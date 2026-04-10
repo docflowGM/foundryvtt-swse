@@ -37,13 +37,12 @@ export class NPCSheet extends HandlebarsApplicationMixin(foundry.applications.sh
     }
   };
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['swse', 'sheet', 'actor', 'npc', 'swse-sheet', 'swse-npc-sheet', 'v2'],
-      width: 820,
-      height: 920
-    });
-  }
+  static DEFAULT_OPTIONS = {
+    ...super.DEFAULT_OPTIONS,
+    classes: ['swse', 'sheet', 'actor', 'npc', 'swse-sheet', 'swse-npc-sheet', 'v2'],
+    width: 820,
+    height: 920
+  };
 
   get actor() {
     return this.document;

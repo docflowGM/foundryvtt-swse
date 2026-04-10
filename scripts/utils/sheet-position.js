@@ -18,6 +18,7 @@ const DEFAULTS = {
 
 /**
  * Compute a centered, fully-clamped position for an app window.
+ * Accounts for sidebar's actual bounding rect, not assumed right-docking.
  *
  * @param {number} [targetWidth=900] Desired window width
  * @param {number} [targetHeight=950] Desired window height
@@ -25,35 +26,54 @@ const DEFAULTS = {
  */
 export function computeCenteredPosition(targetWidth = DEFAULTS.width, targetHeight = DEFAULTS.height) {
   const sidebarEl = ui?.sidebar?.element ?? document.querySelector('#sidebar');
-  const sidebarW = sidebarEl ? (sidebarEl.offsetWidth || 310) : 310;
+  const sidebarRect = sidebarEl?.getBoundingClientRect();
 
   const viewportW = window.innerWidth;
   const viewportH = window.innerHeight;
 
-  const availW = Math.max(500, viewportW - sidebarW - 16);
+  // Determine actual work area based on sidebar's occupied space
+  let workAreaLeft = 0;
+  let workAreaRight = viewportW;
+
+  if (sidebarRect) {
+    // Sidebar exists — determine which side it occupies
+    const sidebarCenterX = sidebarRect.left + (sidebarRect.width / 2);
+
+    if (sidebarCenterX < viewportW / 2) {
+      // Sidebar occupies LEFT side → usable area is to the RIGHT of it
+      workAreaLeft = Math.round(sidebarRect.right);
+    } else {
+      // Sidebar occupies RIGHT side → usable area is to the LEFT of it
+      workAreaRight = Math.round(sidebarRect.left);
+    }
+  }
+
+  const availW = Math.max(500, workAreaRight - workAreaLeft - 16);
   const width = Math.min(targetWidth, availW);
   const height = Math.min(targetHeight, Math.max(600, viewportH - 60));
 
-  const rawLeft = Math.round((availW - width) / 2);
+  // Center within the actual work area
+  const rawLeft = workAreaLeft + Math.round((availW - width) / 2);
   const rawTop = Math.round((viewportH - height) / 2);
 
-  const left = Math.max(MARGIN, Math.min(rawLeft, availW - width - MARGIN));
+  const left = Math.max(MARGIN + workAreaLeft, Math.min(rawLeft, workAreaRight - width - MARGIN));
   const top = Math.max(MARGIN, Math.min(rawTop, viewportH - height - MARGIN));
 
-  // CRITICAL: Expanded diagnostic logging to show each calculation step
+  // Diagnostic logging
   const sidebarDetected = !!sidebarEl;
-  console.log('[sheet-position] ════ STEP 1: Sidebar Detection ════', {
+  console.log('[sheet-position] ════ STEP 1: Sidebar Detection (Actual Rect) ════', {
     sidebarElement_found: sidebarDetected,
-    sidebarWidth_detected: sidebarW,
-    note: sidebarDetected ? 'Sidebar detected — right-side offset will be used' : 'NO SIDEBAR FOUND — defaulting to 310px'
+    sidebarRect: sidebarRect ? { left: sidebarRect.left, right: sidebarRect.right, width: sidebarRect.width } : 'none',
+    sidebarSide: sidebarRect ? (sidebarRect.left + (sidebarRect.width / 2) < viewportW / 2 ? 'LEFT' : 'RIGHT') : 'none'
   });
 
-  console.log('[sheet-position] ════ STEP 2: Viewport & Available Space ════', {
+  console.log('[sheet-position] ════ STEP 2: Work Area Calculation ════', {
     viewport_width: viewportW,
     viewport_height: viewportH,
-    sidebar_width: sidebarW,
+    work_area_left: workAreaLeft,
+    work_area_right: workAreaRight,
     available_width: availW,
-    calculation: `availW = max(500, ${viewportW} - ${sidebarW} - 16) = ${availW}`
+    note: `Canvas area: x=${workAreaLeft} to x=${workAreaRight}`
   });
 
   console.log('[sheet-position] ════ STEP 3: Window Size (Target vs Final) ════', {
@@ -63,19 +83,12 @@ export function computeCenteredPosition(targetWidth = DEFAULTS.width, targetHeig
     final_height: height
   });
 
-  console.log('[sheet-position] ════ STEP 4: Position Centering ════', {
+  console.log('[sheet-position] ════ STEP 4: Centered Position ════', {
     raw_left: rawLeft,
     raw_top: rawTop,
     final_left: left,
     final_top: top,
-    clamping_note: `left clamped between ${MARGIN} and ${availW - width - MARGIN}`
-  });
-
-  console.log('[sheet-position] ════ FINAL RESULT ════', {
-    width,
-    height,
-    left,
-    top
+    note: `Centered within work area [${workAreaLeft}, ${workAreaRight}]`
   });
 
   return { width, height, left, top };

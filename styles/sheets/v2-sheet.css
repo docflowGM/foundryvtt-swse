@@ -16,7 +16,7 @@
    Protected selectors & properties:
    - .window-content: display, flex, min-height, overflow
    - .swse-character-sheet-wrapper: display (transparency)
-   - form.swse-character-sheet-form: display, flex, min-height, overflow
+   - .swse-character-sheet-form: display, flex, min-height, overflow
    - .sheet-shell: display, flex, min-height
    - .sheet-body: display, flex, min-height, overflow (MUST NOT scroll)
    - .sheet-body > .tab: display, flex, min-height, overflow (active/inactive contract)
@@ -24,27 +24,54 @@
    Violation: Any non-contract file setting these properties is a governance error.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* FOUNDATION: window-content flex constraint
+/* FOUNDATION: window-content flex constraint (Character Sheet only)
    Foundry AppV2 does not guarantee flex-safe sizing. This override is critical
    for the entire chain to work. Without min-height: 0, flex children expand to
    their content size instead of respecting the constrained frame.
 
+   NOTE: Runtime DOM shows .window-content inside outer AppV2 form, not under
+   .application.swse-character-sheet. Targeting from .window-content directly.
+
    PHASE 4 P0 REPAIR:
    Add explicit display: flex and flex-direction: column to ensure the bounded
    flex container is established at the frame level. */
-.window-content {
+form.application.sheet {
+  padding-bottom: 18px;
+  padding-right: 18px;
+  box-sizing: border-box;
+  resize: southeast !important;
+  position: absolute !important;
+}
+
+/* RESIZE HANDLE: Anchor to form's bottom-right corner
+   Override Foundry's default position:relative to enable true corner anchoring.
+   This must be absolute positioning for the handle to sit at the actual corner. */
+form.application.sheet > .window-resize-handle {
+  position: absolute !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: auto !important;
+  top: auto !important;
+}
+
+form.application.sheet > .window-content {
   display: flex;
   flex-direction: column;
-  min-height: 0 !important;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
 }
 
-/* WRAPPER: Structural pass-through
-   The .swse-character-sheet-wrapper div is required by AppV2 architecture.
-   It acts as transparent pass-through: display: contents removes it from layout flow
-   while preserving the height chain. */
-.application.swse-character-sheet > .window-content > .swse-character-sheet-wrapper {
-  display: contents;
+/* WRAPPER: Real flex wrapper for resize propagation
+   The .swse-character-sheet-wrapper div now acts as a real flex container
+   to properly propagate resize events from the outer app frame into the sheet.
+   This enables window resizing to expand/contract the sheet content area. */
+form.application.sheet > .window-content > .swse-character-sheet-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0%;
+  min-height: 0;
+  min-width: 0;
 }
 
 /* ROOT: Primary sheet container
@@ -56,8 +83,9 @@
   min-height: 0;
 }
 
-/* PRIMARY FLEX COLUMN: Form wrapper
-   Direct child of .window-content. Carries primary flex responsibility.
+/* PRIMARY FLEX COLUMN: Inner sheet container (div, not form)
+   Chain: .window-content > .swse-character-sheet-wrapper > .swse-character-sheet-form
+   Carries primary flex responsibility.
 
    PHASE 4 P0 REPAIR:
    This is the critical node for the reported failure (form 2600px in 941px parent).
@@ -68,11 +96,10 @@
    - min-width: 0 (allows inline-content shrinking)
    - overflow: hidden (ensures form is not alternate scroll owner)
 
-   Together, these prevent the form from growing to content size and breaking
+   Together, these prevent the inner container from growing to content size and breaking
    the height chain that should be bounded by .window-content.
 */
-.application.swse-character-sheet > .window-content > form.swse-character-sheet-form,
-.application.swse.sheet.actor.character > .window-content > form.swse-character-sheet-form {
+form.application.sheet > .window-content > .swse-character-sheet-wrapper > .swse-character-sheet-form {
   display: flex;
   flex-direction: column;
   flex: 1 1 0%;
@@ -85,19 +112,21 @@
 /* CHARACTER SHEET SCOPE: swse-sheet-ui selectors
    These selectors narrow the scope to the specific character sheet instance
    and establish form-scoped structural rules matching the active template. */
-form.swse-sheet-ui {
+.swse-sheet-ui {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 0%;
   min-height: 0;
+  min-width: 0;
 }
 
-form.swse-sheet-ui > .sheet-shell,
-form.swse-sheet-ui > section.swse-sheet {
+.swse-sheet-ui > .sheet-shell,
+.swse-sheet-ui > section.swse-sheet {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 0%;
   min-height: 0;
+  min-width: 0;
 }
 
 /* SECONDARY FLEX COLUMN: Sheet shell
@@ -116,8 +145,8 @@ form.swse-sheet-ui > section.swse-sheet {
    If sheet-body scrolls, the single-scroll-owner contract is broken.
    flex: 1 1 0% (explicit basis) makes it grow to fill, min-height: 0 allows shrinking.
    Only the active tab child (below) is allowed to scroll. */
-form.swse-sheet-ui .sheet-body,
-form.swse-sheet-ui .sheet-content,
+.swse-sheet-ui .sheet-body,
+.swse-sheet-ui .sheet-content,
 .swse-sheet .sheet-body {
   flex: 1 1 0%;
   min-height: 0;
@@ -130,7 +159,7 @@ form.swse-sheet-ui .sheet-content,
    flex: 1 1 0% (explicit basis) allows active tab to grow without content-sizing.
    min-height: 0 allows content to shrink.
    display: flex enables column layout for tab content. */
-form.swse-sheet-ui .sheet-body > .tab {
+.swse-sheet-ui .sheet-body > .tab {
   flex: 1 1 0%;
   min-height: 0;
   min-width: 0;
@@ -144,13 +173,15 @@ form.swse-sheet-ui .sheet-body > .tab {
    overflow-y: auto enables vertical scrolling.
    overflow-x: hidden prevents horizontal scroll bleed.
    All other tabs are hidden (see below). */
-form.swse-sheet-ui .sheet-body > .tab:not(.active) {
+.swse-sheet-ui .sheet-body > .tab:not(.active) {
   display: none;
 }
 
-/* Add visible scroll to active tab (exact form context) */
-form.swse-sheet-ui .sheet-body > .tab.active,
-form.swse-sheet-ui .sheet-body > .tab {
+/* CRITICAL: Only active tab scrolls
+   Do NOT add overflow-y: auto to all tabs. The single-scroll-owner contract
+   requires that ONLY .tab.active can scroll vertically. All other tabs are
+   hidden (display: none via rule above). */
+.swse-sheet-ui .sheet-body > .tab.active {
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -170,7 +201,7 @@ form.swse-sheet-ui .sheet-body > .tab {
    These do not participate in the growing/shrinking flex chain.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-form.swse-sheet-ui .sheet-header {
+.swse-sheet-ui .sheet-header {
   flex: 0 0 auto;
   display: flex;
   flex-direction: row;
@@ -180,7 +211,7 @@ form.swse-sheet-ui .sheet-header {
   min-height: 0;
 }
 
-form.swse-sheet-ui .sheet-actions {
+.swse-sheet-ui .sheet-actions {
   flex: 0 0 auto;
   display: flex;
   flex-wrap: wrap;
@@ -189,12 +220,12 @@ form.swse-sheet-ui .sheet-actions {
   padding: 6px 8px;
 }
 
-form.swse-sheet-ui .sheet-actions > * {
+.swse-sheet-ui .sheet-actions > * {
   flex: 1 1 150px;
   min-width: 0;
 }
 
-form.swse-sheet-ui .sheet-tabs {
+.swse-sheet-ui .sheet-tabs {
   flex: 0 0 auto;
   display: flex;
   flex-wrap: wrap;
@@ -1020,34 +1051,12 @@ form.swse-sheet-ui .sheet-tabs {
   color: #ff5f5f;
 }
 
-/* =========================================================
-   P0 sheet stabilization
-   ========================================================= */
-
-.application.swse-character-sheet > .window-content > form.swse-character-sheet-form,
-.application.swse.sheet.actor.character > .window-content > form.swse-character-sheet-form {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  min-width: 0;
-}
-
-.swse-sheet .sheet-shell,
-.swse-character-sheet.swse-sheet {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 0;
-  min-width: 0;
-}
-
-.swse-sheet .sheet-shell {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
+/* REMOVED: Duplicate/contradictory "P0 sheet stabilization" rules
+   These rules were overriding the authoritative contract rules defined at the
+   top of this file (lines 27-156). Duplicates and wrong flex values:
+   - flex: 1 (missing basis: 0%)
+   - flex: 1 1 auto (VERY WRONG - enables content-sizing)
+   All layout contract now consolidated in single authoritative block above. */
 
 .swse-sheet .sheet-tabs {
   display: flex;
@@ -1063,7 +1072,7 @@ form.swse-sheet-ui .sheet-tabs {
   min-height: 0;
 }
 
-/* CONSOLIDATED: Tab styling moved to form.swse-sheet-ui .sheet-body > .tab */
+/* CONSOLIDATED: Tab styling moved to .swse-sheet-ui .sheet-body > .tab */
 /* Removed duplicate/conflicting rules to establish single scroll owner */
 
 .swse-sheet .tab-placeholder {
@@ -4475,7 +4484,7 @@ select option:checked {
 }
 
 /* Ensure tab sections use consistent flex behavior */
-/* CONSOLIDATED: All tab styling is defined in form.swse-sheet-ui .sheet-body > .tab
+/* CONSOLIDATED: All tab styling is defined in .swse-sheet-ui .sheet-body > .tab
    This third instance has been removed to prevent cascade conflicts */
 
 /* --- RESPONSIVE: Adjust grid columns for smaller screens --- */
@@ -6222,7 +6231,7 @@ select option:checked {
 /* ========================================================================== */
 
 .swse-sheet .sheet-header,
-form.swse-sheet-ui .sheet-header {
+.swse-sheet-ui .sheet-header {
   align-items: stretch;
 }
 
@@ -6415,109 +6424,109 @@ form.swse-sheet-ui .sheet-header {
   This does NOT touch progression-shell styling.
 */
 
-form.swse-character-sheet-form.swse-sheet-ui,
-form.swse-character-sheet-form.swse-sheet-ui .swse-character-sheet {
+.swse-character-sheet-.swse-sheet-ui,
+.swse-character-sheet-.swse-sheet-ui .swse-character-sheet {
   --swse-flat-panel-bg: linear-gradient(180deg, rgba(5, 16, 28, 0.96), rgba(4, 11, 20, 0.98));
   --swse-flat-border: rgba(104, 214, 255, 0.28);
   --swse-flat-border-strong: rgba(104, 214, 255, 0.42);
 }
 
 /* Kill decorative SVG/pseudo frames */
-form.swse-character-sheet-form.swse-sheet-ui .holo-panel::before,
-form.swse-character-sheet-form.swse-sheet-ui .holo-panel::after,
-form.swse-character-sheet-form.swse-sheet-ui .v3-panel::before,
-form.swse-character-sheet-form.swse-sheet-ui .v3-panel::after,
-form.swse-character-sheet-form.swse-sheet-ui .svg-panel-frame::before,
-form.swse-character-sheet-form.swse-sheet-ui .svg-panel-frame::after,
-form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs .item::before,
-form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs .item::after,
-form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs a::before,
-form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs a::after,
-form.swse-character-sheet-form.swse-sheet-ui .header-btn::before,
-form.swse-character-sheet-form.swse-sheet-ui .header-btn::after,
-form.swse-character-sheet-form.swse-sheet-ui .swse-btn::before,
-form.swse-character-sheet-form.swse-sheet-ui .swse-btn::after,
-form.swse-character-sheet-form.swse-sheet-ui .swse-v2-btn::before,
-form.swse-character-sheet-form.swse-sheet-ui .swse-v2-btn::after,
-form.swse-character-sheet-form.swse-sheet-ui .mini-btn::before,
-form.swse-character-sheet-form.swse-sheet-ui .mini-btn::after,
-form.swse-character-sheet-form.swse-sheet-ui .favorite-btn::before,
-form.swse-character-sheet-form.swse-sheet-ui .favorite-btn::after,
-form.swse-character-sheet-form.swse-sheet-ui .skill-name-btn::before,
-form.swse-character-sheet-form.swse-sheet-ui .skill-name-btn::after,
-form.swse-character-sheet-form.swse-sheet-ui .skill-bonus-btn::before,
-form.swse-character-sheet-form.swse-sheet-ui .skill-bonus-btn::after,
-form.swse-character-sheet-form.swse-sheet-ui .header-select-btn::before,
-form.swse-character-sheet-form.swse-sheet-ui .header-select-btn::after,
-form.swse-character-sheet-form.swse-sheet-ui .swse-panel__frame,
-form.swse-character-sheet-form.swse-sheet-ui .swse-panel__frame::before,
-form.swse-character-sheet-form.swse-sheet-ui .swse-panel__frame::after {
+.swse-character-sheet-.swse-sheet-ui .holo-panel::before,
+.swse-character-sheet-.swse-sheet-ui .holo-panel::after,
+.swse-character-sheet-.swse-sheet-ui .v3-panel::before,
+.swse-character-sheet-.swse-sheet-ui .v3-panel::after,
+.swse-character-sheet-.swse-sheet-ui .svg-panel-frame::before,
+.swse-character-sheet-.swse-sheet-ui .svg-panel-frame::after,
+.swse-character-sheet-.swse-sheet-ui .sheet-tabs .item::before,
+.swse-character-sheet-.swse-sheet-ui .sheet-tabs .item::after,
+.swse-character-sheet-.swse-sheet-ui .sheet-tabs a::before,
+.swse-character-sheet-.swse-sheet-ui .sheet-tabs a::after,
+.swse-character-sheet-.swse-sheet-ui .header-btn::before,
+.swse-character-sheet-.swse-sheet-ui .header-btn::after,
+.swse-character-sheet-.swse-sheet-ui .swse-btn::before,
+.swse-character-sheet-.swse-sheet-ui .swse-btn::after,
+.swse-character-sheet-.swse-sheet-ui .swse-v2-btn::before,
+.swse-character-sheet-.swse-sheet-ui .swse-v2-btn::after,
+.swse-character-sheet-.swse-sheet-ui .mini-btn::before,
+.swse-character-sheet-.swse-sheet-ui .mini-btn::after,
+.swse-character-sheet-.swse-sheet-ui .favorite-btn::before,
+.swse-character-sheet-.swse-sheet-ui .favorite-btn::after,
+.swse-character-sheet-.swse-sheet-ui .skill-name-btn::before,
+.swse-character-sheet-.swse-sheet-ui .skill-name-btn::after,
+.swse-character-sheet-.swse-sheet-ui .skill-bonus-btn::before,
+.swse-character-sheet-.swse-sheet-ui .skill-bonus-btn::after,
+.swse-character-sheet-.swse-sheet-ui .header-select-btn::before,
+.swse-character-sheet-.swse-sheet-ui .header-select-btn::after,
+.swse-character-sheet-.swse-sheet-ui .swse-panel__frame,
+.swse-character-sheet-.swse-sheet-ui .swse-panel__frame::before,
+.swse-character-sheet-.swse-sheet-ui .swse-panel__frame::after {
   content: none !important;
   display: none !important;
   background-image: none !important;
 }
 
 /* Flatten panels/cards/major boxes */
-form.swse-character-sheet-form.swse-sheet-ui .holo-panel,
-form.swse-character-sheet-form.swse-sheet-ui .v3-panel,
-form.swse-character-sheet-form.swse-sheet-ui .svg-framed,
-form.swse-character-sheet-form.swse-sheet-ui .svg-panel-frame,
-form.swse-character-sheet-form.swse-sheet-ui .tab-placeholder,
-form.swse-character-sheet-form.swse-sheet-ui .swse-attacks-panel,
-form.swse-character-sheet-form.swse-sheet-ui .skills-panel,
-form.swse-character-sheet-form.swse-sheet-ui .section-bar,
-form.swse-character-sheet-form.swse-sheet-ui .resource,
-form.swse-character-sheet-form.swse-sheet-ui .combat-metric,
-form.swse-character-sheet-form.swse-sheet-ui .tactical-resource,
-form.swse-character-sheet-form.swse-sheet-ui .header-defense-readout,
-form.swse-character-sheet-form.swse-sheet-ui .field-with-button,
-form.swse-character-sheet-form.swse-sheet-ui .ability-row,
-form.swse-character-sheet-form.swse-sheet-ui .defense-row,
-form.swse-character-sheet-form.swse-sheet-ui .condition-track,
-form.swse-character-sheet-form.swse-sheet-ui .condition-entry,
-form.swse-character-sheet-form.swse-sheet-ui .defense-card,
-form.swse-character-sheet-form.swse-sheet-ui .defense-item,
-form.swse-character-sheet-form.swse-sheet-ui .xp-panel,
-form.swse-character-sheet-form.swse-sheet-ui .second-wind-panel,
-form.swse-character-sheet-form.swse-sheet-ui .hp-condition-panel,
-form.swse-character-sheet-form.swse-sheet-ui .resources-panel,
-form.swse-character-sheet-form.swse-sheet-ui .defenses-panel {
+.swse-character-sheet-.swse-sheet-ui .holo-panel,
+.swse-character-sheet-.swse-sheet-ui .v3-panel,
+.swse-character-sheet-.swse-sheet-ui .svg-framed,
+.swse-character-sheet-.swse-sheet-ui .svg-panel-frame,
+.swse-character-sheet-.swse-sheet-ui .tab-placeholder,
+.swse-character-sheet-.swse-sheet-ui .swse-attacks-panel,
+.swse-character-sheet-.swse-sheet-ui .skills-panel,
+.swse-character-sheet-.swse-sheet-ui .section-bar,
+.swse-character-sheet-.swse-sheet-ui .resource,
+.swse-character-sheet-.swse-sheet-ui .combat-metric,
+.swse-character-sheet-.swse-sheet-ui .tactical-resource,
+.swse-character-sheet-.swse-sheet-ui .header-defense-readout,
+.swse-character-sheet-.swse-sheet-ui .field-with-button,
+.swse-character-sheet-.swse-sheet-ui .ability-row,
+.swse-character-sheet-.swse-sheet-ui .defense-row,
+.swse-character-sheet-.swse-sheet-ui .condition-track,
+.swse-character-sheet-.swse-sheet-ui .condition-entry,
+.swse-character-sheet-.swse-sheet-ui .defense-card,
+.swse-character-sheet-.swse-sheet-ui .defense-item,
+.swse-character-sheet-.swse-sheet-ui .xp-panel,
+.swse-character-sheet-.swse-sheet-ui .second-wind-panel,
+.swse-character-sheet-.swse-sheet-ui .hp-condition-panel,
+.swse-character-sheet-.swse-sheet-ui .resources-panel,
+.swse-character-sheet-.swse-sheet-ui .defenses-panel {
   background: var(--swse-flat-panel-bg) !important;
   background-image: none !important;
   border-image: none !important;
   box-shadow: none !important;
 }
 
-form.swse-character-sheet-form.swse-sheet-ui .holo-panel,
-form.swse-character-sheet-form.swse-sheet-ui .v3-panel,
-form.swse-character-sheet-form.swse-sheet-ui .svg-framed,
-form.swse-character-sheet-form.swse-sheet-ui .svg-panel-frame,
-form.swse-character-sheet-form.swse-sheet-ui .tab-placeholder,
-form.swse-character-sheet-form.swse-sheet-ui .swse-attacks-panel,
-form.swse-character-sheet-form.swse-sheet-ui .skills-panel,
-form.swse-character-sheet-form.swse-sheet-ui .xp-panel,
-form.swse-character-sheet-form.swse-sheet-ui .second-wind-panel,
-form.swse-character-sheet-form.swse-sheet-ui .hp-condition-panel,
-form.swse-character-sheet-form.swse-sheet-ui .resources-panel,
-form.swse-character-sheet-form.swse-sheet-ui .defenses-panel {
+.swse-character-sheet-.swse-sheet-ui .holo-panel,
+.swse-character-sheet-.swse-sheet-ui .v3-panel,
+.swse-character-sheet-.swse-sheet-ui .svg-framed,
+.swse-character-sheet-.swse-sheet-ui .svg-panel-frame,
+.swse-character-sheet-.swse-sheet-ui .tab-placeholder,
+.swse-character-sheet-.swse-sheet-ui .swse-attacks-panel,
+.swse-character-sheet-.swse-sheet-ui .skills-panel,
+.swse-character-sheet-.swse-sheet-ui .xp-panel,
+.swse-character-sheet-.swse-sheet-ui .second-wind-panel,
+.swse-character-sheet-.swse-sheet-ui .hp-condition-panel,
+.swse-character-sheet-.swse-sheet-ui .resources-panel,
+.swse-character-sheet-.swse-sheet-ui .defenses-panel {
   border: 1px solid var(--swse-flat-border) !important;
   border-radius: 12px !important;
   overflow: hidden;
 }
 
 /* Flatten buttons, tab pills, mini controls */
-form.swse-character-sheet-form.swse-sheet-ui .header-btn,
-form.swse-character-sheet-form.swse-sheet-ui .swse-btn,
-form.swse-character-sheet-form.swse-sheet-ui .swse-v2-btn,
-form.swse-character-sheet-form.swse-sheet-ui .mini-btn,
-form.swse-character-sheet-form.swse-sheet-ui .favorite-btn,
-form.swse-character-sheet-form.swse-sheet-ui .skill-name-btn,
-form.swse-character-sheet-form.swse-sheet-ui .skill-bonus-btn,
-form.swse-character-sheet-form.swse-sheet-ui .header-select-btn,
-form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs .item,
-form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs a,
-form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs button,
-form.swse-character-sheet-form.swse-sheet-ui button[type="button"] {
+.swse-character-sheet-.swse-sheet-ui .header-btn,
+.swse-character-sheet-.swse-sheet-ui .swse-btn,
+.swse-character-sheet-.swse-sheet-ui .swse-v2-btn,
+.swse-character-sheet-.swse-sheet-ui .mini-btn,
+.swse-character-sheet-.swse-sheet-ui .favorite-btn,
+.swse-character-sheet-.swse-sheet-ui .skill-name-btn,
+.swse-character-sheet-.swse-sheet-ui .skill-bonus-btn,
+.swse-character-sheet-.swse-sheet-ui .header-select-btn,
+.swse-character-sheet-.swse-sheet-ui .sheet-tabs .item,
+.swse-character-sheet-.swse-sheet-ui .sheet-tabs a,
+.swse-character-sheet-.swse-sheet-ui .sheet-tabs button,
+.swse-character-sheet-.swse-sheet-ui button[type="button"] {
   background: rgba(8, 18, 32, 0.96) !important;
   background-image: none !important;
   border: 1px solid var(--swse-flat-border) !important;
@@ -6526,69 +6535,69 @@ form.swse-character-sheet-form.swse-sheet-ui button[type="button"] {
   text-shadow: none !important;
 }
 
-form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs .item.active,
-form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs a.active,
-form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs button.active,
-form.swse-character-sheet-form.swse-sheet-ui .header-btn:hover,
-form.swse-character-sheet-form.swse-sheet-ui .swse-btn:hover,
-form.swse-character-sheet-form.swse-sheet-ui .swse-v2-btn:hover,
-form.swse-character-sheet-form.swse-sheet-ui .mini-btn:hover,
-form.swse-character-sheet-form.swse-sheet-ui .favorite-btn:hover,
-form.swse-character-sheet-form.swse-sheet-ui .skill-name-btn:hover,
-form.swse-character-sheet-form.swse-sheet-ui .skill-bonus-btn:hover,
-form.swse-character-sheet-form.swse-sheet-ui .header-select-btn:hover {
+.swse-character-sheet-.swse-sheet-ui .sheet-tabs .item.active,
+.swse-character-sheet-.swse-sheet-ui .sheet-tabs a.active,
+.swse-character-sheet-.swse-sheet-ui .sheet-tabs button.active,
+.swse-character-sheet-.swse-sheet-ui .header-btn:hover,
+.swse-character-sheet-.swse-sheet-ui .swse-btn:hover,
+.swse-character-sheet-.swse-sheet-ui .swse-v2-btn:hover,
+.swse-character-sheet-.swse-sheet-ui .mini-btn:hover,
+.swse-character-sheet-.swse-sheet-ui .favorite-btn:hover,
+.swse-character-sheet-.swse-sheet-ui .skill-name-btn:hover,
+.swse-character-sheet-.swse-sheet-ui .skill-bonus-btn:hover,
+.swse-character-sheet-.swse-sheet-ui .header-select-btn:hover {
   border-color: var(--swse-flat-border-strong) !important;
   box-shadow: none !important;
   transform: none !important;
 }
 
 /* Flatten inputs and value boxes */
-form.swse-character-sheet-form.swse-sheet-ui input,
-form.swse-character-sheet-form.swse-sheet-ui select,
-form.swse-character-sheet-form.swse-sheet-ui textarea,
-form.swse-character-sheet-form.swse-sheet-ui .math-pill,
-form.swse-character-sheet-form.swse-sheet-ui .math-result,
-form.swse-character-sheet-form.swse-sheet-ui .resource-segment-bar,
-form.swse-character-sheet-form.swse-sheet-ui .resource-pip-strip,
-form.swse-character-sheet-form.swse-sheet-ui .value-row,
-form.swse-character-sheet-form.swse-sheet-ui .value-box,
-form.swse-character-sheet-form.swse-sheet-ui .header-field,
-form.swse-character-sheet-form.swse-sheet-ui .header-player,
-form.swse-character-sheet-form.swse-sheet-ui .header-name-block {
+.swse-character-sheet-.swse-sheet-ui input,
+.swse-character-sheet-.swse-sheet-ui select,
+.swse-character-sheet-.swse-sheet-ui textarea,
+.swse-character-sheet-.swse-sheet-ui .math-pill,
+.swse-character-sheet-.swse-sheet-ui .math-result,
+.swse-character-sheet-.swse-sheet-ui .resource-segment-bar,
+.swse-character-sheet-.swse-sheet-ui .resource-pip-strip,
+.swse-character-sheet-.swse-sheet-ui .value-row,
+.swse-character-sheet-.swse-sheet-ui .value-box,
+.swse-character-sheet-.swse-sheet-ui .header-field,
+.swse-character-sheet-.swse-sheet-ui .header-player,
+.swse-character-sheet-.swse-sheet-ui .header-name-block {
   background-image: none !important;
   box-shadow: none !important;
 }
 
-form.swse-character-sheet-form.swse-sheet-ui input,
-form.swse-character-sheet-form.swse-sheet-ui select,
-form.swse-character-sheet-form.swse-sheet-ui textarea,
-form.swse-character-sheet-form.swse-sheet-ui .math-pill,
-form.swse-character-sheet-form.swse-sheet-ui .math-result,
-form.swse-character-sheet-form.swse-sheet-ui .value-box,
-form.swse-character-sheet-form.swse-sheet-ui .resource-segment-bar,
-form.swse-character-sheet-form.swse-sheet-ui .resource-pip-strip {
+.swse-character-sheet-.swse-sheet-ui input,
+.swse-character-sheet-.swse-sheet-ui select,
+.swse-character-sheet-.swse-sheet-ui textarea,
+.swse-character-sheet-.swse-sheet-ui .math-pill,
+.swse-character-sheet-.swse-sheet-ui .math-result,
+.swse-character-sheet-.swse-sheet-ui .value-box,
+.swse-character-sheet-.swse-sheet-ui .resource-segment-bar,
+.swse-character-sheet-.swse-sheet-ui .resource-pip-strip {
   background: rgba(5, 14, 25, 0.96) !important;
   border: 1px solid rgba(104, 214, 255, 0.22) !important;
   border-radius: 8px !important;
 }
 
 /* Make sure tabs never disappear after state churn */
-form.swse-character-sheet-form.swse-sheet-ui .sheet-body > .tab {
+.swse-character-sheet-.swse-sheet-ui .sheet-body > .tab {
   min-height: 0;
 }
 
-form.swse-character-sheet-form.swse-sheet-ui .sheet-body > .tab.active {
+.swse-character-sheet-.swse-sheet-ui .sheet-body > .tab.active {
   display: flex !important;
   visibility: visible !important;
   opacity: 1 !important;
 }
 
-form.swse-character-sheet-form.swse-sheet-ui .sheet-body > .tab:not(.active) {
+.swse-character-sheet-.swse-sheet-ui .sheet-body > .tab:not(.active) {
   display: none !important;
 }
 
 /* Small utility layout for the new abilities action row */
-form.swse-character-sheet-form.swse-sheet-ui .section-bar__actions {
+.swse-character-sheet-.swse-sheet-ui .section-bar__actions {
   display: inline-flex;
   align-items: center;
   gap: 8px;

@@ -2,6 +2,14 @@ foundryvtt-swse/
   assets/
     backgrounds/
     class/
+    cursor/
+      swse-cursor-default.svg
+      swse-cursor-forbidden.svg
+      swse-cursor-grab.svg
+      swse-cursor-grabbing.svg
+      swse-cursor-hover.svg
+      swse-cursor-precision.svg
+      swse-cursor-select.svg
     feats/
       desktop.ini
     fonts/
@@ -17,6 +25,7 @@ foundryvtt-swse/
         Font License.txt
     icons/
       canvas/
+        desktop.ini
       force-powers/
     mentors/
     pdf/
@@ -24,9 +33,500 @@ foundryvtt-swse/
     species/
     templates/
     ui/
+      action-palette/
+        action-palette-empty-state-panel.svg
+        action-palette-mini-badge-new.svg
+        action-palette-mini-badge-queued.svg
+        action-palette-mini-badge-warning.svg
+        action-palette-tooltip-plate.svg
+        focus-ring-action.svg
+        gm-shell-panel.svg
+        gm-slot-empty.svg
+        gm-slot-invalid-drop.svg
+        gm-slot-occupied.svg
+        gm-slot-valid-drop.svg
+        gm-zone-panel.svg
+        radial-center-hub-gm.svg
+        radial-center-hub-no-token.svg
+        radial-center-hub-selected-token.svg
+        radial-center-hub.svg
+        radial-label-plate.svg
+        radial-outer-tick-ring.svg
+        radial-ring-10.svg
+        radial-ring-12.svg
+        radial-ring-6.svg
+        radial-ring-8.svg
+        radial-ring-base.svg
+        radial-scan-sweep.svg
+        radial-segment-active.svg
+        radial-segment-confirm.svg
+        radial-segment-cooldown.svg
+        radial-segment-disabled.svg
+        radial-segment-hover.svg
+        radial-segment-idle.svg
+        radial-segment-locked.svg
+        radial-segment-targeting.svg
+        README.txt
+        suggestion-pill.svg
+      chargen/
+        attribute-table.svg
+        button-frame-primary.svg
+        button-frame-secondary.svg
+        dialogue-box.svg
+        dropdown-box.svg
+        footer-bar.svg
+        frame-shell.svg
+        header-bar.svg
+        holodice-3d.svg
+        holodice.svg
+        mentor-combined-panel.svg
+        mentor-dialogue-box.svg
+        mentor-portrait-box.svg
+        mentor-ring.svg
+        modal-frame.svg
+        panel-large.svg
+        panel-small.svg
+        search-box.svg
+        skill-table.svg
+        swse-angled-option-frame-compact.svg
+        swse-angled-option-frame-hover.svg
+        swse-angled-option-frame-locked.svg
+        swse-angled-option-frame-recommended.svg
+        swse-angled-option-frame-selected.svg
+        swse-angled-option-frame.svg
+        swse-btn-back-frame.svg
+        swse-btn-confirm-frame.svg
+        swse-section-header-plate.svg
+        swse-step-chip-active.svg
+        swse-step-chip-complete.svg
+        swse-step-chip-default.svg
+        swse-step-chip-locked.svg
+        swse-step-chip-warning.svg
+        textbox.svg
+        tree-preview.svg
+      chat/
+        chat-badge-crit.svg
+        chat-badge-hex.svg
+        chat-corner-bl.svg
+        chat-corner-br.svg
+        chat-corner-tl.svg
+        chat-corner-tr.svg
+        chat-divider-long.svg
+        chat-divider-short.svg
+        chat-flourish-left.svg
+        chat-flourish-right.svg
+        chat-reaction-rail.svg
+        chat-scanline-panel.svg
+        chat-status-rail.svg
+        README.txt
+      core/
+        buttons_tabs/
+          button-big.svg
+          button-small.svg
+          tabs-bar.svg
+        frames/
+          chargen-shell-frame.svg
+          page-frame.svg
+          partial-frame.svg
+        inputs/
+          filter-sort-search-bar.svg
+          text-box-small.svg
+          text-box.svg
+        meters_trackers/
+          damage-resistance-pill.svg
+          damage-threshold-meter.svg
+          dark-side-score-tracker.svg
+          force-points-dots.svg
+          hp-meter.svg
+          shield-rating-meter.svg
+          xp-meter.svg
+        panels/
+          actions-table.svg
+          armor-panel.svg
+          attributes-panel.svg
+          biography-panel.svg
+          extra-skill-uses-panel.svg
+          feat-table.svg
+          inventory-panel.svg
+          profile-picture-frame.svg
+          second-wind-panel.svg
+          skills-panel.svg
+          store-panel.svg
+          talent-table.svg
+          weapons-panel.svg
+        pills_dots_icons/
+          check-mark.svg
+          dot-big.svg
+          dot-small.svg
+          favorite-star.svg
+          pill-horizontal.svg
+          pill-oblique-left.svg
+          pill-oblique-right.svg
+          pill-vertical.svg
+          x-mark.svg
+      customization/
+        kyber-crystal-outline.svg
+        lightsaber-blade-color-picker.svg
+        lightsaber-hilt-classic.svg
+        lightsaber-hilt-crossguard.svg
+        lightsaber-hilt-curved.svg
+        lightsaber-hilt-double.svg
+        lightsaber-hilt-tech.svg
+        lightsaber-modification-icon.svg
+        lightsaber-outline-classic.svg
+        lightsaber-outline-guarded.svg
+        lightsaber-outline-shoto.svg
+        lightsaber-preview-panel.svg
+        modification-icon-simple.svg
+        modification-icon.svg
+        roll-icon-simple.svg
+        roll-icon.svg
+      docs/
+        asset_inventory.csv
+        LIBRARY-INDEX.md
+        README.txt
+        README_core_detexted.md
+        README_store.md
+        README_wave2_5_finish.md
+        README_wave2_modular.md
+        README_wave4_ship_droid.md
+        UI-DETEXTING-NOTES.md
+      finish/
+        badges/
+          badge-alert-pip-frame.svg
+          badge-circular-mount.svg
+          badge-hanging-tag.svg
+          badge-hex-mount.svg
+          badge-square-corner.svg
+        empty_states/
+          empty-add-item-plate.svg
+          empty-list-row.svg
+          empty-locked-panel.svg
+          empty-no-data-panel.svg
+          empty-slot-plate.svg
+        focus_rings/
+          focus-hard-ring.svg
+          focus-node-pulse-ring.svg
+          focus-oblique-glow.svg
+          focus-soft-ring.svg
+          focus-square-glow.svg
+        header_attachments/
+          header-centered-badge-mount.svg
+          header-left-notch-cap.svg
+          header-overline-strip.svg
+          header-right-notch-cap.svg
+          header-subheader-inset-plate.svg
+        separators/
+          separator-expandable-divider.svg
+          separator-hard-divider.svg
+          separator-icon-anchor-divider.svg
+          separator-segmented-divider.svg
+          separator-soft-holo-divider.svg
+        state_bars/
+          statebar-active-pulse.svg
+          statebar-equipped.svg
+          statebar-locked.svg
+          statebar-new.svg
+          statebar-selected.svg
+          statebar-warning.svg
+      modular/
+        cards/
+          discard-slot.svg
+          exhausted-card-overlay.svg
+          hand-slot.svg
+          mini-card-back-plate.svg
+          selected-card-glow.svg
+        headers/
+          corner-badge-strip.svg
+          subtitle-strip.svg
+          title-strip.svg
+        meters/
+          continuous-fill-overlay.svg
+          dot-track-overlay.svg
+          segmented-fill-overlay.svg
+          spent-slash-overlay.svg
+          threshold-marker.svg
+        overlays/
+          alternating-row-strip.svg
+          column-divider-overlay.svg
+          row-highlight-plate.svg
+          selected-row-glow.svg
+          sortable-header-cap.svg
+        portrait/
+          portrait-holo-mask.svg
+          portrait-hover-glow-overlay.svg
+          portrait-outer-frame.svg
+          portrait-scanline-overlay.svg
+          portrait-status-corner-badge.svg
+        tabs/
+          tab-active.svg
+          tab-alert.svg
+          tab-hover.svg
+          tab-idle.svg
+          tab-locked.svg
+        tree/
+          talent-node-circle.svg
+          tree-active-path-glow.svg
+          tree-connector-horizontal.svg
+          tree-connector-vertical.svg
+          tree-locked-node-overlay.svg
+          tree-selected-node-pulse.svg
+        widgets/
+          check-badge-plate.svg
+          favorite-star-mount.svg
+          filter-chip.svg
+          search-icon-frame.svg
+          tiny-numeric-badge-frame.svg
+          x-badge-plate.svg
+      specialized/
+        crew_positions/
+          crew-positions-panel.svg
+        droid_body_slots/
+          accessory-mount-slot.svg
+          head-slot.svg
+          internal-systems-slot.svg
+          left-arm-slot.svg
+          locomotion-slot.svg
+          right-arm-slot.svg
+          tool-mount-slot.svg
+          torso-slot.svg
+        droid_power/
+          backup-power.svg
+          battery-cells.svg
+          charging-state.svg
+          drained-cell.svg
+          overclock-glow.svg
+          powered-down.svg
+          self-repair-active.svg
+          unstable-power.svg
+        droid_processors/
+          behavior-package-nodes.svg
+          heuristic-processor.svg
+          memory-bank-stack.svg
+          navicomputer-logic.svg
+          protocol-matrix.svg
+          repair-routine-core.svg
+          tactical-processor.svg
+          targeting-core.svg
+        droid_systems/
+          astromech-only-socket.svg
+          damaged-socket.svg
+          droid-systems-panel.svg
+          empty-socket.svg
+          incompatible-socket.svg
+          locked-socket.svg
+          military-only-socket.svg
+          occupied-socket.svg
+          protocol-only-socket.svg
+        force_suite/
+          empty-slot.svg
+          equipped-active-slot.svg
+          force-power-card.svg
+          force-suite-discard.svg
+          force-suite-hand.svg
+          hovered-slot.svg
+          invalid-drop-target.svg
+          occupied-slot.svg
+          valid-drop-target.svg
+        shared_system_states/
+          component-link-line.svg
+          diagnostic-scan-overlay.svg
+          hardpoint-mount-frame.svg
+          module-card-frame.svg
+          repair-in-progress-badge.svg
+          system-offline-slate.svg
+          system-online-slate.svg
+          warning-stripe-overlay.svg
+        ship_arcs/
+          broadside-overlay.svg
+          cone-fire-overlay.svg
+          front-arc-overlay.svg
+          line-fire-overlay.svg
+          port-arc-overlay.svg
+          rear-arc-overlay.svg
+          starboard-arc-overlay.svg
+          turret-full-rotation-overlay.svg
+        ship_crew_markers/
+          assisted-marker.svg
+          commander-marker.svg
+          copilot-marker.svg
+          damage-control-marker.svg
+          damaged-post-marker.svg
+          engineer-marker.svg
+          gunner-marker.svg
+          overloaded-marker.svg
+          pilot-marker.svg
+          sensor-operator-marker.svg
+          shield-operator-marker.svg
+          vacant-marker.svg
+        ship_subsystems/
+          communications-subsystem-card.svg
+          engines-subsystem-card.svg
+          hyperdrive-subsystem-card.svg
+          life-support-subsystem-card.svg
+          navigation-subsystem-card.svg
+          sensors-subsystem-card.svg
+          shields-subsystem-card.svg
+          weapons-subsystem-card.svg
+        starship_maneuvers/
+          empty-slot.svg
+          equipped-active-slot.svg
+          hovered-slot.svg
+          invalid-drop-target.svg
+          occupied-slot.svg
+          starship-maneuvers-hand.svg
+          valid-drop-target.svg
+      states_systems/
+        global_states/
+          state-active-overlay.svg
+          state-cooldown-overlay.svg
+          state-disabled-overlay.svg
+          state-error-overlay.svg
+          state-hover-pulse-overlay.svg
+          state-locked-overlay.svg
+          state-selected-overlay.svg
+          state-warning-overlay.svg
+        scroll_accordion/
+          accordion-cap-closed.svg
+          accordion-cap-open.svg
+          expandable-side-rail.svg
+          fold-indicator.svg
+          icon-armor.svg
+          icon-credits.svg
+          icon-droid.svg
+          icon-feat.svg
+          icon-filter.svg
+          icon-force.svg
+          icon-health.svg
+          icon-inventory.svg
+          icon-lock.svg
+          icon-search.svg
+          icon-shield.svg
+          icon-skill.svg
+          icon-sort.svg
+          icon-starship.svg
+          icon-talent.svg
+          icon-warning.svg
+          icon-weapon.svg
+          icon-xp.svg
+          more-below-chevron-plate.svg
+          overflow-cap-bottom.svg
+          overflow-cap-top.svg
+          page-edge-fade-overlay.svg
+          retract-tray-cap.svg
+          scroll-thumb-shell.svg
+          scroll-track-frame.svg
+        slots/
+          empty-slot.svg
+          equipped-active-slot.svg
+          hovered-slot.svg
+          invalid-drop-target.svg
+          occupied-slot.svg
+          valid-drop-target.svg
+      store/
+        cards/
+          cart-item-row.svg
+          product-card-detail.svg
+          product-card-listing.svg
+          product-card-portraitless.svg
+          product-glyph-card.svg
+          store-offer-banner.svg
+          vendor-panel.svg
+          wishlist-star-card.svg
+        controls/
+          store-cart-sidebar.svg
+          store-category-pill-row.svg
+          store-checkout-button.svg
+          store-filter-bar.svg
+          store-glyph-chip.svg
+          store-loading-overlay.svg
+          store-rarity-badge-common.svg
+          store-rarity-badge-rare.svg
+          store-rarity-badge-restricted.svg
+          store-rarity-badge-uncommon.svg
+          store-search-box.svg
+          store-sort-chip.svg
+          wallet-cart-panel.svg
+          wallet-credit-panel.svg
+        shell/
+          store-footer-strip.svg
+          store-header-strip.svg
+          store-main-grid-panel.svg
+          store-page-frame.svg
+          store-shell-panel.svg
+          store-sidebar-panel.svg
+        splash/
+          store-splash-cta-button-large.svg
+          store-splash-hero-plate.svg
+          store-splash-mentor-dock.svg
+          store-splash-shell.svg
+        widgets/
+          add-to-cart-button.svg
+          aurebesh-glyph-display.svg
+          buyback-chip.svg
+          comparison-toggle.svg
+          discount-burst-badge.svg
+          favorite-toggle-star.svg
+          holo-price-tag.svg
+          remove-from-cart-button.svg
+          stock-dot-row.svg
+          store-tab-active.svg
+          store-tab-idle.svg
+        buyback-approved-stamp.svg
+        cart-sync-warning.svg
+        credit-change-chip-negative.svg
+        credit-change-chip-positive.svg
+        purchase-denied-stamp.svg
+        purchase-success-stamp.svg
+        README.txt
+        store-breadcrumb-strip.svg
+        store-compare-panel.svg
+        store-empty-cart-panel.svg
+        store-empty-category-panel.svg
+        store-empty-history-panel.svg
+        store-empty-results-panel.svg
+        store-empty-vendor-panel.svg
+        store-item-equipped-overlay.svg
+        store-item-low-stock-overlay.svg
+        store-item-new-badge.svg
+        store-item-not-eligible-overlay.svg
+        store-item-out-of-stock-overlay.svg
+        store-item-owned-overlay.svg
+        store-item-restricted-overlay.svg
+        store-item-sale-badge-large.svg
+        store-pagination-chip.svg
+        store-preview-callout.svg
+        store-spec-row.svg
+        store-splash-deal-of-day-panel.svg
+        store-splash-faction-offer-tile.svg
+        store-splash-feature-callout.svg
+        store-splash-terminal-sidebar.svg
+        store-stat-delta-down.svg
+        store-stat-delta-up.svg
+        store-subcategory-pill.svg
+        store-view-toggle-grid.svg
+        store-view-toggle-list.svg
+        vendor-banner-black-market.svg
+        vendor-banner-generic.svg
+        vendor-banner-imperial.svg
+        vendor-banner-junk-dealer.svg
+        vendor-banner-military-surplus.svg
+        vendor-banner-republic.svg
+      attack-ledger-row.svg
+      character-record-header-plate.svg
+      compact-ledger-row.svg
+      condition-track-box-strip.svg
+      dark-side-box-track.svg
       droid-default.svg
+      equipment-ledger-row.svg
       icon-mode-blueprint.svg
       icon-mode-operational.svg
+      record-field-inline-small.svg
+      record-field-inline.svg
+      relationships-notebook-panel.svg
+      resource-pip-strip.svg
+      special-combat-notes-panel.svg
+      UI-PHASE1-NOTES.md
   compendiums/
     starship-maneuvers.json
   data/
@@ -47,102 +547,136 @@ foundryvtt-swse/
       mentors/
         axiom/
           axiom.json
+          axiom_advisory_stub.json
           axiom_dialogue.json
         breach/
           breach.json
+          breach_advisory_stub.json
           breach_dialogues.json
         captain/
           captain.json
+          captain_advisory_stub.json
           captain_dialogue.json
         darth_malbada/
           darth_malbada.json
+          darth_malbada_advisory_stub.json
           darth_malbada_dialogue.json
         darth_miedo/
           darth_miedo.json
+          darth_miedo_advisory_stub.json
           darth_miedo_dialogue.json
         delta/
           delta.json
+          delta_advisory_stub.json
           delta_dialogue.json
         dezmin/
-          dezmin_+dialogues.json
-        infiltrator/
-          infiltrator.json
+          dezmin.json
+          dezmin_advisory_stub.json
+          dezmin_dialogue.json
         j0_n1/
           j0_n1.json
+          j0_n1_advisory_stub.json
           j0_n1_dialogues.json
         jack/
           jack.json
+          jack_advisory_stub.json
           jack_dialogue.json
         kex_varon/
           kex_varon.json
+          kex_varon_advisory_stub.json
           kex_varon_dialogue.json
         kharjo/
+          kharjo.json
+          kharjo_advisory_stub.json
           kharjo_dialogue.json
         korr/
           korr.json
+          korr_advisory_stub.json
           korr_dialogue.json
         krag/
           krag.json
+          krag_advisory_stub.json
           krag_dialogue.json
         kyber/
           kyber.json
+          kyber_advisory_stub.json
           kyber_dialogue.json
         lead/
           lead.json
+          lead_advisory_stub.json
           Lead_dialogues.json
         marl_skindar/
+          marl_skindar_advisory_stub.json
           skindar.json
           skindar_dialogue.json
         mayu/
           mayu.json
+          mayu_advisory_stub.json
           mayu_dialogue.json
         miraj/
           miraj.json
+          miraj_advisory_stub.json
           Miraj_dialogues.json
         ol_salty/
           ol-salty-species-dialogues.json
           ol_salty.json
+          ol_salty_advisory_stub.json
           ol_salty_dialogues.json
         pegar/
           pegar.json
+          pegar_advisory_stub.json
           pegar_dialogues.json
         rajma/
           rajma.json
+          rajma_advisory_stub.json
           rajma_dialogue.json
         rax/
           rax.json
+          rax_advisory_stub.json
           rax_dialogue.json
         riquis/
           riquis.json
+          riquis_advisory_stub.json
           riquis_dialogue.json
         rogue/
           rogue.json
+          rogue_advisory_stub.json
           rogue_dialogue.json
         sela/
           sela.json
+          sela_advisory_stub.json
           sela_dialogue.json
         seraphim/
           seraphim.json
+          seraphim_advisory_stub.json
           seraphim_dialogue.json
         spark/
           spark.json
+          spark_advisory_stub.json
           spark_dialogue.json
         theron/
           theron.json
+          theron_advisory_stub.json
           theron_dialogue.json
         tio_the_hutt/
           tio_the_hutt.json
+          tio_the_hutt_advisory_stub.json
           tio_the_hutt_dialogue.json
         urza/
           urza.json
+          urza_advisory_stub.json
           urza_dialogue.json
         vera/
           vera.json
+          vera_advisory_stub.json
           vera_dialogue.json
         whisper/
           whisper.json
+          whisper_advisory_stub.json
+          whisper_dialogue.json
         zhen/
           zhen.json
+          zhen_advisory_stub.json
           zhen_dialogue.json
       mentor_registry.json
       reasons.json
@@ -162,9 +696,47 @@ foundryvtt-swse/
       missing-assets.txt
       talent-trees.registry.json
       talents.fixed.json
+    metadata/
+      force-power-tags.byId.json
+      force-power-tags.report.json
+      talent-tree-tags.json
     nonheroic/
       nonheroic_templates.json
       nonheroic_units.json
+    prestige-layers/
+      ace-pilot.json
+      assassin.json
+      bounty-hunter.json
+      charlatan.json
+      corporate-agent.json
+      crime-lord.json
+      droid-commander.json
+      elite-trooper.json
+      enforcer.json
+      force-adept.json
+      force-disciple.json
+      gladiator.json
+      gunslinger.json
+      imperial-knight.json
+      improviser.json
+      independent-droid.json
+      infiltrator.json
+      jedi-knight.json
+      jedi-master.json
+      martial-arts-master.json
+      master-privateer.json
+      medic.json
+      melee-duelist.json
+      military-engineer.json
+      officer.json
+      outlaw.json
+      pathfinder.json
+      saboteur.json
+      shaper.json
+      sith-apprentice.json
+      sith-lord.json
+      vanguard.json
+      weapon-master.json
     reviews/
       droid-reviews.json
       modification-reviews.json
@@ -184,12 +756,17 @@ foundryvtt-swse/
       weapon-systems.json
     ability-registry.json
     actor-weapon-ranges.json
+    attribute-bias-mapping.json
     backgrounds.json
+    bias-keys-canonical.json
     character-templates.json
     chargen-config.json
     class-archetypes.json
+    class-chassis-bias.json
+    class-features.json
     combat-actions.json
     default-archetype-weights.json
+    equipment-affinity-mapping.json
     extraskilluses.json
     feat-combat-actions.json
     feat-metadata.json
@@ -206,17 +783,28 @@ foundryvtt-swse/
     generic-archetypes.json
     heroic.json
     languages.json
+    lightsaber-components.json
     lightsaber-form-powers.json
+    lightsaber-items-import.ndjson
     mentor-dialogues.json
     mentor-template-dialogues.json
     mentor-ui-strings.json
+    metadata-assignments.json
     near-human-houserules.json
     near-human-traits.json
+    nonheroic-templates.json
     nonheroic.json
     prestige-class-prerequisites.json
+    prestige-map.json
     prestige-prerequisites-reference.json
+    prestige-signals.json
+    primitive-bias-mapping.json
+    primitive-classification.json
     ship-combat-actions.json
+    skill-bias-mapping.json
+    skill-short-descriptions.json
     skills.json
+    species-abilities-migrated.json
     species-languages.json
     species-traits-migrated.json
     species-traits.json
@@ -227,135 +815,47 @@ foundryvtt-swse/
     talent-granted-abilities.json
     talent-prerequisites.json
     talent-tree-descriptions.json
+    talent-tree-tags.json
     talent_tree_access_rules.json
     talent_tree_class_map.json
     test-species-rules.json
     vehicle-weapon-ranges.json
     vehicle-weapons.json
   docs/
-    _archive/
-      audit-reports/
-        AUDIT-TALENTS-PASSIVE.md
-        AUDIT_REPORT.md
-        BUG_FIX_REPORT.md
-        BUG_REPORT.md
-        COMPENDIUM_AUDIT_FIXES_SUMMARY.md
-        COMPLETE-LINE-ITEM-AUDIT.md
-        DETAILED-IMPLEMENTATION-AUDIT.md
-        DROID_CREATION_BUG_REPORT.md
-        EQUIPMENT_DATA_AUDIT_REPORT.md
-        FORCE_INTEGRATION_REPORT.md
-        IMPLEMENTATION-AUDIT-REPORT.md
-        JEDI_1-2_AUDIT.md
-        MULTICLASS_AUDIT.md
-        ORPHAN_DETECTION_REPORT.md
-        PROGRESSION_AUDIT_SUMMARY.md
-        PROGRESSION_ENGINE_TEST_REPORT.md
-        QA-AUDIT-SUMMARY.md
-        REPO_AUDIT_REPORT.md
-        REPOSITORY_STRUCTURE_AUDIT.txt
-        SSOT_AUDIT_COMPLETE.md
-        SSOT_VERIFICATION_REPORT.md
-        STARSHIP_MANEUVERS_IMPLEMENTATION_REPORT.md
-        STORE_AUDIT_REPORT.md
-        TALENT_SPECIAL_EFFECTS_TO_ABILITIES_REPORT.md
-        UI_STYLING_AUDIT_REPORT.md
-        VEHICLE_CONSTRUCTION_BUG_REPORT.md
-      implementation-details/
-        BACKGROUNDS_IMPLEMENTATION_STATUS.md
-        BONUS_HIT_POINTS_IMPLEMENTATION.md
-        CHARGEN_LEVELUP_INVESTIGATION.md
-        FEATS_TALENTS_IMPLEMENTATION_ROADMAP.md
-        FORCE_POWER_SYSTEM_IMPLEMENTATION.md
-        IMPLEMENTATION_GUIDE.md
-        IMPLEMENTATION_ROADMAP.md
-        IMPLEMENTATION_STATUS.md
-        PHASE_1A_ARCHITECTURE.md
-        PHASE_1B_SCAFFOLDING.md
-        PHASE_1C_INTEGRATION_VALIDATION.md
-        PHASE_2_INTEGRATION_VALIDATION.md
-        PHASE_2_MENTOR_MERGE_PLAN.md
-        PHASE_3_DESIGN_AND_ARCHITECTURE.md
-        PHASE_3_UNIFIED_PROGRESSION_STRATEGY.md
-        PROGRESSION_ARCHITECTURE.md
-        PROGRESSION_COMPILER.md
-        PROGRESSION_ENGINE_FIXES.md
-        PROGRESSION_ENGINE_INTEGRATION.md
-        PROGRESSION_FIXES_LIST.md
-        PROGRESSION_MIGRATION_TODO.md
-        REFACTORING_ROADMAP.md
-        SSOT_COMPLETION_CHECKLIST.md
-        SSOT_REFACTOR_COMPLETION_CHECKLIST.md
-        TALENT_FEAT_IMPLEMENTATION_ARCHITECTURE.md
-        TALENT_FEAT_QUICK_REFERENCE.md
-        TALENT_SYSTEM_STATUS.md
-        TALENT_TREE_ENHANCEMENT.md
-        TALENT_TREE_FLOW_MAP.md
-        TEMPLATE_ID_CONVERSION_REVISED.md
-        TEMPLATE_ID_CONVERSION_STRATEGY.md
-        TEMPLATE_ID_CONVERSION_TESTING.md
-        UNMAPPED-TALENTS-IMPLEMENTATION.md
-        V2_MIGRATION_IMPLEMENTATION_PLAN.md
-      implementation-summaries/
-        ADVANCEMENT_SECURITY_SUMMARY.md
-        ARCHETYPE_ENGINE_DEPLOYMENT_SUMMARY.md
-        CODE_REVIEW_SUMMARY.md
-        FIXES_SUMMARY.md
-        HOOK_SUMMARY.md
-        HOUSERULE_IMPLEMENTATION_SUMMARY.txt
-        IMPLEMENTATION_SUMMARY.md
-        INTEGRATION_TOOLKIT_SUMMARY.md
-        PHASE_2_COMPLETION_SUMMARY.md
-        SESSION_SUMMARY.md
-        SESSION_SUMMARY_PREREQUISITE_REFACTOR.md
-        SSOT_IMPLEMENTATION_SUMMARY.md
-        SSOT_REFACTOR_SUMMARY.md
-        TEST_FINDINGS_SUMMARY.md
-      performance-reports/
-        BUG_FIX_VERIFICATION.md
-        CHARACTER_DEFENSE_VERIFICATION.md
-        COMPLETE_PROGRESSION_SUMMARY.md
-        PHASE_1_CRITICAL_COMPLETE.md
-        PHASE_2_MENTOR_CONSOLIDATION_COMPLETE.md
-        PHASE_3A_PUBLIC_API_COMPLETE.md
-        REFACTORING_COMPLETE.md
-        TEMPLATE_ID_CONVERSION_COMPLETE.md
-        VERIFICATION_QUICK_START.md
-      postmortem-analysis/
-        CHARACTER_SHEET_ANALYSIS.md
-        CHARGEN_POSTMORTEM_ANALYSIS.md
-        HOOK_ANALYSIS.md
-        LEVELUP_CHARGEN_ANALYSIS.md
-        ORPHANED_FILES_ANALYSIS.md
-        PHASE_2_MENTOR_ANALYSIS.md
-        PREREQUISITE_ENGINE_ANALYSIS.md
-        PROGRESSION_ENGINE_ANALYSIS.md
-        PROGRESSION_ISSUES_ANALYSIS.md
-      session-logs/
-        HANDOFF_2026-01-27.md
-        SESSION_LOG.md
-      _INDEX.md
     architecture/
+      ARCHITECTURE.md
       DATA-CONTRACT-DR-SR.md
-    audit/
-      DAMAGE-MITIGATION-AUDIT-V2.md
+      DATA_MODEL.md
+      DESIGN.md
+      ENGINE-ARCHITECTURE.md
+      NAMESPACE.md
     data/
       nonheroic-images-readme.md
       nonheroic-readme.md
     governance/
       CI-RULES-DAMAGE-MITIGATION.md
+      PARTIAL_NAMING_CONVENTIONS.md
+      PARTIAL_SUBPARTIAL_CONTRACT.md
+      PARTIAL_SUBPARTIAL_GOVERNANCE.md
+      ROW_TRANSFORMER_STANDARD.md
+      SENTINEL_PARTIAL_MONITOR.md
+      SVG_BACKED_PARTIAL_STANDARD.md
+    guides/
+      CONTRIBUTING.md
+      FEATURES_GUIDE.md
+      GETTING_STARTED.md
+      MODDING_GUIDE.md
+      QUICK_START.md
+      USER_GUIDE.md
     migrations/
       readme.md
-    reports/
-      .gitignore
-      add-to-cart-error-analysis.md
-      analysis-summary.txt
-      chargen-levelup-review.md
-      chargen-review-report.md
-      repo-structure.txt
-      store-bugs-found.md
-      store-polish-recommendations.md
-      weapon-categorization-summary.md
+    references/
+      ABOUT.md
+      CHANGELOG.md
+      FAQ.md
+      FEATURES.md
+      README.md
+      Rules.md
     store/
       refactoring-summary.md
       store-id-diagnostics.md
@@ -368,6 +868,37 @@ foundryvtt-swse/
       swse_classes_part1.py
       swse_classes_part2.py
       SWSE_CLASSES_PART2_GUIDE.md
+    systems/
+      ACTIVE-TALENT-SYSTEM.md
+      AUDIT_MENTOR_BIAS_INTEGRATION.md
+      BATCH-5-TALENT-ARCHITECTURE-ANALYSIS.md
+      COMBAT_ENHANCEMENTS.md
+      DARK_SIDE_TALENTS.md
+      DARK_SIDE_TALENTS_QUICKSTART.md
+      DROID_BUILDER_DESIGN.md
+      GM_SUGGESTION_INTEGRATION.md
+      MENTOR_CONTRACT.md
+      MENTOR_INFRASTRUCTURE_FINAL_SUMMARY.md
+      MENTOR_INHERITANCE_GUIDE.md
+      MENTOR_INTEGRATION_COMPLETE_SUMMARY.md
+      MENTOR_INTEGRATION_SCHEMA.md
+      MENTOR_SUGGESTION_INTEGRATION_PLAN.md
+      MENTOR_SYSTEM_GM_GUIDE.md
+      MENTOR_WALKTHROUGH_CHECKLIST.md
+      MULTI-OPTION-TALENTS.md
+      ORPHANED_TALENTS_TO_CLASSIFY.md
+      PROGRESSION_COMPILER_UNIFICATION.md
+      PROGRESSION_ENGINE_CORRECTION_PLAN.md
+      SUGGESTION_ENGINE_API.md
+      SWSE_SUGGESTION_ENGINE_DESIGN.md
+      TALENT-NORMALIZER.md
+      V2-PROGRESSION-UI.md
+      VEHICLE_AUDIT_PROMPT.md
+      VEHICLE_CATEGORY_IMPLEMENTATION.md
+      VEHICLE_COMBAT.md
+      VEHICLE_CREATOR_ARCHITECTURE_AUDIT.md
+      VEHICLE_CREW_SYSTEM.md
+      VEHICLE_STATISTICS_CALCULATIONS.md
     templates/
       partials-readme.md
     tools/
@@ -376,228 +907,487 @@ foundryvtt-swse/
       force-powers-analysis.md
       skills-and-feats-guide.md
       vehicle-migration-summary.md
-    00_READ_ME_FIRST.md
-    ABOUT.md
-    ACTIONS.md
-    ACTIVE-TALENT-SYSTEM.md
-    ADVANCEMENT_DOCUMENTATION_INDEX.md
-    ADVANCEMENT_FLOW_DIAGRAMS.md
-    ALL_EDITED_FILES_SINCE_START.md
-    ARCHITECTURAL_VIOLATION_CATEGORIZATION.md
+    .chargen-button-fix-report.md
+    .cursor-authority-implementation.md
+    .phase3-implementation-summary.md
+    .phase4-implementation-summary.md
+    .phase5-implementation-summary.md
+    .phase6-implementation-summary.md
+    .phase6-rail-audit.md
+    .phase7-navigation-audit.md
+    .phase7-progression-control-invariants.md
+    .phase8-completion-report.md
+    .phase8-hydration-diagnostics-audit.md
+    .phase8-implementation-summary.md
+    ACTION_ECONOMY_ARCHITECTURE.md
+    ACTION_ECONOMY_INDICATOR_INTEGRATION.md
+    ACTION_ECONOMY_INTEGRATION_STATUS.md
+    ACTION_ECONOMY_VERIFICATION.md
+    ACTION_POLICY_UI_INTEGRATION.md
+    ACTIONENGINE_IMPLEMENTATION_SUMMARY.md
+    ACTIVE_IMPLEMENTATION_FINAL_REPORT.md
+    ACTUAL_WINNING_RULE_FIX.md
+    APP_CONTRACT_FIXES_SUMMARY.md
+    APP_POSITIONING_AND_LAUNCH_AUDIT.md
+    ARCHETYPE_FIX_EXECUTION_SUMMARY.md
+    ARCHETYPE_SCHEMA_FIX_PLAN.md
+    ARCHETYPE_SCHEMA_FORMALIZATION.md
+    ARCHETYPE_SCHEMA_MISMATCH_ANALYSIS.md
+    ARCHITECTURAL_INVARIANT_TIER_VS_SCORING.md
+    ARCHITECTURAL_REFACTOR_V2_SUMMARY.md
     ARCHITECTURE.md
-    ARCHITECTURE_MUTATION_RULES.md
-    ARMOR_SYSTEM_UPDATES.md
-    Assets_Guide.md
-    AUDIT_REPORT.md
-    BATCH-4-COMPLETION-SUMMARY.md
-    BATCH-4-PARALLEL-EXECUTION.md
-    BATCH-4-REFACTORING-CANDIDATES.md
-    BATCH-4-WORKFLOW-TESTS.md
-    BATCH-5-MUTATION-CLASSIFICATION.md
-    BATCH-5-SCOPE.md
-    BATCH-5-TALENT-ARCHITECTURE-ANALYSIS.md
-    BATCH_ROADMAP.md
-    BUG_FIXES_DETAILED.md
-    button-audit-results.md
-    BUTTON_HANDLER_MATRIX.md
-    CART_TRANSACTION_ARCHITECTURE_AUDIT.md
-    CHANGELOG.md
-    character-generation-parity-report.md
-    CHARACTER-SHEET-WIRING-VERIFICATION.md
-    CHARACTER_TEMPLATES.md
-    chargen-audit-report.md
-    CHARGEN_AUDIT_REPORT.md
-    CLASS_NORMALIZATION_ARCHITECTURE.md
-    COMBAT_ENHANCEMENTS.md
-    COMMERCE_REFACTOR_10_PHASE_ROADMAP.md
-    COMPENDIUM_FIXES_README.md
-    COMPENDIUM_ORGANIZATION.md
-    COMPLETE_10_PHASE_REFACTOR_SUMMARY.md
-    CON_MOD_TECHNICAL_EXPLANATION.md
-    CONDITIONAL_FEAT_EFFECTS.md
-    CONSOLIDATION-COMPLETE.md
-    CONSOLIDATION_AUDIT_REPORT.md
-    CONSOLIDATION_PLAN.md
-    CONSOLIDATION_STRATEGY.md
-    CONTRIBUTING.md
-    CSS_AUDIT_PASS_B_FINDINGS.md
-    CSS_AUDIT_PASS_C_FINDINGS.md
-    DAMAGE-MITIGATION-COMPLETE.md
-    DAMAGE-MITIGATION-IMPLEMENTATION-SUMMARY.md
-    DARK_SIDE_TALENTS.md
-    DARK_SIDE_TALENTS_QUICKSTART.md
-    DATA_MODEL.md
-    DECEPTION_SKILL_USES.md
-    Design.md
-    DIALOG_BLUEPRINT.md
-    DROID_BUILDER_DESIGN.md
-    ENGINE-ARCHITECTURE.md
-    ESLINT-BYPASSES.md
-    EXECUTION_PIPELINE.md
-    FAQ.md
-    FEATURES.md
-    FEATURES_GUIDE.md
-    FINAL_AUDIT_SUMMARY.md
-    FINAL_STATUS_REPORT.md
-    FIRST_RUN_EXPERIENCE.md
-    FIXES_APPLIED.md
-    FORENSIC_DIAGNOSTIC_GUIDE.md
-    FOUNDRY-UPGRADE-CHECKLIST.md
-    FOUNDRY_COMPAT.md
-    GETTING_STARTED.md
-    GM_SUGGESTION_INTEGRATION.md
-    HARDENING_IMPLEMENTATION_COMPLETE.md
-    HARDENING_PHASE_2_REPORT.md
-    HOOK_CONTRACTS.md
+    ARCHITECTURE_AUDIT_RETROFIT_SCOPE.md
+    ARCHITECTURE_STATUS_VS_REQUIREMENTS.md
+    ARCHITECTURE_SUMMARY.md
+    AUDIT-1-BEHAVIORAL-SMOKE.md
+    AUDIT-2-PERSISTENCE.md
+    AUDIT-3-CROSS-SHEET-PARITY.md
+    AUDIT-4-ITEM-EDITOR.md
+    AUDIT-5-FLAGS-POLICY.md
+    AUDIT-6-LOG-CLEANLINESS.md
+    AUDIT-7-REGRESSION-GUARDS.md
+    AUDIT-8-DOCUMENTATION-CONTRIBUTOR-CONTRACT.md
+    AUDIT-CRITICAL-MUTATION-ENFORCEMENT.md
+    AUDIT-ENGINE-GOVERNANCE-2026.md
+    AUDIT-INSTRUMENTATION-GUIDE.md
+    AUDIT_AFFINITY_WEIGHTING_AND_CHAINS.md
+    AUDIT_FINAL_EXECUTIVE_SUMMARY.md
+    AUDIT_FIX_SUMMARY.md
+    AUDIT_MENTOR_ATOMIC_VOICE_INFRASTRUCTURE.md
+    AUDIT_MENTOR_SUGGESTION_SEAM.md
+    AUDIT_SUMMARY.md
+    AUDIT_SWSE_PRIMITIVE_IDENTITY_EXTRACTION.md
+    AUDITS-1-8-MASTER-SUMMARY.md
+    AUTHORITY_RESTORATION_COMPLETE.md
+    BATCH-1-COMPLETION-REPORT.md
+    BATCH-1-REFACTORING-PLAN.md
+    BATCH-2B-CLASSIFICATION.md
+    BATCH-3-COMPLETION-REPORT.md
+    BATCH-3-ENUMERATION.md
+    BATCH-4-EXECUTION-PLAN.md
+    BATCH-4-MIGRATION-MAPPING.md
+    BATCH-STRATEGY-REVISED.md
+    BRIDGE_VERIFICATION.md
+    BUILDINTENT_LIFECYCLE_AUDIT.md
+    BUILDINTENT_LIFECYCLE_DIAGNOSTIC.md
+    BUTTON-AUDIT-FINDINGS.md
+    BUTTON-AUDIT-RUNTIME-PROOF.md
+    CHANGES_APPLIED.txt
+    character-sheet-css-governance-phase-1.md
+    character-sheet-css-governance-phase-2.md
+    character-sheet-css-governance-phase-3.md
+    character-sheet-css-governance-phase-4.md
+    character-sheet-css-governance-phase-5-overview.md
+    character-sheet-css-governance-phase-5-runtime-report-template.md
+    character-sheet-css-governance-phase-5-test-procedures.md
+    character-sheet-css-zero-effect-audit.md
+    CHARACTER_SHEET_AUDIT_REPORT.md
+    CHARACTER_SHEET_FIX_COMPLETE.md
+    CHARACTER_SHEET_RENDER_PIPELINE_AUDIT.md
+    CHARACTER_TEMPLATE_INTEGRATION_HANDOFF.md
+    CHARGEN-BUTTON-FIXES-SUMMARY.md
+    CHARGEN-BUTTON-VISIBILITY-ISSUE.md
+    CHARGEN-LAUNCH-AUDIT.md
+    CHARGEN_ARCHITECTURE_GAPS.md
+    CHECKPOINT-VALIDATION-SUMMARY.md
+    CLAUDE.md
+    CLAUDE_COMMAND_ARCHETYPE_FIX.md
+    CODE_AUTHORITY_AUDIT.md
+    COMPLETE-FIX-SUMMARY.md
+    COMPLETE_HEIGHT_CONSTRAINT_FIX.md
+    COMPREHENSIVE_ARCHITECTURAL_AUDIT_REPORT.md
+    COMPREHENSIVE_AUDIT_REPORT.md
+    CONTEXT_REMEDIATION_PLAN.md
+    CONTRACT_ENFORCEMENT.md
+    CONTRACT_ENFORCEMENT_REVISED.md
+    CONTRACT_VIOLATIONS_GUIDE.md
+    CONTRIBUTING_TO_SHEET.md
+    CORRECTIVE_PASS_REPORT.md
+    CRITICAL_FIX_APPLIED.md
+    CRITICAL_TEMPLATE_DIAGNOSTIC.md
+    CSS_AUDIT_REPORT.md
+    DAMAGE_PIPELINE_AUDIT.md
+    DEBUG_VIOLATIONS_NOW.md
+    DELIVERABLES.md
+    DELIVERABLES_SUMMARY.md
+    DEPENDENCY_GRAPH_AUDIT.md
+    DEPENDENCY_GRAPH_DESIGN.md
+    DEPENDENCY_GRAPH_VERIFICATION.md
+    DETAIL_RAIL_ADJUSTMENTS.md
+    DETAIL_RAIL_DATA_AUDIT.md
+    DETAIL_RAIL_DATA_MATRIX.md
+    DETAIL_RAIL_FLOW_REVIEW.md
+    DETAIL_RAIL_IMPLEMENTATION_REPORT.md
+    DETAIL_RAIL_TEMPLATE_UPDATE_REPORT.md
+    DETAIL_RAIL_TEMPLATE_VERIFICATION.md
+    DIAGNOSTIC-GUIDE-STEP-TRANSITION.md
+    DIAGNOSTIC_NEXT_STEPS.md
+    DOCUMENT_TARGETING_IMPLEMENTATION.md
+    DROID_BUILDER_REDESIGN.md
+    DROID_TEMPLATE_CHOICE_IMPLEMENTATION.md
+    ENABLE-SILENT-MODE-QUICK-START.md
+    ENTRY_POINT_QUICK_REFERENCE.md
+    EVIDENCE-PASS-VALIDATION.md
+    EXTENSION_RECIPES.md
+    FEAT_TALENT_METADATA_IMPROVEMENTS.md
+    FEATURES_CHARACTER_CREATION.md
+    FEATURES_COMBAT.md
+    FEATURES_COMMERCE.md
+    FINAL_P0_FIX_SUMMARY.md
+    FINAL_SESSION_ARCHITECTURE_COMPLETE.md
+    FINALIZATION_SEAM_COMPLETION_REPORT.md
+    FIX-MENTOR-PORTRAIT-SALTY.md
+    FIX-SUMMARY.md
+    FIX-TRANSLATION-ANIMATION-VISIBILITY.md
+    FLEX_CLASS_VERIFICATION.md
+    FOLLOWER_SYSTEM_ARCHITECTURE_AUDIT.md
+    FORENSIC_FINDINGS.md
+    FORENSIC_INVESTIGATION_README.md
+    FORENSIC_SUMMARY.txt
+    FORM_HANDLER_FIXES_SUMMARY.md
+    FORM_HEIGHT_CONSTRAINT_FIX.md
+    FOUNDRY_COUPLING_RISKS.md
+    FRAMED_CONTROLS_AUDIT.md
+    FULL-BUTTON-AUDIT-IN-PROGRESS.md
+    GALACTIC_RECORDS_PHASE3_AUDIT.md
+    GALACTIC_RECORDS_PHASE3_IMPLEMENTATION.md
+    GALACTIC_RECORDS_PHASE3_VERIFICATION.md
+    GALACTIC_RECORDS_PHASE3B_IMPLEMENTATION.md
+    GALACTIC_RECORDS_PHASE3B_VERIFICATION.md
+    GET_ACTUAL_RENDERING_DATA.md
+    GOVERNANCE-FIX-EXPLANATION.md
+    GOVERNANCE-SYSTEM-STATUS.md
+    HANDLEBARS_HYDRATION_DIAGNOSTIC.md
+    HEADER_RESOURCES_COMBAT_REFINEMENT.md
+    HEIGHT_CHAIN_DIAGNOSTIC.md
     HOOKS_AT_A_GLANCE.txt
-    HOUSE_RULE_GOVERNANCE_AUDIT.md
-    HOUSE_RULES_GUIDE.md
-    IMPLEMENTATION-SUMMARY.md
-    index-comparison.md
-    init-talents.js
-    INITIATIVE_MECHANICS.md
-    INTEGRATION_ROLLOUT_CHECKLIST.md
-    INTEGRATION_TESTS_GUIDE.md
-    LEGACY_DELETION_PLAN.md
-    LEVEL_BASED_FEATURE_GRANTING.md
-    levelup-audit-report.md
+    IMMEDIATE-ACTION.md
+    IMPLEMENTATION_COMPLETE.md
+    IMPLEMENTATION_ORDER.md
+    INTERACTION_CONTRACT_AUDIT.md
+    INTERACTION_WIRING_AUDIT.md
+    INTRO-STEP-PHASE2-COMPLETE.md
+    INTRO-STEP-PHASE3-DOM-RENDERING.md
+    INTRO_IMPLEMENTATION_REPORT.md
+    INTRO_VERIFICATION.md
+    INVESTIGATION_SUMMARY_AND_NEXT_STEPS.md
+    ITEM_EDITOR_FORM_FIX_REPORT.md
+    ITEM_EDITOR_FORM_SUBMISSION_AUDIT.md
+    ITEM_EDITOR_SCHEMA_FIX_REPORT.md
+    ITEM_SHEET_STABILIZATION_SUMMARY.md
+    JEDI_ARCHETYPE_METADATA_MAPPING.md
+    JSON_METADATA_INTEGRATION_GUIDE.md
+    LAUNCHER_AUTHORITY_FIXES_APPLIED.md
+    LAYOUT_AUDIT_AND_FIXES.md
+    LAYOUT_CONTRACT_GUIDE.md
+    LAYOUT_CONTROL_PASS_REPORT.md
+    LAYOUT_FIXES_SUMMARY.md
+    LEFT_SELECTED_RAIL_AUDIT.md
+    LEFT_SELECTED_RAIL_DEEP_AUDIT.md
+    LEFT_SELECTED_RAIL_MATRIX.md
+    LEFT_SELECTED_RAIL_REFACTOR_REPORT.md
+    LEFT_SELECTED_RAIL_REPAIR_REPORT.md
+    LEFT_SELECTED_RAIL_REVIEW_CHECKLIST.md
+    LEFT_SELECTED_RAIL_SNAPSHOT_MODEL.md
+    LEFT_SELECTED_RAIL_VERIFICATION.md
+    LEGACY-ENTRY-POINT-CLOSURE.md
+    LEGACY_CHARGEN_DEMOLITION_COMPLETE.md
+    LEVELUP_FIXES_SUMMARY.md
     LICENSE.txt
-    MANUAL_STEP_PROCESSOR_DESIGN.md
-    MASTER_INTEGRATION_GUIDE.md
-    mentor-synthesis-examples.md
-    mentor-system-guide.md
-    MENTOR_CONTRACT.md
-    MENTOR_INHERITANCE_GUIDE.md
-    MENTOR_SUGGESTION_INTEGRATION_PLAN.md
-    MENTOR_SYSTEM_GM_GUIDE.md
-    MENTOR_WALKTHROUGH_CHECKLIST.md
-    MIGRATION-structured-rules.md
-    MIGRATIONS_AND_COMPATIBILITY.md
-    MODDING_GUIDE.md
-    MODIFICATION-COMMERCE-INTEGRITY-AUDIT.md
-    MODIFICATION-SYSTEMS-V2-AUDIT.md
-    MULTI-OPTION-TALENTS.md
-    NAMESPACE.md
-    NEAR_HUMAN_HOUSE_RULES.md
-    NONHEROIC_CHARACTERS.md
-    NPC_CHARGEN_WORKFLOW.md
-    ORPHANED_TALENTS_TO_CLASSIFY.md
-    OWNERSHIP.md
-    PARTIAL-PURITY.md
-    PERFORMANCE_UX_RECOMMENDATIONS.md
+    LIFECYCLE-VIOLATION-DETECTION-ARCHITECTURE.md
+    LOOKAHEAD_ARCHITECTURE_CONTRACT.md
+    LOOKAHEAD_STRESS_TEST_CONTRACT.md
+    MAINTENANCE.md
+    MENTOR_DIALOGUE_AUTHORITY.md
+    MIGRATION_ROADMAP_DROID.md
+    MIGRATION_ROADMAP_NPC.md
+    MODIFICATION_MODAL_COMPATIBILITY_AUDIT.md
+    MODIFICATION_PIPELINE_DESIGN.md
+    MODULE-CHAIN-FIX.md
+    MUTATION-ADAPTER-COMPLETION.md
+    MUTATION-ADAPTER-USAGE-GUIDE.md
+    MUTATION-LINT-FINDINGS.md
+    MUTATION-SOVEREIGNTY-RESTORATION-HANDOFF.md
+    NAVIGATION_AUDIT.md
+    NAVIGATION_VERIFICATION.md
+    NEXT_STEPS_CHECKLIST.md
+    NOBLE_ARCHETYPE_METADATA_MAPPING.md
+    NORMALIZED_FEAT_TALENT_STEPS_AUDIT.md
+    NORMALIZED_FEAT_TALENT_STEPS_VERIFICATION.md
+    NPC_SHEET_MIGRATION_REPORT.md
+    NPC_TEMPLATE_IMPORT_AUDIT.md
+    NPC_TEMPLATE_IMPORT_REPORT.md
+    NPC_TEMPLATE_IMPORT_VERIFICATION.md
+    NPC_TEMPLATE_POST_IMPORT_WIZARD_REPORT.md
+    P0_FIX_QUICK_SUMMARY.txt
+    P0_FIXES_SUMMARY.md
+    P0_REGRESSION_ROLLBACK.md
+    P0_RESIZE_FIX_FINAL_REPORT.md
+    P0_RESIZING_FIX_REPORT.md
+    P0_SECOND_PASS_AUDIT.md
+    P0_STRUCTURAL_FIX_FINAL.md
+    P0_TEMPLATE_FIX_V2.md
+    P0_VALIDATION_CHECKLIST.md
+    PASSIVE_REMAINING_ACTION_PLAN.md
+    PASSIVE_STATE_MIGRATION_FINAL_REPORT.md
+    PERMANENT-FIX-SUMMARY.md
+    PERSISTENCE-DIAGNOSTIC-TEST.md
+    PERSISTENCE-STATUS-AFTER-GOVERNANCE-FIX.md
+    PERSISTENCE-TEST-PROTOCOL.md
+    PERSISTENCE_BUG_FIX.md
+    PHASE-1-ARCHITECTURAL-DECISIONS.md
     PHASE-1-AUDIT.md
-    PHASE-1-IMPLEMENTATION-REPORT.md
-    PHASE-2-COMPLETION-REPORT.md
-    PHASE-2-PROGRESSION-MUTATION-AUDIT.md
-    PHASE-2-SUGGESTION-PROGRESSION-WIRING-AUDIT.md
-    PHASE-3-CHARACTER-SHEET-SYSTEM-AUDIT.md
-    PHASE-3-COMPLETION-REPORT.md
-    PHASE-3-SSOT-SUMMARY.md
-    PHASE-4-MIGRATION-COMPLETION-REPORT.md
-    PHASE-4-REPORT.md
-    PHASE-5-FINAL-CONSOLIDATION-REPORT.md
-    PHASE-5-STRATEGIC-AUDIT.md
-    PHASE-5-VERIFICATION.md
-    PHASE-5A-TALENT-EFFECT-IMPLEMENTATION.md
-    PHASE-5A-VALIDATION-PROTOCOL.md
-    PHASE-5B-COMPENDIUM-COMPLIANCE.md
-    PHASE-5C-5D-CHARGEN-SUGGESTIONS.md
-    PHASE2_DESIGN.md
-    PHASE2_LOCOMOTION_SANITY_CHECK.md
-    PHASE2_STEPCONTROLLER_DESIGN.md
-    PHASE2_UUID_INJECTION.md
-    PHASE3_DESIGN.md
-    PHASE_10_UI_HARDENING_PLAN.md
-    PHASE_1_2_STATUS_REPORT.md
-    PHASE_1_IMPLEMENTATION_PLAN.md
-    PHASE_2_3_FOUNDATION_AUDIT.md
-    PHASE_2_COMPLETION_AUDIT.md
-    PHASE_2_COMPLETION_FINAL.md
-    PHASE_2_HARD_COMPLETION_FINAL.md
-    PHASE_2_VALIDATION_REPORT.md
-    PHASE_3_BATCH_1_VALIDATION_GUIDE.md
-    PHASE_3_BATCH_2_COMBAT_CONSOLIDATION.md
-    PHASE_3_MUTATION_DETERMINISM_PLAN.md
-    PHASE_8_LEGACY_REMOVAL_COMPLETE.md
-    PHASE_9_MANUAL_TESTING_GUIDE.md
-    PHASES-8-10-CERTIFICATION.md
-    PHASES_1_4_IMPLEMENTATION_COMPLETE.md
-    PREREQUISITE_CONSOLIDATION_PLAN.md
-    PREREQUISITE_ENGINE_UUID_UPGRADE.md
-    PRODUCT_PAGE_EXAMPLE.md
-    progression-engine-audit-report.md
-    PROGRESSION_COMPILER_UNIFICATION.md
-    PROGRESSION_ENGINE_CORRECTION_PLAN.md
-    QUICK_START.md
-    README-species-update.md
+    PHASE-1-COMPLETION-REPORT.md
+    PHASE-1-ENFORCEMENT-TRUTH.md
+    PHASE-1-FINAL-REPORT.md
+    PHASE-1-PROGRESS.md
+    PHASE-1-STABILIZATION-HANDOFF.md
+    PHASE-1-STEP-TRANSITION-ANALYSIS.md
+    PHASE-1-VIOLATION-INVENTORY.md
+    PHASE-10-11-GOVERNANCE-RATIFICATION.md
+    PHASE-10-EDITORIAL-REVIEW.md
+    PHASE-10-READINESS-CHECKLIST.md
+    PHASE-11-RATIFICATION-DECISION.md
+    PHASE-2-CLOSURE-CHECKLIST.md
+    PHASE-2-FINAL-COMPLETION-REPORT.md
+    PHASE-2-FINAL-REPORT.md
+    PHASE-2-PREREQUISITE-SOVEREIGNTY-AUDIT.md
+    PHASE-2-PREREQUISITE-SOVEREIGNTY-HANDOFF.md
+    PHASE-2-PROGRESS.md
+    PHASE-2-SESSION-SUMMARY.md
+    PHASE-3-AUDIT-REPORT.md
+    PHASE-3-FINAL-COMPLETION-REPORT.md
+    PHASE-3-FINAL-REPORT.md
+    PHASE-3-INTEGRITY-HARDENING.md
+    PHASE-3-INVARIANT-MAP.md
+    PHASE-3-PROGRESS.md
+    PHASE-3-SCENARIO-RECONCILIATION-HANDOFF.md
+    PHASE-4-5-DELIVERY.md
+    PHASE-4-ENFORCEMENT-MODES.md
+    PHASE-4-FINAL-COMPLETION-REPORT.md
+    PHASE-4-GOVERNANCE-LAYER-MAP.md
+    PHASE-4-GUARD-SIMPLIFICATION.md
+    PHASE-4-MUTATION-TRUTH-TABLE.md
+    PHASE-4-PROGRESS.md
+    PHASE-4-ROLLOUT-TRUTHFULNESS-HANDOFF.md
+    PHASE-5-AUDIT-REPORT.md
+    PHASE-5-BUCKET-SSOT-AUDIT.md
+    PHASE-5-CLOSURE-FINAL.md
+    PHASE-5-COMPLIANCE-100.md
+    PHASE-5-CONTRIBUTOR-GUARDRAILS.md
+    PHASE-5-FINAL-COMPLETION-REPORT.md
+    PHASE-5-FINAL-REPORT.md
+    PHASE-5-GOVERNANCE-SURFACE-MAP.md
+    PHASE-5-HANDOFF.md
+    PHASE-5-HELPER-WRAPPER-COMPLIANCE-MATRIX.md
+    PHASE-5-PROGRESS.md
+    PHASE-5-SSOT-FIXES-VERIFICATION.md
+    PHASE-5-STEP-2-SUMMARY.md
+    PHASE-5-STEP-5-VERIFICATION.md
+    PHASE-5-TEST-COVERAGE-ADDITIONS.md
+    PHASE-5-VERIFICATION-GATE-FINAL.md
+    phase-5a-devtools-commands.md
+    phase-5a-diagnosis-summary.md
+    phase-5a-EXACT-NEXT-STEPS.txt
+    phase-5a-probe-rules.txt
+    PHASE-6-PROGRESS.md
+    PHASE-7-DURABLE-PLATFORM.md
+    PHASE-7-HANDOFF.md
+    PHASE-7-PROGRESS.md
+    PHASE-7-READINESS-CHECKLIST.md
+    PHASE-8-BREAKDOWN-CARDS-FOUNDATION.md
+    PHASE-8-HANDOFF.md
+    PHASE-8-PROGRESS.md
+    PHASE-9-IMPLEMENTATION-COMPLETE.md
+    PHASE-9-IMPLEMENTATION-PLAN.md
+    PHASE2_COMPLETE.md
+    PHASE2_EXECUTION_SUMMARY.md
+    PHASE2_EXTENDED_FINAL_SUMMARY.md
+    PHASE3-SMOKE-TEST-CHECKLIST.md
+    PHASE3-STATIC-SMOKE-AUDIT.md
+    PHASE_10_SKILLS_TAB_EXPANDABLE_SKILL_USES.md
+    PHASE_1_AUDIT.md
+    PHASE_1_BUILD_INTENT_COMPLETE.md
+    PHASE_1_PLAN.md
+    PHASE_1_STABILIZATION_SUMMARY.md
+    PHASE_1_SUBTYPE_HOST_SEAM_HANDOFF.md
+    PHASE_1_SUBTYPE_HOST_SEAM_HANDOFF_CORRECTED.md
+    PHASE_1_VALIDATION_INSTRUCTIONS.md
+    PHASE_2.5_NONHEROIC_CHARGEN_ADAPTATION_HANDOFF.md
+    PHASE_2.6_NONHEROIC_TEMPLATE_ADAPTATION_HANDOFF.md
+    PHASE_2.7_BEAST_BUILDER_ADAPTATION_HANDOFF.md
+    PHASE_2.7B_VERIFICATION_REPORT.md
+    PHASE_2.8_BEAST_FULL_SPINE_INTEGRATION_HANDOFF.md
+    PHASE_2_1_EXECUTIVE_SUMMARY.txt
+    PHASE_2_AUDIT_REPORT.md
+    PHASE_2_BUILD_AND_FIX_REPORT.md
+    PHASE_2_COMPLETION_SUMMARY.md
+    PHASE_2_DELIVERABLES.md
+    PHASE_2_EXECUTIVE_SUMMARY.md
+    PHASE_2_GLOBAL_VALIDATION_COMPLETE.md
+    PHASE_2_IMPLEMENTATION_PLAN.md
+    PHASE_2_NONHEROIC_CONSUMPTION_HANDOFF.md
+    PHASE_2_NONHEROIC_CONSUMPTION_HANDOFF_BEAST_EXPANSION.md
+    PHASE_2_PLAN.md
+    PHASE_2_SPECIES_LANGUAGES_ROLLOUT.md
+    PHASE_2_SUMMARY_STEP_REFACTOR.md
+    PHASE_2_VALIDATION_GUIDE.md
+    PHASE_2_VALIDATION_INSTRUCTIONS.md
+    PHASE_2B_VISUAL_ALIGNMENT_REPORT.md
+    PHASE_3.6_HANDOFF.md
+    PHASE_3.6_VERIFICATION_AUDIT.md
+    PHASE_3_CLEANUP_PLAN.md
+    PHASE_3_CSS_ENHANCEMENT_SUMMARY.md
+    PHASE_3_DELIVERABLES.md
+    PHASE_3_EXECUTIVE_SUMMARY.md
+    PHASE_3_FOLLOWER_CONSUMPTION_HANDOFF.md
+    PHASE_3_FORCE_ROLLOUT.md
+    PHASE_3_PERSISTENCE_COMPLETE.md
+    PHASE_3_VERTICAL_SLICE_NEAR_HUMAN.md
+    PHASE_4_ANALYSIS_INTEGRATION_COMPLETE.md
+    PHASE_4_COMPLETION_REPORT.md
+    PHASE_4_CONTRACT.md
+    PHASE_4_DEBUG_GUIDE.md
+    PHASE_4_SVG_AUDIT.md
+    PHASE_4_SVG_CONTRACT_COMPLETION.md
+    PHASE_5_COMPLETION_SUMMARY.md
+    PHASE_5_CONTRACT.md
+    PHASE_5_EXTENDED_SUGGESTIONS_COMPLETE.md
+    PHASE_5_FLAT_CONTEXT_ANALYSIS.md
+    PHASE_6_AUDIT.md
+    PHASE_6_COMPLETION.md
+    PHASE_6_IMPLEMENTATION_SUMMARY.md
+    PHASE_6_MODE_AWARENESS_COMPLETE.md
+    PHASE_7_AUDIT.md
+    PHASE_7_PROGRESS.md
+    PHASE_8_ROLL_AUDIT_REPORT.md
+    PHASE_9_COMBAT_TAB_REDESIGN.md
+    PHASE_9_DELIVERABLES.md
+    PHASE_A_B_DROID_DEFERRED_IMPLEMENTATION.md
+    PHASE_B_CHARACTER_SHEET_CODEMOD_REPORT.md
+    PHASE_B_DOCUMENTATION.md
+    PHASE_C_CHARACTER_SHEET_INVOCATION_REPORT.md
+    PHASE_C_FINAL_PASS_IMPLEMENTATION.md
+    PHASE_E_CHARACTER_SHEET_COMBAT_ACTION_REPORT.md
+    PHASE_E_TALENT_RULE_PATTERN.md
+    PROGRESSION_PHASE1_COMPLETE.md
+    PROGRESSION_REFACTOR_STATUS.md
+    PROGRESSION_ROUTING_ANALYSIS.md
+    PROGRESSION_SYSTEM_AUDIT.md
+    PROGRESSION_UX_AUDIT.md
+    PROGRESSION_UX_FINAL_SUMMARY.md
+    PROGRESSION_UX_IMPLEMENTATION_SUMMARY.md
+    PROGRESSION_UX_VERIFICATION.md
+    PYTHON_SAFE_PASS_EXACT_CONTRACT_FIX_REPORT.txt
+    QUICK_FIX_REFERENCE.md
     README.md
-    REFACTORING_OPPORTUNITIES.md
-    REMEDIATION_EXAMPLES.md
+    REFERENCE-CONTENT-REALITY-CHECK.md
+    REFERENCE_ARCHITECTURE.md
+    REFERENCE_CONTENT_FIRST_WAVE.md
+    REFINEMENT-PHASE-COMPLETE.md
+    REGISTRY_INTEGRATION_STATUS.md
+    REMEDIATION-PLAN-STABILIZATION-PASS.md
     REPO_STRUCTURE.txt
-    ROLL_CONSOLIDATION_REPORT.md
-    RULE_ELEMENTS_MIGRATION_GUIDE.md
-    Rules.md
-    RUN1_HANDOFF.md
-    RUN1_STATUS.md
-    RUN2_BATCH1_HANDOFF.md
-    RUN2_COMPLETION_REPORT.md
-    RUN2_COMPLETION_SUMMARY.md
-    RUN2_EXECUTION_SUMMARY.md
-    RUN2_FINAL_STATUS.md
-    RUN2_HANDOFF.md
-    RUN2_INITIAL_SCAN.md
-    RUN2_PASS4_AUDIT.md
-    RUN2_PASS5_VERIFICATION.md
-    RUN2_README.md
-    RUN2_SESSION_SUMMARY.md
-    RUN2_STATUS.md
-    SCHEMA-unified-rules.md
-    SENTINEL_ARCHITECTURE.md
-    SENTINEL_DELIVERY.md
-    SENTINEL_INTEGRATION.md
-    SENTINEL_INTEGRATION_SNIPPET.md
-    SENTINEL_JURISDICTION_BOUNDARIES.md
-    SENTINEL_NEW_ARCHITECTURE.md
-    SESSION_COMPLETION_REPORT.md
-    SESSION_SUMMARY.md
-    SHEET_IMPROVEMENTS.md
-    SHEET_UNIFICATION_SPEC.md
-    STARSHIP_MANEUVERS.md
-    START_HERE_RUN2.md
-    STEPCONTROLLER_IMPLEMENTATION.md
-    STORE-AUDIT-V2-NECESSITY.md
-    STORE-WIRING-ARCHITECTURE.md
-    STORE_UI_INTEGRATION_GUIDE.md
-    STORE_UX_FAKE_AMAZON_PATTERN.md
-    SUGGESTION_ENGINE_API.md
-    SWSE_SUGGESTION_ENGINE_DESIGN.md
-    SYSTEM_INITIALIZATION_GUIDE.md
-    SYSTEM_STATUS.md
-    SYSTEMS_AND_RULES.md
-    talent-implementation-complete.md
-    talent-implementation-tiers.md
-    TALENT-NORMALIZER.md
-    TEMPLATE_SYSTEM.md
-    TEMPLATE_UPDATE_GUIDE.txt
-    TEST_EXPECTATIONS.md
-    TEST_HARNESS_README.md
-    THEME-SYSTEM.md
-    TWILEK_JEDI_CHARACTER_SHEET.md
-    TWILEK_JEDI_CHARACTER_SHEET_CORRECTED.md
-    USER_GUIDE.md
-    V14_READINESS.md
-    V1_RETIREMENT_CHECKLIST.md
-    V2-PROGRESSION-UI.md
-    V2-REFACTOR-SUMMARY.md
-    VEHICLE_AUDIT_PROMPT.md
-    VEHICLE_CATEGORY_IMPLEMENTATION.md
-    VEHICLE_COMBAT.md
-    VEHICLE_CREATOR_ARCHITECTURE_AUDIT.md
-    VEHICLE_CREW_SYSTEM.md
-    VEHICLE_STATISTICS_CALCULATIONS.md
-    WEAPONS-V2-COMPLIANCE-AUDIT.md
-    WEAPONS-V2-IMPLEMENTATION-COMPLETE.md
-    WIRING_CHECKLIST.md
+    RETROFIT_PREFLIGHT_CHECKLIST.md
+    ROOT_CAUSE_AND_FIX.md
+    RUNTIME_AUTHORITY_INVESTIGATION.md
+    RUNTIME_DIAGNOSTICS.md
+    SCHEMA-CONSOLIDATION.md
+    SCHEMA_AUDIT_2026-03-10.md
+    SCHEMA_FIELD_CORRECTIONS.md
+    SCHEMA_INGESTION_AUDIT.md
+    SCOUNDREL_ARCHETYPE_METADATA_MAPPING.md
+    SCOUT_ARCHETYPE_METADATA_MAPPING.md
+    SELECTION_ORDERING_AUDIT.md
+    SELECTION_ORDERING_VERIFICATION.md
+    SENTINEL-SILENT-MODE.md
+    SENTINEL_COHERENCE_AUDIT.md
+    SENTINEL_CONTRACT.md
+    SENTINEL_README.md
+    SESSION_CHANGELOG.md
+    SESSION_CONSOLIDATION_SUMMARY.md
+    SESSION_FINAL_DELIVERY.md
+    SESSION_SUMMARY_ALL_FIXES.md
+    SESSION_SUMMARY_LAYOUT_GOVERNANCE.md
+    SETTING_REGISTRATION_FIX.md
+    SETTINGS_REMOVAL_SUMMARY.md
+    SHEET_DIAGNOSTICS_GUIDE.md
+    SHEET_GUARDRAILS.md
+    SHEET_LAYOUT_ARCHITECTURE.md
+    SHEET_LAYOUT_AUDIT_REPORT.md
+    SHEET_MANIFEST.md
+    SHEET_PLATFORM_VOCABULARY.md
+    SHEET_STATUS_REPORT.md
+    SHELL_COMPOSITION_DIAGNOSTIC.md
+    SHELL_METADATA_CONTAMINATION_AUDIT.md
+    SHELL_TEMPLATE_BYPASS_INVESTIGATION.md
+    SIDEBAR_ICON_COMPARISON_GUIDE.md
+    SIDEBAR_ICON_DISAPPEARANCE_AUDIT.md
+    SIDEBAR_INSTRUMENTATION_GUIDE.md
+    SIDEBAR_TRACE_GUIDE.md
+    SIDEBAR_V13_FIXES_REPORT.md
+    SKILL_ENGINE_WIRING.md
+    SOLDIER_ARCHETYPE_METADATA_MAPPING.md
+    SPECIES-ABILITIES-MIGRATION.md
+    SPECIES_STEP_COMPLETE_FIX_SUMMARY.md
+    SPECIES_STEP_FIX_ANALYSIS.md
+    SPECIES_STEP_FIX_DIFFS.md
+    SPECIES_STEP_FIX_PATCHES.md
+    SPECIES_STEP_RESTORATION_SUMMARY.md
+    SPECIES_STEP_SVG_CLEANUP_SUMMARY.md
+    STABILIZATION-PASS-COMPLETION-REPORT.md
+    STEP-TRANSITION-INVESTIGATION-SUMMARY.md
+    STEP_APPLICABILITY_AUDIT.md
+    STEP_STATUS_AUDIT.md
+    SUGGESTION_ENGINE_ARCHITECTURE.md
+    SUGGESTION_ENGINE_AUDIT_FINDINGS.md
+    SUGGESTION_ENGINE_BEHAVIORAL_AUDIT.md
+    SUGGESTION_ENGINE_INTEGRATION.md
+    SUGGESTION_ENGINE_PHASES_COMPLETE.md
+    SUGGESTION_FLOW_REFERENCE.md
+    SVG_CLEANUP_DETAILED_RECORD.txt
+    SVG_LAYER_SLOT_ANCHOR_REPAIR.md
+    TALENT_MIGRATION_WEAPON_SPECIALIZATION.md
+    TALENTS_TAB_CLEANUP.md
+    TEMPLATE_FILE_INGESTION_VERIFICATION.md
+    TEMPLATE_INTEGRATION_SPEC.md
+    TEMPLATE_RENDER_DIAGNOSTIC.md
+    TEMPLATE_SINGLE_ROOT_FIX.md
+    TEST-PERSISTENCE-WITH-GOVERNANCE.md
+    TESTING-BUTTON-FIX.md
+    TIER1-IMPLEMENTATION.md
+    TIER1-PRESSURE-TEST-PROTOCOL.md
+    TIER1_DETAILED_ANALYSIS.md
+    TIER1_METADATA_IMPLEMENTATION.md
+    TIER1_METADATA_POPULATION_STATUS.md
+    TIER1_POPULATION_STRATEGY.md
+    TOOLTIP_ARCHITECTURE.md
+    TOOLTIP_REFACTOR_COMPLETE.md
+    TOOLTIP_REGRESSION_CHECKLIST.md
+    TOOLTIP_SYSTEM.md
+    TRANSLATION-ENGINE-IMPLEMENTATION.md
+    UI-MUTATION-PATH-AUDIT.md
+    UI_BUTTON_BINDING_PATTERN.md
+    V2_CSS_PRIMITIVES.md
+    V2_SHEET_PLATFORM_ARCHITECTURE.md
+    V2_SHEET_RECIPES.md
+    V2_VISUAL_SEMANTICS_RESTORATION.md
+    VALIDATION_PLAN.md
+    VALIDATION_STATE_CONTRACT.md
+    VALIDATOR_REFINEMENT_REPORT.md
+    VEHICLE_SHEET_FIX_COMPLETE.md
+    VERIFICATION-AFTER-ROOT-FIX.md
+    VERIFICATION_CHECKLIST.md
+    VIOLATIONS_FIXED.md
+    WAVE_10_FORCE_POWER_GUARDRAILS.md
+    WEAPON_ARMOR_EDITOR_CLEANUP_REPORT.md
+    WEAPON_EDITOR_DIAGNOSIS.md
+    WEAPON_EDITOR_FIX_REPORT.md
+    WEAPON_SUGGESTION_AUDIT_REPORT.md
+    WEAPONS_ENGINE_DESIGN.md
+    WIRING_COMPLETION_SUMMARY.md
+    WIRING_REGRESSION_AUDIT.md
+    WRAPPER-REGRESSION-GUARD-REPORT.md
   helpers/
     handlebars/
       array-helpers.js
@@ -629,408 +1419,319 @@ foundryvtt-swse/
     migrate-actors-to-progression.py
   packs/
     armor/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     armor-heavy/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     armor-light/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     armor-medium/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     armor-shields/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     attributes/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     backgrounds/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     beasts/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     classes/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     combat-actions/
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     conditions/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
+    datapads-references/
+      000003.log
+      CURRENT
+      LOCK
+      LOG
+      MANIFEST-000002
     droids/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     equipment/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     equipment-comlinks/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     equipment-medical/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     equipment-other/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     equipment-security/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     equipment-survival/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     equipment-tech/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     equipment-tools/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     extraskilluses/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     feats/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     forcepowers/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     forcesecrets/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     forcetechniques/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     heroic/
-      000008.ldb
-      000010.log
+      000004.log
+      000005.ldb
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000009
+      MANIFEST-000002
     languages/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     lightsaberformpowers/
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     nonheroic/
-      000008.ldb
-      000010.log
+      000004.log
+      000005.ldb
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000009
+      MANIFEST-000002
     npc/
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     ship-combat-actions/
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     skills/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     special-combat-condition/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     species/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     talent-enhancements/
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     talent_trees/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     talents/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     vehicle-weapon-ranges/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     vehicle-weapons/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     vehicles/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     vehicles-speeders/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     vehicles-starships/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     vehicles-stations/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     vehicles-walkers/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     weapons/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     weapons-exotic/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     weapons-grenades/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     weapons-heavy/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     weapons-pistols/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     weapons-rifles/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     weapons-simple/
-      000005.ldb
-      000007.log
+      000003.log
       CURRENT
       LOCK
       LOG
-      LOG.old
-      MANIFEST-000006
+      MANIFEST-000002
     armor-heavy.db
     armor-light.db
     armor-medium.db
@@ -1058,9 +1759,12 @@ foundryvtt-swse/
     forcetechniques.db
     heroic.db
     languages.db
+    lightsaber-accessories.db
+    lightsaber-crystals.db
     lightsaberformpowers.db
     nonheroic.db
     npc.db
+    sample-active-abilities.db
     ship-combat-actions.db
     skills.db
     special-combat-condition.db
@@ -1082,13 +1786,14 @@ foundryvtt-swse/
     weapons-rifles.db
     weapons-simple.db
     weapons.db
-  quarantine/
-    backups/
-      classes.db.backup
-      npc.db.backup
-      npc.db.bak
   reports/
+    character-sheet-css-governance-phase-1.json
+    level1-forensic-audit.md
     talent-reconciliation.json
+  schemas/
+    advisory.schema.json
+    archetype.schema.json
+    prestige-layer.schema.json
   scripts/
     actors/
       base/
@@ -1111,13 +1816,21 @@ foundryvtt-swse/
         swse-vehicle.js
         vehicle-crew-positions.js
         vehicle-precreate-hooks.js
+    applications/
+      lightsaber/
+        lightsaber-construction-app.js
+        miraj-attunement-app.js
     apps/
+      armor/
+        armor-modification-app.js
       base/
         base-swse-appv2.js
+        modification-modal-shell.js
         swse-application-v2.js
-        swse-application.js
         swse-form-application-v2.js
         swse-form-application.js
+      blaster/
+        blaster-customization-app.js
       chargen/
         steps/
           class-step.js
@@ -1148,6 +1861,8 @@ foundryvtt-swse/
       dialogs/
         modifier-breakdown-dialog.js
         swse-dialog-v2.js
+      gear/
+        gear-modification-app.js
       levelup/
         debug-panel.js
         diff-viewer.js
@@ -1165,6 +1880,7 @@ foundryvtt-swse/
         levelup-starship-maneuvers.js
         levelup-talents.js
         levelup-validation.js
+        mentor-interaction-integration.js
         npc-levelup-entry.js
         prestige-roadmap.js
       maintenance/
@@ -1187,6 +1903,134 @@ foundryvtt-swse/
         progression-ui.js
         sidebar.js
         starship-maneuver-picker.js
+      progression-framework/
+        adapters/
+          beast-subtype-adapter.js
+          default-subtypes.js
+          follower-advancer.js
+          follower-deriver.js
+          follower-session-seeder.js
+          nonheroic-session-seeder.js
+          progression-subtype-adapter-registry.js
+          progression-subtype-adapter.js
+          talent-cadence-helper.js
+        content/
+          advisory-domain-profiles.js
+          bridge-to-starting-equipment.js
+          bridge-to-store.js
+          campaign-preset-bridge.js
+          content-growth-validator.js
+          domain-support-closure.js
+          faction-kit-bridge.js
+          packaged-build-registry.js
+          target-path-definitions.js
+          template-personalization-engine.js
+        dialogs/
+          template-selection-dialog.js
+        engine/
+          swse-translation-engine.js
+        policies/
+          progression-document-target-policy.js
+        registries/
+          node-descriptor-mapper.js
+          progression-node-registry.js
+        rollout/
+          legacy-entry-point-manager.js
+          rollout-controller.js
+          rollout-settings.js
+        shared/
+          species-patch.js
+        shell/
+          action-footer.js
+          active-step-computer.js
+          build-analysis-integration.js
+          build-intent.js
+          chargen-persistence.js
+          conditional-step-resolver.js
+          invalidation-preview.js
+          mentor-rail.js
+          mutation-coordinator.js
+          mutation-plan.js
+          prereq-adapter.js
+          progress-rail.js
+          progression-finalizer.js
+          progression-reconciler.js
+          progression-session.js
+          progression-shell.js
+          projection-engine.js
+          selected-rail-context.js
+          session-storage.js
+          utility-bar.js
+        steps/
+          follower-steps/
+            follower-background-step.js
+            follower-confirm-step.js
+            follower-feat-step.js
+            follower-language-step.js
+            follower-skills-step.js
+            follower-species-step.js
+            follower-step-base.js
+            follower-template-step.js
+          attribute-step.js
+          background-step.js
+          class-step.js
+          confirm-step.js
+          droid-builder-adapter.js
+          droid-builder-step.js
+          feat-step.js
+          final-droid-configuration-step.js
+          force-power-step.js
+          force-secret-step.js
+          force-technique-step.js
+          intro-step.js
+          l1-survey-step.js
+          language-step.js
+          mentor-step-integration.js
+          name-step.js
+          near-human-builder.js
+          nonheroic-starting-feats-step.js
+          skills-step.js
+          species-step.js
+          starship-maneuver-step.js
+          step-descriptor.js
+          step-normalizers.js
+          step-plugin-base.js
+          summary-step.js
+          talent-step.js
+        testing/
+          document-targeting-tests.test.js
+          phase-1-single-truth-apply.test.js
+          phase-2-prerequisite-sovereignty.test.js
+          phase-2.5-nonheroic-integration.test.js
+          phase-2.6-nonheroic-template-adaptation.test.js
+          phase-2.7-beast-builder-adaptation.test.js
+          phase-2.8-beast-full-spine-integration.test.js
+          phase-3-scenario-reconciliation.test.js
+          phase-3.6-follower-verification.test.js
+          phase-4-rollout-truthfulness.test.js
+          phase-4-step-1-settings-registration.test.js
+          phase-4-step-6-runtime-gating.test.js
+        utils/
+          selection-ordering.js
+        ux/
+          explanation-display.js
+          progression-diagnostics-panel.js
+          progression-recovery-manager.js
+          progression-shell-explainability-integration.js
+          recovery-coordinator.js
+          recovery-display.js
+          step-explainability-mixin.js
+          summary-step-enhancement.js
+          user-explainability.js
+        validation/
+          global-validator.js
+        chargen-shell.js
+        detail-rail-normalizer.js
+        follower-shell.js
+        hydration-diagnostics.js
+        levelup-shell.js
+        progression-entry.js
+        skills-mechanics-resolver.js
       store/
         dialogue/
           rendarr-dialogue.js
@@ -1200,8 +2044,12 @@ foundryvtt-swse/
         store-loading-overlay.js
         store-main.js
         store-shared.js
+        store-splash.js
         STORE_VISUAL_CONTRACT.md
         VISUAL_CONSISTENCY_AUDIT.md
+      weapons/
+        melee-modification-app.js
+      actor-creation-entry-dialog.js
       adopt-or-add-dialog.js
       character-import-wizard.js
       chargen-improved.js
@@ -1214,15 +2062,20 @@ foundryvtt-swse/
       destiny-spending-dialog.js
       droid-builder-app.js
       droid-modification-app.js
+      droid-template-choice-dialog.js
       follower-creator.js
       follower-manager.js
+      galactic-records-browser.js
       gear-templates-engine.js
       gm-droid-approval-dashboard.js
       gm-store-dashboard.js
       house-rules-app.js
       item-selling-system.js
+      mentor-dialogues.data.js
       modifier-inspector-app.js
       nonheroic-units-browser.js
+      npc-import-customization-wizard.js
+      npc-template-importer.js
       prerequisite-builder-dialog.js
       proficiency-selection-dialog.js
       seraphim-narrator.js
@@ -1239,13 +2092,23 @@ foundryvtt-swse/
       xp-calculator.js
     armor/
       armor-upgrade-system.js
+    audit/
+      character-sheet-css-governance.allowlist.json
+      character-sheet-css-governance.js
     automation/
       upkeep.js
+    bootstrap/
+      holo-init.js
+      holo-init.js.phase11bak
+      holo-init.js.phase5bak
+      holo-init.js.phase8bak
     canvas-ui/
       canvas-ui-manager.js
     chat/
       action-chat-engine.js
       chat-commands.js
+      chat-svg-assets.js
+      chat-svg-assets.js.phase3bak
       swse-chat.js
     combat/
       rolls/
@@ -1273,6 +2136,10 @@ foundryvtt-swse/
       force-suite.js
     config/
       skills.js
+    constants/
+      archetype-bias-enums.js
+      beam-styles.js
+      capability-slugs.js
     contracts/
       diagnostic-mode.js
       runtime-contract.js
@@ -1285,12 +2152,15 @@ foundryvtt-swse/
       data-preloader.js
       devmode-validation.js
       document-api-v13.js
+      droid-template-data-loader.js
       effect-sanitizer.js
       error-handler.js
       feature-flags.js
       first-run-experience.js
+      flag-registry.js
       forensic-sheet-diagnostic.js
       foundry-env.js
+      galactic-records-category-registry.js
       hardening-init.js
       hooks-emitter.js
       init.js
@@ -1298,7 +2168,10 @@ foundryvtt-swse/
       lazy-loader.js
       load-templates.js
       logger.js
+      migration-integrity-adapter.js
+      migration-integrity-adapter.test.js
       mutation-safety.js
+      npc-template-data-loader.js
       pack-existence-check.js
       phase5-init.js
       races.js
@@ -1308,15 +2181,17 @@ foundryvtt-swse/
       schema-validator.js
       settings.js
       sheet-stabilizer.js
+      sidebar-icon-class-audit.js
+      sidebar-icon-comparison.js
+      sidebar-icon-fallback.js
+      sidebar-icon-instrumentation.js
+      sidebar-sentinel-trace.js
       structured-logger.js
       swse-api.js
       swse-data.js
-      swse-sentinel.js
-      theme-loader.js
       tooltip-discovery.js
       utils-init.js
       v1-api-scanner.js
-      v2-render-guard.js
       version-adapter.js
       world-data-loader.js
     data/
@@ -1324,19 +2199,27 @@ foundryvtt-swse/
         ClassModelAdapters.js
       models/
         ClassModel.js
+      armor-upgrades.js
+      blade-colors.js
+      blaster-config.js
       class-normalizer.js
+      class-relationship-registry.js
       classes-db.js
       droid-modifications.js
       droid-systems.js
       fix_classes_db_final.py
       force-points.js
+      gear-mods.js
       generate-class-tree-bindings.js
+      lightsaber-crystals-map.js
+      melee-upgrades.js
       prerequisite-checker-regression-guard.js
       prerequisite-checker.js
       prestige-prerequisites.js
       stable-key-migration.js
       talent-db.js
       talent-normalizer.js
+      talent-relationship-registry.js
       talent-tree-db.js
       talent-tree-normalizer.js
       uuid-map.js
@@ -1348,11 +2231,21 @@ foundryvtt-swse/
       vehicle-data-model.js
     debug/
       appv2-probe.js
+      condition-penalty-regression-test.js
       debug-tools.js
+      layout-debug.js
+      sentinel-config.js
+      sentinel-reports.js
+      swse-debugger.js
     dev/
       ability-model-validator.js
       mutation-guard.js
       v2-slippage-report.mjs
+    dialogue/
+      runtime/
+        emotionalRoutingMatrix.js
+        getEncouragementLine.js
+        getJudgmentOverlay.js
     domain/
       droids/
         droid-modification-factory.js
@@ -1368,10 +2261,92 @@ foundryvtt-swse/
       drop-handler.js
     engine/
       abilities/
+        active/
+          active-adapter.js
+          active-contract.js
+          ACTIVE-GUIDE.md
+          active-migration-validator.js
+          active-types.js
+          duration-engine.js
+          effect-resolver.js
+          species-ability-handlers.js
+          targeting-engine.js
+        attack-option/
+          attack-option-adapter.js
+          attack-option-contract.js
+          attack-primitives.js
+        force-power/
+          force-power-adapter.js
+          force-power-contract.js
+          force-power-types.js
+        passive/
+          condition-evaluator.js
+          derived-override-engine.js
+          passive-adapter.js
+          passive-contract.js
+          passive-state.js
+          passive-types.js
+          phase-1b-feat-definitions.js
+          phase-2-feat-definitions.js
+          phase-3-feat-definitions.js
+          phase-4-feat-definitions.js
+          rule-registry.js
+          rule-types.js
+          species-trait-passive-adapter.js
+        progression/
+          IMPLEMENTATION-CHECKLIST.md
+          progression-adapter.js
+          progression-contract.js
+          progression-event-processor.js
+          PROGRESSION-SCHEMA.md
+          progression-types.js
+        unlock/
+          unlock-adapter.js
+          unlock-contract.js
+          unlock-types.js
+        ability-execution-coordinator.js
+        ability-usage.js
         AbilityEngine.js
+        AbilityExecutionRouter.js
+        ActivationLimitEngine.js
+      analysis/
+        archetype-trend-registry.js
+        build-analysis-engine.js
+        index.js
+        mentor-advisory-bridge.js
+        mentor-dialogue-audit.js
+        mentor-system-exploration.js
+        MENTOR_ASSEMBLY_AUDIT.md
+        phase-3-audit-report.js
+        phase-3-b-atom-vocabulary-plan.js
+        phase-3-demo.js
+        PHASE_3-0_IMPLEMENTATION_REPORT.md
+        trajectory-planning-engine.js
+        trajectory-planning-engine.test.js
+      archetype/
+        archetype-registry-integration.js
+        archetype-registry.js
+        chain-registry.js
+      capabilities/
+        capability-registry.js
       chargen/
         CharacterGenerationEngine.js
       combat/
+        action/
+          action-economy-hooks.js
+          action-economy-persistence.js
+          action-economy-settings.js
+          action-engine-v2.js
+          action-engine.js
+          action-policy-controller.js
+          action-policy.js
+        reactions/
+          reaction-engine.js
+          reaction-engine.js.phase11bak
+          reaction-engine.js.phase5bak
+          reaction-engine.js.phase8bak
+          reaction-registry.js
+          reaction-registry.js.phase5bak
         resolvers/
           damage-reduction-resolver.js
           shield-mitigation-resolver.js
@@ -1394,7 +2369,10 @@ foundryvtt-swse/
           utils/
             vehicle-calculations.js
             vehicle-shared.js
+        weapons/
+          weapons-engine.js
         ARCHITECTURE.md
+        combat-executor.js
         CombatEngine.js
         CombatMechanicsEngine.js
         ConditionEngine.js
@@ -1411,9 +2389,22 @@ foundryvtt-swse/
         SWSEInitiative.js
         threshold-engine.js
         weapons-engine.js
+      crafting/
+        blaster-customization-engine.js
+        lightsaber-construction-engine.js
+        lightsaber-construction-engine.test.js
+        lightsaber-construction-engine.test.runner.js
+        modification-intent-builder.js
+        phase-1-crystal-tests.js
+        phase-2-conditional-tests.js
+        phase-3-advanced-crystal-system.js
+        phase-3-advanced-tests.js
+        test-console.js
       crew/
         crew-interaction-engine.js
         follower-talent-config.js
+      darkside/
+        dsp-engine.js
       droids/
         droid-factory.js
       effects/
@@ -1428,13 +2419,27 @@ foundryvtt-swse/
         active-effects-engine.js
       encumbrance/
         EncumbranceEngine.js
+      execution/
+        rules/
+          rule-collector.js
+          rule-definitions.js
+          rule-enum.js
       force/
         force-engine.js
+        force-executor.js
         force-points-service.js
         force-power-categories.js
+        force-power-effects-engine.js
         ForceTrainingEngine.js
       HP/
         HPGeneratorEngine.js
+      import/
+        droid-template-importer-engine.js
+        npc-template-importer-engine.js
+      integrity/
+        drift-detector.js
+        world-integrity-sweep.js
+        world-integrity-sweep.test.js
       interactions/
         adoption-engine.js
         drop-resolution-engine.js
@@ -1443,26 +2448,52 @@ foundryvtt-swse/
         ammo-system.js
         InventoryEngine.js
       mentor/
+        address-engine.js
+        address-policy.js
+        address-profiles.js
         aurebesh-translator.js
         index.js
+        mentor-advisory-coordinator.js
+        mentor-atom-phrases.js
         mentor-decision-logger.js
         mentor-dialogues.data.js
         mentor-dialogues.js
         mentor-inheritance.js
         mentor-intensity-atoms.js
+        mentor-interaction-orchestrator.js
+        mentor-interaction-orchestrator.test.js
         mentor-json-loader.js
+        mentor-judgment-atoms.js
+        mentor-judgment-engine.js
         mentor-memory.js
         mentor-reason-atoms.js
         mentor-reason-judgment-map.js
         mentor-reason-renderer.js
+        mentor-reason-selector.js
         mentor-resolver.js
         mentor-selector.js
         mentor-story-resolver.js
         mentor-synthesis-config.js
+        MENTOR_INTEGRATION_FLOW.md
+        MENTOR_ORCHESTRATOR_INTEGRATION.md
+        MentorAtomTaxonomy.ts
+        ReasonTypeToAtomMapping.ts
+        ReasonTypeToReasonAtomsMapping.js
         validate-mentor-dialogue.js
+        validate-mentor-integration.js
+      prestige/
+        bias-tag-projection.js
+        identity-engine.js
+        prestige-layer-registry.js
       progression/
+        contracts/
+          content-contracts.js
+        coverage/
+          support-tracker.js
         data/
           progression-data.js
+        debugging/
+          progression-debug-helpers.js
         engine/
           autocalc/
             derived-stats.js
@@ -1473,50 +2504,78 @@ foundryvtt-swse/
             prestige-readiness.js
             rollback-store.js
           validators/
+            advisory-validator.js
             feat-duplication.js
           apply-progression-patch.js
           attribute-increase-handler.js
           class-normalizer.js
+          droid-suggestion-engine.js
           engine-helpers.js
           equipment-engine.js
           feature-dispatcher.js
           feature-index.js
           feature-normalizer.js
+          force-authority-engine.js
           force-normalizer.js
           force-power-engine.js
           force-progression.js
           force-secret-engine.js
           force-secret-suggestion-engine.js
+          force-slot-validator.js
           force-technique-engine.js
           force-technique-suggestion-engine.js
           language-engine.js
+          language-suggestion-engine.js
+          maneuver-authority-engine.js
           manual-step-processor.js
           progression-actor-updater.js
           progression-engine-instance.js
           progression-engine.js
           progression-patch.js
           progression-state-normalizer.js
+          selection-modifier-hook-registry.js
+          species-suggestion-engine.js
           starship-maneuver-engine.js
           starship-maneuver-suggestion-engine.js
           starting-feature-registrar.js
           suggestion-constants.js
+          suite-reselection-engine.js
+          telekinetic-prodigy-hook.js
           template-engine.js
         feats/
+          class-feat-registry.js
           feat-dispatcher.js
           feat-engine.js
           feat-normalizer.js
           feat-registry-ui.js
           feat-registry.js
+          feat-slot-migrator.js
+          feat-slot-schema.js
+          feat-slot-validator.js
           feat-state.js
           prerequisite_engine.js
         force/
           force-registry-ui.js
+        forecast/
+          advisory-result-formatter.js
+          build-signals-normalizer.js
+          forecast-engine.js
+          suggestion-context-adapter.js
+          suggestion-result-contract.js
+        governance/
+          architecture-governance.js
         hooks/
           system-init-hooks.js
         integration/
           finalize-integration.js
+        maneuvers/
+          maneuver-slot-validator.js
         modules/
           language-module.js
+        policies/
+          multiclass-policy-integration.js
+          multiclass-policy.js
+          multiclass-policy.test.js
         prerequisites/
           class-prereq-normalizer.js
           class-prerequisites-cache.js
@@ -1526,13 +2585,36 @@ foundryvtt-swse/
           skill-normalizer.js
           skill-registry-ui.js
           skill-registry.js
+          skill-resolver.js
           skill-state.js
           skill-validator.js
+        suggestion/
+          suggestion-context-builder.js
         talents/
+          slot-calculator.js
+          slot-migrator.js
+          slot-validator.js
+          talent-cadence-engine.js
           talent-registry-ui.js
+          talent-slot-schema.js
           TalentNode.js
           TalentTreeGraph.js
           TalentTreeRegistry.js
+          tree-authority.js
+          tree-unlock-manager.js
+        template/
+          template-adapter.js
+          template-initializer.js
+          template-integration.test.js
+          template-observability.js
+          template-override-handler.js
+          template-packaged-flow.js
+          template-registry.js
+          template-suggestion-context.js
+          template-traversal-policy.js
+          template-validator.js
+        testing/
+          scenario-test-matrix.js
         ui/
           templates/
             force-power-picker.hbs
@@ -1545,23 +2627,75 @@ foundryvtt-swse/
           class-data-loader.js
           class-feature-normalizer.js
           class-normalizer.js
+          class-suggestion-utilities.js
           item-normalizer.js
           level-diff-inspector.js
           prerequisite-normalizer.js
           PrerequisiteEnricher.js
           snapshot-manager.js
           species-normalizer.js
+          suite-reselection-utils.js
+        validation/
+          content-validator.js
         npc-progression-engine.js
+        prerequisite-checker.js
+        progression-regression.test.js
         ProgressionCompiler.js
         ProgressionEngineV2.js
         ProgressionSession.js
         RuleEngine.js
         xp-constants.js
         xp-engine.js
+      registries/
+        classes-registry.js
+        force-registry.js
+        species-registry.js
+      repair/
+        actor-repair-engine.js
+        actor-repair-engine.test.js
+      resolution/
+        resolution-context.js
       roll/
         roll-core.js
+      rolls/
+        swse-roll-engine.js
+        swse-roll-engine.js.phase11bak
+        swse-roll-engine.js.phase1bak
+        swse-roll-engine.js.phase3bak
+        swse-roll-engine.js.phase4bak
+        swse-roll-engine.js.phase5bak
+        swse-roll-engine.js.phase8bak
+      rules/
+        modules/
+          core/
+            ability-modifier-rule.js
+            base-attack-bonus-rule.js
+            condition-penalty-rule.js
+            critical-confirm-bonus-rule.js
+            critical-rule.js
+            damage-rule.js
+            index.js
+            proficiency-rule.js
+            reach-rule.js
+            strength-to-damage-rule.js
+          talents/
+            index.js
+            weapon-specialization-rule.js
+        rules-registry.js
       shared/
         xp-system.js
+      skills/
+        rules/
+          armor-rule.js
+          condition-rule.js
+          environment-rule.js
+          feat-species-rule.js
+          index.js
+          retry-rule.js
+          substitution-rule.js
+          training-rule.js
+        skill-attempt-registry.js
+        skill-enforcement-engine.js
       store/
         categorizer.js
         compendium-schema.js
@@ -1615,30 +2749,41 @@ foundryvtt-swse/
           pressure-monitor.js
           spotlight-monitor.js
           tuning-advisor.js
+        AdvisoryEngine.js
         AnchorRepository.js
+        ARCHETYPE_INTEGRATION_GUIDE.md
+        ARCHETYPE_SUGGESTION_MAP.md
         ArchetypeAffinityEngine.js
         ArchetypeDefinitions.js
         ArchetypeEngineHooks.js
         ArchetypeEnhancedForceOptionSuggestionEngine.js
         ArchetypeLoader.js
+        ArchetypeMetadataEngine.js
         ArchetypeShiftTracker.js
         ArchetypeSuggestionIntegration.js
+        AttributeIncreaseScorer.js
         AttributeIncreaseSuggestionEngine.js
         BackgroundSuggestionEngine.js
         BuildCoherenceAnalyzer.js
         BuildIdentityAnchor.js
         BuildIdentityDetector.js
         BuildIntent.js
+        BuildThemeProjection.js
+        CandidatePoolBuilder.js
+        character-data-analysis.js
         ClassSuggestionEngine.js
         CommunityMetaSynergies.js
         CompendiumResolver.js
         ConfidenceScoring.js
+        domain-registry.js
+        EvidenceCardFactory.js
         ForceOptionSuggestionEngine.js
         Level1SkillSuggestionEngine.js
         MentorClarificationSystem.js
         MentorProfile.js
         MentorSystem.js
         MentorWishlistIntegration.js
+        MilestoneComputer.js
         OpportunityCostAnalyzer.js
         PathPreview.js
         PivotDetector.js
@@ -1646,12 +2791,20 @@ foundryvtt-swse/
         PivotStateManager.js
         PlayerAnalytics.js
         PlayerHistoryTracker.js
+        prestige-delay-calculator.js
+        PrestigeAffinityEngine.js
         ProgressionAdvisor.js
+        reason-signal-builder.js
+        ReasonCodeToReasonTypeMapping.js
         ReasonFactory.js
+        scoring-walkthrough.js
         SelectionRecorder.js
+        selectReasonAtoms.js
         shared-suggestion-utilities.js
+        slot-context-detector.js
         SnapshotBuilder.INTEGRATION.md
         SnapshotBuilder.js
+        suggestion-advisory-formatter.js
         suggestion-settings.js
         suggestion-unified-tiers.js
         SuggestionConfidence.js
@@ -1662,11 +2815,21 @@ foundryvtt-swse/
         SuggestionScorer.js
         SuggestionService.js
         SuggestionStateService.js
+        SuggestionV2Contract.js
         SynergyEvaluator.js
+        TAG_INHERITANCE_GUIDE.md
+        TalentCandidateEnricher.js
+        TalentTreeTagRegistry.js
+        tier1-pressure-test.js
+        tier1-standalone-simulation.js
+        tier1-validation.test.js
         validateClassArchetypes.js
         WishlistEngine.js
       system/
         HouseRuleService.js
+      systems/
+        species/
+          species-trait-engine.js
       talent/
         dark-side-devotee-mechanics.js
         dark-side-talent-mechanics.js
@@ -1683,6 +2846,9 @@ foundryvtt-swse/
         talents.js
       vehicles/
         vehicle-factory.js
+      _architecture-guard.js
+      animation-engine.js
+      droid-validation-engine.js
       MetaTuning.js
       progression.js
       roll-engine.js
@@ -1698,39 +2864,97 @@ foundryvtt-swse/
     governance/
       actor-engine/
         actor-engine.js
+        hp-recompute-hooks.js
+      audit/
+        audit-trail.js
+        audit-trail.test.js
+      enforcement/
+        actor-engine-enforcement-gates.js
+        enforcement-policy.js
+        enforcement-policy.test.js
+        levelup-preflight-gate.js
+        preflight-validator.js
+      export/
+        export-marking.js
+      integrity/
+        missing-prereqs-tracker.js
+        prerequisite-integrity-checker.js
+        prerequisite-integrity-tests.js
+        severity-classifier.js
+        severity-classifier.test.js
       mutation/
         batch-1-validation.js
-        embedded-mutation-layer.js
         merge-mutations.js
         mutation-errors.js
         MutationInterceptor.js
       sentinel/
+        enforcement/
+          import-graph-validator.js
+          integrity-wiring-validator.js
+          mutation-path-validator.js
         layers/
           combat-layer.js
           css-layer.js
           data-layer.js
           hooks-layer.js
           hooks-mutation-layer.js
-          migration-mutation-layer.js
-          performance-layer.js
           promises-layer.js
-          render-layer.js
+          sheet-integration-layer.js
           utility-layer.js
+        appv2-audit-runner.js
+        appv2-auditor.js
+        appv2-interaction-auditor.js
         css-auditor.js
         derived-integrity-layer.js
+        enforcement-core.js
+        governance-diagnostics.js
         hook-investigator.js
         integration-tests.js
         investigator.js
         migration-auditor.js
-        migration-manager.js
+        mutation-boundary-defense.js
+        mutation-boundary-defense.test.js
         mutation-integrity-layer.js
         mutation-interceptor-lock.js
+        mutation-path-guard.js
         performance-sovereignty-lock.js
         sentinel-auditors.js
+        sentinel-categories.js
         sentinel-core.js
+        sentinel-css-contract.js
+        sentinel-dashboard.js
+        sentinel-debug-api.js
+        sentinel-init.js
+        sentinel-layout-contract.js
+        sentinel-layout-debugger.js
+        sentinel-layout-evaluator.js
+        sentinel-mall-cop.js
         sentinel-registry.js
+        sentinel-reporter.js
+        sentinel-roll-pipeline.js
+        sentinel-sheet-guardrails.js
+        sentinel-sheet-hydration.js
+        sentinel-source-mapper.js
+        sentinel-template-integrity.js
+        sentinel-update-atomicity.js
+        SENTINEL_CATEGORIZATION_GUIDE.md
         sentry.js
+        sovereignty-enforcement.js
+        tab-diagnostics.js
         transaction-verification.js
+        v2-comprehensive-audit.js
+      ui/
+        integrity-banner.js
+        integrity-dashboard.js
+        integrity-dashboard.test.js
+        rebuild-orchestrator.js
+        slot-resolution-flow.js
+      governance-integration.js
+      governance-system.js
+      mutation-adapter.js
+      PHASE-4-IMPLEMENTATION-GUIDE.md
+      PHASE-5A-SUGGESTION-MENTOR-AUDIT.md
+      v2-app-handler-patterns.md
     helpers/
       swse-dialog-helper.js
     houserules/
@@ -1755,17 +2979,23 @@ foundryvtt-swse/
     infrastructure/
       hooks/
         actor-hooks.js
+        actor-sidebar-controls.js
         assets-hooks.js
+        chargen-sheet-hooks.js
         combat-hooks.js
         destiny-hooks.js
         directory-hooks.js
         follower-hooks.js
+        force-domain-lifecycle.js
         force-power-hooks.js
         hooks-registry.js
         index.js
         init-hooks.js
         levelup-sheet-hooks.js
+        mentor-sheet-hooks.js
+        starship-domain-lifecycle.js
         starship-maneuver-hooks.js
+        store-sheet-hooks.js
         suggestion-hooks.js
         talent-effects-hooks.js
         ui-hooks.js
@@ -1787,6 +3017,7 @@ foundryvtt-swse/
       usage-tracker.js
       world-repair.js
     mentor/
+      mentor-adapter.js
       mentor-archetype-paths.js
       mentor-chat-dialog.js
       mentor-conditional-variants.js
@@ -1798,6 +3029,7 @@ foundryvtt-swse/
       mentor-guidance.js
       mentor-help-strings.js
       mentor-judgment-renderer.js
+      mentor-language-mapper.js
       mentor-memory.test.js
       mentor-reason-renderer.js
       mentor-reflective-dialog.js
@@ -1816,15 +3048,23 @@ foundryvtt-swse/
       mentor-voice-synthesizer.js
       translation-presets.js
     migration/
+      active-ability-mapping.json
+      active-ability-migration.js
       armor-system-migration-v4.js
       migrate-species-to-structured-rules.js
+      passive-state-migration.js
+      predicate-mapping.json
+      template-schema-migrator.js
       weapon-properties-migration.js
       weapon-talents-migration.js
     migrations/
       json-backed-ids-migration.js
+      phase5-compendium-heal.js
     registries/
       background-registry.js
+      feat-registry.js
       language-registry.js
+      talent-registry.js
     rolls/
       defenses.js
       dice.js
@@ -1839,18 +3079,71 @@ foundryvtt-swse/
     scene-controls/
       api.js
       init.js
+    sentinel/
+      sentinel-engine.js
     services/
       drop-service.js
     settings/
       epic-override.js
+      house-rules.js
     sheets/
       v2/
+        character-sheet/
+          context.js
+          form.js
+          listeners.js
+          utils.js
+        context/
+          LocalizationFormatters.js
+          PANEL_REGISTRY.js
+          PanelContextBuilder.js
+          PanelContextValidator.js
+          PanelTypeDefinitions.js
+          PanelValidators.js
+          PostRenderAssertions.js
+          RowTransformers.js
+          SCHEMA.js
+        droid/
+          DroidPanelContextBuilder.js
+          DroidPanelValidators.js
+          DroidPanelVisibilityManager.js
+          DroidSheet.js
+          PANEL_REGISTRY.js
+        npc/
+          NPCPanelContextBuilder.js
+          NPCPanelValidators.js
+          NPCPanelVisibilityManager.js
+          NPCSheet.js
+          PANEL_REGISTRY.js
+        shared/
+          PanelDiagnostics.js
+          PanelVisibilityManager.js
+          PartialRegistry.js
+          PartialValidator.js
+          resource-bar-animations.js
+          resource-number-animations.js
+          RowTransformerHelpers.js
+          SentinelIntegration.js
+          SentinelPartialMonitor.js
+          UIStateManager.js
+        acceptance-verification.js
+        BreakdownIntegration.js
+        character-sheet-diagnostics.js
+        character-sheet-integration-audit.js
+        character-sheet-integration-test-harness.js
         character-sheet.js
-        droid-sheet-v2.js
+        contract-enforcer.js
         droid-sheet.js
+        HelpModeManager.js
+        minimal-test-sheet.js
         npc-combat-sheet.js
         npc-full-sheet.js
         npc-sheet.js
+        PanelVisibilityManager.js
+        runtime-verifier.js
+        sheet-diagnostics-p0.js
+        sheet-diagnostics.js
+        TooltipIntegration.js
         vehicle-sheet.js
     skills/
       skill-uses.js
@@ -1878,34 +3171,55 @@ foundryvtt-swse/
       scout-talent-macros.js
       soldier-talent-macros.js
       squad-actions-init.js
+    test/
+      persistence-canary.js
     tests/
       critical-flow-tests.js
     tools/
       enrich-force-secrets.js
       enrich-force-techniques.js
       force-suggestion-utils.js
+      migrate-species-abilities.js
+      mutation-lint.js
     ui/
       action-palette/
         action-palette.css
         action-palette.js
         init.js
+      combat/
+        action-economy-bindings.js
+        action-economy-bindings.js.pre_phase_f
+        action-economy-integration.js
       dialogue/
         aurebesh-translator.js
         dialogue-effects.css
         translation-presets.js
       discovery/
+        breakdown-card.js
         callout-manager.js
         discovery-settings.js
         feature-tour.js
+        hardpoint-audit.js
         index.js
+        reference-affordance.js
+        reference-service.js
+        tooltip-glossary.js
         tooltip-registry.js
         user-state.js
+      repair/
+        repair-panel.js
       suggestions/
         presentation-map.js
       ArchetypeUIComponents.js
       combat-panel-manager.js
+      combat-stats-tooltip.js
+      cursor-authority.js
       defense-tooltip.js
       inventory-handlers.js
+      mobile-mode-detector.js
+      mobile-mode-manager.js
+      mobile-mode-prompt.js
+      swse-ui-assets.js
       ui-manager.js
       weapon-config-dialog.js
       weapon-tooltip.js
@@ -1922,6 +3236,7 @@ foundryvtt-swse/
       dom-query-shim.js
       dom-utils.js
       droid-appendage-utils.js
+      extra-skill-use-registry.js
       feat-actions-mapper.js
       force-enhancement-detector.js
       force-enhancement-dialog.js
@@ -1929,19 +3244,24 @@ foundryvtt-swse/
       force-power-manager.js
       hardening.js
       hook-performance.js
+      hp-utils.js
       icon-constants.js
       item-filters.js
+      lightsaber-light-sync.js
       logger.js
       macro-functions.js
       math-utils.js
       movement-normalizer.js
+      mutation-trace.js
       notifications.js
       object-utils.js
       performance-utils.js
       reason-inspector.js
       render-guard.js
+      schema-adapters.js
       security-utils.js
       settings-helper.js
+      sheet-position.js
       skill-resolver.js
       skill-use-filter.js
       stable-id.js
@@ -1957,33 +3277,56 @@ foundryvtt-swse/
       warn-gm.js
       wishlist-helpers.js
     validate/
+      validate-advisory.js
       validate-icon-keys.js
+    validation/
+      archetype-validator.js
+      check-mentor-guidance-fields.js
+      check-step-mentor-compliance.js
+      test-class-chassis-bias.js
+      validate-identity-engine.js
+    visual/
+      energy-shield-visual-service.js
+      native-projectile-service.js
     dev-setup.sh
     progression-engine.js
     theme-loader.js
     validate-architecture.js
+    validate-mutation-sovereignty.js
+    verify-panel-alignment.js
   styles/
+    actor-sheets/
+      action-economy-indicator.css
     actors/
       v2/
         summary/
           damage-reduction.css
           hp-shield-wrapper.css
           shield-rating.css
+        combat-stats-panel.css
     apps/
       chargen/
         chargen-talent-tree.css
         chargen-templates.css
         chargen.css
+      armor-modification.css
+      blaster-customization.css
+      chargen.css
+      chargen.css.pre_holo_backup
       combat-action-browser.css
       combat-roll-config.css
       custom-item-dialog.css
       diff-viewer.css
       force-power-picker.css
+      gear-modification.css
       gm-store-dashboard.css
       house-rules-controls.css
       house-rules.css
       houserules.css
       levelup.css
+      lightsaber-construction.css
+      melee-modification.css
+      modification-modal-shell.css
       skill-modifier-breakdown.css
       store-card-grid.css
       store-cards.css
@@ -1995,6 +3338,36 @@ foundryvtt-swse/
       upgrade-app.css
       ux-polish.css
       vehicle-modification.css
+    archive/
+      sheets-v3/
+        v3/
+          components/
+            buttons.css
+            cards.css
+            hover.css
+          core/
+            layout.css
+            numbers.css
+            typography.css
+            variables.css
+          partials/
+            abilities.css
+            biography.css
+            combat.css
+            defenses.css
+            destiny.css
+            feats.css
+            force.css
+            header.css
+            hp-condition.css
+            identity.css
+            initiative.css
+            languages.css
+            racial.css
+            second-wind.css
+            skills.css
+            talents.css
+            xp.css
     chargen/
       near-human.css
     chat/
@@ -2007,7 +3380,11 @@ foundryvtt-swse/
       vehicle-combat.css
     components/
       assets-tab.css
+      breakdown-card.css
+      buttons.css
       discovery.css
+      forms.css
+      item-action-bar.css
       panels.css
       suggestion-card.css
       tabs.css
@@ -2017,8 +3394,11 @@ foundryvtt-swse/
       appv2-structural-safe.css
       canvas-safety.css
       first-run-experience.css
+      svg-geometry.css
       swse-base.css
       variables.css
+    debug/
+      svg-layout-debug.css
     dialogs/
       holo-dialogs.css
     fixes/
@@ -2032,77 +3412,74 @@ foundryvtt-swse/
     progression/
       ability-rolling.css
       suggestion-engine.css
+    progression-framework/
+      components/
+        buttons.css
+        panels.css
+      foundation/
+        effects.css
+        tokens.css
+        typography.css
+      shell/
+        footer.css
+        header.css
+        progress.css
+        rails.css
+        svg-components.css
+      splash/
+        splash.css
+      steps/
+        attribute-step.css
+        background-step.css
+        class-step.css
+        confirm-step.css
+        droid-builder-step.css
+        feat-step.css
+        force-power-step.css
+        intro.css
+        l1-survey-step.css
+        language-step.css
+        name-step.css
+        near-human-builder.css
+        skills-step.css
+        species-step.css
+        summary-step.css
+        talent-step.css
+      action-footer.css
+      diagnostic-banners.css
+      footer-navigation-standards.css
+      holo-theme.css
+      mentor-rail.css
+      option-cards.css
+      progress-rail.css
+      progression-framework.css
+      progression-shell-placeholders.css
+      progression-shell.css
+      rail-viewport-standards.css
+      summary-panel.css
+      utility-bar.css
     rolls/
       roll-config.css
     sheets/
-      v3/
-        components/
-          buttons.css
-          cards.css
-          hover.css
-        core/
-          layout.css
-          numbers.css
-          typography.css
-          variables.css
-        partials/
-          abilities.css
-          biography.css
-          combat.css
-          defenses.css
-          destiny.css
-          feats.css
-          force.css
-          header.css
-          hp-condition.css
-          identity.css
-          initiative.css
-          languages.css
-          racial.css
-          second-wind.css
-          skills.css
-          talents.css
-          xp.css
       abilities-tab.css
       character-sheet.css
-      droid-level3.css
-      droid-sheet-v2.css
       droid-sheet.css
       feat-actions.css
       improved-contrast.css
       inventory.css
-      npc-combat-sheet.css
+      item-sheet.css
+      lightsaber-item.css
       sheet-improvements.css
       skill-actions.css
       unified-sheets.css
+      v2-droid-specific.css
+      v2-npc-specific.css
       v2-sheet.css
-      vehicle-level3.css
       vehicle-sheet.css
     species/
       species-traits.css
-    src/
-      base/
-        _reset.scss
-        _typography.scss
-      components/
-        _buttons.scss
-      themes/
-        _high-contrast.scss
-        _high-republic.scss
-        _holo.scss
-        _jedi.scss
-        _sand-people.scss
-        _starship.scss
-      tokens/
-        _base.scss
-        _theme-high-contrast.scss
-        _theme-high-republic.scss
-        _theme-holo.scss
-        _theme-jedi.scss
-        _theme-sand-people.scss
-        _theme-starship.scss
-      main.scss
     themes/
+      holo.css
       swse-theme-high-contrast.css
       swse-theme-high-republic.css
       swse-theme-holo.css
@@ -2110,7 +3487,21 @@ foundryvtt-swse/
       swse-theme-sand-people.css
       swse-theme-starship.css
     ui/
+      action-economy-buttons.css
+      character-sheet-overflow-contract.css
+      character-sheet-svg-panels.css
+      chat-holo-flourishes.css
+      chat-holo-flourishes.css.phase11bak
+      chat-holo-flourishes.css.phase2bak
+      chat-holo-flourishes.css.phase2v2bak
+      chat-holo-flourishes.css.phase3bak
+      chat-holo-flourishes.css.phase4bak
+      chat-holo-flourishes.css.phase5bak
+      chat-holo-flourishes.css.phase8bak
+      combat-action-economy.css
       directory-buttons.css
+      swse-cursors.css
+      swse-holo-phase1.css
       tab-pulse.css
       wishlist.css
     utils/
@@ -2120,54 +3511,69 @@ foundryvtt-swse/
     core-overrides.css
     fonts.css
     mentor.css
+    miraj-attunement.css
     npc-level3.css
+    swse-core.css
+    swse-holo-ui.css
+    swse-holo.css
     swse-system.css
   templates/
     actors/
       character/
         tabs/
-          abilities-tab.hbs
-          biography-tab.hbs
-          combat-tab.hbs
-          force-tab.hbs
-          import-export-tab.hbs
-          inventory-tab.hbs
-          skills-tab.hbs
           starship-maneuvers-tab.hbs
-          summary-tab.hbs
-          talents-tab.hbs
         v2/
           partials/
             summary/
-              damage-reduction.hbs
               hp-shield-wrapper.hbs
               shield-rating.hbs
             abilities-panel.hbs
+            action-economy-indicator.hbs
             actions-panel.hbs
+            armor-summary-panel.hbs
             attacks-panel.hbs
-            combat-action-card.hbs
-            combat-action-table.hbs
+            attacks-panel.hbs.pre_phase_b
+            bio-profile-panel.hbs
+            biography-log-panel.hbs
+            character-record-header.hbs
+            combat-actions-panel.hbs
+            combat-stats-panel.hbs
             dark-side-panel.hbs
             defense-breakdown-tooltip.hbs
             defenses-panel.hbs
+            equipment-ledger-panel.hbs
             feats-panel.hbs
-            Feats.hbs
-            Force.hbs
+            force-panel.hbs
+            force-powers-known-panel.hbs
+            force-secrets-panel.hbs
+            force-techniques-panel.hbs
             hp-condition-panel.hbs
             identity-strip.hbs
             initiative-control.hbs
+            initiative-control.hbs.pre_phase_b
             inventory-armor-card.hbs
             inventory-item-card.hbs
             inventory-item-row.hbs
             inventory-panel.hbs
             inventory-weapon-card.hbs
             languages-panel.hbs
-            Racial-ability.hbs
+            notes-panel.hbs
+            portrait-panel.hbs
+            racial-ability-panel.hbs
+            relationships-panel.hbs
+            resources-panel.hbs
+            resources-panel.hbs.pre_phase_b
             second-wind-panel.hbs
             skills-panel.hbs
-            Talents.hbs
+            skills-panel.hbs.pre_phase_b
+            skills-panel.hbs.pre_phase_h2
+            special-combat-actions-panel.hbs
+            starship-maneuvers-known-panel.hbs
+            talents-known-panel.hbs
+            talents-panel.hbs
             xp-panel.hbs
           character-sheet.hbs
+          minimal-test-sheet.hbs
       droid/
         v2/
           partials/
@@ -2209,7 +3615,17 @@ foundryvtt-swse/
         vehicle-image.hbs
         vehicle-sheet.css
         vehicle-sheet.hbs
+    applications/
+      lightsaber/
+        lightsaber-construction.hbs
+        miraj-attunement.hbs
     apps/
+      armor/
+        armor-modification.hbs
+      base/
+        modification-modal-shell.hbs
+      blaster/
+        blaster-customization.hbs
       chargen/
         ability-rolling.hbs
         character-generator-app.html
@@ -2217,6 +3633,8 @@ foundryvtt-swse/
         combat-roll-config-dialog.hbs
       droid-modification/
         droid-modification-app.hbs
+      gear/
+        gear-modification.hbs
       house-rules/
         house-rules.hbs
       houserules/
@@ -2232,6 +3650,56 @@ foundryvtt-swse/
       progression/
         attribute-method.hbs
         sidebar.hbs
+      progression-framework/
+        details-panel/
+          attribute-details.hbs
+          background-details.hbs
+          class-details.hbs
+          confirm-details.hbs
+          empty-state.hbs
+          feat-details.hbs
+          force-power-details.hbs
+          force-secret-details.hbs
+          force-technique-details.hbs
+          language-details.hbs
+          species-details.hbs
+          starship-maneuver-details.hbs
+          talent-details.hbs
+        dialogs/
+          template-selection.hbs
+        steps/
+          attribute-work-surface.hbs
+          background-work-surface.hbs
+          class-work-surface.hbs
+          confirm-work-surface.hbs
+          droid-builder-details.hbs
+          droid-builder-work-surface.hbs
+          feat-work-surface.hbs
+          final-droid-configuration-details.hbs
+          final-droid-configuration-work-surface.hbs
+          force-power-work-surface.hbs
+          force-secret-work-surface.hbs
+          force-technique-work-surface.hbs
+          intro-work-surface.hbs
+          l1-survey-work-surface.hbs
+          language-work-surface.hbs
+          name-work-surface.hbs
+          near-human-work-surface.hbs
+          skills-work-surface.hbs
+          species-work-surface.hbs
+          starship-maneuver-work-surface.hbs
+          summary-work-surface.hbs
+          talent-tree-browser.hbs
+          talent-tree-graph.hbs
+        summary-panel/
+          selected-rail.hbs
+          species-summary.hbs
+        diagnostic-banner.hbs
+        mentor-rail.hbs
+        progress-rail.hbs
+        progression-shell.hbs
+        splash.hbs
+        utility-bar.hbs
       store/
         cart-item-v2.hbs
         droid-card-v2.hbs
@@ -2239,11 +3707,15 @@ foundryvtt-swse/
         product-card-v2.hbs
         purchase-history.hbs
         store-card-grid.hbs
+        store-splash.hbs
         store.hbs
         store.html
         vehicle-card-v2.hbs
       upgrade/
         upgrade-app.hbs
+      weapons/
+        melee-modification.hbs
+      actor-creation-entry.hbs
       adopt-or-add-dialog.hbs
       character-import-wizard.hbs
       chargen-background-mentor-suggestion.hbs
@@ -2254,12 +3726,16 @@ foundryvtt-swse/
       chargen-skill-focus.hbs
       chargen-template-selection.hbs
       chargen.hbs
+      chargen.hbs.pre_holo_backup
+      class-tree-access-form.html
       combat-action-browser.hbs
       damage-app.hbs
       destiny-spending-dialog.hbs
       droid-builder.hbs
+      droid-template-choice.hbs
       follower-creator-dialog.html
       follower-inline-builder.hbs
+      galactic-records-browser.hbs
       gm-debug-panel.hbs
       gm-droid-approval-dashboard.hbs
       gm-store-dashboard.hbs
@@ -2274,13 +3750,24 @@ foundryvtt-swse/
       meta-tuning-config.hbs
       modifier-inspector.hbs
       nonheroic-units-browser.hbs
+      npc-import-customization-wizard.hbs
       npc-levelup-entry.hbs
+      npc-template-importer.hbs
       prestige-roadmap.hbs
       skill-modifier-breakdown.hbs
       template-creator.hbs
       vehicle-modification.hbs
       xp-calculator.hbs
     chat/
+      holo-roll.hbs
+      holo-roll.hbs.phase11bak
+      holo-roll.hbs.phase1bak
+      holo-roll.hbs.phase2bak
+      holo-roll.hbs.phase2v2bak
+      holo-roll.hbs.phase3bak
+      holo-roll.hbs.phase4bak
+      holo-roll.hbs.phase5bak
+      holo-roll.hbs.phase8bak
       level-up-summary.hbs
       progression-session-summary.hbs
     dialogs/
@@ -2292,8 +3779,14 @@ foundryvtt-swse/
       suggestion-panel-header.hbs
     gm-tools/
       homebrew-dialog.hbs
+    icons/
+      attack-svg.hbs
+      customize-svg.hbs
+      damage-svg.hbs
+      menu-svg.hbs
     items/
       base/
+        item-sheet-old.hbs
         item-sheet.hbs
     partials/
       actor/
@@ -2301,6 +3794,8 @@ foundryvtt-swse/
       chargen/
         near-human.hbs
       ui/
+        combat/
+          action-enforcement-mode-indicator.hbs
         condition-track.hbs
       abilities-tab.hbs
       ability-block.hbs
@@ -2312,7 +3807,6 @@ foundryvtt-swse/
       droid-builder-budget.hbs
       feat-actions-panel.hbs
       item-controls.hbs
-      ship-combat-actions-panel.hbs
       skill-action-card.hbs
       skill-actions-panel.hbs
       skill-row-static.hbs
@@ -2321,20 +3815,74 @@ foundryvtt-swse/
       tab-navigation.hbs
       talent-abilities-panel.hbs
     sheets/
+      components/
+        attribute-block.hbs
+      layouts/
+        actor-sheet.hbs
+      partials/
+        sheet-header.hbs
+        sheet-tabs.hbs
+      _sheet-skeleton.hbs
       droid-sheet-v2.hbs
     ui/
       action-palette.hbs
       weapon-config-dialog.hbs
       weapon-damage-tooltip.hbs
+    v2/
+      droid/
+        panels/
+          abilities-panel.hbs
+          combat-panel.hbs
+          customizations-panel.hbs
+          defenses-panel.hbs
+          droid-notes-panel.hbs
+          droid-summary-panel.hbs
+          inventory-panel.hbs
+          portrait-panel.hbs
+          programming-panel.hbs
+          protocols-panel.hbs
+          skills-panel.hbs
+        droid-sheet-body.hbs
+        droid-sheet-header.hbs
+        droid-sheet-tabs.hbs
+        droid-sheet.hbs
+      npc/
+        panels/
+          abilities-panel.hbs
+          biography-panel.hbs
+          combat-notes-panel.hbs
+          combat-panel.hbs
+          defense-panel.hbs
+          feats-panel.hbs
+          health-panel.hbs
+          inventory-panel.hbs
+          languages-panel.hbs
+          portrait-panel.hbs
+          skills-panel.hbs
+          talents-panel.hbs
+        npc-sheet-body.hbs
+        npc-sheet-header.hbs
+        npc-sheet-tabs.hbs
+        npc-sheet.hbs
     prerequisite-builder.html
   tests/
     archived/
       batch-2-comprehensive-test.js
+    governance/
+      active-governance.test.js
+    integration/
+      active-pipeline.test.js
     phase-3/
+      passive-state.test.js
       phase-3-architecture.test.js
       test-utils.js
     phase-4/
       droid-modifications.test.js
+    phase-5/
+      active-abilities.test.js
+    unit/
+      active-contract.test.js
+      effect-resolver.test.js
     utils/
       calc-abilities.js
       calc-defenses.js
@@ -2343,7 +3891,20 @@ foundryvtt-swse/
     batch-4-workflow-tests.js
     droid-sheet-v2.test.js
     example.test.js
+    force-power-effects.test.js
+    mutation-sovereignty.test.js
     phase-0-modifiers.test.js
+    phase-1-subtype-adapter-seam.test.js
+    phase-1b-passive-modifier-expansion.test.js
+    phase-1b-runner.mjs
+    phase-2-passive-conditions.test.js
+    phase-3-3-force-subsystem-hardening.test.js
+    phase-3-5-talent-selection-infrastructure.test.js
+    phase-3-passive-derived-overrides.test.js
+    phase-4-lifecycle-wiring.test.js
+    phase-4-runtime-sovereignty.test.js
+    phase-4e-rule-integration.test.js
+    phase-5-governance-compliance.test.js
     phase-5a-talent-effect-tests.js
     phase-9-commerce-integration.test.js
     phase-a-droid-mods.test.js
@@ -2353,10 +3914,13 @@ foundryvtt-swse/
     phase1-armor-modifier-test.js
     progression-determinism-tests.js
     progression-engine-correctness.test.js
+    progression-phase-4-wealth-tests.js
     README.md
+    smoke-test-flanking-behavior.js
     structured-rules-engine.test.js
     test-feat-effects.js
     test-utils.js
+    validate-uncanny-dodge-migration.js
   tools/
     data-prep/
       add_mentor_reactions.py
@@ -2394,6 +3958,7 @@ foundryvtt-swse/
     fix-weapon-proficiencies.js
     fix-weapons-data.js
     generate-partials-manifest.mjs
+    inspect-candidates.js
     migrate-feats-db.js
     migrate-vehicles-db.js
     migration-helper.js
@@ -2405,6 +3970,10 @@ foundryvtt-swse/
     reduce-template-equipment.js
     remove-armor.js
     remove-non-weapons.js
+    rule-candidates.json
+    scan-rule-candidates.js
+    theme-isolation.js
+    theme-state.json
     update-shield-proficiencies.js
     update-species-bonuses-complete.js
     update-species-bonuses.js
@@ -2418,9 +3987,17 @@ foundryvtt-swse/
   .lintstagedrc.json
   .prettierignore
   .prettierrc.json
+  APPLY_METADATA.js
   index.js
-  package-lock.json
+  JEDI_ARCHETYPES_NORMALIZED.json
+  jest.config.js
   package.json
+  patch_character_sheet.py
+  patch_character_sheet_final.py
+  patch_character_sheet_v2.py
+  patch_stabilization.py
   repo_skeleton.txt
   system.json
   template.json
+  TEST-PERSISTENCE-VERIFICATION.js
+  VALIDATION_COMMANDS.sh

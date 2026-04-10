@@ -210,6 +210,95 @@ class CharacterSheetDiagnostics {
   }
 
   /**
+   * Validate the height chain and identify broken nodes
+   * Returns summary of which node is the first broken node (if any)
+   */
+  validateHeightChain(app) {
+    if (!app?.element) return null;
+
+    const chainDefinition = [
+      { name: '.window-content', selector: '.window-content', requiresFlex: true },
+      { name: '.swse-character-sheet-wrapper', selector: '.swse-character-sheet-wrapper', requiresFlex: false, transparent: true },
+      { name: '.swse-character-sheet-form', selector: '.swse-character-sheet-form', requiresFlex: true },
+      { name: '.sheet-shell', selector: '.sheet-shell', requiresFlex: true },
+      { name: '.sheet-body', selector: '.sheet-body', requiresFlex: true, mustNotScroll: true },
+      { name: '.tab.active', selector: '.tab.active', requiresFlex: true, mustScroll: true }
+    ];
+
+    const results = [];
+    let firstBrokenNode = null;
+
+    for (const link of chainDefinition) {
+      const el = app.element.querySelector(link.selector);
+      if (!el) {
+        results.push({
+          name: link.name,
+          selector: link.selector,
+          present: false,
+          broken: true
+        });
+        if (!firstBrokenNode) firstBrokenNode = `Missing: ${link.name}`;
+        continue;
+      }
+
+      const styles = window.getComputedStyle(el);
+      const nodeResult = {
+        name: link.name,
+        selector: link.selector,
+        present: true,
+        tag: el.tagName,
+        display: styles.display,
+        flex: styles.flex,
+        flexBasis: styles.flexBasis,
+        minHeight: styles.minHeight,
+        height: styles.height,
+        overflowY: styles.overflowY,
+        clientHeight: el.clientHeight,
+        scrollHeight: el.scrollHeight,
+        broken: false
+      };
+
+      // Check transparency (for wrapper)
+      if (link.transparent && styles.display !== 'contents') {
+        nodeResult.broken = true;
+        nodeResult.error = `Transparent node has display: ${styles.display} (expected: contents)`;
+        if (!firstBrokenNode) firstBrokenNode = link.name;
+      }
+
+      // Check flex requirement
+      if (link.requiresFlex && styles.display !== 'flex') {
+        nodeResult.broken = true;
+        nodeResult.error = `Flex container has display: ${styles.display} (expected: flex)`;
+        if (!firstBrokenNode) firstBrokenNode = link.name;
+      }
+
+      // Check min-height
+      if (link.requiresFlex && styles.minHeight !== '0px') {
+        nodeResult.warning = `Flex container has min-height: ${styles.minHeight} (expected: 0)`;
+      }
+
+      // Check scroll behavior
+      if (link.mustScroll && styles.overflowY !== 'auto' && styles.overflowY !== 'scroll') {
+        nodeResult.warning = `Tab should scroll but has overflow-y: ${styles.overflowY}`;
+      }
+
+      if (link.mustNotScroll && (styles.overflowY === 'auto' || styles.overflowY === 'scroll')) {
+        nodeResult.broken = true;
+        nodeResult.error = `Container must NOT scroll but has overflow-y: ${styles.overflowY}`;
+        if (!firstBrokenNode) firstBrokenNode = link.name;
+      }
+
+      results.push(nodeResult);
+    }
+
+    return {
+      chain: results,
+      firstBrokenNode: firstBrokenNode,
+      isValid: !firstBrokenNode
+    };
+  }
+
+  /**
    * Detect resize affordances and frame structure
    */
   detectResizeAffordances(app) {
@@ -254,6 +343,7 @@ class CharacterSheetDiagnostics {
       label: label,
       runtimeOptions: this.captureRuntimeOptions(app),
       domLayout: this.captureDOMLayout(app),
+      heightChain: this.validateHeightChain(app),
       scrollRegions: this.detectScrollRegion(app),
       resizeAffordances: this.detectResizeAffordances(app)
     };
@@ -293,6 +383,17 @@ class CharacterSheetDiagnostics {
 
     console.log('[SWSE SheetDiag] CURRENT POSITION');
     console.table(snapshot.runtimeOptions.currentPosition);
+
+    console.log('[SWSE SheetDiag] HEIGHT CHAIN VALIDATION');
+    if (snapshot.heightChain) {
+      if (snapshot.heightChain.isValid) {
+        console.log('✅ HEIGHT CHAIN VALID');
+      } else {
+        console.error('❌ HEIGHT CHAIN BROKEN');
+        console.error(`First broken node: ${snapshot.heightChain.firstBrokenNode}`);
+      }
+      console.table(snapshot.heightChain.chain);
+    }
 
     console.log('[SWSE SheetDiag] DOM LAYOUT CHAIN');
     for (const [name, layout] of Object.entries(snapshot.domLayout)) {
@@ -340,6 +441,17 @@ class CharacterSheetDiagnostics {
     console.log('[SWSE SheetDiag] RESIZE AFFORDANCES');
     console.table(snapshot.resizeAffordances);
 
+    // Final summary
+    console.log('[SWSE SheetDiag] ═══ SUMMARY ═══');
+    const summary = {
+      heightChainStatus: snapshot.heightChain?.isValid ? '✅ PASS' : '❌ BROKEN',
+      scrollOwnerStatus: snapshot.scrollRegions?.length === 1 ? '✅ SINGLE OWNER' : `⚠️ ${snapshot.scrollRegions?.length || 0} SCROLL OWNERS`,
+      expectedOwner: '.tab.active'
+    };
+    if (snapshot.scrollRegions?.length > 0) {
+      summary.actualOwners = snapshot.scrollRegions.map(r => r.classes).join(', ');
+    }
+    console.table(summary);
     console.log('[SWSE SheetDiag] ═══ END INSPECTION ═══');
   }
 

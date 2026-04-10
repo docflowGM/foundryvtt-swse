@@ -39,25 +39,26 @@ export class SWSEV2VehicleSheet extends
     }
   };
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "sheet", "actor", "vehicle", "swse-sheet", "swse-vehicle-sheet", "v2"],
-      width: 820,
-      height: 920,
-      resizable: true,
-      form: {
-        closeOnSubmit: false,
-        submitOnChange: false
-      },
-      tabs: [
-        {
-          navSelector: ".sheet-tabs",
-          contentSelector: ".sheet-content",
-          initial: "overview"
-        }
-      ]
-    });
-  }
+  static DEFAULT_OPTIONS = {
+    ...super.DEFAULT_OPTIONS,
+    classes: ["swse", "sheet", "actor", "vehicle", "swse-sheet", "swse-vehicle-sheet", "v2"],
+    width: 820,
+    height: 920,
+    window: {
+      resizable: true
+    },
+    form: {
+      closeOnSubmit: false,
+      submitOnChange: false
+    },
+    tabs: [
+      {
+        navSelector: ".sheet-tabs",
+        contentSelector: ".sheet-content",
+        initial: "overview"
+      }
+    ]
+  };
 
   /**
    * Convenience getter for accessing the actor document

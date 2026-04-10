@@ -320,7 +320,7 @@ export class CharacterSheetContractEnforcer {
    * CRITICAL CHAIN (from Phase 2 governance):
    * .window-content
    *   → .swse-character-sheet-wrapper (transparent, display: contents)
-   *   → form.swse-character-sheet-form (primary flex column)
+   *   → .swse-character-sheet-form (primary flex column)
    *   → .sheet-shell (secondary flex column)
    *   → .sheet-body (tab container, non-scrolling)
    *   → .tab.active (sole vertical scroll owner)
@@ -335,7 +335,7 @@ export class CharacterSheetContractEnforcer {
     const chain = [
       { selector: '.window-content', required: true, transparent: false },
       { selector: '.swse-character-sheet-wrapper', required: true, transparent: true },
-      { selector: 'form.swse-character-sheet-form', required: true, transparent: false },
+      { selector: '.swse-character-sheet-form', required: true, transparent: false },
       { selector: '.sheet-shell', required: true, transparent: false },
       { selector: '.sheet-body', required: true, transparent: false },
       { selector: '.tab.active', required: true, transparent: false }
@@ -528,7 +528,7 @@ export class CharacterSheetContractEnforcer {
    * Returns geometry data for:
    * - .window-content
    * - .swse-character-sheet-wrapper
-   * - form.swse-character-sheet-form
+   * - .swse-character-sheet-form
    * - .sheet-shell
    * - .sheet-body
    * - .tab.active
@@ -551,7 +551,7 @@ export class CharacterSheetContractEnforcer {
     const chain = [
       { name: 'windowContent', selector: '.window-content' },
       { name: 'wrapper', selector: '.swse-character-sheet-wrapper' },
-      { name: 'form', selector: 'form.swse-character-sheet-form' },
+      { name: 'form', selector: '.swse-character-sheet-form' },
       { name: 'sheetShell', selector: '.sheet-shell' },
       { name: 'sheetBody', selector: '.sheet-body' },
       { name: 'activeTab', selector: '.tab.active' }
@@ -595,8 +595,8 @@ export class CharacterSheetContractEnforcer {
     const geometry = this.captureGeometry(element);
     const violations = [];
 
-    // P0 CHECK: Form height constraint validation
-    const form = element.querySelector('form.swse-character-sheet-form');
+    // P0 CHECK: Form height constraint validation (now a div, not a form)
+    const form = element.querySelector('.swse-character-sheet-form');
     const windowContent = element.querySelector('.window-content');
 
     if (form && windowContent) {
@@ -611,7 +611,7 @@ export class CharacterSheetContractEnforcer {
           rule: 'HEIGHT_CHAIN_BROKEN',
           severity: 'CRITICAL',
           message: `FORM HEIGHT RUNAWAY: Parent ${parentHeight}px, Form ${formHeight}px. Check flex-basis and height properties.`,
-          selector: 'form.swse-character-sheet-form',
+          selector: '.swse-character-sheet-form',
           geometry: { parentHeight, formHeight, ratio: (formHeight / parentHeight).toFixed(1) }
         });
       }
@@ -622,7 +622,7 @@ export class CharacterSheetContractEnforcer {
           rule: 'SCROLL',
           severity: 'CRITICAL',
           message: 'Form must NOT be a scroll owner',
-          selector: 'form.swse-character-sheet-form'
+          selector: '.swse-character-sheet-form'
         });
       }
     }
@@ -678,7 +678,7 @@ export class CharacterSheetContractEnforcer {
    */
   static getP0Status(element) {
     const result = this.validateGeometry(element);
-    const form = element.querySelector('form.swse-character-sheet-form');
+    const form = element.querySelector('.swse-character-sheet-form');
     const windowContent = element.querySelector('.window-content');
     const activeTab = element.querySelector('.tab.active');
 
@@ -1016,9 +1016,10 @@ export class CharacterSheetContractEnforcer {
 
     // Define the expected chain
     const chainSelectors = [
-      { selector: '.application.swse-character-sheet', label: '.application.swse-character-sheet (app root)' },
+      { selector: 'form.application.sheet', label: 'form.application.sheet (app root)' },
       { selector: '.window-content', label: '.window-content' },
-      { selector: 'form.swse-character-sheet-form', label: 'form.swse-character-sheet-form' },
+      { selector: '.swse-character-sheet-wrapper', label: '.swse-character-sheet-wrapper' },
+      { selector: '.swse-character-sheet-form', label: '.swse-character-sheet-form' },
       { selector: '.sheet-shell', label: '.sheet-shell (or .swse-sheet)' },
       { selector: '.sheet-body', label: '.sheet-body' },
       { selector: '.tab.active', label: '.tab.active' }

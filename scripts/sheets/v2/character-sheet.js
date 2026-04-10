@@ -28,7 +28,7 @@ import { bindV2SheetBreakdowns, closeBreakdown } from "/systems/foundryvtt-swse/
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
-import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
+import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { PANEL_REGISTRY } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PANEL_REGISTRY.js";
@@ -244,29 +244,28 @@ function verifyListenerCleanup(element, sheetName, signal) {
 export class SWSEV2CharacterSheet extends
   HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "sheet", "actor", "character", "swse-character-sheet", "swse-sheet", "v2"],
-      width: 900,
-      height: 950,
-      window: {
-        resizable: true,
-        draggable: true,
-        frame: true
-      },
-      form: {
-        closeOnSubmit: false,
-        submitOnChange: false
-      },
-      tabs: [
-        {
-          navSelector: ".sheet-tabs",
-          contentSelector: ".sheet-content",
-          initial: "overview"
-        }
-      ]
-    });
-  }
+  static DEFAULT_OPTIONS = {
+    ...super.DEFAULT_OPTIONS,
+    classes: ["swse", "sheet", "actor", "character", "swse-character-sheet", "swse-sheet", "v2"],
+    width: 900,
+    height: 950,
+    window: {
+      resizable: true,
+      draggable: true,
+      frame: true
+    },
+    form: {
+      closeOnSubmit: false,
+      submitOnChange: false
+    },
+    tabs: [
+      {
+        navSelector: ".sheet-tabs",
+        contentSelector: ".sheet-content",
+        initial: "overview"
+      }
+    ]
+  };
 
   static PARTS = {
     ...super.PARTS,
@@ -371,7 +370,9 @@ export class SWSEV2CharacterSheet extends
 
     if (shouldCenter) {
       // Center once per open session, then let AppV2 own future drag/resize state
-      const pos = computeCenteredPosition(900, 950);
+      // Use dynamic dimensions from DEFAULT_OPTIONS instead of hardcoded 900x950
+      const { width: targetWidth, height: targetHeight } = getApplicationTargetSize(this);
+      const pos = computeCenteredPosition(targetWidth, targetHeight);
       // console.log("[SheetPosition] FIRST RENDER THIS SESSION: Setting centered position", pos);
       // FIX: Only set position (left, top). Do NOT force width/height to prevent user resizing
       // The persistent-position system will restore user's saved dimensions, or use defaults
@@ -1432,12 +1433,12 @@ const forcePoints = [];
       form = html;
       // console.log('[LIFECYCLE] ✓ html IS the form (by tag + class)');
     } else {
-      // Otherwise find it via stable selector
-      form = html.querySelector('form.swse-character-sheet-form');
+      // Otherwise find it via stable selector (now a div, not a form)
+      form = html.querySelector('.swse-character-sheet-form');
       if (!form) {
         // console.log('[LIFECYCLE] Form not found in html, trying appRoot');
         const appRoot = this.element instanceof HTMLElement ? this.element : this.element?.[0];
-        form = appRoot?.querySelector('form.swse-character-sheet-form') ?? null;
+        form = appRoot?.querySelector('.swse-character-sheet-form') ?? null;
       }
     }
 
@@ -1674,14 +1675,14 @@ const forcePoints = [];
         eventTarget: ev.target.tagName
       });
 
-      // Find the form via stable selector (template-guaranteed)
+      // Find the form via stable selector (template-guaranteed, now a div)
       console.log('[PERSISTENCE] Resolving form for submission');
-      let form = input.closest("form.swse-character-sheet-form");
+      let form = input.closest(".swse-character-sheet-form");
 
-      // If not found by closest, query from app root
+      // If not found by closest, query from app root (now a div, not a form)
       if (!form && this.element) {
         const appRoot = this.element instanceof HTMLElement ? this.element : this.element?.[0];
-        form = appRoot?.querySelector("form.swse-character-sheet-form") ?? null;
+        form = appRoot?.querySelector(".swse-character-sheet-form") ?? null;
       }
 
       console.log('[PERSISTENCE] Form resolution result:', { found: !!form, formTag: form?.tagName, formClass: form?.className });
@@ -1717,7 +1718,7 @@ const forcePoints = [];
       const input = ev.target.closest(".ability-expanded input");
       if (!input) return;
 
-      const form = input.closest("form.swse-character-sheet-form");
+      const form = input.closest(".swse-character-sheet-form");
       if (form) {
         console.log('[PERSISTENCE] Ability input blur detected, submitting form');
         this._debouncedSubmit({ target: form, preventDefault: () => {} });

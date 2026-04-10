@@ -1,0 +1,446 @@
+================================================================================
+PHASE 5A — EXACT NEXT STEPS (NO INTERPRETATION NEEDED)
+================================================================================
+
+SITUATION:
+  Phase 4 CSS repairs were applied but produced ZERO visible change at runtime.
+
+MISSION:
+  Determine why: Is the CSS loading? Is it matching? Is it being overridden?
+
+TIMELINE:
+  20-30 minutes total to root cause.
+
+================================================================================
+STEP 1: ADD PROBE RULES TO CSS FILE (1 minute)
+================================================================================
+
+FILE TO EDIT:
+  /sessions/inspiring-bold-cannon/mnt/foundryvtt-swse/styles/sheets/v2-sheet.css
+
+LOCATION TO INSERT:
+  After line 156 (after the active tab overflow rule)
+  Before line 158 (before the "INNER CONTAINER SAFETY" comment)
+
+EXACT TEXT TO ADD:
+  Copy-paste these 23 lines EXACTLY as shown:
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+     PHASE 5A ZERO-EFFECT AUDIT PROBES (TEMPORARY)
+     These rules test whether the CSS governance chain is active at all.
+     DELETE after audit completion.
+     ═══════════════════════════════════════════════════════════════════════════ */
+
+  /* PROBE 1: Form visual marker - magenta outline at most specific selector */
+  .application.swse-character-sheet > .window-content > form.swse-character-sheet-form {
+    outline: 4px solid magenta !important;
+    outline-offset: -2px;
+  }
+
+  /* PROBE 2: Sheet-body visual marker - cyan inset shadow */
+  form.swse-sheet-ui .sheet-body {
+    box-shadow: inset 0 0 0 3px cyan !important;
+  }
+
+  /* PROBE 3: Tab active marker - lime outline on active tab */
+  form.swse-sheet-ui .sheet-body > .tab.active {
+    outline: 3px dashed lime !important;
+    outline-offset: -1px;
+  }
+
+  /* PROBE 4: Behavioral test - force visible height change on tab */
+  form.swse-sheet-ui .sheet-body > .tab.active {
+    min-height: 300px !important;
+    background: rgba(0, 255, 0, 0.02) !important;
+  }
+
+VERIFY:
+  Save the file
+  No syntax errors should appear
+
+================================================================================
+STEP 2: RELOAD FOUNDRY (30 seconds)
+================================================================================
+
+ACTION:
+  1. Go to Foundry in browser
+  2. Press Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac) — HARD REFRESH
+  3. Wait for page to load
+  4. Open a character sheet (any player character)
+
+CRITICAL: HARD REFRESH, not normal refresh!
+This clears browser cache and ensures new CSS loads.
+
+================================================================================
+STEP 3: LOOK WITH YOUR EYES (5 seconds)
+================================================================================
+
+WITHOUT opening DevTools, just look at the character sheet.
+
+DO YOU SEE A MAGENTA OUTLINE around the entire form?
+DO YOU SEE A CYAN BORDER on the content area?
+DO YOU SEE A LIME DASHED OUTLINE on the active tab?
+IS THE ACTIVE TAB TALLER than before?
+
+SCREENSHOT THIS:
+  Take a screenshot of the open sheet showing the probes.
+  Save to: /sessions/inspiring-bold-cannon/mnt/foundryvtt-swse/docs/phase-5a-probe-screenshot.png
+
+NEXT DECISION:
+  → IF YES (all probes visible): Go to STEP 5 (OVERRIDDEN path)
+  → IF NO (probes invisible): Go to STEP 4 (MISMATCH path)
+
+================================================================================
+STEP 4A: IF PROBES ARE INVISIBLE — Verify Actual DOM (10 minutes)
+================================================================================
+
+OPEN DEVTOOLS:
+  Press F12 in browser
+
+GO TO CONSOLE TAB:
+  Click "Console" at top of DevTools
+
+PASTE THIS COMMAND:
+  // Verify the exact DOM chain from template
+  const app = document.querySelector('.application.swse-character-sheet');
+  const windowContent = app?.querySelector('.window-content');
+  const wrapper = windowContent?.querySelector('.swse-character-sheet-wrapper');
+  const form = wrapper?.querySelector('form.swse-character-sheet-form');
+  const shell = form?.querySelector('section.sheet-shell');
+  const sheetBody = form?.querySelector('.sheet-body');
+  const activeTab = form?.querySelector('.tab.active');
+
+  console.log('=== DOM CHAIN VERIFICATION ===');
+  console.log('✓ .application.swse-character-sheet:', !!app);
+  console.log('✓ .window-content:', !!windowContent);
+  console.log('✓ .swse-character-sheet-wrapper:', !!wrapper);
+  console.log('✓ form.swse-character-sheet-form:', !!form);
+  console.log('✓ section.sheet-shell:', !!shell);
+  console.log('✓ .sheet-body:', !!sheetBody);
+  console.log('✓ .tab.active:', !!activeTab);
+  console.log('');
+  console.log('Chain complete:', !!activeTab ? 'YES ✅' : 'NO ❌');
+
+PRESS ENTER and look at output
+
+SCREENSHOT:
+  Take screenshot of console output
+  Save to: /sessions/inspiring-bold-cannon/mnt/foundryvtt-swse/docs/phase-5a-dom-check.png
+
+READ THE OUTPUT:
+  If it says "YES ✅" and all are true:
+    → Selector SHOULD match but isn't (STALE_ASSET or OVERRIDDEN)
+    → Go to STEP 4B (cache clear)
+
+  If any shows false:
+    → DOM structure doesn't match selectors (SELECTOR_MISMATCH)
+    → Go to SECTION 4C (document actual structure)
+
+================================================================================
+STEP 4B: IF DOM CHAIN EXISTS BUT PROBES INVISIBLE — Clear Cache (5 minutes)
+================================================================================
+
+THIS MEANS: The DOM is correct, but CSS might be stale.
+
+CLEAR CACHE METHOD 1 (Recommended):
+  1. Press F12 to open DevTools (if not already open)
+  2. Right-click the reload button at top of browser
+  3. Select "Empty cache and hard reload"
+  4. Wait for page to fully reload
+  5. Go back to STEP 2 (check probes again)
+
+CLEAR CACHE METHOD 2 (Alternative):
+  1. In DevTools, go to "Application" tab
+  2. On left, click "Clear storage"
+  3. Check "Cookies" and "Cache Storage"
+  4. Click "Clear site data"
+  5. Hard refresh the page (Ctrl+Shift+R)
+  6. Go back to STEP 2
+
+AFTER CACHE CLEAR:
+  Do the probes appear now?
+  → IF YES: It was STALE_ASSET. Problem solved.
+  → IF NO: Go to STEP 4C
+
+================================================================================
+STEP 4C: IF PROBES STILL INVISIBLE — Document Actual Structure (10 minutes)
+================================================================================
+
+THIS MEANS: Selector mismatch or wrong sheet type.
+
+PASTE THIS COMMAND IN CONSOLE:
+  // Capture exact classes on each element
+  const app = document.querySelector('.application.swse-character-sheet');
+  const form = document.querySelector('form.swse-character-sheet-form');
+  const body = document.querySelector('.sheet-body');
+  const tab = document.querySelector('.tab.active');
+
+  console.log('=== ACTUAL ELEMENT CLASSES ===');
+  console.log('App class list:', app?.className || 'NOT FOUND');
+  console.log('Form class list:', form?.className || 'NOT FOUND');
+  console.log('Body class list:', body?.className || 'NOT FOUND');
+  console.log('Tab class list:', tab?.className || 'NOT FOUND');
+
+  // Also check sheet identity
+  const windowId = app?.getAttribute('data-appid') || app?.id;
+  const appInst = ui.windows[windowId];
+  console.log('\n=== SHEET IDENTITY ===');
+  console.log('Sheet class:', appInst?.constructor?.name);
+  console.log('Actor type:', appInst?.actor?.type);
+
+SCREENSHOT:
+  Take screenshot of this output
+  Save to: /sessions/inspiring-bold-cannon/mnt/foundryvtt-swse/docs/phase-5a-actual-structure.png
+
+DOCUMENT THE ACTUAL CLASSES:
+  Copy the output into: /sessions/inspiring-bold-cannon/mnt/foundryvtt-swse/docs/character-sheet-css-zero-effect-audit.md
+  In SECTION 2: Live DOM Chain Verification
+  In SECTION 5: Sheet Runtime Identity
+
+DIAGNOSIS:
+  If any class list is different from expected:
+    → Cause: SELECTOR_MISMATCH
+    → Selectors in v2-sheet.css don't match actual runtime DOM
+    → Phase 6 will update selectors to match actual structure
+
+  If actor type is not 'character':
+    → Cause: WRONG_SHEET_PATH
+    → Wrong sheet type is active (npc or droid)
+    → Test with a player character instead
+
+  If sheet class is not 'SWSEV2CharacterSheet':
+    → Cause: WRONG_SHEET_PATH
+    → An older sheet system or V3 is active
+    → Verify system is fully updated
+
+================================================================================
+STEP 5: IF PROBES ARE VISIBLE — Verify Phase 4 Repairs (10 minutes)
+================================================================================
+
+THIS MEANS: CSS file is loading and selectors are matching.
+But Phase 4 repairs are not working (or they're being overridden).
+
+PASTE THIS COMMAND IN CONSOLE:
+  const form = document.querySelector('form.swse-character-sheet-form');
+  const body = document.querySelector('.sheet-body');
+  const tab = document.querySelector('.tab.active');
+
+  const fs = getComputedStyle(form);
+  const bs = getComputedStyle(body);
+  const ts = getComputedStyle(tab);
+
+  console.log('=== PHASE 4 REPAIR STATUS ===');
+  console.log('\nFORM:');
+  console.log('  display:', fs.display, fs.display === 'flex' ? '✅' : '❌');
+  console.log('  flex:', fs.flex, fs.flexBasis === '0%' ? '✅' : '❌');
+  console.log('  height:', fs.height, fs.height === '100%' ? '✅' : '❌');
+  console.log('  overflow:', fs.overflow, fs.overflow === 'hidden' ? '✅' : '❌');
+
+  console.log('\nBODY:');
+  console.log('  display:', bs.display, bs.display === 'flex' ? '✅' : '❌');
+  console.log('  flex:', bs.flex, bs.flexBasis === '0%' ? '✅' : '❌');
+  console.log('  overflow:', bs.overflow, bs.overflow === 'hidden' ? '✅' : '❌');
+
+  console.log('\nTAB:');
+  console.log('  flex:', ts.flex, ts.flexBasis === '0%' ? '✅' : '❌');
+  console.log('  overflow-y:', ts.overflowY, ts.overflowY === 'auto' ? '✅' : '❌');
+  console.log('  overflow-x:', ts.overflowX, ts.overflowX === 'hidden' ? '✅' : '❌');
+
+SCREENSHOT:
+  Take screenshot
+  Save to: /sessions/inspiring-bold-cannon/mnt/foundryvtt-swse/docs/phase-5a-repairs-status.png
+
+READ THE RESULT:
+  All checkmarks?
+    → Phase 4 repairs are working!
+    → Problem might be something else entirely
+    → Run: docs/character-sheet-css-governance-phase-5-overview.md
+
+  Some ❌ marks?
+    → Phase 4 rules are not being applied at runtime
+    → Likely cause: OVERRIDDEN_AT_RUNTIME
+    → Go to STEP 5B
+
+================================================================================
+STEP 5B: IF REPAIRS SHOW SOME ❌ — Find Winning Rules (10 minutes)
+================================================================================
+
+THIS MEANS: CSS rules are matched and loading, but something else is winning.
+
+USE THE DEVTOOLS INSPECTOR:
+  1. Right-click on the form element
+  2. Select "Inspect" (or press Ctrl+Shift+C to activate inspector)
+  3. Click on the form.swse-character-sheet-form element in the DOM tree
+  4. On the right panel, look at "Styles" tab (not "Computed")
+
+FIND THE PROPERTY THAT'S NOT WORKING:
+  Example: If "overflow: hidden" showed ❌:
+    - In the Styles panel, find where "overflow" is defined
+    - Look for rules that override it
+    - The one that's crossed out (struck through) = losing rule
+    - The one that's NOT crossed out = winning rule
+
+DOCUMENT:
+  Take screenshot of the Styles panel
+  For each ❌ property, note:
+    - Which selector is WINNING (not crossed out)
+    - Which file it comes from (shown in gray)
+    - Why is it higher priority (more specific? later loaded?)
+
+EXAMPLE:
+  If you see:
+    form.swse-character-sheet-form { overflow: hidden; }  ← struck through
+    .swse-sheet { overflow: auto; }                       ← NOT struck through
+
+  Then ".swse-sheet" is winning and should be changed to overflow: hidden
+
+SAVE FINDINGS TO AUDIT REPORT:
+  /sessions/inspiring-bold-cannon/mnt/foundryvtt-swse/docs/character-sheet-css-zero-effect-audit.md
+  Section 4: Winning Rule Capture
+
+================================================================================
+STEP 6: FILL IN THE AUDIT REPORT (10 minutes)
+================================================================================
+
+OPEN THIS FILE:
+  /sessions/inspiring-bold-cannon/mnt/foundryvtt-swse/docs/character-sheet-css-zero-effect-audit.md
+
+FILL IN THESE SECTIONS:
+  ✅ SECTION 1: Probe Results
+     - Did the colored outlines appear?
+
+  ✅ SECTION 2: Live DOM Chain Verification
+     - Did all elements exist?
+     - Were classes correct?
+
+  ✅ SECTION 3: Loaded Stylesheet Verification
+     - Was v2-sheet.css loaded?
+     - Did it contain Phase 4 changes?
+
+  ✅ SECTION 4: Winning Rule Capture
+     - What styles are actually being applied?
+     - What rules are winning/losing?
+
+  ✅ SECTION 5: Sheet Runtime Identity
+     - Is it SWSEV2CharacterSheet?
+     - Is it a character actor?
+
+  ✅ SECTION 6: Cache Verification
+     - Did hard reload help?
+
+  ✅ SECTION 7: Final Diagnosis
+     - Check ONE diagnosis box
+     - Explain the evidence
+
+  ✅ SECTION 8: Next Action
+     - If failed, what's the exact fix needed?
+
+SAVE THE COMPLETED REPORT
+
+================================================================================
+STEP 7: REMOVE PROBE RULES (1 minute)
+================================================================================
+
+NOW THAT AUDIT IS DONE:
+  Delete the 4 probe rules you added in STEP 1
+
+  From: /sessions/inspiring-bold-cannon/mnt/foundryvtt-swse/styles/sheets/v2-sheet.css
+  Delete lines 157-185 (the probe rules block)
+
+VERIFY:
+  File should be back to its original state
+  Do NOT leave probes in production code
+
+GIT COMMAND:
+  git checkout -- styles/sheets/v2-sheet.css
+  (This reverts the file to last commit, removing probes)
+
+================================================================================
+DELIVERABLES (What you're producing)
+================================================================================
+
+After completing all steps, you will have:
+
+  1. ✅ /docs/character-sheet-css-zero-effect-audit.md (COMPLETED)
+     The full audit report with all findings
+
+  2. ✅ Screenshot: phase-5a-probe-screenshot.png
+     Visual evidence of probes (visible or not)
+
+  3. ✅ Screenshot: phase-5a-dom-check.png (if needed)
+     DOM structure verification
+
+  4. ✅ Screenshot: phase-5a-repairs-status.png
+     Phase 4 repair verification
+
+  5. ✅ Screenshot: phase-5a-actual-structure.png (if mismatch)
+     Actual vs expected DOM classes
+
+  6. ✅ Screenshot: phase-5a-winning-rules.png (if overridden)
+     DevTools Styles panel showing conflicts
+
+  7. ✅ Root cause diagnosis: ONE of these
+     - NOT_LOADED
+     - SELECTOR_MISMATCH
+     - OVERRIDDEN_AT_RUNTIME
+     - WRONG_SHEET_PATH
+     - STALE_ASSET
+     - MIXED_CAUSE
+
+  8. ✅ Next action defined (for Phase 6)
+     The exact selector/file/change needed
+
+================================================================================
+EXPECTED OUTCOMES
+================================================================================
+
+PASS (Unlikely but possible):
+  All probes visible + all repairs showing ✅
+  → Phase 4 is working! Problem is elsewhere.
+  → Move to full Phase 5 runtime verification
+
+FAIL — SELECTOR_MISMATCH:
+  Probes invisible + DOM check shows different classes
+  → Phase 6: Update selectors to match actual DOM
+  → Low risk fix, very surgical
+
+FAIL — OVERRIDDEN_AT_RUNTIME:
+  Probes visible + some repairs showing ❌ + Styles panel shows conflicts
+  → Phase 6: Remove or change the overriding rule
+  → Identify which file/selector is winning, fix it
+
+FAIL — WRONG_SHEET_PATH:
+  Sheet class ≠ SWSEV2CharacterSheet OR actor.type ≠ character
+  → Verify you're testing the right sheet type
+  → Test with player character, not NPC/Droid
+
+FAIL — STALE_ASSET:
+  Probes invisible → hard reload → probes visible
+  → Cache clear fixed it. Done.
+  → Consider cache-busting headers in Foundry config
+
+================================================================================
+TIME ESTIMATE
+================================================================================
+
+Step 1 (Add probes):        1 min
+Step 2 (Reload):            1 min
+Step 3 (Visual check):       1 min
+  Branch A (visible):       10 min
+  Branch B (invisible):     15 min
+Step 6 (Fill report):       10 min
+Step 7 (Remove probes):      1 min
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOTAL:                  20-30 min
+
+================================================================================
+YOU'RE READY
+================================================================================
+
+Go to STEP 1.
+
+Probes first.
+Evidence only.
+No guessing.
+
+Good luck. 🎯

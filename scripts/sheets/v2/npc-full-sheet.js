@@ -5,11 +5,10 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 
 export class SWSEV2FullNpcSheet extends SWSEV2CharacterSheet {
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "swse-app", "swse-sheet", "swse-npc-sheet", "swse-npc-full-sheet", "v2"]
-    });
-  }
+  static DEFAULT_OPTIONS = {
+    ...super.DEFAULT_OPTIONS,
+    classes: ["swse", "swse-app", "swse-sheet", "swse-npc-sheet", "swse-npc-full-sheet", "v2"]
+  };
 
   async _prepareContext(options) {
     // Check actor type for NPCs
