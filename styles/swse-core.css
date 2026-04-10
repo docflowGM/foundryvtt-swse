@@ -131,8 +131,8 @@
   flex: 1;
   background: var(--swse-bg-panel);
   padding: 0.75rem;
-  overflow-y: auto;
-  overflow-x: hidden;
+  /* CONTRACT FIX: sheet-body must NOT scroll - only .tab.active scrolls */
+  overflow: hidden;
 }
 
 /* =========================

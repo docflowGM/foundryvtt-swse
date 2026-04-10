@@ -12,6 +12,11 @@
    layouts don't collapse.
    ============================================================ */
 
+/* CRITICAL: window-content must have min-height: 0 for flex chain to work */
+.window-content {
+  min-height: 0 !important;
+}
+
 /* Root containers */
 .swse-sheet{
   display: flex;
@@ -24,7 +29,7 @@
 .application.swse.sheet.actor.character > .window-content > form.swse-character-sheet-form {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
   min-width: 0;
   overflow: hidden;
@@ -60,13 +65,16 @@
   flex: 0 0 auto;
 }
 
-/* Tab panels (scrollable) */
-.swse-sheet .tab {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  min-width: 0;
-  overflow-y: auto;
+/* CONSOLIDATED: Tab styling is defined below at form.swse-sheet-ui .sheet-body > .tab
+   This generic rule has been removed to enforce single scroll owner contract.
+   Only the active tab is scrollable. */
+
+/* CRITICAL: Override illegal scroll owners that appear in runtime */
+.swse-sheet .skills-grid-body,
+.swse-sheet .equipment-ledger,
+.swse-sheet .talents-ledger,
+.swse-sheet .force-powers-ledger {
+  overflow-y: hidden !important;
 }
 
 /* Only Overview tab should flex to fill space */
@@ -131,7 +139,7 @@
 form.swse-sheet-ui {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
 }
 
@@ -139,7 +147,7 @@ form.swse-sheet-ui > .sheet-shell,
 form.swse-sheet-ui > section.swse-sheet {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
 }
 
@@ -182,21 +190,27 @@ form.swse-sheet-ui .sheet-tabs {
 /* Body: flex grow to fill */
 form.swse-sheet-ui .sheet-body,
 form.swse-sheet-ui .sheet-content {
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* Active tab: flex grow, main scroll owner */
+/* Active tab: flex grow, SINGLE scroll owner */
 form.swse-sheet-ui .sheet-body > .tab {
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 2px;
+}
+
+/* CRITICAL: Only the active tab is scrollable; all others are hidden */
+form.swse-sheet-ui .sheet-body > .tab:not(.active) {
+  display: none;
 }
 
 /* Inactive tabs: hidden */
@@ -959,7 +973,7 @@ form.swse-sheet-ui .sheet-body > .tab:not(.active) {
 .application.swse.sheet.actor.character > .window-content > form.swse-character-sheet-form {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
   min-width: 0;
 }
@@ -994,18 +1008,8 @@ form.swse-sheet-ui .sheet-body > .tab:not(.active) {
   min-height: 0;
 }
 
-.swse-sheet .tab {
-  display: none;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 10px 12px;
-}
-
-.swse-sheet .tab.active {
-  display: flex;
-}
+/* CONSOLIDATED: Tab styling moved to form.swse-sheet-ui .sheet-body > .tab */
+/* Removed duplicate/conflicting rules to establish single scroll owner */
 
 .swse-sheet .tab-placeholder {
   padding: 16px;
@@ -4416,13 +4420,8 @@ select option:checked {
 }
 
 /* Ensure tab sections use consistent flex behavior */
-.swse-sheet .tab {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  overflow-y: auto;
-  flex: 1;
-}
+/* CONSOLIDATED: All tab styling is defined in form.swse-sheet-ui .sheet-body > .tab
+   This third instance has been removed to prevent cascade conflicts */
 
 /* --- RESPONSIVE: Adjust grid columns for smaller screens --- */
 @media (max-width: 1024px) {
@@ -6042,7 +6041,7 @@ select option:checked {
   grid-template-columns: 1fr;
   gap: 12px;
   align-content: start;
-  overflow: auto;
+  /* REMOVED: overflow: auto; — scroll is now handled by parent .tab */
   padding-right: 4px;
 }
 
@@ -6715,4 +6714,203 @@ form.swse-character-sheet-form.swse-sheet-ui .section-bar__actions {
 /* Remove inline SVG frame styling */
 .swse-character-sheet .modal-dialog svg {
   display: none !important;
+}
+
+
+/* SKILL CHECKBOX STABILITY PATCH */
+.swse-character-sheet .skills-panel input[type="checkbox"],
+.swse-character-sheet .skill-row input[type="checkbox"],
+.swse-character-sheet .skills-grid input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  margin: 0;
+  border: 1px solid #1aa3a3;
+  border-radius: 4px;
+  background: rgba(6, 18, 32, 0.95);
+  box-shadow: none;
+  outline: none;
+  position: relative;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.swse-character-sheet .skills-panel input[type="checkbox"]::before,
+.swse-character-sheet .skill-row input[type="checkbox"]::before,
+.swse-character-sheet .skills-grid input[type="checkbox"]::before,
+.swse-character-sheet .skills-panel input[type="checkbox"]::after,
+.swse-character-sheet .skill-row input[type="checkbox"]::after,
+.swse-character-sheet .skills-grid input[type="checkbox"]::after {
+  box-sizing: border-box;
+}
+
+.swse-character-sheet .skills-panel input[type="checkbox"]:checked::after,
+.swse-character-sheet .skill-row input[type="checkbox"]:checked::after,
+.swse-character-sheet .skills-grid input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid #ffb84d;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.swse-character-sheet .skills-panel input[type="checkbox"]:focus,
+.swse-character-sheet .skill-row input[type="checkbox"]:focus,
+.swse-character-sheet .skills-grid input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #ffd166;
+}
+
+.swse-character-sheet .skills-panel input[type="checkbox"]:hover,
+.swse-character-sheet .skill-row input[type="checkbox"]:hover,
+.swse-character-sheet .skills-grid input[type="checkbox"]:hover {
+  border-color: #ffd166;
+}
+
+
+/* FLAT SKILL CHECKBOX STABILIZATION */
+.swse-character-sheet .skill-checkbox,
+.swse-character-sheet .skills-panel input[type="checkbox"],
+.swse-character-sheet .skills-grid-row input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  margin: 0;
+  border: 1px solid #4e6a78;
+  border-radius: 2px;
+  background: #0f1c24;
+  box-shadow: none;
+  filter: none;
+  outline: none;
+  position: relative;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.swse-character-sheet .skill-checkbox:hover,
+.swse-character-sheet .skills-panel input[type="checkbox"]:hover,
+.swse-character-sheet .skills-grid-row input[type="checkbox"]:hover {
+  border-color: #7e9aa8;
+  background: #13242d;
+}
+
+.swse-character-sheet .skill-checkbox:focus,
+.swse-character-sheet .skills-panel input[type="checkbox"]:focus,
+.swse-character-sheet .skills-grid-row input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #9bb3bf;
+}
+
+.swse-character-sheet .skill-checkbox:checked,
+.swse-character-sheet .skills-panel input[type="checkbox"]:checked,
+.swse-character-sheet .skills-grid-row input[type="checkbox"]:checked {
+  background: #1a2a33;
+  border-color: #9bb3bf;
+}
+
+.swse-character-sheet .skill-checkbox:checked::after,
+.swse-character-sheet .skills-panel input[type="checkbox"]:checked::after,
+.swse-character-sheet .skills-grid-row input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid #d7e1e6;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.swse-character-sheet .skill-checkbox::before,
+.swse-character-sheet .skill-checkbox::after,
+.swse-character-sheet .skills-panel input[type="checkbox"]::before,
+.swse-character-sheet .skills-panel input[type="checkbox"]::after,
+.swse-character-sheet .skills-grid-row input[type="checkbox"]::before,
+.swse-character-sheet .skills-grid-row input[type="checkbox"]::after {
+  box-shadow: none;
+  filter: none;
+}
+
+
+/* FLAT BORING SKILL CHECKBOXES */
+.swse-character-sheet .col-trained,
+.swse-character-sheet .col-focus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swse-character-sheet .skill-checkbox,
+.swse-character-sheet .skills-panel input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  min-height: 14px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #6e8793;
+  border-radius: 2px;
+  background: #10202a;
+  box-shadow: none !important;
+  filter: none !important;
+  outline: none;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.swse-character-sheet .skill-checkbox:hover,
+.swse-character-sheet .skills-panel input[type="checkbox"]:hover {
+  background: #152832;
+  border-color: #93aab5;
+}
+
+.swse-character-sheet .skill-checkbox:focus,
+.swse-character-sheet .skills-panel input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: none !important;
+  border-color: #b8c8cf;
+}
+
+.swse-character-sheet .skill-checkbox:checked,
+.swse-character-sheet .skills-panel input[type="checkbox"]:checked {
+  background: #1a2d37;
+  border-color: #c7d3d8;
+}
+
+.swse-character-sheet .skill-checkbox:checked::after,
+.swse-character-sheet .skills-panel input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 0px;
+  width: 4px;
+  height: 8px;
+  border: solid #e6edf0;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.swse-character-sheet .skill-checkbox::before,
+.swse-character-sheet .skill-checkbox::after,
+.swse-character-sheet .skills-panel input[type="checkbox"]::before,
+.swse-character-sheet .skills-panel input[type="checkbox"]::after {
+  box-shadow: none !important;
+  filter: none !important;
 }

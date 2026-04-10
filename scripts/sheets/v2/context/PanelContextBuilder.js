@@ -318,13 +318,6 @@ export class PanelContextBuilder {
       grouped[category].push(entry);
     });
 
-    // Remove empty groups for template simplicity
-    for (const category of Object.keys(grouped)) {
-      if (grouped[category].length === 0) {
-        delete grouped[category];
-      }
-    }
-
     // Calculate total weight
     const totalWeight = entries.reduce((sum, item) => {
       const weight = Number(item.weight) || 0;

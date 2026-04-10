@@ -99,6 +99,10 @@ function getFieldType(fieldName) {
     return FORM_FIELD_SCHEMA[fieldName];
   }
 
+  if (/^system\.skills\.[^.]+\.(trained|focused|favorite)$/.test(fieldName)) {
+    return 'boolean';
+  }
+
   if (fieldName.includes('notes') || fieldName.includes('description') || fieldName.includes('text')) {
     return 'string';
   }
@@ -132,6 +136,16 @@ export async function handleFormSubmission(sheet, event) {
   let formData;
   try {
     formData = new FormData(form);
+
+    // CRITICAL FIX: Explicitly serialize all checkbox states.
+    // Native FormData uses "on" for checked boxes and omits unchecked boxes entirely.
+    // That is bad for dynamic boolean fields like skill trained/focused/favorite.
+    for (const checkbox of form.querySelectorAll('input[type="checkbox"][name]')) {
+      const fieldName = checkbox.name;
+      if (!fieldName) continue;
+      formData.set(fieldName, checkbox.checked ? 'true' : 'false');
+    }
+
     console.log('[PERSISTENCE] FormData created, entries:', Object.keys(Object.fromEntries(formData.entries())).length);
   } catch (err) {
     console.error('[PERSISTENCE] Failed to create FormData:', err);
@@ -291,6 +305,12 @@ export function filterSSotProtectedFields(expanded) {
     // BLOCK: system.hp.max (managed by ActorEngine.recomputeHP)
     if (key === 'system.hp.max') {
       console.log('[PERSISTENCE] Filtered protected field: system.hp.max');
+      continue;
+    }
+
+    // BLOCK: invalid actor name values on partial updates
+    if (key === 'name' && (value === undefined || value === null || typeof value !== 'string' || value.trim() === '')) {
+      console.log('[PERSISTENCE] Filtered invalid actor name update');
       continue;
     }
 

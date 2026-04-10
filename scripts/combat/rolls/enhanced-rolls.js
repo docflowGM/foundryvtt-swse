@@ -252,7 +252,7 @@ export class SWSERoll {
         concealment: options.concealment || 'none',
         customModifier: options.customModifier || 0,
         situationalBonus: 0,
-        useForcePoint: false
+        useForcePoint: options.useForcePoint || false
       };
 
       if (options.showDialog) {

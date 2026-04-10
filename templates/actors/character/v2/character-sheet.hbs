@@ -1,3 +1,4 @@
+<div class="swse-character-sheet-wrapper">
 <form class="swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui">
 <section class="sheet-shell swse-character-sheet swse-sheet v2 flexcol">
 
@@ -205,10 +206,7 @@
       {{#if actionEconomy}}
         <div class="combat-sidebar">
           <!-- Action Economy Tracker -->
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/action-economy-indicator.hbs"
-              actionState=actionEconomy.state
-              actionBreakdown=actionEconomy.breakdown
-              swiftMax=actionEconomy.state.swiftMax}}
+          <div class="action-economy-indicator-placeholder" style="display:none;"></div>
 
           <!-- New Round / Turn Reset Controls -->
           <div class="combat-turn-controls">
@@ -312,3 +310,4 @@
 </section>
 
 </form>
+</div>

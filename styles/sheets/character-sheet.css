@@ -159,37 +159,54 @@
    Consolidated from swse-system.css (lines 363-386)
    ============================================================================ */
 
+/* CRITICAL FIX: window-content must have min-height: 0 for flex chain to work */
+.window-content {
+  min-height: 0 !important;
+}
+
 .application.swse-character-sheet > .window-content,
 .application.swse.sheet.actor.character > .window-content {
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  min-height: 0 !important;
   overflow: hidden;
 }
 
-.application.swse-character-sheet > .window-content > form.swse-character-sheet-form,
-.application.swse.sheet.actor.character > .window-content > form.swse-character-sheet-form {
+/* STRUCTURAL FIX: Wrapper div is now the root element (not the form)
+   This allows ApplicationV2 frame to properly manage the window and resize handle.
+   The form is now a child of the wrapper, matching the pattern of working ApplicationV2 windows.
+
+   CRITICAL: Wrapper must be transparent - do NOT add flex/overflow here.
+   The form carries all the flex layout responsibility. */
+.application.swse-character-sheet > .window-content > div.swse-character-sheet-wrapper,
+.application.swse.sheet.actor.character > .window-content > div.swse-character-sheet-wrapper {
+  /* Wrapper is transparent - form handles layout */
+  display: contents;
+}
+
+.application.swse-character-sheet > .window-content > div.swse-character-sheet-wrapper > form.swse-character-sheet-form,
+.application.swse.sheet.actor.character > .window-content > div.swse-character-sheet-wrapper > form.swse-character-sheet-form {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .swse-character-sheet.swse-sheet {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .swse-character-sheet.swse-sheet .sheet-body {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
   min-width: 0;
   overflow: hidden;
@@ -277,7 +294,8 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  /* CONTRACT VIOLATION FIX: Skills grid body must NOT scroll */
+  overflow: visible !important;
   gap: 0;
 }
 

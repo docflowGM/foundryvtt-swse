@@ -23,6 +23,10 @@ export class ModificationModalShell extends BaseSWSEAppV2 {
     super(options);
     this.actor = actor;
     this.item = item;
+
+    // Selection state (subclasses override as needed)
+    this.selectedCategory = null;
+    this.selectedModification = null;
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
@@ -50,16 +54,10 @@ export class ModificationModalShell extends BaseSWSEAppV2 {
     // Prepare header content from subclass hook
     const headerContent = this.getHeaderContent();
 
-    // Prepare preview content from subclass hook
-    const previewContent = this.getPreviewContent();
-
-    // Prepare main content from subclass hook
+    // Prepare main content from subclass hook (now returns { list, detail })
     const mainContent = this.getMainContent();
 
-    // Prepare sidebar content if applicable
-    const sidebarContent = this.getSidebarContent();
-
-    // Prepare footer content (cost summary, etc.)
+    // Prepare footer content (now returns { totalCost, wallet, canConfirm })
     const footerContent = this.getFooterContent();
 
     return {
@@ -67,11 +65,12 @@ export class ModificationModalShell extends BaseSWSEAppV2 {
       actor: this.actor,
       item: this.item,
       itemName: this.item.name,
+      itemImg: this.item.img,
       headerContent,
-      previewContent,
       mainContent,
-      sidebarContent,
-      footerContent
+      footerContent,
+      selectedCategory: this.selectedCategory,
+      selectedModification: this.selectedModification
     };
   }
 
@@ -91,7 +90,7 @@ export class ModificationModalShell extends BaseSWSEAppV2 {
 
   /**
    * Return object defining header content
-   * @returns {{title: string, subtitle?: string, icon?: string}}
+   * @returns {{title: string, subtitle?: string}}
    */
   getHeaderContent() {
     return {
@@ -101,43 +100,30 @@ export class ModificationModalShell extends BaseSWSEAppV2 {
   }
 
   /**
-   * Return object defining preview visual
-   * @returns {{content: string, cssVars?: Object}}
-   */
-  getPreviewContent() {
-    return {
-      content: `<div class="modal-preview-placeholder">{{itemName}}</div>`,
-      cssVars: {}
-    };
-  }
-
-  /**
-   * Return object defining main content area
-   * Most of modal UI goes here
-   * @returns {{content: string, regions?: Array}}
+   * Return object defining main content area (2-panel layout)
+   * LEFT PANEL: List of selectable modifications/categories
+   * RIGHT PANEL: Details of selected modification
+   *
+   * @returns {{list: string, detail: string}}
    */
   getMainContent() {
     return {
-      content: `<div class="modal-content-placeholder">Override getMainContent() in subclass</div>`,
-      regions: []
+      list: `<div class="modal-list-placeholder">Override getMainContent().list in subclass</div>`,
+      detail: `<div class="modal-detail-placeholder">Override getMainContent().detail in subclass</div>`
     };
   }
 
   /**
-   * Return sidebar content if applicable
-   * @returns {{content?: string} | null}
-   */
-  getSidebarContent() {
-    return null;
-  }
-
-  /**
-   * Return footer content (cost summary, button, etc.)
-   * @returns {{content: string}}
+   * Return footer content (standardized contract)
+   * Shell will render: Cancel | [Total Cost] | [Wallet] | Confirm
+   *
+   * @returns {{totalCost: number, wallet: number, canConfirm: boolean}}
    */
   getFooterContent() {
     return {
-      content: `<div class="modal-footer-placeholder">Override getFooterContent() in subclass</div>`
+      totalCost: 0,
+      wallet: this.actor?.system?.credits || 0,
+      canConfirm: true
     };
   }
 
@@ -155,54 +141,42 @@ export class ModificationModalShell extends BaseSWSEAppV2 {
    */
 
   /**
-   * Update CSS variable on preview element
-   * Allows live preview updates without full re-render
-   * @param {string} varName - CSS variable name (with -- prefix)
-   * @param {string} value - Value to set
+   * Update selection state and re-render detail panel
+   * Called by subclass when user selects a modification from the list
+   * @param {string} categoryId
+   * @param {string} modificationId
    */
-  updatePreview(varName, value) {
-    const preview = this.element?.querySelector(".modal-preview");
-    if (preview) {
-      preview.style.setProperty(varName, value);
-    }
+  async selectModification(categoryId, modificationId) {
+    this.selectedCategory = categoryId;
+    this.selectedModification = modificationId;
+
+    // Re-render to update detail panel
+    await this.render({ force: true });
   }
 
   /**
-   * Set multiple CSS variables at once
-   * @param {Object} vars - Object with variable names and values
-   */
-  updatePreviewVars(vars) {
-    const preview = this.element?.querySelector(".modal-preview");
-    if (preview) {
-      for (const [varName, value] of Object.entries(vars)) {
-        preview.style.setProperty(varName, value);
-      }
-    }
-  }
-
-  /**
-   * Apply affordability styling to cost summary
+   * Apply affordability styling to footer
    * @param {boolean} canAfford
    */
   setAffordability(canAfford) {
-    const summary = this.element?.querySelector(".modal-footer-summary");
-    if (summary) {
+    const footer = this.element?.querySelector(".modal-footer");
+    if (footer) {
       if (canAfford) {
-        summary.classList.remove("cannot-afford");
-        summary.classList.add("can-afford");
+        footer.classList.remove("cannot-afford");
+        footer.classList.add("can-afford");
       } else {
-        summary.classList.add("cannot-afford");
-        summary.classList.remove("can-afford");
+        footer.classList.add("cannot-afford");
+        footer.classList.remove("can-afford");
       }
     }
   }
 
   /**
-   * Disable/enable apply button
+   * Disable/enable confirm button
    * @param {boolean} disabled
    */
-  setApplyButtonDisabled(disabled) {
-    const btn = this.element?.querySelector(".modal-apply-button");
+  setConfirmDisabled(disabled) {
+    const btn = this.element?.querySelector('[data-action="confirm"]');
     if (btn) {
       btn.disabled = disabled;
     }

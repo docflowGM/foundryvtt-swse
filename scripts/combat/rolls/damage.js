@@ -3,6 +3,7 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { getCriticalDamageBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
+import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 /**
@@ -281,7 +282,7 @@ export async function rollDamage(actor, weapon, context = {}) {
 
   const formula = formulaParts.join(' + ');
 
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(formula);
 
   // Build flavor text with breakdown
   let flavor = `${weapon.name} Damage`;
@@ -362,7 +363,7 @@ export async function rollDamageGeneric(actor, formula = '1d6', label = 'Damage'
     return null;
   }
 
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(formula);
 
   await SWSEChat.postRoll({
     roll,

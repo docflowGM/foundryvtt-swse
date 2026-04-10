@@ -1,490 +1,496 @@
-<div class="swse-sheet">
-<form class="{{cssClass}} sheet-item flexcol" autocomplete="off">
- {{!-- Holographic Frame Header --}}
- <div class="holo-frame-top">
- <img class="sw-logo" src="systems/foundryvtt-swse/assets/ui/swse-logo.png" alt="Star Wars Saga Edition"/>
- </div>
+{{!--
+  SWSE Item Editor V2 — 3-Rail Layout (Header / Body / Footer)
+  Architecture: Fixed Header | Scrollable Body | Fixed Footer
+  Visual: Flat, compact, 2-column grid, thumbnail image scale
+--}}
 
+<form class="{{cssClass}} sheet-item item-sheet-form swse-item-editor-form" autocomplete="off" id="item-sheet-form">
+  <section class="swse-item-editor">
 
- <!-- Header -->
- <header class="sheet-header flexrow">
- <img src="{{item.img}}" title="{{item.name}}" class="profile-img" />
- <div class="header-fields flexcol">
- <h1>
- <input name="name" type="text" value="{{item.name}}" placeholder="Item Name" />
- </h1>
- <div class="form-group inline-group">
- <label>Type</label>
- <input name="type" type="text" value="{{item.type}}" disabled />
- </div>
- {{!-- Upgrade button for weapons, armor, and equipment --}}
- {{#if (or (eq item.type "weapon") (eq item.type "armor") (eq item.type "equipment"))}}
- <div class="form-group">
- <button type="button" class="open-upgrade-app" style="margin-top: 10px;">
- <i class="{{getIconClass 'cog'}}"></i> Manage Upgrades
- </button>
- </div>
- {{/if}}
- </div>
- </header>
+    {{!-- ===== RAIL 1: FIXED HEADER ===== --}}
+    <header class="item-editor__header">
+      <div class="item-editor__identity">
+        {{!-- Thumbnail image --}}
+        <img src="{{item.img}}" alt="{{item.name}}" class="item-editor__image" title="{{item.name}}" />
 
- <!-- Tabs -->
- <nav class="sheet-tabs tabs" data-group="primary">
- <a class="item active" data-tab="data">Data</a>
- <a class="item" data-tab="desc">Description</a>
- </nav>
+        {{!-- Identity fields: name + type + category/branch selectors --}}
+        <div class="item-editor__identity-fields">
+          <div class="form-field form-field--name">
+            <label>Name</label>
+            <input type="text" name="name" value="{{item.name}}" placeholder="Item Name" />
+          </div>
 
- <!-- Tab Contents -->
- <section class="sheet-body flexcol">
+          <div class="item-editor__identity-row">
+            <div class="form-field">
+              <label>Type</label>
+              <select name="type" class="item-type-select">
+                <option value="weapon" {{#if (eq item.type "weapon")}}selected{{/if}}>Weapon</option>
+                <option value="armor" {{#if (eq item.type "armor")}}selected{{/if}}>Armor</option>
+                <option value="equipment" {{#if (eq item.type "equipment")}}selected{{/if}}>Equipment</option>
+              </select>
+            </div>
 
- <!-- Data Tab: show fields based on type -->
- <div class="tab active" data-tab="data">
- <!-- Weapons -->
- {{#if (eq item.type "weapon")}}
- <div class="form-group">
- <label>Weapon Category</label>
- <select name="system.weaponCategory">
- <option value="simple" {{#if (eq system.weaponCategory "simple")}}selected{{/if}}>Simple</option>
- <option value="advanced" {{#if (eq system.weaponCategory "advanced")}}selected{{/if}}>Advanced</option>
- <option value="melee-exotic" {{#if (eq system.weaponCategory "melee-exotic")}}selected{{/if}}>Melee Exotic</option>
- <option value="heavy" {{#if (eq system.weaponCategory "heavy")}}selected{{/if}}>Heavy</option>
- <option value="rifles" {{#if (eq system.weaponCategory "rifles")}}selected{{/if}}>Rifles</option>
- <option value="pistols" {{#if (eq system.weaponCategory "pistols")}}selected{{/if}}>Pistols</option>
- <option value="ranged-exotic" {{#if (eq system.weaponCategory "ranged-exotic")}}selected{{/if}}>Ranged Exotic</option>
- <option value="natural" {{#if (eq system.weaponCategory "natural")}}selected{{/if}}>Natural</option>
- </select>
- </div>
- <div class="form-group">
- <label>Melee or Ranged</label>
- <select name="system.meleeOrRanged">
- <option value="melee" {{#if (eq system.meleeOrRanged "melee")}}selected{{/if}}>Melee</option>
- <option value="ranged" {{#if (eq system.meleeOrRanged "ranged")}}selected{{/if}}>Ranged</option>
- </select>
- </div>
- <div class="form-group">
- <label>Damage</label>
- <div style="display: flex; gap: 8px; align-items: center;">
- <input name="system.damage" type="text" value="{{system.damage}}" style="flex: 1;" placeholder="e.g., 1d6" />
- <span>+</span>
- <select name="system.damageBonus" style="flex: 1;">
- <option value="" {{#if (eq system.damageBonus "")}}selected{{/if}}>(None)</option>
- <option value="str" {{#if (eq system.damageBonus "str")}}selected{{/if}}>STR</option>
- <option value="str2" {{#if (eq system.damageBonus "str2")}}selected{{/if}}>STR x2</option>
- <option value="dex" {{#if (eq system.damageBonus "dex")}}selected{{/if}}>DEX</option>
- <option value="dex2" {{#if (eq system.damageBonus "dex2")}}selected{{/if}}>DEX x2</option>
- </select>
- </div>
- </div>
- <div class="form-group">
- <label>Damage Type</label>
- <select name="system.damageType">
- <option value="energy" {{#if (eq system.damageType "energy")}}selected{{/if}}>Energy</option>
- <option value="kinetic" {{#if (eq system.damageType "kinetic")}}selected{{/if}}>Kinetic</option>
- <option value="ion" {{#if (eq system.damageType "ion")}}selected{{/if}}>Ion</option>
- </select>
- </div>
- <div class="form-group">
- <label>Attack Bonus</label>
- <input name="system.attackBonus" type="number" value="{{system.attackBonus}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Critical Range</label>
- <input name="system.criticalRange" type="text" value="{{system.criticalRange}}" placeholder="e.g., 20 or 19-20" />
- </div>
- <div class="form-group">
- <label>Critical Multiplier</label>
- <input name="system.criticalMultiplier" type="text" value="{{system.criticalMultiplier}}" placeholder="e.g., x2, x3" />
- </div>
- <div class="form-group">
- <label>Attack Attribute</label>
- <select name="system.attackAttribute">
- <option value="str" {{#if (eq system.attackAttribute "str")}}selected{{/if}}>Strength</option>
- <option value="dex" {{#if (eq system.attackAttribute "dex")}}selected{{/if}}>Dexterity</option>
- <option value="con" {{#if (eq system.attackAttribute "con")}}selected{{/if}}>Constitution</option>
- <option value="int" {{#if (eq system.attackAttribute "int")}}selected{{/if}}>Intelligence</option>
- <option value="wis" {{#if (eq system.attackAttribute "wis")}}selected{{/if}}>Wisdom</option>
- <option value="cha" {{#if (eq system.attackAttribute "cha")}}selected{{/if}}>Charisma</option>
- </select>
- </div>
- <div class="form-group">
- <label>Range</label>
- <input name="system.range" type="text" value="{{system.range}}" />
- </div>
- <div class="form-group">
- <label>Special Effects</label>
- <textarea name="system.specialEffects" rows="2">{{system.specialEffects}}</textarea>
- </div>
- <div class="form-group">
- <label for="item-properties">Properties (comma-separated)</label>
- <input id="item-properties" name="system.properties" type="text" value="{{#if system.properties}}{{join system.properties delimiter=', '}}{{/if}}" placeholder="e.g., Stun, Accurate, Autofire" aria-describedby="properties-help" />
- <small id="properties-help">Separate multiple properties with commas</small>
- </div>
- <div class="form-group">
- <label>Ammunition Type</label>
- <input name="system.ammunition.type" type="text" value="{{system.ammunition.type}}" placeholder="e.g., Power Pack, Slugs" />
- </div>
- <div class="form-group">
- <label>Ammo Current / Max</label>
- <div style="display: flex; gap: 8px;">
- <input name="system.ammunition.current" type="number" value="{{system.ammunition.current}}" data-dtype="Number" style="flex: 1;" />
- <span style="line-height: 30px;">/</span>
- <input name="system.ammunition.max" type="number" value="{{system.ammunition.max}}" data-dtype="Number" style="flex: 1;" />
- </div>
- </div>
- <div class="form-group">
- <label>Autofire</label>
- <input name="system.autofire" type="checkbox" {{#if system.autofire}}checked{{/if}} />
- </div>
- <div class="form-group">
- <label>Equipped</label>
- <input name="system.equipped" type="checkbox" {{#if system.equipped}}checked{{/if}} />
- </div>
- <div class="form-group">
- <label>Dual Wielded (Two-Weapon Fighting)</label>
- <input name="system.dualWielded" type="checkbox" {{#if system.dualWielded}}checked{{/if}} />
- </div>
- <div class="form-group">
- <label>Wielded Two-Handed</label>
- <input name="system.wieldedTwoHanded" type="checkbox" {{#if system.wieldedTwoHanded}}checked{{/if}} />
- </div>
- <div class="form-group">
- <label>Weight (kg)</label>
- <input name="system.weight" type="number" value="{{system.weight}}" step="0.1" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Cost (credits)</label>
- <input name="system.cost" type="number" value="{{system.cost}}" data-dtype="Number" />
- </div>
+            {{!-- WEAPON: Melee or Ranged (first selector) --}}
+            {{#if (eq item.type "weapon")}}
+            <div class="form-field">
+              <label>Branch</label>
+              <select name="system.meleeOrRanged" class="melee-or-ranged-select">
+                <option value="melee" {{#if (eq system.meleeOrRanged "melee")}}selected{{/if}}>Melee</option>
+                <option value="ranged" {{#if (eq system.meleeOrRanged "ranged")}}selected{{/if}}>Ranged</option>
+              </select>
+            </div>
+            {{else if (eq item.type "armor")}}
+            {{!-- ARMOR: Armor Type --}}
+            <div class="form-field">
+              <label>Category</label>
+              <select name="system.armorType" class="item-category-select">
+                <option value="light" {{#if (eq system.armorType "light")}}selected{{/if}}>Light</option>
+                <option value="medium" {{#if (eq system.armorType "medium")}}selected{{/if}}>Medium</option>
+                <option value="heavy" {{#if (eq system.armorType "heavy")}}selected{{/if}}>Heavy</option>
+                <option value="shield" {{#if (eq system.armorType "shield")}}selected{{/if}}>Shield</option>
+              </select>
+            </div>
+            {{else if (eq item.type "equipment")}}
+            {{!-- EQUIPMENT: Generic category --}}
+            <div class="form-field">
+              <label>Category</label>
+              <select name="system.category" class="item-category-select">
+                <option value="gear" {{#if (eq system.category "gear")}}selected{{/if}}>Gear</option>
+                <option value="consumable" {{#if (eq system.category "consumable")}}selected{{/if}}>Consumable</option>
+                <option value="medical" {{#if (eq system.category "medical")}}selected{{/if}}>Medical</option>
+              </select>
+            </div>
+            {{/if}}
+          </div>
 
- {{!-- Ranged Weapon Visuals --}}
- {{#if (eq system.meleeOrRanged "ranged")}}
- <div class="form-group">
- <label>Beam Style</label>
- <select name="flags.swse.beamStyle" class="beam-style-select">
- <option value="laser" {{#if (eq item.flags.swse.beamStyle "laser")}}selected{{/if}}>Laser Line</option>
- <option value="bolt" {{#if (eq item.flags.swse.beamStyle "bolt")}}selected{{/if}}>Energy Bolt</option>
- <option value="heavy" {{#if (eq item.flags.swse.beamStyle "heavy")}}selected{{/if}}>Heavy Bolt</option>
- <option value="pulse" {{#if (eq item.flags.swse.beamStyle "pulse")}}selected{{/if}}>Rapid Pulse</option>
- <option value="ion" {{#if (eq item.flags.swse.beamStyle "ion")}}selected{{/if}}>Ion Stream</option>
- <option value="plasma" {{#if (eq item.flags.swse.beamStyle "plasma")}}selected{{/if}}>Plasma Shot</option>
- </select>
- </div>
- <div class="form-group">
- <label>Bolt Color</label>
- <select name="flags.swse.boltColor" class="bolt-color-select">
- <option value="red" {{#if (eq item.flags.swse.boltColor "red")}}selected{{/if}}>Red</option>
- <option value="green" {{#if (eq item.flags.swse.boltColor "green")}}selected{{/if}}>Green</option>
- <option value="blue" {{#if (eq item.flags.swse.boltColor "blue")}}selected{{/if}}>Blue</option>
- <option value="cyan" {{#if (eq item.flags.swse.boltColor "cyan")}}selected{{/if}}>Cyan</option>
- <option value="orange" {{#if (eq item.flags.swse.boltColor "orange")}}selected{{/if}}>Orange</option>
- </select>
- </div>
- {{/if}}
+          {{!-- WEAPON: Weapon Category (second selector, filtered by melee/ranged) --}}
+          {{#if (eq item.type "weapon")}}
+          <div class="form-field">
+            <label>Category</label>
+            <select name="system.weaponCategory" class="weapon-category-select">
+              {{#if (eq system.meleeOrRanged "melee")}}
+              <option value="advanced" {{#if (eq system.weaponCategory "advanced")}}selected{{/if}}>Advanced</option>
+              <option value="lightsaber" {{#if (eq system.weaponCategory "lightsaber")}}selected{{/if}}>Lightsaber</option>
+              <option value="melee-exotic" {{#if (eq system.weaponCategory "melee-exotic")}}selected{{/if}}>Melee Exotic</option>
+              <option value="natural" {{#if (eq system.weaponCategory "natural")}}selected{{/if}}>Natural</option>
+              <option value="simple" {{#if (eq system.weaponCategory "simple")}}selected{{/if}}>Simple</option>
+              {{else}}
+              <option value="heavy" {{#if (eq system.weaponCategory "heavy")}}selected{{/if}}>Heavy</option>
+              <option value="pistols" {{#if (eq system.weaponCategory "pistols")}}selected{{/if}}>Pistols</option>
+              <option value="ranged-exotic" {{#if (eq system.weaponCategory "ranged-exotic")}}selected{{/if}}>Ranged Exotic</option>
+              <option value="rifles" {{#if (eq system.weaponCategory "rifles")}}selected{{/if}}>Rifles</option>
+              <option value="simple" {{#if (eq system.weaponCategory "simple")}}selected{{/if}}>Simple</option>
+              {{/if}}
+            </select>
+          </div>
+          {{/if}}
 
- {{#if (eq system.subtype "lightsaber")}}
- <div class="form-group">
- <label>
- <input type="checkbox" class="emit-light-toggle" {{#if (or item.flags.swse.emitLight item.flags.swse.emitLight)}}checked{{/if}} />
- Emit Blade Light
- </label>
- </div>
- {{/if}}
- {{/if}}
+          {{#if (or (eq item.type "weapon") (eq item.type "armor") (eq item.type "equipment"))}}
+          <div class="form-field form-field--checkbox">
+            <label>
+              <input type="checkbox" name="system.equipped" {{#if system.equipped}}checked{{/if}} />
+              Equipped
+            </label>
+          </div>
+          {{/if}}
 
- <!-- Armor -->
- {{#if (eq item.type "armor")}}
- <div class="form-group">
- <label>Armor Type</label>
- <select name="system.armorType">
- <option value="light" {{#if (eq system.armorType "light")}}selected{{/if}}>Light</option>
- <option value="medium" {{#if (eq system.armorType "medium")}}selected{{/if}}>Medium</option>
- <option value="heavy" {{#if (eq system.armorType "heavy")}}selected{{/if}}>Heavy</option>
- <option value="shield" {{#if (eq system.armorType "shield")}}selected{{/if}}>Shield</option>
- </select>
- </div>
+          {{!-- Action buttons: Manage Upgrades + Customize --}}
+          {{#if (or (eq item.type "weapon") (eq item.type "armor") (eq item.type "equipment"))}}
+          <div class="item-editor__toolbar">
+            <button type="button" class="swse-btn swse-btn--action open-upgrade-app">
+              <i class="{{getIconClass 'cog'}}"></i> Manage Upgrades
+            </button>
 
- {{#if (eq system.armorType "shield")}}
- <!-- Shield-specific fields -->
- <div class="form-group">
- <label>Shield Rating (SR) - Max</label>
- <input name="system.shieldRating" type="number" value="{{system.shieldRating}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Current SR</label>
- <input name="system.currentSR" type="number" value="{{system.currentSR}}" data-dtype="Number" min="0" max="{{system.shieldRating}}" />
- </div>
- <div class="form-group">
- <label>Proficiency Required</label>
- <select name="system.armorProficiencyRequired">
- <option value="" {{#if (eq system.armorProficiencyRequired "")}}selected{{/if}}>None</option>
- <option value="light" {{#if (eq system.armorProficiencyRequired "light")}}selected{{/if}}>Light Armor</option>
- <option value="medium" {{#if (eq system.armorProficiencyRequired "medium")}}selected{{/if}}>Medium Armor</option>
- <option value="heavy" {{#if (eq system.armorProficiencyRequired "heavy")}}selected{{/if}}>Heavy Armor</option>
- </select>
- </div>
- <div class="form-group">
- <label>Charges: Current / Max</label>
- <div style="display: flex; gap: 8px;">
- <input name="system.charges.current" type="number" value="{{system.charges.current}}" data-dtype="Number" style="flex: 1;" min="0" max="{{system.charges.max}}" />
- <span style="line-height: 30px;">/</span>
- <input name="system.charges.max" type="number" value="{{system.charges.max}}" data-dtype="Number" style="flex: 1;" />
- </div>
- </div>
- <div class="form-group">
- <label>Shield Status</label>
- <div style="display: flex; gap: 8px; align-items: center;">
- <span style="flex: 1;">{{#if system.activated}}Active ({{system.currentSR}}/{{system.shieldRating}} SR){{else}}Inactive{{/if}}</span>
- {{#if system.activated}}
- <button type="button" class="deactivate-shield" style="flex: 1;">
- <i class="{{getIconClass 'error'}}"></i> Deactivate
- </button>
- {{else}}
- <button type="button" class="activate-shield" style="flex: 1;" {{#if (lte system.charges.current 0)}}disabled{{/if}}>
- <i class="{{getIconClass 'shieldAlt'}}"></i> Activate
- </button>
- {{/if}}
- </div>
- </div>
- <div class="form-group">
- <label>Max Dex Bonus</label>
- <input name="system.maxDex" type="number" value="{{system.maxDex}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Armor Check Penalty</label>
- <input name="system.armorCheckPenalty" type="number" value="{{system.armorCheckPenalty}}" data-dtype="Number" />
- </div>
- {{else}}
- <!-- Regular armor fields -->
- <div class="form-group">
- <label>Reflex Defense Bonus</label>
- <input name="system.reflexBonus" type="number" value="{{system.reflexBonus}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Fortitude Bonus</label>
- <input name="system.fortitudeBonus" type="number" value="{{system.fortitudeBonus}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Max Dex Bonus</label>
- <input name="system.maxDex" type="number" value="{{system.maxDex}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Armor Check Penalty</label>
- <input name="system.armorCheckPenalty" type="number" value="{{system.armorCheckPenalty}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Speed Penalty (squares)</label>
- <input name="system.speedPenalty" type="number" value="{{system.speedPenalty}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Equipment Perception Bonus</label>
- <input name="system.equipmentPerceptionBonus" type="number" value="{{system.equipmentPerceptionBonus}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Has Required Proficiency</label>
- <input name="system.armorProficiency" type="checkbox" {{#if system.armorProficiency}}checked{{/if}} />
- </div>
- <div class="form-group">
- <label>Special Features</label>
- <textarea name="system.features" rows="2">{{system.features}}</textarea>
- </div>
- {{/if}}
+            {{#if (eq item.type "weapon")}}
+            {{#if (eq system.weaponCategory "lightsaber")}}
+            <button type="button" class="swse-btn swse-btn--action customize-lightsaber">
+              <i class="{{getIconClass 'wand2'}}"></i> Customize Lightsaber
+            </button>
+            {{/if}}
+            {{#if (and (eq system.meleeOrRanged "ranged") (ne system.weaponCategory "simple"))}}
+            <button type="button" class="swse-btn swse-btn--action customize-blaster">
+              <i class="{{getIconClass 'palette'}}"></i> Blaster Color
+            </button>
+            {{/if}}
+            {{/if}}
+          </div>
+          {{/if}}
+        </div>
+      </div>
+    </header>
 
- <!-- Common fields for all armor types -->
- <div class="form-group">
- <label>Weight (kg)</label>
- <input name="system.weight" type="number" value="{{system.weight}}" step="0.1" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Cost (credits)</label>
- <input name="system.cost" type="number" value="{{system.cost}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Equipped</label>
- <input name="system.equipped" type="checkbox" {{#if system.equipped}}checked{{/if}} />
- </div>
- {{/if}}
+    {{!-- Tab navigation --}}
+    <nav class="item-editor__tabs tabs" data-group="primary">
+      <a class="item-editor__tab {{#if (eq activeTab 'data')}}active{{/if}}" data-tab="data">Data</a>
+      <a class="item-editor__tab {{#if (eq activeTab 'description')}}active{{/if}}" data-tab="description">Description</a>
+    </nav>
 
- <!-- Equipment -->
- {{#if (eq item.type "equipment")}}
- <div class="form-group">
- <label>Weight</label>
- <input name="system.weight" type="text" value="{{system.weight}}" />
- </div>
- <div class="form-group">
- <label>Cost</label>
- <input name="system.cost" type="text" value="{{system.cost}}" />
- </div>
- {{/if}}
+    {{!-- ===== RAIL 2: SCROLLABLE BODY ===== --}}
+    <section class="item-editor__body">
 
- <!-- Feats -->
- {{#if (eq item.type "feat")}}
- <div class="form-group">
- <label>Feat Type</label>
- <select name="system.featType">
- <option value="general" {{#if (eq system.featType "general")}}selected{{/if}}>General</option>
- <option value="force" {{#if (eq system.featType "force")}}selected{{/if}}>Force</option>
- <option value="species" {{#if (eq system.featType "species")}}selected{{/if}}>Species</option>
- </select>
- </div>
- <div class="form-group">
- <label>Prerequisite</label>
- <textarea name="system.prerequisite" rows="2">{{system.prerequisite}}</textarea>
- </div>
- <div class="form-group">
- <label>Benefit</label>
- <textarea name="system.benefit" rows="4">{{system.benefit}}</textarea>
- </div>
- <div class="form-group">
- <label>Normal</label>
- <textarea name="system.normalText" rows="2">{{system.normalText}}</textarea>
- </div>
- <div class="form-group">
- <label>Special</label>
- <textarea name="system.special" rows="2">{{system.special}}</textarea>
- </div>
- <div class="form-group">
- <label>Bonus Feat For (comma-separated)</label>
- <input name="system.bonusFeatFor" type="text" value="{{#if system.bonusFeatFor}}{{join system.bonusFeatFor delimiter=', '}}{{/if}}" placeholder="e.g., Soldier, Scout, Jedi" />
- <small>Classes that can take this as a bonus feat</small>
- </div>
- <div class="form-group">
- <label>Uses: Current / Max</label>
- <div style="display: flex; gap: 8px; align-items: center;">
- <input name="system.uses.current" type="number" value="{{system.uses.current}}" data-dtype="Number" style="flex: 1;" />
- <span>/</span>
- <input name="system.uses.max" type="number" value="{{system.uses.max}}" data-dtype="Number" style="flex: 1;" />
- <label style="margin: 0; white-space: nowrap;"><input name="system.uses.perDay" type="checkbox" {{#if system.uses.perDay}}checked{{/if}} /> Per Day</label>
- </div>
- </div>
- {{/if}}
+      {{!-- DATA TAB --}}
+      <div class="tab {{#if (eq activeTab 'data')}}active{{/if}}" data-tab="data">
 
- <!-- Talents -->
- {{#if (eq item.type "talent")}}
- <div class="form-group">
- <label>Talent Tree</label>
- <input name="system.tree" type="text" value="{{system.tree}}" />
- </div>
- <div class="form-group">
- <label>Prerequisite</label>
- <textarea name="system.prerequisite" rows="2">{{system.prerequisite}}</textarea>
- </div>
- <div class="form-group">
- <label>Benefit</label>
- <textarea name="system.benefit" rows="4">{{system.benefit}}</textarea>
- </div>
- <div class="form-group">
- <label>Special</label>
- <textarea name="system.special" rows="2">{{system.special}}</textarea>
- </div>
- <div class="form-group">
- <label>Uses: Current / Max</label>
- <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
- <input name="system.uses.current" type="number" value="{{system.uses.current}}" data-dtype="Number" style="flex: 1; min-width: 60px;" />
- <span>/</span>
- <input name="system.uses.max" type="number" value="{{system.uses.max}}" data-dtype="Number" style="flex: 1; min-width: 60px;" />
- <label style="margin: 0; white-space: nowrap;"><input name="system.uses.perEncounter" type="checkbox" {{#if system.uses.perEncounter}}checked{{/if}} /> Per Encounter</label>
- <label style="margin: 0; white-space: nowrap;"><input name="system.uses.perDay" type="checkbox" {{#if system.uses.perDay}}checked{{/if}} /> Per Day</label>
- </div>
- </div>
- {{/if}}
+        {{!-- ===== WEAPON EDITOR ===== --}}
+        {{#if (eq item.type "weapon")}}
+        <div class="item-editor__grid item-editor__grid--two-col">
 
- <!-- Force Powers -->
- {{#if (or (eq item.type "forcepower") (eq item.type "force-power"))}}
- <div class="form-group">
- <label>Power Level</label>
- <input name="system.powerLevel" type="number" value="{{system.powerLevel}}" min="1" max="6" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Discipline</label>
- <select name="system.discipline">
- <option value="telekinetic" {{#if (eq system.discipline "telekinetic")}}selected{{/if}}>Telekinetic</option>
- <option value="telepathic" {{#if (eq system.discipline "telepathic")}}selected{{/if}}>Telepathic</option>
- <option value="vital" {{#if (eq system.discipline "vital")}}selected{{/if}}>Vital</option>
- <option value="dark-side" {{#if (eq system.discipline "dark-side")}}selected{{/if}}>Dark Side</option>
- <option value="light-side" {{#if (eq system.discipline "light-side")}}selected{{/if}}>Light Side</option>
- </select>
- </div>
- <div class="form-group">
- <label>Use the Force DC</label>
- <input name="system.useTheForce" type="number" value="{{system.useTheForce}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Activation Time</label>
- <input name="system.time" type="text" value="{{system.time}}" />
- </div>
- <div class="form-group">
- <label>Range</label>
- <input name="system.range" type="text" value="{{system.range}}" />
- </div>
- <div class="form-group">
- <label>Target</label>
- <input name="system.target" type="text" value="{{system.target}}" />
- </div>
- <div class="form-group">
- <label>Duration</label>
- <input name="system.duration" type="text" value="{{system.duration}}" />
- </div>
- <div class="form-group">
- <label>Maintainable</label>
- <input name="system.maintainable" type="checkbox" {{#if system.maintainable}}checked{{/if}} />
- </div>
- <div class="form-group">
- <label>Effect</label>
- <textarea name="system.effect" rows="4">{{system.effect}}</textarea>
- </div>
- <div class="form-group">
- <label>Special</label>
- <textarea name="system.special" rows="2">{{system.special}}</textarea>
- </div>
- <div class="form-group">
- <label>Force Point Cost</label>
- <input name="system.forcePointCost" type="number" value="{{system.forcePointCost}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Force Point Enhancement</label>
- <textarea name="system.forcePointEffect" rows="3">{{system.forcePointEffect}}</textarea>
- </div>
- <div class="form-group">
- <label>Tags/Descriptors (comma-separated)</label>
- <input name="system.tags" type="text" value="{{#if system.tags}}{{join system.tags delimiter=', '}}{{/if}}" placeholder="e.g., dark-side, mind-affecting, telekinetic" />
- <small>Separate multiple tags with commas</small>
- </div>
- <div class="form-group">
- <label>Sourcebook</label>
- <input name="system.sourcebook" type="text" value="{{system.sourcebook}}" />
- </div>
- <div class="form-group">
- <label>Page</label>
- <input name="system.page" type="number" value="{{system.page}}" data-dtype="Number" />
- </div>
- {{/if}}
+          {{!-- COLUMN A: Core Stats (Classification fields removed - they are in header) --}}
+          <div class="item-editor__col">
+            <section class="item-editor__section">
+              <h3 class="item-editor__section-title">Mechanics</h3>
 
- <!-- Classes -->
- {{#if (eq item.type "class")}}
- <div class="form-group">
- <label>Hit Die</label>
- <input name="system.hitDie" type="text" value="{{system.hitDie}}" />
- </div>
- <div class="form-group">
- <label>Skill Points</label>
- <input name="system.skillPoints" type="number" value="{{system.skillPoints}}" data-dtype="Number" />
- </div>
- <div class="form-group">
- <label>Features</label>
- <textarea name="system.features">{{system.features}}</textarea>
- </div>
- {{/if}}
- </div>
+              <div class="form-field">
+                <label>Attack Attribute</label>
+                <select name="system.attackAttribute">
+                  <option value="str" {{#if (eq system.attackAttribute "str")}}selected{{/if}}>Strength</option>
+                  <option value="dex" {{#if (eq system.attackAttribute "dex")}}selected{{/if}}>Dexterity</option>
+                  <option value="con" {{#if (eq system.attackAttribute "con")}}selected{{/if}}>Constitution</option>
+                  <option value="int" {{#if (eq system.attackAttribute "int")}}selected{{/if}}>Intelligence</option>
+                  <option value="wis" {{#if (eq system.attackAttribute "wis")}}selected{{/if}}>Wisdom</option>
+                  <option value="cha" {{#if (eq system.attackAttribute "cha")}}selected{{/if}}>Charisma</option>
+                </select>
+              </div>
 
- <!-- Description Tab -->
- <div class="tab" data-tab="desc">
- <h2>Description</h2>
- <div class="form-group">
- <textarea name="system.description">{{system.description}}</textarea>
- </div>
- </div>
- </section>
+              <div class="form-field">
+                <label>Damage</label>
+                <input type="text" name="system.damage" value="{{system.damage}}" placeholder="e.g., 1d6" />
+              </div>
+
+              <div class="form-field">
+                <label>Damage Type</label>
+                <select name="system.damageType">
+                  <option value="energy" {{#if (eq system.damageType "energy")}}selected{{/if}}>Energy</option>
+                  <option value="kinetic" {{#if (eq system.damageType "kinetic")}}selected{{/if}}>Kinetic</option>
+                  <option value="ion" {{#if (eq system.damageType "ion")}}selected{{/if}}>Ion</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label>Damage Bonus</label>
+                <select name="system.damageBonus">
+                  <option value="" {{#if (eq system.damageBonus "")}}selected{{/if}}>(None)</option>
+                  <option value="str" {{#if (eq system.damageBonus "str")}}selected{{/if}}>STR</option>
+                  <option value="str2" {{#if (eq system.damageBonus "str2")}}selected{{/if}}>STR x2</option>
+                  <option value="dex" {{#if (eq system.damageBonus "dex")}}selected{{/if}}>DEX</option>
+                  <option value="dex2" {{#if (eq system.damageBonus "dex2")}}selected{{/if}}>DEX x2</option>
+                </select>
+              </div>
+            </section>
+          </div>
+
+          {{!-- COLUMN B: Combat Stats --}}
+          <div class="item-editor__col">
+            <section class="item-editor__section">
+              <h3 class="item-editor__section-title">Combat</h3>
+
+              <div class="form-field">
+                <label>Attack Bonus</label>
+                <input type="number" name="system.attackBonus" value="{{system.attackBonus}}" data-dtype="Number" />
+              </div>
+
+              <div class="form-field">
+                <label>Critical Range</label>
+                <input type="text" name="system.criticalRange" value="{{system.criticalRange}}" placeholder="e.g., 20 or 19-20" />
+              </div>
+
+              <div class="form-field">
+                <label>Critical Multiplier</label>
+                <input type="text" name="system.criticalMultiplier" value="{{system.criticalMultiplier}}" placeholder="e.g., x2, x3" />
+              </div>
+
+              <div class="form-field">
+                <label>Range</label>
+                <input type="text" name="system.range" value="{{system.range}}" />
+              </div>
+
+              <div class="form-field">
+                <label>Weight (kg)</label>
+                <input type="number" name="system.weight" value="{{system.weight}}" step="0.1" data-dtype="Number" />
+              </div>
+
+              <div class="form-field">
+                <label>Cost (credits)</label>
+                <input type="number" name="system.cost" value="{{system.cost}}" data-dtype="Number" />
+              </div>
+            </section>
+          </div>
+        </div>
+
+        {{!-- Full-width sections for weapon --}}
+
+        {{!-- RANGED: Ammunition fields --}}
+        {{#if (eq system.meleeOrRanged "ranged")}}
+        <section class="item-editor__section">
+          <h3 class="item-editor__section-title">Ammunition</h3>
+
+          <div class="item-editor__grid item-editor__grid--two-col">
+            <div class="item-editor__col">
+              <div class="form-field">
+                <label>Ammunition Type</label>
+                <input type="text" name="system.ammunition.type" value="{{system.ammunition.type}}" placeholder="e.g., Power Pack, Slugs" />
+              </div>
+
+              <div class="form-field">
+                <label>Ammo Current</label>
+                <input type="number" name="system.ammunition.current" value="{{system.ammunition.current}}" data-dtype="Number" />
+              </div>
+
+              <div class="form-field">
+                <label>Ammo Max</label>
+                <input type="number" name="system.ammunition.max" value="{{system.ammunition.max}}" data-dtype="Number" />
+              </div>
+            </div>
+
+            <div class="item-editor__col">
+              <div class="form-field form-field--checkbox">
+                <label>
+                  <input type="checkbox" name="system.autofire" {{#if system.autofire}}checked{{/if}} />
+                  Autofire
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+        {{/if}}
+
+        {{!-- Handedness flags: Dual wielding applies to any weapon type, two-handed is melee only --}}
+        <section class="item-editor__section">
+          <h3 class="item-editor__section-title">Handedness</h3>
+
+          <div class="form-field form-field--checkbox">
+            <label>
+              <input type="checkbox" name="system.dualWielded" {{#if system.dualWielded}}checked{{/if}} />
+              Dual Wielded
+            </label>
+          </div>
+
+          {{#if (eq system.meleeOrRanged "melee")}}
+          <div class="form-field form-field--checkbox">
+            <label>
+              <input type="checkbox" name="system.wieldedTwoHanded" {{#if system.wieldedTwoHanded}}checked{{/if}} />
+              Two-Handed
+            </label>
+          </div>
+          {{/if}}
+        </section>
+
+        <section class="item-editor__section">
+          <h3 class="item-editor__section-title">Special Effects</h3>
+          <div class="form-field form-field--full">
+            <label>Special Effects</label>
+            <textarea name="system.specialEffects" rows="3">{{system.specialEffects}}</textarea>
+          </div>
+
+          <div class="form-field form-field--full">
+            <label>Properties (comma-separated)</label>
+            <input type="text" name="system.properties" value="{{#if system.properties}}{{join system.properties delimiter=', '}}{{/if}}" placeholder="e.g., Stun, Accurate, Autofire" />
+          </div>
+        </section>
+
+        {{!-- Ranged-specific fields --}}
+        {{#if (eq system.meleeOrRanged "ranged")}}
+        <section class="item-editor__section">
+          <h3 class="item-editor__section-title">Ranged Visuals</h3>
+
+          <div class="item-editor__grid item-editor__grid--two-col">
+            <div class="form-field">
+              <label>Beam Style</label>
+              <select name="flags.swse.beamStyle">
+                <option value="laser" {{#if (eq item.flags.swse.beamStyle "laser")}}selected{{/if}}>Laser Line</option>
+                <option value="bolt" {{#if (eq item.flags.swse.beamStyle "bolt")}}selected{{/if}}>Energy Bolt</option>
+                <option value="heavy" {{#if (eq item.flags.swse.beamStyle "heavy")}}selected{{/if}}>Heavy Bolt</option>
+                <option value="pulse" {{#if (eq item.flags.swse.beamStyle "pulse")}}selected{{/if}}>Rapid Pulse</option>
+                <option value="ion" {{#if (eq item.flags.swse.beamStyle "ion")}}selected{{/if}}>Ion Stream</option>
+                <option value="plasma" {{#if (eq item.flags.swse.beamStyle "plasma")}}selected{{/if}}>Plasma Shot</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Bolt Color</label>
+              <select name="flags.swse.boltColor">
+                <option value="red" {{#if (eq item.flags.swse.boltColor "red")}}selected{{/if}}>Red</option>
+                <option value="green" {{#if (eq item.flags.swse.boltColor "green")}}selected{{/if}}>Green</option>
+                <option value="blue" {{#if (eq item.flags.swse.boltColor "blue")}}selected{{/if}}>Blue</option>
+                <option value="cyan" {{#if (eq item.flags.swse.boltColor "cyan")}}selected{{/if}}>Cyan</option>
+                <option value="orange" {{#if (eq item.flags.swse.boltColor "orange")}}selected{{/if}}>Orange</option>
+              </select>
+            </div>
+          </div>
+        </section>
+        {{/if}}
+
+        {{!-- Lightsaber-specific fields --}}
+        {{#if (eq system.weaponCategory "lightsaber")}}
+        <section class="item-editor__section">
+          <h3 class="item-editor__section-title">Lightsaber Options</h3>
+
+          <div class="form-field form-field--checkbox">
+            <label>
+              <input type="checkbox" class="emit-light-toggle" {{#if (or item.flags.swse.emitLight item.flags.swse.emitLight)}}checked{{/if}} />
+              Emit Blade Light
+            </label>
+          </div>
+        </section>
+        {{/if}}
+
+        {{!-- ARMOR EDITOR --}}
+        {{else if (eq item.type "armor")}}
+        <div class="item-editor__grid item-editor__grid--two-col">
+
+          {{!-- COLUMN A: Armor Defense (Classification in header) --}}
+          <div class="item-editor__col">
+            {{!-- Non-shield armor fields --}}
+            {{#if (ne system.armorType "shield")}}
+            <section class="item-editor__section">
+              <h3 class="item-editor__section-title">Defense</h3>
+              <div class="form-field">
+                <label>Reflex Defense Bonus</label>
+                <input type="number" name="system.reflexBonus" value="{{system.reflexBonus}}" data-dtype="Number" />
+              </div>
+
+              <div class="form-field">
+                <label>Fortitude Bonus</label>
+                <input type="number" name="system.fortitudeBonus" value="{{system.fortitudeBonus}}" data-dtype="Number" />
+              </div>
+
+              <div class="form-field">
+                <label>Max Dex Bonus</label>
+                <input type="number" name="system.maxDex" value="{{system.maxDex}}" data-dtype="Number" />
+              </div>
+
+              <div class="form-field">
+                <label>Armor Check Penalty</label>
+                <input type="number" name="system.armorCheckPenalty" value="{{system.armorCheckPenalty}}" data-dtype="Number" />
+              </div>
+              {{/if}}
+            </section>
+          </div>
+
+          {{!-- COLUMN B: Weight, Cost, Flags --}}
+          <div class="item-editor__col">
+            <section class="item-editor__section">
+              <h3 class="item-editor__section-title">Properties</h3>
+
+              <div class="form-field">
+                <label>Weight (kg)</label>
+                <input type="number" name="system.weight" value="{{system.weight}}" step="0.1" data-dtype="Number" />
+              </div>
+
+              <div class="form-field">
+                <label>Cost (credits)</label>
+                <input type="number" name="system.cost" value="{{system.cost}}" data-dtype="Number" />
+              </div>
+
+              {{#if (eq system.armorType "shield")}}
+              <div class="form-field">
+                <label>Shield Rating (Max)</label>
+                <input type="number" name="system.shieldRating" value="{{system.shieldRating}}" data-dtype="Number" />
+              </div>
+
+              <div class="form-field">
+                <label>Current SR</label>
+                <input type="number" name="system.currentSR" value="{{system.currentSR}}" data-dtype="Number" min="0" max="{{system.shieldRating}}" />
+              </div>
+
+              <div class="form-field">
+                <label>Charges Current</label>
+                <input type="number" name="system.charges.current" value="{{system.charges.current}}" data-dtype="Number" min="0" max="{{system.charges.max}}" />
+              </div>
+
+              <div class="form-field">
+                <label>Charges Max</label>
+                <input type="number" name="system.charges.max" value="{{system.charges.max}}" data-dtype="Number" />
+              </div>
+              {{/if}}
+            </section>
+          </div>
+        </div>
+
+        {{#if (ne system.armorType "shield")}}
+        <section class="item-editor__section">
+          <h3 class="item-editor__section-title">Modifiers</h3>
+
+          <div class="item-editor__grid item-editor__grid--two-col">
+            <div class="form-field">
+              <label>Speed Penalty (squares)</label>
+              <input type="number" name="system.speedPenalty" value="{{system.speedPenalty}}" data-dtype="Number" />
+            </div>
+
+            <div class="form-field">
+              <label>Equipment Perception Bonus</label>
+              <input type="number" name="system.equipmentPerceptionBonus" value="{{system.equipmentPerceptionBonus}}" data-dtype="Number" />
+            </div>
+          </div>
+
+          <div class="form-field form-field--full">
+            <label>Special Features</label>
+            <textarea name="system.features" rows="2">{{system.features}}</textarea>
+          </div>
+
+          <div class="form-field form-field--checkbox">
+            <label>
+              <input type="checkbox" name="system.armorProficiency" {{#if system.armorProficiency}}checked{{/if}} />
+              Has Required Proficiency
+            </label>
+          </div>
+        </section>
+        {{/if}}
+
+        {{!-- EQUIPMENT EDITOR --}}
+        {{else if (eq item.type "equipment")}}
+        <section class="item-editor__section">
+          <h3 class="item-editor__section-title">Properties</h3>
+
+          <div class="item-editor__grid item-editor__grid--two-col">
+            <div class="form-field">
+              <label>Weight</label>
+              <input type="text" name="system.weight" value="{{system.weight}}" />
+            </div>
+
+            <div class="form-field">
+              <label>Cost</label>
+              <input type="text" name="system.cost" value="{{system.cost}}" />
+            </div>
+          </div>
+        </section>
+
+        {{/if}}
+      </div>
+
+      {{!-- DESCRIPTION TAB --}}
+      <div class="tab {{#if (eq activeTab 'description')}}active{{/if}}" data-tab="description">
+        <section class="item-editor__section">
+          <h3 class="item-editor__section-title">Description</h3>
+
+          <div class="form-field form-field--full">
+            <textarea name="system.description" rows="8">{{system.description}}</textarea>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    {{!-- ===== RAIL 3: FIXED FOOTER ===== --}}
+    <footer class="item-editor__footer">
+      {{!-- Left: Cancel button --}}
+      <button type="button" class="swse-btn item-editor__footer-cancel close-btn">
+        Cancel
+      </button>
+
+      {{!-- Center: Credits display --}}
+      <div class="item-editor__footer-credits">
+        {{#if actorCredits}}
+        Credits: <strong>{{actorCredits}}</strong>
+        {{else}}
+        <span class="credits-placeholder">No actor context</span>
+        {{/if}}
+      </div>
+
+      {{!-- Right: Confirm button --}}
+      <button type="submit" class="swse-btn swse-btn--primary item-editor__footer-confirm">
+        Confirm
+      </button>
+    </footer>
+
+  </section>
 </form>
-<h1>{{labels.sheetTitle}}</h1>
-
-</div><!-- swse-sheet -->

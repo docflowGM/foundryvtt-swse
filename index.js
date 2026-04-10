@@ -66,6 +66,9 @@ import { registerHouseruleSettings } from './scripts/houserules/houserule-settin
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
 import { initSidebarIconFallback } from './scripts/core/sidebar-icon-fallback.js';
+import { initSidebarSentinelTrace } from './scripts/core/sidebar-sentinel-trace.js';
+import { initSidebarIconComparison } from './scripts/core/sidebar-icon-comparison.js';
+import { initSidebarIconClassAudit } from './scripts/core/sidebar-icon-class-audit.js';
 
 // ---- core engines (bootstrap attachment) ----
 import { RollEngine } from './scripts/engine/roll-engine.js';
@@ -389,6 +392,18 @@ Hooks.once('ready', async () => {
   initializeSceneControls();
   initializeActionPalette();
   initSidebarIconFallback();
+
+  /* ---------- SIDEBAR DIAGNOSTICS (temporary surgical tracing) ---------- */
+  console.log('[SWSE] Initializing sidebar icon diagnostics...');
+  try {
+    initSidebarSentinelTrace();
+    initSidebarIconComparison();
+    initSidebarIconClassAudit();
+    console.log('[SWSE] Sidebar diagnostics initialized successfully');
+  } catch (err) {
+    console.error('[SWSE] Failed to initialize sidebar diagnostics:', err);
+  }
+
   MentorTranslationSettings.loadSettings();
 
   /* ---------- engines ---------- */

@@ -144,9 +144,8 @@
 .swse-sheet .combat-notes-textarea {
   flex: 1;
   min-height: 80px;
-  /* max-height removed — allow tab scroll control */
-  overflow-y: auto;
-  overflow-x: hidden;
+  /* CONTRACT VIOLATION FIXED: inner panel must not have own scroll */
+  /* overflow-y: auto; — REMOVED */
   position: relative;
   z-index: 2;
 }
@@ -154,9 +153,8 @@
 /* Bio profile panel — expand naturally within tab */
 .swse-sheet .bio-profile-content {
   min-height: 0;
-  /* max-height removed — let tab control scroll */
-  overflow-y: auto;
-  overflow-x: hidden;
+  /* CONTRACT VIOLATION FIXED: inner panel must not have own scroll */
+  /* overflow-y: auto; — REMOVED */
   position: relative;
   z-index: 2;
 }
@@ -164,9 +162,8 @@
 /* Biography log panel — expand naturally within tab */
 .swse-sheet .bio-log-sections {
   min-height: 0;
-  /* max-height removed — let tab control scroll */
-  overflow-y: auto;
-  overflow-x: hidden;
+  /* CONTRACT VIOLATION FIXED: inner panel must not have own scroll */
+  /* overflow-y: auto; — REMOVED */
   position: relative;
   z-index: 2;
   display: flex;
@@ -177,9 +174,8 @@
 /* Notes panel — expand naturally within tab */
 .swse-sheet .notes-content {
   min-height: 0;
-  /* max-height removed — let tab control scroll */
-  overflow-y: auto;
-  overflow-x: hidden;
+  /* CONTRACT VIOLATION FIXED: inner panel must not have own scroll */
+  /* overflow-y: auto; — REMOVED */
 }
 
 /* -----------------------------------

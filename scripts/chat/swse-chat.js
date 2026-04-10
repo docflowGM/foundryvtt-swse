@@ -41,7 +41,7 @@ export class SWSEChat {
     });
 
     // Render holo roll template
-    const content = await renderTemplate(
+    const content = await foundry.applications.handlebars.renderTemplate(
       'systems/foundryvtt-swse/templates/chat/holo-roll.hbs',
       holoData
     );

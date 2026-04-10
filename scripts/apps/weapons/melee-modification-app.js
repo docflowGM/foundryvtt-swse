@@ -22,12 +22,15 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
 export class MeleeWeaponModificationApp extends ModificationModalShell {
   constructor(actor, item, options = {}) {
-    super(options);
+    super(actor, item, options);
     this.actor = actor;
     this.item = item;
-    // Start with currently installed upgrades
-    this.selectedUpgrades = item.flags?.swse?.meleeUpgrades || [];
+    // Start with currently installed upgrades (not multi-select anymore, just showing)
+    this.installedUpgrades = item.flags?.swse?.meleeUpgrades || [];
     this.accentColor = item.flags?.swse?.accentColor || DEFAULT_MELEE_ACCENT;
+
+    // NEW: Track what user wants to add (single selection per interaction)
+    this.selectedUpgradeToAdd = null;
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
@@ -41,149 +44,204 @@ export class MeleeWeaponModificationApp extends ModificationModalShell {
     position: { width: 900, height: 650 }
   });
 
-  static PARTS = {
-    form: {
-      template: "systems/foundryvtt-swse/templates/apps/weapons/melee-modification.hbs"
-    }
-  };
+  // Use base shell template for 2-panel layout
+  // (PARTS inherited from ModificationModalShell)
+
+  /**
+   * Override: Handle modification selection
+   * Updates selectedUpgradeToAdd and re-renders detail panel
+   */
+  async selectModification(categoryId, modificationId) {
+    this.selectedUpgradeToAdd = modificationId;
+
+    // Re-render to update detail panel and footer
+    await this.render({ force: true });
+  }
+
+  /**
+   * Override: Return header with weapon name
+   */
+  getHeaderContent() {
+    return {
+      title: `⚔️ ${this.item.name} Modifications`,
+      subtitle: "Select enhancement"
+    };
+  }
+
+  /**
+   * Override: Return { list, detail } for 2-panel layout
+   * List: Categories of upgrades
+   * Detail: Details of selected upgrade
+   */
+  getMainContent() {
+    const listHTML = this.#renderUpgradeList();
+    const detailHTML = this.#renderUpgradeDetail();
+
+    return {
+      list: listHTML,
+      detail: detailHTML
+    };
+  }
+
+  /**
+   * Override: Return standardized footer contract
+   */
+  getFooterContent() {
+    const totalCost = this.selectedUpgradeToAdd
+      ? (MELEE_UPGRADES[this.selectedUpgradeToAdd]?.costCredits || 0)
+      : 0;
+    const wallet = this.actor?.system?.credits || 0;
+
+    return {
+      totalCost,
+      wallet,
+      canConfirm: this.selectedUpgradeToAdd !== null
+    };
+  }
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
 
-    // Calculate total cost
-    let totalCreditCost = 0;
-    const selectedDetails = [];
+    // Store upgrade data for template rendering
+    context.allUpgrades = Object.entries(MELEE_UPGRADES).map(([id, upgrade]) => ({
+      id,
+      ...upgrade
+    }));
+    context.accentColor = this.accentColor;
+    context.installedUpgrades = this.installedUpgrades;
 
-    for (const upgradeId of this.selectedUpgrades) {
-      const upgrade = MELEE_UPGRADES[upgradeId];
-      if (upgrade) {
-        totalCreditCost += upgrade.costCredits || 0;
-        selectedDetails.push(upgrade);
-      }
+    return context;
+  }
+
+  /**
+   * Render left panel: List of upgrades
+   * @private
+   */
+  #renderUpgradeList() {
+    const entries = Object.entries(MELEE_UPGRADES);
+    if (entries.length === 0) {
+      return `<div class="upgrade-list-empty">No upgrades available</div>`;
     }
 
-    // Check actor credits
-    const actorCredits = this.actor.system?.credits || 0;
-    const canAfford = actorCredits >= totalCreditCost;
+    let html = `<div class="upgrade-list">`;
 
-    // Calculate slot usage and validation
-    const totalSlots = this.item.system?.upgradeSlots || 2;
-    const currentUpgrades = this.item.system?.installedUpgrades || [];
-    const currentSlotUsage = currentUpgrades.reduce((sum, u) => sum + (u.slotsUsed || 1), 0);
-    const newSlotUsage = this.selectedUpgrades.length;
-    const totalSlotUsage = currentSlotUsage + newSlotUsage;
-    const canFitSlots = totalSlotUsage <= totalSlots;
-    const slotsRemaining = Math.max(0, totalSlots - currentSlotUsage);
+    for (const [id, upgrade] of entries) {
+      const isInstalled = this.installedUpgrades.includes(id);
+      const isSelected = id === this.selectedUpgradeToAdd;
 
-    return {
-      ...context,
-      actor: this.actor,
-      item: this.item,
-      itemName: this.item.name,
-      selectedUpgrades: this.selectedUpgrades,
-      selectedDetails,
-      accentColor: this.accentColor,
-      allUpgrades: Object.entries(MELEE_UPGRADES).map(([id, upgrade]) => ({
-        id,
-        ...upgrade,
-        selected: this.selectedUpgrades.includes(id)
-      })),
-      totalCreditCost,
-      actorCredits,
-      canAfford,
-      affordabilityClass: canAfford ? "can-afford" : "cannot-afford",
-      // Slot information
-      totalSlots,
-      currentSlotUsage,
-      newSlotUsage,
-      totalSlotUsage,
-      slotsRemaining,
-      canFitSlots,
-      slotWarning: totalSlotUsage > totalSlots ? `⚠️ Exceeds available slots by ${totalSlotUsage - totalSlots}` : null,
-      slotAtLimit: slotsRemaining === 1
-    };
+      html += `
+        <div class="upgrade-list-item ${isInstalled ? 'installed' : ''} ${isSelected ? 'active' : ''}"
+             data-upgrade-id="${id}">
+          <div class="upgrade-list-item-name">${upgrade.name}</div>
+          <div class="upgrade-list-item-cost">${upgrade.costCredits}cr</div>
+          ${isInstalled ? `<span class="upgrade-list-item-badge">Installed</span>` : ''}
+        </div>
+      `;
+    }
+
+    html += `</div>`;
+    return html;
+  }
+
+  /**
+   * Render right panel: Details of selected upgrade
+   * @private
+   */
+  #renderUpgradeDetail() {
+    if (!this.selectedUpgradeToAdd) {
+      return `<div class="upgrade-detail-empty">
+        <p>Select an upgrade to view details</p>
+      </div>`;
+    }
+
+    const upgrade = MELEE_UPGRADES[this.selectedUpgradeToAdd];
+    if (!upgrade) {
+      return `<div class="upgrade-detail-empty"><p>Upgrade not found</p></div>`;
+    }
+
+    const isInstalled = this.installedUpgrades.includes(this.selectedUpgradeToAdd);
+
+    return `
+      <div class="upgrade-detail">
+        <div class="upgrade-detail-name">${upgrade.name}</div>
+        <div class="upgrade-detail-cost">Cost: ${upgrade.costCredits} credits</div>
+
+        ${upgrade.description ? `
+          <div class="upgrade-detail-section">
+            <h4>Description</h4>
+            <p>${upgrade.description}</p>
+          </div>
+        ` : ''}
+
+        ${upgrade.effect ? `
+          <div class="upgrade-detail-section">
+            <h4>Effect</h4>
+            <p>${upgrade.effect}</p>
+          </div>
+        ` : ''}
+
+        ${isInstalled ? `
+          <div class="upgrade-detail-status installed">✓ Already installed</div>
+        ` : ''}
+      </div>
+    `;
   }
 
   attachEventListeners(root) {
-    // Upgrade selection (multi-select)
-    root.querySelectorAll(".melee-upgrade-card").forEach(card => {
-      const upgradeId = card.dataset.upgrade;
-      const isSelected = this.selectedUpgrades.includes(upgradeId);
-
-      if (isSelected) {
-        card.classList.add("selected");
-      }
-
-      card.addEventListener("click", (e) => {
+    // Upgrade list selection
+    root.querySelectorAll(".upgrade-list-item").forEach(item => {
+      item.addEventListener("click", (e) => {
         e.preventDefault();
-
-        if (this.selectedUpgrades.includes(upgradeId)) {
-          // Deselect
-          this.selectedUpgrades = this.selectedUpgrades.filter(id => id !== upgradeId);
-          card.classList.remove("selected");
-        } else {
-          // Select
-          this.selectedUpgrades.push(upgradeId);
-          card.classList.add("selected");
-        }
-
-        // Re-render to update cost
-        this.render();
+        const upgradeId = item.dataset.upgradeId;
+        this.selectModification(null, upgradeId);
       });
     });
 
-    // Accent color selector
-    root.querySelectorAll(".melee-accent-option").forEach(btn => {
-      const color = btn.dataset.accent;
-      const isSelected = color === this.accentColor;
-
-      if (isSelected) {
-        btn.classList.add("selected");
-      }
-
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-
-        // Remove previous selection
-        root.querySelectorAll(".melee-accent-option").forEach(b => b.classList.remove("selected"));
-
-        // Set new selection
-        btn.classList.add("selected");
-        this.accentColor = color;
-
-        // Update preview
-        const preview = root.querySelector(".melee-weapon-visual");
-        if (preview) {
-          preview.style.setProperty("--accent-color", this.#getColorHex(color));
-        }
-      });
-    });
-
-    // Apply button
-    const applyBtn = root.querySelector(".melee-apply-button");
-    applyBtn?.addEventListener("click", (e) => {
+    // Confirm button
+    const confirmBtn = root.querySelector('[data-action="confirm"]');
+    confirmBtn?.addEventListener("click", (e) => {
       e.preventDefault();
       this.#applyModifications();
+    });
+
+    // Cancel button
+    const cancelBtn = root.querySelector('[data-action="cancel"]');
+    cancelBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.close();
     });
   }
 
   async #applyModifications() {
+    // Validate selection
+    if (!this.selectedUpgradeToAdd) {
+      ui.notifications.warn("Please select an upgrade to add.");
+      return;
+    }
+
+    // Validate not already installed
+    if (this.installedUpgrades.includes(this.selectedUpgradeToAdd)) {
+      ui.notifications.warn("This upgrade is already installed.");
+      return;
+    }
+
     // VALIDATION 1: Check slots before proceeding
     const totalSlots = this.item.system?.upgradeSlots || 2;
     const currentUpgrades = this.item.system?.installedUpgrades || [];
     const currentSlotUsage = currentUpgrades.reduce((sum, u) => sum + (u.slotsUsed || 1), 0);
-    const newSlotUsage = this.selectedUpgrades.length;
+    const newSlotUsage = 1; // Single upgrade being added
     const totalSlotUsage = currentSlotUsage + newSlotUsage;
 
     if (totalSlotUsage > totalSlots) {
       ui.notifications.warn(
-        `Modification exceeds available slots. Need ${totalSlotUsage}, have ${totalSlots} available.`
+        `Adding this upgrade exceeds available slots. Need ${totalSlotUsage}, have ${totalSlots} available.`
       );
       return;
     }
 
     // VALIDATION 2: Check credits
-    const totalCost = this.#calculateTotalCost();
+    const upgradeToAdd = MELEE_UPGRADES[this.selectedUpgradeToAdd];
+    const totalCost = upgradeToAdd?.costCredits || 0;
     const actorCredits = this.actor.system?.credits || 0;
 
     if (actorCredits < totalCost) {
@@ -192,12 +250,15 @@ export class MeleeWeaponModificationApp extends ModificationModalShell {
     }
 
     try {
+      // Add to installed list
+      const newInstalledList = [...this.installedUpgrades, this.selectedUpgradeToAdd];
+
       // Build intent via builder
       const intent = ModificationIntentBuilder.buildGenericIntent(
         this.actor,
         this.item,
         [
-          { path: "flags.swse.meleeUpgrades", value: this.selectedUpgrades },
+          { path: "flags.swse.meleeUpgrades", value: newInstalledList },
           { path: "flags.swse.accentColor", value: this.accentColor }
         ],
         { type: "credits", amount: totalCost }
@@ -238,30 +299,6 @@ export class MeleeWeaponModificationApp extends ModificationModalShell {
       SWSELogger.error("Weapon modification failed:", err);
       ui.notifications.error("Unexpected error during modification.");
     }
-  }
-
-  #calculateTotalCost() {
-    let total = 0;
-    for (const upgradeId of this.selectedUpgrades) {
-      const upgrade = MELEE_UPGRADES[upgradeId];
-      if (upgrade) {
-        total += upgrade.costCredits || 0;
-      }
-    }
-    return total;
-  }
-
-  #getColorHex(colorName) {
-    // Return hex color for accent
-    const colors = {
-      "steel": "#a0a0a0",
-      "gold": "#d4af37",
-      "copper": "#b87333",
-      "silver": "#c0c0c0",
-      "black": "#1a1a1a",
-      "crimson": "#dc143c"
-    };
-    return colors[colorName] || "#a0a0a0";
   }
 
 }

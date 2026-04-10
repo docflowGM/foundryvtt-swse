@@ -19,28 +19,50 @@ export class InventoryEngine {
    * For armor: unequip all other armor first (single equipped rule).
    */
   static async toggleEquip(actor, itemId) {
-    const item = actor.items.get(itemId);
-    if (!item) return;
+    const item = actor?.items?.get(itemId);
+    if (!actor || !item) return;
 
-    const newValue = !item.system.equipped;
+    const currentEquipped = item.system?.equipped === true;
+    const newValue = !currentEquipped;
 
-    // If equipping armor, unequip all other armor first
-    if (item.type === "armor" && newValue === true) {
-      const otherArmor = actor.items.filter(
-        i => i.type === "armor" && i.id !== itemId && i.system.equipped
-      );
+    const updates = [];
 
-      for (const armorItem of otherArmor) {
-        await ActorEngine.updateActor(actor, {
-          [`items.${armorItem.id}.system.equipped`]: false
-        }, { source: "InventoryEngine.toggleEquip" });
+    // Shields are modeled as armor items with armorType === "shield".
+    const itemArmorType = String(item.system?.armorType ?? "").toLowerCase();
+    const isShield = item.type === "armor" && itemArmorType === "shield";
+    const isBodyArmor = item.type === "armor" && itemArmorType !== "shield";
+
+    // If equipping BODY armor, unequip other equipped BODY armor first.
+    // Do NOT unequip shields.
+    if (newValue === true && isBodyArmor) {
+      const otherBodyArmor = actor.items.filter(i => {
+        if (i.id === itemId) return false;
+        if (i.type !== "armor") return false;
+        if (i.system?.equipped !== true) return false;
+
+        const otherArmorType = String(i.system?.armorType ?? "").toLowerCase();
+        return otherArmorType !== "shield";
+      });
+
+      for (const armorItem of otherBodyArmor) {
+        updates.push({
+          _id: armorItem.id,
+          "system.equipped": false
+        });
       }
     }
 
-    // Now set the target item
-    await ActorEngine.updateActor(actor, {
-      [`items.${itemId}.system.equipped`]: newValue
-    }, { source: "InventoryEngine.toggleEquip" });
+    // If equipping a shield, allow body armor to remain equipped.
+    // Just toggle the shield itself.
+
+    updates.push({
+      _id: itemId,
+      "system.equipped": newValue
+    });
+
+    await ActorEngine.updateOwnedItems(actor, updates, {
+      source: "InventoryEngine.toggleEquip"
+    });
   }
 
   /**

@@ -22,7 +22,7 @@ export class RollEngine {
     try {
 
       const roll = new Roll(formula, data);
-      await roll.evaluate({ async: true });
+      await roll.evaluate();
 
       // Optional debug logging via Sentinel
       if (globalThis.SWSE?.Debugger) {

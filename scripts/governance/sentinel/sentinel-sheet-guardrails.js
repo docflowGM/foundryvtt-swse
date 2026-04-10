@@ -150,7 +150,16 @@ export class SentinelSheetGuardrails {
 // Auto-init
 if (typeof Hooks !== "undefined") {
   Hooks.once("ready", () => {
-    if (game.settings.get?.("foundryvtt-swse", "sentinelSheetGuardrails") ?? true) {
+    // Safely check setting, default to true if not registered
+    let enabled = true;
+    try {
+      enabled = game.settings.get?.("foundryvtt-swse", "sentinelSheetGuardrails") ?? true;
+    } catch (e) {
+      // Setting not registered, use default (enabled)
+      enabled = true;
+    }
+
+    if (enabled) {
       SentinelSheetGuardrails.init();
     }
   });

@@ -47,6 +47,10 @@ import { traceLog, actorSummary, payloadSummary } from "/systems/foundryvtt-swse
 // Phase 8: Character sheet decomposition - import focused modules
 import { registerListeners } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/listeners.js";
 import { handleFormSubmission } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
+// Diagnostics: runtime inspection of resize/scroll behavior
+import { characterSheetDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet-diagnostics.js";
+// Contract Enforcement: validate sheet architecture at runtime
+import { CharacterSheetContractEnforcer } from "/systems/foundryvtt-swse/scripts/sheets/v2/contract-enforcer.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -241,12 +245,10 @@ export class SWSEV2CharacterSheet extends
   HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
 
   static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions ?? {}, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "character", "swse-character-sheet", "swse-sheet", "v2"],
-      position: {
-        width: 900,
-        height: 950
-      },
+      width: 900,
+      height: 950,
       window: {
         resizable: true,
         draggable: true,
@@ -267,6 +269,7 @@ export class SWSEV2CharacterSheet extends
   }
 
   static PARTS = {
+    ...super.PARTS,
     body: {
       template: "systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs"
     }
@@ -346,6 +349,9 @@ export class SWSEV2CharacterSheet extends
   // ---------------------------------------------------------------
 
   async _onRender(context, options) {
+    // ═══ DIAGNOSTICS: Capture state at render start ═══
+    characterSheetDiagnostics.snapshot('_onRender START (before positioning)', this);
+
     // ═══ FIX: Center on initial render (first time ever or after close/reopen) ═══
     // PROBLEM: Previous code called setPosition repeatedly during a 5-second window,
     // creating a fight loop with Foundry's persistent-position system.
@@ -371,9 +377,15 @@ export class SWSEV2CharacterSheet extends
       // The persistent-position system will restore user's saved dimensions, or use defaults
       this.setPosition({ left: pos.left, top: pos.top });
       this._shouldCenterOnRender = false;
+
+      // ═══ DIAGNOSTICS: After centering ═══
+      characterSheetDiagnostics.snapshot('_onRender AFTER setPosition', this);
     }
 
     await super._onRender(context, options);
+
+    // ═══ DIAGNOSTICS: After Foundry render ═══
+    characterSheetDiagnostics.snapshot('_onRender AFTER super._onRender', this);
 
     // ── Phase 6: Restore UI state after rerender ──
     // This ensures expanded sections, active tabs, focused fields, and scroll position
@@ -391,43 +403,13 @@ export class SWSEV2CharacterSheet extends
     this._renderAbort = new AbortController();
     const { signal } = this._renderAbort;
 
-    // CRITICAL FIX: In ApplicationV2, this.element may be a control button, not the sheet root
-    // The form wraps all sheet content, so use the form as the activation root instead
-    let root = this.element?.[0] ?? this.element;
+    // V13 AppV2: this.element is always an HTMLElement
+    const root = this.element;
 
-    // console.log('[LIFECYCLE] _onRender this.element resolved to:', {
-    //   tag: root?.tagName,
-    //   classes: root?.className
-    // });
-
-    // If this.element is not the form, try to find the actual form element
-    if (root && root.tagName !== 'FORM') {
-      // console.log('[LIFECYCLE] Root is not a FORM, searching for form parent/in DOM');
-      const formParent = root.closest("form");
-      if (formParent) {
-        // console.log('[LIFECYCLE] Found form via closest()');
-        root = formParent;
-      } else {
-        const appRoot = this.element instanceof HTMLElement ? this.element : this.element?.[0];
-        const localForm = appRoot?.closest?.("form") ?? appRoot?.querySelector?.("form.swse-character-sheet-form") ?? null;
-        if (localForm) {
-          // console.log('[LIFECYCLE] Found form within this app root');
-          root = localForm;
-        }
-      }
-    }
-
-    if (!root) {
-      console.error('[LIFECYCLE] _onRender: No root element found');
+    if (!root || !(root instanceof HTMLElement)) {
+      console.error('[LIFECYCLE] _onRender: No valid root element found');
       return;
     }
-
-    // console.log('[LIFECYCLE] _onRender calling activateListeners with root element:', {
-    //   rootTag: root.tagName,
-    //   rootClasses: root.className,
-    //   rootId: root.id,
-    //   isForm: root.tagName === 'FORM'
-    // });
 
     // Phase 9: Apply help level CSS class to root for tier-aware affordance visibility
     HelpModeManager.getLevels().forEach(level => {
@@ -435,7 +417,7 @@ export class SWSEV2CharacterSheet extends
     });
     root.classList.add(`help-level--${this._helpLevel.toLowerCase()}`);
 
-    // Wire listeners to the actual sheet root (now guaranteed to be the form or the sheet content)
+    // Wire listeners to the sheet root
     this.activateListeners(root, { signal });
     applyResourceNumberAnimations(this, root);
     applyResourceBarAnimations(this, root);
@@ -458,6 +440,34 @@ export class SWSEV2CharacterSheet extends
 
     // Verify listener cleanup mechanism is in place (AbortController signal cleanup)
     verifyListenerCleanup(root, "SWSEV2CharacterSheet", signal);
+
+    // ═══ DIAGNOSTICS: Final snapshot after all listeners wired ═══
+    characterSheetDiagnostics.snapshot('_onRender COMPLETE (all listeners wired)', this);
+
+    // ═══ AUTO-DIAGNOSTICS: Run detailed analysis on every open ═══
+    setTimeout(() => {
+      console.log('[SWSE SheetDiag] ════════════════════════════════════');
+      console.log('[SWSE SheetDiag] AUTO-RUNNING CHARACTER SHEET DIAGNOSTICS');
+      console.log('[SWSE SheetDiag] ════════════════════════════════════');
+      characterSheetDiagnostics.inspectHeightChain(this);
+      characterSheetDiagnostics.listOverflowingElements(this);
+      characterSheetDiagnostics.inspectAppState(this);
+      console.log('[SWSE SheetDiag] ════════════════════════════════════');
+
+      // ═══ CONTRACT ENFORCEMENT: Validate architecture compliance ═══
+      console.log('[CHARACTER SHEET CONTRACT] RUNNING ENFORCEMENT VALIDATION');
+      CharacterSheetContractEnforcer.validateAndReport(this.element);
+
+      // ═══ DEBUG: Print exact violation details for fixing ═══
+      console.log('\n');
+      console.log('╔════════════════════════════════════════════════════════════════╗');
+      console.log('║          EXACT VIOLATIONS FOR DEBUGGING AND FIXING             ║');
+      console.log('╚════════════════════════════════════════════════════════════════╝');
+      CharacterSheetContractEnforcer.debugScrollOwners(this.element);
+      CharacterSheetContractEnforcer.debugIllegalPanelScrollers(this.element);
+      CharacterSheetContractEnforcer.debugWindowContentMinHeight(this.element);
+      CharacterSheetContractEnforcer.debugHeightChain(this.element);
+    }, 100);
   }
 
   async _onClose(options) {

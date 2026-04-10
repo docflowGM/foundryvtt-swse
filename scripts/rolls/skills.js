@@ -37,8 +37,8 @@ export async function rollSkill(actor, skillKey) {
 
   // Check trained-only enforcement
   const isTrained = derivedSkill.trained === true;
-  const skillDef = CONFIG.SWSE.skills?.[skillKey] || {};
-  const permission = SkillEnforcementEngine.canRollSkill(skillDef, isTrained);
+  const skillDef = CONFIG?.SWSE?.skills?.[skillKey] || {};
+  const permission = SkillEnforcementEngine.evaluate({ actor, skillKey, actionType: 'check', context: { isTrained, skillDef } });
 
   if (!permission.allowed) {
     ui.notifications.warn(`${permission.reason}`);
@@ -128,10 +128,17 @@ export function calculateSkillMod(actor, skill, actionId = null) {
  * @param {number} dc - Difficulty class
  * @returns {Promise<object>} Result with roll and success
  */
-export async function rollSkillCheck(actor, skillKey, dc) {
+export async function rollSkillCheck(actor, skillKey, dcOrOptions = null) {
   const roll = await rollSkill(actor, skillKey);
 
   if (!roll) {return null;}
+
+  const options = (dcOrOptions && typeof dcOrOptions === 'object' && !Array.isArray(dcOrOptions)) ? dcOrOptions : {};
+  const dc = typeof dcOrOptions === 'number' ? dcOrOptions : (typeof options.dc === 'number' ? options.dc : null);
+
+  if (typeof dc !== 'number') {
+    return { roll, success: null };
+  }
 
   const success = roll.total >= dc;
 

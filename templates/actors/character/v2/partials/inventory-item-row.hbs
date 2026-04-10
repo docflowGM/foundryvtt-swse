@@ -1,0 +1,367 @@
+{{!--
+  SWSE Inventory Item Row — Unified Row Partial for All Item Types
+
+  This partial renders a single horizontal control bar for weapons, armor, shields, and equipment.
+  Structure:
+  - Primary row: icon, name, type, key stats, quick actions
+  - Secondary row: management actions (equip, edit, sell, delete)
+
+  Supports all item types through conditional checks.
+  Preserves all data-action hooks for existing JS bindings.
+--}}
+
+{{!-- Preserve old class names for backward compatibility with JS selectors --}}
+<div class="inventory-item-row inventory-{{type}}-card {{#if equipped}}is-equipped{{/if}}" data-item-id="{{id}}">
+
+<style>
+/* Inventory Row Layout */
+.inventory-item-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  border: 1px solid #333;
+  border-radius: 3px;
+  background: #0d0d0d;
+  transition: all 0.15s ease;
+}
+
+.inventory-item-row.is-equipped {
+  border-color: #ff6b6b;
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 107, 107, 0.05));
+  box-shadow: 0 0 6px rgba(255, 107, 107, 0.2);
+}
+
+/* PRIMARY ROW: Main control bar */
+.item-row-main {
+  display: grid;
+  grid-template-columns: 32px 1fr auto auto auto auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.item-row-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border: 1px solid #333;
+  background: #0a0a0a;
+  border-radius: 2px;
+}
+
+.item-row-name {
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.item-name-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  transition: color 0.15s ease;
+}
+
+.item-name-btn:hover {
+  color: #ffcccc;
+  text-decoration: underline;
+}
+
+.item-name-text {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.item-type-badge {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+/* Stats row */
+.item-row-stats {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.item-row-stats .stat {
+  font-size: 11px;
+  color: #ccc;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 4px;
+  border-radius: 2px;
+  border: 1px solid #222;
+  white-space: nowrap;
+}
+
+.item-row-stats .stat.damage {
+  color: #ff9999;
+  border-color: #663333;
+}
+
+.item-row-stats .stat.range {
+  color: #99ccff;
+}
+
+.item-row-stats .stat.ammo {
+  color: #99ff99;
+}
+
+.item-row-stats .stat.armor-type {
+  color: #ffcc99;
+}
+
+.item-row-stats .stat.defense {
+  color: #ff99ff;
+}
+
+/* Quick action buttons */
+.item-row-quick-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.quick-action-btn {
+  padding: 4px 6px;
+  min-width: 28px;
+  min-height: 28px;
+  font-size: 1rem;
+  border: 1px solid #444;
+  background: rgba(0, 0, 0, 0.5);
+  color: #ccc;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.quick-action-btn:hover {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: #ff6b6b;
+  color: #fff;
+}
+
+.equipped-indicator {
+  font-size: 14px;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+/* Toggle button */
+.item-row-toggle-btn {
+  padding: 4px 8px;
+  min-height: 28px;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: #888;
+  font-size: 14px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.item-row-toggle-btn:hover {
+  background: #222;
+  border-color: #555;
+  color: #ccc;
+}
+
+/* SECONDARY ROW: Management actions */
+.item-row-actions {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.item-row-actions-secondary {
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
+  padding-top: 4px;
+  margin-top: 2px;
+}
+
+.btn {
+  flex: 1;
+  min-width: 50px;
+  padding: 4px 6px;
+  font-size: 11px;
+  border: 1px solid #555;
+  border-radius: 2px;
+  background: #222;
+  color: #ccc;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background: #333;
+  border-color: #777;
+  color: #fff;
+}
+
+.btn-equip {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.btn-equip:hover {
+  background: rgba(255, 107, 107, 0.15);
+}
+
+.btn-config {
+  flex: 0 0 auto;
+  min-width: 28px;
+  border-color: #4a9eff;
+  color: #4a9eff;
+}
+
+.btn-config:hover {
+  background: rgba(74, 158, 255, 0.15);
+}
+
+.btn-edit {
+  border-color: #99ccff;
+  color: #99ccff;
+}
+
+.btn-edit:hover {
+  background: rgba(153, 204, 255, 0.15);
+}
+
+.btn-sell {
+  border-color: #ffcc99;
+  color: #ffcc99;
+}
+
+.btn-sell:hover {
+  background: rgba(255, 204, 153, 0.15);
+}
+
+.btn-delete {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.btn-delete:hover {
+  background: rgba(255, 107, 107, 0.15);
+}
+
+/* Responsive: stack on mobile */
+@media (max-width: 768px) {
+  .item-row-main {
+    grid-template-columns: 32px 1fr auto;
+  }
+
+  .item-row-stats {
+    display: none;
+  }
+
+  .item-row-quick-actions {
+    flex-direction: column;
+    min-width: auto;
+  }
+}
+
+/* Rollable affordance */
+.rollable {
+  cursor: pointer;
+}
+
+.rollable:hover {
+  text-decoration: underline;
+}
+</style>
+
+
+
+  {{!-- PRIMARY ROW: Icon + Name + Stats + Quick Actions --}}
+  <div class="item-row-main">
+
+    {{!-- Item icon (small) --}}
+    <img src="{{img}}" alt="{{name}}" class="item-row-icon" />
+
+    {{!-- Item name (clickable for weapons) --}}
+    <div class="item-row-name">
+      {{#if (eq type "weapon")}}
+        <button type="button" class="item-name-btn rollable" data-item-id="{{id}}" title="Quick roll attack">{{name}}</button>
+      {{else}}
+        <span class="item-name-text">{{name}}</span>
+      {{/if}}
+    </div>
+
+    {{!-- Item type badge --}}
+    <span class="item-type-badge">{{type}}</span>
+
+    {{!-- KEY STATS (conditional by type) --}}
+    <div class="item-row-stats">
+      {{#if (eq type "weapon")}}
+        <span class="stat damage" title="Damage">{{system.damage}}</span>
+        {{#if system.range}}<span class="stat range" title="Range">{{system.range}}</span>{{/if}}
+        {{#if system.ammunition}}
+          <span class="stat ammo" title="Ammunition">
+            {{system.ammunition.current}}/{{system.ammunition.max}}
+          </span>
+        {{/if}}
+      {{else if (eq type "armor")}}
+        <span class="stat armor-type" title="Armor Type">{{system.armorType}}</span>
+        {{#if system.reflexBonus}}<span class="stat defense" title="Reflex Bonus">+{{system.reflexBonus}}</span>{{/if}}
+      {{/if}}
+    </div>
+
+    {{!-- QUICK ACTION BUTTONS --}}
+    <div class="item-row-quick-actions">
+      {{#if (eq type "weapon")}}
+        <button type="button" class="quick-action-btn attack-btn" data-item-id="{{id}}" title="Roll {{name}} attack">⚔</button>
+        <button type="button" class="quick-action-btn damage-btn" data-item-id="{{id}}" title="Roll {{name}} damage">💥</button>
+      {{/if}}
+
+      {{#if equipped}}<span class="equipped-indicator" title="Equipped">✓</span>{{/if}}
+    </div>
+
+    {{!-- MORE BUTTON (toggles secondary actions) --}}
+    <button type="button" class="item-row-toggle-btn" data-action="toggle-row-actions" data-item-id="{{id}}" title="More actions">⋯</button>
+  </div>
+
+  {{!-- SECONDARY ROW: Management Actions --}}
+  <div class="item-row-actions item-row-actions-secondary">
+
+    {{!-- Equip/Unequip --}}
+    <button type="button" class="btn btn-equip" data-action="equip" data-item-id="{{id}}" title="Equip/Unequip item">
+      {{#if equipped}}Unequip{{else}}Equip{{/if}}
+    </button>
+
+    {{!-- Configure (weapon-specific) --}}
+    {{#if (eq type "weapon")}}
+      <button type="button" class="btn btn-config" data-action="configure" data-item-id="{{id}}" title="Configure weapon">⚙</button>
+    {{/if}}
+
+    {{!-- Edit (open item sheet) --}}
+    <button type="button" class="btn btn-edit" data-action="edit" data-item-id="{{id}}" title="Edit item">Edit</button>
+
+    {{!-- Sell --}}
+    <button type="button" class="btn btn-sell" data-action="sell-item" data-item-id="{{id}}" title="Sell item">Sell</button>
+
+    {{!-- Delete --}}
+    <button type="button" class="btn btn-delete" data-action="delete" data-item-id="{{id}}" title="Delete item">Delete</button>
+  </div>
+
+</div>

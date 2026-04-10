@@ -63,9 +63,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/racial-ability-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/resources-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs',
-  'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-armor-card.hbs',
-  'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-card.hbs',
-  'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-weapon-card.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-row.hbs',
 
   // ==============================
   // Droid v2 Partials

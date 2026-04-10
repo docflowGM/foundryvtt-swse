@@ -5,8 +5,25 @@ import { HookInvestigator } from "/systems/foundryvtt-swse/scripts/governance/se
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { GMDroidApprovalDashboard } from "/systems/foundryvtt-swse/scripts/apps/gm-droid-approval-dashboard.js";
 import { registerVehiclePreCreateHooks } from "/systems/foundryvtt-swse/scripts/actors/vehicle/vehicle-precreate-hooks.js";
+import { initSidebarSentinelTrace } from "/systems/foundryvtt-swse/scripts/core/sidebar-sentinel-trace.js";
+import { initSidebarIconComparison } from "/systems/foundryvtt-swse/scripts/core/sidebar-icon-comparison.js";
+import { initSidebarIconClassAudit } from "/systems/foundryvtt-swse/scripts/core/sidebar-icon-class-audit.js";
 
 Hooks.once('init', () => {
+  console.log('[SWSE] Init hook fired - starting sidebar diagnostics initialization');
+  // Temporary: Initialize surgical sidebar diagnostics for icon disappearance
+  try {
+    console.log('[SWSE] Calling initSidebarSentinelTrace...');
+    initSidebarSentinelTrace();
+    console.log('[SWSE] Calling initSidebarIconComparison...');
+    initSidebarIconComparison();
+    console.log('[SWSE] Calling initSidebarIconClassAudit...');
+    initSidebarIconClassAudit();
+    console.log('[SWSE] Sidebar diagnostics initialized successfully');
+  } catch (err) {
+    console.error('[SWSE] Failed to initialize sidebar diagnostics:', err);
+  }
+
   // Register Enhanced Massive Damage setting
   if (!game.settings.settings.has("foundryvtt-swse.enableEnhancedMassiveDamage")) {
     game.settings.register("foundryvtt-swse", "enableEnhancedMassiveDamage", {

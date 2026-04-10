@@ -29,6 +29,12 @@ export class InventoryHandlers {
       this._setupArmorCardHandlers(actor, card);
     });
 
+    // Equipment card handlers
+    const equipmentCards = container.querySelectorAll('.inventory-equipment-card');
+    equipmentCards.forEach(card => {
+      this._setupEquipmentCardHandlers(actor, card);
+    });
+
     swseLogger.debug(`[InventoryHandlers] Initialized handlers for inventory`);
   }
 
@@ -106,6 +112,41 @@ export class InventoryHandlers {
     if (deleteBtn) {
       deleteBtn.addEventListener('click', async () => {
         await this._deleteArmor(armor);
+      });
+    }
+  }
+
+  /**
+   * Setup equipment card event handlers
+   * @private
+   */
+  static _setupEquipmentCardHandlers(actor, card) {
+    const itemId = card.dataset.itemId;
+    const equipment = actor.items.get(itemId);
+
+    if (!equipment) return;
+
+    // Equip button
+    const equipBtn = card.querySelector('button[data-action="equip"]');
+    if (equipBtn) {
+      equipBtn.addEventListener('click', async () => {
+        await this._toggleEquipmentEquipped(actor, equipment);
+      });
+    }
+
+    // Edit button (opens item sheet)
+    const editBtn = card.querySelector('button[data-action="edit"]');
+    if (editBtn) {
+      editBtn.addEventListener('click', () => {
+        equipment.sheet.render(true);
+      });
+    }
+
+    // Delete button
+    const deleteBtn = card.querySelector('button[data-action="delete"]');
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', async () => {
+        await this._deleteEquipment(equipment);
       });
     }
   }
@@ -194,6 +235,51 @@ export class InventoryHandlers {
         } catch (err) {
           swseLogger.error(`[InventoryHandlers] Error deleting armor:`, err);
           ui.notifications.error(`Failed to delete armor: ${err.message}`);
+        }
+      },
+      no: () => {}
+    });
+  }
+
+  /**
+   * Toggle equipment equipped status
+   *
+   * ⚠️ GOVERNANCE: Routes through actor's updateOwnedItem to ensure:
+   * - MutationInterceptor authorization checking
+   * - Proper actor recomputation on equipment change
+   * - Integrity validation after equipment state change
+   *
+   * @private
+   * @param {Actor} actor - Parent actor
+   * @param {Item} equipment - Equipment to toggle
+   */
+  static async _toggleEquipmentEquipped(actor, equipment) {
+    try {
+      // PHASE 5: Route through ActorEngine via updateOwnedItem
+      await actor.updateOwnedItem(equipment, { 'system.equipped': !equipment.system.equipped });
+      swseLogger.info(`[InventoryHandlers] Toggled equipped: ${equipment.name}`);
+    } catch (err) {
+      swseLogger.error(`[InventoryHandlers] Error toggling equipment equipped:`, err);
+      ui.notifications.error(`Failed to equip equipment: ${err.message}`);
+    }
+  }
+
+  /**
+   * Delete equipment from inventory
+   * @private
+   */
+  static async _deleteEquipment(equipment) {
+    const confirmed = await Dialog.confirm({
+      title: 'Delete Equipment',
+      content: `<p>Are you sure you want to delete <strong>${equipment.name}</strong>?</p>`,
+      yes: async () => {
+        try {
+          await equipment.delete();
+          swseLogger.info(`[InventoryHandlers] Deleted equipment: ${equipment.name}`);
+          ui.notifications.info(`Deleted "${equipment.name}"`);
+        } catch (err) {
+          swseLogger.error(`[InventoryHandlers] Error deleting equipment:`, err);
+          ui.notifications.error(`Failed to delete equipment: ${err.message}`);
         }
       },
       no: () => {}

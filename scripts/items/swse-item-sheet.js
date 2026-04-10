@@ -46,7 +46,8 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 /** @inheritDoc */
   static PARTS = {
     form: {
-      template: 'systems/foundryvtt-swse/templates/items/base/item-sheet.hbs'
+      template: 'systems/foundryvtt-swse/templates/items/base/item-sheet.hbs',
+      scrollable: ['.item-editor__body']
     }
   };
 
@@ -55,7 +56,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     primary: {
       tabs: [
         { id: 'data', group: 'primary' },
-        { id: 'desc', group: 'primary' }
+        { id: 'description', group: 'primary' }
       ],
       initial: 'data'
     }
@@ -63,59 +64,41 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
   /** @inheritDoc */
   async _prepareContext(options) {
-    const context = await super._prepareContext(options);
-
+    // Build a plain serializable context for AppV2 rendering.
+    // Do NOT inherit ItemSheetV2's full context here: it can include
+    // non-cloneable class/config references (for example documentClass/TYPES),
+    // which fail RenderAssertions.assertContextSerializable().
     const itemData = this.item?.toObject?.() ?? {};
-    context.item = itemData;
-    context.system = foundry.utils.deepClone(itemData.system ?? {});
 
     // Template expects this for the <form class="{{cssClass}} ..."> binding.
-    // Use DEFAULT_OPTIONS.classes array directly (avoid this.constructor refs)
     const cssClasses = this.constructor.DEFAULT_OPTIONS?.classes ?? [];
-    context.cssClass = Array.isArray(cssClasses) ? cssClasses.join(' ') : '';
 
-    // Optional convenience values for templates without passing live Documents
-    context.itemId = this.item?.id ?? null;
-    context.itemType = itemData.type ?? this.item?.type ?? "";
-    context.itemName = itemData.name ?? this.item?.name ?? "";
-    context.itemImg = itemData.img ?? this.item?.img ?? "";
+    // Get actor credits if this item is embedded
+    const actor = this.item?.actor;
+    const actorCredits = actor?.system?.credits ?? null;
 
-    // Remove any non-serializable properties that might be inherited from parent
-    // This ensures AppV2 serialization check passes
-    const cleanValue = (val, depth = 0) => {
-      if (depth > 10) return val; // Prevent infinite recursion
-      if (typeof val === 'function') return undefined;
-      if (val && typeof val === 'object') {
-        if (val.constructor === Function) return undefined;
-        if (Array.isArray(val)) {
-          return val.map(v => cleanValue(v, depth + 1)).filter(v => v !== undefined);
-        }
-        // Clean nested objects
-        const cleaned = {};
-        for (const [k, v] of Object.entries(val)) {
-          if (typeof v !== 'function' && !(v && typeof v === 'object' && v.constructor === Function)) {
-            cleaned[k] = cleanValue(v, depth + 1);
-          }
-        }
-        return cleaned;
+    const context = {
+      item: itemData,
+      system: foundry.utils.deepClone(itemData.system ?? {}),
+      cssClass: Array.isArray(cssClasses) ? cssClasses.join(' ') : '',
+      itemId: this.item?.id ?? null,
+      itemType: itemData.type ?? this.item?.type ?? "",
+      itemName: itemData.name ?? this.item?.name ?? "",
+      itemImg: itemData.img ?? this.item?.img ?? "",
+      editable: this.isEditable ?? true,
+      owner: this.item?.isOwner ?? false,
+      limited: this.item?.limited ?? false,
+      actorCredits: actorCredits,
+      activeTab: 'data', // Ensure tabs render with Data tab active by default
+      labels: {
+        sheetTitle: itemData.name ?? this.item?.name ?? "Item"
       }
-      return val;
     };
 
-    for (const key of Object.keys(context)) {
-      const value = context[key];
-      if (typeof value === 'function' || (value && typeof value === 'object' && value.constructor === Function)) {
-        delete context[key];
-      } else if (value && typeof value === 'object') {
-        context[key] = cleanValue(value);
-      }
-    }
-
-    // Verify context is serializable (no Document refs, circular refs, etc.)
     RenderAssertions.assertContextSerializable(context, "SWSEItemSheet");
-
     return context;
   }
+
 
   /** @inheritDoc */
   _onRender(context, options) {
@@ -134,12 +117,84 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       }
     });
 
+    // Lightsaber customization entry
+    root.querySelector('.customize-lightsaber')?.addEventListener('click', (event) => {
+      event.preventDefault();
+      try {
+        new LightsaberConstructionApp(this.item.actor ?? this.item).render(true);
+      } catch (err) {
+        SWSELogger.error('[SWSEItemSheet] Failed to open LightsaberConstructionApp', err);
+      }
+    });
+
+    // Blaster customization entry
+    root.querySelector('.customize-blaster')?.addEventListener('click', (event) => {
+      event.preventDefault();
+      try {
+        const actor = this.item.actor ?? this.item;
+        new BlasterCustomizationApp(actor, this.item).render(true);
+      } catch (err) {
+        SWSELogger.error('[SWSEItemSheet] Failed to open BlasterCustomizationApp', err);
+      }
+    });
+
+    // Close button
+    root.querySelector('.close-btn')?.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      this.close();
+    });
+
     // Shield activation helpers (data-only intent -> actor API)
     root.querySelector('.activate-shield')?.addEventListener('click', this.#onActivateShield.bind(this));
     root.querySelector('.deactivate-shield')?.addEventListener('click', this.#onDeactivateShield.bind(this));
 
     // Lightsaber emit light toggle
     root.querySelector('.emit-light-toggle')?.addEventListener('change', this.#onEmitLightToggle.bind(this));
+
+    // Item type selector - re-render on type change to update category options
+    const itemTypeSelect = root.querySelector('.item-type-select');
+    if (itemTypeSelect) {
+      itemTypeSelect.addEventListener('change', this.#onItemTypeChange.bind(this));
+    }
+
+    // Weapon category filtering based on melee/ranged choice
+    const meleeOrRangedSelect = root.querySelector('.melee-or-ranged-select');
+    if (meleeOrRangedSelect) {
+      meleeOrRangedSelect.addEventListener('change', this.#onMeleeOrRangedChange.bind(this));
+    }
+  }
+
+  /**
+   * Handle changes to item type to update category options
+   * @private
+   */
+  async #onItemTypeChange(event) {
+    const itemType = event.currentTarget.value;
+
+    // Update the form data
+    const formData = new FormDataExtended(this.form);
+    formData.set('type', itemType);
+
+    // Re-render to update category options based on new type
+    this.render({ force: true });
+  }
+
+  /**
+   * Handle changes to melee/ranged choice to update category options
+   * @private
+   */
+  async #onMeleeOrRangedChange(event) {
+    const meleeOrRanged = event.currentTarget.value;
+    const categorySelect = this.element?.querySelector('.weapon-category-select');
+    if (!categorySelect) return;
+
+    // Update the form data
+    const formData = new FormDataExtended(this.form);
+    formData.set('system.meleeOrRanged', meleeOrRanged);
+
+    // Re-render to update category options
+    this.render({ force: true });
   }
 
   async #onActivateShield(event) {
@@ -280,7 +335,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
   /**
    * V2 form handler.
-   * @this {SWSEItemSheet}
+   * Static method called by Foundry with proper 'this' binding to app instance.
    * @param {SubmitEvent} event
    * @param {HTMLFormElement} form
    * @param {FormDataExtended} formData

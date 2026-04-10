@@ -2,49 +2,59 @@
   <!-- Hologram Scanline Overlay -->
   <div class="ls-scanline-overlay"></div>
 
-  <!-- Preview Section -->
-  {{#if previewContent}}
-  <div class="modal-preview-section">
-    {{{previewContent}}}
-  </div>
-  {{/if}}
-
   <form class="ls-form flexcol">
-    <!-- Header Section -->
-    <header class="ls-header modal-header">
-      {{#if headerContent.icon}}
-      <span class="modal-header-icon">{{headerContent.icon}}</span>
-      {{/if}}
-      <h1>{{headerContent.title}}</h1>
-      {{#if headerContent.subtitle}}
-      <p class="subtitle">{{headerContent.subtitle}}</p>
-      {{/if}}
+
+    <!-- FIXED HEADER: Item image + Title -->
+    <header class="modal-header">
+      <div class="modal-header-content">
+        {{#if itemImg}}
+        <img src="{{itemImg}}" alt="{{itemName}}" class="modal-header-image" />
+        {{/if}}
+
+        <div class="modal-header-title">
+          <h1>{{headerContent.title}}</h1>
+          {{#if headerContent.subtitle}}
+          <p class="modal-header-subtitle">{{headerContent.subtitle}}</p>
+          {{/if}}
+        </div>
+      </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="modal-content-wrapper">
-      {{#if mainContent.regions}}
-      <div class="ls-panels-grid">
-        {{{mainContent.content}}}
+    <!-- SCROLLABLE BODY: 2-Panel Layout -->
+    <div class="modal-body">
+      <!-- Left Panel: Selection List -->
+      <div class="modal-left">
+        {{{mainContent.list}}}
       </div>
-      {{else}}
-      <div class="modal-content">
-        {{{mainContent.content}}}
-      </div>
-      {{/if}}
 
-      {{#if sidebarContent}}
-      <aside class="modal-sidebar">
-        {{{sidebarContent}}}
-      </aside>
-      {{/if}}
+      <!-- Right Panel: Detail View -->
+      <div class="modal-right">
+        {{{mainContent.detail}}}
+      </div>
     </div>
 
-    <!-- Footer Content (Cost Summary, Button, etc.) -->
-    {{#if footerContent}}
-    <div class="modal-footer">
-      {{{footerContent}}}
-    </div>
-    {{/if}}
+    <!-- FIXED FOOTER: Cancel | Cost Info | Confirm -->
+    <footer class="modal-footer">
+      <button type="button" class="modal-footer-btn modal-footer-cancel" data-action="cancel">
+        Cancel
+      </button>
+
+      <div class="modal-footer-cost">
+        {{#if footerContent.totalCost}}
+        <span class="modal-cost-label">Total Cost:</span>
+        <span class="modal-cost-value">{{footerContent.totalCost}}</span>
+        {{/if}}
+
+        {{#if footerContent.wallet}}
+        <span class="modal-wallet-label">Wallet:</span>
+        <span class="modal-wallet-value">{{footerContent.wallet}}</span>
+        {{/if}}
+      </div>
+
+      <button type="submit" class="modal-footer-btn modal-footer-confirm" data-action="confirm" {{#unless footerContent.canConfirm}}disabled{{/unless}}>
+        Confirm
+      </button>
+    </footer>
+
   </form>
 </div>

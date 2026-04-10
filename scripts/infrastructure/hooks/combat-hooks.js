@@ -194,7 +194,7 @@ async function handleCombatEnd(combat, options, userId) {
  */
 async function handlePostAttackFX(context) {
     // Check if cinematic effects are enabled
-    const cinematicEffectsEnabled = game.settings.get('foundryvtt-swse', 'cinematicEffects');
+    const cinematicEffectsEnabled = game.settings.get('foundryvtt-swse', 'enableCinematicEffects');
     if (!cinematicEffectsEnabled) {
         return;
     }

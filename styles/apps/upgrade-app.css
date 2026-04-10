@@ -29,11 +29,24 @@
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
 }
 
-/* Remove default Foundry padding */
+/* Remove default Foundry padding and establish scroll container */
 .app.window-app.swse-upgrade-app .window-content,
 .application.window-app.swse-upgrade-app .window-content {
   padding: 0;
   background: transparent;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Main upgrade app content container with scroll */
+.swse-upgrade-app {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 15px;
 }
 
 /* ================================================================= */

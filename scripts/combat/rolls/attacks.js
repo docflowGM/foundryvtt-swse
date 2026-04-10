@@ -130,7 +130,7 @@ export async function rollAttack(actor, weapon) {
   const atkBonus = computeAttackBonus(actor, weapon);
 
   const rollFormula = `1d20 + ${atkBonus}`;
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula).evaluate({ async: true });
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
 
   await SWSEChat.postRoll({
     roll,
@@ -178,7 +178,7 @@ export async function rollDamage(actor, weapon) {
   const base = weapon.system?.damage ?? weapon.damage ?? '1d6';
   const formula = `${base} + ${dmgBonus}`;
 
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(formula);
 
   await SWSEChat.postRoll({
     roll,
@@ -241,8 +241,8 @@ export async function rollAttackAndDamageWithNarration(actor, weapon) {
   const rollFormula = `1d20 + ${atkBonus}`;
   const dmgFormula = `${weapon.system?.damage ?? weapon.damage ?? '1d6'} + ${dmgBonus}`;
 
-  const attackRoll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula).evaluate({ async: true });
-  const damageRoll = await globalThis.SWSE.RollEngine.safeRoll(dmgFormula).evaluate({ async: true });
+  const attackRoll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
+  const damageRoll = await globalThis.SWSE.RollEngine.safeRoll(dmgFormula);
 
   const atkTotal = attackRoll?.total;
   const dmgTotal = damageRoll?.total;

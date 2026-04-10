@@ -89,11 +89,14 @@ export const ActorEngine = {
         // PHASE 3: Apply modifier bundle
         // ========================================
         if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] ModifierEngine.applyAll() starting...`, { actor: actor.name });
+          SWSELogger.debug(`[RECOMPUTE] ModifierEngine.computeModifierBundle() starting...`, { actor: actor.name });
         }
-        await ModifierEngine.applyAll(actor);
+        const allModifiers = await ModifierEngine.getAllModifiers(actor);
+        const modifierMap = await ModifierEngine.aggregateAll(actor);
+        const modifierBundle = ModifierEngine.computeModifierBundle(actor, modifierMap, allModifiers);
+        ModifierEngine.applyComputedBundle(actor, modifierBundle);
         if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] ModifierEngine.applyAll() completed`, {
+          SWSELogger.debug(`[RECOMPUTE] ModifierEngine.applyComputedBundle() completed`, {
             actor: actor.name,
             modifierCount: actor.system?.derived?.modifiers?.all?.length || 0,
             hpAdjustment: actor.system?.derived?.hp?.adjustment,
@@ -1979,7 +1982,10 @@ export const ActorEngine = {
         await DerivedCalculator.computeAll(actor);
 
         // Step 2: Apply all modifiers
-        await ModifierEngine.applyAll(actor);
+        const progressionModifiers = await ModifierEngine.getAllModifiers(actor);
+        const progressionModifierMap = await ModifierEngine.aggregateAll(actor);
+        const progressionBundle = ModifierEngine.computeModifierBundle(actor, progressionModifierMap, progressionModifiers);
+        ModifierEngine.applyComputedBundle(actor, progressionBundle);
 
         SWSELogger.log(`[PROGRESSION] ✅ Progression applied to ${actor.name}:`, {
           mutationCount: (itemsToDelete.length > 0 ? 1 : 0) + (itemsToCreate.length > 0 ? 1 : 0) + 1,

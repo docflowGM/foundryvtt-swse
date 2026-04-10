@@ -24,7 +24,7 @@ export default class SWSEFormApplicationV2 extends SWSEApplicationV2 {
 
   /**
    * V2 form handler.
-   *
+   * Static method called by Foundry with proper 'this' binding to app instance.
    * Bridges to legacy `_updateObject(event, data)` where `data` is an expanded object.
    * @param {SubmitEvent} event
    * @param {HTMLFormElement} form

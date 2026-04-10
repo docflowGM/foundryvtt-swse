@@ -129,17 +129,15 @@ function _ensureSidebarTabsVisible() {
 
         log.info('SWSE | Forced sidebar tabs display to visible');
 
-        // If no active tab is set, default to scenes
+        // If no active tab is set, default to scenes (v13 fix)
         if (!ui.sidebar || !ui.sidebar.activeTab) {
           log.warn('SWSE | Sidebar activeTab was null; attempting to activate scenes tab');
           try {
-            // Try to activate the scenes tab
-            const scenesTab = document.querySelector('#scenes');
-            if (scenesTab) {
-              scenesTab.classList.add('active');
-              if (ui.sidebar && ui.sidebar.tabs && ui.sidebar.tabs.characters) {
-                ui.sidebar.tabs.characters.activate();
-              }
+            // Foundry v13: Use proper tab activation via the tab button
+            const scenesButton = document.querySelector('#sidebar-tabs button[data-tab="scenes"]');
+            if (scenesButton) {
+              scenesButton.click(); // Trigger tab activation through button click
+              log.info('SWSE | Scenes tab activated via button click');
             }
           } catch (activateErr) {
             log.warn('SWSE | Failed to activate sidebar tab:', activateErr.message);
