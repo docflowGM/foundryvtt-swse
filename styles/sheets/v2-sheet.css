@@ -27,9 +27,24 @@
 /* FOUNDATION: window-content flex constraint
    Foundry AppV2 does not guarantee flex-safe sizing. This override is critical
    for the entire chain to work. Without min-height: 0, flex children expand to
-   their content size instead of respecting the constrained frame. */
+   their content size instead of respecting the constrained frame.
+
+   PHASE 4 P0 REPAIR:
+   Add explicit display: flex and flex-direction: column to ensure the bounded
+   flex container is established at the frame level. */
 .window-content {
+  display: flex;
+  flex-direction: column;
   min-height: 0 !important;
+  overflow: hidden;
+}
+
+/* WRAPPER: Structural pass-through
+   The .swse-character-sheet-wrapper div is required by AppV2 architecture.
+   It acts as transparent pass-through: display: contents removes it from layout flow
+   while preserving the height chain. */
+.application.swse-character-sheet > .window-content > .swse-character-sheet-wrapper {
+  display: contents;
 }
 
 /* ROOT: Primary sheet container
@@ -43,14 +58,25 @@
 
 /* PRIMARY FLEX COLUMN: Form wrapper
    Direct child of .window-content. Carries primary flex responsibility.
-   flex: 1 makes it grow to fill available space.
-   overflow: hidden ensures form is not a scroll owner (only tab scrolls).
-   min-height: 0 is critical: allows form to shrink and enables child flex items. */
+
+   PHASE 4 P0 REPAIR:
+   This is the critical node for the reported failure (form 2600px in 941px parent).
+
+   - flex: 1 1 0% (explicit flex-basis: 0% prevents content-size resolution)
+   - height: 100% (explicit height ensures form doesn't exceed parent bounds)
+   - min-height: 0 (allows form to shrink; enables child flex items to constrain)
+   - min-width: 0 (allows inline-content shrinking)
+   - overflow: hidden (ensures form is not alternate scroll owner)
+
+   Together, these prevent the form from growing to content size and breaking
+   the height chain that should be bounded by .window-content.
+*/
 .application.swse-character-sheet > .window-content > form.swse-character-sheet-form,
 .application.swse.sheet.actor.character > .window-content > form.swse-character-sheet-form {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 0%;
+  height: 100%;
   min-height: 0;
   min-width: 0;
   overflow: hidden;
@@ -76,11 +102,11 @@ form.swse-sheet-ui > section.swse-sheet {
 
 /* SECONDARY FLEX COLUMN: Sheet shell
    Intermediate container. Passes flex responsibility to sheet-body.
-   flex: 1, min-height: 0 allows proper shrinking in the chain. */
+   flex: 1 1 0% (explicit basis) + min-height: 0 allows proper shrinking. */
 .swse-character-sheet.swse-sheet {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 0%;
   min-height: 0;
   min-width: 0;
 }
@@ -88,12 +114,12 @@ form.swse-sheet-ui > section.swse-sheet {
 /* SHEET BODY: Tab container
    CRITICAL: overflow: hidden. This node MUST NOT scroll.
    If sheet-body scrolls, the single-scroll-owner contract is broken.
-   flex: 1 makes it grow. min-height: 0 allows shrinking.
+   flex: 1 1 0% (explicit basis) makes it grow to fill, min-height: 0 allows shrinking.
    Only the active tab child (below) is allowed to scroll. */
 form.swse-sheet-ui .sheet-body,
 form.swse-sheet-ui .sheet-content,
 .swse-sheet .sheet-body {
-  flex: 1;
+  flex: 1 1 0%;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -101,12 +127,13 @@ form.swse-sheet-ui .sheet-content,
 }
 
 /* TAB BASE STYLE: All tabs inherit flex sizing
-   flex: 1 allows active tab to grow.
+   flex: 1 1 0% (explicit basis) allows active tab to grow without content-sizing.
    min-height: 0 allows content to shrink.
    display: flex enables column layout for tab content. */
 form.swse-sheet-ui .sheet-body > .tab {
-  flex: 1;
+  flex: 1 1 0%;
   min-height: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   padding-right: 2px;

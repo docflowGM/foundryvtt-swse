@@ -587,12 +587,45 @@ export class CharacterSheetContractEnforcer {
   }
 
   /**
-   * Validate actual runtime geometry against contract
+   * PHASE 4: Validate actual runtime geometry against contract
+   * P0 repair focus: Detect form content-sizing breakage
    * Checks that height chain is properly constrained and single scroll owner exists
    */
   static validateGeometry(element) {
     const geometry = this.captureGeometry(element);
     const violations = [];
+
+    // P0 CHECK: Form height constraint validation
+    const form = element.querySelector('form.swse-character-sheet-form');
+    const windowContent = element.querySelector('.window-content');
+
+    if (form && windowContent) {
+      const formHeight = form.clientHeight;
+      const parentHeight = windowContent.clientHeight;
+      const formStyles = window.getComputedStyle(form);
+
+      // P0: Form should be constrained to parent
+      // If form is 2-3x parent height, content-sizing runaway likely occurred
+      if (parentHeight > 0 && formHeight > parentHeight * 1.5) {
+        violations.push({
+          rule: 'HEIGHT_CHAIN_BROKEN',
+          severity: 'CRITICAL',
+          message: `FORM HEIGHT RUNAWAY: Parent ${parentHeight}px, Form ${formHeight}px. Check flex-basis and height properties.`,
+          selector: 'form.swse-character-sheet-form',
+          geometry: { parentHeight, formHeight, ratio: (formHeight / parentHeight).toFixed(1) }
+        });
+      }
+
+      // Form must not be a scroll owner
+      if (formStyles.overflowY === 'auto' || formStyles.overflowY === 'scroll') {
+        violations.push({
+          rule: 'SCROLL',
+          severity: 'CRITICAL',
+          message: 'Form must NOT be a scroll owner',
+          selector: 'form.swse-character-sheet-form'
+        });
+      }
+    }
 
     // Validate scroll owner
     const activeTab = element.querySelector('.tab.active');
@@ -637,6 +670,28 @@ export class CharacterSheetContractEnforcer {
       violations,
       passed: violations.length === 0
     };
+  }
+
+  /**
+   * PHASE 4: Quick P0 status check
+   * Returns one-line summary of height chain and scroll owner status
+   */
+  static getP0Status(element) {
+    const result = this.validateGeometry(element);
+    const form = element.querySelector('form.swse-character-sheet-form');
+    const windowContent = element.querySelector('.window-content');
+    const activeTab = element.querySelector('.tab.active');
+
+    if (result.violations.length > 0) {
+      const heightBroken = result.violations.find(v => v.rule === 'HEIGHT_CHAIN_BROKEN');
+      if (heightBroken) {
+        return `❌ HEIGHT CHAIN BROKEN: ${heightBroken.message}`;
+      }
+      return `❌ CONTRACT VIOLATED: ${result.violations[0].message}`;
+    }
+
+    const scrollOwner = activeTab ? '.sheet-body > .tab.active' : 'NONE';
+    return `✅ P0 PASS: Height chain bounded, scroll owner: ${scrollOwner}`;
   }
 
   /**
