@@ -127,12 +127,11 @@
    MAIN CONTENT AREA
    ========================= */
 
+/* NOTE: Layout properties (flex, overflow) for .sheet-body are now owned by v2-sheet.css.
+   This core file retains only visual/theme properties. */
 .swse-sheet .sheet-body {
-  flex: 1;
   background: var(--swse-bg-panel);
   padding: 0.75rem;
-  /* CONTRACT FIX: sheet-body must NOT scroll - only .tab.active scrolls */
-  overflow: hidden;
 }
 
 /* =========================

@@ -155,70 +155,17 @@
 }
 
 /* ============================================================================
-   V13 APPV2 SCROLL RESTORE
-   Consolidated from swse-system.css (lines 363-386)
+   NOTE: Root layout contract authority moved to styles/sheets/v2-sheet.css
+
+   This file should not define .window-content, form.swse-character-sheet-form,
+   .sheet-body, or .tab properties related to display/flex/overflow/min-height.
+
+   Those properties are now exclusively owned by v2-sheet.css to prevent
+   contradictions and enforce single governance.
+
+   See: docs/character-sheet-css-governance-phase-1.md
+        docs/character-sheet-css-governance-phase-2.md
    ============================================================================ */
-
-/* CRITICAL FIX: window-content must have min-height: 0 for flex chain to work */
-.window-content {
-  min-height: 0 !important;
-}
-
-.application.swse-character-sheet > .window-content,
-.application.swse.sheet.actor.character > .window-content {
-  display: flex;
-  flex-direction: column;
-  min-height: 0 !important;
-  overflow: hidden;
-}
-
-/* STRUCTURAL FIX: Wrapper div is now the root element (not the form)
-   This allows ApplicationV2 frame to properly manage the window and resize handle.
-   The form is now a child of the wrapper, matching the pattern of working ApplicationV2 windows.
-
-   CRITICAL: Wrapper must be transparent - do NOT add flex/overflow here.
-   The form carries all the flex layout responsibility. */
-.application.swse-character-sheet > .window-content > div.swse-character-sheet-wrapper,
-.application.swse.sheet.actor.character > .window-content > div.swse-character-sheet-wrapper {
-  /* Wrapper is transparent - form handles layout */
-  display: contents;
-}
-
-.application.swse-character-sheet > .window-content > div.swse-character-sheet-wrapper > form.swse-character-sheet-form,
-.application.swse.sheet.actor.character > .window-content > div.swse-character-sheet-wrapper > form.swse-character-sheet-form {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  min-width: 0;
-  overflow: visible;
-}
-
-.swse-character-sheet.swse-sheet {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  min-width: 0;
-  overflow: visible;
-}
-
-.swse-character-sheet.swse-sheet .sheet-body {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.swse-character-sheet.swse-sheet .sheet-body > .tab {
-  flex: 1 1 auto;
-  min-height: 0;
-  min-width: 0;
-  overflow-y: auto !important;
-  overflow-x: hidden;
-}
 
 /* ============================================================================
    HP INPUTS (EDITABLE)

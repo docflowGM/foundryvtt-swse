@@ -5,26 +5,47 @@
    Clearly distinguish editable (input) from derived (read-only) values
    ═══════════════════════════════════════════════════════════════ */
 
-/* ============================================================
-   LAYOUT CONTRACT ENFORCEMENT — FOUNDRY V13 INVARIANTS
-   These rules are the safety net for flexcol utility classes.
-   If flexcol is missing from templates, these CSS rules ensure
-   layouts don't collapse.
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHARACTER SHEET ROOT LAYOUT CONTRACT
 
-/* CRITICAL: window-content must have min-height: 0 for flex chain to work */
+   AUTHORITY: This file (v2-sheet.css) is the sole owner of the critical height
+   and scroll chain for the normal SWSE character sheet.
+
+   Non-owner files must not override these selectors/properties.
+
+   Protected selectors & properties:
+   - .window-content: display, flex, min-height, overflow
+   - .swse-character-sheet-wrapper: display (transparency)
+   - form.swse-character-sheet-form: display, flex, min-height, overflow
+   - .sheet-shell: display, flex, min-height
+   - .sheet-body: display, flex, min-height, overflow (MUST NOT scroll)
+   - .sheet-body > .tab: display, flex, min-height, overflow (active/inactive contract)
+
+   Violation: Any non-contract file setting these properties is a governance error.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* FOUNDATION: window-content flex constraint
+   Foundry AppV2 does not guarantee flex-safe sizing. This override is critical
+   for the entire chain to work. Without min-height: 0, flex children expand to
+   their content size instead of respecting the constrained frame. */
 .window-content {
   min-height: 0 !important;
 }
 
-/* Root containers */
-.swse-sheet{
+/* ROOT: Primary sheet container
+   Direct child of ApplicationV2 frame. Must flex to fill frame space. */
+.swse-sheet {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
 }
 
+/* PRIMARY FLEX COLUMN: Form wrapper
+   Direct child of .window-content. Carries primary flex responsibility.
+   flex: 1 makes it grow to fill available space.
+   overflow: hidden ensures form is not a scroll owner (only tab scrolls).
+   min-height: 0 is critical: allows form to shrink and enables child flex items. */
 .application.swse-character-sheet > .window-content > form.swse-character-sheet-form,
 .application.swse.sheet.actor.character > .window-content > form.swse-character-sheet-form {
   display: flex;
@@ -35,41 +56,81 @@
   overflow: hidden;
 }
 
+/* CHARACTER SHEET SCOPE: swse-sheet-ui selectors
+   These selectors narrow the scope to the specific character sheet instance
+   and establish form-scoped structural rules matching the active template. */
+form.swse-sheet-ui {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+form.swse-sheet-ui > .sheet-shell,
+form.swse-sheet-ui > section.swse-sheet {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* SECONDARY FLEX COLUMN: Sheet shell
+   Intermediate container. Passes flex responsibility to sheet-body.
+   flex: 1, min-height: 0 allows proper shrinking in the chain. */
 .swse-character-sheet.swse-sheet {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1;
   min-height: 0;
   min-width: 0;
 }
 
-/* Sheet body (primary growing container) */
+/* SHEET BODY: Tab container
+   CRITICAL: overflow: hidden. This node MUST NOT scroll.
+   If sheet-body scrolls, the single-scroll-owner contract is broken.
+   flex: 1 makes it grow. min-height: 0 allows shrinking.
+   Only the active tab child (below) is allowed to scroll. */
+form.swse-sheet-ui .sheet-body,
+form.swse-sheet-ui .sheet-content,
 .swse-sheet .sheet-body {
-  display: flex;
-  flex-direction: column;
   flex: 1;
   min-height: 0;
-  min-width: 0;
-}
-
-/* Sheet inner wrapper */
-.swse-sheet .sheet-inner {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+/* TAB BASE STYLE: All tabs inherit flex sizing
+   flex: 1 allows active tab to grow.
+   min-height: 0 allows content to shrink.
+   display: flex enables column layout for tab content. */
+form.swse-sheet-ui .sheet-body > .tab {
   flex: 1;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding-right: 2px;
 }
 
-/* Tab navigation (fixed space) */
-.swse-sheet .sheet-tabs {
-  flex: 0 0 auto;
+/* TAB ACTIVE: Sole vertical scroll owner
+   CRITICAL CONTRACT: This is the ONLY element in the chain allowed to scroll.
+   overflow-y: auto enables vertical scrolling.
+   overflow-x: hidden prevents horizontal scroll bleed.
+   All other tabs are hidden (see below). */
+form.swse-sheet-ui .sheet-body > .tab:not(.active) {
+  display: none;
 }
 
-/* CONSOLIDATED: Tab styling is defined below at form.swse-sheet-ui .sheet-body > .tab
-   This generic rule has been removed to enforce single scroll owner contract.
-   Only the active tab is scrollable. */
+/* Add visible scroll to active tab (exact form context) */
+form.swse-sheet-ui .sheet-body > .tab.active,
+form.swse-sheet-ui .sheet-body > .tab {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 
-/* CRITICAL: Override illegal scroll owners that appear in runtime */
+/* INNER CONTAINER SAFETY: Override illegal scroll owners
+   If any inner container somehow gets overflow-y: auto at runtime,
+   it breaks the contract. These rules defend against that. */
 .swse-sheet .skills-grid-body,
 .swse-sheet .equipment-ledger,
 .swse-sheet .talents-ledger,
@@ -77,8 +138,75 @@
   overflow-y: hidden !important;
 }
 
-/* Only Overview tab should flex to fill space */
-.swse-sheet .tab[data-tab="overview"] {
+/* ═══════════════════════════════════════════════════════════════════════════
+   FIXED-HEIGHT STRUCTURAL ELEMENTS (Header, Tabs, Actions)
+   These do not participate in the growing/shrinking flex chain.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+form.swse-sheet-ui .sheet-header {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 10px 12px;
+  min-height: 0;
+}
+
+form.swse-sheet-ui .sheet-actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+  padding: 6px 8px;
+}
+
+form.swse-sheet-ui .sheet-actions > * {
+  flex: 1 1 150px;
+  min-width: 0;
+}
+
+form.swse-sheet-ui .sheet-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  padding: 4px;
+}
+
+.swse-sheet .sheet-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 10px 12px;
+  flex: 0 0 auto;
+}
+
+.swse-sheet .sheet-actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+.swse-sheet .sheet-tabs {
+  flex: 0 0 auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   INTERNAL FLEX UTILITIES (Grids, Sections, Panels)
+   These support component layout but do not affect root contract.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Sheet inner wrapper */
+.swse-sheet .sheet-inner {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 0;
 }
@@ -112,110 +240,10 @@
   min-width: 0;
 }
 
-.swse-sheet .sheet-header {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 10px 12px;
-  flex: 0 0 auto;
-}
-
-.swse-sheet .sheet-actions {
-  flex: 0 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  padding: 10px 12px;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   EXPLICIT FORM-SCOPED STRUCTURAL RULES FOR SWSE-SHEET-UI
-   These match specificity of holo file and establish canonical ownership
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Form root structural contract */
-form.swse-sheet-ui {
-  display: flex;
-  flex-direction: column;
+/* Tab-specific layout: only Overview tab should flex to fill space */
+.swse-sheet .tab[data-tab="overview"] {
   flex: 1;
   min-height: 0;
-}
-
-form.swse-sheet-ui > .sheet-shell,
-form.swse-sheet-ui > section.swse-sheet {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
-
-/* Header: fixed height, no grow */
-form.swse-sheet-ui .sheet-header {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 10px 12px;
-  min-height: 0;
-}
-
-/* Actions: fixed height, no grow — Phase 4 compressed */
-form.swse-sheet-ui .sheet-actions {
-  flex: 0 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  align-items: center;
-  padding: 6px 8px;
-}
-
-form.swse-sheet-ui .sheet-actions > * {
-  flex: 1 1 150px;
-  min-width: 0;
-}
-
-/* Tabs nav: fixed height, no grow — Phase 4 compressed */
-form.swse-sheet-ui .sheet-tabs {
-  flex: 0 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  align-items: center;
-  padding: 4px;
-}
-
-/* Body: flex grow to fill */
-form.swse-sheet-ui .sheet-body,
-form.swse-sheet-ui .sheet-content {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* Active tab: flex grow, SINGLE scroll owner */
-form.swse-sheet-ui .sheet-body > .tab {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 2px;
-}
-
-/* CRITICAL: Only the active tab is scrollable; all others are hidden */
-form.swse-sheet-ui .sheet-body > .tab:not(.active) {
-  display: none;
-}
-
-/* Inactive tabs: hidden */
-form.swse-sheet-ui .sheet-body > .tab:not(.active) {
-  display: none;
 }
 
 /* ═══════════════════════════════════════════════════════════════
