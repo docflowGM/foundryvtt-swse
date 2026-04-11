@@ -32,6 +32,7 @@ import { FORCE_POWER_DATA } from "/systems/foundryvtt-swse/scripts/engine/progre
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ForceSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-slot-validator.js";
+import { ForceProvenanceEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-provenance-engine.js";
 
 export class ForcePowerEngine {
   /**
@@ -233,19 +234,72 @@ static async applySelected(actor, selectedItems = []) {
   try {
     const toCreate = [];
 
+    // Determine provenance context for this application
+    // Get all force grant sources on actor
+    const feats = actor.items.filter(i => i.type === 'feat') || [];
+    const hasForceSensitivity = feats.some(f => f.name?.toLowerCase().includes('force sensitivity'));
+    const ftFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
+
+    // Count how many powers are already assigned to FS
+    const fsOwnedPowers = actor.items.filter(i =>
+      i.type === 'forcepower' && i.system?.provenance?.grantSourceId === 'fs-chargen'
+    ).length;
+
+    // If this is the first power and FS exists, mark it as FS. Otherwise, mark as FT.
+    let powerIndexInThisApplication = 0;
+
     for (const it of filtered) {
+      let itemData;
       if (typeof it.toObject === 'function') {
-        toCreate.push(it.toObject());
+        itemData = it.toObject();
       } else if (it.document) {
-        toCreate.push(it.document.toObject());
+        itemData = it.document.toObject();
       } else {
-        toCreate.push({
+        itemData = {
           name: it.name || 'Force Power',
           type: 'forcepower',
           img: it.img || 'icons/svg/mystery-man.svg',
           system: it.system || {}
-        });
+        };
       }
+
+      // Add provenance metadata
+      if (!itemData.system) {
+        itemData.system = {};
+      }
+
+      // Determine provenance source
+      let grantSourceType = 'force-training'; // Default
+      let grantSourceId = 'ft-unknown';
+      let grantSubtype = 'baseline';
+      let isLocked = false;
+
+      // If first power in this application and no FS powers exist yet, mark as FS
+      if (powerIndexInThisApplication === 0 && hasForceSensitivity && fsOwnedPowers === 0) {
+        grantSourceType = 'force-sensitivity';
+        grantSourceId = 'fs-chargen';
+        grantSubtype = 'baseline';
+        isLocked = true;
+      } else if (ftFeats.length > 0) {
+        // Mark as Force Training
+        grantSourceType = 'force-training';
+        // Use existing grantSourceId if available, else generate one for this acquisition
+        grantSourceId = ftFeats[0].system?.grantSourceId ||
+          ForceProvenanceEngine.generateForceTairingGrantId(actor.system.level, Date.now().toString(16).slice(-8));
+        // Determine subtype: first FT power is baseline, rest are modifier-extra
+        grantSubtype = powerIndexInThisApplication === 0 ? 'baseline' : 'modifier-extra';
+        isLocked = false;
+      }
+
+      itemData.system.provenance = ForceProvenanceEngine.createProvenanceMetadata(
+        grantSourceType,
+        grantSourceId,
+        grantSubtype,
+        isLocked
+      );
+
+      toCreate.push(itemData);
+      powerIndexInThisApplication++;
     }
 
     if (toCreate.length) {

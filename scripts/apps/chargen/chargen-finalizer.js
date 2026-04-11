@@ -17,6 +17,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { emitChargenComplete } from "/systems/foundryvtt-swse/scripts/core/hooks-emitter.js";
 import { withTraceContext, generateTraceId, TraceMetrics } from "/systems/foundryvtt-swse/scripts/core/correlation-id.js";
 import { validateActorSchema, validateImportData } from "/systems/foundryvtt-swse/scripts/core/schema-validator.js";
+import { ForceProvenanceEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-provenance-engine.js";
 
 export class ChargenFinalizer {
 
@@ -188,9 +189,14 @@ export class ChargenFinalizer {
       }
     }
 
-    // Add Force powers
+    // Add Force powers with provenance metadata
     if (snapshot.selectedForcePowers && Array.isArray(snapshot.selectedForcePowers)) {
-      for (const power of snapshot.selectedForcePowers) {
+      const powerWithProvenance = this._enrichForcePowersWithProvenance(
+        snapshot.selectedForcePowers,
+        snapshot.selectedFeats
+      );
+
+      for (const power of powerWithProvenance) {
         if (power) {
           items.push(power);
         }
@@ -207,5 +213,96 @@ export class ChargenFinalizer {
     }
 
     return items;
+  }
+
+  /**
+   * Enrich force powers with provenance metadata during chargen finalization
+   * Determines grant source (Force Sensitivity vs Force Training) and marks appropriately
+   *
+   * @param {Array} powers - Selected force power items
+   * @param {Array} selectedFeats - Selected feat items (to determine grant source)
+   * @returns {Array} Powers with provenance metadata added
+   * @private
+   */
+  static _enrichForcePowersWithProvenance(powers, selectedFeats = []) {
+    if (!Array.isArray(powers) || powers.length === 0) {
+      return powers;
+    }
+
+    try {
+      const feats = selectedFeats || [];
+      const hasForceSensitivity = feats.some(f => f.name?.toLowerCase().includes('force sensitivity'));
+      const forceTrainingFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
+
+      // Determine the ability modifier for Force Training powers
+      const forceAbility = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
+      const configuredAbility = forceAbility === 'charisma' ? 'cha' : 'wis';
+
+      let powerIndex = 0;
+      const enriched = [];
+
+      // First power goes to Force Sensitivity (if it exists)
+      if (hasForceSensitivity && powerIndex < powers.length) {
+        const power = foundry.utils.deepClone(powers[powerIndex]);
+        if (!power.system) {
+          power.system = {};
+        }
+        power.system.provenance = ForceProvenanceEngine.createProvenanceMetadata(
+          'force-sensitivity',
+          'fs-chargen',
+          'baseline',
+          true // isLocked: FS powers are immutable
+        );
+        enriched.push(power);
+        powerIndex++;
+      }
+
+      // Remaining powers go to Force Training (if it exists)
+      if (forceTrainingFeats.length > 0 && powerIndex < powers.length) {
+        // All remaining powers are attributed to Force Training
+        // They represent baseline + modifier-driven powers
+        for (let i = powerIndex; i < powers.length; i++) {
+          const power = foundry.utils.deepClone(powers[i]);
+          if (!power.system) {
+            power.system = {};
+          }
+
+          // Determine subtype: first power is baseline, rest are modifier-extra
+          const isContinuationFromFS = i === powerIndex && !hasForceSensitivity;
+          const subtypeIndex = i - (hasForceSensitivity ? 1 : 0);
+          const subtype = subtypeIndex === 0 ? 'baseline' : 'modifier-extra';
+
+          power.system.provenance = ForceProvenanceEngine.createProvenanceMetadata(
+            'force-training',
+            'ft-0-chargen',
+            subtype,
+            false
+          );
+          enriched.push(power);
+        }
+      } else if (powerIndex < powers.length) {
+        // No FS or FT feats, but powers were selected (shouldn't happen in normal flow)
+        // Mark as unknown-legacy to be conservative
+        for (let i = powerIndex; i < powers.length; i++) {
+          const power = foundry.utils.deepClone(powers[i]);
+          if (!power.system) {
+            power.system = {};
+          }
+          power.system.provenance = ForceProvenanceEngine.createProvenanceMetadata(
+            'unknown-legacy',
+            'unknown-legacy',
+            'unknown-legacy',
+            false
+          );
+          enriched.push(power);
+        }
+      }
+
+      return enriched;
+    } catch (e) {
+      SWSELogger.warn('[CHARGEN FINALIZER] Error enriching force powers with provenance', e);
+      // Fallback: return powers as-is without provenance
+      return powers;
+    }
   }
 }

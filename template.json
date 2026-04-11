@@ -173,6 +173,15 @@
           "rangedAttack": 0,
           "defense": 0
         },
+        "forceGrantLedger": {
+          "lastReconciled": null,
+          "lastReconciliationContext": "",
+          "grants": {},
+          "legacy": {
+            "unknownPowers": 0,
+            "issues": []
+          }
+        },
         "relationships": []
       }
     },
@@ -312,6 +321,14 @@
       "uses": {
         "current": 1,
         "max": 1
+      },
+      "provenance": {
+        "grantSourceType": "force-sensitivity",
+        "grantSourceId": null,
+        "grantSubtype": "baseline",
+        "isLocked": false,
+        "migratedAt": null,
+        "legacyIssues": []
       }
     },
     "weapon": {
