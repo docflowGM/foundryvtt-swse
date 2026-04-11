@@ -17,12 +17,14 @@
  * Public API:
  * - getForceCapacity(actor) -> {number}                          [base capacity only]
  * - getSelectionContext(actor) -> {SelectionContext}             [Phase 3.5: full context]
+ * - getProvenanceContext(actor) -> {Object}                      [provenance ledger + queries]
  * - validateForceAccess(actor) -> {valid: bool, reason: string}
  * - validateForceSelection(actor, powerIds) -> {valid: bool, reason: string, capacityUsed?: number}
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SelectionModifierHookRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/selection-modifier-hook-registry.js";
+import { ForceProvenanceEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-provenance-engine.js";
 
 export class ForceAuthorityEngine {
   /**
@@ -140,6 +142,37 @@ export class ForceAuthorityEngine {
     });
 
     return context;
+  }
+
+  /**
+   * Get provenance context for an actor
+   * Returns full reconciliation ledger and query helpers
+   *
+   * Provides:
+   * - Full grant ledger with entitled/owned breakdown per grant source
+   * - Total entitled, owned, owed calculations
+   * - Legacy issue tracking for retroactively migrated actors
+   * - Helper queries for UI/logic
+   *
+   * @param {Actor} actor - The actor
+   * @returns {Promise<Object>} Provenance context with ledger and query methods
+   */
+  static async getProvenanceContext(actor) {
+    const ledger = await ForceProvenanceEngine.reconcileForceGrants(actor, 'query');
+
+    return {
+      ledger,
+      totalEntitled: ForceProvenanceEngine.getTotalEntitled(ledger),
+      totalOwned: ForceProvenanceEngine.getTotalOwned(ledger),
+      totalOwed: ForceProvenanceEngine.getTotalOwed(ledger),
+      hasLegacyIssues: ForceProvenanceEngine.hasLegacyIssues(ledger),
+      legacyIssues: ForceProvenanceEngine.getLegacyIssues(ledger),
+
+      // Query helpers
+      getGrant: (grantSourceId) => ForceProvenanceEngine.getGrantDetails(ledger, grantSourceId),
+      formatGrantName: (grantSourceId) => ForceProvenanceEngine.formatGrantSourceName(grantSourceId),
+      isUnderEntitled: () => ForceProvenanceEngine.getTotalOwed(ledger) > 0
+    };
   }
 
   /**
