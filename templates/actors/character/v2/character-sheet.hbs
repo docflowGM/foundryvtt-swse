@@ -163,11 +163,9 @@
         <div class="swse-v2-left flexcol">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
         </div>
         <div class="swse-v2-right flexcol">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/resources-panel.hbs"}}
         </div>
       </div>
     </section>
@@ -186,42 +184,53 @@
     <!-- COMBAT TAB -->
     <section class="tab flexcol combat-tab-container" data-group="primary" data-tab-group="primary" data-tab="combat">
 
-      <!-- COMBAT TAB: Main Content Area (left/center) -->
-      <div class="combat-main-area flexcol">
-
-        <!-- TOP: Initiative Control -->
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs"}}
-
-        <!-- TOP: Attacks Panel -->
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
-
-        <!-- CENTER: Combat Actions Panel (main functional area) -->
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
-
-        <!-- NOTES: Special Combat Actions (compact) -->
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/special-combat-actions-panel.hbs"}}
+      <!-- COMBAT TAB: Defenses & Combat Metrics (moved from Overview) -->
+      <div class="combat-readout-area">
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/resources-panel.hbs"}}
       </div>
 
-      <!-- COMBAT TAB: Right Sidebar (action economy tracker + controls) -->
-      {{#if actionEconomy}}
-        <div class="combat-sidebar">
-          <!-- Action Economy Tracker -->
-          <div class="action-economy-indicator-placeholder" style="display:none;"></div>
+      <!-- COMBAT TAB: Main Content Area + Right Sidebar (flexed side-by-side) -->
+      <div class="combat-content-wrapper">
 
-          <!-- New Round / Turn Reset Controls -->
-          <div class="combat-turn-controls">
-            <button type="button"
-                    class="swse-btn swse-btn--primary new-round-btn"
-                    data-action="new-round"
-                    title="Reset actions for a new round (or wait for your turn)">
-              ↻ New Round
-            </button>
-            <div class="turn-hint">
-              Actions auto-reset on your turn
+        <!-- COMBAT TAB: Main Content Area (left/center) -->
+        <div class="combat-main-area flexcol">
+
+          <!-- TOP: Initiative Control -->
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs"}}
+
+          <!-- TOP: Attacks Panel -->
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
+
+          <!-- CENTER: Combat Actions Panel (main functional area) -->
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
+
+          <!-- NOTES: Special Combat Actions (compact) -->
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/special-combat-actions-panel.hbs"}}
+        </div>
+
+        <!-- COMBAT TAB: Right Sidebar (action economy tracker + controls) -->
+        {{#if actionEconomy}}
+          <div class="combat-sidebar">
+            <!-- Action Economy Tracker -->
+            <div class="action-economy-indicator-placeholder" style="display:none;"></div>
+
+            <!-- New Round / Turn Reset Controls -->
+            <div class="combat-turn-controls">
+              <button type="button"
+                      class="swse-btn swse-btn--primary new-round-btn"
+                      data-action="new-round"
+                      title="Reset actions for a new round (or wait for your turn)">
+                ↻ New Round
+              </button>
+              <div class="turn-hint">
+                Actions auto-reset on your turn
+              </div>
             </div>
           </div>
-        </div>
-      {{/if}}
+        {{/if}}
+
+      </div>
 
     </section>
 

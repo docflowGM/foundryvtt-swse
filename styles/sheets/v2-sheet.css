@@ -4127,9 +4127,26 @@ select option:checked {
 
 .swse-sheet .combat-tab-container {
   display: flex;
+  flex-direction: column;
   gap: 12px;
   padding: 12px;
   max-width: 100%;
+  min-height: 0;
+}
+
+.swse-sheet .combat-readout-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.swse-sheet .combat-content-wrapper {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
 }
 
 .swse-sheet .combat-main-area {
@@ -4251,7 +4268,7 @@ select option:checked {
 
 /* Responsive: Stack on smaller screens */
 @media (max-width: 1200px) {
-  .swse-sheet .combat-tab-container {
+  .swse-sheet .combat-content-wrapper {
     flex-direction: column;
   }
 
@@ -4267,6 +4284,10 @@ select option:checked {
 
   .swse-sheet .combat-turn-controls {
     flex: 0 1 auto;
+  }
+
+  .swse-sheet .combat-readout-area {
+    grid-template-columns: 1fr;
   }
 }
 
