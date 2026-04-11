@@ -148,7 +148,7 @@
     <a class="item" data-action="tab" data-tab="skills" data-group="primary" data-tab-group="primary">Skills</a>
     <a class="item" data-action="tab" data-tab="combat" data-group="primary" data-tab-group="primary">Combat</a>
     <a class="item" data-action="tab" data-tab="talents" data-group="primary" data-tab-group="primary">Talents & Feats</a>
-    {{#if actor.system.forceSensitive}}<a class="item" data-action="tab" data-tab="force" data-group="primary" data-tab-group="primary">Force</a>{{/if}}
+    {{#if hasForceSensitivity}}<a class="item" data-action="tab" data-tab="force" data-group="primary" data-tab-group="primary">Force</a>{{/if}}
     <a class="item" data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary">Gear</a>
     <a class="item" data-action="tab" data-tab="biography" data-group="primary" data-tab-group="primary">Biography</a>
     <a class="item" data-action="tab" data-tab="relationships" data-group="primary" data-tab-group="primary">Relationships</a>
@@ -241,7 +241,7 @@
     </section>
 
     <!-- FORCE TAB -->
-    {{#if actor.system.forceSensitive}}
+    {{#if hasForceSensitivity}}
     <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="force">
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs"}}
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/force-panel.hbs"}}
