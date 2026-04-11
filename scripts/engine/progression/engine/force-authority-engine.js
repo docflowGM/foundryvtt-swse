@@ -6,7 +6,7 @@
  * 1. ZERO mutations - pure derivation + validation only
  * 2. Multi-source additive BASE capacity:
  *    - Force Sensitivity feat: +1 power
- *    - Force Training feats: +(1 + WIS modifier) per feat (STACKS)
+ *    - Force Training feats: +(1 + configured ability modifier) per feat (STACKS)
  *    - Class level grants: +X per level
  *    - Template grants: +X if template applies
  * 3. Capacity is RECALCULATED every time - NEVER cached
@@ -49,18 +49,23 @@ export class ForceAuthorityEngine {
         swseLogger.debug('[FORCE CAPACITY] Force Sensitivity: +1');
       }
 
-      // Source 2: Force Training feats (+1 + WIS per feat, STACKS)
+      // Source 2: Force Training feats (+1 + configured ability mod per feat, STACKS)
       const forceTrainingFeats = actor.items.filter(
         i => i.type === 'feat' && i.name.toLowerCase().includes('force training')
       );
       if (forceTrainingFeats.length > 0) {
-        const wisMod = actor.system?.abilities?.wis?.mod ?? 0;
-        const perFeat = 1 + Math.max(0, wisMod);
+        // Use canonical setting to determine which ability modifier to apply
+        const forceAbility = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
+        const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
+        const abilityMod = actor.system?.abilities?.[abilityKey]?.mod ?? 0;
+
+        const perFeat = 1 + Math.max(0, abilityMod);
         const trainingCapacity = forceTrainingFeats.length * perFeat;
         capacity += trainingCapacity;
         swseLogger.debug('[FORCE CAPACITY] Force Training', {
           count: forceTrainingFeats.length,
-          wisMod,
+          configuredAbility: forceAbility,
+          abilityMod,
           perFeat,
           total: trainingCapacity
         });
@@ -75,7 +80,13 @@ export class ForceAuthorityEngine {
         capacity,
         sources: {
           forceSensitivity: hasForceSensitivity ? 1 : 0,
-          forceTraining: forceTrainingFeats.length > 0 ? forceTrainingFeats.length * (1 + Math.max(0, actor.system?.abilities?.wis?.mod ?? 0)) : 0
+          forceTraining: forceTrainingFeats.length > 0
+            ? forceTrainingFeats.length * (1 + Math.max(0, (() => {
+                const forceAbility = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
+                const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
+                return actor.system?.abilities?.[abilityKey]?.mod ?? 0;
+              })()))
+            : 0
         }
       });
 

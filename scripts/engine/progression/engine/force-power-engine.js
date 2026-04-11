@@ -87,7 +87,7 @@ export class ForcePowerEngine {
 
   /**
    * Calculate force powers from ability modifier
-   * Uses WIS mod by default, or CHA mod if house rule is enabled
+   * Uses canonical forceTrainingAttribute setting (wisdom or charisma)
    * Minimum 1 power
    * @param {Actor} actor - The actor
    * @returns {number} Number of powers (minimum 1)
@@ -97,9 +97,9 @@ export class ForcePowerEngine {
       return 1; // Default minimum if no ability data
     }
 
-    // Check for house rule to use CHA instead of WIS
-    const useCha = game.settings?.get('foundryvtt-swse', 'forceTrainingUseCha') ?? false;
-    const abilityKey = useCha ? 'cha' : 'wis';
+    // Use canonical setting to determine which ability modifier to apply
+    const forceAbility = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
+    const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
     const mod = actor.system.abilities[abilityKey]?.mod ?? 0;
 
     return Math.max(1, 1 + mod);
