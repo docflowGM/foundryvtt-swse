@@ -8,7 +8,6 @@
  */
 
 import { PanelVisibilityManager as BasePanelVisibilityManager } from './shared/PanelVisibilityManager.js';
-import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 
 export class PanelVisibilityManager extends BasePanelVisibilityManager {
   constructor(sheetInstance) {
@@ -33,7 +32,7 @@ export class PanelVisibilityManager extends BasePanelVisibilityManager {
     // Character-specific: Define which panels are conditional on actor properties
     this.conditionalPanels = {
       forcePowersPanel: {
-        condition: (actor) => CapabilityRegistry.isForceSensitivity(actor),
+        condition: (actor) => actor.system?.forceSensitive === true,
         reason: 'not force sensitive'
       },
       starshipManeuversPanel: {

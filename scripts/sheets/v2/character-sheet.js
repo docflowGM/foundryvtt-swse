@@ -51,8 +51,6 @@ import { handleFormSubmission } from "/systems/foundryvtt-swse/scripts/sheets/v2
 import { characterSheetDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet-diagnostics.js";
 // Contract Enforcement: validate sheet architecture at runtime
 import { CharacterSheetContractEnforcer } from "/systems/foundryvtt-swse/scripts/sheets/v2/contract-enforcer.js";
-// Capability checks: canonical feat and system state queries
-import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -816,10 +814,6 @@ export class SWSEV2CharacterSheet extends
     const forceSensitive = system.forceSensitive ?? false;
     const identityGlowColor = forceSensitive ? '#88cfff' : '#666666';
 
-    // Force Sensitivity: Canonical feat-based check for tab visibility
-    // This is the source of truth for whether the Force tab should be visible
-    const hasForceSensitivity = CapabilityRegistry.isForceSensitivity(actor);
-
     // Condition track steps (0-5 numeric → visual array)
     const conditionCurrent = system.conditionTrack?.current ?? 0;
     const conditionLabels = ["Normal", "−1", "−2", "−5", "−10", "Helpless"];
@@ -1248,7 +1242,6 @@ const forcePoints = [];
       // PHASE 2: MISSING CONTEXT KEYS (REMEDIATION)
       // ═════════════════════════════════════════════════════════════════
       xpEnabled,                    // XP system active/disabled flag
-      hasForceSensitivity,          // Force tab visibility (canonical feat-based check)
       xpPercent,                    // XP progress percentage for bar fill
       fpAvailable,                  // Force points available for use
       abilities,                    // Array of ability objects with modifiers
