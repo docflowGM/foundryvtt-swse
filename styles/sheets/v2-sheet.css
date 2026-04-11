@@ -1542,6 +1542,38 @@ form.application.sheet > .window-content > .swse-character-sheet-wrapper > .swse
   }
 }
 
+/* Level-up flourish: Initial attention-grabbing flash */
+@keyframes levelup-flourish {
+  0% {
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+    border-color: rgba(0, 255, 136, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(0, 255, 136, 1), inset 0 0 12px rgba(0, 255, 136, 0.6);
+    border-color: rgba(0, 255, 136, 1);
+  }
+  100% {
+    box-shadow: 0 0 16px rgba(0, 255, 136, 0.6);
+    border-color: rgba(0, 255, 136, 0.6);
+  }
+}
+
+/* Level-up glow: Persistent sustained glow */
+@keyframes levelup-glow {
+  0% {
+    box-shadow: 0 0 16px rgba(0, 255, 136, 0.6);
+    border-color: rgba(0, 255, 136, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.8), inset 0 0 8px rgba(0, 255, 136, 0.3);
+    border-color: rgba(0, 255, 136, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 16px rgba(0, 255, 136, 0.6);
+    border-color: rgba(0, 255, 136, 0.6);
+  }
+}
+
 /* ---- ABILITY & DEFENSE CARDS ---- */
 
 .swse-sheet .ability-row {
@@ -6576,6 +6608,14 @@ select option:checked {
   border-color: var(--swse-flat-border-strong) !important;
   box-shadow: none !important;
   transform: none !important;
+}
+
+/* Level Up button readiness flourish */
+.swse-character-sheet-.swse-sheet-ui .header-btn.ready {
+  border-color: rgba(0, 255, 136, 0.6) !important;
+  background: rgba(8, 18, 32, 0.98) !important;
+  animation: levelup-flourish 0.6s ease-in-out 1, levelup-glow 1.5s ease-in-out 0.7s forwards;
+  box-shadow: 0 0 16px rgba(0, 255, 136, 0.4) !important;
 }
 
 /* Flatten inputs and value boxes */
