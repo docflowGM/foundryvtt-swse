@@ -6608,15 +6608,33 @@ select option:checked {
 /* Scope: character sheet only via .swse-character-sheet selector */
 
 /* Header and container backgrounds: solid only, no gradients */
-.swse-character-sheet .sheet-header,
 .swse-character-sheet .header-resources-strip,
-.swse-character-sheet .header-second-wind,
-.swse-character-sheet .header-tactical-strip {
+.swse-character-sheet .header-second-wind {
   display: grid !important;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 6px 8px !important;
   background: transparent !important;
   background-image: none !important;
+}
+
+/* FIX: Restore header flex layout (3-section: left|center|right) */
+/* The header-tactical-strip should remain flex within the center section */
+.swse-character-sheet .sheet-header {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  gap: 16px !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+.swse-character-sheet .header-tactical-strip {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 6px 8px !important;
+  background: transparent !important;
+  background-image: none !important;
+  flex-wrap: wrap;
 }
 
 /* Remove text-shadow from all text elements */
@@ -6745,6 +6763,15 @@ select option:checked {
 /* Remove hover/decorative effects from resource items */
 .swse-character-sheet .header-defense-readout {
   border-bottom: 1px solid rgba(100, 100, 120, 0.2) !important;
+}
+
+/* Semantic coloring for header numeric values */
+.swse-character-sheet .header-defense-readout__value {
+  font-weight: 700;
+}
+
+.swse-character-sheet .tactical-resource__value {
+  font-weight: 700;
 }
 
 /* Ensure panels have consistent, flat appearance */

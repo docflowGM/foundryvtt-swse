@@ -79,12 +79,12 @@
 
                     <div class="tactical-resource tactical-resource--fp">
                       <span class="tactical-resource__label">FP</span>
-                      <span class="tactical-resource__value">{{forcePointsValue}} / {{forcePointsMax}}</span>
+                      <span class="tactical-resource__value mod {{#if (gt forcePointsValue 0)}}mod--positive{{else if (lt forcePointsValue 0)}}mod--negative{{else}}mod--zero{{/if}}">{{forcePointsValue}} / {{forcePointsMax}}</span>
                     </div>
 
                     <div class="tactical-resource tactical-resource--dp">
                       <span class="tactical-resource__label">DP</span>
-                      <span class="tactical-resource__value">{{destinyPointsValue}} / {{destinyPointsMax}}</span>
+                      <span class="tactical-resource__value mod {{#if (gt destinyPointsValue 0)}}mod--positive{{else if (lt destinyPointsValue 0)}}mod--negative{{else}}mod--zero{{/if}}">{{destinyPointsValue}} / {{destinyPointsMax}}</span>
                     </div>
 
                     <div class="tactical-resource tactical-resource--sw">
@@ -106,23 +106,23 @@
         {{#if (eq def.key "fort")}}
           <div class="header-defense-readout">
             <span class="header-defense-readout__label">FORT</span>
-            <span class="header-defense-readout__value">{{def.total}}</span>
+            <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
           </div>
         {{else if (eq def.key "ref")}}
           <div class="header-defense-readout">
             <span class="header-defense-readout__label">REF</span>
-            <span class="header-defense-readout__value">{{def.total}}</span>
+            <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
           </div>
         {{else if (eq def.key "will")}}
           <div class="header-defense-readout">
             <span class="header-defense-readout__label">WILL</span>
-            <span class="header-defense-readout__value">{{def.total}}</span>
+            <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
           </div>
         {{/if}}
       {{/each}}
       <div class="header-defense-readout">
         <span class="header-defense-readout__label">DT</span>
-        <span class="header-defense-readout__value">{{derived.damageThreshold}}</span>
+        <span class="header-defense-readout__value mod {{#if (gt derived.damageThreshold 10)}}mod--positive{{else if (lt derived.damageThreshold 10)}}mod--negative{{else}}mod--zero{{/if}}">{{derived.damageThreshold}}</span>
       </div>
     </div>
   </header>
