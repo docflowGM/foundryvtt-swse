@@ -4,6 +4,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
 import { _findClassItem } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
 
 /**
@@ -113,26 +114,45 @@ export async function _onRemoveForcePower(event) {
 
 /**
  * Calculate how many force powers the character should get at character creation
+ * Uses the same canonical capability signal as level-up: feats actually granted or owned
+ * (NOT direct class membership - the class grants feats, feats grant the capability)
  */
 export function _getForcePowersNeeded() {
-  // Only grant powers if character has Force Sensitivity
-  if (!this.characterData.forceSensitive) {
-    return 0;
+  let powerCount = 0;
+
+  // === Canonical Force Capability Check ===
+  // Check 1: Force Sensitivity feat (granted by Jedi or selected by player)
+  // This is the ACTUAL source of the capability, not the Jedi class itself
+
+  const selectedFeats = this.characterData.feats || [];
+
+  // Get feats granted by the selected class
+  const selectedClass = this.characterData.classes?.[0];
+  let grantedFeats = [];
+  if (selectedClass) {
+    const classDoc = _findClassItem(this._packs?.classes || [], selectedClass);
+    if (classDoc) {
+      grantedFeats = PrerequisiteChecker.getLevel1GrantedFeats(classDoc);
+    }
   }
 
-  // Check if Force Sensitivity feat is in the selected feats
-  const hasForceSensitivityFeat = this.characterData.feats?.some(f =>
-    f.name.toLowerCase().includes('force sensitivity') ||
-    f.name.toLowerCase() === 'force sensitive'
+  // Check if Force Sensitivity feat is present (via selection OR class grant)
+  const hasForceSensitivity = selectedFeats.some(f =>
+    f.name.toLowerCase().includes('force sensitivity')
+  ) || grantedFeats.some(name =>
+    name.toLowerCase().includes('force sensitivity')
   );
 
-  // Force Sensitivity grants 1 power
-  let powerCount = hasForceSensitivityFeat ? 1 : 0;
+  if (hasForceSensitivity) {
+    powerCount += 1;
+    SWSELogger.log(`CharGen | Force Sensitivity feat: +1 power`);
+  }
 
-  // Check for Force Training feats (each grants 1 + WIS/CHA modifier)
-  const forceTrainingFeats = this.characterData.feats?.filter(f =>
+  // Check 2: Force Training feat (each grants 1 + WIS/CHA modifier, min 1)
+  // Force Training itself is the source - not dependent on other feats
+  const forceTrainingFeats = selectedFeats.filter(f =>
     f.name.toLowerCase().includes('force training')
-  ) || [];
+  );
 
   if (forceTrainingFeats.length > 0) {
     // Get the force ability modifier (WIS or CHA based on game setting)
@@ -140,15 +160,17 @@ export function _getForcePowersNeeded() {
     const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
     const modifier = this.characterData.abilities[abilityKey]?.mod || 0;
 
-    // Each Force Training grants 1 + modifier powers
-    const powersPerTraining = 1 + Math.max(0, modifier);
-    powerCount += forceTrainingFeats.length * powersPerTraining;
+    // Each Force Training grants 1 + modifier powers (minimum 1)
+    const powersPerTraining = Math.max(1, 1 + modifier);
+    const trainingPowers = forceTrainingFeats.length * powersPerTraining;
+    powerCount += trainingPowers;
+    SWSELogger.log(`CharGen | Force Training: ${forceTrainingFeats.length} feat(s) × ${powersPerTraining} = +${trainingPowers} power(s)`);
   }
 
   SWSELogger.log(`CharGen | Force powers needed: ${powerCount}`, {
-    forceSensitive: this.characterData.forceSensitive,
-    hasForceSensitivityFeat,
-    forceTrainingCount: forceTrainingFeats.length
+    hasForceSensitivity,
+    forceTrainingCount: forceTrainingFeats.length,
+    grantedFeats: grantedFeats
   });
 
   return powerCount;

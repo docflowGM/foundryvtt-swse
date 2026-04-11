@@ -1899,9 +1899,10 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       steps.push('skills', 'languages', 'feats', 'talents');
 
-      // Add force powers step if character is Force-sensitive
+      // Add force powers step if character has Force capability
+      // (via Force Sensitivity feat or Force Training feat)
       // Note: Droids cannot be Force-sensitive in SWSE
-      if (this.characterData.forceSensitive && !this.characterData.isDroid && this._getForcePowersNeeded() > 0) {
+      if (!this.characterData.isDroid && this._getForcePowersNeeded() > 0) {
         steps.push('force-powers');
       }
 
