@@ -663,7 +663,9 @@ export class SWSEV2CharacterSheet extends
       // PHASE 7: Derived is authoritative for skill totals
       // DerivedCalculator computes and stores skill totals in system.derived.skills[key].total
       // Sheet should NEVER recompute skill totals — that is DerivedCalculator's job
-      const safeTotal = Number.isFinite(derivedData.total) ? derivedData.total : this._buildSkillFallbackTotal(abilityMod, halfLevel, safeMiscMod, skillData);
+      // PHASE 10: Removed happy-path fallback. If derived.total is missing, use error value (0)
+      // rather than rebuilding. This ensures we know when derived computation fails.
+      const safeTotal = Number.isFinite(derivedData.total) ? derivedData.total : 0;
 
       return {
         key,
@@ -796,18 +798,21 @@ export class SWSEV2CharacterSheet extends
 
     // Combat attacks context
     // PHASE 6: Derived is authoritative for attacks list
-    // Fallback: if derived.attacks.list is empty, build from equipped weapons (transitional rescue only)
+    // PHASE 10: Removed happy-path fallback rebuild. If derived.attacks.list is missing,
+    // use empty array instead of rebuilding from items. This ensures we detect derived computation failures.
     let attacksList = derived?.attacks?.list ?? [];
-    if (attacksList.length === 0 && actor?.items) {
-      // PHASE 6: Instrumentation — derived attacks list was empty, falling back to weapon reconstruction
-      // This should not happen if character-actor.js correctly populated derived.attacks.list
-      swseLogger.warn(`[Phase 6] Derived attacks list empty for ${actor.name}, using transitional weapon fallback`, {
+
+    // PHASE 8 Check: If attacks list is empty, log warning for observability
+    if (attacksList.length === 0) {
+      swseLogger.warn(`[Phase 10] Attacks list missing from derived for ${actor.name}`, {
         actor: actor.name,
-        derivedAttacks: derived?.attacks
+        derivedAttacks: derived?.attacks,
+        note: 'Fallback rebuild has been removed in Phase 10. Check DerivedCalculator output.'
       });
 
-      // PHASE 7: Build attacks from equipped weapons as fallback (transitional rescue only)
-      attacksList = this._buildAttacksFallback(actor);
+      if (CONFIG?.SWSE?.debug?.contractObservability) {
+        warnMissingDerivedOutput('Attacks', 'derived.attacks.list', actor.name);
+      }
     }
 
     const combat = {
@@ -3175,20 +3180,30 @@ const forcePoints = [];
    * @param {Object} skillData - Stored skill data (trained, focused)
    * @returns {number} Fallback computed total
    */
+  /**
+   * PHASE 10: LEGACY RESCUE ONLY — DO NOT CALL FROM HAPPY PATH
+   *
+   * Skill total fallback (removed from _prepareContext in Phase 10)
+   * Kept for potential emergency use with legacy/corrupted actors only.
+   * If this is called, it indicates DerivedCalculator failed to compute.
+   *
+   * @deprecated Not called from happy path. Use only in explicit error recovery.
+   */
   _buildSkillFallbackTotal(abilityMod, halfLevel, miscMod, skillData) {
-    swseLogger.warn(`[Phase 7] Skill total fallback used — derived output was missing`, {
+    swseLogger.error(`[Phase 10] LEGACY FALLBACK: Skill total rebuild used — derived.skills[].total missing!`, {
       abilityMod,
       halfLevel,
       miscMod,
       trained: skillData.trained,
-      focused: skillData.focused
+      focused: skillData.focused,
+      warning: 'This indicates DerivedCalculator did not properly compute skill totals'
     });
 
     // PHASE 8: Emit contract observability warning
     if (CONFIG?.SWSE?.debug?.contractObservability) {
       warnSheetFallback(
         'Skills',
-        'skill total rebuilt from fallback path',
+        'LEGACY FALLBACK: skill total rebuilt (should not happen in Phase 10+)',
         { abilityMod, halfLevel, miscMod, skillTrained: skillData.trained },
         this.actor.name
       );
@@ -3200,26 +3215,30 @@ const forcePoints = [];
   }
 
   /**
-   * PHASE 7: Build attacks from equipped weapons (transitional rescue only)
+   * PHASE 10: LEGACY RESCUE ONLY — DO NOT CALL FROM HAPPY PATH
    *
-   * This should NEVER be the main path — character-actor.js.mirrorAttacks() is authoritative.
-   * Only called if derived.attacks.list is empty/missing.
-   * Logs warning when fallback is needed (indicates upstream failure).
+   * Build attacks from equipped weapons (removed from _prepareContext in Phase 10)
+   * Kept only for emergency legacy/corrupted actor recovery.
+   * Character-actor.js.mirrorAttacks() should be the authoritative source.
    *
+   * If this is called, it indicates DerivedCalculator failed to populate derived.attacks.list.
+   *
+   * @deprecated Not called from happy path. Use only in explicit error recovery.
    * @param {Actor} actor - The character actor
    * @returns {Array} Array of basic attack objects from equipped weapons
    */
   _buildAttacksFallback(actor) {
-    swseLogger.warn(`[Phase 7] Attacks list fallback used — derived output was missing`, {
+    swseLogger.error(`[Phase 10] LEGACY FALLBACK: Attacks list rebuild used — derived.attacks.list missing!`, {
       actor: actor.name,
-      equippedWeapons: actor.items?.filter(i => i.type === 'weapon' && i.system?.equipped)?.length ?? 0
+      equippedWeapons: actor.items?.filter(i => i.type === 'weapon' && i.system?.equipped)?.length ?? 0,
+      warning: 'This indicates DerivedCalculator did not properly compute attacks'
     });
 
     // PHASE 8: Emit contract observability warning
     if (CONFIG?.SWSE?.debug?.contractObservability) {
       warnSheetFallback(
         'Attacks',
-        'attack list rebuilt from equipped weapons',
+        'LEGACY FALLBACK: attack list rebuilt (should not happen in Phase 10+)',
         { reason: 'derived.attacks.list was empty or missing' },
         actor.name
       );
