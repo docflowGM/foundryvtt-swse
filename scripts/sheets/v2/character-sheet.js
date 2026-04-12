@@ -807,6 +807,9 @@ export class SWSEV2CharacterSheet extends
       attacks: attacksList
     };
 
+    // PHASE 7.5: Resources Display Unification
+    // Canonical sources: system.forcePoints.{value,max}, system.destinyPoints.{value,max}
+    // All UI surfaces (header, biography panel, resources panel) read from these same sources
     // Force Points visual array (value as dots, with used state)
     const fpValue = system.forcePoints?.value ?? 0;
     const fpMax = system.forcePoints?.max ?? 0;
@@ -1198,6 +1201,12 @@ const forcePoints = [];
       destinyPointsMax,             // Max destiny points (from system.destinyPoints.max)
       forcePoints,                  // Visual array of force point dots
       headerSecondWind,             // Header condensed Second Wind control data
+      // ═════════════════════════════════════════════════════════════════
+      // PHASE 7.5: Identity Summary Data (multiclass format)
+      // ═════════════════════════════════════════════════════════════════
+      classDisplay,                 // Multiclass display format (e.g. "Jedi 3 / Soldier 2")
+      identityGlowColor,            // Force-sensitive glow color
+      forceSensitive,               // Whether character is force-sensitive
       // ═════════════════════════════════════════════════════════════════
       // PHASE 9: Combat Actions Browser (in-tab)
       // ═════════════════════════════════════════════════════════════════
