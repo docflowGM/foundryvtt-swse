@@ -21,6 +21,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { ForceAuthorityEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-authority-engine.js";
 import { ForceSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-slot-validator.js";
 import { ForcePowerEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-power-engine.js";
+import { isForcePowerImmutable } from "/systems/foundryvtt-swse/scripts/engine/progression/hooks/immutability-hook.js";
 import { ManeuverAuthorityEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/maneuver-authority-engine.js";
 import { ManeuverSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/maneuvers/maneuver-slot-validator.js";
 import { StarshipManeuverEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/starship-maneuver-engine.js";
@@ -57,9 +58,27 @@ export class SuiteReselectionEngine {
       context
     });
 
-    // STEP 2: Clear existing powers (via ActorEngine)
+    // STEP 2: Check for immutable powers that cannot be cleared
     try {
       const existingPowers = actor.items.filter(i => i.type === 'forcepower');
+      const lockedPowers = existingPowers.filter(p => isForcePowerImmutable(p));
+
+      if (lockedPowers.length > 0) {
+        // Force Sensitivity powers are immutable
+        const lockedNames = lockedPowers.map(p => p.name).join(', ');
+        swseLogger.warn('[SUITE RESELECTION] Cannot reselect with immutable powers present', {
+          actor: actor.name,
+          lockedPowers: lockedNames,
+          count: lockedPowers.length
+        });
+        return {
+          success: false,
+          error: `Cannot reselect Force Powers: ${lockedPowers.length} immutable power(s) cannot be removed (${lockedNames}). ` +
+                 `Remove the granting feat first, or reselect only modifiable powers.`
+        };
+      }
+
+      // STEP 3: Clear existing powers (via ActorEngine)
       if (existingPowers.length > 0) {
         const powerIds = existingPowers.map(p => p.id || p._id);
         await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', powerIds);
@@ -75,7 +94,7 @@ export class SuiteReselectionEngine {
       };
     }
 
-    // STEP 3: Recalculate derived capacity (FRESH CALCULATION - no caching)
+    // STEP 4: Recalculate derived capacity (FRESH CALCULATION - no caching)
     let capacity = 0;
     try {
       capacity = await ForceAuthorityEngine.getForceCapacity(actor);
@@ -99,7 +118,7 @@ export class SuiteReselectionEngine {
       };
     }
 
-    // STEP 4: Open existing picker (unchanged)
+    // STEP 5: Open existing picker (unchanged)
     try {
       const { ForcePowerPicker } = await import("/systems/foundryvtt-swse/scripts/apps/progression/force-power-picker.js");
       const available = await ForcePowerEngine.collectAvailablePowers(actor);
@@ -134,7 +153,7 @@ export class SuiteReselectionEngine {
         selectedCount: selected.length
       });
 
-      // STEP 5: Validate selections (call existing validator)
+      // STEP 6: Validate selections (call existing validator)
       const selectedIds = selected.map(s => s.id || s._id);
       const validation = await ForceSlotValidator.validateBeforeApply(actor, selectedIds);
       if (!validation.valid) {
@@ -153,7 +172,7 @@ export class SuiteReselectionEngine {
         capacityUsed: validation.capacityUsed
       });
 
-      // STEP 6: Apply via existing path (unchanged)
+      // STEP 7: Apply via existing path (unchanged)
       const result = await ForcePowerEngine.applySelected(actor, selected);
 
       if (result.success) {
@@ -233,7 +252,7 @@ export class SuiteReselectionEngine {
       };
     }
 
-    // STEP 3: Recalculate derived capacity (FRESH CALCULATION - no caching)
+    // STEP 4: Recalculate derived capacity (FRESH CALCULATION - no caching)
     let capacity = 0;
     try {
       capacity = await ManeuverAuthorityEngine.getManeuverCapacity(actor);

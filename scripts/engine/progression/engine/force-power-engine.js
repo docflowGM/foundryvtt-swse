@@ -283,9 +283,35 @@ static async applySelected(actor, selectedItems = []) {
       } else if (ftFeats.length > 0) {
         // Mark as Force Training
         grantSourceType = 'force-training';
-        // Use existing grantSourceId if available, else generate one for this acquisition
-        grantSourceId = ftFeats[0].system?.grantSourceId ||
-          ForceProvenanceEngine.generateForceTairingGrantId(actor.system.level, Date.now().toString(16).slice(-8));
+
+        // Get or create stable grant ID for this FT feat
+        // CRITICAL: Must be stored on feat to ensure stability across sessions
+        const ftFeat = ftFeats[0];
+        if (!ftFeat.system?.grantSourceId) {
+          // Generate new stable grant ID and immediately persist to feat
+          const newGrantId = ForceProvenanceEngine.generateForceTairingGrantId(
+            actor.system.level,
+            Date.now().toString(16).slice(-8)
+          );
+
+          // Store on feat immediately (synchronously, before creating powers)
+          // This prevents duplicate ghost grants if session reloads before power creation
+          try {
+            await ftFeat.update({
+              'system.grantSourceId': newGrantId,
+              'system.acquiredAtLevel': actor.system.level
+            });
+            grantSourceId = newGrantId;
+          } catch (e) {
+            swseLogger.warn('[FORCE POWER] Failed to store grantSourceId on FT feat', e);
+            // Fallback: use generated ID anyway (will be regenerated next session if update failed)
+            grantSourceId = newGrantId;
+          }
+        } else {
+          // Reuse existing stable ID
+          grantSourceId = ftFeat.system.grantSourceId;
+        }
+
         // Determine subtype: first FT power is baseline, rest are modifier-extra
         grantSubtype = powerIndexInThisApplication === 0 ? 'baseline' : 'modifier-extra';
         isLocked = false;

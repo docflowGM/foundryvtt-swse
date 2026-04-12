@@ -10,11 +10,11 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
- * Register immutability enforcement hook
+ * Register immutability enforcement hooks
  * Call from index.js during system initialization
  */
 export function registerImmutabilityHooks() {
-  // Hook on pre-item-delete to enforce immutability rules
+  // Hook 1: Prevent deletion of locked powers
   Hooks.on('preDeleteItem', (item, options, userId) => {
     if (!item || item.type !== 'forcepower') {
       return true; // Allow deletion of non-force-power items
@@ -56,6 +56,38 @@ export function registerImmutabilityHooks() {
 
     // Grant source no longer exists, allow deletion
     return true;
+  });
+
+  // Hook 2: Prevent modification of immutability flags on locked powers
+  Hooks.on('preUpdateItem', (item, updates, options, userId) => {
+    if (!item || item.type !== 'forcepower') {
+      return true; // Allow updates to non-force-power items
+    }
+
+    // Check if attempting to modify provenance metadata
+    if (!updates.system?.provenance) {
+      return true; // Not modifying provenance, allow update
+    }
+
+    // Check if power is currently locked
+    const currentlyLocked = item.system?.provenance?.isLocked;
+    if (!currentlyLocked) {
+      return true; // Not locked, allow modification
+    }
+
+    // Power is locked - prevent disabling immutability
+    const attemptingToUnlock = updates.system.provenance.isLocked === false;
+    if (attemptingToUnlock) {
+      ui.notifications.error('Cannot modify immutability of locked Force powers');
+      swseLogger.warn('[IMMUTABILITY] Blocked modification of locked power immutability flag', {
+        power: item.name,
+        actor: item.parent?.name,
+        attemptedChange: 'isLocked: true → false'
+      });
+      return false; // Prevent modification
+    }
+
+    return true; // Allow other provenance modifications
   });
 }
 
