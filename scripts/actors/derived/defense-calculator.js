@@ -55,7 +55,7 @@ export class DefenseCalculator {
     ]);
 
     const isDroidActor = !!actor.system?.isDroid;
-    const fortAbility = isDroidActor ? strMod : Math.max(strMod, conMod);
+    const fortAbility = isDroidActor ? strMod : conMod;
 
     const adjustments = options?.adjustments ?? {};
     const fortAdjust = adjustments.fort ?? 0;
