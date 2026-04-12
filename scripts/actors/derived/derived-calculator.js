@@ -200,6 +200,14 @@ export class DerivedCalculator {
           adjustment: defenseAdjustments.will
         };
       }
+      if (defenses.flatFooted) {
+        updates['system.derived.defenses'] = updates['system.derived.defenses'] || {};
+        updates['system.derived.defenses'].flatFooted = {
+          base: defenses.flatFooted.base,
+          total: defenses.flatFooted.total,
+          adjustment: defenseAdjustments.ref
+        };
+      }
 
       // ========================================
       // Skills Derived (Phase 4: moved from DataModel._prepareSkills)
