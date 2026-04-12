@@ -1,5 +1,6 @@
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
@@ -761,28 +762,47 @@ export class SWSEV2CharacterSheet extends
       }
     }
 
-    // Build headerDefenses array from derived.defenses object
-    // Convert {fort: 10, ref: 10, will: 10, flatFooted: 10} → [{key: 'fort', label: 'Fortitude', total: 10, ...}, ...]
+    // PHASE 6: Build headerDefenses array from canonical derived.defenses object
+    // Canonical structure: system.derived.defenses.{fortitude|reflex|will}.{base, total, adjustment}
+    // DerivedCalculator is the SOLE authority for defense totals
     const defenseDefs = [
-      { key: 'fort', label: 'Fortitude' },
-      { key: 'ref', label: 'Reflex' },
-      { key: 'will', label: 'Will' },
-      { key: 'flatFooted', label: 'Flat-Footed' }
+      { key: 'fortitude', derivedKey: 'fortitude', label: 'Fortitude' },
+      { key: 'reflex', derivedKey: 'reflex', label: 'Reflex' },
+      { key: 'will', derivedKey: 'will', label: 'Will' },
+      { key: 'flatFooted', derivedKey: 'flatFooted', label: 'Flat-Footed' }
     ];
     const headerDefenses = defenseDefs.map(def => {
-      const abilityMod = derived.defenses[`${def.key}AbilityMod`] ?? 0;
-      const miscMod = derived.defenses[`${def.key}MiscMod`] ?? 0;
+      // PHASE 6: Read from canonical derived defense object
+      const defenseData = derived.defenses?.[def.derivedKey] ?? { base: 10, total: 10, adjustment: 0 };
+
+      // Guard against missing derived data
+      if (!defenseData || typeof defenseData !== 'object') {
+        swseLogger.warn(`[Phase 6] Defense ${def.derivedKey} missing or malformed in derived data`, { defenseData });
+        return {
+          key: def.key,
+          label: def.label,
+          total: 10,
+          adjustment: 0,
+          armorBonus: 0,
+          abilityMod: 0,
+          abilityModClass: 'mod--zero',
+          classDef: 0,
+          miscMod: 0,
+          miscModClass: 'mod--zero'
+        };
+      }
+
       return {
         key: def.key,
         label: def.label,
-        total: derived.defenses[def.key] ?? 10,
-        armorBonus: derived.defenses[`${def.key}ArmorBonus`] ?? 0,
-        abilityMod,
+        total: defenseData.total ?? 10,
+        adjustment: defenseData.adjustment ?? 0,
+        armorBonus: 0,  // Included in computed total, not separated
+        abilityMod: 0,  // Included in computed total, not separated
         // SEMANTIC: Visual state classes for breakdown components
-        abilityModClass: abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero',
-        classDef: derived.defenses[`${def.key}ClassDef`] ?? 0,
-        miscMod,
-        miscModClass: miscMod > 0 ? 'mod--positive' : miscMod < 0 ? 'mod--negative' : 'mod--zero'
+        abilityModClass: 'mod--zero',  // Modifiers already included in total
+        classDef: 0,    // Included in computed total
+        miscMod: 0      // Stored in system.defenses.{fort|ref|will}.miscMod, not in derived
       };
     });
 
@@ -831,10 +851,18 @@ export class SWSEV2CharacterSheet extends
     const initiativeTotal = derived?.initiative?.total ?? 0;
 
     // Combat attacks context
-    // Fallback: if derived.attacks.list is empty, build from equipped weapons
+    // PHASE 6: Derived is authoritative for attacks list
+    // Fallback: if derived.attacks.list is empty, build from equipped weapons (transitional rescue only)
     let attacksList = derived?.attacks?.list ?? [];
     if (attacksList.length === 0 && actor?.items) {
-      // Build attacks from equipped weapons as fallback
+      // PHASE 6: Instrumentation — derived attacks list was empty, falling back to weapon reconstruction
+      // This should not happen if character-actor.js correctly populated derived.attacks.list
+      swseLogger.warn(`[Phase 6] Derived attacks list empty for ${actor.name}, using transitional weapon fallback`, {
+        actor: actor.name,
+        derivedAttacks: derived?.attacks
+      });
+
+      // Build attacks from equipped weapons as fallback (transitional rescue only)
       const equippedWeapons = actor.items.filter(item =>
         item.type === 'weapon' && item.system?.equipped === true
       );

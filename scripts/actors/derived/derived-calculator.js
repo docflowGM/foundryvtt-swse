@@ -269,7 +269,15 @@ export class DerivedCalculator {
 
       for (const [skillKey, skillDef] of Object.entries(skillData)) {
         const skill = actor.system.skills?.[skillKey];
-        if (!skill) continue;
+        if (!skill) {
+          // PHASE 6: Instrumentation — missing skill in base input
+          // This should not happen if template/progression correctly initialized skills
+          swseLogger.warn(`[Phase 6] Skill ${skillKey} missing from canonical base input (system.skills)`, {
+            actor: actor.name,
+            skillKey
+          });
+          continue;
+        }
 
         // Phase 3C: Canonical skill schema = {trained, miscMod, focused, selectedAbility}
         // Derived uses these to compute skill totals. Schema is initialized by progression.

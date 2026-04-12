@@ -152,6 +152,19 @@ function mirrorSkills(system) {
 
   for (const [key, s] of Object.entries(skills)) {
     if (!s) continue;
+
+    // PHASE 6: Instrumentation — validate skill has canonical properties
+    // Derived must have computed these values; sheet should not need fallbacks
+    if (typeof s.trained !== 'boolean') {
+      console.warn(`[Phase 6] Skill ${key} missing trained property (expected boolean)`, s);
+    }
+    if (typeof s.miscMod !== 'number') {
+      console.warn(`[Phase 6] Skill ${key} missing miscMod property (expected number)`, s);
+    }
+    if (typeof s.focused !== 'boolean') {
+      console.warn(`[Phase 6] Skill ${key} missing focused property (expected boolean)`, s);
+    }
+
     const total = safeNumber(s.total, 0);
     const trained = s.trained === true;
     const focused = s.focused === true;
