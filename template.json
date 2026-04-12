@@ -138,7 +138,158 @@
           "regenRate": 0
         },
         "damageReduction": 0,
-        "skills": {},
+        "skills": {
+          "acrobatics": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "climb": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "deception": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "endurance": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "gatherInformation": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "initiative": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "jump": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgeBureaucracy": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgeGalacticLore": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgeLifeSciences": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgePhysicalSciences": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgeSocialSciences": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgeTactics": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgeTechnology": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "mechanics": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "perception": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "persuasion": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "pilot": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "ride": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "stealth": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "survival": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "swim": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "treatInjury": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "useComputer": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "useTheForce": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          }
+        },
         "weapons": [],
         "feats": [],
         "talents": [],
