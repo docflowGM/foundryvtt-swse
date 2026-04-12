@@ -148,8 +148,9 @@ describe('PHASE 1 — Single Truth Apply Path', () => {
       // Verify all critical fields come from canonical session
       expect(plan.set['system.species']).toBeDefined();
       expect(plan.set['system.className']).toBe('Soldier');
-      expect(plan.set['system.abilities.str.value']).toBe(15);
-      expect(plan.set['system.abilities.dex.value']).toBe(12);
+      // Phase 3A: Canonical ability path is .base, not deprecated .value
+      expect(plan.set['system.abilities.str.base']).toBe(15);
+      expect(plan.set['system.abilities.dex.base']).toBe(12);
     });
   });
 

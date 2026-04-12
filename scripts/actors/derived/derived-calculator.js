@@ -96,9 +96,11 @@ export class DerivedCalculator {
       // ========================================
       // Ability Modifiers (Phase 2: moved from DataModel)
       // ========================================
+      // Canonical stored abilities path is system.abilities.<key>.{base, racial, temp}
+      // Derived computes totals and modifiers, written to system.derived.attributes.<key>
       updates['system.derived.attributes'] = {};
-      const attributes = actor.system.attributes || {};
-      for (const [key, ability] of Object.entries(attributes)) {
+      const abilities = actor.system.abilities || {};
+      for (const [key, ability] of Object.entries(abilities)) {
         const total = (ability.base || 10) + (ability.racial || 0) + (ability.enhancement || 0) + (ability.temp || 0);
         const mod = Math.floor((total - 10) / 2);
         updates['system.derived.attributes'][key] = {

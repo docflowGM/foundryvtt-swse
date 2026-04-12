@@ -224,8 +224,9 @@ describe('PHASE 2 — Prerequisite Sovereignty', () => {
       //   if (AbilityEngine.canAcquire(hypotheticalActor, feat)) ...
 
       // Create a hypothetical actor with higher strength
+      // Phase 3A: Canonical ability path is .base, not deprecated .value
       const hypothetical = { ...mockActor };
-      hypothetical.system.abilities.str.value = 15;
+      hypothetical.system.abilities.str.base = 15;
 
       // Evaluate both through AbilityEngine
       const currentLegal = AbilityEngine.canAcquire(mockActor, mockFeat);
@@ -241,7 +242,8 @@ describe('PHASE 2 — Prerequisite Sovereignty', () => {
       // AbilityEngine must agree it's legal for the hypothetical actor
 
       const hypothetical = { ...mockActor };
-      hypothetical.system.abilities.str.value = 20;
+      // Phase 3A: Canonical ability path is .base, not deprecated .value
+      hypothetical.system.abilities.str.base = 20;
 
       // AttributeIncreaseScorer would check: canAcquire(hypothetical, feat)
       const canAcquireAfterIncrease = AbilityEngine.canAcquire(hypothetical, mockFeat);

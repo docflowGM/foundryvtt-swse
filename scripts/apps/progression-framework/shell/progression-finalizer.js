@@ -392,11 +392,14 @@ export class ProgressionFinalizer {
       set['system.classes'] = [clazz];
       add.items.push({ name: clazz.name || clazz.label || String(clazz), type: 'class', system: clazz.system || {} });
     }
+    // Canonical stored ability path is system.abilities.<key>.base
+    // Progression writes base values here; derived computes modifiers and totals
     const attrMap = { strength: 'str', dexterity: 'dex', constitution: 'con', intelligence: 'int', wisdom: 'wis', charisma: 'cha', str: 'str', dex:'dex', con:'con', int:'int', wis:'wis', cha:'cha' };
     for (const [k,v] of Object.entries(attr || {})) {
       const key = attrMap[k];
       const val = typeof v === 'object' ? v?.value : v;
-      if (key && Number.isFinite(Number(val))) set[`system.abilities.${key}.value`] = Number(val);
+      // Write to canonical .base path (not deprecated .value)
+      if (key && Number.isFinite(Number(val))) set[`system.abilities.${key}.base`] = Number(val);
     }
     if (Array.isArray(languages)) set['system.languages'] = languages;
     if (Array.isArray(skills)) {

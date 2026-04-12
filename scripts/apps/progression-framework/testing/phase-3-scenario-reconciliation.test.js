@@ -133,7 +133,8 @@ describe('PHASE 3 — Scenario & Reconciliation Proof', () => {
       // Verify plan uses canonical data
       expect(plan.set['system.species']).toBeDefined();
       expect(plan.set['system.className']).toBe('Soldier');
-      expect(plan.set['system.abilities.str.value']).toBe(15);
+      // Phase 3A: Canonical ability path is .base, not deprecated .value
+      expect(plan.set['system.abilities.str.base']).toBe(15);
     });
   });
 
@@ -539,9 +540,10 @@ describe('PHASE 3 — Scenario & Reconciliation Proof', () => {
 
       // Both should show same values
       expect(projection.attributes.str).toBe(15);
-      expect(plan.set['system.abilities.str.value']).toBe(15);
+      // Phase 3A: Canonical ability path is .base, not deprecated .value
+      expect(plan.set['system.abilities.str.base']).toBe(15);
       expect(projection.attributes.dex).toBe(12);
-      expect(plan.set['system.abilities.dex.value']).toBe(12);
+      expect(plan.set['system.abilities.dex.base']).toBe(12);
     });
   });
 

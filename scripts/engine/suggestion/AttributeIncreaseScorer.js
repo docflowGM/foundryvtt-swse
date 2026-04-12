@@ -38,14 +38,15 @@ export async function scoreAttributeAllocations(actor, buildIntent = {}) {
   SWSELogger.log(`[AttributeIncreaseScorer] Scoring allocations: ${availablePoints} points available (heroic: ${heroicLevel > 0})`);
 
   // Get current ability scores
+  // Phase 3A: Canonical path is .base, but support legacy .value for migration
   const abilities = actor.system?.abilities || {};
   const currentScores = {
-    str: abilities.str?.value || 10,
-    dex: abilities.dex?.value || 10,
-    con: abilities.con?.value || 10,
-    int: abilities.int?.value || 10,
-    wis: abilities.wis?.value || 10,
-    cha: abilities.cha?.value || 10
+    str: abilities.str?.base ?? abilities.str?.value ?? 10,
+    dex: abilities.dex?.base ?? abilities.dex?.value ?? 10,
+    con: abilities.con?.base ?? abilities.con?.value ?? 10,
+    int: abilities.int?.base ?? abilities.int?.value ?? 10,
+    wis: abilities.wis?.base ?? abilities.wis?.value ?? 10,
+    cha: abilities.cha?.base ?? abilities.cha?.value ?? 10
   };
 
   // Generate allocation candidates
@@ -224,17 +225,18 @@ function _getIdentityAlignment(allocation, buildIntent = {}) {
  */
 function _createHypotheticalActor(actor, hypotheticalScores) {
   // Create a shallow copy with modified abilities
+  // Phase 3A: Canonical ability path is .base, not deprecated .value
   const hypothetical = {
     ...actor,
     system: {
       ...actor.system,
       abilities: {
-        str: { ...actor.system.abilities.str, value: hypotheticalScores.str },
-        dex: { ...actor.system.abilities.dex, value: hypotheticalScores.dex },
-        con: { ...actor.system.abilities.con, value: hypotheticalScores.con },
-        int: { ...actor.system.abilities.int, value: hypotheticalScores.int },
-        wis: { ...actor.system.abilities.wis, value: hypotheticalScores.wis },
-        cha: { ...actor.system.abilities.cha, value: hypotheticalScores.cha }
+        str: { ...actor.system.abilities.str, base: hypotheticalScores.str },
+        dex: { ...actor.system.abilities.dex, base: hypotheticalScores.dex },
+        con: { ...actor.system.abilities.con, base: hypotheticalScores.con },
+        int: { ...actor.system.abilities.int, base: hypotheticalScores.int },
+        wis: { ...actor.system.abilities.wis, base: hypotheticalScores.wis },
+        cha: { ...actor.system.abilities.cha, base: hypotheticalScores.cha }
       }
     }
   };

@@ -442,6 +442,13 @@ export const ActorEngine = {
       }
 
       // ========================================
+      // PHASE 3A: Ability schema normalization
+      // ========================================
+      // Normalize any legacy ability.*.value paths to canonical ability.*.base
+      // This ensures old data doesn't break new progression writes
+      this._normalizeAbilityPaths(updateData);
+
+      // ========================================
       // PHASE 2: Mark mutation as in-flight before any reactive code can run
       // ========================================
       this._markActorMutationInFlight(actor.id);
@@ -3546,6 +3553,53 @@ export const ActorEngine = {
     } catch (err) {
       SWSELogger.error(`ActorEngine.deleteActiveEffects failed for ${actor?.name ?? 'unknown actor'}`, err);
       throw err;
+    }
+  }
+
+  /**
+   * PHASE 3A: Normalize legacy ability paths to canonical schema.
+   * Converts deprecated system.abilities.<key>.value → system.abilities.<key>.base
+   * This allows old progression/saved data to work with new schema without immediate migration.
+   *
+   * @param {Object} updateData - The update data object (may be nested)
+   * @private
+   */
+  _normalizeAbilityPaths(updateData) {
+    if (!updateData || typeof updateData !== 'object') return;
+
+    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    const flat = foundry.utils.flattenObject(updateData);
+    const toDelete = [];
+
+    for (const key of Object.keys(flat)) {
+      // Match system.abilities.<key>.value
+      const match = key.match(/^system\.abilities\.([a-z]+)\.value$/);
+      if (match && abilityKeys.includes(match[1])) {
+        const abilityKey = match[1];
+        const newPath = `system.abilities.${abilityKey}.base`;
+
+        // Only normalize if the canonical .base path isn't already being set
+        if (!(newPath in flat)) {
+          flat[newPath] = flat[key];
+          SWSELogger.warn(`[ABILITY NORMALIZATION] Converted legacy path ${key} → ${newPath}`, {
+            abilityKey,
+            value: flat[key]
+          });
+        }
+
+        toDelete.push(key);
+      }
+    }
+
+    // Remove legacy paths from update
+    for (const path of toDelete) {
+      delete flat[path];
+    }
+
+    // Unflatten back to nested form if we made changes
+    if (toDelete.length > 0) {
+      const updated = foundry.utils.expandObject(flat);
+      Object.assign(updateData, updated);
     }
   }
 };
