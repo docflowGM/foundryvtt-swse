@@ -408,7 +408,12 @@ export class ProgressionFinalizer {
       for (const s of skills) {
         const key = s?.key || s?.id || s?.skill;
         if (!key) continue;
-        if (s.trained !== undefined) set[`system.skills.${key}.trained`] = !!s.trained;
+        // Phase 3C: Initialize complete skill object with canonical schema
+        // Ensures fresh characters have stable, predictable skill structure
+        set[`system.skills.${key}.trained`] = s.trained !== undefined ? !!s.trained : false;
+        set[`system.skills.${key}.miscMod`] = s.miscMod || 0;
+        set[`system.skills.${key}.focused`] = s.focused !== undefined ? !!s.focused : false;
+        set[`system.skills.${key}.selectedAbility`] = s.selectedAbility || '';
       }
     }
     const appendItem = (entry, fallbackType) => {

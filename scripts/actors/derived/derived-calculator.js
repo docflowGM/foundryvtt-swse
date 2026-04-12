@@ -271,6 +271,8 @@ export class DerivedCalculator {
         const skill = actor.system.skills?.[skillKey];
         if (!skill) continue;
 
+        // Phase 3C: Canonical skill schema = {trained, miscMod, focused, selectedAbility}
+        // Derived uses these to compute skill totals. Schema is initialized by progression.
         // Get ability modifier
         const abilityKey = skill.selectedAbility || skillDef.defaultAbility;
         const abilityMod = (updates['system.derived.attributes']?.[abilityKey]?.mod) || 0;
