@@ -51,7 +51,10 @@ const FORM_FIELD_SCHEMA = {
   'system.defenses.ref.miscMod': 'number',
   'system.defenses.will.miscMod': 'number',
 
-  // Skills
+  // Skills (PHASE 7: Canonical edit paths)
+  // Editable fields: miscMod (manual bonuses)
+  // Non-editable in this phase: trained, focused, selectedAbility (set by progression/derived)
+  // TODO Phase 7+: Add form fields for trained, focused, selectedAbility when UI supports direct editing
   'system.skills.acrobatics.miscMod': 'number',
   'system.skills.climb.miscMod': 'number',
   'system.skills.deception.miscMod': 'number',

@@ -652,14 +652,10 @@ export class SWSEV2CharacterSheet extends
       // Ensure all numeric values are safe for template rendering
       const safeMiscMod = Number.isFinite(skillData.miscMod) ? skillData.miscMod : 0;
 
-      // STABILIZATION:
-      // The repo currently has a split between legacy skill schema definitions and the
-      // newer unified derived skill registry. Until that is fully normalized, compute a
-      // safe display total here when derivedData.total is absent or stale.
-      const trainingBonus = skillData.trained ? 5 : 0;
-      const focusBonus = skillData.focused ? 5 : 0;
-      const fallbackTotal = abilityMod + halfLevel + safeMiscMod + trainingBonus + focusBonus;
-      const safeTotal = Number.isFinite(derivedData.total) ? derivedData.total : fallbackTotal;
+      // PHASE 7: Derived is authoritative for skill totals
+      // DerivedCalculator computes and stores skill totals in system.derived.skills[key].total
+      // Sheet should NEVER recompute skill totals — that is DerivedCalculator's job
+      const safeTotal = Number.isFinite(derivedData.total) ? derivedData.total : this._buildSkillFallbackTotal(abilityMod, halfLevel, safeMiscMod, skillData);
 
       return {
         key,
@@ -3201,6 +3197,36 @@ const forcePoints = [];
   }
 
   /* ============================================================
+     PHASE 7: SKILL FALLBACK HELPERS
+  ============================================================ */
+
+  /**
+   * PHASE 7: Build skill total fallback (transitional rescue only)
+   *
+   * This should NEVER be the main path — DerivedCalculator is authoritative.
+   * Only called if derived.skills[key].total is missing/invalid.
+   * Logs warning when fallback is needed (indicates upstream failure).
+   *
+   * @param {number} abilityMod - Ability modifier from abilities
+   * @param {number} halfLevel - Half character level
+   * @param {number} miscMod - Misc modifiers from stored skill data
+   * @param {Object} skillData - Stored skill data (trained, focused)
+   * @returns {number} Fallback computed total
+   */
+  _buildSkillFallbackTotal(abilityMod, halfLevel, miscMod, skillData) {
+    swseLogger.warn(`[Phase 7] Skill total fallback used — derived output was missing`, {
+      abilityMod,
+      halfLevel,
+      miscMod,
+      trained: skillData.trained,
+      focused: skillData.focused
+    });
+
+    const trainingBonus = skillData.trained ? 5 : 0;
+    const focusBonus = skillData.focused ? 5 : 0;
+    return abilityMod + halfLevel + miscMod + trainingBonus + focusBonus;
+  }
+
      PHASE 10: SKILL USE HELPERS
   ============================================================ */
 
