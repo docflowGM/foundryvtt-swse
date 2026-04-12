@@ -140,6 +140,7 @@ const FORM_FIELD_SCHEMA = {
 
   // Progression and Resources
   'system.level': 'number',
+  // Phase 3D: Canonical XP path is system.xp.total (not deprecated system.experience)
   'system.xp.total': 'number',
   'system.credits': 'number',
   'system.speed': 'number',

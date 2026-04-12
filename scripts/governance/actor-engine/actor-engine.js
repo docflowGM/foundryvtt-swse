@@ -449,6 +449,12 @@ export const ActorEngine = {
       this._normalizeAbilityPaths(updateData);
 
       // ========================================
+      // PHASE 3D: XP/Resources naming normalization
+      // ========================================
+      // Normalize legacy system.experience → system.xp.total
+      this._normalizeXpPaths(updateData);
+
+      // ========================================
       // PHASE 2: Mark mutation as in-flight before any reactive code can run
       // ========================================
       this._markActorMutationInFlight(actor.id);
@@ -3589,6 +3595,41 @@ export const ActorEngine = {
 
         toDelete.push(key);
       }
+    }
+
+    // Remove legacy paths from update
+    for (const path of toDelete) {
+      delete flat[path];
+    }
+
+    // Unflatten back to nested form if we made changes
+    if (toDelete.length > 0) {
+      const updated = foundry.utils.expandObject(flat);
+      Object.assign(updateData, updated);
+    }
+  }
+
+  /**
+   * PHASE 3D: Normalize legacy XP/experience paths to canonical schema.
+   * Converts deprecated system.experience → system.xp.total
+   * This allows old progression/saved data to work with new naming without immediate migration.
+   *
+   * @param {Object} updateData - The update data object (may be nested)
+   * @private
+   */
+  _normalizeXpPaths(updateData) {
+    if (!updateData || typeof updateData !== 'object') return;
+
+    const flat = foundry.utils.flattenObject(updateData);
+    const toDelete = [];
+
+    // Check for legacy system.experience path
+    if ('system.experience' in flat && !('system.xp.total' in flat)) {
+      flat['system.xp.total'] = flat['system.experience'];
+      SWSELogger.warn(`[XP NORMALIZATION] Converted legacy path system.experience → system.xp.total`, {
+        value: flat['system.experience']
+      });
+      toDelete.push('system.experience');
     }
 
     // Remove legacy paths from update

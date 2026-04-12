@@ -164,6 +164,7 @@ export function buildXpContext(actor, derived) {
   const xpEnabled = xpSystem !== 'disabled';
   const xpDerived = derived.xp ?? { total: 0, progressPercent: 0, xpToNext: 0, level: actor.system.level ?? 1 };
   const xpDisplayLevel = Math.max(1, Number(actor.system.level ?? xpDerived.level ?? 1));
+  // Phase 3D: Prefer derived.xp.total, fall back to canonical system.xp.total (not system.experience)
   const xpTotal = Number(xpDerived.total ?? actor.system?.xp?.total ?? 0) || 0;
   const xpPercent = Math.max(0, Math.min(100, Math.round(Number(xpDerived.progressPercent ?? 0) || 0)));
   const nextLevelAtDisplay = XP_LEVEL_THRESHOLDS[Math.min(20, xpDisplayLevel + 1)] ?? null;
