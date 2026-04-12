@@ -1,5 +1,6 @@
 import { getMentorGuidance, MENTORS } from '../../../engine/mentor/mentor-dialogues.js';
 import { MentorTranslationIntegration } from '../../../mentor/mentor-translation-integration.js';
+import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 
 /**
  * Maps step ID to mentor guidance choice type for getMentorGuidance().
@@ -37,6 +38,18 @@ export class MentorRail {
    */
   async speak(text, mood = null) {
     if (!text) return;
+
+    // [DEBUG] Sequence tracking
+    const speakNum = ProgressionDebugCapture?.nextMentorSpeak?.() ?? 0;
+    console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] speak() called`, {
+      text_length: text.length,
+      text_first_40: text.slice(0, 40),
+      mood: mood,
+      isAnimating_before: this.shell.mentor?.isAnimating ?? '(null)',
+      currentDialogue_before: this.shell.mentor?.currentDialogue?.slice?.(0, 30) ?? '(null)',
+      has_prior_abort: !!this._animationAbort,
+    });
+
     if (mood) this.setMood(mood);
 
     const shell = this.shell;
@@ -45,29 +58,82 @@ export class MentorRail {
     shell.mentor.isAnimating = true;
 
     // Abort any in-flight animation
-    if (this._animationAbort) this._animationAbort.abort();
+    if (this._animationAbort) {
+      console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] Aborting prior animation`, {
+        prior_signal_aborted: this._animationAbort.signal?.aborted ?? '(unknown)',
+      });
+      this._animationAbort.abort();
+    }
+
     this._animationAbort = new AbortController();
     const { signal } = this._animationAbort;
 
+    console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] New AbortController created`, {
+      signal_aborted: signal.aborted,
+    });
+
     // Find dialogue container in live DOM
     const container = shell.element?.querySelector('[data-mentor-dialogue]');
-    if (!container || signal.aborted) return;
+
+    // [DEBUG] DOM search logging
+    console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] DOM container search`, {
+      shell_element_exists: !!shell.element,
+      mentor_dialogue_found: !!container,
+      container_tag: container?.tagName ?? '(null)',
+    });
+
+    if (!container || signal.aborted) {
+      console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] Early return`, {
+        container: !!container,
+        signal_aborted: signal.aborted,
+      });
+      return;
+    }
 
     try {
+      // [DEBUG] Pre-render logging
+      const mentorTextNode = container.querySelector('[data-mentor-text]');
+      console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] About to call MentorTranslationIntegration.render()`, {
+        mentor_text_element: !!mentorTextNode,
+        mentor_text_tag: mentorTextNode?.tagName ?? '(null)',
+      });
+
       await MentorTranslationIntegration.render({
         text,
         container: container.querySelector('[data-mentor-text]') ?? container,
         mentor: shell.mentor.mentorId,
         onComplete: () => {
+          // [DEBUG] Callback execution logging
+          console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] onComplete callback fired`, {
+            signal_aborted: signal.aborted,
+            isAnimating_before_cleanup: this.shell.mentor?.isAnimating ?? '(null)',
+          });
+
           if (!signal.aborted) {
-            shell.mentor.animationState = 'complete';
-            shell.mentor.isAnimating = false;
+            console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] Signal NOT aborted, executing cleanup`);
+            this.shell.mentor.animationState = 'complete';
+            this.shell.mentor.isAnimating = false;
+          } else {
+            console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] Signal WAS aborted, skipping cleanup`);
           }
         },
       });
     } catch (e) {
+      console.error(`[SWSE Mentor Debug] [Speak #${speakNum}] MentorTranslationIntegration.render() threw:`, {
+        error_message: e.message,
+        error_type: e.constructor.name,
+        stack_first_5_lines: e.stack?.split('\n').slice(0, 5).join(' | '),
+        signal_aborted: signal.aborted,
+      });
       if (!signal.aborted) console.warn('[MentorRail] speak error', e);
     }
+
+    // [DEBUG] Final state logging
+    console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] speak() completed`, {
+      final_isAnimating: this.shell.mentor?.isAnimating ?? '(null)',
+      final_currentDialogue: this.shell.mentor?.currentDialogue?.slice?.(0, 30) ?? '(null)',
+      signal_aborted: signal.aborted,
+    });
   }
 
   /**
@@ -77,15 +143,39 @@ export class MentorRail {
    */
   async speakForStep(descriptor) {
     if (!descriptor) return;
+
+    // [DEBUG] speakForStep entry
+    console.log('[SWSE Translation Debug] speakForStep() called', {
+      descriptor_stepId: descriptor.stepId,
+      descriptor_label: descriptor.label,
+    });
+
     const mentorObj = this._getMentorObject();
-    if (!mentorObj) return;
+    if (!mentorObj) {
+      console.log('[SWSE Translation Debug] speakForStep() early return — no mentor object');
+      return;
+    }
 
     const choiceType = STEP_CHOICE_TYPE[descriptor.stepId];
     const text = choiceType
       ? getMentorGuidance(mentorObj, choiceType)
       : `You are at the ${descriptor.label} step.`;
 
-    if (text) await this.speak(text);
+    // [DEBUG] Text resolution
+    console.log('[SWSE Translation Debug] speakForStep() resolved text', {
+      choiceType,
+      text_length: text?.length ?? 0,
+      text_first_50: text?.slice?.(0, 50) ?? '(null)',
+      will_call_speak: !!text,
+    });
+
+    if (text) {
+      console.log('[SWSE Translation Debug] speakForStep() calling speak() with text');
+      await this.speak(text);
+      console.log('[SWSE Translation Debug] speakForStep() speak() completed');
+    } else {
+      console.log('[SWSE Translation Debug] speakForStep() skipping speak() — no text');
+    }
   }
 
   /**

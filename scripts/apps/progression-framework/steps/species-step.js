@@ -18,6 +18,7 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 
 // Maps stepId → mentor guidance choiceType
 const STEP_CHOICE_TYPE = {
@@ -311,6 +312,14 @@ export class SpeciesStep extends ProgressionStepPlugin {
   renderDetailsPanel(focusedItem) {
     swseLogger.log('[SpeciesStep] ===== HYDRATION START: renderDetailsPanel() =====');
 
+    // [DEBUG] Entry logging
+    console.log('[SWSE Details Debug] renderDetailsPanel() called with:', {
+      focusedItem_present: !!focusedItem,
+      focusedItem_id: focusedItem?.id ?? '(null)',
+      focusedItem_name: focusedItem?.name ?? '(null)',
+      focusedItem_keys: focusedItem ? Object.keys(focusedItem).slice(0, 8) : [],
+    });
+
     // Step 1: Validate input
     swseLogger.log('[SpeciesStep] STEP 1: Validating focusedItem', {
       focusedItemPresent: !!focusedItem,
@@ -329,7 +338,21 @@ export class SpeciesStep extends ProgressionStepPlugin {
     });
 
     const species = this._resolveSpeciesEntry(focusedItem);
+
+    // [DEBUG] Log resolution result
+    console.log('[SWSE Details Debug] _resolveSpeciesEntry(focusedItem) result:', {
+      species_found: !!species,
+      species_id: species?.id ?? '(null)',
+      species_name: species?.name ?? '(null)',
+      species_keys: species ? Object.keys(species).slice(0, 8) : [],
+    });
+
     if (!species) {
+      console.error('[SWSE Details Debug] FAIL: _resolveSpeciesEntry returned null', {
+        focusedItem_id: focusedItem?.id,
+        focusedItem_name: focusedItem?.name,
+        focusedItem_keys: focusedItem ? Object.keys(focusedItem) : [],
+      });
       swseLogger.error('[SpeciesStep] FAIL: Registry lookup failed', {
         attemptedId: focusedItem.id,
         registryEntries: SpeciesRegistry.getAll()?.length ?? 0,
@@ -418,6 +441,16 @@ export class SpeciesStep extends ProgressionStepPlugin {
         data: detailsData,
       };
 
+      // [DEBUG] Log final template spec
+      console.log('[SWSE Details Debug] Template spec built successfully:', {
+        template_path: templateSpec.template.split('/').pop(),
+        data_keys: Object.keys(templateSpec.data).slice(0, 10),
+        has_mentorProse: !!detailsData.mentorProse,
+        has_species: !!detailsData.species,
+        abilityRows_count: detailsData.abilityRows?.length ?? 0,
+        abilities_count: detailsData.abilities?.length ?? 0,
+      });
+
       swseLogger.log('[SpeciesStep] STEP 7: ✓ Template spec built', {
         template: templateSpec.template,
         dataKeysCount: Object.keys(templateSpec.data).length,
@@ -436,11 +469,25 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onItemFocused(id, shell) {
+    // [DEBUG] Click sequence tracking
+    const clickNum = ProgressionDebugCapture?.nextClickSequence?.() ?? 0;
+    console.log(`[SWSE Species Debug] [Click #${clickNum}] onItemFocused START`, { id });
     console.log('[SpeciesStep] onItemFocused called with id:', id);
 
     const entry = this._resolveSpeciesEntry(id);
+
+    // [DEBUG] Log resolution
+    console.log(`[SWSE Species Debug] [Click #${clickNum}] _resolveSpeciesEntry result`, {
+      found: !!entry,
+      entry_id: entry?.id ?? '(null)',
+      entry_name: entry?.name ?? '(null)',
+      entry_keys: entry ? Object.keys(entry).slice(0, 8) : [],
+      has_abilityScores: !!entry?.abilityScores,
+    });
+
     if (!entry) {
       console.error(`[SpeciesStep] ✗ onItemFocused: no registry entry for id "${id}" — focus ignored`);
+      console.error(`[SWSE Species Debug] [Click #${clickNum}] Entry resolution FAILED`);
       return;
     }
 
@@ -464,20 +511,68 @@ export class SpeciesStep extends ProgressionStepPlugin {
       });
     }
 
+    // [DEBUG] Log before focusedItem assignment
+    console.log(`[SWSE Species Debug] [Click #${clickNum}] About to set shell.focusedItem`, {
+      previous_id: shell.focusedItem?.id ?? '(null)',
+      new_id: entry.id,
+    });
+
     shell.focusedItem = entry;
+
+    console.log(`[SWSE Species Debug] [Click #${clickNum}] shell.focusedItem assigned`, {
+      current_id: shell.focusedItem?.id,
+      current_name: shell.focusedItem?.name,
+    });
 
     // Look up Ol' Salty dialogue for species name
     const dialogue = this._getOlSaltyDialogue(entry.name);
+
+    // [DEBUG] Log dialogue lookup
+    console.log(`[SWSE Species Debug] [Click #${clickNum}] Dialogue lookup for "${entry.name}"`, {
+      dialogue_found: !!dialogue,
+      dialogue_type: typeof dialogue,
+      dialogue_length: typeof dialogue === 'string' ? dialogue.length : null,
+      dialogue_first_30: typeof dialogue === 'string' ? dialogue.slice(0, 30) : null,
+    });
+
     if (dialogue) {
       console.log('[SpeciesStep] ✓ Found mentor dialogue for', entry.name);
-      await shell.mentorRail.speak(dialogue, 'encouraging');
+
+      // [DEBUG] Log before speak call
+      console.log(`[SWSE Species Debug] [Click #${clickNum}] About to call shell.mentorRail.speak()`, {
+        mentor_isAnimating_before: shell.mentor?.isAnimating ?? '(null)',
+        mentor_currentDialogue_before: shell.mentor?.currentDialogue?.slice?.(0, 30) ?? '(null)',
+      });
+
+      try {
+        await shell.mentorRail.speak(dialogue, 'encouraging');
+        console.log(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() completed`);
+      } catch (speakErr) {
+        console.error(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() threw:`, speakErr);
+        console.error(`[SWSE Species Debug] [Click #${clickNum}] Speak error details:`, {
+          message: speakErr.message,
+          stack: speakErr.stack?.split('\n').slice(0, 4).join(' | '),
+        });
+        // LOG BUT RETHROW - don't swallow the error
+        throw speakErr;
+      }
     } else {
       console.log('[SpeciesStep] ⚠ No mentor dialogue found for', entry.name);
+      console.log(`[SWSE Species Debug] [Click #${clickNum}] No dialogue, skipping speak()`);
     }
 
     console.log('[SpeciesStep] Triggering shell.render() to update detail panel');
     console.log('[SpeciesStep] shell.focusedItem is now:', shell.focusedItem);
+
+    // [DEBUG] Log before render
+    console.log(`[SWSE Species Debug] [Click #${clickNum}] About to call shell.render()`, {
+      focusedItem_id: shell.focusedItem?.id,
+      focusedItem_name: shell.focusedItem?.name,
+    });
+
     shell.render();
+
+    console.log(`[SWSE Species Debug] [Click #${clickNum}] onItemFocused COMPLETE`);
   }
 
   async onItemCommitted(id, shell) {

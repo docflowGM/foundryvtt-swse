@@ -61,7 +61,21 @@ export class MentorTranslationIntegration {
       force = false
     } = options;
 
+    // [DEBUG] Translation render tracking
+    console.log('[SWSE Translation Debug] MentorTranslationIntegration.render() called', {
+      text_length: text?.length ?? 0,
+      text_first_40: text?.slice?.(0, 40) ?? '(null)',
+      container_exists: !!container,
+      container_tag: container?.tagName ?? '(null)',
+      mentor,
+      force,
+    });
+
     if (!text || !container) {
+      console.warn('[SWSE Translation Debug] MentorTranslationIntegration: missing text or container', {
+        text_empty: !text,
+        container_null: !container,
+      });
       console.warn('MentorTranslationIntegration: missing text or container');
       return container;
     }
@@ -77,8 +91,19 @@ export class MentorTranslationIntegration {
 
     const enabled = force || (this.settings.enabled && userFlagValue);
 
+    // [DEBUG] Translation enabled state
+    console.log('[SWSE Translation Debug] MentorTranslationIntegration translation enabled check', {
+      enabled,
+      force,
+      settings_enabled: this.settings.enabled,
+      userFlagValue,
+    });
+
     if (!enabled) {
       // Just render plain text
+      console.log('[SWSE Translation Debug] Translation DISABLED — rendering plain text', {
+        text_length: text.length,
+      });
       container.innerHTML = this._escapeHtml(text);
       onComplete();
       return container;
@@ -90,8 +115,15 @@ export class MentorTranslationIntegration {
     // Load CSS if not already loaded
     await this._ensureCSSLoaded();
 
+    // [DEBUG] About to render with translation
+    console.log('[SWSE Translation Debug] About to call AurebeshTranslator.render()', {
+      text_length: text.length,
+      preset,
+      container_tag: container.tagName,
+    });
+
     // Render with translation
-    return AurebeshTranslator.render({
+    const result = await AurebeshTranslator.render({
       text,
       container,
       preset,
@@ -100,10 +132,21 @@ export class MentorTranslationIntegration {
         container.dataset.mentor = mentor;
         container.dataset.topic = topic;
         container.dataset.preset = preset;
+
+        // [DEBUG] onComplete callback
+        console.log('[SWSE Translation Debug] AurebeshTranslator.render() onComplete callback fired');
+
         onComplete();
       },
       enableSkip: true
     });
+
+    // [DEBUG] Translation render completed
+    console.log('[SWSE Translation Debug] MentorTranslationIntegration.render() completed', {
+      result_tag: result?.tagName ?? '(null)',
+    });
+
+    return result;
   }
 
   /**
