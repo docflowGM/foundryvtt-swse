@@ -34,6 +34,7 @@ import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/
 import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { PANEL_REGISTRY } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PANEL_REGISTRY.js";
 import { PostRenderAssertions } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PostRenderAssertions.js";
+import { buildHpViewModel, buildDefensesViewModel, buildHeaderHpSegments } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js";
 // Phase 7: Shared platform layer imports (reusable across all V2 sheets)
@@ -758,49 +759,10 @@ export class SWSEV2CharacterSheet extends
       }
     }
 
-    // PHASE 6: Build headerDefenses array from canonical derived.defenses object
-    // Canonical structure: system.derived.defenses.{fortitude|reflex|will}.{base, total, adjustment}
-    // DerivedCalculator is the SOLE authority for defense totals
-    const defenseDefs = [
-      { key: 'fortitude', derivedKey: 'fortitude', label: 'Fortitude' },
-      { key: 'reflex', derivedKey: 'reflex', label: 'Reflex' },
-      { key: 'will', derivedKey: 'will', label: 'Will' },
-      { key: 'flatFooted', derivedKey: 'flatFooted', label: 'Flat-Footed' }
-    ];
-    const headerDefenses = defenseDefs.map(def => {
-      // PHASE 6: Read from canonical derived defense object
-      const defenseData = derived.defenses?.[def.derivedKey] ?? { base: 10, total: 10, adjustment: 0 };
-
-      // Guard against missing derived data
-      if (!defenseData || typeof defenseData !== 'object') {
-        swseLogger.warn(`[Phase 6] Defense ${def.derivedKey} missing or malformed in derived data`, { defenseData });
-        return {
-          key: def.key,
-          label: def.label,
-          total: 10,
-          adjustment: 0,
-          armorBonus: 0,
-          abilityMod: 0,
-          abilityModClass: 'mod--zero',
-          classDef: 0,
-          miscMod: 0,
-          miscModClass: 'mod--zero'
-        };
-      }
-
-      return {
-        key: def.key,
-        label: def.label,
-        total: defenseData.total ?? 10,
-        adjustment: defenseData.adjustment ?? 0,
-        armorBonus: 0,  // Included in computed total, not separated
-        abilityMod: 0,  // Included in computed total, not separated
-        // SEMANTIC: Visual state classes for breakdown components
-        abilityModClass: 'mod--zero',  // Modifiers already included in total
-        classDef: 0,    // Included in computed total
-        miscMod: 0      // Stored in system.defenses.{fort|ref|will}.miscMod, not in derived
-      };
-    });
+    // PHASE 7.5: Defenses view-model note
+    // buildDefensesViewModel() is used by PanelContextBuilder.buildDefensePanel()
+    // Header defenses are read directly from defensePanel.defenses (which is built by that helper)
+    // No separate headerDefenses computation needed — one canonical source
 
     // PHASE 7: Read class display from canonical derived.identity bundle
     // character-actor.js.mirrorIdentity() builds this — sheet should never rebuild it
@@ -1011,22 +973,9 @@ const forcePoints = [];
       stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress'
     };
 
-    // HEADER SEGMENTS: Compact tactical HP and XP bars
-    const hpCurrentRaw = Number(system.hp?.value ?? 0);
-    const hpMaxRaw = Math.max(1, Number(system.hp?.max ?? 1));
-    const hpRatio = Math.max(0, Math.min(1, hpCurrentRaw / hpMaxRaw));
-    const hpFilledSegments = Math.round(hpRatio * 20);
-    const hpColorClassForIndex = (index) => {
-      if (index < 4) return "seg-red";
-      if (index < 8) return "seg-orange";
-      if (index < 12) return "seg-yellow";
-      if (index < 16) return "seg-yellowgreen";
-      return "seg-green";
-    };
-    const headerHpSegments = Array.from({ length: 20 }, (_, index) => ({
-      filled: index < hpFilledSegments,
-      colorClass: hpColorClassForIndex(index)
-    }));
+    // PHASE 7.5: HEADER SEGMENTS: Consume canonical HP view-model
+    // buildHeaderHpSegments() uses the same HP data as all other HP displays
+    const headerHpSegments = buildHeaderHpSegments(actor);
 
     const xpFilledSegments = Math.round((xpPercent / 100) * 20);
     const headerXpSegments = Array.from({ length: 20 }, (_, index) => ({

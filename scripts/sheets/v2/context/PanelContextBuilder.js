@@ -15,6 +15,7 @@
 import { PanelContextValidator } from './PanelContextValidator.js';
 import { RowTransformers } from './RowTransformers.js';
 import { validatePanel } from './PanelValidators.js';
+import { buildHpViewModel, buildDefensesViewModel } from '/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js';
 
 export class PanelContextBuilder {
   constructor(actor, sheetInstance) {
@@ -63,11 +64,14 @@ export class PanelContextBuilder {
    * - stateLabel: "Healthy"|"Wounded"|"Damaged"|"Critical"|"Dead"
    */
   buildHealthPanel() {
-    const hp = this.system.hp || { value: 0, max: 1 };
-    const hpValue = Number(hp.value) || 0;
-    const hpMax = Number(hp.max) || 1;
-    const hpTemp = Number(hp.temp) || 0;
-    const hpPercent = Math.max(0, Math.min(100, Math.round((hpValue / hpMax) * 100)));
+    // PHASE 7.5: Consume canonical HP view-model instead of computing inline
+    // buildHpViewModel is the single source of truth for HP data
+    // This ensures header HP bar, HP numeric display, and resource panel all use the same values
+    const hpViewModel = buildHpViewModel(this.actor);
+    const hpValue = hpViewModel.current;
+    const hpMax = hpViewModel.max;
+    const hpTemp = hpViewModel.temp;
+    const hpPercent = hpViewModel.percent;
     const tempPercent = Math.max(0, Math.min(100, Math.round((hpTemp / hpMax) * 100)));
 
     let stateClass = 'state--healthy';
@@ -188,15 +192,21 @@ export class PanelContextBuilder {
    * - Transforms shape only for template compatibility
    */
   buildDefensePanel() {
+    // PHASE 7.5: Consume canonical defenses view-model instead of computing inline
+    // buildDefensesViewModel is the single source of truth for defense data
+    // This ensures header defenses, defense partial, and all combat displays use the same values
+    const defensesViewModel = buildDefensesViewModel(this.derived);
+
     const system = this.system;
     const defenseKeyMap = [
-      { key: 'fort', label: 'Fortitude', abilityKey: 'str' },
-      { key: 'ref', label: 'Reflex', abilityKey: 'dex' },
-      { key: 'will', label: 'Will', abilityKey: 'wis' }
+      { key: 'fort', derivedKey: 'fortitude', label: 'Fortitude', abilityKey: 'str' },
+      { key: 'ref', derivedKey: 'reflex', label: 'Reflex', abilityKey: 'dex' },
+      { key: 'will', derivedKey: 'will', label: 'Will', abilityKey: 'wis' }
     ];
 
-    const defenses = defenseKeyMap.map(({ key, label, abilityKey }) => {
+    const defenses = defenseKeyMap.map(({ key, derivedKey, label, abilityKey }) => {
       const defenseData = system.defenses?.[key] || {};
+      const defenseViewModel = defensesViewModel[key];
 
       // Get ability modifier from system.attributes
       const abilityMod = system.attributes?.[abilityKey]?.mod ?? 0;
@@ -205,7 +215,8 @@ export class PanelContextBuilder {
       const armorBonus = Number(defenseData.armorBonus) || 0;
       const classDef = Number(defenseData.classBonus) || 0;
       const miscMod = Number(defenseData.miscMod) || 0;
-      const total = Number(defenseData.total) || 10;
+      // Use total from canonical view-model (same as header uses)
+      const total = defenseViewModel.total ?? 10;
 
       // Derive CSS classes from modifier values
       const abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';

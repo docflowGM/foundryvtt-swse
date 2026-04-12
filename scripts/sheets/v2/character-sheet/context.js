@@ -187,15 +187,42 @@ export function buildXpContext(actor, derived) {
 }
 
 /**
+ * PHASE 7.5: Build canonical HP view-model for all sheet displays
+ *
+ * Canonical sheet source for HP data. ALL HP displays must consume this bundle:
+ * - HP bar (header)
+ * - HP numeric display
+ * - resource detail panel
+ * - any status/condition display showing HP
+ *
+ * @param {Actor} actor - The character actor
+ * @returns {Object} Unified HP view-model {current, max, temp, percent, label, segments}
+ */
+export function buildHpViewModel(actor) {
+  const current = Number(actor.system.hp?.value ?? 0);
+  const max = Math.max(1, Number(actor.system.hp?.max ?? 1));
+  const temp = Number(actor.system.hp?.temp ?? 0);
+  const percent = Math.max(0, Math.min(100, Math.round((current / max) * 100)));
+
+  return {
+    current,
+    max,
+    temp,
+    percent,
+    label: `${current}/${max}`,
+    filledSegments: Math.round((current / max) * 20)
+  };
+}
+
+/**
  * Build header HP segments for tactical bar
+ * PHASE 7.5: Consumes canonical buildHpViewModel() — same source as all other HP displays
+ *
  * @param {Actor} actor - The character actor
  * @returns {Array} Array of segment objects
  */
 export function buildHeaderHpSegments(actor) {
-  const hpCurrentRaw = Number(actor.system.hp?.value ?? 0);
-  const hpMaxRaw = Math.max(1, Number(actor.system.hp?.max ?? 1));
-  const hpRatio = Math.max(0, Math.min(1, hpCurrentRaw / hpMaxRaw));
-  const hpFilledSegments = Math.round(hpRatio * 20);
+  const hp = buildHpViewModel(actor);
 
   const hpColorClassForIndex = (index) => {
     if (index < 4) return "seg-red";
@@ -206,9 +233,44 @@ export function buildHeaderHpSegments(actor) {
   };
 
   return Array.from({ length: 20 }, (_, index) => ({
-    filled: index < hpFilledSegments,
+    filled: index < hp.filledSegments,
     colorClass: hpColorClassForIndex(index)
   }));
+}
+
+/**
+ * PHASE 7.5: Build canonical defenses view-model for all sheet displays
+ *
+ * Canonical sheet source for defense data. ALL defense displays must consume this bundle:
+ * - header defense pills
+ * - defense partial/tab
+ * - combat summary defense values
+ * - any status/condition showing defenses
+ *
+ * @param {Object} derived - Derived state from actor.system.derived
+ * @returns {Object} Unified defenses view-model {fort, ref, will, flatFooted}
+ */
+export function buildDefensesViewModel(derived) {
+  const defenseDefs = [
+    { key: 'fortitude', derivedKey: 'fortitude', label: 'Fortitude', abbrev: 'Fort' },
+    { key: 'reflex', derivedKey: 'reflex', label: 'Reflex', abbrev: 'Ref' },
+    { key: 'will', derivedKey: 'will', label: 'Will', abbrev: 'Will' },
+    { key: 'flatFooted', derivedKey: 'flatFooted', label: 'Flat-Footed', abbrev: 'FF' }
+  ];
+
+  const result = {};
+  for (const def of defenseDefs) {
+    const defenseData = derived?.defenses?.[def.derivedKey] ?? { base: 10, total: 10, adjustment: 0 };
+    result[def.key] = {
+      label: def.label,
+      abbrev: def.abbrev,
+      total: defenseData.total ?? 10,
+      adjustment: defenseData.adjustment ?? 0,
+      base: defenseData.base ?? 10
+    };
+  }
+
+  return result;
 }
 
 /**
