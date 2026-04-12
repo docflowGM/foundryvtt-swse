@@ -94,6 +94,8 @@ function mirrorIdentity(actor, system) {
   const i = system.derived.identity;
   // All of these are inputs, but we mirror them into derived so v2 sheets can remain derived-first.
   i.level = safeNumber(system.level, 1);
+  // Phase 3B: Prefer canonical system.class.name, fall back to legacy paths
+  // system.className and system.class (as string) are deprecated, kept for compatibility only
   i.className = system.class?.name ?? system.className ?? system.class ?? '';
   i.species = system.species?.name ?? system.species ?? '';
   i.gender = system.gender ?? '';

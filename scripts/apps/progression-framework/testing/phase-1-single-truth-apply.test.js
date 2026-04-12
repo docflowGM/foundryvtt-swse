@@ -131,7 +131,8 @@ describe('PHASE 1 — Single Truth Apply Path', () => {
       const plan = ProgressionFinalizer._compileMutationPlan(sessionStateWithBoth, mockActor);
 
       // Should use canonical session (Soldier), not committedSelections (Jedi)
-      expect(plan.set['system.className']).toEqual('Soldier');
+      // Phase 3B: Canonical class storage is system.class (object), not deprecated system.className
+      expect(plan.set['system.class'].name).toBe('Soldier');
     });
   });
 
@@ -147,7 +148,8 @@ describe('PHASE 1 — Single Truth Apply Path', () => {
 
       // Verify all critical fields come from canonical session
       expect(plan.set['system.species']).toBeDefined();
-      expect(plan.set['system.className']).toBe('Soldier');
+      // Phase 3B: Canonical class storage is system.class (object), not deprecated system.className
+      expect(plan.set['system.class'].name).toBe('Soldier');
       // Phase 3A: Canonical ability path is .base, not deprecated .value
       expect(plan.set['system.abilities.str.base']).toBe(15);
       expect(plan.set['system.abilities.dex.base']).toBe(12);

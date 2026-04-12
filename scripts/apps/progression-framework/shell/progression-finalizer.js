@@ -387,9 +387,11 @@ export class ProgressionFinalizer {
       }
     }
     if (clazz) {
+      // Phase 3B: Canonical class storage is system.class (object)
+      // Derived computes display string (system.derived.identity.className)
+      // Legacy scalar paths (system.className, system.classes) remain for compatibility only
       set['system.class'] = clazz;
-      set['system.className'] = clazz.name || clazz.label || clazz;
-      set['system.classes'] = [clazz];
+      // DO NOT write system.className or system.classes - these are derived/legacy
       add.items.push({ name: clazz.name || clazz.label || String(clazz), type: 'class', system: clazz.system || {} });
     }
     // Canonical stored ability path is system.abilities.<key>.base

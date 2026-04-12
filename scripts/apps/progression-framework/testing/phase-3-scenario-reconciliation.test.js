@@ -132,7 +132,8 @@ describe('PHASE 3 — Scenario & Reconciliation Proof', () => {
 
       // Verify plan uses canonical data
       expect(plan.set['system.species']).toBeDefined();
-      expect(plan.set['system.className']).toBe('Soldier');
+      // Phase 3B: Canonical class storage is system.class (object), not deprecated system.className
+      expect(plan.set['system.class'].name).toBe('Soldier');
       // Phase 3A: Canonical ability path is .base, not deprecated .value
       expect(plan.set['system.abilities.str.base']).toBe(15);
     });
@@ -524,7 +525,8 @@ describe('PHASE 3 — Scenario & Reconciliation Proof', () => {
 
       // Both should show Soldier
       expect(projection.identity.class).toBe('soldier');
-      expect(plan.set['system.className']).toBe('Soldier');
+      // Phase 3B: Canonical class storage is system.class (object), not deprecated system.className
+      expect(plan.set['system.class'].name).toBe('Soldier');
     });
 
     it('should maintain parity for attributes between projection and apply', () => {
