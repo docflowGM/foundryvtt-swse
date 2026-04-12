@@ -6,20 +6,23 @@
  *
  * Formula: Sum of BAB from each class at its current level.
  *
- * CRITICAL CORRECTNESS NOTE — Fractional BAB:
- * - Some classes have fractional BAB progression (e.g., 0.75 per level)
- * - SWSE rules: Accumulate all fractional BAB, then floor ONCE at the end
- * - WRONG: floor(0.75) + floor(0.75) + floor(0.75) = 0 + 0 + 0 = 0
- * - RIGHT: floor(0.75 + 0.75 + 0.75) = floor(2.25) = 2
+ * PHASE 10+ CORRECTNESS NOTE — Cumulative Integer BAB:
+ * - Class compendium stores cumulative integer BAB at each class level
+ * - NO fractional values exist in actual compendium data
+ * - Slow/Medium/Fast metadata are class progression rate labels only
+ * - Calculator reads levelProgression[level].bab for each class level (cumulative values)
+ * - Sums these cumulative values across all classes
+ * - Returns raw integer sum (no flooring per-level)
  *
- * This calculator implements the RIGHT behavior:
- * - Accumulates all BAB values (fractional included)
- * - Returns raw sum (no flooring)
- * - Flooring happens at point-of-use if needed
+ * Example (Multiclass):
+ * - Scout level 5 (medium BAB): cumulative BAB = 3
+ * - Soldier level 5 (fast BAB): cumulative BAB = 5
+ * - Total BAB = 3 + 5 = 8
  *
  * Prestige Classes:
  * - Must have level_progression data in compendium or hardcoded fallback
  * - If missing, throws error (fail-fast instead of silent skip)
+ * - Prestige classes included in BAB sum (not skipped)
  *
  * NONHEROIC CHARACTERS:
  * - Nonheroic classes use SWSE nonheroic BAB progression (not class-based)

@@ -130,14 +130,17 @@ export class MilestoneComputer {
 
   /**
    * Check if next total level grants general talent
-   * General talents are tied to specific class cadences
-   * For now, returns unknown (TODO: implement general talent cadence if it exists)
+   * PHASE 10+: General talents granted at 1st level and every odd heroic level (3, 5, 7, ...)
+   * Per SWSE RAW: Talents acquired based on heroic-level cadence, not total level
    * @private
    */
   static _getNextLevelGrantsGeneralTalent(actor, nextTotalLevel) {
-    // Currently unknown - general talent cadence is class-based
-    // Would need additional system rule to determine system-wide cadence
-    return false; // Conservative: assume no general talent at next level
+    // Calculate next heroic level to determine talent cadence
+    const currentHeroicLevel = AttributeIncreaseHandler._getHeroicLevel(actor);
+    const nextHeroicLevel = currentHeroicLevel + 1;
+
+    // Talents at 1st level and every odd heroic level (3, 5, 7, 9, 11, 13, 15, 17, 19)
+    return (nextHeroicLevel === 1) || (nextHeroicLevel >= 3 && nextHeroicLevel % 2 === 1);
   }
 
   /**
