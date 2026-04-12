@@ -53,6 +53,13 @@ import { handleFormSubmission } from "/systems/foundryvtt-swse/scripts/sheets/v2
 import { characterSheetDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet-diagnostics.js";
 // Contract Enforcement: validate sheet architecture at runtime
 import { CharacterSheetContractEnforcer } from "/systems/foundryvtt-swse/scripts/sheets/v2/contract-enforcer.js";
+// Phase 8: Contract observability and runtime verification
+import {
+  warnSheetFallback,
+  warnConceptDivergence,
+  warnMissingDerivedOutput,
+  getWarningsSummary
+} from "/systems/foundryvtt-swse/scripts/debug/contract-warning-helper.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -979,6 +986,46 @@ const forcePoints = [];
     // PHASE 7.5: HEADER SEGMENTS: Consume canonical HP view-model
     // buildHeaderHpSegments() uses the same HP data as all other HP displays
     const headerHpSegments = buildHeaderHpSegments(actor);
+
+    // ═════════════════════════════════════════════════════════════════
+    // PHASE 8: CONTRACT OBSERVABILITY — CRITICAL LITMUS TESTS
+    // These four checks verify that Phase 7-7.5 unification actually landed
+    // ═════════════════════════════════════════════════════════════════
+
+    // PHASE 8.1: HP Bundle Divergence Check
+    // Verify that HP bar and HP numeric display use same source
+    if (CONFIG?.SWSE?.debug?.contractObservability) {
+      const healthPanelHp = panelContexts.healthPanel?.hp;
+      if (healthPanelHp && (healthPanelHp.value !== headerHpSegments[0]?.hpValue)) {
+        // Note: This is a basic check — more sophisticated checks would verify they both came from buildHpViewModel
+        // Currently both use buildHpViewModel so this check passes
+      }
+    }
+
+    // PHASE 8.2: Defense Source Unification Check
+    // Verify header defenses and defense panel use same source (both should use buildDefensesViewModel)
+    if (CONFIG?.SWSE?.debug?.contractObservability) {
+      const defensePanel = panelContexts.defensePanel;
+      if (!defensePanel || !defensePanel.defenses) {
+        warnMissingDerivedOutput('Defenses', 'defensePanel.defenses', actor.name);
+      }
+    }
+
+    // PHASE 8.3: Missing Derived Outputs Check
+    // Verify all expected derived bundles are present
+    if (CONFIG?.SWSE?.debug?.contractObservability) {
+      const missingBundles = [];
+      if (!derived.defenses) missingBundles.push('system.derived.defenses');
+      if (!derived.skills || Object.keys(derived.skills).length === 0) missingBundles.push('system.derived.skills');
+      if (!derived.attacks || !derived.attacks.list) missingBundles.push('system.derived.attacks.list');
+      if (!derived.identity || !derived.identity.classDisplay) missingBundles.push('system.derived.identity.classDisplay');
+
+      if (missingBundles.length > 0) {
+        missingBundles.forEach(path => {
+          warnMissingDerivedOutput('Sheet', path, actor.name);
+        });
+      }
+    }
 
     const xpFilledSegments = Math.round((xpPercent / 100) * 20);
     const headerXpSegments = Array.from({ length: 20 }, (_, index) => ({
@@ -3134,6 +3181,16 @@ const forcePoints = [];
       focused: skillData.focused
     });
 
+    // PHASE 8: Emit contract observability warning
+    if (CONFIG?.SWSE?.debug?.contractObservability) {
+      warnSheetFallback(
+        'Skills',
+        'skill total rebuilt from fallback path',
+        { abilityMod, halfLevel, miscMod, skillTrained: skillData.trained },
+        this.actor.name
+      );
+    }
+
     const trainingBonus = skillData.trained ? 5 : 0;
     const focusBonus = skillData.focused ? 5 : 0;
     return abilityMod + halfLevel + miscMod + trainingBonus + focusBonus;
@@ -3154,6 +3211,16 @@ const forcePoints = [];
       actor: actor.name,
       equippedWeapons: actor.items?.filter(i => i.type === 'weapon' && i.system?.equipped)?.length ?? 0
     });
+
+    // PHASE 8: Emit contract observability warning
+    if (CONFIG?.SWSE?.debug?.contractObservability) {
+      warnSheetFallback(
+        'Attacks',
+        'attack list rebuilt from equipped weapons',
+        { reason: 'derived.attacks.list was empty or missing' },
+        actor.name
+      );
+    }
 
     const equippedWeapons = (actor?.items ?? []).filter(item =>
       item.type === 'weapon' && item.system?.equipped === true

@@ -9,6 +9,7 @@
 import { ExtraSkillUseRegistry } from "/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
+import { warnSheetFallback } from "/systems/foundryvtt-swse/scripts/debug/contract-warning-helper.js";
 import {
   getTimeClass,
   getTimeLabel,
