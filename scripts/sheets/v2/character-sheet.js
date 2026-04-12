@@ -802,30 +802,9 @@ export class SWSEV2CharacterSheet extends
       };
     });
 
-    // Build derived class display string from progression data
-    // Format: "Jedi 3 / Soldier 2" or "Noble 5" for single class
-    // Source: actor.system.progression.classLevels (authoritative progression engine output)
-    let classDisplay = '—';
-    const classLevels = actor.system.progression?.classLevels ?? [];
-    if (classLevels.length > 0) {
-      try {
-        const { PROGRESSION_RULES } = await import(
-          "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js"
-        );
-        const classes = PROGRESSION_RULES.classes || {};
-        classDisplay = classLevels
-          .map(cl => {
-            const className = classes[cl.class]?.name || cl.class || 'Unknown';
-            return `${className} ${cl.level}`;
-          })
-          .join(' / ');
-      } catch (err) {
-        // Fallback: use classId if import fails
-        classDisplay = classLevels
-          .map(cl => `${cl.class} ${cl.level}`)
-          .join(' / ');
-      }
-    }
+    // PHASE 7: Read class display from canonical derived.identity bundle
+    // character-actor.js.mirrorIdentity() builds this — sheet should never rebuild it
+    let classDisplay = derived.identity?.classDisplay ?? '—';
 
     // Identity + visual customization
     const forceSensitive = system.forceSensitive ?? false;
@@ -858,33 +837,8 @@ export class SWSEV2CharacterSheet extends
         derivedAttacks: derived?.attacks
       });
 
-      // Build attacks from equipped weapons as fallback (transitional rescue only)
-      const equippedWeapons = actor.items.filter(item =>
-        item.type === 'weapon' && item.system?.equipped === true
-      );
-
-      // Create basic attack data from equipped weapons
-      attacksList = equippedWeapons.map(weapon => ({
-        id: `attack-${weapon.id}`,
-        name: weapon.name,
-        weaponId: weapon.id,
-        weaponName: weapon.name,
-        weaponType: weapon.system?.weaponCategory,
-        attackBonus: weapon.system?.attackBonus ?? 0,
-        attackTotal: (weapon.system?.attackBonus ?? 0) + (actor.system?.baseAttackBonus ?? 0),
-        attackAttribute: weapon.system?.attackAttribute ?? 'str',
-        damageFormula: weapon.system?.damage ?? '1d6',
-        damageBonus: weapon.system?.damageBonus ?? '',
-        critRange: weapon.system?.criticalRange ?? '20',
-        critMult: weapon.system?.criticalMultiplier ?? 'x2',
-        tags: [],
-        weaponProperties: {},
-        breakdown: {
-          attack: [],
-          damage: [],
-          conditional: []
-        }
-      }));
+      // PHASE 7: Build attacks from equipped weapons as fallback (transitional rescue only)
+      attacksList = this._buildAttacksFallback(actor);
     }
 
     const combat = {
@@ -3225,6 +3179,49 @@ const forcePoints = [];
     const trainingBonus = skillData.trained ? 5 : 0;
     const focusBonus = skillData.focused ? 5 : 0;
     return abilityMod + halfLevel + miscMod + trainingBonus + focusBonus;
+  }
+
+  /**
+   * PHASE 7: Build attacks from equipped weapons (transitional rescue only)
+   *
+   * This should NEVER be the main path — character-actor.js.mirrorAttacks() is authoritative.
+   * Only called if derived.attacks.list is empty/missing.
+   * Logs warning when fallback is needed (indicates upstream failure).
+   *
+   * @param {Actor} actor - The character actor
+   * @returns {Array} Array of basic attack objects from equipped weapons
+   */
+  _buildAttacksFallback(actor) {
+    swseLogger.warn(`[Phase 7] Attacks list fallback used — derived output was missing`, {
+      actor: actor.name,
+      equippedWeapons: actor.items?.filter(i => i.type === 'weapon' && i.system?.equipped)?.length ?? 0
+    });
+
+    const equippedWeapons = (actor?.items ?? []).filter(item =>
+      item.type === 'weapon' && item.system?.equipped === true
+    );
+
+    return equippedWeapons.map(weapon => ({
+      id: `attack-${weapon.id}`,
+      name: weapon.name,
+      weaponId: weapon.id,
+      weaponName: weapon.name,
+      weaponType: weapon.system?.weaponCategory,
+      attackBonus: weapon.system?.attackBonus ?? 0,
+      attackTotal: (weapon.system?.attackBonus ?? 0) + (actor.system?.baseAttackBonus ?? 0),
+      attackAttribute: weapon.system?.attackAttribute ?? 'str',
+      damageFormula: weapon.system?.damage ?? '1d6',
+      damageBonus: weapon.system?.damageBonus ?? '',
+      critRange: weapon.system?.criticalRange ?? '20',
+      critMult: weapon.system?.criticalMultiplier ?? 'x2',
+      tags: [],
+      weaponProperties: {},
+      breakdown: {
+        attack: [],
+        damage: [],
+        conditional: []
+      }
+    }));
   }
 
      PHASE 10: SKILL USE HELPERS

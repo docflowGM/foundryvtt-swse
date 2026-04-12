@@ -90,13 +90,44 @@ function safeNumber(value, fallback = 0) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+/**
+ * PHASE 7: Build class display string (multiclass format: "Jedi 3 / Soldier 2")
+ * CANONICAL BUILDER for identity summary — sheet should read this, never rebuild
+ *
+ * @param {Array} classLevels - progression.classLevels array [{class, level}, ...]
+ * @param {string} fallbackClassName - Single class name if multiclass unavailable
+ * @returns {string} Formatted class display or fallback
+ */
+function buildClassDisplay(classLevels, fallbackClassName) {
+  if (!Array.isArray(classLevels) || classLevels.length === 0) {
+    return fallbackClassName || '—';
+  }
+
+  // Build from classLevels if available (multiclass tracking)
+  return classLevels
+    .map(cl => {
+      // Format: "ClassName Level" or "classId Level" if name unavailable
+      const displayName = typeof cl === 'object' ? cl.class : cl;
+      const displayLevel = typeof cl === 'object' ? cl.level : 1;
+      return `${displayName} ${displayLevel}`;
+    })
+    .join(' / ');
+}
+
 function mirrorIdentity(actor, system) {
   const i = system.derived.identity;
-  // All of these are inputs, but we mirror them into derived so v2 sheets can remain derived-first.
+  // PHASE 7: All identity values are inputs, but we mirror them into derived so sheets can remain derived-first.
+  // Sheet should NEVER rebuild identity strings — read from this bundle instead.
   i.level = safeNumber(system.level, 1);
+
   // Phase 3B: Prefer canonical system.class.name, fall back to legacy paths
   // system.className and system.class (as string) are deprecated, kept for compatibility only
   i.className = system.class?.name ?? system.className ?? system.class ?? '';
+
+  // PHASE 7: Build full class display including multiclass format ("Jedi 3 / Soldier 2")
+  // from progression.classLevels (authoritative multiclass tracking)
+  i.classDisplay = buildClassDisplay(system.progression?.classLevels ?? [], i.className);
+
   i.species = system.species?.name ?? system.species ?? '';
   i.gender = system.gender ?? '';
   i.background = system.background?.name ?? system.background ?? '';

@@ -46,7 +46,9 @@ const FORM_FIELD_SCHEMA = {
   'system.abilities.cha.racial': 'number',
   'system.abilities.cha.temp': 'number',
 
-  // Defense modifiers
+  // Defense modifiers (PHASE 7: Canonical edit paths)
+  // Display totals come from system.derived.defenses.{fortitude|reflex|will}.total
+  // Editable overrides are system.defenses.{fort|ref|will}.miscMod
   'system.defenses.fort.miscMod': 'number',
   'system.defenses.ref.miscMod': 'number',
   'system.defenses.will.miscMod': 'number',
@@ -81,12 +83,14 @@ const FORM_FIELD_SCHEMA = {
   'system.skills.useComputer.miscMod': 'number',
   'system.skills.useTheForce.miscMod': 'number',
 
-  // Progression and Resources
+  // Progression and Resources (PHASE 7: Canonical edit paths)
   'system.level': 'number',
   // Phase 3D: Canonical XP path is system.xp.total (not deprecated system.experience)
   'system.xp.total': 'number',
   'system.credits': 'number',
   'system.speed': 'number',
+  // Destiny/Force Points — editable resource pools
+  // Display derived totals come from system.derived.destinyPoints, system.derived.forcePoints
   'system.destinyPoints.value': 'number',
   'system.destinyPoints.max': 'number',
   'system.forcePoints.value': 'number',
