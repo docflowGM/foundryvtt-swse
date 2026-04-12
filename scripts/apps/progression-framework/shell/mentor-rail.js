@@ -143,15 +143,39 @@ export class MentorRail {
    */
   async speakForStep(descriptor) {
     if (!descriptor) return;
+
+    // [DEBUG] speakForStep entry
+    console.log('[SWSE Translation Debug] speakForStep() called', {
+      descriptor_stepId: descriptor.stepId,
+      descriptor_label: descriptor.label,
+    });
+
     const mentorObj = this._getMentorObject();
-    if (!mentorObj) return;
+    if (!mentorObj) {
+      console.log('[SWSE Translation Debug] speakForStep() early return — no mentor object');
+      return;
+    }
 
     const choiceType = STEP_CHOICE_TYPE[descriptor.stepId];
     const text = choiceType
       ? getMentorGuidance(mentorObj, choiceType)
       : `You are at the ${descriptor.label} step.`;
 
-    if (text) await this.speak(text);
+    // [DEBUG] Text resolution
+    console.log('[SWSE Translation Debug] speakForStep() resolved text', {
+      choiceType,
+      text_length: text?.length ?? 0,
+      text_first_50: text?.slice?.(0, 50) ?? '(null)',
+      will_call_speak: !!text,
+    });
+
+    if (text) {
+      console.log('[SWSE Translation Debug] speakForStep() calling speak() with text');
+      await this.speak(text);
+      console.log('[SWSE Translation Debug] speakForStep() speak() completed');
+    } else {
+      console.log('[SWSE Translation Debug] speakForStep() skipping speak() — no text');
+    }
   }
 
   /**

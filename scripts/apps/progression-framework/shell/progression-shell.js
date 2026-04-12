@@ -895,6 +895,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Render mentor-rail template with mentor and collapse state
     if (this.mentorRail) {
       try {
+        // [DEBUG] Translation bootstrap tracking
+        console.log('[SWSE Translation Debug] [_prepareContext] Rendering mentor-rail template with mentor state:', {
+          currentDialogue: this.mentor.currentDialogue ?? '(empty)',
+          currentDialogue_length: this.mentor.currentDialogue?.length ?? 0,
+          isAnimating: this.mentor.isAnimating,
+          animationState: this.mentor.animationState,
+          renderNum,
+        });
+
         partsHtml.mentorRail = await foundry.applications.handlebars.renderTemplate(
           'systems/foundryvtt-swse/templates/apps/progression-framework/mentor-rail.hbs',
           {
@@ -902,6 +911,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
             mentorCollapsed: this.mentorCollapsed,
           }
         );
+
+        // [DEBUG] Log template result
+        console.log('[SWSE Translation Debug] [_prepareContext] mentor-rail template rendered:', {
+          html_includes_fallback: partsHtml.mentorRail?.includes?.('Awaiting your decision') ?? false,
+          html_includes_currentDialogue: partsHtml.mentorRail?.includes?.(this.mentor.currentDialogue) ?? false,
+          html_length: partsHtml.mentorRail?.length ?? 0,
+          renderNum,
+        });
       } catch (err) {
         console.error('[ProgressionShell] Failed to render mentor-rail:', err);
         partsHtml.mentorRail = null;
@@ -1086,9 +1103,27 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     // Auto-speak only on actual step change — NOT on every full render
     const descriptor = this.steps[this.currentStepIndex];
+
+    // [DEBUG] Translation bootstrap tracking
+    console.log('[SWSE Translation Debug] [_onRender] speakForStep check', {
+      descriptor_exists: !!descriptor,
+      descriptor_stepId: descriptor?.stepId ?? '(null)',
+      lastSpokenStepId: this._lastSpokenStepId ?? '(null)',
+      condition_result: descriptor && descriptor.stepId !== this._lastSpokenStepId,
+      will_call_speak: descriptor && descriptor.stepId !== this._lastSpokenStepId,
+    });
+
     if (descriptor && descriptor.stepId !== this._lastSpokenStepId) {
+      console.log('[SWSE Translation Debug] [_onRender] CALLING speakForStep()', {
+        stepId: descriptor.stepId,
+      });
       this._lastSpokenStepId = descriptor.stepId;
       await this.mentorRail.speakForStep(descriptor);
+      console.log('[SWSE Translation Debug] [_onRender] speakForStep() COMPLETED');
+    } else {
+      console.log('[SWSE Translation Debug] [_onRender] SKIPPING speakForStep() — condition false or already spoken', {
+        reason: !descriptor ? 'no descriptor' : 'already spoken',
+      });
     }
 
     // Notify current step plugin that render completed
