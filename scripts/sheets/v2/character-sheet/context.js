@@ -187,6 +187,84 @@ export function buildXpContext(actor, derived) {
 }
 
 /**
+ * PHASE 7.5: Build canonical attributes view-model for all sheet displays
+ *
+ * Canonical sheet source for ability/attribute data. ALL ability displays must consume this bundle:
+ * - abilities panel
+ * - ability breakdown displays
+ * - any status/condition showing ability scores
+ *
+ * @param {Actor} actor - The character actor
+ * @returns {Object} Unified attributes view-model {str, dex, con, int, wis, cha}
+ */
+export function buildAttributesViewModel(actor) {
+  const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+  const abilityLabels = {
+    'str': 'Strength',
+    'dex': 'Dexterity',
+    'con': 'Constitution',
+    'int': 'Intelligence',
+    'wis': 'Wisdom',
+    'cha': 'Charisma'
+  };
+
+  const derived = actor.system?.derived ?? {};
+  const result = {};
+
+  for (const key of abilityKeys) {
+    const derivedAttr = derived.attributes?.[key] ?? { total: 10, mod: 0 };
+    const value = derivedAttr.total ?? 10;
+    const modifier = derivedAttr.mod ?? Math.floor((value - 10) / 2);
+    const modifierClass = modifier > 0 ? 'positive' : modifier < 0 ? 'negative' : 'zero';
+
+    result[key] = {
+      key,
+      label: abilityLabels[key],
+      value,
+      modifier,
+      modifierClass
+    };
+  }
+
+  return result;
+}
+
+/**
+ * PHASE 7.5: Build canonical identity summary view-model
+ *
+ * Canonical sheet source for character identity. ALL identity displays must consume this bundle:
+ * - biography panel
+ * - header identity strip
+ * - character record summary
+ *
+ * @param {Actor} actor - The character actor
+ * @returns {Object} Unified identity view-model {className, classDisplay, species, level, etc}
+ */
+export function buildIdentityViewModel(actor) {
+  const system = actor.system;
+  const derived = system?.derived ?? {};
+  const identity = derived.identity ?? {};
+
+  return {
+    name: actor.name || 'Unnamed',
+    className: identity.className ?? system.class?.name ?? system.className ?? system.class ?? '—',
+    classDisplay: identity.classDisplay ?? '—',
+    species: identity.species ?? system.species?.name ?? system.species ?? '—',
+    level: Number(system.level) || 1,
+    size: identity.size ?? system.size ?? '—',
+    gender: identity.gender ?? system.gender ?? '—',
+    background: identity.background ?? system.background?.name ?? system.background ?? '—',
+    homeworld: system.planetOfOrigin ?? '—',
+    profession: system.profession ?? '—',
+    age: system.flags?.swse?.character?.age ?? '—',
+    height: system.flags?.swse?.character?.height ?? '—',
+    weight: system.flags?.swse?.character?.weight ?? '—',
+    destinyPoints: identity.destinyPoints ?? { value: 0, max: 0 },
+    forcePoints: identity.forcePoints ?? { value: 0, max: 0 }
+  };
+}
+
+/**
  * PHASE 7.5: Build canonical HP view-model for all sheet displays
  *
  * Canonical sheet source for HP data. ALL HP displays must consume this bundle:

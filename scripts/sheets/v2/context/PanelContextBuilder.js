@@ -15,7 +15,7 @@
 import { PanelContextValidator } from './PanelContextValidator.js';
 import { RowTransformers } from './RowTransformers.js';
 import { validatePanel } from './PanelValidators.js';
-import { buildHpViewModel, buildDefensesViewModel } from '/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js';
+import { buildHpViewModel, buildDefensesViewModel, buildAttributesViewModel, buildIdentityViewModel } from '/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js';
 
 export class PanelContextBuilder {
   constructor(actor, sheetInstance) {
@@ -256,24 +256,14 @@ export class PanelContextBuilder {
    * - biography: { ... }
    */
   buildBiographyPanel() {
+    // PHASE 7.5: Consume canonical identity view-model instead of rebuilding
+    // buildIdentityViewModel is the single source of truth for identity data
+    // All identity displays use the same prepared bundle
+    const identityViewModel = buildIdentityViewModel(this.actor);
+
     const identity = {
-      name: this.actor.name || 'Unnamed',
+      ...identityViewModel,
       player: this.system.flags?.swse?.character?.player || '—',
-      class: this.system.class || '—',
-      level: Number(this.system.level) || 1,
-      species: this.system.race || '—',
-      size: this.system.size || '—',
-      age: this.system.flags?.swse?.character?.age || '—',
-      gender: this.system.flags?.swse?.character?.gender || '—',
-      height: this.system.flags?.swse?.character?.height || '—',
-      weight: this.system.flags?.swse?.character?.weight || '—',
-      homeworld: this.system.planetOfOrigin || '—',
-      profession: this.system.profession || '—',
-      background: this.system.event || '—',
-      destinyPoints: {
-        value: Number(this.system.destinyPoints?.value) || 0,
-        max: Number(this.system.destinyPoints?.max) || 0
-      },
       canEdit: this.sheet.isEditable
     };
 
@@ -938,31 +928,15 @@ export class PanelContextBuilder {
    * - abilities: [ { key, label, value, modifier, modifierClass } ]
    */
   buildAbilitiesPanel() {
-    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    const abilityLabels = {
-      'str': 'Strength',
-      'dex': 'Dexterity',
-      'con': 'Constitution',
-      'int': 'Intelligence',
-      'wis': 'Wisdom',
-      'cha': 'Charisma'
-    };
+    // PHASE 7.5: Consume canonical attributes view-model instead of recomputing
+    // buildAttributesViewModel is the single source of truth for ability data
+    // All ability displays use the same prepared bundle
+    const attributesViewModel = buildAttributesViewModel(this.actor);
 
-    const abilities = abilityKeys.map(key => {
-      const abilityData = this.system.abilities?.[key] || {};
-      const value = Number(abilityData.value) || 10;
-      const modifier = Math.floor((value - 10) / 2);
-      const modifierClass = modifier > 0 ? 'positive' : modifier < 0 ? 'negative' : 'zero';
-
-      return {
-        key,
-        label: abilityLabels[key],
-        value,
-        modifier,
-        modifierClass,
-        canEdit: this.sheet.isEditable
-      };
-    });
+    const abilities = Object.values(attributesViewModel).map(attr => ({
+      ...attr,
+      canEdit: this.sheet.isEditable
+    }));
 
     const panel = {
       abilities,
