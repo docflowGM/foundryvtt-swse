@@ -91,8 +91,16 @@ function safeNumber(value, fallback = 0) {
 }
 
 /**
- * PHASE 7: Build class display string (multiclass format: "Jedi 3 / Soldier 2")
- * CANONICAL BUILDER for identity summary — sheet should read this, never rebuild
+ * PHASE 7: Build canonical class display string (multiclass format: "Jedi 3 / Soldier 2")
+ *
+ * CANONICAL BUILDER for all identity/class summary displays — sheet reads system.derived.identity.classDisplay,
+ * never rebuilds it.
+ *
+ * CRITICAL CONTRACT:
+ * - Preserves exact actor class progression order (no heroic-first sorting)
+ * - Formats as "ClassName Level" joined by " / "
+ * - Used by mirrorIdentity() to populate system.derived.identity.classDisplay
+ * - Sheet displays consume derived.identity.classDisplay or buildIdentityViewModel()
  *
  * @param {Array} classLevels - progression.classLevels array [{class, level}, ...]
  * @param {string} fallbackClassName - Single class name if multiclass unavailable
@@ -103,7 +111,8 @@ function buildClassDisplay(classLevels, fallbackClassName) {
     return fallbackClassName || '—';
   }
 
-  // Build from classLevels if available (multiclass tracking)
+  // Build from classLevels in exact order (no reordering, no heroic-first sorting)
+  // Each class progression entry is formatted as "ClassName Level"
   return classLevels
     .map(cl => {
       // Format: "ClassName Level" or "classId Level" if name unavailable

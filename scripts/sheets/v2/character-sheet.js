@@ -1251,6 +1251,9 @@ const forcePoints = [];
       // ═════════════════════════════════════════════════════════════════
       // PHASE 7.5: Identity Summary Data (multiclass format)
       // ═════════════════════════════════════════════════════════════════
+      // PHASE 8: classDisplay is canonical from system.derived.identity.classDisplay
+      // Built by character-actor.js buildClassDisplay() — preserves exact actor class progression order
+      // No heroic-first sorting. All displays read this single source.
       classDisplay,                 // Multiclass display format (e.g. "Jedi 3 / Soldier 2")
       identityGlowColor,            // Force-sensitive glow color
       forceSensitive,               // Whether character is force-sensitive

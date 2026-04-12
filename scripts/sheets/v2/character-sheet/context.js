@@ -123,36 +123,6 @@ export async function enrichSkillUses(skill, actor) {
   }
 }
 
-/**
- * Build class display string from progression data
- * @param {Actor} actor - The character actor
- * @returns {string} Formatted class display (e.g. "Jedi 3 / Soldier 2")
- */
-export async function buildClassDisplay(actor) {
-  let classDisplay = '—';
-  const classLevels = actor.system.progression?.classLevels ?? [];
-
-  if (classLevels.length > 0) {
-    try {
-      const { PROGRESSION_RULES } = await import(
-        "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js"
-      );
-      const classes = PROGRESSION_RULES.classes || {};
-      classDisplay = classLevels
-        .map(cl => {
-          const className = classes[cl.class]?.name || cl.class || 'Unknown';
-          return `${className} ${cl.level}`;
-        })
-        .join(' / ');
-    } catch (err) {
-      classDisplay = classLevels
-        .map(cl => `${cl.class} ${cl.level}`)
-        .join(' / ');
-    }
-  }
-
-  return classDisplay;
-}
 
 /**
  * Build XP context data
