@@ -42,6 +42,7 @@ import { InvalidationPreview } from './invalidation-preview.js';
 import { RolloutController } from '../rollout/rollout-controller.js';
 import { SelectedRailContext } from './selected-rail-context.js';
 import { ProjectionEngine } from './projection-engine.js';
+import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -211,6 +212,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
       title,
       ...options,
     });
+
+    // [DEBUG] Initialize global error capture once
+    if (!window._progressionDebugEnabled) {
+      window._progressionDebugEnabled = true;
+      ProgressionDebugCapture.init();
+    }
 
     this.actor = actor;
     this.mode = mode;
@@ -703,6 +710,16 @@ export class ProgressionShell extends SWSEApplicationV2 {
   // ---------------------------------------------------------------------------
 
   async _prepareContext(options) {
+    // [DEBUG] Render cycle tracking
+    const renderNum = ProgressionDebugCapture.nextRenderCycle();
+    ProgressionDebugCapture.log('Progression Debug', `[Render #${renderNum}] _prepareContext START`, {
+      step: this.steps[this.currentStepIndex]?.stepId,
+      focusedItem_id: this.focusedItem?.id ?? '(null)',
+      focusedItem_name: this.focusedItem?.name ?? '(null)',
+    });
+
+    ProgressionDebugCapture.updateState(this);
+
     const context = await super._prepareContext(options);
 
     // PHASE 4: Apply rollout configuration to shell
@@ -717,6 +734,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
     context.mode = this.mode;
     context.buildIntent = this.buildIntent;
     context.focusedItem = this.focusedItem;  // ✓ FIX: Pass focusedItem to getStepData so details panel hydrates
+
+    // [DEBUG] Log context state
+    ProgressionDebugCapture.log('Progression Debug', `[Render #${renderNum}] Context focusedItem set`, {
+      focusedItem_id: context.focusedItem?.id ?? '(null)',
+      focusedItem_keys: context.focusedItem ? Object.keys(context.focusedItem).slice(0, 6) : [],
+    });
 
     // ═══ PHASE 8: HYDRATION DIAGNOSTICS ═══
     const diagnostics = new HydrationDiagnosticsCollector({
@@ -806,11 +829,39 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const utilityBarConfig = currentPlugin?.getUtilityBarConfig() ?? { mode: 'minimal' };
 
     // Details panel
+    ProgressionDebugCapture.log('Progression Debug', `[Render #${renderNum}] Calling renderDetailsPanel()`, {
+      plugin: currentPlugin?.constructor?.name ?? '(null)',
+      focusedItem_id: this.focusedItem?.id ?? '(null)',
+    });
+
     const detailsPanelSpec = currentPlugin?.renderDetailsPanel(this.focusedItem)
       ?? { template: null, data: {} };
+
+    // [DEBUG] Log template spec
+    ProgressionDebugCapture.log('Progression Debug', `[Render #${renderNum}] renderDetailsPanel() returned`, {
+      has_template: !!detailsPanelSpec?.template,
+      template_path: detailsPanelSpec?.template?.split('/').pop() ?? '(null)',
+      data_keys: detailsPanelSpec?.data ? Object.keys(detailsPanelSpec.data).slice(0, 8) : [],
+    });
+
     const detailsPanelHtml = detailsPanelSpec?.template
       ? await foundry.applications.handlebars.renderTemplate(detailsPanelSpec.template, detailsPanelSpec.data)
       : null;
+
+    // [DEBUG] Log HTML result
+    ProgressionDebugCapture.log('Progression Debug', `[Render #${renderNum}] Template HTML rendered`, {
+      html_length: detailsPanelHtml?.length ?? 0,
+      has_species_details: detailsPanelHtml?.includes?.('prog-species-details') ?? false,
+      has_empty_state: detailsPanelHtml?.includes?.('prog-details-empty') ?? false,
+      focusedItem_name_in_html: this.focusedItem?.name ? detailsPanelHtml?.includes?.(this.focusedItem.name) : 'N/A',
+    });
+
+    // [DEBUG] State drift check
+    ProgressionDebugCapture.detectStateDrift(
+      !detailsPanelHtml && this.focusedItem,
+      'Details panel HTML is null/empty but focusedItem exists',
+      { focusedItem: this.focusedItem?.name }
+    );
 
     // Species-specific: Detect details panel hydration failure
     diagnostics.detectSpeciesDetailsPanelFailure(currentDescriptor?.stepId, this.focusedItem, detailsPanelHtml);
@@ -1664,12 +1715,27 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   async _onFocusItem(event, target) {
+    // [DEBUG] Click sequence tracking
+    const clickNum = ProgressionDebugCapture.nextClickSequence();
+    const stepId = this.steps[this.currentStepIndex]?.stepId;
+    ProgressionDebugCapture.log('Progression Debug', `[Click #${clickNum}] _onFocusItem START`, {
+      step: stepId,
+      eventTarget: event?.target?.className?.slice(0, 40),
+    });
+
     // Resolve the clicked row using the canonical data-item-id contract first,
     // but also tolerate legacy data-feat-id / data-language-id rows.
     const { element, row, itemId, matchedAttribute } = this._resolveInteractionItemId(target, event);
 
+    // [DEBUG] Log resolved itemId
+    ProgressionDebugCapture.log('Progression Debug', `[Click #${clickNum}] Resolved itemId`, {
+      itemId,
+      found: !!itemId,
+      matchedAttribute,
+      rowTag: row?.tagName,
+    });
+
     // DIAGNOSTICS: Log click target details
-    const stepId = this.steps[this.currentStepIndex]?.stepId;
     swseLogger.debug(`[ProgressionShell] _onFocusItem click on step "${stepId}"`, {
       eventTarget: event?.target?.tagName,
       eventTargetClass: event?.target?.className?.slice(0, 50),
@@ -1706,8 +1772,27 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     const plugin = this.stepPlugins.get(stepId);
     if (plugin) {
+      // [DEBUG] Log before delegating to plugin
+      ProgressionDebugCapture.log('Progression Debug', `[Click #${clickNum}] Calling plugin.onItemFocused()`, {
+        pluginClass: plugin.constructor.name,
+        itemId,
+      });
+
       swseLogger.debug(`[ProgressionShell] _onFocusItem calling plugin.onItemFocused(${itemId})`);
-      await plugin.onItemFocused(itemId, this);
+
+      try {
+        await plugin.onItemFocused(itemId, this);
+        ProgressionDebugCapture.log('Progression Debug', `[Click #${clickNum}] plugin.onItemFocused() completed`, {
+          focusedItem_id: this.focusedItem?.id ?? '(null)',
+          focusedItem_name: this.focusedItem?.name ?? '(null)',
+        });
+      } catch (focusErr) {
+        ProgressionDebugCapture.log('Progression Debug', `[Click #${clickNum}] plugin.onItemFocused() threw`, {
+          error: focusErr.message,
+          stack: focusErr.stack?.split('\n').slice(0, 3).join(' | '),
+        });
+        throw focusErr; // Re-throw after logging
+      }
     }
   }
 
