@@ -1542,6 +1542,38 @@ form.application.sheet > .window-content > .swse-character-sheet-wrapper > .swse
   }
 }
 
+/* Level-up flourish: Initial attention-grabbing flash */
+@keyframes levelup-flourish {
+  0% {
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+    border-color: rgba(0, 255, 136, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(0, 255, 136, 1), inset 0 0 12px rgba(0, 255, 136, 0.6);
+    border-color: rgba(0, 255, 136, 1);
+  }
+  100% {
+    box-shadow: 0 0 16px rgba(0, 255, 136, 0.6);
+    border-color: rgba(0, 255, 136, 0.6);
+  }
+}
+
+/* Level-up glow: Persistent sustained glow */
+@keyframes levelup-glow {
+  0% {
+    box-shadow: 0 0 16px rgba(0, 255, 136, 0.6);
+    border-color: rgba(0, 255, 136, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.8), inset 0 0 8px rgba(0, 255, 136, 0.3);
+    border-color: rgba(0, 255, 136, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 16px rgba(0, 255, 136, 0.6);
+    border-color: rgba(0, 255, 136, 0.6);
+  }
+}
+
 /* ---- ABILITY & DEFENSE CARDS ---- */
 
 .swse-sheet .ability-row {
@@ -4127,9 +4159,32 @@ select option:checked {
 
 .swse-sheet .combat-tab-container {
   display: flex;
+  flex-direction: column;
   gap: 12px;
   padding: 12px;
   max-width: 100%;
+  min-height: 0;
+}
+
+.swse-sheet .combat-readout-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  align-items: start;
+}
+
+.swse-sheet .combat-readout-area > * {
+  min-width: 0;
+  min-height: 0;
+}
+
+.swse-sheet .combat-content-wrapper {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
 }
 
 .swse-sheet .combat-main-area {
@@ -4251,7 +4306,7 @@ select option:checked {
 
 /* Responsive: Stack on smaller screens */
 @media (max-width: 1200px) {
-  .swse-sheet .combat-tab-container {
+  .swse-sheet .combat-content-wrapper {
     flex-direction: column;
   }
 
@@ -4267,6 +4322,10 @@ select option:checked {
 
   .swse-sheet .combat-turn-controls {
     flex: 0 1 auto;
+  }
+
+  .swse-sheet .combat-readout-area {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -6551,6 +6610,14 @@ select option:checked {
   transform: none !important;
 }
 
+/* Level Up button readiness flourish */
+.swse-character-sheet-.swse-sheet-ui .header-btn.ready {
+  border-color: rgba(0, 255, 136, 0.6) !important;
+  background: rgba(8, 18, 32, 0.98) !important;
+  animation: levelup-flourish 0.6s ease-in-out 1, levelup-glow 1.5s ease-in-out 0.7s forwards;
+  box-shadow: 0 0 16px rgba(0, 255, 136, 0.4) !important;
+}
+
 /* Flatten inputs and value boxes */
 .swse-character-sheet-.swse-sheet-ui input,
 .swse-character-sheet-.swse-sheet-ui select,
@@ -6608,15 +6675,33 @@ select option:checked {
 /* Scope: character sheet only via .swse-character-sheet selector */
 
 /* Header and container backgrounds: solid only, no gradients */
-.swse-character-sheet .sheet-header,
 .swse-character-sheet .header-resources-strip,
-.swse-character-sheet .header-second-wind,
-.swse-character-sheet .header-tactical-strip {
+.swse-character-sheet .header-second-wind {
   display: grid !important;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 6px 8px !important;
   background: transparent !important;
   background-image: none !important;
+}
+
+/* FIX: Restore header flex layout (3-section: left|center|right) */
+/* The header-tactical-strip should remain flex within the center section */
+.swse-character-sheet .sheet-header {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  gap: 16px !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+.swse-character-sheet .header-tactical-strip {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 6px 8px !important;
+  background: transparent !important;
+  background-image: none !important;
+  flex-wrap: wrap;
 }
 
 /* Remove text-shadow from all text elements */
@@ -6745,6 +6830,15 @@ select option:checked {
 /* Remove hover/decorative effects from resource items */
 .swse-character-sheet .header-defense-readout {
   border-bottom: 1px solid rgba(100, 100, 120, 0.2) !important;
+}
+
+/* Semantic coloring for header numeric values */
+.swse-character-sheet .header-defense-readout__value {
+  font-weight: 700;
+}
+
+.swse-character-sheet .tactical-resource__value {
+  font-weight: 700;
 }
 
 /* Ensure panels have consistent, flat appearance */

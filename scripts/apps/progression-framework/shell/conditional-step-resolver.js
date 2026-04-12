@@ -23,6 +23,7 @@
 
 import { createStepDescriptor, StepCategory, StepType } from '../steps/step-descriptor.js';
 import { ForcePowerStep } from '../steps/force-power-step.js';
+import { ForceAuthorityEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/engine/force-authority-engine.js';
 
 /**
  * Known conditional step keys used by the progression engine.
@@ -220,7 +221,7 @@ export class ConditionalStepResolver {
   }
 
   async _checkForcePowersUnlocked(actor) {
-    // TODO (Wave 10): engine.isStepUnlocked(actor, 'force-powers', levelContext)
+    // Check if actor has Force capability AND is under-entitled (owned < entitled)
     try {
       const feats = actor?.items?.filter(i => i.type === 'feat') ?? [];
       const hasForceSensitivity = feats.some(f =>
@@ -229,12 +230,25 @@ export class ConditionalStepResolver {
       const hasForceTraining = feats.some(f =>
         f.name?.toLowerCase().includes('force training')
       );
-      if (hasForceSensitivity || hasForceTraining) {
+
+      // Only show step if actor has Force capability
+      if (!hasForceSensitivity && !hasForceTraining) {
+        return { active: false, reason: null };
+      }
+
+      // Check if actor is under-entitled (owned < entitled)
+      const entitledCapacity = await ForceAuthorityEngine.getForceCapacity(actor);
+      const ownedPowers = actor?.items?.filter(i => i.type === 'forcepower')?.length ?? 0;
+
+      // Show Force Powers step if:
+      // - Actor has capacity (entitled > 0), AND
+      // - Actor owns fewer powers than entitled
+      if (entitledCapacity > 0 && ownedPowers < entitledCapacity) {
         const reason = hasForceSensitivity ? 'Force Sensitivity' : 'Force Training feat';
         return { active: true, reason };
       }
     } catch {
-      // Defensive
+      // Defensive - fall through to return false
     }
     return { active: false, reason: null };
   }

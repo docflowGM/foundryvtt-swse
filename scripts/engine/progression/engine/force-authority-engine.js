@@ -6,7 +6,7 @@
  * 1. ZERO mutations - pure derivation + validation only
  * 2. Multi-source additive BASE capacity:
  *    - Force Sensitivity feat: +1 power
- *    - Force Training feats: +(1 + WIS modifier) per feat (STACKS)
+ *    - Force Training feats: +(1 + configured ability modifier) per feat (STACKS)
  *    - Class level grants: +X per level
  *    - Template grants: +X if template applies
  * 3. Capacity is RECALCULATED every time - NEVER cached
@@ -17,12 +17,14 @@
  * Public API:
  * - getForceCapacity(actor) -> {number}                          [base capacity only]
  * - getSelectionContext(actor) -> {SelectionContext}             [Phase 3.5: full context]
+ * - getProvenanceContext(actor) -> {Object}                      [provenance ledger + queries]
  * - validateForceAccess(actor) -> {valid: bool, reason: string}
  * - validateForceSelection(actor, powerIds) -> {valid: bool, reason: string, capacityUsed?: number}
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SelectionModifierHookRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/selection-modifier-hook-registry.js";
+import { ForceProvenanceEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-provenance-engine.js";
 
 export class ForceAuthorityEngine {
   /**
@@ -49,18 +51,23 @@ export class ForceAuthorityEngine {
         swseLogger.debug('[FORCE CAPACITY] Force Sensitivity: +1');
       }
 
-      // Source 2: Force Training feats (+1 + WIS per feat, STACKS)
+      // Source 2: Force Training feats (+1 + configured ability mod per feat, STACKS)
       const forceTrainingFeats = actor.items.filter(
         i => i.type === 'feat' && i.name.toLowerCase().includes('force training')
       );
       if (forceTrainingFeats.length > 0) {
-        const wisMod = actor.system?.abilities?.wis?.mod ?? 0;
-        const perFeat = 1 + Math.max(0, wisMod);
+        // Use canonical setting to determine which ability modifier to apply
+        const forceAbility = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
+        const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
+        const abilityMod = actor.system?.abilities?.[abilityKey]?.mod ?? 0;
+
+        const perFeat = 1 + Math.max(0, abilityMod);
         const trainingCapacity = forceTrainingFeats.length * perFeat;
         capacity += trainingCapacity;
         swseLogger.debug('[FORCE CAPACITY] Force Training', {
           count: forceTrainingFeats.length,
-          wisMod,
+          configuredAbility: forceAbility,
+          abilityMod,
           perFeat,
           total: trainingCapacity
         });
@@ -75,7 +82,13 @@ export class ForceAuthorityEngine {
         capacity,
         sources: {
           forceSensitivity: hasForceSensitivity ? 1 : 0,
-          forceTraining: forceTrainingFeats.length > 0 ? forceTrainingFeats.length * (1 + Math.max(0, actor.system?.abilities?.wis?.mod ?? 0)) : 0
+          forceTraining: forceTrainingFeats.length > 0
+            ? forceTrainingFeats.length * (1 + Math.max(0, (() => {
+                const forceAbility = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
+                const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
+                return actor.system?.abilities?.[abilityKey]?.mod ?? 0;
+              })()))
+            : 0
         }
       });
 
@@ -129,6 +142,37 @@ export class ForceAuthorityEngine {
     });
 
     return context;
+  }
+
+  /**
+   * Get provenance context for an actor
+   * Returns full reconciliation ledger and query helpers
+   *
+   * Provides:
+   * - Full grant ledger with entitled/owned breakdown per grant source
+   * - Total entitled, owned, owed calculations
+   * - Legacy issue tracking for retroactively migrated actors
+   * - Helper queries for UI/logic
+   *
+   * @param {Actor} actor - The actor
+   * @returns {Promise<Object>} Provenance context with ledger and query methods
+   */
+  static async getProvenanceContext(actor) {
+    const ledger = await ForceProvenanceEngine.reconcileForceGrants(actor, 'query');
+
+    return {
+      ledger,
+      totalEntitled: ForceProvenanceEngine.getTotalEntitled(ledger),
+      totalOwned: ForceProvenanceEngine.getTotalOwned(ledger),
+      totalOwed: ForceProvenanceEngine.getTotalOwed(ledger),
+      hasLegacyIssues: ForceProvenanceEngine.hasLegacyIssues(ledger),
+      legacyIssues: ForceProvenanceEngine.getLegacyIssues(ledger),
+
+      // Query helpers
+      getGrant: (grantSourceId) => ForceProvenanceEngine.getGrantDetails(ledger, grantSourceId),
+      formatGrantName: (grantSourceId) => ForceProvenanceEngine.formatGrantSourceName(grantSourceId),
+      isUnderEntitled: () => ForceProvenanceEngine.getTotalOwed(ledger) > 0
+    };
   }
 
   /**

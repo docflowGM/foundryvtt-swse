@@ -10,26 +10,32 @@ import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/cap
 
 /**
  * Determine if character gains force powers on this level up
- * - Jedi at level 1 gets Force Sensitivity (1 power)
- * - Force Training feat grants 1 + WIS/CHA mod (min 1)
+ * Uses canonical capability signals: feats actually granted or owned
+ * (NOT direct Jedi class membership - Jedi grants Force Sensitivity feat)
+ *
  * @param {Actor} actor - The actor
  * @param {Array} selectedFeats - Currently selected feats
  * @returns {boolean} True if character gains force powers
  */
 export function getsForcePowers(actor, selectedFeats = []) {
-  // Check if character is level 1 Jedi (gets Force Sensitivity)
-  const newLevel = actor.system.level + 1;
-  if (newLevel === 2) {
-    // If this is level 2, they were level 1. Check if they're Jedi
-    if (getClassLevel(actor, 'jedi') > 0) {return true;}
-  }
+  // Check 1: Character has Force Sensitivity feat (granted at level 1 for Jedi, or selected)
+  // This is the ACTUAL capability source, not class membership
+  const hasForceSensitivity = actor.items?.some(i =>
+    i.type === 'feat' && i.name?.toLowerCase().includes('force sensitivity')
+  ) || selectedFeats.some(f => {
+    const name = typeof f === 'string' ? f : f.name;
+    return name?.toLowerCase().includes('force sensitivity');
+  });
 
-  // Check if Force Training is in selected feats
+  if (hasForceSensitivity) {return true;}
+
+  // Check 2: Character is selecting Force Training feat
   const hasForceTraining = selectedFeats.some(f => {
     const slug = typeof f === 'string' ? f : f.system?.slug || f.name?.toLowerCase().replace(/\s+/g, '-');
     return slug === CAPABILITY_SLUGS.FORCE_TRAINING ||
            (typeof f === 'string' ? f === 'Force Training' : f.name === 'Force Training');
   });
+
   if (hasForceTraining) {return true;}
 
   return false;
@@ -37,6 +43,8 @@ export function getsForcePowers(actor, selectedFeats = []) {
 
 /**
  * Count how many force powers the character gains
+ * Uses canonical capability signals: feats actually granted or owned
+ *
  * @param {Actor} actor - The actor
  * @param {Array} selectedFeats - Currently selected feats
  * @returns {number} Number of powers to select
@@ -44,24 +52,27 @@ export function getsForcePowers(actor, selectedFeats = []) {
 export async function countForcePowersGained(actor, selectedFeats = []) {
   let count = 0;
 
-  // Check for Force Sensitivity (level 1 Jedi)
-  const newLevel = actor.system.level + 1;
-  if (newLevel === 2) {
-    if (getClassLevel(actor, 'jedi') > 0) {count += 1;}
+  // Check 1: Force Sensitivity feat (if being acquired this level)
+  // The actor may already have it, but we count if they're gaining it NOW
+  const gainsForceSensitivity = selectedFeats.some(f => {
+    const name = typeof f === 'string' ? f : f.name;
+    return name?.toLowerCase().includes('force sensitivity');
+  });
+
+  if (gainsForceSensitivity) {
+    count += 1;
   }
 
-  // Check for Force Training feat
+  // Check 2: Force Training feat (each grants 1 + WIS/CHA mod, minimum 1)
   for (const feat of selectedFeats) {
     const featName = typeof feat === 'string' ? feat : feat.name;
     const featSlug = typeof feat === 'string' ? feat : (feat.system?.slug || featName?.toLowerCase().replace(/\s+/g, '-'));
     if (featSlug === CAPABILITY_SLUGS.FORCE_TRAINING || featName === 'Force Training') {
-      // Force Training grants 1 + WIS mod (or CHA mod with house rule), minimum 1
-      const wisAbility = actor.system.abilities?.wis;
-      const chaAbility = actor.system.abilities?.cha;
-
-      // Check for house rule to use CHA instead of WIS
-      const useCha = game.settings?.get('foundryvtt-swse', 'forceTrainingUseCha') ?? false;
-      const mod = (useCha ? chaAbility?.mod : wisAbility?.mod) ?? 0;
+      // Force Training grants 1 + WIS/CHA mod (based on game setting), minimum 1
+      const forceAbility = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
+      const mod = forceAbility === 'charisma'
+        ? (actor.system.abilities?.cha?.mod ?? 0)
+        : (actor.system.abilities?.wis?.mod ?? 0);
 
       count += Math.max(1, 1 + mod);
     }

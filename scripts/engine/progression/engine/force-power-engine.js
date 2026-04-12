@@ -32,6 +32,7 @@ import { FORCE_POWER_DATA } from "/systems/foundryvtt-swse/scripts/engine/progre
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ForceSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-slot-validator.js";
+import { ForceProvenanceEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-provenance-engine.js";
 
 export class ForcePowerEngine {
   /**
@@ -87,7 +88,7 @@ export class ForcePowerEngine {
 
   /**
    * Calculate force powers from ability modifier
-   * Uses WIS mod by default, or CHA mod if house rule is enabled
+   * Uses canonical forceTrainingAttribute setting (wisdom or charisma)
    * Minimum 1 power
    * @param {Actor} actor - The actor
    * @returns {number} Number of powers (minimum 1)
@@ -97,9 +98,9 @@ export class ForcePowerEngine {
       return 1; // Default minimum if no ability data
     }
 
-    // Check for house rule to use CHA instead of WIS
-    const useCha = game.settings?.get('foundryvtt-swse', 'forceTrainingUseCha') ?? false;
-    const abilityKey = useCha ? 'cha' : 'wis';
+    // Use canonical setting to determine which ability modifier to apply
+    const forceAbility = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
+    const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
     const mod = actor.system.abilities[abilityKey]?.mod ?? 0;
 
     return Math.max(1, 1 + mod);
@@ -233,19 +234,98 @@ static async applySelected(actor, selectedItems = []) {
   try {
     const toCreate = [];
 
+    // Determine provenance context for this application
+    // Get all force grant sources on actor
+    const feats = actor.items.filter(i => i.type === 'feat') || [];
+    const hasForceSensitivity = feats.some(f => f.name?.toLowerCase().includes('force sensitivity'));
+    const ftFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
+
+    // Count how many powers are already assigned to FS
+    const fsOwnedPowers = actor.items.filter(i =>
+      i.type === 'forcepower' && i.system?.provenance?.grantSourceId === 'fs-chargen'
+    ).length;
+
+    // If this is the first power and FS exists, mark it as FS. Otherwise, mark as FT.
+    let powerIndexInThisApplication = 0;
+
     for (const it of filtered) {
+      let itemData;
       if (typeof it.toObject === 'function') {
-        toCreate.push(it.toObject());
+        itemData = it.toObject();
       } else if (it.document) {
-        toCreate.push(it.document.toObject());
+        itemData = it.document.toObject();
       } else {
-        toCreate.push({
+        itemData = {
           name: it.name || 'Force Power',
           type: 'forcepower',
           img: it.img || 'icons/svg/mystery-man.svg',
           system: it.system || {}
-        });
+        };
       }
+
+      // Add provenance metadata
+      if (!itemData.system) {
+        itemData.system = {};
+      }
+
+      // Determine provenance source
+      let grantSourceType = 'force-training'; // Default
+      let grantSourceId = 'ft-unknown';
+      let grantSubtype = 'baseline';
+      let isLocked = false;
+
+      // If first power in this application and no FS powers exist yet, mark as FS
+      if (powerIndexInThisApplication === 0 && hasForceSensitivity && fsOwnedPowers === 0) {
+        grantSourceType = 'force-sensitivity';
+        grantSourceId = 'fs-chargen';
+        grantSubtype = 'baseline';
+        isLocked = true;
+      } else if (ftFeats.length > 0) {
+        // Mark as Force Training
+        grantSourceType = 'force-training';
+
+        // Get or create stable grant ID for this FT feat
+        // CRITICAL: Must be stored on feat to ensure stability across sessions
+        const ftFeat = ftFeats[0];
+        if (!ftFeat.system?.grantSourceId) {
+          // Generate new stable grant ID and immediately persist to feat
+          const newGrantId = ForceProvenanceEngine.generateForceTairingGrantId(
+            actor.system.level,
+            Date.now().toString(16).slice(-8)
+          );
+
+          // Store on feat immediately (synchronously, before creating powers)
+          // This prevents duplicate ghost grants if session reloads before power creation
+          try {
+            await ftFeat.update({
+              'system.grantSourceId': newGrantId,
+              'system.acquiredAtLevel': actor.system.level
+            });
+            grantSourceId = newGrantId;
+          } catch (e) {
+            swseLogger.warn('[FORCE POWER] Failed to store grantSourceId on FT feat', e);
+            // Fallback: use generated ID anyway (will be regenerated next session if update failed)
+            grantSourceId = newGrantId;
+          }
+        } else {
+          // Reuse existing stable ID
+          grantSourceId = ftFeat.system.grantSourceId;
+        }
+
+        // Determine subtype: first FT power is baseline, rest are modifier-extra
+        grantSubtype = powerIndexInThisApplication === 0 ? 'baseline' : 'modifier-extra';
+        isLocked = false;
+      }
+
+      itemData.system.provenance = ForceProvenanceEngine.createProvenanceMetadata(
+        grantSourceType,
+        grantSourceId,
+        grantSubtype,
+        isLocked
+      );
+
+      toCreate.push(itemData);
+      powerIndexInThisApplication++;
     }
 
     if (toCreate.length) {
