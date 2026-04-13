@@ -35,7 +35,7 @@
           {{!-- Aurabesh Text (Diegetic) --}}
           {{!-- STABLE DOM: Engine can bind to aurabesh and cursor --}}
           <div class="prog-intro-aurabesh prog-intro-aurabesh--{{currentStepData.state}}" data-role="intro-aurabesh-container">
-            <span class="prog-intro-aurabesh__text" data-role="intro-aurabesh-text">{{currentStepData.aurabesh}}</span>
+            <span class="prog-intro-aurabesh__text" data-role="intro-aurabesh">{{currentStepData.aurabesh}}</span>
             {{#if (eq currentStepData.state "processing")}}
               <span class="prog-intro-cursor prog-intro-cursor--blink" data-role="intro-cursor"></span>
             {{/if}}
@@ -58,6 +58,12 @@
               <span class="prog-intro-status__text" data-role="intro-status-text">WAITING</span>
             {{/if}}
           </div>
+
+          {{!-- Microlabel (Diegetic System Messages) --}}
+          {{!-- STABLE DOM: Engine binds to this for system status updates --}}
+          <div class="prog-intro-microlabel" data-role="intro-microlabel">
+            > initializing system...
+          </div>
         </div>
       {{/if}}
 
@@ -79,11 +85,19 @@
     {{!-- Progress Bar --}}
     {{!-- STABLE DOM: Engine binds to these for direct progress updates --}}
     <div class="prog-intro-progress-container">
-      <div class="prog-intro-progress-bar">
+      {{!-- Segmented progress bar (Phase 1+ boot sequence) --}}
+      <div class="prog-intro-progress-bar prog-intro-progress-bar--segmented">
+        {{#each progressSegments}}
+          <div class="prog-intro-segment {{#if this.active}}active{{/if}}" data-role="intro-segment"></div>
+        {{/each}}
+      </div>
+      {{!-- Smooth fill (backward compatibility, hidden) --}}
+      <div class="prog-intro-progress-bar prog-intro-progress-bar--smooth" style="display: none;">
         <div class="prog-intro-progress-fill" style="width: {{progressPercent}}%" data-role="intro-progress-fill"></div>
       </div>
+      {{!-- Nested node for intro-progress-percent selector (Phase 1 contract) --}}
       <div class="prog-intro-progress-text" data-role="intro-progress-label">
-        {{stepNumber}} / {{bootSequenceLength}}
+        <span data-role="intro-progress-percent">{{stepNumber}} / {{bootSequenceLength}}</span>
       </div>
     </div>
 
@@ -96,16 +110,38 @@
     {{/if}}
   </div>
 
-  {{!-- Footer: Continue Button (shown when sequence complete) --}}
-  {{!-- data-action="next-step" delegates to shell._onNextStep via ApplicationV2 action system --}}
+  {{!-- Footer: Action Buttons (shown when sequence complete) --}}
+  {{!-- Three-button grid: Go Back / Proceed / Pick Profile --}}
   {{#if sequenceComplete}}
     <div class="prog-intro-footer prog-intro-footer--fade-in">
-      <button class="prog-intro-continue-btn prog-btn prog-btn--primary"
-              type="button"
-              data-action="next-step">
-        <i class="fas fa-arrow-right"></i>
-        Continue
-      </button>
+      <div class="prog-intro-actions">
+        {{!-- Go Back: uses existing previous-step handler --}}
+        <button class="prog-intro-btn prog-btn prog-btn--secondary"
+                type="button"
+                data-action="previous-step"
+                title="Return to previous step">
+          <i class="fas fa-arrow-left"></i>
+          Go Back
+        </button>
+
+        {{!-- Proceed: uses existing next-step handler --}}
+        <button class="prog-intro-btn prog-btn prog-btn--primary"
+                type="button"
+                data-action="next-step"
+                title="Continue to next step">
+          <i class="fas fa-arrow-right"></i>
+          Proceed
+        </button>
+
+        {{!-- Pick Profile: bound directly in intro-step.js --}}
+        <button class="prog-intro-btn prog-btn prog-btn--primary"
+                type="button"
+                data-role="intro-pick-profile"
+                title="Select a template or profile">
+          <i class="fas fa-scroll"></i>
+          Pick Profile
+        </button>
+      </div>
     </div>
   {{else}}
     <div class="prog-intro-footer">

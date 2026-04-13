@@ -26,6 +26,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SWSETranslationEngine } from '../engine/swse-translation-engine.js';
+import { TemplateSelectionDialog } from '../dialogs/template-selection-dialog.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 
 // ========== INTRO STATE MACHINE ==========
@@ -36,6 +37,130 @@ const INTRO_STATE = {
   TRANSITIONING: 'transitioning',
   DISPOSED: 'disposed'
 };
+
+// ========== BOOT SEQUENCE DECLARATIONS (Phase 2) ==========
+
+const INTRO_LINE_TONE = {
+  NEUTRAL: 'neutral',
+  ERROR: 'error',
+  SUCCESS: 'success'
+};
+
+/**
+ * Declarative boot sequence for Phase 2 implementation.
+ * Each line defines Aurabesh text, English translation, tone, progress level, and duration.
+ */
+const BOOT_LINES = [
+  {
+    aurabesh: '[SYSTEM LINK ESTABLISHING]',
+    basic: 'System Link Establishing',
+    tone: INTRO_LINE_TONE.NEUTRAL,
+    progress: 3,
+    duration: 800
+  },
+  {
+    aurabesh: '[IDENTITY MATRIX INDEXED]',
+    basic: 'Identity Matrix Indexed',
+    tone: INTRO_LINE_TONE.SUCCESS,
+    progress: 8,
+    duration: 800
+  },
+  {
+    aurabesh: '[GALACTIC RECORD INDEX NOT DETECTED]',
+    basic: 'Galactic Record Index Not Detected',
+    tone: INTRO_LINE_TONE.ERROR,
+    progress: 12,
+    duration: 1000
+  },
+  {
+    aurabesh: '[OVERRIDE AUTHORIZATION GRANTED]',
+    basic: 'Override Authorization Granted',
+    tone: INTRO_LINE_TONE.SUCCESS,
+    progress: 16,
+    duration: 800
+  },
+  {
+    aurabesh: '[PRIMARY LANGUAGE MATRIX VERIFIED]',
+    basic: 'Primary Language Matrix Verified',
+    tone: INTRO_LINE_TONE.SUCCESS,
+    progress: 20,
+    duration: 600
+  },
+  {
+    aurabesh: '[AWAITING USER REGISTRATION...]',
+    basic: 'Awaiting User Registration...',
+    tone: INTRO_LINE_TONE.NEUTRAL,
+    final: true,
+    blinkingCursor: true
+  }
+];
+
+/**
+ * Class toggle helpers — manage cursor and text tone animations
+ */
+function setCursorMode(cursorEl, mode) {
+  if (!cursorEl) return;
+  cursorEl.classList.remove('is-blinking', 'is-typing', 'is-translating', 'is-error');
+  switch (mode) {
+    case 'typing':
+      cursorEl.classList.add('is-typing');
+      break;
+    case 'translating':
+      cursorEl.classList.add('is-translating');
+      break;
+    case 'error':
+      cursorEl.classList.add('is-error', 'is-typing');
+      break;
+    case 'blink':
+      cursorEl.classList.add('is-blinking');
+      break;
+  }
+}
+
+function setToneClasses(targetEl, tone) {
+  if (!targetEl) return;
+  targetEl.classList.remove('prog-intro-text--neutral', 'prog-intro-text--success', 'prog-intro-text--error');
+  if (tone === INTRO_LINE_TONE.SUCCESS) {
+    targetEl.classList.add('prog-intro-text--success');
+  } else if (tone === INTRO_LINE_TONE.ERROR) {
+    targetEl.classList.add('prog-intro-text--error');
+  } else {
+    targetEl.classList.add('prog-intro-text--neutral');
+  }
+}
+
+function setProgressTone(progressBarEl, tone) {
+  if (!progressBarEl) return;
+  progressBarEl.classList.remove('prog-intro-progress-bar--success', 'prog-intro-progress-bar--error');
+  if (tone === INTRO_LINE_TONE.SUCCESS) {
+    progressBarEl.classList.add('prog-intro-progress-bar--success');
+  } else if (tone === INTRO_LINE_TONE.ERROR) {
+    progressBarEl.classList.add('prog-intro-progress-bar--error');
+  }
+}
+
+function updateSegments(segments, activeCount) {
+  segments.forEach((segment, index) => {
+    segment.classList.remove('is-active', 'is-head');
+    if (index < activeCount) {
+      segment.classList.add('is-active');
+      if (index === activeCount - 1) {
+        segment.classList.add('is-head');
+      }
+    }
+  });
+}
+
+function updateProgressUI(els, activeCount, totalCount) {
+  updateSegments(els.segments, activeCount);
+  if (els.progressPercent) {
+    els.progressPercent.textContent = `${String(activeCount).padStart(2, '0')} / ${String(totalCount).padStart(2, '0')}`;
+  }
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 export class IntroStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -95,7 +220,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
     // Translation state (typewriter effect)
     this._translatedText = '';            // Text being typed out
-    this._fullText = 'INITIALIZATION SUCCESSFUL. NEW USER DETECTED. AWAITING CLASSIFICATION.';  // Full text to display
+    this._fullText = 'INITIALIZATION SUCCESSFUL. NEW USER DETECTED. AWAITING USER REGISTRATION...';  // Full text to display
 
     // Clock state
     this._clockRunning = false;
@@ -358,6 +483,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
       // Progress tracking
       progressPercent: stepData.progress,
+      progressSegments: stepData.progressSegments,
       stepNumber: this._getCurrentPhaseIndex() + 1,
       bootSequenceLength: this._phases.length,
 
@@ -401,42 +527,48 @@ export class IntroStep extends ProgressionStepPlugin {
       }
     });
 
-    // Continue button handler (only visible when complete=true)
-    $surface.on('click', '[data-role="intro-continue"]', (event) => {
+    // Phase 2: Pick Profile button handler (bound to data-role, not data-action)
+    $surface.on('click', '[data-role="intro-pick-profile"]', async (event) => {
       event.preventDefault();
       event.stopPropagation();
 
-      swseLogger.debug('[IntroStep.activateListeners] Continue button clicked', {
-        state: this._state,
-        continueClicked: this._continueClicked,
-      });
+      swseLogger.debug('[IntroStep.activateListeners] Pick Profile button clicked');
 
       try {
-        // Prevent double-click
-        if (this._continueClicked || this._transitionInProgress) {
-          swseLogger.warn('[IntroStep.activateListeners] Continue already clicked or transition in progress, ignoring');
+        // Guard against double-click
+        if (this._transitionInProgress) {
+          swseLogger.warn('[IntroStep.activateListeners] Transition in progress, ignoring');
           return;
         }
 
-        // Only allow transition from COMPLETE_AWAITING_CLICK state
-        if (this._state !== INTRO_STATE.COMPLETE_AWAITING_CLICK) {
-          swseLogger.warn('[IntroStep.activateListeners] Cannot transition from state', { state: this._state });
+        const liveActor = this._shell?.actor;
+        if (!liveActor) {
+          swseLogger.error('[IntroStep.activateListeners] No actor available for template selection');
           return;
         }
 
-        // Mark as clicked and start transition
-        this._continueClicked = true;
-        this._state = INTRO_STATE.TRANSITIONING;
-        this._transitionInProgress = true;
+        // Open template selection dialog
+        const templateId = await TemplateSelectionDialog.showChoiceDialog(liveActor);
 
-        swseLogger.debug('[IntroStep.activateListeners] Transitioning to next step', {
-          newState: this._state,
-        });
-
-        // Transition to next step (species)
-        this._transitionToNextStep();
+        // Handle result
+        if (templateId) {
+          // User selected a template — advance to next step
+          swseLogger.debug('[IntroStep.activateListeners] Template selected', { templateId });
+          this._continueClicked = true;
+          this._state = INTRO_STATE.TRANSITIONING;
+          this._transitionInProgress = true;
+          await this._transitionToNextStep();
+        } else if (templateId === null) {
+          // User chose "Create from Scratch" — advance to next step
+          swseLogger.debug('[IntroStep.activateListeners] Freeform chargen chosen');
+          this._continueClicked = true;
+          this._state = INTRO_STATE.TRANSITIONING;
+          this._transitionInProgress = true;
+          await this._transitionToNextStep();
+        }
+        // templateId === false → user cancelled, no action
       } catch (error) {
-        swseLogger.error('[IntroStep.activateListeners] ERROR handling Continue button', {
+        swseLogger.error('[IntroStep.activateListeners] ERROR handling Pick Profile button', {
           error: error.message,
           stack: error.stack,
         });
@@ -444,6 +576,9 @@ export class IntroStep extends ProgressionStepPlugin {
         this._continueClicked = false;
       }
     });
+
+    // Note: Go Back (data-action="previous-step") and Proceed (data-action="next-step")
+    // are routed through the shell's action system via ApplicationV2, not bound here
 
     // Parallax camera drift on mouse movement
     $surface.on('mousemove', '.prog-intro-surface', (event) => {
@@ -570,31 +705,14 @@ export class IntroStep extends ProgressionStepPlugin {
    * Only the shell render at the end (phase complete) is needed for structural updates.
    */
   async startIntroSequence(shell) {
-    for (let i = 0; i < this._phases.length; i++) {
-      // CRITICAL: Exit if animation was cancelled (user navigated away)
-      if (!this._introRunning) return;
+    // Phase 2: Use declarative boot sequence with segmented progress bar
+    swseLogger.debug('[IntroStep.startIntroSequence] Starting Phase 2 boot sequence with bootLines');
 
-      // Exit early if skip was triggered
-      if (this._isSkipping) break;
+    // Run the boot sequence animation
+    await this.runBootSequence(shell, this._sessionToken);
 
-      const phase = this._phases[i];
-
-      // Enter this phase
-      this._phase = phase.label;
-      console.log(`[IntroStep.startIntroSequence] Entering phase ${i + 1}/6:`, phase.label);
-
-      // Special handling for translation phase (no progress bar, masked-reveal animation)
-      if (phase.label === 'TRANSLATING') {
-        // Use the Translation Engine for stable, orchestrated reveal animation
-        console.log('[IntroStep.startIntroSequence] Starting translation phase via engine');
-        await this._runTranslationViaEngine(shell, this._sessionToken);
-        console.log('[IntroStep.startIntroSequence] Translation engine animation completed');
-      } else {
-        // Animate progress smoothly over the phase duration
-        // This uses direct DOM mutation, not shell re-renders
-        await this._animateProgress(phase.duration, shell);
-      }
-    }
+    // Guard: check if still running
+    if (!this._introRunning) return;
 
     // All phases complete — trigger ONE final render to update UI state
     // (show continue button, final text, etc.)
@@ -723,6 +841,109 @@ export class IntroStep extends ProgressionStepPlugin {
       swseLogger.debug('[IntroStep._runTranslationViaEngine] Engine animation completed');
     } catch (err) {
       swseLogger.error('[IntroStep._runTranslationViaEngine] Error:', err);
+    }
+  }
+
+  /**
+   * Phase 2: Run the declarative boot sequence using bootLines and segmented progress bar.
+   * Animates each boot line, updates tone classes, manages cursor state, and handles translation reveals.
+   * Reuses existing SWSETranslationEngine for character-by-character reveal.
+   */
+  async runBootSequence(shell, sessionToken) {
+    try {
+      swseLogger.debug('[IntroStep.runBootSequence] Starting Phase 2 boot sequence');
+
+      if (!this._workSurfaceEl?.isConnected) {
+        swseLogger.error('[IntroStep.runBootSequence] Work surface not connected');
+        return;
+      }
+
+      // Cache DOM elements for animation
+      const aurabeshEl = this._workSurfaceEl.querySelector('[data-role="intro-aurabesh"]');
+      const progressBar = this._workSurfaceEl.querySelector('.prog-intro-progress-bar--segmented');
+      const segments = Array.from(this._workSurfaceEl.querySelectorAll('[data-role="intro-segment"]'));
+      const progressPercent = this._workSurfaceEl.querySelector('[data-role="intro-progress-percent"]');
+      const microlabel = this._workSurfaceEl.querySelector('[data-role="intro-microlabel"]');
+      const translationText = this._workSurfaceEl.querySelector('[data-role="intro-translation-text"]');
+      const cursorEl = aurabeshEl?.querySelector('.prog-intro-cursor');
+
+      const els = {
+        aurabesh: aurabeshEl,
+        cursor: cursorEl,
+        progressBar,
+        segments,
+        progressPercent,
+        microlabel,
+        translationText
+      };
+
+      // Run each boot line
+      for (let i = 0; i < BOOT_LINES.length; i++) {
+        // Guard: cancel if intro is not running
+        if (!this._introRunning) return;
+
+        // Guard: session token invalidation
+        if (this._sessionToken !== sessionToken) {
+          swseLogger.debug('[IntroStep.runBootSequence] Session invalidated, aborting');
+          return;
+        }
+
+        const line = BOOT_LINES[i];
+
+        // Set tone classes for this line
+        setToneClasses(els.aurabesh, line.tone);
+        setToneClasses(els.translationText, line.tone);
+        setProgressTone(els.progressBar, line.tone);
+
+        // Update microlabel
+        if (els.microlabel) {
+          els.microlabel.textContent = line.basic;
+          setToneClasses(els.microlabel, line.tone);
+        }
+
+        // Set cursor mode based on tone
+        if (line.tone === INTRO_LINE_TONE.ERROR) {
+          setCursorMode(els.cursor, 'error');
+        } else {
+          setCursorMode(els.cursor, 'typing');
+        }
+
+        // Update Aurabesh text and run translation reveal
+        if (els.aurabesh && !line.final) {
+          // Create a translation session for this line
+          const session = this._translationEngine.createSession({
+            profile: 'chargenIntro',
+            target: this._workSurfaceEl,
+            translatedText: line.basic,
+            selectors: {
+              'translationText': '[data-role="intro-translation-text"]'
+            },
+            onComplete: () => {
+              swseLogger.debug('[IntroStep.runBootSequence] Line translation complete', { line: line.basic });
+            }
+          });
+
+          if (session) {
+            await this._translationEngine.runSession(session);
+          }
+        }
+
+        // Update progress bar segments
+        updateProgressUI(els, line.progress || (i + 1), 20);
+
+        // Wait for phase duration
+        await delay(line.duration || 600);
+
+        // If this is the final line, set cursor to blinking mode
+        if (line.final) {
+          setCursorMode(els.cursor, 'blink');
+          await delay(120);
+        }
+      }
+
+      swseLogger.debug('[IntroStep.runBootSequence] Boot sequence complete');
+    } catch (err) {
+      swseLogger.error('[IntroStep.runBootSequence] Error:', err);
     }
   }
 
