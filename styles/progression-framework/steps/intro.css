@@ -257,26 +257,51 @@
   display: inline-block;
 }
 
-/* Cursor Blink */
+/* ============================================================================
+   Cursor — Block Style (DOS Terminal) for Phase 2
+   ============================================================================ */
+
 .prog-intro-cursor {
   display: inline-block;
-  width: 2px;
-  height: 24px;
-  background: rgba(0, 180, 255, 0.8);
-  box-shadow: 0 0 6px rgba(0, 180, 255, 0.5);
+  width: 0.72em;
+  height: 1.05em;
+  margin-left: 0.08em;
+  vertical-align: text-bottom;
+  background: rgba(125, 245, 255, 0.95);
+  border: 1px solid rgba(180, 250, 255, 0.95);
+  box-shadow: 0 0 6px rgba(80, 220, 255, 0.55), 0 0 12px rgba(80, 220, 255, 0.18);
+  transform: translateY(0.08em);
 }
 
-.prog-intro-cursor--blink {
-  animation: prog-intro-blink 600ms infinite;
+.prog-intro-cursor.is-blinking {
+  animation: prog-intro-cursor-blink 1s steps(1, end) infinite;
 }
 
-@keyframes prog-intro-blink {
-  0%, 49% {
-    opacity: 1;
-  }
-  50%, 100% {
-    opacity: 0;
-  }
+.prog-intro-cursor.is-typing {
+  animation: prog-intro-cursor-type 0.42s steps(1, end) infinite;
+}
+
+.prog-intro-cursor.is-translating {
+  background: rgba(110, 255, 145, 0.98);
+  border-color: rgba(180, 255, 195, 0.98);
+  box-shadow: 0 0 6px rgba(80, 255, 120, 0.55), 0 0 14px rgba(80, 255, 120, 0.2);
+  animation: prog-intro-cursor-type 0.34s steps(1, end) infinite;
+}
+
+.prog-intro-cursor.is-error {
+  background: rgba(255, 70, 70, 0.98);
+  border-color: rgba(255, 180, 180, 0.95);
+  box-shadow: 0 0 6px rgba(255, 70, 70, 0.55), 0 0 14px rgba(255, 70, 70, 0.22);
+}
+
+@keyframes prog-intro-cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes prog-intro-cursor-type {
+  0%, 100% { opacity: 1; transform: translateY(0.08em) scale(1); }
+  50% { opacity: 1; transform: translateY(0.08em) scale(1.03); }
 }
 
 /* ============================================================================
@@ -361,31 +386,108 @@
   overflow: hidden;
 }
 
-/* Segmented progress bar (Phase 1+ boot sequence) */
+/* ============================================================================
+   Segmented Progress Bar (Phase 2 Boot Sequence)
+   ============================================================================ */
+
+.prog-intro-progress-wrap {
+  position: relative;
+  width: min(760px, 88%);
+  margin: 0 auto;
+  display: grid;
+  gap: 0.55rem;
+  z-index: 2;
+}
+
 .prog-intro-progress-bar--segmented {
-  display: flex;
-  gap: 1px;
-  align-items: stretch;
-  padding: 2px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(0, 180, 255, 0.3);
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.6);
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(20, minmax(0, 1fr));
+  gap: 0.35rem;
+  align-items: center;
+  min-height: 28px;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid rgba(95, 235, 255, 0.35);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(10, 30, 40, 0.82) 0%, rgba(6, 16, 28, 0.92) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(140, 245, 255, 0.08),
+    inset 0 0 18px rgba(30, 180, 255, 0.08),
+    0 0 16px rgba(30, 180, 255, 0.12);
+  overflow: hidden;
+}
+
+.prog-intro-progress-bar--segmented::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(110, 235, 255, 0.08) 22%, rgba(110, 235, 255, 0.18) 50%, rgba(110, 235, 255, 0.08) 78%, transparent 100%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.prog-intro-progress-bar--segmented::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 3px);
+  opacity: 0.22;
+  pointer-events: none;
 }
 
 /* Individual segment */
 .prog-intro-segment {
-  flex: 1;
-  height: 6px;
-  background: rgba(0, 180, 255, 0.15);
-  border: 0.5px solid rgba(0, 180, 255, 0.2);
-  border-radius: 1px;
-  transition: all 200ms ease;
+  position: relative;
+  height: 14px;
+  border-radius: 2px;
+  border: 1px solid rgba(110, 235, 255, 0.16);
+  background: linear-gradient(180deg, rgba(18, 42, 56, 0.92) 0%, rgba(8, 20, 30, 0.96) 100%);
+  box-shadow: inset 0 0 4px rgba(140, 245, 255, 0.04), 0 0 2px rgba(0, 0, 0, 0.35);
+  transition: background 120ms linear, border-color 120ms linear, box-shadow 120ms linear, opacity 120ms linear, transform 120ms linear;
+  opacity: 0.72;
 }
 
+.prog-intro-segment::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 1px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.04) 28%, transparent 100%);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.prog-intro-segment.is-active,
 .prog-intro-segment.active {
-  background: linear-gradient(90deg, rgba(0, 180, 255, 0.7), rgba(100, 230, 255, 0.95));
-  box-shadow: 0 0 4px rgba(0, 210, 255, 0.5);
-  border-color: rgba(0, 210, 255, 0.5);
+  opacity: 1;
+  border-color: rgba(110, 245, 255, 0.78);
+  background: linear-gradient(180deg, rgba(125, 245, 255, 0.95) 0%, rgba(40, 195, 255, 0.92) 52%, rgba(12, 120, 200, 0.96) 100%);
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.28), 0 0 8px rgba(80, 220, 255, 0.45), 0 0 16px rgba(80, 220, 255, 0.22);
+}
+
+.prog-intro-segment.is-head {
+  animation: prog-intro-segment-pulse 0.9s ease-in-out infinite;
+}
+
+@keyframes prog-intro-segment-pulse {
+  0%, 100% { transform: scaleY(1); filter: brightness(1); }
+  50% { transform: scaleY(1.08); filter: brightness(1.12); }
+}
+
+/* Success tone */
+.prog-intro-progress-bar--success .prog-intro-segment.is-active,
+.prog-intro-progress-bar--success .prog-intro-segment.active {
+  border-color: rgba(110, 255, 145, 0.86);
+  background: linear-gradient(180deg, rgba(150, 255, 175, 0.98) 0%, rgba(60, 235, 110, 0.94) 55%, rgba(12, 135, 48, 0.98) 100%);
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.24), 0 0 8px rgba(80, 255, 120, 0.48), 0 0 18px rgba(80, 255, 120, 0.2);
+}
+
+/* Error tone */
+.prog-intro-progress-bar--error .prog-intro-segment.is-active,
+.prog-intro-progress-bar--error .prog-intro-segment.active {
+  border-color: rgba(255, 95, 95, 0.88);
+  background: linear-gradient(180deg, rgba(255, 120, 120, 0.98) 0%, rgba(255, 55, 55, 0.94) 50%, rgba(155, 10, 10, 0.98) 100%);
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.2), 0 0 8px rgba(255, 70, 70, 0.5), 0 0 18px rgba(255, 70, 70, 0.22);
 }
 
 /* Smooth progress fill (backward compatibility) */
@@ -411,6 +513,74 @@
   letter-spacing: 1px;
   text-transform: uppercase;
   min-width: 40px;
+}
+
+/* ============================================================================
+   Text Color Utilities (Tone Classes for Boot Sequence)
+   ============================================================================ */
+
+.prog-intro-text--neutral {
+  color: rgba(125, 245, 255, 0.96);
+  text-shadow: 0 0 6px rgba(80, 220, 255, 0.38), 0 0 12px rgba(80, 220, 255, 0.14);
+}
+
+.prog-intro-text--success {
+  color: rgba(140, 255, 165, 0.98);
+  text-shadow: 0 0 6px rgba(80, 255, 120, 0.34), 0 0 12px rgba(80, 255, 120, 0.12);
+}
+
+.prog-intro-text--error {
+  color: rgba(255, 95, 95, 0.98);
+  text-shadow: 0 0 6px rgba(255, 70, 70, 0.32), 0 0 12px rgba(255, 70, 70, 0.12);
+}
+
+/* ============================================================================
+   Action Buttons (Phase 2 End-State: Go Back / Proceed / Pick Profile)
+   ============================================================================ */
+
+.prog-intro-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.prog-intro-btn {
+  background-image: url('../../../assets/ui/chargen/button-frame-primary.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  min-width: 140px;
+  height: 42px;
+  padding: 0 16px;
+  color: rgba(150, 240, 255, 0.95);
+  font-family: 'Aurabesh Condensed', var(--swse-font-ui, 'Orbitron', monospace);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 120ms ease, filter 120ms ease;
+}
+
+.prog-intro-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.14) drop-shadow(0 0 10px rgba(100, 220, 255, 0.32));
+}
+
+.prog-intro-btn:active {
+  transform: translateY(0px);
+  filter: brightness(1.06);
+}
+
+.prog-intro-btn i {
+  margin-right: 6px;
 }
 
 /* ============================================================================
