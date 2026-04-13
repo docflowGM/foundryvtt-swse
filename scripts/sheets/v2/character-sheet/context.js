@@ -6,9 +6,7 @@
  * but delegates to these helpers for specific concerns.
  */
 
-import { ExtraSkillUseRegistry } from "/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js";
-import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
-import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
+import { warnSheetFallback } from "/systems/foundryvtt-swse/scripts/debug/contract-warning-helper.js";
 import {
   getTimeClass,
   getTimeLabel,
@@ -17,184 +15,134 @@ import {
   categorizeSkillUse
 } from "./utils.js";
 
-/**
- * Normalize derived state to ensure all expected properties exist with safe defaults
- * @param {Object} rawDerived - Raw derived state from actor.system.derived
- * @returns {Object} Normalized derived state
- */
-export function normalizeDerivedState(rawDerived) {
-  const derived = foundry.utils.duplicate(rawDerived ?? {});
+// PHASE 10: normalizeDerivedState() removed
+// This function was exported but never imported or called anywhere.
+// Derived normalization is now handled directly in character-actor.js computeCharacterDerived()
 
-  // Initialize nested structures
-  derived.talents ??= {};
-  derived.talents.groups ??= [];
-  derived.talents.list ??= [];
+// PHASE 10: enrichSkillUses() removed
+// This function was exported but never imported or called anywhere.
+// Skill enrichment is handled directly in character-sheet.js during skills panel preparation
 
-  derived.skills ??= [];
 
-  derived.attacks ??= {};
-  derived.attacks.list ??= [];
-
-  derived.actions ??= {};
-  derived.actions.groups ??= [];
-
-  derived.identity ??= {};
-  derived.identity.halfLevel ??= 0;
-
-  derived.encumbrance ??= {};
-  derived.encumbrance.state ??= "normal";
-  derived.encumbrance.label ??= "Unencumbered";
-  derived.encumbrance.total ??= 0;
-  derived.encumbrance.lightLoad ??= 0;
-  derived.encumbrance.mediumLoad ??= 0;
-  derived.encumbrance.heavyLoad ??= 0;
-
-  // Defense and damage thresholds
-  derived.damageThreshold ??= 10;
-  derived.damage ??= {};
-  derived.damage.conditionHelpless ??= false;
-
-  return derived;
-}
+// PHASE 10: buildXpContext() removed
+// This function was exported but never imported or called anywhere.
+// XP context building is handled directly in character-sheet.js _prepareContext()
 
 /**
- * Build skill uses array with enriched metadata from ExtraSkillUseRegistry
- * @param {Object} skill - Skill object from context
+ * PHASE 7.5: Build canonical attributes view-model for all sheet displays
+ *
+ * Canonical sheet source for ability/attribute data. ALL ability displays must consume this bundle:
+ * - abilities panel
+ * - ability breakdown displays
+ * - any status/condition showing ability scores
+ *
  * @param {Actor} actor - The character actor
+ * @returns {Object} Unified attributes view-model {str, dex, con, int, wis, cha}
  */
-export async function enrichSkillUses(skill, actor) {
-  if (!skill || !actor) return;
+export function buildAttributesViewModel(actor) {
+  const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+  const abilityLabels = {
+    'str': 'Strength',
+    'dex': 'Dexterity',
+    'con': 'Constitution',
+    'int': 'Intelligence',
+    'wis': 'Wisdom',
+    'cha': 'Charisma'
+  };
 
-  try {
-    await ExtraSkillUseRegistry.initialize();
-    const skillUses = await ExtraSkillUseRegistry.getForSkill(skill.key, { actor });
+  const derived = actor.system?.derived ?? {};
+  const result = {};
 
-    const normalizedUses = skillUses.map(use => {
-      const timeClass = getTimeClass(use.time);
-      const timeLabel = getTimeLabel(use.time);
-      const actionType = classifyActionType(use);
-      const actionTypeLabel = getActionTypeLabel(use);
-      const isBlocked = use.trainedOnly && !skill.trained;
+  for (const key of abilityKeys) {
+    const derivedAttr = derived.attributes?.[key] ?? { total: 10, mod: 0 };
+    const value = derivedAttr.total ?? 10;
+    const modifier = derivedAttr.mod ?? Math.floor((value - 10) / 2);
+    const modifierClass = modifier > 0 ? 'positive' : modifier < 0 ? 'negative' : 'zero';
 
-      return {
-        key: use.key,
-        useKey: use.key,
-        label: use.label,
-        name: use.name,
-        dc: use.dc,
-        time: use.time,
-        description: use.description || use.effect || '',
-        effect: use.effect,
-        trainedOnly: use.trainedOnly,
-        timeClass,
-        timeLabel,
-        actionType,
-        actionTypeLabel,
-        requiresTrained: use.trainedOnly,
-        skillTrained: skill.trained,
-        isBlocked,
-        canUseNow: !isBlocked,
-        blockedReason: isBlocked ? "Requires training" : "",
-        sourceType: use.sourceType ?? use.source ?? (use.trainedOnly ? "trained" : "core"),
-        sourceLabel: use.sourceLabel ?? use.sourceName ?? (use.trainedOnly ? "Trained Use" : "Core Use"),
-        category: categorizeSkillUse(use, skill.key)
-      };
-    });
-
-    // Group by category
-    const grouped = {};
-    normalizedUses.forEach(use => {
-      const cat = use.category;
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push(use);
-    });
-
-    skill.extraUses = normalizedUses;
-    skill.extraUsesGrouped = grouped;
-    skill.extraUsesCount = normalizedUses.length;
-    skill.hasExtraUses = normalizedUses.length > 0;
-  } catch (err) {
-    console.warn('[SWSE] Failed to load extra skill uses:', err);
-    skill.extraUses = [];
-    skill.extraUsesGrouped = {};
-    skill.extraUsesCount = 0;
-    skill.hasExtraUses = false;
-  }
-}
-
-/**
- * Build class display string from progression data
- * @param {Actor} actor - The character actor
- * @returns {string} Formatted class display (e.g. "Jedi 3 / Soldier 2")
- */
-export async function buildClassDisplay(actor) {
-  let classDisplay = '—';
-  const classLevels = actor.system.progression?.classLevels ?? [];
-
-  if (classLevels.length > 0) {
-    try {
-      const { PROGRESSION_RULES } = await import(
-        "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js"
-      );
-      const classes = PROGRESSION_RULES.classes || {};
-      classDisplay = classLevels
-        .map(cl => {
-          const className = classes[cl.class]?.name || cl.class || 'Unknown';
-          return `${className} ${cl.level}`;
-        })
-        .join(' / ');
-    } catch (err) {
-      classDisplay = classLevels
-        .map(cl => `${cl.class} ${cl.level}`)
-        .join(' / ');
-    }
+    result[key] = {
+      key,
+      label: abilityLabels[key],
+      value,
+      modifier,
+      modifierClass
+    };
   }
 
-  return classDisplay;
+  return result;
 }
 
 /**
- * Build XP context data
+ * PHASE 7.5: Build canonical identity summary view-model
+ *
+ * Canonical sheet source for character identity. ALL identity displays must consume this bundle:
+ * - biography panel
+ * - header identity strip
+ * - character record summary
+ *
  * @param {Actor} actor - The character actor
- * @param {Object} derived - Derived state
- * @returns {Object} XP context object
+ * @returns {Object} Unified identity view-model {className, classDisplay, species, level, etc}
  */
-export function buildXpContext(actor, derived) {
-  const xpSystem = CONFIG.SWSE?.system?.xpProgression || 'milestone';
-  const xpEnabled = xpSystem !== 'disabled';
-  const xpDerived = derived.xp ?? { total: 0, progressPercent: 0, xpToNext: 0, level: actor.system.level ?? 1 };
-  const xpDisplayLevel = Math.max(1, Number(actor.system.level ?? xpDerived.level ?? 1));
-  const xpTotal = Number(xpDerived.total ?? actor.system?.xp?.total ?? 0) || 0;
-  const xpPercent = Math.max(0, Math.min(100, Math.round(Number(xpDerived.progressPercent ?? 0) || 0)));
-  const nextLevelAtDisplay = XP_LEVEL_THRESHOLDS[Math.min(20, xpDisplayLevel + 1)] ?? null;
-  const xpLevelReady = xpPercent >= 100;
-  const xpSegments = Array.from({ length: 20 }, (_, index) => ({
-    index,
-    filled: ((index + 1) / 20) * 100 <= xpPercent + 0.0001
-  }));
+export function buildIdentityViewModel(actor) {
+  const system = actor.system;
+  const derived = system?.derived ?? {};
+  const identity = derived.identity ?? {};
 
   return {
-    enabled: xpEnabled,
-    level: xpDisplayLevel,
-    total: xpTotal,
-    nextLevelAt: nextLevelAtDisplay,
-    xpToNext: nextLevelAtDisplay !== null ? Math.max(0, nextLevelAtDisplay - xpTotal) : 0,
-    percentRounded: xpPercent,
-    segments: xpSegments,
-    stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress'
+    name: actor.name || 'Unnamed',
+    className: identity.className ?? system.class?.name ?? system.className ?? system.class ?? '—',
+    classDisplay: identity.classDisplay ?? '—',
+    species: identity.species ?? system.species?.name ?? system.species ?? '—',
+    level: Number(system.level) || 1,
+    size: identity.size ?? system.size ?? '—',
+    gender: identity.gender ?? system.gender ?? '—',
+    background: identity.background ?? system.background?.name ?? system.background ?? '—',
+    homeworld: system.planetOfOrigin ?? '—',
+    profession: system.profession ?? '—',
+    age: system.flags?.swse?.character?.age ?? '—',
+    height: system.flags?.swse?.character?.height ?? '—',
+    weight: system.flags?.swse?.character?.weight ?? '—',
+    destinyPoints: identity.destinyPoints ?? { value: 0, max: 0 },
+    forcePoints: identity.forcePoints ?? { value: 0, max: 0 }
+  };
+}
+
+/**
+ * PHASE 7.5: Build canonical HP view-model for all sheet displays
+ *
+ * Canonical sheet source for HP data. ALL HP displays must consume this bundle:
+ * - HP bar (header)
+ * - HP numeric display
+ * - resource detail panel
+ * - any status/condition display showing HP
+ *
+ * @param {Actor} actor - The character actor
+ * @returns {Object} Unified HP view-model {current, max, temp, percent, label, segments}
+ */
+export function buildHpViewModel(actor) {
+  const current = Number(actor.system.hp?.value ?? 0);
+  const max = Math.max(1, Number(actor.system.hp?.max ?? 1));
+  const temp = Number(actor.system.hp?.temp ?? 0);
+  const percent = Math.max(0, Math.min(100, Math.round((current / max) * 100)));
+
+  return {
+    current,
+    max,
+    temp,
+    percent,
+    label: `${current}/${max}`,
+    filledSegments: Math.round((current / max) * 20)
   };
 }
 
 /**
  * Build header HP segments for tactical bar
+ * PHASE 7.5: Consumes canonical buildHpViewModel() — same source as all other HP displays
+ *
  * @param {Actor} actor - The character actor
  * @returns {Array} Array of segment objects
  */
 export function buildHeaderHpSegments(actor) {
-  const hpCurrentRaw = Number(actor.system.hp?.value ?? 0);
-  const hpMaxRaw = Math.max(1, Number(actor.system.hp?.max ?? 1));
-  const hpRatio = Math.max(0, Math.min(1, hpCurrentRaw / hpMaxRaw));
-  const hpFilledSegments = Math.round(hpRatio * 20);
+  const hp = buildHpViewModel(actor);
 
   const hpColorClassForIndex = (index) => {
     if (index < 4) return "seg-red";
@@ -205,76 +153,50 @@ export function buildHeaderHpSegments(actor) {
   };
 
   return Array.from({ length: 20 }, (_, index) => ({
-    filled: index < hpFilledSegments,
+    filled: index < hp.filledSegments,
     colorClass: hpColorClassForIndex(index)
   }));
 }
 
 /**
- * Build Dark Side Points context
- * @param {Actor} actor - The character actor
- * @returns {Object} DSP context
+ * PHASE 7.5: Build canonical defenses view-model for all sheet displays
+ *
+ * Canonical sheet source for defense data. ALL defense displays must consume this bundle:
+ * - header defense pills
+ * - defense partial/tab
+ * - combat summary defense values
+ * - any status/condition showing defenses
+ *
+ * @param {Object} derived - Derived state from actor.system.derived
+ * @returns {Object} Unified defenses view-model {fort, ref, will, flatFooted}
  */
-export function buildDspContext(actor) {
-  const dspValue = DSPEngine.getValue(actor);
-  const dspMax = DSPEngine.getMax(actor);
-  const dspSegments = [];
-  for (let i = 1; i <= dspMax; i++) {
-    dspSegments.push({
-      index: i,
-      filled: i <= dspValue,
-      color: i <= dspValue ? '#E74C3C' : '#4A90E2'
-    });
+export function buildDefensesViewModel(derived) {
+  const defenseDefs = [
+    { key: 'fortitude', derivedKey: 'fortitude', label: 'Fortitude', abbrev: 'Fort' },
+    { key: 'reflex', derivedKey: 'reflex', label: 'Reflex', abbrev: 'Ref' },
+    { key: 'will', derivedKey: 'will', label: 'Will', abbrev: 'Will' },
+    { key: 'flatFooted', derivedKey: 'flatFooted', label: 'Flat-Footed', abbrev: 'FF' }
+  ];
+
+  const result = {};
+  for (const def of defenseDefs) {
+    const defenseData = derived?.defenses?.[def.derivedKey] ?? { base: 10, total: 10, adjustment: 0 };
+    result[def.key] = {
+      label: def.label,
+      abbrev: def.abbrev,
+      total: defenseData.total ?? 10,
+      adjustment: defenseData.adjustment ?? 0,
+      base: defenseData.base ?? 10
+    };
   }
-  return { value: dspValue, max: dspMax, segments: dspSegments };
+
+  return result;
 }
 
-/**
- * Load combat actions from data file and organize by economy type
- * @returns {Object} Organized combat actions by economy
- */
-export async function loadCombatActions() {
-  let combatActions = { groups: [] };
-  try {
-    const response = await fetch('/systems/foundryvtt-swse/data/combat-actions.json');
-    if (response.ok) {
-      const actionsData = await response.json();
+// PHASE 10: buildDspContext() removed
+// This function was exported but never imported or called anywhere.
+// DSP context is built directly using DSPEngine throughout the codebase
 
-      const grouped = {};
-      const economyOrder = ['full-round', 'standard', 'move', 'swift', 'free', 'reaction'];
-
-      for (const action of actionsData) {
-        if (!action.action?.type) continue;
-        const economy = action.action.type.toLowerCase().replace(/[\s+]/g, '-');
-        if (!grouped[economy]) {
-          grouped[economy] = [];
-        }
-        grouped[economy].push({
-          id: action.name.toLowerCase().replace(/\s+/g, '-'),
-          name: action.name,
-          type: action.action.type,
-          cost: action.action.cost,
-          notes: action.notes,
-          hasRelatedSkills: action.relatedSkills && action.relatedSkills.length > 0
-        });
-      }
-
-      for (const eco of economyOrder) {
-        if (grouped[eco]) {
-          combatActions.groups.push({
-            label: eco.charAt(0).toUpperCase() + eco.slice(1).replace('-', ' '),
-            count: grouped[eco].length,
-            subgroups: [{
-              label: eco.charAt(0).toUpperCase() + eco.slice(1).replace('-', ' '),
-              count: grouped[eco].length,
-              items: grouped[eco]
-            }]
-          });
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('[SWSE] Failed to load combat actions:', err);
-  }
-  return combatActions;
-}
+// PHASE 10: loadCombatActions() removed
+// This function was exported but never imported or called anywhere.
+// Combat actions are loaded and organized directly in character-sheet.js

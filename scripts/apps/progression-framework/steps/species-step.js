@@ -262,11 +262,12 @@ export class SpeciesStep extends ProgressionStepPlugin {
       ?? system.species?.value
       ?? null;
 
-    // Class: read from actor system — first class entry if available
-    const classes = system.classes ?? system.class ?? null;
-    const currentClass = Array.isArray(classes)
-      ? (classes[0]?.name ?? null)
-      : (typeof classes === 'string' ? classes : null);
+    // Phase 3B: Class - prefer canonical system.class (object), fall back to legacy system.classes
+    // Extract name regardless of storage format for display
+    const classObj = system.class ?? system.classes?.[0] ?? null;
+    const currentClass = (typeof classObj === 'object' && classObj?.name)
+      ? classObj.name
+      : (typeof classObj === 'string' ? classObj : null);
 
     // Talents: count from actor items
     const talentItems = actor?.items?.filter(i => i.type === 'talent') ?? [];

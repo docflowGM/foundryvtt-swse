@@ -92,6 +92,7 @@ export class CharacterGenerationEngine {
       // ====================================================================
       // PHASE 6: Determine initial feats/talents based on class
       // ====================================================================
+      // Phase 3B: Prefer canonical system.class.id, fall back to legacy system.className
       const classId = actor.system.class?.id || actor.system.className || 'soldier';
       const initialFeats = this.#getInitialFeats(classId, houseRules);
       const initialTalents = this.#getInitialTalents(classId, houseRules);
@@ -305,6 +306,7 @@ export class CharacterGenerationEngine {
    * @private
    */
   static #calculateStartingWealth(actor, houseRules) {
+    // Phase 3B: Prefer canonical system.class.id, fall back to legacy system.className
     const classId = actor.system.class?.id || actor.system.className || 'soldier';
 
     // Base wealth by class
@@ -334,6 +336,7 @@ export class CharacterGenerationEngine {
    * @private
    */
   static #getHitDie(actor) {
+    // Phase 3B: Prefer canonical system.class.id, fall back to legacy system.className
     const classId = actor.system.class?.id || actor.system.className || 'Soldier';
 
     // Use PROGRESSION_RULES as SSOT

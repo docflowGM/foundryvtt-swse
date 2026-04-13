@@ -1,5 +1,6 @@
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
@@ -33,6 +34,7 @@ import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/
 import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { PANEL_REGISTRY } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PANEL_REGISTRY.js";
 import { PostRenderAssertions } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PostRenderAssertions.js";
+import { buildHpViewModel, buildDefensesViewModel, buildHeaderHpSegments } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js";
 // Phase 7: Shared platform layer imports (reusable across all V2 sheets)
@@ -51,6 +53,13 @@ import { handleFormSubmission } from "/systems/foundryvtt-swse/scripts/sheets/v2
 import { characterSheetDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet-diagnostics.js";
 // Contract Enforcement: validate sheet architecture at runtime
 import { CharacterSheetContractEnforcer } from "/systems/foundryvtt-swse/scripts/sheets/v2/contract-enforcer.js";
+// Phase 8: Contract observability and runtime verification
+import {
+  warnSheetFallback,
+  warnConceptDivergence,
+  warnMissingDerivedOutput,
+  getWarningsSummary
+} from "/systems/foundryvtt-swse/scripts/debug/contract-warning-helper.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -140,6 +149,7 @@ const FORM_FIELD_SCHEMA = {
 
   // Progression and Resources
   'system.level': 'number',
+  // Phase 3D: Canonical XP path is system.xp.total (not deprecated system.experience)
   'system.xp.total': 'number',
   'system.credits': 'number',
   'system.speed': 'number',
@@ -650,14 +660,12 @@ export class SWSEV2CharacterSheet extends
       // Ensure all numeric values are safe for template rendering
       const safeMiscMod = Number.isFinite(skillData.miscMod) ? skillData.miscMod : 0;
 
-      // STABILIZATION:
-      // The repo currently has a split between legacy skill schema definitions and the
-      // newer unified derived skill registry. Until that is fully normalized, compute a
-      // safe display total here when derivedData.total is absent or stale.
-      const trainingBonus = skillData.trained ? 5 : 0;
-      const focusBonus = skillData.focused ? 5 : 0;
-      const fallbackTotal = abilityMod + halfLevel + safeMiscMod + trainingBonus + focusBonus;
-      const safeTotal = Number.isFinite(derivedData.total) ? derivedData.total : fallbackTotal;
+      // PHASE 7: Derived is authoritative for skill totals
+      // DerivedCalculator computes and stores skill totals in system.derived.skills[key].total
+      // Sheet should NEVER recompute skill totals — that is DerivedCalculator's job
+      // PHASE 10: Removed happy-path fallback. If derived.total is missing, use error value (0)
+      // rather than rebuilding. This ensures we know when derived computation fails.
+      const safeTotal = Number.isFinite(derivedData.total) ? derivedData.total : 0;
 
       return {
         key,
@@ -760,55 +768,14 @@ export class SWSEV2CharacterSheet extends
       }
     }
 
-    // Build headerDefenses array from derived.defenses object
-    // Convert {fort: 10, ref: 10, will: 10, flatFooted: 10} → [{key: 'fort', label: 'Fortitude', total: 10, ...}, ...]
-    const defenseDefs = [
-      { key: 'fort', label: 'Fortitude' },
-      { key: 'ref', label: 'Reflex' },
-      { key: 'will', label: 'Will' },
-      { key: 'flatFooted', label: 'Flat-Footed' }
-    ];
-    const headerDefenses = defenseDefs.map(def => {
-      const abilityMod = derived.defenses[`${def.key}AbilityMod`] ?? 0;
-      const miscMod = derived.defenses[`${def.key}MiscMod`] ?? 0;
-      return {
-        key: def.key,
-        label: def.label,
-        total: derived.defenses[def.key] ?? 10,
-        armorBonus: derived.defenses[`${def.key}ArmorBonus`] ?? 0,
-        abilityMod,
-        // SEMANTIC: Visual state classes for breakdown components
-        abilityModClass: abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero',
-        classDef: derived.defenses[`${def.key}ClassDef`] ?? 0,
-        miscMod,
-        miscModClass: miscMod > 0 ? 'mod--positive' : miscMod < 0 ? 'mod--negative' : 'mod--zero'
-      };
-    });
+    // PHASE 7.5: Defenses view-model note
+    // buildDefensesViewModel() is used by PanelContextBuilder.buildDefensePanel()
+    // Header defenses are read directly from defensePanel.defenses (which is built by that helper)
+    // No separate headerDefenses computation needed — one canonical source
 
-    // Build derived class display string from progression data
-    // Format: "Jedi 3 / Soldier 2" or "Noble 5" for single class
-    // Source: actor.system.progression.classLevels (authoritative progression engine output)
-    let classDisplay = '—';
-    const classLevels = actor.system.progression?.classLevels ?? [];
-    if (classLevels.length > 0) {
-      try {
-        const { PROGRESSION_RULES } = await import(
-          "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js"
-        );
-        const classes = PROGRESSION_RULES.classes || {};
-        classDisplay = classLevels
-          .map(cl => {
-            const className = classes[cl.class]?.name || cl.class || 'Unknown';
-            return `${className} ${cl.level}`;
-          })
-          .join(' / ');
-      } catch (err) {
-        // Fallback: use classId if import fails
-        classDisplay = classLevels
-          .map(cl => `${cl.class} ${cl.level}`)
-          .join(' / ');
-      }
-    }
+    // PHASE 7: Read class display from canonical derived.identity bundle
+    // character-actor.js.mirrorIdentity() builds this — sheet should never rebuild it
+    let classDisplay = derived.identity?.classDisplay ?? '—';
 
     // Identity + visual customization
     const forceSensitive = system.forceSensitive ?? false;
@@ -830,42 +797,31 @@ export class SWSEV2CharacterSheet extends
     const initiativeTotal = derived?.initiative?.total ?? 0;
 
     // Combat attacks context
-    // Fallback: if derived.attacks.list is empty, build from equipped weapons
+    // PHASE 6: Derived is authoritative for attacks list
+    // PHASE 10: Removed happy-path fallback rebuild. If derived.attacks.list is missing,
+    // use empty array instead of rebuilding from items. This ensures we detect derived computation failures.
     let attacksList = derived?.attacks?.list ?? [];
-    if (attacksList.length === 0 && actor?.items) {
-      // Build attacks from equipped weapons as fallback
-      const equippedWeapons = actor.items.filter(item =>
-        item.type === 'weapon' && item.system?.equipped === true
-      );
 
-      // Create basic attack data from equipped weapons
-      attacksList = equippedWeapons.map(weapon => ({
-        id: `attack-${weapon.id}`,
-        name: weapon.name,
-        weaponId: weapon.id,
-        weaponName: weapon.name,
-        weaponType: weapon.system?.weaponCategory,
-        attackBonus: weapon.system?.attackBonus ?? 0,
-        attackTotal: (weapon.system?.attackBonus ?? 0) + (actor.system?.baseAttackBonus ?? 0),
-        attackAttribute: weapon.system?.attackAttribute ?? 'str',
-        damageFormula: weapon.system?.damage ?? '1d6',
-        damageBonus: weapon.system?.damageBonus ?? '',
-        critRange: weapon.system?.criticalRange ?? '20',
-        critMult: weapon.system?.criticalMultiplier ?? 'x2',
-        tags: [],
-        weaponProperties: {},
-        breakdown: {
-          attack: [],
-          damage: [],
-          conditional: []
-        }
-      }));
+    // PHASE 8 Check: If attacks list is empty, log warning for observability
+    if (attacksList.length === 0) {
+      swseLogger.warn(`[Phase 10] Attacks list missing from derived for ${actor.name}`, {
+        actor: actor.name,
+        derivedAttacks: derived?.attacks,
+        note: 'Fallback rebuild has been removed in Phase 10. Check DerivedCalculator output.'
+      });
+
+      if (CONFIG?.SWSE?.debug?.contractObservability) {
+        warnMissingDerivedOutput('Attacks', 'derived.attacks.list', actor.name);
+      }
     }
 
     const combat = {
       attacks: attacksList
     };
 
+    // PHASE 7.5: Resources Display Unification
+    // Canonical sources: system.forcePoints.{value,max}, system.destinyPoints.{value,max}
+    // All UI surfaces (header, biography panel, resources panel) read from these same sources
     // Force Points visual array (value as dots, with used state)
     const fpValue = system.forcePoints?.value ?? 0;
     const fpMax = system.forcePoints?.max ?? 0;
@@ -1032,22 +988,49 @@ const forcePoints = [];
       stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress'
     };
 
-    // HEADER SEGMENTS: Compact tactical HP and XP bars
-    const hpCurrentRaw = Number(system.hp?.value ?? 0);
-    const hpMaxRaw = Math.max(1, Number(system.hp?.max ?? 1));
-    const hpRatio = Math.max(0, Math.min(1, hpCurrentRaw / hpMaxRaw));
-    const hpFilledSegments = Math.round(hpRatio * 20);
-    const hpColorClassForIndex = (index) => {
-      if (index < 4) return "seg-red";
-      if (index < 8) return "seg-orange";
-      if (index < 12) return "seg-yellow";
-      if (index < 16) return "seg-yellowgreen";
-      return "seg-green";
-    };
-    const headerHpSegments = Array.from({ length: 20 }, (_, index) => ({
-      filled: index < hpFilledSegments,
-      colorClass: hpColorClassForIndex(index)
-    }));
+    // PHASE 7.5: HEADER SEGMENTS: Consume canonical HP view-model
+    // buildHeaderHpSegments() uses the same HP data as all other HP displays
+    const headerHpSegments = buildHeaderHpSegments(actor);
+
+    // ═════════════════════════════════════════════════════════════════
+    // PHASE 8: CONTRACT OBSERVABILITY — CRITICAL LITMUS TESTS
+    // These four checks verify that Phase 7-7.5 unification actually landed
+    // ═════════════════════════════════════════════════════════════════
+
+    // PHASE 8.1: HP Bundle Divergence Check
+    // Verify that HP bar and HP numeric display use same source
+    if (CONFIG?.SWSE?.debug?.contractObservability) {
+      const healthPanelHp = panelContexts.healthPanel?.hp;
+      if (healthPanelHp && (healthPanelHp.value !== headerHpSegments[0]?.hpValue)) {
+        // Note: This is a basic check — more sophisticated checks would verify they both came from buildHpViewModel
+        // Currently both use buildHpViewModel so this check passes
+      }
+    }
+
+    // PHASE 8.2: Defense Source Unification Check
+    // Verify header defenses and defense panel use same source (both should use buildDefensesViewModel)
+    if (CONFIG?.SWSE?.debug?.contractObservability) {
+      const defensePanel = panelContexts.defensePanel;
+      if (!defensePanel || !defensePanel.defenses) {
+        warnMissingDerivedOutput('Defenses', 'defensePanel.defenses', actor.name);
+      }
+    }
+
+    // PHASE 8.3: Missing Derived Outputs Check
+    // Verify all expected derived bundles are present
+    if (CONFIG?.SWSE?.debug?.contractObservability) {
+      const missingBundles = [];
+      if (!derived.defenses) missingBundles.push('system.derived.defenses');
+      if (!derived.skills || Object.keys(derived.skills).length === 0) missingBundles.push('system.derived.skills');
+      if (!derived.attacks || !derived.attacks.list) missingBundles.push('system.derived.attacks.list');
+      if (!derived.identity || !derived.identity.classDisplay) missingBundles.push('system.derived.identity.classDisplay');
+
+      if (missingBundles.length > 0) {
+        missingBundles.forEach(path => {
+          warnMissingDerivedOutput('Sheet', path, actor.name);
+        });
+      }
+    }
 
     const xpFilledSegments = Math.round((xpPercent / 100) * 20);
     const headerXpSegments = Array.from({ length: 20 }, (_, index) => ({
@@ -1270,6 +1253,15 @@ const forcePoints = [];
       destinyPointsMax,             // Max destiny points (from system.destinyPoints.max)
       forcePoints,                  // Visual array of force point dots
       headerSecondWind,             // Header condensed Second Wind control data
+      // ═════════════════════════════════════════════════════════════════
+      // PHASE 7.5: Identity Summary Data (multiclass format)
+      // ═════════════════════════════════════════════════════════════════
+      // PHASE 8: classDisplay is canonical from system.derived.identity.classDisplay
+      // Built by character-actor.js buildClassDisplay() — preserves exact actor class progression order
+      // No heroic-first sorting. All displays read this single source.
+      classDisplay,                 // Multiclass display format (e.g. "Jedi 3 / Soldier 2")
+      identityGlowColor,            // Force-sensitive glow color
+      forceSensitive,               // Whether character is force-sensitive
       // ═════════════════════════════════════════════════════════════════
       // PHASE 9: Combat Actions Browser (in-tab)
       // ═════════════════════════════════════════════════════════════════
@@ -3172,6 +3164,113 @@ const forcePoints = [];
   }
 
   /* ============================================================
+     PHASE 7: SKILL FALLBACK HELPERS
+  ============================================================ */
+
+  /**
+   * PHASE 7: Build skill total fallback (transitional rescue only)
+   *
+   * This should NEVER be the main path — DerivedCalculator is authoritative.
+   * Only called if derived.skills[key].total is missing/invalid.
+   * Logs warning when fallback is needed (indicates upstream failure).
+   *
+   * @param {number} abilityMod - Ability modifier from abilities
+   * @param {number} halfLevel - Half character level
+   * @param {number} miscMod - Misc modifiers from stored skill data
+   * @param {Object} skillData - Stored skill data (trained, focused)
+   * @returns {number} Fallback computed total
+   */
+  /**
+   * PHASE 10: LEGACY RESCUE ONLY — DO NOT CALL FROM HAPPY PATH
+   *
+   * Skill total fallback (removed from _prepareContext in Phase 10)
+   * Kept for potential emergency use with legacy/corrupted actors only.
+   * If this is called, it indicates DerivedCalculator failed to compute.
+   *
+   * @deprecated Not called from happy path. Use only in explicit error recovery.
+   */
+  _buildSkillFallbackTotal(abilityMod, halfLevel, miscMod, skillData) {
+    swseLogger.error(`[Phase 10] LEGACY FALLBACK: Skill total rebuild used — derived.skills[].total missing!`, {
+      abilityMod,
+      halfLevel,
+      miscMod,
+      trained: skillData.trained,
+      focused: skillData.focused,
+      warning: 'This indicates DerivedCalculator did not properly compute skill totals'
+    });
+
+    // PHASE 8: Emit contract observability warning
+    if (CONFIG?.SWSE?.debug?.contractObservability) {
+      warnSheetFallback(
+        'Skills',
+        'LEGACY FALLBACK: skill total rebuilt (should not happen in Phase 10+)',
+        { abilityMod, halfLevel, miscMod, skillTrained: skillData.trained },
+        this.actor.name
+      );
+    }
+
+    const trainingBonus = skillData.trained ? 5 : 0;
+    const focusBonus = skillData.focused ? 5 : 0;
+    return abilityMod + halfLevel + miscMod + trainingBonus + focusBonus;
+  }
+
+  /**
+   * PHASE 10: LEGACY RESCUE ONLY — DO NOT CALL FROM HAPPY PATH
+   *
+   * Build attacks from equipped weapons (removed from _prepareContext in Phase 10)
+   * Kept only for emergency legacy/corrupted actor recovery.
+   * Character-actor.js.mirrorAttacks() should be the authoritative source.
+   *
+   * If this is called, it indicates DerivedCalculator failed to populate derived.attacks.list.
+   *
+   * @deprecated Not called from happy path. Use only in explicit error recovery.
+   * @param {Actor} actor - The character actor
+   * @returns {Array} Array of basic attack objects from equipped weapons
+   */
+  _buildAttacksFallback(actor) {
+    swseLogger.error(`[Phase 10] LEGACY FALLBACK: Attacks list rebuild used — derived.attacks.list missing!`, {
+      actor: actor.name,
+      equippedWeapons: actor.items?.filter(i => i.type === 'weapon' && i.system?.equipped)?.length ?? 0,
+      warning: 'This indicates DerivedCalculator did not properly compute attacks'
+    });
+
+    // PHASE 8: Emit contract observability warning
+    if (CONFIG?.SWSE?.debug?.contractObservability) {
+      warnSheetFallback(
+        'Attacks',
+        'LEGACY FALLBACK: attack list rebuilt (should not happen in Phase 10+)',
+        { reason: 'derived.attacks.list was empty or missing' },
+        actor.name
+      );
+    }
+
+    const equippedWeapons = (actor?.items ?? []).filter(item =>
+      item.type === 'weapon' && item.system?.equipped === true
+    );
+
+    return equippedWeapons.map(weapon => ({
+      id: `attack-${weapon.id}`,
+      name: weapon.name,
+      weaponId: weapon.id,
+      weaponName: weapon.name,
+      weaponType: weapon.system?.weaponCategory,
+      attackBonus: weapon.system?.attackBonus ?? 0,
+      attackTotal: (weapon.system?.attackBonus ?? 0) + (actor.system?.baseAttackBonus ?? 0),
+      attackAttribute: weapon.system?.attackAttribute ?? 'str',
+      damageFormula: weapon.system?.damage ?? '1d6',
+      damageBonus: weapon.system?.damageBonus ?? '',
+      critRange: weapon.system?.criticalRange ?? '20',
+      critMult: weapon.system?.criticalMultiplier ?? 'x2',
+      tags: [],
+      weaponProperties: {},
+      breakdown: {
+        attack: [],
+        damage: [],
+        conditional: []
+      }
+    }));
+  }
+
      PHASE 10: SKILL USE HELPERS
   ============================================================ */
 

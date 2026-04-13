@@ -15,6 +15,7 @@
 import { PanelContextValidator } from './PanelContextValidator.js';
 import { RowTransformers } from './RowTransformers.js';
 import { validatePanel } from './PanelValidators.js';
+import { buildHpViewModel, buildDefensesViewModel, buildAttributesViewModel, buildIdentityViewModel } from '/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js';
 
 export class PanelContextBuilder {
   constructor(actor, sheetInstance) {
@@ -63,11 +64,14 @@ export class PanelContextBuilder {
    * - stateLabel: "Healthy"|"Wounded"|"Damaged"|"Critical"|"Dead"
    */
   buildHealthPanel() {
-    const hp = this.system.hp || { value: 0, max: 1 };
-    const hpValue = Number(hp.value) || 0;
-    const hpMax = Number(hp.max) || 1;
-    const hpTemp = Number(hp.temp) || 0;
-    const hpPercent = Math.max(0, Math.min(100, Math.round((hpValue / hpMax) * 100)));
+    // PHASE 7.5: Consume canonical HP view-model instead of computing inline
+    // buildHpViewModel is the single source of truth for HP data
+    // This ensures header HP bar, HP numeric display, and resource panel all use the same values
+    const hpViewModel = buildHpViewModel(this.actor);
+    const hpValue = hpViewModel.current;
+    const hpMax = hpViewModel.max;
+    const hpTemp = hpViewModel.temp;
+    const hpPercent = hpViewModel.percent;
     const tempPercent = Math.max(0, Math.min(100, Math.round((hpTemp / hpMax) * 100)));
 
     let stateClass = 'state--healthy';
@@ -188,15 +192,21 @@ export class PanelContextBuilder {
    * - Transforms shape only for template compatibility
    */
   buildDefensePanel() {
+    // PHASE 7.5: Consume canonical defenses view-model instead of computing inline
+    // buildDefensesViewModel is the single source of truth for defense data
+    // This ensures header defenses, defense partial, and all combat displays use the same values
+    const defensesViewModel = buildDefensesViewModel(this.derived);
+
     const system = this.system;
     const defenseKeyMap = [
-      { key: 'fort', label: 'Fortitude', abilityKey: 'str' },
-      { key: 'ref', label: 'Reflex', abilityKey: 'dex' },
-      { key: 'will', label: 'Will', abilityKey: 'wis' }
+      { key: 'fort', derivedKey: 'fortitude', label: 'Fortitude', abilityKey: 'str' },
+      { key: 'ref', derivedKey: 'reflex', label: 'Reflex', abilityKey: 'dex' },
+      { key: 'will', derivedKey: 'will', label: 'Will', abilityKey: 'wis' }
     ];
 
-    const defenses = defenseKeyMap.map(({ key, label, abilityKey }) => {
+    const defenses = defenseKeyMap.map(({ key, derivedKey, label, abilityKey }) => {
       const defenseData = system.defenses?.[key] || {};
+      const defenseViewModel = defensesViewModel[key];
 
       // Get ability modifier from system.attributes
       const abilityMod = system.attributes?.[abilityKey]?.mod ?? 0;
@@ -205,7 +215,8 @@ export class PanelContextBuilder {
       const armorBonus = Number(defenseData.armorBonus) || 0;
       const classDef = Number(defenseData.classBonus) || 0;
       const miscMod = Number(defenseData.miscMod) || 0;
-      const total = Number(defenseData.total) || 10;
+      // Use total from canonical view-model (same as header uses)
+      const total = defenseViewModel.total ?? 10;
 
       // Derive CSS classes from modifier values
       const abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';
@@ -245,24 +256,14 @@ export class PanelContextBuilder {
    * - biography: { ... }
    */
   buildBiographyPanel() {
+    // PHASE 7.5: Consume canonical identity view-model instead of rebuilding
+    // buildIdentityViewModel is the single source of truth for identity data
+    // All identity displays use the same prepared bundle
+    const identityViewModel = buildIdentityViewModel(this.actor);
+
     const identity = {
-      name: this.actor.name || 'Unnamed',
+      ...identityViewModel,
       player: this.system.flags?.swse?.character?.player || '—',
-      class: this.system.class || '—',
-      level: Number(this.system.level) || 1,
-      species: this.system.race || '—',
-      size: this.system.size || '—',
-      age: this.system.flags?.swse?.character?.age || '—',
-      gender: this.system.flags?.swse?.character?.gender || '—',
-      height: this.system.flags?.swse?.character?.height || '—',
-      weight: this.system.flags?.swse?.character?.weight || '—',
-      homeworld: this.system.planetOfOrigin || '—',
-      profession: this.system.profession || '—',
-      background: this.system.event || '—',
-      destinyPoints: {
-        value: Number(this.system.destinyPoints?.value) || 0,
-        max: Number(this.system.destinyPoints?.max) || 0
-      },
       canEdit: this.sheet.isEditable
     };
 
@@ -927,31 +928,15 @@ export class PanelContextBuilder {
    * - abilities: [ { key, label, value, modifier, modifierClass } ]
    */
   buildAbilitiesPanel() {
-    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    const abilityLabels = {
-      'str': 'Strength',
-      'dex': 'Dexterity',
-      'con': 'Constitution',
-      'int': 'Intelligence',
-      'wis': 'Wisdom',
-      'cha': 'Charisma'
-    };
+    // PHASE 7.5: Consume canonical attributes view-model instead of recomputing
+    // buildAttributesViewModel is the single source of truth for ability data
+    // All ability displays use the same prepared bundle
+    const attributesViewModel = buildAttributesViewModel(this.actor);
 
-    const abilities = abilityKeys.map(key => {
-      const abilityData = this.system.abilities?.[key] || {};
-      const value = Number(abilityData.value) || 10;
-      const modifier = Math.floor((value - 10) / 2);
-      const modifierClass = modifier > 0 ? 'positive' : modifier < 0 ? 'negative' : 'zero';
-
-      return {
-        key,
-        label: abilityLabels[key],
-        value,
-        modifier,
-        modifierClass,
-        canEdit: this.sheet.isEditable
-      };
-    });
+    const abilities = Object.values(attributesViewModel).map(attr => ({
+      ...attr,
+      canEdit: this.sheet.isEditable
+    }));
 
     const panel = {
       abilities,

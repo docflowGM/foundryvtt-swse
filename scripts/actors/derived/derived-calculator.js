@@ -96,9 +96,11 @@ export class DerivedCalculator {
       // ========================================
       // Ability Modifiers (Phase 2: moved from DataModel)
       // ========================================
+      // Canonical stored abilities path is system.abilities.<key>.{base, racial, temp}
+      // Derived computes totals and modifiers, written to system.derived.attributes.<key>
       updates['system.derived.attributes'] = {};
-      const attributes = actor.system.attributes || {};
-      for (const [key, ability] of Object.entries(attributes)) {
+      const abilities = actor.system.abilities || {};
+      for (const [key, ability] of Object.entries(abilities)) {
         const total = (ability.base || 10) + (ability.racial || 0) + (ability.enhancement || 0) + (ability.temp || 0);
         const mod = Math.floor((total - 10) / 2);
         updates['system.derived.attributes'][key] = {
@@ -123,28 +125,19 @@ export class DerivedCalculator {
       };
 
       // ========================================
-      // Force/Destiny Points Derived (Phase 2: moved from DataModel)
+      // Force/Destiny Points (PHASE 10+: REMOVED from derived)
       // ========================================
-      // Force points: WIS modifier + class levels + bonuses
-      const wisMod = (updates['system.derived.attributes']?.wis?.mod) || 0;
-      const forceClassBonus = actor.system.forcePoints?.classBonus || 0;
-      updates['system.derived.forcePoints'] = {
-        wisdom: wisMod,
-        classBonus: forceClassBonus,
-        total: wisMod + forceClassBonus + (actor.system.forcePoints?.bonus || 0)
-      };
-
-      // Destiny points: CHA modifier + class levels + bonuses
-      // Also mirror user input (value, max) for template display
-      const chaMod = (updates['system.derived.attributes']?.cha?.mod) || 0;
-      const destinyClassBonus = actor.system.destinyPoints?.classBonus || 0;
-      updates['system.derived.destinyPoints'] = {
-        charisma: chaMod,
-        classBonus: destinyClassBonus,
-        total: chaMod + destinyClassBonus + (actor.system.destinyPoints?.bonus || 0),
-        value: actor.system.destinyPoints?.value || 0,
-        max: actor.system.destinyPoints?.max || 0
-      };
+      // DECISION: Force Points and Destiny Points are stored-authoritative, not derived.
+      // - system.forcePoints.value = current FP (user-managed via spend/gain)
+      // - system.forcePoints.max = max FP (calculated and stored at chargen/levelup/class-change)
+      //
+      // Dead fields removed:
+      // - system.forcePoints.classBonus (read but never written; no rule or data backing it)
+      // - derived.forcePoints (was echoing stale classBonus logic)
+      // - derived.destinyPoints (similar dead logic)
+      //
+      // Sheet reads directly from system.forcePoints.{value,max} (canonical contract).
+      // See scripts/data/force-points.js for max FP calculation and lifecycle triggers.
 
       // HP: Mirror-only pattern (Phase 4)
       // ActorEngine.recomputeHP() is the sole writer of system.hp.max
@@ -196,6 +189,14 @@ export class DerivedCalculator {
           base: defenses.will.base,
           total: defenses.will.total,
           adjustment: defenseAdjustments.will
+        };
+      }
+      if (defenses.flatFooted) {
+        updates['system.derived.defenses'] = updates['system.derived.defenses'] || {};
+        updates['system.derived.defenses'].flatFooted = {
+          base: defenses.flatFooted.base,
+          total: defenses.flatFooted.total,
+          adjustment: defenseAdjustments.ref
         };
       }
 
@@ -267,8 +268,18 @@ export class DerivedCalculator {
 
       for (const [skillKey, skillDef] of Object.entries(skillData)) {
         const skill = actor.system.skills?.[skillKey];
-        if (!skill) continue;
+        if (!skill) {
+          // PHASE 6: Instrumentation — missing skill in base input
+          // This should not happen if template/progression correctly initialized skills
+          swseLogger.warn(`[Phase 6] Skill ${skillKey} missing from canonical base input (system.skills)`, {
+            actor: actor.name,
+            skillKey
+          });
+          continue;
+        }
 
+        // Phase 3C: Canonical skill schema = {trained, miscMod, focused, selectedAbility}
+        // Derived uses these to compute skill totals. Schema is initialized by progression.
         // Get ability modifier
         const abilityKey = skill.selectedAbility || skillDef.defaultAbility;
         const abilityMod = (updates['system.derived.attributes']?.[abilityKey]?.mod) || 0;

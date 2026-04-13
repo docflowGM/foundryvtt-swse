@@ -457,20 +457,20 @@ export async function applyClassFeatures(classDoc, classLevel, actor) {
 
   SWSELogger.log(`SWSE LevelUp | Applying class features for ${classDoc.name} level ${classLevel}:`, levelData);
 
-  // Apply Force Points if specified
-  if (levelData.forcePoints && levelData.forcePoints > 0) {
-    const currentMax = actor.system.forcePoints?.max || 5;
-    const newMax = currentMax + levelData.forcePoints;
-    const currentValue = actor.system.forcePoints?.value || 5;
-    const newValue = currentValue + levelData.forcePoints;
+  // PHASE 10+: Recalculate max Force Points based on new character level
+  // Force Point max is deterministic from: base (5/6/7) + floor(totalLevel / 2)
+  // Use calculateMaxForcePoints to get correct max, then update if changed
+  const { calculateMaxForcePoints } = await import('/systems/foundryvtt-swse/scripts/data/force-points.js');
+  const oldMax = actor.system.forcePoints?.max || 5;
+  const newMax = calculateMaxForcePoints(actor);
 
+  if (newMax !== oldMax) {
     await globalThis.SWSE.ActorEngine.updateActor(actor, {
-      'system.forcePoints.max': newMax,
-      'system.forcePoints.value': newValue
+      'system.forcePoints.max': newMax
     });
 
-    SWSELogger.log(`SWSE LevelUp | Increased Force Points by ${levelData.forcePoints} (${currentMax} → ${newMax})`);
-    ui.notifications.info(`Force Points increased by ${levelData.forcePoints}!`);
+    SWSELogger.log(`SWSE LevelUp | Force Points recalculated (${oldMax} → ${newMax})`);
+    ui.notifications.info(`Force Points recalculated: ${oldMax} → ${newMax}`);
   }
 
   // Process each feature that's not a choice (talents and feats are already handled)

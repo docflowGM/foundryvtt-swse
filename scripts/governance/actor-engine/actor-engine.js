@@ -428,9 +428,27 @@ export const ActorEngine = {
       }
 
       // ========================================
+      // PHASE 4: Contract Enforcement & Normalization
+      // ========================================
+      // Normalize incoming mutation to canonical contract paths
+      // Initialize required base shapes for touched domains
+      // Validate post-normalization
+      const { normalizedUpdateData, warnings } = this._normalizeMutationForContract(updateData, actor);
+      this._initializeCanonicalShapesForTouchedDomains(normalizedUpdateData, actor);
+      const validationResult = this._validateCanonicalMutationPlan(normalizedUpdateData, actor);
+
+      // Log Phase 4 warnings and validation results
+      if (warnings.length > 0) {
+        SWSELogger.warn(`[PHASE 4] Normalization warnings for ${actor.name}:`, warnings);
+      }
+      if (!validationResult.isValid) {
+        SWSELogger.warn(`[PHASE 4] Contract validation warnings for ${actor.name}:`, validationResult.warnings);
+      }
+
+      // ========================================
       // PHASE 4D: HP max write enforcement
       // ========================================
-      const flatUpdateData = foundry.utils.flattenObject(updateData);
+      const flatUpdateData = foundry.utils.flattenObject(normalizedUpdateData);
       const hpMaxPath = Object.keys(flatUpdateData).find(path => path === 'system.hp.max');
 
       if (hpMaxPath && !options.isRecomputeHPCall && !options.isMigration) {
@@ -440,6 +458,8 @@ export const ActorEngine = {
           `Caller: ${caller}`
         );
       }
+
+      // Phase 3A & 3D normalizations are now handled in Phase 4 comprehensive normalization above
 
       // ========================================
       // PHASE 2: Mark mutation as in-flight before any reactive code can run
@@ -471,9 +491,9 @@ export const ActorEngine = {
           // [MUTATION TRACE] ENGINE — handoff to applyActorUpdateAtomic
           traceLog('ENGINE', `handoff to applyActorUpdateAtomic (traceId=${_traceId})`, {
             actor:   actorSummary(actor),
-            payload: payloadSummary(updateData)
+            payload: payloadSummary(normalizedUpdateData)
           });
-          const result = await applyActorUpdateAtomic(actor, updateData, optsWithMeta);
+          const result = await applyActorUpdateAtomic(actor, normalizedUpdateData, optsWithMeta);
           await this.recalcAll(actor);
           return result;
         } finally {
@@ -3546,6 +3566,466 @@ export const ActorEngine = {
     } catch (err) {
       SWSELogger.error(`ActorEngine.deleteActiveEffects failed for ${actor?.name ?? 'unknown actor'}`, err);
       throw err;
+    }
+  }
+
+  /**
+   * PHASE 4: Comprehensive mutation plan normalization for contract enforcement.
+   *
+   * Transforms incoming mutation data to conform to canonical contract paths:
+   * - Abilities: .value → .base, and ensure ability object shapes
+   * - Class: remove redundant class scalar paths
+   * - Skills: complete skill object shapes
+   * - XP: system.experience → system.xp.total
+   *
+   * @param {Object} updateData - Raw incoming mutation data
+   * @param {Actor} actor - Target actor
+   * @returns {Object} {normalizedUpdateData, warnings}
+   * @private
+   */
+  _normalizeMutationForContract(updateData, actor) {
+    if (!updateData || typeof updateData !== 'object') {
+      return { normalizedUpdateData: updateData, warnings: [] };
+    }
+
+    const warnings = [];
+    const normalized = foundry.utils.deepClone(updateData);
+    const flat = foundry.utils.flattenObject(normalized);
+
+    // ========================================
+    // Normalize Phase 3 domains
+    // ========================================
+
+    // 1. Abilities: .value → .base
+    const abilityWarnings = this._normalizeAbilityPathsForContract(flat);
+    warnings.push(...abilityWarnings);
+
+    // 2. Class: Remove redundant scalar paths
+    const classWarnings = this._normalizeClassPathsForContract(flat);
+    warnings.push(...classWarnings);
+
+    // 3. Skills: Ensure complete structure
+    const skillWarnings = this._normalizeSkillStructureForContract(flat);
+    warnings.push(...skillWarnings);
+
+    // 4. XP: Normalize naming
+    const xpWarnings = this._normalizeXpPathsForContract(flat);
+    warnings.push(...xpWarnings);
+
+    // Unflatten back to nested form
+    const normalizedUpdateData = foundry.utils.expandObject(flat);
+
+    return { normalizedUpdateData, warnings };
+  }
+
+  /**
+   * Initialize canonical base shapes for domains touched by this mutation.
+   *
+   * Called AFTER normalization to ensure canonical structure exists before apply.
+   * Only initializes required containers for touched domains.
+   *
+   * @param {Object} updateData - Normalized update data
+   * @param {Actor} actor - Target actor
+   * @private
+   */
+  _initializeCanonicalShapesForTouchedDomains(updateData, actor) {
+    if (!updateData || typeof updateData !== 'object') return;
+
+    const flat = foundry.utils.flattenObject(updateData);
+    const touched = new Set();
+
+    // Detect which domains are being touched
+    for (const key of Object.keys(flat)) {
+      if (key.startsWith('system.abilities.')) touched.add('abilities');
+      if (key.startsWith('system.class')) touched.add('class');
+      if (key.startsWith('system.skills.')) touched.add('skills');
+      if (key.startsWith('system.xp.') || key.startsWith('system.experience')) touched.add('xp');
+      if (key.startsWith('system.hp')) touched.add('hp');
+    }
+
+    // Initialize required structures for touched domains
+    if (touched.has('abilities')) {
+      this._ensureCanonicalAbilityShapes(actor);
+    }
+    if (touched.has('skills')) {
+      this._ensureCanonicalSkillShapes(actor, flat);
+    }
+    if (touched.has('xp')) {
+      this._ensureCanonicalXpShape(actor);
+    }
+    if (touched.has('hp')) {
+      this._ensureCanonicalHpShape(actor);
+    }
+  }
+
+  /**
+   * Validate that normalized mutation plan complies with canonical contract.
+   *
+   * Checks for coherence issues, conflicting paths, required structures.
+   * Warns but does not fail - allows callers to proceed with visibility.
+   *
+   * @param {Object} updateData - Normalized update data
+   * @param {Actor} actor - Target actor
+   * @returns {Object} {isValid, warnings}
+   * @private
+   */
+  _validateCanonicalMutationPlan(updateData, actor) {
+    if (!updateData || typeof updateData !== 'object') {
+      return { isValid: true, warnings: [] };
+    }
+
+    const warnings = [];
+    const flat = foundry.utils.flattenObject(updateData);
+
+    // Check for conflicting canonical/legacy paths
+    if (flat['system.abilities.str.base'] && flat['system.abilities.str.value']) {
+      warnings.push('Conflict: both system.abilities.str.base and .value present in mutation');
+    }
+    if (flat['system.xp.total'] && flat['system.experience']) {
+      warnings.push('Conflict: both system.xp.total and system.experience present in mutation');
+    }
+
+    // Check for incomplete skill objects being set
+    for (const key of Object.keys(flat)) {
+      if (key.match(/^system\.skills\.\w+\.\w+$/)) {
+        const skillMatch = key.match(/^system\.skills\.(\w+)\.(\w+)$/);
+        if (skillMatch) {
+          const skillKey = skillMatch[1];
+          const propKey = skillMatch[2];
+          // If only one property is being set, that's usually ok (partial updates)
+          // But warn if it looks like incomplete initialization
+          if (!['trained', 'miscMod', 'focused', 'selectedAbility'].includes(propKey)) {
+            warnings.push(`Unusual skill property: system.skills.${skillKey}.${propKey}`);
+          }
+        }
+      }
+    }
+
+    return { isValid: warnings.length === 0, warnings };
+  }
+
+  // ========================================
+  // Domain-specific normalization helpers
+  // ========================================
+
+  /**
+   * Normalize ability paths: .value → .base with warnings
+   * @private
+   */
+  _normalizeAbilityPathsForContract(flat) {
+    const warnings = [];
+    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    const toDelete = [];
+
+    for (const key of Object.keys(flat)) {
+      const match = key.match(/^system\.abilities\.([a-z]+)\.value$/);
+      if (match && abilityKeys.includes(match[1])) {
+        const abilityKey = match[1];
+        const newPath = `system.abilities.${abilityKey}.base`;
+
+        if (!(newPath in flat)) {
+          flat[newPath] = flat[key];
+          warnings.push(
+            `[NORMALIZE] Deprecated ability path ${key} → ${newPath} ` +
+            `(value=${flat[key]})`
+          );
+        } else {
+          warnings.push(
+            `[CONFLICT] Both ${key} and ${newPath} present; using .base`
+          );
+        }
+        toDelete.push(key);
+      }
+    }
+
+    for (const path of toDelete) {
+      delete flat[path];
+    }
+
+    return warnings;
+  }
+
+  /**
+   * Normalize class paths: remove redundant scalar paths
+   * @private
+   */
+  _normalizeClassPathsForContract(flat) {
+    const warnings = [];
+
+    // If system.className is present without system.class, that's a legacy-only write
+    // We'll keep it for now but warn
+    if (flat['system.className'] && !flat['system.class']) {
+      warnings.push(
+        `[LEGACY] system.className write without system.class (deprecated scalar path)`
+      );
+    }
+
+    if (flat['system.classes'] && !flat['system.class']) {
+      warnings.push(
+        `[LEGACY] system.classes write without system.class (deprecated array path)`
+      );
+    }
+
+    return warnings;
+  }
+
+  /**
+   * Normalize skill structure: ensure touched skills have complete shape
+   * @private
+   */
+  _normalizeSkillStructureForContract(flat) {
+    const warnings = [];
+
+    // Find skills being touched
+    const skillKeys = new Set();
+    for (const key of Object.keys(flat)) {
+      const match = key.match(/^system\.skills\.(\w+)\./);
+      if (match) {
+        skillKeys.add(match[1]);
+      }
+    }
+
+    // For each touched skill, ensure all canonical properties exist
+    for (const skillKey of skillKeys) {
+      const basePath = `system.skills.${skillKey}`;
+      const props = ['trained', 'miscMod', 'focused', 'selectedAbility'];
+
+      for (const prop of props) {
+        const path = `${basePath}.${prop}`;
+        if (!(path in flat)) {
+          // Initialize to safe default
+          const defaults = {
+            trained: false,
+            miscMod: 0,
+            focused: false,
+            selectedAbility: ''
+          };
+          flat[path] = defaults[prop];
+          warnings.push(
+            `[INITIALIZE] Skill ${skillKey}.${prop} initialized to default (${defaults[prop]})`
+          );
+        }
+      }
+    }
+
+    return warnings;
+  }
+
+  /**
+   * Normalize XP paths: system.experience → system.xp.total
+   * @private
+   */
+  _normalizeXpPathsForContract(flat) {
+    const warnings = [];
+
+    if ('system.experience' in flat && !('system.xp.total' in flat)) {
+      flat['system.xp.total'] = flat['system.experience'];
+      warnings.push(
+        `[NORMALIZE] Legacy XP path system.experience → system.xp.total ` +
+        `(value=${flat['system.experience']})`
+      );
+      delete flat['system.experience'];
+    } else if ('system.experience' in flat && 'system.xp.total' in flat) {
+      warnings.push(
+        `[CONFLICT] Both system.experience and system.xp.total present; using xp.total`
+      );
+      delete flat['system.experience'];
+    }
+
+    return warnings;
+  }
+
+  // ========================================
+  // Canonical shape initialization helpers
+  // ========================================
+
+  /**
+   * Ensure actor has canonical ability object shapes
+   * @private
+   */
+  _ensureCanonicalAbilityShapes(actor) {
+    if (!actor.system) actor.system = {};
+    if (!actor.system.abilities) actor.system.abilities = {};
+
+    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    for (const key of abilityKeys) {
+      if (!actor.system.abilities[key]) {
+        actor.system.abilities[key] = {
+          base: 10,
+          racial: 0,
+          temp: 0,
+          total: 10,
+          mod: 0
+        };
+      } else {
+        // Ensure all expected properties exist
+        if (actor.system.abilities[key].base === undefined) {
+          actor.system.abilities[key].base = actor.system.abilities[key].value || 10;
+        }
+        if (actor.system.abilities[key].racial === undefined) {
+          actor.system.abilities[key].racial = 0;
+        }
+        if (actor.system.abilities[key].temp === undefined) {
+          actor.system.abilities[key].temp = 0;
+        }
+      }
+    }
+  }
+
+  /**
+   * Ensure touched skills have canonical object shapes
+   * @private
+   */
+  _ensureCanonicalSkillShapes(actor, flatUpdateData) {
+    if (!actor.system) actor.system = {};
+    if (!actor.system.skills) actor.system.skills = {};
+
+    // Find which skills are being touched
+    const skillKeys = new Set();
+    for (const key of Object.keys(flatUpdateData)) {
+      const match = key.match(/^system\.skills\.(\w+)\./);
+      if (match) {
+        skillKeys.add(match[1]);
+      }
+    }
+
+    // Initialize touched skills to canonical shape
+    for (const skillKey of skillKeys) {
+      if (!actor.system.skills[skillKey]) {
+        actor.system.skills[skillKey] = {
+          trained: false,
+          miscMod: 0,
+          focused: false,
+          selectedAbility: ''
+        };
+      } else {
+        // Ensure all properties exist
+        if (actor.system.skills[skillKey].trained === undefined) {
+          actor.system.skills[skillKey].trained = false;
+        }
+        if (actor.system.skills[skillKey].miscMod === undefined) {
+          actor.system.skills[skillKey].miscMod = 0;
+        }
+        if (actor.system.skills[skillKey].focused === undefined) {
+          actor.system.skills[skillKey].focused = false;
+        }
+        if (actor.system.skills[skillKey].selectedAbility === undefined) {
+          actor.system.skills[skillKey].selectedAbility = '';
+        }
+      }
+    }
+  }
+
+  /**
+   * Ensure canonical XP object shape
+   * @private
+   */
+  _ensureCanonicalXpShape(actor) {
+    if (!actor.system) actor.system = {};
+    if (!actor.system.xp) {
+      actor.system.xp = { total: 0 };
+    }
+    if (actor.system.xp.total === undefined) {
+      actor.system.xp.total = 0;
+    }
+  }
+
+  /**
+   * Ensure canonical HP object shape
+   * @private
+   */
+  _ensureCanonicalHpShape(actor) {
+    if (!actor.system) actor.system = {};
+    if (!actor.system.hp) {
+      actor.system.hp = {
+        value: 1,
+        max: 1,
+        temp: 0
+      };
+    }
+    if (actor.system.hp.value === undefined) actor.system.hp.value = 1;
+    if (actor.system.hp.max === undefined) actor.system.hp.max = 1;
+  }
+
+  /**
+   * PHASE 3A: Normalize legacy ability paths to canonical schema.
+   * Converts deprecated system.abilities.<key>.value → system.abilities.<key>.base
+   * This allows old progression/saved data to work with new schema without immediate migration.
+   *
+   * @param {Object} updateData - The update data object (may be nested)
+   * @private
+   */
+  _normalizeAbilityPaths(updateData) {
+    if (!updateData || typeof updateData !== 'object') return;
+
+    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    const flat = foundry.utils.flattenObject(updateData);
+    const toDelete = [];
+
+    for (const key of Object.keys(flat)) {
+      // Match system.abilities.<key>.value
+      const match = key.match(/^system\.abilities\.([a-z]+)\.value$/);
+      if (match && abilityKeys.includes(match[1])) {
+        const abilityKey = match[1];
+        const newPath = `system.abilities.${abilityKey}.base`;
+
+        // Only normalize if the canonical .base path isn't already being set
+        if (!(newPath in flat)) {
+          flat[newPath] = flat[key];
+          SWSELogger.warn(`[ABILITY NORMALIZATION] Converted legacy path ${key} → ${newPath}`, {
+            abilityKey,
+            value: flat[key]
+          });
+        }
+
+        toDelete.push(key);
+      }
+    }
+
+    // Remove legacy paths from update
+    for (const path of toDelete) {
+      delete flat[path];
+    }
+
+    // Unflatten back to nested form if we made changes
+    if (toDelete.length > 0) {
+      const updated = foundry.utils.expandObject(flat);
+      Object.assign(updateData, updated);
+    }
+  }
+
+  /**
+   * PHASE 3D: Normalize legacy XP/experience paths to canonical schema.
+   * Converts deprecated system.experience → system.xp.total
+   * This allows old progression/saved data to work with new naming without immediate migration.
+   *
+   * @param {Object} updateData - The update data object (may be nested)
+   * @private
+   */
+  _normalizeXpPaths(updateData) {
+    if (!updateData || typeof updateData !== 'object') return;
+
+    const flat = foundry.utils.flattenObject(updateData);
+    const toDelete = [];
+
+    // Check for legacy system.experience path
+    if ('system.experience' in flat && !('system.xp.total' in flat)) {
+      flat['system.xp.total'] = flat['system.experience'];
+      SWSELogger.warn(`[XP NORMALIZATION] Converted legacy path system.experience → system.xp.total`, {
+        value: flat['system.experience']
+      });
+      toDelete.push('system.experience');
+    }
+
+    // Remove legacy paths from update
+    for (const path of toDelete) {
+      delete flat[path];
+    }
+
+    // Unflatten back to nested form if we made changes
+    if (toDelete.length > 0) {
+      const updated = foundry.utils.expandObject(flat);
+      Object.assign(updateData, updated);
     }
   }
 };

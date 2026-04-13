@@ -387,23 +387,33 @@ export class ProgressionFinalizer {
       }
     }
     if (clazz) {
+      // Phase 3B: Canonical class storage is system.class (object)
+      // Derived computes display string (system.derived.identity.className)
+      // Legacy scalar paths (system.className, system.classes) remain for compatibility only
       set['system.class'] = clazz;
-      set['system.className'] = clazz.name || clazz.label || clazz;
-      set['system.classes'] = [clazz];
+      // DO NOT write system.className or system.classes - these are derived/legacy
       add.items.push({ name: clazz.name || clazz.label || String(clazz), type: 'class', system: clazz.system || {} });
     }
+    // Canonical stored ability path is system.abilities.<key>.base
+    // Progression writes base values here; derived computes modifiers and totals
     const attrMap = { strength: 'str', dexterity: 'dex', constitution: 'con', intelligence: 'int', wisdom: 'wis', charisma: 'cha', str: 'str', dex:'dex', con:'con', int:'int', wis:'wis', cha:'cha' };
     for (const [k,v] of Object.entries(attr || {})) {
       const key = attrMap[k];
       const val = typeof v === 'object' ? v?.value : v;
-      if (key && Number.isFinite(Number(val))) set[`system.abilities.${key}.value`] = Number(val);
+      // Write to canonical .base path (not deprecated .value)
+      if (key && Number.isFinite(Number(val))) set[`system.abilities.${key}.base`] = Number(val);
     }
     if (Array.isArray(languages)) set['system.languages'] = languages;
     if (Array.isArray(skills)) {
       for (const s of skills) {
         const key = s?.key || s?.id || s?.skill;
         if (!key) continue;
-        if (s.trained !== undefined) set[`system.skills.${key}.trained`] = !!s.trained;
+        // Phase 3C: Initialize complete skill object with canonical schema
+        // Ensures fresh characters have stable, predictable skill structure
+        set[`system.skills.${key}.trained`] = s.trained !== undefined ? !!s.trained : false;
+        set[`system.skills.${key}.miscMod`] = s.miscMod || 0;
+        set[`system.skills.${key}.focused`] = s.focused !== undefined ? !!s.focused : false;
+        set[`system.skills.${key}.selectedAbility`] = s.selectedAbility || '';
       }
     }
     const appendItem = (entry, fallbackType) => {

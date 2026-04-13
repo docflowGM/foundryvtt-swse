@@ -55,7 +55,7 @@ export class DefenseCalculator {
     ]);
 
     const isDroidActor = !!actor.system?.isDroid;
-    const fortAbility = isDroidActor ? strMod : Math.max(strMod, conMod);
+    const fortAbility = isDroidActor ? strMod : conMod;
 
     const adjustments = options?.adjustments ?? {};
     const fortAdjust = adjustments.fort ?? 0;
@@ -67,16 +67,55 @@ export class DefenseCalculator {
     const refStateBonus = await this._getStateModifiers(actor, 'reflex', context);
     const willStateBonus = await this._getStateModifiers(actor, 'will', context);
 
-    const calcDefense = (classBonus, abilityMod, adjustment, stateBonus) => {
+    // PHASE 10+: Armor handling for Reflex Defense
+    // If armored and no Armor Defense/Improved Armor Defense feat:
+    // armor's Reflex Defense replaces heroic-level contribution
+    const hasArmorDefenseFeat = actor.items?.some(item =>
+      ['Armored Defense', 'Improved Armored Defense'].includes(item.name)
+    ) ?? false;
+
+    const equippedArmor = actor.items?.find(item =>
+      item.type === 'armor' && item.system?.equipped
+    );
+
+    let reflexLevelTerm = heroicLevel;
+    if (equippedArmor && !hasArmorDefenseFeat) {
+      // Armor's Reflex replaces heroic-level contribution
+      reflexLevelTerm = equippedArmor.system.reflexBonus ?? 0;
+    }
+
+    // Simple formula for Fort, Will (no armor dependency)
+    const calcSimpleDefense = (classBonus, abilityMod, adjustment, stateBonus) => {
       const base = 10 + heroicLevel + classBonus + abilityMod;
       const total = Math.max(1, base + adjustment + stateBonus);
       return { base, total, adjustment, stateBonus };
     };
 
+    // Reflex with armor handling
+    const reflexBase = 10 + reflexLevelTerm + refBonus;
+    const reflexTotal = Math.max(1, reflexBase + dexMod + refAdjust + refStateBonus);
+
+    // Flat-Footed: same as Reflex but without DEX modifier
+    const flatFootedBase = 10 + reflexLevelTerm + refBonus;
+    const flatFootedTotal = Math.max(1, flatFootedBase + 0 + refAdjust + refStateBonus);
+
     return {
-      fortitude: calcDefense(fortBonus, fortAbility, fortAdjust, fortStateBonus),
-      reflex: calcDefense(refBonus, dexMod, refAdjust, refStateBonus),
-      will: calcDefense(willBonus, wisMod, willAdjust, willStateBonus)
+      fortitude: calcSimpleDefense(fortBonus, fortAbility, fortAdjust, fortStateBonus),
+      reflex: {
+        base: reflexBase,
+        total: reflexTotal,
+        adjustment: refAdjust,
+        stateBonus: refStateBonus,
+        armorContribution: equippedArmor ? reflexLevelTerm : null
+      },
+      will: calcSimpleDefense(willBonus, wisMod, willAdjust, willStateBonus),
+      flatFooted: {
+        base: flatFootedBase,
+        total: flatFootedTotal,
+        adjustment: refAdjust,
+        stateBonus: refStateBonus,
+        armorContribution: equippedArmor ? reflexLevelTerm : null
+      }
     };
   }
 

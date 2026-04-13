@@ -1,18 +1,19 @@
 // ============================================
 // FILE: scripts/data/force-points.js
-// Force Point Calculation - Actor Derived
+// Force Point Calculation - Stored Authoritative
 // ============================================
 //
-// This module implements the AUTHORITATIVE Force Point calculation.
+// PHASE 10+: Force Points are stored-authoritative, not derived.
+// This module implements CALCULATION and LIFECYCLE TRIGGERS only.
 //
 // CRITICAL DESIGN DECISIONS (DO NOT CHANGE):
 // 1. Force Points are a PROGRESSION resource, not a Force ability
-// 2. They are calculated from total character level + prestige status
-// 3. They are INDEPENDENT of Force Sensitivity feat
-// 4. They are INDEPENDENT of current class
+// 2. Max FP is calculated from total character level + prestige status
+// 3. Force Points are INDEPENDENT of Force Sensitivity feat
+// 4. Force Points are INDEPENDENT of current class
 // 5. Once prestige base is unlocked (6), it NEVER downgrades to 5
 //
-// Force Point Formula:
+// Force Point Formula (AUTHORITATIVE):
 // - Base = 5 (standard heroic characters)
 // - Base = 6 (characters who have unlocked any prestige class)
 // - Base = 7 (Force Disciple, Jedi Master, Sith Lord only)
@@ -22,11 +23,19 @@
 // - Shaper prestige class does NOT grant the base 6 increase
 // - Force Disciple, Jedi Master, Sith Lord grant base 7 (not 6)
 //
-// This calculation is actor-derived and deterministic.
-// It should be recalculated on:
-// - Actor creation
-// - Class addition
-// - Level change
+// DEAD FIELDS (removed PHASE 10):
+// - system.forcePoints.classBonus — was read but never written (dead drift)
+// - system.derived.forcePoints — was echoing dead classBonus logic (no longer computed)
+//
+// CANONICAL CONTRACT (after PHASE 10):
+// - system.forcePoints.value = current FP (user-managed via spend/gain)
+// - system.forcePoints.max = max FP (calculated and stored)
+// - Sheet reads directly from system.forcePoints.{value,max}
+//
+// Recalculation triggers:
+// - chargen-class.js: calculateMaxForcePoints() at character creation
+// - levelup-class.js: calculateMaxForcePoints() on level-up
+// - No other paths write to system.forcePoints.max
 // ============================================
 
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";

@@ -69,9 +69,9 @@ export class HPCalculator {
         maxHP += (hitDie * 3) + conMod;
         isFirstLevel = false;
       } else {
-        // All other levels: average (hit die / 2 + 1) + CON mod
-        const avgRoll = Math.floor(hitDie / 2) + 1;
-        maxHP += avgRoll + conMod;
+        // All other levels: full hit die + CON mod (not average roll)
+        const hpGain = hitDie;
+        maxHP += hpGain + conMod;
       }
     }
 
