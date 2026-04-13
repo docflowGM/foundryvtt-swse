@@ -358,6 +358,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
       // Progress tracking
       progressPercent: stepData.progress,
+      progressSegments: stepData.progressSegments,
       stepNumber: this._getCurrentPhaseIndex() + 1,
       bootSequenceLength: this._phases.length,
 
