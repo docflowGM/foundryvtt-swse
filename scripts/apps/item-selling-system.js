@@ -24,6 +24,8 @@ import { normalizeCredits, calculateRawSellPrice, calculatePercentageFloor } fro
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
 
 /**
  * Initiate item selling process
@@ -265,17 +267,33 @@ async function acceptSale(item, actor, salePrice, isAutomatic) {
     const creditsBefore = normalizeCredits(actor.system?.credits ?? 0);
     const creditsAfter = normalizeCredits(creditsBefore + salePrice);
 
-    // STEP 1: Remove item from actor (if this fails, nothing happens)
-    // SOVEREIGNTY: Route item deletion through ActorEngine
-    await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', [item.id]);
+    // Build atomic mutation plan: delete item and update credits in one operation
+    const deletionPlan = {
+      delete: {
+        Item: [item.id]
+      }
+    };
 
-    // STEP 2: Add credits (if this fails, item is already gone — we failed atomically)
-    await ActorEngine.updateActor(actor, { 'system.credits': creditsAfter });
+    const creditPlan = {
+      set: {
+        'system.credits': creditsAfter
+      }
+    };
 
-    // STEP 3: Log transaction (informational only, doesn't block)
+    // Merge plans into single atomic operation
+    const mergedPlan = mergeMutationPlans([deletionPlan, creditPlan]);
+
+    // Apply merged plan atomically through ActorEngine
+    await ActorEngine.applyMutationPlan(actor, mergedPlan, {
+      validate: true,
+      rederive: true,
+      source: 'ItemSellingSystem.acceptSale'
+    });
+
+    // Log transaction (informational only, doesn't block)
     logSaleTransaction(actor, item, salePrice, isAutomatic);
 
-    // STEP 4: Show feedback and animate (only after mutations confirmed)
+    // Show feedback and animate (only after mutations confirmed)
     const isSeller = game.user?.isGM || game.user?.id === actor.owner;
     if (isSeller) {
       showPlayerSaleAcceptance(item, salePrice);
@@ -283,8 +301,7 @@ async function acceptSale(item, actor, salePrice, isAutomatic) {
       await animateCreditGain(actor, creditsBefore, creditsAfter);
     }
   } catch (err) {
-    // EDGE CASE 2: Transaction failure safety
-    // If any mutation failed, item stays in inventory, credits unchanged
+    // All-or-nothing: if mutation fails, both item and credits unchanged
     SWSELogger.error('Item sale failed:', err);
     ui.notifications.error('Sale failed. See console for details.');
     // UI is restored; player can try again
