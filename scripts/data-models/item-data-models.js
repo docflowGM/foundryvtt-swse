@@ -934,3 +934,112 @@ export class CombatActionDataModel extends foundry.abstract.DataModel {
     };
   }
 }
+
+/**
+ * Extra Skill Use Data Model
+ *
+ * Represents additional uses for skills beyond core mechanics.
+ * The 'skill' field is authoritative for routing - code uses this first,
+ * and only falls back to fuzzy name matching for legacy entries without it.
+ */
+export class ExtraSkillUseDataModel extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      // Routing - REQUIRED for regenerated entries
+      skill: new fields.StringField({
+        required: true,
+        label: 'Skill Key',
+        hint: 'Canonical internal key (e.g., useTheForce, perception, initiative)'
+      }),
+      skillLabel: new fields.StringField({
+        initial: '',
+        label: 'Skill Label',
+        hint: 'Human-readable display name (e.g., Use the Force)'
+      }),
+
+      // Application
+      application: new fields.StringField({
+        initial: '',
+        label: 'Application Name',
+        hint: 'Specific use name (e.g., Sense Force)'
+      }),
+
+      // Access constraints
+      trainedOnly: new fields.BooleanField({
+        initial: false,
+        label: 'Trained Only',
+        hint: 'Requires skill to be trained'
+      }),
+      requiresForceSensitivity: new fields.BooleanField({
+        initial: false,
+        label: 'Requires Force Sensitivity',
+        hint: 'Only accessible if character has Force Sensitivity feat'
+      }),
+
+      // Action economy
+      actionType: new fields.StringField({
+        initial: 'standard',
+        choices: ['free', 'swift', 'move', 'standard', 'full-round', 'reaction', 'immediate', 'varies'],
+        label: 'Action Type',
+        hint: 'Standard, swift, move, full-round, reaction, or immediate'
+      }),
+      actionTypeRaw: new fields.StringField({
+        initial: '',
+        label: 'Action Type (Raw)',
+        hint: 'Original source wording'
+      }),
+
+      // Rules mechanics
+      dc: new fields.NumberField({
+        initial: null,
+        nullable: true,
+        integer: true,
+        label: 'DC',
+        hint: 'Difficulty class if applicable'
+      }),
+      target: new fields.StringField({
+        initial: '',
+        label: 'Target',
+        hint: 'Typical target(s) for this use'
+      }),
+      effect: new fields.HTMLField({
+        initial: '',
+        label: 'Effect',
+        hint: 'What happens on success'
+      }),
+      description: new fields.HTMLField({
+        initial: '',
+        label: 'Description',
+        hint: 'Full rules description'
+      }),
+      special: new fields.HTMLField({
+        initial: '',
+        label: 'Special',
+        hint: 'Special conditions or variations'
+      }),
+
+      // Metadata
+      category: new fields.StringField({
+        initial: 'skill-use',
+        label: 'Category',
+        hint: 'Type of use (skill-use, force-power, etc.)'
+      }),
+      tags: new fields.ArrayField(new fields.StringField(), {
+        label: 'Tags',
+        hint: 'Tags for organization'
+      }),
+      sourcebook: new fields.StringField({
+        initial: '',
+        label: 'Sourcebook',
+        hint: 'Source material reference'
+      }),
+      page: new fields.NumberField({
+        initial: null,
+        nullable: true,
+        integer: true,
+        label: 'Page Number'
+      })
+    };
+  }
+}

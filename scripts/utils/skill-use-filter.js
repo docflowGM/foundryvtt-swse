@@ -33,6 +33,7 @@ export class SkillUseFilter {
    * @returns {boolean} True if this is a Use the Force application
    */
   static isUseTheForceApplication(applicationName) {
+    // Base UTF power names - these are the authoritative indicators
     const utfApplications = [
       'Force Trance',
       'Move Light Object',
@@ -45,10 +46,18 @@ export class SkillUseFilter {
       'Place other in Force Trance'
     ];
 
+    // Normalize the application name for comparison:
+    // - Remove various dash/separator variants (en-dash, em-dash, hyphen, etc.)
+    // - Lowercase for case-insensitive comparison
+    const normalizedAppName = applicationName
+      .toLowerCase()
+      .replace(/[–—-]/g, ' '); // Replace en-dash, em-dash, hyphen with space
+
     // Check if application name includes any UTF application
-    return utfApplications.some(name =>
-      applicationName.toLowerCase().includes(name.toLowerCase())
-    );
+    return utfApplications.some(name => {
+      const normalizedName = name.toLowerCase().replace(/[–—-]/g, ' ');
+      return normalizedAppName.includes(normalizedName);
+    });
   }
 
   /**

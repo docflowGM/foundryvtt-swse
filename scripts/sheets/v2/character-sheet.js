@@ -3493,7 +3493,7 @@ const forcePoints = [];
     };
 
     if (typeof SkillUseFilter?.rollSkillUseApplication === "function") {
-      return await SkillUseFilter.rollSkillUseApplication(this.actor, skillKey, selectedUse, payload);
+      return await SkillUseFilter.rollSkillUseApplication(this.actor, selectedUse, payload);
     }
 
     return await rollSkillCheck(this.actor, skillKey, payload);
