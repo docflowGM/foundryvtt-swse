@@ -811,3 +811,126 @@ export class TalentTreeDataModel extends foundry.abstract.DataModel {
     };
   }
 }
+
+// Combat Action Data Model
+// Represents combat actions for both character and vehicle/ship actions
+export class CombatActionDataModel extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      // Identity
+      key: new fields.StringField({ initial: '', label: 'Internal Key', hint: 'Stable slug identifier' }),
+
+      // Domain
+      domain: new fields.StringField({
+        initial: 'character',
+        choices: ['character', 'vehicle'],
+        label: 'Domain',
+        hint: 'Character combat actions or vehicle/ship combat actions'
+      }),
+      category: new fields.StringField({ initial: 'combat', label: 'Category' }),
+
+      // Crew position (ship actions only)
+      crewPosition: new fields.StringField({
+        initial: '',
+        label: 'Crew Position',
+        hint: 'For vehicle actions: pilot, gunner, engineer, etc. Empty for character actions'
+      }),
+
+      // Action economy
+      actionType: new fields.StringField({
+        initial: 'standard',
+        choices: ['free', 'swift', 'move', 'standard', 'full-round', 'reaction', 'immediate', 'varies', 'compound'],
+        label: 'Action Type (Canonical)',
+        hint: 'Normalized action cost for consistency'
+      }),
+      actionTypeRaw: new fields.StringField({
+        initial: '',
+        label: 'Action Type (Raw)',
+        hint: 'Original source wording, may include compound costs'
+      }),
+      cost: new fields.NumberField({
+        initial: null,
+        nullable: true,
+        integer: true,
+        label: 'Numeric Cost',
+        hint: 'Action points/economy cost, null if varies or compound'
+      }),
+
+      // Rule text
+      summary: new fields.StringField({
+        initial: '',
+        label: 'Summary',
+        hint: 'Short one-line description'
+      }),
+      notes: new fields.HTMLField({ label: 'Rules Text' }),
+      notesAdvanced: new fields.HTMLField({
+        label: 'Advanced Notes',
+        hint: 'Additional rules clarifications'
+      }),
+      restriction: new fields.StringField({
+        initial: '',
+        label: 'Restriction',
+        hint: 'Hard constraints on usage'
+      }),
+
+      // Requirements and examples
+      requirements: new fields.ArrayField(new fields.StringField(), {
+        label: 'Requirements',
+        hint: 'Prerequisites or conditions'
+      }),
+      examples: new fields.ArrayField(new fields.StringField(), {
+        label: 'Examples',
+        hint: 'Usage examples from source'
+      }),
+
+      // Related skills (preserves structure for potential automation)
+      relatedSkills: new fields.ArrayField(new fields.SchemaField({
+        skill: new fields.StringField({ required: true, label: 'Skill' }),
+        when: new fields.StringField({ label: 'When', hint: 'Usage condition' }),
+        dc: new fields.SchemaField({
+          type: new fields.StringField({ initial: 'flat', label: 'DC Type' }),
+          value: new fields.StringField({ label: 'DC Value' })
+        }),
+        outcome: new fields.StringField({ label: 'Outcome' })
+      }), { label: 'Related Skills' }),
+
+      // Resource/ammo usage
+      ammoConsumption: new fields.NumberField({
+        initial: null,
+        nullable: true,
+        integer: true,
+        min: 0,
+        label: 'Ammunition Consumed',
+        hint: 'e.g., 5 for burst fire'
+      }),
+
+      // Metadata
+      tags: new fields.ArrayField(new fields.StringField(), { label: 'Tags' }),
+      sourcebook: new fields.StringField({ initial: '', label: 'Sourcebook' }),
+      page: new fields.NumberField({
+        initial: null,
+        nullable: true,
+        integer: true,
+        label: 'Page Number'
+      }),
+
+      // Execution metadata (for future automation)
+      executable: new fields.BooleanField({
+        initial: false,
+        label: 'Executable',
+        hint: 'Can this action be executed as active ability'
+      }),
+      trigger: new fields.StringField({
+        initial: '',
+        label: 'Trigger',
+        hint: 'Activation trigger if action is reactive'
+      }),
+      toggleable: new fields.BooleanField({
+        initial: false,
+        label: 'Toggleable',
+        hint: 'Can be toggled on/off'
+      })
+    };
+  }
+}
