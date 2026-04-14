@@ -400,8 +400,8 @@ export class ForcePowerDataModel extends foundry.abstract.DataModel {
       discipline: new fields.StringField({
         required: false,
         initial: 'telekinetic',
-        choices: ['telekinetic', 'telepathic', 'vital', 'dark-side', 'light-side'],
-        label: 'Force Discipline'
+        label: 'Force Discipline',
+        hint: 'e.g., telekinetic, telepathic, vital, dark-side, light-side, or form-specific like "Form VII: Juyo"'
       }),
       useTheForce: new fields.NumberField({
         required: true,
@@ -466,7 +466,16 @@ export class ForcePowerDataModel extends foundry.abstract.DataModel {
       uses: new fields.SchemaField({
         current: new fields.NumberField({ initial: 0, min: 0, integer: true }),
         max: new fields.NumberField({ initial: 0, min: 0, integer: true })
-      })
+      }),
+
+      // Lightsaber Form Power extensions (optional fields)
+      // All lightsaber form powers fit within the standard forcepower type
+      // These model lightsaber form powers as bonus riders on base forcepower mechanics
+      form: new fields.StringField({ initial: '', label: 'Lightsaber Form', hint: 'e.g., Juyo, Shien, Soresu' }),
+      bonusTalent: new fields.StringField({ initial: '', label: 'Bonus Talent', hint: 'Talent that enhances this power (bonus metadata, not prerequisite)' }),
+      trigger: new fields.StringField({ initial: '', label: 'Trigger Condition', hint: 'Condition for bonus activation' }),
+      formBonus: new fields.HTMLField({ label: 'Form Bonus', hint: 'Bonus effect when actor has bonusTalent and trigger condition is met' }),
+      canRebuke: new fields.BooleanField({ initial: false, label: 'Can Be Rebuked', hint: 'Whether this power can be rebuked by opponents' })
     };
   }
 }
@@ -798,6 +807,238 @@ export class TalentTreeDataModel extends foundry.abstract.DataModel {
         required: false,
         nullable: true,
         label: 'Cost'
+      })
+    };
+  }
+}
+
+// Combat Action Data Model
+// Represents combat actions for both character and vehicle/ship actions
+export class CombatActionDataModel extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      // Identity
+      key: new fields.StringField({ initial: '', label: 'Internal Key', hint: 'Stable slug identifier' }),
+
+      // Domain
+      domain: new fields.StringField({
+        initial: 'character',
+        choices: ['character', 'vehicle'],
+        label: 'Domain',
+        hint: 'Character combat actions or vehicle/ship combat actions'
+      }),
+      category: new fields.StringField({ initial: 'combat', label: 'Category' }),
+
+      // Crew position (ship actions only)
+      crewPosition: new fields.StringField({
+        initial: '',
+        label: 'Crew Position',
+        hint: 'For vehicle actions: pilot, gunner, engineer, etc. Empty for character actions'
+      }),
+
+      // Action economy
+      actionType: new fields.StringField({
+        initial: 'standard',
+        choices: ['free', 'swift', 'move', 'standard', 'full-round', 'reaction', 'immediate', 'varies', 'compound'],
+        label: 'Action Type (Canonical)',
+        hint: 'Normalized action cost for consistency'
+      }),
+      actionTypeRaw: new fields.StringField({
+        initial: '',
+        label: 'Action Type (Raw)',
+        hint: 'Original source wording, may include compound costs'
+      }),
+      cost: new fields.NumberField({
+        initial: null,
+        nullable: true,
+        integer: true,
+        label: 'Numeric Cost',
+        hint: 'Action points/economy cost, null if varies or compound'
+      }),
+
+      // Rule text
+      summary: new fields.StringField({
+        initial: '',
+        label: 'Summary',
+        hint: 'Short one-line description'
+      }),
+      notes: new fields.HTMLField({ label: 'Rules Text' }),
+      notesAdvanced: new fields.HTMLField({
+        label: 'Advanced Notes',
+        hint: 'Additional rules clarifications'
+      }),
+      restriction: new fields.StringField({
+        initial: '',
+        label: 'Restriction',
+        hint: 'Hard constraints on usage'
+      }),
+
+      // Requirements and examples
+      requirements: new fields.ArrayField(new fields.StringField(), {
+        label: 'Requirements',
+        hint: 'Prerequisites or conditions'
+      }),
+      examples: new fields.ArrayField(new fields.StringField(), {
+        label: 'Examples',
+        hint: 'Usage examples from source'
+      }),
+
+      // Related skills (preserves structure for potential automation)
+      relatedSkills: new fields.ArrayField(new fields.SchemaField({
+        skill: new fields.StringField({ required: true, label: 'Skill' }),
+        when: new fields.StringField({ label: 'When', hint: 'Usage condition' }),
+        dc: new fields.SchemaField({
+          type: new fields.StringField({ initial: 'flat', label: 'DC Type' }),
+          value: new fields.StringField({ label: 'DC Value' })
+        }),
+        outcome: new fields.StringField({ label: 'Outcome' })
+      }), { label: 'Related Skills' }),
+
+      // Resource/ammo usage
+      ammoConsumption: new fields.NumberField({
+        initial: null,
+        nullable: true,
+        integer: true,
+        min: 0,
+        label: 'Ammunition Consumed',
+        hint: 'e.g., 5 for burst fire'
+      }),
+
+      // Metadata
+      tags: new fields.ArrayField(new fields.StringField(), { label: 'Tags' }),
+      sourcebook: new fields.StringField({ initial: '', label: 'Sourcebook' }),
+      page: new fields.NumberField({
+        initial: null,
+        nullable: true,
+        integer: true,
+        label: 'Page Number'
+      }),
+
+      // Execution metadata (for future automation)
+      executable: new fields.BooleanField({
+        initial: false,
+        label: 'Executable',
+        hint: 'Can this action be executed as active ability'
+      }),
+      trigger: new fields.StringField({
+        initial: '',
+        label: 'Trigger',
+        hint: 'Activation trigger if action is reactive'
+      }),
+      toggleable: new fields.BooleanField({
+        initial: false,
+        label: 'Toggleable',
+        hint: 'Can be toggled on/off'
+      })
+    };
+  }
+}
+
+/**
+ * Extra Skill Use Data Model
+ *
+ * Represents additional uses for skills beyond core mechanics.
+ * The 'skill' field is authoritative for routing - code uses this first,
+ * and only falls back to fuzzy name matching for legacy entries without it.
+ */
+export class ExtraSkillUseDataModel extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      // Routing - REQUIRED for regenerated entries
+      skill: new fields.StringField({
+        required: true,
+        label: 'Skill Key',
+        hint: 'Canonical internal key (e.g., useTheForce, perception, initiative)'
+      }),
+      skillLabel: new fields.StringField({
+        initial: '',
+        label: 'Skill Label',
+        hint: 'Human-readable display name (e.g., Use the Force)'
+      }),
+
+      // Application
+      application: new fields.StringField({
+        initial: '',
+        label: 'Application Name',
+        hint: 'Specific use name (e.g., Sense Force)'
+      }),
+
+      // Access constraints
+      trainedOnly: new fields.BooleanField({
+        initial: false,
+        label: 'Trained Only',
+        hint: 'Requires skill to be trained'
+      }),
+      requiresForceSensitivity: new fields.BooleanField({
+        initial: false,
+        label: 'Requires Force Sensitivity',
+        hint: 'Only accessible if character has Force Sensitivity feat'
+      }),
+
+      // Action economy
+      actionType: new fields.StringField({
+        initial: 'standard',
+        choices: ['free', 'swift', 'move', 'standard', 'full-round', 'reaction', 'immediate', 'varies'],
+        label: 'Action Type',
+        hint: 'Standard, swift, move, full-round, reaction, or immediate'
+      }),
+      actionTypeRaw: new fields.StringField({
+        initial: '',
+        label: 'Action Type (Raw)',
+        hint: 'Original source wording'
+      }),
+
+      // Rules mechanics
+      dc: new fields.NumberField({
+        initial: null,
+        nullable: true,
+        integer: true,
+        label: 'DC',
+        hint: 'Difficulty class if applicable'
+      }),
+      target: new fields.StringField({
+        initial: '',
+        label: 'Target',
+        hint: 'Typical target(s) for this use'
+      }),
+      effect: new fields.HTMLField({
+        initial: '',
+        label: 'Effect',
+        hint: 'What happens on success'
+      }),
+      description: new fields.HTMLField({
+        initial: '',
+        label: 'Description',
+        hint: 'Full rules description'
+      }),
+      special: new fields.HTMLField({
+        initial: '',
+        label: 'Special',
+        hint: 'Special conditions or variations'
+      }),
+
+      // Metadata
+      category: new fields.StringField({
+        initial: 'skill-use',
+        label: 'Category',
+        hint: 'Type of use (skill-use, force-power, etc.)'
+      }),
+      tags: new fields.ArrayField(new fields.StringField(), {
+        label: 'Tags',
+        hint: 'Tags for organization'
+      }),
+      sourcebook: new fields.StringField({
+        initial: '',
+        label: 'Sourcebook',
+        hint: 'Source material reference'
+      }),
+      page: new fields.NumberField({
+        initial: null,
+        nullable: true,
+        integer: true,
+        label: 'Page Number'
       })
     };
   }

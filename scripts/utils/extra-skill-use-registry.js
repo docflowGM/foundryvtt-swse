@@ -107,6 +107,11 @@ export class ExtraSkillUseRegistry {
   static _normalize(raw) {
     const system = raw?.system ?? {};
     const application = system.application ?? raw?.name ?? "Unknown Skill Use";
+
+    // Routing priority for skill key:
+    // 1. system.skill (authoritative for regenerated entries with explicit metadata)
+    // 2. system.skillKey (legacy fallback)
+    // 3. fuzzy name matching (last resort for unclassified entries)
     const skillKey = this._normalizeSkillKey(
       system.skill ?? system.skillKey ?? SkillUseFilter.getSkillKeyForApplication({ application })
     );
