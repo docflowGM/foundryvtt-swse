@@ -5,12 +5,24 @@
  * This script reads lightsaber-form-powers.json and populates the
  * packs/lightsaberformpowers.db SQLite database with forcepower items.
  *
+ * Lightsaber form powers are modeled as bonus riders on base forcepower mechanics.
+ * The bonusTalent field indicates which talent enhances the power, NOT a prerequisite.
+ *
  * Usage:
  *   node scripts/build/populate-lightsaber-form-powers.js
  */
 
 const fs = require('fs');
 const path = require('path');
+
+/**
+ * Extract talent name from formBonus text like 'Lightsaber Form (Juyo): ...'
+ */
+function extractBonusTalent(formBonusText) {
+  if (!formBonusText) return '';
+  const match = formBonusText.match(/Lightsaber Form \(([^)]+)\)/);
+  return match ? match[1] : '';
+}
 
 // Try to use better-sqlite3, fall back to simple approach if not available
 let Database;
@@ -101,6 +113,10 @@ async function populateLightsaberFormPowers() {
           useTheForce = dcs[0];
         }
 
+        // Extract bonus talent from formBonus text for semantic clarity
+        const formBonusText = powerData.formBonus || '';
+        const bonusTalent = extractBonusTalent(formBonusText);
+
         // Build system object
         const system = {
           powerLevel: 1,
@@ -130,10 +146,11 @@ async function populateLightsaberFormPowers() {
             current: 0,
             max: 0
           },
-          // Lightsaber form power extensions
+          // Lightsaber form power extensions (bonus rider relationship, NOT prerequisites)
           form: powerData.form || '',
+          bonusTalent: bonusTalent,
           trigger: powerData.trigger || '',
-          formBonus: powerData.formBonus || '',
+          formBonus: formBonusText,
           canRebuke: powerData.canRebuke || false
         };
 

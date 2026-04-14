@@ -21,6 +21,17 @@ def generate_id():
     """Generate a Foundry-compatible ID (16 characters, hex)"""
     return uuid.uuid4().hex[:16]
 
+def extract_bonus_talent(form_bonus_text):
+    """Extract talent name from formBonus text like 'Lightsaber Form (Juyo): ...'"""
+    if not form_bonus_text:
+        return ''
+    # Look for pattern: Lightsaber Form (TalentName):
+    import re
+    match = re.search(r'Lightsaber Form \(([^)]+)\)', form_bonus_text)
+    if match:
+        return match.group(1)
+    return ''
+
 def map_discipline(discipline_str):
     """Map JSON discipline string to schema choices"""
     if not discipline_str:
@@ -123,6 +134,10 @@ def populate_lightsaber_form_powers():
                 if dcs:
                     use_the_force = dcs[0]
 
+            # Extract bonus talent from formBonus text for semantic clarity
+            form_bonus_text = power_data.get('formBonus', '')
+            bonus_talent = extract_bonus_talent(form_bonus_text)
+
             # Build system object
             system = {
                 'powerLevel': 1,
@@ -155,10 +170,11 @@ def populate_lightsaber_form_powers():
                     'current': 0,
                     'max': 0
                 },
-                # Lightsaber form power extensions
+                # Lightsaber form power extensions (bonus rider relationship, NOT prerequisites)
                 'form': power_data.get('form', ''),
+                'bonusTalent': bonus_talent,
                 'trigger': power_data.get('trigger', ''),
-                'formBonus': power_data.get('formBonus', ''),
+                'formBonus': form_bonus_text,
                 'canRebuke': power_data.get('canRebuke', False)
             }
 

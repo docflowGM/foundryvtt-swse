@@ -470,9 +470,11 @@ export class ForcePowerDataModel extends foundry.abstract.DataModel {
 
       // Lightsaber Form Power extensions (optional fields)
       // All lightsaber form powers fit within the standard forcepower type
+      // These model lightsaber form powers as bonus riders on base forcepower mechanics
       form: new fields.StringField({ initial: '', label: 'Lightsaber Form', hint: 'e.g., Juyo, Shien, Soresu' }),
-      trigger: new fields.StringField({ initial: '', label: 'Trigger Condition', hint: 'When/how the power can be used' }),
-      formBonus: new fields.HTMLField({ label: 'Form Bonus', hint: 'Bonus effect if character has the corresponding Form talent' }),
+      bonusTalent: new fields.StringField({ initial: '', label: 'Bonus Talent', hint: 'Talent that enhances this power (bonus metadata, not prerequisite)' }),
+      trigger: new fields.StringField({ initial: '', label: 'Trigger Condition', hint: 'Condition for bonus activation' }),
+      formBonus: new fields.HTMLField({ label: 'Form Bonus', hint: 'Bonus effect when actor has bonusTalent and trigger condition is met' }),
       canRebuke: new fields.BooleanField({ initial: false, label: 'Can Be Rebuked', hint: 'Whether this power can be rebuked by opponents' })
     };
   }

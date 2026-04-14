@@ -15,6 +15,13 @@
  */
 
 (async function importLightsaberFormPowers() {
+  // Extract bonus talent from formBonus text like 'Lightsaber Form (Juyo): ...'
+  function extractBonusTalent(formBonusText) {
+    if (!formBonusText) return '';
+    const match = formBonusText.match(/Lightsaber Form \(([^)]+)\)/);
+    return match ? match[1] : '';
+  }
+
   // Load the JSON data
   const response = await fetch('systems/foundryvtt-swse/data/lightsaber-form-powers.json');
   const data = await response.json();
@@ -85,6 +92,10 @@
         else if (disc.includes('light')) discipline = 'light-side';
       }
 
+      // Extract bonus talent from formBonus text
+      const formBonusText = powerData.formBonus || '';
+      const bonusTalent = extractBonusTalent(formBonusText);
+
       // Convert item data
       const itemData = {
         name: powerData.name,
@@ -114,10 +125,11 @@
             current: 0,
             max: 0
           },
-          // Lightsaber form power extensions
+          // Lightsaber form power extensions (bonus rider relationship, NOT prerequisites)
           form: powerData.form || '',
+          bonusTalent: bonusTalent,
           trigger: powerData.trigger || '',
-          formBonus: powerData.formBonus || '',
+          formBonus: formBonusText,
           canRebuke: powerData.canRebuke || false
         }
       };
