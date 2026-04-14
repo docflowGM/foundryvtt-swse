@@ -2,25 +2,19 @@
  * AttributeStep plugin
  *
  * Handles attribute/ability assignment for character generation.
- * Integrates with existing attribute calculation logic from chargen-abilities.js
- *
- * Supported methods:
- * - point-buy: 25/20 point pool allocation
- * - standard-rolling: 4d6 drop lowest, 6 rolls
- * - organic-rolling: 21d6 drop lowest 3, chunk into 6
+ * Refactored to support canonical Point Buy, Array, High Power, and Organic methods.
+ * Reuses the legacy v1 rolling formulas for Organic generation.
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
-import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
-import { RollEngine } from '/systems/foundryvtt-swse/scripts/engine/roll-engine.js';
 import { normalizeAttributes } from './step-normalizers.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import { RollEngine } from '/systems/foundryvtt-swse/scripts/engine/roll-engine.js';
 
-// Ability score constants and calculations
 const ABILITIES = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 const ABILITY_NAMES = {
   str: 'Strength',
@@ -31,21 +25,40 @@ const ABILITY_NAMES = {
   cha: 'Charisma',
 };
 
+const METHOD_IDS = ['point-buy', 'array', 'high-power', 'organic'];
+const ARRAY_PRESETS = {
+  array: [15, 14, 13, 12, 10, 8],
+  'high-power': [16, 14, 12, 10, 10, 8],
+};
+const POINT_BUY_COSTS = {
+  8: 0,
+  9: 1,
+  10: 2,
+  11: 3,
+  12: 4,
+  13: 5,
+  14: 6,
+  15: 8,
+  16: 10,
+  17: 13,
+  18: 16,
+};
+
 const ABILITY_EFFECTS = {
   str: {
     label: 'Strength',
     affects: ['Melee attack bonus', 'Damage with melee/thrown weapons', 'Armor class (some)', 'Carry capacity'],
-    classRelevance: { 'Soldier': 'Primary', 'Jedi': 'Secondary' },
+    classRelevance: { Soldier: 'Primary', Jedi: 'Secondary' },
   },
   dex: {
     label: 'Dexterity',
     affects: ['Initiative', 'Ranged attack bonus', 'Reflex defense', 'Armor class', 'Acrobatics'],
-    classRelevance: { 'Scoundrel': 'Primary', 'Soldier': 'Secondary' },
+    classRelevance: { Scoundrel: 'Primary', Soldier: 'Secondary' },
   },
   con: {
     label: 'Constitution',
     affects: ['Hit points', 'Fortitude defense', 'Endurance'],
-    classRelevance: { 'Soldier': 'Primary', 'all': 'Important' },
+    classRelevance: { Soldier: 'Primary', all: 'Important' },
   },
   int: {
     label: 'Intelligence',
@@ -55,12 +68,12 @@ const ABILITY_EFFECTS = {
   wis: {
     label: 'Wisdom',
     affects: ['Will defense', 'Awareness', 'Insight', 'Force potential'],
-    classRelevance: { 'Jedi': 'Primary' },
+    classRelevance: { Jedi: 'Primary' },
   },
   cha: {
     label: 'Charisma',
     affects: ['Persuasion', 'Deception', 'Leadership', 'Social influence'],
-    classRelevance: { 'Scoundrel': 'Secondary', 'Jedi': 'Secondary' },
+    classRelevance: { Scoundrel: 'Secondary', Jedi: 'Secondary' },
   },
 };
 
@@ -68,182 +81,108 @@ export class AttributeStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
 
-    // State
-    this._method = 'point-buy';      // 'point-buy' | 'standard' | 'organic'
-    this._baseScores = {
-      str: 10, dex: 10, con: 10,
-      int: 10, wis: 10, cha: 10,
-    };
-    this._speciesModifiers = {
-      str: 0, dex: 0, con: 0,
-      int: 0, wis: 0, cha: 0,
-    };
-    this._focusedAbility = 'str';      // which ability row is focused
-    this._pointBuyPool = 25;           // remaining points in point buy
-    this._pointBuyCosts = {
-      8: 0, 9: 1, 10: 2, 11: 3, 12: 4,
-      13: 5, 14: 6, 15: 8, 16: 10, 17: 13, 18: 16,
-    };
-    this._pointBuyAllocations = {};   // track point-buy state
+    this._method = 'point-buy';
+    this._baseScores = { str: 8, dex: 8, con: 8, int: 8, wis: 8, cha: 8 };
+    this._speciesModifiers = { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 };
+    this._focusedAbility = 'str';
 
-    // Dice mode state (for standard/organic)
-    this._rolledPool = [];             // {id, value} tiles from dice rolls
-    this._assignedRolls = {            // ability -> tileId (standard) or [tileIds] (organic)
-      str: null, dex: null, con: null,
-      int: null, wis: null, cha: null,
-    };
-    this._diceLocked = false;          // whether current dice assignment is finalized
-    this._nextTileId = 1;              // for generating unique tile IDs
+    this._isDroid = false;
+    this._activeAbilities = [...ABILITIES];
 
-    // Method controls
+    this._pointBuyCosts = { ...POINT_BUY_COSTS };
+    this._pointBuyPoolTotal = 25;
+    this._pointBuyPool = 25;
+
+    this._poolTiles = [];
+    this._assignedTiles = {};
+    this._nextPoolId = 1;
+
     this._methodChanged = false;
-
-    // Suggestions
     this._suggestedAllocations = [];
-
-    // Event listener cleanup
     this._renderAbort = null;
   }
 
-  // ---------------------------------------------------------------------------
-  // Lifecycle
-  // ---------------------------------------------------------------------------
-
   async onStepEnter(shell) {
-    // Load species modifiers from committed selection
-    // FIXED: Use SpeciesRegistry to look up species by ID instead of relying on
-    // non-existent speciesData field in committed selection. This ensures attribute
-    // step uses the same species-modifier derivation path as the ProjectionEngine
-    // and summary rail, keeping both synchronized.
+    this._isDroid = shell?.actor?.type === 'droid';
+    this._activeAbilities = this._isDroid ? ABILITIES.filter((a) => a !== 'con') : [...ABILITIES];
+    this._focusedAbility = this._activeAbilities[0] || 'str';
+
     const speciesCommitment = shell.committedSelections?.get('species');
-    if (speciesCommitment?.species?.id) {
-      try {
-        const species = SpeciesRegistry.getById(speciesCommitment.species.id);
-        if (species?.abilityScores) {
-          this._applySpeciesModifiers(species);
-        }
-      } catch (err) {
-        swseLogger.warn('[AttributeStep] Error loading species modifiers:', err);
-        // Fall back to no modifiers if species lookup fails
-      }
+    if (speciesCommitment?.speciesData) {
+      this._applySpeciesModifiers(speciesCommitment.speciesData);
     }
 
-    // Initialize point buy allocations from base scores
-    this._initializePointBuy();
-
-    // Get suggested attribute allocations
+    await this._initializeMethod(this._method);
     await this._getSuggestedAllocations(shell.actor, shell);
-
-    // Enable Ask Mentor
     shell.mentor.askMentorEnabled = true;
   }
 
   async onDataReady(shell) {
     if (!shell.element) return;
 
-    // Clean up old listeners before attaching new ones
     this._renderAbort?.abort();
     this._renderAbort = new AbortController();
     const { signal } = this._renderAbort;
 
     const methodButtons = shell.element.querySelectorAll('.attr-method-btn');
-    methodButtons.forEach(btn => {
-      const fn = async (e) => {
+    methodButtons.forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
         e.preventDefault();
         const newMethod = btn.dataset.method;
-        if (newMethod && newMethod !== this._method) {
-          this._method = newMethod;
-          this._methodChanged = true;
-          this._diceLocked = false;
-
-          if (newMethod === 'point-buy') {
-            this._initializePointBuy();
-          } else if (newMethod === 'standard') {
-            await this._rollStandard();
-          } else if (newMethod === 'organic') {
-            await this._rollOrganic();
-          }
-          shell.render();
-        }
-      };
-      btn.addEventListener('click', fn, { signal });
+        if (!newMethod || newMethod === this._method) return;
+        await this._initializeMethod(newMethod);
+        this._methodChanged = true;
+        shell.render();
+      }, { signal });
     });
 
-    // Wire ability increment/decrement buttons for point buy
-    if (this._method === 'point-buy') {
-      ABILITIES.forEach(ability => {
-        const minusBtn = shell.element.querySelector(`[data-ability="${ability}"][data-delta="-1"]`);
-        const plusBtn = shell.element.querySelector(`[data-ability="${ability}"][data-delta="1"]`);
-
-        if (minusBtn) {
-          minusBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            this._adjustPointBuyScore(ability, -1);
-            shell.render();
-          }, { signal });
-        }
-
-        if (plusBtn) {
-          plusBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            this._adjustPointBuyScore(ability, 1);
-            shell.render();
-          }, { signal });
-        }
-      });
-    }
-
-    // Wire drag/drop for dice modes (standard and organic)
-    if (this._method === 'standard' || this._method === 'organic') {
-      this._wireDiceDragDrop(shell, signal);
-      this._wireDiceButtons(shell, signal);
-    }
-
-    // Wire focus on ability rows
-    ABILITIES.forEach(ability => {
+    this._activeAbilities.forEach((ability) => {
       const row = shell.element.querySelector(`[data-ability-row="${ability}"]`);
       if (row) {
         row.addEventListener('click', (e) => {
+          if (e.target.closest('button')) return;
           e.preventDefault();
           this._focusedAbility = ability;
           shell.render();
         }, { signal });
       }
     });
+
+    if (this._method === 'point-buy') {
+      this._wirePointBuyControls(shell, signal);
+    } else {
+      this._wirePoolControls(shell, signal);
+    }
   }
 
   async onStepExit(shell) {
-    // PHASE 1: Normalize and commit to canonical session
-    const normalizedAttributes = normalizeAttributes({ ...this._baseScores });
+    this._renderAbort?.abort();
 
-    if (normalizedAttributes && shell) {
-      // Commit to canonical session (also updates buildIntent for backward compat)
+    if (!this.validate().isValid || !shell) return;
+
+    const values = {};
+    this._activeAbilities.forEach((ability) => {
+      values[ability] = this._baseScores[ability];
+    });
+
+    const normalizedAttributes = normalizeAttributes(values);
+    if (normalizedAttributes) {
       await this._commitNormalized(shell, 'attributes', normalizedAttributes);
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Data
-  // ---------------------------------------------------------------------------
-
   async getStepData(context) {
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedAllocations);
-
-    // For dice modes, compute available pool tiles
-    const getAvailablePoolTiles = () => {
-      const assigned = new Set(
-        Object.values(this._assignedRolls).flat().filter(v => v !== null && v !== undefined)
-      );
-      return this._rolledPool.filter(t => !assigned.has(t.id));
-    };
-
+    const pointBuyStatus = this._getPointBuyStatus();
+    const availablePool = this._getAvailablePoolTiles();
     return {
       method: this._method,
       methodChanged: this._methodChanged,
       abilities: this._formatAbilityRows(suggestedIds, confidenceMap),
       focusedAbility: this._focusedAbility,
       pointBuyPool: this._pointBuyPool,
-      pointBuyStatus: this._getPointBuyStatus(),
+      pointBuyStatus,
+      pointBuyTotal: this._pointBuyPoolTotal,
       speciesModifiers: this._speciesModifiers,
       validationStatus: this.validate(),
       hasSuggestions,
@@ -252,27 +191,25 @@ export class AttributeStep extends ProgressionStepPlugin {
         acc[id] = data;
         return acc;
       }, {}),
-      // Dice mode data
-      rolledPool: this._rolledPool,
-      assignedRolls: this._assignedRolls,
-      availablePoolTiles: this._method !== 'point-buy' ? getAvailablePoolTiles() : [],
-      diceLocked: this._diceLocked,
-      isDiceComplete: this._isDiceComplete(),
+      isPointBuy: this._method === 'point-buy',
+      isPoolMethod: this._method !== 'point-buy',
+      isDroid: this._isDroid,
+      methodLabel: this._getMethodLabel(),
+      poolInstruction: this._getPoolInstruction(),
+      availablePool,
+      hasAvailablePool: availablePool.length > 0,
+      poolEmptyText: this._method === 'organic' ? 'All rolled values assigned.' : 'All values assigned.',
     };
   }
 
   getSelection() {
     const isValid = this.validate().isValid;
     return {
-      selected: isValid ? ABILITIES.map(a => `${a}:${this._baseScores[a]}`) : [],
+      selected: isValid ? this._activeAbilities.map((a) => `${a}:${this._baseScores[a]}`) : [],
       count: isValid ? 1 : 0,
       isComplete: isValid,
     };
   }
-
-  // ---------------------------------------------------------------------------
-  // Rendering
-  // ---------------------------------------------------------------------------
 
   renderWorkSurface(stepData) {
     return {
@@ -282,13 +219,8 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   renderDetailsPanel(focusedItem) {
-    const ability = this._focusedAbility;
-    const baseScore = this._baseScores[ability];
-    const speciesMod = this._speciesModifiers[ability];
-    const finalScore = baseScore + speciesMod;
-    const modifier = Math.floor((finalScore - 10) / 2);
-
-    // Normalize detail panel data for canonical display (no fabrication)
+    const ability = this._activeAbilities.includes(this._focusedAbility) ? this._focusedAbility : (this._activeAbilities[0] || 'str');
+    const row = this._getAbilityRowData(ability);
     const normalized = normalizeDetailPanelData({ ability, key: ability }, 'attribute');
 
     return {
@@ -298,14 +230,13 @@ export class AttributeStep extends ProgressionStepPlugin {
         label: ABILITY_NAMES[ability],
         description: this._getAbilityDescription(ability),
         affects: ABILITY_EFFECTS[ability]?.affects ?? [],
-        baseScore,
-        speciesMod,
-        finalScore,
-        modifier,
-        modifierFormatted: modifier > 0 ? `+${modifier}` : `${modifier}`,
-        modClass: modifier > 0 ? 'prog-num--pos' : modifier < 0 ? 'prog-num--neg' : 'prog-num--zero',
-        speciesModClass: speciesMod > 0 ? 'prog-num--pos' : speciesMod < 0 ? 'prog-num--neg' : 'prog-num--zero',
-        // Add normalized fields for enhanced detail rail
+        baseScore: row.assigned ? row.base : 8,
+        speciesMod: row.speciesMod,
+        finalScore: row.assigned ? row.final : (8 + row.speciesMod),
+        modifier: row.assigned ? row.modifier : Math.floor(((8 + row.speciesMod) - 10) / 2),
+        modifierFormatted: row.assigned ? row.modifierFormatted : `${Math.floor(((8 + row.speciesMod) - 10) / 2)}`,
+        modClass: row.assigned ? row.modClass : 'prog-num--zero',
+        speciesModClass: row.speciesModClass,
         canonicalDescription: normalized.description,
         metadataTags: normalized.metadataTags,
         mentorProse: normalized.mentorProse,
@@ -314,314 +245,365 @@ export class AttributeStep extends ProgressionStepPlugin {
     };
   }
 
-  // ---------------------------------------------------------------------------
-  // Attribute Methods
-  // ---------------------------------------------------------------------------
-
   _applySpeciesModifiers(speciesData) {
     const mods = speciesData.abilityScores || {};
-    ABILITIES.forEach(ability => {
+    ABILITIES.forEach((ability) => {
       this._speciesModifiers[ability] = mods[ability] || 0;
     });
   }
 
+  async _initializeMethod(method) {
+    if (!METHOD_IDS.includes(method)) {
+      method = 'point-buy';
+    }
+
+    this._method = method;
+    this._resetFocusIfNeeded();
+
+    if (method === 'point-buy') {
+      this._initializePointBuy();
+      return;
+    }
+
+    if (method === 'array' || method === 'high-power') {
+      this._initializeFixedPool(method);
+      return;
+    }
+
+    if (method === 'organic') {
+      await this._initializeOrganicPool();
+    }
+  }
+
   _initializePointBuy() {
-    this._pointBuyPool = 25;
-    this._pointBuyAllocations = {};
-    ABILITIES.forEach(a => {
-      this._baseScores[a] = 10;
-      this._pointBuyAllocations[a] = 10;
+    this._pointBuyPoolTotal = this._isDroid ? 20 : 25;
+    this._pointBuyPool = this._pointBuyPoolTotal;
+    this._poolTiles = [];
+    this._assignedTiles = this._makeEmptyAssignments();
+    this._nextPoolId = 1;
+
+    ABILITIES.forEach((ability) => {
+      this._baseScores[ability] = this._activeAbilities.includes(ability) ? 8 : null;
+    });
+  }
+
+  _initializeFixedPool(method) {
+    const preset = ARRAY_PRESETS[method] || ARRAY_PRESETS.array;
+    this._poolTiles = preset
+      .slice(0, this._activeAbilities.length)
+      .map((value) => this._makePoolTile({ value, origin: method, tooltip: `${this._getMethodLabel(method)} value` }));
+    this._assignedTiles = this._makeEmptyAssignments();
+    this._nextPoolId = this._poolTiles.length + 1;
+    this._pointBuyPool = this._pointBuyPoolTotal;
+
+    ABILITIES.forEach((ability) => {
+      this._baseScores[ability] = this._activeAbilities.includes(ability) ? 8 : null;
+    });
+  }
+
+  async _initializeOrganicPool() {
+    const rolled = await this._rollOrganicValues(this._activeAbilities.length);
+    this._poolTiles = rolled.map((entry) => this._makePoolTile(entry));
+    this._assignedTiles = this._makeEmptyAssignments();
+    this._nextPoolId = this._poolTiles.length + 1;
+    this._pointBuyPool = this._pointBuyPoolTotal;
+
+    ABILITIES.forEach((ability) => {
+      this._baseScores[ability] = this._activeAbilities.includes(ability) ? 8 : null;
+    });
+  }
+
+  _wirePointBuyControls(shell, signal) {
+    this._activeAbilities.forEach((ability) => {
+      const minusBtn = shell.element.querySelector(`[data-ability="${ability}"][data-delta="-1"]`);
+      const plusBtn = shell.element.querySelector(`[data-ability="${ability}"][data-delta="1"]`);
+
+      if (minusBtn) {
+        minusBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this._adjustPointBuyScore(ability, -1);
+          shell.render();
+        }, { signal });
+      }
+
+      if (plusBtn) {
+        plusBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this._adjustPointBuyScore(ability, 1);
+          shell.render();
+        }, { signal });
+      }
+    });
+  }
+
+  _wirePoolControls(shell, signal) {
+    const poolTiles = shell.element.querySelectorAll('[data-pool-id]');
+    poolTiles.forEach((tile) => {
+      tile.setAttribute('draggable', 'true');
+      tile.addEventListener('click', (e) => {
+        e.preventDefault();
+        const tileId = tile.dataset.poolId;
+        const targetAbility = this._focusedAbility;
+        if (!tileId || !targetAbility) return;
+        this._assignTileToAbility(tileId, targetAbility);
+        shell.render();
+      }, { signal });
+
+      tile.addEventListener('dragstart', (e) => {
+        const tileId = tile.dataset.poolId;
+        if (!tileId) return;
+        e.dataTransfer.setData('text/swse-attribute-tile', tileId);
+        e.dataTransfer.effectAllowed = 'move';
+        tile.classList.add('is-dragging');
+      }, { signal });
+
+      tile.addEventListener('dragend', () => {
+        tile.classList.remove('is-dragging');
+      }, { signal });
+    });
+
+    const assignmentBoxes = shell.element.querySelectorAll('[data-assign-ability]');
+    assignmentBoxes.forEach((box) => {
+      const ability = box.dataset.assignAbility;
+      if (!ability) return;
+
+      box.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        box.classList.add('is-dragover');
+      }, { signal });
+
+      box.addEventListener('dragleave', () => {
+        box.classList.remove('is-dragover');
+      }, { signal });
+
+      box.addEventListener('drop', (e) => {
+        e.preventDefault();
+        box.classList.remove('is-dragover');
+        const tileId = e.dataTransfer.getData('text/swse-attribute-tile');
+        if (!tileId || !ability) return;
+        this._assignTileToAbility(tileId, ability);
+        shell.render();
+      }, { signal });
+    });
+
+    const assignedTiles = shell.element.querySelectorAll('[data-assigned-tile-id]');
+    assignedTiles.forEach((tile) => {
+      tile.setAttribute('draggable', 'true');
+      tile.addEventListener('dragstart', (e) => {
+        const tileId = tile.dataset.assignedTileId;
+        if (!tileId) return;
+        e.dataTransfer.setData('text/swse-attribute-tile', tileId);
+        e.dataTransfer.effectAllowed = 'move';
+        tile.classList.add('is-dragging');
+      }, { signal });
+
+      tile.addEventListener('dragend', () => {
+        tile.classList.remove('is-dragging');
+      }, { signal });
+    });
+
+    const poolDropZone = shell.element.querySelector('[data-pool-dropzone]');
+    if (poolDropZone) {
+      poolDropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        poolDropZone.classList.add('is-dragover');
+      }, { signal });
+
+      poolDropZone.addEventListener('dragleave', () => {
+        poolDropZone.classList.remove('is-dragover');
+      }, { signal });
+
+      poolDropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        poolDropZone.classList.remove('is-dragover');
+        const tileId = e.dataTransfer.getData('text/swse-attribute-tile');
+        if (!tileId) return;
+        this._returnTileToPool(tileId);
+        shell.render();
+      }, { signal });
+    }
+
+    const clearButtons = shell.element.querySelectorAll('[data-clear-ability]');
+    clearButtons.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const ability = btn.dataset.clearAbility;
+        if (!ability) return;
+        this._clearAssignment(ability);
+        shell.render();
+      }, { signal });
     });
   }
 
   _adjustPointBuyScore(ability, delta) {
-    const current = this._pointBuyAllocations[ability] || 10;
+    if (!this._activeAbilities.includes(ability)) return;
+
+    const current = Number.isFinite(this._baseScores[ability]) ? this._baseScores[ability] : 8;
     const newScore = current + delta;
 
-    // Validate bounds (8-18)
     if (newScore < 8 || newScore > 18) return;
 
-    // Calculate cost difference
-    const oldCost = this._pointBuyCosts[current] || 0;
-    const newCost = this._pointBuyCosts[newScore] || 0;
+    const oldCost = this._getPointBuyCost(current);
+    const newCost = this._getPointBuyCost(newScore);
     const costDelta = newCost - oldCost;
 
-    // Check if we have enough points
     if (costDelta > this._pointBuyPool) return;
 
-    // Apply change
-    this._pointBuyAllocations[ability] = newScore;
     this._baseScores[ability] = newScore;
     this._pointBuyPool -= costDelta;
   }
 
+  _getPointBuyCost(score) {
+    return this._pointBuyCosts[score] ?? 0;
+  }
+
+  _getNextIncrementCost(score) {
+    if (score >= 18) return null;
+    return this._getPointBuyCost(score + 1) - this._getPointBuyCost(score);
+  }
+
   _getPointBuyStatus() {
-    const spent = 25 - this._pointBuyPool;
+    const spent = this._pointBuyPoolTotal - this._pointBuyPool;
     const isComplete = this._pointBuyPool === 0;
-    const spentPercent = Math.round((spent / 25) * 100);
     return {
       spent,
       remaining: this._pointBuyPool,
+      total: this._pointBuyPoolTotal,
       isComplete,
-      spentPercent,
-      status: isComplete
-        ? 'All points allocated'
-        : `${this._pointBuyPool} points remaining`,
+      status: isComplete ? 'All points allocated' : `${this._pointBuyPool} points remaining`,
     };
   }
 
-  // ---------------------------------------------------------------------------
-  // Dice Rolling Methods
-  // ---------------------------------------------------------------------------
-
-  async _rollStandard() {
-    this._rolledPool = [];
-    this._assignedRolls = { str: null, dex: null, con: null, int: null, wis: null, cha: null };
-    this._diceLocked = false;
-    this._nextTileId = 1;
-
-    // Roll 4d6 drop lowest, six times
-    for (let i = 0; i < 6; i++) {
-      const roll = await this._safeRoll('4d6');
-      const results = this._extractDiceResults(roll);
-      const sorted = results.slice().sort((a, b) => a - b);
-      sorted.shift(); // Drop lowest
-      const total = sorted.reduce((a, b) => a + b, 0);
-
-      this._rolledPool.push({
-        id: `std-${this._nextTileId++}`,
-        value: total,
-      });
-    }
+  _makeEmptyAssignments() {
+    const assignments = {};
+    this._activeAbilities.forEach((ability) => {
+      assignments[ability] = null;
+    });
+    return assignments;
   }
 
-  async _rollOrganic() {
-    this._rolledPool = [];
-    this._assignedRolls = { str: [], dex: [], con: [], int: [], wis: [], cha: [] };
-    this._diceLocked = false;
-    this._nextTileId = 1;
-
-    // Roll 21d6, drop lowest 3
-    const roll = await this._safeRoll('21d6');
-    let results = this._extractDiceResults(roll);
-
-    // Ensure we have 21 results (fallback if roll fails)
-    while (results.length < 21) {
-      results.push(Math.ceil(Math.random() * 6));
-    }
-
-    // Sort and drop lowest 3
-    const sorted = results.slice().sort((a, b) => a - b);
-    sorted.splice(0, 3); // Drop lowest 3
-
-    // Create 18 individual dice tiles
-    for (let i = 0; i < sorted.length; i++) {
-      this._rolledPool.push({
-        id: `org-${this._nextTileId++}`,
-        value: sorted[i],
-      });
-    }
+  _makePoolTile({ value, tooltip = '', origin = 'array' }) {
+    return {
+      id: `pool-${this._nextPoolId++}`,
+      value,
+      tooltip,
+      origin,
+    };
   }
 
-  async _safeRoll(formula) {
+  _getAvailablePoolTiles() {
+    const assignedIds = new Set(Object.values(this._assignedTiles || {}).filter(Boolean));
+    return this._poolTiles.filter((tile) => !assignedIds.has(tile.id));
+  }
+
+  _findPoolTile(tileId) {
+    return this._poolTiles.find((tile) => tile.id === tileId) || null;
+  }
+
+  _assignTileToAbility(tileId, ability) {
+    if (!this._activeAbilities.includes(ability)) return;
+    const tile = this._findPoolTile(tileId);
+    if (!tile) return;
+
+    const oldAbility = Object.keys(this._assignedTiles).find((key) => this._assignedTiles[key] === tileId);
+    const currentTileId = this._assignedTiles[ability];
+
+    if (oldAbility && oldAbility !== ability) {
+      this._assignedTiles[oldAbility] = currentTileId || null;
+      this._assignedTiles[ability] = tileId;
+    } else {
+      this._assignedTiles[ability] = tileId;
+    }
+
+    this._syncBaseScoresFromAssignments();
+  }
+
+  _clearAssignment(ability) {
+    if (!this._activeAbilities.includes(ability)) return;
+    this._assignedTiles[ability] = null;
+    this._syncBaseScoresFromAssignments();
+  }
+
+  _syncBaseScoresFromAssignments() {
+    this._activeAbilities.forEach((ability) => {
+      const tileId = this._assignedTiles[ability];
+      const tile = tileId ? this._findPoolTile(tileId) : null;
+      this._baseScores[ability] = tile ? tile.value : 8;
+    });
+  }
+
+  async _rollOrganicValues(count = 6) {
+    const roll = await this._rollFormula('21d6');
+    const results = (roll.dice && roll.dice[0] && roll.dice[0].results)
+      ? roll.dice[0].results.map((x) => x.result)
+      : (roll.results || []);
+
+    const filled = results.slice();
+    while (filled.length < 21) {
+      filled.push(Math.ceil(Math.random() * 6));
+    }
+
+    const sortedAll = filled.slice().sort((a, b) => a - b);
+    const dropped = sortedAll.splice(0, 3);
+    const remaining = sortedAll.slice().reverse();
+
+    const pool = [];
+    const targetCount = Math.max(count, 6);
+    for (let i = 0; i < targetCount; i += 1) {
+      const chunk = remaining.splice(0, 3);
+      const sum = chunk.reduce((acc, val) => acc + val, 0);
+      pool.push({
+        value: sum,
+        tooltip: `Rolled group: ${chunk.join(', ')} (dropped global: ${dropped.join(', ')})`,
+        origin: 'organic',
+      });
+    }
+
+    return pool.slice(0, count);
+  }
+
+  async _rollFormula(formula) {
     try {
       const roll = await RollEngine.safeRoll(formula);
       if (roll) return roll;
     } catch (err) {
-      swseLogger.warn('[AttributeStep] RollEngine failed, using fallback:', err);
+      console.warn('RollEngine failed in AttributeStep:', err);
     }
 
-    // Fallback: simulate dice rolls
+    const results = [];
     const match = formula.match(/(\d+)d(\d+)/);
     if (match) {
-      const n = parseInt(match[1], 10);
-      const s = parseInt(match[2], 10);
-      const results = [];
-      for (let i = 0; i < n; i++) {
-        results.push(Math.ceil(Math.random() * s));
+      const count = parseInt(match[1], 10);
+      const sides = parseInt(match[2], 10);
+      for (let i = 0; i < count; i += 1) {
+        results.push(Math.ceil(Math.random() * sides));
       }
-      return {
-        dice: [{ results: results.map(r => ({ result: r })) }],
-        results,
-        total: results.reduce((a, b) => a + b, 0),
-      };
-    }
-    return { dice: [], results: [], total: 0 };
-  }
-
-  _extractDiceResults(roll) {
-    if (roll.dice && roll.dice.length > 0 && roll.dice[0].results) {
-      return roll.dice[0].results.map(x => x.result);
-    }
-    return roll.results || [];
-  }
-
-  _wireDiceDragDrop(shell, signal) {
-    if (!shell.element) return;
-
-    // Make pool tiles draggable
-    shell.element.querySelectorAll('[data-tile-id]').forEach(tile => {
-      tile.addEventListener('dragstart', (e) => {
-        const tileId = tile.dataset.tileId;
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', tileId);
-        tile.classList.add('dragging');
-      }, { signal });
-
-      tile.addEventListener('dragend', (e) => {
-        tile.classList.remove('dragging');
-      }, { signal });
-    });
-
-    // Make drop slots droppable
-    const dropZones = shell.element.querySelectorAll('[data-drop-ability]');
-    dropZones.forEach(zone => {
-      zone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        zone.classList.add('dragover');
-      }, { signal });
-
-      zone.addEventListener('dragleave', (e) => {
-        zone.classList.remove('dragover');
-      }, { signal });
-
-      zone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        zone.classList.remove('dragover');
-        const tileId = e.dataTransfer.getData('text/plain');
-        const ability = zone.dataset.dropAbility;
-
-        if (this._method === 'standard') {
-          this._assignStandardTile(ability, tileId);
-        } else if (this._method === 'organic') {
-          this._assignOrganicTile(ability, tileId);
-        }
-
-        shell.render();
-      }, { signal });
-    });
-  }
-
-  _wireDiceButtons(shell, signal) {
-    if (!shell.element) return;
-
-    const lockBtn = shell.element.querySelector('[data-dice-action="lock"]');
-    const resetBtn = shell.element.querySelector('[data-dice-action="reset"]');
-    const rerollBtn = shell.element.querySelector('[data-dice-action="reroll"]');
-
-    if (lockBtn) {
-      lockBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        this._lockDice(shell);
-      }, { signal });
     }
 
-    if (resetBtn) {
-      resetBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        this._resetDice(shell);
-      }, { signal });
-    }
-
-    if (rerollBtn) {
-      rerollBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        if (this._method === 'standard') {
-          await this._rollStandard();
-        } else if (this._method === 'organic') {
-          await this._rollOrganic();
-        }
-        shell.render();
-      }, { signal });
-    }
+    return {
+      dice: [{ results: results.map((result) => ({ result })) }],
+      results,
+      total: results.reduce((acc, val) => acc + val, 0),
+    };
   }
-
-  _assignStandardTile(ability, tileId) {
-    // Remove tile from any other ability
-    ABILITIES.forEach(ab => {
-      if (this._assignedRolls[ab] === tileId) {
-        this._assignedRolls[ab] = null;
-      }
-    });
-    // Assign to this ability
-    this._assignedRolls[ability] = tileId;
-  }
-
-  _assignOrganicTile(ability, tileId) {
-    // Remove tile from any other group
-    ABILITIES.forEach(ab => {
-      this._assignedRolls[ab] = this._assignedRolls[ab].filter(id => id !== tileId);
-    });
-    // Add to this ability's group (max 3)
-    if (this._assignedRolls[ability].length < 3) {
-      this._assignedRolls[ability].push(tileId);
-    }
-  }
-
-  _lockDice(shell) {
-    if (!this._isDiceComplete()) {
-      swseLogger.warn('[AttributeStep] Cannot lock dice: assignment incomplete');
-      return;
-    }
-
-    // Derive base scores from assigned dice
-    ABILITIES.forEach(ability => {
-      if (this._method === 'standard') {
-        const tileId = this._assignedRolls[ability];
-        const tile = this._rolledPool.find(t => t.id === tileId);
-        this._baseScores[ability] = tile?.value || 10;
-      } else if (this._method === 'organic') {
-        const tileIds = this._assignedRolls[ability];
-        const tiles = this._rolledPool.filter(t => tileIds.includes(t.id));
-        const sum = tiles.reduce((acc, t) => acc + t.value, 0);
-        this._baseScores[ability] = sum || 10;
-      }
-    });
-
-    this._diceLocked = true;
-    shell.render();
-  }
-
-  _resetDice(shell) {
-    if (this._diceLocked) return;
-
-    // Clear assignments, keep pool
-    this._assignedRolls = this._method === 'standard'
-      ? { str: null, dex: null, con: null, int: null, wis: null, cha: null }
-      : { str: [], dex: [], con: [], int: [], wis: [], cha: [] };
-
-    shell.render();
-  }
-
-  _isDiceComplete() {
-    if (this._method === 'standard') {
-      return ABILITIES.every(ab => this._assignedRolls[ab] !== null);
-    } else if (this._method === 'organic') {
-      return ABILITIES.every(ab => this._assignedRolls[ab].length === 3);
-    }
-    return false;
-  }
-
-  // ---------------------------------------------------------------------------
-  // Validation
-  // ---------------------------------------------------------------------------
 
   validate() {
-    const baseScoresValid = ABILITIES.every(a => {
-      const score = this._baseScores[a];
-      return score >= 8 && score <= 18;
+    const abilities = this._activeAbilities;
+    const baseScoresValid = abilities.every((ability) => {
+      const score = this._baseScores[ability];
+      return Number.isFinite(score) && score >= 8 && score <= 18;
     });
 
-    const methodValid = this._method && ['point-buy', 'standard', 'organic'].includes(this._method);
-
+    const methodValid = METHOD_IDS.includes(this._method);
     let isComplete = baseScoresValid && methodValid;
 
-    // Method-specific validation
     if (this._method === 'point-buy') {
       isComplete = isComplete && this._pointBuyPool === 0;
-    } else if (this._method === 'standard' || this._method === 'organic') {
-      isComplete = isComplete && this._diceLocked && this._isDiceComplete();
+    } else {
+      isComplete = isComplete && abilities.every((ability) => !!this._assignedTiles[ability]);
     }
 
     return {
@@ -632,13 +614,18 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   getBlockingIssues() {
-    if (!this.validate().isValid) {
-      if (this._method === 'point-buy' && this._pointBuyPool > 0) {
-        return [`Allocate all ${this._pointBuyPool} remaining points`];
-      }
-      return ['Complete attribute assignment'];
+    if (this.validate().isValid) return [];
+
+    if (this._method === 'point-buy' && this._pointBuyPool > 0) {
+      return [`Allocate all ${this._pointBuyPool} remaining points`];
     }
-    return [];
+
+    const unassigned = this._activeAbilities.filter((ability) => !this._assignedTiles[ability]);
+    if (unassigned.length > 0) {
+      return [`Assign all remaining values (${unassigned.length} left)`];
+    }
+
+    return ['Complete attribute assignment'];
   }
 
   getRemainingPicks() {
@@ -650,39 +637,28 @@ export class AttributeStep extends ProgressionStepPlugin {
       }];
     }
 
+    const unassigned = this._activeAbilities.filter((ability) => !this._assignedTiles[ability]).length;
     return [{
-      label: `✓ Attributes assigned via ${this._method}`,
-      count: 0,
-      isWarning: false,
+      label: unassigned > 0 ? `${unassigned} values unassigned` : `✓ ${this._getMethodLabel()} complete`,
+      count: unassigned,
+      isWarning: unassigned > 0,
     }];
   }
-
-  // ---------------------------------------------------------------------------
-  // Utility Bar Config
-  // ---------------------------------------------------------------------------
 
   getUtilityBarConfig() {
     return {
       mode: 'minimal',
-      custom: [
-        { id: 'method-selector', label: 'Method:', type: 'select' },
-      ],
+      custom: [{ id: 'method-selector', label: 'Method:', type: 'select' }],
     };
   }
 
-  // ---------------------------------------------------------------------------
-  // Mentor
-  // ---------------------------------------------------------------------------
-
   async onAskMentor(shell) {
-    // If we have suggestions, use the advisory system instead of standard guidance
     if (this._suggestedAllocations && this._suggestedAllocations.length > 0) {
       await handleAskMentorWithSuggestions(shell.actor, 'attribute', this._suggestedAllocations, shell, {
         domain: 'attributes',
-        archetype: 'your ability scores'
+        archetype: 'your ability scores',
       });
     } else {
-      // Fallback to standard guidance if no suggestions
       await handleAskMentor(shell.actor, 'attribute', shell);
     }
   }
@@ -691,13 +667,12 @@ export class AttributeStep extends ProgressionStepPlugin {
     const customGuidance = getStepGuidance(shell.actor, 'attribute');
     if (customGuidance) return customGuidance;
 
-    // Mode-aware default guidance
     if (this.isChargen(shell)) {
       return 'Your attributes shape your capabilities. Strength, speed, intellect — choose wisely for your path.';
-    } else if (this.isLevelup(shell)) {
+    }
+    if (this.isLevelup(shell)) {
       return 'As you grow stronger, you may sharpen your natural abilities. Allocate your improvement wisely.';
     }
-
     return 'Distribute your points with care.';
   }
 
@@ -705,48 +680,53 @@ export class AttributeStep extends ProgressionStepPlugin {
     return 'context-only';
   }
 
-  // ---------------------------------------------------------------------------
-  // Private Helpers
-  // ---------------------------------------------------------------------------
-
   _formatAbilityRows(suggestedIds = new Set(), confidenceMap = new Map()) {
-    return ABILITIES.map(ability => {
-      const baseScore = this._baseScores[ability];
-      const speciesMod = this._speciesModifiers[ability];
-      const finalScore = baseScore + speciesMod;
-      const modifier = Math.floor((finalScore - 10) / 2);
-      const isSuggested = this.isSuggestedItem(ability, suggestedIds);
-      const confidenceData = confidenceMap.get ? confidenceMap.get(ability) : confidenceMap[ability];
+    return this._activeAbilities.map((ability) => this._getAbilityRowData(ability, suggestedIds, confidenceMap));
+  }
 
-      // Calculate next increment cost (for point-buy mode display)
-      // Uses marginal cost rule only, not cumulative table
-      let nextIncrementCost = null;
-      let canIncrement = false;
-      if (this._method === 'point-buy' && baseScore < 18) {
-        nextIncrementCost = this._getNextIncrementCost(baseScore);
-        canIncrement = this._pointBuyPool >= nextIncrementCost;
-      }
+  _getAbilityRowData(ability, suggestedIds = new Set(), confidenceMap = new Map()) {
+    const isPointBuy = this._method === 'point-buy';
+    const baseScore = Number.isFinite(this._baseScores[ability]) ? this._baseScores[ability] : 8;
+    const speciesMod = this._speciesModifiers[ability] || 0;
+    const tileId = this._assignedTiles[ability] || null;
+    const assignedTile = tileId ? this._findPoolTile(tileId) : null;
+    const assigned = isPointBuy ? true : !!assignedTile;
+    const finalScore = assigned ? baseScore + speciesMod : null;
+    const modifier = assigned ? Math.floor((finalScore - 10) / 2) : null;
+    const isSuggested = this.isSuggestedItem(ability, suggestedIds);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(ability) : confidenceMap[ability];
+    const nextIncrementCost = isPointBuy ? this._getNextIncrementCost(baseScore) : null;
+    const canIncrement = isPointBuy && baseScore < 18 && nextIncrementCost !== null && this._pointBuyPool >= nextIncrementCost;
+    const canDecrement = isPointBuy && baseScore > 8;
+    const rowFocused = ability === this._focusedAbility;
 
-      return {
-        id: ability,
-        label: ABILITY_NAMES[ability],
-        base: baseScore,
-        speciesMod,
-        speciesModClass: speciesMod > 0 ? 'prog-num--pos' : speciesMod < 0 ? 'prog-num--neg' : 'prog-num--zero',
-        final: finalScore,
-        modifier,
-        modifierFormatted: modifier > 0 ? `+${modifier}` : `${modifier}`,
-        modClass: modifier > 0 ? 'prog-num--pos' : modifier < 0 ? 'prog-num--neg' : 'prog-num--zero',
-        isFocused: ability === this._focusedAbility,
-        canAdjust: this._method === 'point-buy',
-        isSuggested,
-        badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
-        badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
-        confidenceLevel: confidenceData?.confidenceLevel || null,
-        nextIncrementCost,
-        canIncrement,
-      };
-    });
+    return {
+      id: ability,
+      label: ABILITY_NAMES[ability],
+      base: baseScore,
+      baseDisplay: assigned ? `${baseScore}` : '—',
+      speciesMod,
+      speciesModDisplay: `${speciesMod > 0 ? '+' : ''}${speciesMod}`,
+      speciesModClass: speciesMod > 0 ? 'prog-num--pos' : speciesMod < 0 ? 'prog-num--neg' : 'prog-num--zero',
+      final: finalScore,
+      finalDisplay: assigned ? `${finalScore}` : '—',
+      modifier,
+      modifierFormatted: assigned ? (modifier > 0 ? `+${modifier}` : `${modifier}`) : '—',
+      modClass: assigned ? (modifier > 0 ? 'prog-num--pos' : modifier < 0 ? 'prog-num--neg' : 'prog-num--zero') : 'prog-num--zero',
+      isFocused: rowFocused,
+      canAdjust: isPointBuy,
+      canIncrement,
+      canDecrement,
+      nextIncrementCost,
+      canAffordNext: nextIncrementCost !== null ? this._pointBuyPool >= nextIncrementCost : false,
+      assigned,
+      assignedTileId: tileId,
+      assignedOrigin: assignedTile?.origin || null,
+      isSuggested,
+      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
+    };
   }
 
   _getAbilityDescription(ability) {
@@ -761,29 +741,36 @@ export class AttributeStep extends ProgressionStepPlugin {
     return descriptions[ability] || '';
   }
 
-  // ---------------------------------------------------------------------------
-  // Suggestions
-  // ---------------------------------------------------------------------------
+  _getMethodLabel(method = this._method) {
+    if (method === 'point-buy') return 'Point Buy';
+    if (method === 'array') return 'Array';
+    if (method === 'high-power') return 'High Power';
+    if (method === 'organic') return 'Organic';
+    return 'Attributes';
+  }
 
-  /**
-   * Get suggested attribute allocations from SuggestionService
-   * Recommendations based on class, background, and other selections
-   * @private
-   */
+  _getPoolInstruction() {
+    if (this._method === 'organic') {
+      return 'Click a rolled value to assign it to the focused ability row.';
+    }
+    return 'Click a value in the pool to assign it to the focused ability row.';
+  }
+
+  _resetFocusIfNeeded() {
+    if (!this._activeAbilities.includes(this._focusedAbility)) {
+      this._focusedAbility = this._activeAbilities[0] || 'str';
+    }
+  }
+
   async _getSuggestedAllocations(actor, shell) {
     try {
-      // Build characterData from shell's buildIntent/committedSelections
       const characterData = this._buildCharacterDataFromShell(shell);
-
-      // Get suggestions from SuggestionService
       const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
         domain: 'attributes',
         pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
         engineOptions: { includeFutureAvailability: true },
-        persist: true
+        persist: true,
       });
-
-      // Store top suggestions
       this._suggestedAllocations = (suggested || []).slice(0, 3);
     } catch (err) {
       swseLogger.warn('[AttributeStep] Suggestion service error:', err);
@@ -791,16 +778,8 @@ export class AttributeStep extends ProgressionStepPlugin {
     }
   }
 
-  /**
-   * Extract character data from shell for suggestion engine
-   * Allows suggestions to understand what choices have been made so far
-   * @private
-   */
   _buildCharacterDataFromShell(shell) {
-    if (!shell?.buildIntent) {
-      return {};
-    }
-
+    if (!shell?.buildIntent) return {};
     return shell.buildIntent.toCharacterData();
   }
 }

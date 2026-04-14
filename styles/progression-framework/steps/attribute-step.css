@@ -550,3 +550,194 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* --- Attribute method refactor additions --- */
+.progression-shell .prog-attribute-increment-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.progression-shell .prog-attribute-cost {
+  font-size: 10px;
+  color: var(--prog-text-dim);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.progression-shell .prog-attribute-cost--unaffordable {
+  color: rgba(255, 120, 120, 0.95);
+}
+
+.progression-shell .prog-attribute-pool-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-sm);
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .prog-attribute-pool-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.progression-shell .prog-attribute-pool-title {
+  font-size: var(--prog-font-size-sm);
+  font-weight: bold;
+  color: var(--prog-text-heading);
+}
+
+.progression-shell .prog-attribute-pool-help {
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+}
+
+.progression-shell .prog-attribute-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--prog-space-xs);
+  min-height: 48px;
+}
+
+.progression-shell .prog-attribute-pool--empty {
+  align-items: center;
+}
+
+.progression-shell .prog-attribute-pool-empty {
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+}
+
+.progression-shell .prog-attribute-pool-tile {
+  appearance: none;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  min-height: 52px;
+  padding: 6px 8px;
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  background: rgba(0, 0, 0, 0.34);
+  color: var(--prog-text);
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+}
+
+.progression-shell .prog-attribute-pool-tile:hover {
+  border-color: var(--prog-accent);
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.25);
+}
+
+.progression-shell .prog-attribute-pool-tile__value {
+  font-size: var(--prog-font-size-lg);
+  font-weight: bold;
+  line-height: 1;
+}
+
+.progression-shell .prog-attribute-pool-tile__origin {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--prog-text-dim);
+}
+
+.progression-shell .prog-attribute-assignment-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 80px;
+  min-height: 32px;
+  padding: 4px 6px;
+  border: 1px dashed var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.progression-shell .prog-attribute-assignment-box--focused {
+  border-color: var(--prog-accent);
+}
+
+.progression-shell .prog-attribute-assignment-box--assigned {
+  border-style: solid;
+  border-color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+}
+
+.progression-shell .prog-attribute-assignment-placeholder {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--prog-text-dim);
+  letter-spacing: 0.04em;
+}
+
+.progression-shell .prog-attribute-clear {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid var(--prog-border);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.32);
+  color: var(--prog-text-dim);
+  cursor: pointer;
+}
+
+.progression-shell .prog-attribute-clear:hover {
+  color: var(--prog-negative);
+  border-color: var(--prog-negative);
+}
+
+
+/* --- v1-style drag/drop upgrade for attribute pools --- */
+.progression-shell .prog-attribute-pool[data-pool-dropzone="true"],
+.progression-shell .prog-attribute-assignment-box[data-assign-ability] {
+  transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease, transform 120ms ease;
+}
+
+.progression-shell .prog-attribute-pool-tile,
+.progression-shell .prog-attribute-assigned-tile {
+  cursor: grab;
+  user-select: none;
+}
+
+.progression-shell .prog-attribute-pool-tile.is-dragging,
+.progression-shell .prog-attribute-assigned-tile.is-dragging {
+  opacity: 0.55;
+  transform: scale(0.97);
+}
+
+.progression-shell .prog-attribute-pool.is-dragover,
+.progression-shell .prog-attribute-assignment-box.is-dragover {
+  border-color: rgba(110, 220, 255, 0.9);
+  box-shadow: 0 0 0 1px rgba(110, 220, 255, 0.6), 0 0 14px rgba(110, 220, 255, 0.18);
+  background: rgba(80, 160, 210, 0.12);
+}
+
+.progression-shell .prog-attribute-assigned-tile {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(110, 220, 255, 0.35);
+  background: rgba(25, 45, 70, 0.72);
+}
+
+.progression-shell .prog-attribute-assigned-tile__origin {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--prog-text-dim);
+}
+
+.progression-shell .prog-attribute-assignment-box[data-assign-ability] {
+  min-height: 42px;
+}

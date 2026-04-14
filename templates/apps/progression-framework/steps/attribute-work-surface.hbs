@@ -7,74 +7,82 @@
     </p>
   </div>
 
-  {{!-- Method Selector --}}
   <div class="prog-attribute-method-selector">
     <label class="prog-attribute-method-label">Method:</label>
     <div class="prog-attribute-method-buttons">
-      <button class="prog-btn prog-btn--method attr-method-btn
-                     {{#if (eq method "point-buy")}}active{{/if}}"
+      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "point-buy")}}active{{/if}}"
               data-method="point-buy"
               type="button"
-              title="Point buy: 25 points to allocate">
+              title="Point buy: spend points to raise scores from 8">
         <i class="fas fa-coins"></i> Point Buy
       </button>
-      <button class="prog-btn prog-btn--method attr-method-btn
-                     {{#if (eq method "standard")}}active{{/if}}"
-              data-method="standard"
+      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "array")}}active{{/if}}"
+              data-method="array"
               type="button"
-              title="Standard: 4d6 drop lowest (x6)">
-        <i class="fas fa-dice-d6"></i> Standard
+              title="Canonical standard array: 15, 14, 13, 12, 10, 8">
+        <i class="fas fa-layer-group"></i> Array
       </button>
-      <button class="prog-btn prog-btn--method attr-method-btn
-                     {{#if (eq method "organic")}}active{{/if}}"
+      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "high-power")}}active{{/if}}"
+              data-method="high-power"
+              type="button"
+              title="High Power array: 16, 14, 12, 10, 10, 8">
+        <i class="fas fa-bolt"></i> High Power
+      </button>
+      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "organic")}}active{{/if}}"
               data-method="organic"
               type="button"
-              title="Organic: 21d6 drop lowest 3">
+              title="Organic: legacy 21d6 drop lowest 3 pool">
         <i class="fas fa-dice"></i> Organic
       </button>
     </div>
   </div>
 
-  {{!-- Point Buy Status --}}
-  {{#if (eq method "point-buy")}}
-    <div class="prog-attribute-pointbuy-status
-                {{#if pointBuyStatus.isComplete}}prog-attribute-pointbuy--complete{{/if}}">
+  {{#if isPointBuy}}
+    <div class="prog-attribute-pointbuy-status {{#if pointBuyStatus.isComplete}}prog-attribute-pointbuy-status--complete{{/if}}">
       <div class="prog-attribute-pointbuy-bar">
-        <div class="prog-attribute-pointbuy-used" style="width: {{pointBuyStatus.spentPercent}}%"></div>
+        <div class="prog-attribute-pointbuy-used" style="width: {{div pointBuyStatus.spent pointBuyStatus.total 100}}%"></div>
       </div>
       <div class="prog-attribute-pointbuy-text">
-        {{pointBuyStatus.spent}}/25 points allocated
+        {{pointBuyStatus.spent}}/{{pointBuyStatus.total}} points allocated — {{pointBuyStatus.status}}
       </div>
     </div>
   {{/if}}
 
-  {{!-- Dice Pool (Standard & Organic) --}}
-  {{#if (or (eq method "standard") (eq method "organic"))}}
-    <div class="prog-dice-pool">
-      <div class="prog-dice-pool-label">Available Values</div>
-      <div class="prog-dice-pool-tiles">
-        {{#each availablePoolTiles}}
-          <div class="prog-dice-tile" data-tile-id="{{id}}" draggable="true" title="Drag to assign">
-            <span class="prog-dice-value">{{value}}</span>
-          </div>
-        {{/each}}
+  {{#if isPoolMethod}}
+    <div class="prog-attribute-pool-panel">
+      <div class="prog-attribute-pool-header">
+        <div class="prog-attribute-pool-title">{{methodLabel}} Pool</div>
+        <div class="prog-attribute-pool-help">{{poolInstruction}}</div>
+      </div>
+      <div class="prog-attribute-pool {{#unless hasAvailablePool}}prog-attribute-pool--empty{{/unless}}" data-pool-dropzone="true">
+        {{#if hasAvailablePool}}
+          {{#each availablePool}}
+            <div class="prog-attribute-pool-tile"
+                 role="button"
+                 tabindex="0"
+                 draggable="true"
+                 data-pool-id="{{id}}"
+                 title="{{tooltip}}">
+              <span class="prog-attribute-pool-tile__value">{{value}}</span>
+              <span class="prog-attribute-pool-tile__origin">{{origin}}</span>
+            </div>
+          {{/each}}
+        {{else}}
+          <div class="prog-attribute-pool-empty">{{poolEmptyText}}</div>
+        {{/if}}
       </div>
     </div>
   {{/if}}
 
-  {{!-- Ability Rows --}}
   <div class="prog-attribute-rows">
     {{#each abilities}}
-      <div class="prog-attribute-row
-                  {{#if isFocused}}prog-attribute-row--focused{{/if}}
-                  {{#if isSuggested}}prog-attribute-row--suggested prog-attribute-row--suggested-{{confidenceLevel}}{{/if}}"
+      <div class="prog-attribute-row {{#if isFocused}}prog-attribute-row--focused{{/if}} {{#if isSuggested}}prog-attribute-row--suggested prog-attribute-row--suggested-{{confidenceLevel}}{{/if}}"
            data-ability-row="{{id}}"
            data-recommended="{{#if isSuggested}}true{{/if}}"
            data-confidence-level="{{confidenceLevel}}"
            role="button"
            tabindex="0">
 
-        {{!-- Ability Name --}}
         <div class="prog-attribute-row__label">
           {{label}}
           {{#if badgeLabel}}
@@ -82,56 +90,63 @@
           {{/if}}
         </div>
 
-        {{!-- Base Score / Dice Assignment --}}
         <div class="prog-attribute-row__score prog-attribute-row__base">
           {{#if canAdjust}}
-            {{!-- Point Buy: +/- buttons with next cost --}}
             <button class="prog-attribute-btn prog-attribute-btn--minus"
                     data-ability="{{id}}"
                     data-delta="-1"
-                    type="button">−</button>
+                    type="button"
+                    {{#unless canDecrement}}disabled{{/unless}}>−</button>
             <span class="prog-attribute-value">{{base}}</span>
             <div class="prog-attribute-increment-info">
               <button class="prog-attribute-btn prog-attribute-btn--plus"
                       data-ability="{{id}}"
                       data-delta="1"
-                      type="button">+</button>
+                      type="button"
+                      {{#unless canIncrement}}disabled{{/unless}}>+</button>
               {{#if nextIncrementCost}}
-                <span class="prog-attribute-cost {{#unless canIncrement}}prog-attribute-cost--unaffordable{{/unless}}">
-                  costs {{nextIncrementCost}}
-                </span>
+                <span class="prog-attribute-cost {{#unless canAffordNext}}prog-attribute-cost--unaffordable{{/unless}}">+ costs {{nextIncrementCost}}</span>
               {{/if}}
             </div>
           {{else}}
-            {{!-- Dice modes: drop zone for assignment --}}
-            <div class="prog-dice-drop-zone" data-drop-ability="{{id}}" title="Drop value here">
-              <span class="prog-attribute-value">{{base}}</span>
+            <div class="prog-attribute-assignment-box {{#if assigned}}prog-attribute-assignment-box--assigned{{/if}} {{#if isFocused}}prog-attribute-assignment-box--focused{{/if}}"
+                 data-assign-ability="{{id}}">
+              {{#if assigned}}
+                <div class="prog-attribute-assigned-tile"
+                     draggable="true"
+                     data-assigned-tile-id="{{assignedTileId}}"
+                     title="Drag to another ability or back to the pool">
+                  <span class="prog-attribute-value">{{baseDisplay}}</span>
+                  {{#if assignedOrigin}}
+                    <span class="prog-attribute-assigned-tile__origin">{{assignedOrigin}}</span>
+                  {{/if}}
+                </div>
+                <button class="prog-attribute-clear"
+                        type="button"
+                        data-clear-ability="{{id}}"
+                        title="Return value to pool">×</button>
+              {{else}}
+                <span class="prog-attribute-assignment-placeholder">drop value here</span>
+              {{/if}}
             </div>
           {{/if}}
         </div>
 
-        {{!-- Species Modifier --}}
         <div class="prog-attribute-row__score prog-attribute-row__species">
-          <span class="prog-attribute-value {{speciesModClass}}">
-            {{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}}
-          </span>
+          <span class="prog-attribute-value {{speciesModClass}}">{{speciesModDisplay}}</span>
         </div>
 
-        {{!-- Final Score --}}
         <div class="prog-attribute-row__score prog-attribute-row__final">
-          <span class="prog-attribute-value prog-attribute-value--final">{{final}}</span>
+          <span class="prog-attribute-value prog-attribute-value--final">{{finalDisplay}}</span>
         </div>
 
-        {{!-- Modifier --}}
         <div class="prog-attribute-row__score prog-attribute-row__modifier">
           <span class="prog-attribute-value {{modClass}}">{{modifierFormatted}}</span>
         </div>
-
       </div>
     {{/each}}
-  </div>{{!-- /rows --}}
+  </div>
 
-  {{!-- Column Headers --}}
   <div class="prog-attribute-headers">
     <div class="prog-attribute-headers__label"></div>
     <div class="prog-attribute-headers__base">Base</div>
@@ -140,22 +155,4 @@
     <div class="prog-attribute-headers__modifier">Mod</div>
   </div>
 
-  {{!-- Dice Controls (Standard & Organic) --}}
-  {{#if (or (eq method "standard") (eq method "organic"))}}
-    <div class="prog-dice-controls">
-      <button class="prog-btn prog-btn--dice" data-dice-action="reset" type="button">
-        Reset
-      </button>
-      <button class="prog-btn prog-btn--dice" data-dice-action="reroll" type="button">
-        Reroll
-      </button>
-      <button class="prog-btn prog-btn--dice prog-btn--primary"
-              data-dice-action="lock"
-              type="button"
-              {{#unless isDiceComplete}}disabled{{/unless}}>
-        Lock
-      </button>
-    </div>
-  {{/if}}
-
-</div>{{!-- /attribute-surface --}}
+</div>
