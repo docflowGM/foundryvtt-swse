@@ -53,12 +53,15 @@ function organizeWeapons() {
   const heavy = [];
   const exotic = [];
   const grenades = [];
+  const lightsabers = [];
 
   lines.forEach(line => {
     const item = JSON.parse(line);
     const category = item.system?.category || item.system?.subcategory || item.system?.proficiency || 'simple';
 
-    if (category === 'grenade') {
+    if (category === 'lightsaber') {
+      lightsabers.push(line);
+    } else if (category === 'grenade') {
       grenades.push(line);
     } else if (category === 'simple') {
       simple.push(line);
@@ -82,8 +85,9 @@ function organizeWeapons() {
   fs.writeFileSync(path.join(packsDir, 'weapons-heavy.db'), heavy.join('\n') + (heavy.length > 0 ? '\n' : ''));
   fs.writeFileSync(path.join(packsDir, 'weapons-exotic.db'), exotic.join('\n') + (exotic.length > 0 ? '\n' : ''));
   fs.writeFileSync(path.join(packsDir, 'weapons-grenades.db'), grenades.join('\n') + (grenades.length > 0 ? '\n' : ''));
+  fs.writeFileSync(path.join(packsDir, 'weapons-lightsabers.db'), lightsabers.join('\n') + (lightsabers.length > 0 ? '\n' : ''));
 
-  console.log(`Organized weapons: ${simple.length} simple, ${pistols.length} pistols, ${rifles.length} rifles, ${heavy.length} heavy, ${exotic.length} exotic, ${grenades.length} grenades`);
+  console.log(`Organized weapons: ${simple.length} simple, ${pistols.length} pistols, ${rifles.length} rifles, ${heavy.length} heavy, ${exotic.length} exotic, ${grenades.length} grenades, ${lightsabers.length} lightsabers`);
 }
 
 organizeArmor();
