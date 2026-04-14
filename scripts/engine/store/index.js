@@ -132,8 +132,15 @@ export async function buildStoreIndex({ useCache = true } = {}) {
   for (const [, subMap] of index.byCategory.entries()) {
     for (const [sub, arr] of subMap.entries()) {
       arr.sort((a, b) => {
-        const ac = a.finalCost ?? Infinity;
-        const bc = b.finalCost ?? Infinity;
+        // For sorting, use the primary cost (scalar or new condition for vehicles)
+        const getComparablePrice = (item) => {
+          if (item.finalCost !== null) return item.finalCost;
+          if (item.finalCostNew !== null) return item.finalCostNew; // Conditional: use new price
+          return Infinity; // Missing pricing goes to end
+        };
+
+        const ac = getComparablePrice(a);
+        const bc = getComparablePrice(b);
         if (ac !== bc) {return ac - bc;}
         return a.name.localeCompare(b.name);
       });

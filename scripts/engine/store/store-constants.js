@@ -7,12 +7,38 @@
 
 /**
  * Compendium pack names (SSOT locations)
+ * Weapons and armor use subtype-first pattern (like vehicles).
+ * Master packs remain as fallback aggregate references only.
  */
 export const STORE_PACKS = {
-  WEAPONS: 'foundryvtt-swse.weapons',
-  ARMOR: 'foundryvtt-swse.armor',
+  // Weapons: use subtype packs for store inventory
+  WEAPON_PACKS: [
+    'foundryvtt-swse.weapons-simple',
+    'foundryvtt-swse.weapons-pistols',
+    'foundryvtt-swse.weapons-rifles',
+    'foundryvtt-swse.weapons-heavy',
+    'foundryvtt-swse.weapons-grenades',
+    'foundryvtt-swse.weapons-exotic',
+    'foundryvtt-swse.weapons-lightsabers'
+  ],
+  WEAPONS_CANONICAL: 'foundryvtt-swse.weapons',
+
+  // Armor: use subtype packs for store inventory
+  ARMOR_PACKS: [
+    'foundryvtt-swse.armor-light',
+    'foundryvtt-swse.armor-medium',
+    'foundryvtt-swse.armor-heavy',
+    'foundryvtt-swse.armor-shields'
+  ],
+  ARMOR_CANONICAL: 'foundryvtt-swse.armor',
+
+  // Equipment: current single-source (can be migrated later)
   EQUIPMENT: 'foundryvtt-swse.equipment',
+
+  // Droids: current single-source
   DROIDS: 'foundryvtt-swse.droids',
+
+  // Vehicles: use subtype packs for store inventory
   VEHICLE_PACKS: [
     'foundryvtt-swse.vehicles-walkers',
     'foundryvtt-swse.vehicles-speeders',

@@ -135,9 +135,27 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* LOAD PACK ITEMS                              */
   /* ------------------------------------------- */
 
-  const itemPackNames = [STORE_PACKS.WEAPONS, STORE_PACKS.ARMOR, STORE_PACKS.EQUIPMENT];
+  const itemPackNames = [...STORE_PACKS.WEAPON_PACKS, ...STORE_PACKS.ARMOR_PACKS, STORE_PACKS.EQUIPMENT];
   const itemPackResults = await Promise.all(itemPackNames.map(safeGetPackDocuments));
-  const packItemDocs = itemPackResults.flatMap(result => result.docs);
+  let packItemDocs = itemPackResults.flatMap(result => result.docs);
+
+  // Canonical weapons pack fallback: only use when split weapon packs return no items.
+  if (packItemDocs.length === 0 && STORE_PACKS.WEAPONS_CANONICAL) {
+    const canonicalWeapons = await safeGetPackDocuments(STORE_PACKS.WEAPONS_CANONICAL);
+    if (canonicalWeapons.found) {
+      itemPackResults.push(canonicalWeapons);
+      packItemDocs = [...packItemDocs, ...canonicalWeapons.docs];
+    }
+  }
+
+  // Canonical armor pack fallback: only use when split armor packs return no items.
+  if (packItemDocs.length === 0 && STORE_PACKS.ARMOR_CANONICAL) {
+    const canonicalArmor = await safeGetPackDocuments(STORE_PACKS.ARMOR_CANONICAL);
+    if (canonicalArmor.found) {
+      itemPackResults.push(canonicalArmor);
+      packItemDocs = [...packItemDocs, ...canonicalArmor.docs];
+    }
+  }
 
   /* ------------------------------------------- */
   /* LOAD PACK ACTORS (droids + vehicles)         */
@@ -179,8 +197,10 @@ export async function loadRawStoreData({ useCache = true } = {}) {
     version: 2,
     loadedAt: Date.now(),
     packsUsed: flattenPackNames([
-      STORE_PACKS.WEAPONS,
-      STORE_PACKS.ARMOR,
+      STORE_PACKS.WEAPON_PACKS,
+      STORE_PACKS.ARMOR_PACKS,
+      STORE_PACKS.WEAPONS_CANONICAL,
+      STORE_PACKS.ARMOR_CANONICAL,
       STORE_PACKS.EQUIPMENT,
       STORE_PACKS.DROIDS,
       STORE_PACKS.VEHICLE_PACKS,

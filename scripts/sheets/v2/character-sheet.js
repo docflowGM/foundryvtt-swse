@@ -16,6 +16,7 @@ import { MeleeWeaponModificationApp } from "/systems/foundryvtt-swse/scripts/app
 import { GearModificationApp } from "/systems/foundryvtt-swse/scripts/apps/gear/gear-modification-app.js";
 import { launchProgression, launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
+import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
 import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-executor.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
@@ -2104,7 +2105,12 @@ const forcePoints = [];
       button.addEventListener("click", async (event) => {
         const row = event.currentTarget.closest(".inventory-row");
         const itemId = row?.dataset.itemId;
-        if (itemId) await InventoryEngine.decrementQuantity(this.actor, itemId);
+        if (itemId) {
+          const item = this.actor.items.get(itemId);
+          if (item) {
+            await initiateItemSale(item, this.actor);
+          }
+        }
       }, { signal });
     });
 

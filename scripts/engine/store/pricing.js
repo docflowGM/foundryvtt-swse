@@ -7,8 +7,15 @@
  *  - GM markup
  *  - GM discount
  *  - minimum cost sanity rules
- *  - used-price logic for vehicles
+ *  - structured new/used vehicle pricing (when available)
+ *
+ * Policy:
+ *  - Scalar items: apply markup to baseCost
+ *  - Conditional items (new/used): apply markup to both new and used separately
+ *  - Unavailable/missing: no final cost
  */
+
+import { resolveStoreCost } from '/systems/foundryvtt-swse/scripts/engine/store/cost-registry.js';
 
 /* -------------------------------------------------------------- */
 /* PRICE CALCULATION                                              */
@@ -39,14 +46,6 @@ export function calculateFinalCost(base) {
   return Math.max(result, 0);
 }
 
-/**
- * Calculate used vehicle cost (usually 50%).
- */
-export function calculateUsedCost(base) {
-  const used = base * 0.5;
-  return calculateFinalCost(used);
-}
-
 /* -------------------------------------------------------------- */
 /* ITEM ENRICHMENT                                                */
 /* -------------------------------------------------------------- */
@@ -54,25 +53,32 @@ export function calculateUsedCost(base) {
 /**
  * Apply pricing to a normalized StoreItem.
  * Mutates the object to set:
- *   item.finalCost
- *   item.finalCostUsed (vehicles)
+ *   item.finalCost (scalar items or selected condition)
+ *   item.finalCostNew (conditional items)
+ *   item.finalCostUsed (conditional items)
  *
  * @param {StoreItem} item
  * @returns {StoreItem}
  */
 export function applyPricing(item) {
-  const base = item.cost;
+  // Build a cost record for resolver (simplified version)
+  const costRecord = {
+    costStatus: item.costStatus,
+    pricingMode: item.pricingMode,
+    baseCost: item.cost,
+    baseCostNew: item.costNew,
+    baseCostUsed: item.costUsed
+  };
 
-  if (base !== null && base !== undefined) {
-    item.finalCost = calculateFinalCost(base);
-  } else {
-    item.finalCost = null;
-  }
+  // Resolve costs using registry resolver
+  const markup = getMarkupPercent();
+  const resolved = resolveStoreCost(costRecord, { markup });
 
-  // Vehicles get both new + used prices
-  if (item.type === 'vehicle' && base != null) {
-    item.finalCostUsed = calculateUsedCost(base);
-  }
+  // Assign final costs
+  item.finalCost = resolved.cost;
+  item.finalCostNew = resolved.costNew;
+  item.finalCostUsed = resolved.costUsed;
+  item.usedCondition = resolved.usedCondition;
 
   return item;
 }
