@@ -14,6 +14,7 @@ import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interact
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
+import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -127,6 +128,22 @@ export class SWSEV2CombatNpcSheet extends
   }
 
   async _onRender(context, options) {
+    // ═══ FIX: Center on initial render (first time ever or after close/reopen) ═══
+    // Use dynamic dimensions instead of hardcoding 800x700
+    const isFirstRenderEver = !this.rendered;
+    if (isFirstRenderEver) {
+      this._hasBeenRendered = true;
+      this._shouldCenterOnRender = true;
+    }
+
+    const shouldCenter = this._shouldCenterOnRender;
+    if (shouldCenter) {
+      const { width: targetWidth, height: targetHeight } = getApplicationTargetSize(this);
+      const pos = computeCenteredPosition(targetWidth, targetHeight);
+      this.setPosition({ left: pos.left, top: pos.top });
+      this._shouldCenterOnRender = false;
+    }
+
     // Phase 3: Enforce super._onRender call (AppV2 contract)
     await super._onRender(context, options);
 
@@ -393,35 +410,4 @@ export class SWSEV2CombatNpcSheet extends
    * @param {string} tabName - tab identifier to pulse
    */
   _pulseTab(tabName) {
-    if (!tabName) return;
-
-    const tabButton = this.element?.querySelector(`[data-tab="${tabName}"]`);
-    if (!tabButton) return;
-
-    tabButton.classList.add('tab-pulse');
-
-    setTimeout(() => {
-      tabButton.classList.remove('tab-pulse');
-    }, 800);
-  }
-
-  async _onSubmitForm(event) {
-    event.preventDefault();
-
-    const form = event.target;
-    const formData = new FormData(form);
-    const formDataObj = Object.fromEntries(formData.entries());
-    const expanded = foundry.utils.expandObject(formDataObj);
-
-    if (!expanded) {return;}
-
-    try {
-      // CRITICAL: Include ALL fields (name, system, etc.) not just system.
-      // Route directly through governance layer to bypass Foundry's actor.update()
-      await ActorEngine.updateActor(this.actor, expanded);
-    } catch (err) {
-      console.error('Sheet submission failed:', err);
-      ui.notifications.error(`Failed to update actor: ${err.message}`);
-    }
-  }
-}
+   

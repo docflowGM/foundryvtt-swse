@@ -1,4 +1,4 @@
-<div class="prog-intro-surface swse-ui-shell swse-splash-screen">
+<div class="prog-intro-surface swse-ui-shell swse-splash-screen {{#if localizedMode}}prog-intro-surface--localized{{else}}prog-intro-surface--foreign{{/if}}">
   {{!-- OS Header Bar --}}
   <div class="prog-intro-header">
     <div class="prog-intro-header__left">
@@ -43,38 +43,27 @@
 
           {{!-- Status Indicator --}}
           {{!-- STABLE DOM: Engine binds to status for state updates --}}
-          <div class="prog-intro-status prog-intro-status--{{currentStepData.state}}" data-role="intro-status">
-            {{#if (eq currentStepData.state "processing")}}
-              <span class="prog-intro-status__icon" data-role="intro-status-icon">⊙</span>
-              <span class="prog-intro-status__text" data-role="intro-status-text">PROCESSING</span>
-            {{else if (eq currentStepData.state "success")}}
-              <span class="prog-intro-status__icon" data-role="intro-status-icon">✓</span>
-              <span class="prog-intro-status__text" data-role="intro-status-text">SUCCESS</span>
-            {{else if (eq currentStepData.state "unknown")}}
-              <span class="prog-intro-status__icon" data-role="intro-status-icon">!</span>
-              <span class="prog-intro-status__text" data-role="intro-status-text">UNKNOWN</span>
-            {{else}}
-              <span class="prog-intro-status__icon" data-role="intro-status-icon">○</span>
-              <span class="prog-intro-status__text" data-role="intro-status-text">WAITING</span>
-            {{/if}}
+          <div class="prog-intro-status prog-intro-status--{{currentStepData.state}} {{#if currentStepData.localized}}prog-intro-status--localized{{else}}prog-intro-status--foreign{{/if}}" data-role="intro-status">
+            <span class="prog-intro-status__icon" data-role="intro-status-icon">{{currentStepData.statusIcon}}</span>
+            <span class="prog-intro-status__text" data-role="intro-status-text">{{currentStepData.statusText}}</span>
           </div>
 
           {{!-- Microlabel (Diegetic System Messages) --}}
           {{!-- STABLE DOM: Engine binds to this for system status updates --}}
           <div class="prog-intro-microlabel" data-role="intro-microlabel">
-            > initializing system...
+            {{currentStepData.microlabel}}
           </div>
         </div>
       {{/if}}
 
       {{!-- Translation Text (hidden by default, shown during TRANSLATING phase) --}}
       {{!-- STABLE DOM: Always mounted, hidden/shown via classes for engine binding --}}
-      <div class="prog-intro-text-container {{#unless isTranslating}}hidden{{/unless}}"
+      <div class="prog-intro-text-container prog-intro-translation-container {{#unless isTranslating}}hidden{{/unless}}"
            data-role="intro-translation"
-           style="{{#if isTranslating}}display: block{{else}}display: none{{/if}}">
+           style="{{#if isTranslating}}display: flex{{else}}display: none{{/if}}">
         <div class="prog-intro-label prog-intro-label--success" data-role="intro-status-label">TRANSLATING</div>
         <div class="prog-intro-translation-text">
-          <span class="prog-intro-translation__content" data-role="intro-translation-text">{{translatedText}}</span>
+          <div class="prog-intro-translation__content" data-role="intro-translation-text">{{translatedText}}</div>
         </div>
         <div class="prog-intro-source-text" data-role="intro-source-text" style="display: none;">
           <span class="prog-intro-aurabesh" data-role="intro-aurabesh">{{currentStepData.aurabesh}}</span>
@@ -96,30 +85,24 @@
         <div class="prog-intro-progress-fill" style="width: {{progressPercent}}%" data-role="intro-progress-fill"></div>
       </div>
       {{!-- Nested node for intro-progress-percent selector (Phase 1 contract) --}}
-      <div class="prog-intro-progress-text" data-role="intro-progress-label">
-        <span data-role="intro-progress-percent">{{stepNumber}} / {{bootSequenceLength}}</span>
+      <div class="prog-intro-progress-text prog-intro-progress-text--neutral" data-role="intro-progress-label">
+        <span data-role="intro-progress-percent">{{progressPercent}}%</span>
       </div>
     </div>
 
-    {{!-- Identity Block (shown after sequence complete) --}}
-    {{#if sequenceComplete}}
-      <div class="prog-intro-identity-block prog-intro-identity-block--fade-in">
-        <div class="prog-intro-identity-label">WELCOME</div>
-        <div class="prog-intro-identity-subtext">Ready to begin character registration.</div>
-      </div>
-    {{/if}}
+
   </div>
 
   {{!-- Footer: Action Buttons (shown when sequence complete) --}}
-  {{!-- Three-button grid: Go Back / Proceed / Pick Profile --}}
+  {{!-- Three-button grid: Go Back / Proceed / Choose a Pregenerated Character --}}
   {{#if sequenceComplete}}
     <div class="prog-intro-footer prog-intro-footer--fade-in">
       <div class="prog-intro-actions">
         {{!-- Go Back: uses existing previous-step handler --}}
-        <button class="prog-intro-btn prog-btn prog-btn--secondary"
+        <button class="prog-intro-btn prog-btn prog-btn--primary"
                 type="button"
                 data-action="previous-step"
-                title="Return to previous step">
+                title="Close character generation and return to character sheet" aria-label="Close character generation and return to character sheet">
           <i class="fas fa-arrow-left"></i>
           Go Back
         </button>
@@ -128,18 +111,18 @@
         <button class="prog-intro-btn prog-btn prog-btn--primary"
                 type="button"
                 data-action="next-step"
-                title="Continue to next step">
+                title="Ready to begin character registration." aria-label="Ready to begin character registration.">
           <i class="fas fa-arrow-right"></i>
           Proceed
         </button>
 
-        {{!-- Pick Profile: bound directly in intro-step.js --}}
+        {{!-- Choose a Pregenerated Character: bound directly in intro-step.js --}}
         <button class="prog-intro-btn prog-btn prog-btn--primary"
                 type="button"
                 data-role="intro-pick-profile"
-                title="Select a template or profile">
+                title="Choose a pregenerated character" aria-label="Choose a pregenerated character">
           <i class="fas fa-scroll"></i>
-          Pick Profile
+          Pick Galactic Profile
         </button>
       </div>
     </div>

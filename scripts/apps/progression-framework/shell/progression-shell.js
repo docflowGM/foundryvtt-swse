@@ -282,9 +282,17 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Track last spoken step to prevent redundant auto-speech on every full render
     this._lastSpokenStepId = null;
 
-    // Render loop prevention guard
+    // Render loop prevention guard — now with queueing support
     this._isRendering = false;
+    this._pendingRender = false;
     this._renderCount = 0;
+
+    // MANDATORY HYDRATION GUARDS — Force rehydration on every focus change
+    // Tracks what hydration state we've rendered to; changing focusedItem invalidates it
+    this._lastHydrationKey = null;  // `${stepId}::${focusedItem?.id ?? 'none'}`
+    this._lastFailedHydrationKey = null;  // Circuit-breaker: hydration key that just failed to render
+    this._focusedItemSnapshot = null;  // Last item we hydrated for; changing this invalidates hydration
+    this._mentorStateSnapshot = null;  // Track mentor state separately for stale guard
 
     // Position centering tracking — initialize EARLY so first render knows this is a new open
     this._openedAt = Date.now();
@@ -418,23 +426,103 @@ export class ProgressionShell extends SWSEApplicationV2 {
     return 'actor';
   }
 
-  // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
+  /**
+   * Check if current hydration state is still valid.
+   * If focusedItem has changed, hydration is stale and must be redone.
+   * This enforces the rule: "changed focus = mandatory rehydration"
+   * @returns {boolean} true if hydration is valid, false if stale
+   * @private
+   */
+  _isHydrationValid() {
+    const currentKey = `${this.currentStep?.id ?? 'unknown'}::${this.focusedItem?.id ?? 'none'}`;
+    const isValid = this._lastHydrationKey === currentKey && this._focusedItemSnapshot === this.focusedItem;
+
+    if (!isValid) {
+      console.debug(`[SWSE Hydration Guard] Hydration state STALE | was: ${this._lastHydrationKey}, now: ${currentKey}`);
+    }
+    return isValid;
+  }
+
+  /**
+   * Mark current hydration state as valid for the current focus.
+   * Called after a successful render to track what we hydrated for.
+   * @private
+   */
+  _markHydrationCurrent() {
+    this._lastHydrationKey = `${this.currentStep?.id ?? 'unknown'}::${this.focusedItem?.id ?? 'none'}`;
+    this._focusedItemSnapshot = this.focusedItem;
+    console.debug(`[SWSE Hydration Guard] Hydration marked CURRENT | key: ${this._lastHydrationKey}`);
+  }
+
+  // ═══ AUDIT INSTRUMENTATION + RENDER GUARD + CIRCUIT-BREAKER ═══
   async render(...args) {
-    // Render loop prevention: block recursive render calls during active render
+    const currentHydrationKey = `${this.currentStep?.id ?? 'unknown'}::${this.focusedItem?.id ?? 'none'}`;
+
+    // CIRCUIT-BREAKER: If this exact hydration key just failed, SUPPRESS requeue
+    // Only force requeue if it's a NEW hydration key (not the same one that failed)
+    if (!this._isHydrationValid()) {
+      if (currentHydrationKey === this._lastFailedHydrationKey) {
+        console.warn(`[ProgressionShell] ⚠️ SUPPRESSING requeue for failed hydration key: ${currentHydrationKey}`);
+        // Don't set _pendingRender; this breaks the infinite loop
+      } else {
+        console.warn(`[ProgressionShell] ⚠️ Hydration is stale (focus changed) — FORCING REQUEUE for mandatory rehydration`);
+        this._pendingRender = true;  // Force one more rerender after this one completes
+      }
+    }
+
+    // Render queue: if render is in progress, queue one pending rerender instead of blocking
     if (this._isRendering) {
-      console.warn("[ProgressionShell] ⚠️ Render called while already rendering — BLOCKED (loop prevention)");
+      console.warn("[ProgressionShell] ⚠️ Render called while already rendering — QUEUEING (will retry after)");
+      console.debug(`[SWSE Render Queue Debug] Queuing rerender | focusedItem: ${this.focusedItem?.id ?? '(null)'} | _pendingRender before: ${this._pendingRender}`);
+      this._pendingRender = true;
       return this;
     }
+
+    console.debug(`[SWSE Render Queue Debug] render() called | isRendering: ${this._isRendering} | pendingRender: ${this._pendingRender} | focusedItem: ${this.focusedItem?.id ?? '(null)'} | step: ${this.currentStep?.id ?? '(unknown)'}`);
 
     this._isRendering = true;
     this._renderCount++;
 
     console.log(`[ProgressionShell] RENDER START (#${this._renderCount}) position:`, this.position);
-    const result = await super.render(...args);
-    console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
 
-    this._isRendering = false;
-    return result;
+    let renderSucceeded = false;
+
+    try {
+      const result = await super.render(...args);
+      console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
+      console.debug(`[SWSE Render Queue Debug] Render complete | willFlushPending: ${this._pendingRender}`);
+
+      // Mark hydration as current after successful render
+      this._markHydrationCurrent();
+
+      // Clear failed key marker on success (new hydration key can be tried next time)
+      this._lastFailedHydrationKey = null;
+
+      renderSucceeded = true;
+      return result;
+    } catch (err) {
+      console.error(`[SWSE Render Queue Debug] Render threw error before cleanup:`, err.message);
+
+      // CIRCUIT-BREAKER: Record this hydration key as failed
+      this._lastFailedHydrationKey = currentHydrationKey;
+      console.warn(`[ProgressionShell] ⚠️ MARKED FAILED: hydration key "${currentHydrationKey}" — suppressing auto-requeue`);
+
+      // Clear pending rerender on failure (prevents infinite loop)
+      this._pendingRender = false;
+
+      throw err;
+    } finally {
+      this._isRendering = false;
+
+      // CRITICAL: Only flush queued rerender if render SUCCEEDED
+      // Prevents infinite loop when same hydration key keeps failing
+      if (renderSucceeded && this._pendingRender) {
+        this._pendingRender = false;
+        console.log(`[ProgressionShell] EXECUTE QUEUED RERENDER (#${this._renderCount + 1})`);
+        console.debug(`[SWSE Render Queue Debug] Flushing queued rerender | focusedItem: ${this.focusedItem?.id ?? '(null)'}`);
+        queueMicrotask(() => this.render());
+      }
+    }
   }
 
   setPosition(position) {
@@ -808,9 +896,26 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     // Render work surface
     const workSurfaceSpec = currentPlugin?.renderWorkSurface?.(stepData) ?? null;
+
+    // [DEBUG STEP TRANSITION] Track which step's work surface is being rendered
+    console.log('[STEP TRANSITION DEBUG] renderWorkSurface', {
+      currentStepId: currentDescriptor?.stepId,
+      pluginClass: currentPlugin?.constructor?.name,
+      templatePath: workSurfaceSpec?.template?.split('/').pop(),
+      hasSpec: !!workSurfaceSpec,
+    });
+
     const workSurfaceHtml = workSurfaceSpec?.template
       ? await foundry.applications.handlebars.renderTemplate(workSurfaceSpec.template, workSurfaceSpec.data)
       : null;
+
+    // [DEBUG STEP TRANSITION] Verify HTML was generated
+    console.log('[STEP TRANSITION DEBUG] workSurfaceHtml generated', {
+      currentStepId: currentDescriptor?.stepId,
+      htmlLength: workSurfaceHtml?.length ?? 0,
+      containsSpeciesRow: workSurfaceHtml?.includes?.('prog-species-row') ?? false,
+      htmlPreview: workSurfaceHtml?.slice?.(0, 80) ?? '(null)',
+    });
 
     // Rule 8.3: Detect blank template
     if (!workSurfaceHtml) {
@@ -837,16 +942,163 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const detailsPanelSpec = currentPlugin?.renderDetailsPanel(this.focusedItem)
       ?? { template: null, data: {} };
 
-    // [DEBUG] Log template spec
+    // [DEBUG] A. Template spec handoff
+    console.log('[SWSE Details Rail Debug] A. renderDetailsPanel() returned', {
+      has_template: !!detailsPanelSpec?.template,
+      template_path: detailsPanelSpec?.template?.split('/').pop() ?? '(null)',
+      data_keys_count: detailsPanelSpec?.data ? Object.keys(detailsPanelSpec.data).length : 0,
+      data_sample_keys: detailsPanelSpec?.data ? Object.keys(detailsPanelSpec.data).slice(0, 5) : [],
+      focusedItem_id: this.focusedItem?.id ?? '(null)',
+      focusedItem_name: this.focusedItem?.name ?? '(null)',
+    });
+
     ProgressionDebugCapture.log('Progression Debug', `[Render #${renderNum}] renderDetailsPanel() returned`, {
       has_template: !!detailsPanelSpec?.template,
       template_path: detailsPanelSpec?.template?.split('/').pop() ?? '(null)',
       data_keys: detailsPanelSpec?.data ? Object.keys(detailsPanelSpec.data).slice(0, 8) : [],
     });
 
-    const detailsPanelHtml = detailsPanelSpec?.template
-      ? await foundry.applications.handlebars.renderTemplate(detailsPanelSpec.template, detailsPanelSpec.data)
-      : null;
+    // [DEBUG] B. Before template render
+    console.log('[SWSE Details Rail Debug] B. Before template render', {
+      template_path: detailsPanelSpec?.template ?? '(null)',
+      data_keys_count: detailsPanelSpec?.data ? Object.keys(detailsPanelSpec.data).length : 0,
+    });
+
+    // ═══ TEMPLATE SOURCE DEBUG: Fetch and inspect raw template text ═══
+    let detailsPanelHtml = null;
+
+    if (detailsPanelSpec?.template) {
+      const templatePath = detailsPanelSpec.template;
+
+      // [SWSE Template Source Debug] 1. Log exact template path
+      console.log('[SWSE Template Source Debug] 1. template path', {
+        templatePath,
+        focusedItemId: this.focusedItem?.id,
+        stepId: this._currentStep?.id ?? this.currentStep ?? this.steps[this.currentStepIndex]?.stepId ?? 'unknown'
+      });
+
+      try {
+        // [SWSE Template Source Debug] 2-4. Fetch raw template text and check for corruption
+        const raw = await fetch(templatePath).then(r => r.text());
+
+        console.log('[SWSE Template Source Debug] 2. raw template checks', {
+          templatePath,
+          rawLength: raw.length,
+          hasBadHybrid: raw.includes('{{!-{{!--'),
+          hasValidPortraitComment: raw.includes('{{!-- 2. Species portrait'),
+          hasEmDash: raw.includes('—'),
+          hasEnDash: raw.includes('–')
+        });
+
+        // [SWSE Template Source Debug] 3. Raw template preview (first 400 chars)
+        console.log('[SWSE Template Source Debug] 3. raw template preview', raw.slice(0, 400));
+
+        // [SWSE Template Source Debug] 4. Raw template lines 1-20
+        console.log('[SWSE Template Source Debug] 4. raw template lines 1-20',
+          raw.split('\n').slice(0, 20).map((line, i) => `${i + 1}: ${line}`).join('\n')
+        );
+
+        // [SWSE Template Source Debug] 5-7. Token search and context
+        const badIdx = raw.indexOf('{{!-{{!--');
+        const portraitIdx = raw.indexOf('Species por');
+
+        console.log('[SWSE Template Source Debug] 5. token search', {
+          badIdx,
+          portraitIdx
+        });
+
+        if (badIdx >= 0) {
+          console.log('[SWSE Template Source Debug] 6. bad token context',
+            raw.slice(Math.max(0, badIdx - 80), badIdx + 120)
+          );
+        }
+
+        if (portraitIdx >= 0) {
+          console.log('[SWSE Template Source Debug] 7. portrait token context',
+            raw.slice(Math.max(0, portraitIdx - 80), portraitIdx + 120)
+          );
+        }
+
+        // [SWSE Template Source Debug] 8-9. Character codes for suspect line
+        const lines = raw.split('\n');
+        const suspectLine = lines.find(l => l.includes('Species por') || l.includes('{{!-{{!--') || l.includes('{{!-- 2.'));
+        if (suspectLine) {
+          console.log('[SWSE Template Source Debug] 8. suspect line raw', suspectLine);
+          console.log('[SWSE Template Source Debug] 9. suspect line char codes',
+            Array.from(suspectLine).map(ch => `${ch}(${ch.charCodeAt(0)})`).join(' ')
+          );
+        }
+
+        // [SWSE Template Source Debug] 10. Pre-render final checks
+        console.log('[SWSE Template Source Debug] 10. pre-render final checks', {
+          hasBadHybridBeforeRender: raw.includes('{{!-{{!--'),
+          hasValidBlockCommentBeforeRender: raw.includes('{{!--')
+        });
+
+        // [SWSE Template Source Debug] 11. About to render template
+        console.log('[SWSE Template Source Debug] 11. about to render template', {
+          templatePath,
+          dataKeys: Object.keys(detailsPanelSpec.data ?? {})
+        });
+
+        // ═══ TEMPLATE RENDER WITH FALLBACK FOR CACHE CORRUPTION ═══
+        // Try normal renderTemplate path; if it fails for species-details.hbs, use direct Handlebars.compile()
+        try {
+          console.log('[SWSE Template Fallback Debug] Attempting normal renderTemplate()');
+          detailsPanelHtml = await foundry.applications.handlebars.renderTemplate(templatePath, detailsPanelSpec.data);
+
+          console.log('[SWSE Template Fallback Debug] Normal renderTemplate succeeded', {
+            htmlLength: detailsPanelHtml?.length ?? 0
+          });
+        } catch (renderErr) {
+          console.warn('[SWSE Template Fallback Debug] Normal renderTemplate failed:', renderErr.message);
+
+          // Targeted fallback: for species-details.hbs, try direct Handlebars compile
+          if (templatePath.includes('species-details.hbs')) {
+            console.log('[SWSE Template Fallback Debug] Attempting direct Handlebars.compile() fallback for species-details.hbs');
+
+            try {
+              // Compile raw template text directly with Handlebars
+              const compiled = Handlebars.compile(raw);
+              detailsPanelHtml = compiled(detailsPanelSpec.data);
+
+              console.log('[SWSE Template Fallback Debug] Direct compile fallback SUCCEEDED', {
+                htmlLength: detailsPanelHtml?.length ?? 0,
+                includesSpeciesName: this.focusedItem?.name ? detailsPanelHtml?.includes(this.focusedItem.name) : 'N/A',
+                pathUsed: 'direct-handlebars-compile'
+              });
+            } catch (fallbackErr) {
+              console.error('[SWSE Template Fallback Debug] Direct compile fallback FAILED:', fallbackErr.message);
+              throw fallbackErr;
+            }
+          } else {
+            // For non-species templates, re-throw the original error
+            throw renderErr;
+          }
+        }
+
+        // [SWSE Template Source Debug] 12. Render success
+        console.log('[SWSE Template Source Debug] 12. render success', {
+          htmlLength: detailsPanelHtml?.length ?? 0,
+          includesSpeciesName: this.focusedItem?.name ? detailsPanelHtml?.includes(this.focusedItem.name) : 'N/A'
+        });
+      } catch (sourceErr) {
+        console.error('[SWSE Template Source Debug] Template fetch/render failed:', sourceErr);
+        console.error('[SWSE Template Source Debug] Error stack:', sourceErr.stack);
+        // Allow error to propagate for hydration diagnostics
+        throw sourceErr;
+      }
+    }
+
+    // [DEBUG] C. After template render
+    console.log('[SWSE Details Rail Debug] C. After template render', {
+      html_length: detailsPanelHtml?.length ?? 0,
+      html_is_empty: !detailsPanelHtml || detailsPanelHtml.length === 0,
+      has_species_details_div: detailsPanelHtml?.includes?.('prog-species-details') ?? false,
+      has_empty_state_div: detailsPanelHtml?.includes?.('prog-details-empty') ?? false,
+      focusedItem_name_in_html: this.focusedItem?.name ? detailsPanelHtml?.includes?.(this.focusedItem.name) : 'N/A',
+      html_preview: detailsPanelHtml?.slice?.(0, 150) ?? '(null)',
+    });
 
     // [DEBUG] Log HTML result
     ProgressionDebugCapture.log('Progression Debug', `[Render #${renderNum}] Template HTML rendered`, {
@@ -1091,6 +1343,32 @@ export class ProgressionShell extends SWSEApplicationV2 {
     centerApplicationDuringStartup(this, { width: 1000, height: 750 });
 
     await super._onRender(context, options);
+
+    // [DEBUG] D. Before DOM injection (after super._onRender completes)
+    const detailsPanelContainer = this.element?.querySelector('[data-region="details-panel"]');
+    const detailsPanelHtmlFromContext = context?.detailsPanelHtml;
+    console.log('[SWSE Details Rail Debug] D. After super._onRender (before injection verification)', {
+      container_selector: '[data-region="details-panel"]',
+      container_found: !!detailsPanelContainer,
+      container_tag: detailsPanelContainer?.tagName ?? '(not found)',
+      container_class: detailsPanelContainer?.className ?? '(not found)',
+      html_in_context: !!detailsPanelHtmlFromContext,
+      html_length_in_context: detailsPanelHtmlFromContext?.length ?? 0,
+      focusedItem_id: this.focusedItem?.id ?? '(null)',
+    });
+
+    // [DEBUG] E. After DOM injection (check what's actually rendered)
+    if (detailsPanelContainer) {
+      const actualContent = detailsPanelContainer.innerHTML;
+      console.log('[SWSE Details Rail Debug] E. After DOM injection - container innerHTML', {
+        actual_content_length: actualContent?.length ?? 0,
+        actual_content_empty: !actualContent || actualContent.trim().length === 0,
+        has_species_details_div: actualContent?.includes?.('prog-species-details') ?? false,
+        has_placeholder_div: actualContent?.includes?.('prog-details-placeholder') ?? false,
+        has_empty_state_div: actualContent?.includes?.('prog-details-empty') ?? false,
+        content_preview: actualContent?.slice?.(0, 150) ?? '(null)',
+      });
+    }
 
     // Phase 4: Mobile touch safety handlers
     this._activateTouchSafety(this.element);
@@ -1535,8 +1813,17 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.currentStepIndex = nextApplicableIndex;
     this.focusedItem = null;
 
+    // [DEBUG STEP TRANSITION] Log the transition
+    const prevStepId = currentDescriptor?.stepId;
     const nextDescriptor = this.steps[this.currentStepIndex];
     const nextPlugin = this.stepPlugins.get(nextDescriptor?.stepId);
+
+    console.log('[STEP TRANSITION DEBUG] Moving to next step', {
+      fromStep: prevStepId,
+      toStep: nextDescriptor?.stepId,
+      toPluginClass: nextPlugin?.constructor?.name,
+      focusedItemAfterReset: this.focusedItem,
+    });
     if (nextPlugin) {
       try {
         await nextPlugin.onStepEnter(this);

@@ -1,0 +1,109 @@
+/**
+ * chargen-stabilization.css
+ *
+ * TEMPORARY STABILIZATION: Disable decorative SVG backgrounds and frame overlays
+ * This is a surgical CSS override to simplify the chargen visual presentation
+ * while the hydration pipeline is being debugged and fixed.
+ *
+ * REVERSIBLE: Simply remove this file from system.json imports to restore full styling.
+ *
+ * Changes:
+ * - Hides SVG decorative elements in mentor portrait zone
+ * - Hides decorative frame ::before overlays on swse-ui-frame elements
+ * - Hides gradient backgrounds from decorative panels
+ * - Keeps all content, buttons, and layout intact
+ *
+ * Scope: Chargen progression shell only
+ * Target: .progression-shell and nested chargen components
+ */
+
+/* ============================================================================
+   MENTOR RAIL: Hide SVG portrait frame, keep name/dialogue/buttons
+   ============================================================================ */
+
+.progression-shell .prog-mentor__portrait {
+  /* Hide the decorative SVG frame with embedded portrait holographic effects */
+  display: none !important;
+}
+
+/* ============================================================================
+   DETAILS PANEL: Hide decorative frame chrome from details region
+   ============================================================================ */
+
+.progression-shell [data-region="details-panel"] {
+  /* Remove decorative background elements from details panel */
+  background: transparent !important;
+}
+
+.progression-shell .prog-details-placeholder--no-frame::before {
+  /* Hide any decorative overlay on placeholder */
+  display: none !important;
+}
+
+/* ============================================================================
+   UI FRAME OVERLAYS: Disable decorative frame overlays across all chargen UI
+   This removes the ::before pseudo-elements that render the decorative SVG frame background.
+   ============================================================================ */
+
+.progression-shell .swse-ui-frame::before {
+  /* Hide the decorative frame overlay background image */
+  display: none !important;
+}
+
+.progression-shell .swse-ui-frame {
+  /* Simplify background to plain solid color instead of gradient + overlay */
+  background: var(--prog-bg-surface) !important;
+  /* Reduce visual noise from shadows */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02) !important;
+}
+
+/* ============================================================================
+   PROGRESS RAIL FRAMES: Simplify step chip backgrounds
+   ============================================================================ */
+
+.progression-shell .prog-step.swse-ui-frame::before {
+  /* Hide step chip decorative frame overlay */
+  display: none !important;
+}
+
+/* ============================================================================
+   FOOTER FRAME: Simplify footer background
+   ============================================================================ */
+
+.progression-shell [data-region="action-footer"].swse-ui-frame::before {
+  /* Hide footer decorative frame overlay */
+  display: none !important;
+}
+
+.progression-shell [data-region="action-footer"].swse-ui-frame {
+  /* Simplify footer background */
+  background: var(--prog-bg-surface) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02) !important;
+}
+
+/* ============================================================================
+   ENSURE CONTENT VISIBILITY
+   Explicitly show all content elements to compensate for hidden decorative layers
+   ============================================================================ */
+
+.progression-shell .prog-mentor__name,
+.progression-shell .prog-mentor__title,
+.progression-shell .prog-mentor__dialogue,
+.progression-shell .prog-mentor__dialogue-content,
+.progression-shell .prog-mentor__text {
+  display: block !important;
+  visibility: visible !important;
+}
+
+.progression-shell .prog-step,
+.progression-shell .prog-step > * {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+/* ============================================================================
+   PRESERVE LAYOUT AND SPACING
+   Do not change any layout/sizing — only remove decorative visual elements
+   ============================================================================ */
+
+/* (No spacing changes — layout remains intact) */

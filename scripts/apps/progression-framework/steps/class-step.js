@@ -40,6 +40,9 @@ export class ClassStep extends ProgressionStepPlugin {
 
     // Phase 2.5: Track if this is a nonheroic progression
     this._isNonheroicProgression = false;
+
+    // Focus version guard — prevents stale async completion from overwriting newer focus
+    this._focusVersion = 0;
   }
 
   // ---------------------------------------------------------------------------
@@ -186,14 +189,27 @@ export class ClassStep extends ProgressionStepPlugin {
     const entry = this._allClasses.find(c => c.id === id);
     if (!entry) return;
 
+    // Capture focus version before any async work to guard against stale completion
+    const focusVersion = ++this._focusVersion;
+    console.debug(`[SWSE Stale Focus Guard] [Class] Focus version incremented to ${focusVersion} for ${entry.id}`);
+
+    console.debug(`[SWSE Chargen Hydration Debug] [ClassStep] Requesting rerender for class selection | selected: ${entry.name} (${entry.id}) | focusedItem before: ${shell.focusedItem?.id ?? '(null)'}`);
+
     shell.focusedItem = entry;
 
     // Speak class flavor text on focus (but do NOT swap mentor yet)
     const flavorText = entry.fantasy || entry.description || `${entry.name} is a powerful choice.`;
     if (flavorText) {
       await shell.mentorRail.speak(flavorText, 'encouraging');
+
+      // GUARD: Verify this focus is still current before applying any results
+      if (this._focusVersion !== focusVersion) {
+        console.debug(`[SWSE Stale Focus Guard] [Class] Discarding stale mentor speak | was: v${focusVersion}, now: v${this._focusVersion} | class: ${entry.id}`);
+        return;  // Stale focus, don't render or update UI
+      }
     }
 
+    console.debug(`[SWSE Chargen Hydration Debug] [ClassStep] Calling shell.render() | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
     shell.render();
   }
 

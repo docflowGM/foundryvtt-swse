@@ -48,6 +48,9 @@ export class BackgroundStep extends ProgressionStepPlugin {
 
     // Event listener cleanup
     this._renderAbort = null;
+
+    // Focus version guard — prevents stale async completion from overwriting newer focus
+    this._focusVersion = 0;
   }
 
   // ---------------------------------------------------------------------------
@@ -201,14 +204,27 @@ export class BackgroundStep extends ProgressionStepPlugin {
     const background = this._allBackgrounds.find(b => b.id === id);
     if (!background) return;
 
+    // Capture focus version before any async work to guard against stale completion
+    const focusVersion = ++this._focusVersion;
+    console.debug(`[SWSE Stale Focus Guard] [Background] Focus version incremented to ${focusVersion} for ${background.id}`);
+
+    console.debug(`[SWSE Chargen Hydration Debug] [BackgroundStep] Requesting rerender for background selection | selected: ${background.name} (${background.id})`);
+
     this._focusedBackgroundId = id;
 
     // Mentor reaction on focus
     const flavorText = this._getMentorFlavorForBackground(background);
     if (flavorText) {
       await shell.mentorRail.speak(flavorText, 'neutral');
+
+      // GUARD: Verify this focus is still current before applying any results
+      if (this._focusVersion !== focusVersion) {
+        console.debug(`[SWSE Stale Focus Guard] [Background] Discarding stale mentor speak | was: v${focusVersion}, now: v${this._focusVersion} | background: ${background.id}`);
+        return;  // Stale focus, don't render or update UI
+      }
     }
 
+    console.debug(`[SWSE Chargen Hydration Debug] [BackgroundStep] Calling shell.render() | focusedBackgroundId: ${this._focusedBackgroundId}`);
     shell.render();
   }
 

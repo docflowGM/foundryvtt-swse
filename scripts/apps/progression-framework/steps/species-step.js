@@ -47,6 +47,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
     // Near-Human builder
     this._nearHumanBuilder = new NearHumanBuilder();
 
+    // Focus version guard — prevents stale async completion from overwriting newer focus
+    this._focusVersion = 0;
+
     // Mentor dialogues
     this._olSaltyDialogues = null;    // loaded once in onStepEnter
 
@@ -313,6 +316,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
   renderDetailsPanel(focusedItem) {
     swseLogger.log('[SpeciesStep] ===== HYDRATION START: renderDetailsPanel() =====');
 
+    console.debug(`[SWSE Species Hydration Debug] renderDetailsPanel() entry | focusedItem: ${focusedItem?.id ?? '(null)'} (${focusedItem?.name ?? '(null)'})`);
+
     // [DEBUG] Entry logging
     console.log('[SWSE Details Debug] renderDetailsPanel() called with:', {
       focusedItem_present: !!focusedItem,
@@ -518,6 +523,10 @@ export class SpeciesStep extends ProgressionStepPlugin {
       new_id: entry.id,
     });
 
+    // Capture focus version before any async work to guard against stale completion
+    const focusVersion = ++this._focusVersion;
+    console.debug(`[SWSE Stale Focus Guard] [Species] Focus version incremented to ${focusVersion} for ${entry.id}`);
+
     shell.focusedItem = entry;
 
     console.log(`[SWSE Species Debug] [Click #${clickNum}] shell.focusedItem assigned`, {
@@ -548,6 +557,12 @@ export class SpeciesStep extends ProgressionStepPlugin {
       try {
         await shell.mentorRail.speak(dialogue, 'encouraging');
         console.log(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() completed`);
+
+        // GUARD: Verify this focus is still current before applying any results
+        if (this._focusVersion !== focusVersion) {
+          console.debug(`[SWSE Stale Focus Guard] [Species] Discarding stale mentor speak | was: v${focusVersion}, now: v${this._focusVersion} | species: ${entry.id}`);
+          return;  // Stale focus, don't render or update UI
+        }
       } catch (speakErr) {
         console.error(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() threw:`, speakErr);
         console.error(`[SWSE Species Debug] [Click #${clickNum}] Speak error details:`, {
@@ -571,7 +586,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
       focusedItem_name: shell.focusedItem?.name,
     });
 
+    console.debug(`[SWSE Species Hydration Debug] [Click #${clickNum}] Requesting rerender for species hydration | selected: ${entry.name} (${entry.id}) | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
     shell.render();
+    console.debug(`[SWSE Species Hydration Debug] [Click #${clickNum}] Rerender requested | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
 
     console.log(`[SWSE Species Debug] [Click #${clickNum}] onItemFocused COMPLETE`);
   }

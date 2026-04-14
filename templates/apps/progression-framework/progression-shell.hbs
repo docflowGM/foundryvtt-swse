@@ -155,12 +155,12 @@
       {{!-- ==================================================================
         DETAILS PANEL — always mounted on desktop; empty state when nothing focused
       ================================================================== --}}
-      <div data-region="details-panel">
+      <div data-region="details-panel" class="prog-details-panel-no-frame">
 
         {{#if detailsPanelHtml}}
           {{{detailsPanelHtml}}}
         {{else}}
-          <div class="prog-details-placeholder swse-card-schema swse-card-schema--enumerated swse-card-schema--placeholder">
+          <div class="prog-details-placeholder prog-details-placeholder--no-frame swse-card-schema swse-card-schema--enumerated swse-card-schema--placeholder">
             {{#if focusedItem}}
               <div class="prog-details-placeholder__name prog-heading">
                 {{focusedItem.name}}

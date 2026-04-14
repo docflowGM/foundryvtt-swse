@@ -131,6 +131,10 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this._closeAfterCheckout = options.closeAfterCheckout !== false;
     this._checkoutCompleted = false;
     this._closeHandled = false;
+
+    this.currentView = 'browse';
+    this.currentCategory = '';
+    this.selectedProductId = null;
   }
 
 
@@ -172,13 +176,140 @@ export class SWSEStore extends BaseSWSEAppV2 {
   async _prepareContext(_options) {
     if (!this._loaded) {await this._initialize();}
 
+    const allItems = this._buildItemsWithSuggestions();
+    const cartEntries = this._buildCartEntries();
+    const purchaseHistoryEntries = this._buildPurchaseHistoryEntries();
+    const cartTotal = calculateCartTotal(this.cart);
+    const credits = Number(this.actor?.system?.credits ?? 0) || 0;
+    const cartRemaining = Math.max(0, credits - cartTotal);
+    const currentView = this.currentView || 'browse';
+    const categorySummary = this._buildCategorySummary(allItems);
+    const currentCategoryLabel = this._getCurrentCategoryLabel(categorySummary);
+    const selectedProduct = this._buildSelectedProductView();
+
     return {
-      allItems: this._buildItemsWithSuggestions(),
-      credits: Number(this.actor?.system?.credits ?? 0) || 0,
+      allItems,
+      credits,
+      cartCount: cartEntries.length,
+      cartTotal,
+      cartRemaining,
+      cartEntries,
+      currentView,
+      currentCategoryLabel,
+      categorySummary,
+      selectedProduct,
+      purchaseHistoryEntries,
+      purchaseHistoryCount: purchaseHistoryEntries.length,
+      pageContext: this._buildPageContext({ currentView, currentCategoryLabel, cartRemaining }),
       isGM: game.user?.isGM ?? false,
       rendarrWelcome: getRendarrLine('welcome'),
       rendarrImage: 'systems/foundryvtt-swse/assets/mentors/rendarr.webp'
     };
+  }
+
+  _buildCartEntries() {
+    const entries = [];
+    for (const item of this.cart?.items || []) {
+      entries.push({ id: item.id, name: item.name, cost: item.cost ?? 0, type: 'Item', img: item.img || '' });
+    }
+    for (const droid of this.cart?.droids || []) {
+      entries.push({ id: droid.id, name: droid.name, cost: droid.cost ?? 0, type: 'Droid', img: droid.img || '' });
+    }
+    for (const vehicle of this.cart?.vehicles || []) {
+      entries.push({ id: vehicle.id, name: vehicle.name, cost: vehicle.cost ?? 0, type: 'Vehicle', img: vehicle.img || '' });
+    }
+    return entries;
+  }
+
+  _buildPurchaseHistoryEntries() {
+    const history = this.actor?.getFlag?.('foundryvtt-swse', 'purchaseHistory') || [];
+    return history.slice().reverse().map(entry => {
+      const items = [
+        ...(entry.items || []).map(i => ({ name: i.name || 'Unknown Item', qty: 1, cost: i.cost ?? 0 })),
+        ...(entry.droids || []).map(i => ({ name: i.name || 'Unknown Droid', qty: 1, cost: i.cost ?? 0 })),
+        ...(entry.vehicles || []).map(i => ({ name: i.name || 'Unknown Vehicle', qty: 1, cost: i.cost ?? 0 }))
+      ];
+      return {
+        timestamp: new Date(entry.timestamp || Date.now()).toLocaleString(),
+        total: entry.total ?? 0,
+        items
+      };
+    });
+  }
+
+  _buildCategorySummary(allItems = []) {
+    const labels = new Map();
+    const counts = new Map();
+    for (const item of allItems) {
+      const key = safeString(item.category || item.type || 'other').toLowerCase();
+      counts.set(key, (counts.get(key) || 0) + 1);
+      if (!labels.has(key)) {
+        labels.set(key, safeString(item.category || item.type || 'Other'));
+      }
+    }
+    return [...counts.entries()]
+      .map(([key, count]) => ({ key, count, label: labels.get(key) || key }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }
+
+  _getCurrentCategoryLabel(categorySummary = []) {
+    if (!this.currentCategory) {return 'All Listings';}
+    return categorySummary.find(category => category.key === this.currentCategory)?.label || this.currentCategory;
+  }
+
+  _buildPageContext({ currentView, currentCategoryLabel, cartRemaining }) {
+    const labels = {
+      browse: 'Browse',
+      cart: 'Cart',
+      checkout: 'Checkout',
+      history: 'History',
+      detail: 'Detail'
+    };
+    return {
+      pageLabel: labels[currentView] || 'Browse',
+      currentCategoryLabel,
+      briefTitle: currentView === 'checkout' ? 'Settlement Window' : currentView === 'history' ? 'Archive Access' : 'Listings Routed',
+      briefBody: currentView === 'checkout'
+        ? 'Review the locked manifest before confirming the trade.'
+        : currentView === 'history'
+          ? 'Previous exchange logs are stored here for reference.'
+          : 'Browse the exchange, inspect listings, and stage gear in your cart.',
+      briefTags: [
+        { label: 'Category', value: currentCategoryLabel },
+        { label: 'Inventory', value: String(this.storeInventory?.allItems?.length || 0) },
+        { label: 'Reserve', value: `₢ ${cartRemaining}` }
+      ],
+      cartRemaining
+    };
+  }
+
+  _buildSelectedProductView() {
+    if (!this.selectedProductId) {return null;}
+    const item = this.itemsById.get(this.selectedProductId);
+    if (!item) {return null;}
+    const view = this._viewFromItem(item);
+    const suggestion = this.suggestions.get(view.id);
+    return {
+      ...view,
+      price: view.finalCost,
+      category: item.category || item.type || '',
+      availability: item.system?.availability || 'Standard',
+      suggestionBullets: suggestion?.explanations || [],
+      suggestionTierLabel: suggestion?.combined ? this._tierToDisplayLabel(suggestion.combined.tier) : '',
+      techDetailsHtml: this._buildTechnicalDetails(item, safeSystem(item) ?? {}, item.type || ''),
+      description: safeSystem(item)?.description || '',
+      mentorReview: this._generateMentorReview(suggestion),
+      flavorReviewsHtml: this._generateFlavorReviews(item, item.type || '')
+    };
+  }
+
+  _getLiveActorForTemplateDialog() {
+    return this.actor
+      || this.object
+      || this._shell?.actor
+      || this._shell?.object
+      || this._shell?.progressionSession?.actor
+      || null;
   }
 
   async _initialize() {
@@ -678,7 +809,74 @@ export class SWSEStore extends BaseSWSEAppV2 {
     if (sortSelect) {
       sortSelect.addEventListener('change', updateGrid);
     }
+    if (categoryFilter) {
+      categoryFilter.value = this.currentCategory || '';
+    }
 
+    root.querySelectorAll('[data-action="show-browse"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.currentView = 'browse';
+        this.render();
+      });
+    });
+    root.querySelectorAll('[data-action="view-cart"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.currentView = 'cart';
+        this.render();
+      });
+    });
+    root.querySelectorAll('[data-action="show-checkout"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.currentView = 'checkout';
+        this.render();
+      });
+    });
+    root.querySelectorAll('[data-action="show-history"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.currentView = 'history';
+        this.render();
+      });
+    });
+    root.querySelectorAll('[data-action="category-nav"]').forEach(btn => {
+      btn.addEventListener('click', ev => {
+        this.currentCategory = ev.currentTarget?.dataset?.category || '';
+        this.currentView = 'browse';
+        this.render();
+      });
+    });
+    root.querySelectorAll('[data-action="clear-filters"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.currentCategory = '';
+        this.currentPage = 1;
+        const search = root.querySelector('#store-search');
+        const availability = root.querySelector('#store-availability-filter');
+        if (search) search.value = '';
+        if (categoryFilter) categoryFilter.value = '';
+        if (availability) availability.value = '';
+        if (sortSelect) sortSelect.value = 'suggested';
+        updateGrid();
+      });
+    });
+    root.querySelectorAll('[data-action="remove-cart-row"]').forEach(btn => {
+      btn.addEventListener('click', async ev => {
+        const typeLabel = (ev.currentTarget?.dataset?.type || '').toLowerCase();
+        const type = typeLabel === 'droid' ? 'droids' : typeLabel === 'vehicle' ? 'vehicles' : 'items';
+        const id = ev.currentTarget?.dataset?.id;
+        if (!id) {return;}
+        removeFromCartById(this.cart, type, id);
+        await this._persistCart();
+        this.render();
+      });
+    });
+    root.querySelectorAll('[data-action="detail-add-to-cart"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!this.selectedProductId) {return;}
+        addItemToCart(this, this.selectedProductId, line => this._setRendarrLine(line));
+        await this._persistCart();
+        this.currentView = 'cart';
+        this.render();
+      });
+    });
     // Card expand buttons
     root.querySelectorAll('[data-action="expand-product"]').forEach(btn => {
       btn.addEventListener('click', ev => {
@@ -691,57 +889,45 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
     // Add to cart buttons (cards)
     root.querySelectorAll('[data-action="add-to-cart"]').forEach(btn => {
-      btn.addEventListener('click', ev => {
+      btn.addEventListener('click', async ev => {
         ev.stopPropagation();
         const id = ev.currentTarget?.dataset?.itemId;
         if (!id) {return;}
         addItemToCart(this, id, line => this._setRendarrLine(line));
-        this._persistCart();
-        this._renderCartUI();
+        await this._persistCart();
+        this.render();
       });
     });
 
-    // Cart button
-    const viewCartBtn = root.querySelector('[data-action="view-cart"]');
-    if (viewCartBtn) {
-      viewCartBtn.addEventListener('click', () => this._showCartSidebar(root));
-    }
-
-    // Close cart button (HANDLER FIX)
-    const closeCartBtn = root.querySelector('[data-action="close-cart"]');
-    if (closeCartBtn) {
-      closeCartBtn.addEventListener('click', () => this._hideCartSidebar(root));
-    }
-
     // Legacy buy item buttons (for backward compat)
     root.querySelectorAll('.buy-item').forEach(btn => {
-      btn.addEventListener('click', ev => {
+      btn.addEventListener('click', async ev => {
         const id = ev.currentTarget?.dataset?.itemId;
         if (!id) {return;}
         addItemToCart(this, id, line => this._setRendarrLine(line));
-        this._persistCart();
-        this._renderCartUI();
+        await this._persistCart();
+        this.render();
       });
     });
 
     root.querySelectorAll('.buy-droid').forEach(btn => {
-      btn.addEventListener('click', ev => {
+      btn.addEventListener('click', async ev => {
         const id = ev.currentTarget?.dataset?.actorId || ev.currentTarget?.dataset?.droidId;
         if (!id) {return;}
         addDroidToCart(this, id, line => this._setRendarrLine(line));
-        this._persistCart();
-        this._renderCartUI();
+        await this._persistCart();
+        this.render();
       });
     });
 
     root.querySelectorAll('.buy-vehicle').forEach(btn => {
-      btn.addEventListener('click', ev => {
+      btn.addEventListener('click', async ev => {
         const id = ev.currentTarget?.dataset?.actorId || ev.currentTarget?.dataset?.vehicleId;
         const condition = ev.currentTarget?.dataset?.condition || 'new';
         if (!id) {return;}
         addVehicleToCart(this, id, condition, line => this._setRendarrLine(line));
-        this._persistCart();
-        this._renderCartUI();
+        await this._persistCart();
+        this.render();
       });
     });
 
@@ -774,11 +960,20 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
     const checkoutBtn = root.querySelector('#checkout-cart');
     if (checkoutBtn) {
-      checkoutBtn.addEventListener('click', async () => {
+      checkoutBtn.addEventListener('click', () => {
+        this.currentView = 'checkout';
+        this.render();
+      });
+    }
+
+    const confirmCheckoutBtn = root.querySelector('#confirm-checkout');
+    if (confirmCheckoutBtn) {
+      confirmCheckoutBtn.addEventListener('click', async () => {
         await checkout(this, (el, v) => this._animateNumber(el, v));
         this.cart = emptyCart();
         await this._persistCart();
-        this._renderCartUI();
+        this.currentView = 'history';
+        this.render();
       });
     }
 
@@ -787,7 +982,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       clearBtn.addEventListener('click', async () => {
         clearCart(this.cart);
         await this._persistCart();
-        this._renderCartUI();
+        this.render();
       });
     }
 
@@ -805,6 +1000,9 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
     // Initial render once DOM exists
     this._renderCartUI();
+    if (root.querySelector('#products-grid')) {
+      this._filterAndSortGrid(root);
+    }
 
     // PHASE 5: Complete: All rendering done, fade out overlay
     this.loadingOverlay?.advancePhase?.();
@@ -829,7 +1027,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     // P2-4: Safe search term handling (Unicode-safe, case-insensitive)
     const rawSearchTerm = root.querySelector('#store-search')?.value || '';
     const searchTerm = rawSearchTerm.toLowerCase().trim();
-    const categoryFilter = root.querySelector('#store-category-filter')?.value || '';
+    const categoryFilter = root.querySelector('#store-category-filter')?.value || this.currentCategory || '';
     const availabilityFilter = root.querySelector('#store-availability-filter')?.value || '';
     const sortValue = root.querySelector('#store-sort')?.value || 'suggested';
 
@@ -894,6 +1092,21 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const emptyState = grid.parentElement?.querySelector('.empty-state');
     if (emptyState) {
       emptyState.style.display = totalVisible === 0 ? 'flex' : 'none';
+    }
+
+    root.querySelectorAll('[data-results-count]').forEach(el => {
+      el.textContent = String(totalVisible);
+    });
+    root.querySelectorAll('[data-cart-count]').forEach(el => {
+      el.textContent = String((this.cart.items.length + this.cart.droids.length + this.cart.vehicles.length) || 0);
+    });
+    root.querySelectorAll('[data-action="category-nav"]').forEach(btn => {
+      const isActive = (btn.dataset.category || '') === (categoryFilter || '');
+      btn.classList.toggle('is-active', isActive);
+    });
+    const allBtn = root.querySelector('[data-action="category-nav"][data-category=""]');
+    if (allBtn) {
+      allBtn.classList.toggle('is-active', !categoryFilter);
     }
 
     // Render pagination controls
@@ -967,6 +1180,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const modalHTML = this._buildProductModalContent(item);
     modal.innerHTML = modalHTML;
     modal.style.display = 'flex';
+    modal.onclick = event => {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    };
 
     // Close button handler
     modal.querySelector('.close-modal-btn')?.addEventListener('click', () => {
@@ -1000,14 +1218,14 @@ export class SWSEStore extends BaseSWSEAppV2 {
     }
 
     // Add to cart from modal (with quantity)
-    modal.querySelector('.modal-add-to-cart')?.addEventListener('click', () => {
+    modal.querySelector('.modal-add-to-cart')?.addEventListener('click', async () => {
       const qty = parseInt(qtyInput?.value) || 1;
       for (let i = 0; i < qty; i++) {
         addItemToCart(this, itemId, i === 0 ? (line => this._setRendarrLine(line)) : null);
       }
       this._persistCart();
-      this._renderCartUI();
       modal.style.display = 'none';
+      this.render();
     });
   }
 
@@ -1272,50 +1490,19 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const rootEl = this.element;
     if (!rootEl) {return;}
 
-    const listEl = rootEl.querySelector('#cart-items-list');
-    const subtotalEl = rootEl.querySelector('#cart-subtotal');
-    const remainingEl = rootEl.querySelector('#cart-remaining');
-    const countEl = rootEl.querySelector('#cart-count');
-    if (!listEl || !subtotalEl || !remainingEl || !countEl) {return;}
-
     const subtotal = calculateCartTotal(this.cart);
     const credits = Number(this.actor?.system?.credits ?? 0) || 0;
     const remaining = credits - subtotal;
+    const count = (this.cart.items.length + this.cart.droids.length + this.cart.vehicles.length) || 0;
 
-    countEl.textContent = String((this.cart.items.length + this.cart.droids.length + this.cart.vehicles.length) || 0);
-    subtotalEl.textContent = String(subtotal);
-    remainingEl.textContent = String(Math.max(0, remaining));
-
-    listEl.innerHTML = '';
-
-    const addRow = (entry, type) => {
-      const row = document.createElement('div');
-      row.classList.add('cart-item-row');
-      row.innerHTML = `
-        <img class="cart-item-img" src="${entry.img || ''}" alt="${entry.name || ''}"/>
-        <div class="cart-item-meta">
-          <div class="cart-item-name">${entry.name || ''}</div>
-          <div class="cart-item-cost">₢ ${entry.cost ?? 0}</div>
-        </div>
-        <button type="button" class="cart-item-remove holo-btn secondary" data-type="${type}" data-id="${entry.id}">
-          <i class="fa-solid fa-times"></i>
-        </button>
-      `;
-      listEl.appendChild(row);
-    };
-
-    for (const it of this.cart.items) {addRow(it, 'items');}
-    for (const it of this.cart.droids) {addRow(it, 'droids');}
-    for (const it of this.cart.vehicles) {addRow(it, 'vehicles');}
-
-    listEl.querySelectorAll('.cart-item-remove').forEach(btn => {
-      btn.addEventListener('click', async (ev) => {
-        const type = ev.currentTarget.dataset.type;
-        const id = ev.currentTarget.dataset.id;
-        removeFromCartById(this.cart, type, id);
-        await this._persistCart();
-        this._renderCartUI();
-      });
+    rootEl.querySelectorAll('[data-cart-count]').forEach(el => {
+      el.textContent = String(count);
+    });
+    rootEl.querySelectorAll('[data-cart-total]').forEach(el => {
+      el.textContent = String(subtotal);
+    });
+    rootEl.querySelectorAll('[data-cart-remaining]').forEach(el => {
+      el.textContent = String(Math.max(0, remaining));
     });
   }
 

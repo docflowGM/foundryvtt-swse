@@ -9,6 +9,7 @@ import { DroidPanelValidators } from './DroidPanelValidators.js';
 import { PANEL_REGISTRY } from './PANEL_REGISTRY.js';
 import { UIStateManager } from '../shared/UIStateManager.js';
 import { PanelDiagnostics } from '../shared/PanelDiagnostics.js';
+import { computeCenteredPosition, getApplicationTargetSize } from '/systems/foundryvtt-swse/scripts/utils/sheet-position.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -112,6 +113,22 @@ export class DroidSheet extends HandlebarsApplicationMixin(foundry.applications.
   }
 
   async _onRender(context, options) {
+    // ═══ FIX: Center on initial render (first time ever or after close/reopen) ═══
+    // Use dynamic dimensions instead of hardcoding 820x920
+    const isFirstRenderEver = !this.rendered;
+    if (isFirstRenderEver) {
+      this._hasBeenRendered = true;
+      this._shouldCenterOnRender = true;
+    }
+
+    const shouldCenter = this._shouldCenterOnRender;
+    if (shouldCenter) {
+      const { width: targetWidth, height: targetHeight } = getApplicationTargetSize(this);
+      const pos = computeCenteredPosition(targetWidth, targetHeight);
+      this.setPosition({ left: pos.left, top: pos.top });
+      this._shouldCenterOnRender = false;
+    }
+
     await super._onRender(context, options);
 
     if (this.uiStateManager) {

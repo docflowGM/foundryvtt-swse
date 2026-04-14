@@ -3567,7 +3567,7 @@ export const ActorEngine = {
       SWSELogger.error(`ActorEngine.deleteActiveEffects failed for ${actor?.name ?? 'unknown actor'}`, err);
       throw err;
     }
-  }
+  },
 
   /**
    * PHASE 4: Comprehensive mutation plan normalization for contract enforcement.
@@ -3616,7 +3616,7 @@ export const ActorEngine = {
     const normalizedUpdateData = foundry.utils.expandObject(flat);
 
     return { normalizedUpdateData, warnings };
-  }
+  },
 
   /**
    * Initialize canonical base shapes for domains touched by this mutation.
@@ -3656,7 +3656,7 @@ export const ActorEngine = {
     if (touched.has('hp')) {
       this._ensureCanonicalHpShape(actor);
     }
-  }
+  },
 
   /**
    * Validate that normalized mutation plan complies with canonical contract.
@@ -3702,7 +3702,7 @@ export const ActorEngine = {
     }
 
     return { isValid: warnings.length === 0, warnings };
-  }
+  },
 
   // ========================================
   // Domain-specific normalization helpers
@@ -3743,7 +3743,7 @@ export const ActorEngine = {
     }
 
     return warnings;
-  }
+  },
 
   /**
    * Normalize class paths: remove redundant scalar paths
@@ -3767,7 +3767,7 @@ export const ActorEngine = {
     }
 
     return warnings;
-  }
+  },
 
   /**
    * Normalize skill structure: ensure touched skills have complete shape
@@ -3792,24 +3792,54 @@ export const ActorEngine = {
 
       for (const prop of props) {
         const path = `${basePath}.${prop}`;
+        const defaults = {
+          trained: false,
+          miscMod: 0,
+          focused: false,
+          selectedAbility: ''
+        };
+
         if (!(path in flat)) {
-          // Initialize to safe default
-          const defaults = {
-            trained: false,
-            miscMod: 0,
-            focused: false,
-            selectedAbility: ''
-          };
           flat[path] = defaults[prop];
           warnings.push(
             `[INITIALIZE] Skill ${skillKey}.${prop} initialized to default (${defaults[prop]})`
+          );
+          continue;
+        }
+
+        if (prop === 'miscMod') {
+          const coerced = Number(flat[path]);
+          if (!Number.isFinite(coerced)) {
+            warnings.push(
+              `[COERCE] Skill ${skillKey}.miscMod invalid (${flat[path]}); defaulting to 0`
+            );
+            flat[path] = 0;
+          } else if (typeof flat[path] !== 'number') {
+            warnings.push(
+              `[COERCE] Skill ${skillKey}.miscMod ${JSON.stringify(flat[path])} -> ${coerced}`
+            );
+            flat[path] = coerced;
+          }
+        } else if (prop === 'trained' || prop === 'focused') {
+          if (typeof flat[path] !== 'boolean') {
+            const raw = flat[path];
+            flat[path] = raw === true || raw === 'true' || raw === 1 || raw === '1';
+            warnings.push(
+              `[COERCE] Skill ${skillKey}.${prop} ${JSON.stringify(raw)} -> ${flat[path]}`
+            );
+          }
+        } else if (prop === 'selectedAbility' && typeof flat[path] !== 'string') {
+          const raw = flat[path];
+          flat[path] = raw == null ? '' : String(raw);
+          warnings.push(
+            `[COERCE] Skill ${skillKey}.selectedAbility ${JSON.stringify(raw)} -> ${JSON.stringify(flat[path])}`
           );
         }
       }
     }
 
     return warnings;
-  }
+  },
 
   /**
    * Normalize XP paths: system.experience → system.xp.total
@@ -3833,7 +3863,7 @@ export const ActorEngine = {
     }
 
     return warnings;
-  }
+  },
 
   // ========================================
   // Canonical shape initialization helpers
@@ -3870,7 +3900,7 @@ export const ActorEngine = {
         }
       }
     }
-  }
+  },
 
   /**
    * Ensure touched skills have canonical object shapes
@@ -3914,7 +3944,7 @@ export const ActorEngine = {
         }
       }
     }
-  }
+  },
 
   /**
    * Ensure canonical XP object shape
@@ -3928,7 +3958,7 @@ export const ActorEngine = {
     if (actor.system.xp.total === undefined) {
       actor.system.xp.total = 0;
     }
-  }
+  },
 
   /**
    * Ensure canonical HP object shape
@@ -3945,7 +3975,7 @@ export const ActorEngine = {
     }
     if (actor.system.hp.value === undefined) actor.system.hp.value = 1;
     if (actor.system.hp.max === undefined) actor.system.hp.max = 1;
-  }
+  },
 
   /**
    * PHASE 3A: Normalize legacy ability paths to canonical schema.
@@ -3992,7 +4022,7 @@ export const ActorEngine = {
       const updated = foundry.utils.expandObject(flat);
       Object.assign(updateData, updated);
     }
-  }
+  },
 
   /**
    * PHASE 3D: Normalize legacy XP/experience paths to canonical schema.

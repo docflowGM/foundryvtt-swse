@@ -1,40 +1,32 @@
 <div class="prog-species-details">
 
-  {{!-- 1. Ol' Salty's species-specific quote (mentor prose) —}}
-  {{#if mentorProse}}
-    <div class="prog-species-details__salty-dialogue">
-      <i class="prog-species-details__salty-icon fas fa-comment-dots"></i>
-      <p class="prog-species-details__salty-text">"{{mentorProse}}"</p>
-    </div>
-  {{/if}}
-
-  {{!-- 2. Species portrait — only if art exists —}}
+  {{!-- 2. Species portrait - only if art exists --}}
   {{#if img}}
     <div class="prog-species-details__portrait">
       <img class="prog-species-details__portrait-img" src="{{img}}" alt="{{species.name}}">
     </div>
   {{/if}}
 
-  {{!-- 3. Name + source header —}}
+  {{!-- 3. Name + source header --}}
   <div class="prog-species-details__header">
     <h2 class="prog-species-details__name">{{species.name}}</h2>
     {{#if source}}<span class="prog-chip">{{source}}</span>{{/if}}
   </div>
 
-  {{!-- 4. Description text (lore/background) —}}
+  {{!-- 4. Description text (lore/background) --}}
   {{#if canonicalDescription}}
     <p class="prog-species-details__desc">{{canonicalDescription}}</p>
   {{else}}
     <p class="prog-species-details__desc prog-species-details__desc--unavailable">No description available.</p>
   {{/if}}
 
-  {{!-- 5. Key stats: size, speed —}}
+  {{!-- 5. Key stats: size, speed --}}
   <div class="prog-species-details__stats">
     {{#if size}}<div><strong>Size:</strong> {{size}}</div>{{/if}}
     {{#if speed}}<div><strong>Speed:</strong> {{speed}}</div>{{/if}}
   </div>
 
-  {{!-- 6. Ability modifiers: +2 DEX, -2 CON, etc. —}}
+  {{!-- 6. Ability modifiers: +2 DEX, -2 CON, etc. --}}
   {{#if abilityRows.length}}
     <div class="prog-species-details__attrs">
       {{#each abilityRows}}
@@ -48,7 +40,7 @@
     </div>
   {{/if}}
 
-  {{!-- 7. Special abilities —}}
+  {{!-- 7. Special abilities --}}
   {{#if abilities.length}}
     <div class="prog-species-details__special">
       <h4>Special Abilities</h4>
@@ -56,7 +48,7 @@
     </div>
   {{/if}}
 
-  {{!-- 8. Languages —}}
+  {{!-- 8. Languages --}}
   {{#if languages.length}}
     <div class="prog-species-details__languages">
       <h4>Languages</h4>
@@ -64,7 +56,7 @@
     </div>
   {{/if}}
 
-  {{!-- 9. CONFIRMATION ACTION — Confirm Species button or Near-Human builder entry —}}
+  {{!-- 9. CONFIRMATION ACTION - Confirm Species button or Near-Human builder entry --}}
   <div class="prog-species-details__actions">
     {{#if isNearHuman}}
       <button class="prog-btn prog-btn--primary" data-action="enter-near-human" type="button">

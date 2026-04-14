@@ -40,10 +40,24 @@
     <div class="prog-attribute-pointbuy-status
                 {{#if pointBuyStatus.isComplete}}prog-attribute-pointbuy--complete{{/if}}">
       <div class="prog-attribute-pointbuy-bar">
-        <div class="prog-attribute-pointbuy-used" style="width: {{div pointBuyStatus.spent 25 100}}%"></div>
+        <div class="prog-attribute-pointbuy-used" style="width: {{pointBuyStatus.spentPercent}}%"></div>
       </div>
       <div class="prog-attribute-pointbuy-text">
         {{pointBuyStatus.spent}}/25 points allocated
+      </div>
+    </div>
+  {{/if}}
+
+  {{!-- Dice Pool (Standard & Organic) --}}
+  {{#if (or (eq method "standard") (eq method "organic"))}}
+    <div class="prog-dice-pool">
+      <div class="prog-dice-pool-label">Available Values</div>
+      <div class="prog-dice-pool-tiles">
+        {{#each availablePoolTiles}}
+          <div class="prog-dice-tile" data-tile-id="{{id}}" draggable="true" title="Drag to assign">
+            <span class="prog-dice-value">{{value}}</span>
+          </div>
+        {{/each}}
       </div>
     </div>
   {{/if}}
@@ -68,20 +82,31 @@
           {{/if}}
         </div>
 
-        {{!-- Base Score --}}
+        {{!-- Base Score / Dice Assignment --}}
         <div class="prog-attribute-row__score prog-attribute-row__base">
           {{#if canAdjust}}
+            {{!-- Point Buy: +/- buttons with next cost --}}
             <button class="prog-attribute-btn prog-attribute-btn--minus"
                     data-ability="{{id}}"
                     data-delta="-1"
                     type="button">−</button>
-          {{/if}}
-          <span class="prog-attribute-value">{{base}}</span>
-          {{#if canAdjust}}
-            <button class="prog-attribute-btn prog-attribute-btn--plus"
-                    data-ability="{{id}}"
-                    data-delta="1"
-                    type="button">+</button>
+            <span class="prog-attribute-value">{{base}}</span>
+            <div class="prog-attribute-increment-info">
+              <button class="prog-attribute-btn prog-attribute-btn--plus"
+                      data-ability="{{id}}"
+                      data-delta="1"
+                      type="button">+</button>
+              {{#if nextIncrementCost}}
+                <span class="prog-attribute-cost {{#unless canIncrement}}prog-attribute-cost--unaffordable{{/unless}}">
+                  costs {{nextIncrementCost}}
+                </span>
+              {{/if}}
+            </div>
+          {{else}}
+            {{!-- Dice modes: drop zone for assignment --}}
+            <div class="prog-dice-drop-zone" data-drop-ability="{{id}}" title="Drop value here">
+              <span class="prog-attribute-value">{{base}}</span>
+            </div>
           {{/if}}
         </div>
 
@@ -114,5 +139,23 @@
     <div class="prog-attribute-headers__final">Final</div>
     <div class="prog-attribute-headers__modifier">Mod</div>
   </div>
+
+  {{!-- Dice Controls (Standard & Organic) --}}
+  {{#if (or (eq method "standard") (eq method "organic"))}}
+    <div class="prog-dice-controls">
+      <button class="prog-btn prog-btn--dice" data-dice-action="reset" type="button">
+        Reset
+      </button>
+      <button class="prog-btn prog-btn--dice" data-dice-action="reroll" type="button">
+        Reroll
+      </button>
+      <button class="prog-btn prog-btn--dice prog-btn--primary"
+              data-dice-action="lock"
+              type="button"
+              {{#unless isDiceComplete}}disabled{{/unless}}>
+        Lock
+      </button>
+    </div>
+  {{/if}}
 
 </div>{{!-- /attribute-surface --}}

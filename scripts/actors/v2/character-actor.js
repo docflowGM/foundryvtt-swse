@@ -9,6 +9,7 @@ import { FeatActionsMapper } from "/systems/foundryvtt-swse/scripts/utils/feat-a
 import { EncumbranceEngine } from "/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js";
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.
@@ -187,28 +188,16 @@ function mirrorHp(system) {
 }
 
 function mirrorSkills(system) {
-  const skills = system.skills ?? {};
+  const skills = normalizeSkillMap(system.skills);
   const list = [];
 
   for (const [key, s] of Object.entries(skills)) {
-    if (!s) continue;
+    if (!s || key === 'pilot') continue;
 
-    // PHASE 6: Instrumentation — validate skill has canonical properties
-    // Derived must have computed these values; sheet should not need fallbacks
-    if (typeof s.trained !== 'boolean') {
-      console.warn(`[Phase 6] Skill ${key} missing trained property (expected boolean)`, s);
-    }
-    if (typeof s.miscMod !== 'number') {
-      console.warn(`[Phase 6] Skill ${key} missing miscMod property (expected number)`, s);
-    }
-    if (typeof s.focused !== 'boolean') {
-      console.warn(`[Phase 6] Skill ${key} missing focused property (expected boolean)`, s);
-    }
-
-    const total = safeNumber(s.total, 0);
+    const total = safeNumber(s.legacyStaticTotal ? s.legacyTotal : s.total, 0);
     const trained = s.trained === true;
     const focused = s.focused === true;
-    const ability = s.selectedAbility ?? s.ability ?? '';
+    const ability = typeof s.selectedAbility === 'string' ? s.selectedAbility : (s.ability ?? '');
     list.push({
       key,
       label: humanizeSkillKey(key),

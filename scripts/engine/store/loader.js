@@ -12,6 +12,8 @@
  *     version,
  *     loadedAt,
  *     packsUsed: [],
+ *     missingPacks: [],
+ *     sourceCounts: {},
  *     itemCount,
  *     actorCount
  *   }
@@ -54,6 +56,31 @@ function saveCache(data) {
   }
 }
 
+
+function flattenPackNames(value) {
+  if (Array.isArray(value)) return value.flatMap(flattenPackNames);
+  return typeof value === 'string' ? [value] : [];
+}
+
+function countBySource(docs = []) {
+  const counts = {};
+  for (const doc of docs) {
+    const source = doc?.pack || 'world';
+    counts[source] = (counts[source] || 0) + 1;
+  }
+  return counts;
+}
+
+function mergeSourceCounts(...sources) {
+  const merged = {};
+  for (const source of sources) {
+    for (const [key, value] of Object.entries(source || {})) {
+      merged[key] = (merged[key] || 0) + Number(value || 0);
+    }
+  }
+  return merged;
+}
+
 /* ------------------------------------------- */
 /* SAFE FETCH HELPERS                           */
 /* ------------------------------------------- */
@@ -62,15 +89,15 @@ async function safeGetPackDocuments(packName) {
   const pack = game.packs.get(packName);
   if (!pack) {
     console.warn(`SWSE Store | Missing pack: ${packName}`);
-    return [];
+    return { docs: [], found: false, packName };
   }
 
   try {
     const docs = await pack.getDocuments();
-    return docs;
+    return { docs, found: true, packName };
   } catch (err) {
     console.error(`SWSE Store | Cannot load pack: ${packName}`, err);
-    return [];
+    return { docs: [], found: false, packName };
   }
 }
 
@@ -108,25 +135,30 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* LOAD PACK ITEMS                              */
   /* ------------------------------------------- */
 
-  const packItemDocs = [
-    ...(await safeGetPackDocuments(STORE_PACKS.WEAPONS)),
-    ...(await safeGetPackDocuments(STORE_PACKS.ARMOR)),
-    ...(await safeGetPackDocuments(STORE_PACKS.EQUIPMENT))
-  ];
+  const itemPackNames = [STORE_PACKS.WEAPONS, STORE_PACKS.ARMOR, STORE_PACKS.EQUIPMENT];
+  const itemPackResults = await Promise.all(itemPackNames.map(safeGetPackDocuments));
+  const packItemDocs = itemPackResults.flatMap(result => result.docs);
 
   /* ------------------------------------------- */
   /* LOAD PACK ACTORS (droids + vehicles)         */
   /* ------------------------------------------- */
 
-  // Load droid and vehicle actors from packs
-  const packActorDocs = [
-    ...(await safeGetPackDocuments(STORE_PACKS.DROIDS))
-  ];
+  const actorPackNames = [STORE_PACKS.DROIDS, ...STORE_PACKS.VEHICLE_PACKS];
+  const actorPackResults = await Promise.all(actorPackNames.map(safeGetPackDocuments));
+  let packActorDocs = actorPackResults.flatMap(result => result.docs);
 
-  // Load vehicles from all vehicle packs (array of pack names)
-  for (const vehiclePack of STORE_PACKS.VEHICLE_PACKS) {
-    packActorDocs.push(...(await safeGetPackDocuments(vehiclePack)));
+  // Canonical vehicles pack fallback: only use when split vehicle packs return no actors.
+  if (packActorDocs.length === 0 && STORE_PACKS.VEHICLES_CANONICAL) {
+    const canonicalVehicles = await safeGetPackDocuments(STORE_PACKS.VEHICLES_CANONICAL);
+    if (canonicalVehicles.found) {
+      actorPackResults.push(canonicalVehicles);
+      packActorDocs = canonicalVehicles.docs;
+    }
   }
+
+  const missingPacks = [...itemPackResults, ...actorPackResults]
+    .filter(result => !result.found)
+    .map(result => result.packName);
 
   /* ------------------------------------------- */
   /* MERGE SOURCES                                */
@@ -136,14 +168,35 @@ export async function loadRawStoreData({ useCache = true } = {}) {
     .filter(item => item.type !== 'weaponUpgrade'); // Exclude weaponUpgrades - they're not store inventory
   const allActors = [...worldActors, ...packActorDocs];
 
+  const itemSourceCounts = mergeSourceCounts(countBySource(worldItems), countBySource(packItemDocs));
+  const actorSourceCounts = mergeSourceCounts(countBySource(worldActors), countBySource(packActorDocs));
+
   /* ------------------------------------------- */
   /* BUILD METADATA                                */
   /* ------------------------------------------- */
 
   const metadata = {
-    version: 1,
+    version: 2,
     loadedAt: Date.now(),
-    packsUsed: Object.values(STORE_PACKS),
+    packsUsed: flattenPackNames([
+      STORE_PACKS.WEAPONS,
+      STORE_PACKS.ARMOR,
+      STORE_PACKS.EQUIPMENT,
+      STORE_PACKS.DROIDS,
+      STORE_PACKS.VEHICLE_PACKS,
+      STORE_PACKS.VEHICLES_CANONICAL
+    ]),
+    missingPacks,
+    sourceCounts: {
+      items: itemSourceCounts,
+      actors: actorSourceCounts,
+      worldItems: worldItems.length,
+      worldActors: worldActors.length,
+      packItems: packItemDocs.length,
+      packActors: packActorDocs.length,
+      filteredItems: allItems.length,
+      filteredActors: allActors.length
+    },
     itemCount: allItems.length,
     actorCount: allActors.length
   };

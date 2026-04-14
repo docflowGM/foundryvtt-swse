@@ -26,6 +26,15 @@
 
 import { swseLogger } from '../../../utils/logger.js';
 
+function escapeHTML(value = '') {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // ============================================================================
 // TRANSLATION PROFILES — Define behavior for each UI context
 // ============================================================================
@@ -44,6 +53,15 @@ export const TRANSLATION_PROFILES = {
       success: 'translating-success',
       waiting: 'translating-waiting'
     }
+  },
+
+  chargenBootLine: {
+    mode: 'boot-line',
+    typingSpeed: 42,
+    decodeSpeed: 34,
+    cursorCharacter: '█',
+    preserveSpaces: true,
+    enableSkip: true
   },
 
   mentorDialogue: {
@@ -219,6 +237,9 @@ export class TranslationSession {
         case 'typewriter-target':
           await this._animateTypewriterTarget(myToken);
           break;
+        case 'boot-line':
+          await this._animateBootLine(myToken);
+          break;
         case 'decrypt':
           await this._animateDecrypt(myToken);
           break;
@@ -329,6 +350,71 @@ export class TranslationSession {
 
       animateFrame();
     });
+  }
+
+  async _animateBootLine(sessionToken) {
+    const binding = this._binding;
+    if (!binding) return;
+
+    const container = binding.get('lineText') || binding.get('aurabeshText') || binding.get('translationText');
+    if (!container) {
+      swseLogger.error('[TranslationSession] No boot line container found');
+      return;
+    }
+
+    const sourceText = this._options.sourceText || this._options.translatedText || '';
+    const translatedText = this._options.translatedText || sourceText;
+    const cursor = escapeHTML(this._profile.cursorCharacter || '█');
+    const typingSpeed = this._profile.typingSpeed || 42;
+    const decodeSpeed = this._profile.decodeSpeed || 34;
+    const keepFinalCursor = this._options.keepFinalCursor === true;
+    const cursorMode = this._options.cursorMode || 'translating';
+
+    const renderFrame = (typedCount, decodeCount, showCursor = true) => {
+      const typedSource = sourceText.slice(0, typedCount);
+      const decodedPrefix = translatedText.slice(0, decodeCount);
+      const undecodedSuffix = typedSource.slice(decodeCount);
+
+      const basic = decodedPrefix
+        ? `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(decodedPrefix)}</span>`
+        : '';
+      const aurabesh = undecodedSuffix
+        ? `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--aurabesh">${escapeHTML(undecodedSuffix)}</span>`
+        : '';
+      const cursorClass = cursorMode === 'blink'
+        ? 'is-blinking'
+        : (cursorMode === 'error' ? 'is-error is-translating' : 'is-translating');
+      const cursorHTML = showCursor
+        ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
+        : '';
+
+      binding.setHTML('lineText', `${basic}${cursorHTML}${aurabesh}`);
+    };
+
+    const wait = (ms) => new Promise((resolve) => {
+      this._timer = setTimeout(resolve, ms);
+    });
+
+    for (let typedCount = 0; typedCount <= sourceText.length; typedCount += 1) {
+      if (this._sessionToken !== sessionToken || this._state === 'cancelled') return;
+      renderFrame(typedCount, 0, true);
+      await wait(typingSpeed);
+    }
+
+    for (let decodeCount = 0; decodeCount <= translatedText.length; decodeCount += 1) {
+      if (this._sessionToken !== sessionToken || this._state === 'cancelled') return;
+      renderFrame(sourceText.length, decodeCount, true);
+      await wait(decodeSpeed);
+    }
+
+    const finalCursorClass = cursorMode === 'blink' ? 'is-blinking' : 'is-translating';
+    const finalCursor = keepFinalCursor
+      ? `<span class="prog-intro-cursor ${finalCursorClass}">${cursor}</span>`
+      : '';
+    binding.setHTML(
+      'lineText',
+      `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(translatedText)}</span>${finalCursor}`
+    );
   }
 
   /**

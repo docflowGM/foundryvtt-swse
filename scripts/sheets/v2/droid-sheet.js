@@ -17,6 +17,7 @@ import { isXPEnabled } from "/systems/foundryvtt-swse/scripts/engine/progression
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
+import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -190,6 +191,22 @@ export class SWSEV2DroidSheet extends
    * which triggers a re-render with new _prepareContext() data.
    */
   async _onRender(context, options) {
+    // ═══ FIX: Center on initial render (first time ever or after close/reopen) ═══
+    // Use dynamic dimensions instead of hardcoding 820x920
+    const isFirstRenderEver = !this.rendered;
+    if (isFirstRenderEver) {
+      this._hasBeenRendered = true;
+      this._shouldCenterOnRender = true;
+    }
+
+    const shouldCenter = this._shouldCenterOnRender;
+    if (shouldCenter) {
+      const { width: targetWidth, height: targetHeight } = getApplicationTargetSize(this);
+      const pos = computeCenteredPosition(targetWidth, targetHeight);
+      this.setPosition({ left: pos.left, top: pos.top });
+      this._shouldCenterOnRender = false;
+    }
+
     // Phase 3: Enforce super._onRender call (AppV2 contract)
     await super._onRender(context, options);
 

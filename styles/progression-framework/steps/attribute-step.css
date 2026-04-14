@@ -246,6 +246,26 @@
   cursor: not-allowed;
 }
 
+/* Point Buy Increment Info (button + cost label) */
+.progression-shell .prog-attribute-increment-info {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-xs);
+  white-space: nowrap;
+}
+
+.progression-shell .prog-attribute-cost {
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  font-weight: normal;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-attribute-cost--unaffordable {
+  color: var(--prog-negative);
+  opacity: 0.7;
+}
+
 /* Semantic Colors */
 .progression-shell .prog-num--pos {
   color: var(--prog-positive);
@@ -408,4 +428,125 @@
   line-height: 1.5;
   color: var(--prog-text);
   text-shadow: var(--prog-text-shadow);
+}
+
+/* Dice Pool & Assignment (Standard & Organic) */
+.progression-shell .prog-dice-pool {
+  padding: var(--prog-space-sm);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .prog-dice-pool-label {
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--prog-text-dim);
+  margin-bottom: var(--prog-space-xs);
+}
+
+.progression-shell .prog-dice-pool-tiles {
+  display: flex;
+  gap: var(--prog-space-xs);
+  flex-wrap: wrap;
+}
+
+.progression-shell .prog-dice-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.2), rgba(0, 220, 180, 0.1));
+  border: 2px solid var(--prog-accent);
+  border-radius: var(--prog-radius-sm);
+  cursor: grab;
+  user-select: none;
+  transition: all var(--prog-transition-fast);
+}
+
+.progression-shell .prog-dice-tile:hover {
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.progression-shell .prog-dice-tile.dragging {
+  opacity: 0.6;
+  cursor: grabbing;
+}
+
+.progression-shell .prog-dice-value {
+  font-weight: bold;
+  font-size: var(--prog-font-size-base);
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+/* Dice Drop Zone */
+.progression-shell .prog-dice-drop-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: var(--prog-space-xs);
+  background: rgba(0, 0, 0, 0.1);
+  border: 2px dashed var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  transition: all var(--prog-transition-fast);
+}
+
+.progression-shell .prog-dice-drop-zone.dragover {
+  background: rgba(0, 170, 255, 0.15);
+  border-color: var(--prog-accent);
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
+}
+
+.progression-shell .prog-dice-drop-zone .prog-attribute-value {
+  color: var(--prog-accent);
+}
+
+/* Dice Control Buttons */
+.progression-shell .prog-dice-controls {
+  display: flex;
+  gap: var(--prog-space-sm);
+  justify-content: flex-end;
+  padding: var(--prog-space-md) 0 0 0;
+  border-top: 1px solid var(--prog-border);
+}
+
+.progression-shell .prog-btn--dice {
+  padding: var(--prog-space-xs) var(--prog-space-md);
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  color: var(--prog-text-dim);
+  cursor: pointer;
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all var(--prog-transition-fast);
+}
+
+.progression-shell .prog-btn--dice:hover:not(:disabled) {
+  border-color: var(--prog-border-bright);
+  color: var(--prog-text);
+}
+
+.progression-shell .prog-btn--dice.prog-btn--primary {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+}
+
+.progression-shell .prog-btn--dice.prog-btn--primary:hover:not(:disabled) {
+  background: rgba(0, 170, 255, 0.15);
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
+}
+
+.progression-shell .prog-btn--dice:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }

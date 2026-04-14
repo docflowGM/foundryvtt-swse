@@ -24,6 +24,7 @@
  */
 
 import { swseLogger } from '../../../utils/logger.js';
+import { SpeciesRegistry } from '../../../engine/registries/species-registry.js';
 
 export class ProjectionEngine {
   /**
@@ -104,14 +105,15 @@ export class ProjectionEngine {
    * Returns normalized format: { str: { score, modifier }, dex: { score, modifier }, ... }
    * Modifier computed as (score - 10) / 2, rounded down.
    *
+   * FIXED: Now applies species modifiers from SpeciesRegistry to staged attribute scores.
+   * This ensures the summary rail shows species-adjusted values, not base values.
+   *
    * @private
    */
   static _projectAttributes(draftSelections) {
     const attrSelection = draftSelections.attributes;
-    const defaultAttrs = {
-      str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10,
-    };
 
+    // Get staged attribute scores (or base 10 if not set)
     const scores = {
       str: attrSelection?.values?.str || 10,
       dex: attrSelection?.values?.dex || 10,
@@ -120,6 +122,23 @@ export class ProjectionEngine {
       wis: attrSelection?.values?.wis || 10,
       cha: attrSelection?.values?.cha || 10,
     };
+
+    // Apply species modifiers if a species is selected
+    if (draftSelections.species?.id) {
+      try {
+        const species = SpeciesRegistry.getById(draftSelections.species.id);
+        if (species?.abilityScores) {
+          // Apply species modifiers to the staged scores
+          const mods = species.abilityScores;
+          Object.keys(scores).forEach(ability => {
+            scores[ability] += (mods[ability] || 0);
+          });
+        }
+      } catch (err) {
+        swseLogger.warn('[ProjectionEngine] Error applying species modifiers:', err);
+        // Fall back to unmodified scores if species lookup fails
+      }
+    }
 
     // Compute normalized format with scores and modifiers
     const normalized = {};

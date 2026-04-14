@@ -147,6 +147,22 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
   }
 
   async _onRender(context, options) {
+    // ═══ FIX: Center on initial render (first time ever or after close/reopen) ═══
+    // Use dynamic dimensions instead of hardcoding 820x920
+    const isFirstRenderEver = !this.rendered;
+    if (isFirstRenderEver) {
+      this._hasBeenRendered = true;
+      this._shouldCenterOnRender = true;
+    }
+
+    const shouldCenter = this._shouldCenterOnRender;
+    if (shouldCenter) {
+      const { width: targetWidth, height: targetHeight } = getApplicationTargetSize(this);
+      const pos = computeCenteredPosition(targetWidth, targetHeight);
+      this.setPosition({ left: pos.left, top: pos.top });
+      this._shouldCenterOnRender = false;
+    }
+
     // Phase 3: Enforce super._onRender call (AppV2 contract)
     await super._onRender(context, options);
 

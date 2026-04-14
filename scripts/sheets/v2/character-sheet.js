@@ -992,6 +992,8 @@ const forcePoints = [];
     // buildHeaderHpSegments() uses the same HP data as all other HP displays
     const headerHpSegments = buildHeaderHpSegments(actor);
 
+    let panelContexts = {};
+
     // ═════════════════════════════════════════════════════════════════
     // PHASE 8: CONTRACT OBSERVABILITY — CRITICAL LITMUS TESTS
     // These four checks verify that Phase 7-7.5 unification actually landed
@@ -1160,7 +1162,7 @@ const forcePoints = [];
     }
 
     // Build visible panels + cached hidden panels
-    const panelContexts = {};
+    panelContexts = {};
     for (const panelName of panelsToBuild) {
       const startTime = performance.now();
       const builderMethod = `build${panelName.charAt(0).toUpperCase() + panelName.slice(1)}`;
@@ -1885,7 +1887,7 @@ const forcePoints = [];
         await launchProgression(this.actor);
       } catch (err) {
         console.error('[SHEET] ✗ launchProgression failed:', err);
-        SWSELogger.error('[CharacterSheet] Progression launch failed:', err);
+        swseLogger.error('[CharacterSheet] Progression launch failed:', err);
       }
     }, { signal, capture: false });
 
@@ -1898,7 +1900,7 @@ const forcePoints = [];
         await launchProgression(this.actor, { currentStep: 'attribute' });
       } catch (err) {
         console.error('[SHEET] â roll-attributes failed:', err);
-        SWSELogger.error('[CharacterSheet] roll-attributes failed:', err);
+        swseLogger.error('[CharacterSheet] roll-attributes failed:', err);
       }
     }, { signal, capture: false });
 
@@ -1933,7 +1935,7 @@ const forcePoints = [];
         await launchProgression(this.actor, { currentStep: targetStep });
       } catch (err) {
         console.error(`[SHEET] ✗ ${action} failed:`, err);
-        SWSELogger.error(`[CharacterSheet] ${action} failed:`, err);
+        swseLogger.error(`[CharacterSheet] ${action} failed:`, err);
       }
     }, { signal, capture: false });
 
@@ -1946,7 +1948,7 @@ const forcePoints = [];
         await launchFollowerProgression(this.actor);
       } catch (err) {
         console.error('[SHEET] ✗ launchFollowerProgression failed:', err);
-        SWSELogger.error('[CharacterSheet] Follower progression launch failed:', err);
+        swseLogger.error('[CharacterSheet] Follower progression launch failed:', err);
       }
     }, { signal, capture: false });
 
@@ -3271,6 +3273,7 @@ const forcePoints = [];
     }));
   }
 
+  /* ============================================================
      PHASE 10: SKILL USE HELPERS
   ============================================================ */
 

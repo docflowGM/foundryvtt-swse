@@ -31,6 +31,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 
 export class DerivedCalculator {
   /**
@@ -253,6 +254,7 @@ export class DerivedCalculator {
         useTheForce: { defaultAbility: 'cha', untrained: true, armorPenalty: false }
       };
 
+      const normalizedSkills = normalizeSkillMap(actor.system.skills);
       const halfLevel = actor.system.halfLevel || 0;
       const isDroid = actor.system.isDroid || false;
       const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
@@ -267,14 +269,26 @@ export class DerivedCalculator {
       const speciesSkillBonuses = actor.system.speciesSkillBonuses || {};
 
       for (const [skillKey, skillDef] of Object.entries(skillData)) {
-        const skill = actor.system.skills?.[skillKey];
-        if (!skill) {
-          // PHASE 6: Instrumentation — missing skill in base input
-          // This should not happen if template/progression correctly initialized skills
-          swseLogger.warn(`[Phase 6] Skill ${skillKey} missing from canonical base input (system.skills)`, {
-            actor: actor.name,
-            skillKey
-          });
+        const skill = normalizedSkills[skillKey];
+
+        // Phase 3C: Canonical skill schema = {trained, miscMod, focused, selectedAbility}.
+        // Legacy compendium droids may contribute static numeric totals; honor those instead
+        // of re-deriving from partial schema to avoid crashes and noisy warnings.
+        if (skill.legacyStaticTotal === true && Number.isFinite(Number(skill.legacyTotal))) {
+          updates['system.derived.skills'][skillKey] = {
+            label: skillKey,
+            ability: skill.selectedAbility || skillDef.defaultAbility,
+            total: Number(skill.legacyTotal),
+            trained: skill.trained || false,
+            focused: skill.focused || false,
+            miscMod: Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0,
+            armorPenalty: 0,
+            conditionPenalty: 0,
+            featBonus: 0,
+            speciesBonus: 0,
+            stateBonus: 0,
+            untrained: skillDef.untrained !== false
+          };
           continue;
         }
 
@@ -285,7 +299,8 @@ export class DerivedCalculator {
         const abilityMod = (updates['system.derived.attributes']?.[abilityKey]?.mod) || 0;
 
         // Calculate total bonus
-        let total = abilityMod + (skill.miscMod || 0);
+        const skillMiscMod = Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0;
+        let total = abilityMod + skillMiscMod;
 
         // Add species trait bonus
         const speciesBonus = speciesSkillBonuses[skillKey] || 0;
@@ -383,7 +398,7 @@ export class DerivedCalculator {
           selectedAbility: abilityKey,
           trained: skill.trained || false,
           focused: skill.focused || false,
-          miscMod: skill.miscMod || 0,
+          miscMod: Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0,
           speciesBonus: speciesBonus,
           hasOccupationBonus: hasOccupationBonus,
           featBonus: featBonus,

@@ -19,6 +19,7 @@ import { EnhancedPilot } from "/systems/foundryvtt-swse/scripts/engine/combat/st
 import { EnhancedCommander } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-commander.js";
 import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
 import { StarshipManeuversEngine } from "/systems/foundryvtt-swse/scripts/engine/StarshipManeuversEngine.js";
+import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -240,6 +241,22 @@ export class SWSEV2VehicleSheet extends
    * which triggers a re-render with new _prepareContext() data.
    */
   async _onRender(context, options) {
+    // ═══ FIX: Center on initial render (first time ever or after close/reopen) ═══
+    // Use dynamic dimensions instead of hardcoding 820x920
+    const isFirstRenderEver = !this.rendered;
+    if (isFirstRenderEver) {
+      this._hasBeenRendered = true;
+      this._shouldCenterOnRender = true;
+    }
+
+    const shouldCenter = this._shouldCenterOnRender;
+    if (shouldCenter) {
+      const { width: targetWidth, height: targetHeight } = getApplicationTargetSize(this);
+      const pos = computeCenteredPosition(targetWidth, targetHeight);
+      this.setPosition({ left: pos.left, top: pos.top });
+      this._shouldCenterOnRender = false;
+    }
+
     // Phase 3: Enforce super._onRender call (AppV2 contract)
     await super._onRender(context, options);
 
@@ -714,11 +731,10 @@ export class SWSEV2VehicleSheet extends
     const formDataObj = Object.fromEntries(formData.entries());
     const expanded = foundry.utils.expandObject(formDataObj);
 
-    if (!expanded) {return;}
+    if (!expanded) return;
 
     try {
-      // CRITICAL: Include ALL fields (name, system, etc.) not just system.
-      // Route directly through governance layer to bypass Foundry's actor.update()
+      // Route directly through governance layer
       await ActorEngine.updateActor(this.actor, expanded);
     } catch (err) {
       console.error('Sheet submission failed:', err);

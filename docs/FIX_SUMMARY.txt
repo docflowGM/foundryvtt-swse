@@ -1,0 +1,181 @@
+═══════════════════════════════════════════════════════════════════════════════
+                     RENDER QUEUE FIX — SUMMARY REPORT
+═══════════════════════════════════════════════════════════════════════════════
+
+ROOT CAUSE
+──────────
+The progression shell's render guard discarded nested rerender requests during
+active renders. When Species step clicked an item:
+  1. Set shell.focusedItem = entry
+  2. Await shell.mentorRail.speak() (async animation)
+  3. Call shell.render() to hydrate the detail panel
+
+If the shell was still considered "rendering", the critical detail hydration
+rerender was BLOCKED and silently discarded, leaving the right rail empty.
+
+Console evidence:
+  "[ProgressionShell] Render called while already rendering — BLOCKED"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+FILES CHANGED
+─────────────
+ONLY ONE FILE:
+  • scripts/apps/progression-framework/shell/progression-shell.js
+
+TWO LOCATIONS:
+  1. Constructor (line 285–288): Initialize _pendingRender flag
+  2. render() method (line 422–450): Implement queue logic with try/finally
+
+═══════════════════════════════════════════════════════════════════════════════
+
+EXACT CODE CHANGES
+──────────────────
+
+LOCATION 1 — Constructor (lines 285–288)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OLD:
+    // Render loop prevention guard
+    this._isRendering = false;
+    this._renderCount = 0;
+
+NEW:
+    // Render loop prevention guard — now with queueing support
+    this._isRendering = false;
+    this._pendingRender = false;
+    this._renderCount = 0;
+
+CHANGE: Added _pendingRender = false to track queued rerenders
+
+
+LOCATION 2 — render() method (lines 422–450)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OLD:
+  async render(...args) {
+    if (this._isRendering) {
+      console.warn("[ProgressionShell] ⚠️ Render called while already rendering — BLOCKED (loop prevention)");
+      return this;
+    }
+    this._isRendering = true;
+    this._renderCount++;
+    console.log(`[ProgressionShell] RENDER START (#${this._renderCount}) position:`, this.position);
+    const result = await super.render(...args);
+    console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
+    this._isRendering = false;
+    return result;
+  }
+
+NEW:
+  async render(...args) {
+    // Render queue: if render is in progress, queue one pending rerender instead of blocking
+    if (this._isRendering) {
+      console.warn("[ProgressionShell] ⚠️ Render called while already rendering — QUEUEING (will retry after)");
+      this._pendingRender = true;
+      return this;
+    }
+    this._isRendering = true;
+    this._renderCount++;
+    console.log(`[ProgressionShell] RENDER START (#${this._renderCount}) position:`, this.position);
+    try {
+      const result = await super.render(...args);
+      console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
+      return result;
+    } finally {
+      this._isRendering = false;
+      if (this._pendingRender) {
+        this._pendingRender = false;
+        console.log(`[ProgressionShell] EXECUTE QUEUED RERENDER (#${this._renderCount + 1})`);
+        queueMicrotask(() => this.render());
+      }
+    }
+  }
+
+CHANGES:
+  • Line 425–428: Queue the rerender instead of blocking (set _pendingRender)
+  • Line 436–449: Wrap in try/finally to ensure lock is always released
+  • Line 444–448: After lock is released, execute queued rerender if flagged
+  • Uses queueMicrotask() for safe async scheduling (standard browser API)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+WHY THIS IS MINIMAL & SAFE
+───────────────────────────
+✓ ISOLATED to render guard only — no species data, mentor, or template changes
+✓ PRESERVES loop prevention — only queues ONE rerender, not unlimited
+✓ USES TRY/FINALLY for guaranteed guard release, even on errors
+✓ STANDARD PATTERNS — queueMicrotask() is browser-standard
+✓ BACKWARD COMPATIBLE — existing render() calls work unchanged
+✓ NO NEW DEPENDENCIES — uses only native browser APIs
+
+═══════════════════════════════════════════════════════════════════════════════
+
+EXPECTED BEHAVIOR AFTER FIX
+────────────────────────────
+OLD:
+  Species click
+  → focusedItem set ✓
+  → mentorRail.speak() ✓
+  → shell.render() called but BLOCKED
+  → Detail rail empty ✗
+
+NEW:
+  Species click
+  → focusedItem set ✓
+  → mentorRail.speak() ✓
+  → shell.render() called → queued ✓
+  → Current render ends
+  → Queued rerender runs → detail rail hydrates ✓
+
+Console output now shows:
+  [ProgressionShell] RENDER START (#1)
+  [ProgressionShell] Render called while already rendering — QUEUEING (will retry after)
+  [ProgressionShell] RENDER COMPLETE (#1)
+  [ProgressionShell] EXECUTE QUEUED RERENDER (#2)
+  [ProgressionShell] RENDER START (#2)
+  [ProgressionShell] RENDER COMPLETE (#2)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+VERIFICATION CHECKLIST
+──────────────────────
+□ Click non-Advose species → right detail rail populates immediately
+□ Species image, name, attributes, abilities all visible
+□ Mentor text (Ol' Salty dialogue) appears
+□ Can click different species rapidly — details update smoothly
+□ No render loop warnings in console
+□ No "BLOCKED" message as terminal outcome (should see "QUEUEING")
+□ Progression step no longer stuck waiting for detail hydration
+
+═══════════════════════════════════════════════════════════════════════════════
+
+RISKS & FOLLOW-UP OBSERVATIONS
+────────────────────────────────
+LOW RISK:
+  • Bounded queue (max 2 renders per event) — no unbounded loops
+  • Microtask scheduling prevents stack issues
+  • Guard still prevents recursive render chains
+  • No change to species resolution, mentor animation, or templates
+
+IF DETAILS STILL DON'T HYDRATE:
+  Issue is not the render lock, but likely:
+  1. shell.focusedItem not set correctly (species-step.js line 521)
+  2. renderDetailsPanel() called with wrong data
+  3. Detail template not receiving species object
+  → Action: Check data flow in getDetailsPanelData() and renderDetailsPanel()
+
+IF MULTIPLE RERENDERS HAPPEN:
+  This is expected and optimal:
+  1. Initial render from click handler
+  2. Queued rerender after mentor speak completes
+  → This is correct behavior, not a regression
+
+═══════════════════════════════════════════════════════════════════════════════
+
+SYNTAX VERIFICATION
+────────────────────
+✓ Node syntax check passed (no errors)
+✓ File modifications applied correctly
+✓ Both locations updated
+✓ Ready for testing
+
+═══════════════════════════════════════════════════════════════════════════════

@@ -111,6 +111,14 @@ function getFieldType(fieldName) {
     return 'boolean';
   }
 
+  if (/^system\.skills\.[^.]+\.miscMod$/.test(fieldName)) {
+    return 'number';
+  }
+
+  if (/^system\.skills\.[^.]+\.selectedAbility$/.test(fieldName)) {
+    return 'string';
+  }
+
   if (fieldName.includes('notes') || fieldName.includes('description') || fieldName.includes('text')) {
     return 'string';
   }
