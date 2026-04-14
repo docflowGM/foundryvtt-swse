@@ -5,6 +5,9 @@ Populate Lightsaber Form Powers Compendium
 This script reads lightsaber-form-powers.json and populates the
 packs/lightsaberformpowers.db SQLite database with forcepower items.
 
+Lightsaber form powers are modeled as bonus riders on base forcepower mechanics.
+The bonusTalent field indicates which talent enhances the power (bonus metadata, NOT prerequisite).
+
 Usage:
     python3 scripts/build/populate-lightsaber-form-powers.py
 """
@@ -32,22 +35,31 @@ def extract_bonus_talent(form_bonus_text):
         return match.group(1)
     return ''
 
-def map_discipline(discipline_str):
-    """Map JSON discipline string to schema choices"""
-    if not discipline_str:
-        return 'telekinetic'
-    disc = discipline_str.lower()
-    if 'telekinetic' in disc:
-        return 'telekinetic'
-    elif 'telepathic' in disc:
-        return 'telepathic'
-    elif 'vital' in disc:
-        return 'vital'
-    elif 'dark' in disc:
-        return 'dark-side'
-    elif 'light' in disc:
-        return 'light-side'
-    return 'telekinetic'
+def extract_trigger(form_bonus_text):
+    """
+    Extract trigger condition if present and cleanly separable.
+
+    Examples:
+    - "If you have X Talent and miss with both attack rolls, ..." -> "Miss with both attack rolls"
+    - "If you have X Talent, " -> "" (no cleanly separable trigger)
+    """
+    if not form_bonus_text:
+        return ''
+
+    import re
+    # Look for pattern: "If you have the X Talent and [trigger condition], [effect]"
+    match = re.search(r'If you have the [^T]+ Talent and ([^,]+),', form_bonus_text)
+    if match:
+        trigger = match.group(1).strip()
+        # Clean up common patterns
+        if trigger.startswith('you '):
+            trigger = trigger[4:]  # Remove leading "you "
+        # Capitalize first letter
+        trigger = trigger[0].upper() + trigger[1:] if trigger else ''
+        return trigger
+
+    # Don't extract trigger if there's no clear "and" separator
+    return ''
 
 def populate_lightsaber_form_powers():
     """Main function to populate the compendium"""
@@ -85,10 +97,11 @@ def populate_lightsaber_form_powers():
                 type TEXT NOT NULL,
                 img TEXT,
                 system TEXT,
+                effects TEXT,
                 folder TEXT,
-                flags TEXT,
                 sort INTEGER DEFAULT 0,
-                prototypeToken TEXT,
+                ownership TEXT,
+                flags TEXT,
                 _stats TEXT
             )
         ''')
@@ -115,7 +128,7 @@ def populate_lightsaber_form_powers():
             # Generate ID
             item_id = generate_id()
 
-            # Build description
+            # Build description - preserve both description and effect if both exist
             full_description = ''
             if power_data.get('description'):
                 full_description += power_data['description']
@@ -124,31 +137,37 @@ def populate_lightsaber_form_powers():
                     full_description += '\n\n'
                 full_description += power_data['effect']
 
-            # Map discipline
-            discipline = map_discipline(power_data.get('discipline', ''))
+            # Preserve discipline exactly as in source (e.g., "Form VII: Juyo")
+            discipline = power_data.get('discipline', 'telekinetic')
 
-            # Determine useTheForce DC
+            # Determine useTheForce DC from lowest DC in chart
             use_the_force = 15
             if power_data.get('dcChart'):
                 dcs = sorted([item['dc'] for item in power_data['dcChart']])
                 if dcs:
                     use_the_force = dcs[0]
 
-            # Extract bonus talent from formBonus text for semantic clarity
+            # Extract bonus talent and trigger from formBonus text
             form_bonus_text = power_data.get('formBonus', '')
             bonus_talent = extract_bonus_talent(form_bonus_text)
+            extracted_trigger = extract_trigger(form_bonus_text)
 
-            # Build system object
+            # Use source trigger if available, otherwise use extracted trigger
+            trigger = power_data.get('trigger', '') or extracted_trigger
+
+            # Build system object - match the exact schema
             system = {
+                # Existing forcepower core
                 'powerLevel': 1,
                 'discipline': discipline,
                 'useTheForce': use_the_force,
                 'time': power_data.get('time', 'Standard Action'),
-                'range': power_data.get('range', ''),
-                'target': power_data.get('target', ''),
+                'range': power_data.get('range', 'Personal'),
+                'target': power_data.get('target', 'One target'),
                 'duration': power_data.get('duration', 'Instantaneous'),
                 'effect': full_description,
                 'special': power_data.get('special', ''),
+                'descriptor': [],
                 'dcChart': [
                     {
                         'dc': item['dc'],
@@ -161,24 +180,26 @@ def populate_lightsaber_form_powers():
                 'forcePointEffect': power_data.get('forcePointEffect', ''),
                 'forcePointCost': power_data.get('forcePointCost', 0),
                 'sourcebook': power_data.get('source', 'Jedi Academy Training Manual'),
-                'page': None,
+                'page': power_data.get('page', None),
                 'tags': power_data.get('tags', ['lightsaber-form']),
-                'descriptor': [],
                 'inSuite': False,
                 'spent': False,
                 'uses': {
                     'current': 0,
                     'max': 0
                 },
+                # Live forcepower document conventions
+                'executionModel': 'FORCE_POWER',
+                'costNumeric': None,
                 # Lightsaber form power extensions (bonus rider relationship, NOT prerequisites)
                 'form': power_data.get('form', ''),
                 'bonusTalent': bonus_talent,
-                'trigger': power_data.get('trigger', ''),
+                'trigger': trigger,
                 'formBonus': form_bonus_text,
                 'canRebuke': power_data.get('canRebuke', False)
             }
 
-            # Build stats
+            # Build document shape
             now = datetime.utcnow().isoformat() + 'Z'
             stats = {
                 'created': now,
@@ -186,20 +207,23 @@ def populate_lightsaber_form_powers():
                 'lastModifiedBy': None
             }
 
+            ownership = {'default': 0}
+
             # Insert into database
             cursor.execute(
-                '''INSERT INTO items (_id, name, type, img, system, folder, flags, sort, prototypeToken, _stats)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                '''INSERT INTO items (_id, name, type, img, system, effects, folder, sort, ownership, flags, _stats)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                 (
                     item_id,
                     power_data['name'],
                     'forcepower',
                     'icons/magic/light/orb-lightbulb-gray.webp',
                     json.dumps(system),
+                    json.dumps([]),
                     None,
-                    json.dumps({}),
                     imported + skipped,
-                    None,
+                    json.dumps(ownership),
+                    json.dumps({}),
                     json.dumps(stats)
                 )
             )

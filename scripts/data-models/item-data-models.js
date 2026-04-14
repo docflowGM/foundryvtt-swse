@@ -400,8 +400,8 @@ export class ForcePowerDataModel extends foundry.abstract.DataModel {
       discipline: new fields.StringField({
         required: false,
         initial: 'telekinetic',
-        choices: ['telekinetic', 'telepathic', 'vital', 'dark-side', 'light-side'],
-        label: 'Force Discipline'
+        label: 'Force Discipline',
+        hint: 'e.g., telekinetic, telepathic, vital, dark-side, light-side, or form-specific like "Form VII: Juyo"'
       }),
       useTheForce: new fields.NumberField({
         required: true,
