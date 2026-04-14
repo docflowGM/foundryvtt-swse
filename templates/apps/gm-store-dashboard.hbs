@@ -18,7 +18,7 @@
     {{!-- TAB 1: TRANSACTIONS LEDGER --}}
     <div class="dashboard-tab swse-ui-panel" data-tab="transactions">
       <h3>TRANSACTION LEDGER</h3>
-      <p class="tab-description" title="A chronological record of all finalized store transactions. This ledger exists for auditing and correction, not for initiating trades.">A chronological record of all finalized store transactions. Use this to audit purchases, identify mistakes, or reverse transactions if necessary.</p>
+      <p class="tab-description" title="A chronological record of all finalized store transactions. This ledger exists for auditing and credit correction, not for initiating trades.">A chronological record of all finalized store transactions. Use this to audit purchases and correct credits if necessary.</p>
 
       {{!-- Filters --}}
       <div class="filters-row swse-control-cluster">
@@ -68,8 +68,8 @@
               <td><span class="source-badge">{{this.source}}</span></td>
               <td>
                 <button class="action-btn swse-ui-button" data-action="reverse-transaction" data-index="{{@index}}"
-                        title="Reverse this transaction. Purchases will remove the item and restore credits. Sales will re-add the item and remove credits. Use only to correct mistakes.">
-                  Reverse
+                        title="Adjust credits for this transaction. This is a ledger correction only — inventory items are not affected. Use to fix credit mistakes.">
+                  Adjust Credits
                 </button>
               </td>
             </tr>
@@ -85,53 +85,41 @@
     {{!-- TAB 2: PENDING SALES --}}
     <div class="dashboard-tab swse-ui-panel" data-tab="pending">
       <h3>PENDING SELL ATTEMPTS</h3>
-      <p class="tab-description" title="Sell offers awaiting GM resolution. Offers appear here if they were not automatically accepted or if the original prompt was dismissed.">Sell offers awaiting GM resolution. These appear if a sell request was not immediately resolved or was dismissed earlier.</p>
-
-      {{!-- Pending Sales Table --}}
-      <table class="pending-table">
-        <thead>
-          <tr>
-            <th title="When the sell offer was submitted by the player.">Time</th>
-            <th title="The character offering the item for sale.">Actor</th>
-            <th title="The item the player is attempting to sell.">Item</th>
-            <th title="The proposed credit value. Items without a base price cannot be automatically valued.">Requested Value</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each pendingSales}}
-            <tr data-index="{{@index}}">
-              <td>{{#formatDate this.timestamp}}{{/formatDate}}</td>
-              <td>{{this.actor}}</td>
-              <td>{{this.item}}</td>
-              <td>
-                {{#if this.value}}
-                  {{this.value}} cr
-                {{else}}
-                  <span class="no-price">No base price</span>
-                {{/if}}
-              </td>
-              <td>
-                <button class="action-btn swse-ui-button" data-action="accept-pending" data-index="{{@index}}"
-                        title="Accept this sale at the listed value. The item will be removed from the actor and credits will be transferred.">
-                  Accept
-                </button>
-                <button class="action-btn secondary swse-ui-button" data-action="deny-pending" data-index="{{@index}}"
-                        title="Deny this sale. No inventory or credit changes will occur.">
-                  Deny
-                </button>
-                <button class="action-btn swse-ui-button" data-action="set-amount-pending" data-index="{{@index}}"
-                        title="Manually specify a different credit value for this sale. This overrides the standard valuation.">
-                  Set Amount
-                </button>
-              </td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
+      <p class="tab-description" title="Sell offers awaiting resolution. Offers appear here if they were not automatically accepted or if the original prompt was dismissed.">Sell offers awaiting resolution. These appear if a sell request was not immediately resolved or was dismissed earlier.</p>
+      <p style="color: #ff9900; padding: 1rem; background: rgba(255, 153, 0, 0.1); border-radius: 4px; margin-bottom: 1rem;">
+        <strong>⚠ Not Yet Implemented:</strong> Pending sale resolution is not yet available. This feature is under development.
+      </p>
 
       {{#if (eq pendingSales.length 0)}}
         <p class="empty-state">No pending sales.</p>
+      {{else}}
+        {{!-- Pending Sales Table --}}
+        <table class="pending-table">
+          <thead>
+            <tr>
+              <th title="When the sell offer was submitted by the player.">Time</th>
+              <th title="The character offering the item for sale.">Actor</th>
+              <th title="The item the player is attempting to sell.">Item</th>
+              <th title="The proposed credit value. Items without a base price cannot be automatically valued.">Requested Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each pendingSales}}
+              <tr data-index="{{@index}}">
+                <td>{{#formatDate this.timestamp}}{{/formatDate}}</td>
+                <td>{{this.actor}}</td>
+                <td>{{this.item}}</td>
+                <td>
+                  {{#if this.value}}
+                    {{this.value}} cr
+                  {{else}}
+                    <span class="no-price">No base price</span>
+                  {{/if}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
       {{/if}}
     </div>
 

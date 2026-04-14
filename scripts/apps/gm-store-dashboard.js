@@ -24,6 +24,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { calculateCartTotal } from "/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js";
 import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
 export class GMStoreDashboard extends BaseSWSEAppV2 {
@@ -312,11 +313,11 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     }
 
     const confirmed = await SWSEDialogV2.confirm({
-      title: 'Reverse Transaction',
+      title: 'Adjust Credits for Transaction',
       content: `
-        <p>Are you sure you want to reverse this transaction?</p>
+        <p>Correct the credit balance for this transaction?</p>
         <p><strong>${tx.actor}</strong> ${tx.type === 'Buy' ? 'purchased' : 'sold'} <strong>${tx.item}</strong> for ${Math.abs(tx.amount).toLocaleString()} credits.</p>
-        <p style="color: #ff9900; margin-top: 1rem;">This action cannot be easily undone. Credits will be adjusted and items modified accordingly.</p>
+        <p style="color: #ff9900; margin-top: 1rem;"><strong>⚠ Ledger Correction Only:</strong> This adjusts the actor's credits only. Inventory items are not restored or removed. Use this to correct credit mistakes only.</p>
       `,
       defaultYes: false
     });
@@ -332,26 +333,26 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
         return;
       }
 
-      // Reverse the transaction
+      // Adjust credits only (reverse the amount)
       const currentCredits = normalizeCredits(actor.system?.credits ?? 0);
-      const reversalCredits = normalizeCredits(currentCredits - tx.amount); // Reverse the amount
+      const correctedCredits = normalizeCredits(currentCredits - tx.amount);
 
-      await ActorEngine.updateActor(actor, { 'system.credits': reversalCredits });
+      await ActorEngine.updateActor(actor, { 'system.credits': correctedCredits });
 
-      SWSELogger.info(`[GM Store] Transaction reversed: ${tx.actor} - ${tx.item} (${tx.amount} credits)`);
-      ui.notifications.info(`Transaction reversed. ${actor.name} now has ${reversalCredits.toLocaleString()} credits.`);
+      SWSELogger.info(`[GM Store] Credit adjustment: ${tx.actor} - ${tx.item} (${tx.amount} credits)`);
+      ui.notifications.info(`Credit adjusted. ${actor.name} now has ${correctedCredits.toLocaleString()} credits.`);
 
       this.render();
     } catch (err) {
-      SWSELogger.error('Transaction reversal failed:', err);
-      ui.notifications.error('Failed to reverse transaction. See console for details.');
+      SWSELogger.error('Credit adjustment failed:', err);
+      ui.notifications.error('Failed to adjust credits. See console for details.');
     }
   }
 
   async _resolvePendingSale(index, action, customAmount = null) {
-    // Placeholder for pending sale resolution
-    // This would reuse the selling system's resolution logic
-    ui.notifications.info(`Pending sale ${action} (placeholder).`);
+    // Pending sale resolution is not yet implemented
+    ui.notifications.error('Pending sale resolution is not yet implemented. Please contact the development team.');
+    SWSELogger.warn('[GM Store Dashboard] Attempted to resolve pending sale but feature is not implemented');
   }
 
   /**
