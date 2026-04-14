@@ -466,7 +466,14 @@ export class ForcePowerDataModel extends foundry.abstract.DataModel {
       uses: new fields.SchemaField({
         current: new fields.NumberField({ initial: 0, min: 0, integer: true }),
         max: new fields.NumberField({ initial: 0, min: 0, integer: true })
-      })
+      }),
+
+      // Lightsaber Form Power extensions (optional fields)
+      // All lightsaber form powers fit within the standard forcepower type
+      form: new fields.StringField({ initial: '', label: 'Lightsaber Form', hint: 'e.g., Juyo, Shien, Soresu' }),
+      trigger: new fields.StringField({ initial: '', label: 'Trigger Condition', hint: 'When/how the power can be used' }),
+      formBonus: new fields.HTMLField({ label: 'Form Bonus', hint: 'Bonus effect if character has the corresponding Form talent' }),
+      canRebuke: new fields.BooleanField({ initial: false, label: 'Can Be Rebuked', hint: 'Whether this power can be rebuked by opponents' })
     };
   }
 }
