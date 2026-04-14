@@ -997,8 +997,9 @@ export class SWSEStore extends BaseSWSEAppV2 {
       document.removeEventListener('keydown', this._escapeKeyHandler);
     }
     this._escapeKeyHandler = (ev) => {
-      if (ev.key === 'Escape' && this.isCheckoutMode) {
-        this._cancelCheckout();
+      // Escape key handling (currently no-op as checkout flow no longer uses checkout mode)
+      if (ev.key === 'Escape') {
+        // Future: could handle other escape scenarios here
       }
     };
     document.addEventListener('keydown', this._escapeKeyHandler);
@@ -1167,14 +1168,6 @@ export class SWSEStore extends BaseSWSEAppV2 {
     }
   }
 
-  _showCartSidebar(root) {
-    const sidebar = root.querySelector('#cart-sidebar');
-    if (sidebar) {
-      sidebar.style.display = 'flex';
-      this._renderCartUI();
-    }
-  }
-
   _showProductModal(itemId, root) {
     const item = this.itemsById.get(itemId);
     if (!item) {return;}
@@ -1236,7 +1229,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
   _buildProductModalContent(item) {
     const sys = safeSystem(item) ?? {};
-    const suggestion = this.suggestions.get(item._id);
+    const suggestion = this.suggestions.get(item.id);
     const itemType = item.type || '';
 
     // Build technical details based on item type
@@ -1512,128 +1505,6 @@ export class SWSEStore extends BaseSWSEAppV2 {
   }
 
   /**
-   * Enter checkout mode: Transform cart into ledger view
-   * Lock quantities, disable cart editing
-   */
-  enterCheckoutMode() {
-    this.isCheckoutMode = true;
-    const rootEl = this.element;
-    if (rootEl) {
-      rootEl.classList.add('checkout-mode');
-      // Move focus to cart
-      const cartSidebar = rootEl.querySelector('.cart-sidebar');
-      if (cartSidebar) {
-        cartSidebar.setAttribute('aria-expanded', 'true');
-      }
-    }
-    this._renderCheckoutLedger();
-  }
-
-  /**
-   * Exit checkout mode: Return to normal cart view
-   */
-  exitCheckoutMode() {
-    this.isCheckoutMode = false;
-    const rootEl = this.element;
-    if (rootEl) {
-      rootEl.classList.remove('checkout-mode');
-      const cartSidebar = rootEl.querySelector('.cart-sidebar');
-      if (cartSidebar) {
-        cartSidebar.setAttribute('aria-expanded', 'false');
-      }
-    }
-  }
-
-  /**
-   * Render cart as ledger view (checkout mode only)
-   */
-  _renderCheckoutLedger() {
-    const rootEl = this.element;
-    if (!rootEl) {return;}
-
-    const listEl = rootEl.querySelector('#cart-items-list');
-    if (!listEl) {return;}
-
-    listEl.innerHTML = '';
-
-    // Create ledger rows (text-forward, no images)
-    const addLedgerRow = (entry, type, qty = 1) => {
-      const row = document.createElement('div');
-      row.classList.add('cart-item');
-      const cost = entry.cost ?? 0;
-      row.innerHTML = `
-        <span class="cart-item-name">${entry.name || ''}</span>
-        <span class="cart-item-qty">×${qty}</span>
-        <span class="cart-item-cost">₢ ${cost.toLocaleString()}</span>
-      `;
-      listEl.appendChild(row);
-    };
-
-    // Items
-    for (const it of this.cart.items) {
-      addLedgerRow(it, 'items', 1);
-    }
-
-    // Droids
-    for (const it of this.cart.droids) {
-      addLedgerRow(it, 'droids', 1);
-    }
-
-    // Vehicles
-    for (const it of this.cart.vehicles) {
-      addLedgerRow(it, 'vehicles', 1);
-    }
-
-    // Optionally add mentor interpretation below ledger
-    const mentorInterpEl = rootEl.querySelector('.checkout-mentor-interpretation');
-    if (mentorInterpEl) {
-      mentorInterpEl.remove();
-    }
-
-    const interpretation = this._getMentorCheckoutInterpretation();
-    if (interpretation) {
-      const interpEl = document.createElement('div');
-      interpEl.classList.add('checkout-mentor-interpretation');
-      interpEl.textContent = interpretation;
-      rootEl.querySelector('.cart-summary')?.parentElement?.insertBefore(
-        interpEl,
-        rootEl.querySelector('.cart-summary')
-      );
-    }
-
-    // Disable clear cart button in checkout mode
-    const clearBtn = rootEl.querySelector('.clear-cart-btn');
-    if (clearBtn) {
-      clearBtn.disabled = true;
-    }
-
-    // Update checkout button to say "Confirm Trade"
-    const checkoutBtn = rootEl.querySelector('.checkout-btn');
-    if (checkoutBtn) {
-      checkoutBtn.textContent = 'Confirm Trade';
-    }
-  }
-
-  /**
-   * Generate mentor interpretation for checkout based on affordability
-   */
-  _getMentorCheckoutInterpretation() {
-    const actor = this.actor;
-    if (!actor) {return null;}
-
-    const credits = Number(actor.system?.credits ?? 0) || 0;
-    const total = calculateCartTotal(this.cart);
-    const remaining = credits - total;
-
-    if (remaining >= credits * 0.5) {
-      return 'This exchange is well within acceptable limits.';
-    } else if (remaining >= 0) {
-      return 'This purchase leaves you with limited reserves. Proceed with caution.';
-    }
-    return null; // Should not reach here if checkout was allowed
-  }
-
-  /**
    * Animate credit reconciliation after purchase
    */
   async animateCreditReconciliation(fromCredits, toCredits, duration = 600) {
@@ -1680,16 +1551,6 @@ export class SWSEStore extends BaseSWSEAppV2 {
     return new Promise(resolve => {
       setTimeout(resolve, duration);
     });
-  }
-
-  /**
-   * Cancel checkout mode (Part 8: Escape safety)
-   * Restores cart interactivity
-   */
-  _cancelCheckout() {
-    if (!this.isCheckoutMode) {return;}
-    this.exitCheckoutMode();
-    this._renderCartUI();
   }
 
 }

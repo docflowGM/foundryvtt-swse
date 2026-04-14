@@ -173,16 +173,16 @@ export class WeaponSuggestions {
    */
   static _groupByTier(scored) {
     const groups = {
-      perfect: [],
-      excellent: [],
-      good: [],
-      viable: [],
-      marginal: [],
-      poor: []
+      Perfect: [],
+      Excellent: [],
+      Good: [],
+      Viable: [],
+      Marginal: [],
+      Poor: []
     };
 
     scored.forEach(weapon => {
-      const tier = weapon.combined.tier || 'poor';
+      const tier = weapon.combined.tier || 'Poor';
       if (groups[tier]) {
         groups[tier].push(weapon);
       }
