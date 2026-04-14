@@ -58,6 +58,15 @@ export const ITEM_SCHEMA = {
 
 /**
  * Expected schema for droid/vehicle compendiums (actors)
+ *
+ * Pricing modes:
+ * 1. Scalar: system.cost = number (droids, basic items)
+ * 2. Conditional: system.cost = { new: number, used: number } (vehicles)
+ * 3. Unavailable: system.cost = { new: "not publicly available", used: "not publicly available" }
+ * 4. Missing: no cost field or null
+ *
+ * For vehicles, system.costNumeric is a packed composite helper value.
+ * Do NOT treat it as scalar truth when structured cost exists.
  */
 export const ACTOR_SCHEMA = {
   id: { type: 'string', required: true },
@@ -66,13 +75,31 @@ export const ACTOR_SCHEMA = {
   type: { type: 'string', required: true, enum: ['character', 'npc', 'vehicle', 'droid'] },
 
   system: {
-    cost: { type: 'number', required: true, description: 'Purchase cost in credits' }
+    cost: {
+      oneOf: [
+        { type: 'number', description: 'Scalar purchase cost in credits (droids, basic items)' },
+        {
+          type: 'object',
+          description: 'Structured new/used vehicle pricing',
+          properties: {
+            new: { oneOf: [{ type: 'number' }, { type: 'string' }] },
+            used: { oneOf: [{ type: 'number' }, { type: 'string' }] }
+          }
+        }
+      ]
+    },
+    costNumeric: {
+      type: 'number',
+      required: false,
+      description: 'Packed composite helper for vehicles (not authoritative). If system.cost is { new, used }, this field is derived.'
+    }
   },
 
   img: { type: 'string', required: true },
 
   FORBIDDEN: [
-    'flags for cost/legality/availability (use system fields)'
+    'flags for cost/legality/availability (use system fields)',
+    'Guessed costs for unavailable entries (use "not publicly available" string if no cost)'
   ]
 };
 

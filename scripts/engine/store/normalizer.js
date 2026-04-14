@@ -5,6 +5,8 @@
  * These normalized objects are the ONLY form the store UI should ever consume.
  */
 
+import { buildStoreCostRecord } from '/systems/foundryvtt-swse/scripts/engine/store/cost-registry.js';
+
 /* ----------------------------------------------- */
 /* RARITY CLASSIFICATION (ENGINE)                   */
 /* ----------------------------------------------- */
@@ -71,53 +73,13 @@ function safeString(v, fallback = '') {
 }
 
 /* ----------------------------------------------- */
-/* COST NORMALIZATION                               */
+/* COST NORMALIZATION VIA REGISTRY                 */
 /* ----------------------------------------------- */
 
-function normalizeNumber(val) {
-  if (val === undefined || val === null) {return null;}
-  if (typeof val === 'number') {return Number.isFinite(val) ? val : null;}
-
-  const s = String(val).trim().toLowerCase();
-  if (!s) {return null;}
-
-  // Skip placeholders like "varies", "special", etc.
-  const bad = ['varies', 'see', 'negotiat', 'included', 'n/a', 'na', 'unknown', 'special'];
-  if (bad.some(term => s.includes(term))) {return null;}
-
-  // Strip currency symbols & text
-  const cleaned = s
-    .replace(/[,¢$€£₹]/g, '')
-    .replace(/\s*cr\b/i, '')
-    .replace(/\(.+?\)/g, '')
-    .replace(/[^\d.-]/g, '');
-
-  if (!cleaned || cleaned === '-' || cleaned === '—') {return null;}
-
-  const parsed = Number(cleaned);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function extractBaseCost(obj) {
-  const sys = obj.system || {};
-
-  // Canonical store item pricing can appear in several shapes depending on pack type:
-  // - Item packs: system.cost or system.price
-  // - Vehicle actors: system.cost.new / system.cost.used
-  // - Some generated packs: system.costNumeric
-  // Prefer explicit numeric cost fields first, then structured cost objects.
-  const structuredCost = typeof sys.cost === 'object' && sys.cost
-    ? (normalizeNumber(sys.cost.new) ?? normalizeNumber(sys.cost.used))
-    : null;
-
-  return (
-    normalizeNumber(sys.costNumeric) ??
-    structuredCost ??
-    normalizeNumber(sys.cost) ??
-    normalizeNumber(sys.price) ??
-    normalizeNumber(sys.priceNumeric) ??
-    null
-  );
+function extractCostRecord(obj) {
+  // Use the authoritative cost registry/resolver
+  const costRecord = buildStoreCostRecord(obj);
+  return costRecord;
 }
 
 /* ----------------------------------------------- */
@@ -180,7 +142,9 @@ export function normalizeStoreItem(raw) {
   const name = safeString(raw.name || sys.name || 'Unnamed Item');
   const img = safeImg(raw);
   const type = normalizeType(raw);
-  const baseCost = extractBaseCost(raw);
+
+  // Extract full cost record with registry
+  const costRecord = extractCostRecord(raw);
 
   const { rarityClass, rarityLabel } = extractRarity(raw);
 
@@ -194,10 +158,22 @@ export function normalizeStoreItem(raw) {
     rarityClass,
     rarityLabel,
 
-    // cost fields
-    cost: baseCost,
-    finalCost: null,      // pricing.js will fill this in
-    finalCostUsed: null,  // for vehicles
+    // cost fields - preserve all pricing modes
+    costStatus: costRecord.costStatus,              // priced | conditional | unavailable | missing
+    pricingMode: costRecord.pricingMode,            // single | new-used | none
+    cost: costRecord.baseCost,                      // scalar base cost (if priced)
+    costNew: costRecord.baseCostNew,                // new condition cost (if conditional)
+    costUsed: costRecord.baseCostUsed,              // used condition cost (if conditional)
+    requiresCondition: costRecord.requiresCondition, // true if new/used selection required
+    defaultCondition: costRecord.defaultCondition,  // null (let UI decide)
+    unavailabilityReason: costRecord.unavailabilityReason, // reason if unavailable
+    rawCostSource: costRecord.rawCostSource,        // source field for debugging
+
+    // Final costs (filled in by pricing.js)
+    finalCost: null,      // scalar final cost after markup
+    finalCostNew: null,   // new final cost after markup (vehicles)
+    finalCostUsed: null,  // used final cost after markup (vehicles)
+    usedCondition: null,  // which condition was used ('new' | 'used' | null)
 
     // direct access to system data
     system: sys,
@@ -285,13 +261,33 @@ export function filterValidStoreItems(items) {
       return false;
     }
 
-    // Must have a cost (all store items must be priced)
-    const hasCost = item.cost !== null && item.cost !== undefined && item.cost >= 0;
-    if (!hasCost) {
-      logger.warn(`[Store] Excluded item: missing or invalid cost`, {
+    // Exclude unavailable entries (explicit "not publicly available")
+    if (item.costStatus === 'unavailable') {
+      logger.debug(`[Store] Excluded item: unavailable`, {
         name: item.name,
         id: item.id || item._id,
-        cost: item.cost,
+        reason: item.unavailabilityReason
+      });
+      return false;
+    }
+
+    // Exclude missing pricing (no usable cost information)
+    if (item.costStatus === 'missing') {
+      logger.warn(`[Store] Excluded item: missing pricing`, {
+        name: item.name,
+        id: item.id || item._id,
+        type: item.type
+      });
+      return false;
+    }
+
+    // Item must have valid pricing
+    const isPriced = item.costStatus === 'priced' || item.costStatus === 'conditional';
+    if (!isPriced) {
+      logger.warn(`[Store] Excluded item: invalid pricing status`, {
+        name: item.name,
+        id: item.id || item._id,
+        costStatus: item.costStatus,
         type: item.type
       });
       return false;
