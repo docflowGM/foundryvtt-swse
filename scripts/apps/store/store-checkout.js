@@ -811,16 +811,58 @@ async function createVehiclePlans(cartVehicles, itemsById) {
 }
 
 /**
+ * Flatten cart into single array for validation and purchase
+ * @param {Object} cart - Shopping cart
+ * @returns {Array} Flattened cart items with normalized costs
+ */
+function flattenCartForPurchase(cart) {
+    const flattened = [];
+
+    // Add items
+    for (const item of cart.items || []) {
+        flattened.push({
+            id: item.id,
+            name: item.name,
+            type: 'item',
+            finalCost: normalizeCredits(item.cost)
+        });
+    }
+
+    // Add droids
+    for (const droid of cart.droids || []) {
+        flattened.push({
+            id: droid.id,
+            name: droid.name,
+            type: 'droid',
+            finalCost: normalizeCredits(droid.cost)
+        });
+    }
+
+    // Add vehicles
+    for (const vehicle of cart.vehicles || []) {
+        flattened.push({
+            id: vehicle.id,
+            name: vehicle.name,
+            type: 'vehicle',
+            finalCost: normalizeCredits(vehicle.cost),
+            condition: vehicle.condition
+        });
+    }
+
+    return flattened;
+}
+
+/**
  * Checkout and purchase all items in cart
  * @param {Object} store - Store instance
  * @param {Function} animateNumberCallback - Callback to animate numbers
+ * @returns {Promise<Object>} { success: boolean, transactionId?: string, total?: number, error?: string }
  */
 export async function checkout(store, animateNumberCallback) {
     const actor = store.actor;
-
     const credits = Number(actor.system.credits) || 0;
 
-    // HARDENING 4: Revalidate cart before checkout (re-price all items)
+    // Revalidate cart before checkout (re-price all items)
     const revalidationReport = revalidateCartItems(store);
     if (revalidationReport.removed.length > 0) {
         ui.notifications.warn(`${revalidationReport.removed.length} item(s) no longer available and were removed.`);
@@ -831,148 +873,96 @@ export async function checkout(store, animateNumberCallback) {
 
     if (total === 0) {
         ui.notifications.warn('Your cart is empty.');
-        return;
+        return { success: false, error: 'Cart is empty.' };
     }
 
-    // DELEGATED TO ENGINE: Check eligibility
+    // Check eligibility
     const eligible = StoreEngine.canPurchase({
         actor,
-        items: [...store.cart.items, ...store.cart.droids, ...store.cart.vehicles],
+        items: flattenCartForPurchase(store.cart),
         totalCost: total
     });
 
     if (!eligible.canPurchase) {
         ui.notifications.warn(eligible.reason || 'Cannot complete purchase.');
-        return;
+        return { success: false, error: eligible.reason || 'Cannot complete purchase.' };
     }
 
-    // PART 3: Enter checkout mode (ledger view)
-    store.enterCheckoutMode();
-    store._showCartSidebar(store.element);
-
-    // PART 5: Wait for confirmation (user clicks Confirm Trade or Cancel)
-    return new Promise((resolve) => {
-        const rootEl = store.element;
-        if (!rootEl) {
-            resolve();
-            return;
+    try {
+        // Re-validate cart before final purchase
+        const cartValidation = await revalidateCart(store, actor, total);
+        if (!cartValidation.valid) {
+            ui.notifications.error(cartValidation.error);
+            return { success: false, error: cartValidation.error };
         }
 
-        const confirmBtn = rootEl.querySelector('.checkout-btn');
-        const cancelBtn = rootEl.querySelector('#cancel-checkout');
+        // Execute engine transaction
+        const result = await StoreEngine.purchase({
+            actor,
+            items: flattenCartForPurchase(store.cart),
+            totalCost: total,
+            itemGrantCallback: async (purchasingActor, cartItems) => {
+                // Compile all MutationPlans
+                const plans = [];
 
-        const handleConfirm = async () => {
-            // Disable buttons during transaction
-            if (confirmBtn) confirmBtn.disabled = true;
-            if (cancelBtn) cancelBtn.disabled = true;
+                // Compile item plans
+                plans.push(...createItemPlans(store.cart.items));
 
-            cleanupListeners();
-
-            try {
-                // P1-2: Re-validate cart before final purchase
-                // Check that all items still exist and prices haven't changed significantly
-                const cartValidation = await revalidateCart(store, actor, total);
-                if (!cartValidation.valid) {
-                    ui.notifications.error(cartValidation.error);
-                    if (confirmBtn) confirmBtn.disabled = false;
-                    if (cancelBtn) cancelBtn.disabled = false;
-                    return;
+                // Compile droid plans
+                if (store.cart.droids?.length > 0) {
+                    plans.push(...(await createDroidPlans(store.cart.droids)));
                 }
 
-                // PART 5: Execute engine transaction
-                const result = await StoreEngine.purchase({
-                    actor,
-                    items: store.cart,
-                    totalCost: total,
-                    itemGrantCallback: async (purchasingActor, cartItems) => {
-                        // PHASE 1: Compile all MutationPlans instead of mutating directly
-                        const plans = [];
-
-                        // Compile item plans
-                        plans.push(...createItemPlans(store.cart.items));
-
-                        // Compile droid plans
-                        if (store.cart.droids?.length > 0) {
-                            plans.push(...(await createDroidPlans(store.cart.droids)));
-                        }
-
-                        // Compile vehicle plans
-                        if (store.cart.vehicles?.length > 0) {
-                            plans.push(...(await createVehiclePlans(store.cart.vehicles, store.itemsById)));
-                        }
-
-                        // Return plans for engine to apply
-                        return plans;
-                    }
-                });
-
-                if (!result.success) {
-                    ui.notifications.error(`Purchase failed: ${result.error}`);
-                    store.exitCheckoutMode();
-                    store._renderCartUI();
-                    resolve();
-                    return;
+                // Compile vehicle plans
+                if (store.cart.vehicles?.length > 0) {
+                    plans.push(...(await createVehiclePlans(store.cart.vehicles, store.itemsById)));
                 }
 
-                // PART 6: Animate credit reconciliation
-                const newCredits = Number(actor.system?.credits ?? 0) || 0;
-                await store.animateCreditReconciliation(credits, newCredits, 600);
-
-                ui.notifications.info(`Purchase complete! Spent ${total.toLocaleString()} credits.`);
-
-                // Log purchase to history
-                await logPurchaseToHistory(actor, store.cart, total);
-
-                // PART 7: Clear cart and exit checkout mode
-                const purchasedItems = {
-                    items: [...(store.cart.items || [])],
-                    droids: [...(store.cart.droids || [])],
-                    vehicles: [...(store.cart.vehicles || [])]
-                };
-                clearCart(store.cart);
-                store.cartTotal = 0;
-                await store._persistCart?.();
-                store.exitCheckoutMode();
-                store._renderCartUI();
-
-                await store._handleCheckoutCompletion?.({
-                    total,
-                    purchasedItems,
-                    creditsBefore: credits,
-                    creditsAfter: newCredits
-                });
-
-                resolve();
-            } catch (err) {
-                SWSELogger.error('SWSE Store | Checkout failed:', err);
-                ui.notifications.error('Purchase failed. See console for details.');
-                store.exitCheckoutMode();
-                store._renderCartUI();
-                resolve();
+                return plans;
             }
-        };
+        });
 
-        const handleCancel = () => {
-            cleanupListeners();
-            store.exitCheckoutMode();
-            store._renderCartUI();
-            resolve();
-        };
-
-        const cleanupListeners = () => {
-            if (confirmBtn) confirmBtn.removeEventListener('click', handleConfirm);
-            if (cancelBtn) cancelBtn.removeEventListener('click', handleCancel);
-        };
-
-        // Add event listeners
-        if (confirmBtn) {
-            confirmBtn.addEventListener('click', handleConfirm);
+        if (!result.success) {
+            ui.notifications.error(`Purchase failed: ${result.error}`);
+            return { success: false, error: result.error };
         }
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', handleCancel);
-            cancelBtn.style.display = '';  // Show cancel button
-        }
-    });
+
+        // Animate credit reconciliation
+        const newCredits = Number(actor.system?.credits ?? 0) || 0;
+        await store.animateCreditReconciliation(credits, newCredits, 600);
+
+        ui.notifications.info(`Purchase complete! Spent ${total.toLocaleString()} credits.`);
+
+        // Log purchase to history
+        await logPurchaseToHistory(actor, store.cart, total);
+
+        // Clear cart only on success
+        const purchasedItems = {
+            items: [...(store.cart.items || [])],
+            droids: [...(store.cart.droids || [])],
+            vehicles: [...(store.cart.vehicles || [])]
+        };
+        clearCart(store.cart);
+        store.cartTotal = 0;
+        await store._persistCart?.();
+
+        await store._handleCheckoutCompletion?.({
+            total,
+            purchasedItems,
+            creditsBefore: credits,
+            creditsAfter: newCredits
+        });
+
+        return {
+            success: true,
+            transactionId: result.transactionId,
+            total
+        };
+    } catch (err) {
+        SWSELogger.error('SWSE Store | Checkout failed:', err);
+        ui.notifications.error('Purchase failed. See console for details.');
+        return { success: false, error: err.message };
+    }
 }
 
 /**

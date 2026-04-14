@@ -51,6 +51,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { freezePricing, unfreezePricing } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
+import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
 
 const logger = () => SWSELogger || globalThis.swseLogger || console;
 
@@ -410,17 +411,10 @@ export class StoreEngine {
             throw new Error('itemGrantCallback must return an array of MutationPlans');
           }
 
-          // Validate each plan structure before any mutations
+          // Validate each plan is an object (accept bucketed mutation plans as-is)
           for (const plan of grantPlans) {
             if (!plan || typeof plan !== 'object') {
               throw new Error('Plan must be a valid object');
-            }
-            if (!plan.type) {
-              throw new Error('Plan missing required field: type');
-            }
-            // DroidFactory/VehicleFactory should have proper structure
-            if (plan.type === 'create' && !plan.data) {
-              throw new Error('Creation plan missing required field: data');
             }
           }
 
@@ -503,51 +497,40 @@ export class StoreEngine {
         existingFlags.sessionPurchaseIds = existingFlags.sessionPurchaseIds.slice(-100);
       }
 
-      // PHASE 6: DEDUCT CREDITS
-      // =======================
-      try {
-        await ActorEngine.updateActor(freshActor, {
-          'system.credits': creditPlan.set['system.credits'],
-          'flags.foundryvtt-swse': existingFlags
-        });
-        logger().debug('StoreEngine: Credits deducted', {
-          transactionId,
-          newBalance: creditPlan.set['system.credits']
-        });
-      } catch (creditErr) {
-        logger().error('StoreEngine: Credit deduction failed', {
-          transactionId,
-          error: creditErr.message
-        });
-        throw creditErr;
-      }
+      // PHASE 6: MERGE PLANS AND BUILD FINAL TRANSACTION
+      // ===============================================
+      let mergedPlan = { set: { 'flags.foundryvtt-swse': existingFlags } };
 
-      // PHASE 7: APPLY ITEM GRANT PLANS
-      // ===============================
-      const appliedPlans = [];
       try {
-        for (const plan of grantPlans) {
-          try {
-            await ActorEngine.applyMutationPlan(freshActor, plan);
-            appliedPlans.push(plan);
-            logger().debug('StoreEngine: Grant plan applied', {
-              transactionId,
-              planType: plan.type
-            });
-          } catch (applyErr) {
-            logger().error('StoreEngine: Failed to apply grant plan', {
-              transactionId,
-              planIndex: appliedPlans.length,
-              error: applyErr.message
-            });
-            throw applyErr;
-          }
-        }
-      } catch (grantErr) {
-        logger().error('StoreEngine: Item grant failed (attempting rollback)', {
+        // Build credit plan from ledger
+        const creditMutation = creditPlan;
+
+        // Merge all grant plans with credit plan
+        const allPlans = [...grantPlans, creditMutation];
+        mergedPlan = mergeMutationPlans(...allPlans);
+
+        logger().debug('StoreEngine: Plans merged for atomic transaction', {
           transactionId,
-          appliedCount: appliedPlans.length,
-          error: grantErr.message
+          grantPlanCount: grantPlans.length,
+          mergedPlanBuckets: Object.keys(mergedPlan).length
+        });
+
+        // Apply merged plan atomically
+        await ActorEngine.applyMutationPlan(freshActor, mergedPlan, {
+          validate: true,
+          rederive: true,
+          source: 'StoreEngine.purchase'
+        });
+
+        logger().info('StoreEngine: Atomic transaction applied successfully', {
+          transactionId,
+          grantPlanCount: grantPlans.length,
+          newBalance: mergedPlan.set?.['system.credits'] ?? freshActor.system?.credits
+        });
+      } catch (transactionErr) {
+        logger().error('StoreEngine: Atomic transaction failed (attempting rollback)', {
+          transactionId,
+          error: transactionErr.message
         });
 
         // ROLLBACK: Restore from snapshot if available
@@ -564,11 +547,11 @@ export class StoreEngine {
               transactionId,
               rollbackError: rollbackErr.message
             });
-            throw new Error(`Item grant failed and rollback failed: ${grantErr.message}`);
+            throw new Error(`Transaction failed and rollback failed: ${transactionErr.message}`);
           }
         }
 
-        throw grantErr;
+        throw transactionErr;
       }
 
       logger().info('StoreEngine: Purchase completed', {

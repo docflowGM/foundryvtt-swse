@@ -140,6 +140,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
 
   async close(options = {}) {
+    // Clean up global event listeners
+    if (this._escapeKeyHandler) {
+      document.removeEventListener('keydown', this._escapeKeyHandler);
+      this._escapeKeyHandler = null;
+    }
     const result = await super.close(options);
     if (!this._closeHandled) {
       this._closeHandled = true;
@@ -969,11 +974,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const confirmCheckoutBtn = root.querySelector('#confirm-checkout');
     if (confirmCheckoutBtn) {
       confirmCheckoutBtn.addEventListener('click', async () => {
-        await checkout(this, (el, v) => this._animateNumber(el, v));
-        this.cart = emptyCart();
-        await this._persistCart();
-        this.currentView = 'history';
-        this.render();
+        const result = await checkout(this, (el, v) => this._animateNumber(el, v));
+        if (result?.success === true) {
+          this.currentView = 'history';
+          this.render();
+        }
       });
     }
 
@@ -1687,13 +1692,4 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this._renderCartUI();
   }
 
-  async close(options) {
-    // Clean up global event listeners
-    if (this._escapeKeyHandler) {
-      document.removeEventListener('keydown', this._escapeKeyHandler);
-      this._escapeKeyHandler = null;
-    }
-    // Call parent close
-    return super.close(options);
-  }
 }
