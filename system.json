@@ -264,6 +264,13 @@
       "path": "packs/weapons-simple"
     },
     {
+      "name": "weapons-lightsabers",
+      "label": "Weapons - Lightsabers",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/weapons-lightsabers"
+    },
+    {
       "name": "weapons",
       "label": "Weapons (All)",
       "type": "Item",
