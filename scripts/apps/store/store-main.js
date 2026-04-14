@@ -646,8 +646,16 @@ export class SWSEStore extends BaseSWSEAppV2 {
       id: item.id ?? item._id,
       name: safeString(item.name),
       img: safeImg(item),
-      // Display uses actual engine finalCost, not base cost
+
+      // Display pricing: For template compatibility
+      // Scalar items: use finalCost as cost
+      // Conditional vehicles: use finalCostNew as cost, finalCostUsed as costUsed
+      cost: item.finalCostNew ?? item.finalCost,
+      costUsed: item.finalCostUsed ?? undefined,
+
+      // Legacy field for some views
       finalCost: item.finalCost ?? getCostValue(item),
+
       rarityClass,
       rarityLabel: getRarityLabel(rarityClass),
       system: sys,
