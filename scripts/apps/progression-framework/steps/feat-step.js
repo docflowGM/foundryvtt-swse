@@ -29,6 +29,7 @@ import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engin
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import { resolveClassModel, getClassBonusFeatsLookupKeys } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 
 // Constants
 const FEATS_PER_CATEGORY_INITIAL = 5;  // Constrained visible count per category

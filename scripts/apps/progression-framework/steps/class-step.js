@@ -257,9 +257,10 @@ export class ClassStep extends ProgressionStepPlugin {
       return;
     }
 
-    // PHASE 1: Normalize and commit to canonical session
+    // PHASE 3: Normalize and commit to canonical session, preserving sourceId for re-resolution
     const normalizedClass = normalizeClass({
       classId: id,
+      sourceId: classData.sourceId,  // PHASE 3: Preserve sourceId for downstream re-resolution
       className: entry.name,
       classData,
       system: classData.system,

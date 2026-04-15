@@ -26,6 +26,7 @@ import { buildDependencyGraph } from '/systems/foundryvtt-swse/scripts/apps/char
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import { resolveClassModel, getClassTalentTreeLookupKeys } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 
 export class TalentStep extends ProgressionStepPlugin {
   constructor(descriptor) {

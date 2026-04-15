@@ -1,9 +1,11 @@
 /**
- * Feat Slot Validator - Phase 1.5
+ * Feat Slot Validator - Phase 3
  *
  * Validates feat selection against structured feat slots.
  * Mirrors TalentSlotValidator for symmetry.
  * Single validation path - no branching on source.
+ *
+ * PHASE 3: Hardened to use canonical class identity for class bonus feat legality.
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -14,8 +16,10 @@ export class FeatSlotValidator {
    * Validate if a feat can be selected for a specific slot
    * CANONICAL: Only validator that answers "is this feat selection valid?"
    *
+   * PHASE 3: Accepts either Foundry classId OR canonical class lookup keys
+   *
    * @param {Object} feat - Feat item to select
-   * @param {Object} slot - FeatSlot to fill
+   * @param {Object} slot - FeatSlot to fill {slotType, classId, classLookupKeys?}
    * @param {Object} actor - Actor (for context)
    * @returns {Promise<Object>} {valid: boolean, message: string}
    */
@@ -46,14 +50,27 @@ export class FeatSlotValidator {
     // Check 2: Eligibility based on slotType (NOT source)
     // Key principle: Validation is IDENTICAL for all slot types
     if (slot.slotType === 'class') {
-      // Class bonus feat slots restrict to class-specific feats
-      if (slot.classId) {
-        const allowed = await ClassFeatRegistry.getClassBonusFeats(slot.classId);
+      // PHASE 3: Support both Foundry classId and canonical lookup keys
+      const classId = slot.classId || slot.classLookupKeys?.classId;
+
+      if (classId) {
+        const allowed = await ClassFeatRegistry.getClassBonusFeats(classId);
         if (allowed.length === 0) {
+          SWSELogger.warn(
+            `[FeatSlotValidator] No class bonus feats available for class ${classId}`
+          );
           errors.push('No class bonus feat is available for this class at this level');
         } else if (!allowed.includes(feat._id || feat.id)) {
+          SWSELogger.warn(
+            `[FeatSlotValidator] Feat ${feat._id} not in class bonus list for ${classId}`
+          );
           errors.push(`Feat not allowed for class bonus slot: must be from class feat list`);
         }
+      } else {
+        SWSELogger.warn(
+          '[FeatSlotValidator] Class slot provided but no classId resolved'
+        );
+        errors.push('Class ID not resolved for class bonus validation');
       }
     } else if (slot.slotType === 'heroic') {
       // Heroic slots allow any feat (no restriction)

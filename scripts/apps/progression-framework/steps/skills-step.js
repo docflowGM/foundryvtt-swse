@@ -20,6 +20,7 @@ import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registr
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { BeastSubtypeAdapter } from '../adapters/beast-subtype-adapter.js';
+import { resolveClassModel, getClassSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 
 export class SkillsStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -469,14 +470,16 @@ renderDetailsPanel(focusedItem) {
       || shell?.committedSelections?.get?.('class')
       || null;
 
-    const classData = this._resolveSelectedClassData(classSelection);
-    const classSkillRefs = classData?.classSkills || classData?.system?.classSkills || [];
+    const classModel = this._resolveSelectedClassData(classSelection);
+
+    // PHASE 3: Use canonical class model for class skills
+    const classSkillRefs = classModel ? getClassSkills(classModel) : [];
     const classSkillMatches = this._matchSkillsFromRefs(classSkillRefs);
 
-    if (!classData || classSkillMatches.length === 0) {
+    if (!classModel || classSkillMatches.length === 0) {
       return {
         mode: 'fallback-full-chart',
-        fallbackReason: !classData
+        fallbackReason: !classModel
           ? 'selected-class-unresolved'
           : 'selected-class-produced-zero-skill-matches',
         classSkillRefs: classSkillRefs.length,
@@ -541,11 +544,15 @@ renderDetailsPanel(focusedItem) {
   _resolveSelectedClassData(classSelection) {
     if (!classSelection) return null;
 
-    return (
-      ClassesRegistry.getById(classSelection.id || classSelection.classId || classSelection._id)
-      || ClassesRegistry.getByName(classSelection.name || classSelection.className || classSelection.label)
-      || null
-    );
+    // PHASE 3: Use canonical class resolution helper for consistent behavior
+    const classModel = resolveClassModel(classSelection);
+
+    if (!classModel) {
+      swseLogger.warn('[SkillsStep] Failed to resolve class from selection:', classSelection);
+      return null;
+    }
+
+    return classModel;
   }
 
   _getBackgroundSkillRefs(shell) {
