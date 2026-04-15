@@ -60,31 +60,56 @@ export class TalentStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onStepEnter(shell) {
-    // Build talent tree database if not already done
-    if (!TalentTreeDB.isBuilt) {
-      await TalentTreeDB.build();
+    try {
+      // Build talent tree database if not already done
+      if (!TalentTreeDB.isBuilt) {
+        const treeDbResult = await TalentTreeDB.build();
+        if (!treeDbResult) {
+          console.error('[TalentStep] TalentTreeDB.build() failed. Talent trees may be unavailable.');
+        }
+      }
+
+      // Load all talent trees
+      this._allTrees = Array.from(TalentTreeDB.trees.values());
+      console.log(`[TalentStep] Loaded ${this._allTrees.length} talent trees from database`);
+
+      // Initialize TalentRegistry (fail-closed if error)
+      if (!TalentRegistry.isInitialized?.()) {
+        try {
+          await TalentRegistry.initialize?.();
+        } catch (err) {
+          console.error('[TalentStep] TalentRegistry initialization failed:', err);
+        }
+      }
+
+      // Filter for trees available in this context (heroic or class-specific)
+      const availableTrees = await this._getAvailableTrees(shell);
+      console.log(`[TalentStep] ${availableTrees.length} trees available for ${this._slotType} slot context`);
+
+      // Get suggested trees (pass shell so suggestion engine sees chargen choices)
+      this._suggestedTrees = await this._getSuggestedTrees(shell.actor, availableTrees, shell);
+      console.log(`[TalentStep] ${this._suggestedTrees.length} suggested trees for this build`);
+
+      // Store available trees for display
+      this._allTrees = availableTrees;
+
+      // Start in tree browser stage
+      this._stage = 'browser';
+      this._focusedTreeId = null;
+      this._selectedTreeId = null;
+
+      // Enable mentor
+      shell.mentor.askMentorEnabled = true;
+    } catch (err) {
+      console.error('[TalentStep] onStepEnter failed:', err);
+      // Ensure defaults are set even on failure (fail-closed, empty trees)
+      this._allTrees = [];
+      this._suggestedTrees = [];
+      this._stage = 'browser';
+      this._focusedTreeId = null;
+      this._selectedTreeId = null;
+      shell.mentor.askMentorEnabled = true;
     }
-
-    // Load all talent trees
-    this._allTrees = Array.from(TalentTreeDB.trees.values());
-
-    // Filter for trees available in this context (heroic or class-specific)
-    await TalentRegistry.initialize?.();
-    const availableTrees = await this._getAvailableTrees(shell);
-
-    // Get suggested trees (pass shell so suggestion engine sees chargen choices)
-    this._suggestedTrees = await this._getSuggestedTrees(shell.actor, availableTrees, shell);
-
-    // Store available trees for display
-    this._allTrees = availableTrees;
-
-    // Start in tree browser stage
-    this._stage = 'browser';
-    this._focusedTreeId = null;
-    this._selectedTreeId = null;
-
-    // Enable mentor
-    shell.mentor.askMentorEnabled = true;
   }
 
   async onDataReady(shell) {
@@ -196,6 +221,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
   /**
    * Get talent trees available in current context
+   * HARDENED: Fail-closed for class slots, verify against allowed IDs
    */
   async _getAvailableTrees(shell) {
     const actor = shell?.actor || null;
@@ -219,16 +245,20 @@ export class TalentStep extends ProgressionStepPlugin {
       }
     }
 
+    // Fail-closed for class slots with no allowed trees
+    if (this._slotType === 'class' && (!allowedIds || allowedIds.length === 0)) {
+      console.warn('[TalentStep] No class talent trees allowed in this context (fail-closed)');
+      return [];
+    }
+
+    // For heroic slots, use all available trees if no restriction
     const normalizedAllowed = new Set((allowedIds || []).map(id => String(id).toLowerCase()));
     let available = allTrees.filter(tree => {
-      if (!normalizedAllowed.size) return this._slotType !== 'class';
+      if (!normalizedAllowed.size) return this._slotType === 'heroic';  // heroic: allow all if no restriction
       const treeIds = [tree.id, tree.sourceId, tree.name].filter(Boolean).map(v => String(v).toLowerCase());
       return treeIds.some(id => normalizedAllowed.has(id));
     });
 
-    if (this._slotType === 'class' && normalizedAllowed.size === 0) {
-      return [];
-    }
     return available;
   }
 
@@ -280,18 +310,38 @@ export class TalentStep extends ProgressionStepPlugin {
 
   /**
    * Get talents for a specific tree
+   * HARDENED: Verify registry initialization, log missing talents, provide diagnostics
    */
   async _getTalentsForTree(tree, actor) {
     if (!tree) return [];
 
+    // Ensure registry is initialized and ready
+    if (!TalentRegistry.isInitialized?.()) {
+      console.warn('[TalentStep] TalentRegistry not initialized before talent resolution. Initializing now...');
+      await TalentRegistry.initialize?.();
+    }
+
+    // Use canonical tree shape: prefer top-level talentIds over system.talentIds
     const talentIds = tree.talentIds || tree.system?.talentIds || [];
     const talents = [];
+    const missingIds = [];
 
     for (const talentId of talentIds) {
       const talent = TalentRegistry.getById?.(talentId) || TalentRegistry.getByName?.(talentId);
       if (talent) {
         talents.push(talent);
+      } else {
+        missingIds.push(talentId);
       }
+    }
+
+    // Diagnostic logging (once per tree enter)
+    if (talentIds.length > 0) {
+      console.log(
+        `[TalentStep] Tree "${tree.name}" (${tree.id}): ` +
+        `${talentIds.length} talent IDs → ${talents.length} resolved ` +
+        `${missingIds.length > 0 ? `(${missingIds.length} missing: ${missingIds.join(', ')})` : '(all resolved)'}`
+      );
     }
 
     return talents;
@@ -348,6 +398,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
   /**
    * Data for Stage 1: Tree Browser
+   * HARDENED: Use canonical tree fields, consistent ID handling
    */
   _getTreeBrowserData(context) {
     const filteredTrees = this._filterTreesBySearch(this._allTrees);
@@ -377,16 +428,19 @@ export class TalentStep extends ProgressionStepPlugin {
       stage: 'browser',
       slotType: this._slotType,
       allTrees: filteredTrees.map(tree => ({
-        _id: tree._id || tree.id,
+        // Use canonical tree.id field (normalized trees always have this)
+        id: tree.id,
         name: tree.name,
-        summary: tree.system?.description || '',
-        nodeCount: (tree.system?.talentIds || []).length,
-        isSuggested: this._suggestedTrees.some(s => s._id === tree._id || s.id === tree.id),
-        isFocused: (tree._id || tree.id) === this._focusedTreeId,
-        slotType: tree.system?.classRestricted ? 'class' : 'heroic',
+        summary: tree.description || tree.system?.description || '',
+        // Use canonical talentIds field (top-level, not system.talentIds)
+        nodeCount: (tree.talentIds || []).length,
+        isSuggested: this._suggestedTrees.some(s => s.id === tree.id),
+        isFocused: tree.id === this._focusedTreeId,
+        // Determine slot type from context or fallback (normalized trees don't have classRestricted)
+        slotType: tree.category === 'droid' || tree.tags?.includes('class-only') ? 'class' : 'heroic',
       })),
       suggestedTrees: this._suggestedTrees.map(t => ({
-        _id: t._id || t.id,
+        id: t.id,
         name: t.name,
       })),
       searchQuery: this._searchQuery,
@@ -398,28 +452,41 @@ export class TalentStep extends ProgressionStepPlugin {
 
   /**
    * Data for Stage 2: Tree Graph
+   * HARDENED: Validate talents resolved, use canonical tree fields
    */
   async _getTreeGraphData(context) {
     const selectedTree = this._getTree(this._selectedTreeId);
-    if (!selectedTree || !this._graphData) {
+    if (!selectedTree) {
+      console.warn(`[TalentStep] Selected tree not found: ${this._selectedTreeId}`);
       return { stage: 'graph', error: 'Tree not found' };
+    }
+
+    // Validate that talents actually resolved
+    if (!this._graphData || !this._selectedTreeTalents || this._selectedTreeTalents.length === 0) {
+      console.warn(
+        `[TalentStep] Tree "${selectedTree.name}" has no resolved talents. ` +
+        `talentIds count: ${(selectedTree.talentIds || []).length}, resolved: ${this._selectedTreeTalents?.length || 0}`
+      );
+      // Still render, but with empty graph (better than crashing)
     }
 
     // Prepare node states
     const nodeStates = {};
-    for (const [nodeId, node] of this._graphData.nodes) {
-      const talent = node.talent;
-      const isLegal = await this._isLegal({}, talent);  // TODO: pass actual actor
-      const isOwned = false;  // TODO: check if already owned
-      const isSelected = nodeId === this._selectedTalentId;
-      const isSuggested = this._suggestedTrees.some(t => t._id === this._selectedTreeId);
+    if (this._graphData?.nodes) {
+      for (const [nodeId, node] of this._graphData.nodes) {
+        const talent = node.talent;
+        const isLegal = await this._isLegal({}, talent);  // TODO: pass actual actor
+        const isOwned = false;  // TODO: check if already owned
+        const isSelected = nodeId === this._selectedTalentId;
+        const isSuggested = this._suggestedTrees.some(t => t.id === this._selectedTreeId);
 
-      nodeStates[nodeId] = {
-        legal: isLegal,
-        owned: isOwned,
-        selected: isSelected,
-        suggested: isSuggested,
-      };
+        nodeStates[nodeId] = {
+          legal: isLegal,
+          owned: isOwned,
+          selected: isSelected,
+          suggested: isSuggested,
+        };
+      }
     }
 
     // Get committed talents from session and order them canonically
@@ -507,6 +574,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
     const talent = this._getTalent(this._focusedTalentId);
     if (!talent) {
+      console.warn(`[TalentStep] Focused talent not found: ${this._focusedTalentId}`);
       return this.renderDetailsPanelEmptyState();
     }
 
@@ -522,11 +590,13 @@ export class TalentStep extends ProgressionStepPlugin {
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/talent-details.hbs',
       data: {
+        // Ensure both _id and id are set for compatibility
         talent: { ...talent, _id: talentId, id: talentId },
         treeName: selectedTree?.name || '',
         isSelected,
         description: talent.description || talent.system?.description || '',
-        prerequisites: talent.prerequisites?.raw || talent.system?.prerequisites || talent.system?.prerequisite || '',
+        // Use normalized prerequisites from normalizer (avoids fabrication)
+        prerequisites: normalized.prerequisites ? normalized.prerequisites[0] : null,
         // Add normalized fields for enhanced detail rail
         canonicalDescription: normalized.description,
         metadataTags: normalized.metadataTags,

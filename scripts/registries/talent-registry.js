@@ -184,6 +184,7 @@ export class TalentRegistry {
 
     /**
      * Get talent entry by ID
+     * HARDENED: Fail-closed if registry not initialized
      * @param {string} id - Talent ID (usually compendium _id)
      * @returns {TalentRegistryEntry|null}
      */
@@ -191,16 +192,25 @@ export class TalentRegistry {
         if (!id) {
             return null;
         }
+        if (!this._initialized) {
+            SWSELogger.warn('[TalentRegistry] getById called before initialization. Registry will be empty.');
+            return null;
+        }
         return this._byId.get(id) || null;
     }
 
     /**
      * Get talent entry by name (case-insensitive)
+     * HARDENED: Fail-closed if registry not initialized
      * @param {string} name - Talent name
      * @returns {TalentRegistryEntry|null}
      */
     static getByName(name) {
         if (!name) {
+            return null;
+        }
+        if (!this._initialized) {
+            SWSELogger.warn('[TalentRegistry] getByName called before initialization. Registry will be empty.');
             return null;
         }
         return this._byName.get(String(name).toLowerCase()) || null;

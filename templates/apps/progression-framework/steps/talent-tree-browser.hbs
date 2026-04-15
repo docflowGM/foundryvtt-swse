@@ -28,16 +28,16 @@
       {{#each suggestedTrees}}
       <button class="talent-tree-card talent-tree-card--suggested"
               data-action="focus-tree"
-              data-tree-id="{{this.id}}">
+              data-tree-id="{{id}}">
         <div class="talent-tree-card__content">
-          <h5 class="talent-tree-card__name">{{this.name}}</h5>
+          <h5 class="talent-tree-card__name">{{name}}</h5>
           <p class="talent-tree-card__meta">
             <span class="talent-tree-badge suggested-badge">
               <i class="fa-solid fa-star"></i> Suggested
             </span>
           </p>
         </div>
-        <button class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{this.id}}">
+        <button class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{id}}">
           <i class="fa-solid fa-arrow-right"></i> Explore
         </button>
       </button>
@@ -51,17 +51,17 @@
     {{#if allTrees}}
     <div class="talent-tree-cards all-trees">
       {{#each allTrees}}
-      <button class="talent-tree-card {{#if this.isFocused}}talent-tree-card--focused{{/if}} {{#if this.isSuggested}}talent-tree-card--suggested{{/if}}"
+      <button class="talent-tree-card {{#if isFocused}}talent-tree-card--focused{{/if}} {{#if isSuggested}}talent-tree-card--suggested{{/if}}"
               data-action="focus-tree"
-              data-tree-id="{{this.id}}">
+              data-tree-id="{{id}}">
         <div class="talent-tree-card__content">
-          <h5 class="talent-tree-card__name">{{this.name}}</h5>
-          <p class="talent-tree-card__summary">{{this.summary}}</p>
+          <h5 class="talent-tree-card__name">{{name}}</h5>
+          <p class="talent-tree-card__summary">{{summary}}</p>
           <div class="talent-tree-card__meta">
             <span class="talent-tree-badge">
-              <i class="fa-solid fa-layer-group"></i> {{this.nodeCount}} talents
+              <i class="fa-solid fa-layer-group"></i> {{nodeCount}} talents
             </span>
-            {{#if (eq this.slotType "class")}}
+            {{#if (eq slotType "class")}}
             <span class="talent-tree-badge class-badge">
               <i class="fa-solid fa-lock"></i> Class
             </span>
@@ -72,7 +72,7 @@
             {{/if}}
           </div>
         </div>
-        <button class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{this.id}}">
+        <button class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{id}}">
           <i class="fa-solid fa-arrow-right"></i> Explore
         </button>
       </button>

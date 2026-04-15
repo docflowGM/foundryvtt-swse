@@ -53,12 +53,12 @@
 
     <div class="talent-details__actions">
       {{#if isSelected}}
-      <button class="action-btn deselect-btn" data-action="commit-item" data-item-id="{{talent.id}}">
+      <button class="action-btn deselect-btn" data-action="commit-item" data-item-id="{{talent._id}}">
         <i class="fa-solid fa-times-circle"></i>
         Deselect Talent
       </button>
       {{else}}
-      <button class="action-btn select-btn" data-action="commit-item" data-item-id="{{talent.id}}">
+      <button class="action-btn select-btn" data-action="commit-item" data-item-id="{{talent._id}}">
         <i class="fa-solid fa-check-circle"></i>
         Choose This Talent
       </button>
