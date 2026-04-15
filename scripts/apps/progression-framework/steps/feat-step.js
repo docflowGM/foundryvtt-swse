@@ -35,6 +35,27 @@ import { resolveClassModel, getClassBonusFeatsLookupKeys } from '/systems/foundr
 const FEATS_PER_CATEGORY_INITIAL = 5;  // Constrained visible count per category
 const TOP_SUGGESTIONS = 4;              // Top N suggested feats to show
 
+// User-friendly labels for featType values
+const FEAT_TYPE_LABELS = {
+  general:     'General',
+  force:       'Force',
+  species:     'Species',
+  team:        'Team',
+  martial_arts: 'Martial Arts',
+};
+
+// Category icons keyed by lowercase featType
+const FEAT_TYPE_ICONS = {
+  general:     'fa-star',
+  force:       'fa-fan',
+  species:     'fa-dna',
+  team:        'fa-users',
+  martial_arts: 'fa-hand-fist',
+};
+
+// Module-level cache so large JSON is parsed only once per page load
+let _featMappingCache = null;
+
 export class FeatStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
@@ -56,6 +77,13 @@ export class FeatStep extends ProgressionStepPlugin {
     // UI state
     this._selectedFeatItem = null;       // The actual feat item for display
 
+    // Mapping & filter state
+    this._mapping = null;                // feat-buckets-and-subbuckets.json
+    this._selectedTypes = new Set();     // Active featType multi-select filter
+    this._selectedTags  = new Set();     // Active tag multi-select filter
+    this._openFilterPanel = null;        // Which dropdown is open: 'type' | 'tag' | null
+    this._sortBy = 'alpha-asc';          // Default sort
+
     // Event listener cleanup
     this._renderAbort = null;            // AbortController for automatic listener cleanup
   }
@@ -70,8 +98,14 @@ export class FeatStep extends ProgressionStepPlugin {
       await FeatRegistry.build();
     }
 
+    // Load tag/bucket mapping (cached at module level after first load)
+    this._mapping = await this._loadMapping();
+
     // Load and normalize all feats from registry
     this._allFeats = (FeatRegistry.list?.() || []).map(f => this._normalizeFeat(f));
+
+    // Attach UI tags from mapping to each feat
+    this._annotateFeatsWithTags();
 
     // Get legal feats for this context
     const legalFeats = await this._getLegalFeats(shell.actor);
@@ -111,13 +145,39 @@ export class FeatStep extends ProgressionStepPlugin {
       shell.render();
     };
     const onSort = e => {
-      this._sortBy = e.detail?.sortId || 'alpha';
+      this._sortBy = e.detail?.sortId || 'alpha-asc';
       shell.render();
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
     shell.element.addEventListener('prog:utility:filter', onFilter, { signal });
     shell.element.addEventListener('prog:utility:sort', onSort, { signal });
+
+    // Wire filter-panel toggle buttons (Type / Tags dropdowns)
+    const filterPanelBtns = shell.element.querySelectorAll('[data-action="open-filter-panel"]');
+    filterPanelBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const panelId = btn.dataset.panel;
+        this._openFilterPanel = this._openFilterPanel === panelId ? null : panelId;
+        shell.render();
+      }, { signal });
+    });
+
+    // Wire filter checkboxes (type & tag)
+    const filterCheckboxes = shell.element.querySelectorAll('[data-filter-group]');
+    filterCheckboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const group = cb.dataset.filterGroup;
+        if (group === 'type') {
+          if (cb.checked) this._selectedTypes.add(cb.value);
+          else            this._selectedTypes.delete(cb.value);
+        } else if (group === 'tag') {
+          if (cb.checked) this._selectedTags.add(cb.value);
+          else            this._selectedTags.delete(cb.value);
+        }
+        shell.render();
+      }, { signal });
+    });
 
     // Wire category expand/collapse
     const categoryToggles = shell.element.querySelectorAll('[data-action="toggle-category"]');
@@ -273,15 +333,27 @@ export class FeatStep extends ProgressionStepPlugin {
       }
     }
 
-    // Convert to grouped object
+    // Convert to grouped object with friendly labels
     for (const [category, feats] of Object.entries(categoryMap)) {
       this._groupedFeats[category] = {
-        label: category,
+        label: FEAT_TYPE_LABELS[category] || this._toTitleCase(category),
         icon: this._getCategoryIcon(category),
         feats,
         isSuggested: false,
       };
     }
+  }
+
+  _toTitleCase(str) {
+    return String(str).replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  /**
+   * Normalize a raw featType string to a stable lowercase key
+   */
+  _normalizeFeatTypeKey(raw) {
+    if (!raw) return 'general';
+    return String(raw).toLowerCase().trim();
   }
 
   /**
@@ -302,6 +374,7 @@ export class FeatStep extends ProgressionStepPlugin {
       description: feat.description || feat.system?.description?.value || feat.system?.description || feat.system?.benefit || '',
       prerequisiteLine,
       isAvailable: true,
+      uiBroadTags: [],  // populated by _annotateFeatsWithTags after mapping loads
     };
   }
 
@@ -319,23 +392,12 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _getCategoryIcon(category) {
-    const iconMap = {
-      'Combat': 'fa-sword',
-      'General': 'fa-star',
-      'Force': 'fa-fan',
-      'Skill': 'fa-scroll',
-      'Defensive': 'fa-shield',
-      'Mobility': 'fa-person-running',
-      'Social': 'fa-handshake',
-      'Species': 'fa-dna',
-      'Talent': 'fa-wand-magic-sparkles',
-    };
-    return iconMap[category] || 'fa-circle';
+    return FEAT_TYPE_ICONS[category] || 'fa-circle';
   }
 
-
   _getFeatCategory(feat) {
-    return feat?.category || feat?.system?.category || feat?.system?.featType || 'General';
+    const raw = feat?.category || feat?.system?.category || feat?.system?.featType;
+    return this._normalizeFeatTypeKey(raw);
   }
 
   _getFeatDescription(feat) {
@@ -382,6 +444,45 @@ export class FeatStep extends ProgressionStepPlugin {
    */
   _getFeat(featId) {
     return this._allFeats.find(f => (f._id === featId || f.id === featId || f.name === featId));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Mapping Helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Load feat-buckets-and-subbuckets.json once and cache at module level
+   */
+  async _loadMapping() {
+    if (_featMappingCache) return _featMappingCache;
+    try {
+      const response = await fetch('systems/foundryvtt-swse/data/feat-buckets-and-subbuckets.json');
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      _featMappingCache = await response.json();
+      return _featMappingCache;
+    } catch (err) {
+      console.warn('[FeatStep] Could not load feat-buckets-and-subbuckets.json:', err);
+      return { perFeat: {}, intent: { addsUiSubBuckets: [] } };
+    }
+  }
+
+  /**
+   * Attach uiBroadTags from mapping to every feat in _allFeats (mutates in place)
+   */
+  _annotateFeatsWithTags() {
+    const perFeat = this._mapping?.perFeat || {};
+    for (const feat of this._allFeats) {
+      const entry = perFeat[feat.name];
+      feat.uiBroadTags = entry?.uiBroadTags || [];
+    }
+  }
+
+  /**
+   * Return uiBroadTags for a feat from the mapping (safe, returns [] when unmapped)
+   */
+  _getFeatTagsFromMapping(feat) {
+    const entry = this._mapping?.perFeat?.[feat.name];
+    return entry?.uiBroadTags || [];
   }
 
   /**
@@ -431,6 +532,11 @@ export class FeatStep extends ProgressionStepPlugin {
     const groupedDisplay = {};
 
     for (const [categoryKey, group] of Object.entries(this._groupedFeats)) {
+      // Apply type filter: skip groups that don't match (suggested group always passes)
+      if (this._selectedTypes.size > 0 && !group.isSuggested && !this._selectedTypes.has(categoryKey)) {
+        continue;
+      }
+
       const featsToShow = this._filterFeatsBySearch(group.feats);
 
       groupedDisplay[categoryKey] = {
@@ -448,13 +554,32 @@ export class FeatStep extends ProgressionStepPlugin {
           isFocused: (feat._id || feat.id) === this._focusedFeatId,
           isSelected: (feat._id || feat.id) === this._selectedFeatId,
           isAvailable: true,
-          unavailabilityReason: null
+          unavailabilityReason: null,
+          uiBroadTags: feat.uiBroadTags || [],
         })),
         visibleCount: Math.min(featsToShow.length, FEATS_PER_CATEGORY_INITIAL),
         totalCount: featsToShow.length,
         canExpand: featsToShow.length > FEATS_PER_CATEGORY_INITIAL,
       };
     }
+
+    // Type options — built from all available groups (excluding suggested)
+    const typeOptions = Object.keys(this._groupedFeats)
+      .filter(k => k !== 'suggested')
+      .sort()
+      .map(t => ({
+        value: t,
+        label: FEAT_TYPE_LABELS[t] || this._toTitleCase(t),
+        checked: this._selectedTypes.has(t),
+      }));
+
+    // Tag options — from mapping intent (the canonical UI sub-bucket list)
+    const rawTags = this._mapping?.intent?.addsUiSubBuckets || [];
+    const tagOptions = [...rawTags].sort().map(t => ({
+      value: t,
+      label: t,
+      checked: this._selectedTags.has(t),
+    }));
 
     // Get committed feats from session and order them canonically
     const committedFeats = context?.shell?.progressionSession?.draftSelections?.feats || [];
@@ -489,6 +614,12 @@ export class FeatStep extends ProgressionStepPlugin {
       orderedSelections,
       // PHASE 2 UX: Slot progress
       slotProgress,
+      // Filter state
+      typeOptions,
+      tagOptions,
+      selectedTypesCount: this._selectedTypes.size,
+      selectedTagsCount: this._selectedTags.size,
+      openFilterPanel: this._openFilterPanel,
     };
   }
 
@@ -528,7 +659,7 @@ export class FeatStep extends ProgressionStepPlugin {
 
     // Normalize detail panel data for canonical display (no fabrication)
     const normalized = normalizeDetailPanelData(feat, 'feat', {
-      metadata: { tags: [] }, // Could augment with feat-metadata.json tags if needed
+      metadata: { tags: feat.uiBroadTags || [] },
     });
 
     return {
@@ -537,7 +668,7 @@ export class FeatStep extends ProgressionStepPlugin {
         feat,
         isSuggested,
         isSelected,
-        category: this._getFeatCategory(feat),
+        category: FEAT_TYPE_LABELS[this._getFeatCategory(feat)] || this._toTitleCase(this._getFeatCategory(feat)),
         description: this._getFeatDescription(feat),
         prerequisites: this._getFeatPrerequisites(feat),
         prerequisiteLine: feat.prerequisiteLine || this._getFeatPrerequisites(feat),
@@ -546,6 +677,8 @@ export class FeatStep extends ProgressionStepPlugin {
         canonicalDescription: normalized.description,
         metadataTags: normalized.metadataTags,
         hasMentorProse: normalized.fallbacks.hasMentorProse,
+        // Tags from mapping
+        uiBroadTags: feat.uiBroadTags || [],
       },
     };
   }
@@ -589,26 +722,33 @@ export class FeatStep extends ProgressionStepPlugin {
 
   _filterFeatsBySearch(feats) {
     let filtered = feats;
+
+    // Search filter
     if (this._searchQuery) {
       const q = this._searchQuery.toLowerCase();
       filtered = filtered.filter(feat =>
         feat.name.toLowerCase().includes(q) ||
-        this._getFeatDescription(feat).toLowerCase().includes(q) ||
-        this._getFeatCategory(feat).toLowerCase().includes(q)
+        this._getFeatDescription(feat).toLowerCase().includes(q)
       );
     }
-    const activeFilters = Object.entries(this._filters || {}).filter(([,v]) => !!v).map(([k]) => k);
-    if (activeFilters.length) {
+
+    // Tag filter: include feats that have ANY of the selected tags
+    // Unmapped feats (uiBroadTags = []) are excluded only when tags are actively selected
+    if (this._selectedTags.size > 0) {
       filtered = filtered.filter(feat => {
-        const c = String(this._getFeatCategory(feat)).toLowerCase();
-        return activeFilters.some(f => c.includes(f));
+        const tags = feat.uiBroadTags || [];
+        return tags.some(t => this._selectedTags.has(t));
       });
     }
-    if (this._sortBy === 'alpha') {
-      filtered = [...filtered].sort((a,b)=> String(a.name).localeCompare(String(b.name)));
-    } else if (this._sortBy === 'category') {
-      filtered = [...filtered].sort((a,b)=> String(this._getFeatCategory(a)).localeCompare(String(this._getFeatCategory(b))) || String(a.name).localeCompare(String(b.name)));
+
+    // Sort
+    if (this._sortBy === 'alpha-desc') {
+      filtered = [...filtered].sort((a, b) => String(b.name).localeCompare(String(a.name)));
+    } else {
+      // 'alpha-asc' is the default (also covers legacy 'alpha')
+      filtered = [...filtered].sort((a, b) => String(a.name).localeCompare(String(b.name)));
     }
+
     return filtered;
   }
 
@@ -684,17 +824,10 @@ export class FeatStep extends ProgressionStepPlugin {
     return {
       mode: 'rich',
       search: { enabled: true, placeholder: 'Search feats…' },
-      filters: [
-        { id: 'combat', label: 'Combat', defaultOn: false },
-        { id: 'force', label: 'Force', defaultOn: false },
-        { id: 'skill', label: 'Skill', defaultOn: false },
-        { id: 'utility', label: 'Utility', defaultOn: false },
-        { id: 'social', label: 'Social', defaultOn: false },
-        { id: 'species', label: 'Racial', defaultOn: false },
-      ],
+      // Type and tag filters are rendered inline in the work surface, not as utility-bar chips.
       sorts: [
-        { id: 'alpha', label: 'A–Z' },
-        { id: 'category', label: 'Category' },
+        { id: 'alpha-asc',  label: 'Name A→Z' },
+        { id: 'alpha-desc', label: 'Name Z→A' },
       ],
     };
   }

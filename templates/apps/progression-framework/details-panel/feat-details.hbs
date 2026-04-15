@@ -26,6 +26,18 @@
     <span class="category-value">{{category}}</span>
   </div>
 
+  {{!-- Tags (from feat-buckets-and-subbuckets.json mapping) --}}
+  {{#if uiBroadTags.length}}
+  <div class="feat-tags-row">
+    <span class="row-label">Tags:</span>
+    <div class="feat-tags">
+      {{#each uiBroadTags}}
+      <span class="feat-tag-badge">{{this}}</span>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
   {{!-- Feat Description --}}
   <div class="feat-description-section">
     <h3>Description</h3>
