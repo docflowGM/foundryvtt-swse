@@ -7,6 +7,8 @@
  * PHASE 3: Hardened to use ManeuverAuthorityEngine for access/capacity.
  * Content source: StarshipManeuverEngine (actor-owned) → StarshipManeuverManager (definition pool fallback)
  * CONDITIONAL — unlocked only when actor has starship piloting capability.
+ *
+ * PHASE 3.1: Comprehensive diagnostic logging for hydration failures.
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
@@ -46,11 +48,50 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   get descriptor() { return this._descriptor; }
 
   async onStepEnter(shell) {
+    const sessionId = shell?.sessionId || 'unknown';
+    const actorName = shell?.actor?.name || 'unknown';
+    const diagnostics = {
+      sessionId,
+      actorName,
+      accessValidation: null,
+      capacityResolution: null,
+      contentSourceLoading: null,
+      alreadySelected: null,
+    };
+
     try {
       // PHASE 3: Validate access first (fail-closed if not allowed)
-      const accessValidation = await ManeuverAuthorityEngine.validateManeuverAccess(shell.actor);
-      if (!accessValidation.valid) {
-        swseLogger.log(`[StarshipManeuverStep] Access blocked: ${accessValidation.reason}`);
+      try {
+        const accessValidation = await ManeuverAuthorityEngine.validateManeuverAccess(shell.actor);
+        diagnostics.accessValidation = {
+          success: accessValidation.valid,
+          reason: accessValidation.reason || 'not specified',
+        };
+
+        if (!accessValidation.valid) {
+          swseLogger.warn(`[StarshipManeuverStep] Access blocked for ${actorName}`, {
+            sessionId,
+            reason: accessValidation.reason,
+            diagnostics,
+          });
+          this._allManeuvers = [];
+          this._remainingPicks = 0;
+          shell.mentor.askMentorEnabled = true;
+          return;
+        }
+
+        swseLogger.debug(`[StarshipManeuverStep] Access validated for ${actorName}`, { sessionId });
+      } catch (accessErr) {
+        diagnostics.accessValidation = {
+          success: false,
+          error: accessErr.message,
+          reason: 'access validation threw exception',
+        };
+        swseLogger.error(`[StarshipManeuverStep] Access validation exception for ${actorName}`, {
+          sessionId,
+          error: accessErr.message,
+          diagnostics,
+        });
         this._allManeuvers = [];
         this._remainingPicks = 0;
         shell.mentor.askMentorEnabled = true;
@@ -58,37 +99,146 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       }
 
       // PHASE 3: Get capacity from authority engine
-      const capacity = await ManeuverAuthorityEngine.getManeuverCapacity(shell.actor);
-      swseLogger.debug(`[StarshipManeuverStep] Capacity validated: ${capacity} picks available`);
+      let capacity = 0;
+      try {
+        capacity = await ManeuverAuthorityEngine.getManeuverCapacity(shell.actor);
+        diagnostics.capacityResolution = {
+          success: capacity > 0,
+          capacity,
+          message: capacity > 0 ? 'capacity determined' : 'zero capacity resolved',
+        };
+
+        swseLogger.debug(`[StarshipManeuverStep] Capacity resolved for ${actorName}`, {
+          sessionId,
+          capacity,
+        });
+      } catch (capacityErr) {
+        diagnostics.capacityResolution = {
+          success: false,
+          error: capacityErr.message,
+          message: 'capacity resolution threw exception',
+        };
+        swseLogger.error(`[StarshipManeuverStep] Capacity resolution exception for ${actorName}`, {
+          sessionId,
+          error: capacityErr.message,
+          diagnostics,
+        });
+        this._allManeuvers = [];
+        this._remainingPicks = 0;
+        shell.mentor.askMentorEnabled = true;
+        return;
+      }
 
       // PHASE 3: Load maneuvers from primary source (actor-owned items)
-      const actorManeuvers = await StarshipManeuverEngine.collectAvailableManeuvers(shell.actor);
-      let maneuverPool = actorManeuvers;
+      let maneuverPool = [];
+      let contentSource = 'none';
+      try {
+        const actorManeuvers = await StarshipManeuverEngine.collectAvailableManeuvers(shell.actor);
+        maneuverPool = actorManeuvers;
+        contentSource = 'actor-owned';
 
-      // Fallback to definition pool if actor has no owned maneuvers but access is valid
-      if (maneuverPool.length === 0) {
-        swseLogger.debug(`[StarshipManeuverStep] No actor-owned maneuvers, using definition pool fallback`);
-        maneuverPool = StarshipManeuverManager._getAllManeuverDefinitions();
-      } else {
-        swseLogger.debug(`[StarshipManeuverStep] Using actor-owned maneuvers: ${maneuverPool.length} available`);
+        // Fallback to definition pool if actor has no owned maneuvers but access is valid
+        if (maneuverPool.length === 0) {
+          try {
+            maneuverPool = StarshipManeuverManager._getAllManeuverDefinitions();
+            contentSource = 'definition-pool';
+            swseLogger.debug(`[StarshipManeuverStep] No actor-owned maneuvers, using definition pool fallback for ${actorName}`, {
+              sessionId,
+              definitionCount: maneuverPool.length,
+            });
+          } catch (defPoolErr) {
+            diagnostics.contentSourceLoading = {
+              actorEngineSuccess: true,
+              actorEngineCount: 0,
+              definitionPoolSuccess: false,
+              definitionPoolError: defPoolErr.message,
+              message: 'definition pool fallback threw exception',
+            };
+            swseLogger.error(`[StarshipManeuverStep] Definition pool fallback exception for ${actorName}`, {
+              sessionId,
+              error: defPoolErr.message,
+              diagnostics,
+            });
+            this._allManeuvers = [];
+            this._remainingPicks = 0;
+            shell.mentor.askMentorEnabled = true;
+            return;
+          }
+        } else {
+          swseLogger.debug(`[StarshipManeuverStep] Using actor-owned maneuvers for ${actorName}`, {
+            sessionId,
+            actorOwnedCount: maneuverPool.length,
+          });
+        }
+
+        diagnostics.contentSourceLoading = {
+          actorEngineSuccess: true,
+          actorEngineCount: actorManeuvers.length,
+          definitionPoolSuccess: contentSource === 'definition-pool',
+          definitionPoolCount: contentSource === 'definition-pool' ? maneuverPool.length : 0,
+          source: contentSource,
+          totalCount: maneuverPool.length,
+        };
+      } catch (contentErr) {
+        diagnostics.contentSourceLoading = {
+          actorEngineSuccess: false,
+          actorEngineError: contentErr.message,
+          message: 'actor maneuver engine threw exception',
+        };
+        swseLogger.error(`[StarshipManeuverStep] Content source loading exception for ${actorName}`, {
+          sessionId,
+          error: contentErr.message,
+          diagnostics,
+        });
+        this._allManeuvers = [];
+        this._remainingPicks = 0;
+        shell.mentor.askMentorEnabled = true;
+        return;
       }
 
       this._allManeuvers = maneuverPool;
 
       // Calculate remaining picks from capacity and shell selections
-      const pendingManeuvers = shell?.buildIntent?.getSelection?.('starshipManeuvers') || [];
-      const pendingCount = Array.isArray(pendingManeuvers)
-        ? pendingManeuvers.reduce((sum, m) => sum + (m.count || 1), 0)
-        : 0;
-      const alreadySelected = pendingCount > 0 ? pendingCount : (shell.actor?.system?.starshipManeuverSuite?.maneuvers?.length ?? 0);
-      this._remainingPicks = Math.max(0, capacity - alreadySelected);
+      try {
+        const pendingManeuvers = shell?.buildIntent?.getSelection?.('starshipManeuvers') || [];
+        const pendingCount = Array.isArray(pendingManeuvers)
+          ? pendingManeuvers.reduce((sum, m) => sum + (m.count || 1), 0)
+          : 0;
+        const actorCount = shell.actor?.system?.starshipManeuverSuite?.maneuvers?.length ?? 0;
+        const alreadySelected = pendingCount > 0 ? pendingCount : actorCount;
+        this._remainingPicks = Math.max(0, capacity - alreadySelected);
 
-      swseLogger.log(`[StarshipManeuverStep] Entitlements resolved`, {
-        capacity,
-        alreadySelected,
-        remaining: this._remainingPicks,
-        source: actorManeuvers.length > 0 ? 'actor-owned' : 'definition-pool'
-      });
+        diagnostics.alreadySelected = {
+          pendingCount,
+          actorCount,
+          total: alreadySelected,
+          capacity,
+          remaining: this._remainingPicks,
+        };
+
+        swseLogger.log(`[StarshipManeuverStep] Entitlements resolved for ${actorName}`, {
+          sessionId,
+          capacity,
+          alreadySelected,
+          remaining: this._remainingPicks,
+          source: contentSource,
+          diagnostics,
+        });
+      } catch (selectedErr) {
+        diagnostics.alreadySelected = {
+          error: selectedErr.message,
+          message: 'already-selected counting threw exception',
+        };
+        swseLogger.error(`[StarshipManeuverStep] Already-selected counting exception for ${actorName}`, {
+          sessionId,
+          error: selectedErr.message,
+          diagnostics,
+        });
+        this._allManeuvers = [];
+        this._remainingPicks = 0;
+        shell.mentor.askMentorEnabled = true;
+        return;
+      }
 
       await this._computeLegalManeuvers(shell.actor);
       this._applyFilters();
@@ -98,9 +248,16 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
 
       shell.mentor.askMentorEnabled = true;
 
-      swseLogger.debug(`[StarshipManeuverStep] Entered: ${this._allManeuvers.length} total, ${this._legalManeuvers.length} legal, ${this._remainingPicks} picks`);
+      swseLogger.debug(`[StarshipManeuverStep] Entered: ${this._allManeuvers.length} total, ${this._legalManeuvers.length} legal, ${this._remainingPicks} picks`, {
+        sessionId,
+        diagnostics,
+      });
     } catch (e) {
-      swseLogger.error('[StarshipManeuverStep.onStepEnter]', e);
+      swseLogger.error(`[StarshipManeuverStep.onStepEnter] Unhandled exception for ${actorName}`, {
+        sessionId,
+        error: e.message,
+        diagnostics,
+      });
       this._allManeuvers = [];
       this._remainingPicks = 0;
     }
@@ -316,17 +473,46 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
 
   async _computeLegalManeuvers(actor) {
     this._legalManeuvers = [];
+    const actorName = actor?.name || 'unknown';
 
-    // PHASE 3: Use AbilityEngine to evaluate prerequisite legality
-    for (const maneuver of this._allManeuvers) {
-      const assessment = AbilityEngine.evaluateAcquisition(actor, maneuver);
+    try {
+      // PHASE 3: Use AbilityEngine to evaluate prerequisite legality
+      let evaluationErrors = 0;
+      for (const maneuver of this._allManeuvers) {
+        try {
+          const assessment = AbilityEngine.evaluateAcquisition(actor, maneuver);
 
-      if (assessment.legal) {
-        this._legalManeuvers.push(maneuver);
+          if (assessment.legal) {
+            this._legalManeuvers.push(maneuver);
+          }
+        } catch (itemErr) {
+          evaluationErrors++;
+          swseLogger.warn(`[StarshipManeuverStep] AbilityEngine evaluation exception for maneuver ${maneuver.id}`, {
+            actorName,
+            maneuverName: maneuver.name,
+            error: itemErr.message,
+          });
+        }
       }
-    }
 
-    swseLogger.debug(`[StarshipManeuverStep] Legal maneuvers: ${this._legalManeuvers.length} of ${this._allManeuvers.length}`);
+      swseLogger.debug(`[StarshipManeuverStep] Legal maneuvers computed for ${actorName}`, {
+        legal: this._legalManeuvers.length,
+        total: this._allManeuvers.length,
+        evaluationErrors,
+      });
+
+      if (evaluationErrors > 0) {
+        swseLogger.warn(`[StarshipManeuverStep] ${evaluationErrors} maneuver legality evaluations failed for ${actorName}`, {
+          total: this._allManeuvers.length,
+          evaluated: this._allManeuvers.length - evaluationErrors,
+        });
+      }
+    } catch (err) {
+      swseLogger.error(`[StarshipManeuverStep._computeLegalManeuvers] Unhandled exception for ${actorName}`, {
+        error: err.message,
+      });
+      this._legalManeuvers = [];
+    }
   }
 
   _applyFilters() {

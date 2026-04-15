@@ -9,6 +9,8 @@
  * - Provide safe accessors for class mechanics
  * - Fail-closed when resolution fails
  * - Log warnings at seam boundaries
+ *
+ * PHASE 3.1: Comprehensive diagnostic logging for hydration failures.
  */
 
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
@@ -25,50 +27,125 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
  */
 export function resolveClassModel(classSelection) {
   if (!classSelection) {
+    swseLogger.debug('[ClassResolution] Null classSelection provided');
     return null;
   }
 
-  // Extract identifiers from various payload formats
-  const classId = classSelection.id || classSelection.classId || classSelection._id;
-  const sourceId = classSelection.sourceId;
-  const className = classSelection.name || classSelection.className;
+  const diagnostics = {
+    selectionType: classSelection?.constructor?.name || typeof classSelection,
+    payloadKeys: classSelection && typeof classSelection === 'object' ? Object.keys(classSelection) : [],
+  };
 
-  // Attempt resolution by ID (preferred)
-  if (classId) {
-    const model = ClassesRegistry.getById(classId);
-    if (model) {
-      swseLogger.debug(`[ClassResolution] Resolved class by ID: ${classId}`);
-      return model;
+  try {
+    // Extract identifiers from various payload formats
+    const classId = classSelection.id || classSelection.classId || classSelection._id;
+    const sourceId = classSelection.sourceId;
+    const className = classSelection.name || classSelection.className;
+
+    diagnostics.extractedIds = {
+      classId: classId || null,
+      sourceId: sourceId || null,
+      className: className || null,
+    };
+
+    // Attempt resolution by ID (preferred)
+    if (classId) {
+      try {
+        const model = ClassesRegistry.getById(classId);
+        if (model) {
+          diagnostics.resolution = {
+            method: 'getById',
+            classId,
+            success: true,
+            modelName: model.name || 'unknown',
+          };
+          swseLogger.debug(`[ClassResolution] Resolved class by ID: ${classId}`, { diagnostics });
+          return model;
+        }
+        diagnostics.getByIdResult = 'no model found';
+      } catch (registryErr) {
+        diagnostics.getByIdError = registryErr.message;
+        swseLogger.warn(`[ClassResolution] ClassesRegistry.getById threw exception for ID ${classId}`, {
+          error: registryErr.message,
+          diagnostics,
+        });
+      }
     }
-  }
 
-  // Fallback to sourceId resolution
-  if (sourceId) {
-    const all = ClassesRegistry.getAll();
-    const model = all.find(c => c.sourceId === sourceId);
-    if (model) {
-      swseLogger.debug(`[ClassResolution] Resolved class by sourceId: ${sourceId}`);
-      return model;
+    // Fallback to sourceId resolution
+    if (sourceId) {
+      try {
+        const all = ClassesRegistry.getAll();
+        const model = all.find(c => c.sourceId === sourceId);
+        if (model) {
+          diagnostics.resolution = {
+            method: 'getAll + sourceId match',
+            sourceId,
+            success: true,
+            modelName: model.name || 'unknown',
+          };
+          swseLogger.debug(`[ClassResolution] Resolved class by sourceId: ${sourceId}`, { diagnostics });
+          return model;
+        }
+        diagnostics.getAllSourceIdResult = 'no model found for sourceId';
+      } catch (registryErr) {
+        diagnostics.getAllError = registryErr.message;
+        swseLogger.warn(`[ClassResolution] ClassesRegistry.getAll threw exception while resolving sourceId ${sourceId}`, {
+          error: registryErr.message,
+          diagnostics,
+        });
+      }
     }
-  }
 
-  // Final fallback to name resolution (compatibility only)
-  if (className) {
-    const model = ClassesRegistry.getByName(className);
-    if (model) {
-      swseLogger.debug(`[ClassResolution] Resolved class by name: ${className} (compatibility fallback)`);
-      return model;
+    // Final fallback to name resolution (compatibility only)
+    if (className) {
+      try {
+        const model = ClassesRegistry.getByName(className);
+        if (model) {
+          diagnostics.resolution = {
+            method: 'getByName (compatibility fallback)',
+            className,
+            success: true,
+            modelName: model.name || 'unknown',
+          };
+          swseLogger.debug(`[ClassResolution] Resolved class by name: ${className} (compatibility fallback)`, { diagnostics });
+          return model;
+        }
+        diagnostics.getByNameResult = 'no model found';
+      } catch (registryErr) {
+        diagnostics.getByNameError = registryErr.message;
+        swseLogger.warn(`[ClassResolution] ClassesRegistry.getByName threw exception for name ${className}`, {
+          error: registryErr.message,
+          diagnostics,
+        });
+      }
     }
-  }
 
-  // Resolution failed
-  swseLogger.warn(`[ClassResolution] Failed to resolve class:`, {
-    classId,
-    sourceId,
-    className,
-    payload: classSelection
-  });
-  return null;
+    // Resolution failed
+    diagnostics.resolution = {
+      method: 'none',
+      success: false,
+      reason: 'all resolution methods failed or no identifiers provided',
+    };
+    swseLogger.warn(`[ClassResolution] Failed to resolve class after all methods`, {
+      classId,
+      sourceId,
+      className,
+      diagnostics,
+    });
+    return null;
+  } catch (err) {
+    // Catch any unhandled exceptions during resolution
+    diagnostics.exception = {
+      message: err.message,
+      stack: err.stack,
+    };
+    swseLogger.error(`[ClassResolution] Unhandled exception in resolveClassModel`, {
+      error: err.message,
+      diagnostics,
+    });
+    return null;
+  }
 }
 
 /**
@@ -80,20 +157,69 @@ export function resolveClassModel(classSelection) {
  */
 export function resolveSelectedClassFromShell(shell) {
   if (!shell) {
+    swseLogger.debug('[ClassResolution.resolveSelectedClassFromShell] Null shell provided');
     return null;
   }
 
-  // Try canonical session first
-  const classSelection =
-    shell.progressionSession?.getSelection?.('class')
-    || shell.committedSelections?.get?.('class')
-    || null;
+  const diagnostics = {
+    shellAvailable: !!shell,
+    progressionSessionAvailable: !!shell.progressionSession,
+    committedSelectionsAvailable: !!shell.committedSelections,
+  };
 
-  if (classSelection) {
-    return resolveClassModel(classSelection);
+  try {
+    // Try canonical session first
+    let classSelection = null;
+    try {
+      classSelection = shell.progressionSession?.getSelection?.('class');
+      diagnostics.progressionSessionGetSelection = {
+        attempted: true,
+        found: !!classSelection,
+      };
+    } catch (sessionErr) {
+      diagnostics.progressionSessionGetSelectionError = sessionErr.message;
+      swseLogger.warn('[ClassResolution.resolveSelectedClassFromShell] progressionSession.getSelection threw', {
+        error: sessionErr.message,
+      });
+    }
+
+    // Fallback to committed selections
+    if (!classSelection) {
+      try {
+        classSelection = shell.committedSelections?.get?.('class');
+        diagnostics.committedSelectionsGet = {
+          attempted: true,
+          found: !!classSelection,
+        };
+      } catch (committedErr) {
+        diagnostics.committedSelectionsGetError = committedErr.message;
+        swseLogger.warn('[ClassResolution.resolveSelectedClassFromShell] committedSelections.get threw', {
+          error: committedErr.message,
+        });
+      }
+    }
+
+    if (classSelection) {
+      diagnostics.classSelectionFound = true;
+      const resolved = resolveClassModel(classSelection);
+      diagnostics.resolutionSuccess = !!resolved;
+      return resolved;
+    }
+
+    diagnostics.classSelectionFound = false;
+    swseLogger.debug('[ClassResolution.resolveSelectedClassFromShell] No class selection in shell', { diagnostics });
+    return null;
+  } catch (err) {
+    diagnostics.exception = {
+      message: err.message,
+      stack: err.stack,
+    };
+    swseLogger.error('[ClassResolution.resolveSelectedClassFromShell] Unhandled exception', {
+      error: err.message,
+      diagnostics,
+    });
+    return null;
   }
-
-  return null;
 }
 
 /**
@@ -104,21 +230,69 @@ export function resolveSelectedClassFromShell(shell) {
  * @returns {Object|null} Full ClassModel of current class or null
  */
 export function resolveClassFromActor(actor) {
-  if (!actor || !actor.system?.classes || actor.system.classes.length === 0) {
+  const actorName = actor?.name || 'unknown';
+  const diagnostics = {
+    actorName,
+    actorAvailable: !!actor,
+    systemAvailable: !!actor?.system,
+    classesArrayExists: !!actor?.system?.classes,
+  };
+
+  if (!actor || !actor.system?.classes) {
+    diagnostics.reason = 'actor or system.classes missing';
+    swseLogger.debug('[ClassResolution.resolveClassFromActor] Invalid actor context', { diagnostics });
     return null;
   }
 
-  // Get the most recent class (last in array)
-  const currentClassDoc = actor.system.classes[actor.system.classes.length - 1];
-  if (!currentClassDoc) {
+  try {
+    const classesArray = actor.system.classes;
+    diagnostics.classesArrayLength = classesArray.length;
+
+    if (classesArray.length === 0) {
+      diagnostics.reason = 'classes array empty';
+      swseLogger.debug('[ClassResolution.resolveClassFromActor] Actor has no classes', { diagnostics });
+      return null;
+    }
+
+    // Get the most recent class (last in array)
+    const currentClassDoc = classesArray[classesArray.length - 1];
+    if (!currentClassDoc) {
+      diagnostics.reason = 'current class doc is null/undefined';
+      swseLogger.warn('[ClassResolution.resolveClassFromActor] Could not access last element of classes array', { diagnostics });
+      return null;
+    }
+
+    diagnostics.currentClassDocAvailable = true;
+    diagnostics.currentClassDocKeys = Object.keys(currentClassDoc);
+
+    const classModel = resolveClassModel({
+      id: currentClassDoc._id,
+      sourceId: currentClassDoc._id,
+      name: currentClassDoc.name
+    });
+
+    diagnostics.resolutionSuccess = !!classModel;
+    if (classModel) {
+      swseLogger.debug('[ClassResolution.resolveClassFromActor] Resolved current class', {
+        actorName,
+        className: classModel.name,
+        diagnostics,
+      });
+    }
+
+    return classModel;
+  } catch (err) {
+    diagnostics.exception = {
+      message: err.message,
+      stack: err.stack,
+    };
+    swseLogger.error('[ClassResolution.resolveClassFromActor] Unhandled exception', {
+      actorName,
+      error: err.message,
+      diagnostics,
+    });
     return null;
   }
-
-  return resolveClassModel({
-    id: currentClassDoc._id,
-    sourceId: currentClassDoc._id,
-    name: currentClassDoc.name
-  });
 }
 
 /**

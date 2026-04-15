@@ -309,23 +309,77 @@ export class ActiveStepComputer {
    * @private
    */
   async _hasStarshipChoices(actor, progressionSession) {
+    const actorName = actor?.name || 'unknown';
+    const diagnostics = {
+      actorName,
+      engineImport: null,
+      accessValidation: null,
+    };
+
     try {
       // Import the authority engine
-      const { ManeuverAuthorityEngine } = await import(
-        '/systems/foundryvtt-swse/scripts/engine/progression/engine/maneuver-authority-engine.js'
-      );
-
-      // Check real access validation: Starship Tactics feat + domain unlock
-      const accessValidation = await ManeuverAuthorityEngine.validateManeuverAccess(actor);
-      const hasAccess = accessValidation.valid;
-
-      if (!hasAccess) {
-        swseLogger.debug('[ActiveStepComputer] Starship Maneuvers: access denied', { reason: accessValidation.reason });
+      let ManeuverAuthorityEngine;
+      try {
+        const imported = await import(
+          '/systems/foundryvtt-swse/scripts/engine/progression/engine/maneuver-authority-engine.js'
+        );
+        ManeuverAuthorityEngine = imported.ManeuverAuthorityEngine;
+        diagnostics.engineImport = {
+          success: !!ManeuverAuthorityEngine,
+          message: 'ManeuverAuthorityEngine imported',
+        };
+      } catch (importErr) {
+        diagnostics.engineImport = {
+          success: false,
+          error: importErr.message,
+          message: 'ManeuverAuthorityEngine import failed',
+        };
+        swseLogger.error('[ActiveStepComputer] ManeuverAuthorityEngine import failed for starship access check', {
+          actorName,
+          error: importErr.message,
+          diagnostics,
+        });
+        return false; // Fail closed
       }
 
-      return hasAccess;
+      // Check real access validation: Starship Tactics feat + domain unlock
+      try {
+        const accessValidation = await ManeuverAuthorityEngine.validateManeuverAccess(actor);
+        const hasAccess = accessValidation.valid;
+
+        diagnostics.accessValidation = {
+          success: true,
+          valid: hasAccess,
+          reason: accessValidation.reason || 'not specified',
+        };
+
+        if (!hasAccess) {
+          swseLogger.debug('[ActiveStepComputer] Starship Maneuvers: access denied for ' + actorName, {
+            reason: accessValidation.reason,
+            diagnostics,
+          });
+        } else {
+          swseLogger.debug('[ActiveStepComputer] Starship Maneuvers: access granted for ' + actorName, { diagnostics });
+        }
+
+        return hasAccess;
+      } catch (validationErr) {
+        diagnostics.accessValidation = {
+          success: false,
+          error: validationErr.message,
+          message: 'validateManeuverAccess threw exception',
+        };
+        swseLogger.error('[ActiveStepComputer] Starship maneuver access validation exception for ' + actorName, {
+          error: validationErr.message,
+          diagnostics,
+        });
+        return false; // Fail closed
+      }
     } catch (err) {
-      swseLogger.warn('[ActiveStepComputer] Error checking starship maneuver access:', err);
+      swseLogger.error('[ActiveStepComputer] Unhandled error checking starship maneuver access for ' + actorName, {
+        error: err.message,
+        diagnostics,
+      });
       return false; // Fail closed
     }
   }
