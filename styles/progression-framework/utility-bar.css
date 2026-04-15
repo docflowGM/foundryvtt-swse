@@ -56,7 +56,6 @@
 .progression-shell .swse-filter-field--search {
   flex: 0 1 200px;
   min-width: 0;
-  background-image: url('../../assets/ui/chargen/search-box.svg');
 }
 
 .progression-shell .swse-filter-field--search input {
@@ -82,7 +81,6 @@
 /* Select field variant */
 .progression-shell .swse-filter-field--select {
   flex: 0 1 auto;
-  background-image: url('../../assets/ui/chargen/dropdown-box.svg');
 }
 
 .progression-shell .swse-filter-field--select select {

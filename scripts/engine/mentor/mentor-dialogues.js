@@ -1,5 +1,6 @@
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.data.js";
 
 /**
  * SWSE Mentor Dialogue System
@@ -7,7 +8,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
  * Each starting class has a unique mentor who guides them through all 20 levels
  */
 
-export { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.data.js";
+export { MENTORS };
 
 /**
  * Get mentor for a given class

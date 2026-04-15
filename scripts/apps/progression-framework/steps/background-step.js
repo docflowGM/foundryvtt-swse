@@ -42,15 +42,13 @@ export class BackgroundStep extends ProgressionStepPlugin {
     this._committedBackgroundIds = [];  // May contain 1+ based on house rule
     this._searchQuery = '';
     this._activeCategory = 'event';  // which category tab is active
+    this._sortBy = 'alpha';
 
     // House rule state
     this._maxBackgrounds = 1;        // from backgroundSelectionCount setting
 
     // Event listener cleanup
     this._renderAbort = null;
-
-    // Focus version guard — prevents stale async completion from overwriting newer focus
-    this._focusVersion = 0;
   }
 
   // ---------------------------------------------------------------------------
@@ -60,7 +58,9 @@ export class BackgroundStep extends ProgressionStepPlugin {
   async onStepEnter(shell) {
     // Load backgrounds from registry
     await BackgroundRegistry.ensureLoaded();
-    this._allBackgrounds = BackgroundRegistry.getAll() || [];
+    this._allBackgrounds = typeof BackgroundRegistry.getAll === 'function'
+      ? (await BackgroundRegistry.getAll()) || []
+      : (await BackgroundRegistry.all?.()) || [];
 
     // Load house rule: max background selections
     const houseSetting = game?.settings?.get('foundryvtt-swse', 'backgroundSelectionCount');
@@ -76,35 +76,44 @@ export class BackgroundStep extends ProgressionStepPlugin {
     shell.mentor.askMentorEnabled = true;
   }
 
-  async onDataReady(shell) {
-    if (!shell.element) return;
 
-    // Clean up old listeners before attaching new ones
-    this._renderAbort?.abort();
-    this._renderAbort = new AbortController();
-    const { signal } = this._renderAbort;
+async onDataReady(shell) {
+  if (!shell.element) return;
 
-    const categoryButtons = shell.element.querySelectorAll('.bg-category-btn');
-    categoryButtons.forEach(btn => {
-      const fn = (e) => {
-        e.preventDefault();
-        this._activeCategory = btn.dataset.category;
-        shell.render();
-      };
-      btn.addEventListener('click', fn, { signal });
-    });
+  this._renderAbort?.abort();
+  this._renderAbort = new AbortController();
+  const { signal } = this._renderAbort;
 
-    // Wire search input
-    const searchInput = shell.element.querySelector('.bg-search-input');
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        this._searchQuery = e.target.value;
-        shell.render();
-      }, { signal });
+  const onSearch = (e) => {
+    this._searchQuery = String(e.detail?.query || '');
+    shell.render();
+  };
+
+  const onFilter = (e) => {
+    const { filterId, value } = e.detail || {};
+    if (!filterId || !value) return;
+    if (['event', 'occupation', 'planet'].includes(filterId)) {
+      this._activeCategory = filterId;
+      if (shell.utilityBar?._filterState) {
+        shell.utilityBar._filterState.event = filterId === 'event';
+        shell.utilityBar._filterState.occupation = filterId === 'occupation';
+        shell.utilityBar._filterState.planet = filterId === 'planet';
+      }
+      shell.render();
     }
-  }
+  };
 
-  async onStepExit(shell) {
+  const onSort = (e) => {
+    this._sortBy = e.detail?.sortId || 'alpha';
+    shell.render();
+  };
+
+  shell.element.addEventListener('prog:utility:search', onSearch, { signal });
+  shell.element.addEventListener('prog:utility:filter', onFilter, { signal });
+  shell.element.addEventListener('prog:utility:sort', onSort, { signal });
+}
+
+async onStepExit(shell) {
     // Cleanup if needed
   }
 
@@ -176,9 +185,13 @@ export class BackgroundStep extends ProgressionStepPlugin {
         background,
         category: CATEGORY_LABELS[background.category] || background.category,
         description: background.narrativeDescription || background.description || '',
-        trainedSkills: background.trainedSkills || [],
+        trainedSkills: background.trainedSkills || background.relevantSkills || [],
+        relevantSkills: background.relevantSkills || [],
         bonusLanguage: background.bonusLanguage || '',
         source: background.source || 'Unknown',
+        mechanicalBonuses: this._extractMechanicalBonuses(background),
+        skillChoiceCount: Number(background.skillChoiceCount || 0),
+        specialAbility: background.specialAbility || '',
         isCommitted,
         selectionMode: this._maxBackgrounds > 1 ? 'multi' : 'single',
         canAddMore: this._maxBackgrounds > 1 && this._committedBackgroundIds.length < this._maxBackgrounds,
@@ -204,27 +217,14 @@ export class BackgroundStep extends ProgressionStepPlugin {
     const background = this._allBackgrounds.find(b => b.id === id);
     if (!background) return;
 
-    // Capture focus version before any async work to guard against stale completion
-    const focusVersion = ++this._focusVersion;
-    console.debug(`[SWSE Stale Focus Guard] [Background] Focus version incremented to ${focusVersion} for ${background.id}`);
-
-    console.debug(`[SWSE Chargen Hydration Debug] [BackgroundStep] Requesting rerender for background selection | selected: ${background.name} (${background.id})`);
-
     this._focusedBackgroundId = id;
 
     // Mentor reaction on focus
     const flavorText = this._getMentorFlavorForBackground(background);
     if (flavorText) {
       await shell.mentorRail.speak(flavorText, 'neutral');
-
-      // GUARD: Verify this focus is still current before applying any results
-      if (this._focusVersion !== focusVersion) {
-        console.debug(`[SWSE Stale Focus Guard] [Background] Discarding stale mentor speak | was: v${focusVersion}, now: v${this._focusVersion} | background: ${background.id}`);
-        return;  // Stale focus, don't render or update UI
-      }
     }
 
-    console.debug(`[SWSE Chargen Hydration Debug] [BackgroundStep] Calling shell.render() | focusedBackgroundId: ${this._focusedBackgroundId}`);
     shell.render();
   }
 
@@ -337,25 +337,35 @@ export class BackgroundStep extends ProgressionStepPlugin {
   // Utility Bar Config
   // ---------------------------------------------------------------------------
 
-  getUtilityBarConfig() {
-    return {
-      mode: 'rich',
-      search: {
-        enabled: true,
-        placeholder: 'Search backgrounds…',
-      },
-      custom: [
-        {
-          id: 'mode-indicator',
-          label: `Mode: ${this._maxBackgrounds > 1 ? `Multi (${this._maxBackgrounds} max)` : 'Single'}`,
-          type: 'text',
-        },
-      ],
-    };
-  }
 
-  // ---------------------------------------------------------------------------
-  // Mentor
+getUtilityBarConfig() {
+  return {
+    mode: 'rich',
+    search: {
+      enabled: true,
+      placeholder: 'Search backgrounds…',
+    },
+    filters: [
+      { id: 'event', label: 'Event', defaultOn: this._activeCategory === 'event' },
+      { id: 'occupation', label: 'Occupation', defaultOn: this._activeCategory === 'occupation' },
+      { id: 'planet', label: 'Homeworld', defaultOn: this._activeCategory === 'planet' },
+    ],
+    sorts: [
+      { id: 'alpha', label: 'Sort: A–Z' },
+      { id: 'source', label: 'Sort: Source' },
+    ],
+    customControls: [
+      {
+        id: 'mode-indicator',
+        label: `Mode: ${this._maxBackgrounds > 1 ? `Multi (${this._maxBackgrounds} max)` : 'Single'}`,
+        type: 'label',
+      },
+    ],
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Mentor
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
@@ -462,25 +472,50 @@ export class BackgroundStep extends ProgressionStepPlugin {
     return shell.buildIntent.toCharacterData();
   }
 
-  _getFilteredBackgrounds() {
-    let filtered = this._allBackgrounds;
 
-    // Search filter
-    if (this._searchQuery) {
-      const q = this._searchQuery.toLowerCase();
-      filtered = filtered.filter(bg => {
-        const name = (bg.name || '').toLowerCase();
-        const desc = (bg.narrativeDescription || bg.description || '').toLowerCase();
-        const skills = (bg.trainedSkills || []).join(' ').toLowerCase();
-        const lang = (bg.bonusLanguage || '').toLowerCase();
-        return name.includes(q) || desc.includes(q) || skills.includes(q) || lang.includes(q);
-      });
-    }
+_getFilteredBackgrounds() {
+  let filtered = this._allBackgrounds.filter((bg) => (bg.category || 'event') === this._activeCategory);
 
-    return filtered;
+  if (this._searchQuery) {
+    const q = this._searchQuery.toLowerCase().trim();
+    filtered = filtered.filter((bg) => {
+      const haystack = [
+        bg.name,
+        bg.narrativeDescription,
+        bg.description,
+        bg.specialAbility,
+        bg.bonusLanguage,
+        bg.source,
+        ...(bg.trainedSkills || []),
+        ...(bg.relevantSkills || []),
+        bg.mechanicalEffect?.description,
+      ].filter(Boolean).join(' ').toLowerCase();
+      return haystack.includes(q);
+    });
   }
 
-  _getCategoryChips() {
+  if (this._sortBy === 'source') {
+    filtered = filtered.slice().sort((a, b) => String(a.source || '').localeCompare(String(b.source || '')) || String(a.name || '').localeCompare(String(b.name || '')));
+  } else {
+    filtered = filtered.slice().sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+  }
+
+  return filtered;
+}
+
+_extractMechanicalBonuses(background) {
+  const bonuses = [];
+  if (!background) return bonuses;
+  if (background.mechanicalEffect?.description) bonuses.push(background.mechanicalEffect.description);
+  if (background.specialAbility) bonuses.push(background.specialAbility);
+  if (background.skillChoiceCount && (background.relevantSkills || []).length) {
+    bonuses.push(`Choose ${background.skillChoiceCount} skill${background.skillChoiceCount === 1 ? '' : 's'} from: ${(background.relevantSkills || []).join(', ')}`);
+  }
+  if (background.bonusLanguage) bonuses.push(`Bonus language: ${background.bonusLanguage}`);
+  return bonuses;
+}
+
+_getCategoryChips() {
     return ['event', 'occupation', 'planet'].map(category => ({
       id: category,
       label: CATEGORY_LABELS[category],
@@ -492,6 +527,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
   _formatCategoryGroups(filtered, suggestedIds = new Set(), confidenceMap = new Map()) {
     const result = {};
     for (const category of ['event', 'occupation', 'planet']) {
+      if (category !== this._activeCategory) continue;
       const backgrounds = (this._groupedBackgrounds[category] || [])
         .filter(bg => filtered.includes(bg))
         .map(bg => {

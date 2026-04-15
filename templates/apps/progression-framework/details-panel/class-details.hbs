@@ -1,10 +1,15 @@
 <div class="prog-class-details">
   <div class="prog-class-details__header">
-    <h2 class="prog-class-details__name">{{class.name}}</h2>
-    <span class="prog-chip">{{type}}</span>
+    {{#if class.img}}<img class="prog-class-details__portrait" src="{{class.img}}" alt="{{class.name}}">{{/if}}
+    <div class="prog-class-details__heading-copy">
+      <h2 class="prog-class-details__name">{{class.name}}</h2>
+      <div class="prog-class-details__meta-row">
+        <span class="prog-chip">{{type}}</span>
+        {{#each classTags}}<span class="prog-chip">{{this}}</span>{{/each}}
+      </div>
+    </div>
   </div>
 
-  {{!-- Class Description --}}
   {{#if canonicalDescription}}
     <p class="prog-class-details__description">{{canonicalDescription}}</p>
   {{else if fantasy}}
@@ -12,67 +17,34 @@
   {{/if}}
 
   <div class="prog-class-details__stats-grid">
-    <div class="prog-class-details__stat">
-      <span class="prog-class-details__stat-label">BAB</span>
-      <span class="prog-class-details__stat-value">{{bab}}</span>
-    </div>
-    <div class="prog-class-details__stat">
-      <span class="prog-class-details__stat-label">Hit Die</span>
-      <span class="prog-class-details__stat-value">{{hitDie}}</span>
-    </div>
-    <div class="prog-class-details__stat">
-      <span class="prog-class-details__stat-label">Defense Bonus</span>
-      <span class="prog-class-details__stat-value">{{defenseBonus}}</span>
-    </div>
+    <div class="prog-class-details__stat"><span class="prog-class-details__stat-label">BAB</span><span class="prog-class-details__stat-value">{{bab}}</span></div>
+    <div class="prog-class-details__stat"><span class="prog-class-details__stat-label">Fort</span><span class="prog-class-details__stat-value">+{{defenses.fortitude}}</span></div>
+    <div class="prog-class-details__stat"><span class="prog-class-details__stat-label">Ref</span><span class="prog-class-details__stat-value">+{{defenses.reflex}}</span></div>
+    <div class="prog-class-details__stat"><span class="prog-class-details__stat-label">Will</span><span class="prog-class-details__stat-value">+{{defenses.will}}</span></div>
+    <div class="prog-class-details__stat"><span class="prog-class-details__stat-label">Hit Die</span><span class="prog-class-details__stat-value">{{hitDie}}</span></div>
+    <div class="prog-class-details__stat"><span class="prog-class-details__stat-label">Trained Skills</span><span class="prog-class-details__stat-value">{{trainedSkillCount}} + INT</span></div>
   </div>
 
   <div class="prog-class-details__mentor">
-    <h4 class="prog-class-details__section-title">Your Guide</h4>
-    <div class="prog-class-details__mentor-name">
-      <i class="fas fa-user-circle"></i>
-      {{mentorName}}
-    </div>
+    <h4 class="prog-class-details__section-title">Mentor</h4>
+    <div class="prog-class-details__mentor-name"><i class="fas fa-user-circle"></i>{{mentorName}}</div>
   </div>
 
-  {{#if startingAbilities.length}}
-    <div class="prog-class-details__abilities">
-      <h4 class="prog-class-details__section-title">Starting Abilities</h4>
-      <ul class="prog-class-details__list">
-        {{#each startingAbilities}}
-          <li>{{this.name}}</li>
-        {{/each}}
-      </ul>
-    </div>
-  {{/if}}
-
-  {{#if trainedSkills.length}}
-    <div class="prog-class-details__skills">
-      <h4 class="prog-class-details__section-title">Trained Skills</h4>
-      <ul class="prog-class-details__list">
-        {{#each trainedSkills}}
-          <li>{{this.name}}</li>
-        {{/each}}
-      </ul>
-    </div>
-  {{/if}}
-
   {{#if classSkills.length}}
-    <div class="prog-class-details__class-skills">
-      <h4 class="prog-class-details__section-title">Class Skills</h4>
-      <ul class="prog-class-details__list">
-        {{#each classSkills}}
-          <li>{{this.name}}</li>
-        {{/each}}
-      </ul>
-    </div>
+  <div class="prog-class-details__class-skills">
+    <h4 class="prog-class-details__section-title">Class Skills</h4>
+    <ul class="prog-class-details__list">{{#each classSkills}}<li>{{this.name}}</li>{{/each}}</ul>
+  </div>
+  {{/if}}
+
+  {{#if levelOneFeatures.length}}
+  <div class="prog-class-details__abilities">
+    <h4 class="prog-class-details__section-title">Level 1 Features</h4>
+    <ul class="prog-class-details__list">{{#each levelOneFeatures}}<li>{{this.name}}</li>{{/each}}</ul>
+  </div>
   {{/if}}
 
   <div class="prog-class-details__actions">
-    <button class="prog-btn prog-btn--primary"
-            data-action="commit-item"
-            data-item-id="{{class.id}}"
-            type="button">
-      <i class="fas fa-check"></i> Choose {{class.name}}
-    </button>
+    <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{class.id}}" type="button"><i class="fas fa-check"></i> Choose {{class.name}}</button>
   </div>
 </div>

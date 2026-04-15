@@ -50,77 +50,100 @@ const INTRO_LINE_TONE = {
  * Declarative boot sequence for Phase 2 implementation.
  * Each line defines Aurabesh text, English translation, tone, progress level, and duration.
  */
+const TOTAL_PROGRESS_SEGMENTS = 20;
+
 const BOOT_LINES = [
   {
-    header: 'SYSTEM BOOT',
-    basic: 'SYSTEM LINK ESTABLISHING',
-    microlabel: 'querying local memory lattice...',
+    label: 'STANDBY',
+    status: 'PROCESSING',
+    aurabesh: 'INITIALIZING',
+    basic: 'Initializing...',
+    microlabel: 'Priming datapad memory lattice...',
+    tone: INTRO_LINE_TONE.NEUTRAL,
+    progress: 0,
+    duration: 280
+  },
+  {
+    label: 'HANDSHAKE',
+    status: 'PROCESSING',
+    aurabesh: 'NEW USER DETECTED',
+    basic: 'New User Detected',
+    microlabel: 'Identity matrix indexed.',
     tone: INTRO_LINE_TONE.NEUTRAL,
     progress: 3,
-    duration: 340
+    duration: 260
   },
   {
-    header: 'USER SCAN',
-    basic: 'NEW USER DETECTED',
-    microlabel: 'identity matrix indexed...',
+    label: 'SCANNING',
+    status: 'PROCESSING',
+    aurabesh: 'DETECTING SPECIES',
+    basic: 'Detecting Species',
+    microlabel: 'Running xenobiological handshake...',
     tone: INTRO_LINE_TONE.NEUTRAL,
     progress: 6,
-    duration: 340
+    duration: 260
   },
   {
-    header: 'SPECIES SCAN',
-    basic: 'NON-BASIC DETECTED',
-    microlabel: 'detecting species signature...',
-    tone: INTRO_LINE_TONE.NEUTRAL,
-    progress: 10,
-    duration: 360
-  },
-  {
-    header: 'RECORD QUERY',
-    basic: 'GALACTIC RECORD INDEX NOT DETECTED',
-    microlabel: 'record lookup failed...',
+    label: 'ALERT',
+    status: 'ALERT',
+    aurabesh: 'NON-BASIC DETECTED',
+    basic: 'Non-Basic Detected',
+    microlabel: 'Galactic record index unresolved.',
     tone: INTRO_LINE_TONE.ERROR,
-    progress: 13,
-    duration: 480
+    progress: 9,
+    duration: 320
   },
   {
-    header: 'LINGUISTIC MATRIX',
-    basic: 'TRANSLATION SUCCESSFUL',
-    microlabel: 'localizing interface strings...',
-    tone: INTRO_LINE_TONE.SUCCESS,
-    progress: 16,
-    translate: true,
-    duration: 420,
-    translationHold: 260
-  },
-  {
-    header: 'LOCALIZATION',
-    basic: 'TRANSLATION COMPLETE',
-    microlabel: 'basic language matrix online.',
-    tone: INTRO_LINE_TONE.SUCCESS,
-    progress: 18,
-    localized: true,
-    duration: 360
-  },
-  {
-    header: 'REGISTRATION',
-    basic: 'NEW REGISTRATION READY',
-    microlabel: 'ready to begin character registration.',
+    label: 'DECODING',
+    status: 'PROCESSING',
+    aurabesh: 'ATTEMPTING DIALECT SYNTHESIS',
+    basic: 'Attempting Dialect Synthesis',
+    microlabel: 'Translating primary language matrix...',
     tone: INTRO_LINE_TONE.NEUTRAL,
-    progress: 19,
-    localized: true,
-    duration: 360
+    progress: 12,
+    duration: 280
   },
   {
-    header: 'AWAITING',
-    basic: 'AWAITING USER REGISTRATION...',
-    microlabel: 'awaiting operator response.',
+    label: 'SUCCESS',
+    status: 'SUCCESS',
+    aurabesh: 'TRANSLATION SUCCESSFUL',
+    basic: 'Translation Successful',
+    microlabel: 'Basic language bridge established.',
+    tone: INTRO_LINE_TONE.SUCCESS,
+    progress: 15,
+    duration: 280
+  },
+  {
+    label: 'MENTOR LINK',
+    status: 'SUCCESS',
+    aurabesh: 'MENTOR SUBSYSTEM INITIATED',
+    basic: 'Mentor Subsystem Initiated',
+    microlabel: 'Advisor lattice brought online.',
+    tone: INTRO_LINE_TONE.SUCCESS,
+    progress: 17,
+    duration: 260
+  },
+  {
+    label: 'READY',
+    status: 'SUCCESS',
+    aurabesh: 'SYSTEM READY FOR INPUT',
+    basic: 'System Ready for Input',
+    microlabel: 'Character registration protocols loaded.',
+    tone: INTRO_LINE_TONE.SUCCESS,
+    progress: 20,
+    duration: 260
+  },
+  {
+    label: 'AWAITING',
+    status: 'READY',
+    aurabesh: 'AWAITING USER REGISTRATION',
+    basic: 'Awaiting User Registration...',
+    microlabel: 'Awaiting operator response.',
     tone: INTRO_LINE_TONE.NEUTRAL,
     progress: 20,
-    localized: true,
+    duration: 0,
     final: true,
-    blinkingCursor: true,
-    duration: 120
+    blinkingCursor: true
   }
 ];
 
@@ -180,158 +203,11 @@ function updateSegments(segments, activeCount) {
   });
 }
 
-function getLineStatus(line) {
-  if (line?.statusText) return line.statusText;
-  if (line?.final) return 'READY';
-  if (line?.translate) return 'TRANSLATING';
-  if (line?.tone === INTRO_LINE_TONE.ERROR) return 'ERROR';
-  if (line?.tone === INTRO_LINE_TONE.SUCCESS) return 'SUCCESS';
-  return 'PROCESSING';
-}
-
-function getLineStatusIcon(line) {
-  if (line?.statusIcon) return line.statusIcon;
-  if (line?.final) return '◉';
-  if (line?.translate) return '⊚';
-  if (line?.tone === INTRO_LINE_TONE.ERROR) return '!';
-  if (line?.tone === INTRO_LINE_TONE.SUCCESS) return '✓';
-  return '⊙';
-}
-
-function setLocalizationMode(surfaceEl, localized) {
-  if (!surfaceEl) return;
-  surfaceEl.classList.toggle('prog-intro-surface--localized', !!localized);
-  surfaceEl.classList.toggle('prog-intro-surface--foreign', !localized);
-}
-
-function setStatusDisplay(els, line, localized) {
-  if (els.status) {
-    els.status.classList.toggle('prog-intro-status--localized', !!localized);
-    els.status.classList.toggle('prog-intro-status--foreign', !localized);
-  }
-  if (els.statusIcon) {
-    els.statusIcon.textContent = getLineStatusIcon(line);
-  }
-  if (els.statusText) {
-    els.statusText.textContent = getLineStatus(line);
-  }
-}
-
-function setLineCopy(els, line, localized) {
-  const headerText = line?.header || 'STANDBY';
-  const bodyText = line?.basic || '';
-  const microText = line?.microlabel || '';
-
-  if (els.label) {
-    els.label.textContent = headerText;
-  }
-  if (els.aurabesh) {
-    els.aurabesh.textContent = bodyText;
-  }
-  if (els.microlabel) {
-    els.microlabel.textContent = localized ? microText : microText.toUpperCase();
-  }
-
-  setHeadlineLocalized(els, localized);
-  setStatusDisplay(els, line, localized);
-}
-
-function setTranslationVisibility(els, showTranslation) {
-  if (els.textContainer) {
-    els.textContainer.style.display = showTranslation ? 'none' : 'flex';
-  }
-  if (els.translationContainer) {
-    els.translationContainer.style.display = showTranslation ? 'flex' : 'none';
-    els.translationContainer.classList.toggle('hidden', !showTranslation);
-  }
-}
-
-function setHeadlineLocalized(els, localized) {
-  if (els.aurabeshContainer) els.aurabeshContainer.classList.toggle('is-localized', !!localized);
-  if (els.aurabesh) els.aurabesh.classList.toggle('is-localized', !!localized);
-}
-
-async function typeTextToElement(targetEl, cursorEl, text, speed, sessionCheck, onTick = null) {
-  if (!targetEl) return;
-  targetEl.textContent = '';
-  const chars = [...String(text || '')];
-  for (let i = 0; i < chars.length; i++) {
-    if (!sessionCheck()) return false;
-    targetEl.textContent += chars[i];
-    if (typeof onTick === 'function') onTick();
-    await delay(speed);
-  }
-  if (cursorEl && !chars.length) {
-    cursorEl.style.opacity = '1';
-  }
-  return true;
-}
-
-function primeTranslationContainer(els, line) {
-  if (!els.translationLabel || !els.translationText) return;
-  els.translationLabel.textContent = line?.header || 'TRANSLATING';
-  els.translationText.innerHTML = '';
-}
-
-function setTranslationTone(els, tone) {
-  if (!els.translationText) return;
-  els.translationText.classList.remove('prog-intro-text--neutral', 'prog-intro-text--success', 'prog-intro-text--error');
-  if (tone === INTRO_LINE_TONE.SUCCESS) {
-    els.translationText.classList.add('prog-intro-text--success');
-  } else if (tone === INTRO_LINE_TONE.ERROR) {
-    els.translationText.classList.add('prog-intro-text--error');
-  } else {
-    els.translationText.classList.add('prog-intro-text--neutral');
-  }
-}
-
-function updateProgressUI(els, activeCount, totalCount, tone = INTRO_LINE_TONE.NEUTRAL) {
-  if (!els || !totalCount) return;
-
-  if (els.segments && Array.isArray(els.segments)) {
-    updateSegments(els.segments, activeCount);
-  }
-
+function updateProgressUI(els, activeCount, totalCount) {
+  updateSegments(els.segments, activeCount);
   if (els.progressPercent) {
-    const pct = Math.max(0, Math.min(100, Math.round((activeCount / totalCount) * 100)));
-    els.progressPercent.textContent = `${pct}%`;
-    els.progressPercent.classList.remove(
-      'prog-intro-progress-text--neutral',
-      'prog-intro-progress-text--error',
-      'prog-intro-progress-text--success'
-    );
-    if (tone === INTRO_LINE_TONE.ERROR) {
-      els.progressPercent.classList.add('prog-intro-progress-text--error');
-    } else if (tone === INTRO_LINE_TONE.SUCCESS) {
-      els.progressPercent.classList.add('prog-intro-progress-text--success');
-    } else {
-      els.progressPercent.classList.add('prog-intro-progress-text--neutral');
-    }
+    els.progressPercent.textContent = `${String(activeCount).padStart(2, '0')} / ${String(totalCount).padStart(2, '0')}`;
   }
-}
-
-function getBootSequenceTotalDuration() {
-  return BOOT_LINES.reduce((sum, line) => {
-    const typingDuration = Math.max(0, String(line?.basic || '').length * 34);
-    const translationDuration = line?.translate ? Math.max(0, String(line?.basic || '').length * 28) : 0;
-    const translationHold = line?.translationHold || 0;
-    const lineHold = line?.duration || 320;
-    return sum + typingDuration + translationDuration + translationHold + lineHold;
-  }, 0);
-}
-
-function computeBootProgressPercent(elapsedMs, totalMs) {
-  if (!totalMs || totalMs <= 0) return 0;
-  const ratio = Math.max(0, Math.min(1, elapsedMs / totalMs));
-  return ratio * 100;
-}
-
-function updateContinuousProgress(context, els, elapsedMs, totalMs, tone = INTRO_LINE_TONE.NEUTRAL) {
-  const pct = computeBootProgressPercent(elapsedMs, totalMs);
-  context._progress = pct;
-
-  const activeCount = Math.max(0, Math.min(20, Math.round(pct / 5)));
-  updateProgressUI(els, activeCount, 20, tone);
 }
 
 function delay(ms) {
@@ -349,44 +225,17 @@ export class IntroStep extends ProgressionStepPlugin {
     this._transitionInProgress = false;  // Prevent double transition
 
     // ====== PHASE-DRIVEN STATE MACHINE ======
-    this._phases = [
-      {
-        label: 'SYSTEMS CHECK',
-        aurabesh: 'PATEK THARA VAUN',
-        duration: 800,
-        microlabel: 'initializing memory banks...'
-      },
-      {
-        label: 'NETWORK SCAN',
-        aurabesh: 'TAKRA MANDALAKI',
-        duration: 1000,
-        microlabel: 'scanning network protocols...'
-      },
-      {
-        label: 'IDENTITY QUERY',
-        aurabesh: 'KESH NARI NABUKT',
-        duration: 1000,
-        microlabel: 'querying identity subsystems...'
-      },
-      {
-        label: 'IDENTITY UNKNOWN',
-        aurabesh: 'KARESH VANDALOR MUSK',
-        duration: 800,
-        microlabel: 'error: unrecognized entity'
-      },
-      {
-        label: 'OVERRIDE AUTHORIZED',
-        aurabesh: 'KARATH MANDALAI VESKOR',
-        duration: 600,
-        microlabel: 'override accepted, loading profile...'
-      },
-      {
-        label: 'TRANSLATING',
-        aurabesh: '···',
-        duration: 0,
-        microlabel: 'decoding linguistic patterns...'
-      },  // Translation phase (no progress bar)
-    ];
+    this._phases = BOOT_LINES.map((line) => ({
+      label: line.label,
+      aurabesh: line.aurabesh,
+      duration: line.duration,
+      microlabel: line.microlabel,
+      tone: line.tone,
+      status: line.status,
+      basic: line.basic,
+      progress: line.progress,
+      final: Boolean(line.final)
+    }));
 
     this._phase = null;                   // Current phase label
     this._progress = 0;                   // 0-100, animates smoothly
@@ -406,7 +255,6 @@ export class IntroStep extends ProgressionStepPlugin {
     // Signal animation state
     this._signalLevel = 0;
     this._signalDirection = 1;
-    this._signalInterval = null;
 
     // Parallax state (camera drift)
     this._parallaxX = 0;
@@ -420,13 +268,13 @@ export class IntroStep extends ProgressionStepPlugin {
 
     // Micro-label state
     this._currentMicrolabel = '';
+    this._currentLine = BOOT_LINES[0];
 
     // Intro sequence guard and cancellation
     this._introSequenceStarted = false;
     this._animationSequenceStarted = false;  // Tracks if animation has been started (after DOM ready)
     this._introRunId = 0;  // Incremented on each run, used to cancel stale loops
     this._introRunning = false;  // Set to false to abort current animation
-    this._initializationSucceeded = false;  // Set to true only after onStepEnter completes without error
 
     // DOM element cache (for direct mutation without full re-render)
     this._workSurfaceEl = null;
@@ -436,9 +284,6 @@ export class IntroStep extends ProgressionStepPlugin {
     this._microlabelEl = null;
     this._statusEl = null;
     this._segmentsContainerEl = null;
-    this._currentBootIndex = -1;
-    this._currentBootLine = null;
-    this._localized = false;
 
     // Shell reference
     this._shell = null;
@@ -472,7 +317,9 @@ export class IntroStep extends ProgressionStepPlugin {
     // Initialize phase state
     this._progress = 0;
     this._complete = false;
-    this._phase = null;
+    this._phase = BOOT_LINES[0].label;
+    this._currentLine = BOOT_LINES[0];
+    this._currentMicrolabel = BOOT_LINES[0].microlabel;
     this._translatedText = '';
     this._translationCharStates = [];
 
@@ -485,9 +332,6 @@ export class IntroStep extends ProgressionStepPlugin {
     // Start clock and signal animation (non-blocking, runs in background)
     this._startClock();
     this._startSignalAnimation();
-
-    // Mark initialization as successful ONLY after all setup completes without error
-    this._initializationSucceeded = true;
 
     swseLogger.debug('[IntroStep.onStepEnter] Initialization complete, waiting for afterRender');
   }
@@ -504,6 +348,7 @@ export class IntroStep extends ProgressionStepPlugin {
     this._sessionToken = null;
 
     // Stop all animations and timers immediately
+    this._translationEngine.cancel();
     this._stopClock();
     this._stopSignalAnimation();
     if (this._timer) {
@@ -518,7 +363,6 @@ export class IntroStep extends ProgressionStepPlugin {
     this._isSkipping = false;
     this._continueClicked = false;
     this._transitionInProgress = false;
-    this._initializationSucceeded = false;
 
     // Clear DOM element cache
     this._workSurfaceEl = null;
@@ -528,9 +372,6 @@ export class IntroStep extends ProgressionStepPlugin {
     this._microlabelEl = null;
     this._statusEl = null;
     this._segmentsContainerEl = null;
-    this._currentBootIndex = -1;
-    this._currentBootLine = null;
-    this._localized = false;
     this._shell = null;
 
     swseLogger.debug('[IntroStep.onStepExit] Cleanup complete');
@@ -553,10 +394,7 @@ export class IntroStep extends ProgressionStepPlugin {
       phaseLabel: phaseData.phaseLabel,
       phaseAurabesh: phaseData.phaseAurabesh,
       phaseState: phaseData.phaseState,
-      localized: phaseData.localized,
-      statusText: phaseData.statusText,
-      statusIcon: phaseData.statusIcon,
-      currentMicrolabel: phaseData.microlabel,
+      phaseStatus: phaseData.phaseStatus,
 
       // Progress (0-100, animates smoothly)
       progress: Math.round(this._progress),
@@ -566,7 +404,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
       // Translation state
       translatedText: this._translatedText,
-      isTranslating: this._phase === 'TRANSLATING' && !this._complete,
+      isTranslating: false,
 
       // Completion state
       complete: this._complete,
@@ -575,7 +413,7 @@ export class IntroStep extends ProgressionStepPlugin {
       signalBars: [0, 1, 2, 3].map(i => ({ active: i <= this._signalLevel })),
 
       // Micro-label (system messages)
-      microlabel: this._currentMicrolabel,
+      microlabel: this._currentMicrolabel || phaseData.phaseMicrolabel,
 
       // Parallax data (camera drift)
       parallaxX: this._parallaxX,
@@ -670,19 +508,15 @@ export class IntroStep extends ProgressionStepPlugin {
       currentStepData: {
         state: stepData.phaseState,
         label: stepData.phaseLabel,
+        status: stepData.phaseStatus,
         aurabesh: stepData.phaseAurabesh,
-        localized: stepData.localized,
-        statusText: stepData.statusText,
-        statusIcon: stepData.statusIcon,
-        microlabel: stepData.currentMicrolabel,
       },
 
       // Progress tracking
       progressPercent: stepData.progress,
       progressSegments: stepData.progressSegments,
-      stepNumber: Math.max(0, Math.floor(stepData.progress)),
-      bootSequenceLength: 20,
-      localizedMode: stepData.localized,
+      stepNumber: Math.min(TOTAL_PROGRESS_SEGMENTS, Math.round((stepData.progress / 100) * TOTAL_PROGRESS_SEGMENTS)),
+      bootSequenceLength: TOTAL_PROGRESS_SEGMENTS,
 
       // Translation
       translatedText: stepData.translatedText,
@@ -721,6 +555,32 @@ export class IntroStep extends ProgressionStepPlugin {
         this._skipIntro();
         // Shell will re-render on next tick, which will show completion state
         this.descriptor._shell?.render(false);
+      }
+    });
+
+    $surface.on('click', '[data-role="intro-go-back"]', async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (this._transitionInProgress) return;
+      this._transitionInProgress = true;
+
+      try {
+        const sheet = this._shell?.actor?.sheet;
+        await this._shell?.close();
+        if (sheet) {
+          if (sheet.minimized && typeof sheet.maximize === 'function') {
+            await sheet.maximize();
+          }
+          sheet.render(true);
+        }
+      } catch (error) {
+        swseLogger.error('[IntroStep.activateListeners] Failed to restore actor sheet from intro go-back', {
+          error: error.message,
+          stack: error.stack,
+        });
+      } finally {
+        this._transitionInProgress = false;
       }
     });
 
@@ -852,23 +712,11 @@ export class IntroStep extends ProgressionStepPlugin {
       return;
     }
 
-    // Always update work surface reference (may be rebuilt by shell re-renders during animation)
-    if (workSurfaceEl) {
-      this._workSurfaceEl = workSurfaceEl;
-      this._translationTextEl = workSurfaceEl.querySelector('[data-role="intro-translation"]');
-      const translationFound = !!this._translationTextEl;
-      console.log('[IntroStep.afterRender] Translation element binding:', {
-        selector: '[data-role="intro-translation"]',
-        found: translationFound,
-        element: translationFound ? 'cached' : 'NOT FOUND',
-      });
-
-      swseLogger.debug('[IntroStep.afterRender] Work surface ready, translation engine will load on demand');
-    }
+    // Cache work-surface root for direct mutation during the boot sequence
+    this._workSurfaceEl = workSurfaceEl;
 
     // ONLY on first render during ANIMATING state: start the animation
-    // GUARD: Only start if initialization succeeded (no errors in onStepEnter)
-    if (this._state === INTRO_STATE.ANIMATING && !this._animationSequenceStarted && this._initializationSucceeded) {
+    if (this._state === INTRO_STATE.ANIMATING && !this._animationSequenceStarted) {
       swseLogger.debug('[IntroStep.afterRender] Starting animation sequence');
       this._animationSequenceStarted = true;
 
@@ -881,7 +729,6 @@ export class IntroStep extends ProgressionStepPlugin {
       swseLogger.debug('[IntroStep.afterRender] Not starting animation', {
         state: this._state,
         alreadyStarted: this._animationSequenceStarted,
-        initSucceeded: this._initializationSucceeded,
       });
     }
   }
@@ -1014,7 +861,7 @@ export class IntroStep extends ProgressionStepPlugin {
         target: this._workSurfaceEl,
         translatedText: this._fullText,
         selectors: {
-          'translationText': '[data-role="intro-translation-text"]'
+          'translationText': '[data-role="intro-aurabesh"]'
         },
         onComplete: () => {
           swseLogger.debug('[IntroStep._runTranslationViaEngine] Session completed');
@@ -1046,199 +893,70 @@ export class IntroStep extends ProgressionStepPlugin {
    */
   async runBootSequence(shell, sessionToken) {
     try {
-      swseLogger.debug('[IntroStep.runBootSequence] Starting localized boot sequence');
+      swseLogger.debug('[IntroStep.runBootSequence] Starting boot sequence');
 
       if (!this._workSurfaceEl?.isConnected) {
         swseLogger.error('[IntroStep.runBootSequence] Work surface not connected');
         return;
       }
 
-      const surfaceEl = this._workSurfaceEl.closest('.prog-intro-surface') || this._workSurfaceEl.querySelector('.prog-intro-surface') || this._workSurfaceEl;
-      const textContainer = this._workSurfaceEl.querySelector('.prog-intro-text-container');
-      const translationContainer = this._workSurfaceEl.querySelector('[data-role="intro-translation"]');
-      const translationLabel = this._workSurfaceEl.querySelector('[data-role="intro-status-label"]');
-      const label = this._workSurfaceEl.querySelector('[data-role="intro-label"]');
-      const aurabeshContainer = this._workSurfaceEl.querySelector('[data-role="intro-aurabesh-container"]');
-      const aurabesh = this._workSurfaceEl.querySelector('[data-role="intro-aurabesh"]');
-      const cursor = this._workSurfaceEl.querySelector('[data-role="intro-cursor"]');
-      const status = this._workSurfaceEl.querySelector('[data-role="intro-status"]');
-      const statusIcon = this._workSurfaceEl.querySelector('[data-role="intro-status-icon"]');
-      const statusText = this._workSurfaceEl.querySelector('[data-role="intro-status-text"]');
+      const lineEl = this._workSurfaceEl.querySelector('[data-role="intro-aurabesh"]');
       const progressBar = this._workSurfaceEl.querySelector('.prog-intro-progress-bar--segmented');
       const segments = Array.from(this._workSurfaceEl.querySelectorAll('[data-role="intro-segment"]'));
       const progressPercent = this._workSurfaceEl.querySelector('[data-role="intro-progress-percent"]');
       const microlabel = this._workSurfaceEl.querySelector('[data-role="intro-microlabel"]');
-      const translationText = this._workSurfaceEl.querySelector('[data-role="intro-translation-text"]');
+      const labelEl = this._workSurfaceEl.querySelector('[data-role="intro-label"]');
+      const statusEl = this._workSurfaceEl.querySelector('[data-role="intro-status"]');
+      const statusIcon = this._workSurfaceEl.querySelector('[data-role="intro-status-icon"]');
+      const statusText = this._workSurfaceEl.querySelector('[data-role="intro-status-text"]');
 
       const els = {
-        surfaceEl,
-        textContainer,
-        translationContainer,
-        translationLabel,
-        label,
-        aurabeshContainer,
-        aurabesh,
-        cursor,
-        status,
-        statusIcon,
-        statusText,
+        lineEl,
         progressBar,
         segments,
         progressPercent,
         microlabel,
-        translationText
+        labelEl,
+        statusEl,
+        statusIcon,
+        statusText
       };
 
-      this._localized = false;
-      setLocalizationMode(surfaceEl, false);
-      setHeadlineLocalized(els, false);
-      setTranslationVisibility(els, false);
+      for (const line of BOOT_LINES) {
+        if (!this._introRunning || this._sessionToken !== sessionToken) return;
 
-      const sessionCheck = () => this._introRunning && this._sessionToken === sessionToken;
-      const bootStartTime = performance.now();
-      const bootTotalDuration = getBootSequenceTotalDuration();
+        this._phase = line.label;
+        this._currentLine = line;
+        this._currentMicrolabel = line.microlabel;
+        this._progress = Math.round((line.progress / TOTAL_PROGRESS_SEGMENTS) * 100);
+        this._translatedText = line.basic;
 
-      // Helper: Refresh DOM element references in case shell re-rendered during animation
-      const refreshElements = () => {
-        if (!this._workSurfaceEl?.isConnected) return null;
-        return {
-          surfaceEl: this._workSurfaceEl.closest('.prog-intro-surface') || this._workSurfaceEl.querySelector('.prog-intro-surface') || this._workSurfaceEl,
-          label: this._workSurfaceEl.querySelector('[data-role="intro-label"]'),
-          aurabeshContainer: this._workSurfaceEl.querySelector('[data-role="intro-aurabesh-container"]'),
-          aurabesh: this._workSurfaceEl.querySelector('[data-role="intro-aurabesh"]'),
-          cursor: this._workSurfaceEl.querySelector('[data-role="intro-cursor"]'),
-          progressBar: this._workSurfaceEl.querySelector('.prog-intro-progress-bar--segmented'),
-          segments: Array.from(this._workSurfaceEl.querySelectorAll('[data-role="intro-segment"]')),
-          progressPercent: this._workSurfaceEl.querySelector('[data-role="intro-progress-percent"]'),
-          microlabel: this._workSurfaceEl.querySelector('[data-role="intro-microlabel"]'),
-          translationContainer: this._workSurfaceEl.querySelector('[data-role="intro-translation"]'),
-          translationText: this._workSurfaceEl.querySelector('[data-role="intro-translation-text"]'),
-        };
-      };
-
-      for (let i = 0; i < BOOT_LINES.length; i++) {
-        if (!sessionCheck()) return;
-
-        // Refresh DOM references in case shell rebuilt the template during animation
-        const freshEls = refreshElements();
-        if (!freshEls) return; // DOM not available
-        Object.assign(els, freshEls);
-
-        const line = BOOT_LINES[i];
-        this._currentBootIndex = i;
-        this._currentBootLine = line;
-        this._phase = line.header;
-
-        setToneClasses(els.label, line.tone);
-        setToneClasses(els.aurabeshContainer, line.tone);
-        setToneClasses(els.microlabel, line.tone);
+        const stateClass = this._getStateClassForTone(line.tone);
+        this._applyLineChrome(els, line, stateClass);
+        updateProgressUI(els, line.progress, TOTAL_PROGRESS_SEGMENTS);
         setProgressTone(els.progressBar, line.tone);
 
-        updateContinuousProgress(
-          this,
-          els,
-          performance.now() - bootStartTime,
-          bootTotalDuration,
-          line.tone
-        );
-        if (!sessionCheck()) return;
+        const session = this._translationEngine.createSession({
+          profile: 'chargenBootLine',
+          target: this._workSurfaceEl,
+          sourceText: line.aurabesh,
+          translatedText: line.basic,
+          selectors: {
+            lineText: '[data-role="intro-aurabesh"]'
+          },
+          keepFinalCursor: Boolean(line.final),
+          cursorMode: line.final ? 'blink' : (line.tone === INTRO_LINE_TONE.ERROR ? 'error' : 'translating')
+        });
 
-        if (line.localized) {
-          this._localized = true;
-          setLocalizationMode(surfaceEl, true);
-        }
-
-        setTranslationVisibility(els, false);
-        setLineCopy(els, line, this._localized);
-
-        if (line.tone === INTRO_LINE_TONE.ERROR) {
-          setCursorMode(els.cursor, 'error');
-        } else {
-          setCursorMode(els.cursor, line.final ? 'blink' : 'typing');
-        }
-
-        await typeTextToElement(
-          els.aurabesh,
-          els.cursor,
-          line.basic,
-          this._localized ? 28 : 34,
-          sessionCheck,
-          () => updateContinuousProgress(
-            this,
-            els,
-            performance.now() - bootStartTime,
-            bootTotalDuration,
-            line.tone
-          )
-        );
-        if (!sessionCheck()) return;
-
-        updateContinuousProgress(
-          this,
-          els,
-          performance.now() - bootStartTime,
-          bootTotalDuration,
-          line.tone
-        );
-
-        if (line.translate) {
-          await delay(line.translationHold || 240);
-          if (!sessionCheck()) return;
-
-          // Single-line in-place translation: switch the headline itself to Basic.
-          // This avoids the split/overlay effect from the mentor-style translator.
-          this._localized = true;
-          setLocalizationMode(surfaceEl, true);
-          setHeadlineLocalized(els, true);
-          setTranslationVisibility(els, false);
-          setStatusDisplay(els, line, true);
-          setCursorMode(els.cursor, 'translating');
-
-          if (els.microlabel) {
-            els.microlabel.textContent = line.microlabel || '';
-          }
-
-          if (els.aurabesh) {
-            els.aurabesh.textContent = '';
-          }
-
-          await typeTextToElement(
-            els.aurabesh,
-            els.cursor,
-            line.basic,
-            28,
-            sessionCheck,
-            () => updateContinuousProgress(
-              this,
-              els,
-              performance.now() - bootStartTime,
-              bootTotalDuration,
-              line.tone
-            )
-          );
-          if (!sessionCheck()) return;
-
-          setCursorMode(els.cursor, 'typing');
-          setLineCopy(els, line, true);
+        if (session) {
+          await this._translationEngine.runSession(session);
         }
 
         if (line.final) {
-          setCursorMode(els.cursor, 'blink');
+          break;
         }
 
-        const lineDelay = line.duration || 320;
-        const lineDelayStart = performance.now();
-        while ((performance.now() - lineDelayStart) < lineDelay) {
-          if (!sessionCheck()) return;
-          updateContinuousProgress(
-            this,
-            els,
-            performance.now() - bootStartTime,
-            bootTotalDuration,
-            line.tone
-          );
-          await delay(16);
-        }
+        await delay(line.duration || 240);
       }
 
       swseLogger.debug('[IntroStep.runBootSequence] Boot sequence complete');
@@ -1352,7 +1070,7 @@ export class IntroStep extends ProgressionStepPlugin {
     // Query from the document since we're in an async loop
     const progressPercentEl = document.querySelector('[data-role="intro-progress-percent"]');
     if (progressPercentEl) {
-      progressPercentEl.textContent = `${Math.max(0, Math.min(100, Math.round(this._progress)))}%`;
+      progressPercentEl.textContent = `${Math.round(this._progress)}%`;
     }
 
     // Update segmented bar (20 segments)
@@ -1455,14 +1173,17 @@ export class IntroStep extends ProgressionStepPlugin {
    */
   _skipIntro() {
     this._isSkipping = true;
+    this._introRunning = false;
+    this._translationEngine.cancel();
+
+    const finalLine = BOOT_LINES[BOOT_LINES.length - 1];
+    this._currentLine = finalLine;
+    this._phase = finalLine.label;
+    this._currentMicrolabel = finalLine.microlabel;
+    this._translatedText = finalLine.basic;
     this._progress = 100;
-    this._phase = 'AWAITING';
-    this._currentBootIndex = BOOT_LINES.length - 1;
-    this._currentBootLine = BOOT_LINES[BOOT_LINES.length - 1];
-    this._localized = true;
-    this._translatedText = this._fullText;
     this._complete = true;
-    // Re-render via shell will happen automatically
+    this._state = INTRO_STATE.COMPLETE_AWAITING_CLICK;
   }
 
   /**
@@ -1470,10 +1191,9 @@ export class IntroStep extends ProgressionStepPlugin {
    * Each segment is either active or inactive based on current progress.
    */
   _getProgressSegments() {
-    const TOTAL_SEGMENTS = 20;
-    const activeCount = Math.floor((this._progress / 100) * TOTAL_SEGMENTS);
+    const activeCount = Math.floor((this._progress / 100) * TOTAL_PROGRESS_SEGMENTS);
 
-    return Array.from({ length: TOTAL_SEGMENTS }, (_, i) => ({
+    return Array.from({ length: TOTAL_PROGRESS_SEGMENTS }, (_, i) => ({
       active: i < activeCount,
     }));
   }
@@ -1483,35 +1203,58 @@ export class IntroStep extends ProgressionStepPlugin {
    * Also updates micro-label for diegetic system messages.
    */
   getPhaseData() {
-    const line = this._currentBootLine;
-    if (!line) {
-      return {
-        phaseLabel: 'STANDBY',
-        phaseAurabesh: 'AWAITING SEQUENCE',
-        phaseState: 'processing',
-        localized: false,
-        statusText: 'PROCESSING',
-        statusIcon: '⊙',
-        microlabel: ''
-      };
-    }
-
-    let phaseState = 'processing';
-    if (line.tone === INTRO_LINE_TONE.ERROR) {
-      phaseState = 'unknown';
-    } else if (line.tone === INTRO_LINE_TONE.SUCCESS) {
-      phaseState = 'success';
-    }
+    const currentLine = this._currentLine || BOOT_LINES[0];
 
     return {
-      phaseLabel: line.header || line.basic,
-      phaseAurabesh: line.basic,
-      phaseState,
-      localized: !!this._localized,
-      statusText: getLineStatus(line),
-      statusIcon: getLineStatusIcon(line),
-      microlabel: line.microlabel || ''
+      phaseLabel: currentLine.label,
+      phaseAurabesh: this._complete ? currentLine.basic : currentLine.aurabesh,
+      phaseState: this._getStateClassForTone(currentLine.tone),
+      phaseStatus: currentLine.status,
+      phaseMicrolabel: currentLine.microlabel,
     };
+  }
+
+  _getStateClassForTone(tone) {
+    if (tone === INTRO_LINE_TONE.ERROR) return 'unknown';
+    if (tone === INTRO_LINE_TONE.SUCCESS) return 'success';
+    return 'processing';
+  }
+
+  _applyLineChrome(els, line, stateClass) {
+    if (els.labelEl) {
+      els.labelEl.textContent = line.label;
+      els.labelEl.className = `prog-intro-label prog-intro-label--${stateClass}`;
+    }
+
+    if (els.statusEl) {
+      els.statusEl.className = `prog-intro-status prog-intro-status--${stateClass}`;
+    }
+
+    if (els.statusText) {
+      els.statusText.textContent = line.status;
+    }
+
+    if (els.statusIcon) {
+      if (line.tone === INTRO_LINE_TONE.ERROR) {
+        els.statusIcon.textContent = '!';
+      } else if (line.tone === INTRO_LINE_TONE.SUCCESS) {
+        els.statusIcon.textContent = '✓';
+      } else {
+        els.statusIcon.textContent = '⊙';
+      }
+    }
+
+    if (els.microlabel) {
+      els.microlabel.textContent = line.microlabel;
+      els.microlabel.classList.remove('prog-intro-text--neutral', 'prog-intro-text--success', 'prog-intro-text--error');
+      if (line.tone === INTRO_LINE_TONE.ERROR) {
+        els.microlabel.classList.add('prog-intro-text--error');
+      } else if (line.tone === INTRO_LINE_TONE.SUCCESS) {
+        els.microlabel.classList.add('prog-intro-text--success');
+      } else {
+        els.microlabel.classList.add('prog-intro-text--neutral');
+      }
+    }
   }
 
   /**
@@ -1519,7 +1262,8 @@ export class IntroStep extends ProgressionStepPlugin {
    * @returns {number} Index of current phase, or -1 if no phase is active
    */
   _getCurrentPhaseIndex() {
-    return this._currentBootIndex;
+    if (!this._currentLine) return -1;
+    return BOOT_LINES.findIndex((line) => line.label === this._currentLine.label);
   }
 
   /**
@@ -1529,16 +1273,99 @@ export class IntroStep extends ProgressionStepPlugin {
    * Uses the shell's internal _onNextStep() method to properly handle the transition.
    */
   async _transitionToNextStep() {
-    if (this._shell) {
-      // Use shell's next-step handler
-      this._state = INTRO_STATE.TRANSITIONING;
-      this._introRunning = false;
-      await this._shell._onNextStep();
+    try {
+      // Guard against double transition
+      if (this._state !== INTRO_STATE.TRANSITIONING) {
+        swseLogger.warn('[IntroStep._transitionToNextStep] Not in TRANSITIONING state, aborting');
+        return;
+      }
+
+      // Get shell reference
+      if (!this._shell) {
+        swseLogger.error('[IntroStep._transitionToNextStep] No shell reference, cannot transition');
+        return;
+      }
+
+      swseLogger.debug('[IntroStep._transitionToNextStep] Beginning transition to next step via shell action');
+
+      // Tell the shell to move to the next step
+      // The shell's _onNextStep handles all the logic: blocking issues, plugin callbacks, rendering, etc.
+      // We create a fake event since the action system expects one
+      const fakeEvent = { preventDefault: () => {}, stopPropagation: () => {} };
+      await this._shell._onNextStep(fakeEvent, null);
+
+      swseLogger.debug('[IntroStep._transitionToNextStep] Transition complete, next step should now be active');
+    } catch (error) {
+      swseLogger.error('[IntroStep._transitionToNextStep] Error during transition', { error: error.message });
+      this._transitionInProgress = false;
+      this._continueClicked = false;
     }
   }
 
   // ---------------------------------------------------------------------------
-  // Mentor Context
+  // Clock & Signal Animation
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Start the diegetic clock updating every second.
+   */
+  _startClock() {
+    if (this._clockRunning) return;
+    this._clockRunning = true;
+    this._startTime = Date.now();
+    this._clockInterval = setInterval(() => {
+      // Clock continues ticking — no need to render unless shell wants to
+      // (Clock is updated on each render via _getCurrentTime())
+    }, 1000);
+  }
+
+  /**
+   * Stop the clock.
+   */
+  _stopClock() {
+    if (this._clockInterval) {
+      clearInterval(this._clockInterval);
+      this._clockInterval = null;
+    }
+    this._clockRunning = false;
+  }
+
+  /**
+   * Get current time in HH:MM format for header display.
+   */
+  _getCurrentTime() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
+
+  /**
+   * Start signal level animation (cycles 0-3).
+   */
+  _startSignalAnimation() {
+    const interval = setInterval(() => {
+      this._signalLevel += this._signalDirection;
+      if (this._signalLevel >= 3) this._signalDirection = -1;
+      if (this._signalLevel <= 0) this._signalDirection = 1;
+    }, 400);
+
+    // Store interval for cleanup
+    this._signalAnimationInterval = interval;
+  }
+
+  /**
+   * Stop signal animation.
+   */
+  _stopSignalAnimation() {
+    if (this._signalAnimationInterval) {
+      clearInterval(this._signalAnimationInterval);
+      this._signalAnimationInterval = null;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Mentor Integration (Reusing existing translation system)
   // ---------------------------------------------------------------------------
 
   /**
@@ -1567,88 +1394,5 @@ export class IntroStep extends ProgressionStepPlugin {
    */
   delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  // ---------------------------------------------------------------------------
-  // Clock and Signal Animation (Minimal implementations for UI animation)
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Start the fake OS clock animation.
-   * Updates the displayed time periodically in the header.
-   */
-  _startClock() {
-    if (this._clockRunning) return;
-
-    this._clockRunning = true;
-    this._startTime = Date.now();
-
-    // Update clock display every 500ms (reasonable for fake OS feel)
-    this._clockInterval = setInterval(() => {
-      if (!this._clockRunning) {
-        clearInterval(this._clockInterval);
-        return;
-      }
-      // Clock visual updates happen via getStepData(), which is called on render
-      // No need to do anything here unless we want to force a render
-    }, 500);
-  }
-
-  /**
-   * Stop the fake OS clock animation.
-   */
-  _stopClock() {
-    this._clockRunning = false;
-    if (this._clockInterval) {
-      clearInterval(this._clockInterval);
-      this._clockInterval = null;
-    }
-    this._startTime = null;
-  }
-
-  /**
-   * Get the current time for display in the fake OS header.
-   * Returns a simple time format.
-   * @returns {string} Formatted time like "14:32"
-   */
-  _getCurrentTime() {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  }
-
-  /**
-   * Start the signal bars animation (fake OS signal strength indicator).
-   * Animates the signal level up and down periodically.
-   */
-  _startSignalAnimation() {
-    // Initialize signal level
-    this._signalLevel = 2;
-    this._signalDirection = 1;
-
-    // Animate signal bars every 200ms
-    this._signalInterval = setInterval(() => {
-      this._signalLevel += this._signalDirection;
-
-      // Bounce between 0 and 3
-      if (this._signalLevel >= 3) {
-        this._signalDirection = -1;
-      } else if (this._signalLevel <= 0) {
-        this._signalDirection = 1;
-      }
-    }, 200);
-  }
-
-  /**
-   * Stop the signal bars animation.
-   */
-  _stopSignalAnimation() {
-    if (this._signalInterval) {
-      clearInterval(this._signalInterval);
-      this._signalInterval = null;
-    }
-    this._signalLevel = 0;
-    this._signalDirection = 1;
   }
 }

@@ -1,0 +1,20 @@
+<div class="prog-skill-details">
+  <div class="prog-skill-details__header">
+    <h2 class="prog-skill-details__name">{{skillName}}</h2>
+    <span class="prog-chip">{{abilityLabel}}</span>
+  </div>
+
+  {{#if skill.description}}
+    <p class="prog-skill-details__description">{{skill.description}}</p>
+  {{else}}
+    <p class="prog-skill-details__description">This skill uses {{abilityLabel}} and can be trained during character creation.</p>
+  {{/if}}
+
+  <div class="prog-skill-details__section">
+    <h4 class="prog-skill-details__section-title">Skill Summary</h4>
+    <p><strong>Ability:</strong> {{abilityLabel}}</p>
+    <p><strong>Category:</strong> {{category}}</p>
+    <p><strong>Class Skill:</strong> {{#if isClassSkill}}Yes{{else}}No{{/if}}</p>
+    <p><strong>Trained:</strong> {{#if trained}}Yes{{else}}No{{/if}}</p>
+  </div>
+</div>

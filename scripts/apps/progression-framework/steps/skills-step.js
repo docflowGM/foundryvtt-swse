@@ -33,6 +33,7 @@ export class SkillsStep extends ProgressionStepPlugin {
     this._suggestedSkills = [];           // Suggested skills from SuggestionService
     this._isBeast = false;                // Beast constraint flag
     this._beastSkillList = null;          // Beast skill list if applicable
+    this._focusedSkillId = null;          // focused skill for details rail
 
     // Event listener cleanup
     this._renderAbort = null;
@@ -76,18 +77,24 @@ export class SkillsStep extends ProgressionStepPlugin {
       .filter(s => s.trained)
       .length;
 
-    // Load full skill list from registry
-    try {
-      const skillRegistry = SkillRegistry.getInstance?.() || SkillRegistry;
-      this._allSkills = await skillRegistry.getSkills?.() || [];
-      if (typeof skillRegistry === 'function') {
-        // Fallback if it's a constructor
-        this._allSkills = Object.values(skillRegistry.SKILLS || {});
-      }
-    } catch (err) {
-      swseLogger.warn('[SkillsStep] Failed to load skill registry:', err);
-      this._allSkills = [];
-    }
+
+// Load full skill list from registry
+try {
+  if (!SkillRegistry.isBuilt && typeof SkillRegistry.build === 'function') {
+    await SkillRegistry.build();
+  }
+  let rawSkills = [];
+  if (typeof SkillRegistry.list === 'function') {
+    rawSkills = SkillRegistry.list();
+  } else {
+    const skillRegistry = SkillRegistry.getInstance?.() || SkillRegistry;
+    rawSkills = await skillRegistry.getSkills?.() || [];
+  }
+  this._allSkills = (rawSkills || []).map((skill) => this._normalizeSkillRecord(skill)).filter(Boolean);
+} catch (err) {
+  swseLogger.warn('[SkillsStep] Failed to load skill registry:', err);
+  this._allSkills = [];
+}
 
     // Phase 2.7: Filter to Beast skill list if applicable
     if (this._isBeast) {
@@ -337,6 +344,24 @@ export class SkillsStep extends ProgressionStepPlugin {
     };
   }
 
+
+renderDetailsPanel(focusedItem) {
+  const skill = this._resolveFocusedSkill(focusedItem);
+  if (!skill) return this.renderDetailsPanelEmptyState();
+
+  return {
+    template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/skill-details.hbs',
+    data: {
+      skill,
+      skillName: skill.name,
+      abilityLabel: skill.abilityLabel || 'Unknown',
+      category: skill.category || null,
+      isClassSkill: !!skill.classSkill,
+      trained: !!this._trainedSkills.get(skill.key)?.trained,
+    },
+  };
+}
+
   getMentorContext(shell) {
     const customGuidance = getStepGuidance(shell.actor, 'skills');
     if (customGuidance) return customGuidance;
@@ -405,14 +430,72 @@ export class SkillsStep extends ProgressionStepPlugin {
     return shell.buildIntent.toCharacterData();
   }
 
-  _formatSkillCard(skill, suggestedIds = new Set()) {
-    const isSuggested = this.isSuggestedItem(skill.id, suggestedIds);
-    return {
-      ...skill,
-      isSuggested,
-      badgeLabel: isSuggested ? 'Recommended' : null,
-      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
-    };
-  }
+
+_normalizeSkillRecord(skill) {
+  if (!skill) return null;
+  const name = skill.name || skill.label || skill.id || skill._id || 'Unknown Skill';
+  const key = String(skill.key || skill.slug || skill.system?.key || name)
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/[()]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+  const id = skill.id || skill._id || key;
+  const ability = String(skill.system?.ability || skill.ability || '').toLowerCase();
+  const abilityLabel = this._abilityLabel(ability);
+  const classSkills = skill.system?.classes || skill.classes || {};
+  const classSkill = Object.values(classSkills).some(Boolean);
+
+  return {
+    ...skill,
+    id,
+    _id: skill._id || id,
+    key,
+    name,
+    ability,
+    abilityLabel,
+    category: skill.category || abilityLabel,
+    alwaysVisible: skill.alwaysVisible ?? true,
+    available: skill.available ?? true,
+    classSkill,
+    description: skill.system?.description || skill.description || '',
+  };
+}
+
+_abilityLabel(ability) {
+  const map = {
+    str: 'Strength',
+    dex: 'Dexterity',
+    con: 'Constitution',
+    int: 'Intelligence',
+    wis: 'Wisdom',
+    cha: 'Charisma',
+  };
+  return map[ability] || 'General';
+}
+
+_resolveFocusedSkill(focusedItem) {
+  const focusedId = focusedItem?.id || this._focusedSkillId;
+  if (!focusedId) return null;
+  return this._availableSkills.find((skill) => skill.id === focusedId || skill._id === focusedId || skill.key === focusedId) || null;
+}
+
+async onItemFocused(id, shell) {
+  const skill = this._availableSkills.find((entry) => entry.id === id || entry._id === id || entry.key === id);
+  if (!skill) return;
+  this._focusedSkillId = skill.id;
+  shell.focusedItem = { id: skill.id };
+  shell.render();
+}
+
+_formatSkillCard(skill, suggestedIds = new Set()) {
+  const normalized = this._normalizeSkillRecord(skill);
+  const isSuggested = this.isSuggestedItem(normalized.id, suggestedIds) || this.isSuggestedItem(normalized.key, suggestedIds);
+  return {
+    ...normalized,
+    isSuggested,
+    badgeLabel: isSuggested ? 'Recommended' : null,
+    badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+  };
+}
 
 }

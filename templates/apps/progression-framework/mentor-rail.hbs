@@ -1,98 +1,19 @@
 <div class="prog-mentor-rail swse-ui-panel swse-prog-mentor-rail" data-mood="{{mentor.mood}}">
 
-  {{!-- Portrait zone: Type 1 SVG-embedded portrait + nameplate labels
-       SVG owns the portrait composition; image is embedded inside the frame, not layered. --}}
+  {{!-- Portrait zone: portrait display with CSS-based styling --}}
   <div class="prog-mentor__portrait-zone swse-ui-frame">
-
-    {{! Portrait — SVG Type 1: mentor portrait embedded in mentor-portrait-box.svg frame }}
-    {{! Increased size from 82x96 to 120x120 for better visual presence (+20%) }}
-    <svg class="prog-mentor__portrait"
-         xmlns="http://www.w3.org/2000/svg"
-         viewBox="0 0 240 280"
-         width="120" height="120"
-         preserveAspectRatio="xMidYMid meet"
-         data-mentor-portrait="{{mentor.id}}">
-      <defs>
-        <linearGradient id="holo-bg-{{mentor.id}}" x1="0" y1="0" x2="240" y2="280" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#0B1A29"/>
-          <stop offset="1" stop-color="#08121B"/>
-        </linearGradient>
-        <clipPath id="portrait-clip-{{mentor.id}}">
-          <circle cx="120" cy="110" r="75"/>
-        </clipPath>
-      </defs>
-
-      {{! SVG Frame: chamfered rect with cyan borders }}
-      <path d="M24 16H216L224 24V232L216 240H24L16 232V24L24 16Z" fill="url(#holo-bg-{{mentor.id}})" stroke="#48DBFF" stroke-width="3"/>
-      <path d="M36 28H204L212 36V220L204 228H36L28 220V36L36 28Z" stroke="#97F6FF" stroke-opacity="0.35"/>
-      <path d="M40 236H200L212 248V256L200 264H40L28 256V248L40 236Z" fill="#091B29" stroke="#48DBFF" stroke-opacity="0.7"/>
-      <path d="M54 30H96" stroke="#83F0FF" stroke-width="2" stroke-opacity="0.55"/>
-      <path d="M144 228H188" stroke="#83F0FF" stroke-width="2" stroke-opacity="0.35"/>
-
-      {{! Embedded Portrait Image — Type 1 ownership }}
+    <div class="prog-mentor__portrait" data-mentor-portrait="{{mentor.id}}">
       {{#if mentor.portrait}}
-        <image x="35" y="25" width="170" height="170"
-               href="{{mentor.portrait}}"
-               alt="{{mentor.name}}"
-               clip-path="url(#portrait-clip-{{mentor.id}})"
-               preserveAspectRatio="xMidYMid meet"
-               onerror="this.style.display='none'"/>
+        <img class="prog-mentor__portrait-image"
+             src="{{mentor.portrait}}"
+             alt="{{mentor.name}}"
+             title="{{mentor.name}}"/>
       {{else}}
-        {{! Fallback: if no portrait available, show placeholder circle }}
-        <circle cx="120" cy="110" r="75" fill="rgba(30, 60, 90, 0.5)" stroke="#48DBFF" stroke-width="2"/>
-        <text x="120" y="115" text-anchor="middle" fill="#7CE9FF" font-size="48" dominant-baseline="middle">
-          <tspan font-family="Font Awesome 6 Pro">&#xf2bd;</tspan>
-        </text>
+        <div class="prog-mentor__portrait-placeholder">
+          <i class="fas fa-user-circle"></i>
+        </div>
       {{/if}}
-
-      {{! Holographic Tint Overlay — subtle cyan glass effect }}
-      <defs>
-        <radialGradient id="holo-tint-{{mentor.id}}" cx="120" cy="90" r="100">
-          <stop offset="0%" stop-color="rgba(120, 240, 255, 0.15)"/>
-          <stop offset="100%" stop-color="rgba(0, 180, 255, 0.05)"/>
-        </radialGradient>
-
-        {{! Scanlines pattern for holographic CRT effect }}
-        <pattern id="scanlines-{{mentor.id}}" x="0" y="0" width="240" height="4" patternUnits="userSpaceOnUse">
-          <line x1="0" y1="2" x2="240" y2="2" stroke="#48DBFF" stroke-width="0.5" opacity="0.15"/>
-        </pattern>
-
-        {{! Subtle chromatic aberration via filter }}
-        <filter id="chromatic-{{mentor.id}}" x="-50%" y="-50%" width="200%" height="200%">
-          <feOffset in="SourceGraphic" dx="0.5" dy="0" result="offsetred"/>
-          <feBlend in="SourceGraphic" in2="offsetred" mode="lighten"/>
-        </filter>
-
-        {{! Soft glow filter for holographic presence }}
-        <filter id="holo-glow-{{mentor.id}}" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur"/>
-          <feFlood flood-color="#48DBFF" flood-opacity="0.2" result="color"/>
-          <feComposite in="color" in2="blur" operator="in" result="glow"/>
-          <feComposite in="glow" in2="SourceGraphic" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
-        </filter>
-      </defs>
-
-      {{! Holographic tint base layer }}
-      <circle cx="120" cy="110" r="75" fill="url(#holo-tint-{{mentor.id}})" opacity="0.6"/>
-
-      {{! Scanlines overlay — CRT holographic effect }}
-      <circle cx="120" cy="110" r="75" fill="url(#scanlines-{{mentor.id}})" opacity="0.3"/>
-
-      {{! Subtle Targeting Ring Overlay }}
-      <circle cx="120" cy="110" r="75"
-              fill="none"
-              stroke="#48DBFF"
-              stroke-width="1"
-              stroke-dasharray="4,2"
-              opacity="0.4"/>
-
-      {{! Inner glow ring for holographic depth }}
-      <circle cx="120" cy="110" r="72"
-              fill="none"
-              stroke="#48DBFF"
-              stroke-width="0.5"
-              opacity="0.2"/>
-    </svg>
+    </div>
   </div>{{!-- /portrait-zone --}}
 
   {{! Name and title (hidden when mentor collapsed) }}

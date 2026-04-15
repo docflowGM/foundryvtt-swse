@@ -631,7 +631,6 @@
    ============================================================================ */
 
 .prog-intro-continue-btn {
-  background-image: url('../../../assets/ui/chargen/button-frame-primary.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  transparent;
@@ -971,107 +970,4 @@
     font-size: 10px;
   }
 
-  .prog-intro-panel {
-    margin: 12px;
-    padding: 16px;
-  }
-
-  .prog-intro-aurabesh {
-    font-size: 20px;
-  }
-
-  .prog-intro-continue-btn {
-    padding: 8px 16px;
-    font-size: 11px;
-  }
-}
-
-
-/* Single-line translation fix: once localized, the headline must switch out of Aurebesh font */
-.prog-intro-aurabesh.is-localized,
-.prog-intro-aurabesh__text.is-localized,
-.prog-intro-surface--localized [data-role="intro-aurabesh"] {
-  font-family: 'Orbitron', 'Courier New', monospace !important;
-  font-style: normal !important;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-}
-
-/* Footer button hover copy */
-.prog-intro-actions .prog-intro-btn[data-hovercopy] {
-  position: relative;
-}
-
-.prog-intro-actions .prog-intro-btn[data-hovercopy]::after {
-  content: attr(data-hovercopy);
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 10px);
-  transform: translateX(-50%) translateY(6px);
-  min-width: 220px;
-  max-width: 320px;
-  padding: 8px 10px;
-  border: 1px solid rgba(100, 220, 255, 0.35);
-  background: linear-gradient(180deg, rgba(8, 24, 40, 0.96), rgba(4, 14, 28, 0.98));
-  color: rgba(190, 235, 255, 0.95);
-  font-family: 'Courier New', monospace;
-  font-size: 11px;
-  line-height: 1.35;
-  letter-spacing: 0.04em;
-  text-transform: none;
-  text-align: center;
-  border-radius: 4px;
-  box-shadow: 0 0 16px rgba(0, 180, 255, 0.16);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 140ms ease, transform 140ms ease;
-  z-index: 20;
-}
-
-.prog-intro-actions .prog-intro-btn[data-hovercopy]::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 4px);
-  transform: translateX(-50%) translateY(6px);
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid rgba(100, 220, 255, 0.35);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 140ms ease, transform 140ms ease;
-  z-index: 20;
-}
-
-.prog-intro-actions .prog-intro-btn[data-hovercopy]:hover::after,
-.prog-intro-actions .prog-intro-btn[data-hovercopy]:hover::before,
-.prog-intro-actions .prog-intro-btn[data-hovercopy]:focus-visible::after,
-.prog-intro-actions .prog-intro-btn[data-hovercopy]:focus-visible::before {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-
-/* Restore tone coloring for helper copy and error/success text */
-.prog-intro-microlabel.prog-intro-text--error,
-.prog-intro-text--error .prog-intro-aurabesh__text,
-.prog-intro-text--error .prog-intro-translation__content,
-.prog-intro-status--unknown .prog-intro-status__text,
-.prog-intro-status--unknown .prog-intro-status__icon {
-  color: rgba(255, 120, 120, 0.98);
-  text-shadow: 0 0 10px rgba(255, 80, 80, 0.28);
-}
-
-.prog-intro-microlabel.prog-intro-text--success,
-.prog-intro-text--success .prog-intro-aurabesh__text,
-.prog-intro-text--success .prog-intro-translation__content,
-.prog-intro-status--success .prog-intro-status__text,
-.prog-intro-status--success .prog-intro-status__icon {
-  color: rgba(100, 255, 140, 0.98);
-  text-shadow: 0 0 10px rgba(44, 255, 111, 0.28);
-}
-
-.prog-intro-microlabel.prog-intro-text--neutral,
-.prog-intro-status--processing .prog-intro-status__text {
-  color: rgba(120, 230, 255, 0.95);
-}
+  .p

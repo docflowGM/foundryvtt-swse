@@ -65,6 +65,7 @@ import { registerSystemSettings } from './scripts/core/settings.js';
 import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
+import './scripts/core/init.js'; // Register Handlebars helpers
 import { initSidebarIconFallback } from './scripts/core/sidebar-icon-fallback.js';
 import { initSidebarSentinelTrace } from './scripts/core/sidebar-sentinel-trace.js';
 import { initSidebarIconComparison } from './scripts/core/sidebar-icon-comparison.js';

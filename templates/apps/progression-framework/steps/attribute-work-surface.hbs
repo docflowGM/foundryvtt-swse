@@ -1,5 +1,5 @@
-<div class="prog-attribute-surface">
 
+<div class="prog-attribute-surface">
   <div class="prog-attribute-header">
     <h3 class="prog-attribute-title">Assign Your Attributes</h3>
     <p class="prog-attribute-help">
@@ -10,149 +10,148 @@
   <div class="prog-attribute-method-selector">
     <label class="prog-attribute-method-label">Method:</label>
     <div class="prog-attribute-method-buttons">
-      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "point-buy")}}active{{/if}}"
-              data-method="point-buy"
-              type="button"
-              title="Point buy: spend points to raise scores from 8">
+      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "point-buy")}}active{{/if}}" data-method="point-buy" type="button">
         <i class="fas fa-coins"></i> Point Buy
       </button>
-      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "array")}}active{{/if}}"
-              data-method="array"
-              type="button"
-              title="Canonical standard array: 15, 14, 13, 12, 10, 8">
-        <i class="fas fa-layer-group"></i> Array
+      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "array")}}active{{/if}}" data-method="array" type="button">
+        <i class="fas fa-th-large"></i> Array
       </button>
-      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "high-power")}}active{{/if}}"
-              data-method="high-power"
-              type="button"
-              title="High Power array: 16, 14, 12, 10, 10, 8">
-        <i class="fas fa-bolt"></i> High Power
+      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "standard")}}active{{/if}}" data-method="standard" type="button">
+        <i class="fas fa-dice-d6"></i> Standard
       </button>
-      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "organic")}}active{{/if}}"
-              data-method="organic"
-              type="button"
-              title="Organic: legacy 21d6 drop lowest 3 pool">
+      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "organic")}}active{{/if}}" data-method="organic" type="button">
         <i class="fas fa-dice"></i> Organic
       </button>
     </div>
   </div>
 
-  {{#if isPointBuy}}
-    <div class="prog-attribute-pointbuy-status {{#if pointBuyStatus.isComplete}}prog-attribute-pointbuy-status--complete{{/if}}">
+  {{#if showArrayPools}}
+    <div class="prog-attribute-submethod-selector">
+      <button class="prog-btn prog-btn--submethod attr-array-type-btn {{#if (eq arrayType "standard")}}active{{/if}}" data-array-type="standard" type="button">Standard Array</button>
+      <button class="prog-btn prog-btn--submethod attr-array-type-btn {{#if (eq arrayType "highPower")}}active{{/if}}" data-array-type="highPower" type="button">High Power Array</button>
+    </div>
+  {{/if}}
+
+  {{#if showPointBuy}}
+    <div class="prog-attribute-pointbuy-status {{#if pointBuyStatus.isComplete}}prog-attribute-pointbuy--complete{{/if}}">
       <div class="prog-attribute-pointbuy-bar">
-        <div class="prog-attribute-pointbuy-used" style="width: {{div pointBuyStatus.spent pointBuyStatus.total 100}}%"></div>
+        <div class="prog-attribute-pointbuy-used" style="width: {{pointBuyStatus.percent}}%"></div>
       </div>
-      <div class="prog-attribute-pointbuy-text">
-        {{pointBuyStatus.spent}}/{{pointBuyStatus.total}} points allocated — {{pointBuyStatus.status}}
+      <div class="prog-attribute-pointbuy-text">{{pointBuyStatus.spent}}/25 points allocated — {{pointBuyStatus.status}}</div>
+    </div>
+  {{/if}}
+
+  {{#if showArrayPools}}
+    <div class="prog-attribute-pool-panel">
+      <div class="prog-attribute-pool-panel__header">
+        <h4>{{poolHeading}}</h4>
+        <p>{{poolInstructions}}</p>
+      </div>
+      <div class="prog-attribute-tile-grid">
+        {{#each poolTiles}}
+          <button class="prog-attribute-tile {{#if used}}is-used{{/if}} {{#if assignedToFocused}}is-focused{{/if}}" data-pool-tile-id="{{id}}" type="button" {{#if used}}disabled{{/if}}>
+            <span class="prog-attribute-tile__value">{{value}}</span>
+            <span class="prog-attribute-tile__label">{{label}}</span>
+          </button>
+        {{/each}}
       </div>
     </div>
   {{/if}}
 
-  {{#if isPoolMethod}}
+  {{#if showStandardPools}}
     <div class="prog-attribute-pool-panel">
-      <div class="prog-attribute-pool-header">
-        <div class="prog-attribute-pool-title">{{methodLabel}} Pool</div>
-        <div class="prog-attribute-pool-help">{{poolInstruction}}</div>
+      <div class="prog-attribute-pool-panel__header">
+        <div>
+          <h4>{{poolHeading}}</h4>
+          <p>{{poolInstructions}}</p>
+        </div>
+        <button class="prog-btn prog-btn--secondary prog-btn--reroll" data-reroll-method="standard" type="button">
+          <i class="fas fa-rotate"></i> Reroll
+        </button>
       </div>
-      <div class="prog-attribute-pool {{#unless hasAvailablePool}}prog-attribute-pool--empty{{/unless}}" data-pool-dropzone="true">
-        {{#if hasAvailablePool}}
-          {{#each availablePool}}
-            <div class="prog-attribute-pool-tile"
-                 role="button"
-                 tabindex="0"
-                 draggable="true"
-                 data-pool-id="{{id}}"
-                 title="{{tooltip}}">
-              <span class="prog-attribute-pool-tile__value">{{value}}</span>
-              <span class="prog-attribute-pool-tile__origin">{{origin}}</span>
-            </div>
-          {{/each}}
-        {{else}}
-          <div class="prog-attribute-pool-empty">{{poolEmptyText}}</div>
-        {{/if}}
+      <div class="prog-attribute-tile-grid">
+        {{#each poolTiles}}
+          <button class="prog-attribute-tile {{#if used}}is-used{{/if}} {{#if assignedToFocused}}is-focused{{/if}}" data-pool-tile-id="{{id}}" type="button" {{#if used}}disabled{{/if}}>
+            <span class="prog-attribute-tile__value">{{value}}</span>
+            <span class="prog-attribute-tile__label">{{label}}</span>
+          </button>
+        {{/each}}
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if showOrganicPools}}
+    <div class="prog-attribute-pool-panel">
+      <div class="prog-attribute-pool-panel__header">
+        <div>
+          <h4>{{poolHeading}}</h4>
+          <p>{{poolInstructions}}</p>
+          <p class="prog-attribute-pool-panel__meta">Selected dice: {{organicSelectedCount}} / 3{{#if organicSelectedCount}} — Current sum: {{organicSelectedTotal}}{{/if}}</p>
+        </div>
+        <div class="prog-attribute-pool-panel__actions">
+          <button class="prog-btn prog-btn--secondary prog-btn--reroll" data-reroll-method="organic" type="button">
+            <i class="fas fa-rotate"></i> Reroll 18d6
+          </button>
+          <button class="prog-btn prog-btn--primary" data-organic-assign-focused type="button" {{#unless (eq organicSelectedCount 3)}}disabled{{/unless}}>
+            Assign to {{focusedAbilityLabel}}
+          </button>
+        </div>
+      </div>
+      <div class="prog-attribute-dice-grid">
+        {{#each organicDice}}
+          <button class="prog-attribute-die {{#if selected}}is-selected{{/if}} {{#if used}}is-used{{/if}}" data-organic-die-id="{{id}}" type="button" {{#if used}}disabled{{/if}}>
+            <span class="prog-attribute-die__value">{{value}}</span>
+          </button>
+        {{/each}}
       </div>
     </div>
   {{/if}}
 
   <div class="prog-attribute-rows">
     {{#each abilities}}
-      <div class="prog-attribute-row {{#if isFocused}}prog-attribute-row--focused{{/if}} {{#if isSuggested}}prog-attribute-row--suggested prog-attribute-row--suggested-{{confidenceLevel}}{{/if}}"
-           data-ability-row="{{id}}"
-           data-recommended="{{#if isSuggested}}true{{/if}}"
-           data-confidence-level="{{confidenceLevel}}"
-           role="button"
-           tabindex="0">
-
-        <div class="prog-attribute-row__label">
-          {{label}}
-          {{#if badgeLabel}}
-            <span class="swse-option-card__badge swse-option-card__badge--recommended">{{badgeLabel}}</span>
-          {{/if}}
+      <div class="prog-attribute-row {{#if isFocused}}prog-attribute-row--focused{{/if}} {{#if isSuggested}}prog-attribute-row--suggested prog-attribute-row--suggested-{{confidenceLevel}}{{/if}}" data-ability-row="{{id}}" role="button" tabindex="0">
+        <div class="prog-attribute-row__header">
+          <div>
+            <div class="prog-attribute-row__label">{{label}}</div>
+            {{#if poolSourceLabel}}<div class="prog-attribute-row__subtext">{{poolSourceLabel}}{{#if poolValueLabel}} · {{poolValueLabel}}{{/if}}</div>{{/if}}
+            {{#if organicBreakdown}}<div class="prog-attribute-row__subtext">{{organicBreakdown}}</div>{{/if}}
+          </div>
+          <div class="prog-attribute-row__header-actions">
+            {{#if badgeLabel}}<span class="swse-option-card__badge swse-option-card__badge--recommended">{{badgeLabel}}</span>{{/if}}
+            {{#if canClear}}
+              <button class="prog-attribute-row__clear" data-clear-ability="{{id}}" type="button" title="Clear assignment">
+                <i class="fas fa-xmark"></i>
+              </button>
+            {{/if}}
+          </div>
         </div>
 
-        <div class="prog-attribute-row__score prog-attribute-row__base">
-          {{#if canAdjust}}
-            <button class="prog-attribute-btn prog-attribute-btn--minus"
-                    data-ability="{{id}}"
-                    data-delta="-1"
-                    type="button"
-                    {{#unless canDecrement}}disabled{{/unless}}>−</button>
-            <span class="prog-attribute-value">{{base}}</span>
-            <div class="prog-attribute-increment-info">
-              <button class="prog-attribute-btn prog-attribute-btn--plus"
-                      data-ability="{{id}}"
-                      data-delta="1"
-                      type="button"
-                      {{#unless canIncrement}}disabled{{/unless}}>+</button>
-              {{#if nextIncrementCost}}
-                <span class="prog-attribute-cost {{#unless canAffordNext}}prog-attribute-cost--unaffordable{{/unless}}">+ costs {{nextIncrementCost}}</span>
-              {{/if}}
-            </div>
-          {{else}}
-            <div class="prog-attribute-assignment-box {{#if assigned}}prog-attribute-assignment-box--assigned{{/if}} {{#if isFocused}}prog-attribute-assignment-box--focused{{/if}}"
-                 data-assign-ability="{{id}}">
-              {{#if assigned}}
-                <div class="prog-attribute-assigned-tile"
-                     draggable="true"
-                     data-assigned-tile-id="{{assignedTileId}}"
-                     title="Drag to another ability or back to the pool">
-                  <span class="prog-attribute-value">{{baseDisplay}}</span>
-                  {{#if assignedOrigin}}
-                    <span class="prog-attribute-assigned-tile__origin">{{assignedOrigin}}</span>
-                  {{/if}}
-                </div>
-                <button class="prog-attribute-clear"
-                        type="button"
-                        data-clear-ability="{{id}}"
-                        title="Return value to pool">×</button>
-              {{else}}
-                <span class="prog-attribute-assignment-placeholder">drop value here</span>
-              {{/if}}
-            </div>
-          {{/if}}
+        <div class="prog-attribute-row__stats">
+          <div class="prog-attribute-stat">
+            <span class="prog-attribute-stat__label">Base</span>
+            <span class="prog-attribute-stat__value">{{baseDisplay}}</span>
+          </div>
+          <div class="prog-attribute-stat">
+            <span class="prog-attribute-stat__label">Species</span>
+            <span class="prog-attribute-stat__value {{speciesModClass}}">{{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}}</span>
+          </div>
+          <div class="prog-attribute-stat">
+            <span class="prog-attribute-stat__label">Final</span>
+            <span class="prog-attribute-stat__value prog-attribute-stat__value--final">{{finalDisplay}}</span>
+          </div>
+          <div class="prog-attribute-stat">
+            <span class="prog-attribute-stat__label">Mod</span>
+            <span class="prog-attribute-stat__value {{modClass}}">{{modifierFormatted}}</span>
+          </div>
         </div>
 
-        <div class="prog-attribute-row__score prog-attribute-row__species">
-          <span class="prog-attribute-value {{speciesModClass}}">{{speciesModDisplay}}</span>
-        </div>
-
-        <div class="prog-attribute-row__score prog-attribute-row__final">
-          <span class="prog-attribute-value prog-attribute-value--final">{{finalDisplay}}</span>
-        </div>
-
-        <div class="prog-attribute-row__score prog-attribute-row__modifier">
-          <span class="prog-attribute-value {{modClass}}">{{modifierFormatted}}</span>
-        </div>
+        {{#if canAdjust}}
+          <div class="prog-attribute-row__pointbuy">
+            <button class="prog-attribute-btn prog-attribute-btn--minus" data-ability="{{id}}" data-delta="-1" type="button">−</button>
+            <button class="prog-attribute-btn prog-attribute-btn--plus" data-ability="{{id}}" data-delta="1" type="button">+</button>
+          </div>
+        {{/if}}
       </div>
     {{/each}}
   </div>
-
-  <div class="prog-attribute-headers">
-    <div class="prog-attribute-headers__label"></div>
-    <div class="prog-attribute-headers__base">Base</div>
-    <div class="prog-attribute-headers__species">Species</div>
-    <div class="prog-attribute-headers__final">Final</div>
-    <div class="prog-attribute-headers__modifier">Mod</div>
-  </div>
-
 </div>

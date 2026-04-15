@@ -108,4 +108,8 @@ export class BackgroundRegistry {
     await this.ensureLoaded();
     return Array.from(this._bySlug.values());
   }
+
+  static async getAll() {
+    return this.all();
+  }
 }

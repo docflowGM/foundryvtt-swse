@@ -39,8 +39,8 @@
     <div class="feat-list suggested-list">
       {{#each groupedFeats.suggested.feats}}
       <div class="feat-item suggested-feat {{#if this.isFocused}}focused{{/if}} {{#if this.isSelected}}selected{{/if}}"
-           data-feat-id="{{this._id}}"
-           data-item-id="{{this._id}}"
+           data-feat-id="{{this.id}}"
+           data-item-id="{{this.id}}"
            data-action="focus-item">
         <div class="feat-item-content">
           <span class="feat-name">{{this.name}}</span>
@@ -76,8 +76,8 @@
       {{#each group.feats as |feat idx|}}
       {{#if (or (lt idx group.visibleCount) group.isExpanded)}}
       <div class="feat-item category-feat {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}} {{#unless feat.isAvailable}}unavailable{{/unless}}"
-           data-feat-id="{{feat._id}}"
-           data-item-id="{{feat._id}}"
+           data-feat-id="{{feat.id}}"
+           data-item-id="{{feat.id}}"
            data-action="focus-item"
            {{#unless feat.isAvailable}}title="{{feat.unavailabilityReason}}"{{/unless}}>
         <div class="feat-item-content">

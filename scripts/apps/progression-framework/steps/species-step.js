@@ -1161,9 +1161,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     // Use existing img if it looks like real art (not a default Foundry icon)
     if (species.img
       && !species.img.includes('mystery-man')
-      && !species.img.includes('icons/svg')
-      && !species.img.includes('icons/tokens')
-      && species.img !== 'icons/svg/mystery-man.svg') {
+      && !species.img.includes('icons/tokens')) {
       return species.img;
     }
     // Look up by name in the scanned file map

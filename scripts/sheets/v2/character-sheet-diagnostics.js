@@ -360,7 +360,7 @@ class CharacterSheetDiagnostics {
    * One-time inspection of the character sheet
    */
   inspectCharacterSheet() {
-    console.log('[SWSE SheetDiag] ═══ CHARACTER SHEET INSPECTION ═══');
+    // console.log('[SWSE SheetDiag] ═══ CHARACTER SHEET INSPECTION ═══');
 
     const app = this.getSheetInstance();
     if (!app) {
@@ -371,23 +371,23 @@ class CharacterSheetDiagnostics {
     const snapshot = this.snapshot('inspect');
     this.lastReport = snapshot;
 
-    console.log('[SWSE SheetDiag] CLASS HIERARCHY');
+    // console.log('[SWSE SheetDiag] CLASS HIERARCHY');
     console.table({
       current: snapshot.runtimeOptions.className,
       baseClass: snapshot.runtimeOptions.baseClass,
       chain: snapshot.runtimeOptions.fullChain.join(' → ')
     });
 
-    console.log('[SWSE SheetDiag] EFFECTIVE RUNTIME OPTIONS');
+    // console.log('[SWSE SheetDiag] EFFECTIVE RUNTIME OPTIONS');
     console.table(snapshot.runtimeOptions.options);
 
-    console.log('[SWSE SheetDiag] CURRENT POSITION');
+    // console.log('[SWSE SheetDiag] CURRENT POSITION');
     console.table(snapshot.runtimeOptions.currentPosition);
 
-    console.log('[SWSE SheetDiag] HEIGHT CHAIN VALIDATION');
+    // console.log('[SWSE SheetDiag] HEIGHT CHAIN VALIDATION');
     if (snapshot.heightChain) {
       if (snapshot.heightChain.isValid) {
-        console.log('✅ HEIGHT CHAIN VALID');
+        // console.log('✅ HEIGHT CHAIN VALID');
       } else {
         console.error('❌ HEIGHT CHAIN BROKEN');
         console.error(`First broken node: ${snapshot.heightChain.firstBrokenNode}`);
@@ -395,11 +395,11 @@ class CharacterSheetDiagnostics {
       console.table(snapshot.heightChain.chain);
     }
 
-    console.log('[SWSE SheetDiag] DOM LAYOUT CHAIN');
+    // console.log('[SWSE SheetDiag] DOM LAYOUT CHAIN');
     for (const [name, layout] of Object.entries(snapshot.domLayout)) {
       if (layout.present) {
         console.group(`[SWSE SheetDiag] ${name}`);
-        console.log(`Tag: ${layout.tag} | Classes: ${layout.classes || '(none)'}`);
+        // console.log(`Tag: ${layout.tag} | Classes: ${layout.classes || '(none)'}`);
         console.table({
           'Bounding Rect': layout.boundingRect,
           'Scroll Metrics': layout.scrollMetrics,
@@ -431,18 +431,18 @@ class CharacterSheetDiagnostics {
       }
     }
 
-    console.log('[SWSE SheetDiag] SCROLL REGIONS (elements with overflow)');
+    // console.log('[SWSE SheetDiag] SCROLL REGIONS (elements with overflow)');
     if (snapshot.scrollRegions.length > 0) {
       console.table(snapshot.scrollRegions);
     } else {
       console.warn('[SWSE SheetDiag] ⚠️ NO SCROLL REGIONS DETECTED');
     }
 
-    console.log('[SWSE SheetDiag] RESIZE AFFORDANCES');
+    // console.log('[SWSE SheetDiag] RESIZE AFFORDANCES');
     console.table(snapshot.resizeAffordances);
 
     // Final summary
-    console.log('[SWSE SheetDiag] ═══ SUMMARY ═══');
+    // console.log('[SWSE SheetDiag] ═══ SUMMARY ═══');
     const summary = {
       heightChainStatus: snapshot.heightChain?.isValid ? '✅ PASS' : '❌ BROKEN',
       scrollOwnerStatus: snapshot.scrollRegions?.length === 1 ? '✅ SINGLE OWNER' : `⚠️ ${snapshot.scrollRegions?.length || 0} SCROLL OWNERS`,
@@ -452,14 +452,14 @@ class CharacterSheetDiagnostics {
       summary.actualOwners = snapshot.scrollRegions.map(r => r.classes).join(', ');
     }
     console.table(summary);
-    console.log('[SWSE SheetDiag] ═══ END INSPECTION ═══');
+    // console.log('[SWSE SheetDiag] ═══ END INSPECTION ═══');
   }
 
   /**
    * Attach observers and periodic snapshots to track runtime changes
    */
   watchCharacterSheet() {
-    console.log('[SWSE SheetDiag] Starting observation...');
+    // console.log('[SWSE SheetDiag] Starting observation...');
 
     const app = this.getSheetInstance();
     if (!app?.element) {
@@ -470,10 +470,10 @@ class CharacterSheetDiagnostics {
     // ResizeObserver: detect when window/elements change size
     this.observers.resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        console.log(`[SWSE SheetDiag] ResizeObserver: ${entry.target.className || entry.target.tagName}`, {
-          width: Math.round(entry.contentRect.width),
-          height: Math.round(entry.contentRect.height)
-        });
+        // console.log(`[SWSE SheetDiag] ResizeObserver: ${entry.target.className || entry.target.tagName}`, {
+        //   width: Math.round(entry.contentRect.width),
+        //   height: Math.round(entry.contentRect.height)
+        // });
       }
     });
 
@@ -488,10 +488,10 @@ class CharacterSheetDiagnostics {
     this.observers.mutationObserver = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-          console.log(`[SWSE SheetDiag] ClassChange:`, mutation.target.className);
+          // console.log(`[SWSE SheetDiag] ClassChange:`, mutation.target.className);
         }
         if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-          console.log(`[SWSE SheetDiag] StyleChange:`, mutation.target.getAttribute('style'));
+          // console.log(`[SWSE SheetDiag] StyleChange:`, mutation.target.getAttribute('style'));
         }
       }
     });
@@ -507,11 +507,11 @@ class CharacterSheetDiagnostics {
     for (const ms of snapshots) {
       setTimeout(() => {
         this.snapshot(`+${ms}ms after render`);
-        console.log(`[SWSE SheetDiag] Snapshot at +${ms}ms taken`);
+        // console.log(`[SWSE SheetDiag] Snapshot at +${ms}ms taken`);
       }, ms);
     }
 
-    console.log('[SWSE SheetDiag] ✓ Observation active (ResizeObserver + MutationObserver + periodic snapshots)');
+    // console.log('[SWSE SheetDiag] ✓ Observation active (ResizeObserver + MutationObserver + periodic snapshots)');
   }
 
   /**
@@ -523,9 +523,9 @@ class CharacterSheetDiagnostics {
       return;
     }
 
-    console.log('[SWSE SheetDiag] ═══ LAST REPORT ═══');
-    console.log(JSON.stringify(this.lastReport, null, 2));
-    console.log('[SWSE SheetDiag] ═══ END REPORT ═══');
+    // console.log('[SWSE SheetDiag] ═══ LAST REPORT ═══');
+    // console.log(JSON.stringify(this.lastReport, null, 2));
+    // console.log('[SWSE SheetDiag] ═══ END REPORT ═══');
   }
 
   /**
@@ -569,14 +569,14 @@ class CharacterSheetDiagnostics {
       };
     };
 
-    console.log('[SWSE SheetDiag] ═══ HEIGHT CHAIN AUDIT ═══');
-    console.table(getHeightMetrics('.window-content', '.window-content'));
-    console.table(getHeightMetrics('.swse-character-sheet-form', 'form'));
-    console.table(getHeightMetrics('.sheet-shell', '.sheet-shell'));
-    console.table(getHeightMetrics('.sheet-body', '.sheet-body'));
-    console.table(getHeightMetrics('.sheet-body > .tab.active', 'active tab'));
-    console.table(getHeightMetrics('.sheet-body > .tab.active > div:first-child', 'tab inner wrapper'));
-    console.log('[SWSE SheetDiag] ═══ END HEIGHT CHAIN ═══');
+    // console.log('[SWSE SheetDiag] ═══ HEIGHT CHAIN AUDIT ═══');
+    // console.table(getHeightMetrics('.window-content', '.window-content'));
+    // console.table(getHeightMetrics('.swse-character-sheet-form', 'form'));
+    // console.table(getHeightMetrics('.sheet-shell', '.sheet-shell'));
+    // console.table(getHeightMetrics('.sheet-body', '.sheet-body'));
+    // console.table(getHeightMetrics('.sheet-body > .tab.active', 'active tab'));
+    // console.table(getHeightMetrics('.sheet-body > .tab.active > div:first-child', 'tab inner wrapper'));
+    // console.log('[SWSE SheetDiag] ═══ END HEIGHT CHAIN ═══');
   }
 
   /**
@@ -612,9 +612,9 @@ class CharacterSheetDiagnostics {
       }
     }
 
-    console.log('[SWSE SheetDiag] ═══ OVERFLOWING ELEMENTS ═══');
-    console.table(overflowing);
-    console.log(`[SWSE SheetDiag] Found ${overflowing.length} overflowing elements`);
+    // console.log('[SWSE SheetDiag] ═══ OVERFLOWING ELEMENTS ═══');
+    // console.table(overflowing);
+    // console.log(`[SWSE SheetDiag] Found ${overflowing.length} overflowing elements`);
   }
 
   /**
@@ -630,32 +630,32 @@ class CharacterSheetDiagnostics {
       return;
     }
 
-    console.log('[SWSE SheetDiag] ═══ APP RUNTIME STATE ═══');
-    console.log({
-      className: app.constructor.name,
-      parentClasses: Object.getPrototypeOf(Object.getPrototypeOf(app))?.constructor?.name,
-      effectiveOptions: {
-        width: app.options?.width,
-        height: app.options?.height,
-        resizable: app.options?.resizable,
-        draggable: app.options?.draggable,
-        frame: app.options?.frame,
-        window: app.options?.window,
-        position: app.options?.position
-      },
-      currentPosition: {
-        width: app.position?.width,
-        height: app.position?.height,
-        left: app.position?.left,
-        top: app.position?.top
-      },
-      elementState: {
-        hasResizableClass: app.element?.classList?.contains('resizable'),
-        appClasses: app.element?.className,
-        appTag: app.element?.tagName
-      }
-    });
-    console.log('[SWSE SheetDiag] ═══ END APP STATE ═══');
+    // console.log('[SWSE SheetDiag] ═══ APP RUNTIME STATE ═══');
+    // console.log({
+    //   className: app.constructor.name,
+    //   parentClasses: Object.getPrototypeOf(Object.getPrototypeOf(app))?.constructor?.name,
+    //   effectiveOptions: {
+    //     width: app.options?.width,
+    //     height: app.options?.height,
+    //     resizable: app.options?.resizable,
+    //     draggable: app.options?.draggable,
+    //     frame: app.options?.frame,
+    //     window: app.options?.window,
+    //     position: app.options?.position
+    //   },
+    //   currentPosition: {
+    //     width: app.position?.width,
+    //     height: app.position?.height,
+    //     left: app.position?.left,
+    //     top: app.position?.top
+    //   },
+    //   elementState: {
+    //     hasResizableClass: app.element?.classList?.contains('resizable'),
+    //     appClasses: app.element?.className,
+    //     appTag: app.element?.tagName
+    //   }
+    // });
+    // console.log('[SWSE SheetDiag] ═══ END APP STATE ═══');
   }
 
   /**
@@ -671,11 +671,11 @@ class CharacterSheetDiagnostics {
   stopWatching() {
     if (this.observers.resizeObserver) {
       this.observers.resizeObserver.disconnect();
-      console.log('[SWSE SheetDiag] ResizeObserver stopped');
+      // console.log('[SWSE SheetDiag] ResizeObserver stopped');
     }
     if (this.observers.mutationObserver) {
       this.observers.mutationObserver.disconnect();
-      console.log('[SWSE SheetDiag] MutationObserver stopped');
+      // console.log('[SWSE SheetDiag] MutationObserver stopped');
     }
   }
 }

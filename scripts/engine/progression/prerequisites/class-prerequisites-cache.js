@@ -21,6 +21,7 @@
 import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 
 /**
  * In-memory cache: className → normalized prerequisites + eligibility
@@ -117,15 +118,35 @@ export function evaluateClassEligibility({
     pendingData = {}
 }) {
     const cached = getCachedPrerequisites(className);
+    const classDoc = ClassesRegistry.getByName?.(className) || ClassesRegistry.get?.(className) || null;
+    const isPrestige = classDoc ? (classDoc.baseClass === false || classDoc.prestigeClass === true) : !!cached;
 
-    // Base classes or uncached classes are always eligible
-    if (!cached) {
+    if (!cached && !isPrestige) {
         return {
             eligible: true,
             className,
             isPrestige: false,
             eligibilityResult: { met: true, missing: [], details: {} },
             reasons: { missing: [], met: ['No prerequisites'] }
+        };
+    }
+
+    if (!cached && isPrestige) {
+        const assessment = AbilityEngine.evaluatePrestigeClassAcquisition(
+            actor,
+            className,
+            pendingData
+        );
+
+        return {
+            eligible: assessment.legal,
+            className,
+            isPrestige: true,
+            eligibilityResult: assessment,
+            reasons: {
+                missing: assessment.missingPrereqs || [],
+                met: assessment.legal ? ['All prerequisites met'] : []
+            }
         };
     }
 

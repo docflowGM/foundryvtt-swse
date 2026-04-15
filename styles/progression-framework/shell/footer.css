@@ -96,7 +96,6 @@
 
 /* Back button — SVG provides left-cut asymmetric frame + arrow glyph */
 .progression-shell .swse-btn--back {
-  background-image: url('../../../assets/ui/chargen/swse-btn-back-frame.svg');
   /* Text sits in the right 2/3 of the frame (SVG has arrow in left zone) */
   padding-left: 44px;
   padding-right: 14px;
@@ -104,7 +103,6 @@
 
 /* Confirm/Next button — SVG provides right-cut frame + check/arrow glyph */
 .progression-shell .swse-btn--confirm {
-  background-image: url('../../../assets/ui/chargen/swse-btn-confirm-frame.svg');
   /* Text sits in the right 2/3 of the frame (SVG has check in left zone) */
   padding-left: 44px;
   padding-right: 14px;
@@ -201,7 +199,6 @@
 
   /* Default chip SVG — dim blue, circle indicator */
   background-color: transparent;
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-default.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
 
@@ -227,7 +224,6 @@
 
 /* ACTIVE / CURRENT — bright cyan SVG */
 .progression-shell .swse-step-btn.is-current {
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-active.svg');
   color: rgba(230, 252, 255, 0.98);
   font-weight: 700;
   cursor: default;
@@ -236,21 +232,18 @@
 
 /* COMPLETE — teal/green SVG */
 .progression-shell .swse-step-btn.is-complete:not(.is-current) {
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-complete.svg');
   color: rgba(180, 255, 230, 0.88);
   cursor: pointer;
 }
 
 /* LOCKED / FUTURE — grey SVG */
 .progression-shell .swse-step-btn.is-locked {
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-locked.svg');
   color: rgba(130, 145, 160, 0.55);
   cursor: not-allowed;
 }
 
 /* WARNING — amber SVG */
 .progression-shell .swse-step-btn.is-warning:not(.is-current) {
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-warning.svg');
   color: rgba(255, 225, 130, 0.90);
   cursor: pointer;
 }

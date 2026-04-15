@@ -50,26 +50,22 @@
 
 /* Default state — unpicked, available option */
 .swse-option-card {
-  background-image: url('../../assets/ui/chargen/swse-angled-option-frame.svg');
   background-color: rgba(8, 20, 36, 0.8);
 }
 
 /* Hover state — cursor over an available option */
 .swse-option-card:hover {
-  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-hover.svg');
 }
 
 /* Focused state — option is being inspected/previewed */
 .swse-option-card[data-focused="true"],
 .swse-option-card.swse-option-card--focused {
-  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-hover.svg');
 }
 
 /* Selected/Committed state — option has been chosen */
 .swse-option-card[data-selected="true"],
 .swse-option-card.swse-option-card--selected,
 .swse-option-card[aria-selected="true"] {
-  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-selected.svg');
 }
 
 /* Locked/Disabled state — option is unavailable or locked */
@@ -77,7 +73,6 @@
 .swse-option-card.swse-option-card--locked,
 .swse-option-card:disabled,
 .swse-option-card[aria-disabled="true"] {
-  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-locked.svg');
   opacity: 0.65;
   cursor: var(--swse-cursor-forbidden);
   pointer-events: none;
@@ -86,12 +81,10 @@
 /* Recommended state — option is flagged as synergistic/optimal */
 .swse-option-card[data-recommended="true"],
 .swse-option-card.swse-option-card--recommended {
-  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-recommended.svg');
 }
 
 /* Compact variant — smaller card for dense layouts */
 .swse-option-card.swse-option-card--compact {
-  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-compact.svg');
   min-height: 80px;
   padding: 12px 16px;
   gap: 6px;
@@ -277,7 +270,6 @@
 .swse-section-header {
   position: relative;
   padding: 12px 20px;
-  background-image: url('../../assets/ui/chargen/swse-section-header-plate.svg');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-position: center;

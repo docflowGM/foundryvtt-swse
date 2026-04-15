@@ -171,7 +171,6 @@
   overflow-y: auto;
 
   /* SVG provides the frame chrome — chamfered rect + left arrow + cyan borders */
-  background-image:  url('../../../assets/ui/chargen/mentor-dialogue-box.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  transparent;

@@ -1,12 +1,3 @@
-/* Attribute Step — numeric assignment with base/species/final/mod clarity */
-
-/* ============================================================================
-   ATTRIBUTE STEP — SVG chrome integration
-   attribute-table.svg (720×420): sci-fi data table with header row, column labels,
-     row chrome, corner accent marks. Used as low-opacity watermark over the surface
-     so live HTML rows are readable but the space reads as a holo data terminal.
-   holodice.svg: applied as decorative icon in the method-selector roll zone.
-   ============================================================================ */
 
 .progression-shell .prog-attribute-surface {
   display: flex;
@@ -16,23 +7,22 @@
   overflow-y: auto;
   height: 100%;
   position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-/* attribute-table.svg watermark — subtle "data terminal" texture behind live rows */
 .progression-shell .prog-attribute-surface::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
-  background-image:  url('../../../assets/ui/chargen/attribute-table.svg');
-  background-size:   100% auto;
-  background-position: center 60px;    /* offset below header — aligns with rows zone */
+  background-image: url('../../../assets/ui/chargen/attribute-table.svg');
+  background-size: 100% auto;
+  background-position: center 120px;
   background-repeat: no-repeat;
-  pointer-events:    none;
-  z-index:           0;
-  opacity:           0.07;             /* atmospheric — not competing with live data */
+  opacity: 0.06;
+  pointer-events: none;
 }
 
-/* Ensure all actual content renders above the watermark */
 .progression-shell .prog-attribute-surface > * {
   position: relative;
   z-index: 1;
@@ -58,91 +48,67 @@
   line-height: 1.5;
 }
 
-/* Method Selector — holodice.svg decorates the roll zone */
+.progression-shell .prog-attribute-method-selector,
+.progression-shell .prog-attribute-submethod-selector,
+.progression-shell .prog-attribute-pointbuy-status,
+.progression-shell .prog-attribute-pool-panel {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  padding: var(--prog-space-sm);
+}
+
 .progression-shell .prog-attribute-method-selector {
   display: flex;
   align-items: center;
   gap: var(--prog-space-sm);
-  padding: var(--prog-space-sm);
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--prog-radius-sm);
-  position: relative;
-}
-
-/* holodice.svg — 36×36px decorative holo-dice icon at right end of method bar
-   Visible as a subtle glow element reinforcing the "roll" interaction zone.
-   Uses holodice.svg (256×256 square, steel gradient d20-style icon) */
-.progression-shell .prog-attribute-method-selector::after {
-  content: "";
-  flex-shrink: 0;
-  width:  36px;
-  height: 36px;
-  background-image:  url('../../../assets/ui/chargen/holodice.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  opacity:           0.55;
-  filter:            drop-shadow(0 0 4px rgba(100, 220, 255, 0.30));
-  pointer-events:    none;
-  margin-left: auto;
 }
 
 .progression-shell .prog-attribute-method-label {
   font-size: var(--prog-font-size-xs);
   font-weight: bold;
   color: var(--prog-text-heading);
-  text-shadow: var(--prog-heading-shadow);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   flex-shrink: 0;
 }
 
-.progression-shell .prog-attribute-method-buttons {
-  display: flex;
+.progression-shell .prog-attribute-method-buttons,
+.progression-shell .prog-attribute-submethod-selector {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--prog-space-xs);
-  flex: 1;
+  width: 100%;
 }
 
-.progression-shell .prog-btn--method {
-  flex: 1;
-  font-size: var(--prog-font-size-xs);
-  padding: var(--prog-space-xs) var(--prog-space-sm);
-  background: var(--prog-bg-read);
-  border: 1px solid var(--prog-border);
-  color: var(--prog-text-dim);
-  cursor: pointer;
-  transition: all var(--prog-transition-fast);
+.progression-shell .prog-attribute-submethod-selector {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.progression-shell .prog-btn--method:hover {
-  border-color: var(--prog-border-bright);
+.progression-shell .prog-btn--method,
+.progression-shell .prog-btn--submethod,
+.progression-shell .prog-btn--reroll {
+  width: 100%;
+  justify-content: center;
 }
 
-.progression-shell .prog-btn--method.active {
+.progression-shell .prog-btn--method.active,
+.progression-shell .prog-btn--submethod.active {
   border-color: var(--prog-accent);
   background: rgba(0, 170, 255, 0.12);
   color: var(--prog-accent);
-  text-shadow: var(--prog-heading-shadow);
   font-weight: bold;
 }
 
-/* Point Buy Status */
-.progression-shell .prog-attribute-pointbuy-status {
-  padding: var(--prog-space-sm);
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--prog-border);
-  border-radius: var(--prog-radius-sm);
-}
-
-.progression-shell .prog-attribute-pointbuy-status--complete {
+.progression-shell .prog-attribute-pointbuy--complete {
   border-color: var(--prog-positive);
-  background: rgba(0, 255, 128, 0.08);
 }
 
 .progression-shell .prog-attribute-pointbuy-bar {
   width: 100%;
   height: 6px;
   background: var(--prog-bg-read);
-  border-radius: 3px;
+  border-radius: 999px;
   overflow: hidden;
   margin-bottom: var(--prog-space-xs);
 }
@@ -150,35 +116,116 @@
 .progression-shell .prog-attribute-pointbuy-used {
   height: 100%;
   background: linear-gradient(90deg, var(--prog-positive), var(--prog-accent));
-  transition: width var(--prog-transition-normal);
 }
 
 .progression-shell .prog-attribute-pointbuy-text {
   font-size: var(--prog-font-size-xs);
-  text-align: center;
   color: var(--prog-text);
-  text-shadow: var(--prog-text-shadow);
 }
 
-/* Ability Rows */
+.progression-shell .prog-attribute-pool-panel__header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--prog-space-md);
+  align-items: flex-start;
+  margin-bottom: var(--prog-space-sm);
+}
+
+.progression-shell .prog-attribute-pool-panel__header h4 {
+  margin: 0 0 0.35rem 0;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-heading);
+}
+
+.progression-shell .prog-attribute-pool-panel__header p,
+.progression-shell .prog-attribute-pool-panel__meta {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  line-height: 1.45;
+}
+
+.progression-shell .prog-attribute-pool-panel__actions {
+  display: flex;
+  gap: var(--prog-space-xs);
+  align-items: center;
+}
+
+.progression-shell .prog-attribute-tile-grid,
+.progression-shell .prog-attribute-dice-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .prog-attribute-tile,
+.progression-shell .prog-attribute-die {
+  appearance: none;
+  border: 1px solid rgba(95, 235, 255, 0.45);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(6, 22, 38, 0.96), rgba(3, 12, 24, 0.98));
+  color: var(--prog-text-heading);
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(140, 245, 255, 0.08), 0 0 16px rgba(0, 170, 255, 0.08);
+  transition: border-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+}
+
+.progression-shell .prog-attribute-tile:hover:not(:disabled),
+.progression-shell .prog-attribute-die:hover:not(:disabled) {
+  border-color: rgba(135, 245, 255, 0.9);
+  transform: translateY(-1px);
+}
+
+.progression-shell .prog-attribute-tile.is-focused,
+.progression-shell .prog-attribute-die.is-selected {
+  border-color: var(--prog-accent);
+  box-shadow: 0 0 0 1px rgba(95, 235, 255, 0.55), 0 0 18px rgba(0, 170, 255, 0.22);
+}
+
+.progression-shell .prog-attribute-tile.is-used,
+.progression-shell .prog-attribute-die.is-used {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.progression-shell .prog-attribute-tile__value,
+.progression-shell .prog-attribute-die__value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--prog-text-heading);
+}
+
+.progression-shell .prog-attribute-tile__label {
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--prog-text-dim);
+  text-align: center;
+}
+
 .progression-shell .prog-attribute-rows {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--prog-space-xs);
-  padding: var(--prog-space-md) 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--prog-space-sm);
+  align-items: start;
 }
 
 .progression-shell .prog-attribute-row {
-  display: grid;
-  grid-template-columns: 90px 60px 60px 60px 60px;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
   gap: var(--prog-space-sm);
   padding: var(--prog-space-sm);
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.22);
   border: 1px solid var(--prog-border);
-  border-radius: var(--prog-radius-sm);
+  border-radius: 10px;
   cursor: pointer;
-  transition: all var(--prog-transition-fast);
+  min-height: 128px;
 }
 
 .progression-shell .prog-attribute-row:hover {
@@ -187,557 +234,124 @@
 
 .progression-shell .prog-attribute-row--focused {
   border-color: var(--prog-accent);
-  background: rgba(0, 170, 255, 0.08);
-  box-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
+  box-shadow: 0 0 0 1px rgba(0, 170, 255, 0.4), 0 0 14px rgba(0, 170, 255, 0.16);
+}
+
+.progression-shell .prog-attribute-row__header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--prog-space-sm);
+  align-items: flex-start;
 }
 
 .progression-shell .prog-attribute-row__label {
-  font-weight: bold;
   font-size: var(--prog-font-size-sm);
+  font-weight: 700;
   color: var(--prog-text-heading);
-  text-shadow: var(--prog-heading-shadow);
 }
 
-.progression-shell .prog-attribute-row__score {
+.progression-shell .prog-attribute-row__subtext {
+  font-size: 0.7rem;
+  color: var(--prog-text-dim);
+  line-height: 1.4;
+}
+
+.progression-shell .prog-attribute-row__header-actions {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: var(--prog-space-xs);
 }
 
-.progression-shell .prog-attribute-value {
-  font-size: var(--prog-font-size-base);
-  font-weight: bold;
-  color: var(--prog-text);
-  text-shadow: var(--prog-text-shadow);
-  text-align: center;
-}
-
-.progression-shell .prog-attribute-value--final {
-  font-size: var(--prog-font-size-lg);
-  color: var(--prog-accent);
-  text-shadow: var(--prog-heading-shadow);
-}
-
-/* Point Buy Buttons */
-.progression-shell .prog-attribute-btn {
+.progression-shell .prog-attribute-row__clear {
   appearance: none;
-  background: var(--prog-bg-read);
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
   border: 1px solid var(--prog-border);
+  background: rgba(10, 18, 28, 0.9);
   color: var(--prog-text-dim);
   cursor: pointer;
-  width: 22px;
-  height: 22px;
-  padding: 0;
-  border-radius: 3px;
-  font-size: var(--prog-font-size-sm);
-  font-weight: bold;
-  transition: all var(--prog-transition-fast);
 }
 
-.progression-shell .prog-attribute-btn:hover:not(:disabled) {
-  border-color: var(--prog-accent);
-  color: var(--prog-accent);
-  background: rgba(0, 170, 255, 0.08);
-}
-
-.progression-shell .prog-attribute-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* Point Buy Increment Info (button + cost label) */
-.progression-shell .prog-attribute-increment-info {
-  display: flex;
-  align-items: center;
+.progression-shell .prog-attribute-row__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--prog-space-xs);
-  white-space: nowrap;
 }
 
-.progression-shell .prog-attribute-cost {
-  font-size: var(--prog-font-size-xs);
+.progression-shell .prog-attribute-stat {
+  padding: 0.55rem;
+  border-radius: 8px;
+  border: 1px solid rgba(95, 235, 255, 0.14);
+  background: rgba(6, 18, 28, 0.85);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.progression-shell .prog-attribute-stat__label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: var(--prog-text-dim);
-  font-weight: normal;
-  text-shadow: var(--prog-text-shadow);
 }
 
-.progression-shell .prog-attribute-cost--unaffordable {
-  color: var(--prog-negative);
-  opacity: 0.7;
+.progression-shell .prog-attribute-stat__value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--prog-text-heading);
 }
 
-/* Semantic Colors */
+.progression-shell .prog-attribute-stat__value--final {
+  color: var(--prog-accent);
+}
+
+.progression-shell .prog-attribute-row__pointbuy {
+  display: flex;
+  gap: var(--prog-space-xs);
+  justify-content: flex-end;
+}
+
+.progression-shell .prog-attribute-btn {
+  appearance: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--prog-border);
+  background: rgba(12, 22, 34, 0.95);
+  color: var(--prog-text-heading);
+  cursor: pointer;
+}
+
 .progression-shell .prog-num--pos {
   color: var(--prog-positive);
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .progression-shell .prog-num--neg {
   color: var(--prog-negative);
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .progression-shell .prog-num--zero {
-  color: var(--prog-neutral);
-}
-
-/* Column Headers */
-.progression-shell .prog-attribute-headers {
-  display: grid;
-  grid-template-columns: 90px 60px 60px 60px 60px;
-  align-items: center;
-  gap: var(--prog-space-sm);
-  padding: var(--prog-space-sm);
-  font-size: var(--prog-font-size-xs);
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--prog-text-dim);
-  border-bottom: 1px solid var(--prog-border);
-}
-
-.progression-shell .prog-attribute-headers__label {
-}
-
-.progression-shell .prog-attribute-headers__base,
-.progression-shell .prog-attribute-headers__species,
-.progression-shell .prog-attribute-headers__final,
-.progression-shell .prog-attribute-headers__modifier {
-  text-align: center;
-}
-
-/* Attribute Details Panel */
-.progression-shell .prog-attribute-details {
-  padding: var(--prog-space-md);
-  overflow-y: auto;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--prog-space-sm);
-}
-
-.progression-shell .prog-attribute-details__header {
-  border-bottom: 1px solid var(--prog-border);
-  padding-bottom: var(--prog-space-sm);
-}
-
-.progression-shell .prog-attribute-details__name {
-  margin: 0;
-  font-size: var(--prog-font-size-lg);
-  color: var(--prog-text-heading);
-  text-shadow: var(--prog-heading-shadow);
-}
-
-.progression-shell .prog-attribute-details__description {
-  margin: 0;
-  font-size: var(--prog-font-size-xs);
-  line-height: 1.6;
-  color: var(--prog-text);
-  text-shadow: var(--prog-text-shadow);
-  font-style: italic;
-}
-
-.progression-shell .prog-attribute-details__breakdown {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--prog-space-sm);
-  padding: var(--prog-space-sm);
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--prog-radius-sm);
-  font-size: var(--prog-font-size-xs);
-}
-
-.progression-shell .prog-attribute-details__breakdown-row {
-  display: contents;
-}
-
-.progression-shell .prog-attribute-details__breakdown-row--final {
-  border-top: 1px solid var(--prog-border);
-  padding-top: var(--prog-space-xs);
-}
-
-.progression-shell .prog-attribute-details__breakdown-row > span {
-  padding: 2px 0;
-}
-
-.progression-shell .prog-attribute-details__breakdown-label {
-  color: var(--prog-text-dim);
-  font-weight: bold;
-  text-shadow: var(--prog-text-shadow);
-}
-
-.progression-shell .prog-attribute-details__breakdown-value {
-  text-align: right;
-  font-weight: bold;
-  color: var(--prog-text);
-  text-shadow: var(--prog-text-shadow);
-}
-
-.progression-shell .prog-attribute-details__breakdown-value--final {
-  font-size: var(--prog-font-size-base);
-  color: var(--prog-accent);
-  text-shadow: var(--prog-heading-shadow);
-}
-
-.progression-shell .prog-attribute-details__section {
-  margin-top: var(--prog-space-md);
-}
-
-.progression-shell .prog-attribute-details__section-title {
-  margin: 0 0 var(--prog-space-xs) 0;
-  font-size: var(--prog-font-size-sm);
-  font-weight: bold;
-  color: var(--prog-text-heading);
-  text-shadow: var(--prog-heading-shadow);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.progression-shell .prog-attribute-details__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.progression-shell .prog-attribute-details__list-item {
-  font-size: var(--prog-font-size-xs);
-  color: var(--prog-text);
-  text-shadow: var(--prog-text-shadow);
-}
-
-.progression-shell .prog-attribute-details__list-item:before {
-  content: '•';
-  margin-right: var(--prog-space-xs);
-  color: var(--prog-accent);
-}
-
-.progression-shell .prog-attribute-details__guidance {
-  margin-top: auto;
-  padding: var(--prog-space-sm);
-  background: rgba(0, 170, 255, 0.08);
-  border-left: 3px solid var(--prog-accent);
-  border-radius: var(--prog-radius-sm);
-}
-
-.progression-shell .prog-attribute-details__guidance-text {
-  margin: 0;
-  font-size: var(--prog-font-size-xs);
-  line-height: 1.5;
-  color: var(--prog-text);
-  text-shadow: var(--prog-text-shadow);
-}
-
-/* Dice Pool & Assignment (Standard & Organic) */
-.progression-shell .prog-dice-pool {
-  padding: var(--prog-space-sm);
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--prog-border);
-  border-radius: var(--prog-radius-sm);
-}
-
-.progression-shell .prog-dice-pool-label {
-  font-size: var(--prog-font-size-xs);
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--prog-text-dim);
-  margin-bottom: var(--prog-space-xs);
-}
-
-.progression-shell .prog-dice-pool-tiles {
-  display: flex;
-  gap: var(--prog-space-xs);
-  flex-wrap: wrap;
-}
-
-.progression-shell .prog-dice-tile {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, rgba(0, 170, 255, 0.2), rgba(0, 220, 180, 0.1));
-  border: 2px solid var(--prog-accent);
-  border-radius: var(--prog-radius-sm);
-  cursor: grab;
-  user-select: none;
-  transition: all var(--prog-transition-fast);
-}
-
-.progression-shell .prog-dice-tile:hover {
-  box-shadow: 0 0 8px rgba(0, 170, 255, 0.4);
-  transform: translateY(-2px);
-}
-
-.progression-shell .prog-dice-tile.dragging {
-  opacity: 0.6;
-  cursor: grabbing;
-}
-
-.progression-shell .prog-dice-value {
-  font-weight: bold;
-  font-size: var(--prog-font-size-base);
-  color: var(--prog-accent);
-  text-shadow: var(--prog-heading-shadow);
-}
-
-/* Dice Drop Zone */
-.progression-shell .prog-dice-drop-zone {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  padding: var(--prog-space-xs);
-  background: rgba(0, 0, 0, 0.1);
-  border: 2px dashed var(--prog-border);
-  border-radius: var(--prog-radius-sm);
-  transition: all var(--prog-transition-fast);
-}
-
-.progression-shell .prog-dice-drop-zone.dragover {
-  background: rgba(0, 170, 255, 0.15);
-  border-color: var(--prog-accent);
-  box-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
-}
-
-.progression-shell .prog-dice-drop-zone .prog-attribute-value {
-  color: var(--prog-accent);
-}
-
-/* Dice Control Buttons */
-.progression-shell .prog-dice-controls {
-  display: flex;
-  gap: var(--prog-space-sm);
-  justify-content: flex-end;
-  padding: var(--prog-space-md) 0 0 0;
-  border-top: 1px solid var(--prog-border);
-}
-
-.progression-shell .prog-btn--dice {
-  padding: var(--prog-space-xs) var(--prog-space-md);
-  background: var(--prog-bg-read);
-  border: 1px solid var(--prog-border);
-  border-radius: var(--prog-radius-sm);
-  color: var(--prog-text-dim);
-  cursor: pointer;
-  font-size: var(--prog-font-size-xs);
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: all var(--prog-transition-fast);
-}
-
-.progression-shell .prog-btn--dice:hover:not(:disabled) {
-  border-color: var(--prog-border-bright);
-  color: var(--prog-text);
-}
-
-.progression-shell .prog-btn--dice.prog-btn--primary {
-  border-color: var(--prog-accent);
-  color: var(--prog-accent);
-  background: rgba(0, 170, 255, 0.08);
-}
-
-.progression-shell .prog-btn--dice.prog-btn--primary:hover:not(:disabled) {
-  background: rgba(0, 170, 255, 0.15);
-  box-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
-}
-
-.progression-shell .prog-btn--dice:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* --- Attribute method refactor additions --- */
-.progression-shell .prog-attribute-increment-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.progression-shell .prog-attribute-cost {
-  font-size: 10px;
-  color: var(--prog-text-dim);
-  white-space: nowrap;
-  letter-spacing: 0.02em;
-}
-
-.progression-shell .prog-attribute-cost--unaffordable {
-  color: rgba(255, 120, 120, 0.95);
-}
-
-.progression-shell .prog-attribute-pool-panel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--prog-space-sm);
-  padding: var(--prog-space-sm);
-  background: rgba(0, 0, 0, 0.28);
-  border: 1px solid var(--prog-border);
-  border-radius: var(--prog-radius-sm);
-}
-
-.progression-shell .prog-attribute-pool-header {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.progression-shell .prog-attribute-pool-title {
-  font-size: var(--prog-font-size-sm);
-  font-weight: bold;
-  color: var(--prog-text-heading);
-}
-
-.progression-shell .prog-attribute-pool-help {
-  font-size: var(--prog-font-size-xs);
   color: var(--prog-text-dim);
 }
 
-.progression-shell .prog-attribute-pool {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--prog-space-xs);
-  min-height: 48px;
+@media (max-width: 1100px) {
+  .progression-shell .prog-attribute-rows {
+    grid-template-columns: 1fr;
+  }
 }
 
-.progression-shell .prog-attribute-pool--empty {
-  align-items: center;
-}
+@media (max-width: 900px) {
+  .progression-shell .prog-attribute-method-buttons,
+  .progression-shell .prog-attribute-tile-grid,
+  .progression-shell .prog-attribute-dice-grid,
+  .progression-shell .prog-attribute-row__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
-.progression-shell .prog-attribute-pool-empty {
-  font-size: var(--prog-font-size-xs);
-  color: var(--prog-text-dim);
-}
-
-.progression-shell .prog-attribute-pool-tile {
-  appearance: none;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-width: 52px;
-  min-height: 52px;
-  padding: 6px 8px;
-  border: 1px solid var(--prog-border);
-  border-radius: var(--prog-radius-sm);
-  background: rgba(0, 0, 0, 0.34);
-  color: var(--prog-text);
-  cursor: pointer;
-  transition: all var(--prog-transition-fast);
-}
-
-.progression-shell .prog-attribute-pool-tile:hover {
-  border-color: var(--prog-accent);
-  box-shadow: 0 0 6px rgba(0, 170, 255, 0.25);
-}
-
-.progression-shell .prog-attribute-pool-tile__value {
-  font-size: var(--prog-font-size-lg);
-  font-weight: bold;
-  line-height: 1;
-}
-
-.progression-shell .prog-attribute-pool-tile__origin {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--prog-text-dim);
-}
-
-.progression-shell .prog-attribute-assignment-box {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  min-width: 80px;
-  min-height: 32px;
-  padding: 4px 6px;
-  border: 1px dashed var(--prog-border);
-  border-radius: var(--prog-radius-sm);
-  background: rgba(0, 0, 0, 0.22);
-}
-
-.progression-shell .prog-attribute-assignment-box--focused {
-  border-color: var(--prog-accent);
-}
-
-.progression-shell .prog-attribute-assignment-box--assigned {
-  border-style: solid;
-  border-color: var(--prog-accent);
-  background: rgba(0, 170, 255, 0.08);
-}
-
-.progression-shell .prog-attribute-assignment-placeholder {
-  font-size: 10px;
-  text-transform: uppercase;
-  color: var(--prog-text-dim);
-  letter-spacing: 0.04em;
-}
-
-.progression-shell .prog-attribute-clear {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  padding: 0;
-  border: 1px solid var(--prog-border);
-  border-radius: 3px;
-  background: rgba(0, 0, 0, 0.32);
-  color: var(--prog-text-dim);
-  cursor: pointer;
-}
-
-.progression-shell .prog-attribute-clear:hover {
-  color: var(--prog-negative);
-  border-color: var(--prog-negative);
-}
-
-
-/* --- v1-style drag/drop upgrade for attribute pools --- */
-.progression-shell .prog-attribute-pool[data-pool-dropzone="true"],
-.progression-shell .prog-attribute-assignment-box[data-assign-ability] {
-  transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease, transform 120ms ease;
-}
-
-.progression-shell .prog-attribute-pool-tile,
-.progression-shell .prog-attribute-assigned-tile {
-  cursor: grab;
-  user-select: none;
-}
-
-.progression-shell .prog-attribute-pool-tile.is-dragging,
-.progression-shell .prog-attribute-assigned-tile.is-dragging {
-  opacity: 0.55;
-  transform: scale(0.97);
-}
-
-.progression-shell .prog-attribute-pool.is-dragover,
-.progression-shell .prog-attribute-assignment-box.is-dragover {
-  border-color: rgba(110, 220, 255, 0.9);
-  box-shadow: 0 0 0 1px rgba(110, 220, 255, 0.6), 0 0 14px rgba(110, 220, 255, 0.18);
-  background: rgba(80, 160, 210, 0.12);
-}
-
-.progression-shell .prog-attribute-assigned-tile {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(110, 220, 255, 0.35);
-  background: rgba(25, 45, 70, 0.72);
-}
-
-.progression-shell .prog-attribute-assigned-tile__origin {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--prog-text-dim);
-}
-
-.progression-shell .prog-attribute-assignment-box[data-assign-ability] {
-  min-height: 42px;
+  .progression-shell .prog-attribute-pool-panel__header {
+    flex-direction: column;
+  }
 }

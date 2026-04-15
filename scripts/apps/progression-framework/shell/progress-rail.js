@@ -1,3 +1,4 @@
+
 /**
  * Progress Rail — manages step indicator DOM, navigation, and hook API.
  * Does NOT import or wrap sidebar.js (clean new implementation).
@@ -6,13 +7,10 @@
 export class ProgressRail {
   constructor(shell) {
     this.shell = shell;
-    this._handlers = []; // { el, event, fn } — tracked for cleanup before re-render
+    this._handlers = [];
+    this._lastScrolledStepId = null;
   }
 
-  /**
-   * Called by shell._onRender() after every render.
-   * @param {HTMLElement} regionEl — the [data-region="progress-rail"] element
-   */
   afterRender(regionEl) {
     if (!regionEl) return;
     this._cleanup();
@@ -20,17 +18,11 @@ export class ProgressRail {
     this._scrollCurrentIntoView(regionEl);
   }
 
-  /**
-   * Wire click and keydown handlers to completed steps.
-   * Completed steps have tabindex="0" (keyboard-accessible).
-   * @param {HTMLElement} regionEl
-   * @private
-   */
   _wireStepClicks(regionEl) {
-    regionEl.querySelectorAll('.prog-step[tabindex="0"]').forEach(el => {
-      const fn = (e) => {
-        if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
-        e.preventDefault();
+    regionEl.querySelectorAll('.prog-step[tabindex="0"]').forEach((el) => {
+      const fn = (event) => {
+        if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
         const stepId = el.dataset.stepId;
         const stepIndex = parseInt(el.dataset.stepIndex, 10);
         this._navigate(stepId, stepIndex);
@@ -41,33 +33,24 @@ export class ProgressRail {
     });
   }
 
-  /**
-   * Navigate to a step. Routes through shell.navigateToStep() for policy enforcement.
-   * @param {string} stepId
-   * @param {number} stepIndex
-   * @private
-   */
   _navigate(stepId, stepIndex) {
-    // Navigation policy is shell-owned — progress rail only requests, does not mutate
     this.shell.navigateToStep(stepIndex, { source: 'progress-rail' });
-    // Emit hook for engine listener compatibility
     Hooks.callAll('swse:sidebar:navigate', { stepId, stepIndex });
   }
 
-  /**
-   * Scroll the active step into view smoothly.
-   * @param {HTMLElement} regionEl
-   * @private
-   */
   _scrollCurrentIntoView(regionEl) {
-    regionEl.querySelector('.prog-step--active')
-      ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const active = regionEl.querySelector('.prog-step--active');
+    if (!active) return;
+
+    const activeStepId = active.dataset.stepId || active.dataset.stepIndex || null;
+    if (activeStepId && this._lastScrolledStepId === activeStepId) {
+      return;
+    }
+
+    this._lastScrolledStepId = activeStepId;
+    active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
-  /**
-   * Clean up event handlers before re-render.
-   * @private
-   */
   _cleanup() {
     this._handlers.forEach(({ el, event, fn }) => el.removeEventListener(event, fn));
     this._handlers = [];

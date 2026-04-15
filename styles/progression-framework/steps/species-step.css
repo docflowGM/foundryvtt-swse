@@ -58,7 +58,6 @@
   width: 100%;
 
   /* SVG background for default state (using compact version for 64px rows) */
-  background-image: url('../../../assets/ui/chargen/swse-angled-option-frame-compact.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -84,24 +83,20 @@
 
 /* Hover state → reveal the compact frame with hover styling */
 .progression-shell .prog-species-row:hover {
-  background-image: url('../../../assets/ui/chargen/swse-angled-option-frame-compact.svg');
   box-shadow: 0 0 16px rgba(0, 180, 255, 0.15);
 }
 
 .progression-shell .prog-species-row:focus {
   outline: none;
-  background-image: url('../../../assets/ui/chargen/swse-angled-option-frame-compact.svg');
 }
 
 /* Focused state (clicked, details panel shows) → compact SVG frame */
 .progression-shell .prog-species-row--focused {
-  background-image: url('../../../assets/ui/chargen/swse-angled-option-frame-compact.svg');
   box-shadow: 0 0 16px rgba(0, 180, 255, 0.15);
 }
 
 /* Committed state (confirmed selection) → selected SVG frame */
 .progression-shell .prog-species-row--committed {
-  background-image: url('../../../assets/ui/chargen/swse-angled-option-frame-selected.svg');
   box-shadow: 0 0 20px rgba(0, 220, 120, 0.2);
 }
 
@@ -298,7 +293,6 @@
   align-items: flex-start;
 
   /* dialogue-box.svg: chamfered rect, cyan border, speech tail at bottom-left */
-  background-image:  url('../../../assets/ui/chargen/dialogue-box.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  transparent;

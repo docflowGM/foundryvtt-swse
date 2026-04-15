@@ -197,7 +197,13 @@ export class SuggestionService {
       return cached.suggestions;
     }
 
-    const trace = HouseRuleService.get('enableSuggestionTrace') ?? false;
+    let trace = false;
+    try {
+      trace = HouseRuleService.get('enableSuggestionTrace') ?? false;
+    } catch (err) {
+      // Setting not registered yet; default to false
+      trace = false;
+    }
 
     let suggestions = [];
     const debug = null;
@@ -505,7 +511,13 @@ export class SuggestionService {
   }
 
   static validateSuggestionDTO(suggestions, { context = null, domain = null } = {}) {
-    const trace = HouseRuleService.get('enableSuggestionTrace') ?? false;
+    let trace = false;
+    try {
+      trace = HouseRuleService.get('enableSuggestionTrace') ?? false;
+    } catch (err) {
+      // Setting not registered yet; default to false
+      trace = false;
+    }
     if (!trace) {return;}
 
     const bad = [];

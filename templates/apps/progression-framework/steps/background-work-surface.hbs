@@ -1,40 +1,5 @@
+
 <div class="prog-background-surface">
-
-  {{!-- Header --}}
-  <div class="prog-background-header swse-card-schema swse-card-schema--identity swse-card-schema--filled">
-    <h3 class="prog-background-title">Choose Your Background</h3>
-    <p class="prog-background-help">
-      {{#eq selectionMode "multi"}}
-        Select up to {{maxBackgrounds}} backgrounds that shaped your character.
-      {{else}}
-        Choose one background that defines your past.
-      {{/eq}}
-    </p>
-  </div>
-
-  {{!-- Search --}}
-  <div class="prog-background-search swse-card-schema swse-card-schema--choice swse-card-schema--pending">
-    <input class="bg-search-input"
-           type="text"
-           placeholder="Search backgrounds…"
-           value="{{searchQuery}}"
-           style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--prog-border); background: var(--prog-bg-read);">
-  </div>
-
-  {{!-- Category Tabs --}}
-  <div class="prog-background-categories swse-card-schema swse-card-schema--choice swse-card-schema--pending">
-    {{#each categories}}
-      <button class="prog-background-category-btn bg-category-btn
-                     {{#if isActive}}active{{/if}}"
-              data-category="{{id}}"
-              type="button">
-        <span class="prog-background-category-label">{{label}}</span>
-        <span class="prog-background-category-count">{{count}}</span>
-      </button>
-    {{/each}}
-  </div>
-
-  {{!-- Background Items --}}
   <div class="prog-background-items">
     {{#each backgroundsByCategory}}
       <div class="prog-background-group">
@@ -57,7 +22,6 @@
                     type="button"
                     role="option"
                     {{#if isCommitted}}aria-selected="true"{{/if}}>
-
               <div class="swse-option-card__header">
                 <h3 class="swse-option-card__title prog-background-item__name">
                   {{name}}
@@ -66,32 +30,24 @@
                   {{/if}}
                 </h3>
               </div>
-
               {{#if shortDesc}}
                 <div class="swse-option-card__body prog-background-item__desc">{{shortDesc}}</div>
               {{/if}}
-
               {{#if trainedSkills.length}}
                 <div class="swse-option-card__meta">
                   {{#each trainedSkills}}
                     <span class="swse-option-card__badge">{{this}}</span>
                   {{/each}}
-                  {{#if hasMore}}
-                    <span class="swse-option-card__badge">+{{subtract trainedSkills.length hasMore}} more</span>
-                  {{/if}}
                 </div>
               {{/if}}
-
               {{#if isCommitted}}
                 <div class="swse-option-card__meta">
                   <span class="swse-option-card__badge"><i class="fas fa-check"></i> Selected</span>
                 </div>
               {{/if}}
-
             </button>
           {{/each}}
         </div>
-
       </div>
     {{else}}
       <div class="prog-background-empty">
@@ -100,5 +56,4 @@
       </div>
     {{/each}}
   </div>
-
-</div>{{!-- /background-surface --}}
+</div>

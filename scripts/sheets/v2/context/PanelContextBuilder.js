@@ -206,7 +206,7 @@ export class PanelContextBuilder {
 
     const defenses = defenseKeyMap.map(({ key, derivedKey, label, abilityKey }) => {
       const defenseData = system.defenses?.[key] || {};
-      const defenseViewModel = defensesViewModel[key];
+      const defenseViewModel = defensesViewModel?.[key] || {};
 
       // Get ability modifier from system.attributes
       const abilityMod = system.attributes?.[abilityKey]?.mod ?? 0;
@@ -216,7 +216,7 @@ export class PanelContextBuilder {
       const classDef = Number(defenseData.classBonus) || 0;
       const miscMod = Number(defenseData.miscMod) || 0;
       // Use total from canonical view-model (same as header uses)
-      const total = defenseViewModel.total ?? 10;
+      const total = defenseViewModel?.total ?? 10;
 
       // Derive CSS classes from modifier values
       const abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';

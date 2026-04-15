@@ -74,11 +74,9 @@ export class BuildIntent {
       );
 
       // Also update shell.committedSelections for backward compatibility during migration
+      // Store the raw normalized selection so existing step readers keep working.
       if (this.shell?.committedSelections && success) {
-        this.shell.committedSelections.set(selectionKey, {
-          [selectionKey]: value,
-          source: stepId,
-        });
+        this.shell.committedSelections.set(selectionKey, value);
       }
 
       // Re-render shell to reflect changes

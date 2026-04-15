@@ -37,22 +37,29 @@ export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2
     },
     template: 'systems/foundryvtt-swse/templates/apps/progression-framework/dialogs/template-selection.hbs',
     buttons: {
-      // Foundry v12 DialogV2 requires at least one button in config
+      // Foundry v13 DialogV2 requires at least one button in config
       // We use custom [data-button] buttons in the template, but need this for validation
       confirm: {
         icon: 'fas fa-check',
         label: 'Confirm Selection',
+        callback: () => {} // Handled by custom _onButtonClick
+      },
+      freeform: {
+        icon: 'fas fa-edit',
+        label: 'Create from Scratch',
         callback: () => {} // Handled by custom _onButtonClick
       }
     }
   };
 
   constructor(options = {}) {
-    // Ensure buttons are set before calling super() to avoid Foundry validation error
-    if (!options.buttons) {
-      options.buttons = this.constructor.DEFAULT_OPTIONS.buttons;
-    }
-    super(options);
+    // Foundry v13 DialogV2 requires options.buttons before super() is called
+    // Merge with defaults if not provided
+    const finalOptions = {
+      ...options,
+      buttons: options.buttons || TemplateSelectionDialog.DEFAULT_OPTIONS.buttons
+    };
+    super(finalOptions);
     this.selectedTemplate = null;
     this.templates = [];
     this.templatesByClass = {};

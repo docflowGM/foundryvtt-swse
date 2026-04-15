@@ -18,11 +18,6 @@
     </p>
   </div>
 
-  {{!-- Search Bar --}}
-  <div class="talent-browser-search">
-    <input type="text" class="talent-search-input" placeholder="Search talent trees..." value="{{searchQuery}}">
-  </div>
-
   {{!-- Suggested Trees --}}
   {{#if suggestedTrees}}
   <section class="talent-browser-suggested">
@@ -33,7 +28,7 @@
       {{#each suggestedTrees}}
       <button class="talent-tree-card talent-tree-card--suggested"
               data-action="focus-tree"
-              data-tree-id="{{this._id}}">
+              data-tree-id="{{this.id}}">
         <div class="talent-tree-card__content">
           <h5 class="talent-tree-card__name">{{this.name}}</h5>
           <p class="talent-tree-card__meta">
@@ -42,7 +37,7 @@
             </span>
           </p>
         </div>
-        <button class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{this._id}}">
+        <button class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{this.id}}">
           <i class="fa-solid fa-arrow-right"></i> Explore
         </button>
       </button>
@@ -58,7 +53,7 @@
       {{#each allTrees}}
       <button class="talent-tree-card {{#if this.isFocused}}talent-tree-card--focused{{/if}} {{#if this.isSuggested}}talent-tree-card--suggested{{/if}}"
               data-action="focus-tree"
-              data-tree-id="{{this._id}}">
+              data-tree-id="{{this.id}}">
         <div class="talent-tree-card__content">
           <h5 class="talent-tree-card__name">{{this.name}}</h5>
           <p class="talent-tree-card__summary">{{this.summary}}</p>
@@ -77,7 +72,7 @@
             {{/if}}
           </div>
         </div>
-        <button class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{this._id}}">
+        <button class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{this.id}}">
           <i class="fa-solid fa-arrow-right"></i> Explore
         </button>
       </button>

@@ -998,9 +998,12 @@ foundryvtt-swse/
     CLAUDE_COMMAND_ARCHETYPE_FIX.md
     CODE_AUTHORITY_AUDIT.md
     COMPLETE-FIX-SUMMARY.md
+    COMPLETE_CHARGEN_HYDRATION_FIX.md
     COMPLETE_HEIGHT_CONSTRAINT_FIX.md
     COMPREHENSIVE_ARCHITECTURAL_AUDIT_REPORT.md
     COMPREHENSIVE_AUDIT_REPORT.md
+    COMPREHENSIVE_HYDRATION_GUARDS_REPORT.md
+    COMPREHENSIVE_INSTRUMENTATION_REPORT.md
     CONTEXT_REMEDIATION_PLAN.md
     CONTRACT_ENFORCEMENT.md
     CONTRACT_ENFORCEMENT_REVISED.md
@@ -1013,6 +1016,7 @@ foundryvtt-swse/
     DAMAGE_PIPELINE_AUDIT.md
     DEBUG_VIOLATIONS_NOW.md
     DELIVERABLES.md
+    DELIVERABLES.txt
     DELIVERABLES_SUMMARY.md
     DEPENDENCY_GRAPH_AUDIT.md
     DEPENDENCY_GRAPH_DESIGN.md
@@ -1043,6 +1047,7 @@ foundryvtt-swse/
     FIX-MENTOR-PORTRAIT-SALTY.md
     FIX-SUMMARY.md
     FIX-TRANSLATION-ANIMATION-VISIBILITY.md
+    FIX_SUMMARY.txt
     FLEX_CLASS_VERIFICATION.md
     FOLLOWER_SYSTEM_ARCHITECTURE_AUDIT.md
     FORCE_POWER_PROVENANCE_FINAL_STATUS.md
@@ -1074,6 +1079,7 @@ foundryvtt-swse/
     IMPLEMENTATION_ORDER.md
     IMPLEMENTATION_REPORT_FORCE_COUNTING_FIX.md
     IMPLEMENTATION_REPORT_FORCE_UNLOCK_CORRECTION.md
+    INSTRUMENTATION_GUIDE.md
     INSTRUMENTATION_INDEX.md
     INSTRUMENTATION_SPEC.md
     INSTRUMENTATION_SUMMARY.md
@@ -1082,6 +1088,9 @@ foundryvtt-swse/
     INTRO-STEP-PHASE2-COMPLETE.md
     INTRO-STEP-PHASE3-DOM-RENDERING.md
     INTRO_IMPLEMENTATION_REPORT.md
+    INTRO_SPLASH_FIX_DIAGNOSIS.md
+    INTRO_SPLASH_FIX_VERIFICATION.md
+    INTRO_SPLASH_FIXES_SUMMARY.txt
     INTRO_VERIFICATION.md
     INVESTIGATION_SUMMARY_AND_NEXT_STEPS.md
     ITEM_EDITOR_FORM_FIX_REPORT.md
@@ -1144,6 +1153,7 @@ foundryvtt-swse/
     P0_VALIDATION_CHECKLIST.md
     PASSIVE_REMAINING_ACTION_PLAN.md
     PASSIVE_STATE_MIGRATION_FINAL_REPORT.md
+    PATCH_SUMMARY.txt
     PERMANENT-FIX-SUMMARY.md
     PERSISTENCE-DIAGNOSTIC-TEST.md
     PERSISTENCE-STATUS-AFTER-GOVERNANCE-FIX.md
@@ -1305,12 +1315,15 @@ foundryvtt-swse/
     PYTHON_SAFE_PASS_EXACT_CONTRACT_FIX_REPORT.txt
     QUICK_FIX_REFERENCE.md
     README.md
+    README_RENDER_QUEUE_FIX.md
     REFERENCE-CONTENT-REALITY-CHECK.md
     REFERENCE_ARCHITECTURE.md
     REFERENCE_CONTENT_FIRST_WAVE.md
     REFINEMENT-PHASE-COMPLETE.md
     REGISTRY_INTEGRATION_STATUS.md
     REMEDIATION-PLAN-STABILIZATION-PASS.md
+    RENDER_QUEUE_FIX_EXECUTIVE_SUMMARY.md
+    RENDER_QUEUE_FIX_REPORT.md
     REPO_STRUCTURE.txt
     RETROFIT_PREFLIGHT_CHECKLIST.md
     ROOT_CAUSE_AND_FIX.md
@@ -1360,6 +1373,8 @@ foundryvtt-swse/
     SPECIES_STEP_RESTORATION_SUMMARY.md
     SPECIES_STEP_SVG_CLEANUP_SUMMARY.md
     STABILIZATION-PASS-COMPLETION-REPORT.md
+    STALE_FOCUS_FIX_IMPLEMENTATION.md
+    STALE_FOCUS_RACE_CONDITION_AUDIT.md
     STEP-TRANSITION-INVESTIGATION-SUMMARY.md
     STEP_APPLICABILITY_AUDIT.md
     STEP_STATUS_AUDIT.md
@@ -1402,6 +1417,7 @@ foundryvtt-swse/
     VALIDATOR_REFINEMENT_REPORT.md
     VEHICLE_SHEET_FIX_COMPLETE.md
     VERIFICATION-AFTER-ROOT-FIX.md
+    VERIFICATION_AND_CLEANUP.md
     VERIFICATION_CHECKLIST.md
     VIOLATIONS_FIXED.md
     WAVE_10_FORCE_POWER_GUARDRAILS.md
@@ -1443,443 +1459,6 @@ foundryvtt-swse/
   migrations/
     migrate-actors-to-progression.py
   packs/
-    armor/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    armor-heavy/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    armor-light/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    armor-medium/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    armor-shields/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    attributes/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    backgrounds/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    beasts/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    classes/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    combat-actions/
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    conditions/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    datapads-references/
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    droids/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    equipment/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    equipment-comlinks/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    equipment-medical/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    equipment-other/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    equipment-security/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    equipment-survival/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    equipment-tech/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    equipment-tools/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    extraskilluses/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    feats/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    forcepowers/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    forcesecrets/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    forcetechniques/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    heroic/
-      000008.ldb
-      000036.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000035
-    languages/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    lightsaberformpowers/
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    nonheroic/
-      000008.ldb
-      000036.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000035
-    npc/
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    ship-combat-actions/
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    skills/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    special-combat-condition/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    species/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    talent-enhancements/
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    talent_trees/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    talents/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    vehicle-weapon-ranges/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    vehicle-weapons/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    vehicles/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    vehicles-speeders/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    vehicles-starships/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    vehicles-stations/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    vehicles-walkers/
-      000005.ldb
-      000033.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000032
-    weapons/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    weapons-exotic/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    weapons-grenades/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    weapons-heavy/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    weapons-pistols/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    weapons-rifles/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
-    weapons-simple/
-      000035.ldb
-      000039.ldb
-      000040.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000038
     armor-heavy.db
     armor-light.db
     armor-medium.db
@@ -1930,6 +1509,7 @@ foundryvtt-swse/
     weapons-exotic.db
     weapons-grenades.db
     weapons-heavy.db
+    weapons-lightsabers.db
     weapons-pistols.db
     weapons-rifles.db
     weapons-simple.db
@@ -2855,6 +2435,7 @@ foundryvtt-swse/
       store/
         categorizer.js
         compendium-schema.js
+        cost-registry.js
         index.js
         ledger-service.js
         loader.js
@@ -3418,6 +2999,7 @@ foundryvtt-swse/
       security-utils.js
       settings-helper.js
       sheet-position.js
+      skill-normalization.js
       skill-resolver.js
       skill-use-filter.js
       stable-id.js
@@ -3602,6 +3184,7 @@ foundryvtt-swse/
         summary-step.css
         talent-step.css
       action-footer.css
+      chargen-stabilization.css
       diagnostic-banners.css
       footer-navigation-standards.css
       holo-theme.css

@@ -24,11 +24,11 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
  * @param {Object} raw - Raw commit data from species-step
  * @returns {Object|null} Normalized species, or null if invalid
  */
+
 export function normalizeSpecies(raw) {
   if (!raw) return null;
 
   try {
-    // Handle both old and new formats
     const id = raw.speciesId || raw.id;
     const name = raw.speciesName || raw.name;
     const data = raw.speciesData || raw;
@@ -41,9 +41,11 @@ export function normalizeSpecies(raw) {
     return {
       id,
       name,
+      abilityScores: data.abilityScores || {},
+      speciesData: data,
       grants: data.grants || {},
-      nearHumanData: raw.nearHumanData || null, // Keep near-human builder data if present
-      patch: raw.patch || null, // Keep atomic patch for compatibility
+      nearHumanData: raw.nearHumanData || null,
+      patch: raw.patch || null,
       metadata: {
         source: data.source || 'core',
         createdAt: Date.now(),
@@ -54,6 +56,7 @@ export function normalizeSpecies(raw) {
     return null;
   }
 }
+
 
 /**
  * Normalize class selection.

@@ -49,7 +49,9 @@ export class FeatSlotValidator {
       // Class bonus feat slots restrict to class-specific feats
       if (slot.classId) {
         const allowed = await ClassFeatRegistry.getClassBonusFeats(slot.classId);
-        if (allowed.length > 0 && !allowed.includes(feat._id)) {
+        if (allowed.length === 0) {
+          errors.push('No class bonus feat is available for this class at this level');
+        } else if (!allowed.includes(feat._id || feat.id)) {
           errors.push(`Feat not allowed for class bonus slot: must be from class feat list`);
         }
       }

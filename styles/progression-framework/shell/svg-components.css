@@ -1,24 +1,13 @@
 /**
- * svg-components.css — Shared SVG chrome component classes
+ * svg-components.css — CSS-based chrome components (SVGs removed)
  *
- * Reusable datapad-style component classes that can be applied across all
- * chargen steps. Each class applies one SVG from assets/ui/chargen/ as the
- * background chrome and adjusts padding/sizing to keep content within the
- * SVG's visual frame.
- *
- * Usage pattern:
- *   Add class to wrapper element or input element.
- *   SVG handles border, fill, glow geometry.
- *   CSS handles padding so content clears SVG frame borders.
- *
- * Asset paths (relative from styles/progression-framework/shell/):
- *   ../../../assets/ui/chargen/
+ * Reusable datapad-style component classes using CSS borders and styling
+ * instead of SVG assets. Each class applies a consistent sci-fi UI style
+ * with cyan borders and dark backgrounds.
  */
 
 /* ============================================================================
-   BUTTON FRAMES — button-frame-primary.svg (360×96) / button-frame-secondary.svg (320×90)
-   Generic action button frames for in-step UI buttons (not footer nav).
-   Apply .prog-svgbtn--primary or .prog-svgbtn--secondary to button elements.
+   BUTTON FRAMES — Primary and secondary buttons
    ============================================================================ */
 
 .progression-shell .prog-svgbtn--primary {
@@ -26,12 +15,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/button-frame-primary.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  background-color:  transparent;
-  border: none;
-  border-radius: 0;
+  background-color: rgba(20, 60, 90, 0.6);
+  border: 2px solid rgba(100, 220, 255, 0.6);
+  border-radius: 4px;
   min-width: 120px;
   height: 42px;
   padding: 0 18px;
@@ -43,24 +29,28 @@
   letter-spacing: 0.08em;
   cursor: pointer;
   transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
+  box-shadow: 0 0 8px rgba(100, 220, 255, 0.2) inset;
 }
+
 .progression-shell .prog-svgbtn--primary:hover:not(:disabled) {
   transform: translateY(-2px);
   filter: brightness(1.12) drop-shadow(0 0 8px rgba(100, 220, 255, 0.28));
+  border-color: rgba(120, 240, 255, 0.8);
 }
-.progression-shell .prog-svgbtn--primary:disabled { opacity: 0.38; cursor: not-allowed; }
+
+.progression-shell .prog-svgbtn--primary:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
 
 .progression-shell .prog-svgbtn--secondary {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/button-frame-secondary.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  background-color:  transparent;
-  border: none;
-  border-radius: 0;
+  background-color: rgba(15, 50, 75, 0.5);
+  border: 1px solid rgba(80, 200, 255, 0.5);
+  border-radius: 3px;
   min-width: 100px;
   height: 38px;
   padding: 0 16px;
@@ -72,21 +62,25 @@
   letter-spacing: 0.07em;
   cursor: pointer;
   transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
+  box-shadow: 0 0 6px rgba(80, 200, 255, 0.15) inset;
 }
+
 .progression-shell .prog-svgbtn--secondary:hover:not(:disabled) {
   transform: translateY(-1px);
   filter: brightness(1.10) drop-shadow(0 0 6px rgba(100, 200, 255, 0.22));
+  border-color: rgba(100, 220, 255, 0.7);
 }
-.progression-shell .prog-svgbtn--secondary:disabled { opacity: 0.38; cursor: not-allowed; }
 
-/* Ask Mentor button — secondary frame applied automatically */
+.progression-shell .prog-svgbtn--secondary:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+/* Ask Mentor button */
 .progression-shell .prog-mentor__ask {
-  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/button-frame-secondary.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  background-color:  transparent;
-  border: none;
-  border-radius: 0;
+  background-color: rgba(15, 50, 75, 0.5);
+  border: 1px solid rgba(80, 200, 255, 0.5);
+  border-radius: 3px;
   min-width: 80px;
   height: 34px;
   padding: 0 14px;
@@ -97,36 +91,32 @@
   letter-spacing: 0.06em;
   cursor: pointer;
   transition: transform 100ms ease, filter 100ms ease;
+  box-shadow: 0 0 6px rgba(80, 200, 255, 0.15) inset;
 }
+
 .progression-shell .prog-mentor__ask:hover {
   transform: translateY(-1px);
   filter: brightness(1.10) drop-shadow(0 0 5px rgba(100, 200, 255, 0.25));
+  border-color: rgba(100, 220, 255, 0.7);
 }
 
 /* ============================================================================
-   SEARCH-BOX — search-box.svg (720×96)
-   Chamfered search input frame with left search-icon zone, cyan border stroke.
-   Apply to .prog-svgchrome--search wrapper or directly to input element.
+   SEARCH-BOX
    ============================================================================ */
 
 .progression-shell .prog-svgchrome--search {
   position: relative;
   display: flex;
   align-items: center;
-
-  /* search-box.svg provides chamfered rect with scan line + cyan border chrome */
-  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/search-box.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  background-color:  transparent;
-  border: none;
-
-  /* Height matches SVG natural proportion (96 / 720 × actual width, min 36px) */
+  background-color: rgba(10, 30, 50, 0.6);
+  border: 2px solid rgba(100, 220, 255, 0.5);
+  border-radius: 4px;
   min-height: 36px;
-  border-radius: 0;
+  padding: 2px 8px;
+  box-shadow: 0 0 8px rgba(100, 220, 255, 0.15) inset;
 }
 
-/* Direct input inside .prog-svgchrome--search — transparent, fills inside frame */
+/* Direct input inside .prog-svgchrome--search */
 .progression-shell .prog-svgchrome--search input,
 .progression-shell .prog-svgchrome--search .prog-utility-bar__search {
   flex: 1 1 auto;
@@ -141,141 +131,136 @@
 
 /* Apply directly to search inputs in the utility bar */
 .progression-shell .prog-utility-bar__search {
-  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/search-box.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  background-color:  transparent;
-  border: none;
-  border-radius: 0;
+  background-color: rgba(10, 30, 50, 0.5);
+  border: 1px solid rgba(80, 200, 255, 0.4);
+  border-radius: 3px;
   outline: none;
   color: var(--prog-text);
   padding: 4px 14px;
   min-height: 32px;
+  box-shadow: 0 0 6px rgba(80, 200, 255, 0.1) inset;
+}
 
-  /* Placeholder text color */
-  &::placeholder {
-    color: rgba(100, 180, 220, 0.45);
-    font-style: italic;
-  }
+/* Placeholder text color */
+.progression-shell .prog-utility-bar__search::placeholder {
+  color: rgba(100, 180, 220, 0.45);
+  font-style: italic;
 }
 
 .progression-shell .prog-utility-bar__search:focus {
   filter: brightness(1.08) drop-shadow(0 0 4px rgba(100, 220, 255, 0.25));
+  border-color: rgba(120, 240, 255, 0.6);
 }
 
 /* ============================================================================
-   TEXTBOX — textbox.svg (640×96)
-   Chamfered text-input frame, similar to search but without search icon zone.
+   TEXTBOX
    ============================================================================ */
 
 .progression-shell .prog-svgchrome--textbox,
 .progression-shell input[type="text"].prog-svgchrome,
 .progression-shell input[type="number"].prog-svgchrome {
-  background-image:  url('../../../assets/ui/chargen/textbox.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  background-color:  transparent;
-  border: none;
-  border-radius: 0;
+  background-color: rgba(10, 30, 50, 0.5);
+  border: 1px solid rgba(80, 200, 255, 0.4);
+  border-radius: 3px;
   outline: none;
   color: var(--prog-text);
   font-size: var(--prog-font-size-xs);
   padding: 4px 14px;
   min-height: 32px;
+  box-shadow: 0 0 6px rgba(80, 200, 255, 0.1) inset;
+}
 
-  &::placeholder {
-    color: rgba(100, 180, 220, 0.40);
-    font-style: italic;
-  }
+.progression-shell input[type="text"].prog-svgchrome::placeholder,
+.progression-shell input[type="number"].prog-svgchrome::placeholder {
+  color: rgba(100, 180, 220, 0.40);
+  font-style: italic;
+}
 
-  &:focus {
-    filter: brightness(1.08) drop-shadow(0 0 4px rgba(100, 220, 255, 0.20));
-  }
+.progression-shell input[type="text"].prog-svgchrome:focus,
+.progression-shell input[type="number"].prog-svgchrome:focus {
+  filter: brightness(1.08) drop-shadow(0 0 4px rgba(100, 220, 255, 0.20));
+  border-color: rgba(120, 240, 255, 0.6);
 }
 
 /* ============================================================================
-   DROPDOWN — dropdown-box.svg (640×96)
-   Chamfered select/dropdown frame with cyan border and arrow hint area.
+   DROPDOWN
    ============================================================================ */
 
 .progression-shell .prog-svgchrome--dropdown,
 .progression-shell select.prog-svgchrome {
-  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/dropdown-box.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  background-color:  transparent;
-  border: none;
-  border-radius: 0;
+  background-color: rgba(10, 30, 50, 0.5);
+  border: 1px solid rgba(80, 200, 255, 0.4);
+  border-radius: 3px;
   outline: none;
   color: var(--prog-text);
   font-size: var(--prog-font-size-xs);
-  padding: 4px 32px 4px 14px;    /* right padding clears SVG arrow indicator zone */
+  padding: 4px 32px 4px 14px;
   min-height: 32px;
   cursor: pointer;
-  appearance: none;              /* remove default OS arrow — SVG provides it */
+  appearance: none;
+  box-shadow: 0 0 6px rgba(80, 200, 255, 0.1) inset;
+}
 
-  &:focus {
-    filter: brightness(1.08) drop-shadow(0 0 4px rgba(100, 220, 255, 0.20));
-  }
+.progression-shell select.prog-svgchrome:focus {
+  filter: brightness(1.08) drop-shadow(0 0 4px rgba(100, 220, 255, 0.20));
+  border-color: rgba(120, 240, 255, 0.6);
 }
 
 /* Sort dropdown in utility bar */
 .progression-shell .prog-utility-bar__sort {
-  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/dropdown-box.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  background-color:  transparent;
-  border: none;
-  border-radius: 0;
+  background-color: rgba(10, 30, 50, 0.5);
+  border: 1px solid rgba(80, 200, 255, 0.4);
+  border-radius: 3px;
   color: var(--prog-text);
   font-size: var(--prog-font-size-xs);
   padding: 4px 28px 4px 12px;
   min-height: 30px;
   appearance: none;
+  box-shadow: 0 0 6px rgba(80, 200, 255, 0.1) inset;
+}
 
-  &:focus {
-    filter: brightness(1.08) drop-shadow(0 0 4px rgba(100, 220, 255, 0.20));
-    outline: none;
-  }
+.progression-shell .prog-utility-bar__sort:focus {
+  filter: brightness(1.08) drop-shadow(0 0 4px rgba(100, 220, 255, 0.20));
+  border-color: rgba(120, 240, 255, 0.6);
+  outline: none;
 }
 
 /* ============================================================================
-   HOLODICE — holodice.svg (256×256) utility class
-   Decorative holo-die icon. Use as inline icon or background decoration.
-
-   As an img: <img src="assets/ui/chargen/holodice.svg" class="prog-holodice">
-   As background: apply .prog-holodice--bg to any element with defined w/h
+   HOLODICE — Decorative holo-die icon
    ============================================================================ */
 
 .progression-shell .prog-holodice {
   display: inline-block;
-  width:  28px;
+  width: 28px;
   height: 28px;
-  background-image:  url('../../../assets/ui/chargen/holodice.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  background-color:  transparent;
-  border: none;
+  background-color: rgba(50, 100, 150, 0.4);
+  border: 1px solid rgba(100, 220, 255, 0.3);
+  border-radius: 3px;
   opacity: 0.75;
   filter: drop-shadow(0 0 4px rgba(100, 220, 255, 0.30));
   flex-shrink: 0;
   vertical-align: middle;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: rgba(100, 220, 255, 0.6);
 }
 
 .progression-shell .prog-holodice--lg {
-  width:  48px;
+  width: 48px;
   height: 48px;
-}
-
-/* 3D variant — holodice-3d.svg, use for larger/hero roll moments */
-.progression-shell .prog-holodice--3d {
-  background-image: url('../../../assets/ui/chargen/holodice-3d.svg');
+  font-size: 28px;
 }
 
 /* Animated spin — for "rolling" states */
 @keyframes prog-holodice-spin {
-  0%   { transform: rotate(0deg);   }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .progression-shell .prog-holodice--rolling {
@@ -285,40 +270,34 @@
 }
 
 /* ============================================================================
-   MODAL FRAME — modal-frame.svg (1500×920)
-   Full-screen modal chrome. Apply to .prog-modal or dialog overlay container.
+   MODAL FRAME
    ============================================================================ */
 
 .progression-shell .prog-modal-frame {
-  background-image:  url('../../../assets/ui/chargen/modal-frame.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  background-color:  #040a12;
-  border: none;
+  background-color: #040a12;
+  border: 2px solid rgba(100, 220, 255, 0.4);
   border-radius: 0;
   position: relative;
-
-  /* Content padding clears SVG border geometry */
   padding: 40px 48px;
+  box-shadow: 0 0 24px rgba(0, 180, 255, 0.15),
+              0 0 0 1px rgba(180, 245, 255, 0.1) inset;
 }
 
 /* ============================================================================
-   TREE PREVIEW — tree-preview.svg (800×500)
-   Node-map canvas chrome. Apply to talent tree / feat tree viewport container.
+   TREE PREVIEW
    ============================================================================ */
 
 .progression-shell .prog-tree-frame {
-  background-image:  url('../../../assets/ui/chargen/tree-preview.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  background-color:  transparent;
-  border: none;
+  background-color: transparent;
+  border: 1px solid rgba(100, 220, 255, 0.3);
+  border-radius: 3px;
   position: relative;
   min-height: 200px;
+  box-shadow: 0 0 8px rgba(100, 220, 255, 0.1) inset;
 }
 
 /* ============================================================================
-   GLOBAL: BUTTON TEXT LAYERING — Ensure text always sits above SVG frames
+   GLOBAL: BUTTON TEXT LAYERING
    ============================================================================ */
 
 .progression-shell .prog-svgbtn--primary,
@@ -330,20 +309,6 @@
   align-items: center;
   justify-content: center;
   overflow: visible;
-}
-
-/* Force text content above SVG background */
-.progression-shell .prog-svgbtn--primary::before,
-.progression-shell .prog-svgbtn--secondary::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: transparent;
-  pointer-events: none;
-  z-index: 0;
 }
 
 /* Text spans and labels always render on top */

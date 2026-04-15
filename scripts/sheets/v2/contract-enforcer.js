@@ -36,7 +36,7 @@ export class CharacterSheetContractEnforcer {
       readOnly: true,
       description: "Character Sheet Window Contract enforcement and violation detection",
       init: () => {
-        console.log("[SWSE Sentinel] Character Sheet Contract Enforcer layer ready");
+        // console.log("[SWSE Sentinel] Character Sheet Contract Enforcer layer ready");
       }
     });
   }
@@ -515,7 +515,7 @@ export class CharacterSheetContractEnforcer {
     }
 
     if (result.passed) {
-      console.log('[CHARACTER SHEET CONTRACT] ✓ All rules passed');
+      // console.log('[CHARACTER SHEET CONTRACT] ✓ All rules passed');
     }
 
     return result;
@@ -834,30 +834,30 @@ export class CharacterSheetContractEnforcer {
   static printDiagnosis(element) {
     const diagnosis = this.diagnoseFailures(element);
 
-    console.log('\n╔════════════════════════════════════════════════════════════════╗');
-    console.log('║        CHARACTER SHEET CONTRACT FAILURE DIAGNOSIS               ║');
-    console.log('╚════════════════════════════════════════════════════════════════╝\n');
+    // console.log('\n╔════════════════════════════════════════════════════════════════╗');
+    // console.log('║        CHARACTER SHEET CONTRACT FAILURE DIAGNOSIS               ║');
+    // console.log('╚════════════════════════════════════════════════════════════════╝\n');
 
     if (diagnosis.passed) {
-      console.log('✅ CONTRACT PASSED: All rules satisfied\n');
+      // console.log('✅ CONTRACT PASSED: All rules satisfied\n');
       return;
     }
 
-    console.log(`❌ CONTRACT FAILED: ${diagnosis.violations.length} violation(s)\n`);
+    // console.log(`❌ CONTRACT FAILED: ${diagnosis.violations.length} violation(s)\n`);
 
     Object.entries(diagnosis.categories).forEach(([cat, data]) => {
       if (cat === 'OK') return;
-      console.log(`📍 ${cat}`);
-      console.log(`   ${data.message}`);
+      // console.log(`📍 ${cat}`);
+      // console.log(`   ${data.message}`);
       if (data.violations && data.violations.length > 0) {
         data.violations.forEach(v => {
-          console.log(`   - [${v.severity}] ${v.message}`);
+          // console.log(`   - [${v.severity}] ${v.message}`);
         });
       }
       if (data.recommendation) {
-        console.log(`   ➡️  RECOMMENDATION: ${data.recommendation}`);
+        // console.log(`   ➡️  RECOMMENDATION: ${data.recommendation}`);
       }
-      console.log('');
+      // console.log('');
     });
   }
 
@@ -866,68 +866,68 @@ export class CharacterSheetContractEnforcer {
    * Call this to see exactly which elements are scrollable and why
    */
   static debugScrollOwners(element) {
-    console.log('\n╔════════════════════════════════════════════════════════════════╗');
-    console.log('║   DEBUG: REAL SHEET-LEVEL VERTICAL SCROLL OWNERS (REFINED)    ║');
-    console.log('╚════════════════════════════════════════════════════════════════╝\n');
+    // console.log('\n╔════════════════════════════════════════════════════════════════╗');
+    // console.log('║   DEBUG: REAL SHEET-LEVEL VERTICAL SCROLL OWNERS (REFINED)    ║');
+    // console.log('╚════════════════════════════════════════════════════════════════╝\n');
 
     const scrollOwners = this.findScrollOwners(element);
     const excluded = scrollOwners.excluded || {};
 
     // Report real scroll owners
     if (scrollOwners.length === 0) {
-      console.log('✓ No sheet-level scroll owners found (correct state).');
+      // console.log('✓ No sheet-level scroll owners found (correct state).');
     } else {
-      console.log(`Found ${scrollOwners.length} real scroll owner(s):\n`);
+      // console.log(`Found ${scrollOwners.length} real scroll owner(s):\n`);
 
       scrollOwners.forEach((el, idx) => {
         const styles = window.getComputedStyle(el);
         const path = this.getElementPath(el);
 
-        console.log(`${idx + 1}. ${path}`);
-        console.log(`   Classes: ${el.className}`);
-        console.log(`   Display: ${styles.display}`);
-        console.log(`   Overflow-Y: ${styles.overflowY}`);
-        console.log(`   ScrollHeight: ${el.scrollHeight}`);
-        console.log(`   ClientHeight: ${el.clientHeight}`);
-        console.log(`   Can scroll: ${el.scrollHeight > el.clientHeight}`);
-        console.log(`   Min-height: ${styles.minHeight}`);
-        console.log('');
+        // console.log(`${idx + 1}. ${path}`);
+        // console.log(`   Classes: ${el.className}`);
+        // console.log(`   Display: ${styles.display}`);
+        // console.log(`   Overflow-Y: ${styles.overflowY}`);
+        // console.log(`   ScrollHeight: ${el.scrollHeight}`);
+        // console.log(`   ClientHeight: ${el.clientHeight}`);
+        // console.log(`   Can scroll: ${el.scrollHeight > el.clientHeight}`);
+        // console.log(`   Min-height: ${styles.minHeight}`);
+        // console.log('');
       });
     }
 
     // Report exclusions
-    console.log('╔════════════════════════════════════════════════════════════════╗');
-    console.log('║                    EXCLUSIONS (NOT VIOLATIONS)                 ║');
-    console.log('╚════════════════════════════════════════════════════════════════╝\n');
+    // console.log('╔════════════════════════════════════════════════════════════════╗');
+    // console.log('║                    EXCLUSIONS (NOT VIOLATIONS)                 ║');
+    // console.log('╚════════════════════════════════════════════════════════════════╝\n');
 
     if (excluded.hiddenTabs && excluded.hiddenTabs.length > 0) {
-      console.log(`Hidden tabs (display: none): ${excluded.hiddenTabs.length}`);
+      // console.log(`Hidden tabs (display: none): ${excluded.hiddenTabs.length}`);
       excluded.hiddenTabs.forEach((el) => {
         const path = this.getElementPath(el);
-        console.log(`  - ${path}`);
+        // console.log(`  - ${path}`);
       });
-      console.log('');
+      // console.log('');
     }
 
     if (excluded.nativeControls && excluded.nativeControls.length > 0) {
-      console.log(`Native form controls (textarea, input, etc): ${excluded.nativeControls.length}`);
+      // console.log(`Native form controls (textarea, input, etc): ${excluded.nativeControls.length}`);
       excluded.nativeControls.slice(0, 5).forEach((el) => {
         const path = this.getElementPath(el);
-        console.log(`  - ${path}`);
+        // console.log(`  - ${path}`);
       });
       if (excluded.nativeControls.length > 5) {
-        console.log(`  ... and ${excluded.nativeControls.length - 5} more`);
+        // console.log(`  ... and ${excluded.nativeControls.length - 5} more`);
       }
-      console.log('');
+      // console.log('');
     }
 
     if (excluded.horizontalOnly && excluded.horizontalOnly.length > 0) {
-      console.log(`Horizontal-only scrollers: ${excluded.horizontalOnly.length}`);
+      // console.log(`Horizontal-only scrollers: ${excluded.horizontalOnly.length}`);
       excluded.horizontalOnly.forEach((el) => {
         const path = this.getElementPath(el);
-        console.log(`  - ${path}`);
+        // console.log(`  - ${path}`);
       });
-      console.log('');
+      // console.log('');
     }
 
     return scrollOwners;
@@ -937,31 +937,31 @@ export class CharacterSheetContractEnforcer {
    * DEBUG: Print the one remaining inner panel scroller
    */
   static debugIllegalPanelScrollers(element) {
-    console.log('\n╔════════════════════════════════════════════════════════════════╗');
-    console.log('║      DEBUG: ILLEGAL INNER PANEL SCROLLERS                      ║');
-    console.log('╚════════════════════════════════════════════════════════════════╝\n');
+    // console.log('\n╔════════════════════════════════════════════════════════════════╗');
+    // console.log('║      DEBUG: ILLEGAL INNER PANEL SCROLLERS                      ║');
+    // console.log('╚════════════════════════════════════════════════════════════════╝\n');
 
     const illegal = this.findIllegalPanelScrollers(element);
 
     if (illegal.length === 0) {
-      console.log('No illegal panel scrollers found.');
+      // console.log('No illegal panel scrollers found.');
       return;
     }
 
-    console.log(`Found ${illegal.length} illegal panel scroller(s):\n`);
+    // console.log(`Found ${illegal.length} illegal panel scroller(s):\n`);
 
     illegal.forEach((el, idx) => {
       const styles = window.getComputedStyle(el);
       const path = this.getElementPath(el);
 
-      console.log(`${idx + 1}. ${path}`);
-      console.log(`   Classes: ${el.className}`);
-      console.log(`   Overflow-Y: ${styles.overflowY}`);
-      console.log(`   Overflow: ${styles.overflow}`);
-      console.log(`   ScrollHeight: ${el.scrollHeight}`);
-      console.log(`   ClientHeight: ${el.clientHeight}`);
-      console.log(`   CSS Rule to Remove: overflow-y: auto or overflow: auto`);
-      console.log('');
+      // console.log(`${idx + 1}. ${path}`);
+      // console.log(`   Classes: ${el.className}`);
+      // console.log(`   Overflow-Y: ${styles.overflowY}`);
+      // console.log(`   Overflow: ${styles.overflow}`);
+      // console.log(`   ScrollHeight: ${el.scrollHeight}`);
+      // console.log(`   ClientHeight: ${el.clientHeight}`);
+      // console.log(`   CSS Rule to Remove: overflow-y: auto or overflow: auto`);
+      // console.log('');
     });
 
     return illegal;
@@ -971,37 +971,37 @@ export class CharacterSheetContractEnforcer {
    * DEBUG: Check why .window-content min-height is not 0
    */
   static debugWindowContentMinHeight(element) {
-    console.log('\n╔════════════════════════════════════════════════════════════════╗');
-    console.log('║      DEBUG: .WINDOW-CONTENT MIN-HEIGHT ISSUE                   ║');
-    console.log('╚════════════════════════════════════════════════════════════════╝\n');
+    // console.log('\n╔════════════════════════════════════════════════════════════════╗');
+    // console.log('║      DEBUG: .WINDOW-CONTENT MIN-HEIGHT ISSUE                   ║');
+    // console.log('╚════════════════════════════════════════════════════════════════╝\n');
 
     const windowContent = element.querySelector('.window-content');
 
     if (!windowContent) {
-      console.log('ERROR: .window-content not found');
+      // console.log('ERROR: .window-content not found');
       return;
     }
 
     const styles = window.getComputedStyle(windowContent);
     const inlineStyle = windowContent.getAttribute('style');
 
-    console.log('Element: .window-content');
-    console.log(`Computed min-height: ${styles.minHeight}`);
-    console.log(`Computed height: ${styles.height}`);
-    console.log(`Inline style attribute: ${inlineStyle || '(none)'}`);
-    console.log(`Display: ${styles.display}`);
-    console.log(`Flex: ${styles.flex}`);
-    console.log(`Overflow: ${styles.overflow}`);
-    console.log(`ScrollHeight: ${windowContent.scrollHeight}`);
-    console.log(`ClientHeight: ${windowContent.clientHeight}`);
-    console.log(`OffsetHeight: ${windowContent.offsetHeight}`);
+    // console.log('Element: .window-content');
+    // console.log(`Computed min-height: ${styles.minHeight}`);
+    // console.log(`Computed height: ${styles.height}`);
+    // console.log(`Inline style attribute: ${inlineStyle || '(none)'}`);
+    // console.log(`Display: ${styles.display}`);
+    // console.log(`Flex: ${styles.flex}`);
+    // console.log(`Overflow: ${styles.overflow}`);
+    // console.log(`ScrollHeight: ${windowContent.scrollHeight}`);
+    // console.log(`ClientHeight: ${windowContent.clientHeight}`);
+    // console.log(`OffsetHeight: ${windowContent.offsetHeight}`);
 
     // Report actual status
     if (styles.minHeight === '0px') {
-      console.log('\n✓ STATUS: min-height is correctly set to 0px (flex chain is working)');
+      // console.log('\n✓ STATUS: min-height is correctly set to 0px (flex chain is working)');
     } else {
-      console.log(`\n⚠ PROBLEM: min-height is "${styles.minHeight}" instead of "0px"`);
-      console.log('To fix: Find the CSS rule that sets min-height and override it to `min-height: 0 !important`');
+      // console.log(`\n⚠ PROBLEM: min-height is "${styles.minHeight}" instead of "0px"`);
+      // console.log('To fix: Find the CSS rule that sets min-height and override it to `min-height: 0 !important`');
     }
   }
 
@@ -1010,9 +1010,9 @@ export class CharacterSheetContractEnforcer {
    * Identifies where the height constraint is lost
    */
   static debugHeightChain(element) {
-    console.log('\n╔════════════════════════════════════════════════════════════════╗');
-    console.log('║              DEBUG: HEIGHT CONSTRAINT CHAIN AUDIT               ║');
-    console.log('╚════════════════════════════════════════════════════════════════╝\n');
+    // console.log('\n╔════════════════════════════════════════════════════════════════╗');
+    // console.log('║              DEBUG: HEIGHT CONSTRAINT CHAIN AUDIT               ║');
+    // console.log('╚════════════════════════════════════════════════════════════════╝\n');
 
     // Define the expected chain
     const chainSelectors = [
@@ -1032,7 +1032,7 @@ export class CharacterSheetContractEnforcer {
       const el = element.closest('.application')?.querySelector(item.selector) || document.querySelector(item.selector);
 
       if (!el) {
-        console.log(`❌ NOT FOUND: ${item.label}`);
+        // console.log(`❌ NOT FOUND: ${item.label}`);
         return;
       }
 
@@ -1040,21 +1040,21 @@ export class CharacterSheetContractEnforcer {
       const isConstrained = el.clientHeight < el.scrollHeight;
       const heightLimited = previousHeight !== null && el.clientHeight <= previousHeight;
 
-      console.log(`\n[${idx + 1}] ${item.label}`);
-      console.log(`    Display: ${styles.display}`);
-      console.log(`    Flex: ${styles.flex || styles.flexGrow + ' ' + styles.flexShrink + ' ' + styles.flexBasis}`);
-      console.log(`    Min-height: ${styles.minHeight}`);
-      console.log(`    Height: ${styles.height}`);
-      console.log(`    Max-height: ${styles.maxHeight}`);
-      console.log(`    ClientHeight: ${el.clientHeight}`);
-      console.log(`    ScrollHeight: ${el.scrollHeight}`);
-      console.log(`    Is constrained: ${isConstrained ? 'YES (clientH < scrollH)' : 'NO (clientH >= scrollH)'}`);
+      // console.log(`\n[${idx + 1}] ${item.label}`);
+      // console.log(`    Display: ${styles.display}`);
+      // console.log(`    Flex: ${styles.flex || styles.flexGrow + ' ' + styles.flexShrink + ' ' + styles.flexBasis}`);
+      // console.log(`    Min-height: ${styles.minHeight}`);
+      // console.log(`    Height: ${styles.height}`);
+      // console.log(`    Max-height: ${styles.maxHeight}`);
+      // console.log(`    ClientHeight: ${el.clientHeight}`);
+      // console.log(`    ScrollHeight: ${el.scrollHeight}`);
+      // console.log(`    Is constrained: ${isConstrained ? 'YES (clientH < scrollH)' : 'NO (clientH >= scrollH)'}`);
 
       if (previousHeight !== null) {
-        console.log(`    Parent clientHeight: ${previousHeight}`);
-        console.log(`    Height limited by parent: ${heightLimited ? 'YES' : 'NO - AUTO-GROWING'}`);
+        // console.log(`    Parent clientHeight: ${previousHeight}`);
+        // console.log(`    Height limited by parent: ${heightLimited ? 'YES' : 'NO - AUTO-GROWING'}`);
         if (!heightLimited && !constraintBroken) {
-          console.log(`    ⚠️  CONSTRAINT CHAIN BREAKS HERE`);
+          // console.log(`    ⚠️  CONSTRAINT CHAIN BREAKS HERE`);
           constraintBroken = true;
         }
       }
@@ -1062,20 +1062,20 @@ export class CharacterSheetContractEnforcer {
       previousHeight = el.clientHeight;
     });
 
-    console.log('\n╔════════════════════════════════════════════════════════════════╗');
-    console.log('║                         ANALYSIS                              ║');
-    console.log('╚════════════════════════════════════════════════════════════════╝\n');
+    // console.log('\n╔════════════════════════════════════════════════════════════════╗');
+    // console.log('║                         ANALYSIS                              ║');
+    // console.log('╚════════════════════════════════════════════════════════════════╝\n');
 
     const activeTab = document.querySelector('.tab.active');
     if (activeTab) {
       const styles = window.getComputedStyle(activeTab);
       if (activeTab.scrollHeight > activeTab.clientHeight) {
-        console.log('✓ Active tab HAS scrollable content (good)');
+        // console.log('✓ Active tab HAS scrollable content (good)');
       } else {
-        console.log(`⚠️  Active tab is NOT constrained:`);
-        console.log(`    scrollHeight: ${activeTab.scrollHeight}`);
-        console.log(`    clientHeight: ${activeTab.clientHeight}`);
-        console.log(`    These should differ for scrolling to work`);
+        // console.log(`⚠️  Active tab is NOT constrained:`);
+        // console.log(`    scrollHeight: ${activeTab.scrollHeight}`);
+        // console.log(`    clientHeight: ${activeTab.clientHeight}`);
+        // console.log(`    These should differ for scrolling to work`);
       }
     }
   }

@@ -9,6 +9,9 @@ export const mathHelpers = {
 
   subtract: (a, b) => Number(a ?? 0) - Number(b ?? 0),
 
+  // Alias for subtract
+  sub: (a, b) => Number(a ?? 0) - Number(b ?? 0),
+
   multiply: (a, b) => Number(a ?? 0) * Number(b ?? 0),
 
   // Alias for multiply
@@ -18,6 +21,13 @@ export const mathHelpers = {
     const divisor = Number(b ?? 0);
     if (!divisor) {return 0;}
     return Number(a ?? 0) / divisor;
+  },
+
+  // Alias for divide with optional percentage multiplier
+  div: (a, b, multiplier = 1) => {
+    const divisor = Number(b ?? 0);
+    if (!divisor) {return 0;}
+    return (Number(a ?? 0) / divisor) * Number(multiplier ?? 1);
   },
 
   floor: (value) => Math.floor(Number(value ?? 0)),

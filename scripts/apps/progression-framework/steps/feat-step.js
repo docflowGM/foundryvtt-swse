@@ -32,7 +32,7 @@ import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 
 // Constants
 const FEATS_PER_CATEGORY_INITIAL = 5;  // Constrained visible count per category
-const TOP_SUGGESTIONS = 3;              // Top N suggested feats to show
+const TOP_SUGGESTIONS = 4;              // Top N suggested feats to show
 
 export class FeatStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -65,10 +65,12 @@ export class FeatStep extends ProgressionStepPlugin {
 
   async onStepEnter(shell) {
     // Ensure registry loaded
-    await FeatRegistry.initialize?.();
+    if (!FeatRegistry.isBuilt && typeof FeatRegistry.build === 'function') {
+      await FeatRegistry.build();
+    }
 
-    // Load all feats from registry
-    this._allFeats = FeatRegistry.list?.() || [];
+    // Load and normalize all feats from registry
+    this._allFeats = (FeatRegistry.list?.() || []).map(f => this._normalizeFeat(f));
 
     // Get legal feats for this context
     const legalFeats = await this._getLegalFeats(shell.actor);
@@ -97,23 +99,24 @@ export class FeatStep extends ProgressionStepPlugin {
     this._renderAbort = new AbortController();
     const { signal } = this._renderAbort;
 
-    // Wire search input
-    const searchInput = shell.element.querySelector('.feat-search-input');
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        this._searchQuery = e.target.value;
-        shell.render();
-      }, { signal });
-    }
+    const onSearch = e => {
+      this._searchQuery = e.detail.query || '';
+      shell.render();
+    };
+    const onFilter = e => {
+      const { filterId, value } = e.detail || {};
+      this._filters = this._filters || {};
+      this._filters[filterId] = value;
+      shell.render();
+    };
+    const onSort = e => {
+      this._sortBy = e.detail?.sortId || 'alpha';
+      shell.render();
+    };
 
-    // Wire Show All toggle
-    const showAllToggle = shell.element.querySelector('.feat-show-all-toggle');
-    if (showAllToggle) {
-      showAllToggle.addEventListener('change', (e) => {
-        this._showAll = e.target.checked;
-        shell.render();
-      }, { signal });
-    }
+    shell.element.addEventListener('prog:utility:search', onSearch, { signal });
+    shell.element.addEventListener('prog:utility:filter', onFilter, { signal });
+    shell.element.addEventListener('prog:utility:sort', onSort, { signal });
 
     // Wire category expand/collapse
     const categoryToggles = shell.element.querySelectorAll('[data-action="toggle-category"]');
@@ -143,13 +146,7 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   async onStepExit(shell) {
-    // Commit selected feat to actor
-    if (this._selectedFeatId) {
-      const feat = this._allFeats.find(f => f._id === this._selectedFeatId);
-      if (feat) {
-        await FeatEngine.learn(shell.actor, feat.name);
-      }
-    }
+    // Do not mutate actor here; finalizer owns application of draft selections.
   }
 
   // ---------------------------------------------------------------------------
@@ -217,8 +214,8 @@ export class FeatStep extends ProgressionStepPlugin {
         persist: true
       });
 
-      // Return top N suggestions
-      return (suggested || []).slice(0, TOP_SUGGESTIONS);
+      // Return ranked top-N suggestions without fabricating a fallback list
+      return (suggested || []).slice(0, TOP_SUGGESTIONS).map(f => this._normalizeFeat(f));
     } catch (err) {
       console.warn('[FeatStep] Suggestion service error:', err);
       return [];
@@ -289,6 +286,37 @@ export class FeatStep extends ProgressionStepPlugin {
   /**
    * Get icon for category
    */
+  _normalizeFeat(feat) {
+    if (!feat) return feat;
+    const id = feat._id || feat.id || feat.uuid || feat.name;
+    const rawCategory = feat.category || feat.system?.category || feat.system?.featType || 'General';
+    const normalizedCategory = String(rawCategory || 'General').trim();
+    const prereqRaw = feat.prerequisites?.raw ?? feat.system?.prerequisites ?? feat.system?.prerequisite ?? null;
+    const prerequisiteLine = this._formatPrerequisiteLine(prereqRaw);
+    return {
+      ...feat,
+      id,
+      _id: id,
+      category: normalizedCategory,
+      description: feat.description || feat.system?.description?.value || feat.system?.description || feat.system?.benefit || '',
+      prerequisiteLine,
+      isAvailable: true,
+    };
+  }
+
+  _formatPrerequisiteLine(raw) {
+    if (!raw) return 'No prerequisites';
+    if (Array.isArray(raw)) return raw.map(r => typeof r === 'string' ? r : (r?.name || r?.type || JSON.stringify(r))).filter(Boolean).join(', ') || 'No prerequisites';
+    if (typeof raw === 'string') return raw.trim() || 'No prerequisites';
+    if (typeof raw === 'object') {
+      if (raw.raw) return this._formatPrerequisiteLine(raw.raw);
+      if (raw.name) return String(raw.name);
+      if (raw.type && raw.value != null) return `${raw.type}: ${raw.value}`;
+      return Object.entries(raw).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join('/') : String(v)}`).join(', ');
+    }
+    return 'No prerequisites';
+  }
+
   _getCategoryIcon(category) {
     const iconMap = {
       'Combat': 'fa-sword',
@@ -306,10 +334,12 @@ export class FeatStep extends ProgressionStepPlugin {
 
 
   _getFeatCategory(feat) {
-    return feat?.system?.category || feat?.system?.featType || 'General';
+    return feat?.category || feat?.system?.category || feat?.system?.featType || 'General';
   }
 
   _getFeatDescription(feat) {
+    const direct = feat?.description;
+    if (typeof direct === 'string' && direct.trim()) return direct.trim();
     const raw = feat?.system?.description;
     if (typeof raw === 'string' && raw.trim()) return raw.trim();
     if (raw && typeof raw === 'object' && typeof raw.value === 'string' && raw.value.trim()) return raw.value.trim();
@@ -319,7 +349,7 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _getFeatPrerequisites(feat) {
-    const raw = feat?.system?.prerequisites ?? feat?.system?.prerequisite;
+    const raw = feat?.prerequisites?.raw ?? feat?.system?.prerequisites ?? feat?.system?.prerequisite;
     if (Array.isArray(raw)) {
       return raw.filter(Boolean).map(String).map(s => s.trim()).filter(Boolean);
     }
@@ -350,7 +380,7 @@ export class FeatStep extends ProgressionStepPlugin {
    * Get feat by ID
    */
   _getFeat(featId) {
-    return this._allFeats.find(f => f._id === featId);
+    return this._allFeats.find(f => (f._id === featId || f.id === featId || f.name === featId));
   }
 
   /**
@@ -408,16 +438,16 @@ export class FeatStep extends ProgressionStepPlugin {
         isSuggested: group.isSuggested,
         isExpanded: this._expandedCategories.has(categoryKey),
         feats: featsToShow.map(feat => ({
-          _id: feat._id,
+          _id: feat._id || feat.id,
+          id: feat.id || feat._id,
           name: feat.name,
           category: this._getFeatCategory(feat),
-          prerequisiteLine: this._getPrerequisiteLine(feat),
-          isSuggested: this._suggestedFeats.some(s => s._id === feat._id),
-          isFocused: feat._id === this._focusedFeatId,
-          isSelected: feat._id === this._selectedFeatId,
-          // PHASE 6 UX: Availability status for styling/explanation
-          isAvailable: true, // All feats shown here are available
-          unavailabilityReason: null, // No reason needed for available feats
+          prerequisiteLine: feat.prerequisiteLine || this._getPrerequisiteLine(feat),
+          isSuggested: this._suggestedFeats.some(s => (s._id || s.id) === (feat._id || feat.id)),
+          isFocused: (feat._id || feat.id) === this._focusedFeatId,
+          isSelected: (feat._id || feat.id) === this._selectedFeatId,
+          isAvailable: true,
+          unavailabilityReason: null
         })),
         visibleCount: Math.min(featsToShow.length, FEATS_PER_CATEGORY_INITIAL),
         totalCount: featsToShow.length,
@@ -491,8 +521,9 @@ export class FeatStep extends ProgressionStepPlugin {
       return this.renderDetailsPanelEmptyState();
     }
 
-    const isSuggested = this._suggestedFeats.some(s => s._id === feat._id);
-    const isSelected = feat._id === this._selectedFeatId;
+    const featId = feat._id || feat.id;
+    const isSuggested = this._suggestedFeats.some(s => (s._id || s.id) === featId);
+    const isSelected = featId === this._selectedFeatId;
 
     // Normalize detail panel data for canonical display (no fabrication)
     const normalized = normalizeDetailPanelData(feat, 'feat', {
@@ -508,6 +539,7 @@ export class FeatStep extends ProgressionStepPlugin {
         category: this._getFeatCategory(feat),
         description: this._getFeatDescription(feat),
         prerequisites: this._getFeatPrerequisites(feat),
+        prerequisiteLine: feat.prerequisiteLine || this._getFeatPrerequisites(feat),
         isRepeatable: this._isRepeatable(feat.name),
         // Add normalized fields for enhanced detail rail
         canonicalDescription: normalized.description,
@@ -522,7 +554,7 @@ export class FeatStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onItemFocused(item) {
-    this._focusedFeatId = item?.id || item;
+    this._focusedFeatId = item?._id || item?.id || item;
   }
 
   async onItemCommitted(item, shell) {
@@ -532,10 +564,11 @@ export class FeatStep extends ProgressionStepPlugin {
     if (!feat) return;
 
     // Toggle selection
-    if (this._selectedFeatId === feat._id) {
+    const featId = feat._id || feat.id;
+    if (this._selectedFeatId === featId) {
       this._selectedFeatId = null;
     } else {
-      this._selectedFeatId = feat._id;
+      this._selectedFeatId = featId;
     }
 
     // Update observable build intent (Phase 6 solution)
@@ -554,14 +587,28 @@ export class FeatStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   _filterFeatsBySearch(feats) {
-    if (!this._searchQuery) return feats;
-
-    const q = this._searchQuery.toLowerCase();
-    return feats.filter(feat =>
-      feat.name.toLowerCase().includes(q) ||
-      this._getFeatDescription(feat).toLowerCase().includes(q) ||
-      this._getFeatCategory(feat).toLowerCase().includes(q)
-    );
+    let filtered = feats;
+    if (this._searchQuery) {
+      const q = this._searchQuery.toLowerCase();
+      filtered = filtered.filter(feat =>
+        feat.name.toLowerCase().includes(q) ||
+        this._getFeatDescription(feat).toLowerCase().includes(q) ||
+        this._getFeatCategory(feat).toLowerCase().includes(q)
+      );
+    }
+    const activeFilters = Object.entries(this._filters || {}).filter(([,v]) => !!v).map(([k]) => k);
+    if (activeFilters.length) {
+      filtered = filtered.filter(feat => {
+        const c = String(this._getFeatCategory(feat)).toLowerCase();
+        return activeFilters.some(f => c.includes(f));
+      });
+    }
+    if (this._sortBy === 'alpha') {
+      filtered = [...filtered].sort((a,b)=> String(a.name).localeCompare(String(b.name)));
+    } else if (this._sortBy === 'category') {
+      filtered = [...filtered].sort((a,b)=> String(this._getFeatCategory(a)).localeCompare(String(this._getFeatCategory(b))) || String(a.name).localeCompare(String(b.name)));
+    }
+    return filtered;
   }
 
   // ---------------------------------------------------------------------------
@@ -635,7 +682,19 @@ export class FeatStep extends ProgressionStepPlugin {
   getUtilityBarConfig() {
     return {
       mode: 'rich',
-      controls: ['search', 'show-all-toggle', 'sort'],
+      search: { enabled: true, placeholder: 'Search feats…' },
+      filters: [
+        { id: 'combat', label: 'Combat', defaultOn: false },
+        { id: 'force', label: 'Force', defaultOn: false },
+        { id: 'skill', label: 'Skill', defaultOn: false },
+        { id: 'utility', label: 'Utility', defaultOn: false },
+        { id: 'social', label: 'Social', defaultOn: false },
+        { id: 'species', label: 'Racial', defaultOn: false },
+      ],
+      sorts: [
+        { id: 'alpha', label: 'A–Z' },
+        { id: 'category', label: 'Category' },
+      ],
     };
   }
 

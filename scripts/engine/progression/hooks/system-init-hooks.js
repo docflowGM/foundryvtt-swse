@@ -30,6 +30,7 @@ import { validateMentorIntegration } from "/systems/foundryvtt-swse/scripts/engi
 
 // PHASE 4: Rollout Configuration
 import { RolloutSettings } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/rollout/rollout-settings.js";
+import { initializeClassPrerequisitesCache } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-init.js";
 
 export const SystemInitHooks = {
 
@@ -143,7 +144,13 @@ export const SystemInitHooks = {
                 return;
             }
 
-            
+            // 4. Warm class prerequisite cache so UI and suggestion paths read the same legality layer.
+            SWSELogger.log('  - Initializing class prerequisites cache...');
+            const prereqInit = await initializeClassPrerequisitesCache();
+            if (!prereqInit?.success) {
+                SWSELogger.warn('[System Init] Class prerequisites cache did not fully initialize:', prereqInit?.error || prereqInit);
+            }
+
             // SSOT Talent Ownership Integrity Check
             const orphaned = [];
 

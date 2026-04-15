@@ -106,7 +106,6 @@
   opacity: 1;
   cursor: default;
   pointer-events: none;             /* Prevent accidental clicks */
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-active.svg');
   color: rgba(230, 252, 255, 0.98);
   font-weight: 700;
   filter: drop-shadow(0 0 6px rgba(100, 240, 255, 0.30));
@@ -122,7 +121,6 @@
   opacity: 1;
   cursor: pointer;
   pointer-events: auto;
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-complete.svg');
   color: rgba(180, 255, 230, 0.88);
 }
 
@@ -136,7 +134,6 @@
   opacity: 0.50;
   cursor: not-allowed;
   pointer-events: auto;             /* Keep for aria updates */
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-locked.svg');
   color: rgba(130, 145, 160, 0.55);
 }
 
@@ -151,7 +148,6 @@
   opacity: 1;
   cursor: pointer;
   pointer-events: auto;
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-warning.svg');
   color: rgba(255, 225, 130, 0.90);
 }
 

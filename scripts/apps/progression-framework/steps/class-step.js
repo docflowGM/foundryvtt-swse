@@ -16,6 +16,8 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
+import { evaluateClassEligibility } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-cache.js';
 
 export class ClassStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -37,12 +39,10 @@ export class ClassStep extends ProgressionStepPlugin {
 
     // Suggestions
     this._suggestedClasses = [];
+    this._skillDocs = [];
 
     // Phase 2.5: Track if this is a nonheroic progression
     this._isNonheroicProgression = false;
-
-    // Focus version guard — prevents stale async completion from overwriting newer focus
-    this._focusVersion = 0;
   }
 
   // ---------------------------------------------------------------------------
@@ -64,8 +64,24 @@ export class ClassStep extends ProgressionStepPlugin {
     // Get suggested classes
     await this._getSuggestedClasses(shell.actor, shell);
 
+    try {
+      if (!SkillRegistry.isBuilt) await SkillRegistry.build?.();
+      this._skillDocs = SkillRegistry.list?.() || [];
+    } catch (_err) {
+      this._skillDocs = [];
+    }
+
+    const utilityFilters = shell?.utilityBar?.getFilterState?.() || {};
+    if (utilityFilters.base) this._filters.type = 'base';
+    if (utilityFilters.prestige) this._filters.type = 'prestige';
+    if (utilityFilters.nonheroic) this._filters.heroicType = 'nonheroic';
+    const utilitySearch = shell?.utilityBar?.getSearchQuery?.();
+    if (utilitySearch) this._searchQuery = utilitySearch;
+    const utilitySort = shell?.utilityBar?.getSortValue?.();
+    if (utilitySort) this._sortBy = utilitySort;
+
     // Initial filter
-    this._applyFilters();
+    this._applyFilters(shell);
 
     // Enable Ask Mentor for this step
     shell.mentor.askMentorEnabled = true;
@@ -81,18 +97,26 @@ export class ClassStep extends ProgressionStepPlugin {
 
     const onSearch = e => {
       this._searchQuery = e.detail.query;
-      this._applyFilters();
+      this._applyFilters(shell);
       shell.render();
     };
     const onFilter = e => {
       const { filterId, value } = e.detail;
-      this._filters[filterId] = value;
-      this._applyFilters();
+      if (filterId === 'base' && value) {
+        this._filters.type = 'base';
+      } else if (filterId === 'prestige' && value) {
+        this._filters.type = 'prestige';
+      } else if ((filterId === 'base' || filterId === 'prestige') && !value && this._filters.type === filterId) {
+        this._filters.type = null;
+      } else if (filterId === 'nonheroic') {
+        this._filters.heroicType = value ? 'nonheroic' : null;
+      }
+      this._applyFilters(shell);
       shell.render();
     };
     const onSort = e => {
       this._sortBy = e.detail.sortId;
-      this._applyFilters();
+      this._applyFilters(shell);
       shell.render();
     };
 
@@ -157,23 +181,32 @@ export class ClassStep extends ProgressionStepPlugin {
     const classData = this._allClasses.find(c => c.id === focusedItem.id);
     if (!classData) return this.renderDetailsPanelEmptyState();
 
-    // Normalize detail panel data for canonical display (no fabrication)
     const normalized = normalizeDetailPanelData(classData, 'class');
+    const mentor = getMentorForClass(classData.name);
+    const levelOne = Array.isArray(classData.levelProgression) ? (classData.levelProgression.find(l => Number(l.level) === 1) || classData.levelProgression[0]) : null;
+    const babValue = levelOne?.bab ?? (classData.babProgression === 'fast' ? 1 : 0);
+    const defenses = classData.defenses || {};
+    const classSkills = this._formatSkillNames(classData.classSkills || []);
+    const trainedSkillCount = Number(classData.trainedSkills ?? classData.system?.trainedSkills ?? 0) || 0;
+    const levelOneFeatures = (classData.startingFeatures || levelOne?.features || []).map(f => ({
+      name: typeof f === 'string' ? f : (f?.name || f?.label || ''),
+      type: typeof f === 'string' ? null : (f?.type || null),
+    })).filter(f => f.name);
 
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/class-details.hbs',
       data: {
         class: classData,
-        type: classData.prestige ? 'Prestige' : 'Base',
-        bab: classData.bab ?? '+0',
-        hitDie: classData.hitDie ?? 'd10',
-        defenseBonus: classData.defenseBonus ?? '+0',
-        startingAbilities: (classData.startingAbilities ?? []).map(a => ({ name: a })),
-        trainedSkills: (classData.trainedSkills ?? []).map(s => ({ name: s })),
-        classSkills: (classData.classSkills ?? []).map(s => ({ name: s })),
-        mentorName: classData.mentorName ?? 'Unknown Guide',
+        type: classData.prestigeClass ? 'Prestige' : 'Base',
+        bab: `+${babValue}`,
+        hitDie: `d${classData.hitDie ?? 10}`,
+        defenses: { fortitude: defenses.fortitude ?? 0, reflex: defenses.reflex ?? 0, will: defenses.will ?? 0 },
+        trainedSkillCount,
+        classSkills: classSkills.map(name => ({ name })),
+        mentorName: mentor?.name || classData.mentorName || 'Unknown Mentor',
         fantasy: classData.fantasy ?? classData.description ?? '',
-        // Add normalized fields for enhanced detail rail
+        levelOneFeatures,
+        classTags: [classData.role, classData.source, classData.forceSensitive ? 'Force-Sensitive' : null].filter(Boolean),
         canonicalDescription: normalized.description,
         metadataTags: normalized.metadataTags,
         hasMentorProse: normalized.fallbacks.hasMentorProse,
@@ -181,6 +214,19 @@ export class ClassStep extends ProgressionStepPlugin {
     };
   }
 
+  _formatSkillNames(skillRefs = []) {
+    return (skillRefs || []).map(ref => {
+      if (!ref) return null;
+      const direct = this._skillDocs.find(s => s._id === ref || s.id === ref || s.name === ref);
+      if (direct?.name) return direct.name;
+      const text = String(ref);
+      if (/^[a-f0-9]{16}$/i.test(text)) return `Unknown Skill (${text.slice(0, 6)})`;
+      return text.replace(/[_-]+/g, ' ').replace(/(^|\s)\w/g, m => m.toUpperCase());
+    }).filter(Boolean);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Interaction: Focus vs Commit
   // ---------------------------------------------------------------------------
   // Interaction: Focus vs Commit
   // ---------------------------------------------------------------------------
@@ -189,27 +235,14 @@ export class ClassStep extends ProgressionStepPlugin {
     const entry = this._allClasses.find(c => c.id === id);
     if (!entry) return;
 
-    // Capture focus version before any async work to guard against stale completion
-    const focusVersion = ++this._focusVersion;
-    console.debug(`[SWSE Stale Focus Guard] [Class] Focus version incremented to ${focusVersion} for ${entry.id}`);
-
-    console.debug(`[SWSE Chargen Hydration Debug] [ClassStep] Requesting rerender for class selection | selected: ${entry.name} (${entry.id}) | focusedItem before: ${shell.focusedItem?.id ?? '(null)'}`);
-
     shell.focusedItem = entry;
 
     // Speak class flavor text on focus (but do NOT swap mentor yet)
     const flavorText = entry.fantasy || entry.description || `${entry.name} is a powerful choice.`;
     if (flavorText) {
       await shell.mentorRail.speak(flavorText, 'encouraging');
-
-      // GUARD: Verify this focus is still current before applying any results
-      if (this._focusVersion !== focusVersion) {
-        console.debug(`[SWSE Stale Focus Guard] [Class] Discarding stale mentor speak | was: v${focusVersion}, now: v${this._focusVersion} | class: ${entry.id}`);
-        return;  // Stale focus, don't render or update UI
-      }
     }
 
-    console.debug(`[SWSE Chargen Hydration Debug] [ClassStep] Calling shell.render() | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
     shell.render();
   }
 
@@ -244,15 +277,13 @@ export class ClassStep extends ProgressionStepPlugin {
     this._committedClassId = id;
     this._committedClassName = entry.name;
 
-    // *** MENTOR SWAP HAPPENS HERE, NOT ON FOCUS ***
-    // Switch to class-specific mentor
-    const mentorName = classData.mentorName || entry.name;
-    const mentorGreeting = `Welcome, young ${entry.name}. I am ${mentorName}, and I will guide you through your path.`;
-
-    shell.mentor.currentDialogue = mentorGreeting;
-    shell.mentor.mood = 'encouraging';
-    shell.mentor.mentorId = classData.mentorId || id;  // Store mentor ID for persistence
-    // Note: full mentor swap (history, state, dialogue bank) happens in mentor-rail.js integration
+    const mentor = getMentorForClass(entry.name);
+    if (mentor?.id) {
+      shell.mentorRail?.setMentor?.(mentor.id);
+      shell.mentor.currentDialogue = `Welcome, ${entry.name}. ${mentor.name} will guide your path.`;
+      shell.mentor.mood = 'encouraging';
+      shell.mentor.mentorId = mentor.id;
+    }
 
     shell.focusedItem = null;
     shell.render();
@@ -327,7 +358,7 @@ export class ClassStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    const customGuidance = getStepGuidance(shell.actor, 'class');
+    const customGuidance = getStepGuidance(shell.actor, 'class', shell);
     if (customGuidance) return customGuidance;
 
     // Mode-aware default guidance
@@ -353,7 +384,7 @@ export class ClassStep extends ProgressionStepPlugin {
     this._utilityUnlisteners = [];
   }
 
-  _applyFilters() {
+  _applyFilters(shell = null) {
     let filtered = [...this._allClasses];
 
     // Search by name (case-insensitive substring)
@@ -365,11 +396,14 @@ export class ClassStep extends ProgressionStepPlugin {
     // Type filter (base vs prestige)
     if (this._filters.type) {
       filtered = filtered.filter(c => {
-        if (this._filters.type === 'base') return !c.prestige;
-        if (this._filters.type === 'prestige') return c.prestige;
+        if (this._filters.type === 'base') return c.baseClass !== false;
+        if (this._filters.type === 'prestige') return c.prestigeClass === true || c.baseClass === false;
         return true;
       });
     }
+
+    const pendingData = shell?.buildIntent?.toCharacterData?.() || {};
+    filtered = filtered.filter(c => evaluateClassEligibility({ className: c.name, actor: shell?.actor, pendingData })?.eligible !== false);
 
     // Phase 2.5: Heroic/Nonheroic filter
     if (this._filters.heroicType) {
@@ -409,12 +443,12 @@ export class ClassStep extends ProgressionStepPlugin {
     return {
       id: classData.id,
       name: classData.name,
-      type: classData.prestige ? 'Prestige' : 'Base',
-      bab: classData.bab ?? '+0',
+      type: classData.prestigeClass ? 'Prestige' : 'Base',
+      bab: `+${(Array.isArray(classData.levelProgression) ? ((classData.levelProgression.find(l => Number(l.level) === 1) || classData.levelProgression[0])?.bab ?? 0) : 0)}`,
       hitDie: classData.hitDie ?? 'd10',
-      defenseBonus: classData.defenseBonus ?? '+0',
+      defenseBonus: `${classData.defenses?.fortitude ?? 0}/${classData.defenses?.reflex ?? 0}/${classData.defenses?.will ?? 0}`,
       description: classData.fantasy ?? classData.description ?? '',
-      mentorName: classData.mentorName ?? 'Unknown Guide',
+      mentorName: getMentorForClass(classData.name)?.name ?? classData.mentorName ?? 'Unknown Mentor',
       isSuggested,
       confidenceLevel: confidenceData?.confidenceLevel || null,
       metaChips: [
@@ -458,6 +492,7 @@ export class ClassStep extends ProgressionStepPlugin {
     } catch (err) {
       swseLogger.warn('[ClassStep] Suggestion service error:', err);
       this._suggestedClasses = [];
+    this._skillDocs = [];
     }
   }
 

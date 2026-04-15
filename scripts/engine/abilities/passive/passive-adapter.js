@@ -54,9 +54,11 @@ export class PassiveAdapter {
       this.handleDerivedOverride(actor, ability);
     } else if (subType === 'RULE') {
       this.handleRule(actor, ability, ruleCollector);
+    } else if (subType === PASSIVE_SUBTYPES.STATE) {
+      this.handleState(actor, ability);
     } else {
       throw new Error(
-        `PASSIVE ${subType} not supported. Use: MODIFIER, DERIVED_OVERRIDE, RULE`
+        `PASSIVE ${subType} not supported. Use: MODIFIER, DERIVED_OVERRIDE, RULE, STATE`
       );
     }
   }
@@ -402,6 +404,32 @@ export class PassiveAdapter {
         `registering ${meta.rules.length} rules for ${actor.name}`
       );
     }
+  }
+
+  /**
+   * Handle STATE subtype integration.
+   *
+   * PHASE 4: State-dependent predicates (conditional passive modifiers)
+   *   - Validated in PassiveContractValidator
+   *   - Currently a stub; full implementation deferred to Phase 5+
+   *
+   * @param {Object} actor - The actor document
+   * @param {Object} ability - The ability item
+   */
+  static handleState(actor, ability) {
+    // PHASE 4: Stub implementation - validate structure only
+    const meta = ability.system.abilityMeta;
+    if (!meta?.modifiers || !Array.isArray(meta.modifiers)) {
+      throw new Error(
+        `PASSIVE STATE ${ability.name} missing or invalid modifiers array`
+      );
+    }
+
+    // Future phases: integrate with ConditionEvaluator and state tracking
+    swseLogger.debug(
+      `[PassiveAdapter] STATE ${ability.name} ` +
+      `registered for ${actor.name} (${meta.modifiers.length} state predicates)`
+    );
   }
 
   // PHASE 4: Deferred subtypes

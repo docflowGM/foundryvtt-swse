@@ -245,7 +245,7 @@ function verifyListenerCleanup(element, sheetName, signal) {
   if (signal.aborted) {
     console.log(`[SWSE Sheet] ${sheetName} listeners have been cleaned up (signal aborted)`);
   } else {
-    console.log(`[SWSE Sheet] ${sheetName} listeners are active; will be cleaned on next render via AbortController`);
+    // console.log(`[SWSE Sheet] ${sheetName} listeners are active; will be cleaned on next render via AbortController`);
   }
 
   // Note: Actual listener count requires browser internal APIs. Rely on AbortController
@@ -419,7 +419,7 @@ export class SWSEV2CharacterSheet extends
     const root = this.element;
 
     if (!root || !(root instanceof HTMLElement)) {
-      console.error('[LIFECYCLE] _onRender: No valid root element found');
+      // console.error('[LIFECYCLE] _onRender: No valid root element found');
       return;
     }
 
@@ -458,23 +458,23 @@ export class SWSEV2CharacterSheet extends
 
     // ═══ AUTO-DIAGNOSTICS: Run detailed analysis on every open ═══
     setTimeout(() => {
-      console.log('[SWSE SheetDiag] ════════════════════════════════════');
-      console.log('[SWSE SheetDiag] AUTO-RUNNING CHARACTER SHEET DIAGNOSTICS');
-      console.log('[SWSE SheetDiag] ════════════════════════════════════');
+      // console.log('[SWSE SheetDiag] ════════════════════════════════════');
+      // console.log('[SWSE SheetDiag] AUTO-RUNNING CHARACTER SHEET DIAGNOSTICS');
+      // console.log('[SWSE SheetDiag] ════════════════════════════════════');
       characterSheetDiagnostics.inspectHeightChain(this);
       characterSheetDiagnostics.listOverflowingElements(this);
       characterSheetDiagnostics.inspectAppState(this);
-      console.log('[SWSE SheetDiag] ════════════════════════════════════');
+      // console.log('[SWSE SheetDiag] ════════════════════════════════════');
 
       // ═══ CONTRACT ENFORCEMENT: Validate architecture compliance ═══
-      console.log('[CHARACTER SHEET CONTRACT] RUNNING ENFORCEMENT VALIDATION');
+      // console.log('[CHARACTER SHEET CONTRACT] RUNNING ENFORCEMENT VALIDATION');
       CharacterSheetContractEnforcer.validateAndReport(this.element);
 
       // ═══ DEBUG: Print exact violation details for fixing ═══
-      console.log('\n');
-      console.log('╔════════════════════════════════════════════════════════════════╗');
-      console.log('║          EXACT VIOLATIONS FOR DEBUGGING AND FIXING             ║');
-      console.log('╚════════════════════════════════════════════════════════════════╝');
+      // console.log('\n');
+      // console.log('╔════════════════════════════════════════════════════════════════╗');
+      // console.log('║          EXACT VIOLATIONS FOR DEBUGGING AND FIXING             ║');
+      // console.log('╚════════════════════════════════════════════════════════════════╝');
       CharacterSheetContractEnforcer.debugScrollOwners(this.element);
       CharacterSheetContractEnforcer.debugIllegalPanelScrollers(this.element);
       CharacterSheetContractEnforcer.debugWindowContentMinHeight(this.element);
@@ -1175,7 +1175,7 @@ const forcePoints = [];
           this.panelDiagnostics.recordPanelBuild(panelName, duration);
           this.visibilityManager.markPanelBuilt(panelName);
         } catch (err) {
-          console.error(`[PANEL BUILD ERROR] ${panelName}:`, err);
+          // console.error(`[PANEL BUILD ERROR] ${panelName}:`, err);
           this.panelDiagnostics.recordError(panelName, err.message);
           // Provide empty fallback to prevent template errors
           panelContexts[panelName] = {};
@@ -1405,7 +1405,7 @@ const forcePoints = [];
             return;
           }
         } catch (err) {
-          console.error('[HP-INPUT] Error updating HP:', err);
+          // console.error('[HP-INPUT] Error updating HP:', err);
           ui.notifications.error(`Failed to update HP: ${err.message}`);
         }
       }, { signal });
@@ -1454,34 +1454,34 @@ const forcePoints = [];
       // });
 
       const submitHandler = async (ev) => {
-        console.log('[PERSISTENCE] ─── SUBMIT EVENT FIRED ───');
-        console.log('[PERSISTENCE] Event target:', ev.target.tagName, ev.target.className);
-        console.log('[PERSISTENCE] defaultPrevented BEFORE:', ev.defaultPrevented);
+        // console.log('[PERSISTENCE] ─── SUBMIT EVENT FIRED ───');
+        // console.log('[PERSISTENCE] Event target:', ev.target.tagName, ev.target.className);
+        // console.log('[PERSISTENCE] defaultPrevented BEFORE:', ev.defaultPrevented);
 
         ev.preventDefault();
         ev.stopPropagation();
 
-        console.log('[PERSISTENCE] defaultPrevented AFTER:', ev.defaultPrevented);
-        console.log('[PERSISTENCE] Calling _onSubmitForm now');
+        // console.log('[PERSISTENCE] defaultPrevented AFTER:', ev.defaultPrevented);
+        // console.log('[PERSISTENCE] Calling _onSubmitForm now');
 
         // Route to our update handler
         try {
           await this._onSubmitForm({ target: form, preventDefault: () => {} });
-          console.log('[PERSISTENCE] _onSubmitForm completed successfully');
+          // console.log('[PERSISTENCE] _onSubmitForm completed successfully');
         } catch (err) {
-          console.error('[PERSISTENCE] _onSubmitForm threw error:', err);
+          // console.error('[PERSISTENCE] _onSubmitForm threw error:', err);
         }
       };
 
       form.addEventListener("submit", submitHandler, { signal, capture: false });
 
-      console.log('[LIFECYCLE] Submit listener attached successfully');
+      // console.log('[LIFECYCLE] Submit listener attached successfully');
       console.log('[LIFECYCLE] Will listener survive? Checking signal status:', {
         signalAborted: signal?.aborted ?? 'N/A'
       });
     } else {
-      console.error('[LIFECYCLE] ❌ CRITICAL: Could not find form element to attach submit listener');
-      console.error('[LIFECYCLE] This means NO submit interception will happen');
+      // console.error('[LIFECYCLE] ❌ CRITICAL: Could not find form element to attach submit listener');
+      // console.error('[LIFECYCLE] This means NO submit interception will happen');
     }
 
     // DELEGATED: Help Mode Cycling (OFF → CORE → STANDARD → ADVANCED → OFF)
@@ -1513,7 +1513,7 @@ const forcePoints = [];
       const { TooltipRegistry } = await import("/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js");
       TooltipRegistry.setHelpMode(HelpModeManager.isActive(this._helpLevel));
 
-      console.log(`[HELP-MODE] Cycled to: ${this._helpLevel}`);
+      // console.log(`[HELP-MODE] Cycled to: ${this._helpLevel}`);
     }, { signal });
     // DELEGATED: Tab Switching - Route through shared UI state manager
     // This prevents "blank body" states where DOM classes and remembered state diverge.
@@ -1527,7 +1527,7 @@ const forcePoints = [];
       ev.preventDefault();
       ev.stopPropagation();
 
-      console.log(`[TAB SWITCH] Switching to tab: ${tabName}`);
+      // console.log(`[TAB SWITCH] Switching to tab: ${tabName}`);
 
       // PHASE 2: UIStateManager is the sole owner of tab activation.
       // Visibility manager tracks which panels should be built for this tab.
@@ -1544,39 +1544,39 @@ const forcePoints = [];
       const button = ev.target.closest("[data-action='toggle-abilities']");
       if (!button) return;
 
-      console.log("✓ [DEBUG] Abilities toggle click fired");
+      // console.log("✓ [DEBUG] Abilities toggle click fired");
       ev.preventDefault();
 
       const panel = button.closest(".abilities-panel");
-      console.log("[DEBUG] Panel found:", !!panel, "Classes:", panel?.className);
+      // console.log("[DEBUG] Panel found:", !!panel, "Classes:", panel?.className);
       if (!panel) {
         console.warn("[ERROR] Could not find .abilities-panel parent");
         return;
       }
 
-      console.log("[DEBUG] Classes BEFORE toggle:", panel.className);
+      // console.log("[DEBUG] Classes BEFORE toggle:", panel.className);
       const isExpanded = panel.classList.toggle("abilities-expanded");
-      console.log("[DEBUG] Classes AFTER toggle:", panel.className, "| isExpanded:", isExpanded);
+      // console.log("[DEBUG] Classes AFTER toggle:", panel.className, "| isExpanded:", isExpanded);
 
       // Show/hide expanded views for each ability
       const rows = panel.querySelectorAll(".ability-row");
-      console.log("[DEBUG] Found", rows.length, "ability rows");
+      // console.log("[DEBUG] Found", rows.length, "ability rows");
       rows.forEach((row, idx) => {
         const collapsed = row.querySelector(".ability-collapsed");
         const expanded = row.querySelector(".ability-expanded");
         if (collapsed) {
           collapsed.style.display = isExpanded ? "none" : "flex";
-          console.log(`[DEBUG] Row ${idx} collapsed display:`, collapsed.style.display);
+          // console.log(`[DEBUG] Row ${idx} collapsed display:`, collapsed.style.display);
         }
         if (expanded) {
           expanded.style.display = isExpanded ? "flex" : "none";
-          console.log(`[DEBUG] Row ${idx} expanded display:`, expanded.style.display);
+          // console.log(`[DEBUG] Row ${idx} expanded display:`, expanded.style.display);
         }
       });
 
       // Update button text
       button.textContent = isExpanded ? "Collapse" : "Expand";
-      console.log("[DEBUG] Button text updated to:", button.textContent);
+      // console.log("[DEBUG] Button text updated to:", button.textContent);
     }, { signal });
 
 // DELEGATED: Toggle Defenses Panel - Show/Hide Expanded Views
@@ -1584,39 +1584,39 @@ const forcePoints = [];
       const button = ev.target.closest("[data-action='toggle-defenses']");
       if (!button) return;
 
-      console.log("✓ [DEBUG] Defenses toggle click fired");
+      // console.log("✓ [DEBUG] Defenses toggle click fired");
       ev.preventDefault();
 
       const panel = button.closest(".defenses-panel");
-      console.log("[DEBUG] Panel found:", !!panel, "Classes:", panel?.className);
+      // console.log("[DEBUG] Panel found:", !!panel, "Classes:", panel?.className);
       if (!panel) {
         console.warn("[ERROR] Could not find .defenses-panel parent");
         return;
       }
 
-      console.log("[DEBUG] Classes BEFORE toggle:", panel.className);
+      // console.log("[DEBUG] Classes BEFORE toggle:", panel.className);
       const isExpanded = panel.classList.toggle("defenses-expanded");
-      console.log("[DEBUG] Classes AFTER toggle:", panel.className, "| isExpanded:", isExpanded);
+      // console.log("[DEBUG] Classes AFTER toggle:", panel.className, "| isExpanded:", isExpanded);
 
       // Show/hide expanded views for each defense
       const rows = panel.querySelectorAll(".defense-row");
-      console.log("[DEBUG] Found", rows.length, "defense rows");
+      // console.log("[DEBUG] Found", rows.length, "defense rows");
       rows.forEach((row, idx) => {
         const collapsed = row.querySelector(".defense-collapsed");
         const expanded = row.querySelector(".defense-expanded");
         if (collapsed) {
           collapsed.style.display = isExpanded ? "none" : "flex";
-          console.log(`[DEBUG] Row ${idx} collapsed display:`, collapsed.style.display);
+          // console.log(`[DEBUG] Row ${idx} collapsed display:`, collapsed.style.display);
         }
         if (expanded) {
           expanded.style.display = isExpanded ? "flex" : "none";
-          console.log(`[DEBUG] Row ${idx} expanded display:`, expanded.style.display);
+          // console.log(`[DEBUG] Row ${idx} expanded display:`, expanded.style.display);
         }
       });
 
       // Update button text
       button.textContent = isExpanded ? "Collapse" : "Expand";
-      console.log("[DEBUG] Button text updated to:", button.textContent);
+      // console.log("[DEBUG] Button text updated to:", button.textContent);
     }, { signal });
 
 // DELEGATED: Roll Ability Check (d20 + ability modifier)
@@ -1631,7 +1631,7 @@ const forcePoints = [];
       try {
         await SWSERoll.rollAbility(this.actor, abilityKey);
       } catch (err) {
-        console.error("Ability roll failed:", err);
+        // console.error("Ability roll failed:", err);
         ui?.notifications?.error?.(`Ability roll failed: ${err.message}`);
       }
     }, { signal });
@@ -1647,7 +1647,7 @@ const forcePoints = [];
       try {
         await this._runCanonicalInitiative(mode);
       } catch (err) {
-        console.error("Initiative roll failed:", err);
+        // console.error("Initiative roll failed:", err);
         ui?.notifications?.error?.(`Initiative roll failed: ${err.message}`);
       }
     }, { signal });
@@ -1671,7 +1671,7 @@ const forcePoints = [];
       });
 
       // Find the form via stable selector (template-guaranteed, now a div)
-      console.log('[PERSISTENCE] Resolving form for submission');
+      // console.log('[PERSISTENCE] Resolving form for submission');
       let form = input.closest(".swse-character-sheet-form");
 
       // If not found by closest, query from app root (now a div, not a form)
@@ -1680,18 +1680,18 @@ const forcePoints = [];
         form = appRoot?.querySelector(".swse-character-sheet-form") ?? null;
       }
 
-      console.log('[PERSISTENCE] Form resolution result:', { found: !!form, formTag: form?.tagName, formClass: form?.className });
+      // console.log('[PERSISTENCE] Form resolution result:', { found: !!form, formTag: form?.tagName, formClass: form?.className });
 
       if (form) {
-        console.log('[PERSISTENCE] Form found, queuing debounced _onSubmitForm');
+        // console.log('[PERSISTENCE] Form found, queuing debounced _onSubmitForm');
         try {
           this._debouncedSubmit({ target: form, preventDefault: () => {} });
-          console.log('[PERSISTENCE] Debounced submit queued');
+          // console.log('[PERSISTENCE] Debounced submit queued');
         } catch (err) {
-          console.error('[PERSISTENCE] Debounced submit threw error:', err);
+          // console.error('[PERSISTENCE] Debounced submit threw error:', err);
         }
       } else {
-        console.error("[PERSISTENCE] ❌ Could not find form element to submit");
+        // console.error("[PERSISTENCE] ❌ Could not find form element to submit");
       }
     }, { signal, capture: false });
 
@@ -1715,7 +1715,7 @@ const forcePoints = [];
 
       const form = input.closest(".swse-character-sheet-form");
       if (form) {
-        console.log('[PERSISTENCE] Ability input blur detected, submitting form');
+        // console.log('[PERSISTENCE] Ability input blur detected, submitting form');
         this._debouncedSubmit({ target: form, preventDefault: () => {} });
       }
     }, { signal, capture: true });
@@ -1751,7 +1751,7 @@ const forcePoints = [];
       try {
         await this._runCanonicalSkillCheck(skillKey);
       } catch (err) {
-        console.error("Skill roll failed:", err);
+        // console.error("Skill roll failed:", err);
         ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
       }
     }, { signal, capture: false });
@@ -1781,7 +1781,7 @@ const forcePoints = [];
           useForcePoint: modResult.useForcePoint || false
         });
       } catch (err) {
-        console.error("Skill roll failed:", err);
+        // console.error("Skill roll failed:", err);
         ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
       }
     }, { signal, capture: false });
@@ -1815,7 +1815,7 @@ const forcePoints = [];
           useForcePoint: modResult.useForcePoint || false
         });
       } catch (err) {
-        console.error("Attack roll failed:", err);
+        // console.error("Attack roll failed:", err);
         ui?.notifications?.error?.(`Attack roll failed: ${err.message}`);
       }
     }, { signal, capture: false });
@@ -1847,7 +1847,7 @@ const forcePoints = [];
           useForcePoint: modResult.useForcePoint || false
         });
       } catch (err) {
-        console.error("Damage roll failed:", err);
+        // console.error("Damage roll failed:", err);
         ui?.notifications?.error?.(`Damage roll failed: ${err.message}`);
       }
     }, { signal, capture: false });
@@ -1887,7 +1887,7 @@ const forcePoints = [];
       try {
         await launchProgression(this.actor);
       } catch (err) {
-        console.error('[SHEET] ✗ launchProgression failed:', err);
+        // console.error('[SHEET] ✗ launchProgression failed:', err);
         swseLogger.error('[CharacterSheet] Progression launch failed:', err);
       }
     }, { signal, capture: false });
@@ -1900,7 +1900,7 @@ const forcePoints = [];
       try {
         await launchProgression(this.actor, { currentStep: 'attribute' });
       } catch (err) {
-        console.error('[SHEET] â roll-attributes failed:', err);
+        // console.error('[SHEET] â roll-attributes failed:', err);
         swseLogger.error('[CharacterSheet] roll-attributes failed:', err);
       }
     }, { signal, capture: false });
@@ -1935,7 +1935,7 @@ const forcePoints = [];
       try {
         await launchProgression(this.actor, { currentStep: targetStep });
       } catch (err) {
-        console.error(`[SHEET] ✗ ${action} failed:`, err);
+        // console.error(`[SHEET] ✗ ${action} failed:`, err);
         swseLogger.error(`[CharacterSheet] ${action} failed:`, err);
       }
     }, { signal, capture: false });
@@ -1948,7 +1948,7 @@ const forcePoints = [];
       try {
         await launchFollowerProgression(this.actor);
       } catch (err) {
-        console.error('[SHEET] ✗ launchFollowerProgression failed:', err);
+        // console.error('[SHEET] ✗ launchFollowerProgression failed:', err);
         swseLogger.error('[CharacterSheet] Follower progression launch failed:', err);
       }
     }, { signal, capture: false });
@@ -2267,7 +2267,7 @@ const forcePoints = [];
           // Trigger a re-render to update the action economy indicator
           this.render(false);
         } catch (err) {
-          console.error('Failed to reset turn state:', err);
+          // console.error('Failed to reset turn state:', err);
           ui?.notifications?.error?.('Failed to reset actions');
         }
       }, { signal });
@@ -2421,7 +2421,7 @@ const forcePoints = [];
         try {
           await SWSERoll.rollSkill(this.actor, skillKey);
         } catch (err) {
-          console.error("Skill roll failed:", err);
+          // console.error("Skill roll failed:", err);
           ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
         }
       }, { signal });
@@ -2619,7 +2619,7 @@ const forcePoints = [];
             ui?.notifications?.info?.(`${power.name} ${isRecovery ? "recovered" : "used"}`);
           }
         } catch (err) {
-          console.error("Force activation failed:", err);
+          // console.error("Force activation failed:", err);
           ui?.notifications?.error?.(`Force activation failed: ${err.message}`);
         }
       }, { signal });
@@ -2657,7 +2657,7 @@ const forcePoints = [];
               ui?.notifications?.warn?.(`No customization available for ${item.type}`);
           }
         } catch (err) {
-          console.error("Customization modal failed:", err);
+          // console.error("Customization modal failed:", err);
           ui?.notifications?.error?.("Failed to open customization modal");
         }
       }, { signal });
@@ -2751,7 +2751,7 @@ const forcePoints = [];
 
         ui.notifications.info(`Created new ${itemType}`);
       } catch (err) {
-        console.error(`[GEAR] Failed to create ${itemType}:`, err);
+        // console.error(`[GEAR] Failed to create ${itemType}:`, err);
         ui.notifications.error(`Failed to create item: ${err.message}`);
       }
     });
@@ -2860,7 +2860,7 @@ const forcePoints = [];
         doc.sheet.render(true);
       }
     } catch (err) {
-      console.error(`Failed to create ${this._currentItemType}:`, err);
+      // console.error(`Failed to create ${this._currentItemType}:`, err);
       ui?.notifications?.error?.(`Failed to create ${this._currentItemType}: ${err.message}`);
     }
   }
@@ -2908,7 +2908,7 @@ const forcePoints = [];
           try {
             await ActorEngine.apply(this.actor, plan);
           } catch (err) {
-            console.error("Failed to add language:", err);
+            // console.error("Failed to add language:", err);
             ui?.notifications?.error?.(`Failed to add language: ${err.message}`);
           }
         }
@@ -2932,7 +2932,7 @@ const forcePoints = [];
         try {
           await ActorEngine.apply(this.actor, plan);
         } catch (err) {
-          console.error("Failed to remove language:", err);
+          // console.error("Failed to remove language:", err);
           ui?.notifications?.error?.(`Failed to remove language: ${err.message}`);
         }
       }, { signal });
@@ -2946,7 +2946,7 @@ const forcePoints = [];
           await ActorEngine.resetSecondWind(this.actor);
           ui?.notifications?.info?.("Second Wind restored!");
         } catch (err) {
-          console.error("Rest failed:", err);
+          // console.error("Rest failed:", err);
           ui?.notifications?.error?.(`Rest failed: ${err.message}`);
         }
       }, { signal });
@@ -2964,7 +2964,7 @@ const forcePoints = [];
           }
           ui?.notifications?.info?.(`Regained ${result?.healed ?? 0} HP!`);
         } catch (err) {
-          console.error("Second Wind use failed:", err);
+          // console.error("Second Wind use failed:", err);
           ui?.notifications?.error?.(`Second Wind use failed: ${err.message}`);
         }
       }, { signal });
@@ -2988,7 +2988,7 @@ const forcePoints = [];
           await ActorEngine.apply(this.actor, plan);
           ui?.notifications?.info?.("Force Point restored!");
         } catch (err) {
-          console.error("Force Point restore failed:", err);
+          // console.error("Force Point restore failed:", err);
           ui?.notifications?.error?.(`Force Point restore failed: ${err.message}`);
         }
       }, { signal });
@@ -3011,7 +3011,7 @@ const forcePoints = [];
           await ActorEngine.apply(this.actor, plan);
           ui?.notifications?.info?.("Force Point spent!");
         } catch (err) {
-          console.error("Force Point spend failed:", err);
+          // console.error("Force Point spend failed:", err);
           ui?.notifications?.error?.(`Force Point spend failed: ${err.message}`);
         }
       }, { signal });
@@ -3036,7 +3036,7 @@ const forcePoints = [];
         await ActorEngine.apply(this.actor, plan);
         ui?.notifications?.info?.("Condition updated!");
       } catch (err) {
-        console.error("Condition update failed:", err);
+        // console.error("Condition update failed:", err);
         ui?.notifications?.error?.(`Condition update failed: ${err.message}`);
       }
     }, { signal, capture: false });
@@ -3059,7 +3059,7 @@ const forcePoints = [];
           try {
             await ActorEngine.apply(this.actor, plan);
           } catch (err) {
-            console.error("Failed to set DSP:", err);
+            // console.error("Failed to set DSP:", err);
             ui?.notifications?.error?.(`Failed to set DSP: ${err.message}`);
           }
         }
@@ -3091,7 +3091,7 @@ const forcePoints = [];
             sourceLabel
           });
         } catch (err) {
-          console.error("Failed to use extra skill:", err);
+          // console.error("Failed to use extra skill:", err);
           ui?.notifications?.error?.(`Failed to use extra skill: ${err.message}`);
         }
       }, { signal });
@@ -3697,7 +3697,7 @@ const forcePoints = [];
         this._pulseTab(result.uiTargetTab);
       }
     } catch (err) {
-      console.error('Drop application failed:', err);
+      // console.error('Drop application failed:', err);
       ui?.notifications?.error?.(`Failed to add dropped item: ${err.message}`);
     }
   }
@@ -3735,7 +3735,7 @@ const forcePoints = [];
     const alreadyLinked = relationships.some(r => r.uuid === actor.uuid);
 
     if (alreadyLinked) {
-      console.debug(`Already linked: ${actor.name}`);
+      // console.debug(`Already linked: ${actor.name}`);
       return;
     }
 
@@ -3755,7 +3755,7 @@ const forcePoints = [];
     try {
       await ActorEngine.apply(this.actor, mutationPlan);
     } catch (err) {
-      console.error('Failed to add actor relationship:', err);
+      // console.error('Failed to add actor relationship:', err);
       ui?.notifications?.error?.(`Failed to add relationship: ${err.message}`);
     }
   }
@@ -3781,7 +3781,7 @@ const forcePoints = [];
       await ActorEngine.apply(this.actor, mutationPlan);
       ui?.notifications?.info?.(`${this.actor.name} adopted stat block from ${sourceActor.name}`);
     } catch (err) {
-      console.error('Adoption failed:', err);
+      // console.error('Adoption failed:', err);
       ui?.notifications?.error?.(`Adoption failed: ${err.message}`);
     }
   }
@@ -3824,7 +3824,7 @@ const forcePoints = [];
       await ActorEngine.apply(this.actor, plan);
       ui?.notifications?.info?.('Build revalidated — prerequisites now enforced');
     } catch (err) {
-      console.error('Build revalidation failed:', err);
+      // console.error('Build revalidation failed:', err);
       ui?.notifications?.error?.(`Build revalidation failed: ${err.message}`);
     }
   }
@@ -3870,8 +3870,8 @@ const forcePoints = [];
   // ============================================================
 
   async _onSubmitForm_OLD(event) {
-    console.log('[PERSISTENCE] ════════════════════════════════════════');
-    console.log('[PERSISTENCE] _onSubmitForm CALLED');
+    // console.log('[PERSISTENCE] ════════════════════════════════════════');
+    // console.log('[PERSISTENCE] _onSubmitForm CALLED');
     console.log('[PERSISTENCE] Event:', {
       type: event?.type,
       target: event?.target?.tagName,
@@ -3880,7 +3880,7 @@ const forcePoints = [];
 
     try {
       event.preventDefault();
-      console.log('[PERSISTENCE] Prevented default');
+      // console.log('[PERSISTENCE] Prevented default');
     } catch (err) {
       console.warn('[PERSISTENCE] Could not preventDefault:', err);
     }
@@ -3895,13 +3895,13 @@ const forcePoints = [];
     });
 
     // DIAGNOSTIC: Log form data collection
-    console.log('[PERSISTENCE] Collecting FormData from form');
+    // console.log('[PERSISTENCE] Collecting FormData from form');
     let formData;
     try {
       formData = new FormData(form);
-      console.log('[PERSISTENCE] FormData created successfully');
+      // console.log('[PERSISTENCE] FormData created successfully');
     } catch (err) {
-      console.error('[PERSISTENCE] Failed to create FormData:', err);
+      // console.error('[PERSISTENCE] Failed to create FormData:', err);
       return;
     }
 
@@ -3926,10 +3926,10 @@ const forcePoints = [];
 
     const expanded = foundry.utils.expandObject(coercedData);
 
-    console.log('[PERSISTENCE] Expanded form data:', expanded);
+    // console.log('[PERSISTENCE] Expanded form data:', expanded);
 
     const sanitized = this._sanitizeExpandedFormData(expanded);
-    console.log('[PERSISTENCE] Sanitized form data:', sanitized);
+    // console.log('[PERSISTENCE] Sanitized form data:', sanitized);
 
     // CRITICAL: Filter out SSOT-protected fields that cannot be updated directly
     // These fields are enforced by ActorEngine governance and must be recalculated
@@ -3944,7 +3944,7 @@ const forcePoints = [];
       }
     }
     if (removedKeys.length > 0) {
-      console.log('[PERSISTENCE] Keys removed by filter:', removedKeys);
+      // console.log('[PERSISTENCE] Keys removed by filter:', removedKeys);
     }
 
     if (!filtered || Object.keys(filtered).length === 0) {
@@ -3990,24 +3990,24 @@ const forcePoints = [];
 
       await ActorEngine.updateActor(freshActor, filtered);
 
-      console.log('[PERSISTENCE] ActorEngine.updateActor completed successfully');
+      // console.log('[PERSISTENCE] ActorEngine.updateActor completed successfully');
 
       // CRITICAL: If level was changed, trigger full recalculation of derived data
       // This ensures halfLevel, defenses, and all derived stats are recalculated
       if (filtered['system.level'] !== undefined) {
-        console.log('[PERSISTENCE] Level changed detected, triggering full actor recalculation');
+        // console.log('[PERSISTENCE] Level changed detected, triggering full actor recalculation');
         try {
           await ActorEngine.recalcAll(freshActor);
-          console.log('[PERSISTENCE] Full actor recalculation completed');
+          // console.log('[PERSISTENCE] Full actor recalculation completed');
           // Re-render sheet to show updated derived values
           await this.render(false);
-          console.log('[PERSISTENCE] Sheet re-rendered with updated derived data');
+          // console.log('[PERSISTENCE] Sheet re-rendered with updated derived data');
         } catch (recalcErr) {
-          console.error('[PERSISTENCE] Recalculation failed:', recalcErr);
+          // console.error('[PERSISTENCE] Recalculation failed:', recalcErr);
         }
       }
     } catch (err) {
-      console.error('[PERSISTENCE] Sheet submission failed:', err);
+      // console.error('[PERSISTENCE] Sheet submission failed:', err);
       ui.notifications.error(`Failed to update actor: ${err.message}`);
     }
   }

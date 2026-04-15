@@ -1,5 +1,5 @@
-<div class="prog-background-details">
 
+<div class="prog-background-details">
   <div class="prog-background-details__header">
     <h2 class="prog-background-details__name">{{background.name}}</h2>
     <span class="prog-chip">{{category}}</span>
@@ -11,57 +11,51 @@
     <p class="prog-background-details__description prog-background-details__description--unavailable">No description available.</p>
   {{/if}}
 
-  {{!-- What You Gain --}}
   <div class="prog-background-details__section">
     <h4 class="prog-background-details__section-title">What This Grants</h4>
-
-    {{#if trainedSkills.length}}
+    {{#if mechanicalBonuses.length}}
       <div class="prog-background-details__subsection">
-        <h5 class="prog-background-details__subsection-title">Trained Skills</h5>
+        <h5 class="prog-background-details__subsection-title">Mechanical Benefits</h5>
+        <ul class="prog-background-details__bonus-list">
+          {{#each mechanicalBonuses}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+      </div>
+    {{/if}}
+    {{#if relevantSkills.length}}
+      <div class="prog-background-details__subsection">
+        <h5 class="prog-background-details__subsection-title">Relevant Skills</h5>
         <div class="prog-background-details__skills">
-          {{#each trainedSkills}}
+          {{#each relevantSkills}}
             <span class="prog-chip">{{this}}</span>
           {{/each}}
         </div>
       </div>
     {{/if}}
-
     {{#if bonusLanguage}}
       <div class="prog-background-details__subsection">
         <h5 class="prog-background-details__subsection-title">Bonus Language</h5>
         <p class="prog-background-details__bonus-lang">{{bonusLanguage}}</p>
       </div>
     {{/if}}
-
-    {{#unless (or trainedSkills.length bonusLanguage)}}
-      <p class="prog-background-details__no-grants">
-        This background grants no mechanical bonuses, but shapes your character story.
-      </p>
+    {{#unless (or mechanicalBonuses.length bonusLanguage relevantSkills.length)}}
+      <p class="prog-background-details__no-grants">No mechanical grants were detected for this background.</p>
     {{/unless}}
   </div>
 
-  {{!-- Selection Status --}}
-  <div class="prog-background-details__status
-              {{#if isCommitted}}prog-background-details__status--committed{{/if}}">
+  <div class="prog-background-details__status {{#if isCommitted}}prog-background-details__status--committed{{/if}}">
     <p class="prog-background-details__status-text">{{selectionStatus}}</p>
   </div>
 
-  {{!-- Source --}}
   {{#if source}}
-    <p class="prog-background-details__source">
-      <small>Source: {{source}}</small>
-    </p>
+    <p class="prog-background-details__source"><small>Source: {{source}}</small></p>
   {{/if}}
 
-  {{!-- Actions --}}
   <div class="prog-background-details__actions">
-    <button class="prog-btn prog-btn--primary"
-            data-action="commit-item"
-            data-item-id="{{background.id}}"
-            type="button">
+    <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{background.id}}" type="button">
       <i class="fas {{#if isCommitted}}fa-times{{else}}fa-check{{/if}}"></i>
       {{buttonLabel}}
     </button>
   </div>
-
-</div>{{!-- /background-details --}}
+</div>

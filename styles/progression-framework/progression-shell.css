@@ -70,9 +70,7 @@
      Radial glow gradient overlays on top to reinforce holo tint.
      Background-color is the dark interior fallback behind the SVG. */
   background-image:
-    radial-gradient(circle at 50% 0%, rgba(0, 180, 255, 0.09), transparent 38%),
-    url('../../assets/ui/chargen/frame-shell.svg');
-  background-size:
+    radial-gradient(circle at 50% 0%, rgba(0, 180, 255, 0.09), transparent 38%),  background-size:
     100% 100%,
     100% 100%;
   background-repeat: no-repeat;
@@ -151,9 +149,7 @@
      left-to-right connector arrow, bottom nameplate bar in portrait zone.
      CSS overlay tint reinforces the blue holo atmosphere on top. */
   background-image:
-    linear-gradient(90deg, rgba(0, 180, 255, 0.04), rgba(0, 120, 200, 0.02)),
-    url('../../assets/ui/chargen/mentor-combined-panel.svg');
-  background-size: 100% 100%, 100% 100%;
+    linear-gradient(90deg, rgba(0, 180, 255, 0.04), rgba(0, 120, 200, 0.02)),  background-size: 100% 100%, 100% 100%;
   background-repeat: no-repeat;
   background-color: #091827;     /* matches SVG fill #091827 */
 
@@ -342,9 +338,7 @@
      diamond center element at midpoint, side accent lines.
      Same construction language as footer-bar.svg — consistent device framing. */
   background-image:
-    linear-gradient(180deg, rgba(8, 20, 34, 0.50), rgba(4, 12, 22, 0.60)),
-    url('../../assets/ui/chargen/header-bar.svg');
-  background-size:   100% 100%, 100% 100%;
+    linear-gradient(180deg, rgba(8, 20, 34, 0.50), rgba(4, 12, 22, 0.60)),  background-size:   100% 100%, 100% 100%;
   background-repeat: no-repeat;
   background-color:  #050b13;
 
@@ -393,7 +387,6 @@
   flex-direction: column;
 
   /* Tall rail panel (dedicated proportions, not stretched) */
-  background-image:  url('../../assets/ui/chargen/panel-large.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  #040b13;   /* matches SVG inner fill #040B13 */
@@ -449,9 +442,7 @@
      corner accent marks, and inner viewport frame. Provides real panel geometry.
      CSS gradient overlay adds holo tint on top of SVG interior. */
   background-image:
-    linear-gradient(180deg, rgba(0, 180, 255, 0.03), rgba(0, 120, 200, 0.02)),
-    url('../../assets/ui/chargen/panel-large.svg');
-  background-size:   100% 100%, 100% 100%;
+    linear-gradient(180deg, rgba(0, 180, 255, 0.03), rgba(0, 120, 200, 0.02)),  background-size:   100% 100%, 100% 100%;
   background-repeat: no-repeat;
   background-color:  #040b13;   /* matches SVG inner fill */
 
@@ -484,7 +475,6 @@
   flex-direction: column;
 
   /* Tall rail panel (dedicated proportions, not stretched) */
-  background-image:  url('../../assets/ui/chargen/panel-large.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  #040b13;   /* matches SVG inner fill */
@@ -530,9 +520,7 @@
      diamond center element, side accent lines.
      CSS gradient underlay tints the SVG dark zones blue-navy. */
   background-image:
-    linear-gradient(180deg, rgba(8, 20, 34, 0.55), rgba(4, 12, 22, 0.65)),
-    url('../../assets/ui/chargen/footer-bar.svg');
-  background-size:   100% 100%, 100% 100%;
+    linear-gradient(180deg, rgba(8, 20, 34, 0.55), rgba(4, 12, 22, 0.65)),  background-size:   100% 100%, 100% 100%;
   background-repeat: no-repeat;
   background-color:  #050b13;    /* matches SVG inner fill */
 

@@ -150,7 +150,6 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image:  url('../../../assets/ui/chargen/skill-table.svg');
   background-size:   100% auto;
   background-position: center 20px;
   background-repeat: no-repeat;

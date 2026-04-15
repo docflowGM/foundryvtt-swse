@@ -65,18 +65,16 @@ export const STEP_TO_CHOICE_TYPE = {
  * @param {Actor} actor - The actor being created
  * @returns {Object|null} The mentor data object
  */
-export function getStepMentorObject(actor) {
-  if (!actor) return MENTORS.Scoundrel || Object.values(MENTORS)[0];
+export function getStepMentorObject(actor, shell = null) {
+  const committedClass = shell?.committedSelections?.get?.('class');
+  const focusedClass = shell?.focusedItem;
+  const className = committedClass?.name || committedClass?.className || focusedClass?.name || actor?.system?.class?.primary?.name || actor?.system?.class?.primary || null;
 
-  // Try to get class from actor if already selected
-  const classData = actor.system?.class?.primary;
-  const className = classData?.name || classData;
-
-  if (className && MENTORS[className]) {
-    return MENTORS[className];
+  if (className) {
+    const mentor = getMentorForClass(className);
+    if (mentor) return mentor;
   }
 
-  // Default to Scoundrel
   return MENTORS.Scoundrel || Object.values(MENTORS)[0];
 }
 
@@ -87,8 +85,8 @@ export function getStepMentorObject(actor) {
  * @param {string} stepId - The step ID
  * @returns {string} The guidance text
  */
-export function getStepGuidance(actor, stepId) {
-  const mentor = getStepMentorObject(actor);
+export function getStepGuidance(actor, stepId, shell = null) {
+  const mentor = getStepMentorObject(actor, shell);
   const choiceType = STEP_TO_CHOICE_TYPE[stepId];
 
   if (!mentor) return 'Make your choice wisely.';
@@ -107,8 +105,8 @@ export function getStepGuidance(actor, stepId) {
  * @returns {Promise<void>}
  */
 export async function handleAskMentor(actor, stepId, shell) {
-  const mentor = getStepMentorObject(actor);
-  const guidance = getStepGuidance(actor, stepId);
+  const mentor = getStepMentorObject(actor, shell);
+  const guidance = getStepGuidance(actor, stepId, shell);
 
   if (guidance && shell?.mentorRail) {
     await shell.mentorRail.speak(guidance, 'encouraging');
@@ -124,8 +122,8 @@ export async function handleAskMentor(actor, stepId, shell) {
  * @param {string} fallback - Fallback message if no guidance found
  * @returns {string} The context message
  */
-export function getStepMentorContext(actor, stepId, fallback = '') {
-  const guidance = getStepGuidance(actor, stepId);
+export function getStepMentorContext(actor, stepId, fallback = '', shell = null) {
+  const guidance = getStepGuidance(actor, stepId, shell);
   return guidance || fallback || 'Make your choice wisely.';
 }
 
@@ -151,7 +149,7 @@ export async function handleAskMentorWithSuggestions(actor, stepId, suggestions,
     if (!shell?.mentorRail) return;
 
     // Get mentor ID from actor/class
-    const mentor = getStepMentorObject(actor);
+    const mentor = getStepMentorObject(actor, shell);
     if (!mentor) return;
 
     // Get mentor ID from the mentor object (handle both name and id)
@@ -182,7 +180,7 @@ export async function handleAskMentorWithSuggestions(actor, stepId, suggestions,
       );
     } else {
       // Fallback to standard guidance if no advisory generated
-      const guidance = getStepGuidance(actor, stepId);
+      const guidance = getStepGuidance(actor, stepId, shell);
       if (guidance) {
         await shell.mentorRail.speak(guidance, 'encouraging');
       }
@@ -190,7 +188,7 @@ export async function handleAskMentorWithSuggestions(actor, stepId, suggestions,
   } catch (err) {
     swseLogger.warn('[MentorStepIntegration] Error in handleAskMentorWithSuggestions:', err);
     // Fallback to standard guidance on error
-    const guidance = getStepGuidance(actor, stepId);
+    const guidance = getStepGuidance(actor, stepId, shell);
     if (guidance && shell?.mentorRail) {
       await shell.mentorRail.speak(guidance, 'encouraging');
     }

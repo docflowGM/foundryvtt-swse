@@ -64,17 +64,29 @@ export class ChargenPersistence {
     if (!checkpoint) return false;
 
     try {
-      // Restore buildIntent state
-      if (shell.buildIntent && checkpoint.buildIntent) {
-        for (const [key, value] of Object.entries(checkpoint.buildIntent)) {
+      const restoredSelections = checkpoint.draftSelections || checkpoint.buildIntent || {};
+
+      // Restore canonical progression session state first.
+      if (shell.progressionSession && restoredSelections && typeof restoredSelections === 'object') {
+        shell.progressionSession.draftSelections = {
+          ...shell.progressionSession.draftSelections,
+          ...restoredSelections,
+        };
+        shell.progressionSession.currentStepId = checkpoint.currentStepId || checkpoint.lastStepId || shell.progressionSession.currentStepId || null;
+      }
+
+      // Restore buildIntent compatibility state.
+      if (shell.buildIntent && restoredSelections) {
+        for (const [key, value] of Object.entries(restoredSelections)) {
           if (value !== undefined && value !== null) {
             shell.buildIntent.commitSelection('checkpoint-restore', key, value);
           }
         }
       }
 
-      // Restore committedSelections
+      // Restore legacy committedSelections as raw normalized values.
       if (shell.committedSelections && checkpoint.committedSelections) {
+        shell.committedSelections.clear();
         for (const [stepId, selection] of Object.entries(checkpoint.committedSelections)) {
           shell.committedSelections.set(stepId, selection);
         }
@@ -145,7 +157,8 @@ export class ChargenPersistence {
    */
   static _compileCheckpoint(shell, stepId) {
     // Capture all current selections
-    const buildIntent = shell.buildIntent ? shell.buildIntent.getAllSelections() : {};
+    const draftSelections = shell.progressionSession?.getAllSelections?.() || {};
+    const buildIntent = shell.buildIntent ? shell.buildIntent.getAllSelections() : draftSelections;
     const committedSelections = {};
 
     if (shell.committedSelections) {
@@ -158,15 +171,17 @@ export class ChargenPersistence {
       // Checkpoint metadata
       timestamp: new Date().toISOString(),
       lastStepId: stepId,
+      currentStepId: shell.getCurrentStepId?.() || stepId,
       actorId: shell.actor.id,
       mode: shell.mode,
 
       // Build state
       buildIntent,
+      draftSelections,
       committedSelections,
 
       // Version for future migrations
-      version: 1,
+      version: 2,
     };
   }
 

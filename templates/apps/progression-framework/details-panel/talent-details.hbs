@@ -2,60 +2,72 @@
 {{!-- Shows focused talent node details, prerequisites, and selection controls --}}
 
 <div class="talent-details-panel">
-
-  {{!-- Talent Header --}}
-  <div class="talent-details__header">
-    <h2 class="talent-details__name">{{talent.name}}</h2>
-    <div class="talent-details__meta">
-      <span class="talent-meta-badge tree-badge">{{treeName}}</span>
-      {{#if isSelected}}
-      <span class="talent-meta-badge selected-badge">
-        <i class="fa-solid fa-check-circle"></i> Selected
-      </span>
-      {{/if}}
+  {{#if isTreeView}}
+    <div class="talent-details__header">
+      <h2 class="talent-details__name">{{tree.name}}</h2>
+      <div class="talent-details__meta">
+        <span class="talent-meta-badge tree-badge">Talent Tree</span>
+      </div>
     </div>
-  </div>
 
-  {{!-- Description --}}
-  <div class="talent-details__section">
-    <h3 class="talent-details__section-title">Description</h3>
-    {{#if canonicalDescription}}
-      <p class="talent-details__description">{{canonicalDescription}}</p>
-    {{else}}
-      <p class="talent-details__description talent-details__description--unavailable">No description available.</p>
-    {{/if}}
-  </div>
-
-  {{!-- Prerequisites --}}
-  <div class="talent-details__section">
-    <h3 class="talent-details__section-title">Prerequisites</h3>
-    <div class="talent-prerequisites">
-      {{#if prerequisites}}
-        <p class="talent-prerequisites__text">{{prerequisites}}</p>
+    <div class="talent-details__section">
+      <h3 class="talent-details__section-title">Description</h3>
+      {{#if canonicalDescription}}
+        <p class="talent-details__description">{{canonicalDescription}}</p>
       {{else}}
-        <p class="talent-prerequisites__text talent-prerequisites__text--none">None</p>
+        <p class="talent-details__description talent-details__description--unavailable">No description available.</p>
       {{/if}}
     </div>
-  </div>
+  {{else}}
+    <div class="talent-details__header">
+      <h2 class="talent-details__name">{{talent.name}}</h2>
+      <div class="talent-details__meta">
+        <span class="talent-meta-badge tree-badge">{{treeName}}</span>
+        {{#if isSelected}}
+        <span class="talent-meta-badge selected-badge">
+          <i class="fa-solid fa-check-circle"></i> Selected
+        </span>
+        {{/if}}
+      </div>
+    </div>
 
-  {{!-- Selection Controls --}}
-  <div class="talent-details__actions">
-    {{#if isSelected}}
-    <button class="action-btn deselect-btn" data-action="commit-item" data-item-id="{{talent._id}}">
-      <i class="fa-solid fa-times-circle"></i>
-      Deselect Talent
-    </button>
-    {{else}}
-    <button class="action-btn select-btn" data-action="commit-item" data-item-id="{{talent._id}}">
-      <i class="fa-solid fa-check-circle"></i>
-      Choose This Talent
-    </button>
-    {{/if}}
+    <div class="talent-details__section">
+      <h3 class="talent-details__section-title">Description</h3>
+      {{#if canonicalDescription}}
+        <p class="talent-details__description">{{canonicalDescription}}</p>
+      {{else}}
+        <p class="talent-details__description talent-details__description--unavailable">No description available.</p>
+      {{/if}}
+    </div>
 
-    <button class="action-btn mentor-btn" data-action="ask-mentor">
-      <i class="fa-solid fa-brain"></i>
-      Ask Mentor
-    </button>
-  </div>
+    <div class="talent-details__section">
+      <h3 class="talent-details__section-title">Prerequisites</h3>
+      <div class="talent-prerequisites">
+        {{#if prerequisites}}
+          <p class="talent-prerequisites__text">{{prerequisites}}</p>
+        {{else}}
+          <p class="talent-prerequisites__text talent-prerequisites__text--none">No prerequisites</p>
+        {{/if}}
+      </div>
+    </div>
 
+    <div class="talent-details__actions">
+      {{#if isSelected}}
+      <button class="action-btn deselect-btn" data-action="commit-item" data-item-id="{{talent.id}}">
+        <i class="fa-solid fa-times-circle"></i>
+        Deselect Talent
+      </button>
+      {{else}}
+      <button class="action-btn select-btn" data-action="commit-item" data-item-id="{{talent.id}}">
+        <i class="fa-solid fa-check-circle"></i>
+        Choose This Talent
+      </button>
+      {{/if}}
+
+      <button class="action-btn mentor-btn" data-action="ask-mentor">
+        <i class="fa-solid fa-brain"></i>
+        Ask Mentor
+      </button>
+    </div>
+  {{/if}}
 </div>

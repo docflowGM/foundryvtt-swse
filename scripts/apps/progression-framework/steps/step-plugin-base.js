@@ -108,7 +108,6 @@ export class ProgressionStepPlugin {
    */
   async onItemFocused(itemId, shell) {
     // Default: no-op. Subclasses update focusedItem on shell.
-    console.debug(`[SWSE Chargen Hydration Debug] onItemFocused hook entry | step: ${this.descriptor?.id ?? '(unknown)'} | itemId: ${itemId ?? '(null)'}`);
   }
 
   /**
@@ -222,7 +221,6 @@ export class ProgressionStepPlugin {
    * @returns {{ template: string, data: Object }}
    */
   renderDetailsPanel(focusedItem) {
-    console.debug(`[SWSE Chargen Hydration Debug] renderDetailsPanel hook entry | step: ${this.descriptor?.id ?? '(unknown)'} | focusedItem: ${focusedItem?.id ?? '(null)'}`);
     if (!focusedItem) return this.renderDetailsPanelEmptyState();
     throw new NotImplementedError('renderDetailsPanel', this.constructor.name);
   }
@@ -323,7 +321,6 @@ export class ProgressionStepPlugin {
    */
   async afterRender(shell, workSurfaceEl) {
     // Default: no-op
-    console.debug(`[SWSE Chargen Hydration Debug] afterRender hook completed | step: ${this.descriptor?.id ?? '(unknown)'} | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
   }
 
   // ---------------------------------------------------------------------------
@@ -463,11 +460,9 @@ export class ProgressionStepPlugin {
       }
 
       // Also update committedSelections for backward compatibility during migration
+      // Store the normalized value directly so legacy readers can consume it without unwrapping.
       if (shell.committedSelections) {
-        shell.committedSelections.set(selectionKey, {
-          [selectionKey]: normalizedValue,
-          source: nodeId,
-        });
+        shell.committedSelections.set(selectionKey, normalizedValue);
       }
 
       // PHASE 2: Trigger post-commit reconciliation

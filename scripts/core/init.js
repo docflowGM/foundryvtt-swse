@@ -105,3 +105,13 @@ if (!Handlebars.helpers.add) {
     return (a ?? 0) + (b ?? 0);
   });
 }
+
+// Divide helper for percentage calculations (e.g., point buy progress bar)
+if (!Handlebars.helpers.div) {
+  Handlebars.registerHelper("div", function(a, b, factor) {
+    const divisor = b ?? 1;
+    const result = (a ?? 0) / divisor;
+    // If a third parameter is provided, multiply by it (for percentage calculations)
+    return factor ? result * factor : result;
+  });
+}

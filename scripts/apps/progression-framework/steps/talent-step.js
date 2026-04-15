@@ -18,6 +18,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
 import { TalentRegistry } from '/systems/foundryvtt-swse/scripts/registries/talent-registry.js';
+import { getAllowedTalentTrees } from '/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -68,7 +69,8 @@ export class TalentStep extends ProgressionStepPlugin {
     this._allTrees = Array.from(TalentTreeDB.trees.values());
 
     // Filter for trees available in this context (heroic or class-specific)
-    const availableTrees = await this._getAvailableTrees(shell.actor);
+    await TalentRegistry.initialize?.();
+    const availableTrees = await this._getAvailableTrees(shell);
 
     // Get suggested trees (pass shell so suggestion engine sees chargen choices)
     this._suggestedTrees = await this._getSuggestedTrees(shell.actor, availableTrees, shell);
@@ -93,14 +95,12 @@ export class TalentStep extends ProgressionStepPlugin {
     this._renderAbort = new AbortController();
     const { signal } = this._renderAbort;
 
-    // Wire search input (Stage 1)
-    const searchInput = shell.element.querySelector('.talent-search-input');
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        this._searchQuery = e.target.value;
-        shell.render();
-      }, { signal });
-    }
+    const onSearch = e => {
+      this._searchQuery = e.detail?.query || '';
+      shell.render();
+    };
+    shell.element.addEventListener('prog:utility:search', onSearch, { signal });
+
 
     // Wire tree card focus (Stage 1)
     const treeCards = shell.element.querySelectorAll('[data-action="focus-tree"]');
@@ -197,20 +197,38 @@ export class TalentStep extends ProgressionStepPlugin {
   /**
    * Get talent trees available in current context
    */
-  async _getAvailableTrees(actor) {
-    if (!actor) return [];
+  async _getAvailableTrees(shell) {
+    const actor = shell?.actor || null;
+    const allTrees = this._allTrees || [];
+    const committedClass = shell?.committedSelections?.get?.('class') || shell?.buildIntent?.getSelection?.('class') || null;
 
-    // Filter by slot type
-    const available = this._allTrees.filter(tree => {
-      // Check if tree is available in this slot context
-      if (this._slotType === 'class' && tree.system?.classRestricted !== true) {
-        return false;  // Class slot, but tree is not class-specific
+    // Determine allowed tree ids from class selection first, actor fallback second
+    let allowedIds = [];
+    const classSystem = committedClass?.system || {};
+    const classTreeIds = classSystem.talentTrees || classSystem.talent_trees || committedClass?.grants?.talentAccess || [];
+    if (Array.isArray(classTreeIds) && classTreeIds.length) {
+      allowedIds.push(...classTreeIds);
+    }
+
+    if (actor && allowedIds.length === 0) {
+      const slot = { slotType: this._slotType, classId: this._classId || committedClass?.id || null };
+      try {
+        allowedIds = getAllowedTalentTrees(actor, slot) || [];
+      } catch (err) {
+        console.warn('[TalentStep] Tree authority lookup failed:', err);
       }
+    }
 
-      // Check tree legality
-      return true;  // TODO: Add legality checks if trees have prerequisites
+    const normalizedAllowed = new Set((allowedIds || []).map(id => String(id).toLowerCase()));
+    let available = allTrees.filter(tree => {
+      if (!normalizedAllowed.size) return this._slotType !== 'class';
+      const treeIds = [tree.id, tree.sourceId, tree.name].filter(Boolean).map(v => String(v).toLowerCase());
+      return treeIds.some(id => normalizedAllowed.has(id));
     });
 
+    if (this._slotType === 'class' && normalizedAllowed.size === 0) {
+      return [];
+    }
     return available;
   }
 
@@ -232,7 +250,7 @@ export class TalentStep extends ProgressionStepPlugin {
         persist: true
       });
 
-      return (suggested || []).slice(0, 3);  // Top 3 trees
+      return (suggested || []).slice(0, 4);  // Top ranked trees
     } catch (err) {
       console.warn('[TalentStep] Suggestion service error:', err);
       return [];
@@ -266,11 +284,11 @@ export class TalentStep extends ProgressionStepPlugin {
   async _getTalentsForTree(tree, actor) {
     if (!tree) return [];
 
-    const talentIds = tree.system?.talentIds || [];
+    const talentIds = tree.talentIds || tree.system?.talentIds || [];
     const talents = [];
 
     for (const talentId of talentIds) {
-      const talent = TalentRegistry.get?.(talentId);
+      const talent = TalentRegistry.getById?.(talentId) || TalentRegistry.getByName?.(talentId);
       if (talent) {
         talents.push(talent);
       }
@@ -290,7 +308,7 @@ export class TalentStep extends ProgressionStepPlugin {
    * Get a talent by ID
    */
   _getTalent(talentId) {
-    return TalentRegistry.get?.(talentId);
+    return TalentRegistry.getById?.(talentId) || TalentRegistry.getByName?.(talentId) || null;
   }
 
   /**
@@ -492,7 +510,8 @@ export class TalentStep extends ProgressionStepPlugin {
       return this.renderDetailsPanelEmptyState();
     }
 
-    const isSelected = talent._id === this._selectedTalentId;
+    const talentId = talent._id || talent.id;
+    const isSelected = talentId === this._selectedTalentId;
     const selectedTree = this._getTree(this._selectedTreeId);
 
     // Normalize detail panel data for canonical display (no fabrication)
@@ -503,11 +522,11 @@ export class TalentStep extends ProgressionStepPlugin {
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/talent-details.hbs',
       data: {
-        talent,
+        talent: { ...talent, _id: talentId, id: talentId },
         treeName: selectedTree?.name || '',
         isSelected,
-        description: talent.system?.description || '',
-        prerequisites: talent.system?.prerequisites || talent.system?.prerequisite || '',
+        description: talent.description || talent.system?.description || '',
+        prerequisites: talent.prerequisites?.raw || talent.system?.prerequisites || talent.system?.prerequisite || '',
         // Add normalized fields for enhanced detail rail
         canonicalDescription: normalized.description,
         metadataTags: normalized.metadataTags,
@@ -522,7 +541,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
   async onItemFocused(item) {
     if (this._stage === 'graph') {
-      this._focusedTalentId = item?.id || item;
+      this._focusedTalentId = item?._id || item?.id || item;
     }
   }
 
@@ -531,10 +550,10 @@ export class TalentStep extends ProgressionStepPlugin {
 
     if (this._stage === 'browser') {
       // Entering tree on commit
-      this._enterTree(item._id || item, {});  // TODO: pass shell
+      this._enterTree(item._id || item?.id || item, shell);  // TODO: pass shell
     } else if (this._stage === 'graph') {
       // Toggle selection in graph
-      const talentId = item._id || item;
+      const talentId = item._id || item?.id || item;
       if (this._selectedTalentId === talentId) {
         this._selectedTalentId = null;
       } else {
@@ -617,6 +636,21 @@ export class TalentStep extends ProgressionStepPlugin {
       }
     }
     return null;
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // Utility Bar
+  // ---------------------------------------------------------------------------
+
+  getUtilityBarConfig() {
+    return {
+      mode: 'rich',
+      search: { enabled: true, placeholder: this._stage === 'browser' ? 'Search talent trees…' : 'Search talents…' },
+      sorts: [
+        { id: 'alpha', label: 'A–Z' },
+      ],
+    };
   }
 
   // ---------------------------------------------------------------------------

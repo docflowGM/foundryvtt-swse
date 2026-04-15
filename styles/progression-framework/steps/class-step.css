@@ -271,3 +271,9 @@
   min-height: 0;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 0 18px rgba(0,180,255,0.08);
 }
+
+
+.progression-shell .prog-class-details__portrait { width: 100%; max-height: 180px; object-fit: cover; border-radius: var(--prog-radius-sm); border: 1px solid var(--prog-border); margin-bottom: var(--prog-space-sm); }
+.progression-shell .prog-class-details__heading-copy { flex: 1; }
+.progression-shell .prog-class-details__meta-row { display:flex; gap:6px; flex-wrap:wrap; }
+.progression-shell .prog-class-details__stats-grid { grid-template-columns: repeat(2, 1fr); }

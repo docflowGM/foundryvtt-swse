@@ -39,22 +39,22 @@
   {{!-- Prerequisites Section (text-only, no validation) --}}
   <div class="feat-prerequisites-section">
     <h3>Prerequisites</h3>
-    {{#if prerequisites}}
-      <p class="feat-prerequisites">{{prerequisites}}</p>
+    {{#if prerequisiteLine}}
+      <p class="feat-prerequisites">{{prerequisiteLine}}</p>
     {{else}}
-      <p class="feat-prerequisites feat-prerequisites--none">None</p>
+      <p class="feat-prerequisites feat-prerequisites--none">No prerequisites</p>
     {{/if}}
   </div>
 
   {{!-- Selection Controls --}}
   <div class="details-actions">
     {{#if isSelected}}
-    <button class="action-btn deselect-btn" data-action="commit-item" data-item-id="{{feat._id}}">
+    <button class="action-btn deselect-btn" data-action="commit-item" data-item-id="{{feat.id}}">
       <i class="fa-solid fa-times-circle"></i>
       Deselect
     </button>
     {{else}}
-    <button class="action-btn select-btn" data-action="commit-item" data-item-id="{{feat._id}}">
+    <button class="action-btn select-btn" data-action="commit-item" data-item-id="{{feat.id}}">
       <i class="fa-solid fa-check-circle"></i>
       Choose This Feat
     </button>
