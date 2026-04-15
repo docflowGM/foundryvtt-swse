@@ -47,15 +47,44 @@
       Class and ability bonuses apply automatically.
     </p>
 
+    {{#if isFallbackFullChart}}
+      <div class="prog-skills-status prog-skills-status--warning">
+        Showing the full skill chart because the class/background skill list could not be resolved.
+      </div>
+    {{else}}
+      <div class="prog-skills-status prog-skills-status--info">
+        Showing {{availableSkillCount}} legal trainable skill{{#unless (eq availableSkillCount 1)}}s{{/unless}} from class and background.
+      </div>
+    {{/if}}
+
     <div class="prog-skills-list">
       {{#each allSkills}}
         {{#if (or this.alwaysVisible this.available)}}
-          <div class="prog-skill-row {{#if (and ../trainedSkills.[this.key] ../trainedSkills.[this.key].trained)}}trained{{/if}}"
-               data-skill-row="{{this.key}}">
+          <div class="prog-skill-row {{#if (and ../trainedSkills.[this.key] ../trainedSkills.[this.key].trained)}}trained{{/if}} {{#if (eq ../focusedSkillId this.id)}}is-focused{{/if}}"
+               data-skill-row="{{this.key}}"
+               data-item-id="{{this.id}}"
+               data-action="focus-item"
+               role="button"
+               tabindex="0">
 
             {{!-- Skill Name & Category --}}
             <div class="prog-skill-info">
               <div class="prog-skill-name">{{this.name}}</div>
+
+              <div class="prog-skill-tags">
+                {{#if this.isClassSkill}}
+                  <span class="prog-skill-tag">Class</span>
+                {{/if}}
+
+                {{#if this.isBackgroundSkill}}
+                  <span class="prog-skill-tag prog-skill-tag--background">Background</span>
+                {{/if}}
+
+                {{#if this.badgeLabel}}
+                  <span class="prog-skill-tag prog-skill-tag--suggested">{{this.badgeLabel}}</span>
+                {{/if}}
+              </div>
+
               {{#if this.category}}
                 <div class="prog-skill-category">{{this.category}}</div>
               {{/if}}

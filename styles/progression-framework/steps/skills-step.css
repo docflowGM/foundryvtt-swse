@@ -104,6 +104,26 @@
   font-size: 0.85rem;
 }
 
+.prog-skills-status {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.prog-skills-status--info {
+  background: var(--prog-info);
+  border: 1px solid var(--prog-accent);
+  color: var(--prog-text);
+}
+
+.prog-skills-status--warning {
+  background: var(--prog-negative-bg);
+  border: 1px solid var(--prog-negative);
+  color: var(--prog-negative);
+}
+
 /* ============================================================================
    SKILLS STEP — SVG chrome integration
    skill-table.svg (1120×520): sci-fi skill table with cyan column headers,
@@ -168,11 +188,18 @@
   border: 1px solid var(--prog-border);
   border-radius: 4px;
   transition: all 0.2s;
+  cursor: pointer;
 }
 
 .prog-skill-row:hover {
   background: var(--prog-bg-hover);
   border-color: var(--prog-accent);
+}
+
+.prog-skill-row.is-focused {
+  background: var(--prog-bg-hover);
+  border-color: var(--prog-accent);
+  box-shadow: inset 0 0 0 1px var(--prog-accent);
 }
 
 .prog-skill-row.trained {
@@ -197,6 +224,37 @@
   color: var(--prog-text-dim);
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+.prog-skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+}
+
+.prog-skill-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--prog-border);
+  background: var(--prog-bg-raised);
+  color: var(--prog-text-dim);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.prog-skill-tag--background {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+}
+
+.prog-skill-tag--suggested {
+  border-color: var(--prog-positive);
+  color: var(--prog-positive);
 }
 
 .prog-skill-controls {
