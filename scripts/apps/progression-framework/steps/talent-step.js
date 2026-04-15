@@ -222,25 +222,32 @@ export class TalentStep extends ProgressionStepPlugin {
 
   /**
    * Get talent trees available in current context
-   * HARDENED: Fail-closed for class slots, verify against allowed IDs
+   * HARDENED: Use class-resolution helper to resolve class model first
    */
   async _getAvailableTrees(shell) {
     const actor = shell?.actor || null;
     const allTrees = this._allTrees || [];
     const committedClass = shell?.committedSelections?.get?.('class') || shell?.buildIntent?.getSelection?.('class') || null;
 
-    // Determine allowed tree ids from class selection first, actor fallback second
+    // Resolve class model using canonical helper (primary source)
+    let classModel = null;
     let allowedIds = [];
-    const classSystem = committedClass?.system || {};
-    const classTreeIds = classSystem.talentTrees || classSystem.talent_trees || committedClass?.grants?.talentAccess || [];
-    if (Array.isArray(classTreeIds) && classTreeIds.length) {
-      allowedIds.push(...classTreeIds);
+
+    if (committedClass) {
+      classModel = resolveClassModel(committedClass);
+      if (classModel) {
+        // Use canonical class model talent tree IDs (primary source)
+        allowedIds = getClassTalentTreeLookupKeys(classModel) || [];
+        console.log(`[TalentStep] Resolved class model "${classModel.name}" with ${allowedIds.length} talent tree access keys`);
+      }
     }
 
-    if (actor && allowedIds.length === 0) {
-      const slot = { slotType: this._slotType, classId: this._classId || committedClass?.id || null };
+    // Fallback: Use actor authority only for levelup context when class is unresolved
+    if (actor && allowedIds.length === 0 && !committedClass) {
+      const slot = { slotType: this._slotType, classId: this._classId || null };
       try {
         allowedIds = getAllowedTalentTrees(actor, slot) || [];
+        console.log(`[TalentStep] Fallback to actor authority: ${allowedIds.length} trees allowed`);
       } catch (err) {
         console.warn('[TalentStep] Tree authority lookup failed:', err);
       }

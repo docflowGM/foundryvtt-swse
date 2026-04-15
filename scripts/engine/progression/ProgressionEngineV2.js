@@ -26,6 +26,7 @@ import { HPGeneratorEngine } from "/systems/foundryvtt-swse/scripts/engine/HP/HP
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
+import { resolveClassModel, getClassHitDie } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
 
 export class ProgressionEngineV2 {
   /**
@@ -404,15 +405,26 @@ export class ProgressionEngineV2 {
    * @private
    */
   static #getHitDie(actor) {
-    const classId = actor.system.class?.id || actor.system.class?.name || 'Soldier';
+    // Resolve class model using canonical helper first
+    const classData = actor.system.class;
+    const classModel = classData ? resolveClassModel({ id: classData.id, name: classData.name, sourceId: classData.sourceId }) : null;
 
-    // Use PROGRESSION_RULES as SSOT
-    const classData = PROGRESSION_RULES.classes?.[classId];
-    if (classData && classData.hitDie) {
-      return classData.hitDie;
+    if (classModel) {
+      const hitDie = getClassHitDie(classModel);
+      if (hitDie) {
+        return hitDie;
+      }
     }
 
-    // Fallback if not found
+    // Fallback: Use PROGRESSION_RULES if class model resolution fails
+    const classId = actor.system.class?.id || actor.system.class?.name || 'Soldier';
+    const progRulesData = PROGRESSION_RULES.classes?.[classId];
+    if (progRulesData && progRulesData.hitDie) {
+      swseLogger.warn(`[ProgressionEngine] Using PROGRESSION_RULES fallback for hit die (class: ${classId})`);
+      return progRulesData.hitDie;
+    }
+
+    // Final fallback
     swseLogger.warn(`[ProgressionEngine] No hit die found for class ${classId}, using default d8`);
     return 8;
   }
