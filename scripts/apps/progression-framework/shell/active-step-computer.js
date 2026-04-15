@@ -251,34 +251,83 @@ export class ActiveStepComputer {
 
   /**
    * Check if force secret entitlements exist.
+   * PHASE 3: Uses real class grant budget instead of proxy signals.
    * @private
    */
-  _hasForceSecretChoices(actor, progressionSession) {
-    // Force secrets applicable if force powers were selected
-    const forcePowers = progressionSession?.draftSelections?.forcePowers;
-    return Array.isArray(forcePowers) && forcePowers.length > 0;
+  async _hasForceSecretChoices(actor, progressionSession) {
+    try {
+      // Import the entitlement resolver
+      const { resolveForceSecretEntitlements } = await import(
+        '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js'
+      );
+
+      // Check the real class progression grant budget
+      const entitlements = resolveForceSecretEntitlements(progressionSession, null, actor);
+      const hasGrants = entitlements.total > 0;
+
+      if (!hasGrants) {
+        swseLogger.debug('[ActiveStepComputer] Force Secrets: no class grants resolved');
+      }
+
+      return hasGrants;
+    } catch (err) {
+      swseLogger.warn('[ActiveStepComputer] Error checking force secret grants:', err);
+      return false; // Fail closed
+    }
   }
 
   /**
    * Check if force technique entitlements exist.
+   * PHASE 3: Uses real class grant budget instead of proxy signals.
    * @private
    */
-  _hasForceTechniqueChoices(actor, progressionSession) {
-    // Force techniques applicable if secrets were selected OR force talent exists
-    const forceSecrets = progressionSession?.draftSelections?.forceSecrets;
-    const hasForceTalent = actor.items.some(item =>
-      item.type === 'talent' && item.name?.toLowerCase().includes('force')
-    );
-    return (Array.isArray(forceSecrets) && forceSecrets.length > 0) || hasForceTalent;
+  async _hasForceTechniqueChoices(actor, progressionSession) {
+    try {
+      // Import the entitlement resolver
+      const { resolveForceTechniqueEntitlements } = await import(
+        '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js'
+      );
+
+      // Check the real class progression grant budget
+      const entitlements = resolveForceTechniqueEntitlements(progressionSession, null, actor);
+      const hasGrants = entitlements.total > 0;
+
+      if (!hasGrants) {
+        swseLogger.debug('[ActiveStepComputer] Force Techniques: no class grants resolved');
+      }
+
+      return hasGrants;
+    } catch (err) {
+      swseLogger.warn('[ActiveStepComputer] Error checking force technique grants:', err);
+      return false; // Fail closed
+    }
   }
 
   /**
    * Check if starship maneuver entitlements exist.
+   * PHASE 3: Uses real ManeuverAuthorityEngine validation instead of placeholder.
    * @private
    */
-  _hasStarshipChoices(actor, progressionSession) {
-    // Starship maneuvers applicable if prerequisite feat exists
-    return true;
+  async _hasStarshipChoices(actor, progressionSession) {
+    try {
+      // Import the authority engine
+      const { ManeuverAuthorityEngine } = await import(
+        '/systems/foundryvtt-swse/scripts/engine/progression/engine/maneuver-authority-engine.js'
+      );
+
+      // Check real access validation: Starship Tactics feat + domain unlock
+      const accessValidation = await ManeuverAuthorityEngine.validateManeuverAccess(actor);
+      const hasAccess = accessValidation.valid;
+
+      if (!hasAccess) {
+        swseLogger.debug('[ActiveStepComputer] Starship Maneuvers: access denied', { reason: accessValidation.reason });
+      }
+
+      return hasAccess;
+    } catch (err) {
+      swseLogger.warn('[ActiveStepComputer] Error checking starship maneuver access:', err);
+      return false; // Fail closed
+    }
   }
 
   /**
@@ -359,30 +408,19 @@ export class ActiveStepComputer {
       return hasForceSensitivity;
     }
 
-    // Force secrets: requires force-powers to have been selected
+    // Force secrets: PHASE 3 - check real class grant budget (not proxy signals)
     if (node.nodeId === 'force-secrets') {
-      const forcePowerSelection = progressionSession?.draftSelections?.forcePowers;
-      return Array.isArray(forcePowerSelection) && forcePowerSelection.length > 0;
+      return await this._hasForceSecretChoices(actor, progressionSession);
     }
 
-    // Force techniques: requires force-secrets or force-powers
+    // Force techniques: PHASE 3 - check real class grant budget (not proxy signals)
     if (node.nodeId === 'force-techniques') {
-      const secretSelection = progressionSession?.draftSelections?.forceSecrets;
-      const hasForceTalent = actor.items.some(item =>
-        item.type === 'talent' && item.name?.toLowerCase().includes('force')
-      );
-      return (Array.isArray(secretSelection) && secretSelection.length > 0) || hasForceTalent;
+      return await this._hasForceTechniqueChoices(actor, progressionSession);
     }
 
-    // Starship maneuvers: requires Starship feat or piloting feat
+    // Starship maneuvers: PHASE 3 - check real access validation (not proxy signals)
     if (node.nodeId === 'starship-maneuvers') {
-      const hasStarshipFeat = actor.items.some(item =>
-        item.type === 'feat' && (
-          item.name?.toLowerCase().includes('starship') ||
-          item.name?.toLowerCase().includes('pilot')
-        )
-      );
-      return hasStarshipFeat;
+      return await this._hasStarshipChoices(actor, progressionSession);
     }
 
     // Generic: if no specific rules, assume active

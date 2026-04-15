@@ -38,7 +38,9 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       }
 
       this._allTechniques = ForceRegistry.byType('technique') || [];
-      this._remainingPicks = 0; // TODO (Wave 10): detect from engine
+      // PHASE 3: Resolve from class progression features + engine choice budget
+      const entitlements = await this._resolveTechniqueEntitlements(shell);
+      this._remainingPicks = entitlements.remaining;
 
       await this._computeLegalTechniques(shell.actor);
       this._applyFilters();
@@ -254,8 +256,10 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   getUtilityBarMode() { return 'rich'; }
 
   getMentorContext(shell) {
-    const mentorObj = this._getMentorObject(shell.actor);
-    return getMentorGuidance(mentorObj, 'force_technique') || 'Master these techniques with patience and practice.';
+    // PHASE 3: Guard against undefined mentor helpers
+    // Use standard guidance helper instead of custom mentor resolution
+    return getStepGuidance(shell.actor, 'force-techniques')
+      || 'Master these techniques with patience and practice.';
   }
 
   async onAskMentor(shell) {
@@ -274,6 +278,35 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   getMentorMode() { return 'context-only'; }
 
   // Private
+
+  /**
+   * PHASE 3: Resolve Force Technique entitlements from class progression features
+   * Primary source: class level progression features (force_technique_choice)
+   * Secondary: engine choice budget from feature dispatcher
+   * Fallback: actor state for compatibility
+   */
+  async _resolveTechniqueEntitlements(shell) {
+    const { resolveForceTechniqueEntitlements } = await import(
+      '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js'
+    );
+
+    // Note: engine data not available in this context, so pass null
+    const entitlements = resolveForceTechniqueEntitlements(shell, null, shell?.actor);
+
+    if (entitlements.isBlocked) {
+      swseLogger.log(
+        `[ForceTechniqueStep] Force Techniques blocked — no class grant resolved`,
+        { reasons: entitlements.reasons }
+      );
+    } else if (entitlements.isEmpty && entitlements.total > 0) {
+      swseLogger.debug(
+        `[ForceTechniqueStep] Force Techniques available but not yet selected`,
+        { total: entitlements.total, reasons: entitlements.reasons }
+      );
+    }
+
+    return entitlements;
+  }
 
   async _computeLegalTechniques(actor) {
     this._legalTechniques = [];

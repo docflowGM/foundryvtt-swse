@@ -46,9 +46,9 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
       this._allSecrets = ForceRegistry.byType('secret') || [];
 
-      // Determine picks available (engine-specific logic)
-      const secretGrants = await this._detectSecretGrants(shell.actor);
-      this._remainingPicks = secretGrants - (shell.actor.system?.progression?.forceSecrets?.length ?? 0);
+      // PHASE 3: Determine picks available using class progression features + engine choice budget
+      const entitlements = await this._resolveSecretEntitlements(shell);
+      this._remainingPicks = entitlements.remaining;
 
       await this._computeLegalSecrets(shell.actor);
       this._applyFilters();
@@ -304,9 +304,33 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
   // Private helpers
 
-  async _detectSecretGrants(actor) {
-    // TODO (Wave 10+): Call engine API to get secret grants
-    return 0; // Conservative: no secrets in interim
+  /**
+   * PHASE 3: Resolve Force Secret entitlements from class progression features
+   * Primary source: class level progression features (force_secret_choice)
+   * Secondary: engine choice budget from feature dispatcher
+   * Fallback: actor state for compatibility
+   */
+  async _resolveSecretEntitlements(shell) {
+    const { resolveForceSecretEntitlements } = await import(
+      '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js'
+    );
+
+    // Note: engine data not available in this context, so pass null
+    const entitlements = resolveForceSecretEntitlements(shell, null, shell?.actor);
+
+    if (entitlements.isBlocked) {
+      swseLogger.log(
+        `[ForceSecretStep] Force Secrets blocked — no class grant resolved`,
+        { reasons: entitlements.reasons }
+      );
+    } else if (entitlements.isEmpty && entitlements.total > 0) {
+      swseLogger.debug(
+        `[ForceSecretStep] Force Secrets available but not yet selected`,
+        { total: entitlements.total, reasons: entitlements.reasons }
+      );
+    }
+
+    return entitlements;
   }
 
   async _computeLegalSecrets(actor) {

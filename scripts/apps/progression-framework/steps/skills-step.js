@@ -16,9 +16,11 @@ import { normalizeSkills } from './step-normalizers.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SkillRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
+import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { BeastSubtypeAdapter } from '../adapters/beast-subtype-adapter.js';
+import { resolveClassModel, getClassSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 
 export class SkillsStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -34,6 +36,17 @@ export class SkillsStep extends ProgressionStepPlugin {
     this._isBeast = false;                // Beast constraint flag
     this._beastSkillList = null;          // Beast skill list if applicable
     this._focusedSkillId = null;          // focused skill for details rail
+
+    this._skillDerivation = {
+      mode: 'fallback-full-chart',
+      fallbackReason: 'uninitialized',
+      classSkillRefs: 0,
+      classSkillMatches: 0,
+      backgroundSkillRefs: 0,
+      backgroundSkillMatches: 0,
+      trainedSelectionMatches: 0,
+      skills: [],
+    };
 
     // Event listener cleanup
     this._renderAbort = null;
@@ -109,7 +122,21 @@ try {
         beastSkillList: this._beastSkillList
       });
     } else {
-      this._availableSkills = this._allSkills;
+      const derivation = this._deriveAvailableSkills(shell);
+      this._skillDerivation = derivation;
+      this._availableSkills = derivation.skills;
+
+      swseLogger.log('[SkillsStep] Skill availability resolved', {
+        mode: derivation.mode,
+        totalRegistrySkills: this._allSkills.length,
+        classSkillRefs: derivation.classSkillRefs,
+        classSkillMatches: derivation.classSkillMatches,
+        backgroundSkillRefs: derivation.backgroundSkillRefs,
+        backgroundSkillMatches: derivation.backgroundSkillMatches,
+        trainedSelectionMatches: derivation.trainedSelectionMatches,
+        availableSkills: derivation.skills.length,
+        fallbackReason: derivation.fallbackReason || null,
+      });
     }
 
     // Get suggested skills from SuggestionService
@@ -140,11 +167,11 @@ try {
       }, { signal });
     });
 
-    // Wire train/untrain buttons
     const trainButtons = shell.element.querySelectorAll('.skills-step-train-btn');
     trainButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         const skillKey = btn.dataset.skill;
         this._trainSkill(skillKey);
         shell.render();
@@ -155,17 +182,18 @@ try {
     untrainButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         const skillKey = btn.dataset.skill;
         this._untrainSkill(skillKey);
         shell.render();
       }, { signal });
     });
 
-    // Wire reset button
     const resetBtn = shell.element.querySelector('.skills-step-reset-btn');
     if (resetBtn) {
       resetBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         this._resetAllSkills();
         shell.render();
       }, { signal });
@@ -200,6 +228,11 @@ try {
       hasSuggestions,
       suggestedSkillIds: Array.from(suggestedIds),
       isBeast: this._isBeast,
+      focusedSkillId: this._focusedSkillId,
+      availableSkillCount: this._availableSkills.length,
+      skillSourceMode: this._skillDerivation?.mode || 'fallback-full-chart',
+      fallbackReason: this._skillDerivation?.fallbackReason || null,
+      isFallbackFullChart: (this._skillDerivation?.mode || 'fallback-full-chart') === 'fallback-full-chart',
     };
   }
 
@@ -356,7 +389,8 @@ renderDetailsPanel(focusedItem) {
       skillName: skill.name,
       abilityLabel: skill.abilityLabel || 'Unknown',
       category: skill.category || null,
-      isClassSkill: !!skill.classSkill,
+      isClassSkill: !!skill.isClassSkill,
+      isBackgroundSkill: !!skill.isBackgroundSkill,
       trained: !!this._trainedSkills.get(skill.key)?.trained,
     },
   };
@@ -430,6 +464,175 @@ renderDetailsPanel(focusedItem) {
     return shell.buildIntent.toCharacterData();
   }
 
+  _deriveAvailableSkills(shell) {
+    const classSelection =
+      shell?.progressionSession?.getSelection?.('class')
+      || shell?.committedSelections?.get?.('class')
+      || null;
+
+    const classModel = this._resolveSelectedClassData(classSelection);
+
+    // PHASE 3: Use canonical class model for class skills
+    const classSkillRefs = classModel ? getClassSkills(classModel) : [];
+    const classSkillMatches = this._matchSkillsFromRefs(classSkillRefs);
+
+    if (!classModel || classSkillMatches.length === 0) {
+      return {
+        mode: 'fallback-full-chart',
+        fallbackReason: !classModel
+          ? 'selected-class-unresolved'
+          : 'selected-class-produced-zero-skill-matches',
+        classSkillRefs: classSkillRefs.length,
+        classSkillMatches: classSkillMatches.length,
+        backgroundSkillRefs: 0,
+        backgroundSkillMatches: 0,
+        trainedSelectionMatches: 0,
+        skills: this._allSkills.map(skill => ({
+          ...skill,
+          isClassSkill: false,
+          isBackgroundSkill: false,
+        })),
+      };
+    }
+
+    const backgroundSkillRefs = this._getBackgroundSkillRefs(shell);
+    const backgroundSkillMatches = this._matchSkillsFromRefs(backgroundSkillRefs);
+    const trainedSelectionMatches = this._matchSkillsFromRefs(Array.from(this._trainedSkills.keys()));
+
+    const classIds = new Set(classSkillMatches.map(skill => skill.id));
+    const backgroundIds = new Set(backgroundSkillMatches.map(skill => skill.id));
+    const trainedIds = new Set(trainedSelectionMatches.map(skill => skill.id));
+    const allowedIds = new Set([...classIds, ...backgroundIds, ...trainedIds]);
+
+    const skills = this._allSkills
+      .filter(skill => allowedIds.has(skill.id))
+      .map(skill => ({
+        ...skill,
+        isClassSkill: classIds.has(skill.id),
+        isBackgroundSkill: backgroundIds.has(skill.id),
+      }));
+
+    if (skills.length === 0) {
+      return {
+        mode: 'fallback-full-chart',
+        fallbackReason: 'allowed-skill-set-empty-after-filter',
+        classSkillRefs: classSkillRefs.length,
+        classSkillMatches: classSkillMatches.length,
+        backgroundSkillRefs: backgroundSkillRefs.length,
+        backgroundSkillMatches: backgroundSkillMatches.length,
+        trainedSelectionMatches: trainedSelectionMatches.length,
+        skills: this._allSkills.map(skill => ({
+          ...skill,
+          isClassSkill: false,
+          isBackgroundSkill: false,
+        })),
+      };
+    }
+
+    return {
+      mode: 'legal-class-background',
+      fallbackReason: null,
+      classSkillRefs: classSkillRefs.length,
+      classSkillMatches: classSkillMatches.length,
+      backgroundSkillRefs: backgroundSkillRefs.length,
+      backgroundSkillMatches: backgroundSkillMatches.length,
+      trainedSelectionMatches: trainedSelectionMatches.length,
+      skills,
+    };
+  }
+
+  _resolveSelectedClassData(classSelection) {
+    if (!classSelection) return null;
+
+    // PHASE 3: Use canonical class resolution helper for consistent behavior
+    const classModel = resolveClassModel(classSelection);
+
+    if (!classModel) {
+      swseLogger.warn('[SkillsStep] Failed to resolve class from selection:', classSelection);
+      return null;
+    }
+
+    return classModel;
+  }
+
+  _getBackgroundSkillRefs(shell) {
+    const rawCommitted = shell?.committedSelections?.get?.('background');
+    const rawBackgrounds = Array.isArray(rawCommitted?.backgrounds) ? rawCommitted.backgrounds : [];
+
+    if (rawBackgrounds.length > 0) {
+      return rawBackgrounds.flatMap(bg => ([
+        ...(bg.trainedSkills || bg.system?.trainedSkills || []),
+        ...(bg.relevantSkills || bg.system?.relevantSkills || []),
+        ...(bg.skills || bg.system?.skills || []),
+        ...(bg.grants?.skills || []),
+      ])).filter(Boolean);
+    }
+
+    const canonicalBackground =
+      shell?.progressionSession?.getSelection?.('background')
+      || rawCommitted
+      || null;
+
+    return [
+      ...(canonicalBackground?.grants?.skills || []),
+      ...(canonicalBackground?.trainedSkills || []),
+      ...(canonicalBackground?.relevantSkills || []),
+      ...(canonicalBackground?.skills || []),
+    ].filter(Boolean);
+  }
+
+  _matchSkillsFromRefs(refs = []) {
+    const seen = new Set();
+    const matches = [];
+
+    for (const ref of refs || []) {
+      const skill = this._resolveSkillFromRef(ref);
+      if (!skill) continue;
+      if (seen.has(skill.id)) continue;
+      seen.add(skill.id);
+      matches.push(skill);
+    }
+
+    return matches;
+  }
+
+  _resolveSkillFromRef(ref) {
+    if (!ref) return null;
+
+    const raw = String(ref).trim();
+    const simplified = raw
+      .replace(/\[(.*?)\]/g, '')
+      .replace(/\((.*?)\)/g, '')
+      .replace(/\ball skills, taken individually\b/gi, '')
+      .trim();
+
+    const rawKey = this._skillLookupKey(raw);
+    const simpleKey = this._skillLookupKey(simplified);
+
+    return this._allSkills.find(skill => {
+      const skillId = String(skill.id || skill._id || '').toLowerCase();
+      const skillNameKey = this._skillLookupKey(skill.name || '');
+      const skillKey = this._skillLookupKey(skill.key || '');
+
+      return (
+        skillId === raw.toLowerCase()
+        || skillId === simplified.toLowerCase()
+        || skillNameKey === rawKey
+        || skillNameKey === simpleKey
+        || skillKey === rawKey
+        || skillKey === simpleKey
+        || (skillNameKey === 'knowledge' && simpleKey.startsWith('knowledge'))
+      );
+    }) || null;
+  }
+
+  _skillLookupKey(value) {
+    return String(value || '')
+      .toLowerCase()
+      .replace(/\s+/g, '')
+      .replace(/[()[\]{}]/g, '')
+      .replace(/[^a-z0-9]/g, '');
+  }
 
 _normalizeSkillRecord(skill) {
   if (!skill) return null;

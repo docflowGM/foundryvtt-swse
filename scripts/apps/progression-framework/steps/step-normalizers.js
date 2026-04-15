@@ -62,7 +62,9 @@ export function normalizeSpecies(raw) {
  * Normalize class selection.
  *
  * Input: Raw class step commit data
- * Output: Canonical class object: {id, name, grants, metadata}
+ * Output: Canonical class object: {id, sourceId, name, grants, metadata}
+ *
+ * PHASE 3: Preserve sourceId for downstream re-resolution from ClassesRegistry
  *
  * @param {Object} raw - Raw commit data from class-step
  * @returns {Object|null} Normalized class, or null if invalid
@@ -72,6 +74,7 @@ export function normalizeClass(raw) {
 
   try {
     const id = raw.classId || raw.id || raw.label;
+    const sourceId = raw.sourceId || raw._id || id;  // Preserve original Foundry document ID
     const name = raw.className || raw.name || raw.label;
 
     if (!id) {
@@ -81,6 +84,7 @@ export function normalizeClass(raw) {
 
     return {
       id,
+      sourceId,  // PHASE 3: Added for canonical re-resolution
       name: name || id,
       grants: {
         hp: raw.hp || null,

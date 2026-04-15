@@ -77,9 +77,8 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       // 4. Template-based grants (from applied templates)
       // 5. Generic feat-based grants (from compendium or hardcoded data)
       //
-      // The shell MUST NOT assume Force Training is the only source of entitlements.
-      // Each source can have its own restrictions (e.g. "telekinetic powers only").
-      this._remainingPicks = await this._computeTotalEntitlements(shell.actor);
+      // PHASE 3: Now shell-aware — passes shell context for pending state
+      this._remainingPicks = await this._computeTotalEntitlements(shell.actor, shell);
 
       // Filter to legal powers (prereqs met, not already selected)
       await this._computeLegalPowers(shell.actor);
@@ -407,7 +406,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
 
   /**
    * Compute total force power entitlements from ALL sources.
-   * GUARDRAIL: The shell must honor all entitlement sources, not just Force Training.
+   * PHASE 3: Shell-aware — reads from pending shell state first, falls back to actor state.
    *
    * Sources:
    * 1. Force Training feat (1 + WIS/CHA modifier per feat instance)
@@ -417,21 +416,33 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    * 5. Telekinetic Prodigy bonus slots (restricted, but still count toward total)
    *
    * @param {Actor} actor
+   * @param {Object} shell - Progression shell with pending selections
    * @returns {Promise<number>} Total picks the actor is entitled to
    */
-  async _computeTotalEntitlements(actor) {
+  async _computeTotalEntitlements(actor, shell = null) {
+    // Use shell-aware resolution if shell is provided
+    if (shell) {
+      const { resolveForcePowerEntitlements } = await import(
+        '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js'
+      );
+      const result = await resolveForcePowerEntitlements(shell, actor);
+      swseLogger.debug(
+        `[ForcePowerStep._computeTotalEntitlements] Shell-aware: ${result.total} total, ${result.selected} selected, ${result.remaining} remaining`,
+        { reasons: result.reasons, source: result.source }
+      );
+      return result.remaining;
+    }
+
+    // Fallback: Legacy actor-only calculation (compatibility)
     let totalEntitlements = 0;
     const reasons = [];
-
-    // TODO (Wave 10): Call ForcePowerEngine methods to enumerate all sources
-    // For interim: detect Force Training feat instances and their WIS-based grants
 
     const feats = actor.items?.filter(i => i.type === 'feat') ?? [];
     const forceTrainingFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
 
     if (forceTrainingFeats.length > 0) {
       const wisMod = actor.system?.abilities?.wis?.mod ?? 0;
-      const wisOrChaMod = actor.system?.abilities?.cha?.mod ?? wisMod; // TODO: check house rule
+      const wisOrChaMod = actor.system?.abilities?.cha?.mod ?? wisMod;
 
       for (let i = 0; i < forceTrainingFeats.length; i++) {
         const grantsForThisFeat = Math.max(1, 1 + wisOrChaMod);
@@ -440,18 +451,11 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       }
     }
 
-    // TODO (Wave 10+): Also check for:
-    // - Class-level force power grants
-    // - Template-based grants
-    // - Generic feat grants (via compendium forcePowerGrants field)
-    // - Restricted pools (Telekinetic Prodigy bonus slots)
-
-    // Subtract already-selected powers
     const alreadySelected = actor.system?.progression?.forcePowers?.length ?? 0;
     const remaining = Math.max(0, totalEntitlements - alreadySelected);
 
     swseLogger.debug(
-      `[ForcePowerStep._computeTotalEntitlements] Total: ${totalEntitlements}, Already: ${alreadySelected}, Remaining: ${remaining}`
+      `[ForcePowerStep._computeTotalEntitlements] Actor fallback: ${totalEntitlements} total, ${alreadySelected} selected, ${remaining} remaining`
     );
 
     return remaining;

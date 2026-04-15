@@ -14,27 +14,39 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { resolveClassModel, getClassStartingCredits } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
 
 export class EquipmentEngine {
 
     /**
      * Get starting credits for a character
      * Based on class and background
+     * HARDENED: Uses canonical class-resolution helper instead of re-reading compendium
      */
-    static async getStartingCredits(actor, className, backgroundName) {
+    static async getStartingCredits(actor, classItem, backgroundName) {
         let credits = 0;
 
-        // Get class starting credits
-        if (className) {
-            const classPack = game.packs.get('foundryvtt-swse.classes');
-            if (classPack) {
-                const classIndex = classPack.index.find(c => c.name === className);
-                if (classIndex) {
-                    const classDoc = await classPack.getDocument(classIndex._id);
-                    // NOTE: Compendium may use camelCase 'startingCredits' or snake_case 'starting_credits'
-                    const classCredits = classDoc?.system?.startingCredits || classDoc?.system?.starting_credits;
-                    if (classCredits) {
-                        credits += classCredits;
+        // Get class starting credits from canonical class model
+        if (classItem) {
+            const classModel = resolveClassModel(classItem);
+            if (classModel) {
+                const classCredits = getClassStartingCredits(classModel);
+                if (classCredits) {
+                    credits += classCredits;
+                    SWSELogger.log(`[EquipmentEngine] Class "${classModel.name}" grants ${classCredits} starting credits`);
+                }
+            } else if (typeof classItem === 'string') {
+                // Fallback: if classItem is a string (class name), try name-based lookup in compendium
+                SWSELogger.warn(`[EquipmentEngine] Could not resolve class model from ${classItem}, falling back to compendium lookup`);
+                const classPack = game.packs.get('foundryvtt-swse.classes');
+                if (classPack) {
+                    const classIndex = classPack.index.find(c => c.name === classItem);
+                    if (classIndex) {
+                        const classDoc = await classPack.getDocument(classIndex._id);
+                        const classCredits = classDoc?.system?.startingCredits || classDoc?.system?.starting_credits;
+                        if (classCredits) {
+                            credits += classCredits;
+                        }
                     }
                 }
             }
@@ -47,10 +59,10 @@ export class EquipmentEngine {
                 const bgIndex = bgPack.index.find(b => b.name === backgroundName);
                 if (bgIndex) {
                     const bgDoc = await bgPack.getDocument(bgIndex._id);
-                    // NOTE: Compendium may use camelCase 'startingCredits' or snake_case 'starting_credits'
                     const bgCredits = bgDoc?.system?.startingCredits || bgDoc?.system?.starting_credits;
                     if (bgCredits) {
                         credits += bgCredits;
+                        SWSELogger.log(`[EquipmentEngine] Background "${backgroundName}" grants ${bgCredits} starting credits`);
                     }
                 }
             }
