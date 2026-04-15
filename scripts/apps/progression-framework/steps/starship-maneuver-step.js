@@ -4,10 +4,16 @@
  * Starship Maneuver selection step — CRITICAL: uses stacking model like Force Powers.
  * Each duplicate selection = additional use, not an error.
  *
+ * PHASE 3: Hardened to use ManeuverAuthorityEngine for access/capacity.
+ * Content source: StarshipManeuverEngine (actor-owned) → StarshipManeuverManager (definition pool fallback)
  * CONDITIONAL — unlocked only when actor has starship piloting capability.
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { ManeuverAuthorityEngine } from '../../../engine/progression/engine/maneuver-authority-engine.js';
+import { StarshipManeuverEngine } from '../../../engine/progression/engine/starship-maneuver-engine.js';
+import { StarshipManeuverManager } from '../../../utils/starship-maneuver-manager.js';
+import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
@@ -41,9 +47,48 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
 
   async onStepEnter(shell) {
     try {
-      // TODO (Wave 10): Load from registry or engine
-      this._allManeuvers = [];
-      this._remainingPicks = 0;
+      // PHASE 3: Validate access first (fail-closed if not allowed)
+      const accessValidation = await ManeuverAuthorityEngine.validateManeuverAccess(shell.actor);
+      if (!accessValidation.valid) {
+        swseLogger.log(`[StarshipManeuverStep] Access blocked: ${accessValidation.reason}`);
+        this._allManeuvers = [];
+        this._remainingPicks = 0;
+        shell.mentor.askMentorEnabled = true;
+        return;
+      }
+
+      // PHASE 3: Get capacity from authority engine
+      const capacity = await ManeuverAuthorityEngine.getManeuverCapacity(shell.actor);
+      swseLogger.debug(`[StarshipManeuverStep] Capacity validated: ${capacity} picks available`);
+
+      // PHASE 3: Load maneuvers from primary source (actor-owned items)
+      const actorManeuvers = await StarshipManeuverEngine.collectAvailableManeuvers(shell.actor);
+      let maneuverPool = actorManeuvers;
+
+      // Fallback to definition pool if actor has no owned maneuvers but access is valid
+      if (maneuverPool.length === 0) {
+        swseLogger.debug(`[StarshipManeuverStep] No actor-owned maneuvers, using definition pool fallback`);
+        maneuverPool = StarshipManeuverManager._getAllManeuverDefinitions();
+      } else {
+        swseLogger.debug(`[StarshipManeuverStep] Using actor-owned maneuvers: ${maneuverPool.length} available`);
+      }
+
+      this._allManeuvers = maneuverPool;
+
+      // Calculate remaining picks from capacity and shell selections
+      const pendingManeuvers = shell?.buildIntent?.getSelection?.('starshipManeuvers') || [];
+      const pendingCount = Array.isArray(pendingManeuvers)
+        ? pendingManeuvers.reduce((sum, m) => sum + (m.count || 1), 0)
+        : 0;
+      const alreadySelected = pendingCount > 0 ? pendingCount : (shell.actor?.system?.starshipManeuverSuite?.maneuvers?.length ?? 0);
+      this._remainingPicks = Math.max(0, capacity - alreadySelected);
+
+      swseLogger.log(`[StarshipManeuverStep] Entitlements resolved`, {
+        capacity,
+        alreadySelected,
+        remaining: this._remainingPicks,
+        source: actorManeuvers.length > 0 ? 'actor-owned' : 'definition-pool'
+      });
 
       await this._computeLegalManeuvers(shell.actor);
       this._applyFilters();
@@ -53,10 +98,11 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
 
       shell.mentor.askMentorEnabled = true;
 
-      swseLogger.debug(`[StarshipManeuverStep] Entered: ${this._allManeuvers.length} maneuvers`);
+      swseLogger.debug(`[StarshipManeuverStep] Entered: ${this._allManeuvers.length} total, ${this._legalManeuvers.length} legal, ${this._remainingPicks} picks`);
     } catch (e) {
       swseLogger.error('[StarshipManeuverStep.onStepEnter]', e);
       this._allManeuvers = [];
+      this._remainingPicks = 0;
     }
   }
 
@@ -269,7 +315,18 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   // Private
 
   async _computeLegalManeuvers(actor) {
-    this._legalManeuvers = [...this._allManeuvers]; // TODO: filter by prerequisites
+    this._legalManeuvers = [];
+
+    // PHASE 3: Use AbilityEngine to evaluate prerequisite legality
+    for (const maneuver of this._allManeuvers) {
+      const assessment = AbilityEngine.evaluateAcquisition(actor, maneuver);
+
+      if (assessment.legal) {
+        this._legalManeuvers.push(maneuver);
+      }
+    }
+
+    swseLogger.debug(`[StarshipManeuverStep] Legal maneuvers: ${this._legalManeuvers.length} of ${this._allManeuvers.length}`);
   }
 
   _applyFilters() {
