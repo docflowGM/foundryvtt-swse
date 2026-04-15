@@ -578,7 +578,8 @@ export class TalentStep extends ProgressionStepPlugin {
       return this.renderDetailsPanelEmptyState();
     }
 
-    const talentId = talent._id || talent.id;
+    // Use canonical talent.id field (from TalentRegistry normalized entry)
+    const talentId = talent.id;
     const isSelected = talentId === this._selectedTalentId;
     const selectedTree = this._getTree(this._selectedTreeId);
 
@@ -590,8 +591,9 @@ export class TalentStep extends ProgressionStepPlugin {
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/talent-details.hbs',
       data: {
-        // Ensure both _id and id are set for compatibility
-        talent: { ...talent, _id: talentId, id: talentId },
+        // Pass talent with canonical id field only (no artificial _id injection)
+        talent,
+        talentId,  // Expose canonical ID explicitly for template
         treeName: selectedTree?.name || '',
         isSelected,
         description: talent.description || talent.system?.description || '',
@@ -611,19 +613,21 @@ export class TalentStep extends ProgressionStepPlugin {
 
   async onItemFocused(item) {
     if (this._stage === 'graph') {
-      this._focusedTalentId = item?._id || item?.id || item;
+      // item is a string ID from the shell event extraction
+      this._focusedTalentId = item;
     }
   }
 
   async onItemCommitted(item, shell) {
     if (!item) return;
 
+    // item is a string ID extracted from data-item-id or data-tree-id attributes
     if (this._stage === 'browser') {
-      // Entering tree on commit
-      this._enterTree(item._id || item?.id || item, shell);  // TODO: pass shell
+      // Entering tree on commit (item is a tree ID string)
+      this._enterTree(item, shell);
     } else if (this._stage === 'graph') {
-      // Toggle selection in graph
-      const talentId = item._id || item?.id || item;
+      // Toggle selection in graph (item is a talent ID string)
+      const talentId = item;
       if (this._selectedTalentId === talentId) {
         this._selectedTalentId = null;
       } else {
