@@ -570,6 +570,163 @@
 }
 
 /* ====================================================================
+   FEAT FILTER BAR (Type & Tag multi-select dropdowns)
+   ==================================================================== */
+
+.feat-filter-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0;
+}
+
+/* A single dropdown group (button + optional panel) */
+.feat-filter-group {
+  position: relative;
+}
+
+/* Toggle button */
+.feat-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid rgba(0, 150, 200, 0.25);
+  border-radius: 3px;
+  background: rgba(0, 50, 80, 0.5);
+  color: #a0d0f0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  letter-spacing: 0.02em;
+}
+
+.feat-filter-btn:hover {
+  background: rgba(0, 100, 150, 0.5);
+  border-color: rgba(0, 200, 255, 0.3);
+  color: #c0e8ff;
+}
+
+.feat-filter-btn.is-open {
+  background: rgba(0, 100, 160, 0.6);
+  border-color: rgba(0, 200, 255, 0.4);
+  color: #00d0ff;
+}
+
+.feat-filter-btn i {
+  font-size: 0.72rem;
+  opacity: 0.8;
+  transition: transform 0.15s ease;
+}
+
+/* Badge showing how many filters are active */
+.feat-filter-active-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: rgba(0, 200, 255, 0.25);
+  color: #00d0ff;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* Dropdown panel */
+.feat-filter-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 200;
+  min-width: 160px;
+  max-height: 280px;
+  overflow-y: auto;
+  background: rgba(0, 25, 45, 0.97);
+  border: 1px solid rgba(0, 150, 200, 0.3);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  padding: 0.4rem 0;
+}
+
+.feat-filter-panel::-webkit-scrollbar {
+  width: 5px;
+}
+
+.feat-filter-panel::-webkit-scrollbar-track {
+  background: rgba(0, 50, 80, 0.2);
+}
+
+.feat-filter-panel::-webkit-scrollbar-thumb {
+  background: rgba(0, 150, 200, 0.3);
+  border-radius: 3px;
+}
+
+/* Checkbox row inside the panel */
+.feat-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.84rem;
+  color: #a0cce0;
+  transition: background 0.1s ease;
+  user-select: none;
+}
+
+.feat-filter-option:hover {
+  background: rgba(0, 100, 150, 0.35);
+  color: #c8e8ff;
+}
+
+.feat-filter-option input[type="checkbox"] {
+  accent-color: #00c0e0;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.feat-filter-option__label {
+  line-height: 1.3;
+}
+
+/* ====================================================================
+   FEAT DETAIL PANEL — TAGS ROW & BADGES
+   ==================================================================== */
+
+.feat-tags-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.feat-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.feat-tag-badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 2px;
+  background: rgba(0, 100, 150, 0.25);
+  border: 1px solid rgba(0, 150, 200, 0.2);
+  color: #70c0e0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+/* ====================================================================
    UTILITY BAR INTEGRATION
    ==================================================================== */
 

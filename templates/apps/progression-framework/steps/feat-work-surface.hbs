@@ -22,6 +22,53 @@
   </div>
   {{/if}}
 
+  {{!-- Type & Tag Filter Bar --}}
+  <div class="feat-filter-bar">
+    {{!-- Type dropdown --}}
+    {{#if typeOptions}}
+    <div class="feat-filter-group">
+      <button class="feat-filter-btn{{#if (eq openFilterPanel 'type')}} is-open{{/if}}"
+              data-action="open-filter-panel" data-panel="type" type="button">
+        <span>Type</span>
+        {{#if selectedTypesCount}}<span class="feat-filter-active-count">{{selectedTypesCount}}</span>{{/if}}
+        <i class="fa-solid fa-chevron-{{#if (eq openFilterPanel 'type')}}up{{else}}down{{/if}}"></i>
+      </button>
+      {{#if (eq openFilterPanel 'type')}}
+      <div class="feat-filter-panel">
+        {{#each typeOptions}}
+        <label class="feat-filter-option">
+          <input type="checkbox" data-filter-group="type" value="{{this.value}}" {{#if this.checked}}checked{{/if}}>
+          <span class="feat-filter-option__label">{{this.label}}</span>
+        </label>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{!-- Tags dropdown --}}
+    {{#if tagOptions}}
+    <div class="feat-filter-group">
+      <button class="feat-filter-btn{{#if (eq openFilterPanel 'tag')}} is-open{{/if}}"
+              data-action="open-filter-panel" data-panel="tag" type="button">
+        <span>Tags</span>
+        {{#if selectedTagsCount}}<span class="feat-filter-active-count">{{selectedTagsCount}}</span>{{/if}}
+        <i class="fa-solid fa-chevron-{{#if (eq openFilterPanel 'tag')}}up{{else}}down{{/if}}"></i>
+      </button>
+      {{#if (eq openFilterPanel 'tag')}}
+      <div class="feat-filter-panel">
+        {{#each tagOptions}}
+        <label class="feat-filter-option">
+          <input type="checkbox" data-filter-group="tag" value="{{this.value}}" {{#if this.checked}}checked{{/if}}>
+          <span class="feat-filter-option__label">{{this.label}}</span>
+        </label>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+  </div>
+
   {{#if groupedFeats.suggested}}
   <section class="feat-group suggested-group">
     <div class="group-header" data-action="toggle-category" data-category="suggested">
