@@ -2,9 +2,18 @@
 
   {{!-- Credits Box --}}
   <div class="credits-box">
-    <div class="credits-label">Credits</div>
-    <div class="credits-value">
-      {{actor.system.credits}}
+    <label class="credits-label" for="swse-sheet-credits-input">Credits</label>
+    <div class="credits-value credits-value--editable">
+      <input
+        id="swse-sheet-credits-input"
+        class="credits-input"
+        type="number"
+        name="system.credits"
+        value="{{actor.system.credits}}"
+        min="0"
+        step="1"
+        inputmode="numeric"
+      >
       <span class="credits-symbol">$</span>
     </div>
   </div>
@@ -118,6 +127,29 @@
   font-weight: bold;
   color: #fff;
   text-shadow: 0 0 8px rgba(0, 204, 255, 0.5);
+}
+
+.credits-value--editable {
+  justify-content: flex-end;
+}
+
+.credits-input {
+  width: 120px;
+  padding: 6px 8px;
+  border: 1px solid rgba(0, 204, 255, 0.45);
+  border-radius: 4px;
+  background: rgba(3, 16, 28, 0.9);
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: right;
+  box-shadow: inset 0 0 6px rgba(0, 204, 255, 0.12);
+}
+
+.credits-input:focus {
+  outline: none;
+  border-color: #0cf;
+  box-shadow: 0 0 0 1px rgba(0, 204, 255, 0.45), inset 0 0 6px rgba(0, 204, 255, 0.16);
 }
 
 .credits-symbol {

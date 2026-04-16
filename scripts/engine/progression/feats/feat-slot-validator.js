@@ -51,18 +51,20 @@ export class FeatSlotValidator {
     // Key principle: Validation is IDENTICAL for all slot types
     if (slot.slotType === 'class') {
       // PHASE 3: Support both Foundry classId and canonical lookup keys
-      const classId = slot.classId || slot.classLookupKeys?.classId;
+      const lookupKeys = Array.isArray(slot.classLookupKeys)
+        ? slot.classLookupKeys
+        : [slot.classId, slot.classLookupKeys?.classId, slot.classLookupKeys?.sourceId, slot.classLookupKeys?.name].filter(Boolean);
 
-      if (classId) {
-        const allowed = await ClassFeatRegistry.getClassBonusFeats(classId);
+      if (lookupKeys.length > 0) {
+        const allowed = await ClassFeatRegistry.getClassBonusFeats(lookupKeys);
         if (allowed.length === 0) {
           SWSELogger.warn(
-            `[FeatSlotValidator] No class bonus feats available for class ${classId}`
+            `[FeatSlotValidator] No class bonus feats available for class keys ${lookupKeys.join(', ')}`
           );
           errors.push('No class bonus feat is available for this class at this level');
         } else if (!allowed.includes(feat._id || feat.id)) {
           SWSELogger.warn(
-            `[FeatSlotValidator] Feat ${feat._id} not in class bonus list for ${classId}`
+            `[FeatSlotValidator] Feat ${feat._id} not in class bonus list for ${lookupKeys.join(', ')}`
           );
           errors.push(`Feat not allowed for class bonus slot: must be from class feat list`);
         }

@@ -9,6 +9,7 @@ export class UtilityBar {
     this._searchQuery = '';
     this._sortValue = '';
     this._handlers = []; // { el, event, fn } — tracked for cleanup before re-render
+    this._focusState = null;
   }
 
   /**
@@ -79,7 +80,7 @@ export class UtilityBar {
 
     // Restore search query
     const searchEl = regionEl.querySelector('[data-utility-search]');
-    if (searchEl && this._searchQuery) searchEl.value = this._searchQuery;
+    if (searchEl) searchEl.value = this._searchQuery;
 
     // Restore sort dropdown value
     const sortEl = regionEl.querySelector('[data-utility-sort]');
@@ -89,8 +90,17 @@ export class UtilityBar {
     regionEl.querySelectorAll('[data-utility-select]').forEach(dropdown => {
       const id = dropdown.dataset.utilitySelect;
       const value = this._filterState[id];
-      if (value) dropdown.value = value;
+      if (value !== undefined && value !== null && value !== '') dropdown.value = value;
     });
+
+    if (searchEl && this._focusState?.control === 'search') {
+      searchEl.focus({ preventScroll: true });
+      if (typeof this._focusState.start === 'number' && typeof searchEl.setSelectionRange === 'function') {
+        try {
+          searchEl.setSelectionRange(this._focusState.start, this._focusState.end ?? this._focusState.start);
+        } catch (_) {}
+      }
+    }
   }
 
   /**
@@ -105,14 +115,24 @@ export class UtilityBar {
       this._handlers.push({ el, event, fn });
     };
 
+    const rememberSearchFocus = (el) => {
+      this._focusState = {
+        control: 'search',
+        start: el.selectionStart ?? null,
+        end: el.selectionEnd ?? null
+      };
+    };
+
     // Search input
     const searchEl = regionEl.querySelector('[data-utility-search]');
     if (searchEl) {
       track(searchEl, 'input', e => {
         this._searchQuery = e.target.value;
+        rememberSearchFocus(e.target);
         regionEl.dispatchEvent(new CustomEvent('prog:utility:search',
           { bubbles: true, detail: { query: this._searchQuery } }));
       });
+      track(searchEl, 'focus', e => rememberSearchFocus(e.target));
     }
 
     // Filter chips
@@ -145,6 +165,44 @@ export class UtilityBar {
         this._filterState[id] = value;
         regionEl.dispatchEvent(new CustomEvent('prog:utility:filter',
           { bubbles: true, detail: { filterId: id, value: value } }));
+      });
+    });
+
+    regionEl.querySelectorAll('[data-action="reset-utility-filters"]').forEach(button => {
+      track(button, 'click', () => {
+        this._searchQuery = '';
+        Object.keys(this._filterState).forEach(key => {
+          this._filterState[key] = typeof this._filterState[key] === 'boolean' ? false : '';
+        });
+
+        const searchInput = regionEl.querySelector('[data-utility-search]');
+        if (searchInput) {
+          searchInput.value = '';
+          this._focusState = { control: 'search', start: 0, end: 0 };
+        }
+
+        regionEl.querySelectorAll('[data-utility-filter]').forEach(chip => {
+          chip.dataset.active = 'false';
+          chip.classList.remove('prog-utility-bar__filter-chip--active');
+        });
+        const sortInput = regionEl.querySelector('[data-utility-sort]');
+        if (sortInput) {
+          sortInput.selectedIndex = 0;
+          this._sortValue = sortInput.value || '';
+        } else {
+          this._sortValue = '';
+        }
+        regionEl.querySelectorAll('[data-utility-select]').forEach(dropdown => {
+          dropdown.selectedIndex = 0;
+          const id = dropdown.dataset.utilitySelect;
+          this._filterState[id] = dropdown.value;
+        });
+
+        regionEl.dispatchEvent(new CustomEvent('prog:utility:search', { bubbles: true, detail: { query: '' } }));
+        for (const [id, value] of Object.entries(this._filterState)) {
+          regionEl.dispatchEvent(new CustomEvent('prog:utility:filter', { bubbles: true, detail: { filterId: id, value } }));
+        }
+        regionEl.dispatchEvent(new CustomEvent('prog:utility:sort', { bubbles: true, detail: { sortId: this._sortValue } }));
       });
     });
   }

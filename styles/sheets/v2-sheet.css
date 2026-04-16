@@ -7072,3 +7072,99 @@ select option:checked {
   box-shadow: none !important;
   filter: none !important;
 }
+
+
+/* simplify skills checkboxes to one visible box */
+.swse-character-sheet .skills-panel input[type="checkbox"].skill-checkbox,
+.swse-sheet .skills-panel input[type="checkbox"].skill-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(0, 234, 255, 0.4);
+  border-radius: 4px;
+  background: rgba(7, 17, 30, 0.92);
+  position: relative;
+  box-shadow: none;
+}
+.swse-character-sheet .skills-panel input[type="checkbox"].skill-checkbox::before,
+.swse-character-sheet .skills-panel input[type="checkbox"].skill-checkbox::after,
+.swse-sheet .skills-panel input[type="checkbox"].skill-checkbox::before,
+.swse-sheet .skills-panel input[type="checkbox"].skill-checkbox::after {
+  content: none !important;
+  display: none !important;
+}
+.swse-character-sheet .skills-panel input[type="checkbox"].skill-checkbox:checked,
+.swse-sheet .skills-panel input[type="checkbox"].skill-checkbox:checked {
+  background: rgba(0, 170, 255, 0.28);
+  border-color: rgba(0, 234, 255, 0.75);
+}
+.swse-character-sheet .skills-panel input[type="checkbox"].skill-checkbox:checked,
+.swse-sheet .skills-panel input[type="checkbox"].skill-checkbox:checked {
+  background-image: linear-gradient(135deg, transparent 45%, #d9f8ff 45%, #d9f8ff 55%, transparent 55%), linear-gradient(45deg, transparent 35%, #d9f8ff 35%, #d9f8ff 45%, transparent 45%);
+}
+
+
+/* ========================================================================== */
+/* TEMPORARY SVG PARTIAL CHROME REMOVAL + HEADER BAR CLEANUP                  */
+/* User-requested: remove SVG boxes from partials for now; keep simple panels  */
+/* and show HP/XP as bars only with no numeric overlay text in the header.     */
+/* ========================================================================== */
+
+.swse-character-sheet .swse-panel__frame,
+.swse-character-sheet .svg-panel-frame::before,
+.swse-character-sheet .svg-panel-frame::after {
+  display: none !important;
+  background: none !important;
+  background-image: none !important;
+}
+
+.swse-character-sheet .svg-framed,
+.swse-character-sheet .svg-panel-frame,
+.swse-character-sheet .svg-wrapped,
+.swse-character-sheet .svg-row-backed {
+  background: rgba(7, 18, 32, 0.58) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.swse-character-sheet .svg-framed,
+.swse-character-sheet .svg-panel-frame {
+  border: 1px solid rgba(124, 232, 255, 0.18) !important;
+  border-radius: 12px !important;
+}
+
+.swse-character-sheet .svg-wrapped,
+.swse-character-sheet .svg-row-backed {
+  border: 1px solid rgba(124, 232, 255, 0.14) !important;
+  border-radius: 8px !important;
+}
+
+.swse-character-sheet .record-field.svg-wrapped,
+.swse-character-sheet .ledger-row.svg-row-backed,
+.swse-character-sheet .talent-row.svg-row-backed,
+.swse-character-sheet .power-row.svg-row-backed,
+.swse-character-sheet .secret-row.svg-row-backed,
+.swse-character-sheet .technique-row.svg-row-backed,
+.swse-character-sheet .maneuver-row.svg-row-backed,
+.swse-character-sheet .swse-attack-block.svg-row-backed {
+  background-image: none !important;
+}
+
+.swse-character-sheet .resource-segment-bar__text {
+  display: none !important;
+}
+
+.swse-character-sheet .resource-segment-bar {
+  min-height: 24px !important;
+  padding: 2px !important;
+}
+
+.swse-character-sheet .tactical-resource--hp .resource-segment-bar,
+.swse-character-sheet .tactical-resource--xp .resource-segment-bar {
+  width: 100%;
+}
+
+.swse-character-sheet .resource-segment {
+  border-radius: 999px;
+}

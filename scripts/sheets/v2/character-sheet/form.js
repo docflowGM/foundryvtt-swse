@@ -20,6 +20,7 @@ const FORM_FIELD_SCHEMA = {
   'system.hp.temp': 'number',
   'system.hpBonus': 'number',
   'system.conditionTrack.current': 'number',
+  'system.conditionTrack.persistent': 'boolean',
   'system.damageReduction': 'number',
   'system.baseAttackBonus': 'number',
   'system.secondWind.healing': 'number',

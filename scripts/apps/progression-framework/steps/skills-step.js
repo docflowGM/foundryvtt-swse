@@ -20,7 +20,7 @@ import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registr
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { BeastSubtypeAdapter } from '../adapters/beast-subtype-adapter.js';
-import { resolveClassModel, getClassSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
+import { resolveClassModel, resolveSelectedClassFromShell, getClassSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 
 export class SkillsStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -75,8 +75,8 @@ export class SkillsStep extends ProgressionStepPlugin {
         isBeast: this._isBeast
       });
     } else {
-      // Load allowed skills count from character build
-      this._allowedCount = character.build?.trainedSkillsAllowed || 1;
+      // Load allowed skills count from canonical class + INT + species bonus when possible
+      this._allowedCount = this._resolveAllowedSkillCount(shell, character);
     }
 
     // Load existing skill selections if any
@@ -124,7 +124,9 @@ try {
     } else {
       const derivation = this._deriveAvailableSkills(shell);
       this._skillDerivation = derivation;
-      this._availableSkills = derivation.skills;
+      this._availableSkills = derivation.skills
+        .slice()
+        .sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
 
       swseLogger.log('[SkillsStep] Skill availability resolved', {
         mode: derivation.mode,
@@ -282,6 +284,12 @@ try {
   // ---------------------------------------------------------------------------
 
   _toggleSkill(skillKey, trained) {
+    const targetSkill = this._availableSkills.find(skill => skill.key === skillKey || skill.id === skillKey || skill._id === skillKey);
+    if (trained && targetSkill && targetSkill.canTrain === false) {
+      ui.notifications.warn('Only class or background skills can be trained at this time.');
+      return;
+    }
+
     // Phase 2.7: For Beast, enforce Beast skill list constraint
     if (trained && this._isBeast) {
       const isValidBeastSkill = this._availableSkills.some(skill => {
@@ -315,6 +323,12 @@ try {
   }
 
   _trainSkill(skillKey) {
+    const targetSkill = this._availableSkills.find(skill => skill.key === skillKey || skill.id === skillKey || skill._id === skillKey);
+    if (targetSkill && targetSkill.canTrain === false) {
+      ui.notifications.warn('Only class or background skills can be trained at this time.');
+      return;
+    }
+
     // Phase 2.7: For Beast, enforce Beast skill list constraint
     if (this._isBeast) {
       const isValidBeastSkill = this._availableSkills.some(skill => {
@@ -443,8 +457,10 @@ renderDetailsPanel(focusedItem) {
         persist: true
       });
 
-      // Store top suggestions
-      this._suggestedSkills = (suggested || []).slice(0, 3);
+      const rankedSuggestions = SuggestionService.sortBySuggestion((suggested || []))
+        .filter(skill => (skill?.suggestion?.tier ?? skill?.tier ?? 0) > 0);
+
+      this._suggestedSkills = rankedSuggestions.slice(0, 3);
     } catch (err) {
       swseLogger.warn('[SkillsStep] Suggestion service error:', err);
       this._suggestedSkills = [];
@@ -462,6 +478,54 @@ renderDetailsPanel(focusedItem) {
     }
 
     return shell.buildIntent.toCharacterData();
+  }
+
+
+
+  _resolveAllowedSkillCount(shell, character) {
+    const classModel = resolveSelectedClassFromShell(shell) || this._resolveSelectedClassData(
+      shell?.progressionSession?.getSelection?.('class')
+      || shell?.committedSelections?.get?.('class')
+      || null
+    );
+
+    const classTrainedSkills = Number(
+      classModel?.trainedSkills
+      ?? classModel?.skillPoints
+      ?? classModel?.system?.trainedSkills
+      ?? classModel?.system?.skillPoints
+      ?? 0
+    ) || 0;
+
+    const intMod = Number(
+      character?.abilities?.int?.mod
+      ?? character?.abilities?.int?.modifier
+      ?? 0
+    ) || 0;
+
+    const speciesSelection =
+      shell?.progressionSession?.getSelection?.('species')
+      || shell?.committedSelections?.get?.('species')
+      || shell?.buildIntent?.toCharacterData?.()?.species
+      || null;
+
+    const speciesName = String(
+      speciesSelection?.name
+      ?? speciesSelection?.label
+      ?? speciesSelection?.id
+      ?? character?.species
+      ?? character?.details?.species
+      ?? ''
+    ).trim().toLowerCase();
+
+    const humanBonus = (
+      speciesName === 'human'
+      || speciesName === 'nearhuman'
+      || speciesName === 'near_human'
+      || speciesName === 'near-human'
+    ) ? 1 : 0;
+
+    return Math.max(1, classTrainedSkills + intMod + humanBonus);
   }
 
   _deriveAvailableSkills(shell) {
@@ -491,6 +555,7 @@ renderDetailsPanel(focusedItem) {
           ...skill,
           isClassSkill: false,
           isBackgroundSkill: false,
+          canTrain: false,
         })),
       };
     }
@@ -510,6 +575,7 @@ renderDetailsPanel(focusedItem) {
         ...skill,
         isClassSkill: classIds.has(skill.id),
         isBackgroundSkill: backgroundIds.has(skill.id),
+        canTrain: true,
       }));
 
     if (skills.length === 0) {
@@ -525,6 +591,7 @@ renderDetailsPanel(focusedItem) {
           ...skill,
           isClassSkill: false,
           isBackgroundSkill: false,
+          canTrain: false,
         })),
       };
     }
@@ -698,6 +765,7 @@ _formatSkillCard(skill, suggestedIds = new Set()) {
     isSuggested,
     badgeLabel: isSuggested ? 'Recommended' : null,
     badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+    canTrain: normalized.canTrain !== false,
   };
 }
 

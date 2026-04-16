@@ -234,7 +234,7 @@
         <div class="action-footer__confirm">
           <button type="button"
                   class="swse-btn swse-btn--confirm
-                         {{#if footer.next.isLastStep}}swse-btn--last-step{{/if}}"
+                         {{#if footer.next.isLastStep}}swse-btn--last-step{{/if}} {{#if footer.next.enabled}}swse-btn--advance-ready{{/if}}"
                   data-action="{{#if footer.next.isLastStep}}confirm-step{{else}}next-step{{/if}}"
                   {{#unless footer.next.enabled}}disabled{{/unless}}>
             <span class="swse-btn__label">{{footer.next.label}}</span>

@@ -101,11 +101,11 @@
                 </button>
               {{else}}
                 <button type="button"
-                        class="prog-btn prog-btn--small prog-btn--secondary skills-step-train-btn"
+                        class="prog-btn prog-btn--small {{#if this.canTrain}}prog-btn--secondary skills-step-train-btn{{else}}prog-btn--locked{{/if}}"
                         data-skill="{{this.key}}"
-                        {{#if (eq ../trainedCount ../allowedCount)}}disabled{{/if}}
-                        title="Train this skill">
-                  <i class="fas fa-plus"></i> Train
+                        {{#if (or (not this.canTrain) (eq ../trainedCount ../allowedCount))}}disabled{{/if}}
+                        title="{{#if this.canTrain}}Train this skill{{else}}Only class or background skills can be trained{{/if}}">
+                  <i class="fas {{#if this.canTrain}}fa-plus{{else}}fa-lock{{/if}}"></i> {{#if this.canTrain}}Train{{else}}Locked{{/if}}
                 </button>
               {{/if}}
             </div>

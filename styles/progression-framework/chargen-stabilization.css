@@ -107,3 +107,21 @@
    ============================================================================ */
 
 /* (No spacing changes — layout remains intact) */
+
+
+/* Flatten decorative button SVG chrome across the progression shell */
+.progression-shell .swse-ui-button::before,
+.progression-shell .swse-btn::before,
+.progression-shell .prog-btn::before,
+.progression-shell .prog-utility-bar__filter-chip::before {
+  display: none !important;
+}
+
+.progression-shell .swse-ui-button,
+.progression-shell .prog-btn,
+.progression-shell .prog-utility-bar__filter-chip {
+  background: var(--prog-bg-surface) !important;
+  border: 1px solid var(--prog-border-accent) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}

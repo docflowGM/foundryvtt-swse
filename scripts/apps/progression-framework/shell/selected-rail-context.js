@@ -197,7 +197,7 @@ export class SelectedRailContext {
     if (projection.identity?.species) {
       items.push({
         label: 'Species',
-        value: projection.identity.species,
+        value: this._cleanIdentityValue(projection.identity.species),
         isCurrent: currentStepId === 'species',
       });
     }
@@ -205,7 +205,7 @@ export class SelectedRailContext {
     if (projection.identity?.class) {
       items.push({
         label: 'Class',
-        value: projection.identity.class,
+        value: this._cleanIdentityValue(projection.identity.class),
         isCurrent: currentStepId === 'class',
       });
     }
@@ -213,7 +213,7 @@ export class SelectedRailContext {
     if (projection.identity?.background) {
       items.push({
         label: 'Background',
-        value: projection.identity.background,
+        value: this._cleanIdentityValue(projection.identity.background),
         isCurrent: currentStepId === 'background',
       });
     }
@@ -282,8 +282,8 @@ export class SelectedRailContext {
       id: 'skills',
       label: `Skills (${projection.skills.trained.length})`,
       items: projection.skills.trained.map(skill => ({
-        label: skill.name ?? skill,
-        value: skill.name ? skill.trained : true,
+        label: 'Trained',
+        value: this._formatSkillSummaryValue(skill),
         isCurrent: currentStepId === 'skills',
       })),
       isCurrent: currentStepId === 'skills',
@@ -472,6 +472,35 @@ export class SelectedRailContext {
           items,
         }
       : null;
+  }
+
+
+  /**
+   * Normalize identity values so the summary rail always renders stable text.
+   * @private
+   */
+  static _cleanIdentityValue(value) {
+    if (value === null || value === undefined) return '';
+    if (typeof value === 'string' || typeof value === 'number') return String(value).trim();
+    if (typeof value === 'object') {
+      const candidate = value.displayName || value.name || value.label || value.title || value.id;
+      if (candidate !== null && candidate !== undefined) return String(candidate).trim();
+    }
+    return String(value).trim();
+  }
+
+  /**
+   * Normalize skill values for compact left-rail display.
+   * @private
+   */
+  static _formatSkillSummaryValue(skill) {
+    if (skill === null || skill === undefined) return '';
+    if (typeof skill === 'string' || typeof skill === 'number') return String(skill).trim();
+    if (typeof skill === 'object') {
+      const candidate = skill.name || skill.label || skill.id;
+      if (candidate !== null && candidate !== undefined) return String(candidate).trim();
+    }
+    return String(skill).trim();
   }
 
   /**

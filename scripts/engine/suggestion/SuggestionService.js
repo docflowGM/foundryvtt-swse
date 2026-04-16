@@ -413,11 +413,23 @@ export class SuggestionService {
 
   static sortBySuggestion(items) {
     if (!Array.isArray(items)) {return items;}
-    // Sort by suggestion tier descending when available (compatible with legacy engine output)
+
     return items.slice().sort((a, b) => {
-      const ta = a?.suggestion?.tier ?? a?.tier ?? 0;
-      const tb = b?.suggestion?.tier ?? b?.tier ?? 0;
-      return tb - ta;
+      const tierA = a?.suggestion?.tier ?? a?.tier ?? 0;
+      const tierB = b?.suggestion?.tier ?? b?.tier ?? 0;
+      if (tierB !== tierA) {
+        return tierB - tierA;
+      }
+
+      const confidenceA = a?.suggestion?.confidence ?? a?.confidence ?? 0;
+      const confidenceB = b?.suggestion?.confidence ?? b?.confidence ?? 0;
+      if (confidenceB !== confidenceA) {
+        return confidenceB - confidenceA;
+      }
+
+      const nameA = String(a?.name ?? '');
+      const nameB = String(b?.name ?? '');
+      return nameA.localeCompare(nameB);
     });
   }
 

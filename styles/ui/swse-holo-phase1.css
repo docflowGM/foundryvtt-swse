@@ -174,6 +174,10 @@
 .swse-sheet-ui .language-remove{align-self:stretch;min-width:42px;}
 .swse-sheet-ui .languages-empty{padding:24px;}
 .swse-sheet-ui .swse-gear-panel{padding:14px;}
+.swse-sheet-ui .sheet-credits-box{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;margin-bottom:16px;border:1px solid var(--swse-ui-line-strong);border-radius:12px;background:linear-gradient(135deg, rgba(20,50,80,.6), rgba(10,30,50,.6));box-shadow:inset 0 0 8px rgba(0,204,255,.1), 0 0 16px rgba(124,232,255,.08);}
+.swse-sheet-ui .sheet-credits-label{font-size:12px;font-weight:800;text-transform:uppercase;color:var(--swse-ui-cyan-strong);letter-spacing:.1em;}
+.swse-sheet-ui .sheet-credits-value{display:flex;align-items:center;gap:6px;font-size:20px;font-weight:800;color:#fff;text-shadow:0 0 8px rgba(0,204,255,.5);}
+.swse-sheet-ui .sheet-credits-symbol{font-family:"Aurabesh";font-size:24px;color:var(--swse-ui-amber);text-shadow:0 0 10px rgba(255,196,0,.45);line-height:1;}
 .swse-sheet-ui .gear-row-left,.swse-store-ui .product-info{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
 .swse-sheet-ui .gear-row-actions,.swse-store-ui .product-actions,.swse-store-ui .vehicle-buttons,.swse-store-ui .droid-buttons,.swse-store-card-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;}
 .swse-sheet-ui .gear-stat,.swse-store-ui .detail-item,.swse-store-ui .detail-line{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.03);border:1px solid rgba(124,232,255,.12);}

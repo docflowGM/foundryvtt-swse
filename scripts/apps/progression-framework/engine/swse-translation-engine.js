@@ -364,13 +364,40 @@ export class TranslationSession {
 
     const sourceText = this._options.sourceText || this._options.translatedText || '';
     const translatedText = this._options.translatedText || sourceText;
+    const displayMode = this._options.displayMode || 'decode'; // decode | source-only | translated-only
     const cursor = escapeHTML(this._profile.cursorCharacter || '█');
     const typingSpeed = this._profile.typingSpeed || 42;
     const decodeSpeed = this._profile.decodeSpeed || 34;
     const keepFinalCursor = this._options.keepFinalCursor === true;
     const cursorMode = this._options.cursorMode || 'translating';
 
-    const renderFrame = (typedCount, decodeCount, showCursor = true) => {
+    const cursorClass = cursorMode === 'blink'
+      ? 'is-blinking'
+      : (cursorMode === 'error' ? 'is-error is-translating' : 'is-translating');
+
+    const renderSourceFrame = (typedCount, showCursor = true) => {
+      const typed = sourceText.slice(0, typedCount);
+      const cursorHTML = showCursor
+        ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
+        : '';
+      binding.setHTML(
+        'lineText',
+        `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--aurabesh">${escapeHTML(typed)}</span>${cursorHTML}`
+      );
+    };
+
+    const renderTranslatedFrame = (typedCount, showCursor = true) => {
+      const typed = translatedText.slice(0, typedCount);
+      const cursorHTML = showCursor
+        ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
+        : '';
+      binding.setHTML(
+        'lineText',
+        `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(typed)}</span>${cursorHTML}`
+      );
+    };
+
+    const renderDecodeFrame = (typedCount, decodeCount, showCursor = true) => {
       const typedSource = sourceText.slice(0, typedCount);
       const decodedPrefix = translatedText.slice(0, decodeCount);
       const undecodedSuffix = typedSource.slice(decodeCount);
@@ -381,9 +408,6 @@ export class TranslationSession {
       const aurabesh = undecodedSuffix
         ? `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--aurabesh">${escapeHTML(undecodedSuffix)}</span>`
         : '';
-      const cursorClass = cursorMode === 'blink'
-        ? 'is-blinking'
-        : (cursorMode === 'error' ? 'is-error is-translating' : 'is-translating');
       const cursorHTML = showCursor
         ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
         : '';
@@ -395,21 +419,54 @@ export class TranslationSession {
       this._timer = setTimeout(resolve, ms);
     });
 
+    if (displayMode === 'source-only') {
+      for (let typedCount = 0; typedCount <= sourceText.length; typedCount += 1) {
+        if (this._sessionToken !== sessionToken || this._state === 'cancelled') return;
+        renderSourceFrame(typedCount, true);
+        await wait(typingSpeed);
+      }
+
+      const finalCursor = keepFinalCursor
+        ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
+        : '';
+      binding.setHTML(
+        'lineText',
+        `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--aurabesh">${escapeHTML(sourceText)}</span>${finalCursor}`
+      );
+      return;
+    }
+
+    if (displayMode === 'translated-only') {
+      for (let typedCount = 0; typedCount <= translatedText.length; typedCount += 1) {
+        if (this._sessionToken !== sessionToken || this._state === 'cancelled') return;
+        renderTranslatedFrame(typedCount, true);
+        await wait(typingSpeed);
+      }
+
+      const finalCursor = keepFinalCursor
+        ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
+        : '';
+      binding.setHTML(
+        'lineText',
+        `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(translatedText)}</span>${finalCursor}`
+      );
+      return;
+    }
+
     for (let typedCount = 0; typedCount <= sourceText.length; typedCount += 1) {
       if (this._sessionToken !== sessionToken || this._state === 'cancelled') return;
-      renderFrame(typedCount, 0, true);
+      renderDecodeFrame(typedCount, 0, true);
       await wait(typingSpeed);
     }
 
     for (let decodeCount = 0; decodeCount <= translatedText.length; decodeCount += 1) {
       if (this._sessionToken !== sessionToken || this._state === 'cancelled') return;
-      renderFrame(sourceText.length, decodeCount, true);
+      renderDecodeFrame(sourceText.length, decodeCount, true);
       await wait(decodeSpeed);
     }
 
-    const finalCursorClass = cursorMode === 'blink' ? 'is-blinking' : 'is-translating';
     const finalCursor = keepFinalCursor
-      ? `<span class="prog-intro-cursor ${finalCursorClass}">${cursor}</span>`
+      ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
       : '';
     binding.setHTML(
       'lineText',

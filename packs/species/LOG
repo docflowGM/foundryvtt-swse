@@ -1,5 +1,5 @@
-2026/04/14-19:59:25.687 42c0 Recovering log #15
-2026/04/14-19:59:25.691 42c0 Level-0 table #17: started
-2026/04/14-19:59:25.695 42c0 Level-0 table #17: 26711 bytes OK
-2026/04/14-19:59:25.701 42c0 Delete type=0 #15
-2026/04/14-19:59:25.701 42c0 Delete type=3 #13
+2026/04/15-21:17:04.957 aa64 Recovering log #28
+2026/04/15-21:17:04.958 aa64 Level-0 table #30: started
+2026/04/15-21:17:04.964 aa64 Level-0 table #30: 26708 bytes OK
+2026/04/15-21:17:04.970 aa64 Delete type=0 #28
+2026/04/15-21:17:04.970 aa64 Delete type=3 #26

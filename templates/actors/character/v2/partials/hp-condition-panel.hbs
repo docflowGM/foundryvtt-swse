@@ -69,7 +69,18 @@
     <div class="condition-standard-track" data-swse-tooltip="ConditionTrack">
       <div class="condition-standard-track__header">
         <span class="condition-standard-track__title">Condition Track</span>
-        <span class="condition-standard-track__summary">Current: {{healthPanel.currentConditionPenalty.label}}</span>
+        <div class="condition-standard-track__header-meta">
+          <span class="condition-standard-track__summary">Current: {{healthPanel.currentConditionPenalty.label}}</span>
+          <label class="condition-standard-track__persistent">
+            <input type="checkbox"
+                   class="condition-persistent-checkbox"
+                   name="system.conditionTrack.persistent"
+                   data-action="toggle-condition-persistent"
+                   {{#if healthPanel.conditionTrack.persistent}}checked{{/if}}
+                   {{#unless healthPanel.conditionTrack.canEdit}}disabled{{/unless}}>
+            <span>Persistent</span>
+          </label>
+        </div>
       </div>
 
       <div class="condition-standard-track__rows">

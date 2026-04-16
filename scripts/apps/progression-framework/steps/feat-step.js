@@ -23,26 +23,17 @@ import { FeatRegistry } from '/systems/foundryvtt-swse/scripts/engine/progressio
 import { FeatSlotValidator } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js';
 import { FeatEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-engine.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
-import { normalizeFeats } from './step-normalizers.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
-import { resolveClassModel, getClassBonusFeatsLookupKeys } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
+import { resolveClassModel, resolveSelectedClassFromShell, getClassBonusFeatsLookupKeys } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
+import { FEAT_TYPE_LABELS, getFeatTypeLabel, loadFeatBucketsMapping, normalizeFeatRuntime, normalizeFeatTypeKey } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-shape.js';
 
 // Constants
 const FEATS_PER_CATEGORY_INITIAL = 5;  // Constrained visible count per category
 const TOP_SUGGESTIONS = 4;              // Top N suggested feats to show
-
-// User-friendly labels for featType values
-const FEAT_TYPE_LABELS = {
-  general:     'General',
-  force:       'Force',
-  species:     'Species',
-  team:        'Team',
-  martial_arts: 'Martial Arts',
-};
 
 // Category icons keyed by lowercase featType
 const FEAT_TYPE_ICONS = {
@@ -53,8 +44,6 @@ const FEAT_TYPE_ICONS = {
   martial_arts: 'fa-hand-fist',
 };
 
-// Module-level cache so large JSON is parsed only once per page load
-let _featMappingCache = null;
 
 export class FeatStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -76,6 +65,7 @@ export class FeatStep extends ProgressionStepPlugin {
 
     // UI state
     this._selectedFeatItem = null;       // The actual feat item for display
+    this._noChoicesAvailable = false;     // safety net for zero-option steps
 
     // Mapping & filter state
     this._mapping = null;                // feat-buckets-and-subbuckets.json
@@ -98,17 +88,15 @@ export class FeatStep extends ProgressionStepPlugin {
       await FeatRegistry.build();
     }
 
-    // Load tag/bucket mapping (cached at module level after first load)
+    // Load tag/bucket mapping (cached after first load)
     this._mapping = await this._loadMapping();
 
-    // Load and normalize all feats from registry
-    this._allFeats = (FeatRegistry.list?.() || []).map(f => this._normalizeFeat(f));
-
-    // Attach UI tags from mapping to each feat
-    this._annotateFeatsWithTags();
+    // Load canonical normalized feats from registry and reattach mapping tags for current page state
+    this._allFeats = (FeatRegistry.list?.() || []).map(f => normalizeFeatRuntime(f, { mapping: this._mapping }));
 
     // Get legal feats for this context
-    const legalFeats = await this._getLegalFeats(shell.actor);
+    const legalFeats = await this._getLegalFeats(shell.actor, shell);
+    this._noChoicesAvailable = legalFeats.length === 0;
 
     // Get suggested feats (pass shell so suggestion engine sees chargen choices)
     this._suggestedFeats = await this._getSuggestedFeats(shell.actor, legalFeats, shell);
@@ -217,14 +205,14 @@ export class FeatStep extends ProgressionStepPlugin {
   /**
    * Get all feats legal for this context
    */
-  async _getLegalFeats(actor) {
+  async _getLegalFeats(actor, shell) {
     if (!actor) return [];
 
     const legal = [];
 
     for (const feat of this._allFeats) {
-      // Check if feat meets prerequisites
-      const assessment = AbilityEngine.evaluateAcquisition(actor, feat);
+      // Check if feat meets prerequisites using pending chargen selections
+      const assessment = AbilityEngine.evaluateAcquisition(actor, feat, this._buildPendingAbilityData(shell));
 
       if (!assessment.legal) {
         continue;  // Skip illegal feats for now (unless showAll is on)
@@ -233,7 +221,7 @@ export class FeatStep extends ProgressionStepPlugin {
       // Check if feat is slot-compatible
       const slotValidation = await FeatSlotValidator.validateFeatForSlot(
         feat,
-        { slotType: this._slotType, classId: this._classId },
+        { slotType: this._slotType, classId: this._classId, classLookupKeys: this._getCurrentClassLookupKeys(shell) },
         actor
       );
 
@@ -275,8 +263,21 @@ export class FeatStep extends ProgressionStepPlugin {
         persist: true
       });
 
-      // Return ranked top-N suggestions without fabricating a fallback list
-      return (suggested || []).slice(0, TOP_SUGGESTIONS).map(f => this._normalizeFeat(f));
+      const normalizedSuggestions = (suggested || []).map(f => normalizeFeatRuntime(f, { mapping: this._mapping }));
+      const rankedSuggestions = SuggestionService.sortBySuggestion(normalizedSuggestions)
+        .filter(feat => (feat?.suggestion?.tier ?? feat?.tier ?? 0) > 0);
+
+      console.info('[FeatStep] Suggested feats resolved', {
+        returned: normalizedSuggestions.length,
+        ranked: rankedSuggestions.length,
+        top: rankedSuggestions.slice(0, TOP_SUGGESTIONS).map(feat => ({
+          name: feat.name,
+          tier: feat?.suggestion?.tier ?? feat?.tier ?? 0,
+          confidence: feat?.suggestion?.confidence ?? feat?.confidence ?? 0,
+        })),
+      });
+
+      return rankedSuggestions.slice(0, TOP_SUGGESTIONS);
     } catch (err) {
       console.warn('[FeatStep] Suggestion service error:', err);
       return [];
@@ -328,7 +329,7 @@ export class FeatStep extends ProgressionStepPlugin {
         categoryMap[category] = [];
       }
       // Don't re-add suggestions
-      if (!this._suggestedFeats.some(s => s._id === feat._id)) {
+      if (!this._suggestedFeats.some(s => (s._id || s.id) === (feat._id || feat.id))) {
         categoryMap[category].push(feat);
       }
     }
@@ -361,20 +362,11 @@ export class FeatStep extends ProgressionStepPlugin {
    */
   _normalizeFeat(feat) {
     if (!feat) return feat;
-    const id = feat._id || feat.id || feat.uuid || feat.name;
-    const rawCategory = feat.category || feat.system?.category || feat.system?.featType || 'General';
-    const normalizedCategory = String(rawCategory || 'General').trim();
-    const prereqRaw = feat.prerequisites?.raw ?? feat.system?.prerequisites ?? feat.system?.prerequisite ?? null;
-    const prerequisiteLine = this._formatPrerequisiteLine(prereqRaw);
+    const normalized = normalizeFeatRuntime(feat, { mapping: this._mapping });
     return {
-      ...feat,
-      id,
-      _id: id,
-      category: normalizedCategory,
-      description: feat.description || feat.system?.description?.value || feat.system?.description || feat.system?.benefit || '',
-      prerequisiteLine,
+      ...normalized,
+      prerequisiteLine: normalized.prerequisiteText || this._formatPrerequisiteLine(normalized.prerequisitesStructured),
       isAvailable: true,
-      uiBroadTags: [],  // populated by _annotateFeatsWithTags after mapping loads
     };
   }
 
@@ -396,47 +388,24 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _getFeatCategory(feat) {
-    const raw = feat?.category || feat?.system?.category || feat?.system?.featType;
-    return this._normalizeFeatTypeKey(raw);
+    return normalizeFeatTypeKey(feat?.featType || feat?.category || feat?.system?.featType);
   }
 
   _getFeatDescription(feat) {
-    const direct = feat?.description;
-    if (typeof direct === 'string' && direct.trim()) return direct.trim();
-    const raw = feat?.system?.description;
-    if (typeof raw === 'string' && raw.trim()) return raw.trim();
-    if (raw && typeof raw === 'object' && typeof raw.value === 'string' && raw.value.trim()) return raw.value.trim();
-    const benefit = feat?.system?.benefit;
-    if (typeof benefit === 'string' && benefit.trim()) return benefit.trim();
-    return '';
+    return String(feat?.description || '').trim();
   }
 
   _getFeatPrerequisites(feat) {
-    const raw = feat?.prerequisites?.raw ?? feat?.system?.prerequisites ?? feat?.system?.prerequisite;
-    if (Array.isArray(raw)) {
-      return raw.filter(Boolean).map(String).map(s => s.trim()).filter(Boolean);
-    }
-    if (typeof raw === 'string') {
-      const cleaned = raw.trim();
-      return cleaned ? [cleaned] : [];
-    }
-    return [];
+    const text = String(feat?.prerequisiteText || '').trim();
+    return text ? [text] : [];
   }
 
   /**
    * Get prerequisite line for compact middle-panel display
    */
   _getPrerequisiteLine(feat) {
-    const raw = feat?.system?.prerequisites ?? feat?.system?.prerequisite;
-    if (Array.isArray(raw)) {
-      const cleaned = raw.filter(Boolean).map(String).map(s => s.trim()).filter(Boolean);
-      return cleaned.length ? cleaned.join(', ') : 'No prerequisite';
-    }
-    if (typeof raw === 'string') {
-      const cleaned = raw.trim();
-      return cleaned || 'No prerequisite';
-    }
-    return 'No prerequisite';
+    const cleaned = String(feat?.prerequisiteText || '').trim();
+    return cleaned || 'No prerequisite';
   }
 
   /**
@@ -454,16 +423,7 @@ export class FeatStep extends ProgressionStepPlugin {
    * Load feat-buckets-and-subbuckets.json once and cache at module level
    */
   async _loadMapping() {
-    if (_featMappingCache) return _featMappingCache;
-    try {
-      const response = await fetch('systems/foundryvtt-swse/data/feat-buckets-and-subbuckets.json');
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      _featMappingCache = await response.json();
-      return _featMappingCache;
-    } catch (err) {
-      console.warn('[FeatStep] Could not load feat-buckets-and-subbuckets.json:', err);
-      return { perFeat: {}, intent: { addsUiSubBuckets: [] } };
-    }
+    return loadFeatBucketsMapping();
   }
 
   /**
@@ -472,8 +432,7 @@ export class FeatStep extends ProgressionStepPlugin {
   _annotateFeatsWithTags() {
     const perFeat = this._mapping?.perFeat || {};
     for (const feat of this._allFeats) {
-      const entry = perFeat[feat.name];
-      feat.uiBroadTags = entry?.uiBroadTags || [];
+      feat.uiBroadTags = this._getFeatTagsFromMapping(feat);
     }
   }
 
@@ -481,8 +440,7 @@ export class FeatStep extends ProgressionStepPlugin {
    * Return uiBroadTags for a feat from the mapping (safe, returns [] when unmapped)
    */
   _getFeatTagsFromMapping(feat) {
-    const entry = this._mapping?.perFeat?.[feat.name];
-    return entry?.uiBroadTags || [];
+    return Array.isArray(feat?.uiBroadTags) ? feat.uiBroadTags : [];
   }
 
   /**
@@ -548,7 +506,7 @@ export class FeatStep extends ProgressionStepPlugin {
           _id: feat._id || feat.id,
           id: feat.id || feat._id,
           name: feat.name,
-          category: this._getFeatCategory(feat),
+          category: feat.featTypeLabel || getFeatTypeLabel(this._getFeatCategory(feat)),
           prerequisiteLine: feat.prerequisiteLine || this._getPrerequisiteLine(feat),
           isSuggested: this._suggestedFeats.some(s => (s._id || s.id) === (feat._id || feat.id)),
           isFocused: (feat._id || feat.id) === this._focusedFeatId,
@@ -569,7 +527,7 @@ export class FeatStep extends ProgressionStepPlugin {
       .sort()
       .map(t => ({
         value: t,
-        label: FEAT_TYPE_LABELS[t] || this._toTitleCase(t),
+        label: getFeatTypeLabel(t),
         checked: this._selectedTypes.has(t),
       }));
 
@@ -658,7 +616,7 @@ export class FeatStep extends ProgressionStepPlugin {
     const isSelected = featId === this._selectedFeatId;
 
     // Normalize detail panel data for canonical display (no fabrication)
-    const normalized = normalizeDetailPanelData(feat, 'feat', {
+    normalizeDetailPanelData(feat, 'feat', {
       metadata: { tags: feat.uiBroadTags || [] },
     });
 
@@ -668,16 +626,11 @@ export class FeatStep extends ProgressionStepPlugin {
         feat,
         isSuggested,
         isSelected,
-        category: FEAT_TYPE_LABELS[this._getFeatCategory(feat)] || this._toTitleCase(this._getFeatCategory(feat)),
-        description: this._getFeatDescription(feat),
+        category: feat.featTypeLabel || getFeatTypeLabel(this._getFeatCategory(feat)),
+        description: feat.description || '',
         prerequisites: this._getFeatPrerequisites(feat),
-        prerequisiteLine: feat.prerequisiteLine || this._getFeatPrerequisites(feat),
+        prerequisiteLine: feat.prerequisiteText || feat.prerequisiteLine || this._getPrerequisiteLine(feat),
         isRepeatable: this._isRepeatable(feat.name),
-        // Add normalized fields for enhanced detail rail
-        canonicalDescription: normalized.description,
-        metadataTags: normalized.metadataTags,
-        hasMentorProse: normalized.fallbacks.hasMentorProse,
-        // Tags from mapping
         uiBroadTags: feat.uiBroadTags || [],
       },
     };
@@ -786,8 +739,8 @@ export class FeatStep extends ProgressionStepPlugin {
     const issues = [];
     const warnings = [];
 
-    // Blocking issue if no feat selected
-    if (!this._selectedFeatId) {
+    // Safety net: if there are no legal choices, step is auto-valid/skippable
+    if (!this._noChoicesAvailable && !this._selectedFeatId) {
       issues.push('No feat selected');
     }
 
@@ -799,6 +752,9 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   getBlockingIssues() {
+    if (this._noChoicesAvailable) {
+      return [];
+    }
     if (!this._selectedFeatId) {
       return [`Select a ${this._slotType === 'class' ? 'Class' : 'General'} Feat`];
     }
@@ -809,6 +765,9 @@ export class FeatStep extends ProgressionStepPlugin {
    * PHASE 3 UX: Specific, actionable explanation for why Next is blocked
    */
   getBlockerExplanation() {
+    if (this._noChoicesAvailable) {
+      return null;
+    }
     if (!this._selectedFeatId) {
       const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'General';
       return `Choose a ${slotTypeLabel} Feat to continue`;
@@ -840,7 +799,9 @@ export class FeatStep extends ProgressionStepPlugin {
     const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'General';
 
     let statusText = '';
-    if (this._selectedFeatId) {
+    if (this._noChoicesAvailable) {
+      statusText = `${slotTypeLabel} Feat: No legal options — safe to skip`;
+    } else if (this._selectedFeatId) {
       const feat = this._getFeat(this._selectedFeatId);
       statusText = `${slotTypeLabel} Feat: ${feat?.name || 'Selected'}`;
     } else {
@@ -850,7 +811,7 @@ export class FeatStep extends ProgressionStepPlugin {
     return {
       mode: 'feat-selection',
       statusText,
-      isComplete: !!this._selectedFeatId,
+      isComplete: this._noChoicesAvailable || !!this._selectedFeatId,
       slotType: this._slotType,
     };
   }

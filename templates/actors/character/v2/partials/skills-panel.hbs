@@ -4,6 +4,28 @@
     <h3>Skills</h3>
   </header>
 
+  <div class="skills-tools-row">
+    <div class="skills-tool skills-tool--filter">
+      <label for="skills-filter-select">Filter</label>
+      <select id="skills-filter-select" data-action="filter-skills">
+        <option value="all">All Skills</option>
+        <option value="trained">Trained</option>
+        <option value="favorited">Favorited</option>
+        <option value="focused">Focused</option>
+      </select>
+    </div>
+    <div class="skills-tool skills-tool--sort">
+      <label for="skills-sort-select">Sort</label>
+      <select id="skills-sort-select" data-action="sort-skills">
+        <option value="name">Name A→Z</option>
+        <option value="ability">Ability</option>
+        <option value="total-desc">Highest Total</option>
+        <option value="total-asc">Lowest Total</option>
+      </select>
+    </div>
+    <button type="button" class="skills-tool-reset" data-action="reset-skills-tools">Reset Filters</button>
+  </div>
+
   <!-- Skills Grid Header (Sticky) -->
   <div class="skills-grid-header swse-grid-header">
     <div class="col-favorite">★</div>
@@ -19,13 +41,20 @@
   </div>
 
   <!-- Skills Grid Body -->
-  <div class="skills-grid-body">
+  <div class="skills-grid-body skills-list">
 
     {{#each derived.skills as |skill|}}
 
-      <div class="skills-grid-row swse-row-surface" data-skill="{{skill.key}}"
+      <div class="skills-grid-row swse-row-surface skill-row-container" data-skill="{{skill.key}}"
            data-skill-extra-uses="{{skill.extraUses.length}}"
-           data-swse-tooltip="{{skill.label}}">
+           data-swse-tooltip="{{skill.label}}"
+           data-name="{{skill.key}}"
+           data-label="{{skill.label}}"
+           data-total="{{skill.total}}"
+           data-trained="{{#if skill.trained}}true{{else}}false{{/if}}"
+           data-favorite="{{#if skill.favorite}}true{{else}}false{{/if}}"
+           data-focused="{{#if skill.focused}}true{{else}}false{{/if}}"
+           data-ability="{{skill.selectedAbility}}">
 
         <!-- Favorite Star (with expand/collapse affordance if extra uses available) -->
         <div class="col-favorite">
@@ -230,6 +259,15 @@
   </div>
 
 </section>
+
+<style>
+.skills-tools-row { display:flex; flex-wrap:wrap; align-items:end; gap:12px; margin-bottom:10px; }
+.skills-tool { display:flex; flex-direction:column; gap:4px; }
+.skills-tool label { font-size:0.75rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; opacity:0.8; }
+.skills-tool select, .skills-tool-reset { min-height:34px; border-radius:8px; }
+.skills-tool-reset { border:1px solid rgba(0, 234, 255, 0.24); background:rgba(7, 17, 30, 0.9); color:#d9f8ff; font-weight:700; padding:0 12px; }
+.skills-tool-reset:hover { border-color:rgba(0, 234, 255, 0.55); }
+</style>
 
 <!-- CSS for Traditional Grid Layout & Color Coding -->
 <style>

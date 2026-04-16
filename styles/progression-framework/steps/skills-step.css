@@ -368,3 +368,15 @@
     flex: 1;
   }
 }
+
+
+.prog-btn--locked {
+  background: var(--prog-bg-disabled);
+  border-color: var(--prog-border);
+  color: var(--prog-text-disabled);
+}
+
+.prog-btn--locked:hover:not(:disabled) {
+  background: var(--prog-bg-disabled);
+  border-color: var(--prog-border);
+}

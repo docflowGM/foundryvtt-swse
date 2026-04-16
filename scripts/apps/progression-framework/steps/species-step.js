@@ -545,38 +545,6 @@ export class SpeciesStep extends ProgressionStepPlugin {
       dialogue_first_30: typeof dialogue === 'string' ? dialogue.slice(0, 30) : null,
     });
 
-    if (dialogue) {
-      console.log('[SpeciesStep] ✓ Found mentor dialogue for', entry.name);
-
-      // [DEBUG] Log before speak call
-      console.log(`[SWSE Species Debug] [Click #${clickNum}] About to call shell.mentorRail.speak()`, {
-        mentor_isAnimating_before: shell.mentor?.isAnimating ?? '(null)',
-        mentor_currentDialogue_before: shell.mentor?.currentDialogue?.slice?.(0, 30) ?? '(null)',
-      });
-
-      try {
-        await shell.mentorRail.speak(dialogue, 'encouraging');
-        console.log(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() completed`);
-
-        // GUARD: Verify this focus is still current before applying any results
-        if (this._focusVersion !== focusVersion) {
-          console.debug(`[SWSE Stale Focus Guard] [Species] Discarding stale mentor speak | was: v${focusVersion}, now: v${this._focusVersion} | species: ${entry.id}`);
-          return;  // Stale focus, don't render or update UI
-        }
-      } catch (speakErr) {
-        console.error(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() threw:`, speakErr);
-        console.error(`[SWSE Species Debug] [Click #${clickNum}] Speak error details:`, {
-          message: speakErr.message,
-          stack: speakErr.stack?.split('\n').slice(0, 4).join(' | '),
-        });
-        // LOG BUT RETHROW - don't swallow the error
-        throw speakErr;
-      }
-    } else {
-      console.log('[SpeciesStep] ⚠ No mentor dialogue found for', entry.name);
-      console.log(`[SWSE Species Debug] [Click #${clickNum}] No dialogue, skipping speak()`);
-    }
-
     console.log('[SpeciesStep] Triggering shell.render() to update detail panel');
     console.log('[SpeciesStep] shell.focusedItem is now:', shell.focusedItem);
 
@@ -589,6 +557,36 @@ export class SpeciesStep extends ProgressionStepPlugin {
     console.debug(`[SWSE Species Hydration Debug] [Click #${clickNum}] Requesting rerender for species hydration | selected: ${entry.name} (${entry.id}) | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
     shell.render();
     console.debug(`[SWSE Species Hydration Debug] [Click #${clickNum}] Rerender requested | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
+
+    if (dialogue) {
+      console.log('[SpeciesStep] ✓ Found mentor dialogue for', entry.name);
+
+      // [DEBUG] Log before non-blocking speak call
+      console.log(`[SWSE Species Debug] [Click #${clickNum}] About to call shell.mentorRail.speak() non-blocking`, {
+        mentor_isAnimating_before: shell.mentor?.isAnimating ?? '(null)',
+        mentor_currentDialogue_before: shell.mentor?.currentDialogue?.slice?.(0, 30) ?? '(null)',
+      });
+
+      void shell.mentorRail.speak(dialogue, 'encouraging')
+        .then(() => {
+          console.log(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() completed`);
+
+          // GUARD: Keep stale completion from re-touching UI state if focus moved on.
+          if (this._focusVersion !== focusVersion) {
+            console.debug(`[SWSE Stale Focus Guard] [Species] Discarding stale mentor speak completion | was: v${focusVersion}, now: v${this._focusVersion} | species: ${entry.id}`);
+          }
+        })
+        .catch(speakErr => {
+          console.error(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() threw:`, speakErr);
+          console.error(`[SWSE Species Debug] [Click #${clickNum}] Speak error details:`, {
+            message: speakErr.message,
+            stack: speakErr.stack?.split('\n').slice(0, 4).join(' | '),
+          });
+        });
+    } else {
+      console.log('[SpeciesStep] ⚠ No mentor dialogue found for', entry.name);
+      console.log(`[SWSE Species Debug] [Click #${clickNum}] No dialogue, skipping speak()`);
+    }
 
     console.log(`[SWSE Species Debug] [Click #${clickNum}] onItemFocused COMPLETE`);
   }

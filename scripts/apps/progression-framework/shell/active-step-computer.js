@@ -31,6 +31,8 @@ import {
   getDownstreamDependents,
 } from '../registries/progression-node-registry.js';
 import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
+import { resolveClassModel } from '../../../engine/progression/utils/class-resolution.js';
+import { ClassFeatRegistry } from '../../../engine/progression/feats/class-feat-registry.js';
 
 export class ActiveStepComputer {
   /**
@@ -222,11 +224,40 @@ export class ActiveStepComputer {
    * Check if legal feat choices exist for this feat type.
    * @private
    */
-  _hasFeatChoices(stepNodeId, actor, progressionSession) {
-    // Placeholder: would call AbilityEngine.evaluateAcquisition() for each feat
-    // For now, assume applicable (step plugin filters legal choices)
-    // This prevents false negatives where a feat *might* be legal
-    return true;
+  async _hasFeatChoices(stepNodeId, actor, progressionSession) {
+    if (stepNodeId !== 'class-feat') {
+      return true;
+    }
+
+    try {
+      const classSelection = progressionSession?.getSelection?.('class') || progressionSession?.draftSelections?.class || null;
+      const classModel = resolveClassModel(classSelection);
+      if (!classModel) {
+        return false;
+      }
+
+      const currentLevel = Number(actor?.system?.level || actor?.system?.details?.level || 1) || 1;
+      const levelEntry = Array.isArray(classModel.levelProgression)
+        ? classModel.levelProgression.find(entry => Number(entry.level) === currentLevel)
+        : null;
+      const features = levelEntry?.features || [];
+      const hasClassFeatGrant = features.some(feature => {
+        const type = String(feature?.type || '').toLowerCase();
+        const name = String(feature?.name || feature || '').toLowerCase();
+        return type === 'feat_choice' || name.includes('bonus feat');
+      });
+
+      if (!hasClassFeatGrant) {
+        return false;
+      }
+
+      const lookupKeys = [classModel.sourceId, classModel.id, classModel.name].filter(Boolean);
+      const allowed = await ClassFeatRegistry.getClassBonusFeats(lookupKeys);
+      return allowed.length > 0;
+    } catch (err) {
+      swseLogger.warn('[ActiveStepComputer] Error evaluating class-feat applicability:', err);
+      return false;
+    }
   }
 
   /**

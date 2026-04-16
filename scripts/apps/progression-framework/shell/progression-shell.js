@@ -468,11 +468,40 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return this;
     }
 
+    const captureScrollPositions = (root) => {
+      if (!root) return [];
+      const selectors = [
+        '.window-content',
+        '[data-region="summary-panel"]',
+        '[data-region="work-surface"]',
+        '[data-region="details-panel"]',
+        '[data-region="mentor-rail"]',
+        '[data-region="utility-bar"]'
+      ];
+      return selectors.map(selector => {
+        const el = root.querySelector(selector);
+        return el ? { selector, top: el.scrollTop, left: el.scrollLeft } : null;
+      }).filter(Boolean);
+    };
+
+    const restoreScrollPositions = (root, snapshots) => {
+      if (!root || !Array.isArray(snapshots)) return;
+      for (const snap of snapshots) {
+        const el = root.querySelector(snap.selector);
+        if (!el) continue;
+        el.scrollTop = snap.top;
+        el.scrollLeft = snap.left;
+      }
+    };
+
+    const scrollSnapshots = captureScrollPositions(this.element);
+
     this._isRendering = true;
     this._renderCount++;
 
     console.log(`[ProgressionShell] RENDER START (#${this._renderCount}) position:`, this.position);
     const result = await super.render(...args);
+    restoreScrollPositions(this.element, scrollSnapshots);
     console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
 
     this._isRendering = false;
@@ -1165,8 +1194,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
         stepId: descriptor.stepId,
       });
       this._lastSpokenStepId = descriptor.stepId;
-      await this.mentorRail.speakForStep(descriptor);
-      console.log('[SWSE Translation Debug] [_onRender] speakForStep() COMPLETED');
+      void this.mentorRail.speakForStep(descriptor)
+        .then(() => {
+          console.log('[SWSE Translation Debug] [_onRender] speakForStep() COMPLETED');
+        })
+        .catch(error => {
+          console.error('[SWSE Translation Debug] [_onRender] speakForStep() FAILED', error);
+        });
     } else {
       console.log('[SWSE Translation Debug] [_onRender] SKIPPING speakForStep() — condition false or already spoken', {
         reason: !descriptor ? 'no descriptor' : 'already spoken',

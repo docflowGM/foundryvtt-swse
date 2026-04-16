@@ -145,11 +145,11 @@ export function buildHeaderHpSegments(actor) {
   const hp = buildHpViewModel(actor);
 
   const hpColorClassForIndex = (index) => {
-    if (index < 4) return "seg-red";
-    if (index < 8) return "seg-orange";
-    if (index < 12) return "seg-yellow";
-    if (index < 16) return "seg-yellowgreen";
-    return "seg-green";
+    if (index < 4) return "seg--red";
+    if (index < 8) return "seg--orange";
+    if (index < 12) return "seg--yellow";
+    if (index < 16) return "seg--yellowgreen";
+    return "seg--green";
   };
 
   return Array.from({ length: 20 }, (_, index) => ({

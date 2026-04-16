@@ -562,3 +562,34 @@
 .svg-framed .section-bar {
   z-index: 3;
 }
+
+
+/* ========================================================================== */
+/* TEMPORARY OVERRIDE: REMOVE SVG PANEL/ROW/FIELD ART FROM CHARACTER PARTIALS */
+/* ========================================================================== */
+
+.swse-panel__frame {
+  display: none;
+  background-image: none !important;
+}
+
+.svg-panel-frame,
+.svg-framed,
+.record-field.svg-wrapped,
+.swse-attack-block.svg-row-backed,
+.ledger-row.svg-row-backed,
+.talent-row.svg-row-backed,
+.power-row.svg-row-backed,
+.secret-row.svg-row-backed,
+.technique-row.svg-row-backed,
+.maneuver-row.svg-row-backed,
+.resource-pip-strip.svg-framed,
+.relationships-panel.svg-framed,
+.special-combat-actions-panel.svg-framed,
+.defenses-panel.svg-framed,
+.armor-summary-panel.svg-framed,
+.character-record-header.svg-framed,
+.hp-condition-panel.svg-framed,
+.dsp-numbered-track.svg-framed {
+  background-image: none !important;
+}

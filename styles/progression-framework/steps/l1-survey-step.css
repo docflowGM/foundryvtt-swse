@@ -105,3 +105,35 @@
 .progression-shell .prog-l1-survey__option input[type="radio"]:checked ~ .prog-l1-survey__option-hint {
   color: var(--prog-text);
 }
+
+
+.progression-shell .prog-l1-survey__mentor {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: var(--prog-space-md);
+  padding: var(--prog-space-md);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-md);
+  background: var(--prog-bg-surface);
+}
+.progression-shell .prog-l1-survey__mentor-portrait img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--prog-border-bright);
+}
+.progression-shell .prog-l1-survey__mentor-name {
+  color: var(--prog-text-heading);
+  font-weight: 700;
+}
+.progression-shell .prog-l1-survey__mentor-title {
+  color: var(--prog-text-dim);
+  font-size: var(--prog-font-size-xs);
+  margin-bottom: 0.4rem;
+}
+.progression-shell .prog-l1-survey__mentor-dialogue {
+  margin: 0;
+  color: var(--prog-text);
+  line-height: 1.45;
+}

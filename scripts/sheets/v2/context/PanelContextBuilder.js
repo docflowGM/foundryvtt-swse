@@ -103,15 +103,16 @@ export class PanelContextBuilder {
     const damageReductionValue = Number(this.system.damageReduction ?? 0) || 0;
 
     const ctCurrent = Number(this.system.conditionTrack?.current) || 0;
+    const ctPersistent = this.system.conditionTrack?.persistent === true;
     const ctMax = 6;
 
     const conditionDefinitions = [
-      { step: 0, label: 'Normal', description: 'No penalties.', severityClass: 'severity-normal', penalty: 0 },
-      { step: 1, label: '-1', description: 'To all defenses, attacks, skill, and ability checks.', severityClass: 'severity-low', penalty: -1 },
-      { step: 2, label: '-2', description: 'To all defenses, attacks, skill, and ability checks.', severityClass: 'severity-mid', penalty: -2 },
-      { step: 3, label: '-5', description: 'To all defenses, attacks, skill, and ability checks.', severityClass: 'severity-high', penalty: -5 },
-      { step: 4, label: '-10', description: 'To all defenses, attacks, skill, and ability checks. Move at half speed.', severityClass: 'severity-critical', penalty: -10 },
-      { step: 5, label: 'Helpless', description: 'Unconscious or disabled.', severityClass: 'severity-helpless', penalty: null }
+      { step: 0, label: 'Normal', description: 'No penalties', severityClass: 'severity-normal', penalty: 0 },
+      { step: 1, label: '-1', description: 'Def • Atk • Skill • Ability', severityClass: 'severity-low', penalty: -1 },
+      { step: 2, label: '-2', description: 'Def • Atk • Skill • Ability', severityClass: 'severity-mid', penalty: -2 },
+      { step: 3, label: '-5', description: 'Def • Atk • Skill • Ability', severityClass: 'severity-high', penalty: -5 },
+      { step: 4, label: '-10', description: 'Def • Atk • Skill • Ability • Half speed', severityClass: 'severity-critical', penalty: -10 },
+      { step: 5, label: 'Helpless', description: 'Unconscious / disabled', severityClass: 'severity-helpless', penalty: null }
     ];
 
     const conditionSlots = conditionDefinitions.map(def => ({
@@ -163,6 +164,7 @@ export class PanelContextBuilder {
       conditionTrack: {
         current: ctCurrent,
         max: ctMax,
+        persistent: ctPersistent,
         canEdit: this.sheet.isEditable
       },
       conditionSlots,

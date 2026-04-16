@@ -94,9 +94,9 @@ export class ProjectionEngine {
    */
   static _projectIdentity(draftSelections) {
     return {
-      species: draftSelections.species?.id || draftSelections.species?.name || null,
-      class: draftSelections.class?.id || draftSelections.class?.name || null,
-      background: draftSelections.background?.id || draftSelections.background?.name || null,
+      species: draftSelections.species?.name || draftSelections.species?.id || null,
+      class: draftSelections.class?.name || draftSelections.class?.id || null,
+      background: draftSelections.background?.name || draftSelections.background?.id || null,
     };
   }
 

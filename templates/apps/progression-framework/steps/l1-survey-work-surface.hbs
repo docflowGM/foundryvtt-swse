@@ -7,6 +7,13 @@
     </p>
   </div>
 
+  {{#if mentorGuidance}}
+  <div class="prog-l1-survey__mentor-note swse-ui-frame">
+    <div class="prog-l1-survey__mentor-kicker">{{#if mentorName}}{{mentorName}}{{else}}Mentor{{/if}}{{#if mentorTitle}} · {{mentorTitle}}{{/if}}</div>
+    <p class="prog-l1-survey__mentor-text">{{mentorGuidance}}</p>
+  </div>
+  {{/if}}
+
   <div class="prog-l1-survey__questions">
 
     {{!-- Question 1: Playstyle --}}

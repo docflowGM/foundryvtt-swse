@@ -21,34 +21,38 @@ export class ClassFeatRegistry {
    * @param {string} classId - Class ID (16-char Foundry ID)
    * @returns {Promise<Array<string>>} Array of feat IDs allowed for this class bonus
    */
-  static async getClassBonusFeats(classId) {
-    if (!classId) {
+  static async getClassBonusFeats(classKeyOrKeys) {
+    const lookupKeys = Array.isArray(classKeyOrKeys)
+      ? classKeyOrKeys.map(value => String(value).trim()).filter(Boolean)
+      : [String(classKeyOrKeys || '').trim()].filter(Boolean);
+
+    if (lookupKeys.length === 0) {
       return [];
     }
 
-    // Check cache first
-    if (this._bonusFeatsCache.has(classId)) {
-      return this._bonusFeatsCache.get(classId);
+    const cacheKey = lookupKeys.slice().sort().join('|');
+    if (this._bonusFeatsCache.has(cacheKey)) {
+      return this._bonusFeatsCache.get(cacheKey);
     }
 
-    // Load feats if not already loaded
     if (!this._featsLoaded) {
       await this._loadFeatsCache();
     }
 
-    // Find feats where bonus_feat_for includes this classId
+    const lookupSet = new Set(lookupKeys.map(k => k.toLowerCase()));
+
     const bonusFeats = this._allFeatsData
       .filter(feat => {
         const bonusFor = feat.system?.bonus_feat_for || [];
-        return Array.isArray(bonusFor) && bonusFor.includes(classId);
+        const values = Array.isArray(bonusFor) ? bonusFor : [bonusFor];
+        return values.some(value => lookupSet.has(String(value || '').trim().toLowerCase()));
       })
       .map(feat => feat._id);
 
-    // Cache result
-    this._bonusFeatsCache.set(classId, bonusFeats);
+    this._bonusFeatsCache.set(cacheKey, bonusFeats);
 
     SWSELogger.log(
-      `[ClassFeatRegistry] Found ${bonusFeats.length} bonus feats for class ${classId}`
+      `[ClassFeatRegistry] Found ${bonusFeats.length} bonus feats for class keys ${lookupKeys.join(', ')}`
     );
 
     return bonusFeats;

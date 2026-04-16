@@ -117,6 +117,13 @@
     <section class="tab flexcol" data-tab-group="primary" data-tab="gear">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
+          <div class="sheet-credits-box">
+            <div class="sheet-credits-label">Credits</div>
+            <div class="sheet-credits-value">
+              {{floor actor.system.credits}}
+              <span class="sheet-credits-symbol">$</span>
+            </div>
+          </div>
           <section class="gear-section">
             <h3>Equipment</h3>
             {{#if equipment}}

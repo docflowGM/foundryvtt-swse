@@ -218,14 +218,15 @@ async onStepExit(shell) {
     if (!background) return;
 
     this._focusedBackgroundId = id;
+    shell.render();
 
-    // Mentor reaction on focus
+    // Mentor reaction on focus should not block right-rail detail hydration.
     const flavorText = this._getMentorFlavorForBackground(background);
     if (flavorText) {
-      await shell.mentorRail.speak(flavorText, 'neutral');
+      void shell.mentorRail.speak(flavorText, 'neutral').catch(error => {
+        console.error('[BackgroundStep] Non-blocking mentor speak failed:', error);
+      });
     }
-
-    shell.render();
   }
 
   async onItemCommitted(id, shell) {

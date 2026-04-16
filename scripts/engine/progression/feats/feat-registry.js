@@ -1,4 +1,3 @@
-
 async function loadJSON(url) {
   const response = await fetch(url);
   if (!response.ok) {
@@ -6,7 +5,6 @@ async function loadJSON(url) {
   }
   return response.json();
 }
-
 
 /**
  * FEAT REGISTRY
@@ -18,6 +16,7 @@ async function loadJSON(url) {
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { toStableKey } from "/systems/foundryvtt-swse/scripts/utils/stable-key.js";
+import { loadFeatBucketsMapping, normalizeFeatRuntime, normalizeFeatTypeKey, resolveFeatBonusFeatFor } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-shape.js";
 
 export const FeatRegistry = {
 
@@ -38,20 +37,26 @@ export const FeatRegistry = {
                 return false;
             }
 
+            const mapping = await loadFeatBucketsMapping();
             const docs = await pack.getDocuments();
             let count = 0;
 
-            for (const featDoc of docs) {
-                if (featDoc.name) {
-                    this.feats.set(featDoc.name.toLowerCase(), featDoc);
+            this.feats.clear();
+            this._byKey.clear();
 
-                    // Store by stable key (generate if not in compendium)
-                    const key = featDoc.system?.key ?? toStableKey(featDoc.name);
-                    if (key) {
-                        this._byKey.set(key, featDoc);
-                    }
-                    count++;
+            for (const featDoc of docs) {
+                if (!featDoc?.name) {
+                    continue;
                 }
+
+                const normalizedFeat = normalizeFeatRuntime(featDoc, { mapping });
+                this.feats.set(normalizedFeat.name.toLowerCase(), normalizedFeat);
+
+                const key = featDoc.system?.key ?? toStableKey(normalizedFeat.name);
+                if (key) {
+                    this._byKey.set(key, normalizedFeat);
+                }
+                count++;
             }
 
             this.isBuilt = true;
@@ -106,39 +111,29 @@ export const FeatRegistry = {
      * Get feats of a specific type
      */
     getByType(featType) {
-        const normalized = String(featType).toLowerCase();
-        return this.list().filter(feat => {
-            const fType = String(feat.system?.featType || 'general').toLowerCase();
-            return fType === normalized;
-        });
+        const normalized = normalizeFeatTypeKey(featType);
+        return this.list().filter(feat => feat.featType === normalized);
     },
 
     /**
      * Get all feat names
      */
     getNames() {
-        return Array.from(this.feats.keys()).map(name => {
-            const doc = this.feats.get(name);
-            return doc.name;
-        });
+        return Array.from(this.feats.values()).map(feat => feat.name);
     },
 
     /**
      * Get bonus feats (feats that can be selected as bonus feats)
      */
     getBonusFeats() {
-        return this.list().filter(feat => {
-            const bonusFor = feat.system?.bonus_feat_for || [];
-            return Array.isArray(bonusFor) && bonusFor.length > 0;
-        });
+        return this.list().filter(feat => feat.bonusFeatFor.length > 0);
     },
 
     /**
      * Check if feat can be bonus feat for a class
      */
     canBeBonusFeatFor(featDoc, className) {
-        const bonusFor = featDoc.system?.bonus_feat_for || [];
-        return Array.isArray(bonusFor) && bonusFor.includes(className);
+        return resolveFeatBonusFeatFor(featDoc).includes(className);
     },
 
     /**
@@ -146,6 +141,7 @@ export const FeatRegistry = {
      */
     async rebuild() {
         this.feats.clear();
+        this._byKey.clear();
         this.isBuilt = false;
         return await this.build();
     },

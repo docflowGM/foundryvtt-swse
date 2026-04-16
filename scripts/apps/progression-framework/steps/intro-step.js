@@ -922,6 +922,8 @@ export class IntroStep extends ProgressionStepPlugin {
         statusText
       };
 
+      let translationUnlocked = false;
+
       for (const line of BOOT_LINES) {
         if (!this._introRunning || this._sessionToken !== sessionToken) return;
 
@@ -929,18 +931,31 @@ export class IntroStep extends ProgressionStepPlugin {
         this._currentLine = line;
         this._currentMicrolabel = line.microlabel;
         this._progress = Math.round((line.progress / TOTAL_PROGRESS_SEGMENTS) * 100);
-        this._translatedText = line.basic;
+        this._translatedText = translationUnlocked ? line.basic : '';
 
         const stateClass = this._getStateClassForTone(line.tone);
         this._applyLineChrome(els, line, stateClass);
         updateProgressUI(els, line.progress, TOTAL_PROGRESS_SEGMENTS);
         setProgressTone(els.progressBar, line.tone);
 
+        let displayMode = 'source-only';
+        let sourceText = line.aurabesh;
+        let translatedText = line.basic;
+
+        if (translationUnlocked) {
+          displayMode = 'translated-only';
+          sourceText = line.basic;
+          translatedText = line.basic;
+        } else if (line.label === 'SUCCESS') {
+          displayMode = 'decode';
+        }
+
         const session = this._translationEngine.createSession({
           profile: 'chargenBootLine',
           target: this._workSurfaceEl,
-          sourceText: line.aurabesh,
-          translatedText: line.basic,
+          sourceText,
+          translatedText,
+          displayMode,
           selectors: {
             lineText: '[data-role="intro-aurabesh"]'
           },
@@ -950,6 +965,11 @@ export class IntroStep extends ProgressionStepPlugin {
 
         if (session) {
           await this._translationEngine.runSession(session);
+        }
+
+        if (line.label === 'SUCCESS') {
+          translationUnlocked = true;
+          this._translatedText = line.basic;
         }
 
         if (line.final) {

@@ -11,7 +11,7 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
 import { normalizeClass } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
-import { getMentorGuidance } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { getMentorGuidance, getMentorForClass } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -236,14 +236,15 @@ export class ClassStep extends ProgressionStepPlugin {
     if (!entry) return;
 
     shell.focusedItem = entry;
+    shell.render();
 
-    // Speak class flavor text on focus (but do NOT swap mentor yet)
+    // Speak class flavor text on focus without blocking details-panel rendering.
     const flavorText = entry.fantasy || entry.description || `${entry.name} is a powerful choice.`;
     if (flavorText) {
-      await shell.mentorRail.speak(flavorText, 'encouraging');
+      void shell.mentorRail.speak(flavorText, 'encouraging').catch(error => {
+        console.error('[ClassStep] Non-blocking mentor speak failed:', error);
+      });
     }
-
-    shell.render();
   }
 
   async onItemCommitted(id, shell) {

@@ -695,7 +695,7 @@ export class SWSEV2CharacterSheet extends
     try {
       await ExtraSkillUseRegistry.initialize();
       for (const skill of derived.skills) {
-        const skillUses = await ExtraSkillUseRegistry.getForSkill(skill.key, { actor });
+        const skillUses = await ExtraSkillUseRegistry.getForSkill(skill.key, { actor, includeInaccessible: true });
 
         // Normalize each skill use with enhanced metadata
         const normalizedUses = skillUses.map(use => {
@@ -2368,107 +2368,127 @@ const forcePoints = [];
   ============================================================ */
 
   _activateSkillsUI(html, { signal } = {}) {
-    // Filter skills by text
-    html.querySelectorAll('[data-action="filter-skills"]').forEach(input => {
-      input.addEventListener("input", (event) => {
-        const filterText = event.target.value.toLowerCase();
-        const skillRows = html.querySelectorAll(".skill-row-container");
+    const skillsList = html.querySelector('.skills-list');
+    const getRows = () => Array.from(html.querySelectorAll('.skill-row-container'));
+    const filterControls = Array.from(html.querySelectorAll('[data-action="filter-skills"]'));
+    const sortControls = Array.from(html.querySelectorAll('[data-action="sort-skills"]'));
 
-        skillRows.forEach(row => {
-          const skillName = row.dataset.name?.toLowerCase() || "";
-          const skillLabel = row.dataset.label?.toLowerCase() || "";
-          const matches = skillName.includes(filterText) || skillLabel.includes(filterText);
-          row.style.display = matches ? "" : "none";
-        });
+    const applyFiltersAndSort = () => {
+      const activeFilter = filterControls[0]?.value || 'all';
+      const activeSort = sortControls[0]?.value || 'name';
+      const skillRows = getRows();
+      const visibleRows = [];
+
+      for (const row of skillRows) {
+        const trained = row.dataset.trained === 'true';
+        const favorite = row.dataset.favorite === 'true';
+        const focused = row.dataset.focused === 'true';
+        let matches = true;
+        if (activeFilter === 'trained') matches = trained;
+        else if (activeFilter === 'favorited') matches = favorite;
+        else if (activeFilter === 'focused') matches = focused;
+
+        row.style.display = matches ? '' : 'none';
+        let extraUsesSection = row.nextElementSibling;
+        while (extraUsesSection && !extraUsesSection.classList.contains('skill-extra-uses')) {
+          extraUsesSection = extraUsesSection.nextElementSibling;
+        }
+        if (extraUsesSection?.classList.contains('skill-extra-uses')) {
+          extraUsesSection.style.display = matches ? '' : 'none';
+        }
+        if (matches) visibleRows.push(row);
+      }
+
+      if (!skillsList) return;
+      visibleRows.sort((a, b) => {
+        switch (activeSort) {
+          case 'ability':
+            return (a.dataset.ability || '').localeCompare(b.dataset.ability || '') || (a.dataset.label || '').localeCompare(b.dataset.label || '');
+          case 'total-desc':
+            return Number(b.dataset.total || 0) - Number(a.dataset.total || 0) || (a.dataset.label || '').localeCompare(b.dataset.label || '');
+          case 'total-asc':
+            return Number(a.dataset.total || 0) - Number(b.dataset.total || 0) || (a.dataset.label || '').localeCompare(b.dataset.label || '');
+          case 'name':
+          default:
+            return (a.dataset.label || '').localeCompare(b.dataset.label || '');
+        }
+      });
+
+      for (const row of visibleRows) {
+        skillsList.appendChild(row);
+        let extraUsesSection = row.nextElementSibling;
+        while (extraUsesSection && !extraUsesSection.classList.contains('skill-extra-uses')) {
+          extraUsesSection = extraUsesSection.nextElementSibling;
+        }
+        if (extraUsesSection?.classList.contains('skill-extra-uses')) {
+          skillsList.appendChild(extraUsesSection);
+        }
+      }
+    };
+
+    filterControls.forEach(select => {
+      select.addEventListener('change', applyFiltersAndSort, { signal });
+    });
+
+    sortControls.forEach(select => {
+      select.addEventListener('change', applyFiltersAndSort, { signal });
+    });
+
+    html.querySelectorAll('[data-action="reset-skills-tools"]').forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        filterControls.forEach(select => { select.value = 'all'; });
+        sortControls.forEach(select => { select.value = 'name'; });
+        applyFiltersAndSort();
       }, { signal });
     });
 
-    // Sort skills
-    html.querySelectorAll('[data-action="sort-skills"]').forEach(select => {
-      select.addEventListener("change", (event) => {
-        const sortBy = event.target.value;
-        const skillsList = html.querySelector(".skills-list");
-        if (!skillsList) return;
-
-        const rows = Array.from(skillsList.querySelectorAll(".skill-row-container"));
-        rows.sort((a, b) => {
-          switch (sortBy) {
-            case "name":
-              return (a.dataset.name || "").localeCompare(b.dataset.name || "");
-            case "total-desc":
-              return Number(b.dataset.total || 0) - Number(a.dataset.total || 0);
-            case "trained":
-              return (b.dataset.trained === "true" ? 1 : 0) - (a.dataset.trained === "true" ? 1 : 0);
-            case "favorite":
-              return (b.dataset.favorite === "true" ? 1 : 0) - (a.dataset.favorite === "true" ? 1 : 0);
-            case "default":
-            default:
-              return 0;
-          }
-        });
-
-        rows.forEach(row => skillsList.appendChild(row));
-      }, { signal });
-    });
-
-    // Roll skill button
     html.querySelectorAll('[data-action="roll-skill"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener('click', async (event) => {
         event.preventDefault();
         const skillKey = button.dataset.skill;
         if (!skillKey) return;
-
         try {
           await SWSERoll.rollSkill(this.actor, skillKey);
         } catch (err) {
-          // console.error("Skill roll failed:", err);
           ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
         }
       }, { signal });
     });
 
-    // PHASE 10+: Expand/collapse skill uses with filter support
     html.querySelectorAll('[data-action="toggle-skill-expand"]').forEach(button => {
-      button.addEventListener("click", (event) => {
+      button.addEventListener('click', (event) => {
         event.preventDefault();
         const skillKey = button.dataset.skill;
         if (!skillKey) return;
 
-        // Find the skill row and then the next sibling extra uses section
         const skillRow = button.closest('.skills-grid-row');
         if (!skillRow) return;
-
-        // The extra uses section should be the immediate next element or nearby sibling
         let extraUsesSection = skillRow.nextElementSibling;
         while (extraUsesSection && !extraUsesSection.classList.contains('skill-extra-uses')) {
           extraUsesSection = extraUsesSection.nextElementSibling;
         }
-
-        if (!extraUsesSection || !extraUsesSection.classList.contains('skill-extra-uses')) return;
+        if (!extraUsesSection?.classList.contains('skill-extra-uses')) return;
 
         const isExpanded = button.getAttribute('aria-expanded') === 'true';
+        button.setAttribute('aria-expanded', String(!isExpanded));
+        const countBadge = button.querySelector('.expand-count');
+        if (!countBadge) button.textContent = isExpanded ? '▶' : '▼';
 
         if (isExpanded) {
-          // Collapse
-          button.setAttribute('aria-expanded', 'false');
           extraUsesSection.classList.remove('skill-extra-uses--expanded');
           extraUsesSection.classList.add('skill-extra-uses--collapsed');
-          // Hide filter bar
           const filterBar = extraUsesSection.querySelector('.extra-uses-filter-bar');
           if (filterBar) filterBar.classList.add('skill-extra-uses-hidden');
         } else {
-          // Expand
-          button.setAttribute('aria-expanded', 'true');
           extraUsesSection.classList.remove('skill-extra-uses--collapsed');
           extraUsesSection.classList.add('skill-extra-uses--expanded');
-          // Show filter bar
           const filterBar = extraUsesSection.querySelector('.extra-uses-filter-bar');
           if (filterBar) filterBar.classList.remove('skill-extra-uses-hidden');
         }
       }, { signal });
     });
 
-    // PHASE 10+: Filter skill uses by category/availability
     html.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', (event) => {
         event.preventDefault();
@@ -2476,69 +2496,20 @@ const forcePoints = [];
         const filterBar = btn.closest('.extra-uses-filter-bar');
         if (!filterBar) return;
 
-        // Update active button
         filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-btn--active'));
         btn.classList.add('filter-btn--active');
 
-        // Find the parent extra-uses section and filter rows
         const extrasSection = filterBar.closest('.skill-extra-uses');
-        if (!extrasSection) return;
-
-        // Show/hide uses based on filter
-        extrasSection.querySelectorAll('.extra-use-row').forEach(row => {
-          let show = false;
-
-          if (filterType === 'all') {
-            show = true;
-          } else if (filterType === 'available') {
-            // Show only non-blocked uses
-            show = !row.classList.contains('use-blocked');
-          } else if (filterType === 'combat') {
-            // Show only combat-relevant uses
-            const category = row.dataset.category;
-            show = category === 'Combat' || category === 'Special';
-          }
-
-          row.style.display = show ? '' : 'none';
+        const useRows = extrasSection?.querySelectorAll('.extra-use-row') ?? [];
+        useRows.forEach(row => {
+          if (filterType === 'all') row.style.display = '';
+          else if (filterType === 'available') row.style.display = row.classList.contains('use-blocked') ? 'none' : '';
+          else if (filterType === 'combat') row.style.display = (row.dataset.category === 'Combat' || row.dataset.category === 'Defensive') ? '' : 'none';
         });
       }, { signal });
     });
 
-    // ===== FOCUS CHECKBOX CONTROL =====
-    // Focus checkbox should only be enabled when Trained is checked
-    // Listen for changes to Trained checkboxes and update Focus checkbox state accordingly
-    html.addEventListener("change", (event) => {
-      const trainedCheckbox = event.target.closest('input[name*=".trained"]');
-      if (!trainedCheckbox) return;
-
-      // Find the corresponding skill row
-      const skillRow = trainedCheckbox.closest('[data-skill]');
-      if (!skillRow) return;
-
-      // Find the Focus checkbox in the same row
-      const focusCheckbox = skillRow.querySelector('input[name*=".focused"]');
-      if (!focusCheckbox) return;
-
-      // Enable/disable Focus based on Trained state
-      focusCheckbox.disabled = !trainedCheckbox.checked;
-
-      // If disabling Focus, uncheck it
-      if (focusCheckbox.disabled && focusCheckbox.checked) {
-        focusCheckbox.checked = false;
-        // Trigger change event to save the form
-        focusCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    }, { signal, capture: false });
-
-    // Initialize Focus checkbox states on render
-    html.querySelectorAll('[data-skill]').forEach(skillRow => {
-      const trainedCheckbox = skillRow.querySelector('input[name*=".trained"]');
-      const focusCheckbox = skillRow.querySelector('input[name*=".focused"]');
-
-      if (trainedCheckbox && focusCheckbox) {
-        focusCheckbox.disabled = !trainedCheckbox.checked;
-      }
-    });
+    applyFiltersAndSort();
   }
 
   /* ============================================================

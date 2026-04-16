@@ -18,7 +18,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, getStepMentorObject } from './mentor-step-integration.js';
 import { BuildAnalysisIntegration } from '../shell/build-analysis-integration.js';
 
 export class L1SurveyStep extends ProgressionStepPlugin {
@@ -169,9 +169,15 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       ? BuildAnalysisIntegration.getStrengthSummary(this._analysisResult)
       : null;
 
+    const mentor = getStepMentorObject(context?.shell?.actor ?? null, context?.shell ?? null);
+    const mentorGuidance = getStepGuidance(context?.shell?.actor ?? null, 'l1-survey', context?.shell ?? null);
+
     return {
       surveyAnswers: { ...this._surveyAnswers },
       isSkipped: this._isSkipped,
+      mentorName: mentor?.name || null,
+      mentorTitle: mentor?.title || mentor?.class || null,
+      mentorGuidance,
       // Phase 4: Analysis results for UI
       analysisResult: this._analysisResult,
       conflictSummary,

@@ -56,9 +56,6 @@
                         {{#each headerHpSegments as |segment|}}
                           <span class="resource-segment {{segment.colorClass}} {{#if segment.filled}}is-filled{{/if}}"></span>
                         {{/each}}
-                        <span class="resource-segment-bar__text">
-                          {{healthPanel.hp.value}} / {{healthPanel.hp.max}}{{#if healthPanel.hp.temp}} (+{{healthPanel.hp.temp}}){{/if}}
-                        </span>
                       </div>
                     </div>
 
@@ -71,9 +68,6 @@
                         {{#each headerXpSegments as |segment|}}
                           <span class="resource-segment {{#if segment.filled}}is-filled{{/if}}"></span>
                         {{/each}}
-                        <span class="resource-segment-bar__text">
-                          {{xpData.total}} / {{xpData.nextLevelAt}} • {{xpData.percentRounded}}%
-                        </span>
                       </div>
                     </div>
 
