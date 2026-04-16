@@ -195,6 +195,22 @@ async function handleItemCreate(item, options, userId) {
     // STARSHIP TACTICS FEAT HANDLING (Phase 3.1)
     // =========================================================================
     // Handle Starship Tactics feat addition (domain unlock)
+    // Apply actor preferred lightsaber color to newly created lightsabers
+    if (item.type === 'weapon' && (item.system?.weaponCategory === 'lightsaber' || item.system?.subtype === 'lightsaber')) {
+        const preferredColor = actor.getFlag?.('swse', 'preferredLightsaberColor');
+        if (preferredColor && item.flags?.swse?.bladeColor !== preferredColor) {
+            try {
+                await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
+                    _id: item.id,
+                    'flags.swse.bladeColor': preferredColor
+                }]);
+                SWSELogger.log(`Applied preferred lightsaber color ${preferredColor} to ${item.name}`);
+            } catch (err) {
+                SWSELogger.warn('Failed to apply preferred lightsaber color:', err);
+            }
+        }
+    }
+
     if (item.type === 'feat') {
         const featName = item.name.toLowerCase();
         if (featName === 'starship tactics' || featName.includes('starship tactics')) {

@@ -90,6 +90,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       limited: this.item?.limited ?? false,
       actorCredits: actorCredits,
       activeTab: 'data', // Ensure tabs render with Data tab active by default
+      bladeColorOptions: Object.entries(BLADE_COLOR_MAP).map(([name, hex]) => ({ name, hex })),
       labels: {
         sheetTitle: itemData.name ?? this.item?.name ?? "Item"
       }
@@ -243,6 +244,60 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     ui.notifications.info(
       `${this.item.name} activated! SR: ${shieldRating}, Charges remaining: ${currentCharges - 1}`
     );
+  }
+
+
+  async #onActivateLightsaber(event) {
+    event.preventDefault();
+
+    const actor = this.item?.actor;
+    const bladeColor = this.item?.flags?.swse?.bladeColor || actor?.getFlag?.('swse', 'preferredLightsaberColor') || 'blue';
+
+    if (actor?.activateItem) {
+      await actor.activateItem(this.item);
+    } else if (this.item?.isEmbedded && actor) {
+      await actor.updateOwnedItem(this.item, { 'system.activated': true });
+    } else {
+      await this.item.update({ 'system.activated': true });
+    }
+
+    if (!this.item.flags?.swse?.emitLight) {
+      if (this.item?.isEmbedded && actor) {
+        await actor.updateOwnedItem(this.item, { 'flags.swse.emitLight': true, 'flags.swse.bladeColor': bladeColor });
+      } else {
+        await this.item.update({ 'flags.swse.emitLight': true, 'flags.swse.bladeColor': bladeColor });
+      }
+    }
+
+    const tokens = actor?.getActiveTokens?.() || [];
+    if (tokens[0]?.document) {
+      const hex = BLADE_COLOR_MAP[bladeColor] ?? '#00ffff';
+      await tokens[0].document.update({
+        light: { dim: 20, bright: 10, color: hex, alpha: 0.3, animation: { type: 'pulse', speed: 3, intensity: 2 } }
+      });
+    }
+
+    ui.notifications.info(`${this.item.name} activated.`);
+  }
+
+  async #onDeactivateLightsaber(event) {
+    event.preventDefault();
+
+    const actor = this.item?.actor;
+    if (actor?.deactivateItem) {
+      await actor.deactivateItem(this.item);
+    } else if (this.item?.isEmbedded && actor) {
+      await actor.updateOwnedItem(this.item, { 'system.activated': false });
+    } else {
+      await this.item.update({ 'system.activated': false });
+    }
+
+    const tokens = actor?.getActiveTokens?.() || [];
+    if (tokens[0]?.document) {
+      await tokens[0].document.update({ light: { dim: 0, bright: 0 } });
+    }
+
+    ui.notifications.info(`${this.item.name} deactivated.`);
   }
 
   async #onDeactivateShield(event) {

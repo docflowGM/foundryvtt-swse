@@ -1,102 +1,65 @@
 <div class="prog-l1-survey">
-
   <div class="prog-l1-survey__intro">
-    <h2 class="prog-l1-survey__title">Identify Your Path</h2>
+    <h2 class="prog-l1-survey__title">Declare Your Intent</h2>
     <p class="prog-l1-survey__subtitle">
-      Help us understand how you like to play. This survey is optional — you can skip it at any time.
+      {{#if surveyDefinition}}
+        {{surveyDefinition.classDisplayName}} survey · grounded in mentor guidance and archetype metadata.
+      {{else}}
+        The mentor is still reading the shape of your path.
+      {{/if}}
     </p>
   </div>
 
   {{#if mentorGuidance}}
-  <div class="prog-l1-survey__mentor-note swse-ui-frame">
-    <div class="prog-l1-survey__mentor-kicker">{{#if mentorName}}{{mentorName}}{{else}}Mentor{{/if}}{{#if mentorTitle}} · {{mentorTitle}}{{/if}}</div>
-    <p class="prog-l1-survey__mentor-text">{{mentorGuidance}}</p>
+  <div class="prog-l1-survey__mentor">
+    {{#if mentorPortrait}}
+      <div class="prog-l1-survey__mentor-portrait"><img src="{{mentorPortrait}}" alt="{{mentorName}}"></div>
+    {{/if}}
+    <div class="prog-l1-survey__mentor-copy">
+      <div class="prog-l1-survey__mentor-name">{{mentorName}}</div>
+      <div class="prog-l1-survey__mentor-title">{{mentorTitle}}</div>
+      <p class="prog-l1-survey__mentor-dialogue">{{mentorGuidance}}</p>
+    </div>
+  </div>
+  {{/if}}
+
+  {{#if topMatches.length}}
+  <div class="prog-l1-survey__matches">
+    <div class="prog-l1-survey__matches-title">Current archetype read</div>
+    <div class="prog-l1-survey__match-list">
+      {{#each topMatches}}
+      <div class="prog-l1-survey__match">
+        <div class="prog-l1-survey__match-name">{{this.archetype.name}}</div>
+        <div class="prog-l1-survey__match-note">{{this.archetype.notes}}</div>
+      </div>
+      {{/each}}
+    </div>
   </div>
   {{/if}}
 
   <div class="prog-l1-survey__questions">
-
-    {{!-- Question 1: Playstyle --}}
-    <div class="prog-l1-survey__question">
-      <h3 class="prog-l1-survey__q-title">What's Your Playstyle?</h3>
+    {{#each surveyQuestions}}
+    <section class="prog-l1-survey__question">
+      <h3 class="prog-l1-survey__q-title">{{this.text}}</h3>
       <div class="prog-l1-survey__options">
+        {{#each this.options}}
         <label class="prog-l1-survey__option">
-          <input type="radio" name="survey-playstyle" value="aggressive"
-                 {{#if (eq surveyAnswers.playstyle "aggressive")}}checked{{/if}}>
-          <span class="prog-l1-survey__option-label">Aggressive</span>
-          <span class="prog-l1-survey__option-hint">Rush into battle and deal damage</span>
+          <input
+            type="radio"
+            name="survey-{{@../index}}"
+            value="{{this.id}}"
+            data-survey-question-id
+            data-question-id="{{../id}}"
+            {{#if (eq ../selected this.id)}}checked{{/if}}
+          >
+          <span class="prog-l1-survey__option-body">
+            <span class="prog-l1-survey__option-label">{{this.label}}</span>
+            {{#if this.hint}}<span class="prog-l1-survey__option-hint">{{this.hint}}</span>{{/if}}
+          </span>
         </label>
-        <label class="prog-l1-survey__option">
-          <input type="radio" name="survey-playstyle" value="defensive"
-                 {{#if (eq surveyAnswers.playstyle "defensive")}}checked{{/if}}>
-          <span class="prog-l1-survey__option-label">Defensive</span>
-          <span class="prog-l1-survey__option-hint">Protect allies and mitigate damage</span>
-        </label>
-        <label class="prog-l1-survey__option">
-          <input type="radio" name="survey-playstyle" value="social"
-                 {{#if (eq surveyAnswers.playstyle "social")}}checked{{/if}}>
-          <span class="prog-l1-survey__option-label">Social</span>
-          <span class="prog-l1-survey__option-hint">Influence and persuade others</span>
-        </label>
-        <label class="prog-l1-survey__option">
-          <input type="radio" name="survey-playstyle" value="tactical"
-                 {{#if (eq surveyAnswers.playstyle "tactical")}}checked{{/if}}>
-          <span class="prog-l1-survey__option-label">Tactical</span>
-          <span class="prog-l1-survey__option-hint">Plan and adapt to circumstances</span>
-        </label>
+        {{/each}}
       </div>
-    </div>
-
-    {{!-- Question 2: Focus --}}
-    <div class="prog-l1-survey__question">
-      <h3 class="prog-l1-survey__q-title">What's Your Focus?</h3>
-      <div class="prog-l1-survey__options">
-        <label class="prog-l1-survey__option">
-          <input type="radio" name="survey-focus" value="combat"
-                 {{#if (eq surveyAnswers.focus "combat")}}checked{{/if}}>
-          <span class="prog-l1-survey__option-label">Combat</span>
-          <span class="prog-l1-survey__option-hint">Excel in battle</span>
-        </label>
-        <label class="prog-l1-survey__option">
-          <input type="radio" name="survey-focus" value="skills"
-                 {{#if (eq surveyAnswers.focus "skills")}}checked{{/if}}>
-          <span class="prog-l1-survey__option-label">Skills</span>
-          <span class="prog-l1-survey__option-hint">Master specialized abilities</span>
-        </label>
-        <label class="prog-l1-survey__option">
-          <input type="radio" name="survey-focus" value="roleplay"
-                 {{#if (eq surveyAnswers.focus "roleplay")}}checked{{/if}}>
-          <span class="prog-l1-survey__option-label">Roleplay</span>
-          <span class="prog-l1-survey__option-hint">Develop character and story</span>
-        </label>
-      </div>
-    </div>
-
-    {{!-- Question 3: Experience --}}
-    <div class="prog-l1-survey__question">
-      <h3 class="prog-l1-survey__q-title">What's Your Experience Level?</h3>
-      <div class="prog-l1-survey__options">
-        <label class="prog-l1-survey__option">
-          <input type="radio" name="survey-experience" value="newbie"
-                 {{#if (eq surveyAnswers.experience "newbie")}}checked{{/if}}>
-          <span class="prog-l1-survey__option-label">New to SWSE</span>
-          <span class="prog-l1-survey__option-hint">First time playing Star Wars d20</span>
-        </label>
-        <label class="prog-l1-survey__option">
-          <input type="radio" name="survey-experience" value="intermediate"
-                 {{#if (eq surveyAnswers.experience "intermediate")}}checked{{/if}}>
-          <span class="prog-l1-survey__option-label">Intermediate</span>
-          <span class="prog-l1-survey__option-hint">Familiar with the system</span>
-        </label>
-        <label class="prog-l1-survey__option">
-          <input type="radio" name="survey-experience" value="veteran"
-                 {{#if (eq surveyAnswers.experience "veteran")}}checked{{/if}}>
-          <span class="prog-l1-survey__option-label">Veteran</span>
-          <span class="prog-l1-survey__option-hint">Experienced player</span>
-        </label>
-      </div>
-    </div>
-
-  </div>{{!-- /questions --}}
-
-</div>{{!-- /l1-survey --}}
+    </section>
+    {{/each}}
+  </div>
+</div>

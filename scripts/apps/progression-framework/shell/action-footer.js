@@ -83,6 +83,7 @@ export class ActionFooter {
         enabled: canAdvance,
         label: nextLabel,
         isLastStep,
+        hidden: !!footerOverride.hideNext,
       },
       blockingIssues,
       warnings,

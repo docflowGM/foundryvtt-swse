@@ -1,0 +1,26 @@
+{{#if empty}}
+<div class="prog-l1-survey-details prog-l1-survey-details--empty">
+  <h3 class="prog-l1-survey-details__title">Answer Details</h3>
+  <p class="prog-l1-survey-details__summary">Focus or select an answer in the survey to preview what that choice implies for the build.</p>
+</div>
+{{else}}
+<div class="prog-l1-survey-details {{#if bladeColor}}has-blade-color{{/if}}">
+  <h3 class="prog-l1-survey-details__title">{{title}}</h3>
+  <p class="prog-l1-survey-details__summary">{{summary}}</p>
+
+  {{#if tags.length}}
+  <div class="prog-l1-survey-details__tags">
+    {{#each tags}}
+    <span class="prog-l1-survey-details__tag {{cssClass}}">{{label}}</span>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  {{#if bladeColor}}
+  <div class="prog-l1-survey-details__blade-row">
+    <span class="prog-l1-survey-details__blade-chip blade-{{bladeColor}}"></span>
+    <span class="prog-l1-survey-details__blade-label">Preferred blade color: {{bladeColor}}</span>
+  </div>
+  {{/if}}
+</div>
+{{/if}}

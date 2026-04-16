@@ -73,8 +73,8 @@ export class LightsaberLightSync {
     ) || [];
 
     for (const saber of lightsabers) {
-      const isActive = saber.system?.active === true || saber.system?.equippable?.equipped === true;
-      const isEquipped = saber.system?.equippable?.equipped === true;
+      const isActive = saber.system?.activated === true || saber.system?.active === true;
+      const isEquipped = saber.system?.equipped === true || saber.system?.equippable?.equipped === true;
       const emitsLight = saber.flags?.swse?.emitLight === true;
 
       if (isActive && isEquipped && emitsLight) {
@@ -210,7 +210,9 @@ export class LightsaberLightSync {
 
       // Check if relevant fields changed
       const relevantFields = [
+        "system.activated",
         "system.active",
+        "system.equipped",
         "system.equippable.equipped",
         "flags.swse.emitLight",
         "flags.swse.bladeColor"

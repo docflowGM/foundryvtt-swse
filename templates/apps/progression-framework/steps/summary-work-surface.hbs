@@ -1,3 +1,124 @@
+{{#if (eq mode "levelup")}}
+<div class="prog-summary-surface prog-summary-surface--levelup">
+  <div class="prog-panel prog-panel--left">
+    <h3 class="prog-panel-title">Level-Up Delta</h3>
+    <div class="prog-summary-section swse-card-schema swse-card-schema--identity swse-card-schema--filled">
+      <div class="prog-section-header"><i class="fas fa-layer-group"></i> Class Progression</div>
+      {{#if levelupSummary.metadataChanges.length}}
+        <div class="prog-items-list">
+          {{#each levelupSummary.metadataChanges}}
+            <div class="prog-item-entry">
+              <i class="fas {{#if this.isNew}}fa-plus-circle{{else}}fa-arrow-up{{/if}}"></i>
+              {{#if this.before}}<span>{{this.before}}</span> <span class="prog-delta-arrow">→</span>{{/if}}
+              <strong>{{this.after}}</strong>
+            </div>
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="prog-placeholder">No class delta detected.</div>
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="prog-panel prog-panel--center">
+    <h3 class="prog-panel-title">What Changes</h3>
+    {{#if levelupSummary.statChanges.length}}
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
+      <div class="prog-section-header"><i class="fas fa-chart-line"></i> Derived Changes</div>
+      <div class="prog-items-list">
+        {{#each levelupSummary.statChanges}}
+          <div class="prog-item-entry prog-delta-entry">
+            <span class="prog-delta-label">{{this.label}}</span>
+            <span class="prog-delta-values">{{this.before}} <span class="prog-delta-arrow">→</span> {{this.after}}{{#if this.pending}} <em>(pending HP choice)</em>{{/if}}</span>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if levelupSummary.attributeChanges.length}}
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
+      <div class="prog-section-header"><i class="fas fa-chart-bar"></i> Ability Changes <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="attribute" type="button"><i class="fas fa-pencil-alt"></i></button></div>
+      <div class="prog-items-list">
+        {{#each levelupSummary.attributeChanges}}
+          <div class="prog-item-entry prog-delta-entry"><span class="prog-delta-label">{{this.label}}</span><span class="prog-delta-values">{{this.before}} <span class="prog-delta-arrow">→</span> {{this.after}}</span></div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if levelupSummary.addedSkills.length}}
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
+      <div class="prog-section-header"><i class="fas fa-book-open"></i> New Trained Skills <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="skills" type="button"><i class="fas fa-pencil-alt"></i></button></div>
+      <div class="prog-items-list">{{#each levelupSummary.addedSkills}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}</div>
+    </div>
+    {{/if}}
+
+    {{#if levelupSummary.addedFeats.length}}
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
+      <div class="prog-section-header"><i class="fas fa-star"></i> New Feats <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="general-feat" type="button"><i class="fas fa-pencil-alt"></i></button></div>
+      <div class="prog-items-list">{{#each levelupSummary.addedFeats}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}</div>
+    </div>
+    {{/if}}
+
+    {{#if levelupSummary.addedTalents.length}}
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
+      <div class="prog-section-header"><i class="fas fa-gem"></i> New Talents <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="class-talent" type="button"><i class="fas fa-pencil-alt"></i></button></div>
+      <div class="prog-items-list">{{#each levelupSummary.addedTalents}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}</div>
+    </div>
+    {{/if}}
+
+    {{#if levelupSummary.addedForcePowers.length}}
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
+      <div class="prog-section-header"><i class="fas fa-hand-sparkles"></i> New Force Powers <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="force-powers" type="button"><i class="fas fa-pencil-alt"></i></button></div>
+      <div class="prog-items-list">{{#each levelupSummary.addedForcePowers}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}</div>
+    </div>
+    {{/if}}
+
+    {{#unless (or levelupSummary.statChanges.length levelupSummary.attributeChanges.length levelupSummary.addedFeats.length levelupSummary.addedTalents.length levelupSummary.addedForcePowers.length levelupSummary.addedSkills.length)}}
+      <div class="prog-empty-state swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
+        <i class="fas fa-clipboard-list"></i>
+        <p>No visible deltas were detected yet. Continue resolving your level-up choices.</p>
+      </div>
+    {{/unless}}
+  </div>
+
+  <div class="prog-panel prog-panel--right">
+    <h3 class="prog-panel-title">Resolve & Finalize</h3>
+    <div class="prog-summary-section swse-card-schema swse-card-schema--choice swse-card-schema--pending">
+      <div class="prog-section-header"><i class="fas fa-heartbeat"></i> Hit Point Gain</div>
+      <div class="prog-item-entry prog-delta-entry">
+        <span class="prog-delta-label">Formula</span>
+        <span class="prog-delta-values">{{hpGainState.formula}}</span>
+      </div>
+      <div class="prog-item-entry prog-delta-entry">
+        <span class="prog-delta-label">Preview</span>
+        <span class="prog-delta-values">+{{hpGainState.gain}}{{#if hpGainState.method}} ({{hpGainState.method}}){{/if}}</span>
+      </div>
+      {{#if hpGainState.needsResolution}}
+        {{#unless hpGainState.resolved}}
+          <div class="prog-creation-note"><i class="fas fa-dice"></i><strong>HP Choice Required:</strong> resolve your hit point gain before finalizing level-up.</div>
+          <div class="prog-random-name-buttons">
+            <button class="prog-btn prog-btn--small" type="button" data-action="roll-hp"><i class="fas fa-dice"></i> Roll HP</button>
+            <button class="prog-btn prog-btn--small" type="button" data-action="use-max-hp"><i class="fas fa-shield-alt"></i> Take Maximum</button>
+          </div>
+        {{else}}
+          <div class="prog-checklist-item complete"><i class="fas fa-check-circle"></i><span class="prog-checklist-label">HP resolved: <strong>+{{hpGainState.gain}}</strong></span></div>
+        {{/unless}}
+      {{else}}
+        <div class="prog-checklist-item complete"><i class="fas fa-check-circle"></i><span class="prog-checklist-label">HP gain auto-resolved by current houserule.</span></div>
+      {{/if}}
+
+      {{#if issuesSummary.hasErrors}}
+      <div class="prog-status-errors">
+        <div class="prog-status-section-title">Blocking Issues:</div>
+        <ul class="prog-issue-list">{{#each issuesSummary.errors}}<li class="prog-issue-item prog-issue-error"><i class="fas fa-times-circle"></i> {{this}}</li>{{/each}}</ul>
+      </div>
+      {{/if}}
+    </div>
+  </div>
+</div>
+{{else}}
 <div class="prog-summary-surface">
 
   {{!-- Left Panel: Identity Card with Name Registration --}}
@@ -285,3 +406,5 @@
   </div>
 
 </div>
+
+{{/if}}

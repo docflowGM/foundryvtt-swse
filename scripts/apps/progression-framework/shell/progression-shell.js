@@ -96,6 +96,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'roll-credits'(e, t)        { return this._onRollCredits(e, t); },
       'reroll-credits'(e, t)      { return this._onRollCredits(e, t); },
       'use-max-credits'(e, t)     { return this._onUseMaxCredits(e, t); },
+      'use-average-credits'(e, t) { return this._onUseAverageCredits(e, t); },
       'roll-hp'(e, t)             { return this._onRollHP(e, t); },
       'use-max-hp'(e, t)          { return this._onUseMaxHP(e, t); },
       'enter-store'(e, t)         { return this._onEnterStore(e, t); },
@@ -1194,13 +1195,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
         stepId: descriptor.stepId,
       });
       this._lastSpokenStepId = descriptor.stepId;
-      void this.mentorRail.speakForStep(descriptor)
-        .then(() => {
-          console.log('[SWSE Translation Debug] [_onRender] speakForStep() COMPLETED');
-        })
-        .catch(error => {
-          console.error('[SWSE Translation Debug] [_onRender] speakForStep() FAILED', error);
-        });
+      await this.mentorRail.speakForStep(descriptor);
+      console.log('[SWSE Translation Debug] [_onRender] speakForStep() COMPLETED');
     } else {
       console.log('[SWSE Translation Debug] [_onRender] SKIPPING speakForStep() — condition false or already spoken', {
         reason: !descriptor ? 'no descriptor' : 'already spoken',
@@ -1982,6 +1978,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }
   }
 
+
+  async _onUseAverageCredits(event, target) {
+    event?.preventDefault();
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.useAverageCredits) {
+      await plugin.useAverageCredits(this.actor);
+      this.render();
+    }
+  }
   async _onRollHP(event, target) {
     event?.preventDefault();
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);

@@ -559,3 +559,45 @@
   flex-shrink: 0;
   margin-top: 0.1rem;
 }
+
+/* ------ Level-up Summary Delta Mode ------ */
+.prog-summary-surface--levelup {
+  display: contents;
+}
+
+.prog-inline-edit-btn {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--prog-border-accent);
+  color: var(--prog-accent);
+  border-radius: 3px;
+  padding: 0.15rem 0.4rem;
+  cursor: pointer;
+}
+
+.prog-inline-edit-btn:hover {
+  border-color: var(--prog-accent-bright);
+  color: var(--prog-accent-bright);
+}
+
+.prog-delta-entry {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.prog-delta-label {
+  font-weight: 700;
+  color: var(--prog-text-dim);
+}
+
+.prog-delta-values {
+  text-align: right;
+  color: var(--prog-text);
+}
+
+.prog-delta-arrow {
+  color: var(--prog-accent);
+  padding: 0 0.35rem;
+}

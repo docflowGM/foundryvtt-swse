@@ -1,33 +1,19 @@
 /**
- * SummaryStep plugin (formerly: read-only summary, now: summary with final name registration)
+ * SummaryStep plugin
  *
- * Review of all character progression selections with final name input.
- * This step acts as "registering a datapad profile" — player reviews all choices
- * and registers the character's final name before creation.
- *
- * Summarizes decisions from: attributes, class, skills, feats, talents.
- * Allows character naming at this stage (moved from NameStep via Phase 2 Summary Refactor).
- * Final checkpoint before character creation completes.
- *
- * Data:
- * - Aggregated from prior steps via shell committedSelections
- * - Name and level are editable on THIS step (now the "datapad registration" phase)
- *
- * NOTE: NameStep was removed. Character naming happens here as the final UI step
- * before confirmation, creating a natural "datapad profile registration" flow.
+ * Chargen: final review/registration surface.
+ * Level-up: delta review surface showing only what changed.
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ProjectionEngine } from '../shell/projection-engine.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 
 export class SummaryStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
-
-    // State (aggregated from shell committedSelections + editable name/level)
     this._summary = {
       name: '',
       level: 1,
@@ -36,159 +22,148 @@ export class SummaryStep extends ProgressionStepPlugin {
       attributes: {},
       skills: [],
       feats: [],
-      featSelections: [],  // Full selection objects for ordering
+      featSelections: [],
       talents: [],
-      talentSelections: [],  // Full selection objects for ordering
+      talentSelections: [],
       languages: [],
       money: { total: 0, sources: [] },
       hpCalculation: { base: 0, modifiers: 0, total: 0 },
     };
-
-    // Character naming (was in NameStep, now here for "datapad profile registration")
     this._characterName = '';
     this._startingLevel = 1;
     this._isReviewComplete = false;
-
-    // Event listener cleanup
     this._renderAbort = null;
+    this._activeMode = 'chargen';
+    this._hpGainState = {
+      resolved: false,
+      gain: 0,
+      method: null,
+      formula: '',
+      needsResolution: false,
+      hitDie: 0,
+    };
+    this._levelupSummary = {
+      metadataChanges: [],
+      statChanges: [],
+      attributeChanges: [],
+      addedFeats: [],
+      addedTalents: [],
+      addedForcePowers: [],
+      addedSkills: [],
+    };
   }
 
-  // ---------------------------------------------------------------------------
-  // Lifecycle
-  // ---------------------------------------------------------------------------
-
   async onStepEnter(shell) {
-    // PHASE 1: Read from canonical progressionSession first
-    this._aggregateSummary(shell);
+    const mode = shell?.mode || 'chargen';
+    this._activeMode = mode;
 
-    // Load existing name/level if character already has them
-    // Note: During draft, prefer progressionSession over actor for consistency
-    const progressionSnapshot = shell.progressionSession?.actorSnapshot?.system || {};
-    const liveCharacter = shell.actor?.system || {};
-    const character = progressionSnapshot.identity?.name ? progressionSnapshot : liveCharacter;
-
-    if (character.identity?.name) {
-      this._characterName = character.identity.name;
-    }
-    if (shell.targetLevel) {
-      this._startingLevel = shell.targetLevel;
+    if (mode === 'levelup') {
+      await this._buildLevelupSummary(shell);
+    } else {
+      await this._aggregateSummary(shell);
+      const progressionSnapshot = shell.progressionSession?.actorSnapshot?.system || {};
+      const liveCharacter = shell.actor?.system || {};
+      const character = progressionSnapshot.identity?.name ? progressionSnapshot : liveCharacter;
+      if (character.identity?.name) this._characterName = character.identity.name;
+      if (shell.targetLevel) this._startingLevel = shell.targetLevel;
     }
 
-    // Enable Ask Mentor for final guidance
     shell.mentor.askMentorEnabled = true;
-
-    swseLogger.log('[SummaryStep] Entered with aggregated summary:', this._summary);
-    swseLogger.log('[SummaryStep] Character name:', this._characterName, 'Starting level:', this._startingLevel);
   }
 
   async onDataReady(shell) {
     if (!shell.element) return;
 
-    // Clean up old listeners before attaching new ones
     this._renderAbort?.abort();
     this._renderAbort = new AbortController();
     const { signal } = this._renderAbort;
+    const mode = shell?.mode || 'chargen';
 
-    // Wire name input (now editable on this step as "datapad profile registration")
-    const nameInput = shell.element.querySelector('.summary-step-name-input');
-    if (nameInput) {
-      nameInput.value = this._characterName;
-      nameInput.addEventListener('input', (e) => {
-        this._characterName = e.target.value;
-        this._summary.name = e.target.value;
-      }, { signal });
-      nameInput.addEventListener('change', () => {
-        shell.render();
-      }, { signal });
+    if (mode !== 'levelup') {
+      const nameInput = shell.element.querySelector('.summary-step-name-input');
+      if (nameInput) {
+        nameInput.value = this._characterName;
+        nameInput.addEventListener('input', (e) => {
+          this._characterName = e.target.value;
+          this._summary.name = e.target.value;
+        }, { signal });
+        nameInput.addEventListener('change', () => shell.render(), { signal });
+      }
+
+      const levelInput = shell.element.querySelector('.summary-step-level-input');
+      if (levelInput) {
+        levelInput.value = this._startingLevel;
+        levelInput.addEventListener('input', (e) => {
+          const val = parseInt(e.target.value, 10);
+          if (!Number.isNaN(val) && val >= 1 && val <= 20) {
+            this._startingLevel = val;
+            this._summary.level = val;
+          }
+        }, { signal });
+        levelInput.addEventListener('change', () => shell.render(), { signal });
+      }
+
+      const randomNameBtn = shell.element.querySelector('.summary-step-random-name-btn');
+      if (randomNameBtn) {
+        randomNameBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const randomName = await this._generateRandomName(shell.actor);
+          if (randomName) {
+            this._characterName = randomName;
+            this._summary.name = randomName;
+            shell.render();
+          }
+        }, { signal });
+      }
+
+      const randomDroidNameBtn = shell.element.querySelector('.summary-step-random-droid-name-btn');
+      if (randomDroidNameBtn) {
+        randomDroidNameBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const randomName = await this._generateRandomDroidName(shell.actor);
+          if (randomName) {
+            this._characterName = randomName;
+            this._summary.name = randomName;
+            shell.render();
+          }
+        }, { signal });
+      }
     }
 
-    // Wire level input (level slider, also editable here)
-    const levelInput = shell.element.querySelector('.summary-step-level-input');
-    if (levelInput) {
-      levelInput.value = this._startingLevel;
-      levelInput.addEventListener('input', (e) => {
-        const val = parseInt(e.target.value, 10);
-        if (!isNaN(val) && val >= 1 && val <= 20) {
-          this._startingLevel = val;
-          this._summary.level = val;
-        }
-      }, { signal });
-      levelInput.addEventListener('change', () => {
-        shell.render();
-      }, { signal });
-    }
-
-    // Wire random name button (for living beings)
-    const randomNameBtn = shell.element.querySelector('.summary-step-random-name-btn');
-    if (randomNameBtn) {
-      randomNameBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const randomName = await this._generateRandomName(shell.actor);
-        if (randomName) {
-          this._characterName = randomName;
-          this._summary.name = randomName;
-          shell.render();
-        }
-      }, { signal });
-    }
-
-    // Wire random droid name button (if character is droid)
-    const randomDroidNameBtn = shell.element.querySelector('.summary-step-random-droid-name-btn');
-    if (randomDroidNameBtn) {
-      randomDroidNameBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const randomName = await this._generateRandomDroidName(shell.actor);
-        if (randomName) {
-          this._characterName = randomName;
-          this._summary.name = randomName;
-          shell.render();
-        }
-      }, { signal });
-    }
-
-    // Wire any "back to step" buttons if present (ability to return to prior steps)
-    const backButtons = shell.element.querySelectorAll('.summary-step-edit-btn');
-    backButtons.forEach(btn => {
+    const editButtons = shell.element.querySelectorAll('.summary-step-edit-btn');
+    editButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const stepId = btn.dataset.step;
-        if (stepId) {
-          swseLogger.log(`[SummaryStep] User wants to edit step: ${stepId}`);
-          // This would be handled by shell navigation
-        }
+        if (!stepId) return;
+        const stepIndex = shell.steps.findIndex(s => s.stepId === stepId);
+        if (stepIndex >= 0) shell.navigateToStep(stepIndex, { source: 'summary-edit' });
       }, { signal });
     });
 
-    // Mark as reviewed
     this._isReviewComplete = true;
   }
 
-  async onStepExit(shell) {
-    // No cleanup needed; name state is preserved in this._characterName
-  }
-
-  // ---------------------------------------------------------------------------
-  // Data
-  // ---------------------------------------------------------------------------
-
   async getStepData(context) {
-    // PHASE 1: Check if droid build is deferred (from canonical session ONLY)
-    let pendingDroidBuild = false;
+    const mode = context?.mode || context?.shell?.mode || 'chargen';
 
-    // Try to access shell from context (if provided) or from global state
-    const shell = context?.shell || globalThis.game?.swse?.currentProgressionShell;
-
-    // PHASE 1: Read droid state from canonical session ONLY
-    if (shell?.progressionSession?.draftSelections?.droid) {
-      const droidBuild = shell.progressionSession.draftSelections.droid;
-      pendingDroidBuild = !!(droidBuild?.buildState?.isDeferred);
+    if (mode === 'levelup') {
+      const validation = this.validate();
+      return {
+        mode,
+        levelupSummary: this._levelupSummary,
+        hpGainState: { ...this._hpGainState },
+        issuesSummary: {
+          hasErrors: validation.errors.length > 0,
+          errorCount: validation.errors.length,
+          errors: validation.errors,
+          isReadyToFinalize: validation.isValid,
+        },
+      };
     }
 
-    // Order feats and talents canonically (General → Class → Bonus → Subtype)
     const orderedFeats = canonicallyOrderSelections(this._summary.featSelections);
     const orderedTalents = canonicallyOrderSelections(this._summary.talentSelections);
-
-    // PHASE 9 UX: Issue summary for control center functionality
     const validation = this.validate();
     const issuesSummary = {
       hasErrors: validation.errors.length > 0,
@@ -201,62 +176,56 @@ export class SummaryStep extends ProgressionStepPlugin {
       finalizationStatus: validation.isValid && this._isReviewComplete && !!this._characterName
         ? 'Ready to create character'
         : validation.errors.length > 0
-        ? `${validation.errors.length} error${validation.errors.length === 1 ? '' : 's'} to fix`
-        : `Incomplete (${Object.keys(this._summary.attributes).length ? '' : 'attributes, '}${this._summary.feats.length ? '' : 'feats, '}${this._characterName ? '' : 'name'})`
+          ? `${validation.errors.length} error${validation.errors.length === 1 ? '' : 's'} to fix`
+          : 'Incomplete',
     };
 
     return {
+      mode,
       summary: this._summary,
-      characterName: this._characterName,  // Final name for actor creation
-      startingLevel: this._startingLevel,   // Starting level (1-20)
+      characterName: this._characterName,
+      startingLevel: this._startingLevel,
       isReviewComplete: this._isReviewComplete,
-      // PHASE 1: Show warning if droid build is pending
-      pendingDroidBuild: pendingDroidBuild,
-      // Selection ordering: Canonical order for feat and talent display
       orderedFeats,
       orderedTalents,
-      // PHASE 9 UX: Issue summary and finalization status
       issuesSummary,
     };
   }
 
-  // ---------------------------------------------------------------------------
-  // Validation
-  // ---------------------------------------------------------------------------
-
   validate() {
+    const mode = this._activeMode || 'chargen';
     const errors = [];
-    const warnings = {
-      blocking: [],    // Cannot proceed without fixing
-      caution: [],     // Should fix but can proceed
-      info: [],        // Informational only
-    };
+    const warnings = { blocking: [], caution: [], info: [] };
 
-    // PHASE 4: Character name is NOW required on THIS step (moved from NameStep)
-    // This enforces "datapad profile registration" before creation
+    if (mode === 'levelup') {
+      if (this._hpGainState.needsResolution && !this._hpGainState.resolved) {
+        errors.push('Resolve hit point gain before finalizing level-up');
+      }
+      return {
+        isValid: errors.length === 0,
+        errors,
+        warnings,
+        blockingCount: warnings.blocking.length,
+        cautionCount: warnings.caution.length,
+        infoCount: warnings.info.length,
+      };
+    }
+
     if (!this._characterName || this._characterName.trim() === '') {
       errors.push('Character name is required (enter or generate a name above)');
     }
-
-    // PHASE 4: Validate starting level
     if (this._startingLevel < 1 || this._startingLevel > 20) {
       errors.push('Starting level must be between 1 and 20');
     }
-
-    // PHASE 4: Validate that all prior steps are complete
-    if (!this._summary.class) {
-      errors.push('Character class must be selected');
+    if (!this._summary.class) errors.push('Class selection is required');
+    if (!this._summary.species) errors.push('Species selection is required');
+    if (!this._summary.attributes || Object.keys(this._summary.attributes).length === 0) {
+      errors.push('Attributes must be assigned');
     }
 
-    if (Object.keys(this._summary.attributes).length === 0) {
-      errors.push('Character attributes must be assigned');
-    }
-
-    // PHASE 4: Feats and talents should be complete based on level
     const requiredFeats = this._calculateRequiredFeats();
     if (this._summary.feats.length < requiredFeats) {
       warnings.caution.push({
-        level: 'caution',
         message: `Character should have ${requiredFeats} feat(s), currently has ${this._summary.feats.length}`,
         actionable: 'Add feats in the Feats step if desired',
       });
@@ -273,7 +242,11 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   getSelection() {
-    // Character name is now a selection on this step (formerly on NameStep)
+    const mode = this._activeMode || 'chargen';
+    if (mode === 'levelup') {
+      const complete = !(this._hpGainState.needsResolution && !this._hpGainState.resolved);
+      return { selected: complete ? ['levelup-summary'] : [], count: complete ? 1 : 0, isComplete: complete };
+    }
     return {
       selected: this._characterName ? [this._characterName] : [],
       count: this._characterName ? 1 : 0,
@@ -282,13 +255,8 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   getBlockingIssues() {
-    const validation = this.validate();
-    return validation.errors;
+    return this.validate().errors;
   }
-
-  // ---------------------------------------------------------------------------
-  // Rendering
-  // ---------------------------------------------------------------------------
 
   renderWorkSurface(stepData) {
     return {
@@ -297,150 +265,355 @@ export class SummaryStep extends ProgressionStepPlugin {
     };
   }
 
-  // ---------------------------------------------------------------------------
-  // Aggregation & Helpers
-  // ---------------------------------------------------------------------------
-
-  _aggregateSummary(shell) {
+  async _aggregateSummary(shell) {
     const character = shell.actor?.system || {};
+    if (!shell.progressionSession) throw new Error('SummaryStep requires progressionSession');
 
-    // PHASE 1: REQUIRE canonical session; NO fallback to committedSelections
-    if (!shell.progressionSession) {
-      throw new Error('SummaryStep requires progressionSession');
-    }
-
-    // Try to use projection first (derived character model)
-    // If projection unavailable, rebuild from canonical session ONLY
-    const projection = shell.progressionSession.currentProjection ||
-                       ProjectionEngine.buildProjection(shell.progressionSession, shell.actor);
+    const projection = shell.progressionSession.currentProjection || await ProjectionEngine.buildProjection(shell.progressionSession, shell.actor);
+    shell.progressionSession.currentProjection = projection;
 
     if (projection) {
-      // Use projection as authoritative source of character state
       this._summary.name = this._characterName || character.identity?.name || '';
       this._summary.level = this._startingLevel || shell.targetLevel || 1;
-
-      // Identity from projection
       this._summary.species = projection.identity?.species || '';
       this._summary.class = projection.identity?.class || '';
-
-      // Attributes from projection (already normalized to {str, dex, ...})
       this._summary.attributes = projection.attributes || {};
-
-      // Skills from projection (trained skills array)
       this._summary.skills = projection.skills?.trained || [];
-
-      // Languages from projection (array of {id, name})
-      this._summary.languages = (projection.languages || [])
-        .map(lang => lang.id || lang.name || lang);
-
-      // Feats from projection (array of {id, name, source})
-      this._summary.feats = (projection.abilities?.feats || [])
-        .map(feat => feat.id || feat.name || feat);
-
-      // Talents from projection (array of {id, name, source})
-      this._summary.talents = (projection.abilities?.talents || [])
-        .map(talent => talent.id || talent.name || talent);
-
-      swseLogger.log('[SummaryStep] Aggregated summary from projection:', this._summary);
+      this._summary.languages = (projection.languages || []).map(lang => lang.id || lang.name || lang);
+      this._summary.featSelections = projection.abilities?.feats || [];
+      this._summary.feats = (projection.abilities?.feats || []).map(feat => feat.name || feat.id || feat);
+      this._summary.talentSelections = projection.abilities?.talents || [];
+      this._summary.talents = (projection.abilities?.talents || []).map(talent => talent.name || talent.id || talent);
       return;
     }
 
-    // PHASE 1: Rebuild from canonical session ONLY if projection unavailable
-    // NO fallback to committedSelections
-    const session = shell.progressionSession;
-    const selections = session.draftSelections || {};
-
-    // PHASE 1: Read from canonical session ONLY. No committedSelections fallback.
-
-    // Name/Level — entered directly on this SummaryStep as "datapad profile registration"
+    const selections = shell.progressionSession.draftSelections || {};
     this._summary.name = this._characterName || character.identity?.name || '';
     this._summary.level = this._startingLevel || shell.targetLevel || 1;
-
-    // Species: from canonical session normalized format
-    const speciesNorm = selections.species;
-    this._summary.species = speciesNorm?.name || speciesNorm?.id || '';
-
-    // Class: from canonical session normalized format
-    const classNorm = selections.class;
-    this._summary.class = classNorm?.name || classNorm?.id || '';
-
-    // Attributes: from canonical session normalized format {values: {...}}
-    const attrNorm = selections.attributes;
-    this._summary.attributes = (attrNorm?.values) ? { ...attrNorm.values } : {};
-
-    // Skills: from canonical session normalized format {trained: [ids]}
-    const skillsNorm = selections.skills;
-    this._summary.skills = (skillsNorm?.trained && Array.isArray(skillsNorm.trained))
-      ? skillsNorm.trained
-      : [];
-
-    // Languages: from canonical session normalized format [{id, source}, ...]
-    const languagesNorm = selections.languages;
-    this._summary.languages = Array.isArray(languagesNorm)
-      ? languagesNorm.map(lang => lang.id || lang)
-      : [];
-
-    // Feats: from canonical session normalized format [{id, source}, ...]
-    const featsNorm = selections.feats;
-    this._summary.featSelections = Array.isArray(featsNorm) ? [...featsNorm] : [];
-    this._summary.feats = Array.isArray(featsNorm)
-      ? featsNorm.map(feat => feat.id || feat)
-      : [];
-
-    // Talents: from canonical session normalized format [{id, treeId, source}, ...]
-    const talentsNorm = selections.talents;
-    this._summary.talentSelections = Array.isArray(talentsNorm) ? [...talentsNorm] : [];
-    this._summary.talents = Array.isArray(talentsNorm)
-      ? talentsNorm.map(talent => talent.id || talent)
-      : [];
-
-    swseLogger.log('[SummaryStep] Aggregated summary from canonical session.draftSelections:', this._summary);
+    this._summary.species = selections.species?.name || selections.species?.id || '';
+    this._summary.class = selections.class?.name || selections.class?.id || '';
+    this._summary.attributes = selections.attributes?.values ? { ...selections.attributes.values } : {};
+    this._summary.skills = Array.isArray(selections.skills?.trained) ? selections.skills.trained : [];
+    this._summary.languages = Array.isArray(selections.languages) ? selections.languages.map(lang => lang.id || lang) : [];
+    this._summary.featSelections = Array.isArray(selections.feats) ? [...selections.feats] : [];
+    this._summary.feats = Array.isArray(selections.feats) ? selections.feats.map(feat => feat.name || feat.id || feat) : [];
+    this._summary.talentSelections = Array.isArray(selections.talents) ? [...selections.talents] : [];
+    this._summary.talents = Array.isArray(selections.talents) ? selections.talents.map(talent => talent.name || talent.id || talent) : [];
   }
 
-  _calculateRequiredFeats() {
-    // Heroic characters start with 1 general feat
-    // This is a simplified calculation; actual rules may vary
-    return 1;
+  async _buildLevelupSummary(shell) {
+    const actor = shell.actor;
+    const session = shell.progressionSession;
+    if (!actor || !session) throw new Error('Level-up summary requires actor and progressionSession');
+
+    const selections = session.draftSelections || {};
+    const projection = session.currentProjection || await ProjectionEngine.buildProjection(session, actor);
+    session.currentProjection = projection;
+
+    await this._checkHPGainResolution(shell);
+
+    const currentLevel = this._getCurrentLevel(actor);
+    const newLevel = currentLevel + 1;
+    const selectedClass = selections.class || null;
+    const selectedClassName = selectedClass?.name || selectedClass?.id || '';
+
+    const currentClasses = actor.items.filter(i => i.type === 'class').map(i => ({
+      name: i.name,
+      level: Number(i.system?.level || 1),
+      system: i.system || {},
+      type: 'class'
+    }));
+
+    const metadataChanges = [];
+    if (selectedClassName) {
+      const existing = currentClasses.find(c => c.name === selectedClassName);
+      metadataChanges.push(existing
+        ? { label: selectedClassName, before: `${selectedClassName} ${existing.level}`, after: `${selectedClassName} ${existing.level + 1}`, isNew: false }
+        : { label: selectedClassName, before: null, after: `${selectedClassName} 1`, isNew: true }
+      );
+    }
+
+    const beforeAttributes = this._getCurrentAttributeScores(actor);
+    const afterAttributes = this._getProjectedAttributeScores(projection, beforeAttributes);
+    const beforeBAB = this._getCurrentBAB(actor);
+    const afterBAB = await this._computeProjectedBAB(actor, selectedClass);
+    const currentStrMod = this._abilityMod(beforeAttributes.str);
+    const afterStrMod = this._abilityMod(afterAttributes.str);
+    const currentDexMod = this._abilityMod(beforeAttributes.dex);
+    const afterDexMod = this._abilityMod(afterAttributes.dex);
+    const currentWisMod = this._abilityMod(beforeAttributes.wis);
+    const afterWisMod = this._abilityMod(afterAttributes.wis);
+
+    const currentClassBonuses = await this._getMaxDefenseBonuses(currentClasses);
+    const afterClassBonuses = await this._getProjectedDefenseBonuses(currentClasses, selectedClass);
+
+    const beforeReflex = this._getDefenseTotal(actor, 'reflex');
+    const beforeFort = this._getDefenseTotal(actor, 'fortitude');
+    const beforeWill = this._getDefenseTotal(actor, 'will');
+    const afterReflex = beforeReflex - currentDexMod - (currentClassBonuses.reflex || 0) + afterDexMod + (afterClassBonuses.reflex || 0);
+    const afterFort = beforeFort - currentStrMod - (currentClassBonuses.fortitude || 0) + afterStrMod + (afterClassBonuses.fortitude || 0);
+    const afterWill = beforeWill - currentWisMod - (currentClassBonuses.will || 0) + afterWisMod + (afterClassBonuses.will || 0);
+
+    const beforeHP = this._getCurrentHPMax(actor);
+    const afterHP = beforeHP + (Number(this._hpGainState.gain) || 0);
+    const beforeGrapple = this._getCurrentGrapple(actor);
+    const afterGrapple = beforeGrapple - beforeBAB - currentStrMod + afterBAB + afterStrMod;
+    const beforeSecondWind = Number(actor.system?.secondWind?.healing || (5 + Math.floor(currentLevel / 4) * 5));
+    const afterSecondWind = Number(actor.system?.secondWind?.misc || 0) + (5 + Math.floor(newLevel / 4) * 5);
+    const beforeDT = this._getCurrentDamageThreshold(actor, beforeFort);
+    const afterDT = afterFort;
+
+    const statChanges = [];
+    const pushStat = (label, before, after, opts = {}) => {
+      if (before === after && !opts.force) return;
+      statChanges.push({ label, before, after, pending: !!opts.pending });
+    };
+
+    pushStat('HP', beforeHP, afterHP, { pending: this._hpGainState.needsResolution && !this._hpGainState.resolved });
+    pushStat('BaB', beforeBAB, afterBAB);
+    pushStat('Reflex Total', beforeReflex, afterReflex);
+    pushStat('Fortitude Total', beforeFort, afterFort);
+    pushStat('Will Total', beforeWill, afterWill);
+    pushStat('Damage Threshold', beforeDT, afterDT);
+    pushStat('Grapple Bonus', beforeGrapple, afterGrapple);
+    pushStat('Second Wind Recovery HP', beforeSecondWind, afterSecondWind);
+
+    const attributeChanges = Object.keys(beforeAttributes).reduce((acc, key) => {
+      if (beforeAttributes[key] !== afterAttributes[key]) {
+        acc.push({ label: key.toUpperCase(), before: beforeAttributes[key], after: afterAttributes[key] });
+      }
+      return acc;
+    }, []);
+
+    const addedFeats = this._getAddedNames(actor, projection?.abilities?.feats, 'feat');
+    const addedTalents = this._getAddedNames(actor, projection?.abilities?.talents, 'talent');
+    const addedForcePowers = this._getAddedNames(actor, projection?.abilities?.forcePowers, 'forcepower');
+    const addedSkills = this._getAddedSkills(actor, projection?.skills?.trained || []);
+
+    this._levelupSummary = {
+      metadataChanges,
+      statChanges,
+      attributeChanges,
+      addedFeats,
+      addedTalents,
+      addedForcePowers,
+      addedSkills,
+    };
   }
 
-  // ---------------------------------------------------------------------------
-  // Random Name Generation (migrated from NameStep)
-  // ---------------------------------------------------------------------------
+  _getCurrentLevel(actor) {
+    return Number(actor?.system?.details?.level ?? actor?.system?.level ?? 1);
+  }
 
-  /**
-   * Generate a random name for a living being.
-   * Uses existing name generator from chargen-shared.js
-   *
-   * @param {Actor} actor - The actor to generate a name for
-   * @returns {Promise<string|null>} Random name or null if generation fails
-   */
+  _getCurrentHPMax(actor) {
+    return Number(actor?.system?.hp?.max ?? actor?.system?.derived?.hp?.max ?? 0);
+  }
+
+  _getCurrentBAB(actor) {
+    return Number(actor?.system?.derived?.bab ?? actor?.system?.bab?.total ?? actor?.system?.baseAttackBonus ?? 0);
+  }
+
+  _getCurrentGrapple(actor) {
+    return Number(actor?.system?.derived?.grappleBonus ?? actor?.system?.grappleModifier ?? 0);
+  }
+
+  _getCurrentDamageThreshold(actor, fallbackFort) {
+    return Number(actor?.system?.damageThreshold ?? actor?.system?.derived?.damageThreshold ?? fallbackFort ?? 10);
+  }
+
+  _getDefenseTotal(actor, key) {
+    return Number(
+      actor?.system?.derived?.defenses?.[key]?.total ??
+      actor?.system?.defenses?.[key]?.total ??
+      actor?.system?.defenses?.[key] ??
+      10
+    );
+  }
+
+  _getCurrentAttributeScores(actor) {
+    const system = actor?.system || {};
+    return {
+      str: Number(system?.abilities?.str?.base ?? system?.attributes?.str?.value ?? 10),
+      dex: Number(system?.abilities?.dex?.base ?? system?.attributes?.dex?.value ?? 10),
+      con: Number(system?.abilities?.con?.base ?? system?.attributes?.con?.value ?? 10),
+      int: Number(system?.abilities?.int?.base ?? system?.attributes?.int?.value ?? 10),
+      wis: Number(system?.abilities?.wis?.base ?? system?.attributes?.wis?.value ?? 10),
+      cha: Number(system?.abilities?.cha?.base ?? system?.attributes?.cha?.value ?? 10),
+    };
+  }
+
+  _getProjectedAttributeScores(projection, fallback) {
+    const attrs = projection?.attributes || {};
+    return {
+      str: Number(attrs?.str?.score ?? fallback.str),
+      dex: Number(attrs?.dex?.score ?? fallback.dex),
+      con: Number(attrs?.con?.score ?? fallback.con),
+      int: Number(attrs?.int?.score ?? fallback.int),
+      wis: Number(attrs?.wis?.score ?? fallback.wis),
+      cha: Number(attrs?.cha?.score ?? fallback.cha),
+    };
+  }
+
+  _abilityMod(score) {
+    return Math.floor((Number(score || 10) - 10) / 2);
+  }
+
+  async _computeProjectedBAB(actor, selectedClass) {
+    const { calculateTotalBAB } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
+    const synthetic = {
+      items: actor.items.map(i => ({ type: i.type, name: i.name, system: foundry.utils.deepClone(i.system || {}) }))
+    };
+    const className = selectedClass?.name || selectedClass?.id;
+    if (className) {
+      const existing = synthetic.items.find(i => i.type === 'class' && i.name === className);
+      if (existing) {
+        existing.system.level = Number(existing.system.level || 1) + 1;
+      } else {
+        synthetic.items.push({ type: 'class', name: className, system: foundry.utils.deepClone(selectedClass?.system || {}) });
+      }
+    }
+    return Number(calculateTotalBAB(synthetic) || this._getCurrentBAB(actor));
+  }
+
+  async _getMaxDefenseBonuses(classEntries) {
+    const { getClassDefenseBonuses } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
+    const maxes = { fortitude: 0, reflex: 0, will: 0 };
+    for (const entry of classEntries || []) {
+      let defenses = entry?.system?.defenses;
+      if (!defenses || (defenses.fortitude == null && defenses.reflex == null && defenses.will == null)) {
+        try {
+          defenses = await getClassDefenseBonuses(entry.name);
+        } catch (err) {
+          defenses = { fortitude: 0, reflex: 0, will: 0 };
+        }
+      }
+      maxes.fortitude = Math.max(maxes.fortitude, Number(defenses?.fortitude || 0));
+      maxes.reflex = Math.max(maxes.reflex, Number(defenses?.reflex || 0));
+      maxes.will = Math.max(maxes.will, Number(defenses?.will || 0));
+    }
+    return maxes;
+  }
+
+  async _getProjectedDefenseBonuses(currentClasses, selectedClass) {
+    const current = await this._getMaxDefenseBonuses(currentClasses);
+    const className = selectedClass?.name || selectedClass?.id;
+    if (!className) return current;
+    const existing = (currentClasses || []).find(c => c.name === className);
+    if (existing) return current;
+    const { getClassDefenseBonuses } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
+    let defenses = selectedClass?.system?.defenses;
+    if (!defenses || (defenses.fortitude == null && defenses.reflex == null && defenses.will == null)) {
+      defenses = await getClassDefenseBonuses(className);
+    }
+    return {
+      fortitude: Math.max(current.fortitude, Number(defenses?.fortitude || 0)),
+      reflex: Math.max(current.reflex, Number(defenses?.reflex || 0)),
+      will: Math.max(current.will, Number(defenses?.will || 0)),
+    };
+  }
+
+  _getAddedNames(actor, projectedList, itemType) {
+    const current = new Set(actor.items.filter(i => i.type === itemType).map(i => String(i.name || '').toLowerCase()));
+    return (projectedList || [])
+      .map(entry => entry?.name || entry?.id || entry)
+      .filter(Boolean)
+      .filter(name => !current.has(String(name).toLowerCase()));
+  }
+
+  _getAddedSkills(actor, projectedTrained) {
+    const current = new Set(
+      Object.entries(actor?.system?.skills || {})
+        .filter(([, data]) => data?.trained === true)
+        .map(([key]) => key)
+    );
+    return (projectedTrained || []).filter(skill => !current.has(skill));
+  }
+
+  async _checkHPGainResolution(shell) {
+    try {
+      const mode = shell?.mode || 'chargen';
+      if (mode !== 'levelup') return;
+      const actor = shell.actor;
+      const selectedClass = shell.progressionSession?.draftSelections?.class || null;
+      const classData = selectedClass || actor.items.find(i => i.type === 'class');
+      if (!classData) return;
+
+      const { calculateHPGain } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
+      const hpGeneration = game.settings.get('foundryvtt-swse', 'hpGeneration') || 'max';
+      const maxHPLevels = Number(game.settings.get('foundryvtt-swse', 'maxHPLevels') ?? 3);
+      const newLevel = this._getCurrentLevel(actor) + 1;
+      const hitDie = this._extractHitDie(classData);
+      const hpGain = Number(calculateHPGain(classData, actor, newLevel) || 0);
+      const needsResolution = newLevel > maxHPLevels && hpGeneration === 'roll';
+      this._hpGainState = {
+        resolved: !needsResolution,
+        gain: hpGain,
+        method: needsResolution ? null : hpGeneration,
+        formula: `d${hitDie} ${Number(actor?.system?.abilities?.con?.mod ?? actor?.system?.attributes?.con?.mod ?? 0) >= 0 ? '+' : ''}${Number(actor?.system?.abilities?.con?.mod ?? actor?.system?.attributes?.con?.mod ?? 0)}`,
+        needsResolution,
+        hitDie,
+      };
+    } catch (e) {
+      swseLogger.error('[SummaryStep._checkHPGainResolution]', e);
+      this._hpGainState.resolved = true;
+    }
+  }
+
+  async rollHPGain(actor) {
+    await this._checkHPGainResolution({ actor, mode: 'levelup', progressionSession: game?.swse?.currentProgressionShell?.progressionSession });
+    this._hpGainState.resolved = true;
+    this._hpGainState.method = 'rolled';
+    return { success: true, gain: this._hpGainState.gain };
+  }
+
+  async useMaximumHPGain(actor) {
+    const selectedClass = game?.swse?.currentProgressionShell?.progressionSession?.draftSelections?.class || actor.items.find(i => i.type === 'class');
+    const hitDie = this._extractHitDie(selectedClass);
+    const conMod = Number(actor?.system?.abilities?.con?.mod ?? actor?.system?.attributes?.con?.mod ?? 0);
+    const maxHPGain = Math.max(1, hitDie + conMod);
+    this._hpGainState.resolved = true;
+    this._hpGainState.gain = maxHPGain;
+    this._hpGainState.method = 'maximum';
+    return { success: true, gain: maxHPGain };
+  }
+
+  _extractHitDie(classData) {
+    if (!classData) return 6;
+    const hitDieString = classData?.system?.hitDie || classData?.hitDie || '1d6';
+    const match = String(hitDieString).match(/d(\d+)/i);
+    if (match) return Number(match[1]);
+    const classHitDice = {
+      'Elite Trooper': 12, 'Independent Droid': 12,
+      'Assassin': 10, 'Bounty Hunter': 10, 'Droid Commander': 10, 'Gladiator': 10,
+      'Imperial Knight': 10, 'Jedi': 10, 'Jedi Knight': 10, 'Jedi Master': 10,
+      'Master Privateer': 10, 'Martial Arts Master': 10, 'Pathfinder': 10,
+      'Sith Apprentice': 10, 'Sith Lord': 10, 'Soldier': 10, 'Vanguard': 10,
+      'Ace Pilot': 8, 'Beast Rider': 8, 'Charlatan': 8, 'Corporate Agent': 8,
+      'Crime Lord': 8, 'Enforcer': 8, 'Force Adept': 8, 'Force Disciple': 8,
+      'Gunslinger': 8, 'Improviser': 8, 'Infiltrator': 8, 'Medic': 8,
+      'Melee Duelist': 8, 'Military Engineer': 8, 'Officer': 8, 'Outlaw': 8,
+      'Saboteur': 8, 'Scout': 8, 'Shaper': 8,
+      'Noble': 6, 'Scoundrel': 6, 'Slicer': 6
+    };
+    return classHitDice[classData?.name] || 6;
+  }
+
+  _calculateRequiredFeats() { return 1; }
+
   async _generateRandomName(actor) {
     try {
-      // Import and use existing random name generator from old chargen
       const { getRandomName } = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js');
-      if (typeof getRandomName === 'function') {
-        return await getRandomName(actor);
-      }
+      if (typeof getRandomName === 'function') return await getRandomName(actor);
     } catch (err) {
       swseLogger.warn('[SummaryStep] Failed to generate random name:', err);
     }
     return null;
   }
 
-  /**
-   * Generate a random droid name.
-   * Uses existing droid name generator from chargen-shared.js
-   *
-   * @param {Actor} actor - The actor to generate a name for
-   * @returns {Promise<string|null>} Random droid name or null if generation fails
-   */
   async _generateRandomDroidName(actor) {
     try {
-      // Import and use existing droid name generator from old chargen
       const { getRandomDroidName } = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js');
-      if (typeof getRandomDroidName === 'function') {
-        return await getRandomDroidName(actor);
-      }
+      if (typeof getRandomDroidName === 'function') return await getRandomDroidName(actor);
     } catch (err) {
       swseLogger.warn('[SummaryStep] Failed to generate random droid name:', err);
     }
@@ -448,12 +621,10 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'confirm')
-      || 'Make your choice wisely.';
+    return getStepGuidance(shell.actor, 'confirm') || 'Make your choice wisely.';
   }
 
   getMentorMode() {
     return 'context-only';
   }
-
 }

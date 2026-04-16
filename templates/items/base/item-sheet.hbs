@@ -325,11 +325,28 @@
         <section class="item-editor__section">
           <h3 class="item-editor__section-title">Lightsaber Options</h3>
 
+          <div class="form-field">
+            <label>Blade Color</label>
+            <select name="flags.swse.bladeColor">
+              {{#each bladeColorOptions}}
+              <option value="{{this.name}}" {{#if (eq ../item.flags.swse.bladeColor this.name)}}selected{{/if}}>{{this.name}}</option>
+              {{/each}}
+            </select>
+          </div>
+
           <div class="form-field form-field--checkbox">
             <label>
-              <input type="checkbox" class="emit-light-toggle" {{#if (or item.flags.swse.emitLight item.flags.swse.emitLight)}}checked{{/if}} />
+              <input type="checkbox" class="emit-light-toggle" {{#if item.flags.swse.emitLight}}checked{{/if}} />
               Emit Blade Light
             </label>
+          </div>
+
+          <div class="item-editor__button-row">
+            {{#if system.activated}}
+            <button type="button" class="swse-btn swse-btn--warn deactivate-lightsaber">Deactivate Lightsaber</button>
+            {{else}}
+            <button type="button" class="swse-btn swse-btn--action activate-lightsaber">Activate Lightsaber</button>
+            {{/if}}
           </div>
         </section>
         {{/if}}

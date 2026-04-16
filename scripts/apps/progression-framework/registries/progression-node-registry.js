@@ -71,7 +71,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     label: 'Datapad Boot',
     icon: 'fa-circle-notch',
     category: 'canonical',
-    modes: ['chargen'],
+    modes: ['chargen', 'levelup'],
     subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic', 'beast'],
 
     /** Activation policy: always owed in chargen */
