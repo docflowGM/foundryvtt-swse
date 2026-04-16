@@ -10,6 +10,64 @@ import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-d
 
 export { MENTORS };
 
+function _normalizeMentorLookup(value) {
+    return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/["'`.]/g, '')
+        .replace(/&/g, 'and')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+}
+
+export function resolveMentorData(ref) {
+    if (!ref) {
+        return MENTORS.Scoundrel;
+    }
+
+    if (typeof ref === 'object' && ref.name && ref.title) {
+        return ref;
+    }
+
+    if (MENTORS[ref]) {
+        return MENTORS[ref];
+    }
+
+    const normalized = _normalizeMentorLookup(ref);
+    for (const [key, mentor] of Object.entries(MENTORS)) {
+        const candidates = [
+            key,
+            mentor?.id,
+            mentor?.mentorId,
+            mentor?.mentor_id,
+            mentor?.name,
+            mentor?.displayName,
+        ];
+        if (candidates.some(candidate => _normalizeMentorLookup(candidate) == normalized)) {
+            return mentor;
+        }
+    }
+
+    return MENTORS.Scoundrel;
+}
+
+export function getMentorKey(ref) {
+    if (!ref) return 'Scoundrel';
+    if (MENTORS[ref]) return ref;
+    const mentor = resolveMentorData(ref);
+    return Object.entries(MENTORS).find(([, value]) => value === mentor)?.[0] || 'Scoundrel';
+}
+
+export function getMentorIntroText(ref, fallbackClassName = '') {
+    const mentor = resolveMentorData(ref);
+    if (!mentor) {
+        return fallbackClassName ? `Welcome, ${fallbackClassName}.` : 'Welcome.';
+    }
+
+    const greeting = mentor.levelGreetings?.[1] || mentor.levelGreetings?.['1'] || mentor.summaryGuidance || mentor.classGuidance || '';
+    return greeting || (fallbackClassName ? `Welcome, ${fallbackClassName}.` : 'Welcome.');
+}
+
 /**
  * Get mentor for a given class
  * @param {string} className - The class name (base or prestige)

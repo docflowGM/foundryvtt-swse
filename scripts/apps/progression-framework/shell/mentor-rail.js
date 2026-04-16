@@ -1,4 +1,4 @@
-import { getMentorGuidance, MENTORS } from '../../../engine/mentor/mentor-dialogues.js';
+import { getMentorGuidance, MENTORS, resolveMentorData, getMentorKey } from '../../../engine/mentor/mentor-dialogues.js';
 import { MentorTranslationIntegration } from '../../../mentor/mentor-translation-integration.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 
@@ -195,13 +195,12 @@ export class MentorRail {
    * Swap mentor identity; triggers partial re-render of mentor-rail PART only.
    * @param {string} mentorId
    */
-  setMentor(mentorId) {
-    const data = Object.values(MENTORS).find(m => m.id === mentorId)
-               ?? Object.values(MENTORS).find(m => m.id === 'ol-salty');
+  setMentor(mentorRef) {
+    const data = resolveMentorData(mentorRef);
     if (!data) return;
 
     Object.assign(this.shell.mentor, {
-      mentorId: data.id,
+      mentorId: getMentorKey(mentorRef),
       name: data.name,
       title: data.title,
       portrait: data.portrait ?? null,
@@ -265,6 +264,6 @@ export class MentorRail {
    * @private
    */
   _getMentorObject() {
-    return Object.values(MENTORS).find(m => m.id === this.shell.mentor.mentorId) ?? null;
+    return resolveMentorData(this.shell.mentor?.mentorId || this.shell.mentor?.name || 'Scoundrel') ?? null;
   }
 }

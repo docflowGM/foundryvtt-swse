@@ -20,6 +20,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { getStepGuidance, handleAskMentor, getStepMentorObject } from './mentor-step-integration.js';
 import { BuildAnalysisIntegration } from '../shell/build-analysis-integration.js';
+import { getMentorIntroText, getMentorKey } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 
 export class L1SurveyStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -49,17 +50,20 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     // Survey is opt-in, so no forced entry
     this._isSkipped = false;
 
+    const mentor = getStepMentorObject(shell?.actor ?? null, shell);
+    if (mentor && shell?.mentorRail) {
+      const mentorKey = getMentorKey(shell?.committedSelections?.get?.('class')?.name || mentor?.name || 'Scoundrel');
+      shell.mentorRail.setMentor(mentorKey);
+      shell.mentor.currentDialogue = getMentorIntroText(mentor, shell?.committedSelections?.get?.('class')?.name || '');
+      shell.mentor.mood = 'encouraging';
+      shell.mentor.askMentorEnabled = true;
+    }
+
     // Phase 4: Run build analysis to see coherence and conflicts
     try {
       this._analysisResult = await BuildAnalysisIntegration.analyzeAndProvideFeedback(shell);
 
       if (this._analysisResult) {
-        // Display analysis feedback via mentor
-        const feedback = this._analysisResult.feedback;
-        if (feedback) {
-          await shell.mentorRail.speak(feedback, this._getMoodFromAnalysis());
-        }
-
         // Store emergent archetype for reference
         this._emergentArchetype = this._analysisResult.emergentArchetype;
       }
@@ -170,7 +174,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       : null;
 
     const mentor = getStepMentorObject(context?.shell?.actor ?? null, context?.shell ?? null);
-    const mentorGuidance = getStepGuidance(context?.shell?.actor ?? null, 'l1-survey', context?.shell ?? null);
+    const mentorGuidance = getMentorIntroText(mentor, context?.shell?.committedSelections?.get?.('class')?.name || '');
 
     return {
       surveyAnswers: { ...this._surveyAnswers },
@@ -297,7 +301,8 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'l1-survey') ||
+    const mentor = getStepMentorObject(shell?.actor ?? null, shell ?? null);
+    return getMentorIntroText(mentor, shell?.committedSelections?.get?.('class')?.name || '') ||
       'This brief survey helps me understand how best to guide you. Answer truthfully — there are no wrong paths.';
   }
 
