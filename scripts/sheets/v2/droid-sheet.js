@@ -18,6 +18,7 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
+import { PortraitUploadController } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PortraitUploadController.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -228,6 +229,9 @@ export class SWSEV2DroidSheet extends
 
     markActiveConditionStep(root, this.actor);
     applyResourceBarAnimations(this, root);
+
+    // Portrait upload + auto-apply (click via data-edit="img", drag/drop here)
+    PortraitUploadController.bind(root, { actor: this.actor, signal });
 
     /* ---------------- TAB HANDLING ---------------- */
 

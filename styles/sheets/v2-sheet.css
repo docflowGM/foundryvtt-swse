@@ -7168,3 +7168,20 @@ select option:checked {
 .swse-character-sheet .resource-segment {
   border-radius: 999px;
 }
+
+/* ─── Portrait upload dropzone affordance ─── */
+.swse-sheet [data-role="actor-portrait-dropzone"] {
+  position: relative;
+  transition: outline-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.swse-sheet [data-role="actor-portrait-dropzone"].portrait-drop-active {
+  outline: 2px dashed rgba(0, 255, 136, 0.75);
+  outline-offset: 2px;
+  box-shadow: 0 0 18px rgba(0, 255, 136, 0.25);
+}
+
+.swse-sheet [data-role="actor-portrait-image"].portrait-drop-active {
+  border-color: rgba(0, 255, 136, 0.9);
+  box-shadow: 0 0 14px rgba(0, 255, 136, 0.4);
+}
