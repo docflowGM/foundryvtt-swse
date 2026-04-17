@@ -42,6 +42,7 @@ import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use
 import { UIStateManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/UIStateManager.js";
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 import { PanelDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PanelDiagnostics.js";
+import { PortraitUploadController } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PortraitUploadController.js";
 // Character-specific visibility manager (subclass of shared base)
 import { PanelVisibilityManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/PanelVisibilityManager.js";
 import { applyResourceNumberAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-number-animations.js";
@@ -433,6 +434,9 @@ export class SWSEV2CharacterSheet extends
     this.activateListeners(root, { signal });
     applyResourceNumberAnimations(this, root);
     applyResourceBarAnimations(this, root);
+
+    // Portrait upload + auto-apply (click-to-pick via data-edit="img", drag/drop here)
+    PortraitUploadController.bind(root, { actor: this.actor, signal });
 
     // Wire tooltip bindings for micro-tooltips
     bindV2CharacterSheetTooltips(this.document, root, this._renderAbort);

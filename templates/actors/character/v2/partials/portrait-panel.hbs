@@ -1,13 +1,15 @@
-<section class="portrait-panel holo-panel">
+<section class="portrait-panel holo-panel" data-role="actor-portrait-dropzone">
 
   <header class="section-bar">
     <h3 class="section-header">Portrait</h3>
   </header>
 
   <div class="portrait-container">
-    <img class="portrait-image" src="{{portraitPanel.img}}"
+    <img class="portrait-image"
+         src="{{portraitPanel.img}}"
          data-edit="img"
-         title="Click to change portrait"
+         data-role="actor-portrait-image"
+         title="Click or drop image to update portrait"
          alt="{{portraitPanel.name}} portrait"
          {{#unless portraitPanel.canEdit}}style="cursor: default;"{{/unless}} />
   </div>

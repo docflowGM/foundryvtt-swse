@@ -7,6 +7,7 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
+import { PortraitUploadController } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PortraitUploadController.js";
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -189,6 +190,9 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     // Highlight the current condition step
     markActiveConditionStep(root, this.actor);
     applyResourceBarAnimations(this, root);
+
+    // Portrait upload + auto-apply (click via data-edit="img", drag/drop here)
+    PortraitUploadController.bind(root, { actor: this.actor, signal });
 
     // Condition step clicking
     for (const el of root.querySelectorAll('.swse-v2-condition-step')) {
