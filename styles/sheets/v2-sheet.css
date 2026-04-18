@@ -6483,109 +6483,109 @@ select option:checked {
   This does NOT touch progression-shell styling.
 */
 
-.swse-character-sheet-.swse-sheet-ui,
-.swse-character-sheet-.swse-sheet-ui .swse-character-sheet {
+.swse-character-sheet .swse-sheet-ui,
+.swse-character-sheet .swse-sheet-ui .swse-character-sheet {
   --swse-flat-panel-bg: linear-gradient(180deg, rgba(5, 16, 28, 0.96), rgba(4, 11, 20, 0.98));
   --swse-flat-border: rgba(104, 214, 255, 0.28);
   --swse-flat-border-strong: rgba(104, 214, 255, 0.42);
 }
 
 /* Kill decorative SVG/pseudo frames */
-.swse-character-sheet-.swse-sheet-ui .holo-panel::before,
-.swse-character-sheet-.swse-sheet-ui .holo-panel::after,
-.swse-character-sheet-.swse-sheet-ui .v3-panel::before,
-.swse-character-sheet-.swse-sheet-ui .v3-panel::after,
-.swse-character-sheet-.swse-sheet-ui .svg-panel-frame::before,
-.swse-character-sheet-.swse-sheet-ui .svg-panel-frame::after,
-.swse-character-sheet-.swse-sheet-ui .sheet-tabs .item::before,
-.swse-character-sheet-.swse-sheet-ui .sheet-tabs .item::after,
-.swse-character-sheet-.swse-sheet-ui .sheet-tabs a::before,
-.swse-character-sheet-.swse-sheet-ui .sheet-tabs a::after,
-.swse-character-sheet-.swse-sheet-ui .header-btn::before,
-.swse-character-sheet-.swse-sheet-ui .header-btn::after,
-.swse-character-sheet-.swse-sheet-ui .swse-btn::before,
-.swse-character-sheet-.swse-sheet-ui .swse-btn::after,
-.swse-character-sheet-.swse-sheet-ui .swse-v2-btn::before,
-.swse-character-sheet-.swse-sheet-ui .swse-v2-btn::after,
-.swse-character-sheet-.swse-sheet-ui .mini-btn::before,
-.swse-character-sheet-.swse-sheet-ui .mini-btn::after,
-.swse-character-sheet-.swse-sheet-ui .favorite-btn::before,
-.swse-character-sheet-.swse-sheet-ui .favorite-btn::after,
-.swse-character-sheet-.swse-sheet-ui .skill-name-btn::before,
-.swse-character-sheet-.swse-sheet-ui .skill-name-btn::after,
-.swse-character-sheet-.swse-sheet-ui .skill-bonus-btn::before,
-.swse-character-sheet-.swse-sheet-ui .skill-bonus-btn::after,
-.swse-character-sheet-.swse-sheet-ui .header-select-btn::before,
-.swse-character-sheet-.swse-sheet-ui .header-select-btn::after,
-.swse-character-sheet-.swse-sheet-ui .swse-panel__frame,
-.swse-character-sheet-.swse-sheet-ui .swse-panel__frame::before,
-.swse-character-sheet-.swse-sheet-ui .swse-panel__frame::after {
+.swse-character-sheet .swse-sheet-ui .holo-panel::before,
+.swse-character-sheet .swse-sheet-ui .holo-panel::after,
+.swse-character-sheet .swse-sheet-ui .v3-panel::before,
+.swse-character-sheet .swse-sheet-ui .v3-panel::after,
+.swse-character-sheet .swse-sheet-ui .svg-panel-frame::before,
+.swse-character-sheet .swse-sheet-ui .svg-panel-frame::after,
+.swse-character-sheet .swse-sheet-ui .sheet-tabs .item::before,
+.swse-character-sheet .swse-sheet-ui .sheet-tabs .item::after,
+.swse-character-sheet .swse-sheet-ui .sheet-tabs a::before,
+.swse-character-sheet .swse-sheet-ui .sheet-tabs a::after,
+.swse-character-sheet .swse-sheet-ui .header-btn::before,
+.swse-character-sheet .swse-sheet-ui .header-btn::after,
+.swse-character-sheet .swse-sheet-ui .swse-btn::before,
+.swse-character-sheet .swse-sheet-ui .swse-btn::after,
+.swse-character-sheet .swse-sheet-ui .swse-v2-btn::before,
+.swse-character-sheet .swse-sheet-ui .swse-v2-btn::after,
+.swse-character-sheet .swse-sheet-ui .mini-btn::before,
+.swse-character-sheet .swse-sheet-ui .mini-btn::after,
+.swse-character-sheet .swse-sheet-ui .favorite-btn::before,
+.swse-character-sheet .swse-sheet-ui .favorite-btn::after,
+.swse-character-sheet .swse-sheet-ui .skill-name-btn::before,
+.swse-character-sheet .swse-sheet-ui .skill-name-btn::after,
+.swse-character-sheet .swse-sheet-ui .skill-bonus-btn::before,
+.swse-character-sheet .swse-sheet-ui .skill-bonus-btn::after,
+.swse-character-sheet .swse-sheet-ui .header-select-btn::before,
+.swse-character-sheet .swse-sheet-ui .header-select-btn::after,
+.swse-character-sheet .swse-sheet-ui .swse-panel__frame,
+.swse-character-sheet .swse-sheet-ui .swse-panel__frame::before,
+.swse-character-sheet .swse-sheet-ui .swse-panel__frame::after {
   content: none !important;
   display: none !important;
   background-image: none !important;
 }
 
 /* Flatten panels/cards/major boxes */
-.swse-character-sheet-.swse-sheet-ui .holo-panel,
-.swse-character-sheet-.swse-sheet-ui .v3-panel,
-.swse-character-sheet-.swse-sheet-ui .svg-framed,
-.swse-character-sheet-.swse-sheet-ui .svg-panel-frame,
-.swse-character-sheet-.swse-sheet-ui .tab-placeholder,
-.swse-character-sheet-.swse-sheet-ui .swse-attacks-panel,
-.swse-character-sheet-.swse-sheet-ui .skills-panel,
-.swse-character-sheet-.swse-sheet-ui .section-bar,
-.swse-character-sheet-.swse-sheet-ui .resource,
-.swse-character-sheet-.swse-sheet-ui .combat-metric,
-.swse-character-sheet-.swse-sheet-ui .tactical-resource,
-.swse-character-sheet-.swse-sheet-ui .header-defense-readout,
-.swse-character-sheet-.swse-sheet-ui .field-with-button,
-.swse-character-sheet-.swse-sheet-ui .ability-row,
-.swse-character-sheet-.swse-sheet-ui .defense-row,
-.swse-character-sheet-.swse-sheet-ui .condition-track,
-.swse-character-sheet-.swse-sheet-ui .condition-entry,
-.swse-character-sheet-.swse-sheet-ui .defense-card,
-.swse-character-sheet-.swse-sheet-ui .defense-item,
-.swse-character-sheet-.swse-sheet-ui .xp-panel,
-.swse-character-sheet-.swse-sheet-ui .second-wind-panel,
-.swse-character-sheet-.swse-sheet-ui .hp-condition-panel,
-.swse-character-sheet-.swse-sheet-ui .resources-panel,
-.swse-character-sheet-.swse-sheet-ui .defenses-panel {
+.swse-character-sheet .swse-sheet-ui .holo-panel,
+.swse-character-sheet .swse-sheet-ui .v3-panel,
+.swse-character-sheet .swse-sheet-ui .svg-framed,
+.swse-character-sheet .swse-sheet-ui .svg-panel-frame,
+.swse-character-sheet .swse-sheet-ui .tab-placeholder,
+.swse-character-sheet .swse-sheet-ui .swse-attacks-panel,
+.swse-character-sheet .swse-sheet-ui .skills-panel,
+.swse-character-sheet .swse-sheet-ui .section-bar,
+.swse-character-sheet .swse-sheet-ui .resource,
+.swse-character-sheet .swse-sheet-ui .combat-metric,
+.swse-character-sheet .swse-sheet-ui .tactical-resource,
+.swse-character-sheet .swse-sheet-ui .header-defense-readout,
+.swse-character-sheet .swse-sheet-ui .field-with-button,
+.swse-character-sheet .swse-sheet-ui .ability-row,
+.swse-character-sheet .swse-sheet-ui .defense-row,
+.swse-character-sheet .swse-sheet-ui .condition-track,
+.swse-character-sheet .swse-sheet-ui .condition-entry,
+.swse-character-sheet .swse-sheet-ui .defense-card,
+.swse-character-sheet .swse-sheet-ui .defense-item,
+.swse-character-sheet .swse-sheet-ui .xp-panel,
+.swse-character-sheet .swse-sheet-ui .second-wind-panel,
+.swse-character-sheet .swse-sheet-ui .hp-condition-panel,
+.swse-character-sheet .swse-sheet-ui .resources-panel,
+.swse-character-sheet .swse-sheet-ui .defenses-panel {
   background: var(--swse-flat-panel-bg) !important;
   background-image: none !important;
   border-image: none !important;
   box-shadow: none !important;
 }
 
-.swse-character-sheet-.swse-sheet-ui .holo-panel,
-.swse-character-sheet-.swse-sheet-ui .v3-panel,
-.swse-character-sheet-.swse-sheet-ui .svg-framed,
-.swse-character-sheet-.swse-sheet-ui .svg-panel-frame,
-.swse-character-sheet-.swse-sheet-ui .tab-placeholder,
-.swse-character-sheet-.swse-sheet-ui .swse-attacks-panel,
-.swse-character-sheet-.swse-sheet-ui .skills-panel,
-.swse-character-sheet-.swse-sheet-ui .xp-panel,
-.swse-character-sheet-.swse-sheet-ui .second-wind-panel,
-.swse-character-sheet-.swse-sheet-ui .hp-condition-panel,
-.swse-character-sheet-.swse-sheet-ui .resources-panel,
-.swse-character-sheet-.swse-sheet-ui .defenses-panel {
+.swse-character-sheet .swse-sheet-ui .holo-panel,
+.swse-character-sheet .swse-sheet-ui .v3-panel,
+.swse-character-sheet .swse-sheet-ui .svg-framed,
+.swse-character-sheet .swse-sheet-ui .svg-panel-frame,
+.swse-character-sheet .swse-sheet-ui .tab-placeholder,
+.swse-character-sheet .swse-sheet-ui .swse-attacks-panel,
+.swse-character-sheet .swse-sheet-ui .skills-panel,
+.swse-character-sheet .swse-sheet-ui .xp-panel,
+.swse-character-sheet .swse-sheet-ui .second-wind-panel,
+.swse-character-sheet .swse-sheet-ui .hp-condition-panel,
+.swse-character-sheet .swse-sheet-ui .resources-panel,
+.swse-character-sheet .swse-sheet-ui .defenses-panel {
   border: 1px solid var(--swse-flat-border) !important;
   border-radius: 12px !important;
   overflow: hidden;
 }
 
 /* Flatten buttons, tab pills, mini controls */
-.swse-character-sheet-.swse-sheet-ui .header-btn,
-.swse-character-sheet-.swse-sheet-ui .swse-btn,
-.swse-character-sheet-.swse-sheet-ui .swse-v2-btn,
-.swse-character-sheet-.swse-sheet-ui .mini-btn,
-.swse-character-sheet-.swse-sheet-ui .favorite-btn,
-.swse-character-sheet-.swse-sheet-ui .skill-name-btn,
-.swse-character-sheet-.swse-sheet-ui .skill-bonus-btn,
-.swse-character-sheet-.swse-sheet-ui .header-select-btn,
-.swse-character-sheet-.swse-sheet-ui .sheet-tabs .item,
-.swse-character-sheet-.swse-sheet-ui .sheet-tabs a,
-.swse-character-sheet-.swse-sheet-ui .sheet-tabs button,
-.swse-character-sheet-.swse-sheet-ui button[type="button"] {
+.swse-character-sheet .swse-sheet-ui .header-btn,
+.swse-character-sheet .swse-sheet-ui .swse-btn,
+.swse-character-sheet .swse-sheet-ui .swse-v2-btn,
+.swse-character-sheet .swse-sheet-ui .mini-btn,
+.swse-character-sheet .swse-sheet-ui .favorite-btn,
+.swse-character-sheet .swse-sheet-ui .skill-name-btn,
+.swse-character-sheet .swse-sheet-ui .skill-bonus-btn,
+.swse-character-sheet .swse-sheet-ui .header-select-btn,
+.swse-character-sheet .swse-sheet-ui .sheet-tabs .item,
+.swse-character-sheet .swse-sheet-ui .sheet-tabs a,
+.swse-character-sheet .swse-sheet-ui .sheet-tabs button,
+.swse-character-sheet .swse-sheet-ui button[type="button"] {
   background: rgba(8, 18, 32, 0.96) !important;
   background-image: none !important;
   border: 1px solid var(--swse-flat-border) !important;
@@ -6594,24 +6594,24 @@ select option:checked {
   text-shadow: none !important;
 }
 
-.swse-character-sheet-.swse-sheet-ui .sheet-tabs .item.active,
-.swse-character-sheet-.swse-sheet-ui .sheet-tabs a.active,
-.swse-character-sheet-.swse-sheet-ui .sheet-tabs button.active,
-.swse-character-sheet-.swse-sheet-ui .header-btn:hover,
-.swse-character-sheet-.swse-sheet-ui .swse-btn:hover,
-.swse-character-sheet-.swse-sheet-ui .swse-v2-btn:hover,
-.swse-character-sheet-.swse-sheet-ui .mini-btn:hover,
-.swse-character-sheet-.swse-sheet-ui .favorite-btn:hover,
-.swse-character-sheet-.swse-sheet-ui .skill-name-btn:hover,
-.swse-character-sheet-.swse-sheet-ui .skill-bonus-btn:hover,
-.swse-character-sheet-.swse-sheet-ui .header-select-btn:hover {
+.swse-character-sheet .swse-sheet-ui .sheet-tabs .item.active,
+.swse-character-sheet .swse-sheet-ui .sheet-tabs a.active,
+.swse-character-sheet .swse-sheet-ui .sheet-tabs button.active,
+.swse-character-sheet .swse-sheet-ui .header-btn:hover,
+.swse-character-sheet .swse-sheet-ui .swse-btn:hover,
+.swse-character-sheet .swse-sheet-ui .swse-v2-btn:hover,
+.swse-character-sheet .swse-sheet-ui .mini-btn:hover,
+.swse-character-sheet .swse-sheet-ui .favorite-btn:hover,
+.swse-character-sheet .swse-sheet-ui .skill-name-btn:hover,
+.swse-character-sheet .swse-sheet-ui .skill-bonus-btn:hover,
+.swse-character-sheet .swse-sheet-ui .header-select-btn:hover {
   border-color: var(--swse-flat-border-strong) !important;
   box-shadow: none !important;
   transform: none !important;
 }
 
 /* Level Up button readiness flourish */
-.swse-character-sheet-.swse-sheet-ui .header-btn.ready {
+.swse-character-sheet .swse-sheet-ui .header-btn.ready {
   border-color: rgba(0, 255, 136, 0.6) !important;
   background: rgba(8, 18, 32, 0.98) !important;
   animation: levelup-flourish 0.6s ease-in-out 1, levelup-glow 1.5s ease-in-out 0.7s forwards;
@@ -6619,52 +6619,52 @@ select option:checked {
 }
 
 /* Flatten inputs and value boxes */
-.swse-character-sheet-.swse-sheet-ui input,
-.swse-character-sheet-.swse-sheet-ui select,
-.swse-character-sheet-.swse-sheet-ui textarea,
-.swse-character-sheet-.swse-sheet-ui .math-pill,
-.swse-character-sheet-.swse-sheet-ui .math-result,
-.swse-character-sheet-.swse-sheet-ui .resource-segment-bar,
-.swse-character-sheet-.swse-sheet-ui .resource-pip-strip,
-.swse-character-sheet-.swse-sheet-ui .value-row,
-.swse-character-sheet-.swse-sheet-ui .value-box,
-.swse-character-sheet-.swse-sheet-ui .header-field,
-.swse-character-sheet-.swse-sheet-ui .header-player,
-.swse-character-sheet-.swse-sheet-ui .header-name-block {
+.swse-character-sheet .swse-sheet-ui input,
+.swse-character-sheet .swse-sheet-ui select,
+.swse-character-sheet .swse-sheet-ui textarea,
+.swse-character-sheet .swse-sheet-ui .math-pill,
+.swse-character-sheet .swse-sheet-ui .math-result,
+.swse-character-sheet .swse-sheet-ui .resource-segment-bar,
+.swse-character-sheet .swse-sheet-ui .resource-pip-strip,
+.swse-character-sheet .swse-sheet-ui .value-row,
+.swse-character-sheet .swse-sheet-ui .value-box,
+.swse-character-sheet .swse-sheet-ui .header-field,
+.swse-character-sheet .swse-sheet-ui .header-player,
+.swse-character-sheet .swse-sheet-ui .header-name-block {
   background-image: none !important;
   box-shadow: none !important;
 }
 
-.swse-character-sheet-.swse-sheet-ui input,
-.swse-character-sheet-.swse-sheet-ui select,
-.swse-character-sheet-.swse-sheet-ui textarea,
-.swse-character-sheet-.swse-sheet-ui .math-pill,
-.swse-character-sheet-.swse-sheet-ui .math-result,
-.swse-character-sheet-.swse-sheet-ui .value-box,
-.swse-character-sheet-.swse-sheet-ui .resource-segment-bar,
-.swse-character-sheet-.swse-sheet-ui .resource-pip-strip {
+.swse-character-sheet .swse-sheet-ui input,
+.swse-character-sheet .swse-sheet-ui select,
+.swse-character-sheet .swse-sheet-ui textarea,
+.swse-character-sheet .swse-sheet-ui .math-pill,
+.swse-character-sheet .swse-sheet-ui .math-result,
+.swse-character-sheet .swse-sheet-ui .value-box,
+.swse-character-sheet .swse-sheet-ui .resource-segment-bar,
+.swse-character-sheet .swse-sheet-ui .resource-pip-strip {
   background: rgba(5, 14, 25, 0.96) !important;
   border: 1px solid rgba(104, 214, 255, 0.22) !important;
   border-radius: 8px !important;
 }
 
 /* Make sure tabs never disappear after state churn */
-.swse-character-sheet-.swse-sheet-ui .sheet-body > .tab {
+.swse-character-sheet .swse-sheet-ui .sheet-body > .tab {
   min-height: 0;
 }
 
-.swse-character-sheet-.swse-sheet-ui .sheet-body > .tab.active {
+.swse-character-sheet .swse-sheet-ui .sheet-body > .tab.active {
   display: flex !important;
   visibility: visible !important;
   opacity: 1 !important;
 }
 
-.swse-character-sheet-.swse-sheet-ui .sheet-body > .tab:not(.active) {
+.swse-character-sheet .swse-sheet-ui .sheet-body > .tab:not(.active) {
   display: none !important;
 }
 
 /* Small utility layout for the new abilities action row */
-.swse-character-sheet-.swse-sheet-ui .section-bar__actions {
+.swse-character-sheet .swse-sheet-ui .section-bar__actions {
   display: inline-flex;
   align-items: center;
   gap: 8px;
