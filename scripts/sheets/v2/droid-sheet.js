@@ -19,6 +19,7 @@ import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PortraitUploadController } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PortraitUploadController.js";
+import { UIStateManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/UIStateManager.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -63,6 +64,21 @@ export class SWSEV2DroidSheet extends
 
   constructor(document, options = {}) {
     super(document, options);
+
+    // Preserve interactive UI state (active tab, scroll, focus) across rerenders.
+    this.uiStateManager = new UIStateManager(this);
+  }
+
+  async render(...args) {
+    // Capture UI state before rerender so it can be restored after.
+    this.uiStateManager?.captureState();
+    return super.render(...args);
+  }
+
+  async _onClose(options) {
+    // Clear UI state on close; next open starts fresh.
+    this.uiStateManager?.clear();
+    return super._onClose(options);
   }
 
   async _prepareContext(options) {
@@ -210,6 +226,9 @@ export class SWSEV2DroidSheet extends
 
     // Phase 3: Enforce super._onRender call (AppV2 contract)
     await super._onRender(context, options);
+
+    // Restore UI state (active tab, expanded rows, focus, scroll) after rerender.
+    this.uiStateManager?.restoreState();
 
     const root = this.element;
     if (!(root instanceof HTMLElement)) {
