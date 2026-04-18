@@ -1,0 +1,56 @@
+{{!--
+  Droid weapons ledger panel.
+
+  Extracted from templates/actors/droid/v2/droid-sheet.hbs (gear tab) as
+  part of Phase 3A template decomposition. Markup preserved byte-for-byte.
+
+  Context consumed:
+    weapons[]  — pre-projected by DroidSheetContextBuilder
+                 (rowContract: id, name, type, img, system)
+
+  Listeners (wired in scripts/sheets/v2/droid-sheet/listeners.js):
+    .swse-v2-open-item           — wireItemOpenControls
+    [data-action="sell-item"]    — wireEquipmentSellAndDelete
+    [data-action="delete-item"]  — wireEquipmentSellAndDelete
+
+  NOTE: Outer {{#if weapons}} gate is preserved in droid-sheet.hbs around
+  the partial include to keep the exact original render behavior (the
+  weapons section is hidden entirely when there are no weapons).
+--}}
+<section class="weapons-section">
+  <h3>Weapons</h3>
+  <div class="weapons-list" style="border-top: 1px solid #ddd;">
+    {{#each weapons as |item|}}
+      <div class="weapon-row" style="display: grid; grid-template-columns: 1fr 100px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+        <div class="weapon-name">
+          <button type="button"
+                  class="weapon-name-btn swse-v2-open-item"
+                  data-item-id="{{item.id}}"
+                  style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+            {{item.name}}
+          </button>
+        </div>
+        <div style="font-size: 0.85em;">
+          Damage: {{item.system.damage}}
+        </div>
+        <div style="text-align: right; font-size: 0.85em;">
+          {{item.system.weight}} lbs
+        </div>
+        <button type="button"
+                class="weapon-sell"
+                data-action="sell-item"
+                data-item-id="{{item.id}}"
+                style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+          Sell
+        </button>
+        <button type="button"
+                class="weapon-delete"
+                data-action="delete-item"
+                data-item-id="{{item.id}}"
+                style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+          Delete
+        </button>
+      </div>
+    {{/each}}
+  </div>
+</section>

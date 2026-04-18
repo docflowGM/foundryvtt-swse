@@ -31,7 +31,15 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
  * of partials, and Phase 2 must not regress any of them. A key is "satisfied"
  * if it exists at the documented path (defined or null/empty value is fine —
  * we are not asserting non-null payloads here).
+ *
+ * Phase 3A added the optional `partial` field on entries that correspond to
+ * a concrete droid-owned partial (`templates/actors/droid/v2/partials/*.hbs`).
+ * This is *documentation only* today — the live template still composes
+ * partials by explicit `{{> ... }}` includes. No dynamic registry-driven
+ * rendering is introduced yet.
  */
+const DROID_PARTIAL_BASE = "systems/foundryvtt-swse/templates/actors/droid/v2/partials";
+
 export const DROID_LIVE_PANEL_REGISTRY = Object.freeze([
   {
     panelName: "header",
@@ -46,28 +54,32 @@ export const DROID_LIVE_PANEL_REGISTRY = Object.freeze([
   {
     panelName: "summary",
     description: "Top-of-sheet summary (initiative, system shape, abilities)",
-    requiredKeys: ["system", "derived"]
+    requiredKeys: ["system", "derived"],
+    partial: `${DROID_PARTIAL_BASE}/initiative-panel.hbs`
   },
   {
     panelName: "equipment",
     description: "Equipment ledger entries projected from actor.items",
     requiredKeys: ["equipment"],
     arrayKey: "equipment",
-    rowContract: ["id", "name", "type", "img", "system"]
+    rowContract: ["id", "name", "type", "img", "system"],
+    partial: `${DROID_PARTIAL_BASE}/equipment-panel.hbs`
   },
   {
     panelName: "armor",
     description: "Armor ledger entries projected from actor.items",
     requiredKeys: ["armor"],
     arrayKey: "armor",
-    rowContract: ["id", "name", "type", "img", "system"]
+    rowContract: ["id", "name", "type", "img", "system"],
+    partial: `${DROID_PARTIAL_BASE}/armor-panel.hbs`
   },
   {
     panelName: "weapons",
     description: "Weapons ledger entries projected from actor.items",
     requiredKeys: ["weapons"],
     arrayKey: "weapons",
-    rowContract: ["id", "name", "type", "img", "system"]
+    rowContract: ["id", "name", "type", "img", "system"],
+    partial: `${DROID_PARTIAL_BASE}/weapons-panel.hbs`
   },
   {
     panelName: "talents",
@@ -90,7 +102,8 @@ export const DROID_LIVE_PANEL_REGISTRY = Object.freeze([
   {
     panelName: "ownedActors",
     description: "Serializable map of related/owned actors",
-    requiredKeys: ["ownedActorMap"]
+    requiredKeys: ["ownedActorMap"],
+    partial: `${DROID_PARTIAL_BASE}/owned-actors-panel.hbs`
   },
   {
     panelName: "xp",
@@ -109,7 +122,8 @@ export const DROID_LIVE_PANEL_REGISTRY = Object.freeze([
       "droidPanels.programming",
       "droidPanels.customizations",
       "droidPanels.buildHistory"
-    ]
+    ],
+    partial: `${DROID_PARTIAL_BASE}/droid-systems-panel.hbs`
   }
 ]);
 

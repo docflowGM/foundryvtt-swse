@@ -1,0 +1,65 @@
+{{!--
+  Droid armor ledger panel.
+
+  Extracted from templates/actors/droid/v2/droid-sheet.hbs (gear tab) as
+  part of Phase 3A template decomposition. Markup preserved byte-for-byte.
+
+  Context consumed:
+    armor[]  — pre-projected by DroidSheetContextBuilder
+               (rowContract: id, name, type, img, system)
+
+  Listeners (wired in scripts/sheets/v2/droid-sheet/listeners.js):
+    .swse-v2-open-item                 — wireItemOpenControls
+    [data-action="toggle-equip-armor"] — wireArmorEquipToggle
+    [data-action="sell-item"]          — wireEquipmentSellAndDelete
+    [data-action="delete-item"]        — wireEquipmentSellAndDelete
+--}}
+<section class="armor-section">
+  <h3>Armor</h3>
+  {{#if armor}}
+    <div class="armor-list" style="border-top: 1px solid #ddd;">
+      {{#each armor as |item|}}\
+        <div class="armor-row" style="display: grid; grid-template-columns: 40px 1fr 120px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+          <div style="text-align: center;">
+            <input type="checkbox"
+                   class="armor-equip"
+                   data-action="toggle-equip-armor"
+                   data-item-id="{{item.id}}"
+                   {{#if item.system.equipped}}checked{{/if}}
+                   style="cursor: pointer;">
+          </div>
+          <div class="armor-name">
+            <button type="button"
+                    class="armor-name-btn swse-v2-open-item"
+                    data-item-id="{{item.id}}"
+                    style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+              {{item.name}}
+            </button>
+          </div>
+          <div style="font-size: 0.85em;">
+            Def: {{item.system.defenseBonus}} | DX: {{item.system.maxDex}}
+          </div>
+          <div style="text-align: right; font-size: 0.85em;">
+            {{item.system.weight}} lbs
+          </div>
+          <button type="button"
+                  class="armor-sell"
+                  data-action="sell-item"
+                  data-item-id="{{item.id}}"
+                  style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+            Sell
+          </button>
+          <button type="button"
+                  class="armor-delete"
+                  data-action="delete-item"
+                  data-item-id="{{item.id}}"
+                  style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+            Delete
+          </button>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="muted" style="padding: 16px;">No armor equipped</div>
+  {{/if}}
+</section>
