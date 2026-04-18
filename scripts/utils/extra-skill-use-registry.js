@@ -112,9 +112,25 @@ export class ExtraSkillUseRegistry {
     // 1. system.skill (authoritative for regenerated entries with explicit metadata)
     // 2. system.skillKey (legacy fallback)
     // 3. fuzzy name matching (last resort for unclassified entries)
-    const skillKey = this._normalizeSkillKey(
-      system.skill ?? system.skillKey ?? SkillUseFilter.getSkillKeyForApplication({ application })
-    );
+    //
+    // When we fall back to inference, emit a debug warning so silent
+    // misroutes are at least visible in console — explicit metadata is
+    // always preferable to name-sniffing.
+    let skillInput;
+    if (system.skill) {
+      skillInput = system.skill;
+    } else if (system.skillKey) {
+      skillInput = system.skillKey;
+    } else {
+      skillInput = SkillUseFilter.getSkillKeyForApplication({ application });
+      SWSELogger.debug("SWSE | ExtraSkillUseRegistry falling back to inferred skill key", {
+        application,
+        inferredSkillKey: skillInput,
+        sourcePack: raw?.pack ?? null,
+        docId: raw?._id ?? null
+      });
+    }
+    const skillKey = this._normalizeSkillKey(skillInput);
 
     const description = this._firstNonEmpty(
       system.description?.value,

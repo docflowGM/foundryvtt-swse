@@ -1,0 +1,30 @@
+{{!--
+  Droid initiative panel.
+
+  Extracted from templates/actors/droid/v2/droid-sheet.hbs (combat tab) as
+  part of Phase 3A template decomposition. Markup preserved byte-for-byte.
+
+  Context consumed:
+    system.skills.initiative.total
+
+  Listeners (wired in scripts/sheets/v2/droid-sheet/listeners.js):
+    .roll-initiative    — wireInitiativeControls
+    .take10-initiative  — wireInitiativeControls
+--}}
+<div class="holo-panel initiative-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Initiative</h3>
+  </div>
+  <div class="initiative-panel-body">
+    <div class="initiative-mod-label">Total Modifier</div>
+    <div class="initiative-mod-value">{{system.skills.initiative.total}}</div>
+    <div class="initiative-controls">
+      <button type="button" class="initiative-btn roll-initiative">
+        Roll
+      </button>
+      <button type="button" class="initiative-btn take10-initiative">
+        Take 10
+      </button>
+    </div>
+  </div>
+</div>

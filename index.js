@@ -116,7 +116,6 @@ import { SWSEMinimalTestSheet } from './scripts/sheets/v2/minimal-test-sheet.js'
 import { SWSEV2NpcSheet } from './scripts/sheets/v2/npc-sheet.js';
 import { NPCSheet } from './scripts/sheets/v2/npc/NPCSheet.js'; // Phase 7b: Panelized NPC sheet
 import { SWSEV2DroidSheet } from './scripts/sheets/v2/droid-sheet.js';
-import { DroidSheet } from './scripts/sheets/v2/droid/DroidSheet.js'; // Phase 7c: Panelized Droid sheet
 import { SWSEV2VehicleSheet } from './scripts/sheets/v2/vehicle-sheet.js';
 import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 
@@ -255,12 +254,6 @@ Hooks.once("setup", () => {
   ActorCollection.registerSheet("foundryvtt-swse", SWSEV2DroidSheet, {
     types: ["droid"],
     makeDefault: true
-  });
-
-  ActorCollection.registerSheet("foundryvtt-swse", DroidSheet, {
-    types: ["droid"],
-    makeDefault: false,
-    label: "SWSE V2 Droid Sheet (Panelized - Phase 7c)"
   });
 
   ActorCollection.registerSheet("foundryvtt-swse", SWSEV2VehicleSheet, {

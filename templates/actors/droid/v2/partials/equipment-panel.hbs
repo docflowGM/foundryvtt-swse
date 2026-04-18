@@ -1,0 +1,66 @@
+{{!--
+  Droid equipment ledger panel.
+
+  Extracted from templates/actors/droid/v2/droid-sheet.hbs (gear tab) as
+  part of Phase 3A template decomposition. Markup preserved byte-for-byte.
+
+  Context consumed:
+    actor.system.credits           — credits box display
+    equipment[]                    — pre-projected by DroidSheetContextBuilder
+                                     (rowContract: id, name, type, img, system)
+
+  Listeners (wired in scripts/sheets/v2/droid-sheet/listeners.js):
+    .swse-v2-open-item             — wireItemOpenControls
+    [data-action="sell-item"]      — wireEquipmentSellAndDelete
+    [data-action="delete-item"]    — wireEquipmentSellAndDelete
+--}}
+<div class="sheet-credits-box">
+  <div class="sheet-credits-label">Credits</div>
+  <div class="sheet-credits-value">
+    {{floor actor.system.credits}}
+    <span class="sheet-credits-symbol">$</span>
+  </div>
+</div>
+<section class="gear-section">
+  <h3>Equipment</h3>
+  {{#if equipment}}
+    <div class="equipment-list" style="border-top: 1px solid #ddd;">
+      {{#each equipment as |item|}}
+        <div class="equipment-row" style="display: grid; grid-template-columns: 1fr 80px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+          <div class="equipment-name">
+            <button type="button"
+                    class="equipment-name-btn swse-v2-open-item"
+                    data-item-id="{{item.id}}"
+                    style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
+              {{item.name}}
+            </button>
+          </div>
+          <input type="number"
+                 name="items.{{item.id}}.system.quantity"
+                 value="{{item.system.quantity}}"
+                 min="0"
+                 style="padding: 4px; border: 1px solid #ccc; border-radius: 2px;">
+          <div class="equipment-weight" style="text-align: right;">
+            {{item.system.weight}} lbs
+          </div>
+          <button type="button"
+                  class="equipment-sell"
+                  data-action="sell-item"
+                  data-item-id="{{item.id}}"
+                  style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+            Sell
+          </button>
+          <button type="button"
+                  class="equipment-delete"
+                  data-action="delete-item"
+                  data-item-id="{{item.id}}"
+                  style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
+            Delete
+          </button>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="muted" style="padding: 16px;">No equipment</div>
+  {{/if}}
+</section>

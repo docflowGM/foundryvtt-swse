@@ -1,8 +1,31 @@
-# Droid Sheet Migration Roadmap (Phase 7c)
+# Droid Sheet Migration Roadmap (Phase 7c) — SUPERSEDED
+
+> **⚠️ SUPERSEDED — HISTORICAL REFERENCE ONLY**
+>
+> This roadmap proposed a separate panelized droid sheet at
+> `scripts/sheets/v2/droid/DroidSheet.js`, backed by
+> `DroidPanelContextBuilder`, `DroidPanelValidators`,
+> `DroidPanelVisibilityManager`, and a per-panel `PANEL_REGISTRY.js`.
+>
+> **That parallel implementation was removed in Phase 3C.** The structural
+> goals described below (panel-shaped context, row contracts, registry
+> diagnostics, panel partials, listener lifecycle cleanup) were applied
+> directly to the live-registered droid sheet via Phases 2 / 3A / 3B / 3C.
+>
+> The live droid sheet is:
+>
+>   - `scripts/sheets/v2/droid-sheet.js`
+>   - `scripts/sheets/v2/droid-sheet/context-builder.js`
+>   - `scripts/sheets/v2/droid-sheet/listeners.js`
+>   - `scripts/sheets/v2/droid-sheet/panel-registry.js`
+>   - `templates/actors/droid/v2/droid-sheet.hbs` + `partials/*`
+>
+> Do not resurrect any of the removed dormant paths. This document is kept
+> for historical context only.
 
 **Last Updated:** 2026-03-29
-**Status:** IMPLEMENTATION GUIDE FOR DROID SHEET V2 MIGRATION
-**Phase:** Phase 7c (Scheduled after Phase 7b complete)
+**Status:** SUPERSEDED BY PHASES 2 / 3A / 3B / 3C (live path)
+**Phase:** Phase 7c (retired — live path is authoritative)
 
 Detailed step-by-step roadmap for migrating the existing Droid sheet to the V2 platform architecture.
 

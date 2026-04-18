@@ -4,21 +4,17 @@ const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
-import { DropService } from "/systems/foundryvtt-swse/scripts/services/drop-service.js";
-import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
-import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
-import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
-import { rollSkill } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
-import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
-import { isXPEnabled } from "/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js";
-import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
-import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PortraitUploadController } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PortraitUploadController.js";
+import { UIStateManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/UIStateManager.js";
+import { DroidSheetContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/context-builder.js";
+import { wireDroidSheetListeners } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/listeners.js";
+import { diagnoseLivePanelContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/panel-registry.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -63,6 +59,22 @@ export class SWSEV2DroidSheet extends
 
   constructor(document, options = {}) {
     super(document, options);
+
+    // Preserves interactive UI state (active tabs, scroll, focus) across rerenders.
+    this.uiStateManager = new UIStateManager(this);
+  }
+
+  async render(...args) {
+    // Capture interactive state before Foundry tears down the DOM so we can
+    // restore tabs/scroll/focus once _onRender finishes.
+    this.uiStateManager?.captureState();
+    return super.render(...args);
+  }
+
+  async _onClose(options) {
+    this._renderAbort?.abort();
+    this.uiStateManager?.clear();
+    return super._onClose?.(options);
   }
 
   async _prepareContext(options) {
@@ -79,94 +91,14 @@ export class SWSEV2DroidSheet extends
 
     const baseContext = await super._prepareContext(options);
 
-    // Build owned actors map (serializable: no Document references)
-    const ownedActorMap = {};
-    for (const entry of actor.system.ownedActors || []) {
-      const ownedActor = game.actors.get(entry.id);
-      if (ownedActor) {
-        // Store only serializable properties, not the Document itself
-        ownedActorMap[entry.id] = {
-          id: ownedActor.id,
-          name: ownedActor.name,
-          type: ownedActor.type,
-          img: ownedActor.img
-        };
-      }
-    }
-
-    // Build equipment, armor, and weapon lists
-    const equipment = actor.items.filter(item => item.type === "equipment").map(item => ({
-      id: item.id,
-      name: item.name,
-      type: item.type,
-      img: item.img,
-      system: item.system
-    }));
-
-    const armor = actor.items.filter(item => item.type === "armor").map(item => ({
-      id: item.id,
-      name: item.name,
-      type: item.type,
-      img: item.img,
-      system: item.system
-    }));
-
-    const weapons = actor.items.filter(item => item.type === "weapon").map(item => ({
-      id: item.id,
-      name: item.name,
-      type: item.type,
-      img: item.img,
-      system: item.system
-    }));
-
-    // XP display data
-    const xpEnabled = isXPEnabled();
-    const xpData = actor.system?.derived?.xp ?? null;
-    const xpPercent = xpData?.progressPercent ?? 0;
-    const isGM = game.user?.isGM === true;
-
-    // Abilities panel data (Phase 3)
-    let feats = [];
-    let talents = [];
-    let racialAbilities = [];
-    try {
-      const abilityPanel = AbilityEngine.getCardPanelModelForActor(actor);
-      feats = abilityPanel.all?.filter(a => a.type === "feat") ?? [];
-      talents = abilityPanel.all?.filter(a => a.type === "talent") ?? [];
-      racialAbilities = abilityPanel.all?.filter(a => a.type === "racialAbility") ?? [];
-    } catch (err) {
-      console.error('Error preparing abilities panel for Droid sheet:', err);
-    }
-
+    // Phase 2: panel-shaped context construction now lives in the builder.
+    // The builder preserves every key the live template + its partials
+    // consume; droid-only panel payloads (locomotion, protocols, programming,
+    // customizations, build history, etc.) are exposed under `droidPanels`.
+    const builder = new DroidSheetContextBuilder(actor);
     const overrides = {
-      // NOTE: 'actor' Document NOT included here — use 'document' from baseContext instead
-      system: actor.system,
-      derived: actor.system?.derived ?? {},
-      xpEnabled,
-      xpData,
-      xpPercent,
-      isGM,
-      items: actor.items.map(item => ({
-        id: item.id,
-        name: item.name,
-        type: item.type,
-        img: item.img,
-        system: item.system
-      })),
-      equipment,
-      armor,
-      weapons,
-      ownedActorMap,
-      feats,
-      talents,
-      racialAbilities,
-      editable: this.isEditable,
-      user: {
-        id: game.user.id,
-        name: game.user.name,
-        role: game.user.role
-      }
-      // NOTE: CONFIG.SWSE removed — not serializable
+      ...builder.build(),
+      editable: this.isEditable
     };
 
     RenderAssertions.assertContextSerializable(
@@ -174,7 +106,27 @@ export class SWSEV2DroidSheet extends
       "SWSEV2DroidSheet"
     );
 
-    return { ...baseContext, ...overrides };
+    const merged = { ...baseContext, ...overrides };
+
+    // Phase 2: minimal live-path panel registry — flag drift (does not throw)
+    // so contract regressions surface in the console without breaking render.
+    try {
+      const { report, durationMs } = diagnoseLivePanelContext(merged, {
+        actorId: actor?.id,
+        actorName: actor?.name
+      });
+      if (!report.ok) {
+        SWSELogger.warn("SWSE | SWSEV2DroidSheet panel contract drift", {
+          actorId: actor?.id,
+          missing: report.missing,
+          durationMs
+        });
+      }
+    } catch (err) {
+      SWSELogger.error("SWSE | SWSEV2DroidSheet panel diagnostics failed", err);
+    }
+
+    return merged;
   }
 
   /**
@@ -211,6 +163,9 @@ export class SWSEV2DroidSheet extends
     // Phase 3: Enforce super._onRender call (AppV2 contract)
     await super._onRender(context, options);
 
+    // Restore tabs/scroll/focus that were captured before super.render().
+    this.uiStateManager?.restoreState();
+
     const root = this.element;
     if (!(root instanceof HTMLElement)) {
       throw new Error("DroidSheet: element not HTMLElement");
@@ -233,367 +188,15 @@ export class SWSEV2DroidSheet extends
     // Portrait upload + auto-apply (click via data-edit="img", drag/drop here)
     PortraitUploadController.bind(root, { actor: this.actor, signal });
 
-    /* ---------------- TAB HANDLING ---------------- */
-
-    for (const tabBtn of root.querySelectorAll(".sheet-tabs .item")) {
-      tabBtn.addEventListener("click", (ev) => {
-        const tabName = ev.currentTarget.dataset.tab;
-        if (!tabName) return;
-
-        root.querySelectorAll(".sheet-tabs .item")
-          .forEach(b => b.classList.remove("active"));
-
-        ev.currentTarget.classList.add("active");
-
-        root.querySelectorAll(".tab")
-          .forEach(t => t.classList.remove("active"));
-
-        root.querySelector(`.tab[data-tab="${tabName}"]`)
-          ?.classList.add("active");
-      }, { signal });
-    }
-
-    /* ---------------- CONDITION STEP HANDLING ---------------- */
-
-    for (const el of root.querySelectorAll(".swse-v2-condition-step")) {
-      el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const step = Number(ev.currentTarget?.dataset?.step);
-        if (!Number.isFinite(step)) return;
-        if (typeof this.actor?.setConditionTrackStep === "function") {
-          await this.actor?.setConditionTrackStep(step);
-        } else if (this.actor) {
-          await ActorEngine.updateActor(this.actor, { 'system.conditionTrack.current': step });
-        }
-      }, { signal });
-    }
-
-    const improveBtn = root.querySelector(".swse-v2-condition-improve");
-    if (improveBtn) {
-      improveBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        if (typeof this.actor?.improveConditionTrack === "function") {
-          await this.actor?.improveConditionTrack();
-        }
-      }, { signal });
-    }
-
-    const worsenBtn = root.querySelector(".swse-v2-condition-worsen");
-    if (worsenBtn) {
-      worsenBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        if (typeof this.actor?.worsenConditionTrack === "function") {
-          await this.actor?.worsenConditionTrack();
-        }
-      }, { signal });
-    }
-
-    const persistentCheckbox = root.querySelector(".swse-v2-condition-persistent");
-    if (persistentCheckbox) {
-      persistentCheckbox.addEventListener("change", async (ev) => {
-        const flag = ev.currentTarget?.checked === true;
-        if (typeof this.actor?.setConditionTrackPersistent === "function") {
-          await this.actor?.setConditionTrackPersistent(flag);
-        }
-      }, { signal });
-    }
-
-    /* ---------------- INITIATIVE CONTROLS ---------------- */
-
-    root.querySelector(".roll-initiative")?.addEventListener("click", async (ev) => {
-      ev.preventDefault();
-      await this.actor.swseRollInitiative();
-    }, { signal });
-
-    root.querySelector(".take10-initiative")?.addEventListener("click", async (ev) => {
-      ev.preventDefault();
-      await this.actor.swseTake10Initiative();
-    }, { signal });
-
-    /* ---------------- PROGRESSION FRAMEWORK BUTTONS (Chargen/Store/Mentor) ---------------- */
-
-    root.querySelector('[data-action="cmd-chargen"]')?.addEventListener("click", async (ev) => {
-      ev.preventDefault();
-      const { launchProgression } = await import("/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/chargen-shell.js");
-      await launchProgression(this.actor);
-    }, { signal });
-
-    root.querySelector('[data-action="cmd-store"]')?.addEventListener("click", async (ev) => {
-      ev.preventDefault();
-      const { launchProgression } = await import("/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/chargen-shell.js");
-      await launchProgression(this.actor, 'store');
-    }, { signal });
-
-    root.querySelector('[data-action="open-mentor"]')?.addEventListener("click", async (ev) => {
-      ev.preventDefault();
-      // TODO: Implement mentor interaction for droid sheet
-      ui.notifications.info("Mentor interactions coming soon!");
-    }, { signal });
-
-    /* ---------------- ITEM OPEN ---------------- */
-
-    for (const el of root.querySelectorAll(".swse-v2-open-item")) {
-      el.addEventListener("click", (ev) => {
-        ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
-        const item = this.actor?.items?.get(itemId);
-        item?.sheet?.render(true);
-      }, { signal });
-    }
-
-    /* ---- EQUIPMENT: SELL & DELETE ---- */
-
-    for (const btn of root.querySelectorAll('[data-action="sell-item"]')) {
-      btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
-        if (!itemId) return;
-        const item = this.document.items.get(itemId);
-        if (!item) return;
-
-        const price = item.system.price ?? 0;
-        const currentCredits = this.document.system.credits ?? 0;
-
-        await this.document.update({
-          "system.credits": currentCredits + price
-        });
-
-        // PHASE 8: Use ActorEngine
-        await ActorEngine.deleteEmbeddedDocuments(this.document, "Item", [itemId]);
-        ui.notifications.info(`Sold ${item.name} for ${price} credits`);
-      }, { signal });
-    }
-
-    for (const btn of root.querySelectorAll('[data-action="delete-item"]')) {
-      btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
-        if (!itemId) return;
-        // PHASE 8: Use ActorEngine
-        await ActorEngine.deleteEmbeddedDocuments(this.document, "Item", [itemId]);
-      }, { signal });
-    }
-
-    /* ---- ARMOR EQUIP TOGGLE ---- */
-
-    for (const checkbox of root.querySelectorAll('[data-action="toggle-equip-armor"]')) {
-      checkbox.addEventListener("change", async (ev) => {
-        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
-        if (!itemId) return;
-        const item = this.document.items.get(itemId);
-        if (!item) return;
-        await ActorEngine.updateEmbeddedDocuments(this.document, 'Item', [{ _id: itemId, "system.equipped": ev.currentTarget.checked }]);
-      }, { signal });
-    }
-
-    /* ---- FEAT/TALENT BUTTONS ---- */
-
-    for (const btn of root.querySelectorAll('[data-action="add-feat"]')) {
-      btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        game.swse.progression?.openFeatSelector?.(this.document);
-      }, { signal });
-    }
-
-    for (const btn of root.querySelectorAll('[data-action="add-talent"]')) {
-      btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        game.swse.progression?.openTalentSelector?.(this.document);
-      }, { signal });
-    }
-
-    /* ---- OWNED ACTORS MANAGEMENT ---- */
-
-    for (const btn of root.querySelectorAll('[data-action="remove-owned"]')) {
-      btn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const actorId = ev.currentTarget?.dataset?.actorId;
-        if (!actorId) return;
-        const owned = this.document.system.ownedActors?.filter(o => o.id !== actorId) || [];
-        await this.document.update({ "system.ownedActors": owned });
-      }, { signal });
-    }
-
-    for (const btn of root.querySelectorAll('[data-action="open-owned"]')) {
-      btn.addEventListener("click", (ev) => {
-        ev.preventDefault();
-        const actorId = ev.currentTarget?.dataset?.actorId;
-        if (!actorId) return;
-        const actor = game.actors.get(actorId);
-        actor?.sheet?.render(true);
-      }, { signal });
-    }
-
-    /* ---------------- SKILL ROLLING ---------------- */
-
-    for (const el of root.querySelectorAll('[data-action="roll-skill"]')) {
-      el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const skillKey = ev.currentTarget?.dataset?.skill;
-        if (skillKey && this.actor) {
-          await SWSERoll.rollSkill(this.actor, skillKey);
-}
-      }, { signal });
-    }
-
-    /* ---------------- DEFENSE ROLLING ---------------- */
-
-    for (const el of root.querySelectorAll('[data-action="roll-defense"]')) {
-      el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const defenseType = ev.currentTarget?.dataset?.defense;
-        if (defenseType && this.actor) {
-          if (typeof game.swse?.rolls?.defenses?.rollDefense === "function") {
-            await game.swse.rolls.defenses.rollDefense(this.document, defenseType);
-          }
-        }
-      }, { signal });
-    }
-
-    /* ---------------- WEAPON ROLLING ---------------- */
-
-    for (const el of root.querySelectorAll('[data-action="roll-weapon"], [data-action="roll-weapon-attack"]')) {
-      el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
-        if (!itemId || !this.actor) return;
-        const item = this.actor.items?.get(itemId);
-        if (!item) return;
-        if (typeof item.roll === "function") {
-          await item.roll();
-        } else {
-          await SWSERoll.rollAttack(this.actor, item, { showDialog: true });
-}
-      }, { signal });
-    }
-
-    /* ---------------- ACTION USE ---------------- */
-
-    for (const el of root.querySelectorAll(".swse-v2-use-action")) {
-      el.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const actionId = ev.currentTarget?.dataset?.actionId;
-        if (typeof this.actor?.useAction === "function") {
-          await this.actor?.useAction(actionId);
-        }
-      }, { signal });
-    }
-
-    /* ---------------- EDIT DROID SYSTEMS (DROID-SPECIFIC) ---------------- */
-
-    const editDroidBtn = root.querySelector(".edit-droid-systems");
-    if (editDroidBtn) {
-      editDroidBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        const hasConfig = !!this.actor?.system?.droidSystems?.degree;
-        const mode = hasConfig ? "EDIT" : "NEW";
-
-        try {
-          await DroidBuilderApp.open(this.actor, {
-            mode: mode,
-            sourceActor: hasConfig ? this.actor : null,
-            requireApproval: game.settings.get('foundryvtt-swse', 'store.requireGMApproval') ?? false
-          });
-        } catch (err) {
-          console.error('Failed to open droid builder:', err);
-          ui.notifications.error('Failed to open droid builder.');
-        }
-      }, { signal });
-    }
-
-    /* ---------------- PROGRESSION BUTTONS (DROID-SPECIFIC) ---------------- */
-
-    const levelUpBtn = root.querySelector('[data-action="level-up"]');
-    if (levelUpBtn) {
-      levelUpBtn.addEventListener("click", async (ev) => {
-        ev.preventDefault();
-        if (this.actor) {
-          await SWSELevelUp.openEnhanced(this.actor);
-        }
-      }, { signal });
-    }
-
-    /* ---- ABILITIES TAB HANDLERS (Phase 3) ---- */
-
-    this._bindAbilityCardHandlers(root);
-
-    /* ---- DRAG & DROP VISUAL FEEDBACK ---- */
-
-    DropService.bindDragFeedback(root);
-
-    /* ---- DRAG & DROP HANDLING — V2 CANONICAL PATH ---- */
-    // Bind dragover to allow drop events to fire (default browser behavior prevents drops)
-    root.addEventListener("dragover", (e) => {
-      e.preventDefault();
-    });
-
-    // Bind drop event to authoritative _onDrop handler
-    // This routes drops through DropResolutionEngine for unified item/actor handling
-    root.addEventListener("drop", (e) => {
-      this._onDrop(e);
-    });
+    // Phase 2: All listener wiring lives in scripts/sheets/v2/droid-sheet/listeners.js.
+    // wireDroidSheetListeners preserves the original `_onRender` order so init
+    // sequencing (tab handling first, drag/drop last) is unchanged.
+    wireDroidSheetListeners(this, root, signal);
 
     RenderAssertions.assertRenderComplete(
       this,
       "SWSEV2DroidSheet"
     );
-  }
-
-  _bindAbilityCardHandlers(root) {
-    // Ability card chat button
-    root.querySelectorAll('.ability-chat-btn').forEach((btn) => {
-      btn.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const abilityId = ev.currentTarget?.dataset?.abilityId;
-        if (!abilityId) return;
-
-        try {
-          const { ActionChatEngine } = await import("/systems/foundryvtt-swse/scripts/chat/action-chat-engine.js");
-          await ActionChatEngine.emote(this.document, `uses ability: ${abilityId}`);
-        } catch (err) {
-          console.error('Error posting ability chat:', err);
-        }
-      });
-    });
-
-    // Ability card roll button
-    root.querySelectorAll('.ability-roll-btn').forEach((btn) => {
-      btn.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const abilityId = ev.currentTarget?.dataset?.abilityId;
-        if (!abilityId) return;
-
-        try {
-          const ability = this.document.items?.get(abilityId);
-          if (ability) {
-            await rollAttack(this.document, ability);
-          }
-        } catch (err) {
-          console.error('Error rolling ability:', err);
-        }
-      });
-    });
-
-    // Ability card use button
-    root.querySelectorAll('.ability-use-btn').forEach((btn) => {
-      btn.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const abilityId = ev.currentTarget?.dataset?.abilityId;
-        if (!abilityId) return;
-
-        try {
-          const ability = this.document.items?.get(abilityId);
-          if (ability) {
-            // Mark as used
-            const { AbilityUsage } = await import("/systems/foundryvtt-swse/scripts/engine/abilities/ability-usage.js");
-            await AbilityUsage.markUsed(this.document, abilityId);
-            this.render();
-          }
-        } catch (err) {
-          console.error('Error using ability:', err);
-        }
-      });
-    });
   }
 
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
