@@ -16,14 +16,26 @@ export class SkillUseFilter {
   static canAccessSkillUse(actor, skillUse) {
     if (!actor || !skillUse) {return false;}
 
-    const applicationName = skillUse.application || '';
+    // Prefer explicit structured metadata when present. Normalized registry
+    // entries carry `system.skill` (and sometimes top-level `skill`) with the
+    // authoritative skill key, which is far more reliable than sniffing the
+    // application-name string.
+    const structuredSkill = skillUse?.system?.skill ?? skillUse?.skill ?? null;
+    if (structuredSkill === 'useTheForce') {
+      return this.canUseTheForce(actor);
+    }
+    if (structuredSkill) {
+      // Non-UTF skills have no access gate at this layer.
+      return true;
+    }
 
-    // Check if this is a Use the Force application
+    // Fallback: string-based detection for unstructured entries (legacy /
+    // JSON fallback / entries missing explicit metadata).
+    const applicationName = skillUse.application || '';
     if (this.isUseTheForceApplication(applicationName)) {
       return this.canUseTheForce(actor);
     }
 
-    // Other skill uses are available to all characters
     return true;
   }
 
@@ -33,7 +45,20 @@ export class SkillUseFilter {
    * @returns {boolean} True if this is a Use the Force application
    */
   static isUseTheForceApplication(applicationName) {
-    // Base UTF power names - these are the authoritative indicators
+    if (!applicationName) {return false;}
+
+    // Stable structural marker: canonical UTF entries carry a parenthetical
+    // "(Use the Force...)" qualifier, e.g.
+    //   "Move Light Object — Catch Thrown Weapon (Use the Force, Trained Only)"
+    // Match this first — it is robust across dash variants and base-power
+    // rewording, and it avoids false positives from unrelated applications
+    // that happen to reference a Force power name in passing.
+    if (/\(\s*use the force\b/i.test(applicationName)) {
+      return true;
+    }
+
+    // Legacy base-power name list, kept for backwards compatibility with
+    // entries that predate the parenthetical marker convention.
     const utfApplications = [
       'Force Trance',
       'Move Light Object',

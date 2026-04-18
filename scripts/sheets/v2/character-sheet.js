@@ -695,11 +695,41 @@ export class SWSEV2CharacterSheet extends
     derived.skills = skillsList;
 
     // Phase 10+: Populate extraUses from ExtraSkillUseRegistry with enhanced UX
-    // Adds expandable skill uses with intelligent grouping, status awareness, and filtering
+    // Adds expandable skill uses with intelligent grouping, status awareness, and filtering.
+    //
+    // Hydration is staged so one bad skill never wipes the whole panel:
+    //  1. Registry init is its own failure domain — if it throws, the registry is
+    //     unusable, so every skill fails closed. This is a hard prereq.
+    //  2. Per-skill hydration runs inside its own try/catch, so a single skill's
+    //     failure is isolated to that row. Errors are logged with skill key,
+    //     actor id/name, and stack so live runs produce a concrete trail.
+    let registryReady = true;
     try {
       await ExtraSkillUseRegistry.initialize();
-      for (const skill of derived.skills) {
+    } catch (err) {
+      registryReady = false;
+      swseLogger.error("[CharacterSheet] ExtraSkillUseRegistry.initialize() failed; every skill will have empty extraUses", {
+        actorId: actor?.id,
+        actorName: actor?.name,
+        error: err?.message,
+        stack: err?.stack
+      });
+    }
+
+    for (const skill of derived.skills) {
+      if (!registryReady) {
+        skill.extraUses = [];
+        skill.extraUsesGrouped = {};
+        skill.extraUsesCount = 0;
+        skill.hasExtraUses = false;
+        continue;
+      }
+
+      try {
         const skillUses = await ExtraSkillUseRegistry.getForSkill(skill.key, { actor, includeInaccessible: true });
+        const rawCount = skillUses.length;
+        const accessibleCount = skillUses.filter(u => u.accessible !== false).length;
+        const inaccessibleCount = rawCount - accessibleCount;
 
         // Normalize each skill use with enhanced metadata
         const normalizedUses = skillUses.map(use => {
@@ -761,11 +791,37 @@ export class SWSEV2CharacterSheet extends
         skill.extraUsesGrouped = grouped;
         skill.extraUsesCount = normalizedUses.length;
         skill.hasExtraUses = normalizedUses.length > 0;
-      }
-    } catch (err) {
-      // Fallback: if registry fails, keep empty extraUses arrays
-      console.warn("SWSE | Failed to load extra skill uses for skills panel", err);
-      for (const skill of derived.skills) {
+
+        // Targeted instrumentation: always log useTheForce (the primary offender),
+        // and log any skill that lost entries between registry and template
+        // (raw>0 but grouped==0 means something dropped silently mid-pipeline).
+        const groupedCount = Object.values(grouped).reduce((acc, arr) => acc + arr.length, 0);
+        const hasSilentDrop = rawCount > 0 && groupedCount === 0;
+        if (skill.key === 'useTheForce' || hasSilentDrop) {
+          swseLogger.debug("[CharacterSheet] Skill extra-use hydration metrics", {
+            actorId: actor?.id,
+            actorName: actor?.name,
+            skillKey: skill.key,
+            skillLabel: skill.label,
+            trained: skill.trained,
+            rawCount,
+            accessibleCount,
+            inaccessibleCount,
+            normalizedCount: normalizedUses.length,
+            groupedCount,
+            hasExtraUses: skill.hasExtraUses,
+            silentDrop: hasSilentDrop
+          });
+        }
+      } catch (err) {
+        swseLogger.error("[CharacterSheet] extra-use hydration failed for skill", {
+          actorId: actor?.id,
+          actorName: actor?.name,
+          skillKey: skill.key,
+          skillLabel: skill.label,
+          error: err?.message,
+          stack: err?.stack
+        });
         skill.extraUses = [];
         skill.extraUsesGrouped = {};
         skill.extraUsesCount = 0;
