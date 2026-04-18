@@ -3,8 +3,10 @@
  *
  * Live-path Droid Sheet context builder.
  *
- * Phase 2 transplant from the dormant `scripts/sheets/v2/droid/DroidPanelContextBuilder.js`,
- * adapted to the live-registered SWSEV2DroidSheet template
+ * Originally seeded (Phase 2) from panel-shaping ideas in a parallel dormant
+ * droid implementation; that parallel tree was removed in Phase 3C. This
+ * builder is now the only droid context builder in the repo, adapted to the
+ * live-registered SWSEV2DroidSheet template
  * (`templates/actors/droid/v2/droid-sheet.hbs`).
  *
  * Goals:

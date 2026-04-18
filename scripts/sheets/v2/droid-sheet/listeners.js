@@ -367,17 +367,17 @@ function wireAbilityCardHandlers(sheet, root, signal) {
   });
 }
 
-function wireDragAndDrop(sheet, root, _signal) {
+function wireDragAndDrop(sheet, root, signal) {
   DropService.bindDragFeedback(root);
 
-  // NOTE: parity preservation — the original `_onRender` registered these two
-  // listeners without an AbortSignal. Keeping the same shape here so behavior
-  // is byte-equivalent post-extraction; revisit when audit time allows.
+  // Mirror the character sheet's lifecycle discipline: bind drag/dragover
+  // with the render-scoped AbortSignal so listeners are revoked on abort
+  // and cannot accumulate across re-renders if the root element is reused.
   root.addEventListener("dragover", (e) => {
     e.preventDefault();
-  });
+  }, { signal });
 
   root.addEventListener("drop", (e) => {
     sheet._onDrop(e);
-  });
+  }, { signal });
 }

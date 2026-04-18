@@ -1,8 +1,0 @@
-{{!-- Droid Sheet tabs --}}
-<div class="sheet-tabs">
-  {{#each tabPanels as |panelNames tabName|}}
-    <button class="tab{{#if (eq ../currentTab tabName)}} active{{/if}}" data-tab="{{tabName}}" type="button">
-      {{capitalize tabName}}
-    </button>
-  {{/each}}
-</div>

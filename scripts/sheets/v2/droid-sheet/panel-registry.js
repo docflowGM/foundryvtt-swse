@@ -17,9 +17,10 @@
  *      report so callers (and tests) can react.
  *
  * If/when the live droid sheet is broken into per-panel partials, this
- * registry can grow into a full registry comparable to the character sheet's,
- * and the dormant `scripts/sheets/v2/droid/PANEL_REGISTRY.js` payload contract
- * can be merged in.
+ * registry can grow into a full registry comparable to the character sheet's.
+ *
+ * Phase 3C removed the dormant `scripts/sheets/v2/droid/*` tree — this file
+ * is now the only droid panel registry in the repo.
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
