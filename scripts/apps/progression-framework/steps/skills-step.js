@@ -29,11 +29,12 @@ export class SkillsStep extends ProgressionStepPlugin {
     // State
     this._trainedSkills = new Map();      // skillKey → {trained, focus, misc}
     this._allSkills = [];                 // Full skill list from registry
-    this._availableSkills = [];           // Filtered list (constrained for Beast)
+    this._availableSkills = [];           // Filtered list (constrained for Beast/Droid)
     this._trainedCount = 0;
     this._allowedCount = 1;               // Updated on enter from character data
     this._suggestedSkills = [];           // Suggested skills from SuggestionService
     this._isBeast = false;                // Beast constraint flag
+    this._isDroid = false;                // Droid constraint flag
     this._beastSkillList = null;          // Beast skill list if applicable
     this._focusedSkillId = null;          // focused skill for details rail
 
@@ -61,6 +62,9 @@ export class SkillsStep extends ProgressionStepPlugin {
 
     // Phase 2.7: Check if this is Beast progression
     this._isBeast = shell.progressionSession?.beastContext?.isBeast === true;
+
+    // Phase 3.1: Check if this is Droid progression
+    this._isDroid = shell.progressionSession?.droidContext?.isDroid === true;
 
     // Phase 2.5: Check if this is nonheroic progression
     const isNonheroic = shell.progressionSession?.nonheroicContext?.hasNonheroic === true;
@@ -139,6 +143,28 @@ try {
         availableSkills: derivation.skills.length,
         fallbackReason: derivation.fallbackReason || null,
       });
+    }
+
+    // Phase 3.1: Filter out "Use the Force" for Droids (droid constraint: cannot use/train Force skill)
+    if (this._isDroid) {
+      const beforeCount = this._availableSkills.length;
+      this._availableSkills = this._availableSkills.filter(skill => {
+        const skillKey = skill.key || skill.id || '';
+        const skillName = skill.name || skill.label || '';
+        // Exclude "Use the Force" (checked by key and name for safety)
+        return !(
+          skillKey.toLowerCase() === 'usetheforce' ||
+          skillName.toLowerCase() === 'use the force'
+        );
+      });
+      const filtered = beforeCount - this._availableSkills.length;
+      if (filtered > 0) {
+        swseLogger.debug('[SkillsStep] Droid progression - "Use the Force" excluded from available skills', {
+          beforeCount,
+          afterCount: this._availableSkills.length,
+          filtered
+        });
+      }
     }
 
     // Get suggested skills from SuggestionService
@@ -230,6 +256,7 @@ try {
       hasSuggestions,
       suggestedSkillIds: Array.from(suggestedIds),
       isBeast: this._isBeast,
+      isDroid: this._isDroid,
       focusedSkillId: this._focusedSkillId,
       availableSkillCount: this._availableSkills.length,
       skillSourceMode: this._skillDerivation?.mode || 'fallback-full-chart',
@@ -290,6 +317,15 @@ try {
       return;
     }
 
+    // Phase 3.1: For Droid, enforce droid skill constraint (no "Use the Force")
+    if (trained && this._isDroid) {
+      const skillKeyLower = (skillKey || '').toLowerCase();
+      if (skillKeyLower === 'usetheforce' || skillKeyLower === 'use the force') {
+        ui.notifications.warn('Droids cannot use or train the Force skill.');
+        return;
+      }
+    }
+
     // Phase 2.7: For Beast, enforce Beast skill list constraint
     if (trained && this._isBeast) {
       const isValidBeastSkill = this._availableSkills.some(skill => {
@@ -327,6 +363,15 @@ try {
     if (targetSkill && targetSkill.canTrain === false) {
       ui.notifications.warn('Only class or background skills can be trained at this time.');
       return;
+    }
+
+    // Phase 3.1: For Droid, enforce droid skill constraint (no "Use the Force")
+    if (this._isDroid) {
+      const skillKeyLower = (skillKey || '').toLowerCase();
+      if (skillKeyLower === 'usetheforce' || skillKeyLower === 'use the force') {
+        ui.notifications.warn('Droids cannot use or train the Force skill.');
+        return;
+      }
     }
 
     // Phase 2.7: For Beast, enforce Beast skill list constraint
