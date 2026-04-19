@@ -24,6 +24,7 @@ import { BlockMechanicalAlternative, setupBlockMechanicalHooks } from "/systems/
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
+import { CombatRules } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatRules.js";
 
 /**
  * HouseruleMechanics
@@ -74,7 +75,7 @@ export class HouseruleMechanics {
       try {
         if (!config?.critical) {return;}
 
-        const variant = game.settings.get('foundryvtt-swse', 'criticalHitVariant');
+        const variant = CombatRules.getCriticalHitVariant();
         config.criticalMode = variant || 'standard';
       } catch (err) {
         SWSELogger.error('Critical variant application failed', err);
@@ -115,10 +116,7 @@ export class HouseruleMechanics {
         SWSELogger.warn('CONFIG.SWSE not initialized, skipping diagonal movement setup');
         return;
       }
-      CONFIG.SWSE.diagonalMovement = game.settings.get(
-        'foundryvtt-swse',
-        'diagonalMovement'
-      );
+      CONFIG.SWSE.diagonalMovement = CombatRules.getDiagonalMovement();
     } catch (err) {
       SWSELogger.error('Diagonal movement handler failed', err);
     }
@@ -133,7 +131,7 @@ export class HouseruleMechanics {
       try {
         if (!update?.system?.hp?.value) {return;}
 
-        const system = game.settings.get('foundryvtt-swse', 'deathSystem');
+        const system = CombatRules.getDeathSystem();
         const newValue = update.system.hp.value;
 
         if (newValue > 0) {return;}
@@ -214,10 +212,7 @@ export class HouseruleMechanics {
 
   static getModifiedRange(baseRange) {
     try {
-      const mult = game.settings.get(
-        'foundryvtt-swse',
-        'weaponRangeMultiplier'
-      );
+      const mult = CombatRules.getWeaponRangeMultiplier();
       return Math.round(baseRange * mult);
     } catch (err) {
       SWSELogger.error('Range multiplier calculation failed', err);
@@ -226,11 +221,11 @@ export class HouseruleMechanics {
   }
 
   static isSecondWindImproved() {
-    return game.settings.get('foundryvtt-swse', 'secondWindImproved');
+    return CombatRules.secondWindImprovedEnabled();
   }
 
   static getSecondWindRecovery() {
-    return game.settings.get('foundryvtt-swse', 'secondWindRecovery');
+    return CombatRules.getSecondWindRecovery();
   }
 
   static async applyCriticalDamage(baseRoll, mode = 'standard') {
@@ -335,10 +330,7 @@ export class HouseruleMechanics {
   // ========================================================================
 
   static _setupSpaceCombatInitiative() {
-    const system = game.settings.get(
-      'foundryvtt-swse',
-      'spaceInitiativeSystem'
-    );
+    const system = CombatRules.getSpaceInitiativeSystem();
 
     if (system !== 'shipBased') {return;}
 

@@ -4,6 +4,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { CombatRules } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatRules.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -21,7 +22,7 @@ export class FlankingMechanics {
    * @returns {boolean} - True if flanking conditions are met
    */
   static isFlanking(attacker, target) {
-    if (!game.settings.get(NS, 'flankingEnabled')) {return false;}
+    if (!CombatRules.flankingEnabled()) {return false;}
     if (!attacker || !target || !attacker.scene || !target.scene) {return false;}
 
     // Get flanking allies
@@ -38,9 +39,9 @@ export class FlankingMechanics {
   static getFlankerCount(target, attacker) {
     if (!target) {return 0;}
 
-    const requiresConsciousness = game.settings.get(NS, 'flankingRequiresConsciousness');
-    const allowDiagonal = game.settings.get(NS, 'flankingDiagonalCounts');
-    const largeCreatureRule = game.settings.get(NS, 'flankingLargeCreatures');
+    const requiresConsciousness = CombatRules.flankingRequiresConsciousnessEnabled();
+    const allowDiagonal = CombatRules.flankingDiagonalCountsEnabled();
+    const largeCreatureRule = CombatRules.flankingLargeCreaturesEnabled();
 
     let flankers = 0;
 
@@ -129,7 +130,7 @@ export class FlankingMechanics {
   static applyFlankingBonus(actor, target, roll) {
     if (!this.isFlanking(actor, target)) {return;}
 
-    const bonus = game.settings.get(NS, 'flankingBonus');
+    const bonus = CombatRules.getFlankingBonus();
     let modifier = 0;
 
     switch (bonus) {
@@ -161,7 +162,7 @@ export class FlankingMechanics {
   static getFlankingBonus(attacker, target) {
     if (!this.isFlanking(attacker, target)) {return 0;}
 
-    const bonus = game.settings.get(NS, 'flankingBonus');
+    const bonus = CombatRules.getFlankingBonus();
 
     switch (bonus) {
       case 'plusTwo':

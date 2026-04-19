@@ -1,4 +1,5 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { CombatRules } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatRules.js";
 
 /**
  * Register SWSE Chat Commands (Advanced Version)
@@ -267,7 +268,7 @@ async function cmdRest(args) {
     // Second Wind recovery based on rest type and houserule setting
     if (normalizedType === 'short') {
       // Short rest: may restore Second Wind if houserule setting allows
-      const recoveryMode = game.settings.get('foundryvtt-swse', 'secondWindRecovery');
+      const recoveryMode = CombatRules.getSecondWindRecovery();
       if (recoveryMode === 'short') {
         const maxUses = a.system.secondWind?.max ?? 1;
         updateData['system.secondWind.uses'] = maxUses;
