@@ -32,6 +32,7 @@ import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine
 import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
+import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 
 export class DerivedCalculator {
   /**
@@ -311,8 +312,10 @@ export class DerivedCalculator {
           total += 5;
         }
 
-        // Add half level
-        total += halfLevel;
+        // Add half level (gated by disableHalfLevelSkillBonus rule)
+        if (SkillRules.isHalfLevelSkillBonusEnabled()) {
+          total += halfLevel;
+        }
 
         // Add skill focus bonus
         if (skill.focused) {

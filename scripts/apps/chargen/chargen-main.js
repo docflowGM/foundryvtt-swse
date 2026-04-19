@@ -8,6 +8,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { canonicalizeSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
@@ -3102,6 +3103,18 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       if (rec?.uuid) {languageUuids.push(rec.uuid);}
     }
 
+    // Normalize and persist background-granted class skills
+    // Background skills (from backgrounds.json) use display names like "Gather Information"
+    // Canonicalize to internal keys like "gatherInformation" for actor persistence
+    const backgroundClassSkills = [];
+    const backgroundSkillNames = this.characterData.background?.trainedSkills || [];
+    for (const skillName of backgroundSkillNames) {
+      const canonicalKey = canonicalizeSkillKey(skillName);
+      if (canonicalKey) {
+        backgroundClassSkills.push(canonicalKey);
+      }
+    }
+
     const progression = {
       classLevels: (this.characterData.classes || []).map(cls => ({
         class: cls.name,
@@ -3153,6 +3166,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       event: this.characterData.background && this.characterData.background.category === 'event' ? this.characterData.background.name : '',
       profession: this.characterData.background && this.characterData.background.category === 'occupation' ? this.characterData.background.name : '',
       planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : '',
+      // Background-granted class skills (canonicalized keys)
+      backgroundClassSkills: backgroundClassSkills,
       // Progression structure for level-up system
       progression: progression,
       // Mentor system data for IdentityEngine bias layer

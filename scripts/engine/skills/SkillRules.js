@@ -83,4 +83,24 @@ export class SkillRules {
   static athleticsConsolidationEnabled() {
     return HouseRuleService.getBoolean('athleticsConsolidation', false);
   }
+
+  /**
+   * Ranked Skills System Rules (NEW - Groundwork)
+   */
+
+  static getSkillProgressionMode() {
+    return HouseRuleService.getString('skillProgressionMode', 'swse_standard');
+  }
+
+  static getSkillRankClassSkillPolicy() {
+    return HouseRuleService.getString('skillRankClassSkillPolicy', 'current_class_plus_backgrounds');
+  }
+
+  static getPrestigeClassSkillPolicy() {
+    return HouseRuleService.getString('prestigeClassSkillPolicy', 'inherit_entry_tree_class');
+  }
+
+  static isHalfLevelSkillBonusEnabled() {
+    return !HouseRuleService.getBoolean('disableHalfLevelSkillBonus', false);
+  }
 }

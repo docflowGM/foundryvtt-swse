@@ -1493,5 +1493,60 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  /* -------------------------------------------------------------------------- */
+  /*                        RANKED SKILLS SYSTEM                               */
+  /* -------------------------------------------------------------------------- */
+
+  register('skillProgressionMode', {
+    name: 'Skill Progression Mode',
+    hint: 'Choose between standard SWSE trained/untrained model or rank-based 3.5-style skill progression.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      swse_standard: 'Standard SWSE (trained/untrained)',
+      ranked_35_style: '3.5-Style Ranked Skills'
+    },
+    default: 'swse_standard'
+  });
+
+  register('skillRankClassSkillPolicy', {
+    name: 'Class Skill Eligibility Policy',
+    hint: 'Determines which skills count as class skills for rank spending cost.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      current_class_plus_backgrounds: 'Current Level Class + Backgrounds (Recommended)',
+      union_any_class: 'Any Class Ever Taken (Not Yet Implemented)',
+      backgrounds_only: 'Backgrounds Only (Not Yet Implemented)'
+    },
+    default: 'current_class_plus_backgrounds'
+  });
+
+  register('prestigeClassSkillPolicy', {
+    name: 'Prestige Class Skill Inheritance',
+    hint: 'Determines how prestige classes determine class skill lists and skill point grants.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      inherit_entry_tree_class: 'Inherit from Entry Talent Tree\'s Core Class (Recommended)',
+      inherit_entry_class: 'Inherit from Entry Class (Not Yet Implemented)',
+      inherit_best_heroic_class: 'Inherit Best Heroic Class (Not Yet Implemented)',
+      no_new_class_skills: 'No New Class Skills on Prestige (Not Yet Implemented)'
+    },
+    default: 'inherit_entry_tree_class'
+  });
+
+  register('disableHalfLevelSkillBonus', {
+    name: 'Disable Half-Level Skill Bonus',
+    hint: 'When enabled, removes the universal +1/2 heroic level contribution from all skill checks. Orthogonal to progression mode.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   SWSELogger.info('SWSE | Houserule settings registered successfully.');
 }

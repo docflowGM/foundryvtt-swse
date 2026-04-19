@@ -100,6 +100,14 @@ export const SkillState = {
     },
 
     /**
+     * Get background-granted class skills (canonicalized skill keys)
+     * Safe accessor: returns empty array if not present
+     */
+    getBackgroundClassSkills(actor) {
+        return actor.system?.backgroundClassSkills || [];
+    },
+
+    /**
      * Clear all trained skills
      */
     async clear(actor) {
