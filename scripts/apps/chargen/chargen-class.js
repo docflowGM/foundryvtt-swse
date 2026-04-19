@@ -5,6 +5,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
+import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
 import { applyProgressionPatch } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/apply-progression-patch.js";
 import { buildClassAtomicPatch } from "/systems/foundryvtt-swse/scripts/apps/chargen/steps/class-step.js";
 import {
@@ -157,8 +158,9 @@ export async function _onSelectClass(event) {
   SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Using class definition:`, classDef);
 
   // Apply class selection + resets as a single atomic patch
-  const talentEveryLevelRule = game.settings.get('foundryvtt-swse', 'talentEveryLevel') ?? false;
-  const talentEveryLevelExtraL1 = game.settings.get('foundryvtt-swse', 'talentEveryLevelExtraL1') ?? false;
+  // PHASE 3A: Talent cadence rules routed through FeatRulesAdapter
+  const talentEveryLevelRule = FeatRulesAdapter.talentEveryLevelEnabled();
+  const talentEveryLevelExtraL1 = FeatRulesAdapter.talentExtraAtLevel1();
   const talentsRequired = talentEveryLevelRule ? (talentEveryLevelExtraL1 ? 2 : 1) : 1;
 
   // Phase 1: Pass classDoc and house rule settings for structured slot generation

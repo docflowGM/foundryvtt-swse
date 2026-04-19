@@ -2,6 +2,7 @@
 // SWSE Character Generator - IMPROVED
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
 // Fully integrated with houserules and database
 // Multi-level support with automatic progression
 // ============================================
@@ -416,10 +417,10 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   // HOUSERULE BONUSES
   // ========================================
   async _applyHouseruleBonuses(actor) {
-    // Auto-grant Weapon Finesse if houserule is enabled
+    // Auto-grant Weapon Finesse if houserule is enabled (PHASE 3A: routed through FeatRulesAdapter)
     let weaponFinesseDefault = false;
     try {
-      weaponFinesseDefault = game.settings.get('foundryvtt-swse', 'weaponFinesseDefault');
+      weaponFinesseDefault = FeatRulesAdapter.weaponFinesseDefaultEnabled();
     } catch (err) {
       weaponFinesseDefault = false;
     }

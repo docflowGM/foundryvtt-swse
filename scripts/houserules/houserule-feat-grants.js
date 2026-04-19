@@ -5,10 +5,12 @@
  * enable them. Handles duplicates by offering replacement feat selection.
  *
  * PHASE 7: All mutations routed through ActorEngine for atomic governance
+ * PHASE 3A: Pilot family reads routed through FeatRulesAdapter
  */
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
 
 /**
  * Mapping of house rule settings to feats/talents they grant
@@ -90,8 +92,8 @@ export class HouseRuleFeatGrants {
         : GRANT_MAPPINGS;
 
       for (const [settingName, grants] of Object.entries(grantsToProcess)) {
-        // Check if this setting is enabled
-        const isEnabled = game.settings.get('foundryvtt-swse', settingName);
+        // Check if this setting is enabled (PHASE 3A: route pilot family through adapter)
+        const isEnabled = this._isDefaultGrantEnabled(settingName);
         if (!isEnabled) {continue;}
 
         for (const grant of grants) {
@@ -376,5 +378,22 @@ export class HouseRuleFeatGrants {
       SWSELogger.error(`Error granting replacement ${type}`, err);
       ui.notifications.error(`Could not grant replacement ${type}`);
     }
+  }
+
+  /**
+   * Check if a default grant rule is enabled
+   * PHASE 3A: Pilot family rules routed through FeatRulesAdapter
+   * Out-of-scope rules (armoredDefenseForAll) use direct read
+   */
+  static _isDefaultGrantEnabled(settingName) {
+    // Pilot family (FeatRulesAdapter)
+    if (settingName === 'weaponFinesseDefault') return FeatRulesAdapter.weaponFinesseDefaultEnabled();
+    if (settingName === 'pointBlankShotDefault') return FeatRulesAdapter.pointBlankShotDefaultEnabled();
+    if (settingName === 'powerAttackDefault') return FeatRulesAdapter.powerAttackDefaultEnabled();
+    if (settingName === 'preciseShotDefault') return FeatRulesAdapter.preciseShotDefaultEnabled();
+    if (settingName === 'dodgeDefault') return FeatRulesAdapter.dodgeDefaultEnabled();
+
+    // Out-of-scope rules (will be routed in Phase 3B)
+    return game.settings.get('foundryvtt-swse', settingName);
   }
 }

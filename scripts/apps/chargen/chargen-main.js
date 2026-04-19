@@ -10,6 +10,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
@@ -1168,12 +1169,12 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       const selectedClass = this.characterData.classes?.[0];
       let talentsRequired = 1; // Default: 1 talent at level 1
 
-      // Check houserule settings
+      // Check houserule settings (PHASE 3A: routed through FeatRulesAdapter)
       let talentEveryLevel = false;
       let talentEveryLevelExtraL1 = false;
       try {
-        talentEveryLevel = game.settings.get('foundryvtt-swse', 'talentEveryLevel');
-        talentEveryLevelExtraL1 = game.settings.get('foundryvtt-swse', 'talentEveryLevelExtraL1');
+        talentEveryLevel = FeatRulesAdapter.talentEveryLevelEnabled();
+        talentEveryLevelExtraL1 = FeatRulesAdapter.talentExtraAtLevel1();
       } catch (err) {
         talentEveryLevel = false;
         talentEveryLevelExtraL1 = false;

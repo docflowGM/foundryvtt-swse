@@ -15,17 +15,18 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
 
 export class TalentCadenceEngine {
   /**
    * Get house rule settings for talent progression
-   * CANONICAL: Only place to read talent house rules
+   * CANONICAL: Only place to read talent house rules (PHASE 3A: routed through FeatRulesAdapter)
    * @returns {Object} {talentEveryLevel: boolean, talentEveryLevelExtraL1: boolean}
    */
   static getHouseRuleSettings() {
     return {
-      talentEveryLevel: game.settings.get('foundryvtt-swse', 'talentEveryLevel') ?? false,
-      talentEveryLevelExtraL1: game.settings.get('foundryvtt-swse', 'talentEveryLevelExtraL1') ?? false
+      talentEveryLevel: FeatRulesAdapter.talentEveryLevelEnabled(),
+      talentEveryLevelExtraL1: FeatRulesAdapter.talentExtraAtLevel1()
     };
   }
 
