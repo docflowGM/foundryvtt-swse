@@ -14,12 +14,31 @@ import { confirm as uiConfirm } from "/systems/foundryvtt-swse/scripts/utils/ui-
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 export class AbilityRollingController {
+  /**
+   * @param {Actor} actor
+   * @param {HTMLElement} root
+   * @param {Object} opts
+   * @param {string}   opts.method  - 'standard' | 'organic'
+   * @param {Object}   opts.config  - Optional generation config (from session.droidContext.attributeGenerationConfig).
+   *                                  When provided, overrides roll counts, dice counts, and ability slot list.
+   *                                  Omit entirely for default actor behavior (6 abilities, 21d6 organic, 6 standard rolls).
+   */
   constructor(actor, root, opts = {}) {
     this.actor = actor;
     this.root = root;
     this.method = opts.method || 'organic';
+
+    // Config-driven parameters — all default to standard actor values when no config is supplied.
+    const cfg = opts.config || {};
+    this._rollCount     = cfg.standardRollCount  ?? 6;   // number of 4d6 rolls for standard method
+    this._organicDice   = cfg.organicDiceCount   ?? 21;  // total dice for organic pool (e.g. 21d6 or 18d6)
+    this._groupCount    = cfg.organicGroupCount  ?? 6;   // number of score groups carved from organic pool
+    this._dropCount     = cfg.organicDropCount   ?? 3;   // global lowest dice dropped before grouping
+    // Uppercase slot names used as assignment keys and displayed in UI
+    this._abilityKeys   = cfg.abilityKeys ?? ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
+
     this.pool = [];       // { id, value, tooltip, origin }
-    this.assigned = { STR:null, DEX:null, CON:null, INT:null, WIS:null, CHA:null };
+    this.assigned = Object.fromEntries(this._abilityKeys.map(k => [k, null]));
     this.history = [];
     this.confirmed = false;
     this._nextId = 1;
@@ -44,10 +63,10 @@ export class AbilityRollingController {
   }
 
   async _rollStandard() {
+    // Roll count is config-driven: 6 for actors, 5 for droids (no CON roll)
     this.pool = [];
-    for (let i=0;i<6;i++) {
+    for (let i = 0; i < this._rollCount; i++) {
       const r = await this._rollFormula('4d6');
-      // Prefer dice terms when available
       const results = (r.dice && r.dice.length>0 && r.dice[0].results) ? r.dice[0].results.map(x => x.result) : (r.results || [r.total]);
       const sorted = results.slice().sort((a,b) => a-b);
       const drop = sorted.shift();
@@ -57,19 +76,22 @@ export class AbilityRollingController {
   }
 
   async _rollOrganic() {
-    // Roll 21d6, drop lowest 3 overall, chunk into 6 groups of 3 and sum each
-    const r = await this._rollFormula('21d6');
+    // Dice count and group count are config-driven.
+    // Actor default:  21d6, drop 3 lowest, chunk into 6 groups → 6 scores
+    // Droid variant:  18d6, drop 3 lowest, chunk into 5 groups → 5 scores (no CON)
+    const totalDice = this._organicDice;
+    const r = await this._rollFormula(`${totalDice}d6`);
     const results = (r.dice && r.dice[0] && r.dice[0].results) ? r.dice[0].results.map(x => x.result) : (r.results || []);
     const filled = results.slice();
-    while (filled.length < 21) {filled.push(Math.ceil(Math.random()*6));}
+    while (filled.length < totalDice) { filled.push(Math.ceil(Math.random() * 6)); }
     const sortedAll = filled.slice().sort((a,b) => a-b);
-    const dropped = sortedAll.splice(0,3);
-    const remaining = sortedAll.slice(); // already sorted ascending -> we'll chunk descending for nicer distribution
-    remaining.reverse();
+    const dropped = sortedAll.splice(0, this._dropCount);
+    const remaining = sortedAll.slice();
+    remaining.reverse(); // descending for nicer distribution
     this.pool = [];
-    for (let i=0;i<6;i++) {
-      const chunk = remaining.splice(0,3);
-      const sum = chunk.reduce((a,b) => a+b,0);
+    for (let i = 0; i < this._groupCount; i++) {
+      const chunk = remaining.splice(0, 3);
+      const sum = chunk.reduce((a,b) => a+b, 0);
       this.pool.push(this._makeDie({ value: sum, tooltip: `Rolled group: ${chunk.join(', ')} (dropped global: ${dropped.join(', ')})`, origin: 'organic' }));
     }
   }
@@ -318,7 +340,7 @@ export class AbilityRollingController {
       this.assigned[last.toStat] = null;
     } else if (last.action === 'rerollAll') {
       this.pool = last.prevPool || this.pool;
-      this.assigned = last.prevAssigned || { STR:null, DEX:null, CON:null, INT:null, WIS:null, CHA:null };
+      this.assigned = last.prevAssigned || Object.fromEntries(this._abilityKeys.map(k => [k, null]));
     } else if (last.action === 'rerollSingle') {
       const die = this.pool.find(d => d.id===last.dieId);
       if (die) {Object.assign(die, last.prev);}
@@ -391,8 +413,7 @@ export class AbilityRollingController {
       return;
     }
     const mapping = {};
-    const keys = ['STR','DEX','CON','INT','WIS','CHA'];
-    for (const k of keys) {
+    for (const k of this._abilityKeys) {
       const dieId = this.assigned[k];
       const die = this.pool.find(d => d.id===dieId);
       const val = die ? die.value : 0;
