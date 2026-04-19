@@ -1,12 +1,22 @@
-{{!-- Droid configuration is PRIMARY state (system.droidSystems). Mechanical effects are mirrored into system.derived. Do NOT move droidSystems into derived. --}}
+{{!--
+  Build History Panel — Phase 1: Template Integration Pass
+
+  Now consumes droidPanels.buildHistory instead of raw system.droidSystems.buildHistory.
+  Preserves current timeline layout.
+
+  Data contract:
+    droidPanels.buildHistory.entries[] (id, timestamp, action, mode, costDelta, detail, summary, actor)
+    droidPanels.buildHistory.hasEntries
+    droidPanels.buildHistory.emptyMessage
+--}}
 <div class="holo-panel">
   <div class="section-bar">
     <h3 class="section-header">Build History</h3>
   </div>
 
-  {{#if system.droidSystems.buildHistory.length}}
+  {{#if droidPanels.buildHistory.hasEntries}}
     <div class="build-history-timeline">
-      {{#each system.droidSystems.buildHistory as |entry index|}}
+      {{#each droidPanels.buildHistory.entries as |entry index|}}
         <div class="history-entry">
           <div class="history-marker"></div>
           <div class="history-content">
@@ -43,7 +53,7 @@
     </div>
   {{else}}
     <div class="empty-state">
-      <p><em>No build history yet.</em></p>
+      <p><em>{{droidPanels.buildHistory.emptyMessage}}</em></p>
     </div>
   {{/if}}
 </div>

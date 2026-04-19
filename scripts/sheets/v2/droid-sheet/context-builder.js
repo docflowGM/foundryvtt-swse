@@ -175,11 +175,13 @@ export class DroidSheetContextBuilder {
       protocols: this.buildProtocolsPanel(),
       programming: this.buildProgrammingPanel(),
       customizations: this.buildCustomizationsPanel(),
-      buildHistory: this.buildBuildHistoryPanel()
+      buildHistory: this.buildBuildHistoryPanel(),
+      configurationMetrics: this.buildConfigurationMetricsPanel()
     };
   }
 
   buildDroidSummaryPanel() {
+    const droidSystems = this.system?.droidSystems ?? {};
     return {
       droidType: this.system?.droidType ?? "",
       droidModel: this.system?.droidModel ?? "",
@@ -187,7 +189,13 @@ export class DroidSheetContextBuilder {
       maxModificationPoints: this._calculateMaxModPoints(),
       usedModificationPoints: this._calculateUsedModPoints(),
       availableModificationPoints: this._calculateAvailableModPoints(),
-      canEdit: this.actor?.isOwner === true
+      canEdit: this.actor?.isOwner === true,
+      // Phase 1: Project core droidSystems summary for backwards-compatible template migration
+      degree: droidSystems.degree ?? "",
+      size: droidSystems.size ?? "",
+      stateMode: droidSystems.stateMode ?? "",
+      creditsSpent: Number(droidSystems.credits?.spent ?? 0),
+      creditsTotal: Number(droidSystems.credits?.total ?? 0)
     };
   }
 
@@ -210,10 +218,13 @@ export class DroidSheetContextBuilder {
 
   buildLocomotionPanel() {
     const locomotion = this.system?.locomotion ?? {};
+    const droidSystems = this.system?.droidSystems ?? {};
     return {
       type: locomotion.type ?? "",
       speed: Number(locomotion.speed ?? 0),
-      notes: locomotion.notes ?? ""
+      notes: locomotion.notes ?? "",
+      // Phase 1: Project name from droidSystems for backwards-compatible template migration
+      name: droidSystems.locomotion?.name ?? ""
     };
   }
 
@@ -298,13 +309,32 @@ export class DroidSheetContextBuilder {
       id: event?.id ?? `build-${idx}`,
       timestamp: event?.timestamp ?? null,
       summary: event?.summary ?? "",
-      actor: event?.actor ?? null
+      actor: event?.actor ?? null,
+      // Phase 1: Project full entry structure for template backwards-compatibility
+      action: event?.action ?? "",
+      mode: event?.mode ?? "",
+      costDelta: event?.costDelta ?? 0,
+      detail: event?.detail ?? ""
     }));
     return {
       entries,
       hasEntries: entries.length > 0,
       totalCount: entries.length,
       emptyMessage: "No build history recorded"
+    };
+  }
+
+  buildConfigurationMetricsPanel() {
+    const droidSystems = this.system?.droidSystems ?? {};
+    return {
+      // Phase 1: Project simple counts and names for template backwards-compatibility
+      // These will eventually be replaced with richer subsystem panels
+      processorName: droidSystems.processor?.name ?? "",
+      armorName: droidSystems.armor?.name ?? "",
+      appendagesCount: Array.isArray(droidSystems.appendages) ? droidSystems.appendages.length : 0,
+      sensorsCount: Array.isArray(droidSystems.sensors) ? droidSystems.sensors.length : 0,
+      weaponsCount: Array.isArray(droidSystems.weapons) ? droidSystems.weapons.length : 0,
+      accessoriesCount: Array.isArray(droidSystems.accessories) ? droidSystems.accessories.length : 0
     };
   }
 
