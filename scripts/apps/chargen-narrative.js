@@ -1,6 +1,7 @@
 // ============================================
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 // SWSE Character Generator - NARRATIVE ENHANCED
 // Personalized responses by Ol' Salty the Space Pirate
 // Talent tree visualization
@@ -480,7 +481,7 @@ export default class CharacterGeneratorNarrative extends CharacterGeneratorImpro
     // Check if deflect/block should be grouped (houserule)
     let groupDeflectBlock = false;
     try {
-      groupDeflectBlock = game.settings.get('foundryvtt-swse', 'groupDeflectBlock') || false;
+      groupDeflectBlock = ProgressionRules.groupDeflectBlockEnabled();
     } catch (err) {
       groupDeflectBlock = false;
     }

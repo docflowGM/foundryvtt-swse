@@ -21,6 +21,10 @@ import { HealingMechanics } from "/systems/foundryvtt-swse/scripts/houserules/ho
 import { HealingSkillIntegration } from "/systems/foundryvtt-swse/scripts/houserules/houserule-healing-skill-integration.js";
 import { ActorSheetEnhancements } from "/systems/foundryvtt-swse/scripts/houserules/houserule-actor-enhancements.js";
 import { BlockMechanicalAlternative, setupBlockMechanicalHooks } from "/systems/foundryvtt-swse/scripts/houserules/houserule-block-mechanic.js";
+import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
+import { CombatRules } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatRules.js";
 
 /**
  * HouseruleMechanics
@@ -71,7 +75,7 @@ export class HouseruleMechanics {
       try {
         if (!config?.critical) {return;}
 
-        const variant = game.settings.get('foundryvtt-swse', 'criticalHitVariant');
+        const variant = CombatRules.getCriticalHitVariant();
         config.criticalMode = variant || 'standard';
       } catch (err) {
         SWSELogger.error('Critical variant application failed', err);
@@ -86,7 +90,7 @@ export class HouseruleMechanics {
   static _setupConditionTrackLimits() {
     Hooks.on('preUpdateActor', (actor, update, options, userId) => {
       try {
-        const cap = game.settings.get('foundryvtt-swse', 'conditionTrackCap');
+        const cap = ConditionTrackRules.getConditionTrackCap();
         if (!cap || !update?.system?.conditionTrack?.current) {return;}
 
         const current = actor.system.conditionTrack?.current ?? 0;
@@ -112,10 +116,7 @@ export class HouseruleMechanics {
         SWSELogger.warn('CONFIG.SWSE not initialized, skipping diagonal movement setup');
         return;
       }
-      CONFIG.SWSE.diagonalMovement = game.settings.get(
-        'foundryvtt-swse',
-        'diagonalMovement'
-      );
+      CONFIG.SWSE.diagonalMovement = CombatRules.getDiagonalMovement();
     } catch (err) {
       SWSELogger.error('Diagonal movement handler failed', err);
     }
@@ -130,7 +131,7 @@ export class HouseruleMechanics {
       try {
         if (!update?.system?.hp?.value) {return;}
 
-        const system = game.settings.get('foundryvtt-swse', 'deathSystem');
+        const system = CombatRules.getDeathSystem();
         const newValue = update.system.hp.value;
 
         if (newValue > 0) {return;}
@@ -167,8 +168,8 @@ export class HouseruleMechanics {
 
   static async generateHP(actor, classItem, level) {
     try {
-      const method = game.settings.get('foundryvtt-swse', 'hpGeneration');
-      const maxLevels = game.settings.get('foundryvtt-swse', 'maxHPLevels');
+      const method = ProgressionRules.getHPGeneration();
+      const maxLevels = ProgressionRules.getMaxHPLevels();
       const hitDie = classItem.system.hitDie || 6;
       const conMod = actor.system.attributes.con.mod ?? 0;
 
@@ -211,10 +212,7 @@ export class HouseruleMechanics {
 
   static getModifiedRange(baseRange) {
     try {
-      const mult = game.settings.get(
-        'foundryvtt-swse',
-        'weaponRangeMultiplier'
-      );
+      const mult = CombatRules.getWeaponRangeMultiplier();
       return Math.round(baseRange * mult);
     } catch (err) {
       SWSELogger.error('Range multiplier calculation failed', err);
@@ -223,11 +221,11 @@ export class HouseruleMechanics {
   }
 
   static isSecondWindImproved() {
-    return game.settings.get('foundryvtt-swse', 'secondWindImproved');
+    return CombatRules.secondWindImprovedEnabled();
   }
 
   static getSecondWindRecovery() {
-    return game.settings.get('foundryvtt-swse', 'secondWindRecovery');
+    return CombatRules.getSecondWindRecovery();
   }
 
   static async applyCriticalDamage(baseRoll, mode = 'standard') {
@@ -275,7 +273,7 @@ export class HouseruleMechanics {
       try {
         if (skillId !== 'feint') {return;}
 
-        const setting = game.settings.get('foundryvtt-swse', 'feintSkill');
+        const setting = SkillRules.getFeintSkill();
         if (setting === 'persuasion') {context.useSkill = 'persuasion';}
       } catch (err) {
         SWSELogger.error('Feint skill override failed', err);
@@ -285,10 +283,7 @@ export class HouseruleMechanics {
 
   static getSkillFocusBonus(actor, skill) {
     try {
-      const variant = game.settings.get(
-        'foundryvtt-swse',
-        'skillFocusVariant'
-      );
+      const variant = SkillRules.getSkillFocusVariant();
       const level = actor.system.level || 1;
 
       switch (variant) {
@@ -296,10 +291,7 @@ export class HouseruleMechanics {
           return Math.min(5, Math.trunc(level / 2));
 
         case 'delayed': {
-          const activation = game.settings.get(
-            'foundryvtt-swse',
-            'skillFocusActivationLevel'
-          );
+          const activation = SkillRules.getSkillFocusActivationLevel();
           return level >= activation ? 5 : 0;
         }
 
@@ -338,10 +330,7 @@ export class HouseruleMechanics {
   // ========================================================================
 
   static _setupSpaceCombatInitiative() {
-    const system = game.settings.get(
-      'foundryvtt-swse',
-      'spaceInitiativeSystem'
-    );
+    const system = CombatRules.getSpaceInitiativeSystem();
 
     if (system !== 'shipBased') {return;}
 

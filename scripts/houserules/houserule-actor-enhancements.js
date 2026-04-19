@@ -7,6 +7,9 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SkillTrainingMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-skill-training.js";
 import { HealingSkillIntegration } from "/systems/foundryvtt-swse/scripts/houserules/houserule-healing-skill-integration.js";
 import { ConditionTrackMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-condition-track.js";
+import { HealingRules } from "/systems/foundryvtt-swse/scripts/houserules/adapters/HealingRules.js";
+import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -54,7 +57,7 @@ export class ActorSheetEnhancements {
    * @private
    */
   static _addTrainingPointsDisplay(root, actor) {
-    if (!game.settings.get(NS, 'skillTrainingEnabled')) return;
+    if (!SkillRules.skillTrainingEnabled()) return;
 
     // Prevent duplicate injection
     if (root.querySelector(".swse-training-points-display")) return;
@@ -64,7 +67,7 @@ export class ActorSheetEnhancements {
 
     const trainingPoints = SkillTrainingMechanics.getTrainingPoints(actor);
     const level = actor.system?.details?.level || 1;
-    const maxPerSkill = game.settings.get(NS, 'skillTrainingCap');
+    const maxPerSkill = SkillRules.getSkillTrainingCap();
 
     // Create training points display
     const trainingDisplay = `
@@ -134,7 +137,7 @@ export class ActorSheetEnhancements {
    * @private
    */
   static _addHealingCooldownDisplay(root, actor) {
-    if (!game.settings.get(NS, 'healingSkillEnabled')) return;
+    if (!HealingRules.healingSkillEnabled()) return;
 
     // Prevent duplicate injection
     if (root.querySelector(".swse-healing-cooldown-display")) return;
@@ -170,7 +173,7 @@ export class ActorSheetEnhancements {
    * @private
    */
   static _addConditionTrackDisplay(root, actor) {
-    if (!game.settings.get(NS, 'conditionTrackEnabled')) return;
+    if (!ConditionTrackRules.conditionTrackEnabled()) return;
 
     // Prevent duplicate injection
     if (root.querySelector(".swse-condition-track-display")) return;
@@ -179,7 +182,7 @@ export class ActorSheetEnhancements {
     if (!bioTab) return;
 
     const trackLevel = ConditionTrackMechanics.getConditionTrackLevel(actor);
-    const variant = game.settings.get(NS, 'conditionTrackVariant');
+    const variant = ConditionTrackRules.getConditionTrackVariant();
     const description = ConditionTrackMechanics.getTrackLevelDescription(trackLevel, variant);
     const penalties = ConditionTrackMechanics.getTrackPenalties(actor);
 

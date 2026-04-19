@@ -9,6 +9,8 @@
 //
 // ============================================
 
+import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
+
 export const ClassRelationshipRegistry = {
 
     classToTrees: new Map(),
@@ -49,7 +51,7 @@ export const ClassRelationshipRegistry = {
         const canonical = new Set(this.getCanonicalTrees(classId));
 
         // Layer 1: Automatic Dark Side prestige rule
-        if (game.settings.get("foundryvtt-swse", "enableDarkSideTreeAccess")) {
+        if (ForceRules.enableDarkSideTreeAccess()) {
             if (classId === "sith_apprentice" || classId === "sith_lord") {
                 canonical.add("lightsaber_combat");
                 canonical.add("lightsaber_forms");

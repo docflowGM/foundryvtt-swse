@@ -3,6 +3,7 @@
 // ============================================
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ChargenRules } from "/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js";
 
 
 const _SPECIES_MOD_CLASSES = ['mod-positive', 'mod-negative', 'mod-neutral'];
@@ -122,8 +123,8 @@ export function _bindAbilitiesUI(root) {
     // Point buy system
     // Get the correct point buy pool from settings
     const pointBuyPool = chargen.characterData.isDroid
-      ? (game.settings.get('foundryvtt-swse', 'droidPointBuyPool') || 20)
-      : (game.settings.get('foundryvtt-swse', 'livingPointBuyPool') || 25);
+      ? ChargenRules.getDroidPointBuyPool()
+      : ChargenRules.getLivingPointBuyPool();
 
     let pool = pointBuyPool;
     // Cumulative cost table: score -> total cost from 8

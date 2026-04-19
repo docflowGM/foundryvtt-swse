@@ -10,6 +10,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { warnGM } from "/systems/foundryvtt-swse/scripts/utils/warn-gm.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 import { TalentTreeVisualizer } from "/systems/foundryvtt-swse/scripts/apps/talent-tree-visualizer.js";
 import { getClassLevel, getCharacterClasses } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
 import { checkTalentPrerequisites } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-validation.js";
@@ -82,7 +83,7 @@ export function getsTalent(selectedClass, actor) {
 export async function getAvailableTalentTrees(selectedClass, actor) {
   SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: START - Class: "${selectedClass?.name}", Actor: ${actor?.id}`);
 
-  const talentTreeRestriction = game.settings.get('foundryvtt-swse', 'talentTreeRestriction');
+  const talentTreeRestriction = ProgressionRules.getTalentTreeRestriction();
   SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: talentTreeRestriction setting: "${talentTreeRestriction}"`);
 
   let availableTrees = [];
@@ -418,7 +419,7 @@ function buildTalentGraph(talents) {
  * @returns {string} HTML string
  */
 function generateTalentTreeHtml(treeName, talentGraph) {
-  const groupDeflectBlock = game.settings.get('foundryvtt-swse', 'groupDeflectBlock') || false;
+  const groupDeflectBlock = ProgressionRules.groupDeflectBlockEnabled();
 
   let html = `
     <div class="talent-tree-container">

@@ -100,6 +100,40 @@ export const SkillState = {
     },
 
     /**
+     * Get background-granted class skills (canonicalized skill keys)
+     * Safe accessor: returns empty array if not present
+     */
+    getBackgroundClassSkills(actor) {
+        return actor.system?.backgroundClassSkills || [];
+    },
+
+    /**
+     * Get ranks for a skill (ranked mode)
+     * Returns 0 if skill has no ranks
+     *
+     * @param {Actor} actor - The actor
+     * @param {string} skillKey - Skill key
+     * @returns {number} - Current rank count
+     */
+    getRanks(actor, skillKey) {
+        if (!actor || !skillKey) {return 0;}
+        return (actor.system?.skills?.[skillKey]?.ranks) || 0;
+    },
+
+    /**
+     * Derive trained status from ranks (ranked mode only)
+     * A skill is trained if it has at least 1 rank
+     *
+     * @param {Actor} actor - The actor
+     * @param {string} skillKey - Skill key
+     * @returns {boolean} - True if ranks >= 1
+     */
+    isTrainedFromRanks(actor, skillKey) {
+        const ranks = this.getRanks(actor, skillKey);
+        return ranks >= 1;
+    },
+
+    /**
      * Clear all trained skills
      */
     async clear(actor) {

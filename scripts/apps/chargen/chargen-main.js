@@ -8,8 +8,12 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { canonicalizeSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { calculateSkillPointGrant, isRankedModeEnabled } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
+import { ChargenRules } from "/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js";
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
@@ -798,12 +802,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       // Apply banned species filter (only if not GM)
       if (!game.user.isGM) {
-        let bannedSpeciesStr = '';
-        try {
-          bannedSpeciesStr = game.settings.get('foundryvtt-swse', 'bannedSpecies') || '';
-        } catch (err) {
-          bannedSpeciesStr = '';
-        }
+        const bannedSpeciesStr = ChargenRules.getBannedSpecies();
 
         const bannedSpecies = bannedSpeciesStr
           .split(',')
@@ -1168,12 +1167,12 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       const selectedClass = this.characterData.classes?.[0];
       let talentsRequired = 1; // Default: 1 talent at level 1
 
-      // Check houserule settings
+      // Check houserule settings (PHASE 3A: routed through FeatRulesAdapter)
       let talentEveryLevel = false;
       let talentEveryLevelExtraL1 = false;
       try {
-        talentEveryLevel = game.settings.get('foundryvtt-swse', 'talentEveryLevel');
-        talentEveryLevelExtraL1 = game.settings.get('foundryvtt-swse', 'talentEveryLevelExtraL1');
+        talentEveryLevel = FeatRulesAdapter.talentEveryLevelEnabled();
+        talentEveryLevelExtraL1 = FeatRulesAdapter.talentExtraAtLevel1();
       } catch (err) {
         talentEveryLevel = false;
         talentEveryLevelExtraL1 = false;
@@ -1886,12 +1885,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       steps.push('abilities', 'class');
 
       // Add background step only if enabled
-      let backgroundsEnabled = true;
-      try {
-        backgroundsEnabled = game.settings.get('foundryvtt-swse', 'enableBackgrounds') ?? true;
-      } catch (err) {
-        backgroundsEnabled = true;
-      }
+      const backgroundsEnabled = ChargenRules.backgroundsEnabled();
 
       if (backgroundsEnabled) {
         steps.push('background');
@@ -2529,14 +2523,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           }, 0);
 
           // Get the correct point buy pool based on character type
-          let pointBuyPool = 25;
-          try {
-            pointBuyPool = this.characterData.isDroid
-              ? (game.settings.get('foundryvtt-swse', 'droidPointBuyPool') || 20)
-              : (game.settings.get('foundryvtt-swse', 'livingPointBuyPool') || 25);
-          } catch (err) {
-            pointBuyPool = this.characterData.isDroid ? 20 : 25;
-          }
+          const pointBuyPool = this.characterData.isDroid
+            ? ChargenRules.getDroidPointBuyPool()
+            : ChargenRules.getLivingPointBuyPool();
 
           // Allow some flexibility (within 2 points of the budget)
           if (totalSpent > pointBuyPool) {
@@ -3056,10 +3045,53 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     };
   }
 
+  /**
+   * Convert trained skills to ranks for ranked mode (level 1 allocation).
+   * In standard mode, this is a no-op; trained skills remain as boolean flags.
+   * In ranked mode, we allocate skill ranks for level 1 based on available points.
+   *
+   * @private
+   */
+  _processSkillsForChargen() {
+    if (!isRankedModeEnabled()) {
+      return; // Standard mode: use trained flags as-is
+    }
+
+    // Ranked mode: allocate ranks at level 1
+    const classes = this.characterData.classes || [];
+    if (classes.length === 0) {
+      return; // No class selected
+    }
+
+    const primaryClass = classes[0];
+    const intMod = this.characterData.abilities?.int?.mod || 0;
+    const availablePoints = calculateSkillPointGrant(1, intMod, primaryClass.id || primaryClass.name);
+
+    if (availablePoints <= 0) {
+      return; // No points to spend
+    }
+
+    // For now, simply grant 1 rank to each trained skill in priority order
+    // until we run out of points
+    let pointsRemaining = availablePoints;
+    const trainedSkills = Object.keys(this.characterData.skills || {})
+      .filter(k => this.characterData.skills[k]?.trained)
+      .slice(0, availablePoints); // Simple allocation: 1 rank per skill
+
+    for (const skillKey of trainedSkills) {
+      if (pointsRemaining <= 0) {break;}
+      this.characterData.skills[skillKey].ranks = 1;
+      pointsRemaining -= 1; // Assume all are class-skill for now (simplest chargen)
+    }
+  }
+
   async _createActor() {
     // Invariant: Actors are never created without required progression data.
     // These assertions ensure derived data can be properly computed.
     this._assertCharacterComplete();
+
+    // Process skills for ranked mode (convert trained to ranks if needed)
+    this._processSkillsForChargen();
 
     // Build proper actor data structure matching SWSEActorSheet expectations
     // Note: The actor system uses 'race' as the property name for species data
@@ -3076,13 +3108,15 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     // Build skills object (using camelCase keys)
+    // Support both standard mode (trained boolean) and ranked mode (ranks number)
     const skills = {};
     for (const [key, skill] of Object.entries(this.characterData.skills || {})) {
       skills[key] = {
         trained: skill.trained || false,
         focused: skill.focused || false,
         miscMod: skill.misc || 0,
-        selectedAbility: skill.selectedAbility || this._getDefaultAbilityForSkill(key)
+        selectedAbility: skill.selectedAbility || this._getDefaultAbilityForSkill(key),
+        ranks: skill.ranks || 0  // Ranked mode: skill rank count (0 = untrained)
       };
     }
 
@@ -3099,6 +3133,18 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       const rec = await LanguageRegistry.getByName(name);
       if (rec?.internalId) {languageInternalIds.push(rec.internalId);}
       if (rec?.uuid) {languageUuids.push(rec.uuid);}
+    }
+
+    // Normalize and persist background-granted class skills
+    // Background skills (from backgrounds.json) use display names like "Gather Information"
+    // Canonicalize to internal keys like "gatherInformation" for actor persistence
+    const backgroundClassSkills = [];
+    const backgroundSkillNames = this.characterData.background?.trainedSkills || [];
+    for (const skillName of backgroundSkillNames) {
+      const canonicalKey = canonicalizeSkillKey(skillName);
+      if (canonicalKey) {
+        backgroundClassSkills.push(canonicalKey);
+      }
     }
 
     const progression = {
@@ -3152,6 +3198,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       event: this.characterData.background && this.characterData.background.category === 'event' ? this.characterData.background.name : '',
       profession: this.characterData.background && this.characterData.background.category === 'occupation' ? this.characterData.background.name : '',
       planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : '',
+      // Background-granted class skills (canonicalized keys)
+      backgroundClassSkills: backgroundClassSkills,
       // Progression structure for level-up system
       progression: progression,
       // Mentor system data for IdentityEngine bias layer

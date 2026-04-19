@@ -21,6 +21,7 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { EquipmentEngine } from '../../../engine/progression/engine/equipment-engine.js';
 import { HPGeneratorEngine } from '../../../engine/HP/HPGeneratorEngine.js';
 import { SettingsHelper } from '../../../utils/settings-helper.js';
+import { ProgressionRules } from '../../../engine/progression/ProgressionRules.js';
 import { AurebeshTranslator } from '../../../ui/dialogue/aurebesh-translator.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
@@ -424,8 +425,8 @@ export class ConfirmStep extends ProgressionStepPlugin {
       const newLevel = (actor.system.details?.level || 1) + 1;
 
       // Get HP generation settings
-      const hpGeneration = SettingsHelper.getString('hpGeneration', 'average');
-      const maxHPLevels = SettingsHelper.getNumber('maxHPLevels', 1);
+      const hpGeneration = ProgressionRules.getHPGeneration();
+      const maxHPLevels = ProgressionRules.getMaxHPLevels();
 
       // Get class for hit die
       const classData = actor.system.class?.primary;

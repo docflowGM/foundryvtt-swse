@@ -9,6 +9,7 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ProjectionEngine } from '../shell/projection-engine.js';
 import { getStepGuidance } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 
 export class SummaryStep extends ProgressionStepPlugin {
@@ -539,8 +540,8 @@ export class SummaryStep extends ProgressionStepPlugin {
       if (!classData) return;
 
       const { calculateHPGain } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
-      const hpGeneration = game.settings.get('foundryvtt-swse', 'hpGeneration') || 'max';
-      const maxHPLevels = Number(game.settings.get('foundryvtt-swse', 'maxHPLevels') ?? 3);
+      const hpGeneration = ProgressionRules.getHPGeneration();
+      const maxHPLevels = ProgressionRules.getMaxHPLevels();
       const newLevel = this._getCurrentLevel(actor) + 1;
       const hitDie = this._extractHitDie(classData);
       const hpGain = Number(calculateHPGain(classData, actor, newLevel) || 0);

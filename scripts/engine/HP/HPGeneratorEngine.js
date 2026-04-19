@@ -3,7 +3,7 @@
  * Handles all HP calculation logic for both character creation and level-up.
  * Single source of truth for HP generation rules.
  */
-import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class HPGeneratorEngine {
@@ -23,8 +23,8 @@ export class HPGeneratorEngine {
     const { context = 'levelup', isNonheroic = false } = options;
 
     // Get settings with safe defaults
-    const hpGeneration = SettingsHelper.getString('hpGeneration', 'average');
-    const maxHPLevels = SettingsHelper.getNumber('maxHPLevels', 1);
+    const hpGeneration = ProgressionRules.getHPGeneration();
+    const maxHPLevels = ProgressionRules.getMaxHPLevels();
 
     // Get Constitution modifier (droids get 0)
     const isDroid = actor.system.isDroid || false;
@@ -111,8 +111,8 @@ export class HPGeneratorEngine {
    */
   static getSettings() {
     return {
-      method: SettingsHelper.getString('hpGeneration', 'average'),
-      maxHPLevels: SettingsHelper.getNumber('maxHPLevels', 1)
+      method: ProgressionRules.getHPGeneration(),
+      maxHPLevels: ProgressionRules.getMaxHPLevels()
     };
   }
 
@@ -122,8 +122,8 @@ export class HPGeneratorEngine {
    */
   static validateSettings() {
     const errors = [];
-    const method = SettingsHelper.getString('hpGeneration', 'average');
-    const maxHPLevels = SettingsHelper.getNumber('maxHPLevels', 1);
+    const method = ProgressionRules.getHPGeneration();
+    const maxHPLevels = ProgressionRules.getMaxHPLevels();
 
     const validMethods = ['roll', 'average', 'maximum', 'average_minimum'];
     if (!validMethods.includes(method)) {

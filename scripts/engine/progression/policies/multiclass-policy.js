@@ -8,6 +8,8 @@
  * Does NOT modify BAB, Defense, DerivedCalculator, or mutation paths.
  */
 
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
+
 export class MulticlassPolicy {
   /**
    * Evaluate multiclass policy for a given class addition.
@@ -21,7 +23,7 @@ export class MulticlassPolicy {
    * @returns {Object} Policy result with grants and restrictions
    */
   static evaluate(actor, newClassData, context = {}) {
-    const enhancedEnabled = game.settings.get("foundryvtt-swse", "multiclassEnhancedEnabled");
+    const enhancedEnabled = ProgressionRules.isMulticlassEnhancedEnabled();
 
     // If enhanced mode disabled, always use RAW
     if (!enhancedEnabled) {
@@ -98,9 +100,9 @@ export class MulticlassPolicy {
     }
 
     // Read individual feature flags
-    const allowRetraining = game.settings.get("foundryvtt-swse", "multiclassRetraining");
-    const allowExtraFeats = game.settings.get("foundryvtt-swse", "multiclassExtraStartingFeats");
-    const allowBonusSkills = game.settings.get("foundryvtt-swse", "multiclassBonusSkillDelta");
+    const allowRetraining = ProgressionRules.multiclassRetrainingEnabled();
+    const allowExtraFeats = ProgressionRules.multiclassExtraStartingFeatsEnabled();
+    const allowBonusSkills = ProgressionRules.multiclassBonusSkillDeltaEnabled();
 
     // Calculate skill training delta (only relevant if bonus skills enabled)
     let bonusSkillTrainings = 0;
@@ -254,7 +256,7 @@ export class MulticlassPolicy {
    * @returns {Object} { mode: "RAW"|"ENHANCED", flags: {...} }
    */
   static getConfiguration() {
-    const enhancedEnabled = game.settings.get("foundryvtt-swse", "multiclassEnhancedEnabled");
+    const enhancedEnabled = ProgressionRules.isMulticlassEnhancedEnabled();
 
     if (!enhancedEnabled) {
       return {
@@ -272,9 +274,9 @@ export class MulticlassPolicy {
       mode: "ENHANCED",
       enabled: true,
       flags: {
-        retraining: game.settings.get("foundryvtt-swse", "multiclassRetraining"),
-        extraStartingFeats: game.settings.get("foundryvtt-swse", "multiclassExtraStartingFeats"),
-        bonusSkillDelta: game.settings.get("foundryvtt-swse", "multiclassBonusSkillDelta")
+        retraining: ProgressionRules.multiclassRetrainingEnabled(),
+        extraStartingFeats: ProgressionRules.multiclassExtraStartingFeatsEnabled(),
+        bonusSkillDelta: ProgressionRules.multiclassBonusSkillDeltaEnabled()
       }
     };
   }

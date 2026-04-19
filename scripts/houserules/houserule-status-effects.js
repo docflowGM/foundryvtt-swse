@@ -7,6 +7,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -116,9 +117,9 @@ export class StatusEffectsMechanics {
    * @returns {Array<Object>} - Array of status effect definitions
    */
   static getAvailableEffects() {
-    if (!game.settings.get(NS, 'statusEffectsEnabled')) {return [];}
+    if (!ConditionTrackRules.statusEffectsEnabled()) {return [];}
 
-    const list = game.settings.get(NS, 'statusEffectsList');
+    const list = ConditionTrackRules.getStatusEffectsList();
     return STATUS_EFFECTS_LIBRARY[list] || STATUS_EFFECTS_LIBRARY.combatConditions;
   }
 
@@ -129,7 +130,7 @@ export class StatusEffectsMechanics {
    * @returns {Promise<boolean>} - Success status
    */
   static async applyEffect(actor, effectId) {
-    if (!game.settings.get(NS, 'statusEffectsEnabled') || !actor) {return false;}
+    if (!ConditionTrackRules.statusEffectsEnabled() || !actor) {return false;}
 
     const effect = this.findEffect(effectId);
     if (!effect) {
@@ -217,7 +218,7 @@ export class StatusEffectsMechanics {
    * @param {number} newTrackLevel - New condition track level
    */
   static async autoApplyConditionEffects(actor, newTrackLevel) {
-    const autoApply = game.settings.get(NS, 'autoApplyFromConditionTrack');
+    const autoApply = ConditionTrackRules.autoApplyFromConditionTrackEnabled();
     if (!autoApply) {return;}
 
     // Map condition track levels to effects
@@ -239,10 +240,10 @@ export class StatusEffectsMechanics {
    * @private
    */
   static async onActorUpdate(actor, data) {
-    if (!game.settings.get(NS, 'statusEffectsEnabled')) {return;}
+    if (!ConditionTrackRules.statusEffectsEnabled()) {return;}
 
     // Track effect duration if needed
-    const tracking = game.settings.get(NS, 'statusEffectDurationTracking');
+    const tracking = ConditionTrackRules.statusEffectDurationTrackingEnabled();
     if (tracking === 'rounds') {
       // Decrement effect duration each round in combat
       actor.effects.forEach(effect => {
@@ -259,7 +260,7 @@ export class StatusEffectsMechanics {
    * @private
    */
   static async onRestCompleted(data) {
-    const autoRemove = game.settings.get(NS, 'autoRemoveOnRest');
+    const autoRemove = ConditionTrackRules.autoRemoveOnRestEnabled();
     if (!autoRemove) {return;}
 
     // Remove temporary effects on rest
@@ -289,7 +290,7 @@ export class StatusEffectsMechanics {
       ac: 0
     };
 
-    if (!game.settings.get(NS, 'statusEffectsEnabled') || !actor) {return modifiers;}
+    if (!ConditionTrackRules.statusEffectsEnabled() || !actor) {return modifiers;}
 
     // Apply penalties based on active effects
     if (this.hasEffect(actor, 'fatigued')) {

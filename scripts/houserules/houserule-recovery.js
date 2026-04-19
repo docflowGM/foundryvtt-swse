@@ -3,10 +3,12 @@
  * Handles HP and Vitality recovery during rest
  *
  * PHASE 7: All mutations routed through ActorEngine for atomic governance
+ * PHASE 3B: Recovery rules routed through HealingRules adapter
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { HealingRules } from "/systems/foundryvtt-swse/scripts/houserules/adapters/HealingRules.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -23,8 +25,8 @@ export class RecoveryMechanics {
    * @returns {number} - HP to recover
    */
   static calculateRecoveryHP(actor) {
-    const recoveryType = game.settings.get(NS, 'recoveryHPType');
-    const customAmount = game.settings.get(NS, 'customRecoveryHP');
+    const recoveryType = HealingRules.getRecoveryHPType();
+    const customAmount = HealingRules.getCustomRecoveryHP();
 
     if (!actor) {return 0;}
 
@@ -51,10 +53,10 @@ export class RecoveryMechanics {
    * @returns {number} - Vitality to recover (0 if disabled)
    */
   static calculateVitalityRecovery(actor) {
-    const recoveryVitality = game.settings.get(NS, 'recoveryVitality');
+    const recoveryVitality = HealingRules.recoveryVitalityEnabled();
     if (!recoveryVitality) {return 0;}
 
-    return game.settings.get(NS, 'recoveryVitalityAmount');
+    return HealingRules.getRecoveryVitalityAmount();
   }
 
   /**
@@ -63,7 +65,7 @@ export class RecoveryMechanics {
    * @returns {Promise<Object>} - Recovery result
    */
   static async performRecovery(actor) {
-    if (!game.settings.get(NS, 'recoveryEnabled')) {
+    if (!HealingRules.recoveryEnabled()) {
       return { success: false, message: 'Recovery is not enabled' };
     }
 
@@ -116,14 +118,14 @@ export class RecoveryMechanics {
    * @private
    */
   static async onRestCompleted(data) {
-    if (!game.settings.get(NS, 'recoveryEnabled')) {return;}
+    if (!HealingRules.recoveryEnabled()) {return;}
 
-    const requiresFullRest = game.settings.get(NS, 'recoveryRequiresFullRest');
+    const requiresFullRest = HealingRules.recoveryRequiresFullRest();
     const isFullRest = data.isFullRest || data.duration >= 480; // 8 hours in minutes
 
     if (requiresFullRest && !isFullRest) {return;}
 
-    const timing = game.settings.get(NS, 'recoveryTiming');
+    const timing = HealingRules.getRecoveryTiming();
     if (timing === 'afterRest' || timing === 'both') {
       // Recover all actors
       for (const actor of game.actors) {

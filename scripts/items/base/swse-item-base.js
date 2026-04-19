@@ -9,6 +9,7 @@
  */
 
 import { getWeaponRangeInfo } from "/systems/foundryvtt-swse/scripts/items/weapon-ranges.js";
+import { CombatRules } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatRules.js";
 
 export class SWSEItemBase extends Item {
 
@@ -68,11 +69,9 @@ export class SWSEItemBase extends Item {
     }
 
     // Apply weapon range multiplier from houserules
-    if (game.settings && game.settings.get) {
-      const multiplier = game.settings.get('foundryvtt-swse', 'weaponRangeMultiplier') || 1.0;
-      if (data.range?.value) {
-        data.range.modified = Math.round(data.range.value * multiplier);
-      }
+    const multiplier = CombatRules.getWeaponRangeMultiplier();
+    if (data.range?.value) {
+      data.range.modified = Math.round(data.range.value * multiplier);
     }
   }
 

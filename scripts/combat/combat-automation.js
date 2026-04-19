@@ -2,6 +2,7 @@ import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { CombatRules } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatRules.js";
 
 /**
  * SWSE Combat Automation (v13+)
@@ -44,7 +45,7 @@ export class SWSECombatAutomation {
      * Controlled by SWSE system setting: resetResourcesOnCombat
      */
     Hooks.on('combatStart', async combat => {
-      if (!game.settings.get('foundryvtt-swse', 'resetResourcesOnCombat')) {return;}
+      if (!CombatRules.resetResourcesOnCombatEnabled()) {return;}
 
       for (const combatant of combat.combatants) {
         const actor = combatant.actor;

@@ -15,6 +15,7 @@
 import { SWSEProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression.js";
 import { SWSELogger, swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
 import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
@@ -378,13 +379,13 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     data.characterClasses = getCharacterClasses(this.actor);
 
     // Multi-class bonus choice from houserules
-    data.multiclassBonusChoice = game.settings.get('foundryvtt-swse', 'multiclassBonusChoice');
+    data.multiclassBonusChoice = ProgressionRules.getMulticlassBonusChoice();
 
     // Talent tree restriction from houserules
-    data.talentTreeRestriction = game.settings.get('foundryvtt-swse', 'talentTreeRestriction');
+    data.talentTreeRestriction = ProgressionRules.getTalentTreeRestriction();
 
     // Ability increase settings
-    data.abilityIncreaseMethod = game.settings.get('foundryvtt-swse', 'abilityIncreaseMethod') || 'flexible';
+    data.abilityIncreaseMethod = ProgressionRules.getAbilityIncreaseMethod();
     data.getsAbilityIncrease = getsAbilityIncrease(data.newLevel);
     data.abilityIncreases = this.abilityIncreases;
 
@@ -1527,7 +1528,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   async _onAbilityIncrease(event) {
     event.preventDefault();
     const ability = event.currentTarget.dataset.ability;
-    const abilityIncreaseMethod = game.settings.get('foundryvtt-swse', 'abilityIncreaseMethod');
+    const abilityIncreaseMethod = ProgressionRules.getAbilityIncreaseMethod();
 
     if (!this.abilityIncreases[ability]) {
       this.abilityIncreases[ability] = 0;

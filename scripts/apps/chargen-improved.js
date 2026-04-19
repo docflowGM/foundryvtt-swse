@@ -2,6 +2,9 @@
 // SWSE Character Generator - IMPROVED
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
+import { ChargenRules } from "/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js";
 // Fully integrated with houserules and database
 // Multi-level support with automatic progression
 // ============================================
@@ -25,25 +28,15 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
 
     // Get GM's ability generation method from houserules (with safe fallback)
     try {
-      context.abilityMethod = game.settings.get('foundryvtt-swse', 'abilityScoreMethod') || 'pointbuy';
+      context.abilityMethod = ProgressionRules.getAbilityScoreMethod();
     } catch (err) {
       context.abilityMethod = 'pointbuy';
     }
 
     // Use droid or living point buy pool based on character type
-    if (this.characterData.isDroid) {
-      try {
-        context.pointBuyPool = game.settings.get('foundryvtt-swse', 'droidPointBuyPool') || 20;
-      } catch (err) {
-        context.pointBuyPool = 20;
-      }
-    } else {
-      try {
-        context.pointBuyPool = game.settings.get('foundryvtt-swse', 'livingPointBuyPool') || 25;
-      } catch (err) {
-        context.pointBuyPool = 25;
-      }
-    }
+    context.pointBuyPool = this.characterData.isDroid
+      ? ChargenRules.getDroidPointBuyPool()
+      : ChargenRules.getLivingPointBuyPool();
 
     // Add target level
     context.targetLevel = this.targetLevel;
@@ -416,10 +409,10 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
   // HOUSERULE BONUSES
   // ========================================
   async _applyHouseruleBonuses(actor) {
-    // Auto-grant Weapon Finesse if houserule is enabled
+    // Auto-grant Weapon Finesse if houserule is enabled (PHASE 3A: routed through FeatRulesAdapter)
     let weaponFinesseDefault = false;
     try {
-      weaponFinesseDefault = game.settings.get('foundryvtt-swse', 'weaponFinesseDefault');
+      weaponFinesseDefault = FeatRulesAdapter.weaponFinesseDefaultEnabled();
     } catch (err) {
       weaponFinesseDefault = false;
     }
@@ -443,7 +436,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     // Log block/deflect houserule setting for reference
     let blockDeflectTalents = 'separate';
     try {
-      blockDeflectTalents = game.settings.get('foundryvtt-swse', 'blockDeflectTalents');
+      blockDeflectTalents = ProgressionRules.getBlockDeflectTalents();
     } catch (err) {
       blockDeflectTalents = 'separate';
     }

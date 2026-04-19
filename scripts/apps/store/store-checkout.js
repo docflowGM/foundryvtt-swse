@@ -11,6 +11,7 @@
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { calculateFinalCost } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
 import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
@@ -506,7 +507,7 @@ export async function buyVehicle(store, actorId, condition) {
  * @param {Function} closeCallback - Callback to close the store
  */
 export async function createCustomDroid(actor, closeCallback) {
-    const baseCredits = game.settings.get('foundryvtt-swse', 'droidConstructionCredits') || 1000;
+    const baseCredits = ProgressionRules.getDroidConstructionCredits();
     const credits = Number(actor.system.credits) || 0;
 
     if (credits < baseCredits) {
@@ -1179,7 +1180,7 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
         return;
     }
 
-    const baseCredits = game.settings.get('foundryvtt-swse', 'droidConstructionCredits') || 1000;
+    const baseCredits = ProgressionRules.getDroidConstructionCredits();
     const playerCredits = Number(actor.system.credits) || 0;
 
     // Check if player has minimum credits

@@ -1,9 +1,12 @@
 /**
  * Skill point allocation for SWSE Level Up system
  * Handles multiclass bonus skill selection and skill training
+ * Supports both standard mode (trained boolean) and ranked mode (rank spending)
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { calculateSkillPointGrant, isRankedModeEnabled, addRank } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
+import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 
 /**
  * Select a multiclass bonus skill
@@ -73,4 +76,51 @@ export function checkIntModifierIncrease(actor, oldIntMod, newIntMod, newLevel) 
 
   SWSELogger.log(`[LEVELUP-SKILLS] checkIntModifierIncrease: No INT modifier increase detected`);
   return false;
+}
+
+/**
+ * Calculate skill points granted for a level-up under ranked mode
+ * @param {Actor} actor - The actor
+ * @param {string} classId - Class being taken at this level
+ * @param {number} intMod - Intelligence modifier
+ * @returns {number} Skill points granted for this level
+ */
+export function calculateRankedModeSkillPoints(actor, classId, intMod) {
+  if (!isRankedModeEnabled() || !actor || !classId) {
+    return 0;
+  }
+
+  // Get current level (heroic level for point grant calculation)
+  const currentLevel = actor.system?.level || 1;
+
+  // calculateSkillPointGrant handles prestige class inheritance
+  return calculateSkillPointGrant(currentLevel + 1, intMod, classId);
+}
+
+/**
+ * Apply ranked skill ranks to actor
+ * @param {Actor} actor - The actor
+ * @param {Object} rankAllocations - Object mapping skillKey -> newRankCount
+ * @returns {Promise<void>}
+ */
+export async function applyRankedSkills(actor, rankAllocations) {
+  if (!rankAllocations || Object.keys(rankAllocations).length === 0) {
+    SWSELogger.log(`[LEVELUP-SKILLS] applyRankedSkills: No ranks to apply`);
+    return;
+  }
+
+  SWSELogger.log(`[LEVELUP-SKILLS] applyRankedSkills: START - Actor: ${actor.id}, allocations:`, rankAllocations);
+
+  const updates = {};
+  for (const [skillKey, newRanks] of Object.entries(rankAllocations)) {
+    updates[`system.skills.${skillKey}.ranks`] = newRanks;
+  }
+
+  try {
+    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
+    SWSELogger.log(`[LEVELUP-SKILLS] applyRankedSkills: COMPLETE - Applied ${Object.keys(rankAllocations).length} skill ranks`);
+  } catch (err) {
+    SWSELogger.error(`[LEVELUP-SKILLS] ERROR applying ranked skills:`, err);
+    throw err;
+  }
 }

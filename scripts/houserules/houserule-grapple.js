@@ -5,6 +5,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { CombatRules } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatRules.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -19,8 +20,8 @@ export class GrappleMechanics {
    * @returns {number} - The DC to beat
    */
   static getGrappleDC(target) {
-    const grappleVariant = game.settings.get(NS, 'grappleVariant');
-    const dcBonus = game.settings.get(NS, 'grappleDCBonus');
+    const grappleVariant = CombatRules.getGrappleVariant();
+    const dcBonus = CombatRules.getGrappleDCBonus();
 
     if (!target) {return 10;}
 
@@ -37,7 +38,7 @@ export class GrappleMechanics {
    * @returns {boolean}
    */
   static canGrapple(actor) {
-    return game.settings.get(NS, 'grappleEnabled') && actor && !actor.isToken;
+    return CombatRules.grappleEnabled() && actor && !actor.isToken;
   }
 
   /**
@@ -51,7 +52,7 @@ export class GrappleMechanics {
       return { success: false, message: 'Grapple is not enabled' };
     }
 
-    const variant = game.settings.get(NS, 'grappleVariant');
+    const variant = CombatRules.getGrappleVariant();
     const grappleDC = this.getGrappleDC(target);
 
     // Roll grapple check (typically STR + BAB)

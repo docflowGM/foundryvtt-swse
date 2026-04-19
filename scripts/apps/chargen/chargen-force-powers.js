@@ -6,6 +6,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
 import { _findClassItem } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
+import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
 
 /**
  * Handle force power selection
@@ -156,7 +157,7 @@ export function _getForcePowersNeeded() {
 
   if (forceTrainingFeats.length > 0) {
     // Get the force ability modifier (WIS or CHA based on game setting)
-    const forceAbility = game.settings.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
+    const forceAbility = ForceRules.getTrainingAttribute();
     const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
     const modifier = this.characterData.abilities[abilityKey]?.mod || 0;
 

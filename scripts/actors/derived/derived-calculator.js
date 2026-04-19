@@ -32,6 +32,8 @@ import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine
 import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
+import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
+import { isRankedModeEnabled, deriveTrainedFromRanks } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
 
 export class DerivedCalculator {
   /**
@@ -306,13 +308,25 @@ export class DerivedCalculator {
         const speciesBonus = speciesSkillBonuses[skillKey] || 0;
         total += speciesBonus;
 
-        // Add training bonus
-        if (skill.trained) {
-          total += 5;
+        // Add training/rank bonus
+        // Under ranked mode: use ranks directly; under standard mode: use trained +5 bonus
+        const rankedMode = isRankedModeEnabled();
+        let isTrained = skill.trained; // Standard mode: use stored boolean
+        if (rankedMode) {
+          const ranks = skill.ranks || 0;
+          total += ranks;
+          isTrained = deriveTrainedFromRanks(ranks); // Derived trained status
+        } else {
+          // Standard mode: use traditional trained +5 bonus
+          if (skill.trained) {
+            total += 5;
+          }
         }
 
-        // Add half level
-        total += halfLevel;
+        // Add half level (gated by disableHalfLevelSkillBonus rule)
+        if (SkillRules.isHalfLevelSkillBonusEnabled()) {
+          total += halfLevel;
+        }
 
         // Add skill focus bonus
         if (skill.focused) {
@@ -321,7 +335,7 @@ export class DerivedCalculator {
 
         // Apply occupation bonus (only to untrained checks)
         let hasOccupationBonus = false;
-        if (!skill.trained && occupationBonus?.skills?.includes(skillKey)) {
+        if (!isTrained && occupationBonus?.skills?.includes(skillKey)) {
           total += occupationBonus.value || 2;
           hasOccupationBonus = true;
         }

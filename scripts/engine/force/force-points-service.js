@@ -23,6 +23,7 @@
 import { getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
 
 export class ForcePointsService {
 
@@ -53,7 +54,7 @@ export class ForcePointsService {
     const base = this._getForcePointBase(actor);
 
     // Check for daily Force Points setting override
-    const useDailyForcePoints = game.settings?.get('foundryvtt-swse', 'dailyForcePoints') || false;
+    const useDailyForcePoints = ForceRules.dailyForcePoints();
 
     if (useDailyForcePoints) {
       // Daily FP mode: band-based (1-5: 1 FP, 6-10: 2 FP, 11-15: 3 FP, 16+: 4 FP)
