@@ -596,6 +596,22 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   async _initializeSteps() {
     try {
+      // Call seedSession() on the subtype adapter once per session.
+      // Must run before step resolution so contributeActiveSteps() can read seeded context.
+      if (!this.progressionSession._sessionSeeded) {
+        const adapter = this.progressionSession?.subtypeAdapter;
+        if (adapter?.seedSession) {
+          try {
+            await adapter.seedSession(this.progressionSession, this.actor, this.mode);
+            this.progressionSession._sessionSeeded = true;
+          } catch (seedErr) {
+            swseLogger.warn('[ProgressionShell] Adapter seedSession failed (non-fatal):', seedErr.message);
+          }
+        } else {
+          this.progressionSession._sessionSeeded = true;
+        }
+      }
+
       // PHASE 2: _getCanonicalDescriptors may be async (ActiveStepComputer in chargen/levelup shells)
       const canonicalDescriptorsOrPromise = this._getCanonicalDescriptors();
       const canonicalDescriptors = canonicalDescriptorsOrPromise instanceof Promise

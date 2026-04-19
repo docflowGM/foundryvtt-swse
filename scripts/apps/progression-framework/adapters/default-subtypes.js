@@ -20,6 +20,8 @@ import { seedNonheroicSession } from './nonheroic-session-seeder.js';
 import { shouldSuppressTalentSteps, describeTalentCadence } from './talent-cadence-helper.js';
 import { seedFollowerSession, validateFollowerEntitlement } from './follower-session-seeder.js';
 import { deriveFollowerStats, getFollowerDerivationContext, deriveFollowerStateForApply } from './follower-deriver.js';
+import { DroidBuilderAdapter } from '../steps/droid-builder-adapter.js';
+import { swseLogger } from '../../../utils/logger.js';
 
 // Re-export for convenience
 export { ParticipantKind };
@@ -47,34 +49,139 @@ export class ActorSubtypeAdapter extends ProgressionSubtypeAdapter {
 /**
  * Droid subtype adapter.
  * INDEPENDENT participant: full progression lifecycle.
- * Phase 1: Wraps existing droid progression behavior (DroidBuilderAdapter).
- * Phase 2+: Full nonheroic integration.
+ *
+ * Implements all four adapter responsibilities:
+ *  1. seedSession            — seeds droid session context (20-pt buy, CON=0 intent, generation config)
+ *  2. contributeActiveSteps  — defense-in-depth force-step suppression
+ *  3. contributeMutationPlan — writes all droid system fields to the mutation plan
+ *  4. validateReadiness      — enforces build completeness before finalization
  */
 export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
   constructor() {
     super('droid', 'Character (Droid)', ParticipantKind.INDEPENDENT);
   }
 
-  async seedSession(session, actor, mode) {
-    // Phase 1: Droid session seeding deferred.
-    // Legacy DroidBuilderAdapter handles this for now.
-    // Phase 2: Migrate nonheroic session seeding through adapter.
-  }
+  // ---------------------------------------------------------------------------
+  // 1. Session seeding
+  // ---------------------------------------------------------------------------
 
-  async contributeActiveSteps(candidateStepIds, session, actor) {
-    // Phase 1: Droids use droid-specific filtering.
-    // Filter to steps marked safe for droid subtype.
-    // (Registry already declares this; adapter reinforces it.)
-    return candidateStepIds.filter(stepId => {
-      // Phase 1: Trust registry. Spine already filtered by mode/subtype.
-      return true;
+  async seedSession(session, actor, mode) {
+    // Set droid-specific session context consumed downstream by:
+    //  - AttributeStep  (reads pointBuyPool + attributeGenerationConfig)
+    //  - AbilityRollingController (reads attributeGenerationConfig when wired)
+    //  - contributeMutationPlan (reads droidContext.conBase to enforce CON=0)
+    session.droidContext = {
+      isDroid: true,
+      // Point-buy pool: droids get 20 points, actors get 25 (SWSE core rule)
+      pointBuyPool: 20,
+      // CON is not a droid ability; enforced to 0 in contributeMutationPlan
+      excludedAbilities: ['con'],
+      conBase: 0,
+      // Config consumed by rolling/array systems — keeps all droid rules data-driven
+      attributeGenerationConfig: {
+        abilityCount: 5,
+        // Uppercase keys match AbilityRollingController.assigned slot names
+        abilityKeys: ['STR', 'DEX', 'INT', 'WIS', 'CHA'],
+        // Lowercase keys match system.abilities paths
+        abilitySystemKeys: ['str', 'dex', 'int', 'wis', 'cha'],
+        // Standard rolling: 5 rolls instead of 6 (no CON roll)
+        standardRollCount: 5,
+        // Organic rolling: 18d6 = 5 groups × 3 dice + 3 global drops
+        organicDiceCount: 18,
+        organicGroupCount: 5,
+        organicDropCount: 3,
+        // Predefined arrays without CON slot
+        arrays: {
+          standard: [15, 14, 13, 12, 8],     // actor standard [15,14,13,12,10,8] minus 10
+          highPower: [16, 14, 12, 10, 8],    // actor high-power [16,14,12,12,10,8] minus one 12
+        },
+      },
+    };
+
+    swseLogger.debug('[DroidAdapter] Droid session context seeded', {
+      pointBuyPool: session.droidContext.pointBuyPool,
+      abilityCount: session.droidContext.attributeGenerationConfig.abilityCount,
     });
   }
 
+  // ---------------------------------------------------------------------------
+  // 2. Step filtering
+  // ---------------------------------------------------------------------------
+
+  async contributeActiveSteps(candidateStepIds, session, actor) {
+    // Defense-in-depth force suppression.
+    // The registry already excludes 'droid' from force node subtypes,
+    // but the adapter enforces this explicitly as a second layer.
+    // Droids are non-Force-sensitive by definition (SWSE core rules).
+    const FORCE_STEP_IDS = ['force-powers', 'force-secrets', 'force-techniques'];
+    const filtered = candidateStepIds.filter(id => !FORCE_STEP_IDS.includes(id));
+
+    const suppressed = candidateStepIds.filter(id => FORCE_STEP_IDS.includes(id));
+    if (suppressed.length > 0) {
+      swseLogger.debug('[DroidAdapter] Force steps suppressed for droid', { suppressed });
+    }
+
+    return filtered;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 3. Mutation plan contribution
+  // ---------------------------------------------------------------------------
+
+  async contributeMutationPlan(mutationPlan, session, actor) {
+    const droidBuild = session.draftSelections?.droid;
+    if (!droidBuild?.isDroid) {
+      return mutationPlan;
+    }
+
+    if (!mutationPlan.set) mutationPlan.set = {};
+
+    // Write all droid identity and system fields.
+    // These are NOT written anywhere in the base _compileMutationPlan path —
+    // this adapter is the sole authoritative writer for droid system fields.
+    mutationPlan.set['system.isDroid']      = true;
+    mutationPlan.set['system.droidDegree']  = droidBuild.droidDegree  || '1st-degree';
+    mutationPlan.set['system.droidSize']    = droidBuild.droidSize    || 'medium';
+    mutationPlan.set['system.droidSystems'] = droidBuild.droidSystems ?? null;
+    mutationPlan.set['system.droidCredits'] = droidBuild.droidCredits ?? null;
+
+    // Enforce CON = 0 regardless of what the attribute step committed.
+    // Reference: chargen-droid.js:38-42 (legacy spec)
+    mutationPlan.set['system.abilities.con.base'] = 0;
+
+    swseLogger.debug('[DroidAdapter] Droid fields written to mutation plan', {
+      droidDegree: droidBuild.droidDegree,
+      droidSize: droidBuild.droidSize,
+    });
+
+    return mutationPlan;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 4. Readiness validation
+  // ---------------------------------------------------------------------------
+
   async validateReadiness(session, actor) {
-    // Phase 1: Droid-specific readiness checks deferred.
-    // Legacy DroidBuilderAdapter handles droid credit overflow, etc.
-    // Phase 2: Migrate nonheroic readiness validation through adapter.
+    const droidBuild = session.draftSelections?.droid;
+
+    if (!droidBuild?.isDroid) {
+      throw new Error('[DroidAdapter] validateReadiness: No droid build found in session');
+    }
+
+    // Reuse existing build completeness validator.
+    // Budget overflow is already checked by ProgressionFinalizer._validateReadiness();
+    // this adds locomotion, processor, appendage, and processor-type completeness.
+    const result = DroidBuilderAdapter.validateDroidBuild(droidBuild);
+    if (!result.isValid) {
+      throw new Error(
+        `[DroidAdapter] Droid build incomplete: ${result.issues.join('; ')}`
+      );
+    }
+
+    swseLogger.debug('[DroidAdapter] Droid readiness validated', {
+      droidDegree: droidBuild.droidDegree,
+      droidSize: droidBuild.droidSize,
+    });
   }
 }
 
