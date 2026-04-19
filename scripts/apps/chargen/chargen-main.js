@@ -10,6 +10,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { canonicalizeSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { calculateSkillPointGrant, isRankedModeEnabled } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
@@ -3058,10 +3059,53 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     };
   }
 
+  /**
+   * Convert trained skills to ranks for ranked mode (level 1 allocation).
+   * In standard mode, this is a no-op; trained skills remain as boolean flags.
+   * In ranked mode, we allocate skill ranks for level 1 based on available points.
+   *
+   * @private
+   */
+  _processSkillsForChargen() {
+    if (!isRankedModeEnabled()) {
+      return; // Standard mode: use trained flags as-is
+    }
+
+    // Ranked mode: allocate ranks at level 1
+    const classes = this.characterData.classes || [];
+    if (classes.length === 0) {
+      return; // No class selected
+    }
+
+    const primaryClass = classes[0];
+    const intMod = this.characterData.abilities?.int?.mod || 0;
+    const availablePoints = calculateSkillPointGrant(1, intMod, primaryClass.id || primaryClass.name);
+
+    if (availablePoints <= 0) {
+      return; // No points to spend
+    }
+
+    // For now, simply grant 1 rank to each trained skill in priority order
+    // until we run out of points
+    let pointsRemaining = availablePoints;
+    const trainedSkills = Object.keys(this.characterData.skills || {})
+      .filter(k => this.characterData.skills[k]?.trained)
+      .slice(0, availablePoints); // Simple allocation: 1 rank per skill
+
+    for (const skillKey of trainedSkills) {
+      if (pointsRemaining <= 0) {break;}
+      this.characterData.skills[skillKey].ranks = 1;
+      pointsRemaining -= 1; // Assume all are class-skill for now (simplest chargen)
+    }
+  }
+
   async _createActor() {
     // Invariant: Actors are never created without required progression data.
     // These assertions ensure derived data can be properly computed.
     this._assertCharacterComplete();
+
+    // Process skills for ranked mode (convert trained to ranks if needed)
+    this._processSkillsForChargen();
 
     // Build proper actor data structure matching SWSEActorSheet expectations
     // Note: The actor system uses 'race' as the property name for species data
@@ -3078,13 +3122,15 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     // Build skills object (using camelCase keys)
+    // Support both standard mode (trained boolean) and ranked mode (ranks number)
     const skills = {};
     for (const [key, skill] of Object.entries(this.characterData.skills || {})) {
       skills[key] = {
         trained: skill.trained || false,
         focused: skill.focused || false,
         miscMod: skill.misc || 0,
-        selectedAbility: skill.selectedAbility || this._getDefaultAbilityForSkill(key)
+        selectedAbility: skill.selectedAbility || this._getDefaultAbilityForSkill(key),
+        ranks: skill.ranks || 0  // Ranked mode: skill rank count (0 = untrained)
       };
     }
 
