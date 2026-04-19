@@ -268,6 +268,17 @@ export class PrerequisiteChecker {
             feat = { name: feat, system: {} };
         }
 
+        // Phase 3.1: Droids cannot acquire Force Sensitivity feat from any source
+        const isDroid = actor?.system?.isDroid === true;
+        const featName = feat.name || feat.label || '';
+        if (isDroid && featName.toLowerCase() === 'force sensitivity') {
+            return {
+                met: false,
+                missing: ['Droids cannot acquire Force Sensitivity'],
+                details: { droidConstraint: 'Force Sensitivity forbidden for droids' }
+            };
+        }
+
         const prereqData = feat.system?.prerequisite || feat.system?.prerequisites || '';
 
         // Try structured format first (if exists)
@@ -1484,15 +1495,22 @@ export class PrerequisiteChecker {
     /**
      * Get feats/talents granted by a class at Level 1.
      */
-    static getLevel1GrantedFeats(classDoc) {
+    static getLevel1GrantedFeats(classDoc, actor = null) {
         const granted = [];
         if (!classDoc?.system) {return granted;}
+
+        // Phase 3.1: Check if actor is a droid for Force Sensitivity suppression
+        const isDroid = actor?.system?.isDroid === true;
 
         const levelProgression = classDoc.system.levelProgression || [];
         if (levelProgression.length > 0) {
             const level1Features = levelProgression[0].features || [];
             for (const feature of level1Features) {
                 if (feature.type === 'feat_grant' && feature.name) {
+                    // Phase 3.1: Droids cannot receive Force Sensitivity feat from any source (including class grants)
+                    if (isDroid && feature.name.toLowerCase() === 'force sensitivity') {
+                        continue;  // Skip Force Sensitivity grant for droids
+                    }
                     granted.push(feature.name);
                 }
             }
@@ -1501,6 +1519,10 @@ export class PrerequisiteChecker {
         const startingFeatures = classDoc.system.startingFeatures || [];
         for (const feature of startingFeatures) {
             if (feature.type === 'feat_grant' && feature.name) {
+                // Phase 3.1: Droids cannot receive Force Sensitivity feat from any source (including class grants)
+                if (isDroid && feature.name.toLowerCase() === 'force sensitivity') {
+                    continue;  // Skip Force Sensitivity grant for droids
+                }
                 granted.push(feature.name);
             }
         }
@@ -1518,7 +1540,7 @@ export class PrerequisiteChecker {
         houseruleFeats.forEach(f => granted.add(f));
 
         if (classDoc) {
-            const level1Feats = this.getLevel1GrantedFeats(classDoc);
+            const level1Feats = this.getLevel1GrantedFeats(classDoc, actor);
             level1Feats.forEach(f => granted.add(f));
         }
 
