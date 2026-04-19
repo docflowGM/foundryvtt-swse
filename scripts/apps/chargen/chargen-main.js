@@ -13,6 +13,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { calculateSkillPointGrant, isRankedModeEnabled } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
+import { ChargenRules } from "/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js";
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
@@ -801,12 +802,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       // Apply banned species filter (only if not GM)
       if (!game.user.isGM) {
-        let bannedSpeciesStr = '';
-        try {
-          bannedSpeciesStr = game.settings.get('foundryvtt-swse', 'bannedSpecies') || '';
-        } catch (err) {
-          bannedSpeciesStr = '';
-        }
+        const bannedSpeciesStr = ChargenRules.getBannedSpecies();
 
         const bannedSpecies = bannedSpeciesStr
           .split(',')
@@ -1889,12 +1885,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       steps.push('abilities', 'class');
 
       // Add background step only if enabled
-      let backgroundsEnabled = true;
-      try {
-        backgroundsEnabled = game.settings.get('foundryvtt-swse', 'enableBackgrounds') ?? true;
-      } catch (err) {
-        backgroundsEnabled = true;
-      }
+      const backgroundsEnabled = ChargenRules.backgroundsEnabled();
 
       if (backgroundsEnabled) {
         steps.push('background');
@@ -2532,14 +2523,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           }, 0);
 
           // Get the correct point buy pool based on character type
-          let pointBuyPool = 25;
-          try {
-            pointBuyPool = this.characterData.isDroid
-              ? (game.settings.get('foundryvtt-swse', 'droidPointBuyPool') || 20)
-              : (game.settings.get('foundryvtt-swse', 'livingPointBuyPool') || 25);
-          } catch (err) {
-            pointBuyPool = this.characterData.isDroid ? 20 : 25;
-          }
+          const pointBuyPool = this.characterData.isDroid
+            ? ChargenRules.getDroidPointBuyPool()
+            : ChargenRules.getLivingPointBuyPool();
 
           // Allow some flexibility (within 2 points of the budget)
           if (totalSpent > pointBuyPool) {

@@ -4,6 +4,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
 import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
+import { ChargenRules } from "/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js";
 // Fully integrated with houserules and database
 // Multi-level support with automatic progression
 // ============================================
@@ -33,19 +34,9 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     }
 
     // Use droid or living point buy pool based on character type
-    if (this.characterData.isDroid) {
-      try {
-        context.pointBuyPool = game.settings.get('foundryvtt-swse', 'droidPointBuyPool') || 20;
-      } catch (err) {
-        context.pointBuyPool = 20;
-      }
-    } else {
-      try {
-        context.pointBuyPool = game.settings.get('foundryvtt-swse', 'livingPointBuyPool') || 25;
-      } catch (err) {
-        context.pointBuyPool = 25;
-      }
-    }
+    context.pointBuyPool = this.characterData.isDroid
+      ? ChargenRules.getDroidPointBuyPool()
+      : ChargenRules.getLivingPointBuyPool();
 
     // Add target level
     context.targetLevel = this.targetLevel;
