@@ -700,17 +700,62 @@ export class DroidBuilderApp extends SWSEApplication {
         'system.droidSystems': this.droidSystems
       };
 
-      // For CONVERT_FROM_STATBLOCK: Update conversion provenance flags
+      // For CONVERT_FROM_STATBLOCK: Store comprehensive conversion report
       if (this.mode === 'CONVERT_FROM_STATBLOCK' && this.conversionSeed) {
-        updateData['flags.swse.stockDroidConversion'] = {
-          sourceId: this.conversionSeed.source?.sourceId,
-          sourceName: this.conversionSeed.source?.sourceName,
+        // Preserve original stock import flags if present
+        const originalStockFlags = this.sourceActor?.flags?.swse?.stockDroidImport || {};
+
+        updateData['flags.swse.stockDroidConversionReport'] = {
+          // Source tracking
+          sourceId: this.conversionSeed.source?.sourceId || originalStockFlags.sourceId,
+          sourceName: this.conversionSeed.source?.sourceName || originalStockFlags.sourceName,
+
+          // Conversion metadata
           conversionMode: 'statblock-to-custom',
           conversionTimestamp: Date.now(),
+
+          // Published snapshot from original stock
+          publishedSnapshot: this.conversionSeed.inferredSeed ? {
+            // Store minimal snapshot for comparison later
+            timestamp: originalStockFlags.importedAt,
+            abilities: originalStockFlags.publishedTotals?.abilities || {},
+            defenses: originalStockFlags.publishedTotals?.defenses || {},
+            hp: originalStockFlags.publishedTotals?.hp || {},
+            speed: originalStockFlags.publishedTotals?.speed,
+            threshold: originalStockFlags.publishedTotals?.threshold,
+            attacks: originalStockFlags.publishedTotals?.attacks || [],
+            skills: originalStockFlags.publishedTotals?.skills || {}
+          } : {},
+
+          // Inferred seed (what converter suggested)
+          inferredSeed: foundry.utils.deepClone(this.conversionSeed.inferredSeed) || {},
+
+          // Unresolved fields that required user selection
+          unresolved: this.conversionSeed.unresolved || {},
+
+          // Conversion quality metrics
+          confidence: this.conversionSeed.conversionMeta?.confidence || 'unknown',
           assumptions: this.conversionSeed.conversionMeta?.assumptions || [],
           warnings: this.conversionSeed.conversionMeta?.warnings || [],
-          originalStatblockTotals: this.conversionSeed.conversionMeta?.publishedTotals || {}
+
+          // Finalized selections (what user chose in builder)
+          finalizedSelections: {
+            degree: this.droidSystems.degree,
+            size: this.droidSystems.size,
+            locomotion: this.droidSystems.locomotion?.name,
+            processor: this.droidSystems.processor?.name,
+            armor: this.droidSystems.armor?.name,
+            appendages: this.droidSystems.appendages?.length || 0,
+            sensors: this.droidSystems.sensors?.length || 0,
+            weapons: this.droidSystems.weapons?.length || 0,
+            accessories: this.droidSystems.accessories?.length || 0
+          }
         };
+
+        // Keep original stock import flags for reference
+        if (Object.keys(originalStockFlags).length > 0) {
+          updateData['flags.swse.stockDroidImport'] = originalStockFlags;
+        }
       }
 
       await ActorEngine.updateActor(this.actor, updateData);

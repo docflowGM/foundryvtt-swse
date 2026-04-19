@@ -1,0 +1,335 @@
+{{!--
+  Stock Droid Provenance Panel
+  Shows where the droid came from and enables comparison/audit actions
+  Only renders for stock-imported or converted droids
+--}}
+
+{{#if (or stockImport stockConversion)}}
+<div class="holo-panel swse-ui-panel stock-droid-provenance-panel">
+  <div class="section-bar">
+    <h3 class="section-header">
+      <i class="fas {{#if stockConversion}}fa-wand-magic-sparkles{{else}}fa-file-import{{/if}}"></i>
+      Stock Droid Source
+    </h3>
+  </div>
+
+  <div class="provenance-content">
+    <!-- Source Information -->
+    <div class="provenance-block">
+      <div class="block-label">Source</div>
+      <div class="block-value">{{#if stockConversion}}{{stockConversion.sourceName}}{{else if stockImport}}{{stockImport.sourceName}}{{else}}Unknown{{/if}}</div>
+    </div>
+
+    <!-- Mode -->
+    <div class="provenance-block">
+      <div class="block-label">Mode</div>
+      <div class="block-value">
+        {{#if stockConversion}}
+          <span class="mode-badge converted">
+            <i class="fas fa-wand-magic-sparkles"></i> Converted Custom
+          </span>
+        {{else}}
+          <span class="mode-badge statblock">
+            <i class="fas fa-file-import"></i> Stock Statblock
+          </span>
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- Confidence (if conversion) -->
+    {{#if stockConversion}}
+    <div class="provenance-block">
+      <div class="block-label">Confidence</div>
+      <div class="block-value">
+        <span class="confidence-badge {{stockConversion.confidence}}">
+          {{stockConversion.confidence}}
+        </span>
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- Dates -->
+    <div class="provenance-block">
+      <div class="block-label">{{#if stockConversion}}Converted{{else}}Imported{{/if}}</div>
+      <div class="block-value date-value">
+        {{#if stockConversion}}
+          {{formatDate stockConversion.conversionTimestamp "short"}}
+        {{else if stockImport}}
+          {{formatDate stockImport.importedAt "short"}}
+        {{else}}
+          Unknown
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- Quality Metrics -->
+    {{#if stockConversion}}
+    <div class="provenance-block full-width">
+      <div class="block-label">Conversion Quality</div>
+      <div class="quality-metrics">
+        {{#if stockConversion.assumptions}}
+        <div class="metric">
+          <span class="metric-count">{{stockConversion.assumptions.length}}</span>
+          <span class="metric-label">Assumption{{#if (ne stockConversion.assumptions.length 1)}}s{{/if}}</span>
+        </div>
+        {{/if}}
+        {{#if stockConversion.warnings}}
+        <div class="metric warning">
+          <span class="metric-count">{{stockConversion.warnings.length}}</span>
+          <span class="metric-label">Warning{{#if (ne stockConversion.warnings.length 1)}}s{{/if}}</span>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- Quick Actions -->
+    {{#if editable}}
+    <div class="provenance-actions">
+      {{#if stockImport}}
+      <button class="action-btn compare-btn" data-action="compare-stock" title="Compare to original stock statblock">
+        <i class="fas fa-code-branch"></i> Compare
+      </button>
+      {{/if}}
+
+      {{#if stockConversion}}
+      <button class="action-btn review-btn" data-action="view-conversion-details" title="Review conversion details and assumptions">
+        <i class="fas fa-clipboard-check"></i> Review
+      </button>
+      <button class="action-btn compare-btn" data-action="compare-stock" title="Compare to original stock statblock">
+        <i class="fas fa-code-branch"></i> Compare
+      </button>
+      {{/if}}
+    </div>
+    {{/if}}
+  </div>
+
+  <!-- Warnings -->
+  {{#if stockConversion}}
+  <div class="provenance-warning">
+    <i class="fas fa-info-circle"></i>
+    <p>This droid was converted from a stock statblock. Later customizations may diverge from the original published values.</p>
+  </div>
+  {{/if}}
+</div>
+
+<style>
+.stock-droid-provenance-panel {
+  background: linear-gradient(135deg, #15192a 0%, #1a1f33 100%);
+}
+
+.stock-droid-provenance-panel .section-bar {
+  border-bottom: 2px solid #4a90e2;
+}
+
+.stock-droid-provenance-panel .section-header {
+  color: #4a90e2;
+}
+
+.provenance-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.provenance-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.provenance-block.full-width {
+  grid-column: 1 / -1;
+}
+
+.block-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: #a0a0a0;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+
+.block-value {
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.date-value {
+  font-family: monospace;
+  color: #c0c0d0;
+  font-size: 0.85rem;
+}
+
+.mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.mode-badge.converted {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.mode-badge.statblock {
+  background: rgba(74, 144, 226, 0.15);
+  color: #4a90e2;
+  border: 1px solid rgba(74, 144, 226, 0.3);
+}
+
+.confidence-badge {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.confidence-badge.high {
+  background: rgba(45, 95, 46, 0.5);
+  color: #90ee90;
+}
+
+.confidence-badge.medium {
+  background: rgba(95, 95, 45, 0.5);
+  color: #ffeb3b;
+}
+
+.confidence-badge.low {
+  background: rgba(95, 45, 45, 0.5);
+  color: #ff9999;
+}
+
+.quality-metrics {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  background: #0a0e27;
+  border-radius: 0.2rem;
+  border: 1px solid #3a3f4a;
+}
+
+.metric.warning {
+  border-color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.metric-count {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.metric-label {
+  font-size: 0.7rem;
+  color: #a0a0a0;
+  text-transform: uppercase;
+}
+
+.metric.warning .metric-count {
+  color: #ff9999;
+}
+
+.provenance-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #3a3f4a;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #3a3f4a;
+  border-radius: 0.2rem;
+  background: #0a0e27;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.action-btn:hover {
+  background: #15192a;
+  border-color: #5a5f6a;
+}
+
+.action-btn.compare-btn {
+  border-color: #4a90e2;
+  color: #4a90e2;
+}
+
+.action-btn.compare-btn:hover {
+  background: rgba(74, 144, 226, 0.1);
+}
+
+.action-btn.review-btn {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.action-btn.review-btn:hover {
+  background: rgba(255, 193, 7, 0.1);
+}
+
+.provenance-warning {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 193, 7, 0.05);
+  border-top: 1px solid #3a3f4a;
+  border-left: 3px solid #ffc107;
+  color: #a0a0a0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.provenance-warning i {
+  flex-shrink: 0;
+  color: #ffc107;
+  margin-top: 0.1rem;
+}
+
+.provenance-warning p {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .provenance-content {
+    grid-template-columns: 1fr;
+  }
+
+  .provenance-actions {
+    gap: 0.5rem;
+  }
+
+  .action-btn {
+    flex: 1;
+  }
+}
+</style>
