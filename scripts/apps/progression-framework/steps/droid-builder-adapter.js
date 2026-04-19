@@ -12,6 +12,7 @@
 
 import { DroidBuilderStep } from './droid-builder-step.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { ProgressionRules } from '../../../engine/progression/ProgressionRules.js';
 
 export class DroidBuilderAdapter {
   /**
@@ -51,9 +52,9 @@ export class DroidBuilderAdapter {
           totalWeight: 0
         },
         droidCredits: {
-          base: game.settings.get('foundryvtt-swse', 'droidConstructionCredits') || 1000,
+          base: ProgressionRules.getDroidConstructionCredits(),
           spent: characterData.droidCredits?.spent || 0,
-          remaining: (game.settings.get('foundryvtt-swse', 'droidConstructionCredits') || 1000) - (characterData.droidCredits?.spent || 0)
+          remaining: ProgressionRules.getDroidConstructionCredits() - (characterData.droidCredits?.spent || 0)
         }
       };
     }

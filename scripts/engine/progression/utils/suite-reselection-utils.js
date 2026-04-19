@@ -6,13 +6,15 @@
  * No side effects. No mutations. Callable from anywhere.
  */
 
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
+
 /**
  * Check if suite reselection is enabled via world setting
  * @returns {boolean} True if setting is enabled
  */
 export function isSuiteReselectionEnabled() {
   try {
-    return game.settings.get("foundryvtt-swse", "allowSuiteReselection") === true;
+    return ProgressionRules.suiteReselectionAllowed();
   } catch (e) {
     return false;
   }

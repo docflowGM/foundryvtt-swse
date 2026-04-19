@@ -1,5 +1,6 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 import CharacterGeneratorNarrative from "/systems/foundryvtt-swse/scripts/apps/chargen-narrative.js";
 import CharacterGeneratorImproved from "/systems/foundryvtt-swse/scripts/apps/chargen-improved.js";
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
@@ -49,7 +50,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                         // User chose "Begin New Character" - show chargen options
                         // Check if user can create NPCs (GM or house rule enabled)
                         const isGM = game.user.isGM;
-                        const allowPlayersNonheroic = game.settings.get('foundryvtt-swse', 'allowPlayersNonheroic');
+                        const allowPlayersNonheroic = ProgressionRules.allowPlayersNonheroic();
                         const canCreateNPC = isGM || allowPlayersNonheroic;
 
                         // PHASE 4 STEP 5: Check rollout mode before offering legacy generators

@@ -4,6 +4,7 @@
 
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 import { DROID_SYSTEMS } from "/systems/foundryvtt-swse/scripts/data/droid-systems.js";
 import { escapeHtml } from "/systems/foundryvtt-swse/scripts/utils/string-utils.js";
 
@@ -121,7 +122,7 @@ export function _populateDroidBuilder(root) {
   }
 
   // Get house rule settings for credits
-  const baseCredits = game.settings.get('foundryvtt-swse', 'droidConstructionCredits') || 1000;
+  const baseCredits = ProgressionRules.getDroidConstructionCredits();
   this.characterData.droidCredits.base = baseCredits;
   this.characterData.droidCredits.remaining = baseCredits - this.characterData.droidCredits.spent;
 

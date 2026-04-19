@@ -22,6 +22,7 @@ import { HealingSkillIntegration } from "/systems/foundryvtt-swse/scripts/houser
 import { ActorSheetEnhancements } from "/systems/foundryvtt-swse/scripts/houserules/houserule-actor-enhancements.js";
 import { BlockMechanicalAlternative, setupBlockMechanicalHooks } from "/systems/foundryvtt-swse/scripts/houserules/houserule-block-mechanic.js";
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 
 /**
  * HouseruleMechanics
@@ -168,8 +169,8 @@ export class HouseruleMechanics {
 
   static async generateHP(actor, classItem, level) {
     try {
-      const method = game.settings.get('foundryvtt-swse', 'hpGeneration');
-      const maxLevels = game.settings.get('foundryvtt-swse', 'maxHPLevels');
+      const method = ProgressionRules.getHPGeneration();
+      const maxLevels = ProgressionRules.getMaxHPLevels();
       const hitDie = classItem.system.hitDie || 6;
       const conMod = actor.system.attributes.con.mod ?? 0;
 

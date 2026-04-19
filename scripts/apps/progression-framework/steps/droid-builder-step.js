@@ -16,6 +16,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { DROID_SYSTEMS } from '../../../data/droid-systems.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { ProgressionRules } from '../../../engine/progression/ProgressionRules.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -58,8 +59,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     }
 
     // Get house rule settings
-    const baseCredits = game.settings.get('foundryvtt-swse', 'droidConstructionCredits') || 1000;
-    const allowOverflow = game.settings.get('foundryvtt-swse', 'allowDroidOverflow') ?? true;
+    const baseCredits = ProgressionRules.getDroidConstructionCredits();
+    const allowOverflow = ProgressionRules.droidOverflowEnabled();
 
     // Initialize with actor's current droid state, or defaults
     const droidSystems = actor?.system?.droidSystems || {
@@ -1134,7 +1135,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
         base: this._droidState?.droidCredits?.base || 1000,
         spent: this._droidState?.droidCredits?.spent || 0,
         remaining: this._droidState?.droidCredits?.remaining || 1000,
-        allowOverflow: game.settings.get('foundryvtt-swse', 'allowDroidOverflow') ?? false,
+        allowOverflow: ProgressionRules.droidOverflowEnabled(),
       };
 
       const droidDegree = this._droidState?.droidDegree || actor?.system?.droidDegree || '1st-degree';

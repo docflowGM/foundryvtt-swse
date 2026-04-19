@@ -1,6 +1,7 @@
 import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
+import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 // ============================================
@@ -89,7 +90,7 @@ async _prepareContext(options) {
 
     // Add Nonheroic class only if user is GM or house rule allows it
     const isGM = game.user.isGM;
-    const allowPlayersNonheroic = game.settings.get('foundryvtt-swse', 'allowPlayersNonheroic');
+    const allowPlayersNonheroic = ProgressionRules.allowPlayersNonheroic();
     if (isGM || allowPlayersNonheroic) {
       context.classes.push({
         name: 'Nonheroic',
