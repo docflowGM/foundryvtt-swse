@@ -43,12 +43,51 @@
 
     <section class="tab flexcol" data-tab-group="primary" data-tab="systems">
       <div class="swse-v2-sheet-grid">
+        <!-- Summary strip: degree, size, credits, state -->
         <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs"}}
+        </div>
+
+        <!-- Core subsystems -->
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs"}}
         </div>
 
         <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-armor-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-sensors-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-weapons-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs"}}
+        </div>
+
+        <!-- Budget analysis and status -->
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-budget-breakdown-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-validation-panel.hbs"}}
+        </div>
+
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history-panel.hbs"}}
         </div>
       </div>
     </section>

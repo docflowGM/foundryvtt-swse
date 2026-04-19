@@ -1,0 +1,45 @@
+{{!--
+  Droid Processor Panel
+
+  Shows the droid's processing core with cost and bonus details.
+
+  Data consumed:
+    droidPanels.processor (id, name, cost, bonus, description, hasProcessor)
+
+  Phase 3B: Enriched processor detail with cost and capability metrics.
+--}}
+<section class="swse-panel holo-panel swse-ui-panel">
+  <header class="section-bar">
+    <h3 class="section-header">Processor</h3>
+  </header>
+
+  {{#if droidPanels.processor.hasProcessor}}
+    <div class="processor-content">
+      <div class="config-item swse-metric-chip">
+        <span class="label">Type:</span>
+        <span class="value">{{droidPanels.processor.name}}</span>
+      </div>
+      {{#if droidPanels.processor.cost}}
+        <div class="config-item swse-metric-chip">
+          <span class="label">Cost:</span>
+          <span class="value">{{droidPanels.processor.cost}} credits</span>
+        </div>
+      {{/if}}
+      {{#if droidPanels.processor.bonus}}
+        <div class="config-item swse-metric-chip">
+          <span class="label">Bonus:</span>
+          <span class="value">+{{droidPanels.processor.bonus}}</span>
+        </div>
+      {{/if}}
+      {{#if droidPanels.processor.description}}
+        <div class="processor-description muted" style="margin-top: 8px; font-size: 0.9em;">
+          {{droidPanels.processor.description}}
+        </div>
+      {{/if}}
+    </div>
+  {{else}}
+    <div class="empty-state">
+      <p><em>{{droidPanels.processor.emptyMessage}}</em></p>
+    </div>
+  {{/if}}
+</section>

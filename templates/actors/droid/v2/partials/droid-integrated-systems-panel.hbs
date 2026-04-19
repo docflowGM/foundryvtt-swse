@@ -1,0 +1,39 @@
+{{!--
+  Droid Integrated Systems Panel
+
+  Shows installed integrated systems (weapons, shields, sensors, etc. that are part of the chassis).
+
+  Data consumed:
+    droidPanels.integratedSystems.entries[] (id, name, type, description)
+    droidPanels.integratedSystems.hasEntries
+    droidPanels.integratedSystems.emptyMessage
+
+  Current depth: list of installed systems with name and type. Pass 4+ will add categorization/detail.
+--}}
+<section class="swse-panel holo-panel swse-ui-panel">
+  <header class="section-bar">
+    <h3 class="section-header">Integrated Systems</h3>
+  </header>
+
+  {{#if droidPanels.integratedSystems.hasEntries}}
+    <div class="integrated-systems-list">
+      {{#each droidPanels.integratedSystems.entries as |system|}}
+        <div class="system-entry" data-system-id="{{system.id}}">
+          <div class="system-header">
+            <span class="system-name">{{system.name}}</span>
+            <span class="system-type muted" style="font-size: 0.85em;">[{{system.type}}]</span>
+          </div>
+          {{#if system.description}}
+            <div class="system-description muted" style="font-size: 0.85em; margin-top: 4px;">
+              {{system.description}}
+            </div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="empty-state">
+      <p><em>{{droidPanels.integratedSystems.emptyMessage}}</em></p>
+    </div>
+  {{/if}}
+</section>

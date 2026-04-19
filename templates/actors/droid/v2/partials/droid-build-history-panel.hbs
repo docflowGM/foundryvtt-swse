@@ -1,18 +1,19 @@
 {{!--
-  Build History Panel — Phase 1: Template Integration Pass
+  Droid Build History Panel
 
-  Now consumes droidPanels.buildHistory instead of raw system.droidSystems.buildHistory.
-  Preserves current timeline layout.
+  Timeline of configuration changes: creation, modification, approval, rejection.
 
-  Data contract:
-    droidPanels.buildHistory.entries[] (id, timestamp, action, mode, costDelta, detail, summary, actor)
+  Data consumed:
+    droidPanels.buildHistory.entries[] (id, timestamp, action, mode, costDelta, detail)
     droidPanels.buildHistory.hasEntries
     droidPanels.buildHistory.emptyMessage
+
+  This panel intentionally remains a simple timeline. Pass 3 will add subsystem change tracking.
 --}}
-<div class="holo-panel">
-  <div class="section-bar">
+<section class="holo-panel">
+  <header class="section-bar">
     <h3 class="section-header">Build History</h3>
-  </div>
+  </header>
 
   {{#if droidPanels.buildHistory.hasEntries}}
     <div class="build-history-timeline">
@@ -56,4 +57,4 @@
       <p><em>{{droidPanels.buildHistory.emptyMessage}}</em></p>
     </div>
   {{/if}}
-</div>
+</section>

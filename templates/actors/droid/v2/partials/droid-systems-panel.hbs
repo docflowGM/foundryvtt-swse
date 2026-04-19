@@ -1,4 +1,14 @@
-{{!-- Droid configuration is PRIMARY state (system.droidSystems). Mechanical effects are mirrored into system.derived. Do NOT move droidSystems into derived. --}}
+{{!--
+  Droid Systems Panel — Phase 1: Template Integration Pass
+
+  Now consumes droidPanels.* instead of raw system.droidSystems.
+  Preserves current chip-summary layout and all affordances.
+
+  Data contract:
+    droidPanels.droidSummary (degree, size, credits, state)
+    droidPanels.locomotion.name
+    droidPanels.configurationMetrics (processor, armor, counts)
+--}}
 <div class="holo-panel swse-ui-panel swse-droid-system-suite">
   <div class="section-bar">
     <h3 class="section-header">Droid Systems</h3>
@@ -9,82 +19,82 @@
     {{/if}}
   </div>
 
-  {{#if system.droidSystems}}
+  {{#if droidPanels.droidSummary.degree}}
     <div class="droid-config-summary swse-store-section">
-      {{#if system.droidSystems.degree}}
+      {{#if droidPanels.droidSummary.degree}}
         <div class="config-item swse-metric-chip">
           <span class="label">Degree:</span>
-          <span class="value">{{system.droidSystems.degree}}</span>
+          <span class="value">{{droidPanels.droidSummary.degree}}</span>
         </div>
       {{/if}}
 
-      {{#if system.droidSystems.size}}
+      {{#if droidPanels.droidSummary.size}}
         <div class="config-item swse-metric-chip">
           <span class="label">Size:</span>
-          <span class="value">{{system.droidSystems.size}}</span>
+          <span class="value">{{droidPanels.droidSummary.size}}</span>
         </div>
       {{/if}}
 
-      {{#if system.droidSystems.locomotion.name}}
+      {{#if droidPanels.locomotion.name}}
         <div class="config-item swse-metric-chip">
           <span class="label">Locomotion:</span>
-          <span class="value">{{system.droidSystems.locomotion.name}}</span>
+          <span class="value">{{droidPanels.locomotion.name}}</span>
         </div>
       {{/if}}
 
-      {{#if system.droidSystems.appendages.length}}
+      {{#if droidPanels.configurationMetrics.appendagesCount}}
         <div class="config-item swse-metric-chip">
           <span class="label">Appendages:</span>
-          <span class="value">{{system.droidSystems.appendages.length}}</span>
+          <span class="value">{{droidPanels.configurationMetrics.appendagesCount}}</span>
         </div>
       {{/if}}
 
-      {{#if system.droidSystems.sensors.length}}
+      {{#if droidPanels.configurationMetrics.sensorsCount}}
         <div class="config-item swse-metric-chip">
           <span class="label">Sensors:</span>
-          <span class="value">{{system.droidSystems.sensors.length}}</span>
+          <span class="value">{{droidPanels.configurationMetrics.sensorsCount}}</span>
         </div>
       {{/if}}
 
-      {{#if system.droidSystems.processor.name}}
+      {{#if droidPanels.configurationMetrics.processorName}}
         <div class="config-item swse-metric-chip">
           <span class="label">Processor:</span>
-          <span class="value">{{system.droidSystems.processor.name}}</span>
+          <span class="value">{{droidPanels.configurationMetrics.processorName}}</span>
         </div>
       {{/if}}
 
-      {{#if system.droidSystems.armor.name}}
+      {{#if droidPanels.configurationMetrics.armorName}}
         <div class="config-item swse-metric-chip">
           <span class="label">Armor:</span>
-          <span class="value">{{system.droidSystems.armor.name}}</span>
+          <span class="value">{{droidPanels.configurationMetrics.armorName}}</span>
         </div>
       {{/if}}
 
-      {{#if system.droidSystems.weapons.length}}
+      {{#if droidPanels.configurationMetrics.weaponsCount}}
         <div class="config-item swse-metric-chip">
           <span class="label">Weapons:</span>
-          <span class="value">{{system.droidSystems.weapons.length}}</span>
+          <span class="value">{{droidPanels.configurationMetrics.weaponsCount}}</span>
         </div>
       {{/if}}
 
-      {{#if system.droidSystems.accessories.length}}
+      {{#if droidPanels.configurationMetrics.accessoriesCount}}
         <div class="config-item swse-metric-chip">
           <span class="label">Accessories:</span>
-          <span class="value">{{system.droidSystems.accessories.length}}</span>
+          <span class="value">{{droidPanels.configurationMetrics.accessoriesCount}}</span>
         </div>
       {{/if}}
 
-      {{#if system.droidSystems.credits}}
+      {{#if droidPanels.droidSummary.creditsTotal}}
         <div class="config-item swse-metric-chip">
           <span class="label">Cost:</span>
-          <span class="value">{{system.droidSystems.credits.spent}} / {{system.droidSystems.credits.total}} credits</span>
+          <span class="value">{{droidPanels.droidSummary.creditsSpent}} / {{droidPanels.droidSummary.creditsTotal}} credits</span>
         </div>
       {{/if}}
 
-      {{#if system.droidSystems.stateMode}}
+      {{#if droidPanels.droidSummary.stateMode}}
         <div class="config-item swse-metric-chip">
           <span class="label">State:</span>
-          <span class="value state-{{system.droidSystems.stateMode}}">{{system.droidSystems.stateMode}}</span>
+          <span class="value state-{{droidPanels.droidSummary.stateMode}}">{{droidPanels.droidSummary.stateMode}}</span>
         </div>
       {{/if}}
     </div>
