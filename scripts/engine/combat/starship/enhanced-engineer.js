@@ -1,5 +1,6 @@
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { VehicleRules } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle/VehicleRules.js";
 
 /**
  * EnhancedEngineer — Power allocation and repair action system.
@@ -63,7 +64,7 @@ export class EnhancedEngineer {
 
   static get enabled() {
     try {
-      return game.settings?.get('foundryvtt-swse', 'enableEnhancedEngineer') ?? false;
+      return VehicleRules.enhancedEngineerEnabled();
     } catch {
       return false;
     }

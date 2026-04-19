@@ -11,6 +11,8 @@
  * Does NOT modify stored values — only provides conversion utilities.
  */
 
+import { VehicleRules } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle/VehicleRules.js";
+
 export class ScaleEngine {
 
   static SCALES = Object.freeze({
@@ -27,7 +29,7 @@ export class ScaleEngine {
 
   static get enabled() {
     try {
-      return game.settings?.get('foundryvtt-swse', 'enableScaleEngine') ?? false;
+      return VehicleRules.scaleEngineEnabled();
     } catch {
       return false;
     }

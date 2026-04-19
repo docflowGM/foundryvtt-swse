@@ -18,6 +18,7 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { VehicleRules } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle/VehicleRules.js";
 
 export class VehicleTurnController {
 
@@ -75,7 +76,7 @@ export class VehicleTurnController {
 
   static get enabled() {
     try {
-      return game.settings?.get('foundryvtt-swse', 'enableVehicleTurnController') ?? false;
+      return VehicleRules.vehicleTurnControllerEnabled();
     } catch {
       return false;
     }

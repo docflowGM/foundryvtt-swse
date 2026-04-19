@@ -17,6 +17,7 @@
 
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { VehicleRules } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle/VehicleRules.js";
 
 export class EnhancedPilot {
 
@@ -72,7 +73,7 @@ export class EnhancedPilot {
 
   static get enabled() {
     try {
-      return game.settings?.get('foundryvtt-swse', 'enableEnhancedPilot') ?? false;
+      return VehicleRules.enhancedPilotEnabled();
     } catch {
       return false;
     }

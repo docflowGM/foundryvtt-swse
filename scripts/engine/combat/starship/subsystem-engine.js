@@ -26,6 +26,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { VehicleRules } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle/VehicleRules.js";
 
 export class SubsystemEngine {
 
@@ -82,7 +83,7 @@ export class SubsystemEngine {
 
   static get enabled() {
     try {
-      return game.settings?.get('foundryvtt-swse', 'enableSWES') ?? false;
+      return VehicleRules.swesEnabled();
     } catch {
       return false;
     }
