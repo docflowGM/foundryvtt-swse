@@ -1,0 +1,400 @@
+<div class="stock-droid-conversion-dialog">
+  <div class="conversion-header">
+    <h2><i class="fas fa-robot"></i> Convert Stock Droid to Custom</h2>
+    <p class="subtitle">Review inferred values before customization</p>
+  </div>
+
+  <div class="conversion-content">
+    <!-- Source Information -->
+    <section class="conversion-section">
+      <h3><i class="fas fa-file-import"></i> Source</h3>
+      <div class="source-info">
+        <p><strong>Name:</strong> {{source.sourceName}}</p>
+        <p><strong>Import Mode:</strong> Stock Statblock</p>
+        <p class="source-note"><i class="fas fa-info-circle"></i> Converting from published values. Results may differ from original.</p>
+      </div>
+    </section>
+
+    <!-- Confidence & Warnings -->
+    {{#if conversionMeta.confidence}}
+    <section class="conversion-section confidence-section">
+      <h3><i class="fas fa-gauge-high"></i> Conversion Confidence</h3>
+      <div class="confidence-badge {{conversionMeta.confidence}}">
+        {{conversionMeta.confidence}}
+      </div>
+      <p class="confidence-note">{{#switch conversionMeta.confidence}}
+        {{#case 'high'}}Most values inferred from source with high confidence.{{/case}}
+        {{#case 'medium'}}Some values inferred; others using safe defaults.{{/case}}
+        {{#case 'low'}}Many values require user selection in builder.{{/case}}
+      {{/switch}}</p>
+    </section>
+    {{/if}}
+
+    <!-- Inferred Systems -->
+    <section class="conversion-section">
+      <h3><i class="fas fa-cogs"></i> Inferred Systems</h3>
+
+      <div class="system-card">
+        <div class="system-label">Degree</div>
+        <div class="system-value">{{inferredSeed.degree}}</div>
+        <div class="system-confidence">{{#if assumptions}}
+          {{#each assumptions}}
+            {{#if this~}}
+              <small>✓ {{this}}</small>
+            {{/if~}}
+          {{/each}}
+        {{else}}<small>Default value</small>{{/if}}</div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-label">Size</div>
+        <div class="system-value">{{inferredSeed.size}}</div>
+        <div class="system-confidence"><small>{{#if (eq inferredSeed.size 'Medium')}}Default{{else}}Inferred from source{{/if}}</small></div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-label">Locomotion</div>
+        <div class="system-value">{{#if inferredSeed.locomotion.name}}{{inferredSeed.locomotion.name}}{{else}}<em>(Requires selection)</em>{{/if}}</div>
+        <div class="system-confidence">
+          <small>{{inferredSeed.locomotion.reason}}</small>
+          {{#if inferredSeed.locomotion.confidence}}<small class="confidence-tag {{inferredSeed.locomotion.confidence}}">{{inferredSeed.locomotion.confidence}}</small>{{/if}}
+        </div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-label">Processor</div>
+        <div class="system-value"><em>(Requires selection)</em></div>
+        <div class="system-confidence"><small>Cannot infer from statblock</small></div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-label">Armor</div>
+        <div class="system-value"><em>(Requires selection)</em></div>
+        <div class="system-confidence"><small>{{#each unresolved.blockers}}{{#if (includes this 'armor' 'Armor')}}{{this}}{{/if}}{{/each}}</small></div>
+      </div>
+    </section>
+
+    <!-- Unresolved Fields -->
+    {{#if unresolved.blockers}}
+    <section class="conversion-section blockers-section">
+      <h3><i class="fas fa-exclamation-triangle"></i> Requires User Selection</h3>
+      <ul class="blocker-list">
+        {{#each unresolved.blockers}}
+        <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </section>
+    {{/if}}
+
+    <!-- Warnings -->
+    {{#if conversionMeta.warnings}}
+    <section class="conversion-section warnings-section">
+      <h3><i class="fas fa-warning"></i> Important Notes</h3>
+      <ul class="warning-list">
+        {{#each conversionMeta.warnings}}
+        <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </section>
+    {{/if}}
+
+    <!-- Key Insight -->
+    <section class="conversion-section insight-section">
+      <h3><i class="fas fa-lightbulb"></i> What Happens Next</h3>
+      <ol class="insight-steps">
+        <li><strong>Open Builder:</strong> You'll customize the remaining systems (processor, armor, appendages, sensors)</li>
+        <li><strong>Builder Calculates:</strong> Defenses, abilities, and costs are derived from your selections</li>
+        <li><strong>Finalize:</strong> When you save, your custom droid is created with full builder authority</li>
+      </ol>
+    </section>
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="conversion-footer">
+    <button class="btn btn-secondary" data-action="cancel">
+      <i class="fas fa-times"></i> Cancel
+    </button>
+    <button class="btn btn-primary" data-action="proceed">
+      <i class="fas fa-arrow-right"></i> Proceed to Builder
+    </button>
+  </div>
+</div>
+
+<style>
+.stock-droid-conversion-dialog {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  color: #e0e0e0;
+  font-family: var(--font-primary, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+}
+
+.conversion-header {
+  text-align: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #3a3f4a;
+}
+
+.conversion-header h2 {
+  margin: 0 0 0.5rem 0;
+  color: #fff;
+  font-size: 1.3rem;
+}
+
+.conversion-header .subtitle {
+  margin: 0;
+  color: #a0a0a0;
+  font-size: 0.9rem;
+}
+
+.conversion-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.conversion-section {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #3a3f4a;
+  border-radius: 0.4rem;
+  background: #15192a;
+}
+
+.conversion-section h3 {
+  margin: 0 0 1rem 0;
+  color: #ffc107;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.source-info p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.source-note {
+  color: #a0a0a0;
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+}
+
+.confidence-section {
+  border-color: #ffc107;
+  background: rgba(255, 193, 7, 0.05);
+}
+
+.confidence-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 0.3rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.confidence-badge.high {
+  background: #2d5f2e;
+  color: #90ee90;
+}
+
+.confidence-badge.medium {
+  background: #5f5f2d;
+  color: #ffeb3b;
+}
+
+.confidence-badge.low {
+  background: #5f2d2d;
+  color: #ff9999;
+}
+
+.confidence-note {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.85rem;
+  color: #a0a0a0;
+}
+
+.system-card {
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #3a3f4a;
+  border-radius: 0.3rem;
+  background: #0a0e27;
+}
+
+.system-label {
+  font-weight: bold;
+  color: #ffc107;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.system-value {
+  color: #fff;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.system-value em {
+  color: #a0a0a0;
+  font-style: italic;
+}
+
+.system-confidence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.system-confidence small {
+  color: #808090;
+  font-size: 0.8rem;
+}
+
+.confidence-tag {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.2rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.confidence-tag.high {
+  background: rgba(45, 95, 46, 0.5);
+  color: #90ee90;
+}
+
+.confidence-tag.medium {
+  background: rgba(95, 95, 45, 0.5);
+  color: #ffeb3b;
+}
+
+.confidence-tag.low,
+.confidence-tag.none {
+  background: rgba(95, 45, 45, 0.5);
+  color: #ff9999;
+}
+
+.blockers-section {
+  border-color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.blocker-list {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.blocker-list li {
+  margin: 0.5rem 0;
+  color: #ff9999;
+  font-size: 0.9rem;
+}
+
+.warnings-section {
+  border-color: #ffb74d;
+  background: rgba(255, 183, 77, 0.05);
+}
+
+.warning-list {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.warning-list li {
+  margin: 0.5rem 0;
+  color: #ffc77d;
+  font-size: 0.9rem;
+}
+
+.insight-section {
+  border-color: #4a90e2;
+  background: rgba(74, 144, 226, 0.05);
+}
+
+.insight-section h3 {
+  color: #4a90e2;
+}
+
+.insight-steps {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.insight-steps li {
+  margin: 0.75rem 0;
+  color: #a0a0a0;
+  font-size: 0.9rem;
+}
+
+.insight-steps strong {
+  color: #fff;
+}
+
+.conversion-footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #3a3f4a;
+  background: #0a0e27;
+}
+
+.btn {
+  padding: 0.7rem 1.5rem;
+  border: 1px solid #3a3f4a;
+  border-radius: 0.3rem;
+  background: #15192a;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.btn:hover {
+  background: #1a1f33;
+  border-color: #5a5f6a;
+}
+
+.btn-secondary {
+  background: #15192a;
+  border-color: #3a3f4a;
+}
+
+.btn-secondary:hover {
+  background: #1a1f33;
+  border-color: #5a5f6a;
+}
+
+.btn-primary {
+  background: #4a90e2;
+  color: #fff;
+  border-color: #3a7bb8;
+}
+
+.btn-primary:hover {
+  background: #357abd;
+  border-color: #2a5fa0;
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
+}
+
+@media (max-width: 768px) {
+  .conversion-footer {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+</style>

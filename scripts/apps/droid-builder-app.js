@@ -18,9 +18,10 @@ export class DroidBuilderApp extends SWSEApplication {
     this.actor = actor;
 
     // Phase 3b: Builder mode and state management
-    this.mode = options.mode || 'NEW'; // 'NEW', 'EDIT', 'TEMPLATE'
-    this.sourceActor = options.sourceActor || null; // For EDIT/TEMPLATE modes
+    this.mode = options.mode || 'NEW'; // 'NEW', 'EDIT', 'TEMPLATE', 'CONVERT_FROM_STATBLOCK'
+    this.sourceActor = options.sourceActor || null; // For EDIT/TEMPLATE/CONVERT_FROM_STATBLOCK modes
     this.templateId = options.templateId || null; // For TEMPLATE mode
+    this.conversionSeed = options.conversionSeed || null; // For CONVERT_FROM_STATBLOCK mode
     this.requireApproval = options.requireApproval ?? false; // GM approval gate
 
     // UI state: in-memory copy of droid systems for validation
@@ -42,11 +43,35 @@ export class DroidBuilderApp extends SWSEApplication {
   /**
    * Synchronous initialization for constructor
    * TEMPLATE mode async loading happens in _prepareContext
+   * CONVERT_FROM_STATBLOCK mode seeding happens here
    */
   _getInitialDroidSystems() {
     // EDIT mode: load from existing actor
     if (this.mode === 'EDIT' && this.sourceActor?.system?.droidSystems) {
       return foundry.utils.deepClone(this.sourceActor.system.droidSystems);
+    }
+
+    // CONVERT_FROM_STATBLOCK mode: seed from converter output
+    if (this.mode === 'CONVERT_FROM_STATBLOCK' && this.conversionSeed?.inferredSeed) {
+      const seed = this.conversionSeed.inferredSeed;
+      return {
+        degree: seed.degree || '',
+        size: seed.size || 'Medium',
+        locomotion: seed.locomotion?.id ? {
+          id: seed.locomotion.id,
+          name: seed.locomotion.name,
+          cost: 0,  // Will be looked up from SYSTEM_CATALOG
+          speed: 0
+        } : { id: '', name: '', cost: 0, speed: 0 },
+        processor: { id: '', name: '', cost: 0, bonus: 0 },  // Always unresolved
+        armor: { id: '', name: '', cost: 0, bonus: 0 },  // Always unresolved
+        appendages: seed.appendages || [],
+        sensors: seed.sensors || [],
+        weapons: [],
+        accessories: [],
+        credits: { total: 2000, spent: 0, remaining: 2000 },
+        stateMode: 'DRAFT'
+      };
     }
 
     // NEW and TEMPLATE: start with blank config (TEMPLATE loads in _prepareContext)
@@ -112,7 +137,8 @@ export class DroidBuilderApp extends SWSEApplication {
     const modeLabel = {
       'NEW': 'New Droid',
       'EDIT': 'Edit Droid',
-      'TEMPLATE': 'Clone Droid'
+      'TEMPLATE': 'Clone Droid',
+      'CONVERT_FROM_STATBLOCK': 'Convert to Custom'
     };
     const label = modeLabel[this.mode] || 'Droid Builder';
     return `${label} (Seraphim)${this.requireApproval ? ' [Approval Required]' : ''}`;
@@ -660,18 +686,34 @@ export class DroidBuilderApp extends SWSEApplication {
       const buildHistory = this.droidSystems.buildHistory || [];
       buildHistory.push({
         timestamp: new Date().toISOString(),
-        action: this.mode === 'EDIT' ? 'modified' : 'created',
+        action: this.mode === 'EDIT' ? 'modified' : this.mode === 'CONVERT_FROM_STATBLOCK' ? 'converted' : 'created',
         mode: this.mode,
-        before: this.mode === 'EDIT' ? this.sourceActor?.system?.droidSystems : null,
+        before: (this.mode === 'EDIT' || this.mode === 'CONVERT_FROM_STATBLOCK') ? this.sourceActor?.system?.droidSystems : null,
         after: foundry.utils.deepClone(this.droidSystems),
         costDelta: costDelta || 0
       });
 
       this.droidSystems.buildHistory = buildHistory;
 
-      await ActorEngine.updateActor(this.actor, {
+      // Prepare update object
+      const updateData = {
         'system.droidSystems': this.droidSystems
-      });
+      };
+
+      // For CONVERT_FROM_STATBLOCK: Update conversion provenance flags
+      if (this.mode === 'CONVERT_FROM_STATBLOCK' && this.conversionSeed) {
+        updateData['flags.swse.stockDroidConversion'] = {
+          sourceId: this.conversionSeed.source?.sourceId,
+          sourceName: this.conversionSeed.source?.sourceName,
+          conversionMode: 'statblock-to-custom',
+          conversionTimestamp: Date.now(),
+          assumptions: this.conversionSeed.conversionMeta?.assumptions || [],
+          warnings: this.conversionSeed.conversionMeta?.warnings || [],
+          originalStatblockTotals: this.conversionSeed.conversionMeta?.publishedTotals || {}
+        };
+      }
+
+      await ActorEngine.updateActor(this.actor, updateData);
 
       ui.notifications.info(`Droid configuration saved to ${this.actor.name}!`);
       this.close();

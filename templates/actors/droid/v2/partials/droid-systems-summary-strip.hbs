@@ -17,9 +17,15 @@
   <div class="section-bar">
     <h3 class="section-header">Droid Systems</h3>
     {{#if editable}}
-      <button type="button" class="edit-droid-systems holo-btn small" aria-label="Edit droid configuration">
-        <i class="fa-solid fa-edit"></i> Edit
-      </button>
+      {{#if (lookup actor.flags.swse "stockDroidImport")}}
+        <button type="button" class="convert-to-custom-droid holo-btn small" aria-label="Convert stock droid to custom system-native droid">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Convert to Custom
+        </button>
+      {{else}}
+        <button type="button" class="edit-droid-systems holo-btn small" aria-label="Edit droid configuration">
+          <i class="fa-solid fa-edit"></i> Edit
+        </button>
+      {{/if}}
     {{/if}}
   </div>
 

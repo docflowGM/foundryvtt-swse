@@ -15,6 +15,7 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
+import { StockDroidConversionDialog } from "/systems/foundryvtt-swse/scripts/apps/stock-droid-conversion-dialog.js";
 import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
@@ -43,6 +44,7 @@ export function wireDroidSheetListeners(sheet, root, signal) {
   wireWeaponRolling(sheet, root, signal);
   wireActionUse(sheet, root, signal);
   wireDroidSystemsEditor(sheet, root, signal);
+  wireConvertStockDroid(sheet, root, signal);
   wireProgressionButtons(sheet, root, signal);
   wireAbilityCardHandlers(sheet, root, signal);
   wireDragAndDrop(sheet, root, signal);
@@ -301,6 +303,53 @@ function wireDroidSystemsEditor(sheet, root, signal) {
     } catch (err) {
       console.error("Failed to open droid builder:", err);
       ui.notifications.error("Failed to open droid builder.");
+    }
+  }, { signal });
+}
+
+function wireConvertStockDroid(sheet, root, signal) {
+  const convertBtn = root.querySelector(".convert-to-custom-droid");
+  if (!convertBtn) return;
+
+  // Only show for stock droid imports (not custom droids)
+  const isStockDroid = !!sheet.actor?.flags?.swse?.stockDroidImport;
+  if (!isStockDroid) {
+    convertBtn.style.display = "none";
+    return;
+  }
+
+  convertBtn.addEventListener("click", async (ev) => {
+    ev.preventDefault();
+    try {
+      // Import the converter and stock droid normalizer
+      const { StockDroidConverter } = await import("/systems/foundryvtt-swse/scripts/domain/droids/stock-droid-converter.js");
+      const { StockDroidNormalizer } = await import("/systems/foundryvtt-swse/scripts/domain/droids/stock-droid-normalizer.js");
+
+      // Extract the normalized stock droid from saved flags
+      const stockFlags = sheet.actor.flags.swse.stockDroidImport;
+      const publishedTotals = stockFlags.publishedTotals || {};
+
+      // Reconstruct a minimal normalized object from saved data
+      const normalized = {
+        source: {
+          compendiumId: stockFlags.sourceId,
+          name: stockFlags.sourceName
+        },
+        identity: {
+          degree: sheet.actor.system.droidDegree || '',
+          size: sheet.actor.system.size || 'Medium'
+        },
+        publishedTotals
+      };
+
+      // Generate converter seed
+      const converterOutput = StockDroidConverter.convertStockDroidToBuilderSeed(normalized);
+
+      // Open conversion dialog
+      await StockDroidConversionDialog.openConversionFlow(converterOutput, sheet.actor);
+    } catch (err) {
+      console.error("Failed to open conversion dialog:", err);
+      ui.notifications.error("Failed to open conversion dialog.");
     }
   }, { signal });
 }
