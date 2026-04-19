@@ -1,9 +1,11 @@
 /**
  * Training-Based Skill Advancement House Rule
  * Handles skill improvement through training points
+ * PHASE 3C: Skill training rules routed through SkillRules adapter
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -20,7 +22,7 @@ export class SkillTrainingMechanics {
    * @param {Actor} actor - The actor being created
    */
   static initializeActorTraining(actor) {
-    if (!game.settings.get(NS, 'skillTrainingEnabled')) {return;}
+    if (!SkillRules.skillTrainingEnabled()) {return;}
 
     if (!actor.getFlag(NS, 'trainingPoints')) {
       actor.setFlag(NS, 'trainingPoints', 0);
@@ -37,7 +39,7 @@ export class SkillTrainingMechanics {
    * @returns {number} - Available training points
    */
   static getTrainingPoints(actor) {
-    if (!game.settings.get(NS, 'skillTrainingEnabled') || !actor) {return 0;}
+    if (!SkillRules.skillTrainingEnabled() || !actor) {return 0;}
     return actor.getFlag(NS, 'trainingPoints') || 0;
   }
 
@@ -48,7 +50,7 @@ export class SkillTrainingMechanics {
    * @returns {number} - Training points spent
    */
   static getSkillTraining(actor, skillName) {
-    if (!game.settings.get(NS, 'skillTrainingEnabled') || !actor) {return 0;}
+    if (!SkillRules.skillTrainingEnabled() || !actor) {return 0;}
 
     const training = actor.getFlag(NS, 'skillTraining') || {};
     return training[skillName] || 0;
@@ -60,7 +62,7 @@ export class SkillTrainingMechanics {
    * @returns {number} - Points gained this level
    */
   static calculateLevelTraining(actor) {
-    const pointsType = game.settings.get(NS, 'trainingPointsPerLevel');
+    const pointsType = SkillRules.getTrainingPointsPerLevel();
 
     switch (pointsType) {
       case 'two':
@@ -83,7 +85,7 @@ export class SkillTrainingMechanics {
    * @returns {Promise<boolean>} - Success status
    */
   static async addTrainingPoints(actor, points) {
-    if (!game.settings.get(NS, 'skillTrainingEnabled') || !actor || points <= 0) {
+    if (!SkillRules.skillTrainingEnabled() || !actor || points <= 0) {
       return false;
     }
 
@@ -105,7 +107,7 @@ export class SkillTrainingMechanics {
    * @returns {Promise<Object>} - Result object
    */
   static async spendTrainingPoints(actor, skillName, points) {
-    if (!game.settings.get(NS, 'skillTrainingEnabled') || !actor || points <= 0) {
+    if (!SkillRules.skillTrainingEnabled() || !actor || points <= 0) {
       return { success: false, message: 'Invalid training parameters' };
     }
 
@@ -115,7 +117,7 @@ export class SkillTrainingMechanics {
     }
 
     // Check caps
-    const cap = game.settings.get(NS, 'skillTrainingCap');
+    const cap = SkillRules.getSkillTrainingCap();
     const currentTraining = this.getSkillTraining(actor, skillName);
     const level = actor.system?.details?.level || 1;
 
@@ -159,10 +161,10 @@ export class SkillTrainingMechanics {
    * @returns {number} - Bonus from training points
    */
   static getTrainingBonus(actor, skillName) {
-    if (!game.settings.get(NS, 'skillTrainingEnabled') || !actor) {return 0;}
+    if (!SkillRules.skillTrainingEnabled() || !actor) {return 0;}
 
     const spent = this.getSkillTraining(actor, skillName);
-    const scale = game.settings.get(NS, 'trainingCostScale');
+    const scale = SkillRules.getTrainingCostScale();
 
     switch (scale) {
       case 'linear':
@@ -183,7 +185,7 @@ export class SkillTrainingMechanics {
    * @private
    */
   static validateTrainingData(actor, data) {
-    if (!game.settings.get(NS, 'skillTrainingEnabled')) {return;}
+    if (!SkillRules.skillTrainingEnabled()) {return;}
 
     // Ensure training flags exist
     const flags = data.flags || {};

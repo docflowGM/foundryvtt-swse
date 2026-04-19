@@ -21,6 +21,7 @@ import { HealingMechanics } from "/systems/foundryvtt-swse/scripts/houserules/ho
 import { HealingSkillIntegration } from "/systems/foundryvtt-swse/scripts/houserules/houserule-healing-skill-integration.js";
 import { ActorSheetEnhancements } from "/systems/foundryvtt-swse/scripts/houserules/houserule-actor-enhancements.js";
 import { BlockMechanicalAlternative, setupBlockMechanicalHooks } from "/systems/foundryvtt-swse/scripts/houserules/houserule-block-mechanic.js";
+import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 
 /**
  * HouseruleMechanics
@@ -275,7 +276,7 @@ export class HouseruleMechanics {
       try {
         if (skillId !== 'feint') {return;}
 
-        const setting = game.settings.get('foundryvtt-swse', 'feintSkill');
+        const setting = SkillRules.getFeintSkill();
         if (setting === 'persuasion') {context.useSkill = 'persuasion';}
       } catch (err) {
         SWSELogger.error('Feint skill override failed', err);
@@ -285,10 +286,7 @@ export class HouseruleMechanics {
 
   static getSkillFocusBonus(actor, skill) {
     try {
-      const variant = game.settings.get(
-        'foundryvtt-swse',
-        'skillFocusVariant'
-      );
+      const variant = SkillRules.getSkillFocusVariant();
       const level = actor.system.level || 1;
 
       switch (variant) {
@@ -296,10 +294,7 @@ export class HouseruleMechanics {
           return Math.min(5, Math.trunc(level / 2));
 
         case 'delayed': {
-          const activation = game.settings.get(
-            'foundryvtt-swse',
-            'skillFocusActivationLevel'
-          );
+          const activation = SkillRules.getSkillFocusActivationLevel();
           return level >= activation ? 5 : 0;
         }
 
