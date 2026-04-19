@@ -9,6 +9,7 @@ import { HealingSkillIntegration } from "/systems/foundryvtt-swse/scripts/houser
 import { ConditionTrackMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-condition-track.js";
 import { HealingRules } from "/systems/foundryvtt-swse/scripts/houserules/adapters/HealingRules.js";
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -172,7 +173,7 @@ export class ActorSheetEnhancements {
    * @private
    */
   static _addConditionTrackDisplay(root, actor) {
-    if (!game.settings.get(NS, 'conditionTrackEnabled')) return;
+    if (!ConditionTrackRules.conditionTrackEnabled()) return;
 
     // Prevent duplicate injection
     if (root.querySelector(".swse-condition-track-display")) return;
@@ -181,7 +182,7 @@ export class ActorSheetEnhancements {
     if (!bioTab) return;
 
     const trackLevel = ConditionTrackMechanics.getConditionTrackLevel(actor);
-    const variant = game.settings.get(NS, 'conditionTrackVariant');
+    const variant = ConditionTrackRules.getConditionTrackVariant();
     const description = ConditionTrackMechanics.getTrackLevelDescription(trackLevel, variant);
     const penalties = ConditionTrackMechanics.getTrackPenalties(actor);
 

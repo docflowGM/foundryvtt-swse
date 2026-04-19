@@ -23,6 +23,7 @@ import { ActorSheetEnhancements } from "/systems/foundryvtt-swse/scripts/houseru
 import { BlockMechanicalAlternative, setupBlockMechanicalHooks } from "/systems/foundryvtt-swse/scripts/houserules/houserule-block-mechanic.js";
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 
 /**
  * HouseruleMechanics
@@ -88,7 +89,7 @@ export class HouseruleMechanics {
   static _setupConditionTrackLimits() {
     Hooks.on('preUpdateActor', (actor, update, options, userId) => {
       try {
-        const cap = game.settings.get('foundryvtt-swse', 'conditionTrackCap');
+        const cap = ConditionTrackRules.getConditionTrackCap();
         if (!cap || !update?.system?.conditionTrack?.current) {return;}
 
         const current = actor.system.conditionTrack?.current ?? 0;
