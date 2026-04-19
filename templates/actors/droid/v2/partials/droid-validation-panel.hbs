@@ -1,0 +1,39 @@
+{{!--
+  Droid Validation Panel
+
+  Minimal status/readiness shell showing current configuration state.
+
+  Data consumed:
+    droidPanels.droidSummary.stateMode
+
+  Current depth: MINIMAL. Only shows current state mode as readiness indicator.
+  This panel is intentionally thin pending Pass 3 enrichment with:
+  - validation logic
+  - issue detection
+  - missing-subsystem checks
+  - budget warnings
+  - GM approval tracking
+
+  For now, it surfaces existing state only.
+--}}
+<section class="swse-panel holo-panel swse-ui-panel">
+  <header class="section-bar">
+    <h3 class="section-header">Configuration Status</h3>
+  </header>
+
+  {{#if droidPanels.droidSummary.stateMode}}
+    <div class="validation-content">
+      <div class="config-item swse-metric-chip">
+        <span class="label">State:</span>
+        <span class="value state-{{droidPanels.droidSummary.stateMode}}">{{droidPanels.droidSummary.stateMode}}</span>
+      </div>
+      <div class="validation-note muted" style="font-size: 0.85em; margin-top: 12px;">
+        <small>Detailed validation and readiness checks coming in a future update.</small>
+      </div>
+    </div>
+  {{else}}
+    <div class="empty-state">
+      <p><em>No configuration state.</em></p>
+    </div>
+  {{/if}}
+</section>

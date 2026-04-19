@@ -1,0 +1,46 @@
+{{!--
+  Droid Locomotion Panel
+
+  Shows the droid's movement system:
+  - type/name
+  - speed
+  - any notes
+
+  Data consumed:
+    droidPanels.locomotion (name, type, speed, notes)
+
+  Current depth: shallow (type, speed, notes only). Pass 3 will add features/restrictions.
+--}}
+<section class="swse-panel holo-panel swse-ui-panel">
+  <header class="section-bar">
+    <h3 class="section-header">Locomotion</h3>
+  </header>
+
+  {{#if droidPanels.locomotion.name}}
+    <div class="locomotion-content">
+      <div class="locomotion-main">
+        <div class="config-item swse-metric-chip">
+          <span class="label">Type:</span>
+          <span class="value">{{droidPanels.locomotion.name}}</span>
+        </div>
+
+        {{#if droidPanels.locomotion.speed}}
+          <div class="config-item swse-metric-chip">
+            <span class="label">Speed:</span>
+            <span class="value">{{droidPanels.locomotion.speed}}</span>
+          </div>
+        {{/if}}
+
+        {{#if droidPanels.locomotion.notes}}
+          <div class="locomotion-notes muted">
+            <small>{{droidPanels.locomotion.notes}}</small>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+  {{else}}
+    <div class="empty-state">
+      <p><em>No locomotion system configured.</em></p>
+    </div>
+  {{/if}}
+</section>

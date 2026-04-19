@@ -1,0 +1,66 @@
+{{!--
+  Droid Systems Summary Strip
+
+  Compact top-level readout showing:
+  - degree, size
+  - current state
+  - credit budget summary
+  - edit affordance
+
+  Data consumed:
+    droidPanels.droidSummary (degree, size, stateMode, creditsSpent, creditsTotal)
+    editable (permission flag)
+
+  This is the entry-level summary. Subsystem detail panels follow below.
+--}}
+<div class="holo-panel swse-ui-panel swse-droid-system-suite">
+  <div class="section-bar">
+    <h3 class="section-header">Droid Systems</h3>
+    {{#if editable}}
+      <button type="button" class="edit-droid-systems holo-btn small" aria-label="Edit droid configuration">
+        <i class="fa-solid fa-edit"></i> Edit
+      </button>
+    {{/if}}
+  </div>
+
+  {{#if droidPanels.droidSummary.degree}}
+    <div class="droid-config-summary swse-store-section">
+      {{#if droidPanels.droidSummary.degree}}
+        <div class="config-item swse-metric-chip">
+          <span class="label">Degree:</span>
+          <span class="value">{{droidPanels.droidSummary.degree}}</span>
+        </div>
+      {{/if}}
+
+      {{#if droidPanels.droidSummary.size}}
+        <div class="config-item swse-metric-chip">
+          <span class="label">Size:</span>
+          <span class="value">{{droidPanels.droidSummary.size}}</span>
+        </div>
+      {{/if}}
+
+      {{#if droidPanels.droidSummary.creditsTotal}}
+        <div class="config-item swse-metric-chip">
+          <span class="label">Cost:</span>
+          <span class="value">{{droidPanels.droidSummary.creditsSpent}} / {{droidPanels.droidSummary.creditsTotal}} credits</span>
+        </div>
+      {{/if}}
+
+      {{#if droidPanels.droidSummary.stateMode}}
+        <div class="config-item swse-metric-chip">
+          <span class="label">State:</span>
+          <span class="value state-{{droidPanels.droidSummary.stateMode}}">{{droidPanels.droidSummary.stateMode}}</span>
+        </div>
+      {{/if}}
+    </div>
+  {{else}}
+    <div class="empty-state">
+      <p><em>No droid configuration yet.</em></p>
+      {{#if editable}}
+        <button type="button" class="edit-droid-systems holo-btn" aria-label="Create droid configuration">
+          <i class="fa-solid fa-robot"></i> Create Configuration
+        </button>
+      {{/if}}
+    </div>
+  {{/if}}
+</div>

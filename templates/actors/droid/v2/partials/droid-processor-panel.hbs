@@ -1,0 +1,31 @@
+{{!--
+  Droid Processor Panel
+
+  Shows the droid's processing core.
+
+  Data consumed:
+    droidPanels.configurationMetrics.processorName
+
+  Current depth: SHALLOW. Only shows processor name.
+  Pass 3 will add: heuristic/autonomy flags, skill implications, behavioral effects.
+
+  This panel intentionally remains thin until the builder shapes richer processor data.
+--}}
+<section class="swse-panel holo-panel swse-ui-panel">
+  <header class="section-bar">
+    <h3 class="section-header">Processor</h3>
+  </header>
+
+  {{#if droidPanels.configurationMetrics.processorName}}
+    <div class="processor-content">
+      <div class="config-item swse-metric-chip">
+        <span class="label">Type:</span>
+        <span class="value">{{droidPanels.configurationMetrics.processorName}}</span>
+      </div>
+    </div>
+  {{else}}
+    <div class="empty-state">
+      <p><em>No processor configured.</em></p>
+    </div>
+  {{/if}}
+</section>

@@ -68,8 +68,17 @@ export const SWSE_TEMPLATES = [
   // ==============================
   // Droid v2 Partials
   // ==============================
+  // Legacy monolithic panels (used by NPC sheet, kept for backward compatibility)
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs',
+  // Phase 2: New subsystem partials for droid sheet systems tab
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-validation-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history-panel.hbs',
+  // Other droid partials
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/initiative-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/equipment-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/armor-panel.hbs',
