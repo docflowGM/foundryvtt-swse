@@ -14,6 +14,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
 
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 export class BlockMechanicalAlternative {
@@ -22,7 +23,7 @@ export class BlockMechanicalAlternative {
    */
   static initialize() {
     try {
-      if (!game.settings.get('foundryvtt-swse', 'blockMechanicalAlternative')) {
+      if (!ForceRules.blockMechanicalAlternative()) {
         return;
       }
 
@@ -152,7 +153,7 @@ export class BlockMechanicalAlternative {
 export function setupBlockMechanicalHooks() {
   Hooks.on('combatTurn', (combat, updateData, options) => {
     try {
-      const enabled = game.settings.get('foundryvtt-swse', 'blockMechanicalAlternative');
+      const enabled = ForceRules.blockMechanicalAlternative();
       if (!enabled) {return;}
 
       // Reset block attempts for all combatants at the start of their turn

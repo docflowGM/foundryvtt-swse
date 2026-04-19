@@ -3,7 +3,7 @@
  * Handles Force ability attribute selection, Dark Side score, and Force point management.
  * Single source of truth for all Force-related calculations.
  */
-import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class ForceTrainingEngine {
@@ -12,7 +12,7 @@ export class ForceTrainingEngine {
    * @returns {string} 'wisdom' or 'charisma'
    */
   static getTrainingAttribute() {
-    return SettingsHelper.getString('forceTrainingAttribute', 'wisdom');
+    return ForceRules.getTrainingAttribute();
   }
 
   /**
@@ -37,7 +37,7 @@ export class ForceTrainingEngine {
    * @returns {boolean} True if restriction is enabled
    */
   static isForceSensitiveJediOnly() {
-    return SettingsHelper.getBoolean('forceSensitiveJediOnly', false);
+    return ForceRules.isForceSensitiveJediOnly();
   }
 
   /**
@@ -49,7 +49,7 @@ export class ForceTrainingEngine {
    */
   static getMaxDarkSideScore(actor) {
     const wisdomMod = actor.system.attributes.wis?.mod || 0;
-    const multiplier = SettingsHelper.getNumber('darkSideMaxMultiplier', 1);
+    const multiplier = ForceRules.getDarkSideMaxMultiplier();
     return Math.max(0, wisdomMod * multiplier);
   }
 
@@ -58,7 +58,7 @@ export class ForceTrainingEngine {
    * @returns {boolean} True if auto-increase is enabled
    */
   static shouldAutoIncreaseDarkSideScore() {
-    return SettingsHelper.getBoolean('darkSidePowerIncreaseScore', true);
+    return ForceRules.darkSidePowerIncreaseScore();
   }
 
   /**
@@ -66,7 +66,7 @@ export class ForceTrainingEngine {
    * @returns {string} 'strict', 'lenient', or 'narrative'
    */
   static getDarkSideTemptationMode() {
-    return SettingsHelper.getString('darkSideTemptation', 'strict');
+    return ForceRules.getDarkSideTemptationMode();
   }
 
   /**
@@ -74,7 +74,7 @@ export class ForceTrainingEngine {
    * @returns {boolean} True if combined, false if separate
    */
   static hasBlockDeflectCombined() {
-    const setting = SettingsHelper.getString('blockDeflectTalents', 'separate');
+    const setting = ForceRules.getBlockDeflectTalents();
     return setting === 'combined';
   }
 
@@ -83,7 +83,7 @@ export class ForceTrainingEngine {
    * @returns {boolean} True if alternative block mechanic is enabled
    */
   static hasBlockMechanicalAlternative() {
-    return SettingsHelper.getBoolean('blockMechanicalAlternative', false);
+    return ForceRules.blockMechanicalAlternative();
   }
 
   /**
@@ -100,7 +100,7 @@ export class ForceTrainingEngine {
       );
     }
 
-    const blockDeflect = SettingsHelper.getString('blockDeflectTalents', 'separate');
+    const blockDeflect = ForceRules.getBlockDeflectTalents();
     if (!['separate', 'combined'].includes(blockDeflect)) {
       errors.push(
         `Invalid blockDeflectTalents: "${blockDeflect}". Must be "separate" or "combined"`
@@ -114,7 +114,7 @@ export class ForceTrainingEngine {
       );
     }
 
-    const maxDSS = SettingsHelper.getNumber('darkSideMaxMultiplier', 1);
+    const maxDSS = ForceRules.getDarkSideMaxMultiplier();
     if (maxDSS < 0) {
       errors.push(
         `Invalid darkSideMaxMultiplier: ${maxDSS}. Must be non-negative`
@@ -134,7 +134,7 @@ export class ForceTrainingEngine {
       blockDeflectCombined: ForceTrainingEngine.hasBlockDeflectCombined(),
       blockMechanicalAlternative: ForceTrainingEngine.hasBlockMechanicalAlternative(),
       forceSensitiveJediOnly: ForceTrainingEngine.isForceSensitiveJediOnly(),
-      darkSideMaxMultiplier: SettingsHelper.getNumber('darkSideMaxMultiplier', 1),
+      darkSideMaxMultiplier: ForceRules.getDarkSideMaxMultiplier(),
       darkSidePowerIncreaseScore: ForceTrainingEngine.shouldAutoIncreaseDarkSideScore(),
       darkSideTemptation: ForceTrainingEngine.getDarkSideTemptationMode()
     };
