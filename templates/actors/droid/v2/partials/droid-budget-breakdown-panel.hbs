@@ -1,0 +1,66 @@
+{{!--
+  Droid Budget Breakdown Panel
+
+  Shows where the droid configuration budget is being spent across subsystems.
+
+  Data consumed:
+    droidPanels.budgetBreakdown (totalSpent, totalBudget, remaining, isOverBudget, categories[], hasCategories)
+
+  Phase 4: Budget category analysis. Rolls up subsystem costs by category.
+--}}
+<section class="swse-panel holo-panel swse-ui-panel">
+  <header class="section-bar">
+    <h3 class="section-header">Budget Breakdown</h3>
+    <span class="section-meta muted" style="font-size: 0.85em;">{{droidPanels.budgetBreakdown.totalSpent}} / {{droidPanels.budgetBreakdown.totalBudget}} credits</span>
+  </header>
+
+  {{#if droidPanels.budgetBreakdown.hasCategories}}
+    <div class="budget-categories">
+      {{#each droidPanels.budgetBreakdown.categories as |category|}}
+        <div class="budget-category-row" data-category="{{category.key}}" style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+          <div class="category-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span class="category-label">
+              {{category.label}}
+              {{#if category.count}}
+                <span class="category-count muted" style="font-size: 0.85em; margin-left: 4px;">({{category.count}})</span>
+              {{/if}}
+              {{#if category.isLargest}}
+                <span class="largest-badge" style="font-size: 0.75em; background: rgba(200,150,50,0.3); padding: 2px 6px; border-radius: 2px; margin-left: 6px;">Largest</span>
+              {{/if}}
+            </span>
+            <span class="category-cost" style="font-weight: bold;">{{category.cost}} cr</span>
+          </div>
+          <div class="category-footer" style="display: flex; justify-content: space-between; font-size: 0.85em; color: rgba(255,255,255,0.6);">
+            <span class="category-percent">{{category.percent}}% of total</span>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+    <!-- Budget summary -->
+    <div class="budget-summary" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.2);">
+      <div class="summary-row" style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+        <span class="label">Total Budget:</span>
+        <span class="value">{{droidPanels.budgetBreakdown.totalBudget}} credits</span>
+      </div>
+      <div class="summary-row" style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+        <span class="label">Spent:</span>
+        <span class="value">{{droidPanels.budgetBreakdown.totalSpent}} credits</span>
+      </div>
+      <div class="summary-row" style="display: flex; justify-content: space-between; {{#if droidPanels.budgetBreakdown.isOverBudget}}color: #c83232;{{else}}color: rgba(100, 180, 100, 1);{{/if}}">
+        <span class="label">{{#if droidPanels.budgetBreakdown.isOverBudget}}Over Budget:{{else}}Remaining:{{/if}}</span>
+        <span class="value {{#if droidPanels.budgetBreakdown.isOverBudget}}over-budget{{else}}in-budget{{/if}}">
+          {{#if droidPanels.budgetBreakdown.isOverBudget}}
+            -{{droidPanels.budgetBreakdown.remaining}} (overage)
+          {{else}}
+            {{droidPanels.budgetBreakdown.remaining}} credits
+          {{/if}}
+        </span>
+      </div>
+    </div>
+  {{else}}
+    <div class="empty-state">
+      <p><em>{{droidPanels.budgetBreakdown.emptyMessage}}</em></p>
+    </div>
+  {{/if}}
+</section>

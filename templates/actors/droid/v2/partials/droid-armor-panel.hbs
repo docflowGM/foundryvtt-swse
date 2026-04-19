@@ -1,0 +1,45 @@
+{{!--
+  Droid Armor Panel
+
+  Shows the droid's protective covering with cost and defense contribution.
+
+  Data consumed:
+    droidPanels.armor (id, name, cost, bonus, description, hasArmor)
+
+  Phase 4: Armor detail enrichment. Shows protective system with defensive bonus.
+--}}
+<section class="swse-panel holo-panel swse-ui-panel">
+  <header class="section-bar">
+    <h3 class="section-header">Armor</h3>
+  </header>
+
+  {{#if droidPanels.armor.hasArmor}}
+    <div class="armor-content">
+      <div class="config-item swse-metric-chip">
+        <span class="label">Type:</span>
+        <span class="value">{{droidPanels.armor.name}}</span>
+      </div>
+      {{#if droidPanels.armor.cost}}
+        <div class="config-item swse-metric-chip">
+          <span class="label">Cost:</span>
+          <span class="value">{{droidPanels.armor.cost}} credits</span>
+        </div>
+      {{/if}}
+      {{#if droidPanels.armor.bonus}}
+        <div class="config-item swse-metric-chip">
+          <span class="label">Defense Bonus:</span>
+          <span class="value">+{{droidPanels.armor.bonus}}</span>
+        </div>
+      {{/if}}
+      {{#if droidPanels.armor.description}}
+        <div class="armor-description muted" style="margin-top: 8px; font-size: 0.9em;">
+          {{droidPanels.armor.description}}
+        </div>
+      {{/if}}
+    </div>
+  {{else}}
+    <div class="empty-state">
+      <p><em>{{droidPanels.armor.emptyMessage}}</em></p>
+    </div>
+  {{/if}}
+</section>

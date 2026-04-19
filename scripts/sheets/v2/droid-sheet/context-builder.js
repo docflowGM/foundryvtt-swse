@@ -173,10 +173,12 @@ export class DroidSheetContextBuilder {
       heuristicProcessors: this.buildHeuristicProcessorsPanel(),
       locomotion: this.buildLocomotionPanel(),
       processor: this.buildProcessorPanel(),
+      armor: this.buildArmorPanel(),
       appendages: this.buildAppendagesPanel(),
       sensors: this.buildSensorsPanel(),
       integratedWeapons: this.buildIntegratedWeaponsPanel(),
       integratedSystems: this.buildIntegratedSystemsPanel(),
+      budgetBreakdown: this.buildBudgetBreakdownPanel(),
       protocols: this.buildProtocolsPanel(),
       programming: this.buildProgrammingPanel(),
       customizations: this.buildCustomizationsPanel(),
@@ -261,6 +263,20 @@ export class DroidSheetContextBuilder {
       description: processor.description ?? "",
       hasProcessor: Boolean(processor.id),
       emptyMessage: "No processor configured"
+    };
+  }
+
+  buildArmorPanel() {
+    const droidSystems = this.system?.droidSystems ?? {};
+    const armor = droidSystems.armor ?? {};
+    return {
+      id: armor.id ?? "",
+      name: armor.name ?? "",
+      cost: Number(armor.cost ?? 0),
+      bonus: Number(armor.bonus ?? 0),
+      description: armor.description ?? "",
+      hasArmor: Boolean(armor.id),
+      emptyMessage: "No armor configured"
     };
   }
 
@@ -487,6 +503,135 @@ export class DroidSheetContextBuilder {
       // User-facing status summary
       statusLabel: isReady ? "Ready to Finalize" : (validation.valid ? "Over Budget" : "Incomplete Configuration"),
       allClearMessage: !hasIssues ? "Configuration is valid and within budget" : null
+    };
+  }
+
+  buildBudgetBreakdownPanel() {
+    const droidSystems = this.system?.droidSystems ?? {};
+    const creditsSpent = Number(droidSystems.credits?.spent ?? 0);
+    const creditsTotal = Number(droidSystems.credits?.total ?? 0);
+    const creditsRemaining = creditsTotal - creditsSpent;
+    const isOverBudget = creditsSpent > creditsTotal;
+
+    // Build category breakdown from subsystem contracts
+    const locomotionCost = Number(droidSystems.locomotion?.cost ?? 0);
+    const processorCost = Number(droidSystems.processor?.cost ?? 0);
+    const armorCost = Number(droidSystems.armor?.cost ?? 0);
+
+    const appendagesCost = Array.isArray(droidSystems.appendages)
+      ? droidSystems.appendages.reduce((sum, a) => sum + Number(a.cost ?? 0), 0)
+      : 0;
+    const appendagesCount = Array.isArray(droidSystems.appendages) ? droidSystems.appendages.length : 0;
+
+    const sensorsCost = Array.isArray(droidSystems.sensors)
+      ? droidSystems.sensors.reduce((sum, s) => sum + Number(s.cost ?? 0), 0)
+      : 0;
+    const sensorsCount = Array.isArray(droidSystems.sensors) ? droidSystems.sensors.length : 0;
+
+    const weaponsCost = Array.isArray(droidSystems.weapons)
+      ? droidSystems.weapons.reduce((sum, w) => sum + Number(w.cost ?? 0), 0)
+      : 0;
+    const weaponsCount = Array.isArray(droidSystems.weapons) ? droidSystems.weapons.length : 0;
+
+    const accessoriesCost = Array.isArray(droidSystems.accessories)
+      ? droidSystems.accessories.reduce((sum, a) => sum + Number(a.cost ?? 0), 0)
+      : 0;
+    const accessoriesCount = Array.isArray(droidSystems.accessories) ? droidSystems.accessories.length : 0;
+
+    // Build categories array, omitting zero-cost items to avoid clutter
+    const categories = [];
+
+    if (locomotionCost > 0) {
+      categories.push({
+        key: 'locomotion',
+        label: 'Locomotion',
+        cost: locomotionCost,
+        count: 1,
+        percent: Math.round((locomotionCost / creditsSpent) * 100) || 0
+      });
+    }
+
+    if (processorCost > 0) {
+      categories.push({
+        key: 'processor',
+        label: 'Processor',
+        cost: processorCost,
+        count: 1,
+        percent: Math.round((processorCost / creditsSpent) * 100) || 0
+      });
+    }
+
+    if (armorCost > 0) {
+      categories.push({
+        key: 'armor',
+        label: 'Armor',
+        cost: armorCost,
+        count: 1,
+        percent: Math.round((armorCost / creditsSpent) * 100) || 0
+      });
+    }
+
+    if (appendagesCost > 0) {
+      categories.push({
+        key: 'appendages',
+        label: 'Appendages',
+        cost: appendagesCost,
+        count: appendagesCount,
+        percent: Math.round((appendagesCost / creditsSpent) * 100) || 0
+      });
+    }
+
+    if (sensorsCost > 0) {
+      categories.push({
+        key: 'sensors',
+        label: 'Sensors',
+        cost: sensorsCost,
+        count: sensorsCount,
+        percent: Math.round((sensorsCost / creditsSpent) * 100) || 0
+      });
+    }
+
+    if (weaponsCost > 0) {
+      categories.push({
+        key: 'weapons',
+        label: 'Integrated Weapons',
+        cost: weaponsCost,
+        count: weaponsCount,
+        percent: Math.round((weaponsCost / creditsSpent) * 100) || 0
+      });
+    }
+
+    if (accessoriesCost > 0) {
+      categories.push({
+        key: 'accessories',
+        label: 'Accessories',
+        cost: accessoriesCost,
+        count: accessoriesCount,
+        percent: Math.round((accessoriesCost / creditsSpent) * 100) || 0
+      });
+    }
+
+    // Identify largest cost driver
+    let largestKey = null;
+    if (categories.length > 0) {
+      const largest = categories.reduce((max, cat) => cat.cost > max.cost ? cat : max);
+      largestKey = largest.key;
+    }
+
+    // Add isLargest flag to each category
+    categories.forEach(cat => {
+      cat.isLargest = cat.key === largestKey;
+    });
+
+    return {
+      totalSpent: creditsSpent,
+      totalBudget: creditsTotal,
+      remaining: creditsRemaining,
+      isOverBudget,
+      categories,
+      hasCategories: categories.length > 0,
+      largestDriver: largestKey,
+      emptyMessage: "No budget allocated yet"
     };
   }
 
