@@ -90,7 +90,7 @@ export class DroidTemplateChoiceDialog extends HandlebarsApplicationMixin(Applic
           });
         }
       },
-      droidActor: this.droidActor
+      actor: this.droidActor
     });
   }
 
