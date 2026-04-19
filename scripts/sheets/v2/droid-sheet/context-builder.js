@@ -172,6 +172,10 @@ export class DroidSheetContextBuilder {
       droidSummary: this.buildDroidSummaryPanel(),
       heuristicProcessors: this.buildHeuristicProcessorsPanel(),
       locomotion: this.buildLocomotionPanel(),
+      processor: this.buildProcessorPanel(),
+      appendages: this.buildAppendagesPanel(),
+      sensors: this.buildSensorsPanel(),
+      integratedWeapons: this.buildIntegratedWeaponsPanel(),
       integratedSystems: this.buildIntegratedSystemsPanel(),
       protocols: this.buildProtocolsPanel(),
       programming: this.buildProgrammingPanel(),
@@ -243,6 +247,79 @@ export class DroidSheetContextBuilder {
       notes: locomotion.notes ?? "",
       // Phase 1: Project name from droidSystems for backwards-compatible template migration
       name: droidSystems.locomotion?.name ?? ""
+    };
+  }
+
+  buildProcessorPanel() {
+    const droidSystems = this.system?.droidSystems ?? {};
+    const processor = droidSystems.processor ?? {};
+    return {
+      id: processor.id ?? "",
+      name: processor.name ?? "",
+      cost: Number(processor.cost ?? 0),
+      bonus: Number(processor.bonus ?? 0),
+      description: processor.description ?? "",
+      hasProcessor: Boolean(processor.id),
+      emptyMessage: "No processor configured"
+    };
+  }
+
+  buildAppendagesPanel() {
+    const droidSystems = this.system?.droidSystems ?? {};
+    const entries = Array.isArray(droidSystems.appendages)
+      ? droidSystems.appendages.map((item, idx) => ({
+          id: item.id ?? `appendage-${idx}`,
+          name: item.name ?? "",
+          cost: Number(item.cost ?? 0),
+          description: item.description ?? ""
+        }))
+      : [];
+    return {
+      entries,
+      hasEntries: entries.length > 0,
+      totalCount: entries.length,
+      totalCost: entries.reduce((sum, entry) => sum + entry.cost, 0),
+      emptyMessage: "No appendages configured"
+    };
+  }
+
+  buildSensorsPanel() {
+    const droidSystems = this.system?.droidSystems ?? {};
+    const entries = Array.isArray(droidSystems.sensors)
+      ? droidSystems.sensors.map((item, idx) => ({
+          id: item.id ?? `sensor-${idx}`,
+          name: item.name ?? "",
+          cost: Number(item.cost ?? 0),
+          range: item.range ?? "",
+          description: item.description ?? ""
+        }))
+      : [];
+    return {
+      entries,
+      hasEntries: entries.length > 0,
+      totalCount: entries.length,
+      totalCost: entries.reduce((sum, entry) => sum + entry.cost, 0),
+      emptyMessage: "No sensors configured"
+    };
+  }
+
+  buildIntegratedWeaponsPanel() {
+    const droidSystems = this.system?.droidSystems ?? {};
+    const entries = Array.isArray(droidSystems.weapons)
+      ? droidSystems.weapons.map((item, idx) => ({
+          id: item.id ?? `weapon-${idx}`,
+          name: item.name ?? "",
+          cost: Number(item.cost ?? 0),
+          type: item.type ?? "built-in",
+          description: item.description ?? ""
+        }))
+      : [];
+    return {
+      entries,
+      hasEntries: entries.length > 0,
+      totalCount: entries.length,
+      totalCost: entries.reduce((sum, entry) => sum + entry.cost, 0),
+      emptyMessage: "No integrated weapons configured"
     };
   }
 

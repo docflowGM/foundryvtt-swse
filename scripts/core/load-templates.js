@@ -78,6 +78,10 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-validation-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history-panel.hbs',
+  // Phase 3B: Subsystem detail enrichment partials
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-sensors-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-weapons-panel.hbs',
   // Other droid partials
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/initiative-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/equipment-panel.hbs',
