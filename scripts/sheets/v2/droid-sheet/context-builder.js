@@ -30,6 +30,7 @@
 
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { isXPEnabled } from "/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js";
+import { DroidValidationEngine } from "/systems/foundryvtt-swse/scripts/engine/droid-validation-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
@@ -176,12 +177,23 @@ export class DroidSheetContextBuilder {
       programming: this.buildProgrammingPanel(),
       customizations: this.buildCustomizationsPanel(),
       buildHistory: this.buildBuildHistoryPanel(),
-      configurationMetrics: this.buildConfigurationMetricsPanel()
+      configurationMetrics: this.buildConfigurationMetricsPanel(),
+      // Phase 3A: Real validation/readiness diagnostics
+      validation: this.buildValidationPanel()
     };
   }
 
   buildDroidSummaryPanel() {
     const droidSystems = this.system?.droidSystems ?? {};
+    const creditsSpent = Number(droidSystems.credits?.spent ?? 0);
+    const creditsTotal = Number(droidSystems.credits?.total ?? 0);
+    const creditsRemaining = creditsTotal - creditsSpent;
+    const isOverBudget = creditsSpent > creditsTotal;
+
+    // Readiness: check if droid has all required components
+    const validation = DroidValidationEngine.validateDroidConfiguration(droidSystems);
+    const isReady = validation.valid && !isOverBudget;
+
     return {
       droidType: this.system?.droidType ?? "",
       droidModel: this.system?.droidModel ?? "",
@@ -194,8 +206,14 @@ export class DroidSheetContextBuilder {
       degree: droidSystems.degree ?? "",
       size: droidSystems.size ?? "",
       stateMode: droidSystems.stateMode ?? "",
-      creditsSpent: Number(droidSystems.credits?.spent ?? 0),
-      creditsTotal: Number(droidSystems.credits?.total ?? 0)
+      creditsSpent,
+      creditsTotal,
+      // Phase 3A: Real budget diagnostics
+      creditsRemaining,
+      isOverBudget,
+      budgetStatus: isOverBudget ? "OVER_BUDGET" : (creditsSpent === 0 ? "EMPTY" : "IN_BUDGET"),
+      readinessStatus: isReady ? "READY" : (validation.valid ? "OVER_BUDGET" : "INCOMPLETE"),
+      isReady
     };
   }
 
@@ -335,6 +353,63 @@ export class DroidSheetContextBuilder {
       sensorsCount: Array.isArray(droidSystems.sensors) ? droidSystems.sensors.length : 0,
       weaponsCount: Array.isArray(droidSystems.weapons) ? droidSystems.weapons.length : 0,
       accessoriesCount: Array.isArray(droidSystems.accessories) ? droidSystems.accessories.length : 0
+    };
+  }
+
+  buildValidationPanel() {
+    const droidSystems = this.system?.droidSystems ?? {};
+    const creditsSpent = Number(droidSystems.credits?.spent ?? 0);
+    const creditsTotal = Number(droidSystems.credits?.total ?? 0);
+    const isOverBudget = creditsSpent > creditsTotal;
+
+    // Use DroidValidationEngine for configuration validation
+    const validation = DroidValidationEngine.validateDroidConfiguration(droidSystems);
+
+    // Build issues list
+    const issues = [];
+    if (!validation.valid) {
+      issues.push(...validation.errors.map((error, idx) => ({
+        id: `validation-${idx}`,
+        type: "missing",
+        severity: "error",
+        message: error
+      })));
+    }
+
+    // Add budget issue if over-budget
+    if (isOverBudget) {
+      const overage = creditsSpent - creditsTotal;
+      issues.push({
+        id: "budget-overage",
+        type: "over_budget",
+        severity: "error",
+        message: `Configuration exceeds budget by ${overage} credits`
+      });
+    }
+
+    // Determine overall readiness
+    const hasIssues = issues.length > 0;
+    const isReady = validation.valid && !isOverBudget;
+
+    return {
+      state: droidSystems.stateMode ?? "NEW",
+      isReady,
+      isValid: validation.valid,
+      isOverBudget,
+      issues,
+      hasIssues,
+      issueCount: issues.length,
+      warnings: isOverBudget && !validation.valid ? [
+        "Configuration is incomplete and over-budget"
+      ] : isOverBudget ? [
+        "Configuration exceeds budget"
+      ] : !validation.valid ? [
+        "Configuration is incomplete"
+      ] : [],
+      hasWarnings: (isOverBudget || !validation.valid),
+      // User-facing status summary
+      statusLabel: isReady ? "Ready to Finalize" : (validation.valid ? "Over Budget" : "Incomplete Configuration"),
+      allClearMessage: !hasIssues ? "Configuration is valid and within budget" : null
     };
   }
 

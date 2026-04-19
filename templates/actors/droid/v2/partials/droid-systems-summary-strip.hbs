@@ -41,15 +41,21 @@
 
       {{#if droidPanels.droidSummary.creditsTotal}}
         <div class="config-item swse-metric-chip">
-          <span class="label">Cost:</span>
-          <span class="value">{{droidPanels.droidSummary.creditsSpent}} / {{droidPanels.droidSummary.creditsTotal}} credits</span>
+          <span class="label">Budget:</span>
+          <span class="value">{{droidPanels.droidSummary.creditsSpent}} / {{droidPanels.droidSummary.creditsTotal}}</span>
+        </div>
+        <div class="config-item swse-metric-chip">
+          <span class="label">Remaining:</span>
+          <span class="value {{#if droidPanels.droidSummary.isOverBudget}}over-budget{{else}}in-budget{{/if}}">
+            {{droidPanels.droidSummary.creditsRemaining}}
+          </span>
         </div>
       {{/if}}
 
-      {{#if droidPanels.droidSummary.stateMode}}
+      {{#if droidPanels.droidSummary.readinessStatus}}
         <div class="config-item swse-metric-chip">
-          <span class="label">State:</span>
-          <span class="value state-{{droidPanels.droidSummary.stateMode}}">{{droidPanels.droidSummary.stateMode}}</span>
+          <span class="label">Status:</span>
+          <span class="value readiness-{{droidPanels.droidSummary.readinessStatus}}">{{droidPanels.droidSummary.readinessStatus}}</span>
         </div>
       {{/if}}
     </div>

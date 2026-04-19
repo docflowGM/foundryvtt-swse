@@ -1,39 +1,63 @@
 {{!--
   Droid Validation Panel
 
-  Minimal status/readiness shell showing current configuration state.
+  Renders real configuration validation and readiness diagnostics.
 
   Data consumed:
-    droidPanels.droidSummary.stateMode
+    droidPanels.validation (state, isReady, isValid, issues[], warnings[], statusLabel, allClearMessage)
 
-  Current depth: MINIMAL. Only shows current state mode as readiness indicator.
-  This panel is intentionally thin pending Pass 3 enrichment with:
-  - validation logic
-  - issue detection
-  - missing-subsystem checks
-  - budget warnings
-  - GM approval tracking
-
-  For now, it surfaces existing state only.
+  Phase 3A: Real validation driven by DroidValidationEngine.
+  Shows: missing required subsystems, budget overage, readiness status.
 --}}
 <section class="swse-panel holo-panel swse-ui-panel">
   <header class="section-bar">
     <h3 class="section-header">Configuration Status</h3>
   </header>
 
-  {{#if droidPanels.droidSummary.stateMode}}
+  {{#if droidPanels.validation}}
     <div class="validation-content">
+      <!-- Readiness status -->
       <div class="config-item swse-metric-chip">
-        <span class="label">State:</span>
-        <span class="value state-{{droidPanels.droidSummary.stateMode}}">{{droidPanels.droidSummary.stateMode}}</span>
+        <span class="label">Status:</span>
+        <span class="value readiness-{{#if droidPanels.validation.isReady}}ready{{else}}not-ready{{/if}}">
+          {{droidPanels.validation.statusLabel}}
+        </span>
       </div>
-      <div class="validation-note muted" style="font-size: 0.85em; margin-top: 12px;">
-        <small>Detailed validation and readiness checks coming in a future update.</small>
-      </div>
+
+      <!-- Issues/errors -->
+      {{#if droidPanels.validation.hasIssues}}
+        <div class="validation-issues" style="margin-top: 12px; padding: 8px; background: rgba(200, 50, 50, 0.1); border-left: 3px solid #c83232; border-radius: 2px;">
+          <div class="issues-header" style="font-weight: bold; font-size: 0.9em; margin-bottom: 8px;">
+            Issues ({{droidPanels.validation.issueCount}}):
+          </div>
+          <div class="issues-list">
+            {{#each droidPanels.validation.issues as |issue|}}
+              <div class="issue-entry" style="margin-bottom: 6px; padding-left: 12px;">
+                <small>
+                  {{#if (eq issue.type 'missing')}}
+                    ⚠ {{issue.message}}
+                  {{else if (eq issue.type 'over_budget')}}
+                    ✗ {{issue.message}}
+                  {{else}}
+                    • {{issue.message}}
+                  {{/if}}
+                </small>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      {{/if}}
+
+      <!-- All-clear message -->
+      {{#if droidPanels.validation.allClearMessage}}
+        <div class="validation-all-clear" style="margin-top: 12px; padding: 8px; background: rgba(100, 180, 100, 0.1); border-left: 3px solid #64b464; border-radius: 2px;">
+          <small style="color: #2d5a2d;">✓ {{droidPanels.validation.allClearMessage}}</small>
+        </div>
+      {{/if}}
     </div>
   {{else}}
     <div class="empty-state">
-      <p><em>No configuration state.</em></p>
+      <p><em>No configuration validation data.</em></p>
     </div>
   {{/if}}
 </section>
