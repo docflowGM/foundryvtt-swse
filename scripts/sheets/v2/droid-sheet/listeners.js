@@ -15,6 +15,8 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
+import { StockDroidConversionDialog } from "/systems/foundryvtt-swse/scripts/apps/stock-droid-conversion-dialog.js";
+import { StockDroidComparisonDialog } from "/systems/foundryvtt-swse/scripts/apps/stock-droid-comparison-dialog.js";
 import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
@@ -43,6 +45,8 @@ export function wireDroidSheetListeners(sheet, root, signal) {
   wireWeaponRolling(sheet, root, signal);
   wireActionUse(sheet, root, signal);
   wireDroidSystemsEditor(sheet, root, signal);
+  wireConvertStockDroid(sheet, root, signal);
+  wireStockDroidProvenance(sheet, root, signal);
   wireProgressionButtons(sheet, root, signal);
   wireAbilityCardHandlers(sheet, root, signal);
   wireDragAndDrop(sheet, root, signal);
@@ -303,6 +307,126 @@ function wireDroidSystemsEditor(sheet, root, signal) {
       ui.notifications.error("Failed to open droid builder.");
     }
   }, { signal });
+}
+
+function wireConvertStockDroid(sheet, root, signal) {
+  const convertBtn = root.querySelector(".convert-to-custom-droid");
+  if (!convertBtn) return;
+
+  // Only show for stock droid imports (not custom droids)
+  const isStockDroid = !!sheet.actor?.flags?.swse?.stockDroidImport;
+  if (!isStockDroid) {
+    convertBtn.style.display = "none";
+    return;
+  }
+
+  convertBtn.addEventListener("click", async (ev) => {
+    ev.preventDefault();
+    try {
+      // Import the converter and stock droid normalizer
+      const { StockDroidConverter } = await import("/systems/foundryvtt-swse/scripts/domain/droids/stock-droid-converter.js");
+      const { StockDroidNormalizer } = await import("/systems/foundryvtt-swse/scripts/domain/droids/stock-droid-normalizer.js");
+
+      // Extract the normalized stock droid from saved flags
+      const stockFlags = sheet.actor.flags.swse.stockDroidImport;
+      const publishedTotals = stockFlags.publishedTotals || {};
+
+      // Reconstruct a minimal normalized object from saved data
+      const normalized = {
+        source: {
+          compendiumId: stockFlags.sourceId,
+          name: stockFlags.sourceName
+        },
+        identity: {
+          degree: sheet.actor.system.droidDegree || '',
+          size: sheet.actor.system.size || 'Medium'
+        },
+        publishedTotals
+      };
+
+      // Generate converter seed
+      const converterOutput = StockDroidConverter.convertStockDroidToBuilderSeed(normalized);
+
+      // Open conversion dialog
+      await StockDroidConversionDialog.openConversionFlow(converterOutput, sheet.actor);
+    } catch (err) {
+      console.error("Failed to open conversion dialog:", err);
+      ui.notifications.error("Failed to open conversion dialog.");
+    }
+  }, { signal });
+}
+
+function wireStockDroidProvenance(sheet, root, signal) {
+  // Compare button
+  const compareBtn = root.querySelector('[data-action="compare-stock"]');
+  if (compareBtn) {
+    compareBtn.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      try {
+        const conversionReport = sheet.actor?.flags?.swse?.stockDroidConversionReport ||
+                               sheet.actor?.flags?.swse?.stockDroidImport;
+
+        if (!conversionReport) {
+          ui.notifications.warn("No stock droid provenance found.");
+          return;
+        }
+
+        await StockDroidComparisonDialog.openComparison(sheet.actor, conversionReport);
+      } catch (err) {
+        console.error("Failed to open comparison dialog:", err);
+        ui.notifications.error("Failed to open comparison dialog.");
+      }
+    }, { signal });
+  }
+
+  // Review conversion details button
+  const reviewBtn = root.querySelector('[data-action="view-conversion-details"]');
+  if (reviewBtn) {
+    reviewBtn.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      try {
+        const conversionReport = sheet.actor?.flags?.swse?.stockDroidConversionReport;
+
+        if (!conversionReport) {
+          ui.notifications.warn("No conversion report found.");
+          return;
+        }
+
+        // Show conversion details in a simple dialog
+        const content = `
+          <h4>Conversion Details</h4>
+          <p><strong>Source:</strong> ${conversionReport.sourceName}</p>
+          <p><strong>Confidence:</strong> ${conversionReport.confidence}</p>
+          <p><strong>Converted:</strong> ${new Date(conversionReport.conversionTimestamp).toLocaleString()}</p>
+
+          <h5>Assumptions (${conversionReport.assumptions?.length || 0})</h5>
+          ${conversionReport.assumptions?.length > 0
+            ? `<ul>${conversionReport.assumptions.map(a => `<li>${a}</li>`).join('')}</ul>`
+            : '<p><em>None</em></p>'}
+
+          <h5>Warnings (${conversionReport.warnings?.length || 0})</h5>
+          ${conversionReport.warnings?.length > 0
+            ? `<ul>${conversionReport.warnings.map(w => `<li>${w}</li>`).join('')}</ul>`
+            : '<p><em>None</em></p>'}
+        `;
+
+        const { SWSEDialogV2 } = await import("/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js");
+        await SWSEDialogV2.wait({
+          title: `${sheet.actor.name} - Conversion Report`,
+          content,
+          buttons: {
+            ok: {
+              label: 'Close',
+              callback: () => { }
+            }
+          }
+        });
+      } catch (err) {
+        console.error("Failed to show conversion details:", err);
+        ui.notifications.error("Failed to show conversion details.");
+      }
+    }, { signal });
+  }
 }
 
 function wireProgressionButtons(sheet, root, signal) {

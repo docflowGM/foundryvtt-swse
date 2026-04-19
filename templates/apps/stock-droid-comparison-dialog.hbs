@@ -1,0 +1,398 @@
+<div class="stock-droid-comparison-dialog">
+  <div class="comparison-header">
+    <h2><i class="fas fa-code-branch"></i> Compare: {{actor.name}}</h2>
+    <p class="subtitle">{{#if isConverted}}Converted{{else}}Imported{{/if}} from {{sourceName}}</p>
+  </div>
+
+  <div class="comparison-intro">
+    {{#if isConverted}}
+    <div class="info-box converted">
+      <i class="fas fa-wand-magic-sparkles"></i>
+      <p><strong>Converted Droid:</strong> This droid was converted from a stock statblock to a custom system-native droid. Current values may differ from the original stock statblock due to builder edits and inferred selections.</p>
+    </div>
+    {{else}}
+    <div class="info-box">
+      <i class="fas fa-info-circle"></i>
+      <p><strong>Stock Droid:</strong> This droid was imported as a stock statblock. Comparison shows published values vs. any subsequent customizations.</p>
+    </div>
+    {{/if}}
+  </div>
+
+  {{#if summary}}
+  <div class="comparison-summary">
+    <h3>Summary</h3>
+    <div class="summary-stats">
+      <div class="stat-item">
+        <span class="label">Total Fields</span>
+        <span class="value">{{summary.totalFields}}</span>
+      </div>
+      <div class="stat-item">
+        <span class="label">Same</span>
+        <span class="value">{{summary.sameCount}}</span>
+      </div>
+      <div class="stat-item">
+        <span class="label">Changed</span>
+        <span class="value">{{summary.changedCount}}</span>
+      </div>
+      <div class="stat-item">
+        <span class="label">Reference</span>
+        <span class="value">{{summary.referenceOnlyCount}}</span>
+      </div>
+      <div class="stat-item">
+        <span class="label">Unknown</span>
+        <span class="value">{{summary.unknownCount}}</span>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+  <div class="comparison-categories">
+    {{#each categoriesForTemplate}}
+    <section class="comparison-category">
+      <h3 class="category-header">
+        <i class="fas {{this.icon}}"></i>
+        {{this.name}}
+      </h3>
+
+      {{#if this.fields}}
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Published Stock</th>
+            <th>Current</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each this.fields}}
+          <tr class="field-row status-{{this.status}}">
+            <td class="field-name">{{this.name}}</td>
+            <td class="field-published">{{#if this.published}}{{this.published}}{{else}}<em>—</em>{{/if}}</td>
+            <td class="field-current">{{#if this.current}}{{this.current}}{{else}}<em>—</em>{{/if}}</td>
+            <td class="field-status">
+              <span class="status-badge {{this.status}}">{{this.statusLabel}}</span>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      {{else if this.summary}}
+      <div class="summary-details">
+        {{#each this.summary}}
+        <div class="summary-item">
+          <span class="label">{{this.@key}}:</span>
+          <span class="value">{{this}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </section>
+    {{/each}}
+  </div>
+
+  <div class="comparison-footer">
+    <button class="btn btn-secondary" data-action="close">
+      <i class="fas fa-times"></i> Close
+    </button>
+  </div>
+</div>
+
+<style>
+.stock-droid-comparison-dialog {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  color: #e0e0e0;
+  font-family: var(--font-primary, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+}
+
+.comparison-header {
+  text-align: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #3a3f4a;
+}
+
+.comparison-header h2 {
+  margin: 0 0 0.5rem 0;
+  color: #fff;
+  font-size: 1.3rem;
+}
+
+.comparison-header .subtitle {
+  margin: 0;
+  color: #a0a0a0;
+  font-size: 0.9rem;
+}
+
+.comparison-intro {
+  padding: 1rem 1.5rem;
+  background: #15192a;
+  border-bottom: 1px solid #3a3f4a;
+}
+
+.info-box {
+  padding: 0.75rem 1rem;
+  border-left: 3px solid #4a90e2;
+  background: rgba(74, 144, 226, 0.05);
+  border-radius: 0.3rem;
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.info-box.converted {
+  border-left-color: #ffc107;
+  background: rgba(255, 193, 7, 0.05);
+}
+
+.info-box i {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.info-box p {
+  margin: 0;
+  color: #a0a0a0;
+}
+
+.info-box strong {
+  color: #fff;
+}
+
+.comparison-summary {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #3a3f4a;
+}
+
+.comparison-summary h3 {
+  margin: 0 0 0.75rem 0;
+  color: #ffc107;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.75rem;
+}
+
+.stat-item {
+  padding: 0.5rem;
+  background: #0a0e27;
+  border: 1px solid #3a3f4a;
+  border-radius: 0.3rem;
+  text-align: center;
+}
+
+.stat-item .label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: #a0a0a0;
+  margin-bottom: 0.25rem;
+}
+
+.stat-item .value {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.comparison-categories {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.comparison-category {
+  margin-bottom: 2rem;
+}
+
+.comparison-category:last-child {
+  margin-bottom: 0;
+}
+
+.category-header {
+  margin: 0 0 1rem 0;
+  padding: 0.75rem;
+  background: #15192a;
+  border-left: 3px solid #ffc107;
+  color: #fff;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.comparison-table thead {
+  background: #15192a;
+  border-bottom: 2px solid #3a3f4a;
+}
+
+.comparison-table th {
+  padding: 0.75rem;
+  text-align: left;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #ffc107;
+  font-weight: bold;
+}
+
+.comparison-table tbody tr {
+  border-bottom: 1px solid #3a3f4a;
+  transition: background 0.2s;
+}
+
+.comparison-table tbody tr:hover {
+  background: rgba(255, 193, 7, 0.05);
+}
+
+.field-row.status-same td {
+  color: #90ee90;
+}
+
+.field-row.status-changed td {
+  color: #ffb366;
+}
+
+.field-row.status-reference-only td {
+  color: #9090a0;
+}
+
+.comparison-table td {
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.field-name {
+  font-weight: bold;
+}
+
+.field-published,
+.field-current {
+  font-family: monospace;
+  color: #a0a0a0;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.status-badge.same {
+  background: rgba(45, 95, 46, 0.5);
+  color: #90ee90;
+}
+
+.status-badge.changed {
+  background: rgba(200, 150, 50, 0.5);
+  color: #ffb366;
+}
+
+.status-badge.reference-only {
+  background: rgba(100, 100, 110, 0.5);
+  color: #c0c0d0;
+}
+
+.status-badge.configured {
+  background: rgba(74, 144, 226, 0.5);
+  color: #4a90e2;
+}
+
+.status-badge.unknown {
+  background: rgba(100, 100, 100, 0.5);
+  color: #a0a0a0;
+}
+
+.summary-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #15192a;
+  border-radius: 0.3rem;
+}
+
+.summary-item {
+  padding: 0.5rem;
+}
+
+.summary-item .label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #a0a0a0;
+  margin-bottom: 0.25rem;
+}
+
+.summary-item .value {
+  display: block;
+  font-size: 0.95rem;
+  color: #fff;
+  font-weight: bold;
+}
+
+.comparison-footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #3a3f4a;
+  background: #0a0e27;
+}
+
+.btn {
+  padding: 0.7rem 1.5rem;
+  border: 1px solid #3a3f4a;
+  border-radius: 0.3rem;
+  background: #15192a;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.btn:hover {
+  background: #1a1f33;
+  border-color: #5a5f6a;
+}
+
+.btn-secondary {
+  background: #15192a;
+  border-color: #3a3f4a;
+}
+
+@media (max-width: 768px) {
+  .comparison-table {
+    font-size: 0.75rem;
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .summary-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+</style>

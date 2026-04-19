@@ -185,7 +185,10 @@ export class DroidSheetContextBuilder {
       buildHistory: this.buildBuildHistoryPanel(),
       configurationMetrics: this.buildConfigurationMetricsPanel(),
       // Phase 3A: Real validation/readiness diagnostics
-      validation: this.buildValidationPanel()
+      validation: this.buildValidationPanel(),
+      // Phase 3B: Stock droid provenance
+      stockImport: this.actor?.flags?.swse?.stockDroidImport,
+      stockConversion: this.actor?.flags?.swse?.stockDroidConversionReport
     };
   }
 

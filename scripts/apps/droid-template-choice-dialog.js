@@ -12,7 +12,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { GalacticRecordsBrowser } from "/systems/foundryvtt-swse/scripts/apps/galactic-records-browser.js";
+import { StockDroidImportWizard } from "/systems/foundryvtt-swse/scripts/apps/stock-droid-import-wizard.js";
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -72,24 +72,25 @@ export class DroidTemplateChoiceDialog extends HandlebarsApplicationMixin(Applic
 
   /**
    * User chose to use a droid template
-   * Opens Galactic Records filtered to Droid category
+   * Opens Stock Droid Import Wizard for multi-step import
    */
   async _onDroidTemplate() {
     SWSELogger.log('[DroidTemplateChoiceDialog] User selected: Use Droid Template');
     await this.close();
 
-    // Open Galactic Records but pre-select droid category
-    const browser = GalacticRecordsBrowser.create({
-      preSelectCategory: 'droid',
-      importCallback: async (actor) => {
-        // When droid is imported from template, call parent callback
+    // Open Stock Droid Import Wizard
+    StockDroidImportWizard.create({
+      callback: async (result) => {
+        // When droid is imported from wizard, call parent callback
         if (this.callback && typeof this.callback === 'function') {
           this.callback({
             choice: 'droid-template',
-            actor: actor
+            actor: result.actor,
+            mode: result.mode
           });
         }
-      }
+      },
+      actor: this.droidActor
     });
   }
 

@@ -91,6 +91,12 @@
     {{#if selectedTemplate}}
     <div class="preview-section">
       <h3>Step 3: Review & Import</h3>
+      {{#if (eq @root.selectedCategory 'droid')}}
+      <div class="import-mode-notice">
+        <i class="fas fa-info-circle"></i>
+        <span><strong>Stock Droid Statblock</strong> — Published values will be used for play. To fully customize, create or convert to a custom droid in the builder.</span>
+      </div>
+      {{/if}}
       <div class="selected-preview">
         <div class="preview-item">
           <img src="{{selectedTemplate.portrait}}" alt="{{selectedTemplate.name}}" />
@@ -348,6 +354,26 @@
 }
 
 /* Preview */
+.import-mode-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-left: 3px solid #ffc107;
+  background: #2a2f42;
+  border-radius: 0.3rem;
+  color: #e0e0e0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.import-mode-notice i {
+  color: #ffc107;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
 .selected-preview {
   padding: 1rem;
   border: 1px solid #3a3f4a;
