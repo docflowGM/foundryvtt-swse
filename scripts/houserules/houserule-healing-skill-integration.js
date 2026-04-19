@@ -1,11 +1,13 @@
 /**
  * Healing Skill Integration - Treat Injury Skill Hooks
  * Connects the HealingMechanics to the skill system for use in combat and roleplay
+ * PHASE 3B: Healing skill integration reads routed through HealingRules adapter
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { HealingMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-healing.js";
+import { HealingRules } from "/systems/foundryvtt-swse/scripts/houserules/adapters/HealingRules.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 const NS = 'foundryvtt-swse';
@@ -27,7 +29,7 @@ export class HealingSkillIntegration {
    * Handle skill roll event - check if it's a Treat Injury healing application
    */
   static async onSkillRoll(actor, skillKey, rollResult) {
-    if (!game.settings.get(NS, 'healingSkillEnabled')) {return;}
+    if (!HealingRules.healingSkillEnabled()) {return;}
     if (skillKey !== 'treatInjury') {return;}
 
     // Store the roll result for use in skill action dialogs
@@ -42,7 +44,7 @@ export class HealingSkillIntegration {
    * Called when player clicks a healing action on the character sheet
    */
   static async executeHealingAction(actor, application, targetActor, rollResult) {
-    if (!game.settings.get(NS, 'healingSkillEnabled')) {
+    if (!HealingRules.healingSkillEnabled()) {
       ui.notifications.error('Healing skill integration is not enabled');
       return null;
     }
@@ -77,7 +79,7 @@ export class HealingSkillIntegration {
    * Displays options for the medic to choose healing target and apply healing
    */
   static async createHealingDialog(actor, application) {
-    if (!game.settings.get(NS, 'healingSkillEnabled')) {return;}
+    if (!HealingRules.healingSkillEnabled()) {return;}
 
     const lastRoll = actor.getFlag(NS, 'lastTreatInjuryRoll');
     if (!lastRoll) {
@@ -210,14 +212,14 @@ export class HealingSkillIntegration {
    * Filters based on training and settings
    */
   static getAvailableHealingUses(actor) {
-    if (!game.settings.get(NS, 'healingSkillEnabled')) {return [];}
+    if (!HealingRules.healingSkillEnabled()) {return [];}
 
     const uses = [];
     const treatInjury = actor.system?.skills?.treatInjury;
     const isTrained = treatInjury?.trained || false;
 
     // First Aid - everyone
-    if (game.settings.get(NS, 'firstAidEnabled')) {
+    if (HealingRules.firstAidEnabled()) {
       uses.push({
         name: 'First Aid (requires medpac)',
         dc: 15,
@@ -227,7 +229,7 @@ export class HealingSkillIntegration {
     }
 
     // Long-Term Care - everyone
-    if (game.settings.get(NS, 'longTermCareEnabled')) {
+    if (HealingRules.longTermCareEnabled()) {
       uses.push({
         name: 'Long-Term Care (8 hours per day max)',
         dc: '—',
@@ -237,7 +239,7 @@ export class HealingSkillIntegration {
     }
 
     // Surgery - trained only
-    if (game.settings.get(NS, 'performSurgeryEnabled') && isTrained) {
+    if (HealingRules.performSurgeryEnabled() && isTrained) {
       uses.push({
         name: 'Perform Surgery (trained, surgery kit, 1 hour)',
         dc: 20,
@@ -247,7 +249,7 @@ export class HealingSkillIntegration {
     }
 
     // Revivify - trained only
-    if (game.settings.get(NS, 'revivifyEnabled') && isTrained) {
+    if (HealingRules.revivifyEnabled() && isTrained) {
       uses.push({
         name: 'Revivify (trained, medkit, within 1 round of death)',
         dc: 25,
@@ -257,7 +259,7 @@ export class HealingSkillIntegration {
     }
 
     // Critical Care - optional
-    if (game.settings.get(NS, 'criticalCareEnabled') && isTrained) {
+    if (HealingRules.criticalCareEnabled() && isTrained) {
       uses.push({
         name: 'Critical Care (multiple medpacs in 24 hours)',
         dc: 20,

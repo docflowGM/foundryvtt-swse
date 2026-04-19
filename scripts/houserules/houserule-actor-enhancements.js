@@ -7,6 +7,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SkillTrainingMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-skill-training.js";
 import { HealingSkillIntegration } from "/systems/foundryvtt-swse/scripts/houserules/houserule-healing-skill-integration.js";
 import { ConditionTrackMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-condition-track.js";
+import { HealingRules } from "/systems/foundryvtt-swse/scripts/houserules/adapters/HealingRules.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -134,7 +135,7 @@ export class ActorSheetEnhancements {
    * @private
    */
   static _addHealingCooldownDisplay(root, actor) {
-    if (!game.settings.get(NS, 'healingSkillEnabled')) return;
+    if (!HealingRules.healingSkillEnabled()) return;
 
     // Prevent duplicate injection
     if (root.querySelector(".swse-healing-cooldown-display")) return;

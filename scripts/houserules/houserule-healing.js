@@ -4,10 +4,12 @@
  * Based on SWSE official rules
  *
  * PHASE 7: All mutations routed through ActorEngine for atomic governance
+ * PHASE 3B: Healing rules routed through HealingRules adapter
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { HealingRules } from "/systems/foundryvtt-swse/scripts/houserules/adapters/HealingRules.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -26,11 +28,11 @@ export class HealingMechanics {
    * @returns {Promise<Object>} - Result of healing
    */
   static async performFirstAid(healer, target, checkResult) {
-    if (!game.settings.get(NS, 'healingSkillEnabled')) {
+    if (!HealingRules.healingSkillEnabled()) {
       return { success: false, message: 'Healing skill integration disabled' };
     }
 
-    if (!game.settings.get(NS, 'firstAidEnabled')) {
+    if (!HealingRules.firstAidEnabled()) {
       return { success: false, message: 'First Aid not enabled in this campaign' };
     }
 
@@ -78,7 +80,7 @@ export class HealingMechanics {
    * @private
    */
   static _calculateFirstAidHealing(target, checkResult, dc) {
-    const formula = game.settings.get(NS, 'firstAidHealingType');
+    const formula = HealingRules.getFirstAidHealingType();
     const level = target.system?.details?.level || 1;
 
     switch (formula) {
@@ -87,7 +89,7 @@ export class HealingMechanics {
       case 'levelPlusDC':
         return level + Math.max(0, checkResult - dc);
       case 'fixed':
-        return game.settings.get(NS, 'firstAidFixedAmount');
+        return HealingRules.getFirstAidFixedAmount();
       default:
         return level;
     }
@@ -117,17 +119,17 @@ export class HealingMechanics {
    * @returns {Promise<Object>} - Healing results
    */
   static async performLongTermCare(healer, targets) {
-    if (!game.settings.get(NS, 'healingSkillEnabled')) {
+    if (!HealingRules.healingSkillEnabled()) {
       return { success: false, message: 'Healing skill integration disabled' };
     }
 
-    if (!game.settings.get(NS, 'longTermCareEnabled')) {
+    if (!HealingRules.longTermCareEnabled()) {
       return { success: false, message: 'Long-Term Care not enabled' };
     }
 
     if (!Array.isArray(targets)) {targets = [targets];}
 
-    const maxTargets = game.settings.get(NS, 'longTermCareMultipleTargets');
+    const maxTargets = HealingRules.getLongTermCareMultipleTargets();
     if (targets.length > maxTargets) {
       return {
         success: false,
@@ -187,7 +189,7 @@ export class HealingMechanics {
    * @private
    */
   static _calculateLongTermCareHealing(target) {
-    const formula = game.settings.get(NS, 'longTermCareHealing');
+    const formula = HealingRules.getLongTermCareHealing();
     const level = target.system?.details?.level || 1;
     const conMod = target.system?.attributes?.con?.mod || 0;
 
@@ -197,7 +199,7 @@ export class HealingMechanics {
       case 'conBonus':
         return Math.max(1, conMod) * level;
       case 'fixed':
-        return game.settings.get(NS, 'longTermCareFixedAmount');
+        return HealingRules.getLongTermCareFixedAmount();
       default:
         return level;
     }
@@ -213,11 +215,11 @@ export class HealingMechanics {
    * @returns {Promise<Object>}
    */
   static async performSurgery(surgeon, patient, checkResult) {
-    if (!game.settings.get(NS, 'healingSkillEnabled')) {
+    if (!HealingRules.healingSkillEnabled()) {
       return { success: false, message: 'Healing skill integration disabled' };
     }
 
-    if (!game.settings.get(NS, 'performSurgeryEnabled')) {
+    if (!HealingRules.performSurgeryEnabled()) {
       return { success: false, message: 'Surgery not enabled' };
     }
 
@@ -232,7 +234,7 @@ export class HealingMechanics {
 
     if (success) {
       healing = this._calculateSurgeryHealing(patient);
-    } else if (game.settings.get(NS, 'surgeryFailureDamage') && failureMargin >= failureThreshold) {
+    } else if (HealingRules.surgeryFailureDamageEnabled() && failureMargin >= failureThreshold) {
       // Calculate damage threshold
       damageFromFailure = patient.system?.traits?.damageThreshold || 5;
     }
@@ -300,7 +302,7 @@ export class HealingMechanics {
    * @private
    */
   static _calculateSurgeryHealing(patient) {
-    const formula = game.settings.get(NS, 'performSurgeryHealing');
+    const formula = HealingRules.getPerformSurgeryHealing();
     const level = patient.system?.details?.level || 1;
     const conMod = patient.system?.attributes?.con?.mod || 0;
 
@@ -308,7 +310,7 @@ export class HealingMechanics {
       case 'conBonus':
         return Math.max(1, conMod) * level;
       case 'fixed':
-        return game.settings.get(NS, 'performSurgeryFixedAmount');
+        return HealingRules.getPerformSurgeryFixedAmount();
       case 'automatic':
         return 999; // Will be capped at max HP anyway
       default:
@@ -325,11 +327,11 @@ export class HealingMechanics {
    * @returns {Promise<Object>}
    */
   static async performRevivify(medic, corpse, checkResult) {
-    if (!game.settings.get(NS, 'healingSkillEnabled')) {
+    if (!HealingRules.healingSkillEnabled()) {
       return { success: false, message: 'Healing skill integration disabled' };
     }
 
-    if (!game.settings.get(NS, 'revivifyEnabled')) {
+    if (!HealingRules.revivifyEnabled()) {
       return { success: false, message: 'Revivify not enabled' };
     }
 
@@ -388,11 +390,11 @@ export class HealingMechanics {
    * @returns {Promise<Object>}
    */
   static async performCriticalCare(healer, patient, checkResult) {
-    if (!game.settings.get(NS, 'healingSkillEnabled')) {
+    if (!HealingRules.healingSkillEnabled()) {
       return { success: false, message: 'Healing skill integration disabled' };
     }
 
-    if (!game.settings.get(NS, 'criticalCareEnabled')) {
+    if (!HealingRules.criticalCareEnabled()) {
       return { success: false, message: 'Critical Care not enabled' };
     }
 
@@ -475,14 +477,14 @@ export class HealingMechanics {
    * @private
    */
   static _calculateCriticalCareHealing(patient, checkResult, dc) {
-    const formula = game.settings.get(NS, 'criticalCareHealing');
+    const formula = HealingRules.getCriticalCareHealing();
     const level = patient.system?.details?.level || 1;
 
     switch (formula) {
       case 'levelPlusDC':
         return level + Math.max(0, checkResult - dc);
       case 'fixed':
-        return game.settings.get(NS, 'criticalCareFixedAmount');
+        return HealingRules.getCriticalCareFixedAmount();
       default:
         return level + Math.max(0, checkResult - dc);
     }
