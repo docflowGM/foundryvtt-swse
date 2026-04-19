@@ -1,0 +1,1082 @@
+<section class="swse-stock-droid-wizard">
+  <!-- Header with title and step tracker -->
+  <header class="wizard-header">
+    <div class="wizard-title-row">
+      <div class="wizard-title-block">
+        <h1 class="wizard-title"><i class="fas fa-file-import"></i> Import Stock Droid</h1>
+        <p class="wizard-subtitle">
+          {{#switch currentStep}}
+            {{#case 1}}Choose a stock droid from the archive{{/case}}
+            {{#case 2}}Review the selected droid's details{{/case}}
+            {{#case 3}}Choose how you want to import this droid{{/case}}
+            {{#case 4}}Confirm and apply the import{{/case}}
+          {{/switch}}
+        </p>
+      </div>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="wizard-steps">
+      {{#each steps}}
+      <div class="wizard-step {{#if (eq this.num currentStep)}}is-active{{/if}} {{#if (lt this.num currentStep)}}is-complete{{/if}}">
+        <div class="wizard-step-index">
+          {{#if (lt this.num currentStep)}}<i class="fas fa-check"></i>{{else}}{{this.num}}{{/if}}
+        </div>
+        <div class="wizard-step-labels">
+          <div class="wizard-step-label">{{this.label}}</div>
+          <div class="wizard-step-meta">{{this.meta}}</div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </header>
+
+  <!-- Main content area -->
+  <div class="wizard-body">
+    {{#switch currentStep}}
+      <!-- STEP 1: SELECT STOCK DROID -->
+      {{#case 1}}
+      <div class="step-select">
+        <div class="wizard-toolbar">
+          <div class="wizard-search">
+            <label class="wizard-label">Search</label>
+            <input type="text" class="wizard-input" data-field="search" placeholder="Search droids..." />
+          </div>
+          <div class="wizard-filter">
+            <label class="wizard-label">Degree</label>
+            <select class="wizard-select" data-field="degree">
+              <option value="">Any</option>
+              <option value="1st">First-Degree</option>
+              <option value="2nd">Second-Degree</option>
+              <option value="3rd">Third-Degree</option>
+            </select>
+          </div>
+          <div class="wizard-filter">
+            <label class="wizard-label">Size</label>
+            <select class="wizard-select" data-field="size">
+              <option value="">Any</option>
+              <option value="tiny">Tiny</option>
+              <option value="small">Small</option>
+              <option value="medium">Medium</option>
+              <option value="large">Large</option>
+              <option value="huge">Huge</option>
+            </select>
+          </div>
+          <div class="wizard-filter">
+            <label class="wizard-label">Source</label>
+            <select class="wizard-select" data-field="source">
+              <option value="">Any</option>
+              <option value="core">Core Rules</option>
+              <option value="swse">SWSE</option>
+            </select>
+          </div>
+        </div>
+
+        {{#if availableDroids.length}}
+        <div class="droid-results">
+          {{#each availableDroids}}
+          <div class="droid-result-card {{#if (eq @root.selectedDroid.id this.id)}}is-selected{{/if}}" data-droid-id="{{this.id}}">
+            <img src="{{this.img}}" alt="{{this.name}}" class="droid-result-image" />
+            <div class="droid-result-main">
+              <div class="droid-result-header">
+                <h3 class="droid-result-name" data-droid-name>{{this.name}}</h3>
+              </div>
+              <div class="droid-result-source">{{this.source}}</div>
+              <div class="droid-result-meta">
+                {{#if this.degree}}<span class="meta-chip">{{this.degree}}</span>{{/if}}
+                {{#if this.size}}<span class="meta-chip">{{this.size}}</span>{{/if}}
+                {{#if this.category}}<span class="meta-chip">{{this.category}}</span>{{/if}}
+              </div>
+              {{#if this.summary}}<p class="droid-result-summary">{{this.summary}}</p>{{/if}}
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        {{else}}
+        <div class="wizard-empty">
+          <i class="fas fa-inbox" style="font-size: 48px; opacity: 0.5; margin-bottom: 12px;"></i>
+          <div class="wizard-empty-title">No Stock Droids Available</div>
+          <p class="wizard-empty-copy">No stock droids found in the archive. Make sure the droid compendium is loaded and contains stock droid templates.</p>
+        </div>
+        {{/if}}
+      </div>
+      {{/case}}
+
+      <!-- STEP 2: PREVIEW STOCK DROID -->
+      {{#case 2}}
+      <div class="step-preview">
+        {{#if selectedDroid}}
+        <div class="preview-layout">
+          <div class="preview-sidebar">
+            <div class="preview-hero">
+              <img src="{{selectedDroid.img}}" alt="{{selectedDroid.name}}" class="preview-image" />
+              <h2 class="preview-name">{{selectedDroid.name}}</h2>
+            </div>
+
+            <div class="wizard-card">
+              <div class="wizard-card-title">Statistics</div>
+              <div class="stat-grid">
+                <div class="stat-box">
+                  <div class="stat-box-label">Hit Points</div>
+                  <div class="stat-box-value">—</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-label">Speed</div>
+                  <div class="stat-box-value">—</div>
+                </div>
+                <div class="stat-box">
+                  <div class="stat-box-label">Size</div>
+                  <div class="stat-box-value">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="preview-main">
+            <div class="wizard-card">
+              <div class="wizard-card-title">Summary</div>
+              <p class="preview-summary">Stock droid statblock from the galactic archives. This droid can be imported as-is for use in play, or converted to a builder-native custom droid for full customization.</p>
+            </div>
+
+            <div class="wizard-card">
+              <div class="wizard-card-title">Defenses</div>
+              <div class="key-value-grid">
+                <div class="kv-card">
+                  <div class="kv-list">
+                    <div class="kv-row">
+                      <span class="label">Fortitude</span>
+                      <span class="value">—</span>
+                    </div>
+                    <div class="kv-row">
+                      <span class="label">Reflex</span>
+                      <span class="value">—</span>
+                    </div>
+                    <div class="kv-row">
+                      <span class="label">Will</span>
+                      <span class="value">—</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="kv-card">
+                  <div class="kv-list">
+                    <div class="kv-row">
+                      <span class="label">Threshold</span>
+                      <span class="value">—</span>
+                    </div>
+                    <div class="kv-row">
+                      <span class="label">Droid Type</span>
+                      <span class="value">—</span>
+                    </div>
+                    <div class="kv-row">
+                      <span class="label">Category</span>
+                      <span class="value">—</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-card">
+              <div class="wizard-card-title">Abilities</div>
+              <div class="key-value-grid">
+                <div class="kv-card">
+                  <div class="kv-title">Physical</div>
+                  <div class="kv-list">
+                    <div class="kv-row">
+                      <span class="label">Strength</span>
+                      <span class="value">—</span>
+                    </div>
+                    <div class="kv-row">
+                      <span class="label">Dexterity</span>
+                      <span class="value">—</span>
+                    </div>
+                    <div class="kv-row">
+                      <span class="label">Constitution</span>
+                      <span class="value">0</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="kv-card">
+                  <div class="kv-title">Mental</div>
+                  <div class="kv-list">
+                    <div class="kv-row">
+                      <span class="label">Intelligence</span>
+                      <span class="value">—</span>
+                    </div>
+                    <div class="kv-row">
+                      <span class="label">Wisdom</span>
+                      <span class="value">—</span>
+                    </div>
+                    <div class="kv-row">
+                      <span class="label">Charisma</span>
+                      <span class="value">—</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{else}}
+        <div class="wizard-empty">
+          <p class="wizard-empty-copy">No droid selected. Go back and choose a droid to preview.</p>
+        </div>
+        {{/if}}
+      </div>
+      {{/case}}
+
+      <!-- STEP 3: CHOOSE IMPORT MODE -->
+      {{#case 3}}
+      <div class="step-mode">
+        {{#if importError}}
+        <div class="warning-banner">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{importError}}
+        </div>
+        {{/if}}
+
+        <div class="mode-grid">
+          <!-- Statblock Mode -->
+          <div class="mode-card {{#if (eq selectedMode 'statblock')}}is-selected{{/if}}" data-mode="statblock">
+            <div class="mode-card-header">
+              <h3 class="mode-card-title"><i class="fas fa-file-import"></i> Stock Statblock</h3>
+              <span class="mode-card-tag">Default</span>
+            </div>
+
+            <p class="mode-card-copy">
+              Import the droid as-is from the published statblock.
+            </p>
+
+            <ul class="mode-card-list">
+              <li><strong>✓ Ready to play:</strong> Fully usable for encounter/combat</li>
+              <li><strong>✓ Quick import:</strong> No conversion needed</li>
+              <li><strong>✓ Reference:</strong> Published values are authoritative</li>
+              <li><strong>⊕ Limited:</strong> Cannot edit droid systems (locked)</li>
+            </ul>
+
+            <p class="mode-card-copy" style="font-size: 12px; margin-top: auto; color: rgba(232, 230, 223, 0.58);">
+              Best for: NPCs, encounters, reference droids. Can convert to custom later.
+            </p>
+          </div>
+
+          <!-- Conversion Mode (Experimental) -->
+          <div class="mode-card {{#if (eq selectedMode 'convert')}}is-selected{{/if}}" data-mode="convert">
+            <div class="mode-card-header">
+              <h3 class="mode-card-title"><i class="fas fa-wand-magic-sparkles"></i> Convert to Custom</h3>
+              <span class="mode-card-tag">Beta</span>
+            </div>
+
+            <p class="mode-card-copy">
+              Convert to a builder-native custom droid using bounded inference.
+            </p>
+
+            <ul class="mode-card-list">
+              <li><strong>✓ Customizable:</strong> Full droid builder access</li>
+              <li><strong>✓ Transparent:</strong> See all conversion assumptions</li>
+              <li><strong>⊕ Approximate:</strong> Some values inferred from statblock</li>
+              <li><strong>⊕ Takes longer:</strong> Multi-step conversion process</li>
+            </ul>
+
+            <p class="mode-card-copy" style="font-size: 12px; margin-top: auto; color: rgba(232, 230, 223, 0.58);">
+              Best for: Player characters, custom droids, full control. Start in wizard, finish in builder.
+            </p>
+          </div>
+        </div>
+
+        <div class="info-banner">
+          <i class="fas fa-lightbulb"></i>
+          <strong>Tip:</strong> You can always convert a statblock droid to custom later. Choose statblock for now if you're unsure.
+        </div>
+      </div>
+      {{/case}}
+
+      <!-- STEP 4: REVIEW AND APPLY -->
+      {{#case 4}}
+      <div class="step-review">
+        {{#if importError}}
+        <div class="warning-banner">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{importError}}
+        </div>
+        {{/if}}
+
+        <div class="review-grid">
+          <div class="review-summary">
+            <div class="wizard-card">
+              <div class="wizard-card-title">Import Summary</div>
+
+              {{#if selectedDroid}}
+              <div class="review-list">
+                <div class="review-row">
+                  <span class="review-label">Droid</span>
+                  <span class="review-value">{{selectedDroid.name}}</span>
+                </div>
+                <div class="review-row">
+                  <span class="review-label">Mode</span>
+                  <span class="review-value">
+                    {{#if (eq selectedMode 'statblock')}}Stock Statblock{{else}}Convert to Custom{{/if}}
+                  </span>
+                </div>
+                <div class="review-row">
+                  <span class="review-label">Status</span>
+                  <span class="review-value">Ready to import</span>
+                </div>
+              </div>
+              {{else}}
+              <p style="color: rgba(232, 230, 223, 0.7);">No droid selected</p>
+              {{/if}}
+            </div>
+
+            {{#if (eq selectedMode 'statblock')}}
+            <div class="success-banner">
+              <i class="fas fa-check-circle"></i>
+              <strong>Statblock Import:</strong> The droid will be imported with published values as the authority. You can use it immediately in encounters.
+            </div>
+            {{else}}
+            <div class="info-banner">
+              <i class="fas fa-circle-info"></i>
+              <strong>Conversion Mode:</strong> After import, you'll use the builder to complete customization. The system will show you all assumptions made during conversion.
+            </div>
+            {{/if}}
+          </div>
+
+          <div class="review-sidebar">
+            <div class="wizard-card">
+              <div class="wizard-card-title">What Happens Next</div>
+              <ol style="margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.6; color: rgba(232, 230, 223, 0.76);">
+                {{#if (eq selectedMode 'statblock')}}
+                <li>Import the droid actor</li>
+                <li>Droid appears in your actor list</li>
+                <li>Ready for combat/play immediately</li>
+                <li>Can convert to custom anytime</li>
+                {{else}}
+                <li>Import the droid actor</li>
+                <li>Open conversion dialog</li>
+                <li>Review inferred values</li>
+                <li>Complete in droid builder</li>
+                {{/if}}
+              </ol>
+            </div>
+
+            <div class="wizard-card">
+              <div class="wizard-card-title">Details</div>
+              <div style="font-size: 12px; color: rgba(232, 230, 223, 0.7); line-height: 1.6;">
+                <p>Actor will be created in your current scene/world. Use the sheet to adjust name, portrait, and notes after import.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {{/case}}
+    {{/switch}}
+  </div>
+
+  <!-- Footer with navigation -->
+  <footer class="wizard-footer">
+    <div class="wizard-footer-left">
+      <button type="button" class="wizard-button" data-action="cancel">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+
+    <div class="wizard-footer-right">
+      {{#if canGoBack}}
+      <button type="button" class="wizard-button" data-action="back">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+      {{/if}}
+
+      {{#if (and (lt currentStep 4) canGoNext)}}
+      <button type="button" class="wizard-button is-primary" data-action="next">
+        Next <i class="fas fa-arrow-right"></i>
+      </button>
+      {{/if}}
+
+      {{#if (eq currentStep 4)}}
+      <button type="button" class="wizard-button is-primary {{#unless canApply}}:disabled{{/unless}}" data-action="apply" {{#unless canApply}}disabled{{/unless}}>
+        {{#if isImporting}}<i class="fas fa-spinner fa-spin"></i> Importing...{{else}}<i class="fas fa-download"></i> Import Stock Droid{{/if}}
+      </button>
+      {{/if}}
+    </div>
+  </footer>
+</section>
+
+<style>
+/* ========================================================= */
+/* SWSE Stock Droid Import Wizard - Styles                */
+/* ========================================================= */
+
+.swse-stock-droid-wizard {
+  display: flex;
+  flex-direction: column;
+  min-height: 720px;
+  height: 100%;
+  color: var(--color-text-light-highlight, #e8e6df);
+  background: rgba(10, 12, 18, 0.96);
+  border: 1px solid rgba(180, 210, 255, 0.14);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Header */
+.swse-stock-droid-wizard .wizard-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid rgba(180, 210, 255, 0.12);
+  background: linear-gradient(180deg, rgba(70, 100, 160, 0.18) 0%, rgba(20, 26, 36, 0.1) 100%);
+}
+
+.swse-stock-droid-wizard .wizard-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.swse-stock-droid-wizard .wizard-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.swse-stock-droid-wizard .wizard-title {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.swse-stock-droid-wizard .wizard-subtitle {
+  margin: 0;
+  color: rgba(232, 230, 223, 0.72);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.swse-stock-droid-wizard .wizard-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.swse-stock-droid-wizard .wizard-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(180, 210, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.swse-stock-droid-wizard .wizard-step.is-active {
+  border-color: rgba(130, 190, 255, 0.5);
+  background: rgba(70, 120, 200, 0.16);
+  box-shadow: 0 0 0 1px rgba(130, 190, 255, 0.14) inset;
+}
+
+.swse-stock-droid-wizard .wizard-step.is-complete {
+  border-color: rgba(115, 200, 145, 0.34);
+  background: rgba(70, 120, 90, 0.14);
+}
+
+.swse-stock-droid-wizard .wizard-step-index {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.swse-stock-droid-wizard .wizard-step.is-active .wizard-step-index {
+  background: rgba(130, 190, 255, 0.24);
+  border-color: rgba(130, 190, 255, 0.46);
+}
+
+.swse-stock-droid-wizard .wizard-step.is-complete .wizard-step-index {
+  background: rgba(115, 200, 145, 0.22);
+  border-color: rgba(115, 200, 145, 0.42);
+}
+
+.swse-stock-droid-wizard .wizard-step-labels {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.swse-stock-droid-wizard .wizard-step-label {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swse-stock-droid-wizard .wizard-step-meta {
+  font-size: 11px;
+  color: rgba(232, 230, 223, 0.58);
+}
+
+/* Body */
+.swse-stock-droid-wizard .wizard-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px;
+  overflow: auto;
+  gap: 16px;
+}
+
+/* Cards */
+.swse-stock-droid-wizard .wizard-card {
+  border: 1px solid rgba(180, 210, 255, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 14px;
+}
+
+.swse-stock-droid-wizard .wizard-card-title {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.swse-stock-droid-wizard .wizard-card-subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(232, 230, 223, 0.68);
+}
+
+/* Step-specific: Search/filters */
+.swse-stock-droid-wizard .wizard-toolbar {
+  display: grid;
+  grid-template-columns: minmax(280px, 1.5fr) repeat(3, minmax(100px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.swse-stock-droid-wizard .wizard-search,
+.swse-stock-droid-wizard .wizard-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.swse-stock-droid-wizard .wizard-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(232, 230, 223, 0.62);
+  font-weight: bold;
+}
+
+.swse-stock-droid-wizard .wizard-input,
+.swse-stock-droid-wizard .wizard-select {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(180, 210, 255, 0.16);
+  background: rgba(9, 12, 18, 0.82);
+  color: inherit;
+  padding: 9px 10px;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+.swse-stock-droid-wizard .wizard-input:focus,
+.swse-stock-droid-wizard .wizard-select:focus {
+  outline: none;
+  border-color: rgba(130, 190, 255, 0.55);
+  box-shadow: 0 0 0 1px rgba(130, 190, 255, 0.2);
+}
+
+/* Step 1: Droid results */
+.swse-stock-droid-wizard .droid-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.swse-stock-droid-wizard .droid-result-card {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(180, 210, 255, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: border-color 120ms ease, transform 120ms ease, background 120ms ease;
+}
+
+.swse-stock-droid-wizard .droid-result-card:hover {
+  border-color: rgba(130, 190, 255, 0.34);
+  background: rgba(70, 120, 200, 0.08);
+  transform: translateY(-1px);
+}
+
+.swse-stock-droid-wizard .droid-result-card.is-selected {
+  border-color: rgba(130, 190, 255, 0.56);
+  background: rgba(70, 120, 200, 0.14);
+  box-shadow: 0 0 0 1px rgba(130, 190, 255, 0.18) inset;
+}
+
+.swse-stock-droid-wizard .droid-result-image {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.swse-stock-droid-wizard .droid-result-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-stock-droid-wizard .droid-result-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.swse-stock-droid-wizard .droid-result-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.swse-stock-droid-wizard .droid-result-source {
+  font-size: 11px;
+  color: rgba(232, 230, 223, 0.58);
+  white-space: nowrap;
+}
+
+.swse-stock-droid-wizard .droid-result-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.swse-stock-droid-wizard .meta-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(180, 210, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 11px;
+  color: rgba(232, 230, 223, 0.84);
+}
+
+.swse-stock-droid-wizard .droid-result-summary {
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(232, 230, 223, 0.74);
+  margin: 0;
+}
+
+/* Step 2: Preview */
+.swse-stock-droid-wizard .preview-layout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.swse-stock-droid-wizard .preview-sidebar,
+.swse-stock-droid-wizard .preview-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swse-stock-droid-wizard .preview-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swse-stock-droid-wizard .preview-image {
+  width: 100%;
+  max-width: 240px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(180, 210, 255, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.swse-stock-droid-wizard .preview-name {
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.15;
+  font-weight: 700;
+}
+
+.swse-stock-droid-wizard .preview-summary {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(232, 230, 223, 0.76);
+  margin: 0;
+}
+
+.swse-stock-droid-wizard .stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.swse-stock-droid-wizard .stat-box {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(180, 210, 255, 0.14);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.swse-stock-droid-wizard .stat-box-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(232, 230, 223, 0.58);
+  font-weight: bold;
+}
+
+.swse-stock-droid-wizard .stat-box-value {
+  margin-top: 4px;
+  font-size: 18px;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+.swse-stock-droid-wizard .key-value-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.swse-stock-droid-wizard .kv-card {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(180, 210, 255, 0.14);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.swse-stock-droid-wizard .kv-title {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.swse-stock-droid-wizard .kv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+}
+
+.swse-stock-droid-wizard .kv-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.swse-stock-droid-wizard .kv-row .label {
+  color: rgba(232, 230, 223, 0.68);
+}
+
+.swse-stock-droid-wizard .kv-row .value {
+  font-weight: 600;
+}
+
+/* Step 3: Mode selection */
+.swse-stock-droid-wizard .mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.swse-stock-droid-wizard .mode-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 240px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(180, 210, 255, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: border-color 120ms ease, transform 120ms ease, background 120ms ease;
+}
+
+.swse-stock-droid-wizard .mode-card:hover {
+  border-color: rgba(130, 190, 255, 0.34);
+  background: rgba(70, 120, 200, 0.08);
+  transform: translateY(-1px);
+}
+
+.swse-stock-droid-wizard .mode-card.is-selected {
+  border-color: rgba(130, 190, 255, 0.56);
+  background: rgba(70, 120, 200, 0.14);
+  box-shadow: 0 0 0 1px rgba(130, 190, 255, 0.18) inset;
+}
+
+.swse-stock-droid-wizard .mode-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.swse-stock-droid-wizard .mode-card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.swse-stock-droid-wizard .mode-card-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(180, 210, 255, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(232, 230, 223, 0.8);
+  white-space: nowrap;
+}
+
+.swse-stock-droid-wizard .mode-card-copy {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(232, 230, 223, 0.74);
+  margin: 0;
+}
+
+.swse-stock-droid-wizard .mode-card-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(232, 230, 223, 0.76);
+}
+
+/* Step 4: Review */
+.swse-stock-droid-wizard .review-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 16px;
+}
+
+.swse-stock-droid-wizard .review-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swse-stock-droid-wizard .review-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swse-stock-droid-wizard .warning-banner,
+.swse-stock-droid-wizard .info-banner,
+.swse-stock-droid-wizard .success-banner {
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+
+.swse-stock-droid-wizard .warning-banner {
+  border: 1px solid rgba(245, 190, 90, 0.28);
+  background: rgba(135, 95, 15, 0.16);
+  color: rgba(255, 229, 179, 0.96);
+}
+
+.swse-stock-droid-wizard .info-banner {
+  border: 1px solid rgba(130, 190, 255, 0.28);
+  background: rgba(35, 70, 120, 0.16);
+  color: rgba(212, 232, 255, 0.96);
+}
+
+.swse-stock-droid-wizard .success-banner {
+  border: 1px solid rgba(115, 200, 145, 0.28);
+  background: rgba(35, 90, 55, 0.16);
+  color: rgba(210, 255, 225, 0.96);
+}
+
+.swse-stock-droid-wizard .review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+}
+
+.swse-stock-droid-wizard .review-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 13px;
+}
+
+.swse-stock-droid-wizard .review-row:last-child {
+  border-bottom: 0;
+}
+
+.swse-stock-droid-wizard .review-label {
+  color: rgba(232, 230, 223, 0.68);
+}
+
+.swse-stock-droid-wizard .review-value {
+  text-align: right;
+  font-weight: 600;
+}
+
+/* Footer */
+.swse-stock-droid-wizard .wizard-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  border-top: 1px solid rgba(180, 210, 255, 0.12);
+  background: rgba(9, 12, 18, 0.94);
+}
+
+.swse-stock-droid-wizard .wizard-footer-left,
+.swse-stock-droid-wizard .wizard-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Buttons */
+.swse-stock-droid-wizard .wizard-button {
+  appearance: none;
+  border: 1px solid rgba(180, 210, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease, transform 120ms ease, opacity 120ms ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse-stock-droid-wizard .wizard-button:hover:not(:disabled) {
+  border-color: rgba(130, 190, 255, 0.34);
+  background: rgba(70, 120, 200, 0.1);
+  transform: translateY(-1px);
+}
+
+.swse-stock-droid-wizard .wizard-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.swse-stock-droid-wizard .wizard-button.is-primary {
+  border-color: rgba(130, 190, 255, 0.34);
+  background: rgba(70, 120, 200, 0.2);
+  font-weight: 700;
+}
+
+/* Empty states */
+.swse-stock-droid-wizard .wizard-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: 24px;
+  border: 1px dashed rgba(180, 210, 255, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  text-align: center;
+}
+
+.swse-stock-droid-wizard .wizard-empty-title {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.swse-stock-droid-wizard .wizard-empty-copy {
+  max-width: 520px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(232, 230, 223, 0.7);
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .swse-stock-droid-wizard .wizard-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+  .swse-stock-droid-wizard .preview-layout,
+  .swse-stock-droid-wizard .review-grid,
+  .swse-stock-droid-wizard .mode-grid {
+    grid-template-columns: 1fr;
+  }
+  .swse-stock-droid-wizard .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .swse-stock-droid-wizard .key-value-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .swse-stock-droid-wizard .wizard-header,
+  .swse-stock-droid-wizard .wizard-body,
+  .swse-stock-droid-wizard .wizard-footer {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .swse-stock-droid-wizard .wizard-steps {
+    grid-template-columns: 1fr 1fr;
+  }
+  .swse-stock-droid-wizard .wizard-toolbar,
+  .swse-stock-droid-wizard .stat-grid {
+    grid-template-columns: 1fr;
+  }
+  .swse-stock-droid-wizard .wizard-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .swse-stock-droid-wizard .wizard-footer-left,
+  .swse-stock-droid-wizard .wizard-footer-right {
+    justify-content: space-between;
+  }
+}
+</style>
