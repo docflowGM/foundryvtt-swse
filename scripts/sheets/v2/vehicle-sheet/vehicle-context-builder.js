@@ -168,26 +168,65 @@ export function buildVehicleHpConditionPanel(actor) {
  */
 export function buildVehicleWeaponMountPanel(actor) {
   const system = actor.system ?? {};
-  const weapons = actor.items.filter(item => item.type === 'weapon') || [];
+  const mounts = [];
 
-  if (weapons.length === 0) {
-    return null;
+  // ════════════════════════════════════════════════════════════════════════════
+  // Priority 1: Embedded weapon items (created by weapon import normalizer)
+  // ════════════════════════════════════════════════════════════════════════════
+  const embeddedWeapons = actor.items.filter(item => item.type === 'weapon') || [];
+
+  for (const weapon of embeddedWeapons) {
+    const itemSystem = weapon.system ?? {};
+    const vehicleMount = itemSystem.vehicleMount ?? {};
+
+    mounts.push({
+      key: vehicleMount.mountKey || `mount-${mounts.length}`,
+      name: weapon.name,
+      arc: vehicleMount.arc || itemSystem.arc || 'unknown',
+      linkedGroup: vehicleMount.linkedGroup || null,
+      fireControl: vehicleMount.fireControl || itemSystem.fireControl || null,
+      gunner: 'Unassigned',
+      crewRole: vehicleMount.crewRole || 'gunner',
+      attackSummary: itemSystem.bonus || itemSystem.attackBonus || '+0',
+      damageSummary: itemSystem.damage || '1d10',
+      rangeSummary: itemSystem.range || null,
+      notes: itemSystem.notes ? [itemSystem.notes] : [],
+      rawSource: vehicleMount.rawSource || null,
+      parseConfidence: vehicleMount.parseConfidence || 'structured'
+    });
   }
 
-  const mounts = weapons.map((weapon, idx) => {
-    const itemSystem = weapon.system ?? {};
-    return {
-      key: `mount-${idx}`,
-      name: weapon.name,
-      arc: itemSystem.arc || 'Omnidirectional',
-      linkedGroup: null,  // Phase 3: Implement linked batteries
-      fireControl: itemSystem.fireControl || 'Manual',
-      gunner: 'Unassigned',  // Phase 3: Implement crew assignments
-      attackSummary: itemSystem.bonus || '+0',
-      damageSummary: itemSystem.damage || '1d10',
-      notes: itemSystem.notes ? [itemSystem.notes] : []
-    };
-  });
+  // ════════════════════════════════════════════════════════════════════════════
+  // Priority 2: Fallback to system.weapons array (for imported vehicles)
+  // Used when embedded items haven't been created yet
+  // ════════════════════════════════════════════════════════════════════════════
+  if (mounts.length === 0 && Array.isArray(system.weapons)) {
+    for (let i = 0; i < system.weapons.length; i++) {
+      const weapon = system.weapons[i];
+      if (!weapon || !weapon.name) continue;
+
+      mounts.push({
+        key: `mount-${i}`,
+        name: weapon.name,
+        arc: weapon.arc || 'unknown',
+        linkedGroup: null,
+        fireControl: weapon.fireControl || null,
+        gunner: 'Unassigned',
+        crewRole: 'gunner',
+        attackSummary: weapon.bonus || weapon.attackBonus || '+0',
+        damageSummary: weapon.damage || '1d10',
+        rangeSummary: weapon.range || null,
+        notes: [],
+        rawSource: null,
+        parseConfidence: 'fallback'
+      });
+    }
+  }
+
+  // Return null if no weapons found (don't render empty panel)
+  if (mounts.length === 0) {
+    return null;
+  }
 
   return {
     title: 'Weapon Mounts',

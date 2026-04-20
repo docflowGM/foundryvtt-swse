@@ -13,6 +13,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeVehicleImportData } from "/systems/foundryvtt-swse/scripts/engine/import/vehicle-import-normalizer.js";
+import { normalizeVehicleWeaponImportData, createVehicleWeaponItems } from "/systems/foundryvtt-swse/scripts/engine/import/vehicle-weapon-import-normalizer.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const MAPPING_PATH = 'modules/foundryvtt-swse/VEHICLE_AUDIT_MAPPING.json';
@@ -54,8 +55,12 @@ async function loadVehicleMapping() {
 /**
  * Register preCreate hook for vehicles
  * Automatically assigns category based on vehicle name + normalizes imported data
+ * Also registers postCreate hook for weapon item creation
  */
 export function registerVehiclePreCreateHooks() {
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PRE-CREATE: Normalize vehicle data
+  // ═══════════════════════════════════════════════════════════════════════════
   Hooks.on('preCreateItem', async (document, data, options, userId) => {
     // Only process vehicles
     if (document.type !== 'vehicle') {
@@ -67,10 +72,8 @@ export function registerVehiclePreCreateHooks() {
       document.system = {};
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
     // Phase 4: Normalize imported vehicle data (before category assignment)
     // Ensures downstream contracts (derived-builder, context-builder) are met
-    // ═══════════════════════════════════════════════════════════════════════════
     try {
       const normalized = normalizeVehicleImportData(document.system);
       Object.assign(document.system, normalized);
@@ -80,9 +83,7 @@ export function registerVehiclePreCreateHooks() {
       // Continue anyway - normalization errors should not block vehicle creation
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
     // Original: Auto-fill category from mapping
-    // ═══════════════════════════════════════════════════════════════════════════
     const mapping = await loadVehicleMapping();
     if (!mapping || Object.keys(mapping).length === 0) {
       return;
@@ -117,6 +118,36 @@ export function registerVehiclePreCreateHooks() {
     } else if (category === 'REVIEW_REQUIRED') {
       // Flag vehicles that need manual review
       SWSELogger.info(`[${SYSTEM_ID}] Vehicle "${vehicleName}" marked for manual category review`);
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // POST-CREATE: Create embedded weapon items from system.weapons
+  // ═══════════════════════════════════════════════════════════════════════════
+  Hooks.on('createActor', async (actor, options, userId) => {
+    // Only process vehicles
+    if (actor.type !== 'vehicle') {
+      return;
+    }
+
+    try {
+      // Normalize weapon data and prepare item creation
+      const weaponResult = await normalizeVehicleWeaponImportData(actor, {
+        createItems: true,
+        preserveSource: true
+      });
+
+      // Create embedded weapon items if any were parsed
+      if (weaponResult.items && weaponResult.items.length > 0) {
+        const created = await createVehicleWeaponItems(actor, weaponResult.items);
+        SWSELogger.log(
+          `[${SYSTEM_ID}] Vehicle "${actor.name}" weapon import: ${weaponResult.parseStats.total} sources → ` +
+          `${created.length} items created, ${weaponResult.parseStats.deduped} deduped`
+        );
+      }
+    } catch (err) {
+      SWSELogger.error(`[${SYSTEM_ID}] Failed to create vehicle weapons:`, err.message);
+      // Don't block actor creation if weapon items fail
     }
   });
 }
