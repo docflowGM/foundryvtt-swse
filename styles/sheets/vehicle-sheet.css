@@ -903,6 +903,104 @@
    SMALL SCREEN SAFETY
    ========================================================= */
 
+/* =========================================================
+   PHASE 3: RULE SURFACE PANELS
+   ========================================================= */
+
+.swse-vehicle-maneuver-list,
+.swse-vehicle-order-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.swse-vehicle-maneuver-card,
+.swse-vehicle-order-card {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--swse-vehicle-border-soft);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.swse-vehicle-maneuver-card.is-active,
+.swse-vehicle-order-card.is-active {
+  border-color: rgba(120,214,156,0.4);
+  background: rgba(120,214,156,0.08);
+}
+
+.swse-vehicle-maneuver-header,
+.swse-vehicle-order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.swse-vehicle-maneuver-name,
+.swse-vehicle-order-name {
+  font-weight: 800;
+  color: var(--swse-vehicle-text);
+  font-size: 0.9rem;
+}
+
+.swse-vehicle-maneuver-summary,
+.swse-vehicle-order-summary {
+  font-size: 0.74rem;
+  color: var(--swse-vehicle-text-muted);
+}
+
+.swse-vehicle-phase-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.swse-vehicle-phase-step {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--swse-vehicle-border-soft);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.02);
+}
+
+.swse-vehicle-phase-step.is-active {
+  border-color: rgba(102,214,191,0.4);
+  background: rgba(102,214,191,0.08);
+}
+
+.swse-vehicle-phase-step.is-complete {
+  border-color: rgba(120,214,156,0.3);
+  opacity: 0.6;
+}
+
+.swse-vehicle-phase-indicator {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--swse-vehicle-text-dim);
+}
+
+.swse-vehicle-phase-step.is-active .swse-vehicle-phase-indicator {
+  background: var(--swse-vehicle-accent);
+  box-shadow: 0 0 6px var(--swse-vehicle-accent);
+}
+
+.swse-vehicle-phase-step.is-complete .swse-vehicle-phase-indicator {
+  background: var(--swse-vehicle-normal);
+}
+
+.swse-vehicle-phase-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--swse-vehicle-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 @media (max-width: 800px) {
   .swse-vehicle-header-meta,
   .swse-vehicle-hp-stats,

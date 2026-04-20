@@ -149,12 +149,16 @@ export class SWSEV2VehicleSheet extends
     const ruleContexts = VehicleRulesAdapter.buildAllRuleContexts(actor);
 
     // ════════════════════════════════════════════════════════════════════════════
-    // PHASE 1: Build prepared panel contexts for template rendering
+    // PHASE 3: Build prepared panel contexts for template rendering
     // ════════════════════════════════════════════════════════════════════════════
     const panelContext = buildVehicleSheetContext(actor, baseContext, {
       subsystemData: ruleContexts.subsystemData,
       subsystemPenalties: ruleContexts.subsystemPenalties,
       shieldZones: ruleContexts.shieldZones,
+      powerData: ruleContexts.powerData,
+      pilotData: ruleContexts.pilotData,
+      commanderData: ruleContexts.commanderData,
+      turnPhaseData: ruleContexts.turnPhaseData,
       totalCargoWeight,
       cargoState
     });

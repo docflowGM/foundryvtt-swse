@@ -84,50 +84,121 @@ export class VehicleRulesAdapter {
 
   /**
    * Build power management data IF enhanced engineer rule is enabled
-   * PHASE 2: Placeholder. Returns null in Phase 1.
    *
    * @param {Actor} actor - The vehicle actor
    * @returns {Object|null} Power data or null
    */
   static buildPowerData(actor) {
-    // Phase 1: Not yet implemented
-    return null;
+    try {
+      if (!EnhancedEngineer.enabled) {
+        return null;
+      }
+    } catch {
+      return null;
+    }
+
+    try {
+      const budget = EnhancedEngineer.getPowerBudget(actor);
+      const allocation = EnhancedEngineer.getPowerAllocation(actor);
+
+      return {
+        powerData: {
+          budget,
+          allocation,
+          available: Math.max(0, budget - allocation)
+        }
+      };
+    } catch (err) {
+      console.warn('[VehicleRulesAdapter] EnhancedEngineer access failed:', err);
+      return null;
+    }
   }
 
   /**
    * Build pilot maneuver control data IF enhanced pilot rule is enabled
-   * PHASE 2: Placeholder. Returns null in Phase 1.
    *
    * @param {Actor} actor - The vehicle actor
    * @returns {Object|null} Pilot data or null
    */
   static buildPilotData(actor) {
-    // Phase 1: Not yet implemented
-    return null;
+    try {
+      if (!EnhancedPilot.enabled) {
+        return null;
+      }
+    } catch {
+      return null;
+    }
+
+    try {
+      const currentManeuver = EnhancedPilot.getCurrentManeuver(actor);
+
+      return {
+        pilotData: {
+          currentManeuver
+        }
+      };
+    } catch (err) {
+      console.warn('[VehicleRulesAdapter] EnhancedPilot access failed:', err);
+      return null;
+    }
   }
 
   /**
    * Build commander order control data IF enhanced commander rule is enabled
-   * PHASE 2: Placeholder. Returns null in Phase 1.
    *
    * @param {Actor} actor - The vehicle actor
    * @returns {Object|null} Commander data or null
    */
   static buildCommanderData(actor) {
-    // Phase 1: Not yet implemented
-    return null;
+    try {
+      if (!EnhancedCommander.enabled) {
+        return null;
+      }
+    } catch {
+      return null;
+    }
+
+    try {
+      const currentOrder = EnhancedCommander.getCurrentOrder(actor);
+
+      return {
+        commanderData: {
+          currentOrder
+        }
+      };
+    } catch (err) {
+      console.warn('[VehicleRulesAdapter] EnhancedCommander access failed:', err);
+      return null;
+    }
   }
 
   /**
    * Build turn phase tracker data IF turn controller rule is enabled
-   * PHASE 2: Placeholder. Returns null in Phase 1.
    *
    * @param {Actor} actor - The vehicle actor
    * @returns {Object|null} Turn phase data or null
    */
   static buildTurnPhaseData(actor) {
-    // Phase 1: Not yet implemented
-    return null;
+    try {
+      if (!VehicleTurnController.enabled) {
+        return null;
+      }
+    } catch {
+      return null;
+    }
+
+    try {
+      const turnState = VehicleTurnController.getTurnState(actor);
+
+      return {
+        turnPhaseData: {
+          turnState
+        }
+      };
+    } catch (err) {
+      console.warn('[VehicleRulesAdapter] VehicleTurnController access failed:', err);
+      return null;
+    }
   }
 
   /**

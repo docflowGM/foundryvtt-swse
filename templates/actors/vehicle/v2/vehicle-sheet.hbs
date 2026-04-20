@@ -5,7 +5,7 @@
         <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="52" height="52" style="border-radius:8px;"/>
         <div class="flexcol" style="gap:4px;">
           <input name="name" type="text" value="{{actor.name}}" style="font-size:1.25rem; font-weight:800;"/>
-          <div class="muted" style="opacity:0.8;">v2 Vehicle Sheet — Phase 2 Mature Architecture</div>
+          <div class="muted" style="opacity:0.8;">v2 Vehicle Sheet — Phase 3 Rule Surfaces</div>
         </div>
       </div>
     </header>
@@ -22,7 +22,7 @@
 
       <section class="sheet-content swse-vehicle-content">
 
-        <!-- OVERVIEW TAB: Identity, defenses, health, crew summary, cargo summary -->
+        <!-- OVERVIEW TAB: Identity, defenses, health, crew summary, cargo summary, turn phase -->
         <section class="tab flexcol" data-group="primary" data-tab="overview">
           {{#if vehiclePanels.headerSummaryPanel}}
             {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-header-summary-panel.hbs" panel=vehiclePanels.headerSummaryPanel}}
@@ -43,16 +43,24 @@
           {{#if vehiclePanels.cargoSummaryPanel}}
             {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs" panel=vehiclePanels.cargoSummaryPanel}}
           {{/if}}
+
+          {{#if vehiclePanels.turnPhasePanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-turn-phase-panel.hbs" panel=vehiclePanels.turnPhasePanel}}
+          {{/if}}
         </section>
 
-        <!-- WEAPONS TAB: Mounted weapons -->
+        <!-- WEAPONS TAB: Mounted weapons, pilot maneuvers -->
         <section class="tab flexcol" data-group="primary" data-tab="weapons">
           {{#if vehiclePanels.weaponMountPanel}}
             {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs" panel=vehiclePanels.weaponMountPanel}}
           {{/if}}
+
+          {{#if vehiclePanels.pilotManeuverPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-pilot-maneuver-panel.hbs" panel=vehiclePanels.pilotManeuverPanel}}
+          {{/if}}
         </section>
 
-        <!-- CREW TAB: Crew summary and station assignments -->
+        <!-- CREW TAB: Crew summary, station assignments, commander orders -->
         <section class="tab flexcol" data-group="primary" data-tab="crew">
           {{#if vehiclePanels.crewSummaryPanel}}
             {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs" panel=vehiclePanels.crewSummaryPanel}}
@@ -60,6 +68,10 @@
 
           {{#if vehiclePanels.crewAssignmentPanel}}
             {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs" panel=vehiclePanels.crewAssignmentPanel}}
+          {{/if}}
+
+          {{#if vehiclePanels.commanderOrderPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-commander-order-panel.hbs" panel=vehiclePanels.commanderOrderPanel}}
           {{/if}}
         </section>
 

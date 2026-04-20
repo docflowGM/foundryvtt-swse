@@ -414,8 +414,63 @@ export function buildVehicleCargoManifestPanel(actor) {
 }
 
 /**
- * Main context builder for vehicle sheet — Phase 2
- * Builds all 11 panel contexts and tab structures
+ * PHASE 3: Build pilot maneuver panel from rule context
+ */
+function buildPilotManeuverPanel(pilotData) {
+  if (!pilotData) return null;
+
+  return {
+    title: 'Pilot Maneuvers',
+    currentManeuver: pilotData.currentManeuver || null,
+    maneuvers: [
+      { key: 'dodge', label: 'Dodge', summary: 'Defensive posture' },
+      { key: 'aggressive', label: 'Aggressive', summary: 'Attack-focused' },
+      { key: 'evasive', label: 'Evasive', summary: 'High mobility' }
+    ]
+  };
+}
+
+/**
+ * PHASE 3: Build commander order panel from rule context
+ */
+function buildCommanderOrderPanel(commanderData) {
+  if (!commanderData) return null;
+
+  return {
+    title: 'Commander Orders',
+    currentOrder: commanderData.currentOrder || null,
+    orders: [
+      { key: 'rally', label: 'Rally', summary: 'Boost crew effectiveness' },
+      { key: 'hold-fire', label: 'Hold Fire', summary: 'Restrained action' },
+      { key: 'full-attack', label: 'Full Attack', summary: 'Maximum offensive' }
+    ]
+  };
+}
+
+/**
+ * PHASE 3: Build turn phase panel from rule context
+ */
+function buildTurnPhasePanel(turnPhaseData) {
+  if (!turnPhaseData) return null;
+
+  const turnState = turnPhaseData.turnState || {};
+
+  return {
+    title: 'Turn Status',
+    currentPhase: turnState.currentPhase || 'Initiative',
+    phases: [
+      { key: 'initiative', label: 'Initiative', active: false, completed: false },
+      { key: 'maneuver', label: 'Maneuver', active: false, completed: false },
+      { key: 'attack', label: 'Attack', active: false, completed: false },
+      { key: 'end', label: 'End', active: false, completed: false }
+    ],
+    roundLabel: turnState.roundLabel || 'Round 1'
+  };
+}
+
+/**
+ * Main context builder for vehicle sheet — Phase 3
+ * Builds all panel contexts and includes rule-driven panels
  */
 export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   // Extract house-rule data from options
@@ -423,6 +478,9 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const subsystemPenalties = options.subsystemPenalties || null;
   const shieldZones = options.shieldZones || null;
   const powerData = options.powerData || null;
+  const pilotData = options.pilotData || null;
+  const commanderData = options.commanderData || null;
+  const turnPhaseData = options.turnPhaseData || null;
   const totalCargoWeight = options.totalCargoWeight || 0;
   const cargoState = options.cargoState || 'normal';
 
@@ -439,6 +497,11 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const cargoSummaryPanel = buildVehicleCargoSummaryPanel(actor, totalCargoWeight, cargoState);
   const cargoManifestPanel = buildVehicleCargoManifestPanel(actor);
 
+  // Phase 3: Build rule-driven panels
+  const pilotManeuverPanel = buildPilotManeuverPanel(pilotData);
+  const commanderOrderPanel = buildCommanderOrderPanel(commanderData);
+  const turnPhasePanel = buildTurnPhasePanel(turnPhaseData);
+
   return {
     vehiclePanels: {
       headerSummaryPanel,
@@ -451,7 +514,10 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
       shieldManagementPanel,
       powerSummaryPanel,
       cargoSummaryPanel,
-      cargoManifestPanel
+      cargoManifestPanel,
+      pilotManeuverPanel,
+      commanderOrderPanel,
+      turnPhasePanel
     },
     vehicleTabs: {
       overview: {
@@ -459,14 +525,17 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
         defensesPanel,
         hpConditionPanel,
         crewSummaryPanel,
-        cargoSummaryPanel
+        cargoSummaryPanel,
+        turnPhasePanel
       },
       weapons: {
-        weaponMountPanel
+        weaponMountPanel,
+        pilotManeuverPanel
       },
       crew: {
         crewSummaryPanel,
-        crewAssignmentPanel
+        crewAssignmentPanel,
+        commanderOrderPanel
       },
       systems: {
         subsystemDetailPanel,
