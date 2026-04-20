@@ -1,17 +1,22 @@
-<section class="swse-vehicle-header-panel">
-  <div class="swse-vehicle-header-meta">
-    <div class="swse-vehicle-name">{{panel.name}}</div>
-    <div class="swse-vehicle-type-row">
-      <span class="swse-vehicle-type-label">{{panel.typeLabel}}</span>
-      <span class="swse-vehicle-type-separator">—</span>
-      <span class="swse-vehicle-size-label">{{panel.sizeLabel}}</span>
+<section class="swse-vehicle-panel swse-vehicle-header-panel">
+  <div class="swse-vehicle-header-topline">
+    <div>
+      <h2 class="swse-vehicle-header-name">{{panel.name}}</h2>
+      <div class="swse-vehicle-header-subtitle">{{panel.typeLabel}}{{#if panel.sizeLabel}} — {{panel.sizeLabel}}{{/if}}</div>
     </div>
-    <div class="swse-vehicle-category">{{panel.category}}</div>
   </div>
+
+  <div class="swse-vehicle-header-meta">
+    <div class="swse-vehicle-meta-cell">
+      <span class="swse-vehicle-meta-label">Category</span>
+      <span class="swse-vehicle-meta-value">{{panel.category}}</span>
+    </div>
+  </div>
+
   {{#if panel.tags}}
     <div class="swse-vehicle-tag-list">
       {{#each panel.tags as |tag|}}
-        <span class="swse-vehicle-tag swse-vehicle-tag--{{tag.tone}}">{{tag.label}}</span>
+        <span class="swse-vehicle-tag {{#if tag.tone}}tone-{{tag.tone}}{{/if}}">{{tag.label}}</span>
       {{/each}}
     </div>
   {{/if}}

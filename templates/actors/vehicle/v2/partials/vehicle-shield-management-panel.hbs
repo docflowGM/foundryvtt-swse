@@ -1,43 +1,37 @@
-<section class="swse-vehicle-shield-panel swse-vehicle-panel">
+<section class="swse-vehicle-panel">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
   </header>
 
   <div class="swse-vehicle-panel-body">
-    <!-- SHIELD CAPACITY BAR -->
-    <div class="swse-vehicle-shield-capacity-bar">
-      <div class="swse-vehicle-shield-capacity-fill" style="width: {{#if (gt panel.max 0)}}{{#multiply panel.total panel.max}}{{/multiply}}{{else}}0{{/if}}%;"></div>
-      <div class="swse-vehicle-shield-capacity-label">
-        <span class="swse-vehicle-shield-capacity-value">{{panel.total}}/{{panel.max}}</span>
+    <div style="margin-bottom: 0.75rem;">
+      <div class="swse-vehicle-shield-summary">
+        <div class="swse-vehicle-shield-stat">
+          <span class="swse-vehicle-shield-stat-label">Total</span>
+          <span class="swse-vehicle-shield-stat-value">{{panel.total}}/{{panel.max}}</span>
+        </div>
+        <div class="swse-vehicle-shield-stat">
+          <span class="swse-vehicle-shield-stat-label">Recharge</span>
+          <span class="swse-vehicle-shield-stat-value">{{panel.rechargeRate}}/rd</span>
+        </div>
       </div>
     </div>
 
-    <!-- SHIELD ZONE GRID -->
     <div class="swse-vehicle-shield-list">
       {{#each panel.zones as |zone|}}
-        <div class="swse-vehicle-shield-zone swse-vehicle-shield-zone--{{zone.state}}">
-          <div class="swse-vehicle-shield-zone-name">{{zone.label}}</div>
-          <div class="swse-vehicle-shield-zone-value">{{zone.value}}</div>
+        <div class="swse-vehicle-shield-row">
+          <div class="swse-vehicle-shield-label">{{zone.label}}</div>
+          <div class="swse-vehicle-shield-value {{#if (eq zone.state "low")}}style="color: var(--swse-vehicle-warning);"{{/if}}">
+            {{zone.value}}
+          </div>
         </div>
       {{/each}}
     </div>
 
-    <!-- SHIELD STATS -->
-    <div class="swse-vehicle-shield-stats">
-      <div class="swse-vehicle-stat-row">
-        <span class="swse-vehicle-stat-label">Max Capacity:</span>
-        <span class="swse-vehicle-stat-value">{{panel.max}}</span>
-      </div>
-      <div class="swse-vehicle-stat-row">
-        <span class="swse-vehicle-stat-label">Recharge Rate:</span>
-        <span class="swse-vehicle-stat-value">{{panel.rechargeRate}} per round</span>
-      </div>
-    </div>
-
     {{#if panel.notes}}
-      <div class="swse-vehicle-shield-notes">
+      <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--swse-vehicle-border-soft); font-size: 0.74rem; color: var(--swse-vehicle-text-muted);">
         {{#each panel.notes as |note|}}
-          <div class="swse-vehicle-note-item">{{note}}</div>
+          <div>{{note}}</div>
         {{/each}}
       </div>
     {{/if}}

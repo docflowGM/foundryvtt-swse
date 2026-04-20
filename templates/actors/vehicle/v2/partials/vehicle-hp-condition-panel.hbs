@@ -1,42 +1,39 @@
-<section class="swse-vehicle-hp-panel swse-vehicle-panel">
+<section class="swse-vehicle-panel swse-vehicle-hp-panel {{#if panel.critical}}is-critical{{else if panel.warning}}is-warning{{/if}}">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
   </header>
 
   <div class="swse-vehicle-panel-body">
-    <!-- HP BAR -->
-    <div class="swse-vehicle-hp-bar {{#if panel.critical}}swse-vehicle-hp-bar--critical{{else if panel.warning}}swse-vehicle-hp-bar--warning{{/if}}">
-      <div class="swse-vehicle-hp-fill" style="width: {{panel.hp.percent}}%;"></div>
-      <div class="swse-vehicle-hp-label">
-        <span class="swse-vehicle-hp-value">{{panel.hp.value}}/{{panel.hp.max}}</span>
-      </div>
+    <div class="swse-vehicle-hp-topline">
+      <span class="swse-vehicle-hp-title">Hull Integrity</span>
+      <span class="swse-vehicle-hp-value">{{panel.hp.value}}/{{panel.hp.max}}</span>
     </div>
 
-    <!-- HP STATS -->
+    <div class="swse-vehicle-hp-bar">
+      <div class="swse-vehicle-hp-fill" style="--fill-pct: {{panel.hp.percent}}%;"></div>
+    </div>
+
     <div class="swse-vehicle-hp-stats">
+      <div class="swse-vehicle-hp-stat">
+        <span class="swse-vehicle-hp-stat-label">Threshold</span>
+        <span class="swse-vehicle-hp-stat-value">{{panel.damageThreshold}}</span>
+      </div>
+      <div class="swse-vehicle-hp-stat">
+        <span class="swse-vehicle-hp-stat-label">Reduction</span>
+        <span class="swse-vehicle-hp-stat-value">{{panel.damageReduction}}</span>
+      </div>
       {{#if (gt panel.hp.temp 0)}}
-        <div class="swse-vehicle-stat-row">
-          <span class="swse-vehicle-stat-label">Temp HP:</span>
-          <span class="swse-vehicle-stat-value">{{panel.hp.temp}}</span>
+        <div class="swse-vehicle-hp-stat">
+          <span class="swse-vehicle-hp-stat-label">Temp HP</span>
+          <span class="swse-vehicle-hp-stat-value">{{panel.hp.temp}}</span>
         </div>
       {{/if}}
-      <div class="swse-vehicle-stat-row">
-        <span class="swse-vehicle-stat-label">Damage Threshold:</span>
-        <span class="swse-vehicle-stat-value">{{panel.damageThreshold}}</span>
-      </div>
-      <div class="swse-vehicle-stat-row">
-        <span class="swse-vehicle-stat-label">Damage Reduction:</span>
-        <span class="swse-vehicle-stat-value">{{panel.damageReduction}}</span>
-      </div>
     </div>
 
-    <!-- CONDITION STATE -->
-    <div class="swse-vehicle-condition-state swse-vehicle-condition-state--{{panel.condition.severity}}">
-      <div class="swse-vehicle-condition-label">Status: {{panel.condition.label}}</div>
+    <div class="swse-vehicle-condition-state {{#if panel.condition.severity}}is-{{panel.condition.severity}}{{/if}}">
+      {{panel.condition.label}}
       {{#if (gt panel.condition.penalty 0)}}
-        <div class="swse-vehicle-condition-penalty">
-          Penalty: -{{panel.condition.penalty}}
-        </div>
+        <span style="margin-left: 0.5rem;">−{{panel.condition.penalty}}</span>
       {{/if}}
     </div>
   </div>

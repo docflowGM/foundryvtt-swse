@@ -1,36 +1,26 @@
-<section class="swse-vehicle-cargo-panel swse-vehicle-panel">
+<section class="swse-vehicle-panel {{#if (eq panel.state "critical")}}is-critical{{else if (eq panel.state "near")}}is-warning{{/if}}">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
   </header>
 
   <div class="swse-vehicle-panel-body">
-    <!-- CARGO CAPACITY BAR -->
-    <div class="swse-vehicle-cargo-bar {{#if (eq panel.state "over")}}swse-vehicle-cargo-bar--over{{else if (eq panel.state "near")}}swse-vehicle-cargo-bar--near{{/if}}">
-      <div class="swse-vehicle-cargo-fill" style="width: {{panel.percentUsed}}%;"></div>
-      <div class="swse-vehicle-cargo-label">
-        <span class="swse-vehicle-cargo-value">{{panel.totalWeight}}/{{panel.capacity}}</span>
-      </div>
+    <div class="swse-vehicle-cargo-bar">
+      <div class="swse-vehicle-cargo-fill" style="--fill-pct: {{panel.percentUsed}}%;"></div>
     </div>
 
-    <!-- CARGO STATS -->
-    <div class="swse-vehicle-cargo-stats">
-      <div class="swse-vehicle-stat-row">
-        <span class="swse-vehicle-stat-label">Total Weight:</span>
-        <span class="swse-vehicle-stat-value">{{panel.totalWeight}} kg</span>
+    <div class="swse-vehicle-cargo-overview">
+      <div class="swse-vehicle-cargo-stat">
+        <span class="swse-vehicle-cargo-stat-label">Total</span>
+        <span class="swse-vehicle-cargo-stat-value">{{panel.totalWeight}}</span>
       </div>
-      <div class="swse-vehicle-stat-row">
-        <span class="swse-vehicle-stat-label">Capacity:</span>
-        <span class="swse-vehicle-stat-value">{{panel.capacity}} kg</span>
+      <div class="swse-vehicle-cargo-stat">
+        <span class="swse-vehicle-cargo-stat-label">Capacity</span>
+        <span class="swse-vehicle-cargo-stat-value">{{panel.capacity}}</span>
       </div>
-      <div class="swse-vehicle-stat-row">
-        <span class="swse-vehicle-stat-label">Used:</span>
-        <span class="swse-vehicle-stat-value">{{panel.percentUsed}}%</span>
+      <div class="swse-vehicle-cargo-stat">
+        <span class="swse-vehicle-cargo-stat-label">Used</span>
+        <span class="swse-vehicle-cargo-stat-value">{{panel.percentUsed}}%</span>
       </div>
-    </div>
-
-    <!-- CARGO STATE -->
-    <div class="swse-vehicle-cargo-state swse-vehicle-cargo-state--{{panel.state}}">
-      <span class="swse-vehicle-cargo-state-label">{{panel.stateLabel}}</span>
     </div>
   </div>
 </section>

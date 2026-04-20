@@ -1,15 +1,11 @@
-<section class="swse-vehicle-power-panel swse-vehicle-panel">
+<section class="swse-vehicle-panel {{#if panel.overAllocated}}is-overallocated{{/if}}">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
   </header>
 
   <div class="swse-vehicle-panel-body">
-    <!-- POWER ALLOCATION BAR -->
-    <div class="swse-vehicle-power-bar {{#if panel.overAllocated}}swse-vehicle-power-bar--over{{/if}}">
-      <div class="swse-vehicle-power-fill" style="width: {{#if (gt panel.budget 0)}}{{#multiply panel.allocated panel.budget}}{{/multiply}}{{else}}0{{/if}}%;"></div>
-      <div class="swse-vehicle-power-label">
-        <span class="swse-vehicle-power-value">{{panel.allocated}}/{{panel.budget}}</span>
-      </div>
+    <div class="swse-vehicle-power-bar">
+      <div class="swse-vehicle-power-fill" style="--fill-pct: {{#if (gt panel.budget 0)}}{{#multiply panel.allocated panel.budget}}{{/multiply}}{{else}}0{{/if}}%;"></div>
     </div>
 
     <!-- POWER STATS -->
