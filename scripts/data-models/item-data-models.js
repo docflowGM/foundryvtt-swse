@@ -84,7 +84,26 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
       // Gear Template fields
       gearTemplate: new fields.StringField({ initial: '', label: 'Primary Gear Template' }),
       gearTemplateSecondary: new fields.StringField({ initial: '', label: 'Secondary Gear Template (stackable)' }),
-      templateCost: new fields.NumberField({ initial: 0, min: 0, integer: true, label: 'Template Cost' })
+      templateCost: new fields.NumberField({ initial: 0, min: 0, integer: true, label: 'Template Cost' }),
+
+      // Vehicle mount metadata (Phase: Vehicle Weapons Importer)
+      vehicleMount: new fields.SchemaField({
+        mountKey: new fields.StringField({ initial: '', label: 'Mount Key' }),
+        mountLabel: new fields.StringField({ initial: '', label: 'Mount Label' }),
+        arc: new fields.StringField({ initial: 'unknown', label: 'Fire Arc' }),
+        linkedGroup: new fields.StringField({ initial: '', label: 'Linked Battery Group' }),
+        fireControl: new fields.StringField({ initial: '', label: 'Fire Control Method' }),
+        crewRole: new fields.StringField({ initial: 'gunner', label: 'Crew Role' }),
+        importSource: new fields.StringField({ initial: '', label: 'Import Source' }),
+        parseConfidence: new fields.StringField({ initial: 'unknown', label: 'Parse Confidence' }),
+        rawSource: new fields.StringField({ initial: '', label: 'Raw Import Source' })
+      }, { initial: {}, label: 'Vehicle Mount Metadata' }),
+
+      // Additional vehicle weapon fields
+      arc: new fields.StringField({ initial: 'unknown', label: 'Fire Arc' }),
+      fireControl: new fields.StringField({ initial: '', label: 'Fire Control' }),
+      bonus: new fields.StringField({ initial: '+0', label: 'Attack Bonus Display' }),
+      mounted: new fields.BooleanField({ initial: false, label: 'Mounted on Vehicle' })
     };
   }
 

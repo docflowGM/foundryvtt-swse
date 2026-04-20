@@ -1,0 +1,39 @@
+<section class="swse-vehicle-panel">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    <div style="margin-bottom: 0.75rem;">
+      <div class="swse-vehicle-shield-summary">
+        <div class="swse-vehicle-shield-stat">
+          <span class="swse-vehicle-shield-stat-label">Total</span>
+          <span class="swse-vehicle-shield-stat-value">{{panel.total}}/{{panel.max}}</span>
+        </div>
+        <div class="swse-vehicle-shield-stat">
+          <span class="swse-vehicle-shield-stat-label">Recharge</span>
+          <span class="swse-vehicle-shield-stat-value">{{panel.rechargeRate}}/rd</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="swse-vehicle-shield-list">
+      {{#each panel.zones as |zone|}}
+        <div class="swse-vehicle-shield-row">
+          <div class="swse-vehicle-shield-label">{{zone.label}}</div>
+          <div class="swse-vehicle-shield-value {{#if (eq zone.state "low")}}style="color: var(--swse-vehicle-warning);"{{/if}}">
+            {{zone.value}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+    {{#if panel.notes}}
+      <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--swse-vehicle-border-soft); font-size: 0.74rem; color: var(--swse-vehicle-text-muted);">
+        {{#each panel.notes as |note|}}
+          <div>{{note}}</div>
+        {{/each}}
+      </div>
+    {{/if}}
+  </div>
+</section>

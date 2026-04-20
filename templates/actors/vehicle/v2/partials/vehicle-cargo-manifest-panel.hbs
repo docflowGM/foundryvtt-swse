@@ -1,0 +1,30 @@
+<section class="swse-vehicle-panel">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    {{#if panel.items.length}}
+      <div class="swse-vehicle-cargo-item-list">
+        {{#each panel.items as |item|}}
+          <div class="swse-vehicle-cargo-item">
+            <div class="swse-vehicle-cargo-item-header">
+              <div class="swse-vehicle-cargo-item-name">{{item.name}}</div>
+              <div class="swse-vehicle-cargo-item-qty">Qty: {{item.quantity}}</div>
+            </div>
+            <div class="swse-vehicle-cargo-item-meta">
+              <div class="swse-vehicle-cargo-item-weight">{{item.weight}} kg</div>
+              {{#if item.notes}}
+                <div class="swse-vehicle-cargo-item-notes">{{item.notes}}</div>
+              {{/if}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="swse-vehicle-cargo-item-empty">
+        {{panel.emptyText}}
+      </div>
+    {{/if}}
+  </div>
+</section>

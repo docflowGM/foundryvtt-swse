@@ -1,0 +1,16 @@
+<section class="swse-vehicle-panel">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    <div class="swse-vehicle-defense-list">
+      {{#each panel.defenses as |defense|}}
+        <div class="swse-vehicle-defense-row">
+          <div class="swse-vehicle-defense-label">{{defense.label}}</div>
+          <div class="swse-vehicle-defense-total">{{defense.total}}</div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</section>

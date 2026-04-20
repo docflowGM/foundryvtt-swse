@@ -1,0 +1,21 @@
+<section class="swse-vehicle-panel">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--swse-vehicle-border-soft);">
+      <div style="font-size: 0.65rem; text-transform: uppercase; color: var(--swse-vehicle-text-dim); letter-spacing: 0.08em; margin-bottom: 0.3rem;">{{panel.roundLabel}}</div>
+      <div style="font-size: 0.95rem; font-weight: 800;">{{panel.currentPhase}}</div>
+    </div>
+
+    <div class="swse-vehicle-phase-list">
+      {{#each panel.phases as |phase|}}
+        <div class="swse-vehicle-phase-step {{#if phase.active}}is-active{{else if phase.completed}}is-complete{{/if}}">
+          <div class="swse-vehicle-phase-indicator"></div>
+          <div class="swse-vehicle-phase-label">{{phase.label}}</div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</section>

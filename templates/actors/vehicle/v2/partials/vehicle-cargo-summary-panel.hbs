@@ -1,0 +1,26 @@
+<section class="swse-vehicle-panel {{#if (eq panel.state "critical")}}is-critical{{else if (eq panel.state "near")}}is-warning{{/if}}">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    <div class="swse-vehicle-cargo-bar">
+      <div class="swse-vehicle-cargo-fill" style="--fill-pct: {{panel.percentUsed}}%;"></div>
+    </div>
+
+    <div class="swse-vehicle-cargo-overview">
+      <div class="swse-vehicle-cargo-stat">
+        <span class="swse-vehicle-cargo-stat-label">Total</span>
+        <span class="swse-vehicle-cargo-stat-value">{{panel.totalWeight}}</span>
+      </div>
+      <div class="swse-vehicle-cargo-stat">
+        <span class="swse-vehicle-cargo-stat-label">Capacity</span>
+        <span class="swse-vehicle-cargo-stat-value">{{panel.capacity}}</span>
+      </div>
+      <div class="swse-vehicle-cargo-stat">
+        <span class="swse-vehicle-cargo-stat-label">Used</span>
+        <span class="swse-vehicle-cargo-stat-value">{{panel.percentUsed}}%</span>
+      </div>
+    </div>
+  </div>
+</section>

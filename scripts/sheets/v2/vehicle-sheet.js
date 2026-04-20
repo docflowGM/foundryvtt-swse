@@ -12,14 +12,11 @@ import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced
 import { VehicleDropEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/vehicle-drop-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
-import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
-import { EnhancedShields } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js";
-import { EnhancedEngineer } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-engineer.js";
-import { EnhancedPilot } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-pilot.js";
-import { EnhancedCommander } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-commander.js";
-import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
 import { StarshipManeuversEngine } from "/systems/foundryvtt-swse/scripts/engine/StarshipManeuversEngine.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
+// PHASE 1: Import prepared context builders instead of direct engine access
+import { buildVehicleSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
+import { VehicleRulesAdapter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-rules-adapter.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -87,12 +84,16 @@ export class SWSEV2VehicleSheet extends
 
     const baseContext = await super._prepareContext(options);
 
-    // DATAPAD HEADER: HP state
-    const currentHp = actor.system?.hp?.value ?? 0;
-    const maxHp = actor.system?.hp?.max ?? 1;
-    const hpPercent = Math.max(0, Math.min(100, (currentHp / maxHp) * 100));
-    const hpWarning = hpPercent <= 50 && hpPercent > 25;
-    const hpCritical = hpPercent <= 25;
+    // ════════════════════════════════════════════════════════════════════════════
+    // PHASE 1: Build prepared panel contexts using builders (not raw data)
+    // ════════════════════════════════════════════════════════════════════════════
+
+    // DATAPAD HEADER: HP state (from prepared derived data)
+    const derived = actor.system?.derived ?? {};
+    const hp = derived.hp ?? { value: 0, max: 1, percent: 0, warning: false, critical: false };
+    const hpPercent = Math.max(0, Math.min(100, hp.percent ?? 0));
+    const hpWarning = hp.warning ?? false;
+    const hpCritical = hp.critical ?? false;
 
     // Condition Track state
     const conditionStep = actor.system?.conditionTrack?.current ?? 0;
@@ -103,7 +104,6 @@ export class SWSEV2VehicleSheet extends
     for (const entry of actor.system.ownedActors || []) {
       const ownedActor = game.actors.get(entry.id);
       if (ownedActor) {
-        // Store only serializable properties, not the Document itself
         ownedActorMap[entry.id] = {
           id: ownedActor.id,
           name: ownedActor.name,
@@ -130,29 +130,9 @@ export class SWSEV2VehicleSheet extends
       system: item.system
     }));
 
-    // Engine states for template
-    const subsystemsEnabled = SubsystemEngine.enabled;
-    const enhancedShieldsEnabled = EnhancedShields.enabled;
-    const enhancedEngineerEnabled = EnhancedEngineer.enabled;
-    const enhancedPilotEnabled = EnhancedPilot.enabled;
-    const enhancedCommanderEnabled = EnhancedCommander.enabled;
-    const turnControllerEnabled = VehicleTurnController.enabled;
-
-    const subsystems = subsystemsEnabled ? SubsystemEngine.getSubsystems(actor) : null;
-    const subsystemPenalties = subsystemsEnabled ? SubsystemEngine.getAggregatePenalties(actor) : null;
-    const shieldZones = enhancedShieldsEnabled ? (actor.system.enhancedShields ?? {}) : null;
-    const powerAllocation = enhancedEngineerEnabled ? (actor.system.powerAllocation ?? {}) : null;
-    const pilotManeuver = enhancedPilotEnabled ? (actor.system.pilotManeuver ?? 'none') : null;
-    const commanderOrder = enhancedCommanderEnabled ? (actor.system.commanderOrder ?? 'none') : null;
-    const turnState = turnControllerEnabled ? (actor.system.turnState ?? {}) : null;
-    const turnPhases = turnControllerEnabled
-      ? ['commander', 'pilot', 'engineer', 'shields', 'gunner', 'cleanup'].map(p => ({
-        name: p,
-        active: turnState?.currentPhase === p
-      }))
-      : null;
-
-    // Cargo weight calculation
+    // ════════════════════════════════════════════════════════════════════════════
+    // PHASE 1: Calculate cargo state for summary panel
+    // ════════════════════════════════════════════════════════════════════════════
     const cargoCapacity = actor.system?.cargo?.capacity ?? 500;
     let totalCargoWeight = 0;
     const cargoItems = actor.items.filter(item => item.type === "equipment");
@@ -163,13 +143,33 @@ export class SWSEV2VehicleSheet extends
     }
     const cargoState = totalCargoWeight > cargoCapacity * 1.1 ? 'over' : totalCargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal';
 
-    // Starship Maneuvers (for pilot/crew crew positions)
+    // ════════════════════════════════════════════════════════════════════════════
+    // PHASE 1: Build all house rule contexts through adapter (no direct reads)
+    // ════════════════════════════════════════════════════════════════════════════
+    const ruleContexts = VehicleRulesAdapter.buildAllRuleContexts(actor);
+
+    // ════════════════════════════════════════════════════════════════════════════
+    // PHASE 3: Build prepared panel contexts for template rendering
+    // ════════════════════════════════════════════════════════════════════════════
+    const panelContext = buildVehicleSheetContext(actor, baseContext, {
+      subsystemData: ruleContexts.subsystemData,
+      subsystemPenalties: ruleContexts.subsystemPenalties,
+      shieldZones: ruleContexts.shieldZones,
+      powerData: ruleContexts.powerData,
+      pilotData: ruleContexts.pilotData,
+      commanderData: ruleContexts.commanderData,
+      turnPhaseData: ruleContexts.turnPhaseData,
+      totalCargoWeight,
+      cargoState
+    });
+
+    // Starship Maneuvers (for pilot/crew positions)
     const starshipManeuvers = StarshipManeuversEngine.getManeuversForActor(actor);
 
     const overrides = {
-      // NOTE: 'actor' Document NOT included here — use 'document' from baseContext instead
+      // Core document and system data
       system: actor.system,
-      derived: actor.system?.derived ?? {},
+      derived: derived,  // Now properly normalized by buildVehicleDerived
       items: actor.items.map(item => ({
         id: item.id,
         name: item.name,
@@ -186,35 +186,32 @@ export class SWSEV2VehicleSheet extends
         name: game.user.name,
         role: game.user.role
       },
-      // NOTE: CONFIG.SWSE removed — not serializable
-      // DATAPAD HEADER STATES
+      // PHASE 1: DATAPAD HEADER STATES
       hpPercent,
       hpWarning,
       hpCritical,
       ctWarning,
-      // CARGO SYSTEM
+      // PHASE 1: CARGO SYSTEM
       cargoCapacity: Math.round(cargoCapacity * 100) / 100,
       totalCargoWeight: Math.round(totalCargoWeight * 100) / 100,
       cargoState,
-      // Starship engine states
-      engines: {
-        subsystemsEnabled,
-        enhancedShieldsEnabled,
-        enhancedEngineerEnabled,
-        enhancedPilotEnabled,
-        enhancedCommanderEnabled,
-        turnControllerEnabled,
-        subsystems,
-        subsystemPenalties,
-        shieldZones,
-        powerAllocation,
-        pilotManeuver,
-        commanderOrder,
-        turnState,
-        turnPhases,
-        powerBudget: enhancedEngineerEnabled ? EnhancedEngineer.getPowerBudget(actor) : 0
+      // PHASE 1: Prepared panel contexts (not raw data)
+      ...panelContext,
+      // PHASE 1: House rule contexts (null if rule disabled)
+      houseRuleContexts: {
+        subsystemPanel: ruleContexts.subsystemData ? {
+          subsystemData: ruleContexts.subsystemData,
+          subsystemPenalties: ruleContexts.subsystemPenalties
+        } : null,
+        shieldPanel: ruleContexts.shieldZones ? {
+          shieldZones: ruleContexts.shieldZones
+        } : null,
+        powerPanel: ruleContexts.powerData || null,
+        pilotPanel: ruleContexts.pilotData || null,
+        commanderPanel: ruleContexts.commanderData || null,
+        turnPhasePanel: ruleContexts.turnPhaseData || null
       },
-      // Starship Maneuvers
+      // PHASE 1: Starship Maneuvers
       starshipManeuvers
     };
 

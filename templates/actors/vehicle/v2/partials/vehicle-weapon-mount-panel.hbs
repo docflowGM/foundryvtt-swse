@@ -1,0 +1,70 @@
+<section class="swse-vehicle-panel">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    <div class="swse-vehicle-weapon-list">
+      {{#each panel.mounts as |mount|}}
+        <div class="swse-vehicle-weapon-card {{#if mount.parseConfidence}}is-{{mount.parseConfidence}}{{/if}}">
+          <div class="swse-vehicle-weapon-titlebar">
+            <h4 class="swse-vehicle-weapon-name">{{mount.name}}</h4>
+            <span class="swse-vehicle-weapon-chip">{{mount.arc}}</span>
+            {{#if mount.parseConfidence}}
+              <span class="swse-vehicle-weapon-confidence is-{{mount.parseConfidence}}">{{mount.parseConfidence}}</span>
+            {{/if}}
+          </div>
+
+          <div class="swse-vehicle-weapon-meta">
+            {{#if mount.gunner}}
+              <span class="swse-vehicle-weapon-chip">
+                <span class="swse-vehicle-weapon-stat-label">Gunner:</span>
+                {{mount.gunner}}
+              </span>
+            {{/if}}
+            {{#if mount.fireControl}}
+              <span class="swse-vehicle-weapon-chip">
+                <span class="swse-vehicle-weapon-stat-label">Fire Control:</span>
+                {{mount.fireControl}}
+              </span>
+            {{/if}}
+          </div>
+
+          <div class="swse-vehicle-weapon-statline">
+            {{#if mount.attackSummary}}
+              <div class="swse-vehicle-weapon-stat">
+                <span class="swse-vehicle-weapon-stat-label">Attack</span>
+                <span class="swse-vehicle-weapon-stat-value">{{mount.attackSummary}}</span>
+              </div>
+            {{/if}}
+            {{#if mount.damageSummary}}
+              <div class="swse-vehicle-weapon-stat">
+                <span class="swse-vehicle-weapon-stat-label">Damage</span>
+                <span class="swse-vehicle-weapon-stat-value">{{mount.damageSummary}}</span>
+              </div>
+            {{/if}}
+            {{#if mount.rangeSummary}}
+              <div class="swse-vehicle-weapon-stat">
+                <span class="swse-vehicle-weapon-stat-label">Range</span>
+                <span class="swse-vehicle-weapon-stat-value">{{mount.rangeSummary}}</span>
+              </div>
+            {{/if}}
+          </div>
+
+          {{#if mount.linkedGroup}}
+            <div style="margin-top: 0.45rem; padding-top: 0.45rem; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.72rem; color: var(--swse-vehicle-text-muted);">
+              <span style="text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">Linked:</span> {{mount.linkedGroup}}
+            </div>
+          {{/if}}
+
+          {{#if mount.rawSource}}
+            <div class="swse-vehicle-weapon-raw">
+              <span style="font-size: 0.65rem; text-transform: uppercase; color: var(--swse-vehicle-text-dim); letter-spacing: 0.08em; margin-bottom: 0.2rem;">Source:</span>
+              <div style="font-size: 0.75rem; color: var(--swse-vehicle-text-muted); font-family: monospace;">{{mount.rawSource}}</div>
+            </div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</section>

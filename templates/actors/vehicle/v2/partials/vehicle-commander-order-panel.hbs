@@ -1,0 +1,30 @@
+<section class="swse-vehicle-panel">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    {{#if panel.currentOrder}}
+      <div style="margin-bottom: 0.6rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--swse-vehicle-border-soft);">
+        <div style="font-size: 0.65rem; text-transform: uppercase; color: var(--swse-vehicle-text-dim); letter-spacing: 0.08em; margin-bottom: 0.2rem;">Active Order</div>
+        <div style="font-size: 0.95rem; font-weight: 800;">{{panel.currentOrder.label}}</div>
+      </div>
+    {{/if}}
+
+    {{#if panel.orders}}
+      <div class="swse-vehicle-order-list">
+        {{#each panel.orders as |order|}}
+          <div class="swse-vehicle-order-card {{#if (eq order.key panel.currentOrder.key)}}is-active{{/if}}">
+            <div class="swse-vehicle-order-header">
+              <span class="swse-vehicle-order-name">{{order.label}}</span>
+              {{#if (eq order.key panel.currentOrder.key)}}
+                <span style="font-size: 0.66rem; color: var(--swse-vehicle-normal); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Active</span>
+              {{/if}}
+            </div>
+            <div class="swse-vehicle-order-summary">{{order.summary}}</div>
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
+  </div>
+</section>
