@@ -1,6 +1,11 @@
 <section class="swse-npc-card swse-npc-relationships-card">
   <header class="swse-npc-card__header">
-    <h3 class="swse-section-title">Relationships</h3>
+    <div class="swse-npc-card__header-main">
+      <h3 class="swse-section-title">Relationships</h3>
+      <p class="swse-npc-card__subhead">
+        Owner, rider, and related linkage for this NPC.
+      </p>
+    </div>
   </header>
 
   <div class="swse-npc-card__body swse-npc-relationships-stack">
@@ -15,7 +20,7 @@
     {{#unless showOwnerPanel}}
       {{#unless showMountPanel}}
         <p class="swse-npc-empty-state">
-          No owner, rider, or minion relationships are currently available for this NPC.
+          No owner, rider, or mount relationship data is currently available for this NPC.
         </p>
       {{/unless}}
     {{/unless}}

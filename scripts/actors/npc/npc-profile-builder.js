@@ -32,6 +32,12 @@ export class NpcProfileBuilder {
     const riderData = this._resolveRiderData(actor);
     const hasRider = !!riderData;
 
+    // Resolve beast summary (Phase 4)
+    const beastSummary = this._getBeastSummary(actor);
+
+    // Resolve mount summary (Phase 4)
+    const mountSummary = this._getMountSummary(actor);
+
     // Resolve progression summary
     const progressionSummary = this._getProgressionSummary(actor);
 
@@ -88,6 +94,10 @@ export class NpcProfileBuilder {
 
       // Beast metadata
       beastKind: actor.system?.npcProfile?.beastKind || null,
+      beastSummary,
+
+      // Mount metadata (Phase 4 expanded)
+      mountSummary,
 
       // Progression summary (Phase 5 expanded)
       progressionSummary,
@@ -173,6 +183,82 @@ export class NpcProfileBuilder {
     return {
       name: rider.name || 'Unknown Rider',
       notes: actor.system?.npcProfile?.mount?.riderNotes || null
+    };
+  }
+
+  /**
+   * Get beast summary for display (Phase 4).
+   * @private
+   */
+  static _getBeastSummary(actor) {
+    if (!actor || actor.system?.npcProfile?.kind !== 'beast') {
+      return null;
+    }
+
+    const size = actor.system?.size || null;
+    const intelligence = actor.system?.abilities?.int?.value ?? null;
+    const speed = actor.system?.speed?.total ?? actor.system?.speed ?? null;
+    const speedSummary = speed ? `${speed} ft.` : null;
+
+    // Collect natural attack names (weapons)
+    const weapons = actor.items?.filter(i => i.type === 'weapon') || [];
+    const naturalAttackNames = weapons.map(w => w.name || 'Unnamed Attack').filter(Boolean);
+
+    // Collect special ability names (feats/talents/class features with creature/beast in name)
+    const abilities = actor.items?.filter(i => {
+      const types = ['feat', 'talent', 'class_feature'];
+      return types.includes(i.type);
+    }) || [];
+    const specialAbilityNames = abilities
+      .filter(a => {
+        const name = (a.name || '').toLowerCase();
+        return name.includes('ability') || name.includes('special') || name.includes('sense') || name.includes('immunity');
+      })
+      .map(a => a.name || 'Unnamed Ability')
+      .filter(Boolean);
+
+    const traitNotes = actor.system?.npcProfile?.traitNotes || null;
+
+    return {
+      size,
+      intelligence,
+      speedSummary,
+      naturalAttackNames,
+      specialAbilityNames,
+      traitNotes
+    };
+  }
+
+  /**
+   * Get mount summary for display (Phase 4).
+   * @private
+   */
+  static _getMountSummary(actor) {
+    if (!actor || actor.system?.npcProfile?.kind !== 'mount') {
+      return null;
+    }
+
+    // Resolve rider reference
+    const riderId = actor.system?.npcProfile?.mount?.riderActorId;
+    const rider = riderId ? game.actors?.get(riderId) : null;
+    const riderName = rider?.name || null;
+
+    // Mount operation fields
+    const battleTrained = actor.system?.npcProfile?.mount?.battleTrained ?? false;
+    const saddle = actor.system?.npcProfile?.mount?.saddle || null;
+    const passengerSlots = actor.system?.npcProfile?.mount?.passengerSlots ?? null;
+    const carryingCapacity = actor.system?.npcProfile?.mount?.carryingCapacity || null;
+    const mountedMovementNotes = actor.system?.npcProfile?.mount?.mountedMovementNotes || null;
+    const notes = actor.system?.npcProfile?.mount?.notes || null;
+
+    return {
+      riderName,
+      battleTrained,
+      saddle,
+      passengerSlots,
+      carryingCapacity,
+      mountedMovementNotes,
+      notes
     };
   }
 
@@ -309,7 +395,14 @@ export class NpcProfileBuilder {
       hasRider: false,
       riderSummary: null,
       beastKind: null,
+      beastSummary: null,
+      mountSummary: null,
       progressionSummary: null,
+      hasMixedProgressionTracks: false,
+      canLaunchNpcLevelUp: false,
+      hasNpcProgressionSnapshot: false,
+      canRevertNpcProgression: false,
+      npcProgressionAdvisory: null,
       profileDescription: 'NPC data unavailable.',
       authorityDescription: 'Unknown authority.'
     };

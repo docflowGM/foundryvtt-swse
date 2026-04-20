@@ -1,33 +1,72 @@
 <section class="swse-npc-card swse-npc-mount-card">
   <header class="swse-npc-card__header">
-    <h3 class="swse-section-title">Mount Operations</h3>
-    <span class="swse-npc-badge swse-npc-badge--subtype">Mount</span>
+    <div class="swse-npc-card__header-main">
+      <h3 class="swse-section-title">Mount Operations</h3>
+      <p class="swse-npc-card__subhead">
+        Rider-facing operational summary for this mount profile.
+      </p>
+    </div>
+
+    <div class="swse-npc-badges">
+      <span class="swse-npc-badge swse-npc-badge--subtype">Mount</span>
+      {{#if mountSummary.battleTrained}}
+        <span class="swse-npc-badge swse-npc-badge--warning">Battle Trained</span>
+      {{/if}}
+    </div>
   </header>
 
   <div class="swse-npc-card__body">
-    {{#if hasRider}}
-      <dl class="swse-npc-meta-list">
-        <div class="swse-npc-meta-list__row">
-          <dt>Assigned Rider</dt>
-          <dd>{{riderSummary.name}}</dd>
+    <div class="swse-npc-summary-grid">
+      <div class="swse-npc-summary-stat">
+        <label class="swse-npc-summary-stat__label">Rider</label>
+        <div class="swse-npc-summary-stat__value">
+          {{#if mountSummary.riderName}}{{mountSummary.riderName}}{{else}}—{{/if}}
         </div>
+      </div>
 
-        {{#if riderSummary.notes}}
-          <div class="swse-npc-meta-list__row">
-            <dt>Rider Notes</dt>
-            <dd>{{riderSummary.notes}}</dd>
-          </div>
-        {{/if}}
-      </dl>
-    {{else}}
-      <p class="swse-npc-empty-state">
-        No rider is currently assigned.
-      </p>
-    {{/if}}
+      <div class="swse-npc-summary-stat">
+        <label class="swse-npc-summary-stat__label">Battle Trained</label>
+        <div class="swse-npc-summary-stat__value">
+          {{#if mountSummary.battleTrained}}Yes{{else}}No{{/if}}
+        </div>
+      </div>
 
-    <div class="swse-npc-callout swse-npc-callout--mount">
-      <strong>Phase 2 scaffold:</strong>
-      This panel is reserved for rider, battle-trained, carrying capacity, and mounted movement integration.
+      <div class="swse-npc-summary-stat">
+        <label class="swse-npc-summary-stat__label">Passenger Slots</label>
+        <div class="swse-npc-summary-stat__value">
+          {{#if mountSummary.passengerSlots}}{{mountSummary.passengerSlots}}{{else}}—{{/if}}
+        </div>
+      </div>
+
+      <div class="swse-npc-summary-stat">
+        <label class="swse-npc-summary-stat__label">Carrying Capacity</label>
+        <div class="swse-npc-summary-stat__value">
+          {{#if mountSummary.carryingCapacity}}{{mountSummary.carryingCapacity}}{{else}}—{{/if}}
+        </div>
+      </div>
     </div>
+
+    <dl class="swse-npc-meta-list">
+      <div class="swse-npc-meta-list__row">
+        <dt>Saddle</dt>
+        <dd>{{#if mountSummary.saddle}}{{mountSummary.saddle}}{{else}}None listed{{/if}}</dd>
+      </div>
+
+      <div class="swse-npc-meta-list__row">
+        <dt>Movement Notes</dt>
+        <dd>{{#if mountSummary.mountedMovementNotes}}{{mountSummary.mountedMovementNotes}}{{else}}No mounted movement notes recorded.{{/if}}</dd>
+      </div>
+
+      <div class="swse-npc-meta-list__row">
+        <dt>Notes</dt>
+        <dd>{{#if mountSummary.notes}}{{mountSummary.notes}}{{else}}No additional mount notes recorded.{{/if}}</dd>
+      </div>
+    </dl>
+
+    {{#unless mountSummary.riderName}}
+      <p class="swse-npc-empty-state">
+        No rider is currently assigned to this mount.
+      </p>
+    {{/unless}}
   </div>
 </section>
