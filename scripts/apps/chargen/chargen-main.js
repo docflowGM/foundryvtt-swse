@@ -70,6 +70,62 @@ import { applyProgressionPatch } from "/systems/foundryvtt-swse/scripts/engine/p
 import { buildNamePatch } from "/systems/foundryvtt-swse/scripts/apps/chargen/steps/name-step.js";
 import { confirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 
+// Phase 3: Modularization - extracted helpers
+import {
+  initializeCharacterData,
+  loadFromActor,
+  loadPacksData,
+  loadSkillsData,
+  loadFeatMetadata,
+  filterForceDependentItems
+} from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-state.js";
+import {
+  getSteps,
+  getStepIndex,
+  getNextStep,
+  getPrevStep,
+  findNextValidStep,
+  canJumpToStep,
+  shouldAutoSkipStep
+} from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-routing.js";
+import {
+  validateCurrentStep,
+  validateFinalCharacter,
+  validateFinalizedValues,
+  assertCharacterComplete
+} from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-validation.js";
+import {
+  captureScrollPositions,
+  restoreScrollPositions,
+  buildBaseContext,
+  enhanceContextForStep,
+  activateFoundryTooltips,
+  isValidElement,
+  logRenderMetadata
+} from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-render.js";
+import {
+  buildActorSystemData,
+  buildProgressionStructure,
+  buildBiographyFields,
+  buildMentorSystemData,
+  createNonheroicClassItem,
+  createClassItem,
+  logCreationSuccess,
+  logCreationError
+} from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-persistence.js";
+import {
+  selectRandomName,
+  applyTypeSelection,
+  applyDegreeSelection,
+  applySizeSelection,
+  toggleFreeBuild,
+  preventNavigation,
+  getMissingSelectionMessage,
+  validateSelectionCount,
+  updateSelectionState,
+  logAction
+} from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-actions.js";
+
 /**
  * Character Generator — Multi-step Wizard
  *
@@ -124,94 +180,15 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     });
 
     this.actor = actor;
-    this.actorType = options.actorType || 'character'; // "character" for PCs, "npc" for NPCs
-    this.mentor = null; // Mentor character for survey prompts (initialized when needed)
-    this.singleStepMode = options.singleStepMode || false; // Close after confirming single step
-    this._creatingActor = false; // Re-entry guard for character creation
-    this.characterData = {
-      name: '',
-      isDroid: false,
-      droidDegree: '',
-      droidSize: 'medium',
-      species: '',
-      size: 'Medium',  // Character size (Small, Medium, Large)
-      specialAbilities: [],  // Racial special abilities
-      languages: [],  // Known languages
-      racialSkillBonuses: [],  // Racial skill bonuses (e.g., "+2 Perception")
-      speciesSource: '',  // Source book for species
-      speciesFilters: {  // Filters for species selection
-        attributeBonus: null,  // Filter by attribute bonus (str, dex, con, int, wis, cha)
-        attributePenalty: null,  // Filter by attribute penalty
-        size: null  // Filter by size category
-      },
-      background: null,  // Selected background (Event, Occupation, or Planet)
-      backgroundCategory: 'events',  // Current background category tab
-      backgroundSkills: [],  // Skills selected from background
-      backgroundNarratorComment: '',  // Ol' Salty's comment for current category
-      skillFilter: null,  // Active skill filter for backgrounds
-      languageFilter: null,  // Active language filter for backgrounds
-      allowHomebrewPlanets: false,  // Toggle for homebrew planets
-      occupationBonus: null,  // Occupation untrained skill bonuses
-      importedDroidData: null,
-      preselectedSkills: [],
-      droidSystems: {
-        locomotion: null,
-        processor: { name: 'Heuristic Processor', cost: 0, weight: 5 }, // Free
-        appendages: [
-          { name: 'Hand', cost: 0, weight: 5 }, // Free
-          { name: 'Hand', cost: 0, weight: 5 }  // Free
-        ],
-        accessories: [],
-        totalCost: 0,
-        totalWeight: 10
-      },
-      droidCredits: {
-        base: 1000,
-        class: 0,
-        spent: 0,
-        remaining: 1000
-      },
-      classes: [],
-      abilities: {
-        str: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
-        dex: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
-        con: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
-        int: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
-        wis: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 },
-        cha: { base: 10, racial: 0, temp: 0, total: 10, mod: 0 }
-      },
-      abilitiesAssigned: false,  // Track if user has assigned abilities
-      skills: {},
-      trainedSkills: [],  // Track which skills are trained (for progression)
-      classSkillsList: [],  // List of skills that are class skills for this class
-      trainedSkillsAllowed: 0,  // Total number of skill trainings allowed
-      feats: [],
-      featsRequired: 1, // Base 1, +1 for Human
-      talents: [],
-      talentsRequired: 1, // 1 talent at level 1
-      powers: [],
-      forcePowersRequired: 0, // Calculated based on Force Sensitivity and Force Training feats
-      starshipManeuvers: [],
-      starshipManeuversRequired: 0, // Calculated based on Starship Tactics feats
-      level: 1,
-      hp: { value: 1, max: 1, temp: 0 },
-      forcePoints: { value: 5, max: 5, die: '1d6' },
-      destinyPoints: { value: 1 },
-      secondWind: { uses: 1, max: 1, misc: 0, healing: 0 },
-      defenses: {
-        fort: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 10, ability: 'con' },
-        reflex: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 12, ability: 'dex' },
-        will: { base: 10, armor: 0, ability: 0, classBonus: 0, misc: 0, total: 11, ability: 'wis' }
-      },
-      bab: 0,
-      speed: 6,
-      damageThresholdMisc: 0,
-      credits: 1000  // Starting credits
-    };
+    this.actorType = options.actorType || 'character';
+    this.mentor = null;
+    this.singleStepMode = options.singleStepMode || false;
+    this._creatingActor = false;
+    this.characterData = initializeCharacterData();
     this.currentStep = 'name';
-    this.selectedTalentTree = null;  // For two-step talent selection
-    this.freeBuild = false;  // Free build mode bypasses validation
-    this.skippedSteps = new Set();  // Track which steps have been skipped
+    this.selectedTalentTree = null;
+    this.freeBuild = false;
+    this.skippedSteps = new Set();
 
     // Caches for compendia
     this._packs = {
@@ -228,7 +205,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // If an actor is provided, populate characterData from it
     if (this.actor) {
-      this._loadFromActor(actor);
+      loadFromActor(actor, this.characterData);
     }
 
     // Initialize dev guards for architectural constraint enforcement
@@ -260,94 +237,12 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    * @override
    */
   async render(force = false, options = {}) {
-    // Store scroll positions before render
-    const scrollPositions = {};
-    if (this.element instanceof HTMLElement) {
-      for (const selector of this.constructor.DEFAULT_OPTIONS?.scrollY || []) {
-        const el = this.element.querySelector(selector);
-        if (el) {
-          scrollPositions[selector] = el.scrollTop;
-        }
-      }
-    }
-
-    // Call parent render
+    const scrollPositions = captureScrollPositions(this.element, this.constructor.DEFAULT_OPTIONS?.scrollY || []);
     const result = await super.render(force, options);
-
-    // Restore scroll positions after render
-    if (this.element instanceof HTMLElement) {
-      for (const [selector, scrollTop] of Object.entries(scrollPositions)) {
-        const el = this.element.querySelector(selector);
-        if (el) {
-          el.scrollTop = scrollTop;
-        }
-      }
-    }
-
+    restoreScrollPositions(this.element, scrollPositions);
     return result;
   }
 
-  /**
-   * Load character data from an existing actor
-   * @param {Actor} actor - The actor to load from
-   * @private
-   */
-  _loadFromActor(actor) {
-    const system = actor.system;
-
-    // Load basic info
-    this.characterData.name = actor.name || '';
-    this.characterData.level = system.level || 0;
-
-    // Load species/droid status
-    if (system.species) {
-      this.characterData.species = system.species;
-      this.characterData.isDroid = false;
-    }
-    if (system.isDroid) {
-      this.characterData.isDroid = true;
-      this.characterData.droidDegree = system.droidDegree || '';
-      this.characterData.droidSize = system.size || 'medium';
-    }
-
-    // Load abilities
-    if (system.attributes) {
-      for (const [key, value] of Object.entries(system.attributes)) {
-        if (this.characterData.abilities[key]) {
-          this.characterData.abilities[key].total = value.total ?? 10;
-          this.characterData.abilities[key].base = value.base ?? 10;
-        }
-      }
-    }
-
-    // Load speed (ensure it's a valid number)
-    if (system.speed && Number.isFinite(system.speed)) {
-      this.characterData.speed = system.speed;
-    } else {
-      this.characterData.speed = 6;
-    }
-
-    // Load classes
-    const classItems = actor.items.filter(item => item.type === 'class');
-    this.characterData.classes = classItems.map(cls => ({
-      name: cls.name,
-      level: cls.system.level || 1
-    }));
-
-    // Load existing items as full objects (not just names) to preserve ._id and other properties
-    this.characterData.feats = actor.items.filter(item => item.type === 'feat').map(f => ({
-      name: f.name,
-      _id: f.id,
-      type: f.type,
-      system: f.system
-    }));
-    this.characterData.talents = actor.items.filter(item => item.type === 'talent').map(t => ({
-      name: t.name,
-      _id: t.id,
-      type: t.type,
-      system: t.system
-    }));
-  }
 
   static get defaultOptions() {
     const merged = foundry.utils.mergeObject(super.defaultOptions, {
@@ -540,110 +435,24 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
   /**
    * Filter out Force-dependent talents/feats for droids
-   * Droids cannot be Force-sensitive in SWSE rules
    * @param {Array} items - Array of talents or feats
    * @returns {Array} Filtered array
    * @private
    */
   _filterForceDependentItems(items) {
-    if (!this.characterData.isDroid) {
-      return items; // Not a droid, no filtering needed
-    }
-
-    return items.filter(item => {
-      const prereqs = item.system?.prerequisites || '';
-      const preqsLower = prereqs.toLowerCase();
-      // Exclude items that require Force Sensitivity, Force Techniques, Force Secrets, or Force Points
-      return !(
-        preqsLower.includes('force sensitivity') ||
-        preqsLower.includes('force technique') ||
-        preqsLower.includes('force secret') ||
-        preqsLower.includes('force point')
-      );
-    });
+    return filterForceDependentItems(items, this.characterData.isDroid);
   }
 
   async _loadData() {
-    // Show loading notification (only if cache is empty)
-    const showLoading = !ChargenDataCache.isCached();
-    const loadingNotif = showLoading ? ui.notifications.info(
-      'Loading character generation data...',
-      { permanent: true }
-    ) : null;
-
-    try {
-      // Use cached data if available, otherwise load
-      const cachedPacks = await ChargenDataCache.getData();
-      // PERFORMANCE: Use structural sharing - only clone if modifications are needed
-      // The house rule below requires cloning for talents
-      this._packs = { ...cachedPacks };
-
-      // Apply Block/Deflect combination to talents if house rule enabled
-      if (this._packs.talents) {
-        this._packs.talents = HouseRuleTalentCombination.processBlockDeflectCombination(this._packs.talents);
-      }
-
-      // Validate critical packs
-      const criticalPacks = ['species', 'classes', 'feats'];
-      const missingCriticalPacks = [];
-
-      for (const key of criticalPacks) {
-        if (!this._packs[key] || this._packs[key].length === 0) {
-          missingCriticalPacks.push(`swse.${key}`);
-        }
-      }
-
-      // Block chargen if critical packs are missing
-      if (missingCriticalPacks.length > 0) {
-        const missingList = missingCriticalPacks.join(', ');
-        ui.notifications.error(
-          `Character generation cannot continue. Missing critical compendium packs: ${missingList}. Please ensure all SWSE compendium packs are properly installed.`,
-          { permanent: true }
-        );
-        SWSELogger.error(`chargen: blocking due to missing critical packs: ${missingList}`);
-        this.close();
-        return false;
-      }
-
-      // Load skills
-      try {
-        const resp = await fetch('systems/foundryvtt-swse/data/skills.json');
-        if (resp.ok) {
-          this._skillsJson = await resp.json();
-          SWSELogger.log('chargen: skills.json loaded successfully');
-        } else {
-          SWSELogger.warn('chargen: failed to fetch skills.json, using defaults');
-          this._skillsJson = this._getDefaultSkills();
-          ui.notifications.warn('Failed to load skills data. Using defaults.');
-        }
-      } catch (e) {
-        SWSELogger.error('chargen: error loading skills.json:', e);
-        this._skillsJson = this._getDefaultSkills();
-        ui.notifications.warn('Failed to load skills data. Using defaults.');
-      }
-
-      // Load feat metadata
-      try {
-        const resp = await fetch('systems/foundryvtt-swse/data/feat-metadata.json');
-        if (resp.ok) {
-          this._featMetadata = await resp.json();
-          SWSELogger.log('chargen: feat-metadata.json loaded successfully');
-        } else {
-          SWSELogger.warn('chargen: failed to fetch feat-metadata.json');
-          this._featMetadata = null;
-        }
-      } catch (e) {
-        SWSELogger.error('chargen: error loading feat-metadata.json:', e);
-        this._featMetadata = null;
-      }
-
-      return true;
-    } finally {
-      // Clear loading notification
-      if (loadingNotif) {
-        loadingNotif.remove();
-      }
+    const packsLoaded = await loadPacksData(this._packs);
+    if (!packsLoaded) {
+      this.close();
+      return false;
     }
+
+    this._skillsJson = await loadSkillsData(() => this._getDefaultSkills());
+    this._featMetadata = await loadFeatMetadata();
+    return true;
   }
 
 
@@ -1554,8 +1363,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    * @param {Object} options - Render options
    */
   async _onRender(context, options) {
-    // TRACE: Metadata BEFORE super._onRender()
-    SWSELogger.log('[CharacterGenerator._onRender] METADATA BEFORE super._onRender():', {
+    logRenderMetadata('METADATA BEFORE super._onRender()', {
       'this.id': this.id,
       'this.title': this.title,
       'this.constructor.name': this.constructor.name,
@@ -1565,8 +1373,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     await super._onRender(context, options);
 
-    // TRACE: Metadata AFTER super._onRender()
-    SWSELogger.log('[CharacterGenerator._onRender] METADATA AFTER super._onRender():', {
+    logRenderMetadata('METADATA AFTER super._onRender()', {
       'this.id': this.id,
       'this.title': this.title,
       'element.className': this.element?.className,
@@ -1577,14 +1384,10 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       }
     });
 
-    // V2: Access DOM via this.element (HTMLElement, not jQuery)
     const root = this.element;
-    if (!(root instanceof HTMLElement)) {return;}
+    if (!isValidElement(root)) { return; }
 
-    // Activate Foundry tooltips for feat descriptions
-    if (game.tooltip) {
-      game.tooltip.activate(root, { selector: '[data-tooltip]' });
-    }
+    activateFoundryTooltips(root);
 
     // Phase 6: Use consolidated listener binding from base class
     const bindings = [
@@ -1861,59 +1664,14 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
   }
 
   _getSteps() {
-    if (this.actor) {
-      return ['abilities', 'class', 'background', 'feats', 'talents', 'skills', 'languages', 'summary'];
-    }
-
-    // Include type selection (living/droid) after name
-    const steps = ['name', 'type'];
-
-    // If droid, show degree and size selection; if living, show species
-    if (this.characterData.isDroid) {
-      steps.push('degree', 'size', 'droid-builder');
-    } else {
-      steps.push('species');
-    }
-
-    // NPC workflow: skip class and talents, go straight to abilities/skills/languages/feats
-    if (this.actorType === 'npc') {
-      steps.push('abilities', 'skills', 'languages', 'feats', 'summary');
-    } else {
-      // PC workflow: normal flow with class and talents
-      // Note: skills before feats to allow Skill Focus validation
-      // Note: languages after skills (INT-dependent) for both living and droid characters
-      steps.push('abilities', 'class');
-
-      // Add background step only if enabled
-      const backgroundsEnabled = ChargenRules.backgroundsEnabled();
-
-      if (backgroundsEnabled) {
-        steps.push('background');
-      }
-
-      steps.push('skills', 'languages', 'feats', 'talents');
-
-      // Add force powers step if character has Force capability
-      // (via Force Sensitivity feat or Force Training feat)
-      // Note: Droids cannot be Force-sensitive in SWSE
-      if (!this.characterData.isDroid && this._getForcePowersNeeded() > 0) {
-        steps.push('force-powers');
-      }
-
-      // Add starship maneuvers step if character has Starship Tactics feat
-      if (this._getStarshipManeuversNeeded() > 0) {
-        steps.push('starship-maneuvers');
-      }
-
-      // Add final droid customization step if droid character
-      // This allows player to finalize droid after class/background selection for final credit total
-      if (this.characterData.isDroid) {
-        steps.push('droid-final');
-      }
-
-      steps.push('summary', 'shop');
-    }
-    return steps;
+    return getSteps(
+      this.characterData,
+      this.characterData.isDroid,
+      this.actorType,
+      !!this.actor,
+      () => this._getForcePowersNeeded(),
+      () => this._getStarshipManeuversNeeded()
+    );
   }
 
   /**
@@ -2454,180 +2212,16 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
   }
 
   _validateCurrentStep() {
-    // Skip validation if free build is enabled
-    if (this.freeBuild) {
-      return true;
-    }
-    switch (this.currentStep) {
-      case 'name':
-        if (!this.characterData.name || this.characterData.name.trim() === '') {
-          ui.notifications.warn('Please enter a character name.');
-          return false;
-        }
-        break;
-      case 'type':
-        // Type is set by button click, isDroid will be true or false
-        break;
-      case 'degree':
-        if (!this.characterData.droidDegree) {
-          ui.notifications.warn('Please select a droid degree.');
-          return false;
-        }
-        break;
-      case 'size':
-        if (!this.characterData.droidSize) {
-          ui.notifications.warn('Please select a droid size.');
-          return false;
-        }
-        break;
-      case 'droid-builder':
-        // Droid builder is optional - player can skip and build later
-        // Always return true to allow proceeding
-        return true;
-      case 'droid-final':
-        // Final droid step is required - must have built the droid or be skipping to it
-        return this._validateDroidBuilder();
-      case 'species':
-        if (!this.characterData.species) {
-          ui.notifications.warn('Please select a species.');
-          return false;
-        }
-        break;
-      case 'abilities':
-        // Validate that ability scores are properly set
-        // Droids don't have Constitution ability
-        const abilities = this.characterData.isDroid
-          ? ['str', 'dex', 'int', 'wis', 'cha']
-          : ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-        const allSet = abilities.every(ab => {
-          const base = this.characterData.abilities[ab]?.base;
-          return base !== undefined && base >= 8 && base <= 18;
-        });
-
-        if (!allSet) {
-          ui.notifications.warn('Please set all ability scores.');
-          return false;
-        }
-
-        // Only validate point buy budget if point buy method was used
-        if (this.characterData.abilityGenerationMethod === 'point-mode') {
-          // Validate point buy budget using the same cumulative cost table as the UI
-          // This matches the standard point buy costs from the Saga Edition rules
-          const cumulativeCosts = {
-            8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 6, 15: 8, 16: 10, 17: 13, 18: 16
-          };
-          const pointCosts = (value) => cumulativeCosts[value] || 0;
-
-          const totalSpent = abilities.reduce((sum, ab) => {
-            return sum + pointCosts(this.characterData.abilities[ab]?.base || 8);
-          }, 0);
-
-          // Get the correct point buy pool based on character type
-          const pointBuyPool = this.characterData.isDroid
-            ? ChargenRules.getDroidPointBuyPool()
-            : ChargenRules.getLivingPointBuyPool();
-
-          // Allow some flexibility (within 2 points of the budget)
-          if (totalSpent > pointBuyPool) {
-            ui.notifications.warn(`You've overspent your point buy budget! (${totalSpent}/${pointBuyPool} points)`);
-            return false;
-          }
-
-          if (totalSpent < pointBuyPool - 2) {
-            ui.notifications.warn(`You still have ${pointBuyPool - totalSpent} point buy points to spend. Use them all!`);
-            return false;
-          }
-        }
-        break;
-      case 'class':
-        if (this.characterData.classes.length === 0) {
-          ui.notifications.warn('Please select a class.');
-          return false;
-        }
-        break;
-      case 'background':
-        // Background is optional in SWSE rules, allow skipping
-        break;
-      case 'skills': {
-        const trainedCount = Object.values(this.characterData.skills || {}).filter(s => s.trained).length;
-        const requiredCount = this.characterData.trainedSkillsAllowed || 0;
-        if (trainedCount < requiredCount) {
-          ui.notifications.warn(`You must train ${requiredCount} skills (currently trained: ${trainedCount}).`);
-          return false;
-        }
-        if (trainedCount > requiredCount) {
-          ui.notifications.warn(`You can only train ${requiredCount} skills (currently trained: ${trainedCount}). Untrain ${trainedCount - requiredCount} skill(s).`);
-          return false;
-        }
-        break;
+    return validateCurrentStep(
+      this.currentStep,
+      this.characterData,
+      this.freeBuild,
+      {
+        validateDroidBuilder: () => this._validateDroidBuilder(),
+        getForcePowersNeeded: () => this._getForcePowersNeeded(),
+        getStarshipManeuversNeeded: () => this._getStarshipManeuversNeeded()
       }
-      case 'languages':
-        // Languages validation handled by auto-skip logic in _onNextStep
-        break;
-      case 'feats': {
-        const selectedFeatsCount = (this.characterData.feats || []).length;
-        const requiredFeats = this.characterData.featsRequired || 1;
-        if (selectedFeatsCount < requiredFeats) {
-          ui.notifications.warn(`You must select ${requiredFeats} feat(s) (currently selected: ${selectedFeatsCount}).`);
-          return false;
-        }
-        break;
-      }
-      case 'talents': {
-        // Phase 1: Use structured slot validation
-        const talentSlots = this.characterData.talentSlots || [];
-        const selectedTalents = this.characterData.talents || [];
-        const unlockedTrees = this.characterData.unlockedTrees || [];
-
-        // Fallback to numeric validation if slots not yet initialized
-        if (!talentSlots || talentSlots.length === 0) {
-          const selectedTalentsCount = selectedTalents.length;
-          const requiredTalents = this.characterData.talentsRequired || 1;
-          if (selectedTalentsCount < requiredTalents) {
-            ui.notifications.warn(`You must select ${requiredTalents} talent(s) (currently selected: ${selectedTalentsCount}).`);
-            return false;
-          }
-        } else {
-          // Use new slot validator
-          const validation = TalentSlotValidator.validateTotalSlots(selectedTalents, talentSlots);
-          if (!validation.valid) {
-            ui.notifications.warn(validation.message);
-            return false;
-          }
-          if (selectedTalents.length < talentSlots.length) {
-            ui.notifications.warn(`You must select ${talentSlots.length} talent(s) (currently selected: ${selectedTalents.length}).`);
-            return false;
-          }
-        }
-        break;
-      }
-      case 'force-powers': {
-        const selectedPowersCount = (this.characterData.powers || []).length;
-        const requiredPowers = this._getForcePowersNeeded();
-        if (selectedPowersCount < requiredPowers) {
-          ui.notifications.warn(`You must select ${requiredPowers} Force power(s) (currently selected: ${selectedPowersCount}).`);
-          return false;
-        }
-        break;
-      }
-      case 'starship-maneuvers': {
-        const selectedManeuversCount = (this.characterData.starshipManeuvers || []).length;
-        const requiredManeuvers = this._getStarshipManeuversNeeded();
-        if (selectedManeuversCount < requiredManeuvers) {
-          ui.notifications.warn(`You must select ${requiredManeuvers} starship maneuver(s) (currently selected: ${selectedManeuversCount}).`);
-          return false;
-        }
-        break;
-      }
-      case 'summary':
-        // Auto-select maximum credits if formula exists but not chosen
-        if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
-          this.characterData.credits = this.characterData.startingCreditsFormula.maxPossible;
-          this.characterData.creditsChosen = true;
-        }
-        break;
-    }
-    return true;
+    );
   }
 
   /**
@@ -2671,80 +2265,10 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
   /**
    * Validate final character data before creation
-   * This runs EVEN in free build mode to prevent broken characters
-   * CRITICAL: Must match _assertCharacterComplete checks for consistency
    * @returns {Promise<boolean>} True if valid, false otherwise
    */
   async _validateFinalCharacter() {
-    const errors = [];
-
-    // Always required: Character name
-    if (!this.characterData.name || this.characterData.name.trim() === '') {
-      errors.push('Character must have a name');
-    }
-
-    // CONSISTENCY CHECK: Validate all 6 abilities are defined and valid (matches _assertCharacterComplete)
-    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    for (const key of abilityKeys) {
-      const ability = this.characterData.abilities[key];
-      if (!ability || typeof ability.base !== 'number' || !Number.isFinite(ability.base)) {
-        errors.push(`Ability ${key.toUpperCase()} must be a valid number`);
-      }
-    }
-
-    // Droid-specific minimum validation
-    if (this.characterData.isDroid) {
-      if (!this.characterData.droidSystems?.locomotion) {
-        errors.push('Droids must have a locomotion system');
-      }
-      if (!this.characterData.droidSystems?.processor) {
-        errors.push('Droids must have a processor');
-      }
-      if (!this.characterData.droidDegree) {
-        errors.push('Droids must have a degree selected');
-      }
-    }
-
-    // Living beings need a species
-    if (!this.characterData.isDroid && !this.characterData.species) {
-      errors.push('Living characters must have a species');
-    }
-
-    // Class required for all characters
-    if (!this.characterData.classes || this.characterData.classes.length === 0) {
-      errors.push('Character must have at least one class');
-    }
-
-    // Starting credits - auto-select if formula exists but not chosen
-    if (this.characterData.startingCreditsFormula && !this.characterData.creditsChosen) {
-      this.characterData.credits = this.characterData.startingCreditsFormula.maxPossible;
-      this.characterData.creditsChosen = true;
-    }
-
-    // Show errors
-    if (errors.length > 0) {
-      if (!this.freeBuild) {
-        // In normal mode, just show the errors and block
-        ui.notifications.error(`Validation errors:\n${errors.join('\n')}`);
-        return false;
-      } else {
-        // In free build mode, show a confirmation dialog
-        const confirmed = await confirm(
-          'Validation Warnings',
-          `
-            <p><strong>The following issues were found:</strong></p>
-            <ul>
-              ${errors.map(e => `<li>${e}</li>`).join('')}
-            </ul>
-            <p>Creating a character with these issues may cause problems.</p>
-            <p><strong>Continue anyway?</strong></p>
-          `
-        );
-        return confirmed;
-      }
-    }
-
-    return true;
+    return validateFinalCharacter(this.characterData, this.freeBuild);
   }
 
   _finalizeCharacter() {
@@ -2768,109 +2292,20 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
   /**
    * Validate that _finalizeCharacter recalculations produced valid values
-   * Prevents creating actors with NaN or null derived values
    * @private
    * @throws {Error} if any critical recalculated values are invalid
    */
   _validateFinalizedValues() {
-    const errors = [];
-
-    // Check HP is a finite number
-    if (!Number.isFinite(this.characterData.hp?.max)) {
-      errors.push(`HP max is invalid: ${this.characterData.hp?.max}`);
-    }
-
-    // Check all defenses are finite numbers
-    const defenseKeys = ['fort', 'reflex', 'will'];
-    for (const key of defenseKeys) {
-      const defense = this.characterData.defenses?.[key]?.total;
-      if (!Number.isFinite(defense)) {
-        errors.push(`${key.toUpperCase()} defense is invalid: ${defense}`);
-      }
-    }
-
-    // Check Second Wind healing is finite
-    if (!Number.isFinite(this.characterData.secondWind?.healing)) {
-      errors.push(`Second Wind healing is invalid: ${this.characterData.secondWind?.healing}`);
-    }
-
-    // Check Damage Threshold is finite
-    if (!Number.isFinite(this.characterData.damageThreshold)) {
-      errors.push(`Damage Threshold is invalid: ${this.characterData.damageThreshold}`);
-    }
-
-    // Check BAB is finite (or 0 if not set)
-    if (this.characterData.bab != null && !Number.isFinite(this.characterData.bab)) {
-      errors.push(`Base Attack Bonus is invalid: ${this.characterData.bab}`);
-    }
-
-    // Throw error if any finalization checks failed
-    if (errors.length > 0) {
-      const errorMsg = `Character finalization failed - invalid derived values:\n${errors.map(e => `• ${e}`).join('\n')}`;
-      SWSELogger.error('[CHARGEN] ' + errorMsg.replace(/\n/g, ' '));
-      throw new Error(errorMsg);
-    }
-
-    SWSELogger.log('[CHARGEN] Finalized character values validated successfully');
+    validateFinalizedValues(this.characterData);
   }
 
   /**
    * Assert that character has all required progression data before creation
-   * Fail-fast precondition check to prevent incomplete actors
-   *
-   * Invariant: Actors are never created without required progression data.
-   * This ensures prepareDerivedData() can compute valid derived values.
-   *
    * @private
    * @throws {Error} if any required field is missing or invalid
    */
   _assertCharacterComplete() {
-    const errors = [];
-
-    // Required: Character name
-    if (!this.characterData.name || this.characterData.name.trim() === '') {
-      errors.push('Character name is required');
-    }
-
-    // Required: Abilities (all 6 must be defined)
-    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    for (const key of abilityKeys) {
-      const ability = this.characterData.abilities[key];
-      if (!ability || typeof ability.base !== 'number' || !Number.isFinite(ability.base)) {
-        errors.push(`Ability ${key.toUpperCase()} is required and must be a number`);
-      }
-    }
-
-    // Required: Class (living or droid)
-    if (!this.characterData.classes || this.characterData.classes.length === 0) {
-      errors.push('At least one class is required');
-    }
-
-    // Required: Species (for non-droids)
-    if (!this.characterData.isDroid && !this.characterData.species) {
-      errors.push('Species is required for non-droid characters');
-    }
-
-    // Required: Droid systems (for droids)
-    if (this.characterData.isDroid) {
-      if (!this.characterData.droidSystems?.locomotion) {
-        errors.push('Droid locomotion system is required');
-      }
-      if (!this.characterData.droidSystems?.processor) {
-        errors.push('Droid processor is required');
-      }
-      if (!this.characterData.droidDegree) {
-        errors.push('Droid degree is required');
-      }
-    }
-
-    // If any errors, throw immediately
-    if (errors.length > 0) {
-      SWSELogger.error('[CHARGEN] Character precondition check failed:', errors);
-      throw new Error(
-        `Character is incomplete and cannot be created:\n${errors.map(e => `• ${e}`).join('\n')}`
-      );
-    }
+    assertCharacterComplete(this.characterData);
   }
 
   async _onFinish(event) {
