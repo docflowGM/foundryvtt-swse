@@ -1,0 +1,23 @@
+<section class="swse-panel swse-vehicle-defenses-panel">
+  <header class="swse-panel-header swse-panel-header--compact">
+    <h3 class="swse-panel-title">{{panel.title}}</h3>
+  </header>
+
+  <div class="swse-panel-body swse-defense-list">
+    {{#each panel.defenses as |defense|}}
+      <div class="swse-defense-row">
+        <div class="swse-defense-label">{{defense.label}}</div>
+        <div class="swse-defense-values">
+          <span class="swse-defense-total">{{defense.total}}</span>
+          <span class="swse-defense-formula">({{defense.base}} + {{defense.adjustment}})</span>
+        </div>
+      </div>
+    {{/each}}
+    <div class="swse-defense-row swse-defense-row--damage-threshold">
+      <div class="swse-defense-label">Damage Threshold</div>
+      <div class="swse-defense-values">
+        <span class="swse-defense-total">{{panel.damageThreshold}}</span>
+      </div>
+    </div>
+  </div>
+</section>

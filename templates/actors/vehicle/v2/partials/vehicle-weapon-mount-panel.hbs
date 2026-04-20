@@ -1,0 +1,42 @@
+<section class="swse-vehicle-weapon-panel swse-vehicle-panel">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    <div class="swse-vehicle-weapon-list">
+      {{#each panel.mounts as |mount|}}
+        <div class="swse-vehicle-weapon-card">
+          <div class="swse-vehicle-weapon-header">
+            <div class="swse-vehicle-weapon-name">{{mount.name}}</div>
+            <div class="swse-vehicle-weapon-arc">{{mount.arc}}</div>
+          </div>
+          <div class="swse-vehicle-weapon-meta">
+            <div class="swse-vehicle-weapon-stat">
+              <span class="swse-vehicle-weapon-stat-label">Gunner:</span>
+              <span class="swse-vehicle-weapon-stat-value">{{mount.gunner}}</span>
+            </div>
+            <div class="swse-vehicle-weapon-stat">
+              <span class="swse-vehicle-weapon-stat-label">Fire Control:</span>
+              <span class="swse-vehicle-weapon-stat-value">{{mount.fireControl}}</span>
+            </div>
+          </div>
+          <div class="swse-vehicle-weapon-statline">
+            <span class="swse-vehicle-weapon-attack">Attack: {{mount.attackSummary}}</span>
+            <span class="swse-vehicle-weapon-damage">Damage: {{mount.damageSummary}}</span>
+          </div>
+          {{#if mount.linkedGroup}}
+            <div class="swse-vehicle-weapon-linked">Linked: {{mount.linkedGroup}}</div>
+          {{/if}}
+          {{#if mount.notes}}
+            <div class="swse-vehicle-weapon-notes">
+              {{#each mount.notes as |note|}}
+                <div class="swse-vehicle-note-item">{{note}}</div>
+              {{/each}}
+            </div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</section>

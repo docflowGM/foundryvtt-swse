@@ -1,0 +1,18 @@
+<section class="swse-vehicle-header-panel">
+  <div class="swse-vehicle-header-meta">
+    <div class="swse-vehicle-name">{{panel.name}}</div>
+    <div class="swse-vehicle-type-row">
+      <span class="swse-vehicle-type-label">{{panel.typeLabel}}</span>
+      <span class="swse-vehicle-type-separator">—</span>
+      <span class="swse-vehicle-size-label">{{panel.sizeLabel}}</span>
+    </div>
+    <div class="swse-vehicle-category">{{panel.category}}</div>
+  </div>
+  {{#if panel.tags}}
+    <div class="swse-vehicle-tag-list">
+      {{#each panel.tags as |tag|}}
+        <span class="swse-vehicle-tag swse-vehicle-tag--{{tag.tone}}">{{tag.label}}</span>
+      {{/each}}
+    </div>
+  {{/if}}
+</section>

@@ -1,0 +1,21 @@
+<section class="swse-vehicle-station-panel swse-vehicle-panel">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    <div class="swse-vehicle-station-list">
+      {{#each panel.stations as |station|}}
+        <div class="swse-vehicle-station-row {{#if station.occupied}}swse-vehicle-station-row--occupied{{/if}}">
+          <div class="swse-vehicle-station-meta">
+            <div class="swse-vehicle-station-name">{{station.label}}</div>
+            <div class="swse-vehicle-station-status">{{station.occupantName}}</div>
+          </div>
+          {{#if station.notes}}
+            <div class="swse-vehicle-station-notes">{{station.notes}}</div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</section>

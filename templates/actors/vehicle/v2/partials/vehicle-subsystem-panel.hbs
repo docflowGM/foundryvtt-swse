@@ -1,0 +1,27 @@
+<section class="swse-panel swse-vehicle-subsystem-panel">
+  <header class="swse-panel-header">
+    <h3 class="swse-panel-title">{{panel.title}}</h3>
+    {{#if panel.aggregatePenaltyText}}
+      <span class="swse-subsystem-penalty-label">⚠ {{panel.aggregatePenaltyText}}</span>
+    {{/if}}
+  </header>
+
+  <div class="swse-panel-body swse-subsystem-list">
+    {{#each panel.subsystems as |subsystem|}}
+      <div class="swse-subsystem-card {{subsystem.tierClass}}">
+        <div class="swse-subsystem-header">
+          <div class="swse-subsystem-name">{{subsystem.label}}</div>
+          <div class="swse-subsystem-tier">{{subsystem.tier}}</div>
+        </div>
+        {{#if subsystem.penaltyText}}
+          <div class="swse-subsystem-penalty">{{subsystem.penaltyText}}</div>
+        {{/if}}
+        {{#if subsystem.canRepair}}
+          <div class="swse-subsystem-actions">
+            <button type="button" class="swse-v2-btn swse-subsystem-repair-btn" data-action="repair-subsystem" data-subsystem="{{subsystem.key}}">Repair</button>
+          </div>
+        {{/if}}
+      </div>
+    {{/each}}
+  </div>
+</section>

@@ -1,0 +1,52 @@
+<section class="swse-vehicle-power-panel swse-vehicle-panel">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    <!-- POWER ALLOCATION BAR -->
+    <div class="swse-vehicle-power-bar {{#if panel.overAllocated}}swse-vehicle-power-bar--over{{/if}}">
+      <div class="swse-vehicle-power-fill" style="width: {{#if (gt panel.budget 0)}}{{#multiply panel.allocated panel.budget}}{{/multiply}}{{else}}0{{/if}}%;"></div>
+      <div class="swse-vehicle-power-label">
+        <span class="swse-vehicle-power-value">{{panel.allocated}}/{{panel.budget}}</span>
+      </div>
+    </div>
+
+    <!-- POWER STATS -->
+    <div class="swse-vehicle-power-stats">
+      <div class="swse-vehicle-stat-row">
+        <span class="swse-vehicle-stat-label">Available:</span>
+        <span class="swse-vehicle-stat-value">{{panel.available}}</span>
+      </div>
+      <div class="swse-vehicle-stat-row">
+        <span class="swse-vehicle-stat-label">Allocated:</span>
+        <span class="swse-vehicle-stat-value {{#if panel.overAllocated}}swse-vehicle-power-stat-over{{/if}}">{{panel.allocated}}</span>
+      </div>
+      <div class="swse-vehicle-stat-row">
+        <span class="swse-vehicle-stat-label">Budget:</span>
+        <span class="swse-vehicle-stat-value">{{panel.budget}}</span>
+      </div>
+      {{#if panel.overAllocated}}
+        <div class="swse-vehicle-stat-row swse-vehicle-power-stat-warning">
+          <span class="swse-vehicle-stat-label">Over-allocated by:</span>
+          <span class="swse-vehicle-stat-value">{{#subtract panel.allocated panel.budget}}{{/subtract}}</span>
+        </div>
+      {{/if}}
+    </div>
+
+    <!-- SUBSYSTEM LOADS -->
+    {{#if panel.subsystemLoads}}
+      <div class="swse-vehicle-subsystem-loads">
+        <h4 class="swse-vehicle-subsystem-loads-title">Subsystem Power Draw</h4>
+        <div class="swse-vehicle-load-list">
+          {{#each panel.subsystemLoads as |load|}}
+            <div class="swse-vehicle-load-row">
+              <span class="swse-vehicle-load-name">{{load.name}}</span>
+              <span class="swse-vehicle-load-value">{{load.power}}</span>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+  </div>
+</section>

@@ -1,0 +1,48 @@
+<section class="swse-vehicle-subsystem-panel swse-vehicle-panel">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    {{#if panel.aggregatePenaltyText}}
+      <div class="swse-vehicle-subsystem-aggregate-penalty">
+        {{panel.aggregatePenaltyText}}
+      </div>
+    {{/if}}
+
+    <div class="swse-vehicle-subsystem-list">
+      {{#each panel.subsystems as |subsystem|}}
+        <div class="swse-vehicle-subsystem-card swse-vehicle-subsystem-card--{{subsystem.tier}}">
+          <div class="swse-vehicle-subsystem-header">
+            <div class="swse-vehicle-subsystem-name">{{subsystem.label}}</div>
+            <div class="swse-vehicle-subsystem-status swse-vehicle-subsystem-status--{{subsystem.tier}}">
+              {{subsystem.statusLabel}}
+            </div>
+          </div>
+
+          {{#if subsystem.penaltyText}}
+            <div class="swse-vehicle-subsystem-penalty">
+              {{subsystem.penaltyText}}
+            </div>
+          {{/if}}
+
+          {{#if subsystem.detailLines}}
+            <div class="swse-vehicle-subsystem-details">
+              {{#each subsystem.detailLines as |line|}}
+                <div class="swse-vehicle-subsystem-detail-line">{{line}}</div>
+              {{/each}}
+            </div>
+          {{/if}}
+
+          {{#if subsystem.canRepair}}
+            <div class="swse-vehicle-subsystem-actions">
+              <button class="swse-btn swse-btn-small swse-btn-repair" data-subsystem="{{subsystem.key}}">
+                Repair
+              </button>
+            </div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</section>
