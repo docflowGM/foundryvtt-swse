@@ -1,48 +1,11 @@
 <section class="sheet-shell swse-sheet-ui swse-ui-shell swse-vehicle-sheet swse-vehicle-shell v2 flexcol">
 
-    <!-- DATAPAD HEADER -->
-    <section class="datapad-header swse-ui-frame swse-vehicle-header">
-      <div class="header-main">
-        <div>
-          <div class="vehicle-name">{{actor.name}}</div>
-          <div class="vehicle-meta">
-            {{#if system.type}}{{system.type}}{{/if}}
-            {{#if system.size}} — {{system.size}}{{/if}}
-          </div>
-        </div>
-        <div class="header-defenses">
-          <div class="swse-stat" data-swse-tooltip="ReflexDefense"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
-          <div class="swse-stat" data-swse-tooltip="FortitudeDefense"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
-          <div class="swse-stat" data-swse-tooltip="DamageThreshold"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
-        </div>
-      </div>
-
-      <!-- HP BAR -->
-      <div class="header-bar">
-        <div style="font-size: 0.7rem; opacity: 0.6; margin-bottom: 2px;">HP</div>
-        <div class="datapad-status-bar hp {{#if hpCritical}}hp-critical{{else if hpWarning}}hp-warning{{/if}}">
-          <div class="fill" style="width: {{hpPercent}}%;"></div>
-        </div>
-      </div>
-
-      <!-- STATUS INDICATORS -->
-      <div class="datapad-indicators">
-        {{#if ctWarning}}<span class="ct-warning">⚠ Condition</span>{{/if}}
-        {{#if (gt cargoState "normal")}}<span class="cargo-warning">📦 Cargo</span>{{/if}}
-      </div>
-    </section>
-
     <header class="sheet-header swse-ui-frame">
       <div class="flexrow" style="align-items:center; gap:12px;">
         <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="52" height="52" style="border-radius:8px;"/>
         <div class="flexcol" style="gap:4px;">
           <input name="name" type="text" value="{{actor.name}}" style="font-size:1.25rem; font-weight:800;"/>
-          <div class="muted" style="opacity:0.8;">v2 Vehicle Sheet — Datapad Architecture</div>
-        </div>
-        <div class="flexrow" style="margin-left:auto; gap:10px;">
-          <div class="swse-stat" data-swse-tooltip="ReflexDefense"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
-          <div class="swse-stat" data-swse-tooltip="FortitudeDefense"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
-          <div class="swse-stat" data-swse-tooltip="DamageThreshold"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
+          <div class="muted" style="opacity:0.8;">v2 Vehicle Sheet — Phase 2 Mature Architecture</div>
         </div>
       </div>
     </header>
@@ -54,153 +17,80 @@
         <a class="item" data-tab="weapons">Weapons</a>
         <a class="item" data-tab="crew">Crew</a>
         <a class="item" data-tab="systems">Systems</a>
+        <a class="item" data-tab="cargo">Cargo</a>
       </nav>
 
       <section class="sheet-content swse-vehicle-content">
-      <section class="tab flexcol" data-group="primary" data-tab="overview">
-        <div class="swse-v2-sheet-grid">
-          <div class="swse-v2-left flexcol">
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/identity-panel.hbs"}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/resource-cartridges.hbs"}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/hp-condition-panel.hbs"}}
-          </div>
-          <div class="swse-v2-right flexcol">
-            <!-- PHASE 1: Use prepared context for defenses -->
-            {{#if vehiclePanels.defensesPanel}}
-              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-defenses-panel.hbs" panel=vehiclePanels.defensesPanel}}
-            {{/if}}
-            <!-- Keep damage-threshold panel for backward compat (not yet partalized) -->
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/damage-threshold-panel.hbs"}}
-            <!-- PHASE 1: Use prepared context for cargo -->
-            {{#if vehiclePanels.cargoSummaryPanel}}
-              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs" panel=vehiclePanels.cargoSummaryPanel}}
-            {{else}}
-              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/cargo-panel.hbs"}}
-            {{/if}}
-          </div>
-        </div>
-      </section>
 
-      <section class="tab flexcol" data-group="primary" data-tab="weapons" data-drop-zone="weapon">
-        <div class="swse-v2-grid swse-vehicle-weapons-grid" style="margin-top:12px;">
-          <div class="swse-v2-holo-group">
-            <div class="swse-v2-holo-header">Attacks</div>
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/attacks-panel.hbs"}}
-          </div>
-        </div>
-      </section>
+        <!-- OVERVIEW TAB: Identity, defenses, health, crew summary, cargo summary -->
+        <section class="tab flexcol" data-group="primary" data-tab="overview">
+          {{#if vehiclePanels.headerSummaryPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-header-summary-panel.hbs" panel=vehiclePanels.headerSummaryPanel}}
+          {{/if}}
 
-      <section class="tab flexcol" data-group="primary" data-tab="crew">
-        <div class="swse-v2-grid">
-          <!-- PHASE 1: Use prepared context for crew summary -->
+          {{#if vehiclePanels.hpConditionPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-hp-condition-panel.hbs" panel=vehiclePanels.hpConditionPanel}}
+          {{/if}}
+
+          {{#if vehiclePanels.defensesPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-defenses-panel-full.hbs" panel=vehiclePanels.defensesPanel}}
+          {{/if}}
+
           {{#if vehiclePanels.crewSummaryPanel}}
             {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs" panel=vehiclePanels.crewSummaryPanel}}
-          {{else}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/crew-panel.hbs"}}
           {{/if}}
-        </div>
+
+          {{#if vehiclePanels.cargoSummaryPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs" panel=vehiclePanels.cargoSummaryPanel}}
+          {{/if}}
+        </section>
+
+        <!-- WEAPONS TAB: Mounted weapons -->
+        <section class="tab flexcol" data-group="primary" data-tab="weapons">
+          {{#if vehiclePanels.weaponMountPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs" panel=vehiclePanels.weaponMountPanel}}
+          {{/if}}
+        </section>
+
+        <!-- CREW TAB: Crew summary and station assignments -->
+        <section class="tab flexcol" data-group="primary" data-tab="crew">
+          {{#if vehiclePanels.crewSummaryPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs" panel=vehiclePanels.crewSummaryPanel}}
+          {{/if}}
+
+          {{#if vehiclePanels.crewAssignmentPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs" panel=vehiclePanels.crewAssignmentPanel}}
+          {{/if}}
+        </section>
+
+        <!-- SYSTEMS TAB: Subsystems, shields, power -->
+        <section class="tab flexcol" data-group="primary" data-tab="systems">
+          {{#if vehiclePanels.subsystemDetailPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-subsystem-detail-panel.hbs" panel=vehiclePanels.subsystemDetailPanel}}
+          {{/if}}
+
+          {{#if vehiclePanels.shieldManagementPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-shield-management-panel.hbs" panel=vehiclePanels.shieldManagementPanel}}
+          {{/if}}
+
+          {{#if vehiclePanels.powerSummaryPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-power-summary-panel.hbs" panel=vehiclePanels.powerSummaryPanel}}
+          {{/if}}
+        </section>
+
+        <!-- CARGO TAB: Cargo manifest -->
+        <section class="tab flexcol" data-group="primary" data-tab="cargo">
+          {{#if vehiclePanels.cargoSummaryPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs" panel=vehiclePanels.cargoSummaryPanel}}
+          {{/if}}
+
+          {{#if vehiclePanels.cargoManifestPanel}}
+            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-manifest-panel.hbs" panel=vehiclePanels.cargoManifestPanel}}
+          {{/if}}
+        </section>
+
       </section>
 
-      <section class="tab flexcol" data-group="primary" data-tab="systems" data-drop-zone="equipment">
-        <div class="swse-v2-grid swse-vehicle-systems-grid" style="margin-top:12px;">
-
-          <!-- PHASE 1: Use prepared house rule context, not direct feature flag checks -->
-          {{#if vehiclePanels.subsystemPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-subsystem-panel.hbs" panel=vehiclePanels.subsystemPanel}}
-          {{/if}}
-
-          {{#if vehiclePanels.shieldPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-shield-management-panel.hbs" panel=vehiclePanels.shieldPanel}}
-          {{/if}}
-
-          <!-- PHASE 2+: Power, pilot, commander panels (stub for future) -->
-          {{#if houseRuleContexts.powerPanel}}
-            <!-- Phase 2: Power management panel -->
-          {{/if}}
-
-          {{#if houseRuleContexts.pilotPanel}}
-            <!-- Phase 2: Pilot maneuver control panel -->
-          {{/if}}
-
-          {{#if houseRuleContexts.commanderPanel}}
-            <!-- Phase 2: Commander order control panel -->
-          {{/if}}
-
-          {{#if houseRuleContexts.turnPhasePanel}}
-            <!-- Phase 2: Turn phase tracker panel -->
-          {{/if}}
-
-          {{#if starshipManeuvers.total}}
-          <div class="swse-v2-full">
-            <div class="holo-panel swse-ui-panel swse-vehicle-system-panel">
-              <div class="section-bar">
-                <h3 class="section-header">Starship Maneuvers</h3>
-                <span class="muted">{{starshipManeuvers.total}} learned</span>
-              </div>
-              {{> "systems/foundryvtt-swse/templates/partials/starship-maneuvers-panel.hbs" maneuvers=starshipManeuvers}}
-            </div>
-          </div>
-          {{/if}}
-
-          <div class="swse-v2-full">
-            <div class="holo-panel swse-ui-panel swse-vehicle-system-panel">
-              <div class="section-bar">
-                <h3 class="section-header">Equipment</h3>
-              </div>
-              {{#if equipment}}
-                <div class="equipment-list" style="border-top: 1px solid #ddd;">
-                  {{#each equipment as |item|}}
-                    <div class="equipment-row" style="display: grid; grid-template-columns: 1fr 80px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
-                      <div class="equipment-name">
-                        <button type="button"
-                                class="equipment-name-btn swse-v2-open-item"
-                                data-item-id="{{item.id}}"
-                                style="background: none; border: none; color: #0066cc; cursor: pointer; text-decoration: underline;">
-                          {{item.name}}
-                        </button>
-                      </div>
-                      <input type="number"
-                             name="items.{{item.id}}.system.quantity"
-                             value="{{item.system.quantity}}"
-                             min="0"
-                             style="padding: 4px; border: 1px solid #ccc; border-radius: 2px;">
-                      <div class="equipment-weight" style="text-align: right;">
-                        {{item.system.weight}} lbs
-                      </div>
-                      <button type="button"
-                              class="equipment-sell"
-                              data-action="sell-item"
-                              data-item-id="{{item.id}}"
-                              style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
-                        Sell
-                      </button>
-                      <button type="button"
-                              class="equipment-delete"
-                              data-action="delete-item"
-                              data-item-id="{{item.id}}"
-                              style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
-                        Delete
-                      </button>
-                    </div>
-                  {{/each}}
-                </div>
-              {{else}}
-                <div class="muted" style="padding: 16px;">No equipment</div>
-              {{/if}}
-            </div>
-          </div>
-
-          <div class="swse-v2-full">
-            <div class="holo-panel swse-ui-panel swse-vehicle-system-panel">
-              <div class="section-bar">
-                <h3 class="section-header">Actions</h3>
-              </div>
-              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs"}}
-            </div>
-          </div>
-        </div>
-      </section>
-      </section>
     </section>
 
 </section>
