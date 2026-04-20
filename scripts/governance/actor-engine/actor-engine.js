@@ -13,6 +13,10 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { traceLog, actorSummary, payloadSummary, MutationDepth } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 
+// Internal modules for modularized responsibilities
+import { DerivedEngineModule } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/internal/actor-engine-derived.js";
+import { ValidationEngineModule } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/internal/actor-engine-validation.js";
+
 /**
  * ActorEngine
  * Centralized actor mutation and recalculation pipeline.
@@ -27,205 +31,29 @@ export const ActorEngine = {
   // Uses reference counting to handle nested updates (preUpdateActor hooks calling updateActor again)
   _inFlightMutations: new Map(),
   /**
-   * Perform any derived-stat recalculation.
-   * Runs after every validated update. Non-blocking.
-   *
-   * PHASE 2C: ModifierEngine.applyAll() is currently IMPURE
-   * It writes directly to system.derived.* without enforcement.
-   * TODO (Phase 2C): Refactor ModifierEngine.applyAll() to:
-   *   - Return computed modifier bundle instead of mutating
-   *   - Apply bundle in DerivedCalculator context only
-   *   - Prevent unauthorized writes to system.derived.*
-   * Known issues in ModifierEngine.applyAll():
-   *   - Writes system.skills.*.total directly (should be derived-only)
-   *   - Writes system.derived.initiative as number (corrupts shape)
-   *   - Writes system.derived.defenses.*.total (should be value)
-   *   - Non-idempotent (calling twice produces different results)
-   * Mitigation: Set actor._isDerivedCalcCycle = true during DerivedCalculator phase
+   * Facade to DerivedEngineModule.recalcAll()
+   * Delegates derived recalculation to internal module.
    */
   async recalcAll(actor) {
-    if (!actor) throw new Error('recalcAll() called with no actor');
-
-    // PHASE 3: Recomputation observability
-    const recomputeStart = performance.now();
-    const enforcementLevel = MutationInterceptor.getEnforcementLevel();
-    const isDevEnvironment = (
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1'
-    );
-    const observabilityEnabled = (enforcementLevel === 'strict' || isDevEnvironment);
-
-    try {
-      if (observabilityEnabled) {
-        SWSELogger.debug(`[RECOMPUTE START] ${actor.name}`, {
-          stage: 'begin',
-          enforceLevel: enforcementLevel,
-          timestamp: new Date().toISOString()
-        });
-      }
-
-      // ========================================
-      // PHASE 1: Mark that we're in derived calc cycle
-      // ========================================
-      actor._isDerivedCalcCycle = true;
-      try {
-        // ========================================
-        // PHASE 2: Compute base derived values
-        // ========================================
-        if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] DerivedCalculator.computeAll() starting...`, { actor: actor.name });
-        }
-        await DerivedCalculator.computeAll(actor);
-        if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] DerivedCalculator.computeAll() completed`, {
-            actor: actor.name,
-            derivedHP: actor.system?.derived?.hp?.total,
-            derivedBAB: actor.system?.derived?.bab,
-            defensesFort: actor.system?.derived?.defenses?.fortitude?.total
-          });
-        }
-
-        // ========================================
-        // PHASE 3: Apply modifier bundle
-        // ========================================
-        if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] ModifierEngine.computeModifierBundle() starting...`, { actor: actor.name });
-        }
-        const allModifiers = await ModifierEngine.getAllModifiers(actor);
-        const modifierMap = await ModifierEngine.aggregateAll(actor);
-        const modifierBundle = ModifierEngine.computeModifierBundle(actor, modifierMap, allModifiers);
-        ModifierEngine.applyComputedBundle(actor, modifierBundle);
-        if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] ModifierEngine.applyComputedBundle() completed`, {
-            actor: actor.name,
-            modifierCount: actor.system?.derived?.modifiers?.all?.length || 0,
-            hpAdjustment: actor.system?.derived?.hp?.adjustment,
-            babAdjustment: actor.system?.derived?.babAdjustment
-          });
-        }
-      } finally {
-        actor._isDerivedCalcCycle = false;
-      }
-
-      // ========================================
-      // PHASE 4: Check prerequisite integrity
-      // ========================================
-      // PHASE 3: In strict mode, reject skip flags (S2 hardening)
-      if (actor._skipIntegrityCheck && enforcementLevel === 'strict') {
-        const message = (
-          `[INTEGRITY SKIP REJECTED] Attempted to skip integrity checks in strict mode\n` +
-          `_skipIntegrityCheck is only allowed for legitimate recursion prevention\n` +
-          `In strict mode, all mutations must include integrity validation`
-        );
-        throw new Error(message);
-      }
-
-      // Skip if flagged as integrity check (prevent recursion)
-      if (!actor._skipIntegrityCheck) {
-        if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] Integrity checks starting...`, { actor: actor.name });
-        }
-        await this._checkIntegrity(actor);
-        if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] Integrity checks completed`, { actor: actor.name });
-        }
-      } else {
-        // PHASE 3: In normal mode, still warn about skip flag
-        if (enforcementLevel !== 'silent') {
-          SWSELogger.warn(`[INTEGRITY SKIP] Integrity checks skipped for ${actor.name} due to _skipIntegrityCheck flag`);
-        }
-      }
-
-      // ========================================
-      // PHASE 5: Recomputation complete
-      // ========================================
-      const recomputeEnd = performance.now();
-      const duration = (recomputeEnd - recomputeStart).toFixed(2);
-      if (observabilityEnabled) {
-        SWSELogger.debug(`[RECOMPUTE END] ${actor.name} — Pipeline completed`, {
-          stage: 'complete',
-          durationMs: duration,
-          enforceLevel: enforcementLevel,
-          timestamp: new Date().toISOString()
-        });
-      }
-    } catch (err) {
-      const recomputeEnd = performance.now();
-      const duration = (recomputeEnd - recomputeStart).toFixed(2);
-      SWSELogger.error(`[RECOMPUTE FAILED] ${actor.name} — Pipeline error after ${duration}ms:`, err);
-      throw err; // Re-throw in strict mode
-    }
+    return DerivedEngineModule.recalcAll(actor);
   },
 
   /**
-   * PHASE 3: Strict enforcement check for derived writes
-   * Validates that writes to system.derived.* only happen during:
-   * - DerivedCalculator (marked with _isDerivedCalcCycle = true)
-   * - Designated mutation phases with isDerivedCalculatorCall option
-   *
-   * PHASE 3 HARDENING: In strict mode, throws error. In normal mode, warns only.
-   *
-   * @param {Object} changes - Update changes to validate
-   * @param {Actor} actor - Actor being updated
-   * @param {Object} options - Update options
-   * @throws {Error} If violation detected in strict mode
+   * Facade to ValidationEngineModule._validateDerivedWriteAuthority()
+   * Delegates validation to internal module.
    * @private
    */
   _validateDerivedWriteAuthority(changes, actor, options = {}) {
-    const derivedPaths = [];
-
-    const checkObject = (obj, prefix = '') => {
-      if (!obj || typeof obj !== 'object') return;
-      for (const [key, value] of Object.entries(obj)) {
-        const path = prefix ? `${prefix}.${key}` : key;
-        if (path.startsWith('system.derived.')) {
-          derivedPaths.push(path);
-        }
-        if (typeof value === 'object' && value !== null) {
-          checkObject(value, path);
-        }
-      }
-    };
-
-    checkObject(changes);
-
-    // Enforce derived write authority
-    if (derivedPaths.length > 0 &&
-        !actor._isDerivedCalcCycle &&
-        !options.isDerivedCalculatorCall) {
-      const violationList = derivedPaths.slice(0, 5).join(', ');
-      const enforcementLevel = MutationInterceptor.getEnforcementLevel();
-      const message = (
-        `[SSOT VIOLATION] Attempted direct write to derived paths: ${violationList}${derivedPaths.length > 5 ? '...' : ''}\n` +
-        `Only DerivedCalculator may write system.derived.*\n` +
-        `Caller: ${new Error().stack.split('\n')[2]}`
-      );
-
-      if (enforcementLevel === 'strict') {
-        // PHASE 3: Hard enforcement in strict mode
-        throw new Error(message);
-      } else {
-        // PHASE 3: Warning-only in normal/log-only mode
-        SWSELogger.warn(message);
-      }
-    }
+    return ValidationEngineModule._validateDerivedWriteAuthority(changes, actor, options);
   },
 
   /**
-   * Check prerequisite integrity and update tracking.
-   * Called after every mutation that affects abilities.
+   * Facade to DerivedEngineModule._checkIntegrity()
+   * Delegates integrity checking to internal module.
    * @private
    */
   async _checkIntegrity(actor) {
-    try {
-      const report = await PrerequisiteIntegrityChecker.evaluate(actor);
-      if (Object.keys(report.violations).length > 0) {
-        SWSELogger.warn(`[INTEGRITY] Prerequisite violations detected for ${actor.name}:`, report.violations);
-      }
-    } catch (err) {
-      SWSELogger.error('[INTEGRITY] Failed to check prerequisites:', err);
-      // Don't throw — integrity check failure shouldn't block gameplay
-    }
+    return DerivedEngineModule._checkIntegrity(actor);
   },
 
   // PHASE 11: Track active migrations to prevent recursion
@@ -3570,492 +3398,109 @@ export const ActorEngine = {
   },
 
   /**
-   * PHASE 4: Comprehensive mutation plan normalization for contract enforcement.
-   *
-   * Transforms incoming mutation data to conform to canonical contract paths:
-   * - Abilities: .value → .base, and ensure ability object shapes
-   * - Class: remove redundant class scalar paths
-   * - Skills: complete skill object shapes
-   * - XP: system.experience → system.xp.total
-   *
-   * @param {Object} updateData - Raw incoming mutation data
-   * @param {Actor} actor - Target actor
-   * @returns {Object} {normalizedUpdateData, warnings}
+   * Facade to ValidationEngineModule._normalizeMutationForContract()
+   * Delegates normalization to internal module.
    * @private
    */
   _normalizeMutationForContract(updateData, actor) {
-    if (!updateData || typeof updateData !== 'object') {
-      return { normalizedUpdateData: updateData, warnings: [] };
-    }
-
-    const warnings = [];
-    const normalized = foundry.utils.deepClone(updateData);
-    const flat = foundry.utils.flattenObject(normalized);
-
-    // ========================================
-    // Normalize Phase 3 domains
-    // ========================================
-
-    // 1. Abilities: .value → .base
-    const abilityWarnings = this._normalizeAbilityPathsForContract(flat);
-    warnings.push(...abilityWarnings);
-
-    // 2. Class: Remove redundant scalar paths
-    const classWarnings = this._normalizeClassPathsForContract(flat);
-    warnings.push(...classWarnings);
-
-    // 3. Skills: Ensure complete structure
-    const skillWarnings = this._normalizeSkillStructureForContract(flat);
-    warnings.push(...skillWarnings);
-
-    // 4. XP: Normalize naming
-    const xpWarnings = this._normalizeXpPathsForContract(flat);
-    warnings.push(...xpWarnings);
-
-    // Unflatten back to nested form
-    const normalizedUpdateData = foundry.utils.expandObject(flat);
-
-    return { normalizedUpdateData, warnings };
+    return ValidationEngineModule._normalizeMutationForContract(updateData, actor);
   },
 
   /**
-   * Initialize canonical base shapes for domains touched by this mutation.
-   *
-   * Called AFTER normalization to ensure canonical structure exists before apply.
-   * Only initializes required containers for touched domains.
-   *
-   * @param {Object} updateData - Normalized update data
-   * @param {Actor} actor - Target actor
+   * Facade to ValidationEngineModule._initializeCanonicalShapesForTouchedDomains()
+   * Delegates shape initialization to internal module.
    * @private
    */
   _initializeCanonicalShapesForTouchedDomains(updateData, actor) {
-    if (!updateData || typeof updateData !== 'object') return;
-
-    const flat = foundry.utils.flattenObject(updateData);
-    const touched = new Set();
-
-    // Detect which domains are being touched
-    for (const key of Object.keys(flat)) {
-      if (key.startsWith('system.abilities.')) touched.add('abilities');
-      if (key.startsWith('system.class')) touched.add('class');
-      if (key.startsWith('system.skills.')) touched.add('skills');
-      if (key.startsWith('system.xp.') || key.startsWith('system.experience')) touched.add('xp');
-      if (key.startsWith('system.hp')) touched.add('hp');
-    }
-
-    // Initialize required structures for touched domains
-    if (touched.has('abilities')) {
-      this._ensureCanonicalAbilityShapes(actor);
-    }
-    if (touched.has('skills')) {
-      this._ensureCanonicalSkillShapes(actor, flat);
-    }
-    if (touched.has('xp')) {
-      this._ensureCanonicalXpShape(actor);
-    }
-    if (touched.has('hp')) {
-      this._ensureCanonicalHpShape(actor);
-    }
+    return ValidationEngineModule._initializeCanonicalShapesForTouchedDomains(updateData, actor);
   },
 
   /**
-   * Validate that normalized mutation plan complies with canonical contract.
-   *
-   * Checks for coherence issues, conflicting paths, required structures.
-   * Warns but does not fail - allows callers to proceed with visibility.
-   *
-   * @param {Object} updateData - Normalized update data
-   * @param {Actor} actor - Target actor
-   * @returns {Object} {isValid, warnings}
+   * Facade to ValidationEngineModule._validateCanonicalMutationPlan()
+   * Delegates validation to internal module.
    * @private
    */
   _validateCanonicalMutationPlan(updateData, actor) {
-    if (!updateData || typeof updateData !== 'object') {
-      return { isValid: true, warnings: [] };
-    }
-
-    const warnings = [];
-    const flat = foundry.utils.flattenObject(updateData);
-
-    // Check for conflicting canonical/legacy paths
-    if (flat['system.abilities.str.base'] && flat['system.abilities.str.value']) {
-      warnings.push('Conflict: both system.abilities.str.base and .value present in mutation');
-    }
-    if (flat['system.xp.total'] && flat['system.experience']) {
-      warnings.push('Conflict: both system.xp.total and system.experience present in mutation');
-    }
-
-    // Check for incomplete skill objects being set
-    for (const key of Object.keys(flat)) {
-      if (key.match(/^system\.skills\.\w+\.\w+$/)) {
-        const skillMatch = key.match(/^system\.skills\.(\w+)\.(\w+)$/);
-        if (skillMatch) {
-          const skillKey = skillMatch[1];
-          const propKey = skillMatch[2];
-          // If only one property is being set, that's usually ok (partial updates)
-          // But warn if it looks like incomplete initialization
-          if (!['trained', 'miscMod', 'focused', 'selectedAbility'].includes(propKey)) {
-            warnings.push(`Unusual skill property: system.skills.${skillKey}.${propKey}`);
-          }
-        }
-      }
-    }
-
-    return { isValid: warnings.length === 0, warnings };
+    return ValidationEngineModule._validateCanonicalMutationPlan(updateData, actor);
   },
 
-  // ========================================
-  // Domain-specific normalization helpers
-  // ========================================
-
   /**
-   * Normalize ability paths: .value → .base with warnings
+   * Facade to ValidationEngineModule._normalizeAbilityPathsForContract()
    * @private
    */
   _normalizeAbilityPathsForContract(flat) {
-    const warnings = [];
-    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    const toDelete = [];
-
-    for (const key of Object.keys(flat)) {
-      const match = key.match(/^system\.abilities\.([a-z]+)\.value$/);
-      if (match && abilityKeys.includes(match[1])) {
-        const abilityKey = match[1];
-        const newPath = `system.abilities.${abilityKey}.base`;
-
-        if (!(newPath in flat)) {
-          flat[newPath] = flat[key];
-          warnings.push(
-            `[NORMALIZE] Deprecated ability path ${key} → ${newPath} ` +
-            `(value=${flat[key]})`
-          );
-        } else {
-          warnings.push(
-            `[CONFLICT] Both ${key} and ${newPath} present; using .base`
-          );
-        }
-        toDelete.push(key);
-      }
-    }
-
-    for (const path of toDelete) {
-      delete flat[path];
-    }
-
-    return warnings;
+    return ValidationEngineModule._normalizeAbilityPathsForContract(flat);
   },
 
   /**
-   * Normalize class paths: remove redundant scalar paths
+   * Facade to ValidationEngineModule._normalizeClassPathsForContract()
    * @private
    */
   _normalizeClassPathsForContract(flat) {
-    const warnings = [];
-
-    // If system.className is present without system.class, that's a legacy-only write
-    // We'll keep it for now but warn
-    if (flat['system.className'] && !flat['system.class']) {
-      warnings.push(
-        `[LEGACY] system.className write without system.class (deprecated scalar path)`
-      );
-    }
-
-    if (flat['system.classes'] && !flat['system.class']) {
-      warnings.push(
-        `[LEGACY] system.classes write without system.class (deprecated array path)`
-      );
-    }
-
-    return warnings;
+    return ValidationEngineModule._normalizeClassPathsForContract(flat);
   },
 
   /**
-   * Normalize skill structure: ensure touched skills have complete shape
+   * Facade to ValidationEngineModule._normalizeSkillStructureForContract()
    * @private
    */
   _normalizeSkillStructureForContract(flat) {
-    const warnings = [];
-
-    // Find skills being touched
-    const skillKeys = new Set();
-    for (const key of Object.keys(flat)) {
-      const match = key.match(/^system\.skills\.(\w+)\./);
-      if (match) {
-        skillKeys.add(match[1]);
-      }
-    }
-
-    // For each touched skill, ensure all canonical properties exist
-    for (const skillKey of skillKeys) {
-      const basePath = `system.skills.${skillKey}`;
-      const props = ['trained', 'miscMod', 'focused', 'selectedAbility'];
-
-      for (const prop of props) {
-        const path = `${basePath}.${prop}`;
-        const defaults = {
-          trained: false,
-          miscMod: 0,
-          focused: false,
-          selectedAbility: ''
-        };
-
-        if (!(path in flat)) {
-          flat[path] = defaults[prop];
-          warnings.push(
-            `[INITIALIZE] Skill ${skillKey}.${prop} initialized to default (${defaults[prop]})`
-          );
-          continue;
-        }
-
-        if (prop === 'miscMod') {
-          const coerced = Number(flat[path]);
-          if (!Number.isFinite(coerced)) {
-            warnings.push(
-              `[COERCE] Skill ${skillKey}.miscMod invalid (${flat[path]}); defaulting to 0`
-            );
-            flat[path] = 0;
-          } else if (typeof flat[path] !== 'number') {
-            warnings.push(
-              `[COERCE] Skill ${skillKey}.miscMod ${JSON.stringify(flat[path])} -> ${coerced}`
-            );
-            flat[path] = coerced;
-          }
-        } else if (prop === 'trained' || prop === 'focused') {
-          if (typeof flat[path] !== 'boolean') {
-            const raw = flat[path];
-            flat[path] = raw === true || raw === 'true' || raw === 1 || raw === '1';
-            warnings.push(
-              `[COERCE] Skill ${skillKey}.${prop} ${JSON.stringify(raw)} -> ${flat[path]}`
-            );
-          }
-        } else if (prop === 'selectedAbility' && typeof flat[path] !== 'string') {
-          const raw = flat[path];
-          flat[path] = raw == null ? '' : String(raw);
-          warnings.push(
-            `[COERCE] Skill ${skillKey}.selectedAbility ${JSON.stringify(raw)} -> ${JSON.stringify(flat[path])}`
-          );
-        }
-      }
-    }
-
-    return warnings;
+    return ValidationEngineModule._normalizeSkillStructureForContract(flat);
   },
 
   /**
-   * Normalize XP paths: system.experience → system.xp.total
+   * Facade to ValidationEngineModule._normalizeXpPathsForContract()
    * @private
    */
   _normalizeXpPathsForContract(flat) {
-    const warnings = [];
-
-    if ('system.experience' in flat && !('system.xp.total' in flat)) {
-      flat['system.xp.total'] = flat['system.experience'];
-      warnings.push(
-        `[NORMALIZE] Legacy XP path system.experience → system.xp.total ` +
-        `(value=${flat['system.experience']})`
-      );
-      delete flat['system.experience'];
-    } else if ('system.experience' in flat && 'system.xp.total' in flat) {
-      warnings.push(
-        `[CONFLICT] Both system.experience and system.xp.total present; using xp.total`
-      );
-      delete flat['system.experience'];
-    }
-
-    return warnings;
+    return ValidationEngineModule._normalizeXpPathsForContract(flat);
   },
 
-  // ========================================
-  // Canonical shape initialization helpers
-  // ========================================
-
   /**
-   * Ensure actor has canonical ability object shapes
+   * Facade to ValidationEngineModule._ensureCanonicalAbilityShapes()
    * @private
    */
   _ensureCanonicalAbilityShapes(actor) {
-    if (!actor.system) actor.system = {};
-    if (!actor.system.abilities) actor.system.abilities = {};
-
-    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    for (const key of abilityKeys) {
-      if (!actor.system.abilities[key]) {
-        actor.system.abilities[key] = {
-          base: 10,
-          racial: 0,
-          temp: 0,
-          total: 10,
-          mod: 0
-        };
-      } else {
-        // Ensure all expected properties exist
-        if (actor.system.abilities[key].base === undefined) {
-          actor.system.abilities[key].base = actor.system.abilities[key].value || 10;
-        }
-        if (actor.system.abilities[key].racial === undefined) {
-          actor.system.abilities[key].racial = 0;
-        }
-        if (actor.system.abilities[key].temp === undefined) {
-          actor.system.abilities[key].temp = 0;
-        }
-      }
-    }
+    return ValidationEngineModule._ensureCanonicalAbilityShapes(actor);
   },
 
   /**
-   * Ensure touched skills have canonical object shapes
+   * Facade to ValidationEngineModule._ensureCanonicalSkillShapes()
    * @private
    */
   _ensureCanonicalSkillShapes(actor, flatUpdateData) {
-    if (!actor.system) actor.system = {};
-    if (!actor.system.skills) actor.system.skills = {};
-
-    // Find which skills are being touched
-    const skillKeys = new Set();
-    for (const key of Object.keys(flatUpdateData)) {
-      const match = key.match(/^system\.skills\.(\w+)\./);
-      if (match) {
-        skillKeys.add(match[1]);
-      }
-    }
-
-    // Initialize touched skills to canonical shape
-    for (const skillKey of skillKeys) {
-      if (!actor.system.skills[skillKey]) {
-        actor.system.skills[skillKey] = {
-          trained: false,
-          miscMod: 0,
-          focused: false,
-          selectedAbility: ''
-        };
-      } else {
-        // Ensure all properties exist
-        if (actor.system.skills[skillKey].trained === undefined) {
-          actor.system.skills[skillKey].trained = false;
-        }
-        if (actor.system.skills[skillKey].miscMod === undefined) {
-          actor.system.skills[skillKey].miscMod = 0;
-        }
-        if (actor.system.skills[skillKey].focused === undefined) {
-          actor.system.skills[skillKey].focused = false;
-        }
-        if (actor.system.skills[skillKey].selectedAbility === undefined) {
-          actor.system.skills[skillKey].selectedAbility = '';
-        }
-      }
-    }
+    return ValidationEngineModule._ensureCanonicalSkillShapes(actor, flatUpdateData);
   },
 
   /**
-   * Ensure canonical XP object shape
+   * Facade to ValidationEngineModule._ensureCanonicalXpShape()
    * @private
    */
   _ensureCanonicalXpShape(actor) {
-    if (!actor.system) actor.system = {};
-    if (!actor.system.xp) {
-      actor.system.xp = { total: 0 };
-    }
-    if (actor.system.xp.total === undefined) {
-      actor.system.xp.total = 0;
-    }
+    return ValidationEngineModule._ensureCanonicalXpShape(actor);
   },
 
   /**
-   * Ensure canonical HP object shape
+   * Facade to ValidationEngineModule._ensureCanonicalHpShape()
    * @private
    */
   _ensureCanonicalHpShape(actor) {
-    if (!actor.system) actor.system = {};
-    if (!actor.system.hp) {
-      actor.system.hp = {
-        value: 1,
-        max: 1,
-        temp: 0
-      };
-    }
-    if (actor.system.hp.value === undefined) actor.system.hp.value = 1;
-    if (actor.system.hp.max === undefined) actor.system.hp.max = 1;
+    return ValidationEngineModule._ensureCanonicalHpShape(actor);
   },
 
   /**
-   * PHASE 3A: Normalize legacy ability paths to canonical schema.
-   * Converts deprecated system.abilities.<key>.value → system.abilities.<key>.base
-   * This allows old progression/saved data to work with new schema without immediate migration.
-   *
-   * @param {Object} updateData - The update data object (may be nested)
+   * Facade to ValidationEngineModule._normalizeAbilityPaths()
    * @private
    */
   _normalizeAbilityPaths(updateData) {
-    if (!updateData || typeof updateData !== 'object') return;
-
-    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    const flat = foundry.utils.flattenObject(updateData);
-    const toDelete = [];
-
-    for (const key of Object.keys(flat)) {
-      // Match system.abilities.<key>.value
-      const match = key.match(/^system\.abilities\.([a-z]+)\.value$/);
-      if (match && abilityKeys.includes(match[1])) {
-        const abilityKey = match[1];
-        const newPath = `system.abilities.${abilityKey}.base`;
-
-        // Only normalize if the canonical .base path isn't already being set
-        if (!(newPath in flat)) {
-          flat[newPath] = flat[key];
-          SWSELogger.warn(`[ABILITY NORMALIZATION] Converted legacy path ${key} → ${newPath}`, {
-            abilityKey,
-            value: flat[key]
-          });
-        }
-
-        toDelete.push(key);
-      }
-    }
-
-    // Remove legacy paths from update
-    for (const path of toDelete) {
-      delete flat[path];
-    }
-
-    // Unflatten back to nested form if we made changes
-    if (toDelete.length > 0) {
-      const updated = foundry.utils.expandObject(flat);
-      Object.assign(updateData, updated);
-    }
+    return ValidationEngineModule._normalizeAbilityPaths(updateData);
   },
 
   /**
-   * PHASE 3D: Normalize legacy XP/experience paths to canonical schema.
-   * Converts deprecated system.experience → system.xp.total
-   * This allows old progression/saved data to work with new naming without immediate migration.
-   *
-   * @param {Object} updateData - The update data object (may be nested)
+   * Facade to ValidationEngineModule._normalizeXpPaths()
    * @private
    */
   _normalizeXpPaths(updateData) {
-    if (!updateData || typeof updateData !== 'object') return;
-
-    const flat = foundry.utils.flattenObject(updateData);
-    const toDelete = [];
-
-    // Check for legacy system.experience path
-    if ('system.experience' in flat && !('system.xp.total' in flat)) {
-      flat['system.xp.total'] = flat['system.experience'];
-      SWSELogger.warn(`[XP NORMALIZATION] Converted legacy path system.experience → system.xp.total`, {
-        value: flat['system.experience']
-      });
-      toDelete.push('system.experience');
-    }
-
-    // Remove legacy paths from update
-    for (const path of toDelete) {
-      delete flat[path];
-    }
-
-    // Unflatten back to nested form if we made changes
-    if (toDelete.length > 0) {
-      const updated = foundry.utils.expandObject(flat);
-      Object.assign(updateData, updated);
-    }
+    return ValidationEngineModule._normalizeXpPaths(updateData);
   }
 };
