@@ -1,45 +1,123 @@
-<section class="swse-npc-card swse-npc-progression-card">
+<section class="swse-npc-card swse-npc-progression-card {{#if hasMixedProgressionTracks}}is-mixed-track{{/if}}">
   <header class="swse-npc-card__header">
-    <h3 class="swse-section-title">Progression</h3>
-    {{#if isProgressionMode}}
-      <span class="swse-npc-badge swse-npc-badge--mode">Active</span>
-    {{else}}
-      <span class="swse-npc-badge swse-npc-badge--muted">Inactive</span>
-    {{/if}}
+    <div class="swse-npc-card__header-main">
+      <h3 class="swse-section-title">Progression</h3>
+      <p class="swse-npc-card__subhead">
+        Advancement summary for this NPC.
+      </p>
+    </div>
+
+    <div class="swse-npc-badges">
+      <span class="swse-npc-badge swse-npc-badge--mode">{{progressionSummary.mode}}</span>
+
+      {{#if hasMixedProgressionTracks}}
+        <span class="swse-npc-badge swse-npc-badge--warning">Mixed Track</span>
+      {{/if}}
+
+      {{#if progressionSummary.hasSnapshot}}
+        <span class="swse-npc-badge swse-npc-badge--subtype">Snapshot</span>
+      {{/if}}
+    </div>
   </header>
 
   <div class="swse-npc-card__body">
-    {{#if progressionSummary}}
-      <dl class="swse-npc-meta-list">
-        {{#if progressionSummary.heroicLevels}}
-          <div class="swse-npc-meta-list__row">
-            <dt>Heroic Levels</dt>
-            <dd>{{progressionSummary.heroicLevels}}</dd>
-          </div>
-        {{/if}}
+    <div class="swse-npc-progress-grid">
+      <div class="swse-npc-progress-stat">
+        <label class="swse-npc-progress-stat__label">Heroic Levels</label>
+        <div class="swse-npc-progress-stat__value">{{progressionSummary.heroicLevels}}</div>
+      </div>
 
-        {{#if progressionSummary.nonheroicLevels}}
-          <div class="swse-npc-meta-list__row">
-            <dt>Nonheroic Levels</dt>
-            <dd>{{progressionSummary.nonheroicLevels}}</dd>
-          </div>
-        {{/if}}
+      <div class="swse-npc-progress-stat">
+        <label class="swse-npc-progress-stat__label">Nonheroic Levels</label>
+        <div class="swse-npc-progress-stat__value">{{progressionSummary.nonheroicLevels}}</div>
+      </div>
 
-        {{#if progressionSummary.totalLevels}}
-          <div class="swse-npc-meta-list__row">
-            <dt>Total Levels</dt>
-            <dd>{{progressionSummary.totalLevels}}</dd>
-          </div>
-        {{/if}}
-      </dl>
-    {{else}}
-      <p class="swse-npc-empty-state">
-        No progression summary is currently available for this NPC.
+      <div class="swse-npc-progress-stat">
+        <label class="swse-npc-progress-stat__label">Total Levels</label>
+        <div class="swse-npc-progress-stat__value">{{progressionSummary.totalLevels}}</div>
+      </div>
+
+      <div class="swse-npc-progress-stat">
+        <label class="swse-npc-progress-stat__label">Class Count</label>
+        <div class="swse-npc-progress-stat__value">{{progressionSummary.classCount}}</div>
+      </div>
+    </div>
+
+    <div class="swse-npc-progress-classes">
+      <div class="swse-npc-progress-classes__label">Classes</div>
+
+      {{#if progressionSummary.classNames.length}}
+        <div class="swse-npc-chip-row">
+          {{#each progressionSummary.classNames as |className|}}
+            <span class="swse-npc-chip">{{className}}</span>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="swse-npc-empty-state">
+          No class progression is currently recorded for this NPC.
+        </p>
+      {{/if}}
+    </div>
+
+    {{#if progressionSummary.advisory}}
+      <div class="swse-npc-callout swse-npc-callout--progression">
+        <strong>Advisory:</strong>
+        {{progressionSummary.advisory}}
+      </div>
+    {{/if}}
+
+    {{#if hasMixedProgressionTracks}}
+      <div class="swse-npc-callout swse-npc-callout--warning">
+        <strong>Mixed-track NPC:</strong>
+        This NPC currently uses both heroic and nonheroic advancement tracks.
+      </div>
+    {{/if}}
+
+    {{#if isStatblockMode}}
+      <div class="swse-npc-callout swse-npc-callout--statblock">
+        <strong>Statblock authority:</strong>
+        Printed/published values remain authoritative unless explicitly transitioned through the supported progression flow.
+      </div>
+    {{/if}}
+
+    <div class="swse-npc-action-row">
+      {{#if canLaunchNpcLevelUp}}
+        <button
+          type="button"
+          class="swse-npc-action-button"
+          data-action="open-npc-levelup">
+          Open NPC Level-Up
+        </button>
+      {{/if}}
+
+      {{#if canRevertNpcProgression}}
+        <button
+          type="button"
+          class="swse-npc-action-button swse-npc-action-button--secondary"
+          data-action="revert-npc-progression">
+          Revert Snapshot
+        </button>
+      {{/if}}
+    </div>
+
+    {{#if progressionSummary.snapshotLabel}}
+      <p class="swse-npc-card__footnote">
+        Current snapshot: {{progressionSummary.snapshotLabel}}
       </p>
     {{/if}}
 
-    <p class="swse-npc-card__footnote">
-      This panel is a shell for deeper heroic/nonheroic level-up integration in later phases.
-    </p>
+    {{#unless canLaunchNpcLevelUp}}
+      <p class="swse-npc-card__footnote">
+        NPC level-up launch is not currently available for this actor state.
+      </p>
+    {{/unless}}
+
+    {{#unless canRevertNpcProgression}}
+      {{#unless progressionSummary.snapshotLabel}}
+        <p class="swse-npc-card__footnote">
+          Snapshot revert is only shown when a truthful snapshot state is available.
+        </p>
+      {{/unless}}
+    {{/unless}}
   </div>
 </section>

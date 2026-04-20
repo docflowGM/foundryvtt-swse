@@ -46,6 +46,13 @@ export class NpcProfileBuilder {
     const profileDescription = this._getProfileDescription(npcKind, npcMode);
     const authorityDescription = this._getAuthorityDescription(npcMode, npcKind);
 
+    // Phase 5: Top-level helper fields (mirrored from progressionSummary for convenience)
+    const hasMixedProgressionTracks = progressionSummary?.hasMixedTracks ?? false;
+    const canLaunchNpcLevelUp = progressionSummary?.canLaunchLevelUp ?? false;
+    const hasNpcProgressionSnapshot = progressionSummary?.hasSnapshot ?? false;
+    const canRevertNpcProgression = progressionSummary?.revertAvailable ?? false;
+    const npcProgressionAdvisory = progressionSummary?.advisory ?? null;
+
     return {
       // Mode + subtype (stable, canonical)
       npcKind,
@@ -82,8 +89,15 @@ export class NpcProfileBuilder {
       // Beast metadata
       beastKind: actor.system?.npcProfile?.beastKind || null,
 
-      // Progression summary
+      // Progression summary (Phase 5 expanded)
       progressionSummary,
+
+      // Phase 5: Top-level helpers
+      hasMixedProgressionTracks,
+      canLaunchNpcLevelUp,
+      hasNpcProgressionSnapshot,
+      canRevertNpcProgression,
+      npcProgressionAdvisory,
 
       // Descriptions
       profileDescription,
@@ -163,33 +177,66 @@ export class NpcProfileBuilder {
   }
 
   /**
-   * Get progression summary for display.
+   * Get progression summary for display (Phase 5 expanded).
    * @private
    */
   static _getProgressionSummary(actor) {
-    if (!actor || !isNpcProgressionMode(actor)) {
+    if (!actor) {
       return null;
     }
 
-    const classes = actor.items?.filter(i => i.type === 'class') || [];
-    const heroicLevel = classes
-      .filter(c => c.system?.isNonheroic !== true)
-      .reduce((sum, c) => sum + (Number(c.system?.level) || 0), 0);
-    const nonheroicLevel = classes
-      .filter(c => c.system?.isNonheroic === true)
-      .reduce((sum, c) => sum + (Number(c.system?.level) || 0), 0);
+    const npcMode = getNpcMode(actor);
+    const isProgression = npcMode === 'progression';
 
+    const classes = actor.items?.filter(i => i.type === 'class') || [];
+    const heroicClasses = classes.filter(c => c.system?.isNonheroic !== true);
+    const nonheroicClasses = classes.filter(c => c.system?.isNonheroic === true);
+
+    const heroicLevel = heroicClasses.reduce((sum, c) => sum + (Number(c.system?.level) || 0), 0);
+    const nonheroicLevel = nonheroicClasses.reduce((sum, c) => sum + (Number(c.system?.level) || 0), 0);
     const totalLevels = (heroicLevel || 0) + (nonheroicLevel || 0);
 
-    // Only return if there's actual progression data
-    if (totalLevels === 0) {
+    // Build class names array
+    const classNames = classes.map(c => c.name || 'Unnamed Class').filter(Boolean);
+    const classCount = classes.length;
+
+    // Detect mixed tracks
+    const hasMixedTracks = heroicLevel > 0 && nonheroicLevel > 0;
+
+    // Determine if can launch level-up
+    const canLaunchLevelUp = isProgression || !isProgression; // Always allow if GM can control (checked in handler)
+
+    // Check snapshot availability
+    const { NpcProgressionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js");
+    const hasSnapshot = NpcProgressionEngine.hasSnapshot?.(actor) ?? false;
+    const snapshotInfo = NpcProgressionEngine.getSnapshotInfo?.(actor);
+    const snapshotLabel = snapshotInfo?.label ?? null;
+    const revertAvailable = hasSnapshot;
+
+    // Generate advisory
+    let advisory = null;
+    if (hasMixedTracks) {
+      advisory = 'This NPC uses both heroic and nonheroic advancement tracks. Mixed progression is legal but uncommon.';
+    }
+
+    // Return null if no progression data at all
+    if (totalLevels === 0 && !isProgression) {
       return null;
     }
 
     return {
       heroicLevels: heroicLevel || 0,
       nonheroicLevels: nonheroicLevel || 0,
-      totalLevels
+      totalLevels,
+      classCount,
+      classNames,
+      hasMixedTracks,
+      mode: npcMode,
+      canLaunchLevelUp,
+      hasSnapshot,
+      snapshotLabel,
+      revertAvailable,
+      advisory
     };
   }
 

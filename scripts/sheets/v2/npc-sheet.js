@@ -276,6 +276,41 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       ui.notifications.info("Mentor interactions coming soon!");
     }, { signal });
 
+    /* ---- PHASE 5: NPC PROGRESSION PANEL ACTIONS ---- */
+
+    root.querySelector('[data-action="open-npc-levelup"]')?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      const { SWSENpcLevelUpEntry } = await import("/systems/foundryvtt-swse/scripts/apps/levelup/npc-levelup-entry.js");
+      new SWSENpcLevelUpEntry(this.actor).render(true);
+    }, { signal });
+
+    root.querySelector('[data-action="revert-npc-progression"]')?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      const { NpcProgressionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js");
+
+      const snapshotInfo = NpcProgressionEngine.getSnapshotInfo?.(this.actor);
+      if (!snapshotInfo) {
+        ui.notifications.warn('No snapshot available to revert to.');
+        return;
+      }
+
+      const { SWSEDialogV2 } = await import("/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js");
+      const ok = await SWSEDialogV2.confirm({
+        title: 'Revert NPC to Statblock Snapshot',
+        content: `<p>This restores the NPC to: <strong>${snapshotInfo.label}</strong> (${snapshotInfo.date})</p><p>Items, effects, and all attributes will be restored exactly.</p>`
+      });
+      if (!ok) {return;}
+
+      try {
+        await NpcProgressionEngine.revertToSnapshot(this.actor);
+        ui.notifications.info('NPC reverted to snapshot.');
+        this.render(false);
+      } catch (err) {
+        console.error('Snapshot revert failed:', err);
+        ui.notifications.error('Failed to revert NPC to snapshot.');
+      }
+    }, { signal });
+
     // Item sheet opening
     for (const el of root.querySelectorAll('.swse-v2-open-item')) {
       el.addEventListener('click', (ev) => {

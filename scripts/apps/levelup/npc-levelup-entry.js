@@ -43,6 +43,12 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     const mode = getNpcMode(actor);
     const hasSnapshot = NpcProgressionEngine.hasSnapshot(actor);
 
+    // Phase 5: Progression summary for status block
+    const classes = actor.items?.filter(i => i.type === 'class') || [];
+    const classNames = classes.map(c => c.name || 'Unnamed Class').filter(Boolean);
+    const classCount = classes.length;
+    const hasMixedProgressionTracks = Number(heroicLevels) > 0 && Number(nonheroicLevels) > 0;
+
     return {
       actorName: actor?.name ?? 'NPC',
       totalLevel: Number(actor?.system?.level) || Number(totalLevel) || 1,
@@ -56,7 +62,12 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
       heroicBlocked,
       heroicAdvisory,
       nonheroicBlocked,
-      nonheroicAdvisory
+      nonheroicAdvisory,
+
+      // Phase 5: Progression summary fields
+      classCount,
+      classNames,
+      hasMixedProgressionTracks
     };
   }
 
