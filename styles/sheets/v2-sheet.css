@@ -2232,52 +2232,153 @@ select option:checked {
   margin-bottom: 12px;
 }
 
-.swse-sheet.relationship-entry {
-  border: 1px solid rgba(0, 255, 136, 0.2);
-  border-radius: 8px;
-  padding: 10px;
-  background: rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
+/* =========================================
+   Character Relationships — typed roster colors
+   ========================================= */
+
+.swse-sheet.swse-relationship-roster-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-left-width: 4px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
   cursor: pointer;
-}
-
-.swse-sheet.relationship-entry:hover {
-  background: rgba(0, 0, 0, 0.35);
-  border-color: rgba(0, 255, 136, 0.4);
-  box-shadow: 0 0 8px rgba(0, 255, 136, 0.15);
-}
-
-.swse-sheet.relationship-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.swse-sheet.relationship-name-block {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-}
-
-.swse-sheet.relationship-portrait {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  object-fit: cover;
-  border: 1px solid rgba(0, 255, 136, 0.2);
-}
-
-.swse-sheet.relationship-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
   min-width: 0;
 }
 
-.swse-sheet.relationship-name {
+.swse-sheet.swse-relationship-roster-card:hover,
+.swse-sheet.swse-relationship-roster-card:focus {
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+/* Followers — Classic Cyan */
+.swse-sheet.swse-relationship-roster-card--follower {
+  border-color: rgba(90, 220, 255, 0.30);
+  border-left-color: rgba(90, 220, 255, 0.95);
+  background: linear-gradient(
+    90deg,
+    rgba(90, 220, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.035) 18%
+  );
+  box-shadow: inset 0 0 0 1px rgba(90, 220, 255, 0.06);
+}
+
+.swse-sheet.swse-relationship-roster-card--follower:hover,
+.swse-sheet.swse-relationship-roster-card--follower:focus {
+  border-color: rgba(90, 220, 255, 0.45);
+  box-shadow: 0 0 0 1px rgba(90, 220, 255, 0.12);
+}
+
+/* Mounts — Light Green */
+.swse-sheet.swse-relationship-roster-card--mount {
+  border-color: rgba(150, 235, 165, 0.30);
+  border-left-color: rgba(150, 235, 165, 0.95);
+  background: linear-gradient(
+    90deg,
+    rgba(150, 235, 165, 0.12) 0%,
+    rgba(255, 255, 255, 0.035) 18%
+  );
+  box-shadow: inset 0 0 0 1px rgba(150, 235, 165, 0.06);
+}
+
+.swse-sheet.swse-relationship-roster-card--mount:hover,
+.swse-sheet.swse-relationship-roster-card--mount:focus {
+  border-color: rgba(150, 235, 165, 0.45);
+  box-shadow: 0 0 0 1px rgba(150, 235, 165, 0.12);
+}
+
+/* Droids — Silver / Circuitry */
+.swse-sheet.swse-relationship-roster-card--droid {
+  border-color: rgba(205, 210, 220, 0.32);
+  border-left-color: rgba(215, 220, 230, 0.96);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(205, 210, 220, 0.12) 0%,
+      rgba(255, 255, 255, 0.035) 18%
+    ),
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.018) 0px,
+      rgba(255, 255, 255, 0.018) 6px,
+      rgba(0, 0, 0, 0.00) 6px,
+      rgba(0, 0, 0, 0.00) 12px
+    );
+  box-shadow: inset 0 0 0 1px rgba(205, 210, 220, 0.07);
+}
+
+.swse-sheet.swse-relationship-roster-card--droid:hover,
+.swse-sheet.swse-relationship-roster-card--droid:focus {
+  border-color: rgba(215, 220, 230, 0.48);
+  box-shadow: 0 0 0 1px rgba(205, 210, 220, 0.13);
+}
+
+/* Beasts — Purple */
+.swse-sheet.swse-relationship-roster-card--beast {
+  border-color: rgba(185, 130, 255, 0.30);
+  border-left-color: rgba(185, 130, 255, 0.95);
+  background: linear-gradient(
+    90deg,
+    rgba(185, 130, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.035) 18%
+  );
+  box-shadow: inset 0 0 0 1px rgba(185, 130, 255, 0.06);
+}
+
+.swse-sheet.swse-relationship-roster-card--beast:hover,
+.swse-sheet.swse-relationship-roster-card--beast:focus {
+  border-color: rgba(185, 130, 255, 0.45);
+  box-shadow: 0 0 0 1px rgba(185, 130, 255, 0.12);
+}
+
+/* Vehicles — Red */
+.swse-sheet.swse-relationship-roster-card--vehicle {
+  border-color: rgba(255, 115, 115, 0.30);
+  border-left-color: rgba(255, 115, 115, 0.95);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 115, 115, 0.12) 0%,
+    rgba(255, 255, 255, 0.035) 18%
+  );
+  box-shadow: inset 0 0 0 1px rgba(255, 115, 115, 0.06);
+}
+
+.swse-sheet.swse-relationship-roster-card--vehicle:hover,
+.swse-sheet.swse-relationship-roster-card--vehicle:focus {
+  border-color: rgba(255, 115, 115, 0.45);
+  box-shadow: 0 0 0 1px rgba(255, 115, 115, 0.12);
+}
+
+/* Roster card content */
+.swse-sheet.swse-relationship-roster-card__media {
+  width: 52px;
+  height: 52px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.swse-sheet.swse-relationship-roster-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.swse-sheet.swse-relationship-roster-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.swse-sheet.swse-relationship-roster-card__name {
   font-weight: 700;
   font-size: 0.95rem;
   opacity: 0.95;
@@ -2286,18 +2387,18 @@ select option:checked {
   text-overflow: ellipsis;
 }
 
-.swse-sheet.relationship-type {
+.swse-sheet.swse-relationship-roster-card__type {
   font-size: 0.8rem;
   opacity: 0.7;
   text-transform: capitalize;
 }
 
-.swse-sheet.relationship-notes {
+.swse-sheet.swse-relationship-roster-card__notes {
   font-size: 0.85rem;
   opacity: 0.85;
   line-height: 1.4;
   padding-top: 6px;
-  border-top: 1px solid rgba(0, 255, 136, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-style: italic;
 }
 
@@ -2323,7 +2424,7 @@ select option:checked {
   gap: 6px;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(0, 255, 136, 0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* ------------------------------------------------------------------ */

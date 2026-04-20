@@ -17,19 +17,17 @@
     {{#if (gt relationshipsPanel.relationships.length 0)}}
       <div class="relationships-list">
       {{#each relationshipsPanel.relationships}}
-        <div class="relationship-entry" data-uuid="{{this.uuid}}">
-          <div class="relationship-header">
-            <div class="relationship-name-block">
-              <img class="relationship-portrait" src="{{this.img}}" alt="{{this.name}}" title="Click to open {{this.name}}" />
-              <div class="relationship-info">
-                <div class="relationship-name">{{this.name}}</div>
-                <div class="relationship-type">{{this.type}}</div>
-              </div>
-            </div>
+        <div class="swse-relationship-roster-card swse-relationship-roster-card--{{this.type}}" data-uuid="{{this.uuid}}" role="button" tabindex="0">
+          <div class="swse-relationship-roster-card__media">
+            <img class="swse-relationship-roster-card__img" src="{{this.img}}" alt="{{this.name}}" title="Click to open {{this.name}}" />
           </div>
-          {{#if this.notes}}
-            <div class="relationship-notes">{{this.notes}}</div>
-          {{/if}}
+          <div class="swse-relationship-roster-card__content">
+            <div class="swse-relationship-roster-card__name">{{this.name}}</div>
+            <div class="swse-relationship-roster-card__type">{{this.type}}</div>
+            {{#if this.notes}}
+              <div class="swse-relationship-roster-card__notes">{{this.notes}}</div>
+            {{/if}}
+          </div>
         </div>
       {{/each}}
     </div>
