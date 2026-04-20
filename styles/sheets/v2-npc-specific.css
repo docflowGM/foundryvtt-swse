@@ -722,6 +722,28 @@
   min-width: 0;
 }
 
+/* =========================================
+   Phase 3: Follower / Minion Support
+   ========================================= */
+
+.swse-npc-summary-grid--follower {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.swse-npc-follower-card {
+  min-width: 0;
+}
+
+.swse-npc-callout--follower {
+  background: rgba(120, 190, 255, 0.10);
+  border-color: rgba(120, 190, 255, 0.24);
+}
+
+.swse-npc-callout--follower-secondary {
+  background: rgba(180, 160, 255, 0.10);
+  border-color: rgba(180, 160, 255, 0.22);
+}
+
 @media (max-width: 980px) {
   .swse-npc-overview-layout {
     grid-template-columns: minmax(0, 1fr);
@@ -736,6 +758,10 @@
   }
 
   .swse-npc-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .swse-npc-summary-grid--follower {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -774,6 +800,10 @@
   }
 
   .swse-npc-summary-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .swse-npc-summary-grid--follower {
     grid-template-columns: minmax(0, 1fr);
   }
 }

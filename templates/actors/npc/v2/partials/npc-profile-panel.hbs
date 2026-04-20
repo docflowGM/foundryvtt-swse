@@ -1,6 +1,9 @@
 <section class="swse-npc-card swse-npc-profile-card">
   <header class="swse-npc-card__header">
-    <h3 class="swse-section-title">NPC Profile</h3>
+    <div class="swse-npc-card__header-main">
+      <h3 class="swse-section-title">NPC Profile</h3>
+    </div>
+
     <div class="swse-npc-badges">
       <span class="swse-npc-badge swse-npc-badge--kind">{{npcKind}}</span>
       {{#if isFollowerNpc}}
@@ -38,14 +41,20 @@
 
       <div class="swse-npc-meta-list__row">
         <dt>Relationships</dt>
-        <dd>
-          {{#if showRelationshipsTab}}
-            Active
-          {{else}}
-            None
-          {{/if}}
-        </dd>
+        <dd>{{#if showRelationshipsTab}}Active{{else}}None{{/if}}</dd>
       </div>
+
+      {{#if isFollowerNpc}}
+        <div class="swse-npc-meta-list__row">
+          <dt>Owner Resolved</dt>
+          <dd>{{#if followerSummary.isOwnerResolved}}Yes{{else}}No{{/if}}</dd>
+        </div>
+
+        <div class="swse-npc-meta-list__row">
+          <dt>Template Resolved</dt>
+          <dd>{{#if followerSummary.isTemplateResolved}}Yes{{else}}No{{/if}}</dd>
+        </div>
+      {{/if}}
     </dl>
   </div>
 </section>

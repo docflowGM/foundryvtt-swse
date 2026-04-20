@@ -38,6 +38,10 @@ export class NpcProfileBuilder {
     // Resolve mount summary (Phase 4)
     const mountSummary = this._getMountSummary(actor);
 
+    // Resolve follower summary (Phase 3)
+    const followerSummary = this._getFollowerSummary(actor);
+    const hasFollowerSummary = !!followerSummary;
+
     // Resolve progression summary
     const progressionSummary = this._getProgressionSummary(actor);
 
@@ -51,6 +55,23 @@ export class NpcProfileBuilder {
     // Generate descriptions
     const profileDescription = this._getProfileDescription(npcKind, npcMode);
     const authorityDescription = this._getAuthorityDescription(npcMode, npcKind);
+
+    // Phase 3: Follower-specific descriptions
+    let followerAuthorityDescription = null;
+    let followerScalingDescription = null;
+    if (npcKind === 'follower' && hasFollowerSummary) {
+      if (npcMode === 'statblock') {
+        followerAuthorityDescription = 'This follower uses published statblock values as the primary authority for abilities.';
+      } else if (npcMode === 'progression') {
+        followerAuthorityDescription = 'This follower uses progression-driven calculations, typically scaled to the owner\'s heroic level.';
+      }
+
+      if (followerSummary.scalingMode === 'Progression-scaled') {
+        followerScalingDescription = `Scales from owner's heroic level (currently ${followerSummary.ownerHeroicLevel || '—'}).`;
+      } else if (followerSummary.scalingMode === 'Statblock-fixed') {
+        followerScalingDescription = 'Uses fixed statblock values; not scaled to owner level.';
+      }
+    }
 
     // Phase 5: Top-level helper fields (mirrored from progressionSummary for convenience)
     const hasMixedProgressionTracks = progressionSummary?.hasMixedTracks ?? false;
@@ -98,6 +119,12 @@ export class NpcProfileBuilder {
 
       // Mount metadata (Phase 4 expanded)
       mountSummary,
+
+      // Follower metadata (Phase 3)
+      hasFollowerSummary,
+      followerSummary,
+      followerAuthorityDescription,
+      followerScalingDescription,
 
       // Progression summary (Phase 5 expanded)
       progressionSummary,
@@ -263,6 +290,95 @@ export class NpcProfileBuilder {
   }
 
   /**
+   * Get follower summary for display (Phase 3).
+   * Supports both new npcProfile contract and legacy follower flags.
+   * @private
+   */
+  static _getFollowerSummary(actor) {
+    if (!actor || actor.system?.npcProfile?.kind !== 'follower') {
+      return null;
+    }
+
+    let ownerName = null;
+    let ownerActorId = null;
+    let grantingTalentName = null;
+    let templateName = null;
+    let provenance = null;
+    let ownerHeroicLevel = null;
+    let isOwnerResolved = false;
+    let isTemplateResolved = false;
+
+    // Try new npcProfile contract first
+    const ownerRef = actor.system?.npcProfile?.owner;
+    if (ownerRef?.actorId) {
+      ownerActorId = ownerRef.actorId;
+      const owner = game.actors?.get(ownerActorId);
+      if (owner) {
+        ownerName = owner.name || 'Unknown Owner';
+        isOwnerResolved = true;
+        // Resolve owner's heroic level if available
+        const { getHeroicLevel } = await import("/systems/foundryvtt-swse/scripts/actors/derived/level-split.js");
+        ownerHeroicLevel = getHeroicLevel(owner) || null;
+      }
+      if (ownerRef.talent?.name) {
+        grantingTalentName = ownerRef.talent.name;
+      }
+      provenance = 'NPC profile contract';
+    } else {
+      // Fall back to legacy follower flags
+      const legacyOwnerId = actor?.flags?.swse?.follower?.ownerId;
+      if (legacyOwnerId) {
+        ownerActorId = legacyOwnerId;
+        const owner = game.actors?.get(legacyOwnerId);
+        if (owner) {
+          ownerName = owner.name || 'Unknown Owner';
+          isOwnerResolved = true;
+          // Resolve owner's heroic level if available
+          const { getHeroicLevel } = await import("/systems/foundryvtt-swse/scripts/actors/derived/level-split.js");
+          ownerHeroicLevel = getHeroicLevel(owner) || null;
+        }
+        if (actor?.flags?.swse?.follower?.grantingTalent) {
+          grantingTalentName = actor.flags.swse.follower.grantingTalent;
+        }
+        provenance = 'Legacy follower flag';
+      }
+    }
+
+    // Resolve template
+    templateName = actor.system?.npcProfile?.template || actor.system?.followerType || null;
+    isTemplateResolved = !!templateName;
+
+    // Determine scaling mode
+    const npcMode = actor.system?.npcProfile?.mode || 'statblock';
+    let scalingMode = null;
+    if (npcMode === 'progression') {
+      scalingMode = 'Progression-scaled';
+    } else if (npcMode === 'statblock') {
+      scalingMode = 'Statblock-fixed';
+    }
+
+    // Current follower level (derived from classes if progression mode)
+    let currentFollowerLevel = actor.system?.level || null;
+
+    // Notes field
+    const notes = actor.system?.npcProfile?.notes || null;
+
+    return {
+      ownerName,
+      ownerActorId,
+      grantingTalentName,
+      templateName,
+      provenance,
+      scalingMode,
+      ownerHeroicLevel,
+      currentFollowerLevel,
+      isOwnerResolved,
+      isTemplateResolved,
+      notes
+    };
+  }
+
+  /**
    * Get progression summary for display (Phase 5 expanded).
    * @private
    */
@@ -397,6 +513,10 @@ export class NpcProfileBuilder {
       beastKind: null,
       beastSummary: null,
       mountSummary: null,
+      hasFollowerSummary: false,
+      followerSummary: null,
+      followerAuthorityDescription: null,
+      followerScalingDescription: null,
       progressionSummary: null,
       hasMixedProgressionTracks: false,
       canLaunchNpcLevelUp: false,
