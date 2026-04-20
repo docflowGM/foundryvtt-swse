@@ -1,0 +1,42 @@
+<section class="swse-npc-card swse-npc-owner-card">
+  <header class="swse-npc-card__header">
+    <h3 class="swse-section-title">Owner / Minion Link</h3>
+    <span class="swse-npc-badge swse-npc-badge--subtype">Follower</span>
+  </header>
+
+  <div class="swse-npc-card__body">
+    {{#if hasOwner}}
+      <dl class="swse-npc-meta-list">
+        <div class="swse-npc-meta-list__row">
+          <dt>Owner</dt>
+          <dd>{{ownerSummary.name}}</dd>
+        </div>
+
+        {{#if ownerSummary.talent}}
+          <div class="swse-npc-meta-list__row">
+            <dt>Granting Talent</dt>
+            <dd>{{ownerSummary.talent}}</dd>
+          </div>
+        {{/if}}
+
+        {{#if ownerSummary.template}}
+          <div class="swse-npc-meta-list__row">
+            <dt>Template</dt>
+            <dd>{{ownerSummary.template}}</dd>
+          </div>
+        {{/if}}
+
+        {{#if ownerSummary.provenance}}
+          <div class="swse-npc-meta-list__row">
+            <dt>Source</dt>
+            <dd>{{ownerSummary.provenance}}</dd>
+          </div>
+        {{/if}}
+      </dl>
+    {{else}}
+      <p class="swse-npc-empty-state">
+        This follower has no resolved owner summary available yet.
+      </p>
+    {{/if}}
+  </div>
+</section>

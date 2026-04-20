@@ -309,3 +309,257 @@
   opacity: 0.75;
   text-align: right;
 }
+
+/* ========================================= */
+/* NPC V2 — Phase 2 Overview / Relationships */
+/* ========================================= */
+
+.swse-npc-overview-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.swse-npc-overview-main,
+.swse-npc-overview-side,
+.swse-npc-relationships-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.swse-npc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--color-border-light-primary, rgba(255, 255, 255, 0.12));
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  min-width: 0;
+}
+
+.swse-npc-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 8px;
+}
+
+.swse-npc-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.swse-npc-card__lead {
+  margin: 0;
+  line-height: 1.45;
+  opacity: 0.95;
+}
+
+.swse-npc-card__footnote {
+  margin: 0;
+  font-size: 0.875rem;
+  opacity: 0.75;
+}
+
+.swse-npc-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.swse-npc-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.swse-npc-badge--mode {
+  background: rgba(80, 140, 255, 0.14);
+}
+
+.swse-npc-badge--kind {
+  background: rgba(255, 190, 80, 0.14);
+}
+
+.swse-npc-badge--subtype {
+  background: rgba(120, 210, 160, 0.14);
+}
+
+.swse-npc-badge--muted {
+  opacity: 0.7;
+}
+
+.swse-npc-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.swse-npc-mode-grid__item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.swse-npc-mode-grid__item.is-active {
+  border-color: rgba(120, 190, 255, 0.35);
+  background: rgba(80, 140, 255, 0.10);
+}
+
+.swse-npc-mode-grid__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.swse-npc-mode-grid__value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.swse-npc-mode-grid__text {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  opacity: 0.9;
+}
+
+.swse-npc-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+}
+
+.swse-npc-meta-list__row {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.swse-npc-meta-list__row dt {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.swse-npc-meta-list__row dd {
+  margin: 0;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.swse-npc-callout {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  line-height: 1.4;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.swse-npc-callout--statblock {
+  background: rgba(255, 190, 80, 0.10);
+  border-color: rgba(255, 190, 80, 0.22);
+}
+
+.swse-npc-callout--progression {
+  background: rgba(80, 140, 255, 0.10);
+  border-color: rgba(80, 140, 255, 0.24);
+}
+
+.swse-npc-callout--mount {
+  background: rgba(120, 210, 160, 0.10);
+  border-color: rgba(120, 210, 160, 0.24);
+}
+
+.swse-npc-summary-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.swse-npc-empty-state {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  opacity: 0.82;
+}
+
+.swse-npc-authority-card.is-statblock {
+  border-color: rgba(255, 190, 80, 0.22);
+}
+
+.swse-npc-authority-card.is-progression {
+  border-color: rgba(80, 140, 255, 0.24);
+}
+
+.swse-npc-relationships-tab .swse-npc-card,
+.swse-npc-owner-card,
+.swse-npc-mount-card,
+.swse-npc-beast-card,
+.swse-npc-progression-card,
+.swse-npc-profile-card,
+.swse-npc-mode-card {
+  min-width: 0;
+}
+
+@media (max-width: 980px) {
+  .swse-npc-overview-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .swse-npc-mode-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .swse-npc-card {
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .swse-npc-card__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .swse-npc-badges {
+    justify-content: flex-start;
+  }
+
+  .swse-npc-meta-list__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}

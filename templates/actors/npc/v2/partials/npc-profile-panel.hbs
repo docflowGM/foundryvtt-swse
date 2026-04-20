@@ -1,0 +1,51 @@
+<section class="swse-npc-card swse-npc-profile-card">
+  <header class="swse-npc-card__header">
+    <h3 class="swse-section-title">NPC Profile</h3>
+    <div class="swse-npc-badges">
+      <span class="swse-npc-badge swse-npc-badge--kind">{{npcKind}}</span>
+      {{#if isFollowerNpc}}
+        <span class="swse-npc-badge swse-npc-badge--subtype">Minion</span>
+      {{/if}}
+      {{#if isBeastNpc}}
+        <span class="swse-npc-badge swse-npc-badge--subtype">Creature</span>
+      {{/if}}
+      {{#if isMountNpc}}
+        <span class="swse-npc-badge swse-npc-badge--subtype">Mounted</span>
+      {{/if}}
+    </div>
+  </header>
+
+  <div class="swse-npc-card__body">
+    <p class="swse-npc-card__lead">
+      {{profileDescription}}
+    </p>
+
+    <dl class="swse-npc-meta-list">
+      <div class="swse-npc-meta-list__row">
+        <dt>Profile</dt>
+        <dd>{{npcKind}}</dd>
+      </div>
+
+      <div class="swse-npc-meta-list__row">
+        <dt>Mode</dt>
+        <dd>{{npcMode}}</dd>
+      </div>
+
+      <div class="swse-npc-meta-list__row">
+        <dt>Attack Authority</dt>
+        <dd>{{#if usesFlatStatblockAttacks}}Flat Statblock{{else}}Derived / Progression{{/if}}</dd>
+      </div>
+
+      <div class="swse-npc-meta-list__row">
+        <dt>Relationships</dt>
+        <dd>
+          {{#if showRelationshipsTab}}
+            Active
+          {{else}}
+            None
+          {{/if}}
+        </dd>
+      </div>
+    </dl>
+  </div>
+</section>

@@ -1,0 +1,33 @@
+<section class="swse-npc-card swse-npc-mount-card">
+  <header class="swse-npc-card__header">
+    <h3 class="swse-section-title">Mount Operations</h3>
+    <span class="swse-npc-badge swse-npc-badge--subtype">Mount</span>
+  </header>
+
+  <div class="swse-npc-card__body">
+    {{#if hasRider}}
+      <dl class="swse-npc-meta-list">
+        <div class="swse-npc-meta-list__row">
+          <dt>Assigned Rider</dt>
+          <dd>{{riderSummary.name}}</dd>
+        </div>
+
+        {{#if riderSummary.notes}}
+          <div class="swse-npc-meta-list__row">
+            <dt>Rider Notes</dt>
+            <dd>{{riderSummary.notes}}</dd>
+          </div>
+        {{/if}}
+      </dl>
+    {{else}}
+      <p class="swse-npc-empty-state">
+        No rider is currently assigned.
+      </p>
+    {{/if}}
+
+    <div class="swse-npc-callout swse-npc-callout--mount">
+      <strong>Phase 2 scaffold:</strong>
+      This panel is reserved for rider, battle-trained, carrying capacity, and mounted movement integration.
+    </div>
+  </div>
+</section>

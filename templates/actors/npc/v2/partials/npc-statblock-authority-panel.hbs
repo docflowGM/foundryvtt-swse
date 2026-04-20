@@ -1,0 +1,25 @@
+<section class="swse-npc-card swse-npc-authority-card {{#if isStatblockMode}}is-statblock{{else}}is-progression{{/if}}">
+  <header class="swse-npc-card__header">
+    <h3 class="swse-section-title">Authority</h3>
+  </header>
+
+  <div class="swse-npc-card__body">
+    <p class="swse-npc-card__lead">
+      {{authorityDescription}}
+    </p>
+
+    {{#if isStatblockMode}}
+      <div class="swse-npc-callout swse-npc-callout--statblock">
+        <strong>Statblock authority:</strong>
+        Published values are treated as the primary source for this NPC.
+      </div>
+    {{/if}}
+
+    {{#if isProgressionMode}}
+      <div class="swse-npc-callout swse-npc-callout--progression">
+        <strong>Progression authority:</strong>
+        This NPC is expected to follow advancement-driven calculations and level tracking.
+      </div>
+    {{/if}}
+  </div>
+</section>

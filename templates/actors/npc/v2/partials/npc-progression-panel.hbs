@@ -1,0 +1,45 @@
+<section class="swse-npc-card swse-npc-progression-card">
+  <header class="swse-npc-card__header">
+    <h3 class="swse-section-title">Progression</h3>
+    {{#if isProgressionMode}}
+      <span class="swse-npc-badge swse-npc-badge--mode">Active</span>
+    {{else}}
+      <span class="swse-npc-badge swse-npc-badge--muted">Inactive</span>
+    {{/if}}
+  </header>
+
+  <div class="swse-npc-card__body">
+    {{#if progressionSummary}}
+      <dl class="swse-npc-meta-list">
+        {{#if progressionSummary.heroicLevels}}
+          <div class="swse-npc-meta-list__row">
+            <dt>Heroic Levels</dt>
+            <dd>{{progressionSummary.heroicLevels}}</dd>
+          </div>
+        {{/if}}
+
+        {{#if progressionSummary.nonheroicLevels}}
+          <div class="swse-npc-meta-list__row">
+            <dt>Nonheroic Levels</dt>
+            <dd>{{progressionSummary.nonheroicLevels}}</dd>
+          </div>
+        {{/if}}
+
+        {{#if progressionSummary.totalLevels}}
+          <div class="swse-npc-meta-list__row">
+            <dt>Total Levels</dt>
+            <dd>{{progressionSummary.totalLevels}}</dd>
+          </div>
+        {{/if}}
+      </dl>
+    {{else}}
+      <p class="swse-npc-empty-state">
+        No progression summary is currently available for this NPC.
+      </p>
+    {{/if}}
+
+    <p class="swse-npc-card__footnote">
+      This panel is a shell for deeper heroic/nonheroic level-up integration in later phases.
+    </p>
+  </div>
+</section>
