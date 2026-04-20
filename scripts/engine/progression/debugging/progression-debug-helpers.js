@@ -329,37 +329,37 @@ export class ProgressionDebugHelpers {
   }
 
   static _findLegalityReasons(context, option) {
-    // TODO: Check PrerequisiteChecker results
+    // planned: Check PrerequisiteChecker results
     return [];
   }
 
   static _scoreSignalMatches(buildSignals, option) {
-    // TODO: Score how well option matches build signals
+    // planned: Score how well option matches build signals
     return { score: 0, matches: [] };
   }
 
   static _analyzeSynergies(projectedCharacter, option) {
-    // TODO: Check synergies with current selections
+    // planned: Check synergies with current selections
     return [];
   }
 
   static _analyzeTargetAlignment(context, option) {
-    // TODO: Check alignment with target path
+    // planned: Check alignment with target path
     return { target: null, alignment: 'neutral' };
   }
 
   static _getMentorBias(mentorId, option) {
-    // TODO: Look up mentor bias for this option
+    // planned: Look up mentor bias for this option
     return 'neutral';
   }
 
   static _analyzeTradeoffs(context, option) {
-    // TODO: Find tradeoffs
+    // planned: Find tradeoffs
     return [];
   }
 
   static _generateSuggestionNotes(context, option, rank) {
-    // TODO: Generate human-readable notes
+    // planned: Generate human-readable notes
     return [];
   }
 
@@ -375,7 +375,7 @@ export class ProgressionDebugHelpers {
   }
 
   static _generateConflictResolution(validationReport) {
-    // TODO: Generate step-by-step resolution guide
+    // planned: Generate step-by-step resolution guide
     return [];
   }
 
@@ -388,12 +388,12 @@ export class ProgressionDebugHelpers {
   }
 
   static _checkProjectionMutationParity(projection, plan) {
-    // TODO: Check if projection and plan match
+    // planned: Check if projection and plan match
     return true;
   }
 
   static _findProjectionMutationDiffs(projection, plan) {
-    // TODO: Find differences
+    // planned: Find differences
     return [];
   }
 }

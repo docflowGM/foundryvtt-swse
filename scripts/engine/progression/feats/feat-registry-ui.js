@@ -1,98 +1,57 @@
 /**
- * Feat Registry - UI version
- * Loads and indexes feats with prerequisite validation
+ * Feat Registry - UI facade over canonical FeatRegistry.
  */
-
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import BaseFeatRegistry from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry.js";
 
 export const FeatRegistry = {
-  _feats: [],
-
-  /**
-   * Build the registry from compendium
-   */
   async build() {
-    try {
-      const pack = game.packs.get('foundryvtt-swse.feats');
-      if (!pack) {
-        SWSELogger.warn("Feats compendium 'foundryvtt-swse.feats' not found");
-        this._feats = [];
-        return;
-      }
-
-      this._feats = await pack.getDocuments();
-      SWSELogger.log(`FeatRegistry built: ${this._feats.length} feats loaded`);
-    } catch (err) {
-      SWSELogger.error('Failed to build FeatRegistry:', err);
-      this._feats = [];
-    }
+    return BaseFeatRegistry.build?.();
   },
 
-  /**
-   * Get all feats available for an actor
-   */
   async listAvailable(actor, pending = {}) {
-    return this._feats.map(f => {
+    return (BaseFeatRegistry.list?.() || []).map((feat) => {
       let valid = true;
       try {
-        const assessment = AbilityEngine.evaluateAcquisition(actor, f, pending);
+        const assessment = AbilityEngine.evaluateAcquisition(actor, feat, pending);
         valid = assessment.legal;
       } catch (err) {
-        SWSELogger.warn(`Prerequisite check failed for ${f.name}:`, err);
+        SWSELogger.warn(`Prerequisite check failed for ${feat.name}:`, err);
         valid = false;
       }
 
       return {
-        name: f.name,
-        id: f.id,
+        name: feat.name,
+        id: feat.id,
         isQualified: valid,
-        data: f
+        data: feat,
       };
     });
   },
 
-  /**
-   * Get a specific feat by name
-   */
   get(name) {
-    const lower = name.toLowerCase();
-    return this._feats.find(f => f.name.toLowerCase() === lower);
+    return BaseFeatRegistry.get?.(name) || null;
   },
 
-  /**
-   * Get all feats
-   */
   list() {
-    return this._feats;
+    return BaseFeatRegistry.list?.() || [];
   },
 
-  /**
-   * Get only bonus-feat-eligible feats
-   */
   getBonusFeats() {
-    return this._feats.filter(f => {
-      const type = f.system.type || '';
-      return type.includes('bonus') || type === 'feat';
-    });
+    return BaseFeatRegistry.getBonusFeats?.() || [];
   },
 
-  /**
-   * Check if a feat can be taken as a bonus feat for a class
-   */
   canBeBonusFeatFor(featName, className) {
-    const feat = this.get(featName);
-    if (!feat) {return false;}
-    // Most feats can be taken as bonus feats, so default to true
-    return true;
+    const feat = typeof featName === 'string' ? this.get(featName) : featName;
+    return BaseFeatRegistry.canBeBonusFeatFor?.(feat, className) ?? false;
   },
 
-  /**
-   * Clear the registry
-   */
   clear() {
-    this._feats = [];
+    BaseFeatRegistry.feats?.clear?.();
+    BaseFeatRegistry._byKey?.clear?.();
+    BaseFeatRegistry.isBuilt = false;
   }
 };
 
-SWSELogger.log('FeatRegistry (UI) module loaded');
+SWSELogger.log('FeatRegistry (UI facade) module loaded');

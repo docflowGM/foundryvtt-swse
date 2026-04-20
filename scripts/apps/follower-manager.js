@@ -1,5 +1,6 @@
 import { FollowerCreator } from "/systems/foundryvtt-swse/scripts/apps/follower-creator.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 
 /**
  * Follower Manager - Handles follower enhancements and bonuses
@@ -115,16 +116,12 @@ export class FollowerManager {
      * @private
      */
     static async addFeatToAllFollowers(followers, featName) {
-        const featsPack = game.packs.get('foundryvtt-swse.feats');
-        const featIndex = await featsPack.getIndex({ fields: ['name'] });
-        const featEntry = featIndex.find(f => f.name === featName);
-
-        if (!featEntry) {
+        const featDoc = await FeatRegistry.getDocumentByName?.(featName);
+        if (!featDoc) {
             swseLogger.warn(`Feat not found: ${featName}`);
             return;
         }
 
-        const featDoc = await featsPack.getDocument(featEntry._id);
         const featData = featDoc.toObject();
 
         for (const follower of followers) {

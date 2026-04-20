@@ -5,6 +5,7 @@
  */
 
 import { SWSELogger, swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 export class DevModeValidator {
   constructor() {
@@ -16,7 +17,7 @@ export class DevModeValidator {
    * Initialize validator
    */
   initialize() {
-    this._devMode = game.settings?.get('foundryvtt-swse', 'devMode') ?? false;
+    this._devMode = SettingsHelper.getBoolean('devMode', false);
     if (this._devMode) {
       SWSELogger.log('SWSE | Dev Mode Validator initialized');
     }
@@ -42,7 +43,7 @@ export class DevModeValidator {
 
     for (const rule of criticalRules) {
       try {
-        const value = game.settings.get(namespace, rule);
+        const value = SettingsHelper.getSafe(rule, null);
         // Setting exists and is readable
       } catch (e) {
         issues.push({

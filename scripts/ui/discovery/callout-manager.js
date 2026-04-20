@@ -6,6 +6,7 @@
  */
 
 import { DiscoveryUserState } from "/systems/foundryvtt-swse/scripts/ui/discovery/user-state.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 const CALLOUT_CLASS = 'swse-discovery-callout';
 const SYSTEM_ID = 'foundryvtt-swse';
@@ -124,7 +125,7 @@ export const CalloutManager = {
 
     // Check setting
     try {
-      if (game.settings.get(SYSTEM_ID, 'disableCallouts')) {return;}
+      if (SettingsHelper.getBoolean('disableCallouts', false)) {return;}
     } catch { /* setting not registered yet, continue */ }
 
     for (const def of CALLOUT_DEFS) {
@@ -146,7 +147,7 @@ export const CalloutManager = {
    */
   trigger(calloutId) {
     try {
-      if (game.settings.get(SYSTEM_ID, 'disableCallouts')) {return;}
+      if (SettingsHelper.getBoolean('disableCallouts', false)) {return;}
     } catch { /* continue */ }
 
     if (DiscoveryUserState.isCalloutDismissed(calloutId)) {return;}

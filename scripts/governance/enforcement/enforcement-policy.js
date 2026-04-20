@@ -25,6 +25,7 @@
  */
 
 import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export class EnforcementPolicy {
   // Decision outcomes
@@ -124,7 +125,7 @@ export class EnforcementPolicy {
 
     return {
       mode: actor.system.governance.enforcementMode ?? GovernanceSystem.ENFORCEMENT_MODES.NORMAL,
-      strictEnforcement: options.strictEnforcement ?? game.settings.get('foundryvtt-swse', 'strictEnforcementEnabled')
+      strictEnforcement: options.strictEnforcement ?? HouseRuleService.isEnabled('strictEnforcementEnabled')
     };
   }
 

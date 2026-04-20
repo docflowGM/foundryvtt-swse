@@ -5,6 +5,7 @@
 
 import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 export class MentorTranslationSettings {
   /**
@@ -60,12 +61,12 @@ export class MentorTranslationSettings {
    */
   static loadSettings() {
     MentorTranslationIntegration.settings.enabled =
-      game.settings.get('foundryvtt-swse', 'mentorTranslationEnabled');
+      SettingsHelper.getBoolean('mentorTranslationEnabled', true);
 
     MentorTranslationIntegration.settings.skipOnClick =
-      game.settings.get('foundryvtt-swse', 'mentorTranslationSkipOnClick');
+      SettingsHelper.getBoolean('mentorTranslationSkipOnClick', true);
 
-    const speed = game.settings.get('foundryvtt-swse', 'mentorTranslationSpeed');
+    const speed = SettingsHelper.getNumber('mentorTranslationSpeed', 25);
     MentorTranslationIntegration.settings.speedMultiplier = speed / 25;
   }
 
@@ -90,9 +91,9 @@ export class MentorTranslationSettings {
    * Open settings dialog
    */
   static openSettingsDialog() {
-    const enabled = game.settings.get('foundryvtt-swse', 'mentorTranslationEnabled');
-    const skipOnClick = game.settings.get('foundryvtt-swse', 'mentorTranslationSkipOnClick');
-    const speed = game.settings.get('foundryvtt-swse', 'mentorTranslationSpeed');
+    const enabled = SettingsHelper.getBoolean('mentorTranslationEnabled', true);
+    const skipOnClick = SettingsHelper.getBoolean('mentorTranslationSkipOnClick', true);
+    const speed = SettingsHelper.getNumber('mentorTranslationSpeed', 25);
 
     const content = `
       <form class="mentor-translation-settings-form">
@@ -138,9 +139,9 @@ export class MentorTranslationSettings {
             const skipOnClick = html.querySelector('#skip-on-click')?.checked;
             const speed = parseInt(html.querySelector('#animation-speed')?.value);
 
-            game.settings.set('foundryvtt-swse', 'mentorTranslationEnabled', enabled);
-            game.settings.set('foundryvtt-swse', 'mentorTranslationSkipOnClick', skipOnClick);
-            game.settings.set('foundryvtt-swse', 'mentorTranslationSpeed', speed);
+            HouseRuleService.set('mentorTranslationEnabled', enabled);
+            HouseRuleService.set('mentorTranslationSkipOnClick', skipOnClick);
+            HouseRuleService.set('mentorTranslationSpeed', speed);
 
             MentorTranslationSettings.loadSettings();
           }

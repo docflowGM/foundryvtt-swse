@@ -84,19 +84,15 @@ export class LanguageEngine {
      * Apply languages from species
      */
     static async applySpeciesLanguages(actor, speciesName) {
-        const speciesPack = game.packs.get('foundryvtt-swse.species');
-        if (!speciesPack) {return [];}
-
-        const speciesIndex = speciesPack.index.find(s => s.name === speciesName);
-        if (!speciesIndex) {
+        const { SpeciesRegistry } = await import('/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js');
+        await SpeciesRegistry.initialize?.();
+        const species = SpeciesRegistry.getByName(speciesName) || SpeciesRegistry.getById(speciesName);
+        if (!species) {
             SWSELogger.warn(`Species not found: ${speciesName}`);
             return [];
         }
 
-        const speciesDoc = await speciesPack.getDocument(speciesIndex._id);
-        if (!speciesDoc) {return [];}
-
-        const languages = speciesDoc.system?.languages || [];
+        const languages = species.languages || [];
         const results = await this.grantLanguages(actor, languages);
 
         SWSELogger.log(`Applied ${languages.length} species languages for ${speciesName}`);
@@ -107,19 +103,13 @@ export class LanguageEngine {
      * Apply languages from background
      */
     static async applyBackgroundLanguages(actor, backgroundName) {
-        const bgPack = game.packs.get('foundryvtt-swse.backgrounds');
-        if (!bgPack) {return [];}
-
-        const bgIndex = bgPack.index.find(b => b.name === backgroundName);
-        if (!bgIndex) {
+        const background = await BackgroundRegistry.resolve?.(backgroundName) || await BackgroundRegistry.getByName?.(backgroundName);
+        if (!background) {
             SWSELogger.warn(`Background not found: ${backgroundName}`);
             return [];
         }
 
-        const bgDoc = await bgPack.getDocument(bgIndex._id);
-        if (!bgDoc) {return [];}
-
-        const languages = bgDoc.system?.languages || [];
+        const languages = background.languages || background.grants?.languages || [];
         const results = await this.grantLanguages(actor, languages);
 
         SWSELogger.log(`Applied ${languages.length} background languages for ${backgroundName}`);
@@ -170,7 +160,12 @@ export class LanguageEngine {
      */
     static calculateBonusLanguagesAvailable(actor) {
         const intMod = actor.system.attributes?.int?.mod || 0;
-        const linguistBonuses = this.applyLinguistLanguages(actor);
+        const linguistBonuses = (actor.items || []).filter(i =>
+            i.type === 'feat' && (
+                i.system?.slug === CAPABILITY_SLUGS.LINGUIST ||
+                i.name === 'Linguist'
+            )
+        ).length * 2;
 
         return Math.max(0, intMod) + linguistBonuses;
     }

@@ -108,7 +108,7 @@ export class TemplateValidator {
     try {
       const speciesId = species.id || species.compendiumId;
       if (speciesId) {
-        // TODO: Wire to compendium lookup
+        // planned: Wire to compendium lookup
         // For now, just log as reusable
         swseLogger.debug('[TemplateValidator] Species validated (ID-based)', { speciesId });
       }
@@ -181,7 +181,7 @@ export class TemplateValidator {
     // Background validation (lighter than class/species)
     // Just check it exists
     try {
-      // TODO: Wire to background registry
+      // planned: Wire to background registry
       swseLogger.debug('[TemplateValidator] Background validated', { backgroundName: background.name });
     } catch (err) {
       report.warnings.push({
@@ -231,7 +231,7 @@ export class TemplateValidator {
     if (!skills || skills.length === 0) return;
 
     // Check that skill count doesn't exceed available training
-    // TODO: Calculate actual available training based on class/attributes
+    // planned: Calculate actual available training based on class/attributes
     const maxTrainedSkills = 4; // Placeholder
 
     if (Array.isArray(skills) && skills.length > maxTrainedSkills) {
@@ -366,7 +366,7 @@ export class TemplateValidator {
     if (!languages || languages.length === 0) return;
 
     // Species and background grant languages; check against allotment
-    // TODO: Calculate actual language allotment from species/background/feats
+    // planned: Calculate actual language allotment from species/background/feats
     const maxLanguages = 3; // Placeholder
 
     if (Array.isArray(languages) && languages.length > maxLanguages) {

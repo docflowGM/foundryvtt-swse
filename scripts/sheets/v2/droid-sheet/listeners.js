@@ -21,6 +21,9 @@ import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { DropService } from "/systems/foundryvtt-swse/scripts/services/drop-service.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 
 /**
  * Wire every droid-sheet listener block. Order matches the original
@@ -127,14 +130,12 @@ function wireInitiativeControls(sheet, root, signal) {
 function wireProgressionFrameworkButtons(sheet, root, signal) {
   root.querySelector('[data-action="cmd-chargen"]')?.addEventListener("click", async (ev) => {
     ev.preventDefault();
-    const { launchProgression } = await import("/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/chargen-shell.js");
     await launchProgression(sheet.actor);
   }, { signal });
 
   root.querySelector('[data-action="cmd-store"]')?.addEventListener("click", async (ev) => {
     ev.preventDefault();
-    const { launchProgression } = await import("/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/chargen-shell.js");
-    await launchProgression(sheet.actor, "store");
+    new SWSEStore(sheet.actor).render(true);
   }, { signal });
 
   root.querySelector('[data-action="open-mentor"]')?.addEventListener("click", async (ev) => {
@@ -165,7 +166,7 @@ function wireEquipmentSellAndDelete(sheet, root, signal) {
 
       const price = item.system.price ?? 0;
       const currentCredits = sheet.document.system.credits ?? 0;
-      await sheet.document.update({ "system.credits": currentCredits + price });
+      await ActorEngine.updateActor(sheet.document, { "system.credits": currentCredits + price }, { source: 'droid-sheet-sell-item' });
 
       await ActorEngine.deleteEmbeddedDocuments(sheet.document, "Item", [itemId]);
       ui.notifications.info(`Sold ${item.name} for ${price} credits`);
@@ -219,7 +220,7 @@ function wireOwnedActorControls(sheet, root, signal) {
       const actorId = ev.currentTarget?.dataset?.actorId;
       if (!actorId) return;
       const owned = sheet.document.system.ownedActors?.filter((o) => o.id !== actorId) || [];
-      await sheet.document.update({ "system.ownedActors": owned });
+      await ActorEngine.updateActor(sheet.document, { "system.ownedActors": owned }, { source: 'droid-sheet-owned-actors' });
     }, { signal });
   }
 
@@ -300,7 +301,7 @@ function wireDroidSystemsEditor(sheet, root, signal) {
       await DroidBuilderApp.open(sheet.actor, {
         mode,
         sourceActor: hasConfig ? sheet.actor : null,
-        requireApproval: game.settings.get("foundryvtt-swse", "store.requireGMApproval") ?? false
+        requireApproval: HouseRuleService.isEnabled('store.requireGMApproval')
       });
     } catch (err) {
       console.error("Failed to open droid builder:", err);

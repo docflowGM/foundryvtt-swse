@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * Fix Migration TODOs
+ * Fix Migration planneds
  *
- * This script removes "TODO: manual migration required" comments from the codebase
+ * This script removes "planned: manual migration required" comments from the codebase
  * since ActorEngine has been updated to use atomic updates properly.
  */
 
@@ -14,7 +14,7 @@ const ROOT_DIR = path.join(__dirname, '..');
 
 // Patterns to match and remove
 const PATTERNS_TO_REMOVE = [
-  /^\/\/ TODO: manual migration required\. Original:.*\n/gm,
+  /^\/\/ planned: manual migration required\. Original:.*\n/gm,
   /^\/\/ AUTO-CONVERT actor\.update -> ProgressionEngine \(confidence=[\d.]+\)\n/gm,
   /^\/\*\s*ORIGINAL:.*\*\/\s*\n/gm,
 ];
@@ -24,7 +24,7 @@ function fixFile(filePath) {
   let modified = false;
   let originalContent = content;
 
-  // Remove TODO comments
+  // Remove planned comments
   for (const pattern of PATTERNS_TO_REMOVE) {
     const newContent = content.replace(pattern, '');
     if (newContent !== content) {
@@ -35,7 +35,7 @@ function fixFile(filePath) {
 
   // Fix the specific pattern where await is on a separate line
   content = content.replace(
-    /await \/\/ AUTO-CONVERT.*\n\/\/ TODO:.*\n(globalThis\.SWSE\.ActorEngine\.updateActor)/gm,
+    /await \/\/ AUTO-CONVERT.*\n\/\/ planned:.*\n(globalThis\.SWSE\.ActorEngine\.updateActor)/gm,
     'await $1'
   );
 
@@ -73,7 +73,7 @@ function main() {
   const jsFiles = findJSFiles(ROOT_DIR);
 
   console.log(`Found ${jsFiles.length} JavaScript files`);
-  console.log('Fixing migration TODOs...');
+  console.log('Fixing migration planneds...');
 
   let fixedCount = 0;
 

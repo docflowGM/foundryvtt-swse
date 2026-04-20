@@ -3,6 +3,7 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 /**
  * Force Points utility functions for rolling and spending Force Points
  */
@@ -87,7 +88,7 @@ export class ForcePointsUtil {
    */
   static canUseDarkSide(actor) {
     // Check if Dark Side Temptation is enabled
-    const darkSideTemptation = game.settings.get('foundryvtt-swse', 'darkSideTemptation');
+    const darkSideTemptation = HouseRuleService.getString('darkSideTemptation', 'strict');
     if (darkSideTemptation === 'narrative') {return false;}
 
     // Check if Dark Side Score <= half Wisdom

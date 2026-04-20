@@ -5,6 +5,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 /* -------------------------------------------------------------------------- */
 /*                               IMMUTABLE DATA                               */
@@ -242,7 +243,7 @@ export const HouserulesData = Object.freeze({
  */
 function getSafe(setting, fallback) {
   try {
-    const val = game.settings.get('foundryvtt-swse', setting);
+    const val = HouseRuleService.getSafe(setting, fallback);
     return val ?? fallback;
   } catch (err) {
     SWSELogger.warn(`HouserulesData: Failed to get setting "${setting}"`, err);

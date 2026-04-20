@@ -166,15 +166,15 @@ export class ProgressionEventProcessor {
         break;
 
       case "GRANT_XP":
-        // TODO: Phase 5 - Implement XP granting
+        // planned: Phase 5 - Implement XP granting
         break;
 
       case "GRANT_ITEM":
-        // TODO: Phase 5 - Implement item cloning and granting
+        // planned: Phase 5 - Implement item cloning and granting
         break;
 
       case "CUSTOM":
-        // TODO: Phase 5 - Custom effect handlers
+        // planned: Phase 5 - Custom effect handlers
         break;
 
       default:

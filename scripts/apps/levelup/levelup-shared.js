@@ -6,6 +6,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getClassProperty } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { HPGeneratorEngine } from "/systems/foundryvtt-swse/scripts/engine/HP/HPGeneratorEngine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * List of base classes in SWSE (legacy - should use isBaseClass with class docs instead)
@@ -190,13 +191,14 @@ export async function calculateDefenseBonuses(actor) {
       if (classItem.system.defenses === undefined ||
           (!classItem.system.defenses.fortitude && !classItem.system.defenses.reflex && !classItem.system.defenses.will)) {
         SWSELogger.log(`SWSE LevelUp | Updating ${className} with defense bonuses: Fort +${progression.fortitude}, Ref +${progression.reflex}, Will +${progression.will}`);
-        await classItem.update({
+        await ActorEngine.updateOwnedItems(actor, [{
+          _id: classItem.id,
           'system.defenses': {
             fortitude: progression.fortitude,
             reflex: progression.reflex,
             will: progression.will
           }
-        });
+        }], { source: 'levelup-shared.calculateDefenseBonuses' });
       }
     }
   }

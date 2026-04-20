@@ -423,6 +423,10 @@ export class SpeciesRegistry {
     return this._byName.get(String(name).toLowerCase()) || null;
   }
 
+  static getAll() {
+    return [...this._entries];
+  }
+
   /**
    * Get all species in a category
    * @param {string} category - Category (e.g., "humanoid", "droid")
@@ -505,8 +509,8 @@ export class SpeciesRegistry {
       return null;
     }
 
-    const entry = this._byId.get(id);
-    if (!entry) {
+    const entry = this.getById(id);
+    if (!entry?.id) {
       return null;
     }
 
@@ -519,11 +523,28 @@ export class SpeciesRegistry {
     }
 
     try {
-      return await pack.getDocument(id);
+      return await pack.getDocument(entry.id);
     } catch (err) {
-      SWSELogger.warn(`[SpeciesRegistry] Failed to fetch document ${id} from ${packKey}:`, err);
+      SWSELogger.warn(`[SpeciesRegistry] Failed to fetch document ${entry.id} from ${packKey}:`, err);
       return null;
     }
+  }
+
+  static async getDocumentById(id) {
+    return this._getDocument(id);
+  }
+
+  static async getDocumentByName(name) {
+    const entry = this.getByName(name);
+    return entry ? this._getDocument(entry.id) : null;
+  }
+
+  static async getDocumentByRef(ref) {
+    if (!ref) return null;
+    if (typeof ref === 'string') {
+      return (await this.getDocumentById(ref)) || (await this.getDocumentByName(ref));
+    }
+    return (await this.getDocumentById(ref.id || ref._id || ref.internalId)) || (await this.getDocumentByName(ref.name || ref.label));
   }
 }
 

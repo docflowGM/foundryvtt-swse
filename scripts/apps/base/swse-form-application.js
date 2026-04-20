@@ -1,3 +1,4 @@
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 /**
  * Base FormApplication class for SWSE system (AppV2)
  * Provides standardized defaults for all SWSE form-based windows
@@ -75,7 +76,7 @@ export default class SWSEFormApplication extends HandlebarsApplicationMixin(Form
      */
     _log(message, data = null) {
         try {
-            if (game.settings.get('foundryvtt-swse', 'debugMode')) {
+            if (SettingsHelper.getBoolean('debugMode', false)) {
                 const logger = globalThis.swseLogger ?? console;
                 logger.log(`[SWSE FormApplication: ${this.constructor.name}] ${message}`, data || '');
             }

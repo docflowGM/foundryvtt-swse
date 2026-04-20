@@ -1,4 +1,6 @@
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export class UIManager {
 
@@ -16,7 +18,7 @@ export class UIManager {
 
   static getTheme() {
     try {
-      return game.settings.get("foundryvtt-swse", "activeTheme") || "holo";
+      return SettingsHelper.getString('activeTheme', 'holo');
     } catch {
       return "holo";
     }
@@ -31,7 +33,7 @@ export class UIManager {
   }
 
   static async setTheme(theme) {
-    await game.settings.set("foundryvtt-swse", "activeTheme", theme);
+    await HouseRuleService.set("activeTheme", theme);
     this.applyTheme(theme);
   }
 
@@ -53,10 +55,10 @@ export class UIManager {
 
   static async _handleFirstRun() {
     try {
-      const shown = game.settings.get("foundryvtt-swse", "themePromptShown");
+      const shown = SettingsHelper.getBoolean('themePromptShown', false);
       if (!shown) {
         new ThemePickerDialog().render(true);
-        await game.settings.set("foundryvtt-swse", "themePromptShown", true);
+        await HouseRuleService.set("themePromptShown", true);
       }
     } catch {}
   }

@@ -7,6 +7,7 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
  */
 
 import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 const NAMESPACE = 'foundryvtt-swse';
 
@@ -16,7 +17,7 @@ const NAMESPACE = 'foundryvtt-swse';
 
 function safeGet(setting) {
   try {
-    return game.settings.get(NAMESPACE, setting);
+    return HouseRuleService.getSafe(setting, null);
   } catch (err) {
     console.error(`SWSE Houserules | Failed to read setting "${setting}"`, err);
     return null;
@@ -25,7 +26,7 @@ function safeGet(setting) {
 
 function safeSet(setting, value) {
   try {
-    return game.settings.set(NAMESPACE, setting, value);
+    return HouseRuleService.set(setting, value);
   } catch (err) {
     console.error(`SWSE Houserules | Failed to save setting "${setting}"`, err);
   }

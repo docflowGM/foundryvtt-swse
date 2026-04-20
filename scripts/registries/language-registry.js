@@ -106,6 +106,25 @@ export class LanguageRegistry {
     return this._byId.get(String(id || '').trim()) || null;
   }
 
+  
+
+  static async getBySlug(slug) {
+    await this.ensureLoaded();
+    const normalized = String(slug || '').trim().toLowerCase();
+    for (const record of this._byId.values()) {
+      if (String(record?.slug || '').trim().toLowerCase() === normalized) return record;
+    }
+    return null;
+  }
+
+  static async resolve(ref) {
+    if (!ref) return null;
+    if (typeof ref === 'string') {
+      return (await this.getById(ref)) || (await this.getByName(ref)) || (await this.getBySlug(ref));
+    }
+    return (await this.getById(ref._id || ref.internalId || ref.id)) || (await this.getByName(ref.name || ref.label)) || (await this.getBySlug(ref.slug || ref.id));
+  }
+
   static async all() {
     await this.ensureLoaded();
     return Array.from(this._byName.values());

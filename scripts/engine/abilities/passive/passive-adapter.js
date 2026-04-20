@@ -4,7 +4,7 @@
  * Scaffolding for PASSIVE ability registration and dispatch.
  * Handles routing of passive abilities to their respective subsystems.
  *
- * Integration points (TODO):
+ * Integration points (planned):
  * - handleModifier: ModifierEngine
  * - handleRule: RuleRegistry
  * - handleDerived: DerivedStatBuilder

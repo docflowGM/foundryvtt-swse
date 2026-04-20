@@ -7,6 +7,12 @@
  * This module performs read-only lookups.
  */
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
+import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
 
 function _norm(name) {
   return String(name ?? '')
@@ -61,13 +67,51 @@ export class CompendiumResolver {
 
   static async resolveByName({ domain, name, packName = null }) {
     if (!name) {return null;}
+
+    const normalized = _norm(name);
+    const registryEntry = (() => {
+      switch (domain) {
+        case 'feat':
+          return FeatRegistry.getByName?.(name);
+        case 'talent':
+          return TalentRegistry.getByName?.(name);
+        case 'forcepowers':
+          return ForceRegistry.getByName?.(name);
+        case 'class':
+          return ClassesRegistry.getByName?.(name);
+        case 'species':
+          return SpeciesRegistry.getByName?.(name);
+        default:
+          return null;
+      }
+    })();
+
+    if (registryEntry?.id || registryEntry?.sourceId) {
+      return {
+        pack: registryEntry.pack || packName || this._packMap?.[domain] || null,
+        id: registryEntry.id || registryEntry.sourceId,
+        name: registryEntry.name || name
+      };
+    }
+
+    if (domain === 'background') {
+      const bg = await BackgroundRegistry.getByName?.(name);
+      if (bg?._id || bg?.id) {
+        return {
+          pack: bg.pack || packName || this._packMap?.[domain] || null,
+          id: bg._id || bg.id,
+          name: bg.name || name
+        };
+      }
+    }
+
     const resolvedPack = packName || this._packMap?.[domain] || null;
     if (!resolvedPack) {return null;}
 
     const idx = await this._getNameIndex(resolvedPack);
     if (!idx) {return null;}
 
-    const hit = idx.get(_norm(name));
+    const hit = idx.get(normalized);
     if (!hit) {return null;}
 
     return {

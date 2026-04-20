@@ -15,6 +15,7 @@ import { getClassLevel, getCharacterClasses } from "/systems/foundryvtt-swse/scr
 import { getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { TalentCadenceEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-cadence-engine.js";
+import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
 
 /**
  * Calculate available talents at the current heroic level
@@ -93,20 +94,14 @@ export function getTalentProgressionInfo(selectedClass, actor) {
  */
 export async function getAvailableTalentTreesForHeroicTalent(actor) {
   const allTrees = new Set();
-  const characterClasses = getCharacterClasses(actor);
-  const classPack = game.packs.get('foundryvtt-swse.classes');
+  const classItems = actor.items.filter(item => item.type === 'class');
 
   // Collect all talent trees from all classes the character has levels in
-  for (const [className] of Object.entries(characterClasses)) {
-    const classIndex = classPack?.index.find(c => c.name === className);
-    if (classIndex) {
-      const classDoc = await classPack.getDocument(classIndex._id);
-      if (classDoc) {
-        const trees = getTalentTrees(classDoc);
-        if (trees && trees.length > 0) {
-          trees.forEach(tree => allTrees.add(tree));
-        }
-      }
+  for (const classItem of classItems) {
+    const classModel = resolveClassModel(classItem);
+    const trees = classModel?.talentTreeNames || [];
+    if (trees.length > 0) {
+      trees.forEach(tree => allTrees.add(tree));
     }
   }
 

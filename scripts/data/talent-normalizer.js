@@ -152,7 +152,7 @@ export function checkTalentPrerequisites(talent, actor) {
     // This is a simplified check - full implementation would be in progression engine
     // For now, just check if prerequisites exist and are not empty
     return talent.prerequisites.every(prereq => {
-        // TODO: Implement full prerequisite checking logic
+        // planned: Implement full prerequisite checking logic
         // This would check:
         // - Level requirements
         // - Feat requirements

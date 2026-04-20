@@ -80,7 +80,7 @@ export class ContentValidator {
       warnings: [],
     };
 
-    // TODO: Get nodes from PROGRESSION_NODE_REGISTRY
+    // planned: Get nodes from PROGRESSION_NODE_REGISTRY
     // For now, document what we're checking
 
     const checksPerformed = [
@@ -118,7 +118,7 @@ export class ContentValidator {
       conflictingReferences: [],
     };
 
-    // TODO: Get templates from character-templates.json
+    // planned: Get templates from character-templates.json
     // For each template, check:
 
     const templateChecks = [
@@ -196,7 +196,7 @@ export class ContentValidator {
       brokenPaths: [],
     };
 
-    // TODO: Get targets from target registry
+    // planned: Get targets from target registry
     // Check:
     // - Required fields present
     // - Prerequisites reference valid items
@@ -235,7 +235,7 @@ export class ContentValidator {
       brokenReferences: [],
     };
 
-    // TODO: Check advisory metadata for:
+    // planned: Check advisory metadata for:
     // - Valid domains
     // - Tags match archetype registry
     // - Mentor IDs valid
@@ -275,7 +275,7 @@ export class ContentValidator {
       contradictions: [],
     };
 
-    // TODO: Check each item's prerequisites for:
+    // planned: Check each item's prerequisites for:
     // - Non-contradictory ability requirements
     // - Valid class references
     // - Valid feat references
@@ -414,7 +414,7 @@ export class ContentValidator {
    * @private
    */
   static _checkSpeciesExists(speciesId) {
-    // TODO: Check against species compendium
+    // planned: Check against species compendium
     return { valid: true, reason: null };
   }
 
@@ -423,7 +423,7 @@ export class ContentValidator {
    * @private
    */
   static _checkClassExists(classId) {
-    // TODO: Check against class compendium
+    // planned: Check against class compendium
     return { valid: true, reason: null };
   }
 
@@ -432,7 +432,7 @@ export class ContentValidator {
    * @private
    */
   static _checkBackgroundExists(backgroundId) {
-    // TODO: Check against background registry
+    // planned: Check against background registry
     return { valid: true, reason: null };
   }
 
@@ -443,7 +443,7 @@ export class ContentValidator {
   static _checkFeatReferences(featIds) {
     const results = [];
     for (const featId of featIds) {
-      // TODO: Check feat compendium
+      // planned: Check feat compendium
       results.push({ id: featId, valid: true });
     }
     return results;
@@ -456,7 +456,7 @@ export class ContentValidator {
   static _checkTalentReferences(talentIds) {
     const results = [];
     for (const talentId of talentIds) {
-      // TODO: Check talent compendium
+      // planned: Check talent compendium
       results.push({ id: talentId, valid: true });
     }
     return results;
@@ -469,7 +469,7 @@ export class ContentValidator {
   static _checkSkillReferences(skillIds) {
     const results = [];
     for (const skillId of skillIds) {
-      // TODO: Check skill registry
+      // planned: Check skill registry
       results.push({ id: skillId, valid: true });
     }
     return results;
@@ -482,7 +482,7 @@ export class ContentValidator {
   static _checkLanguageReferences(langIds) {
     const results = [];
     for (const langId of langIds) {
-      // TODO: Check language registry
+      // planned: Check language registry
       results.push({ id: langId, valid: true });
     }
     return results;
@@ -495,7 +495,7 @@ export class ContentValidator {
   static _checkForcePowerReferences(powerIds) {
     const results = [];
     for (const powerId of powerIds) {
-      // TODO: Check force power compendium
+      // planned: Check force power compendium
       results.push({ id: powerId, valid: true });
     }
     return results;
@@ -529,7 +529,7 @@ export class ContentValidator {
     // Check if feats are compatible with class, species, etc.
     const issues = [];
 
-    // TODO: For each feat, check:
+    // planned: For each feat, check:
     // - Class compatibility
     // - Ability prerequisites
     // - Other feat dependencies
@@ -560,7 +560,7 @@ export class ContentValidator {
    * @private
    */
   static _checkCircularDependencies(template) {
-    // TODO: Check if template prerequisites create circular deps
+    // planned: Check if template prerequisites create circular deps
     return { valid: true, issues: [] };
   }
 

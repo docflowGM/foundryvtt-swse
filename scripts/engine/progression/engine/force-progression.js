@@ -16,6 +16,9 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ApplyHandlers } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/apply-handlers.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 
 export class ForceProgressionEngine {
 
@@ -78,21 +81,9 @@ export class ForceProgressionEngine {
             return false;
         }
 
-        // Find power in compendium
-        const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-        if (!powerPack) {
-            SWSELogger.warn('Force powers compendium not found');
-            return false;
-        }
-
-        const powerIndex = powerPack.index.find(p => p.name === powerName);
-        if (!powerIndex) {
-            SWSELogger.warn(`Force power not found: ${powerName}`);
-            return false;
-        }
-
-        const powerDoc = await powerPack.getDocument(powerIndex._id);
+        const powerDoc = await ForceRegistry.getDocumentByRef?.(powerName, 'power');
         if (!powerDoc) {
+            SWSELogger.warn(`Force power not found: ${powerName}`);
             return false;
         }
 
@@ -120,10 +111,12 @@ export class ForceProgressionEngine {
      * Used when class grants "Force Power Choice"
      */
     static async createForcePowerChoice(actor, count = 1, filters = {}) {
-        const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-        if (!powerPack) {return [];}
-
-        const allPowers = await powerPack.getDocuments();
+        await ForceRegistry.ensureInitialized?.();
+        const allPowers = [];
+        for (const entry of (ForceRegistry.getByType?.('power') || [])) {
+            const doc = await ForceRegistry.getDocumentByRef?.(entry, 'power');
+            if (doc) allPowers.push(doc);
+        }
         let availablePowers = allPowers.filter(p => {
             // Filter by power level if specified
             if (filters.maxPowerLevel && p.system?.powerLevel > filters.maxPowerLevel) {
@@ -185,21 +178,11 @@ export class ForceProgressionEngine {
             return false;
         }
 
-        // Find technique in feats compendium
-        const featPack = game.packs.get('foundryvtt-swse.feats');
-        if (!featPack) {
-            SWSELogger.warn('Feats compendium not found');
-            return false;
-        }
-
-        const featIndex = featPack.index.find(f => f.name === techniqueName);
-        if (!featIndex) {
+        const featDoc = await FeatRegistry.getDocumentByName?.(techniqueName);
+        if (!featDoc) {
             SWSELogger.warn(`Force technique not found: ${techniqueName}`);
             return false;
         }
-
-        const featDoc = await featPack.getDocument(featIndex._id);
-        if (!featDoc) {return false;}
 
         await ApplyHandlers.applyFeat(actor, featDoc.toObject());
         SWSELogger.log(`Granted force technique: ${techniqueName}`);
@@ -222,21 +205,11 @@ export class ForceProgressionEngine {
             return false;
         }
 
-        // Find secret in talents compendium
-        const talentPack = game.packs.get('foundryvtt-swse.talents');
-        if (!talentPack) {
-            SWSELogger.warn('Talents compendium not found');
-            return false;
-        }
-
-        const talentIndex = talentPack.index.find(t => t.name === secretName);
-        if (!talentIndex) {
+        const talentDoc = await TalentRegistry.getDocumentByName?.(secretName);
+        if (!talentDoc) {
             SWSELogger.warn(`Force secret not found: ${secretName}`);
             return false;
         }
-
-        const talentDoc = await talentPack.getDocument(talentIndex._id);
-        if (!talentDoc) {return false;}
 
         await ApplyHandlers.applyTalent(actor, talentDoc.toObject());
         SWSELogger.log(`Granted force secret: ${secretName}`);
@@ -247,10 +220,11 @@ export class ForceProgressionEngine {
      * Create Force Technique choice selection
      */
     static async createForceTechniqueChoice(actor, count = 1) {
-        const featPack = game.packs.get('foundryvtt-swse.feats');
-        if (!featPack) {return [];}
-
-        const allFeats = await featPack.getDocuments();
+        const allFeats = [];
+        for (const entry of (FeatRegistry.getAll?.() || [])) {
+            const doc = await FeatRegistry.getDocumentById?.(entry.id);
+            if (doc) allFeats.push(doc);
+        }
         const techniques = allFeats.filter(f =>
             f.system?.tags?.includes('force_technique') &&
             !actor.items.some(i => i.type === 'feat' && i.name === f.name)
@@ -263,10 +237,11 @@ export class ForceProgressionEngine {
      * Create Force Secret choice selection
      */
     static async createForceSecretChoice(actor, count = 1) {
-        const talentPack = game.packs.get('foundryvtt-swse.talents');
-        if (!talentPack) {return [];}
-
-        const allTalents = await talentPack.getDocuments();
+        const allTalents = [];
+        for (const entry of (TalentRegistry.getAll?.() || [])) {
+            const doc = await TalentRegistry.getDocumentById?.(entry.id);
+            if (doc) allTalents.push(doc);
+        }
         const secrets = allTalents.filter(t =>
             t.system?.tags?.includes('force_secret') &&
             !actor.items.some(i => i.type === 'talent' && i.name === t.name)

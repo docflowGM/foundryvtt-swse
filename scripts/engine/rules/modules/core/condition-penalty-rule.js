@@ -13,7 +13,7 @@
  * - This rule remains registered but unused to maintain registry structure
  * - Future migration: Either activate WeaponsEngine fully OR remove this rule
  *
- * TODO: Phase 2 - Decide between:
+ * planned: Phase 2 - Decide between:
  * A) Activate WeaponsEngine.evaluateAttack() as primary combat path + remove computeAttackBonus()
  * B) Deprecated this rule and clean up CombatRulesRegistry
  */

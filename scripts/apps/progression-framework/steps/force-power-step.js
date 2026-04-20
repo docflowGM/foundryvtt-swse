@@ -121,12 +121,12 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       shell.render();
     };
     const onFilter = e => {
-      // TODO (Wave 10+): implement power-level filtering
+      // planned (Wave 10+): implement power-level filtering
       this._applyFilters();
       shell.render();
     };
     const onSort = e => {
-      // TODO (Wave 10+): implement sorting
+      // planned (Wave 10+): implement sorting
       this._applyFilters();
       shell.render();
     };
@@ -354,14 +354,14 @@ export class ForcePowerStep extends ProgressionStepPlugin {
         placeholder: 'Search Force Powers…',
       },
       filters: [
-        // TODO (Wave 10+): add power level filter
+        // planned (Wave 10+): add power level filter
         // { id: 'level-1', label: 'Force Level 1', defaultOn: false },
         // { id: 'level-2', label: 'Force Level 2', defaultOn: false },
         // etc.
       ],
       sorts: [
         { id: 'name', label: 'Alphabetical' },
-        // TODO (Wave 10+): add force level sort
+        // planned (Wave 10+): add force level sort
         // { id: 'level', label: 'Force Level' },
       ],
     };

@@ -31,6 +31,13 @@ import { validateMentorIntegration } from "/systems/foundryvtt-swse/scripts/engi
 // PHASE 4: Rollout Configuration
 import { RolloutSettings } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/rollout/rollout-settings.js";
 import { initializeClassPrerequisitesCache } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-init.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
+import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/language-registry.js";
+import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
+import { TalentRegistry as CanonicalTalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
+import { FeatRegistry as CanonicalFeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 
 export const SystemInitHooks = {
 
@@ -172,6 +179,17 @@ export const SystemInitHooks = {
                 );
             }
 
+            SWSELogger.log('  - Initializing canonical content registries...');
+            await Promise.allSettled([
+                ClassesRegistry.initialize?.(),
+                SpeciesRegistry.initialize?.(),
+                CanonicalFeatRegistry.initialize?.(),
+                CanonicalTalentRegistry.initialize?.(),
+                BackgroundRegistry.ensureLoaded?.(),
+                LanguageRegistry.ensureLoaded?.(),
+                ForceRegistry.initialize?.(),
+            ]);
+
             SWSELogger.log(`SSOT registries built: ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents`);
 
         } catch (err) {
@@ -224,13 +242,12 @@ export const SystemInitHooks = {
      */
     async _normalizeClasses() {
         try {
-            const classPack = game.packs.get('foundryvtt-swse.classes');
-            if (!classPack) {
-                SWSELogger.warn('Classes compendium not found');
+            if (!ClassesRegistry.isInitialized()) {
+                SWSELogger.warn('ClassesRegistry not initialized');
                 return;
             }
 
-            const classes = await classPack.getDocuments();
+            const classes = await ClassesRegistry.getAllDocuments();
             let count = 0;
 
             for (const classDoc of classes) {
@@ -252,16 +269,13 @@ export const SystemInitHooks = {
      */
     async _normalizeTalents() {
         try {
-            const talentPack = game.packs.get('foundryvtt-swse.talents');
-            if (!talentPack) {
-                SWSELogger.warn('Talents compendium not found');
-                return;
-            }
-
-            const talents = await talentPack.getDocuments();
+            await CanonicalTalentRegistry.initialize?.();
+            const talents = CanonicalTalentRegistry.getAll?.() || [];
             let count = 0;
 
-            for (const talentDoc of talents) {
+            for (const entry of talents) {
+                const talentDoc = await CanonicalTalentRegistry.getDocumentById?.(entry.id);
+                if (!talentDoc) continue;
                 // Normalize document fields (SSOT data-layer normalizer)
                 normalizeDocumentTalent(talentDoc);
 
@@ -284,49 +298,33 @@ export const SystemInitHooks = {
      */
     async _normalizeForceContent() {
         try {
-            // Normalize Force powers
-            const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-            if (powerPack) {
-                const powers = await powerPack.getDocuments();
-                let count = 0;
-                for (const powerDoc of powers) {
-                    ForceNormalizer.normalizePower(powerDoc);
-                    count++;
-                }
-                SWSELogger.log(`Normalized ${count} Force power documents`);
+            await ForceRegistry.initialize?.();
+            let powerCount = 0;
+            for (const entry of (ForceRegistry.getAll?.() || []).filter((e) => e.type === 'power')) {
+                const powerDoc = await ForceRegistry.getDocumentById?.(entry.id);
+                if (!powerDoc) continue;
+                ForceNormalizer.normalizePower(powerDoc);
+                powerCount++;
             }
+            if (powerCount > 0) SWSELogger.log(`Normalized ${powerCount} Force power documents`);
 
-            // Normalize Force feats (techniques) if they exist in feats pack
-            const featPack = game.packs.get('foundryvtt-swse.feats');
-            if (featPack) {
-                const feats = await featPack.getDocuments();
-                let count = 0;
-                for (const featDoc of feats) {
-                    if (featDoc.system?.tags?.includes('force_technique')) {
-                        ForceNormalizer.normalizeTechnique(featDoc);
-                        count++;
-                    }
-                }
-                if (count > 0) {
-                    SWSELogger.log(`Normalized ${count} Force technique documents`);
-                }
+            let techniqueCount = 0;
+            for (const entry of (ForceRegistry.getAll?.() || []).filter((e) => e.type === 'technique')) {
+                const featDoc = await ForceRegistry.getDocumentById?.(entry.id);
+                if (!featDoc) continue;
+                ForceNormalizer.normalizeTechnique(featDoc);
+                techniqueCount++;
             }
+            if (techniqueCount > 0) SWSELogger.log(`Normalized ${techniqueCount} Force technique documents`);
 
-            // Normalize Force talents (secrets) if they exist in talents pack
-            const talentPack = game.packs.get('foundryvtt-swse.talents');
-            if (talentPack) {
-                const talents = await talentPack.getDocuments();
-                let count = 0;
-                for (const talentDoc of talents) {
-                    if (talentDoc.system?.tags?.includes('force_secret')) {
-                        ForceNormalizer.normalizeSecret(talentDoc);
-                        count++;
-                    }
-                }
-                if (count > 0) {
-                    SWSELogger.log(`Normalized ${count} Force secret documents`);
-                }
+            let secretCount = 0;
+            for (const entry of (ForceRegistry.getAll?.() || []).filter((e) => e.type === 'secret')) {
+                const talentDoc = await ForceRegistry.getDocumentById?.(entry.id);
+                if (!talentDoc) continue;
+                ForceNormalizer.normalizeSecret(talentDoc);
+                secretCount++;
             }
+            if (secretCount > 0) SWSELogger.log(`Normalized ${secretCount} Force secret documents`);
 
         } catch (err) {
             SWSELogger.error('Failed to normalize Force content:', err);
@@ -392,18 +390,13 @@ export const SystemInitHooks = {
                 return;
             }
 
-            const pack = game.packs.get('foundryvtt-swse.skills');
-            if (pack) {
-                const skills = await pack.getDocuments();
-                let normalized = 0;
-
-                for (const skillDoc of skills) {
-                    SkillNormalizer.normalize(skillDoc);
-                    normalized++;
-                }
-
-                SWSELogger.log(`Built skill registry with ${normalized} skills`);
+            let normalized = 0;
+            for (const skillEntry of SkillRegistry.list?.() || []) {
+                if (!skillEntry?.document) continue;
+                SkillNormalizer.normalize(skillEntry.document);
+                normalized++;
             }
+            SWSELogger.log(`Built skill registry with ${normalized} skills`);
 
         } catch (err) {
             SWSELogger.error('Failed to build skill registry:', err);
@@ -424,18 +417,15 @@ export const SystemInitHooks = {
                 return;
             }
 
-            const pack = game.packs.get('foundryvtt-swse.feats');
-            if (pack) {
-                const feats = await pack.getDocuments();
-                let normalized = 0;
-
-                for (const featDoc of feats) {
-                    FeatNormalizer.normalize(featDoc);
-                    normalized++;
-                }
-
-                SWSELogger.log(`Built feat registry with ${normalized} feats`);
+            await CanonicalFeatRegistry.initialize?.();
+            let normalized = 0;
+            for (const entry of CanonicalFeatRegistry.getAll?.() || []) {
+                const featDoc = await CanonicalFeatRegistry.getDocumentById?.(entry.id);
+                if (!featDoc) continue;
+                FeatNormalizer.normalize(featDoc);
+                normalized++;
             }
+            SWSELogger.log(`Built feat registry with ${normalized} feats`);
 
         } catch (err) {
             SWSELogger.error('Failed to build feat registry:', err);

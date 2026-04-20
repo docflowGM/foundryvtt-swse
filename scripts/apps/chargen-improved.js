@@ -420,16 +420,10 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     if (weaponFinesseDefault) {
       SWSELogger.log('SWSE CharGen | Auto-granting Weapon Finesse (houserule)');
 
-      // Find Weapon Finesse feat in compendium
-      const featPack = game.packs.get('foundryvtt-swse.feats');
-      if (featPack) {
-        const feats = await featPack.getDocuments();
-        const weaponFinesse = feats.find(f => f.name === 'Weapon Finesse');
-
-        if (weaponFinesse) {
-          await ActorEngine.createEmbeddedDocuments(actor, 'Item', [weaponFinesse.toObject()]);
-          ui.notifications.info('Weapon Finesse feat automatically granted!');
-        }
+      const weaponFinesse = await FeatRegistry.getDocumentByName?.('Weapon Finesse');
+      if (weaponFinesse) {
+        await ActorEngine.createEmbeddedDocuments(actor, 'Item', [weaponFinesse.toObject()]);
+        ui.notifications.info('Weapon Finesse feat automatically granted!');
       }
     }
 

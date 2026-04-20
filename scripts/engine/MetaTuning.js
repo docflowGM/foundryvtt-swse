@@ -6,25 +6,17 @@
  * - Archetype emphasis tuning
  * - Feature toggles
  *
- * Sovereignty Rules:
- * - Pure configuration service
- * - No actor mutation
- * - No derived writes
- * - No side effects outside Foundry settings registration
+ * Governance:
+ * - Reads/writes flow through HouseRuleService so system settings retain one SSOT.
  */
+
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 const MODULE_ID = 'foundryvtt-swse';
 
 export class MetaTuning {
-
-  /* -------------------------------------------------------------------------- */
-  /* DEFAULT CONFIGURATION                                                      */
-  /* -------------------------------------------------------------------------- */
-
   static DEFAULT_CONFIG = {
     enabled: true,
-
-    // Adjust weighting per build archetype
     themeEmphasis: {
       ranged: 1.0,
       melee: 1.0,
@@ -35,64 +27,38 @@ export class MetaTuning {
       defense: 1.0,
       vehicle: 1.0
     },
-
-    // Future-proofing for expansion
     debugLogging: false
   };
 
-  /* -------------------------------------------------------------------------- */
-  /* CONFIG ACCESS                                                              */
-  /* -------------------------------------------------------------------------- */
-
-  /**
-   * Get current MetaTuning configuration
-   */
   static getConfig() {
-    const stored = game.settings.get(MODULE_ID, 'metaTuningConfig');
-    return stored ?? this.DEFAULT_CONFIG;
+    return HouseRuleService.getObject('metaTuningConfig', this.DEFAULT_CONFIG);
   }
 
-  /**
-   * Update MetaTuning configuration safely
-   */
   static async updateConfig(partial) {
     const current = this.getConfig();
     const merged = foundry.utils.mergeObject(
       foundry.utils.deepClone(current),
       partial
     );
-
-    await game.settings.set(MODULE_ID, 'metaTuningConfig', merged);
+    await HouseRuleService.set('metaTuningConfig', merged);
     return merged;
   }
 
-  /**
-   * Reset configuration to defaults
-   */
   static async resetConfig() {
-    await game.settings.set(MODULE_ID, 'metaTuningConfig', this.DEFAULT_CONFIG);
+    await HouseRuleService.set('metaTuningConfig', this.DEFAULT_CONFIG);
     return this.DEFAULT_CONFIG;
   }
 
-  /**
-   * Get emphasis multiplier for a specific archetype
-   */
   static getThemeWeight(archetype) {
     const config = this.getConfig();
     if (!config.enabled) return 1.0;
     return config.themeEmphasis?.[archetype] ?? 1.0;
   }
 
-  /**
-   * Check if meta tuning system is enabled
-   */
   static isEnabled() {
     return this.getConfig().enabled === true;
   }
 
-  /**
-   * Debug logging helper
-   */
   static debug(...args) {
     if (this.getConfig().debugLogging) {
       console.log('SWSE MetaTuning |', ...args);
@@ -100,19 +66,13 @@ export class MetaTuning {
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/* SETTINGS REGISTRATION                                                      */
-/* -------------------------------------------------------------------------- */
-
 export function registerMetaTuningSettings() {
-
   game.settings.register(MODULE_ID, 'metaTuningConfig', {
     name: 'Meta Tuning Configuration',
     hint: 'Adjust community synergy weighting and meta build influence.',
     scope: 'world',
-    config: false, // hidden (advanced system setting)
+    config: false,
     type: Object,
     default: MetaTuning.DEFAULT_CONFIG
   });
-
 }

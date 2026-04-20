@@ -223,6 +223,44 @@ export class ForceRegistry {
   }
 
 
+  static resolveEntry(ref, expectedType = null) {
+    if (!ref) return null;
+    const entry = typeof ref === 'string'
+      ? (this.getById(ref) || this.getByName(ref))
+      : (this.getById(ref.id || ref._id || ref.internalId) || this.getByName(ref.name || ref.label));
+    if (!entry) return null;
+    if (expectedType && entry.type !== expectedType) return null;
+    return entry;
+  }
+
+  static ensureInitialized() {
+    return this.initialize();
+  }
+
+  static async _getDocument(id, type = null) {
+    const entry = type ? this.resolveEntry(id, type) : this.resolveEntry(id);
+    const resolved = entry || this.getById(id);
+    if (!resolved?.pack || !resolved?.id) return null;
+    const pack = game?.packs?.get(resolved.pack);
+    if (!pack) return null;
+    try {
+      return await pack.getDocument(resolved.id);
+    } catch (err) {
+      SWSELogger.warn(`[ForceRegistry] Failed to fetch document ${resolved.id} from ${resolved.pack}:`, err);
+      return null;
+    }
+  }
+
+  static async getDocumentById(id) {
+    return this._getDocument(id);
+  }
+
+  static async getDocumentByRef(ref, expectedType = null) {
+    const entry = this.resolveEntry(ref, expectedType);
+    return entry ? this._getDocument(entry.id, expectedType) : null;
+  }
+
+
   static async init() {
     return this.initialize();
   }
@@ -264,6 +302,44 @@ export class ForceRegistry {
   }
 
 
+  static resolveEntry(ref, expectedType = null) {
+    if (!ref) return null;
+    const entry = typeof ref === 'string'
+      ? (this.getById(ref) || this.getByName(ref))
+      : (this.getById(ref.id || ref._id || ref.internalId) || this.getByName(ref.name || ref.label));
+    if (!entry) return null;
+    if (expectedType && entry.type !== expectedType) return null;
+    return entry;
+  }
+
+  static ensureInitialized() {
+    return this.initialize();
+  }
+
+  static async _getDocument(id, type = null) {
+    const entry = type ? this.resolveEntry(id, type) : this.resolveEntry(id);
+    const resolved = entry || this.getById(id);
+    if (!resolved?.pack || !resolved?.id) return null;
+    const pack = game?.packs?.get(resolved.pack);
+    if (!pack) return null;
+    try {
+      return await pack.getDocument(resolved.id);
+    } catch (err) {
+      SWSELogger.warn(`[ForceRegistry] Failed to fetch document ${resolved.id} from ${resolved.pack}:`, err);
+      return null;
+    }
+  }
+
+  static async getDocumentById(id) {
+    return this._getDocument(id);
+  }
+
+  static async getDocumentByRef(ref, expectedType = null) {
+    const entry = this.resolveEntry(ref, expectedType);
+    return entry ? this._getDocument(entry.id, expectedType) : null;
+  }
+
+
   static async init() {
     return this.initialize();
   }
@@ -286,6 +362,44 @@ export class ForceRegistry {
   }
 
 
+  static resolveEntry(ref, expectedType = null) {
+    if (!ref) return null;
+    const entry = typeof ref === 'string'
+      ? (this.getById(ref) || this.getByName(ref))
+      : (this.getById(ref.id || ref._id || ref.internalId) || this.getByName(ref.name || ref.label));
+    if (!entry) return null;
+    if (expectedType && entry.type !== expectedType) return null;
+    return entry;
+  }
+
+  static ensureInitialized() {
+    return this.initialize();
+  }
+
+  static async _getDocument(id, type = null) {
+    const entry = type ? this.resolveEntry(id, type) : this.resolveEntry(id);
+    const resolved = entry || this.getById(id);
+    if (!resolved?.pack || !resolved?.id) return null;
+    const pack = game?.packs?.get(resolved.pack);
+    if (!pack) return null;
+    try {
+      return await pack.getDocument(resolved.id);
+    } catch (err) {
+      SWSELogger.warn(`[ForceRegistry] Failed to fetch document ${resolved.id} from ${resolved.pack}:`, err);
+      return null;
+    }
+  }
+
+  static async getDocumentById(id) {
+    return this._getDocument(id);
+  }
+
+  static async getDocumentByRef(ref, expectedType = null) {
+    const entry = this.resolveEntry(ref, expectedType);
+    return entry ? this._getDocument(entry.id, expectedType) : null;
+  }
+
+
   static async init() {
     return this.initialize();
   }
@@ -305,6 +419,44 @@ export class ForceRegistry {
     }
     const normalized = String(category).toLowerCase().trim();
     return [...(this._byCategory.get(normalized) || [])];
+  }
+
+
+  static resolveEntry(ref, expectedType = null) {
+    if (!ref) return null;
+    const entry = typeof ref === 'string'
+      ? (this.getById(ref) || this.getByName(ref))
+      : (this.getById(ref.id || ref._id || ref.internalId) || this.getByName(ref.name || ref.label));
+    if (!entry) return null;
+    if (expectedType && entry.type !== expectedType) return null;
+    return entry;
+  }
+
+  static ensureInitialized() {
+    return this.initialize();
+  }
+
+  static async _getDocument(id, type = null) {
+    const entry = type ? this.resolveEntry(id, type) : this.resolveEntry(id);
+    const resolved = entry || this.getById(id);
+    if (!resolved?.pack || !resolved?.id) return null;
+    const pack = game?.packs?.get(resolved.pack);
+    if (!pack) return null;
+    try {
+      return await pack.getDocument(resolved.id);
+    } catch (err) {
+      SWSELogger.warn(`[ForceRegistry] Failed to fetch document ${resolved.id} from ${resolved.pack}:`, err);
+      return null;
+    }
+  }
+
+  static async getDocumentById(id) {
+    return this._getDocument(id);
+  }
+
+  static async getDocumentByRef(ref, expectedType = null) {
+    const entry = this.resolveEntry(ref, expectedType);
+    return entry ? this._getDocument(entry.id, expectedType) : null;
   }
 
 

@@ -11,7 +11,7 @@
  */
 import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { launchProgression, launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 import { NPCTemplateImporter } from "/systems/foundryvtt-swse/scripts/apps/npc-template-importer.js";
@@ -26,7 +26,12 @@ function onClickChargen(app) {
       ui?.notifications?.warn?.('No actor selected. GMs can create new actors.');
       return;
     }
-    // TODO: Allow opening progression for new actor creation (no actor passed)
+
+    SWSELogger.log('[Actor Sidebar] Opening new-character progression from sidebar');
+    launchNewProgression({ actorType: 'character' }).catch(err => {
+      SWSELogger.error('[Actor Sidebar] Error opening new-character progression:', err);
+      ui?.notifications?.error?.(`Failed to open progression: ${err.message}`);
+    });
     return;
   }
 

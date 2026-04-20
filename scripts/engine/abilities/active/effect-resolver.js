@@ -136,7 +136,7 @@ export class EffectResolver {
    *   description: string (for UI display)
    * }
    *
-   * TODO: Integrate with ConditionEngine (Phase 4+)
+   * planned: Integrate with ConditionEngine (Phase 4+)
    *
    * @private
    */
@@ -151,7 +151,7 @@ export class EffectResolver {
       };
     }
 
-    // TODO: Use ConditionEngine.applyCondition(target, condition, severity)
+    // planned: Use ConditionEngine.applyCondition(target, condition, severity)
     // For now, just log the intent
     SWSELogger.warn(
       `[EffectResolver] STATUS effect not yet implemented: ${condition} on ${target.name}`,
@@ -189,7 +189,7 @@ export class EffectResolver {
 
     try {
       // Evaluate healing formula
-      // TODO: Use Roll engine to evaluate formula
+      // planned: Use Roll engine to evaluate formula
       // const roll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
       // const healAmount = roll.total;
 
@@ -291,7 +291,7 @@ export class EffectResolver {
 
   /**
    * Unapply an effect (remove modifier, cure status, etc.)
-   * Currently only supports MODIFIER effects; others TODO.
+   * Currently only supports MODIFIER effects; others planned.
    *
    * @param {Object} target - Target actor document
    * @param {string} abilityId - ID of ability that applied the effect

@@ -10,6 +10,7 @@ import { getCurrentPhase, SWSE_PHASES } from "/systems/foundryvtt-swse/scripts/s
  * Initialize SWSE scene controls
  * Call this once during system init
  */
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 export function initializeSceneControls() {
   // Register control groups
   sceneControlRegistry.registerGroup('force', {
@@ -31,7 +32,7 @@ export function initializeSceneControls() {
   sceneControlRegistry.registerTool('force', 'force-push', {
     title: 'Force Push',
     icon: 'fa-solid fa-hand-paper',
-    onClick: () => console.log('Force Push activated'),
+    onClick: () => SWSELogger.debug('Force Push activated'),
     visible: () => _hasSelectedToken(),
     enabled: () => _isPhase(SWSE_PHASES.NARRATIVE) && _hasSelectedToken()
   });
@@ -39,7 +40,7 @@ export function initializeSceneControls() {
   sceneControlRegistry.registerTool('force', 'force-move', {
     title: 'Force Move',
     icon: 'fa-solid fa-arrow-up',
-    onClick: () => console.log('Force Move activated'),
+    onClick: () => SWSELogger.debug('Force Move activated'),
     visible: () => _hasSelectedToken(),
     enabled: () => _isPhase(SWSE_PHASES.NARRATIVE) && _hasSelectedToken()
   });
@@ -47,7 +48,7 @@ export function initializeSceneControls() {
   sceneControlRegistry.registerTool('force', 'force-sense', {
     title: 'Force Sense',
     icon: 'fa-solid fa-eye',
-    onClick: () => console.log('Force Sense activated'),
+    onClick: () => SWSELogger.debug('Force Sense activated'),
     visible: () => _hasSelectedToken(),
     enabled: () => _hasSelectedToken()
   });
@@ -56,7 +57,7 @@ export function initializeSceneControls() {
   sceneControlRegistry.registerTool('tech', 'slice', {
     title: 'Slice Terminal',
     icon: 'fa-solid fa-lock-open',
-    onClick: () => console.log('Slice activated'),
+    onClick: () => SWSELogger.debug('Slice activated'),
     visible: () => _hasSelectedToken(),
     enabled: () => _isPhase(SWSE_PHASES.NARRATIVE) && _hasSelectedToken()
   });
@@ -64,7 +65,7 @@ export function initializeSceneControls() {
   sceneControlRegistry.registerTool('tech', 'deploy-gadget', {
     title: 'Deploy Gadget',
     icon: 'fa-solid fa-cube',
-    onClick: () => console.log('Deploy Gadget activated'),
+    onClick: () => SWSELogger.debug('Deploy Gadget activated'),
     visible: () => _hasSelectedToken(),
     enabled: () => _hasSelectedToken()
   });
@@ -73,7 +74,7 @@ export function initializeSceneControls() {
   sceneControlRegistry.registerTool('combat', 'aim', {
     title: 'Aim',
     icon: 'fa-solid fa-bullseye',
-    onClick: () => console.log('Aim activated'),
+    onClick: () => SWSELogger.debug('Aim activated'),
     visible: () => _isPhase(SWSE_PHASES.COMBAT),
     enabled: () => _isPhase(SWSE_PHASES.COMBAT) && _hasSelectedToken()
   });
@@ -81,7 +82,7 @@ export function initializeSceneControls() {
   sceneControlRegistry.registerTool('combat', 'full-attack', {
     title: 'Full Attack',
     icon: 'fa-solid fa-burst',
-    onClick: () => console.log('Full Attack activated'),
+    onClick: () => SWSELogger.debug('Full Attack activated'),
     visible: () => _isPhase(SWSE_PHASES.COMBAT),
     enabled: () => _isPhase(SWSE_PHASES.COMBAT) && _hasSelectedToken()
   });

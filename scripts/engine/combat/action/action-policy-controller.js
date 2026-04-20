@@ -15,6 +15,7 @@
  */
 
 import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/sentinel/sentinel-engine.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export class ActionPolicyController {
   // Enforcement mode enum
@@ -50,7 +51,7 @@ export class ActionPolicyController {
       };
     }
 
-    const mode = game.settings.get("foundryvtt-swse", "actionEconomyMode");
+    const mode = HouseRuleService.getString('actionEconomyMode', this.MODE.LOOSE);
 
     // GM OVERRIDE: Shift+Click (STRICT mode only, GM-only)
     if (gmOverride && game.user.isGM && mode === this.MODE.STRICT) {
@@ -184,7 +185,7 @@ export class ActionPolicyController {
    * @returns {boolean}
    */
   static wouldPermit(result) {
-    const mode = game.settings.get("foundryvtt-swse", "actionEconomyMode");
+    const mode = HouseRuleService.getString('actionEconomyMode', this.MODE.LOOSE);
 
     if (mode === this.MODE.NONE) {
       return true;

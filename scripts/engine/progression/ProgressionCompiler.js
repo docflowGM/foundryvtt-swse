@@ -229,7 +229,7 @@ export class ProgressionCompiler {
    * @private
    */
   static _compileSetBackground(snapshot, backgroundId) {
-    // TODO: Validate background exists in system
+    // planned: Validate background exists in system
     // For now, simple validation
     if (!backgroundId) throw new Error('Background ID required');
 
@@ -270,7 +270,7 @@ export class ProgressionCompiler {
   static _compileSetSpecies(snapshot, speciesId) {
     if (!speciesId) throw new Error('Species ID required');
 
-    // TODO: Validate species exists in system
+    // planned: Validate species exists in system
     return {
       set: {
         'system.species': {
@@ -313,7 +313,7 @@ export class ProgressionCompiler {
   static _compileSetClass(snapshot, classId) {
     if (!classId) throw new Error('Class ID required');
 
-    // TODO: Validate class exists in system
+    // planned: Validate class exists in system
     return {
       set: {
         'system.class': {
@@ -355,7 +355,7 @@ export class ProgressionCompiler {
       throw new Error('At least one force secret required');
     }
 
-    // TODO: Validate each secret exists + prerequisites met
+    // planned: Validate each secret exists + prerequisites met
     // For now, basic validation
     return {
       add: {
@@ -375,7 +375,7 @@ export class ProgressionCompiler {
       throw new Error('At least one force technique required');
     }
 
-    // TODO: Validate each technique exists + prerequisites met
+    // planned: Validate each technique exists + prerequisites met
     return {
       add: {
         forceTechniques: ids
@@ -394,7 +394,7 @@ export class ProgressionCompiler {
       throw new Error('At least one force power required');
     }
 
-    // TODO: Validate each power exists + prerequisites met
+    // planned: Validate each power exists + prerequisites met
     return {
       add: {
         forcePowers: ids

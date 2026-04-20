@@ -1,3 +1,5 @@
+import SkillRegistry from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
+
 /**
  * scripts/utils/skill-resolver.js
  *
@@ -60,15 +62,15 @@ async function loadSkillIdCache() {
     const nameToId = new Map();
 
     try {
-      const pack = game.packs?.get('foundryvtt-swse.skills');
-      if (!pack) {return { idToName, nameToId };}
-      const index = await pack.getIndex({ fields: ['name'] });
-      for (const entry of index) {
-        idToName.set(entry._id, entry.name);
-        nameToId.set(String(entry.name).toLowerCase(), entry._id);
+      const skills = SkillRegistry.list?.() || [];
+      for (const entry of skills) {
+        const skillId = entry.id || entry._id;
+        if (!skillId || !entry.name) {continue;}
+        idToName.set(skillId, entry.name);
+        nameToId.set(String(entry.name).toLowerCase(), skillId);
       }
     } catch (err) {
-      console.warn('SWSE SkillResolver: failed to load skills compendium', err);
+      console.warn('SWSE SkillResolver: failed to load skills registry', err);
     }
 
     return { idToName, nameToId };

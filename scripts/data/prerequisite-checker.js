@@ -59,6 +59,7 @@ import { normalizeTalentTreeId } from "/systems/foundryvtt-swse/scripts/data/tal
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 /**
  * MAIN CLASS: PrerequisiteChecker
@@ -1452,12 +1453,12 @@ export class PrerequisiteChecker {
         ];
 
         for (const { setting, name } of settings) {
-            if (typeof game !== 'undefined' && game.settings.get('foundryvtt-swse', setting)) {
+            if (typeof game !== 'undefined' && HouseRuleService.isEnabled(setting)) {
                 grantedFeats.push(name);
             }
         }
 
-        if (typeof game !== 'undefined' && game.settings.get('foundryvtt-swse', 'armoredDefenseForAll')) {
+        if (typeof game !== 'undefined' && HouseRuleService.isEnabled('armoredDefenseForAll')) {
             grantedFeats.push('Armored Defense');
         }
 

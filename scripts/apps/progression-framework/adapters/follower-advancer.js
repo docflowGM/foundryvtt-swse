@@ -10,6 +10,7 @@
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
 import { FollowerCreator } from '../../follower-creator.js';
+import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 
 /**
  * Compute the follower advancement plan (which levels need to be applied)
@@ -101,10 +102,10 @@ export async function advanceFollowerToLevel(follower, owner, templateType, targ
     const bab = template.babProgression?.[Math.min(level - 1, 19)] ?? 0;
 
     // Update BAB and level
-    await follower.update({
+    await ActorEngine.updateActor(follower, {
       'system.level': level,
       'system.baseAttackBonus': bab
-    });
+    }, { source: 'FollowerAdvancer.advanceFollowerToLevel' });
 
     swseLogger.debug('[FollowerAdvancer] Applied level', level, '- BAB now', bab);
   }

@@ -224,7 +224,7 @@ export class ActiveAdapter {
       if (isActive) {
         // Remove persistent effect
         if (persistentEffect) {
-          // TODO: Remove modifier via ModifierEngine (Phase 4)
+          // planned: Remove modifier via ModifierEngine (Phase 4)
         }
 
         // Deactivate the mode
@@ -255,7 +255,7 @@ export class ActiveAdapter {
         for (const otherMode of otherModes) {
           if (otherMode.getFlag?.('swse', 'modeActive')) {
             await otherMode.setFlag('foundryvtt-swse', 'modeActive', false);
-            // TODO: Remove persistent effect from other mode (Phase 4)
+            // planned: Remove persistent effect from other mode (Phase 4)
             SWSELogger.log(`[ActiveAdapter] Deactivated conflicting MODE: ${otherMode.name}`);
           }
         }
@@ -286,7 +286,7 @@ export class ActiveAdapter {
 
       // 2d. Apply persistent effect
       if (persistentEffect) {
-        // TODO: Apply modifier via ModifierEngine (Phase 4)
+        // planned: Apply modifier via ModifierEngine (Phase 4)
       }
 
       // 2e. Activate the mode

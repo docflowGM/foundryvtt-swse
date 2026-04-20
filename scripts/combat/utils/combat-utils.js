@@ -3,6 +3,7 @@ import { ResolutionContext } from '../../engine/resolution/resolution-context.js
 import { RULES } from '../../engine/execution/rules/rule-enum.js';
 import { SchemaAdapters } from '../../utils/schema-adapters.js';
 import { isNpcStatblockMode } from '../../actors/npc/npc-mode-adapter.js';
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 /**
  * Modern SWSE Combat Utilities (v13+)
@@ -78,7 +79,7 @@ export function computeAttackBonus(actor, weapon) {
                     0;
 
   // REGRESSION GUARD: Detect mismatch between system and derived penalties
-  if (game.settings.get(game.system.id, "devMode") &&
+  if (SettingsHelper.getBoolean('devMode', false) &&
       actor.system?.conditionTrack &&
       actor.system?.conditionTrack?.penalty !== undefined &&
       actor.system?.derived?.damage?.conditionPenalty !== actor.system?.conditionTrack?.penalty) {

@@ -23,6 +23,7 @@
  */
 
 import { HPCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/hp-calculator.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { BABCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/bab-calculator.js";
 import { DefenseCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/defense-calculator.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
@@ -430,10 +431,7 @@ export class DerivedCalculator {
       // ========================================
       try {
 
-        const safeGet = (key, fallback) =>
-          game.settings.settings.has(`foundryvtt-swse.${key}`)
-            ? game.settings.get('foundryvtt-swse', key)
-            : fallback;
+        const safeGet = (key, fallback) => HouseRuleService.getSafe(key, fallback);
 
         const enableEnhanced = safeGet('enableEnhancedMassiveDamage', false);
         const modifyFormula = safeGet('modifyDamageThresholdFormula', false);

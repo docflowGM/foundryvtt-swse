@@ -19,6 +19,8 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { resolveSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 
 export class FollowerCreator {
 
@@ -53,16 +55,15 @@ static async getInlineCreationContext(owner, templateChoices = null, grantingTal
     ? templateChoices.filter(k => templates[k])
     : Object.keys(templates);
 
-  const speciesPack = game.packs.get('foundryvtt-swse.species');
-  if (!speciesPack) {
-    ui.notifications.error('Species compendium not found! Cannot create follower.');
+  await SpeciesRegistry.initialize?.();
+  const speciesList = (SpeciesRegistry.getAll?.() || [])
+    .map(s => ({ id: s.id || s._id, name: s.name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  if (speciesList.length === 0) {
+    ui.notifications.error('Species registry not found! Cannot create follower.');
     return null;
   }
-
-  const speciesIndex = await speciesPack.getIndex();
-  const speciesList = speciesIndex
-    .map(s => ({ id: s._id, name: s.name }))
-    .sort((a, b) => a.name.localeCompare(b.name));
 
   const templateTypes = allowed.map(key => ({
     key,
@@ -153,14 +154,12 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      */
     static async _showFollowerCreationDialog(owner, template, templateType, grantingTalent) {
         // Get available species
-        const speciesPack = game.packs.get('foundryvtt-swse.species');
-        if (!speciesPack) {
-            ui.notifications.error('Species compendium not found! Cannot create follower.');
+        await SpeciesRegistry.initialize?.();
+        const speciesList = (SpeciesRegistry.getAll?.() || []).map(s => ({ id: s.id || s._id, name: s.name })).sort((a, b) => a.name.localeCompare(b.name));
+        if (speciesList.length === 0) {
+            ui.notifications.error('Species registry not found! Cannot create follower.');
             return null;
         }
-
-        const speciesIndex = await speciesPack.getIndex();
-        const speciesList = speciesIndex.map(s => ({ id: s._id, name: s.name })).sort((a, b) => a.name.localeCompare(b.name));
 
         const dialogData = {
             template,
@@ -235,8 +234,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         const followerLevel = ownerHeroicLevel; // Followers are same HEROIC level as owner
 
         // Get species data
-        const speciesPack = game.packs.get('foundryvtt-swse.species');
-        const speciesDoc = await speciesPack.getDocument(followerData.species);
+        const speciesDoc = await SpeciesRegistry.getDocumentByRef?.(followerData.species);
 
         // Calculate base abilities (all start at 10)
         const abilities = {
@@ -344,9 +342,9 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         await this._applyDefenseBonuses(follower, template);
 
         // Update progression data on actor
-        await follower.update({
+        await ActorEngine.updateActor(follower, {
             'system.progression': progressionData
-        });
+        }, { source: 'FollowerCreator.createFollower' });
 
         swseLogger.log(`FollowerCreator: Created follower "${follower.name}" for ${owner.name}`);
 
@@ -420,9 +418,9 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 // This would need additional dialog, for now just apply the first choice
                 const abilityChoice = template.abilityChoices[0];
                 const currentAbility = follower.system.attributes[abilityChoice].base;
-                await follower.update({
+                await ActorEngine.updateActor(follower, {
                     [`system.attributes.${abilityChoice}.base`]: currentAbility + template.abilityBonus
-                });
+                }, { source: 'FollowerCreator.applyHumanBonus' });
                 break;
             case 'feat': {
                 const feats = template.feats || template.featChoices || [];
@@ -490,26 +488,15 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @returns {boolean} True if feat was added successfully
      */
     static async _addFeatByName(follower, featName) {
-        const featsPack = game.packs.get('foundryvtt-swse.feats');
-        if (!featsPack) {
-            swseLogger.warn('FollowerCreator: Feats compendium not found');
-            return false;
-        }
-
         try {
-            const featIndex = await featsPack.getIndex({ fields: ['name'] });
-            const featEntry = featIndex.find(f => f.name === featName);
-
-            if (featEntry) {
-                const featDoc = await featsPack.getDocument(featEntry._id);
+            const featDoc = await FeatRegistry.getDocumentByName?.(featName);
+            if (featDoc) {
                 const featData = featDoc.toObject();
-                // PHASE 8: Use ActorEngine
                 await ActorEngine.createEmbeddedDocuments(follower, 'Item', [featData]);
                 return true;
-            } else {
-                swseLogger.warn(`FollowerCreator: Feat not found: ${featName}`);
-                return false;
             }
+            swseLogger.warn(`FollowerCreator: Feat not found: ${featName}`);
+            return false;
         } catch (e) {
             swseLogger.warn(`FollowerCreator: Error adding feat "${featName}":`, e);
             return false;
@@ -551,9 +538,9 @@ static async createFollower(owner, templateType, grantingTalent = null) {
     static async _trainSkill(follower, skillName) {
         const skillKey = await resolveSkillKey(skillName);
         if (skillKey && follower.system.skills?.[skillKey]) {
-            await follower.update({
+            await ActorEngine.updateActor(follower, {
                 [`system.skills.${skillKey}.trained`]: true
-            });
+            }, { source: 'FollowerCreator.trainSkill' });
             return true;
         }
         return false;
@@ -608,11 +595,11 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         // Set ownership permissions to match owner
         const ownerUser = game.users.find(u => u.character?.id === owner.id);
         if (ownerUser) {
-            await follower.update({
+            await ActorEngine.updateActor(follower, {
                 ownership: {
                     [ownerUser.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
                 }
-            });
+            }, { source: 'FollowerCreator.linkFollowerToOwner' });
         }
     }
 
@@ -718,14 +705,9 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             // Apply species (if needed)
             if (speciesName) {
                 try {
-                    const speciesPack = game.packs.get('foundryvtt-swse.species');
-                    if (speciesPack) {
-                        const speciesIndex = await speciesPack.getIndex();
-                        const speciesEntry = speciesIndex.find(s => s.name === speciesName);
-                        if (speciesEntry) {
-                            const speciesDoc = await speciesPack.getDocument(speciesEntry._id);
-                            await ActorEngine.createEmbeddedDocuments(follower, 'Item', [speciesDoc.toObject()]);
-                        }
+                    const speciesDoc = await SpeciesRegistry.getDocumentByRef?.(speciesName);
+                    if (speciesDoc) {
+                        await ActorEngine.createEmbeddedDocuments(follower, 'Item', [speciesDoc.toObject()]);
                     }
                 } catch (err) {
                     swseLogger.warn('[FollowerCreator] Could not apply species:', err);
@@ -739,7 +721,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 for (const [defType, defData] of Object.entries(followerState.defenses)) {
                     defenseUpdates[`system.defenses.${defType}.total`] = defData.total;
                 }
-                await follower.update(defenseUpdates);
+                await ActorEngine.updateActor(follower, defenseUpdates, { source: 'FollowerCreator.createFromMutation.defenses' });
             }
 
             // Link to owner
@@ -794,7 +776,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 }
             }
 
-            await follower.update(updateData);
+            await ActorEngine.updateActor(follower, updateData, { source: 'FollowerCreator.updateFromMutation' });
 
             swseLogger.log('[FollowerCreator] Follower updated from mutation:', {
                 followerId: follower.id,

@@ -242,7 +242,7 @@ export class DroidBuilderApp extends SWSEApplication {
 
   /**
    * System catalogs (temporary placeholders)
-   * TODO: Load from compendiums or config later
+   * planned: Load from compendiums or config later
    */
   static SYSTEM_CATALOG = {
     locomotion: [

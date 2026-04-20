@@ -117,7 +117,7 @@ export class SuggestionEngineHooks {
       const anchorResult = await BuildIdentityAnchor.validateAndUpdateAnchor(actor);
       if (anchorResult.updated) {
         SWSELogger.log(`[Hooks] Anchor updated at level ${newLevel}: ${anchorResult.newState}`);
-        // TODO: Could trigger UI element to ask player for confirmation if PROPOSED
+        // planned: Could trigger UI element to ask player for confirmation if PROPOSED
       }
 
       // Update pivot state based on recent picks

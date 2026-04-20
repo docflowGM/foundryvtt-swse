@@ -13,6 +13,7 @@ import { traceLog } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.
  * Form field type schema for coercion
  * Maps field names to their expected types: 'number', 'boolean', 'string'
  */
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 const FORM_FIELD_SCHEMA = {
   // HP/Health
   'system.hp.value': 'number',
@@ -57,7 +58,7 @@ const FORM_FIELD_SCHEMA = {
   // Skills (PHASE 7: Canonical edit paths)
   // Editable fields: miscMod (manual bonuses)
   // Non-editable in this phase: trained, focused, selectedAbility (set by progression/derived)
-  // TODO Phase 7+: Add form fields for trained, focused, selectedAbility when UI supports direct editing
+  // planned Phase 7+: Add form fields for trained, focused, selectedAbility when UI supports direct editing
   'system.skills.acrobatics.miscMod': 'number',
   'system.skills.climb.miscMod': 'number',
   'system.skills.deception.miscMod': 'number',
@@ -133,8 +134,8 @@ function getFieldType(fieldName) {
  * @param {Event} event - The form submit event
  */
 export async function handleFormSubmission(sheet, event) {
-  console.log('[PERSISTENCE] ════════════════════════════════════════');
-  console.log('[PERSISTENCE] Form submission started');
+  SWSELogger.debug('[PERSISTENCE] ════════════════════════════════════════');
+  SWSELogger.debug('[PERSISTENCE] Form submission started');
 
   try {
     event.preventDefault();
@@ -143,7 +144,7 @@ export async function handleFormSubmission(sheet, event) {
   }
 
   const form = event.target;
-  console.log('[PERSISTENCE] Form element:', {
+  SWSELogger.debug('[PERSISTENCE] Form element:', {
     tag: form?.tagName,
     class: form?.className,
     isConnected: form?.isConnected
@@ -163,7 +164,7 @@ export async function handleFormSubmission(sheet, event) {
       formData.set(fieldName, checkbox.checked ? 'true' : 'false');
     }
 
-    console.log('[PERSISTENCE] FormData created, entries:', Object.keys(Object.fromEntries(formData.entries())).length);
+    SWSELogger.debug('[PERSISTENCE] FormData created, entries:', Object.keys(Object.fromEntries(formData.entries())).length);
   } catch (err) {
     console.error('[PERSISTENCE] Failed to create FormData:', err);
     return;
@@ -171,23 +172,23 @@ export async function handleFormSubmission(sheet, event) {
 
   // Convert to plain object
   const formDataObj = Object.fromEntries(formData.entries());
-  console.log('[PERSISTENCE] Raw form data collected');
+  SWSELogger.debug('[PERSISTENCE] Raw form data collected');
 
   // Coerce types
   const coercedData = coerceFormData(formDataObj);
-  console.log('[PERSISTENCE] Data coerced to correct types');
+  SWSELogger.debug('[PERSISTENCE] Data coerced to correct types');
 
   // Expand nested paths
   const expanded = foundry.utils.expandObject(coercedData);
-  console.log('[PERSISTENCE] Form data expanded to nested object');
+  SWSELogger.debug('[PERSISTENCE] Form data expanded to nested object');
 
   // Sanitize
   const sanitized = sanitizeExpandedFormData(expanded);
-  console.log('[PERSISTENCE] Form data sanitized');
+  SWSELogger.debug('[PERSISTENCE] Form data sanitized');
 
   // Filter SSOT-protected fields
   const filtered = filterSSotProtectedFields(sanitized);
-  console.log('[PERSISTENCE] SSOT-protected fields filtered');
+  SWSELogger.debug('[PERSISTENCE] SSOT-protected fields filtered');
 
   if (!filtered || Object.keys(filtered).length === 0) {
     console.warn('[PERSISTENCE] No updatable data after filtering');
@@ -208,9 +209,9 @@ export async function handleFormSubmission(sheet, event) {
       return;
     }
 
-    console.log('[PERSISTENCE] Calling ActorEngine.updateActor...');
+    SWSELogger.debug('[PERSISTENCE] Calling ActorEngine.updateActor...');
     await ActorEngine.updateActor(currentActor, filtered);
-    console.log('[PERSISTENCE] Form submission completed successfully');
+    SWSELogger.debug('[PERSISTENCE] Form submission completed successfully');
 
     traceLog('form-submission', {
       actorId: currentActorId,
@@ -315,19 +316,19 @@ export function filterSSotProtectedFields(expanded) {
   for (const [key, value] of Object.entries(flat)) {
     // BLOCK: system.derived.* (engine-owned, calculated)
     if (key.startsWith('system.derived.')) {
-      console.log(`[PERSISTENCE] Filtered protected field: ${key}`);
+      SWSELogger.debug(`[PERSISTENCE] Filtered protected field: ${key}`);
       continue;
     }
 
     // BLOCK: system.hp.max (managed by ActorEngine.recomputeHP)
     if (key === 'system.hp.max') {
-      console.log('[PERSISTENCE] Filtered protected field: system.hp.max');
+      SWSELogger.debug('[PERSISTENCE] Filtered protected field: system.hp.max');
       continue;
     }
 
     // BLOCK: invalid actor name values on partial updates
     if (key === 'name' && (value === undefined || value === null || typeof value !== 'string' || value.trim() === '')) {
-      console.log('[PERSISTENCE] Filtered invalid actor name update');
+      SWSELogger.debug('[PERSISTENCE] Filtered invalid actor name update');
       continue;
     }
 

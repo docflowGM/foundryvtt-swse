@@ -6,6 +6,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { NPCTemplateDataLoader } from "/systems/foundryvtt-swse/scripts/core/npc-template-data-loader.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class NPCTemplateImporterEngine {
   /**
@@ -308,7 +309,7 @@ export class NPCTemplateImporterEngine {
     // Create all items in the actor
     if (items.length > 0) {
       try {
-        await actor.createEmbeddedDocuments('Item', items);  // @mutation-exception: Governance audit/test code
+        await ActorEngine.createEmbeddedDocuments(actor, 'Item', items, { source: 'npc-template-importer' });
         SWSELogger.log(`[NPCTemplateImporterEngine] Added ${items.length} items to ${actor.name}`);
       } catch (err) {
         SWSELogger.warn(`[NPCTemplateImporterEngine] Error adding items to actor:`, err);

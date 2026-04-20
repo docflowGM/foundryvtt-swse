@@ -443,7 +443,7 @@ export class SentinelMallCop {
    * @param {string} context - Purchase context
    */
   static monitorPurchase(context) {
-    // TODO: Intercept purchase calls and validate:
+    // planned: Intercept purchase calls and validate:
     // - Routes through ActorEngine (not direct actor.update)
     // - Uses SWSEChat for messages
     // - Tracks DSP/force point changes

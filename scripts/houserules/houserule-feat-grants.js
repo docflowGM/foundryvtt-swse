@@ -10,7 +10,10 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 /**
  * Mapping of house rule settings to feats/talents they grant
@@ -153,17 +156,12 @@ export class HouseRuleFeatGrants {
     };
 
     try {
-      const packName =
-        type === 'feat'
-          ? 'foundryvtt-swse.feats'
-          : 'foundryvtt-swse.talents';
-      const pack = game.packs.get(packName);
+      const doc = type === 'feat'
+        ? await FeatRegistry.getDocumentById?.(id)
+        : await TalentRegistry.getDocumentById?.(id);
 
-      if (pack) {
-        const doc = await pack.getDocument(id);
-        if (doc) {
-          itemData = doc.toObject();
-        }
+      if (doc) {
+        itemData = doc.toObject();
       }
     } catch (err) {
       SWSELogger.warn(`Could not load ${type} from compendium, using basic data`);
@@ -229,32 +227,17 @@ export class HouseRuleFeatGrants {
    */
   static async _openReplacementDialog(actor, type, rejectedName) {
     try {
-      const packName =
-        type === 'feat'
-          ? 'foundryvtt-swse.feats'
-          : 'foundryvtt-swse.talents';
-      const pack = game.packs.get(packName);
-
-      if (!pack) {
-        ui.notifications.error(
-          `Could not find ${type} compendium`
-        );
-        return;
-      }
-
-      // Get all available items of this type
-      const allItems = await pack.getDocuments();
-      const available = allItems.filter(
+      const entries = type === 'feat' ? (FeatRegistry.getAll?.() || []) : (TalentRegistry.getAll?.() || []);
+      const available = entries.filter(
         (item) =>
           // Exclude the feat that was already offered
           item.name.toLowerCase() !== rejectedName.toLowerCase() &&
-          // Check if actor already has it
           !actor.items.some(
             (i) =>
               i.type === type &&
               i.name.toLowerCase() === item.name.toLowerCase()
           )
-      );
+      ).map((item) => ({ ...item, _id: item.id || item._id }));
 
       // Create dialog for selection
       this._showReplacementSelectionDialog(
@@ -347,18 +330,9 @@ export class HouseRuleFeatGrants {
    */
   static async _grantReplacementFeat(actor, type, itemId) {
     try {
-      const packName =
-        type === 'feat'
-          ? 'foundryvtt-swse.feats'
-          : 'foundryvtt-swse.talents';
-      const pack = game.packs.get(packName);
-
-      if (!pack) {
-        ui.notifications.error(`Could not find ${type} compendium`);
-        return;
-      }
-
-      const item = await pack.getDocument(itemId);
+      const item = type === 'feat'
+        ? await FeatRegistry.getDocumentById?.(itemId)
+        : await TalentRegistry.getDocumentById?.(itemId);
       if (!item) {
         ui.notifications.error(`Could not find ${type}`);
         return;
@@ -394,6 +368,6 @@ export class HouseRuleFeatGrants {
     if (settingName === 'dodgeDefault') return FeatRulesAdapter.dodgeDefaultEnabled();
 
     // Out-of-scope rules (will be routed in Phase 3B)
-    return game.settings.get('foundryvtt-swse', settingName);
+    return HouseRuleService.getSafe(settingName, false);
   }
 }

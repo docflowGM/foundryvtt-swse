@@ -28,6 +28,7 @@ import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveClassModel, getClassTalentTreeLookupKeys } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 export class TalentStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
@@ -72,7 +73,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
       // Load all talent trees
       this._allTrees = Array.from(TalentTreeDB.trees.values());
-      console.log(`[TalentStep] Loaded ${this._allTrees.length} talent trees from database`);
+      SWSELogger.debug(`[TalentStep] Loaded ${this._allTrees.length} talent trees from database`);
 
       // Initialize TalentRegistry (fail-closed if error)
       if (!TalentRegistry.isInitialized?.()) {
@@ -85,11 +86,11 @@ export class TalentStep extends ProgressionStepPlugin {
 
       // Filter for trees available in this context (heroic or class-specific)
       const availableTrees = await this._getAvailableTrees(shell);
-      console.log(`[TalentStep] ${availableTrees.length} trees available for ${this._slotType} slot context`);
+      SWSELogger.debug(`[TalentStep] ${availableTrees.length} trees available for ${this._slotType} slot context`);
 
       // Get suggested trees (pass shell so suggestion engine sees chargen choices)
       this._suggestedTrees = await this._getSuggestedTrees(shell.actor, availableTrees, shell);
-      console.log(`[TalentStep] ${this._suggestedTrees.length} suggested trees for this build`);
+      SWSELogger.debug(`[TalentStep] ${this._suggestedTrees.length} suggested trees for this build`);
 
       // Store available trees for display
       this._allTrees = availableTrees;
@@ -238,7 +239,7 @@ export class TalentStep extends ProgressionStepPlugin {
       if (classModel) {
         // Use canonical class model talent tree IDs (primary source)
         allowedIds = getClassTalentTreeLookupKeys(classModel) || [];
-        console.log(`[TalentStep] Resolved class model "${classModel.name}" with ${allowedIds.length} talent tree access keys`);
+        SWSELogger.debug(`[TalentStep] Resolved class model "${classModel.name}" with ${allowedIds.length} talent tree access keys`);
       }
     }
 
@@ -247,7 +248,7 @@ export class TalentStep extends ProgressionStepPlugin {
       const slot = { slotType: this._slotType, classId: this._classId || null };
       try {
         allowedIds = getAllowedTalentTrees(actor, slot) || [];
-        console.log(`[TalentStep] Fallback to actor authority: ${allowedIds.length} trees allowed`);
+        SWSELogger.debug(`[TalentStep] Fallback to actor authority: ${allowedIds.length} trees allowed`);
       } catch (err) {
         console.warn('[TalentStep] Tree authority lookup failed:', err);
       }
@@ -345,7 +346,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
     // Diagnostic logging (once per tree enter)
     if (talentIds.length > 0) {
-      console.log(
+      SWSELogger.debug(
         `[TalentStep] Tree "${tree.name}" (${tree.id}): ` +
         `${talentIds.length} talent IDs → ${talents.length} resolved ` +
         `${missingIds.length > 0 ? `(${missingIds.length} missing: ${missingIds.join(', ')})` : '(all resolved)'}`
@@ -483,8 +484,8 @@ export class TalentStep extends ProgressionStepPlugin {
     if (this._graphData?.nodes) {
       for (const [nodeId, node] of this._graphData.nodes) {
         const talent = node.talent;
-        const isLegal = await this._isLegal({}, talent);  // TODO: pass actual actor
-        const isOwned = false;  // TODO: check if already owned
+        const isLegal = await this._isLegal({}, talent);  // planned: pass actual actor
+        const isOwned = false;  // planned: check if already owned
         const isSelected = nodeId === this._selectedTalentId;
         const isSuggested = this._suggestedTrees.some(t => t.id === this._selectedTreeId);
 

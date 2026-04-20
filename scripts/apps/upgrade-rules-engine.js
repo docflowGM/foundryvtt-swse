@@ -127,7 +127,7 @@ export class UpgradeRulesEngine {
     // LedgerService.validateFunds() is now the sole credit authority
     // UpgradeRulesEngine handles only slot and restriction logic
 
-    // TODO: Implement upgrade restriction checking when rules are finalized
+    // planned: Implement upgrade restriction checking when rules are finalized
     // This would check things like: weapon type compatibility, armor class compatibility, etc.
 
     return {

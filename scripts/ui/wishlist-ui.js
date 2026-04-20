@@ -5,6 +5,8 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { WishlistEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/WishlistEngine.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 
 export class WishlistUI {
   /**
@@ -169,17 +171,13 @@ export class WishlistUI {
         await WishlistEngine.removeFromWishlist(actor, itemId, itemType);
         ui.notifications.info(`Removed "${itemName}" from wishlist`);
       } else {
-        // Need to find the actual document
-        const pack = itemType === 'feat'
-          ? game.packs.get('foundryvtt-swse.feats')
-          : game.packs.get('foundryvtt-swse.talents');
+        const doc = itemType === 'feat'
+          ? await FeatRegistry.getDocumentById?.(itemId)
+          : await TalentRegistry.getDocumentById?.(itemId);
 
-        if (pack) {
-          const doc = await pack.getDocument(itemId);
-          if (doc) {
-            await WishlistEngine.addToWishlist(actor, doc, itemType);
-            ui.notifications.info(`Added "${doc.name}" to wishlist`);
-          }
+        if (doc) {
+          await WishlistEngine.addToWishlist(actor, doc, itemType);
+          ui.notifications.info(`Added "${doc.name}" to wishlist`);
         }
       }
       menu.remove();

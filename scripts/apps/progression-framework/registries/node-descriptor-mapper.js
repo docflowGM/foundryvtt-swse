@@ -25,6 +25,10 @@ import { GeneralTalentStep, ClassTalentStep } from '../steps/talent-step.js';
 import { LanguageStep } from '../steps/language-step.js';
 import { SummaryStep } from '../steps/summary-step.js';
 import { ForcePowerStep } from '../steps/force-power-step.js';
+import { ForceSecretStep } from '../steps/force-secret-step.js';
+import { ForceTechniqueStep } from '../steps/force-technique-step.js';
+import { StarshipManeuverStep } from '../steps/starship-maneuver-step.js';
+import { FinalDroidConfigurationStep } from '../steps/final-droid-configuration-step.js';
 
 /**
  * Map of nodeId → step plugin class.
@@ -45,10 +49,10 @@ const NODE_PLUGIN_MAP = Object.freeze({
   'class-talent': ClassTalentStep,
   languages: LanguageStep,
   'force-powers': ForcePowerStep,
-  'force-secrets': null, // TODO: ForceSecretStep
-  'force-techniques': null, // TODO: ForceTechniqueStep
-  'starship-maneuvers': null, // TODO: StarshipManeuverStep
-  'final-droid-configuration': null, // Lazy-loaded by ConditionalStepResolver
+  'force-secrets': ForceSecretStep,
+  'force-techniques': ForceTechniqueStep,
+  'starship-maneuvers': StarshipManeuverStep,
+  'final-droid-configuration': FinalDroidConfigurationStep,
   summary: SummaryStep,
 });
 

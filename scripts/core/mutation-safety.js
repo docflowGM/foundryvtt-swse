@@ -9,6 +9,7 @@
  */
 
 import { log, isGameMaster } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const FLAG_MUTATION_LOCK = 'mutationLocked';
@@ -112,12 +113,9 @@ export async function restoreActorFromSnapshot(actor) {
       return false;
     }
 
-    // Restore from snapshot
-    const updates = foundry.utils.deepClone(snapshot.data);
-    delete updates._id;
-    delete updates.name;
-
-    await actor.update(updates, { [SYSTEM_ID]: { skipHooks: true } });
+    await ActorEngine.restoreFromSnapshot(actor, foundry.utils.deepClone(snapshot.data), {
+      meta: { guardKey: 'mutation-safety-restore' }
+    });
     await actor.unsetFlag(SYSTEM_ID, FLAG_SNAPSHOT);
 
     log.info(`Actor ${actor.name} restored from snapshot (operation: ${snapshot.operation})`);

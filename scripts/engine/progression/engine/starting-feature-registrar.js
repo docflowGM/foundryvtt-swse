@@ -8,6 +8,7 @@
 
 import { FeatureIndex } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/feature-index.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 
 export const StartingFeatureRegistrar = {
 
@@ -134,13 +135,7 @@ export const StartingFeatureRegistrar = {
      */
     async registerAllClasses() {
         try {
-            const classPack = game.packs.get('foundryvtt-swse.classes');
-            if (!classPack) {
-                SWSELogger.warn('Classes compendium not found');
-                return;
-            }
-
-            const classes = await classPack.getDocuments();
+            const classes = await ClassesRegistry.getAllDocuments();
             let registered = 0;
 
             for (const classDoc of classes) {

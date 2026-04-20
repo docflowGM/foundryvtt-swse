@@ -49,8 +49,17 @@ export class LevelupShell extends ProgressionShell {
    * @private
    * @returns {string} subtype: 'beast', 'nonheroic', or 'actor'
    */
-  _getProgressionSubtype() {
+  _getProgressionSubtype(mode, options = {}) {
+    if (options?.subtype) {
+      return options.subtype;
+    }
+
     if (!this.actor) return 'actor';
+
+    const isDroidProfile = this.actor.system?.isDroid === true || this.actor.type === 'droid';
+    if (isDroidProfile) {
+      return 'droid';
+    }
 
     // Phase 2.8: Detect Beast profile (highest priority)
     const isBeastProfile = this.actor.flags?.swse?.beastData ||

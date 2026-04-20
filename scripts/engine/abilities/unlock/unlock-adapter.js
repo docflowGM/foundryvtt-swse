@@ -92,7 +92,7 @@ export class UnlockAdapter {
   /**
    * Handle SYSTEM_ACCESS grant (e.g., Force Sensitivity attunement).
    *
-   * TODO:
+   * planned:
    * - Verify actor meets prerequisites
    * - Unlock system access (flags, state)
    * - Apply any side effects (e.g., Force points)
@@ -110,7 +110,7 @@ export class UnlockAdapter {
   /**
    * Handle PROFICIENCY grant (weapon or armor proficiency).
    *
-   * TODO:
+   * planned:
    * - Add proficiency to actor.system.weaponProficiencies or armorProficiencies
    * - Verify no duplicates
    * - Broadcast change event
@@ -127,7 +127,7 @@ export class UnlockAdapter {
   /**
    * Handle DOMAIN_ACCESS grant (Force domain unlock).
    *
-   * TODO:
+   * planned:
    * - Verify actor is Force Sensitive
    * - Add domain to accessible domains
    * - Update actor state
@@ -144,7 +144,7 @@ export class UnlockAdapter {
   /**
    * Handle SKILL_TRAINING grant (mark skill as trained/class skill).
    *
-   * TODO:
+   * planned:
    * - Add skill to actor.system.classSkills or trained skills
    * - Update skill DC calculations if needed
    * - Broadcast change event

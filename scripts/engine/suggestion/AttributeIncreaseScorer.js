@@ -9,6 +9,7 @@
  */
 
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { AttributeIncreaseHandler } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/attribute-increase-handler.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
@@ -253,11 +254,11 @@ async function _findUnlockedFeats(actor, hypotheticalActor) {
   const unlockedFeats = [];
 
   try {
-    // Get all available feats from compendium
-    const featPack = game.packs.get('foundryvtt-swse.feats');
-    if (!featPack) return [];
-
-    const allFeats = await featPack.getDocuments();
+    const allFeats = [];
+    for (const entry of (FeatRegistry.getAll?.() || [])) {
+      const featDoc = await FeatRegistry.getDocumentById?.(entry.id);
+      if (featDoc) allFeats.push(featDoc);
+    }
 
     for (const feat of allFeats) {
       // Check if feat is already owned

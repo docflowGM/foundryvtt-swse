@@ -8,6 +8,12 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 import { getCache } from "/systems/foundryvtt-swse/scripts/core/cache-manager.js";
 import { timed } from "/systems/foundryvtt-swse/scripts/utils/performance-utils.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
+import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import SkillRegistry from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
 
 export class DataPreloader {
   constructor() {
@@ -140,22 +146,21 @@ export class DataPreloader {
    * @private
    */
   async _preloadClasses() {
-    const pack = game.packs.get('foundryvtt-swse.classes');
-    if (!pack) {return;}
+    if (!ClassesRegistry.isInitialized()) {return;}
 
-    const index = await pack.getIndex();
+    const index = ClassesRegistry.getAll();
     this._classesCache.set('_index', index);
 
     // Preload actual documents for small packs
-    if (index.size <= 20) {
+    if (index.length <= 20) {
       try {
-        const documents = await pack.getDocuments();
+        const documents = await ClassesRegistry.getAllDocuments();
         for (const doc of documents) {
           this._classesCache.set(doc.id, doc);
+          this._classesCache.set(doc.name.toLowerCase(), doc);
         }
       } catch (error) {
-        // Fall back to index-only if document loading fails
-        SWSELogger.warn('Failed to preload class documents, using index only:', error.message);
+        SWSELogger.warn('Failed to preload class documents from ClassesRegistry, using index only:', error.message);
       }
     }
   }
@@ -164,201 +169,185 @@ export class DataPreloader {
    * Preload feats
    * @private
    */
-  async _preloadFeats() {
-    const pack = game.packs.get('foundryvtt-swse.feats');
-    if (!pack) {return;}
-
-    const index = await pack.getIndex();
-    this._featsCache.set('_index', index);
-
-    // Cache the index for searching
-    const byName = new Map();
-    for (const entry of index) {
-      byName.set(entry.name.toLowerCase(), entry);
-    }
-    this._featsCache.set('_byName', byName);
+  
+async _preloadFeats() {
+  await FeatRegistry.initialize?.();
+  const entries = FeatRegistry.getAll?.() || [];
+  this._featsCache.set('_index', entries);
+  const byName = new Map();
+  for (const entry of entries) {
+    byName.set(String(entry.name || '').toLowerCase(), entry);
   }
+  this._featsCache.set('_byName', byName);
+}
 
   /**
    * Preload talents
    * @private
    */
-  async _preloadTalents() {
-    const pack = game.packs.get('foundryvtt-swse.talents');
-    if (!pack) {return;}
-
-    const index = await pack.getIndex();
-    this._talentsCache.set('_index', index);
-
-    // Group by talent tree for quick filtering
-    const byTree = new Map();
-    for (const entry of index) {
-      const tree = entry.system?.tree || 'Unknown';
-      if (!byTree.has(tree)) {
-        byTree.set(tree, []);
-      }
-      byTree.get(tree).push(entry);
-    }
-    this._talentsCache.set('_byTree', byTree);
+  
+async _preloadTalents() {
+  await TalentRegistry.initialize?.();
+  const entries = TalentRegistry.getAll?.() || [];
+  this._talentsCache.set('_index', entries);
+  const byTree = new Map();
+  for (const entry of entries) {
+    const tree = entry.talentTree || entry.category || 'Unknown';
+    if (!byTree.has(tree)) byTree.set(tree, []);
+    byTree.get(tree).push(entry);
   }
+  this._talentsCache.set('_byTree', byTree);
+}
 
   /**
    * Preload force powers
    * @private
    */
-  async _preloadForcePowers() {
-    const pack = game.packs.get('foundryvtt-swse.forcepowers');
-    if (!pack) {return;}
-
-    const index = await pack.getIndex();
-    this._forcePowersCache.set('_index', index);
-
-    // Cache for quick access
-    const byName = new Map();
-    for (const entry of index) {
-      byName.set(entry.name.toLowerCase(), entry);
-    }
-    this._forcePowersCache.set('_byName', byName);
+  
+async _preloadForcePowers() {
+  await ForceRegistry.initialize?.();
+  const entries = (ForceRegistry.getAll?.() || []).filter((entry) => entry.type === 'power');
+  this._forcePowersCache.set('_index', entries);
+  const byName = new Map();
+  for (const entry of entries) {
+    byName.set(String(entry.name || '').toLowerCase(), entry);
   }
+  this._forcePowersCache.set('_byName', byName);
+}
 
   /**
    * Preload species
    * @private
    */
-  async _preloadSpecies() {
-    const pack = game.packs.get('foundryvtt-swse.species');
-    if (!pack) {return;}
-
-    const index = await pack.getIndex();
-    this._speciesCache.set('_index', index);
-
-    // Preload all species documents (usually small)
-    try {
-      const documents = await pack.getDocuments();
-      for (const doc of documents) {
-        this._speciesCache.set(doc.id, doc);
-        this._speciesCache.set(doc.name.toLowerCase(), doc);
-      }
-    } catch (error) {
-      // Fall back to index-only if document loading fails
-      SWSELogger.warn('Failed to preload species documents, using index only:', error.message);
-      const byName = new Map();
-      for (const entry of index) {
-        byName.set(entry.name.toLowerCase(), entry);
-      }
-      this._speciesCache.set('_byName', byName);
-    }
+  
+async _preloadSpecies() {
+  await SpeciesRegistry.initialize?.();
+  const entries = SpeciesRegistry.getAll?.() || [];
+  this._speciesCache.set('_index', entries);
+  const byName = new Map();
+  for (const entry of entries) {
+    byName.set(String(entry.name || '').toLowerCase(), entry);
+    this._speciesCache.set(entry.id, entry);
   }
+  this._speciesCache.set('_byName', byName);
+}
 
   /**
    * Preload skills
    * @private
    */
-  async _preloadSkills() {
-    const pack = game.packs.get('foundryvtt-swse.skills');
-    if (!pack) {return;}
-
-    const index = await pack.getIndex();
-    this._skillsCache.set('_index', index);
-
-    // Cache by name for quick lookup
-    const byName = new Map();
-    for (const entry of index) {
-      byName.set(entry.name.toLowerCase(), entry);
-    }
-    this._skillsCache.set('_byName', byName);
+  
+async _preloadSkills() {
+  await SkillRegistry.build();
+  const entries = SkillRegistry.list?.() || [];
+  this._skillsCache.set('_index', entries);
+  const byName = new Map();
+  for (const entry of entries) {
+    byName.set(String(entry.name || '').toLowerCase(), entry);
+    this._skillsCache.set(entry.id, entry);
   }
+  this._skillsCache.set('_byName', byName);
+}
 
   /**
    * Get cached class by ID or name
    */
   async getClass(idOrName) {
-    return this._getCached(this._classesCache, 'foundryvtt-swse.classes', idOrName);
+    const model = ClassesRegistry.resolveModel(idOrName);
+    if (!model?.sourceId) {return null;}
+
+    const cached = this._classesCache.get(model.sourceId) || this._classesCache.get(String(idOrName).toLowerCase());
+    if (cached) {return cached;}
+
+    const doc = await ClassesRegistry.getDocumentBySourceId(model.sourceId);
+    if (doc) {
+      this._classesCache.set(model.sourceId, doc);
+      this._classesCache.set(doc.name.toLowerCase(), doc);
+    }
+    return doc;
   }
 
   /**
    * Get cached feat by ID or name
    */
-  async getFeat(idOrName) {
-    return this._getCached(this._featsCache, 'foundryvtt-swse.feats', idOrName);
+  
+async getFeat(idOrName) {
+  const entry = FeatRegistry.resolveEntry?.(idOrName) || null;
+  if (!entry) return null;
+  const cached = this._featsCache.get(entry.id) || this._featsCache.get(String(entry.name || '').toLowerCase());
+  if (cached) return cached;
+  const doc = await FeatRegistry.getDocumentById?.(entry.id);
+  if (doc) {
+    this._featsCache.set(entry.id, doc);
+    this._featsCache.set(doc.name.toLowerCase(), doc);
   }
+  return doc;
+}
 
   /**
    * Get cached talent by ID or name
    */
-  async getTalent(idOrName) {
-    return this._getCached(this._talentsCache, 'foundryvtt-swse.talents', idOrName);
+  
+async getTalent(idOrName) {
+  const entry = TalentRegistry.resolveEntry?.(idOrName) || null;
+  if (!entry) return null;
+  const cached = this._talentsCache.get(entry.id) || this._talentsCache.get(String(entry.name || '').toLowerCase());
+  if (cached) return cached;
+  const doc = await TalentRegistry.getDocumentById?.(entry.id);
+  if (doc) {
+    this._talentsCache.set(entry.id, doc);
+    this._talentsCache.set(doc.name.toLowerCase(), doc);
   }
+  return doc;
+}
 
   /**
    * Get cached force power by ID or name
    */
-  async getForcePower(idOrName) {
-    return this._getCached(this._forcePowersCache, 'foundryvtt-swse.forcepowers', idOrName);
+  
+async getForcePower(idOrName) {
+  const entry = ForceRegistry.resolveEntry?.(idOrName, 'power') || null;
+  if (!entry) return null;
+  const cached = this._forcePowersCache.get(entry.id) || this._forcePowersCache.get(String(entry.name || '').toLowerCase());
+  if (cached) return cached;
+  const doc = await ForceRegistry.getDocumentById?.(entry.id);
+  if (doc) {
+    this._forcePowersCache.set(entry.id, doc);
+    this._forcePowersCache.set(doc.name.toLowerCase(), doc);
   }
+  return doc;
+}
 
   /**
    * Get cached species by ID or name
    */
-  async getSpecies(idOrName) {
-    return this._getCached(this._speciesCache, 'foundryvtt-swse.species', idOrName);
+  
+async getSpecies(idOrName) {
+  const entry = SpeciesRegistry.resolveEntry?.(idOrName) || null;
+  if (!entry) return null;
+  const cached = this._speciesCache.get(entry.id) || this._speciesCache.get(String(entry.name || '').toLowerCase());
+  if (cached) return cached;
+  const doc = await SpeciesRegistry.getDocumentById?.(entry.id);
+  if (doc) {
+    this._speciesCache.set(entry.id, doc);
+    this._speciesCache.set(doc.name.toLowerCase(), doc);
   }
+  return doc;
+}
 
   /**
    * Get all talents by tree
    */
-  async getTalentsByTree(treeName) {
-    const byTree = this._talentsCache.get('_byTree');
-    if (byTree) {
-      return byTree.get(treeName) || [];
-    }
-
-    // Fallback to pack lookup
-    const pack = game.packs.get('foundryvtt-swse.talents');
-    if (!pack) {return [];}
-
-    const index = await pack.getIndex();
-    return Array.from(index).filter(e => e.system?.tree === treeName);
+  
+async getTalentsByTree(treeName) {
+  const byTree = this._talentsCache.get('_byTree');
+  if (byTree) {
+    return byTree.get(treeName) || [];
   }
+  await TalentRegistry.initialize?.();
+  return (TalentRegistry.getAll?.() || []).filter((entry) => (entry.talentTree || entry.category) === treeName);
+}
 
-  /**
-   * Generic cached getter
-   * @private
-   */
-  async _getCached(cache, packId, idOrName) {
-    // Check direct cache
-    if (cache.has(idOrName)) {
-      return cache.get(idOrName);
-    }
-
-    // Check by lowercase name
-    const lowerName = typeof idOrName === 'string' ? idOrName.toLowerCase() : null;
-    if (lowerName) {
-      const byName = cache.get('_byName');
-      if (byName && byName.has(lowerName)) {
-        const entry = byName.get(lowerName);
-        const pack = game.packs.get(packId);
-        const doc = await pack.getDocument(entry._id);
-        cache.set(entry._id, doc);
-        return doc;
-      }
-
-      if (cache.has(lowerName)) {
-        return cache.get(lowerName);
-      }
-    }
-
-    // Fallback to pack lookup
-    const pack = game.packs.get(packId);
-    if (!pack) {return null;}
-
-    const doc = await pack.getDocument(idOrName);
-    if (doc) {
-      cache.set(idOrName, doc);
-    }
-
-    return doc;
-  }
 
   /**
    * Clear all caches

@@ -8,6 +8,7 @@
 
 import { FollowerStepBase } from './follower-step-base.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export class FollowerBackgroundStep extends FollowerStepBase {
   constructor(descriptor) {
@@ -20,7 +21,7 @@ export class FollowerBackgroundStep extends FollowerStepBase {
   async onStepEnter(shell) {
     try {
       // Check house rule setting for follower backgrounds
-      const enableFollowerBackgrounds = game.settings.get('foundryvtt-swse', 'enableFollowerBackgrounds') ?? false;
+      const enableFollowerBackgrounds = HouseRuleService.isEnabled('enableFollowerBackgrounds');
       this._isEnabled = enableFollowerBackgrounds;
 
       swseLogger.log('[FollowerBackgroundStep] Entered, enabled:', this._isEnabled);

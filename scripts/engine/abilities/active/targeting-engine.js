@@ -244,7 +244,7 @@ export class TargetingEngine {
 
     return targets.filter(target => {
       if (type === 'ALLY') {
-        // TODO: Check actual alliance via faction/party system
+        // planned: Check actual alliance via faction/party system
         // For now: anything not explicitly hostile
         return !this._isHostile(actor, target);
       }
@@ -259,7 +259,7 @@ export class TargetingEngine {
 
   /**
    * Determine if two actors are hostile.
-   * TODO: Integrate with faction/party system.
+   * planned: Integrate with faction/party system.
    * @private
    */
   static _isHostile(actor1, actor2) {
@@ -293,7 +293,7 @@ export class TargetingEngine {
     if (type === 'FIXED') {
       count = selection.value ?? targets.length;
     } else if (type === 'FORMULA') {
-      // TODO: Evaluate formula (e.g., "CHA_MOD") to get count
+      // planned: Evaluate formula (e.g., "CHA_MOD") to get count
       // For now, just use the full list
       count = targets.length;
     }

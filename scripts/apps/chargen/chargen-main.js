@@ -69,6 +69,7 @@ import { renderTalentTreeGraph, getTalentsInTree } from "/systems/foundryvtt-sws
 import { applyProgressionPatch } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/apply-progression-patch.js";
 import { buildNamePatch } from "/systems/foundryvtt-swse/scripts/apps/chargen/steps/name-step.js";
 import { confirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
+import { launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 
 /**
  * Character Generator — Multi-step Wizard
@@ -87,9 +88,19 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    * @returns {ProgressionShell} The character progression shell instance
    */
   static async open(actor, options = {}) {
-    // NEW SHELL IS NOW THE ONLY ACTIVE PATH
+    if (!actor) {
+      return launchNewProgression({
+        actorType: options.actorType || 'character',
+        subtype: options.subtype || null,
+        isDroid: options.isDroid === true || options.subtype === 'droid',
+        name: options.name || null,
+        system: options.system || {},
+        currentStep: options.currentStep || null,
+      });
+    }
+
     const { ChargenShell } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/chargen-shell.js');
-    return ChargenShell.open(actor);
+    return ChargenShell.open(actor, options);
   }
 
   /**

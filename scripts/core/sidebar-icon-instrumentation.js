@@ -1,3 +1,4 @@
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 /**
  * TEMPORARY SIDEBAR ICON INSTRUMENTATION
  *
@@ -198,7 +199,7 @@ export function initSidebarInstrumentation() {
   Hooks.once('ready', () => {
     try {
       debugLog('🔍 Checking sentinelSheetGuardrails setting...');
-      const setting = game.settings.get('foundryvtt-swse', 'sentinelSheetGuardrails');
+      const setting = SettingsHelper.getBoolean('sentinelSheetGuardrails', false);
       debugLog('✓ sentinelSheetGuardrails setting found', { value: setting });
     } catch (err) {
       debugLog('❌ ERROR reading sentinelSheetGuardrails', {

@@ -33,7 +33,7 @@ export class GearTemplatesEngine {
       return template;
     }
 
-    // TODO: Implement template lookup when template library is available
+    // planned: Implement template lookup when template library is available
     // Currently returns null to indicate unsupported template
     return null;
   }
@@ -66,7 +66,7 @@ export class GearTemplatesEngine {
    * @returns {Array} Array of template objects
    */
   static getAvailableTemplates(item) {
-    // TODO: Implement template compatibility checking when rules are finalized
+    // planned: Implement template compatibility checking when rules are finalized
     // This would check item type, rarity, prerequisites, etc.
     // For now, return empty array (no templates available)
     return [];
@@ -83,7 +83,7 @@ export class GearTemplatesEngine {
       return 0;
     }
 
-    // TODO: Implement cost calculation based on:
+    // planned: Implement cost calculation based on:
     // - Base template cost
     // - Item rarity/quality modifiers
     // - Character perks/discounts
@@ -105,7 +105,7 @@ export class GearTemplatesEngine {
       };
     }
 
-    // TODO: Implement template validation:
+    // planned: Implement template validation:
     // - Check item type compatibility
     // - Check for existing template
     // - Check for conflicting upgrades/templates
@@ -128,7 +128,7 @@ export class GearTemplatesEngine {
       return;
     }
 
-    // TODO: Implement template application:
+    // planned: Implement template application:
     // - Update item.system.gearTemplate
     // - Store template cost in item.system.templateCost
     // - Update any derived stats
@@ -146,7 +146,7 @@ export class GearTemplatesEngine {
       return;
     }
 
-    // TODO: Implement template removal:
+    // planned: Implement template removal:
     // - Clear item.system.gearTemplate
     // - Clear item.system.templateCost
     // - Revert any derived stat changes

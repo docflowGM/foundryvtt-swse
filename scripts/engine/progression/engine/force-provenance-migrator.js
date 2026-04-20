@@ -13,6 +13,7 @@
 
 import { ForceProvenanceEngine } from './force-provenance-engine.js';
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class ForceProvenanceMigrator {
   /**
@@ -182,13 +183,9 @@ export class ForceProvenanceMigrator {
           'system.provenance': u['system.provenance']
         }));
 
-        // Update items on actor
-        for (const update of powerUpdates) {
-          const power = actor.items.get(update._id);
-          if (power) {
-            await power.update(update);
-          }
-        }
+        await ActorEngine.updateOwnedItems(actor, powerUpdates, {
+          meta: { guardKey: 'force-provenance-migrator' }
+        });
 
         swseLogger.log('[FORCE PROVENANCE] Migration complete', {
           actor: actor.name,
@@ -204,9 +201,9 @@ export class ForceProvenanceMigrator {
     // Update actor with legacy issues
     if (issues.length > 0) {
       try {
-        await actor.update({
+        await ActorEngine.updateActor(actor, {
           'system.forceGrantLedger.legacy.issues': issues
-        });
+        }, { source: 'ForceProvenanceMigrator.storeLegacyIssues' });
       } catch (e) {
         swseLogger.warn('[FORCE PROVENANCE] Failed to store legacy issues', e);
       }

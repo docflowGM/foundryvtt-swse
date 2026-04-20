@@ -5,6 +5,7 @@
 
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { ClassRelationshipRegistry } from "/systems/foundryvtt-swse/scripts/data/class-relationship-registry.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export function registerHouseRuleSettings() {
     // Follower Backgrounds House Rule
@@ -67,7 +68,7 @@ export class ClassTreeAccessForm extends BaseSWSEAppV2 {
 
     async _prepareContext(options) {
         const context = await super._prepareContext(options);
-        const overrides = game.settings.get('foundryvtt-swse', 'classTreeOverrides');
+        const overrides = HouseRuleService.getObject('classTreeOverrides', {});
         const allTrees = this._getAvailableTrees();
         const selectedTrees = overrides || {};
 
@@ -120,7 +121,7 @@ export class ClassTreeAccessForm extends BaseSWSEAppV2 {
             }
         }
 
-        await game.settings.set('foundryvtt-swse', 'classTreeOverrides', overrides);
+        await HouseRuleService.set('classTreeOverrides', overrides);
         this.close();
     }
 
@@ -144,7 +145,7 @@ export class ClassTreeAccessForm extends BaseSWSEAppV2 {
  * Helper: Get all class → tree overrides
  */
 export function getClassTreeOverrides() {
-    return game.settings.get('foundryvtt-swse', 'classTreeOverrides') || {};
+    return HouseRuleService.getObject('classTreeOverrides', {});
 }
 
 /**
@@ -157,7 +158,7 @@ export async function addClassTreeAccess(classId, treeId) {
     }
     if (!overrides[classId].includes(treeId)) {
         overrides[classId].push(treeId);
-        await game.settings.set('foundryvtt-swse', 'classTreeOverrides', overrides);
+        await HouseRuleService.set('classTreeOverrides', overrides);
     }
 }
 
@@ -171,7 +172,7 @@ export async function removeClassTreeAccess(classId, treeId) {
         if (overrides[classId].length === 0) {
             delete overrides[classId];
         }
-        await game.settings.set('foundryvtt-swse', 'classTreeOverrides', overrides);
+        await HouseRuleService.set('classTreeOverrides', overrides);
     }
 }
 
@@ -181,12 +182,12 @@ export async function removeClassTreeAccess(classId, treeId) {
 export async function clearClassTreeOverrides(classId) {
     const overrides = getClassTreeOverrides();
     delete overrides[classId];
-    await game.settings.set('foundryvtt-swse', 'classTreeOverrides', overrides);
+    await HouseRuleService.set('classTreeOverrides', overrides);
 }
 
 /**
  * Helper: Check if Dark Side prestige rule is enabled
  */
 export function isDarkSidePrestigeRuleEnabled() {
-    return game.settings.get('foundryvtt-swse', 'enableDarkSideTreeAccess') === true;
+    return HouseRuleService.isEnabled('enableDarkSideTreeAccess');
 }

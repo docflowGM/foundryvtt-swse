@@ -13,6 +13,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export class GovernanceSystem {
 
@@ -112,7 +113,7 @@ export class GovernanceSystem {
     }
 
     // Store in world settings
-    game.settings.set('foundryvtt-swse', 'governanceVisibilityMode', mode);
+    HouseRuleService.set('governanceVisibilityMode', mode);
 
     SWSELogger.log(`[GOVERNANCE] World visibility mode: ${mode}`, {
       mode,
@@ -127,7 +128,7 @@ export class GovernanceSystem {
    * @static
    */
   static getVisibilityMode() {
-    return game.settings.get('foundryvtt-swse', 'governanceVisibilityMode') || this.VISIBILITY_MODES.BANNER;
+    return HouseRuleService.getString('governanceVisibilityMode', this.VISIBILITY_MODES.BANNER);
   }
 
   /**

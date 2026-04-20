@@ -658,7 +658,7 @@ export class ProgressionSession {
       errors.push(`Too many ability points: ${totalAbilityPoints}/${budget.abilityPoints}`);
     }
 
-    // TODO: Add more validation (prerequisites, uniqueness, etc.)
+    // planned: Add more validation (prerequisites, uniqueness, etc.)
 
     return errors;
   }

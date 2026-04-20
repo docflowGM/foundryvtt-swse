@@ -373,13 +373,13 @@ export class Phase3TrendAudit {
       ],
 
       beforeMentorIntegration: [
-        { item: 'Apply recommended consolidations', status: 'TODO' },
-        { item: 'Update BuildAnalysisEngine with consolidated signals', status: 'TODO' },
-        { item: 'Create MentorAdvisoryBridge interface', status: 'TODO' },
-        { item: 'Map signals to mentor reason atoms', status: 'TODO' },
-        { item: 'Map severity to mentor intensity', status: 'TODO' },
-        { item: 'Test on sample actors', status: 'TODO' },
-        { item: 'Documentation complete', status: 'TODO' }
+        { item: 'Apply recommended consolidations', status: 'planned' },
+        { item: 'Update BuildAnalysisEngine with consolidated signals', status: 'planned' },
+        { item: 'Create MentorAdvisoryBridge interface', status: 'planned' },
+        { item: 'Map signals to mentor reason atoms', status: 'planned' },
+        { item: 'Map severity to mentor intensity', status: 'planned' },
+        { item: 'Test on sample actors', status: 'planned' },
+        { item: 'Documentation complete', status: 'planned' }
       ]
     }
   };

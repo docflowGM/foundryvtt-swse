@@ -1,3 +1,4 @@
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 /**
  * Epic override (Level 21+) — policy setting
  *
@@ -17,5 +18,5 @@ export function registerEpicOverrideSetting() {
 }
 
 export function isEpicOverrideEnabled() {
-  return game.settings.get('foundryvtt-swse', 'epicOverride') === true;
+  return HouseRuleService.isEnabled('epicOverride');
 }

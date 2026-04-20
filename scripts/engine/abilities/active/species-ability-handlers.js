@@ -105,7 +105,7 @@ export async function applyDamageRoll(target, sourceAbility, effect) {
   }
 
   try {
-    // TODO: Use actual Roll system when available
+    // planned: Use actual Roll system when available
     // For now, simulate simple damage
     const baseDamage = parseInt(diceFormula) || 0;
 

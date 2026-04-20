@@ -16,6 +16,12 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
 import { slugify } from "/systems/foundryvtt-swse/scripts/utils/stable-id.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
+import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
+import { compendiumLoader } from "/systems/foundryvtt-swse/scripts/utils/compendium-loader.js";
 
 export class TemplateIdMapper {
   /**
@@ -89,33 +95,13 @@ export class TemplateIdMapper {
     if (!speciesName) {return null;}
 
     try {
-      // Species uses slug format: species-lowercase-name
-      const slugId = `species-${speciesName.toLowerCase().replace(/\s+/g, '-')}`;
-
-      // Verify it exists by trying to get the document
-      const speciesPack = game.packs.get('foundryvtt-swse.species');
-      if (!speciesPack) {
-        throw new Error('Species compendium not found');
-      }
-
-      const doc = await speciesPack.getDocument(slugId).catch(() => null);
-      if (doc) {
-        swseLogger.log(`[TEMPLATE-MAPPER] Species found: ${speciesName} → ${slugId}`);
-        return slugId;
-      }
-
-      // If slug format doesn't work, search by name
-      const index = await speciesPack.getIndex();
-      const speciesEntry = Array.from(index).find(e =>
-        e.name.toLowerCase() === speciesName.toLowerCase()
-      );
-
-      if (!speciesEntry) {
+      await SpeciesRegistry.initialize?.();
+      const entry = SpeciesRegistry.getByName(speciesName) || SpeciesRegistry.getById(speciesName);
+      if (!entry?.id) {
         throw new Error(`Species not found: "${speciesName}"`);
       }
-
-      swseLogger.log(`[TEMPLATE-MAPPER] Species found by name: ${speciesName} → ${speciesEntry._id}`);
-      return speciesEntry._id;
+      swseLogger.log(`[TEMPLATE-MAPPER] Species found via SpeciesRegistry: ${speciesName} → ${entry.id}`);
+      return entry.id;
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding species "${speciesName}":`, err);
       throw err;
@@ -161,43 +147,16 @@ export class TemplateIdMapper {
     if (!className) {return null;}
 
     try {
-      // Import ClassesDB
-      const { ClassesDB } = await import("/systems/foundryvtt-swse/scripts/data/classes-db.js");
+      const classData = ClassesRegistry.getByName(className)
+        || ClassesRegistry.search(c => c.name?.toLowerCase() === className.toLowerCase())[0]
+        || null;
 
-      // Try exact match first
-      const classData = ClassesDB.getByName(className);
-      if (classData) {
-        swseLogger.log(`[TEMPLATE-MAPPER] Class found: ${className} → ${classData._id}`);
-        return classData._id;
-      }
-
-      // Try case-insensitive search
-      const classMatch = Object.values(ClassesDB.data || {}).find(c =>
-        c.name.toLowerCase() === className.toLowerCase()
-      );
-
-      if (classMatch) {
-        swseLogger.log(`[TEMPLATE-MAPPER] Class found (case-insensitive): ${className} → ${classMatch._id}`);
-        return classMatch._id;
-      }
-
-      // Fallback: search compendium directly
-      const classPack = game.packs.get('foundryvtt-swse.classes');
-      if (!classPack) {
-        throw new Error('Classes compendium not found');
-      }
-
-      const index = await classPack.getIndex();
-      const classEntry = Array.from(index).find(e =>
-        e.name.toLowerCase() === className.toLowerCase()
-      );
-
-      if (!classEntry) {
+      if (!classData?.sourceId) {
         throw new Error(`Class not found: "${className}"`);
       }
 
-      swseLogger.log(`[TEMPLATE-MAPPER] Class found via compendium: ${className} → ${classEntry._id}`);
-      return classEntry._id;
+      swseLogger.log(`[TEMPLATE-MAPPER] Class found via ClassesRegistry: ${className} → ${classData.sourceId}`);
+      return classData.sourceId;
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding class "${className}":`, err);
       throw err;
@@ -213,31 +172,13 @@ export class TemplateIdMapper {
     if (!featName) {return null;}
 
     try {
-      // Try FeatureIndex first (SSOT for indexed features)
-      const { FeatureIndex } = await import("/systems/foundryvtt-swse/scripts/engine/progression/engine/feature-index.js");
-      const feat = FeatureIndex.getFeat?.(featName);
-      if (feat) {
-        swseLogger.log(`[TEMPLATE-MAPPER] Feat found in FeatureIndex: ${featName} → ${feat._id}`);
-        return feat._id;
-      }
-
-      // Fallback: search compendium
-      const featPack = game.packs.get('foundryvtt-swse.feats');
-      if (!featPack) {
-        throw new Error('Feats compendium not found');
-      }
-
-      const index = await featPack.getIndex();
-      const featEntry = Array.from(index).find(e =>
-        e.name.toLowerCase() === featName.toLowerCase()
-      );
-
-      if (!featEntry) {
+      const feat = FeatRegistry.getByName?.(featName) || FeatRegistry.getById?.(featName);
+      if (!feat?.id) {
         throw new Error(`Feat not found: "${featName}"`);
       }
 
-      swseLogger.log(`[TEMPLATE-MAPPER] Feat found in compendium: ${featName} → ${featEntry._id}`);
-      return featEntry._id;
+      swseLogger.log(`[TEMPLATE-MAPPER] Feat found via FeatRegistry: ${featName} → ${feat.id}`);
+      return feat.id;
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding feat "${featName}":`, err);
       throw err;
@@ -253,43 +194,13 @@ export class TemplateIdMapper {
     if (!talentName) {return null;}
 
     try {
-      // Import TalentDB
-      const { TalentDB } = await import("/systems/foundryvtt-swse/scripts/data/talent-db.js");
-
-      // Try exact match first
-      const talent = TalentDB.getByName(talentName);
-      if (talent) {
-        swseLogger.log(`[TEMPLATE-MAPPER] Talent found: ${talentName} → ${talent._id}`);
-        return talent._id;
-      }
-
-      // Try case-insensitive search
-      const talentMatch = Object.values(TalentDB.data || {}).find(t =>
-        t.name.toLowerCase() === talentName.toLowerCase()
-      );
-
-      if (talentMatch) {
-        swseLogger.log(`[TEMPLATE-MAPPER] Talent found (case-insensitive): ${talentName} → ${talentMatch._id}`);
-        return talentMatch._id;
-      }
-
-      // Fallback: search compendium directly
-      const talentPack = game.packs.get('foundryvtt-swse.talents');
-      if (!talentPack) {
-        throw new Error('Talents compendium not found');
-      }
-
-      const index = await talentPack.getIndex();
-      const talentEntry = Array.from(index).find(e =>
-        e.name.toLowerCase() === talentName.toLowerCase()
-      );
-
-      if (!talentEntry) {
+      const talent = TalentRegistry.getByName?.(talentName) || TalentRegistry.getById?.(talentName);
+      if (!talent?.id) {
         throw new Error(`Talent not found: "${talentName}"`);
       }
 
-      swseLogger.log(`[TEMPLATE-MAPPER] Talent found in compendium: ${talentName} → ${talentEntry._id}`);
-      return talentEntry._id;
+      swseLogger.log(`[TEMPLATE-MAPPER] Talent found via TalentRegistry: ${talentName} → ${talent.id}`);
+      return talent.id;
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding talent "${talentName}":`, err);
       throw err;
@@ -305,43 +216,13 @@ export class TemplateIdMapper {
     if (!treeName) {return null;}
 
     try {
-      // Import TalentTreeDB
       const { TalentTreeDB } = await import("/systems/foundryvtt-swse/scripts/data/talent-tree-db.js");
-
-      // Try exact match first
-      const tree = TalentTreeDB.getByName(treeName);
-      if (tree) {
-        swseLogger.log(`[TEMPLATE-MAPPER] Talent tree found: ${treeName} → ${tree._id}`);
-        return tree._id;
-      }
-
-      // Try case-insensitive search
-      const treeMatch = Object.values(TalentTreeDB.data || {}).find(t =>
-        t.name.toLowerCase() === treeName.toLowerCase()
-      );
-
-      if (treeMatch) {
-        swseLogger.log(`[TEMPLATE-MAPPER] Talent tree found (case-insensitive): ${treeName} → ${treeMatch._id}`);
-        return treeMatch._id;
-      }
-
-      // Fallback: search compendium directly
-      const treePack = game.packs.get('foundryvtt-swse.talent_trees');
-      if (!treePack) {
-        throw new Error('Talent trees compendium not found');
-      }
-
-      const index = await treePack.getIndex();
-      const treeEntry = Array.from(index).find(e =>
-        e.name.toLowerCase() === treeName.toLowerCase()
-      );
-
-      if (!treeEntry) {
+      const tree = TalentTreeDB.byName?.(treeName) || TalentTreeDB.byId?.(treeName) || null;
+      if (!tree?.id) {
         throw new Error(`Talent tree not found: "${treeName}"`);
       }
-
-      swseLogger.log(`[TEMPLATE-MAPPER] Talent tree found in compendium: ${treeName} → ${treeEntry._id}`);
-      return treeEntry._id;
+      swseLogger.log(`[TEMPLATE-MAPPER] Talent tree found via TalentTreeDB: ${treeName} → ${tree.id}`);
+      return tree.id;
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding talent tree "${treeName}":`, err);
       throw err;
@@ -357,31 +238,13 @@ export class TemplateIdMapper {
     if (!powerName) {return null;}
 
     try {
-      // Try FeatureIndex first (SSOT for indexed features)
-      const { FeatureIndex } = await import("/systems/foundryvtt-swse/scripts/engine/progression/engine/feature-index.js");
-      const power = FeatureIndex.getPower?.(powerName);
-      if (power) {
-        swseLogger.log(`[TEMPLATE-MAPPER] Force power found in FeatureIndex: ${powerName} → ${power._id}`);
-        return power._id;
-      }
-
-      // Fallback: search compendium
-      const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-      if (!powerPack) {
-        throw new Error('Force powers compendium not found');
-      }
-
-      const index = await powerPack.getIndex();
-      const powerEntry = Array.from(index).find(e =>
-        e.name.toLowerCase() === powerName.toLowerCase()
-      );
-
-      if (!powerEntry) {
+      const power = ForceRegistry.getByName?.(powerName) || ForceRegistry.getById?.(powerName);
+      if (!power?.id) {
         throw new Error(`Force power not found: "${powerName}"`);
       }
 
-      swseLogger.log(`[TEMPLATE-MAPPER] Force power found in compendium: ${powerName} → ${powerEntry._id}`);
-      return powerEntry._id;
+      swseLogger.log(`[TEMPLATE-MAPPER] Force power found via ForceRegistry: ${powerName} → ${power.id}`);
+      return power.id;
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding force power "${powerName}":`, err);
       throw err;
@@ -401,17 +264,10 @@ export class TemplateIdMapper {
       const packNames = ['foundryvtt-swse.equipment', 'foundryvtt-swse.weapons', 'foundryvtt-swse.armor'];
 
       for (const packName of packNames) {
-        const pack = game.packs.get(packName);
-        if (!pack) {continue;}
-
-        const index = await pack.getIndex();
-        const entry = Array.from(index).find(e =>
-          e.name.toLowerCase() === itemName.toLowerCase()
-        );
-
-        if (entry) {
-          swseLogger.log(`[TEMPLATE-MAPPER] Item found in ${packName}: ${itemName} → ${entry._id}`);
-          return entry._id;
+        const item = await compendiumLoader.find(packName, (entry) => String(entry?.name || '').toLowerCase() === itemName.toLowerCase(), { loadFull: true });
+        if (item?.id || item?._id) {
+          swseLogger.log(`[TEMPLATE-MAPPER] Item found in ${packName}: ${itemName} → ${item.id || item._id}`);
+          return item.id || item._id;
         }
       }
 

@@ -1,3 +1,4 @@
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 /**
  * Discovery User State Manager
  *
@@ -6,6 +7,8 @@
  */
 
 const SETTING_KEY = 'discoveryState';
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+
 const SYSTEM_ID = 'foundryvtt-swse';
 
 const DEFAULT_STATE = Object.freeze({
@@ -36,7 +39,7 @@ export const DiscoveryUserState = {
   /** Load state from setting into memory. Call once on 'ready'. */
   load() {
     try {
-      const raw = game.settings.get(SYSTEM_ID, SETTING_KEY);
+      const raw = SettingsHelper.getObject(SETTING_KEY, { ...DEFAULT_STATE });
       _state = Object.assign({}, DEFAULT_STATE, raw);
     } catch {
       _state = { ...DEFAULT_STATE };
@@ -51,7 +54,7 @@ export const DiscoveryUserState = {
 
   /** Persist current in-memory state to Foundry setting. */
   async _save() {
-    await game.settings.set(SYSTEM_ID, SETTING_KEY, { ..._state });
+    await HouseRuleService.set(SETTING_KEY, { ..._state });
   },
 
   // --- Callout helpers ---

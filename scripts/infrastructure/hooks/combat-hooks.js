@@ -17,6 +17,7 @@ import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/h
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SpeciesRerollHandler } from "/systems/foundryvtt-swse/scripts/species/species-reroll-handler.js";
 import { NativeProjectileService } from "/systems/foundryvtt-swse/scripts/visual/native-projectile-service.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 /**
  * Register all combat-related hooks
@@ -26,8 +27,8 @@ export function registerCombatHooks() {
     SWSELogger.log('Registering combat hooks');
 
     // Check if automation is enabled
-    const automationEnabled = game.settings.get('foundryvtt-swse', 'enableAutomation');
-    const conditionRecoveryEnabled = game.settings.get('foundryvtt-swse', 'autoConditionRecovery');
+    const automationEnabled = HouseRuleService.isEnabled('enableAutomation');
+    const conditionRecoveryEnabled = HouseRuleService.isEnabled('autoConditionRecovery');
 
     // Combat creation
     HooksRegistry.register('createCombat', handleCombatCreate, {
@@ -194,7 +195,7 @@ async function handleCombatEnd(combat, options, userId) {
  */
 async function handlePostAttackFX(context) {
     // Check if cinematic effects are enabled
-    const cinematicEffectsEnabled = game.settings.get('foundryvtt-swse', 'enableCinematicEffects');
+    const cinematicEffectsEnabled = HouseRuleService.isEnabled('enableCinematicEffects');
     if (!cinematicEffectsEnabled) {
         return;
     }

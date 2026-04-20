@@ -217,7 +217,7 @@ export class ForecastEngine {
    * @private
    */
   static _findNearEligiblePaths(actor, candidate, context) {
-    // TODO: Phase 4 Work Package F - target registry
+    // planned: Phase 4 Work Package F - target registry
     // For now, return empty array; will be populated with explicit targets
     return [];
   }
@@ -235,7 +235,7 @@ export class ForecastEngine {
 
     // Placeholder for hypothetical projection
     // Would use projection engine + forecast to determine cascading effects
-    // TODO: Phase 4 Work Package C - forecast-aware scoring
+    // planned: Phase 4 Work Package C - forecast-aware scoring
 
     return result;
   }
@@ -245,7 +245,7 @@ export class ForecastEngine {
    * @private
    */
   static _evaluatePrestigeImpact(actor, candidate, context) {
-    // TODO: Integrate prestige-delay-calculator results
+    // planned: Integrate prestige-delay-calculator results
     // For now, return null (no prestige impact)
     return null;
   }
@@ -255,7 +255,7 @@ export class ForecastEngine {
    * @private
    */
   static _evaluatePrestigeClassPath(targetId, projectedContext, maxLevels) {
-    // TODO: Integrate with prestige-delay-calculator
+    // planned: Integrate with prestige-delay-calculator
     // Simulate forward levels and check eligibility
     return null;
   }

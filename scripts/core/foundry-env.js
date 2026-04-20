@@ -1,3 +1,4 @@
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 /**
  * Foundry Environment Accessor - v13 / AppV2 Safe
  * Centralized, explicit access to Foundry runtime.
@@ -104,7 +105,7 @@ export function getSetting(key, defaultValue = undefined) {
 
   const game = getGame();
   try {
-    return game?.settings?.get(getSystemId(), key) ?? defaultValue;
+    return HouseRuleService.getSafe(key, defaultValue);
   } catch {
     return defaultValue;
   }
@@ -117,7 +118,7 @@ export async function setSetting(key, value) {
   if (!game?.user?.isGM) return false;
 
   try {
-    await game.settings.set(getSystemId(), key, value);
+    await HouseRuleService.set(key, value);
     return true;
   } catch {
     return false;
@@ -174,7 +175,7 @@ export const notify = {
 export const log = {
   debug(message, data) {
     const game = getGame();
-    if (game?.settings?.get(getSystemId(), 'debugMode')) {
+    if (HouseRuleService.getBoolean('debugMode', false)) {
       console.debug(`[${getSystemId()}] ${message}`, data ?? '');
     }
   },

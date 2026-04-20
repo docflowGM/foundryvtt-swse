@@ -10,6 +10,7 @@
 // ============================================
 
 import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export const ClassRelationshipRegistry = {
 
@@ -59,7 +60,7 @@ export const ClassRelationshipRegistry = {
         }
 
         // Layer 2: GM overrides
-        const overrides = game.settings.get("foundryvtt-swse", "classTreeOverrides") || {};
+        const overrides = HouseRuleService.getObject('classTreeOverrides', {});
         const extra = overrides[classId] || [];
 
         for (const treeId of extra) {

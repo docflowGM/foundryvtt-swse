@@ -1,10 +1,20 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 /**
  * GM Homebrew Management
  * Central system for custom rules and options
  */
+
+const HOME_BREW_DEFAULTS = Object.freeze({
+  feats: [],
+  talents: [],
+  forcePowers: [],
+  species: [],
+  classes: []
+});
 
 export class SWSEHomebrewManager {
 
@@ -56,40 +66,40 @@ export class SWSEHomebrewManager {
   }
 
   static async createCustomFeat(data) {
-    const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
+    const homebrew = foundry.utils.deepClone(SettingsHelper.getObject('homebrewContent', HOME_BREW_DEFAULTS));
     homebrew.feats.push({
       id: foundry.utils.randomID(),
       ...data,
       isHomebrew: true
     });
-    await game.settings.set('foundryvtt-swse', 'homebrewContent', homebrew);
+    await HouseRuleService.set('homebrewContent', homebrew);
     ui.notifications.info(`Created homebrew feat: ${data.name}`);
   }
 
   static async createCustomTalent(data) {
-    const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
+    const homebrew = foundry.utils.deepClone(SettingsHelper.getObject('homebrewContent', HOME_BREW_DEFAULTS));
     homebrew.talents.push({
       id: foundry.utils.randomID(),
       ...data,
       isHomebrew: true
     });
-    await game.settings.set('foundryvtt-swse', 'homebrewContent', homebrew);
+    await HouseRuleService.set('homebrewContent', homebrew);
     ui.notifications.info(`Created homebrew talent: ${data.name}`);
   }
 
   static async createCustomForcePower(data) {
-    const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
+    const homebrew = foundry.utils.deepClone(SettingsHelper.getObject('homebrewContent', HOME_BREW_DEFAULTS));
     homebrew.forcePowers.push({
       id: foundry.utils.randomID(),
       ...data,
       isHomebrew: true
     });
-    await game.settings.set('foundryvtt-swse', 'homebrewContent', homebrew);
+    await HouseRuleService.set('homebrewContent', homebrew);
     ui.notifications.info(`Created homebrew Force power: ${data.name}`);
   }
 
   static async exportHomebrew() {
-    const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
+    const homebrew = foundry.utils.deepClone(SettingsHelper.getObject('homebrewContent', HOME_BREW_DEFAULTS));
     const json = JSON.stringify(homebrew, null, 2);
 
     const blob = new Blob([json], { type: 'application/json' });
@@ -108,7 +118,7 @@ export class SWSEHomebrewManager {
       const text = await file.text();
       const imported = JSON.parse(text);
 
-      const current = game.settings.get('foundryvtt-swse', 'homebrewContent');
+      const current = foundry.utils.deepClone(SettingsHelper.getObject('homebrewContent', HOME_BREW_DEFAULTS));
       const merged = {
         feats: [...current.feats, ...(imported.feats || [])],
         talents: [...current.talents, ...(imported.talents || [])],
@@ -117,7 +127,7 @@ export class SWSEHomebrewManager {
         classes: [...current.classes, ...(imported.classes || [])]
       };
 
-      await game.settings.set('foundryvtt-swse', 'homebrewContent', merged);
+      await HouseRuleService.set('homebrewContent', merged);
       ui.notifications.info('Homebrew content imported successfully');
     } catch (err) {
       ui.notifications.error('Failed to import homebrew content');
@@ -158,10 +168,10 @@ class HomebrewManagerApp extends SWSEFormApplicationV2 {
     return foundry.utils.mergeObject(clone, legacy);
   }
 async _prepareContext(options) {
-    const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
+    const homebrew = foundry.utils.deepClone(SettingsHelper.getObject('homebrewContent', HOME_BREW_DEFAULTS));
     return {
       homebrew,
-      allowHomebrew: game.settings.get('foundryvtt-swse', 'allowHomebrew')
+      allowHomebrew: SettingsHelper.getBoolean('allowHomebrew', false)
     };
   }
 
@@ -268,9 +278,9 @@ async _prepareContext(options) {
 
     if (!confirmed) {return;}
 
-    const homebrew = game.settings.get('foundryvtt-swse', 'homebrewContent');
+    const homebrew = foundry.utils.deepClone(SettingsHelper.getObject('homebrewContent', HOME_BREW_DEFAULTS));
     homebrew[type] = homebrew[type].filter(item => item.id !== id);
-    await game.settings.set('foundryvtt-swse', 'homebrewContent', homebrew);
+    await HouseRuleService.set('homebrewContent', homebrew);
     this.render();
   }
 

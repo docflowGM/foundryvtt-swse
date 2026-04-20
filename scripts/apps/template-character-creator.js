@@ -12,6 +12,9 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { resolveSkillKey, resolveSkillName } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
 import CharacterTemplates from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-templates.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import { compendiumLoader } from "/systems/foundryvtt-swse/scripts/utils/compendium-loader.js";
 
 
 const TEMPLATE_PATH = 'systems/foundryvtt-swse/templates/apps/template-creator.hbs';
@@ -736,29 +739,12 @@ async _prepareContext(options) {
   async _applySpeciesBonus(actor, speciesRefOrName, abilityUpdates) {
     try {
       const speciesName = typeof speciesRefOrName === 'string' ? speciesRefOrName : (speciesRefOrName.displayName || speciesRefOrName.name);
-      const speciesPackName = typeof speciesRefOrName === 'object' && speciesRefOrName.pack ? speciesRefOrName.pack : 'foundryvtt-swse.species';
       const speciesId = typeof speciesRefOrName === 'object' && speciesRefOrName.id ? speciesRefOrName.id : null;
-      const speciesPack = game.packs.get(speciesPackName);
-      if (!speciesPack) {return;}
-
-      if (speciesId) {
-        const species = await speciesPack.getDocument(speciesId);
-        if (species) {
-          return this._applySpeciesDataToAbilities(species.system, abilityUpdates);
-        }
-      }
-
-      const index = await speciesPack.getIndex();
-      const speciesEntry = index.find(s => s.name === speciesName);
-
-      if (!speciesEntry) {
-        SWSELogger.warn(`SWSE | Species not found: ${speciesName}`);
-        return;
-      }
-
-      const species = await speciesPack.getDocument(speciesEntry._id);
+      const species = speciesId
+        ? await SpeciesRegistry.getDocumentById?.(speciesId)
+        : await SpeciesRegistry.getDocumentByName?.(speciesName);
       if (!species) {
-        SWSELogger.warn(`SWSE | Failed to load species document for: ${speciesName}`);
+        SWSELogger.warn(`SWSE | Species not found: ${speciesName}`);
         return;
       }
 
@@ -794,42 +780,29 @@ async _prepareContext(options) {
    */
   async _applyClass(actor, template) {
     try {
-      const classPack = game.packs.get('foundryvtt-swse.classes');
-      if (!classPack) {return;}
-
       const classRef = template.classRef || null;
       const className = classRef ? (classRef.displayName || classRef.name) : template.className;
-      const classPackName = classRef?.pack || 'foundryvtt-swse.classes';
       const classId = classRef?.id || null;
 
+      let classItem = null;
       if (classId) {
-        const pack = game.packs.get(classPackName);
-        if (pack) {
-          const classItem = await pack.getDocument(classId);
-          if (classItem) {
-            const classData = classItem.toObject();
-            classData.system.level = template.level || 1;
-            await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classData]);
-            SWSELogger.log(`SWSE | Added class: ${className}`);
-            return;
-          }
-        }
+        classItem = await ClassesRegistry.getDocumentBySourceId(classId);
       }
 
-      const index = await classPack.getIndex();
-      const classEntry = index.find(c => c.name === className);
+      if (!classItem && className) {
+        classItem = await ClassesRegistry.getDocumentByName(className);
+      }
 
-      if (!classEntry) {
+      if (!classItem) {
         SWSELogger.warn(`SWSE | Class not found: ${template.className}`);
         return;
       }
 
-      const classItem = await classPack.getDocument(classEntry._id);
       const classData = classItem.toObject();
       classData.system.level = template.level || 1;
 
       await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classData]);
-      SWSELogger.log(`SWSE | Added class: ${template.className}`);
+      SWSELogger.log(`SWSE | Added class: ${className}`);
 
       // Auto-check Force Sensitive if this is a Force-using class
       const forceUsingClasses = ['Jedi', 'Sith', 'Force Adept', 'Force Disciple'];
@@ -947,9 +920,10 @@ async _prepareContext(options) {
         const searchName = equipmentName.trim();
 
         if (equipmentId && equipmentPackName) {
-          const pack = game.packs.get(equipmentPackName);
-          if (pack) {
-            const item = await pack.getDocument(equipmentId);
+          const item = equipmentPackName
+            ? await compendiumLoader.find(equipmentPackName, (entry) => (entry?.id || entry?._id) === equipmentId, { loadFull: true }).catch(() => null)
+            : null;
+          if (item) {
             if (item) {
               const itemData = item.toObject();
               if (itemData.system && typeof itemData.system.quantity === 'number') {
@@ -969,32 +943,22 @@ async _prepareContext(options) {
 
         // Search through all compendia
         for (const packName of compendiaPacks) {
-          const pack = game.packs.get(packName);
-          if (!pack) {continue;}
+          const item = await compendiumLoader.find(
+            packName,
+            (entry) => {
+              const entryName = String(entry?.name || '');
+              return entryName === searchName
+                || entryName.toLowerCase() === searchName.toLowerCase()
+                || entryName.toLowerCase().includes(searchName.toLowerCase());
+            },
+            { loadFull: true }
+          ).catch(() => null);
 
-          // Get pack index for faster searching
-          const index = await pack.getIndex();
-
-          // Try exact match first
-          let entry = index.find(i => i.name === searchName);
-
-          // If no exact match, try case-insensitive
-          if (!entry) {
-            entry = index.find(i => i.name.toLowerCase() === searchName.toLowerCase());
-          }
-
-          // If still no match, try partial match
-          if (!entry) {
-            entry = index.find(i => i.name.toLowerCase().includes(searchName.toLowerCase()));
-          }
-
-          if (entry) {
-            // Found the item, add it to the actor
-            const item = await pack.getDocument(entry._id);
+          if (item) {
             const itemData = item.toObject();
 
             await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
-            results.added.push(entry.name);
+            results.added.push(item.name);
             found = true;
             SWSELogger.log(`SWSE | Added equipment: ${entry.name}`);
             break; // Stop searching once found

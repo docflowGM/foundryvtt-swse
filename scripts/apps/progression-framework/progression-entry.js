@@ -64,6 +64,50 @@ function _isChargenIncomplete(actor) {
   return false; // Actor progression is complete
 }
 
+
+function _createTransientProgressionActor({ actorType = 'character', subtype = null, isDroid = false, name = null, system = {} } = {}) {
+  const ActorClass = CONFIG?.Actor?.documentClass;
+  if (!ActorClass) {
+    throw new Error('Foundry Actor document class is not available.');
+  }
+
+  const resolvedIsDroid = isDroid || subtype === 'droid';
+  const resolvedActorType = resolvedIsDroid ? 'character' : actorType;
+  const defaultName = name || (resolvedActorType === 'npc'
+    ? 'New NPC'
+    : resolvedIsDroid
+      ? 'New Droid'
+      : 'New Character');
+
+  const baseSystem = foundry.utils.mergeObject({
+    level: 0,
+    swse: {
+      mentorSurveyCompleted: false,
+      progressionSubtype: subtype || null,
+    },
+  }, system || {}, { inplace: false, recursive: true });
+
+  if (resolvedIsDroid) {
+    baseSystem.isDroid = true;
+  }
+
+  return new ActorClass({
+    name: defaultName,
+    type: resolvedActorType,
+    system: baseSystem,
+  }, { parent: null });
+}
+
+export async function launchNewProgression(options = {}) {
+  const actor = _createTransientProgressionActor(options);
+  const launchOptions = { ...options };
+  delete launchOptions.actorType;
+  delete launchOptions.isDroid;
+  delete launchOptions.name;
+  delete launchOptions.system;
+  return launchProgression(actor, launchOptions);
+}
+
 /**
  * Unified entry point for all progression.
  * BLOCKING: Does not return until progression is complete or user cancels.
@@ -74,15 +118,15 @@ function _isChargenIncomplete(actor) {
  */
 export async function launchProgression(actor, options = {}) {
   // DIAGNOSTICS: Log entry point with full context
-  console.log('[PROGRESSION] ═══════════════════════════════════════════');
-  console.log('[PROGRESSION] launchProgression() ENTRY');
-  console.log('[PROGRESSION] actor.name:', actor?.name);
-  console.log('[PROGRESSION] actor.type:', actor?.type);
-  console.log('[PROGRESSION] actor.system.level:', actor?.system?.level);
-  console.log('[PROGRESSION] actor.items.size:', actor?.items?.size);
+  SWSELogger.debug('[PROGRESSION] ═══════════════════════════════════════════');
+  SWSELogger.debug('[PROGRESSION] launchProgression() ENTRY');
+  SWSELogger.debug('[PROGRESSION] actor.name:', actor?.name);
+  SWSELogger.debug('[PROGRESSION] actor.type:', actor?.type);
+  SWSELogger.debug('[PROGRESSION] actor.system.level:', actor?.system?.level);
+  SWSELogger.debug('[PROGRESSION] actor.items.size:', actor?.items?.size);
   const hasClass = Array.from(actor?.items ?? []).some(item => item.type === 'class');
-  console.log('[PROGRESSION] hasClass:', hasClass);
-  console.log('[PROGRESSION] ═══════════════════════════════════════════');
+  SWSELogger.debug('[PROGRESSION] hasClass:', hasClass);
+  SWSELogger.debug('[PROGRESSION] ═══════════════════════════════════════════');
 
   if (!actor) {
     ui?.notifications?.error?.('No actor provided to progression launcher.');
@@ -142,21 +186,21 @@ export async function launchProgression(actor, options = {}) {
     // Applies to all progression-eligible types: character (heroic), droid, npc (nonheroic/beast/follower)
     const isChargenIncomplete = _isChargenIncomplete(actor);
 
-    console.log('[PROGRESSION] ───────────────────────────────');
-    console.log('[PROGRESSION] ROUTING DECISION');
-    console.log('[PROGRESSION] actor.type:', actor.type);
-    console.log('[PROGRESSION] isChargenIncomplete:', isChargenIncomplete);
-    console.log('[PROGRESSION] ───────────────────────────────');
+    SWSELogger.debug('[PROGRESSION] ───────────────────────────────');
+    SWSELogger.debug('[PROGRESSION] ROUTING DECISION');
+    SWSELogger.debug('[PROGRESSION] actor.type:', actor.type);
+    SWSELogger.debug('[PROGRESSION] isChargenIncomplete:', isChargenIncomplete);
+    SWSELogger.debug('[PROGRESSION] ───────────────────────────────');
 
     if (isChargenIncomplete) {
       // Brand new or incomplete actor → open ChargenShell
       SWSELogger.log(`[Progression Entry] Actor is incomplete (type=${actor.type}, level=${actor.system.level}, hasClass=${actor.items.some(i => i.type === 'class')}) → routing to ChargenShell`);
-      console.log('[PROGRESSION] ROUTING: Opening ChargenShell for incomplete actor');
+      SWSELogger.debug('[PROGRESSION] ROUTING: Opening ChargenShell for incomplete actor');
       try {
         const { ChargenShell } = await import('./chargen-shell.js');
-        console.log('[PROGRESSION] ChargenShell imported successfully');
+        SWSELogger.debug('[PROGRESSION] ChargenShell imported successfully');
         const result = await ChargenShell.open(actor, options);
-        console.log('[PROGRESSION] ChargenShell.open() completed, result:', result?.constructor?.name);
+        SWSELogger.debug('[PROGRESSION] ChargenShell.open() completed, result:', result?.constructor?.name);
         return result;
       } catch (importErr) {
         console.error('[PROGRESSION] ❌ ChargenShell import failed:', importErr);
@@ -166,11 +210,11 @@ export async function launchProgression(actor, options = {}) {
     } else {
       // Established actor → open LevelupShell for level advancement
       SWSELogger.log(`[Progression Entry] Actor is complete (type=${actor.type}, level=${actor.system.level}) → routing to LevelupShell`);
-      console.log('[PROGRESSION] ROUTING: Opening LevelupShell for complete actor');
+      SWSELogger.debug('[PROGRESSION] ROUTING: Opening LevelupShell for complete actor');
       const { LevelupShell } = await import('./levelup-shell.js');
-      console.log('[PROGRESSION] LevelupShell imported');
+      SWSELogger.debug('[PROGRESSION] LevelupShell imported');
       const result = await LevelupShell.open(actor, options);
-      console.log('[PROGRESSION] LevelupShell.open() completed, result:', result?.constructor?.name);
+      SWSELogger.debug('[PROGRESSION] LevelupShell.open() completed, result:', result?.constructor?.name);
       return result;
     }
 

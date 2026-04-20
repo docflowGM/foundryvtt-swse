@@ -12,6 +12,8 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 
 export class ArchetypeRegistry {
     // Immutable cache
@@ -485,27 +487,7 @@ export class ArchetypeRegistry {
 
             const results = [];
             const seenIds = new Set();
-            const pack = game.packs.get('foundryvtt-swse.feats');
-
-            if (!pack) {
-                SWSELogger.warn('[ArchetypeRegistry] Feats compendium not found');
-                return [];
-            }
-
-            // Check if any items are keywords (need index lookup)
-            let index = null;
-            const needsIndex = items.some(item => {
-                const isId = typeof item === 'string' && /^[A-Za-z0-9]{16}$/.test(item);
-                return !isId;
-            });
-
-            if (needsIndex) {
-                try {
-                    index = await pack.getIndex();
-                } catch (err) {
-                    SWSELogger.warn('[ArchetypeRegistry] Failed to get feats index:', err);
-                }
-            }
+            const index = (FeatRegistry.getAll?.() || []).map((entry) => ({ _id: entry.id, name: entry.name }));
 
             for (const item of items) {
                 // Skip falsy entries
@@ -523,7 +505,7 @@ export class ArchetypeRegistry {
                 }
 
                 // Otherwise treat as keyword and fuzzy-match
-                if (typeof item === 'string' && item.trim().length > 0 && index) {
+                if (typeof item === 'string' && item.trim().length > 0 && index.length > 0) {
                     const match = this._findBestMatch(item, index);
                     if (match && !seenIds.has(match._id)) {
                         results.push(match._id);
@@ -558,27 +540,7 @@ export class ArchetypeRegistry {
 
             const results = [];
             const seenIds = new Set();
-            const pack = game.packs.get('foundryvtt-swse.talents');
-
-            if (!pack) {
-                SWSELogger.warn('[ArchetypeRegistry] Talents compendium not found');
-                return [];
-            }
-
-            // Check if any items are keywords (need index lookup)
-            let index = null;
-            const needsIndex = items.some(item => {
-                const isId = typeof item === 'string' && /^[A-Za-z0-9]{16}$/.test(item);
-                return !isId;
-            });
-
-            if (needsIndex) {
-                try {
-                    index = await pack.getIndex();
-                } catch (err) {
-                    SWSELogger.warn('[ArchetypeRegistry] Failed to get talents index:', err);
-                }
-            }
+            const index = (TalentRegistry.getAll?.() || []).map((entry) => ({ _id: entry.id, name: entry.name }));
 
             for (const item of items) {
                 // Skip falsy entries
@@ -596,7 +558,7 @@ export class ArchetypeRegistry {
                 }
 
                 // Otherwise treat as keyword and fuzzy-match
-                if (typeof item === 'string' && item.trim().length > 0 && index) {
+                if (typeof item === 'string' && item.trim().length > 0 && index.length > 0) {
                     const match = this._findBestMatch(item, index);
                     if (match && !seenIds.has(match._id)) {
                         results.push(match._id);

@@ -16,6 +16,7 @@ import { registerDiscoverySettings } from "/systems/foundryvtt-swse/scripts/ui/d
 import { DefenseTooltip } from "/systems/foundryvtt-swse/scripts/ui/defense-tooltip.js";
 import { WeaponTooltip } from "/systems/foundryvtt-swse/scripts/ui/weapon-tooltip.js";
 import { CombatStatsTooltip } from "/systems/foundryvtt-swse/scripts/ui/combat-stats-tooltip.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -46,7 +47,7 @@ export function onDiscoveryReady() {
   setTimeout(() => FeatureTour.show(), 1500);
 
   // Expose for debugging
-  if (game.settings.get(SYSTEM_ID, 'devMode')) {
+  if (SettingsHelper.getBoolean('devMode', false)) {
     console.log('SWSE | Discovery system initialized');
     globalThis.SWSEDiscovery = {
       glossary: TooltipGlossary,
@@ -69,7 +70,7 @@ function _onAppRender(app, html) {
 
   // Tooltips
   try {
-    if (!game.settings.get(SYSTEM_ID, 'disableTooltips')) {
+    if (!SettingsHelper.getBoolean('disableTooltips', false)) {
       TooltipRegistry.bind(root);
     }
   } catch { /* setting may not be ready */ }

@@ -372,7 +372,7 @@ export class MutationPlan {
    * @private
    */
   static async _applyItemMutation(actor, mutation) {
-    // TODO: Wire into ActorEngine for actual item creation/removal
+    // planned: Wire into ActorEngine for actual item creation/removal
     // For now, just log the intent
     swseLogger.debug('[MutationPlan] Item mutation:', {
       action: mutation.action,

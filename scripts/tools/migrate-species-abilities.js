@@ -192,7 +192,7 @@ function migrateAbility(candidate) {
           actionType: actionType
         },
         frequency: frequency,
-        // TODO: effect type depends on ability
+        // planned: effect type depends on ability
         // Some are MODIFIER, some are DAMAGE_ROLL, some are CUSTOM
         effect: {
           type: 'CUSTOM', // Placeholder - requires specific implementation
@@ -200,7 +200,7 @@ function migrateAbility(candidate) {
           handlerRequired: true
         },
         targeting: {
-          // TODO: Determine targeting based on effect description
+          // planned: Determine targeting based on effect description
           // Most species abilities are SELF or AREA
           type: 'self',
           notes: 'Targeting requirement: determine from effect description'

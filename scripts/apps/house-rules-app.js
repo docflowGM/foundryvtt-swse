@@ -253,7 +253,7 @@ export class HouseRulesApp extends BaseSWSEAppV2 {
         const checked = event.target.checked;
 
         try {
-          await game.settings.set(this.NS, key, checked);
+          await HouseRuleService.set(key, checked);
           SWSELogger.info(`[HouseRulesApp] Updated ${key} = ${checked}`);
         } catch (err) {
           SWSELogger.error(`[HouseRulesApp] Failed to update ${key}:`, err);

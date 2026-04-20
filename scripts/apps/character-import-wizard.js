@@ -285,35 +285,21 @@ export class CharacterImportWizard extends BaseSWSEAppV2 {
 
         if (!confirmed) return;
 
-        // Update the actor
-        await targetActor.update({
+        // Replace the actor through governance so root data and embedded docs stay under ActorEngine authority
+        await ActorEngine.restoreFromSnapshot(targetActor, {
           name: actorData.name,
           img: actorData.img,
           system: actorData.system,
-          flags: actorData.flags
-        });
+          prototypeToken: actorData.prototypeToken ?? targetActor.prototypeToken?.toObject?.() ?? {},
+          items: cleanedItems,
+          effects: cleanedEffects
+        }, { meta: { guardKey: 'character-import' } });
 
-        // Clear existing items and effects
-        // PHASE 8: Use ActorEngine for atomic bulk deletion
-        if (targetActor.items.length > 0) {
-          await ActorEngine.deleteEmbeddedDocuments(targetActor, 'Item', targetActor.items.map(i => i.id));
-        }
-        if (targetActor.effects.length > 0) {
-          await ActorEngine.deleteEmbeddedDocuments(targetActor, 'ActiveEffect', targetActor.effects.map(e => e.id));
-        }
-
-        // Add new items and effects (using already cleaned data)
-        if (cleanedItems.length > 0) {
-          const createdItems = await createItemInActor(targetActor, cleanedItems);
-          if (!createdItems || createdItems.length === 0) {
-            console.warn('No items were created');
-          }
-        }
-        if (cleanedEffects.length > 0) {
-          const createdEffects = await createEffectOnActor(targetActor, cleanedEffects);
-          if (!createdEffects || createdEffects.length === 0) {
-            console.warn('No effects were created');
-          }
+        if (actorData.flags && Object.keys(actorData.flags).length > 0) {
+          await ActorEngine.updateActor(targetActor, { flags: actorData.flags }, {
+            source: 'CharacterImportWizard.import.flags',
+            meta: { guardKey: 'character-import-flags' }
+          });
         }
 
         ui.notifications.info(`Successfully updated ${targetActor.name}`);

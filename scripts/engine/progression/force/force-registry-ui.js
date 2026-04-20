@@ -1,140 +1,43 @@
 /**
- * Force Registry - UI version
- * Loads and indexes Force powers, techniques, and secrets
+ * Force Registry - UI facade over canonical ForceRegistry.
  */
-
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { ForceRegistry as RootForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
 
 export const ForceRegistry = {
-  _powers: [],
-  _secrets: [],
-  _techniques: [],
-
-  /**
-   * Build the registry from compendiums
-   */
   async build() {
-    try {
-      const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-      const secretPack = game.packs.get('foundryvtt-swse.forcesecrets');
-      const techPack = game.packs.get('foundryvtt-swse.forcetechniques');
-
-      this._powers = powerPack ? await powerPack.getDocuments() : [];
-      this._secrets = secretPack ? await secretPack.getDocuments() : [];
-      this._techniques = techPack ? await techPack.getDocuments() : [];
-
-      SWSELogger.log(
-        `ForceRegistry built: ${this._powers.length} powers, ` +
-        `${this._secrets.length} secrets, ${this._techniques.length} techniques`
-      );
-    } catch (err) {
-      SWSELogger.error('Failed to build ForceRegistry:', err);
-      this._powers = [];
-      this._secrets = [];
-      this._techniques = [];
-    }
+    return RootForceRegistry.initialize?.();
   },
 
-  /**
-   * Get Force powers available for an actor
-   */
   listPowersForActor(actor) {
-    return this._powers.map(p => {
+    return (RootForceRegistry.getByType?.('power') || []).map((power) => {
       let qualified = true;
       try {
-        const assessment = AbilityEngine.evaluateAcquisition(actor, p, {});
+        const assessment = AbilityEngine.evaluateAcquisition(actor, power, {});
         qualified = assessment.legal;
       } catch (err) {
-        SWSELogger.warn(`Prerequisite check failed for ${p.name}:`, err);
+        SWSELogger.warn(`Prerequisite check failed for ${power.name}:`, err);
       }
-
-      return {
-        name: p.name,
-        id: p.id,
-        isQualified: qualified,
-        data: p
-      };
+      return { name: power.name, id: power.id, isQualified: qualified, data: power };
     });
   },
 
-  /**
-   * Get Force secrets available for an actor
-   */
   listSecretsForActor(actor) {
-    return this._secrets.map(s => ({
-      name: s.name,
-      id: s.id,
-      isQualified: true,
-      data: s
-    }));
+    return (RootForceRegistry.getByType?.('secret') || []).map((secret) => ({ name: secret.name, id: secret.id, isQualified: true, data: secret }));
   },
 
-  /**
-   * Get Force techniques available for an actor
-   */
   listTechniquesForActor(actor) {
-    return this._techniques.map(t => ({
-      name: t.name,
-      id: t.id,
-      isQualified: true,
-      data: t
-    }));
+    return (RootForceRegistry.getByType?.('technique') || []).map((technique) => ({ name: technique.name, id: technique.id, isQualified: true, data: technique }));
   },
 
-  /**
-   * Get a specific power by name
-   */
-  getPower(name) {
-    const lower = name.toLowerCase();
-    return this._powers.find(p => p.name.toLowerCase() === lower);
-  },
-
-  /**
-   * Get a specific secret by name
-   */
-  getSecret(name) {
-    const lower = name.toLowerCase();
-    return this._secrets.find(s => s.name.toLowerCase() === lower);
-  },
-
-  /**
-   * Get a specific technique by name
-   */
-  getTechnique(name) {
-    const lower = name.toLowerCase();
-    return this._techniques.find(t => t.name.toLowerCase() === lower);
-  },
-
-  /**
-   * Get all powers
-   */
-  getPowers() {
-    return this._powers;
-  },
-
-  /**
-   * Get all secrets
-   */
-  getSecrets() {
-    return this._secrets;
-  },
-
-  /**
-   * Get all techniques
-   */
-  getTechniques() {
-    return this._techniques;
-  },
-
-  /**
-   * Clear the registry
-   */
-  clear() {
-    this._powers = [];
-    this._secrets = [];
-    this._techniques = [];
-  }
+  getPower(name) { return RootForceRegistry.getByName?.(name); },
+  getSecret(name) { const entry = RootForceRegistry.getByName?.(name); return entry?.type === 'secret' ? entry : null; },
+  getTechnique(name) { const entry = RootForceRegistry.getByName?.(name); return entry?.type === 'technique' ? entry : null; },
+  getPowers() { return RootForceRegistry.getByType?.('power') || []; },
+  getSecrets() { return RootForceRegistry.getByType?.('secret') || []; },
+  getTechniques() { return RootForceRegistry.getByType?.('technique') || []; },
+  clear() { RootForceRegistry._entries = []; RootForceRegistry._byId = new Map(); RootForceRegistry._byName = new Map(); RootForceRegistry._byType = new Map(); RootForceRegistry._byCategory = new Map(); RootForceRegistry._byTag = new Map(); RootForceRegistry._initialized = false; }
 };
 
-SWSELogger.log('ForceRegistry (UI) module loaded');
+SWSELogger.log('ForceRegistry (UI facade) module loaded');

@@ -23,6 +23,8 @@ import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { calculateCartTotal } from "/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js";
 import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
@@ -80,30 +82,30 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     await this._loadPendingSales();
     await this._loadPendingApprovals();
 
-    const storeOpen = game.settings.get('foundryvtt-swse', 'storeOpen') ?? true;
-    const buyModifier = game.settings.get('foundryvtt-swse', 'globalBuyModifier') ?? 0;
-    const autoAcceptSelling = game.settings.get('foundryvtt-swse', 'autoAcceptItemSales') ?? false;
-    const autoSalePercent = game.settings.get('foundryvtt-swse', 'automaticSalePercentage') ?? 50;
-    const disallowAutoSellNoPrice = game.settings.get('foundryvtt-swse', 'disallowAutoSellNoPrice') ?? true;
+    const storeOpen = SettingsHelper.getSafe('storeOpen', true);
+    const buyModifier = SettingsHelper.getSafe('globalBuyModifier', 0);
+    const autoAcceptSelling = SettingsHelper.getSafe('autoAcceptItemSales', false);
+    const autoSalePercent = SettingsHelper.getSafe('automaticSalePercentage', 50);
+    const disallowAutoSellNoPrice = SettingsHelper.getSafe('disallowAutoSellNoPrice', true);
 
     // Visibility filters (stored as world settings)
-    const visibleRarities = game.settings.get('foundryvtt-swse', 'visibleRarities') ?? {
+    const visibleRarities = SettingsHelper.getObject('visibleRarities', {
       common: true,
       uncommon: true,
       rare: false,
       restricted: false,
       illegal: false
-    };
+    });
 
-    const visibleTypes = game.settings.get('foundryvtt-swse', 'visibleItemTypes') ?? {
+    const visibleTypes = SettingsHelper.getObject('visibleItemTypes', {
       weapons: true,
       armor: true,
       gear: true,
       droids: true,
       vehicles: true
-    };
+    });
 
-    const blacklistedItems = game.settings.get('foundryvtt-swse', 'blacklistedItems') ?? [];
+    const blacklistedItems = SettingsHelper.getArray('blacklistedItems', []);
 
     return {
       transactions: this.transactions,
@@ -149,12 +151,12 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
 
   async _loadPendingSales() {
     // Load pending sales from world flag (if implemented)
-    this.pendingSales = game.settings.get('foundryvtt-swse', 'pendingSales') ?? [];
+    this.pendingSales = SettingsHelper.getArray('pendingSales', []);
   }
 
   async _loadPendingApprovals() {
     // Load pending custom droid/vehicle purchases from world flag
-    this.pendingApprovals = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') ?? [];
+    this.pendingApprovals = SettingsHelper.getArray('pendingCustomPurchases', []);
 
     // Enrich each approval with actor name
     for (const approval of this.pendingApprovals) {
@@ -177,7 +179,7 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     const storeOpenToggle = root.querySelector('[name="storeOpen"]');
     if (storeOpenToggle) {
       storeOpenToggle.addEventListener('change', async (ev) => {
-        await game.settings.set('foundryvtt-swse', 'storeOpen', ev.currentTarget.checked);
+        await HouseRuleService.set('storeOpen', ev.currentTarget.checked);
         this.render();
       });
     }
@@ -187,7 +189,7 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     if (buyModifierSlider) {
       buyModifierSlider.addEventListener('input', async (ev) => {
         const value = normalizeCredits(ev.currentTarget.value);
-        await game.settings.set('foundryvtt-swse', 'globalBuyModifier', value);
+        await HouseRuleService.set('globalBuyModifier', value);
       });
     }
 
@@ -196,9 +198,9 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
       const checkbox = root.querySelector(`[name="rarity-${rarity}"]`);
       if (checkbox) {
         checkbox.addEventListener('change', async (ev) => {
-          const visibleRarities = game.settings.get('foundryvtt-swse', 'visibleRarities') ?? {};
+          const visibleRarities = SettingsHelper.getObject('visibleRarities', {});
           visibleRarities[rarity] = ev.currentTarget.checked;
-          await game.settings.set('foundryvtt-swse', 'visibleRarities', visibleRarities);
+          await HouseRuleService.set('visibleRarities', visibleRarities);
         });
       }
     }
@@ -208,9 +210,9 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
       const checkbox = root.querySelector(`[name="type-${type}"]`);
       if (checkbox) {
         checkbox.addEventListener('change', async (ev) => {
-          const visibleTypes = game.settings.get('foundryvtt-swse', 'visibleItemTypes') ?? {};
+          const visibleTypes = SettingsHelper.getObject('visibleItemTypes', {});
           visibleTypes[type] = ev.currentTarget.checked;
-          await game.settings.set('foundryvtt-swse', 'visibleItemTypes', visibleTypes);
+          await HouseRuleService.set('visibleItemTypes', visibleTypes);
         });
       }
     }
@@ -219,7 +221,7 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     const autoAcceptToggle = root.querySelector('[name="autoAcceptSelling"]');
     if (autoAcceptToggle) {
       autoAcceptToggle.addEventListener('change', async (ev) => {
-        await game.settings.set('foundryvtt-swse', 'autoAcceptItemSales', ev.currentTarget.checked);
+        await HouseRuleService.set('autoAcceptItemSales', ev.currentTarget.checked);
         this.render();
       });
     }
@@ -229,7 +231,7 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     if (autoSaleSlider) {
       autoSaleSlider.addEventListener('input', async (ev) => {
         const value = normalizeCredits(ev.currentTarget.value);
-        await game.settings.set('foundryvtt-swse', 'automaticSalePercentage', value);
+        await HouseRuleService.set('automaticSalePercentage', value);
       });
     }
 
@@ -237,7 +239,7 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     const disallowAutoNoPrice = root.querySelector('[name="disallowAutoSellNoPrice"]');
     if (disallowAutoNoPrice) {
       disallowAutoNoPrice.addEventListener('change', async (ev) => {
-        await game.settings.set('foundryvtt-swse', 'disallowAutoSellNoPrice', ev.currentTarget.checked);
+        await HouseRuleService.set('disallowAutoSellNoPrice', ev.currentTarget.checked);
       });
     }
 
@@ -472,9 +474,9 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
       await ownerActor.setFlag('foundryvtt-swse', 'purchaseHistory', history);
 
       // 5. Remove from pending queue
-      const pendingPurchases = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') || [];
+      const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
       pendingPurchases.splice(index, 1);
-      await game.settings.set('foundryvtt-swse', 'pendingCustomPurchases', pendingPurchases);
+      await HouseRuleService.set('pendingCustomPurchases', pendingPurchases);
 
       ui.notifications.info(`Approved: ${approval.draftData.name} for ${ownerActor.name}`);
       SWSELogger.log('SWSE Store | Custom purchase approved:', approval);
@@ -512,9 +514,9 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
       }
 
       // Remove from pending queue
-      const pendingPurchases = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') || [];
+      const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
       pendingPurchases.splice(index, 1);
-      await game.settings.set('foundryvtt-swse', 'pendingCustomPurchases', pendingPurchases);
+      await HouseRuleService.set('pendingCustomPurchases', pendingPurchases);
 
       ui.notifications.info(`Denied: ${approval.draftData.name}`);
       SWSELogger.log('SWSE Store | Custom purchase denied:', approval);

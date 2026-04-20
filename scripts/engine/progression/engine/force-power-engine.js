@@ -33,6 +33,8 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ForceSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-slot-validator.js";
 import { ForceProvenanceEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-provenance-engine.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
 
 export class ForcePowerEngine {
   /**
@@ -48,24 +50,13 @@ export class ForcePowerEngine {
 
     if (!featDoc) {
       try {
-        const pack = game.packs.get('foundryvtt-swse.feats');
-        if (!pack) {
-          // Only warn once per session
-          if (!ForcePowerEngine._featPackWarnShown) {
-            swseLogger.warn('ForcePowerEngine: foundryvtt-swse.feats compendium not found. Feat-based force power grants may not work.');
-            ForcePowerEngine._featPackWarnShown = true;
-          }
-        } else {
-          if (!pack.indexed) {
-            await pack.getIndex();
-          }
-          const index = pack.index.find(e => e.name === featName);
-          if (index) {
-            featDoc = await pack.getDocument(index._id);
-          }
+        featDoc = await FeatRegistry.getDocumentByName?.(featName);
+        if (!featDoc && !ForcePowerEngine._featPackWarnShown) {
+          swseLogger.warn('ForcePowerEngine: feat registry could not resolve feat-based force power grants.');
+          ForcePowerEngine._featPackWarnShown = true;
         }
       } catch (e) {
-        swseLogger.warn(`ForcePowerEngine: Failed to load feat "${featName}" from compendium`, e);
+        swseLogger.warn(`ForcePowerEngine: Failed to load feat "${featName}" from registry`, e);
       }
     }
 
@@ -187,24 +178,16 @@ static async detectForcePowerTriggers(actor, updateSummary = {}) {
 
 static async collectAvailablePowers(actor) {
   try {
-    const pack = game.packs.get('foundryvtt-swse.forcepowers');
-
-    if (!pack) {
-      swseLogger.error('Force Power Engine: foundryvtt-swse.forcepowers compendium not found!');
-      return [];
+    await ForceRegistry.ensureInitialized?.();
+    const entries = ForceRegistry.getByType?.('power') || [];
+    const docs = [];
+    for (const entry of entries) {
+      const doc = await ForceRegistry.getDocumentByRef?.(entry, 'power');
+      if (doc) docs.push(doc);
     }
-
-    if (!pack.indexed) {
-      await pack.getIndex();
-    }
-
-    const docs = pack.getDocuments
-      ? await pack.getDocuments()
-      : pack.index.map(e => e);
-
-    return docs ?? [];
+    return docs;
   } catch (e) {
-    swseLogger.error('ForcePowerEngine: Failed to collect powers from compendium', e);
+    swseLogger.error('ForcePowerEngine: Failed to collect powers from registry', e);
     return [];
   }
 }
@@ -297,10 +280,11 @@ static async applySelected(actor, selectedItems = []) {
           // Store on feat immediately (synchronously, before creating powers)
           // This prevents duplicate ghost grants if session reloads before power creation
           try {
-            await ftFeat.update({
+            await ActorEngine.updateOwnedItems(actor, [{
+              _id: ftFeat.id,
               'system.grantSourceId': newGrantId,
               'system.acquiredAtLevel': actor.system.level
-            });
+            }], { source: 'ForcePowerEngine.persistGrantSourceId' });
             grantSourceId = newGrantId;
           } catch (e) {
             swseLogger.warn('[FORCE POWER] Failed to store grantSourceId on FT feat', e);

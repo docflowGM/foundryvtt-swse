@@ -15,6 +15,7 @@ import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -86,7 +87,7 @@ export class SWSEV2CombatNpcSheet extends
         const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
         const state = ActionEngine.getVisualState(turnState);
         const breakdown = ActionEngine.getTooltipBreakdown(turnState);
-        const enforcementMode = game.settings.get("foundryvtt-swse", "actionEconomyMode");
+        const enforcementMode = HouseRuleService.getString('actionEconomyMode', 'loose');
 
         actionEconomy = {
           state,
@@ -410,4 +411,15 @@ export class SWSEV2CombatNpcSheet extends
    * @param {string} tabName - tab identifier to pulse
    */
   _pulseTab(tabName) {
-   
+       if (!tabName) return;
+
+    const tabButton = this.element?.querySelector(`[data-tab="${tabName}"]`);
+    if (!tabButton) return;
+
+    tabButton.classList.add('tab-pulse');
+
+    setTimeout(() => {
+      tabButton.classList.remove('tab-pulse');
+    }, 800);
+  }
+}

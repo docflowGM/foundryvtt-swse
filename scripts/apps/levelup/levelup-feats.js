@@ -9,6 +9,7 @@ import { getClassLevel } from "/systems/foundryvtt-swse/scripts/apps/levelup/lev
 import { filterQualifiedFeats } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-validation.js";
 import { getClassProperty } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 
 // Cache for feat metadata
 let _featMetadataCache = null;
@@ -210,18 +211,15 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
  */
 export async function loadFeats(actor, selectedClass, pendingData) {
   try {
-    const featPack = game.packs.get('foundryvtt-swse.feats');
-    if (!featPack) {
-      SWSELogger.error('SWSE LevelUp | Feats compendium pack not found!');
-      ui.notifications.error('Failed to load feats compendium. Feats will not be available.', { permanent: true });
-      return { categories: [], feats: [] };
+    const allFeats = [];
+    for (const entry of (FeatRegistry.getAll?.() || [])) {
+      const doc = await FeatRegistry.getDocumentById?.(entry.id);
+      if (doc) allFeats.push(doc);
     }
 
-    const allFeats = await featPack.getDocuments();
-
     if (!allFeats || allFeats.length === 0) {
-      SWSELogger.error('SWSE LevelUp | Feats compendium is empty!');
-      ui.notifications.error('Feats compendium is empty. Please check your SWSE installation.', { permanent: true });
+      SWSELogger.error('SWSE LevelUp | Feat registry is empty!');
+      ui.notifications.error('Feat registry is empty. Please check your SWSE installation.', { permanent: true });
       return { categories: [], feats: [] };
     }
 
@@ -356,7 +354,5 @@ export function selectBonusFeat(featId, featData, selectedFeats) {
  * @returns {Promise<Object|null>} The selected feat or null
  */
 export async function selectMulticlassFeat(featId) {
-  const featPack = game.packs.get('foundryvtt-swse.feats');
-  const feat = await featPack.getDocument(featId);
-  return feat || null;
+  return await FeatRegistry.getDocumentById?.(featId) || null;
 }

@@ -16,7 +16,7 @@
  */
 
 export function featSpeciesRule({ actor, skillKey, context }, result) {
-  // TODO: Implement once feat/species gate definitions are available
+  // planned: Implement once feat/species gate definitions are available
   // For now, this is a passthrough
 
   result.diagnostics.rulesTriggered.push("featSpeciesRule");

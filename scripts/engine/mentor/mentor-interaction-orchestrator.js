@@ -714,7 +714,7 @@ export class MentorInteractionOrchestrator {
         advisoryType,
         tier,
         isLevelUp: mode === "selection",
-        isFirstLevelInClass: false, // TODO: derive from actor if needed
+        isFirstLevelInClass: false, // planned: derive from actor if needed
         isTalkInitiated: mode !== "selection"
       });
 

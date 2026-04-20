@@ -27,6 +27,9 @@ import {
 } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-dual-talent-progression.js";
 import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
 import { getAllowedTalentTrees } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
+import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
+import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
+import { TalentTreeRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/TalentTreeRegistry.js";
 
 /**
  * Get the number of talents granted at this level
@@ -91,21 +94,16 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
   if (talentTreeRestriction === 'unrestricted') {
     // Free build mode: all talent trees from all talents
     SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Unrestricted mode - loading all talent trees`);
-    const talentPack = game.packs.get('foundryvtt-swse.talents');
-    if (talentPack) {
-      const allTalents = await talentPack.getDocuments();
-      const treeSet = new Set();
-      allTalents.forEach(talent => {
-        const tree = talent.system?.tree;
-        if (tree) {
-          treeSet.add(tree);
-        }
-      });
-      availableTrees = Array.from(treeSet);
-      SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Unrestricted - found ${availableTrees.length} talent trees`);
-    } else {
-      SWSELogger.error(`[LEVELUP-TALENTS] ERROR: Talents compendium not found`);
-    }
+    const allTalents = TalentRegistry.getAll?.() || [];
+    const treeSet = new Set();
+    allTalents.forEach(talent => {
+      const tree = talent.system?.tree || talent.system?.talent_tree || talent.talentTree;
+      if (tree) {
+        treeSet.add(tree);
+      }
+    });
+    availableTrees = Array.from(treeSet);
+    SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Unrestricted - found ${availableTrees.length} talent trees`);
   } else if (talentTreeRestriction === 'current') {
     // Only talent trees from the selected class
     SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Current mode - using selected class trees only`);
@@ -123,19 +121,15 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
   } else {
     // Talent trees from any class the character has levels in
     SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Multiclass mode - collecting trees from all character classes`);
-    const characterClasses = getCharacterClasses(actor);
-    const classPack = game.packs.get('foundryvtt-swse.classes');
-    SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Character has classes:`, Object.keys(characterClasses));
+    const classItems = actor.items.filter(item => item.type === 'class');
+    SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Character has classes:`, classItems.map(item => item.name));
 
-    for (const className of Object.keys(characterClasses)) {
-      const classDoc = await classPack.index.find(c => c.name === className);
-      if (classDoc) {
-        const fullClass = await classPack.getDocument(classDoc._id);
-        const trees = getTalentTrees(fullClass);
-        SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Class "${className}" - trees: ${trees?.length || 0}`);
-        if (trees && trees.length > 0) {
-          availableTrees.push(...trees);
-        }
+    for (const classItem of classItems) {
+      const classModel = resolveClassModel(classItem);
+      const trees = classModel?.talentTreeNames || [];
+      SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Class "${classItem.name}" - trees: ${trees.length}`);
+      if (trees.length > 0) {
+        availableTrees.push(...trees);
       }
     }
 
@@ -166,16 +160,14 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
   // -----------------------------------------------------------
 
   // Load all talent documents once for tree validation
-  const talentPack = game.packs.get('foundryvtt-swse.talents');
-  const allTalents = talentPack ? await talentPack.getDocuments() : [];
+  const allTalents = TalentRegistry.getAll?.() || [];
 
   for (const treeName of availableTrees) {
 
       // 1 — Check if tree exists in the talent tree compendium
-      const treePack = game.packs.get('foundryvtt-swse.talent_trees');
-      const treeIndex = treePack?.index.find(t => t.name === treeName);
+      const tree = TalentTreeRegistry.getTree?.(treeName);
 
-      if (!treeIndex) {
+      if (!tree) {
           warnGM(
               `${selectedClass.name} references a Talent Tree "${treeName}" that does NOT exist in the talentTrees compendium.`
           );
@@ -208,19 +200,16 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
 export async function loadTalentData(actor = null, pendingData = {}) {
   SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: START - Actor: ${actor?.id}, pendingData keys:`, Object.keys(pendingData));
 
-  const talentPack = game.packs.get('foundryvtt-swse.talents');
-  SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Talents pack lookup:`, talentPack ? 'FOUND' : 'NOT FOUND');
+  let talents = TalentRegistry.getAll?.() || [];
+  SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Talent registry status:`, talents.length > 0 ? 'READY' : 'EMPTY');
 
-  if (!talentPack) {
-    SWSELogger.error(`[LEVELUP-TALENTS] ERROR: Talents compendium pack not found!`);
-    SWSELogger.error(`[LEVELUP-TALENTS] Available packs:`, Array.from(game.packs.keys()));
-    ui.notifications.error('Failed to load talents compendium. Talents will not be available.', { permanent: true });
+  if (!talents || talents.length === 0) {
+    SWSELogger.error(`[LEVELUP-TALENTS] ERROR: Talent registry is empty!`);
+    ui.notifications.error('Talent registry is empty. Please check your SWSE installation.', { permanent: true });
     return [];
   }
 
-  SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Fetching talents from pack...`);
-  let talents = await talentPack.getDocuments();
-  SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Retrieved ${talents?.length || 0} talents from compendium`);
+  SWSELogger.log(`[LEVELUP-TALENTS] loadTalentData: Retrieved ${talents?.length || 0} talents from registry`);
 
   if (!talents || talents.length === 0) {
     SWSELogger.error(`[LEVELUP-TALENTS] ERROR: Talents compendium is empty!`);

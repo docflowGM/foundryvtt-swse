@@ -104,6 +104,25 @@ export class BackgroundRegistry {
     return this._byId.get(id) || null;
   }
 
+  
+
+  static async getByName(name) {
+    await this.ensureLoaded();
+    const normalized = String(name || '').trim().toLowerCase();
+    for (const record of this._bySlug.values()) {
+      if (String(record?.name || '').trim().toLowerCase() === normalized) return record;
+    }
+    return null;
+  }
+
+  static async resolve(ref) {
+    if (!ref) return null;
+    if (typeof ref === 'string') {
+      return (await this.getById(ref)) || (await this.getBySlug(ref)) || (await this.getByName(ref));
+    }
+    return (await this.getById(ref._id || ref.internalId || ref.id)) || (await this.getBySlug(ref.slug || ref.id)) || (await this.getByName(ref.name));
+  }
+
   static async all() {
     await this.ensureLoaded();
     return Array.from(this._bySlug.values());
@@ -111,5 +130,33 @@ export class BackgroundRegistry {
 
   static async getAll() {
     return this.all();
+  }
+
+  static async getDocumentById(id) {
+    const entry = await this.getById(id);
+    if (!entry?._id || !entry?.uuid) return null;
+    const systemId = game?.system?.id || 'foundryvtt-swse';
+    const packKey = `${systemId}.backgrounds`;
+    const pack = game?.packs?.get(packKey);
+    if (!pack) return null;
+    try {
+      return await pack.getDocument(entry._id);
+    } catch (err) {
+      SWSELogger.warn(`BackgroundRegistry: failed to fetch background ${entry._id} from ${packKey}`, err);
+      return null;
+    }
+  }
+
+  static async getDocumentByName(name) {
+    const entry = await this.getByName(name);
+    return entry ? this.getDocumentById(entry._id || entry.internalId || entry.id) : null;
+  }
+
+  static async getDocumentByRef(ref) {
+    if (!ref) return null;
+    if (typeof ref === 'string') {
+      return (await this.getDocumentById(ref)) || (await this.getDocumentByName(ref)) || (await this.getDocumentById((await this.getBySlug(ref))?._id));
+    }
+    return (await this.getDocumentById(ref._id || ref.internalId || ref.id)) || (await this.getDocumentByName(ref.name || ref.label));
   }
 }

@@ -4,8 +4,8 @@
  * Features typing animation for immersive mentor text.
  */
 
-import {
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import {
     getMentorForClass,
     getMentorGuidance,
     getLevel1Class
@@ -15,6 +15,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TypingAnimation } from "/systems/foundryvtt-swse/scripts/utils/typing-animation.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 export class MentorGuidanceUI {
 
@@ -40,7 +41,7 @@ export class MentorGuidanceUI {
         if (!guidance) {return;}
 
         // Check if guidance popups are enabled
-        if (!game.settings.get('foundryvtt-swse', 'mentorGuidanceEnabled')) {
+        if (!SettingsHelper.getBoolean('mentorGuidanceEnabled', true)) {
             // Fallback: send to chat if popups disabled
             await createChatMessage({
                 speaker: ChatMessage.getSpeaker({ actor: actor }),

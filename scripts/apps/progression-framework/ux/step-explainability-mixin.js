@@ -64,7 +64,7 @@ export const StepExplainabilityMixin = {
         optEl.appendChild(badge);
       }
     });
-  }
+  },
 
   /**
    * Get rationale for why an option is suggested/ranked.
@@ -73,8 +73,8 @@ export const StepExplainabilityMixin = {
   _getOptionRationale(shell, optionId) {
     // This would integrate with SuggestionEngineCoordinator in the step
     // For now, return stub
-    return null; // TODO: Integrate with step's suggestion context
-  }
+    return null; // planned: Integrate with step's suggestion context
+  },
 
   /**
    * Get template provenance for an option.
@@ -95,7 +95,7 @@ export const StepExplainabilityMixin = {
       source: templateSource,
       overridden: session.draftSelections[optionId]?.overridden,
     });
-  }
+  },
 
   /**
    * Create a styled explanation element for a validation failure.
@@ -122,7 +122,7 @@ export const StepExplainabilityMixin = {
     `;
 
     return el;
-  }
+  },
 
   /**
    * Create a directive explanation for a step (why is this step here?).
@@ -139,7 +139,7 @@ export const StepExplainabilityMixin = {
     }
 
     return ExplanationDisplay.renderStepExplanationCard(this._descriptor, shell.progressionSession);
-  }
+  },
 
   /**
    * Helper to get the icon for a validation severity.
@@ -157,7 +157,7 @@ export const StepExplainabilityMixin = {
       default:
         return '•';
     }
-  }
+  },
 
   /**
    * Escape HTML in text to prevent XSS.

@@ -37,6 +37,7 @@ import {
   getErrorMessage,
   categorizeError
 } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 
 export class CharacterGeneratorApp extends SWSEApplicationV2 {
   /**
@@ -163,12 +164,12 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
     if (!this.fullMode) {
       return [];
     }
-    // TODO: Fetch from ClassesDB
-    return [
-      { id: 'jedi', label: 'Jedi' },
-      { id: 'soldier', label: 'Soldier' },
-      { id: 'scout', label: 'Scout' }
-    ];
+
+    const classes = ClassesRegistry.getBaseClasses();
+    return classes.map(cls => ({
+      id: cls.id,
+      label: cls.name
+    }));
   }
 
   /**

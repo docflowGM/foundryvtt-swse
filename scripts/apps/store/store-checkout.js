@@ -11,6 +11,7 @@
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { calculateFinalCost } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
@@ -22,6 +23,7 @@ import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/s
 import { SWSEVehicleHandler } from "/systems/foundryvtt-swse/scripts/actors/vehicle/swse-vehicle-handler.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 /**
  * Add item to shopping cart
@@ -1067,9 +1069,9 @@ export async function submitDraftDroidForApproval(chargenSnapshot, ownerActor, c
         };
 
         // 4. Add to pending queue (world flag)
-        const pendingPurchases = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') || [];
+        const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
         pendingPurchases.push(pendingRecord);
-        await game.settings.set('foundryvtt-swse', 'pendingCustomPurchases', pendingPurchases);
+        await HouseRuleService.set('pendingCustomPurchases', pendingPurchases);
 
         // 5. Notify player
         ui.notifications.info(`Droid design submitted for GM approval. Awaiting review...`);
@@ -1145,9 +1147,9 @@ export async function submitDraftVehicleForApproval(modificationData, vehicleTem
         };
 
         // 4. Add to pending queue (world flag)
-        const pendingPurchases = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') || [];
+        const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
         pendingPurchases.push(pendingRecord);
-        await game.settings.set('foundryvtt-swse', 'pendingCustomPurchases', pendingPurchases);
+        await HouseRuleService.set('pendingCustomPurchases', pendingPurchases);
 
         // 5. Notify player
         ui.notifications.info(`Vehicle design submitted for GM approval. Awaiting review...`);
@@ -1212,7 +1214,7 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
 
     try {
         // Determine if GM approval is required (world setting)
-        const requireApproval = game.settings.get('foundryvtt-swse', 'store.requireGMApproval') ?? false;
+        const requireApproval = SettingsHelper.getSafe('store.requireGMApproval', false);
 
         // Set up hook listener for droid finalization
         const hookId = Hooks.on('swse:droidFinalized', async (data) => {
@@ -1380,7 +1382,7 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
         if (!confirmed) return;
 
         // Launch builder in TEMPLATE mode
-        const requireApproval = game.settings.get('foundryvtt-swse', 'store.requireGMApproval') ?? false;
+        const requireApproval = SettingsHelper.getSafe('store.requireGMApproval', false);
 
         // Set up hook listener (same as buildDroidWithBuilder)
         const hookId = Hooks.on('swse:droidFinalized', async (data) => {

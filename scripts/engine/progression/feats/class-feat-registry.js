@@ -7,6 +7,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 
 export class ClassFeatRegistry {
   // Cache: classId → [feat IDs]
@@ -75,19 +76,17 @@ export class ClassFeatRegistry {
    */
   static async _loadFeatsCache() {
     try {
-      const featPack = game.packs.get('foundryvtt-swse.feats');
-      if (!featPack) {
-        SWSELogger.warn('[ClassFeatRegistry] Feats compendium not found');
-        this._featsLoaded = true;
-        return;
-      }
-
-      const feats = await featPack.getDocuments();
-      this._allFeatsData = feats.map(f => f.toObject());
+      this._allFeatsData = (FeatRegistry.getAll?.() || []).map((entry) => ({
+        _id: entry.id,
+        id: entry.id,
+        name: entry.name,
+        type: 'feat',
+        system: entry.system || {}
+      }));
       this._featsLoaded = true;
 
       SWSELogger.log(
-        `[ClassFeatRegistry] Loaded ${this._allFeatsData.length} feats from compendium`
+        `[ClassFeatRegistry] Loaded ${this._allFeatsData.length} feats from registry`
       );
     } catch (err) {
       SWSELogger.error('[ClassFeatRegistry] Failed to load feats cache:', err);

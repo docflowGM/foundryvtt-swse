@@ -26,7 +26,7 @@ import {
   formatMentorMemory
 } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js";
 
-// TODO: DSP saturation functions need to be implemented
+// planned: DSP saturation functions need to be implemented
 // These calculate dark side points influence on mentor decisions
 // import {
 //   calculateDspSaturation,
@@ -60,7 +60,7 @@ export function testDspSaturation() {
       }
     };
 
-    // TODO: Implement DSP saturation functions
+    // planned: Implement DSP saturation functions
     // const saturation = calculateDspSaturation(mockActor);
     // const band = getDspBand(saturation);
     // const tone = getToneModifier(band);

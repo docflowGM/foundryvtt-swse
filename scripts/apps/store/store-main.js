@@ -31,6 +31,8 @@ import {
   getRarityLabel,
   getCostValue
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { getRendarrLine } from "/systems/foundryvtt-swse/scripts/apps/store/dialogue/rendarr-dialogue.js";
 import {
   addItemToCart,
@@ -116,8 +118,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this.isCheckoutMode = false;     // Checkout mode state (true = ledger view, locked cart)
 
     // Initialize loading overlay
-    const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh');
-    const skipOverlay = game.settings.get('foundryvtt-swse', 'storeSkipLoadingOverlay');
+    const useAurebesh = SettingsHelper.getSafe('useAurebesh', false);
+    const skipOverlay = SettingsHelper.getSafe('storeSkipLoadingOverlay', false);
     const reduceMotion = game.user?.getFlag?.('core', 'reduce-motion') ?? false;
 
     this.loadingOverlay = new StoreLoadingOverlay({
@@ -376,7 +378,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
           }
         } catch (overflowErr) {
           // Overflow pack is optional, don't fail if missing
-          console.debug('[SWSE Store] Overflow reviews not found (optional)', overflowErr.message);
+          SWSELogger.debug('[SWSE Store] Overflow reviews not found (optional)', overflowErr.message);
         }
 
         // Try to load usernames pack
@@ -388,7 +390,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
           }
         } catch (usernamesErr) {
           // Usernames pack is optional, don't fail if missing
-          console.debug('[SWSE Store] Usernames not found (optional)', usernamesErr.message);
+          SWSELogger.debug('[SWSE Store] Usernames not found (optional)', usernamesErr.message);
         }
 
         // Try to load vehicle reviews pack
@@ -402,7 +404,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
           }
         } catch (vehicleErr) {
           // Vehicle pack is optional, don't fail if missing
-          console.debug('[SWSE Store] Vehicle reviews not found (optional)', vehicleErr.message);
+          SWSELogger.debug('[SWSE Store] Vehicle reviews not found (optional)', vehicleErr.message);
         }
 
         // Try to load droid reviews pack
@@ -428,7 +430,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
           }
         } catch (droidErr) {
           // Droid pack is optional, don't fail if missing
-          console.debug('[SWSE Store] Droid reviews not found (optional)', droidErr.message);
+          SWSELogger.debug('[SWSE Store] Droid reviews not found (optional)', droidErr.message);
         }
 
         // Try to load modification reviews pack
@@ -442,7 +444,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
           }
         } catch (modErr) {
           // Modification pack is optional, don't fail if missing
-          console.debug('[SWSE Store] Modification reviews not found (optional)', modErr.message);
+          SWSELogger.debug('[SWSE Store] Modification reviews not found (optional)', modErr.message);
         }
 
         // Try to load service reviews pack
@@ -471,7 +473,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
           }
         } catch (serviceErr) {
           // Service pack is optional, don't fail if missing
-          console.debug('[SWSE Store] Service reviews not found (optional)', serviceErr.message);
+          SWSELogger.debug('[SWSE Store] Service reviews not found (optional)', serviceErr.message);
         }
       }
     } catch (err) {
@@ -543,7 +545,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
   _buildItemsWithSuggestions() {
     const items = [];
-    const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh');
+    const useAurebesh = SettingsHelper.getSafe('useAurebesh', false);
 
     for (const item of this.storeInventory?.allItems || []) {
       // Engine normalizes IDs to .id (not ._id)
@@ -1397,7 +1399,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
   _generateFlavorReviews(item, itemType) {
     if (!this.reviewsData) {
-      console.debug('[SWSE Store] No reviews data loaded');
+      SWSELogger.debug('[SWSE Store] No reviews data loaded');
       return null;
     }
 

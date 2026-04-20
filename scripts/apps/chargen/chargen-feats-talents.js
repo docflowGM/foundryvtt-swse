@@ -4,6 +4,7 @@
 
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 import { getTalentTrees, getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
@@ -629,10 +630,8 @@ export async function _onSelectTalent(event) {
       if (chargenContext._packs?.talents && chargenContext._packs.talents.length > 0) {
         actualTalent = _findTalentItem(chargenContext._packs.talents, talentName);
       } else {
-        // Fallback: Load from live pack if cache unavailable
-        actualTalent = await game.packs.get('foundryvtt-swse.talents')?.getDocuments()
-          .then(docs => docs.find(d => d.name === talentName))
-          .catch(() => null);
+        // Fallback: Resolve through canonical talent registry if cache unavailable
+        actualTalent = await TalentRegistry.getDocumentByName?.(talentName);
       }
 
       if (actualTalent) {

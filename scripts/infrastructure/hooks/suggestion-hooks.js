@@ -5,6 +5,7 @@ import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import MentorNotesApp from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 function safeGetActorId(doc) {
   return doc?.actor?.id || doc?.parent?.id || doc?.id || null;
@@ -12,7 +13,7 @@ function safeGetActorId(doc) {
 
 function isMentorNotesEnabled() {
   try {
-    return game.settings.get('foundryvtt-swse', 'enableMentorNotesPanel') ?? true;
+    return SettingsHelper.getBoolean('enableMentorNotesPanel', true);
   } catch {
     return true;
   }

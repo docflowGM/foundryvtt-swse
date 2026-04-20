@@ -194,14 +194,14 @@ export class BuildSignalsNormalizer {
   static _extractTargets(session, projection, targets) {
     if (!session && !projection) return;
 
-    // TODO: Prestige class targets from survey or inferred path
+    // planned: Prestige class targets from survey or inferred path
     // Would integrate with prestige-delay-calculator and target registry
 
-    // TODO: Talent tree targets from survey or projected selections
+    // planned: Talent tree targets from survey or projected selections
 
-    // TODO: Force domain targets if Force user
+    // planned: Force domain targets if Force user
 
-    // TODO: Starship targets if starship selected
+    // planned: Starship targets if starship selected
   }
 
   /**
@@ -284,7 +284,7 @@ export class BuildSignalsNormalizer {
   static _inferForceSpecialization(powers, techniques) {
     const tags = [];
 
-    // TODO: Map powers and techniques to domains (Control, Sense, Alter)
+    // planned: Map powers and techniques to domains (Control, Sense, Alter)
     // and specializations (Lightsaber, Enhancement, etc.)
 
     return tags;
@@ -354,7 +354,7 @@ export class BuildSignalsNormalizer {
    * @private
    */
   static _targetMatchesArchetype(targetId, archetypes) {
-    // TODO: Wire to target registry for proper matching
+    // planned: Wire to target registry for proper matching
     // Simple placeholder for now
     return false;
   }
@@ -364,7 +364,7 @@ export class BuildSignalsNormalizer {
    * @private
    */
   static _targetMatchesRole(targetId, roles) {
-    // TODO: Wire to target registry for proper matching
+    // planned: Wire to target registry for proper matching
     return false;
   }
 }

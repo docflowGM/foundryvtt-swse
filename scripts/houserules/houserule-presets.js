@@ -1,5 +1,6 @@
 // scripts/houserules/houserule-presets.js
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 /**
  * CENTRAL DEFINITIONS FOR PRESET BUNDLES
@@ -189,12 +190,12 @@ export async function applyPreset(presetName) {
     }
 
     try {
-      const current = game.settings.get('foundryvtt-swse', key);
+      const current = HouseRuleService.getSafe(key, null);
       const merged = typeof value === 'object' && !Array.isArray(value)
         ? deepMerge(structuredClone(current ?? {}), value)
         : value;
 
-      await game.settings.set('foundryvtt-swse', key, merged);
+      await HouseRuleService.set(key, merged);
     } catch (err) {
       SWSELogger.error(`Failed to set preset key "${key}"`, err);
     }
@@ -242,7 +243,7 @@ export function exportSettings() {
 
   for (const key of allowedKeys) {
     try {
-      out[key] = game.settings.get('foundryvtt-swse', key);
+      out[key] = HouseRuleService.getSafe(key, null);
     } catch (err) {
       SWSELogger.warn(`Skipping unknown houserule key during export: ${key}`);
     }

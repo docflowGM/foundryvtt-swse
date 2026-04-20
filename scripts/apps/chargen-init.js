@@ -8,7 +8,8 @@ import { ActorCreationEntryDialog } from "/systems/foundryvtt-swse/scripts/apps/
 import { DroidTemplateChoiceDialog } from "/systems/foundryvtt-swse/scripts/apps/droid-template-choice-dialog.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { RolloutSettings } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/rollout/rollout-settings.js";
-import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { launchProgression, launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 // Single hook to handle both create button interception and header button addition
 Hooks.on('renderActorDirectory', (app, html, data) => {
@@ -75,15 +76,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                                 icon: '<i class="fa-solid fa-dice-d20"></i>',
                                 label: '✓ Custom PC (Unified)',
                                 callback: async () => {
-                                    // Route to unified ProgressionShell via launchProgression
-                                    const { launchProgression } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js');
-                                    const ActorClass = CONFIG.Actor.documentClass;
-                                    const tempActor = new ActorClass({
-                                        name: 'New Character',
-                                        type: 'character',
-                                        system: { level: 0, swse: { mentorSurveyCompleted: false } }
-                                    }, { parent: null });
-                                    await launchProgression(tempActor);
+                                    await launchNewProgression({ actorType: 'character' });
                                 }
                             };
                         }
@@ -110,25 +103,12 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                             };
                         }
 
-                        // Add NPC Generator button only if permitted and legacy fallback available
-                        if (canCreateNPC && legacyAvailable) {
+                        if (canCreateNPC) {
                             buttons.npc = {
                                 icon: '<i class="fa-solid fa-users"></i>',
-                                label: '⚠ Legacy NPC Generator',
+                                label: 'NPC Nonheroic (Unified)',
                                 callback: async () => {
-                                    SWSELogger.warn('[chargen-init] Opening legacy NPC generator (fallback mode)');
-                                    // Create temporary NPC actor for consistent initialization
-                                    const ActorClass = CONFIG.Actor.documentClass;
-                                    const tempActor = new ActorClass({
-                                        name: 'New NPC (Temp)',
-                                        type: 'npc',
-                                        system: {
-                                            level: 1,
-                                            swse: { mentorSurveyCompleted: false }
-                                        }
-                                    }, { parent: null });
-
-                                    new CharacterGeneratorImproved(tempActor, { actorType: 'npc' }).render(true);
+                                    await launchNewProgression({ actorType: 'npc', subtype: 'nonheroic' });
                                 }
                             };
                         }
@@ -200,19 +180,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
             button.innerHTML = '<i class="fa-solid fa-hat-wizard"></i> Generator';
             button.title = 'Open custom character generator';
             button.addEventListener('click', async () => {
-                // Create temporary actor for consistent initialization and mentor survey handling
-                // Ensures L1 mentor survey fires consistently regardless of entry point
-                const ActorClass = CONFIG.Actor.documentClass;
-                const tempActor = new ActorClass({
-                    name: 'New Character (Temp)',
-                    type: 'character',
-                    system: {
-                        level: 1,
-                        swse: { mentorSurveyCompleted: false }
-                    }
-                }, { parent: null });
-
-                new CharacterGeneratorNarrative(tempActor).render(true);
+                await launchNewProgression({ actorType: 'character' });
             });
             header.appendChild(button);
 
@@ -248,7 +216,7 @@ async function _handleDroidCreation(result) {
       if (importedDroid && importedDroid.type === 'droid') {
         SWSELogger.log('[chargen-init] Launching progression for imported droid:', importedDroid.name);
         // Set droid flag to mark this as a droid character
-        await importedDroid.update({ 'system.isDroid': true });
+        await ActorEngine.updateActor(importedDroid, { 'system.isDroid': true }, { source: 'chargen-init.imported-droid' });
         // Launch progression to continue chargen
         await launchProgression(importedDroid);
       } else {
@@ -281,8 +249,7 @@ async function _handleDroidCreation(result) {
 
       SWSELogger.log('[chargen-init] Created droid actor for class template:', droidActor.name);
 
-      // TODO: In future, pass class template context to progression
-      // For now, launch progression which will guide through full chargen
+      // Class templates currently enter the unified spine at standard droid chargen.
       await launchProgression(droidActor);
     } else if (result.choice === 'custom') {
       // Create a new empty droid actor and launch progression

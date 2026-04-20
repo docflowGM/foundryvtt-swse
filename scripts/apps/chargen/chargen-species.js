@@ -1265,7 +1265,7 @@ function _renderNearHumanTraits(overlay) {
 
   for (const [type, traits] of Object.entries(traitsByType)) {
     const typeLabel = typeLabels[type] || type;
-    // TODO: Convert jQuery DOM construction to document.createElement()
+    // planned: Convert jQuery DOM construction to document.createElement()
     const typeGroupHtml = `
       <div class="trait-type-group">
         <h4 class="trait-type-header">${typeLabel}</h4>

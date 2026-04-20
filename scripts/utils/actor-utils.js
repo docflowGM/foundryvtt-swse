@@ -422,14 +422,9 @@ export async function safeActorUpdate(actor, changes, options = {}) {
     });
 
     try {
-      // Restore the backup (excluding _id)
-      const restoreData = {};
-      for (const [key, value] of Object.entries(backup)) {
-        if (key !== '_id') {
-          restoreData[key] = value;
-        }
-      }
-      await actor.update(restoreData, { diff: false, recursive: false });
+      await ActorEngine.restoreFromSnapshot(actor, backup, {
+        meta: { guardKey: 'safe-actor-update-rollback' }
+      });
       swseLogger.log('Actor state restored successfully');
     } catch (rollbackErr) {
       swseLogger.error('Rollback failed:', rollbackErr);

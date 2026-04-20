@@ -6,6 +6,8 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { initializeTooltipDiscovery } from "/systems/foundryvtt-swse/scripts/core/tooltip-discovery.js";
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const SETTING_KEY = 'welcomeShown';
@@ -21,7 +23,7 @@ async function shouldShowWelcome() {
   if (!game?.user?.isGM) return false;
 
   try {
-    const shown = await game.settings.get(SYSTEM_ID, SETTING_KEY);
+    const shown = SettingsHelper.getBoolean(SETTING_KEY, false);
     return !shown;
   } catch {
     return true;
@@ -30,7 +32,7 @@ async function shouldShowWelcome() {
 
 async function markWelcomeShown() {
   try {
-    await game.settings.set(SYSTEM_ID, SETTING_KEY, true);
+    await HouseRuleService.set(SETTING_KEY, true);
   } catch (err) {
     SWSELogger.warn('Failed to mark welcome as shown:', err.message);
   }
@@ -40,7 +42,7 @@ export async function resetWelcome() {
   if (!game?.user?.isGM) return false;
 
   try {
-    await game.settings.set(SYSTEM_ID, SETTING_KEY, false);
+    await HouseRuleService.set(SETTING_KEY, false);
     SWSELogger.log('Welcome dialog will show on next page load');
     return true;
   } catch (err) {

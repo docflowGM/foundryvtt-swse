@@ -380,9 +380,9 @@ export class SWSEV2VehicleSheet extends
         const price = item.system.price ?? 0;
         const currentCredits = this.document.system.credits ?? 0;
 
-        await this.document.update({
+        await ActorEngine.updateActor(this.document, {
           "system.credits": currentCredits + price
-        });
+        }, { source: 'vehicle-sheet-sell-item' });
 
         // PHASE 8: Use ActorEngine
         await ActorEngine.deleteEmbeddedDocuments(this.document, "Item", [itemId]);
@@ -408,7 +408,7 @@ export class SWSEV2VehicleSheet extends
         const actorId = ev.currentTarget?.dataset?.actorId;
         if (!actorId) return;
         const owned = this.document.system.ownedActors?.filter(o => o.id !== actorId) || [];
-        await this.document.update({ "system.ownedActors": owned });
+        await ActorEngine.updateActor(this.document, { "system.ownedActors": owned }, { source: 'vehicle-sheet-owned-actors' });
       }, { signal });
     }
 
@@ -663,7 +663,7 @@ export class SWSEV2VehicleSheet extends
 
     new AdoptOrAddDialog(droppedVehicle, async (choice) => {
       if (choice === "add") {
-        // TODO: Implement add to hangar (store as reference in system.hangar array)
+        // planned: Implement add to hangar (store as reference in system.hangar array)
         ui?.notifications?.info?.('Add to hangar (not yet implemented)');
       } else if (choice === "adopt") {
         await this._adoptVehicle(droppedVehicle);

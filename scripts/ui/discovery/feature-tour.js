@@ -6,6 +6,7 @@
  */
 
 import { DiscoveryUserState } from "/systems/foundryvtt-swse/scripts/ui/discovery/user-state.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const TOUR_CLASS = 'swse-discovery-tour';
@@ -87,7 +88,7 @@ export const FeatureTour = {
   async show() {
     // Check disabled setting
     try {
-      if (game.settings.get(SYSTEM_ID, 'disableTour')) {return;}
+      if (SettingsHelper.getBoolean('disableTour', false)) {return;}
     } catch { /* setting not registered yet, continue */ }
 
     if (DiscoveryUserState.isTourCompleted()) {return;}

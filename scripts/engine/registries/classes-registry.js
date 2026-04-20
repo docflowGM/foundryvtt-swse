@@ -98,6 +98,48 @@ export class ClassesRegistry {
     );
   }
 
+
+  /**
+   * Get class definition by original compendium document ID.
+   * @param {string} sourceId - Foundry document _id from the classes compendium
+   * @returns {Object|null}
+   */
+  static getBySourceId(sourceId) {
+    if (!sourceId) {
+      return null;
+    }
+
+    const all = ClassesDB.all();
+    return all.find(c => c.sourceId === sourceId) || null;
+  }
+
+
+  /**
+   * Resolve a class model from any common reference shape.
+   * Accepts canonical IDs, source IDs, display names, or reference objects.
+   * @param {string|object} ref
+   * @returns {object|null}
+   */
+  static resolveModel(ref) {
+    if (!ref) {
+      return null;
+    }
+
+    if (typeof ref === 'string') {
+      return this.getById(ref) || this.getBySourceId(ref) || this.getByName(ref);
+    }
+
+    if (typeof ref === 'object') {
+      return (
+        this.getById(ref.classId || ref.id) ||
+        this.getBySourceId(ref.sourceId || ref.documentId) ||
+        this.getByName(ref.displayName || ref.name)
+      );
+    }
+
+    return null;
+  }
+
   /**
    * Get all base classes (not prestige)
    * @returns {Object[]} Array of base class definitions
@@ -164,8 +206,8 @@ export class ClassesRegistry {
    * @param {string} classId - Class ID
    * @returns {Promise<*>} Full class document or null
    */
-  static async _getDocument(classId) {
-    if (!classId) {
+  static async _getDocument(sourceId) {
+    if (!sourceId) {
       return null;
     }
 
@@ -178,14 +220,78 @@ export class ClassesRegistry {
     }
 
     try {
-      return await pack.getDocument(classId);
+      return await pack.getDocument(sourceId);
     } catch (err) {
       SWSELogger.warn(
-        `[ClassesRegistry] Failed to fetch document ${classId} from ${packKey}:`,
+        `[ClassesRegistry] Failed to fetch document ${sourceId} from ${packKey}:`,
         err
       );
       return null;
     }
+  }
+
+  /**
+   * Get the full compendium document for a class by normalized class ID.
+   * @param {string} id - Canonical class ID
+   * @returns {Promise<*>}
+   */
+  static async getDocumentById(id) {
+    const model = this.getById(id);
+    return model?.sourceId ? this._getDocument(model.sourceId) : null;
+  }
+
+  /**
+   * Get the full compendium document for a class by display name.
+   * @param {string} name - Display name
+   * @returns {Promise<*>}
+   */
+  static async getDocumentByName(name) {
+    const model = this.getByName(name);
+    return model?.sourceId ? this._getDocument(model.sourceId) : null;
+  }
+
+  /**
+   * Get the full compendium document for a class by source document ID.
+   * @param {string} sourceId - Compendium document _id
+   * @returns {Promise<*>}
+   */
+  static async getDocumentBySourceId(sourceId) {
+    return this._getDocument(sourceId);
+  }
+
+
+  /**
+   * Get the full compendium document for a class from any supported ref shape.
+   * @param {string|object} ref
+   * @returns {Promise<*>}
+   */
+  static async getDocumentByRef(ref) {
+    const model = this.resolveModel(ref);
+    if (model?.sourceId) {
+      return this._getDocument(model.sourceId);
+    }
+
+    if (typeof ref === 'string') {
+      return this._getDocument(ref);
+    }
+
+    if (typeof ref === 'object' && ref?.sourceId) {
+      return this._getDocument(ref.sourceId);
+    }
+
+    return null;
+  }
+
+  /**
+   * Get all full class compendium documents.
+   * Prefer getAll() for data-only reads and reserve this for consumers that
+   * genuinely require the original Item document shape.
+   * @returns {Promise<Array>}
+   */
+  static async getAllDocuments() {
+    const all = this.getAll();
+    const docs = await Promise.all(all.map(model => this._getDocument(model.sourceId)));
+    return docs.filter(Boolean);
   }
 }
 

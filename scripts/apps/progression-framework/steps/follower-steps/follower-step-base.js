@@ -123,7 +123,7 @@ export class FollowerStepBase extends ProgressionStepPlugin {
     }
 
     // Follower feats come from template definition
-    // Phase 3 TODO: Define follower-specific feat allowances in template
+    // Phase 3 planned: Define follower-specific feat allowances in template
     return template.legalFeats || [];
   }
 

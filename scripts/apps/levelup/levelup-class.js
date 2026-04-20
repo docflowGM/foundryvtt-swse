@@ -15,6 +15,9 @@ import { getClassProperty } from "/systems/foundryvtt-swse/scripts/apps/chargen/
 import { ClassSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SkillResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-resolver.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import SkillRegistry from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
 
 /**
  * Get class metadata (icon and description)
@@ -79,93 +82,89 @@ export async function getAvailableClasses(actor, pendingData, options = {}) {
   const { includeSuggestions = true } = options;
   SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: START - Actor: ${actor.id} (${actor.name}), includeSuggestions: ${includeSuggestions}`);
 
-  const classPack = game.packs.get('foundryvtt-swse.classes');
-  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Classes pack lookup:`, classPack ? 'FOUND' : 'NOT FOUND');
-  if (!classPack) {
-    SWSELogger.error(`[LEVELUP-CLASS] ERROR: Classes compendium pack not found!`);
-    SWSELogger.error(`[LEVELUP-CLASS] Available packs:`, Array.from(game.packs.keys()));
-    ui.notifications.error('Failed to load classes compendium. Classes will not be available.');
+  const allClasses = ClassesRegistry.getAll();
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Registry returned ${allClasses.length} classes`);
+  if (allClasses.length === 0) {
+    SWSELogger.error(`[LEVELUP-CLASS] ERROR: Classes registry is empty or unavailable`);
+    ui.notifications.error('Failed to load classes registry. Classes will not be available.');
     return [];
   }
 
-  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Fetching all classes from pack...`);
-  const allClasses = await classPack.getDocuments();
-  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Total classes in pack: ${allClasses.length}`);
-  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Class names:`, allClasses.map(c => c.name));
   const availableClasses = [];
 
   // Load all skills for validation
-  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Loading skills pack for validation...`);
-  const skillPack = game.packs.get('foundryvtt-swse.skills');
-  const allSkills = skillPack ? await skillPack.getDocuments() : [];
-  const skillNames = allSkills.map(s => s.name);
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Loading skills registry for validation...`);
+  const allSkills = SkillRegistry.list?.() || [];
   SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Skills loaded: ${allSkills.length} skills`);
 
   // Check prerequisites for each class
   SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Checking prerequisites for each class...`);
-  for (const classDoc of allClasses) {
-    SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Processing class "${classDoc.name}"...`);
-    const isBase = isBaseClass(classDoc);
-    SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classDoc.name}" - isBase: ${isBase}`);
+  for (const classModel of allClasses) {
+    SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Processing class "${classModel.name}"...`);
+    const isBase = isBaseClass(classModel);
+    SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classModel.name}" - isBase: ${isBase}`);
 
-    // meetsClassPrerequisites is now async (loads from JSON)
-    const meetsPrereqs = await meetsClassPrerequisites(classDoc, actor, pendingData);
-    SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classDoc.name}" - meetsPrerequisites: ${meetsPrereqs}`);
+    const meetsPrereqs = await meetsClassPrerequisites(classModel, actor, pendingData);
+    SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classModel.name}" - meetsPrerequisites: ${meetsPrereqs}`);
 
     if (meetsPrereqs) {
-
-      // ------------------------------------------------------------
-      // VALIDATE CLASS SKILLS
-      // NOTE: Compendium may use camelCase 'classSkills' or snake_case 'class_skills'
-      // Uses SkillResolver for robust matching (handles naming variations)
-      // ------------------------------------------------------------
-      const classSkills = classDoc.system?.classSkills || classDoc.system?.class_skills || [];
-      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classDoc.name}" - classSkills:`, classSkills);
+      const classSkills = classModel.classSkills || [];
+      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classModel.name}" - classSkills:`, classSkills);
 
       const { valid: validSkills, invalid: invalidSkills } = SkillResolver.validateClassSkills(classSkills, allSkills);
 
       if (invalidSkills.length > 0) {
         SWSELogger.error(
-          `[LEVELUP-CLASS] ERROR: "${classDoc.name}" has unresolved class skills:`,
+          `[LEVELUP-CLASS] ERROR: "${classModel.name}" has unresolved class skills:`,
           invalidSkills
         );
         warnGM(
-          `${classDoc.name} has unresolved class skills that don't exist: ${invalidSkills.join(', ')}`
+          `${classModel.name} has unresolved class skills that don't exist: ${invalidSkills.join(', ')}`
         );
       } else {
         SWSELogger.log(
-          `[LEVELUP-CLASS] "${classDoc.name}" class skills validated successfully:`,
+          `[LEVELUP-CLASS] "${classModel.name}" class skills validated successfully:`,
           validSkills
         );
       }
 
-      const metadata = getClassMetadata(classDoc.name);
+      const metadata = getClassMetadata(classModel.name);
       availableClasses.push({
-        id: classDoc._id,
-        name: classDoc.name,
-        system: classDoc.system,
-        img: classDoc.img,
+        id: classModel.sourceId,
+        classId: classModel.id,
+        sourceId: classModel.sourceId,
+        name: classModel.name,
+        system: {
+          ...classModel,
+          classId: classModel.id,
+          classSkills: classModel.classSkills,
+          class_skills: classModel.classSkills,
+          base_class: classModel.baseClass,
+          startingCredits: classModel.startingCredits,
+          starting_credits: classModel.startingCredits,
+          hitDie: classModel.hitDie,
+          hit_die: classModel.hitDie,
+          talent_trees: classModel.talentTreeNames
+        },
+        img: classModel.img,
         isBase: isBase,
         isPrestige: !isBase,
         icon: metadata.icon,
         description: metadata.description
       });
-      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classDoc.name}" - ADDED to available classes`);
+      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classModel.name}" - ADDED to available classes`);
     } else {
-      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classDoc.name}" - FILTERED OUT (prerequisite not met)`);
+      SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classModel.name}" - FILTERED OUT (prerequisite not met)`);
     }
   }
   SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Total available classes after filtering: ${availableClasses.length}`);
 
-  // Apply class suggestions if enabled and character is level 1+
-  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Checking if suggestions should be applied (includeSuggestions: ${includeSuggestions}, level: ${actor.system?.level || 0})`);
   if (includeSuggestions && (actor.system?.level || 0) >= 1) {
     try {
-      // Use the coordinator API for suggestions
       SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Attempting to apply class suggestions...`);
       let classesWithSuggestions = availableClasses;
 
-      classesWithSuggestions = await SuggestionService.getSuggestions(actor, 'levelup', { domain: 'classes', available: availableClasses, pendingData, persist: true });// Sort by suggestion tier
+      classesWithSuggestions = await SuggestionService.getSuggestions(actor, 'levelup', { domain: 'classes', available: availableClasses, pendingData, persist: true });
       SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Sorting classes by suggestion tier...`);
       const sortedClasses = ClassSuggestionEngine.sortBySuggestion(classesWithSuggestions);
 
@@ -180,7 +179,6 @@ export async function getAvailableClasses(actor, pendingData, options = {}) {
     } catch (err) {
       SWSELogger.error(`[LEVELUP-CLASS] ERROR: Failed to apply class suggestions:`, err);
       SWSELogger.error(`[LEVELUP-CLASS] Error stack:`, err.stack);
-      // Fall back to unsorted classes
       SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Falling back to unsorted classes`);
       return availableClasses;
     }
@@ -203,15 +201,15 @@ export function getClassSuggestionEngine() {
  * @returns {Promise<Array>} Array of species objects
  */
 export async function getAvailableSpecies() {
-  const speciesPack = game.packs.get('foundryvtt-swse.species');
-  if (!speciesPack) {
-    SWSELogger.error('SWSE LevelUp | Species compendium not found!');
-    ui.notifications.error('Failed to load species compendium. Species will not be available.');
+  await SpeciesRegistry.initialize?.();
+  const allSpecies = SpeciesRegistry.getAll?.() || [];
+  if (allSpecies.length === 0) {
+    SWSELogger.error('SWSE LevelUp | Species registry empty!');
+    ui.notifications.error('Failed to load species registry. Species will not be available.');
     return [];
   }
 
-  const allSpecies = await speciesPack.getDocuments();
-  SWSELogger.log(`SWSE LevelUp | Loaded ${allSpecies.length} species from compendium`);
+  SWSELogger.log(`SWSE LevelUp | Loaded ${allSpecies.length} species from registry`);
 
   const availableSpecies = [];
 
@@ -302,29 +300,21 @@ function sortSpeciesBySource(species) {
 export async function selectSpecies(speciesId, speciesName) {
   SWSELogger.log(`SWSE LevelUp | Attempting to select species: ${speciesName} (ID: ${speciesId})`);
 
-  const speciesPack = game.packs.get('foundryvtt-swse.species');
-  if (!speciesPack) {
-    SWSELogger.error('SWSE LevelUp | Species compendium not found!');
-    ui.notifications.error('Species compendium not found! Please check that the foundryvtt-swse.species compendium exists.');
-    return null;
-  }
+  await SpeciesRegistry.initialize?.();
 
-  // Try to get the document using the ID if provided
   let speciesDoc = null;
   if (speciesId && speciesId !== 'null' && speciesId !== 'undefined') {
-    speciesDoc = await speciesPack.getDocument(speciesId);
+    speciesDoc = await SpeciesRegistry.getDocumentById?.(speciesId);
   }
 
-  // If not found by ID, try searching by name as a fallback
   if (!speciesDoc && speciesName) {
-    const allSpecies = await speciesPack.getDocuments();
-    speciesDoc = allSpecies.find(s => s.name === speciesName);
+    speciesDoc = await SpeciesRegistry.getDocumentByName?.(speciesName);
   }
 
   if (!speciesDoc) {
     SWSELogger.error(`SWSE LevelUp | Species not found with ID: ${speciesId} or name: ${speciesName}`);
-    SWSELogger.log('SWSE LevelUp | Available species in pack:', await speciesPack.getDocuments());
-    ui.notifications.error(`Species "${speciesName}" not found! The species compendium may be empty or the ID is incorrect.`);
+    SWSELogger.log('SWSE LevelUp | Available species in registry:', SpeciesRegistry.getAll?.());
+    ui.notifications.error(`Species "${speciesName}" not found! The species registry may be empty or the ID is incorrect.`);
     return null;
   }
 
@@ -340,8 +330,9 @@ export async function selectSpecies(speciesId, speciesName) {
  * @returns {Promise<Object|null>} The selected class document or null
  */
 export async function selectClass(classId, actor, context) {
-  const classPack = game.packs.get('foundryvtt-swse.classes');
-  const classDoc = await classPack.getDocument(classId);
+  const classDoc = await ClassesRegistry.getDocumentBySourceId(classId)
+    || await ClassesRegistry.getDocumentById(classId)
+    || await ClassesRegistry.getDocumentByName(classId);
 
   if (!classDoc) {
     ui.notifications.error('Class not found!');

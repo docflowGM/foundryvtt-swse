@@ -3,7 +3,7 @@
  * Handles species-granted reroll abilities (like Duros Expert Pilot, Bothan Spy Network)
  */
 
-// TODO: SpeciesTraitEngine not found - file may have been deleted or moved
+// planned: SpeciesTraitEngine not found - file may have been deleted or moved
 // import { SpeciesTraitEngine } from "/systems/foundryvtt-swse/scripts/engine/systems/species/species-trait-engine.js";
 import { SPECIES_TRAIT_TYPES } from "/systems/foundryvtt-swse/scripts/species/species-trait-types.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";

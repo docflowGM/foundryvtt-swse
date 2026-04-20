@@ -26,6 +26,7 @@ import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-ut
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 /**
  * Initiate item selling process
@@ -139,11 +140,11 @@ async function resolveSaleNoPriceBase(item, actor) {
  * Resolve the sale (auto-accept or GM prompt)
  */
 async function resolveSale(item, actor, basePrice, rawOffer) {
-  const autoAccept = game.settings.get('foundryvtt-swse', 'autoAcceptItemSales') ?? false;
+  const autoAccept = HouseRuleService.isEnabled('autoAcceptItemSales');
 
   if (autoAccept) {
     // Auto-accept: Use slider percentage
-    const percentage = normalizeCredits(game.settings.get('foundryvtt-swse', 'automaticSalePercentage') ?? 50);
+    const percentage = normalizeCredits(HouseRuleService.getNumber('automaticSalePercentage', 50));
     const salePrice = calculatePercentageFloor(basePrice, percentage);
     await acceptSale(item, actor, salePrice, true);
   } else {

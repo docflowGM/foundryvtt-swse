@@ -11,6 +11,7 @@ import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-a
 import { SWSEUpgradeApp } from "/systems/foundryvtt-swse/scripts/apps/upgrade-app.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { BLADE_COLOR_MAP } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -229,7 +230,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     // PHASE 2: Route embedded items through ActorEngine
     if (this.item?.isEmbedded && actor) {
       try {
-        await actor.updateOwnedItem(this.item, updates);
+        await ActorEngine.updateEmbeddedDocuments(actor, "Item", [{ _id: this.item.id, ...updates }]);
       } catch (err) {
         console.error('[Item Sheet] Shield activation failed:', err);
         ui.notifications.error(`Failed to activate ${this.item.name}: ${err.message}`);
@@ -256,14 +257,14 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     if (actor?.activateItem) {
       await actor.activateItem(this.item);
     } else if (this.item?.isEmbedded && actor) {
-      await actor.updateOwnedItem(this.item, { 'system.activated': true });
+      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'system.activated': true }]);
     } else {
       await this.item.update({ 'system.activated': true });
     }
 
     if (!this.item.flags?.swse?.emitLight) {
       if (this.item?.isEmbedded && actor) {
-        await actor.updateOwnedItem(this.item, { 'flags.swse.emitLight': true, 'flags.swse.bladeColor': bladeColor });
+        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'flags.swse.emitLight': true, 'flags.swse.bladeColor': bladeColor }]);
       } else {
         await this.item.update({ 'flags.swse.emitLight': true, 'flags.swse.bladeColor': bladeColor });
       }
@@ -287,7 +288,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     if (actor?.deactivateItem) {
       await actor.deactivateItem(this.item);
     } else if (this.item?.isEmbedded && actor) {
-      await actor.updateOwnedItem(this.item, { 'system.activated': false });
+      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'system.activated': false }]);
     } else {
       await this.item.update({ 'system.activated': false });
     }
@@ -314,7 +315,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     // PHASE 2: Route embedded items through ActorEngine
     if (this.item?.isEmbedded && actor) {
       try {
-        await actor.updateOwnedItem(this.item, updates);
+        await ActorEngine.updateEmbeddedDocuments(actor, "Item", [{ _id: this.item.id, ...updates }]);
       } catch (err) {
         console.error('[Item Sheet] Shield deactivation failed:', err);
         ui.notifications.error(`Failed to deactivate ${this.item.name}: ${err.message}`);
@@ -338,7 +339,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     // PHASE 2: Route embedded items through ActorEngine
     if (this.item?.isEmbedded && actor) {
       try {
-        await actor.updateOwnedItem(this.item, { 'flags.swse.emitLight': enabled });
+        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'flags.swse.emitLight': enabled }]);
       } catch (err) {
         console.error('[Item Sheet] Light toggle failed:', err);
         ui.notifications.error(`Failed to toggle light: ${err.message}`);
@@ -426,7 +427,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     // PHASE 2: Route embedded items through ActorEngine
     if (this.item?.isEmbedded && actor) {
       try {
-        await actor.updateOwnedItem(this.item, flatData);
+        await ActorEngine.updateEmbeddedDocuments(actor, "Item", [{ _id: this.item.id, ...flatData }]);
         return;
       } catch (err) {
         console.error('[Item Sheet] Form submission failed:', err);

@@ -118,16 +118,9 @@ export function initializeForcePowerHooks() {
           'system.spent': false
         }));
 
-        if (globalThis.SWSE?.ActorEngine?.updateOwnedItems) {
-          await globalThis.SWSE.ActorEngine.updateOwnedItems(combatant.actor, updates, {
-            meta: { guardKey: 'force-power-grant' }
-          });
-        } else {
-          // Fallback for non-Foundry environments
-          for (const power of spentPowers) {
-            await power.update({ 'system.spent': false });
-          }
-        }
+        await ActorEngine.updateOwnedItems(combatant.actor, updates, {
+          meta: { guardKey: 'force-power-grant' }
+        });
 
         if (combatant.actor.isOwner) {
           ui.notifications.info(`Combat ended. ${combatant.actor.name} regained ${spentPowers.length} Force Power(s)`);

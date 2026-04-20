@@ -21,6 +21,7 @@
  * is declared, so this can be mounted on older partials too.
  */
 
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 const LOG = "[SWSE Portrait Upload]";
 
 const ACCEPTED_IMAGE_MIME = /^image\/(png|jpe?g|webp|gif|avif|svg\+xml)$/i;
@@ -114,7 +115,7 @@ async function uploadPortraitFile(actor, file) {
   const safeName = sanitizeFilename(file.name || "portrait.png");
   const renamed = new File([file], safeName, { type: file.type });
 
-  console.log(`${LOG} uploading`, { folder, name: safeName, size: file.size, type: file.type });
+  SWSELogger.debug(`${LOG} uploading`, { folder, name: safeName, size: file.size, type: file.type });
 
   try {
     const response = await FP.upload(source, folder, renamed, {}, { notify: false });
@@ -123,7 +124,7 @@ async function uploadPortraitFile(actor, file) {
       console.warn(`${LOG} upload response missing path`, response);
       return { ok: false, error: "Upload response missing path" };
     }
-    console.log(`${LOG} upload success`, path);
+    SWSELogger.debug(`${LOG} upload success`, path);
     return { ok: true, path };
   } catch (err) {
     console.error(`${LOG} upload failed`, err);
@@ -133,8 +134,8 @@ async function uploadPortraitFile(actor, file) {
 
 async function applyPortrait(actor, imgPath) {
   try {
-    await actor.update({ img: imgPath });
-    console.log(`${LOG} actor.img applied`, imgPath);
+    await ActorEngine.updateActor(actor, { img: imgPath }, { source: 'portrait-upload' });
+    SWSELogger.debug(`${LOG} actor.img applied`, imgPath);
     return true;
   } catch (err) {
     console.error(`${LOG} actor.update failed`, err);
@@ -217,7 +218,7 @@ function attachDropHandlers(zone, actor, signal) {
     }
 
     const file = imageFiles[0];
-    console.log(`${LOG} drop accepted`, { name: file.name, type: file.type, size: file.size });
+    SWSELogger.debug(`${LOG} drop accepted`, { name: file.name, type: file.type, size: file.size });
 
     const result = await uploadPortraitFile(actor, file);
     if (!result.ok) {
@@ -257,7 +258,7 @@ export function bindPortraitUpload(root, { actor, signal } = {}) {
   }
 
   if (!canEditActor(actor)) {
-    console.log(`${LOG} skip bind: actor not editable`, actor?.id);
+    SWSELogger.debug(`${LOG} skip bind: actor not editable`, actor?.id);
     return;
   }
 
@@ -267,7 +268,7 @@ export function bindPortraitUpload(root, { actor, signal } = {}) {
     attachDropHandlers(zone, actor, signal);
   }
 
-  console.log(`${LOG} bound`, { actor: actor?.name, zones: zones.length });
+  SWSELogger.debug(`${LOG} bound`, { actor: actor?.name, zones: zones.length });
 }
 
 export const PortraitUploadController = {

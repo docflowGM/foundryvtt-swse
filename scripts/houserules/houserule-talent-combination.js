@@ -6,6 +6,7 @@
  * in the talent selector, but grants both talents when selected.
  */
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 // Talent IDs
 const BLOCK_ID = '9379daa94a228c04';
@@ -20,10 +21,7 @@ export class HouseRuleTalentCombination {
    */
   static processBlockDeflectCombination(talents) {
     try {
-      var blockDeflectMode = game.settings.get(
-        'foundryvtt-swse',
-        'blockDeflectTalents'
-      );
+      var blockDeflectMode = HouseRuleService.getString('blockDeflectTalents', 'separate');
     } catch (err) {
       // Setting not yet registered, use default
       blockDeflectMode = 'separate';
@@ -107,10 +105,7 @@ export class HouseRuleTalentCombination {
    * @returns {Array} Array of talent names to actually grant (may include multiple)
    */
   static getActualTalentsToGrant(talentName) {
-    const blockDeflectMode = game.settings.get(
-      'foundryvtt-swse',
-      'blockDeflectTalents'
-    );
+    const blockDeflectMode = HouseRuleService.getString('blockDeflectTalents', 'separate');
 
     if (
       blockDeflectMode === 'combined' &&

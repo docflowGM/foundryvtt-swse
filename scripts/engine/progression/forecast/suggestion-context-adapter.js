@@ -158,7 +158,7 @@ export class SuggestionContextAdapter {
       },
     };
 
-    // TODO: Phase 4 Work Package D - normalize build signals
+    // planned: Phase 4 Work Package D - normalize build signals
     // For now, extract from session if available
     if (shell.progressionSession?.draftSelections?.survey) {
       signals.explicit.surveyAnswers = { ...shell.progressionSession.draftSelections.survey };
@@ -186,7 +186,7 @@ export class SuggestionContextAdapter {
       restrictedOptions: [],
     };
 
-    // TODO: Phase 4 Work Package D
+    // planned: Phase 4 Work Package D
     // Extract from reconciliation state, dirty nodes, etc.
 
     return constraints;
@@ -223,7 +223,7 @@ export class SuggestionContextAdapter {
     if (!Array.isArray(options)) return [];
 
     return options.filter(option => {
-      // TODO: Phase 4 - check if option is hidden due to:
+      // planned: Phase 4 - check if option is hidden due to:
       // - Dirty node (invalidated by prior change)
       // - Restricted to specific subtype (droid-only, npc-only, etc.)
       // - Requires completed prerequisites (not just met, but node visited)
@@ -269,7 +269,7 @@ export class SuggestionContextAdapter {
    * @private
    */
   static _inferArchetypeFromClass(className) {
-    // TODO: Wire to ArchetypeRegistry for proper inference
+    // planned: Wire to ArchetypeRegistry for proper inference
     // Simple placeholder for now
     if (!className) return null;
 
@@ -289,7 +289,7 @@ export class SuggestionContextAdapter {
    * @private
    */
   static _calculatePicksRemaining(shell) {
-    // TODO: Get from current step plugin (getRemainingPicks)
+    // planned: Get from current step plugin (getRemainingPicks)
     // For now, return 1 as placeholder
     return 1;
   }

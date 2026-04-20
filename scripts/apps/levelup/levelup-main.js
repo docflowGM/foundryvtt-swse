@@ -116,6 +116,7 @@ import { MentorInteractionIntegration } from "/systems/foundryvtt-swse/scripts/a
 
 // V2 API base class
 import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
@@ -535,7 +536,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     // Suggestion diff (optional learning aid)
     try {
-      const enabled = game.settings.get('foundryvtt-swse', 'showSuggestionDiffOnLevelUp') ?? false;
+      const enabled = HouseRuleService.isEnabled('showSuggestionDiffOnLevelUp');
       if (enabled) {
         const panel = qs(root, '.swse-suggestion-diff');
         if (!panel) {

@@ -19,7 +19,7 @@ export class MentorProfile {
    * @returns {number} 0-1 bias weight
    */
   static getBias(actor, dimension) {
-    // TODO: Phase 1C - Retrieve from actor.system.suggestionEngine.mentorProfile.biases
+    // planned: Phase 1C - Retrieve from actor.system.suggestionEngine.mentorProfile.biases
     if (!actor.system.suggestionEngine?.mentorProfile?.biases) {return 0;}
     return actor.system.suggestionEngine.mentorProfile.biases[dimension] || 0;
   }
@@ -30,7 +30,7 @@ export class MentorProfile {
    * @returns {Object} { forceFocus: 0.3, melee: 0.2, ... }
    */
   static getAllBiases(actor) {
-    // TODO: Phase 1C - Return entire bias profile
+    // planned: Phase 1C - Return entire bias profile
     if (!actor.system.suggestionEngine?.mentorProfile?.biases) {return {};}
     return actor.system.suggestionEngine.mentorProfile.biases;
   }
@@ -43,7 +43,7 @@ export class MentorProfile {
    * @returns {Promise<void>}
    */
   static async setBias(actor, dimension, weight) {
-    // TODO: Phase 1C - Update and save
+    // planned: Phase 1C - Update and save
     if (!actor.system.suggestionEngine?.mentorProfile) {return;}
     actor.system.suggestionEngine.mentorProfile.biases[dimension] = weight;
     SWSELogger.log(`[MentorProfile] Bias updated: ${dimension} = ${weight}`);
@@ -55,7 +55,7 @@ export class MentorProfile {
    * @returns {boolean}
    */
   static isComplete(actor) {
-    // TODO: Phase 1C - Check completedAt timestamp
+    // planned: Phase 1C - Check completedAt timestamp
     return !!actor.system.suggestionEngine?.mentorProfile?.completedAt;
   }
 
@@ -66,7 +66,7 @@ export class MentorProfile {
    * @returns {Promise<void>}
    */
   static async initializeFromSurvey(actor, surveyAnswers) {
-    // TODO: Phase 1C - Aggregate survey biases into profile
+    // planned: Phase 1C - Aggregate survey biases into profile
     if (!actor.system.suggestionEngine) {
       actor.system.suggestionEngine = {};
     }

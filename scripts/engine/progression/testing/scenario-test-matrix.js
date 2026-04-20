@@ -470,7 +470,7 @@ export class ScenarioTestMatrix {
       };
     }
 
-    // TODO: Implement actual scenario execution
+    // planned: Implement actual scenario execution
     // This would:
     // 1. Create actor with appropriate baseline
     // 2. Execute selections or steps

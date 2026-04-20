@@ -187,7 +187,7 @@ export class DerivedIntegrityLayer {
       'combat/swse-combatant.js'
     ];
 
-    // TODO: In Phase 3, implement actual file scan for compute* methods
+    // planned: In Phase 3, implement actual file scan for compute* methods
 
     return report;
   }

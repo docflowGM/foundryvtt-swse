@@ -15,6 +15,7 @@ import { CORE_CLASSES } from "/systems/foundryvtt-swse/scripts/engine/progressio
 
 // V2 API base class
 import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 
 /**
  * GM Debug Panel Application
@@ -203,10 +204,9 @@ export class GMDebugPanel extends SWSEApplicationV2 {
      * Analyze classes for debug display
      */
     async _analyzeClasses() {
-        const classPack = game.packs.get('foundryvtt-swse.classes');
-        if (!classPack) {return [];}
+        if (!ClassesRegistry.isInitialized()) {return [];}
 
-        const allClasses = await classPack.getDocuments();
+        const allClasses = await ClassesRegistry.getAllDocuments();
         const prestigePrereqs = await ClassSuggestionEngine._loadPrestigePrerequisites();
         const actorState = await ClassSuggestionEngine._buildActorState(this.actor, this.pendingData);
 

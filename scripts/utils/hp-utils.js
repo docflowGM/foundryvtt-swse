@@ -1,3 +1,5 @@
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+
 // === CANONICAL HP MUTATION HELPER ===
 export async function applyHPMutation(actor, patch) {
   if (!actor || !patch) return;
@@ -15,17 +17,15 @@ export async function applyHPMutation(actor, patch) {
   }
 
   if ("system.hp.max" in patch) {
-    newMax = Math.max(1, patch["system.hp.max"]);
-    newValue = Math.min(newValue, newMax);
+    throw new Error('applyHPMutation() cannot write system.hp.max directly. Update builder inputs and use ActorEngine.recomputeHP().');
   }
 
   if ("system.hp.temp" in patch) {
     newTemp = Math.max(0, patch["system.hp.temp"]);
   }
 
-  return actor.update({
+  return ActorEngine.updateActor(actor, {
     "system.hp.value": newValue,
-    "system.hp.max": newMax,
     "system.hp.temp": newTemp
-  });
+  }, { source: 'hp-utils.applyHPMutation' });
 }

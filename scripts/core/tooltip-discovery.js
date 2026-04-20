@@ -13,6 +13,8 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const SETTING_KEY = 'tooltips-discovered';
@@ -124,7 +126,7 @@ const ENHANCED_TOOLTIPS = {
  */
 async function getDiscoveredTooltips() {
   try {
-    const discovered = await game.settings.get(SYSTEM_ID, SETTING_KEY);
+    const discovered = SettingsHelper.getObject(SETTING_KEY, {});
     return discovered || {};
   } catch {
     return {};
@@ -141,7 +143,7 @@ async function markTooltipDiscovered(key) {
       discoveredAt: Date.now(),
       count: (discovered[key]?.count || 0) + 1
     };
-    await game.settings.set(SYSTEM_ID, SETTING_KEY, discovered);
+    await HouseRuleService.set(SETTING_KEY, discovered);
   } catch (err) {
     SWSELogger.warn('Failed to mark tooltip discovered:', err.message);
   }
@@ -380,7 +382,7 @@ export function registerTooltipDiscoveryConsole() {
       markDiscovered: markTooltipDiscovered,
       getDiscovered: getDiscoveredTooltips,
       resetDiscovery: async () => {
-        await game.settings.set(SYSTEM_ID, SETTING_KEY, {});
+        await HouseRuleService.set(SETTING_KEY, {});
         SWSELogger.log('Tooltip discovery reset - suggestions will show again');
       }
     };

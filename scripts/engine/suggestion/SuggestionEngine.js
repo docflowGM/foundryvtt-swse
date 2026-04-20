@@ -2503,12 +2503,8 @@ export class SuggestionEngine {
 
             // Check each wishlisted item to see if this feat/talent is a prerequisite
             for (const wishedItem of wishlistedItems) {
-                // Try to find the actual item document
-                const itemPack = item.type === 'feat'
-                    ? game.packs.get('foundryvtt-swse.feats')
-                    : game.packs.get('foundryvtt-swse.talents');
-
-                if (!itemPack) {continue;}
+                // Matching against the canonical wishlist metadata is sufficient here;
+                // no direct compendium read is needed.
 
                 // For now, match by name - could be improved with proper lookups
                 if (wishedItem.name.toLowerCase().includes(item.name.toLowerCase()) ||

@@ -135,7 +135,7 @@ export class MigrationIntegrityAdapter {
     const version = game.system?.version || game.data?.system?.version;
 
     try {
-      await game.settings.set('foundryvtt-swse', this.VERSION_SETTING, version);
+      await HouseRuleService.set(this.VERSION_SETTING, version);
       SWSELogger.log('[5C-2] Stored version:', version);
     } catch (err) {
       SWSELogger.warn('[5C-2] Failed to store version:', err);

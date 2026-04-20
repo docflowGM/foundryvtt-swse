@@ -16,6 +16,7 @@
 
 import { RolloutSettings } from './rollout-settings.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { launchProgression } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js';
 
 export class LegacyEntryPointManager {
   /**
@@ -128,15 +129,8 @@ export class LegacyEntryPointManager {
     // Show migration warning to user
     this._showMigrationDialog(actor, legacyType);
 
-    // Import and launch unified progression shell
-    const { ProgressionShell } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-shell.js');
-
-    const mode = legacyType === 'levelup' ? 'levelup' : 'chargen';
-
-    return new ProgressionShell({
-      actor,
-      mode,
-      migrationReason: `Legacy "${legacyType}" entry point`,
+    return launchProgression(actor, {
+      source: `legacy-entry-point.${legacyType}`
     });
   }
 

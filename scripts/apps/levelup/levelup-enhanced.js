@@ -11,6 +11,7 @@ import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/progressi
 import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { qs, qsa } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 
 // V2 API base class
 import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
@@ -294,17 +295,12 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    */
   async _getAvailableClasses() {
     try {
-      const pack = game.packs.get('foundryvtt-swse.classes');
-      if (!pack) {
-        SWSELogger.warn('Classes compendium not found');
-        return [];
-      }
-
-      const docs = await pack.getDocuments();
-      return docs.map(c => ({
+      return ClassesRegistry.getAll().map(c => ({
         name: c.name,
         img: c.img || null,
-        isQualified: true
+        isQualified: true,
+        id: c.id,
+        sourceId: c.sourceId
       }));
     } catch (err) {
       SWSELogger.error('Failed to get available classes:', err);

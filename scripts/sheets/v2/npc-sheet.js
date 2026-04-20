@@ -9,6 +9,9 @@ import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/she
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PortraitUploadController } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PortraitUploadController.js";
 import { NpcProfileBuilder } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-profile-builder.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { launchProgression, launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -135,7 +138,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
         const state = ActionEngine.getVisualState(turnState);
         const breakdown = ActionEngine.getTooltipBreakdown(turnState);
-        const enforcementMode = game.settings.get("foundryvtt-swse", "actionEconomyMode");
+        const enforcementMode = HouseRuleService.getString('actionEconomyMode', 'loose');
 
         context.actionEconomy = {
           state,
@@ -260,20 +263,17 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
     root.querySelector('[data-action="cmd-chargen"]')?.addEventListener("click", async (ev) => {
       ev.preventDefault();
-      const { launchProgression } = await import("/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/chargen-shell.js");
       await launchProgression(this.actor);
     }, { signal });
 
     root.querySelector('[data-action="cmd-store"]')?.addEventListener("click", async (ev) => {
       ev.preventDefault();
-      const { launchProgression } = await import("/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/chargen-shell.js");
-      await launchProgression(this.actor, 'store');
+      new SWSEStore(this.actor).render(true);
     }, { signal });
 
     root.querySelector('[data-action="open-mentor"]')?.addEventListener("click", async (ev) => {
       ev.preventDefault();
-      // TODO: Implement mentor interaction for NPC sheet
-      ui.notifications.info("Mentor interactions coming soon!");
+      ui.notifications.info("Mentor interactions are not yet available on NPC sheets.");
     }, { signal });
 
     /* ---- PHASE 5: NPC PROGRESSION PANEL ACTIONS ---- */
@@ -326,7 +326,6 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         ui.notifications?.warn('Owner actor could not be found in this world.');
         return;
       }
-      const { launchFollowerProgression } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js');
       await launchFollowerProgression(ownerActor, { existingFollowerId: this.actor.id });
     }, { signal });
 

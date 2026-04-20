@@ -160,39 +160,28 @@ export async function _getStartingLanguages() {
  * @returns {Promise<Object>} Languages organized by category
  */
 export async function _getAvailableLanguages() {
-  const systemId = game?.system?.id || 'foundryvtt-swse';
-  const packKey = `${systemId}.languages`;
-
-  // Prefer compendium pack (stable _id + uuid + descriptions).
   try {
-    const pack = game?.packs?.get(packKey);
-    if (pack) {
-      const idx = await pack.getIndex({ fields: ['name', 'img', 'system'] });
-
+    const records = await LanguageRegistry.getAll?.() || [];
+    if (records.length > 0) {
       const widelyUsed = [];
       const localTrade = [];
 
-      for (const e of idx) {
-        const sys = e.system || {};
-        const category = sys.category || 'local-trade';
-
+      for (const rec of records) {
+        const category = rec.category || (rec.isLocal ? 'local-trade' : 'widely-used');
         const record = {
-          _id: e._id,
-          uuid: `Compendium.${pack.collection}.${e._id}`,
-          name: e.name,
-          img: e.img,
-          description: sys.description || '',
-          isLocal: !!sys.isLocal,
+          _id: rec._id || rec.internalId || rec.id,
+          uuid: rec.uuid || null,
+          name: rec.name,
+          img: rec.img || null,
+          description: rec.description || '',
+          isLocal: !!rec.isLocal,
           category
         };
-
         if (category === 'widely-used') {widelyUsed.push(record);} else {localTrade.push(record);}
       }
 
       widelyUsed.sort((a, b) => a.name.localeCompare(b.name));
       localTrade.sort((a, b) => a.name.localeCompare(b.name));
-
-      SWSELogger.log(`chargen: Loaded ${idx.length} languages from compendium ${packKey}`);
 
       return {
         widelyUsed: {
@@ -208,10 +197,9 @@ export async function _getAvailableLanguages() {
       };
     }
   } catch (e) {
-    SWSELogger.warn('chargen: Failed to load languages from compendium, falling back to JSON', e);
+    SWSELogger.warn('chargen: Failed to load languages from registry, falling back to JSON', e);
   }
 
-  // Fallback: JSON, mapped through registry when possible.
   const languagesData = await _loadLanguagesData.call(this);
   const categories = languagesData?.categories || {};
 
@@ -220,10 +208,10 @@ export async function _getAvailableLanguages() {
     for (const name of names || []) {
       const rec = await LanguageRegistry.getByName(name);
       out.push({
-        _id: rec?.internalId || '',
-        uuid: rec?.uuid || '',
+        _id: rec?._id || rec?.internalId || rec?.id || name,
+        uuid: rec?.uuid || null,
         name,
-        img: rec?.img,
+        img: rec?.img || null,
         description: rec?.description || '',
         isLocal: !!rec?.isLocal,
         category: rec?.category || fallbackCategory

@@ -16,6 +16,7 @@
  */
 
 import { resolveStoreCost } from '/systems/foundryvtt-swse/scripts/engine/store/cost-registry.js';
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 /* -------------------------------------------------------------- */
 /* PRICE CALCULATION                                              */
@@ -134,7 +135,7 @@ function getMarkupPercent() {
   if (_pricingFrozen && _frozenMarkup !== null) {
     return _frozenMarkup;
   }
-  return Number(game.settings.get('foundryvtt-swse', 'storeMarkup') ?? 0);
+  return HouseRuleService.getNumber('storeMarkup', 0);
 }
 
 /**
@@ -144,5 +145,5 @@ function getDiscountPercent() {
   if (_pricingFrozen && _frozenDiscount !== null) {
     return _frozenDiscount;
   }
-  return Number(game.settings.get('foundryvtt-swse', 'storeDiscount') ?? 0);
+  return HouseRuleService.getNumber('storeDiscount', 0);
 }

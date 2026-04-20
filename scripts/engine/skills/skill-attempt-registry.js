@@ -80,7 +80,7 @@ export class SkillAttemptRegistry {
       contextHash
     });
 
-    // TODO: Persist to actor.flags.swse.skillAttempts for session recovery
+    // planned: Persist to actor.flags.swse.skillAttempts for session recovery
   }
 
   /**

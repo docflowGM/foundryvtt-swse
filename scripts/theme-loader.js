@@ -5,6 +5,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 export class ThemeLoader {
   /**
@@ -108,7 +109,7 @@ export class ThemeLoader {
     SWSELogger.log('[SWSE Theme] Theme loader initialized');
 
     // Load initial theme from settings
-    const themeName = game.settings.get('foundryvtt-swse', 'sheetTheme') || 'holo';
+    const themeName = SettingsHelper.getString('sheetTheme', 'holo');
     this.applyTheme(themeName);
   }
 }

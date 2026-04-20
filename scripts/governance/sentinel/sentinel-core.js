@@ -9,6 +9,7 @@
  */
 
 import { SentinelConfig } from "../../debug/sentinel-config.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 export class SentinelEngine {
   static MODES = {
@@ -72,8 +73,8 @@ export class SentinelEngine {
     this.#bootId = `boot-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
     // Determine mode from settings
-    const devMode = game.settings.get('foundryvtt-swse', 'devMode');
-    const sentinelMode = game.settings.get('foundryvtt-swse', 'sentinelMode');
+    const devMode = SettingsHelper.getSafe('devMode', false);
+    const sentinelMode = SettingsHelper.getSafe('sentinelMode', 'OFF');
 
     if (!devMode && sentinelMode === 'OFF') {
       this.#mode = this.MODES.OFF;
@@ -120,7 +121,7 @@ export class SentinelEngine {
     let enabled = true;
 
     try {
-      enabled = game.settings.get('foundryvtt-swse', settingKey);
+      enabled = SettingsHelper.getSafe(settingKey, true);
     } catch {
       // Setting may not exist yet, default to true
       enabled = true;

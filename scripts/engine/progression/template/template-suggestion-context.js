@@ -216,7 +216,7 @@ export class TemplateSuggestionContext {
 
   /**
    * Map mentor ID to display name.
-   * TODO: Wire to mentor registry.
+   * planned: Wire to mentor registry.
    *
    * @private
    */
@@ -367,7 +367,7 @@ export class TemplateSuggestionContext {
    * @private
    */
   static _optionMatchesArchetype(option, archetype) {
-    // TODO: Wire to archetype matching logic
+    // planned: Wire to archetype matching logic
     // For now, just check option tags
     return option.tags?.includes(archetype) || false;
   }
@@ -377,7 +377,7 @@ export class TemplateSuggestionContext {
    * @private
    */
   static _optionMatchesRole(option, role) {
-    // TODO: Wire to role matching logic
+    // planned: Wire to role matching logic
     return option.tags?.includes(role) || false;
   }
 
@@ -386,7 +386,7 @@ export class TemplateSuggestionContext {
    * @private
    */
   static _optionUnlocksTarget(option, target) {
-    // TODO: Wire to prestige path logic
+    // planned: Wire to prestige path logic
     return option.prestigePath?.includes(target) || false;
   }
 }

@@ -17,6 +17,7 @@
  */
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
 
 export class RolloutSettings {
   /**
@@ -186,7 +187,7 @@ export class RolloutSettings {
    * @returns {'internal' | 'gm-opt-in' | 'beta' | 'default' | 'legacy-fallback'}
    */
   static getRolloutMode() {
-    return game.settings.get('foundryvtt-swse', 'progression-rollout-mode') || 'beta';
+    return HouseRuleService.getString('progression-rollout-mode', 'beta');
   }
 
   /**
@@ -197,27 +198,27 @@ export class RolloutSettings {
   static isFeatureEnabled(featureName) {
     switch (featureName) {
       case 'templates':
-        return game.settings.get('foundryvtt-swse', 'progression-enable-templates') !== false;
+        return HouseRuleService.getBoolean('progression-enable-templates', true);
       case 'advisory':
-        return game.settings.get('foundryvtt-swse', 'progression-enable-advisory') !== false;
+        return HouseRuleService.getBoolean('progression-enable-advisory', true);
       case 'forecast':
-        return game.settings.get('foundryvtt-swse', 'progression-enable-forecast') !== false;
+        return HouseRuleService.getBoolean('progression-enable-forecast', true);
       case 'explainability':
-        return game.settings.get('foundryvtt-swse', 'progression-show-explainability') !== false;
+        return HouseRuleService.getBoolean('progression-show-explainability', true);
       case 'template-provenance':
-        return game.settings.get('foundryvtt-swse', 'progression-show-template-provenance') !== false;
+        return HouseRuleService.getBoolean('progression-show-template-provenance', true);
       case 'support-warnings':
-        return game.settings.get('foundryvtt-swse', 'progression-show-support-warnings') !== false;
+        return HouseRuleService.getBoolean('progression-show-support-warnings', true);
       case 'debug-tools':
-        return game.settings.get('foundryvtt-swse', 'progression-enable-debug-tools') === true;
+        return HouseRuleService.getBoolean('progression-enable-debug-tools', false);
       case 'session-resume':
-        return game.settings.get('foundryvtt-swse', 'progression-allow-session-resume') !== false;
+        return HouseRuleService.getBoolean('progression-allow-session-resume', true);
       case 'apply-retry':
-        return game.settings.get('foundryvtt-swse', 'progression-allow-apply-retry') !== false;
+        return HouseRuleService.getBoolean('progression-allow-apply-retry', true);
       case 'legacy-fallback':
-        return game.settings.get('foundryvtt-swse', 'progression-legacy-fallback-enabled') === true;
+        return HouseRuleService.getBoolean('progression-legacy-fallback-enabled', false);
       case 'legacy-entry-points':
-        return game.settings.get('foundryvtt-swse', 'progression-legacy-entry-points-visible') === true;
+        return HouseRuleService.getBoolean('progression-legacy-entry-points-visible', false);
       default:
         return false;
     }

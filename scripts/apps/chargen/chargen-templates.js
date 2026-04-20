@@ -8,6 +8,13 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
+import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
+import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
+import { compendiumLoader } from "/systems/foundryvtt-swse/scripts/utils/compendium-loader.js";
 
 export class CharacterTemplates {
   static _templates = null;
@@ -100,14 +107,9 @@ export class CharacterTemplates {
 
     // Validate species ID
     if (template.speciesId) {
-      const speciesPack = game.packs.get('foundryvtt-swse.species');
-      if (!speciesPack) {
-        errors.push('Species compendium not found');
-      } else {
-        const doc = await speciesPack.getDocument(template.speciesId).catch(() => null);
-        if (!doc) {
-          errors.push(`Species ID not found: ${template.speciesId}`);
-        }
+      const doc = await SpeciesRegistry.getDocumentById?.(template.speciesId).catch(() => null);
+      if (!doc) {
+        errors.push(`Species ID not found: ${template.speciesId}`);
       }
     }
 
@@ -119,104 +121,63 @@ export class CharacterTemplates {
 
     // Validate class ID
     if (template.classId) {
-      const classPack = game.packs.get('foundryvtt-swse.classes');
-      if (!classPack) {
-        errors.push('Classes compendium not found');
-      } else {
-        const doc = await classPack.getDocument(template.classId).catch(() => null);
-        if (!doc) {
-          errors.push(`Class ID not found: ${template.classId}`);
-        }
+      const doc = await ClassesRegistry.getDocumentBySourceId(template.classId).catch(() => null);
+      if (!doc) {
+        errors.push(`Class ID not found: ${template.classId}`);
       }
     }
 
     // Validate feat IDs
     if (template.featIds && Array.isArray(template.featIds)) {
-      const featPack = game.packs.get('foundryvtt-swse.feats');
-      if (!featPack) {
-        errors.push('Feats compendium not found');
-      } else {
-        for (const featId of template.featIds) {
-          const doc = await featPack.getDocument(featId).catch(() => null);
-          if (!doc) {
-            errors.push(`Feat ID not found: ${featId}`);
-          }
+      for (const featId of template.featIds) {
+        const doc = await FeatRegistry.getDocumentById?.(featId).catch(() => null);
+        if (!doc) {
+          errors.push(`Feat ID not found: ${featId}`);
         }
       }
     }
 
     // Validate talent IDs
     if (template.talentIds && Array.isArray(template.talentIds)) {
-      const talentPack = game.packs.get('foundryvtt-swse.talents');
-      if (!talentPack) {
-        errors.push('Talents compendium not found');
-      } else {
-        for (const talentId of template.talentIds) {
-          const doc = await talentPack.getDocument(talentId).catch(() => null);
-          if (!doc) {
-            errors.push(`Talent ID not found: ${talentId}`);
-          }
+      for (const talentId of template.talentIds) {
+        const doc = await TalentRegistry.getDocumentById?.(talentId).catch(() => null);
+        if (!doc) {
+          errors.push(`Talent ID not found: ${talentId}`);
         }
       }
     }
 
     // Validate talent tree IDs
     if (template.talentTreeIds && Array.isArray(template.talentTreeIds)) {
-      const treePack = game.packs.get('foundryvtt-swse.talent_trees');
-      if (!treePack) {
-        errors.push('Talent trees compendium not found');
-      } else {
-        for (const treeId of template.talentTreeIds) {
-          const doc = await treePack.getDocument(treeId).catch(() => null);
-          if (!doc) {
-            errors.push(`Talent tree ID not found: ${treeId}`);
-          }
+      await TalentTreeDB.build?.();
+      for (const treeId of template.talentTreeIds) {
+        const tree = TalentTreeDB.byId?.(treeId) || TalentTreeDB.bySourceId?.(treeId) || null;
+        if (!tree) {
+          errors.push(`Talent tree ID not found: ${treeId}`);
         }
       }
     }
 
     // Validate force power IDs
     if (template.forcePowerIds && Array.isArray(template.forcePowerIds)) {
-      const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-      if (!powerPack) {
-        errors.push('Force powers compendium not found');
-      } else {
-        for (const powerId of template.forcePowerIds) {
-          const doc = await powerPack.getDocument(powerId).catch(() => null);
-          if (!doc) {
-            errors.push(`Force power ID not found: ${powerId}`);
-          }
+      for (const powerId of template.forcePowerIds) {
+        const doc = await ForceRegistry.getDocumentByRef?.(powerId, 'power').catch(() => null);
+        if (!doc) {
+          errors.push(`Force power ID not found: ${powerId}`);
         }
       }
     }
 
     // Validate item IDs
     if (template.itemIds && Array.isArray(template.itemIds)) {
-      const equipPack = game.packs.get('foundryvtt-swse.equipment');
-      const weaponPack = game.packs.get('foundryvtt-swse.weapons');
-      const armorPack = game.packs.get('foundryvtt-swse.armor');
-
+      const packNames = ['foundryvtt-swse.equipment', 'foundryvtt-swse.weapons', 'foundryvtt-swse.armor'];
       for (const itemId of template.itemIds) {
         let found = false;
-
-        if (equipPack) {
-          const doc = await equipPack.getDocument(itemId).catch(() => null);
-          if (doc) { found = true; }
+        for (const packName of packNames) {
+          const item = await compendiumLoader.find(packName, (entry) => (entry?.id || entry?._id) === itemId, { loadFull: true }).catch(() => null);
+          if (item) { found = true; break; }
         }
-
-        if (!found && weaponPack) {
-          const doc = await weaponPack.getDocument(itemId).catch(() => null);
-          if (doc) { found = true; }
-        }
-
-        if (!found && armorPack) {
-          const doc = await armorPack.getDocument(itemId).catch(() => null);
-          if (doc) { found = true; }
-        }
-
-        if (!found) {
-          errors.push(`Item ID not found in equipment/weapons/armor: ${itemId}`);
-        }
+        if (!found) errors.push(`Item ID not found in equipment/weapons/armor: ${itemId}`);
       }
     }
 
@@ -473,104 +434,43 @@ export class CharacterTemplates {
     if (!featRef) {return;}
 
     const featName = typeof featRef === 'string' ? featRef : (featRef.displayName || featRef.name);
-    const featPackName = typeof featRef === 'object' && featRef.pack ? featRef.pack : 'foundryvtt-swse.feats';
     const featId = typeof featRef === 'object' && featRef.id ? featRef.id : null;
 
     try {
-      // Find feat in compendium
-      const featPack = game.packs.get(featPackName);
-      if (!featPack) {
-        SWSELogger.warn('SWSE | Feats compendium not found');
-        return;
+      let feat = featId ? await FeatRegistry.getDocumentById?.(featId) : null;
+      if (!feat && featName) {
+        feat = await FeatRegistry.getDocumentByName?.(featName);
       }
 
-      if (featId) {
-        const feat = await featPack.getDocument(featId);
-        if (feat) {
-          const featData = feat.toObject();
-          // Strip effects during chargen to avoid Foundry v13+ validation issues
-          delete featData.effects;
-          await ActorEngine.createEmbeddedDocuments(actor, 'Item', [featData]);
-          SWSELogger.log(`SWSE | Added template feat: ${featName}`);
-
-          // Handle Skill Focus feat - auto-check the skill's focused checkbox
-          if (featName.startsWith('Skill Focus')) {
-            const match = featName.match(/Skill Focus \(([^)]+)\)/);
-            if (match) {
-              await this._applySkillFocus(actor, match[1]);
-            }
-          }
-
-          // Handle Weapon Focus feat
-          if (featName.startsWith('Weapon Focus')) {
-            const match = featName.match(/Weapon Focus \(([^)]+)\)/);
-            if (match) {
-              await this._applyWeaponFocus(actor, match[1]);
-            }
-          }
-
-          // Handle Weapon Proficiency feat
-          if (featName.startsWith('Weapon Proficiency')) {
-            const match = featName.match(/Weapon Proficiency \(([^)]+)\)/);
-            if (match) {
-              await this._applyWeaponProficiency(actor, match[1]);
-            }
-          }
-          return;
-        }
-      }
-
-      const index = await featPack.getIndex();
-      if (!index) {
-        SWSELogger.error('SWSE | Failed to get feats compendium index');
-        ui.notifications.error('Failed to load feats data. Please refresh and try again.');
-        return;
-      }
-
-      let featEntry = index.find(f => f.name === featName);
-
-      // Fallback: handle variants like "Skill Focus (Use the Force)"
-      if (!featEntry && featName.includes('(')) {
-        const baseName = featName.split('(')[0].trim();
-        featEntry = index.find(f => f.name === baseName);
-      }
-
-      if (!featEntry) {
+      if (!feat) {
         SWSELogger.warn(`SWSE | Feat not found: ${featName}`);
         ui.notifications.warn(`Feat not found: ${featName}. Please add manually.`);
         return;
       }
 
-      const feat = await featPack.getDocument(featEntry._id);
       const featData = feat.toObject();
-      // Strip effects during chargen to avoid Foundry v13+ validation issues
       delete featData.effects;
       await ActorEngine.createEmbeddedDocuments(actor, 'Item', [featData]);
       SWSELogger.log(`SWSE | Added template feat: ${featName}`);
 
-      // Handle Skill Focus feat - auto-check the skill's focused checkbox
       if (featName.startsWith('Skill Focus')) {
         const match = featName.match(/Skill Focus \(([^)]+)\)/);
         if (match) {
           const skillDisplayName = match[1].trim();
           const skillKey = this._getSkillKeyFromDisplayName(skillDisplayName);
-
           if (skillKey) {
             await globalThis.SWSE.ActorEngine.updateActor(actor, {
               [`system.skills.${skillKey}.focused`]: true
             });
-
             SWSELogger.log(`SWSE | Auto-checked skill focus for: ${skillDisplayName}`);
           }
         }
       }
 
-      // Handle Force Sensitivity feat - auto-check Force Sensitive
       if (featName === 'Force Sensitivity') {
         await globalThis.SWSE.ActorEngine.updateActor(actor, {
           'system.forceSensitive': true
         });
-
         SWSELogger.log('SWSE | Auto-checked Force Sensitive');
       }
     } catch (error) {
@@ -627,63 +527,22 @@ export class CharacterTemplates {
     }
 
     const talentName = typeof talentRef === 'string' ? talentRef : (talentRef.displayName || talentRef.name);
-    const talentPackName = typeof talentRef === 'object' && talentRef.pack ? talentRef.pack : 'foundryvtt-swse.talents';
     const talentId = typeof talentRef === 'object' && talentRef.id ? talentRef.id : null;
 
     try {
       SWSELogger.log(`SWSE | Attempting to apply template talent: ${talentName}`);
-
-      // Find talent in compendium
-      const talentPack = game.packs.get(talentPackName);
-      if (!talentPack) {
-        SWSELogger.warn('SWSE | Talents compendium not found');
-        ui.notifications.warn('Talents compendium not found! Cannot add template talent.');
-        return;
+      let talent = talentId ? await TalentRegistry.getDocumentById?.(talentId) : null;
+      if (!talent && talentName) {
+        talent = await TalentRegistry.getDocumentByName?.(talentName);
       }
 
-      if (talentId) {
-        const talent = await talentPack.getDocument(talentId);
-        if (talent) {
-          const talentData = talent.toObject();
-          // Strip effects during chargen to avoid Foundry v13+ validation issues
-          delete talentData.effects;
-          await ActorEngine.createEmbeddedDocuments(actor, 'Item', [talentData]);
-          SWSELogger.log(`SWSE | Added template talent: ${talentName}`);
-          return;
-        }
-      }
-
-      const index = await talentPack.getIndex();
-      if (!index) {
-        SWSELogger.error('SWSE | Failed to get talents compendium index');
-        ui.notifications.error('Failed to load talents data. Please refresh and try again.');
-        return;
-      }
-
-      // Try exact match first
-      let talentEntry = index.find(t => t.name === talentName);
-
-      // Try case-insensitive match if exact match fails
-      if (!talentEntry) {
-        talentEntry = index.find(t => t.name.toLowerCase() === talentName.toLowerCase());
-      }
-
-      if (!talentEntry) {
-        SWSELogger.warn(`SWSE | Talent not found in compendium: ${talentName}`);
-        SWSELogger.log(`SWSE | Available talents: ${index.map(t => t.name).slice(0, 10).join(', ')}...`);
-        ui.notifications.warn(`Talent "${talentName}" not found in compendium. Please add manually.`);
-        return;
-      }
-
-      const talent = await talentPack.getDocument(talentEntry._id);
       if (!talent) {
-        SWSELogger.error(`SWSE | Failed to load talent document: ${talentName}`);
-        ui.notifications.error(`Failed to load talent "${talentName}". Please add manually.`);
+        SWSELogger.warn(`SWSE | Talent not found in registry: ${talentName}`);
+        ui.notifications.warn(`Talent "${talentName}" not found in registry. Please add manually.`);
         return;
       }
 
       const talentData = talent.toObject();
-      // Strip effects during chargen to avoid Foundry v13+ validation issues
       delete talentData.effects;
       await ActorEngine.createEmbeddedDocuments(actor, 'Item', [talentData]);
       SWSELogger.log(`SWSE | Successfully added template talent: ${talentName}`);
@@ -703,27 +562,12 @@ export class CharacterTemplates {
     if (!powerNames || powerNames.length === 0) {return;}
 
     try {
-      const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-      if (!powerPack) {
-        SWSELogger.warn('SWSE | Force powers compendium not found');
-        return;
-      }
-
-      const index = await powerPack.getIndex();
-      if (!index) {
-        SWSELogger.error('SWSE | Failed to get force powers compendium index');
-        ui.notifications.error('Failed to load force powers data. Please refresh and try again.');
-        return;
-      }
-
       const powersToAdd = [];
 
       for (const powerName of powerNames) {
-        const powerEntry = index.find(p => p.name === powerName);
-        if (powerEntry) {
-          const power = await powerPack.getDocument(powerEntry._id);
-          const powerData = power.toObject();
-          // Strip effects during chargen to avoid Foundry v13+ validation issues
+        const powerDoc = await ForceRegistry.getDocumentByRef?.(powerName, 'power');
+        if (powerDoc) {
+          const powerData = powerDoc.toObject();
           delete powerData.effects;
           powersToAdd.push(powerData);
         } else {

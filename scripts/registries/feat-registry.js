@@ -172,7 +172,8 @@ export class FeatRegistry {
             requiresTraining: Boolean(system.requiresTraining),
             requiresProficiency: Boolean(system.requiresProficiency),
             source: system.source || null,
-            pack: doc.pack || 'unknown'
+            pack: doc.pack || 'unknown',
+            system
         };
     }
 
@@ -289,6 +290,38 @@ export class FeatRegistry {
      */
     static getTags() {
         return Array.from(this._byTag.keys()).sort();
+    }
+
+
+    static async _getDocument(id) {
+        if (!id) return null;
+        const systemId = game?.system?.id || 'foundryvtt-swse';
+        const packKey = `${systemId}.feats`;
+        const pack = game?.packs?.get(packKey);
+        if (!pack) return null;
+        try {
+            return await pack.getDocument(id);
+        } catch (err) {
+            SWSELogger.warn(`[FeatRegistry] Failed to fetch document ${id} from ${packKey}:`, err);
+            return null;
+        }
+    }
+
+    static resolveEntry(ref) {
+        if (!ref) return null;
+        if (typeof ref === 'string') {
+            return this.getById(ref) || this.getByName(ref);
+        }
+        return this.getById(ref.id || ref._id || ref.internalId) || this.getByName(ref.name || ref.label);
+    }
+
+    static async getDocumentById(id) {
+        return this._getDocument(id);
+    }
+
+    static async getDocumentByName(name) {
+        const entry = this.getByName(name);
+        return entry ? this._getDocument(entry.id) : null;
     }
 
     /**

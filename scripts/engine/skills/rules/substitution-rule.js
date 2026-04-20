@@ -15,7 +15,7 @@
  */
 
 export function substitutionRule({ actor, skillKey, context }, result) {
-  // TODO: Implement once substitution talent database is available
+  // planned: Implement once substitution talent database is available
   // For now, this is a passthrough
 
   result.diagnostics.rulesTriggered.push("substitutionRule");

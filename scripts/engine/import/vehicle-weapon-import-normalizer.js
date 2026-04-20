@@ -18,6 +18,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -300,7 +301,7 @@ export function buildVehicleWeaponMountSummary(parsed, index = 0) {
     arc: parsed.arc || 'unknown',
     linkedGroup: parsed.linkedGroup,
     fireControl: parsed.fireControl,
-    gunner: 'Unassigned',  // TODO Phase 3: implement crew assignments
+    gunner: 'Unassigned',  // planned Phase 3: implement crew assignments
     crewRole: parsed.crewRole || 'gunner',
     attackSummary: parsed.attackSummary,
     damageSummary: parsed.damageSummary,
@@ -486,7 +487,7 @@ export async function createVehicleWeaponItems(actor, itemDataArray) {
   }
 
   try {
-    const created = await actor.createEmbeddedDocuments('Item', itemDataArray);
+    const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', itemDataArray, { source: 'vehicle-weapon-import-normalizer' });
     SWSELogger.debug(`[${SYSTEM_ID}] Created ${created.length} embedded weapon items on vehicle`);
     return created;
   } catch (err) {

@@ -4,9 +4,10 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { NpcProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js";
-import { SWSELevelUpEnhanced } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup-enhanced.js";
+import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { getNpcMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { SnapshotManager } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js";
 
 export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
   static PARTS = {
@@ -130,20 +131,17 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     }
 
     try {
-      // Build heroic progression packet through NPC engine
-      const packet = await NpcProgressionEngine.buildHeroicLevelPacket(this.actor, {
-        createSnapshot: true
-      });
+      const nextLevel = (Number(this.actor.system?.level) || 1) + 1;
+      await SnapshotManager.createSnapshot(this.actor, `Before Heroic Level-Up to ${nextLevel}`);
 
-      // Apply through unified ActorEngine for governance
-      await NpcProgressionEngine.applyProgression(this.actor, packet);
-
-      // Close this dialog and open full level-up UI
       this.close();
-      new SWSELevelUpEnhanced(this.actor).render(true);
+      await launchProgression(this.actor, {
+        subtype: 'actor',
+        source: 'npc-levelup-entry.heroic'
+      });
     } catch (err) {
       SWSELogger.error('Heroic level-up failed:', err);
-      ui.notifications.error('Failed to apply heroic level-up.');
+      ui.notifications.error('Failed to open heroic level-up.');
     }
   }
 
@@ -167,18 +165,17 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     }
 
     try {
-      // Build nonheroic progression packet through NPC engine
-      const packet = await NpcProgressionEngine.buildNonheroicLevelPacket(this.actor, {
-        createSnapshot: true
-      });
-
-      // Apply through unified ActorEngine for governance
-      await NpcProgressionEngine.applyProgression(this.actor, packet);
+      const nextLevel = (Number(this.actor.system?.level) || 1) + 1;
+      await SnapshotManager.createSnapshot(this.actor, `Before Nonheroic Level-Up to ${nextLevel}`);
 
       this.close();
+      await launchProgression(this.actor, {
+        subtype: 'nonheroic',
+        source: 'npc-levelup-entry.nonheroic'
+      });
     } catch (err) {
       SWSELogger.error('Nonheroic level-up failed:', err);
-      ui.notifications.error('Failed to apply nonheroic level-up.');
+      ui.notifications.error('Failed to open nonheroic level-up.');
     }
   }
 

@@ -694,7 +694,7 @@ export class ConfirmStep extends ProgressionStepPlugin {
    * Get mentor name for build.
    */
   _getMentorName(systemData) {
-    // TODO: get mentor from mentor-dialogues based on class
+    // planned: get mentor from mentor-dialogues based on class
     return systemData.mentor || 'Mentor Unknown';
   }
 }

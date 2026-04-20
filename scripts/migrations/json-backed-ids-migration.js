@@ -1,6 +1,8 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
 import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/language-registry.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 const MIGRATION_VERSION = '2026-02-06-json-backed-ids-v1';
 
@@ -46,7 +48,7 @@ async function _deriveBackgroundId(backgroundSlugOrName) {
 export async function runJsonBackedIdsMigration() {
   if (!game.user?.isGM) {return;}
 
-  const current = game.settings.get('foundryvtt-swse', 'jsonBackedIdsMigration');
+  const current = SettingsHelper.getSafe('jsonBackedIdsMigration', null);
   if (current === MIGRATION_VERSION) {return;}
 
   SWSELogger.log(`[MIGRATION] JSON-backed IDs migration starting (${MIGRATION_VERSION})`);
@@ -99,7 +101,7 @@ export async function runJsonBackedIdsMigration() {
   }
 
   SWSELogger.log(`[MIGRATION] JSON-backed IDs migration complete. Updated actors: ${updatedCount}/${actors.length}`);
-  await game.settings.set('foundryvtt-swse', 'jsonBackedIdsMigration', MIGRATION_VERSION);
+  await HouseRuleService.set('jsonBackedIdsMigration', MIGRATION_VERSION);
 }
 
 export { MIGRATION_VERSION };

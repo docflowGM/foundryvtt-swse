@@ -160,28 +160,19 @@ export class LanguageStep extends ProgressionStepPlugin {
     // Species languages
     const speciesName = actor.system?.species?.primary?.name || actor.system?.species;
     if (speciesName) {
-      const speciesPack = game.packs.get('foundryvtt-swse.species');
-      if (speciesPack) {
-        const speciesIndex = speciesPack.index.find(s => s.name === speciesName);
-        if (speciesIndex) {
-          const speciesDoc = await speciesPack.getDocument(speciesIndex._id);
-          if (speciesDoc?.system?.languages) {
-            speciesDoc.system.languages.forEach(lang => known.add(lang));
-          }
-        }
+      const speciesDoc = await ProgressionContentAuthority.getSpeciesDocument(speciesName);
+      if (speciesDoc?.system?.languages) {
+        speciesDoc.system.languages.forEach(lang => known.add(lang));
       }
     }
 
     // Background languages (from committed background if available)
     const bgIds = shell?.committedSelections?.get('background') || [];
     if (Array.isArray(bgIds) && bgIds.length > 0) {
-      const bgPack = game.packs.get('foundryvtt-swse.backgrounds');
-      if (bgPack) {
-        for (const bgId of bgIds) {
-          const bgDoc = await bgPack.getDocument(bgId);
-          if (bgDoc?.system?.languages) {
-            bgDoc.system.languages.forEach(lang => known.add(lang));
-          }
+      for (const bgId of bgIds) {
+        const bgDoc = await ProgressionContentAuthority.getBackgroundDocument(bgId);
+        if (bgDoc?.system?.languages) {
+          bgDoc.system.languages.forEach(lang => known.add(lang));
         }
       }
     }

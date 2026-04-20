@@ -18,6 +18,7 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class ForceProvenanceEngine {
   /**
@@ -190,9 +191,9 @@ export class ForceProvenanceEngine {
    */
   static async storeReconciliation(actor, ledger) {
     try {
-      await actor.update({
+      await ActorEngine.updateActor(actor, {
         'system.forceGrantLedger': ledger
-      });
+      }, { source: 'ForceProvenanceEngine.storeReconciliation' });
     } catch (e) {
       swseLogger.warn('[FORCE PROVENANCE] Failed to store ledger', e);
     }
