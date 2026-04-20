@@ -37,10 +37,13 @@ export class NpcProfileBuilder {
 
     // Resolve mount summary (Phase 4)
     const mountSummary = this._getMountSummary(actor);
+    const mountRiderResolved = mountSummary?.riderName !== null;
+    const mountRiderUnresolved = npcKind === 'mount' && !mountRiderResolved;
 
     // Resolve follower summary (Phase 3)
     const followerSummary = this._getFollowerSummary(actor);
     const hasFollowerSummary = !!followerSummary;
+    const followerOwnerUnresolved = npcKind === 'follower' && !followerSummary?.isOwnerResolved;
 
     // Resolve progression summary
     const progressionSummary = this._getProgressionSummary(actor);
@@ -50,7 +53,7 @@ export class NpcProfileBuilder {
     const showOwnerPanel = npcKind === 'follower' && hasOwner;
     const showBeastPanel = npcKind === 'beast';
     const showMountPanel = npcKind === 'mount';
-    const showRelationshipsTab = showOwnerPanel || showMountPanel;
+    const showRelationshipsTab = npcKind === 'follower' || npcKind === 'mount';
 
     // Generate descriptions
     const profileDescription = this._getProfileDescription(npcKind, npcMode);
@@ -119,10 +122,13 @@ export class NpcProfileBuilder {
 
       // Mount metadata (Phase 4 expanded)
       mountSummary,
+      mountRiderResolved,
+      mountRiderUnresolved,
 
       // Follower metadata (Phase 3)
       hasFollowerSummary,
       followerSummary,
+      followerOwnerUnresolved,
       followerAuthorityDescription,
       followerScalingDescription,
 
@@ -515,8 +521,11 @@ export class NpcProfileBuilder {
       mountSummary: null,
       hasFollowerSummary: false,
       followerSummary: null,
+      followerOwnerUnresolved: false,
       followerAuthorityDescription: null,
       followerScalingDescription: null,
+      mountRiderResolved: false,
+      mountRiderUnresolved: false,
       progressionSummary: null,
       hasMixedProgressionTracks: false,
       canLaunchNpcLevelUp: false,
