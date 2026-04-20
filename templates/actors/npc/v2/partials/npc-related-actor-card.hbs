@@ -1,0 +1,37 @@
+{{#if actorId}}
+  <div
+    class="swse-npc-related-actor-card"
+    data-action="open-related-actor"
+    data-actor-id="{{actorId}}"
+    tabindex="0"
+    role="button"
+    aria-label="Open related actor sheet for {{name}}">
+    <div class="swse-npc-related-actor-card__media">
+      <img
+        class="swse-npc-related-actor-card__img"
+        src="{{#if img}}{{img}}{{else}}icons/svg/mystery-man.svg{{/if}}"
+        alt="{{name}}">
+    </div>
+
+    <div class="swse-npc-related-actor-card__content">
+      <div class="swse-npc-related-actor-card__title">
+        {{#if name}}{{name}}{{else}}Unknown Actor{{/if}}
+      </div>
+
+      <div class="swse-npc-related-actor-card__meta">
+        {{#if type}}{{type}}{{else}}Actor{{/if}}
+        {{#if kind}} &bull; {{kind}}{{/if}}
+      </div>
+    </div>
+
+    <div class="swse-npc-related-actor-card__actions">
+      <button
+        type="button"
+        class="swse-npc-action-button swse-npc-action-button--secondary"
+        data-action="open-related-actor"
+        data-actor-id="{{actorId}}">
+        Open
+      </button>
+    </div>
+  </div>
+{{/if}}

@@ -32,6 +32,43 @@ export class NpcProfileBuilder {
     const riderData = this._resolveRiderData(actor);
     const hasRider = !!riderData;
 
+    // Build serializable link card objects for open-related-actor action
+    let ownerLink = { actorId: null, name: null, img: null, type: null, kind: null };
+    if (npcKind === 'follower') {
+      const ownerId = actor.system?.npcProfile?.owner?.actorId || actor?.flags?.swse?.follower?.ownerId || null;
+      if (ownerId) {
+        const owner = game.actors?.get(ownerId);
+        if (owner) {
+          ownerLink = {
+            actorId: ownerId,
+            name: owner.name || null,
+            img: owner.img || null,
+            type: owner.type || null,
+            kind: owner.system?.npcProfile?.kind || null
+          };
+        }
+      }
+    }
+    const hasOwnerLink = Boolean(ownerLink.actorId);
+
+    let riderLink = { actorId: null, name: null, img: null, type: null, kind: null };
+    if (npcKind === 'mount') {
+      const riderId = actor.system?.npcProfile?.mount?.riderActorId || null;
+      if (riderId) {
+        const rider = game.actors?.get(riderId);
+        if (rider) {
+          riderLink = {
+            actorId: riderId,
+            name: rider.name || null,
+            img: rider.img || null,
+            type: rider.type || null,
+            kind: rider.system?.npcProfile?.kind || null
+          };
+        }
+      }
+    }
+    const hasRiderLink = Boolean(riderLink.actorId);
+
     // Resolve beast summary (Phase 4)
     const beastSummary = this._getBeastSummary(actor);
 
@@ -141,6 +178,12 @@ export class NpcProfileBuilder {
       hasNpcProgressionSnapshot,
       canRevertNpcProgression,
       npcProgressionAdvisory,
+
+      // Relationship link cards (for open-related-actor action)
+      ownerLink,
+      hasOwnerLink,
+      riderLink,
+      hasRiderLink,
 
       // Descriptions
       profileDescription,
@@ -532,6 +575,10 @@ export class NpcProfileBuilder {
       hasNpcProgressionSnapshot: false,
       canRevertNpcProgression: false,
       npcProgressionAdvisory: null,
+      ownerLink: { actorId: null, name: null, img: null, type: null, kind: null },
+      hasOwnerLink: false,
+      riderLink: { actorId: null, name: null, img: null, type: null, kind: null },
+      hasRiderLink: false,
       profileDescription: 'NPC data unavailable.',
       authorityDescription: 'Unknown authority.'
     };

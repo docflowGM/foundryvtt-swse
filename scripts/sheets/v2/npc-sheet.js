@@ -311,6 +311,28 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       }
     }, { signal });
 
+    // Open related actor sheet (linked relationship cards)
+    const _openRelatedActor = (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const actorId = ev.currentTarget?.dataset?.actorId;
+      if (!actorId) return;
+      const relatedActor = game.actors?.get(actorId);
+      if (!relatedActor?.sheet) {
+        ui.notifications?.warn('Related actor could not be found.');
+        return;
+      }
+      relatedActor.sheet.render(true);
+    };
+    for (const el of root.querySelectorAll('[data-action="open-related-actor"]')) {
+      el.addEventListener('click', _openRelatedActor, { signal });
+      if (el.tagName !== 'BUTTON') {
+        el.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter' || ev.key === ' ') _openRelatedActor(ev);
+        }, { signal });
+      }
+    }
+
     // Item sheet opening
     for (const el of root.querySelectorAll('.swse-v2-open-item')) {
       el.addEventListener('click', (ev) => {

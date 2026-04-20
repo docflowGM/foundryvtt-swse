@@ -807,3 +807,100 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* =========================================
+   NPC V2 — Linked relationship actor cards
+   ========================================= */
+
+.swse-npc-detail-block {
+  margin-top: 12px;
+}
+
+.swse-npc-detail-block__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+
+.swse-npc-related-actor-card {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+  min-width: 0;
+}
+
+.swse-npc-related-actor-card:hover,
+.swse-npc-related-actor-card:focus {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(120, 190, 255, 0.28);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.swse-npc-related-actor-card__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swse-npc-related-actor-card__img {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.swse-npc-related-actor-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.swse-npc-related-actor-card__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.swse-npc-related-actor-card__meta {
+  font-size: 0.8rem;
+  opacity: 0.74;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.swse-npc-related-actor-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+  .swse-npc-related-actor-card {
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+
+  .swse-npc-related-actor-card__img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .swse-npc-related-actor-card__actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
