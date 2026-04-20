@@ -279,7 +279,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         // Create actor data
         const actorData = {
             name: followerData.name || `${owner.name}'s Follower`,
-            type: 'character',
+            type: 'npc',
             system: {
                 level: followerLevel,
                 isFollower: true,
@@ -291,7 +291,15 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 attributes: {
                     damageThreshold: 0 // Will be calculated on prepare
                 },
-                progression: progressionData
+                progression: progressionData,
+                npcProfile: {
+                    kind: 'follower',
+                    owner: {
+                        actorId: owner.id,
+                        talent: grantingTalent ? { id: grantingTalent.id, name: grantingTalent.name } : null
+                    },
+                    template: template.name
+                }
             },
             flags: {
                 swse: {
@@ -299,6 +307,11 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                         ownerId: owner.id,
                         templateType: followerData.templateType,
                         grantingTalent: grantingTalent?.name || null
+                    }
+                },
+                'foundryvtt-swse': {
+                    npcLevelUp: {
+                        mode: 'statblock'
                     }
                 }
             }
@@ -658,7 +671,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             // Create actor from derived state
             const actorData = {
                 name: `${owner.name}'s ${templateType.charAt(0).toUpperCase() + templateType.slice(1)} Follower`,
-                type: 'character',
+                type: 'npc',
                 system: {
                     level: targetHeroicLevel,
                     race: speciesName,
@@ -669,6 +682,14 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                         followerChoices: persistentChoices,
                         followerTemplate: templateType,
                         isFollower: true
+                    },
+                    npcProfile: {
+                        kind: 'follower',
+                        owner: {
+                            actorId: owner.id,
+                            talent: null
+                        },
+                        template: templateType
                     }
                 },
                 flags: {
@@ -677,6 +698,11 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                             ownerId: owner.id,
                             templateType: templateType,
                             isFollower: true
+                        }
+                    },
+                    'foundryvtt-swse': {
+                        npcLevelUp: {
+                            mode: 'statblock'
                         }
                     }
                 }

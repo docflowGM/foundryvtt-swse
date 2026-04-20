@@ -2,6 +2,7 @@ import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/d
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -23,10 +24,9 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
  */
 function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
   // Statblock NPCs can use stored totals until explicitly leveled.
-  if (actor?.type === 'npc') {
-    const mode = actor.getFlag?.('swse', 'npcLevelUp.mode') ?? 'statblock';
+  if (actor?.type === 'npc' && isNpcStatblockMode(actor)) {
     const npc = weapon?.flags?.swse?.npc;
-    if (mode !== 'progression' && npc?.useFlat === true && Number.isFinite(npc.flatAttackBonus)) {
+    if (npc?.useFlat === true && Number.isFinite(npc.flatAttackBonus)) {
       return Number(npc.flatAttackBonus) || 0;
     }
   }

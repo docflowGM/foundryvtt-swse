@@ -1,0 +1,95 @@
+<section class="swse-npc-card swse-npc-owner-card swse-npc-follower-card">
+  <header class="swse-npc-card__header">
+    <div class="swse-npc-card__header-main">
+      <h3 class="swse-section-title">Follower / Minion Link</h3>
+      <p class="swse-npc-card__subhead">
+        Owner, provenance, and follower relationship summary.
+      </p>
+    </div>
+
+    <div class="swse-npc-badges">
+      <span class="swse-npc-badge swse-npc-badge--subtype">Follower</span>
+      {{#if followerSummary.isOwnerResolved}}
+        <span class="swse-npc-badge swse-npc-badge--kind">Owner Linked</span>
+      {{/if}}
+    </div>
+  </header>
+
+  <div class="swse-npc-card__body">
+    <div class="swse-npc-summary-grid swse-npc-summary-grid--follower">
+      <div class="swse-npc-summary-stat">
+        <label class="swse-npc-summary-stat__label">Owner</label>
+        <div class="swse-npc-summary-stat__value">
+          {{#if followerSummary.ownerName}}{{followerSummary.ownerName}}{{else}}—{{/if}}
+        </div>
+      </div>
+
+      <div class="swse-npc-summary-stat">
+        <label class="swse-npc-summary-stat__label">Template</label>
+        <div class="swse-npc-summary-stat__value">
+          {{#if followerSummary.templateName}}{{followerSummary.templateName}}{{else}}—{{/if}}
+        </div>
+      </div>
+
+      <div class="swse-npc-summary-stat">
+        <label class="swse-npc-summary-stat__label">Rules Mode</label>
+        <div class="swse-npc-summary-stat__value">{{npcMode}}</div>
+      </div>
+
+      <div class="swse-npc-summary-stat">
+        <label class="swse-npc-summary-stat__label">Scaling</label>
+        <div class="swse-npc-summary-stat__value">
+          {{#if followerSummary.scalingMode}}{{followerSummary.scalingMode}}{{else}}—{{/if}}
+        </div>
+      </div>
+    </div>
+
+    <dl class="swse-npc-meta-list">
+      <div class="swse-npc-meta-list__row">
+        <dt>Granting Talent</dt>
+        <dd>{{#if followerSummary.grantingTalentName}}{{followerSummary.grantingTalentName}}{{else}}No granting talent resolved.{{/if}}</dd>
+      </div>
+
+      <div class="swse-npc-meta-list__row">
+        <dt>Provenance</dt>
+        <dd>{{#if followerSummary.provenance}}{{followerSummary.provenance}}{{else}}No follower provenance recorded.{{/if}}</dd>
+      </div>
+
+      <div class="swse-npc-meta-list__row">
+        <dt>Owner Heroic Level</dt>
+        <dd>{{#if followerSummary.ownerHeroicLevel}}{{followerSummary.ownerHeroicLevel}}{{else}}—{{/if}}</dd>
+      </div>
+
+      <div class="swse-npc-meta-list__row">
+        <dt>Follower Level</dt>
+        <dd>{{#if followerSummary.currentFollowerLevel}}{{followerSummary.currentFollowerLevel}}{{else}}—{{/if}}</dd>
+      </div>
+    </dl>
+
+    {{#if followerAuthorityDescription}}
+      <div class="swse-npc-callout swse-npc-callout--follower">
+        <strong>Follower Authority:</strong>
+        {{followerAuthorityDescription}}
+      </div>
+    {{/if}}
+
+    {{#if followerScalingDescription}}
+      <div class="swse-npc-callout swse-npc-callout--follower-secondary">
+        <strong>Scaling:</strong>
+        {{followerScalingDescription}}
+      </div>
+    {{/if}}
+
+    {{#if followerSummary.notes}}
+      <p class="swse-npc-card__footnote">
+        {{followerSummary.notes}}
+      </p>
+    {{/if}}
+
+    {{#unless followerSummary.ownerName}}
+      <p class="swse-npc-empty-state">
+        No owner is currently resolved for this follower.
+      </p>
+    {{/unless}}
+  </div>
+</section>

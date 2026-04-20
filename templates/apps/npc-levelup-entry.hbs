@@ -10,6 +10,48 @@
     </p>
   </header>
 
+  <div class="swse-npc-levelup-status">
+    <div class="swse-npc-progress-grid">
+      <div class="swse-npc-progress-stat">
+        <label class="swse-npc-progress-stat__label">Heroic Levels</label>
+        <div class="swse-npc-progress-stat__value">{{heroicLevels}}</div>
+      </div>
+
+      <div class="swse-npc-progress-stat">
+        <label class="swse-npc-progress-stat__label">Nonheroic Levels</label>
+        <div class="swse-npc-progress-stat__value">{{nonheroicLevels}}</div>
+      </div>
+
+      <div class="swse-npc-progress-stat">
+        <label class="swse-npc-progress-stat__label">Total Levels</label>
+        <div class="swse-npc-progress-stat__value">{{totalLevel}}</div>
+      </div>
+
+      <div class="swse-npc-progress-stat">
+        <label class="swse-npc-progress-stat__label">Class Count</label>
+        <div class="swse-npc-progress-stat__value">{{classCount}}</div>
+      </div>
+    </div>
+
+    {{#if classNames.length}}
+      <div class="swse-npc-progress-classes">
+        <div class="swse-npc-progress-classes__label">Classes</div>
+        <div class="swse-npc-chip-row">
+          {{#each classNames as |className|}}
+            <span class="swse-npc-chip">{{className}}</span>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if hasMixedProgressionTracks}}
+      <div class="swse-npc-callout swse-npc-callout--warning">
+        <strong>Mixed-track NPC:</strong>
+        This NPC uses both heroic and nonheroic advancement tracks.
+      </div>
+    {{/if}}
+  </div>
+
   {{#if heroicBlocked}}
     <p class="warning"><strong>Heroic:</strong> Epic Override required to take Heroic levels beyond 20.</p>
   {{/if}}

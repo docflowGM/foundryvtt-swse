@@ -1,0 +1,28 @@
+<section class="swse-npc-card swse-npc-relationships-card">
+  <header class="swse-npc-card__header">
+    <div class="swse-npc-card__header-main">
+      <h3 class="swse-section-title">Relationships</h3>
+      <p class="swse-npc-card__subhead">
+        Owner, rider, follower provenance, and related linkage for this NPC.
+      </p>
+    </div>
+  </header>
+
+  <div class="swse-npc-card__body swse-npc-relationships-stack">
+    {{#if showOwnerPanel}}
+      {{> "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-owner-panel.hbs"}}
+    {{/if}}
+
+    {{#if showMountPanel}}
+      {{> "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-mount-panel.hbs"}}
+    {{/if}}
+
+    {{#unless showOwnerPanel}}
+      {{#unless showMountPanel}}
+        <p class="swse-npc-empty-state">
+          No owner, rider, follower provenance, or mount relationship data is currently available for this NPC.
+        </p>
+      {{/unless}}
+    {{/unless}}
+  </div>
+</section>

@@ -6,6 +6,7 @@ import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/l
 import { NpcProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js";
 import { SWSELevelUpEnhanced } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup-enhanced.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { getNpcMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 
 export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
   static PARTS = {
@@ -39,8 +40,14 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     const nonheroicBlocked = nonheroicNext > 20 && !epicOverrideEnabled;
     const nonheroicAdvisory = nonheroicNext > 20 && epicOverrideEnabled;
 
-    const mode = actor?.getFlag('foundryvtt-swse', 'npcLevelUp.mode') ?? 'statblock';
+    const mode = getNpcMode(actor);
     const hasSnapshot = NpcProgressionEngine.hasSnapshot(actor);
+
+    // Phase 5: Progression summary for status block
+    const classes = actor.items?.filter(i => i.type === 'class') || [];
+    const classNames = classes.map(c => c.name || 'Unnamed Class').filter(Boolean);
+    const classCount = classes.length;
+    const hasMixedProgressionTracks = Number(heroicLevels) > 0 && Number(nonheroicLevels) > 0;
 
     return {
       actorName: actor?.name ?? 'NPC',
@@ -55,7 +62,12 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
       heroicBlocked,
       heroicAdvisory,
       nonheroicBlocked,
-      nonheroicAdvisory
+      nonheroicAdvisory,
+
+      // Phase 5: Progression summary fields
+      classCount,
+      classNames,
+      hasMixedProgressionTracks
     };
   }
 

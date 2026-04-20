@@ -1,0 +1,37 @@
+<section class="swse-npc-card swse-npc-mode-card">
+  <header class="swse-npc-card__header">
+    <h3 class="swse-section-title">Rules Mode</h3>
+    <div class="swse-npc-badges">
+      <span class="swse-npc-badge swse-npc-badge--mode">{{npcMode}}</span>
+      <span class="swse-npc-badge swse-npc-badge--kind">{{npcKind}}</span>
+    </div>
+  </header>
+
+  <div class="swse-npc-card__body">
+    <p class="swse-npc-card__lead">
+      {{authorityDescription}}
+    </p>
+
+    <div class="swse-npc-mode-grid">
+      <div class="swse-npc-mode-grid__item {{#if isStatblockMode}}is-active{{/if}}">
+        <label class="swse-npc-mode-grid__label">Statblock Mode</label>
+        <div class="swse-npc-mode-grid__value">
+          {{#if isStatblockMode}}Active{{else}}Inactive{{/if}}
+        </div>
+        <p class="swse-npc-mode-grid__text">
+          Uses printed/published NPC values as the primary authority.
+        </p>
+      </div>
+
+      <div class="swse-npc-mode-grid__item {{#if isProgressionMode}}is-active{{/if}}">
+        <label class="swse-npc-mode-grid__label">Progression Mode</label>
+        <div class="swse-npc-mode-grid__value">
+          {{#if isProgressionMode}}Active{{else}}Inactive{{/if}}
+        </div>
+        <p class="swse-npc-mode-grid__text">
+          Uses level-based progression and recalculated advancement data.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

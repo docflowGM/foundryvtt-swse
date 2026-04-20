@@ -8,6 +8,7 @@ import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/comba
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PortraitUploadController } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PortraitUploadController.js";
+import { NpcProfileBuilder } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-profile-builder.js";
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -113,6 +114,14 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       context.racialAbilities = abilityPanel.all?.filter(a => a.type === "racialAbility") ?? [];
     } catch (err) {
       console.error('Error preparing abilities panel for NPC sheet:', err);
+    }
+
+    // NPC Profile Context (Phase 1: Contract Foundation)
+    try {
+      const npcProfile = NpcProfileBuilder.buildContext(actor);
+      Object.assign(context, npcProfile);
+    } catch (err) {
+      console.error('Error building NPC profile context:', err);
     }
 
     // Action Economy Context (for combat tab)
@@ -265,6 +274,41 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       ev.preventDefault();
       // TODO: Implement mentor interaction for NPC sheet
       ui.notifications.info("Mentor interactions coming soon!");
+    }, { signal });
+
+    /* ---- PHASE 5: NPC PROGRESSION PANEL ACTIONS ---- */
+
+    root.querySelector('[data-action="open-npc-levelup"]')?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      const { SWSENpcLevelUpEntry } = await import("/systems/foundryvtt-swse/scripts/apps/levelup/npc-levelup-entry.js");
+      new SWSENpcLevelUpEntry(this.actor).render(true);
+    }, { signal });
+
+    root.querySelector('[data-action="revert-npc-progression"]')?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      const { NpcProgressionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js");
+
+      const snapshotInfo = NpcProgressionEngine.getSnapshotInfo?.(this.actor);
+      if (!snapshotInfo) {
+        ui.notifications.warn('No snapshot available to revert to.');
+        return;
+      }
+
+      const { SWSEDialogV2 } = await import("/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js");
+      const ok = await SWSEDialogV2.confirm({
+        title: 'Revert NPC to Statblock Snapshot',
+        content: `<p>This restores the NPC to: <strong>${snapshotInfo.label}</strong> (${snapshotInfo.date})</p><p>Items, effects, and all attributes will be restored exactly.</p>`
+      });
+      if (!ok) {return;}
+
+      try {
+        await NpcProgressionEngine.revertToSnapshot(this.actor);
+        ui.notifications.info('NPC reverted to snapshot.');
+        this.render(false);
+      } catch (err) {
+        console.error('Snapshot revert failed:', err);
+        ui.notifications.error('Failed to revert NPC to snapshot.');
+      }
     }, { signal });
 
     // Item sheet opening

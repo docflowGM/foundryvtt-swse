@@ -1,0 +1,79 @@
+<section class="swse-npc-card swse-npc-beast-card">
+  <header class="swse-npc-card__header">
+    <div class="swse-npc-card__header-main">
+      <h3 class="swse-section-title">Beast Summary</h3>
+      <p class="swse-npc-card__subhead">
+        Creature-facing overview for this NPC profile.
+      </p>
+    </div>
+
+    <div class="swse-npc-badges">
+      <span class="swse-npc-badge swse-npc-badge--subtype">Beast</span>
+      {{#if beastSummary.size}}
+        <span class="swse-npc-badge swse-npc-badge--kind">{{beastSummary.size}}</span>
+      {{/if}}
+    </div>
+  </header>
+
+  <div class="swse-npc-card__body">
+    <div class="swse-npc-summary-grid">
+      <div class="swse-npc-summary-stat">
+        <label class="swse-npc-summary-stat__label">Size</label>
+        <div class="swse-npc-summary-stat__value">
+          {{#if beastSummary.size}}{{beastSummary.size}}{{else}}—{{/if}}
+        </div>
+      </div>
+
+      <div class="swse-npc-summary-stat">
+        <label class="swse-npc-summary-stat__label">Intelligence</label>
+        <div class="swse-npc-summary-stat__value">
+          {{#if beastSummary.intelligence}}{{beastSummary.intelligence}}{{else}}—{{/if}}
+        </div>
+      </div>
+
+      <div class="swse-npc-summary-stat">
+        <label class="swse-npc-summary-stat__label">Speed</label>
+        <div class="swse-npc-summary-stat__value">
+          {{#if beastSummary.speedSummary}}{{beastSummary.speedSummary}}{{else}}—{{/if}}
+        </div>
+      </div>
+    </div>
+
+    <div class="swse-npc-detail-block">
+      <div class="swse-npc-detail-block__label">Natural Attacks</div>
+      {{#if beastSummary.naturalAttackNames.length}}
+        <div class="swse-npc-chip-row">
+          {{#each beastSummary.naturalAttackNames as |attackName|}}
+            <span class="swse-npc-chip swse-npc-chip--attack">{{attackName}}</span>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="swse-npc-empty-state">
+          No natural attacks are summarized for this beast.
+        </p>
+      {{/if}}
+    </div>
+
+    <div class="swse-npc-detail-block">
+      <div class="swse-npc-detail-block__label">Special Abilities</div>
+      {{#if beastSummary.specialAbilityNames.length}}
+        <div class="swse-npc-chip-row">
+          {{#each beastSummary.specialAbilityNames as |abilityName|}}
+            <span class="swse-npc-chip swse-npc-chip--ability">{{abilityName}}</span>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="swse-npc-empty-state">
+          No special abilities are summarized for this beast.
+        </p>
+      {{/if}}
+    </div>
+
+    {{#if beastSummary.traitNotes}}
+      <div class="swse-npc-callout swse-npc-callout--beast">
+        <strong>Trait Notes:</strong>
+        {{beastSummary.traitNotes}}
+      </div>
+    {{/if}}
+  </div>
+</section>
