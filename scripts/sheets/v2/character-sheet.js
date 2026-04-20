@@ -51,6 +51,7 @@ import { traceLog, actorSummary, payloadSummary } from "/systems/foundryvtt-swse
 // Phase 8: Character sheet decomposition - import focused modules
 import { registerListeners } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/listeners.js";
 import { handleFormSubmission } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
+import { buildInventoryModel, getTimeClass, getTimeLabel, classifyActionType, getActionTypeLabel, categorizeSkillUse, pulseTab, showItemSelectionModal, hideItemSelectionModal, previewAbilityRow } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/utils.js";
 // Diagnostics: runtime inspection of resize/scroll behavior
 import { characterSheetDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet-diagnostics.js";
 // Contract Enforcement: validate sheet architecture at runtime
@@ -733,10 +734,10 @@ export class SWSEV2CharacterSheet extends
 
         // Normalize each skill use with enhanced metadata
         const normalizedUses = skillUses.map(use => {
-          const timeClass = this._getTimeClass(use.time);
-          const timeLabel = this._getTimeLabel(use.time);
-          const actionType = this._classifyActionType(use);
-          const actionTypeLabel = this._getActionTypeLabel(use);
+          const timeClass = getTimeClass(use.time);
+          const timeLabel = getTimeLabel(use.time);
+          const actionType = classifyActionType(use);
+          const actionTypeLabel = getActionTypeLabel(use);
           const isBlocked = use.trainedOnly && !skill.trained;
           const blockedReason = isBlocked ? "Requires training" : "";
           const sourceType =
@@ -774,7 +775,7 @@ export class SWSEV2CharacterSheet extends
             sourceType,
             sourceLabel,
             // Grouping category
-            category: this._categorizeSkillUse(use, skill.key)
+            category: categorizeSkillUse(use, skill.key)
           };
         });
 
@@ -1352,63 +1353,6 @@ const forcePoints = [];
      INVENTORY VIEW MODEL (READ-ONLY)
   ============================================================ */
 
-  _buildInventoryModel(actor) {
-    const items = Array.from(actor.items);
-
-    // Map of item type -> display category
-    const typeToCategory = {
-      weapon: "Weapons",
-      armor: "Armor",
-      shield: "Armor",
-      equipment: "Equipment",
-      consumable: "Consumables",
-      misc: "Miscellaneous",
-      ammo: "Ammunition"
-    };
-
-    // Build inventory groups
-    const inventory = new Map();
-
-    // Initialize standard groups
-    ["Weapons", "Armor", "Equipment", "Consumables"].forEach(group => {
-      inventory.set(group, []);
-    });
-
-    // Sort items into groups with full data
-    items.forEach(item => {
-      const category = typeToCategory[item.type] || "Miscellaneous";
-
-      // Ensure category exists in map
-      if (!inventory.has(category)) {
-        inventory.set(category, []);
-      }
-
-      const itemData = {
-        id: item.id,
-        name: item.name,
-        type: item.type,
-        category: item.type,
-        img: item.img,
-        quantity: item.system?.quantity ?? 1,
-        weight: item.system?.weight ?? 0,
-        cost: item.system?.cost ?? 0,
-        equipped: item.system?.equipped ?? false
-      };
-
-      inventory.get(category).push(itemData);
-    });
-
-    // Remove empty groups
-    for (const [key, items] of inventory.entries()) {
-      if (items.length === 0) {
-        inventory.delete(key);
-      }
-    }
-
-    // Convert to object for Handlebars iteration
-    return Object.fromEntries(inventory);
-  }
-
   /* ============================================================
      LISTENERS (UI ONLY)
   ============================================================ */
@@ -1763,7 +1707,7 @@ const forcePoints = [];
 
       const row = input.closest(".ability-row");
       if (row) {
-        this._previewAbilityRow(row);
+        previewAbilityRow(row);
       }
     }, { signal, capture: false });
 
@@ -2062,33 +2006,6 @@ const forcePoints = [];
   /* ============================================================
      UI PREVIEW MATH (NON-AUTHORITATIVE)
   ============================================================ */
-
-  _previewAbilityRow(row) {
-    if (!row) return;
-
-    const base = Number(row.querySelector('[data-field="base"]')?.value || 0);
-    const racial = Number(row.querySelector('[data-field="racial"]')?.value || 0);
-    const temp = Number(row.querySelector('[data-field="temp"]')?.value || 0);
-
-    const total = base + racial + temp;
-    const mod = Math.floor((total - 10) / 2);
-
-    const totalEl = row.querySelector(".math-result");
-    const modEl = row.querySelector(".math-mod");
-
-    if (totalEl) {
-      totalEl.textContent = total;
-      totalEl.classList.remove("result-positive","result-zero","result-negative");
-
-      if (total > 0) totalEl.classList.add("result-positive");
-      else if (total === 0) totalEl.classList.add("result-zero");
-      else totalEl.classList.add("result-negative");
-    }
-
-    if (modEl) {
-      modEl.textContent = mod >= 0 ? "+" + mod : mod;
-    }
-  }
 
   /* ============================================================
      FORCE ANIMATION HELPERS (UI ONLY)
@@ -3319,147 +3236,6 @@ const forcePoints = [];
    * @param {string|null} timeValue - The time field from extra skill use
    * @returns {string} CSS class name
    */
-  _getTimeClass(timeValue) {
-    if (!timeValue) return 'time--unknown';
-
-    const normalized = String(timeValue).toLowerCase().trim();
-
-    // Map common action economy designations
-    if (normalized.includes('swift')) return 'time--swift';
-    if (normalized.includes('move')) return 'time--move';
-    if (normalized.includes('standard')) return 'time--standard';
-    if (normalized.includes('full')) return 'time--full';
-    if (normalized.includes('free')) return 'time--free';
-    if (normalized.includes('reaction')) return 'time--reaction';
-    if (normalized.includes('round')) return 'time--full';
-
-    return 'time--unknown';
-  }
-
-  /**
-   * Map action economy time value to human-readable label
-   * @param {string|null} timeValue - The time field from extra skill use
-   * @returns {string} Human-readable label with icon
-   */
-  _getTimeLabel(timeValue) {
-    if (!timeValue) return '—';
-
-    const normalized = String(timeValue).toLowerCase().trim();
-
-    // Map to readable labels with icons
-    if (normalized.includes('swift')) return '⚡ Swift';
-    if (normalized.includes('move')) return '▶ Move';
-    if (normalized.includes('standard')) return '⬤ Standard';
-    if (normalized.includes('full') || normalized.includes('round')) return '⟲ Full Round';
-    if (normalized.includes('free')) return '∞ Free';
-    if (normalized.includes('reaction')) return '↩ Reaction';
-
-    // Return as-is if not matched
-    return timeValue;
-  }
-
-  /**
-   * Classify the action type of a skill use for UI clarity
-   * @param {Object} use - The skill use object
-   * @returns {string} Action type: 'check', 'opposed', 'use', 'roll', 'reference', or 'unknown'
-   */
-  _classifyActionType(use) {
-    const label = String(use.label || '').toLowerCase();
-    const dc = String(use.dc || '').toLowerCase();
-    const effect = String(use.effect || '').toLowerCase();
-    const time = String(use.time || '').toLowerCase();
-
-    // Opposed checks: explicitly stated as opposed
-    if (dc.includes('opposed')) return 'opposed';
-    if (label.includes('feint') || label.includes('deception')) return 'opposed';
-
-    // Combat actions: combat terminology
-    if (label.includes('attack') || label.includes('feint') || label.includes('dodge') || label.includes('parry')) return 'roll';
-    if (effect.includes('attack') || effect.includes('damage')) return 'roll';
-
-    // Uses/invocations: applying an effect
-    if (label.includes('use') || label.includes('apply') || label.includes('activate')) return 'use';
-    if (effect.includes('gain') || effect.includes('apply')) return 'use';
-
-    // Rolls/checks: skill rolls with DC
-    if (dc && !dc.includes('none') && !dc.includes('n/a')) return 'check';
-    if (effect.includes('check') || effect.includes('roll')) return 'check';
-
-    // Reference/informational: no action needed
-    if (label.includes('reference') || label.includes('information') || label.includes('know')) return 'reference';
-    if (time.includes('none') || time.includes('n/a') || time.includes('instant')) return 'reference';
-
-    return 'check'; // Default to check
-  }
-
-  /**
-   * Get human-readable label for action type
-   * @param {Object} use - The skill use object
-   * @returns {Object} { type: string, label: string, icon: string }
-   */
-  _getActionTypeLabel(use) {
-    const type = this._classifyActionType(use);
-    const map = {
-      'check': { label: 'Check', icon: '🎲', action: 'check' },
-      'opposed': { label: 'Opposed', icon: '⚔', action: 'opposed' },
-      'roll': { label: 'Roll', icon: '🎲', action: 'roll' },
-      'use': { label: 'Use', icon: '✓', action: 'use' },
-      'reference': { label: 'Info', icon: 'ℹ', action: 'reference' },
-      'unknown': { label: 'Action', icon: '→', action: 'unknown' }
-    };
-    return map[type] || map['unknown'];
-  }
-
-  /**
-   * Categorize a skill use for grouped display
-   * Derives display grouping based on metadata signals
-   * @param {Object} use - The skill use object
-   * @param {string} skillKey - The skill key
-   * @returns {string} Category: 'Core', 'Combat', 'Social', 'Utility', or 'Special'
-   */
-  _categorizeSkillUse(use, skillKey) {
-    const label = (use.label || '').toLowerCase();
-    const effect = (use.effect || '').toLowerCase();
-    const time = (use.time || '').toLowerCase();
-
-    // Combat-specific uses
-    const combatSkills = ['gatherInformation', 'deception', 'persuasion', 'endurance', 'acrobatics'];
-    const combatTerms = ['feint', 'dodge', 'parry', 'attack', 'defend', 'distract', 'demoralize', 'intimidate'];
-    if (combatSkills.includes(skillKey) && combatTerms.some(t => label.includes(t) || effect.includes(t))) {
-      return 'Combat';
-    }
-    if (label.includes('feint') || label.includes('dodge') || label.includes('parry')) {
-      return 'Combat';
-    }
-    if (effect.includes('attack') || effect.includes('defend') || effect.includes('flat-footed')) {
-      return 'Combat';
-    }
-
-    // Social uses
-    const socialSkills = ['persuasion', 'deception', 'gatherInformation'];
-    const socialTerms = ['persuade', 'bargain', 'bribe', 'intimidate', 'deception', 'deceptive', 'innuendo', 'haggle'];
-    if (socialSkills.includes(skillKey) && socialTerms.some(t => label.includes(t) || effect.includes(t))) {
-      return 'Social';
-    }
-
-    // Special uses with explicit markers
-    if (label.includes('(trained)') || use.trainedOnly) {
-      return 'Special';
-    }
-    if (label.includes('(feat)') || label.includes('(talent)') || label.includes('(class)')) {
-      return 'Special';
-    }
-
-    // Check if it's a core/fundamental use (no special conditions)
-    // Core uses don't have "trained only", don't require special setup
-    if (!use.trainedOnly && !label.includes('(trained)') && !label.includes('(feat)')) {
-      return 'Core';
-    }
-
-    // Default to utility for everything else
-    return 'Utility';
-  }
-
   /* ============================================================
      PHASE C/E/F/H: CANONICAL INVOCATION + ACTION ECONOMY WRAPPERS
   ============================================================ */
@@ -3725,7 +3501,7 @@ const forcePoints = [];
       await ActorEngine.apply(this.actor, result.mutationPlan);
       // UI feedback: pulse the target tab
       if (result.uiTargetTab) {
-        this._pulseTab(result.uiTargetTab);
+        pulseTab(this.element, result.uiTargetTab);
       }
     } catch (err) {
       // console.error('Drop application failed:', err);
@@ -3823,19 +3599,6 @@ const forcePoints = [];
    * @private
    * @param {string} tabName - tab identifier to pulse
    */
-  _pulseTab(tabName) {
-    if (!tabName) return;
-
-    const tabButton = this.element?.querySelector(`[data-tab="${tabName}"]`);
-    if (!tabButton) return;
-
-    tabButton.classList.add('tab-pulse');
-
-    setTimeout(() => {
-      tabButton.classList.remove('tab-pulse');
-    }, 800);
-  }
-
   /**
    * Revalidate character build by switching from free build mode to normal mode.
    * This enforces prerequisites and restrictions that were bypassed in free build.
