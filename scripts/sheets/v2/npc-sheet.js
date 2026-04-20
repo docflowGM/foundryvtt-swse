@@ -8,6 +8,7 @@ import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/comba
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PortraitUploadController } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PortraitUploadController.js";
+import { NpcProfileBuilder } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-profile-builder.js";
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -113,6 +114,14 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       context.racialAbilities = abilityPanel.all?.filter(a => a.type === "racialAbility") ?? [];
     } catch (err) {
       console.error('Error preparing abilities panel for NPC sheet:', err);
+    }
+
+    // NPC Profile Context (Phase 1: Contract Foundation)
+    try {
+      const npcProfile = NpcProfileBuilder.buildContext(actor);
+      Object.assign(context, npcProfile);
+    } catch (err) {
+      console.error('Error building NPC profile context:', err);
     }
 
     // Action Economy Context (for combat tab)

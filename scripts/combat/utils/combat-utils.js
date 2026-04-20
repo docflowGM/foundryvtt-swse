@@ -2,6 +2,7 @@ import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
 import { ResolutionContext } from '../../engine/resolution/resolution-context.js';
 import { RULES } from '../../engine/execution/rules/rule-enum.js';
 import { SchemaAdapters } from '../../utils/schema-adapters.js';
+import { isNpcStatblockMode } from '../../actors/npc/npc-mode-adapter.js';
 
 /**
  * Modern SWSE Combat Utilities (v13+)
@@ -48,10 +49,9 @@ export function getConditionPenalty(ctStep) {
  */
 export function computeAttackBonus(actor, weapon) {
   // Statblock NPCs can use stored totals until explicitly leveled.
-  if (actor?.type === 'npc') {
-    const mode = actor.getFlag?.('swse', 'npcLevelUp.mode') ?? 'statblock';
+  if (actor?.type === 'npc' && isNpcStatblockMode(actor)) {
     const npc = weapon?.flags?.swse?.npc;
-    if (mode !== 'progression' && npc?.useFlat === true && Number.isFinite(npc.flatAttackBonus)) {
+    if (npc?.useFlat === true && Number.isFinite(npc.flatAttackBonus)) {
       return Number(npc.flatAttackBonus) || 0;
     }
   }

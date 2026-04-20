@@ -6,6 +6,7 @@ import { getCriticalDamageBonus } from "/systems/foundryvtt-swse/scripts/combat/
 import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 /**
  * Determine if a weapon is a melee weapon
  * @param {Item} weapon - The weapon item
@@ -223,12 +224,11 @@ export async function rollDamage(actor, weapon, context = {}) {
   }
 
   // Statblock NPCs can roll printed damage formula until explicitly leveled.
-  if (actor.type === 'npc') {
-    const mode = actor.getFlag?.('swse', 'npcLevelUp.mode') ?? 'statblock';
+  if (actor.type === 'npc' && isNpcStatblockMode(actor)) {
     const npc = weapon?.flags?.swse?.npc;
     const flatFormula = npc?.flatDamageFormula;
 
-    if (mode !== 'progression' && npc?.useFlat === true && typeof flatFormula === 'string' && flatFormula.trim()) {
+    if (npc?.useFlat === true && typeof flatFormula === 'string' && flatFormula.trim()) {
       const roll = await RollEngine.safeRoll(flatFormula);
       if (roll) {
         await SWSEChat.postRoll({

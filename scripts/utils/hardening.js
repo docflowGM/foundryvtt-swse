@@ -12,6 +12,7 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 
 const SYSTEM_SCOPE_COMPAT = 'foundryvtt-swse';
 const FLAG_SNAPSHOT = 'npcLevelUp.snapshot';
@@ -32,8 +33,7 @@ function _actorKey(actor) {
 
 export function isStatblockNpc(actor) {
   if (!actor || actor.type !== 'npc') {return false;}
-  const mode = actor.getFlag?.(SYSTEM_SCOPE_COMPAT, FLAG_MODE) ?? 'statblock';
-  return mode !== 'progression';
+  return isNpcStatblockMode(actor);
 }
 
 export function shouldSkipDerivedData(actor) {

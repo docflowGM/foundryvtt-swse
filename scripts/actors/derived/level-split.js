@@ -1,4 +1,5 @@
 import { warnIfMixedTracks } from "/systems/foundryvtt-swse/scripts/utils/hardening.js";
+import { getNpcMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 /**
  * Level split utilities (Heroic vs Nonheroic)
  *
@@ -80,7 +81,7 @@ export function getEffectiveHalfLevel(actor) {
   const type = actor?.type;
 
   if (type === 'npc') {
-    const mode = actor.getFlag?.('swse', 'npcLevelUp.mode') ?? 'statblock';
+    const mode = getNpcMode(actor);
     if (mode !== 'progression') {return Math.floor(totalLevel / 2);}
     return getHeroicHalfLevel(actor);
   }

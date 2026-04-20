@@ -3,6 +3,7 @@ import { SWSELogger } from '../utils/logger.js';
 import { SWSEActorDataModel } from './actor-data-model.js';
 import { SpeciesTraitEngine } from '../engine/systems/species/species-trait-engine.js';
 import { warnIfMixedTracks } from '../utils/hardening.js';
+import { getNpcMode } from '../actors/npc/npc-mode-adapter.js';
 
 export class SWSECharacterDataModel extends SWSEActorDataModel {
 
@@ -336,7 +337,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Calculate half level (non-derived utility)
     const isNpc = actor?.type === 'npc';
-    const npcMode = isNpc ? (actor.getFlag?.('swse', 'npcLevelUp.mode') ?? 'statblock') : 'progression';
+    const npcMode = isNpc ? getNpcMode(actor) : 'progression';
     const effectiveLevel = (isNpc && npcMode !== 'progression') ? (this.level || 1) : (this.heroicLevel || 0);
     this.halfLevel = Math.floor((Number(effectiveLevel) || 0) / 2);
 
