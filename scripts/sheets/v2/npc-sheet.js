@@ -311,6 +311,47 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       }
     }, { signal });
 
+    // Open follower advancement flow (from follower NPC sheet → owner's FollowerShell)
+    root.querySelector('[data-action="open-follower-advancement"]')?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      const ownerActorId = this.actor.system?.npcProfile?.owner?.actorId
+        || this.actor.flags?.swse?.follower?.ownerId
+        || null;
+      if (!ownerActorId) {
+        ui.notifications?.warn('No owner is linked to this follower.');
+        return;
+      }
+      const ownerActor = game.actors?.get(ownerActorId);
+      if (!ownerActor) {
+        ui.notifications?.warn('Owner actor could not be found in this world.');
+        return;
+      }
+      const { launchFollowerProgression } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js');
+      await launchFollowerProgression(ownerActor, { existingFollowerId: this.actor.id });
+    }, { signal });
+
+    // Open related actor sheet (linked relationship cards)
+    const _openRelatedActor = (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const actorId = ev.currentTarget?.dataset?.actorId;
+      if (!actorId) return;
+      const relatedActor = game.actors?.get(actorId);
+      if (!relatedActor?.sheet) {
+        ui.notifications?.warn('Related actor could not be found.');
+        return;
+      }
+      relatedActor.sheet.render(true);
+    };
+    for (const el of root.querySelectorAll('[data-action="open-related-actor"]')) {
+      el.addEventListener('click', _openRelatedActor, { signal });
+      if (el.tagName !== 'BUTTON') {
+        el.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter' || ev.key === ' ') _openRelatedActor(ev);
+        }, { signal });
+      }
+    }
+
     // Item sheet opening
     for (const el of root.querySelectorAll('.swse-v2-open-item')) {
       el.addEventListener('click', (ev) => {

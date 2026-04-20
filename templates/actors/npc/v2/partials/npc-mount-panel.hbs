@@ -63,6 +63,13 @@
       </div>
     </dl>
 
+    {{#if hasRiderLink}}
+      <div class="swse-npc-detail-block">
+        <div class="swse-npc-detail-block__label">Linked Rider Sheet</div>
+        {{> "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-related-actor-card.hbs" riderLink}}
+      </div>
+    {{/if}}
+
     {{#unless mountSummary.riderName}}
       <p class="swse-npc-empty-state">
         No rider is assigned to this mount.
