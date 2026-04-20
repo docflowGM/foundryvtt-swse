@@ -412,6 +412,23 @@ export class NpcProfileBuilder {
     // Notes field
     const notes = actor.system?.npcProfile?.notes || null;
 
+    // Advancement eligibility — synchronous inline heroic-level calculation
+    let _ownerHeroicLevelSync = null;
+    if (isOwnerResolved && ownerActorId) {
+      const _ownerForLevel = game.actors?.get(ownerActorId);
+      _ownerHeroicLevelSync = _ownerForLevel?.items
+        ?.filter(c => c.type === 'class' && !c.system?.isNonheroic)
+        ?.reduce((sum, c) => sum + (Number(c.system?.level) || 0), 0) ?? null;
+    }
+    const ownerLevelDelta = (_ownerHeroicLevelSync !== null && currentFollowerLevel !== null)
+      ? _ownerHeroicLevelSync - currentFollowerLevel
+      : null;
+    const canAdvance = ownerLevelDelta !== null && ownerLevelDelta > 0;
+    const advanceReason = canAdvance
+      ? `Owner is heroic level ${_ownerHeroicLevelSync}; follower is at level ${currentFollowerLevel}.`
+      : null;
+    const canLaunchAdvance = canAdvance && Boolean(ownerActorId);
+
     return {
       ownerName,
       ownerActorId,
@@ -423,7 +440,11 @@ export class NpcProfileBuilder {
       currentFollowerLevel,
       isOwnerResolved,
       isTemplateResolved,
-      notes
+      notes,
+      canAdvance,
+      advanceReason,
+      ownerLevelDelta,
+      canLaunchAdvance
     };
   }
 

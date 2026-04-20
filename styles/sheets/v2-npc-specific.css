@@ -809,6 +809,15 @@
 }
 
 /* =========================================
+   NPC V2 — Follower advancement eligibility
+   ========================================= */
+
+.swse-npc-callout--follower-advance {
+  background: rgba(120, 210, 160, 0.12);
+  border-color: rgba(120, 210, 160, 0.26);
+}
+
+/* =========================================
    NPC V2 — Linked relationship actor cards
    ========================================= */
 

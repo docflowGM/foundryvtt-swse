@@ -87,6 +87,28 @@
       </div>
     {{/if}}
 
+    {{#if followerSummary.canAdvance}}
+      <div class="swse-npc-callout swse-npc-callout--follower-advance">
+        <strong>Eligible to Level Up:</strong>
+        {{#if followerSummary.advanceReason}}
+          {{followerSummary.advanceReason}}
+        {{else}}
+          This follower is eligible for advancement because its owner has advanced.
+        {{/if}}
+      </div>
+
+      {{#if followerSummary.canLaunchAdvance}}
+        <div class="swse-npc-action-row">
+          <button
+            type="button"
+            class="swse-npc-action-button"
+            data-action="open-follower-advancement">
+            Open Follower Advancement
+          </button>
+        </div>
+      {{/if}}
+    {{/if}}
+
     {{#if followerSummary.notes}}
       <p class="swse-npc-card__footnote">
         {{followerSummary.notes}}
