@@ -28,6 +28,7 @@ import { swseLogger } from '../../../utils/logger.js';
 import { SWSETranslationEngine } from '../engine/swse-translation-engine.js';
 import { TemplateSelectionDialog } from '../dialogs/template-selection-dialog.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { buildActorSplashV2Context } from './actor-splash-v2-controller.js';
 
 // ========== INTRO STATE MACHINE ==========
 const INTRO_STATE = {
@@ -325,6 +326,7 @@ export class IntroStep extends ProgressionStepPlugin {
     this._bootLines = BOOT_LINES;
     this._isDroidIntro = false;
     this._isActorV2 = false;
+    this._actorV2StageIndex = 0;  // Track progression through actor-v2 stages
 
     // ====== PHASE-DRIVEN STATE MACHINE ======
     this._phases = this._bootLines.map((line) => ({
@@ -422,6 +424,7 @@ export class IntroStep extends ProgressionStepPlugin {
     // Initialize active intro variant
     this._isDroidIntro = shell?.progressionSession?.subtype === 'droid';
     this._isActorV2 = !this._isDroidIntro && shell?.actor?.type === 'character';
+    this._actorV2StageIndex = 0;  // Reset stage progression for actor-v2
     this._bootLines = this._isDroidIntro ? DROID_BOOT_LINES : BOOT_LINES;
     this._phases = this._bootLines.map((line) => ({
       label: line.label,
@@ -508,6 +511,26 @@ export class IntroStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    // Actor-v2 uses different data structure
+    if (this._isActorV2) {
+      const actorV2Data = buildActorSplashV2Context({
+        stageIndex: this._actorV2StageIndex,
+        currentTime: this._getCurrentTime(),
+        localizedMode: this._localizedMode,
+        glitchFire: false,
+        sessionId: this._shell?.actor?.id || 'NEW-00000',
+        isComplete: this._complete,
+      });
+
+      swseLogger.debug('[IntroStep.getStepData] Actor-v2 step data', {
+        stageIndex: this._actorV2StageIndex,
+        complete: this._complete,
+      });
+
+      return actorV2Data;
+    }
+
+    // Standard/Droid intro path
     const phaseData = this.getPhaseData();
 
     const stepData = {
@@ -548,10 +571,10 @@ export class IntroStep extends ProgressionStepPlugin {
 
       // Character effects for translation (flicker, glow trail)
       translationCharStates: this._translationCharStates,
-      introVariant: this._isDroidIntro ? 'droid' : (this._isActorV2 ? 'actor-v2' : 'standard'),
+      introVariant: this._isDroidIntro ? 'droid' : 'standard',
       continueLabel: this._isDroidIntro ? 'Register New Unit' : 'Proceed',
       continueTitle: this._isDroidIntro ? 'Ready to begin droid unit registration.' : 'Ready to begin character registration.',
-      showPregenerated: !this._isDroidIntro && !this._isActorV2,
+      showPregenerated: !this._isDroidIntro,
     };
 
     // DIAGNOSTIC: Show what data is being returned to template

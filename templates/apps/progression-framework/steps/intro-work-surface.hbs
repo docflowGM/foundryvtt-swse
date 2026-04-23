@@ -1,3 +1,203 @@
+{{#if (eq introVariant "actor-v2")}}
+{{!-- ========================================================================
+     ACTOR V2 SPLASH VARIANT
+     ======================================================================== --}}
+<div class="prog-intro-surface prog-intro-surface--actor-v2 swse-ui-shell {{#if localizedMode}}prog-intro-surface--localized{{else}}prog-intro-surface--foreign{{/if}} {{#if isComplete}}is-complete{{/if}} {{#if erroring}}is-erroring{{/if}} {{#if succeeding}}is-succeeding{{/if}}">
+  <div class="stage">
+    <div class="tablet">
+      <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
+      <div class="rivet mid-l"></div><div class="rivet mid-r"></div>
+      <div class="btn-phys top1"></div><div class="btn-phys top2"></div>
+      <div class="btn-phys right1"></div><div class="btn-phys right2"></div>
+      <div class="vent"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="cam"></div>
+      <div class="bezel-led a"></div><div class="bezel-led b"></div><div class="bezel-led c"></div><div class="bezel-led d"></div>
+      <div class="bezel-label">{{bezelLabel}}</div>
+      <div class="bezel-serial">{{bezelSerial}}</div>
+      <div class="bezel-fcc">{{bezelCertification}}</div>
+      <div class="bezel-manu">{{bezelManufacturer}}</div>
+
+      <div class="screen" data-role="intro-screen">
+        {{#if showManufacturerCard}}
+        <div class="manu-card" data-role="intro-manu-card">
+          <div class="tag">{{manufacturerTag}}</div>
+          <div class="logo">{{manufacturerLogo}}</div>
+          <div class="spin"></div>
+          <div class="version">{{manufacturerVersion}}</div>
+          <div class="tag intro-subtag">{{manufacturerSubtag}}</div>
+        </div>
+        {{/if}}
+
+        <div class="scan-v"></div>
+        <div class="glitch-overlay {{#if glitchFire}}fire{{/if}}" data-role="intro-glitch"></div>
+        <div class="red-wash {{#if erroring}}on{{/if}}" data-role="intro-red-wash"></div>
+        <div class="green-wash {{#if greenWashOn}}on{{/if}}" data-role="intro-green-wash"></div>
+        <div class="big-banner {{bannerClass}}" data-role="intro-big-banner">{{bannerText}}</div>
+
+        <div class="pixel-test {{#if pixelTestOn}}on{{/if}}" data-role="intro-pixel-test">
+          <div class="bar r"></div><div class="bar g"></div><div class="bar b"></div><div class="bar w"></div>
+        </div>
+
+        <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+
+        <div class="hud">
+          <div class="hud-left">
+            <span class="tag"><span class="dot"></span>LINK</span>
+            <span class="tag" data-role="boot-stage-tag"><span class="dot {{bootStageDotClass}}"></span>{{bootStageTag}}</span>
+            <span class="tag">ENC · AES-2048</span>
+            <span class="tag intro-diag-tag"><span class="dot intro-purple-dot"></span>DIAG</span>
+          </div>
+          <div class="hud-title">{{hudTitle}}</div>
+          <div class="hud-right">
+            <span class="tag"><span class="signal">{{#each signalBars}}<span></span>{{/each}}</span></span>
+            <span class="tag battery">{{#each batteryCells}}<span class="cell {{#if this.empty}}empty{{/if}}"></span>{{/each}}</span>
+            <span class="tag" data-role="clock">{{currentTime}}</span>
+          </div>
+        </div>
+
+        <div class="boot">
+          <div class="pane diag">
+            <div class="pane-head">Channel Diagnostics <span class="mini-led"></span></div>
+            <div class="channels">
+              {{#each channels}}
+              <div class="channel {{stateClass}}" data-ch="{{id}}">
+                <div class="lbl">{{label}}</div>
+                <div class="gauge"><div class="fill" style="width:{{pct}}%"></div></div>
+                <div class="val">{{displayValue}}</div>
+              </div>
+              {{/each}}
+            </div>
+
+            <div class="pane-head">Capacitor <span class="mini-led"></span></div>
+            <div class="cap">
+              <div class="cap-label">CHG</div>
+              <div class="cap-body"><div class="cap-fill" style="width:{{capacitorPct}}%" data-role="cap-fill"></div></div>
+              <div class="cap-val" data-role="cap-val">{{capacitorLabel}}</div>
+            </div>
+
+            <div class="pane-head">Chip Map · A7 <span class="mini-led"></span></div>
+            <div class="die" data-role="die-map">
+              {{#each chipBanks}}
+              <div class="bank {{#if hot}}hot{{/if}} {{#if err}}err{{/if}}" style="{{style}}">{{label}}</div>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="pane hero">
+            <div class="stage-marquee">
+              <div class="stg-idx" data-role="stage-index">{{stageIndex}}</div>
+              <div class="stg-name" data-role="stage-name">{{stageName}}</div>
+              <div class="stg-glyph" data-role="stage-glyph">{{stageGlyph}}</div>
+            </div>
+
+            <div class="hero-progress">
+              <div class="hp-row">
+                <div class="hp-counter">
+                  <span class="lbl">Loaded</span>
+                  <span class="pct-big" data-role="intro-progress-percent">{{progressPercent}}%</span>
+                </div>
+                <div>
+                  <div class="seg-bar" data-role="seg-bar">
+                    {{#each progressSegments}}<div class="seg {{#if active}}on{{/if}} {{#if leading}}leading{{/if}}"></div>{{/each}}
+                  </div>
+                  <div class="hp-ticks">
+                    {{#each progressTicks}}<span class="{{#if major}}major{{/if}}">{{label}}</span>{{/each}}
+                  </div>
+                </div>
+                <div class="hp-counter right">
+                  <span class="lbl">ETA</span>
+                  <span class="pct-big" data-role="eta-big">{{etaLabel}}</span>
+                </div>
+              </div>
+
+              <div class="sub-track">
+                <span class="task" data-role="current-task">{{currentTask}}</span>
+                <div class="sub-bar"><div class="sub-fill" style="width:{{taskProgress}}%" data-role="sub-fill"></div></div>
+                <span class="eta" data-role="task-count">{{taskCount}}</span>
+              </div>
+            </div>
+
+            <div class="intro-ring-row">
+              <div class="ring">
+                <div class="halo"></div>
+                <svg class="r-outer" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><circle cx="100" cy="100" r="94" opacity="0.25"></circle><circle cx="100" cy="100" r="94" stroke-dasharray="2 6" opacity="0.7"></circle><circle cx="100" cy="100" r="94" stroke-dasharray="30 550" stroke-width="2" opacity="0.9"></circle></svg>
+                <svg class="r-mid" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><circle cx="100" cy="100" r="74" opacity="0.3"></circle><path d="M100 26 L100 34 M174 100 L166 100 M100 174 L100 166 M26 100 L34 100" stroke-width="2"></path><circle cx="100" cy="26" r="3" fill="currentColor"></circle><circle cx="174" cy="100" r="2" fill="currentColor"></circle></svg>
+                <svg class="r-inner" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><circle cx="100" cy="100" r="54" opacity="0.5"></circle><path d="M100 46 L110 54 L100 62 L90 54 Z" fill="currentColor" opacity="0.6"></path><circle cx="100" cy="100" r="54" stroke-dasharray="1 4" opacity="0.5"></circle></svg>
+                <div class="core" data-role="core-glyph">{{coreGlyph}}</div>
+                <div class="scan"></div>
+              </div>
+
+              <div class="status intro-status-block">
+                <span class="label" data-role="status-label">{{statusLabel}}</span>
+                <span class="msg {{statusClass}}" data-role="status-msg">{{statusMessage}}</span>
+                <span class="glyph-src" data-role="status-src">{{statusSource}}</span>
+              </div>
+            </div>
+
+            <div class="translate {{#if isTranslating}}on{{/if}}" data-role="translate-zone">
+              <span class="lbl">Aurebesh translation</span>
+              <span class="src" data-role="trans-src">{{translationSource}}</span>
+              <span class="arrow">▸</span>
+              <span class="dst" data-role="trans-dst">{{translationTarget}}</span>
+            </div>
+          </div>
+
+          <div class="pane stream">
+            <div class="pane-head">Boot Log · Stream <span class="mini-led"></span></div>
+            <div class="log" data-role="boot-log">
+              {{#each logLines}}
+              <div class="log-line"><span class="t">[{{time}}]</span><span class="{{tagClass}}">[{{tag}}]</span> <span class="txt">{{text}}</span></div>
+              {{/each}}
+            </div>
+
+            <div class="prompt"><span class="intro-prompt-prefix">versa:~$ </span><span data-role="prompt-text">{{promptText}}</span><span class="blink"></span></div>
+
+            <div class="pane-head">Uplink · RTT (ms)<span data-role="rtt-val" class="intro-rtt-val">{{rttLabel}}</span></div>
+            <div class="spark"><canvas class="spark-canvas" data-role="spark-canvas" width="300" height="52"></canvas></div>
+
+            <div class="pane-head">Active Thread <span class="mini-led"></span></div>
+            <div class="thread">
+              <div><span class="k">tid:</span> <span class="intro-thread-value">{{thread.tid}}</span></div>
+              <div><span class="k">cpu:</span> <span class="intro-thread-pos">{{thread.cpu}}</span></div>
+              <div><span class="k">mem:</span> <span class="intro-thread-value">{{thread.mem}}</span></div>
+              <div><span class="k">pkts:</span> <span class="intro-thread-value">{{thread.pkts}}</span></div>
+              <div><span class="k">warn:</span> <span class="intro-thread-warn">{{thread.warn}}</span></div>
+              <div><span class="k">err: </span> <span class="intro-thread-neg">{{thread.err}}</span></div>
+            </div>
+
+            <div class="identity {{#if showIdentity}}on{{/if}}" data-role="identity-card">
+              <div class="bust"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="50" cy="36" r="16"></circle><path d="M22 88 Q22 58 50 58 Q78 58 78 88"></path><path d="M14 50 L86 50" stroke-dasharray="2 4" opacity="0.4"></path><path d="M50 8 L50 96" stroke-dasharray="2 4" opacity="0.4"></path></svg></div>
+              <div class="info">
+                <span class="badge">{{identity.badge}}</span>
+                <div class="name">{{identity.name}}</div>
+                <div class="sub">{{identity.sub}}</div>
+                <div class="meta-grid">{{#each identity.meta}}<div class="m"><div class="k">{{key}}</div><div class="v">{{value}}</div></div>{{/each}}</div>
+              </div>
+            </div>
+
+            <div class="register {{#if showRegister}}on{{/if}}" data-role="register-banner">
+              <div class="msg">{{registerMessage}}</div>
+              <div class="cta"><span>{{registerCta}}</span><span class="finger">☟</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <div class="hint"><kbd>SPACE</kbd> skip · <kbd>ENTER</kbd> continue · <kbd>R</kbd> replay</div>
+          <div class="intro-action-row">
+            <button class="btn ghost" type="button" data-action="skip-intro">Skip Boot</button>
+            <button class="btn primary" type="button" data-action="next-step" {{#unless isComplete}}disabled{{/unless}}>{{continueLabel}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{else}}
+{{!-- ========================================================================
+     STANDARD/DROID SPLASH VARIANT (original intro framework)
+     ======================================================================== --}}
 <div class="prog-intro-surface swse-ui-shell swse-splash-screen prog-intro-surface--{{introVariant}} {{#if localizedMode}}prog-intro-surface--localized{{else}}prog-intro-surface--foreign{{/if}}">
   {{!-- OS Header Bar --}}
   <div class="prog-intro-header">
@@ -134,3 +334,4 @@
     </div>
   {{/if}}
 </div>
+{{/if}}
