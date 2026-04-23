@@ -581,7 +581,8 @@
   gap: 12px;
 }
 
-.swse-sheet-v2-shell .bio-field {
+.swse-sheet-v2-shell .bio-field,
+.swse-sheet-v2-shell .notes-content.v2-bio-card {
   background: oklch(0 0 0 / 0.3);
   border: 1px solid oklch(var(--vapor-cyan) / 0.2);
   padding: 10px;
