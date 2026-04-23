@@ -32,6 +32,7 @@
     "styles/core/variables.css",
     "styles/core/svg-geometry.css",
     "styles/sheets/v2-sheet.css",
+    "styles/sheets/v2-shell-tokens.css",
     "styles/actors/v2/combat-stats-panel.css",
     "styles/sheets/v2-npc-specific.css",
     "styles/sheets/v2-droid-specific.css",

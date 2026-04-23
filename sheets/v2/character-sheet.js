@@ -83,6 +83,14 @@ function debounce(fn, ms = 500) {
 }
 
 /**
+ * Get the configured theme for the character sheet (Phase 1 shell skin)
+ * Supports: 'vapor', 'cryo', 'droid'
+ */
+function getSheetTheme(actor) {
+  return actor?.getFlag?.('foundryvtt-swse', 'sheetTheme') || 'cryo';
+}
+
+/**
  * Field type schema for form coercion
  * Maps field names or patterns to their expected types: 'number', 'boolean', 'string'
  * Used instead of string pattern matching for reliable type coercion
@@ -1297,6 +1305,10 @@ const forcePoints = [];
         feat: true,
         maneuver: true
       },
+      // ═════════════════════════════════════════════════════════════════
+      // PHASE 1: V2 Shell Theme Tokens
+      // ═════════════════════════════════════════════════════════════════
+      sheetTheme: getSheetTheme(actor),  // Theme for v2 shell styling ('vapor', 'cryo', 'droid')
       // ═════════════════════════════════════════════════════════════════
       // PHASE 5: Removed legacy flat context
       // All data is now provided through panelized contexts above.

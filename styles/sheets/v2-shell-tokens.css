@@ -1,0 +1,292 @@
+/* ============================================================================
+   ACTOR SHEET V2 SHELL TOKENS
+   Phase 1: shell, chrome, header, resource strip, tabs, layout
+   ============================================================================ */
+
+.swse-sheet-v2-shell {
+  --vapor-pink: oklch(0.72 0.26 350);
+  --vapor-purple: oklch(0.55 0.26 300);
+  --vapor-cyan: oklch(0.85 0.18 200);
+  --screen-h: 278;
+  --screen-c-base: 0.055;
+  --screen-c-alt: 0.070;
+  --ink-h: 190;
+  --scan-strength: 0.03;
+  --anim-speed: 1;
+  --glow-mult: 1;
+
+  --accent-h: var(--ink-h);
+  --accent-c: 0.17;
+  --accent-l: 0.82;
+  --accent: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
+  --holo-blue: oklch(0.82 0.15 220);
+  --screen: oklch(0.13 var(--screen-c-base) var(--screen-h));
+  --screen-2: oklch(0.18 var(--screen-c-alt) var(--screen-h));
+  --ink: oklch(0.94 0.04 var(--accent-h));
+  --ink-dim: oklch(0.72 0.06 var(--accent-h));
+  --ink-faint: oklch(0.50 0.05 var(--accent-h));
+  --pos: oklch(0.82 0.19 145);
+  --neg: oklch(0.70 0.22 25);
+  --zero: oklch(0.88 0.17 95);
+
+  --font-body: var(--swse-font-body, system-ui, sans-serif);
+  --font-mono: var(--swse-font-mono, ui-monospace, monospace);
+  --font-display: var(--swse-font-display, monospace);
+  --font-orbit: var(--swse-font-orbit, system-ui, sans-serif);
+
+  color: var(--ink);
+  font-family: var(--font-body);
+  background:
+    radial-gradient(ellipse at 28% 18%, oklch(0.18 0.10 320 / 0.55), transparent 55%),
+    radial-gradient(ellipse at 82% 88%, oklch(0.18 0.10 200 / 0.5), transparent 55%),
+    linear-gradient(180deg, #060612 0%, #020205 100%);
+}
+
+/* Tablet/Datapad shell */
+.swse-sheet-v2-shell .swse-v2-tablet {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  padding: 36px 32px 44px;
+  border-radius: 22px;
+  background: linear-gradient(140deg, #1a1a26 0%, #0b0b14 55%, #12121c 100%);
+  box-shadow:
+    inset 0 0 0 1px oklch(0.35 0.04 270 / 0.5),
+    inset 0 2px 0 0 oklch(0.55 0.03 270 / 0.4),
+    inset 0 -2px 0 0 oklch(0.05 0.02 270 / 0.9),
+    0 40px 80px oklch(0 0 0 / 0.7),
+    0 0 140px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.12);
+}
+
+/* Screen/content area */
+.swse-sheet-v2-shell .swse-v2-screen {
+  position: relative;
+  background: radial-gradient(ellipse at 30% 10%, var(--screen-2) 0%, var(--screen) 50%, oklch(0.08 0.04 278) 100%);
+  border: 1px solid oklch(0.3 0.04 260 / 0.6);
+  border-radius: 10px;
+  padding: 18px;
+  min-height: 100%;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px oklch(0 0 0 / 0.6),
+    inset 0 2px 14px oklch(0 0 0 / 0.5),
+    inset 0 0 80px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.08);
+}
+
+/* Scanline effect overlay */
+.swse-sheet-v2-shell .swse-v2-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 3px,
+    oklch(1 0 0 / var(--scan-strength)) 3px 4px
+  );
+  border-radius: 10px;
+}
+
+/* HUD status bar */
+.swse-sheet-v2-shell .swse-v2-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid oklch(var(--vapor-cyan) / 0.25);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell .swse-v2-hud-left,
+.swse-sheet-v2-shell .swse-v2-hud-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.swse-sheet-v2-shell .swse-v2-hud-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.3em;
+  color: var(--vapor-cyan);
+  text-shadow: 0 0 10px oklch(var(--vapor-cyan) / 0.5);
+}
+
+.swse-sheet-v2-shell .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid oklch(var(--ink-faint) / 0.5);
+  border-radius: 3px;
+  font-size: 9px;
+}
+
+.swse-sheet-v2-shell .tag .dot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--pos);
+}
+
+.swse-sheet-v2-shell .tag .dot.warn {
+  background: var(--neg);
+}
+
+/* Title strip */
+.swse-sheet-v2-shell .swse-v2-title-strip {
+  font-family: var(--font-display);
+  text-align: center;
+  font-size: 16px;
+  letter-spacing: 0.5em;
+  color: var(--vapor-pink);
+  padding: 6px 0 8px;
+  border-bottom: 1px solid oklch(var(--vapor-cyan) / 0.2);
+  margin-bottom: 14px;
+  text-shadow:
+    0 0 10px oklch(var(--vapor-pink) / 0.5),
+    2px 0 0 oklch(var(--vapor-cyan) / 0.4),
+    -2px 0 0 oklch(var(--vapor-pink) / 0.4);
+}
+
+/* Header grid: portrait, identity, defenses */
+.swse-sheet-v2-shell .swse-v2-header {
+  display: grid;
+  grid-template-columns: 128px 1fr 300px;
+  gap: 18px;
+  align-items: stretch;
+  margin-bottom: 16px;
+}
+
+/* Resource strip: HP, DP, FP, CT */
+.swse-sheet-v2-shell .swse-v2-resource-strip {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+/* Tab navigation */
+.swse-sheet-v2-shell .swse-v2-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid oklch(var(--vapor-cyan) / 0.3);
+  margin-bottom: 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell .swse-v2-tab {
+  padding: 10px 22px;
+  color: var(--ink-faint);
+  border: 1px solid transparent;
+  border-bottom: none;
+  background: transparent;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swse-sheet-v2-shell .swse-v2-tab:hover {
+  color: var(--ink-dim);
+}
+
+.swse-sheet-v2-shell .swse-v2-tab.is-active {
+  color: var(--vapor-cyan);
+  background: linear-gradient(
+    180deg,
+    oklch(var(--vapor-cyan) / 0.18) 0%,
+    oklch(var(--vapor-cyan) / 0.05) 100%
+  );
+  border-color: oklch(var(--vapor-cyan) / 0.4);
+  text-shadow: 0 0 8px oklch(var(--vapor-cyan) / 0.6);
+}
+
+/* Body layout: sidebar + main */
+.swse-sheet-v2-shell .swse-v2-body {
+  display: grid;
+  grid-template-columns: 330px 1fr;
+  gap: 16px;
+  min-height: 100%;
+}
+
+.swse-sheet-v2-shell .swse-v2-sidebar,
+.swse-sheet-v2-shell .swse-v2-main {
+  min-width: 0;
+}
+
+/* Sidebar styling */
+.swse-sheet-v2-shell .swse-v2-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Main content area */
+.swse-sheet-v2-shell .swse-v2-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Theme variants */
+.swse-sheet-v2-shell[data-theme="vapor"] {
+  /* Default: vapor theme already set */
+}
+
+.swse-sheet-v2-shell[data-theme="cryo"] {
+  --vapor-cyan: oklch(0.92 0.08 200);
+  --vapor-pink: oklch(0.85 0.10 210);
+  --vapor-purple: oklch(0.60 0.10 220);
+  --screen-h: 215;
+  --ink-h: 205;
+}
+
+.swse-sheet-v2-shell[data-theme="droid"] {
+  --vapor-cyan: oklch(0.82 0.17 75);
+  --vapor-pink: oklch(0.78 0.20 55);
+  --vapor-purple: oklch(0.50 0.18 60);
+  --screen-h: 60;
+  --ink-h: 80;
+}
+
+/* Responsive: collapse to single column on smaller screens */
+@media (max-width: 1200px) {
+  .swse-sheet-v2-shell .swse-v2-header,
+  .swse-sheet-v2-shell .swse-v2-resource-strip,
+  .swse-sheet-v2-shell .swse-v2-body {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-sheet-v2-shell .swse-v2-tabs {
+    flex-wrap: wrap;
+  }
+}
+
+/* Responsive: tablet/phone view */
+@media (max-width: 768px) {
+  .swse-sheet-v2-shell .swse-v2-tablet {
+    padding: 20px 16px 28px;
+  }
+
+  .swse-sheet-v2-shell .swse-v2-screen {
+    padding: 12px;
+  }
+
+  .swse-sheet-v2-shell .swse-v2-header {
+    grid-template-columns: 1fr;
+  }
+}
