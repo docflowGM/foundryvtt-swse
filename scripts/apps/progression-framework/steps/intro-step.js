@@ -28,6 +28,8 @@ import { swseLogger } from '../../../utils/logger.js';
 import { SWSETranslationEngine } from '../engine/swse-translation-engine.js';
 import { TemplateSelectionDialog } from '../dialogs/template-selection-dialog.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { buildActorSplashV2Context } from './actor-splash-v2-controller.js';
+import { buildDroidSplashV2Context } from './droid-splash-v2-controller.js';
 
 // ========== INTRO STATE MACHINE ==========
 const INTRO_STATE = {
@@ -324,6 +326,9 @@ export class IntroStep extends ProgressionStepPlugin {
     // Active intro variant
     this._bootLines = BOOT_LINES;
     this._isDroidIntro = false;
+    this._isActorV2 = false;
+    this._actorV2StageIndex = 0;  // Track progression through actor-v2 stages
+    this._droidV2StageIndex = 0;  // Track progression through droid-v2 stages
 
     // ====== PHASE-DRIVEN STATE MACHINE ======
     this._phases = this._bootLines.map((line) => ({
@@ -420,6 +425,9 @@ export class IntroStep extends ProgressionStepPlugin {
 
     // Initialize active intro variant
     this._isDroidIntro = shell?.progressionSession?.subtype === 'droid';
+    this._isActorV2 = !this._isDroidIntro && shell?.actor?.type === 'character';
+    this._actorV2StageIndex = 0;  // Reset stage progression for actor-v2
+    this._droidV2StageIndex = 0;  // Reset stage progression for droid-v2
     this._bootLines = this._isDroidIntro ? DROID_BOOT_LINES : BOOT_LINES;
     this._phases = this._bootLines.map((line) => ({
       label: line.label,
@@ -506,12 +514,49 @@ export class IntroStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    // Actor-v2 uses different data structure
+    if (this._isActorV2) {
+      const actorV2Data = buildActorSplashV2Context({
+        stageIndex: this._actorV2StageIndex,
+        currentTime: this._getCurrentTime(),
+        localizedMode: this._localizedMode,
+        glitchFire: false,
+        sessionId: this._shell?.actor?.id || 'NEW-00000',
+        isComplete: this._complete,
+      });
+
+      swseLogger.debug('[IntroStep.getStepData] Actor-v2 step data', {
+        stageIndex: this._actorV2StageIndex,
+        complete: this._complete,
+      });
+
+      return actorV2Data;
+    }
+
+    // Droid-v2 uses new controller data structure (Phase 2: now routed)
+    if (this._isDroidIntro) {
+      const droidV2Data = buildDroidSplashV2Context({
+        stageIndex: this._droidV2StageIndex,
+        sessionId: this._shell?.actor?.id || 'DR-00000',
+        isComplete: this._complete,
+        currentTime: this._getCurrentTime(),
+      });
+
+      swseLogger.debug('[IntroStep.getStepData] Droid-v2 step data', {
+        stageIndex: this._droidV2StageIndex,
+        complete: this._complete,
+      });
+
+      return droidV2Data;
+    }
+
+    // Standard intro path
     const phaseData = this.getPhaseData();
 
     const stepData = {
       currentTime: this._getCurrentTime(),
-      systemName: this._isDroidIntro ? 'DROID ASSEMBLY DATAPAD' : 'VERSAFUNCTION DATAPAD',
-      battery: this._isDroidIntro ? 92 : 85,
+      systemName: 'VERSAFUNCTION DATAPAD',
+      battery: 85,
 
       // Phase data
       phase: this._phase,
@@ -546,10 +591,10 @@ export class IntroStep extends ProgressionStepPlugin {
 
       // Character effects for translation (flicker, glow trail)
       translationCharStates: this._translationCharStates,
-      introVariant: this._isDroidIntro ? 'droid' : 'standard',
-      continueLabel: this._isDroidIntro ? 'Register New Unit' : 'Proceed',
-      continueTitle: this._isDroidIntro ? 'Ready to begin droid unit registration.' : 'Ready to begin character registration.',
-      showPregenerated: !this._isDroidIntro,
+      introVariant: 'standard',
+      continueLabel: 'Proceed',
+      continueTitle: 'Ready to begin character registration.',
+      showPregenerated: true,
     };
 
     // DIAGNOSTIC: Show what data is being returned to template
@@ -885,8 +930,12 @@ export class IntroStep extends ProgressionStepPlugin {
     // Phase 2: Use declarative boot sequence with segmented progress bar
     swseLogger.debug('[IntroStep.startIntroSequence] Starting Phase 2 boot sequence with bootLines');
 
-    // Run the boot sequence animation
-    await this.runBootSequence(shell, this._sessionToken);
+    // Route to droid-v2 or standard animation
+    if (this._isDroidIntro) {
+      await this.runDroidV2BootSequence(shell, this._sessionToken);
+    } else {
+      await this.runBootSequence(shell, this._sessionToken);
+    }
 
     // Guard: check if still running
     if (!this._introRunning) return;
@@ -1119,9 +1168,106 @@ export class IntroStep extends ProgressionStepPlugin {
         await delay(line.duration || 240);
       }
 
+      // Run translation for actor-v2 after boot sequence completes
+      if (this._isActorV2) {
+        swseLogger.debug('[IntroStep.runBootSequence] Running actor-v2 translation');
+        await this.runSplashTranslation(shell, 'aurebesh');
+      }
+
       swseLogger.debug('[IntroStep.runBootSequence] Boot sequence complete');
     } catch (err) {
       swseLogger.error('[IntroStep.runBootSequence] Error:', err);
+    }
+  }
+
+  /**
+   * Droid-v2 boot sequence animation.
+   * Progresses through 7 stages, updating context via buildDroidSplashV2Context.
+   * Calls shell.render() for each stage to update the UI.
+   * Respects cancellation and session invalidation.
+   */
+  async runDroidV2BootSequence(shell, sessionToken) {
+    try {
+      swseLogger.debug('[IntroStep.runDroidV2BootSequence] Starting droid-v2 boot sequence');
+
+      // Stage durations (in ms)
+      const stageDurations = [280, 260, 260, 320, 280, 260, 260];  // 7 stages
+
+      for (let stageIndex = 0; stageIndex < 7; stageIndex++) {
+        // Exit early if intro was cancelled
+        if (!this._introRunning || this._sessionToken !== sessionToken) {
+          swseLogger.debug('[IntroStep.runDroidV2BootSequence] Sequence cancelled');
+          return;
+        }
+
+        // Update stage index and render
+        this._droidV2StageIndex = stageIndex;
+        shell.render();
+
+        // Run translation animation at stage 4 (binary-chatter)
+        if (stageIndex === 4) {
+          await this.runSplashTranslation(shell, 'binary');
+        }
+
+        // Wait for stage duration
+        const duration = stageDurations[stageIndex] || 260;
+        await delay(duration);
+      }
+
+      swseLogger.debug('[IntroStep.runDroidV2BootSequence] Boot sequence complete');
+    } catch (err) {
+      swseLogger.error('[IntroStep.runDroidV2BootSequence] Error:', err);
+    }
+  }
+
+  /**
+   * Run translation animation for actor-v2 or droid-v2 via shared translation engine.
+   * Reveals target text (English) from source (Aurebesh or Binary) using engine.
+   * Reuses existing translation engine with sourceMode awareness.
+   */
+  async runSplashTranslation(shell, sourceMode) {
+    try {
+      const isActorV2 = sourceMode === 'aurebesh';
+      const isDroidV2 = sourceMode === 'binary';
+
+      if (!isActorV2 && !isDroidV2) {
+        swseLogger.warn('[IntroStep.runSplashTranslation] Unknown sourceMode:', sourceMode);
+        return;
+      }
+
+      swseLogger.debug('[IntroStep.runSplashTranslation] Starting translation', { sourceMode });
+
+      // Get current context data
+      const stepData = await this.getStepData();
+      if (!stepData.isTranslating) {
+        swseLogger.debug('[IntroStep.runSplashTranslation] No translation in current stage');
+        return;
+      }
+
+      // Create translation session with source-mode-aware selectors
+      const session = this._translationEngine.createSession({
+        profile: 'chargenBootLine',
+        target: this._workSurfaceEl,
+        sourceText: stepData.translationSource,
+        translatedText: stepData.translationTarget,
+        displayMode: 'reveal',
+        sourceMode: sourceMode,
+        selectors: {
+          'translationText': '[data-role="trans-dst"]',  // Destination slot for target text
+          'sourceText': '[data-role="trans-src"]'        // Source slot for source text
+        },
+        onComplete: () => {
+          swseLogger.debug('[IntroStep.runSplashTranslation] Translation complete');
+        }
+      });
+
+      if (session) {
+        await this._translationEngine.runSession(session);
+      }
+
+      swseLogger.debug('[IntroStep.runSplashTranslation] Translation animation complete');
+    } catch (err) {
+      swseLogger.error('[IntroStep.runSplashTranslation] Error:', err);
     }
   }
 
