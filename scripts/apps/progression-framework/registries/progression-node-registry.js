@@ -200,11 +200,11 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-shield-alt',
     category: 'canonical',
     modes: ['chargen', 'levelup'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic', 'beast'],
+    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic', 'beast'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
 
-    /** Class depends on: species (may be species-gated) */
+    /** Class depends on: species (may be species-gated), but droid types skip this dependency */
     dependsOn: ['species'],
 
     /** Class changes invalidate:
@@ -394,7 +394,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-star-half-alt',
     category: 'canonical',
     modes: ['chargen', 'levelup'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic', 'beast'],
+    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic', 'beast'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
     dependsOn: ['class', 'attribute', 'skills', 'general-feat'],
@@ -431,7 +431,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-gem',
     category: 'canonical',
     modes: ['chargen', 'levelup'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic'],
+    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
     dependsOn: ['class', 'general-feat', 'class-feat'],
@@ -464,7 +464,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-gem',
     category: 'canonical',
     modes: ['chargen', 'levelup'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic'],
+    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
     dependsOn: ['class', 'general-feat', 'class-feat', 'general-talent'],

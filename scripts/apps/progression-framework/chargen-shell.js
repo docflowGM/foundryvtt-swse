@@ -203,17 +203,66 @@ export class ChargenShell extends ProgressionShell {
   _getLegacyCanonicalDescriptors(subtype) {
     const isDroid = subtype === 'droid';
 
-    const stepConfigs = CHARGEN_CANONICAL_STEPS.map(config => {
-      if (config.stepId === 'species' && isDroid) {
-        return {
-          ...config,
-          stepId: 'droid-builder',
-          label: 'Droid Builder',
-          icon: 'fa-robot',
-          pluginClass: DroidBuilderStep,
-        };
+    // For droid, reorder to: intro → class → droid-builder → attribute → ...
+    // For biological, keep original: intro → species → attribute → class → ...
+    if (isDroid) {
+      // Build droid-specific sequence: remove species, reorder class before attribute, insert droid-builder
+      const droidSteps = [];
+      let classStep = null;
+
+      for (const config of CHARGEN_CANONICAL_STEPS) {
+        if (config.stepId === 'species') {
+          // Skip species for droid
+          continue;
+        }
+        if (config.stepId === 'class') {
+          // Save class; will insert it before attribute
+          classStep = config;
+          continue;
+        }
+        if (config.stepId === 'attribute' && classStep) {
+          // Insert class before attribute, then droid-builder after class
+          droidSteps.push(classStep);
+          droidSteps.push({
+            stepId: 'droid-builder',
+            label: 'Droid Systems',
+            icon: 'fa-robot',
+            type: StepType.BUILD,
+            pluginClass: DroidBuilderStep,
+          });
+          droidSteps.push(config);
+        } else {
+          droidSteps.push(config);
+        }
       }
-      if (config.stepId === 'species' && !isDroid) {
+
+      // Handle case where class was never inserted (shouldn't happen, but safe)
+      if (classStep && !droidSteps.some(s => s.stepId === 'class')) {
+        const idx = droidSteps.findIndex(s => s.stepId === 'attribute');
+        if (idx >= 0) {
+          droidSteps.splice(idx, 0, classStep);
+          droidSteps.splice(idx + 1, 0, {
+            stepId: 'droid-builder',
+            label: 'Droid Systems',
+            icon: 'fa-robot',
+            type: StepType.BUILD,
+            pluginClass: DroidBuilderStep,
+          });
+        }
+      }
+
+      return droidSteps.map(config =>
+        createStepDescriptor({
+          ...config,
+          category: config.category ?? StepCategory.CANONICAL,
+          pluginClass: config.pluginClass ?? NullStepPlugin,
+        })
+      );
+    }
+
+    // Biological chargen: species → attribute → class
+    const stepConfigs = CHARGEN_CANONICAL_STEPS.map(config => {
+      if (config.stepId === 'species') {
         return {
           ...config,
           pluginClass: SpeciesStep,
