@@ -202,6 +202,8 @@
   color: var(--ink-dim);
 }
 
+/* Support both .active (live system) and .is-active (future variants) */
+.swse-sheet-v2-shell .swse-v2-tab.active,
 .swse-sheet-v2-shell .swse-v2-tab.is-active {
   color: var(--vapor-cyan);
   background: linear-gradient(
