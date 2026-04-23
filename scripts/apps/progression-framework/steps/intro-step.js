@@ -1198,6 +1198,11 @@ export class IntroStep extends ProgressionStepPlugin {
         this._droidV2StageIndex = stageIndex;
         shell.render();
 
+        // Run translation animation at stage 4 (binary-chatter)
+        if (stageIndex === 4) {
+          await this.runSplashTranslation(shell, 'binary');
+        }
+
         // Wait for stage duration
         const duration = stageDurations[stageIndex] || 260;
         await delay(duration);
