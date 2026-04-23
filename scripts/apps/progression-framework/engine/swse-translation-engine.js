@@ -214,6 +214,7 @@ export class TranslationSession {
     this._options = options;
     this._profile = TRANSLATION_PROFILES[options.profile] || TRANSLATION_PROFILES.chargenIntro;
     this._binding = options.binding;
+    this._sourceMode = options.sourceMode || 'aurebesh';  // Source mode: aurebesh or binary
     this._state = 'idle';  // idle, running, complete, cancelled
     this._timer = null;
     this._charIndex = 0;
@@ -229,7 +230,7 @@ export class TranslationSession {
     const myToken = this._sessionToken;
 
     try {
-      swseLogger.debug(`[TranslationSession] Starting with profile: ${this._options.profile}`);
+      swseLogger.debug(`[TranslationSession] Starting with profile: ${this._options.profile}, sourceMode: ${this._sourceMode}`);
 
       // Run animation based on mode
       switch (this._profile.mode) {

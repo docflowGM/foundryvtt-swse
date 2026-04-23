@@ -1168,6 +1168,12 @@ export class IntroStep extends ProgressionStepPlugin {
         await delay(line.duration || 240);
       }
 
+      // Run translation for actor-v2 after boot sequence completes
+      if (this._isActorV2) {
+        swseLogger.debug('[IntroStep.runBootSequence] Running actor-v2 translation');
+        await this.runSplashTranslation(shell, 'aurebesh');
+      }
+
       swseLogger.debug('[IntroStep.runBootSequence] Boot sequence complete');
     } catch (err) {
       swseLogger.error('[IntroStep.runBootSequence] Error:', err);
