@@ -255,6 +255,7 @@ export function buildDroidSplashV2Context(options = {}) {
     translationLabel: translation?.label || 'Binary translation',
     translationSource: translation?.sourceText || '01010101 01001110 01001001 01010100',
     translationTarget: translation?.targetText || 'Unit online. Droid assembly complete.',
+    sourceMode: 'binary',
 
     continueLabel: 'Register New Unit',
     continueDisabled: !complete,

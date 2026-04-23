@@ -441,8 +441,10 @@ export function buildActorSplashV2Context(options = {}) {
     statusSource: stage?.statusSource || '&lt;ign_0x3F · factory-default&gt;',
 
     isTranslating: Boolean(translation),
+    translationLabel: 'Aurebesh translation',
     translationSource: translation?.aurebeshSourceText || 'WELCOME NEW USER. REGISTRATION PROTOCOLS READY.',
     translationTarget: translation?.englishTargetText || 'Welcome, new user. Registration protocols ready.',
+    sourceMode: 'aurebesh',
 
     logLines: buildLogLines(safeStageIndex),
     promptText: progressPercent >= 100 ? 'register --new-user' : 'tail -f /var/log/boot',

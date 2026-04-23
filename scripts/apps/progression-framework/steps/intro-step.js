@@ -1210,6 +1210,57 @@ export class IntroStep extends ProgressionStepPlugin {
   }
 
   /**
+   * Run translation animation for actor-v2 or droid-v2 via shared translation engine.
+   * Reveals target text (English) from source (Aurebesh or Binary) using engine.
+   * Reuses existing translation engine with sourceMode awareness.
+   */
+  async runSplashTranslation(shell, sourceMode) {
+    try {
+      const isActorV2 = sourceMode === 'aurebesh';
+      const isDroidV2 = sourceMode === 'binary';
+
+      if (!isActorV2 && !isDroidV2) {
+        swseLogger.warn('[IntroStep.runSplashTranslation] Unknown sourceMode:', sourceMode);
+        return;
+      }
+
+      swseLogger.debug('[IntroStep.runSplashTranslation] Starting translation', { sourceMode });
+
+      // Get current context data
+      const stepData = await this.getStepData();
+      if (!stepData.isTranslating) {
+        swseLogger.debug('[IntroStep.runSplashTranslation] No translation in current stage');
+        return;
+      }
+
+      // Create translation session with source-mode-aware selectors
+      const session = this._translationEngine.createSession({
+        profile: 'chargenBootLine',
+        target: this._workSurfaceEl,
+        sourceText: stepData.translationSource,
+        translatedText: stepData.translationTarget,
+        displayMode: 'reveal',
+        sourceMode: sourceMode,
+        selectors: {
+          'translationText': '[data-role="trans-dst"]',  // Destination slot for target text
+          'sourceText': '[data-role="trans-src"]'        // Source slot for source text
+        },
+        onComplete: () => {
+          swseLogger.debug('[IntroStep.runSplashTranslation] Translation complete');
+        }
+      });
+
+      if (session) {
+        await this._translationEngine.runSession(session);
+      }
+
+      swseLogger.debug('[IntroStep.runSplashTranslation] Translation animation complete');
+    } catch (err) {
+      swseLogger.error('[IntroStep.runSplashTranslation] Error:', err);
+    }
+  }
+
+  /**
    * DEPRECATED: Old translation method. Kept for reference.
    * Use _runTranslationViaEngine() instead.
    *
