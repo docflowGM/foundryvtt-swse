@@ -324,6 +324,7 @@ export class IntroStep extends ProgressionStepPlugin {
     // Active intro variant
     this._bootLines = BOOT_LINES;
     this._isDroidIntro = false;
+    this._isActorV2 = false;
 
     // ====== PHASE-DRIVEN STATE MACHINE ======
     this._phases = this._bootLines.map((line) => ({
@@ -420,6 +421,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
     // Initialize active intro variant
     this._isDroidIntro = shell?.progressionSession?.subtype === 'droid';
+    this._isActorV2 = !this._isDroidIntro && shell?.actor?.type === 'character';
     this._bootLines = this._isDroidIntro ? DROID_BOOT_LINES : BOOT_LINES;
     this._phases = this._bootLines.map((line) => ({
       label: line.label,
@@ -546,10 +548,10 @@ export class IntroStep extends ProgressionStepPlugin {
 
       // Character effects for translation (flicker, glow trail)
       translationCharStates: this._translationCharStates,
-      introVariant: this._isDroidIntro ? 'droid' : 'standard',
+      introVariant: this._isDroidIntro ? 'droid' : (this._isActorV2 ? 'actor-v2' : 'standard'),
       continueLabel: this._isDroidIntro ? 'Register New Unit' : 'Proceed',
       continueTitle: this._isDroidIntro ? 'Ready to begin droid unit registration.' : 'Ready to begin character registration.',
-      showPregenerated: !this._isDroidIntro,
+      showPregenerated: !this._isDroidIntro && !this._isActorV2,
     };
 
     // DIAGNOSTIC: Show what data is being returned to template
