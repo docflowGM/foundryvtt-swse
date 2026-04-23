@@ -34,6 +34,7 @@
     "styles/sheets/v2-sheet.css",
     "styles/sheets/v2-shell-tokens.css",
     "styles/sheets/v2-interior-reskin.css",
+    "styles/sheets/v2-alive-systems.css",
     "styles/actors/v2/combat-stats-panel.css",
     "styles/sheets/v2-npc-specific.css",
     "styles/sheets/v2-droid-specific.css",
