@@ -29,6 +29,7 @@ import { SWSETranslationEngine } from '../engine/swse-translation-engine.js';
 import { TemplateSelectionDialog } from '../dialogs/template-selection-dialog.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { buildActorSplashV2Context } from './actor-splash-v2-controller.js';
+import { buildDroidSplashV2Context } from './droid-splash-v2-controller.js';
 
 // ========== INTRO STATE MACHINE ==========
 const INTRO_STATE = {
@@ -327,6 +328,7 @@ export class IntroStep extends ProgressionStepPlugin {
     this._isDroidIntro = false;
     this._isActorV2 = false;
     this._actorV2StageIndex = 0;  // Track progression through actor-v2 stages
+    this._droidV2StageIndex = 0;  // Track progression through droid-v2 stages
 
     // ====== PHASE-DRIVEN STATE MACHINE ======
     this._phases = this._bootLines.map((line) => ({
@@ -425,6 +427,7 @@ export class IntroStep extends ProgressionStepPlugin {
     this._isDroidIntro = shell?.progressionSession?.subtype === 'droid';
     this._isActorV2 = !this._isDroidIntro && shell?.actor?.type === 'character';
     this._actorV2StageIndex = 0;  // Reset stage progression for actor-v2
+    this._droidV2StageIndex = 0;  // Reset stage progression for droid-v2
     this._bootLines = this._isDroidIntro ? DROID_BOOT_LINES : BOOT_LINES;
     this._phases = this._bootLines.map((line) => ({
       label: line.label,
@@ -530,7 +533,7 @@ export class IntroStep extends ProgressionStepPlugin {
       return actorV2Data;
     }
 
-    // Standard/Droid intro path
+    // Standard/Droid intro path (Phase 1: droid-v2 controller wired but not yet routed)
     const phaseData = this.getPhaseData();
 
     const stepData = {
