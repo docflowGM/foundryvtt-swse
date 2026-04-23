@@ -294,6 +294,12 @@ export class TranslationSession {
       return;
     }
 
+    // Apply sourceMode metadata
+    const container = binding.get('translationText');
+    if (container) {
+      container.dataset.sourceMode = this._sourceMode;
+    }
+
     const mask = this._profile.maskCharacter || '●';
     const cursor = this._profile.cursorCharacter || '◆';
     const preserveSpaces = this._profile.preserveSpaces !== false;
@@ -357,20 +363,33 @@ export class TranslationSession {
     const binding = this._binding;
     if (!binding) return;
 
-    const container = binding.get('lineText') || binding.get('aurabeshText') || binding.get('translationText');
+    const container = binding.get('translationText');
     if (!container) {
       swseLogger.error('[TranslationSession] No boot line container found');
       return;
     }
 
+    // Apply sourceMode metadata to DOM — this proves engine owns mode state
+    const sourceContainer = binding.get('sourceText');
+    if (sourceContainer) {
+      sourceContainer.dataset.sourceMode = this._sourceMode;
+    }
+    container.dataset.sourceMode = this._sourceMode;
+
     const sourceText = this._options.sourceText || this._options.translatedText || '';
     const translatedText = this._options.translatedText || sourceText;
     const displayMode = this._options.displayMode || 'decode'; // decode | source-only | translated-only
     const cursor = escapeHTML(this._profile.cursorCharacter || '█');
-    const typingSpeed = this._profile.typingSpeed || 42;
-    const decodeSpeed = this._profile.decodeSpeed || 34;
+    let typingSpeed = this._profile.typingSpeed || 42;
+    let decodeSpeed = this._profile.decodeSpeed || 34;
     const keepFinalCursor = this._options.keepFinalCursor === true;
     const cursorMode = this._options.cursorMode || 'translating';
+
+    // sourceMode-aware timing: binary mode runs faster/tighter
+    if (this._sourceMode === 'binary') {
+      typingSpeed = Math.max(28, Math.floor(typingSpeed * 0.85));
+      decodeSpeed = Math.max(20, Math.floor(decodeSpeed * 0.8));
+    }
 
     const cursorClass = cursorMode === 'blink'
       ? 'is-blinking'
@@ -382,8 +401,8 @@ export class TranslationSession {
         ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
         : '';
       binding.setHTML(
-        'lineText',
-        `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--aurabesh">${escapeHTML(typed)}</span>${cursorHTML}`
+        'sourceText',
+        `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--${this._sourceMode}">${escapeHTML(typed)}</span>${cursorHTML}`
       );
     };
 
@@ -393,7 +412,7 @@ export class TranslationSession {
         ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
         : '';
       binding.setHTML(
-        'lineText',
+        'translationText',
         `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(typed)}</span>${cursorHTML}`
       );
     };
@@ -403,17 +422,22 @@ export class TranslationSession {
       const decodedPrefix = translatedText.slice(0, decodeCount);
       const undecodedSuffix = typedSource.slice(decodeCount);
 
+      // Update source: show typed portion and any decoded suffix
+      const sourceMode = this._sourceMode;
+      const sourceFrameClass = `prog-intro-boot-fragment prog-intro-boot-fragment--${sourceMode}`;
+      const sourceFrameHTML = typedSource
+        ? `<span class="${sourceFrameClass}">${escapeHTML(typedSource)}</span>`
+        : '';
+      binding.setHTML('sourceText', sourceFrameHTML);
+
+      // Update target: show decoded portion with cursor
       const basic = decodedPrefix
         ? `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(decodedPrefix)}</span>`
-        : '';
-      const aurabesh = undecodedSuffix
-        ? `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--aurabesh">${escapeHTML(undecodedSuffix)}</span>`
         : '';
       const cursorHTML = showCursor
         ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
         : '';
-
-      binding.setHTML('lineText', `${basic}${cursorHTML}${aurabesh}`);
+      binding.setHTML('translationText', `${basic}${cursorHTML}`);
     };
 
     const wait = (ms) => new Promise((resolve) => {
@@ -431,8 +455,8 @@ export class TranslationSession {
         ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
         : '';
       binding.setHTML(
-        'lineText',
-        `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--aurabesh">${escapeHTML(sourceText)}</span>${finalCursor}`
+        'sourceText',
+        `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--${this._sourceMode}">${escapeHTML(sourceText)}</span>${finalCursor}`
       );
       return;
     }
@@ -448,7 +472,7 @@ export class TranslationSession {
         ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
         : '';
       binding.setHTML(
-        'lineText',
+        'translationText',
         `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(translatedText)}</span>${finalCursor}`
       );
       return;
@@ -470,7 +494,7 @@ export class TranslationSession {
       ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
       : '';
     binding.setHTML(
-      'lineText',
+      'translationText',
       `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(translatedText)}</span>${finalCursor}`
     );
   }
@@ -487,6 +511,9 @@ export class TranslationSession {
 
     const container = binding.get('translationText');
     if (!container) return;
+
+    // Apply sourceMode metadata
+    container.dataset.sourceMode = this._sourceMode;
 
     return new Promise((resolve) => {
       AurebeshTranslator.render({
@@ -516,6 +543,9 @@ export class TranslationSession {
 
     const container = binding.get('translationText');
     if (!container) return;
+
+    // Apply sourceMode metadata
+    container.dataset.sourceMode = this._sourceMode;
 
     container.style.opacity = '0';
     binding.setText('translationText', this._options.translatedText || '');
