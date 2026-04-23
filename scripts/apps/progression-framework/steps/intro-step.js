@@ -930,8 +930,12 @@ export class IntroStep extends ProgressionStepPlugin {
     // Phase 2: Use declarative boot sequence with segmented progress bar
     swseLogger.debug('[IntroStep.startIntroSequence] Starting Phase 2 boot sequence with bootLines');
 
-    // Run the boot sequence animation
-    await this.runBootSequence(shell, this._sessionToken);
+    // Route to droid-v2 or standard animation
+    if (this._isDroidIntro) {
+      await this.runDroidV2BootSequence(shell, this._sessionToken);
+    } else {
+      await this.runBootSequence(shell, this._sessionToken);
+    }
 
     // Guard: check if still running
     if (!this._introRunning) return;
@@ -1167,6 +1171,41 @@ export class IntroStep extends ProgressionStepPlugin {
       swseLogger.debug('[IntroStep.runBootSequence] Boot sequence complete');
     } catch (err) {
       swseLogger.error('[IntroStep.runBootSequence] Error:', err);
+    }
+  }
+
+  /**
+   * Droid-v2 boot sequence animation.
+   * Progresses through 7 stages, updating context via buildDroidSplashV2Context.
+   * Calls shell.render() for each stage to update the UI.
+   * Respects cancellation and session invalidation.
+   */
+  async runDroidV2BootSequence(shell, sessionToken) {
+    try {
+      swseLogger.debug('[IntroStep.runDroidV2BootSequence] Starting droid-v2 boot sequence');
+
+      // Stage durations (in ms)
+      const stageDurations = [280, 260, 260, 320, 280, 260, 260];  // 7 stages
+
+      for (let stageIndex = 0; stageIndex < 7; stageIndex++) {
+        // Exit early if intro was cancelled
+        if (!this._introRunning || this._sessionToken !== sessionToken) {
+          swseLogger.debug('[IntroStep.runDroidV2BootSequence] Sequence cancelled');
+          return;
+        }
+
+        // Update stage index and render
+        this._droidV2StageIndex = stageIndex;
+        shell.render();
+
+        // Wait for stage duration
+        const duration = stageDurations[stageIndex] || 260;
+        await delay(duration);
+      }
+
+      swseLogger.debug('[IntroStep.runDroidV2BootSequence] Boot sequence complete');
+    } catch (err) {
+      swseLogger.error('[IntroStep.runDroidV2BootSequence] Error:', err);
     }
   }
 
