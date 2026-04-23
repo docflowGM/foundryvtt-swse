@@ -1,4 +1,4 @@
-<div class="prog-intro-surface swse-ui-shell swse-splash-screen {{#if localizedMode}}prog-intro-surface--localized{{else}}prog-intro-surface--foreign{{/if}}">
+<div class="prog-intro-surface swse-ui-shell swse-splash-screen prog-intro-surface--{{introVariant}} {{#if localizedMode}}prog-intro-surface--localized{{else}}prog-intro-surface--foreign{{/if}}">
   {{!-- OS Header Bar --}}
   <div class="prog-intro-header">
     <div class="prog-intro-header__left">
@@ -111,11 +111,12 @@
         <button class="prog-intro-btn prog-btn prog-btn--primary"
                 type="button"
                 data-action="next-step"
-                title="Ready to begin character registration." aria-label="Ready to begin character registration.">
+                title="{{continueTitle}}" aria-label="{{continueTitle}}">
           <i class="fas fa-arrow-right"></i>
-          Proceed
+          {{continueLabel}}
         </button>
 
+        {{#if showPregenerated}}
         {{!-- Choose a Pregenerated Character: bound directly in intro-step.js --}}
         <button class="prog-intro-btn prog-btn prog-btn--primary"
                 type="button"
@@ -124,6 +125,7 @@
           <i class="fas fa-scroll"></i>
           Pick Galactic Profile
         </button>
+        {{/if}}
       </div>
     </div>
   {{else}}

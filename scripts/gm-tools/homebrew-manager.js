@@ -140,8 +140,7 @@ export class SWSEHomebrewManager {
  * Homebrew Manager Application
  */
 class HomebrewManagerApp extends SWSEFormApplicationV2 {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'homebrew-manager',
       title: 'SWSE Homebrew Manager',

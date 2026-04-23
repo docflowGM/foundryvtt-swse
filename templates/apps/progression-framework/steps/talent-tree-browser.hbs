@@ -1,9 +1,5 @@
 {{!-- Talent Tree Browser (Stage 1) --}}
-{{!-- Browse and select a talent tree to inspect --}}
-
 <div class="talent-work-surface talent-stage-browser">
-
-  {{!-- Header --}}
   <div class="talent-browser-header">
     <h3 class="talent-browser-title">
       <i class="fa-solid fa-sitemap"></i>
@@ -18,42 +14,16 @@
     </p>
   </div>
 
-  {{!-- Suggested Trees --}}
-  {{#if suggestedTrees}}
-  <section class="talent-browser-suggested">
-    <h4 class="talent-section-title">
-      <i class="fa-solid fa-lightbulb"></i> Recommended for Your Build
-    </h4>
-    <div class="talent-tree-cards suggested-trees">
-      {{#each suggestedTrees}}
-      <button class="talent-tree-card talent-tree-card--suggested"
-              data-action="focus-tree"
-              data-tree-id="{{id}}">
-        <div class="talent-tree-card__content">
-          <h5 class="talent-tree-card__name">{{name}}</h5>
-          <p class="talent-tree-card__meta">
-            <span class="talent-tree-badge suggested-badge">
-              <i class="fa-solid fa-star"></i> Suggested
-            </span>
-          </p>
-        </div>
-        <button class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{id}}">
-          <i class="fa-solid fa-arrow-right"></i> Explore
-        </button>
-      </button>
-      {{/each}}
-    </div>
-  </section>
-  {{/if}}
-
-  {{!-- All Trees Grid --}}
   <section class="talent-browser-all-trees">
     {{#if allTrees}}
     <div class="talent-tree-cards all-trees">
       {{#each allTrees}}
-      <button class="talent-tree-card {{#if isFocused}}talent-tree-card--focused{{/if}} {{#if isSuggested}}talent-tree-card--suggested{{/if}}"
-              data-action="focus-tree"
-              data-tree-id="{{id}}">
+      <article class="talent-tree-card {{#if isFocused}}talent-tree-card--focused{{/if}} {{#if isSuggested}}talent-tree-card--suggested{{/if}}"
+               data-action="focus-tree"
+               data-tree-id="{{id}}"
+               tabindex="0"
+               role="button"
+               aria-label="Focus talent tree {{name}}">
         <div class="talent-tree-card__content">
           <h5 class="talent-tree-card__name">{{name}}</h5>
           <p class="talent-tree-card__summary">{{summary}}</p>
@@ -61,6 +31,11 @@
             <span class="talent-tree-badge">
               <i class="fa-solid fa-layer-group"></i> {{nodeCount}} talents
             </span>
+            {{#if isSuggested}}
+            <span class="talent-tree-badge suggested-badge">
+              <i class="fa-solid fa-star"></i> Suggested
+            </span>
+            {{/if}}
             {{#if (eq slotType "class")}}
             <span class="talent-tree-badge class-badge">
               <i class="fa-solid fa-lock"></i> Class
@@ -72,10 +47,10 @@
             {{/if}}
           </div>
         </div>
-        <button class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{id}}">
+        <button type="button" class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{id}}">
           <i class="fa-solid fa-arrow-right"></i> Explore
         </button>
-      </button>
+      </article>
       {{/each}}
     </div>
     {{else}}
@@ -85,5 +60,4 @@
     </div>
     {{/if}}
   </section>
-
 </div>

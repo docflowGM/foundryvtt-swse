@@ -91,6 +91,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/armor-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/weapons-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/owned-actors-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/droid/v2/partials/stock-droid-provenance-panel.hbs',
 
   // ==============================
   // Vehicle v2 Partials

@@ -1,0 +1,165 @@
+<div class="prog-skills-surface">
+
+  {{!-- Left Panel: Skills Summary --}}
+  <div class="prog-panel prog-panel--left">
+    <h3 class="prog-panel-title">Training Summary</h3>
+
+    <div class="prog-skills-counter">
+      <div class="prog-counter-bar">
+        <div class="prog-counter-fill" style="width: {{div trainedCount allowedCount 100}}%"></div>
+      </div>
+      <div class="prog-counter-text">
+        <span class="prog-counter-value">{{trainedCount}}</span>
+        <span class="prog-counter-label">/ {{allowedCount}} trained</span>
+      </div>
+    </div>
+
+    {{#if (gt trainedCount 0)}}
+      <div class="prog-trained-skills-list">
+        <h4 class="prog-list-title">Selected Skills</h4>
+        {{#each allSkills}}
+          {{#if (and ../trainedSkills.[this.key] ../trainedSkills.[this.key].trained)}}
+            <div class="prog-trained-skill-badge">
+              <i class="fas fa-check"></i> {{this.name}}
+            </div>
+          {{/if}}
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if (eq trainedCount allowedCount)}}
+      <div class="prog-skills-complete">
+        <i class="fas fa-star"></i> Slots Filled
+      </div>
+    {{else}}
+      <div class="prog-skills-remaining">
+        {{sub allowedCount trainedCount}} slot(s) remaining
+      </div>
+    {{/if}}
+  </div>
+
+  {{!-- Center Panel: Skill Selection List --}}
+  <div class="prog-panel prog-panel--center">
+    <h3 class="prog-panel-title">Select Your Skills</h3>
+
+    <p class="prog-help-text">
+      Train {{allowedCount}} skill{{#unless (eq allowedCount 1)}}s{{/unless}} to specialize your character's expertise.
+      Class and ability bonuses apply automatically.
+    </p>
+
+    {{#if isFallbackFullChart}}
+      <div class="prog-skills-status prog-skills-status--warning">
+        Legal skills could not be fully resolved. Only matched class, background, and already-trained skills are shown.
+      </div>
+    {{else}}
+      <div class="prog-skills-status prog-skills-status--info">
+        Showing {{availableSkillCount}} legal trainable skill{{#unless (eq availableSkillCount 1)}}s{{/unless}} from class and background.
+      </div>
+    {{/if}}
+
+    <div class="prog-skills-list">
+      {{#each allSkills}}
+        {{#if (or this.alwaysVisible this.available)}}
+          <div class="prog-skill-row {{#if (and ../trainedSkills.[this.key] ../trainedSkills.[this.key].trained)}}trained{{/if}} {{#if (eq ../focusedSkillId this.id)}}is-focused{{/if}}"
+               data-skill-row="{{this.key}}"
+               data-item-id="{{this.id}}"
+               data-action="focus-item"
+               role="button"
+               tabindex="0">
+
+            {{!-- Skill Name & Category --}}
+            <div class="prog-skill-info">
+              <div class="prog-skill-name">{{this.name}}</div>
+
+              <div class="prog-skill-tags">
+                {{#if this.isClassSkill}}
+                  <span class="prog-skill-tag prog-skill-tag--class">Class</span>
+                {{/if}}
+
+                {{#if this.isBackgroundSkill}}
+                  <span class="prog-skill-tag prog-skill-tag--background">Background</span>
+                {{/if}}
+
+                {{#if this.badgeLabel}}
+                  <span class="prog-skill-tag prog-skill-tag--suggested">{{this.badgeLabel}}</span>
+                {{/if}}
+              </div>
+
+              {{#if this.category}}
+                <div class="prog-skill-category">{{this.category}}</div>
+              {{/if}}
+            </div>
+
+            {{!-- Train/Untrain Buttons --}}
+            <div class="prog-skill-controls">
+              {{#if (and ../trainedSkills.[this.key] ../trainedSkills.[this.key].trained)}}
+                <button type="button"
+                        class="prog-btn prog-btn--small prog-btn--selected skills-step-untrain-btn"
+                        data-skill="{{this.key}}"
+                        title="Skill trained — click to untrain">
+                  <i class="fas fa-check"></i>
+                </button>
+              {{else if this.canTrain}}
+                <button type="button"
+                        class="prog-btn prog-btn--small prog-btn--secondary skills-step-train-btn"
+                        data-skill="{{this.key}}"
+                        {{#if (eq ../trainedCount ../allowedCount)}}disabled{{/if}}
+                        title="Train this skill">
+                  <i class="fas fa-plus"></i> Train
+                </button>
+              {{else}}
+                <div class="prog-skill-controls__placeholder" title="Only class or background skills can be trained">
+                  <i class="fas fa-minus"></i>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        {{/if}}
+      {{/each}}
+    </div>
+
+    {{#if (gt allSkills.length 0)}}
+      <div class="prog-skills-actions">
+        <button type="button"
+                class="prog-btn prog-btn--secondary prog-btn--small skills-step-reset-btn"
+                title="Reset all skill selections">
+          <i class="fas fa-redo"></i> Reset All
+        </button>
+      </div>
+    {{/if}}
+  </div>
+
+  {{!-- Right Panel: Skill Details & Guidance --}}
+  <div class="prog-panel prog-panel--right">
+    <h3 class="prog-panel-title">Skill Expertise</h3>
+
+    <div class="prog-details-text">
+      <p>
+        <strong>Trained Skills:</strong> You begin the game trained in skills of your choosing.
+        Your class, level, and ability modifiers grant you bonus ranks and favorable Difficulty Classes (DCs).
+      </p>
+
+      <p>
+        <strong>Class Skills:</strong> Some skills are trained and refined based on your class selection.
+        You gain a +3 bonus on checks for these class skills.
+      </p>
+
+      <p>
+        <strong>Ability Modifiers:</strong> Each skill benefits from one of your six core abilities
+        (Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma).
+      </p>
+
+      <p>
+        <strong>Skill Checks:</strong> When your character attempts a task that requires a skill check,
+        you roll d20 and add your skill ranks, your ability modifier, and any other relevant bonuses.
+      </p>
+
+      <p class="prog-guidance-tip">
+        <i class="fas fa-lightbulb"></i>
+        Choose skills that match your character concept and class role.
+        You can always learn new skills through leveling up!
+      </p>
+    </div>
+  </div>
+
+</div>

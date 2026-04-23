@@ -8,6 +8,15 @@ import { registerActionEconomySettings } from "/systems/foundryvtt-swse/scripts/
  */
 export async function registerSystemSettings() {
 
+game.settings.register('foundryvtt-swse', 'debugMode', {
+  name: 'Debug Mode',
+  hint: 'Enable verbose logging for SWSE system',
+  scope: 'client',
+  config: true,
+  type: Boolean,
+  default: false
+});
+
   game.settings.register("foundryvtt-swse", "darkSideMaxMultiplier", {
     name: "Dark Side Max Multiplier",
     hint: "Multiplier applied to Wisdom score to determine maximum Dark Side Score.",
@@ -491,6 +500,13 @@ export async function registerSystemSettings() {
     type: Boolean,
     default: false
   });
-
+game.settings.register('foundryvtt-swse', 'themePromptShown', {
+  name: 'Theme Prompt Shown',
+  hint: 'Tracks whether the first-run theme selection prompt has already been shown to this user.',
+  scope: 'client',
+  config: false,
+  type: Boolean,
+  default: false
+});
   SWSELogger.log('SWSE | Settings registered');
 }

@@ -10,8 +10,7 @@ export default class SWSEFormApplication extends HandlebarsApplicationMixin(Form
     /**
      * Default options for SWSE FormApplications
      */
-    static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-        FormApplication.DEFAULT_OPTIONS ?? {},
+    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(FormApplication.DEFAULT_OPTIONS ?? {}),
         {
             classes: ['swse', 'swse-form'],
             position: {

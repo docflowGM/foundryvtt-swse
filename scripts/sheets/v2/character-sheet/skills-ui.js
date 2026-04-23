@@ -4,8 +4,6 @@
  * Handles skill filtering, sorting, expansion, and rolling
  */
 
-import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
-
 /**
  * Activate skills panel UI listeners
  * @param {SWSEV2CharacterSheet} sheet - The character sheet instance
@@ -17,14 +15,26 @@ export function activateSkillsUI(sheet, html, { signal } = {}) {
   const getRows = () => Array.from(html.querySelectorAll('.skill-row-container'));
   const filterControls = Array.from(html.querySelectorAll('[data-action="filter-skills"]'));
   const sortControls = Array.from(html.querySelectorAll('[data-action="sort-skills"]'));
+  const escapeSkillKey = (value) => {
+    if (globalThis.CSS?.escape) return globalThis.CSS.escape(String(value));
+    return String(value);
+  };
+  const findExtraUsesSection = (skillKey) => {
+    if (!skillKey) return null;
+    return html.querySelector(`.skill-extra-uses[data-skill="${escapeSkillKey(skillKey)}"]`);
+  };
 
   const applyFiltersAndSort = () => {
     const activeFilter = filterControls[0]?.value || 'all';
     const activeSort = sortControls[0]?.value || 'name';
-    const skillRows = getRows();
-    const visibleRows = [];
+    const rowPairs = getRows().map(row => ({
+      row,
+      extraUsesSection: findExtraUsesSection(row.dataset.skill)
+    }));
+    const visiblePairs = [];
 
-    for (const row of skillRows) {
+    for (const pair of rowPairs) {
+      const { row, extraUsesSection } = pair;
       const trained = row.dataset.trained === 'true';
       const favorite = row.dataset.favorite === 'true';
       const focused = row.dataset.focused === 'true';
@@ -34,38 +44,32 @@ export function activateSkillsUI(sheet, html, { signal } = {}) {
       else if (activeFilter === 'focused') matches = focused;
 
       row.style.display = matches ? '' : 'none';
-      let extraUsesSection = row.nextElementSibling;
-      while (extraUsesSection && !extraUsesSection.classList.contains('skill-extra-uses')) {
-        extraUsesSection = extraUsesSection.nextElementSibling;
-      }
-      if (extraUsesSection?.classList.contains('skill-extra-uses')) {
+      if (extraUsesSection) {
         extraUsesSection.style.display = matches ? '' : 'none';
       }
-      if (matches) visibleRows.push(row);
+      if (matches) visiblePairs.push(pair);
     }
 
     if (!skillsList) return;
-    visibleRows.sort((a, b) => {
+    visiblePairs.sort((a, b) => {
+      const rowA = a.row;
+      const rowB = b.row;
       switch (activeSort) {
         case 'ability':
-          return (a.dataset.ability || '').localeCompare(b.dataset.ability || '') || (a.dataset.label || '').localeCompare(b.dataset.label || '');
+          return (rowA.dataset.ability || '').localeCompare(rowB.dataset.ability || '') || (rowA.dataset.label || '').localeCompare(rowB.dataset.label || '');
         case 'total-desc':
-          return Number(b.dataset.total || 0) - Number(a.dataset.total || 0) || (a.dataset.label || '').localeCompare(b.dataset.label || '');
+          return Number(rowB.dataset.total || 0) - Number(rowA.dataset.total || 0) || (rowA.dataset.label || '').localeCompare(rowB.dataset.label || '');
         case 'total-asc':
-          return Number(a.dataset.total || 0) - Number(b.dataset.total || 0) || (a.dataset.label || '').localeCompare(b.dataset.label || '');
+          return Number(rowA.dataset.total || 0) - Number(rowB.dataset.total || 0) || (rowA.dataset.label || '').localeCompare(rowB.dataset.label || '');
         case 'name':
         default:
-          return (a.dataset.label || '').localeCompare(b.dataset.label || '');
+          return (rowA.dataset.label || '').localeCompare(rowB.dataset.label || '');
       }
     });
 
-    for (const row of visibleRows) {
+    for (const { row, extraUsesSection } of visiblePairs) {
       skillsList.appendChild(row);
-      let extraUsesSection = row.nextElementSibling;
-      while (extraUsesSection && !extraUsesSection.classList.contains('skill-extra-uses')) {
-        extraUsesSection = extraUsesSection.nextElementSibling;
-      }
-      if (extraUsesSection?.classList.contains('skill-extra-uses')) {
+      if (extraUsesSection) {
         skillsList.appendChild(extraUsesSection);
       }
     }
@@ -88,18 +92,7 @@ export function activateSkillsUI(sheet, html, { signal } = {}) {
     }, { signal });
   });
 
-  html.querySelectorAll('[data-action="roll-skill"]').forEach(button => {
-    button.addEventListener('click', async (event) => {
-      event.preventDefault();
-      const skillKey = button.dataset.skill;
-      if (!skillKey) return;
-      try {
-        await SWSERoll.rollSkill(sheet.actor, skillKey);
-      } catch (err) {
-        ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
-      }
-    }, { signal });
-  });
+
 
   html.querySelectorAll('[data-action="toggle-skill-expand"]').forEach(button => {
     button.addEventListener('click', (event) => {
@@ -107,13 +100,15 @@ export function activateSkillsUI(sheet, html, { signal } = {}) {
       const skillKey = button.dataset.skill;
       if (!skillKey) return;
 
-      const skillRow = button.closest('.skills-grid-row');
-      if (!skillRow) return;
-      let extraUsesSection = skillRow.nextElementSibling;
-      while (extraUsesSection && !extraUsesSection.classList.contains('skill-extra-uses')) {
-        extraUsesSection = extraUsesSection.nextElementSibling;
+      const extraUsesSection = findExtraUsesSection(skillKey);
+      if (!extraUsesSection?.classList.contains('skill-extra-uses')) {
+        console.warn('[SWSE Skills UI] Extra skill uses section not found for toggle', {
+          actorId: sheet?.actor?.id,
+          actorName: sheet?.actor?.name,
+          skillKey
+        });
+        return;
       }
-      if (!extraUsesSection?.classList.contains('skill-extra-uses')) return;
 
       const isExpanded = button.getAttribute('aria-expanded') === 'true';
       button.setAttribute('aria-expanded', String(!isExpanded));

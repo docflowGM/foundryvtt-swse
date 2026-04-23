@@ -60,11 +60,32 @@ export function resolveFeatDescription(rawFeat) {
   return '';
 }
 
+function coercePrerequisiteText(...values) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim();
+    }
+    if (Array.isArray(value)) {
+      const joined = value.map((entry) => String(entry ?? '').trim()).filter(Boolean).join('; ');
+      if (joined) return joined;
+    }
+    if (value && typeof value === 'object' && typeof value.raw === 'string' && value.raw.trim()) {
+      return value.raw.trim();
+    }
+  }
+  return '';
+}
+
 export function resolveFeatPrerequisites(rawFeat) {
+  const prerequisiteText = coercePrerequisiteText(
+    rawFeat?.prerequisiteText,
+    rawFeat?.prerequisiteLine,
+    rawFeat?.system?.prerequisite,
+    rawFeat?.system?.prerequisites,
+  );
+
   return {
-    prerequisiteText: typeof rawFeat?.system?.prerequisite === 'string'
-      ? rawFeat.system.prerequisite.trim()
-      : '',
+    prerequisiteText,
     prerequisitesStructured: rawFeat?.system?.prerequisitesStructured ?? null,
   };
 }
@@ -133,6 +154,7 @@ export function normalizeFeatRuntime(rawFeat, { mapping = null } = {}) {
     benefit: typeof rawFeat?.system?.benefit === 'string' ? rawFeat.system.benefit : '',
     prerequisiteText,
     prerequisitesStructured,
+    prerequisiteLine: prerequisiteText,
     special: typeof rawFeat?.system?.special === 'string' ? rawFeat.system.special : '',
     normalText: typeof rawFeat?.system?.normalText === 'string' ? rawFeat.system.normalText : '',
     tags,

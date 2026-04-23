@@ -6,17 +6,17 @@
 
   {{!-- Tab Navigation --}}
   <nav class="dashboard-tabs swse-ui-tabs swse-ui-frame">
-    <button class="tab-button swse-ui-tab" data-tab="transactions" title="Review all completed buy and sell transactions. Transactions may be reversed here if a correction is required.">Transactions</button>
-    <button class="tab-button swse-ui-tab" data-tab="pending" title="View and resolve sell offers that have not yet been accepted or denied.">Pending Sales</button>
-    <button class="tab-button swse-ui-tab" data-tab="approvals" title="Review and approve custom droid and vehicle purchases awaiting GM authorization.">Pending Approvals</button>
-    <button class="tab-button swse-ui-tab" data-tab="controls" title="Configure store availability, pricing modifiers, item visibility, and selling house rules.">Store Controls</button>
+    <button class="tab-button swse-ui-tab" data-swse-tab="transactions" title="Review all completed buy and sell transactions. Transactions may be reversed here if a correction is required.">Transactions</button>
+    <button class="tab-button swse-ui-tab" data-swse-tab="pending" title="View and resolve sell offers that have not yet been accepted or denied.">Pending Sales</button>
+    <button class="tab-button swse-ui-tab" data-swse-tab="approvals" title="Review and approve custom droid and vehicle purchases awaiting GM authorization.">Pending Approvals</button>
+    <button class="tab-button swse-ui-tab" data-swse-tab="controls" title="Configure store availability, pricing modifiers, item visibility, and selling house rules.">Store Controls</button>
   </nav>
 
   {{!-- Tab Content --}}
   <div class="dashboard-content flexcol swse-ui-panel">
 
     {{!-- TAB 1: TRANSACTIONS LEDGER --}}
-    <div class="dashboard-tab swse-ui-panel" data-tab="transactions">
+    <div class="dashboard-tab swse-ui-panel" data-swse-tab="transactions">
       <h3>TRANSACTION LEDGER</h3>
       <p class="tab-description" title="A chronological record of all finalized store transactions. This ledger exists for auditing and credit correction, not for initiating trades.">A chronological record of all finalized store transactions. Use this to audit purchases and correct credits if necessary.</p>
 
@@ -83,7 +83,7 @@
     </div>
 
     {{!-- TAB 2: PENDING SALES --}}
-    <div class="dashboard-tab swse-ui-panel" data-tab="pending">
+    <div class="dashboard-tab swse-ui-panel" data-swse-tab="pending">
       <h3>PENDING SELL ATTEMPTS</h3>
       <p class="tab-description" title="Sell offers awaiting resolution. Offers appear here if they were not automatically accepted or if the original prompt was dismissed.">Sell offers awaiting resolution. These appear if a sell request was not immediately resolved or was dismissed earlier.</p>
       <p style="color: #ff9900; padding: 1rem; background: rgba(255, 153, 0, 0.1); border-radius: 4px; margin-bottom: 1rem;">
@@ -124,7 +124,7 @@
     </div>
 
     {{!-- TAB 3: PENDING APPROVALS --}}
-    <div class="dashboard-tab swse-ui-panel" data-tab="approvals">
+    <div class="dashboard-tab swse-ui-panel" data-swse-tab="approvals">
       <h3>PENDING CUSTOM PURCHASES</h3>
       <p class="tab-description" title="Custom droid and vehicle builds awaiting GM approval. Preview the finished product, edit if needed, or approve/deny the purchase.">Pending custom droid and vehicle purchases awaiting GM review and approval.</p>
 
@@ -164,7 +164,7 @@
     </div>
 
     {{!-- TAB 4: STORE CONTROLS --}}
-    <div class="dashboard-tab swse-ui-panel" data-tab="controls">
+    <div class="dashboard-tab swse-ui-panel" data-swse-tab="controls">
       <h3>STORE CONTROLS</h3>
 
       {{!-- Store Availability --}}

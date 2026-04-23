@@ -21,8 +21,7 @@ export class NPCTemplateImporter extends foundry.applications.api.DialogV2 {
     this.isLoading = false;
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    foundry.applications.api.DialogV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(foundry.applications.api.DialogV2.DEFAULT_OPTIONS ?? {}),
     {
       classes: ['swse', 'npc-template-importer', 'swse-app'],
       width: 900,

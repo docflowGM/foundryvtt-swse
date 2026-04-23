@@ -25,8 +25,7 @@ export class StarshipManeuverPicker extends SWSEFormApplicationV2 {
     this.selectedSet = new Set();
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'starship-maneuver-picker',
       classes: ['swse-app', 'starship-maneuver-picker'],

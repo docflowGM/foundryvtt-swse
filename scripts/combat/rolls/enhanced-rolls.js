@@ -28,6 +28,7 @@ import {
   generateFullAttackCard
 } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { rollSkillCheck as canonicalRollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 
 /**
  * SWSERoll — Unified SWSE Rolling Engine for v13+
@@ -1140,7 +1141,9 @@ export class SWSERoll {
   /* ========================================================================== */
 
   /**
-   * Roll a skill check with full breakdown
+   * Roll a skill check through the canonical RollCore + SWSEChat pipeline.
+   * This preserves the public SWSERoll API for legacy callers while ensuring
+   * skill rolls use the same holo chat card and modifier dialog flow as v2 sheets.
    * @param {Actor} actor - The actor making the check
    * @param {string} skillKey - The skill key (e.g., 'acrobatics', 'perception')
    * @param {Object} [options={}] - Skill check options
@@ -1149,16 +1152,13 @@ export class SWSERoll {
    * @returns {Promise<Object|null>} Skill check result
    */
   static async rollSkill(actor, skillKey, options = {}) {
-    const skill = actor.system.skills[skillKey];
+    const skill = actor?.system?.skills?.[skillKey];
     if (!skill) {
       ui.notifications.warn(`Skill ${skillKey} not found.`);
       return null;
     }
 
-    // PHASE 4E: Check skill training requirement
-    // If skill  (trainedOnly/untrained=false) and actor is untrained,
-    // check if TREAT_SKILL_AS_TRAINED rule applies
-    const requiresTraining = !skill.untrained;  // trainedOnly = !untrained
+    const requiresTraining = skill.untrained === false;
     if (requiresTraining && !skill.trained) {
       const context = new ResolutionContext(actor);
       if (!context.hasRule(RULES.TREAT_SKILL_AS_TRAINED, { skillId: skillKey })) {
@@ -1168,16 +1168,14 @@ export class SWSERoll {
     }
 
     try {
-       const mode = options?.mode ?? (options?.take10 ? "take10" : "roll");
-      // Get modifiers from dialog if requested
       let modifiers = {
-        customModifier: 0,
-        useForcePoint: false
+        customModifier: Number(options?.customModifier || 0),
+        useForcePoint: options?.useForcePoint === true
       };
 
       if (options.showDialog) {
         const dialogResult = await showRollModifiersDialog({
-          title: `${skillKey} Check`,
+          title: `${skill.label ?? skillKey} Check`,
           rollType: 'skill',
           actor,
           showCover: false,
@@ -1185,121 +1183,39 @@ export class SWSERoll {
         });
 
         if (!dialogResult) {return null;}
-        modifiers = { ...modifiers, ...dialogResult };
+        modifiers = {
+          customModifier: Number(dialogResult.customModifier || 0),
+          useForcePoint: dialogResult.useForcePoint === true
+        };
       }
 
-      // Create context for hooks
-      const context = {
-        actor,
-        skillKey,
-        skill,
-        modifiers,
-        dc: options.dc
-      };
+      const result = await canonicalRollSkillCheck(actor, skillKey, {
+        dc: options?.dc,
+        customModifier: modifiers.customModifier,
+        useForcePoint: modifiers.useForcePoint,
+        mode: options?.mode,
+        take10: options?.take10 === true,
+        skillUse: options?.skillUse,
+        useKey: options?.useKey,
+        actionType: options?.actionType,
+        sourceType: options?.sourceType,
+        sourceLabel: options?.sourceLabel
+      });
 
-      // Call pre-roll hook
-      if (!callPreRollHook(ROLL_HOOKS.PRE_SKILL, context)) {
-        return { cancelled: true };
+      if (!result?.roll) {
+        return null;
       }
 
-      // Force Point
-      const fpBonus = modifiers.useForcePoint
-        ? await this.promptForcePointUse(actor, `${skillKey} check`)
-        : 0;
-
-      const total = skill.total + fpBonus + modifiers.customModifier;
-
-      // Build formula
-      const formula = mode === "take10" ? `10 + ${total}` : `1d20 + ${total}`;
-      const roll = await this._safeRoll(formula);
-      if (!roll) {return null;}
-
-      const d20 = mode === "take10" ? 10 : roll.dice[0].results[0].result;
-
-      // Breakdown components
-      const parts = [];
-      const halfLevel = getEffectiveHalfLevel(actor);
-      parts.push(`½ Level +${halfLevel}`);
-
-      if (skill.trained) {parts.push(`Trained +5`);}
-      if (skill.focused) {parts.push(`Skill Focus +5`);}
-
-      const abilityMod = SchemaAdapters.getAbilityMod(actor, skill.selectedAbility);
-      parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? '+' : ''}${abilityMod}`);
-
-      const misc = skill.miscMod ?? 0;
-      if (misc) {parts.push(`Misc ${misc >= 0 ? '+' : ''}${misc}`);}
-
-      const condition = actor.system.conditionTrack?.penalty ?? 0;
-      if (condition) {parts.push(`Condition ${condition}`);}
-
-      if (fpBonus) {parts.push(`FP +${fpBonus}`);}
-      if (modifiers.customModifier) {parts.push(`Custom ${modifiers.customModifier >= 0 ? '+' : ''}${modifiers.customModifier}`);}
-
-      // DC comparison
-      const dc = options.dc;
-      const success = dc != null ? roll.total >= dc : null;
-
-      const result = {
-        roll,
-        d20,
-        total: roll.total,
-        skillTotal: skill.total,
-        fpBonus,
-        dc,
-        success,
+      const derivedSkill = actor.system?.derived?.skills?.[skillKey] ?? null;
+      return {
+        roll: result.roll,
+        total: result.roll.total,
+        d20: result.roll.dice?.[0]?.results?.[0]?.result ?? null,
+        skillTotal: Number(derivedSkill?.total ?? skill.total ?? 0),
+        dc: typeof options?.dc === 'number' ? options.dc : null,
+        success: result.success,
         modifiers
       };
-
-      // Record in history
-      RollHistory.record({
-        roll,
-        actor,
-        type: 'skill',
-        result: { skillKey, success, dc },
-        context
-      });
-
-      // Build chat card
-      const dcHTML = dc != null ? `
-        <div class="skill-dc">
-          <span>vs DC ${dc}</span>
-          <span class="dc-result ${success ? 'success' : 'failure'}">
-            ${success ? '<i class="fa-solid fa-check"></i> Success' : '<i class="fa-solid fa-times"></i> Failure'}
-            (${roll.total - dc >= 0 ? '+' : ''}${roll.total - dc})
-          </span>
-        </div>
-      ` : '';
-
-      const html = `
-        <div class="swse-skill-card">
-          <h3>${skillKey.toUpperCase()} Check</h3>
-          <div class="roll-total">${roll.total}</div>
-          <div class="roll-d20">d20: ${d20}${d20 === 20 ? ' <i class="fa-solid fa-star"></i>' : d20 === 1 ? ' <i class="fa-solid fa-skull"></i>' : ''}</div>
-          <div class="roll-formula">${formula}</div>
-          <div class="roll-breakdown">${parts.join(', ')}</div>
-          ${dcHTML}
-        </div>
-      `;
-
-      const msg = await createChatMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: html,
-        rolls: [roll],
-        flags: { swse: { roll: roll.toJSON() } }
-      });
-
-      result.message = msg;
-
-      if (game.dice3d) {
-        await game.dice3d.showForRoll(roll, game.user, true);
-      }
-
-      // Post-roll hook
-      callPostRollHook(ROLL_HOOKS.POST_SKILL, { ...context, result });
-
-      return result;
-
     } catch (err) {
       swseLogger.error('Skill roll failed:', err);
       ui.notifications.error('Skill roll failed. Check console for details.');

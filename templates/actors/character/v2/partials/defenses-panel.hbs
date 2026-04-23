@@ -1,37 +1,69 @@
-<section class="swse-panel swse-panel--defenses defenses-panel v3-panel holo-panel defenses-panel--open">
+<section class="swse-panel swse-panel--defenses defenses-panel v3-panel holo-panel">
   <div class="swse-panel__content">
     <header class="section-bar">
       <h3 class="section-header">Defenses</h3>
+      <div class="section-bar__actions">
+        <button type="button"
+                data-action="toggle-defenses"
+                class="swse-btn">
+          Expand
+        </button>
+      </div>
     </header>
 
-    <div class="defenses-container defenses-container--cards">
+    <div class="defenses-container defenses-container--rows">
       {{#each defensePanel.defenses as |def|}}
-        <div class="defense-card defense-{{def.key}}">
-          <div class="defense-card__header">
-            <div class="defense-card__label">{{def.label}}</div>
-            <div class="defense-card__total">{{def.total}}</div>
-          </div>
-
-          <div class="defense-card__body">
-            <div class="defense-card__formula">
-              <span class="defense-token">10</span>
-              <span class="defense-op">+</span>
-              <span class="defense-token">A {{def.armorBonus}}</span>
-              <span class="defense-op">+</span>
-              <span class="defense-token">Ab {{def.abilityMod}}</span>
-              <span class="defense-op">+</span>
-              <span class="defense-token">C {{def.classDef}}</span>
-              <span class="defense-op">+</span>
-              <span class="defense-token defense-token--editable">M</span>
+        <div class="defense-row defense-{{def.key}}">
+          <div class="defense-collapsed">
+            <div class="defense-label-group">
+              <div class="defense-label">{{def.label}}</div>
+              <div class="defense-summary">
+                10 + Armor {{def.armorBonus}} + {{def.abilityLabel}} {{def.abilityMod}} + Class {{def.classDef}} + Misc {{def.miscMod}}
+              </div>
             </div>
 
-            <div class="defense-card__misc">
-              <label>Misc Modifier</label>
-              <input type="number"
-                     name="system.defenses.{{def.key}}.miscMod"
-                     value="{{def.miscMod}}"
-                     class="misc-input {{def.miscModClass}}"
-                     {{#unless def.canEdit}}disabled{{/unless}} />
+            <div class="defense-total-group">
+              <div class="defense-total">{{def.total}}</div>
+              <div class="defense-total-label">Total</div>
+            </div>
+          </div>
+
+          <div class="defense-expanded">
+            <div class="defense-expanded__breakdown">
+              <div class="defense-breakdown-row">
+                <span class="defense-breakdown-label">Base</span>
+                <span class="defense-breakdown-value">10</span>
+              </div>
+              <div class="defense-breakdown-row">
+                <span class="defense-breakdown-label">Armor Bonus</span>
+                {{#if def.armorEditable}}
+                  <input type="number" name="{{def.armorPath}}" value="{{def.armorBonus}}" class="misc-input" {{#unless def.canEdit}}disabled{{/unless}} />
+                {{else}}
+                  <span class="defense-breakdown-value">{{numberFormat def.armorBonus decimals=0 sign=true}}</span>
+                {{/if}}
+              </div>
+              <div class="defense-breakdown-row">
+                <span class="defense-breakdown-label">{{def.abilityLabel}} Modifier</span>
+                <span class="defense-breakdown-value">{{numberFormat def.abilityMod decimals=0 sign=true}}</span>
+              </div>
+              <div class="defense-breakdown-row">
+                <span class="defense-breakdown-label">Class Bonus</span>
+                <input type="number" name="{{def.classBonusPath}}" value="{{def.classDef}}" class="misc-input" {{#unless def.canEdit}}disabled{{/unless}} />
+              </div>
+              <div class="defense-breakdown-row defense-breakdown-row--editable">
+                <label class="defense-breakdown-label" for="defense-misc-{{def.key}}">Misc Modifier</label>
+                <input id="defense-misc-{{def.key}}"
+                       type="number"
+                       name="{{def.miscPath}}"
+                       value="{{def.miscMod}}"
+                       class="misc-input {{def.miscModClass}}"
+                       {{#unless def.canEdit}}disabled{{/unless}} />
+              </div>
+            </div>
+
+            <div class="defense-expanded__total">
+              <div class="defense-total">{{def.total}}</div>
+              <div class="defense-total-label">{{def.label}}</div>
             </div>
           </div>
         </div>

@@ -332,7 +332,7 @@ const NORMALIZER_HANDLERS = {
    */
   feat: (itemData, context) => {
     const desc = itemData.system?.description || itemData.system?.benefit || itemData.description || null;
-    const prereqs = extractPrerequisites(itemData.system?.prerequisites || itemData.system?.prerequisite);
+    const prereqs = extractPrerequisites(itemData.prerequisiteText || itemData.prerequisiteLine || itemData.system?.prerequisites || itemData.system?.prerequisite);
     const category = itemData.system?.category || itemData.system?.featType || 'General';
 
     return {

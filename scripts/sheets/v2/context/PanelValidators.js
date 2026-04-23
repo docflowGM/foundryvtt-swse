@@ -953,6 +953,18 @@ export function validateSkillsPanel(panelData) {
   };
 }
 
+
+
+export function validateResourcesPanel(panelData) {
+  const errors = [];
+  if (!panelData || typeof panelData !== 'object') {
+    return { valid: false, errors: ['resourcesPanel is null/undefined'] };
+  }
+  if (!panelData.combatMetrics || typeof panelData.combatMetrics !== 'object') errors.push('combatMetrics must be object');
+  if (!panelData.resources || typeof panelData.resources !== 'object') errors.push('resources must be object');
+  return { valid: errors.length === 0, errors };
+}
+
 export function validatePanel(panelKey, panelData) {
   const validators = {
     healthPanel: validateHealthPanel,
@@ -975,6 +987,7 @@ export function validatePanel(panelKey, panelData) {
     armorSummaryPanel: validateArmorSummaryPanel,
     equipmentLedgerPanel: validateEquipmentLedgerPanel,
     combatNotesPanel: validateCombatNotesPanel,
+    resourcesPanel: validateResourcesPanel,
     relationshipsPanel: validateRelationshipsPanel
   };
 

@@ -1,52 +1,40 @@
 {{!-- Talent Tree Graph (Stage 2) --}}
-{{!-- Inspect and select a talent node from the tree structure --}}
-
 <div class="talent-work-surface talent-stage-graph">
-
-  {{!-- Graph Header --}}
   <div class="talent-graph-header">
     <div class="talent-graph-header__title-wrap">
       <h3 class="talent-graph-header__title">
-        <i class="fa-solid fa-sitemap"></i>
+        <i class="fa-solid fa-diagram-project"></i>
         {{selectedTreeName}}
       </h3>
-      <p class="talent-graph-header__subtitle">Inspect the tree structure and select a talent to develop</p>
+      <p class="talent-graph-header__subtitle">Select a node to inspect it. Double-click a legal node or use the detail rail to choose it.</p>
     </div>
-    <button class="talent-graph-header__exit-btn" data-action="exit-tree" title="Return to tree browser">
+    <button class="talent-graph-header__exit-btn" data-role="exit-tree" type="button" title="Return to tree browser">
       <i class="fa-solid fa-arrow-left"></i> Back to Trees
     </button>
   </div>
 
-  {{!-- Graph Container --}}
   <div class="talent-graph-container">
     <div class="talent-graph-viewport">
-      {{!-- Graph will be rendered here by existing renderer --}}
-      {{!-- Nodes will have data-action="focus-talent" and data-talent-id attributes --}}
-      {{!-- CSS will apply classes like .prog-talent-node--legal, .prog-talent-node--blocked, etc. --}}
-      <div class="talent-graph-canvas" data-graph-id="{{selectedTreeId}}">
-        {{!-- Graph nodes rendered by existing chargen-talent-tree-graph.js renderer --}}
-      </div>
+      <div class="talent-tree-graph-container talent-graph-canvas" data-graph-id="{{selectedTreeId}}"></div>
     </div>
   </div>
 
-  {{!-- Legend / Node State Guide --}}
   <div class="talent-graph-legend">
     <div class="talent-legend-item">
-      <span class="talent-legend-dot talent-legend-dot--legal"></span>
-      <span class="talent-legend-label">Legal Now</span>
+      <span class="talent-legend-swatch talent-legend-swatch--owned"></span>
+      <span class="talent-legend-label">Purchased</span>
     </div>
     <div class="talent-legend-item">
-      <span class="talent-legend-dot talent-legend-dot--blocked"></span>
-      <span class="talent-legend-label">Prerequisites Unmet</span>
+      <span class="talent-legend-swatch talent-legend-swatch--default"></span>
+      <span class="talent-legend-label">Default</span>
     </div>
     <div class="talent-legend-item">
-      <span class="talent-legend-dot talent-legend-dot--owned"></span>
-      <span class="talent-legend-label">Already Owned</span>
+      <span class="talent-legend-swatch talent-legend-swatch--available"></span>
+      <span class="talent-legend-label">Meets Prereq</span>
     </div>
     <div class="talent-legend-item">
-      <span class="talent-legend-dot talent-legend-dot--selected"></span>
-      <span class="talent-legend-label">Selected This Step</span>
+      <span class="talent-legend-swatch talent-legend-swatch--blocked"></span>
+      <span class="talent-legend-label">Does Not Meet Prereq</span>
     </div>
   </div>
-
 </div>

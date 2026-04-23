@@ -18,7 +18,7 @@ const { ItemSheetV2 } = foundry.applications.sheets;
 
 export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   /** @inheritDoc */
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
     classes: ['swse', 'sheet', 'item', 'swse-app', 'swse-theme-holo'],
     position: { width: 520, height: 600 },
     window: { resizable: true },
@@ -70,6 +70,19 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     // non-cloneable class/config references (for example documentClass/TYPES),
     // which fail RenderAssertions.assertContextSerializable().
     const itemData = this.item?.toObject?.() ?? {};
+
+    // Preview-only state used when a type/branch selector changes before the
+    // sheet has finished saving. This keeps dependent selects stable without
+    // touching deprecated global FormDataExtended APIs.
+    const previewItemType = this._previewItemType ?? null;
+    const previewWeaponBranch = this._previewWeaponBranch ?? null;
+    if (previewItemType) {
+      itemData.type = previewItemType;
+    }
+    itemData.system ??= {};
+    if (previewWeaponBranch && itemData.type === 'weapon') {
+      itemData.system.meleeOrRanged = previewWeaponBranch;
+    }
 
     // Template expects this for the <form class="{{cssClass}} ..."> binding.
     const cssClasses = this.constructor.DEFAULT_OPTIONS?.classes ?? [];
@@ -172,13 +185,10 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
    * @private
    */
   async #onItemTypeChange(event) {
-    const itemType = event.currentTarget.value;
-
-    // Update the form data
-    const formData = new FormDataExtended(this.form);
-    formData.set('type', itemType);
-
-    // Re-render to update category options based on new type
+    this._previewItemType = event.currentTarget.value || null;
+    if (this._previewItemType !== 'weapon') {
+      this._previewWeaponBranch = null;
+    }
     this.render({ force: true });
   }
 
@@ -187,15 +197,10 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
    * @private
    */
   async #onMeleeOrRangedChange(event) {
-    const meleeOrRanged = event.currentTarget.value;
-    const categorySelect = this.element?.querySelector('.weapon-category-select');
+    const categorySelect = this.element?.querySelector?.('.weapon-category-select');
     if (!categorySelect) return;
 
-    // Update the form data
-    const formData = new FormDataExtended(this.form);
-    formData.set('system.meleeOrRanged', meleeOrRanged);
-
-    // Re-render to update category options
+    this._previewWeaponBranch = event.currentTarget.value || null;
     this.render({ force: true });
   }
 
@@ -399,6 +404,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   static async #onSubmitForm(event, form, formData) {
     event.preventDefault();
 
+    const app = this;
     const data = foundry.utils.expandObject(formData.object);
 
     // Normalize string lists into arrays.
@@ -428,6 +434,8 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     if (this.item?.isEmbedded && actor) {
       try {
         await ActorEngine.updateEmbeddedDocuments(actor, "Item", [{ _id: this.item.id, ...flatData }]);
+        app._previewItemType = null;
+        app._previewWeaponBranch = null;
         return;
       } catch (err) {
         console.error('[Item Sheet] Form submission failed:', err);
@@ -438,6 +446,8 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
     // @mutation-exception: Unowned item update
     // Unowned items (not on an actor) can update directly — UI-only sheet operation
-    await this.item.update(flatData); // @mutation-exception: UI-only unowned item
+    await app.item.update(flatData); // @mutation-exception: UI-only unowned item
+    app._previewItemType = null;
+    app._previewWeaponBranch = null;
   }
 }

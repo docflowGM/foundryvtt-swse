@@ -35,7 +35,7 @@ export class GearModificationApp extends ModificationModalShell {
     this.accentColor = item.flags?.swse?.accentColor || DEFAULT_GEAR_ACCENT;
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
     id: "swse-gear-modification",
     classes: ["swse", "gear-modification", "swse-theme-holo"],
     window: {

@@ -469,27 +469,52 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return this;
     }
 
+    const buildNodePath = (root, el) => {
+      if (!root || !el || root === el) return [];
+      const path = [];
+      let node = el;
+      while (node && node !== root) {
+        const parent = node.parentElement;
+        if (!parent) return null;
+        path.unshift(Array.prototype.indexOf.call(parent.children, node));
+        node = parent;
+      }
+      return node === root ? path : null;
+    };
+
+    const resolveNodePath = (root, path) => {
+      let node = root;
+      for (const index of path || []) {
+        node = node?.children?.[index] ?? null;
+        if (!node) return null;
+      }
+      return node;
+    };
+
     const captureScrollPositions = (root) => {
-      if (!root) return [];
-      const selectors = [
-        '.window-content',
-        '[data-region="summary-panel"]',
-        '[data-region="work-surface"]',
-        '[data-region="details-panel"]',
-        '[data-region="mentor-rail"]',
-        '[data-region="utility-bar"]'
-      ];
-      return selectors.map(selector => {
-        const el = root.querySelector(selector);
-        return el ? { selector, top: el.scrollTop, left: el.scrollLeft } : null;
-      }).filter(Boolean);
+      if (!(root instanceof HTMLElement)) return [];
+      const nodes = [root, ...root.querySelectorAll('*')];
+      return nodes
+        .filter(el => el instanceof HTMLElement)
+        .map(el => ({
+          el,
+          top: el.scrollTop,
+          left: el.scrollLeft
+        }))
+        .filter(snap => snap.top > 0 || snap.left > 0)
+        .map(snap => ({
+          path: buildNodePath(root, snap.el),
+          top: snap.top,
+          left: snap.left
+        }))
+        .filter(snap => Array.isArray(snap.path));
     };
 
     const restoreScrollPositions = (root, snapshots) => {
-      if (!root || !Array.isArray(snapshots)) return;
+      if (!(root instanceof HTMLElement) || !Array.isArray(snapshots) || !snapshots.length) return;
       for (const snap of snapshots) {
-        const el = root.querySelector(snap.selector);
-        if (!el) continue;
+        const el = resolveNodePath(root, snap.path);
+        if (!(el instanceof HTMLElement)) continue;
         el.scrollTop = snap.top;
         el.scrollLeft = snap.left;
       }
@@ -502,6 +527,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     console.log(`[ProgressionShell] RENDER START (#${this._renderCount}) position:`, this.position);
     const result = await super.render(...args);
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     restoreScrollPositions(this.element, scrollSnapshots);
     console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
 
@@ -529,25 +555,94 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return;
     }
 
+    const entered = await this._activateStep(this.currentStepIndex, {
+      source: 'initialization',
+      showNotification: true,
+      notificationMessage: `Failed to initialize step: ${descriptor.stepId}. Try reloading the application.`,
+    });
+
+    if (entered) {
+      swseLogger.log(`[ProgressionShell] Initialized first step: ${descriptor.stepId}`);
+    }
+  }
+
+  async _activateStep(stepIndex, options = {}) {
+    const {
+      source = 'unknown',
+      restoreIndex = null,
+      showNotification = true,
+      notificationMessage = null,
+    } = options;
+
+    const descriptor = this.steps[stepIndex];
+    if (!descriptor) {
+      swseLogger.warn(`[ProgressionShell] Cannot activate missing step at index ${stepIndex} via ${source}`);
+      return false;
+    }
+
+    const previousIndex = this.currentStepIndex;
+    const previousDescriptor = this.steps[previousIndex] ?? null;
+
+    this.currentStepIndex = stepIndex;
+    this.focusedItem = null;
+    this.progressionSession.currentStepId = descriptor.stepId ?? null;
+
     const plugin = this.stepPlugins.get(descriptor.stepId);
     if (!plugin) {
-      swseLogger.warn(`[ProgressionShell] No plugin found for step ${descriptor.stepId} during first step init`);
-      return;
+      swseLogger.warn(`[ProgressionShell] No plugin found for step ${descriptor.stepId} via ${source}`);
+      this.utilityBar.setConfig({ mode: 'minimal' });
+      return true;
     }
 
     try {
       await plugin.onStepEnter(this);
-      // Mark step as visited
+
       if (!this.progressionSession.visitedStepIds.includes(descriptor.stepId)) {
         this.progressionSession.visitedStepIds.push(descriptor.stepId);
       }
-      swseLogger.log(`[ProgressionShell] Initialized first step: ${descriptor.stepId}`);
+
+      this.mentor.currentDialogue = plugin.getMentorContext(this);
+      this.mentor.askMentorEnabled = plugin.getMentorMode() !== null;
+      this.mentor.mentorMode = plugin.getMentorMode();
+      this.utilityBar.setConfig(plugin.getUtilityBarConfig());
+      return true;
     } catch (err) {
-      swseLogger.error(`[ProgressionShell] Error initializing first step ${descriptor.stepId}:`, err);
-      // Report error but don't throw — allow UI to render and show error state
-      ui?.notifications?.error?.(
-        `Failed to initialize step: ${descriptor.stepId}. Try reloading the application.`
-      );
+      swseLogger.error(`[ProgressionShell] Error entering step ${descriptor.stepId} via ${source}:`, err);
+      this.lastError = err?.message || String(err);
+
+      const fallbackIndex = Number.isInteger(restoreIndex) ? restoreIndex : previousIndex;
+      const hasFallback = fallbackIndex >= 0 && fallbackIndex < this.steps.length;
+      if (hasFallback) {
+        this.currentStepIndex = fallbackIndex;
+        this.progressionSession.currentStepId = this.steps[fallbackIndex]?.stepId ?? null;
+
+        const fallbackPlugin = this.stepPlugins.get(this.steps[fallbackIndex]?.stepId);
+        if (fallbackPlugin) {
+          try {
+            this.mentor.currentDialogue = fallbackPlugin.getMentorContext(this);
+            this.mentor.askMentorEnabled = fallbackPlugin.getMentorMode() !== null;
+            this.mentor.mentorMode = fallbackPlugin.getMentorMode();
+            this.utilityBar.setConfig(fallbackPlugin.getUtilityBarConfig());
+          } catch (fallbackErr) {
+            swseLogger.warn('[ProgressionShell] Failed to restore fallback step state after activation error', {
+              attemptedStep: descriptor.stepId,
+              fallbackStep: this.steps[fallbackIndex]?.stepId ?? null,
+              error: fallbackErr?.message || String(fallbackErr),
+            });
+          }
+        }
+      } else if (previousDescriptor) {
+        this.currentStepIndex = previousIndex;
+        this.progressionSession.currentStepId = previousDescriptor.stepId ?? null;
+      }
+
+      if (showNotification) {
+        ui?.notifications?.error?.(
+          notificationMessage
+          || `Failed to load ${descriptor?.label || descriptor?.stepId}. Returning to previous step.`
+        );
+      }
+      return false;
     }
   }
 
@@ -560,10 +655,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const olSalty = Object.values(MENTORS_DATA).find(m => m?.id === 'ol-salty');
 
     this.mentor = {
+      id: 'ol-salty',
       mentorId: 'ol-salty',
-      name: olSalty?.name ?? "Ol' Salty",
-      title: olSalty?.title ?? 'Seasoned Spacer',
-      portrait: olSalty?.portrait ?? 'systems/foundryvtt-swse/assets/mentors/salty.png',
+      name: olSalty?.name || "Ol' Salty",
+      title: olSalty?.title || 'Seasoned Spacer',
+      portrait: olSalty?.portrait || 'systems/foundryvtt-swse/assets/mentors/salty.png',
       currentDialogue: '',
       pendingDialogue: null,
       isAnimating: false,
@@ -897,16 +993,36 @@ export class ProgressionShell extends SWSEApplicationV2 {
     diagnostics.detectInvalidStepData(currentDescriptor?.stepId ?? 'unknown', stepData);
 
     // Render work surface
-    const workSurfaceSpec = currentPlugin?.renderWorkSurface?.(stepData) ?? null;
-    const workSurfaceHtml = workSurfaceSpec?.template
-      ? await foundry.applications.handlebars.renderTemplate(workSurfaceSpec.template, workSurfaceSpec.data)
-      : null;
+    let workSurfaceSpec = null;
+    let workSurfaceHtml = null;
+    try {
+      workSurfaceSpec = currentPlugin?.renderWorkSurface?.(stepData) ?? null;
+      workSurfaceHtml = workSurfaceSpec?.template
+        ? await foundry.applications.handlebars.renderTemplate(workSurfaceSpec.template, workSurfaceSpec.data)
+        : null;
+    } catch (error) {
+      console.error('[ProgressionShell] Work surface render failed, falling back to error surface:', error);
+      workSurfaceHtml = await foundry.applications.handlebars.renderTemplate(
+        'systems/foundryvtt-swse/templates/apps/progression-framework/steps/step-error-surface.hbs',
+        {
+          stepLabel: currentDescriptor?.label || currentDescriptor?.stepId || 'Current Step',
+          errorMessage: error?.message || 'This step could not be rendered.',
+          canContinue: currentPlugin?.getBlockingIssues?.()?.length === 0,
+        }
+      );
+    }
 
     // Rule 8.3: Detect blank template
     if (!workSurfaceHtml) {
       diagnostics.detectBlankTemplate(currentDescriptor?.stepId ?? 'unknown', workSurfaceHtml);
-      // Show placeholder UI
-      const placeholder = HydrationRecoveryStrategies.generatePlaceholderHTML();
+      workSurfaceHtml = await foundry.applications.handlebars.renderTemplate(
+        'systems/foundryvtt-swse/templates/apps/progression-framework/steps/step-error-surface.hbs',
+        {
+          stepLabel: currentDescriptor?.label || currentDescriptor?.stepId || 'Current Step',
+          errorMessage: 'This step returned no content. You can go back and try again.',
+          canContinue: currentPlugin?.getBlockingIssues?.()?.length === 0,
+        }
+      );
     }
 
     diagnostics.detectSpeciesRowsMissingIds(currentDescriptor?.stepId, workSurfaceHtml);
@@ -924,8 +1040,20 @@ export class ProgressionShell extends SWSEApplicationV2 {
       focusedItem_id: this.focusedItem?.id ?? '(null)',
     });
 
-    const detailsPanelSpec = currentPlugin?.renderDetailsPanel(this.focusedItem)
-      ?? { template: null, data: {} };
+    let detailsPanelSpec = { template: null, data: {} };
+    try {
+      detailsPanelSpec = currentPlugin?.renderDetailsPanel(this.focusedItem)
+        ?? { template: null, data: {} };
+    } catch (error) {
+      console.error('[ProgressionShell] Details rail render failed, falling back to empty state:', error);
+      detailsPanelSpec = {
+        template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/empty-state.hbs',
+        data: {
+          title: 'Details unavailable',
+          body: 'This selection could not be rendered. You can still change steps or double-click to commit where supported.'
+        }
+      };
+    }
 
     // [DEBUG] Log template spec
     ProgressionDebugCapture.log('Progression Debug', `[Render #${renderNum}] renderDetailsPanel() returned`, {
@@ -960,12 +1088,18 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // REFACTOR: Now uses canonical SelectedRailContext instead of per-step renderSummaryPanel
     // FIXED: Now properly awaits async buildSnapshot to include adapter contributions
     const selectedRailContext = await SelectedRailContext.buildSnapshot(this, currentDescriptor?.stepId ?? null);
-    const summaryPanelHtml = selectedRailContext && selectedRailContext.snapshotSections.length > 0
-      ? await foundry.applications.handlebars.renderTemplate(
-          'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/selected-rail.hbs',
-          selectedRailContext
-        )
-      : null;
+    let summaryPanelHtml = null;
+    try {
+      summaryPanelHtml = selectedRailContext && selectedRailContext.snapshotSections.length > 0
+        ? await foundry.applications.handlebars.renderTemplate(
+            'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/selected-rail.hbs',
+            selectedRailContext
+          )
+        : null;
+    } catch (error) {
+      console.error('[ProgressionShell] Summary rail render failed, falling back to blank rail:', error);
+      summaryPanelHtml = null;
+    }
 
     // ── DEBUG: shell region ownership verification ──
     const isIntroMode = currentDescriptor?.stepId === 'intro';
@@ -1194,32 +1328,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.progressRail.afterRender(html.querySelector('[data-region="progress-rail"]'));
     this.utilityBar.afterRender(html.querySelector('[data-region="utility-bar"]'));
 
-    // Auto-speak only on actual step change — NOT on every full render
+    // Notify current step plugin that render completed BEFORE mentor speech.
+    // This keeps detail hydration, click handlers, and selection state responsive
+    // while the mentor animation is still playing.
     const descriptor = this.steps[this.currentStepIndex];
-
-    // [DEBUG] Translation bootstrap tracking
-    console.log('[SWSE Translation Debug] [_onRender] speakForStep check', {
-      descriptor_exists: !!descriptor,
-      descriptor_stepId: descriptor?.stepId ?? '(null)',
-      lastSpokenStepId: this._lastSpokenStepId ?? '(null)',
-      condition_result: descriptor && descriptor.stepId !== this._lastSpokenStepId,
-      will_call_speak: descriptor && descriptor.stepId !== this._lastSpokenStepId,
-    });
-
-    if (descriptor && descriptor.stepId !== this._lastSpokenStepId) {
-      console.log('[SWSE Translation Debug] [_onRender] CALLING speakForStep()', {
-        stepId: descriptor.stepId,
-      });
-      this._lastSpokenStepId = descriptor.stepId;
-      await this.mentorRail.speakForStep(descriptor);
-      console.log('[SWSE Translation Debug] [_onRender] speakForStep() COMPLETED');
-    } else {
-      console.log('[SWSE Translation Debug] [_onRender] SKIPPING speakForStep() — condition false or already spoken', {
-        reason: !descriptor ? 'no descriptor' : 'already spoken',
-      });
-    }
-
-    // Notify current step plugin that render completed
     if (descriptor) {
       const plugin = this.stepPlugins.get(descriptor.stepId);
       if (plugin) {
@@ -1233,6 +1345,36 @@ export class ProgressionShell extends SWSEApplicationV2 {
           swseLogger.error('ProgressionShell: plugin.afterRender failed', { err })
         );
       }
+    }
+
+    // Auto-speak only on actual step change — NOT on every full render.
+    // IMPORTANT: do not await this animation path. Blocking here prevents
+    // the player from clicking items or seeing hydrated details until the
+    // mentor finishes talking.
+    console.log('[SWSE Translation Debug] [_onRender] speakForStep check', {
+      descriptor_exists: !!descriptor,
+      descriptor_stepId: descriptor?.stepId ?? '(null)',
+      lastSpokenStepId: this._lastSpokenStepId ?? '(null)',
+      condition_result: descriptor && descriptor.stepId !== this._lastSpokenStepId,
+      will_call_speak: descriptor && descriptor.stepId !== this._lastSpokenStepId,
+    });
+
+    if (descriptor && descriptor.stepId !== this._lastSpokenStepId) {
+      console.log('[SWSE Translation Debug] [_onRender] CALLING speakForStep()', {
+        stepId: descriptor.stepId,
+      });
+      this._lastSpokenStepId = descriptor.stepId;
+      void this.mentorRail.speakForStep(descriptor)
+        .then(() => {
+          console.log('[SWSE Translation Debug] [_onRender] speakForStep() COMPLETED');
+        })
+        .catch(err => {
+          swseLogger.error('ProgressionShell: mentorRail.speakForStep failed', { err });
+        });
+    } else {
+      console.log('[SWSE Translation Debug] [_onRender] SKIPPING speakForStep() — condition false or already spoken', {
+        reason: !descriptor ? 'no descriptor' : 'already spoken',
+      });
     }
   }
 
@@ -1309,14 +1451,23 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @param {number} stepIndex
    * @param {Object} options — { source: string }
    */
-  navigateToStep(stepIndex, { source = 'unknown' } = {}) {
+  async navigateToStep(stepIndex, { source = 'unknown' } = {}) {
     if (stepIndex < 0 || stepIndex >= this.steps.length) return;
     if (stepIndex >= this.currentStepIndex) return; // forward nav blocked
-    // Future: plugin onStepExit hook, validation checks
-    this.currentStepIndex = stepIndex;
-    this.progressionSession.currentStepId = this.steps[stepIndex]?.stepId ?? null;
-    const currentPlugin = this.stepPlugins.get(this.steps[stepIndex]?.stepId);
-    if (currentPlugin) this.utilityBar.setConfig(currentPlugin.getUtilityBarConfig());
+
+    const currentDescriptor = this.steps[this.currentStepIndex];
+    const currentPlugin = this.stepPlugins.get(currentDescriptor?.stepId);
+    if (currentPlugin?.onStepExit) {
+      try {
+        await currentPlugin.onStepExit(this);
+      } catch (err) {
+        swseLogger.warn(`[ProgressionShell] Step exit failed during backward navigation from ${currentDescriptor?.stepId}:`, err);
+      }
+    }
+
+    const entered = await this._activateStep(stepIndex, { source, restoreIndex: this.currentStepIndex });
+    if (!entered) return;
+
     void this._persistSessionSnapshot(this.progressionSession.currentStepId);
     this.render();
   }
@@ -1589,7 +1740,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (!stepId) return;
     const stepIndex = this.steps.findIndex(d => d.stepId === stepId);
     if (stepIndex < 0 || stepIndex >= this.currentStepIndex) return; // can only go back
-    this.navigateToStep(stepIndex, { source: 'footer-chip' });
+    await this.navigateToStep(stepIndex, { source: 'footer-chip' });
   }
 
   async _onNextStep(event, target) {
@@ -1603,7 +1754,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const currentPlugin = this.stepPlugins.get(currentDescriptor?.stepId);
 
     if (currentPlugin) {
-      const blockingIssues = currentPlugin.getBlockingIssues();
+      let blockingIssues = [];
+      try {
+        blockingIssues = currentPlugin.getBlockingIssues?.() ?? [];
+      } catch (err) {
+        swseLogger.error(`[ProgressionShell] getBlockingIssues failed for ${currentDescriptor?.stepId}:`, err);
+        blockingIssues = ['This step could not be validated. Please try again.'];
+      }
       if (blockingIssues.length > 0) {
         ui.notifications.warn(blockingIssues[0]);
         return;
@@ -1627,36 +1784,19 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return;
     }
 
-    this.currentStepIndex = nextApplicableIndex;
-    this.focusedItem = null;
-
-    const nextDescriptor = this.steps[this.currentStepIndex];
-    this.progressionSession.currentStepId = nextDescriptor?.stepId ?? null;
-    const nextPlugin = this.stepPlugins.get(nextDescriptor?.stepId);
-    if (nextPlugin) {
-      try {
-        await nextPlugin.onStepEnter(this);
-        // Mark step as visited
-        if (!this.progressionSession.visitedStepIds.includes(nextDescriptor.stepId)) {
-          this.progressionSession.visitedStepIds.push(nextDescriptor.stepId);
-        }
-        this.mentor.currentDialogue = nextPlugin.getMentorContext(this);
-        this.mentor.askMentorEnabled = nextPlugin.getMentorMode() !== null;
-        this.mentor.mentorMode = nextPlugin.getMentorMode();
-      } catch (err) {
-        swseLogger.error(`[ProgressionShell] Error entering step ${nextDescriptor?.stepId}:`, err);
-        this.lastError = err.message;
-        this.currentStepIndex = nextApplicableIndex > 0 ? nextApplicableIndex - 1 : 0;  // Go back to previous applicable step
-        ui?.notifications?.error?.(`Failed to load ${nextDescriptor?.label}. Returning to previous step.`);
-        return;
-      }
+    const entered = await this._activateStep(nextApplicableIndex, {
+      source: 'next-step',
+      restoreIndex: this.currentStepIndex,
+    });
+    if (!entered) {
+      return;
     }
 
     void this._persistSessionSnapshot(this.progressionSession.currentStepId);
     this.render();
   }
 
-  _onPreviousStep(event, target) {
+  async _onPreviousStep(event, target) {
     // Prevent back-navigation past minimum step (used when starting from splash at species, etc.)
     const minIndex = this._minStepIndex ?? 0;
     if (this.currentStepIndex <= minIndex) {
@@ -1666,7 +1806,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     const currentDescriptor = this.steps[this.currentStepIndex];
     const currentPlugin = this.stepPlugins.get(currentDescriptor?.stepId);
-    currentPlugin?.onStepExit(this);
+    if (currentPlugin?.onStepExit) {
+      try {
+        await currentPlugin.onStepExit(this);
+      } catch (err) {
+        swseLogger.warn(`[ProgressionShell] Step exit failed during previous-step navigation from ${currentDescriptor?.stepId}:`, err);
+      }
+    }
 
     // Auto-skip to previous applicable step
     const prevApplicableIndex = this._findPreviousApplicableStep(this.currentStepIndex - 1, minIndex);
@@ -1675,22 +1821,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return;
     }
 
-    this.currentStepIndex = prevApplicableIndex;
-    this.focusedItem = null;
-
-    const prevDescriptor = this.steps[this.currentStepIndex];
-    this.progressionSession.currentStepId = prevDescriptor?.stepId ?? null;
-    const prevPlugin = this.stepPlugins.get(prevDescriptor?.stepId);
-    if (prevPlugin) {
-      prevPlugin.onStepEnter(this);
-      // Mark step as visited
-      if (!this.progressionSession.visitedStepIds.includes(prevDescriptor.stepId)) {
-        this.progressionSession.visitedStepIds.push(prevDescriptor.stepId);
-      }
-      this.mentor.currentDialogue = prevPlugin.getMentorContext(this);
-      this.mentor.askMentorEnabled = prevPlugin.getMentorMode() !== null;
-      this.mentor.mentorMode = prevPlugin.getMentorMode();
-      this.utilityBar.setConfig(prevPlugin.getUtilityBarConfig());
+    const entered = await this._activateStep(prevApplicableIndex, {
+      source: 'previous-step',
+      restoreIndex: this.currentStepIndex,
+    });
+    if (!entered) {
+      return;
     }
 
     void this._persistSessionSnapshot(this.progressionSession.currentStepId);

@@ -42,17 +42,21 @@ function ensureId(obj, prefix = 'item') {
   const id = obj._id || obj.id;
   if (id) {return id;}
 
-  // STRICT: No fallback ID generation
-  // Missing IDs indicate compendium data quality issues
-  // Engine should fail loudly so GM fixes the source
   const logger = globalThis.swseLogger || console;
-  logger.error(`[StoreEngine] Item has no canonical ID. Fix compendium data:`, {
+  const slugSource = String(obj.name || obj.type || 'unknown')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'unknown';
+  const fallbackId = `${prefix}-${slugSource}`;
+
+  logger.warn(`[StoreEngine] Item has no canonical ID. Using fallback ID for runtime hydration:`, {
     name: obj.name || 'Unknown',
     type: obj.type || 'unknown',
-    source: obj.pack || 'world'
+    source: obj.pack || 'world',
+    fallbackId
   });
 
-  throw new Error(`SSOT Violation: Item "${obj.name || 'Unknown'}" (${obj.type || 'unknown'}) has no ID. Compendium data must have canonical id or _id field.`);
+  return fallbackId;
 }
 
 /* ----------------------------------------------- */

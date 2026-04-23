@@ -10,7 +10,7 @@
   <div class="swse-action-tabs">
     {{#each tabs as |tab|}}
       <div class="swse-action-tab {{#if (eq ../currentTab tab)}}active{{/if}}"
-           data-tab="{{tab}}">
+           data-swse-tab="{{tab}}">
         {{#if (eq tab "character")}}Character Actions{{/if}}
         {{#if (eq tab "vehicle")}}Vehicle Actions{{/if}}
       </div>

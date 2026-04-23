@@ -3,7 +3,7 @@
  */
 
 import { createStepDescriptor, StepCategory, StepType } from '../steps/step-descriptor.js';
-import { SkillStep } from '../steps/skills-step.js';
+import { SkillsStep } from '../steps/skills-step.js';
 import { ForcePowerStep } from '../steps/force-power-step.js';
 import { ForceSecretStep } from '../steps/force-secret-step.js';
 import { ForceTechniqueStep } from '../steps/force-technique-step.js';
@@ -133,7 +133,7 @@ export class ConditionalStepResolver {
 }
 
 const CONDITIONAL_STEP_CONFIG = {
-  [ConditionalStepKey.SKILLS]: { label: 'Skills', icon: 'fa-graduation-cap', type: StepType.SELECTION, isSkippable: false, pluginClass: SkillStep },
+  [ConditionalStepKey.SKILLS]: { label: 'Skills', icon: 'fa-graduation-cap', type: StepType.SELECTION, isSkippable: false, pluginClass: SkillsStep },
   [ConditionalStepKey.FORCE_POWERS]: { label: 'Force Powers', icon: 'fa-hand-sparkles', type: StepType.SELECTION, isSkippable: false, pluginClass: ForcePowerStep },
   [ConditionalStepKey.FORCE_SECRETS]: { label: 'Force Secrets', icon: 'fa-eye-slash', type: StepType.SELECTION, isSkippable: false, pluginClass: ForceSecretStep },
   [ConditionalStepKey.FORCE_TECHNIQUES]: { label: 'Force Techniques', icon: 'fa-book-sparkles', type: StepType.SELECTION, isSkippable: false, pluginClass: ForceTechniqueStep },

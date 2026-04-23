@@ -37,84 +37,160 @@ export class DefenseCalculator {
       return this._emptyResult();
     }
 
-    const derivedAttrs = actor.system.derived?.attributes ?? {};
-
-    const strMod = derivedAttrs.str?.mod ?? 0;
-    const dexMod = derivedAttrs.dex?.mod ?? 0;
-    const conMod = derivedAttrs.con?.mod ?? 0;
-    const wisMod = derivedAttrs.wis?.mod ?? 0;
-
     const heroicLevel = getHeroicLevel(actor) ?? 0;
-
     const safeClassLevels = Array.isArray(classLevels) ? classLevels : [];
+    const defensesState = actor.system?.defenses ?? {};
+    const abilitiesState = actor.system?.abilities ?? {};
+    const isDroidActor = !!actor.system?.isDroid;
 
-    const [fortBonus, refBonus, willBonus] = await Promise.all([
+    const [computedFortClassBonus, computedRefClassBonus, computedWillClassBonus] = await Promise.all([
       this._getSaveBonus(safeClassLevels, 'fort'),
       this._getSaveBonus(safeClassLevels, 'ref'),
       this._getSaveBonus(safeClassLevels, 'will')
     ]);
 
-    const isDroidActor = !!actor.system?.isDroid;
-    const fortAbility = isDroidActor ? strMod : conMod;
-
     const adjustments = options?.adjustments ?? {};
-    const fortAdjust = adjustments.fort ?? 0;
-    const refAdjust = adjustments.ref ?? 0;
-    const willAdjust = adjustments.will ?? 0;
+    const fortAdjust = Number(adjustments.fort ?? 0) || 0;
+    const refAdjust = Number(adjustments.ref ?? 0) || 0;
+    const willAdjust = Number(adjustments.will ?? 0) || 0;
 
-    // PHASE 4: Get state-dependent modifiers
     const fortStateBonus = await this._getStateModifiers(actor, 'fortitude', context);
     const refStateBonus = await this._getStateModifiers(actor, 'reflex', context);
     const willStateBonus = await this._getStateModifiers(actor, 'will', context);
 
-    // PHASE 10+: Armor handling for Reflex Defense
-    // If armored and no Armor Defense/Improved Armor Defense feat:
-    // armor's Reflex Defense replaces heroic-level contribution
-    const hasArmorDefenseFeat = actor.items?.some(item =>
-      ['Armored Defense', 'Improved Armored Defense'].includes(item.name)
-    ) ?? false;
+    const equippedArmor = actor.items?.find(item => item.type === 'armor' && item.system?.equipped) ?? null;
+    const hasArmoredDefense = actor.items?.some(item => item.name === 'Armored Defense') ?? false;
+    const hasImprovedArmoredDefense = actor.items?.some(item => item.name === 'Improved Armored Defense') ?? false;
 
-    const equippedArmor = actor.items?.find(item =>
-      item.type === 'armor' && item.system?.equipped
-    );
+    const getAbilityMod = (abilityKey, fallback = 0) => {
+      const key = String(abilityKey || '').toLowerCase();
+      const derivedMod = actor.system?.derived?.attributes?.[key]?.mod;
+      if (Number.isFinite(Number(derivedMod))) return Number(derivedMod);
 
-    let reflexLevelTerm = heroicLevel;
-    if (equippedArmor && !hasArmorDefenseFeat) {
-      // Armor's Reflex replaces heroic-level contribution
-      reflexLevelTerm = equippedArmor.system.reflexBonus ?? 0;
-    }
-
-    // Simple formula for Fort, Will (no armor dependency)
-    const calcSimpleDefense = (classBonus, abilityMod, adjustment, stateBonus) => {
-      const base = 10 + heroicLevel + classBonus + abilityMod;
-      const total = Math.max(1, base + adjustment + stateBonus);
-      return { base, total, adjustment, stateBonus };
+      const ability = abilitiesState?.[key] ?? {};
+      const total = Number(ability.total ?? ((ability.base ?? 10) + (ability.racial ?? 0) + (ability.enhancement ?? 0) + (ability.temp ?? 0)));
+      if (!Number.isFinite(total)) return fallback;
+      return Math.floor((total - 10) / 2);
     };
 
-    // Reflex with armor handling
-    const reflexBase = 10 + reflexLevelTerm + refBonus;
-    const reflexTotal = Math.max(1, reflexBase + dexMod + refAdjust + refStateBonus);
+    const getMiscBonus = (defenseState) => {
+      let total = 0;
+      if (defenseState?.misc?.auto && typeof defenseState.misc.auto === 'object') {
+        for (const value of Object.values(defenseState.misc.auto)) {
+          total += Number(value || 0);
+        }
+      }
+      total += Number(defenseState?.misc?.user?.extra ?? 0) || 0;
+      return total;
+    };
 
-    // Flat-Footed: same as Reflex but without DEX modifier
-    const flatFootedBase = 10 + reflexLevelTerm + refBonus;
-    const flatFootedTotal = Math.max(1, flatFootedBase + 0 + refAdjust + refStateBonus);
+    const getConditionPenalty = () => {
+      const derivedPenalty = actor.system?.derived?.damage?.conditionPenalty;
+      if (Number.isFinite(Number(derivedPenalty))) return Number(derivedPenalty);
+      const step = Number(actor.system?.conditionTrack?.current ?? 0) || 0;
+      const penalties = [0, -1, -2, -5, -10, 0];
+      return penalties[step] ?? 0;
+    };
+
+    const conditionPenalty = getConditionPenalty();
+
+    const reflexState = defensesState?.reflex ?? {};
+    const fortitudeState = defensesState?.fortitude ?? {};
+    const willState = defensesState?.will ?? {};
+
+    const reflexAbilityKey = String(reflexState.ability || 'dex').toLowerCase();
+    let reflexAbilityMod = getAbilityMod(reflexAbilityKey, 0);
+    const reflexClassBonus = Number(reflexState.classBonus ?? computedRefClassBonus) || 0;
+    const reflexMiscBonus = getMiscBonus(reflexState);
+    const reflexArmorBonus = Number(reflexState.armor ?? equippedArmor?.system?.defenseBonus ?? equippedArmor?.system?.armorBonus ?? 0) || 0;
+    if (equippedArmor) {
+      const maxAbilityBonus = Number(equippedArmor.system?.maxDexBonus);
+      if (Number.isFinite(maxAbilityBonus)) {
+        reflexAbilityMod = Math.min(reflexAbilityMod, maxAbilityBonus);
+      }
+    }
+    let reflexLevelTerm = heroicLevel;
+    if (equippedArmor) {
+      if (hasImprovedArmoredDefense) {
+        reflexLevelTerm = Math.max(heroicLevel + Math.floor(reflexArmorBonus / 2), reflexArmorBonus);
+      } else if (hasArmoredDefense) {
+        reflexLevelTerm = Math.max(heroicLevel, reflexArmorBonus);
+      } else {
+        reflexLevelTerm = reflexArmorBonus;
+      }
+    }
+    const reflexBase = 10 + reflexLevelTerm + reflexClassBonus;
+    const reflexTotal = Math.max(1, reflexBase + reflexAbilityMod + reflexMiscBonus + refStateBonus + refAdjust + conditionPenalty);
+
+    const fortDefaultAbility = isDroidActor ? 'str' : 'con';
+    const fortAbilityKey = String(fortitudeState.ability || fortDefaultAbility).toLowerCase();
+    const fortAbilityMod = getAbilityMod(fortAbilityKey, 0);
+    const fortClassBonus = Number(fortitudeState.classBonus ?? computedFortClassBonus) || 0;
+    const fortMiscBonus = getMiscBonus(fortitudeState);
+    const fortArmorBonus = Number(equippedArmor?.system?.equipmentBonus ?? equippedArmor?.system?.fortBonus ?? 0) || 0;
+    const fortBase = 10 + heroicLevel + fortClassBonus + fortAbilityMod + fortArmorBonus;
+    const fortTotal = Math.max(1, fortBase + fortMiscBonus + fortStateBonus + fortAdjust + conditionPenalty);
+
+    const willAbilityKey = String(willState.ability || 'wis').toLowerCase();
+    const willAbilityMod = getAbilityMod(willAbilityKey, 0);
+    const willClassBonus = Number(willState.classBonus ?? computedWillClassBonus) || 0;
+    const willMiscBonus = getMiscBonus(willState);
+    const willBase = 10 + heroicLevel + willClassBonus + willAbilityMod;
+    const willTotal = Math.max(1, willBase + willMiscBonus + willStateBonus + willAdjust + conditionPenalty);
+
+    const flatFootedBase = reflexBase;
+    const flatFootedTotal = Math.max(1, reflexTotal - reflexAbilityMod);
 
     return {
-      fortitude: calcSimpleDefense(fortBonus, fortAbility, fortAdjust, fortStateBonus),
+      fortitude: {
+        base: fortBase,
+        total: fortTotal,
+        adjustment: fortAdjust,
+        stateBonus: fortStateBonus,
+        classBonus: fortClassBonus,
+        miscBonus: fortMiscBonus,
+        armorBonus: fortArmorBonus,
+        abilityKey: fortAbilityKey,
+        abilityMod: fortAbilityMod,
+        conditionPenalty
+      },
       reflex: {
         base: reflexBase,
         total: reflexTotal,
         adjustment: refAdjust,
         stateBonus: refStateBonus,
-        armorContribution: equippedArmor ? reflexLevelTerm : null
+        classBonus: reflexClassBonus,
+        miscBonus: reflexMiscBonus,
+        armorBonus: reflexArmorBonus,
+        armorContribution: reflexLevelTerm,
+        abilityKey: reflexAbilityKey,
+        abilityMod: reflexAbilityMod,
+        conditionPenalty
       },
-      will: calcSimpleDefense(willBonus, wisMod, willAdjust, willStateBonus),
+      will: {
+        base: willBase,
+        total: willTotal,
+        adjustment: willAdjust,
+        stateBonus: willStateBonus,
+        classBonus: willClassBonus,
+        miscBonus: willMiscBonus,
+        armorBonus: 0,
+        abilityKey: willAbilityKey,
+        abilityMod: willAbilityMod,
+        conditionPenalty
+      },
       flatFooted: {
         base: flatFootedBase,
         total: flatFootedTotal,
         adjustment: refAdjust,
         stateBonus: refStateBonus,
-        armorContribution: equippedArmor ? reflexLevelTerm : null
+        classBonus: reflexClassBonus,
+        miscBonus: reflexMiscBonus,
+        armorBonus: reflexArmorBonus,
+        armorContribution: reflexLevelTerm,
+        abilityKey: reflexAbilityKey,
+        abilityMod: 0,
+        conditionPenalty
       }
     };
   }

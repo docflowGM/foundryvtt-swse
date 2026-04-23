@@ -34,8 +34,7 @@ export class StockDroidConversionDialog extends HandlebarsApplicationMixin(Appli
     this.actor = options.actor || null;
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    ApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(ApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       classes: ['swse', 'stock-droid-conversion-dialog', 'swse-app'],
       width: 700,

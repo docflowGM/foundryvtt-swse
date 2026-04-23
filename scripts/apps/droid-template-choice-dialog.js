@@ -26,8 +26,7 @@ export class DroidTemplateChoiceDialog extends HandlebarsApplicationMixin(Applic
     this.droidActor = options.droidActor || null; // Temporary actor to pass through
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    ApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(ApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       classes: ['swse', 'droid-template-choice', 'swse-app'],
       width: 700,

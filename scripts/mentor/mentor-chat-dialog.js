@@ -102,7 +102,7 @@ const CHAT_TOPICS = [
 ];
 
 export class MentorChatDialog extends SWSEFormApplicationV2 {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
       id: 'mentor-chat-dialog',
       classes: ['swse', 'mentor-chat-dialog'],
       template: 'systems/foundryvtt-swse/templates/apps/mentor-chat-dialog.hbs',

@@ -83,11 +83,11 @@ export class SkillsStep extends ProgressionStepPlugin {
       this._allowedCount = this._resolveAllowedSkillCount(shell, character);
     }
 
-    // Load existing skill selections if any
-    const existingSkills = character.skills || {};
-    for (const [key, skillData] of Object.entries(existingSkills)) {
-      this._trainedSkills.set(key, { ...skillData });
-    }
+    // Load existing skill selections from canonical progression state first.
+    // In chargen we intentionally do NOT seed from actor.system.skills because
+    // base actor documents may contain default skill keys that would make every
+    // skill appear legal or preselected.
+    this._seedExistingSkills(shell, character);
 
     // Count current trained
     this._trainedCount = Array.from(this._trainedSkills.values())
@@ -450,7 +450,7 @@ renderDetailsPanel(focusedItem) {
       category: skill.category || null,
       isClassSkill: !!skill.isClassSkill,
       isBackgroundSkill: !!skill.isBackgroundSkill,
-      trained: !!this._trainedSkills.get(skill.key)?.trained,
+      trained: !!this._getSkillSelectionState(skill)?.trained,
     },
   };
 }
@@ -527,6 +527,49 @@ renderDetailsPanel(focusedItem) {
 
 
 
+
+  _seedExistingSkills(shell, character) {
+    this._trainedSkills = new Map();
+
+    const rawSelection =
+      shell?.progressionSession?.draftSelections?.skills
+      ?? shell?.progressionSession?.getSelection?.('skills')
+      ?? shell?.committedSelections?.get?.('skills')
+      ?? shell?.buildIntent?.getSelection?.('skills')
+      ?? null;
+
+    const seededKeys = new Set(this._extractTrainedSkillKeys(rawSelection));
+
+    if (!this.isChargen(shell)) {
+      const actorSkills = character?.skills || {};
+      for (const [key, skillData] of Object.entries(actorSkills)) {
+        if (skillData?.trained === true) {
+          seededKeys.add(key);
+        }
+      }
+    }
+
+    for (const key of seededKeys) {
+      this._trainedSkills.set(key, { trained: true });
+    }
+  }
+
+  _extractTrainedSkillKeys(rawSelection) {
+    const normalized = normalizeSkills(rawSelection);
+    if (!normalized?.trained || !Array.isArray(normalized.trained)) {
+      return [];
+    }
+
+    const unique = new Map();
+    for (const key of normalized.trained) {
+      const normalizedKey = this._skillLookupKey(key);
+      if (!normalizedKey || unique.has(normalizedKey)) continue;
+      unique.set(normalizedKey, key);
+    }
+
+    return Array.from(unique.values());
+  }
+
   _resolveAllowedSkillCount(shell, character) {
     const classModel = resolveSelectedClassFromShell(shell) || this._resolveSelectedClassData(
       shell?.progressionSession?.getSelection?.('class')
@@ -542,17 +585,38 @@ renderDetailsPanel(focusedItem) {
       ?? 0
     ) || 0;
 
-    const intMod = Number(
-      character?.abilities?.int?.mod
-      ?? character?.abilities?.int?.modifier
-      ?? 0
-    ) || 0;
+    const attributeSelection =
+      shell?.progressionSession?.getSelection?.('attributes')
+      || shell?.committedSelections?.get?.('attributes')
+      || shell?.buildIntent?.toCharacterData?.()?.abilityIncreases
+      || null;
+
+    const selectedInt = Number(
+      attributeSelection?.values?.int
+      ?? attributeSelection?.int
+      ?? character?.abilities?.int?.base
+      ?? character?.abilities?.int?.value
+      ?? character?.abilities?.int?.total
+      ?? character?.attributes?.int?.value
+      ?? 10
+    ) || 10;
 
     const speciesSelection =
       shell?.progressionSession?.getSelection?.('species')
       || shell?.committedSelections?.get?.('species')
       || shell?.buildIntent?.toCharacterData?.()?.species
       || null;
+
+    const speciesAbilityScores = speciesSelection?.abilityScores || speciesSelection?.system?.abilityScores || {};
+    const speciesIntBonus = Number(
+      speciesAbilityScores.int
+      ?? speciesAbilityScores.Intelligence
+      ?? speciesAbilityScores.intelligence
+      ?? 0
+    ) || 0;
+
+    const finalIntScore = selectedInt + speciesIntBonus;
+    const intMod = Math.floor((finalIntScore - 10) / 2);
 
     const speciesName = String(
       speciesSelection?.name
@@ -581,63 +645,51 @@ renderDetailsPanel(focusedItem) {
 
     const classModel = this._resolveSelectedClassData(classSelection);
 
-    // PHASE 3: Use canonical class model for class skills
     const classSkillRefs = classModel ? getClassSkills(classModel) : [];
     const classSkillMatches = this._matchSkillsFromRefs(classSkillRefs);
-
-    if (!classModel || classSkillMatches.length === 0) {
-      return {
-        mode: 'fallback-full-chart',
-        fallbackReason: !classModel
-          ? 'selected-class-unresolved'
-          : 'selected-class-produced-zero-skill-matches',
-        classSkillRefs: classSkillRefs.length,
-        classSkillMatches: classSkillMatches.length,
-        backgroundSkillRefs: 0,
-        backgroundSkillMatches: 0,
-        trainedSelectionMatches: 0,
-        skills: this._allSkills.map(skill => ({
-          ...skill,
-          isClassSkill: false,
-          isBackgroundSkill: false,
-          canTrain: false,
-        })),
-      };
-    }
-
     const backgroundSkillRefs = this._getBackgroundSkillRefs(shell);
     const backgroundSkillMatches = this._matchSkillsFromRefs(backgroundSkillRefs);
-    const trainedSelectionMatches = this._matchSkillsFromRefs(Array.from(this._trainedSkills.keys()));
+    const trainedSelectionMatches = this._matchSkillsFromRefs(
+      Array.from(this._trainedSkills.entries())
+        .filter(([_, state]) => state?.trained)
+        .map(([key]) => key)
+    );
 
     const classIds = new Set(classSkillMatches.map(skill => skill.id));
     const backgroundIds = new Set(backgroundSkillMatches.map(skill => skill.id));
     const trainedIds = new Set(trainedSelectionMatches.map(skill => skill.id));
     const allowedIds = new Set([...classIds, ...backgroundIds, ...trainedIds]);
 
-    const skills = this._allSkills
-      .filter(skill => allowedIds.has(skill.id))
-      .map(skill => ({
+    const allowedSkillMap = new Map();
+    for (const skill of this._allSkills) {
+      if (!allowedIds.has(skill.id)) continue;
+      allowedSkillMap.set(skill.id, {
         ...skill,
         isClassSkill: classIds.has(skill.id),
         isBackgroundSkill: backgroundIds.has(skill.id),
-        canTrain: true,
-      }));
+        available: true,
+        canTrain: classIds.has(skill.id) || backgroundIds.has(skill.id) || trainedIds.has(skill.id),
+        alwaysVisible: true,
+      });
+    }
 
-    if (skills.length === 0) {
+    const skills = Array.from(allowedSkillMap.values())
+      .sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+
+    if (!classModel || classSkillMatches.length === 0 || skills.length === 0) {
       return {
         mode: 'fallback-full-chart',
-        fallbackReason: 'allowed-skill-set-empty-after-filter',
+        fallbackReason: !classModel
+          ? 'selected-class-unresolved'
+          : (classSkillMatches.length === 0
+            ? 'selected-class-produced-zero-skill-matches'
+            : 'allowed-skill-set-empty-after-filter'),
         classSkillRefs: classSkillRefs.length,
         classSkillMatches: classSkillMatches.length,
         backgroundSkillRefs: backgroundSkillRefs.length,
         backgroundSkillMatches: backgroundSkillMatches.length,
         trainedSelectionMatches: trainedSelectionMatches.length,
-        skills: this._allSkills.map(skill => ({
-          ...skill,
-          isClassSkill: false,
-          isBackgroundSkill: false,
-          canTrain: false,
-        })),
+        skills,
       };
     }
 
@@ -652,6 +704,7 @@ renderDetailsPanel(focusedItem) {
       skills,
     };
   }
+
 
   _resolveSelectedClassData(classSelection) {
     if (!classSelection) return null;
@@ -698,20 +751,27 @@ renderDetailsPanel(focusedItem) {
     const matches = [];
 
     for (const ref of refs || []) {
-      const skill = this._resolveSkillFromRef(ref);
-      if (!skill) continue;
-      if (seen.has(skill.id)) continue;
-      seen.add(skill.id);
-      matches.push(skill);
+      const resolvedSkills = this._resolveSkillsFromRef(ref);
+      for (const skill of resolvedSkills) {
+        if (!skill || seen.has(skill.id)) continue;
+        seen.add(skill.id);
+        matches.push(skill);
+      }
     }
 
     return matches;
   }
 
-  _resolveSkillFromRef(ref) {
-    if (!ref) return null;
+  _resolveSkillsFromRef(ref) {
+    if (!ref) return [];
 
-    const raw = String(ref).trim();
+    const rawValue = typeof ref === 'object'
+      ? (ref.name || ref.label || ref.key || ref.id || ref._id || '')
+      : ref;
+
+    const raw = String(rawValue).trim();
+    if (!raw) return [];
+
     const simplified = raw
       .replace(/\[(.*?)\]/g, '')
       .replace(/\((.*?)\)/g, '')
@@ -720,8 +780,13 @@ renderDetailsPanel(focusedItem) {
 
     const rawKey = this._skillLookupKey(raw);
     const simpleKey = this._skillLookupKey(simplified);
+    const isKnowledgeWildcard = /knowledge\s*\(\s*(any|all)\s*\)/i.test(raw) || simpleKey === 'knowledge';
 
-    return this._allSkills.find(skill => {
+    if (isKnowledgeWildcard) {
+      return this._allSkills.filter(skill => /^knowledge/i.test(String(skill.name || '')));
+    }
+
+    const match = this._allSkills.find(skill => {
       const skillId = String(skill.id || skill._id || '').toLowerCase();
       const skillNameKey = this._skillLookupKey(skill.name || '');
       const skillKey = this._skillLookupKey(skill.key || '');
@@ -733,12 +798,37 @@ renderDetailsPanel(focusedItem) {
         || skillNameKey === simpleKey
         || skillKey === rawKey
         || skillKey === simpleKey
-        || (skillNameKey === 'knowledge' && simpleKey.startsWith('knowledge'))
       );
-    }) || null;
+    });
+
+    return match ? [match] : [];
   }
 
-  _skillLookupKey(value) {
+
+  
+_getSkillSelectionState(skillOrKey) {
+  const candidates = typeof skillOrKey === 'string'
+    ? [skillOrKey]
+    : [skillOrKey?.key, skillOrKey?.id, skillOrKey?._id, skillOrKey?.name];
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+
+    const direct = this._trainedSkills.get(candidate);
+    if (direct) return direct;
+
+    const normalizedCandidate = this._skillLookupKey(candidate);
+    for (const [storedKey, state] of this._trainedSkills.entries()) {
+      if (this._skillLookupKey(storedKey) === normalizedCandidate) {
+        return state;
+      }
+    }
+  }
+
+  return null;
+}
+
+_skillLookupKey(value) {
     return String(value || '')
       .toLowerCase()
       .replace(/\s+/g, '')
@@ -769,8 +859,8 @@ _normalizeSkillRecord(skill) {
     ability,
     abilityLabel,
     category: skill.category || abilityLabel,
-    alwaysVisible: skill.alwaysVisible ?? true,
-    available: skill.available ?? true,
+    alwaysVisible: skill.alwaysVisible ?? false,
+    available: skill.available ?? false,
     classSkill,
     description: skill.system?.description || skill.description || '',
   };
@@ -811,6 +901,7 @@ _formatSkillCard(skill, suggestedIds = new Set()) {
     badgeLabel: isSuggested ? 'Recommended' : null,
     badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
     canTrain: normalized.canTrain !== false,
+    isTrained: !!this._getSkillSelectionState(normalized)?.trained,
   };
 }
 

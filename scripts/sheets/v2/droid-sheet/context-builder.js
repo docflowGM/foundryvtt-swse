@@ -32,6 +32,9 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { isXPEnabled } from "/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js";
 import { DroidValidationEngine } from "/systems/foundryvtt-swse/scripts/engine/droid-validation-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
+import { buildHeaderHpSegments } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js";
+import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 
 const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
 
@@ -50,6 +53,7 @@ export class DroidSheetContextBuilder {
     this.actor = actor;
     this.system = actor?.system ?? {};
     this.derived = actor?.system?.derived ?? {};
+    this.panelBuilder = new PanelContextBuilder(actor, { isEditable: actor?.isOwner === true });
   }
 
   /**
@@ -64,19 +68,40 @@ export class DroidSheetContextBuilder {
     const equipment = this.buildEquipmentEntries();
     const armor = this.buildArmorEntries();
     const weapons = this.buildWeaponEntries();
-    const xp = this.buildXpDisplay();
     const abilityCards = this.buildAbilityCardLists();
     const droidPanels = this.buildDroidSpecificPanels();
+
+    const biographyPanel = this.buildBiographyPanel();
+    const healthPanel = this.panelBuilder.buildHealthPanel();
+    const defensePanel = this.panelBuilder.buildDefensePanel();
+    const secondWindPanel = this.panelBuilder.buildSecondWindPanel();
+    const abilitiesPanel = this.buildAbilitiesPanel();
+    const abilities = abilitiesPanel.abilities;
+    const derived = this.buildDerivedViewModel(abilities);
+    const header = this.buildHeaderViewModel();
 
     return {
       // NOTE: the 'actor' Document is intentionally NOT included; consumers use
       // `document` from the base context.
       system: this.system,
-      derived: this.derived,
-      xpEnabled: xp.xpEnabled,
-      xpData: xp.xpData,
-      xpPercent: xp.xpPercent,
-      isGM: xp.isGM,
+      derived,
+      biographyPanel,
+      healthPanel,
+      defensePanel,
+      abilitiesPanel,
+      abilities,
+      xpEnabled: header.xpEnabled,
+      xpData: header.xpData,
+      xpPercent: header.xpPercent,
+      xpLevelReady: header.xpLevelReady,
+      isGM: header.isGM,
+      headerHpSegments: header.headerHpSegments,
+      headerXpSegments: header.headerXpSegments,
+      forcePointsValue: header.forcePointsValue,
+      forcePointsMax: header.forcePointsMax,
+      destinyPointsValue: header.destinyPointsValue,
+      destinyPointsMax: header.destinyPointsMax,
+      secondWindPanel,
       items: projectItems(this.actor?.items),
       equipment,
       armor,
@@ -99,6 +124,37 @@ export class DroidSheetContextBuilder {
    * primitive fields — Document refs are not safe to serialize into the
    * Handlebars context.
    */
+
+  buildBiographyPanel() {
+    const panel = this.panelBuilder.buildBiographyPanel();
+    panel.identity = {
+      ...panel.identity,
+      class: 'Droid',
+      species: this.system?.droidType || panel.identity.species,
+      profession: this.system?.droidModel || panel.identity.profession,
+      homeworld: this.system?.manufacturer || panel.identity.homeworld
+    };
+    return panel;
+  }
+
+  buildAbilitiesPanel() {
+    const panel = this.panelBuilder.buildAbilitiesPanel();
+    panel.abilities = panel.abilities.filter((ability) => ability.key !== 'con');
+    return panel;
+  }
+
+  buildDerivedViewModel(abilities) {
+    const derived = foundry.utils.deepClone(this.derived ?? {});
+    derived.identity ??= {};
+    derived.identity.abilities = abilities.map((ability) => ({
+      key: ability.key,
+      label: ability.label,
+      value: ability.total,
+      mod: ability.mod
+    }));
+    return derived;
+  }
+
   buildOwnedActorMap() {
     const map = {};
     for (const entry of this.system?.ownedActors ?? []) {
@@ -126,12 +182,42 @@ export class DroidSheetContextBuilder {
     return projectItems((this.actor?.items ?? []).filter((item) => item.type === "weapon"));
   }
 
-  buildXpDisplay() {
+  buildHeaderViewModel() {
     const xpEnabled = isXPEnabled();
-    const xpData = this.derived?.xp ?? null;
-    const xpPercent = xpData?.progressPercent ?? 0;
-    const isGM = game.user?.isGM === true;
-    return { xpEnabled, xpData, xpPercent, isGM };
+    const xpDerived = this.derived?.xp ?? { total: 0, progressPercent: 0, xpToNext: 0, level: this.system?.level ?? 1 };
+    const xpDisplayLevel = Math.max(1, Number(this.system?.level ?? xpDerived.level ?? 1));
+    const xpTotal = Number(xpDerived.total ?? this.system?.xp?.total ?? 0) || 0;
+    const xpPercent = Math.max(0, Math.min(100, Math.round(Number(xpDerived.progressPercent ?? 0) || 0)));
+    const nextLevelAtDisplay = XP_LEVEL_THRESHOLDS[Math.min(20, xpDisplayLevel + 1)] ?? null;
+    const xpLevelReady = xpPercent >= 100;
+    const xpData = {
+      level: xpDisplayLevel,
+      total: xpTotal,
+      nextLevelAt: nextLevelAtDisplay,
+      xpToNext: nextLevelAtDisplay !== null ? Math.max(0, nextLevelAtDisplay - xpTotal) : 0,
+      percentRounded: xpPercent,
+      stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress'
+    };
+
+    const headerHpSegments = buildHeaderHpSegments(this.actor);
+    const xpFilledSegments = Math.round((xpPercent / 100) * 20);
+    const headerXpSegments = Array.from({ length: 20 }, (_, index) => ({
+      filled: index < xpFilledSegments
+    }));
+
+    return {
+      xpEnabled,
+      xpData,
+      xpPercent,
+      xpLevelReady,
+      isGM: game.user?.isGM === true,
+      headerHpSegments,
+      headerXpSegments,
+      forcePointsValue: Number(this.system?.forcePoints?.value ?? 0) || 0,
+      forcePointsMax: Number(this.system?.forcePoints?.max ?? 0) || 0,
+      destinyPointsValue: Number(this.system?.destinyPoints?.value ?? 0) || 0,
+      destinyPointsMax: Number(this.system?.destinyPoints?.max ?? 0) || 0
+    };
   }
 
   /**

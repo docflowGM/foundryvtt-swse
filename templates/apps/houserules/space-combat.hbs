@@ -1,11 +1,11 @@
 <form>
   <nav class="tabs" data-group="primary-tabs">
-    <a class="item active" data-tab="initiative">Initiative</a>
-    <a class="item" data-tab="roles">Crew Roles</a>
+    <a class="item active" data-swse-tab="initiative">Initiative</a>
+    <a class="item" data-swse-tab="roles">Crew Roles</a>
   </nav>
   
   <section class="content">
-    <div class="tab active" data-group="primary-tabs" data-tab="initiative">
+    <div class="tab active" data-group="primary-tabs" data-swse-tab="initiative">
       <div class="form-group">
         <label>Space Combat Initiative</label>
         <select name="spaceInitiativeSystem">
@@ -53,7 +53,7 @@
       {{/if}}
     </div>
     
-    <div class="tab" data-group="primary-tabs" data-tab="roles">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="roles">
       <div class="form-group">
         <label>Multiple Weapons Operators</label>
         <input type="checkbox" name="weaponsOperatorsRollInit" {{#if weaponsOperatorsRollInit}}checked{{/if}}/>

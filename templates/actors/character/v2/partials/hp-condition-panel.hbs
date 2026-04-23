@@ -86,7 +86,7 @@
       <div class="condition-standard-track__rows">
         {{#each healthPanel.conditionSlots as |slot|}}
           <button type="button"
-                  class="condition-track-row {{slot.severityClass}} {{#if slot.active}}active{{/if}}"
+                  class="condition-track-row {{slot.severityClass}} {{#if slot.active}}active{{/if}} {{#if slot.active}}is-current{{/if}}"
                   data-action="set-condition-step"
                   data-step="{{slot.step}}"
                   title="Set condition: {{slot.label}}"

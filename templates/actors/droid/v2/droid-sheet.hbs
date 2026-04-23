@@ -1,34 +1,133 @@
+<div class="swse-character-sheet-wrapper">
+<form class="swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui" autocomplete="off">
 <div class="swse swse-sheet swse-droid-sheet v2 flexcol swse-sheet-ui swse-ui-shell">
-  <header class="sheet-header holo-header swse-ui-frame">
-    <div class="header-left">
+  <header class="sheet-header holo-header">
+    <div class="sheet-header-left" data-role="actor-portrait-dropzone">
       <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="64" width="64"/>
-      <div class="title-block">
-        <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
-        <div class="subline muted">Droid — v2 truth view</div>
+    </div>
+
+    <div class="sheet-header-center">
+      <div class="sheet-header-topline">
+        <div class="header-name-block">
+          <h1 class="charname"><input name="name" type="text" value="{{biographyPanel.identity.name}}" placeholder="Name"/></h1>
+        </div>
+        <div class="header-player">
+          <label>Player:</label>
+          <input name="flags.swse.character.player" type="text" value="{{biographyPanel.identity.player}}" placeholder="Player Name"/>
+        </div>
+      </div>
+
+      <div class="sheet-header-meta-grid">
+        <div class="header-field">
+          <label>Class:</label>
+          <input type="text" value="{{biographyPanel.identity.class}}" placeholder="Droid" disabled />
+        </div>
+        <div class="header-field">
+          <label>Type:</label>
+          <input name="system.droidType" type="text" value="{{biographyPanel.identity.species}}" placeholder="Droid Type"/>
+        </div>
+        <div class="header-field">
+          <label>Level:</label>
+          <input name="system.level" type="number" value="{{biographyPanel.identity.level}}" min="1" max="20" placeholder="1"/>
+        </div>
+      </div>
+
+      <div class="header-tactical-strip">
+        <div class="tactical-resource tactical-resource--hp">
+          <span class="tactical-resource__label">HP</span>
+          <div class="resource-segment-bar resource-segment-bar--hp"
+               data-resource-visual="hp"
+               data-hp-current="{{healthPanel.hp.value}}"
+               data-hp-max="{{healthPanel.hp.max}}"
+               data-hp-temp="{{healthPanel.hp.temp}}">
+            {{#each headerHpSegments as |segment|}}
+              <span class="resource-segment {{segment.colorClass}} {{#if segment.filled}}is-filled{{/if}}"></span>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="tactical-resource tactical-resource--xp">
+          <span class="tactical-resource__label">XP</span>
+          <div class="resource-segment-bar resource-segment-bar--xp"
+               data-resource-visual="xp"
+               data-xp-total="{{xpData.total}}"
+               data-xp-percent="{{xpData.percentRounded}}">
+            {{#each headerXpSegments as |segment|}}
+              <span class="resource-segment {{#if segment.filled}}is-filled{{/if}}"></span>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="tactical-resource tactical-resource--fp">
+          <span class="tactical-resource__label">MP</span>
+          <span class="tactical-resource__value mod {{#if droidPanels.droidSummary.availableModificationPoints}}mod--positive{{else}}mod--zero{{/if}}">{{droidPanels.droidSummary.usedModificationPoints}} / {{droidPanels.droidSummary.maxModificationPoints}}</span>
+        </div>
+
+        <div class="tactical-resource tactical-resource--dp">
+          <span class="tactical-resource__label">Budget</span>
+          <span class="tactical-resource__value mod {{#if droidPanels.droidSummary.isOverBudget}}mod--negative{{else}}mod--positive{{/if}}">{{droidPanels.droidSummary.creditsSpent}} / {{droidPanels.droidSummary.creditsTotal}}</span>
+        </div>
+
+        <div class="tactical-resource tactical-resource--sw">
+          <div class="tactical-resource__sw-head">
+            <span class="tactical-resource__label">Config</span>
+            <span class="tactical-resource__meta">{{#if droidPanels.droidSummary.degree}}{{droidPanels.droidSummary.degree}}{{else}}Unconfigured{{/if}}</span>
+          </div>
+          <div class="tactical-resource__sw-body">
+            <span class="tactical-resource__meta">{{#if droidPanels.droidSummary.size}}{{droidPanels.droidSummary.size}}{{else}}No chassis selected{{/if}}</span>
+            <button type="button" class="sw-use-btn edit-droid-systems">{{#if droidPanels.droidSummary.degree}}Edit{{else}}Create{{/if}}</button>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="header-right">
-      <div class="swse-stat"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
-      <div class="swse-stat"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
-      <div class="swse-stat"><div class="label">WILL</div><div class="value">{{derived.defenses.will}}</div></div>
-      <div class="swse-stat"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
+
+    <div class="sheet-header-right sheet-header-right--compact">
+      {{#each defensePanel.defenses as |def|}}
+        {{#if (eq def.key "fort")}}
+          <div class="header-defense-readout">
+            <span class="header-defense-readout__label">FORT</span>
+            <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
+          </div>
+        {{else if (eq def.key "ref")}}
+          <div class="header-defense-readout">
+            <span class="header-defense-readout__label">REF</span>
+            <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
+          </div>
+        {{else if (eq def.key "will")}}
+          <div class="header-defense-readout">
+            <span class="header-defense-readout__label">WILL</span>
+            <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
+          </div>
+        {{/if}}
+      {{/each}}
+      <div class="header-defense-readout">
+        <span class="header-defense-readout__label">DT</span>
+        <span class="header-defense-readout__value mod {{#if (gt derived.damageThreshold 10)}}mod--positive{{else if (lt derived.damageThreshold 10)}}mod--negative{{else}}mod--zero{{/if}}">{{derived.damageThreshold}}</span>
+      </div>
     </div>
   </header>
 
-  <nav class="sheet-tabs tabs swse-ui-tabs" data-tab-group="primary">
-    <a class="item swse-ui-tab active" data-action="tab" data-tab="overview">Overview</a>
-    <a class="item swse-ui-tab" data-action="tab" data-tab="systems">Systems</a>
-    <a class="item swse-ui-tab" data-action="tab" data-tab="combat">Combat</a>
-    <a class="item swse-ui-tab" data-action="tab" data-tab="skills">Skills</a>
-    <a class="item swse-ui-tab" data-action="tab" data-tab="abilities">Abilities</a>
-    <a class="item swse-ui-tab" data-action="tab" data-tab="talents">Talents</a>
-    <a class="item swse-ui-tab" data-action="tab" data-tab="gear">Gear</a>
-    <a class="item swse-ui-tab" data-action="tab" data-tab="relationships">Relationships</a>
-    <a class="item swse-ui-tab" data-action="tab" data-tab="notes">Notes</a>
+  <div class="sheet-actions">
+    <button type="button" class="header-btn edit-droid-systems">{{#if droidPanels.droidSummary.degree}}Configure{{else}}Create Configuration{{/if}}</button>
+    <button type="button" data-action="level-up" class="header-btn {{#if xpLevelReady}}ready{{/if}}">Level Up</button>
+    <button type="button" data-action="cmd-store" class="header-btn">Store</button>
+    <button type="button" data-action="open-mentor" class="header-btn"><i class="fas fa-user-astronaut"></i> Mentor</button>
+  </div>
+
+  <nav class="sheet-tabs tabs flexrow" data-group="primary" data-tab-group="primary">
+    <a class="item active" data-action="tab" data-tab="overview" data-group="primary" data-tab-group="primary">Overview</a>
+    <a class="item" data-action="tab" data-tab="systems" data-group="primary" data-tab-group="primary">Systems</a>
+    <a class="item" data-action="tab" data-tab="combat" data-group="primary" data-tab-group="primary">Combat</a>
+    <a class="item" data-action="tab" data-tab="skills" data-group="primary" data-tab-group="primary">Skills</a>
+    <a class="item" data-action="tab" data-tab="abilities" data-group="primary" data-tab-group="primary">Abilities</a>
+    <a class="item" data-action="tab" data-tab="talents" data-group="primary" data-tab-group="primary">Talents</a>
+    <a class="item" data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary">Gear</a>
+    <a class="item" data-action="tab" data-tab="relationships" data-group="primary" data-tab-group="primary">Relationships</a>
+    <a class="item" data-action="tab" data-tab="notes" data-group="primary" data-tab-group="primary">Notes</a>
   </nav>
 
   <section class="sheet-body flexcol">
-    <section class="tab active flexcol" data-tab-group="primary" data-tab="overview">
+    <section class="tab active flexcol" data-group="primary" data-tab-group="primary" data-tab="overview">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-left flexcol">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs"}}
@@ -42,14 +141,12 @@
       </div>
     </section>
 
-    <section class="tab flexcol" data-tab-group="primary" data-tab="systems">
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="systems">
       <div class="swse-v2-sheet-grid">
-        <!-- Summary strip: degree, size, credits, state -->
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs"}}
         </div>
 
-        <!-- Core subsystems -->
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs"}}
         </div>
@@ -78,7 +175,6 @@
           {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs"}}
         </div>
 
-        <!-- Budget analysis and status -->
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-budget-breakdown-panel.hbs"}}
         </div>
@@ -93,10 +189,8 @@
       </div>
     </section>
 
-    <section class="tab flexcol" data-tab-group="primary" data-tab="combat">
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="combat">
       <div class="swse-v2-sheet-grid">
-
-        <!-- INITIATIVE DISPLAY -->
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/initiative-panel.hbs"}}
         </div>
@@ -111,7 +205,7 @@
       </div>
     </section>
 
-    <section class="tab flexcol" data-tab-group="primary" data-tab="skills">
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="skills">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
@@ -119,7 +213,7 @@
       </div>
     </section>
 
-    <section class="tab flexcol" data-tab-group="primary" data-tab="abilities">
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="abilities">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs"}}
@@ -127,7 +221,7 @@
       </div>
     </section>
 
-    <section class="tab flexcol" data-tab-group="primary" data-tab="talents">
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="talents">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs"}}
@@ -138,7 +232,7 @@
       </div>
     </section>
 
-    <section class="tab flexcol" data-tab-group="primary" data-tab="gear">
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="gear">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/equipment-panel.hbs"}}
@@ -156,7 +250,7 @@
       </div>
     </section>
 
-    <section class="tab flexcol" data-tab-group="primary" data-tab="relationships">
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="relationships">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/owned-actors-panel.hbs"}}
@@ -164,7 +258,7 @@
       </div>
     </section>
 
-    <section class="tab flexcol" data-tab-group="primary" data-tab="notes">
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="notes">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs"}}
@@ -172,4 +266,6 @@
       </div>
     </section>
   </section>
+</div>
+</form>
 </div>

@@ -12,6 +12,7 @@ import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governan
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { traceLog, actorSummary, payloadSummary, MutationDepth } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
+import { captureHydrationSnapshot, collectHydrationSensitivePaths, emitHydrationError, emitHydrationWarning } from "/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js";
 
 /**
  * ActorEngine
@@ -26,6 +27,72 @@ export const ActorEngine = {
   // PHASE 2: In-flight mutation guard per actor (actor id → reference count)
   // Uses reference counting to handle nested updates (preUpdateActor hooks calling updateActor again)
   _inFlightMutations: new Map(),
+
+  /**
+   * Merge a DerivedCalculator update bundle into the live actor document.
+   *
+   * Foundry does not persist or await async derived recomputations for us.
+   * When ActorEngine performs an authoritative mutation, we must fold the
+   * freshly computed system.derived.* snapshot back onto the live actor so
+   * any follow-up render reads the same canonical state.
+   *
+   * @param {Actor} actor
+   * @param {Object} updates - Flat update object returned by DerivedCalculator.computeAll()
+   * @private
+   */
+  _applyDerivedUpdates(actor, updates) {
+    if (!actor?.system || !updates || typeof updates !== 'object') return;
+
+    const expanded = foundry.utils.expandObject(updates);
+    const derivedUpdate = expanded?.system?.derived;
+    if (!derivedUpdate || typeof derivedUpdate !== 'object') return;
+
+    actor.system.derived ??= {};
+    foundry.utils.mergeObject(actor.system.derived, derivedUpdate, {
+      inplace: true,
+      insertKeys: true,
+      insertValues: true,
+      overwrite: true,
+      recursive: true
+    });
+  },
+
+  /**
+   * Re-render any open actor sheets after an engine-owned recomputation.
+   *
+   * The base actor update triggers one render from Foundry, but that render can
+   * happen before our async derived recomputation finishes. Request one follow-up
+   * render so the UI reflects the authoritative post-mutation derived snapshot.
+   *
+   * @param {Actor} actor
+   * @private
+   */
+  _refreshOpenActorApps(actor, options = {}) {
+    if (options?.suppressAppRefresh) {
+      SWSELogger.debug(`[RENDER REFRESH] Suppressed open-app refresh for ${actor?.name ?? 'unknown actor'}`, {
+        actorId: actor?.id,
+        source: options?.source ?? null
+      });
+      return;
+    }
+
+    const apps = Object.values(actor?.apps ?? {});
+    if (!apps.length) return;
+
+    queueMicrotask(() => {
+      for (const app of apps) {
+        try {
+          app?.render?.(false);
+        } catch (err) {
+          SWSELogger.warn(`[RENDER REFRESH] Failed to refresh app for ${actor?.name ?? 'unknown actor'}`, {
+            actorId: actor?.id,
+            appId: app?.id,
+            error: err?.message
+          });
+        }
+      }
+    });
+  },
   /**
    * Perform any derived-stat recalculation.
    * Runs after every validated update. Non-blocking.
@@ -75,7 +142,8 @@ export const ActorEngine = {
         if (observabilityEnabled) {
           SWSELogger.debug(`[RECOMPUTE] DerivedCalculator.computeAll() starting...`, { actor: actor.name });
         }
-        await DerivedCalculator.computeAll(actor);
+        const derivedUpdates = await DerivedCalculator.computeAll(actor);
+        this._applyDerivedUpdates(actor, derivedUpdates);
         if (observabilityEnabled) {
           SWSELogger.debug(`[RECOMPUTE] DerivedCalculator.computeAll() completed`, {
             actor: actor.name,
@@ -445,6 +513,22 @@ export const ActorEngine = {
         SWSELogger.warn(`[PHASE 4] Contract validation warnings for ${actor.name}:`, validationResult.warnings);
       }
 
+      const sensitivePaths = collectHydrationSensitivePaths(normalizedUpdateData);
+      const shouldTraceHydration = sensitivePaths.length > 0;
+      const hydrationBefore = shouldTraceHydration ? captureHydrationSnapshot(actor) : null;
+      if (shouldTraceHydration) {
+        emitHydrationWarning('ENGINE_UPDATE_START', {
+          traceId: _traceId,
+          actorId: actor.id,
+          actorName: actor.name,
+          source: options.source ?? null,
+          guardKey: meta.guardKey ?? null,
+          sensitivePaths,
+          normalizedUpdateData,
+          before: hydrationBefore
+        });
+      }
+
       // ========================================
       // PHASE 4D: HP max write enforcement
       // ========================================
@@ -495,6 +579,16 @@ export const ActorEngine = {
           });
           const result = await applyActorUpdateAtomic(actor, normalizedUpdateData, optsWithMeta);
           await this.recalcAll(actor);
+          if (shouldTraceHydration) {
+            emitHydrationWarning('ENGINE_UPDATE_SUCCESS', {
+              traceId: _traceId,
+              actorId: actor.id,
+              actorName: actor.name,
+              sensitivePaths,
+              after: captureHydrationSnapshot(actor)
+            });
+          }
+          this._refreshOpenActorApps(actor, options);
           return result;
         } finally {
           // Always clear context, even on error
@@ -516,6 +610,17 @@ export const ActorEngine = {
       traceLog('ENGINE', `updateActor threw (traceId=${_traceId}): ${err?.message}`, {
         actor: actorSummary(actor)
       });
+      if (typeof shouldTraceHydration !== 'undefined' && shouldTraceHydration) {
+        emitHydrationError('ENGINE_UPDATE_FAILED', {
+          traceId: _traceId,
+          actorId: actor?.id ?? null,
+          actorName: actor?.name ?? null,
+          sensitivePaths: typeof sensitivePaths !== 'undefined' ? sensitivePaths : [],
+          error: err?.message,
+          stack: err?.stack,
+          snapshot: captureHydrationSnapshot(actor)
+        });
+      }
       SWSELogger.error(`ActorEngine.updateActor failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         updateData,
@@ -872,7 +977,7 @@ export const ActorEngine = {
    *   update?: { ... }  (system updates via dot-path)
    * }
    */
-  async apply(actor, mutationPlan) {
+  async apply(actor, mutationPlan, options = {}) {
     try {
       if (!actor) {throw new Error('apply() called with no actor');}
       if (!mutationPlan) {return;} // noop
@@ -982,7 +1087,7 @@ export const ActorEngine = {
             );
           }
         }
-        await this.updateActor(actor, mutationPlan.update);
+        await this.updateActor(actor, mutationPlan.update, options);
       }
 
       if (isAdoption) {
@@ -1999,7 +2104,8 @@ export const ActorEngine = {
         SWSELogger.debug(`[PROGRESSION] Triggering derived recalculation`);
 
         // Step 1: Compute all derived values
-        await DerivedCalculator.computeAll(actor);
+        const progressionDerivedUpdates = await DerivedCalculator.computeAll(actor);
+        this._applyDerivedUpdates(actor, progressionDerivedUpdates);
 
         // Step 2: Apply all modifiers
         const progressionModifiers = await ModifierEngine.getAllModifiers(actor);
@@ -3605,10 +3711,14 @@ export const ActorEngine = {
     warnings.push(...classWarnings);
 
     // 3. Skills: Ensure complete structure
-    const skillWarnings = this._normalizeSkillStructureForContract(flat);
+    const skillWarnings = this._normalizeSkillStructureForContract(flat, actor);
     warnings.push(...skillWarnings);
 
-    // 4. XP: Normalize naming
+    // 4. Defenses: normalize short aliases and legacy misc paths
+    const defenseWarnings = this._normalizeDefensePathsForContract(flat);
+    warnings.push(...defenseWarnings);
+
+    // 5. XP: Normalize naming
     const xpWarnings = this._normalizeXpPathsForContract(flat);
     warnings.push(...xpWarnings);
 
@@ -3639,6 +3749,7 @@ export const ActorEngine = {
       if (key.startsWith('system.abilities.')) touched.add('abilities');
       if (key.startsWith('system.class')) touched.add('class');
       if (key.startsWith('system.skills.')) touched.add('skills');
+      if (key.startsWith('system.defenses.')) touched.add('defenses');
       if (key.startsWith('system.xp.') || key.startsWith('system.experience')) touched.add('xp');
       if (key.startsWith('system.hp')) touched.add('hp');
     }
@@ -3649,6 +3760,9 @@ export const ActorEngine = {
     }
     if (touched.has('skills')) {
       this._ensureCanonicalSkillShapes(actor, flat);
+    }
+    if (touched.has('defenses')) {
+      this._ensureCanonicalDefenseShapes(actor);
     }
     if (touched.has('xp')) {
       this._ensureCanonicalXpShape(actor);
@@ -3694,7 +3808,7 @@ export const ActorEngine = {
           const propKey = skillMatch[2];
           // If only one property is being set, that's usually ok (partial updates)
           // But warn if it looks like incomplete initialization
-          if (!['trained', 'miscMod', 'focused', 'selectedAbility'].includes(propKey)) {
+          if (!['trained', 'miscMod', 'focused', 'selectedAbility', 'favorite'].includes(propKey)) {
             warnings.push(`Unusual skill property: system.skills.${skillKey}.${propKey}`);
           }
         }
@@ -3770,72 +3884,123 @@ export const ActorEngine = {
   },
 
   /**
-   * Normalize skill structure: ensure touched skills have complete shape
+   * Normalize skill structure for live, narrow mutations.
+   *
+   * IMPORTANT:
+   * - Do NOT auto-fill untouched canonical skill properties here.
+   * - Live sheet edits frequently mutate only one leaf such as:
+   *   system.skills.acrobatics.trained or system.skills.acrobatics.miscMod
+   * - Expanding that into a full pseudo-initialization corrupts partial edits
+   *   and causes unrelated skill fields to revert or disappear.
+   *
+   * This helper now coerces only the explicitly touched leaf paths.
+   * Canonical container initialization is handled separately by
+   * _ensureCanonicalSkillShapes() only when an entire skill object is missing.
+   *
    * @private
    */
-  _normalizeSkillStructureForContract(flat) {
+  _normalizeSkillStructureForContract(flat, actor) {
     const warnings = [];
+    const canonicalProps = new Set(['trained', 'miscMod', 'focused', 'selectedAbility', 'favorite']);
 
-    // Find skills being touched
-    const skillKeys = new Set();
     for (const key of Object.keys(flat)) {
-      const match = key.match(/^system\.skills\.(\w+)\./);
-      if (match) {
-        skillKeys.add(match[1]);
+      const match = key.match(/^system\.skills\.([^.]+)\.([^.]+)$/);
+      if (!match) continue;
+
+      const skillKey = match[1];
+      const prop = match[2];
+      if (!canonicalProps.has(prop)) continue;
+
+      const currentSkill = actor?.system?.skills?.[skillKey] ?? {};
+
+      if (prop === 'miscMod') {
+        const coerced = Number(flat[key]);
+        const fallback = Number.isFinite(Number(currentSkill.miscMod)) ? Number(currentSkill.miscMod) : 0;
+        if (!Number.isFinite(coerced)) {
+          warnings.push(
+            `[COERCE] Skill ${skillKey}.miscMod invalid (${flat[key]}); preserving current value`
+          );
+          flat[key] = fallback;
+        } else if (typeof flat[key] !== 'number') {
+          warnings.push(
+            `[COERCE] Skill ${skillKey}.miscMod ${JSON.stringify(flat[key])} -> ${coerced}`
+          );
+          flat[key] = coerced;
+        }
+        continue;
+      }
+
+      if (prop === 'trained' || prop === 'focused' || prop === 'favorite') {
+        if (typeof flat[key] !== 'boolean') {
+          const raw = flat[key];
+          flat[key] = raw === true || raw == 'true' || raw == 1 || raw == '1' || raw === 'on';
+          warnings.push(
+            `[COERCE] Skill ${skillKey}.${prop} ${JSON.stringify(raw)} -> ${flat[key]}`
+          );
+        }
+        continue;
+      }
+
+      if (prop === 'selectedAbility' && typeof flat[key] !== 'string') {
+        const raw = flat[key];
+        flat[key] = raw == null ? '' : String(raw);
+        warnings.push(
+          `[COERCE] Skill ${skillKey}.selectedAbility ${JSON.stringify(raw)} -> ${JSON.stringify(flat[key])}`
+        );
       }
     }
 
-    // For each touched skill, ensure all canonical properties exist
-    for (const skillKey of skillKeys) {
-      const basePath = `system.skills.${skillKey}`;
-      const props = ['trained', 'miscMod', 'focused', 'selectedAbility'];
+    return warnings;
+  },
 
-      for (const prop of props) {
-        const path = `${basePath}.${prop}`;
-        const defaults = {
-          trained: false,
-          miscMod: 0,
-          focused: false,
-          selectedAbility: ''
-        };
 
-        if (!(path in flat)) {
-          flat[path] = defaults[prop];
-          warnings.push(
-            `[INITIALIZE] Skill ${skillKey}.${prop} initialized to default (${defaults[prop]})`
-          );
-          continue;
-        }
+  /**
+   * Normalize defense paths to canonical schema.
+   *
+   * Supported legacy aliases:
+   * - system.defenses.fort.*   -> system.defenses.fortitude.*
+   * - system.defenses.ref.*    -> system.defenses.reflex.*
+   * - *.miscMod               -> *.misc.user.extra
+   * - system.defenses.reflex.armorBonus -> system.defenses.reflex.armor
+   *
+   * @private
+   */
+  _normalizeDefensePathsForContract(flat) {
+    const warnings = [];
+    const aliasMap = {
+      fort: 'fortitude',
+      ref: 'reflex',
+      will: 'will'
+    };
+    const remaps = [];
 
-        if (prop === 'miscMod') {
-          const coerced = Number(flat[path]);
-          if (!Number.isFinite(coerced)) {
-            warnings.push(
-              `[COERCE] Skill ${skillKey}.miscMod invalid (${flat[path]}); defaulting to 0`
-            );
-            flat[path] = 0;
-          } else if (typeof flat[path] !== 'number') {
-            warnings.push(
-              `[COERCE] Skill ${skillKey}.miscMod ${JSON.stringify(flat[path])} -> ${coerced}`
-            );
-            flat[path] = coerced;
-          }
-        } else if (prop === 'trained' || prop === 'focused') {
-          if (typeof flat[path] !== 'boolean') {
-            const raw = flat[path];
-            flat[path] = raw === true || raw === 'true' || raw === 1 || raw === '1';
-            warnings.push(
-              `[COERCE] Skill ${skillKey}.${prop} ${JSON.stringify(raw)} -> ${flat[path]}`
-            );
-          }
-        } else if (prop === 'selectedAbility' && typeof flat[path] !== 'string') {
-          const raw = flat[path];
-          flat[path] = raw == null ? '' : String(raw);
-          warnings.push(
-            `[COERCE] Skill ${skillKey}.selectedAbility ${JSON.stringify(raw)} -> ${JSON.stringify(flat[path])}`
-          );
-        }
+    for (const [key, value] of Object.entries(flat)) {
+      const match = key.match(/^system\.defenses\.([^.]+)\.(.+)$/);
+      if (!match) continue;
+
+      const rawDefenseKey = match[1];
+      const remainder = match[2];
+      const canonicalDefenseKey = aliasMap[rawDefenseKey] || rawDefenseKey;
+      let canonicalRemainder = remainder;
+
+      if (canonicalRemainder === 'miscMod') {
+        canonicalRemainder = 'misc.user.extra';
+      } else if (canonicalRemainder === 'armorBonus' && canonicalDefenseKey === 'reflex') {
+        canonicalRemainder = 'armor';
       }
+
+      const canonicalPath = `system.defenses.${canonicalDefenseKey}.${canonicalRemainder}`;
+      if (canonicalPath === key) continue;
+
+      remaps.push([key, canonicalPath, value]);
+      warnings.push(`[NORMALIZE] Defense path ${key} -> ${canonicalPath}`);
+    }
+
+    for (const [oldPath, newPath, value] of remaps) {
+      if (!(newPath in flat)) {
+        flat[newPath] = value;
+      }
+      delete flat[oldPath];
     }
 
     return warnings;
@@ -3903,46 +4068,69 @@ export const ActorEngine = {
   },
 
   /**
-   * Ensure touched skills have canonical object shapes
+   * Ensure touched skills have canonical object containers.
+   *
+   * IMPORTANT:
+   * Existing skills must not be backfilled here during live edits. Backfilling
+   * untouched properties turns a narrow mutation into an implicit rewrite.
+   * Only create the full canonical object when the touched skill does not exist
+   * at all or is not an object.
+   *
    * @private
    */
   _ensureCanonicalSkillShapes(actor, flatUpdateData) {
     if (!actor.system) actor.system = {};
-    if (!actor.system.skills) actor.system.skills = {};
+    if (!actor.system.skills || typeof actor.system.skills !== 'object') actor.system.skills = {};
 
-    // Find which skills are being touched
     const skillKeys = new Set();
     for (const key of Object.keys(flatUpdateData)) {
-      const match = key.match(/^system\.skills\.(\w+)\./);
+      const match = key.match(/^system\.skills\.([^.]+)\./);
       if (match) {
         skillKeys.add(match[1]);
       }
     }
 
-    // Initialize touched skills to canonical shape
     for (const skillKey of skillKeys) {
-      if (!actor.system.skills[skillKey]) {
-        actor.system.skills[skillKey] = {
-          trained: false,
-          miscMod: 0,
-          focused: false,
-          selectedAbility: ''
-        };
-      } else {
-        // Ensure all properties exist
-        if (actor.system.skills[skillKey].trained === undefined) {
-          actor.system.skills[skillKey].trained = false;
-        }
-        if (actor.system.skills[skillKey].miscMod === undefined) {
-          actor.system.skills[skillKey].miscMod = 0;
-        }
-        if (actor.system.skills[skillKey].focused === undefined) {
-          actor.system.skills[skillKey].focused = false;
-        }
-        if (actor.system.skills[skillKey].selectedAbility === undefined) {
-          actor.system.skills[skillKey].selectedAbility = '';
-        }
+      const current = actor.system.skills[skillKey];
+      if (current && typeof current === 'object' && !Array.isArray(current)) continue;
+
+      actor.system.skills[skillKey] = {
+        trained: false,
+        miscMod: 0,
+        focused: false,
+        selectedAbility: '',
+        favorite: false
+      };
+    }
+  },
+
+
+  /**
+   * Ensure canonical defense containers exist for touched mutations.
+   * @private
+   */
+  _ensureCanonicalDefenseShapes(actor) {
+    if (!actor.system) actor.system = {};
+    if (!actor.system.defenses || typeof actor.system.defenses !== 'object') actor.system.defenses = {};
+
+    const defaults = {
+      reflex: { classBonus: 0, armor: 0, ability: 'dex', misc: { auto: {}, user: { extra: 0 } } },
+      fortitude: { classBonus: 0, ability: actor.system?.isDroid ? 'str' : 'con', misc: { auto: {}, user: { extra: 0 } } },
+      will: { classBonus: 0, ability: 'wis', misc: { auto: {}, user: { extra: 0 } } }
+    };
+
+    for (const [key, seed] of Object.entries(defaults)) {
+      if (!actor.system.defenses[key] || typeof actor.system.defenses[key] !== 'object') {
+        actor.system.defenses[key] = foundry.utils.deepClone(seed);
+        continue;
       }
+      actor.system.defenses[key].classBonus ??= seed.classBonus;
+      if (key === 'reflex') actor.system.defenses[key].armor ??= seed.armor;
+      actor.system.defenses[key].ability ??= seed.ability;
+      actor.system.defenses[key].misc ??= {};
+      actor.system.defenses[key].misc.auto ??= {};
+      actor.system.defenses[key].misc.user ??= {};
+      actor.system.defenses[key].misc.user.extra ??= 0;
     }
   },
 

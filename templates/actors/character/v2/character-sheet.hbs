@@ -1,12 +1,12 @@
 <div class="swse-character-sheet-wrapper">
-<div class="swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui">
+<form class="swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui" autocomplete="off">
 <section class="sheet-shell swse-character-sheet swse-sheet v2 flexcol">
 
   <!-- HEADER -->
   <header class="sheet-header holo-header">
     <!-- LEFT: PORTRAIT ONLY -->
-    <div class="sheet-header-left">
-      <img class="profile" src="{{actor.img}}" data-edit="img" title="Click to change portrait" height="64" width="64"/>
+    <div class="sheet-header-left" data-role="actor-portrait-dropzone">
+      <img class="profile" src="{{actor.img}}" data-edit="img" data-role="actor-portrait-image" title="Click or drop image to update portrait" height="64" width="64"/>
     </div>
 
     <!-- CENTER: NAME/PLAYER + COMPACT META GRID -->
@@ -14,11 +14,11 @@
       <!-- Top line: Name and Player -->
       <div class="sheet-header-topline">
         <div class="header-name-block">
-          <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
+          <h1 class="charname"><input name="name" type="text" value="{{biographyPanel.identity.name}}" placeholder="Name"/></h1>
         </div>
         <div class="header-player">
           <label>Player:</label>
-          <input name="flags.swse.character.player" type="text" value="{{actor.flags.swse.character.player}}" placeholder="Player Name"/>
+          <input name="flags.swse.character.player" type="text" value="{{biographyPanel.identity.player}}" placeholder="Player Name"/>
         </div>
       </div>
 
@@ -27,20 +27,20 @@
         <div class="header-field">
           <label>Class:</label>
           <div class="field-with-button">
-            <input name="system.class" type="text" value="{{actor.system.class}}" placeholder="Select Class"/>
+            <input name="system.class" type="text" value="{{biographyPanel.identity.class}}" placeholder="Select Class"/>
             <button type="button" class="header-select-btn" data-action="cmd-select-class" title="Select Class from progression system">⚙️</button>
           </div>
         </div>
         <div class="header-field">
           <label>Species:</label>
           <div class="field-with-button">
-            <input name="system.race" type="text" value="{{actor.system.race}}" placeholder="Select Species"/>
+            <input name="system.race" type="text" value="{{biographyPanel.identity.species}}" placeholder="Select Species"/>
             <button type="button" class="header-select-btn" data-action="cmd-select-species" title="Select Species from progression system">⚙️</button>
           </div>
         </div>
         <div class="header-field">
           <label>Level:</label>
-          <input name="system.level" type="number" value="{{actor.system.level}}" min="1" max="20" placeholder="1"/>
+          <input name="system.level" type="number" value="{{biographyPanel.identity.level}}" min="1" max="20" placeholder="1"/>
         </div>
       </div>
 
@@ -312,5 +312,5 @@
 
 </section>
 
-</div>
+</form>
 </div>

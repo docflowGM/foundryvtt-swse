@@ -18,6 +18,14 @@
 import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+function emitAbilityTrace(label, payload = {}) {
+  try {
+    console.warn(`SWSE [PREREQ TRACE] ${label}`, payload);
+  } catch (_err) {
+    // no-op
+  }
+}
+
 export class AbilityEngine {
   /**
    * Evaluate whether an actor can acquire a candidate item.
@@ -48,6 +56,15 @@ export class AbilityEngine {
     }
 
     try {
+      emitAbilityTrace('EVALUATE_START', {
+        actorName: actor?.name || null,
+        candidateName: typeof candidate === 'string' ? candidate : candidate?.name || candidate?.id || null,
+        candidateType: typeof candidate === 'string' ? 'string' : candidate?.type || 'unknown',
+        rawPrerequisite: typeof candidate === 'object'
+          ? (candidate?.system?.prerequisite || candidate?.system?.prerequisites || null)
+          : null,
+        pendingKeys: Object.keys(pending || {}),
+      });
       // Detect candidate type (fix operator precedence)
       let type;
       if (typeof candidate === 'string') {
@@ -77,6 +94,14 @@ export class AbilityEngine {
       }
 
       // Convert PrerequisiteChecker result to standardized format
+      emitAbilityTrace('EVALUATE_RESULT', {
+        actorName: actor?.name || null,
+        candidateName: typeof candidate === 'string' ? candidate : candidate?.name || candidate?.id || null,
+        candidateType: type,
+        met: result?.met === true,
+        missing: result?.missing || [],
+        detailsKeys: Object.keys(result?.details || {}),
+      });
       return {
         legal: result.met === true,
         permanentlyBlocked: false, // PrerequisiteChecker doesn't distinguish permanent blocks; assume all are temporary
@@ -84,6 +109,12 @@ export class AbilityEngine {
         blockingReasons: result.missing || [] // For now, missing preqs = blocking reasons
       };
     } catch (err) {
+      emitAbilityTrace('EVALUATE_FAILED', {
+        actorName: actor?.name || null,
+        candidateName: typeof candidate === 'string' ? candidate : candidate?.name || candidate?.id || null,
+        candidateType: typeof candidate === 'string' ? 'string' : candidate?.type || 'unknown',
+        error: err?.message || String(err),
+      });
       SWSELogger.error('[AbilityEngine.evaluateAcquisition]', err);
       return {
         legal: false,
@@ -237,8 +268,8 @@ export class AbilityEngine {
    * @param {Object} classDoc - The class document
    * @returns {Array} Feats granted by this class
    */
-  static getGrantedFeats(actor, classDoc = null) {
-    return PrerequisiteChecker.getAllGrantedFeats(actor, classDoc);
+  static getGrantedFeats(actor, classDoc = null, pending = {}) {
+    return PrerequisiteChecker.getAllGrantedFeats(actor, classDoc, pending);
   }
 
   /**

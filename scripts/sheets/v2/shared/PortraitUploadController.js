@@ -22,6 +22,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 const LOG = "[SWSE Portrait Upload]";
 
 const ACCEPTED_IMAGE_MIME = /^image\/(png|jpe?g|webp|gif|avif|svg\+xml)$/i;
@@ -144,23 +145,54 @@ async function applyPortrait(actor, imgPath) {
   }
 }
 
+async function openPortraitPicker(actor) {
+  const FP = getFilePicker();
+  if (!FP) {
+    notify("error", "FilePicker unavailable.");
+    return;
+  }
+
+  try {
+    const picker = new FP({
+      type: "image",
+      callback: async (path) => {
+        if (!path) return;
+        const applied = await applyPortrait(actor, path);
+        if (applied) notify("info", "Portrait updated.");
+      }
+    });
+    picker.browse();
+  } catch (err) {
+    console.error(`${LOG} picker failed`, err);
+    notify("error", "Failed to open portrait picker.");
+  }
+}
+
 function findDropzones(root) {
   const marked = root.querySelectorAll('[data-role="actor-portrait-dropzone"]');
   if (marked.length) return Array.from(marked);
 
-  // Fallback: any .portrait-container or .portrait-image's parent.
-  const containers = root.querySelectorAll(".portrait-container, .swse-panel--portrait, .portrait-panel");
+  // Fallbacks: portrait panels plus common header portrait containers on v2 sheets.
+  const containers = root.querySelectorAll(
+    ".portrait-container, .swse-panel--portrait, .portrait-panel, .sheet-header-left, .header-left"
+  );
   return Array.from(containers);
 }
 
 function findImageEl(zone) {
   return zone.querySelector('[data-role="actor-portrait-image"]')
       ?? zone.querySelector(".portrait-image")
+      ?? zone.querySelector("img.profile")
       ?? zone.querySelector("img");
 }
 
 function attachDropHandlers(zone, actor, signal) {
   const img = findImageEl(zone);
+
+  const clickTarget = img ?? zone;
+  if (clickTarget) {
+    clickTarget.style.cursor = canEditActor(actor) ? "pointer" : clickTarget.style.cursor;
+  }
 
   const setActive = (active) => {
     zone.classList.toggle("portrait-drop-active", !!active);
@@ -230,6 +262,18 @@ function attachDropHandlers(zone, actor, signal) {
     if (applied) notify("info", "Portrait updated.");
   };
 
+  const onClick = async (ev) => {
+    if (ev.button !== 0) return;
+    if (!canEditActor(actor)) {
+      notify("warn", "You do not have permission to edit this actor's portrait.");
+      return;
+    }
+    ev.preventDefault();
+    ev.stopPropagation();
+    await openPortraitPicker(actor);
+  };
+
+  clickTarget?.addEventListener("click", onClick, { signal });
   zone.addEventListener("dragenter", onDragEnter, { signal });
   zone.addEventListener("dragover",  onDragOver,  { signal });
   zone.addEventListener("dragleave", onDragLeave, { signal });

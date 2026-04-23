@@ -44,21 +44,49 @@ function _restoreSidebarDefaults() {
   const sidebar = document.getElementById('sidebar');
   if (!sidebar) return;
 
-  // Get current classes and filter to only Foundry defaults
-  const currentClasses = Array.from(sidebar.classList);
-
-  // Foundry sidebar default classes (these should always be present)
-  const foundryDefaults = ['collapsed', 'app', 'window-app'];
+  // Remove leaked app classes from the sidebar root itself.
   const swseInjected = ['swse', 'vehicle-modification-app', 'swse-app', 'swse-theme-holo'];
+  const rootClassesToRemove = Array.from(sidebar.classList).filter(cls => swseInjected.includes(cls));
+  rootClassesToRemove.forEach(cls => sidebar.classList.remove(cls));
 
-  // Remove any SWSE-injected classes
-  const classesToRemove = currentClasses.filter(cls => swseInjected.includes(cls));
-  classesToRemove.forEach(cls => sidebar.classList.remove(cls));
-
-  // Log if we removed anything
-  if (classesToRemove.length > 0) {
-    log.warn(`SWSE | Removed ${classesToRemove.length} injected classes from sidebar:`, classesToRemove);
+  if (rootClassesToRemove.length > 0) {
+    log.warn(`SWSE | Removed ${rootClassesToRemove.length} injected classes from sidebar root:`, rootClassesToRemove);
   }
+
+  // Defensive normalization: native Foundry sidebar panels should never inherit
+  // custom SWSE app classes from DEFAULT_OPTIONS leakage.
+  const nativePanelAllowlist = new Set([
+    'tab', 'sidebar-tab', 'directory', 'flexcol', 'active',
+    'chat-sidebar', 'combat-sidebar', 'scenes-sidebar', 'actors-sidebar',
+    'items-sidebar', 'journal-sidebar', 'tables-sidebar', 'cards-sidebar',
+    'macros-sidebar', 'playlists-sidebar', 'compendium-sidebar', 'settings-sidebar'
+  ]);
+
+  const nativeSidebarPanels = sidebar.querySelectorAll([
+    '#chat', '#combat', '#scenes', '#actors', '#items', '#journal',
+    '#tables', '#cards', '#macros', '#playlists', '#compendium', '#settings'
+  ].join(','));
+
+  nativeSidebarPanels.forEach((panel) => {
+    const removed = [];
+    for (const cls of Array.from(panel.classList)) {
+      const isFontAwesome = cls.startsWith('fa-');
+      const isSwseLeak = cls === 'swse' || cls === 'swse-app' || cls.includes('dialog') || cls.endsWith('-app') || cls.startsWith('swse-');
+      const isAllowed = nativePanelAllowlist.has(cls);
+      if (!isAllowed && !isFontAwesome && isSwseLeak) {
+        panel.classList.remove(cls);
+        removed.push(cls);
+      }
+    }
+
+    if (removed.length > 0) {
+      log.warn(`SWSE | Stripped leaked classes from native sidebar panel #${panel.id}:`, removed);
+    }
+
+    // Foundry controls visibility via active state; clear stale inline display
+    // without forcing non-active panels visible.
+    panel.style.removeProperty('display');
+  });
 }
 
 /**
@@ -72,6 +100,7 @@ export async function initializeHardeningSystem() {
     registerSafetyDiagnostics();
     registerMutationSafety();
     registerDiagnosticsCommand();
+    registerConsoleLogExport();
 
     // Phase 6: Register settings and console helpers
     registerFirstRunSettings();
@@ -109,34 +138,87 @@ export async function initializeHardeningSystem() {
  * Called from ready hook to fix sidebar display issues
  * @private
  */
+function registerConsoleLogExport() {
+  globalThis.SWSE = globalThis.SWSE || {};
+  globalThis.SWSE.consolelog = globalThis.SWSE.consolelog || {};
+  globalThis.swse = globalThis.swse || {};
+  globalThis.swse.consolelog = globalThis.swse.consolelog || {};
+
+  const bufferKey = '__swseConsoleBuffer';
+  if (!globalThis[bufferKey]) {
+    globalThis[bufferKey] = [];
+    for (const level of ['log', 'info', 'warn', 'error', 'debug']) {
+      const original = console[level].bind(console);
+      if (console[level].__swseWrapped) continue;
+      const wrapped = (...args) => {
+        try {
+          const rendered = args.map(arg => {
+            if (typeof arg === 'string') return arg;
+            try { return JSON.stringify(arg, null, 2); } catch (_err) { return String(arg); }
+          }).join(' ');
+          globalThis[bufferKey].push(`[${new Date().toISOString()}] [${level.toUpperCase()}] ${rendered}`);
+          if (globalThis[bufferKey].length > 10000) globalThis[bufferKey].shift();
+        } catch (_err) {}
+        return original(...args);
+      };
+      wrapped.__swseWrapped = true;
+      console[level] = wrapped;
+    }
+  }
+
+  const exportConsoleLog = async (filename = null) => {
+    const lines = globalThis[bufferKey] || [];
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const safeName = filename || `console-log-${stamp}.txt`;
+    const contents = lines.join('\n');
+    const blob = new Blob([contents], { type: 'text/plain;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = safeName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 0);
+    ui.notifications?.info?.(`SWSE console log exported as ${safeName}`);
+    return { filename: safeName, lineCount: lines.length };
+  };
+
+  globalThis.SWSE.consolelog.export = exportConsoleLog;
+  globalThis.swse.consolelog.export = exportConsoleLog;
+}
+
 function _ensureSidebarTabsVisible() {
   // Register to run AFTER ready hook completes and modules are loaded
   Hooks.on('ready', () => {
     // Defer execution to ensure Foundry initialization is complete
     setTimeout(() => {
       try {
-        const scenes = document.querySelector('#scenes');
-        const combat = document.querySelector('#combat');
+        // FIXED: Only select sidebar panels that are INSIDE #sidebar container
+        // This prevents confusion with SWSE app elements that might have the same ID
+        const sidebar = document.querySelector('#sidebar');
+        if (!sidebar) {
+          log.warn('SWSE | Sidebar container not found in DOM');
+          return;
+        }
+
+        const scenes = sidebar.querySelector('#scenes');
+        const combat = sidebar.querySelector('#combat');
 
         if (!scenes || !combat) {
           log.warn('SWSE | Sidebar tabs not found in DOM');
           return;
         }
 
-        // Force display of sidebar tabs in case Foundry failed to initialize them
-        scenes.style.display = '';
-        combat.style.display = '';
+        // Normalize sidebar after all apps/modules load. Do NOT force display on
+        // native panels; that can make inactive panels visible simultaneously.
+        _restoreSidebarDefaults();
 
-        log.info('SWSE | Forced sidebar tabs display to visible');
-
-        // If no active tab is set, default to scenes (v13 fix)
         if (!ui.sidebar || !ui.sidebar.activeTab) {
           log.warn('SWSE | Sidebar activeTab was null; attempting to activate scenes tab');
           try {
-            // Foundry v13: Use proper tab activation via the tab button
             const scenesButton = document.querySelector('#sidebar-tabs button[data-tab="scenes"]');
             if (scenesButton) {
-              scenesButton.click(); // Trigger tab activation through button click
+              scenesButton.click();
               log.info('SWSE | Scenes tab activated via button click');
             }
           } catch (activateErr) {
@@ -144,7 +226,7 @@ function _ensureSidebarTabsVisible() {
           }
         }
 
-        log.info('SWSE | Sidebar tab visibility restoration complete');
+        log.info('SWSE | Sidebar tab visibility normalization complete');
       } catch (err) {
         log.warn('SWSE | Sidebar tab visibility restoration failed:', err.message);
       }
@@ -292,21 +374,26 @@ export function registerHardeningHooks() {
   });
 
   // GUARANTEED SIDEBAR FIX: Run after all other ready hooks complete
+  // FIXED: Only affect actual Foundry sidebar elements, not app windows with same IDs
   Hooks.once('ready', () => {
     setTimeout(() => {
       try {
-        const scenes = document.querySelector('#scenes');
-        const combat = document.querySelector('#combat');
+        // FIXED: Ensure we're selecting elements INSIDE #sidebar container only
+        const sidebar = document.querySelector('#sidebar');
+        if (!sidebar) {
+          return; // Sidebar doesn't exist, nothing to fix
+        }
+
+        const scenes = sidebar.querySelector('#scenes');
+        const combat = sidebar.querySelector('#combat');
 
         if (scenes && combat) {
-          // Force visible
-          scenes.style.display = '';
-          combat.style.display = '';
+          _restoreSidebarDefaults();
 
-          // Ensure at least one is active
-          if (!scenes.classList.contains('active') && !combat.classList.contains('active')) {
-            scenes.classList.add('active');
-            log.info('SWSE | Forced #scenes tab to active state');
+          if (!scenes.classList.contains('active') && !combat.classList.contains('active') && !ui.sidebar?.activeTab) {
+            const scenesButton = document.querySelector('#sidebar-tabs button[data-tab="scenes"]');
+            scenesButton?.click?.();
+            log.info('SWSE | Triggered native scenes tab activation');
           }
         }
       } catch (err) {

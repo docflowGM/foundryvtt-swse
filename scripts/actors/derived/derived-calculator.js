@@ -176,7 +176,14 @@ export class DerivedCalculator {
         updates['system.derived.defenses'].fortitude = {
           base: defenses.fortitude.base,
           total: defenses.fortitude.total,
-          adjustment: defenseAdjustments.fort
+          adjustment: defenseAdjustments.fort,
+          stateBonus: defenses.fortitude.stateBonus ?? 0,
+          classBonus: defenses.fortitude.classBonus ?? 0,
+          miscBonus: defenses.fortitude.miscBonus ?? 0,
+          armorBonus: defenses.fortitude.armorBonus ?? 0,
+          abilityKey: defenses.fortitude.abilityKey ?? 'con',
+          abilityMod: defenses.fortitude.abilityMod ?? 0,
+          conditionPenalty: defenses.fortitude.conditionPenalty ?? 0
         };
       }
       if (defenses.reflex) {
@@ -184,7 +191,15 @@ export class DerivedCalculator {
         updates['system.derived.defenses'].reflex = {
           base: defenses.reflex.base,
           total: defenses.reflex.total,
-          adjustment: defenseAdjustments.ref
+          adjustment: defenseAdjustments.ref,
+          stateBonus: defenses.reflex.stateBonus ?? 0,
+          classBonus: defenses.reflex.classBonus ?? 0,
+          miscBonus: defenses.reflex.miscBonus ?? 0,
+          armorBonus: defenses.reflex.armorBonus ?? 0,
+          armorContribution: defenses.reflex.armorContribution ?? 0,
+          abilityKey: defenses.reflex.abilityKey ?? 'dex',
+          abilityMod: defenses.reflex.abilityMod ?? 0,
+          conditionPenalty: defenses.reflex.conditionPenalty ?? 0
         };
       }
       if (defenses.will) {
@@ -192,7 +207,14 @@ export class DerivedCalculator {
         updates['system.derived.defenses'].will = {
           base: defenses.will.base,
           total: defenses.will.total,
-          adjustment: defenseAdjustments.will
+          adjustment: defenseAdjustments.will,
+          stateBonus: defenses.will.stateBonus ?? 0,
+          classBonus: defenses.will.classBonus ?? 0,
+          miscBonus: defenses.will.miscBonus ?? 0,
+          armorBonus: defenses.will.armorBonus ?? 0,
+          abilityKey: defenses.will.abilityKey ?? 'wis',
+          abilityMod: defenses.will.abilityMod ?? 0,
+          conditionPenalty: defenses.will.conditionPenalty ?? 0
         };
       }
       if (defenses.flatFooted) {
@@ -200,7 +222,15 @@ export class DerivedCalculator {
         updates['system.derived.defenses'].flatFooted = {
           base: defenses.flatFooted.base,
           total: defenses.flatFooted.total,
-          adjustment: defenseAdjustments.ref
+          adjustment: defenseAdjustments.ref,
+          stateBonus: defenses.flatFooted.stateBonus ?? 0,
+          classBonus: defenses.flatFooted.classBonus ?? 0,
+          miscBonus: defenses.flatFooted.miscBonus ?? 0,
+          armorBonus: defenses.flatFooted.armorBonus ?? 0,
+          armorContribution: defenses.flatFooted.armorContribution ?? 0,
+          abilityKey: defenses.flatFooted.abilityKey ?? 'dex',
+          abilityMod: defenses.flatFooted.abilityMod ?? 0,
+          conditionPenalty: defenses.flatFooted.conditionPenalty ?? 0
         };
       }
 

@@ -11,7 +11,7 @@ export class MentorReflectiveDialog extends SWSEFormApplicationV2 {
     this.actor = actor;
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
     classes: ['swse', 'mentor-reflective-dialog'],
     template: 'systems/foundryvtt-swse/templates/apps/mentor-reflective-dialog.hbs',
     width: 600,

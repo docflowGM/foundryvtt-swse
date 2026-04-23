@@ -24,6 +24,7 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 
 export class LanguageStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -441,19 +442,58 @@ export class LanguageStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   validate() {
-    const issues = [];
-    const warnings = [];
-
-    // No blocking issues for languages (step can be completed with 0 bonus picks if INT mod is 0)
-    if (this._bonusLanguagesAvailable > 0 && this._selectedBonusLanguages.length < this._bonusLanguagesAvailable) {
-      warnings.push(`${this._bonusLanguagesAvailable - this._selectedBonusLanguages.length} bonus language picks remain`);
-    }
+    const issues = this.getBlockingIssues();
+    const warnings = this.getWarnings();
 
     return {
-      isValid: true,
+      isValid: issues.length === 0,
       errors: issues,
       warnings,
     };
+  }
+
+  getBlockingIssues() {
+    const remainingPicks = Math.max(0, this._bonusLanguagesAvailable - this._selectedBonusLanguages.length);
+    if (remainingPicks <= 0) {
+      return [];
+    }
+
+    return [
+      remainingPicks === 1
+        ? 'Select 1 more bonus language to continue'
+        : `Select ${remainingPicks} more bonus languages to continue`,
+    ];
+  }
+
+  getWarnings() {
+    const remainingPicks = Math.max(0, this._bonusLanguagesAvailable - this._selectedBonusLanguages.length);
+    if (remainingPicks <= 0) {
+      return [];
+    }
+
+    return [
+      remainingPicks === 1
+        ? '1 bonus language pick remains'
+        : `${remainingPicks} bonus language picks remain`,
+    ];
+  }
+
+  getRemainingPicks() {
+    const remainingPicks = Math.max(0, this._bonusLanguagesAvailable - this._selectedBonusLanguages.length);
+
+    if (this._bonusLanguagesAvailable <= 0) {
+      return [{ label: 'No bonus languages', count: 0, isWarning: false }];
+    }
+
+    return [{
+      label: 'Bonus languages',
+      count: remainingPicks,
+      isWarning: remainingPicks > 0,
+    }];
+  }
+
+  getBlockerExplanation() {
+    return this.getBlockingIssues()[0] || null;
   }
 
   // ---------------------------------------------------------------------------

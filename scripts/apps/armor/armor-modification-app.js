@@ -30,7 +30,7 @@ export class ArmorModificationApp extends ModificationModalShell {
     this.tintColor = item.flags?.swse?.tintColor || "#888888";
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
     id: "swse-armor-modification",
     classes: ["swse", "armor-modification", "swse-theme-holo"],
     window: {

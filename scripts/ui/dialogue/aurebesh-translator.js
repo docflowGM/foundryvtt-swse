@@ -35,9 +35,11 @@ export class AurebeshTranslator {
 
     // Create wrapper with unique ID for styling/cleanup
     const wrapperId = `aurebesh-${Date.now()}`;
-    const wrapper = document.createElement('div');
+    const wrapperTag = container.tagName === 'P' ? 'span' : 'div';
+    const wrapper = document.createElement(wrapperTag);
     wrapper.id = wrapperId;
     wrapper.className = 'aurebesh-dialogue-wrapper';
+    if (wrapperTag === 'span') wrapper.style.display = 'inline';
     wrapper.innerHTML = '';
     container.appendChild(wrapper);
 

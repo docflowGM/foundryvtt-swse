@@ -46,8 +46,7 @@ function _num(v) {
 /* ========================================================================== */
 
 export class CharacterCreationMenu extends SWSEFormApplicationV2 {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'swse-character-creation-menu',
       title: 'Character Creation Rules',
@@ -89,8 +88,7 @@ async _prepareContext(options) {
 /* ========================================================================== */
 
 export class AdvancementMenu extends SWSEFormApplicationV2 {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'swse-advancement-menu',
       title: 'Advancement Rules',
@@ -149,8 +147,7 @@ export class AdvancementMenu extends SWSEFormApplicationV2 {
 /* ========================================================================== */
 
 export class CombatMenu extends SWSEFormApplicationV2 {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'swse-combat-menu',
       title: 'Combat Rules',
@@ -271,8 +268,7 @@ export class CombatMenu extends SWSEFormApplicationV2 {
 /* ========================================================================== */
 
 export class ForceMenu extends SWSEFormApplicationV2 {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'swse-force-menu',
       title: 'Force & Destiny Rules',
@@ -303,8 +299,7 @@ export class ForceMenu extends SWSEFormApplicationV2 {
 /* ========================================================================== */
 
 export class PresetsMenu extends SWSEFormApplicationV2 {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'swse-presets-menu',
       title: 'Houserule Presets',
@@ -415,8 +410,7 @@ export class PresetsMenu extends SWSEFormApplicationV2 {
 /* ========================================================================== */
 
 export class SkillsFeatsMenu extends SWSEFormApplicationV2 {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'swse-skills-feats-menu',
       title: 'Skills & Feats Rules',
@@ -449,8 +443,7 @@ export class SkillsFeatsMenu extends SWSEFormApplicationV2 {
 /* ========================================================================== */
 
 export class SpaceCombatMenu extends SWSEFormApplicationV2 {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'swse-space-combat-menu',
       title: 'Space Combat Rules',
@@ -540,8 +533,7 @@ export class SpaceCombatMenu extends SWSEFormApplicationV2 {
 /* ========================================================================== */
 
 export class CharacterRestrictionsMenu extends SWSEFormApplicationV2 {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'swse-character-restrictions-menu',
       title: 'Character Creation - Restrictions & Backgrounds',

@@ -30,12 +30,46 @@ import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveClassModel, resolveSelectedClassFromShell, getClassBonusFeatsLookupKeys } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 import { FEAT_TYPE_LABELS, getFeatTypeLabel, loadFeatBucketsMapping, normalizeFeatRuntime, normalizeFeatTypeKey } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-shape.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+
+function resolveClassLookupKeysForFeatStep(shell) {
+  try {
+    const classModel = resolveSelectedClassFromShell(shell) || resolveClassModel(
+      shell?.progressionSession?.getSelection?.('class')
+      || shell?.committedSelections?.get?.('class')
+      || null
+    );
+
+    if (!classModel) {
+      return [];
+    }
+
+    const lookup = getClassBonusFeatsLookupKeys(classModel);
+    return [lookup.classId, lookup.sourceId, lookup.name].filter(Boolean);
+  } catch (error) {
+    swseLogger.warn('[FeatStep] Failed to resolve class lookup keys; continuing without class feat lookup hints', {
+      error: error?.message || String(error),
+      currentStepId: shell?.progressionSession?.currentStepId || null,
+    });
+    return [];
+  }
+}
 
 // Constants
 const FEATS_PER_CATEGORY_INITIAL = 5;  // Constrained visible count per category
 const TOP_SUGGESTIONS = 4;              // Top N suggested feats to show
 
 // Category icons keyed by lowercase featType
+
+
+function emitFeatStepTrace(label, payload = {}) {
+  try {
+    console.warn(`SWSE [FEAT STEP TRACE] ${label}`, payload);
+  } catch (_err) {
+    // no-op
+  }
+}
+
 const FEAT_TYPE_ICONS = {
   general:     'fa-star',
   force:       'fa-fan',
@@ -76,6 +110,7 @@ export class FeatStep extends ProgressionStepPlugin {
 
     // Event listener cleanup
     this._renderAbort = null;            // AbortController for automatic listener cleanup
+    this._isDroidProgression = false;
   }
 
   // ---------------------------------------------------------------------------
@@ -89,20 +124,60 @@ export class FeatStep extends ProgressionStepPlugin {
     }
 
     // Load tag/bucket mapping (cached after first load)
-    this._mapping = await this._loadMapping();
+    try {
+      this._mapping = await this._loadMapping();
+    } catch (error) {
+      swseLogger.warn('[FeatStep] Failed to load feat bucket mapping; continuing with unbucketed feat data', {
+        error: error?.message || String(error),
+        stepId: this.descriptor?.stepId || null,
+      });
+      this._mapping = null;
+    }
 
     // Load canonical normalized feats from registry and reattach mapping tags for current page state
     this._allFeats = (FeatRegistry.list?.() || []).map(f => normalizeFeatRuntime(f, { mapping: this._mapping }));
+    this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
+    const existingFeat = this._getCommittedFeatForSlot(shell);
+    this._selectedFeatId = existingFeat?.id || existingFeat?._id || null;
+    this._selectedFeatItem = existingFeat || null;
+
+    emitFeatStepTrace('STEP_ENTER_START', {
+      stepId: this.descriptor?.stepId || null,
+      slotType: this._slotType,
+      actorName: shell?.actor?.name || null,
+      registryCount: this._allFeats.length,
+    });
 
     // Get legal feats for this context
-    const legalFeats = await this._getLegalFeats(shell.actor, shell);
+    let legalFeats = [];
+    try {
+      legalFeats = await this._getLegalFeats(shell.actor, shell);
+    } catch (error) {
+      swseLogger.error('[FeatStep] Failed to compute legal feats; degrading to empty state instead of hard-blocking progression', {
+        error: error?.message || String(error),
+        stepId: this.descriptor?.stepId || null,
+        actor: shell?.actor?.name || null,
+      });
+      legalFeats = [];
+    }
     this._noChoicesAvailable = legalFeats.length === 0;
+    emitFeatStepTrace('LEGAL_FEATS_RESULT', {
+      stepId: this.descriptor?.stepId || null,
+      slotType: this._slotType,
+      legalCount: legalFeats.length,
+      noChoicesAvailable: this._noChoicesAvailable,
+      sampleLegalFeats: legalFeats.slice(0, 10).map(f => f?.name || f?.id || '(unknown)'),
+    });
 
     // Get suggested feats (pass shell so suggestion engine sees chargen choices)
     this._suggestedFeats = await this._getSuggestedFeats(shell.actor, legalFeats, shell);
 
     // Group feats by category
     this._groupFeats(legalFeats);
+    emitFeatStepTrace('GROUPING_COMPLETE', {
+      groups: Object.fromEntries(Object.entries(this._groupedFeats || {}).map(([key, group]) => [key, group?.feats?.length || 0])),
+      suggestedCount: this._suggestedFeats.length,
+    });
 
     // Expand suggested category by default, collapse others
     this._expandedCategories.clear();
@@ -209,36 +284,47 @@ export class FeatStep extends ProgressionStepPlugin {
     if (!actor) return [];
 
     const legal = [];
+    const pendingAbilityData = this._buildPendingAbilityData(shell);
+    const classLookupKeys = resolveClassLookupKeysForFeatStep(shell);
 
     for (const feat of this._allFeats) {
-      // Check if feat meets prerequisites using pending chargen selections
-      const assessment = AbilityEngine.evaluateAcquisition(actor, feat, this._buildPendingAbilityData(shell));
+      try {
+        // Check if feat meets prerequisites using pending chargen selections
+        const assessment = AbilityEngine.evaluateAcquisition(actor, feat, pendingAbilityData);
 
-      if (!assessment.legal) {
-        continue;  // Skip illegal feats for now (unless showAll is on)
+        if (!assessment?.legal) {
+          continue;  // Skip illegal feats for now (unless showAll is on)
+        }
+
+        // Check if feat is slot-compatible
+        const slotValidation = await FeatSlotValidator.validateFeatForSlot(
+          feat,
+          { slotType: this._slotType, classId: this._classId, classLookupKeys },
+          actor
+        );
+
+        if (!slotValidation?.valid) {
+          continue;  // Skip slot-incompatible feats
+        }
+
+        // Check if already owned (unless repeatable)
+        const alreadyOwned = actor.items.some(i =>
+          i.type === 'feat' && i.name?.toLowerCase?.() === feat.name?.toLowerCase?.()
+        );
+
+        if (alreadyOwned && !FeatEngine.repeatables.includes(String(feat.name || '').toLowerCase())) {
+          continue;  // Skip non-repeatable feats already owned
+        }
+
+        legal.push(feat);
+      } catch (error) {
+        swseLogger.warn('[FeatStep] Skipping feat after legality evaluation failure', {
+          featId: feat?._id || feat?.id || null,
+          featName: feat?.name || null,
+          error: error?.message || String(error),
+          stepId: this.descriptor?.stepId || null,
+        });
       }
-
-      // Check if feat is slot-compatible
-      const slotValidation = await FeatSlotValidator.validateFeatForSlot(
-        feat,
-        { slotType: this._slotType, classId: this._classId, classLookupKeys: this._getCurrentClassLookupKeys(shell) },
-        actor
-      );
-
-      if (!slotValidation.valid) {
-        continue;  // Skip slot-incompatible feats
-      }
-
-      // Check if already owned (unless repeatable)
-      const alreadyOwned = actor.items.some(i =>
-        i.type === 'feat' && i.name.toLowerCase() === feat.name.toLowerCase()
-      );
-
-      if (alreadyOwned && !FeatEngine.repeatables.includes(feat.name.toLowerCase())) {
-        continue;  // Skip non-repeatable feats already owned
-      }
-
-      legal.push(feat);
     }
 
     return legal;
@@ -289,19 +375,70 @@ export class FeatStep extends ProgressionStepPlugin {
    * Allows suggestion engine to see what choices have been made so far in chargen
    */
   _buildCharacterDataFromShell(shell) {
-    if (!shell?.committedSelections) {
+    const selections = shell?.progressionSession?.draftSelections || null;
+    const committed = shell?.committedSelections || null;
+
+    if (!selections && !committed) {
       return {};
     }
 
-    const committed = shell.committedSelections;
+    const committedSkills = selections?.skills || committed?.get?.('skills') || {};
+    const normalizedSkills = Array.isArray(committedSkills?.trained)
+      ? Object.fromEntries(committedSkills.trained.map((skillKey) => [skillKey, { trained: true }]))
+      : committedSkills;
 
     return {
-      classes: committed.get('class') ? [committed.get('class')] : [],
-      species: committed.get('species'),
-      feats: committed.get('feats') || [],
-      talents: committed.get('talents') || [],
-      skills: committed.get('skills') || {},
-      abilityIncreases: committed.get('attributes') || {},
+      classes: selections?.class ? [selections.class] : (committed?.get?.('class') ? [committed.get('class')] : []),
+      species: selections?.species || committed?.get?.('species'),
+      feats: selections?.feats || committed?.get?.('feats') || [],
+      talents: selections?.talents || committed?.get?.('talents') || [],
+      skills: normalizedSkills,
+      abilityIncreases: selections?.attributes || committed?.get?.('attributes') || {},
+    };
+  }
+
+  _getCommittedFeatSelections(shell) {
+    return Array.isArray(shell?.progressionSession?.draftSelections?.feats)
+      ? [...shell.progressionSession.draftSelections.feats]
+      : [];
+  }
+
+  _getCommittedFeatForSlot(shell) {
+    return this._getCommittedFeatSelections(shell).find(feat => feat?.slotType === this._slotType) || null;
+  }
+
+  _buildCanonicalFeatSelection(feat) {
+    if (!feat) return null;
+    return {
+      id: feat.id || feat._id,
+      name: feat.name || '',
+      type: feat.type || 'feat',
+      system: feat.system || {},
+      img: feat.img || undefined,
+      slotType: this._slotType,
+      source: this._slotType,
+    };
+  }
+
+  _getCurrentClassLookupKeys(shell) {
+    return resolveClassLookupKeysForFeatStep(shell);
+  }
+
+  _buildPendingAbilityData(shell) {
+    const characterData = this._buildCharacterDataFromShell(shell);
+    const selectedSkills = Array.isArray(characterData.skills?.trained)
+      ? characterData.skills.trained.map(key => ({ key }))
+      : Object.keys(characterData.skills || {})
+        .filter(key => characterData.skills[key]?.trained || characterData.skills[key] === true)
+        .map(key => ({ key }));
+
+    return {
+      selectedClass: characterData.classes?.[0] || shell?.committedSelections?.get?.('class') || null,
+      selectedFeats: characterData.feats || [],
+      selectedTalents: characterData.talents || [],
+      selectedSkills,
+      skillRanks: {},
+      grantedFeats: [],
     };
   }
 
@@ -546,7 +683,8 @@ export class FeatStep extends ProgressionStepPlugin {
     // PHASE 2 UX: Micro-progress — show slot progress
     // Note: For a single feat slot, this step shows 0-1 selection
     // For normalized Feat step (Phase: Normalized Steps), this will show dual subsection progress
-    const selectedCount = committedFeats.length;
+    const slotSelections = committedFeats.filter(feat => feat?.slotType === this._slotType);
+    const selectedCount = slotSelections.length;
     const requiredCount = 1; // Single feat slot per step
     const remainingCount = Math.max(0, requiredCount - selectedCount);
     const isComplete = remainingCount === 0;
@@ -603,11 +741,21 @@ export class FeatStep extends ProgressionStepPlugin {
 
   renderDetailsPanel(focusedItem) {
     if (!this._focusedFeatId) {
+      emitFeatStepTrace('DETAILS_EMPTY', {
+        reason: 'no-focused-feat-id',
+        stepId: this.descriptor?.stepId || null,
+        selectedFeatId: this._selectedFeatId,
+      });
       return this.renderDetailsPanelEmptyState();
     }
 
     const feat = this._getFeat(this._focusedFeatId);
     if (!feat) {
+      emitFeatStepTrace('DETAILS_EMPTY', {
+        reason: 'focused-feat-not-found',
+        stepId: this.descriptor?.stepId || null,
+        focusedFeatId: this._focusedFeatId,
+      });
       return this.renderDetailsPanelEmptyState();
     }
 
@@ -618,6 +766,14 @@ export class FeatStep extends ProgressionStepPlugin {
     // Normalize detail panel data for canonical display (no fabrication)
     normalizeDetailPanelData(feat, 'feat', {
       metadata: { tags: feat.uiBroadTags || [] },
+    });
+
+    emitFeatStepTrace('DETAILS_READY', {
+      featId,
+      featName: feat?.name || null,
+      isSuggested,
+      isSelected,
+      prerequisiteLine: feat.prerequisiteText || feat.prerequisiteLine || this._getPrerequisiteLine(feat),
     });
 
     return {
@@ -642,30 +798,49 @@ export class FeatStep extends ProgressionStepPlugin {
 
   async onItemFocused(item) {
     this._focusedFeatId = item?._id || item?.id || item;
+    emitFeatStepTrace('ITEM_FOCUSED', {
+      focusedFeatId: this._focusedFeatId,
+      itemName: item?.name || null,
+    });
   }
 
   async onItemCommitted(item, shell) {
     if (!item) return;
 
     const feat = this._getFeat(item?.id || item?._id || item);
-    if (!feat) return;
-
-    // Toggle selection
-    const featId = feat._id || feat.id;
-    if (this._selectedFeatId === featId) {
-      this._selectedFeatId = null;
-    } else {
-      this._selectedFeatId = featId;
+    if (!feat) {
+      emitFeatStepTrace('ITEM_COMMIT_FAILED', {
+        reason: 'feat-not-found',
+        incomingItem: item?.id || item?._id || item || null,
+      });
+      return;
     }
 
-    // Update observable build intent (Phase 6 solution)
-    // Each feat slot (general/class) commits to shell.committedSelections with its own stepId,
-    // and also updates buildIntent for cross-step visibility
+    const featId = feat._id || feat.id;
+    const currentSelections = this._getCommittedFeatSelections(shell);
+    const slotSelections = currentSelections.filter(entry => entry?.slotType !== this._slotType);
+    const isTogglingOff = this._selectedFeatId === featId;
+    const nextSelection = isTogglingOff ? null : this._buildCanonicalFeatSelection(feat);
+    const nextSelections = nextSelection ? [...slotSelections, nextSelection] : slotSelections;
+
+    this._selectedFeatId = nextSelection?.id || null;
+    this._selectedFeatItem = nextSelection || null;
+
+    emitFeatStepTrace('ITEM_COMMITTED', {
+      featId,
+      featName: feat?.name || null,
+      selectedFeatId: this._selectedFeatId,
+      slotType: this._slotType,
+      totalSelections: nextSelections.length,
+    });
+
+    await this._commitNormalized(shell, 'feats', nextSelections);
+
+    if (shell?.committedSelections && this.descriptor?.stepId) {
+      shell.committedSelections.set(this.descriptor.stepId, nextSelection);
+    }
     if (shell?.buildIntent && this.descriptor?.stepId) {
-      const selectedFeatData = this._selectedFeatId
-        ? { featId: this._selectedFeatId, feat, slotType: this._slotType }
-        : null;
-      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, selectedFeatData);
+      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, nextSelection);
     }
   }
 
@@ -719,7 +894,9 @@ export class FeatStep extends ProgressionStepPlugin {
 
     // Mode-aware default guidance
     if (this.isChargen(shell)) {
-      return 'Choose feats that strengthen your abilities and define your playstyle. Some feats are better for your build than others.';
+      return this._isDroidProgression
+        ? 'Choose feats that reinforce your chassis role package and complement your installed systems.'
+        : 'Choose feats that strengthen your abilities and define your playstyle. Some feats are better for your build than others.';
     } else if (this.isLevelup(shell)) {
       return 'As you gain experience, you may learn new techniques and abilities. Choose feats that enhance your path.';
     }
@@ -782,7 +959,7 @@ export class FeatStep extends ProgressionStepPlugin {
   getUtilityBarConfig() {
     return {
       mode: 'rich',
-      search: { enabled: true, placeholder: 'Search feats…' },
+      search: { enabled: true, placeholder: this._isDroidProgression ? 'Search droid feats…' : 'Search feats…' },
       // Type and tag filters are rendered inline in the work surface, not as utility-bar chips.
       sorts: [
         { id: 'alpha-asc',  label: 'Name A→Z' },

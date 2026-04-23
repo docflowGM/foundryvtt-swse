@@ -24,6 +24,7 @@ import { DropService } from "/systems/foundryvtt-swse/scripts/services/drop-serv
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
+import { coerceSingleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 
 /**
  * Wire every droid-sheet listener block. Order matches the original
@@ -35,6 +36,7 @@ import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-mai
  */
 export function wireDroidSheetListeners(sheet, root, signal) {
   wireTabHandling(sheet, root, signal);
+  wireNamedFieldPersistence(sheet, root, signal);
   wireConditionTrackControls(sheet, root, signal);
   wireInitiativeControls(sheet, root, signal);
   wireProgressionFrameworkButtons(sheet, root, signal);
@@ -68,6 +70,33 @@ function wireTabHandling(sheet, root, signal) {
       root.querySelector(`.tab[data-tab="${tabName}"]`)?.classList.add("active");
     }, { signal });
   }
+}
+
+
+function wireNamedFieldPersistence(sheet, root, signal) {
+  root.addEventListener('change', async (ev) => {
+    const field = ev.target instanceof HTMLElement
+      ? ev.target.closest('input[name], textarea[name], select[name]')
+      : null;
+    if (!(field instanceof HTMLElement)) return;
+    if (!field.name || field.hasAttribute('data-action') || field.disabled || field.hasAttribute('readonly')) return;
+    if (field.name.startsWith('items.')) return;
+
+    const rawValue = field.matches('input[type="checkbox"]') ? field.checked : field.value;
+    const update = {
+      [field.name]: coerceSingleFieldValue(field.name, rawValue, field)
+    };
+
+    try {
+      await ActorEngine.updateActor(sheet.actor, update, {
+        source: 'droid-sheet-direct-field',
+        meta: { guardKey: `droid-field:${field.name}` }
+      });
+    } catch (err) {
+      console.error('Droid field update failed:', err);
+      ui.notifications.error(`Failed to update field: ${err.message}`);
+    }
+  }, { signal });
 }
 
 function wireConditionTrackControls(sheet, root, signal) {
@@ -291,23 +320,26 @@ function wireActionUse(sheet, root, signal) {
 }
 
 function wireDroidSystemsEditor(sheet, root, signal) {
-  const editDroidBtn = root.querySelector(".edit-droid-systems");
-  if (!editDroidBtn) return;
-  editDroidBtn.addEventListener("click", async (ev) => {
-    ev.preventDefault();
-    const hasConfig = !!sheet.actor?.system?.droidSystems?.degree;
-    const mode = hasConfig ? "EDIT" : "NEW";
-    try {
-      await DroidBuilderApp.open(sheet.actor, {
-        mode,
-        sourceActor: hasConfig ? sheet.actor : null,
-        requireApproval: HouseRuleService.isEnabled('store.requireGMApproval')
-      });
-    } catch (err) {
-      console.error("Failed to open droid builder:", err);
-      ui.notifications.error("Failed to open droid builder.");
-    }
-  }, { signal });
+  const editButtons = root.querySelectorAll('.edit-droid-systems');
+  if (!editButtons.length) return;
+
+  for (const editDroidBtn of editButtons) {
+    editDroidBtn.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      const hasConfig = !!sheet.actor?.system?.droidSystems?.degree;
+      const mode = hasConfig ? 'EDIT' : 'NEW';
+      try {
+        await DroidBuilderApp.open(sheet.actor, {
+          mode,
+          sourceActor: hasConfig ? sheet.actor : null,
+          requireApproval: HouseRuleService.isEnabled('store.requireGMApproval')
+        });
+      } catch (err) {
+        console.error('Failed to open droid builder:', err);
+        ui.notifications.error('Failed to open droid builder.');
+      }
+    }, { signal });
+  }
 }
 
 function wireConvertStockDroid(sheet, root, signal) {

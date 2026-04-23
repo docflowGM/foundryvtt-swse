@@ -16,8 +16,7 @@ import {
 } from "/systems/foundryvtt-swse/scripts/houserules/houserule-menus.js";
 
 export class HouserulesConfig extends SWSEFormApplicationV2 {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'swse-houserules-config',
       title: 'SWSE House Rules Configuration',

@@ -33,8 +33,14 @@ export class SuggestionContextBuilder {
       : actor.system?.progression?.talents || [];
 
     const selectedSkills = characterData.skills !== undefined
-      ? characterData.skills
-      : actor.system?.skills || {};
+      ? Array.isArray(characterData.skills)
+        ? characterData.skills
+        : Object.entries(characterData.skills || {})
+          .filter(([, value]) => value === true || value?.trained === true)
+          .map(([key]) => ({ key }))
+      : Object.entries(actor.system?.skills || {})
+          .filter(([, value]) => value === true || value?.trained === true)
+          .map(([key]) => ({ key }));
 
     const abilityIncreases = characterData.abilityIncreases || {};
 
@@ -106,7 +112,7 @@ export class SuggestionContextBuilder {
       pendingData &&
       Array.isArray(pendingData.selectedFeats) &&
       Array.isArray(pendingData.selectedTalents) &&
-      typeof pendingData.selectedSkills === 'object'
+      Array.isArray(pendingData.selectedSkills)
     );
   }
 }

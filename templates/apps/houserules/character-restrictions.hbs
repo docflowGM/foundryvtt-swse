@@ -1,12 +1,12 @@
 <form class="character-restrictions-menu">
   <nav class="tabs" data-group="primary-tabs">
-    <a class="item active" data-tab="backgrounds">Backgrounds</a>
-    <a class="item" data-tab="races">Banned Races</a>
+    <a class="item active" data-swse-tab="backgrounds">Backgrounds</a>
+    <a class="item" data-swse-tab="races">Banned Races</a>
   </nav>
 
   <section class="content">
     <!-- Backgrounds Tab -->
-    <div class="tab active" data-group="primary-tabs" data-tab="backgrounds">
+    <div class="tab active" data-group="primary-tabs" data-swse-tab="backgrounds">
       <div class="form-group">
         <label for="enableBackgrounds">
           <input type="checkbox" id="enableBackgrounds" name="enableBackgrounds" {{#if enableBackgrounds}}checked{{/if}}/>
@@ -17,7 +17,7 @@
     </div>
 
     <!-- Banned Races Tab -->
-    <div class="tab" data-group="primary-tabs" data-tab="races">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="races">
       <div class="form-group">
         <label>Ban Races from Player Selection</label>
         <p class="hint">Check any races to prevent players from selecting them. GMs can always select any race. Note: This only affects new character creation.</p>

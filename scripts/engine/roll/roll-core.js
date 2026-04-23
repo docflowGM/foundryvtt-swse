@@ -255,7 +255,7 @@ export class RollCore {
 
     try {
       const fpRoll = new Roll(forceDice);
-      await fpRoll.evaluate({ async: true });
+      await fpRoll.evaluate();
 
       // For multiple dice, take the highest; for single die, use total
       let bonus = 0;
@@ -276,7 +276,7 @@ export class RollCore {
         roll: fpRoll
       };
     } catch (err) {
-      swseLogger.error(`[RollCore] Force Point roll failed for die "${forceDie}":`, err);
+      swseLogger.error(`[RollCore] Force Point roll failed for die "${forceDice}":`, err);
       return {
         success: false,
         bonus: 0,
@@ -318,7 +318,7 @@ export class RollCore {
     try {
       // Use Foundry's native Roll class
       const roll = new Roll(formula, rollData);
-      await roll.evaluate({ async: true });
+      await roll.evaluate();
       return roll;
     } catch (err) {
       throw new Error(`Failed to execute formula "${formula}": ${err.message}`);

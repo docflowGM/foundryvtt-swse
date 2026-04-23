@@ -25,7 +25,7 @@ export class LightsaberConstructionApp extends ModificationModalShell {
     this.selectedBladeColor = DEFAULT_BLADE_COLOR;
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
     id: "swse-lightsaber-construction",
     classes: ["swse", "lightsaber-construction", "swse-theme-holo"],
     window: {

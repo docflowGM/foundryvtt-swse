@@ -33,7 +33,7 @@ export class MeleeWeaponModificationApp extends ModificationModalShell {
     this.selectedUpgradeToAdd = null;
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
     id: "swse-melee-modification",
     classes: ["swse", "melee-modification", "swse-theme-holo"],
     window: {

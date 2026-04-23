@@ -10,7 +10,7 @@ import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-a
  * - Subclasses may still implement legacy `_updateObject(event, data)` for convenience
  */
 export default class SWSEFormApplicationV2 extends SWSEApplicationV2 {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
     tag: 'form',
     window: {
       contentClasses: ['standard-form']

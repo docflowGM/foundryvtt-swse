@@ -29,7 +29,7 @@ export class ModificationModalShell extends BaseSWSEAppV2 {
     this.selectedModification = null;
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
     classes: ["swse", "modification-modal-shell", "swse-theme-holo"],
     window: {
       resizable: true

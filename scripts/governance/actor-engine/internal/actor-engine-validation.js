@@ -87,8 +87,8 @@ export const ValidationEngineModule = {
     const classWarnings = this._normalizeClassPathsForContract(flat);
     warnings.push(...classWarnings);
 
-    // 3. Skills: Ensure complete structure
-    const skillWarnings = this._normalizeSkillStructureForContract(flat);
+    // 3. Skills: Coerce only touched leaf paths
+    const skillWarnings = this._normalizeSkillStructureForContract(flat, actor);
     warnings.push(...skillWarnings);
 
     // 4. XP: Normalize naming
@@ -177,7 +177,7 @@ export const ValidationEngineModule = {
           const propKey = skillMatch[2];
           // If only one property is being set, that's usually ok (partial updates)
           // But warn if it looks like incomplete initialization
-          if (!['trained', 'miscMod', 'focused', 'selectedAbility'].includes(propKey)) {
+          if (!['trained', 'miscMod', 'focused', 'selectedAbility', 'favorite'].includes(propKey)) {
             warnings.push(`Unusual skill property: system.skills.${skillKey}.${propKey}`);
           }
         }
@@ -253,71 +253,51 @@ export const ValidationEngineModule = {
   },
 
   /**
-   * Normalize skill structure: ensure touched skills have complete shape
+   * Normalize touched skill leaf paths without backfilling untouched properties.
    * @private
    */
-  _normalizeSkillStructureForContract(flat) {
+  _normalizeSkillStructureForContract(flat, actor) {
     const warnings = [];
+    const canonicalProps = new Set(['trained', 'miscMod', 'focused', 'selectedAbility', 'favorite']);
 
-    // Find skills being touched
-    const skillKeys = new Set();
     for (const key of Object.keys(flat)) {
-      const match = key.match(/^system\.skills\.(\w+)\./);
-      if (match) {
-        skillKeys.add(match[1]);
-      }
-    }
+      const match = key.match(/^system\.skills\.(\w+)\.(\w+)$/);
+      if (!match) continue;
 
-    // For each touched skill, ensure all canonical properties exist
-    for (const skillKey of skillKeys) {
-      const basePath = `system.skills.${skillKey}`;
-      const props = ['trained', 'miscMod', 'focused', 'selectedAbility'];
+      const skillKey = match[1];
+      const prop = match[2];
+      if (!canonicalProps.has(prop)) continue;
 
-      for (const prop of props) {
-        const path = `${basePath}.${prop}`;
-        const defaults = {
-          trained: false,
-          miscMod: 0,
-          focused: false,
-          selectedAbility: ''
-        };
+      const currentSkill = actor?.system?.skills?.[skillKey] ?? {};
 
-        if (!(path in flat)) {
-          flat[path] = defaults[prop];
+      if (prop === 'miscMod') {
+        const coerced = Number(flat[key]);
+        const fallback = Number.isFinite(Number(currentSkill.miscMod)) ? Number(currentSkill.miscMod) : 0;
+        if (!Number.isFinite(coerced)) {
           warnings.push(
-            `[INITIALIZE] Skill ${skillKey}.${prop} initialized to default (${defaults[prop]})`
+            `[COERCE] Skill ${skillKey}.miscMod invalid (${flat[key]}); preserving current value`
           );
-          continue;
-        }
-
-        if (prop === 'miscMod') {
-          const coerced = Number(flat[path]);
-          if (!Number.isFinite(coerced)) {
-            warnings.push(
-              `[COERCE] Skill ${skillKey}.miscMod invalid (${flat[path]}); defaulting to 0`
-            );
-            flat[path] = 0;
-          } else if (typeof flat[path] !== 'number') {
-            warnings.push(
-              `[COERCE] Skill ${skillKey}.miscMod ${JSON.stringify(flat[path])} -> ${coerced}`
-            );
-            flat[path] = coerced;
-          }
-        } else if (prop === 'trained' || prop === 'focused') {
-          if (typeof flat[path] !== 'boolean') {
-            const raw = flat[path];
-            flat[path] = raw === true || raw === 'true' || raw === 1 || raw === '1';
-            warnings.push(
-              `[COERCE] Skill ${skillKey}.${prop} ${JSON.stringify(raw)} -> ${flat[path]}`
-            );
-          }
-        } else if (prop === 'selectedAbility' && typeof flat[path] !== 'string') {
-          const raw = flat[path];
-          flat[path] = raw == null ? '' : String(raw);
+          flat[key] = fallback;
+        } else if (typeof flat[key] !== 'number') {
           warnings.push(
-            `[COERCE] Skill ${skillKey}.selectedAbility ${JSON.stringify(raw)} -> ${JSON.stringify(flat[path])}`
+            `[COERCE] Skill ${skillKey}.miscMod ${JSON.stringify(flat[key])} -> ${coerced}`
+          );
+          flat[key] = coerced;
+        }
+      } else if (prop === 'trained' || prop === 'focused' || prop === 'favorite') {
+        if (typeof flat[key] !== 'boolean') {
+          const raw = flat[key];
+          flat[key] = raw === true || raw === 'true' || raw === 1 || raw === '1' || raw === 'on';
+          warnings.push(
+            `[COERCE] Skill ${skillKey}.${prop} ${JSON.stringify(raw)} -> ${flat[key]}`
           );
         }
+      } else if (prop === 'selectedAbility' && typeof flat[key] !== 'string') {
+        const raw = flat[key];
+        flat[key] = raw == null ? '' : String(raw);
+        warnings.push(
+          `[COERCE] Skill ${skillKey}.selectedAbility ${JSON.stringify(raw)} -> ${JSON.stringify(flat[key])}`
+        );
       }
     }
 
@@ -409,7 +389,8 @@ export const ValidationEngineModule = {
           trained: false,
           miscMod: 0,
           focused: false,
-          selectedAbility: ''
+          selectedAbility: '',
+          favorite: false
         };
       } else {
         // Ensure all properties exist

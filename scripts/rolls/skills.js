@@ -17,7 +17,7 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
  * @param {string} skillKey - The skill key
  * @returns {Promise<Roll>} The skill check roll
  */
-export async function rollSkill(actor, skillKey) {
+export async function rollSkill(actor, skillKey, options = {}) {
   const utils = game.swse.utils;
   // === READ FROM DERIVED (SSOT) ===
   const derivedSkill = actor.system.derived?.skills?.[skillKey];
@@ -52,9 +52,10 @@ export async function rollSkill(actor, skillKey) {
   const rollResult = await RollCore.execute({
     actor,
     domain,
-    baseBonus: derivedSkill.total,
+    baseBonus: derivedSkill.total + Number(options?.customModifier || 0),
     rollOptions: {
-      baseDice: '1d20'
+      baseDice: '1d20',
+      useForce: options?.useForcePoint === true
     },
     context: { skillKey, trained: isTrained }
   });
@@ -68,16 +69,21 @@ export async function rollSkill(actor, skillKey) {
   const skillLabel = skill.label || utils.string.capitalize(skillKey);
   if (rollResult.roll) {
     // Build detailed modifier breakdown
-    const breakdown = [
-      `Trained: ${isTrained ? 'Yes' : 'No'}`,
-      `Base Bonus: ${rollResult.baseBonus}`,
-      `Situational Mods: ${rollResult.modifierTotal}`
-    ].join(' | ');
+    const total = rollResult.roll?.total ?? 'unknown';
+    const flavor = `${actor.name} used ${skillLabel} and got ${total}.`;
 
     await SWSEChat.postRoll({
       roll: rollResult.roll,
       actor,
-      flavor: `<strong>${skillLabel}</strong><br/>${breakdown}`
+      flavor,
+      context: {
+        type: 'skill',
+        label: skillLabel,
+        trained: isTrained,
+        baseBonus: rollResult.baseBonus,
+        situationalMods: rollResult.modifierTotal,
+        customModifier: Number(options?.customModifier || 0)
+      }
     });
   }
 
@@ -129,11 +135,11 @@ export function calculateSkillMod(actor, skill, actionId = null) {
  * @returns {Promise<object>} Result with roll and success
  */
 export async function rollSkillCheck(actor, skillKey, dcOrOptions = null) {
-  const roll = await rollSkill(actor, skillKey);
+  const options = (dcOrOptions && typeof dcOrOptions === 'object' && !Array.isArray(dcOrOptions)) ? dcOrOptions : {};
+  const roll = await rollSkill(actor, skillKey, options);
 
   if (!roll) {return null;}
 
-  const options = (dcOrOptions && typeof dcOrOptions === 'object' && !Array.isArray(dcOrOptions)) ? dcOrOptions : {};
   const dc = typeof dcOrOptions === 'number' ? dcOrOptions : (typeof options.dc === 'number' ? options.dc : null);
 
   if (typeof dc !== 'number') {

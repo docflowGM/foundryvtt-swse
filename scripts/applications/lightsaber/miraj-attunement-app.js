@@ -22,7 +22,7 @@ export class MirajAttunementApp extends BaseSWSEAppV2 {
     this.weapon = weapon;
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
     id: "miraj-attunement",
     classes: ["swse", "miraj-attunement", "swse-theme-holo"],
     window: {

@@ -1,12 +1,16 @@
-<div class="swse-chat-card swse-roll-card">
+<div class="swse-chat-card swse-roll-card swse-roll-card--{{category}}">
+  {{#if title}}
   <header class="card-header">
     <h3>{{title}}</h3>
     {{#if subtitle}}<div class="card-subtitle">{{subtitle}}</div>{{/if}}
   </header>
+  {{/if}}
 
-  {{#if flavor}}
+  {{#if context}}
   <div class="card-content">
-    <p>{{flavor}}</p>
+    {{#if context.baseBonus}}<div><strong>Base Bonus:</strong> {{numberFormat context.baseBonus decimals=0 sign=true}}</div>{{/if}}
+    {{#if context.situationalMods}}<div><strong>Situational Mods:</strong> {{numberFormat context.situationalMods decimals=0 sign=true}}</div>{{/if}}
+    {{#if context.customModifier}}<div><strong>Custom Modifier:</strong> {{numberFormat context.customModifier decimals=0 sign=true}}</div>{{/if}}
   </div>
   {{/if}}
 
@@ -14,8 +18,8 @@
   <div class="card-content">
     <div class="dice-roll">
       <div class="dice-result">
-        {{#if roll.formula}}<div class="dice-formula">{{roll.formula}}</div>{{/if}}
-        <div class="dice-total">{{roll.total}}</div>
+        {{#if formula}}<div class="dice-formula">{{formula}}</div>{{/if}}
+        <div class="dice-total">{{total}}</div>
       </div>
     </div>
   </div>

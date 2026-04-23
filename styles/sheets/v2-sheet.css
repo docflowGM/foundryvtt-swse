@@ -67,11 +67,7 @@ form.application.sheet > .window-content {
    to properly propagate resize events from the outer app frame into the sheet.
    This enables window resizing to expand/contract the sheet content area. */
 form.application.sheet > .window-content > .swse-character-sheet-wrapper {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 0%;
-  min-height: 0;
-  min-width: 0;
+  display: contents;
 }
 
 /* ROOT: Primary sheet container
@@ -99,7 +95,8 @@ form.application.sheet > .window-content > .swse-character-sheet-wrapper {
    Together, these prevent the inner container from growing to content size and breaking
    the height chain that should be bounded by .window-content.
 */
-form.application.sheet > .window-content > .swse-character-sheet-wrapper > .swse-character-sheet-form {
+form.application.sheet > .window-content > .swse-character-sheet-wrapper > .swse-character-sheet-form,
+form.application.sheet > .window-content > .swse-character-sheet-form {
   display: flex;
   flex-direction: column;
   flex: 1 1 0%;
@@ -2232,153 +2229,52 @@ select option:checked {
   margin-bottom: 12px;
 }
 
-/* =========================================
-   Character Relationships — typed roster colors
-   ========================================= */
-
-.swse-sheet.swse-relationship-roster-card {
-  display: grid;
-  grid-template-columns: 52px minmax(0, 1fr);
-  gap: 10px;
-  align-items: center;
-  padding: 10px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-left-width: 4px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
+.swse-sheet.relationship-entry {
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
   cursor: pointer;
-  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
-  min-width: 0;
 }
 
-.swse-sheet.swse-relationship-roster-card:hover,
-.swse-sheet.swse-relationship-roster-card:focus {
-  background: rgba(255, 255, 255, 0.07);
-  transform: translateY(-1px);
-  outline: none;
+.swse-sheet.relationship-entry:hover {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: rgba(0, 255, 136, 0.4);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.15);
 }
 
-/* Followers — Classic Cyan */
-.swse-sheet.swse-relationship-roster-card--follower {
-  border-color: rgba(90, 220, 255, 0.30);
-  border-left-color: rgba(90, 220, 255, 0.95);
-  background: linear-gradient(
-    90deg,
-    rgba(90, 220, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.035) 18%
-  );
-  box-shadow: inset 0 0 0 1px rgba(90, 220, 255, 0.06);
+.swse-sheet.relationship-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
-.swse-sheet.swse-relationship-roster-card--follower:hover,
-.swse-sheet.swse-relationship-roster-card--follower:focus {
-  border-color: rgba(90, 220, 255, 0.45);
-  box-shadow: 0 0 0 1px rgba(90, 220, 255, 0.12);
+.swse-sheet.relationship-name-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
 }
 
-/* Mounts — Light Green */
-.swse-sheet.swse-relationship-roster-card--mount {
-  border-color: rgba(150, 235, 165, 0.30);
-  border-left-color: rgba(150, 235, 165, 0.95);
-  background: linear-gradient(
-    90deg,
-    rgba(150, 235, 165, 0.12) 0%,
-    rgba(255, 255, 255, 0.035) 18%
-  );
-  box-shadow: inset 0 0 0 1px rgba(150, 235, 165, 0.06);
-}
-
-.swse-sheet.swse-relationship-roster-card--mount:hover,
-.swse-sheet.swse-relationship-roster-card--mount:focus {
-  border-color: rgba(150, 235, 165, 0.45);
-  box-shadow: 0 0 0 1px rgba(150, 235, 165, 0.12);
-}
-
-/* Droids — Silver / Circuitry */
-.swse-sheet.swse-relationship-roster-card--droid {
-  border-color: rgba(205, 210, 220, 0.32);
-  border-left-color: rgba(215, 220, 230, 0.96);
-  background:
-    linear-gradient(
-      90deg,
-      rgba(205, 210, 220, 0.12) 0%,
-      rgba(255, 255, 255, 0.035) 18%
-    ),
-    repeating-linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.018) 0px,
-      rgba(255, 255, 255, 0.018) 6px,
-      rgba(0, 0, 0, 0.00) 6px,
-      rgba(0, 0, 0, 0.00) 12px
-    );
-  box-shadow: inset 0 0 0 1px rgba(205, 210, 220, 0.07);
-}
-
-.swse-sheet.swse-relationship-roster-card--droid:hover,
-.swse-sheet.swse-relationship-roster-card--droid:focus {
-  border-color: rgba(215, 220, 230, 0.48);
-  box-shadow: 0 0 0 1px rgba(205, 210, 220, 0.13);
-}
-
-/* Beasts — Purple */
-.swse-sheet.swse-relationship-roster-card--beast {
-  border-color: rgba(185, 130, 255, 0.30);
-  border-left-color: rgba(185, 130, 255, 0.95);
-  background: linear-gradient(
-    90deg,
-    rgba(185, 130, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.035) 18%
-  );
-  box-shadow: inset 0 0 0 1px rgba(185, 130, 255, 0.06);
-}
-
-.swse-sheet.swse-relationship-roster-card--beast:hover,
-.swse-sheet.swse-relationship-roster-card--beast:focus {
-  border-color: rgba(185, 130, 255, 0.45);
-  box-shadow: 0 0 0 1px rgba(185, 130, 255, 0.12);
-}
-
-/* Vehicles — Red */
-.swse-sheet.swse-relationship-roster-card--vehicle {
-  border-color: rgba(255, 115, 115, 0.30);
-  border-left-color: rgba(255, 115, 115, 0.95);
-  background: linear-gradient(
-    90deg,
-    rgba(255, 115, 115, 0.12) 0%,
-    rgba(255, 255, 255, 0.035) 18%
-  );
-  box-shadow: inset 0 0 0 1px rgba(255, 115, 115, 0.06);
-}
-
-.swse-sheet.swse-relationship-roster-card--vehicle:hover,
-.swse-sheet.swse-relationship-roster-card--vehicle:focus {
-  border-color: rgba(255, 115, 115, 0.45);
-  box-shadow: 0 0 0 1px rgba(255, 115, 115, 0.12);
-}
-
-/* Roster card content */
-.swse-sheet.swse-relationship-roster-card__media {
-  width: 52px;
-  height: 52px;
+.swse-sheet.relationship-portrait {
+  width: 40px;
+  height: 40px;
   border-radius: 4px;
-  overflow: hidden;
-}
-
-.swse-sheet.swse-relationship-roster-card__img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
-  display: block;
+  border: 1px solid rgba(0, 255, 136, 0.2);
 }
 
-.swse-sheet.swse-relationship-roster-card__content {
+.swse-sheet.relationship-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1;
   min-width: 0;
 }
 
-.swse-sheet.swse-relationship-roster-card__name {
+.swse-sheet.relationship-name {
   font-weight: 700;
   font-size: 0.95rem;
   opacity: 0.95;
@@ -2387,18 +2283,18 @@ select option:checked {
   text-overflow: ellipsis;
 }
 
-.swse-sheet.swse-relationship-roster-card__type {
+.swse-sheet.relationship-type {
   font-size: 0.8rem;
   opacity: 0.7;
   text-transform: capitalize;
 }
 
-.swse-sheet.swse-relationship-roster-card__notes {
+.swse-sheet.relationship-notes {
   font-size: 0.85rem;
   opacity: 0.85;
   line-height: 1.4;
   padding-top: 6px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(0, 255, 136, 0.1);
   font-style: italic;
 }
 
@@ -2424,7 +2320,7 @@ select option:checked {
   gap: 6px;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(0, 255, 136, 0.15);
 }
 
 /* ------------------------------------------------------------------ */
@@ -6196,17 +6092,83 @@ select option:checked {
   color: rgba(234, 248, 255, 0.88);
 }
 
+
+.swse-sheet .condition-track-row__badge {
+  min-width: 4.75rem;
+  text-align: center;
+}
+
+.swse-sheet .condition-track-row.active .condition-track-row__badge,
+.swse-sheet .condition-track-row.is-current .condition-track-row__badge {
+  color: #f7fbff;
+  text-shadow: 0 0 10px rgba(255,255,255,.18);
+}
+
+
 .swse-sheet .condition-track-row.active {
-  box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset, 0 0 18px rgba(124,232,255,.18);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.08) inset, 0 0 22px rgba(124,232,255,.22);
   border-color: rgba(124,232,255,.44);
 }
 
-.swse-sheet .condition-track-row.severity-normal { border-left: 5px solid #2d7a2f; }
-.swse-sheet .condition-track-row.severity-low { border-left: 5px solid #7b9d2e; }
-.swse-sheet .condition-track-row.severity-mid { border-left: 5px solid #b38a28; }
-.swse-sheet .condition-track-row.severity-high { border-left: 5px solid #c05e1e; }
-.swse-sheet .condition-track-row.severity-critical { border-left: 5px solid #962625; }
-.swse-sheet .condition-track-row.severity-helpless { border-left: 5px solid #6e6e6e; }
+.swse-sheet .condition-track-row.severity-normal {
+  border-left: 5px solid #2d7a2f;
+  background: linear-gradient(90deg, rgba(45, 122, 47, 0.24), rgba(8, 23, 42, 0.78));
+}
+
+.swse-sheet .condition-track-row.severity-low {
+  border-left: 5px solid #7b9d2e;
+  background: linear-gradient(90deg, rgba(123, 157, 46, 0.24), rgba(8, 23, 42, 0.78));
+}
+
+.swse-sheet .condition-track-row.severity-mid {
+  border-left: 5px solid #b38a28;
+  background: linear-gradient(90deg, rgba(179, 138, 40, 0.24), rgba(8, 23, 42, 0.78));
+}
+
+.swse-sheet .condition-track-row.severity-high {
+  border-left: 5px solid #c05e1e;
+  background: linear-gradient(90deg, rgba(192, 94, 30, 0.26), rgba(8, 23, 42, 0.8));
+}
+
+.swse-sheet .condition-track-row.severity-critical {
+  border-left: 5px solid #962625;
+  background: linear-gradient(90deg, rgba(150, 38, 37, 0.3), rgba(8, 23, 42, 0.82));
+}
+
+.swse-sheet .condition-track-row.severity-helpless {
+  border-left: 5px solid #6e6e6e;
+  background: linear-gradient(90deg, rgba(110, 110, 110, 0.26), rgba(8, 23, 42, 0.82));
+}
+
+.swse-sheet .condition-track-row.severity-normal.active,
+.swse-sheet .condition-track-row.severity-normal.is-current {
+  background: linear-gradient(90deg, rgba(45, 122, 47, 0.42), rgba(12, 42, 20, 0.92));
+}
+
+.swse-sheet .condition-track-row.severity-low.active,
+.swse-sheet .condition-track-row.severity-low.is-current {
+  background: linear-gradient(90deg, rgba(123, 157, 46, 0.42), rgba(45, 58, 12, 0.92));
+}
+
+.swse-sheet .condition-track-row.severity-mid.active,
+.swse-sheet .condition-track-row.severity-mid.is-current {
+  background: linear-gradient(90deg, rgba(179, 138, 40, 0.44), rgba(64, 43, 8, 0.94));
+}
+
+.swse-sheet .condition-track-row.severity-high.active,
+.swse-sheet .condition-track-row.severity-high.is-current {
+  background: linear-gradient(90deg, rgba(192, 94, 30, 0.48), rgba(74, 28, 6, 0.94));
+}
+
+.swse-sheet .condition-track-row.severity-critical.active,
+.swse-sheet .condition-track-row.severity-critical.is-current {
+  background: linear-gradient(90deg, rgba(150, 38, 37, 0.52), rgba(82, 12, 12, 0.95));
+}
+
+.swse-sheet .condition-track-row.severity-helpless.active,
+.swse-sheet .condition-track-row.severity-helpless.is-current {
+  background: linear-gradient(90deg, rgba(110, 110, 110, 0.4), rgba(44, 44, 44, 0.94));
+}
 
 .swse-sheet .sw-content--detailed {
   display: flex;
@@ -7285,4 +7247,136 @@ select option:checked {
 .swse-sheet [data-role="actor-portrait-image"].portrait-drop-active {
   border-color: rgba(0, 255, 136, 0.9);
   box-shadow: 0 0 14px rgba(0, 255, 136, 0.4);
+}
+
+/* Defense panel normalization */
+.swse-sheet .defenses-container--rows {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-content: start;
+}
+
+.swse-sheet .defense-row {
+  border: 1px solid rgba(124,232,255,.18);
+  border-radius: 12px;
+  background: rgba(6, 17, 31, 0.78);
+  padding: 12px 14px;
+}
+
+.swse-sheet .defense-collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.swse-sheet .defense-label-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.swse-sheet .defense-label {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.swse-sheet .defense-summary {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: rgba(196, 232, 255, 0.8);
+}
+
+.swse-sheet .defense-total-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+}
+
+.swse-sheet .defense-total {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #b7f4ff;
+}
+
+.swse-sheet .defense-total-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(183, 244, 255, 0.7);
+}
+
+.swse-sheet .defense-expanded {
+  display: none;
+  gap: 16px;
+  align-items: stretch;
+  justify-content: space-between;
+}
+
+.swse-sheet .defense-expanded__breakdown {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  flex: 1 1 auto;
+}
+
+.swse-sheet .defense-breakdown-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(10, 28, 48, 0.72);
+  border: 1px solid rgba(124,232,255,.12);
+}
+
+.swse-sheet .defense-breakdown-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: rgba(220, 245, 255, 0.92);
+}
+
+.swse-sheet .defense-breakdown-value {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #d9f7ff;
+}
+
+.swse-sheet .defense-breakdown-row--editable input.misc-input {
+  width: 88px;
+  justify-self: end;
+  text-align: center;
+}
+
+.swse-sheet .defense-expanded__total {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 108px;
+  border-left: 1px solid rgba(124,232,255,.14);
+  padding-left: 16px;
+}
+
+@media (max-width: 900px) {
+  .swse-sheet .defense-collapsed,
+  .swse-sheet .defense-expanded {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .swse-sheet .defense-expanded__total {
+    border-left: none;
+    border-top: 1px solid rgba(124,232,255,.14);
+    padding-left: 0;
+    padding-top: 12px;
+  }
 }

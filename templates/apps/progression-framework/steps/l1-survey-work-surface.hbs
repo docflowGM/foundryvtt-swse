@@ -3,29 +3,38 @@
     <h2 class="prog-l1-survey__title">Declare Your Intent</h2>
     <p class="prog-l1-survey__subtitle">
       {{#if surveyDefinition}}
-        {{surveyDefinition.classDisplayName}} survey · grounded in mentor guidance and archetype metadata.
+        {{surveyDefinition.classDisplayName}} path · one answer at a time.
       {{else}}
         The mentor is still reading the shape of your path.
       {{/if}}
     </p>
-  </div>
-
-  {{#if mentorGuidance}}
-  <div class="prog-l1-survey__mentor">
-    {{#if mentorPortrait}}
-      <div class="prog-l1-survey__mentor-portrait"><img src="{{mentorPortrait}}" alt="{{mentorName}}"></div>
-    {{/if}}
-    <div class="prog-l1-survey__mentor-copy">
-      <div class="prog-l1-survey__mentor-name">{{mentorName}}</div>
-      <div class="prog-l1-survey__mentor-title">{{mentorTitle}}</div>
-      <p class="prog-l1-survey__mentor-dialogue">{{mentorGuidance}}</p>
+    <div class="prog-l1-survey__progress-row">
+      <span class="prog-chip">Answered {{answeredCount}} / {{totalQuestions}}</span>
+      {{#if remainingCount}}<span class="prog-chip prog-chip--dim">{{remainingCount}} remaining</span>{{else}}<span class="prog-chip prog-chip--positive">Survey complete</span>{{/if}}
     </div>
   </div>
+
+  {{#if activeQuestion}}
+    <section class="prog-l1-survey__question prog-l1-survey__question--active">
+      <div class="prog-l1-survey__question-kicker">Question {{activeQuestionNumber}} of {{totalQuestions}}</div>
+      <h3 class="prog-l1-survey__q-title">{{activeQuestion.text}}</h3>
+      <div class="prog-l1-survey__options">
+        {{#each activeQuestion.options}}
+        <label class="prog-l1-survey__option {{#if (eq ../activeQuestion.selected this.id)}}prog-l1-survey__option--selected{{/if}}">
+          <input type="radio" name="survey-{{../activeQuestion.id}}" value="{{this.id}}" data-survey-question-id data-question-id="{{../activeQuestion.id}}" {{#if (eq ../activeQuestion.selected this.id)}}checked{{/if}}>
+          <span class="prog-l1-survey__option-body">
+            <span class="prog-l1-survey__option-label">{{this.label}}</span>
+            {{#if this.hint}}<span class="prog-l1-survey__option-hint">{{this.hint}}</span>{{/if}}
+          </span>
+        </label>
+        {{/each}}
+      </div>
+    </section>
   {{/if}}
 
   {{#if topMatches.length}}
   <div class="prog-l1-survey__matches">
-    <div class="prog-l1-survey__matches-title">Current archetype read</div>
+    <div class="prog-l1-survey__matches-title">Current mentor read</div>
     <div class="prog-l1-survey__match-list">
       {{#each topMatches}}
       <div class="prog-l1-survey__match">
@@ -36,30 +45,4 @@
     </div>
   </div>
   {{/if}}
-
-  <div class="prog-l1-survey__questions">
-    {{#each surveyQuestions}}
-    <section class="prog-l1-survey__question">
-      <h3 class="prog-l1-survey__q-title">{{this.text}}</h3>
-      <div class="prog-l1-survey__options">
-        {{#each this.options}}
-        <label class="prog-l1-survey__option">
-          <input
-            type="radio"
-            name="survey-{{@../index}}"
-            value="{{this.id}}"
-            data-survey-question-id
-            data-question-id="{{../id}}"
-            {{#if (eq ../selected this.id)}}checked{{/if}}
-          >
-          <span class="prog-l1-survey__option-body">
-            <span class="prog-l1-survey__option-label">{{this.label}}</span>
-            {{#if this.hint}}<span class="prog-l1-survey__option-hint">{{this.hint}}</span>{{/if}}
-          </span>
-        </label>
-        {{/each}}
-      </div>
-    </section>
-    {{/each}}
-  </div>
 </div>

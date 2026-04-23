@@ -380,3 +380,68 @@
   background: var(--prog-bg-disabled);
   border-color: var(--prog-border);
 }
+
+
+.prog-skill-tag--class {
+  border-color: var(--prog-positive);
+  color: var(--prog-positive);
+}
+
+.prog-btn--selected {
+  background: rgba(0, 255, 128, 0.12);
+  border-color: var(--prog-positive);
+  color: var(--prog-positive);
+}
+
+.prog-skill-controls__placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px dashed var(--prog-border);
+  border-radius: 3px;
+  color: var(--prog-text-dim);
+  opacity: 0.7;
+}
+
+
+.prog-skill-name-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.prog-skill-state-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(0, 255, 128, 0.12);
+  border: 1px solid var(--prog-positive);
+  color: var(--prog-positive);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prog-skill-row.trained .prog-skill-name {
+  color: var(--prog-positive);
+}
+
+.prog-skills-empty {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px dashed var(--prog-border);
+  border-radius: 4px;
+  color: var(--prog-text-dim);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.prog-skill-controls__placeholder {
+  min-width: 5.75rem;
+}

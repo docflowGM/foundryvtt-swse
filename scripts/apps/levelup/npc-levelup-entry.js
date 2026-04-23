@@ -14,7 +14,7 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     content: { template: 'systems/foundryvtt-swse/templates/apps/npc-levelup-entry.hbs' }
   };
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
     id: 'swse-npc-levelup-entry',
     position: { width: 560, height: 'auto' },
     window: { title: 'NPC Level Up', resizable: true, draggable: true, frame: true }

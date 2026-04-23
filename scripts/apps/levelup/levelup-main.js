@@ -120,7 +120,7 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
 
 export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
       classes: ['swse', 'levelup-dialog', 'swse-app'],
       width: 800,
       height: 600,

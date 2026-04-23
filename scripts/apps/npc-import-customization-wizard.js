@@ -20,8 +20,7 @@ export class NPCImportCustomizationWizard extends foundry.applications.api.Dialo
     };
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    foundry.applications.api.DialogV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(foundry.applications.api.DialogV2.DEFAULT_OPTIONS ?? {}),
     {
       classes: ['swse', 'npc-import-wizard', 'swse-app'],
       width: 600,

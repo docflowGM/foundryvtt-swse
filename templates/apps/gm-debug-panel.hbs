@@ -15,16 +15,16 @@
   </header>
 
   <nav class="debug-tabs">
-    <a class="tab" data-tab="overview"><i class="{{getIconClass 'chartPie'}}"></i> Overview</a>
-    <a class="tab" data-tab="prestige"><i class="{{getIconClass 'crown'}}"></i> Prestige</a>
-    <a class="tab" data-tab="signals"><i class="{{getIconClass 'signal'}}"></i> Signals</a>
-    <a class="tab" data-tab="classes"><i class="{{getIconClass 'users'}}"></i> Classes</a>
-    <a class="tab" data-tab="raw"><i class="{{getIconClass 'code'}}"></i> Raw JSON</a>
+    <a class="swse-tab" data-swse-tab="overview"><i class="{{getIconClass 'chartPie'}}"></i> Overview</a>
+    <a class="swse-tab" data-swse-tab="prestige"><i class="{{getIconClass 'crown'}}"></i> Prestige</a>
+    <a class="swse-tab" data-swse-tab="signals"><i class="{{getIconClass 'signal'}}"></i> Signals</a>
+    <a class="swse-tab" data-swse-tab="classes"><i class="{{getIconClass 'users'}}"></i> Classes</a>
+    <a class="swse-tab" data-swse-tab="raw"><i class="{{getIconClass 'code'}}"></i> Raw JSON</a>
   </nav>
 
   <div class="debug-content">
     {{!-- OVERVIEW TAB --}}
-    <section class="tab-section" data-tab="overview">
+    <section class="tab-section" data-swse-tab="overview">
       {{#if buildIntent}}
       <div class="overview-grid">
         {{!-- Combat Style --}}
@@ -125,7 +125,7 @@
     </section>
 
     {{!-- PRESTIGE TAB --}}
-    <section class="tab-section" data-tab="prestige">
+    <section class="tab-section" data-swse-tab="prestige">
       <h3><i class="{{getIconClass 'crown'}}"></i> Prestige Class Affinities</h3>
       <p class="tab-description">Classes ranked by how well they match the character's build direction.</p>
 
@@ -165,7 +165,7 @@
     </section>
 
     {{!-- SIGNALS TAB --}}
-    <section class="tab-section" data-tab="signals">
+    <section class="tab-section" data-swse-tab="signals">
       <h3><i class="{{getIconClass 'signal'}}"></i> Detected Signals</h3>
       <p class="tab-description">Individual choices that influenced the build intent analysis.</p>
 
@@ -222,7 +222,7 @@
     </section>
 
     {{!-- CLASSES TAB --}}
-    <section class="tab-section" data-tab="classes">
+    <section class="tab-section" data-swse-tab="classes">
       <h3><i class="{{getIconClass 'users'}}"></i> Prestige Class Qualification</h3>
       <p class="tab-description">Detailed prerequisite status for each prestige class.</p>
 
@@ -257,7 +257,7 @@
     </section>
 
     {{!-- RAW JSON TAB --}}
-    <section class="tab-section" data-tab="raw">
+    <section class="tab-section" data-swse-tab="raw">
       <h3><i class="{{getIconClass 'code'}}"></i> Raw BuildIntent JSON</h3>
       <p class="tab-description">Complete BuildIntent data for debugging and export.</p>
       <pre class="json-output">{{rawBuildIntent}}</pre>

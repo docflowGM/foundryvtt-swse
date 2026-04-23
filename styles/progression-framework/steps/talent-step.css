@@ -604,3 +604,158 @@
   border-color: rgba(180, 120, 220, 0.5);
   box-shadow: 0 0 12px rgba(150, 100, 255, 0.25);
 }
+
+/* ====================================================================
+   PROGRESSION TALENT TREE RENDERER (OVAL NODES)
+   ==================================================================== */
+
+.talent-graph-canvas {
+  min-width: 960px;
+  min-height: 520px;
+}
+
+.prog-talent-tree-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.prog-talent-tree-link {
+  stroke-width: 6px;
+  stroke-linecap: round;
+  opacity: 0.95;
+}
+
+.prog-talent-tree-link--owned {
+  stroke: #22c55e;
+}
+
+.prog-talent-tree-link--default {
+  stroke: #111111;
+}
+
+.prog-talent-tree-link--available {
+  stroke: #1d9bf0;
+}
+
+.prog-talent-tree-link--blocked {
+  stroke: #ef4444;
+}
+
+.prog-talent-oval {
+  cursor: pointer;
+  outline: none;
+}
+
+.prog-talent-oval__shape {
+  stroke-width: 4px;
+  fill: rgba(0, 0, 0, 0.08);
+  transition: transform 0.16s ease, filter 0.16s ease;
+}
+
+.prog-talent-oval__label {
+  fill: #f5f5f5;
+  font-size: 18px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.prog-talent-oval:hover .prog-talent-oval__shape,
+.prog-talent-oval:focus-visible .prog-talent-oval__shape {
+  filter: brightness(1.08);
+}
+
+.prog-talent-oval--default .prog-talent-oval__shape {
+  stroke: #111111;
+  fill: rgba(255, 255, 255, 0.02);
+}
+
+.prog-talent-oval--available .prog-talent-oval__shape {
+  stroke: #1d9bf0;
+  fill: rgba(29, 155, 240, 0.08);
+}
+
+.prog-talent-oval--blocked .prog-talent-oval__shape {
+  stroke: #ef4444;
+  fill: rgba(239, 68, 68, 0.08);
+}
+
+.prog-talent-oval--owned .prog-talent-oval__shape {
+  stroke: #22c55e;
+  fill: rgba(34, 197, 94, 0.09);
+}
+
+.prog-talent-oval--focused .prog-talent-oval__shape {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.18));
+}
+
+.talent-graph-legend {
+  gap: 1rem;
+}
+
+.talent-legend-swatch {
+  display: inline-block;
+  width: 56px;
+  height: 0;
+  border-top: 4px solid currentColor;
+  border-radius: 999px;
+}
+
+.talent-legend-swatch--owned {
+  color: #22c55e;
+}
+
+.talent-legend-swatch--default {
+  color: #111111;
+}
+
+.talent-legend-swatch--available {
+  color: #1d9bf0;
+}
+
+.talent-legend-swatch--blocked {
+  color: #ef4444;
+}
+
+.talent-meta-badge.owned-badge {
+  background: rgba(34, 197, 94, 0.16);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.32);
+}
+
+.talent-meta-badge.available-badge {
+  background: rgba(29, 155, 240, 0.16);
+  color: #1d9bf0;
+  border: 1px solid rgba(29, 155, 240, 0.32);
+}
+
+.talent-meta-badge.blocked-badge {
+  background: rgba(239, 68, 68, 0.16);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.32);
+}
+
+.talent-prerequisites__missing-list {
+  margin: 0.75rem 0 0 1rem;
+  padding: 0;
+  color: #ffb3b3;
+}
+
+.talent-prerequisites__missing-list li {
+  margin: 0.25rem 0;
+}
+
+.action-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.prog-talent-tree-empty {
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a0c0d0;
+  font-size: 0.95rem;
+}

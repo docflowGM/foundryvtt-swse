@@ -277,3 +277,53 @@
 .progression-shell .prog-class-details__heading-copy { flex: 1; }
 .progression-shell .prog-class-details__meta-row { display:flex; gap:6px; flex-wrap:wrap; }
 .progression-shell .prog-class-details__stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+/* Droid class variant */
+.progression-shell .prog-class-browse--droid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+  height: 100%;
+}
+
+.progression-shell .prog-class-browse__droid-hud {
+  margin: 0 var(--prog-space-md);
+  padding: var(--prog-space-md);
+  background: linear-gradient(180deg, rgba(42, 30, 10, 0.72), rgba(18, 12, 4, 0.84));
+  border: 1px solid rgba(255, 196, 64, 0.28);
+  border-left: 3px solid rgba(255, 196, 64, 0.55);
+  box-shadow: 0 0 18px rgba(255, 191, 73, 0.08);
+}
+
+.progression-shell .prog-class-browse__droid-eyebrow {
+  font-size: var(--prog-font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: rgba(255, 222, 136, 0.78);
+  margin-bottom: var(--prog-space-xs);
+}
+
+.progression-shell .prog-class-browse__droid-title {
+  margin: 0 0 var(--prog-space-xs) 0;
+  font-size: var(--prog-font-size-lg);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 222, 136, 0.95);
+  text-shadow: 0 0 8px rgba(255, 191, 73, 0.22);
+}
+
+.progression-shell .prog-class-browse__droid-subtitle {
+  margin: 0;
+  color: var(--prog-text-dim);
+}
+
+.progression-shell .prog-class-browse--droid .prog-class-card {
+  background: linear-gradient(180deg, rgba(28, 20, 8, 0.68), rgba(10, 8, 4, 0.82));
+  border-color: rgba(255, 196, 64, 0.18);
+}
+
+.progression-shell .prog-class-browse--droid .prog-class-card:hover,
+.progression-shell .prog-class-browse--droid .prog-class-card--focused {
+  border-color: rgba(255, 196, 64, 0.42);
+  box-shadow: 0 0 10px rgba(255, 191, 73, 0.12);
+}

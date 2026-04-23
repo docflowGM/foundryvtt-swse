@@ -3,8 +3,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 
 export class MaintenanceApp extends SWSEApplication {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEApplication.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEApplication.DEFAULT_OPTIONS ?? {}),
     {
       id: 'swse-maintenance',
       classes: ['swse', 'swse-maintenance', 'swse-app'],

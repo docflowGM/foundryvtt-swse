@@ -1,0 +1,12 @@
+<div class="prog-step-error-surface" data-step-error="true">
+  <div class="prog-step-error-surface__card">
+    <div class="prog-step-error-surface__eyebrow">Step recovery mode</div>
+    <h3 class="prog-step-error-surface__title">{{stepLabel}}</h3>
+    <p class="prog-step-error-surface__message">{{errorMessage}}</p>
+    {{#if canContinue}}
+      <p class="prog-step-error-surface__hint">This step has entered a degraded render state, but progression is still allowed.</p>
+    {{else}}
+      <p class="prog-step-error-surface__hint">Go back one step and try again. If the problem persists, send the newest log export.</p>
+    {{/if}}
+  </div>
+</div>

@@ -26,7 +26,7 @@ export class BlasterCustomizationApp extends ModificationModalShell {
     this.selectedFxType = item.flags?.swse?.fxType || "standard";
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
     id: "swse-blaster-customization",
     classes: ["swse", "blaster-customization", "swse-theme-holo"],
     window: {

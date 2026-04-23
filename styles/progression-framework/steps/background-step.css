@@ -359,3 +359,15 @@
 .progression-shell .prog-background-item.swse-card-schema {
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 0 14px rgba(0,180,255,0.08);
 }
+
+
+.progression-shell .prog-background-details__skill--new {
+  border-color: var(--prog-positive);
+  color: var(--prog-positive);
+}
+
+.progression-shell .prog-background-details__skill-legend {
+  margin: 0.35rem 0 0 0;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+}

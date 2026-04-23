@@ -127,7 +127,7 @@ function buildQuestionText(kind, profile, mentorName, classDisplayName, primaryT
   const raw = line(profile, mentorName, prompts[kind] || prompts.path)
     .replaceAll('{className}', classDisplayName)
     .replaceAll('{primaryTerm}', primaryTerm || titleCaseKey(primaryTerm));
-  return `${mentorName} asks: ${raw}`;
+  return raw;
 }
 
 function optionFromArchetype(archetype, classDisplayName, scalar = 0.22) {
@@ -193,7 +193,17 @@ function makeQuestions({ classId, classDisplayName, archetypes, mentor }) {
     text: buildQuestionText('attribute', profile, mentor.name, classDisplayName),
     options: attrKeys.map((key) => {
       const reps = findBestArchetypesByKey(archetypes, 'attributeBias', key, 3);
-      return optionFromCluster(`${classId}_instinct_${key}`, `${titleCaseKey(normalizeAttributeKey(key))} — ${reps[0]?.name || classDisplayName}`, reps[0]?.notes || `Let ${titleCaseKey(normalizeAttributeKey(key)).toLowerCase()} carry this path.`, reps, key, 0.14);
+      const attributeLabelMap = {
+        strength: 'Power',
+        dexterity: 'Precision',
+        constitution: 'Hardiness',
+        intelligence: 'Know-how',
+        wisdom: 'Awareness',
+        charisma: 'Presence'
+      };
+      const normalized = normalizeAttributeKey(key);
+      const displayLabel = attributeLabelMap[normalized] || titleCaseKey(normalized);
+      return optionFromCluster(`${classId}_instinct_${key}`, `${displayLabel} — ${reps[0]?.name || classDisplayName}`, reps[0]?.notes || `Let ${displayLabel.toLowerCase()} carry this path.`, reps, key, 0.14);
     })
   });
 

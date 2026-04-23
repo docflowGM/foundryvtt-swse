@@ -29,15 +29,15 @@
   </div>
 
   <nav class="config-tabs">
-    <a class="tab" data-tab="tiers"><i class="{{getIconClass 'layerGroup'}}"></i> Tier Weights</a>
-    <a class="tab" data-tab="themes"><i class="{{getIconClass 'tag'}}s"></i> Themes</a>
-    <a class="tab" data-tab="display"><i class="{{getIconClass 'eye'}}"></i> Display</a>
-    <a class="tab" data-tab="advanced"><i class="{{getIconClass 'cog'}}"></i> Advanced</a>
+    <a class="tab" data-swse-tab="tiers"><i class="{{getIconClass 'layerGroup'}}"></i> Tier Weights</a>
+    <a class="tab" data-swse-tab="themes"><i class="{{getIconClass 'tag'}}s"></i> Themes</a>
+    <a class="tab" data-swse-tab="display"><i class="{{getIconClass 'eye'}}"></i> Display</a>
+    <a class="tab" data-swse-tab="advanced"><i class="{{getIconClass 'cog'}}"></i> Advanced</a>
   </nav>
 
   <div class="config-content">
     {{!-- TIER WEIGHTS TAB --}}
-    <section class="tab-section" data-tab="tiers">
+    <section class="tab-section" data-swse-tab="tiers">
       <h3>Feat/Talent Suggestion Tiers</h3>
       <p class="section-description">Adjust the weight of each suggestion tier. Higher values = more important.</p>
 
@@ -183,7 +183,7 @@
     </section>
 
     {{!-- THEMES TAB --}}
-    <section class="tab-section" data-tab="themes">
+    <section class="tab-section" data-swse-tab="themes">
       <h3>Theme Emphasis</h3>
       <p class="section-description">
         Adjust how strongly each theme type influences suggestions.
@@ -278,7 +278,7 @@
     </section>
 
     {{!-- DISPLAY TAB --}}
-    <section class="tab-section" data-tab="display">
+    <section class="tab-section" data-swse-tab="display">
       <h3>Display Options</h3>
       <p class="section-description">Control what suggestion features are shown in the UI.</p>
 
@@ -323,7 +323,7 @@
     </section>
 
     {{!-- ADVANCED TAB --}}
-    <section class="tab-section" data-tab="advanced">
+    <section class="tab-section" data-swse-tab="advanced">
       <h3>Advanced Settings</h3>
       <p class="section-description">Fine-tune the suggestion algorithm. Modify with caution.</p>
 

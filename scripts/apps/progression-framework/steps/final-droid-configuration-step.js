@@ -405,7 +405,7 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
   /**
    * PHASE C: Handle confirm button.
    */
-  _onConfirmDroidBuild(event, shell, workSurfaceEl) {
+  async _onConfirmDroidBuild(event, shell, workSurfaceEl) {
     event.preventDefault();
 
     const success = this.confirmDroidBuild();
@@ -413,7 +413,7 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
     if (success) {
       ui.notifications.info('Droid configuration confirmed. Ready to complete chargen.');
       // Commit the finalized state
-      this._commitFinalDroidBuild(shell);
+      await this._commitFinalDroidBuild(shell);
       shell.render();
     } else {
       ui.notifications.warn('Unable to confirm droid build');
@@ -424,7 +424,7 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
    * PHASE C: Commit the finalized droid build to shell state.
    * Updates the committedSelections with the finalized state.
    */
-  _commitFinalDroidBuild(shell) {
+  async _commitFinalDroidBuild(shell) {
     // Update the committed selection with finalized state
     const finalizedSelection = {
       isDroid: true,
@@ -435,9 +435,11 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
       buildState: JSON.parse(JSON.stringify(this._droidState.buildState)),
     };
 
-    shell.committedSelections.set('droid-builder', finalizedSelection);
+    await this._commitNormalized(shell, 'droid', finalizedSelection);
 
-    // Update observable build intent
+    if (shell?.committedSelections) {
+      shell.committedSelections.set('droid-builder', finalizedSelection);
+    }
     if (shell?.buildIntent && this.descriptor?.stepId) {
       shell.buildIntent.commitSelection(this.descriptor.stepId, 'droid-builder', finalizedSelection);
     }

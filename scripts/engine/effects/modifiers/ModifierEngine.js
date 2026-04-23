@@ -242,17 +242,20 @@ export class ModifierEngine {
       // ========================================
       // SKILLS (Computed Bundle)
       // ========================================
-      const skills = actor.system?.skills;
-      if (skills && typeof skills === 'object') {
-        for (const [skillKey, skillData] of Object.entries(skills)) {
+      const derivedSkills = actor.system?.derived?.skills;
+      if (derivedSkills && typeof derivedSkills === 'object') {
+        for (const [skillKey, skillData] of Object.entries(derivedSkills)) {
           if (!skillData || typeof skillData !== 'object') continue;
+          if (Array.isArray(skillData)) continue;
+          if (skillKey === 'list') continue;
 
           const targetKey = `skill.${skillKey}`;
           const modifier = modifierMap[targetKey] || 0;
-          const base = skillData.base || skillData.total || 0;
+          const base = Number(skillData.total ?? 0) || 0;
 
           bundle.skills[skillKey] = {
-            total: Math.max(0, base + modifier)
+            total: Math.max(0, base + modifier),
+            adjustment: modifier
           };
         }
       }
@@ -303,7 +306,8 @@ export class ModifierEngine {
         // INITIATIVE (Computed Bundle)
         // ========================================
         const initiativeModifier = modifierMap['initiative.total'] || 0;
-        bundle.initiative = (derived.initiative || 0) + initiativeModifier;
+        const initiativeBase = Number(derived.initiative?.total ?? derived.initiative ?? 0) || 0;
+        bundle.initiative = initiativeBase + initiativeModifier;
         bundle.initiativeAdjustment = initiativeModifier;
 
         // ========================================
@@ -361,11 +365,16 @@ export class ModifierEngine {
       // ========================================
       // APPLY SKILLS
       // ========================================
-      const skills = actor.system?.skills;
-      if (skills && typeof skills === 'object') {
+      const derivedSkills = actor.system?.derived?.skills;
+      if (derivedSkills && typeof derivedSkills === 'object') {
         for (const [skillKey, computed] of Object.entries(bundle.skills)) {
-          if (skills[skillKey] && typeof computed.total === 'number') {
-            skills[skillKey].total = computed.total;
+          if (Array.isArray(derivedSkills[skillKey])) continue;
+          derivedSkills[skillKey] ??= {};
+          if (typeof computed.total === 'number') {
+            derivedSkills[skillKey].total = computed.total;
+          }
+          if (typeof computed.adjustment === 'number') {
+            derivedSkills[skillKey].adjustment = computed.adjustment;
           }
         }
       }
@@ -400,8 +409,11 @@ export class ModifierEngine {
         derived.babAdjustment = bundle.babAdjustment;
 
         // INITIATIVE
-        derived.initiative = bundle.initiative;
-        derived.initiativeAdjustment = bundle.initiativeAdjustment;
+        if (!derived.initiative || typeof derived.initiative !== 'object') {
+          derived.initiative = {};
+        }
+        derived.initiative.total = bundle.initiative;
+        derived.initiative.adjustment = bundle.initiativeAdjustment;
 
         // SPEED
         if (bundle.speed && derived.speed) {

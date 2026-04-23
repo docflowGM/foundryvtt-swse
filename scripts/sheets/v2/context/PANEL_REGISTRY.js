@@ -818,6 +818,29 @@ export const PANEL_REGISTRY = {
     }
   },
 
+  resourcesPanel: {
+    name: 'Combat Metrics & Resources',
+    type: 'display',
+    svgBacked: false,
+    structure: 'combat metrics and heroic resources',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/resources-panel.hbs',
+    builder: 'buildResourcesPanel',
+    validator: 'validateResourcesPanel',
+    requiredKeys: [
+      'combatMetrics',
+      'resources'
+    ],
+    optionalKeys: [],
+    postRenderAssertions: {
+      critical: false,
+      rootSelector: '.resources-panel',
+      optionalElements: {
+        '.combat-metric': '0..99',
+        '.heroic-resource': '0..99'
+      }
+    }
+  },
+
   relationshipsPanel: {
     name: 'Relationships & Connections',
     type: 'display',

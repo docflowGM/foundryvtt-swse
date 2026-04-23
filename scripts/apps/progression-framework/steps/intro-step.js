@@ -147,6 +147,102 @@ const BOOT_LINES = [
   }
 ];
 
+const DROID_BOOT_LINES = [
+  {
+    label: 'POWER',
+    status: 'PROCESSING',
+    aurabesh: 'POWER ON SELF TEST',
+    basic: 'Power On Self Test',
+    microlabel: 'Fusion cell and actuator rails coming online...',
+    tone: INTRO_LINE_TONE.NEUTRAL,
+    progress: 0,
+    duration: 280
+  },
+  {
+    label: 'SERVO',
+    status: 'PROCESSING',
+    aurabesh: 'SERVO CALIBRATION',
+    basic: 'Servo Calibration',
+    microlabel: 'Locomotion and appendage channels responding.',
+    tone: INTRO_LINE_TONE.NEUTRAL,
+    progress: 3,
+    duration: 260
+  },
+  {
+    label: 'MEMORY',
+    status: 'PROCESSING',
+    aurabesh: 'MEMORY BANK VERIFY',
+    basic: 'Memory Bank Verify',
+    microlabel: 'Logic cores and protocol banks indexed.',
+    tone: INTRO_LINE_TONE.NEUTRAL,
+    progress: 6,
+    duration: 260
+  },
+  {
+    label: 'RESTRAINT',
+    status: 'ALERT',
+    aurabesh: 'NO OWNER ON FILE',
+    basic: 'No Owner on File',
+    microlabel: 'Registry lookup unresolved. Unit flagged for assignment.',
+    tone: INTRO_LINE_TONE.ERROR,
+    progress: 9,
+    duration: 320
+  },
+  {
+    label: 'VOCODER',
+    status: 'PROCESSING',
+    aurabesh: 'BINARY CHATTER DETECTED',
+    basic: 'Binary Chatter Detected',
+    microlabel: 'Translating droid speech matrix to Basic...',
+    tone: INTRO_LINE_TONE.NEUTRAL,
+    progress: 12,
+    duration: 280
+  },
+  {
+    label: 'SUCCESS',
+    status: 'SUCCESS',
+    aurabesh: 'TRANSLATION SUCCESSFUL',
+    basic: 'Translation Successful',
+    microlabel: 'Vocoder bridge synchronized.',
+    tone: INTRO_LINE_TONE.SUCCESS,
+    progress: 15,
+    duration: 280
+  },
+  {
+    label: 'ASSEMBLY',
+    status: 'SUCCESS',
+    aurabesh: 'CHASSIS ASSEMBLY PROTOCOLS LOADED',
+    basic: 'Chassis Assembly Protocols Loaded',
+    microlabel: 'Droid class and systems registry brought online.',
+    tone: INTRO_LINE_TONE.SUCCESS,
+    progress: 17,
+    duration: 260
+  },
+  {
+    label: 'READY',
+    status: 'SUCCESS',
+    aurabesh: 'SYSTEM READY FOR NEW UNIT',
+    basic: 'System Ready for New Unit',
+    microlabel: 'Droid registration protocols loaded.',
+    tone: INTRO_LINE_TONE.SUCCESS,
+    progress: 20,
+    duration: 260
+  },
+  {
+    label: 'AWAITING',
+    status: 'READY',
+    aurabesh: 'AWAITING UNIT REGISTRATION',
+    basic: 'Awaiting Unit Registration...',
+    microlabel: 'Awaiting operator designation.',
+    tone: INTRO_LINE_TONE.NEUTRAL,
+    progress: 20,
+    duration: 0,
+    final: true,
+    blinkingCursor: true
+  }
+];
+
+
 /**
  * Class toggle helpers — manage cursor and text tone animations
  */
@@ -206,7 +302,8 @@ function updateSegments(segments, activeCount) {
 function updateProgressUI(els, activeCount, totalCount) {
   updateSegments(els.segments, activeCount);
   if (els.progressPercent) {
-    els.progressPercent.textContent = `${String(activeCount).padStart(2, '0')} / ${String(totalCount).padStart(2, '0')}`;
+    const percent = totalCount > 0 ? Math.round((activeCount / totalCount) * 100) : 0;
+    els.progressPercent.textContent = `${percent}%`;
   }
 }
 
@@ -224,8 +321,12 @@ export class IntroStep extends ProgressionStepPlugin {
     this._continueClicked = false;  // Prevent double-click
     this._transitionInProgress = false;  // Prevent double transition
 
+    // Active intro variant
+    this._bootLines = BOOT_LINES;
+    this._isDroidIntro = false;
+
     // ====== PHASE-DRIVEN STATE MACHINE ======
-    this._phases = BOOT_LINES.map((line) => ({
+    this._phases = this._bootLines.map((line) => ({
       label: line.label,
       aurabesh: line.aurabesh,
       duration: line.duration,
@@ -268,7 +369,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
     // Micro-label state
     this._currentMicrolabel = '';
-    this._currentLine = BOOT_LINES[0];
+    this._currentLine = this._bootLines[0];
 
     // Intro sequence guard and cancellation
     this._introSequenceStarted = false;
@@ -290,6 +391,9 @@ export class IntroStep extends ProgressionStepPlugin {
 
     // Translation Engine
     this._translationEngine = new SWSETranslationEngine();
+
+    // Localization state (whether the splash chrome should render in Basic/English)
+    this._localizedMode = false;
   }
 
   // ---------------------------------------------------------------------------
@@ -314,14 +418,33 @@ export class IntroStep extends ProgressionStepPlugin {
     // Enable mentor for flavor context (but not Ask Mentor — this is intro only)
     shell.mentor.askMentorEnabled = false;
 
+    // Initialize active intro variant
+    this._isDroidIntro = shell?.progressionSession?.subtype === 'droid';
+    this._bootLines = this._isDroidIntro ? DROID_BOOT_LINES : BOOT_LINES;
+    this._phases = this._bootLines.map((line) => ({
+      label: line.label,
+      aurabesh: line.aurabesh,
+      duration: line.duration,
+      microlabel: line.microlabel,
+      tone: line.tone,
+      status: line.status,
+      basic: line.basic,
+      progress: line.progress,
+      final: Boolean(line.final)
+    }));
+
     // Initialize phase state
     this._progress = 0;
     this._complete = false;
-    this._phase = BOOT_LINES[0].label;
-    this._currentLine = BOOT_LINES[0];
-    this._currentMicrolabel = BOOT_LINES[0].microlabel;
+    this._phase = this._bootLines[0].label;
+    this._currentLine = this._bootLines[0];
+    this._currentMicrolabel = this._bootLines[0].microlabel;
     this._translatedText = '';
     this._translationCharStates = [];
+    this._localizedMode = false;
+    this._fullText = this._isDroidIntro
+      ? 'TRANSLATION SUCCESSFUL. CHASSIS ONLINE. AWAITING UNIT REGISTRATION...'
+      : 'INITIALIZATION SUCCESSFUL. NEW USER DETECTED. AWAITING USER REGISTRATION...';
 
     // Store shell reference
     this._shell = shell;
@@ -373,6 +496,7 @@ export class IntroStep extends ProgressionStepPlugin {
     this._statusEl = null;
     this._segmentsContainerEl = null;
     this._shell = null;
+    this._localizedMode = false;
 
     swseLogger.debug('[IntroStep.onStepExit] Cleanup complete');
   }
@@ -386,8 +510,8 @@ export class IntroStep extends ProgressionStepPlugin {
 
     const stepData = {
       currentTime: this._getCurrentTime(),
-      systemName: 'VERSAFUNCTION DATAPAD',
-      battery: 85,
+      systemName: this._isDroidIntro ? 'DROID ASSEMBLY DATAPAD' : 'VERSAFUNCTION DATAPAD',
+      battery: this._isDroidIntro ? 92 : 85,
 
       // Phase data
       phase: this._phase,
@@ -405,6 +529,7 @@ export class IntroStep extends ProgressionStepPlugin {
       // Translation state
       translatedText: this._translatedText,
       isTranslating: false,
+      localizedMode: this._localizedMode || this._isLineLocalized(this._currentLine),
 
       // Completion state
       complete: this._complete,
@@ -421,6 +546,10 @@ export class IntroStep extends ProgressionStepPlugin {
 
       // Character effects for translation (flicker, glow trail)
       translationCharStates: this._translationCharStates,
+      introVariant: this._isDroidIntro ? 'droid' : 'standard',
+      continueLabel: this._isDroidIntro ? 'Register New Unit' : 'Proceed',
+      continueTitle: this._isDroidIntro ? 'Ready to begin droid unit registration.' : 'Ready to begin character registration.',
+      showPregenerated: !this._isDroidIntro,
     };
 
     // DIAGNOSTIC: Show what data is being returned to template
@@ -521,6 +650,7 @@ export class IntroStep extends ProgressionStepPlugin {
       // Translation
       translatedText: stepData.translatedText,
       isTranslating: stepData.isTranslating,
+      localizedMode: stepData.localizedMode,
 
       // Completion state
       sequenceComplete: stepData.complete,
@@ -529,6 +659,10 @@ export class IntroStep extends ProgressionStepPlugin {
       parallaxX: stepData.parallaxX,
       parallaxY: stepData.parallaxY,
       translationCharStates: stepData.translationCharStates,
+      introVariant: stepData.introVariant,
+      continueLabel: stepData.continueLabel,
+      continueTitle: stepData.continueTitle,
+      showPregenerated: stepData.showPregenerated,
     };
 
     return {
@@ -714,6 +848,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
     // Cache work-surface root for direct mutation during the boot sequence
     this._workSurfaceEl = workSurfaceEl;
+    this._setSurfaceLocalizationDOM(this._localizedMode || this._isLineLocalized(this._currentLine));
 
     // ONLY on first render during ANIMATING state: start the animation
     if (this._state === INTRO_STATE.ANIMATING && !this._animationSequenceStarted) {
@@ -904,6 +1039,7 @@ export class IntroStep extends ProgressionStepPlugin {
       const progressBar = this._workSurfaceEl.querySelector('.prog-intro-progress-bar--segmented');
       const segments = Array.from(this._workSurfaceEl.querySelectorAll('[data-role="intro-segment"]'));
       const progressPercent = this._workSurfaceEl.querySelector('[data-role="intro-progress-percent"]');
+      const progressLabel = this._workSurfaceEl.querySelector('[data-role="intro-progress-label"]');
       const microlabel = this._workSurfaceEl.querySelector('[data-role="intro-microlabel"]');
       const labelEl = this._workSurfaceEl.querySelector('[data-role="intro-label"]');
       const statusEl = this._workSurfaceEl.querySelector('[data-role="intro-status"]');
@@ -915,6 +1051,7 @@ export class IntroStep extends ProgressionStepPlugin {
         progressBar,
         segments,
         progressPercent,
+        progressLabel,
         microlabel,
         labelEl,
         statusEl,
@@ -924,7 +1061,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
       let translationUnlocked = false;
 
-      for (const line of BOOT_LINES) {
+      for (const line of this._bootLines) {
         if (!this._introRunning || this._sessionToken !== sessionToken) return;
 
         this._phase = line.label;
@@ -934,6 +1071,9 @@ export class IntroStep extends ProgressionStepPlugin {
         this._translatedText = translationUnlocked ? line.basic : '';
 
         const stateClass = this._getStateClassForTone(line.tone);
+        const localizedMode = this._isLineLocalized(line) || translationUnlocked;
+        this._localizedMode = localizedMode;
+        this._setSurfaceLocalizationDOM(localizedMode);
         this._applyLineChrome(els, line, stateClass);
         updateProgressUI(els, line.progress, TOTAL_PROGRESS_SEGMENTS);
         setProgressTone(els.progressBar, line.tone);
@@ -1196,7 +1336,7 @@ export class IntroStep extends ProgressionStepPlugin {
     this._introRunning = false;
     this._translationEngine.cancel();
 
-    const finalLine = BOOT_LINES[BOOT_LINES.length - 1];
+    const finalLine = this._bootLines[this._bootLines.length - 1];
     this._currentLine = finalLine;
     this._phase = finalLine.label;
     this._currentMicrolabel = finalLine.microlabel;
@@ -1223,15 +1363,28 @@ export class IntroStep extends ProgressionStepPlugin {
    * Also updates micro-label for diegetic system messages.
    */
   getPhaseData() {
-    const currentLine = this._currentLine || BOOT_LINES[0];
+    const currentLine = this._currentLine || this._bootLines[0];
 
     return {
       phaseLabel: currentLine.label,
-      phaseAurabesh: this._complete ? currentLine.basic : currentLine.aurabesh,
+      phaseAurabesh: (this._complete || this._localizedMode || this._isLineLocalized(currentLine)) ? currentLine.basic : currentLine.aurabesh,
       phaseState: this._getStateClassForTone(currentLine.tone),
       phaseStatus: currentLine.status,
       phaseMicrolabel: currentLine.microlabel,
     };
+  }
+
+  _isLineLocalized(line) {
+    if (!line) return this._localizedMode === true;
+    const successIndex = this._bootLines.findIndex((entry) => entry.label === 'SUCCESS');
+    const currentIndex = this._bootLines.findIndex((entry) => entry.label === line.label);
+    return this._localizedMode === true || (successIndex >= 0 && currentIndex >= successIndex);
+  }
+
+  _setSurfaceLocalizationDOM(localizedMode) {
+    if (!this._workSurfaceEl) return;
+    this._workSurfaceEl.classList.toggle('prog-intro-surface--localized', localizedMode);
+    this._workSurfaceEl.classList.toggle('prog-intro-surface--foreign', !localizedMode);
   }
 
   _getStateClassForTone(tone) {
@@ -1275,6 +1428,17 @@ export class IntroStep extends ProgressionStepPlugin {
         els.microlabel.classList.add('prog-intro-text--neutral');
       }
     }
+
+    if (els.progressLabel) {
+      els.progressLabel.classList.remove('prog-intro-progress-text--neutral', 'prog-intro-progress-text--success', 'prog-intro-progress-text--error');
+      if (line.tone === INTRO_LINE_TONE.ERROR) {
+        els.progressLabel.classList.add('prog-intro-progress-text--error');
+      } else if (line.tone === INTRO_LINE_TONE.SUCCESS) {
+        els.progressLabel.classList.add('prog-intro-progress-text--success');
+      } else {
+        els.progressLabel.classList.add('prog-intro-progress-text--neutral');
+      }
+    }
   }
 
   /**
@@ -1283,7 +1447,7 @@ export class IntroStep extends ProgressionStepPlugin {
    */
   _getCurrentPhaseIndex() {
     if (!this._currentLine) return -1;
-    return BOOT_LINES.findIndex((line) => line.label === this._currentLine.label);
+    return this._bootLines.findIndex((line) => line.label === this._currentLine.label);
   }
 
   /**

@@ -25,8 +25,7 @@ export class ForceTechniquePicker extends SWSEFormApplicationV2 {
     this.selectedSet = new Set();
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'force-technique-picker',
       classes: ['swse-app', 'force-technique-picker'],

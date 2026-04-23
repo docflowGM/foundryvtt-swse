@@ -27,8 +27,7 @@ export class ForcePowerPicker extends SWSEFormApplicationV2 {
   /**
    * Default window configuration for the Force Power Picker.
    */
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'force-power-picker',
       classes: ['swse-app', 'force-power-picker'],

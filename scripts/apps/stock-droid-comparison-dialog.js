@@ -34,8 +34,7 @@ export class StockDroidComparisonDialog extends HandlebarsApplicationMixin(Appli
     this.conversionReport = options.conversionReport || {};
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    ApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(ApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       classes: ['swse', 'stock-droid-comparison-dialog', 'swse-app'],
       width: 900,

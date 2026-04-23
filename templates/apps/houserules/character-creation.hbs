@@ -1,12 +1,12 @@
 <form>
   <nav class="tabs" data-group="primary-tabs">
-    <a class="item active" data-tab="abilities">Ability Scores</a>
-    <a class="item" data-tab="hp">Hit Points</a>
-    <a class="item" data-tab="other">Other</a>
+    <a class="item active" data-swse-tab="abilities">Ability Scores</a>
+    <a class="item" data-swse-tab="hp">Hit Points</a>
+    <a class="item" data-swse-tab="other">Other</a>
   </nav>
   
   <section class="content">
-    <div class="tab active" data-group="primary-tabs" data-tab="abilities">
+    <div class="tab active" data-group="primary-tabs" data-swse-tab="abilities">
       <div class="form-group">
         <label>Ability Score Method</label>
         <select name="abilityScoreMethod">
@@ -30,7 +30,7 @@
       </div>
     </div>
     
-    <div class="tab" data-group="primary-tabs" data-tab="hp">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="hp">
       <div class="form-group">
         <label>HP Generation Method</label>
         <select name="hpGeneration">

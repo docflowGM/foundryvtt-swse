@@ -1,4 +1,11 @@
-<div class="prog-class-browse prog-quickref-stage">
+<div class="prog-class-browse prog-quickref-stage {{#if isDroidProgression}}prog-class-browse--droid{{/if}}">
+  {{#if isDroidProgression}}
+    <div class="prog-class-browse__droid-hud">
+      <div class="prog-class-browse__droid-eyebrow">Droid Assembly Registry</div>
+      <h2 class="prog-class-browse__droid-title">Select Droid Class</h2>
+      <p class="prog-class-browse__droid-subtitle">Choose the unit role package before chassis systems are installed.</p>
+    </div>
+  {{/if}}
   <div class="prog-class-grid" role="listbox" aria-label="Class">
     {{#each classes}}
       <button class="swse-option-card prog-class-card

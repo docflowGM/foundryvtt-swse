@@ -8,6 +8,7 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { traceLog } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
+import { captureHydrationSnapshot, emitHydrationError, emitHydrationWarning, isHydrationSensitivePath, recordHydrationMutation } from "/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js";
 
 /**
  * Form field type schema for coercion
@@ -48,12 +49,19 @@ const FORM_FIELD_SCHEMA = {
   'system.abilities.cha.racial': 'number',
   'system.abilities.cha.temp': 'number',
 
-  // Defense modifiers (PHASE 7: Canonical edit paths)
+  // Defense modifiers (PHASE 8: Canonical edit paths)
   // Display totals come from system.derived.defenses.{fortitude|reflex|will}.total
-  // Editable overrides are system.defenses.{fort|ref|will}.miscMod
-  'system.defenses.fort.miscMod': 'number',
-  'system.defenses.ref.miscMod': 'number',
-  'system.defenses.will.miscMod': 'number',
+  // Editable overrides live on system.defenses.{fortitude|reflex|will}.*
+  'system.defenses.fortitude.classBonus': 'number',
+  'system.defenses.fortitude.misc.user.extra': 'number',
+  'system.defenses.fortitude.ability': 'string',
+  'system.defenses.reflex.classBonus': 'number',
+  'system.defenses.reflex.misc.user.extra': 'number',
+  'system.defenses.reflex.ability': 'string',
+  'system.defenses.reflex.armor': 'number',
+  'system.defenses.will.classBonus': 'number',
+  'system.defenses.will.misc.user.extra': 'number',
+  'system.defenses.will.ability': 'string',
 
   // Skills (PHASE 7: Canonical edit paths)
   // Editable fields: miscMod (manual bonuses)
@@ -133,6 +141,124 @@ function getFieldType(fieldName) {
  * @param {SWSEV2CharacterSheet} sheet - The character sheet instance
  * @param {Event} event - The form submit event
  */
+
+function collectFormDataForField(field) {
+  const formData = new FormData();
+  if (!(field instanceof HTMLElement) || !field.name || field.disabled) return formData;
+
+  if (field.matches('input[type="checkbox"]')) {
+    formData.set(field.name, field.checked ? 'true' : 'false');
+    return formData;
+  }
+
+  if (field.matches('input[type="radio"]')) {
+    if (field.checked) formData.set(field.name, field.value ?? '');
+    return formData;
+  }
+
+  if (field instanceof HTMLSelectElement && field.multiple) {
+    for (const option of field.selectedOptions) {
+      formData.append(field.name, option.value);
+    }
+    return formData;
+  }
+
+  formData.set(field.name, field.value ?? '');
+  return formData;
+}
+
+function resolveExplicitFieldTarget(event) {
+  const path = typeof event?.composedPath === 'function' ? event.composedPath() : [];
+  const candidates = [event?.target, event?.currentTarget, ...path];
+
+  for (const candidate of candidates) {
+    if (!(candidate instanceof HTMLElement)) continue;
+
+    if (candidate.matches?.('input[name], textarea[name], select[name]')) {
+      return candidate;
+    }
+
+    const nestedField = candidate.closest?.('input[name], textarea[name], select[name]');
+    if (nestedField) return nestedField;
+  }
+
+  return null;
+}
+
+export function isDirectFieldMutationPath(fieldName) {
+  if (!fieldName || typeof fieldName !== 'string') return false;
+
+  return (
+    /^system\.skills\.[^.]+\.(trained|focused|miscMod|selectedAbility|favorite)$/.test(fieldName) ||
+    /^system\.defenses\.(fortitude|reflex|will)\.(ability|classBonus)$/.test(fieldName) ||
+    /^system\.defenses\.reflex\.armor$/.test(fieldName) ||
+    /^system\.defenses\.(fortitude|reflex|will)\.misc\.user\.extra$/.test(fieldName) ||
+    fieldName === 'system.conditionTrack.current'
+  );
+}
+
+export function coerceSingleFieldValue(fieldName, value, field = null) {
+  const expectedType = getFieldType(fieldName);
+
+  if (expectedType === 'number') {
+    const numValue = Number(value);
+    return Number.isNaN(numValue) ? 0 : numValue;
+  }
+
+  if (expectedType === 'boolean') {
+    if (field?.matches?.('input[type="checkbox"]')) return field.checked;
+    return value === 'true' || value === '1' || value === true || value === 'on';
+  }
+
+  return value ?? '';
+}
+
+export function buildScopedUpdateFromField(field) {
+  if (!(field instanceof HTMLElement) || !field.name || field.disabled) return null;
+
+  let rawValue = field.value ?? '';
+  if (field.matches?.('input[type="checkbox"]')) {
+    rawValue = field.checked;
+  }
+
+  return {
+    [field.name]: coerceSingleFieldValue(field.name, rawValue, field)
+  };
+}
+
+function collectFormDataFromContainer(container) {
+  const pairs = [];
+  if (!container?.querySelectorAll) return new FormData();
+
+  const fields = container.querySelectorAll('input[name], textarea[name], select[name]');
+  for (const field of fields) {
+    if (!field.name || field.disabled) continue;
+
+    if (field.matches('input[type="checkbox"]')) {
+      pairs.push([field.name, field.checked ? 'true' : 'false']);
+      continue;
+    }
+
+    if (field.matches('input[type="radio"]')) {
+      if (field.checked) pairs.push([field.name, field.value]);
+      continue;
+    }
+
+    if (field instanceof HTMLSelectElement && field.multiple) {
+      for (const option of field.selectedOptions) {
+        pairs.push([field.name, option.value]);
+      }
+      continue;
+    }
+
+    pairs.push([field.name, field.value ?? '']);
+  }
+
+  const formData = new FormData();
+  for (const [key, value] of pairs) formData.append(key, value);
+  return formData;
+}
+
 export async function handleFormSubmission(sheet, event) {
   SWSELogger.debug('[PERSISTENCE] ════════════════════════════════════════');
   SWSELogger.debug('[PERSISTENCE] Form submission started');
@@ -143,25 +269,133 @@ export async function handleFormSubmission(sheet, event) {
     console.warn('[PERSISTENCE] Could not preventDefault:', err);
   }
 
-  const form = event.target;
+  const explicitTarget = event?.target ?? event?.currentTarget ?? null;
+  const explicitField = resolveExplicitFieldTarget(event);
+  let form = explicitTarget instanceof HTMLFormElement ? explicitTarget : explicitTarget?.closest?.('form');
+  let container = explicitTarget?.closest?.('.swse-character-sheet-form') ?? null;
+
+  const appRoot = sheet?.element instanceof HTMLElement ? sheet.element : sheet?.element?.[0];
+  if (!form) {
+    form = appRoot?.querySelector?.('form.swse-character-sheet-form') ?? null;
+  }
+  if (!container) {
+    container = form ?? appRoot?.querySelector?.('.swse-character-sheet-form') ?? appRoot ?? null;
+  }
+
   SWSELogger.debug('[PERSISTENCE] Form element:', {
     tag: form?.tagName,
     class: form?.className,
-    isConnected: form?.isConnected
+    containerTag: container?.tagName,
+    containerClass: container?.className,
+    isConnected: form?.isConnected ?? container?.isConnected
   });
+
+  if (!(form instanceof HTMLFormElement) && !container?.querySelectorAll) {
+    console.error('[PERSISTENCE] No form or serializable container available for submission');
+    return;
+  }
+
+  const currentActorId = sheet.actor?.id;
+  if (!currentActorId) {
+    console.error('[PERSISTENCE] Actor ID not found');
+    return;
+  }
+
+  const currentActor = game.actors.get(currentActorId);
+  if (!currentActor) {
+    console.error('[PERSISTENCE] Could not fetch fresh actor from world');
+    return;
+  }
+
+  if (explicitField && isDirectFieldMutationPath(explicitField.name)) {
+    const scopedUpdate = buildScopedUpdateFromField(explicitField);
+    if (!scopedUpdate) {
+      console.warn('[PERSISTENCE] Direct field mutation resolved no scoped update');
+      return;
+    }
+
+    const isSensitiveField = isHydrationSensitivePath(explicitField.name);
+    const beforeSnapshot = isSensitiveField ? captureHydrationSnapshot(currentActor) : null;
+    const mutationRecord = recordHydrationMutation(sheet, {
+      source: 'character-sheet-direct-field',
+      field: explicitField.name,
+      inputType: explicitField.type || explicitField.tagName || 'unknown',
+      update: scopedUpdate,
+      before: beforeSnapshot
+    });
+
+    try {
+      SWSELogger.debug('[PERSISTENCE] Applying direct field mutation', {
+        field: explicitField.name,
+        update: scopedUpdate
+      });
+
+      if (isSensitiveField) {
+        emitHydrationWarning('FORM_DIRECT_MUTATION_START', {
+          mutation: mutationRecord,
+          before: beforeSnapshot
+        });
+      }
+
+      await ActorEngine.updateActor(currentActor, scopedUpdate, {
+        source: 'character-sheet-direct-field',
+        suppressAppRefresh: true,
+        meta: { guardKey: `direct-field:` }
+      });
+
+      const refreshedActor = game.actors.get(currentActorId) ?? currentActor;
+      const afterSnapshot = isSensitiveField ? captureHydrationSnapshot(refreshedActor) : null;
+      if (isSensitiveField) {
+        recordHydrationMutation(sheet, {
+          ...mutationRecord,
+          status: 'success',
+          after: afterSnapshot
+        });
+        emitHydrationWarning('FORM_DIRECT_MUTATION_SUCCESS', {
+          field: explicitField.name,
+          after: afterSnapshot
+        });
+      }
+
+      traceLog('FORM', 'direct field mutation applied', {
+        actorId: currentActorId,
+        actorName: currentActor.name,
+        field: explicitField.name
+      });
+      return;
+    } catch (err) {
+      if (isSensitiveField) {
+        emitHydrationError('FORM_DIRECT_MUTATION_FAILED', {
+          field: explicitField.name,
+          mutation: mutationRecord,
+          error: err?.message,
+          stack: err?.stack,
+          snapshot: captureHydrationSnapshot(game.actors.get(currentActorId) ?? currentActor)
+        });
+      }
+      console.error('[PERSISTENCE] Direct field mutation failed:', err);
+      ui?.notifications?.error(`Field update failed: `);
+      return;
+    }
+  }
 
   // Collect FormData
   let formData;
   try {
-    formData = new FormData(form);
+    formData = explicitField
+      ? collectFormDataForField(explicitField)
+      : (form instanceof HTMLFormElement ? new FormData(form) : collectFormDataFromContainer(container));
 
-    // CRITICAL FIX: Explicitly serialize all checkbox states.
-    // Native FormData uses "on" for checked boxes and omits unchecked boxes entirely.
-    // That is bad for dynamic boolean fields like skill trained/focused/favorite.
-    for (const checkbox of form.querySelectorAll('input[type="checkbox"][name]')) {
-      const fieldName = checkbox.name;
-      if (!fieldName) continue;
-      formData.set(fieldName, checkbox.checked ? 'true' : 'false');
+    // CRITICAL FIX: Explicitly serialize checkbox state for scoped field submissions.
+    if (explicitField?.matches('input[type="checkbox"][name]')) {
+      formData.set(explicitField.name, explicitField.checked ? 'true' : 'false');
+    } else if (!explicitField) {
+      const checkboxRoot = form instanceof HTMLFormElement ? form : container;
+      for (const checkbox of checkboxRoot.querySelectorAll('input[type="checkbox"][name]')) {
+        const fieldName = checkbox.name;
+        if (!fieldName) continue;
+        formData.set(fieldName, checkbox.checked ? 'true' : 'false');
+      }
     }
 
     SWSELogger.debug('[PERSISTENCE] FormData created, entries:', Object.keys(Object.fromEntries(formData.entries())).length);
@@ -197,20 +431,11 @@ export async function handleFormSubmission(sheet, event) {
 
   // Update actor via ActorEngine
   try {
-    const currentActorId = sheet.actor?.id;
-    if (!currentActorId) {
-      console.error('[PERSISTENCE] Actor ID not found');
-      return;
-    }
-
-    const currentActor = game.actors.get(currentActorId);
-    if (!currentActor) {
-      console.error('[PERSISTENCE] Could not fetch fresh actor from world');
-      return;
-    }
-
     SWSELogger.debug('[PERSISTENCE] Calling ActorEngine.updateActor...');
-    await ActorEngine.updateActor(currentActor, filtered);
+    await ActorEngine.updateActor(currentActor, filtered, {
+      source: 'character-sheet-form-submit',
+      meta: { guardKey: 'character-sheet-form-submit' }
+    });
     SWSELogger.debug('[PERSISTENCE] Form submission completed successfully');
 
     traceLog('form-submission', {

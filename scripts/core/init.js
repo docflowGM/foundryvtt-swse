@@ -115,3 +115,14 @@ if (!Handlebars.helpers.div) {
     return factor ? result * factor : result;
   });
 }
+
+// Count helper for summary/checklist templates
+if (!Handlebars.helpers.count) {
+  Handlebars.registerHelper("count", function(value) {
+    if (Array.isArray(value)) return value.length;
+    if (value && typeof value === "object") return Object.keys(value).length;
+    if (typeof value === "string") return value.length;
+    return 0;
+  });
+}
+

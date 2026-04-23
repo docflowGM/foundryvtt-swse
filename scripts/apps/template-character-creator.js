@@ -32,7 +32,7 @@ export class TemplateCharacterCreator extends SWSEFormApplicationV2 {
     this.creationCallback = options.creationCallback || null; // Callback for droid creation workflow
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}), {
     classes: ['swse', 'template-creator', 'swse-app'],
     width: 1000,
     height: 700,

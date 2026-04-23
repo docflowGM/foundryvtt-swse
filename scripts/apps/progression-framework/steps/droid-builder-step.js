@@ -252,8 +252,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     };
 
     return {
-      title: 'DROID CHASSIS CONFIGURATION',
-      subtitle: 'Select systems and components to assemble your droid.',
+      title: 'DROID SYSTEMS CONFIGURATION',
+      subtitle: 'Configure chassis systems and components before unit registration.',
 
       droidInfo: {
         degree: this._droidState.droidDegree,
@@ -970,9 +970,11 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       buildState: JSON.parse(JSON.stringify(this._droidState.buildState)),
     };
 
-    shell.committedSelections.set(this.descriptor.stepId, deferredSelection);
+    await this._commitNormalized(shell, 'droid', deferredSelection);
 
-    // Update observable build intent
+    if (shell?.committedSelections && this.descriptor?.stepId) {
+      shell.committedSelections.set(this.descriptor.stepId, deferredSelection);
+    }
     if (shell?.buildIntent && this.descriptor?.stepId) {
       shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, deferredSelection);
     }
@@ -1089,9 +1091,11 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       buildState: JSON.parse(JSON.stringify(this._droidState.buildState)),
     };
 
-    shell.committedSelections.set(this.descriptor.stepId, selection);
+    await this._commitNormalized(shell, 'droid', selection);
 
-    // Update observable build intent (Phase 6 solution)
+    if (shell?.committedSelections && this.descriptor?.stepId) {
+      shell.committedSelections.set(this.descriptor.stepId, selection);
+    }
     if (shell?.buildIntent && this.descriptor?.stepId) {
       shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, selection);
     }

@@ -9,7 +9,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
-import { ForcePowerEngine } from '../../../engine/progression/engine/force-secret-engine.js';
+import { ForceSecretEngine } from '../../../engine/progression/engine/force-secret-engine.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';

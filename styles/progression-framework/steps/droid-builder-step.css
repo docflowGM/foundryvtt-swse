@@ -736,3 +736,82 @@
   font-style: italic;
   color: var(--prog-text-dim) !important;
 }
+
+/* Droid datapad aesthetic pass */
+.progression-shell .prog-droid-builder--datapad {
+  background:
+    radial-gradient(circle at top center, rgba(255, 196, 64, 0.08), transparent 30%),
+    linear-gradient(180deg, rgba(20, 16, 10, 0.48), rgba(7, 8, 10, 0.24));
+}
+
+.progression-shell .prog-droid-builder__hud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--prog-space-sm);
+  align-items: center;
+  margin-bottom: var(--prog-space-sm);
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  border: 1px solid rgba(255, 196, 64, 0.22);
+  background: rgba(12, 10, 6, 0.65);
+}
+
+.progression-shell .prog-droid-builder__hud-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--prog-font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255, 222, 136, 0.82);
+}
+
+.progression-shell .prog-droid-builder__hud-tag--serial {
+  margin-left: auto;
+}
+
+.progression-shell .prog-droid-builder__hud-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 222, 136, 0.92);
+  box-shadow: 0 0 8px rgba(255, 191, 73, 0.55);
+}
+
+.progression-shell .prog-droid-builder__datapad-note {
+  margin-top: calc(-1 * var(--prog-space-xs));
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  border-left: 3px solid rgba(255, 196, 64, 0.5);
+  background: rgba(22, 16, 8, 0.46);
+  color: var(--prog-text-dim);
+}
+
+.progression-shell .prog-droid-builder--datapad .prog-droid-builder__header {
+  border-bottom-color: rgba(255, 196, 64, 0.24);
+}
+
+.progression-shell .prog-droid-builder--datapad .prog-droid-builder__title,
+.progression-shell .prog-droid-builder--datapad .metric-value,
+.progression-shell .prog-droid-builder--datapad .chassis-spec strong,
+.progression-shell .prog-droid-builder--datapad .prog-droid-builder__tab--active,
+.progression-shell .prog-droid-builder--datapad .prog-droid-builder__panel-header h3 {
+  color: rgba(255, 222, 136, 0.96);
+  text-shadow: 0 0 8px rgba(255, 191, 73, 0.18);
+}
+
+.progression-shell .prog-droid-builder--datapad .prog-droid-builder__metrics,
+.progression-shell .prog-droid-builder--datapad .prog-droid-builder__panel-header,
+.progression-shell .prog-droid-builder--datapad .metric-chip,
+.progression-shell .prog-droid-builder--datapad .system-card {
+  border-color: rgba(255, 196, 64, 0.18);
+}
+
+.progression-shell .prog-droid-builder--datapad .metric-chip,
+.progression-shell .prog-droid-builder--datapad .system-card {
+  background: linear-gradient(180deg, rgba(26, 20, 10, 0.7), rgba(8, 8, 10, 0.82));
+}
+
+.progression-shell .prog-droid-builder--datapad .system-card:hover {
+  border-color: rgba(255, 196, 64, 0.38);
+  background: linear-gradient(180deg, rgba(42, 30, 10, 0.78), rgba(10, 8, 4, 0.88));
+  box-shadow: 0 0 12px rgba(255, 191, 73, 0.1);
+}

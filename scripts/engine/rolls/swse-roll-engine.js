@@ -30,40 +30,37 @@ export class SWSERollEngine {
       throw new Error('SWSERollEngine.buildHoloRollData requires a Roll object');
     }
 
-    // Ensure roll is evaluated
-    if (!roll.total) {
+    if (roll.total === undefined || roll.total === null) {
       throw new Error('SWSERollEngine: Roll must be evaluated before rendering');
     }
 
-    // Build dice breakdown
     const breakdown = this._buildBreakdown(roll);
-
-    // Categorize total (crit/fail/normal)
     const category = this._categorizeResult(roll, context);
+    const actorName = actor?.name ?? 'Unknown';
+    const label = context?.label ?? context?.skillLabel ?? context?.rollLabel ?? '';
+    const title = flavor || (label ? `${actorName} used ${label}` : `${actorName} rolled`);
 
     return {
       chatSvg: buildChatSvgContext(),
-      chatState: swseDeriveChatStateContext(__swseSafePayload ?? payload ?? context ?? data ?? {}),
-      chatResolution: swseDeriveResolutionState(__swseSafePayload ?? payload ?? context ?? data ?? {}),
-      chatReactions: swseDeriveChatReactions(__swseSafePayload ?? payload ?? context ?? data ?? {}),
-      chatEvent: swseBuildAttackEventContext(__swseSafePayload ?? payload ?? context ?? data ?? {}),
-      chatCard: swseDeriveChatCardContext(__swseSafePayload ?? payload ?? context ?? data ?? {}),
-      // Roll data
+      chatState: buildChatStateContext({
+        state: category === 'crit' ? 'success' : category === 'fail' ? 'failure' : 'default',
+        statusLabel: label || 'Roll Result',
+        statusSubLabel: `Total ${roll.total}`,
+        showStatusRail: true,
+        showHeaderDivider: true,
+        showBadge: true
+      }),
       roll,
       formula: roll.formula,
       total: roll.total,
       dice: roll.dice,
       breakdown,
-
-      // Display data
       flavor,
-      category, // 'crit' | 'fail' | 'success' | 'neutral'
-
-      // Actor context
+      title,
+      subtitle: context?.trained === true ? 'Trained' : '',
+      category,
       actor,
-      actorName: actor?.name ?? 'Unknown',
-
-      // Metadata
+      actorName,
       timestamp: new Date().toISOString(),
       context
     };

@@ -15,8 +15,7 @@ export class PrerequisiteBuilderDialog extends SWSEFormApplicationV2 {
     this.mode = object.type ?? 'all';
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       id: 'prerequisite-builder',
       title: 'Prerequisite Builder',

@@ -1,14 +1,14 @@
 <form class="houserules-form">
   <nav class="tabs" data-group="primary-tabs">
-    <a class="item active" data-tab="levelup">Level Up</a>
-    <a class="item" data-tab="skills">Skills</a>
-    <a class="item" data-tab="talents">Talents</a>
-    <a class="item" data-tab="training">Skill Training</a>
-    <a class="item" data-tab="retraining">Retraining</a>
+    <a class="item active" data-swse-tab="levelup">Level Up</a>
+    <a class="item" data-swse-tab="skills">Skills</a>
+    <a class="item" data-swse-tab="talents">Talents</a>
+    <a class="item" data-swse-tab="training">Skill Training</a>
+    <a class="item" data-swse-tab="retraining">Retraining</a>
   </nav>
 
   <section class="content">
-    <div class="tab active" data-group="primary-tabs" data-tab="levelup">
+    <div class="tab active" data-group="primary-tabs" data-swse-tab="levelup">
       <div class="form-group">
         <input type="checkbox" name="talentEveryLevel" {{#if talentEveryLevel}}checked{{/if}}/>
         <label>Characters Gain Talent Every Level</label>
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="tab" data-group="primary-tabs" data-tab="skills">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="skills">
       <div class="form-group">
         <input type="checkbox" name="crossClassSkillTraining" {{#if crossClassSkillTraining}}checked{{/if}}/>
         <label>Allow Cross-Class Skill Training</label>
@@ -62,7 +62,7 @@
       {{/if}}
     </div>
 
-    <div class="tab" data-group="primary-tabs" data-tab="talents">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="talents">
       <div class="form-group">
         <label>Skill Focus Activation Requirements</label>
         <div class="form-group-nested">
@@ -83,7 +83,7 @@
       </div>
     </div>
 
-    <div class="tab" data-group="primary-tabs" data-tab="training">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="training">
       <div class="form-group">
         <input type="checkbox" name="skillTrainingEnabled" {{#if skillTrainingEnabled}}checked{{/if}}/>
         <label>Enable Training-Based Skill Advancement</label>
@@ -156,7 +156,7 @@
       {{/if}}
     </div>
 
-    <div class="tab" data-group="primary-tabs" data-tab="retraining">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="retraining">
       <div class="form-group">
         <input type="checkbox" name="retrainingEnabled" {{#if retrainingEnabled}}checked{{/if}}/>
         <label>Allow Retraining of Feats, Skills, and Talents</label>

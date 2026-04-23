@@ -2,16 +2,22 @@
 function shouldEmitDiagnostics() {
   try {
     if (globalThis.SWSE_DEBUG_LOGGING === true) return true;
+
+    const settings = globalThis.game?.settings;
+
+    // HARD STOP: do not read settings before ready
+    if (!settings || typeof settings.get !== 'function') return false;
+
     const svc = globalThis.HouseRuleService;
-    if (svc?.getBoolean) {
-      const enabled = svc.getBoolean('debugMode', false) === true;
-      globalThis.SWSE_DEBUG_LOGGING = enabled;
-      return enabled;
-    }
+    if (!svc?.getBoolean) return false;
+
+    const enabled = svc.getBoolean('debugMode', false) === true;
+    globalThis.SWSE_DEBUG_LOGGING = enabled;
+    return enabled;
+
   } catch (_err) {
-    // Never let diagnostics checks break runtime logging.
+    return false;
   }
-  return false;
 }
 
 const SWSELogger = {

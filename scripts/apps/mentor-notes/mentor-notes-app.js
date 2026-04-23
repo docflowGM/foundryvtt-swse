@@ -6,7 +6,7 @@ import { qs } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
 export class MentorNotesApp extends BaseSWSEAppV2 {
   static _instances = new Map();
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
     id: 'swse-mentor-notes',
     classes: ['swse', 'mentor-notes-app'],
     template: 'systems/foundryvtt-swse/templates/apps/mentor-notes.hbs',

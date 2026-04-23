@@ -17,6 +17,7 @@ import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import { resolveSelectedClassFromShell, getClassSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 
 const CATEGORY_LABELS = {
   event: 'Event',
@@ -41,7 +42,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
     this._focusedBackgroundId = null;
     this._committedBackgroundIds = [];  // May contain 1+ based on house rule
     this._searchQuery = '';
-    this._activeCategory = 'event';  // which category tab is active
+    this._activeCategory = 'all';  // which category tab is active
     this._sortBy = 'alpha';
 
     // House rule state
@@ -93,11 +94,11 @@ async onDataReady(shell) {
     const { filterId, value } = e.detail || {};
     if (!filterId || !value) return;
     if (['event', 'occupation', 'planet'].includes(filterId)) {
-      this._activeCategory = filterId;
+      this._activeCategory = value ? filterId : 'all';
       if (shell.utilityBar?._filterState) {
-        shell.utilityBar._filterState.event = filterId === 'event';
-        shell.utilityBar._filterState.occupation = filterId === 'occupation';
-        shell.utilityBar._filterState.planet = filterId === 'planet';
+        shell.utilityBar._filterState.event = value && filterId === 'event';
+        shell.utilityBar._filterState.occupation = value && filterId === 'occupation';
+        shell.utilityBar._filterState.planet = value && filterId === 'planet';
       }
       shell.render();
     }
@@ -186,7 +187,7 @@ async onStepExit(shell) {
         category: CATEGORY_LABELS[background.category] || background.category,
         description: background.narrativeDescription || background.description || '',
         trainedSkills: background.trainedSkills || background.relevantSkills || [],
-        relevantSkills: background.relevantSkills || [],
+        relevantSkills: this._buildRelevantSkillDisplay(background),
         bonusLanguage: background.bonusLanguage || '',
         source: background.source || 'Unknown',
         mechanicalBonuses: this._extractMechanicalBonuses(background),
@@ -475,7 +476,7 @@ getUtilityBarConfig() {
 
 
 _getFilteredBackgrounds() {
-  let filtered = this._allBackgrounds.filter((bg) => (bg.category || 'event') === this._activeCategory);
+  let filtered = this._allBackgrounds.filter((bg) => this._activeCategory === 'all' || (bg.category || 'event') === this._activeCategory);
 
   if (this._searchQuery) {
     const q = this._searchQuery.toLowerCase().trim();
@@ -504,6 +505,24 @@ _getFilteredBackgrounds() {
   return filtered;
 }
 
+
+  _buildRelevantSkillDisplay(background, shell) {
+    const rawSkills = [
+      ...(background?.relevantSkills || []),
+      ...(background?.trainedSkills || []),
+    ].filter(Boolean);
+
+    const selectedClass = resolveSelectedClassFromShell(shell);
+    const classSkillRefs = selectedClass ? getClassSkills(selectedClass) : [];
+    const classSkillKeys = new Set(classSkillRefs.map(ref => String(ref).toLowerCase().replace(/[^a-z0-9]/g, '')));
+
+    return rawSkills.map(skill => {
+      const label = String(skill);
+      const key = label.toLowerCase().replace(/[^a-z0-9]/g, '');
+      return { label, isClassSkill: classSkillKeys.has(key) };
+    });
+  }
+
 _extractMechanicalBonuses(background) {
   const bonuses = [];
   if (!background) return bonuses;
@@ -528,7 +547,7 @@ _getCategoryChips() {
   _formatCategoryGroups(filtered, suggestedIds = new Set(), confidenceMap = new Map()) {
     const result = {};
     for (const category of ['event', 'occupation', 'planet']) {
-      if (category !== this._activeCategory) continue;
+      if (this._activeCategory !== 'all' && category !== this._activeCategory) continue;
       const backgrounds = (this._groupedBackgrounds[category] || [])
         .filter(bg => filtered.includes(bg))
         .map(bg => {

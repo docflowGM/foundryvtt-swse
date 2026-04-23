@@ -29,8 +29,7 @@ export class GalacticRecordsBrowser extends HandlebarsApplicationMixin(Applicati
     this.importCallback = options.importCallback || null;
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    ApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(ApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       classes: ['swse', 'galactic-records-browser', 'swse-app'],
       width: 1000,

@@ -218,8 +218,9 @@ export class SummaryStep extends ProgressionStepPlugin {
     if (this._startingLevel < 1 || this._startingLevel > 20) {
       errors.push('Starting level must be between 1 and 20');
     }
+    const hasDroidBuild = !!this.descriptor?._shell?.progressionSession?.draftSelections?.droid;
     if (!this._summary.class) errors.push('Class selection is required');
-    if (!this._summary.species) errors.push('Species selection is required');
+    if (!this._summary.species && !hasDroidBuild) errors.push('Species selection is required');
     if (!this._summary.attributes || Object.keys(this._summary.attributes).length === 0) {
       errors.push('Attributes must be assigned');
     }
@@ -276,7 +277,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     if (projection) {
       this._summary.name = this._characterName || character.identity?.name || '';
       this._summary.level = this._startingLevel || shell.targetLevel || 1;
-      this._summary.species = projection.identity?.species || '';
+      this._summary.species = projection.identity?.species || (shell.progressionSession?.draftSelections?.droid ? 'Droid' : '');
       this._summary.class = projection.identity?.class || '';
       this._summary.attributes = projection.attributes || {};
       this._summary.skills = projection.skills?.trained || [];
@@ -291,7 +292,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     const selections = shell.progressionSession.draftSelections || {};
     this._summary.name = this._characterName || character.identity?.name || '';
     this._summary.level = this._startingLevel || shell.targetLevel || 1;
-    this._summary.species = selections.species?.name || selections.species?.id || '';
+    this._summary.species = selections.species?.name || selections.species?.id || (selections.droid ? 'Droid' : '');
     this._summary.class = selections.class?.name || selections.class?.id || '';
     this._summary.attributes = selections.attributes?.values ? { ...selections.attributes.values } : {};
     this._summary.skills = Array.isArray(selections.skills?.trained) ? selections.skills.trained : [];

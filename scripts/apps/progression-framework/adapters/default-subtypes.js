@@ -121,7 +121,18 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
       swseLogger.debug('[DroidAdapter] Force steps suppressed for droid', { suppressed });
     }
 
-    return filtered;
+    // Droid chargen cadence: Splash -> Droid Class -> Droid Systems -> Attributes -> rest.
+    const prioritized = ['intro', 'class', 'droid-builder', 'attribute'];
+    const ordered = [];
+    for (const stepId of prioritized) {
+      if (filtered.includes(stepId)) ordered.push(stepId);
+    }
+    for (const stepId of filtered) {
+      if (!ordered.includes(stepId)) ordered.push(stepId);
+    }
+
+    swseLogger.debug('[DroidAdapter] Droid active step order applied', { ordered });
+    return ordered;
   }
 
   // ---------------------------------------------------------------------------

@@ -28,8 +28,7 @@ const DEFAULT_STEPS = [
 const STEP_ORDER = DEFAULT_STEPS.map(s => s.key);
 
 export class StockDroidImportWizard extends HandlebarsApplicationMixin(ApplicationV2) {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    ApplicationV2.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(ApplicationV2.DEFAULT_OPTIONS ?? {}),
     {
       classes: ['swse', 'stock-droid-import-wizard', 'swse-app'],
       width: 1080,

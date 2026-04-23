@@ -12,6 +12,45 @@ import { getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen
  * @param {string} prereqString - Raw prerequisites string
  * @returns {string[]} Array of talent names that are prerequisites
  */
+function normalizeTalentLookupName(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u2018\u2019\u201B\u2032']/g, '')
+    .replace(/[\u2010-\u2015]/g, '-')
+    .replace(/[^a-z0-9()]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getTalentNodeId(talent) {
+  return talent?.id || talent?._id || talent?.uuid || talent?.name;
+}
+
+function getTalentPrerequisiteString(talent) {
+  const candidates = [
+    talent?.system?.prerequisites,
+    talent?.system?.prerequisite,
+    talent?.system?.prerequisites?.raw,
+    talent?.prerequisites?.raw,
+    talent?.prerequisites,
+  ];
+
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim()) {
+      return candidate.trim();
+    }
+    if (candidate && typeof candidate === 'object') {
+      const raw = candidate.raw || candidate.value || candidate.text;
+      if (typeof raw === 'string' && raw.trim()) {
+        return raw.trim();
+      }
+    }
+  }
+
+  return '';
+}
+
 function parsePrerequisites(prereqString) {
   if (!prereqString) {return [];}
 
@@ -44,8 +83,9 @@ export function buildDependencyGraph(talents) {
 
   // First pass: create nodes for all talents
   for (const talent of talents) {
-    const id = talent._id || talent.name;
-    talentsByName.set(talent.name.toLowerCase(), talent);
+    const id = getTalentNodeId(talent);
+    if (!id || !talent?.name) {continue;}
+    talentsByName.set(normalizeTalentLookupName(talent.name), talent);
     nodes.set(id, {
       id,
       name: talent.name,
@@ -58,14 +98,17 @@ export function buildDependencyGraph(talents) {
 
   // Second pass: parse prerequisites and create edges
   for (const talent of talents) {
-    const nodeId = talent._id || talent.name;
+    const nodeId = getTalentNodeId(talent);
     const node = nodes.get(nodeId);
-    const prereqString = talent.system?.prerequisites || talent.system?.prerequisite || '';
+    if (!node) {continue;}
+
+    const prereqString = getTalentPrerequisiteString(talent);
+    const normalizedPrereqString = normalizeTalentLookupName(prereqString);
     const prereqNames = parsePrerequisites(prereqString);
 
-    // Also check for direct talent name matches in prerequisites
-    for (const [name, prereqTalent] of talentsByName) {
-      if (prereqString.toLowerCase().includes(name) && name !== talent.name.toLowerCase()) {
+    // Also check for direct talent name matches in prerequisites using normalized lookup
+    for (const [normalizedName, prereqTalent] of talentsByName) {
+      if (normalizedName && normalizedPrereqString.includes(normalizedName) && normalizedName !== normalizeTalentLookupName(talent.name)) {
         if (!prereqNames.includes(prereqTalent.name)) {
           prereqNames.push(prereqTalent.name);
         }
@@ -73,12 +116,12 @@ export function buildDependencyGraph(talents) {
     }
 
     for (const prereqName of prereqNames) {
-      const prereqTalent = talentsByName.get(prereqName.toLowerCase());
+      const prereqTalent = talentsByName.get(normalizeTalentLookupName(prereqName));
       if (prereqTalent) {
-        const prereqId = prereqTalent._id || prereqTalent.name;
+        const prereqId = getTalentNodeId(prereqTalent);
         const prereqNode = nodes.get(prereqId);
 
-        if (prereqNode && prereqNode.id !== nodeId) {
+        if (prereqNode && prereqNode.id !== nodeId && !node.prerequisites.includes(prereqId)) {
           node.prerequisites.push(prereqId);
           prereqNode.dependents.push(nodeId);
           edges.push({
@@ -214,6 +257,21 @@ function getNodeState(talent, characterData, allTalents) {
   }
 
   return 'available';
+}
+
+function getEdgeState(fromTalent, toTalent, characterData, allTalents) {
+  const fromState = getNodeState(fromTalent, characterData, allTalents);
+  const toState = getNodeState(toTalent, characterData, allTalents);
+  const selectedTalentNames = new Set((characterData?.talents || []).map(t => String(t.name || '').toLowerCase()));
+  const prereqString = String(toTalent?.system?.prerequisites || toTalent?.system?.prerequisite || '').toLowerCase();
+  const fromName = String(fromTalent?.name || '').toLowerCase();
+  const prerequisiteSatisfied = !fromName || !prereqString.includes(fromName) || selectedTalentNames.has(fromName) || fromState === 'selected';
+
+  if (toState === 'selected' || fromState === 'selected') return 'selected';
+  if (toState === 'available' && prerequisiteSatisfied) return 'satisfied';
+  if (toState === 'available') return 'available';
+  if (toState === 'locked') return 'blocked';
+  return 'inactive';
 }
 
 /**
@@ -354,8 +412,7 @@ export function renderTalentTreeGraph(container, talents, characterData, onSelec
     if (fromPos && toPos) {
       const fromNode = nodes.get(edge.from);
       const toNode = nodes.get(edge.to);
-      const fromState = getNodeState(fromNode.talent, characterData, talents);
-      const toState = getNodeState(toNode.talent, characterData, talents);
+      const edgeState = getEdgeState(fromNode.talent, toNode.talent, characterData, talents);
 
       // Main line
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -376,15 +433,27 @@ export function renderTalentTreeGraph(container, talents, characterData, onSelec
       glowLine.setAttribute('stroke-linecap', 'round');
       glowLine.setAttribute('opacity', '0.3');
 
-      if (fromState === 'selected' || toState === 'selected') {
-        line.setAttribute('stroke', '#00e5ff');
-        glowLine.setAttribute('stroke', '#00e5ff');
+      if (edgeState === 'selected') {
+        line.setAttribute('stroke', '#ff00aa');
+        line.setAttribute('opacity', '0.95');
+        glowLine.setAttribute('stroke', '#ff00aa');
+        glowLine.setAttribute('opacity', '0.22');
         line.setAttribute('class', 'edge-active');
-      } else if (fromState === 'available' && toState === 'available') {
+      } else if (edgeState === 'satisfied') {
+        line.setAttribute('stroke', '#00ff88');
+        line.setAttribute('opacity', '0.85');
+        glowLine.setAttribute('stroke', '#00ff88');
+        glowLine.setAttribute('opacity', '0.18');
+      } else if (edgeState === 'available') {
         line.setAttribute('stroke', '#00e5ff');
         line.setAttribute('opacity', '0.7');
         glowLine.setAttribute('stroke', '#00e5ff');
         glowLine.setAttribute('opacity', '0.15');
+      } else if (edgeState === 'blocked') {
+        line.setAttribute('stroke', '#ff9f1a');
+        line.setAttribute('opacity', '0.65');
+        glowLine.setAttribute('stroke', '#ff9f1a');
+        glowLine.setAttribute('opacity', '0.14');
       } else {
         line.setAttribute('stroke', '#445566');
         line.setAttribute('opacity', '0.4');

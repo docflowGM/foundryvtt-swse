@@ -94,8 +94,8 @@
           {{/if}}
           <button type="button"
                   class="skill-name-btn rollable"
-                  data-action="roll-skill"
                   data-skill="{{skill.key}}"
+                  data-mod-dialog="true"
                   title="Click to roll {{skill.label}}">
             {{skill.label}}
           </button>
@@ -169,8 +169,8 @@
         <div class="col-roll">
           <button type="button"
                   class="skill-roll-btn"
-                  data-action="roll-skill"
                   data-skill="{{skill.key}}"
+                  data-mod-dialog="true"
                   aria-label="Roll {{skill.label}}"
                   title="Roll {{skill.label}}">
             🎲
@@ -235,7 +235,7 @@
                   <button type="button"
                           class="extra-use-btn {{#if use.isBlocked}}btn-disabled{{/if}}"
                           data-action="execute-extra-skill-use"
-                          data-skill="{{../skill.key}}"
+                          data-skill="{{../../key}}"
                           data-use="{{use.key}}"
                           data-use-key="{{use.useKey}}"
                           data-blocked="{{#if use.isBlocked}}true{{else}}false{{/if}}"

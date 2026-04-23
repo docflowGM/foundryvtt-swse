@@ -7,11 +7,13 @@
         <img class="prog-mentor__portrait-image"
              src="{{mentor.portrait}}"
              alt="{{mentor.name}}"
-             title="{{mentor.name}}"/>
+             title="{{mentor.name}}"
+             onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.png';"/>
       {{else}}
-        <div class="prog-mentor__portrait-placeholder">
-          <i class="fas fa-user-circle"></i>
-        </div>
+        <img class="prog-mentor__portrait-image"
+             src="systems/foundryvtt-swse/assets/mentors/salty.png"
+             alt="Ol' Salty"
+             title="Ol' Salty"/>
       {{/if}}
     </div>
   </div>{{!-- /portrait-zone --}}
@@ -25,7 +27,7 @@
     <div class="prog-mentor__dialogue-content">
       <p class="prog-mentor__text{{#unless mentor.currentDialogue}} prog-mentor__text--idle{{/unless}}"
          data-mentor-text>
-        {{#if mentor.currentDialogue}}{{mentor.currentDialogue}}{{else}}Awaiting your decision…{{/if}}
+        {{#unless mentor.currentDialogue}}Awaiting your decision…{{/unless}}
       </p>
     </div>
   </div>

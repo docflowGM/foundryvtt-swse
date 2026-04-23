@@ -118,8 +118,7 @@ export class DroidBuilderApp extends SWSEApplication {
     }
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEApplication.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEApplication.DEFAULT_OPTIONS ?? {}),
     {
       classes: ['swse', 'droid-builder-app', 'swse-app'],
       template: 'systems/foundryvtt-swse/templates/apps/droid-builder.hbs',

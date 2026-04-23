@@ -3,8 +3,7 @@ import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/Com
 
 export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    super.DEFAULT_OPTIONS,
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}),
     {
       id: "swse-combat-roll-config",
       classes: ["swse", "holo-console"],

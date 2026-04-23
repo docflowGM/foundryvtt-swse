@@ -10,8 +10,11 @@ import { SETTINGS_DEFAULTS } from "/systems/foundryvtt-swse/scripts/utils/settin
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class HouseRuleService {
-  static NS = 'foundryvtt-swse';
+  static NS = "foundryvtt-swse";
   static DEFAULTS = SETTINGS_DEFAULTS;
+
+  static _warnedMissingKeys = new Set();
+  static _warnedBootUnavailable = false;
 
   static _syncDebugFlag(value) {
     try {
@@ -22,8 +25,44 @@ export class HouseRuleService {
     return value === true;
   }
 
+  static _getSettingsApi() {
+    return globalThis.game?.settings ?? null;
+  }
+
+  static _isSettingsReady() {
+    const settings = this._getSettingsApi();
+    return !!settings && typeof settings.get === "function" && typeof settings.set === "function";
+  }
+
+  static _hasRegisteredSetting(key) {
+    const settings = this._getSettingsApi();
+    if (!settings) return false;
+
+    const fullKey = `${this.NS}.${key}`;
+
+    try {
+      if (settings.settings && typeof settings.settings.has === "function") {
+        return settings.settings.has(fullKey);
+      }
+    } catch (_err) {
+      // Ignore registry probing failures.
+    }
+
+    return false;
+  }
+
   static _read(key) {
-    return game.settings.get(this.NS, key);
+    const settings = this._getSettingsApi();
+
+    if (!settings || typeof settings.get !== "function") {
+      throw new Error("Settings not ready");
+    }
+
+    if (!this._hasRegisteredSetting(key)) {
+      throw new Error(`Setting not registered: ${this.NS}.${key}`);
+    }
+
+    return settings.get(this.NS, key);
   }
 
   static getDefault(key, fallback = undefined) {
@@ -34,11 +73,28 @@ export class HouseRuleService {
 
   static getSafe(key, fallback = undefined) {
     const defaultValue = fallback !== undefined ? fallback : this.getDefault(key, null);
+
+    // Early boot: settings API not available yet. Silent fallback.
+    if (!this._isSettingsReady()) {
+      if (key === "debugMode") this._syncDebugFlag(defaultValue === true);
+      return defaultValue;
+    }
+
+    // Registered settings only. Silent fallback for missing keys to avoid boot spam.
+    if (!this._hasRegisteredSetting(key)) {
+      if (key === "debugMode") this._syncDebugFlag(defaultValue === true);
+      return defaultValue;
+    }
+
     try {
       const value = this._read(key);
-      return value !== undefined && value !== null ? value : defaultValue;
+      const resolved = value !== undefined && value !== null ? value : defaultValue;
+      if (key === "debugMode") this._syncDebugFlag(resolved === true);
+      return resolved;
     } catch (err) {
-      SWSELogger.warn(`[HouseRuleService] Failed to read ${key}, using default`, err);
+      // Silent fallback during runtime-safe reads; logger calls frequently and
+      // should not recursively produce warning storms.
+      if (key === "debugMode") this._syncDebugFlag(defaultValue === true);
       return defaultValue;
     }
   }
@@ -48,11 +104,11 @@ export class HouseRuleService {
     if (fallback === undefined) {
       return this.getSafe(key, undefined);
     }
-    if (typeof fallback === 'boolean') return this.getBoolean(key, fallback);
-    if (typeof fallback === 'string') return this.getString(key, fallback);
-    if (typeof fallback === 'number') return this.getNumber(key, fallback);
+    if (typeof fallback === "boolean") return this.getBoolean(key, fallback);
+    if (typeof fallback === "string") return this.getString(key, fallback);
+    if (typeof fallback === "number") return this.getNumber(key, fallback);
     if (Array.isArray(fallback)) return this.getArray(key, fallback);
-    if (typeof fallback === 'object' && fallback !== null) return this.getObject(key, fallback);
+    if (typeof fallback === "object" && fallback !== null) return this.getObject(key, fallback);
     return this.getSafe(key, fallback);
   }
 
@@ -60,7 +116,7 @@ export class HouseRuleService {
     return this.getBoolean(key, false);
   }
 
-  static getString(key, fallback = '') {
+  static getString(key, fallback = "") {
     const value = this.getSafe(key, fallback);
     return value === undefined || value === null ? fallback : String(value);
   }
@@ -72,7 +128,7 @@ export class HouseRuleService {
 
   static getObject(key, fallback = {}) {
     const value = this.getSafe(key, fallback);
-    return typeof value === 'object' && value !== null && !Array.isArray(value) ? value : fallback;
+    return typeof value === "object" && value !== null && !Array.isArray(value) ? value : fallback;
   }
 
   static getNumber(key, fallback = 0) {
@@ -83,21 +139,37 @@ export class HouseRuleService {
 
   static getBoolean(key, fallback = false) {
     const value = this.getSafe(key, fallback);
-    const result = typeof value === 'boolean' ? value : Boolean(value);
-    if (key === 'debugMode') this._syncDebugFlag(result);
+    const result = typeof value === "boolean" ? value : Boolean(value);
+    if (key === "debugMode") this._syncDebugFlag(result);
     return result;
   }
 
   static async set(key, value, { emitHook = true } = {}) {
+    const settings = this._getSettingsApi();
+
+    if (!settings || typeof settings.set !== "function") {
+      const err = new Error("Settings not ready");
+      SWSELogger.error(`[HouseRuleService] Failed to set ${key}:`, err);
+      throw err;
+    }
+
+    if (!this._hasRegisteredSetting(key)) {
+      const err = new Error(`Setting not registered: ${this.NS}.${key}`);
+      SWSELogger.error(`[HouseRuleService] Failed to set ${key}:`, err);
+      throw err;
+    }
+
     try {
-      await game.settings.set(this.NS, key, value);
-      if (key === 'debugMode') this._syncDebugFlag(value === true);
+      await settings.set(this.NS, key, value);
+      if (key === "debugMode") this._syncDebugFlag(value === true);
+
       if (emitHook) {
-        Hooks.callAll('swse:setting-changed', key, value);
+        Hooks.callAll("swse:setting-changed", key, value);
         if (Object.prototype.hasOwnProperty.call(this.DEFAULTS, key)) {
-          Hooks.callAll('swse:houserule-changed', key, value);
+          Hooks.callAll("swse:houserule-changed", key, value);
         }
       }
+
       return true;
     } catch (err) {
       SWSELogger.error(`[HouseRuleService] Failed to set ${key}:`, err);
@@ -123,6 +195,7 @@ export class HouseRuleService {
     };
 
     report.totalRules = Object.keys(this.DEFAULTS).length;
+
     for (const key of Object.keys(this.DEFAULTS)) {
       try {
         const value = this.get(key);
@@ -132,16 +205,23 @@ export class HouseRuleService {
         report.errors.push(`Rule "${key}" threw error: ${err.message}`);
       }
     }
+
     return report;
   }
 
   static _hookDirectAccess() {
-    const originalGet = game.settings.get;
-    const originalSet = game.settings.set;
-    game.settings.get = function(namespace, key) {
-      if (namespace === 'foundryvtt-swse') {
-        const stack = new Error().stack || '';
-        if (!stack.includes('HouseRuleService.')) {
+    const settings = this._getSettingsApi();
+    if (!settings || typeof settings.get !== "function" || typeof settings.set !== "function") {
+      return;
+    }
+
+    const originalGet = settings.get;
+    const originalSet = settings.set;
+
+    settings.get = function(namespace, key) {
+      if (namespace === "foundryvtt-swse") {
+        const stack = new Error().stack || "";
+        if (!stack.includes("HouseRuleService.")) {
           SWSELogger.warn(
             `[GOVERNANCE] Direct game.settings.get("foundryvtt-swse", "${key}") detected outside HouseRuleService.`,
             stack
@@ -150,10 +230,11 @@ export class HouseRuleService {
       }
       return originalGet.call(this, namespace, key);
     };
-    game.settings.set = async function(namespace, key, value) {
-      if (namespace === 'foundryvtt-swse') {
-        const stack = new Error().stack || '';
-        if (!stack.includes('HouseRuleService.')) {
+
+    settings.set = async function(namespace, key, value) {
+      if (namespace === "foundryvtt-swse") {
+        const stack = new Error().stack || "";
+        if (!stack.includes("HouseRuleService.")) {
           SWSELogger.warn(
             `[GOVERNANCE] Direct game.settings.set("foundryvtt-swse", "${key}") detected outside HouseRuleService.`,
             stack

@@ -379,3 +379,41 @@ if (globalThis.SWSEChatEventBridge && !globalThis.SWSEChatEventBridge._phase11Ha
     return result;
   };
 }
+
+
+// SWSE console log export helper
+if (!globalThis.SWSE) globalThis.SWSE = {};
+if (!globalThis.SWSEConsoleBuffer) {
+  globalThis.SWSEConsoleBuffer = [];
+  const levels = ['log', 'info', 'warn', 'error', 'debug'];
+  for (const level of levels) {
+    const original = console[level]?.bind(console);
+    if (!original || original._swseWrapped) continue;
+    const wrapped = (...args) => {
+      try {
+        const line = args.map(arg => {
+          if (typeof arg === 'string') return arg;
+          try { return JSON.stringify(arg); } catch { return String(arg); }
+        }).join(' ');
+        globalThis.SWSEConsoleBuffer.push(`[${new Date().toISOString()}] [${level.toUpperCase()}] ${line}`);
+        if (globalThis.SWSEConsoleBuffer.length > 10000) globalThis.SWSEConsoleBuffer.shift();
+      } catch (_err) {}
+      return original(...args);
+    };
+    wrapped._swseWrapped = true;
+    console[level] = wrapped;
+  }
+}
+if (!globalThis.SWSE.consolelog) globalThis.SWSE.consolelog = {};
+globalThis.SWSE.consolelog.export = function exportConsoleLog() {
+  const lines = globalThis.SWSEConsoleBuffer || [];
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  a.href = URL.createObjectURL(blob);
+  a.download = `swse-console-${stamp}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};

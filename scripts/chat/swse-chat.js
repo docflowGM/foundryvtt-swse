@@ -54,18 +54,16 @@ export class SWSEChat {
       content,
       flags: {
         ...flags,
-        swse: { holo: true }  // Mark as holo-rendered
+        swse: { ...(flags?.swse || {}), holo: true }
       },
       blind,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL
+      rolls: [roll.toJSON()]
     };
 
     if (Array.isArray(whisper)) {messageData.whisper = whisper;}
+    if (rollMode) {messageData.rollMode = rollMode;}
 
-    const options = { create: true };
-    if (rollMode) {options.rollMode = rollMode;}
-
-    return ChatMessage.create(messageData, options);
+    return createChatMessage(messageData);
   }
 
   static async postHTML({

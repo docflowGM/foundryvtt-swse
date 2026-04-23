@@ -104,10 +104,13 @@ export class MentorTranslationIntegration {
       console.log('[SWSE Translation Debug] Translation DISABLED — rendering plain text', {
         text_length: text.length,
       });
-      container.innerHTML = this._escapeHtml(text);
+      container.textContent = text;
       onComplete();
       return container;
     }
+
+    // Clear any previously rendered plain text or stale translation wrapper before animating.
+    container.replaceChildren();
 
     // Get preset for this mentor
     const preset = this._getPresetForMentor(mentor);
@@ -154,7 +157,7 @@ export class MentorTranslationIntegration {
    */
   static renderPlain(text, container, onComplete = () => {}) {
     if (!text || !container) {return container;}
-    container.innerHTML = this._escapeHtml(text);
+    container.textContent = text;
     onComplete();
     return container;
   }

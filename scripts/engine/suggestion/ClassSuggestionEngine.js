@@ -227,8 +227,17 @@ export class ClassSuggestionEngine {
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Trained skills (${trainedSkills.size}):`, Array.from(trainedSkills));
 
         // Add pending skill training
-        (pendingData.selectedSkills || []).forEach(s => {
-            trainedSkills.add((s.key || s).toLowerCase());
+        const pendingSkillsRaw = pendingData.selectedSkills;
+        const pendingSkills = Array.isArray(pendingSkillsRaw)
+            ? pendingSkillsRaw
+            : (pendingSkillsRaw && typeof pendingSkillsRaw === 'object')
+                ? Object.keys(pendingSkillsRaw).filter(key => pendingSkillsRaw[key])
+                : [];
+        pendingSkills.forEach(s => {
+            const key = (s?.key || s);
+            if (typeof key === 'string' && key.length > 0) {
+                trainedSkills.add(key.toLowerCase());
+            }
         });
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending skills (${trainedSkills.size}):`, Array.from(trainedSkills));
 

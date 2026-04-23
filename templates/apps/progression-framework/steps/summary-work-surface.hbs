@@ -8,125 +8,154 @@
         <div class="prog-items-list">
           {{#each levelupSummary.metadataChanges}}
             <div class="prog-item-entry">
-              <i class="fas {{#if this.isNew}}fa-plus-circle{{else}}fa-arrow-up{{/if}}"></i>
-              {{#if this.before}}<span>{{this.before}}</span> <span class="prog-delta-arrow">→</span>{{/if}}
-              <strong>{{this.after}}</strong>
-            </div>
-          {{/each}}
-        </div>
-      {{else}}
-        <div class="prog-placeholder">No class delta detected.</div>
-      {{/if}}
+              <i class="fas {{#if this.isNew}}fa-plus-circle{{else}}
+<div class="prog-summary-surface prog-summary-surface--chargen">
+  <div class="prog-panel prog-panel--left">
+    <h3 class="prog-panel-title">Metadata</h3>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--identity swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header">
+        <span><i class="fas fa-dna"></i> Race</span>
+        <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="species" type="button" aria-label="Edit species"><i class="fas fa-pencil-alt"></i></button>
+      </div>
+      <div class="prog-summary-line-value">{{#if summary.species}}{{summary.species}}{{else}}<span class="prog-placeholder">Not selected</span>{{/if}}</div>
+    </div>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--identity swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header">
+        <span><i class="fas fa-shield-alt"></i> Class</span>
+        <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="class" type="button" aria-label="Edit class"><i class="fas fa-pencil-alt"></i></button>
+      </div>
+      <div class="prog-summary-line-value">{{#if summary.class}}{{summary.class}}{{else}}<span class="prog-placeholder">Not selected</span>{{/if}}</div>
+    </div>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--identity swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header">
+        <span><i class="fas fa-book"></i> Background</span>
+        <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="background" type="button" aria-label="Edit background"><i class="fas fa-pencil-alt"></i></button>
+      </div>
+      <div class="prog-summary-line-value">{{#if summary.background}}{{summary.background}}{{else}}<span class="prog-placeholder">Not selected</span>{{/if}}</div>
     </div>
   </div>
 
   <div class="prog-panel prog-panel--center">
-    <h3 class="prog-panel-title">What Changes</h3>
-    {{#if levelupSummary.statChanges.length}}
-    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
-      <div class="prog-section-header"><i class="fas fa-chart-line"></i> Derived Changes</div>
-      <div class="prog-items-list">
-        {{#each levelupSummary.statChanges}}
-          <div class="prog-item-entry prog-delta-entry">
-            <span class="prog-delta-label">{{this.label}}</span>
-            <span class="prog-delta-values">{{this.before}} <span class="prog-delta-arrow">→</span> {{this.after}}{{#if this.pending}} <em>(pending HP choice)</em>{{/if}}</span>
+    <h3 class="prog-panel-title">Character Preview</h3>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header">
+        <span><i class="fas fa-fist-raised"></i> Derived Combat Stats</span>
+      </div>
+      <div class="prog-combat-grid">
+        {{#each summary.combatStats}}
+          <div class="prog-combat-stat">
+            <span class="prog-combat-stat__label">{{this.label}}</span>
+            <span class="prog-combat-stat__value {{this.toneClass}}">{{this.value}}</span>
           </div>
         {{/each}}
       </div>
     </div>
-    {{/if}}
 
-    {{#if levelupSummary.attributeChanges.length}}
-    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
-      <div class="prog-section-header"><i class="fas fa-chart-bar"></i> Ability Changes <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="attribute" type="button"><i class="fas fa-pencil-alt"></i></button></div>
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header">
+        <span><i class="fas fa-chart-bar"></i> Attributes</span>
+        <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="attribute" type="button" aria-label="Edit attributes"><i class="fas fa-pencil-alt"></i></button>
+      </div>
+      <div class="prog-attributes-grid prog-attributes-grid--summary">
+        {{#each summary.attributeSummary}}
+          <div class="prog-attr-display prog-attr-display--summary">
+            <span class="prog-attr-name">{{this.label}}</span>
+            <span class="prog-attr-score">{{this.score}}</span>
+            <span class="prog-attr-modifier {{this.toneClass}}">{{this.modifierDisplay}}</span>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header">
+        <span><i class="fas fa-language"></i> Languages</span>
+        <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="languages" type="button" aria-label="Edit languages"><i class="fas fa-pencil-alt"></i></button>
+      </div>
+      <div class="prog-chip-list">
+        {{#if summary.languages.length}}
+          {{#each summary.languages}}
+            <span class="prog-chip">{{this}}</span>
+          {{/each}}
+        {{else}}
+          <span class="prog-placeholder">No languages selected</span>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header">
+        <span><i class="fas fa-star"></i> Feats</span>
+        <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="general-feat" type="button" aria-label="Edit feats"><i class="fas fa-pencil-alt"></i></button>
+      </div>
       <div class="prog-items-list">
-        {{#each levelupSummary.attributeChanges}}
-          <div class="prog-item-entry prog-delta-entry"><span class="prog-delta-label">{{this.label}}</span><span class="prog-delta-values">{{this.before}} <span class="prog-delta-arrow">→</span> {{this.after}}</span></div>
+        {{#if summary.feats.length}}
+          {{#each summary.feats}}
+            <div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>
+          {{/each}}
+        {{else}}
+          <div class="prog-placeholder">No feats selected</div>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header">
+        <span><i class="fas fa-gem"></i> Talents</span>
+        <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="class-talent" type="button" aria-label="Edit talents"><i class="fas fa-pencil-alt"></i></button>
+      </div>
+      <div class="prog-items-list">
+        {{#if summary.talents.length}}
+          {{#each summary.talents}}
+            <div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>
+          {{/each}}
+        {{else}}
+          <div class="prog-placeholder">No talents selected</div>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header">
+        <span><i class="fas fa-book-open"></i> Skills</span>
+        <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="skills" type="button" aria-label="Edit skills"><i class="fas fa-pencil-alt"></i></button>
+      </div>
+      <div class="prog-skill-table">
+        {{#each summary.skillRows}}
+          <div class="prog-skill-row {{#if this.trained}}is-trained{{/if}}">
+            <span class="prog-skill-row__name">{{this.label}}</span>
+            <span class="prog-skill-row__meta">{{this.ability}}{{#if this.trained}} • Trained{{/if}}{{#if this.focused}} • Focus{{/if}}</span>
+            <span class="prog-skill-row__total {{this.toneClass}}">{{this.totalDisplay}}</span>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{#if summary.forcePowers.length}}
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header">
+        <span><i class="fas fa-hand-sparkles"></i> Force Powers</span>
+      </div>
+      <div class="prog-items-list">
+        {{#each summary.forcePowers}}
+          <div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>
         {{/each}}
       </div>
     </div>
     {{/if}}
-
-    {{#if levelupSummary.addedSkills.length}}
-    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
-      <div class="prog-section-header"><i class="fas fa-book-open"></i> New Trained Skills <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="skills" type="button"><i class="fas fa-pencil-alt"></i></button></div>
-      <div class="prog-items-list">{{#each levelupSummary.addedSkills}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}</div>
-    </div>
-    {{/if}}
-
-    {{#if levelupSummary.addedFeats.length}}
-    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
-      <div class="prog-section-header"><i class="fas fa-star"></i> New Feats <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="general-feat" type="button"><i class="fas fa-pencil-alt"></i></button></div>
-      <div class="prog-items-list">{{#each levelupSummary.addedFeats}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}</div>
-    </div>
-    {{/if}}
-
-    {{#if levelupSummary.addedTalents.length}}
-    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
-      <div class="prog-section-header"><i class="fas fa-gem"></i> New Talents <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="class-talent" type="button"><i class="fas fa-pencil-alt"></i></button></div>
-      <div class="prog-items-list">{{#each levelupSummary.addedTalents}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}</div>
-    </div>
-    {{/if}}
-
-    {{#if levelupSummary.addedForcePowers.length}}
-    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
-      <div class="prog-section-header"><i class="fas fa-hand-sparkles"></i> New Force Powers <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="force-powers" type="button"><i class="fas fa-pencil-alt"></i></button></div>
-      <div class="prog-items-list">{{#each levelupSummary.addedForcePowers}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}</div>
-    </div>
-    {{/if}}
-
-    {{#unless (or levelupSummary.statChanges.length levelupSummary.attributeChanges.length levelupSummary.addedFeats.length levelupSummary.addedTalents.length levelupSummary.addedForcePowers.length levelupSummary.addedSkills.length)}}
-      <div class="prog-empty-state swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
-        <i class="fas fa-clipboard-list"></i>
-        <p>No visible deltas were detected yet. Continue resolving your level-up choices.</p>
-      </div>
-    {{/unless}}
   </div>
 
   <div class="prog-panel prog-panel--right">
-    <h3 class="prog-panel-title">Resolve & Finalize</h3>
-    <div class="prog-summary-section swse-card-schema swse-card-schema--choice swse-card-schema--pending">
-      <div class="prog-section-header"><i class="fas fa-heartbeat"></i> Hit Point Gain</div>
-      <div class="prog-item-entry prog-delta-entry">
-        <span class="prog-delta-label">Formula</span>
-        <span class="prog-delta-values">{{hpGainState.formula}}</span>
-      </div>
-      <div class="prog-item-entry prog-delta-entry">
-        <span class="prog-delta-label">Preview</span>
-        <span class="prog-delta-values">+{{hpGainState.gain}}{{#if hpGainState.method}} ({{hpGainState.method}}){{/if}}</span>
-      </div>
-      {{#if hpGainState.needsResolution}}
-        {{#unless hpGainState.resolved}}
-          <div class="prog-creation-note"><i class="fas fa-dice"></i><strong>HP Choice Required:</strong> resolve your hit point gain before finalizing level-up.</div>
-          <div class="prog-random-name-buttons">
-            <button class="prog-btn prog-btn--small" type="button" data-action="roll-hp"><i class="fas fa-dice"></i> Roll HP</button>
-            <button class="prog-btn prog-btn--small" type="button" data-action="use-max-hp"><i class="fas fa-shield-alt"></i> Take Maximum</button>
-          </div>
-        {{else}}
-          <div class="prog-checklist-item complete"><i class="fas fa-check-circle"></i><span class="prog-checklist-label">HP resolved: <strong>+{{hpGainState.gain}}</strong></span></div>
-        {{/unless}}
-      {{else}}
-        <div class="prog-checklist-item complete"><i class="fas fa-check-circle"></i><span class="prog-checklist-label">HP gain auto-resolved by current houserule.</span></div>
-      {{/if}}
+    <h3 class="prog-panel-title">Business Items</h3>
 
-      {{#if issuesSummary.hasErrors}}
-      <div class="prog-status-errors">
-        <div class="prog-status-section-title">Blocking Issues:</div>
-        <ul class="prog-issue-list">{{#each issuesSummary.errors}}<li class="prog-issue-item prog-issue-error"><i class="fas fa-times-circle"></i> {{this}}</li>{{/each}}</ul>
+    <div class="prog-summary-section swse-card-schema swse-card-schema--identity swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header">
+        <span><i class="fas fa-id-card"></i> Name</span>
       </div>
-      {{/if}}
-    </div>
-  </div>
-</div>
-{{else}}
-<div class="prog-summary-surface">
-
-  {{!-- Left Panel: Identity Card with Name Registration --}}
-  <div class="prog-panel prog-panel--left">
-    <h3 class="prog-panel-title">Register Datapad Profile</h3>
-
-    <div class="prog-identity-card swse-card-schema swse-card-schema--identity swse-card-schema--filled">
-      {{!-- CHARACTER NAME INPUT (Editable - this step acts as "datapad profile registration") --}}
       <div class="prog-name-input-section">
         <label for="summary-name-input" class="prog-input-label">Character Name</label>
         <input
@@ -136,145 +165,27 @@
           placeholder="Enter or generate a name..."
           value="{{characterName}}"
         />
-
-        {{!-- Random Name Generation Buttons --}}
         <div class="prog-random-name-buttons">
-          <button class="summary-step-random-name-btn prog-btn prog-btn--small">
-            <i class="fas fa-dice"></i> Generate Name
-          </button>
-          <button class="summary-step-random-droid-name-btn prog-btn prog-btn--small">
-            <i class="fas fa-dice"></i> Droid Name
-          </button>
+          <button class="summary-step-random-name-btn prog-btn prog-btn--small" type="button"><i class="fas fa-dice"></i> Generate Name</button>
+          <button class="summary-step-random-droid-name-btn prog-btn prog-btn--small" type="button"><i class="fas fa-dice"></i> Droid Name</button>
         </div>
-      </div>
-
-      <div class="prog-identity-divider"></div>
-
-      {{!-- LEVEL SLIDER (Editable - 1-20) --}}
-      <div class="prog-level-input-section">
-        <label for="summary-level-input" class="prog-input-label">Starting Level</label>
-        <div class="prog-level-display">
-          <input
-            type="range"
-            id="summary-level-input"
-            class="summary-step-level-input prog-level-slider"
-            min="1"
-            max="20"
-            value="{{startingLevel}}"
-          />
-          <span class="prog-level-value">{{startingLevel}}</span>
-        </div>
-      </div>
-
-      <div class="prog-identity-divider"></div>
-
-      {{!-- CHARACTER STATS (Read-only) --}}
-      <div class="prog-identity-stats">
-        <div class="prog-identity-stat">
-          <span class="prog-stat-label">Species</span>
-          <span class="prog-stat-value">{{#if summary.species}}{{summary.species}}{{else}}<span class="prog-placeholder">—</span>{{/if}}</span>
-        </div>
-        <div class="prog-identity-stat">
-          <span class="prog-stat-label">Class</span>
-          <span class="prog-stat-value">{{#if summary.class}}{{summary.class}}{{else}}<span class="prog-placeholder">—</span>{{/if}}</span>
-        </div>
-      </div>
-
-      <div class="prog-identity-divider"></div>
-
-      <div class="prog-creation-note">
-        <i class="fas fa-datapad"></i>
-        <strong>Datapad Registration:</strong> Review all choices. Enter your character's final name above.
-        Return to any earlier step to modify selections.
       </div>
     </div>
-  </div>
 
-  {{!-- Center Panel: Full Progression Summary --}}
-  <div class="prog-panel prog-panel--center">
-    <h3 class="prog-panel-title">Progression Review</h3>
-
-    {{!-- Attributes Section --}}
-    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
+    <div class="prog-summary-section swse-card-schema swse-card-schema--identity swse-card-schema--filled prog-summary-card">
       <div class="prog-section-header">
-        <i class="fas fa-chart-bar"></i> Attributes
+        <span><i class="fas fa-heartbeat"></i> HP</span>
       </div>
-      {{#if summary.attributes}}
-        <div class="prog-attributes-grid">
-          {{#each summary.attributes}}
-            <div class="prog-attr-display">
-              <span class="prog-attr-name">{{capitalize @key}}</span>
-              <span class="prog-attr-value {{#if (gt this.total 10)}}prog-positive{{else if (lt this.total 10)}}prog-negative{{else}}prog-zero{{/if}}">
-                {{this.total}}
-              </span>
-            </div>
-          {{/each}}
-        </div>
-      {{else}}
-        <div class="prog-placeholder">No attributes assigned</div>
-      {{/if}}
+      <div class="prog-summary-line-value prog-number-positive">{{summary.hpCalculation.total}}</div>
     </div>
 
-    {{!-- Skills Section --}}
-    {{#if summary.skills}}
-      <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
-        <div class="prog-section-header">
-          <i class="fas fa-book-open"></i> Trained Skills ({{summary.skills.length}})
-        </div>
-        <div class="prog-skills-display">
-          {{#each summary.skills}}
-            <div class="prog-skill-badge">{{this}}</div>
-          {{/each}}
-        </div>
+    <div class="prog-summary-section swse-card-schema swse-card-schema--identity swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header">
+        <span><i class="fas fa-credit-card"></i> Starting Currency</span>
       </div>
-    {{/if}}
+      <div class="prog-summary-line-value prog-number-positive">{{summary.startingCredits}}</div>
+    </div>
 
-    {{!-- Feats Section --}}
-    {{#if summary.feats}}
-      <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
-        <div class="prog-section-header">
-          <i class="fas fa-star"></i> Feats ({{summary.feats.length}})
-        </div>
-        <div class="prog-items-list">
-          {{#each summary.feats}}
-            <div class="prog-item-entry">
-              <i class="fas fa-check-circle"></i> {{this}}
-            </div>
-          {{/each}}
-        </div>
-      </div>
-    {{/if}}
-
-    {{!-- Talents Section --}}
-    {{#if summary.talents}}
-      <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
-        <div class="prog-section-header">
-          <i class="fas fa-gem"></i> Talents ({{summary.talents.length}})
-        </div>
-        <div class="prog-items-list">
-          {{#each summary.talents}}
-            <div class="prog-item-entry">
-              <i class="fas fa-check-circle"></i> {{this}}
-            </div>
-          {{/each}}
-        </div>
-      </div>
-    {{/if}}
-
-    {{!-- Empty State --}}
-    {{#unless (or summary.attributes summary.skills summary.feats summary.talents)}}
-      <div class="prog-empty-state swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
-        <i class="fas fa-clipboard-list"></i>
-        <p>Progress through the earlier steps to build your character sheet here.</p>
-      </div>
-    {{/unless}}
-  </div>
-
-  {{!-- Right Panel: Validation & Next Steps --}}
-  <div class="prog-panel prog-panel--right">
-    <h3 class="prog-panel-title">Final Checklist</h3>
-
-    {{!-- PHASE 9 UX: Finalization Status Summary --}}
     {{#if issuesSummary}}
     <div class="prog-finalization-status {{#if issuesSummary.isReadyToFinalize}}ready{{else}}incomplete{{/if}}">
       <div class="prog-finalization-header">
@@ -295,9 +206,7 @@
         <div class="prog-status-section-title">Blocking Issues:</div>
         <ul class="prog-issue-list">
           {{#each issuesSummary.errors}}
-            <li class="prog-issue-item prog-issue-error">
-              <i class="fas fa-times-circle"></i> {{this}}
-            </li>
+            <li class="prog-issue-item prog-issue-error"><i class="fas fa-times-circle"></i> {{this}}</li>
           {{/each}}
         </ul>
       </div>
@@ -308,103 +217,13 @@
         <div class="prog-status-section-title">Review Recommended:</div>
         <ul class="prog-issue-list">
           {{#each issuesSummary.cautions}}
-            <li class="prog-issue-item prog-issue-caution">
-              <i class="fas fa-exclamation-triangle"></i> {{this.message}}
-            </li>
+            <li class="prog-issue-item prog-issue-caution"><i class="fas fa-exclamation-triangle"></i> {{this.message}}</li>
           {{/each}}
         </ul>
       </div>
       {{/if}}
     </div>
     {{/if}}
-
-    <div class="prog-checklist swse-card-schema swse-card-schema--choice swse-card-schema--pending">
-      {{!-- Name is now EDITABLE on this step (was on NameStep) --}}
-      <div class="prog-checklist-item {{#if characterName}}complete{{/if}}">
-        <i class="fas {{#if characterName}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
-        <span class="prog-checklist-label">
-          {{#if characterName}}
-            <i class="fas fa-pencil-alt"></i> Name Registered: <strong>{{characterName}}</strong>
-          {{else}}
-            <i class="fas fa-pencil-alt"></i> Name Registration Required (see left)
-          {{/if}}
-        </span>
-      </div>
-
-      <div class="prog-checklist-item {{#if summary.class}}complete{{/if}}">
-        <i class="fas {{#if summary.class}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
-        <span class="prog-checklist-label">
-          {{#if summary.class}}
-            Class: <strong>{{summary.class}}</strong>
-          {{else}}
-            Class Selection Required
-          {{/if}}
-        </span>
-      </div>
-
-      <div class="prog-checklist-item {{#if (gt (count summary.attributes) 0)}}complete{{/if}}">
-        <i class="fas {{#if (gt (count summary.attributes) 0)}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
-        <span class="prog-checklist-label">
-          {{#if (gt (count summary.attributes) 0)}}
-            Attributes: {{count summary.attributes}} assigned
-          {{else}}
-            Attributes Assignment Required
-          {{/if}}
-        </span>
-      </div>
-
-      <div class="prog-checklist-item {{#if (gt (count summary.species) 0)}}complete{{/if}}">
-        <i class="fas {{#if (gt (count summary.species) 0)}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
-        <span class="prog-checklist-label">
-          {{#if (gt (count summary.species) 0)}}
-            Species: <strong>{{summary.species}}</strong>
-          {{else}}
-            Species Selection Required
-          {{/if}}
-        </span>
-      </div>
-
-      {{#if summary.languages}}
-        <div class="prog-checklist-item complete">
-          <i class="fas fa-check-circle"></i>
-          <span class="prog-checklist-label">Languages: {{summary.languages.length}} selected</span>
-        </div>
-      {{/if}}
-
-      {{#if summary.skills}}
-        <div class="prog-checklist-item complete">
-          <i class="fas fa-check-circle"></i>
-          <span class="prog-checklist-label">Skills: {{summary.skills.length}} trained</span>
-        </div>
-      {{/if}}
-
-      {{#if summary.feats}}
-        <div class="prog-checklist-item complete">
-          <i class="fas fa-check-circle"></i>
-          <span class="prog-checklist-label">Feats: {{summary.feats.length}} selected</span>
-        </div>
-      {{/if}}
-
-      {{#if summary.talents}}
-        <div class="prog-checklist-item complete">
-          <i class="fas fa-check-circle"></i>
-          <span class="prog-checklist-label">Talents: {{summary.talents.length}} selected</span>
-        </div>
-      {{/if}}
-    </div>
-
-    <div class="prog-summary-guidance">
-      <p>
-        <strong>Datapad Profile Ready:</strong> When all information is registered, proceed to finalize character creation.
-        You can return to any earlier step to make adjustments before confirming.
-      </p>
-      <p class="prog-guidance-tip">
-        <i class="fas fa-star"></i>
-        Your character sheet will be automatically populated with all selections and calculations applied.
-      </p>
-    </div>
   </div>
-
 </div>
-
 {{/if}}

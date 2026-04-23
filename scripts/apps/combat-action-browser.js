@@ -17,8 +17,7 @@ import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-app
 
 export class SWSECombatActionBrowser extends SWSEApplication {
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEApplication.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEApplication.DEFAULT_OPTIONS ?? {}),
     {
       id: 'swse-combat-action-browser',
       classes: ['swse', 'swse-action-browser'],
@@ -147,7 +146,7 @@ export class SWSECombatActionBrowser extends SWSEApplication {
 
     root.querySelectorAll('.swse-action-tab').forEach(el => {
       el.addEventListener('click', ev => {
-        this.currentTab = ev.currentTarget.dataset.tab;
+        this.currentTab = ev.currentTarget.dataset.swseTab;
         this.render();
       });
     });

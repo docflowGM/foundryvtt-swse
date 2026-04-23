@@ -43,6 +43,7 @@ export class ClassStep extends ProgressionStepPlugin {
 
     // Phase 2.5: Track if this is a nonheroic progression
     this._isNonheroicProgression = false;
+    this._isDroidProgression = false;
   }
 
   // ---------------------------------------------------------------------------
@@ -55,6 +56,7 @@ export class ClassStep extends ProgressionStepPlugin {
 
     // Phase 2.5: Detect nonheroic progression context
     this._isNonheroicProgression = shell.progressionSession?.nonheroicContext?.hasNonheroic === true;
+    this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
 
     // If nonheroic progression, auto-filter to nonheroic classes only
     if (this._isNonheroicProgression) {
@@ -148,6 +150,7 @@ export class ClassStep extends ProgressionStepPlugin {
       suggestedClassIds: Array.from(suggestedIds),
       suggestedClasses: this._suggestedClasses,
       hasSuggestions,
+      isDroidProgression: this._isDroidProgression,
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
         acc[id] = data;
         return acc;
@@ -235,15 +238,17 @@ export class ClassStep extends ProgressionStepPlugin {
     const entry = this._allClasses.find(c => c.id === id);
     if (!entry) return;
 
+    this._focusedClassId = id;
     shell.focusedItem = entry;
+    shell.render();
 
-    // Speak class flavor text on focus (but do NOT swap mentor yet)
+    // Speak class flavor text on focus, but do not block right-rail hydration.
     const flavorText = entry.fantasy || entry.description || `${entry.name} is a powerful choice.`;
     if (flavorText) {
-      await shell.mentorRail.speak(flavorText, 'encouraging');
+      void shell.mentorRail?.speak?.(flavorText, 'encouraging').catch(err => {
+        console.warn('[ClassStep] Non-blocking mentor speak failed:', err);
+      });
     }
-
-    shell.render();
   }
 
   async onItemCommitted(id, shell) {
@@ -290,7 +295,8 @@ export class ClassStep extends ProgressionStepPlugin {
       shell.mentor.portrait = mentor.portrait ?? shell.mentor.portrait;
     }
 
-    shell.focusedItem = null;
+    this._focusedClassId = id;
+    shell.focusedItem = entry;
     shell.render();
   }
 
@@ -336,7 +342,7 @@ export class ClassStep extends ProgressionStepPlugin {
 
     return {
       mode: 'rich',
-      search: { enabled: true, placeholder: 'Search classes…' },
+      search: { enabled: true, placeholder: this._isDroidProgression ? 'Search droid classes…' : 'Search classes…' },
       filters,
       sorts: [
         { id: 'source', label: 'Source' },
@@ -368,7 +374,9 @@ export class ClassStep extends ProgressionStepPlugin {
 
     // Mode-aware default guidance
     if (this.isChargen(shell)) {
-      return 'Choose your class carefully — it defines your role and abilities. Each path leads to a different destiny.';
+      return this._isDroidProgression
+        ? 'Select your droid class before chassis assembly. This determines your role package and what systems matter most.'
+        : 'Choose your class carefully — it defines your role and abilities. Each path leads to a different destiny.';
     } else if (this.isLevelup(shell)) {
       return 'As you advance, you may embrace a new calling. Consider what new abilities would serve you well.';
     }

@@ -120,7 +120,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
 
   'droid-builder': {
     nodeId: 'droid-builder',
-    label: 'Droid Builder',
+    label: 'Droid Systems',
     icon: 'fa-robot',
     category: 'canonical',
     modes: ['chargen'],

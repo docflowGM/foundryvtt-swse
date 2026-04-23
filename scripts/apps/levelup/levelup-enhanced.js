@@ -60,7 +60,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   }
 
   /** UI template */
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
       classes: ['swse', 'levelup-engine-ui'],
       template: 'systems/foundryvtt-swse/templates/apps/levelup-engine-ui.hbs',
       width: 760,

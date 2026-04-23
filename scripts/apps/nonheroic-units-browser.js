@@ -16,8 +16,7 @@ export class NonheroicUnitsBrowser extends SWSEApplication {
     this.challengeLevelFilter = 'all';
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
-    SWSEApplication.DEFAULT_OPTIONS ?? {},
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(SWSEApplication.DEFAULT_OPTIONS ?? {}),
     {
       id: 'nonheroic-units-browser',
       title: 'Nonheroic Units Browser',

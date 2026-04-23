@@ -60,6 +60,8 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { actorIsDroidLike, actorMeetsMinimumSize, getActorSpeciesNames, namesMatchLoosely, normalizePendingSkillKeys, parseRegistryBackedLegacyPrerequisite, resolveCanonicalFeatName, resolveCanonicalSkillKey } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
+import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
 
 /**
  * MAIN CLASS: PrerequisiteChecker
@@ -270,7 +272,7 @@ export class PrerequisiteChecker {
         }
 
         // Phase 3.1: Droids cannot acquire Force Sensitivity feat from any source
-        const isDroid = actor?.system?.isDroid === true;
+        const isDroid = actorIsDroidLike(actor, pending);
         const featName = feat.name || feat.label || '';
         if (isDroid && featName.toLowerCase() === 'force sensitivity') {
             return {
@@ -761,29 +763,33 @@ export class PrerequisiteChecker {
                 };
             }
             case 'skill_trained': {
-                const trained = actor.system?.skills?.[prereq.skill]?.trained ||
-                    (pending.selectedSkills || []).some(s => s.key === prereq.skill);
+                const skillKey = prereq.skill || resolveCanonicalSkillKey(prereq.skillName || prereq.name || '');
+                const pendingSkillKeys = normalizePendingSkillKeys(pending.selectedSkills);
+                const trained = (skillKey && actor.system?.skills?.[skillKey]?.trained) ||
+                    (skillKey && pendingSkillKeys.includes(skillKey));
                 return {
-                    met: trained,
-                    message: !trained ? ` in ${prereq.skill}` : ''
+                    met: !!trained,
+                    message: !trained ? `Requires training in ${prereq.skillName || prereq.name || skillKey}` : ''
                 };
             }
             case 'skill_ranks': {
-                const ranks = actor.system?.skills?.[prereq.skill]?.ranks ?? 0;
+                const skillKey = prereq.skill || resolveCanonicalSkillKey(prereq.skillName || prereq.name || '');
+                const ranks = skillKey ? (actor.system?.skills?.[skillKey]?.ranks ?? 0) : 0;
                 const met = ranks >= (prereq.ranks ?? 0);
                 return {
                     met,
-                    message: !met ? `Requires ${prereq.ranks} ranks in ${prereq.skill} (you have ${ranks})` : ''
+                    message: !met ? `Requires ${prereq.ranks} ranks in ${prereq.skillName || prereq.name || skillKey} (you have ${ranks})` : ''
                 };
             }
             case 'feat': {
-                const hasFeat = actor.items?.some(i => i.type === 'feat' && i.name === prereq.name) ||
-                    (pending.selectedFeats || []).some(f => f.name === prereq.name) ||
-                    (pending.grantedFeats || []).includes(prereq.name) ||
-                    this.getHouseruleGrantedFeats().includes(prereq.name);
+                const requiredFeatName = resolveCanonicalFeatName(prereq.name || prereq.featName || '');
+                const hasFeat = actor.items?.some(i => i.type === 'feat' && namesMatchLoosely(i.name, requiredFeatName)) ||
+                    (pending.selectedFeats || []).some(f => namesMatchLoosely(f?.name, requiredFeatName)) ||
+                    (pending.grantedFeats || []).some(name => namesMatchLoosely(name, requiredFeatName)) ||
+                    this.getHouseruleGrantedFeats().some(name => namesMatchLoosely(name, requiredFeatName));
                 return {
-                    met: hasFeat,
-                    message: !hasFeat ? `Requires the feat ${prereq.name}` : ''
+                    met: !!hasFeat,
+                    message: !hasFeat ? `Requires the feat ${requiredFeatName}` : ''
                 };
             }
             case 'talent': {
@@ -875,6 +881,12 @@ export class PrerequisiteChecker {
                 return this._checkSkillRankLegacy(prereq, actor, pending);
             case 'force_sensitive':
                 return this._checkForceSensitiveLegacy(prereq, actor, pending);
+            case 'species':
+                return this._checkSpeciesLegacy(prereq, actor, pending);
+            case 'non_droid':
+                return this._checkNonDroidLegacy(prereq, actor, pending);
+            case 'size_at_least':
+                return this._checkSizeAtLeastLegacy(prereq, actor, pending);
             case 'feat':
                 return this._checkFeatLegacy(prereq, actor, pending);
             default:
@@ -899,8 +911,9 @@ export class PrerequisiteChecker {
         }
 
         // Not found by UUID/slug/name - check houserule grants (name-based, expected)
+        const requiredFeatName = resolveCanonicalFeatName(prereq.name || prereq.slug || prereq.uuid || '');
         const hasHouseruleFeat = this.getHouseruleGrantedFeats().some(f =>
-            f.toLowerCase() === prereq.name?.toLowerCase()
+            namesMatchLoosely(f, requiredFeatName)
         );
 
         if (hasHouseruleFeat) {
@@ -913,7 +926,7 @@ export class PrerequisiteChecker {
         // Not found anywhere
         return {
             met: false,
-            message: `Requires feat: ${prereq.name || prereq.slug || prereq.uuid}`
+            message: `Requires feat: ${requiredFeatName || prereq.name || prereq.slug || prereq.uuid}`
         };
     }
 
@@ -971,11 +984,13 @@ export class PrerequisiteChecker {
     }
 
     static _checkSkillTrainedCondition(prereq, actor, pending) {
-        const trained = actor.system?.skills?.[prereq.skill]?.trained ||
-            (pending.selectedSkills || []).some(s => s.key === prereq.skill);
+        const skillKey = prereq.skill || resolveCanonicalSkillKey(prereq.skillName || prereq.name || '');
+        const pendingSkillKeys = normalizePendingSkillKeys(pending.selectedSkills);
+        const trained = (skillKey && actor.system?.skills?.[skillKey]?.trained) ||
+            (skillKey && pendingSkillKeys.includes(skillKey));
         return {
-            met: trained,
-            message: !trained ? ` in ${prereq.skill}` : ''
+            met: !!trained,
+            message: !trained ? `Requires training in ${prereq.skillName || prereq.name || skillKey}` : ''
         };
     }
 
@@ -1010,9 +1025,11 @@ export class PrerequisiteChecker {
     }
 
     static _checkSpeciesCondition(prereq, actor, pending) {
-        const species = actor.system?.species || actor.system?.race || '';
-        const allowed = prereq.species || [prereq.name];
-        const met = allowed.some(s => s.toLowerCase() === species.toLowerCase());
+        const actorSpeciesNames = getActorSpeciesNames(actor, pending);
+        const allowed = (prereq.species || [prereq.name]).filter(Boolean);
+        const met = allowed.some((requiredSpecies) =>
+            actorSpeciesNames.some((ownedSpecies) => namesMatchLoosely(requiredSpecies, ownedSpecies))
+        );
         return {
             met,
             message: !met ? `Requires species: ${allowed.join(' or ')}` : ''
@@ -1030,7 +1047,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkIsDroidCondition(prereq, actor, pending) {
-        const isDroid = actor.system?.type === 'droid' || actor.type === 'droid';
+        const isDroid = actorIsDroidLike(actor, pending);
         return {
             met: isDroid,
             message: !isDroid ? `Requires being a Droid` : ''
@@ -1089,7 +1106,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkNonDroidCondition(prereq, actor, pending) {
-        const isDroid = actor.system?.type === 'droid' || actor.type === 'droid';
+        const isDroid = actorIsDroidLike(actor, pending);
         return {
             met: !isDroid,
             message: isDroid ? `Cannot be a Droid` : ''
@@ -1203,6 +1220,11 @@ export class PrerequisiteChecker {
     static _parseLegacyPrerequisitePart(part) {
         part = part.trim();
 
+        const registryParsed = parseRegistryBackedLegacyPrerequisite(part);
+        if (registryParsed) {
+            return registryParsed;
+        }
+
         // Ability pattern: "Dex 13", "Strength 15+"
         const abilityPattern = /^(str|dex|con|int|wis|cha|strength|dexterity|constitution|intelligence|wisdom|charisma)\s+(\d+)/i;
         const abilityMatch = part.match(abilityPattern);
@@ -1274,9 +1296,11 @@ export class PrerequisiteChecker {
         const skillRankPattern = /^(.+?)\s+(\d+)\s+ranks?$/i;
         const skillRankMatch = part.match(skillRankPattern);
         if (skillRankMatch) {
+            const canonicalSkillKey = resolveCanonicalSkillKey(skillRankMatch[1]);
             return {
                 type: 'skill_rank',
                 skillName: skillRankMatch[1].trim(),
+                skillKey: canonicalSkillKey,
                 ranks: parseInt(skillRankMatch[2], 10)
             };
         }
@@ -1285,9 +1309,11 @@ export class PrerequisiteChecker {
         const skillPattern = /trained\s+in\s+(.+)/i;
         const skillMatch = part.match(skillPattern);
         if (skillMatch) {
+            const canonicalSkillKey = resolveCanonicalSkillKey(skillMatch[1]);
             return {
                 type: 'skill',
-                skillName: skillMatch[1].trim()
+                skillName: skillMatch[1].trim(),
+                skillKey: canonicalSkillKey
             };
         }
 
@@ -1296,13 +1322,18 @@ export class PrerequisiteChecker {
             return { type: 'force_sensitive' };
         }
 
+        const canonicalFeatName = resolveCanonicalFeatName(part);
+        if (canonicalFeatName && canonicalFeatName !== part) {
+            return { type: 'feat', featName: canonicalFeatName, name: canonicalFeatName };
+        }
+
         // FIX #2: Report unrecognized patterns instead of silently parsing as feat names
         // This helps DMs catch malformed prerequisite data
         SWSELogger.warn(`[CHARGEN PREREQ] Unrecognized prerequisite pattern: "${part}". ` +
             `Parsing as feat requirement, but this may indicate a typo or malformed prerequisite.`);
 
         // Default: feat name (last resort fallback)
-        return { type: 'feat', featName: part };
+        return { type: 'feat', featName: canonicalFeatName || part, name: canonicalFeatName || part };
     }
 
     static _checkOrGroupLegacy(prereq, actor, pending) {
@@ -1357,38 +1388,21 @@ export class PrerequisiteChecker {
     }
 
     static _checkSkillLegacy(prereq, actor, pending) {
-        const skillMap = {
-            'acrobatics': 'acrobatics', 'climb': 'climb', 'deception': 'deception',
-            'endurance': 'endurance', 'gather information': 'gatherInformation',
-            'initiative': 'initiative', 'jump': 'jump', 'knowledge': 'knowledge',
-            'mechanics': 'mechanics', 'perception': 'perception', 'persuasion': 'persuasion',
-            'pilot': 'pilot', 'ride': 'ride', 'stealth': 'stealth', 'survival': 'survival',
-            'swim': 'swim', 'treat injury': 'treatInjury', 'use computer': 'useComputer',
-            'use the force': 'useTheForce'
-        };
-        const skillKey = skillMap[prereq.skillName?.toLowerCase()];
+        const skillKey = prereq.skillKey || resolveCanonicalSkillKey(prereq.skillName);
         if (!skillKey) {return { met: true, message: '' };}
 
+        const pendingSkillKeys = normalizePendingSkillKeys(pending.selectedSkills);
         const isTrained = actor.system?.skills?.[skillKey]?.trained || false;
-        const isPending = (pending.selectedSkills || []).some(s => s.key === skillKey);
+        const isPending = pendingSkillKeys.includes(skillKey);
         const met = isTrained || isPending;
         return {
             met,
-            message: !met ? ` in ${prereq.skillName}` : ''
+            message: !met ? `Requires training in ${prereq.skillName}` : ''
         };
     }
 
     static _checkSkillRankLegacy(prereq, actor, pending) {
-        const skillMap = {
-            'acrobatics': 'acrobatics', 'climb': 'climb', 'deception': 'deception',
-            'endurance': 'endurance', 'gather information': 'gatherInformation',
-            'initiative': 'initiative', 'jump': 'jump', 'knowledge': 'knowledge',
-            'mechanics': 'mechanics', 'perception': 'perception', 'persuasion': 'persuasion',
-            'pilot': 'pilot', 'ride': 'ride', 'stealth': 'stealth', 'survival': 'survival',
-            'swim': 'swim', 'treat injury': 'treatInjury', 'use computer': 'useComputer',
-            'use the force': 'useTheForce'
-        };
-        const skillKey = skillMap[prereq.skillName?.toLowerCase()];
+        const skillKey = prereq.skillKey || resolveCanonicalSkillKey(prereq.skillName);
         if (!skillKey) {return { met: true, message: '' };}
 
         const currentRanks = actor.system?.skills?.[skillKey]?.ranks ?? 0;
@@ -1408,31 +1422,112 @@ export class PrerequisiteChecker {
         const hasForceSensitiveClass = actor.items?.some(i =>
             i.type === 'class' && i.system?.forceSensitive === true
         );
-        const pendingClass = pending.selectedClass;
+        const pendingClass = this._resolveGrantedClassDocument(pending?.selectedClass, pending);
         const pendingForceSensitive = pendingClass?.system?.forceSensitive === true;
         const pendingFeats = pending.selectedFeats || [];
         const pendingForceSensitivityFeat = pendingFeats.some(f =>
             f.name?.toLowerCase().includes('force sensitivity')
         );
-        const met = hasForceSensitivityFeat || hasForceSensitiveClass || pendingForceSensitive || pendingForceSensitivityFeat;
+        const pendingGrantedForceSensitivity = (pending.grantedFeats || []).some(name =>
+            namesMatchLoosely(name, 'Force Sensitivity')
+        );
+        const hasHouseruleGrant = this.getHouseruleGrantedFeats().some(name =>
+            namesMatchLoosely(name, 'Force Sensitivity')
+        );
+        const met = hasForceSensitivityFeat || hasForceSensitiveClass || pendingForceSensitive || pendingForceSensitivityFeat || pendingGrantedForceSensitivity || hasHouseruleGrant;
         return {
             met,
             message: !met ? `Requires Force Sensitivity` : ''
         };
     }
 
-    static _checkFeatLegacy(prereq, actor, pending) {
-        const hasFeat = actor.items?.some(i =>
-            i.type === 'feat' && i.name.toLowerCase() === prereq.featName.toLowerCase()
-        );
-        const hasPending = (pending.selectedFeats || []).some(f =>
-            f?.name && f.name.toLowerCase() === prereq.featName.toLowerCase()
-        );
-        const met = hasFeat || hasPending;
+
+    static _checkSpeciesLegacy(prereq, actor, pending) {
+        return this._checkSpeciesCondition(prereq, actor, pending);
+    }
+
+    static _checkNonDroidLegacy(prereq, actor, pending) {
+        return this._checkNonDroidCondition(prereq, actor, pending);
+    }
+
+    static _checkSizeAtLeastLegacy(prereq, actor, pending) {
+        const met = actorMeetsMinimumSize(actor, prereq.minimum, pending);
         return {
             met,
-            message: !met ? `Requires feat: ${prereq.featName}` : ''
+            message: !met ? `Requires ${prereq.label || `${prereq.minimum} or larger`}` : ''
         };
+    }
+
+    static _checkFeatLegacy(prereq, actor, pending) {
+        const requiredFeatName = resolveCanonicalFeatName(prereq.featName || prereq.name || '');
+        const hasFeat = actor.items?.some(i =>
+            i.type === 'feat' && namesMatchLoosely(i.name, requiredFeatName)
+        );
+        const hasPending = (pending.selectedFeats || []).some(f =>
+            f?.name && namesMatchLoosely(f.name, requiredFeatName)
+        );
+        const hasGranted = (pending.grantedFeats || []).some((name) => namesMatchLoosely(name, requiredFeatName));
+        const hasHouserule = this.getHouseruleGrantedFeats().some((name) => namesMatchLoosely(name, requiredFeatName));
+        const met = hasFeat || hasPending || hasGranted || hasHouserule;
+        return {
+            met,
+            message: !met ? `Requires feat: ${requiredFeatName}` : ''
+        };
+    }
+
+    static _resolveGrantedClassDocument(classDoc = null, pending = {}) {
+        const candidates = [
+            classDoc,
+            pending?.selectedClass,
+            pending?.classDoc,
+        ].filter(Boolean);
+
+        for (const candidate of candidates) {
+            if (candidate?.system) {
+                return candidate;
+            }
+
+            const resolved = resolveClassModel(candidate);
+            if (resolved?.system) {
+                return resolved;
+            }
+        }
+
+        return null;
+    }
+
+    static _coerceGrantedFeatName(feature) {
+        if (!feature) return '';
+        if (typeof feature === 'string') {
+            return resolveCanonicalFeatName(feature);
+        }
+
+        const rawName = feature.name || feature.label || feature.feature || '';
+        if (!rawName) return '';
+
+        const featureType = String(feature.type || feature.featureType || feature.kind || '').trim().toLowerCase();
+        const canonicalName = resolveCanonicalFeatName(rawName);
+
+        if (featureType === 'feat_grant') {
+            return canonicalName || rawName;
+        }
+
+        if (canonicalName && namesMatchLoosely(canonicalName, rawName)) {
+            return canonicalName;
+        }
+
+        return '';
+    }
+
+    static _collectGrantedFeatNamesFromFeatures(features = []) {
+        const granted = [];
+        for (const feature of Array.isArray(features) ? features : []) {
+            const featName = this._coerceGrantedFeatName(feature);
+            if (featName) {
+                granted.push(featName);
+            }
+        }
+        return granted;
     }
 
     // ============================================================
@@ -1496,52 +1591,55 @@ export class PrerequisiteChecker {
     /**
      * Get feats/talents granted by a class at Level 1.
      */
-    static getLevel1GrantedFeats(classDoc, actor = null) {
-        const granted = [];
-        if (!classDoc?.system) {return granted;}
+    static getLevel1GrantedFeats(classDoc, actor = null, pending = {}) {
+        const granted = new Set();
+        const resolvedClassDoc = this._resolveGrantedClassDocument(classDoc, pending);
+        if (!resolvedClassDoc?.system) {return [];}
 
         // Phase 3.1: Check if actor is a droid for Force Sensitivity suppression
-        const isDroid = actor?.system?.isDroid === true;
+        const isDroid = actorIsDroidLike(actor, pending);
 
-        const levelProgression = classDoc.system.levelProgression || [];
+        const pushGrantedFeat = (name) => {
+            const canonicalName = resolveCanonicalFeatName(name);
+            if (!canonicalName) {return;}
+            if (isDroid && canonicalName.toLowerCase() === 'force sensitivity') {
+                return;
+            }
+            granted.add(canonicalName);
+        };
+
+        const levelProgression = resolvedClassDoc.system.levelProgression || [];
         if (levelProgression.length > 0) {
-            const level1Features = levelProgression[0].features || [];
-            for (const feature of level1Features) {
-                if (feature.type === 'feat_grant' && feature.name) {
-                    // Phase 3.1: Droids cannot receive Force Sensitivity feat from any source (including class grants)
-                    if (isDroid && feature.name.toLowerCase() === 'force sensitivity') {
-                        continue;  // Skip Force Sensitivity grant for droids
-                    }
-                    granted.push(feature.name);
-                }
+            const level1Features = levelProgression[0]?.features || [];
+            for (const featName of this._collectGrantedFeatNamesFromFeatures(level1Features)) {
+                pushGrantedFeat(featName);
             }
         }
 
-        const startingFeatures = classDoc.system.startingFeatures || [];
-        for (const feature of startingFeatures) {
-            if (feature.type === 'feat_grant' && feature.name) {
-                // Phase 3.1: Droids cannot receive Force Sensitivity feat from any source (including class grants)
-                if (isDroid && feature.name.toLowerCase() === 'force sensitivity') {
-                    continue;  // Skip Force Sensitivity grant for droids
-                }
-                granted.push(feature.name);
-            }
+        const startingFeatures = resolvedClassDoc.system.startingFeatures || [];
+        for (const featName of this._collectGrantedFeatNamesFromFeatures(startingFeatures)) {
+            pushGrantedFeat(featName);
         }
 
-        return granted;
+        const explicitStartingFeats = resolvedClassDoc.grants?.startingFeats || resolvedClassDoc.system?.startingFeats || [];
+        for (const featName of Array.isArray(explicitStartingFeats) ? explicitStartingFeats : []) {
+            pushGrantedFeat(featName);
+        }
+
+        return Array.from(granted);
     }
 
     /**
      * Get all feats granted to a character (houserules + level 1 class grants).
      */
-    static getAllGrantedFeats(actor, classDoc = null) {
+    static getAllGrantedFeats(actor, classDoc = null, pending = {}) {
         const granted = new Set();
 
         const houseruleFeats = this.getHouseruleGrantedFeats();
         houseruleFeats.forEach(f => granted.add(f));
 
         if (classDoc) {
-            const level1Feats = this.getLevel1GrantedFeats(classDoc, actor);
+            const level1Feats = this.getLevel1GrantedFeats(classDoc, actor, pending);
             level1Feats.forEach(f => granted.add(f));
         }
 

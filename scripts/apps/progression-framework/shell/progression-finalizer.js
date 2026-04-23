@@ -365,7 +365,7 @@ export class ProgressionFinalizer {
     const set = {};
     const add = { items: [] };
 
-    const name = summary.characterName || selections.get('name') || actor.name;
+    const name = summary.characterName || actor.name;
     if (name) {
       set.name = name;
     }

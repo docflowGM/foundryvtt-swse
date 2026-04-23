@@ -88,3 +88,27 @@
 .progression-shell .prog-l1-survey__option input:checked + .prog-l1-survey__option-body .prog-l1-survey__option-label {
   color: var(--prog-accent);
 }
+
+
+.progression-shell .prog-l1-survey__progress-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--prog-space-xs);
+  margin-top: var(--prog-space-sm);
+}
+
+.progression-shell .prog-l1-survey__question-kicker {
+  color: var(--prog-text-dim);
+  font-size: var(--prog-font-size-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: var(--prog-space-xs);
+}
+
+.progression-shell .prog-l1-survey__question--active {
+  box-shadow: 0 0 0 1px rgba(0, 170, 255, 0.12) inset;
+}
+
+.progression-shell .prog-l1-survey__option--selected {
+  background: rgba(0, 170, 255, 0.10);
+}

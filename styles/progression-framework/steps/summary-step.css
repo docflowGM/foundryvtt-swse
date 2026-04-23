@@ -601,3 +601,169 @@
   color: var(--prog-accent);
   padding: 0 0.35rem;
 }
+
+/* ------ True three-rail chargen summary ------ */
+.prog-summary-surface--chargen {
+  display: contents;
+}
+
+.prog-summary-card {
+  margin-bottom: 1rem;
+}
+
+.prog-summary-line-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--prog-text);
+}
+
+.prog-combat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.prog-combat-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--prog-border);
+  border-radius: 4px;
+  background: var(--prog-bg-surface);
+}
+
+.prog-combat-stat__label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--prog-text-dim);
+}
+
+.prog-combat-stat__value {
+  font-weight: 800;
+}
+
+.prog-attributes-grid--summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.prog-attr-display--summary {
+  gap: 0.2rem;
+}
+
+.prog-attr-score {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--prog-text);
+}
+
+.prog-attr-modifier {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.prog-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.prog-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--prog-border-accent);
+  border-radius: 999px;
+  background: var(--prog-bg-surface);
+  color: var(--prog-text);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.prog-skill-table {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+  max-height: 24rem;
+  overflow: auto;
+  padding-right: 0.2rem;
+}
+
+.prog-skill-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--prog-border);
+  border-radius: 4px;
+  background: var(--prog-bg-surface);
+}
+
+.prog-skill-row.is-trained {
+  border-color: var(--prog-border-accent);
+  box-shadow: inset 0 0 0 1px rgba(0, 170, 255, 0.08);
+}
+
+.prog-skill-row__name {
+  min-width: 0;
+  font-weight: 600;
+  color: var(--prog-text);
+}
+
+.prog-skill-row__meta {
+  min-width: 0;
+  font-size: 0.72rem;
+  color: var(--prog-text-dim);
+  text-align: right;
+}
+
+.prog-skill-row__total {
+  min-width: 3.2rem;
+  text-align: right;
+  font-weight: 800;
+}
+
+.prog-number-positive {
+  color: rgba(34, 197, 94, 0.98);
+}
+
+.prog-number-zero {
+  color: rgba(245, 200, 66, 0.98);
+}
+
+.prog-number-negative {
+  color: rgba(239, 68, 68, 0.98);
+}
+
+@media (max-width: 1100px) {
+  .prog-combat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .prog-attributes-grid--summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .prog-skill-row {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr) auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .prog-attributes-grid--summary {
+    grid-template-columns: 1fr;
+  }
+
+  .prog-skill-row {
+    grid-template-columns: 1fr;
+  }
+
+  .prog-skill-row__meta,
+  .prog-skill-row__total {
+    text-align: left;
+  }
+}

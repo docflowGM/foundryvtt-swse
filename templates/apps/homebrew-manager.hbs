@@ -9,18 +9,18 @@
 
     {{!-- Navigation Tabs --}}
     <nav class="sheet-tabs tabs" data-group="primary">
-      <a class="item active" data-tab="feats">Feats</a>
-      <a class="item" data-tab="talents">Talents</a>
-      <a class="item" data-tab="powers">Force Powers</a>
-      <a class="item" data-tab="species">Species</a>
-      <a class="item" data-tab="classes">Classes</a>
+      <a class="item active" data-swse-tab="feats">Feats</a>
+      <a class="item" data-swse-tab="talents">Talents</a>
+      <a class="item" data-swse-tab="powers">Force Powers</a>
+      <a class="item" data-swse-tab="species">Species</a>
+      <a class="item" data-swse-tab="classes">Classes</a>
     </nav>
 
     {{!-- Sheet Body --}}
     <section class="sheet-body">
 
       {{!-- Feats Tab --}}
-      <div class="tab content" data-group="primary" data-tab="feats">
+      <div class="tab content" data-group="primary" data-swse-tab="feats">
         <div class="tab-header">
           <h3>Custom Feats</h3>
           <button type="button" class="create-button" data-action="createFeat">
@@ -50,7 +50,7 @@
       </div>
 
       {{!-- Talents Tab --}}
-      <div class="tab content" data-group="primary" data-tab="talents">
+      <div class="tab content" data-group="primary" data-swse-tab="talents">
         <div class="tab-header">
           <h3>Custom Talents</h3>
           <button type="button" class="create-button" data-action="createTalent">
@@ -80,7 +80,7 @@
       </div>
 
       {{!-- Force Powers Tab --}}
-      <div class="tab content" data-group="primary" data-tab="powers">
+      <div class="tab content" data-group="primary" data-swse-tab="powers">
         <div class="tab-header">
           <h3>Custom Force Powers</h3>
           <button type="button" class="create-button" data-action="createForcePower">
@@ -113,7 +113,7 @@
       </div>
 
       {{!-- Species Tab --}}
-      <div class="tab content" data-group="primary" data-tab="species">
+      <div class="tab content" data-group="primary" data-swse-tab="species">
         <div class="tab-header">
           <h3>Custom Species</h3>
           <button type="button" class="create-button" data-action="createSpecies" disabled>
@@ -128,7 +128,7 @@
       </div>
 
       {{!-- Classes Tab --}}
-      <div class="tab content" data-group="primary" data-tab="classes">
+      <div class="tab content" data-group="primary" data-swse-tab="classes">
         <div class="tab-header">
           <h3>Custom Classes</h3>
           <button type="button" class="create-button" data-action="createClass" disabled>
@@ -160,6 +160,6 @@
 
 
 
-  <div class="tab assets" data-tab="assets">
+  <div class="tab assets" data-swse-tab="assets">
     {{> "systems/foundryvtt-swse/templates/partials/assets-panel.hbs"}}
   </div>

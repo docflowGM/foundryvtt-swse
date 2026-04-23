@@ -48,9 +48,10 @@ import { PanelVisibilityManager } from "/systems/foundryvtt-swse/scripts/sheets/
 import { applyResourceNumberAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-number-animations.js";
 import { ExtraSkillUseRegistry } from "/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js";
 import { traceLog, actorSummary, payloadSummary } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
+import { captureHydrationSnapshot, emitHydrationError, emitHydrationWarning, getRecentHydrationMutation, recordHydrationMutation, summarizeBiographyPanel, summarizeDefensePanel } from "/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js";
 // Phase 8: Character sheet decomposition - import focused modules
 import { registerListeners } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/listeners.js";
-import { handleFormSubmission } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
+import { handleFormSubmission, isDirectFieldMutationPath } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 // Diagnostics: runtime inspection of resize/scroll behavior
 import { characterSheetDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet-diagnostics.js";
 // Contract Enforcement: validate sheet architecture at runtime
@@ -121,9 +122,16 @@ const FORM_FIELD_SCHEMA = {
   'system.abilities.cha.temp': 'number',
 
   // Defense modifiers
-  'system.defenses.fort.miscMod': 'number',
-  'system.defenses.ref.miscMod': 'number',
-  'system.defenses.will.miscMod': 'number',
+  'system.defenses.fortitude.classBonus': 'number',
+  'system.defenses.fortitude.misc.user.extra': 'number',
+  'system.defenses.fortitude.ability': 'string',
+  'system.defenses.reflex.classBonus': 'number',
+  'system.defenses.reflex.misc.user.extra': 'number',
+  'system.defenses.reflex.ability': 'string',
+  'system.defenses.reflex.armor': 'number',
+  'system.defenses.will.classBonus': 'number',
+  'system.defenses.will.misc.user.extra': 'number',
+  'system.defenses.will.ability': 'string',
 
   // Skills
   'system.skills.acrobatics.miscMod': 'number',
@@ -295,8 +303,11 @@ export class SWSEV2CharacterSheet extends
     SentinelSheetGuardrails.trackSheetInstance("SWSEV2CharacterSheet");
 
     // Render loop prevention guard (same pattern as ProgressionShell)
+    // Hardening: do not drop legitimate mutation-triggered renders; queue one follow-up render.
     this._isRendering = false;
     this._renderCount = 0;
+    this._pendingRenderArgs = null;
+    this._hasQueuedRender = false;
 
     // Position centering tracking — initialize EARLY so first render knows this is a new open
     this._openedAt = Date.now();
@@ -326,24 +337,44 @@ export class SWSEV2CharacterSheet extends
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
   async render(...args) {
-    // Render loop prevention: block recursive render calls during active render
+    // Render loop prevention: queue one follow-up render instead of dropping
+    // legitimate mutation-driven rerenders while the sheet is still painting.
     if (this._isRendering) {
-      console.warn("[SWSEV2CharacterSheet] ⚠️ Render called while already rendering — BLOCKED (loop prevention)");
+      this._pendingRenderArgs = args;
+      this._hasQueuedRender = true;
+      console.warn("[SWSEV2CharacterSheet] ⚠️ Render called while already rendering — QUEUED follow-up render");
+      const recentHydrationMutation = getRecentHydrationMutation(this);
+      if (recentHydrationMutation) {
+        emitHydrationWarning('SHEET_RENDER_QUEUED', {
+          actorId: this.actor?.id,
+          actorName: this.actor?.name,
+          mutation: recentHydrationMutation,
+          snapshot: captureHydrationSnapshot(this.actor)
+        });
+      }
       return this;
     }
 
     this._isRendering = true;
     this._renderCount++;
 
-    // Phase 6: Capture UI state before rerender so it can be restored after
-    this.uiStateManager.captureState();
+    try {
+      // Phase 6: Capture UI state before rerender so it can be restored after
+      this.uiStateManager.captureState();
 
-    // swseLogger.debug(`[SWSEV2CharacterSheet] RENDER START (#${this._renderCount}) position:`, this.position);
-    const result = await super.render(...args);
-    // swseLogger.debug(`[SWSEV2CharacterSheet] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
+      // swseLogger.debug(`[SWSEV2CharacterSheet] RENDER START (#${this._renderCount}) position:`, this.position);
+      return await super.render(...args);
+      // swseLogger.debug(`[SWSEV2CharacterSheet] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
+    } finally {
+      this._isRendering = false;
 
-    this._isRendering = false;
-    return result;
+      if (this._hasQueuedRender) {
+        const queuedArgs = this._pendingRenderArgs ?? args;
+        this._hasQueuedRender = false;
+        this._pendingRenderArgs = null;
+        queueMicrotask(() => this.render(...queuedArgs));
+      }
+    }
   }
 
   setPosition(position) {
@@ -438,6 +469,23 @@ export class SWSEV2CharacterSheet extends
     applyResourceNumberAnimations(this, root);
     applyResourceBarAnimations(this, root);
 
+    const recentHydrationMutation = getRecentHydrationMutation(this);
+    if (recentHydrationMutation) {
+      emitHydrationWarning('POST_RENDER_DOM_STATE', {
+        actorId: this.actor?.id,
+        actorName: this.actor?.name,
+        mutation: recentHydrationMutation,
+        dom: {
+          header: !!root.querySelector('.sheet-header'),
+          biographyPanel: !!root.querySelector('.character-record-header, .swse-panel--identity'),
+          defensePanel: !!root.querySelector('.swse-panel--defenses'),
+          healthPanel: !!root.querySelector('.swse-panel--health')
+        },
+        snapshot: captureHydrationSnapshot(this.actor),
+        defensePanel: summarizeDefensePanel(this._currentContext?.defensePanel),
+        biographyPanel: summarizeBiographyPanel(this._currentContext?.biographyPanel)
+      });
+    }
     // Portrait upload + auto-apply (click-to-pick via data-edit="img", drag/drop here)
     PortraitUploadController.bind(root, { actor: this.actor, signal });
 
@@ -591,27 +639,27 @@ export class SWSEV2CharacterSheet extends
     derived.damage ??= {};
     derived.damage.conditionHelpless ??= false;
 
-    // SWSE Skills Registry - CANONICAL: Must match skill keys in derived-calculator.js
-    // These are the exact skill keys computed in derived.skills[skillKey]
+    // SWSE Skills Registry - CANONICAL: Must match Actor data model / derived calculator keys exactly.
+    // Do not introduce merged, renamed, or homebrew-only aliases here.
     const SWSE_SKILL_DEFINITIONS = {
       acrobatics: { label: 'Acrobatics', ability: 'dex' },
-      animalHandling: { label: 'Animal Handling', ability: 'cha' },
-      athleticism: { label: 'Athleticism', ability: 'str' },
-      awareness: { label: 'Awareness', ability: 'wis' },
       climb: { label: 'Climb', ability: 'str' },
-      concentration: { label: 'Concentration', ability: 'con' },
       deception: { label: 'Deception', ability: 'cha' },
+      endurance: { label: 'Endurance', ability: 'con' },
       gatherInformation: { label: 'Gather Information', ability: 'cha' },
       initiative: { label: 'Initiative', ability: 'dex' },
-      insight: { label: 'Insight', ability: 'wis' },
-      intimidate: { label: 'Intimidate', ability: 'cha' },
       jump: { label: 'Jump', ability: 'str' },
-      knowledge: { label: 'Knowledge', ability: 'int' },
+      knowledgeBureaucracy: { label: 'Knowledge (Bureaucracy)', ability: 'int' },
+      knowledgeGalacticLore: { label: 'Knowledge (Galactic Lore)', ability: 'int' },
+      knowledgeLifeSciences: { label: 'Knowledge (Life Sciences)', ability: 'int' },
+      knowledgePhysicalSciences: { label: 'Knowledge (Physical Sciences)', ability: 'int' },
+      knowledgeSocialSciences: { label: 'Knowledge (Social Sciences)', ability: 'int' },
+      knowledgeTactics: { label: 'Knowledge (Tactics)', ability: 'int' },
+      knowledgeTechnology: { label: 'Knowledge (Technology)', ability: 'int' },
       mechanics: { label: 'Mechanics', ability: 'int' },
-      medicine: { label: 'Medicine', ability: 'wis' },
       perception: { label: 'Perception', ability: 'wis' },
       persuasion: { label: 'Persuasion', ability: 'cha' },
-      piloting: { label: 'Piloting', ability: 'dex' },
+      pilot: { label: 'Pilot', ability: 'dex' },
       ride: { label: 'Ride', ability: 'dex' },
       stealth: { label: 'Stealth', ability: 'dex' },
       survival: { label: 'Survival', ability: 'wis' },
@@ -1240,6 +1288,16 @@ const forcePoints = [];
         } catch (err) {
           // console.error(`[PANEL BUILD ERROR] ${panelName}:`, err);
           this.panelDiagnostics.recordError(panelName, err.message);
+          emitHydrationError('PANEL_BUILD_FAILED', {
+            actorId: this.actor?.id,
+            actorName: this.actor?.name,
+            panelName,
+            builderMethod,
+            error: err?.message,
+            stack: err?.stack,
+            mutation: getRecentHydrationMutation(this),
+            snapshot: captureHydrationSnapshot(this.actor)
+          });
           // Provide empty fallback to prevent template errors
           panelContexts[panelName] = {};
         }
@@ -1725,6 +1783,15 @@ const forcePoints = [];
       swseLogger.debug('[PERSISTENCE] ─── CHANGE EVENT FIRED (debounced 500ms) ───');
       ev.preventDefault();
 
+      if (isDirectFieldMutationPath(input.name)) {
+        swseLogger.debug('[PERSISTENCE] Direct-field mutation path detected; bypassing broad form serialization', {
+          inputName: input.name,
+          inputType: input.type
+        });
+        await this._onSubmitForm(ev);
+        return;
+      }
+
       // DIAGNOSTIC: Log the field change
       swseLogger.debug('[PERSISTENCE] Field changed:', {
         inputName: input.name,
@@ -1748,7 +1815,7 @@ const forcePoints = [];
       if (form) {
         // swseLogger.debug('[PERSISTENCE] Form found, queuing debounced _onSubmitForm');
         try {
-          this._debouncedSubmit({ target: form, preventDefault: () => {} });
+          this._debouncedSubmit({ target: input, preventDefault: () => {} });
           // swseLogger.debug('[PERSISTENCE] Debounced submit queued');
         } catch (err) {
           // console.error('[PERSISTENCE] Debounced submit threw error:', err);
@@ -1779,7 +1846,7 @@ const forcePoints = [];
       const form = input.closest(".swse-character-sheet-form");
       if (form) {
         // swseLogger.debug('[PERSISTENCE] Ability input blur detected, submitting form');
-        this._debouncedSubmit({ target: form, preventDefault: () => {} });
+        this._debouncedSubmit({ target: input, preventDefault: () => {} });
       }
     }, { signal, capture: true });
 
@@ -1802,49 +1869,42 @@ const forcePoints = [];
 }
     }, { signal, capture: false });
 
-    // DELEGATED: Roll Skill Check (d20 + skill bonus)
+    // DELEGATED: Unified Skill Roll Entry Point
+    // All skill-roll affordances route through the same canonical pipeline so we do not
+    // double-fire rolls or bypass the holo chat/modifier flow.
     html.addEventListener("click", async ev => {
-      const button = ev.target.closest("[data-action='roll-skill']");
+      const button = ev.target.closest(".skill-roll-btn, .skill-name-btn.rollable, [data-action='roll-skill']");
       if (!button) return;
 
       ev.preventDefault();
+      ev.stopPropagation();
+
       const skillKey = button.dataset.skill;
       if (!skillKey) return;
 
-      try {
-        await this._runCanonicalSkillCheck(skillKey);
-      } catch (err) {
-        // console.error("Skill roll failed:", err);
-        ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
-      }
-    }, { signal, capture: false });
-
-    // PHASE 6 Part 3: Skill Roll Button (with modifier dialog)
-    html.addEventListener("click", async ev => {
-      const button = ev.target.closest(".skill-roll-btn");
-      if (!button) return;
-
-      ev.preventDefault();
-      const skillKey = button.dataset.skill;
-      if (!skillKey) return;
+      const wantsModifierDialog = button.dataset.modDialog === 'true'
+        || button.classList.contains('skill-roll-btn')
+        || button.classList.contains('skill-name-btn');
 
       try {
-        const skill = this.actor.system.skills?.[skillKey];
-        if (!skill) return;
+        let rollOptions = {};
+        if (wantsModifierDialog) {
+          const skill = this.actor.system.skills?.[skillKey];
+          const modResult = await showRollModifiersDialog({
+            title: `${skill?.label ?? skillKey} Check`,
+            rollType: 'skill'
+          });
 
-        const modResult = await showRollModifiersDialog({
-          title: `${skill.label ?? skillKey} Check`,
-          rollType: 'skill'
-        });
+          if (modResult === null) return;
 
-        if (modResult === null) return; // Cancelled
+          rollOptions = {
+            customModifier: Number(modResult.customModifier || 0),
+            useForcePoint: modResult.useForcePoint === true
+          };
+        }
 
-        await this._runCanonicalSkillCheck(skillKey, {
-          customModifier: modResult.customModifier || 0,
-          useForcePoint: modResult.useForcePoint || false
-        });
+        await this._runCanonicalSkillCheck(skillKey, rollOptions);
       } catch (err) {
-        // console.error("Skill roll failed:", err);
         ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
       }
     }, { signal, capture: false });
@@ -2009,10 +2069,35 @@ const forcePoints = [];
       if (!button) return;
       ev.preventDefault();
       try {
-        await launchFollowerProgression(this.actor);
+        const choice = await DialogV2.wait({
+          window: { title: 'Add Relationship Actor' },
+          content: `
+            <div class="swse-generic-dialog">
+              <p>Choose what to add to Relationships & Connections.</p>
+            </div>
+          `,
+          buttons: [
+            { action: 'follower', label: 'Follower', default: true },
+            { action: 'beast', label: 'Beast' },
+            { action: 'mount', label: 'Mount' },
+            { action: 'droid', label: 'Droid' },
+            { action: 'vehicle', label: 'Vehicle' },
+            { action: 'cancel', label: 'Cancel' }
+          ]
+        }).catch(() => 'cancel');
+
+        if (choice === 'cancel' || !choice) return;
+        if (choice === 'follower') {
+          await launchFollowerProgression(this.actor);
+          return;
+        }
+
+        const typeMap = { beast: 'npc', mount: 'npc', droid: 'droid', vehicle: 'vehicle' };
+        const actorType = typeMap[choice] || 'npc';
+        const [created] = await Actor.createDocuments([{ name: `New ${choice[0].toUpperCase()}${choice.slice(1)}`, type: actorType }]);
+        if (created?.sheet) created.sheet.render(true);
       } catch (err) {
-        // console.error('[SHEET] ✗ launchFollowerProgression failed:', err);
-        swseLogger.error('[CharacterSheet] Follower progression launch failed:', err);
+        swseLogger.error('[CharacterSheet] Relationship actor creation failed:', err);
       }
     }, { signal, capture: false });
 
@@ -2435,14 +2520,26 @@ const forcePoints = [];
     const getRows = () => Array.from(html.querySelectorAll('.skill-row-container'));
     const filterControls = Array.from(html.querySelectorAll('[data-action="filter-skills"]'));
     const sortControls = Array.from(html.querySelectorAll('[data-action="sort-skills"]'));
+    const escapeSkillKey = (value) => {
+      if (globalThis.CSS?.escape) return globalThis.CSS.escape(String(value));
+      return String(value);
+    };
+    const findExtraUsesSection = (skillKey) => {
+      if (!skillKey) return null;
+      return html.querySelector(`.skill-extra-uses[data-skill="${escapeSkillKey(skillKey)}"]`);
+    };
 
     const applyFiltersAndSort = () => {
       const activeFilter = filterControls[0]?.value || 'all';
       const activeSort = sortControls[0]?.value || 'name';
-      const skillRows = getRows();
-      const visibleRows = [];
+      const rowPairs = getRows().map(row => ({
+        row,
+        extraUsesSection: findExtraUsesSection(row.dataset.skill)
+      }));
+      const visiblePairs = [];
 
-      for (const row of skillRows) {
+      for (const pair of rowPairs) {
+        const { row, extraUsesSection } = pair;
         const trained = row.dataset.trained === 'true';
         const favorite = row.dataset.favorite === 'true';
         const focused = row.dataset.focused === 'true';
@@ -2452,38 +2549,32 @@ const forcePoints = [];
         else if (activeFilter === 'focused') matches = focused;
 
         row.style.display = matches ? '' : 'none';
-        let extraUsesSection = row.nextElementSibling;
-        while (extraUsesSection && !extraUsesSection.classList.contains('skill-extra-uses')) {
-          extraUsesSection = extraUsesSection.nextElementSibling;
-        }
-        if (extraUsesSection?.classList.contains('skill-extra-uses')) {
+        if (extraUsesSection) {
           extraUsesSection.style.display = matches ? '' : 'none';
         }
-        if (matches) visibleRows.push(row);
+        if (matches) visiblePairs.push(pair);
       }
 
       if (!skillsList) return;
-      visibleRows.sort((a, b) => {
+      visiblePairs.sort((a, b) => {
+        const rowA = a.row;
+        const rowB = b.row;
         switch (activeSort) {
           case 'ability':
-            return (a.dataset.ability || '').localeCompare(b.dataset.ability || '') || (a.dataset.label || '').localeCompare(b.dataset.label || '');
+            return (rowA.dataset.ability || '').localeCompare(rowB.dataset.ability || '') || (rowA.dataset.label || '').localeCompare(rowB.dataset.label || '');
           case 'total-desc':
-            return Number(b.dataset.total || 0) - Number(a.dataset.total || 0) || (a.dataset.label || '').localeCompare(b.dataset.label || '');
+            return Number(rowB.dataset.total || 0) - Number(rowA.dataset.total || 0) || (rowA.dataset.label || '').localeCompare(rowB.dataset.label || '');
           case 'total-asc':
-            return Number(a.dataset.total || 0) - Number(b.dataset.total || 0) || (a.dataset.label || '').localeCompare(b.dataset.label || '');
+            return Number(rowA.dataset.total || 0) - Number(rowB.dataset.total || 0) || (rowA.dataset.label || '').localeCompare(rowB.dataset.label || '');
           case 'name':
           default:
-            return (a.dataset.label || '').localeCompare(b.dataset.label || '');
+            return (rowA.dataset.label || '').localeCompare(rowB.dataset.label || '');
         }
       });
 
-      for (const row of visibleRows) {
+      for (const { row, extraUsesSection } of visiblePairs) {
         skillsList.appendChild(row);
-        let extraUsesSection = row.nextElementSibling;
-        while (extraUsesSection && !extraUsesSection.classList.contains('skill-extra-uses')) {
-          extraUsesSection = extraUsesSection.nextElementSibling;
-        }
-        if (extraUsesSection?.classList.contains('skill-extra-uses')) {
+        if (extraUsesSection) {
           skillsList.appendChild(extraUsesSection);
         }
       }
@@ -2506,18 +2597,6 @@ const forcePoints = [];
       }, { signal });
     });
 
-    html.querySelectorAll('[data-action="roll-skill"]').forEach(button => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const skillKey = button.dataset.skill;
-        if (!skillKey) return;
-        try {
-          await SWSERoll.rollSkill(this.actor, skillKey);
-        } catch (err) {
-          ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
-        }
-      }, { signal });
-    });
 
     html.querySelectorAll('[data-action="toggle-skill-expand"]').forEach(button => {
       button.addEventListener('click', (event) => {
@@ -2525,13 +2604,15 @@ const forcePoints = [];
         const skillKey = button.dataset.skill;
         if (!skillKey) return;
 
-        const skillRow = button.closest('.skills-grid-row');
-        if (!skillRow) return;
-        let extraUsesSection = skillRow.nextElementSibling;
-        while (extraUsesSection && !extraUsesSection.classList.contains('skill-extra-uses')) {
-          extraUsesSection = extraUsesSection.nextElementSibling;
+        const extraUsesSection = findExtraUsesSection(skillKey);
+        if (!extraUsesSection?.classList.contains('skill-extra-uses')) {
+          swseLogger.warn('[CharacterSheet] Extra skill uses section not found for toggle', {
+            actorId: this.actor?.id,
+            actorName: this.actor?.name,
+            skillKey
+          });
+          return;
         }
-        if (!extraUsesSection?.classList.contains('skill-extra-uses')) return;
 
         const isExpanded = button.getAttribute('aria-expanded') === 'true';
         button.setAttribute('aria-expanded', String(!isExpanded));
@@ -2759,8 +2840,19 @@ const forcePoints = [];
       if (!button) return;
 
       event.preventDefault();
+      event.stopPropagation();
+
       const itemType = button.dataset.itemType;
       if (!itemType) return;
+
+      this._pendingAddItemTypes ??= new Set();
+      if (this._pendingAddItemTypes.has(itemType) || button.dataset.swseBusy === 'true') {
+        return;
+      }
+
+      button.dataset.swseBusy = 'true';
+      button.disabled = true;
+      this._pendingAddItemTypes.add(itemType);
 
       try {
         const createData = itemType === "shield"
@@ -2782,13 +2874,15 @@ const forcePoints = [];
             };
 
         await ActorEngine.createEmbeddedDocuments(this.actor, "Item", [createData]);
-
         ui.notifications.info(`Created new ${itemType}`);
       } catch (err) {
-        // console.error(`[GEAR] Failed to create ${itemType}:`, err);
         ui.notifications.error(`Failed to create item: ${err.message}`);
+      } finally {
+        this._pendingAddItemTypes.delete(itemType);
+        delete button.dataset.swseBusy;
+        button.disabled = false;
       }
-    });
+    }, { signal, capture: false });
 
     // Add feat button
     html.querySelectorAll('[data-action="add-feat"]').forEach(button => {
@@ -3068,12 +3162,36 @@ const forcePoints = [];
         }
       };
 
+      const mutationRecord = recordHydrationMutation(this, {
+        source: "character-sheet-condition-button",
+        field: "system.conditionTrack.current",
+        step,
+        update: plan.update,
+        before: captureHydrationSnapshot(this.actor)
+      });
+
       try {
-        await ActorEngine.apply(this.actor, plan);
+        emitHydrationWarning("CONDITION_BUTTON_MUTATION_START", {
+          actorId: this.actor?.id,
+          actorName: this.actor?.name,
+          mutation: mutationRecord
+        });
+        await ActorEngine.apply(this.actor, plan, {
+          source: "character-sheet-condition-button",
+          suppressAppRefresh: true
+        });
+        recordHydrationMutation(this, { ...mutationRecord, status: "success", after: captureHydrationSnapshot(this.actor) });
         ui?.notifications?.info?.("Condition updated!");
       } catch (err) {
-        // console.error("Condition update failed:", err);
-        ui?.notifications?.error?.(`Condition update failed: ${err.message}`);
+        emitHydrationError("CONDITION_BUTTON_MUTATION_FAILED", {
+          actorId: this.actor?.id,
+          actorName: this.actor?.name,
+          mutation: mutationRecord,
+          error: err?.message,
+          stack: err?.stack,
+          snapshot: captureHydrationSnapshot(this.actor)
+        });
+        ui?.notifications?.error?.('Condition update failed: ' + err.message);
       }
     }, { signal, capture: false });
 

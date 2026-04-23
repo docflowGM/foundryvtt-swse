@@ -1,18 +1,18 @@
 <form class="houserules-form">
   <nav class="tabs" data-group="primary-tabs">
-    <a class="item active" data-tab="death">Death & Dying</a>
-    <a class="item" data-tab="damage">Damage</a>
-    <a class="item" data-tab="movement">Movement</a>
-    <a class="item" data-tab="feats">Combat Feats</a>
-    <a class="item" data-tab="grapple">Grapple</a>
-    <a class="item" data-tab="recovery">Recovery</a>
-    <a class="item" data-tab="track">Condition Track</a>
-    <a class="item" data-tab="flanking">Flanking</a>
-    <a class="item" data-tab="status">Status Effects</a>
+    <a class="item active" data-swse-tab="death">Death & Dying</a>
+    <a class="item" data-swse-tab="damage">Damage</a>
+    <a class="item" data-swse-tab="movement">Movement</a>
+    <a class="item" data-swse-tab="feats">Combat Feats</a>
+    <a class="item" data-swse-tab="grapple">Grapple</a>
+    <a class="item" data-swse-tab="recovery">Recovery</a>
+    <a class="item" data-swse-tab="track">Condition Track</a>
+    <a class="item" data-swse-tab="flanking">Flanking</a>
+    <a class="item" data-swse-tab="status">Status Effects</a>
   </nav>
   
   <section class="content">
-    <div class="tab active" data-group="primary-tabs" data-tab="death">
+    <div class="tab active" data-group="primary-tabs" data-swse-tab="death">
       <div class="form-group">
         <label>Death System</label>
         <select name="deathSystem.system">
@@ -48,7 +48,7 @@
       {{/if}}
     </div>
     
-    <div class="tab" data-group="primary-tabs" data-tab="damage">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="damage">
       <div class="form-group">
         <label>Condition Track Damage Cap</label>
         <input type="number" name="conditionTrackCap" value="{{conditionTrackCap}}" min="0" max="5"/>
@@ -83,7 +83,7 @@
       </div>
     </div>
     
-    <div class="tab" data-group="primary-tabs" data-tab="movement">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="movement">
       <div class="form-group">
         <label>Diagonal Movement</label>
         <select name="diagonalMovement">
@@ -113,7 +113,7 @@
       </div>
     </div>
     
-    <div class="tab" data-group="primary-tabs" data-tab="feats">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="feats">
       <div class="form-group">
         <input type="checkbox" name="weaponFinesseDefault" {{#if weaponFinesseDefault}}checked{{/if}}/>
         <label>All characters gain Weapon Finesse by default</label>
@@ -175,7 +175,7 @@
       </div>
     </div>
 
-    <div class="tab" data-group="primary-tabs" data-tab="grapple">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="grapple">
       <div class="form-group">
         <input type="checkbox" name="grappleEnabled" {{#if grappleEnabled}}checked{{/if}}/>
         <label>Enable Grapple Mechanics</label>
@@ -207,7 +207,7 @@
       {{/if}}
     </div>
 
-    <div class="tab" data-group="primary-tabs" data-tab="recovery">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="recovery">
       <div class="form-group">
         <input type="checkbox" name="recoveryEnabled" {{#if recoveryEnabled}}checked{{/if}}/>
         <label>Enable Recovery & Healing</label>
@@ -277,7 +277,7 @@
       {{/if}}
     </div>
 
-    <div class="tab" data-group="primary-tabs" data-tab="track">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="track">
       <div class="form-group">
         <input type="checkbox" name="conditionTrackEnabled" {{#if conditionTrackEnabled}}checked{{/if}}/>
         <label>Enable Enhanced Condition Track</label>
@@ -320,7 +320,7 @@
       {{/if}}
     </div>
 
-    <div class="tab" data-group="primary-tabs" data-tab="flanking">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="flanking">
       <div class="form-group">
         <input type="checkbox" name="flankingEnabled" {{#if flankingEnabled}}checked{{/if}}/>
         <label>Enable Flanking</label>
@@ -376,7 +376,7 @@
       {{/if}}
     </div>
 
-    <div class="tab" data-group="primary-tabs" data-tab="status">
+    <div class="tab" data-group="primary-tabs" data-swse-tab="status">
       <div class="form-group">
         <input type="checkbox" name="statusEffectsEnabled" {{#if statusEffectsEnabled}}checked{{/if}}/>
         <label>Enable Status Effects</label>

@@ -1,14 +1,17 @@
 /**
- * Vehicle Sheet Context Builder (Phase 2)
+ * Vehicle Sheet Context Builder
  *
- * PHASE 2: Expanded to provide all 11 panel contexts for mature sheet architecture.
- * Converts raw actor/system/derived data into prepared sheet contexts.
- * All context building is STATELESS and PURE — no mutations, no side effects.
- * Template receives pre-formed objects, not raw data.
+ * Builds prepared, serializable panel contexts for the vehicle sheet.
+ * Context building is stateless and pure: no mutations, no side effects.
+ * Templates receive pre-shaped objects rather than raw actor/system data.
  */
 
 /**
- * Safe numeric coercion
+ * Safe numeric coercion.
+ *
+ * @param {*} value
+ * @param {number} fallback
+ * @returns {number}
  */
 function safeNumber(value, fallback = 0) {
   const n = Number(value);
@@ -16,25 +19,36 @@ function safeNumber(value, fallback = 0) {
 }
 
 /**
- * Build vehicle header summary panel
- * Identity block with name, type, size, category, and tags
+ * Safe array helper.
+ *
+ * @param {*} value
+ * @returns {Array}
+ */
+function safeArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+/**
+ * Build vehicle header summary panel.
+ *
+ * @param {Actor} actor
+ * @returns {Object}
  */
 export function buildVehicleHeaderSummaryPanel(actor) {
-  const system = actor.system ?? {};
+  const system = actor?.system ?? {};
   const derived = system.derived ?? {};
   const identity = derived.identity ?? {};
 
   const tags = [];
-  if (system.tags && Array.isArray(system.tags)) {
-    system.tags.forEach(tag => {
-      tags.push({
-        label: tag,
-        tone: 'neutral'
-      });
+
+  for (const tag of safeArray(system.tags)) {
+    if (!tag) continue;
+    tags.push({
+      label: String(tag),
+      tone: 'neutral'
     });
   }
 
-  // Add damage/condition warning tags
   const hp = derived.hp ?? {};
   if (hp.critical) {
     tags.push({
@@ -50,7 +64,7 @@ export function buildVehicleHeaderSummaryPanel(actor) {
 
   return {
     title: null,
-    name: actor.name || 'Unnamed Vehicle',
+    name: actor?.name || 'Unnamed Vehicle',
     typeLabel: identity.typeLabel || 'Vehicle',
     sizeLabel: identity.sizeLabel || 'Medium',
     category: identity.category || system.category || 'Vehicle',
@@ -59,19 +73,19 @@ export function buildVehicleHeaderSummaryPanel(actor) {
 }
 
 /**
- * Build vehicle defenses panel context
- * Transforms system.derived.defenses into template-ready array format
+ * Build vehicle defenses panel.
+ *
+ * @param {Actor} actor
+ * @returns {Object|null}
  */
 export function buildVehicleDefensesPanel(actor) {
-  const derived = actor.system?.derived ?? {};
+  const derived = actor?.system?.derived ?? {};
   const defenses = derived.defenses ?? {};
 
-  // If defenses are missing, return null (panel will not render)
   if (!defenses.ref && !defenses.fort && !defenses.will && !defenses.flatFooted) {
     return null;
   }
 
-  // Map defenses to array format for template iteration
   const defenseArray = [
     {
       key: 'ref',
@@ -115,16 +129,25 @@ export function buildVehicleDefensesPanel(actor) {
 }
 
 /**
- * Build vehicle HP and condition panel
+ * Build vehicle HP and condition panel.
+ *
+ * @param {Actor} actor
+ * @returns {Object}
  */
 export function buildVehicleHpConditionPanel(actor) {
-  const system = actor.system ?? {};
+  const system = actor?.system ?? {};
   const derived = system.derived ?? {};
-  const hp = derived.hp ?? { value: 0, max: 1, temp: 0, percent: 0, warning: false, critical: false };
+  const hp = derived.hp ?? {
+    value: 0,
+    max: 1,
+    temp: 0,
+    percent: 0,
+    warning: false,
+    critical: false
+  };
   const damage = derived.damage ?? {};
   const conditionTrack = system.conditionTrack ?? { current: 0, penalty: 0 };
 
-  // Map condition track to label
   const conditionLabels = {
     0: 'Operational',
     1: 'Wounded',
@@ -139,49 +162,49 @@ export function buildVehicleHpConditionPanel(actor) {
     3: 'destroyed'
   };
 
-  const conditionCurrent = Math.min(3, Math.max(0, conditionTrack.current));
+  const conditionCurrent = Math.min(3, Math.max(0, safeNumber(conditionTrack.current, 0)));
 
   return {
     title: 'Hull Integrity',
     hp: {
-      value: hp.value,
-      max: hp.max,
-      temp: hp.temp,
-      percent: hp.percent
+      value: safeNumber(hp.value, 0),
+      max: safeNumber(hp.max, 1),
+      temp: safeNumber(hp.temp, 0),
+      percent: safeNumber(hp.percent, 0)
     },
-    damageThreshold: damage.threshold ?? 10,
-    damageReduction: damage.reduction ?? 0,
-    warning: hp.warning,
-    critical: hp.critical,
+    damageThreshold: safeNumber(damage.threshold, 10),
+    damageReduction: safeNumber(damage.reduction, 0),
+    warning: Boolean(hp.warning),
+    critical: Boolean(hp.critical),
     condition: {
       label: conditionLabels[conditionCurrent] || 'Unknown',
       severity: conditionSeverities[conditionCurrent] || 'normal',
       step: conditionCurrent,
-      penalty: conditionTrack.penalty
+      penalty: safeNumber(conditionTrack.penalty, 0)
     }
   };
 }
 
 /**
- * Build vehicle weapon mounts panel
- * PHASE 2: Adapter for current weapon data into mount structure
+ * Build vehicle weapon mounts panel.
+ *
+ * @param {Actor} actor
+ * @returns {Object|null}
  */
 export function buildVehicleWeaponMountPanel(actor) {
-  const system = actor.system ?? {};
+  const system = actor?.system ?? {};
   const mounts = [];
+  const items = safeArray(actor?.items);
 
-  // ════════════════════════════════════════════════════════════════════════════
-  // Priority 1: Embedded weapon items (created by weapon import normalizer)
-  // ════════════════════════════════════════════════════════════════════════════
-  const embeddedWeapons = actor.items.filter(item => item.type === 'weapon') || [];
+  const embeddedWeapons = items.filter((item) => item?.type === 'weapon');
 
   for (const weapon of embeddedWeapons) {
-    const itemSystem = weapon.system ?? {};
+    const itemSystem = weapon?.system ?? {};
     const vehicleMount = itemSystem.vehicleMount ?? {};
 
     mounts.push({
       key: vehicleMount.mountKey || `mount-${mounts.length}`,
-      name: weapon.name,
+      name: weapon?.name || 'Unnamed Weapon',
       arc: vehicleMount.arc || itemSystem.arc || 'unknown',
       linkedGroup: vehicleMount.linkedGroup || null,
       fireControl: vehicleMount.fireControl || itemSystem.fireControl || null,
@@ -196,12 +219,8 @@ export function buildVehicleWeaponMountPanel(actor) {
     });
   }
 
-  // ════════════════════════════════════════════════════════════════════════════
-  // Priority 2: Fallback to system.weapons array (for imported vehicles)
-  // Used when embedded items haven't been created yet
-  // ════════════════════════════════════════════════════════════════════════════
   if (mounts.length === 0 && Array.isArray(system.weapons)) {
-    for (let i = 0; i < system.weapons.length; i++) {
+    for (let i = 0; i < system.weapons.length; i += 1) {
       const weapon = system.weapons[i];
       if (!weapon || !weapon.name) continue;
 
@@ -223,7 +242,6 @@ export function buildVehicleWeaponMountPanel(actor) {
     }
   }
 
-  // Return null if no weapons found (don't render empty panel)
   if (mounts.length === 0) {
     return null;
   }
@@ -235,15 +253,18 @@ export function buildVehicleWeaponMountPanel(actor) {
 }
 
 /**
- * Build vehicle crew summary panel
+ * Build vehicle crew summary panel.
+ *
+ * @param {Actor} actor
+ * @returns {Object}
  */
 export function buildVehicleCrewSummaryPanel(actor) {
-  const system = actor.system ?? {};
-  const ownedActors = system.ownedActors ?? [];
+  const system = actor?.system ?? {};
+  const ownedActors = safeArray(system.ownedActors);
   const crewQuality = system.crewQuality || 'normal';
 
-  const filledSlots = ownedActors.filter(e => e && e.id).length;
-  const totalSlots = 6;  // Standard crew stations
+  const filledSlots = ownedActors.filter((entry) => entry && entry.id).length;
+  const totalSlots = 6;
 
   return {
     title: 'Crew',
@@ -255,35 +276,34 @@ export function buildVehicleCrewSummaryPanel(actor) {
 }
 
 /**
- * Build vehicle crew assignment panel
- * PHASE 2: Proper station assignment structure
+ * Build vehicle crew assignment panel.
+ *
+ * @param {Actor} actor
+ * @returns {Object}
  */
 export function buildVehicleCrewAssignmentPanel(actor) {
-  const system = actor.system ?? {};
+  const system = actor?.system ?? {};
   const crewPositions = system.crewPositions ?? {};
-  const ownedActors = system.ownedActors ?? [];
+  const ownedActors = safeArray(system.ownedActors);
 
-  // Build crew map for quick lookup
   const crewMap = {};
   for (const entry of ownedActors) {
-    if (entry && entry.id) {
-      crewMap[entry.id] = {
-        id: entry.id,
-        name: entry.name || 'Unknown'
-      };
-    }
+    if (!entry?.id) continue;
+    crewMap[entry.id] = {
+      id: entry.id,
+      name: entry.name || 'Unknown'
+    };
   }
 
-  // Map crew positions to station cards
   const stationKeys = ['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander'];
-  const stations = stationKeys.map(key => {
+  const stations = stationKeys.map((key) => {
     const assignedActorId = crewPositions[key];
     const occupant = assignedActorId ? crewMap[assignedActorId] : null;
 
     return {
       key,
       label: key.charAt(0).toUpperCase() + key.slice(1),
-      occupied: !!occupant,
+      occupied: Boolean(occupant),
       occupantName: occupant?.name ?? 'Unassigned',
       occupantId: occupant?.id ?? null,
       notes: null,
@@ -298,8 +318,12 @@ export function buildVehicleCrewAssignmentPanel(actor) {
 }
 
 /**
- * Build vehicle subsystem detail panel
- * PHASE 2: Expanded from Phase 1 scaffold
+ * Build vehicle subsystem detail panel.
+ *
+ * @param {Actor} actor
+ * @param {Object|null} subsystemData
+ * @param {Object|null} subsystemPenalties
+ * @returns {Object|null}
  */
 export function buildVehicleSubsystemDetailPanel(actor, subsystemData, subsystemPenalties) {
   if (!subsystemData) {
@@ -307,7 +331,7 @@ export function buildVehicleSubsystemDetailPanel(actor, subsystemData, subsystem
   }
 
   const subsystemTypes = ['engines', 'weapons', 'shields', 'sensors', 'comms', 'lifeSupport'];
-  const subsystems = subsystemTypes.map(type => {
+  const subsystems = subsystemTypes.map((type) => {
     const tier = subsystemData[type]?.tier ?? 'normal';
     const penalty = subsystemPenalties?.[type];
     const penaltyText = penalty?.description ?? null;
@@ -323,13 +347,13 @@ export function buildVehicleSubsystemDetailPanel(actor, subsystemData, subsystem
     };
   });
 
-  // Build aggregate penalty text
   const penalties = [];
-  if (subsystemPenalties) {
-    Object.values(subsystemPenalties).forEach(p => {
-      if (p?.description) penalties.push(p.description);
-    });
+  if (subsystemPenalties && typeof subsystemPenalties === 'object') {
+    for (const penalty of Object.values(subsystemPenalties)) {
+      if (penalty?.description) penalties.push(penalty.description);
+    }
   }
+
   const aggregatePenaltyText = penalties.length > 0 ? penalties.join('; ') : null;
 
   return {
@@ -340,19 +364,22 @@ export function buildVehicleSubsystemDetailPanel(actor, subsystemData, subsystem
 }
 
 /**
- * Build vehicle shield management panel
- * PHASE 2: Expanded from Phase 1 scaffold
+ * Build vehicle shield management panel.
+ *
+ * @param {Actor} actor
+ * @param {Object|null} shieldZones
+ * @returns {Object|null}
  */
 export function buildVehicleShieldManagementPanel(actor, shieldZones) {
   if (!shieldZones || typeof shieldZones !== 'object') {
     return null;
   }
 
-  // Map zones to card format
   const zoneKeys = ['fore', 'aft', 'port', 'starboard'];
-  const zones = zoneKeys.map(key => {
+  const max = safeNumber(shieldZones.max, 100);
+
+  const zones = zoneKeys.map((key) => {
     const value = safeNumber(shieldZones[key], 0);
-    const max = safeNumber(shieldZones.max, 100);
     const state = value <= max * 0.25 ? 'low' : value <= max * 0.5 ? 'moderate' : 'normal';
 
     return {
@@ -363,8 +390,7 @@ export function buildVehicleShieldManagementPanel(actor, shieldZones) {
     };
   });
 
-  const total = zones.reduce((sum, z) => sum + z.value, 0);
-  const max = safeNumber(shieldZones.max, 100);
+  const total = zones.reduce((sum, zone) => sum + zone.value, 0);
   const rechargeRate = safeNumber(shieldZones.rechargeRate, 0);
 
   return {
@@ -378,19 +404,20 @@ export function buildVehicleShieldManagementPanel(actor, shieldZones) {
 }
 
 /**
- * Build vehicle power summary panel
- * PHASE 2: Summary display (Phase 3 will add interactivity)
+ * Build vehicle power summary panel.
+ *
+ * @param {Actor} actor
+ * @param {Object|null} powerData
+ * @returns {Object}
  */
 export function buildVehiclePowerSummaryPanel(actor, powerData) {
-  // Fallback to safe defaults if power data not available
-  const available = powerData?.available ?? 350;
-  const allocated = powerData?.allocated ?? 250;
-  const budget = powerData?.budget ?? 600;
+  const available = safeNumber(powerData?.available, 350);
+  const allocated = safeNumber(powerData?.allocated, 250);
+  const budget = safeNumber(powerData?.budget, 600);
   const overAllocated = allocated > budget;
 
-  // Build subsystem load list if available
   const subsystemLoads = [];
-  if (powerData?.subsystemLoads) {
+  if (Array.isArray(powerData?.subsystemLoads)) {
     subsystemLoads.push(...powerData.subsystemLoads);
   }
 
@@ -405,33 +432,47 @@ export function buildVehiclePowerSummaryPanel(actor, powerData) {
 }
 
 /**
- * Build vehicle cargo summary panel
+ * Build vehicle cargo summary panel.
+ *
+ * @param {Actor} actor
+ * @param {number} totalCargoWeight
+ * @param {string} cargoState
+ * @returns {Object}
  */
 export function buildVehicleCargoSummaryPanel(actor, totalCargoWeight, cargoState) {
-  const system = actor.system ?? {};
+  const system = actor?.system ?? {};
   const cargoCapacity = safeNumber(system.cargo?.capacity, 500);
-
-  const percentUsed = cargoCapacity > 0 ? (totalCargoWeight / cargoCapacity) * 100 : 0;
+  const cargoWeight = safeNumber(totalCargoWeight, 0);
+  const percentUsed = cargoCapacity > 0 ? (cargoWeight / cargoCapacity) * 100 : 0;
 
   return {
     title: 'Cargo',
-    totalWeight: Math.round(totalCargoWeight * 100) / 100,
+    totalWeight: Math.round(cargoWeight * 100) / 100,
     capacity: Math.round(cargoCapacity * 100) / 100,
     percentUsed: Math.round(percentUsed),
     state: cargoState,
-    stateLabel: cargoState === 'over' ? 'Over Capacity' : cargoState === 'near' ? 'Near Capacity' : 'Normal'
+    stateLabel:
+      cargoState === 'over'
+        ? 'Over Capacity'
+        : cargoState === 'near'
+          ? 'Near Capacity'
+          : 'Normal'
   };
 }
 
 /**
- * Build vehicle cargo manifest panel
- * PHASE 2: Manifest-style panel
+ * Build vehicle cargo manifest panel.
+ *
+ * @param {Actor} actor
+ * @returns {Object}
  */
 export function buildVehicleCargoManifestPanel(actor) {
-  const cargoItems = actor.items
-    .filter(item => item.type === 'equipment')
-    .map(item => ({
-      name: item.name,
+  const items = safeArray(actor?.items);
+
+  const cargoItems = items
+    .filter((item) => item?.type === 'equipment')
+    .map((item) => ({
+      name: item.name || 'Unnamed Item',
       quantity: safeNumber(item.system?.quantity, 1),
       weight: safeNumber(item.system?.weight, 0),
       notes: item.system?.notes || null
@@ -453,7 +494,10 @@ export function buildVehicleCargoManifestPanel(actor) {
 }
 
 /**
- * PHASE 3: Build pilot maneuver panel from rule context
+ * Build pilot maneuver panel from rule context.
+ *
+ * @param {Object|null} pilotData
+ * @returns {Object|null}
  */
 function buildPilotManeuverPanel(pilotData) {
   if (!pilotData) return null;
@@ -470,7 +514,10 @@ function buildPilotManeuverPanel(pilotData) {
 }
 
 /**
- * PHASE 3: Build commander order panel from rule context
+ * Build commander order panel from rule context.
+ *
+ * @param {Object|null} commanderData
+ * @returns {Object|null}
  */
 function buildCommanderOrderPanel(commanderData) {
   if (!commanderData) return null;
@@ -487,32 +534,51 @@ function buildCommanderOrderPanel(commanderData) {
 }
 
 /**
- * PHASE 3: Build turn phase panel from rule context
+ * Build turn phase panel from rule context.
+ *
+ * @param {Object|null} turnPhaseData
+ * @returns {Object|null}
  */
 function buildTurnPhasePanel(turnPhaseData) {
   if (!turnPhaseData) return null;
 
   const turnState = turnPhaseData.turnState || {};
+  const currentPhaseKey = String(turnState.currentPhase || 'initiative').toLowerCase();
+
+  const phases = [
+    { key: 'initiative', label: 'Initiative' },
+    { key: 'maneuver', label: 'Maneuver' },
+    { key: 'attack', label: 'Attack' },
+    { key: 'end', label: 'End' }
+  ].map((phase, index, all) => {
+    const active = phase.key === currentPhaseKey;
+    const activeIndex = all.findIndex((entry) => entry.key === currentPhaseKey);
+    const completed = activeIndex > -1 ? index < activeIndex : false;
+
+    return {
+      ...phase,
+      active,
+      completed
+    };
+  });
 
   return {
     title: 'Turn Status',
     currentPhase: turnState.currentPhase || 'Initiative',
-    phases: [
-      { key: 'initiative', label: 'Initiative', active: false, completed: false },
-      { key: 'maneuver', label: 'Maneuver', active: false, completed: false },
-      { key: 'attack', label: 'Attack', active: false, completed: false },
-      { key: 'end', label: 'End', active: false, completed: false }
-    ],
+    phases,
     roundLabel: turnState.roundLabel || 'Round 1'
   };
 }
 
 /**
- * Main context builder for vehicle sheet — Phase 3
- * Builds all panel contexts and includes rule-driven panels
+ * Main context builder for vehicle sheet.
+ *
+ * @param {Actor} actor
+ * @param {Object} rawContext
+ * @param {Object} options
+ * @returns {Object}
  */
 export function buildVehicleSheetContext(actor, rawContext, options = {}) {
-  // Extract house-rule data from options
   const subsystemData = options.subsystemData || null;
   const subsystemPenalties = options.subsystemPenalties || null;
   const shieldZones = options.shieldZones || null;
@@ -520,10 +586,9 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const pilotData = options.pilotData || null;
   const commanderData = options.commanderData || null;
   const turnPhaseData = options.turnPhaseData || null;
-  const totalCargoWeight = options.totalCargoWeight || 0;
+  const totalCargoWeight = safeNumber(options.totalCargoWeight, 0);
   const cargoState = options.cargoState || 'normal';
 
-  // Build all panel contexts
   const headerSummaryPanel = buildVehicleHeaderSummaryPanel(actor);
   const defensesPanel = buildVehicleDefensesPanel(actor);
   const hpConditionPanel = buildVehicleHpConditionPanel(actor);
@@ -536,7 +601,6 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const cargoSummaryPanel = buildVehicleCargoSummaryPanel(actor, totalCargoWeight, cargoState);
   const cargoManifestPanel = buildVehicleCargoManifestPanel(actor);
 
-  // Phase 3: Build rule-driven panels
   const pilotManeuverPanel = buildPilotManeuverPanel(pilotData);
   const commanderOrderPanel = buildCommanderOrderPanel(commanderData);
   const turnPhasePanel = buildTurnPhasePanel(turnPhaseData);
@@ -589,19 +653,8 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   };
 }
 
-/**
- * Export all builders for testing/reuse
- */
 export {
-  buildVehicleHeaderSummaryPanel,
-  buildVehicleDefensesPanel,
-  buildVehicleHpConditionPanel,
-  buildVehicleWeaponMountPanel,
-  buildVehicleCrewSummaryPanel,
-  buildVehicleCrewAssignmentPanel,
-  buildVehicleSubsystemDetailPanel,
-  buildVehicleShieldManagementPanel,
-  buildVehiclePowerSummaryPanel,
-  buildVehicleCargoSummaryPanel,
-  buildVehicleCargoManifestPanel
+  buildPilotManeuverPanel,
+  buildCommanderOrderPanel,
+  buildTurnPhasePanel
 };

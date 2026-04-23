@@ -1,7 +1,12 @@
 {{!-- Droid Builder Work Surface — Progression Framework Integration --}}
 {{!-- Displays chassis configuration interface with systems, pricing, and build totals --}}
 
-<div class="prog-droid-builder swse-droid-builder-surface swse-ui-shell">
+<div class="prog-droid-builder swse-droid-builder-surface swse-ui-shell prog-droid-builder--datapad">
+  <div class="prog-droid-builder__hud">
+    <div class="prog-droid-builder__hud-tag"><span class="prog-droid-builder__hud-dot"></span>ASSEMBLY BUS</div>
+    <div class="prog-droid-builder__hud-tag">CHASSIS CONFIG</div>
+    <div class="prog-droid-builder__hud-tag prog-droid-builder__hud-tag--serial">DEG {{presentation.droidInfo.degree}} · SIZE {{presentation.droidInfo.size}}</div>
+  </div>
   {{!-- BUILDER HEADER --}}
   <div class="prog-droid-builder__header">
     <h2 class="prog-droid-builder__title">{{presentation.title}}</h2>
@@ -9,6 +14,7 @@
   </div>
 
   {{!-- BUILD METRICS BANNER --}}
+  <div class="prog-droid-builder__datapad-note">Configure locomotion, processor, appendages, and accessories before final unit registration.</div>
   <div class="prog-droid-builder__metrics">
     <div class="metric-chip">
       <span class="metric-label">Systems</span>

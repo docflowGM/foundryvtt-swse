@@ -50,21 +50,30 @@ export function buildAttributesViewModel(actor) {
     'cha': 'Charisma'
   };
 
-  const derived = actor.system?.derived ?? {};
+  const system = actor.system ?? {};
+  const derived = system.derived ?? {};
   const result = {};
 
   for (const key of abilityKeys) {
+    const baseAbility = system.abilities?.[key] ?? {};
     const derivedAttr = derived.attributes?.[key] ?? { total: 10, mod: 0 };
-    const value = derivedAttr.total ?? 10;
-    const modifier = derivedAttr.mod ?? Math.floor((value - 10) / 2);
+    const value = Number(derivedAttr.total ?? 10) || 10;
+    const modifier = Number(derivedAttr.mod ?? Math.floor((value - 10) / 2)) || 0;
     const modifierClass = modifier > 0 ? 'positive' : modifier < 0 ? 'negative' : 'zero';
+    const modClass = modifier > 0 ? 'mod--positive' : modifier < 0 ? 'mod--negative' : 'mod--zero';
 
     result[key] = {
       key,
       label: abilityLabels[key],
       value,
+      total: value,
       modifier,
-      modifierClass
+      mod: modifier,
+      modifierClass,
+      modClass,
+      base: Number(baseAbility.base ?? 10) || 0,
+      racial: Number(baseAbility.racial ?? 0) || 0,
+      temp: Number(baseAbility.temp ?? 0) || 0
     };
   }
 
@@ -83,26 +92,27 @@ export function buildAttributesViewModel(actor) {
  * @returns {Object} Unified identity view-model {className, classDisplay, species, level, etc}
  */
 export function buildIdentityViewModel(actor) {
-  const system = actor.system;
-  const derived = system?.derived ?? {};
+  const system = actor.system ?? {};
+  const flags = actor.flags?.swse?.character ?? {};
+  const derived = system.derived ?? {};
   const identity = derived.identity ?? {};
 
   return {
     name: actor.name || 'Unnamed',
     className: identity.className ?? system.class?.name ?? system.className ?? system.class ?? '—',
-    classDisplay: identity.classDisplay ?? '—',
-    species: identity.species ?? system.species?.name ?? system.species ?? '—',
+    classDisplay: identity.classDisplay ?? identity.className ?? system.class?.name ?? system.className ?? system.class ?? '—',
+    species: identity.species ?? system.race ?? system.species?.name ?? system.species ?? '—',
     level: Number(system.level) || 1,
     size: identity.size ?? system.size ?? '—',
-    gender: identity.gender ?? system.gender ?? '—',
-    background: identity.background ?? system.background?.name ?? system.background ?? '—',
-    homeworld: system.planetOfOrigin ?? '—',
-    profession: system.profession ?? '—',
-    age: system.flags?.swse?.character?.age ?? '—',
-    height: system.flags?.swse?.character?.height ?? '—',
-    weight: system.flags?.swse?.character?.weight ?? '—',
-    destinyPoints: identity.destinyPoints ?? { value: 0, max: 0 },
-    forcePoints: identity.forcePoints ?? { value: 0, max: 0 }
+    gender: identity.gender ?? flags.gender ?? system.gender ?? '—',
+    background: identity.background ?? system.background?.name ?? system.background ?? system.event ?? '—',
+    homeworld: identity.homeworld ?? system.planetOfOrigin ?? '—',
+    profession: identity.profession ?? system.profession ?? '—',
+    age: identity.age ?? flags.age ?? '—',
+    height: identity.height ?? flags.height ?? '—',
+    weight: identity.weight ?? flags.weight ?? '—',
+    destinyPoints: identity.destinyPoints ?? system.destinyPoints ?? { value: 0, max: 0 },
+    forcePoints: identity.forcePoints ?? system.forcePoints ?? { value: 0, max: 0 }
   };
 }
 

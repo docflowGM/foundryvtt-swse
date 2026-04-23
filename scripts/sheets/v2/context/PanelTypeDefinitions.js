@@ -430,6 +430,7 @@
  * @property {FeatPanelContext} featPanel
  * @property {ManeuverPanelContext} maneuverPanel
  * @property {SecondWindPanelContext} secondWindPanel
+ * @property {Object} resourcesPanel
  * @property {DarkSidePanelContext} darkSidePanel
  * @property {ForcePowersPanelContext} forcePowersPanel
  * @property {StarshipManeuversPanelContext} starshipManeuversPanel

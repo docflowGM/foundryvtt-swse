@@ -7,7 +7,14 @@
  * Returns fully serializable object safe for AppV2 structuredClone.
  */
 
-import { getNpcMode, getNpcKind, isNpcStatblockMode, isNpcProgressionMode, usesFlatStatblockAttacks } from './npc-mode-adapter.js';
+import {
+  getNpcMode,
+  getNpcKind,
+  isNpcStatblockMode
+} from './npc-mode-adapter.js';
+
+import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
+import { NpcProgressionEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js';
 
 export class NpcProfileBuilder {
   /**
@@ -35,7 +42,11 @@ export class NpcProfileBuilder {
     // Build serializable link card objects for open-related-actor action
     let ownerLink = { actorId: null, name: null, img: null, type: null, kind: null };
     if (npcKind === 'follower') {
-      const ownerId = actor.system?.npcProfile?.owner?.actorId || actor?.flags?.swse?.follower?.ownerId || null;
+      const ownerId =
+        actor.system?.npcProfile?.owner?.actorId ||
+        actor?.flags?.swse?.follower?.ownerId ||
+        null;
+
       if (ownerId) {
         const owner = game.actors?.get(ownerId);
         if (owner) {
@@ -101,13 +112,16 @@ export class NpcProfileBuilder {
     let followerScalingDescription = null;
     if (npcKind === 'follower' && hasFollowerSummary) {
       if (npcMode === 'statblock') {
-        followerAuthorityDescription = 'This follower uses published statblock values as the primary authority for abilities.';
+        followerAuthorityDescription =
+          'This follower uses published statblock values as the primary authority for abilities.';
       } else if (npcMode === 'progression') {
-        followerAuthorityDescription = 'This follower uses progression-driven calculations, typically scaled to the owner\'s heroic level.';
+        followerAuthorityDescription =
+          'This follower uses progression-driven calculations, typically scaled to the owner\'s heroic level.';
       }
 
       if (followerSummary.scalingMode === 'Progression-scaled') {
-        followerScalingDescription = `Scales from owner's heroic level (currently ${followerSummary.ownerHeroicLevel || '—'}).`;
+        followerScalingDescription =
+          `Scales from owner's heroic level (currently ${followerSummary.ownerHeroicLevel || '—'}).`;
       } else if (followerSummary.scalingMode === 'Statblock-fixed') {
         followerScalingDescription = 'Uses fixed statblock values; not scaled to owner level.';
       }
@@ -197,7 +211,6 @@ export class NpcProfileBuilder {
    */
   static _resolveOwnerData(actor) {
     if (!actor || actor.system?.npcProfile?.kind !== 'follower') {
-      // Check legacy follower flag
       const ownerId = actor?.flags?.swse?.follower?.ownerId;
       if (!ownerId) {
         return null;
@@ -216,7 +229,6 @@ export class NpcProfileBuilder {
       };
     }
 
-    // New canonical npcProfile path
     const ownerId = actor.system?.npcProfile?.owner?.actorId;
     if (!ownerId) {
       return null;
@@ -263,7 +275,7 @@ export class NpcProfileBuilder {
   }
 
   /**
-   * Get beast summary for display (Phase 4).
+   * Get beast summary for display.
    * @private
    */
   static _getBeastSummary(actor) {
@@ -276,21 +288,27 @@ export class NpcProfileBuilder {
     const speed = actor.system?.speed?.total ?? actor.system?.speed ?? null;
     const speedSummary = speed ? `${speed} ft.` : null;
 
-    // Collect natural attack names (weapons)
-    const weapons = actor.items?.filter(i => i.type === 'weapon') || [];
-    const naturalAttackNames = weapons.map(w => w.name || 'Unnamed Attack').filter(Boolean);
+    const weapons = actor.items?.filter((i) => i.type === 'weapon') || [];
+    const naturalAttackNames = weapons
+      .map((w) => w.name || 'Unnamed Attack')
+      .filter(Boolean);
 
-    // Collect special ability names (feats/talents/class features with creature/beast in name)
-    const abilities = actor.items?.filter(i => {
+    const abilities = actor.items?.filter((i) => {
       const types = ['feat', 'talent', 'class_feature'];
       return types.includes(i.type);
     }) || [];
+
     const specialAbilityNames = abilities
-      .filter(a => {
+      .filter((a) => {
         const name = (a.name || '').toLowerCase();
-        return name.includes('ability') || name.includes('special') || name.includes('sense') || name.includes('immunity');
+        return (
+          name.includes('ability') ||
+          name.includes('special') ||
+          name.includes('sense') ||
+          name.includes('immunity')
+        );
       })
-      .map(a => a.name || 'Unnamed Ability')
+      .map((a) => a.name || 'Unnamed Ability')
       .filter(Boolean);
 
     const traitNotes = actor.system?.npcProfile?.traitNotes || null;
@@ -306,7 +324,7 @@ export class NpcProfileBuilder {
   }
 
   /**
-   * Get mount summary for display (Phase 4).
+   * Get mount summary for display.
    * @private
    */
   static _getMountSummary(actor) {
@@ -314,12 +332,10 @@ export class NpcProfileBuilder {
       return null;
     }
 
-    // Resolve rider reference
     const riderId = actor.system?.npcProfile?.mount?.riderActorId;
     const rider = riderId ? game.actors?.get(riderId) : null;
     const riderName = rider?.name || null;
 
-    // Mount operation fields
     const battleTrained = actor.system?.npcProfile?.mount?.battleTrained ?? false;
     const saddle = actor.system?.npcProfile?.mount?.saddle || null;
     const passengerSlots = actor.system?.npcProfile?.mount?.passengerSlots ?? null;
@@ -339,7 +355,7 @@ export class NpcProfileBuilder {
   }
 
   /**
-   * Get follower summary for display (Phase 3).
+   * Get follower summary for display.
    * Supports both new npcProfile contract and legacy follower flags.
    * @private
    */
@@ -365,8 +381,6 @@ export class NpcProfileBuilder {
       if (owner) {
         ownerName = owner.name || 'Unknown Owner';
         isOwnerResolved = true;
-        // Resolve owner's heroic level if available
-        const { getHeroicLevel } = await import("/systems/foundryvtt-swse/scripts/actors/derived/level-split.js");
         ownerHeroicLevel = getHeroicLevel(owner) || null;
       }
       if (ownerRef.talent?.name) {
@@ -382,8 +396,6 @@ export class NpcProfileBuilder {
         if (owner) {
           ownerName = owner.name || 'Unknown Owner';
           isOwnerResolved = true;
-          // Resolve owner's heroic level if available
-          const { getHeroicLevel } = await import("/systems/foundryvtt-swse/scripts/actors/derived/level-split.js");
           ownerHeroicLevel = getHeroicLevel(owner) || null;
         }
         if (actor?.flags?.swse?.follower?.grantingTalent) {
@@ -393,11 +405,9 @@ export class NpcProfileBuilder {
       }
     }
 
-    // Resolve template
     templateName = actor.system?.npcProfile?.template || actor.system?.followerType || null;
     isTemplateResolved = !!templateName;
 
-    // Determine scaling mode
     const npcMode = actor.system?.npcProfile?.mode || 'statblock';
     let scalingMode = null;
     if (npcMode === 'progression') {
@@ -406,26 +416,26 @@ export class NpcProfileBuilder {
       scalingMode = 'Statblock-fixed';
     }
 
-    // Current follower level (derived from classes if progression mode)
-    let currentFollowerLevel = actor.system?.level || null;
-
-    // Notes field
+    const currentFollowerLevel = actor.system?.level ?? null;
     const notes = actor.system?.npcProfile?.notes || null;
 
-    // Advancement eligibility — synchronous inline heroic-level calculation
-    let _ownerHeroicLevelSync = null;
+    let ownerHeroicLevelSync = null;
     if (isOwnerResolved && ownerActorId) {
-      const _ownerForLevel = game.actors?.get(ownerActorId);
-      _ownerHeroicLevelSync = _ownerForLevel?.items
-        ?.filter(c => c.type === 'class' && !c.system?.isNonheroic)
-        ?.reduce((sum, c) => sum + (Number(c.system?.level) || 0), 0) ?? null;
+      const ownerForLevel = game.actors?.get(ownerActorId);
+      ownerHeroicLevelSync =
+        ownerForLevel?.items
+          ?.filter((c) => c.type === 'class' && !c.system?.isNonheroic)
+          ?.reduce((sum, c) => sum + (Number(c.system?.level) || 0), 0) ?? null;
     }
-    const ownerLevelDelta = (_ownerHeroicLevelSync !== null && currentFollowerLevel !== null)
-      ? _ownerHeroicLevelSync - currentFollowerLevel
-      : null;
+
+    const ownerLevelDelta =
+      ownerHeroicLevelSync !== null && currentFollowerLevel !== null
+        ? ownerHeroicLevelSync - currentFollowerLevel
+        : null;
+
     const canAdvance = ownerLevelDelta !== null && ownerLevelDelta > 0;
     const advanceReason = canAdvance
-      ? `Owner is heroic level ${_ownerHeroicLevelSync}; follower is at level ${currentFollowerLevel}.`
+      ? `Owner is heroic level ${ownerHeroicLevelSync}; follower is at level ${currentFollowerLevel}.`
       : null;
     const canLaunchAdvance = canAdvance && Boolean(ownerActorId);
 
@@ -449,7 +459,7 @@ export class NpcProfileBuilder {
   }
 
   /**
-   * Get progression summary for display (Phase 5 expanded).
+   * Get progression summary for display.
    * @private
    */
   static _getProgressionSummary(actor) {
@@ -460,38 +470,32 @@ export class NpcProfileBuilder {
     const npcMode = getNpcMode(actor);
     const isProgression = npcMode === 'progression';
 
-    const classes = actor.items?.filter(i => i.type === 'class') || [];
-    const heroicClasses = classes.filter(c => c.system?.isNonheroic !== true);
-    const nonheroicClasses = classes.filter(c => c.system?.isNonheroic === true);
+    const classes = actor.items?.filter((i) => i.type === 'class') || [];
+    const heroicClasses = classes.filter((c) => c.system?.isNonheroic !== true);
+    const nonheroicClasses = classes.filter((c) => c.system?.isNonheroic === true);
 
     const heroicLevel = heroicClasses.reduce((sum, c) => sum + (Number(c.system?.level) || 0), 0);
     const nonheroicLevel = nonheroicClasses.reduce((sum, c) => sum + (Number(c.system?.level) || 0), 0);
     const totalLevels = (heroicLevel || 0) + (nonheroicLevel || 0);
 
-    // Build class names array
-    const classNames = classes.map(c => c.name || 'Unnamed Class').filter(Boolean);
+    const classNames = classes.map((c) => c.name || 'Unnamed Class').filter(Boolean);
     const classCount = classes.length;
-
-    // Detect mixed tracks
     const hasMixedTracks = heroicLevel > 0 && nonheroicLevel > 0;
 
-    // Determine if can launch level-up
-    const canLaunchLevelUp = isProgression || !isProgression; // Always allow if GM can control (checked in handler)
+    // Kept as existing behavior
+    const canLaunchLevelUp = true;
 
-    // Check snapshot availability
-    const { NpcProgressionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js");
     const hasSnapshot = NpcProgressionEngine.hasSnapshot?.(actor) ?? false;
     const snapshotInfo = NpcProgressionEngine.getSnapshotInfo?.(actor);
     const snapshotLabel = snapshotInfo?.label ?? null;
     const revertAvailable = hasSnapshot;
 
-    // Generate advisory
     let advisory = null;
     if (hasMixedTracks) {
-      advisory = 'This NPC uses both heroic and nonheroic advancement tracks. Mixed progression is legal but uncommon.';
+      advisory =
+        'This NPC uses both heroic and nonheroic advancement tracks. Mixed progression is legal but uncommon.';
     }
 
-    // Return null if no progression data at all
     if (totalLevels === 0 && !isProgression) {
       return null;
     }

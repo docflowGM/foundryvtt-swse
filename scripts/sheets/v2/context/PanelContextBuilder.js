@@ -14,6 +14,7 @@
 
 import { PanelContextValidator } from './PanelContextValidator.js';
 import { RowTransformers } from './RowTransformers.js';
+import { captureHydrationSnapshot, emitHydrationError, emitHydrationWarning, getRecentHydrationMutation, summarizeBiographyPanel, summarizeDefensePanel } from '/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js';
 import { validatePanel } from './PanelValidators.js';
 import { buildHpViewModel, buildDefensesViewModel, buildAttributesViewModel, buildIdentityViewModel } from '/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js';
 
@@ -102,7 +103,7 @@ export class PanelContextBuilder {
     const shieldPercent = shieldMax > 0 ? Math.max(0, Math.min(100, Math.round((shieldCurrent / shieldMax) * 100))) : 0;
     const damageReductionValue = Number(this.system.damageReduction ?? 0) || 0;
 
-    const ctCurrent = Number(this.system.conditionTrack?.current) || 0;
+    const ctCurrent = Number(this.derived?.damage?.conditionStep ?? this.system.conditionTrack?.current ?? 0) || 0;
     const ctPersistent = this.system.conditionTrack?.persistent === true;
     const ctMax = 6;
 
@@ -194,46 +195,67 @@ export class PanelContextBuilder {
    * - Transforms shape only for template compatibility
    */
   buildDefensePanel() {
-    // PHASE 7.5: Consume canonical defenses view-model instead of computing inline
-    // buildDefensesViewModel is the single source of truth for defense data
-    // This ensures header defenses, defense partial, and all combat displays use the same values
+    // PHASE 8: Canonical defense authority
+    // All defense displays now read the same bundle:
+    //   - totals from system.derived.defenses.*
+    //   - editable overrides from system.defenses.{fortitude|reflex|will}.*
+    //   - ability modifiers from system.derived.attributes.*
     const defensesViewModel = buildDefensesViewModel(this.derived);
 
     const system = this.system;
+    const derivedAttributes = this.derived?.attributes ?? {};
+    const abilityLabels = {
+      str: 'Strength',
+      dex: 'Dexterity',
+      con: 'Constitution',
+      int: 'Intelligence',
+      wis: 'Wisdom',
+      cha: 'Charisma'
+    };
+    const defaultFortAbility = system?.isDroid ? 'str' : 'con';
     const defenseKeyMap = [
-      { key: 'fort', derivedKey: 'fortitude', label: 'Fortitude', abilityKey: 'str' },
-      { key: 'ref', derivedKey: 'reflex', label: 'Reflex', abilityKey: 'dex' },
-      { key: 'will', derivedKey: 'will', label: 'Will', abilityKey: 'wis' }
+      { key: 'fort', systemKey: 'fortitude', label: 'Fortitude', defaultAbility: defaultFortAbility },
+      { key: 'ref', systemKey: 'reflex', label: 'Reflex', defaultAbility: 'dex' },
+      { key: 'will', systemKey: 'will', label: 'Will', defaultAbility: 'wis' }
     ];
 
-    const defenses = defenseKeyMap.map(({ key, derivedKey, label, abilityKey }) => {
-      const defenseData = system.defenses?.[key] || {};
-      const defenseViewModel = defensesViewModel?.[key] || {};
-
-      // Get ability modifier from system.attributes
-      const abilityMod = system.attributes?.[abilityKey]?.mod ?? 0;
-
-      // Get stored components
-      const armorBonus = Number(defenseData.armorBonus) || 0;
-      const classDef = Number(defenseData.classBonus) || 0;
-      const miscMod = Number(defenseData.miscMod) || 0;
-      // Use total from canonical view-model (same as header uses)
-      const total = defenseViewModel?.total ?? 10;
-
-      // Derive CSS classes from modifier values
+    const defenses = defenseKeyMap.map(({ key, systemKey, label, defaultAbility }) => {
+      const defenseData = system.defenses?.[systemKey] ?? {};
+      const defenseViewModel = defensesViewModel?.[systemKey] ?? {};
+      const derivedDefense = this.derived?.defenses?.[systemKey] ?? {};
+      const abilityKey = String(defenseData.ability || derivedDefense.abilityKey || defaultAbility || '').toLowerCase();
+      const abilityMod = Number(derivedAttributes?.[abilityKey]?.mod ?? derivedDefense?.abilityMod ?? 0) || 0;
+      const miscMod = Number(defenseData.misc?.user?.extra ?? defenseData.miscMod ?? derivedDefense?.miscBonus ?? 0) || 0;
+      const classDef = Number(defenseData.classBonus ?? derivedDefense?.classBonus ?? 0) || 0;
+      const armorBonus = Number(
+        systemKey === 'reflex'
+          ? (defenseData.armor ?? derivedDefense?.armorBonus ?? derivedDefense?.armorContribution ?? 0)
+          : (derivedDefense?.armorBonus ?? 0)
+      ) || 0;
+      const conditionPenalty = Number(this.derived?.damage?.conditionPenalty ?? 0) || 0;
+      const total = Number(defenseViewModel?.total ?? derivedDefense?.total ?? 10) || 10;
       const abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';
       const miscModClass = miscMod > 0 ? 'mod--positive' : miscMod < 0 ? 'mod--negative' : 'mod--zero';
 
       return {
         key,
+        systemKey,
         label,
         total,
         armorBonus,
+        armorEditable: systemKey === 'reflex',
+        armorPath: systemKey === 'reflex' ? 'system.defenses.reflex.armor' : null,
+        abilityKey,
+        abilityLabel: abilityLabels[abilityKey] || abilityKey.toUpperCase(),
+        abilityPath: `system.defenses.${systemKey}.ability`,
         abilityMod,
         abilityModClass,
         classDef,
+        classBonusPath: `system.defenses.${systemKey}.classBonus`,
         miscMod,
         miscModClass,
+        miscPath: `system.defenses.${systemKey}.misc.user.extra`,
+        conditionPenalty,
         canEdit: this.sheet.isEditable
       };
     });
@@ -244,9 +266,27 @@ export class PanelContextBuilder {
       canEdit: this.sheet.isEditable
     };
 
-    // Validate contract (strict mode throws, dev mode warns)
+    const recentHydrationMutation = getRecentHydrationMutation(this.sheet);
+    const invalidDefenseEntries = defenses.filter((entry) => !Number.isFinite(Number(entry?.total)));
+    if (invalidDefenseEntries.length > 0) {
+      emitHydrationError("PANEL_BUILD_DEFENSE_INVALID_TOTAL", {
+        actorId: this.actor?.id,
+        actorName: this.actor?.name,
+        mutation: recentHydrationMutation,
+        invalidEntries: invalidDefenseEntries,
+        snapshot: captureHydrationSnapshot(this.actor)
+      });
+    }
+    if (recentHydrationMutation) {
+      emitHydrationWarning("PANEL_BUILD_DEFENSE", {
+        actorId: this.actor?.id,
+        actorName: this.actor?.name,
+        mutation: recentHydrationMutation,
+        snapshot: captureHydrationSnapshot(this.actor),
+        panel: summarizeDefensePanel(panel)
+      });
+    }
     this._validatePanelContext('defensePanel', panel);
-
     return panel;
   }
 
@@ -265,6 +305,7 @@ export class PanelContextBuilder {
 
     const identity = {
       ...identityViewModel,
+      class: String(identityViewModel.classDisplay || identityViewModel.className || '—'),
       player: this.system.flags?.swse?.character?.player || '—',
       canEdit: this.sheet.isEditable
     };
@@ -276,6 +317,17 @@ export class PanelContextBuilder {
       identity,
       biography
     };
+
+    const recentHydrationMutation = getRecentHydrationMutation(this.sheet);
+    if (recentHydrationMutation) {
+      emitHydrationWarning("PANEL_BUILD_BIOGRAPHY", {
+        actorId: this.actor?.id,
+        actorName: this.actor?.name,
+        mutation: recentHydrationMutation,
+        snapshot: captureHydrationSnapshot(this.actor),
+        panel: summarizeBiographyPanel(panel)
+      });
+    }
 
     // Validate contract (strict mode throws, dev mode warns)
     this._validatePanelContext('biographyPanel', panel);

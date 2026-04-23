@@ -847,3 +847,71 @@
   font-family: 'Courier New', monospace;
   text-transform: uppercase;
 }
+
+/* ============================================================================
+   Droid Variant — assembly/post aesthetic while preserving mentor/rails shell
+   ============================================================================ */
+
+.prog-intro-surface--droid {
+  color: rgba(250, 232, 180, 1);
+}
+
+.prog-intro-surface--droid .prog-intro-header {
+  background: linear-gradient(180deg, rgba(36, 28, 8, 0.95) 0%, rgba(20, 14, 4, 0.98) 100%);
+  border-bottom-color: rgba(255, 210, 90, 0.4);
+  box-shadow:
+    0 2px 8px rgba(255, 190, 40, 0.18),
+    inset 0 1px 0 rgba(255, 225, 120, 0.12),
+    inset 0 -1px 0 rgba(100, 70, 10, 0.25);
+}
+
+.prog-intro-surface--droid .prog-intro-system-name,
+.prog-intro-surface--droid .prog-intro-time,
+.prog-intro-surface--droid .prog-intro-battery {
+  color: rgba(255, 221, 132, 0.95);
+  text-shadow: 0 0 10px rgba(255, 196, 64, 0.35);
+}
+
+.prog-intro-surface--droid .prog-intro-signal__bar.active {
+  background: linear-gradient(180deg, rgba(255, 231, 145, 0.9), rgba(255, 191, 73, 0.68));
+  box-shadow: 0 0 6px rgba(255, 191, 73, 0.55);
+}
+
+.prog-intro-surface--droid .prog-intro-panel {
+  background:
+    radial-gradient(ellipse 120% 100% at 50% 0%, rgba(140, 95, 18, 0.18) 0%, transparent 70%),
+    linear-gradient(180deg, rgba(28, 20, 8, 0.78), rgba(14, 10, 4, 0.9));
+  border-color: rgba(255, 196, 64, 0.36);
+  box-shadow:
+    0 0 24px rgba(255, 191, 73, 0.14),
+    0 0 48px rgba(145, 95, 18, 0.08),
+    inset 0 0 2px rgba(255, 225, 120, 0.16),
+    inset 0 1px 2px rgba(255, 241, 180, 0.06);
+}
+
+.prog-intro-surface--droid .prog-intro-label--processing,
+.prog-intro-surface--droid .prog-intro-aurabesh--processing,
+.prog-intro-surface--droid .prog-intro-system-name,
+.prog-intro-surface--droid .prog-intro-status--processing,
+.prog-intro-surface--droid .prog-intro-progress-text--neutral,
+.prog-intro-surface--droid .prog-intro-text--neutral {
+  color: rgba(255, 222, 136, 0.98);
+  text-shadow:
+    0 0 10px rgba(255, 196, 64, 0.45),
+    0 0 18px rgba(196, 124, 28, 0.18);
+}
+
+.prog-intro-surface--droid .prog-intro-progress-segment.is-active,
+.prog-intro-surface--droid .prog-intro-progress-fill {
+  background: linear-gradient(180deg, rgba(255, 231, 145, 0.95), rgba(255, 191, 73, 0.7));
+  box-shadow: 0 0 8px rgba(255, 191, 73, 0.45);
+}
+
+.prog-intro-surface--droid .prog-intro-footer {
+  border-top-color: rgba(255, 196, 64, 0.22);
+}
+
+.prog-intro-surface--droid .prog-intro-btn.prog-btn--primary {
+  border-color: rgba(255, 196, 64, 0.48);
+  box-shadow: 0 0 8px rgba(255, 191, 73, 0.14);
+}
