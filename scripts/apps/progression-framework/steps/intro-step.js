@@ -533,13 +533,30 @@ export class IntroStep extends ProgressionStepPlugin {
       return actorV2Data;
     }
 
-    // Standard/Droid intro path (Phase 1: droid-v2 controller wired but not yet routed)
+    // Droid-v2 uses new controller data structure (Phase 2: now routed)
+    if (this._isDroidIntro) {
+      const droidV2Data = buildDroidSplashV2Context({
+        stageIndex: this._droidV2StageIndex,
+        sessionId: this._shell?.actor?.id || 'DR-00000',
+        isComplete: this._complete,
+        currentTime: this._getCurrentTime(),
+      });
+
+      swseLogger.debug('[IntroStep.getStepData] Droid-v2 step data', {
+        stageIndex: this._droidV2StageIndex,
+        complete: this._complete,
+      });
+
+      return droidV2Data;
+    }
+
+    // Standard intro path
     const phaseData = this.getPhaseData();
 
     const stepData = {
       currentTime: this._getCurrentTime(),
-      systemName: this._isDroidIntro ? 'DROID ASSEMBLY DATAPAD' : 'VERSAFUNCTION DATAPAD',
-      battery: this._isDroidIntro ? 92 : 85,
+      systemName: 'VERSAFUNCTION DATAPAD',
+      battery: 85,
 
       // Phase data
       phase: this._phase,
@@ -574,10 +591,10 @@ export class IntroStep extends ProgressionStepPlugin {
 
       // Character effects for translation (flicker, glow trail)
       translationCharStates: this._translationCharStates,
-      introVariant: this._isDroidIntro ? 'droid' : 'standard',
-      continueLabel: this._isDroidIntro ? 'Register New Unit' : 'Proceed',
-      continueTitle: this._isDroidIntro ? 'Ready to begin droid unit registration.' : 'Ready to begin character registration.',
-      showPregenerated: !this._isDroidIntro,
+      introVariant: 'standard',
+      continueLabel: 'Proceed',
+      continueTitle: 'Ready to begin character registration.',
+      showPregenerated: true,
     };
 
     // DIAGNOSTIC: Show what data is being returned to template

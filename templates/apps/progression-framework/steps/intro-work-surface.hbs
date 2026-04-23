@@ -194,6 +194,183 @@
   </div>
 </div>
 
+{{else if (eq introVariant "droid-v2")}}
+{{!-- ========================================================================
+     DROID V2 SPLASH VARIANT
+     ======================================================================== --}}
+<div class="prog-intro-surface prog-intro-surface--droid-v2 swse-ui-shell {{#if isComplete}}is-complete{{/if}}">
+  <div class="stage">
+    <div class="datapad">
+      <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
+      <div class="bezel-label">{{bezelLabel}}</div>
+      <div class="bezel-serial">{{bezelSerial}}</div>
+      <div class="vent"></div>
+      <div class="power-led"></div>
+
+      <div class="screen">
+        <div class="screen-inner holo">
+          <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+
+          <div class="hud">
+            <div class="hud-left">
+              <span class="tag"><span class="dot"></span>BUS</span>
+              <span class="tag" data-role="boot-stage-tag"><span class="dot warn"></span>{{bootStageTag}}</span>
+              <span class="tag">BOLT · DISENGAGED</span>
+            </div>
+            <div class="hud-title">{{hudTitle}}</div>
+            <div class="hud-right">
+              <span class="tag">
+                <span class="signal"><span></span><span></span><span></span><span></span></span>
+              </span>
+              <span class="tag battery">
+                <span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell empty"></span>
+              </span>
+              <span class="tag" data-role="clock">{{currentTime}}</span>
+            </div>
+          </div>
+
+          <div class="boot">
+            <div class="diag">
+              <div class="diag-head">Channel Diagnostics</div>
+              {{#each channels}}
+              <div class="channel {{stateClass}}" data-ch="{{id}}">
+                <div class="lbl">{{label}}</div>
+                <div class="gauge"><div class="fill" style="width:{{pct}}%"></div></div>
+                <div class="val">{{displayValue}}</div>
+              </div>
+              {{/each}}
+
+              <div class="diag-head droid-registry-head">Chassis Registry</div>
+              <div class="droid-registry-card">
+                <div><span class="k">FIRM</span> <span class="v">DROID-OS 9.3.1</span></div>
+                <div><span class="k">FRAME</span> <span class="v">CX-7 BIPED</span></div>
+                <div><span class="k">DEG</span> <span class="v">1ST · AUTONOMOUS</span></div>
+                <div><span class="k">OWNER</span> <span class="v">UNASSIGNED</span></div>
+              </div>
+            </div>
+
+            <div class="hero">
+              <div class="ring">
+                <svg class="r-outer" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+                  <circle cx="100" cy="100" r="94" opacity="0.25"></circle>
+                  <circle cx="100" cy="100" r="94" stroke-dasharray="2 6" opacity="0.7"></circle>
+                  <circle cx="100" cy="100" r="94" stroke-dasharray="30 550" stroke-width="2" opacity="0.9"></circle>
+                </svg>
+                <svg class="r-mid" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+                  <circle cx="100" cy="100" r="74" opacity="0.3"></circle>
+                  <path d="M100 26 L100 34 M174 100 L166 100 M100 174 L100 166 M26 100 L34 100" stroke-width="2"></path>
+                  <circle cx="100" cy="26" r="3" fill="currentColor"></circle>
+                  <circle cx="174" cy="100" r="2" fill="currentColor"></circle>
+                </svg>
+                <svg class="r-inner" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+                  <circle cx="100" cy="100" r="54" opacity="0.5"></circle>
+                  <path d="M100 46 L110 54 L100 62 L90 54 Z" fill="currentColor" opacity="0.6"></path>
+                  <circle cx="100" cy="100" r="54" stroke-dasharray="1 4" opacity="0.5"></circle>
+                </svg>
+                <div class="core" data-role="core-glyph">{{coreGlyph}}</div>
+                <div class="scan"></div>
+              </div>
+
+              <div class="status">
+                <div class="label" data-role="status-label">{{statusLabel}}</div>
+                <div class="msg" data-role="status-msg">{{statusMessage}}</div>
+                <div class="glyph-src" data-role="status-src">{{statusSource}}</div>
+              </div>
+
+              <div class="loader-block">
+                <div class="loader-row">
+                  <span>Progress</span>
+                  <span class="pct" data-role="intro-progress-percent">{{progressPercent}}%</span>
+                </div>
+                <div class="loader-bar">
+                  <div class="loader-fill" style="width:{{progressPercent}}%" data-role="loader-fill"></div>
+                </div>
+                <div class="loader-row loader-row--subtle">
+                  <span data-role="current-task">{{currentTask}}</span>
+                  <span data-role="task-count">{{taskCount}}</span>
+                </div>
+              </div>
+
+              <div class="translate {{#if isTranslating}}on{{/if}}" data-role="translate-zone">
+                <span class="lbl">{{translationLabel}}</span>
+                <span class="src" data-role="trans-src">{{translationSource}}</span>
+                <span class="arrow">▸</span>
+                <span class="dst" data-role="trans-dst">{{translationTarget}}</span>
+              </div>
+            </div>
+
+            <div class="stream">
+              <div class="diag-head">POST Log // Stream</div>
+              <div class="log" data-role="boot-log">
+                {{#each logLines}}
+                <div class="log-line">
+                  <span class="t">[{{time}}]</span><span class="{{tagClass}}">[{{tag}}]</span>
+                  <span class="txt">{{text}}</span>
+                </div>
+                {{/each}}
+              </div>
+
+              <div class="diag-head droid-process-head">Active Process</div>
+              <div class="droid-process-card">
+                <div><span class="k">pid:</span> <span class="v">0x0C0D · droid.assemble</span></div>
+                <div><span class="k">cpu:</span> <span class="v pos">12%</span></div>
+                <div><span class="k">mem:</span> <span class="v">48M / 512M</span></div>
+                <div><span class="k">pkts:</span> <span class="v">0</span></div>
+                <div><span class="k">warn:</span> <span class="v zero">0</span></div>
+                <div><span class="k">err:</span> <span class="v neg">0</span></div>
+              </div>
+
+              <div class="identity {{#if showIdentity}}on{{/if}}" data-role="identity-card">
+                <div class="bust">
+                  <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                    <rect x="28" y="18" width="44" height="32" rx="4"></rect>
+                    <rect x="36" y="26" width="10" height="10" rx="1"></rect>
+                    <rect x="54" y="26" width="10" height="10" rx="1"></rect>
+                    <circle cx="41" cy="31" r="2" fill="currentColor"></circle>
+                    <circle cx="59" cy="31" r="2" fill="currentColor"></circle>
+                    <path d="M34 42 L66 42" stroke-dasharray="2 3"></path>
+                    <path d="M22 54 L78 54"></path>
+                    <path d="M26 58 L26 84 L74 84 L74 58"></path>
+                    <path d="M38 60 L38 80 M50 60 L50 80 M62 60 L62 80" stroke-dasharray="1 2" opacity="0.6"></path>
+                    <circle cx="50" cy="10" r="3"></circle>
+                    <path d="M50 13 L50 18"></path>
+                  </svg>
+                </div>
+
+                <div class="info">
+                  <span class="badge">{{identity.badge}}</span>
+                  <div class="name">{{identity.name}}</div>
+                  <div class="sub">{{identity.sub}}</div>
+                  <div class="meta-grid">
+                    {{#each identity.meta}}
+                    <div class="m">
+                      <div class="k">{{key}}</div>
+                      <div class="v">{{value}}</div>
+                    </div>
+                    {{/each}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <div class="hint">
+              <kbd>SPACE</kbd> skip ·
+              <kbd>ENTER</kbd> continue ·
+              <kbd>R</kbd> replay
+            </div>
+            <div class="intro-action-row">
+              <button class="btn ghost" type="button" data-action="skip-intro">Skip Boot</button>
+              <button class="btn" type="button" data-action="next-step" {{#if continueDisabled}}disabled{{/if}}>{{continueLabel}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 {{else}}
 {{!-- ========================================================================
      STANDARD/DROID SPLASH VARIANT (original intro framework)
