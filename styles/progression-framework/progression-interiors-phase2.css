@@ -1,0 +1,496 @@
+/* ============================================================================
+   PROGRESSION INTERIORS — PHASE 2
+   Interior reskin for the live progression engine
+
+   Applies Phase 1 token system to step interiors, option rows, ability cells,
+   skill lists, and control surfaces. No logic changes; purely cosmetic.
+
+   Reuses: --sheet-accent-primary, --sheet-text-strong, --sheet-text-faint, etc.
+   ============================================================================ */
+
+/* ---------- MANIFEST / SUMMARY INTERIOR SECTIONS ---------- */
+
+.progression-shell.swse-prog-v2-shell .prog-manifest-section,
+.progression-shell.swse-prog-v2-shell .summary-section,
+.progression-shell.swse-prog-v2-shell .selected-rail-section {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed oklch(var(--sheet-accent-primary) / 0.25);
+}
+
+.progression-shell.swse-prog-v2-shell .prog-manifest-title,
+.progression-shell.swse-prog-v2-shell .summary-section__title,
+.progression-shell.swse-prog-v2-shell .selected-rail-section__title {
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--sheet-accent-primary);
+  margin-bottom: 8px;
+}
+
+.progression-shell.swse-prog-v2-shell .prog-manifest-row,
+.progression-shell.swse-prog-v2-shell .summary-row {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px dotted oklch(var(--sheet-accent-primary) / 0.12);
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 11px;
+}
+
+.progression-shell.swse-prog-v2-shell .prog-manifest-row .k,
+.progression-shell.swse-prog-v2-shell .summary-row .k {
+  color: var(--prog-ink-faint);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 9px;
+}
+
+.progression-shell.swse-prog-v2-shell .prog-manifest-row .v,
+.progression-shell.swse-prog-v2-shell .summary-row .v {
+  color: var(--prog-ink);
+  font-family: var(--swse-font-body, system-ui, sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ---------- CHIPS / BADGES ---------- */
+
+.progression-shell.swse-prog-v2-shell .prog-chip,
+.progression-shell.swse-prog-v2-shell .prog-trained-skill-badge,
+.progression-shell.swse-prog-v2-shell .prog-state-chip,
+.progression-shell.swse-prog-v2-shell .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: oklch(var(--sheet-accent-primary) / 0.08);
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.30);
+  color: var(--sheet-accent-primary);
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+}
+
+.progression-shell.swse-prog-v2-shell .prog-chip.is-empty,
+.progression-shell.swse-prog-v2-shell .chip.empty {
+  color: var(--prog-ink-faint);
+  border-color: oklch(var(--sheet-accent-primary) / 0.15);
+  background: transparent;
+}
+
+/* ---------- CANVAS HEAD / TITLE --------- */
+
+.progression-shell.swse-prog-v2-shell .prog-canvas-head,
+.progression-shell.swse-prog-v2-shell .prog-step-context-banner {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid oklch(var(--sheet-accent-primary) / 0.18);
+  margin-bottom: 18px;
+}
+
+.progression-shell.swse-prog-v2-shell .prog-canvas-title,
+.progression-shell.swse-prog-v2-shell [data-region="work-surface"] > h2,
+.progression-shell.swse-prog-v2-shell [data-region="work-surface"] > h3 {
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--prog-ink);
+}
+
+.progression-shell.swse-prog-v2-shell .prog-canvas-subtitle,
+.progression-shell.swse-prog-v2-shell .prog-step-label {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--prog-ink-faint);
+}
+
+.progression-shell.swse-prog-v2-shell .prog-canvas-meta,
+.progression-shell.swse-prog-v2-shell .prog-step-counter {
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--prog-ink-dim);
+  text-align: right;
+}
+
+.progression-shell.swse-prog-v2-shell .prog-canvas-meta .big,
+.progression-shell.swse-prog-v2-shell .prog-step-counter .big {
+  display: block;
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 24px;
+  color: var(--sheet-accent-primary);
+  letter-spacing: 0.2em;
+  text-shadow: 0 0 8px oklch(var(--sheet-accent-primary) / 0.5);
+}
+
+/* ---------- NARRATOR / MENTOR BLOCK ---------- */
+
+.progression-shell.swse-prog-v2-shell .prog-mentor-rail .prog-mentor__body,
+.progression-shell.swse-prog-v2-shell .prog-narrator,
+.progression-shell.swse-prog-v2-shell .mentor-message-block {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 16px;
+  align-items: start;
+  padding: 14px 16px;
+  margin: 0 0 14px;
+  background: oklch(0 0 0 / 0.25);
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.22);
+  border-left: 3px solid var(--sheet-accent-primary);
+}
+
+.progression-shell.swse-prog-v2-shell .prog-mentor__portrait,
+.progression-shell.swse-prog-v2-shell .narrator__avatar {
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--sheet-accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 40%, oklch(var(--sheet-accent-primary) / 0.25), transparent 60%);
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.progression-shell.swse-prog-v2-shell .prog-mentor__dialogue-content,
+.progression-shell.swse-prog-v2-shell .narrator__message {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--prog-ink);
+}
+
+.progression-shell.swse-prog-v2-shell .prog-mentor__name,
+.progression-shell.swse-prog-v2-shell .narrator__name {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--sheet-accent-primary);
+}
+
+/* ---------- IDENTITY FIELDS ---------- */
+
+.progression-shell.swse-prog-v2-shell .prog-field label,
+.progression-shell.swse-prog-v2-shell [data-region="work-surface"] label {
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--prog-ink-faint);
+}
+
+.progression-shell.swse-prog-v2-shell .prog-input,
+.progression-shell.swse-prog-v2-shell [data-region="work-surface"] input[type="text"],
+.progression-shell.swse-prog-v2-shell [data-region="work-surface"] input[type="number"],
+.progression-shell.swse-prog-v2-shell [data-region="work-surface"] textarea {
+  background: oklch(0 0 0 / 0.35);
+  border: none;
+  border-bottom: 1px solid oklch(var(--sheet-accent-primary) / 0.40);
+  color: var(--sheet-accent-primary);
+  text-shadow: 0 0 6px oklch(var(--sheet-accent-primary) / 0.6);
+  padding: 6px 8px;
+  font-family: var(--swse-font-body, system-ui, sans-serif);
+}
+
+.progression-shell.swse-prog-v2-shell .prog-input:focus,
+.progression-shell.swse-prog-v2-shell [data-region="work-surface"] input[type="text"]:focus,
+.progression-shell.swse-prog-v2-shell [data-region="work-surface"] input[type="number"]:focus,
+.progression-shell.swse-prog-v2-shell [data-region="work-surface"] textarea:focus {
+  outline: none;
+  border-bottom-color: var(--sheet-accent-primary);
+  background: oklch(var(--sheet-accent-primary) / 0.04);
+  box-shadow: inset 0 0 8px oklch(var(--sheet-accent-primary) / 0.1);
+}
+
+/* ---------- ABILITY CELLS ---------- */
+
+.progression-shell.swse-prog-v2-shell .ability-cell,
+.progression-shell.swse-prog-v2-shell .prog-ability-cell {
+  background:
+    linear-gradient(180deg,
+      oklch(var(--sheet-accent-primary) / 0.06),
+      oklch(0 0 0 / 0.15));
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.22);
+  padding: 14px 12px;
+  position: relative;
+  text-align: center;
+}
+
+.progression-shell.swse-prog-v2-shell .ability-cell::before,
+.progression-shell.swse-prog-v2-shell .prog-ability-cell::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  background: var(--sheet-accent-primary);
+  opacity: 0.6;
+  box-shadow: 0 0 6px var(--sheet-accent-primary);
+}
+
+.progression-shell.swse-prog-v2-shell .ability-cell .ab-code,
+.progression-shell.swse-prog-v2-shell .ability-cell .ab-name,
+.progression-shell.swse-prog-v2-shell .prog-ability .code {
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.progression-shell.swse-prog-v2-shell .ability-cell .ab-val,
+.progression-shell.swse-prog-v2-shell .prog-ability .value {
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 48px;
+  line-height: 1;
+  color: var(--sheet-accent-primary);
+  text-shadow: 0 0 12px oklch(var(--sheet-accent-primary) / 0.5);
+}
+
+/* ---------- SIGNED VALUE COLORS ---------- */
+
+.progression-shell.swse-prog-v2-shell .pos,
+.progression-shell.swse-prog-v2-shell .is-positive,
+.progression-shell.swse-prog-v2-shell .positive-mod {
+  color: oklch(0.82 0.19 145) !important;
+  text-shadow: 0 0 8px oklch(0.82 0.19 145 / 0.5) !important;
+}
+
+.progression-shell.swse-prog-v2-shell .neg,
+.progression-shell.swse-prog-v2-shell .is-negative,
+.progression-shell.swse-prog-v2-shell .negative-mod {
+  color: oklch(0.70 0.22 25) !important;
+  text-shadow: 0 0 8px oklch(0.70 0.22 25 / 0.5) !important;
+}
+
+.progression-shell.swse-prog-v2-shell .zero,
+.progression-shell.swse-prog-v2-shell .is-zero {
+  color: oklch(0.88 0.17 95) !important;
+  text-shadow: 0 0 8px oklch(0.88 0.17 95 / 0.5) !important;
+}
+
+/* ---------- SKILL ROWS ---------- */
+
+.progression-shell.swse-prog-v2-shell .skill-row,
+.progression-shell.swse-prog-v2-shell .prog-skill-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: oklch(0 0 0 / 0.2);
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.12);
+  transition: border-color 0.15s ease, background 0.15s ease;
+  cursor: pointer;
+}
+
+.progression-shell.swse-prog-v2-shell .skill-row:hover,
+.progression-shell.swse-prog-v2-shell .prog-skill-row:hover {
+  border-color: oklch(var(--sheet-accent-primary) / 0.40);
+  background: oklch(var(--sheet-accent-primary) / 0.06);
+}
+
+.progression-shell.swse-prog-v2-shell .skill-row.trained,
+.progression-shell.swse-prog-v2-shell .prog-skill-row.is-trained {
+  background: oklch(var(--sheet-accent-primary) / 0.10);
+  border-color: var(--sheet-accent-primary);
+}
+
+.progression-shell.swse-prog-v2-shell .skill-row.locked,
+.progression-shell.swse-prog-v2-shell .prog-skill-row.is-locked {
+  background: oklch(var(--sheet-accent-primary) / 0.06);
+  border-color: oklch(var(--sheet-accent-primary) / 0.30);
+  border-left: 3px solid oklch(0.80 0.16 60);
+  opacity: 0.7;
+}
+
+.progression-shell.swse-prog-v2-shell .skill-name,
+.progression-shell.swse-prog-v2-shell .prog-skill-name {
+  flex: 1 1 auto;
+  font-weight: 500;
+  color: var(--prog-ink);
+}
+
+.progression-shell.swse-prog-v2-shell .skill-mod,
+.progression-shell.swse-prog-v2-shell .prog-skill-mod {
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  color: var(--prog-ink-dim);
+}
+
+/* ---------- FEAT / TALENT PICK CARDS ---------- */
+
+.progression-shell.swse-prog-v2-shell .pick,
+.progression-shell.swse-prog-v2-shell .prog-pick-card,
+.progression-shell.swse-prog-v2-shell .swse-option-card {
+  position: relative;
+  padding: 14px 16px;
+  background:
+    linear-gradient(180deg,
+      oklch(var(--sheet-accent-primary) / 0.04),
+      transparent);
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.18);
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.progression-shell.swse-prog-v2-shell .pick:hover,
+.progression-shell.swse-prog-v2-shell .prog-pick-card:hover,
+.progression-shell.swse-prog-v2-shell .swse-option-card:hover {
+  border-color: oklch(var(--sheet-accent-primary) / 0.50);
+  background: oklch(var(--sheet-accent-primary) / 0.08);
+}
+
+.progression-shell.swse-prog-v2-shell .pick.on,
+.progression-shell.swse-prog-v2-shell .prog-pick-card.is-selected,
+.progression-shell.swse-prog-v2-shell .swse-option-card[data-selected="true"] {
+  border-color: var(--sheet-accent-primary);
+  background: oklch(var(--sheet-accent-primary) / 0.10);
+  box-shadow: 0 0 24px oklch(var(--sheet-accent-primary) / 0.20);
+}
+
+.progression-shell.swse-prog-v2-shell .pick.locked,
+.progression-shell.swse-prog-v2-shell .prog-pick-card.is-locked,
+.progression-shell.swse-prog-v2-shell .swse-option-card[data-locked="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.progression-shell.swse-prog-v2-shell .pick .pick-code,
+.progression-shell.swse-prog-v2-shell .pick .pick-prereq,
+.progression-shell.swse-prog-v2-shell .swse-option-card__code {
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+/* ---------- FOOTER BUTTONS ---------- */
+
+.progression-shell.swse-prog-v2-shell .btn,
+.progression-shell.swse-prog-v2-shell .swse-btn,
+.progression-shell.swse-prog-v2-shell button[data-action] {
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  transition: all 0.2s ease;
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.progression-shell.swse-prog-v2-shell .btn.primary,
+.progression-shell.swse-prog-v2-shell .swse-btn--confirm,
+.progression-shell.swse-prog-v2-shell .swse-btn--advance-ready {
+  background: oklch(var(--sheet-accent-primary) / 0.15);
+  border: 1px solid var(--sheet-accent-primary);
+  color: var(--sheet-accent-primary);
+  text-shadow: 0 0 6px oklch(var(--sheet-accent-primary) / 0.6);
+}
+
+.progression-shell.swse-prog-v2-shell .btn.primary:hover,
+.progression-shell.swse-prog-v2-shell .swse-btn--confirm:hover,
+.progression-shell.swse-prog-v2-shell .swse-btn--advance-ready:hover {
+  background: oklch(var(--sheet-accent-primary) / 0.25);
+  box-shadow: 0 0 16px oklch(var(--sheet-accent-primary) / 0.3);
+}
+
+.progression-shell.swse-prog-v2-shell .btn.ghost,
+.progression-shell.swse-prog-v2-shell .swse-btn--back {
+  background: transparent;
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.30);
+  color: var(--prog-ink-dim);
+}
+
+.progression-shell.swse-prog-v2-shell .btn.ghost:hover,
+.progression-shell.swse-prog-v2-shell .swse-btn--back:hover {
+  border-color: oklch(var(--sheet-accent-primary) / 0.50);
+  background: oklch(var(--sheet-accent-primary) / 0.08);
+  color: var(--prog-ink);
+}
+
+.progression-shell.swse-prog-v2-shell button:disabled,
+.progression-shell.swse-prog-v2-shell .btn:disabled,
+.progression-shell.swse-prog-v2-shell .swse-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- OPTION ROWS (Species, Class, etc.) ---------- */
+
+.progression-shell.swse-prog-v2-shell .prog-species-row,
+.progression-shell.swse-prog-v2-shell .prog-class-row,
+.progression-shell.swse-prog-v2-shell .swse-option-row {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 64px;
+  width: 100%;
+  padding: 12px 32px;
+  background:
+    linear-gradient(180deg,
+      oklch(var(--sheet-accent-primary) / 0.04),
+      transparent);
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.18);
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.progression-shell.swse-prog-v2-shell .prog-species-row:hover,
+.progression-shell.swse-prog-v2-shell .prog-class-row:hover,
+.progression-shell.swse-prog-v2-shell .swse-option-row:hover {
+  border-color: oklch(var(--sheet-accent-primary) / 0.50);
+  background: oklch(var(--sheet-accent-primary) / 0.08);
+  box-shadow: 0 0 12px oklch(var(--sheet-accent-primary) / 0.12);
+}
+
+.progression-shell.swse-prog-v2-shell .prog-species-row--focused,
+.progression-shell.swse-prog-v2-shell .prog-class-row--focused,
+.progression-shell.swse-prog-v2-shell .swse-option-row.is-focused {
+  border-color: var(--sheet-accent-primary);
+  background: oklch(var(--sheet-accent-primary) / 0.10);
+  box-shadow: 0 0 16px oklch(var(--sheet-accent-primary) / 0.15);
+}
+
+.progression-shell.swse-prog-v2-shell .prog-species-row--committed,
+.progression-shell.swse-prog-v2-shell .prog-class-row--committed,
+.progression-shell.swse-prog-v2-shell .swse-option-row.is-selected {
+  border-color: var(--sheet-accent-primary);
+  background: oklch(var(--sheet-accent-primary) / 0.12);
+  box-shadow: 0 0 20px oklch(var(--sheet-accent-primary) / 0.20);
+}
+
+.progression-shell.swse-prog-v2-shell .prog-species-row__name,
+.progression-shell.swse-prog-v2-shell .prog-class-row__name,
+.progression-shell.swse-prog-v2-shell .option-row__name {
+  font-weight: 600;
+  color: var(--prog-ink);
+}
+
+/* ---------- REDUCED MOTION ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .progression-shell.swse-prog-v2-shell *,
+  .progression-shell.swse-prog-v2-shell *::before,
+  .progression-shell.swse-prog-v2-shell *::after {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

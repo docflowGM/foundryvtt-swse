@@ -1,13 +1,9 @@
 /* ============================================================================
-   SPECIES STEP — SVG-framed option browser (AUTHORITY VERSION)
+   SPECIES STEP — CSS-FRAMED OPTION BROWSER (PHASE 2)
 
-   This implementation uses the established SVG option-frame system for all
-   visual states. No CSS borders or gradients simulate frames; SVGs are the source of truth.
-
-   Frame SVG Assets:
-   - swse-angled-option-frame.svg           (default state)
-   - swse-angled-option-frame-hover.svg     (hover/focus preview state)
-   - swse-angled-option-frame-selected.svg  (committed/confirmed selection)
+   Phase 2 interior reskin: replaces SVG frames with CSS borders/glows.
+   Inherits token-based styling from progression-interiors-phase2.css.
+   No logic changes; purely cosmetic.
    ============================================================================ */
 
 /* Browse container — fills work-surface */
@@ -22,7 +18,7 @@
 }
 
 /* ============================================================================
-   SPECIES LIST — scrollable vertical stack of SVG-framed rows
+   SPECIES LIST — scrollable vertical stack of CSS-framed rows
    ============================================================================ */
 
 .progression-shell .prog-species-list {
@@ -37,67 +33,24 @@
 }
 
 /* ============================================================================
-   SPECIES ROW — SVG-framed option rows (decorative inner guide removed)
+   SPECIES ROW — CSS-framed option rows (Phase 2)
 
-   After surgical cleanup of SVG assets:
-   - Removed inner safe-content guide rectangle (dashed rect)
-   - Removed title notch accent detail (top path)
-   - Preserved outer chevron frame, holo styling, and visual hierarchy
-   - Row text is now fully readable without decorative overlay
+   Inherits base styling from progression-interiors-phase2.css:
+   - CSS borders and glows instead of SVG frames
+   - Consistent hover/focused/committed state styling
+   - Token-based colors and transitions
    ============================================================================ */
 
 .progression-shell .prog-species-row {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-
-  /* Consistent frame sizing */
-  min-height: 64px;
-  width: 100%;
-
-  /* SVG background for default state (using compact version for 64px rows) */
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: #040b13;
-
-  /* SVG is the chrome — no CSS borders */
-  border: none;
-
-  /* Padding clears the frame border */
-  padding: 12px 32px;
-
-  /* Text and interaction styling */
+  /* Base styling inherited from Phase 2 interior CSS */
+  /* Provides: border, background, transitions */
   text-align: left;
   font-family: inherit;
   font-size: var(--prog-font-size-xs);
-  color: var(--prog-text);
-  cursor: pointer;
-
-  /* State transition animation — smooth SVG swap + opacity */
-  transition: background-image var(--prog-transition-fast),
-              box-shadow var(--prog-transition-fast);
-}
-
-/* Hover state → reveal the compact frame with hover styling */
-.progression-shell .prog-species-row:hover {
-  box-shadow: 0 0 16px rgba(0, 180, 255, 0.15);
 }
 
 .progression-shell .prog-species-row:focus {
   outline: none;
-}
-
-/* Focused state (clicked, details panel shows) → compact SVG frame */
-.progression-shell .prog-species-row--focused {
-  box-shadow: 0 0 16px rgba(0, 180, 255, 0.15);
-}
-
-/* Committed state (confirmed selection) → selected SVG frame */
-.progression-shell .prog-species-row--committed {
-  box-shadow: 0 0 20px rgba(0, 220, 120, 0.2);
 }
 
 /* ============================================================================

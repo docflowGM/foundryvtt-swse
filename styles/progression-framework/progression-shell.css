@@ -1,5 +1,5 @@
 /**
- * progression-shell.css — PHASE 1
+ * progression-shell.css — PHASE 1 + PHASE 2
  *
  * SWSE Progression Shell — OKLCh Datapad Language
  *
@@ -11,11 +11,16 @@
  * - Sci-fi UI hierarchy matching the progression mockup
  *
  * Layout structure: mentor-rail → progress-rail → utility-bar → (summary | work-surface | details) → action-footer
- * All styling CSS-only; no SVG decorative backgrounds (Phase 1 shell-only scope)
+ * All styling CSS-only; no SVG decorative backgrounds
  * Future-ready for shared actor-sheet theme/motion inheritance
  *
- * No step card/interior work in Phase 1; that is Phase 2.
+ * PHASE 1: Shell-only (outer frame, regions, header/footer)
+ * PHASE 2: Interior styling (cards, rows, fields, buttons)
+ *
+ * Imports: progression-interiors-phase2.css (step card/row styling)
  */
+
+@import url('./progression-interiors-phase2.css');
 
 /* =============================================================================
  * FOUNDRY WINDOW HEIGHT CHAIN
