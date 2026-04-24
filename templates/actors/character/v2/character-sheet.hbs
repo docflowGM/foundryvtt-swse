@@ -1,316 +1,382 @@
 <div class="swse-character-sheet-wrapper">
 <form class="swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui" autocomplete="off">
-<section class="sheet-shell swse-character-sheet swse-sheet v2 flexcol">
 
-  <!-- HEADER -->
-  <header class="sheet-header holo-header">
-    <!-- LEFT: PORTRAIT ONLY -->
-    <div class="sheet-header-left" data-role="actor-portrait-dropzone">
-      <img class="profile" src="{{actor.img}}" data-edit="img" data-role="actor-portrait-image" title="Click or drop image to update portrait" height="64" width="64"/>
-    </div>
+<!-- V2 SHELL OUTER CONTAINER -->
+<div class="swse-sheet-v2-shell" data-theme="{{sheetTheme}}" data-motion-style="{{sheetMotionStyle}}" style="{{sheetThemeStyle}}; {{sheetMotionStyleInline}}">
+  <div class="swse-v2-tablet">
+    <div class="swse-v2-screen">
 
-    <!-- CENTER: NAME/PLAYER + COMPACT META GRID -->
-    <div class="sheet-header-center">
-      <!-- Top line: Name and Player -->
-      <div class="sheet-header-topline">
-        <div class="header-name-block">
-          <h1 class="charname"><input name="name" type="text" value="{{biographyPanel.identity.name}}" placeholder="Name"/></h1>
+      <!-- HUD/STATUS BAR -->
+      <div class="swse-v2-hud">
+        <div class="swse-v2-hud-left">
+          <span class="tag"><span class="dot"></span>LINK</span>
+          <span class="tag"><span class="dot warn"></span>CHAR-REC</span>
+          <span class="tag">ENC · AES-2048</span>
         </div>
-        <div class="header-player">
-          <label>Player:</label>
-          <input name="flags.swse.character.player" type="text" value="{{biographyPanel.identity.player}}" placeholder="Player Name"/>
+        <div class="swse-v2-hud-title">CHARACTER RECORD // MK-VII</div>
+        <div class="swse-v2-hud-right">
+          {{!-- reserved for future status indicators --}}
         </div>
       </div>
 
-      <!-- Compact metadata grid: Class / Species / Level -->
-      <div class="sheet-header-meta-grid">
-        <div class="header-field">
-          <label>Class:</label>
-          <div class="field-with-button">
-            <input name="system.class" type="text" value="{{biographyPanel.identity.class}}" placeholder="Select Class"/>
-            <button type="button" class="header-select-btn" data-action="cmd-select-class" title="Select Class from progression system">⚙️</button>
+      <!-- TITLE STRIP -->
+      <div class="swse-v2-title-strip">◇ CHARACTER DOSSIER ◇</div>
+
+      <!-- HEADER SECTION: PORTRAIT, IDENTITY, DEFENSES -->
+      <header class="swse-v2-header">
+        <!-- PORTRAIT REGION -->
+        <div class="swse-v2-portrait-region">
+          <img class="profile" src="{{actor.img}}" data-edit="img" data-role="actor-portrait-image" title="Click or drop image to update portrait" height="128" width="128"/>
+        </div>
+
+        <!-- IDENTITY REGION: NAME, CLASS, SPECIES, LEVEL -->
+        <div class="swse-v2-identity-region">
+          <div class="header-name-block">
+            <h1 class="charname"><input name="name" type="text" value="{{biographyPanel.identity.name}}" placeholder="Name"/></h1>
           </div>
-        </div>
-        <div class="header-field">
-          <label>Species:</label>
-          <div class="field-with-button">
-            <input name="system.race" type="text" value="{{biographyPanel.identity.species}}" placeholder="Select Species"/>
-            <button type="button" class="header-select-btn" data-action="cmd-select-species" title="Select Species from progression system">⚙️</button>
+          <div class="header-player">
+            <label>Player:</label>
+            <input name="flags.swse.character.player" type="text" value="{{biographyPanel.identity.player}}" placeholder="Player Name"/>
           </div>
-        </div>
-        <div class="header-field">
-          <label>Level:</label>
-          <input name="system.level" type="number" value="{{biographyPanel.identity.level}}" min="1" max="20" placeholder="1"/>
-        </div>
-      </div>
-
-      <!-- TACTICAL RESOURCE STRIP: compact HP / XP / FP / DP / Second Wind -->
-                  <div class="header-tactical-strip">
-                    <div class="tactical-resource tactical-resource--hp">
-                      <span class="tactical-resource__label">HP</span>
-                      <div class="resource-segment-bar resource-segment-bar--hp"
-                           data-resource-visual="hp"
-                           data-hp-current="{{healthPanel.hp.value}}"
-                           data-hp-max="{{healthPanel.hp.max}}"
-                           data-hp-temp="{{healthPanel.hp.temp}}">
-                        {{#each headerHpSegments as |segment|}}
-                          <span class="resource-segment {{segment.colorClass}} {{#if segment.filled}}is-filled{{/if}}"></span>
-                        {{/each}}
-                      </div>
-                    </div>
-
-                    <div class="tactical-resource tactical-resource--xp">
-                      <span class="tactical-resource__label">XP</span>
-                      <div class="resource-segment-bar resource-segment-bar--xp"
-                           data-resource-visual="xp"
-                           data-xp-total="{{xpData.total}}"
-                           data-xp-percent="{{xpData.percentRounded}}">
-                        {{#each headerXpSegments as |segment|}}
-                          <span class="resource-segment {{#if segment.filled}}is-filled{{/if}}"></span>
-                        {{/each}}
-                      </div>
-                    </div>
-
-                    <div class="tactical-resource tactical-resource--fp">
-                      <span class="tactical-resource__label">FP</span>
-                      <span class="tactical-resource__value mod {{#if (gt forcePointsValue 0)}}mod--positive{{else if (lt forcePointsValue 0)}}mod--negative{{else}}mod--zero{{/if}}">{{forcePointsValue}} / {{forcePointsMax}}</span>
-                    </div>
-
-                    <div class="tactical-resource tactical-resource--dp">
-                      <span class="tactical-resource__label">DP</span>
-                      <span class="tactical-resource__value mod {{#if (gt destinyPointsValue 0)}}mod--positive{{else if (lt destinyPointsValue 0)}}mod--negative{{else}}mod--zero{{/if}}">{{destinyPointsValue}} / {{destinyPointsMax}}</span>
-                    </div>
-
-                    <div class="tactical-resource tactical-resource--sw">
-                      <div class="tactical-resource__sw-head">
-                        <span class="tactical-resource__label">Second Wind</span>
-                        <span class="tactical-resource__meta">Uses: {{secondWindPanel.uses}}</span>
-                      </div>
-                      <div class="tactical-resource__sw-body">
-                        <span class="tactical-resource__meta">Heals {{secondWindPanel.healing}} HP</span>
-                        <button type="button" class="sw-use-btn" data-action="use-second-wind" {{#unless secondWindPanel.hasUses}}disabled{{/unless}}>Use</button>
-                      </div>
-                    </div>
-                  </div>
+          <div class="sheet-header-meta-grid">
+            <div class="header-field">
+              <label>Class:</label>
+              <div class="field-with-button">
+                <input name="system.class" type="text" value="{{biographyPanel.identity.class}}" placeholder="Select Class"/>
+                <button type="button" class="header-select-btn" data-action="cmd-select-class" title="Select Class from progression system">⚙️</button>
               </div>
+            </div>
+            <div class="header-field">
+              <label>Species:</label>
+              <div class="field-with-button">
+                <input name="system.race" type="text" value="{{biographyPanel.identity.species}}" placeholder="Select Species"/>
+                <button type="button" class="header-select-btn" data-action="cmd-select-species" title="Select Species from progression system">⚙️</button>
+              </div>
+            </div>
+            <div class="header-field">
+              <label>Level:</label>
+              <input name="system.level" type="number" value="{{biographyPanel.identity.level}}" min="1" max="20" placeholder="1"/>
+            </div>
+          </div>
+        </div>
 
-    <!-- RIGHT: DEFENSE READOUT (uses canonical defensePanel context) -->
-    <div class="sheet-header-right sheet-header-right--compact">
-      {{#each defensePanel.defenses as |def|}}
-        {{#if (eq def.key "fort")}}
+        <!-- DEFENSES REGION: FORT, REF, WILL, DT -->
+        <div class="swse-v2-level-region">
+          {{#each defensePanel.defenses as |def|}}
+            {{#if (eq def.key "fort")}}
+              <div class="header-defense-readout">
+                <span class="header-defense-readout__label">FORT</span>
+                <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
+              </div>
+            {{else if (eq def.key "ref")}}
+              <div class="header-defense-readout">
+                <span class="header-defense-readout__label">REF</span>
+                <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
+              </div>
+            {{else if (eq def.key "will")}}
+              <div class="header-defense-readout">
+                <span class="header-defense-readout__label">WILL</span>
+                <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
+              </div>
+            {{/if}}
+          {{/each}}
           <div class="header-defense-readout">
-            <span class="header-defense-readout__label">FORT</span>
-            <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
+            <span class="header-defense-readout__label">DT</span>
+            <span class="header-defense-readout__value mod {{#if (gt derived.damageThreshold 10)}}mod--positive{{else if (lt derived.damageThreshold 10)}}mod--negative{{else}}mod--zero{{/if}}">{{derived.damageThreshold}}</span>
           </div>
-        {{else if (eq def.key "ref")}}
-          <div class="header-defense-readout">
-            <span class="header-defense-readout__label">REF</span>
-            <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
+        </div>
+      </header>
+
+      <!-- RESOURCE STRIP: HP, DP, FP, CT -->
+      <section class="swse-v2-resource-strip">
+        <div class="swse-v2-resource swse-v2-resource--hp">
+          <div class="tactical-resource tactical-resource--hp">
+            <span class="tactical-resource__label">HP</span>
+            <div class="resource-segment-bar resource-segment-bar--hp"
+                 data-resource-visual="hp"
+                 data-hp-current="{{healthPanel.hp.value}}"
+                 data-hp-max="{{healthPanel.hp.max}}"
+                 data-hp-temp="{{healthPanel.hp.temp}}">
+              {{#each headerHpSegments as |segment|}}
+                <span class="resource-segment {{segment.colorClass}} {{#if segment.filled}}is-filled{{/if}}"></span>
+              {{/each}}
+            </div>
           </div>
-        {{else if (eq def.key "will")}}
-          <div class="header-defense-readout">
-            <span class="header-defense-readout__label">WILL</span>
-            <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
+        </div>
+
+        <div class="swse-v2-resource swse-v2-resource--xp">
+          <div class="tactical-resource tactical-resource--xp">
+            <span class="tactical-resource__label">XP</span>
+            <div class="resource-segment-bar resource-segment-bar--xp"
+                 data-resource-visual="xp"
+                 data-xp-total="{{xpData.total}}"
+                 data-xp-percent="{{xpData.percentRounded}}">
+              {{#each headerXpSegments as |segment|}}
+                <span class="resource-segment {{#if segment.filled}}is-filled{{/if}}"></span>
+              {{/each}}
+            </div>
           </div>
+        </div>
+
+        <div class="swse-v2-resource swse-v2-resource--fp">
+          <div class="tactical-resource tactical-resource--fp">
+            <span class="tactical-resource__label">FP</span>
+            <span class="tactical-resource__value mod {{#if (gt forcePointsValue 0)}}mod--positive{{else if (lt forcePointsValue 0)}}mod--negative{{else}}mod--zero{{/if}}">{{forcePointsValue}} / {{forcePointsMax}}</span>
+          </div>
+        </div>
+
+        <div class="swse-v2-resource swse-v2-resource--dp">
+          <div class="tactical-resource tactical-resource--dp">
+            <span class="tactical-resource__label">DP</span>
+            <span class="tactical-resource__value mod {{#if (gt destinyPointsValue 0)}}mod--positive{{else if (lt destinyPointsValue 0)}}mod--negative{{else}}mod--zero{{/if}}">{{destinyPointsValue}} / {{destinyPointsMax}}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACTION BUTTONS -->
+      <div class="sheet-actions">
+        {{#if isLevel0}}
+          <button type="button" data-action="cmd-chargen" class="header-btn">Chargen</button>
+        {{else}}
+          <button type="button" data-action="cmd-levelup" class="header-btn {{#if xpLevelReady}}ready{{/if}}">Level Up</button>
         {{/if}}
-      {{/each}}
-      <div class="header-defense-readout">
-        <span class="header-defense-readout__label">DT</span>
-        <span class="header-defense-readout__value mod {{#if (gt derived.damageThreshold 10)}}mod--positive{{else if (lt derived.damageThreshold 10)}}mod--negative{{else}}mod--zero{{/if}}">{{derived.damageThreshold}}</span>
-      </div>
-    </div>
-  </header>
-
-  <!-- ACTION BUTTONS -->
-  <div class="sheet-actions">
-    {{#if isLevel0}}
-      <button type="button" data-action="cmd-chargen" class="header-btn">Chargen</button>
-    {{else}}
-      <button type="button" data-action="cmd-levelup" class="header-btn {{#if xpLevelReady}}ready{{/if}}">Level Up</button>
-    {{/if}}
-    <button type="button" data-action="cmd-store" class="header-btn">Store</button>
-    <button type="button" data-action="open-mentor" class="header-btn"><i class="fas fa-user-astronaut"></i> Mentor</button>
-    <button type="button" data-action="toggle-help-mode" class="header-btn help-mode-toggle" title="{{helpLevelDescription}}">
-      <i class="fas fa-question-circle"></i> {{helpLevelLabel}}
-    </button>
-  </div>
-
-  <!-- TABS -->
-  <nav class="sheet-tabs tabs flexrow" data-group="primary" data-tab-group="primary">
-    <a class="item active" data-action="tab" data-tab="overview" data-group="primary" data-tab-group="primary">Overview</a>
-    <a class="item" data-action="tab" data-tab="abilities" data-group="primary" data-tab-group="primary">Abilities</a>
-    <a class="item" data-action="tab" data-tab="skills" data-group="primary" data-tab-group="primary">Skills</a>
-    <a class="item" data-action="tab" data-tab="combat" data-group="primary" data-tab-group="primary">Combat</a>
-    <a class="item" data-action="tab" data-tab="talents" data-group="primary" data-tab-group="primary">Talents & Feats</a>
-    {{#if actor.system.forceSensitive}}<a class="item" data-action="tab" data-tab="force" data-group="primary" data-tab-group="primary">Force</a>{{/if}}
-    <a class="item" data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary">Gear</a>
-    <a class="item" data-action="tab" data-tab="biography" data-group="primary" data-tab-group="primary">Biography</a>
-    <a class="item" data-action="tab" data-tab="relationships" data-group="primary" data-tab-group="primary">Relationships</a>
-  </nav>
-
-  <!-- BODY -->
-  <section class="sheet-body sheet-content flexcol">
-
-    <!-- OVERVIEW TAB -->
-    <section class="tab active flexcol" data-group="primary" data-tab-group="primary" data-tab="overview">
-      <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-left flexcol">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs"}}
-        </div>
-        <div class="swse-v2-right flexcol">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs"}}
-        </div>
-      </div>
-    </section>
-
-    <!-- ABILITIES TAB -->
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="abilities">
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/racial-ability-panel.hbs"}}
-    </section>
-
-    <!-- SKILLS TAB -->
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="skills">
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
-    </section>
-
-    <!-- COMBAT TAB -->
-    <section class="tab flexcol combat-tab-container" data-group="primary" data-tab-group="primary" data-tab="combat">
-
-      <!-- COMBAT TAB: Defenses & Combat Metrics (moved from Overview) -->
-      <div class="combat-readout-area">
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/resources-panel.hbs"}}
-      </div>
-
-      <!-- COMBAT TAB: Main Content Area + Right Sidebar (flexed side-by-side) -->
-      <div class="combat-content-wrapper">
-
-        <!-- COMBAT TAB: Main Content Area (left/center) -->
-        <div class="combat-main-area flexcol">
-
-          <!-- TOP: Initiative Control -->
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs"}}
-
-          <!-- TOP: Attacks Panel -->
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
-
-          <!-- CENTER: Combat Actions Panel (main functional area) -->
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
-
-          <!-- NOTES: Special Combat Actions (compact) -->
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/special-combat-actions-panel.hbs"}}
-        </div>
-
-        <!-- COMBAT TAB: Right Sidebar (action economy tracker + controls) -->
-        {{#if actionEconomy}}
-          <div class="combat-sidebar">
-            <!-- Action Economy Tracker -->
-            <div class="action-economy-indicator-placeholder" style="display:none;"></div>
-
-            <!-- New Round / Turn Reset Controls -->
-            <div class="combat-turn-controls">
-              <button type="button"
-                      class="swse-btn swse-btn--primary new-round-btn"
-                      data-action="new-round"
-                      title="Reset actions for a new round (or wait for your turn)">
-                ↻ New Round
-              </button>
-              <div class="turn-hint">
-                Actions auto-reset on your turn
-              </div>
+        <button type="button" data-action="cmd-store" class="header-btn">Store</button>
+        <button type="button" data-action="open-mentor" class="header-btn"><i class="fas fa-user-astronaut"></i> Mentor</button>
+        <button type="button" data-action="toggle-help-mode" class="header-btn help-mode-toggle" title="{{helpLevelDescription}}">
+          <i class="fas fa-question-circle"></i> {{helpLevelLabel}}
+        </button>
+        {{#if editable}}
+          <div class="swse-v2-theme-picker">
+            <span class="swse-v2-theme-picker__label">Theme</span>
+            <div class="swse-v2-theme-picker__groups">
+              {{#each sheetThemeGroups}}
+                <div class="swse-v2-theme-group">
+                  <div class="swse-v2-theme-group__title">{{label}}</div>
+                  <div class="swse-v2-theme-group__chips">
+                    {{#each options}}
+                      <button
+                        type="button"
+                        class="swse-v2-theme-chip {{#if selected}}is-active{{/if}}"
+                        data-action="set-sheet-theme"
+                        data-theme="{{value}}"
+                        title="{{description}}"
+                      >
+                        <span class="swse-v2-theme-chip__swatch swatch--{{value}}"></span>
+                        <span class="swse-v2-theme-chip__text">{{label}}</span>
+                      </button>
+                    {{/each}}
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+          <div class="swse-v2-motion-picker">
+            <span class="swse-v2-motion-picker__label">Motion</span>
+            <div class="swse-v2-motion-picker__chips">
+              {{#each sheetMotionOptions}}
+                <button
+                  type="button"
+                  class="swse-v2-motion-chip {{#if (eq value ../sheetMotionStyle)}}is-active{{/if}}"
+                  data-action="set-sheet-motion-style"
+                  data-motion-style="{{value}}"
+                  title="{{description}}"
+                >
+                  <span class="swse-v2-motion-chip__text">{{label}}</span>
+                </button>
+              {{/each}}
             </div>
           </div>
         {{/if}}
-
       </div>
 
-    </section>
+      <!-- TABS NAVIGATION -->
+      <nav class="swse-v2-tabs sheet-tabs" data-group="primary" data-tab-group="primary">
+        <a class="swse-v2-tab item active" data-action="tab" data-tab="overview" data-group="primary" data-tab-group="primary">Overview</a>
+        <a class="swse-v2-tab item" data-action="tab" data-tab="abilities" data-group="primary" data-tab-group="primary">Abilities</a>
+        <a class="swse-v2-tab item" data-action="tab" data-tab="skills" data-group="primary" data-tab-group="primary">Skills</a>
+        <a class="swse-v2-tab item" data-action="tab" data-tab="combat" data-group="primary" data-tab-group="primary">Combat</a>
+        <a class="swse-v2-tab item" data-action="tab" data-tab="talents" data-group="primary" data-tab-group="primary">Talents & Feats</a>
+        {{#if actor.system.forceSensitive}}<a class="swse-v2-tab item" data-action="tab" data-tab="force" data-group="primary" data-tab-group="primary">Force</a>{{/if}}
+        <a class="swse-v2-tab item" data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary">Gear</a>
+        <a class="swse-v2-tab item" data-action="tab" data-tab="biography" data-group="primary" data-tab-group="primary">Biography</a>
+        <a class="swse-v2-tab item" data-action="tab" data-tab="relationships" data-group="primary" data-tab-group="primary">Relationships</a>
+      </nav>
 
-    <!-- TALENTS TAB -->
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="talents">
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs"}}
-    </section>
+      <!-- BODY: SIDEBAR + MAIN CONTENT -->
+      <section class="swse-v2-body sheet-body sheet-content">
 
-    <!-- FORCE TAB -->
-    {{#if actor.system.forceSensitive}}
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="force">
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/force-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/force-powers-known-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/force-techniques-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/force-secrets-panel.hbs"}}
-    </section>
-    {{/if}}
+        <!-- SIDEBAR -->
+        <aside class="swse-v2-sidebar">
+          {{!-- Overview sidebar content or future summary panels --}}
+        </aside>
 
-    <!-- GEAR TAB -->
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="gear">
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/armor-summary-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/equipment-ledger-panel.hbs"}}
-    </section>
+        <!-- MAIN CONTENT: TAB SECTIONS -->
+        <main class="swse-v2-main">
 
-    <!-- BIOGRAPHY TAB (merged with former Record tab) -->
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="biography">
-      <!-- Identity & Portrait Section -->
-      <div class="record-sheet-grid">
-        <div class="record-left flexcol">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/portrait-panel.hbs"}}
-        </div>
-        <div class="record-right flexcol">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/character-record-header.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/bio-profile-panel.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/notes-panel.hbs"}}
+          <!-- OVERVIEW TAB -->
+          <section class="tab active flexcol" data-group="primary" data-tab-group="primary" data-tab="overview">
+            <div class="swse-v2-sheet-grid">
+              <div class="swse-v2-left flexcol">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs"}}
+              </div>
+              <div class="swse-v2-right flexcol">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs"}}
+              </div>
+            </div>
+          </section>
+
+          <!-- ABILITIES TAB -->
+          <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="abilities">
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/racial-ability-panel.hbs"}}
+          </section>
+
+          <!-- SKILLS TAB -->
+          <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="skills">
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
+          </section>
+
+          <!-- COMBAT TAB -->
+          <section class="tab flexcol combat-tab-container" data-group="primary" data-tab-group="primary" data-tab="combat">
+
+            <!-- COMBAT TAB: Defenses & Combat Metrics (moved from Overview) -->
+            <div class="combat-readout-area">
+              {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
+              {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/resources-panel.hbs"}}
+            </div>
+
+            <!-- COMBAT TAB: Main Content Area + Right Sidebar (flexed side-by-side) -->
+            <div class="combat-content-wrapper">
+
+              <!-- COMBAT TAB: Main Content Area (left/center) -->
+              <div class="combat-main-area flexcol">
+
+                <!-- TOP: Initiative Control -->
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs"}}
+
+                <!-- TOP: Attacks Panel -->
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
+
+                <!-- CENTER: Combat Actions Panel (main functional area) -->
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
+
+                <!-- NOTES: Special Combat Actions (compact) -->
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/special-combat-actions-panel.hbs"}}
+              </div>
+
+              <!-- COMBAT TAB: Right Sidebar (action economy tracker + controls) -->
+              {{#if actionEconomy}}
+                <div class="combat-sidebar">
+                  <!-- Action Economy Tracker -->
+                  <div class="action-economy-indicator-placeholder" style="display:none;"></div>
+
+                  <!-- New Round / Turn Reset Controls -->
+                  <div class="combat-turn-controls">
+                    <button type="button"
+                            class="swse-btn swse-btn--primary new-round-btn"
+                            data-action="new-round"
+                            title="Reset actions for a new round (or wait for your turn)">
+                      ↻ New Round
+                    </button>
+                    <div class="turn-hint">
+                      Actions auto-reset on your turn
+                    </div>
+                  </div>
+                </div>
+              {{/if}}
+
+            </div>
+
+          </section>
+
+          <!-- TALENTS TAB -->
+          <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="talents">
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs"}}
+          </section>
+
+          <!-- FORCE TAB -->
+          {{#if actor.system.forceSensitive}}
+          <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="force">
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/force-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/force-powers-known-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/force-techniques-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/force-secrets-panel.hbs"}}
+          </section>
+          {{/if}}
+
+          <!-- GEAR TAB -->
+          <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="gear">
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/armor-summary-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/equipment-ledger-panel.hbs"}}
+          </section>
+
+          <!-- BIOGRAPHY TAB (merged with former Record tab) -->
+          <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="biography">
+            <!-- Identity & Portrait Section -->
+            <div class="record-sheet-grid">
+              <div class="record-left flexcol">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/portrait-panel.hbs"}}
+              </div>
+              <div class="record-right flexcol">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/character-record-header.hbs"}}
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/bio-profile-panel.hbs"}}
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/notes-panel.hbs"}}
+              </div>
+            </div>
+            <!-- Narrative Biography -->
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/biography-log-panel.hbs"}}
+            <!-- Languages & Background -->
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs"}}
+          </section>
+
+          <!-- RELATIONSHIPS TAB -->
+          <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="relationships">
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/relationships-panel.hbs"}}
+          </section>
+
+        </main>
+
+      </section>
+
+      <!-- MODAL DIALOG FOR FEAT/TALENT SELECTION -->
+      <div id="item-selection-modal" class="item-selection-modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-dialog">
+          <svg class="modal-frame" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet">
+            <!-- Background panel -->
+            <rect x="10" y="10" width="580" height="280" fill="rgba(10, 25, 50, 0.95)" stroke="rgba(0, 255, 136, 0.3)" stroke-width="2" rx="8"/>
+
+            <!-- Title bar accent -->
+            <line x1="10" y1="70" x2="590" y2="70" stroke="rgba(0, 255, 136, 0.2)" stroke-width="1"/>
+
+            <!-- Button frame accents -->
+            <rect x="200" y="220" width="140" height="45" fill="none" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1" rx="4"/>
+            <rect x="360" y="220" width="140" height="45" fill="none" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1" rx="4"/>
+          </svg>
+
+          <div class="modal-content">
+            <h2 id="modal-title" class="modal-title"></h2>
+            <p id="modal-message" class="modal-message"></p>
+
+            <div class="modal-buttons">
+              <button id="modal-btn-yes" class="modal-button modal-button-yes" data-action="modal-yes">
+                Yes, Browse Compendium
+              </button>
+              <button id="modal-btn-no" class="modal-button modal-button-no" data-action="modal-no">
+                No, Create Blank
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-      <!-- Narrative Biography -->
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/biography-log-panel.hbs"}}
-      <!-- Languages & Background -->
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs"}}
-    </section>
 
-    <!-- RELATIONSHIPS TAB -->
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="relationships">
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/relationships-panel.hbs"}}
-    </section>
-
-  </section>
-
-  <!-- MODAL DIALOG FOR FEAT/TALENT SELECTION -->
-  <div id="item-selection-modal" class="item-selection-modal" style="display: none;">
-    <div class="modal-overlay"></div>
-    <div class="modal-dialog">
-      <svg class="modal-frame" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet">
-        <!-- Background panel -->
-        <rect x="10" y="10" width="580" height="280" fill="rgba(10, 25, 50, 0.95)" stroke="rgba(0, 255, 136, 0.3)" stroke-width="2" rx="8"/>
-
-        <!-- Title bar accent -->
-        <line x1="10" y1="70" x2="590" y2="70" stroke="rgba(0, 255, 136, 0.2)" stroke-width="1"/>
-
-        <!-- Button frame accents -->
-        <rect x="200" y="220" width="140" height="45" fill="none" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1" rx="4"/>
-        <rect x="360" y="220" width="140" height="45" fill="none" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1" rx="4"/>
-      </svg>
-
-      <div class="modal-content">
-        <h2 id="modal-title" class="modal-title"></h2>
-        <p id="modal-message" class="modal-message"></p>
-
-        <div class="modal-buttons">
-          <button id="modal-btn-yes" class="modal-button modal-button-yes" data-action="modal-yes">
-            Yes, Browse Compendium
-          </button>
-          <button id="modal-btn-no" class="modal-button modal-button-no" data-action="modal-no">
-            No, Create Blank
-          </button>
-        </div>
-      </div>
     </div>
   </div>
-
-</section>
+</div>
 
 </form>
 </div>

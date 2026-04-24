@@ -1,0 +1,394 @@
+/* ============================================================================
+   PHASE 8: BREATHING / HOLOGRAPHIC MOTION
+   Comprehensive breathing glow, scanline sweeps, resource shimmer, and hover polish
+   ============================================================================ */
+
+/* ---------- MOTION TOKENS ---------- */
+.swse-sheet-v2-shell {
+  --motion-breathe-speed: 4.8s;
+  --motion-shimmer-speed: 2.8s;
+  --motion-scan-speed: 3.6s;
+  --motion-sweep-speed: 3.2s;
+  --motion-pulse-speed: 2.4s;
+  --motion-flicker-speed: 1.8s;
+  --motion-hover-speed: 0.3s;
+}
+
+/* ============================================================================
+   BREATHING GLOW ANIMATIONS
+   Core pulse effect for HUD, title strip, active tab, important readouts
+   ============================================================================ */
+
+@keyframes swse-v2-breathe-glow {
+  0%, 100% {
+    opacity: 0.6;
+    filter: brightness(1) drop-shadow(0 0 8px var(--vapor-cyan));
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.1) drop-shadow(0 0 16px var(--vapor-cyan));
+  }
+}
+
+/* HUD breathing - title and status info */
+.swse-sheet-v2-shell .swse-v2-hud-title,
+.swse-sheet-v2-shell .swse-v2-hud .tag {
+  animation: swse-v2-breathe-glow var(--motion-breathe-speed) ease-in-out infinite;
+}
+
+/* Title strip breathing */
+.swse-sheet-v2-shell .swse-v2-title-strip {
+  animation: swse-v2-breathe-glow calc(var(--motion-breathe-speed) * 1.2) ease-in-out infinite;
+}
+
+/* ============================================================================
+   SCANLINE / HOLO SWEEP ANIMATIONS
+   Diagonal sweep effect for tech aesthetic across key regions
+   ============================================================================ */
+
+@keyframes swse-v2-holo-sweep {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  90% {
+    opacity: 0;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* Sweep effect for title strip */
+.swse-sheet-v2-shell .swse-v2-title-strip::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--vapor-cyan), transparent);
+  animation: swse-v2-holo-sweep var(--motion-sweep-speed) ease-in infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Sweep effect for resource strip - enhance existing portrait scan */
+@keyframes swse-v2-portrait-scan-enhanced {
+  0% {
+    transform: translateY(-12px);
+    opacity: 0.6;
+    filter: drop-shadow(0 0 4px var(--vapor-cyan));
+  }
+  50% {
+    opacity: 0.4;
+    filter: drop-shadow(0 0 2px var(--vapor-cyan));
+  }
+  100% {
+    transform: translateY(128px);
+    opacity: 0.1;
+    filter: drop-shadow(0 0 0px var(--vapor-cyan));
+  }
+}
+
+.swse-sheet-v2-shell .swse-v2-portrait-region::after {
+  animation: swse-v2-portrait-scan-enhanced var(--motion-scan-speed) linear infinite;
+}
+
+/* ============================================================================
+   RESOURCE SHIMMER & POWERED STATE
+   Enhanced shimmer for filled segments with powered appearance
+   ============================================================================ */
+
+@keyframes swse-v2-segment-shimmer-enhanced {
+  0% {
+    opacity: 0.75;
+    filter: brightness(0.9);
+  }
+  25% {
+    opacity: 1;
+    filter: brightness(1.15);
+  }
+  50% {
+    opacity: 0.85;
+    filter: brightness(1);
+  }
+  75% {
+    opacity: 1;
+    filter: brightness(1.1);
+  }
+  100% {
+    opacity: 0.75;
+    filter: brightness(0.9);
+  }
+}
+
+.swse-sheet-v2-shell .resource-segment.is-filled {
+  animation: swse-v2-segment-shimmer-enhanced var(--motion-shimmer-speed) ease-in-out infinite !important;
+}
+
+/* Powered state indicator for resources with glow */
+@keyframes swse-v2-powered-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 12px oklch(var(--vapor-cyan) / 0.15),
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.2),
+      inset 0 0 8px oklch(var(--vapor-cyan) / 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 24px oklch(var(--vapor-cyan) / 0.35),
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.4),
+      inset 0 0 12px oklch(var(--vapor-cyan) / 0.2);
+  }
+}
+
+.swse-sheet-v2-shell .swse-v2-resource {
+  animation: swse-v2-powered-glow var(--motion-breathe-speed) ease-in-out infinite !important;
+}
+
+/* ============================================================================
+   PORTRAIT SCAN REFINEMENT
+   Softer, more intentional diagnostic feel with phase variation
+   ============================================================================ */
+
+@keyframes swse-v2-portrait-diagnostic-scan {
+  0% {
+    transform: translateY(-16px);
+    opacity: 0.5;
+    filter: blur(1px);
+  }
+  20% {
+    opacity: 0.7;
+    filter: blur(0.5px);
+  }
+  80% {
+    opacity: 0.4;
+    filter: blur(0.5px);
+  }
+  100% {
+    transform: translateY(136px);
+    opacity: 0;
+    filter: blur(1px);
+  }
+}
+
+/* Portrait region with dual animation - scan + glow phase sync */
+.swse-sheet-v2-shell .swse-v2-portrait-region {
+  animation: swse-v2-portrait-glow-enhanced var(--motion-breathe-speed) ease-in-out infinite;
+}
+
+@keyframes swse-v2-portrait-glow-enhanced {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.25),
+      0 0 20px oklch(var(--vapor-cyan) / 0.1);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.4),
+      0 0 32px oklch(var(--vapor-cyan) / 0.2);
+  }
+}
+
+/* ============================================================================
+   ACTIVE TAB PULSE
+   Energized appearance with readable pulsing across all themes
+   ============================================================================ */
+
+@keyframes swse-v2-tab-pulse {
+  0%, 100% {
+    background: linear-gradient(135deg, oklch(0.18 0.08 var(--screen-h)), oklch(0.12 0.06 var(--screen-h)));
+    border-color: oklch(var(--vapor-cyan) / 0.35);
+    box-shadow:
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.2),
+      0 0 12px oklch(var(--vapor-cyan) / 0.2);
+  }
+  50% {
+    background: linear-gradient(135deg, oklch(0.22 0.10 var(--screen-h)), oklch(0.16 0.08 var(--screen-h)));
+    border-color: oklch(var(--vapor-cyan) / 0.5);
+    box-shadow:
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.35),
+      0 0 20px oklch(var(--vapor-cyan) / 0.35);
+  }
+}
+
+.swse-sheet-v2-shell .swse-v2-tab.active,
+.swse-sheet-v2-shell .swse-v2-tab.is-active {
+  animation: swse-v2-tab-pulse var(--motion-pulse-speed) ease-in-out infinite;
+}
+
+/* ============================================================================
+   PANEL EDGE ENERGY
+   Subtle powered edges with intermittent flicker effect
+   ============================================================================ */
+
+@keyframes swse-v2-edge-flicker {
+  0% {
+    opacity: 0.1;
+    box-shadow:
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.15),
+      0 0 8px oklch(var(--vapor-cyan) / 0.1);
+  }
+  15% {
+    opacity: 0.3;
+    box-shadow:
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.35),
+      0 0 12px oklch(var(--vapor-cyan) / 0.25);
+  }
+  30% {
+    opacity: 0.15;
+    box-shadow:
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.2),
+      0 0 8px oklch(var(--vapor-cyan) / 0.15);
+  }
+  45% {
+    opacity: 0.25;
+    box-shadow:
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.3),
+      0 0 10px oklch(var(--vapor-cyan) / 0.2);
+  }
+  100% {
+    opacity: 0.1;
+    box-shadow:
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.15),
+      0 0 8px oklch(var(--vapor-cyan) / 0.1);
+  }
+}
+
+.swse-sheet-v2-shell .header-field,
+.swse-sheet-v2-shell .header-defense-readout {
+  animation: swse-v2-edge-flicker var(--motion-flicker-speed) ease-in-out infinite;
+}
+
+/* ============================================================================
+   HOVER POLISH
+   Smooth transitions and visual feedback for interactive elements
+   ============================================================================ */
+
+/* Theme chip hover enhancement */
+.swse-sheet-v2-shell .swse-v2-theme-chip {
+  transition: all var(--motion-hover-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.swse-sheet-v2-shell .swse-v2-theme-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px oklch(0 0 0 / 0.4);
+}
+
+.swse-sheet-v2-shell .swse-v2-theme-chip.is-active {
+  box-shadow: 0 0 16px var(--vapor-cyan), 0 0 24px oklch(var(--vapor-cyan) / 0.5);
+}
+
+/* Roll button hover polish */
+.swse-sheet-v2-shell button[data-action*="roll"],
+.swse-sheet-v2-shell .swse-roll-button {
+  transition: all var(--motion-hover-speed) ease-out;
+}
+
+.swse-sheet-v2-shell button[data-action*="roll"]:hover,
+.swse-sheet-v2-shell .swse-roll-button:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 8px var(--vapor-cyan));
+}
+
+.swse-sheet-v2-shell button[data-action*="roll"]:active,
+.swse-sheet-v2-shell .swse-roll-button:active {
+  transform: scale(0.98);
+}
+
+/* Tab hover enhancement */
+.swse-sheet-v2-shell .swse-v2-tab:not(.active):not(.is-active) {
+  transition: all var(--motion-hover-speed) ease-out;
+}
+
+.swse-sheet-v2-shell .swse-v2-tab:not(.active):not(.is-active):hover {
+  background: linear-gradient(135deg, oklch(0.16 0.07 var(--screen-h)), oklch(0.10 0.05 var(--screen-h)));
+  border-color: oklch(var(--vapor-cyan) / 0.3);
+  box-shadow: 0 0 12px oklch(var(--vapor-cyan) / 0.15);
+}
+
+/* Card row hover polish */
+.swse-sheet-v2-shell .swse-v2-item-row,
+.swse-sheet-v2-shell .v2-gear-row,
+.swse-sheet-v2-shell .ability-card,
+.swse-sheet-v2-shell .skill-row {
+  transition: all var(--motion-hover-speed) ease-out;
+}
+
+.swse-sheet-v2-shell .swse-v2-item-row:hover,
+.swse-sheet-v2-shell .v2-gear-row:hover,
+.swse-sheet-v2-shell .ability-card:hover,
+.swse-sheet-v2-shell .skill-row:hover {
+  background: oklch(0.18 0.06 var(--screen-h));
+  border-color: oklch(var(--vapor-cyan) / 0.4);
+  box-shadow: 0 0 8px oklch(var(--vapor-cyan) / 0.15);
+}
+
+/* Header field focus enhancement */
+.swse-sheet-v2-shell .header-field input:focus {
+  transition: all var(--motion-hover-speed) ease-out;
+  background: oklch(0 0 0 / 0.7);
+  border-color: oklch(var(--vapor-cyan) / 0.5);
+  box-shadow: 0 0 12px oklch(var(--vapor-cyan) / 0.25);
+}
+
+/* ============================================================================
+   REDUCED MOTION ACCESSIBILITY
+   Disable all animations for users who prefer reduced motion
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .swse-sheet-v2-shell .swse-v2-hud__title,
+  .swse-sheet-v2-shell .swse-v2-hud-item,
+  .swse-sheet-v2-shell .swse-v2-title-strip,
+  .swse-sheet-v2-shell .swse-v2-portrait-region,
+  .swse-sheet-v2-shell .swse-v2-resource,
+  .swse-sheet-v2-shell .resource-segment.is-filled,
+  .swse-sheet-v2-shell .swse-v2-tab.active,
+  .swse-sheet-v2-shell .swse-v2-tab.is-active,
+  .swse-sheet-v2-shell .header-field,
+  .swse-sheet-v2-shell .header-defense-readout {
+    animation: none !important;
+  }
+
+  .swse-sheet-v2-shell .swse-v2-title-strip::after {
+    display: none;
+  }
+
+  .swse-sheet-v2-shell .swse-v2-theme-chip,
+  .swse-sheet-v2-shell button[data-action*="roll"],
+  .swse-sheet-v2-shell .swse-roll-button,
+  .swse-sheet-v2-shell .swse-v2-tab:not(.active):not(.is-active),
+  .swse-sheet-v2-shell .swse-v2-item-row,
+  .swse-sheet-v2-shell .v2-gear-row,
+  .swse-sheet-v2-shell .ability-card,
+  .swse-sheet-v2-shell .skill-row,
+  .swse-sheet-v2-shell .header-field input {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .swse-sheet-v2-shell .swse-v2-theme-chip:hover {
+    transform: none;
+    box-shadow: 0 2px 8px oklch(0 0 0 / 0.3);
+  }
+
+  .swse-sheet-v2-shell button[data-action*="roll"]:hover,
+  .swse-sheet-v2-shell .swse-roll-button:hover {
+    transform: none;
+    filter: brightness(1.1);
+  }
+
+  .swse-sheet-v2-shell button[data-action*="roll"]:active,
+  .swse-sheet-v2-shell .swse-roll-button:active {
+    transform: none;
+  }
+}

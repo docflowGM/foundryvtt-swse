@@ -1,0 +1,444 @@
+/* ============================================================================
+   PHASE 4: ALIVE SYSTEMS — RESOURCE STRIP / IDENTITY / PORTRAIT POLISH
+   Presentation layer for header regions and resource displays
+   ============================================================================ */
+
+/* ---------- RESOURCE CARDS ---------- */
+.swse-sheet-v2-shell .swse-v2-resource {
+  background: oklch(0 0 0 / 0.35);
+  border: 1px solid oklch(var(--vapor-cyan) / 0.3);
+  padding: 10px 12px;
+  position: relative;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.swse-sheet-v2-shell .swse-v2-resource::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 8px;
+  width: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--vapor-cyan), transparent);
+  box-shadow: 0 0 6px var(--vapor-cyan);
+}
+
+.swse-sheet-v2-shell .swse-v2-resource:hover {
+  background: oklch(0 0 0 / 0.45);
+  border-color: oklch(var(--vapor-cyan) / 0.5);
+  box-shadow: 0 0 12px oklch(var(--vapor-cyan) / 0.2);
+}
+
+/* ---------- TACTICAL RESOURCE LAYOUT ---------- */
+.swse-sheet-v2-shell .tactical-resource {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell .tactical-resource__label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--vapor-cyan);
+  font-weight: 700;
+}
+
+.swse-sheet-v2-shell .tactical-resource__value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.05em;
+  text-align: center;
+  line-height: 1;
+}
+
+.swse-sheet-v2-shell .tactical-resource__meta {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--ink-faint);
+  letter-spacing: 0.15em;
+}
+
+/* ---------- SEGMENTED RESOURCE BARS ---------- */
+.swse-sheet-v2-shell .resource-segment-bar {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: oklch(0 0 0 / 0.6);
+  border: 1px solid oklch(var(--vapor-cyan) / 0.35);
+  border-radius: 2px;
+  min-height: 16px;
+  align-items: stretch;
+}
+
+.swse-sheet-v2-shell .resource-segment {
+  flex: 1;
+  background: oklch(0 0 0 / 0.7);
+  border: 0.5px solid oklch(var(--vapor-cyan) / 0.2);
+  border-radius: 1px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.swse-sheet-v2-shell .resource-segment.is-filled {
+  background: linear-gradient(
+    135deg,
+    currentColor 0%,
+    oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.8) 100%
+  );
+  border-color: currentColor;
+  box-shadow:
+    inset 0 0 2px oklch(1 0 0 / 0.4),
+    0 0 4px currentColor;
+}
+
+.swse-sheet-v2-shell .resource-segment.is-filled::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 2px,
+    oklch(1 0 0 / 0.1) 2px 3px
+  );
+}
+
+/* HP Bar Specific */
+.swse-sheet-v2-shell .resource-segment-bar--hp .resource-segment.is-filled {
+  color: var(--pos);
+}
+
+/* XP Bar Specific */
+.swse-sheet-v2-shell .resource-segment-bar--xp .resource-segment.is-filled {
+  color: var(--zero);
+}
+
+/* Temp HP Specific */
+.swse-sheet-v2-shell .resource-segment-bar--hp .resource-segment.temp.is-filled {
+  color: var(--vapor-purple);
+}
+
+/* Damaged HP Specific */
+.swse-sheet-v2-shell .resource-segment-bar--hp .resource-segment.damaged.is-filled {
+  color: var(--neg);
+}
+
+/* ---------- PORTRAIT REGION POLISH ---------- */
+.swse-sheet-v2-shell .swse-v2-portrait-region {
+  position: relative;
+  display: inline-block;
+  border: 1px solid oklch(var(--vapor-cyan) / 0.4);
+  background: linear-gradient(140deg, oklch(0 0 0 / 0.5), oklch(var(--vapor-purple) / 0.2));
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.3),
+    0 0 20px oklch(var(--vapor-cyan) / 0.15);
+}
+
+.swse-sheet-v2-shell .swse-v2-portrait-region::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 3px,
+    oklch(var(--vapor-cyan) / 0.08) 3px 4px
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+.swse-sheet-v2-shell .swse-v2-portrait-region::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 12px;
+  background: linear-gradient(180deg, oklch(var(--vapor-cyan) / 0.4), transparent);
+  animation: swse-v2-portrait-scan calc(3.4s / var(--anim-speed)) linear infinite;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.swse-sheet-v2-shell .swse-v2-portrait-region img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes swse-v2-portrait-scan {
+  0% {
+    transform: translateY(-12px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(128px);
+    opacity: 0.2;
+  }
+}
+
+/* ---------- IDENTITY REGION STYLING ---------- */
+.swse-sheet-v2-shell .swse-v2-identity-region {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell .header-name-block {
+  background: oklch(0 0 0 / 0.3);
+  border: 1px solid oklch(var(--vapor-cyan) / 0.3);
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.swse-sheet-v2-shell .charname {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.swse-sheet-v2-shell .charname input {
+  font-family: var(--font-orbit);
+  font-weight: 900;
+  font-size: inherit;
+  letter-spacing: 0.06em;
+  color: var(--vapor-cyan);
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-shadow: 0 0 14px oklch(var(--vapor-cyan) / 0.6);
+  outline: none;
+}
+
+.swse-sheet-v2-shell .charname input::placeholder {
+  color: var(--ink-faint);
+  text-shadow: none;
+}
+
+.swse-sheet-v2-shell .header-player {
+  background: oklch(0 0 0 / 0.25);
+  border: 1px solid oklch(var(--vapor-cyan) / 0.15);
+  padding: 6px 8px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell .header-player label {
+  color: var(--vapor-pink);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.swse-sheet-v2-shell .header-player input {
+  background: transparent;
+  border: none;
+  color: var(--ink);
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 10px;
+  outline: none;
+}
+
+.swse-sheet-v2-shell .header-player input::placeholder {
+  color: var(--ink-faint);
+}
+
+/* Identity Metadata Grid */
+.swse-sheet-v2-shell .sheet-header-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell .header-field {
+  background: oklch(0 0 0 / 0.3);
+  border: 1px solid oklch(var(--vapor-cyan) / 0.2);
+  padding: 8px;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swse-sheet-v2-shell .header-field label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--vapor-cyan);
+}
+
+.swse-sheet-v2-shell .header-field input {
+  background: oklch(0 0 0 / 0.5);
+  border: 1px solid oklch(var(--vapor-cyan) / 0.25);
+  color: var(--ink);
+  padding: 4px 6px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  border-radius: 2px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.swse-sheet-v2-shell .header-field input:focus {
+  background: oklch(0 0 0 / 0.7);
+  border-color: oklch(var(--vapor-cyan) / 0.5);
+  box-shadow: 0 0 8px oklch(var(--vapor-cyan) / 0.2);
+}
+
+.swse-sheet-v2-shell .field-with-button {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.swse-sheet-v2-shell .field-with-button input {
+  flex: 1;
+}
+
+.swse-sheet-v2-shell .header-select-btn {
+  background: oklch(var(--vapor-cyan) / 0.15);
+  border: 1px solid oklch(var(--vapor-cyan) / 0.35);
+  color: var(--vapor-cyan);
+  padding: 4px 6px;
+  font-size: 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swse-sheet-v2-shell .header-select-btn:hover {
+  background: oklch(var(--vapor-cyan) / 0.25);
+  box-shadow: 0 0 8px oklch(var(--vapor-cyan) / 0.3);
+}
+
+/* ---------- DEFENSE READOUTS ---------- */
+.swse-sheet-v2-shell .swse-v2-level-region {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.swse-sheet-v2-shell .header-defense-readout {
+  background: oklch(0 0 0 / 0.3);
+  border: 1px solid oklch(var(--vapor-cyan) / 0.25);
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.swse-sheet-v2-shell .header-defense-readout:hover {
+  background: oklch(0 0 0 / 0.4);
+  border-color: oklch(var(--vapor-cyan) / 0.4);
+}
+
+.swse-sheet-v2-shell .header-defense-readout__label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--vapor-cyan);
+}
+
+.swse-sheet-v2-shell .header-defense-readout__value {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+/* ---------- ALIVE ANIMATIONS ---------- */
+
+/* Subtle glow pulse for resource containers */
+@keyframes swse-v2-glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 12px oklch(var(--vapor-cyan) / 0.15),
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 20px oklch(var(--vapor-cyan) / 0.3),
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.35);
+  }
+}
+
+.swse-sheet-v2-shell .swse-v2-resource {
+  animation: swse-v2-glow-pulse calc(4s / var(--anim-speed)) ease-in-out infinite;
+}
+
+/* Meter shimmer for filled segments */
+@keyframes swse-v2-segment-shimmer {
+  0% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
+.swse-sheet-v2-shell .resource-segment.is-filled {
+  animation: swse-v2-segment-shimmer calc(2s / var(--anim-speed)) ease-in-out infinite;
+}
+
+/* Cyan glow for portrait on hover */
+@keyframes swse-v2-portrait-glow {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.3),
+      0 0 20px oklch(var(--vapor-cyan) / 0.15);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 0 1px oklch(var(--vapor-cyan) / 0.5),
+      0 0 30px oklch(var(--vapor-cyan) / 0.25);
+  }
+}
+
+.swse-sheet-v2-shell .swse-v2-portrait-region {
+  animation: swse-v2-portrait-glow calc(3s / var(--anim-speed)) ease-in-out infinite;
+}
+
+/* ---------- RESPONSIVE ADJUSTMENTS ---------- */
+@media (max-width: 1200px) {
+  .swse-sheet-v2-shell .swse-v2-level-region {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  .swse-sheet-v2-shell .sheet-header-meta-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .swse-sheet-v2-shell .swse-v2-level-region {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .swse-sheet-v2-shell .sheet-header-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-sheet-v2-shell .charname input {
+    font-size: 16px;
+  }
+}

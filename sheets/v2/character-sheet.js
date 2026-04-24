@@ -1,4 +1,17 @@
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
+import {
+  getActorSheetTheme,
+  getActorSheetThemeOptions,
+  buildActorSheetThemeStyle,
+  isValidActorSheetTheme,
+  getActorSheetThemeGroups
+} from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
+import {
+  getActorSheetMotionStyle,
+  getActorSheetMotionStyleOptions,
+  buildActorSheetMotionStyle,
+  isValidActorSheetMotionStyle
+} from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
@@ -80,6 +93,24 @@ function debounce(fn, ms = 500) {
       fn.apply(this, args);
     }, ms);
   };
+}
+
+/**
+ * Phase 6: Get the configured theme for the character sheet from actor flags
+ * Uses the canonical actor-sheet theme registry for validation and resolution
+ */
+function getSheetTheme(actor) {
+  const value = actor?.getFlag?.('foundryvtt-swse', 'sheetTheme');
+  return getActorSheetTheme(value);
+}
+
+/**
+ * Phase 10: Get the configured motion style for the character sheet from actor flags
+ * Uses the canonical actor-sheet motion style registry for validation and resolution
+ */
+function getSheetMotionStyle(actor) {
+  const value = actor?.getFlag?.('foundryvtt-swse', 'sheetMotionStyle');
+  return getActorSheetMotionStyle(value);
 }
 
 /**
@@ -1298,6 +1329,18 @@ const forcePoints = [];
         maneuver: true
       },
       // ═════════════════════════════════════════════════════════════════
+      // PHASE 7: V2 Shell Theme — Grouped Registry Picker
+      // ═════════════════════════════════════════════════════════════════
+      sheetTheme: getSheetTheme(actor),
+      sheetThemeGroups: getActorSheetThemeGroups(getSheetTheme(actor)),
+      sheetThemeStyle: buildActorSheetThemeStyle(getSheetTheme(actor)),
+      // ═════════════════════════════════════════════════════════════════
+      // PHASE 10: V2 Shell Motion Style — Registry Picker
+      // ═════════════════════════════════════════════════════════════════
+      sheetMotionStyle: getSheetMotionStyle(actor),
+      sheetMotionOptions: getActorSheetMotionStyleOptions(),
+      sheetMotionStyleInline: buildActorSheetMotionStyle(getSheetMotionStyle(actor)),
+      // ═════════════════════════════════════════════════════════════════
       // PHASE 5: Removed legacy flat context
       // All data is now provided through panelized contexts above.
       // The following are essential state/permission flags with no panel equivalent:
@@ -1603,6 +1646,43 @@ const forcePoints = [];
 
       // swseLogger.debug(`[HELP-MODE] Cycled to: ${this._helpLevel}`);
     }, { signal });
+
+    // DELEGATED: Sheet Theme Selection (Phase 6)
+    // Allows players/GMs to choose from the canonical actor-sheet theme registry
+    html.addEventListener("click", async ev => {
+      const chip = ev.target.closest("[data-action='set-sheet-theme']");
+      if (!chip) return;
+
+      const newTheme = String(chip.dataset.theme || '');
+      if (!isValidActorSheetTheme(newTheme)) return;
+
+      ev.preventDefault();
+
+      // Persist to actor flag
+      await this.document.setFlag('foundryvtt-swse', 'sheetTheme', newTheme);
+
+      // Rerender sheet to apply theme change
+      this.render(true);
+    }, { signal });
+
+    // DELEGATED: Sheet Motion Style Selection (Phase 10)
+    // Allows players/GMs to choose from the canonical actor-sheet motion style registry
+    html.addEventListener("click", async ev => {
+      const chip = ev.target.closest("[data-action='set-sheet-motion-style']");
+      if (!chip) return;
+
+      const newMotionStyle = String(chip.dataset.motionStyle || '');
+      if (!isValidActorSheetMotionStyle(newMotionStyle)) return;
+
+      ev.preventDefault();
+
+      // Persist to actor flag
+      await this.document.setFlag('foundryvtt-swse', 'sheetMotionStyle', newMotionStyle);
+
+      // Rerender sheet to apply motion style change
+      this.render(true);
+    }, { signal });
+
     // DELEGATED: Tab Switching - Route through shared UI state manager
     // This prevents "blank body" states where DOM classes and remembered state diverge.
     html.addEventListener("click", ev => {
