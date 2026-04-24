@@ -1,20 +1,30 @@
 /**
- * progression-shell.css
+ * progression-shell.css — PHASE 1 + PHASE 2 + PHASE 3 + PHASE 4
  *
- * PHASE 2B: VISUAL ALIGNMENT TO BLUE HOLOGRAPHIC DATAPAD REFERENCE
+ * SWSE Progression Shell — OKLCh Datapad Language
  *
- * This refactor transforms the shell from generic dark layout to:
+ * Transforms the progression shell into a unified datapad visual identity:
  * - Hard-edged framed device (holographic datapad feel)
- * - Strong blue border glow language
- * - Segmented 3-panel composition
+ * - OKLCh token-based theming (compatible with actor-sheet themes)
+ * - Segmented 6-region composition (mentor, progress, utility, work, details, footer)
  * - Distinct header/footer command regions
- * - Sci-fi UI hierarchy matching Near-Human modal reference
+ * - Sci-fi UI hierarchy matching the progression mockup
+ * - Shared-theme holographic motion (Phase 3)
+ * - Shell-owned presentation fidelity (Phase 4)
  *
- * Layout still uses: mentor-rail, progress-rail, main-column structure
- * New styling adds: frame glow, panel segmentation, device aesthetic
+ * Layout structure: mentor-rail → hud-meta-bar → progress-rail → utility-bar → (summary | work-surface | details) → action-footer
+ * All styling CSS-only; no SVG decorative backgrounds
+ * Future-ready for shared actor-sheet theme/motion inheritance
  *
- * Depends on: progression-framework.css (CSS variables)
+ * PHASE 1: Shell-only (outer frame, regions, header/footer)
+ * PHASE 2: Interior styling (cards, rows, fields, buttons)
+ * PHASE 3: Shared-theme holographic motion (animations, scanlines, glows)
+ * PHASE 4: Shell-owned presentation fidelity (HUD, manifest, canvas meta, status)
+ *
+ * Imports: progression-interiors-phase2.css (step card/row styling)
  */
+
+@import url('./progression-interiors-phase2.css');
 
 /* =============================================================================
  * FOUNDRY WINDOW HEIGHT CHAIN
@@ -52,7 +62,70 @@
 }
 
 /* =============================================================================
- * SHELL ROOT — Hard-edged holographic datapad frame
+ * THEME/MOTION TOKENS — Future-compatible with actor-sheet registries
+ * ============================================================================= */
+
+.progression-shell {
+  /* ===== ACCENT TOKENS (mirrored from actor-sheet-theme-registry) ===== */
+  --sheet-accent-primary: var(--vapor-cyan, oklch(0.85 0.18 200));
+  --sheet-accent-secondary: var(--vapor-pink, oklch(0.72 0.26 350));
+  --sheet-accent-tertiary: var(--vapor-purple, oklch(0.55 0.26 300));
+
+  /* ===== OKLDCH SCREEN TOKENS ===== */
+  --screen-h: var(--screen-h, 200);
+  --screen-c-base: 0.055;
+  --screen-c-alt: 0.070;
+  --ink-h: var(--ink-h, 200);
+
+  --prog-screen: oklch(0.13 var(--screen-c-base) var(--screen-h));
+  --prog-screen-2: oklch(0.18 var(--screen-c-alt) var(--screen-h));
+  --prog-ink: oklch(0.94 0.04 var(--ink-h));
+  --prog-ink-dim: oklch(0.72 0.06 var(--ink-h));
+  --prog-ink-faint: oklch(0.50 0.05 var(--ink-h));
+
+  /* ===== SEMANTIC TEXT TOKENS (Phase 6: readability hardening) ===== */
+  --sheet-text-strong: var(--sheet-text-strong, oklch(0.94 0.04 var(--ink-h, 200)));
+  --sheet-text-body: var(--sheet-text-body, oklch(0.72 0.06 var(--ink-h, 200)));
+  --sheet-text-faint: var(--sheet-text-faint, oklch(0.50 0.05 var(--ink-h, 200)));
+
+  /* ===== FRAME/GLOW TOKENS ===== */
+  --prog-border: oklch(var(--sheet-accent-primary) / 0.25);
+  --prog-border-strong: oklch(var(--sheet-accent-primary) / 0.50);
+  --prog-glow: oklch(var(--sheet-accent-primary) / 0.18);
+
+  /* ===== SEMANTIC STATE TOKENS (Pass 2: Step-agnostic semantic colors) ===== */
+  --prog-positive: oklch(0.75 0.25 120);
+  --prog-warning: oklch(0.72 0.20 45);
+  --prog-negative: oklch(0.55 0.25 20);
+
+  /* ===== MOTION TOKENS (Phase 3: shared actor-sheet motion registry) ===== */
+  --motion-enabled: 1;
+  --motion-breathe-speed: 4.8s;
+  --motion-shimmer-speed: 2.8s;
+  --motion-scan-speed: 3.6s;
+  --motion-sweep-speed: 3.2s;
+  --motion-pulse-speed: 2.4s;
+  --motion-flicker-speed: 1.8s;
+  --motion-glow-alpha: 0.24;
+  --motion-glow-alpha-strong: 0.42;
+  --motion-glow-alpha-subtle: 0.15;
+
+  /* ===== TRANSITION TOKENS ===== */
+  --prog-transition-base: 200ms ease;
+  --prog-transition-mentor: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ===== UTILITY HEIGHTS ===== */
+  --prog-utility-bar-height: 48px;
+  --prog-utility-collapsed-h: 24px;
+  --prog-footer-height: 56px;
+  --prog-mentor-width: 320px;
+
+  /* ===== Z-LAYERS ===== */
+  --prog-z-modal: 1000;
+}
+
+/* =============================================================================
+ * SHELL ROOT — Hard-edged holographic datapad frame (CSS-only)
  * ============================================================================= */
 
 .progression-shell {
@@ -63,71 +136,61 @@
   overflow: hidden;
   position: relative;
 
-  /* ===== FRAME STYLING — Cold-steel holographic datapad ===== */
+  color: var(--prog-ink);
+  font-family: var(--swse-font-body, system-ui, sans-serif);
 
-  /* frame-shell.svg: notched steel frame, chamfered corners, cyan accent lines,
-     scanline texture. Sits as the lowest background layer.
-     Radial glow gradient overlays on top to reinforce holo tint.
-     Background-color is the dark interior fallback behind the SVG. */
-  background-image:
-    radial-gradient(circle at 50% 0%, rgba(0, 180, 255, 0.09), transparent 38%),  background-size:
-    100% 100%,
-    100% 100%;
-  background-repeat: no-repeat;
-  background-color: #040a12;   /* matches SVG inner fill #040A12 */
+  /* ===== BACKGROUND: Radial glow + gradient ===== */
+  background:
+    radial-gradient(ellipse at 28% 18%, oklch(0.18 0.10 320 / 0.42), transparent 55%),
+    radial-gradient(ellipse at 82% 88%, oklch(0.18 0.10 200 / 0.36), transparent 55%),
+    linear-gradient(180deg, #060612 0%, #020205 100%);
 
-  /* CSS border — provides the luminous cyan glow the SVG stroke alone can't match */
-  border: 2px solid rgba(80, 220, 255, 0.55);
-
-  /* Frame glow — layered outer + inset halos */
-  box-shadow:
-    0 0 0 1px rgba(180, 245, 255, 0.12) inset,
-    0 0 24px rgba(0, 180, 255, 0.20),
-    0 0 64px rgba(0, 80, 130, 0.16);
+  /* ===== OUTER FRAME: CSS border + glows ===== */
+  border: none;
+  box-shadow: none;
 }
 
 .progression-shell > * {
   box-sizing: border-box;
 }
 
-/* ===== FRAME CORNER ACCENTS — Hard-edged device feel ===== */
+/* ===== SHELL CHROME: Inner border frame ===== */
 .progression-shell::before {
-  content: "";
+  content: '';
   position: absolute;
-  inset: 8px;
-  border: 1px solid rgba(80, 220, 255, 0.25);
-  box-shadow: 0 0 12px rgba(0, 180, 255, 0.15);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.progression-shell::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(135deg, rgba(120,240,255,.18), transparent 8%) top left,
-    linear-gradient(225deg, rgba(120,240,255,.18), transparent 8%) top right,
-    linear-gradient(315deg, rgba(120,240,255,.18), transparent 8%) bottom right,
-    linear-gradient(45deg,  rgba(120,240,255,.18), transparent 8%) bottom left;
-  background-size: 120px 120px;
-  background-repeat: no-repeat;
+  inset: 12px;
   pointer-events: none;
   z-index: 0;
+  border: 1px solid oklch(1 0 0 / 0.05);
+  box-shadow:
+    inset 0 0 0 1px oklch(0 0 0 / 0.6),
+    0 0 40px var(--prog-glow);
+}
+
+/* ===== CORNER ACCENTS: Holographic glow at edges ===== */
+.progression-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    linear-gradient(135deg, oklch(var(--sheet-accent-primary) / 0.12), transparent 8%) top left,
+    linear-gradient(225deg, oklch(var(--sheet-accent-primary) / 0.12), transparent 8%) top right,
+    linear-gradient(315deg, oklch(var(--sheet-accent-primary) / 0.12), transparent 8%) bottom right,
+    linear-gradient(45deg,  oklch(var(--sheet-accent-primary) / 0.12), transparent 8%) bottom left;
+  background-size: 120px 120px;
+  background-repeat: no-repeat;
 }
 
 /* =============================================================================
- * MENTOR RAIL (horizontal top band — full viewport width, NOT a left column)
- * Cancels: shell/layout.css which set this as a left column with fixed width.
+ * MENTOR RAIL (horizontal top band — full viewport width)
+ * Narrator/guide portrait + dialogue zone, always visible
  * ============================================================================= */
 
 .progression-shell [data-region="mentor-rail"] {
   flex: 0 0 auto;
   width: 100%;
-  /* CANCEL old left-column width constraints from shell/layout.css */
-  min-width: 0;
-  max-width: none;
-  /* Explicit height so height:100% children resolve correctly (not against 'auto') */
   height: 160px;
   min-height: 160px;
   max-height: 160px;
@@ -135,29 +198,26 @@
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  /* Inner padding is handled by .prog-mentor-rail child */
   gap: 0;
   padding: 0;
+
+  position: relative;
+  z-index: 1;
 
   transition: height var(--prog-transition-mentor),
               flex-basis var(--prog-transition-mentor),
               min-height var(--prog-transition-mentor),
               max-height var(--prog-transition-mentor);
 
-  /* ===== SVG PANEL CHROME — mentor-combined-panel.svg =====
-     Provides: outer chamfered steel frame, left portrait zone, right dialogue zone,
-     left-to-right connector arrow, bottom nameplate bar in portrait zone.
-     CSS overlay tint reinforces the blue holo atmosphere on top. */
-  background-image:
-    linear-gradient(90deg, rgba(0, 180, 255, 0.04), rgba(0, 120, 200, 0.02)),  background-size: 100% 100%, 100% 100%;
-  background-repeat: no-repeat;
-  background-color: #091827;     /* matches SVG fill #091827 */
-
-  /* Remove old solid gradient — SVG provides the chrome */
-  border-bottom: 1px solid rgba(80, 220, 255, 0.25);
+  /* ===== MENTOR RAIL FRAME (CSS-only) ===== */
+  border-bottom: 1px solid var(--prog-border);
+  background:
+    linear-gradient(90deg,
+      oklch(var(--sheet-accent-primary) / 0.04),
+      oklch(var(--sheet-accent-primary) / 0.02));
   box-shadow:
-    0 0 14px rgba(0, 180, 255, 0.08),
-    inset 0 0 12px rgba(0, 180, 255, 0.02);
+    0 0 14px oklch(var(--sheet-accent-primary) / 0.08),
+    inset 0 0 12px oklch(var(--sheet-accent-primary) / 0.02);
 }
 
 .progression-shell [data-region="mentor-rail"][data-collapsed="true"] {
@@ -168,17 +228,13 @@
 }
 
 /* =============================================================================
- * PROGRESS RAIL (horizontal step indicator band — full width, NOT a left column)
- * Cancels: shell/layout.css which set this as a 160px-wide left column.
+ * PROGRESS RAIL (horizontal step indicator band — stepper chrome)
+ * Shows progression through steps with visual state indicators
  * ============================================================================= */
 
 .progression-shell [data-region="progress-rail"] {
   flex: 0 0 auto;
   width: 100%;
-  /* CANCEL old left-column width constraints from shell/layout.css */
-  min-width: 0;
-  max-width: none;
-  /* CANCEL old height: 100% */
   height: auto;
   overflow-x: auto;
   overflow-y: hidden;
@@ -188,12 +244,18 @@
   padding: 8px 12px;
   gap: 8px;
 
-  /* ===== COMPACT HORIZONTAL RAIL STYLING ===== */
-  background: linear-gradient(90deg, rgba(6, 18, 30, 0.94), rgba(3, 10, 20, 0.96));
-  border-bottom: 1px solid rgba(80, 220, 255, 0.25);
+  position: relative;
+  z-index: 1;
+
+  /* ===== STEPPER RAIL FRAME (CSS-only) ===== */
+  background:
+    linear-gradient(180deg,
+      oklch(var(--sheet-accent-primary) / 0.04),
+      transparent);
+  border-bottom: 1px solid var(--prog-border);
   box-shadow:
-    0 0 8px rgba(0, 180, 255, 0.05),
-    inset 0 0 8px rgba(0, 180, 255, 0.02);
+    0 0 8px oklch(var(--sheet-accent-primary) / 0.05),
+    inset 0 0 8px oklch(var(--sheet-accent-primary) / 0.02);
 }
 
 /* Hide non-user-facing steps from visible rail */
@@ -239,7 +301,7 @@
   overflow-x: auto;
 }
 
-/* Compact step items in horizontal rail — PHASE 5 + 5.5: Improved spacing, focus, transition */
+/* Shell-level step chip styling — state indicators only */
 .progression-shell .prog-step {
   flex: 0 1 auto;
   min-width: 0;
@@ -250,12 +312,13 @@
   padding: 6px 12px;
   font-size: 11px;
   white-space: nowrap;
-  border-radius: 4px;
-  background: rgba(10, 26, 42, 0.6);
-  border: 1px solid rgba(60, 200, 255, 0.3);
-  color: rgba(120, 200, 255, 0.8);
+  border-radius: 2px;
+
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.18);
+  background: oklch(var(--sheet-accent-primary) / 0.03);
+  color: var(--prog-ink-dim);
   cursor: pointer;
-  /* Crisp, responsive transition for scale effect on step activation */
+
   transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
               background 200ms ease,
               border-color 200ms ease,
@@ -263,23 +326,23 @@
 }
 
 .progression-shell .prog-step:hover {
-  background: rgba(15, 35, 55, 0.8);
-  border-color: rgba(80, 220, 255, 0.5);
-  color: rgba(150, 230, 255, 1);
+  background: oklch(var(--sheet-accent-primary) / 0.08);
+  border-color: var(--prog-border);
+  color: var(--prog-ink);
 }
 
-/* PHASE 5 + 5.5: Enhanced active step visibility with scale transform + crisp transition */
 .progression-shell .prog-step--active {
-  background: rgba(0, 150, 220, 0.3);
-  border-color: rgba(100, 230, 255, 0.8);
-  color: rgba(200, 240, 255, 1);
+  background: oklch(var(--sheet-accent-primary) / 0.14);
+  border-color: var(--prog-border-strong);
+  color: var(--prog-ink);
   font-weight: 600;
-  box-shadow: 0 0 8px rgba(0, 150, 220, 0.3);
+  box-shadow: 0 0 18px oklch(var(--sheet-accent-primary) / 0.16);
   transform: scale(1.05);
 }
 
 .progression-shell .prog-step--complete {
   opacity: 0.7;
+  border-color: oklch(var(--sheet-accent-primary) / 0.34);
 }
 
 .progression-shell .prog-step__icon {
@@ -315,7 +378,7 @@
 }
 
 /* =============================================================================
- * UTILITY BAR (control band — top of main column)
+ * UTILITY BAR (HUD control strip — search, filter, sort, mode toggle)
  * ============================================================================= */
 
 .progression-shell [data-region="utility-bar"] {
@@ -328,24 +391,25 @@
   align-items: center;
   overflow: hidden;
 
+  position: relative;
+  z-index: 1;
+
   transition: height var(--prog-transition-base),
               flex-basis var(--prog-transition-base),
               min-height var(--prog-transition-base),
               max-height var(--prog-transition-base);
 
-  /* ===== CONTROL BAND CHROME — header-bar.svg =====
-     header-bar.svg: notched steel bar, inner dark zone, cyan border stroke,
-     diamond center element at midpoint, side accent lines.
-     Same construction language as footer-bar.svg — consistent device framing. */
-  background-image:
-    linear-gradient(180deg, rgba(8, 20, 34, 0.50), rgba(4, 12, 22, 0.60)),  background-size:   100% 100%, 100% 100%;
-  background-repeat: no-repeat;
-  background-color:  #050b13;
-
-  border-bottom: 1px solid rgba(80, 220, 255, 0.22);
+  /* ===== HUD STRIP FRAME (CSS-only) ===== */
+  border-bottom: 1px solid var(--prog-border);
+  background:
+    linear-gradient(180deg,
+      oklch(var(--sheet-accent-primary) / 0.06),
+      oklch(var(--sheet-accent-primary) / 0.02));
   box-shadow:
-    0 0 10px rgba(0, 180, 255, 0.06),
-    inset 0 0 8px rgba(0, 180, 255, 0.02);
+    0 0 14px oklch(var(--sheet-accent-primary) / 0.08),
+    inset 0 0 10px oklch(var(--sheet-accent-primary) / 0.03);
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 
 .progression-shell [data-region="utility-bar"][data-collapsed="true"] {
@@ -423,43 +487,38 @@
 }
 
 /* =============================================================================
- * WORK SURFACE (primary step interaction area — center, visually dominant)
- * Cancels: shell/layout.css which set height: 100% on work-surface.
+ * WORK SURFACE (primary step interaction canvas)
+ * Main visual focus; where step content renders
  * ============================================================================= */
 
 .progression-shell [data-region="work-surface"] {
   flex: 1 1 auto;
   min-width: 0;
-  min-height: 0;  /* CRITICAL: allows flex to shrink below content size, enabling scroll */
-  /* CANCEL old height: 100% from shell/layout.css — cross-axis fill via align-items:stretch */
+  min-height: 0;
   height: auto;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 12px;  /* Reduced: SVG border inset defines outer safe zone, CSS padding is inner content margin */
-
-  /* ===== WORK SURFACE — panel-large.svg dominant center panel =====
-     panel-large.svg: full chamfered steel panel with cyan border lines,
-     corner accent marks, and inner viewport frame. Provides real panel geometry.
-     CSS gradient overlay adds holo tint on top of SVG interior. */
-  background-image:
-    linear-gradient(180deg, rgba(0, 180, 255, 0.03), rgba(0, 120, 200, 0.02)),  background-size:   100% 100%, 100% 100%;
-  background-repeat: no-repeat;
-  background-color:  #040b13;   /* matches SVG inner fill */
-
-  /* Work surface has stronger outer glow — it's the dominant region */
-  border: none;
-
-  box-shadow:
-    0 0 20px rgba(0, 200, 255, 0.13),
-    inset 0 0 16px rgba(0, 200, 255, 0.04);
+  padding: 12px;
 
   position: relative;
+  z-index: 1;
+
+  /* ===== CANVAS FRAME (CSS-only) ===== */
+  border: 1px solid var(--prog-border);
+  background:
+    linear-gradient(180deg,
+      oklch(var(--sheet-accent-primary) / 0.03),
+      transparent 40%);
+  box-shadow:
+    0 0 16px oklch(var(--sheet-accent-primary) / 0.08),
+    inset 0 0 10px oklch(var(--sheet-accent-primary) / 0.02);
 }
 
 /* panel-large.svg provides inner stroke — no CSS ::before inner border needed */
 
 /* =============================================================================
- * DETAILS PANEL (right support panel — always mounted on desktop)
+ * DETAILS PANEL (right information rail — item details/preview)
+ * Optional on mobile; always mounted on desktop
  * ============================================================================= */
 
 .progression-shell [data-region="details-panel"] {
@@ -467,25 +526,23 @@
   width: 280px;
   min-width: 280px;
   max-width: 280px;
-  /* Cross-axis fill via align-items:stretch */
   height: auto;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
 
-  /* Tall rail panel (dedicated proportions, not stretched) */
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-  background-color:  #040b13;   /* matches SVG inner fill */
-
-  border: none;
-
-  box-shadow:
-    0 0 12px rgba(0, 180, 255, 0.08),
-    inset 0 0 10px rgba(0, 180, 255, 0.03);
-
   position: relative;
+  z-index: 1;
+
+  /* ===== DETAILS FRAME (CSS-only) ===== */
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.18);
+  background:
+    linear-gradient(180deg,
+      oklch(var(--sheet-accent-primary) / 0.03),
+      transparent 60%);
+  box-shadow:
+    inset 0 0 8px oklch(var(--sheet-accent-primary) / 0.02);
 }
 
 /* panel-small.svg provides inner stroke — no CSS ::before inner border needed */
@@ -498,7 +555,7 @@
 }
 
 /* =============================================================================
- * ACTION FOOTER (command strip — bottom of main column)
+ * ACTION FOOTER (command controls — Back | Status | Next/Confirm)
  * ============================================================================= */
 
 .progression-shell [data-region="action-footer"] {
@@ -509,25 +566,22 @@
   width: 100%;
   display: flex;
   align-items: stretch;
-  /* Zero lateral padding — .swse-footer grid owns its own padding: 0 8px */
   padding: 0;
   gap: 0;
-  /* Allow SVG drop-shadows and hover lift to breathe */
   overflow: visible;
 
-  /* ===== COMMAND STRIP CHROME — footer-bar.svg + CSS glow =====
-     footer-bar.svg: notched steel bar, inner dark zone, cyan border stroke,
-     diamond center element, side accent lines.
-     CSS gradient underlay tints the SVG dark zones blue-navy. */
-  background-image:
-    linear-gradient(180deg, rgba(8, 20, 34, 0.55), rgba(4, 12, 22, 0.65)),  background-size:   100% 100%, 100% 100%;
-  background-repeat: no-repeat;
-  background-color:  #050b13;    /* matches SVG inner fill */
+  position: relative;
+  z-index: 1;
 
-  border-top: 1px solid rgba(80, 220, 255, 0.25);
+  /* ===== FOOTER FRAME (CSS-only) ===== */
+  border-top: 1px solid var(--prog-border);
+  background:
+    linear-gradient(180deg,
+      oklch(var(--sheet-accent-primary) / 0.04),
+      oklch(var(--sheet-accent-primary) / 0.02));
   box-shadow:
-    0 0 12px rgba(0, 180, 255, 0.07),
-    inset 0 0 10px rgba(0, 180, 255, 0.03);
+    0 0 12px oklch(var(--sheet-accent-primary) / 0.08),
+    inset 0 0 8px oklch(var(--sheet-accent-primary) / 0.02);
 }
 
 /* =============================================================================
@@ -592,6 +646,34 @@
   background-size: 100% 4px;
 
   z-index: 0;
+}
+
+/* =============================================================================
+ * REDUCED MOTION SUPPORT — Accessibility first
+ * ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .progression-shell * {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .progression-shell .prog-step {
+    transition: none;
+  }
+
+  .progression-shell .prog-step--active {
+    transform: none;
+  }
+
+  .progression-shell [data-region="mentor-rail"] {
+    transition: none;
+  }
+
+  .progression-shell [data-region="utility-bar"] {
+    transition: none;
+  }
 }
 
 /* =============================================================================
@@ -1005,6 +1087,364 @@
   display: none;
 }
 
+/* =============================================================================
+ * PHASE 4: SHELL-OWNED PRESENTATION FIDELITY
+ * HUD meta tags, mentor identity, footer status, ability snapshots
+ * ============================================================================= */
+
+/* ---------- HUD META STATUS BAR ---------- */
+.progression-shell .prog-hud-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 8px 12px;
+  background: linear-gradient(90deg,
+    rgba(0, 0, 0, 0.3),
+    oklch(var(--screen-h) calc(var(--screen-c-base) * 0.2) / 0.06),
+    rgba(0, 0, 0, 0.3)
+  );
+  border-bottom: 1px solid oklch(var(--sheet-accent-primary) / 0.15);
+  box-shadow: inset 0 1px 0 oklch(var(--sheet-accent-primary) / 0.08);
+  flex-wrap: wrap;
+}
+
+.progression-shell .prog-hud-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  background: oklch(0 0 0 / 0.25);
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.20);
+  border-radius: 2px;
+  color: var(--sheet-accent-primary);
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 0 4px oklch(var(--sheet-accent-primary) / 0.12);
+}
+
+.progression-shell .prog-hud-tag--mode {
+  border-color: oklch(var(--sheet-accent-primary) / 0.35);
+  background: oklch(var(--sheet-accent-primary) / 0.10);
+}
+
+.progression-shell .prog-hud-tag--actor {
+  border-color: oklch(var(--sheet-accent-primary) / 0.25);
+  background: oklch(0 0 0 / 0.30);
+  color: oklch(0.85 0.04 var(--ink-h));
+}
+
+.progression-shell .prog-hud-tag--stage {
+  border-color: oklch(var(--sheet-accent-secondary) / 0.25);
+  background: oklch(0 0 0 / 0.25);
+  color: oklch(var(--sheet-accent-secondary) / 0.95);
+  margin-left: auto;
+}
+
+/* ---------- MENTOR NAME PREFIX — IDENTITY TIGHTENING ---------- */
+.progression-shell .prog-mentor__name-prefix {
+  color: var(--sheet-accent-primary);
+  margin-right: 4px;
+  font-weight: 700;
+}
+
+/* ---------- FOOTER STATUS LINE ---------- */
+.progression-shell .prog-footer-status-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.progression-shell .prog-footer-status-label {
+  color: oklch(0.60 0.06 var(--ink-h));
+  font-weight: 600;
+}
+
+.progression-shell .prog-footer-status-value {
+  color: var(--sheet-accent-primary);
+  font-weight: 700;
+  text-shadow: 0 0 4px oklch(var(--sheet-accent-primary) / 0.20);
+}
+
+/* ---------- ABILITY MINI-GRID (Phase 4 future use) ---------- */
+.progression-shell .prog-ability-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  font-size: 10px;
+}
+
+.progression-shell .prog-ability-mini {
+  text-align: center;
+  padding: 6px 4px;
+  background: oklch(0 0 0 / 0.25);
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.15);
+  border-radius: 2px;
+}
+
+.progression-shell .prog-ability-mini .code {
+  color: oklch(0.50 0.05 var(--ink-h));
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.progression-shell .prog-ability-mini .val {
+  font-size: 16px;
+  line-height: 1;
+  margin: 2px 0;
+  color: var(--sheet-accent-primary);
+  font-weight: 700;
+}
+
+.progression-shell .prog-ability-mini .mod {
+  font-size: 8px;
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  color: oklch(0.60 0.06 var(--ink-h));
+}
+
+/* ---------- SELECTED CHIPS ROW ---------- */
+.progression-shell .prog-selected-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.progression-shell .prog-selected-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  background: oklch(0 0 0 / 0.30);
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.20);
+  border-radius: 3px;
+  color: var(--sheet-accent-primary);
+  font-size: 10px;
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  box-shadow: 0 0 6px oklch(var(--sheet-accent-primary) / 0.08);
+}
+
+/* =============================================================================
+ * PHASE 3: SHARED-THEME HOLOGRAPHIC MOTION
+ * Motion styles from actor-sheet-motion-registry (standard/quiet/cinematic/diagnostic/off)
+ * ============================================================================= */
+
+/* ---------- SHELL SCANLINE/VIGNETTE LAYER ---------- */
+
+@keyframes prog-shell-scanline {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: calc(var(--motion-glow-alpha-subtle) * 0.6);
+  }
+}
+
+.progression-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.03),
+      rgba(0, 0, 0, 0.03) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+  animation: prog-shell-scanline var(--motion-flicker-speed) ease-in-out infinite;
+  opacity: calc(var(--motion-glow-alpha-subtle) * 0.4);
+  z-index: var(--prog-z-modal);
+}
+
+/* ---------- UTILITY BAR BREATHING + SHEEN ---------- */
+
+@keyframes prog-hud-breathe {
+  0%, 100% {
+    background: linear-gradient(90deg,
+      rgba(0, 0, 0, 0.5),
+      oklch(var(--screen-h) calc(var(--screen-c-alt) * 0.3) / 0.08),
+      rgba(0, 0, 0, 0.5)
+    );
+    box-shadow: 0 0 8px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha) * 0.5));
+  }
+  50% {
+    background: linear-gradient(90deg,
+      rgba(0, 0, 0, 0.4),
+      oklch(var(--screen-h) calc(var(--screen-c-alt) * 0.4) / 0.12),
+      rgba(0, 0, 0, 0.4)
+    );
+    box-shadow: 0 0 16px oklch(var(--sheet-accent-primary) / var(--motion-glow-alpha));
+  }
+}
+
+[data-region="utility-bar"] {
+  animation: prog-hud-breathe var(--motion-breathe-speed) ease-in-out infinite;
+}
+
+/* ---------- MENTOR PORTRAIT SCAN ---------- */
+
+@keyframes prog-mentor-scan {
+  0%, 100% {
+    background-position: 0% 0%;
+    opacity: 0;
+  }
+  50% {
+    background-position: 100% 100%;
+    opacity: calc(var(--motion-glow-alpha-subtle));
+  }
+}
+
+.progression-shell .prog-mentor__portrait::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg,
+      transparent 30%,
+      oklch(var(--sheet-accent-primary) / 0.2) 50%,
+      transparent 70%
+    );
+  background-size: 200% 200%;
+  animation: prog-mentor-scan var(--motion-scan-speed) ease-in-out infinite;
+  border-radius: inherit;
+}
+
+/* ---------- MENTOR DIALOGUE POWERED LIFE ---------- */
+
+@keyframes prog-dialogue-life {
+  0%, 100% {
+    text-shadow:
+      0 0 4px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha) * 0.4)),
+      0 1px 1px rgba(0, 0, 0, 0.8);
+  }
+  50% {
+    text-shadow:
+      0 0 12px oklch(var(--sheet-accent-primary) / var(--motion-glow-alpha)),
+      0 0 20px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha) * 0.5)),
+      0 1px 1px rgba(0, 0, 0, 0.8);
+  }
+}
+
+.progression-shell .prog-species-details__salty-text,
+.progression-shell .prog-mentor__dialogue {
+  animation: prog-dialogue-life calc(var(--motion-breathe-speed) * 1.2) ease-in-out infinite;
+}
+
+/* ---------- ACTIVE STEP PULSE ---------- */
+
+@keyframes prog-step-pulse {
+  0%, 100% {
+    border-color: oklch(var(--sheet-accent-primary) / 0.4);
+    box-shadow: 0 0 8px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha) * 0.5));
+  }
+  50% {
+    border-color: oklch(var(--sheet-accent-primary) / 0.8);
+    box-shadow:
+      0 0 16px oklch(var(--sheet-accent-primary) / var(--motion-glow-alpha)),
+      inset 0 0 12px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha-subtle)));
+  }
+}
+
+.progression-shell .prog-step.is-active {
+  animation: prog-step-pulse var(--motion-pulse-speed) ease-in-out infinite;
+}
+
+/* ---------- WORK-SURFACE ENERGY LINE ---------- */
+
+@keyframes prog-work-energy {
+  0%, 100% {
+    box-shadow:
+      inset 0 2px 0 oklch(var(--sheet-accent-primary) / 0),
+      0 0 12px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha) * 0.3));
+  }
+  50% {
+    box-shadow:
+      inset 0 2px 0 oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha-strong) * 0.5)),
+      0 0 24px oklch(var(--sheet-accent-primary) / var(--motion-glow-alpha));
+  }
+}
+
+[data-region="work-surface"] {
+  animation: prog-work-energy var(--motion-sweep-speed) ease-in-out infinite;
+}
+
+/* ---------- PRIMARY FOOTER BUTTON POWERED STATE ---------- */
+
+@keyframes prog-btn-powered {
+  0%, 100% {
+    box-shadow:
+      0 0 8px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha) * 0.3)),
+      inset 0 0 0 oklch(var(--sheet-accent-secondary) / 0);
+  }
+  50% {
+    box-shadow:
+      0 0 20px oklch(var(--sheet-accent-primary) / var(--motion-glow-alpha-strong)),
+      inset 0 0 8px oklch(var(--sheet-accent-secondary) / calc(var(--motion-glow-alpha) * 0.2));
+  }
+}
+
+.progression-shell .swse-btn--confirm.swse-btn--advance-ready,
+.progression-shell .swse-btn--last-step.swse-btn--advance-ready {
+  animation: prog-btn-powered var(--motion-pulse-speed) ease-in-out infinite;
+}
+
+/* =============================================================================
+ * MOTION OFF MODE — EXPLICIT KILL SWITCH
+ * When user selects "off", all decorative continuous motion stops
+ * ============================================================================= */
+
+.progression-shell[data-motion-style="off"] [data-region="utility-bar"],
+.progression-shell[data-motion-style="off"] [data-region="work-surface"],
+.progression-shell[data-motion-style="off"] .prog-step.is-active,
+.progression-shell[data-motion-style="off"] .swse-btn--confirm.swse-btn--advance-ready,
+.progression-shell[data-motion-style="off"] .swse-btn--last-step.swse-btn--advance-ready,
+.progression-shell[data-motion-style="off"] .prog-mentor__dialogue,
+.progression-shell[data-motion-style="off"] .prog-species-details__salty-text {
+  animation: none !important;
+}
+
+.progression-shell[data-motion-style="off"]::before,
+.progression-shell[data-motion-style="off"] .prog-mentor__portrait::after {
+  display: none !important;
+}
+
+/* =============================================================================
+ * REDUCED-MOTION OVERRIDE
+ * Respects browser prefers-reduced-motion setting
+ * ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .progression-shell::before,
+  .progression-shell .prog-mentor__portrait::after {
+    animation: none !important;
+  }
+
+  .progression-shell [data-region="utility-bar"],
+  .progression-shell [data-region="work-surface"],
+  .progression-shell .prog-step.is-active,
+  .progression-shell .prog-mentor__dialogue,
+  .progression-shell .prog-species-details__salty-text,
+  .progression-shell .swse-btn--confirm.swse-btn--advance-ready,
+  .progression-shell .swse-btn--last-step.swse-btn--advance-ready {
+    animation: none !important;
+  }
+}
+
 @media (max-width: 900px) {
   .progression-shell .prog-holocall-body {
     grid-template-columns: 1fr;
@@ -1013,5 +1453,194 @@
 
   .progression-shell .prog-holocall-content {
     width: 100%;
+  }
+}
+
+/* =============================================================================
+ * PHASE 6: VISUAL BASELINE HARDENING / CONSISTENCY
+ * Consolidates responsive breakpoints, state language, readability, and motion
+ * ============================================================================= */
+
+/* ---------- UNIFIED RESPONSIVE BREAKPOINTS ---------- */
+
+@media (max-width: 1100px) {
+  /* 3-column → 2-column layout transitions at 1100px */
+  .progression-shell .prog-content-row {
+    grid-template-columns: 1fr 2fr;
+  }
+
+  .progression-shell [data-region="details-panel"] {
+    display: none;
+  }
+
+  /* Stack HUD meta bar with wrap on narrow widths */
+  .progression-shell .prog-hud-meta-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 900px) {
+  /* 2-column → 1-column, details panel in tab/modal context only */
+  .progression-shell .prog-content-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Footer status line flex-wrap for narrower widths */
+  .progression-shell .prog-footer-status-line {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* Ability mini-grid responsive */
+  .progression-shell .prog-ability-mini-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  /* Step grids responsive */
+  .progression-shell .prog-class-grid,
+  .progression-shell .prog-species-list {
+    gap: 10px;
+  }
+
+  .progression-shell .prog-class-card {
+    min-height: auto;
+  }
+}
+
+/* ---------- MOTION NORMALIZATION ---------- */
+
+/* Toned-down scan animation peaks (Phase 6) */
+.progression-shell .prog-holo-scan::after,
+.progression-shell .prog-feat-icon-scan::after {
+  animation: prog-holo-scan-normalized var(--motion-scan-speed, 4s) linear infinite;
+}
+
+@keyframes prog-holo-scan-normalized {
+  0% { transform: translateY(0); opacity: 0.08; }
+  10% { opacity: 0.28; }
+  90% { opacity: 0.10; }
+  100% { transform: translateY(100px); opacity: 0.06; }
+}
+
+/* Quiet mode: reduce scan opacity across all holo effects */
+.progression-shell[data-motion-style="quiet"] .prog-holo-scan::after,
+.progression-shell[data-motion-style="quiet"] .prog-feat-icon-scan::after,
+.progression-shell[data-motion-style="quiet"] .prog-mentor__portrait::after {
+  opacity: 0.12 !important;
+}
+
+/* ---------- UNIFIED STATE LANGUAGE ---------- */
+
+/* Focused state: consistent glow across all steps */
+.progression-shell .swse-option-card[data-focused="true"],
+.progression-shell .prog-species-row[data-focused="true"],
+.progression-shell .prog-class-row[data-focused="true"],
+.progression-shell .prog-pick-card.is-focused,
+.progression-shell .prog-skill-row.is-focused,
+.progression-shell .feat-item.focused {
+  border-color: var(--sheet-accent-primary);
+  box-shadow: 0 0 16px var(--sheet-accent-primary) / 0.18, inset 0 0 8px var(--sheet-accent-primary) / 0.04;
+}
+
+/* Selected state: stronger glow (committed/chosen) */
+.progression-shell .swse-option-card[data-selected="true"],
+.progression-shell .prog-species-row[data-committed="true"],
+.progression-shell .prog-class-row[data-committed="true"],
+.progression-shell .prog-pick-card.is-selected,
+.progression-shell .feat-item.selected,
+.progression-shell .prog-skill-row.trained {
+  border-color: var(--sheet-accent-primary);
+  box-shadow: 0 0 22px var(--sheet-accent-primary) / 0.22, inset 0 0 12px var(--sheet-accent-primary) / 0.06;
+}
+
+/* Locked/disabled state: consistent dimming */
+.progression-shell .swse-option-card[data-locked="true"],
+.progression-shell .prog-species-row[data-locked="true"],
+.progression-shell .prog-class-row[data-locked="true"],
+.progression-shell .prog-pick-card.is-locked,
+.progression-shell .feat-item.unavailable,
+.progression-shell .prog-skill-row.is-locked {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+/* ---------- SEMANTIC TEXT READABILITY ---------- */
+
+/* Use semantic text tokens for titles and labels */
+.progression-shell .prog-class-details__name,
+.progression-shell .prog-species-details__name,
+.progression-shell .feat-name,
+.progression-shell .prog-class-card__name,
+.progression-shell .prog-species-row__name,
+.progression-shell .prog-skill-name {
+  color: var(--sheet-text-strong);
+  text-shadow: 0 0 10px oklch(0 0 0 / 0.54), 0 0 16px var(--sheet-accent-primary) / 0.12;
+}
+
+/* Body text for descriptions and metadata */
+.progression-shell .prog-class-details__fantasy,
+.progression-shell .prog-species-details__desc,
+.progression-shell .prog-skill-category,
+.progression-shell .prog-class-details__stat-label {
+  color: var(--sheet-text-body);
+}
+
+/* Faint text for tertiary info */
+.progression-shell .prog-species-row__stats,
+.progression-shell .prog-species-row__source,
+.progression-shell .prog-class-card__type,
+.progression-shell .prog-details-text {
+  color: var(--sheet-text-faint);
+}
+
+/* ---------- IMAGE FALLBACK SAFETY ---------- */
+
+/* Placeholder holo frame for missing art (no fake labels) */
+.progression-shell .prog-species-card__media:empty,
+.progression-shell .prog-species-row__thumb:empty,
+.progression-shell .prog-class-card__media:empty,
+.progression-shell .prog-class-details__portrait-frame:empty,
+.progression-shell .prog-pick-card__icon:empty {
+  background:
+    radial-gradient(circle at 50% 40%, var(--sheet-accent-primary) / 0.10, transparent 55%),
+    linear-gradient(180deg, oklch(0 0 0 / 0.10), oklch(0 0 0 / 0.32)),
+    oklch(0 0 0 / 0.22);
+  border-style: dashed;
+  border-color: var(--sheet-accent-primary) / 0.18;
+  opacity: 0.80;
+}
+
+/* Ensure aspect ratio safety on image elements */
+.progression-shell .prog-species-card__media img,
+.progression-shell .prog-species-details__portrait img,
+.progression-shell .prog-class-details__portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.progression-shell .prog-pick-card__icon-image,
+.progression-shell .prog-feat-icon-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ---------- EDGE CONTRAST SAFEGUARDS ---------- */
+
+/* High-contrast theme overlay adjustment */
+@media (prefers-contrast: more) {
+  .progression-shell .prog-holo-scan::after,
+  .progression-shell .prog-feat-icon-scan::after {
+    opacity: 0.20;
+  }
+
+  .progression-shell [data-selected="true"],
+  .progression-shell .is-selected {
+    box-shadow: 0 0 28px var(--sheet-accent-primary) / 0.28, inset 0 0 14px var(--sheet-accent-primary) / 0.08;
   }
 }

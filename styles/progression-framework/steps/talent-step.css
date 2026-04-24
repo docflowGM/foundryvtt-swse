@@ -42,7 +42,7 @@
 .talent-browser-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #00d0ff;
+  color: var(--sheet-text-strong);
   margin: 0;
   display: flex;
   align-items: center;
@@ -57,7 +57,7 @@
 
 .talent-browser-hint {
   font-size: 0.85rem;
-  color: #a0c0d0;
+  color: var(--sheet-text-body);
   margin: 0;
   line-height: 1.4;
 }
@@ -75,12 +75,12 @@
   border: 1px solid rgba(0, 150, 200, 0.2);
   border-radius: 3px;
   background: rgba(0, 50, 80, 0.3);
-  color: #a0d0ff;
+  color: var(--sheet-text-body);
   font-size: 0.9rem;
 }
 
 .talent-search-input::placeholder {
-  color: #607080;
+  color: var(--sheet-text-faint);
 }
 
 .talent-search-input:focus {
@@ -106,7 +106,7 @@
 .talent-section-title {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #ffc800;
+  color: var(--sheet-accent-secondary);
   margin: 0;
   display: flex;
   align-items: center;
@@ -177,14 +177,14 @@
 .talent-tree-card__name {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #00f0ff;
+  color: var(--sheet-text-strong);
   margin: 0;
   letter-spacing: 0.05em;
 }
 
 .talent-tree-card__summary {
   font-size: 0.8rem;
-  color: #a0c0d0;
+  color: var(--sheet-text-body);
   margin: 0;
   line-height: 1.4;
   overflow: hidden;
@@ -208,7 +208,7 @@
   border-radius: 2px;
   border: 1px solid rgba(0, 150, 200, 0.2);
   background: rgba(0, 100, 150, 0.2);
-  color: #00c0e0;
+  color: var(--sheet-text-body);
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -216,15 +216,15 @@
 }
 
 .talent-tree-badge.suggested-badge {
-  background: rgba(255, 200, 0, 0.15);
-  border-color: rgba(255, 200, 0, 0.3);
-  color: #ffc800;
+  background: oklch(0.72 0.26 350 / 0.15);
+  border-color: oklch(0.72 0.26 350 / 0.3);
+  color: var(--sheet-accent-secondary);
 }
 
 .talent-tree-badge.class-badge {
-  background: rgba(0, 150, 200, 0.15);
-  border-color: rgba(0, 150, 200, 0.3);
-  color: #00d0ff;
+  background: oklch(0.85 0.18 200 / 0.15);
+  border-color: oklch(0.85 0.18 200 / 0.3);
+  color: var(--sheet-accent-primary);
 }
 
 .talent-tree-badge.heroic-badge {
@@ -236,9 +236,9 @@
 .talent-tree-card__enter-btn {
   margin-top: auto;
   padding: 0.5rem 0.75rem;
-  border: 1px solid rgba(0, 150, 200, 0.2);
-  background: rgba(0, 100, 150, 0.2);
-  color: #00d0ff;
+  border: 1px solid oklch(0.85 0.18 200 / 0.2);
+  background: oklch(0.85 0.18 200 / 0.2);
+  color: var(--sheet-accent-primary);
   border-radius: 3px;
   cursor: pointer;
   font-size: 0.85rem;
@@ -251,9 +251,9 @@
 }
 
 .talent-tree-card__enter-btn:hover {
-  background: rgba(0, 150, 200, 0.3);
-  border-color: rgba(0, 200, 255, 0.3);
-  box-shadow: 0 0 8px rgba(0, 200, 255, 0.15);
+  background: oklch(0.85 0.18 200 / 0.3);
+  border-color: oklch(0.85 0.18 200 / 0.3);
+  box-shadow: 0 0 8px oklch(0.85 0.18 200 / 0.15);
 }
 
 /* Empty State */
@@ -265,7 +265,7 @@
   min-height: 200px;
   flex-direction: column;
   gap: 0.75rem;
-  color: #a0c0d0;
+  color: var(--sheet-text-body);
   text-align: center;
 }
 
@@ -296,7 +296,7 @@
 .talent-graph-header__title {
   font-size: 1rem;
   font-weight: 600;
-  color: #00d0ff;
+  color: var(--sheet-accent-primary);
   margin: 0;
   display: flex;
   align-items: center;
@@ -313,9 +313,9 @@
 
 .talent-graph-header__exit-btn {
   padding: 0.625rem 1rem;
-  border: 1px solid rgba(0, 150, 200, 0.2);
-  background: rgba(0, 100, 150, 0.2);
-  color: #00d0ff;
+  border: 1px solid oklch(0.85 0.18 200 / 0.2);
+  background: oklch(0.85 0.18 200 / 0.2);
+  color: var(--sheet-accent-primary);
   border-radius: 3px;
   cursor: pointer;
   font-size: 0.85rem;
@@ -328,9 +328,9 @@
 }
 
 .talent-graph-header__exit-btn:hover {
-  background: rgba(0, 150, 200, 0.3);
-  border-color: rgba(0, 200, 255, 0.3);
-  box-shadow: 0 0 8px rgba(0, 200, 255, 0.15);
+  background: oklch(0.85 0.18 200 / 0.3);
+  border-color: oklch(0.85 0.18 200 / 0.3);
+  box-shadow: 0 0 8px oklch(0.85 0.18 200 / 0.15);
 }
 
 /* Graph Container */
@@ -390,23 +390,23 @@
 }
 
 .talent-legend-dot--legal {
-  background: rgba(34, 197, 94, 0.4);
-  border-color: #22c55e;
+  background: var(--prog-positive) / 0.4;
+  border-color: var(--prog-positive);
 }
 
 .talent-legend-dot--blocked {
-  background: rgba(239, 68, 68, 0.4);
-  border-color: #ef4444;
+  background: var(--prog-negative) / 0.4;
+  border-color: var(--prog-negative);
 }
 
 .talent-legend-dot--owned {
-  background: rgba(245, 158, 11, 0.4);
-  border-color: #f59e0b;
+  background: var(--sheet-accent-secondary) / 0.4;
+  border-color: var(--sheet-accent-secondary);
 }
 
 .talent-legend-dot--selected {
-  background: rgba(0, 176, 208, 0.4);
-  border-color: #00b0d0;
+  background: oklch(0.85 0.18 200 / 0.4);
+  border-color: oklch(0.85 0.18 200 / 0.8);
 }
 
 /* ====================================================================
@@ -430,30 +430,30 @@
 .prog-talent-node--legal circle,
 .prog-talent-node--legal rect,
 .prog-talent-node--legal .prog-talent-node__shape {
-  stroke: #22c55e;
-  fill: rgba(34, 197, 94, 0.14);
+  stroke: var(--prog-positive);
+  fill: var(--prog-positive) / 0.14;
 }
 
 .prog-talent-node--blocked circle,
 .prog-talent-node--blocked rect,
 .prog-talent-node--blocked .prog-talent-node__shape {
-  stroke: #ef4444;
-  fill: rgba(239, 68, 68, 0.11);
+  stroke: var(--prog-negative);
+  fill: var(--prog-negative) / 0.11;
   opacity: 0.7;
 }
 
 .prog-talent-node--owned circle,
 .prog-talent-node--owned rect,
 .prog-talent-node--owned .prog-talent-node__shape {
-  stroke: #f59e0b;
-  fill: rgba(245, 158, 11, 0.12);
+  stroke: var(--sheet-accent-secondary);
+  fill: var(--sheet-accent-secondary) / 0.12;
 }
 
 .prog-talent-node--selected circle,
 .prog-talent-node--selected rect,
 .prog-talent-node--selected .prog-talent-node__shape {
-  stroke: #00d0ff;
-  fill: rgba(0, 208, 255, 0.16);
+  stroke: var(--sheet-accent-primary);
+  fill: var(--sheet-accent-primary) / 0.16;
   stroke-width: 2px;
 }
 
@@ -479,7 +479,7 @@
 .talent-details__name {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #00f0ff;
+  color: var(--sheet-accent-primary);
   margin: 0;
   letter-spacing: 0.02em;
 }
@@ -501,15 +501,15 @@
 }
 
 .talent-meta-badge.tree-badge {
-  background: rgba(0, 150, 200, 0.2);
-  color: #00d0ff;
-  border: 1px solid rgba(0, 150, 200, 0.3);
+  background: oklch(0.85 0.18 200 / 0.2);
+  color: var(--sheet-accent-primary);
+  border: 1px solid oklch(0.85 0.18 200 / 0.3);
 }
 
 .talent-meta-badge.selected-badge {
-  background: rgba(34, 197, 94, 0.2);
-  color: #22c55e;
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: var(--prog-positive) / 0.2;
+  color: var(--prog-positive);
+  border: 1px solid var(--prog-positive) / 0.3;
 }
 
 .talent-details__section {
@@ -522,7 +522,7 @@
 .talent-details__section-title {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #00c0e0;
+  color: var(--sheet-accent-primary);
   margin: 0 0 0.75rem 0;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -558,8 +558,8 @@
   padding: 0.75rem 1rem;
   border-radius: 3px;
   border: 1px solid;
-  background: rgba(0, 100, 150, 0.3);
-  color: #00d0ff;
+  background: oklch(0.85 0.18 200 / 0.3);
+  color: var(--sheet-accent-primary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -571,26 +571,26 @@
 }
 
 .select-btn {
-  background: rgba(0, 150, 200, 0.3);
-  border-color: rgba(0, 200, 255, 0.3);
+  background: oklch(0.85 0.18 200 / 0.3);
+  border-color: oklch(0.85 0.18 200 / 0.3);
 }
 
 .select-btn:hover {
-  background: rgba(0, 180, 220, 0.5);
-  border-color: rgba(0, 220, 255, 0.5);
-  box-shadow: 0 0 12px rgba(0, 200, 255, 0.25);
+  background: oklch(0.85 0.18 200 / 0.5);
+  border-color: oklch(0.85 0.18 200 / 0.5);
+  box-shadow: 0 0 12px oklch(0.85 0.18 200 / 0.25);
 }
 
 .deselect-btn {
-  background: rgba(200, 80, 80, 0.3);
-  border-color: rgba(200, 100, 100, 0.3);
-  color: #ff9090;
+  background: var(--prog-negative) / 0.3;
+  border-color: var(--prog-negative) / 0.3;
+  color: var(--prog-negative);
 }
 
 .deselect-btn:hover {
-  background: rgba(220, 100, 100, 0.5);
-  border-color: rgba(255, 120, 120, 0.5);
-  box-shadow: 0 0 12px rgba(255, 100, 100, 0.25);
+  background: var(--prog-negative) / 0.5;
+  border-color: var(--prog-negative) / 0.5;
+  box-shadow: 0 0 12px var(--prog-negative) / 0.25;
 }
 
 .mentor-btn {
@@ -627,7 +627,7 @@
 }
 
 .prog-talent-tree-link--owned {
-  stroke: #22c55e;
+  stroke: var(--prog-positive);
 }
 
 .prog-talent-tree-link--default {
@@ -635,11 +635,11 @@
 }
 
 .prog-talent-tree-link--available {
-  stroke: #1d9bf0;
+  stroke: var(--sheet-accent-primary);
 }
 
 .prog-talent-tree-link--blocked {
-  stroke: #ef4444;
+  stroke: var(--prog-negative);
 }
 
 .prog-talent-oval {
@@ -671,18 +671,18 @@
 }
 
 .prog-talent-oval--available .prog-talent-oval__shape {
-  stroke: #1d9bf0;
-  fill: rgba(29, 155, 240, 0.08);
+  stroke: var(--sheet-accent-primary);
+  fill: var(--sheet-accent-primary) / 0.08;
 }
 
 .prog-talent-oval--blocked .prog-talent-oval__shape {
-  stroke: #ef4444;
-  fill: rgba(239, 68, 68, 0.08);
+  stroke: var(--prog-negative);
+  fill: var(--prog-negative) / 0.08;
 }
 
 .prog-talent-oval--owned .prog-talent-oval__shape {
-  stroke: #22c55e;
-  fill: rgba(34, 197, 94, 0.09);
+  stroke: var(--prog-positive);
+  fill: var(--prog-positive) / 0.09;
 }
 
 .prog-talent-oval--focused .prog-talent-oval__shape {
@@ -702,7 +702,7 @@
 }
 
 .talent-legend-swatch--owned {
-  color: #22c55e;
+  color: var(--prog-positive);
 }
 
 .talent-legend-swatch--default {
@@ -710,29 +710,29 @@
 }
 
 .talent-legend-swatch--available {
-  color: #1d9bf0;
+  color: var(--sheet-accent-primary);
 }
 
 .talent-legend-swatch--blocked {
-  color: #ef4444;
+  color: var(--prog-negative);
 }
 
 .talent-meta-badge.owned-badge {
-  background: rgba(34, 197, 94, 0.16);
-  color: #22c55e;
-  border: 1px solid rgba(34, 197, 94, 0.32);
+  background: var(--prog-positive) / 0.16;
+  color: var(--prog-positive);
+  border: 1px solid var(--prog-positive) / 0.32;
 }
 
 .talent-meta-badge.available-badge {
-  background: rgba(29, 155, 240, 0.16);
-  color: #1d9bf0;
-  border: 1px solid rgba(29, 155, 240, 0.32);
+  background: var(--sheet-accent-primary) / 0.16;
+  color: var(--sheet-accent-primary);
+  border: 1px solid var(--sheet-accent-primary) / 0.32;
 }
 
 .talent-meta-badge.blocked-badge {
-  background: rgba(239, 68, 68, 0.16);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.32);
+  background: var(--prog-negative) / 0.16;
+  color: var(--prog-negative);
+  border: 1px solid var(--prog-negative) / 0.32;
 }
 
 .talent-prerequisites__missing-list {
@@ -758,4 +758,124 @@
   justify-content: center;
   color: #a0c0d0;
   font-size: 0.95rem;
+}
+
+/* ============================================================================
+   PHASE 7: TALENT TREE VISUAL FIDELITY — HERO-CARD + LEGEND ENHANCEMENTS
+   ============================================================================ */
+
+/* Enhanced talent tree browser card styling (hero-card treatment) */
+.talent-tree-card {
+  background: linear-gradient(135deg,
+    rgba(0, 100, 150, 0.08) 0%,
+    rgba(0, 50, 80, 0.04) 100%);
+  border-radius: 8px;
+  box-shadow:
+    inset 0 0 8px rgba(0, 0, 0, 0.1),
+    0 0 12px rgba(0, 170, 255, 0.05);
+}
+
+.talent-tree-card:hover {
+  background: linear-gradient(135deg,
+    rgba(0, 150, 200, 0.12) 0%,
+    rgba(0, 80, 120, 0.06) 100%);
+  box-shadow:
+    inset 0 0 8px rgba(0, 0, 0, 0.1),
+    0 0 16px rgba(0, 170, 255, 0.12);
+}
+
+.talent-tree-card--focused {
+  background: linear-gradient(135deg,
+    rgba(0, 200, 255, 0.15) 0%,
+    rgba(0, 150, 200, 0.08) 100%);
+  border-color: rgba(0, 220, 255, 0.6);
+  box-shadow:
+    inset 0 0 12px rgba(0, 0, 0, 0.15),
+    0 0 20px rgba(0, 220, 255, 0.25);
+}
+
+.talent-tree-card--suggested {
+  background: linear-gradient(135deg,
+    rgba(255, 200, 0, 0.08) 0%,
+    rgba(200, 150, 0, 0.04) 100%);
+}
+
+.talent-tree-card--suggested:hover {
+  background: linear-gradient(135deg,
+    rgba(255, 200, 0, 0.12) 0%,
+    rgba(200, 150, 0, 0.06) 100%);
+  box-shadow:
+    inset 0 0 8px rgba(0, 0, 0, 0.1),
+    0 0 14px rgba(255, 200, 0, 0.10);
+}
+
+/* Enhanced legend styling — clearer state indicators */
+.talent-graph-legend {
+  display: flex;
+  gap: 1.5rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(0, 200, 255, 0.15);
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+}
+
+.talent-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.talent-legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.talent-legend-swatch--owned {
+  background: var(--prog-positive);
+  box-shadow: 0 0 6px var(--prog-positive) / 0.4;
+}
+
+.talent-legend-swatch--default {
+  background: #808080;
+  box-shadow: 0 0 4px rgba(128, 128, 128, 0.3);
+}
+
+.talent-legend-swatch--available {
+  background: var(--sheet-accent-primary);
+  box-shadow: 0 0 6px var(--sheet-accent-primary) / 0.4;
+}
+
+.talent-legend-swatch--blocked {
+  background: var(--prog-negative);
+  box-shadow: 0 0 6px var(--prog-negative) / 0.4;
+}
+
+.talent-legend-label {
+  color: var(--sheet-text-body);
+  font-weight: 500;
+}
+
+/* Talent graph canvas container styling */
+.talent-graph-viewport {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  background:
+    linear-gradient(180deg,
+      rgba(0, 100, 150, 0.04),
+      transparent 70%);
+  border: 1px solid rgba(0, 200, 255, 0.12);
+  border-radius: 6px;
+  margin: 0 1.25rem;
+}
+
+.talent-tree-graph-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 6px;
 }

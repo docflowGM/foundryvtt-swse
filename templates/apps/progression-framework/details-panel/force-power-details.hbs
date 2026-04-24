@@ -37,8 +37,34 @@
     </div>
   {{/if}}
 
-  {{!-- Selection controls --}}
+  {{!-- PHASE 8: Selection controls with quantity display --}}
   <div class="prog-force-power-details__actions">
+    {{#if selectedCount}}
+      <p class="prog-force-power-details__hint">
+        <i class="fas fa-hourglass-end" aria-hidden="true"></i>
+        Current selection: <strong>{{selectedCount}}</strong> {{plural selectedCount "use" "uses"}} pending
+      </p>
+
+      {{!-- Inline quantity control --}}
+      <div class="prog-force-power-details__quantity-inline">
+        <button class="prog-quantity-btn prog-quantity-btn--decrement"
+                data-action="decrement-quantity"
+                data-item-id="{{power.id}}"
+                type="button"
+                aria-label="Remove one">
+          <i class="fas fa-minus" aria-hidden="true"></i>
+        </button>
+        <span class="prog-quantity-display">{{selectedCount}}</span>
+        <button class="prog-quantity-btn prog-quantity-btn--increment"
+                data-action="increment-quantity"
+                data-item-id="{{power.id}}"
+                type="button"
+                aria-label="Add one">
+          <i class="fas fa-plus" aria-hidden="true"></i>
+        </button>
+      </div>
+    {{/if}}
+
     {{#if canAddMore}}
       {{#if selectedCount}}
         <p class="prog-force-power-details__hint">

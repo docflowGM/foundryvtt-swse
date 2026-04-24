@@ -1,6 +1,11 @@
 <div class="prog-class-details">
   <div class="prog-class-details__header">
-    {{#if class.img}}<img class="prog-class-details__portrait" src="{{class.img}}" alt="{{class.name}}">{{/if}}
+    {{#if class.img}}
+    <div class="prog-class-details__portrait-frame">
+      <img class="prog-class-details__portrait" src="{{class.img}}" alt="{{class.name}}">
+      <div class="prog-holo-scan"></div>
+    </div>
+    {{/if}}
     <div class="prog-class-details__heading-copy">
       <h2 class="prog-class-details__name">{{class.name}}</h2>
       <div class="prog-class-details__meta-row">

@@ -21,9 +21,12 @@
       modal-host      In-shell modal stack
 --}}
 
-<div class="progression-shell swse-ui-shell swse-sheet-ui swse-progression-shell prog-holo {{#if isProcessing}}is-processing{{/if}}"
+<div class="progression-shell swse-ui-shell swse-sheet-ui swse-progression-shell swse-prog-v2-shell prog-holo {{#if isProcessing}}is-processing{{/if}}"
      data-application-content
-     data-step-id="{{currentDescriptor.stepId}}">
+     data-step-id="{{currentDescriptor.stepId}}"
+     data-theme="{{themeKey}}"
+     data-motion-style="{{motionStyle}}"
+     style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
 
 {{#if isIntroMode}}
 
@@ -53,6 +56,17 @@
        data-mood="{{mentor.mood}}">
     {{{parts.mentorRail}}}
   </div>{{!-- /mentor-rail --}}
+
+  {{!-- ======================================================================
+    PHASE 4: HUD META STATUS BAR — Session, mode, step meta
+  ======================================================================= --}}
+  {{#if hudTags}}
+  <div class="prog-hud-meta-bar">
+    <span class="prog-hud-tag prog-hud-tag--mode">{{hudTags.modeTag}}</span>
+    <span class="prog-hud-tag prog-hud-tag--actor">{{hudTags.actorTag}}</span>
+    <span class="prog-hud-tag prog-hud-tag--stage">{{hudTags.stageTag}}</span>
+  </div>
+  {{/if}}
 
   {{!-- ======================================================================
     MAIN COLUMN — progress-rail (horizontal tabs) + utility-bar + content-row + action-footer
@@ -205,6 +219,14 @@
 
         {{!-- ── CENTER: Status indicators only (no step chips here) ── --}}
         <div class="action-footer__status">
+
+          {{!-- PHASE 4 UX: Footer status readout line --}}
+          {{#if footerStatus}}
+          <div class="prog-footer-status-line">
+            <span class="prog-footer-status-label">STATUS:</span>
+            <span class="prog-footer-status-value">{{footerStatus}}</span>
+          </div>
+          {{/if}}
 
           {{!-- PHASE 3 UX: Blocker explanation (specific, actionable message) --}}
           {{#if (and (not footer.next.enabled) footer.blockerExplanation)}}

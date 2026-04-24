@@ -43,6 +43,14 @@ import { RolloutController } from '../rollout/rollout-controller.js';
 import { SelectedRailContext } from './selected-rail-context.js';
 import { ProjectionEngine } from './projection-engine.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
+import {
+  getActorSheetTheme,
+  buildActorSheetThemeStyle
+} from '/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js';
+import {
+  getActorSheetMotionStyle,
+  buildActorSheetMotionStyle
+} from '/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -112,6 +120,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'focus-talent'(e, t)        { return this._onStepAction(e, t); },
       'focus-tree'(e, t)          { return this._onStepAction(e, t); },
       'enter-tree'(e, t)          { return this._onStepAction(e, t); },
+      // Phase 8: Force Power quantity controls
+      'increment-quantity'(e, t)  { return this._onIncrementQuantity(e, t); },
+      'decrement-quantity'(e, t)  { return this._onDecrementQuantity(e, t); },
     },
   };
 
@@ -459,6 +470,118 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Default implementation: can be overridden by subclasses
     if (options.subtype) return options.subtype;
     return 'actor';
+  }
+
+  /**
+   * Get progression shell theme key (Phase 1 hook for future actor-sheet theme inheritance)
+   * @returns {string} Theme key (e.g., 'vapor', 'droid', 'holo', etc.)
+   */
+  _getProgressionThemeKey() {
+    if (!this.actor) return 'cryo'; // fallback
+    const flagValue = this.actor?.getFlag?.('foundryvtt-swse', 'sheetTheme');
+    return getActorSheetTheme(flagValue);
+  }
+
+  /**
+   * Get progression shell motion style (Phase 3: shared actor-sheet motion registry)
+   * @returns {string} Motion style key ('off' | 'quiet' | 'standard' | 'cinematic' | 'diagnostic')
+   */
+  _getProgressionMotionStyle() {
+    if (!this.actor) return 'standard'; // fallback
+    const flagValue = this.actor?.getFlag?.('foundryvtt-swse', 'sheetMotionStyle');
+    return getActorSheetMotionStyle(flagValue);
+  }
+
+  // ═══ PHASE 4: SHELL-OWNED PRESENTATION HELPERS ═══
+
+  /**
+   * Build session label (mode + actor name) for HUD/status readout
+   * @returns {string} e.g. "CHARGEN-Theron Shan"
+   */
+  _buildSessionLabel() {
+    if (!this.actor) return 'SESSION';
+    const mode = String(this.mode || 'chargen').toUpperCase();
+    const name = this.actor.name || 'UNNAMED';
+    return `${mode}-${name}`;
+  }
+
+  /**
+   * Build step meta object for canvas/HUD readout
+   * @returns {Object} { ordinal: 1, total: 8, label: "STAGE 01/08" }
+   */
+  _buildStepMeta() {
+    const ordinal = this.currentStepIndex + 1;
+    const total = this.steps.length;
+    const label = `STAGE ${String(ordinal).padStart(2, '0')}/${String(total).padStart(2, '0')}`;
+    return { ordinal, total, label };
+  }
+
+  /**
+   * Build HUD tag objects (mode, actor name, step meta)
+   * @returns {Object} { modeTag, actorTag, stageTag }
+   */
+  _buildHudTags() {
+    const mode = (this.mode || 'chargen').toUpperCase();
+    const actor = this.actor?.name || 'UNNAMED';
+    const stepMeta = this._buildStepMeta();
+    return {
+      modeTag: mode,
+      actorTag: actor,
+      stageTag: stepMeta.label,
+    };
+  }
+
+  /**
+   * Build ability snapshot if actor.system.abilities exists
+   * @returns {Object|null} { str, dex, con, int, wis, cha } with base values, or null
+   */
+  _buildAbilitySnapshot() {
+    if (!this.actor?.system?.abilities) return null;
+    const ab = this.actor.system.abilities;
+    return {
+      str: ab.str?.base ?? 10,
+      dex: ab.dex?.base ?? 10,
+      con: ab.con?.base ?? 10,
+      int: ab.int?.base ?? 10,
+      wis: ab.wis?.base ?? 10,
+      cha: ab.cha?.base ?? 10,
+    };
+  }
+
+  /**
+   * Build selected chips array from committedSelections Map
+   * Safe read-only display of already-committed choices
+   * @returns {Array} [ { stepId, name, label } ]
+   */
+  _buildSelectedChips() {
+    if (!this.committedSelections || this.committedSelections.size === 0) return [];
+    const chips = [];
+    for (const [stepId, selection] of this.committedSelections.entries()) {
+      if (selection) {
+        chips.push({
+          stepId,
+          name: selection.name || selection.label || 'Selected',
+          label: selection.label || selection.name || 'Selected',
+        });
+      }
+    }
+    return chips;
+  }
+
+  /**
+   * Build footer status label from footer data
+   * @param {Object} footerData - Footer data from _buildFooterData()
+   * @returns {string} e.g. "READY" or "2 picks remaining"
+   */
+  _buildFooterStatus(footerData) {
+    if (!footerData) return 'READY';
+    if (footerData.blockingIssues?.length > 0) {
+      return 'BLOCKING';
+    }
+    if (footerData.center?.[0]?.label) {
+      return footerData.center[0].label.toUpperCase();
+    }
+    return 'READY';
   }
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
@@ -912,6 +1035,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // This sets feature gates, UI visibility, debug tools, etc. based on world settings
     RolloutController.configureShell(this);
 
+    // ✓ PHASE 1: Expose theme and motion for future shared actor-sheet inheritance
+    context.themeKey = this._getProgressionThemeKey();
+    context.motionStyle = this._getProgressionMotionStyle();
+
+    // ✓ PHASE 3: Build inline style strings from actor-sheet theme/motion registries
+    context.themeStyleInline = buildActorSheetThemeStyle(context.themeKey);
+    context.motionStyleInline = buildActorSheetMotionStyle(context.motionStyle);
+
+    // ✓ PHASE 4: Build shell-owned presentation data for HUD/manifest/canvas enrichment
+    context.sessionLabel = this._buildSessionLabel();
+    context.hudTags = this._buildHudTags();
+    context.stepMeta = this._buildStepMeta();
+    context.abilitySnapshot = this._buildAbilitySnapshot();
+    context.selectedChips = this._buildSelectedChips();
+
     // ✓ CRITICAL: Expose shell context to step plugins
     // This allows steps to access committedSelections, actor, mode, and buildIntent
     // Required for suggestion engine to see chargen choices
@@ -1223,6 +1361,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
       // Footer
       footer: footerData,
+      footerStatus: this._buildFooterStatus(footerData),
 
       // Step chips for footer: visible (non-hidden) steps with canonical status
       visibleSteps: this.steps
@@ -2088,6 +2227,48 @@ export class ProgressionShell extends SWSEApplicationV2 {
       this._rebuildProjection();
       // Trigger re-render to show updated selected rail
       this.render();
+    }
+  }
+
+  /**
+   * PHASE 8: Handle quantity increment for force powers/maneuvers.
+   */
+  async _onIncrementQuantity(event, target) {
+    const { element, row, itemId } = this._resolveInteractionItemId(target, event);
+    if (!element || typeof element.closest !== 'function') {
+      swseLogger.warn('[ProgressionShell] _onIncrementQuantity: target is not a DOM element');
+      return;
+    }
+
+    if (!itemId) {
+      swseLogger.warn('[ProgressionShell] _onIncrementQuantity: could not resolve item identity');
+      return;
+    }
+
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.onIncrementQuantity) {
+      await plugin.onIncrementQuantity(itemId, this);
+    }
+  }
+
+  /**
+   * PHASE 8: Handle quantity decrement for force powers/maneuvers.
+   */
+  async _onDecrementQuantity(event, target) {
+    const { element, row, itemId } = this._resolveInteractionItemId(target, event);
+    if (!element || typeof element.closest !== 'function') {
+      swseLogger.warn('[ProgressionShell] _onDecrementQuantity: target is not a DOM element');
+      return;
+    }
+
+    if (!itemId) {
+      swseLogger.warn('[ProgressionShell] _onDecrementQuantity: could not resolve item identity');
+      return;
+    }
+
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.onDecrementQuantity) {
+      await plugin.onDecrementQuantity(itemId, this);
     }
   }
 

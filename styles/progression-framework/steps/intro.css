@@ -3387,3 +3387,92 @@
     justify-content: flex-end;
   }
 }
+
+/* =============================================================================
+   ACCESSIBILITY: PREFERS-REDUCED-MOTION SUPPORT (WCAG 2.1 Level A)
+   Suppress all infinite animations and motion effects when user requests
+   reduced motion in system preferences.
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Suppress all animations across intro surface */
+  .prog-intro-surface *,
+  .prog-intro-surface::before,
+  .prog-intro-surface::after {
+    animation: none !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  /* Explicitly disable infinite motion effects */
+  .prog-intro-cursor,
+  .prog-intro-pulse,
+  .prog-intro-segment-pulse,
+  .prog-intro-content,
+  .prog-intro-status,
+  .prog-intro-message,
+  .prog-intro-button,
+  .prog-intro-scanline,
+  .prog-intro-glitch,
+  .prog-intro-flicker,
+  .prog-intro-breathe,
+  .prog-intro-sweep,
+  .bezel-led,
+  .screen-flicker,
+  .red-wash,
+  .green-wash,
+  .big-banner,
+  .manual-reset,
+  .capsule,
+  .prog-intro-surface--actor-v2 .screen-content,
+  .prog-intro-surface--actor-v2 .bezel,
+  .prog-intro-surface--droid-v2 .boot-content,
+  .prog-intro-surface--droid-v2 .boot-section {
+    animation: none !important;
+  }
+
+  /* Suppress scanline/glitch decorative pseudo-elements */
+  .prog-intro-cursor::before,
+  .prog-intro-cursor::after,
+  .prog-intro-message::before,
+  .prog-intro-message::after,
+  .prog-intro-status::before,
+  .prog-intro-status::after,
+  .prog-intro-content::before,
+  .prog-intro-content::after,
+  .bezel-led::before,
+  .bezel-led::after,
+  .screen-flicker::before,
+  .screen-flicker::after,
+  .big-banner::before,
+  .big-banner::after,
+  .manual-reset::before,
+  .manual-reset::after,
+  .capsule::before,
+  .capsule::after {
+    animation: none !important;
+    display: none !important;
+  }
+
+  /* Maintain readability with static styling when motion disabled */
+  .prog-intro-surface {
+    opacity: 1;
+  }
+
+  .prog-intro-cursor {
+    opacity: 1;
+  }
+
+  .bezel-led {
+    opacity: 0.6;
+  }
+
+  .red-wash.on {
+    opacity: 0.3;
+  }
+
+  .green-wash.on {
+    opacity: 0.4;
+  }
+}

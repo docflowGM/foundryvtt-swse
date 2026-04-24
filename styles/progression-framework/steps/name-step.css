@@ -3,17 +3,36 @@
  * Minimal, focused styles for character name and level selection
  */
 
-/* ------ Name Step Surface ------ */
+/* ------ Name Step Surface -- Phase 5 Identity Enrollment Frame ------ */
 .prog-name-surface {
-  display: contents;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 24px;
+  min-height: 100%;
+  padding: 24px;
+  background: linear-gradient(135deg,
+    rgba(0, 170, 255, 0.02) 0%,
+    rgba(0, 100, 150, 0.01) 50%,
+    transparent 100%);
+  border-radius: 6px;
 }
 
-/* ------ Left Panel: Character Overview ------ */
+/* ------ Left Panel: Character Overview (Phase 5: Hero Callout) ------ */
+.prog-panel--left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(0, 170, 255, 0.04);
+  border: 1px solid rgba(0, 170, 255, 0.15);
+  border-radius: 6px;
+  box-shadow: inset 0 0 12px rgba(0, 170, 255, 0.06);
+}
+
 .prog-panel--left .prog-summary-list {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-top: 1rem;
 }
 
 .prog-summary-row {
@@ -47,12 +66,35 @@
   font-style: italic;
 }
 
-/* ------ Center Panel: Identity Inputs ------ */
+/* ------ Center Panel: Identity Inputs (Phase 5: Enrollment) ------ */
+.prog-panel--center {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(0, 50, 80, 0.15);
+  border: 1px solid rgba(0, 170, 255, 0.20);
+  border-radius: 6px;
+  box-shadow: 0 0 16px rgba(0, 170, 255, 0.08);
+}
+
+.prog-panel--center > h3 {
+  margin: 0;
+  color: var(--sheet-accent-primary);
+  font-weight: 600;
+}
+
+.prog-help-text {
+  color: var(--prog-text-dim);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
 .prog-name-form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  margin-top: 1rem;
 }
 
 .prog-field {
@@ -127,9 +169,25 @@
   font-size: 0.9rem;
 }
 
-/* ------ Right Panel: Details ------ */
+/* ------ Right Panel: Identity Anchor Guidance (Phase 5: Hero Callout) ------ */
+.prog-panel--right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(0, 100, 150, 0.05);
+  border: 1px solid rgba(0, 170, 255, 0.12);
+  border-radius: 6px;
+  box-shadow: inset 0 0 8px rgba(0, 170, 255, 0.04);
+}
+
+.prog-panel--right > h3 {
+  margin: 0;
+  color: var(--sheet-accent-primary);
+  font-weight: 600;
+}
+
 .prog-panel--right .prog-details-text {
-  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;

@@ -15,6 +15,14 @@
              tabindex="0" role="option"
              aria-selected="{{#if (arrayIncludes ../committedCounts @key)}}true{{else}}false{{/if}}">
 
+          {{!-- Force power holographic image slot (Phase 7) --}}
+          {{#if this.img}}
+            <div class="prog-forcepower-card__media">
+              <img class="prog-forcepower-card__image" src="{{this.img}}" alt="{{this.name}}">
+              <div class="prog-holo-scan"></div>
+            </div>
+          {{/if}}
+
           {{!-- Power name --}}
           <div class="prog-force-power-card__header">
             <h3 class="prog-force-power-card__name">
@@ -37,17 +45,74 @@
             </p>
           {{/if}}
 
-          {{!-- Selection state indicator --}}
-          {{#if (lookup ../committedCounts this.id)}}
-            <div class="prog-force-power-card__state-hint">
-              <i class="fas fa-star" aria-hidden="true"></i>
-              Selected {{lookup ../committedCounts this.id}} {{plural (lookup ../committedCounts this.id) "time" "times"}}
-            </div>
+          {{!-- PHASE 8: Selection state indicator + status --}}
+          {{#if (lookup ../cardStates this.id)}}
+            {{#with (lookup ../cardStates this.id)}}
+              <div class="prog-force-power-card__state-section">
+                {{!-- Status badges --}}
+                {{#if isCommitted}}
+                  <span class="prog-force-power-card__status-badge prog-force-power-card__status-badge--committed">
+                    <i class="fas fa-lock" aria-hidden="true"></i>
+                    Committed ({{committedCount}})
+                  </span>
+                {{/if}}
+                {{#if isPending}}
+                  <span class="prog-force-power-card__status-badge prog-force-power-card__status-badge--pending">
+                    <i class="fas fa-hourglass-end" aria-hidden="true"></i>
+                    Pending ({{pendingCount}})
+                  </span>
+                {{/if}}
+
+                {{!-- Quantity controls for pending selections --}}
+                {{#if isPending}}
+                  <div class="prog-force-power-card__quantity-control">
+                    <button class="prog-quantity-btn prog-quantity-btn--decrement"
+                            data-action="decrement-quantity"
+                            data-item-id="{{powerId}}"
+                            type="button"
+                            aria-label="Remove one selection"
+                            title="Remove">
+                      <i class="fas fa-minus" aria-hidden="true"></i>
+                    </button>
+                    <span class="prog-quantity-display">{{pendingCount}}</span>
+                    <button class="prog-quantity-btn prog-quantity-btn--increment"
+                            data-action="increment-quantity"
+                            data-item-id="{{powerId}}"
+                            type="button"
+                            aria-label="Add one more"
+                            title="Add">
+                      <i class="fas fa-plus" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                {{else}}
+                  {{!-- Committed: show add button or unavailable state --}}
+                  {{#if isCommitted}}
+                    <div class="prog-force-power-card__quantity-hint">
+                      <i class="fas fa-info-circle" aria-hidden="true"></i>
+                      {{committedCount}} {{plural committedCount "use" "uses"}} locked
+                    </div>
+                  {{else}}
+                    <div class="prog-force-power-card__state-hint prog-force-power-card__state-hint--available">
+                      <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                      Available
+                    </div>
+                  {{/if}}
+                {{/if}}
+              </div>
+            {{/with}}
           {{else}}
-            <div class="prog-force-power-card__state-hint prog-force-power-card__state-hint--available">
-              <i class="fas fa-plus-circle" aria-hidden="true"></i>
-              Available
-            </div>
+            {{!-- Fallback: legacy display if cardStates missing --}}
+            {{#if (lookup ../pendingCounts this.id)}}
+              <div class="prog-force-power-card__state-hint">
+                <i class="fas fa-star" aria-hidden="true"></i>
+                Selected {{lookup ../pendingCounts this.id}} {{plural (lookup ../pendingCounts this.id) "time" "times"}}
+              </div>
+            {{else}}
+              <div class="prog-force-power-card__state-hint prog-force-power-card__state-hint--available">
+                <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                Available
+              </div>
+            {{/if}}
           {{/if}}
         </div>
       {{/each}}
