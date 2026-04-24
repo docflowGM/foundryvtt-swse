@@ -2,7 +2,7 @@
 <form class="swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui" autocomplete="off">
 
 <!-- V2 SHELL OUTER CONTAINER -->
-<div class="swse-sheet-v2-shell" data-theme="{{sheetTheme}}" style="{{sheetThemeStyle}}">
+<div class="swse-sheet-v2-shell" data-theme="{{sheetTheme}}" data-motion-style="{{sheetMotionStyle}}" style="{{sheetThemeStyle}}; {{sheetMotionStyleInline}}">
   <div class="swse-v2-tablet">
     <div class="swse-v2-screen">
 
@@ -167,6 +167,22 @@
                     {{/each}}
                   </div>
                 </div>
+              {{/each}}
+            </div>
+          </div>
+          <div class="swse-v2-motion-picker">
+            <span class="swse-v2-motion-picker__label">Motion</span>
+            <div class="swse-v2-motion-picker__chips">
+              {{#each sheetMotionOptions}}
+                <button
+                  type="button"
+                  class="swse-v2-motion-chip {{#if (eq value ../sheetMotionStyle)}}is-active{{/if}}"
+                  data-action="set-sheet-motion-style"
+                  data-motion-style="{{value}}"
+                  title="{{description}}"
+                >
+                  <span class="swse-v2-motion-chip__text">{{label}}</span>
+                </button>
               {{/each}}
             </div>
           </div>

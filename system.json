@@ -37,6 +37,7 @@
     "styles/sheets/v2-alive-systems.css",
     "styles/sheets/v2-phase8-breathing-animations.css",
     "styles/sheets/v2-phase9-remaining-motion.css",
+    "styles/sheets/v2-motion-picker.css",
     "styles/actors/v2/combat-stats-panel.css",
     "styles/sheets/v2-npc-specific.css",
     "styles/sheets/v2-droid-specific.css",

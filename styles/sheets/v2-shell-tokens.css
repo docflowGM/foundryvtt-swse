@@ -34,6 +34,25 @@
   --font-display: var(--swse-font-display, monospace);
   --font-orbit: var(--swse-font-orbit, system-ui, sans-serif);
 
+  /* ═══════════════════════════════════════════════════════════════════════ */
+  /* Phase 10: Motion Style Tokens (default to "standard" preset)            */
+  /* Overridden by inline styles from actor-sheet-motion-registry.js         */
+  /* ═══════════════════════════════════════════════════════════════════════ */
+  --motion-enabled: 1;
+  --motion-breathe-speed: 4.8s;
+  --motion-shimmer-speed: 2.8s;
+  --motion-scan-speed: 3.6s;
+  --motion-sweep-speed: 3.2s;
+  --motion-pulse-speed: 2.4s;
+  --motion-flicker-speed: 1.8s;
+  --motion-diagnostic-speed: 8.2s;
+  --motion-micro-speed: 6.8s;
+  --motion-chip-swatch-speed: 4.6s;
+  --motion-tick-speed: 2.2s;
+  --motion-glow-alpha: 0.24;
+  --motion-glow-alpha-strong: 0.42;
+  --motion-glow-alpha-subtle: 0.15;
+
   color: var(--ink);
   font-family: var(--font-body);
   background:
