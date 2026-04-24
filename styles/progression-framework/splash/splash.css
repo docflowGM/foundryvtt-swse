@@ -60,7 +60,7 @@
      this must be transparent here to prevent overriding the frame-consistency fix. */
   background: transparent;
   color: rgba(210, 240, 255, 1);
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   font-size: 13px;
   line-height: 1.4;
   position: relative;
@@ -199,7 +199,7 @@
    ============================================================================ */
 
 .prog-intro-label {
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   font-size: 14px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -241,7 +241,7 @@
 .prog-intro-surface--localized .prog-intro-label,
 .prog-intro-surface--localized .prog-intro-microlabel,
 .prog-intro-surface--localized .prog-intro-status__text {
-  font-family: 'Orbitron', 'Courier New', monospace;
+  font-family: var(--swse-font-orbit, 'Orbitron', sans-serif);
   font-style: normal;
   letter-spacing: 0.12em;
 }
@@ -267,7 +267,7 @@
 }
 
 .prog-intro-surface--localized .prog-intro-aurabesh {
-  font-family: 'Orbitron', 'Courier New', monospace;
+  font-family: var(--swse-font-orbit, 'Orbitron', sans-serif);
   font-style: normal;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -499,7 +499,7 @@
 
 .prog-intro-translation__content,
 .prog-intro-translation__content .aurebesh-dialogue-wrapper {
-  font-family: 'Orbitron', 'Courier New', monospace;
+  font-family: var(--swse-font-orbit, 'Orbitron', sans-serif);
   font-size: 26px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -571,7 +571,7 @@
 
 .prog-intro-identity-label {
   color: rgba(210, 240, 255, 1);
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -642,7 +642,7 @@
   padding: 0 24px;
 
   color: rgba(150, 240, 255, 0.95);
-  font-family: 'Courier New', var(--swse-font-ui, 'Orbitron', monospace);
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 1.5px;
@@ -855,7 +855,7 @@
 }
 
 .boot-loading-label {
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   font-size: 14px;
   color: rgba(0, 180, 220, 1);
   letter-spacing: 2px;

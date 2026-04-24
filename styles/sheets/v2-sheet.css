@@ -2562,7 +2562,7 @@ select option:checked {
   flex: 1;
   padding: 8px 10px;
   min-height: 120px;
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   font-size: 0.85rem;
   line-height: 1.5;
   background: rgba(0, 255, 136, 0.03);
@@ -4708,7 +4708,7 @@ select option:checked {
   border-radius: 8px;
   padding: 30px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   color: #e0e0e0;
 }
 
@@ -4756,7 +4756,7 @@ select option:checked {
   flex: 1;
   padding: 12px 24px;
   font-size: 1rem;
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   font-weight: bold;
   border: 2px solid rgba(0, 200, 255, 0.5);
   background: rgba(0, 20, 40, 0.6);
@@ -4820,7 +4820,7 @@ select option:checked {
   min-height: 28px;
   min-width: 50px;
   padding: 4px 12px;
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   cursor: pointer;
   transition: all 0.15s ease;
 }
@@ -4901,7 +4901,7 @@ select option:checked {
   position: relative;
   min-height: 28px;
   padding: 4px 12px;
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   font-size: 0.85rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
@@ -4953,7 +4953,7 @@ select option:checked {
   border-radius: 4px;
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.85);
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
 }
 
 .swse-sheet .math-pill.compact {

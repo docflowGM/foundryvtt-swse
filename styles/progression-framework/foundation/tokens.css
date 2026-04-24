@@ -124,11 +124,11 @@
   --prog-step-conditional:  #f59e0b;
 
   /* =========================================================================
-   * Typography
+   * Typography — Self-hosted Fonts
    * ========================================================================= */
-  --prog-font:              'Orbitron', 'Roboto Condensed', monospace;
-  --prog-font-body:         'Roboto Condensed', 'Helvetica Neue', sans-serif;
-  --prog-font-mono:         'Roboto Mono', monospace;
+  --prog-font:              'SWSE VT323', monospace;
+  --prog-font-body:         'SWSE Space Grotesk', system-ui, sans-serif;
+  --prog-font-mono:         'SWSE JetBrains Mono', ui-monospace, monospace;
 
   --prog-font-size-xs:      0.65rem;
   --prog-font-size-sm:      0.75rem;

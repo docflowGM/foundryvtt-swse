@@ -25,7 +25,7 @@
   border: 2px solid var(--swse-cyan);
   border-radius: 8px;
   color: var(--swse-cyan);
-  font-family: 'Orbitron', sans-serif;
+  font-family: var(--swse-font-orbit, 'SWSE Orbitron', sans-serif);
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
 }
 

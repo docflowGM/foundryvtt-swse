@@ -292,7 +292,7 @@
     border-radius: 8px;
     padding: 12px;
     color: #9ed0ff;
-    font-family: "Orbitron", sans-serif;
+    font-family: var(--swse-font-orbit, "SWSE Orbitron", sans-serif);
     box-shadow: 0 0 15px rgba(0, 175, 255, 0.3), inset 0 0 10px rgba(0, 175, 255, 0.1);
 }
 
