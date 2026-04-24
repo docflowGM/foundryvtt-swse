@@ -1,5 +1,6 @@
 import { canonicalizeSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { FeatRegistry as CanonicalFeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { TalentRegistry as CanonicalTalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
 
 const SIZE_ORDER = ['Fine', 'Diminutive', 'Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan', 'Colossal'];
@@ -28,6 +29,11 @@ function getCanonicalFeatEntries() {
   return Array.isArray(entries) ? entries : [];
 }
 
+function getCanonicalTalentEntries() {
+  const entries = CanonicalTalentRegistry.getAll?.() || [];
+  return Array.isArray(entries) ? entries : [];
+}
+
 function getCanonicalSpeciesEntries() {
   const entries = SpeciesRegistry.getAll?.() || [];
   return Array.isArray(entries) ? entries : [];
@@ -44,6 +50,20 @@ export function resolveCanonicalFeatName(rawName) {
   if (!normalized) return input;
 
   const match = getCanonicalFeatEntries().find((entry) => normalizeLookupKey(entry?.name) === normalized);
+  return match?.name || input.replace(/\s+/g, ' ').trim();
+}
+
+export function resolveCanonicalTalentName(rawName) {
+  const input = String(rawName ?? '').trim();
+  if (!input) return '';
+
+  const direct = CanonicalTalentRegistry.getByName?.(input);
+  if (direct?.name) return direct.name;
+
+  const normalized = normalizeLookupKey(input);
+  if (!normalized) return input;
+
+  const match = getCanonicalTalentEntries().find((entry) => normalizeLookupKey(entry?.name) === normalized);
   return match?.name || input.replace(/\s+/g, ' ').trim();
 }
 
@@ -183,9 +203,18 @@ export function parseRegistryBackedLegacyPrerequisite(part) {
     return { type: 'feat', featName: featName, name: featName };
   }
 
+  const talentName = resolveCanonicalTalentName(text);
+  if (talentName && getCanonicalTalentEntries().some((entry) => normalizeLookupKey(entry?.name) === normalizeLookupKey(talentName))) {
+    return { type: 'talent', talentName, name: talentName };
+  }
+
   return null;
 }
 
 export function namesMatchLoosely(left, right) {
   return normalizeLookupKey(left) !== '' && normalizeLookupKey(left) === normalizeLookupKey(right);
+}
+
+export function normalizeLooseLookupKey(value) {
+  return normalizeLookupKey(value);
 }

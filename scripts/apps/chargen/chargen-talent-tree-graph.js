@@ -6,6 +6,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
+import { getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
 
 /**
  * Parse prerequisites string to extract talent dependencies
@@ -28,6 +29,11 @@ function getTalentNodeId(talent) {
 }
 
 function getTalentPrerequisiteString(talent) {
+  const canonical = getCanonicalPrerequisiteText('talent', talent?.name);
+  if (typeof canonical === 'string' && canonical.trim()) {
+    return canonical.trim();
+  }
+
   const candidates = [
     talent?.system?.prerequisites,
     talent?.system?.prerequisite,

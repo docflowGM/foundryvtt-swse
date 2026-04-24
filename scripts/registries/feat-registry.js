@@ -23,6 +23,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getCanonicalBenefitText, getCanonicalDescriptionText, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
 
 /**
  * Internal normalized feat entry
@@ -140,6 +141,9 @@ export class FeatRegistry {
      */
     static _normalizeEntry(doc) {
         const system = doc.system || {};
+        const canonicalPrerequisite = getCanonicalPrerequisiteText('feat', doc.name);
+        const canonicalDescription = getCanonicalDescriptionText('feat', doc.name);
+        const canonicalBenefit = getCanonicalBenefitText('feat', doc.name);
 
         // Extract and normalize category
         let category = system.featType || system.category || null;
@@ -156,7 +160,7 @@ export class FeatRegistry {
 
         // Normalize prerequisite block
         const prerequisites = {
-            raw: system.prerequisites || null
+            raw: canonicalPrerequisite || system.prerequisite || system.prerequisites || null
         };
 
         // Create normalized entry
@@ -168,7 +172,7 @@ export class FeatRegistry {
             category: category,
             tags: tags,
             prerequisites: prerequisites,
-            description: system.description?.value || system.description || '',
+            description: canonicalDescription || system.description?.value || system.description || canonicalBenefit || '',
             requiresTraining: Boolean(system.requiresTraining),
             requiresProficiency: Boolean(system.requiresProficiency),
             source: system.source || null,

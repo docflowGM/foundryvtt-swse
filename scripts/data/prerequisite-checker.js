@@ -60,8 +60,10 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
-import { actorIsDroidLike, actorMeetsMinimumSize, getActorSpeciesNames, namesMatchLoosely, normalizePendingSkillKeys, parseRegistryBackedLegacyPrerequisite, resolveCanonicalFeatName, resolveCanonicalSkillKey } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
+import { actorIsDroidLike, actorMeetsMinimumSize, getActorSpeciesNames, namesMatchLoosely, normalizeLooseLookupKey, normalizePendingSkillKeys, parseRegistryBackedLegacyPrerequisite, resolveCanonicalFeatName, resolveCanonicalSkillKey, resolveCanonicalTalentName } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
 import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
+import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
+import { getCanonicalBenefitText, getCanonicalContentAuthority, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
 
 /**
  * MAIN CLASS: PrerequisiteChecker
@@ -89,6 +91,63 @@ export class PrerequisiteChecker {
             this.#resolutionWarningCache.add(key);
             SWSELogger.warn(`[PREREQ-RESOLUTION] ${type} fallback: ${message}`);
         }
+    }
+
+    static _getCanonicalContent(type, item) {
+        const name = typeof item === 'string' ? item : (item?.name || item?.label || '');
+        return getCanonicalContentAuthority(type, name);
+    }
+
+    static _getCanonicalPrerequisiteText(type, item) {
+        const name = typeof item === 'string' ? item : (item?.name || item?.label || '');
+        return getCanonicalPrerequisiteText(type, name);
+    }
+
+    static _extractStructuredPrerequisites(rawStructured) {
+        if (!rawStructured) return null;
+        if (Array.isArray(rawStructured)) return rawStructured;
+        if (Array.isArray(rawStructured?.conditions)) {
+            if (rawStructured.type === 'any' || rawStructured.type === 'or') {
+                return [{ type: 'or', conditions: rawStructured.conditions }];
+            }
+            return rawStructured.conditions;
+        }
+        return null;
+    }
+
+    static _resolveSkillKeyOrId(rawSkill) {
+        if (!rawSkill) return null;
+        const byKey = resolveCanonicalSkillKey(rawSkill);
+        if (byKey) return byKey;
+        const skillEntry = SkillRegistry.getById?.(rawSkill);
+        if (skillEntry?.key) return skillEntry.key;
+        return null;
+    }
+
+    static _getChoiceBaseName(rawName) {
+        const input = String(rawName ?? '').trim();
+        if (!input) return '';
+        return input.replace(/\s*\([^)]*\)\s*$/, '').trim();
+    }
+
+    static _actorHasNamedItem(actor, pending, itemType, requiredName) {
+        const baseName = this._getChoiceBaseName(requiredName);
+        const predicate = (item) => {
+            const itemName = item?.name || '';
+            return namesMatchLoosely(itemName, requiredName) ||
+                (baseName && namesMatchLoosely(itemName, baseName)) ||
+                (baseName && itemName.toLowerCase().startsWith(`${baseName.toLowerCase()} (`));
+        };
+
+        const actorHit = actor.items?.some((i) => i.type === itemType && predicate(i));
+        if (actorHit) return true;
+
+        const pendingArray = itemType === 'feat' ? (pending.selectedFeats || []) : (pending.selectedTalents || []);
+        const pendingHit = pendingArray.some((i) => predicate(i));
+        if (pendingHit) return true;
+
+        const grantedArray = itemType === 'feat' ? (pending.grantedFeats || []) : (pending.grantedTalents || []);
+        return grantedArray.some((entry) => predicate(typeof entry === 'string' ? { name: entry } : entry));
     }
 
     // ============================================================
@@ -132,6 +191,19 @@ export class PrerequisiteChecker {
      * @private
      */
     static _resolvePrerequisiteByUuid(prereq, itemType, actor, pending) {
+        if (prereq.id) {
+            const actorItemByStableId = actor.items?.find(i =>
+                i.type === itemType && (
+                    i.id === prereq.id ||
+                    i._id === prereq.id ||
+                    i.flags?.swse?.id === prereq.id
+                )
+            );
+            if (actorItemByStableId) {
+                return { resolved: actorItemByStableId, via: 'id', fallback: false };
+            }
+        }
+
         // PRIMARY PATH: UUID resolution (most reliable)
         if (prereq.uuid) {
             const actorItem = actor.items?.find(i =>
@@ -282,12 +354,25 @@ export class PrerequisiteChecker {
             };
         }
 
-        const prereqData = feat.system?.prerequisite || feat.system?.prerequisites || '';
+        const canonicalPrereqText = this._getCanonicalPrerequisiteText('feat', feat);
+        const prereqData = canonicalPrereqText || feat.system?.prerequisite || feat.system?.prerequisites || '';
+        const structuredPrereqs = this._extractStructuredPrerequisites(feat.system?.prerequisitesStructured);
+
+        // Canon raw prerequisite text is treated as the current source of truth.
+        if (typeof prereqData === 'string' && prereqData.trim() && prereqData.trim().toLowerCase() !== 'none') {
+            return this._evaluateLegacyStringPrerequisites(
+                prereqData,
+                actor,
+                pending,
+                feat.name,
+                'feat'
+            );
+        }
 
         // Try structured format first (if exists)
-        if (feat.system?.prerequisitesStructured && Array.isArray(feat.system.prerequisitesStructured)) {
+        if (structuredPrereqs?.length) {
             return this._evaluateStructuredPrerequisites(
-                feat.system.prerequisitesStructured,
+                structuredPrereqs,
                 actor,
                 pending,
                 feat.name
@@ -301,17 +386,6 @@ export class PrerequisiteChecker {
                 actor,
                 pending,
                 feat.name
-            );
-        }
-
-        // Fall back to legacy string parsing
-        if (typeof prereqData === 'string' && prereqData.trim()) {
-            return this._evaluateLegacyStringPrerequisites(
-                prereqData,
-                actor,
-                pending,
-                feat.name,
-                'feat'
             );
         }
 
@@ -334,12 +408,24 @@ export class PrerequisiteChecker {
             talent = { name: talent, system: {} };
         }
 
-        const prereqData = talent.system?.prerequisites || talent.system?.prerequisitesStructured || '';
+        const canonicalPrereqText = this._getCanonicalPrerequisiteText('talent', talent);
+        const prereqData = canonicalPrereqText || talent.system?.prerequisites || talent.system?.prerequisite || '';
+        const structuredPrereqs = this._extractStructuredPrerequisites(talent.system?.prerequisitesStructured);
+
+        if (typeof prereqData === 'string' && prereqData.trim() && prereqData.trim().toLowerCase() !== 'none') {
+            return this._evaluateLegacyStringPrerequisites(
+                prereqData,
+                actor,
+                pending,
+                talent.name,
+                'talent'
+            );
+        }
 
         // Try structured format first (if exists)
-        if (Array.isArray(talent.system?.prerequisitesStructured)) {
+        if (structuredPrereqs?.length) {
             return this._evaluateStructuredPrerequisites(
-                talent.system.prerequisitesStructured,
+                structuredPrereqs,
                 actor,
                 pending,
                 talent.name
@@ -353,17 +439,6 @@ export class PrerequisiteChecker {
                 actor,
                 pending,
                 talent.name
-            );
-        }
-
-        // Fall back to legacy string parsing
-        if (typeof prereqData === 'string' && prereqData.trim()) {
-            return this._evaluateLegacyStringPrerequisites(
-                prereqData,
-                actor,
-                pending,
-                talent.name,
-                'talent'
             );
         }
 
@@ -660,7 +735,7 @@ export class PrerequisiteChecker {
         }
 
         const missing = [];
-        const prereqs = this._parseLegacyPrerequisites(prereqString);
+        const prereqs = this._parseLegacyPrerequisites(prereqString, type);
 
         for (const prereq of prereqs) {
             const result = this._checkLegacyCondition(prereq, actor, pending);
@@ -748,22 +823,24 @@ export class PrerequisiteChecker {
         switch (type) {
             case 'ability': {
                 const ability = actor.system?.attributes?.[prereq.ability]?.total ?? 10;
-                const met = ability >= (prereq.minimum ?? 10);
+                const required = prereq.minimum ?? prereq.min ?? 10;
+                const met = ability >= required;
                 return {
                     met,
-                    message: !met ? `Requires ${prereq.ability.toUpperCase()} ${prereq.minimum} (you have ${ability})` : ''
+                    message: !met ? `Requires ${prereq.ability.toUpperCase()} ${required} (you have ${ability})` : ''
                 };
             }
             case 'bab': {
                 const bab = actor.system?.bab?.total ?? actor.system?.bab ?? 0;
-                const met = bab >= (prereq.minimum ?? 0);
+                const required = prereq.minimum ?? prereq.min ?? 0;
+                const met = bab >= required;
                 return {
                     met,
-                    message: !met ? `Requires BAB +${prereq.minimum} (you have +${bab})` : ''
+                    message: !met ? `Requires BAB +${required} (you have +${bab})` : ''
                 };
             }
             case 'skill_trained': {
-                const skillKey = prereq.skill || resolveCanonicalSkillKey(prereq.skillName || prereq.name || '');
+                const skillKey = this._resolveSkillKeyOrId(prereq.skill || prereq.skillId || prereq.skillName || prereq.name || '');
                 const pendingSkillKeys = normalizePendingSkillKeys(pending.selectedSkills);
                 const trained = (skillKey && actor.system?.skills?.[skillKey]?.trained) ||
                     (skillKey && pendingSkillKeys.includes(skillKey));
@@ -773,7 +850,7 @@ export class PrerequisiteChecker {
                 };
             }
             case 'skill_ranks': {
-                const skillKey = prereq.skill || resolveCanonicalSkillKey(prereq.skillName || prereq.name || '');
+                const skillKey = this._resolveSkillKeyOrId(prereq.skill || prereq.skillId || prereq.skillName || prereq.name || '');
                 const ranks = skillKey ? (actor.system?.skills?.[skillKey]?.ranks ?? 0) : 0;
                 const met = ranks >= (prereq.ranks ?? 0);
                 return {
@@ -783,9 +860,7 @@ export class PrerequisiteChecker {
             }
             case 'feat': {
                 const requiredFeatName = resolveCanonicalFeatName(prereq.name || prereq.featName || '');
-                const hasFeat = actor.items?.some(i => i.type === 'feat' && namesMatchLoosely(i.name, requiredFeatName)) ||
-                    (pending.selectedFeats || []).some(f => namesMatchLoosely(f?.name, requiredFeatName)) ||
-                    (pending.grantedFeats || []).some(name => namesMatchLoosely(name, requiredFeatName)) ||
+                const hasFeat = this._actorHasNamedItem(actor, pending, 'feat', requiredFeatName) ||
                     this.getHouseruleGrantedFeats().some(name => namesMatchLoosely(name, requiredFeatName));
                 return {
                     met: !!hasFeat,
@@ -793,11 +868,11 @@ export class PrerequisiteChecker {
                 };
             }
             case 'talent': {
-                const hasTalent = actor.items?.some(i => i.type === 'talent' && i.name === prereq.name) ||
-                    (pending.selectedTalents || []).some(t => t.name === prereq.name);
+                const requiredTalentName = resolveCanonicalTalentName(prereq.name || prereq.talentName || '');
+                const hasTalent = this._actorHasNamedItem(actor, pending, 'talent', requiredTalentName);
                 return {
                     met: hasTalent,
-                    message: !hasTalent ? `Requires the talent ${prereq.name}` : ''
+                    message: !hasTalent ? `Requires the talent ${requiredTalentName}` : ''
                 };
             }
             case 'force_sensitive': {
@@ -889,6 +964,8 @@ export class PrerequisiteChecker {
                 return this._checkSizeAtLeastLegacy(prereq, actor, pending);
             case 'feat':
                 return this._checkFeatLegacy(prereq, actor, pending);
+            case 'talent':
+                return this._checkTalentLegacy(prereq, actor, pending);
             default:
                 return { met: true, message: '' };
         }
@@ -916,7 +993,7 @@ export class PrerequisiteChecker {
             namesMatchLoosely(f, requiredFeatName)
         );
 
-        if (hasHouseruleFeat) {
+        if (hasHouseruleFeat || this._actorHasNamedItem(actor, pending, 'feat', requiredFeatName)) {
             return {
                 met: true,
                 message: ''
@@ -942,10 +1019,15 @@ export class PrerequisiteChecker {
             };
         }
 
+        const requiredTalentName = resolveCanonicalTalentName(prereq.name || prereq.talentName || prereq.slug || prereq.id || prereq.uuid || '');
+        if (this._actorHasNamedItem(actor, pending, 'talent', requiredTalentName)) {
+            return { met: true, message: '' };
+        }
+
         // Not found anywhere
         return {
             met: false,
-            message: `Requires talent: ${prereq.name || prereq.slug || prereq.uuid}`
+            message: `Requires talent: ${requiredTalentName || prereq.name || prereq.slug || prereq.uuid}`
         };
     }
 
@@ -975,7 +1057,7 @@ export class PrerequisiteChecker {
 
     static _checkAttributeCondition(prereq, actor, pending) {
         const ability = actor.system?.attributes?.[prereq.ability]?.total ?? 10;
-        const required = prereq.minimum ?? 10;
+        const required = prereq.minimum ?? prereq.min ?? 10;
         const met = ability >= required;
         return {
             met,
@@ -984,7 +1066,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkSkillTrainedCondition(prereq, actor, pending) {
-        const skillKey = prereq.skill || resolveCanonicalSkillKey(prereq.skillName || prereq.name || '');
+        const skillKey = this._resolveSkillKeyOrId(prereq.skill || prereq.skillId || prereq.skillName || prereq.name || '');
         const pendingSkillKeys = normalizePendingSkillKeys(pending.selectedSkills);
         const trained = (skillKey && actor.system?.skills?.[skillKey]?.trained) ||
             (skillKey && pendingSkillKeys.includes(skillKey));
@@ -995,8 +1077,8 @@ export class PrerequisiteChecker {
     }
 
     static _checkBabCondition(prereq, actor, pending) {
-        const bab = actor.system?.bab ?? 0;
-        const required = prereq.minimum ?? 0;
+        const bab = actor.system?.bab?.total ?? actor.system?.bab ?? 0;
+        const required = prereq.minimum ?? prereq.min ?? 0;
         const met = bab >= required;
         return {
             met,
@@ -1006,7 +1088,7 @@ export class PrerequisiteChecker {
 
     static _checkLevelCondition(prereq, actor, pending) {
         const level = actor.system?.level ?? 1;
-        const required = prereq.minimum ?? 1;
+        const required = prereq.minimum ?? prereq.min ?? 1;
         const met = level >= required;
         return {
             met,
@@ -1015,7 +1097,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkDarkSideCondition(prereq, actor, pending) {
-        const required = prereq.minimum ?? 0;
+        const required = prereq.minimum ?? prereq.min ?? 0;
         const darkSide = DSPEngine.getValue(actor);
         const met = DSPEngine.meetsThreshold(actor, required);
         return {
@@ -1038,7 +1120,7 @@ export class PrerequisiteChecker {
 
     static _checkDroidDegreeCondition(prereq, actor, pending) {
         const droidDegree = actor.system?.droidDegree ?? 0;
-        const required = prereq.minimum ?? 1;
+        const required = prereq.minimum ?? prereq.min ?? 1;
         const met = droidDegree >= required;
         return {
             met,
@@ -1152,7 +1234,7 @@ export class PrerequisiteChecker {
     static _checkClassLevelCondition(prereq, actor, pending) {
         const classItem = this._findClassItem(actor, prereq.className);
         const level = classItem?.system?.level ?? 0;
-        const required = prereq.minimum ?? 1;
+        const required = prereq.minimum ?? prereq.min ?? 1;
         const met = level >= required;
         return {
             met,
@@ -1188,7 +1270,7 @@ export class PrerequisiteChecker {
     // LEGACY STRING PARSING & CHECKING
     // ============================================================
 
-    static _parseLegacyPrerequisites(prereqString) {
+    static _parseLegacyPrerequisites(prereqString, owningType = 'feat') {
         const prereqs = [];
 
         // FIX MEDIUM #2: Normalize whitespace before parsing
@@ -1203,25 +1285,31 @@ export class PrerequisiteChecker {
             const parsedGroups = orGroups.map(group => {
                 // Handle AND/comma/semicolon separation (with normalized whitespace)
                 const andParts = group.split(/[,;]|\s+and\s+/i).map(p => p.trim()).filter(p => p);
-                return andParts.map(part => this._parseLegacyPrerequisitePart(part)).filter(p => p);
+                return andParts.map(part => this._parseLegacyPrerequisitePart(part, owningType)).filter(p => p);
             });
             return [{ type: 'or_group', groups: parsedGroups }];
         } else {
             // Handle AND/comma/semicolon separation (with normalized whitespace)
             const parts = normalized.split(/[,;]|\s+and\s+/i).map(p => p.trim()).filter(p => p);
             for (const part of parts) {
-                const prereq = this._parseLegacyPrerequisitePart(part);
+                const prereq = this._parseLegacyPrerequisitePart(part, owningType);
                 if (prereq) {prereqs.push(prereq);}
             }
             return prereqs;
         }
     }
 
-    static _parseLegacyPrerequisitePart(part) {
+    static _parseLegacyPrerequisitePart(part, owningType = 'feat') {
         part = part.trim();
 
         const registryParsed = parseRegistryBackedLegacyPrerequisite(part);
         if (registryParsed) {
+            if (registryParsed.type === 'feat' && owningType === 'talent') {
+                const talentName = resolveCanonicalTalentName(part);
+                if (talentName && !namesMatchLoosely(talentName, registryParsed.name)) {
+                    return { type: 'talent', talentName, name: talentName };
+                }
+            }
             return registryParsed;
         }
 
@@ -1322,6 +1410,13 @@ export class PrerequisiteChecker {
             return { type: 'force_sensitive' };
         }
 
+        if (owningType === 'talent') {
+            const canonicalTalentName = resolveCanonicalTalentName(part);
+            if (canonicalTalentName && canonicalTalentName !== part) {
+                return { type: 'talent', talentName: canonicalTalentName, name: canonicalTalentName };
+            }
+        }
+
         const canonicalFeatName = resolveCanonicalFeatName(part);
         if (canonicalFeatName && canonicalFeatName !== part) {
             return { type: 'feat', featName: canonicalFeatName, name: canonicalFeatName };
@@ -1333,6 +1428,13 @@ export class PrerequisiteChecker {
             `Parsing as feat requirement, but this may indicate a typo or malformed prerequisite.`);
 
         // Default: feat name (last resort fallback)
+        if (owningType === 'talent') {
+            const fallbackTalent = resolveCanonicalTalentName(part);
+            if (fallbackTalent && normalizeLooseLookupKey(fallbackTalent) !== normalizeLooseLookupKey(part)) {
+                return { type: 'talent', talentName: fallbackTalent, name: fallbackTalent };
+            }
+        }
+
         return { type: 'feat', featName: canonicalFeatName || part, name: canonicalFeatName || part };
     }
 
@@ -1388,7 +1490,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkSkillLegacy(prereq, actor, pending) {
-        const skillKey = prereq.skillKey || resolveCanonicalSkillKey(prereq.skillName);
+        const skillKey = prereq.skillKey || this._resolveSkillKeyOrId(prereq.skillName);
         if (!skillKey) {return { met: true, message: '' };}
 
         const pendingSkillKeys = normalizePendingSkillKeys(pending.selectedSkills);
@@ -1402,7 +1504,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkSkillRankLegacy(prereq, actor, pending) {
-        const skillKey = prereq.skillKey || resolveCanonicalSkillKey(prereq.skillName);
+        const skillKey = prereq.skillKey || this._resolveSkillKeyOrId(prereq.skillName);
         if (!skillKey) {return { met: true, message: '' };}
 
         const currentRanks = actor.system?.skills?.[skillKey]?.ranks ?? 0;
@@ -1460,18 +1562,21 @@ export class PrerequisiteChecker {
 
     static _checkFeatLegacy(prereq, actor, pending) {
         const requiredFeatName = resolveCanonicalFeatName(prereq.featName || prereq.name || '');
-        const hasFeat = actor.items?.some(i =>
-            i.type === 'feat' && namesMatchLoosely(i.name, requiredFeatName)
-        );
-        const hasPending = (pending.selectedFeats || []).some(f =>
-            f?.name && namesMatchLoosely(f.name, requiredFeatName)
-        );
-        const hasGranted = (pending.grantedFeats || []).some((name) => namesMatchLoosely(name, requiredFeatName));
         const hasHouserule = this.getHouseruleGrantedFeats().some((name) => namesMatchLoosely(name, requiredFeatName));
-        const met = hasFeat || hasPending || hasGranted || hasHouserule;
+        const met = this._actorHasNamedItem(actor, pending, 'feat', requiredFeatName) || hasHouserule;
         return {
             met,
             message: !met ? `Requires feat: ${requiredFeatName}` : ''
+        };
+    }
+
+
+    static _checkTalentLegacy(prereq, actor, pending) {
+        const requiredTalentName = resolveCanonicalTalentName(prereq.talentName || prereq.name || '');
+        const met = this._actorHasNamedItem(actor, pending, 'talent', requiredTalentName);
+        return {
+            met,
+            message: !met ? `Requires talent: ${requiredTalentName}` : ''
         };
     }
 

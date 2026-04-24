@@ -23,6 +23,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getCanonicalBenefitText, getCanonicalDescriptionText, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
 
 /**
  * Internal normalized talent entry
@@ -139,6 +140,9 @@ export class TalentRegistry {
      */
     static _normalizeEntry(doc) {
         const system = doc.system || {};
+        const canonicalPrerequisite = getCanonicalPrerequisiteText('talent', doc.name);
+        const canonicalDescription = getCanonicalDescriptionText('talent', doc.name);
+        const canonicalBenefit = getCanonicalBenefitText('talent', doc.name);
 
         // Extract and normalize category
         let category = system.talentCategory || system.category || null;
@@ -155,7 +159,7 @@ export class TalentRegistry {
 
         // Normalize prerequisite block
         const prerequisites = {
-            raw: system.prerequisites || null
+            raw: canonicalPrerequisite || system.prerequisites || system.prerequisite || null
         };
 
         // Create normalized entry
@@ -167,7 +171,7 @@ export class TalentRegistry {
             category: category,
             tags: tags,
             prerequisites: prerequisites,
-            description: system.description?.value || system.description || '',
+            description: canonicalDescription || system.description?.value || system.description || canonicalBenefit || '',
             talentTree: system.talentTree || null,
             source: system.source || null,
             pack: doc.pack || 'unknown',
