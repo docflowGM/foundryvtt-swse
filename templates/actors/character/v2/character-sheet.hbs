@@ -148,18 +148,25 @@
         {{#if editable}}
           <div class="swse-v2-theme-picker">
             <span class="swse-v2-theme-picker__label">Theme</span>
-            <div class="swse-v2-theme-picker__chips">
-              {{#each sheetThemeOptions}}
-                <button
-                  type="button"
-                  class="swse-v2-theme-chip {{#if selected}}is-active{{/if}}"
-                  data-action="set-sheet-theme"
-                  data-theme="{{value}}"
-                  title="{{label}}"
-                >
-                  <span class="swse-v2-theme-chip__swatch swatch--{{value}}"></span>
-                  <span class="swse-v2-theme-chip__text">{{label}}</span>
-                </button>
+            <div class="swse-v2-theme-picker__groups">
+              {{#each sheetThemeGroups}}
+                <div class="swse-v2-theme-group">
+                  <div class="swse-v2-theme-group__title">{{label}}</div>
+                  <div class="swse-v2-theme-group__chips">
+                    {{#each options}}
+                      <button
+                        type="button"
+                        class="swse-v2-theme-chip {{#if selected}}is-active{{/if}}"
+                        data-action="set-sheet-theme"
+                        data-theme="{{value}}"
+                        title="{{description}}"
+                      >
+                        <span class="swse-v2-theme-chip__swatch swatch--{{value}}"></span>
+                        <span class="swse-v2-theme-chip__text">{{label}}</span>
+                      </button>
+                    {{/each}}
+                  </div>
+                </div>
               {{/each}}
             </div>
           </div>

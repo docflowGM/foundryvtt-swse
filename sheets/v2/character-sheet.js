@@ -3,7 +3,8 @@ import {
   getActorSheetTheme,
   getActorSheetThemeOptions,
   buildActorSheetThemeStyle,
-  isValidActorSheetTheme
+  isValidActorSheetTheme,
+  getActorSheetThemeGroups
 } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -1313,14 +1314,10 @@ const forcePoints = [];
         maneuver: true
       },
       // ═════════════════════════════════════════════════════════════════
-      // PHASE 6: V2 Shell Theme — Canonical Registry
+      // PHASE 7: V2 Shell Theme — Grouped Registry Picker
       // ═════════════════════════════════════════════════════════════════
       sheetTheme: getSheetTheme(actor),
-      sheetThemeOptions: getActorSheetThemeOptions().map(opt => ({
-        value: opt.value,
-        label: opt.label,
-        selected: opt.value === getSheetTheme(actor)
-      })),
+      sheetThemeGroups: getActorSheetThemeGroups(getSheetTheme(actor)),
       sheetThemeStyle: buildActorSheetThemeStyle(getSheetTheme(actor)),
       // ═════════════════════════════════════════════════════════════════
       // PHASE 5: Removed legacy flat context

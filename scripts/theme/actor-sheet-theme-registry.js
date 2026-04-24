@@ -66,11 +66,11 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
     source: 'sheet',
     description: 'Deep crimson, dark and intense',
     tokens: {
-      '--vapor-cyan': 'oklch(0.72 0.24 20)',
-      '--vapor-pink': 'oklch(0.65 0.26 10)',
-      '--vapor-purple': 'oklch(0.40 0.22 350)',
-      '--screen-h': '10',
-      '--ink-h': '15'
+      '--vapor-cyan': 'oklch(0.82 0.22 10)',
+      '--vapor-pink': 'oklch(0.75 0.26 350)',
+      '--vapor-purple': 'oklch(0.50 0.22 330)',
+      '--screen-h': '15',
+      '--ink-h': '20'
     }
   },
 
@@ -94,11 +94,11 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
     source: 'sheet',
     description: 'Dark red and black, authoritarian',
     tokens: {
-      '--vapor-cyan': 'oklch(0.80 0.18 25)',
-      '--vapor-pink': 'oklch(0.72 0.22 15)',
-      '--vapor-purple': 'oklch(0.45 0.20 20)',
-      '--screen-h': '15',
-      '--ink-h': '20'
+      '--vapor-cyan': 'oklch(0.85 0.18 30)',
+      '--vapor-pink': 'oklch(0.78 0.20 20)',
+      '--vapor-purple': 'oklch(0.50 0.18 25)',
+      '--screen-h': '20',
+      '--ink-h': '25'
     }
   },
 
@@ -180,11 +180,11 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
     key: 'high-contrast',
     label: 'High Contrast',
     source: 'global',
-    description: 'Maximal contrast for accessibility',
+    description: 'High contrast for accessibility',
     tokens: {
-      '--vapor-cyan': 'oklch(1.0 0.40 180)',
-      '--vapor-pink': 'oklch(1.0 0.40 60)',
-      '--vapor-purple': 'oklch(1.0 0.40 300)',
+      '--vapor-cyan': 'oklch(0.95 0.35 180)',
+      '--vapor-pink': 'oklch(0.95 0.35 60)',
+      '--vapor-purple': 'oklch(0.95 0.35 300)',
       '--screen-h': '0',
       '--ink-h': '0'
     }
@@ -210,11 +210,11 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
     source: 'global',
     description: 'Desert earth tones, sandy ochre',
     tokens: {
-      '--vapor-cyan': 'oklch(0.72 0.18 85)',
-      '--vapor-pink': 'oklch(0.65 0.20 55)',
-      '--vapor-purple': 'oklch(0.48 0.16 70)',
+      '--vapor-cyan': 'oklch(0.80 0.16 80)',
+      '--vapor-pink': 'oklch(0.72 0.18 50)',
+      '--vapor-purple': 'oklch(0.55 0.15 70)',
       '--screen-h': '70',
-      '--ink-h': '60'
+      '--ink-h': '65'
     }
   }
 };
@@ -291,4 +291,43 @@ export function getActorSheetThemesBySource(source) {
   return Object.values(ACTOR_SHEET_THEME_REGISTRY)
     .filter(entry => entry.source === source)
     .map(entry => entry.key);
+}
+
+/**
+ * Phase 7: Get grouped themes for organized picker display
+ * Returns themes organized by family for better usability with 14 themes
+ */
+export function getActorSheetThemeGroups(activeTheme) {
+  const activeEntry = getActorSheetThemeEntry(activeTheme);
+
+  const groups = [
+    {
+      key: 'core',
+      label: 'Core',
+      options: ['vapor', 'cryo', 'droid', 'holo'].map(key => {
+        const entry = ACTOR_SHEET_THEME_REGISTRY[key];
+        return {
+          value: entry.key,
+          label: entry.label,
+          description: entry.description,
+          selected: entry.key === activeTheme
+        };
+      })
+    },
+    {
+      key: 'extended',
+      label: 'Extended',
+      options: ['jedi', 'high-republic', 'imperial', 'rebel', 'sith', 'merc', 'blood', 'starship', 'high-contrast', 'sand-people'].map(key => {
+        const entry = ACTOR_SHEET_THEME_REGISTRY[key];
+        return {
+          value: entry.key,
+          label: entry.label,
+          description: entry.description,
+          selected: entry.key === activeTheme
+        };
+      })
+    }
+  ];
+
+  return groups;
 }

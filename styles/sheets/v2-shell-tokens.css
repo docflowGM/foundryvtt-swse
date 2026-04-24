@@ -248,13 +248,14 @@
 /* Phase 6: Theme tokens are now injected via inline style from registry
    [data-theme] attribute remains for semantic hooks but tokens come from registry */
 
-/* ---------- PHASE 5: Theme Picker — Chip Button Group ---------- */
+/* ---------- PHASE 7: Theme Picker — Grouped Chip Button Layout ---------- */
 .swse-sheet-v2-shell .swse-v2-theme-picker {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
-  flex-wrap: wrap;
+  align-items: flex-start;
   font-family: var(--font-mono);
+  min-width: 0;
 }
 
 .swse-sheet-v2-shell .swse-v2-theme-picker__label {
@@ -264,10 +265,31 @@
   color: var(--ink-faint);
 }
 
-.swse-sheet-v2-shell .swse-v2-theme-picker__chips {
-  display: inline-flex;
-  gap: 6px;
+.swse-sheet-v2-shell .swse-v2-theme-picker__groups {
+  display: flex;
   flex-wrap: wrap;
+  gap: 10px 14px;
+  align-items: flex-start;
+}
+
+.swse-sheet-v2-shell .swse-v2-theme-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell .swse-v2-theme-group__title {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.swse-sheet-v2-shell .swse-v2-theme-group__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .swse-sheet-v2-shell .swse-v2-theme-chip {
@@ -341,9 +363,9 @@
 
 .swse-sheet-v2-shell .swatch--blood {
   background: linear-gradient(135deg,
-    oklch(0.72 0.24 20) 0 33%,
-    oklch(0.65 0.26 10) 33% 66%,
-    oklch(0.40 0.22 350) 66% 100%);
+    oklch(0.82 0.22 10) 0 33%,
+    oklch(0.75 0.26 350) 33% 66%,
+    oklch(0.50 0.22 330) 66% 100%);
 }
 
 .swse-sheet-v2-shell .swatch--merc {
@@ -355,9 +377,9 @@
 
 .swse-sheet-v2-shell .swatch--imperial {
   background: linear-gradient(135deg,
-    oklch(0.80 0.18 25) 0 33%,
-    oklch(0.72 0.22 15) 33% 66%,
-    oklch(0.45 0.20 20) 66% 100%);
+    oklch(0.85 0.18 30) 0 33%,
+    oklch(0.78 0.20 20) 33% 66%,
+    oklch(0.50 0.18 25) 66% 100%);
 }
 
 .swse-sheet-v2-shell .swatch--rebel {
@@ -398,9 +420,9 @@
 
 .swse-sheet-v2-shell .swatch--high-contrast {
   background: linear-gradient(135deg,
-    oklch(1.0 0.40 180) 0 33%,
-    oklch(1.0 0.40 60) 33% 66%,
-    oklch(1.0 0.40 300) 66% 100%);
+    oklch(0.95 0.35 180) 0 33%,
+    oklch(0.95 0.35 60) 33% 66%,
+    oklch(0.95 0.35 300) 66% 100%);
 }
 
 .swse-sheet-v2-shell .swatch--starship {
@@ -412,9 +434,36 @@
 
 .swse-sheet-v2-shell .swatch--sand-people {
   background: linear-gradient(135deg,
-    oklch(0.72 0.18 85) 0 33%,
-    oklch(0.65 0.20 55) 33% 66%,
-    oklch(0.48 0.16 70) 66% 100%);
+    oklch(0.80 0.16 80) 0 33%,
+    oklch(0.72 0.18 50) 33% 66%,
+    oklch(0.55 0.15 70) 66% 100%);
+}
+
+/* ---------- PHASE 7: Semantic Color Aliases for Readability ---------- */
+.swse-sheet-v2-shell {
+  --sheet-text-strong: var(--ink);
+  --sheet-text-body: var(--ink-dim);
+  --sheet-text-faint: var(--ink-faint);
+  --sheet-accent-primary: var(--vapor-cyan);
+  --sheet-accent-secondary: var(--vapor-pink);
+  --sheet-accent-tertiary: var(--vapor-purple);
+}
+
+/* Readability guardrails for problematic themes */
+.swse-sheet-v2-shell[data-theme="high-contrast"] {
+  --sheet-text-strong: oklch(0.98 0.02 95);
+  --sheet-text-body: oklch(0.92 0.02 95);
+  --sheet-text-faint: oklch(0.80 0.02 95);
+}
+
+.swse-sheet-v2-shell[data-theme="blood"] {
+  --sheet-text-body: oklch(0.88 0.03 20);
+  --sheet-text-faint: oklch(0.72 0.03 20);
+}
+
+.swse-sheet-v2-shell[data-theme="sand-people"] {
+  --sheet-text-body: oklch(0.88 0.03 70);
+  --sheet-text-faint: oklch(0.72 0.03 70);
 }
 
 /* Responsive: hide theme picker on small screens */
