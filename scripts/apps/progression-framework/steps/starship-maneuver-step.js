@@ -358,6 +358,64 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     shell.render();
   }
 
+  /**
+   * PHASE 3: Increment quantity of a selected maneuver (via [+] button in details panel).
+   */
+  async onIncrementQuantity(maneuverId, shell) {
+    const maneuver = this._allManeuvers.find(m => m.id === maneuverId);
+    if (!maneuver) return;
+
+    const currentCount = this._committedManeuverCounts.get(maneuverId) ?? 0;
+    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
+
+    // Allow increment if picks remain
+    if (totalSelected < this._remainingPicks) {
+      this._committedManeuverCounts.set(maneuverId, currentCount + 1);
+
+      // Update buildIntent
+      if (shell?.buildIntent && this.descriptor?.stepId) {
+        const maneuversList = Array.from(this._committedManeuverCounts.entries())
+          .filter(([_, count]) => count > 0)
+          .map(([id, count]) => ({ id, count }));
+        shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, maneuversList);
+      }
+
+      shell.render();
+    }
+  }
+
+  /**
+   * PHASE 3: Decrement quantity of a selected maneuver (via [−] button in details panel).
+   * Cannot decrement below 0 or decrement committed (already on actor) quantities.
+   */
+  async onDecrementQuantity(maneuverId, shell) {
+    const maneuver = this._allManeuvers.find(m => m.id === maneuverId);
+    if (!maneuver) return;
+
+    const currentCount = this._committedManeuverCounts.get(maneuverId) ?? 0;
+
+    // Only decrement if there are pending selections to remove
+    if (currentCount > 0) {
+      this._committedManeuverCounts.set(maneuverId, currentCount - 1);
+
+      // If count reaches 0, remove from map
+      if (this._committedManeuverCounts.get(maneuverId) === 0) {
+        this._committedManeuverCounts.delete(maneuverId);
+      }
+
+      // Update buildIntent
+      if (shell?.buildIntent && this.descriptor?.stepId) {
+        const maneuversList = Array.from(this._committedManeuverCounts.entries())
+          .filter(([_, count]) => count > 0)
+          .map(([id, count]) => ({ id, count }));
+        shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, maneuversList);
+      }
+
+      shell.render();
+    }
+  }
+
+
   renderWorkSurface(stepData) {
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/starship-maneuver-work-surface.hbs',

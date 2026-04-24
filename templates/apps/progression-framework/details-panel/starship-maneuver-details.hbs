@@ -22,16 +22,42 @@
   </div>
 
   <div class="prog-starship-maneuver-details__actions">
+    {{#if selectedCount}}
+      <p class="prog-starship-maneuver-details__hint">
+        <i class="fas fa-hourglass-end" aria-hidden="true"></i>
+        Current selection: <strong>{{selectedCount}}</strong> {{plural selectedCount "use" "uses"}} pending
+      </p>
+
+      {{!-- Inline quantity control --}}
+      <div class="prog-starship-maneuver-details__quantity-inline">
+        <button class="prog-quantity-btn prog-quantity-btn--decrement"
+                data-action="decrement-quantity"
+                data-item-id="{{maneuver.id}}"
+                type="button"
+                aria-label="Remove one">
+          <i class="fas fa-minus" aria-hidden="true"></i>
+        </button>
+        <span class="prog-quantity-display">{{selectedCount}}</span>
+        <button class="prog-quantity-btn prog-quantity-btn--increment"
+                data-action="increment-quantity"
+                data-item-id="{{maneuver.id}}"
+                type="button"
+                aria-label="Add one">
+          <i class="fas fa-plus" aria-hidden="true"></i>
+        </button>
+      </div>
+    {{/if}}
+
     {{#if canAddMore}}
       {{#if selectedCount}}
         <p class="prog-starship-maneuver-details__hint">
           <i class="fas fa-info-circle" aria-hidden="true"></i>
-          Additional uses of this maneuver can be selected.
+          You can select this maneuver multiple times for additional uses.
         </p>
       {{else}}
         <p class="prog-starship-maneuver-details__hint">
           <i class="fas fa-info-circle" aria-hidden="true"></i>
-          This maneuver can be selected multiple times for additional uses.
+          This maneuver can be selected multiple times.
         </p>
       {{/if}}
 

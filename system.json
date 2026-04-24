@@ -76,6 +76,7 @@
     "styles/progression-framework/steps/feat-step.css",
     "styles/progression-framework/steps/talent-step.css",
     "styles/progression-framework/steps/force-power-step.css",
+    "styles/progression-framework/steps/starship-maneuver-step.css",
     "styles/progression-framework/steps/confirm-step.css",
     "styles/progression-framework/steps/droid-builder-step.css",
     "styles/progression-framework/option-cards.css",

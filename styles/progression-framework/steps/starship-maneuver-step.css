@@ -1,0 +1,326 @@
+/**
+ * Starship Maneuver Step Styling
+ * Tactical console for piloting maneuver selection
+ * Uses stacking model (duplicate selections = additional uses)
+ */
+
+/* ====================================================================
+   WORK SURFACE — TACTICAL MANEUVER GRID
+   ==================================================================== */
+
+.prog-starship-maneuver-browse {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0;
+}
+
+.prog-starship-maneuver-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--prog-space-md);
+  padding: var(--prog-space-md);
+  overflow-y: auto;
+  width: 100%;
+}
+
+.prog-starship-maneuver-card {
+  background: linear-gradient(135deg,
+    oklch(0.85 0.18 200 / 0.08) 0%,
+    oklch(0.85 0.18 200 / 0.04) 100%);
+  border: 1px solid oklch(0.85 0.18 200 / 0.2);
+  border-radius: 4px;
+  padding: var(--prog-space-md);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+}
+
+.prog-starship-maneuver-card:hover {
+  border-color: oklch(0.85 0.18 200 / 0.35);
+  background: linear-gradient(135deg,
+    oklch(0.85 0.18 200 / 0.12) 0%,
+    oklch(0.85 0.18 200 / 0.06) 100%);
+  box-shadow: 0 0 14px oklch(0.85 0.18 200 / 0.15);
+  transform: translateY(-1px);
+}
+
+/* Selected state — committed maneuver */
+.prog-starship-maneuver-card--selected {
+  border-color: oklch(0.85 0.18 200 / 0.4);
+  background: linear-gradient(135deg,
+    oklch(0.85 0.18 200 / 0.15) 0%,
+    oklch(0.85 0.18 200 / 0.08) 100%);
+  box-shadow: 0 0 16px oklch(0.85 0.18 200 / 0.2);
+}
+
+/* Suggested maneuver styling */
+.prog-starship-maneuver-card.prog-maneuver-card--suggested {
+  border-color: oklch(0.72 0.26 350 / 0.2);
+  background: linear-gradient(135deg,
+    oklch(0.72 0.26 350 / 0.08) 0%,
+    oklch(0.72 0.26 350 / 0.04) 100%);
+}
+
+.prog-starship-maneuver-card.prog-maneuver-card--suggested:hover {
+  background: linear-gradient(135deg,
+    oklch(0.72 0.26 350 / 0.12) 0%,
+    oklch(0.72 0.26 350 / 0.06) 100%);
+  border-color: oklch(0.72 0.26 350 / 0.3);
+  box-shadow: 0 0 10px oklch(0.72 0.26 350 / 0.1);
+}
+
+.prog-starship-maneuver-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--prog-space-sm);
+  min-height: 2.4em;
+}
+
+.prog-starship-maneuver-card__name {
+  margin: 0;
+  font-size: var(--prog-font-size-sm);
+  font-weight: 600;
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  flex: 1;
+  line-height: 1.2;
+}
+
+/* Stack count badge — shows ×2, ×3, etc. */
+.prog-starship-maneuver-card__count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  border-radius: var(--prog-radius-pill);
+  background: var(--sheet-accent-primary);
+  color: var(--prog-bg-base);
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  flex-shrink: 0;
+  box-shadow: 0 0 4px oklch(0.85 0.18 200 / 0.4);
+}
+
+.prog-starship-maneuver-card__description {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text);
+  line-height: 1.4;
+  text-shadow: var(--prog-text-shadow);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.prog-starship-maneuver-card__state-hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--prog-font-size-xs);
+  color: var(--sheet-accent-primary);
+  text-shadow: var(--prog-heading-shadow);
+  margin-top: auto;
+}
+
+.prog-starship-maneuver-card__state-hint--available {
+  color: var(--prog-text-dim);
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* Empty state */
+.prog-starship-maneuver-browse__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--prog-space-md);
+  padding: var(--prog-space-xl);
+  color: var(--prog-text-dim);
+  text-align: center;
+  font-size: var(--prog-font-size-sm);
+}
+
+.prog-starship-maneuver-browse__empty i {
+  font-size: 2.5em;
+  opacity: 0.5;
+}
+
+/* ====================================================================
+   DETAILS PANEL — TACTICAL CONSOLE
+   ==================================================================== */
+
+.prog-starship-maneuver-details {
+  padding: var(--prog-space-md);
+  overflow-y: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+}
+
+.prog-starship-maneuver-details__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--prog-space-sm);
+  border-bottom: 1px solid var(--prog-border);
+  padding-bottom: var(--prog-space-sm);
+}
+
+.prog-starship-maneuver-details__name {
+  margin: 0;
+  font-size: var(--prog-font-size-base);
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  flex: 1;
+}
+
+.prog-starship-maneuver-details__selected-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--prog-font-size-xs);
+  color: var(--sheet-accent-primary);
+  background: oklch(0.85 0.18 200 / 0.1);
+  border: 1px solid var(--sheet-accent-primary);
+  border-radius: var(--prog-radius-sm);
+  padding: 2px 6px;
+  white-space: nowrap;
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.prog-starship-maneuver-details__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-xs);
+}
+
+.prog-starship-maneuver-details__section-title {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  font-weight: 600;
+  color: var(--prog-text-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.prog-starship-maneuver-details__description {
+  margin: 0;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text);
+  line-height: 1.55;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.prog-starship-maneuver-details__description--unavailable {
+  color: var(--prog-text-dim);
+  font-style: italic;
+}
+
+.prog-starship-maneuver-details__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+  margin-top: auto;
+  padding-top: var(--prog-space-sm);
+  border-top: 1px solid var(--prog-border);
+}
+
+.prog-starship-maneuver-details__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--prog-radius-sm);
+  line-height: 1.4;
+}
+
+.prog-starship-maneuver-details__hint i {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.prog-starship-maneuver-details__hint--blocked {
+  color: var(--prog-negative);
+  background: var(--prog-negative) / 0.1;
+  border: 1px solid var(--prog-negative) / 0.3;
+}
+
+/* ====================================================================
+   QUANTITY CONTROLS (PHASE 3)
+   ==================================================================== */
+
+/* Quantity control row: [−] count [+] buttons */
+.prog-starship-maneuver-details__quantity-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 0;
+  margin: 8px 0;
+  border-top: 1px solid var(--prog-border);
+  border-bottom: 1px solid var(--prog-border);
+}
+
+/* Quantity buttons: minus and plus */
+.prog-quantity-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--prog-border);
+  background: var(--prog-bg-interact);
+  border-radius: var(--prog-radius-sm);
+  color: var(--prog-text);
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+  font-size: var(--prog-font-size-sm);
+}
+
+.prog-quantity-btn:hover {
+  border-color: oklch(0.85 0.18 200 / 0.25);
+  background: oklch(0.85 0.18 200 / 0.08);
+  color: var(--sheet-accent-primary);
+}
+
+.prog-quantity-btn:active {
+  transform: scale(0.95);
+}
+
+/* Disabled state for quantity buttons */
+.prog-quantity-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--prog-border);
+}
+
+.prog-quantity-btn:disabled:hover {
+  background: var(--prog-bg-interact);
+  color: var(--prog-text);
+  border-color: var(--prog-border);
+}
+
+/* Quantity display: the number between [−] and [+] */
+.prog-quantity-display {
+  min-width: 32px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--sheet-accent-primary);
+  text-shadow: var(--prog-heading-shadow);
+  font-size: var(--prog-font-size-base);
+}
