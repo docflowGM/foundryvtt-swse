@@ -1,5 +1,5 @@
 /**
- * progression-shell.css — PHASE 1 + PHASE 2
+ * progression-shell.css — PHASE 1 + PHASE 2 + PHASE 3 + PHASE 4
  *
  * SWSE Progression Shell — OKLCh Datapad Language
  *
@@ -9,13 +9,17 @@
  * - Segmented 6-region composition (mentor, progress, utility, work, details, footer)
  * - Distinct header/footer command regions
  * - Sci-fi UI hierarchy matching the progression mockup
+ * - Shared-theme holographic motion (Phase 3)
+ * - Shell-owned presentation fidelity (Phase 4)
  *
- * Layout structure: mentor-rail → progress-rail → utility-bar → (summary | work-surface | details) → action-footer
+ * Layout structure: mentor-rail → hud-meta-bar → progress-rail → utility-bar → (summary | work-surface | details) → action-footer
  * All styling CSS-only; no SVG decorative backgrounds
  * Future-ready for shared actor-sheet theme/motion inheritance
  *
  * PHASE 1: Shell-only (outer frame, regions, header/footer)
  * PHASE 2: Interior styling (cards, rows, fields, buttons)
+ * PHASE 3: Shared-theme holographic motion (animations, scanlines, glows)
+ * PHASE 4: Shell-owned presentation fidelity (HUD, manifest, canvas meta, status)
  *
  * Imports: progression-interiors-phase2.css (step card/row styling)
  */
@@ -1071,6 +1075,155 @@
 
 .progression-shell .prog-holocall-continue[hidden] {
   display: none;
+}
+
+/* =============================================================================
+ * PHASE 4: SHELL-OWNED PRESENTATION FIDELITY
+ * HUD meta tags, mentor identity, footer status, ability snapshots
+ * ============================================================================= */
+
+/* ---------- HUD META STATUS BAR ---------- */
+.progression-shell .prog-hud-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 8px 12px;
+  background: linear-gradient(90deg,
+    rgba(0, 0, 0, 0.3),
+    oklch(var(--screen-h) calc(var(--screen-c-base) * 0.2) / 0.06),
+    rgba(0, 0, 0, 0.3)
+  );
+  border-bottom: 1px solid oklch(var(--sheet-accent-primary) / 0.15);
+  box-shadow: inset 0 1px 0 oklch(var(--sheet-accent-primary) / 0.08);
+  flex-wrap: wrap;
+}
+
+.progression-shell .prog-hud-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  background: oklch(0 0 0 / 0.25);
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.20);
+  border-radius: 2px;
+  color: var(--sheet-accent-primary);
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 0 4px oklch(var(--sheet-accent-primary) / 0.12);
+}
+
+.progression-shell .prog-hud-tag--mode {
+  border-color: oklch(var(--sheet-accent-primary) / 0.35);
+  background: oklch(var(--sheet-accent-primary) / 0.10);
+}
+
+.progression-shell .prog-hud-tag--actor {
+  border-color: oklch(var(--sheet-accent-primary) / 0.25);
+  background: oklch(0 0 0 / 0.30);
+  color: oklch(0.85 0.04 var(--ink-h));
+}
+
+.progression-shell .prog-hud-tag--stage {
+  border-color: oklch(var(--sheet-accent-secondary) / 0.25);
+  background: oklch(0 0 0 / 0.25);
+  color: oklch(var(--sheet-accent-secondary) / 0.95);
+  margin-left: auto;
+}
+
+/* ---------- MENTOR NAME PREFIX — IDENTITY TIGHTENING ---------- */
+.progression-shell .prog-mentor__name-prefix {
+  color: var(--sheet-accent-primary);
+  margin-right: 4px;
+  font-weight: 700;
+}
+
+/* ---------- FOOTER STATUS LINE ---------- */
+.progression-shell .prog-footer-status-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.progression-shell .prog-footer-status-label {
+  color: oklch(0.60 0.06 var(--ink-h));
+  font-weight: 600;
+}
+
+.progression-shell .prog-footer-status-value {
+  color: var(--sheet-accent-primary);
+  font-weight: 700;
+  text-shadow: 0 0 4px oklch(var(--sheet-accent-primary) / 0.20);
+}
+
+/* ---------- ABILITY MINI-GRID (Phase 4 future use) ---------- */
+.progression-shell .prog-ability-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  font-size: 10px;
+}
+
+.progression-shell .prog-ability-mini {
+  text-align: center;
+  padding: 6px 4px;
+  background: oklch(0 0 0 / 0.25);
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.15);
+  border-radius: 2px;
+}
+
+.progression-shell .prog-ability-mini .code {
+  color: oklch(0.50 0.05 var(--ink-h));
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.progression-shell .prog-ability-mini .val {
+  font-size: 16px;
+  line-height: 1;
+  margin: 2px 0;
+  color: var(--sheet-accent-primary);
+  font-weight: 700;
+}
+
+.progression-shell .prog-ability-mini .mod {
+  font-size: 8px;
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  color: oklch(0.60 0.06 var(--ink-h));
+}
+
+/* ---------- SELECTED CHIPS ROW ---------- */
+.progression-shell .prog-selected-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.progression-shell .prog-selected-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  background: oklch(0 0 0 / 0.30);
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.20);
+  border-radius: 3px;
+  color: var(--sheet-accent-primary);
+  font-size: 10px;
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  box-shadow: 0 0 6px oklch(var(--sheet-accent-primary) / 0.08);
 }
 
 /* =============================================================================

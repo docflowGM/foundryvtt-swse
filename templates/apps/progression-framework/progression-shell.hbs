@@ -58,6 +58,17 @@
   </div>{{!-- /mentor-rail --}}
 
   {{!-- ======================================================================
+    PHASE 4: HUD META STATUS BAR — Session, mode, step meta
+  ======================================================================= --}}
+  {{#if hudTags}}
+  <div class="prog-hud-meta-bar">
+    <span class="prog-hud-tag prog-hud-tag--mode">{{hudTags.modeTag}}</span>
+    <span class="prog-hud-tag prog-hud-tag--actor">{{hudTags.actorTag}}</span>
+    <span class="prog-hud-tag prog-hud-tag--stage">{{hudTags.stageTag}}</span>
+  </div>
+  {{/if}}
+
+  {{!-- ======================================================================
     MAIN COLUMN — progress-rail (horizontal tabs) + utility-bar + content-row + action-footer
   ======================================================================= --}}
   <div class="prog-main-column">
@@ -208,6 +219,14 @@
 
         {{!-- ── CENTER: Status indicators only (no step chips here) ── --}}
         <div class="action-footer__status">
+
+          {{!-- PHASE 4 UX: Footer status readout line --}}
+          {{#if footerStatus}}
+          <div class="prog-footer-status-line">
+            <span class="prog-footer-status-label">STATUS:</span>
+            <span class="prog-footer-status-value">{{footerStatus}}</span>
+          </div>
+          {{/if}}
 
           {{!-- PHASE 3 UX: Blocker explanation (specific, actionable message) --}}
           {{#if (and (not footer.next.enabled) footer.blockerExplanation)}}
