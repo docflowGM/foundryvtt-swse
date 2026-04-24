@@ -276,30 +276,47 @@
 }
 
 .progression-shell .prog-attribute-stat {
-  padding: 0.55rem;
+  padding: 0.65rem;
   border-radius: 8px;
-  border: 1px solid rgba(95, 235, 255, 0.14);
-  background: rgba(6, 18, 28, 0.85);
+  border: 1px solid rgba(0, 220, 255, 0.25);
+  background: linear-gradient(135deg,
+    rgba(0, 100, 150, 0.12) 0%,
+    rgba(0, 50, 80, 0.08) 100%);
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2),
+              0 0 8px rgba(0, 170, 255, 0.08);
+}
+
+.progression-shell .prog-attribute-stat:hover {
+  border-color: rgba(0, 220, 255, 0.4);
+  background: linear-gradient(135deg,
+    rgba(0, 150, 200, 0.15) 0%,
+    rgba(0, 80, 120, 0.1) 100%);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.25),
+              0 0 12px rgba(0, 200, 255, 0.15);
 }
 
 .progression-shell .prog-attribute-stat__label {
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   color: var(--prog-text-dim);
+  font-weight: 600;
 }
 
 .progression-shell .prog-attribute-stat__value {
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--prog-text-heading);
+  text-shadow: 0 0 6px rgba(0, 170, 255, 0.2);
 }
 
 .progression-shell .prog-attribute-stat__value--final {
   color: var(--prog-accent);
+  text-shadow: 0 0 8px rgba(0, 220, 255, 0.4);
 }
 
 .progression-shell .prog-attribute-row__pointbuy {

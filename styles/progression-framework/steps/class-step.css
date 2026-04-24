@@ -11,12 +11,14 @@
 
 .progression-shell .prog-class-card {
   appearance: none;
-  background: var(--prog-bg-read);
-  border: 1px solid var(--prog-border);
-  border-radius: var(--prog-radius-sm);
+  background: linear-gradient(135deg,
+    rgba(0, 100, 150, 0.06) 0%,
+    rgba(0, 50, 80, 0.04) 100%);
+  border: 1px solid rgba(80, 220, 255, 0.2);
+  border-radius: 8px;
   padding: var(--prog-space-sm);
   cursor: pointer;
-  transition: all var(--prog-transition-fast);
+  transition: all 0.25s ease;
   font-family: inherit;
   font-size: inherit;
   color: inherit;
@@ -24,11 +26,17 @@
   display: flex;
   flex-direction: column;
   gap: var(--prog-space-sm);
+  box-shadow: 0 0 12px rgba(0, 170, 255, 0.06);
+  position: relative;
 }
 
 .progression-shell .prog-class-card:hover {
-  border-color: var(--prog-border-bright);
-  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(0, 220, 255, 0.4);
+  background: linear-gradient(135deg,
+    rgba(0, 150, 200, 0.1) 0%,
+    rgba(0, 80, 120, 0.06) 100%);
+  box-shadow: 0 0 18px rgba(0, 170, 255, 0.15);
+  transform: translateY(-2px);
 }
 
 .progression-shell .prog-class-card:focus {
@@ -38,12 +46,20 @@
 
 .progression-shell .prog-class-card--focused {
   border-color: var(--prog-accent);
-  background: rgba(0, 170, 255, 0.08);
-  box-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
+  background: linear-gradient(135deg,
+    rgba(0, 200, 255, 0.15) 0%,
+    rgba(0, 150, 200, 0.08) 100%);
+  box-shadow: 0 0 24px rgba(0, 220, 255, 0.3),
+              inset 0 0 12px rgba(0, 170, 255, 0.08);
+  transform: translateY(-2px);
 }
 
 .progression-shell .prog-class-card--committed {
-  border-color: var(--prog-positive);
+  border-color: rgba(100, 220, 100, 0.5);
+  background: linear-gradient(135deg,
+    rgba(100, 220, 100, 0.1) 0%,
+    rgba(50, 150, 100, 0.05) 100%);
+  box-shadow: 0 0 16px rgba(100, 220, 100, 0.2);
 }
 
 .progression-shell .prog-class-card__header {
@@ -273,10 +289,33 @@
 }
 
 
-.progression-shell .prog-class-details__portrait { width: 100%; max-height: 180px; object-fit: cover; border-radius: var(--prog-radius-sm); border: 1px solid var(--prog-border); margin-bottom: var(--prog-space-sm); }
+.progression-shell .prog-class-details__portrait {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 220, 255, 0.3);
+  margin-bottom: var(--prog-space-sm);
+  box-shadow: 0 0 20px rgba(0, 180, 255, 0.2),
+              inset 0 0 12px rgba(0, 0, 0, 0.3);
+  display: block;
+}
 .progression-shell .prog-class-details__heading-copy { flex: 1; }
-.progression-shell .prog-class-details__meta-row { display:flex; gap:6px; flex-wrap:wrap; }
-.progression-shell .prog-class-details__stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+.progression-shell .prog-class-details__meta-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 170, 255, 0.15);
+}
+
+.progression-shell .prog-class-details__stats-grid {
+  grid-template-columns: repeat(2, 1fr);
+  background: rgba(0, 100, 150, 0.08);
+  border: 1px solid rgba(0, 170, 255, 0.15);
+  border-radius: 6px;
+}
 
 /* Droid class variant */
 .progression-shell .prog-class-browse--droid {
