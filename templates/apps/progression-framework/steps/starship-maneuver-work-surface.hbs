@@ -39,6 +39,27 @@
               <i class="fas fa-star" aria-hidden="true"></i>
               Selected {{lookup ../committedCounts this.id}} {{plural (lookup ../committedCounts this.id) "use" "uses"}}
             </div>
+
+            {{!-- Phase 8: Work-surface quantity controls (parity with force-power) --}}
+            <div class="prog-starship-maneuver-card__quantity-inline">
+              <button class="prog-quantity-btn prog-quantity-btn--decrement"
+                      data-action="decrement-quantity"
+                      data-item-id="{{this.id}}"
+                      type="button"
+                      aria-label="Remove one selection"
+                      title="Remove one">
+                <i class="fas fa-minus" aria-hidden="true"></i>
+              </button>
+              <span class="prog-quantity-display">{{lookup ../committedCounts this.id}}</span>
+              <button class="prog-quantity-btn prog-quantity-btn--increment"
+                      data-action="increment-quantity"
+                      data-item-id="{{this.id}}"
+                      type="button"
+                      aria-label="Add one more selection"
+                      title="Add one">
+                <i class="fas fa-plus" aria-hidden="true"></i>
+              </button>
+            </div>
           {{else}}
             <div class="prog-starship-maneuver-card__state-hint prog-starship-maneuver-card__state-hint--available">
               <i class="fas fa-plus-circle" aria-hidden="true"></i>
