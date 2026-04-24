@@ -140,7 +140,7 @@
   font-style: italic;
 }
 
-/* Class details panel */
+/* Class details panel (Phase 6: semantic text tokens) */
 .progression-shell .prog-class-details {
   padding: var(--prog-space-md);
   overflow-y: auto;
@@ -383,7 +383,8 @@
 }
 
 /* ============================================================================
-   OPTIONAL MOTION-AWARE SCAN SWEEP (Phase 5 Addendum)
+   MOTION-AWARE SCAN SWEEP (Phase 5 Addendum, Phase 6 normalization)
+   Uses consolidated prog-holo-scan-normalized keyframe from progression-shell.css
    ==================================================================== */
 
 .progression-shell .prog-holo-scan {
@@ -407,13 +408,7 @@
     transparent
   );
   opacity: 0.20;
-  animation: prog-holo-art-scan var(--motion-scan-speed, 4s) linear infinite;
-}
-
-@keyframes prog-holo-art-scan {
-  0% { transform: translateY(0); opacity: 0.08; }
-  12% { opacity: 0.34; }
-  100% { transform: translateY(100px); opacity: 0.06; }
+  animation: prog-holo-scan-normalized var(--motion-scan-speed, 4s) linear infinite;
 }
 
 .progression-shell.swse-prog-v2-shell[data-motion-style="off"] .prog-holo-scan::after {

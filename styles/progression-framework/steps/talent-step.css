@@ -42,7 +42,7 @@
 .talent-browser-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #00d0ff;
+  color: var(--sheet-text-strong);
   margin: 0;
   display: flex;
   align-items: center;
@@ -57,7 +57,7 @@
 
 .talent-browser-hint {
   font-size: 0.85rem;
-  color: #a0c0d0;
+  color: var(--sheet-text-body);
   margin: 0;
   line-height: 1.4;
 }
@@ -75,12 +75,12 @@
   border: 1px solid rgba(0, 150, 200, 0.2);
   border-radius: 3px;
   background: rgba(0, 50, 80, 0.3);
-  color: #a0d0ff;
+  color: var(--sheet-text-body);
   font-size: 0.9rem;
 }
 
 .talent-search-input::placeholder {
-  color: #607080;
+  color: var(--sheet-text-faint);
 }
 
 .talent-search-input:focus {
@@ -177,14 +177,14 @@
 .talent-tree-card__name {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #00f0ff;
+  color: var(--sheet-text-strong);
   margin: 0;
   letter-spacing: 0.05em;
 }
 
 .talent-tree-card__summary {
   font-size: 0.8rem;
-  color: #a0c0d0;
+  color: var(--sheet-text-body);
   margin: 0;
   line-height: 1.4;
   overflow: hidden;
@@ -208,7 +208,7 @@
   border-radius: 2px;
   border: 1px solid rgba(0, 150, 200, 0.2);
   background: rgba(0, 100, 150, 0.2);
-  color: #00c0e0;
+  color: var(--sheet-text-body);
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -265,7 +265,7 @@
   min-height: 200px;
   flex-direction: column;
   gap: 0.75rem;
-  color: #a0c0d0;
+  color: var(--sheet-text-body);
   text-align: center;
 }
 

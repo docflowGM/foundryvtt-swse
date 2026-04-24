@@ -83,6 +83,11 @@
   --prog-ink-dim: oklch(0.72 0.06 var(--ink-h));
   --prog-ink-faint: oklch(0.50 0.05 var(--ink-h));
 
+  /* ===== SEMANTIC TEXT TOKENS (Phase 6: readability hardening) ===== */
+  --sheet-text-strong: var(--sheet-text-strong, oklch(0.94 0.04 var(--ink-h, 200)));
+  --sheet-text-body: var(--sheet-text-body, oklch(0.72 0.06 var(--ink-h, 200)));
+  --sheet-text-faint: var(--sheet-text-faint, oklch(0.50 0.05 var(--ink-h, 200)));
+
   /* ===== FRAME/GLOW TOKENS ===== */
   --prog-border: oklch(var(--sheet-accent-primary) / 0.25);
   --prog-border-strong: oklch(var(--sheet-accent-primary) / 0.50);
@@ -1443,5 +1448,194 @@
 
   .progression-shell .prog-holocall-content {
     width: 100%;
+  }
+}
+
+/* =============================================================================
+ * PHASE 6: VISUAL BASELINE HARDENING / CONSISTENCY
+ * Consolidates responsive breakpoints, state language, readability, and motion
+ * ============================================================================= */
+
+/* ---------- UNIFIED RESPONSIVE BREAKPOINTS ---------- */
+
+@media (max-width: 1100px) {
+  /* 3-column → 2-column layout transitions at 1100px */
+  .progression-shell .prog-content-row {
+    grid-template-columns: 1fr 2fr;
+  }
+
+  .progression-shell [data-region="details-panel"] {
+    display: none;
+  }
+
+  /* Stack HUD meta bar with wrap on narrow widths */
+  .progression-shell .prog-hud-meta-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 900px) {
+  /* 2-column → 1-column, details panel in tab/modal context only */
+  .progression-shell .prog-content-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Footer status line flex-wrap for narrower widths */
+  .progression-shell .prog-footer-status-line {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* Ability mini-grid responsive */
+  .progression-shell .prog-ability-mini-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  /* Step grids responsive */
+  .progression-shell .prog-class-grid,
+  .progression-shell .prog-species-list {
+    gap: 10px;
+  }
+
+  .progression-shell .prog-class-card {
+    min-height: auto;
+  }
+}
+
+/* ---------- MOTION NORMALIZATION ---------- */
+
+/* Toned-down scan animation peaks (Phase 6) */
+.progression-shell .prog-holo-scan::after,
+.progression-shell .prog-feat-icon-scan::after {
+  animation: prog-holo-scan-normalized var(--motion-scan-speed, 4s) linear infinite;
+}
+
+@keyframes prog-holo-scan-normalized {
+  0% { transform: translateY(0); opacity: 0.08; }
+  10% { opacity: 0.28; }
+  90% { opacity: 0.10; }
+  100% { transform: translateY(100px); opacity: 0.06; }
+}
+
+/* Quiet mode: reduce scan opacity across all holo effects */
+.progression-shell[data-motion-style="quiet"] .prog-holo-scan::after,
+.progression-shell[data-motion-style="quiet"] .prog-feat-icon-scan::after,
+.progression-shell[data-motion-style="quiet"] .prog-mentor__portrait::after {
+  opacity: 0.12 !important;
+}
+
+/* ---------- UNIFIED STATE LANGUAGE ---------- */
+
+/* Focused state: consistent glow across all steps */
+.progression-shell .swse-option-card[data-focused="true"],
+.progression-shell .prog-species-row[data-focused="true"],
+.progression-shell .prog-class-row[data-focused="true"],
+.progression-shell .prog-pick-card.is-focused,
+.progression-shell .prog-skill-row.is-focused,
+.progression-shell .feat-item.focused {
+  border-color: var(--sheet-accent-primary);
+  box-shadow: 0 0 16px var(--sheet-accent-primary) / 0.18, inset 0 0 8px var(--sheet-accent-primary) / 0.04;
+}
+
+/* Selected state: stronger glow (committed/chosen) */
+.progression-shell .swse-option-card[data-selected="true"],
+.progression-shell .prog-species-row[data-committed="true"],
+.progression-shell .prog-class-row[data-committed="true"],
+.progression-shell .prog-pick-card.is-selected,
+.progression-shell .feat-item.selected,
+.progression-shell .prog-skill-row.trained {
+  border-color: var(--sheet-accent-primary);
+  box-shadow: 0 0 22px var(--sheet-accent-primary) / 0.22, inset 0 0 12px var(--sheet-accent-primary) / 0.06;
+}
+
+/* Locked/disabled state: consistent dimming */
+.progression-shell .swse-option-card[data-locked="true"],
+.progression-shell .prog-species-row[data-locked="true"],
+.progression-shell .prog-class-row[data-locked="true"],
+.progression-shell .prog-pick-card.is-locked,
+.progression-shell .feat-item.unavailable,
+.progression-shell .prog-skill-row.is-locked {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+/* ---------- SEMANTIC TEXT READABILITY ---------- */
+
+/* Use semantic text tokens for titles and labels */
+.progression-shell .prog-class-details__name,
+.progression-shell .prog-species-details__name,
+.progression-shell .feat-name,
+.progression-shell .prog-class-card__name,
+.progression-shell .prog-species-row__name,
+.progression-shell .prog-skill-name {
+  color: var(--sheet-text-strong);
+  text-shadow: 0 0 10px oklch(0 0 0 / 0.54), 0 0 16px var(--sheet-accent-primary) / 0.12;
+}
+
+/* Body text for descriptions and metadata */
+.progression-shell .prog-class-details__fantasy,
+.progression-shell .prog-species-details__desc,
+.progression-shell .prog-skill-category,
+.progression-shell .prog-class-details__stat-label {
+  color: var(--sheet-text-body);
+}
+
+/* Faint text for tertiary info */
+.progression-shell .prog-species-row__stats,
+.progression-shell .prog-species-row__source,
+.progression-shell .prog-class-card__type,
+.progression-shell .prog-details-text {
+  color: var(--sheet-text-faint);
+}
+
+/* ---------- IMAGE FALLBACK SAFETY ---------- */
+
+/* Placeholder holo frame for missing art (no fake labels) */
+.progression-shell .prog-species-card__media:empty,
+.progression-shell .prog-species-row__thumb:empty,
+.progression-shell .prog-class-card__media:empty,
+.progression-shell .prog-class-details__portrait-frame:empty,
+.progression-shell .prog-pick-card__icon:empty {
+  background:
+    radial-gradient(circle at 50% 40%, var(--sheet-accent-primary) / 0.10, transparent 55%),
+    linear-gradient(180deg, oklch(0 0 0 / 0.10), oklch(0 0 0 / 0.32)),
+    oklch(0 0 0 / 0.22);
+  border-style: dashed;
+  border-color: var(--sheet-accent-primary) / 0.18;
+  opacity: 0.80;
+}
+
+/* Ensure aspect ratio safety on image elements */
+.progression-shell .prog-species-card__media img,
+.progression-shell .prog-species-details__portrait img,
+.progression-shell .prog-class-details__portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.progression-shell .prog-pick-card__icon-image,
+.progression-shell .prog-feat-icon-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ---------- EDGE CONTRAST SAFEGUARDS ---------- */
+
+/* High-contrast theme overlay adjustment */
+@media (prefers-contrast: more) {
+  .progression-shell .prog-holo-scan::after,
+  .progression-shell .prog-feat-icon-scan::after {
+    opacity: 0.20;
+  }
+
+  .progression-shell [data-selected="true"],
+  .progression-shell .is-selected {
+    box-shadow: 0 0 28px var(--sheet-accent-primary) / 0.28, inset 0 0 14px var(--sheet-accent-primary) / 0.08;
   }
 }

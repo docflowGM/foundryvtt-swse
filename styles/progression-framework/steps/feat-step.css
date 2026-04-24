@@ -333,7 +333,7 @@
 .feat-name {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #e8f5ff;
+  color: var(--sheet-text-strong);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -448,10 +448,10 @@
   gap: 1rem;
 }
 
-.feat-name {
+.feat-details-panel .feat-name {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #00f0ff;
+  color: var(--sheet-text-strong);
   margin: 0;
   letter-spacing: 0.02em;
 }
@@ -497,12 +497,12 @@
 
 .row-label {
   font-weight: 600;
-  color: #00c0e0;
+  color: var(--sheet-text-strong);
   min-width: 80px;
 }
 
 .category-value {
-  color: #a0d0ff;
+  color: var(--sheet-text-body);
 }
 
 /* Feat Description */
@@ -520,7 +520,7 @@
 .feat-description-section h3 {
   font-size: 0.85rem;
   font-weight: 700;
-  color: rgba(0, 220, 255, 0.8);
+  color: var(--sheet-text-strong);
   margin: 0 0 0.6rem 0;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -530,7 +530,7 @@
 .feat-description {
   font-size: 0.9rem;
   line-height: 1.6;
-  color: #b8d8f0;
+  color: var(--sheet-text-body);
   margin: 0;
 }
 
@@ -1204,14 +1204,8 @@
     rgba(0, 180, 255, 0.10),
     transparent
   );
-  animation: prog-feat-icon-scan var(--motion-scan-speed, 4s) linear infinite;
-}
-
-@keyframes prog-feat-icon-scan {
-  0% { transform: translateY(0); opacity: 0.08; }
-  10% { opacity: 0.48; }
-  90% { opacity: 0.12; }
-  100% { transform: translateY(56px); opacity: 0.06; }
+  animation: prog-holo-scan-normalized var(--motion-scan-speed, 4s) linear infinite;
+  opacity: 0.20;
 }
 
 /* Motion disabled: hide scanline animation */
