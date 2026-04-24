@@ -83,11 +83,22 @@ function debounce(fn, ms = 500) {
 }
 
 /**
+ * Phase 5: Supported sheet themes with UI labels
+ */
+const SUPPORTED_SHEET_THEMES = ['cryo', 'vapor', 'droid'];
+const SHEET_THEME_LABELS = {
+  cryo: 'Cryo',
+  vapor: 'Vapor',
+  droid: 'Droid'
+};
+
+/**
  * Get the configured theme for the character sheet (Phase 1 shell skin)
  * Supports: 'vapor', 'cryo', 'droid'
  */
 function getSheetTheme(actor) {
-  return actor?.getFlag?.('foundryvtt-swse', 'sheetTheme') || 'cryo';
+  const value = actor?.getFlag?.('foundryvtt-swse', 'sheetTheme');
+  return SUPPORTED_SHEET_THEMES.includes(value) ? value : 'cryo';
 }
 
 /**
@@ -1309,6 +1320,11 @@ const forcePoints = [];
       // PHASE 1: V2 Shell Theme Tokens
       // ═════════════════════════════════════════════════════════════════
       sheetTheme: getSheetTheme(actor),  // Theme for v2 shell styling ('vapor', 'cryo', 'droid')
+      sheetThemeOptions: SUPPORTED_SHEET_THEMES.map(theme => ({
+        value: theme,
+        label: SHEET_THEME_LABELS[theme],
+        selected: theme === getSheetTheme(actor)
+      })),
       // ═════════════════════════════════════════════════════════════════
       // PHASE 5: Removed legacy flat context
       // All data is now provided through panelized contexts above.
@@ -1615,6 +1631,25 @@ const forcePoints = [];
 
       // swseLogger.debug(`[HELP-MODE] Cycled to: ${this._helpLevel}`);
     }, { signal });
+
+    // DELEGATED: Sheet Theme Selection (Phase 5)
+    // Allows players/GMs to choose between 'cryo', 'vapor', 'droid' themes
+    html.addEventListener("change", async ev => {
+      const select = ev.target.closest("[data-action='change-sheet-theme']");
+      if (!select) return;
+
+      const newTheme = String(select.value || '');
+      if (!SUPPORTED_SHEET_THEMES.includes(newTheme)) return;
+
+      ev.preventDefault();
+
+      // Persist to actor flag
+      await this.document.setFlag('foundryvtt-swse', 'sheetTheme', newTheme);
+
+      // Rerender sheet to apply theme change
+      this.render(true);
+    }, { signal });
+
     // DELEGATED: Tab Switching - Route through shared UI state manager
     // This prevents "blank body" states where DOM classes and remembered state diverge.
     html.addEventListener("click", ev => {
