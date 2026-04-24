@@ -82,7 +82,7 @@
 .progression-shell [data-region="work-surface"] code,
 .progression-shell [data-region="details-panel"] code {
   word-break: break-all;              /* Force break if needed */
-  font-family: "Courier New", monospace;
+  font-family: var(--swse-font-mono, "Courier New", monospace);
   font-size: 0.9em;
 }
 

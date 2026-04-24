@@ -459,7 +459,7 @@
 .progression-shell .prog-mentor__text code,
 .progression-shell .prog-mentor__text samp {
   word-break: break-all;    /* Force break if even hyphens don't help */
-  font-family: "Courier New", monospace;
+  font-family: var(--swse-font-mono, "Courier New", monospace);
   font-size: 0.9em;
 }
 

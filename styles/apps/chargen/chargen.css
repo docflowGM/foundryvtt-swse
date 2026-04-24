@@ -28,7 +28,7 @@
 .narrative-chargen {
     background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
     color: #9ed0ff;
-    font-family: "Orbitron", sans-serif;
+    font-family: var(--swse-font-orbit, "Orbitron", sans-serif);
     min-height: 18px;
     border-radius: 12px;
     display: flex;
@@ -89,7 +89,7 @@
     border-radius: 4px;
     padding: 6px 8px;
     color: #9ed0ff;
-    font-family: "Orbitron", sans-serif;
+    font-family: var(--swse-font-orbit, "Orbitron", sans-serif);
     font-size: 0.9rem;
     transition: all 0.2s ease;
 }
@@ -182,7 +182,7 @@
     color: #fff;
     border-radius: 8px;
     font-size: 1.1rem;
-    font-family: "Orbitron", sans-serif;
+    font-family: var(--swse-font-orbit, "Orbitron", sans-serif);
     cursor: pointer;
 }
 
@@ -3149,7 +3149,7 @@
 }
 
 .narrator-speech-bubble p {
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--swse-font-mono, 'Courier New', monospace);
     font-size: 1.1rem;
     line-height: 1.5;
     color: #00ff88;
@@ -3230,7 +3230,7 @@
     color: #00ffaa;
     font-size: 1.1rem;
     text-shadow: 0 0 15px rgba(0, 255, 170, 0.6);
-    font-family: 'Orbitron', sans-serif;
+    font-family: var(--swse-font-orbit, 'Orbitron', sans-serif);
     font-weight: 600;
 }
 
@@ -3239,7 +3239,7 @@
     color: #00ff88;
     font-size: 1rem;
     line-height: 1.5;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: var(--swse-font-mono, 'Courier New', monospace);
     text-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.2);
     font-weight: 500;
     letter-spacing: 0.5px;

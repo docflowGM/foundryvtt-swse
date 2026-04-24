@@ -53,7 +53,7 @@
      the splash is interior content living inside that device. */
   background: transparent;
   color: rgba(210, 240, 255, 1);
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   font-size: 13px;
   line-height: 1.4;
   position: relative;
@@ -380,7 +380,7 @@
   font-size: 11px;
   color: rgba(80, 210, 255, 0.85);
   letter-spacing: 0.5px;
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   text-align: center;
   margin-top: 12px;
   min-height: 14px;
@@ -844,7 +844,7 @@
 }
 
 .prog-intro-boot-fragment--basic {
-  font-family: 'Courier New', monospace;
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
   text-transform: uppercase;
 }
 
