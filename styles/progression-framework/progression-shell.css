@@ -93,6 +93,11 @@
   --prog-border-strong: oklch(var(--sheet-accent-primary) / 0.50);
   --prog-glow: oklch(var(--sheet-accent-primary) / 0.18);
 
+  /* ===== SEMANTIC STATE TOKENS (Pass 2: Step-agnostic semantic colors) ===== */
+  --prog-positive: oklch(0.75 0.25 120);
+  --prog-warning: oklch(0.72 0.20 45);
+  --prog-negative: oklch(0.55 0.25 20);
+
   /* ===== MOTION TOKENS (Phase 3: shared actor-sheet motion registry) ===== */
   --motion-enabled: 1;
   --motion-breathe-speed: 4.8s;
