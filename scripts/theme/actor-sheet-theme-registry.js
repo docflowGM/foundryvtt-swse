@@ -29,6 +29,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.55 0.26 300)',
       '--screen-h': '278',
       '--ink-h': '190'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE VT323", monospace',
+      '--swse-font-body': '"SWSE Space Grotesk", system-ui, sans-serif',
+      '--swse-font-mono': '"SWSE JetBrains Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -43,6 +49,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.60 0.10 220)',
       '--screen-h': '215',
       '--ink-h': '205'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE VT323", monospace',
+      '--swse-font-body': '"SWSE Space Grotesk", system-ui, sans-serif',
+      '--swse-font-mono': '"SWSE JetBrains Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -57,6 +69,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.50 0.18 60)',
       '--screen-h': '60',
       '--ink-h': '80'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE VT323", monospace',
+      '--swse-font-body': '"SWSE IBM Plex Mono", ui-monospace, monospace',
+      '--swse-font-mono': '"SWSE IBM Plex Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -71,6 +89,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.50 0.22 330)',
       '--screen-h': '15',
       '--ink-h': '20'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE VT323", monospace',
+      '--swse-font-body': '"SWSE Space Grotesk", system-ui, sans-serif',
+      '--swse-font-mono': '"SWSE JetBrains Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -85,6 +109,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.45 0.18 155)',
       '--screen-h': '140',
       '--ink-h': '150'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE VT323", monospace',
+      '--swse-font-body': '"SWSE IBM Plex Mono", ui-monospace, monospace',
+      '--swse-font-mono': '"SWSE IBM Plex Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -99,6 +129,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.50 0.18 25)',
       '--screen-h': '20',
       '--ink-h': '25'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE VT323", monospace',
+      '--swse-font-body': '"SWSE Space Grotesk", system-ui, sans-serif',
+      '--swse-font-mono': '"SWSE JetBrains Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -113,6 +149,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.55 0.22 40)',
       '--screen-h': '40',
       '--ink-h': '50'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE VT323", monospace',
+      '--swse-font-body': '"SWSE Syne", system-ui, sans-serif',
+      '--swse-font-mono': '"SWSE JetBrains Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -127,6 +169,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.40 0.22 350)',
       '--screen-h': '10',
       '--ink-h': '345'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE VT323", monospace',
+      '--swse-font-body': '"SWSE Space Grotesk", system-ui, sans-serif',
+      '--swse-font-mono': '"SWSE JetBrains Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -145,6 +193,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.55 0.18 260)',
       '--screen-h': '220',
       '--ink-h': '220'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE VT323", monospace',
+      '--swse-font-body': '"SWSE Space Grotesk", system-ui, sans-serif',
+      '--swse-font-mono': '"SWSE JetBrains Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -159,6 +213,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.48 0.15 160)',
       '--screen-h': '165',
       '--ink-h': '170'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE Major Mono Display", monospace',
+      '--swse-font-body': '"SWSE IBM Plex Mono", ui-monospace, monospace',
+      '--swse-font-mono': '"SWSE IBM Plex Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -173,6 +233,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.58 0.14 85)',
       '--screen-h': '85',
       '--ink-h': '95'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE VT323", monospace',
+      '--swse-font-body': '"SWSE Syne", system-ui, sans-serif',
+      '--swse-font-mono': '"SWSE JetBrains Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -187,6 +253,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.95 0.35 300)',
       '--screen-h': '0',
       '--ink-h': '0'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE Major Mono Display", monospace',
+      '--swse-font-body': '"SWSE IBM Plex Mono", ui-monospace, monospace',
+      '--swse-font-mono': '"SWSE IBM Plex Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -201,6 +273,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.52 0.16 240)',
       '--screen-h': '200',
       '--ink-h': '210'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE VT323", monospace',
+      '--swse-font-body': '"SWSE IBM Plex Mono", ui-monospace, monospace',
+      '--swse-font-mono': '"SWSE IBM Plex Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   },
 
@@ -215,6 +293,12 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-purple': 'oklch(0.55 0.15 70)',
       '--screen-h': '70',
       '--ink-h': '65'
+    },
+    fonts: {
+      '--swse-font-display': '"SWSE VT323", monospace',
+      '--swse-font-body': '"SWSE Syne", system-ui, sans-serif',
+      '--swse-font-mono': '"SWSE JetBrains Mono", ui-monospace, monospace',
+      '--swse-font-orbit': '"SWSE Orbitron", system-ui, sans-serif'
     }
   }
 };
@@ -261,14 +345,29 @@ export function getActorSheetThemeOptions() {
 /**
  * Build inline style string from theme tokens
  * Returns CSS custom property declarations for the shell element
+ * Includes both color tokens and font tokens
  */
 export function buildActorSheetThemeStyle(themeKey) {
   const entry = getActorSheetThemeEntry(getActorSheetTheme(themeKey));
-  if (!entry || !entry.tokens) return '';
+  if (!entry) return '';
 
-  return Object.entries(entry.tokens)
-    .map(([k, v]) => `${k}: ${v}`)
-    .join('; ');
+  const styles = [];
+
+  // Add color tokens
+  if (entry.tokens) {
+    Object.entries(entry.tokens).forEach(([k, v]) => {
+      styles.push(`${k}: ${v}`);
+    });
+  }
+
+  // Add font tokens
+  if (entry.fonts) {
+    Object.entries(entry.fonts).forEach(([k, v]) => {
+      styles.push(`${k}: ${v}`);
+    });
+  }
+
+  return styles.join('; ');
 }
 
 /**
