@@ -84,7 +84,19 @@
   --prog-border-strong: oklch(var(--sheet-accent-primary) / 0.50);
   --prog-glow: oklch(var(--sheet-accent-primary) / 0.18);
 
-  /* ===== MOTION TOKENS (future hook) ===== */
+  /* ===== MOTION TOKENS (Phase 3: shared actor-sheet motion registry) ===== */
+  --motion-enabled: 1;
+  --motion-breathe-speed: 4.8s;
+  --motion-shimmer-speed: 2.8s;
+  --motion-scan-speed: 3.6s;
+  --motion-sweep-speed: 3.2s;
+  --motion-pulse-speed: 2.4s;
+  --motion-flicker-speed: 1.8s;
+  --motion-glow-alpha: 0.24;
+  --motion-glow-alpha-strong: 0.42;
+  --motion-glow-alpha-subtle: 0.15;
+
+  /* ===== TRANSITION TOKENS ===== */
   --prog-transition-base: 200ms ease;
   --prog-transition-mentor: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -1059,6 +1071,215 @@
 
 .progression-shell .prog-holocall-continue[hidden] {
   display: none;
+}
+
+/* =============================================================================
+ * PHASE 3: SHARED-THEME HOLOGRAPHIC MOTION
+ * Motion styles from actor-sheet-motion-registry (standard/quiet/cinematic/diagnostic/off)
+ * ============================================================================= */
+
+/* ---------- SHELL SCANLINE/VIGNETTE LAYER ---------- */
+
+@keyframes prog-shell-scanline {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: calc(var(--motion-glow-alpha-subtle) * 0.6);
+  }
+}
+
+.progression-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.03),
+      rgba(0, 0, 0, 0.03) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+  animation: prog-shell-scanline var(--motion-flicker-speed) ease-in-out infinite;
+  opacity: calc(var(--motion-glow-alpha-subtle) * 0.4);
+  z-index: var(--prog-z-modal);
+}
+
+/* ---------- UTILITY BAR BREATHING + SHEEN ---------- */
+
+@keyframes prog-hud-breathe {
+  0%, 100% {
+    background: linear-gradient(90deg,
+      rgba(0, 0, 0, 0.5),
+      oklch(var(--screen-h) calc(var(--screen-c-alt) * 0.3) / 0.08),
+      rgba(0, 0, 0, 0.5)
+    );
+    box-shadow: 0 0 8px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha) * 0.5));
+  }
+  50% {
+    background: linear-gradient(90deg,
+      rgba(0, 0, 0, 0.4),
+      oklch(var(--screen-h) calc(var(--screen-c-alt) * 0.4) / 0.12),
+      rgba(0, 0, 0, 0.4)
+    );
+    box-shadow: 0 0 16px oklch(var(--sheet-accent-primary) / var(--motion-glow-alpha));
+  }
+}
+
+[data-region="utility-bar"] {
+  animation: prog-hud-breathe var(--motion-breathe-speed) ease-in-out infinite;
+}
+
+/* ---------- MENTOR PORTRAIT SCAN ---------- */
+
+@keyframes prog-mentor-scan {
+  0%, 100% {
+    background-position: 0% 0%;
+    opacity: 0;
+  }
+  50% {
+    background-position: 100% 100%;
+    opacity: calc(var(--motion-glow-alpha-subtle));
+  }
+}
+
+.progression-shell .prog-mentor__portrait::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg,
+      transparent 30%,
+      oklch(var(--sheet-accent-primary) / 0.2) 50%,
+      transparent 70%
+    );
+  background-size: 200% 200%;
+  animation: prog-mentor-scan var(--motion-scan-speed) ease-in-out infinite;
+  border-radius: inherit;
+}
+
+/* ---------- MENTOR DIALOGUE POWERED LIFE ---------- */
+
+@keyframes prog-dialogue-life {
+  0%, 100% {
+    text-shadow:
+      0 0 4px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha) * 0.4)),
+      0 1px 1px rgba(0, 0, 0, 0.8);
+  }
+  50% {
+    text-shadow:
+      0 0 12px oklch(var(--sheet-accent-primary) / var(--motion-glow-alpha)),
+      0 0 20px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha) * 0.5)),
+      0 1px 1px rgba(0, 0, 0, 0.8);
+  }
+}
+
+.progression-shell .prog-species-details__salty-text,
+.progression-shell .prog-mentor__dialogue {
+  animation: prog-dialogue-life calc(var(--motion-breathe-speed) * 1.2) ease-in-out infinite;
+}
+
+/* ---------- ACTIVE STEP PULSE ---------- */
+
+@keyframes prog-step-pulse {
+  0%, 100% {
+    border-color: oklch(var(--sheet-accent-primary) / 0.4);
+    box-shadow: 0 0 8px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha) * 0.5));
+  }
+  50% {
+    border-color: oklch(var(--sheet-accent-primary) / 0.8);
+    box-shadow:
+      0 0 16px oklch(var(--sheet-accent-primary) / var(--motion-glow-alpha)),
+      inset 0 0 12px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha-subtle)));
+  }
+}
+
+.progression-shell .prog-step.is-active {
+  animation: prog-step-pulse var(--motion-pulse-speed) ease-in-out infinite;
+}
+
+/* ---------- WORK-SURFACE ENERGY LINE ---------- */
+
+@keyframes prog-work-energy {
+  0%, 100% {
+    box-shadow:
+      inset 0 2px 0 oklch(var(--sheet-accent-primary) / 0),
+      0 0 12px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha) * 0.3));
+  }
+  50% {
+    box-shadow:
+      inset 0 2px 0 oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha-strong) * 0.5)),
+      0 0 24px oklch(var(--sheet-accent-primary) / var(--motion-glow-alpha));
+  }
+}
+
+[data-region="work-surface"] {
+  animation: prog-work-energy var(--motion-sweep-speed) ease-in-out infinite;
+}
+
+/* ---------- PRIMARY FOOTER BUTTON POWERED STATE ---------- */
+
+@keyframes prog-btn-powered {
+  0%, 100% {
+    box-shadow:
+      0 0 8px oklch(var(--sheet-accent-primary) / calc(var(--motion-glow-alpha) * 0.3)),
+      inset 0 0 0 oklch(var(--sheet-accent-secondary) / 0);
+  }
+  50% {
+    box-shadow:
+      0 0 20px oklch(var(--sheet-accent-primary) / var(--motion-glow-alpha-strong)),
+      inset 0 0 8px oklch(var(--sheet-accent-secondary) / calc(var(--motion-glow-alpha) * 0.2));
+  }
+}
+
+.progression-shell .swse-btn--confirm.swse-btn--advance-ready,
+.progression-shell .swse-btn--last-step.swse-btn--advance-ready {
+  animation: prog-btn-powered var(--motion-pulse-speed) ease-in-out infinite;
+}
+
+/* =============================================================================
+ * MOTION OFF MODE — EXPLICIT KILL SWITCH
+ * When user selects "off", all decorative continuous motion stops
+ * ============================================================================= */
+
+.progression-shell[data-motion-style="off"] [data-region="utility-bar"],
+.progression-shell[data-motion-style="off"] [data-region="work-surface"],
+.progression-shell[data-motion-style="off"] .prog-step.is-active,
+.progression-shell[data-motion-style="off"] .swse-btn--confirm.swse-btn--advance-ready,
+.progression-shell[data-motion-style="off"] .swse-btn--last-step.swse-btn--advance-ready,
+.progression-shell[data-motion-style="off"] .prog-mentor__dialogue,
+.progression-shell[data-motion-style="off"] .prog-species-details__salty-text {
+  animation: none !important;
+}
+
+.progression-shell[data-motion-style="off"]::before,
+.progression-shell[data-motion-style="off"] .prog-mentor__portrait::after {
+  display: none !important;
+}
+
+/* =============================================================================
+ * REDUCED-MOTION OVERRIDE
+ * Respects browser prefers-reduced-motion setting
+ * ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .progression-shell::before,
+  .progression-shell .prog-mentor__portrait::after {
+    animation: none !important;
+  }
+
+  .progression-shell [data-region="utility-bar"],
+  .progression-shell [data-region="work-surface"],
+  .progression-shell .prog-step.is-active,
+  .progression-shell .prog-mentor__dialogue,
+  .progression-shell .prog-species-details__salty-text,
+  .progression-shell .swse-btn--confirm.swse-btn--advance-ready,
+  .progression-shell .swse-btn--last-step.swse-btn--advance-ready {
+    animation: none !important;
+  }
 }
 
 @media (max-width: 900px) {

@@ -43,6 +43,14 @@ import { RolloutController } from '../rollout/rollout-controller.js';
 import { SelectedRailContext } from './selected-rail-context.js';
 import { ProjectionEngine } from './projection-engine.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
+import {
+  getActorSheetTheme,
+  buildActorSheetThemeStyle
+} from '/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js';
+import {
+  getActorSheetMotionStyle,
+  buildActorSheetMotionStyle
+} from '/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -467,16 +475,18 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   _getProgressionThemeKey() {
     if (!this.actor) return 'cryo'; // fallback
-    return this.actor?.getFlag?.('foundryvtt-swse', 'sheetTheme') || 'cryo';
+    const flagValue = this.actor?.getFlag?.('foundryvtt-swse', 'sheetTheme');
+    return getActorSheetTheme(flagValue);
   }
 
   /**
-   * Get progression shell motion style (Phase 1 hook for future shared motion registry)
-   * @returns {string} Motion style ('standard' | 'reduced' | etc.)
+   * Get progression shell motion style (Phase 3: shared actor-sheet motion registry)
+   * @returns {string} Motion style key ('off' | 'quiet' | 'standard' | 'cinematic' | 'diagnostic')
    */
   _getProgressionMotionStyle() {
     if (!this.actor) return 'standard'; // fallback
-    return this.actor?.getFlag?.('foundryvtt-swse', 'sheetMotionStyle') || 'standard';
+    const flagValue = this.actor?.getFlag?.('foundryvtt-swse', 'sheetMotionStyle');
+    return getActorSheetMotionStyle(flagValue);
   }
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
@@ -933,6 +943,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // ✓ PHASE 1: Expose theme and motion for future shared actor-sheet inheritance
     context.themeKey = this._getProgressionThemeKey();
     context.motionStyle = this._getProgressionMotionStyle();
+
+    // ✓ PHASE 3: Build inline style strings from actor-sheet theme/motion registries
+    context.themeStyleInline = buildActorSheetThemeStyle(context.themeKey);
+    context.motionStyleInline = buildActorSheetMotionStyle(context.motionStyle);
 
     // ✓ CRITICAL: Expose shell context to step plugins
     // This allows steps to access committedSelections, actor, mode, and buildIntent
