@@ -1213,10 +1213,25 @@
   display: none !important;
 }
 
-/* Respect prefers-reduced-motion */
+/* Respect prefers-reduced-motion (WCAG 2.1 Level A) */
 @media (prefers-reduced-motion: reduce) {
-  .feat-item__icon-scan::after {
+  /* Suppress all animations in feat step */
+  .feat-work-surface *,
+  .feat-group,
+  .feat-item,
+  .feat-item__icon,
+  .feat-item__icon-scan,
+  .feat-item__label {
+    animation: none !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  /* Suppress scanline and motion pseudo-elements */
+  .feat-item__icon-scan::after,
+  .feat-item__icon::before {
     display: none !important;
+    animation: none !important;
   }
 }
 
