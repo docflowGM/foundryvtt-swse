@@ -21,9 +21,11 @@
       modal-host      In-shell modal stack
 --}}
 
-<div class="progression-shell swse-ui-shell swse-sheet-ui swse-progression-shell prog-holo {{#if isProcessing}}is-processing{{/if}}"
+<div class="progression-shell swse-ui-shell swse-sheet-ui swse-progression-shell swse-prog-v2-shell prog-holo {{#if isProcessing}}is-processing{{/if}}"
      data-application-content
-     data-step-id="{{currentDescriptor.stepId}}">
+     data-step-id="{{currentDescriptor.stepId}}"
+     data-theme="{{themeKey}}"
+     data-motion-style="{{motionStyle}}">
 
 {{#if isIntroMode}}
 

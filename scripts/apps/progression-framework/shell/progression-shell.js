@@ -461,6 +461,24 @@ export class ProgressionShell extends SWSEApplicationV2 {
     return 'actor';
   }
 
+  /**
+   * Get progression shell theme key (Phase 1 hook for future actor-sheet theme inheritance)
+   * @returns {string} Theme key (e.g., 'vapor', 'droid', 'holo', etc.)
+   */
+  _getProgressionThemeKey() {
+    if (!this.actor) return 'cryo'; // fallback
+    return this.actor?.getFlag?.('foundryvtt-swse', 'sheetTheme') || 'cryo';
+  }
+
+  /**
+   * Get progression shell motion style (Phase 1 hook for future shared motion registry)
+   * @returns {string} Motion style ('standard' | 'reduced' | etc.)
+   */
+  _getProgressionMotionStyle() {
+    if (!this.actor) return 'standard'; // fallback
+    return this.actor?.getFlag?.('foundryvtt-swse', 'sheetMotionStyle') || 'standard';
+  }
+
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
   async render(...args) {
     // Render loop prevention: block recursive render calls during active render
@@ -911,6 +929,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // PHASE 4: Apply rollout configuration to shell
     // This sets feature gates, UI visibility, debug tools, etc. based on world settings
     RolloutController.configureShell(this);
+
+    // ✓ PHASE 1: Expose theme and motion for future shared actor-sheet inheritance
+    context.themeKey = this._getProgressionThemeKey();
+    context.motionStyle = this._getProgressionMotionStyle();
 
     // ✓ CRITICAL: Expose shell context to step plugins
     // This allows steps to access committedSelections, actor, mode, and buildIntent
