@@ -27,6 +27,7 @@
     "index.js"
   ],
   "styles": [
+    "styles/fonts.css",
     "styles/swse-core.css",
     "styles/swse-holo.css",
     "styles/core/variables.css",

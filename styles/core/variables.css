@@ -14,6 +14,14 @@
   --font-awesome: "Font Awesome 6 Free";
 
   /* ─────────────────────────────────────────────────────────────────────────
+     TYPOGRAPHY - Self-hosted Fonts
+     ───────────────────────────────────────────────────────────────────────── */
+  --swse-font-display: "SWSE VT323", monospace;
+  --swse-font-body: "SWSE Space Grotesk", system-ui, sans-serif;
+  --swse-font-mono: "SWSE JetBrains Mono", ui-monospace, monospace;
+  --swse-font-orbit: "SWSE Orbitron", system-ui, sans-serif;
+
+  /* ─────────────────────────────────────────────────────────────────────────
      COLORS - Primary Palette
      ───────────────────────────────────────────────────────────────────────── */
 
@@ -54,12 +62,10 @@
   --swse-text-muted: rgba(181, 218, 255, 0.5);
 
   /* ─────────────────────────────────────────────────────────────────────────
-     TYPOGRAPHY
+     TYPOGRAPHY (Legacy — refer to self-hosted tokens above for current usage)
      ───────────────────────────────────────────────────────────────────────── */
 
-  --swse-font: "Rajdhani", "Signika", system-ui, sans-serif;
-  --swse-font-display: "Orbitron", "Roboto", sans-serif;
-  --swse-font-mono: "Consolas", "Monaco", monospace;
+  --swse-font: "SWSE Space Grotesk", system-ui, sans-serif;
 
   --swse-font-size-xs: 9px;
   --swse-font-size-sm: 10px;
