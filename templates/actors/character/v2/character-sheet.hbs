@@ -146,13 +146,22 @@
           <i class="fas fa-question-circle"></i> {{helpLevelLabel}}
         </button>
         {{#if editable}}
-          <div class="swse-v2-theme-control">
-            <label for="swse-sheet-theme-select">Theme:</label>
-            <select id="swse-sheet-theme-select" data-action="change-sheet-theme" class="swse-v2-theme-select">
+          <div class="swse-v2-theme-picker">
+            <span class="swse-v2-theme-picker__label">Theme</span>
+            <div class="swse-v2-theme-picker__chips">
               {{#each sheetThemeOptions}}
-                <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+                <button
+                  type="button"
+                  class="swse-v2-theme-chip {{#if selected}}is-active{{/if}}"
+                  data-action="set-sheet-theme"
+                  data-theme="{{value}}"
+                  title="{{label}}"
+                >
+                  <span class="swse-v2-theme-chip__swatch swatch--{{value}}"></span>
+                  <span class="swse-v2-theme-chip__text">{{label}}</span>
+                </button>
               {{/each}}
-            </select>
+            </div>
           </div>
         {{/if}}
       </div>

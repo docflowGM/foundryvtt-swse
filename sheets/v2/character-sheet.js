@@ -1633,12 +1633,12 @@ const forcePoints = [];
     }, { signal });
 
     // DELEGATED: Sheet Theme Selection (Phase 5)
-    // Allows players/GMs to choose between 'cryo', 'vapor', 'droid' themes
-    html.addEventListener("change", async ev => {
-      const select = ev.target.closest("[data-action='change-sheet-theme']");
-      if (!select) return;
+    // Allows players/GMs to choose between 'cryo', 'vapor', 'droid' themes via chip buttons
+    html.addEventListener("click", async ev => {
+      const chip = ev.target.closest("[data-action='set-sheet-theme']");
+      if (!chip) return;
 
-      const newTheme = String(select.value || '');
+      const newTheme = String(chip.dataset.theme || '');
       if (!SUPPORTED_SHEET_THEMES.includes(newTheme)) return;
 
       ev.preventDefault();
