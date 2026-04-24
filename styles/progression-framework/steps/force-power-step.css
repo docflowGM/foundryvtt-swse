@@ -227,3 +227,134 @@
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
+
+/* ============================================================================
+   PHASE 7: FORCE POWER CODEX + HOLOGRAPHIC IMAGE TREATMENT
+   ============================================================================ */
+
+/* Holographic force power image frame (Phase 7) */
+.progression-shell .prog-forcepower-card__media {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 120px;
+  margin: -8px -12px 8px -12px;
+  background:
+    radial-gradient(circle at 50% 45%, var(--sheet-accent-primary) / 0.16, transparent 58%),
+    linear-gradient(180deg, oklch(0 0 0 / 0.10), oklch(0 0 0 / 0.34)),
+    oklch(0 0 0 / 0.24);
+  border: 1px solid var(--sheet-accent-primary) / 0.20;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  box-shadow:
+    inset 0 0 10px var(--sheet-accent-primary) / 0.03,
+    0 0 14px var(--sheet-accent-primary) / 0.08;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Holographic glow overlay ::before */
+.progression-shell .prog-forcepower-card__media::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background:
+    radial-gradient(circle at 50% 35%, var(--sheet-accent-primary) / 0.20, transparent 42%),
+    radial-gradient(circle at 50% 68%, var(--sheet-accent-secondary) / 0.08, transparent 48%);
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+
+/* Holographic scanlines ::after */
+.progression-shell .prog-forcepower-card__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 3px,
+      var(--sheet-accent-primary) / 0.09 3px 4px
+    ),
+    linear-gradient(135deg, var(--sheet-accent-primary) / 0.10, transparent 28%);
+  mix-blend-mode: screen;
+  opacity: 0.34;
+}
+
+/* Force power image with monochrome holographic filters */
+.progression-shell .prog-forcepower-card__image {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  max-height: 140px;
+  object-fit: cover;
+  filter:
+    grayscale(1)
+    brightness(1.16)
+    contrast(1.08)
+    saturate(1.02)
+    drop-shadow(0 0 6px var(--sheet-accent-primary) / 0.26)
+    drop-shadow(0 0 14px var(--sheet-accent-primary) / 0.12);
+  mix-blend-mode: screen;
+  opacity: 0.94;
+}
+
+/* Motion scan animation for force power images */
+.progression-shell .prog-forcepower-card__media .prog-holo-scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.progression-shell .prog-forcepower-card__media .prog-holo-scan::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  height: 14px;
+  background: linear-gradient(
+    180deg,
+    var(--sheet-accent-primary) / 0.30,
+    var(--sheet-accent-primary) / 0.10,
+    transparent
+  );
+  opacity: 0.20;
+  animation: prog-holo-scan-normalized var(--motion-scan-speed, 3.6s) linear infinite;
+}
+
+/* Motion disabled: hide scanline animation */
+.progression-shell.swse-prog-v2-shell[data-motion-style="off"] .prog-forcepower-card__media .prog-holo-scan::after {
+  display: none !important;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .progression-shell .prog-forcepower-card__media .prog-holo-scan::after {
+    display: none !important;
+  }
+}
+
+/* Enhanced glow on selected force power card */
+.progression-shell .prog-force-power-card--selected .prog-forcepower-card__media {
+  border-color: var(--sheet-accent-primary);
+  box-shadow:
+    inset 0 0 12px var(--sheet-accent-primary) / 0.08,
+    0 0 22px var(--sheet-accent-primary) / 0.18;
+}
+
+/* Dimmed for unavailable/locked state */
+.progression-shell .prog-force-power-card[data-locked="true"] .prog-forcepower-card__media,
+.progression-shell .prog-force-power-card.is-locked .prog-forcepower-card__media {
+  opacity: 0.58;
+}

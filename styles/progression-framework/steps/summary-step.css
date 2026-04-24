@@ -767,3 +767,204 @@
     text-align: left;
   }
 }
+
+/* ============================================================================
+   PHASE 7: SUMMARY STEP VISUAL FIDELITY
+   Exact field terminology + shell-style layout
+   ============================================================================ */
+
+/* Enhanced section headers — monospace uppercase style */
+.prog-section-header {
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--sheet-accent-primary);
+  margin-bottom: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.prog-section-header i {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+/* Summary section card styling — shell-consistent frame */
+.prog-summary-card {
+  background: linear-gradient(180deg,
+    rgba(0, 100, 150, 0.06) 0%,
+    transparent 70%);
+  border: 1px solid rgba(0, 200, 255, 0.18);
+  border-radius: 8px;
+  padding: 12px 14px;
+  box-shadow:
+    inset 0 0 8px rgba(0, 0, 0, 0.06),
+    0 0 10px rgba(0, 170, 255, 0.04);
+}
+
+/* Summary field layout — key/value pairs with monospace labels */
+.prog-summary-field {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px dotted rgba(0, 200, 255, 0.12);
+  align-items: center;
+}
+
+.prog-summary-field:last-child {
+  border-bottom: none;
+}
+
+.prog-summary-field .k {
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 0.70rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sheet-text-faint);
+  font-weight: 600;
+}
+
+.prog-summary-field .v {
+  font-size: 0.9rem;
+  color: var(--sheet-text-strong);
+  font-weight: 500;
+}
+
+.prog-summary-field .v.value-placeholder {
+  color: var(--sheet-text-faint);
+  font-style: italic;
+}
+
+/* Summary line value — primary field display */
+.prog-summary-line-value {
+  font-size: 0.95rem;
+  color: var(--sheet-text-strong);
+  font-weight: 500;
+  padding: 6px 0;
+}
+
+/* Summary grid layouts — abilities, attributes, etc. */
+.prog-combat-grid,
+.prog-attributes-grid--summary {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Enhanced combat stat display */
+.prog-combat-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  text-align: center;
+  padding: 6px 8px;
+  background: rgba(0, 50, 100, 0.2);
+  border: 1px solid rgba(0, 150, 200, 0.12);
+  border-radius: 4px;
+}
+
+.prog-combat-stat__label {
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sheet-text-faint);
+  font-weight: 600;
+}
+
+.prog-combat-stat__value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--sheet-text-strong);
+}
+
+/* Enhanced attribute display */
+.prog-attr-display {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 6px;
+  align-items: center;
+  padding: 8px;
+  background: rgba(0, 50, 100, 0.2);
+  border: 1px solid rgba(0, 150, 200, 0.12);
+  border-radius: 4px;
+}
+
+.prog-attr-name {
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sheet-text-faint);
+  font-weight: 600;
+}
+
+.prog-attr-score,
+.prog-attr-modifier {
+  text-align: right;
+  font-weight: 700;
+  color: var(--sheet-text-strong);
+  font-size: 0.85rem;
+}
+
+.prog-attr-modifier.positive {
+  color: #4ade80;
+}
+
+.prog-attr-modifier.negative {
+  color: #ff6b6b;
+}
+
+.prog-attr-modifier.zero {
+  color: #fbbf24;
+}
+
+/* Chip list for languages, feats, etc. */
+.prog-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.prog-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  background: rgba(0, 100, 150, 0.15);
+  border: 1px solid rgba(0, 150, 200, 0.25);
+  border-radius: 6px;
+  font-size: 0.80rem;
+  color: var(--sheet-text-body);
+  font-weight: 500;
+}
+
+.prog-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prog-item-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--sheet-text-body);
+}
+
+.prog-item-entry i {
+  flex-shrink: 0;
+  color: var(--sheet-accent-primary);
+  margin-top: 2px;
+}
+
+/* Placeholder text styling */
+.prog-placeholder {
+  color: var(--sheet-text-faint);
+  font-style: italic;
+}
