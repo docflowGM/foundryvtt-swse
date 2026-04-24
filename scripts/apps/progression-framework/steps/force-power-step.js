@@ -144,20 +144,70 @@ export class ForcePowerStep extends ProgressionStepPlugin {
 
   /**
    * Provide step data to templates.
+   * PHASE 8: Distinguishes pending counts (current session) from committed counts (already on actor).
    */
   async getStepData(context) {
-    // Build summary display: "Power A ×2, Power B ×1"
-    const committedSummary = Array.from(this._committedPowerCounts.entries()).map(([id, count]) => {
+    // Load actor's existing force powers (previously committed from past progressions)
+    const actorForcePowers = context?.actor?.items?.filter(i =>
+      i.type === 'forcepower' || i.type === 'power'
+    ) || [];
+    const actorCommittedCounts = new Map();
+    for (const item of actorForcePowers) {
+      // Count occurrences of each power by name (actor may have duplicates for stacking)
+      const powerId = item.system?.abilities?.id || item.name?.toLowerCase().replace(/\s+/g, '-');
+      const currentCount = actorCommittedCounts.get(powerId) ?? 0;
+      actorCommittedCounts.set(powerId, currentCount + 1);
+    }
+
+    // Pending counts are current session selections (in _committedPowerCounts)
+    const pendingCounts = new Map(this._committedPowerCounts);
+
+    // Build card state map: powerId → {isPending, isCommitted, count, status}
+    const cardStates = new Map();
+    const allPowerIds = new Set([
+      ...Array.from(pendingCounts.keys()),
+      ...Array.from(actorCommittedCounts.keys()),
+    ]);
+
+    for (const powerId of allPowerIds) {
+      const pendingCount = pendingCounts.get(powerId) ?? 0;
+      const committedCount = actorCommittedCounts.get(powerId) ?? 0;
+      const totalCount = pendingCount + committedCount;
+
+      cardStates.set(powerId, {
+        powerId,
+        pendingCount,
+        committedCount,
+        totalCount,
+        isPending: pendingCount > 0,
+        isCommitted: committedCount > 0,
+        status: committedCount > 0 && pendingCount > 0 ? 'pending-additional'
+                : committedCount > 0 ? 'committed'
+                : 'pending',
+      });
+    }
+
+    // Build summary display: "Power A ×2 (Pending), Power B ×1 (Committed)"
+    const committedSummary = Array.from(pendingCounts.entries()).map(([id, count]) => {
       const power = this._allPowers.find(p => p.id === id);
-      return { id, name: power?.name || id, count };
+      return { id, name: power?.name || id, count, status: 'pending' };
     });
+    for (const [id, count] of actorCommittedCounts.entries()) {
+      if (!pendingCounts.has(id)) {
+        const power = this._allPowers.find(p => p.id === id);
+        committedSummary.push({ id, name: power?.name || id, count, status: 'committed' });
+      }
+    }
 
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedPowers);
 
     return {
       powers: this._filteredPowers.map(p => this._formatPowerCard(p, suggestedIds, confidenceMap)),
       focusedPowerId: this._focusedPowerId,
-      committedCounts: Object.fromEntries(this._committedPowerCounts),  // for template checks
+      // PHASE 8: Separate pending and committed for UI distinction
+      pendingCounts: Object.fromEntries(pendingCounts),
+      committedCounts: Object.fromEntries(actorCommittedCounts),
+      cardStates: Object.fromEntries(cardStates),
       committedSummary,  // for footer display
       remainingPicks: this._remainingPicks,
       hasSuggestions,
@@ -238,6 +288,63 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     this._focusedPowerId = powerId;
     shell.focusedItem = power;
     shell.render();
+  }
+
+  /**
+   * PHASE 8: Increment quantity of a selected power (via [+] button on card).
+   */
+  async onIncrementQuantity(powerId, shell) {
+    const power = this._allPowers.find(p => p.id === powerId);
+    if (!power) return;
+
+    const currentCount = this._committedPowerCounts.get(powerId) ?? 0;
+    const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, c) => sum + c, 0);
+
+    // Allow increment if picks remain
+    if (totalSelected < this._remainingPicks) {
+      this._committedPowerCounts.set(powerId, currentCount + 1);
+
+      // Update buildIntent
+      if (shell?.buildIntent && this.descriptor?.stepId) {
+        const powersList = Array.from(this._committedPowerCounts.entries())
+          .filter(([_, count]) => count > 0)
+          .map(([id, count]) => ({ id, count }));
+        shell.buildIntent.commitSelection(this.descriptor.stepId, 'forcePowers', powersList);
+      }
+
+      shell.render();
+    }
+  }
+
+  /**
+   * PHASE 8: Decrement quantity of a selected power (via [−] button on card).
+   * Cannot decrement below 0 or decrement committed (already on actor) quantities.
+   */
+  async onDecrementQuantity(powerId, shell) {
+    const power = this._allPowers.find(p => p.id === powerId);
+    if (!power) return;
+
+    const currentCount = this._committedPowerCounts.get(powerId) ?? 0;
+
+    // Only decrement if there are pending selections to remove
+    if (currentCount > 0) {
+      this._committedPowerCounts.set(powerId, currentCount - 1);
+
+      // If count reaches 0, remove from map
+      if (this._committedPowerCounts.get(powerId) === 0) {
+        this._committedPowerCounts.delete(powerId);
+      }
+
+      // Update buildIntent
+      if (shell?.buildIntent && this.descriptor?.stepId) {
+        const powersList = Array.from(this._committedPowerCounts.entries())
+          .filter(([_, count]) => count > 0)
+          .map(([id, count]) => ({ id, count }));
+        shell.buildIntent.commitSelection(this.descriptor.stepId, 'forcePowers', powersList);
+      }
+
+      shell.render();
+    }
   }
 
   /**

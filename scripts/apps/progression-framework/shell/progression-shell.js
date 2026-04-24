@@ -120,6 +120,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'focus-talent'(e, t)        { return this._onStepAction(e, t); },
       'focus-tree'(e, t)          { return this._onStepAction(e, t); },
       'enter-tree'(e, t)          { return this._onStepAction(e, t); },
+      // Phase 8: Force Power quantity controls
+      'increment-quantity'(e, t)  { return this._onIncrementQuantity(e, t); },
+      'decrement-quantity'(e, t)  { return this._onDecrementQuantity(e, t); },
     },
   };
 
@@ -2224,6 +2227,48 @@ export class ProgressionShell extends SWSEApplicationV2 {
       this._rebuildProjection();
       // Trigger re-render to show updated selected rail
       this.render();
+    }
+  }
+
+  /**
+   * PHASE 8: Handle quantity increment for force powers/maneuvers.
+   */
+  async _onIncrementQuantity(event, target) {
+    const { element, row, itemId } = this._resolveInteractionItemId(target, event);
+    if (!element || typeof element.closest !== 'function') {
+      swseLogger.warn('[ProgressionShell] _onIncrementQuantity: target is not a DOM element');
+      return;
+    }
+
+    if (!itemId) {
+      swseLogger.warn('[ProgressionShell] _onIncrementQuantity: could not resolve item identity');
+      return;
+    }
+
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.onIncrementQuantity) {
+      await plugin.onIncrementQuantity(itemId, this);
+    }
+  }
+
+  /**
+   * PHASE 8: Handle quantity decrement for force powers/maneuvers.
+   */
+  async _onDecrementQuantity(event, target) {
+    const { element, row, itemId } = this._resolveInteractionItemId(target, event);
+    if (!element || typeof element.closest !== 'function') {
+      swseLogger.warn('[ProgressionShell] _onDecrementQuantity: target is not a DOM element');
+      return;
+    }
+
+    if (!itemId) {
+      swseLogger.warn('[ProgressionShell] _onDecrementQuantity: could not resolve item identity');
+      return;
+    }
+
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.onDecrementQuantity) {
+      await plugin.onDecrementQuantity(itemId, this);
     }
   }
 

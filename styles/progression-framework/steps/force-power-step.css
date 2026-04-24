@@ -358,3 +358,124 @@
 .progression-shell .prog-force-power-card.is-locked .prog-forcepower-card__media {
   opacity: 0.58;
 }
+
+/* ============================================================================
+   PHASE 8: QUANTITY-BASED UI (Pending vs Committed)
+   ============================================================================ */
+
+/* State section — contains status badges and quantity controls */
+.progression-shell .prog-force-power-card__state-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-xs);
+  margin-top: auto;
+}
+
+/* Status badges — show Pending/Committed state */
+.progression-shell .prog-force-power-card__status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--prog-font-size-xs);
+  padding: 3px 8px;
+  border-radius: var(--prog-radius-sm);
+  font-weight: 500;
+  text-shadow: var(--prog-heading-shadow);
+  white-space: nowrap;
+}
+
+/* Pending status: hourglass icon, orange/amber accent */
+.progression-shell .prog-force-power-card__status-badge--pending {
+  color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.12);
+  border: 1px solid rgba(0, 170, 255, 0.25);
+}
+
+/* Committed status: lock icon, muted text (already on actor) */
+.progression-shell .prog-force-power-card__status-badge--committed {
+  color: var(--prog-text-dim);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Quantity control row: [−] count [+] buttons */
+.progression-shell .prog-force-power-card__quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+/* Quantity buttons: minus and plus */
+.progression-shell .prog-quantity-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--prog-border);
+  background: var(--prog-bg-interact);
+  border-radius: var(--prog-radius-sm);
+  color: var(--prog-text);
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+  font-size: var(--prog-font-size-sm);
+}
+
+.progression-shell .prog-quantity-btn:hover {
+  border-color: var(--prog-border-bright);
+  background: rgba(0, 170, 255, 0.08);
+  color: var(--prog-accent);
+}
+
+.progression-shell .prog-quantity-btn:active {
+  transform: scale(0.95);
+}
+
+/* Disabled state for quantity buttons */
+.progression-shell .prog-quantity-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--prog-border);
+}
+
+.progression-shell .prog-quantity-btn:disabled:hover {
+  background: var(--prog-bg-interact);
+  color: var(--prog-text);
+  border-color: var(--prog-border);
+}
+
+/* Quantity display: the number between [−] and [+] */
+.progression-shell .prog-quantity-display {
+  min-width: 32px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+  font-size: var(--prog-font-size-base);
+}
+
+/* Quantity hint for committed-only powers */
+.progression-shell .prog-force-power-card__quantity-hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  text-shadow: var(--prog-text-shadow);
+  margin-top: 4px;
+}
+
+/* Inline quantity control in details panel */
+.progression-shell .prog-force-power-details__quantity-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 0;
+  margin: 8px 0;
+  border-top: 1px solid var(--prog-border);
+  border-bottom: 1px solid var(--prog-border);
+}
