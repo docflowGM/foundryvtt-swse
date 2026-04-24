@@ -359,7 +359,8 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   }
 
   /**
-   * PHASE 3: Increment quantity of a selected maneuver (via [+] button in details panel).
+   * PHASE 3: Increment quantity of a selected maneuver (via [+] button on work-surface or details panel).
+   * Updates the committed count and notifies buildIntent of the new selection state.
    */
   async onIncrementQuantity(maneuverId, shell) {
     const maneuver = this._allManeuvers.find(m => m.id === maneuverId);
@@ -385,8 +386,8 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   }
 
   /**
-   * PHASE 3: Decrement quantity of a selected maneuver (via [−] button in details panel).
-   * Cannot decrement below 0 or decrement committed (already on actor) quantities.
+   * PHASE 3: Decrement quantity of a selected maneuver (via [−] button on work-surface or details panel).
+   * Cannot decrement below 0. Updates committed count and notifies buildIntent of the new selection state.
    */
   async onDecrementQuantity(maneuverId, shell) {
     const maneuver = this._allManeuvers.find(m => m.id === maneuverId);

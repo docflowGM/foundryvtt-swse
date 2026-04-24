@@ -263,8 +263,9 @@
    QUANTITY CONTROLS (PHASE 3)
    ==================================================================== */
 
-/* Quantity control row: [−] count [+] buttons */
-.prog-starship-maneuver-details__quantity-inline {
+/* Quantity control row: [−] count [+] buttons (work-surface + details panel) */
+.prog-starship-maneuver-details__quantity-inline,
+.prog-starship-maneuver-card__quantity-inline {
   display: flex;
   align-items: center;
   justify-content: center;
