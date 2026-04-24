@@ -289,16 +289,81 @@
 }
 
 
-.progression-shell .prog-class-details__portrait {
+/* Class portrait — holographic projection (Phase 5 Addendum) */
+.progression-shell .prog-class-details__portrait-frame {
+  position: relative;
   width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  margin-bottom: var(--prog-space-sm);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(0, 180, 255, 0.16), transparent 58%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.34)),
+    rgba(0, 0, 0, 0.24);
+  border: 1px solid rgba(0, 200, 255, 0.20);
+  box-shadow:
+    inset 0 0 10px rgba(0, 170, 255, 0.03),
+    0 0 18px rgba(0, 180, 255, 0.12);
+  transition: all 0.25s ease;
+}
+
+/* Holographic glow overlay ::before */
+.progression-shell .prog-class-details__portrait-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(0, 200, 255, 0.20), transparent 42%),
+    radial-gradient(circle at 50% 68%, rgba(100, 150, 255, 0.08), transparent 48%);
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+
+/* Holographic scanlines ::after */
+.progression-shell .prog-class-details__portrait-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 3px,
+      rgba(0, 200, 255, 0.09) 3px 4px
+    ),
+    linear-gradient(135deg, rgba(0, 180, 255, 0.10), transparent 28%);
+  mix-blend-mode: screen;
+  opacity: 0.34;
+}
+
+.progression-shell .prog-class-details__portrait {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
   max-height: 220px;
   object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 220, 255, 0.3);
-  margin-bottom: var(--prog-space-sm);
-  box-shadow: 0 0 20px rgba(0, 180, 255, 0.2),
-              inset 0 0 12px rgba(0, 0, 0, 0.3);
+  border: none;
+  border-radius: 0;
+  margin: 0;
   display: block;
+  filter:
+    grayscale(1)
+    brightness(1.16)
+    contrast(1.08)
+    saturate(1.02)
+    drop-shadow(0 0 6px rgba(0, 180, 255, 0.26))
+    drop-shadow(0 0 14px rgba(0, 170, 255, 0.12));
+  mix-blend-mode: screen;
+  opacity: 0.94;
+  box-shadow: none;
 }
 .progression-shell .prog-class-details__heading-copy { flex: 1; }
 
@@ -315,6 +380,50 @@
   background: rgba(0, 100, 150, 0.08);
   border: 1px solid rgba(0, 170, 255, 0.15);
   border-radius: 6px;
+}
+
+/* ============================================================================
+   OPTIONAL MOTION-AWARE SCAN SWEEP (Phase 5 Addendum)
+   ==================================================================== */
+
+.progression-shell .prog-holo-scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.progression-shell .prog-class-details__portrait-frame .prog-holo-scan::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  height: 14px;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 200, 255, 0.30),
+    rgba(0, 200, 255, 0.10),
+    transparent
+  );
+  opacity: 0.20;
+  animation: prog-holo-art-scan var(--motion-scan-speed, 4s) linear infinite;
+}
+
+@keyframes prog-holo-art-scan {
+  0% { transform: translateY(0); opacity: 0.08; }
+  12% { opacity: 0.34; }
+  100% { transform: translateY(100px); opacity: 0.06; }
+}
+
+.progression-shell.swse-prog-v2-shell[data-motion-style="off"] .prog-holo-scan::after {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progression-shell .prog-holo-scan::after {
+    display: none !important;
+  }
 }
 
 /* Droid class variant */

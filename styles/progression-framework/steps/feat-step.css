@@ -1225,3 +1225,23 @@
     display: none !important;
   }
 }
+
+/* ====================================================================
+   HOLOGRAPHIC PROJECTION TREATMENT — FEAT ICONS (Phase 5 Addendum)
+   State variants and enhanced glow
+   ==================================================================== */
+
+/* Focused/selected state enhanced glow */
+.feat-item.focused .feat-item__icon,
+.feat-item.selected .feat-item__icon {
+  border-color: rgba(0, 220, 255, 0.50);
+  box-shadow:
+    inset 0 0 14px rgba(0, 170, 255, 0.06),
+    0 0 20px rgba(0, 220, 255, 0.24);
+}
+
+/* Unavailable state: reduced opacity with subtle desaturation */
+.feat-item.unavailable .feat-item__icon {
+  opacity: 0.58;
+  filter: grayscale(0.20);
+}
