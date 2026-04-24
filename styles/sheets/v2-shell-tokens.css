@@ -245,25 +245,8 @@
 }
 
 /* Theme variants */
-.swse-sheet-v2-shell[data-theme="vapor"] {
-  /* Default: vapor theme already set */
-}
-
-.swse-sheet-v2-shell[data-theme="cryo"] {
-  --vapor-cyan: oklch(0.92 0.08 200);
-  --vapor-pink: oklch(0.85 0.10 210);
-  --vapor-purple: oklch(0.60 0.10 220);
-  --screen-h: 215;
-  --ink-h: 205;
-}
-
-.swse-sheet-v2-shell[data-theme="droid"] {
-  --vapor-cyan: oklch(0.82 0.17 75);
-  --vapor-pink: oklch(0.78 0.20 55);
-  --vapor-purple: oklch(0.50 0.18 60);
-  --screen-h: 60;
-  --ink-h: 80;
-}
+/* Phase 6: Theme tokens are now injected via inline style from registry
+   [data-theme] attribute remains for semantic hooks but tokens come from registry */
 
 /* ---------- PHASE 5: Theme Picker — Chip Button Group ---------- */
 .swse-sheet-v2-shell .swse-v2-theme-picker {
@@ -332,6 +315,9 @@
   line-height: 1;
 }
 
+/* Phase 6: Swatch definitions for all 14 themes in canonical registry */
+
+/* Sheet-native themes */
 .swse-sheet-v2-shell .swatch--vapor {
   background: linear-gradient(135deg,
     oklch(0.85 0.18 200) 0 33%,
@@ -351,6 +337,84 @@
     oklch(0.82 0.17 75) 0 33%,
     oklch(0.78 0.20 55) 33% 66%,
     oklch(0.50 0.18 60) 66% 100%);
+}
+
+.swse-sheet-v2-shell .swatch--blood {
+  background: linear-gradient(135deg,
+    oklch(0.72 0.24 20) 0 33%,
+    oklch(0.65 0.26 10) 33% 66%,
+    oklch(0.40 0.22 350) 66% 100%);
+}
+
+.swse-sheet-v2-shell .swatch--merc {
+  background: linear-gradient(135deg,
+    oklch(0.82 0.19 145) 0 33%,
+    oklch(0.78 0.20 120) 33% 66%,
+    oklch(0.45 0.18 155) 66% 100%);
+}
+
+.swse-sheet-v2-shell .swatch--imperial {
+  background: linear-gradient(135deg,
+    oklch(0.80 0.18 25) 0 33%,
+    oklch(0.72 0.22 15) 33% 66%,
+    oklch(0.45 0.20 20) 66% 100%);
+}
+
+.swse-sheet-v2-shell .swatch--rebel {
+  background: linear-gradient(135deg,
+    oklch(0.82 0.20 55) 0 33%,
+    oklch(0.78 0.22 35) 33% 66%,
+    oklch(0.55 0.22 40) 66% 100%);
+}
+
+.swse-sheet-v2-shell .swatch--sith {
+  background: linear-gradient(135deg,
+    oklch(0.75 0.22 15) 0 33%,
+    oklch(0.65 0.26 340) 33% 66%,
+    oklch(0.40 0.22 350) 66% 100%);
+}
+
+/* Ported global themes */
+.swse-sheet-v2-shell .swatch--holo {
+  background: linear-gradient(135deg,
+    oklch(0.85 0.14 220) 0 33%,
+    oklch(0.78 0.15 240) 33% 66%,
+    oklch(0.55 0.18 260) 66% 100%);
+}
+
+.swse-sheet-v2-shell .swatch--jedi {
+  background: linear-gradient(135deg,
+    oklch(0.85 0.14 175) 0 33%,
+    oklch(0.80 0.18 150) 33% 66%,
+    oklch(0.48 0.15 160) 66% 100%);
+}
+
+.swse-sheet-v2-shell .swatch--high-republic {
+  background: linear-gradient(135deg,
+    oklch(0.90 0.10 95) 0 33%,
+    oklch(0.82 0.16 70) 33% 66%,
+    oklch(0.58 0.14 85) 66% 100%);
+}
+
+.swse-sheet-v2-shell .swatch--high-contrast {
+  background: linear-gradient(135deg,
+    oklch(1.0 0.40 180) 0 33%,
+    oklch(1.0 0.40 60) 33% 66%,
+    oklch(1.0 0.40 300) 66% 100%);
+}
+
+.swse-sheet-v2-shell .swatch--starship {
+  background: linear-gradient(135deg,
+    oklch(0.88 0.12 200) 0 33%,
+    oklch(0.80 0.14 210) 33% 66%,
+    oklch(0.52 0.16 240) 66% 100%);
+}
+
+.swse-sheet-v2-shell .swatch--sand-people {
+  background: linear-gradient(135deg,
+    oklch(0.72 0.18 85) 0 33%,
+    oklch(0.65 0.20 55) 33% 66%,
+    oklch(0.48 0.16 70) 66% 100%);
 }
 
 /* Responsive: hide theme picker on small screens */

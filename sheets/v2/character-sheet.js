@@ -1,4 +1,10 @@
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
+import {
+  getActorSheetTheme,
+  getActorSheetThemeOptions,
+  buildActorSheetThemeStyle,
+  isValidActorSheetTheme
+} from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
@@ -83,22 +89,12 @@ function debounce(fn, ms = 500) {
 }
 
 /**
- * Phase 5: Supported sheet themes with UI labels
- */
-const SUPPORTED_SHEET_THEMES = ['cryo', 'vapor', 'droid'];
-const SHEET_THEME_LABELS = {
-  cryo: 'Cryo',
-  vapor: 'Vapor',
-  droid: 'Droid'
-};
-
-/**
- * Get the configured theme for the character sheet (Phase 1 shell skin)
- * Supports: 'vapor', 'cryo', 'droid'
+ * Phase 6: Get the configured theme for the character sheet from actor flags
+ * Uses the canonical actor-sheet theme registry for validation and resolution
  */
 function getSheetTheme(actor) {
   const value = actor?.getFlag?.('foundryvtt-swse', 'sheetTheme');
-  return SUPPORTED_SHEET_THEMES.includes(value) ? value : 'cryo';
+  return getActorSheetTheme(value);
 }
 
 /**
@@ -1317,14 +1313,15 @@ const forcePoints = [];
         maneuver: true
       },
       // ═════════════════════════════════════════════════════════════════
-      // PHASE 1: V2 Shell Theme Tokens
+      // PHASE 6: V2 Shell Theme — Canonical Registry
       // ═════════════════════════════════════════════════════════════════
-      sheetTheme: getSheetTheme(actor),  // Theme for v2 shell styling ('vapor', 'cryo', 'droid')
-      sheetThemeOptions: SUPPORTED_SHEET_THEMES.map(theme => ({
-        value: theme,
-        label: SHEET_THEME_LABELS[theme],
-        selected: theme === getSheetTheme(actor)
+      sheetTheme: getSheetTheme(actor),
+      sheetThemeOptions: getActorSheetThemeOptions().map(opt => ({
+        value: opt.value,
+        label: opt.label,
+        selected: opt.value === getSheetTheme(actor)
       })),
+      sheetThemeStyle: buildActorSheetThemeStyle(getSheetTheme(actor)),
       // ═════════════════════════════════════════════════════════════════
       // PHASE 5: Removed legacy flat context
       // All data is now provided through panelized contexts above.
@@ -1632,14 +1629,14 @@ const forcePoints = [];
       // swseLogger.debug(`[HELP-MODE] Cycled to: ${this._helpLevel}`);
     }, { signal });
 
-    // DELEGATED: Sheet Theme Selection (Phase 5)
-    // Allows players/GMs to choose between 'cryo', 'vapor', 'droid' themes via chip buttons
+    // DELEGATED: Sheet Theme Selection (Phase 6)
+    // Allows players/GMs to choose from the canonical actor-sheet theme registry
     html.addEventListener("click", async ev => {
       const chip = ev.target.closest("[data-action='set-sheet-theme']");
       if (!chip) return;
 
       const newTheme = String(chip.dataset.theme || '');
-      if (!SUPPORTED_SHEET_THEMES.includes(newTheme)) return;
+      if (!isValidActorSheetTheme(newTheme)) return;
 
       ev.preventDefault();
 
