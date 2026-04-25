@@ -465,10 +465,49 @@
     {{#if (eq currentStep "multiclass-bonus")}}
     <section class="step-multiclass-bonus">
       <h3>Multi-class Bonus</h3>
-      <p class="hint">You are taking a second base class! Choose your bonus (you can always choose feat OR skill):</p>
 
+      {{#if (eq multiclassBonusChoice "single_feat")}}
+      {{!-- RAW DEFAULT: Single Starting Feat Only --}}
+      <p class="hint">You are taking a second base class! Choose one starting feat:</p>
       <div class="multiclass-choice">
-        {{#unless (eq multiclassBonusChoice "all_feats")}}
+        <div class="bonus-options">
+          <div class="bonus-option">
+            <h4>Choose ONE Starting Feat</h4>
+            <div class="feat-selection">
+              {{#each selectedClass.system.startingFeatures}}
+                {{#if (eq this.type "feat_grant")}}
+                <button class="select-feat-btn choice-button" data-feat-id="{{this.name}}">
+                  <i class="{{getIconClass 'star'}}"></i> {{this.name}}
+                </button>
+                {{/if}}
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{else if (eq multiclassBonusChoice "single_skill")}}
+      {{!-- HOUSE RULE: Single Trained Skill Instead --}}
+      <p class="hint">You are taking a second base class! Choose one trained skill:</p>
+      <div class="multiclass-choice">
+        <div class="bonus-options">
+          <div class="bonus-option">
+            <h4>Choose ONE Trained Skill</h4>
+            <div class="skill-selection">
+              {{#each selectedClass.system.classSkills}}
+              <button class="select-skill-btn choice-button" data-skill="{{this}}">
+                <i class="{{getIconClass 'success'}}"></i> {{this}}
+              </button>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{else if (eq multiclassBonusChoice "feat_or_skill")}}
+      {{!-- HOUSE RULE: Feat OR Skill Choice --}}
+      <p class="hint">You are taking a second base class! Choose your bonus (feat OR skill):</p>
+      <div class="multiclass-choice">
         <div class="bonus-options">
           <div class="bonus-option">
             <h4>Choose ONE Starting Feat</h4>
@@ -498,15 +537,19 @@
             </div>
           </div>
         </div>
-        {{/unless}}
+      </div>
 
-        {{#if (eq multiclassBonusChoice "all_feats")}}
-        <p>You will receive ALL starting feats from {{selectedClass.name}}!</p>
+      {{else if (eq multiclassBonusChoice "all_feats")}}
+      {{!-- HOUSE RULE: All Starting Feats --}}
+      <p class="hint">You are taking a second base class! You will automatically receive all starting feats.</p>
+      <div class="multiclass-choice">
+        <p><strong>You will receive ALL starting feats from {{selectedClass.name}}!</strong></p>
         <button class="next-step btn-primary" {{#if epicBlocked}}disabled{{/if}}>
           Continue <i class="{{getIconClass 'arrowRight'}}"></i>
         </button>
-        {{/if}}
       </div>
+
+      {{/if}}
     </section>
     {{/if}}
 

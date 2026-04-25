@@ -23,6 +23,7 @@ import { BASE_CLASSES, calculateTotalBAB } from "/systems/foundryvtt-swse/script
 import { isEpicActor, getPlannedHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/suggestion/shared-suggestion-utilities.js";
 import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
+import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
 
 // ──────────────────────────────────────────────────────────────
 // DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
@@ -299,23 +300,20 @@ export class ClassSuggestionEngine {
     // ──────────────────────────────────────────────────────────────
 
     /**
-     * Load prestige class prerequisites from JSON
-     * @returns {Promise<Object>} Prerequisites object
+     * Load prestige class prerequisites from canonical authority
+     * @returns {Promise<Object>} Prerequisites object in suggestion-engine format
      */
     static async _loadPrestigePrerequisites() {
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Checking cache...`);
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Loading from canonical authority...`);
         if (this._prestigePrereqCache) {
             SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Using cached prerequisites (${Object.keys(this._prestigePrereqCache).length} classes)`);
             return this._prestigePrereqCache;
         }
 
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Cache miss, fetching from JSON...`);
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Loading from PRESTIGE_PREREQUISITES...`);
         try {
-            const response = await fetch('systems/foundryvtt-swse/data/prestige-class-prerequisites.json');
-            if (!response.ok) {
-                throw new Error(`Failed to load: ${response.status}`);
-            }
-            this._prestigePrereqCache = await response.json();
+            // Convert canonical PRESTIGE_PREREQUISITES to suggestion-engine format
+            this._prestigePrereqCache = this._convertPrestigePrerequisites(PRESTIGE_PREREQUISITES);
             SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Successfully loaded ${Object.keys(this._prestigePrereqCache).length} prestige class prerequisites`);
             SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Classes with prerequisites:`, Object.keys(this._prestigePrereqCache));
             return this._prestigePrereqCache;
@@ -325,6 +323,31 @@ export class ClassSuggestionEngine {
             this._prestigePrereqCache = {};
             return this._prestigePrereqCache;
         }
+    }
+
+    /**
+     * Convert PRESTIGE_PREREQUISITES to suggestion-engine format
+     * @private
+     */
+    static _convertPrestigePrerequisites(prestige) {
+        const converted = {};
+
+        for (const [className, prereqs] of Object.entries(prestige)) {
+            converted[className] = {
+                level: prereqs.minLevel,
+                bab: prereqs.minBAB,
+                skills: prereqs.skills,
+                feats: prereqs.feats,
+                featsOr: prereqs.featsAny,
+                talents: prereqs.talents?.specific,
+                talentTrees: prereqs.talents?.trees,
+                techniques: prereqs.forceTechniques?.count,
+                powers: prereqs.forcePowers,
+                other: prereqs.special ? [prereqs.special] : []
+            };
+        }
+
+        return converted;
     }
 
     // ──────────────────────────────────────────────────────────────

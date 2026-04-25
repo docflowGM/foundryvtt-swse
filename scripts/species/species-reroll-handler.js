@@ -1,10 +1,12 @@
 /**
  * Species Reroll Handler
  * Handles species-granted reroll abilities (like Duros Expert Pilot, Bothan Spy Network)
+ *
+ * PHASE 4: Now consumes durable species reroll state from Phase 3
+ * Reads from: flags.swse.speciesRerolls array
+ * Structure: [{scope, target, frequency, outcome, sourceTraitName, sourceTraitId}]
  */
 
-// planned: SpeciesTraitEngine not found - file may have been deleted or moved
-// import { SpeciesTraitEngine } from "/systems/foundryvtt-swse/scripts/engine/systems/species/species-trait-engine.js";
 import { SPECIES_TRAIT_TYPES } from "/systems/foundryvtt-swse/scripts/species/species-trait-types.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -18,48 +20,48 @@ export class SpeciesRerollHandler {
 
   /**
    * Check if an actor has reroll traits that apply to a given skill
+   * PHASE 4: Reads from canonical Phase 3 actor state
    * @param {Actor} actor - The actor to check
    * @param {string} skillKey - The skill key to check rerolls for
    * @returns {Array} Array of applicable reroll traits
    */
   static getApplicableRerolls(actor, skillKey) {
-    return SpeciesTraitEngine.getRerollTraitsForSkill(actor, skillKey);
+    const speciesRerolls = actor.flags?.swse?.speciesRerolls || [];
+    return speciesRerolls.filter(reroll => {
+      // Check if this reroll applies to the skill or 'any' roll
+      if (reroll.scope !== 'skill' && reroll.scope !== 'any') {
+        return false;
+      }
+      // Check if target matches skill name or 'any'
+      if (reroll.target !== skillKey && reroll.target !== 'any') {
+        return false;
+      }
+      return true;
+    });
   }
 
   /**
    * Check if an actor has any reroll available (for any roll type)
+   * PHASE 4: Reads from canonical Phase 3 actor state
    * @param {Actor} actor - The actor
    * @param {string} rollType - 'skill', 'attack', or 'any'
    * @returns {Array} Array of applicable reroll traits
    */
   static getAvailableRerolls(actor, rollType = 'any') {
-    const species = SpeciesTraitEngine.getActorSpecies(actor);
-    if (!species) {return [];}
+    const speciesRerolls = actor.flags?.swse?.speciesRerolls || [];
 
-    const traits = SpeciesTraitEngine.getSpeciesTraitsData(species);
-
-    return traits.filter(t => {
-      if (t.type !== SPECIES_TRAIT_TYPES.REROLL &&
-          !(t.type === SPECIES_TRAIT_TYPES.ONCE_PER_ENCOUNTER && t.effect === 'reroll')) {
-        return false;
-      }
-
-      // Check if already used (for once-per-encounter)
-      if (t.type === SPECIES_TRAIT_TYPES.ONCE_PER_ENCOUNTER && t.used) {
-        return false;
-      }
-
+    return speciesRerolls.filter(reroll => {
       // Check scope matches
-      if (t.scope === 'any') {return true;}
-      if (t.scope === rollType) {return true;}
+      if (reroll.scope === 'any') {return true;}
+      if (reroll.scope === rollType) {return true;}
       if (rollType === 'any') {return true;}
-
       return false;
     });
   }
 
   /**
    * Offer a reroll after a skill check
+   * PHASE 4: Consumes Phase 3 canonical reroll metadata
    * @param {Actor} actor - The actor who made the roll
    * @param {string} skillKey - The skill that was rolled
    * @param {Roll} originalRoll - The original roll result
@@ -73,16 +75,18 @@ export class SpeciesRerollHandler {
       return null;
     }
 
-    // Build dialog content
-    const trait = rerollTraits[0]; // Use first applicable trait
-    const traitName = trait.name || 'Species Ability';
-    const acceptWorse = trait.acceptWorse !== false; // Default to must accept worse
+    // Use first applicable reroll
+    const reroll = rerollTraits[0];
+    const traitName = reroll.sourceTraitName || 'Species Ability';
+
+    // Phase 3 outcome semantics: 'keep_better' or 'must_accept'
+    const mustAcceptWorse = reroll.outcome === 'must_accept';
 
     const content = `
       <div class="species-reroll-dialog">
         <p><strong>${traitName}</strong></p>
         <p>You may reroll this ${skillKey} check.</p>
-        ${acceptWorse ? '<p class="warning"><em>You must accept the new result, even if it is worse.</em></p>' : ''}
+        ${mustAcceptWorse ? '<p class="warning"><em>You must accept the new result, even if it is worse.</em></p>' : '<p><em>You keep the better result.</em></p>'}
         <p>Original roll: <strong>${originalRoll.total}</strong></p>
       </div>
     `;
@@ -103,19 +107,14 @@ export class SpeciesRerollHandler {
     const newRoll = await this._performReroll(actor, originalRoll, options);
 
     if (newRoll) {
-      // Determine which roll to use
+      // Determine which roll to use based on outcome semantics
       let finalRoll = newRoll;
-      if (!acceptWorse && newRoll.total < originalRoll.total) {
+      if (reroll.outcome === 'keep_better' && newRoll.total < originalRoll.total) {
         finalRoll = originalRoll;
       }
 
-      // Mark once-per-encounter traits as used
-      if (trait.type === SPECIES_TRAIT_TYPES.ONCE_PER_ENCOUNTER) {
-        await this._markTraitUsed(actor, trait.id);
-      }
-
       // Send reroll notification to chat
-      await this._sendRerollMessage(actor, skillKey, originalRoll, newRoll, finalRoll, traitName, acceptWorse);
+      await this._sendRerollMessage(actor, skillKey, originalRoll, newRoll, finalRoll, traitName, mustAcceptWorse);
 
       return finalRoll;
     }

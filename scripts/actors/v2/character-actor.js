@@ -304,8 +304,10 @@ function mirrorAttacks(actor, system) {
   const list = [];
 
   for (const w of weapons) {
+    // PHASE 4: Include equipped weapons OR natural weapons with autoEquipped flag
     const equipped = w.system?.equipped === true;
-    if (!equipped) continue;
+    const isAutoEquipped = w.flags?.swse?.autoEquipped === true;
+    if (!equipped && !isAutoEquipped) continue;
 
     const data = w.system ?? {};
     const resources = buildResourcesFromItem(w, RESOURCE_TICK_CAP);

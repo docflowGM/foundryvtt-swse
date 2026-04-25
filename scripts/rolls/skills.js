@@ -8,6 +8,8 @@ import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+// PHASE 5: Import species reroll handler for skill reroll integration
+import { SpeciesRerollHandler } from "/systems/foundryvtt-swse/scripts/species/species-reroll-handler.js";
 
 /**
  * Roll a skill check using unified RollCore pipeline
@@ -85,6 +87,19 @@ export async function rollSkill(actor, skillKey, options = {}) {
         customModifier: Number(options?.customModifier || 0)
       }
     });
+
+    // PHASE 5: Offer species reroll if applicable
+    // Check if actor has applicable species reroll rights for this skill
+    const applicableRerolls = SpeciesRerollHandler.getApplicableRerolls(actor, skillKey);
+    if (applicableRerolls && applicableRerolls.length > 0) {
+      const rerollResult = await SpeciesRerollHandler.offerReroll(actor, skillKey, rollResult.roll, {
+        skillKey
+      });
+      // If reroll was accepted, return the rerolled result
+      if (rerollResult && rerollResult.total !== rollResult.roll.total) {
+        return rerollResult;
+      }
+    }
   }
 
   return rollResult.roll;

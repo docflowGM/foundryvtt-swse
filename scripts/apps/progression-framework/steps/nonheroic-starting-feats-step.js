@@ -15,6 +15,7 @@ import { FeatRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries
 import { FeatEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-engine.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 
 // Nonheroic-specific feats that are allowed
 const NONHEROIC_LEGAL_FEATS = [
@@ -68,7 +69,8 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
     this._allFeats = FeatRegistry.list?.() || [];
 
     // Get legal feats for nonheroic context
-    this._legalFeats = await this._getNonheroicLegalFeats(shell.actor);
+    // PHASE 3.1: Pass shell to access pending class grants
+    this._legalFeats = await this._getNonheroicLegalFeats(shell.actor, shell);
 
     swseLogger.log('[NonheroicStartingFeatsStep] Loaded legal feats:', {
       count: this._legalFeats.length,
@@ -246,8 +248,11 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
    * Get feats legal for nonheroic characters
    * Enforces nonheroic feat restrictions
    */
-  async _getNonheroicLegalFeats(actor) {
+  async _getNonheroicLegalFeats(actor, shell = null) {
     const legal = [];
+
+    // Build pending state with class-granted features for prerequisite evaluation
+    const pending = this._buildPendingStateWithClassGrants(actor, shell);
 
     for (const feat of this._allFeats) {
       // Check if feat is in nonheroic legal list
@@ -258,7 +263,8 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
       }
 
       // Check if feat meets prerequisites
-      const assessment = AbilityEngine.evaluateAcquisition(actor, feat);
+      // PHASE 3.1: Pass pending state so prerequisites see class-granted features
+      const assessment = AbilityEngine.evaluateAcquisition(actor, feat, pending);
       if (!assessment.legal) {
         continue;
       }
@@ -281,6 +287,30 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
     }
 
     return legal;
+  }
+
+  /**
+   * Build pending state with class-granted features for prerequisite evaluation.
+   * @private
+   */
+  _buildPendingStateWithClassGrants(actor, shell = null) {
+    const basePending = {
+      selectedClass: shell?.committedSelections?.get?.('class') || null,
+      selectedFeats: [],
+      selectedTalents: [],
+      selectedSkills: [],
+      skillRanks: {},
+      grantedFeats: [],
+    };
+
+    // Derive class-granted features
+    const selectedClass = basePending.selectedClass;
+    if (selectedClass && actor) {
+      const ledger = buildClassGrantLedger(actor, selectedClass, basePending);
+      return mergeLedgerIntoPending(basePending, ledger);
+    }
+
+    return basePending;
   }
 
   /**

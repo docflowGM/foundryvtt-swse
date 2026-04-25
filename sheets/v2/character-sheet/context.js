@@ -87,11 +87,20 @@ export function buildIdentityViewModel(actor) {
   const derived = system?.derived ?? {};
   const identity = derived.identity ?? {};
 
+  // PHASE 4: Consume durable species state from Phase 3
+  const speciesName = system.species ?? identity.species ?? system.species?.name ?? '—';
+  const speciesLanguages = actor.flags?.swse?.speciesLanguages ?? [];
+  const speciesTraits = actor.flags?.swse?.speciesTraits ?? {};
+  const speciesMovement = system.speciesMovement ?? {};
+
   return {
     name: actor.name || 'Unnamed',
     className: identity.className ?? system.class?.name ?? system.className ?? system.class ?? '—',
     classDisplay: identity.classDisplay ?? '—',
-    species: identity.species ?? system.species?.name ?? system.species ?? '—',
+    species: speciesName,
+    speciesLanguages,
+    speciesTraits,
+    speciesMovement,
     level: Number(system.level) || 1,
     size: identity.size ?? system.size ?? '—',
     gender: identity.gender ?? system.gender ?? '—',
@@ -104,6 +113,108 @@ export function buildIdentityViewModel(actor) {
     destinyPoints: identity.destinyPoints ?? { value: 0, max: 0 },
     forcePoints: identity.forcePoints ?? { value: 0, max: 0 }
   };
+}
+
+/**
+ * PHASE 4: Build canonical movement view-model from Phase 3 structured species movement
+ *
+ * Consumes durable actor species state and displays multi-movement modes.
+ * Canonical source for all movement displays:
+ * - character sheet movement display
+ * - combat card movement
+ * - character record
+ *
+ * @param {Actor} actor - The character actor
+ * @returns {Object} Unified movement view-model {walk, swim, fly, hover, glide, burrow, climb, primary}
+ */
+export function buildMovementViewModel(actor) {
+  const system = actor.system;
+
+  // PHASE 4: Read structured movement modes from Phase 3 canonical state
+  const speciesMovement = system.speciesMovement ?? {};
+  const baseSpeed = system.speed ?? 6;
+
+  // Build movement modes from structured state
+  const walk = speciesMovement.walk ?? baseSpeed ?? 6;
+  const swim = speciesMovement.swim ?? null;
+  const fly = speciesMovement.fly ?? null;
+  const hover = speciesMovement.hover ?? null;
+  const glide = speciesMovement.glide ?? null;
+  const burrow = speciesMovement.burrow ?? null;
+  const climb = speciesMovement.climb ?? null;
+
+  // Collect available movement modes for display
+  const modes = [];
+  if (walk) modes.push({ type: 'walk', speed: walk, label: 'Walk' });
+  if (swim) modes.push({ type: 'swim', speed: swim, label: 'Swim' });
+  if (fly) modes.push({ type: 'fly', speed: fly, label: 'Fly' });
+  if (hover) modes.push({ type: 'hover', speed: hover, label: 'Hover' });
+  if (glide) modes.push({ type: 'glide', speed: glide, label: 'Glide' });
+  if (burrow) modes.push({ type: 'burrow', speed: burrow, label: 'Burrow' });
+  if (climb) modes.push({ type: 'climb', speed: climb, label: 'Climb' });
+
+  return {
+    walk,
+    swim,
+    fly,
+    hover,
+    glide,
+    burrow,
+    climb,
+    primary: walk, // Primary movement is always walk
+    modes, // Array of available modes for rendering
+    hasMultipleModes: modes.length > 1
+  };
+}
+
+/**
+ * PHASE 4: Extract species passive bonuses for a specific calculator target
+ *
+ * Helper function for derived calculators to apply species passive bonuses
+ * from Phase 3 canonical actor state.
+ *
+ * @param {Actor} actor - The character actor
+ * @param {string} target - The bonus target (e.g., 'skill.piloting', 'defense.reflex', etc.)
+ * @returns {number} Total bonus value for that target
+ */
+export function getSpeciesPassiveBonus(actor, target) {
+  const speciesPassiveBonuses = actor.flags?.swse?.speciesPassiveBonuses || {};
+  const bonuses = speciesPassiveBonuses[target] || [];
+
+  if (!Array.isArray(bonuses)) {
+    return 0;
+  }
+
+  return bonuses.reduce((sum, bonus) => sum + (bonus.value || 0), 0);
+}
+
+/**
+ * PHASE 4: Build natural weapons display from species-granted items
+ *
+ * Filters and displays natural weapons created by Phase 3 species materialization.
+ *
+ * @param {Actor} actor - The character actor
+ * @returns {Array} Array of natural weapon objects for display
+ */
+export function buildNaturalWeaponsViewModel(actor) {
+  const naturalWeapons = (actor?.items ?? []).filter(item =>
+    item.type === 'weapon' &&
+    item.flags?.swse?.isNaturalWeapon === true
+  );
+
+  return naturalWeapons.map(w => ({
+    id: w.id,
+    name: w.name,
+    img: w.img ?? '',
+    type: w.system?.type ?? 'natural weapon',
+    category: w.system?.category ?? 'melee',
+    damage: w.system?.damage?.formula ?? '1d4',
+    damageType: w.system?.damage?.type ?? 'bludgeoning',
+    isNaturalWeapon: true,
+    isSpeciesGranted: true,
+    sourceSpecies: w.flags?.swse?.sourceSpecies ?? '',
+    equipped: true // Natural weapons are always considered equipped
+  }));
 }
 
 /**

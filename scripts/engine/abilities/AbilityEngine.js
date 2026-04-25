@@ -16,6 +16,7 @@
  */
 
 import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 function emitAbilityTrace(label, payload = {}) {
@@ -81,7 +82,15 @@ export class AbilityEngine {
       } else if (type === 'talent') {
         result = PrerequisiteChecker.checkTalentPrerequisites(actor, candidate, pending);
       } else if (type === 'class') {
-        result = PrerequisiteChecker.checkClassLevelPrerequisites(actor, candidate, pending);
+        // Detect prestige vs base classes and route appropriately
+        const className = typeof candidate === 'string' ? candidate : candidate?.name;
+        if (className && className in PRESTIGE_PREREQUISITES) {
+          // Prestige class - use prestige-specific checker
+          result = PrerequisiteChecker.checkPrestigeClassPrerequisites(actor, className, pending);
+        } else {
+          // Base class - use generic class checker
+          result = PrerequisiteChecker.checkClassLevelPrerequisites(actor, candidate, pending);
+        }
       } else if (type === 'power' || type === 'forcepower') {
         // Force powers use feat prerequisite logic (they have prerequisite.prerequisite fields)
         result = PrerequisiteChecker.checkFeatPrerequisites(actor, candidate, pending);

@@ -17,6 +17,7 @@ import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 
 export class ForceSecretStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -50,7 +51,8 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       const entitlements = await this._resolveSecretEntitlements(shell);
       this._remainingPicks = entitlements.remaining;
 
-      await this._computeLegalSecrets(shell.actor);
+      // PHASE 3.1: Pass shell to access pending class grants
+      await this._computeLegalSecrets(shell.actor, shell);
       this._applyFilters();
 
       // Get suggested force secrets
@@ -333,12 +335,15 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     return entitlements;
   }
 
-  async _computeLegalSecrets(actor) {
+  async _computeLegalSecrets(actor, shell = null) {
     this._legalSecrets = [];
 
-    // PHASE 1: Use AbilityEngine to evaluate prerequisite legality
+    // Build pending state including class-granted features
+    const pending = this._buildPendingStateWithClassGrants(actor, shell);
+
+    // PHASE 3.1: Pass pending state so prerequisites see class-granted features
     for (const secret of this._allSecrets) {
-      const assessment = AbilityEngine.evaluateAcquisition(actor, secret);
+      const assessment = AbilityEngine.evaluateAcquisition(actor, secret, pending);
 
       if (assessment.legal) {
         this._legalSecrets.push(secret);
@@ -346,6 +351,30 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     }
 
     swseLogger.debug(`[ForceSecretStep] Legal secrets: ${this._legalSecrets.length} of ${this._allSecrets.length}`);
+  }
+
+  /**
+   * Build pending state with class-granted features for prerequisite evaluation.
+   * @private
+   */
+  _buildPendingStateWithClassGrants(actor, shell = null) {
+    const basePending = {
+      selectedClass: shell?.committedSelections?.get?.('class') || null,
+      selectedFeats: [],
+      selectedTalents: [],
+      selectedSkills: [],
+      skillRanks: {},
+      grantedFeats: [],
+    };
+
+    // Derive class-granted features
+    const selectedClass = basePending.selectedClass;
+    if (selectedClass && actor) {
+      const ledger = buildClassGrantLedger(actor, selectedClass, basePending);
+      return mergeLedgerIntoPending(basePending, ledger);
+    }
+
+    return basePending;
   }
 
   _applyFilters() {

@@ -298,8 +298,22 @@ export class DerivedCalculator {
         occupationBonus = actor.flags.swse.occupationBonus;
       }
 
-      // Get species skill bonuses (computed via SpeciesTraitEngine - currently empty)
-      const speciesSkillBonuses = actor.system.speciesSkillBonuses || {};
+      // PHASE 4: Get species skill bonuses from canonical Phase 3 actor state
+      // Phase 3 stores passive bonuses in flags.swse.speciesPassiveBonuses as {target: [{value, type, trait, conditions}]}
+      // Extract skill bonuses and sum them by skill key
+      const speciesPassiveBonuses = actor.flags?.swse?.speciesPassiveBonuses || {};
+      const speciesSkillBonuses = {};
+      for (const [target, bonuses] of Object.entries(speciesPassiveBonuses)) {
+        if (Array.isArray(bonuses)) {
+          for (const bonus of bonuses) {
+            // Sum bonuses by skill key (target could be "athleticism", "piloting", etc.)
+            if (!speciesSkillBonuses[target]) {
+              speciesSkillBonuses[target] = 0;
+            }
+            speciesSkillBonuses[target] += bonus.value || 0;
+          }
+        }
+      }
 
       for (const [skillKey, skillDef] of Object.entries(skillData)) {
         const skill = normalizedSkills[skillKey];

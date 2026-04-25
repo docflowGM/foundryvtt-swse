@@ -46,6 +46,8 @@ export function normalizeSpecies(raw) {
       grants: data.grants || {},
       nearHumanData: raw.nearHumanData || null,
       patch: raw.patch || null,
+      // PHASE 2: Canonical pending context from ledger
+      pendingContext: raw.pendingContext || null,
       metadata: {
         source: data.source || 'core',
         createdAt: Date.now(),

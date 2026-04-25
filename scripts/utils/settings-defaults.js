@@ -80,6 +80,9 @@ export const SETTINGS_DEFAULTS = {
     // Multiclass
     multiclassBonusChoice: 'single_feat',
 
+    // Prestige Classes
+    prestigeClassLevelThreshold: 'enter_on_threshold_level',
+
     // Ability Scores
     abilityIncreaseMethod: 'flexible',
 

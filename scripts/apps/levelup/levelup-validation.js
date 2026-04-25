@@ -8,73 +8,23 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { isBaseClass } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
 import { evaluateClassEligibility } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-cache.js";
 
-// Cache for prestige class prerequisites loaded from JSON
-let _prestigePrereqCache = null;
-
-/**
- * Load prestige class prerequisites from JSON configuration
- * @returns {Promise<Object>} - Prerequisites object
- */
-async function loadPrestigeClassPrerequisites() {
-  if (_prestigePrereqCache) {
-    return _prestigePrereqCache;
-  }
-
-  try {
-    const response = await fetch('systems/foundryvtt-swse/data/prestige-class-prerequisites.json');
-    if (!response.ok) {
-      throw new Error(`Failed to load prerequisites: ${response.status} ${response.statusText}`);
-    }
-    _prestigePrereqCache = await response.json();
-    SWSELogger.log('SWSE LevelUp | Loaded prestige class prerequisites from JSON');
-    return _prestigePrereqCache;
-  } catch (err) {
-    SWSELogger.error('SWSE LevelUp | Failed to load prestige class prerequisites:', err);
-    ui.notifications.warn('Failed to load prestige class prerequisites. Some classes may not validate correctly.');
-    _prestigePrereqCache = {};
-    return _prestigePrereqCache;
-  }
-}
-
-/**
- * Get prerequisites for a prestige class
- * @param {string} className - Name of the prestige class
- * @returns {Promise<string|null>} - Prerequisite string or null
- */
-export async function getPrestigeClassPrerequisites(className) {
-  const prerequisites = await loadPrestigeClassPrerequisites();
-  const classPrereqs = prerequisites[className];
-
-  if (!classPrereqs) {
-    return null;
-  }
-
-  // Return the description field which contains the formatted prerequisite string
-  return classPrereqs.description || null;
-}
+// NOTE: Prestige class prerequisites are now loaded from the canonical authority:
+// scripts/data/prestige-prerequisites.js (injected at import time)
+// This removes the stale JSON fallback and ensures single source of truth.
 
 /**
  * Check if character meets prerequisites for a class
  * @param {Object} classDoc - The class document
  * @param {Actor} actor - The actor
  * @param {Object} pendingData - Pending selections (feats, skills, etc.)
- * @returns {Promise<boolean>}
+ * @returns {boolean} True if prerequisites are met
  */
-export async function meetsClassPrerequisites(classDoc, actor, pendingData) {
+export function meetsClassPrerequisites(classDoc, actor, pendingData) {
   // Base classes have no prerequisites
   if (isBaseClass(classDoc)) {return true;}
 
-  // Load prerequisites for prestige classes from JSON configuration
-  const prestigePrerequisites = await getPrestigeClassPrerequisites(classDoc.name);
-
-  // If we have prerequisites from JSON, use those
-  if (prestigePrerequisites) {
-    const classDocWithPrereqs = { type: 'class', system: { prerequisites: prestigePrerequisites } };
-    const assessment = AbilityEngine.evaluateAcquisition(actor, classDocWithPrereqs, pendingData);
-    return assessment.legal;
-  }
-
-  // Fall back to checking classDoc prerequisites
+  // Use canonical authority via AbilityEngine
+  // AbilityEngine automatically detects prestige classes and routes to appropriate checker
   const classCandidate = { ...classDoc, type: 'class' };
   const assessment = AbilityEngine.evaluateAcquisition(actor, classCandidate, pendingData);
   return assessment.legal;

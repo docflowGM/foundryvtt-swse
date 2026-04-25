@@ -23,6 +23,7 @@ import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 
 /**
  * Force Power step — both Generic (force-powers) for level-up use.
@@ -81,7 +82,8 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       this._remainingPicks = await this._computeTotalEntitlements(shell.actor, shell);
 
       // Filter to legal powers (prereqs met, not already selected)
-      await this._computeLegalPowers(shell.actor);
+      // PHASE 3.1: Pass shell to access pending class grants
+      await this._computeLegalPowers(shell.actor, shell);
       this._applyFilters();
 
       // Get suggested force powers
@@ -570,14 +572,17 @@ export class ForcePowerStep extends ProgressionStepPlugin {
 
   /**
    * Compute which powers have met prerequisites.
-   * PHASE 1: Uses AbilityEngine as the sole rules authority for legality.
+   * PHASE 3.1: Builds pending state with class-granted features for prerequisite checking.
    */
-  async _computeLegalPowers(actor) {
+  async _computeLegalPowers(actor, shell = null) {
     this._legalPowers = [];
 
+    // Build pending state including class-granted features
+    const pending = this._buildPendingStateWithClassGrants(actor, shell);
+
     for (const power of this._allPowers) {
-      // PHASE 1: Use AbilityEngine to evaluate prerequisite legality
-      const assessment = AbilityEngine.evaluateAcquisition(actor, power);
+      // PHASE 3.1: Pass pending state so prerequisites see class-granted features
+      const assessment = AbilityEngine.evaluateAcquisition(actor, power, pending);
 
       if (assessment.legal) {
         this._legalPowers.push(power);
@@ -585,6 +590,30 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     }
 
     swseLogger.debug(`[ForcePowerStep] Legal powers: ${this._legalPowers.length} of ${this._allPowers.length}`);
+  }
+
+  /**
+   * Build pending state with class-granted features for prerequisite evaluation.
+   * @private
+   */
+  _buildPendingStateWithClassGrants(actor, shell = null) {
+    const basePending = {
+      selectedClass: shell?.committedSelections?.get?.('class') || null,
+      selectedFeats: [],
+      selectedTalents: [],
+      selectedSkills: [],
+      skillRanks: {},
+      grantedFeats: [],
+    };
+
+    // Derive class-granted features
+    const selectedClass = basePending.selectedClass;
+    if (selectedClass && actor) {
+      const ledger = buildClassGrantLedger(actor, selectedClass, basePending);
+      return mergeLedgerIntoPending(basePending, ledger);
+    }
+
+    return basePending;
   }
 
   /**

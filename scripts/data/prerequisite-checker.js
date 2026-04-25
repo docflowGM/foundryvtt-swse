@@ -4,6 +4,7 @@
 // ============================================
 
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 //
 // THE CANONICAL PREREQUISITE ENGINE
 // This is the ONLY place in the system that answers "is this legal?"
@@ -520,11 +521,21 @@ export class PrerequisiteChecker {
         const missing = [];
         const details = {};
 
-        // Check minimum level
+        // Check minimum level with house rule support
         if (prereqs.minLevel) {
             const level = getTotalLevel(actor);
-            details.level = { required: prereqs.minLevel, actual: level };
-            if (level < prereqs.minLevel) {
+            const thresholdRule = HouseRuleService.getSafe('prestigeClassLevelThreshold', 'enter_on_threshold_level');
+
+            // House rule: enter_on_threshold_level allows entry when becoming that level
+            // must_already_meet_threshold requires the level to already be met
+            let effectiveLevel = level;
+            if (thresholdRule === 'enter_on_threshold_level') {
+                // Allow entry to level+1 threshold (6->7 can enter level 7 prestige class)
+                effectiveLevel = level + 1;
+            }
+
+            details.level = { required: prereqs.minLevel, actual: level, effectiveLevel, houseRule: thresholdRule };
+            if (effectiveLevel < prereqs.minLevel) {
                 missing.push(`Minimum level ${prereqs.minLevel} (you are level ${level})`);
             }
         }
@@ -549,7 +560,7 @@ export class PrerequisiteChecker {
 
         // Check feats (all required)
         if (prereqs.feats) {
-            const featCheck = checkFeats(actor, prereqs.feats);
+            const featCheck = checkFeats(actor, prereqs.feats, pending);
             details.feats = featCheck;
             if (!featCheck.met) {
                 missing.push(`Feats: ${featCheck.missing.join(', ')}`);
@@ -558,7 +569,7 @@ export class PrerequisiteChecker {
 
         // Check feats (any one of)
         if (prereqs.featsAny) {
-            const featAnyCheck = checkFeatsAny(actor, prereqs.featsAny);
+            const featAnyCheck = checkFeatsAny(actor, prereqs.featsAny, pending);
             details.featsAny = featAnyCheck;
             if (!featAnyCheck.met) {
                 missing.push(`At least one feat from: ${prereqs.featsAny.join(', ')}`);
@@ -1196,8 +1207,16 @@ export class PrerequisiteChecker {
     }
 
     static _checkSpeciesTraitCondition(prereq, actor, pending) {
-        const traits = actor.system?.speciesTraits || [];
-        const hasTrait = traits.includes(prereq.trait);
+        // PHASE 5: Read from Phase 3 canonical actor state (flags.swse.speciesTraitIds)
+        // Fallback to old system.speciesTraits for backward compatibility
+        const traitIds = actor.flags?.swse?.speciesTraitIds || [];
+        const traitMetadata = actor.flags?.swse?.speciesTraits || {};
+
+        // Check if trait exists by ID or name in metadata
+        const hasTrait = traitIds.includes(prereq.trait) ||
+                        traitMetadata.hasOwnProperty(prereq.trait) ||
+                        (actor.system?.speciesTraits || []).includes(prereq.trait); // Fallback
+
         return {
             met: hasTrait,
             message: !hasTrait ? `Requires species trait: ${prereq.trait}` : ''
@@ -1973,33 +1992,46 @@ function getTrainedSkills(actor) {
 
 /**
  * Check if actor has all required feats.
- * Supports both feat names/IDs and flag-based checks (e.g., { flag: "martialArtsFeat" }).
+ * Supports:
+ * - Feat names/IDs (exact or scoped like "Weapon Focus (Melee Weapon)")
+ * - Flag-based checks (e.g., { flag: "martialArtsFeat" })
+ * - Feat family names (e.g., "Martial Arts Feat")
+ * - Pending/granted feats from class selection
  */
-function checkFeats(actor, requiredFeats) {
+function checkFeats(actor, requiredFeats, pending = {}) {
     if (!actor || !requiredFeats || requiredFeats.length === 0) {
         return { met: true, missing: [] };
     }
 
     const actorFeats = getActorFeats(actor);
+
+    // Add granted feats from pending state (e.g., from class selection)
+    const grantedFeats = pending.grantedFeats || [];
+    const allFeats = [...actorFeats, ...grantedFeats.map(f => ({ name: typeof f === 'string' ? f : f.name }))];
+
     const missing = [];
 
     for (const feat of requiredFeats) {
         // Handle flag-based checks
         if (typeof feat === 'object' && feat.flag) {
-            const hasFlag = actorFeats.some(f => f.system?.[feat.flag]);
+            const hasFlag = allFeats.some(f => f.system?.[feat.flag]);
             if (!hasFlag) {
                 missing.push(`Feat with flag: ${feat.flag}`);
             }
             continue;
         }
 
-        // Handle feat name/ID checks
-        const normalized = feat.toString().toLowerCase().replace(/[^a-z0-9]/g, '');
-        const found = actorFeats.some(f => {
-            const fname = f.name ? f.name : f.toString();
-            return fname.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized;
-        });
+        // Handle feat family checks (like "Martial Arts Feat")
+        if (isFeatFamily(feat.toString())) {
+            const familyFeats = getFeatFamilyMatches(actor, feat.toString());
+            if (familyFeats.length === 0) {
+                missing.push(feat.toString());
+            }
+            continue;
+        }
 
+        // Handle feat name/ID checks (with scoped feat support)
+        const found = hasFeatMatch(allFeats, feat.toString());
         if (!found) {
             missing.push(feat.toString());
         }
@@ -2010,32 +2042,44 @@ function checkFeats(actor, requiredFeats) {
 
 /**
  * Check if actor has any one of the required feats.
- * Supports both feat names/IDs and flag-based checks (e.g., { flag: "martialArtsFeat" }).
+ * Supports:
+ * - Feat names/IDs (exact or scoped like "Weapon Focus (Melee Weapon)")
+ * - Flag-based checks (e.g., { flag: "martialArtsFeat" })
+ * - Feat family names (e.g., "Martial Arts Feat")
+ * - Pending/granted feats from class selection
  */
-function checkFeatsAny(actor, requiredFeats) {
+function checkFeatsAny(actor, requiredFeats, pending = {}) {
     if (!actor || !requiredFeats || requiredFeats.length === 0) {
         return { met: true };
     }
 
     const actorFeats = getActorFeats(actor);
 
+    // Add granted feats from pending state (e.g., from class selection)
+    const grantedFeats = pending.grantedFeats || [];
+    const allFeats = [...actorFeats, ...grantedFeats.map(f => ({ name: typeof f === 'string' ? f : f.name }))];
+
     for (const feat of requiredFeats) {
         // Handle flag-based checks
         if (typeof feat === 'object' && feat.flag) {
-            const hasFlag = actorFeats.some(f => f.system?.[feat.flag]);
+            const hasFlag = allFeats.some(f => f.system?.[feat.flag]);
             if (hasFlag) {
                 return { met: true, found: `Feat with flag: ${feat.flag}` };
             }
             continue;
         }
 
-        // Handle feat name/ID checks
-        const normalized = feat.toString().toLowerCase().replace(/[^a-z0-9]/g, '');
-        const found = actorFeats.some(f => {
-            const fname = f.name ? f.name : f.toString();
-            return fname.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized;
-        });
+        // Handle feat family checks (like "Martial Arts Feat")
+        if (isFeatFamily(feat.toString())) {
+            const familyFeats = getFeatFamilyMatches(actor, feat.toString());
+            if (familyFeats.length > 0) {
+                return { met: true, found: familyFeats[0] };
+            }
+            continue;
+        }
 
+        // Handle feat name/ID checks (with scoped feat support)
+        const found = hasFeatMatch(allFeats, feat.toString());
         if (found) {
             return { met: true, found: feat.toString() };
         }
@@ -2074,6 +2118,81 @@ function getActorFeats(actor) {
     }
 
     return feats;
+}
+
+/**
+ * Check if a feat name matches, with support for scoped feats.
+ * For example, "Weapon Focus (Melee Weapon)" will match any "Weapon Focus" feat.
+ * @private
+ */
+function hasFeatMatch(actorFeats, requiredFeat) {
+    // Extract base feat name if scoped (e.g., "Weapon Focus (Melee Weapon)" -> "Weapon Focus")
+    const baseFeat = extractBaseFeatName(requiredFeat);
+    const normalized = baseFeat.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    return actorFeats.some(f => {
+        const fname = f.name ? f.name : f.toString();
+        return fname.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized;
+    });
+}
+
+/**
+ * Extract the base feat name from a scoped feat requirement.
+ * For example, "Weapon Focus (Melee Weapon)" -> "Weapon Focus"
+ * @private
+ */
+function extractBaseFeatName(feat) {
+    const match = feat.match(/^([^\(]+)/);
+    if (match) {
+        return match[1].trim();
+    }
+    return feat;
+}
+
+/**
+ * Check if a feat name represents a feat family (like "Martial Arts Feat").
+ * Feat families typically end with " Feat".
+ * @private
+ */
+function isFeatFamily(feat) {
+    // Known feat families
+    const FEAT_FAMILIES = [
+        'Martial Arts Feat',
+        'Weapon Focus Feat',
+        'Proficiency Feat',
+        'Armor Proficiency Feat'
+    ];
+
+    return FEAT_FAMILIES.some(family =>
+        family.toLowerCase() === feat.toLowerCase()
+    );
+}
+
+/**
+ * Get feats from actor that match a feat family.
+ * For example, "Martial Arts Feat" matches all feats with martialArtsFeat flag.
+ * @private
+ */
+function getFeatFamilyMatches(actor, familyName) {
+    const actorFeats = getActorFeats(actor);
+    const familyLower = familyName.toLowerCase();
+
+    // Map family names to system flags or patterns
+    const familyFlags = {
+        'martial arts feat': 'martialArtsFeat',
+        'weapon focus feat': 'weaponFocusFeat',
+        'proficiency feat': 'proficiencyFeat',
+        'armor proficiency feat': 'armorProficiencyFeat'
+    };
+
+    const flag = familyFlags[familyLower];
+
+    if (flag) {
+        return actorFeats.filter(f => f.system?.[flag]).map(f => f.name || f.toString());
+    }
+
+    // Fallback: return empty if no flag match
+    return [];
 }
 
 /**
@@ -2141,14 +2260,14 @@ function checkTalents(actor, talentReq) {
         const matchingTalents = [];
 
         for (const talent of allTalents) {
-            const treeName = talent.system?.talentTree || talent.system?.talent_tree;
-            if (!treeName) {continue;}
+            // Normalize tree identity from various possible fields
+            const treeId = getCanonicalTalentTreeId(talent);
+            if (!treeId) {continue;}
 
-            const normalizedTreeId = normalizeTalentTreeId(treeName);
-
+            // Normalize required trees and compare
             for (const requiredTree of talentReq.trees) {
                 const requiredTreeId = normalizeTalentTreeId(requiredTree);
-                if (normalizedTreeId === requiredTreeId) {
+                if (treeId === requiredTreeId) {
                     matchingTalents.push(talent);
                     break;
                 }
@@ -2300,6 +2419,30 @@ function checkDroidSystems(actor, requiredSystems) {
     }
 
     return { met: missing.length === 0, missing };
+}
+
+/**
+ * Get canonical talent tree ID from a talent.
+ * Resolves tree identity from multiple possible field names.
+ * @private
+ */
+function getCanonicalTalentTreeId(talent) {
+    if (!talent) return null;
+
+    // Try various field names that might contain tree identity
+    const treeId =
+        talent.treeId ||
+        talent.system?.treeId ||
+        talent.system?.talentTree ||
+        talent.system?.talent_tree ||
+        talent.system?.category ||
+        talent.category ||
+        null;
+
+    if (!treeId) return null;
+
+    // Normalize the tree ID before returning
+    return normalizeTalentTreeId(treeId);
 }
 
 /**

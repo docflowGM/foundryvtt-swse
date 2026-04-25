@@ -19,6 +19,8 @@ import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
+// PHASE 2: Pending species context builder
+import { buildPendingSpeciesContext } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js';
 
 // Maps stepId → mentor guidance choiceType
 const STEP_CHOICE_TYPE = {
@@ -606,6 +608,25 @@ export class SpeciesStep extends ProgressionStepPlugin {
       return;
     }
 
+    // PHASE 2: Build pending species context from canonical ledger
+    const pendingContext = await buildPendingSpeciesContext(shell.actor, entry, {
+      source: 'progression',
+    });
+
+    if (!pendingContext) {
+      console.warn(`[SpeciesStep] Failed to build pending context for ${entry.name}`);
+      return;
+    }
+
+    // Log what we're about to commit
+    console.log('[SpeciesStep] Pending species context built:', {
+      speciesId:        id,
+      speciesName:      entry.name,
+      featsRequired:    pendingContext.entitlements.featsRequired,
+      abilities:        pendingContext.abilities,
+      hasTraits:        pendingContext.traits?.length ?? 0,
+    });
+
     // Build the patch from the registry entry directly.
     // buildSpeciesAtomicPatch accepts SpeciesRegistryEntry (entry.source) — no
     // full Foundry document needed, and no second registry lookup required.
@@ -624,12 +645,14 @@ export class SpeciesStep extends ProgressionStepPlugin {
       patchOps:      patch?.ops ?? [],
     });
 
-    // PHASE 1: Normalize and commit to canonical session
+    // PHASE 1/2: Normalize and commit to canonical session
+    // Now includes ledger context and pending grants
     const normalizedSpecies = normalizeSpecies({
       speciesId: id,
       speciesName: entry.name,
       speciesData: entry,
       patch,
+      pendingContext, // NEW: Full pending context from ledger
     });
 
     if (!normalizedSpecies) {
@@ -669,11 +692,36 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
     const pkg = this._nearHumanBuilder.buildNearHumanPackage();
 
-    // PHASE 1: Normalize and commit to canonical session
+    // PHASE 2: Build pending context for Near-Human
+    // Near-Human treats as Human for entitlements, but with custom trait selected
+    const nearHumanEntry = {
+      id: 'near-human',
+      name: 'Near-Human',
+      source: 'Core Rulebook',
+    };
+
+    const pendingContext = await buildPendingSpeciesContext(shell.actor, nearHumanEntry, {
+      source: 'progression',
+    });
+
+    if (!pendingContext) {
+      console.warn(`[SpeciesStep] Failed to build pending context for near-human`);
+      return;
+    }
+
+    console.log('[SpeciesStep] Near-Human pending context built:', {
+      featsRequired:    pendingContext.entitlements.featsRequired,
+      trait:            pkg?.trait?.name,
+      sacrifice:        pkg?.sacrifice,
+      variants:         pkg?.variants?.length ?? 0,
+    });
+
+    // PHASE 1/2: Normalize and commit to canonical session
     const normalizedSpecies = normalizeSpecies({
       speciesId: 'near-human',
       speciesName: 'Near-Human',
       nearHumanData: pkg,
+      pendingContext, // NEW: Full pending context from ledger
     });
 
     if (!normalizedSpecies) {

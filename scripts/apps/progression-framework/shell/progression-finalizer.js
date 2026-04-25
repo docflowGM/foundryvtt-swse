@@ -16,6 +16,8 @@
 
 import { swseLogger } from '../../../utils/logger.js';
 import { ProgressionDocumentTargetPolicy } from '../policies/progression-document-target-policy.js';
+// PHASE 3: Species materialization
+import { applyCanonicalSpeciesToActor } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-species-to-actor.js';
 
 export class ProgressionFinalizer {
   /**
@@ -46,7 +48,7 @@ export class ProgressionFinalizer {
       this._validateDocumentType(actor, sessionState.progressionSession);
 
       // Compilation
-      const mutationPlan = this._compileMutationPlan(sessionState, actor);
+      const mutationPlan = await this._compileMutationPlan(sessionState, actor);
 
       // Validation step 4: adapter mutation plan
       let finalPlan = mutationPlan;
@@ -111,7 +113,7 @@ export class ProgressionFinalizer {
       this._validateDocumentType(actor, sessionState.progressionSession);
 
       // PHASE 4: Compile the authoritative mutation plan (WITHOUT applying yet)
-      const mutationPlan = this._compileMutationPlan(sessionState, actor, options);
+      const mutationPlan = await this._compileMutationPlan(sessionState, actor, options);
 
       // PHASE 5: Route through adapter seam for subtype-specific mutation plan contribution
       let finalMutationPlan = mutationPlan;
@@ -345,7 +347,7 @@ export class ProgressionFinalizer {
    * @param {Object} options
    * @returns {Object} mutation plan
    */
-  static _compileMutationPlan(sessionState, actor, options = {}) {
+  static async _compileMutationPlan(sessionState, actor, options = {}) {
     // PHASE 1: REQUIRE canonical progressionSession. Fail loudly if missing.
     if (!sessionState.progressionSession) {
       throw new Error('compileMutationPlan requires canonical progressionSession');
@@ -357,6 +359,7 @@ export class ProgressionFinalizer {
     const summary = selections.survey || {};
     const attr = selections.attributes || {};
     const species = selections.species || null;
+    const pendingSpeciesContext = selections.pendingSpeciesContext || null;
     const clazz = selections.class || null;
     const background = selections.background || null;
     const languages = selections.languages || [];
@@ -364,13 +367,49 @@ export class ProgressionFinalizer {
 
     const set = {};
     const add = { items: [] };
+    const itemsToCreate = [];
+    const itemsToDelete = [];
 
     const name = summary.characterName || actor.name;
     if (name) {
       set.name = name;
     }
     if (summary.startingLevel) set['system.level'] = Number(summary.startingLevel);
-    if (species) {
+
+    // PHASE 3: Canonical species materialization
+    // Use pending context from Phase 2 to materialize species durably
+    if (pendingSpeciesContext) {
+      const materialization = await applyCanonicalSpeciesToActor(actor, pendingSpeciesContext);
+      if (materialization.success) {
+        const mutations = materialization.mutations;
+
+        // Merge system mutations
+        for (const [key, value] of Object.entries(mutations)) {
+          if (key.startsWith('system.') || key.startsWith('flags.')) {
+            set[key] = value;
+          }
+        }
+
+        // Collect natural weapons to create
+        if (mutations.itemsToCreate?.length > 0) {
+          itemsToCreate.push(...mutations.itemsToCreate);
+        }
+
+        // Collect items to delete (old species items)
+        if (mutations.itemsToDelete?.length > 0) {
+          itemsToDelete.push(...mutations.itemsToDelete);
+        }
+
+        swseLogger.log('[ProgressionFinalizer] Species materialized from pending context', {
+          species: pendingSpeciesContext.identity.name,
+          mutations: Object.keys(mutations).length,
+          naturalWeapons: itemsToCreate.length,
+        });
+      } else {
+        swseLogger.warn('[ProgressionFinalizer] Species materialization failed:', materialization.error);
+      }
+    } else if (species) {
+      // Fallback: if no pending context, apply species as string (legacy compat)
       set['system.species'] = species;
       set['system.race'] = species;
     }
@@ -416,6 +455,18 @@ export class ProgressionFinalizer {
         set[`system.skills.${key}.selectedAbility`] = s.selectedAbility || '';
       }
     }
+
+    // PHASE 3: Add natural weapons from species materialization
+    for (const nw of itemsToCreate) {
+      add.items.push({
+        name: nw.name,
+        type: nw.type,
+        system: nw.system,
+        flags: nw.flags,
+        img: nw.img
+      });
+    }
+
     const appendItem = (entry, fallbackType) => {
       if (!entry) return;
       if (Array.isArray(entry)) return entry.forEach(e => appendItem(e, fallbackType));
@@ -438,7 +489,7 @@ export class ProgressionFinalizer {
       create: {},
       set,
       add,
-      delete: {},
+      delete: itemsToDelete.length > 0 ? { items: itemsToDelete } : {},
       metadata: {
         mode: sessionState.mode,
         timestamp: new Date().toISOString(),

@@ -13,6 +13,7 @@ import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 
 export class ForceTechniqueStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -42,7 +43,8 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       const entitlements = await this._resolveTechniqueEntitlements(shell);
       this._remainingPicks = entitlements.remaining;
 
-      await this._computeLegalTechniques(shell.actor);
+      // PHASE 3.1: Pass shell to access pending class grants
+      await this._computeLegalTechniques(shell.actor, shell);
       this._applyFilters();
 
       // Get suggested force techniques
@@ -308,12 +310,15 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     return entitlements;
   }
 
-  async _computeLegalTechniques(actor) {
+  async _computeLegalTechniques(actor, shell = null) {
     this._legalTechniques = [];
 
-    // PHASE 1: Use AbilityEngine to evaluate prerequisite legality
+    // Build pending state including class-granted features
+    const pending = this._buildPendingStateWithClassGrants(actor, shell);
+
+    // PHASE 3.1: Pass pending state so prerequisites see class-granted features
     for (const technique of this._allTechniques) {
-      const assessment = AbilityEngine.evaluateAcquisition(actor, technique);
+      const assessment = AbilityEngine.evaluateAcquisition(actor, technique, pending);
 
       if (assessment.legal) {
         this._legalTechniques.push(technique);
@@ -321,6 +326,30 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     }
 
     swseLogger.debug(`[ForceTechniqueStep] Legal techniques: ${this._legalTechniques.length} of ${this._allTechniques.length}`);
+  }
+
+  /**
+   * Build pending state with class-granted features for prerequisite evaluation.
+   * @private
+   */
+  _buildPendingStateWithClassGrants(actor, shell = null) {
+    const basePending = {
+      selectedClass: shell?.committedSelections?.get?.('class') || null,
+      selectedFeats: [],
+      selectedTalents: [],
+      selectedSkills: [],
+      skillRanks: {},
+      grantedFeats: [],
+    };
+
+    // Derive class-granted features
+    const selectedClass = basePending.selectedClass;
+    if (selectedClass && actor) {
+      const ledger = buildClassGrantLedger(actor, selectedClass, basePending);
+      return mergeLedgerIntoPending(basePending, ledger);
+    }
+
+    return basePending;
   }
 
   _applyFilters() {

@@ -27,6 +27,7 @@ import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveClassModel, getClassTalentTreeLookupKeys } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
+import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
@@ -403,14 +404,25 @@ export class TalentStep extends ProgressionStepPlugin {
         .filter(key => characterData.skills[key]?.trained || characterData.skills[key] === true)
         .map(key => ({ key }));
 
-    return {
-      selectedClass: characterData.classes?.[0] || shell?.committedSelections?.get?.('class') || null,
+    const selectedClass = characterData.classes?.[0] || shell?.committedSelections?.get?.('class') || null;
+
+    // Build provisional pending state for grant derivation
+    const basePending = {
+      selectedClass,
       selectedFeats: characterData.feats || [],
       selectedTalents: characterData.talents || [],
       selectedSkills,
       skillRanks: {},
       grantedFeats: [],
     };
+
+    // Derive class-granted features (feats, proficiencies, force sensitivity)
+    if (selectedClass && shell?.actor) {
+      const ledger = buildClassGrantLedger(shell.actor, selectedClass, basePending);
+      return mergeLedgerIntoPending(basePending, ledger);
+    }
+
+    return basePending;
   }
 
   _getCommittedTalentSelections(shell) {

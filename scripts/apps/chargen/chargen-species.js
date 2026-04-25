@@ -6,6 +6,8 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { applyProgressionPatch } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/apply-progression-patch.js";
 import { buildSpeciesAtomicPatch } from "/systems/foundryvtt-swse/scripts/apps/chargen/steps/species-step.js";
 import { confirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
+// PHASE 2: Pending species context builder for chargen integration
+import { buildPendingSpeciesContext, applyPendingSpeciesContext } from "/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js";
 
 // NOTE: _previewedSpeciesName moved to instance property (this.previewedSpeciesName)
 // to prevent race conditions with multiple CharGen windows
@@ -364,12 +366,28 @@ export async function _onSelectSpecies(event) {
 
   SWSELogger.log(`CharGen | Found species: ${speciesDoc.name}`, speciesDoc);
 
+  // PHASE 2: Build pending species context from canonical ledger
+  const pendingContext = await buildPendingSpeciesContext(this.actor, speciesDoc.name, {
+    source: 'chargen',
+  });
+
+  if (!pendingContext) {
+    SWSELogger.warn('CharGen | Failed to build pending species context, falling back to legacy path');
+    // Fall back to legacy path if ledger build fails
+  } else {
+    // Use pending context to apply canonical species data
+    applyPendingSpeciesContext(this.characterData, pendingContext);
+    SWSELogger.log('CharGen | Applied species from canonical pending context');
+  }
+
   // Apply species + entitlements as a single atomic patch
   const patch = buildSpeciesAtomicPatch(this.characterData, speciesDoc, this.actorType);
   this.characterData = applyProgressionPatch(this.characterData, patch);
 
-  // Apply all species data
-  this._applySpeciesData(speciesDoc);
+  // Apply all species data (legacy fallback - will be overridden by pending context if available)
+  if (!pendingContext) {
+    this._applySpeciesData(speciesDoc);
+  }
 
   this._recalcAbilities();
 
@@ -1597,6 +1615,17 @@ export async function _onConfirmNearHuman(event) {
 
   // Get selected variants
   const selectedVariants = _nearHumanState.variants.map(vid => getNearHumanVariant(vid)).filter(v => v !== null);
+
+  // PHASE 2: Build pending context for Near-Human
+  const pendingContext = await buildPendingSpeciesContext(this.actor, 'Near-Human', {
+    source: 'chargen',
+  });
+
+  if (pendingContext) {
+    // Apply canonical pending context
+    applyPendingSpeciesContext(this.characterData, pendingContext);
+    SWSELogger.log('CharGen | Applied Near-Human from canonical pending context');
+  }
 
   // Store the official Near-Human data per SWSE rules
   this.characterData.species = 'Near-Human';

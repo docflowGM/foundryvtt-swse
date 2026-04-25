@@ -17,8 +17,13 @@
 export class RowTransformers {
   /**
    * Transform an item into a generic inventory ledger row
+   * PHASE 5: Include natural weapons as auto-equipped
    */
   static toInventoryRow(item, isEditable) {
+    // PHASE 5: Natural weapons with autoEquipped flag are always equipped
+    const isNaturalWeapon = item.flags?.swse?.autoEquipped === true;
+    const equipped = Boolean(item.system?.equipped) || isNaturalWeapon;
+
     return {
       id: item.id,
       uuid: item.uuid,
@@ -31,11 +36,13 @@ export class RowTransformers {
       quantity: Number(item.system?.quantity) || 1,
       weight: Number(item.system?.weight) || 0,
       rarity: item.system?.rarity || 'common',
-      equipped: Boolean(item.system?.equipped),
+      equipped,
+      isNaturalWeapon,
       tags: this._extractTags(item),
       cssClass: [
         `item-${item.type}`,
-        item.system?.equipped ? 'equipped' : 'unequipped',
+        equipped ? 'equipped' : 'unequipped',
+        isNaturalWeapon ? 'natural-weapon' : '',
         item.system?.rarity ? `rarity-${item.system.rarity}` : ''
       ].filter(Boolean).join(' '),
       canEdit: isEditable,

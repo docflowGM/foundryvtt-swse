@@ -654,14 +654,15 @@ export function registerHouseruleSettings() {
 
   register('multiclassBonusChoice', {
     name: 'Multi-class Bonus Selection',
-    hint: 'Determines bonus gained when taking a second base class.',
+    hint: 'Determines bonus gained when taking a second base class. Default is SWSE RAW.',
     scope: 'world',
     config: true,
     type: String,
     choices: {
-      single_feat: 'Single Starting Feat (or skill)',
-      single_skill: 'Single Trained Skill (or feat)',
-      all_feats: 'All Starting Feats'
+      single_feat: 'Single Starting Feat (RAW Default)',
+      single_skill: 'Single Trained Skill (House Rule)',
+      feat_or_skill: 'Feat OR Skill Choice (House Rule)',
+      all_feats: 'All Starting Feats (House Rule)'
     },
     default: 'single_feat'
   });
