@@ -65,6 +65,7 @@ export const ModifierSource = Object.freeze({
   FEAT: 'feat',
   TALENT: 'talent',
   SPECIES: 'species',
+  BACKGROUND: 'background',
   ENCUMBRANCE: 'encumbrance',
   CONDITION: 'condition',
   ITEM: 'item',

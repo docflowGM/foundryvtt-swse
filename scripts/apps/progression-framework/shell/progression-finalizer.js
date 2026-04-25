@@ -18,6 +18,8 @@ import { swseLogger } from '../../../utils/logger.js';
 import { ProgressionDocumentTargetPolicy } from '../policies/progression-document-target-policy.js';
 // PHASE 3: Species materialization
 import { applyCanonicalSpeciesToActor } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-species-to-actor.js';
+// PHASE 3: Background materialization
+import { applyCanonicalBackgroundsToActor } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-backgrounds-to-actor.js';
 
 export class ProgressionFinalizer {
   /**
@@ -362,6 +364,7 @@ export class ProgressionFinalizer {
     const pendingSpeciesContext = selections.pendingSpeciesContext || null;
     const clazz = selections.class || null;
     const background = selections.background || null;
+    const pendingBackgroundContext = selections.pendingBackgroundContext || null;
     const languages = selections.languages || [];
     const skills = selections.skills || [];
 
@@ -413,7 +416,31 @@ export class ProgressionFinalizer {
       set['system.species'] = species;
       set['system.race'] = species;
     }
-    if (background) {
+
+    // PHASE 3: Canonical background materialization
+    // Use pending context from Phase 2 to materialize backgrounds durably
+    if (pendingBackgroundContext) {
+      const materialization = await applyCanonicalBackgroundsToActor(actor, pendingBackgroundContext);
+      if (materialization.success) {
+        const mutations = materialization.mutations;
+
+        // Merge mutations into set (all background mutations are system or flags fields)
+        for (const [key, value] of Object.entries(mutations)) {
+          if (key.startsWith('system.') || key.startsWith('flags.')) {
+            set[key] = value;
+          }
+        }
+
+        swseLogger.log('[ProgressionFinalizer] Backgrounds materialized from pending context', {
+          backgroundCount: pendingBackgroundContext.selectedIds?.length,
+          multiMode: pendingBackgroundContext.multiMode,
+          mutations: Object.keys(mutations).length,
+        });
+      } else {
+        swseLogger.warn('[ProgressionFinalizer] Background materialization failed:', materialization.error);
+      }
+    } else if (background) {
+      // Fallback: if no pending context, apply background as string (legacy compat)
       set['system.background'] = background;
       // Write back background selections to sheet-facing identity fields
       // Background category determines which field to populate

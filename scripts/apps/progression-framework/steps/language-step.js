@@ -25,6 +25,7 @@ import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
+import { getPendingBackgroundLanguages } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
 
 export class LanguageStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -181,18 +182,13 @@ export class LanguageStep extends ProgressionStepPlugin {
       }
     }
 
-    // Background languages: Read from pending selection first, fall back to committed
-    let bgIds = shell?.draftSelections?.get('background');
-    if (!bgIds) {
-      bgIds = shell?.committedSelections?.get('background') || [];
-    }
-    if (Array.isArray(bgIds) && bgIds.length > 0) {
-      for (const bgId of bgIds) {
-        const bgDoc = await ProgressionContentAuthority.getBackgroundDocument(bgId);
-        if (bgDoc?.system?.languages) {
-          bgDoc.system.languages.forEach(lang => known.add(lang));
-        }
-      }
+    // PHASE 2: Background languages from Background Grant Ledger
+    // Use the normalized pending context which already has merged language grants
+    const bgLanguages = getPendingBackgroundLanguages(
+      shell?.progressionSession?.currentPendingBackgroundContext || {}
+    );
+    if (Array.isArray(bgLanguages) && bgLanguages.length > 0) {
+      bgLanguages.forEach(lang => known.add(lang));
     }
 
     // Class feature languages (if class provides any)

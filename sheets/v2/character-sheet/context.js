@@ -93,6 +93,27 @@ export function buildIdentityViewModel(actor) {
   const speciesTraits = actor.flags?.swse?.speciesTraits ?? {};
   const speciesMovement = system.speciesMovement ?? {};
 
+  // PHASE 4: Consume durable background state from Phase 3
+  const backgroundMode = actor.flags?.swse?.backgroundMode ?? 'single';
+  const backgroundLedger = actor.flags?.swse?.backgroundLedger;
+  const backgroundLanguages = actor.flags?.swse?.backgroundLanguages ?? [];
+  const backgroundClassSkills = actor.flags?.swse?.backgroundClassSkills ?? [];
+  const backgroundPassiveEffects = actor.flags?.swse?.backgroundPassiveEffects ?? [];
+  const occupationBonuses = actor.flags?.swse?.occupationUntrainedBonuses ?? [];
+
+  // Build multi-background display if applicable
+  const backgrounds = backgroundMode === 'multi'
+    ? {
+        event: system.event ?? '—',
+        profession: system.profession ?? '—',
+        homeworld: system.planetOfOrigin ?? '—',
+        mode: 'multi'
+      }
+    : {
+        single: identity.background ?? system.background?.name ?? system.background ?? '—',
+        mode: 'single'
+      };
+
   return {
     name: actor.name || 'Unnamed',
     className: identity.className ?? system.class?.name ?? system.className ?? system.class ?? '—',
@@ -104,9 +125,20 @@ export function buildIdentityViewModel(actor) {
     level: Number(system.level) || 1,
     size: identity.size ?? system.size ?? '—',
     gender: identity.gender ?? system.gender ?? '—',
+
+    // PHASE 4: Background identity and grants
     background: identity.background ?? system.background?.name ?? system.background ?? '—',
     homeworld: system.planetOfOrigin ?? '—',
     profession: system.profession ?? '—',
+    event: system.event ?? '—',
+    backgrounds, // Multi-background support
+    backgroundLanguages,
+    backgroundClassSkills,
+    backgroundPassiveEffects,
+    occupationBonuses,
+    backgroundLedger,
+    backgroundMode,
+
     age: system.flags?.swse?.character?.age ?? '—',
     height: system.flags?.swse?.character?.height ?? '—',
     weight: system.flags?.swse?.character?.weight ?? '—',

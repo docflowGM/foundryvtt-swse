@@ -18,6 +18,7 @@ import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveSelectedClassFromShell, getClassSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
+import { buildPendingBackgroundContext } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
 
 const CATEGORY_LABELS = {
   event: 'Event',
@@ -252,37 +253,38 @@ async onStepExit(shell) {
       }
     }
 
-    // PHASE 1: Normalize and commit to canonical session
-    // For now, commit the first (primary) background to canonical session
-    // Multi-background support can be extended in Phase 2
-    const primaryBackgroundId = this._committedBackgroundIds[0];
-    const primaryBackground = this._allBackgrounds.find(b => b.id === primaryBackgroundId);
+    // PHASE 2: Build canonical Background Grant Ledger for all selected backgrounds
+    // This replaces the Phase 1 single-background normalization with full multi-background support
+    const pendingBackgroundContext = await buildPendingBackgroundContext(
+      this._committedBackgroundIds,
+      { multiMode: this._maxBackgrounds > 1 }
+    );
 
-    if (primaryBackground) {
-      const normalizedBackground = normalizeBackground({
-        backgroundId: primaryBackground.id,
-        backgroundName: primaryBackground.name,
-        category: primaryBackground.category,
-        skills: primaryBackground.skills,
-        feats: primaryBackground.feats,
-        languages: primaryBackground.languages,
-        traits: primaryBackground.traits,
-        source: primaryBackground.source,
-      });
+    if (pendingBackgroundContext && pendingBackgroundContext.ledger) {
+      // Commit the full Background Grant Ledger to canonical session
+      // This becomes the authoritative source for all background-derived grants
+      await this._commitNormalized(shell, 'backgroundLedger', pendingBackgroundContext.ledger);
 
-      if (normalizedBackground) {
-        // Commit to canonical session (also updates committedSelections for backward compat)
-        await this._commitNormalized(shell, 'background', normalizedBackground);
+      // Commit the pending background context for Phase 3 materialization
+      // This includes class skills, languages, bonuses, passive effects ready for actor state
+      await this._commitNormalized(shell, 'pendingBackgroundContext', pendingBackgroundContext);
+
+      // Also store the pending context in session for convenience access by downstream steps
+      // (Skills step, Languages step need this for UI/resolution)
+      if (shell.progressionSession) {
+        shell.progressionSession.currentPendingBackgroundContext = pendingBackgroundContext;
       }
     }
 
-    // Also maintain legacy committedSelections for full multi-background support
-    // This is a compatibility bridge until Phase 2 extends canonical support
+    // Update committedSelections for backward compatibility
+    // Maintains the bridge for legacy code paths
     shell.committedSelections.set('background', {
       backgroundIds: [...this._committedBackgroundIds],
       backgrounds: this._committedBackgroundIds
         .map(bgId => this._allBackgrounds.find(b => b.id === bgId))
         .filter(Boolean),
+      ledger: pendingBackgroundContext?.ledger,
+      pendingContext: pendingBackgroundContext
     });
 
     shell.render();

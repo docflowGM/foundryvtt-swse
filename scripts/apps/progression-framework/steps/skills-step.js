@@ -21,6 +21,8 @@ import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { BeastSubtypeAdapter } from '../adapters/beast-subtype-adapter.js';
 import { resolveClassModel, resolveSelectedClassFromShell, getClassSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
+import { getPendingBackgroundClassSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
+import { BackgroundLedgerCompatibility } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-ledger-compatibility.js';
 
 export class SkillsStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -720,30 +722,46 @@ renderDetailsPanel(focusedItem) {
     return classModel;
   }
 
+  /**
+   * Get background-derived skill opportunities from Background Grant Ledger
+   *
+   * PHASE 2: Consumes Background Grant Ledger pending choices
+   *
+   * Returns the list of skills that can be chosen as class skills from backgrounds.
+   * Under RAW, these are pending choices that Skills step will present to player.
+   * Under house rule "grant all", these are auto-resolved to all relevant skills.
+   *
+   * Note: This does NOT automatically grant skills. Those with resolved[] populated
+   * are already chosen. Empty resolved[] means player must still choose.
+   */
   _getBackgroundSkillRefs(shell) {
-    const rawCommitted = shell?.committedSelections?.get?.('background');
-    const rawBackgrounds = Array.isArray(rawCommitted?.backgrounds) ? rawCommitted.backgrounds : [];
-
-    if (rawBackgrounds.length > 0) {
-      return rawBackgrounds.flatMap(bg => ([
-        ...(bg.trainedSkills || bg.system?.trainedSkills || []),
-        ...(bg.relevantSkills || bg.system?.relevantSkills || []),
-        ...(bg.skills || bg.system?.skills || []),
-        ...(bg.grants?.skills || []),
-      ])).filter(Boolean);
+    // Get pending background context from background-step
+    const pendingContext = shell?.progressionSession?.currentPendingBackgroundContext;
+    if (!pendingContext) {
+      return [];
     }
 
-    const canonicalBackground =
-      shell?.progressionSession?.getSelection?.('background')
-      || rawCommitted
-      || null;
+    // Get pending skill-choice entitlements from backgrounds
+    const pendingChoices = pendingContext.pendingChoices || [];
 
-    return [
-      ...(canonicalBackground?.grants?.skills || []),
-      ...(canonicalBackground?.trainedSkills || []),
-      ...(canonicalBackground?.relevantSkills || []),
-      ...(canonicalBackground?.skills || []),
-    ].filter(Boolean);
+    // Collect all skills that are either:
+    // 1. Auto-resolved by house rule (in choice.resolved array)
+    // 2. Allowed choices the player can pick from (in choice.allowedSkills array)
+    const skillRefs = new Set();
+
+    for (const choice of pendingChoices) {
+      if (!choice || !choice.allowedSkills) continue;
+
+      // If auto-resolved by house rule, all skills are granted
+      if (choice.isAutoResolved && choice.resolved && choice.resolved.length > 0) {
+        choice.resolved.forEach(skill => skillRefs.add(skill));
+      }
+
+      // Also include all allowed skills so they can be presented as options
+      choice.allowedSkills.forEach(skill => skillRefs.add(skill));
+    }
+
+    return Array.from(skillRefs).filter(Boolean);
   }
 
   _matchSkillsFromRefs(refs = []) {

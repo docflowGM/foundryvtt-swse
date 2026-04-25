@@ -50,6 +50,9 @@ export class ModifierEngine {
       // Source 3: Species
       modifiers.push(...this._getSpeciesModifiers(actor));
 
+      // Source 3b: Background bonuses (Phase 4 - occupations, events, planets)
+      modifiers.push(...this._getBackgroundModifiers(actor));
+
       // Source 4: Encumbrance
       modifiers.push(...this._getEncumbranceModifiers(actor));
 
@@ -682,6 +685,117 @@ export class ModifierEngine {
           }
         }
       }
+    }
+
+    return modifiers;
+  }
+
+  /**
+   * Collect modifiers from background state (Phase 4)
+   * @private
+   * @param {Actor} actor
+   * @returns {Modifier[]}
+   */
+  static _getBackgroundModifiers(actor) {
+    const modifiers = [];
+
+    try {
+      // PHASE 4: Consume canonical background state from Phase 3 materialization
+      // Occupation backgrounds grant +2 competence bonus to untrained checks with relevant skills
+      const occupationBonuses = actor.flags?.swse?.occupationUntrainedBonuses || [];
+
+      for (const bonus of occupationBonuses) {
+        if (!bonus || typeof bonus.value !== 'number' || !Array.isArray(bonus.applicableSkills)) {
+          continue;
+        }
+
+        const backgroundId = `background.occupation`;
+        const backgroundName = actor.system?.profession || 'Occupation';
+
+        // Create a modifier for EACH applicable skill
+        // Type: competence (+2 to untrained checks)
+        for (const skillKey of bonus.applicableSkills) {
+          try {
+            // Key: "skill.skillName.untrained_competence"
+            // This allows skill calculators to specifically apply only to untrained checks
+            const modifierTarget = `skill.${skillKey}.untrained_competence`;
+
+            modifiers.push(createModifier({
+              source: ModifierSource.BACKGROUND,
+              sourceId: backgroundId,
+              sourceName: `${backgroundName} (Occupation)`,
+              target: modifierTarget,
+              type: ModifierType.COMPETENCE,
+              value: bonus.value,
+              enabled: true,
+              description: `${backgroundName} occupation: +2 competence to untrained checks with ${skillKey}`,
+              conditions: [
+                {
+                  type: 'untrained_check',
+                  skillKey: skillKey
+                }
+              ]
+            }));
+          } catch (err) {
+            swseLogger.warn(`[ModifierEngine] Failed to create occupation bonus for ${skillKey}:`, err);
+          }
+        }
+      }
+
+      // PHASE 4: Collect any other background bonuses (generic bonus structure)
+      const backgroundBonuses = actor.flags?.swse?.backgroundBonuses || {};
+
+      // Process untrained bonuses
+      const untrainedBonuses = backgroundBonuses.untrained || [];
+      for (const bonus of untrainedBonuses) {
+        if (!bonus || typeof bonus.value !== 'number' || !Array.isArray(bonus.applicableSkills)) {
+          continue;
+        }
+
+        for (const skillKey of bonus.applicableSkills) {
+          try {
+            modifiers.push(createModifier({
+              source: ModifierSource.BACKGROUND,
+              sourceId: `background.bonus.untrained.${skillKey}`,
+              sourceName: 'Background Bonus',
+              target: `skill.${skillKey}`,
+              type: ModifierType.UNTYPED,
+              value: bonus.value,
+              enabled: true,
+              description: `Background untrained bonus: +${bonus.value} to ${skillKey}`
+            }));
+          } catch (err) {
+            swseLogger.warn(`[ModifierEngine] Failed to create background untrained bonus:`, err);
+          }
+        }
+      }
+
+      // Process flat bonuses
+      const flatBonuses = backgroundBonuses.flat || [];
+      for (const bonus of flatBonuses) {
+        if (!bonus || typeof bonus.value !== 'number' || !Array.isArray(bonus.applicableSkills)) {
+          continue;
+        }
+
+        for (const skillKey of bonus.applicableSkills) {
+          try {
+            modifiers.push(createModifier({
+              source: ModifierSource.BACKGROUND,
+              sourceId: `background.bonus.flat.${skillKey}`,
+              sourceName: 'Background Bonus',
+              target: `skill.${skillKey}`,
+              type: ModifierType.UNTYPED,
+              value: bonus.value,
+              enabled: true,
+              description: `Background flat bonus: +${bonus.value} to ${skillKey}`
+            }));
+          } catch (err) {
+            swseLogger.warn(`[ModifierEngine] Failed to create background flat bonus:`, err);
+          }
+        }
+      }
+    } catch (err) {
+      swseLogger.error(`[ModifierEngine] Error collecting background modifiers:`, err);
     }
 
     return modifiers;
