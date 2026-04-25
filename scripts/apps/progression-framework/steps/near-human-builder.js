@@ -9,6 +9,8 @@ export class NearHumanBuilder {
       sacrifice: null,
       variants: [],
       abilityAdjustments: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 },
+      customName: '',  // NEW: Allow player to enter custom Near-Human species name (Phase 1)
+      traitChoices: {},  // NEW: Structured secondary trait-specific choices (Phase 1)
     };
     this._traitsData = null;
     this._handlers = [];
@@ -38,6 +40,8 @@ export class NearHumanBuilder {
       sacrifice: null,
       variants: [],
       abilityAdjustments: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 },
+      customName: '',  // Reset custom name
+      traitChoices: {},  // Reset secondary choices
     };
   }
 
@@ -53,11 +57,17 @@ export class NearHumanBuilder {
       abilityAdjValid = plusTwo.length === 1 && minusTwo.length === 1 && plusTwo[0] !== minusTwo[0];
     }
 
+    // NEW (Phase 1): Validate that all required secondary trait choices are resolved
+    const unresolvedChoices = this._getUnresolvedChoicesForTrait(this._state.traitId);
+    const hasRequiredChoices = unresolvedChoices.length === 0;
+
     return {
       hasTrait,
       hasSacrifice,
       abilityAdjValid,
-      isValid: hasTrait && hasSacrifice && abilityAdjValid,
+      hasRequiredChoices,  // NEW
+      unresolvedChoices,  // NEW: For display purposes
+      isValid: hasTrait && hasSacrifice && abilityAdjValid && hasRequiredChoices,  // UPDATED
     };
   }
 
@@ -82,6 +92,7 @@ export class NearHumanBuilder {
     const trait = this._traitsData?.traits.find(t => t.id === this._state.traitId);
     return {
       speciesName: 'Near-Human',
+      customName: this._state.customName || null,  // NEW (Phase 1): Player-entered custom species name
       trait: {
         id: trait?.id,
         name: trait?.name,
@@ -94,12 +105,24 @@ export class NearHumanBuilder {
       ).filter(Boolean),
       customAbilityChoices:
         this._state.traitId === 'abilityAdjustment' ? { ...this._state.abilityAdjustments } : null,
+      traitChoices: Object.keys(this._state.traitChoices).length > 0 ? { ...this._state.traitChoices } : null,  // NEW (Phase 1): Secondary trait-specific choices
     };
   }
 
   wireDOM(workSurfaceEl, shell) {
     if (!workSurfaceEl || this._isWired) return;
     this._isWired = true;
+
+    // Custom name input (NEW Phase 1)
+    const customNameInput = workSurfaceEl.querySelector('.nh-custom-name-input');
+    if (customNameInput) {
+      const fn = (e) => {
+        this._state.customName = e.target.value.trim();
+        shell.render();
+      };
+      customNameInput.addEventListener('input', fn);
+      this._handlers.push({ el: customNameInput, event: 'input', fn });
+    }
 
     // Sacrifice radio buttons
     workSurfaceEl.querySelectorAll('.nh-sacrifice-radio').forEach(radio => {
@@ -117,6 +140,8 @@ export class NearHumanBuilder {
         e.preventDefault();
         const id = btn.dataset.traitId;
         this._state.traitId = this._state.traitId === id ? null : id;
+        // Reset secondary choices when trait changes
+        this._state.traitChoices = {};
         shell.render();
       };
       btn.addEventListener('click', fn);
@@ -137,6 +162,18 @@ export class NearHumanBuilder {
       };
       chip.addEventListener('click', fn);
       this._handlers.push({ el: chip, event: 'click', fn });
+    });
+
+    // Secondary trait-specific choice selects (NEW Phase 1)
+    workSurfaceEl.querySelectorAll('.nh-trait-choice-select').forEach(select => {
+      const fn = (e) => {
+        const choiceName = select.dataset.choiceName;
+        const choiceValue = e.target.value;
+        this.setTraitChoice(choiceName, choiceValue);
+        shell.render();
+      };
+      select.addEventListener('change', fn);
+      this._handlers.push({ el: select, event: 'change', fn });
     });
 
     // Ability buttons (only if Ability Adjustment trait selected)
@@ -177,6 +214,23 @@ export class NearHumanBuilder {
   exitBuilderMode(resetState = true) {
     this._cleanupHandlers();
     if (resetState) this.reset();
+  }
+
+  // NEW (Phase 1): Set a secondary trait-specific choice
+  setTraitChoice(choiceName, choiceValue) {
+    if (!this._state.traitChoices) this._state.traitChoices = {};
+    this._state.traitChoices[choiceName] = choiceValue;
+  }
+
+  // NEW (Phase 1): Get unresolved required secondary choices for current trait
+  _getUnresolvedChoicesForTrait(traitId) {
+    const trait = this._traitsData?.traits.find(t => t.id === traitId);
+    if (!trait || !trait.requiredChoices) return [];
+
+    // Return required secondary choices not yet made
+    return (trait.requiredChoices || []).filter(choice =>
+      !this._state.traitChoices?.[choice.name]
+    );
   }
 
   _cleanupHandlers() {

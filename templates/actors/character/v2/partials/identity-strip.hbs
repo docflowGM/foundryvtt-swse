@@ -6,7 +6,12 @@
     <h2 class="identity-name">{{biographyPanel.identity.name}}</h2>
 
     <div class="identity-meta">
-      <span>Species: {{biographyPanel.identity.species}}</span>
+      {{!-- PHASE 5: Display custom species name if present (Near-Human variants) --}}
+      {{#if system.speciesCustomName}}
+        <span>Species: {{system.speciesCustomName}}</span>
+      {{else}}
+        <span>Species: {{biographyPanel.identity.species}}</span>
+      {{/if}}
       {{!-- Character biography fields (only display for characters) --}}
       <span>Homeworld: {{biographyPanel.identity.homeworld}}</span>
       <span>Background: {{biographyPanel.identity.background}}</span>

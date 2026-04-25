@@ -442,7 +442,14 @@ export class ProgressionFinalizer {
       // Write to canonical .base path (not deprecated .value)
       if (key && Number.isFinite(Number(val))) set[`system.abilities.${key}.base`] = Number(val);
     }
-    if (Array.isArray(languages)) set['system.languages'] = languages;
+    // FIX 6: Extract language IDs from normalized format for canonical storage
+    // normalizeLanguages() returns [{id, source}, ...] but system.languages expects [id, id, ...]
+    if (Array.isArray(languages)) {
+      const languageIds = languages.map(l =>
+        typeof l === 'string' ? l : l?.id || l?.name
+      ).filter(Boolean);
+      set['system.languages'] = languageIds;
+    }
     if (Array.isArray(skills)) {
       for (const s of skills) {
         const key = s?.key || s?.id || s?.skill;

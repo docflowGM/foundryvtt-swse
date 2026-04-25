@@ -72,6 +72,13 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
   const { source = 'progression' } = options;
 
   try {
+    // PHASE 4: Special handling for Near-Human with customization package
+    if (typeof speciesIdentity === 'object' && speciesIdentity.speciesName === 'Near-Human') {
+      const nearHumanPackage = speciesIdentity;
+      SWSELogger.log('[PendingSpeciesContext] Detected Near-Human package - delegating to customization handler');
+      return await _buildNearHumanContext(actor, nearHumanPackage, options);
+    }
+
     // Step 1: Resolve species identity to registry entry
     const speciesEntry = await _resolveSpeciesEntry(speciesIdentity);
     if (!speciesEntry) {

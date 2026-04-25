@@ -100,11 +100,28 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       isDroid: new fields.BooleanField({ required: true, initial: false }),
       droidDegree: new fields.StringField({ required: false, initial: '' }),
 
+      // PHASE 5: Custom species naming support (Near-Human primarily)
+      speciesCustomName: new fields.StringField({ required: false, initial: '' }),
+
       // Attributes (override parent abilities with enhanced attributes)
       attributes: new fields.SchemaField(attributeSchema),
 
       // STATIC SKILLS - Always present
       skills: new fields.SchemaField(skillsSchema),
+
+      // CUSTOM SKILLS - Player-created actor-local skills
+      customSkills: new fields.ArrayField(
+        new fields.SchemaField({
+          id: new fields.StringField({ required: true, initial: '' }),
+          label: new fields.StringField({ required: true, initial: 'Custom Skill' }),
+          ability: new fields.StringField({ required: true, initial: 'int' }),
+          trained: new fields.BooleanField({ required: true, initial: false }),
+          focused: new fields.BooleanField({ required: true, initial: false }),
+          miscMod: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          notes: new fields.StringField({ required: false, initial: '' })
+        }),
+        { required: true, initial: [] }
+      ),
 
       // HP
       hp: new fields.SchemaField({

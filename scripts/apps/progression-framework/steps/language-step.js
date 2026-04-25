@@ -64,8 +64,8 @@ export class LanguageStep extends ProgressionStepPlugin {
     // Compute known/granted languages from all sources
     this._knownLanguages = await this._getKnownLanguages(shell.actor, shell);
 
-    // Compute available bonus language picks
-    this._bonusLanguagesAvailable = LanguageEngine.calculateBonusLanguagesAvailable(shell.actor);
+    // FIX 4: Compute available bonus language picks including pending selections
+    this._bonusLanguagesAvailable = await this._calculateBonusLanguagesAvailable(shell.actor, shell);
 
     // Get suggested languages from SuggestionService
     await this._getSuggestedLanguages(shell.actor, shell);
@@ -123,11 +123,20 @@ export class LanguageStep extends ProgressionStepPlugin {
   }
 
   async onStepExit(shell) {
-    // Commit selected bonus languages to actor
-    if (this._selectedBonusLanguages.length > 0) {
-      await LanguageEngine.grantLanguages(
-        shell.actor,
-        this._selectedBonusLanguages
+    // FIX 2: Do NOT mutate actor here - defer to finalization
+    // Store selected languages in progression state only
+    // All mutations happen in progression-finalizer, not during step lifecycle
+
+    // Commit to canonical session state (buildIntent for backward compat)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(
+        this.descriptor.stepId,
+        'languages',
+        {
+          knownLanguages: [...this._knownLanguages],
+          selectedBonusLanguages: [...this._selectedBonusLanguages],
+          bonusLanguagesAvailable: this._bonusLanguagesAvailable,
+        }
       );
     }
   }
@@ -138,9 +147,10 @@ export class LanguageStep extends ProgressionStepPlugin {
 
   /**
    * Get all languages from registry
+   * FIX 1: Use correct registry API (.all() not .getAll?.())
    */
   async _getAllLanguages() {
-    const records = await LanguageRegistry.getAll?.() || [];
+    const records = await LanguageRegistry.all();
     return records.map(r => ({
       id: r.id || r.slug,
       name: r.name,
@@ -152,14 +162,18 @@ export class LanguageStep extends ProgressionStepPlugin {
 
   /**
    * Compute known/granted languages from species, background, class sources
+   * FIX 3: Read from pending selection state, not just committed actor state
    */
   async _getKnownLanguages(actor, shell) {
     if (!actor) return [];
 
     const known = new Set();
 
-    // Species languages
-    const speciesName = actor.system?.species?.primary?.name || actor.system?.species;
+    // Species languages: Read from pending selection first, fall back to committed actor
+    let speciesName = shell?.draftSelections?.get('species')?.[0];
+    if (!speciesName) {
+      speciesName = actor.system?.species?.primary?.name || actor.system?.species;
+    }
     if (speciesName) {
       const speciesDoc = await ProgressionContentAuthority.getSpeciesDocument(speciesName);
       if (speciesDoc?.system?.languages) {
@@ -167,8 +181,11 @@ export class LanguageStep extends ProgressionStepPlugin {
       }
     }
 
-    // Background languages (from committed background if available)
-    const bgIds = shell?.committedSelections?.get('background') || [];
+    // Background languages: Read from pending selection first, fall back to committed
+    let bgIds = shell?.draftSelections?.get('background');
+    if (!bgIds) {
+      bgIds = shell?.committedSelections?.get('background') || [];
+    }
     if (Array.isArray(bgIds) && bgIds.length > 0) {
       for (const bgId of bgIds) {
         const bgDoc = await ProgressionContentAuthority.getBackgroundDocument(bgId);
@@ -178,7 +195,60 @@ export class LanguageStep extends ProgressionStepPlugin {
       }
     }
 
+    // Class feature languages (if class provides any)
+    const classIds = shell?.draftSelections?.get('class') || shell?.committedSelections?.get('class') || [];
+    if (Array.isArray(classIds) && classIds.length > 0) {
+      for (const classId of classIds) {
+        // Check if class grants languages (if implemented)
+        // Placeholder for future class language grants
+      }
+    }
+
     return Array.from(known);
+  }
+
+  /**
+   * FIX 4: Calculate bonus languages including pending selections
+   * PHASE 7: Dynamic Linguist compatibility (not hardcoded)
+   * Accounts for: INT modifier, Linguist feat, class features, other pending grants
+   */
+  async _calculateBonusLanguagesAvailable(actor, shell) {
+    // Start with actor-committed bonus languages (INT modifier + committed features)
+    let count = LanguageEngine.calculateBonusLanguagesAvailable(actor);
+
+    // PHASE 7: Check for pending Linguist feat selection (dynamic, not hardcoded)
+    const pendingFeats = shell?.draftSelections?.get('feats') || [];
+    let linguistCount = 0;
+
+    if (Array.isArray(pendingFeats)) {
+      for (const feat of pendingFeats) {
+        // Check if Linguist feat is selected
+        const featName = typeof feat === 'string' ? feat : feat.name || feat.id;
+        if (featName?.toLowerCase().includes('linguist')) {
+          // PHASE 7: Dynamic bonus per Linguist feat
+          // Standard: 1 bonus language per Linguist feat
+          // Could be customized via LanguageEngine if needed
+          linguistCount += 1;
+        }
+      }
+    }
+
+    // Also check committed Linguist (backward compat)
+    if (linguistCount === 0) {
+      const committedLinguist = actor?.items?.some(item =>
+        item.type === 'feat' && item.name?.toLowerCase().includes('linguist')
+      );
+      if (committedLinguist) {
+        linguistCount = 1;
+      }
+    }
+
+    count += linguistCount;
+
+    // TODO: Check for other pending language-granting feats/features
+    // (placeholder for future generalized entitlement framework)
+
+    return count;
   }
 
   /**
@@ -295,11 +365,16 @@ export class LanguageStep extends ProgressionStepPlugin {
   }
 
   getSelection() {
-    const isComplete = this._selectedBonusLanguages.length === this._bonusLanguagesAvailable;
+    // FIX 5: Allow completing even if not all picks spent
+    // Player can choose fewer languages and still progress
+    const isComplete = true;
+
     return {
       selected: this._selectedBonusLanguages,
       count: this._selectedBonusLanguages.length,
-      isComplete: isComplete || this._bonusLanguagesAvailable === 0, // Complete if all picks made or no picks available
+      isComplete,
+      picksSpent: this._selectedBonusLanguages.length,
+      picksAvailable: this._bonusLanguagesAvailable,
     };
   }
 

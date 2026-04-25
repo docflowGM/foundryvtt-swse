@@ -147,6 +147,7 @@ export async function applyCanonicalSpeciesToActor(actor, pendingContext) {
 
 /**
  * Materialize species identity (name, source, UUID).
+ * PHASE 5: Support custom Near-Human species naming
  * @private
  */
 function _materializeSpeciesIdentity(actor, pendingContext) {
@@ -160,6 +161,12 @@ function _materializeSpeciesIdentity(actor, pendingContext) {
 
   // Set system.race for backward compatibility
   mutations['system.race'] = speciesName;
+
+  // PHASE 5: Persist custom species name (e.g., Near-Human variants)
+  // customName stored in pending context when builder creates package
+  if (pendingContext.metadata?.nearHumanCustomization?.customName) {
+    mutations['system.speciesCustomName'] = pendingContext.metadata.nearHumanCustomization.customName;
+  }
 
   // Store UUID if available (for later re-resolution)
   if (pendingContext.identity.doc?.uuid) {

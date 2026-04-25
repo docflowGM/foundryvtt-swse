@@ -80,6 +80,9 @@ export class ProgressionSession {
       starshipManeuvers: [],
       survey: null,
       droid: null,
+      // NEW: Pending entitlements & immediate choices (Phase 1)
+      pendingEntitlements: [],  // Subsystem picks resolved elsewhere
+      immediateChoices: [],     // Resolved immediately in owning step
     };
 
     // Derived outputs (computed on demand, not hand-maintained)

@@ -8,6 +8,16 @@
       <li class="prog-num--pos">+1 Bonus Skill Training at Level 1</li>
     </ul>
 
+    <!-- NEW (Phase 2): Custom Near-Human Species Name -->
+    <div class="prog-nh-section nh-custom-name">
+      <label class="prog-nh-section__label">Custom Species Name (Optional)</label>
+      <input type="text" class="nh-custom-name-input prog-nh-input"
+             placeholder="e.g., Aurelian, Selkath-descended, Vesperi"
+             value="{{nearHuman.state.customName}}"
+             aria-label="Custom Near-Human species name">
+      <p class="prog-nh-section__help">Create a unique name for your Near-Human species variant.</p>
+    </div>
+
     <div class="prog-nh-sacrifice">
       <h4 class="prog-nh-sacrifice__title">Replacement</h4>
       <p class="prog-nh-sacrifice__help">Choose which Human benefit to sacrifice</p>
@@ -49,6 +59,48 @@
                       <button class="nh-ability-btn" data-ability="{{this.key}}" data-delta="2" type="button">+2</button>
                     </div>
                   {{/each}}
+                </div>
+              {{/if}}
+
+              <!-- NEW (Phase 2): Secondary Trait-Specific Choice Pickers -->
+              {{#if (eq id "climateAdaptation")}}
+                <div class="prog-nh-section nh-secondary-choice">
+                  <label class="prog-nh-section__label" for="climate-adapt-select">Select Climate Type</label>
+                  <select id="climate-adapt-select" class="nh-trait-choice-select prog-nh-select" data-choice-name="climateAdaptation">
+                    <option value="">-- Choose climate --</option>
+                    <option value="freezing" {{#if (eq ../nearHuman.state.traitChoices.climateAdaptation "freezing")}}selected{{/if}}>Freezing</option>
+                    <option value="rarefied" {{#if (eq ../nearHuman.state.traitChoices.climateAdaptation "rarefied")}}selected{{/if}}>Rarefied Atmosphere</option>
+                    <option value="searing" {{#if (eq ../nearHuman.state.traitChoices.climateAdaptation "searing")}}selected{{/if}}>Searing</option>
+                    <option value="smoky" {{#if (eq ../nearHuman.state.traitChoices.climateAdaptation "smoky")}}selected{{/if}}>Smoky</option>
+                    <option value="tropical" {{#if (eq ../nearHuman.state.traitChoices.climateAdaptation "tropical")}}selected{{/if}}>Tropical</option>
+                    <option value="watery" {{#if (eq ../nearHuman.state.traitChoices.climateAdaptation "watery")}}selected{{/if}}>Watery</option>
+                  </select>
+                </div>
+              {{/if}}
+
+              {{#if (eq id "biotechAugmentation")}}
+                <div class="prog-nh-section nh-secondary-choice">
+                  <label class="prog-nh-section__label" for="biotech-select">Select Bio-Implant</label>
+                  <select id="biotech-select" class="nh-trait-choice-select prog-nh-select" data-choice-name="biotechAugmentation">
+                    <option value="">-- Choose bio-implant --</option>
+                    <option value="armEnhancement" {{#if (eq ../nearHuman.state.traitChoices.biotechAugmentation "armEnhancement")}}selected{{/if}}>Arm Enhancement</option>
+                    <option value="legEnhancement" {{#if (eq ../nearHuman.state.traitChoices.biotechAugmentation "legEnhancement")}}selected{{/if}}>Leg Enhancement</option>
+                    <option value="organicProcessor" {{#if (eq ../nearHuman.state.traitChoices.biotechAugmentation "organicProcessor")}}selected{{/if}}>Organic Processor</option>
+                    <option value="sensoryUpgrade" {{#if (eq ../nearHuman.state.traitChoices.biotechAugmentation "sensoryUpgrade")}}selected{{/if}}>Sensory Upgrade</option>
+                  </select>
+                </div>
+              {{/if}}
+
+              {{#if (eq id "culturalCybernetics")}}
+                <div class="prog-nh-section nh-secondary-choice">
+                  <label class="prog-nh-section__label" for="cyber-select">Select Cybernetic Enhancement</label>
+                  <select id="cyber-select" class="nh-trait-choice-select prog-nh-select" data-choice-name="culturalCybernetics">
+                    <option value="">-- Choose cybernetic --</option>
+                    <option value="armorPlating" {{#if (eq ../nearHuman.state.traitChoices.culturalCybernetics "armorPlating")}}selected{{/if}}>Armor Plating</option>
+                    <option value="combatInterface" {{#if (eq ../nearHuman.state.traitChoices.culturalCybernetics "combatInterface")}}selected{{/if}}>Combat Interface</option>
+                    <option value="neuralEnhancement" {{#if (eq ../nearHuman.state.traitChoices.culturalCybernetics "neuralEnhancement")}}selected{{/if}}>Neural Enhancement</option>
+                    <option value="reflex Booster" {{#if (eq ../nearHuman.state.traitChoices.culturalCybernetics "reflexBooster")}}selected{{/if}}>Reflex Booster</option>
+                  </select>
                 </div>
               {{/if}}
             </div>

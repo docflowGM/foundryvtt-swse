@@ -780,10 +780,28 @@ renderDetailsPanel(focusedItem) {
 
     const rawKey = this._skillLookupKey(raw);
     const simpleKey = this._skillLookupKey(simplified);
-    const isKnowledgeWildcard = /knowledge\s*\(\s*(any|all)\s*\)/i.test(raw) || simpleKey === 'knowledge';
 
-    if (isKnowledgeWildcard) {
+    // PHASE 2: SPLIT KNOWLEDGE REFACTOR
+    // Distinguish intentional wildcards from stale generic references
+    // Only expand "Knowledge (Any)" or "Knowledge (All)" as deliberate wildcards
+    // Treat bare "Knowledge" as a legacy error and warn about it
+    const isIntentionalKnowledgeWildcard = /knowledge\s*\(\s*(any|all)\s*\)/i.test(raw);
+    const isGenericKnowledge = simpleKey === 'knowledge' && !/knowledge\s*\(/i.test(raw);
+
+    if (isIntentionalKnowledgeWildcard) {
+      // Legitimate wildcard: expand to all Knowledge subskills
       return this._allSkills.filter(skill => /^knowledge/i.test(String(skill.name || '')));
+    }
+
+    if (isGenericKnowledge) {
+      // Legacy stale reference: warn and don't expand silently
+      swseLogger.warn(
+        '[SkillsStep] Encountered legacy generic "Knowledge" reference in skill authority. ' +
+        'This should be updated to use specific Knowledge types (e.g., Knowledge (Technology)) ' +
+        'or an explicit wildcard like Knowledge (Any). Reference:', raw
+      );
+      // Return empty - force explicit update of source
+      return [];
     }
 
     const match = this._allSkills.find(skill => {

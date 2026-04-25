@@ -523,6 +523,137 @@
   line-height: 1.3;
 }
 
+/* ===== PHASE 2: CUSTOM NAME & SECONDARY CHOICE SECTIONS ===== */
+
+.progression-shell .prog-nh-section {
+  border-top: 1px solid rgba(100, 220, 255, 0.2);
+  margin-top: 10px;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Custom name input section */
+.progression-shell .nh-custom-name {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.progression-shell .prog-nh-section__label {
+  display: block;
+  font-size: var(--prog-font-size-xs);
+  font-weight: 700;
+  color: rgba(210, 240, 255, 1);
+  text-shadow:
+    0 0 8px rgba(0, 180, 255, 0.4),
+    0 0 4px rgba(0, 160, 220, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.progression-shell .prog-nh-input {
+  appearance: none;
+  width: 100%;
+  padding: 8px 10px;
+  background: linear-gradient(180deg, rgba(8, 24, 40, 0.8), rgba(4, 14, 28, 0.9));
+  border: 1px solid rgba(100, 220, 255, 0.3);
+  border-radius: 2px;
+  color: rgba(200, 230, 255, 0.95);
+  font-family: inherit;
+  font-size: var(--prog-font-size-xs);
+  box-sizing: border-box;
+  transition: all 100ms ease;
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
+  box-shadow: 0 0 6px rgba(0, 180, 255, 0.03);
+}
+
+.progression-shell .prog-nh-input::placeholder {
+  color: rgba(160, 190, 255, 0.5);
+}
+
+.progression-shell .prog-nh-input:hover {
+  border-color: rgba(150, 240, 255, 0.5);
+  background: linear-gradient(180deg, rgba(12, 30, 48, 0.9), rgba(8, 20, 36, 0.95));
+  box-shadow:
+    0 0 12px rgba(0, 210, 255, 0.15),
+    0 0 6px rgba(100, 220, 255, 0.08);
+}
+
+.progression-shell .prog-nh-input:focus {
+  outline: none;
+  border-color: rgba(150, 240, 255, 0.8);
+  color: rgba(220, 245, 255, 1);
+  box-shadow:
+    0 0 16px rgba(0, 210, 255, 0.2),
+    0 0 8px rgba(100, 220, 255, 0.1),
+    inset 0 0 6px rgba(0, 180, 255, 0.05);
+}
+
+/* Secondary choice select */
+.progression-shell .prog-nh-select {
+  appearance: none;
+  width: 100%;
+  padding: 8px 10px;
+  background: linear-gradient(180deg, rgba(8, 24, 40, 0.8), rgba(4, 14, 28, 0.9)) !important;
+  border: 1px solid rgba(100, 220, 255, 0.3) !important;
+  border-radius: 2px;
+  color: rgba(200, 230, 255, 0.95);
+  font-family: inherit;
+  font-size: var(--prog-font-size-xs);
+  box-sizing: border-box;
+  transition: all 100ms ease;
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
+  box-shadow: 0 0 6px rgba(0, 180, 255, 0.03) !important;
+  cursor: pointer;
+  padding-right: 24px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8"><path fill="%23c8e6ff" d="M1 1l5 5 5-5"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+  padding-right: 28px;
+}
+
+.progression-shell .prog-nh-select:hover {
+  border-color: rgba(150, 240, 255, 0.5) !important;
+  background-color: rgba(12, 30, 48, 0.9) !important;
+  box-shadow:
+    0 0 12px rgba(0, 210, 255, 0.15),
+    0 0 6px rgba(100, 220, 255, 0.08) !important;
+  color: rgba(220, 245, 255, 0.95);
+}
+
+.progression-shell .prog-nh-select:focus {
+  outline: none;
+  border-color: rgba(150, 240, 255, 0.8) !important;
+  box-shadow:
+    0 0 16px rgba(0, 210, 255, 0.2),
+    0 0 8px rgba(100, 220, 255, 0.1),
+    inset 0 0 6px rgba(0, 180, 255, 0.05) !important;
+}
+
+.progression-shell .prog-nh-select option {
+  background: rgba(8, 24, 40, 0.95);
+  color: rgba(200, 230, 255, 0.95);
+}
+
+.progression-shell .nh-secondary-choice {
+  padding: 10px;
+  background: linear-gradient(180deg, rgba(0, 50, 90, 0.3), rgba(0, 30, 60, 0.4));
+  border: 1px solid rgba(100, 220, 255, 0.25);
+  border-radius: 2px;
+  margin-top: 6px;
+}
+
+.progression-shell .prog-nh-section__help {
+  font-size: var(--prog-font-size-xs);
+  color: rgba(160, 190, 255, 0.7);
+  font-style: italic;
+  margin: 4px 0 0 0;
+}
+
 /* Responsive: collapse to 1 column on narrow width */
 @media (max-width: 900px) {
   .progression-shell .prog-nh-builder {

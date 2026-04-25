@@ -9,8 +9,21 @@ import { confirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 // PHASE 2: Pending species context builder for chargen integration
 import { buildPendingSpeciesContext, applyPendingSpeciesContext } from "/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js";
 
+// PHASE 3: Near-Human canonical builder (wrapping legacy handlers)
+import { NearHumanBuilder } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/near-human-builder.js";
+
 // NOTE: _previewedSpeciesName moved to instance property (this.previewedSpeciesName)
 // to prevent race conditions with multiple CharGen windows
+
+// PHASE 3: Canonical NearHumanBuilder instance (replaces split-brain legacy + progression)
+let _canonicalNearHumanBuilder = null;
+async function getCanonicalNearHumanBuilder() {
+  if (!_canonicalNearHumanBuilder) {
+    _canonicalNearHumanBuilder = new NearHumanBuilder();
+    await _canonicalNearHumanBuilder.loadData();
+  }
+  return _canonicalNearHumanBuilder;
+}
 
 // Cache for Ol' Salty dialogues
 let _olSaltyDialogues = null;
@@ -1333,6 +1346,7 @@ function _renderNearHumanVariants(overlay) {
 
 /**
  * Render ability adjustment controls for Ability Adjustment trait
+ * PHASE 3: Uses strict +2/-2 validation (canonical rules)
  */
 function _renderAbilityAdjustments(overlay) {
   const section = overlay.querySelector('#ability-adjustment-section');
@@ -1353,15 +1367,16 @@ function _renderAbilityAdjustments(overlay) {
     const adjustment = _nearHumanState.abilityAdjustments[ability] || 0;
     const displayValue = adjustment >= 0 ? `+${adjustment}` : `${adjustment}`;
 
+    // PHASE 3: Updated buttons to adjust by ±2 instead of ±1
     return `
       <div class="ability-adjustment-row">
         <label class="ability-label">${label}</label>
         <div class="adjustment-controls">
-          <button type="button" class="ability-minus-btn" data-ability="${ability}" title="Decrease by 1">
+          <button type="button" class="ability-minus-btn" data-ability="${ability}" title="Set to -2">
             <i class="fa-solid fa-minus"></i>
           </button>
           <span class="adjustment-value">${displayValue}</span>
-          <button type="button" class="ability-plus-btn" data-ability="${ability}" title="Increase by 1">
+          <button type="button" class="ability-plus-btn" data-ability="${ability}" title="Set to +2">
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -1394,6 +1409,7 @@ function _updateAbilityAdjustmentTotal(overlay) {
 
 /**
  * Handle ability adjustment button clicks
+ * PHASE 3: Enforces strict RAW +2/-2 validation (canonical builder rules)
  */
 export function _onAdjustNearHumanAbility(event) {
   event.preventDefault();
@@ -1405,17 +1421,32 @@ export function _onAdjustNearHumanAbility(event) {
 
   if (!ability) {return;}
 
-  // Adjust the value (allow -1 to +1 range only)
+  // PHASE 3: Strict +2/-2 validation (canonical rules)
   const current = _nearHumanState.abilityAdjustments[ability] || 0;
-  const newValue = isPlus ? current + 1 : current - 1;
+  const delta = isPlus ? 2 : -2;
+  const newValue = current + delta;
 
-  // Clamp to -1 to +1 range
-  if (newValue >= -1 && newValue <= 1) {
-    _nearHumanState.abilityAdjustments[ability] = newValue;
-  } else {
-    ui.notifications.warn('Ability adjustments must be between -1 and +1');
+  // Enforce -2 to +2 range with only -2, 0, or +2 allowed
+  if (newValue !== -2 && newValue !== 0 && newValue !== 2) {
+    ui.notifications.warn('Near-Human ability adjustments must be exactly +2 or -2 (one of each)');
     return;
   }
+
+  // Check canonical builder rules: exactly one +2 and one -2 on different abilities
+  const testState = { ..._nearHumanState.abilityAdjustments };
+  testState[ability] = newValue;
+
+  // Count +2 and -2 adjustments
+  const plusTwo = Object.values(testState).filter(v => v === 2).length;
+  const minusTwo = Object.values(testState).filter(v => v === -2).length;
+
+  // Validate the strict rule
+  if (plusTwo > 1 || minusTwo > 1) {
+    ui.notifications.warn('Can only have one +2 and one -2 adjustment (on different abilities)');
+    return;
+  }
+
+  _nearHumanState.abilityAdjustments[ability] = newValue;
 
   const overlay = this.element.querySelector('#near-human-overlay');
   if (!overlay) return;
@@ -1595,6 +1626,7 @@ export function _onRandomizeNearHuman(event) {
 
 /**
  * Handle Near-Human confirmation (official SWSE rules)
+ * PHASE 3: Uses canonical NearHumanBuilder to produce modern format output
  */
 export async function _onConfirmNearHuman(event) {
   event.preventDefault();
@@ -1606,15 +1638,28 @@ export async function _onConfirmNearHuman(event) {
     return;
   }
 
-  // Get the selected trait
-  const selectedTrait = getNearHumanTrait(_nearHumanState.traitId);
-  if (!selectedTrait) {
-    ui.notifications.error('Selected trait not found in Near-Human traits data.');
-    return;
+  // PHASE 3: Sync legacy _nearHumanState to canonical builder
+  const builder = await getCanonicalNearHumanBuilder();
+
+  // Transfer legacy state to canonical builder
+  builder._state.traitId = _nearHumanState.traitId;
+  builder._state.sacrifice = _nearHumanState.sacrifice;
+  builder._state.variants = [..._nearHumanState.variants];
+  builder._state.abilityAdjustments = { ..._nearHumanState.abilityAdjustments };
+
+  // Validate using canonical builder (strict RAW validation)
+  const canonicalValidation = builder.validate();
+  if (!canonicalValidation.isValid) {
+    // This shouldn't happen as legacy validation already passed
+    // but double-check with canonical rules
+    SWSELogger.warn('CharGen | Legacy validation passed but canonical builder validation failed', {
+      legacyValidation: validation,
+      canonicalValidation: canonicalValidation
+    });
   }
 
-  // Get selected variants
-  const selectedVariants = _nearHumanState.variants.map(vid => getNearHumanVariant(vid)).filter(v => v !== null);
+  // PHASE 3: Get the modern format package from canonical builder
+  const nearHumanPackage = builder.buildNearHumanPackage();
 
   // PHASE 2: Build pending context for Near-Human
   const pendingContext = await buildPendingSpeciesContext(this.actor, 'Near-Human', {
@@ -1627,26 +1672,9 @@ export async function _onConfirmNearHuman(event) {
     SWSELogger.log('CharGen | Applied Near-Human from canonical pending context');
   }
 
-  // Store the official Near-Human data per SWSE rules
+  // PHASE 3: Store the modern Near-Human package (canonical format)
   this.characterData.species = 'Near-Human';
-  this.characterData.nearHumanData = {
-    // Official SWSE Near-Human structure
-    trait: {
-      id: _nearHumanState.traitId,
-      name: selectedTrait.name,
-      description: selectedTrait.description,
-      type: selectedTrait.type
-    },
-    sacrifice: _nearHumanState.sacrifice,  // "feat" or "skill"
-    variants: selectedVariants.map(v => ({
-      id: v.id,
-      name: v.name,
-      description: v.description,
-      type: v.type
-    })),
-    // Store ability adjustments if using Ability Adjustment trait
-    customAbilityChoices: _nearHumanState.traitId === 'abilityAdjustment' ? _nearHumanState.abilityAdjustments : null
-  };
+  this.characterData.nearHumanData = nearHumanPackage;
 
   // Near-Humans use standard Human traits unless modified by their selected trait
   // For now, apply default human parameters and let character sheet apply trait effects
@@ -1679,7 +1707,7 @@ export async function _onConfirmNearHuman(event) {
   this._recalcAbilities();
   await this._onNextStep(event);
 
-  SWSELogger.log('CharGen | Confirmed official SWSE Near-Human species', this.characterData.nearHumanData);
+  SWSELogger.log('CharGen | Confirmed Near-Human using canonical builder (modern format)', nearHumanPackage);
 }
 
 /**

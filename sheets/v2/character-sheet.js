@@ -64,6 +64,8 @@ import { traceLog, actorSummary, payloadSummary } from "/systems/foundryvtt-swse
 // Phase 8: Character sheet decomposition - import focused modules
 import { registerListeners } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/listeners.js";
 import { handleFormSubmission } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
+import { activateCustomSkillsUI } from "/systems/foundryvtt-swse/sheets/v2/character-sheet/custom-skills-ui.js";
+import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
 // Diagnostics: runtime inspection of resize/scroll behavior
 import { characterSheetDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet-diagnostics.js";
 // Contract Enforcement: validate sheet architecture at runtime
@@ -570,6 +572,9 @@ export class SWSEV2CharacterSheet extends
 
     // Sanity check: actor must be valid
     RenderAssertions.assertActorValid(actor, "SWSEV2CharacterSheet");
+
+    // Register Handlebars helpers for custom skills
+    registerCustomSkillsHelpers();
 
     const rawContext = await super._prepareContext(options);
     const SKIP_KEYS = new Set(['actor', 'document', 'system', 'fields']);
@@ -2685,6 +2690,9 @@ const forcePoints = [];
     });
 
     applyFiltersAndSort();
+
+    // Activate custom skills UI
+    activateCustomSkillsUI(this, html, { signal });
   }
 
   /* ============================================================
