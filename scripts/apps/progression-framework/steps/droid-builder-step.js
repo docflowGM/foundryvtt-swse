@@ -20,6 +20,7 @@ import { ProgressionRules } from '../../../engine/progression/ProgressionRules.j
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
+import { getDroidSizeDefaultLocomotion, getDroidSizeBaseSpeed, getDroidSizeCostFactor } from '../../../engine/progression/droids/droid-trait-rules.js';
 
 export class DroidBuilderStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -31,12 +32,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
 
   /**
    * Called when the shell navigates TO this step.
-   * Initialize droid builder state.
+   * Initialize droid builder state, mode-aware for custom vs standard model.
    */
   async onStepEnter(shell) {
     // Ensure droid builder state exists
     if (!this._droidState) {
-      this._droidState = this._initializeDroidState(shell.actor);
+      this._droidState = this._initializeDroidState(shell.actor, shell);
     }
 
     // Get suggested droid systems
@@ -46,8 +47,9 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   /**
    * Initialize droid builder state from actor or defaults.
    * PHASE A + B: Extended state model for deferred/provisional/finalized support
+   * Mode-aware: Custom droids get 1000 credit budget, standard models get 5000 cap
    */
-  _initializeDroidState(actor) {
+  _initializeDroidState(actor, shell) {
     if (!actor) {
       return null;
     }
@@ -58,15 +60,42 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       return null;
     }
 
+    // Get creation mode from session
+    const creationMode = shell?.progressionSession?.droidContext?.creationMode || 'custom';
+    const isStandardModel = creationMode === 'standard-model';
+
     // Get house rule settings
-    const baseCredits = ProgressionRules.getDroidConstructionCredits();
+    let baseCredits = ProgressionRules.getDroidConstructionCredits(); // Default 1000 for custom
     const allowOverflow = ProgressionRules.droidOverflowEnabled();
 
-    // Initialize with actor's current droid state, or defaults
+    // RAW: Standard model droids have a 5000 credit cap total (includes model base cost)
+    if (isStandardModel) {
+      const modelBaseCost = shell?.progressionSession?.draftSelections?.droid?.standardModelBaseCost || 0;
+      baseCredits = 5000 - modelBaseCost; // Remaining budget after model cost
+    }
+
+    // Get size for RAW defaults
+    const size = actor?.system?.droidSize || 'medium';
+    const defaultLocomotionId = getDroidSizeDefaultLocomotion(size);
+    const defaultSpeed = getDroidSizeBaseSpeed(size);
+    const costFactor = getDroidSizeCostFactor(size);
+
+    // Initialize with actor's current droid state, or RAW defaults
     const droidSystems = actor?.system?.droidSystems || {
-      locomotion: null,
+      locomotion: {
+        id: defaultLocomotionId,
+        name: this._getLocomotionName(defaultLocomotionId),
+        speed: defaultSpeed,
+        costFactor: costFactor,
+        cost: this._calculateLocomotionCost(defaultLocomotionId, defaultSpeed, costFactor),
+        weight: this._calculateLocomotionWeight(defaultLocomotionId, costFactor),
+        isDefault: true
+      },
       processor: { id: 'heuristic', name: 'Heuristic Processor', cost: 0, weight: 5 },
-      appendages: [],
+      appendages: [
+        { id: 'hand-1', name: 'Hand (Right)', type: 'hand', cost: 0, weight: 0, isDefault: true },
+        { id: 'hand-2', name: 'Hand (Left)', type: 'hand', cost: 0, weight: 0, isDefault: true }
+      ],
       accessories: [],
       locomotionEnhancements: [],
       appendageEnhancements: [],
@@ -80,8 +109,10 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     // PHASE A + B: Extended state model for budget-aware deferred construction
     return {
       isDroid: true,
+      creationMode: creationMode,  // 'custom' or 'standard-model'
+      isStandardModel: isStandardModel,
       droidDegree: actor?.system?.droidDegree || '1st-degree',
-      droidSize: actor?.system?.droidSize || 'medium',
+      droidSize: size,
 
       // Core systems (unchanged structure)
       droidSystems: systemsCopy,
@@ -92,21 +123,36 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
         spent: actor?.system?.droidCredits?.spent || 0,
         remaining: baseCredits - (actor?.system?.droidCredits?.spent || 0),
         // New: Track whether overflow into general credits is allowed
-        allowOverflow: allowOverflow
+        allowOverflow: allowOverflow,
+        // Standard model: track total cap (5000) vs budget remaining
+        standardModelBaseCost: isStandardModel ? shell?.progressionSession?.draftSelections?.droid?.standardModelBaseCost || 0 : 0,
+        maxTotalCost: isStandardModel ? 5000 : Infinity
       },
 
       // PHASE A + B: Free/default systems tracking
       grantedSystems: {
-        // Heuristic processor is always free in chargen
+        // Heuristic processor is always free in chargen (PC droids only)
         processor: {
           id: 'heuristic',
           name: 'Heuristic Processor',
           cost: 0,
           weight: 5,
-          isGranted: true
+          isGranted: true,
+          isRequired: true,  // PC droids MUST have Heuristic
+          isLocked: true     // Cannot be removed/changed during chargen
         },
-        // Track other free grants here as needed
-        freeAppendages: []
+        // Two appendages standard (typically hands) - free
+        freeAppendages: [
+          { id: 'hand-1', name: 'Hand (Right)', type: 'hand', cost: 0, weight: 0, isGranted: true },
+          { id: 'hand-2', name: 'Hand (Left)', type: 'hand', cost: 0, weight: 0, isGranted: true }
+        ],
+        // Size-based default locomotion
+        locomotion: {
+          id: defaultLocomotionId,
+          name: this._getLocomotionName(defaultLocomotionId),
+          isDefault: true,
+          isGranted: true  // Don't count toward budget
+        }
       },
 
       // PHASE A + B: Build state machine
@@ -127,6 +173,35 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       // PHASE A + B: Suggestion mode hint
       suggestionMode: 'preview'  // 'preview' (provisional) | 'final' (finalized)
     };
+  }
+
+  /**
+   * Helper: Get locomotion system name by ID
+   * @private
+   */
+  _getLocomotionName(locomotionId) {
+    const system = DROID_SYSTEMS.locomotion?.find(l => l.id === locomotionId);
+    return system?.name || 'Walking';
+  }
+
+  /**
+   * Helper: Calculate locomotion cost based on system and size
+   * @private
+   */
+  _calculateLocomotionCost(locomotionId, baseSpeed, costFactor) {
+    const system = DROID_SYSTEMS.locomotion?.find(l => l.id === locomotionId);
+    if (!system || !system.costFormula) return 0;
+    return system.costFormula(baseSpeed, costFactor);
+  }
+
+  /**
+   * Helper: Calculate locomotion weight based on size
+   * @private
+   */
+  _calculateLocomotionWeight(locomotionId, costFactor) {
+    const system = DROID_SYSTEMS.locomotion?.find(l => l.id === locomotionId);
+    if (!system || !system.weightFormula) return 0;
+    return system.weightFormula(costFactor);
   }
 
   /**

@@ -186,6 +186,12 @@
           <div class="hint"><kbd>SPACE</kbd> skip · <kbd>ENTER</kbd> continue · <kbd>R</kbd> replay</div>
           <div class="intro-action-row">
             <button class="btn ghost" type="button" data-action="skip-intro">Skip Boot</button>
+            {{#if showPregenerated}}
+            <button class="btn secondary" type="button" data-role="intro-pick-profile" title="Choose a pregenerated character" aria-label="Choose a pregenerated character" {{#unless isComplete}}disabled{{/unless}}>
+              <i class="fas fa-scroll"></i>
+              Profile
+            </button>
+            {{/if}}
             <button class="btn primary" type="button" data-action="next-step" {{#unless isComplete}}disabled{{/unless}}>{{continueLabel}}</button>
           </div>
         </div>
@@ -362,7 +368,25 @@
             </div>
             <div class="intro-action-row">
               <button class="btn ghost" type="button" data-action="skip-intro">Skip Boot</button>
+              {{#if showDroidCreationModeChoice}}
+              {{!-- DROID CREATION MODE CHOICE: Custom vs Standard Model --}}
+              <button class="btn primary" type="button" data-role="droid-build-custom" title="Build a custom droid from scratch" aria-label="Build a custom droid from scratch" {{#if continueDisabled}}disabled{{/if}}>
+                <i class="fas fa-wrench"></i>
+                Build Custom
+              </button>
+              <button class="btn primary" type="button" data-role="droid-select-standard" title="Import a published standard droid model" aria-label="Import a published standard droid model" {{#if continueDisabled}}disabled{{/if}}>
+                <i class="fas fa-database"></i>
+                Select Model
+              </button>
+              {{else if showPregenerated}}
+              <button class="btn secondary" type="button" data-role="intro-pick-profile" title="Choose a pregenerated droid template" aria-label="Choose a pregenerated droid template" {{#if continueDisabled}}disabled{{/if}}>
+                <i class="fas fa-scroll"></i>
+                Template
+              </button>
+              {{/if}}
+              {{#unless showDroidCreationModeChoice}}
               <button class="btn" type="button" data-action="next-step" {{#if continueDisabled}}disabled{{/if}}>{{continueLabel}}</button>
+              {{/unless}}
             </div>
           </div>
         </div>

@@ -88,6 +88,14 @@ export class ProgressionRules {
   }
 
   /**
+   * Droid Class & Trait Rules
+   */
+
+  static allowDroidJediClass() {
+    return HouseRuleService.getBoolean('allowDroidJediClass', false);
+  }
+
+  /**
    * Character Creation Access Rules
    */
 

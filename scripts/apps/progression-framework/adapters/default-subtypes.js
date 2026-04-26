@@ -22,6 +22,12 @@ import { seedFollowerSession, validateFollowerEntitlement } from './follower-ses
 import { deriveFollowerStats, getFollowerDerivationContext, deriveFollowerStateForApply } from './follower-deriver.js';
 import { DroidBuilderAdapter } from '../steps/droid-builder-adapter.js';
 import { swseLogger } from '../../../utils/logger.js';
+import {
+  getDroidDegreePackage,
+  getDroidBehavioralProfile,
+  getDroidTalentTreeName,
+  combineDroidAbilityMods
+} from '../../../engine/progression/droids/droid-trait-rules.js';
 
 // Re-export for convenience
 export { ParticipantKind };
@@ -70,13 +76,27 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
     //  - AttributeStep  (reads pointBuyPool + attributeGenerationConfig)
     //  - AbilityRollingController (reads attributeGenerationConfig when wired)
     //  - contributeMutationPlan (reads droidContext.conBase to enforce CON=0)
+    //  - TalentStep (reads droidDegree for talent tree filtering)
+    //  - ClassStep (reads allowDroidJedi for class restriction)
+
+    // Pre-seed degree context if known (from saved actor or droid builder)
+    const defaultDegree = actor?.system?.droidDegree || '1st-degree';
+    const degreePackage = getDroidDegreePackage(defaultDegree);
+
     session.droidContext = {
       isDroid: true,
+      // Creation mode: 'custom' (build from scratch) or 'standard-model' (import stock droid)
+      // Default to custom unless explicitly set; user chooses in intro/splash
+      creationMode: 'custom',
       // Point-buy pool: droids get 20 points, actors get 25 (SWSE core rule)
       pointBuyPool: 20,
       // CON is not a droid ability; enforced to 0 in contributeMutationPlan
       excludedAbilities: ['con'],
       conBase: 0,
+      // Degree and size context — used by downstream steps
+      degree: defaultDegree,
+      degreePackage: degreePackage,
+      size: actor?.system?.droidSize || 'medium',
       // Config consumed by rolling/array systems — keeps all droid rules data-driven
       attributeGenerationConfig: {
         abilityCount: 5,
@@ -90,17 +110,20 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
         organicDiceCount: 18,
         organicGroupCount: 5,
         organicDropCount: 3,
-        // Predefined arrays without CON slot
+        // Predefined arrays without CON slot — SWSE RAW compliant
         arrays: {
-          standard: [15, 14, 13, 12, 8],     // actor standard [15,14,13,12,10,8] minus 10
-          highPower: [16, 14, 12, 10, 8],    // actor high-power [16,14,12,12,10,8] minus one 12
+          standard: [15, 14, 13, 12, 10],    // SWSE droid standard array (RAW)
+          highPower: [16, 14, 12, 10, 8],    // higher power alternative
         },
       },
     };
 
     swseLogger.debug('[DroidAdapter] Droid session context seeded', {
       pointBuyPool: session.droidContext.pointBuyPool,
+      degree: defaultDegree,
+      size: session.droidContext.size,
       abilityCount: session.droidContext.attributeGenerationConfig.abilityCount,
+      standardArray: session.droidContext.attributeGenerationConfig.arrays.standard,
     });
   }
 
@@ -121,17 +144,34 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
       swseLogger.debug('[DroidAdapter] Force steps suppressed for droid', { suppressed });
     }
 
-    // Droid chargen cadence: Splash -> Droid Class -> Droid Systems -> Attributes -> rest.
-    const prioritized = ['intro', 'class', 'droid-builder', 'attribute'];
+    // Route based on droid creation mode
+    const creationMode = session.droidContext?.creationMode || 'custom';
+    let prioritized;
+
+    if (creationMode === 'standard-model') {
+      // Standard Droid Model path (RAW): Splash → Model Selection → Systems → Class (if eligible) → rest
+      // Note: attribute step is skipped for standard models (they arrive with published ability scores)
+      prioritized = ['intro', 'droid-model', 'droid-builder', 'class'];
+    } else {
+      // Custom Droid path (RAW): Splash → Degree → Systems → Attributes → rest
+      prioritized = ['intro', 'droid-degree', 'droid-builder', 'attribute'];
+    }
+
     const ordered = [];
     for (const stepId of prioritized) {
       if (filtered.includes(stepId)) ordered.push(stepId);
     }
+
+    // Add remaining steps in their natural order
     for (const stepId of filtered) {
       if (!ordered.includes(stepId)) ordered.push(stepId);
     }
 
-    swseLogger.debug('[DroidAdapter] Droid active step order applied', { ordered });
+    swseLogger.debug('[DroidAdapter] Droid active step order applied', {
+      creationMode,
+      prioritized,
+      ordered
+    });
     return ordered;
   }
 
@@ -147,22 +187,57 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
 
     if (!mutationPlan.set) mutationPlan.set = {};
 
+    const degree = droidBuild.droidDegree || '1st-degree';
+    const size = droidBuild.droidSize || 'medium';
+
     // Write all droid identity and system fields.
     // These are NOT written anywhere in the base _compileMutationPlan path —
     // this adapter is the sole authoritative writer for droid system fields.
     mutationPlan.set['system.isDroid']      = true;
-    mutationPlan.set['system.droidDegree']  = droidBuild.droidDegree  || '1st-degree';
-    mutationPlan.set['system.droidSize']    = droidBuild.droidSize    || 'medium';
+    mutationPlan.set['system.droidDegree']  = degree;
+    mutationPlan.set['system.droidSize']    = size;
     mutationPlan.set['system.droidSystems'] = droidBuild.droidSystems ?? null;
     mutationPlan.set['system.droidCredits'] = droidBuild.droidCredits ?? null;
 
+    // Derive and write behavioral profile from degree (RAW rule)
+    const behavioralProfile = getDroidBehavioralProfile(degree);
+    mutationPlan.set['system.droidBehavioralProfile'] = behavioralProfile;
+
+    // Derive and write eligible talent tree from degree
+    const talentTreeName = getDroidTalentTreeName(degree);
+    mutationPlan.set['system.droidTalentTree'] = talentTreeName;
+
+    // Apply degree and size ability modifiers (RAW rule)
+    // These stack: degree mods + size mods applied to base scores
+    // Reference: SWSE Core Rulebook, Droid Heroes section
+    const abilityMods = combineDroidAbilityMods(degree, size);
+    const abilityKeys = ['str', 'dex', 'int', 'wis', 'cha'];
+
+    for (const ability of abilityKeys) {
+      const mod = abilityMods[ability] || 0;
+      if (mod !== 0) {
+        // Apply modifier to racial modifier slot (where species/racial mods go)
+        mutationPlan.set[`system.abilities.${ability}.racial`] = mod;
+      }
+    }
+
     // Enforce CON = 0 regardless of what the attribute step committed.
+    // Droids do not have Constitution. Force all CON-related fields to 0.
     // Reference: chargen-droid.js:38-42 (legacy spec)
     mutationPlan.set['system.abilities.con.base'] = 0;
+    mutationPlan.set['system.abilities.con.racial'] = 0;
+    mutationPlan.set['system.abilities.con.total'] = 0;
+
+    // Enforce ability score floor of 1 (SWSE rule: droid score can never be less than 1)
+    // This will be validated at finalization
+    mutationPlan.droidAbilityFloor = 1;
 
     swseLogger.debug('[DroidAdapter] Droid fields written to mutation plan', {
-      droidDegree: droidBuild.droidDegree,
-      droidSize: droidBuild.droidSize,
+      droidDegree: degree,
+      droidSize: size,
+      abilityModifiers: abilityMods,
+      behavioralProfile: behavioralProfile,
+      talentTree: talentTreeName,
     });
 
     return mutationPlan;

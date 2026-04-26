@@ -28,6 +28,7 @@ import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveClassModel, getClassTalentTreeLookupKeys } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
+import { getDroidTalentTreeName } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-trait-rules.js';
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
@@ -549,7 +550,24 @@ export class TalentStep extends ProgressionStepPlugin {
    * HARDENED: Use canonical tree fields, consistent ID handling
    */
   _getTreeBrowserData(context) {
-    const filteredTrees = this._filterTreesBySearch(this._allTrees);
+    let filteredTrees = this._filterTreesBySearch(this._allTrees);
+
+    // SWSE RAW: Filter droid talent trees by degree if droid progression
+    if (this._isDroidProgression) {
+      const droidDegree = context?.shell?.progressionSession?.draftSelections?.droid?.droidDegree ||
+                         context?.shell?.actor?.system?.droidDegree ||
+                         '1st-degree';
+      const allowedTreeName = getDroidTalentTreeName(droidDegree);
+
+      // Filter to show only the degree-appropriate talent tree + any universal droid talents
+      filteredTrees = filteredTrees.filter(tree =>
+        tree.name === allowedTreeName ||
+        tree.tags?.includes('droid-universal') ||
+        tree.category === 'droid-universal'
+      );
+    }
+
+    // Continue with filtered trees
 
     // Get committed talents from session and order them canonically
     const committedTalents = context?.shell?.progressionSession?.draftSelections?.talents || [];

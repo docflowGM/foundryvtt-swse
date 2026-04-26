@@ -669,7 +669,16 @@ export class IntroStep extends ProgressionStepPlugin {
    * @returns {{ template: string, data: Object }}
    */
   renderWorkSurface(stepData) {
-    // Map step data to template context
+    // V2 splash controllers (actor-v2, droid-v2) have their own data structure
+    // Pass through directly without normalization to preserve v2-specific fields
+    if (this._isActorV2 || this._isDroidIntro) {
+      return {
+        template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/intro-work-surface.hbs',
+        data: stepData,
+      };
+    }
+
+    // Standard intro path: map step data to template context
     const templateContext = {
       // OS UI elements
       systemName: stepData.systemName,
@@ -813,6 +822,65 @@ export class IntroStep extends ProgressionStepPlugin {
       }
     });
 
+    // Droid creation mode choice (Build Custom vs Select Standard Model)
+    $surface.on('click', '[data-role="droid-build-custom"]', async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (this._transitionInProgress) return;
+      this._transitionInProgress = true;
+
+      try {
+        swseLogger.debug('[IntroStep.activateListeners] Build Custom Droid chosen');
+
+        // Set creation mode to 'custom'
+        if (this._shell?.progressionSession?.droidContext) {
+          this._shell.progressionSession.droidContext.creationMode = 'custom';
+          swseLogger.debug('[IntroStep.activateListeners] Set droidContext.creationMode to custom');
+        }
+
+        this._continueClicked = true;
+        this._state = INTRO_STATE.TRANSITIONING;
+        await this._transitionToNextStep();
+      } catch (error) {
+        swseLogger.error('[IntroStep.activateListeners] ERROR handling Build Custom button', {
+          error: error.message,
+          stack: error.stack,
+        });
+        this._transitionInProgress = false;
+        this._continueClicked = false;
+      }
+    });
+
+    $surface.on('click', '[data-role="droid-select-standard"]', async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (this._transitionInProgress) return;
+      this._transitionInProgress = true;
+
+      try {
+        swseLogger.debug('[IntroStep.activateListeners] Select Standard Model chosen');
+
+        // Set creation mode to 'standard-model'
+        if (this._shell?.progressionSession?.droidContext) {
+          this._shell.progressionSession.droidContext.creationMode = 'standard-model';
+          swseLogger.debug('[IntroStep.activateListeners] Set droidContext.creationMode to standard-model');
+        }
+
+        this._continueClicked = true;
+        this._state = INTRO_STATE.TRANSITIONING;
+        await this._transitionToNextStep();
+      } catch (error) {
+        swseLogger.error('[IntroStep.activateListeners] ERROR handling Select Standard Model button', {
+          error: error.message,
+          stack: error.stack,
+        });
+        this._transitionInProgress = false;
+        this._continueClicked = false;
+      }
+    });
+
     // Note: Go Back (data-action="previous-step") and Proceed (data-action="next-step")
     // are routed through the shell's action system via ApplicationV2, not bound here
 
@@ -930,8 +998,10 @@ export class IntroStep extends ProgressionStepPlugin {
     // Phase 2: Use declarative boot sequence with segmented progress bar
     swseLogger.debug('[IntroStep.startIntroSequence] Starting Phase 2 boot sequence with bootLines');
 
-    // Route to droid-v2 or standard animation
-    if (this._isDroidIntro) {
+    // Route to actor-v2, droid-v2, or standard animation
+    if (this._isActorV2) {
+      await this.runActorV2BootSequence(shell, this._sessionToken);
+    } else if (this._isDroidIntro) {
       await this.runDroidV2BootSequence(shell, this._sessionToken);
     } else {
       await this.runBootSequence(shell, this._sessionToken);
@@ -1145,9 +1215,7 @@ export class IntroStep extends ProgressionStepPlugin {
           sourceText,
           translatedText,
           displayMode,
-          selectors: {
-            lineText: '[data-role="intro-aurabesh"]'
-          },
+          // Use default selectors from engine (matches template structure)
           keepFinalCursor: Boolean(line.final),
           cursorMode: line.final ? 'blink' : (line.tone === INTRO_LINE_TONE.ERROR ? 'error' : 'translating')
         });
@@ -1217,6 +1285,47 @@ export class IntroStep extends ProgressionStepPlugin {
       swseLogger.debug('[IntroStep.runDroidV2BootSequence] Boot sequence complete');
     } catch (err) {
       swseLogger.error('[IntroStep.runDroidV2BootSequence] Error:', err);
+    }
+  }
+
+  /**
+   * Actor-v2 boot sequence animation.
+   * Progresses through 8 stages, updating context via buildActorSplashV2Context.
+   * Calls shell.render() for each stage to update the UI.
+   * Runs Aurebesh translation at stage 6 (the 'translation' stage).
+   * Respects cancellation and session invalidation.
+   */
+  async runActorV2BootSequence(shell, sessionToken) {
+    try {
+      swseLogger.debug('[IntroStep.runActorV2BootSequence] Starting actor-v2 boot sequence');
+
+      // Stage durations (in ms) for 8 stages
+      const stageDurations = [280, 260, 260, 320, 280, 260, 400, 260];  // 8 stages
+
+      for (let stageIndex = 0; stageIndex < 8; stageIndex++) {
+        // Exit early if intro was cancelled
+        if (!this._introRunning || this._sessionToken !== sessionToken) {
+          swseLogger.debug('[IntroStep.runActorV2BootSequence] Sequence cancelled');
+          return;
+        }
+
+        // Update stage index and render
+        this._actorV2StageIndex = stageIndex;
+        shell.render();
+
+        // Run translation animation at stage 6 (the 'translation' stage)
+        if (stageIndex === 6) {
+          await this.runSplashTranslation(shell, 'aurebesh');
+        }
+
+        // Wait for stage duration
+        const duration = stageDurations[stageIndex] || 260;
+        await delay(duration);
+      }
+
+      swseLogger.debug('[IntroStep.runActorV2BootSequence] Boot sequence complete');
+    } catch (err) {
+      swseLogger.error('[IntroStep.runActorV2BootSequence] Error:', err);
     }
   }
 

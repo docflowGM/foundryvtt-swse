@@ -105,10 +105,12 @@
 /* ======================================================================
  * VT323 — Display / Monospace Terminal
  * Used for: display headers, code, technical readouts
+ * FIXED: VT323-Regular.ttf is corrupted (text file, not binary).
+ * Using Orbitron-VariableFont_wght.ttf as fallback (valid binary).
  * ====================================================================== */
 @font-face {
   font-family: "SWSE VT323";
-  src: url("../assets/fonts/VT323-Regular.ttf") format("truetype");
+  src: url("../assets/fonts/Orbitron-VariableFont_wght.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -218,9 +220,10 @@
   font-display: swap;
 }
 
+/* FIXED: JetBrainsMono-SemiBold.ttf is corrupted (text file) - use VariableFont */
 @font-face {
   font-family: "SWSE JetBrains Mono";
-  src: url("../assets/fonts/JetBrainsMono-SemiBold.ttf") format("truetype");
+  src: url("../assets/fonts/JetBrainsMono-VariableFont_wght.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -234,9 +237,10 @@
   font-display: swap;
 }
 
+/* FIXED: JetBrainsMono-Bold.ttf is corrupted (text file) - use VariableFont */
 @font-face {
   font-family: "SWSE JetBrains Mono";
-  src: url("../assets/fonts/JetBrainsMono-Bold.ttf") format("truetype");
+  src: url("../assets/fonts/JetBrainsMono-VariableFont_wght.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -277,10 +281,12 @@
 /* ======================================================================
  * Orbitron — Accent / Tech Display
  * Used for: prominent headers, accents, sci-fi emphasis
+ * FIXED: Orbitron-Regular/Bold/ExtraBold.ttf are corrupted (text files)
+ * Using valid VariableFont and Medium weight
  * ====================================================================== */
 @font-face {
   font-family: "SWSE Orbitron";
-  src: url("../assets/fonts/Orbitron-Regular.ttf") format("truetype");
+  src: url("../assets/fonts/Orbitron-VariableFont_wght.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -296,7 +302,7 @@
 
 @font-face {
   font-family: "SWSE Orbitron";
-  src: url("../assets/fonts/Orbitron-Bold.ttf") format("truetype");
+  src: url("../assets/fonts/Orbitron-VariableFont_wght.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -304,7 +310,7 @@
 
 @font-face {
   font-family: "SWSE Orbitron";
-  src: url("../assets/fonts/Orbitron-ExtraBold.ttf") format("truetype");
+  src: url("../assets/fonts/Orbitron-VariableFont_wght.ttf") format("truetype");
   font-weight: 900;
   font-style: normal;
   font-display: swap;
@@ -330,9 +336,10 @@
   font-display: swap;
 }
 
+/* FIXED: IBMPlexMono-Regular.ttf is corrupted (text file) - use Medium */
 @font-face {
   font-family: "SWSE IBM Plex Mono";
-  src: url("../assets/fonts/IBMPlexMono-Regular.ttf") format("truetype");
+  src: url("../assets/fonts/IBMPlexMono-Medium.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;

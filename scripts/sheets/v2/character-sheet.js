@@ -66,6 +66,18 @@ import {
   warnMissingDerivedOutput,
   getWarningsSummary
 } from "/systems/foundryvtt-swse/scripts/debug/contract-warning-helper.js";
+// Theme and motion control imports
+import {
+  getActorSheetTheme,
+  getActorSheetThemeGroups,
+  getActorSheetThemeEntry,
+  buildActorSheetThemeStyle
+} from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
+import {
+  getActorSheetMotionStyle,
+  getActorSheetMotionStyleOptions,
+  buildActorSheetMotionStyle
+} from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -463,6 +475,34 @@ export class SWSEV2CharacterSheet extends
       root.classList.remove(`help-level--${level.toLowerCase()}`);
     });
     root.classList.add(`help-level--${this._helpLevel.toLowerCase()}`);
+
+    // Phase 11: Apply theme and motion data attributes to swse-sheet-v2-shell element
+    // Use data-theme for theme switching (CSS uses [data-theme] selectors)
+    // Apply fonts and motion styles via inline CSS variables
+    const sheetShell = root.querySelector('.swse-sheet-v2-shell');
+    if (sheetShell) {
+      const currentTheme = getActorSheetTheme(this.document.getFlag('foundryvtt-swse', 'sheetTheme'));
+      const currentMotion = getActorSheetMotionStyle(this.document.getFlag('foundryvtt-swse', 'sheetMotionStyle'));
+
+      // Set data-theme attribute for CSS-based color theming
+      sheetShell.setAttribute('data-theme', currentTheme);
+
+      // Build combined style string with motion animations AND fonts
+      let styleString = buildActorSheetMotionStyle(currentMotion);
+
+      // Add font styles from theme registry
+      const themeEntry = getActorSheetThemeEntry(currentTheme);
+      if (themeEntry && themeEntry.fonts) {
+        const fontStyles = Object.entries(themeEntry.fonts)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join('; ');
+        styleString = styleString ? `${styleString}; ${fontStyles}` : fontStyles;
+      }
+
+      if (styleString) {
+        sheetShell.setAttribute('style', styleString);
+      }
+    }
 
     // Wire listeners to the sheet root
     this.activateListeners(root, { signal });
@@ -1346,6 +1386,13 @@ const forcePoints = [];
       helpLevelLabel: HelpModeManager.getHelpLevelLabel(this._helpLevel),
       helpLevelDescription: HelpModeManager.getHelpLevelDescription(this._helpLevel),
       // ═════════════════════════════════════════════════════════════════
+      // PHASE 11: THEME & MOTION CONTROL CONTEXT
+      // ═════════════════════════════════════════════════════════════════
+      sheetTheme: getActorSheetTheme(actor.getFlag('foundryvtt-swse', 'sheetTheme')),
+      sheetThemeGroups: getActorSheetThemeGroups(getActorSheetTheme(actor.getFlag('foundryvtt-swse', 'sheetTheme'))),
+      sheetMotionStyle: getActorSheetMotionStyle(actor.getFlag('foundryvtt-swse', 'sheetMotionStyle')),
+      sheetMotionOptions: getActorSheetMotionStyleOptions(),
+      // ═════════════════════════════════════════════════════════════════
       // PHASE 2: MISSING CONTEXT KEYS (REMEDIATION)
       // ═════════════════════════════════════════════════════════════════
       xpEnabled,                    // XP system active/disabled flag
@@ -1635,6 +1682,69 @@ const forcePoints = [];
       TooltipRegistry.setHelpMode(HelpModeManager.isActive(this._helpLevel));
 
       // swseLogger.debug(`[HELP-MODE] Cycled to: ${this._helpLevel}`);
+    }, { signal });
+
+    // DELEGATED: Theme Dropdown - Update actor flag and apply theme
+    html.addEventListener("change", async ev => {
+      const select = ev.target.closest("select[data-control='theme']");
+      if (!select) return;
+      ev.preventDefault();
+      const themeKey = select.value;
+      if (!themeKey) return;
+      try {
+        await this.document.setFlag('foundryvtt-swse', 'sheetTheme', themeKey);
+        const sheetShell = html.querySelector('.swse-sheet-v2-shell');
+        if (sheetShell) {
+          sheetShell.setAttribute('data-theme', themeKey);
+          const currentMotion = getActorSheetMotionStyle(this.document.getFlag('foundryvtt-swse', 'sheetMotionStyle'));
+          let styleString = buildActorSheetMotionStyle(currentMotion);
+          const themeEntry = getActorSheetThemeEntry(themeKey);
+          if (themeEntry && themeEntry.fonts) {
+            const fontStyles = Object.entries(themeEntry.fonts)
+              .map(([k, v]) => `${k}: ${v}`)
+              .join('; ');
+            styleString = styleString ? `${styleString}; ${fontStyles}` : fontStyles;
+          }
+          if (styleString) {
+            sheetShell.setAttribute('style', styleString);
+          }
+        }
+        await this.render(false);
+      } catch (err) {
+        swseLogger.error('[THEME] Error setting sheet theme:', err);
+        ui.notifications?.error?.(`Failed to set theme: ${err.message}`);
+      }
+    }, { signal });
+
+    // DELEGATED: Motion Style Dropdown - Update actor flag and apply motion
+    html.addEventListener("change", async ev => {
+      const select = ev.target.closest("select[data-control='motion']");
+      if (!select) return;
+      ev.preventDefault();
+      const motionStyle = select.value;
+      if (!motionStyle) return;
+      try {
+        await this.document.setFlag('foundryvtt-swse', 'sheetMotionStyle', motionStyle);
+        const sheetShell = html.querySelector('.swse-sheet-v2-shell');
+        if (sheetShell) {
+          const currentTheme = getActorSheetTheme(this.document.getFlag('foundryvtt-swse', 'sheetTheme'));
+          let styleString = buildActorSheetMotionStyle(motionStyle);
+          const themeEntry = getActorSheetThemeEntry(currentTheme);
+          if (themeEntry && themeEntry.fonts) {
+            const fontStyles = Object.entries(themeEntry.fonts)
+              .map(([k, v]) => `${k}: ${v}`)
+              .join('; ');
+            styleString = styleString ? `${styleString}; ${fontStyles}` : fontStyles;
+          }
+          if (styleString) {
+            sheetShell.setAttribute('style', styleString);
+          }
+        }
+        await this.render(false);
+      } catch (err) {
+        swseLogger.error('[MOTION] Error setting motion style:', err);
+        ui.notifications?.error?.(`Failed to set motion style: ${err.message}`);
+      }
     }, { signal });
     // DELEGATED: Tab Switching - Route through shared UI state manager
     // This prevents "blank body" states where DOM classes and remembered state diverge.

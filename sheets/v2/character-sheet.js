@@ -1406,6 +1406,10 @@ const forcePoints = [];
       // ═════════════════════════════════════════════════════════════════
       combatActions,                // Organized combat actions by economy type
       // ═════════════════════════════════════════════════════════════════
+      // CUSTOM SKILLS UI FLAGS
+      // ═════════════════════════════════════════════════════════════════
+      customSkillsEditable: this.isEditable,  // Whether user can add/edit/delete custom skills
+      // ═════════════════════════════════════════════════════════════════
       // UNIFIED PANEL CONTEXTS (Primary data source)
       // Panels now own all character data through dedicated view models
       // ═════════════════════════════════════════════════════════════════

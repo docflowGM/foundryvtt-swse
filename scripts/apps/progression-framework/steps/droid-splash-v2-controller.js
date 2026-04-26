@@ -257,6 +257,8 @@ export function buildDroidSplashV2Context(options = {}) {
     translationTarget: translation?.targetText || 'Unit online. Droid assembly complete.',
     sourceMode: 'binary',
 
+    // When complete, show creation mode choice instead of single continue button
+    showDroidCreationModeChoice: complete,
     continueLabel: 'Register New Unit',
     continueDisabled: !complete,
 

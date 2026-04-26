@@ -15,6 +15,7 @@ import { DroidSheetContextBuilder } from "/systems/foundryvtt-swse/scripts/sheet
 import { wireDroidSheetListeners } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/listeners.js";
 import { diagnoseLivePanelContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/panel-registry.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -89,6 +90,9 @@ export class SWSEV2DroidSheet extends
 
     RenderAssertions.assertActorValid(actor, "SWSEV2DroidSheet");
 
+    // Register Handlebars helpers for custom skills (droid sheets can have custom skills too)
+    registerCustomSkillsHelpers();
+
     const baseContext = await super._prepareContext(options);
 
     // Phase 2: panel-shaped context construction now lives in the builder.
@@ -98,7 +102,8 @@ export class SWSEV2DroidSheet extends
     const builder = new DroidSheetContextBuilder(actor);
     const overrides = {
       ...builder.build(),
-      editable: this.isEditable
+      editable: this.isEditable,
+      customSkillsEditable: this.isEditable
     };
 
     RenderAssertions.assertContextSerializable(

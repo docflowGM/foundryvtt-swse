@@ -77,14 +77,20 @@
     0 0 140px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.12);
 }
 
-/* Screen/content area */
+/* Screen/content area — FLEX CONTAINER FOR SCROLL ARCHITECTURE
+   Phase 11: Convert to flex column with proper height constraints.
+   All fixed sections (HUD, title, header, resources, actions, tabs) use flex: 0 0 auto.
+   Body uses flex: 1; min-height: 0 to claim remaining space and enable internal scroll.
+*/
 .swse-sheet-v2-shell .swse-v2-screen {
+  display: flex;
+  flex-direction: column;
   position: relative;
   background: radial-gradient(ellipse at 30% 10%, var(--screen-2) 0%, var(--screen) 50%, oklch(0.08 0.04 278) 100%);
   border: 1px solid oklch(0.3 0.04 260 / 0.6);
   border-radius: 10px;
   padding: 18px;
-  min-height: 100%;
+  height: 100%;
   overflow: hidden;
   box-shadow:
     inset 0 0 0 1px oklch(0 0 0 / 0.6),
@@ -107,8 +113,9 @@
   border-radius: 10px;
 }
 
-/* HUD status bar */
+/* HUD status bar — FIXED HEIGHT, NO FLEX GROW */
 .swse-sheet-v2-shell .swse-v2-hud {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -161,8 +168,9 @@
   background: var(--neg);
 }
 
-/* Title strip */
+/* Title strip — FIXED HEIGHT, NO FLEX GROW */
 .swse-sheet-v2-shell .swse-v2-title-strip {
+  flex: 0 0 auto;
   font-family: var(--font-display);
   text-align: center;
   font-size: 16px;
@@ -177,8 +185,9 @@
     -2px 0 0 oklch(var(--vapor-pink) / 0.4);
 }
 
-/* Header grid: portrait, identity, defenses */
+/* Header grid: portrait, identity, defenses — FIXED HEIGHT, NO FLEX GROW */
 .swse-sheet-v2-shell .swse-v2-header {
+  flex: 0 0 auto;
   display: grid;
   grid-template-columns: 128px 1fr 300px;
   gap: 18px;
@@ -186,16 +195,18 @@
   margin-bottom: 16px;
 }
 
-/* Resource strip: HP, DP, FP, CT */
+/* Resource strip: HP, DP, FP, CT — FIXED HEIGHT, NO FLEX GROW */
 .swse-sheet-v2-shell .swse-v2-resource-strip {
+  flex: 0 0 auto;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 14px;
   margin-bottom: 16px;
 }
 
-/* Tab navigation */
+/* Tab navigation — FIXED HEIGHT, NO FLEX GROW */
 .swse-sheet-v2-shell .swse-v2-tabs {
+  flex: 0 0 auto;
   display: flex;
   gap: 0;
   border-bottom: 1px solid oklch(var(--vapor-cyan) / 0.3);
@@ -234,12 +245,22 @@
   text-shadow: 0 0 8px oklch(var(--vapor-cyan) / 0.6);
 }
 
-/* Body layout: sidebar + main */
+/* Action buttons — FIXED HEIGHT, NO FLEX GROW */
+.swse-sheet-v2-shell .sheet-actions {
+  flex: 0 0 auto;
+}
+
+/* Body layout: sidebar + main — FLEX: 1 TO CLAIM REMAINING SPACE
+   CRITICAL: flex: 1 makes it grow to fill remaining vertical space after fixed sections.
+   CRITICAL: min-height: 0 allows flex column children to constrain their sizes.
+   Grid columns still work because grid + flex can coexist on the same element.
+*/
 .swse-sheet-v2-shell .swse-v2-body {
+  flex: 1;
+  min-height: 0;
   display: grid;
   grid-template-columns: 330px 1fr;
   gap: 16px;
-  min-height: 100%;
 }
 
 .swse-sheet-v2-shell .swse-v2-sidebar,
@@ -254,11 +275,16 @@
   gap: 12px;
 }
 
-/* Main content area */
+/* Main content area — FLEX COLUMN WITH INTERNAL SCROLL
+   CRITICAL: min-height: 0 allows this flex child to shrink and become a scroll owner.
+   Grid column 1fr expands to available width, flex column with min-height: 0
+   enables overflow-y: auto to work on internally-growing content (tab sections).
+*/
 .swse-sheet-v2-shell .swse-v2-main {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 8px;
 }

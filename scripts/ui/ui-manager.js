@@ -10,37 +10,66 @@ export class UIManager {
 
   static _onReady() {
     const theme = this.getTheme();
+    const motionStyle = this.getMotionStyle();
     this.applyTheme(theme);
+    this.applyMotionStyle(motionStyle);
     this._watchThemeSetting();
+    this._watchMotionSetting();
     this._handleFirstRun();
     console.log("[SWSE UI] UIManager initialized");
   }
 
   static getTheme() {
     try {
-      return SettingsHelper.getString('activeTheme', 'holo');
+      return SettingsHelper.getString('sheetTheme', 'holo');
     } catch {
       return "holo";
     }
   }
 
+  static getMotionStyle() {
+    try {
+      return SettingsHelper.getString('sheetMotionStyle', 'standard');
+    } catch {
+      return "standard";
+    }
+  }
+
   static applyTheme(theme) {
-    document.body.dataset.theme = theme;
+    document.documentElement.dataset.theme = theme;
     console.log(`[SWSE UI] Theme applied: ${theme}`);
     // DISABLED: Forcing re-render during ready hook was collapsing Foundry core windows
     // CSS theme variables are applied via data-theme attribute - no re-render needed
     // this._rerenderSWSESheets();
   }
 
+  static applyMotionStyle(motionStyle) {
+    document.documentElement.dataset.motionStyle = motionStyle;
+    console.log(`[SWSE UI] Motion style applied: ${motionStyle}`);
+  }
+
   static async setTheme(theme) {
-    await HouseRuleService.set("activeTheme", theme);
+    await game.settings.set('foundryvtt-swse', 'sheetTheme', theme);
     this.applyTheme(theme);
+  }
+
+  static async setMotionStyle(motionStyle) {
+    await game.settings.set('foundryvtt-swse', 'sheetMotionStyle', motionStyle);
+    this.applyMotionStyle(motionStyle);
   }
 
   static _watchThemeSetting() {
     Hooks.on("updateSetting", (setting) => {
-      if (setting.key === "foundryvtt-swse.activeTheme") {
+      if (setting.key === "foundryvtt-swse.sheetTheme") {
         this.applyTheme(setting.value);
+      }
+    });
+  }
+
+  static _watchMotionSetting() {
+    Hooks.on("updateSetting", (setting) => {
+      if (setting.key === "foundryvtt-swse.sheetMotionStyle") {
+        this.applyMotionStyle(setting.value);
       }
     });
   }

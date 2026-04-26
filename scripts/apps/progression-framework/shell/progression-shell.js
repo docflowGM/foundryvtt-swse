@@ -23,6 +23,7 @@
 
 import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts/utils/sheet-position.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
 import { ProgressionFinalizer } from './progression-finalizer.js';
@@ -89,6 +90,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // handler?.call(this, event, target) is called by #onClickAction; strings have no .call.
       // Each entry is a shorthand method so `this` resolves to the shell instance at call time.
       'continue'(e, t)            { return this._onNextStep(e, t); }, // Splash screen continue button
+      'skip-intro'(e, t)          { return this._onNextStep(e, t); }, // Skip intro splash, advance to next step
       'toggle-mentor'(e, t)       { return this._onToggleMentor(e, t); },
       'toggle-utility-bar'(e, t)  { return this._onToggleUtilityBar(e, t); },
       'ask-mentor'(e, t)          { return this._onAskMentor(e, t); },
@@ -476,20 +478,46 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * Get progression shell theme key (Phase 1 hook for future actor-sheet theme inheritance)
    * @returns {string} Theme key (e.g., 'vapor', 'droid', 'holo', etc.)
    */
+  /**
+   * Get progression shell theme (Phase 3: actor flags override global settings)
+   * Falls back to global client setting if actor flag not set
+   * @returns {string} Theme key ('holo' | 'high-contrast' | 'starship' | 'sand-people' | 'jedi' | 'high-republic')
+   */
   _getProgressionThemeKey() {
-    if (!this.actor) return 'cryo'; // fallback
+    if (!this.actor) {
+      // No actor: use global client setting
+      const globalTheme = SettingsHelper.getString('sheetTheme', 'holo');
+      return getActorSheetTheme(globalTheme);
+    }
     const flagValue = this.actor?.getFlag?.('foundryvtt-swse', 'sheetTheme');
-    return getActorSheetTheme(flagValue);
+    if (flagValue) {
+      // Actor flag set: use it
+      return getActorSheetTheme(flagValue);
+    }
+    // Actor flag not set: fall back to global setting
+    const globalTheme = SettingsHelper.getString('sheetTheme', 'holo');
+    return getActorSheetTheme(globalTheme);
   }
 
   /**
-   * Get progression shell motion style (Phase 3: shared actor-sheet motion registry)
-   * @returns {string} Motion style key ('off' | 'quiet' | 'standard' | 'cinematic' | 'diagnostic')
+   * Get progression shell motion style (Phase 3: actor flags override global settings)
+   * Falls back to global client setting if actor flag not set
+   * @returns {string} Motion style key ('standard' | 'reduced' | 'none')
    */
   _getProgressionMotionStyle() {
-    if (!this.actor) return 'standard'; // fallback
+    if (!this.actor) {
+      // No actor: use global client setting
+      const globalMotion = SettingsHelper.getString('sheetMotionStyle', 'standard');
+      return getActorSheetMotionStyle(globalMotion);
+    }
     const flagValue = this.actor?.getFlag?.('foundryvtt-swse', 'sheetMotionStyle');
-    return getActorSheetMotionStyle(flagValue);
+    if (flagValue) {
+      // Actor flag set: use it
+      return getActorSheetMotionStyle(flagValue);
+    }
+    // Actor flag not set: fall back to global setting
+    const globalMotion = SettingsHelper.getString('sheetMotionStyle', 'standard');
+    return getActorSheetMotionStyle(globalMotion);
   }
 
   // ═══ PHASE 4: SHELL-OWNED PRESENTATION HELPERS ═══

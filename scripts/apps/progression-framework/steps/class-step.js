@@ -18,6 +18,8 @@ import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engin
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
 import { evaluateClassEligibility } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-cache.js';
+import { getPCDroidAllowedHeroicClasses } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-trait-rules.js';
+import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 
 export class ClassStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -44,6 +46,10 @@ export class ClassStep extends ProgressionStepPlugin {
     // Phase 2.5: Track if this is a nonheroic progression
     this._isNonheroicProgression = false;
     this._isDroidProgression = false;
+
+    // Droid mode awareness
+    this._isStandardModelDroid = false;  // Standard model droids have special class rules
+    this._classConversionSurcharge = 1500; // RAW: Adding heroic class to standard model costs 1500
   }
 
   // ---------------------------------------------------------------------------
@@ -57,6 +63,12 @@ export class ClassStep extends ProgressionStepPlugin {
     // Phase 2.5: Detect nonheroic progression context
     this._isNonheroicProgression = shell.progressionSession?.nonheroicContext?.hasNonheroic === true;
     this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
+
+    // Droid mode awareness: Standard model droids have special class rules
+    if (this._isDroidProgression) {
+      this._isStandardModelDroid = shell?.progressionSession?.droidContext?.creationMode === 'standard-model' ||
+                                   shell?.progressionSession?.draftSelections?.droid?.isStandardModel === true;
+    }
 
     // If nonheroic progression, auto-filter to nonheroic classes only
     if (this._isNonheroicProgression) {
@@ -280,6 +292,23 @@ export class ClassStep extends ProgressionStepPlugin {
     // PHASE 2: await reconciliation after commit
     await this._commitNormalized(shell, 'class', normalizedClass);
 
+    // RAW: Standard model droids adding a heroic class incur a 1500 credit surcharge
+    if (this._isStandardModelDroid && !entry.system?.isNonheroic) {
+      // Add surcharge to droid credits
+      if (shell.progressionSession?.draftSelections?.droid) {
+        shell.progressionSession.draftSelections.droid.classConversionSurcharge = this._classConversionSurcharge;
+        const totalCost = (shell.progressionSession.draftSelections.droid.standardModelBaseCost || 0) +
+                         this._classConversionSurcharge;
+        shell.progressionSession.draftSelections.droid.totalCost = totalCost;
+
+        swseLogger.debug('[ClassStep] Standard model droid class surcharge applied', {
+          className: entry.name,
+          surcharge: this._classConversionSurcharge,
+          totalCost: totalCost
+        });
+      }
+    }
+
     this._committedClassId = id;
     this._committedClassName = entry.name;
 
@@ -426,6 +455,15 @@ export class ClassStep extends ProgressionStepPlugin {
         if (this._filters.heroicType === 'nonheroic') return isNonheroic;
         return true;
       });
+    }
+
+    // SWSE RAW: Droid class restriction
+    // PC droids are limited to Noble, Scoundrel, Scout, Soldier
+    // Jedi can be allowed via houserule setting
+    if (this._isDroidProgression) {
+      const allowJedi = ProgressionRules.allowDroidJediClass?.() ?? false;
+      const allowedClasses = getPCDroidAllowedHeroicClasses(allowJedi);
+      filtered = filtered.filter(c => allowedClasses.includes(c.name));
     }
 
     // Sort

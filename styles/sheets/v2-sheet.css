@@ -1,6 +1,238 @@
 /* styles/sheets/v2-sheet.css */
 
 /* ═══════════════════════════════════════════════════════════════
+   FONT FACE DECLARATIONS - SWSE ACTOR SHEET FONTS
+   All fonts loaded from assets/fonts/ directory
+   ═══════════════════════════════════════════════════════════════ */
+
+/* VT323 - Retro console display font
+   NOTE: VT323-Regular.ttf is corrupted (text file, not binary).
+   Commented out - no valid VT323 binary available. Fallback to system monospace.
+   To restore: obtain real VT323.ttf binary from Google Fonts or font source.
+*/
+/*
+@font-face {
+  font-family: "SWSE VT323";
+  src: url('../../assets/fonts/VT323-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+*/
+
+/* Space Grotesk - Geometric sans-serif */
+@font-face {
+  font-family: "SWSE Space Grotesk";
+  src: url('../../assets/fonts/SpaceGrotesk-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE Space Grotesk";
+  src: url('../../assets/fonts/SpaceGrotesk-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE Space Grotesk";
+  src: url('../../assets/fonts/SpaceGrotesk-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* JetBrains Mono - Modern monospace
+   FIXED: JetBrainsMono-Bold.ttf was corrupted (text file).
+   Using valid variable font instead for all weights. */
+@font-face {
+  font-family: "SWSE JetBrains Mono";
+  src: url('../../assets/fonts/JetBrainsMono-VariableFont_wght.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE JetBrains Mono";
+  src: url('../../assets/fonts/JetBrainsMono-VariableFont_wght.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE JetBrains Mono";
+  src: url('../../assets/fonts/JetBrainsMono-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "SWSE JetBrains Mono";
+  src: url('../../assets/fonts/JetBrainsMono-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+}
+
+/* IBM Plex Mono - Professional monospace
+   FIXED: IBMPlexMono-Regular.ttf was corrupted (text file).
+   Using valid Medium weight as fallback for normal weight. */
+@font-face {
+  font-family: "SWSE IBM Plex Mono";
+  src: url('../../assets/fonts/IBMPlexMono-Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE IBM Plex Mono";
+  src: url('../../assets/fonts/IBMPlexMono-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE IBM Plex Mono";
+  src: url('../../assets/fonts/IBMPlexMono-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "SWSE IBM Plex Mono";
+  src: url('../../assets/fonts/IBMPlexMono-BoldItalic.ttf') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+}
+
+/* Orbitron - Futuristic geometric display
+   FIXED: Orbitron-Regular.ttf, Orbitron-Bold.ttf, Orbitron-ExtraBold.ttf were corrupted (text files).
+   Using valid VariableFont and Medium weight for all weights. */
+@font-face {
+  font-family: "SWSE Orbitron";
+  src: url('../../assets/fonts/Orbitron-VariableFont_wght.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE Orbitron";
+  src: url('../../assets/fonts/Orbitron-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE Orbitron";
+  src: url('../../assets/fonts/Orbitron-VariableFont_wght.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE Orbitron";
+  src: url('../../assets/fonts/Orbitron-VariableFont_wght.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* Syne - Humanist sans-serif */
+@font-face {
+  font-family: "SWSE Syne";
+  src: url('../../assets/fonts/Syne-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE Syne";
+  src: url('../../assets/fonts/Syne-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE Syne";
+  src: url('../../assets/fonts/Syne-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE Syne";
+  src: url('../../assets/fonts/Syne-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Major Mono Display - Monospace display font */
+@font-face {
+  font-family: "SWSE Major Mono Display";
+  src: url('../../assets/fonts/MajorMonoDisplay-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Aurebesh - Star Wars alphabet font */
+@font-face {
+  font-family: "SWSE Aurebesh";
+  src: url('../../assets/fonts/Aurabesh/Aurebesh.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE Aurebesh";
+  src: url('../../assets/fonts/Aurabesh/Aurebesh Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Starjedi & Starjhol - Star Wars fonts */
+@font-face {
+  font-family: "SWSE Starjedi";
+  src: url('../../assets/fonts/Starjedi.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SWSE Starjhol";
+  src: url('../../assets/fonts/Starjhol.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FONT APPLICATION - Apply theme fonts to sheet elements
+   These rules apply the font CSS variables set by the theme system
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Apply body font to entire sheet by default */
+.sheet-shell {
+  font-family: var(--swse-font-body, system-ui, sans-serif);
+}
+
+/* Display font for headers and titles */
+.sheet-shell h1,
+.sheet-shell h2,
+.sheet-shell h3,
+.sheet-shell h4,
+.sheet-shell h5,
+.sheet-shell h6,
+.sheet-shell .char-name,
+.sheet-shell .sheet-header h2 {
+  font-family: var(--swse-font-display, 'Courier New', monospace);
+}
+
+/* Orbit font for UI accents and special elements */
+.sheet-shell .swse-utility-strip,
+.sheet-shell .swse-v2-control-dropdowns {
+  font-family: var(--swse-font-orbit, system-ui, sans-serif);
+}
+
+/* Monospace for code-like content (already applied in existing rules) */
+/* Note: .swse-sheet.combat-notes-textarea and other textareas already use --swse-font-mono */
+
+/* ═══════════════════════════════════════════════════════════════
    V2 VISUAL EDITABILITY SYSTEM
    Clearly distinguish editable (input) from derived (read-only) values
    ═══════════════════════════════════════════════════════════════ */
@@ -117,7 +349,40 @@ form.application.sheet > .window-content > .swse-character-sheet-form {
   min-width: 0;
 }
 
-.swse-sheet-ui > .sheet-shell,
+/* V2 SHELL WRAPPER FLEX CHAIN
+   The character v2 sheet uses nested wrapper divs for visual design:
+   - .swse-sheet-v2-shell: outer datapad shell
+   - .swse-v2-tablet: tablet form factor
+   - .swse-v2-screen: screen/display layer
+   All must participate in the flex chain to pass bounded height to tabs.
+   CRITICAL: Each must have display: flex, flex-direction: column, flex: 1 1 0%, min-height: 0
+   so the bounded height constraint flows from the form down to the scroll owner (.tab.active). */
+
+.swse-sheet-v2-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0%;
+  min-height: 0;
+  min-width: 0;
+}
+
+.swse-v2-tablet {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0%;
+  min-height: 0;
+  min-width: 0;
+}
+
+.swse-v2-screen {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0%;
+  min-height: 0;
+  min-width: 0;
+}
+
+.swse-v2-screen > .sheet-shell,
 .swse-sheet-ui > section.swse-sheet {
   display: flex;
   flex-direction: column;
@@ -586,10 +851,23 @@ form.application.sheet > .window-content > .swse-character-sheet-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+  width: 100%;
 }
 
 .swse-sheet .swse-v2-left,
 .swse-sheet .swse-v2-right { min-width: 0; }
+
+/* TAB CONTENT ALIGNMENT
+   Ensure tab flex container explicitly stretches children horizontally.
+   This is the cleaner approach: set align-items: stretch on the tab
+   so direct children (panel sections) expand to full width.
+   CRITICAL: When a tab is display: flex; flex-direction: column, the default
+   align-items: stretch should apply, but we set it explicitly here to ensure
+   abilities-panel, skills-panel, and other section children take full width. */
+.swse-sheet-ui .sheet-body > .tab,
+.swse-sheet .tab {
+  align-items: stretch;
+}
 
 .swse-sheet .swse-v2-full { grid-column: 1 / -1; }
 
@@ -5895,6 +6173,153 @@ select option:checked {
   gap: 12px;
   align-items: start;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMPACT THEME/MOTION CONTROL DROPDOWNS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.swse-v2-control-dropdowns {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  background: rgba(5, 15, 30, 0.65);
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  border-radius: 4px;
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+.swse-control-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+}
+
+.swse-control-label {
+  color: rgba(124, 232, 255, 0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  white-space: nowrap;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.swse-control-select {
+  min-width: 100px;
+  max-width: 140px;
+  padding: 4px 8px;
+  background: rgba(2, 8, 16, 0.95);
+  border: 1px solid rgba(0, 200, 255, 0.3);
+  border-radius: 3px;
+  color: rgba(200, 240, 255, 0.95);
+  font-family: var(--swse-font-mono, 'Courier New', monospace);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  outline: none;
+}
+
+.swse-control-select:hover {
+  border-color: rgba(0, 255, 136, 0.4);
+  background: rgba(2, 12, 24, 0.98);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.15);
+}
+
+.swse-control-select:focus {
+  border-color: rgba(0, 255, 136, 0.6);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.25), inset 0 0 4px rgba(0, 255, 136, 0.1);
+}
+
+.swse-control-select option {
+  background: #010a14;
+  color: #c8f0ff;
+  padding: 4px 8px;
+}
+
+.swse-control-select option:checked {
+  background: linear-gradient(rgba(0, 100, 200, 0.8), rgba(0, 100, 200, 0.8));
+  color: #ffffff;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ACTOR SHEET THEME SYSTEM (data-theme based color theming)
+   Applies theme-specific colors based on [data-theme] attribute set on .sheet-shell
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* THEME: Vapor (cyan-heavy cyberpunk) */
+[data-theme="vapor"] .swse-stat .value { color: #ff1493; }
+[data-theme="vapor"] .swse-sheet .swse-v2-identity-grid .value { color: #ff1493; }
+[data-theme="vapor"] .swse-sheet .swse-v2-hp-block .value { color: #ff1493; }
+
+/* THEME: Cryo (pale cyan, cool - default) */
+[data-theme="cryo"] .swse-stat .value { color: #e0f7ff; }
+[data-theme="cryo"] .swse-sheet .swse-v2-identity-grid .value { color: #e0f7ff; }
+[data-theme="cryo"] .swse-sheet .swse-v2-hp-block .value { color: #e0f7ff; }
+
+/* THEME: Droid (golden yellow, mechanical) */
+[data-theme="droid"] .swse-stat .value { color: #ffd700; }
+[data-theme="droid"] .swse-sheet .swse-v2-identity-grid .value { color: #ffd700; }
+[data-theme="droid"] .swse-sheet .swse-v2-hp-block .value { color: #ffd700; }
+
+/* THEME: Blood (deep crimson, dark) */
+[data-theme="blood"] .swse-stat .value { color: #ff4444; }
+[data-theme="blood"] .swse-sheet .swse-v2-identity-grid .value { color: #ff4444; }
+[data-theme="blood"] .swse-sheet .swse-v2-hp-block .value { color: #ff4444; }
+
+/* THEME: Merc (gunmetal green, tactical) */
+[data-theme="merc"] .swse-stat .value { color: #88dd88; }
+[data-theme="merc"] .swse-sheet .swse-v2-identity-grid .value { color: #88dd88; }
+[data-theme="merc"] .swse-sheet .swse-v2-hp-block .value { color: #88dd88; }
+
+/* THEME: Imperial (dark red/black) */
+[data-theme="imperial"] .swse-stat .value { color: #cc3333; }
+[data-theme="imperial"] .swse-sheet .swse-v2-identity-grid .value { color: #cc3333; }
+[data-theme="imperial"] .swse-sheet .swse-v2-hp-block .value { color: #cc3333; }
+
+/* THEME: Rebel (warm earth tones) */
+[data-theme="rebel"] .swse-stat .value { color: #ffaa66; }
+[data-theme="rebel"] .swse-sheet .swse-v2-identity-grid .value { color: #ffaa66; }
+[data-theme="rebel"] .swse-sheet .swse-v2-hp-block .value { color: #ffaa66; }
+
+/* THEME: Sith (dark red/purple) */
+[data-theme="sith"] .swse-stat .value { color: #dd3366; }
+[data-theme="sith"] .swse-sheet .swse-v2-identity-grid .value { color: #dd3366; }
+[data-theme="sith"] .swse-sheet .swse-v2-hp-block .value { color: #dd3366; }
+
+/* THEME: Holo (bright cyan hologram) */
+[data-theme="holo"] .swse-stat .value { color: #00ffff; }
+[data-theme="holo"] .swse-sheet .swse-v2-identity-grid .value { color: #00ffff; }
+[data-theme="holo"] .swse-sheet .swse-v2-hp-block .value { color: #00ffff; }
+
+/* THEME: Jedi (cool blue) */
+[data-theme="jedi"] .swse-stat .value { color: #4488ff; }
+[data-theme="jedi"] .swse-sheet .swse-v2-identity-grid .value { color: #4488ff; }
+[data-theme="jedi"] .swse-sheet .swse-v2-hp-block .value { color: #4488ff; }
+
+/* THEME: High-Republic (golden warm) */
+[data-theme="high-republic"] .swse-stat .value { color: #ffcc66; }
+[data-theme="high-republic"] .swse-sheet .swse-v2-identity-grid .value { color: #ffcc66; }
+[data-theme="high-republic"] .swse-sheet .swse-v2-hp-block .value { color: #ffcc66; }
+
+/* THEME: High-Contrast (accessibility) */
+[data-theme="high-contrast"] .swse-stat .value { color: #ffff00; }
+[data-theme="high-contrast"] .swse-sheet .swse-v2-identity-grid .value { color: #ffff00; }
+[data-theme="high-contrast"] .swse-sheet .swse-v2-hp-block .value { color: #ffff00; }
+
+/* THEME: Starship (cool blue tech) */
+[data-theme="starship"] .swse-stat .value { color: #44ccff; }
+[data-theme="starship"] .swse-sheet .swse-v2-identity-grid .value { color: #44ccff; }
+[data-theme="starship"] .swse-sheet .swse-v2-hp-block .value { color: #44ccff; }
+
+/* THEME: Sand-People (desert earth) */
+[data-theme="sand-people"] .swse-stat .value { color: #ddaa66; }
+[data-theme="sand-people"] .swse-sheet .swse-v2-identity-grid .value { color: #ddaa66; }
+[data-theme="sand-people"] .swse-sheet .swse-v2-hp-block .value { color: #ddaa66; }
 
 .swse-sheet .resource-item {
   min-width: 0;

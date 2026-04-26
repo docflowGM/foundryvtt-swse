@@ -202,6 +202,29 @@ game.settings.register('foundryvtt-swse', 'debugMode', {
     }
   });
 
+  // Motion Style Settings
+  game.settings.register('foundryvtt-swse', 'sheetMotionStyle', {
+    name: 'Sheet Motion Style',
+    hint: 'Select animation and motion preferences for sheet interactions',
+    scope: 'client',
+    config: true,
+    type: String,
+    choices: {
+      'off': 'Off (Static)',
+      'quiet': 'Quiet (Subtle)',
+      'standard': 'Standard (Default)',
+      'cinematic': 'Cinematic (Rich)',
+      'diagnostic': 'Diagnostic (Console)'
+    },
+    default: 'standard',
+    onChange: async (value) => {
+      if (game.ready) {
+        const { UIManager } = await import("/systems/foundryvtt-swse/scripts/ui/ui-manager.js");
+        await UIManager.setMotionStyle(value);
+      }
+    }
+  });
+
   // Migration tracking setting (hidden from config UI)
   game.settings.register('foundryvtt-swse', 'actorValidationMigration', {
     name: 'Actor Validation Migration Version',
