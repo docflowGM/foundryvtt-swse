@@ -1,0 +1,54 @@
+<div class="mod-card" data-mod-id="{{id}}">
+  <div class="mod-card-header">
+    <h4 class="mod-name">{{name}}</h4>
+    <span class="mod-category-badge">{{category}}</span>
+  </div>
+
+  <div class="mod-card-body">
+    <p class="mod-description">{{description}}</p>
+
+    <div class="mod-stats">
+      {{#if (gt cost 0)}}
+        <div class="stat stat-cost">
+          <span class="stat-icon">💰</span>
+          <span class="stat-value">{{cost}}</span>
+        </div>
+      {{/if}}
+
+      {{#if (gt slots 0)}}
+        <div class="stat stat-slots">
+          <span class="stat-icon">▤</span>
+          <span class="stat-value">{{slots}} slot{{#if (gt slots 1)}}s{{/if}}</span>
+        </div>
+      {{/if}}
+
+      {{#if tags}}
+        <div class="stat stat-tags">
+          {{#each tags}}
+            <span class="tag">{{this}}</span>
+          {{/each}}
+        </div>
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="mod-card-actions">
+    <button
+      type="button"
+      class="btn-select-mod"
+      data-action="select-mod"
+      title="Add this modification"
+    >
+      <i class="fas fa-plus"></i> Add
+    </button>
+    <button
+      type="button"
+      class="btn-remove-mod"
+      data-action="remove-mod"
+      title="Remove this modification"
+      style="display: none;"
+    >
+      <i class="fas fa-minus"></i> Remove
+    </button>
+  </div>
+</div>

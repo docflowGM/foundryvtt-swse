@@ -21,6 +21,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { getHeroicLevel, getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 
 export class LightsaberConstructionEngine {
+  static _catalogCache = null;
   /**
    * Get all available construction options for an actor
    * Returns chassis, crystals, and accessories the actor could potentially select
@@ -37,56 +38,149 @@ export class LightsaberConstructionEngine {
 
     try {
       const items = actor.items || [];
-
-      // Query constructible chassis
-      const chassis = items
-        .filter(i =>
-          i.type === "weapon" &&
-          i.system?.constructible === true &&
-          i.system?.subtype === "lightsaber"
-        )
-        .map(i => ({
-          id: i.id,
-          name: i.name,
-          chassisId: i.system.chassisId,
-          baseBuildDc: i.system.baseBuildDc,
-          baseCost: i.system.baseCost
-        }));
-
-      // Query crystals
-      const crystals = items
-        .filter(i =>
-          i.type === "weaponUpgrade" &&
-          i.system?.lightsaber?.category === "crystal"
-        )
-        .map(i => ({
-          id: i.id,
-          name: i.name,
-          compatibleChassis: i.system.lightsaber.compatibleChassis || [],
-          buildDcModifier: i.system.lightsaber?.buildDcModifier ?? 0,
-          cost: i.system.cost ?? 0,
-          rarity: i.system.lightsaber?.rarity ?? "common"
-        }));
-
-      // Query accessories
-      const accessories = items
-        .filter(i =>
-          i.type === "weaponUpgrade" &&
-          i.system?.lightsaber?.category === "accessory"
-        )
-        .map(i => ({
-          id: i.id,
-          name: i.name,
-          compatibleChassis: i.system.lightsaber.compatibleChassis || [],
-          buildDcModifier: i.system.lightsaber?.buildDcModifier ?? 0,
-          cost: i.system.cost ?? 0,
-          rarity: i.system.lightsaber?.rarity ?? "common"
-        }));
-
+      const chassis = items.filter(i => this.isLightsaberItem(i)).map(i => this.#summarizeOption(i));
+      const crystals = items.filter(i => i.type === "weaponUpgrade" && i.system?.lightsaber?.category === "crystal").map(i => this.#summarizeOption(i));
+      const accessories = items.filter(i => i.type === "weaponUpgrade" && i.system?.lightsaber?.category === "accessory").map(i => this.#summarizeOption(i));
       return { chassis, crystals, accessories };
     } catch (err) {
       SWSELogger.error("getConstructionOptions failed:", err);
       return { chassis: [], crystals: [], accessories: [] };
+    }
+  }
+
+  static async getCatalogOptions() {
+    if (this._catalogCache) return this._catalogCache;
+    const getDocs = async (packId, fallback = []) => {
+      try {
+        const pack = game?.packs?.get(packId);
+        if (!pack) return fallback;
+        const docs = await pack.getDocuments();
+        return docs || fallback;
+      } catch (err) {
+        SWSELogger.error(`getCatalogOptions failed for ${packId}:`, err);
+        return fallback;
+      }
+    };
+
+    const [chassis, crystals, accessories] = await Promise.all([
+      getDocs('foundryvtt-swse.weapons-lightsabers'),
+      getDocs('foundryvtt-swse.lightsaber-crystals'),
+      getDocs('foundryvtt-swse.lightsaber-accessories')
+    ]);
+
+    this._catalogCache = {
+      chassis: chassis.filter(i => this.isLightsaberItem(i) && i.system?.constructible === true).map(i => this.#summarizeOption(i)),
+      crystals: crystals.filter(i => i.type === 'weaponUpgrade' && i.system?.lightsaber?.category === 'crystal').map(i => this.#summarizeOption(i)),
+      accessories: accessories.filter(i => i.type === 'weaponUpgrade' && i.system?.lightsaber?.category === 'accessory').map(i => this.#summarizeOption(i))
+    };
+    return this._catalogCache;
+  }
+
+  static isLightsaberItem(item) {
+    if (!item) return false;
+    return item.type === 'lightsaber' || (item.type === 'weapon' && (item.system?.subtype === 'lightsaber' || item.system?.weaponCategory === 'lightsaber'));
+  }
+
+  static getOwnedLightsabers(actor) {
+    return (actor?.items ?? []).filter(item => this.isLightsaberItem(item));
+  }
+
+  static hasSelfBuiltLightsaber(actor) {
+    return this.getOwnedLightsabers(actor).some(item => item.flags?.swse?.builtBy === actor?.id);
+  }
+
+  static getEligibility(actor) {
+    return this.#validateEligibility(actor);
+  }
+
+  static getEditState(item) {
+    const flags = item?.flags?.swse ?? {};
+    const cfg = flags.lightsaberConfig ?? {};
+    return {
+      chassisId: cfg.chassisId ?? item?.system?.chassisId ?? null,
+      crystalId: cfg.crystalId ?? null,
+      accessoryIds: Array.isArray(cfg.accessoryIds) ? [...cfg.accessoryIds] : [],
+      bladeColor: flags.bladeColor ?? 'blue',
+      builtBy: flags.builtBy ?? null,
+      attunedBy: flags.attunedBy ?? null,
+      selfBuilt: !!flags.builtBy
+    };
+  }
+
+  static async getBuildPreview(actor, config) {
+    const eligibility = this.getEligibility(actor);
+    if (!eligibility?.eligible) {
+      return { success: false, reason: eligibility.reason, eligibility };
+    }
+    const resolved = await this.#resolveSelections(actor, config);
+    if (!resolved.success) return resolved;
+
+    const { chassis, crystal, accessories } = resolved;
+    const baseDc = chassis.system?.baseBuildDc ?? 20;
+    const crystalDcMod = crystal.system?.lightsaber?.buildDcModifier ?? 0;
+    const accessoryDcMod = accessories.reduce((sum, a) => sum + (a.system?.lightsaber?.buildDcModifier ?? 0), 0);
+    const finalDc = baseDc + crystalDcMod + accessoryDcMod;
+    const baseCost = chassis.system?.baseCost ?? chassis.system?.cost ?? 0;
+    const totalCost = baseCost + (crystal.system?.cost ?? 0) + accessories.reduce((sum, a) => sum + (a.system?.cost ?? 0), 0);
+    const modifier = actor.system?.skills?.useTheForce?.total ?? 0;
+    const take10Total = modifier + 10;
+    return {
+      success: true,
+      chassis: this.#summarizeOption(chassis),
+      crystal: this.#summarizeOption(crystal),
+      accessories: accessories.map(a => this.#summarizeOption(a)),
+      finalDc,
+      totalCost,
+      modifier,
+      take10Total,
+      canTake10: take10Total >= finalDc,
+      timeHours: 24,
+      eligibility
+    };
+  }
+
+  static async applyEdits(actor, weapon, config) {
+    if (!actor || !weapon || !this.isLightsaberItem(weapon)) {
+      return { success: false, reason: 'invalid_target' };
+    }
+
+    const resolved = await this.#resolveSelections(actor, {
+      chassisItemId: config?.chassisItemId ?? weapon.system?.chassisId,
+      crystalItemId: config?.crystalItemId,
+      accessoryItemIds: config?.accessoryItemIds || []
+    });
+    if (!resolved.success) return resolved;
+
+    const { crystal, accessories } = resolved;
+    const modifiers = [];
+    if (Array.isArray(crystal.system?.modifiers)) modifiers.push(...crystal.system.modifiers);
+    for (const accessory of accessories) {
+      if (Array.isArray(accessory.system?.modifiers)) modifiers.push(...accessory.system.modifiers);
+    }
+
+    const baseName = weapon.name.replace(/\s*\([^)]*\)\s*$/, '').trim();
+    const accessoryNames = accessories.map(a => a.name).join(', ');
+    const suffix = accessoryNames ? ` (${crystal.name} + ${accessoryNames})` : ` (${crystal.name})`;
+    const damageTypeOverride = modifiers.find(m => m.type === 'DAMAGE_TYPE_CHANGE')?.value;
+    const update = {
+      _id: weapon.id,
+      name: `${baseName}${suffix}`,
+      'system.modifiers': modifiers,
+      'flags.swse.bladeColor': config?.bladeColor || 'blue',
+      'flags.swse.lightsaberConfig': {
+        chassisId: weapon.system?.chassisId ?? null,
+        crystalId: crystal.id,
+        accessoryIds: accessories.map(a => a.id)
+      }
+    };
+    if (damageTypeOverride) update['system.damageType'] = String(damageTypeOverride).toLowerCase();
+
+    try {
+      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [update]);
+      return { success: true, itemId: weapon.id };
+    } catch (err) {
+      SWSELogger.error('applyEdits failed:', err);
+      return { success: false, reason: 'mutation_failed', error: err.message };
     }
   }
 
@@ -125,38 +219,10 @@ export class LightsaberConstructionEngine {
         return { success: false, reason: eligibilityCheck.reason };
       }
 
-      // Step 2: Resolve items
-      const chassis = actor.items.get(config.chassisItemId);
-      if (!chassis) {
-        return { success: false, reason: "chassis_not_found" };
-      }
-
-      // Validate chassis is constructible
-      if (chassis.type !== "weapon" || chassis.system?.constructible !== true) {
-        return { success: false, reason: "invalid_chassis" };
-      }
-
-      // Resolve crystal
-      const crystal = actor.items.get(config.crystalItemId);
-      if (!crystal) {
-        return { success: false, reason: "crystal_not_found" };
-      }
-
-      if (crystal.type !== "weaponUpgrade" || crystal.system?.lightsaber?.category !== "crystal") {
-        return { success: false, reason: "invalid_crystal" };
-      }
-
-      // Resolve accessories
-      const accessories = (config.accessoryItemIds || [])
-        .map(id => actor.items.get(id))
-        .filter(a => a !== undefined);
-
-      // Validate each accessory
-      for (const accessory of accessories) {
-        if (accessory.type !== "weaponUpgrade" || accessory.system?.lightsaber?.category !== "accessory") {
-          return { success: false, reason: "invalid_accessory" };
-        }
-      }
+      // Step 2: Resolve selections from compendium/actor inventory
+      const resolved = await this.#resolveSelections(actor, config);
+      if (!resolved.success) return resolved;
+      const { chassis, crystal, accessories } = resolved;
 
       // Step 3: Validate compatibility
       const chassisId = chassis.system.chassisId;
@@ -202,18 +268,25 @@ export class LightsaberConstructionEngine {
       // Step 7: Execute Use the Force roll
       const skill = actor.system.skills?.useTheForce;
       const modifier = skill?.total ?? 0;
-      const formula = `1d20 + ${modifier}`;
-
-      let roll;
-      try {
-        roll = await RollEngine.safeRoll(formula);
-        await roll.evaluate({ async: true });
-      } catch (err) {
-        SWSELogger.error("Construction roll failed:", err);
-        return { success: false, reason: "roll_failed" };
+      let rollTotal = 0;
+      const checkMode = config?.checkMode === 'take10' ? 'take10' : 'roll';
+      if (checkMode === 'take10') {
+        rollTotal = modifier + 10;
+        if (rollTotal < finalDc) {
+          return { success: false, reason: 'take10_insufficient', finalDc, rollTotal, modifier };
+        }
+      } else {
+        const formula = `1d20 + ${modifier}`;
+        let roll;
+        try {
+          roll = await RollEngine.safeRoll(formula);
+          await roll.evaluate({ async: true });
+        } catch (err) {
+          SWSELogger.error("Construction roll failed:", err);
+          return { success: false, reason: "roll_failed" };
+        }
+        rollTotal = roll.total;
       }
-
-      const rollTotal = roll.total;
 
       // Step 8: Check roll result
       if (rollTotal < finalDc) {
@@ -249,6 +322,11 @@ export class LightsaberConstructionEngine {
           throw new Error("Failed to create lightsaber item");
         }
 
+        try {
+          await actor.unsetFlag?.('foundryvtt-swse', 'lightsaberConstructionDeferred');
+          await actor.unsetFlag?.('foundryvtt-swse', 'lightsaberConstructionAvailable');
+        } catch (_err) {}
+
         return {
           success: true,
           itemId,
@@ -266,6 +344,53 @@ export class LightsaberConstructionEngine {
       SWSELogger.error("attemptConstruction failed:", err);
       return { success: false, reason: "internal_error" };
     }
+  }
+
+  static #summarizeOption(item) {
+    return {
+      id: item.id,
+      _id: item.id,
+      name: item.name,
+      img: item.img,
+      type: item.type,
+      system: foundry.utils.deepClone(item.system ?? {}),
+      flags: foundry.utils.deepClone(item.flags ?? {}),
+      description: item.system?.description ?? '',
+      rarity: item.system?.lightsaber?.rarity ?? item.system?.rarity ?? 'common',
+      buildDcModifier: item.system?.lightsaber?.buildDcModifier ?? 0,
+      cost: item.system?.cost ?? 0,
+      compatibleChassis: item.system?.lightsaber?.compatibleChassis || [],
+      bladeColor: item.system?.lightsaber?.bladeColor || 'Varies'
+    };
+  }
+
+  static async #resolveSelections(actor, config) {
+    const catalogs = await this.getCatalogOptions();
+    const byId = (arr, id) => arr.find(entry => entry.id === id || entry._id === id || entry.system?.chassisId === id);
+    const ownedById = id => actor?.items?.get?.(id);
+
+    const chassis = ownedById(config?.chassisItemId) || byId(catalogs.chassis, config?.chassisItemId);
+    if (!chassis) return { success: false, reason: 'chassis_not_found' };
+    if (!(this.isLightsaberItem(chassis) && chassis.system?.constructible === true)) {
+      return { success: false, reason: 'invalid_chassis' };
+    }
+
+    const crystal = ownedById(config?.crystalItemId) || byId(catalogs.crystals, config?.crystalItemId);
+    if (!crystal) return { success: false, reason: 'crystal_not_found' };
+    if (!(crystal.type === 'weaponUpgrade' && crystal.system?.lightsaber?.category === 'crystal')) {
+      return { success: false, reason: 'invalid_crystal' };
+    }
+
+    const accessories = [];
+    for (const accessoryId of (config?.accessoryItemIds || [])) {
+      const accessory = ownedById(accessoryId) || byId(catalogs.accessories, accessoryId);
+      if (!accessory) return { success: false, reason: 'accessory_not_found' };
+      if (!(accessory.type === 'weaponUpgrade' && accessory.system?.lightsaber?.category === 'accessory')) {
+        return { success: false, reason: 'invalid_accessory' };
+      }
+      accessories.push(accessory);
+    }
+    return { success: true, chassis, crystal, accessories };
   }
 
   /**
@@ -287,7 +412,7 @@ export class LightsaberConstructionEngine {
    */
   static #createBuiltLightsaber(chassis, crystal, accessories, builderId, builtAt, bladeColor = null) {
     // Clone chassis as base
-    const baseData = chassis.toObject();
+    const baseData = typeof chassis.toObject === "function" ? chassis.toObject() : foundry.utils.deepClone(chassis);
 
     // Generate unique name combining components
     const crystalName = crystal.name;
@@ -326,7 +451,12 @@ export class LightsaberConstructionEngine {
           builtBy: builderId,
           builtAt: builtAt,
           attunedBy: null,
-          bladeColor: bladeColor || "blue"
+          bladeColor: bladeColor || "blue",
+          lightsaberConfig: {
+            chassisId: chassis.system?.chassisId ?? null,
+            crystalId: crystal.id,
+            accessoryIds: accessories.map(a => a.id)
+          }
         }
       }
     };

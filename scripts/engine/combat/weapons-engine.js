@@ -496,7 +496,7 @@ export class WeaponsEngine {
       // Import ActorEngine dynamically to avoid circular dependencies
       const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
-      const currentFP = actor.system?.forcePoints?.value ?? 0;
+      const currentFP = actor.system?.forcePoints?.value ?? actor.system?.resources?.forcePoints?.value ?? 0;
       if (currentFP < 1) {
         return { success: false, reason: 'no_force_points' };
       }
@@ -504,7 +504,8 @@ export class WeaponsEngine {
       // Step 1: Deduct Force Point via ActorEngine mutation plan
       await ActorEngine.applyMutationPlan(actor, {
         set: {
-          'system.forcePoints.value': currentFP - 1
+          'system.forcePoints.value': currentFP - 1,
+          'system.resources.forcePoints.value': currentFP - 1
         }
       });
 

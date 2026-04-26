@@ -5,6 +5,11 @@
     <h3 class="section-header">Force Suite</h3>
 
     <div class="force-filter-bar swse-control-cluster">
+      {{#if lightsaberConstructionAvailable}}
+        <button type="button" class="force-tag-filter construct-lightsaber-btn" data-action="construct-lightsaber">
+          {{#if lightsaberConstructionDeferred}}Construct Lightsaber{{else}}Lightsaber Construction Available{{/if}}
+        </button>
+      {{/if}}
       <select data-action="force-sort">
         <option value="name">Sort: Name</option>
         <option value="tag">Sort: Tag</option>

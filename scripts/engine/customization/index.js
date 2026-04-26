@@ -1,0 +1,10 @@
+export { ItemProfileResolver } from '/systems/foundryvtt-swse/scripts/engine/customization/item-profile-resolver.js';
+export { UpgradeSlotEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/upgrade-slot-engine.js';
+export { CustomizationCostEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/customization-cost-engine.js';
+export { UpgradeEligibilityEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/upgrade-eligibility-engine.js';
+export { StructuralChangeEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/structural-change-engine.js';
+export { InstallRemoveEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/install-remove-engine.js';
+export { TemplateEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/template-engine.js';
+export { CustomizationWorkflow } from '/systems/foundryvtt-swse/scripts/engine/customization/customization-workflow.js';
+export { UPGRADE_CATALOG, TEMPLATE_CATALOG } from '/systems/foundryvtt-swse/scripts/engine/customization/upgrade-catalog.js';
+export { RESTRICTION_ORDER, getMostRestrictive, normalizeRestriction } from '/systems/foundryvtt-swse/scripts/engine/customization/restriction-model.js';

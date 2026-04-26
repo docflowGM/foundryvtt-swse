@@ -2151,6 +2151,15 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
       ui.notifications.success(`${this.actor.name} leveled up to level ${newLevel}!`);
 
+      try {
+        const { promptLightsaberConstructionIfEligible } = await import('/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-router.js');
+        setTimeout(() => {
+          promptLightsaberConstructionIfEligible(this.actor, { newLevel, source: 'levelup' });
+        }, 250);
+      } catch (lightsaberErr) {
+        swseLogger.warn('SWSE LevelUp | Lightsaber construction prompt failed to load', lightsaberErr);
+      }
+
       // Close dialog and re-render actor sheet to show changes
       this.close();
       this.actor.sheet.render(true);

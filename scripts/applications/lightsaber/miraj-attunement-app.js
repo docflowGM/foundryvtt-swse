@@ -14,6 +14,8 @@
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { WeaponsEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/weapons-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
+import { getActorSheetTheme, buildActorSheetThemeStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
+import { getActorSheetMotionStyle, buildActorSheetMotionStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
 
 export class MirajAttunementApp extends BaseSWSEAppV2 {
   constructor(actor, weapon, options = {}) {
@@ -47,13 +49,17 @@ export class MirajAttunementApp extends BaseSWSEAppV2 {
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
 
+    const themeKey = getActorSheetTheme(this.actor?.getFlag?.('foundryvtt-swse', 'sheetTheme'));
+    const motionStyle = getActorSheetMotionStyle(this.actor?.getFlag?.('foundryvtt-swse', 'sheetMotionStyle'));
     return {
       ...context,
       actor: this.actor,
       weapon: this.weapon,
       weaponName: this.weapon.name,
-      hasForcePoint: (this.actor.system?.resources?.forcePoints?.value ?? 0) >= 1,
-      bladeColor: this.weapon.flags?.swse?.bladeColor || "blue"
+      hasForcePoint: ((this.actor.system?.resources?.forcePoints?.value ?? this.actor.system?.forcePoints?.value ?? 0) >= 1),
+      bladeColor: this.weapon.flags?.swse?.bladeColor || "blue",
+      themeStyleInline: buildActorSheetThemeStyle(themeKey),
+      motionStyleInline: buildActorSheetMotionStyle(motionStyle)
     };
   }
 

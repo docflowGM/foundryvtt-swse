@@ -1,15 +1,16 @@
 /**
- * LIGHTSABER CONSTRUCTION APPLICATION
+ * Lightsaber Construction / Editing Application
  *
- * Cinematic builder UI with:
- * - Holographic energy rod color selector
- * - Live blade beam preview
- * - Color-reactive panels
- * - Construction mechanics integration
+ * Construction mode:
+ * - Available to actors who meet lightsaber construction prerequisites
+ * - Supports roll or Take 10 when Take 10 would meet the Build DC
+ * - Reuses LightsaberConstructionEngine and Miraj attunement flow
  *
- * Pure UI layer. All mutations routed to LightsaberConstructionEngine.
- *
- * Extends ModificationModalShell for unified layout and lifecycle management
+ * Edit mode:
+ * - Available for any owned lightsaber
+ * - Allows crystal / accessory / blade color changes
+ * - Does not require construction checks
+ * - Self-built sabers can still attune here if not yet attuned
  */
 
 import { ModificationModalShell } from "/systems/foundryvtt-swse/scripts/apps/base/modification-modal-shell.js";
@@ -17,12 +18,31 @@ import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/e
 import { BLADE_COLOR_MAP, VARIES_COLOR_LIST, DEFAULT_BLADE_COLOR } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
 import { MirajAttunementApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/miraj-attunement-app.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
+import { getActorSheetTheme, buildActorSheetThemeStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
+import { getActorSheetMotionStyle, buildActorSheetMotionStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
+
+const MIRAJ_COPY = {
+  construct: "The kyber hums before it sings. Select a chassis, choose a crystal, and let the Force guide your hand through the forge.",
+  edit: "A lightsaber is a living promise. Tune the crystal, settle the accessories, and let the blade become truer to the one who carries it.",
+  existing: "This blade was not born from your hands. You may refine its crystal and fittings, but you cannot claim attunement through another maker's labor."
+};
 
 export class LightsaberConstructionApp extends ModificationModalShell {
-  constructor(actor, options = {}) {
-    super(options);
+  constructor(actor, itemOrOptions = {}, options = {}) {
+    const itemLike = itemOrOptions && typeof itemOrOptions === 'object' && ('system' in itemOrOptions || 'type' in itemOrOptions);
+    const item = itemLike ? itemOrOptions : null;
+    const mergedOptions = itemLike ? options : itemOrOptions || {};
+    super(actor, item, mergedOptions);
+
     this.actor = actor;
+    this.item = item;
+    this.mode = mergedOptions?.mode || (item ? 'edit' : 'construct');
     this.selectedBladeColor = DEFAULT_BLADE_COLOR;
+    this.selectedAccessories = [];
+    this.selectedCheckMode = 'roll';
+    this._catalogs = { chassis: [], crystals: [], accessories: [] };
+    this.selectedChassis = null;
+    this.selectedCrystal = null;
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}), {
@@ -30,10 +50,10 @@ export class LightsaberConstructionApp extends ModificationModalShell {
     classes: ["swse", "lightsaber-construction", "swse-theme-holo"],
     window: {
       icon: "fas fa-lightsaber",
-      title: "Lightsaber Construction",
+      title: "Lightsaber Forge",
       resizable: true
     },
-    position: { width: 900, height: 700 }
+    position: { width: 980, height: 760 }
   });
 
   static PARTS = {
@@ -44,223 +64,229 @@ export class LightsaberConstructionApp extends ModificationModalShell {
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
+    this._catalogs = await LightsaberConstructionEngine.getCatalogOptions();
+    this.#hydrateSelections();
 
-    // Get available options from engine
-    const constructionOptions = LightsaberConstructionEngine.getConstructionOptions(this.actor);
+    const themeKey = getActorSheetTheme(this.actor?.getFlag?.('foundryvtt-swse', 'sheetTheme'));
+    const motionStyle = getActorSheetMotionStyle(this.actor?.getFlag?.('foundryvtt-swse', 'sheetMotionStyle'));
+    const themeStyleInline = buildActorSheetThemeStyle(themeKey);
+    const motionStyleInline = buildActorSheetMotionStyle(motionStyle);
 
-    // Determine color options based on selected crystal
-    let colorOptions = [];
-    if (this.selectedCrystal) {
-      const colorOpts = this.selectedCrystal.system?.lightsaber?.colorOptions;
-      if (colorOpts === "varies") {
-        colorOptions = VARIES_COLOR_LIST;
-      } else if (Array.isArray(colorOpts)) {
-        colorOptions = colorOpts;
-      }
-    }
+    const colorOptions = this.#resolveColorOptions();
+    const buildPreview = this.mode === 'construct' && this.selectedChassis && this.selectedCrystal
+      ? await LightsaberConstructionEngine.getBuildPreview(this.actor, this.#getConfig())
+      : null;
+
+    const editState = this.item ? LightsaberConstructionEngine.getEditState(this.item) : null;
+    const canAttune = this.mode === 'edit' && !!this.item && !!editState?.selfBuilt && editState?.builtBy === this.actor.id && !editState?.attunedBy && ((this.actor.system?.forcePoints?.value ?? this.actor.system?.resources?.forcePoints?.value ?? 0) >= 1);
+    const eligibility = LightsaberConstructionEngine.getEligibility(this.actor);
 
     return {
       ...context,
       actor: this.actor,
-      chassis: constructionOptions.chassis,
-      crystals: constructionOptions.crystals,
-      accessories: constructionOptions.accessories,
+      item: this.item,
+      mode: this.mode,
+      chassis: this._catalogs.chassis,
+      crystals: this._catalogs.crystals,
+      accessories: this._catalogs.accessories.map(accessory => ({ ...accessory, selected: this.selectedAccessories.includes(accessory.id) })),
       selectedChassis: this.selectedChassis,
       selectedCrystal: this.selectedCrystal,
-      selectedAccessories: this.selectedAccessories || [],
+      selectedAccessories: this.selectedAccessories,
       selectedBladeColor: this.selectedBladeColor,
+      selectedCheckMode: this.selectedCheckMode,
       colorOptions,
       colorMap: BLADE_COLOR_MAP,
-      bladeColorHex: BLADE_COLOR_MAP[this.selectedBladeColor] || "#00ffff"
+      bladeColorHex: BLADE_COLOR_MAP[this.selectedBladeColor] || '#00ffff',
+      buildPreview,
+      canTake10: !!buildPreview?.canTake10,
+      take10Total: buildPreview?.take10Total ?? null,
+      finalDc: buildPreview?.finalDc ?? null,
+      totalCost: buildPreview?.totalCost ?? 0,
+      canBuild: !!(this.selectedChassis && this.selectedCrystal && buildPreview?.success && (this.selectedCheckMode !== 'take10' || buildPreview?.canTake10)),
+      canAttune,
+      isSelfBuilt: !!editState?.selfBuilt,
+      isAttuned: !!editState?.attunedBy,
+      attunedByActor: editState?.attunedBy === this.actor?.id,
+      mirajText: this.mode === 'construct' ? MIRAJ_COPY.construct : (editState?.selfBuilt ? MIRAJ_COPY.edit : MIRAJ_COPY.existing),
+      eligibility,
+      buildBlockedReason: buildPreview && buildPreview.success === false ? buildPreview.reason : null,
+      themeStyleInline,
+      motionStyleInline
     };
   }
 
   attachEventListeners(root) {
-    // Set CSS variable for live blade glow
-    root.style.setProperty(
-      "--selected-blade-color",
-      BLADE_COLOR_MAP[this.selectedBladeColor] || "#00ffff"
-    );
+    root.style.setProperty('--selected-blade-color', BLADE_COLOR_MAP[this.selectedBladeColor] || '#00ffff');
 
-    // Chassis selection
-    root.querySelectorAll("[data-chassis-id]").forEach(el => {
-      el.addEventListener("click", (e) => {
-        e.preventDefault();
-        const id = el.dataset.chassisId;
-        const chassis = this.actor.items.get(id);
-        this.selectedChassis = chassis;
-        this.selectedBladeColor = DEFAULT_BLADE_COLOR;
-        this.render();
+    root.querySelectorAll('[data-chassis-id]').forEach(el => {
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (this.mode !== 'construct') return;
+        const option = this._catalogs.chassis.find(ch => ch.id === el.dataset.chassisId);
+        if (!option) return;
+        this.selectedChassis = option;
+        this.render({ force: true });
       });
     });
 
-    // Crystal selection
-    root.querySelectorAll("[data-crystal-id]").forEach(el => {
-      el.addEventListener("click", (e) => {
-        e.preventDefault();
-        const id = el.dataset.crystalId;
-        const crystal = this.actor.items.get(id);
-        this.selectedCrystal = crystal;
-        this.render();
+    root.querySelectorAll('[data-crystal-id]').forEach(el => {
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        const option = this._catalogs.crystals.find(ch => ch.id === el.dataset.crystalId);
+        if (!option) return;
+        this.selectedCrystal = option;
+        const preferred = this.#resolvePreferredColor(option);
+        if (preferred) this.selectedBladeColor = preferred;
+        this.render({ force: true });
+      });
+    });
 
-        // Trigger resonance pulse
-        const bladeEl = root.querySelector(".ls-live-blade");
-        if (bladeEl) {
-          bladeEl.classList.add("resonating");
-          setTimeout(() => bladeEl.classList.remove("resonating"), 600);
+    root.querySelectorAll('[data-accessory-id]').forEach(el => {
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        const id = el.dataset.accessoryId;
+        if (this.selectedAccessories.includes(id)) this.selectedAccessories = this.selectedAccessories.filter(value => value !== id);
+        else this.selectedAccessories = [...this.selectedAccessories, id];
+        this.render({ force: true });
+      });
+    });
+
+    root.querySelectorAll('[data-color]').forEach(el => {
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        this.selectedBladeColor = el.dataset.color;
+        this.render({ force: true });
+      });
+    });
+
+    root.querySelectorAll('[data-check-mode]').forEach(el => {
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        const mode = el.dataset.checkMode;
+        if (mode === 'take10' || mode === 'roll') {
+          this.selectedCheckMode = mode;
+          this.render({ force: true });
         }
       });
     });
 
-    // Accessory selection (multi-select)
-    root.querySelectorAll("[data-accessory-id]").forEach(el => {
-      const id = el.dataset.accessoryId;
-      const isSelected = this.selectedAccessories?.includes(id);
-      if (isSelected) {
-        el.classList.add("selected");
-      }
-
-      el.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (!this.selectedAccessories) this.selectedAccessories = [];
-
-        if (this.selectedAccessories.includes(id)) {
-          this.selectedAccessories = this.selectedAccessories.filter(aid => aid !== id);
-        } else {
-          this.selectedAccessories.push(id);
-        }
-        el.classList.toggle("selected");
-      });
+    root.querySelector('.ls-build-button')?.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.#submit();
     });
 
-    // Blade color selection (energy rods)
-    root.querySelectorAll(".ls-color-cell").forEach(el => {
-      const color = el.dataset.color;
-      const isSelected = color === this.selectedBladeColor;
-
-      if (isSelected) {
-        el.classList.add("selected");
-      }
-
-      el.addEventListener("click", (e) => {
-        e.preventDefault();
-
-        // Remove previous selection
-        root.querySelectorAll(".ls-color-cell").forEach(c => c.classList.remove("selected"));
-
-        // Set new selection
-        el.classList.add("selected");
-        this.selectedBladeColor = color;
-
-        // Update live beam color
-        root.style.setProperty(
-          "--selected-blade-color",
-          BLADE_COLOR_MAP[color]
-        );
-      });
-    });
-
-    // SVG Blade Color Picker Interaction
-    const svgObject = root.querySelector(".ls-blade-svg");
-    if (svgObject) {
-      svgObject.addEventListener("load", () => {
-        const svgDoc = svgObject.contentDocument;
-        if (svgDoc) {
-          svgDoc.querySelectorAll("[data-color]").forEach(colorElement => {
-            colorElement.style.cursor = "pointer";
-            colorElement.addEventListener("click", (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-
-              const color = colorElement.dataset.color;
-              if (!color) return;
-
-              // Remove previous color cell selection
-              root.querySelectorAll(".ls-color-cell").forEach(c => c.classList.remove("selected"));
-
-              // Set new selection on matching color cell
-              const targetCell = root.querySelector(`[data-color="${color}"]`);
-              if (targetCell) {
-                targetCell.classList.add("selected");
-              }
-
-              // Update state
-              this.selectedBladeColor = color;
-
-              // Update CSS variable for live blade glow
-              root.style.setProperty(
-                "--selected-blade-color",
-                BLADE_COLOR_MAP[color] || "#00ffff"
-              );
-            });
-          });
-        }
-      });
-    }
-
-    // Build button
-    const buildBtn = root.querySelector(".ls-build-button");
-    buildBtn?.addEventListener("click", (e) => {
-      e.preventDefault();
-      this.#attemptBuild();
+    root.querySelector('.ls-attune-button')?.addEventListener('click', async (event) => {
+      event.preventDefault();
+      await this.#attuneExisting();
     });
   }
 
-  async #attemptBuild() {
-    if (!this.selectedChassis || !this.selectedCrystal) {
-      ui.notifications.warn("Select a chassis and crystal to construct.");
+  #resolveColorOptions() {
+    const crystalColor = this.selectedCrystal?.system?.lightsaber?.bladeColor;
+    if (!crystalColor) return [];
+    const normalized = String(crystalColor).toLowerCase();
+    if (normalized === 'varies' || normalized.includes('varies')) return VARIES_COLOR_LIST;
+    const options = normalized.split(/\s+or\s+|\//i).map(part => part.trim()).filter(Boolean);
+    return options.length ? options : VARIES_COLOR_LIST;
+  }
+
+  #resolvePreferredColor(crystal) {
+    const options = this.#resolveColorOptions();
+    return options[0] || DEFAULT_BLADE_COLOR;
+  }
+
+  #hydrateSelections() {
+    if (this.mode === 'edit' && this.item) {
+      const editState = LightsaberConstructionEngine.getEditState(this.item);
+      this.selectedChassis = this._catalogs.chassis.find(ch => ch.system?.chassisId === editState.chassisId || ch.id === editState.chassisId) || this.#fallbackChassisFromItem();
+      this.selectedCrystal = this._catalogs.crystals.find(cr => cr.id === editState.crystalId) || this._catalogs.crystals[0] || null;
+      this.selectedAccessories = Array.isArray(editState.accessoryIds) ? [...editState.accessoryIds] : [];
+      this.selectedBladeColor = editState.bladeColor || DEFAULT_BLADE_COLOR;
       return;
     }
 
-    try {
-      // Step 1: Execute construction (pure engine call)
-      const result = await LightsaberConstructionEngine.attemptConstruction(this.actor, {
-        chassisItemId: this.selectedChassis.id,
-        crystalItemId: this.selectedCrystal.id,
-        accessoryItemIds: this.selectedAccessories || [],
-        bladeColor: this.selectedBladeColor
-      });
+    if (!this.selectedChassis) {
+      this.selectedChassis = this._catalogs.chassis.find(ch => ch.system?.chassisId === 'standard') || this._catalogs.chassis[0] || null;
+    }
+    if (!this.selectedCrystal) {
+      this.selectedCrystal = this._catalogs.crystals.find(cr => /ilum/i.test(cr.name)) || this._catalogs.crystals[0] || null;
+    }
+    if (!Array.isArray(this.selectedAccessories)) this.selectedAccessories = [];
+    if (!this.selectedBladeColor) this.selectedBladeColor = this.#resolvePreferredColor(this.selectedCrystal) || DEFAULT_BLADE_COLOR;
+  }
 
-      if (!result.success) {
-        ui.notifications.error(`Construction failed: ${result.reason}`);
+  #fallbackChassisFromItem() {
+    if (!this.item) return null;
+    const chassisId = this.item.system?.chassisId;
+    return this._catalogs.chassis.find(ch => ch.system?.chassisId === chassisId) || {
+      id: this.item.id,
+      name: this.item.name,
+      system: foundry.utils.deepClone(this.item.system ?? {})
+    };
+  }
+
+  #getConfig() {
+    return {
+      chassisItemId: this.selectedChassis?.id || this.item?.system?.chassisId,
+      crystalItemId: this.selectedCrystal?.id,
+      accessoryItemIds: [...this.selectedAccessories],
+      bladeColor: this.selectedBladeColor,
+      checkMode: this.selectedCheckMode
+    };
+  }
+
+  async #submit() {
+    try {
+      if (this.mode === 'construct') {
+        const result = await LightsaberConstructionEngine.attemptConstruction(this.actor, this.#getConfig());
+        if (!result.success) {
+          ui.notifications.error(`Construction failed: ${result.reason}`);
+          return;
+        }
+        const createdWeapon = this.actor.items.get(result.itemId);
+        if (!createdWeapon) throw new Error('Created weapon not found in actor items');
+
+        const hasForcePoints = ((this.actor.system?.forcePoints?.value ?? this.actor.system?.resources?.forcePoints?.value ?? 0) >= 1);
+        const isBuiltByActor = createdWeapon.flags?.swse?.builtBy === this.actor.id;
+        const notYetAttuned = !createdWeapon.flags?.swse?.attunedBy;
+
+        if (hasForcePoints && isBuiltByActor && notYetAttuned) {
+          document.documentElement.style.setProperty('--selected-blade-color', BLADE_COLOR_MAP[this.selectedBladeColor] || '#00ffff');
+          new MirajAttunementApp(this.actor, createdWeapon).render(true);
+        } else {
+          ui.notifications.info(`✨ Lightsaber constructed! DC ${result.finalDc}${this.selectedCheckMode === 'take10' ? `, Take 10 ${result.rollTotal}` : `, Roll ${result.rollTotal}`}`);
+        }
+        this.close();
         return;
       }
 
-      // Step 2: Construction succeeded — fetch created weapon
-      const createdWeapon = this.actor.items.get(result.itemId);
-      if (!createdWeapon) {
-        throw new Error("Created weapon not found in actor items");
+      if (!this.item) {
+        ui.notifications.warn('No lightsaber selected for editing.');
+        return;
       }
-
-      // Step 3: Orchestrate Miraj attunement flow
-      // Check if actor has Force Points and weapon was built by them
-      const hasForcePoints = (this.actor.system?.resources?.forcePoints?.value ?? 0) >= 1;
-      const isBuiltByActor = createdWeapon.flags?.swse?.builtBy === this.actor.id;
-      const notYetAttuned = !createdWeapon.flags?.swse?.attunedBy;
-
-      if (hasForcePoints && isBuiltByActor && notYetAttuned) {
-        // Set CSS variable for Miraj glow to match blade color
-        document.documentElement.style.setProperty(
-          "--selected-blade-color",
-          BLADE_COLOR_MAP[this.selectedBladeColor] || "#00ffff"
-        );
-
-        // Display Miraj attunement ritual (UI orchestration only)
-        new MirajAttunementApp(this.actor, createdWeapon).render(true);
-
-        // Close construction app after Miraj opens
-        this.close();
-      } else {
-        // No Force Points or already attuned — just close and notify
-        ui.notifications.info(
-          `✨ Lightsaber constructed! DC: ${result.finalDc}, Roll: ${result.rollTotal}`
-        );
-        this.close();
+      const result = await LightsaberConstructionEngine.applyEdits(this.actor, this.item, this.#getConfig());
+      if (!result.success) {
+        ui.notifications.error(`Lightsaber update failed: ${result.reason}`);
+        return;
       }
+      ui.notifications.info('Lightsaber tuning applied.');
+      this.close();
+      this.actor?.sheet?.render?.(true);
     } catch (err) {
-      SWSELogger.error("Construction failed:", err);
-      ui.notifications.error("Unexpected error during construction.");
+      SWSELogger.error('Lightsaber submit failed:', err);
+      ui.notifications.error('Unexpected error during lightsaber flow.');
     }
   }
 
+  async #attuneExisting() {
+    if (!this.item) return;
+    try {
+      document.documentElement.style.setProperty('--selected-blade-color', BLADE_COLOR_MAP[this.selectedBladeColor] || '#00ffff');
+      new MirajAttunementApp(this.actor, this.item).render(true);
+      this.close();
+    } catch (err) {
+      SWSELogger.error('Attunement failed:', err);
+      ui.notifications.error('Unexpected error during attunement.');
+    }
+  }
 }

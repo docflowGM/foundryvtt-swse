@@ -93,7 +93,9 @@
     "styles/apps/chargen.css",
     "styles/components/breakdown-card.css",
     "styles/apps/store-card-grid.css",
-    "styles/apps/store-loading-overlay.css"
+    "styles/apps/store-loading-overlay.css",
+    "styles/apps/lightsaber-construction.css",
+    "styles/miraj-attunement.css"
   ],
   "languages": [
     {
@@ -103,12 +105,12 @@
     },
     {
       "lang": "es",
-      "name": "Español",
+      "name": "Espa\u00f1ol",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Français",
+      "name": "Fran\u00e7ais",
       "path": "lang/fr.json"
     },
     {
@@ -118,7 +120,7 @@
     },
     {
       "lang": "ru",
-      "name": "Русский",
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
       "path": "lang/ru.json"
     }
   ],
@@ -572,7 +574,7 @@
       "type": "Number",
       "default": 50,
       "name": "Automatic Sale Value (%)",
-      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10\u2013100%)",
       "range": {
         "min": 10,
         "max": 100,

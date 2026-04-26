@@ -12,6 +12,8 @@ import { SWSEUpgradeApp } from "/systems/foundryvtt-swse/scripts/apps/upgrade-ap
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { BLADE_COLOR_MAP } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { BlasterCustomizationApp } from "/systems/foundryvtt-swse/scripts/apps/blaster/blaster-customization-app.js";
+import { openLightsaberInterface } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-router.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -136,7 +138,12 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     root.querySelector('.customize-lightsaber')?.addEventListener('click', (event) => {
       event.preventDefault();
       try {
-        new LightsaberConstructionApp(this.item.actor ?? this.item).render(true);
+        const actor = this.item.actor;
+        if (!actor) {
+          ui.notifications.warn('Lightsaber customization requires an owned item on an actor.');
+          return;
+        }
+        openLightsaberInterface(actor, this.item);
       } catch (err) {
         SWSELogger.error('[SWSEItemSheet] Failed to open LightsaberConstructionApp', err);
       }

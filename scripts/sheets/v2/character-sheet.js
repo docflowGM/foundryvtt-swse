@@ -10,6 +10,8 @@ import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/in
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
+import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
+import { openLightsaberInterface } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-router.js";
 import { BlasterCustomizationApp } from "/systems/foundryvtt-swse/scripts/apps/blaster/blaster-customization-app.js";
 import { ArmorModificationApp } from "/systems/foundryvtt-swse/scripts/apps/armor/armor-modification-app.js";
 import { MeleeWeaponModificationApp } from "/systems/foundryvtt-swse/scripts/apps/weapons/melee-modification-app.js";
@@ -476,10 +478,10 @@ export class SWSEV2CharacterSheet extends
     });
     root.classList.add(`help-level--${this._helpLevel.toLowerCase()}`);
 
-    // Phase 11: Apply theme and motion data attributes to swse-sheet-v2-shell element
+    // Phase 11: Apply theme and motion data attributes to sheet-shell element
     // Use data-theme for theme switching (CSS uses [data-theme] selectors)
     // Apply fonts and motion styles via inline CSS variables
-    const sheetShell = root.querySelector('.swse-sheet-v2-shell');
+    const sheetShell = root.querySelector('.sheet-shell');
     if (sheetShell) {
       const currentTheme = getActorSheetTheme(this.document.getFlag('foundryvtt-swse', 'sheetTheme'));
       const currentMotion = getActorSheetMotionStyle(this.document.getFlag('foundryvtt-swse', 'sheetMotionStyle'));
@@ -1013,6 +1015,11 @@ const forcePoints = [];
       discard: forcePowers.filter(p => p.system?.discarded).map(toPlain)
     };
 
+    const lightsaberConstructionEligibility = LightsaberConstructionEngine.getEligibility(actor);
+    const lightsaberHasSelfBuilt = LightsaberConstructionEngine.hasSelfBuiltLightsaber(actor);
+    const lightsaberConstructionDeferred = actor.getFlag?.('foundryvtt-swse', 'lightsaberConstructionDeferred') === true;
+    const lightsaberConstructionAvailable = !lightsaberHasSelfBuilt && !!lightsaberConstructionEligibility?.eligible;
+
     // Dark Side Points context (via DSPEngine for house rule support)
     const dspValue = DSPEngine.getValue(actor);
     const dspMax = DSPEngine.getMax(actor);
@@ -1424,6 +1431,10 @@ const forcePoints = [];
       destinyPointsMax,             // Max destiny points (from system.destinyPoints.max)
       forcePoints,                  // Visual array of force point dots
       headerSecondWind,             // Header condensed Second Wind control data
+      lightsaberConstructionAvailable,
+      lightsaberConstructionDeferred,
+      lightsaberConstructionEligibleNow: !!lightsaberConstructionEligibility?.eligible,
+      lightsaberConstructionBlockedReason: lightsaberConstructionEligibility?.reason ?? null,
       // ═════════════════════════════════════════════════════════════════
       // PHASE 7.5: Identity Summary Data (multiclass format)
       // ═════════════════════════════════════════════════════════════════
@@ -1693,7 +1704,7 @@ const forcePoints = [];
       if (!themeKey) return;
       try {
         await this.document.setFlag('foundryvtt-swse', 'sheetTheme', themeKey);
-        const sheetShell = html.querySelector('.swse-sheet-v2-shell');
+        const sheetShell = html.querySelector('.sheet-shell');
         if (sheetShell) {
           sheetShell.setAttribute('data-theme', themeKey);
           const currentMotion = getActorSheetMotionStyle(this.document.getFlag('foundryvtt-swse', 'sheetMotionStyle'));
@@ -1725,7 +1736,7 @@ const forcePoints = [];
       if (!motionStyle) return;
       try {
         await this.document.setFlag('foundryvtt-swse', 'sheetMotionStyle', motionStyle);
-        const sheetShell = html.querySelector('.swse-sheet-v2-shell');
+        const sheetShell = html.querySelector('.sheet-shell');
         if (sheetShell) {
           const currentTheme = getActorSheetTheme(this.document.getFlag('foundryvtt-swse', 'sheetTheme'));
           let styleString = buildActorSheetMotionStyle(motionStyle);
@@ -2394,9 +2405,10 @@ const forcePoints = [];
             item.sheet.render(true);
             break;
           case "configure":
-            // For weapons: open a configuration dialog
-            if (item.type === "weapon") {
-              item.sheet.render(true); // For now, just open the item sheet
+            if (item.type === "weapon" && (item.system?.subtype === "lightsaber" || item.system?.weaponCategory === "lightsaber")) {
+              openLightsaberInterface(this.actor, item);
+            } else if (item.type === "weapon") {
+              item.sheet.render(true);
             }
             break;
         }
@@ -2860,26 +2872,28 @@ const forcePoints = [];
         const item = this.actor.items.get(itemId);
         if (!item) return;
 
-        // Route to correct customization modal based on item type
+        // Route to correct customization modal based on item type / subtype
         try {
-          switch (item.type) {
-            case "lightsaber":
-              new LightsaberConstructionApp(this.actor).render(true);
-              break;
-            case "blaster":
-              new BlasterCustomizationApp(this.actor, item).render(true);
-              break;
-            case "armor":
-              new ArmorModificationApp(this.actor, item).render(true);
-              break;
-            case "weapon":
-              new MeleeWeaponModificationApp(this.actor, item).render(true);
-              break;
-            case "gear":
-              new GearModificationApp(this.actor, item).render(true);
-              break;
-            default:
-              ui?.notifications?.warn?.(`No customization available for ${item.type}`);
+          if (item.type === "lightsaber" || (item.type === "weapon" && (item.system?.subtype === "lightsaber" || item.system?.weaponCategory === "lightsaber"))) {
+            openLightsaberInterface(this.actor, item);
+          } else {
+            switch (item.type) {
+              case "blaster":
+                new BlasterCustomizationApp(this.actor, item).render(true);
+                break;
+              case "armor":
+                new ArmorModificationApp(this.actor, item).render(true);
+                break;
+              case "weapon":
+                new MeleeWeaponModificationApp(this.actor, item).render(true);
+                break;
+              case "gear":
+              case "equipment":
+                new GearModificationApp(this.actor, item).render(true);
+                break;
+              default:
+                ui?.notifications?.warn?.(`No customization available for ${item.type}`);
+            }
           }
         } catch (err) {
           // console.error("Customization modal failed:", err);

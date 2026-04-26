@@ -1,0 +1,188 @@
+<form class="swse-customization-workbench" data-application-content>
+  <div class="workbench-layout">
+    <!-- Left: Inventory Rail -->
+    <aside class="workbench-inventory">
+      <div class="inventory-header">
+        <h3>{{actorName}} — {{adapterLabel}}</h3>
+        <div class="category-tabs">
+          {{#each categories}}
+            <button
+              type="button"
+              data-action="toggle-category"
+              data-category="{{this}}"
+              class="category-tab {{#if (eq activeCategory this)}}active{{/if}}"
+              title="Switch to {{this}}"
+            >
+              {{titleCase this}}
+            </button>
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="inventory-search">
+        <input
+          type="text"
+          placeholder="Search items..."
+          value="{{search}}"
+          data-action="search"
+          class="search-input"
+        />
+      </div>
+
+      <div class="inventory-filters">
+        {{#if availableFilters}}
+          <div class="filter-label">Filter:</div>
+          {{#each availableFilters}}
+            <button
+              type="button"
+              data-action="toggle-filter"
+              data-filter="{{id}}"
+              class="filter-button {{#if (includesArray ../filters id)}}active{{/if}}"
+              title="{{label}}"
+            >
+              <i class="{{icon}}"></i>
+              {{label}}
+            </button>
+          {{/each}}
+        {{/if}}
+      </div>
+
+      <div class="inventory-list">
+        {{#each inventoryItems}}
+          <div
+            class="inventory-item {{#if (eq ../selectedItemId _id)}}selected{{/if}}"
+            data-item-id="{{_id}}"
+            data-action="select-item"
+          >
+            <div class="item-icon">
+              <img src="{{img}}" alt="{{name}}" />
+            </div>
+            <div class="item-info">
+              <div class="item-name">{{name}}</div>
+              <div class="item-type">{{type}}</div>
+            </div>
+          </div>
+        {{/each}}
+        {{#unless inventoryItems.length}}
+          <div class="inventory-empty">No items in this category</div>
+        {{/unless}}
+      </div>
+    </aside>
+
+    <!-- Right: Details & Customization -->
+    <main class="workbench-detail">
+      {{#if selectedItem}}
+        <div class="detail-header">
+          <div class="selected-item-banner">
+            <img src="{{selectedItem.img}}" alt="{{selectedItem.name}}" class="item-banner-icon" />
+            <div class="banner-text">
+              <h2>{{selectedItem.name}}</h2>
+              <p class="item-type-badge">{{adapterLabel}}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-content">
+          <!-- Mod Selection Grid -->
+          <section class="mod-selection-section">
+            <h3>Available Modifications</h3>
+            {{#if modCards}}
+              <div class="mod-grid">
+                {{#each modCards}}
+                  {{> customization-mod-card this}}
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="no-mods-message">No modifications available for this item.</p>
+            {{/if}}
+          </section>
+
+          <!-- Mentor/Guidance Text (Optional) -->
+          <section class="mentor-guidance">
+            <p class="guidance-text">
+              <i class="fas fa-lightbulb"></i>
+              {{#eq activeCategory "weapon"}}
+                Attach optics, grips, barrels, and other tactical upgrades. Each slot can hold one modification.
+              {{else if (eq activeCategory "armor")}}
+                Enhance your suit with protective upgrades and tactical enhancements.
+              {{else if (eq activeCategory "gear")}}
+                Add utility upgrades to expand your equipment's capabilities.
+              {{else if (eq activeCategory "droid")}}
+                Customize your droid companion with system upgrades and accessories.
+              {{else if (eq activeCategory "lightsaber")}}
+                Attune your lightsaber with crystals and focusing hardware.
+              {{/if}}
+            </p>
+          </section>
+        </div>
+
+        <!-- Footer: Cost & Slot Preview -->
+        <footer class="workbench-footer">
+          <div class="footer-section footer-credits">
+            <span class="label">Credits:</span>
+            <span class="value">{{actor.system.credits}}</span>
+          </div>
+
+          <div class="footer-section footer-cost">
+            <span class="label">Cost:</span>
+            <span class="value {{#if (gt pendingCost actor.system.credits)}}insufficient{{/if}}">
+              {{pendingCost}}
+            </span>
+          </div>
+
+          <div class="footer-section footer-after">
+            <span class="label">After:</span>
+            <span class="value {{#if (lt afterBalance 0)}}negative{{/if}}">
+              {{afterBalance}}
+            </span>
+          </div>
+
+          {{#if slotUsage.capacity}}
+            <div class="footer-section footer-slots">
+              <span class="label">Slots:</span>
+              <span class="value {{#if (gt slotUsage.used slotUsage.capacity)}}overflow{{/if}}">
+                {{slotUsage.used}} / {{slotUsage.capacity}}
+              </span>
+            </div>
+          {{/if}}
+
+          <div class="footer-buttons">
+            {{#if validationErrors}}
+              <div class="validation-errors">
+                {{#each validationErrors}}
+                  <div class="error-item">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{this}}
+                  </div>
+                {{/each}}
+              </div>
+            {{/if}}
+
+            <button
+              type="button"
+              class="btn-reset"
+              data-action="reset-customizations"
+              {{#unless (hasSelections selectedItemId)}}disabled{{/unless}}
+            >
+              <i class="fas fa-undo"></i> Reset
+            </button>
+
+            <button
+              type="button"
+              class="btn-apply"
+              data-action="apply-customizations"
+              {{#unless isValid}}disabled{{/unless}}
+            >
+              <i class="fas fa-check"></i> Apply
+            </button>
+          </div>
+        </footer>
+      {{else}}
+        <div class="no-selection">
+          <i class="fas fa-inbox"></i>
+          <p>Select an item from the left to begin customization.</p>
+        </div>
+      {{/if}}
+    </main>
+  </div>
+</form>

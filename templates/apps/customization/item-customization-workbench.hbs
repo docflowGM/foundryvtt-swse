@@ -1,0 +1,243 @@
+<div class="swse-customization-stage">
+  <div class="swse-customization-tablet">
+    <div class="swse-customization-screen" data-application-content>
+      <header class="swse-customization-hud">
+        <div class="hud-side left">
+          <span>WORKBENCH-LINK</span>
+          <span>QUARTERMASTER</span>
+        </div>
+        <div class="hud-title">ARMORY // CUSTOMIZATION</div>
+        <div class="hud-side right">
+          <span>{{actor.name}}</span>
+          <span>{{footer.credits}} CR</span>
+        </div>
+      </header>
+
+      <section class="swse-customization-mentor">
+        <div class="mentor-avatar">⌬</div>
+        <div class="mentor-copy">
+          <div class="mentor-head">RYNN-K7 · QUARTERMASTER</div>
+          <div class="mentor-text">{{mentorText}}</div>
+        </div>
+      </section>
+
+      {{#if hasItems}}
+      <nav class="swse-customization-tabs">
+        {{#each categories}}
+        <button type="button" class="workbench-tab {{#if active}}active{{/if}}" data-action="select-category" data-category="{{key}}">
+          <span class="icon">{{icon}}</span>
+          <span>{{label}}</span>
+          <span class="count">{{count}}</span>
+        </button>
+        {{/each}}
+      </nav>
+
+      <section class="swse-customization-workarea">
+        <aside class="workbench-inventory panel">
+          <div class="panel-head">
+            <span>Inventory</span>
+            <span class="hint">{{currentItem.category}}</span>
+          </div>
+          <div class="search-row">
+            <input type="text" class="search-input" data-action="search-items" placeholder="Search items" value="{{search}}">
+          </div>
+          <div class="inventory-list">
+            {{#each inventoryItems}}
+            <button type="button" class="inventory-item {{#if active}}active{{/if}}" data-action="select-item" data-item-id="{{id}}">
+              <img class="inventory-icon" src="{{img}}" alt="{{name}}">
+              <span class="inventory-copy">
+                <span class="inventory-name">{{name}}</span>
+                <span class="inventory-subtitle">{{subtitle}}</span>
+              </span>
+              <span class="inventory-meta">{{modCount}} MOD{{#if templateCount}} · {{templateCount}} TMP{{/if}}</span>
+            </button>
+            {{/each}}
+          </div>
+        </aside>
+
+        <section class="workbench-detail">
+          <div class="item-hero panel">
+            <div class="panel-head">
+              <span>{{currentItem.name}}</span>
+              <span class="hint">{{currentItem.subtitle}}</span>
+            </div>
+            <div class="hero-grid">
+              <div class="hero-art">
+                <img src="{{currentItem.img}}" alt="{{currentItem.name}}">
+              </div>
+              <div class="hero-copy">
+                <div class="hero-breadcrumb">{{currentItem.category}} · {{currentItem.subtitle}}</div>
+                <div class="hero-description">{{currentItem.description}}</div>
+                <div class="hero-stats">
+                  {{#each currentItem.stats}}
+                  <div class="hero-stat">
+                    <span class="key">{{key}}</span>
+                    <span class="value">{{value}}</span>
+                  </div>
+                  {{/each}}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-grid">
+            <section class="detail-panel panel">
+              <div class="panel-head">
+                <span>Modifications</span>
+                <span class="hint">{{upgrades.length}} available</span>
+              </div>
+              <div class="card-list">
+                {{#if upgrades.length}}
+                  {{#each upgrades}}
+                  <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}" data-action="toggle-upgrade" data-key="{{key}}" {{#if disabled}}title="No slots available"{{/if}}>
+                    <span class="card-top">
+                      <span class="card-name">{{name}}</span>
+                      <span class="card-cost">{{costCredits}} cr</span>
+                    </span>
+                    <span class="card-desc">{{description}}</span>
+                    <span class="card-tags">
+                      {{#if effect}}<span class="tag">{{effect}}</span>{{/if}}
+                      <span class="tag">{{slotCost}} slot</span>
+                      {{#if installed}}<span class="tag state">Installed</span>{{/if}}
+                    </span>
+                  </button>
+                  {{/each}}
+                {{else}}
+                  <div class="empty-state">No structured modifications available for this item.</div>
+                {{/if}}
+              </div>
+            </section>
+
+            <section class="detail-panel panel">
+              <div class="panel-head">
+                <span>Templates</span>
+                <span class="hint">Max {{footer.maxTemplatesPerItem}}</span>
+              </div>
+              <div class="card-list">
+                {{#if templates.length}}
+                  {{#each templates}}
+                  <button type="button" class="config-card template {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}" data-action="toggle-template" data-key="{{key}}" {{#if disabledReason}}title="{{disabledReason}}"{{/if}}>
+                    <span class="card-top">
+                      <span class="card-name">{{name}}</span>
+                      <span class="card-cost">{{costPreview}} cr</span>
+                    </span>
+                    <span class="card-desc">{{description}}</span>
+                    {{#if rulesText}}<span class="card-rules">{{rulesText}}</span>{{/if}}
+                    <span class="card-tags">
+                      <span class="tag">{{restriction}}</span>
+                      {{#if rarity}}<span class="tag rare">Rare</span>{{/if}}
+                      {{#if installed}}<span class="tag state">Applied</span>{{/if}}
+                    </span>
+                  </button>
+                  {{/each}}
+                {{else}}
+                  <div class="empty-state">No templates are available for this item.</div>
+                {{/if}}
+              </div>
+            </section>
+
+            <section class="detail-panel panel">
+              <div class="panel-head">
+                <span>Structural Changes</span>
+                <span class="hint">Slots + bulk</span>
+              </div>
+              <div class="card-list structural-list">
+                <button type="button" class="config-card {{#if structuralActions.sizeIncrease.selected}}selected{{/if}} {{#if structuralActions.sizeIncrease.disabled}}disabled{{/if}}" data-action="toggle-size-increase">
+                  <span class="card-top">
+                    <span class="card-name">{{structuralActions.sizeIncrease.label}}</span>
+                  </span>
+                  <span class="card-desc">{{structuralActions.sizeIncrease.description}}</span>
+                </button>
+                {{#each structuralActions.strips}}
+                <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}" data-action="toggle-strip" data-key="{{key}}">
+                  <span class="card-name">{{label}}</span>
+                </button>
+                {{/each}}
+              </div>
+            </section>
+
+            <section class="detail-panel panel appearance-panel">
+              <div class="panel-head">
+                <span>Appearance / Configuration</span>
+                <span class="hint">Visual pass</span>
+              </div>
+              <div class="appearance-blocks">
+                {{#each currentItem.appearance}}
+                <div class="appearance-block">
+                  <div class="appearance-label">{{key}}</div>
+                  {{#if options}}
+                  <div class="swatch-grid">
+                    {{#each options}}
+                    <button type="button" class="swatch {{#if selected}}selected{{/if}}" style="--swatch: {{hex}}" data-action="{{../action}}" data-key="{{key}}" title="{{label}}"></button>
+                    {{/each}}
+                  </div>
+                  {{/if}}
+                  {{#if variantOptions}}
+                  <div class="variant-list">
+                    {{#each variantOptions}}
+                    <button type="button" class="variant-row {{#if selected}}selected{{/if}}" data-action="{{../action}}" data-key="{{key}}">
+                      <span class="variant-name">{{name}}</span>
+                      <span class="variant-desc">{{description}}</span>
+                    </button>
+                    {{/each}}
+                  </div>
+                  {{/if}}
+                </div>
+                {{/each}}
+              </div>
+              <div class="appearance-actions">
+                {{#each currentItem.appearance}}
+                  {{#if options}}
+                    {{#each options}}
+                      {{#if selected}}
+                      <span class="appearance-current">{{../key}}: {{label}}</span>
+                      {{/if}}
+                    {{/each}}
+                  {{/if}}
+                  {{#if variantOptions}}
+                    {{#each variantOptions}}
+                      {{#if selected}}
+                      <span class="appearance-current">{{../key}}: {{name}}</span>
+                      {{/if}}
+                    {{/each}}
+                  {{/if}}
+                {{/each}}
+              </div>
+            </section>
+          </div>
+        </section>
+      </section>
+
+      <footer class="swse-customization-footer">
+        <div class="footer-credits">
+          <div class="credit-box">
+            <span class="label">Credits</span>
+            <span class="value">{{footer.credits}}</span>
+          </div>
+          <div class="credit-box cost">
+            <span class="label">Cost</span>
+            <span class="value">-{{footer.cost}}</span>
+          </div>
+          <div class="credit-box {{#if footer.canApply}}after{{else}}short{{/if}}">
+            <span class="label">After</span>
+            <span class="value">{{footer.after}}</span>
+          </div>
+        </div>
+        <div class="slot-meter">
+          <div class="meter-head">Slot Usage <span>{{footer.slots.usedSlots}} / {{footer.slots.totalAvailable}}</span></div>
+          <div class="meter-bar {{#if footer.slots.isOverflowing}}overflow{{/if}}">
+            <span class="meter-fill" style="width: {{footer.slotPercent}}%"></span>
+          </div>
+        </div>
+        <div class="footer-actions">
+          <button type="button" class="action ghost" data-action="reset-item">Reset</button>
+          <button type="button" class="action ghost" data-action="close-workbench">Close</button>
+          <button type="button" class="action primary" data-action="apply-item" {{#unless footer.canApply}}disabled{{/unless}}>{{footer.applyLabel}}</button>
+        </div>
+      </footer>
+      {{else}}
+      <section class="swse-customization-empty">No supported items found for the first-wave customization workbench.</section>
+      {{/if}}
+    </div>
+  </div>
+</div>

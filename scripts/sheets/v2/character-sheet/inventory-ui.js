@@ -1,3 +1,4 @@
+import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 /**
  * Inventory UI event listener registration
  *
@@ -84,10 +85,7 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
           item.sheet.render(true);
           break;
         case "configure":
-          // For weapons: open a configuration dialog
-          if (item.type === "weapon") {
-            item.sheet.render(true); // For now, just open the item sheet
-          }
+          openItemCustomization(sheet.actor, item);
           break;
       }
     }, { signal });

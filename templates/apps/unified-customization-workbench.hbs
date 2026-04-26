@@ -1,0 +1,303 @@
+<form class="unified-customization-workbench" data-application-content>
+  <div class="ucw-stage">
+    <div class="ucw-shell">
+      <header class="ucw-hud">
+        <div class="ucw-hud__left">
+          <span class="ucw-tag"><span class="ucw-dot"></span>workbench-link</span>
+          <span class="ucw-tag">engine-authority</span>
+        </div>
+        <div class="ucw-hud__title">Armory // Customization</div>
+        <div class="ucw-hud__right">
+          <span class="ucw-tag">{{activeCategoryLabel}}</span>
+          <span class="ucw-tag">{{activeCategoryCount}} eligible</span>
+        </div>
+      </header>
+
+      <section class="ucw-mentor">
+        <div class="ucw-mentor__portrait">
+          <i class="fas fa-user-astronaut"></i>
+        </div>
+        <div class="ucw-mentor__body">
+          <div class="ucw-mentor__meta">
+            <span class="ucw-mentor__name">{{mentor.name}}</span>
+            <span class="ucw-mentor__role">{{mentor.role}}</span>
+            <span class="ucw-mentor__channel">{{mentor.channel}}</span>
+          </div>
+          <p class="ucw-mentor__line">{{mentor.line}}</p>
+        </div>
+        <div class="ucw-mentor__aside">
+          <div class="ucw-mini-stat">
+            <span class="ucw-mini-stat__label">slot state</span>
+            <strong>{{mentor.slotSummary}}</strong>
+          </div>
+          <button type="button" class="ucw-chip-button" data-action="refresh-workbench">refresh</button>
+        </div>
+      </section>
+
+      {{#if hasMultipleCategories}}
+        <nav class="ucw-categories" aria-label="Customization categories">
+          {{#each eligibleCategories}}
+            <button type="button" class="ucw-category {{#if this.active}}active{{/if}}" data-category="{{this.id}}">
+              <i class="{{this.icon}}"></i>
+              <span>{{this.label}}</span>
+              <span class="ucw-category__count">{{this.count}}</span>
+            </button>
+          {{/each}}
+        </nav>
+      {{/if}}
+
+      <div class="ucw-body">
+        <aside class="ucw-rail panel">
+          <div class="panel__head">
+            <div>
+              <h3>Inventory</h3>
+              <p>{{activeCategoryLabel}} ready for customization</p>
+            </div>
+            <span class="panel__hint">{{activeCategoryCount}}</span>
+          </div>
+
+          <div class="ucw-search-row">
+            <input type="text" class="ucw-search" value="{{searchQuery}}" data-action="search-items" placeholder="search items" />
+            <button type="button" class="ucw-search-clear" data-action="clear-search">reset</button>
+          </div>
+
+          <div class="ucw-inventory-list">
+            {{#each inventoryItems}}
+              <button type="button" class="ucw-inventory-item {{#if this.active}}active{{/if}}" data-item-id="{{this.id}}">
+                <img class="ucw-inventory-item__img" src="{{this.img}}" alt="{{this.name}}" />
+                <span class="ucw-inventory-item__body">
+                  <span class="ucw-inventory-item__name">{{this.name}}</span>
+                  <span class="ucw-inventory-item__meta">{{this.subtitle}}</span>
+                  <span class="ucw-inventory-item__stats">{{this.slotsText}} · {{this.restriction}}</span>
+                </span>
+                {{#if this.customized}}<span class="ucw-inventory-item__badge">★</span>{{/if}}
+              </button>
+            {{/each}}
+            {{#unless inventoryItems.length}}
+              <div class="ucw-empty-rail">No matching items in this category.</div>
+            {{/unless}}
+          </div>
+        </aside>
+
+        <section class="ucw-detail">
+          {{#if selectedItem}}
+            <section class="ucw-hero panel panel--hero">
+              <div class="ucw-hero__visual">
+                <img class="ucw-hero__img" src="{{selectedItemMeta.img}}" alt="{{selectedItemMeta.name}}" />
+              </div>
+              <div class="ucw-hero__copy">
+                <div class="ucw-hero__crumbs">{{selectedItemMeta.categoryLabel}} › {{selectedItemMeta.subtitle}}</div>
+                <h2>{{selectedItemMeta.name}}</h2>
+                <p>{{selectedItemMeta.baseCost}} base · {{selectedItemMeta.effectiveValue}} effective · {{selectedItemMeta.restriction}}{{#if selectedItemMeta.rare}} · rare{{/if}}</p>
+                <div class="ucw-stat-strip">
+                  {{#each selectedItemMeta.stats}}
+                    <div class="ucw-stat-card">
+                      <span class="ucw-stat-card__label">{{this.label}}</span>
+                      <strong>{{this.value}}</strong>
+                    </div>
+                  {{/each}}
+                </div>
+              </div>
+            </section>
+
+            {{#if isCorruptState}}
+              <div class="ucw-banner ucw-banner--warning">
+                This item is reporting a corrupt or overflowing customization state. Review slots before applying more changes.
+              </div>
+            {{/if}}
+
+            <div class="ucw-grid">
+              <section class="panel ucw-section">
+                <div class="panel__head">
+                  <div>
+                    <h3>Structural changes</h3>
+                    <p>Permanent chassis changes that create slot headroom.</p>
+                  </div>
+                  <span class="panel__hint">{{structuralActions.length}}</span>
+                </div>
+                <div class="ucw-card-list">
+                  {{#each structuralActions}}
+                    <article class="ucw-card {{#unless this.allowed}}blocked{{/unless}}">
+                      <div class="ucw-card__top">
+                        <h4>{{this.label}}</h4>
+                        {{#if this.costText}}<span class="ucw-pill">{{this.costText}}</span>{{/if}}
+                      </div>
+                      <p>{{this.description}}</p>
+                      <div class="ucw-meta-row">
+                        {{#if this.dcText}}<span>{{this.dcText}}</span>{{/if}}
+                        {{#if this.timeText}}<span>{{this.timeText}}</span>{{/if}}
+                      </div>
+                      {{#if this.allowed}}
+                        {{#if this.isSizeAction}}
+                          <button type="button" class="ucw-action" data-action="size-increase">Apply</button>
+                        {{else}}
+                          <button type="button" class="ucw-action" data-action="strip-area" data-area-key="{{this.key}}">Apply</button>
+                        {{/if}}
+                      {{else}}
+                        <div class="ucw-reason">{{this.blockedReason}}</div>
+                      {{/if}}
+                    </article>
+                  {{/each}}
+                </div>
+              </section>
+
+              <section class="panel ucw-section">
+                <div class="panel__head">
+                  <div>
+                    <h3>Available upgrades</h3>
+                    <p>Install slots, costs, and legality are engine-validated.</p>
+                  </div>
+                  <span class="panel__hint">{{availableUpgrades.length}}</span>
+                </div>
+                <div class="ucw-card-list">
+                  {{#if availableUpgrades.length}}
+                    {{#each availableUpgrades}}
+                      <article class="ucw-card {{#unless this.actionable}}blocked{{/unless}}">
+                        <div class="ucw-card__top">
+                          <h4>{{this.name}}</h4>
+                          <span class="ucw-pill">{{this.cost}}</span>
+                        </div>
+                        <p>{{this.description}}</p>
+                        <div class="ucw-meta-row">
+                          <span>{{this.slotText}}</span>
+                          <span>{{this.restriction}}</span>
+                          {{#if this.dcText}}<span>{{this.dcText}}</span>{{/if}}
+                        </div>
+                        {{#if this.affectedAreas}}<div class="ucw-reason">Affects: {{this.affectedAreas}}</div>{{/if}}
+                        {{#if this.actionable}}
+                          <button type="button" class="ucw-action" data-action="install-upgrade" data-upgrade-key="{{this.key}}">Install</button>
+                        {{else}}
+                          <div class="ucw-reason">{{this.reason}}</div>
+                        {{/if}}
+                      </article>
+                    {{/each}}
+                  {{else}}
+                    <div class="ucw-empty-state">No upgrade definitions are available for this item.</div>
+                  {{/if}}
+                </div>
+              </section>
+
+              <section class="panel ucw-section">
+                <div class="panel__head">
+                  <div>
+                    <h3>Installed upgrades</h3>
+                    <p>Existing modifications already mounted on this item.</p>
+                  </div>
+                  <span class="panel__hint">{{installedUpgrades.length}}</span>
+                </div>
+                <div class="ucw-card-list compact">
+                  {{#if installedUpgrades.length}}
+                    {{#each installedUpgrades}}
+                      <article class="ucw-card installed">
+                        <div class="ucw-card__top">
+                          <h4>{{this.name}}</h4>
+                          <span class="ucw-pill">{{this.slotText}}</span>
+                        </div>
+                        <p>{{this.description}}</p>
+                        <div class="ucw-meta-row">
+                          <span>{{this.operationCost}}</span>
+                          {{#if this.removalCost}}<span>remove {{this.removalCost}}</span>{{/if}}
+                          {{#if this.removalDc}}<span>{{this.removalDc}}</span>{{/if}}
+                        </div>
+                        {{#if this.canRemove}}
+                          <button type="button" class="ucw-action secondary" data-action="remove-upgrade" data-instance-id="{{this.instanceId}}">Remove</button>
+                        {{else}}
+                          <div class="ucw-reason">{{this.removeReason}}</div>
+                        {{/if}}
+                      </article>
+                    {{/each}}
+                  {{else}}
+                    <div class="ucw-empty-state">No upgrades installed yet.</div>
+                  {{/if}}
+                </div>
+              </section>
+
+              <section class="panel ucw-section">
+                <div class="panel__head">
+                  <div>
+                    <h3>Templates</h3>
+                    <p>Templates are distinct from upgrades and can alter rarity and legality.</p>
+                  </div>
+                  <span class="panel__hint">{{availableTemplates.length}}</span>
+                </div>
+                <div class="ucw-template-columns">
+                  <div class="ucw-card-list compact">
+                    <h4 class="ucw-subhead">Applied</h4>
+                    {{#if appliedTemplates.length}}
+                      {{#each appliedTemplates}}
+                        <article class="ucw-card installed">
+                          <div class="ucw-card__top">
+                            <h4>{{this.name}}</h4>
+                            {{#if this.rare}}<span class="ucw-pill">rare</span>{{/if}}
+                          </div>
+                          <p>{{this.description}}</p>
+                          <div class="ucw-meta-row"><span>{{this.source}}</span><span>{{this.restriction}}</span></div>
+                        </article>
+                      {{/each}}
+                    {{else}}
+                      <div class="ucw-empty-state">No templates applied.</div>
+                    {{/if}}
+                  </div>
+                  <div class="ucw-card-list compact">
+                    <h4 class="ucw-subhead">Available</h4>
+                    {{#if availableTemplates.length}}
+                      {{#each availableTemplates}}
+                        <article class="ucw-card {{#unless this.actionable}}blocked{{/unless}}">
+                          <div class="ucw-card__top">
+                            <h4>{{this.name}}</h4>
+                            {{#if this.costImpact}}<span class="ucw-pill">{{this.costImpact}}</span>{{/if}}
+                          </div>
+                          <p>{{this.description}}</p>
+                          <div class="ucw-meta-row"><span>{{this.source}}</span><span>{{this.restriction}}</span>{{#if this.rare}}<span>rare</span>{{/if}}</div>
+                          {{#if this.actionable}}
+                            <button type="button" class="ucw-action" data-action="apply-template" data-template-key="{{this.key}}">Apply</button>
+                          {{else}}
+                            <div class="ucw-reason">{{this.reason}}</div>
+                          {{/if}}
+                        </article>
+                      {{/each}}
+                    {{else}}
+                      <div class="ucw-empty-state">No templates defined for this item.</div>
+                    {{/if}}
+                  </div>
+                </div>
+              </section>
+            </div>
+          {{else}}
+            <div class="ucw-empty-state ucw-empty-state--large">{{noSelectionMessage}}</div>
+          {{/if}}
+        </section>
+      </div>
+
+      <footer class="ucw-footer">
+        <div class="ucw-footer__stats">
+          <div class="ucw-footer-stat">
+            <span>Credits</span>
+            <strong>{{footer.wallet}}</strong>
+          </div>
+          <div class="ucw-footer-stat">
+            <span>Item Value</span>
+            <strong>{{footer.effectiveValue}}</strong>
+          </div>
+          <div class="ucw-footer-stat {{#if footer.overflow}}warning{{/if}}">
+            <span>After</span>
+            <strong>{{footer.afterValue}}</strong>
+          </div>
+        </div>
+        <div class="ucw-footer__progress">
+          <div class="ucw-progress__label">
+            <span>Slot usage</span>
+            <span>{{footer.slotsUsed}} / {{footer.slotsTotal}}</span>
+          </div>
+          <div class="ucw-progress {{#if footer.overflow}}overflow{{/if}}">
+            <span class="ucw-progress__fill" style="width: {{footer.slotPct}}%;"></span>
+          </div>
+        </div>
+        <div class="ucw-footer__actions">
+          <button type="button" class="ucw-chip-button" data-action="refresh-workbench">Refresh</button>
+          <button type="button" class="ucw-chip-button primary" data-action="close-workbench">Close</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+</form>

@@ -202,29 +202,6 @@ game.settings.register('foundryvtt-swse', 'debugMode', {
     }
   });
 
-  // Motion Style Settings
-  game.settings.register('foundryvtt-swse', 'sheetMotionStyle', {
-    name: 'Sheet Motion Style',
-    hint: 'Select animation and motion preferences for sheet interactions',
-    scope: 'client',
-    config: true,
-    type: String,
-    choices: {
-      'off': 'Off (Static)',
-      'quiet': 'Quiet (Subtle)',
-      'standard': 'Standard (Default)',
-      'cinematic': 'Cinematic (Rich)',
-      'diagnostic': 'Diagnostic (Console)'
-    },
-    default: 'standard',
-    onChange: async (value) => {
-      if (game.ready) {
-        const { UIManager } = await import("/systems/foundryvtt-swse/scripts/ui/ui-manager.js");
-        await UIManager.setMotionStyle(value);
-      }
-    }
-  });
-
   // Migration tracking setting (hidden from config UI)
   game.settings.register('foundryvtt-swse', 'actorValidationMigration', {
     name: 'Actor Validation Migration Version',
@@ -494,6 +471,16 @@ game.settings.register('foundryvtt-swse', 'debugMode', {
   game.settings.register('foundryvtt-swse', 'storeSkipLoadingOverlay', {
     name: 'Skip Store Loading Overlay',
     hint: 'When enabled, the Store skips the animated loading overlay and opens immediately. Useful for slower machines or accessibility preferences.',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+
+  game.settings.register('foundryvtt-swse', 'enableRawCustomizationWorkbench', {
+    name: 'Enable RAW Customization Workbench',
+    hint: 'Routes supported item customization (blaster, melee weapon, armor, gear) through the new RAW-compliant workbench. Disable to fall back to legacy category apps.',
     scope: 'client',
     config: true,
     type: Boolean,
