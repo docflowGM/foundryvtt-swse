@@ -1,0 +1,45 @@
+{{!--
+  surface-chargen.hbs
+  Shell surface for the Character Generation route.
+
+  Container type: ROUTE
+  Route ID: chargen
+
+  Same handoff model as surface-progression: ChargenShell opens on top
+  of the character sheet while this surface provides the bridge state.
+
+  vm:
+    id           — 'chargen'
+    title        — 'Character Creation'
+    actorId      — actor.id
+    actorName    — actor.name
+    source       — launch source
+    isHandoff    — true
+--}}
+
+<div class="swse-shell-surface swse-shell-surface--chargen"
+     data-shell-region="surface-chargen"
+     data-surface-id="{{vm.id}}">
+
+  <div class="swse-shell-surface__header">
+    <div class="swse-shell-surface__title">
+      <i class="fas fa-id-card"></i>
+      <span>{{vm.title}}</span>
+    </div>
+  </div>
+
+  <div class="swse-shell-surface__body swse-shell-surface__body--handoff">
+    <div class="swse-shell-handoff">
+      <div class="swse-shell-handoff__icon">
+        <i class="fas fa-database"></i>
+      </div>
+      <div class="swse-shell-handoff__label">
+        Character Creation Active
+      </div>
+      <div class="swse-shell-handoff__detail">
+        {{vm.actorName}} — New Character Setup
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,61 @@
+{{!--
+  surface-upgrade.hbs
+  Shell surface for the actor-wide Upgrade Workshop route.
+
+  Container type: ROUTE
+  Route ID: upgrade
+
+  This surface renders the full upgrade workshop INLINE within the character
+  sheet shell. UpgradeService builds the view model — no external window opens.
+
+  vm:
+    id      — 'upgrade'
+    title   — 'Upgrade Workshop'
+    mode    — 'actor' | 'single-item'
+    vm      — UpgradeService view model (same shape as upgrade-app.hbs expects)
+    error   — set if VM build failed
+--}}
+
+<div class="swse-shell-surface swse-shell-surface--upgrade"
+     data-shell-region="surface-upgrade"
+     data-surface-id="{{vm.id}}">
+
+  {{!-- ─── Header ─────────────────────────────────────────────────────── --}}
+  <div class="swse-shell-surface__header">
+    <button class="swse-shell-surface__back-btn"
+            data-shell-action="return-to-sheet"
+            type="button"
+            title="Return to Character Sheet">
+      <i class="fas fa-arrow-left"></i>
+      <span>Character Sheet</span>
+    </button>
+
+    <div class="swse-shell-surface__title">
+      <i class="fas fa-tools"></i>
+      <span>{{vm.title}}</span>
+    </div>
+  </div>
+
+  {{!-- ─── Body ────────────────────────────────────────────────────────── --}}
+  <div class="swse-shell-surface__body swse-shell-surface__body--upgrade">
+
+    {{#if vm.error}}
+    <div class="swse-shell-surface__error">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Failed to load upgrade data: {{vm.error}}</span>
+    </div>
+    {{else}}
+
+    {{!--
+      Delegate to the existing upgrade-app template for the body content.
+      The template uses vm.vm which is the UpgradeService view model — same
+      shape as the standalone upgrade app expects.
+    --}}
+    {{> "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs"
+        vm=vm.vm}}
+
+    {{/if}}
+
+  </div>
+
+</div>

@@ -1,0 +1,94 @@
+{{!--
+  shell-surface.hbs
+  Shell surface layer rendered as an additional PART on the character sheet.
+
+  This template renders NOTHING when shellIsSheet === true (normal sheet mode).
+  When shellSurface !== 'sheet', it renders a full-coverage layer containing:
+    - The active surface content (progression | chargen | upgrade)
+    - The overlay layer (if shellOverlay is set)
+    - The drawer layer (if shellDrawer is set)
+
+  CSS ensures this layer covers the sheet body completely when active.
+  Theme and datapad chrome are inherited from the parent sheet window.
+--}}
+
+{{#unless shellIsSheet}}
+<div class="swse-shell-surface-host"
+     data-shell-surface="{{shellSurface}}"
+     data-has-overlay="{{#if shellOverlay}}true{{else}}false{{/if}}"
+     data-has-drawer="{{#if shellDrawer}}true{{else}}false{{/if}}">
+
+  {{!-- ═══════════════════════════════════════════════════════════════
+    SURFACE CONTENT
+    Renders the appropriate surface based on shellSurface value.
+  ═══════════════════════════════════════════════════════════════════ --}}
+
+  {{#if (eq shellSurface "progression")}}
+    {{> "systems/foundryvtt-swse/templates/shell/partials/surface-progression.hbs"
+        vm=shellSurfaceVm}}
+  {{/if}}
+
+  {{#if (eq shellSurface "chargen")}}
+    {{> "systems/foundryvtt-swse/templates/shell/partials/surface-chargen.hbs"
+        vm=shellSurfaceVm}}
+  {{/if}}
+
+  {{#if (eq shellSurface "upgrade")}}
+    {{> "systems/foundryvtt-swse/templates/shell/partials/surface-upgrade.hbs"
+        vm=shellSurfaceVm}}
+  {{/if}}
+
+  {{!-- ═══════════════════════════════════════════════════════════════
+    DRAWER LAYER
+    Rendered alongside the surface when shellDrawer is set.
+    Appears as a side panel (right side by default).
+  ═══════════════════════════════════════════════════════════════════ --}}
+
+  {{#if shellDrawer}}
+    {{> "systems/foundryvtt-swse/templates/shell/partials/shell-drawer-layer.hbs"
+        vm=shellDrawerVm
+        drawerId=shellDrawer.drawerId}}
+  {{/if}}
+
+  {{!-- ═══════════════════════════════════════════════════════════════
+    OVERLAY LAYER
+    Rendered ABOVE surface and drawer when shellOverlay is set.
+    Centered modal-like container with backdrop.
+  ═══════════════════════════════════════════════════════════════════ --}}
+
+  {{#if shellOverlay}}
+    {{> "systems/foundryvtt-swse/templates/shell/partials/shell-overlay-layer.hbs"
+        vm=shellOverlayVm
+        overlayId=shellOverlay.overlayId}}
+  {{/if}}
+
+</div>
+{{/unless}}
+
+{{!-- ═══════════════════════════════════════════════════════════════
+  SHEET-MODE OVERLAYS AND DRAWERS
+  When in normal sheet mode, overlays and drawers still render
+  above the sheet body via a lightweight anchor element.
+═══════════════════════════════════════════════════════════════════ --}}
+
+{{#if shellIsSheet}}
+  {{#if shellOverlay}}
+  <div class="swse-shell-surface-host swse-shell-sheet-layers"
+       data-shell-surface="sheet"
+       data-has-overlay="true">
+    {{> "systems/foundryvtt-swse/templates/shell/partials/shell-overlay-layer.hbs"
+        vm=shellOverlayVm
+        overlayId=shellOverlay.overlayId}}
+  </div>
+  {{/if}}
+
+  {{#if shellDrawer}}
+  <div class="swse-shell-surface-host swse-shell-sheet-layers"
+       data-shell-surface="sheet"
+       data-has-drawer="true">
+    {{> "systems/foundryvtt-swse/templates/shell/partials/shell-drawer-layer.hbs"
+        vm=shellDrawerVm
+        drawerId=shellDrawer.drawerId}}
+  </div>
+  {{/if}}
+{{/if}}
