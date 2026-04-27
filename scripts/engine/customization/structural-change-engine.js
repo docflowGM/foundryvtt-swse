@@ -85,6 +85,9 @@ export class StructuralChangeEngine {
     }
 
     const delta = LedgerService.buildCreditDelta(actor, preview.cost);
+    // MUTATION AUTHORITY: ActorEngine is the sole path for committing state changes
+    // This is the only point where item/actor data is written
+    // UI must never bypass this through direct update() calls
     await ActorEngine.applyMutationPlan(actor, { set: { ...delta.set, ...update } }, item);
     return { success: true, cost: preview.cost, mechanicsDC: preview.mechanicsDC };
   }
@@ -177,6 +180,9 @@ export class StructuralChangeEngine {
     }
 
     const delta = LedgerService.buildCreditDelta(actor, preview.cost);
+    // MUTATION AUTHORITY: ActorEngine is the sole path for committing state changes
+    // This is the only point where item/actor data is written
+    // UI must never bypass this through direct update() calls
     await ActorEngine.applyMutationPlan(actor, { set: { ...delta.set, ...update } }, item);
     return { success: true, areaKey, cost: preview.cost, mechanicsDC: preview.mechanicsDC };
   }

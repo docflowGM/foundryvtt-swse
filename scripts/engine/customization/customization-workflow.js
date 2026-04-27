@@ -6,6 +6,7 @@ import { StructuralChangeEngine } from '/systems/foundryvtt-swse/scripts/engine/
 import { InstallRemoveEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/install-remove-engine.js';
 import { TemplateEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/template-engine.js';
 import { getMostRestrictive, normalizeRestriction } from '/systems/foundryvtt-swse/scripts/engine/customization/restriction-model.js';
+import { SafetyEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/safety-engine.js';
 
 function isActorLike(value) {
   return !!value && typeof value === 'object' && (
@@ -34,6 +35,16 @@ export class CustomizationWorkflow {
   }
 
   getFullCustomizationState(item) {
+    // Validate category support early to prevent unsupported categories from leaking in
+    const categoryValidation = SafetyEngine.validateCategory(item);
+    if (!categoryValidation.allowed) {
+      return {
+        error: categoryValidation.blockingReason,
+        success: false,
+        reason: categoryValidation.reason
+      };
+    }
+
     const profile = this.profileResolver.getNormalizedProfile(item);
     const slotState = this.slotEngine.getFullSlotState(item);
     const customization = this.slotEngine.getCustomizationState(item);
@@ -119,6 +130,11 @@ export class CustomizationWorkflow {
 
   applySizeIncrease(first, second, options = {}) {
     const { actor, item } = normalizeActorItem(first, second);
+    // Validate category support at workflow boundary
+    const categoryValidation = SafetyEngine.validateCategory(item);
+    if (!categoryValidation.allowed) {
+      return { success: false, reason: categoryValidation.reason, blockingReason: categoryValidation.blockingReason };
+    }
     const mechanicsTotal = options?.total ?? options?.mechanicsTotal ?? options?.mechanics?.total ?? null;
     return this.structuralEngine.applySizeIncrease(actor, item, { mechanicsTotal });
   }
@@ -140,6 +156,11 @@ export class CustomizationWorkflow {
 
   applyStrip(first, second, areaKey, options = {}) {
     const { actor, item } = normalizeActorItem(first, second);
+    // Validate category support at workflow boundary
+    const categoryValidation = SafetyEngine.validateCategory(item);
+    if (!categoryValidation.allowed) {
+      return { success: false, reason: categoryValidation.reason, blockingReason: categoryValidation.blockingReason };
+    }
     const mechanicsTotal = options?.total ?? options?.mechanicsTotal ?? options?.mechanics?.total ?? null;
     return this.structuralEngine.applyStrip(actor, item, areaKey, { mechanicsTotal });
   }
@@ -171,6 +192,11 @@ export class CustomizationWorkflow {
 
   applyInstall(first, second, upgradeKey, options = {}) {
     const { actor, item } = normalizeActorItem(first, second);
+    // Validate category support at workflow boundary
+    const categoryValidation = SafetyEngine.validateCategory(item);
+    if (!categoryValidation.allowed) {
+      return { success: false, reason: categoryValidation.reason, blockingReason: categoryValidation.blockingReason };
+    }
     const mechanicsTotal = options?.total ?? options?.mechanicsTotal ?? options?.mechanics?.total ?? null;
     const installSource = options?.installSource ?? options?.source ?? 'commercial';
     return this.installRemoveEngine.applyInstall(actor, item, upgradeKey, { mechanicsTotal, installSource });
@@ -194,6 +220,11 @@ export class CustomizationWorkflow {
 
   applyRemove(first, second, instanceId, options = {}) {
     const { actor, item } = normalizeActorItem(first, second);
+    // Validate category support at workflow boundary
+    const categoryValidation = SafetyEngine.validateCategory(item);
+    if (!categoryValidation.allowed) {
+      return { success: false, reason: categoryValidation.reason, blockingReason: categoryValidation.blockingReason };
+    }
     const mechanicsTotal = options?.total ?? options?.mechanicsTotal ?? options?.mechanics?.total ?? null;
     const destructive = Boolean(options?.destructive);
     return this.installRemoveEngine.applyRemove(actor, item, instanceId, { mechanicsTotal, destructive });
@@ -220,6 +251,11 @@ export class CustomizationWorkflow {
 
   applyTemplate(first, second, templateKey) {
     const { actor, item } = normalizeActorItem(first, second);
+    // Validate category support at workflow boundary
+    const categoryValidation = SafetyEngine.validateCategory(item);
+    if (!categoryValidation.allowed) {
+      return { success: false, reason: categoryValidation.reason, blockingReason: categoryValidation.blockingReason };
+    }
     return this.templateEngine.applyTemplate(actor, item, templateKey);
   }
 }
