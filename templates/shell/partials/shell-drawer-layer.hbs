@@ -1,0 +1,131 @@
+{{!--
+  shell-drawer-layer.hbs
+  Shell drawer layer — side panel alongside the current surface.
+
+  Container type: DRAWER
+
+  Drawer IDs:
+    item-detail         → supporting item detail panel
+    choice-detail       → feat/talent prerequisite & effect inspector
+    selection-detail    → species/class/background explanation
+    modifier-breakdown  → numeric modifier breakdown
+    filter-drawer       → advanced filter/sort controls
+    mentor-advice       → expanded mentor guidance
+
+  vm: drawer view model from ShellSurfaceRegistry.buildDrawerVm()
+  drawerId: the active drawer identifier
+--}}
+
+<div class="swse-shell-drawer"
+     data-shell-region="drawer"
+     data-drawer-id="{{drawerId}}">
+
+  <div class="swse-shell-drawer__header">
+    <span class="swse-shell-drawer__title">
+
+      {{#if (eq drawerId "item-detail")}}
+        <i class="fas fa-box"></i>
+      {{else if (eq drawerId "choice-detail")}}
+        <i class="fas fa-star"></i>
+      {{else if (eq drawerId "selection-detail")}}
+        <i class="fas fa-info-circle"></i>
+      {{else if (eq drawerId "modifier-breakdown")}}
+        <i class="fas fa-calculator"></i>
+      {{else if (eq drawerId "filter-drawer")}}
+        <i class="fas fa-filter"></i>
+      {{else if (eq drawerId "mentor-advice")}}
+        <i class="fas fa-comment-dots"></i>
+      {{else}}
+        <i class="fas fa-panel"></i>
+      {{/if}}
+
+      {{vm.title}}
+    </span>
+
+    <button class="swse-shell-drawer__close"
+            data-shell-action="close-drawer"
+            type="button"
+            title="Close panel">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="swse-shell-drawer__body">
+
+    {{!-- ─── Item Detail ─────────────────────────────────────────────── --}}
+    {{#if (eq drawerId "item-detail")}}
+    <div class="swse-shell-drawer__item-detail">
+      {{#if vm.itemImg}}
+        <img class="swse-shell-drawer__item-img" src="{{vm.itemImg}}" alt="{{vm.itemName}}">
+      {{/if}}
+      <div class="swse-shell-drawer__item-name">{{vm.itemName}}</div>
+      <div class="swse-shell-drawer__item-type">{{vm.itemType}}</div>
+    </div>
+    {{/if}}
+
+    {{!-- ─── Choice / Selection Detail ──────────────────────────────── --}}
+    {{#if (eq drawerId "choice-detail")}}
+    <div class="swse-shell-drawer__choice-detail">
+      {{#if vm.content}}
+        {{{vm.content}}}
+      {{else}}
+        <p class="swse-shell-drawer__empty">No detail available.</p>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{#if (eq drawerId "selection-detail")}}
+    <div class="swse-shell-drawer__selection-detail">
+      {{#if vm.content}}
+        {{{vm.content}}}
+      {{else}}
+        <p class="swse-shell-drawer__empty">No detail available.</p>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{!-- ─── Modifier Breakdown ─────────────────────────────────────── --}}
+    {{#if (eq drawerId "modifier-breakdown")}}
+    <div class="swse-shell-drawer__breakdown">
+      <div class="swse-shell-drawer__breakdown-label">{{vm.label}}</div>
+      {{#each vm.modifiers}}
+      <div class="swse-shell-drawer__breakdown-row">
+        <span class="swse-shell-drawer__breakdown-source">{{this.source}}</span>
+        <span class="swse-shell-drawer__breakdown-value {{#if (gt this.value 0)}}positive{{else if (lt this.value 0)}}negative{{/if}}">
+          {{this.value}}
+        </span>
+      </div>
+      {{/each}}
+      <div class="swse-shell-drawer__breakdown-total">
+        <span>Total</span>
+        <span>{{vm.total}}</span>
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- ─── Filter Drawer ──────────────────────────────────────────── --}}
+    {{#if (eq drawerId "filter-drawer")}}
+    <div class="swse-shell-drawer__filters">
+      {{#if vm.filters.length}}
+        {{#each vm.filters}}
+        <div class="swse-shell-drawer__filter-group">
+          <div class="swse-shell-drawer__filter-label">{{this.label}}</div>
+        </div>
+        {{/each}}
+      {{else}}
+        <p class="swse-shell-drawer__empty">No filters available.</p>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{!-- ─── Mentor Advice ──────────────────────────────────────────── --}}
+    {{#if (eq drawerId "mentor-advice")}}
+    <div class="swse-shell-drawer__mentor-advice" data-mood="{{vm.mood}}">
+      <div class="swse-shell-drawer__mentor-text">
+        {{{vm.advice}}}
+      </div>
+    </div>
+    {{/if}}
+
+  </div>
+</div>

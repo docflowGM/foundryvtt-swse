@@ -18,6 +18,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { ProgressionDocumentTargetPolicy } from "./policies/progression-document-target-policy.js";
+import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -136,20 +137,44 @@ export async function launchProgression(actor, options = {}) {
 
   SWSELogger.log(`[Progression Entry] Launching for actor: ${actor.name} (${actor.type})`);
 
-  // WINDOW AUTHORITY: Minimize actor sheet so it does not collide with or trap chargen.
-  // The sheet stays alive in memory (not closed) — user can restore it after progression.
+  // PHASE 2.X (Document Targeting): Check if actor type is supported for progression
+  const supportedTypes = ProgressionDocumentTargetPolicy.getSupportedActorTypes();
+  if (!supportedTypes.includes(actor.type)) {
+    const msg = `Progression does not support actor type "${actor.type}". Supported types: ${supportedTypes.join(', ')}`;
+    ui?.notifications?.error?.(msg);
+    SWSELogger.error('[Progression Entry] ' + msg);
+    return;
+  }
+
+  // ROUTING LOGIC: Route to ChargenShell (new actors) or LevelupShell (existing actors)
+  const isChargenIncomplete = _isChargenIncomplete(actor);
+
+  SWSELogger.debug('[PROGRESSION] ───────────────────────────────');
+  SWSELogger.debug('[PROGRESSION] ROUTING DECISION');
+  SWSELogger.debug('[PROGRESSION] actor.type:', actor.type);
+  SWSELogger.debug('[PROGRESSION] isChargenIncomplete:', isChargenIncomplete);
+  SWSELogger.debug('[PROGRESSION] ───────────────────────────────');
+
+  // ─── Phase 11: Shell Host routing ─────────────────────────────────────────
+  // Notify the actor's shell host that a progression surface is active.
+  // This ensures the shell tracks state even though ProgressionShell renders
+  // as a positioned-overlay above the character sheet (same position/size).
+  const surfaceId = isChargenIncomplete ? 'chargen' : 'progression';
+  const shell = ShellRouter.getShell(actor.id);
+  if (shell) {
+    shell.setSurface(surfaceId, { source: options.source ?? 'sheet', stepId: options.currentStep ?? null })
+      .then(() => shell.render(false))
+      .catch(() => {});
+  }
+
+  // WINDOW AUTHORITY: Minimize actor sheet so it does not collide with progression.
+  // The shell surface state is set above so the shell can restore itself when done.
   if (actor.sheet?.rendered) {
-    // Normalize sheet position BEFORE minimizing.
-    // When a minimized window is restored, Foundry returns it to the position it had
-    // at the moment of minimize.  If the sheet was sitting in a stale right-side
-    // position, the user would get it back there after chargen completes.
-    // Centering now means restore always returns to a sane visible location.
     try {
       const pos = computeCenteredPosition(900, 950);
       actor.sheet.setPosition(pos);
       SWSELogger.log('[Progression Entry] Actor sheet centered before minimize →', pos);
     } catch (posErr) {
-      // Non-fatal — minimize still happens even if re-center fails
       SWSELogger.warn('[Progression Entry] Could not center actor sheet before minimize:', posErr);
     }
 
@@ -158,9 +183,6 @@ export async function launchProgression(actor, options = {}) {
   }
 
   // WINDOW AUTHORITY: Close any open mentor-notes window for this actor.
-  // A separate mentor-notes app must not visibly compete with the chargen shell.
-  // Close unconditionally — do not check `.rendered` as it can be falsy even when the
-  // window is visible (e.g., app rendered before our check runs).
   try {
     const { MentorNotesApp } = await import('/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js');
     const existingNotes = MentorNotesApp._instances?.get(actor.id);
@@ -173,60 +195,41 @@ export async function launchProgression(actor, options = {}) {
   }
 
   try {
-    // PHASE 2.X (Document Targeting): Check if actor type is supported for progression
-    const supportedTypes = ProgressionDocumentTargetPolicy.getSupportedActorTypes();
-    if (!supportedTypes.includes(actor.type)) {
-      const msg = `Progression does not support actor type "${actor.type}". Supported types: ${supportedTypes.join(', ')}`;
-      ui?.notifications?.error?.(msg);
-      SWSELogger.error('[Progression Entry] ' + msg);
-      return;
-    }
-
-    // ROUTING LOGIC: Route to ChargenShell (new actors) or LevelupShell (existing actors)
-    // Applies to all progression-eligible types: character (heroic), droid, npc (nonheroic/beast/follower)
-    const isChargenIncomplete = _isChargenIncomplete(actor);
-
-    SWSELogger.debug('[PROGRESSION] ───────────────────────────────');
-    SWSELogger.debug('[PROGRESSION] ROUTING DECISION');
-    SWSELogger.debug('[PROGRESSION] actor.type:', actor.type);
-    SWSELogger.debug('[PROGRESSION] isChargenIncomplete:', isChargenIncomplete);
-    SWSELogger.debug('[PROGRESSION] ───────────────────────────────');
+    let progressionShell;
 
     if (isChargenIncomplete) {
-      // Brand new or incomplete actor → open ChargenShell
-      SWSELogger.log(`[Progression Entry] Actor is incomplete (type=${actor.type}, level=${actor.system.level}, hasClass=${actor.items.some(i => i.type === 'class')}) → routing to ChargenShell`);
-      SWSELogger.debug('[PROGRESSION] ROUTING: Opening ChargenShell for incomplete actor');
+      SWSELogger.log(`[Progression Entry] Actor is incomplete → routing to ChargenShell`);
       try {
         const { ChargenShell } = await import('./chargen-shell.js');
-        SWSELogger.debug('[PROGRESSION] ChargenShell imported successfully');
-        const result = await ChargenShell.open(actor, options);
-        SWSELogger.debug('[PROGRESSION] ChargenShell.open() completed, result:', result?.constructor?.name);
-        return result;
+        progressionShell = await ChargenShell.open(actor, options);
       } catch (importErr) {
         console.error('[PROGRESSION] ❌ ChargenShell import failed:', importErr);
         SWSELogger.error('[Progression Entry] ChargenShell import error:', importErr);
         throw importErr;
       }
     } else {
-      // Established actor → open LevelupShell for level advancement
-      SWSELogger.log(`[Progression Entry] Actor is complete (type=${actor.type}, level=${actor.system.level}) → routing to LevelupShell`);
-      SWSELogger.debug('[PROGRESSION] ROUTING: Opening LevelupShell for complete actor');
+      SWSELogger.log(`[Progression Entry] Actor is complete → routing to LevelupShell`);
       const { LevelupShell } = await import('./levelup-shell.js');
-      SWSELogger.debug('[PROGRESSION] LevelupShell imported');
-      const result = await LevelupShell.open(actor, options);
-      SWSELogger.debug('[PROGRESSION] LevelupShell.open() completed, result:', result?.constructor?.name);
-      return result;
+      progressionShell = await LevelupShell.open(actor, options);
     }
 
-    SWSELogger.warn(
-      `[Progression Entry] Unsupported actor type: ${actor.type}. Progression only supports characters.`
-    );
-    ui?.notifications?.warn?.('Progression only supports character actors.');
+    // When the progression shell closes, return the actor's shell to 'sheet' mode
+    if (progressionShell) {
+      const originalClose = progressionShell.close?.bind(progressionShell);
+      progressionShell.close = async (...args) => {
+        ShellRouter.notifySurfaceClosed(actor.id);
+        return originalClose?.(...args);
+      };
+    }
+
+    return progressionShell;
   } catch (err) {
     console.error('[PROGRESSION] ❌ EXCEPTION CAUGHT:', err);
     console.error('[PROGRESSION] Stack:', err.stack);
     SWSELogger.error('[Progression Entry] Exception during progression launch:', err);
     ui?.notifications?.error?.(`Progression failed: ${err.message}`);
+    // On error, return shell to sheet mode
+    ShellRouter.notifySurfaceClosed(actor.id);
   }
 }
 
@@ -273,6 +276,14 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
       `[Follower Progression] Found ${availableSlots.length} available follower slots`
     );
 
+    // Notify shell host that progression is active for follower creation
+    const ownerShell = ShellRouter.getShell(ownerActor.id);
+    if (ownerShell) {
+      ownerShell.setSurface('progression', { source: 'follower-progression' })
+        .then(() => ownerShell.render(false))
+        .catch(() => {});
+    }
+
     // Minimize owner sheet
     if (ownerActor.sheet?.rendered) {
       try {
@@ -309,12 +320,15 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
     );
 
     SWSELogger.log('[Follower Progression] Follower progression completed');
+    // Return owner shell to sheet mode when follower progression completes
+    ShellRouter.notifySurfaceClosed(ownerActor.id);
     return result;
   } catch (err) {
     console.error('[FOLLOWER-PROGRESSION] ❌ EXCEPTION:', err);
     console.error('[FOLLOWER-PROGRESSION] Stack:', err.stack);
     SWSELogger.error('[Follower Progression] Exception during launch:', err);
     ui?.notifications?.error?.(`Follower progression failed: ${err.message}`);
+    ShellRouter.notifySurfaceClosed(ownerActor.id);
   }
 }
 

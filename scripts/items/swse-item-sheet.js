@@ -10,6 +10,8 @@
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { SWSEUpgradeApp } from "/systems/foundryvtt-swse/scripts/apps/upgrade-app.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ShellOverlayManager } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellOverlayManager.js";
+import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { BLADE_COLOR_MAP } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { BlasterCustomizationApp } from "/systems/foundryvtt-swse/scripts/apps/blaster/blaster-customization-app.js";
@@ -125,12 +127,32 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     if (!root) {return;}
 
     // Upgrade management
-    root.querySelector('.open-upgrade-app')?.addEventListener('click', (event) => {
+    // Phase 11: single-item upgrade from item sheet opens as shell OVERLAY on the actor's shell host.
+    // Falls back to standalone SWSEUpgradeApp if the item is unowned or no shell host is open.
+    root.querySelector('.open-upgrade-app')?.addEventListener('click', async (event) => {
       event.preventDefault();
       try {
-        new SWSEUpgradeApp(this.item).render(true);
+        const actor = this.item.actor;
+        if (actor) {
+          const shell = ShellRouter.getShell(actor.id);
+          if (shell) {
+            // Shell host is open — open as overlay (Overlay classification)
+            await ShellOverlayManager.openSingleItemUpgrade(actor, this.item);
+          } else {
+            // No shell host open — open actor sheet first, then overlay
+            await actor.sheet?.render(true);
+            // Give sheet time to render and register
+            await new Promise(resolve => setTimeout(resolve, 50));
+            await ShellOverlayManager.openSingleItemUpgrade(actor, this.item);
+          }
+        } else {
+          // Unowned item — fall back to standalone upgrade app (legacy path)
+          new SWSEUpgradeApp(this.item).render(true);
+        }
       } catch (err) {
         SWSELogger.error('[SWSEItemSheet] Failed to open UpgradeApp', err);
+        // Graceful fallback
+        try { new SWSEUpgradeApp(this.item).render(true); } catch {}
       }
     });
 

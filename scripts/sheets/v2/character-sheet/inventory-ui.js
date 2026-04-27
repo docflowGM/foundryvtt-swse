@@ -8,11 +8,14 @@ import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/cus
  * - Quantity management
  * - Item selling
  * - Gear tab interactions
- * - Upgrade Workshop launch
+ * - Upgrade Workshop launch (Phase 11: routes through ShellRouter as inline surface)
  */
 
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
+import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
+import { UpgradeService } from "/systems/foundryvtt-swse/scripts/engine/upgrades/UpgradeService.js";
+// Legacy fallback only: SWSEUpgradeApp is used when no shell host is registered for the actor
 import { SWSEUpgradeApp } from "/systems/foundryvtt-swse/scripts/apps/upgrade-app.js";
 
 /**
@@ -98,10 +101,30 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
   // ═══════════════════════════════════════════════════════════════════════════════
 
   // Upgrade Workshop launch from gear tab
+  // Phase 11: routes through ShellRouter as an inline shell surface (ROUTE classification).
+  // Falls back to standalone SWSEUpgradeApp if no shell host is registered.
   html.querySelectorAll('[data-action="open-upgrade-workshop"]').forEach(button => {
-    button.addEventListener("click", (event) => {
+    button.addEventListener("click", async (event) => {
       event.preventDefault();
-      SWSEUpgradeApp.openForActor(sheet.actor);
+      const actor = sheet.actor;
+      if (!actor) return;
+
+      // Check for upgradeable items before opening
+      const summary = UpgradeService.getUpgradeAppSummary(actor);
+      if (summary.totalApplicableItems <= 0) {
+        ui.notifications?.warn?.('No upgradeable items available.');
+        return;
+      }
+
+      const shell = ShellRouter.getShell(actor.id);
+      if (shell) {
+        // Shell host is open — switch to inline upgrade surface (Route)
+        await shell.setSurface('upgrade', { mode: 'actor' });
+        shell.render(false);
+      } else {
+        // No shell host registered — fall back to standalone upgrade app
+        SWSEUpgradeApp.openForActor(actor);
+      }
     }, { signal });
   });
 

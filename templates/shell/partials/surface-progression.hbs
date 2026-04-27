@@ -1,0 +1,54 @@
+{{!--
+  surface-progression.hbs
+  Shell surface for the Progression route (level-up).
+
+  Container type: ROUTE
+  Route ID: progression
+
+  This surface is a handoff container: ProgressionShell (a separate ApplicationV2)
+  opens on top of the character sheet at the same position. This template provides
+  the visual bridge state while ProgressionShell is active.
+
+  vm:
+    id           — 'progression'
+    title        — 'Progression'
+    actorId      — actor.id
+    actorName    — actor.name
+    source       — launch source ('sheet')
+    isHandoff    — true (ProgressionShell renders actual content)
+--}}
+
+<div class="swse-shell-surface swse-shell-surface--progression"
+     data-shell-region="surface-progression"
+     data-surface-id="{{vm.id}}">
+
+  <div class="swse-shell-surface__header">
+    <button class="swse-shell-surface__back-btn"
+            data-shell-action="return-to-sheet"
+            type="button"
+            title="Return to Character Sheet">
+      <i class="fas fa-arrow-left"></i>
+      <span>Character Sheet</span>
+    </button>
+
+    <div class="swse-shell-surface__title">
+      <i class="fas fa-chevron-up"></i>
+      <span>{{vm.title}}</span>
+    </div>
+  </div>
+
+  <div class="swse-shell-surface__body swse-shell-surface__body--handoff">
+    <div class="swse-shell-handoff">
+      <div class="swse-shell-handoff__icon">
+        <i class="fas fa-database"></i>
+      </div>
+      <div class="swse-shell-handoff__label">
+        Progression Active
+      </div>
+      <div class="swse-shell-handoff__detail">
+        {{vm.actorName}} — Level Advancement
+      </div>
+    </div>
+  </div>
+
+</div>

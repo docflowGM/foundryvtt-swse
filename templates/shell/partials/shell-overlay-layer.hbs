@@ -1,0 +1,114 @@
+{{!--
+  shell-overlay-layer.hbs
+  Shell overlay layer — centered modal above the current surface.
+
+  Container type: OVERLAY
+
+  Overlay IDs and their rendered content:
+    upgrade-single-item  → single item upgrade panel
+    confirm-*            → short confirmation dialog
+    warning-*            → warning / invalid-action notice
+
+  vm: overlay view model from ShellSurfaceRegistry.buildOverlayVm()
+  overlayId: the active overlay identifier
+--}}
+
+<div class="swse-shell-overlay-backdrop"
+     data-shell-region="overlay-backdrop">
+
+  <div class="swse-shell-overlay"
+       data-shell-region="overlay"
+       data-overlay-id="{{overlayId}}"
+       role="dialog"
+       aria-modal="true">
+
+    {{!-- ─── Single-Item Upgrade ──────────────────────────────────────── --}}
+    {{#if (eq overlayId "upgrade-single-item")}}
+
+    <div class="swse-shell-overlay__header">
+      <span class="swse-shell-overlay__title">
+        <i class="fas fa-tools"></i>
+        {{vm.title}}
+      </span>
+      <button class="swse-shell-overlay__close"
+              data-shell-action="close-overlay"
+              type="button"
+              title="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="swse-shell-overlay__body swse-shell-overlay__body--upgrade">
+      {{#if vm.error}}
+        <div class="swse-shell-overlay__error">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>{{vm.error}}</span>
+        </div>
+      {{else}}
+        {{> "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs"
+            vm=vm.vm}}
+      {{/if}}
+    </div>
+
+    {{/if}}
+
+    {{!-- ─── Confirmation Dialog (vm.confirmLabel is set for confirm-* overlays) ─ --}}
+    {{#if vm.confirmLabel}}
+
+    <div class="swse-shell-overlay__header">
+      <span class="swse-shell-overlay__title">
+        <i class="fas fa-question-circle"></i>
+        {{vm.title}}
+      </span>
+    </div>
+
+    <div class="swse-shell-overlay__body swse-shell-overlay__body--confirm">
+      <p class="swse-shell-overlay__message">{{vm.message}}</p>
+    </div>
+
+    <div class="swse-shell-overlay__footer">
+      <button class="swse-btn swse-btn--secondary"
+              data-shell-overlay-action="cancel"
+              type="button">
+        {{vm.cancelLabel}}
+      </button>
+      <button class="swse-btn {{#if vm.isDangerous}}swse-btn--danger{{else}}swse-btn--primary{{/if}}"
+              data-shell-overlay-action="confirm"
+              type="button">
+        {{vm.confirmLabel}}
+      </button>
+    </div>
+
+    {{/if}}
+
+    {{!-- ─── Warning Notice (vm.dismissLabel is set for warning-* overlays) ──── --}}
+    {{#if vm.dismissLabel}}
+
+    <div class="swse-shell-overlay__header">
+      <span class="swse-shell-overlay__title">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{vm.title}}
+      </span>
+      <button class="swse-shell-overlay__close"
+              data-shell-action="close-overlay"
+              type="button">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="swse-shell-overlay__body swse-shell-overlay__body--warning">
+      <p class="swse-shell-overlay__message">{{vm.message}}</p>
+    </div>
+
+    <div class="swse-shell-overlay__footer">
+      <button class="swse-btn swse-btn--primary"
+              data-shell-action="close-overlay"
+              type="button">
+        {{vm.dismissLabel}}
+      </button>
+    </div>
+
+    {{/if}}
+
+  </div>
+</div>

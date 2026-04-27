@@ -1,0 +1,187 @@
+/**
+ * shell-host.css — Shell surface and routing layer styles (Phase 11)
+ *
+ * The character sheet shell host renders surface content inline.
+ * Surface layers use absolute positioning to cover the sheet body
+ * while reusing the same window chrome, theme, and HUD.
+ */
+
+/* ─── Shell Surface Host ─────────────────────────────────────────────────── */
+
+/**
+ * Full-coverage container that sits above the sheet body.
+ * Only rendered when shellSurface !== 'sheet'.
+ */
+.swse-shell-surface-host {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: row;
+  background: var(--swse-bg-primary, #0a0e1a);
+  overflow: hidden;
+}
+
+/**
+ * Sheet-mode layers anchor (for overlays/drawers when in sheet mode).
+ * Floats above the sheet body without blocking the sheet.
+ */
+.swse-shell-sheet-layers {
+  background: transparent;
+  pointer-events: none;
+}
+
+.swse-shell-sheet-layers > * {
+  pointer-events: all;
+}
+
+/* ─── Surface Container ──────────────────────────────────────────────────── */
+
+.swse-shell-surface {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* ─── Surface Header ─────────────────────────────────────────────────────── */
+
+.swse-shell-surface__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--swse-border-color, rgba(100, 180, 255, 0.2));
+  background: var(--swse-bg-secondary, rgba(10, 20, 40, 0.8));
+  flex-shrink: 0;
+}
+
+.swse-shell-surface__back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--swse-border-color, rgba(100, 180, 255, 0.3));
+  border-radius: 4px;
+  color: var(--swse-text-secondary, rgba(200, 220, 255, 0.7));
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.swse-shell-surface__back-btn:hover {
+  background: rgba(100, 180, 255, 0.1);
+  color: var(--swse-text-primary, rgba(200, 220, 255, 1));
+  border-color: rgba(100, 180, 255, 0.5);
+}
+
+.swse-shell-surface__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--swse-text-primary, rgba(200, 220, 255, 0.95));
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ─── Surface Body ───────────────────────────────────────────────────────── */
+
+.swse-shell-surface__body {
+  flex: 1 1 auto;
+  overflow: auto;
+  position: relative;
+}
+
+/* Upgrade surface body inherits the upgrade app layout */
+.swse-shell-surface__body--upgrade {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Error state */
+.swse-shell-surface__error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 24px;
+  color: var(--swse-color-danger, #ff6b6b);
+  font-size: 13px;
+}
+
+/* ─── Handoff State ──────────────────────────────────────────────────────── */
+/* Shown while progression/chargen shell is active externally */
+
+.swse-shell-surface__body--handoff {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swse-shell-handoff {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px;
+  text-align: center;
+}
+
+.swse-shell-handoff__icon {
+  font-size: 32px;
+  color: var(--swse-color-accent, rgba(100, 180, 255, 0.6));
+  animation: shell-pulse 2s ease-in-out infinite;
+}
+
+@keyframes shell-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.swse-shell-handoff__label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--swse-text-primary, rgba(200, 220, 255, 0.9));
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.swse-shell-handoff__detail {
+  font-size: 12px;
+  color: var(--swse-text-secondary, rgba(150, 180, 220, 0.6));
+}
+
+/* ─── Theme Integration ──────────────────────────────────────────────────── */
+/* Shell surfaces inherit theme variables from the parent sheet element */
+
+[data-theme="imperial"] .swse-shell-surface-host {
+  background: var(--swse-bg-primary, #0d0b14);
+}
+
+[data-theme="rebel"] .swse-shell-surface-host {
+  background: var(--swse-bg-primary, #0a1a0d);
+}
+
+[data-theme="jedi"] .swse-shell-surface-host {
+  background: var(--swse-bg-primary, #0d1108);
+}
+
+[data-theme="sith"] .swse-shell-surface-host {
+  background: var(--swse-bg-primary, #1a0808);
+}
+
+/* ─── Responsive / Mobile ────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  .swse-shell-surface__header {
+    padding: 8px 12px;
+  }
+
+  .swse-shell-surface__back-btn span {
+    display: none;
+  }
+}
