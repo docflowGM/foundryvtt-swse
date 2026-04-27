@@ -38,4 +38,10 @@
   --swse-pad: calc(14px * var(--swse-density));
   --swse-pad-sm: calc(8px * var(--swse-density));
   --swse-pad-lg: calc(20px * var(--swse-density));
+
+  /* MOTION & FEEDBACK (Phase 6: micro-interactions) */
+  --swse-anim-fast: 120ms;
+  --swse-anim-med: 220ms;
+  --swse-anim-slow: 400ms;
+  --swse-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }

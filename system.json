@@ -53,6 +53,8 @@
     "styles/system/components/ui-polish.css",
     "styles/system/components/theme-control.css",
     "styles/system/consistency-lock.css",
+    "styles/system/micro-interactions.css",
+    "styles/system/final-polish.css",
     "styles/sheets/v2-foundation-integration.css",
     "styles/actors/v2/combat-stats-panel.css",
     "styles/sheets/v2-npc-specific.css",
