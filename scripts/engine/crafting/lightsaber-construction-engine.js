@@ -96,6 +96,9 @@ export class LightsaberConstructionEngine {
   static getEditState(item) {
     const flags = item?.flags?.swse ?? {};
     const cfg = flags.lightsaberConfig ?? {};
+    // Extract saber state for edit mode rendering.
+    // Existing/granted/found sabers have no builtBy flag and are edit-only (cannot attune).
+    // Self-built sabers have builtBy set to the creator's actor ID.
     return {
       chassisId: cfg.chassisId ?? item?.system?.chassisId ?? null,
       crystalId: cfg.crystalId ?? null,
@@ -266,6 +269,8 @@ export class LightsaberConstructionEngine {
       }
 
       // Step 7: Execute Use the Force roll
+      // Take 10 is only allowed if 10 + modifier >= DC (enforced by UI, but validated here too)
+      // Take 20 is never allowed for lightsaber construction
       const skill = actor.system.skills?.useTheForce;
       const modifier = skill?.total ?? 0;
       let rollTotal = 0;
