@@ -1,0 +1,95 @@
+/* ============================================================================
+   THEME CONTROL PANEL
+   Global theme settings interface in Character Sheet
+   ============================================================================ */
+
+.swse-theme-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--swse-gap, 12px);
+}
+
+.swse-theme-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.swse-theme-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--swse-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--swse-accent);
+}
+
+.swse-theme-label-text {
+  flex: 1;
+}
+
+.swse-theme-label-value {
+  font-weight: 600;
+  color: var(--swse-accent-soft);
+  min-width: 50px;
+  text-align: right;
+}
+
+.swse-theme-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: oklch(0 0 0 / 0.4);
+  border: 1px solid oklch(var(--swse-accent) / 0.3);
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.swse-theme-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: oklch(var(--swse-accent) / 0.8);
+  border: 1px solid var(--swse-accent);
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 0 8px oklch(var(--swse-accent) / 0.4);
+}
+
+.swse-theme-slider::-webkit-slider-thumb:hover {
+  background: var(--swse-accent);
+  box-shadow: 0 0 12px oklch(var(--swse-accent) / 0.6);
+}
+
+.swse-theme-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: oklch(var(--swse-accent) / 0.8);
+  border: 1px solid var(--swse-accent);
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 0 8px oklch(var(--swse-accent) / 0.4);
+}
+
+.swse-theme-slider::-moz-range-thumb:hover {
+  background: var(--swse-accent);
+  box-shadow: 0 0 12px oklch(var(--swse-accent) / 0.6);
+}
+
+.swse-theme-slider:hover {
+  background: oklch(0 0 0 / 0.5);
+  border-color: oklch(var(--swse-accent) / 0.5);
+}
+
+.swse-btn--small {
+  padding: 6px 12px;
+  font-size: 9px;
+}

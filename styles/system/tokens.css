@@ -31,4 +31,11 @@
   /* EFFECTS */
   --swse-scan-strength: 0.03;
   --swse-glow: 1;
+
+  /* SPACING & DENSITY (responsive to --swse-density) */
+  --swse-density: 1;
+  --swse-gap: calc(12px * var(--swse-density));
+  --swse-pad: calc(14px * var(--swse-density));
+  --swse-pad-sm: calc(8px * var(--swse-density));
+  --swse-pad-lg: calc(20px * var(--swse-density));
 }

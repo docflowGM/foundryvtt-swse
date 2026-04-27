@@ -5,29 +5,48 @@
    ============================================================================ */
 
 export class ThemeManager {
-  static #settings = {
+  static defaults = {
     accentHue: 190,
     density: 1,
     scanlines: 0.03,
-    glowMultiplier: 1
+    glow: 1
   };
 
   static applyTheme(settings = {}) {
-    const merged = { ...this.#settings, ...settings };
+    const merged = { ...this.defaults, ...settings };
     const root = document.documentElement;
 
+    // Set new unified token names
     root.style.setProperty('--swse-accent-h', merged.accentHue);
     root.style.setProperty('--swse-density', merged.density);
     root.style.setProperty('--swse-scan-strength', merged.scanlines);
-    root.style.setProperty('--swse-glow', merged.glowMultiplier);
+    root.style.setProperty('--swse-glow', merged.glow);
+
+    // Set legacy variable names for backwards compatibility
+    root.style.setProperty('--accent-h', merged.accentHue);
+    root.style.setProperty('--ink-h', merged.accentHue);
+    root.style.setProperty('--density', merged.density);
+    root.style.setProperty('--scan-strength', merged.scanlines);
+    root.style.setProperty('--glow-mult', merged.glow);
+  }
+
+  static setTheme(settings) {
+    if (game && game.settings) {
+      game.settings.set('foundryvtt-swse', 'uiTheme', settings);
+    }
+    this.applyTheme(settings);
   }
 
   static loadFromSettings() {
-    const theme = game.settings.get('foundryvtt-swse', 'uiTheme') || {};
+    if (!game || !game.settings) return;
+    const theme = game.settings.get('foundryvtt-swse', 'uiTheme') || this.defaults;
     this.applyTheme(theme);
   }
 
   static getTheme() {
-    return { ...this.#settings };
+    if (game && game.settings) {
+      return game.settings.get('foundryvtt-swse', 'uiTheme') || this.defaults;
+    }
+    return this.defaults;
   }
 }
