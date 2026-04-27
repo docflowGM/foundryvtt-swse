@@ -23,6 +23,11 @@
     Renders the appropriate surface based on shellSurface value.
   ═══════════════════════════════════════════════════════════════════ --}}
 
+  {{#if (eq shellSurface "home")}}
+    {{> "systems/foundryvtt-swse/templates/shell/partials/surface-home.hbs"
+        vm=shellSurfaceVm}}
+  {{/if}}
+
   {{#if (eq shellSurface "progression")}}
     {{> "systems/foundryvtt-swse/templates/shell/partials/surface-progression.hbs"
         vm=shellSurfaceVm}}
@@ -37,6 +42,20 @@
     {{> "systems/foundryvtt-swse/templates/shell/partials/surface-upgrade.hbs"
         vm=shellSurfaceVm}}
   {{/if}}
+
+  {{!-- ═══════════════════════════════════════════════════════════════
+    PERSISTENT HOME NAV
+    Floating home button visible on all non-home surfaces.
+    Lets the user jump to the Home launcher from any route.
+  ═══════════════════════════════════════════════════════════════════ --}}
+  {{#unless (eq shellSurface "home")}}
+  <button class="swse-shell-home-nav"
+          data-shell-action="open-home"
+          type="button"
+          title="Holopad Home">
+    ⌂
+  </button>
+  {{/unless}}
 
   {{!-- ═══════════════════════════════════════════════════════════════
     DRAWER LAYER
@@ -72,6 +91,22 @@
 ═══════════════════════════════════════════════════════════════════ --}}
 
 {{#if shellIsSheet}}
+
+  {{!-- ═══════════════════════════════════════════════════════════════
+    SHEET-MODE HOME NAV
+    Floating home button visible on the character sheet.
+    Rendered inside the shell-surface part so it floats above the body.
+  ═══════════════════════════════════════════════════════════════════ --}}
+  <div class="swse-shell-sheet-layers swse-shell-sheet-home"
+       data-shell-region="sheet-home-nav">
+    <button class="swse-shell-home-nav"
+            data-shell-action="open-home"
+            type="button"
+            title="Holopad Home">
+      ⌂
+    </button>
+  </div>
+
   {{#if shellOverlay}}
   <div class="swse-shell-surface-host swse-shell-sheet-layers"
        data-shell-surface="sheet"
