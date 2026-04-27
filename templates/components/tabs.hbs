@@ -1,0 +1,11 @@
+<nav class="swse-tabs" data-group="{{group}}" data-tab-group="{{group}}">
+  {{#each tabs}}
+    <a class="swse-tab item {{#if active}}active{{/if}}"
+       data-action="tab"
+       data-tab="{{id}}"
+       data-group="{{../group}}"
+       data-tab-group="{{../group}}">
+      {{label}}
+    </a>
+  {{/each}}
+</nav>

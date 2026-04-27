@@ -1,0 +1,25 @@
+/* ============================================================================
+   SWSE HUD COMPONENT
+   Status bar for datapad shell
+   Used by: Character Sheet, Progression, Items, All Datapads
+   ============================================================================ */
+
+.swse-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--swse-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border-bottom: 1px solid oklch(var(--swse-accent) / 0.3);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.swse-hud-title {
+  font-family: var(--swse-font-display);
+  font-size: 18px;
+  color: var(--swse-accent);
+  text-shadow: 0 0 10px oklch(var(--swse-accent) / 0.6);
+}
