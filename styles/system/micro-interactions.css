@@ -1,0 +1,258 @@
+/* ============================================================================
+   MICRO-INTERACTIONS & MOTION
+   Phase 6: Subtle, responsive feedback that makes the UI feel alive
+   Performance-safe animations that work in Foundry context
+   ============================================================================ */
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* GLOBAL MOTION SETUP                                                       */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+* {
+  transition:
+    color var(--swse-anim-fast) var(--swse-ease),
+    background var(--swse-anim-fast) var(--swse-ease),
+    border-color var(--swse-anim-fast) var(--swse-ease),
+    box-shadow var(--swse-anim-fast) var(--swse-ease);
+}
+
+/* Performance optimization: Enable GPU acceleration for frequently-moved elements */
+.swse-datapad,
+.swse-screen,
+.swse-panel,
+.swse-btn,
+[data-toggle="accordion"] {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* BUTTON FEEDBACK (critical for perceived responsiveness)                   */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+.swse-btn {
+  transition:
+    transform var(--swse-anim-fast) var(--swse-ease),
+    box-shadow var(--swse-anim-fast) var(--swse-ease),
+    background var(--swse-anim-fast) var(--swse-ease),
+    border-color var(--swse-anim-fast) var(--swse-ease),
+    color var(--swse-anim-fast) var(--swse-ease);
+}
+
+.swse-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px oklch(0 0 0 / 0.3);
+}
+
+.swse-btn:active {
+  transform: translateY(1px) scale(0.98);
+  transition-duration: var(--swse-anim-fast);
+}
+
+.swse-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* CARD / ROW HOVER DEPTH (hovers feel intentional)                          */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+.swse-hoverable,
+.skill-row,
+.feat-row,
+.item-row,
+[data-hoverable] {
+  transition: all var(--swse-anim-med) var(--swse-ease);
+  cursor: pointer;
+}
+
+.swse-hoverable:hover,
+.skill-row:hover,
+.feat-row:hover,
+.item-row:hover,
+[data-hoverable]:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 20px oklch(0 0 0 / 0.4),
+    0 0 20px oklch(var(--swse-accent) / 0.15);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* PANEL ENTRY ANIMATION (things appear smoothly, not jarring)               */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+.swse-fade-in {
+  animation: swseFadeIn var(--swse-anim-med) var(--swse-ease);
+}
+
+@keyframes swseFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tab content transitions */
+.tab {
+  animation: swseFadeIn var(--swse-anim-med) var(--swse-ease);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* STEP TRANSITIONS (Progression Engine flow)                                */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+.swse-step-content {
+  animation: swseSlide var(--swse-anim-med) var(--swse-ease);
+}
+
+@keyframes swseSlide {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* ACCORDION POLISH (expand/collapse feels responsive)                       */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+.swse-accordion {
+  transition: all var(--swse-anim-fast) var(--swse-ease);
+}
+
+.swse-accordion::before {
+  transition: transform var(--swse-anim-med) var(--swse-ease);
+}
+
+.swse-accordion-body {
+  animation: swseExpand var(--swse-anim-med) var(--swse-ease);
+}
+
+@keyframes swseExpand {
+  from {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* MODIFIER PANEL FEEDBACK (breakdown appears smoothly)                      */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+.swse-mod {
+  transition: text-shadow var(--swse-anim-fast) var(--swse-ease);
+}
+
+.swse-mod-panel {
+  animation: swseFadeIn var(--swse-anim-fast) var(--swse-ease);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* INPUT FEEDBACK (typing feels responsive)                                  */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+input,
+select,
+textarea {
+  transition: all var(--swse-anim-fast) var(--swse-ease);
+}
+
+input:focus,
+input:focus-visible,
+select:focus,
+select:focus-visible,
+textarea:focus,
+textarea:focus-visible {
+  transform: scale(1.01);
+}
+
+input:active,
+select:active,
+textarea:active {
+  transform: scale(0.99);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* LOADING STATE (busy feedback)                                             */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+.swse-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.swse-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border: 2px solid oklch(var(--swse-accent) / 0.2);
+  border-top-color: var(--swse-accent);
+  border-radius: 50%;
+  animation: swseSpin 0.8s linear infinite;
+  z-index: 10;
+}
+
+@keyframes swseSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* SCROLL BEHAVIOR (smooth, not jarring)                                     */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* THEME SLIDER FEEDBACK (feedback on theme changes)                        */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+.swse-theme-slider {
+  transition: background var(--swse-anim-fast) var(--swse-ease),
+              border-color var(--swse-anim-fast) var(--swse-ease);
+}
+
+.swse-theme-slider::-webkit-slider-thumb {
+  transition: all var(--swse-anim-fast) var(--swse-ease);
+}
+
+.swse-theme-slider::-moz-range-thumb {
+  transition: all var(--swse-anim-fast) var(--swse-ease);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* REDUCE MOTION SUPPORT (accessibility)                                    */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

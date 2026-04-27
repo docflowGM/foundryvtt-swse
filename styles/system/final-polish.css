@@ -1,0 +1,221 @@
+/* ============================================================================
+   FINAL POLISH
+   Phase 6: Visual flourishes that complete the "premium app" feel
+   ============================================================================ */
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* BUTTON STATES — All variants polished                                     */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+/* Primary button (most important action) */
+.swse-btn.primary {
+  border-color: var(--swse-pos);
+  color: var(--swse-pos);
+}
+
+.swse-btn.primary:hover {
+  background: oklch(var(--swse-pos) / 0.15);
+  box-shadow: 0 0 12px oklch(var(--swse-pos) / 0.4);
+}
+
+/* Ready state (strong feedback for level-up, chargen complete, etc) */
+.swse-btn.ready {
+  border-color: var(--swse-pos);
+  color: var(--swse-pos);
+  background: oklch(var(--swse-pos) / 0.1);
+  box-shadow: 0 0 12px oklch(var(--swse-pos) / 0.5);
+}
+
+.swse-btn.ready:hover {
+  background: oklch(var(--swse-pos) / 0.2);
+  box-shadow: 0 0 16px oklch(var(--swse-pos) / 0.7);
+}
+
+/* Ghost button (secondary, less prominent) */
+.swse-btn.ghost {
+  background: transparent;
+  border-color: oklch(var(--swse-accent) / 0.3);
+  color: var(--swse-ink-faint);
+}
+
+.swse-btn.ghost:hover {
+  background: oklch(var(--swse-accent) / 0.08);
+  border-color: oklch(var(--swse-accent) / 0.5);
+  color: var(--swse-ink-dim);
+}
+
+/* Success state (confirmation, save successful) */
+.swse-btn.success {
+  border-color: var(--swse-pos);
+  color: var(--swse-pos);
+}
+
+.swse-btn.success:hover {
+  background: oklch(var(--swse-pos) / 0.15);
+  box-shadow: 0 0 8px oklch(var(--swse-pos) / 0.4);
+}
+
+/* Danger state (destructive action) */
+.swse-btn.danger {
+  border-color: var(--swse-neg);
+  color: var(--swse-neg);
+}
+
+.swse-btn.danger:hover {
+  background: oklch(var(--swse-neg) / 0.15);
+  box-shadow: 0 0 8px oklch(var(--swse-neg) / 0.4);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* SCROLLBAR STYLING (polish the invisible)                                  */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: oklch(0 0 0 / 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(var(--swse-accent) / 0.4);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(var(--swse-accent) / 0.6);
+  background-clip: content-box;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-color: oklch(var(--swse-accent) / 0.4) oklch(0 0 0 / 0.2);
+  scrollbar-width: thin;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* TEXT SELECTION (polish subtle details)                                    */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+::selection {
+  background: oklch(var(--swse-accent) / 0.3);
+  color: var(--swse-ink);
+}
+
+::-moz-selection {
+  background: oklch(var(--swse-accent) / 0.3);
+  color: var(--swse-ink);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* FOCUS INDICATORS (accessibility + visual feedback)                        */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+*:focus-visible {
+  outline: 2px solid oklch(var(--swse-accent) / 0.8);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+.swse-btn:focus-visible {
+  outline-offset: 1px;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* PLACEHOLDER TEXT (subtle, not jarring)                                    */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+input::placeholder,
+textarea::placeholder {
+  color: oklch(var(--swse-accent) / 0.3);
+  opacity: 1;
+}
+
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  color: oklch(var(--swse-accent) / 0.3);
+  opacity: 1;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* DISABLED STATE (clear visual feedback)                                    */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+[disabled],
+.disabled,
+input:disabled,
+button:disabled,
+select:disabled,
+textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* FIELDSET & LEGEND (form grouping polish)                                  */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+fieldset {
+  border: 1px solid oklch(var(--swse-accent) / 0.2);
+  border-radius: 4px;
+  padding: var(--swse-pad, 14px);
+  margin: var(--swse-gap, 12px) 0;
+}
+
+legend {
+  padding: 0 var(--swse-pad-sm, 8px);
+  color: var(--swse-accent);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* HOVER STATE CONSISTENCY (everything responds to interaction)              */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+[data-interactive]:hover,
+.interactive:hover {
+  box-shadow: 0 0 12px oklch(var(--swse-accent) / 0.2);
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* CURSOR HINTS (show clickable regions)                                     */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+button,
+.swse-btn,
+[role="button"],
+[data-action],
+.clickable {
+  cursor: pointer !important;
+}
+
+a {
+  cursor: pointer;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* LINK STYLING (unified across system)                                      */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+a {
+  color: var(--swse-accent);
+  text-decoration: none;
+  transition: all var(--swse-anim-fast) var(--swse-ease);
+}
+
+a:hover {
+  text-shadow: 0 0 8px oklch(var(--swse-accent) / 0.5);
+  text-decoration: underline;
+}
+
+a:active {
+  opacity: 0.8;
+}

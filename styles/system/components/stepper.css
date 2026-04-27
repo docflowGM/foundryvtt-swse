@@ -1,0 +1,29 @@
+/* ============================================================================
+   SWSE STEPPER COMPONENT
+   Step indicator for multi-step progression flows
+   Shows current step, completion status, navigation
+   ============================================================================ */
+
+.swse-stepper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 6px;
+}
+
+.swse-step {
+  padding: 8px;
+  border: 1px solid oklch(var(--swse-accent) / 0.2);
+  font-family: var(--swse-font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.swse-step.active {
+  border-color: var(--swse-accent);
+  background: oklch(var(--swse-accent) / 0.15);
+}
+
+.swse-step.done {
+  opacity: 0.6;
+}

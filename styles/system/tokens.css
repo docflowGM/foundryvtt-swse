@@ -1,0 +1,47 @@
+/* ============================================================================
+   SWSE DATAPAD UI SYSTEM — GLOBAL TOKENS
+   Extracted from existing designs (Character Sheet v2, Progression, Items)
+   Single source of truth for colors, fonts, effects
+   ============================================================================ */
+
+:root {
+  /* CORE COLORS (from existing UIs) */
+  --swse-accent-h: 190;
+  --swse-accent-c: 0.17;
+  --swse-accent-l: 0.82;
+  --swse-accent: oklch(var(--swse-accent-l) var(--swse-accent-c) var(--swse-accent-h));
+  --swse-accent-soft: oklch(0.55 var(--swse-accent-c) var(--swse-accent-h));
+  --swse-accent-dim: oklch(0.32 0.08 var(--swse-accent-h));
+  --swse-bg: oklch(0.10 0.03 285);
+  --swse-screen: oklch(0.15 0.06 278);
+  --swse-screen-2: oklch(0.20 0.08 272);
+  --swse-ink: oklch(0.94 0.04 var(--swse-accent-h));
+  --swse-ink-dim: oklch(0.72 0.06 var(--swse-accent-h));
+  --swse-ink-faint: oklch(0.50 0.05 var(--swse-accent-h));
+  --swse-pos: oklch(0.82 0.19 145);
+  --swse-neg: oklch(0.70 0.22 25);
+  --swse-zero: oklch(0.88 0.17 95);
+
+  /* FONTS */
+  --swse-font-body: 'Space Grotesk', system-ui, sans-serif;
+  --swse-font-mono: 'JetBrains Mono', monospace;
+  --swse-font-display: 'VT323', monospace;
+  --swse-font-orbit: 'Orbitron', sans-serif;
+
+  /* EFFECTS */
+  --swse-scan-strength: 0.03;
+  --swse-glow: 1;
+
+  /* SPACING & DENSITY (responsive to --swse-density) */
+  --swse-density: 1;
+  --swse-gap: calc(12px * var(--swse-density));
+  --swse-pad: calc(14px * var(--swse-density));
+  --swse-pad-sm: calc(8px * var(--swse-density));
+  --swse-pad-lg: calc(20px * var(--swse-density));
+
+  /* MOTION & FEEDBACK (Phase 6: micro-interactions) */
+  --swse-anim-fast: 120ms;
+  --swse-anim-med: 220ms;
+  --swse-anim-slow: 400ms;
+  --swse-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}

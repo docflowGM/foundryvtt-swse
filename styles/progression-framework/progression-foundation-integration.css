@@ -1,0 +1,64 @@
+/* ============================================================================
+   PROGRESSION ENGINE — FOUNDATION INTEGRATION
+   Applies foundation component styles to existing progression templates
+   Preserves all game logic and data flow
+   ============================================================================ */
+
+/* Summary panel applies manifest styling */
+.prog-summary-panel {
+  background: oklch(0 0 0 / 0.3);
+  border: 1px solid oklch(var(--swse-accent) / 0.2);
+  padding: 12px;
+}
+
+.prog-summary__row {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 8px;
+  font-family: var(--swse-font-mono);
+  font-size: 11px;
+  padding: 6px 0;
+  border-bottom: 1px dotted oklch(var(--swse-accent) / 0.15);
+}
+
+.prog-summary__row-label {
+  color: var(--swse-ink-faint);
+  text-transform: uppercase;
+  font-size: 9px;
+}
+
+.prog-summary__row-value {
+  color: var(--swse-ink);
+}
+
+/* Progress rail applies stepper styling */
+.prog-progress-rail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 6px;
+}
+
+.prog-step {
+  padding: 8px;
+  border: 1px solid oklch(var(--swse-accent) / 0.2);
+  font-family: var(--swse-font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.prog-step--active {
+  border-color: var(--swse-accent);
+  background: oklch(var(--swse-accent) / 0.15);
+}
+
+.prog-step--complete {
+  opacity: 0.6;
+}
+
+/* Remove SVG chrome from UI frames */
+.swse-ui-frame {
+  background: oklch(0 0 0 / 0.3);
+  border: 1px solid oklch(var(--swse-accent) / 0.2);
+  box-shadow: none;
+}

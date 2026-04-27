@@ -1,0 +1,51 @@
+/* ============================================================================
+   SWSE V2 SHEET — FOUNDATION INTEGRATION
+   Bridges the existing v2 sheet with the new datapad UI foundation system
+   Ensures v2 classes use foundation tokens and components
+   ============================================================================ */
+
+/* Ensure v2 shell uses foundation token namespace */
+.swse-sheet-v2-shell {
+  --swse-accent-h: var(--accent-h);
+  --swse-accent-c: var(--accent-c);
+  --swse-accent-l: var(--accent-l);
+  --swse-accent: var(--accent);
+  --swse-accent-soft: oklch(0.55 var(--accent-c) var(--accent-h));
+  --swse-accent-dim: oklch(0.32 0.08 var(--accent-h));
+  --swse-bg: oklch(0.10 0.03 285);
+  --swse-screen: var(--screen);
+  --swse-screen-2: var(--screen-2);
+  --swse-ink: var(--ink);
+  --swse-ink-dim: var(--ink-dim);
+  --swse-ink-faint: var(--ink-faint);
+  --swse-pos: var(--pos);
+  --swse-neg: var(--neg);
+  --swse-zero: var(--zero);
+  --swse-font-body: var(--font-body);
+  --swse-font-mono: var(--font-mono);
+  --swse-font-display: var(--font-display);
+  --swse-font-orbit: var(--font-orbit);
+  --swse-scan-strength: var(--scan-strength);
+  --swse-glow: var(--glow-mult);
+}
+
+/* Map v2 HUD classes to foundation styles (for backward compatibility) */
+.swse-v2-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--swse-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border-bottom: 1px solid oklch(var(--swse-accent) / 0.3);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.swse-v2-hud-title {
+  font-family: var(--swse-font-display);
+  font-size: 18px;
+  color: var(--swse-accent);
+  text-shadow: 0 0 10px oklch(var(--swse-accent) / 0.6);
+}

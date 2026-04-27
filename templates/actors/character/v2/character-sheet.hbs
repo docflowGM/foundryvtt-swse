@@ -6,18 +6,12 @@
   <div class="swse-v2-tablet">
     <div class="swse-v2-screen">
 
-      <!-- HUD/STATUS BAR -->
-      <div class="swse-v2-hud">
-        <div class="swse-v2-hud-left">
-          <span class="tag"><span class="dot"></span>LINK</span>
-          <span class="tag"><span class="dot warn"></span>CHAR-REC</span>
-          <span class="tag">ENC · AES-2048</span>
-        </div>
-        <div class="swse-v2-hud-title">CHARACTER RECORD // MK-VII</div>
-        <div class="swse-v2-hud-right">
-          {{!-- reserved for future status indicators --}}
-        </div>
-      </div>
+      <!-- HUD/STATUS BAR (using foundation component) -->
+      {{> "systems/foundryvtt-swse/templates/components/hud.hbs"
+          title="CHARACTER RECORD // MK-VII"
+          left=(array "LINK" "CHAR-REC" "ENC · AES-2048")
+          right=(array)
+      }}
 
       <!-- TITLE STRIP -->
       <div class="swse-v2-title-strip">◇ CHARACTER DOSSIER ◇</div>

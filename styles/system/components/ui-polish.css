@@ -1,0 +1,131 @@
+/* ============================================================================
+   UI POLISH — GLOBAL INTERACTION IMPROVEMENTS
+   Input handling, button states, feedback, accessibility
+   ============================================================================ */
+
+/* Input focus guard */
+input:focus {
+  outline: 1px solid oklch(var(--swse-accent) / 0.5);
+  outline-offset: 2px;
+}
+
+/* Search input — stop propagation handlers */
+input[type="search"],
+input[type="text"].search {
+  padding: 8px 12px;
+  background: oklch(0 0 0 / 0.3);
+  border: 1px solid oklch(var(--swse-accent) / 0.3);
+  color: var(--swse-ink);
+  font-family: var(--swse-font-body);
+}
+
+input[type="search"]:focus,
+input[type="text"].search:focus {
+  border-color: oklch(var(--swse-accent) / 0.6);
+  background: oklch(0 0 0 / 0.5);
+}
+
+/* Button state enhancements */
+.swse-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.swse-btn.ready {
+  box-shadow: 0 0 10px oklch(var(--swse-accent) / 0.8);
+  border-color: var(--swse-accent);
+}
+
+/* Ghost button (secondary/reset) */
+.swse-btn.ghost {
+  background: transparent;
+  border-color: oklch(var(--swse-accent) / 0.3);
+  color: var(--swse-ink-faint);
+}
+
+.swse-btn.ghost:hover {
+  background: oklch(var(--swse-accent) / 0.1);
+  border-color: oklch(var(--swse-accent) / 0.5);
+  color: var(--swse-ink-dim);
+}
+
+/* Success state (for confirmations) */
+.swse-btn.success {
+  border-color: var(--swse-pos);
+  color: var(--swse-pos);
+}
+
+.swse-btn.success:hover {
+  background: oklch(var(--swse-pos) / 0.15);
+  box-shadow: 0 0 8px oklch(var(--swse-pos) / 0.4);
+}
+
+/* Danger state (for destructive actions) */
+.swse-btn.danger {
+  border-color: var(--swse-neg);
+  color: var(--swse-neg);
+}
+
+.swse-btn.danger:hover {
+  background: oklch(var(--swse-neg) / 0.15);
+  box-shadow: 0 0 8px oklch(var(--swse-neg) / 0.4);
+}
+
+/* Scrollbar styling for readability */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: oklch(0 0 0 / 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(var(--swse-accent) / 0.4);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(var(--swse-accent) / 0.6);
+}
+
+/* Text selection styling */
+::selection {
+  background: oklch(var(--swse-accent) / 0.3);
+  color: var(--swse-ink);
+}
+
+/* Disabled state styling */
+[disabled],
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Loading indicator */
+.swse-loading {
+  opacity: 0.6;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+/* Tooltip styling */
+[data-title],
+[title] {
+  position: relative;
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+  outline: 2px solid oklch(var(--swse-accent) / 0.8);
+  outline-offset: 2px;
+}
+
+button:focus-visible {
+  outline-offset: 1px;
+}

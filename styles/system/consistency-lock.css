@@ -1,0 +1,168 @@
+/* ============================================================================
+   CONSISTENCY LOCK
+   Final pass to ensure no visual drift across system
+   Enforces unified spacing, button states, and component appearance
+   ============================================================================ */
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* UNIFIED SPACING — All gaps and padding use density-responsive tokens     */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+.swse-panel,
+.swse-hud,
+.swse-tabs,
+.swse-accordion {
+  gap: var(--swse-gap, 12px) !important;
+}
+
+.swse-panel,
+.swse-accordion-body {
+  padding: var(--swse-pad, 14px) !important;
+}
+
+.swse-panel-head {
+  margin-bottom: var(--swse-gap, 12px) !important;
+}
+
+.swse-btn {
+  padding: var(--swse-pad-sm, 8px) calc(var(--swse-pad, 14px) * 1.15) !important;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* BUTTON CONSISTENCY — All button variants use same base                   */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+.swse-btn {
+  font-family: var(--swse-font-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.25em !important;
+  text-transform: uppercase !important;
+  border-radius: 2px !important;
+  transition: all 0.15s ease !important;
+  cursor: pointer !important;
+}
+
+/* Ensure no competing button styles override foundation */
+button.swse-btn,
+input[type="button"].swse-btn,
+input[type="submit"].swse-btn {
+  all: revert;
+  font-family: var(--swse-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: var(--swse-pad-sm, 8px) calc(var(--swse-pad, 14px) * 1.15);
+  cursor: pointer;
+  background: oklch(var(--swse-accent) / 0.1);
+  border: 1px solid oklch(var(--swse-accent) / 0.5);
+  color: var(--swse-accent);
+  transition: all 0.15s ease;
+  border-radius: 2px;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* COMPONENT CONSISTENCY — Ensure shared components look identical           */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+/* HUD consistent styling */
+.swse-hud {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  border-bottom: 1px solid oklch(var(--swse-accent) / 0.3) !important;
+  padding-bottom: var(--swse-pad-sm, 8px) !important;
+  margin-bottom: var(--swse-gap, 12px) !important;
+}
+
+.swse-hud-title {
+  font-family: var(--swse-font-display) !important;
+  font-size: 18px !important;
+  color: var(--swse-accent) !important;
+  text-shadow: 0 0 10px oklch(var(--swse-accent) / 0.6) !important;
+}
+
+/* Panel consistent styling */
+.swse-panel {
+  background: oklch(0 0 0 / 0.3) !important;
+  border: 1px solid oklch(var(--swse-accent) / 0.2) !important;
+  border-radius: 4px !important;
+}
+
+.swse-panel-head {
+  font-family: var(--swse-font-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.3em !important;
+  text-transform: uppercase !important;
+  color: var(--swse-accent) !important;
+  border-bottom: 1px dashed oklch(var(--swse-accent) / 0.3) !important;
+}
+
+/* Tabs consistent styling */
+.swse-tabs {
+  display: flex !important;
+  gap: var(--swse-pad-sm, 8px) !important;
+  border-bottom: 1px solid oklch(var(--swse-accent) / 0.2) !important;
+  padding-bottom: var(--swse-pad-sm, 8px) !important;
+}
+
+.swse-tab {
+  font-family: var(--swse-font-mono) !important;
+  font-size: 9px !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  border-bottom: 2px solid transparent !important;
+  padding: var(--swse-pad-sm, 8px) calc(var(--swse-gap, 12px) * 0.66) !important;
+}
+
+.swse-tab.active {
+  color: var(--swse-accent) !important;
+  border-bottom-color: var(--swse-accent) !important;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* INPUT CONSISTENCY — All form inputs unified                              */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+select,
+textarea {
+  font-family: var(--swse-font-body) !important;
+  color: var(--swse-ink) !important;
+  background: oklch(0 0 0 / 0.3) !important;
+  border: 1px solid oklch(var(--swse-accent) / 0.3) !important;
+  border-radius: 2px !important;
+}
+
+input:focus,
+input:focus-visible,
+select:focus,
+select:focus-visible,
+textarea:focus,
+textarea:focus-visible {
+  outline: none !important;
+  border-color: oklch(var(--swse-accent) / 0.6) !important;
+  box-shadow: 0 0 6px oklch(var(--swse-accent) / 0.3) !important;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* NO DRIFT — Remove any competing styles                                   */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+/* Legacy classes that should not exist anymore */
+.panel {
+  display: none !important;
+}
+
+.hud:not(.swse-hud) {
+  display: none !important;
+}
+
+.tab:not(.swse-tab) {
+  display: none !important;
+}

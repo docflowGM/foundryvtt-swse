@@ -21,12 +21,13 @@
       modal-host      In-shell modal stack
 --}}
 
-<div class="progression-shell swse-ui-shell swse-sheet-ui swse-progression-shell swse-prog-v2-shell prog-holo {{#if isProcessing}}is-processing{{/if}}"
+<div class="swse-datapad progression-shell swse-ui-shell swse-sheet-ui swse-progression-shell swse-prog-v2-shell prog-holo {{#if isProcessing}}is-processing{{/if}}"
      data-application-content
      data-step-id="{{currentDescriptor.stepId}}"
      data-theme="{{themeKey}}"
      data-motion-style="{{motionStyle}}"
      style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
+<div class="swse-screen">
 
 {{#if isIntroMode}}
 
@@ -48,24 +49,27 @@
   ======================================================================= --}}
 
   {{!-- ======================================================================
-    MENTOR HEADER BAND — top of shell, horizontal layout
-    Portrait (left) + Dialogue (right)
+    MENTOR NARRATOR — Mentor guidance (using foundation component)
   ======================================================================= --}}
   <div data-region="mentor-rail"
        data-collapsed="{{mentorCollapsed}}"
        data-mood="{{mentor.mood}}">
-    {{{parts.mentorRail}}}
+    {{> "systems/foundryvtt-swse/templates/components/narrator.hbs"
+        label=mentor.name
+        avatar=mentor.portrait
+        text=mentor.currentDialogue
+    }}
   </div>{{!-- /mentor-rail --}}
 
   {{!-- ======================================================================
-    PHASE 4: HUD META STATUS BAR — Session, mode, step meta
+    HUD STATUS BAR — Session, mode, step meta (using foundation component)
   ======================================================================= --}}
   {{#if hudTags}}
-  <div class="prog-hud-meta-bar">
-    <span class="prog-hud-tag prog-hud-tag--mode">{{hudTags.modeTag}}</span>
-    <span class="prog-hud-tag prog-hud-tag--actor">{{hudTags.actorTag}}</span>
-    <span class="prog-hud-tag prog-hud-tag--stage">{{hudTags.stageTag}}</span>
-  </div>
+  {{> "systems/foundryvtt-swse/templates/components/hud.hbs"
+      title="CHARACTER CREATION"
+      left=(array hudTags.modeTag hudTags.actorTag)
+      right=(array hudTags.stageTag)
+  }}
   {{/if}}
 
   {{!-- ======================================================================
@@ -278,4 +282,6 @@
 
 {{/if}}{{!-- /isIntroMode --}}
 
+</div>{{!-- /swse-screen --}}
+</div>{{!-- /swse-datapad --}}
 </div>{{!-- /progression-shell --}}

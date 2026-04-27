@@ -1,38 +1,9 @@
-<div class="prog-progress-rail swse-ui-panel swse-progress-rail-shell">
-  <div class="prog-progress-rail__label">Steps</div>
-  <ol class="prog-progress-rail__list swse-progress-step-list" role="list">
-    {{#each stepProgress}}
-      <li class="prog-step swse-ui-frame
-              {{#if this.isCurrent}} prog-step--active{{/if}}
-              {{#if this.isComplete}} prog-step--complete{{/if}}
-              {{#if this.isError}} prog-step--error{{/if}}
-              {{#if this.isCaution}} prog-step--caution{{/if}}
-              {{#if this.isInProgress}} prog-step--in-progress{{/if}}
-              {{#if this.isNeutral}} prog-step--neutral{{/if}}
-              {{#if this.descriptor.isConditional}} prog-step--conditional{{/if}}"
-          data-step-id="{{this.descriptor.stepId}}"
-          data-step-index="{{this.index}}"
-          data-step-status="{{this.status}}"
-          data-can-navigate="{{this.canNavigate}}"
-          tabindex="{{#if this.canNavigate}}0{{else}}-1{{/if}}"
-          role="{{#if this.canNavigate}}button{{else}}listitem{{/if}}"
-          {{#if this.isCurrent}}aria-current="step"{{/if}}
-          {{#unless this.canNavigate}}aria-disabled="true"{{/unless}}
-          {{#if (and (not this.canNavigate) (not this.isCurrent))}}
-            title="Available after {{#if @previous}}{{@previous.descriptor.label}}{{else}}previous step{{/if}}"
-          {{/if}}>
-        <span class="prog-step__icon" aria-hidden="true">
-          <i class="{{this.descriptor.icon}}"></i>
-        </span>
-        <span class="prog-step__name">{{this.descriptor.label}}</span>
-        {{#if this.isComplete}}
-          <span class="prog-step__check" aria-hidden="true">✔</span>
-        {{else if this.isError}}
-          <span class="prog-step__error" aria-hidden="true">⚠</span>
-        {{else if this.isCaution}}
-          <span class="prog-step__warning" aria-hidden="true">!</span>
-        {{/if}}
-      </li>
-    {{/each}}
-  </ol>
-</div>
+{{!-- STEPPER COMPONENT (Foundation) --}}
+{{> "systems/foundryvtt-swse/templates/components/stepper.hbs"
+    steps=(map stepProgress (lambda (step) (
+      object
+        label=step.descriptor.label
+        active=step.isCurrent
+        done=step.isComplete
+      )))
+}}

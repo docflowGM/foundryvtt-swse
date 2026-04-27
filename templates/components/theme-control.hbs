@@ -1,0 +1,76 @@
+<div class="swse-theme-controls">
+  <div class="swse-theme-control-group">
+    <label for="theme-accent" class="swse-theme-label">
+      <span class="swse-theme-label-text">Accent Hue</span>
+      <span class="swse-theme-label-value" id="theme-accent-value">{{accentHue}}°</span>
+    </label>
+    <input
+      type="range"
+      id="theme-accent"
+      class="swse-theme-slider"
+      min="0"
+      max="360"
+      value="{{accentHue}}"
+      data-theme="accentHue"
+      data-theme-type="number"
+    />
+  </div>
+
+  <div class="swse-theme-control-group">
+    <label for="theme-density" class="swse-theme-label">
+      <span class="swse-theme-label-text">Density</span>
+      <span class="swse-theme-label-value" id="theme-density-value">{{density}}x</span>
+    </label>
+    <input
+      type="range"
+      id="theme-density"
+      class="swse-theme-slider"
+      min="0.8"
+      max="1.2"
+      step="0.05"
+      value="{{density}}"
+      data-theme="density"
+      data-theme-type="number"
+    />
+  </div>
+
+  <div class="swse-theme-control-group">
+    <label for="theme-scanlines" class="swse-theme-label">
+      <span class="swse-theme-label-text">Scanlines</span>
+      <span class="swse-theme-label-value" id="theme-scanlines-value">{{scanlines}}</span>
+    </label>
+    <input
+      type="range"
+      id="theme-scanlines"
+      class="swse-theme-slider"
+      min="0"
+      max="0.1"
+      step="0.01"
+      value="{{scanlines}}"
+      data-theme="scanlines"
+      data-theme-type="number"
+    />
+  </div>
+
+  <div class="swse-theme-control-group">
+    <label for="theme-glow" class="swse-theme-label">
+      <span class="swse-theme-label-text">Glow Intensity</span>
+      <span class="swse-theme-label-value" id="theme-glow-value">{{glow}}x</span>
+    </label>
+    <input
+      type="range"
+      id="theme-glow"
+      class="swse-theme-slider"
+      min="0"
+      max="2"
+      step="0.1"
+      value="{{glow}}"
+      data-theme="glow"
+      data-theme-type="number"
+    />
+  </div>
+
+  <button type="button" class="swse-btn ghost swse-btn--small" data-action="reset-theme" title="Reset to defaults">
+    RESET THEME
+  </button>
+</div>

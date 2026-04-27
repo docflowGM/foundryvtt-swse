@@ -1,0 +1,48 @@
+/* ============================================================================
+   SWSE ACCORDION COMPONENT
+   Expandable sections for details, extra uses, descriptions
+   ============================================================================ */
+
+.swse-accordion {
+  cursor: pointer;
+  padding: 8px;
+  background: oklch(var(--swse-accent) / 0.05);
+  border-left: 2px solid oklch(var(--swse-accent) / 0.3);
+  transition: all 0.2s;
+}
+
+.swse-accordion:hover {
+  background: oklch(var(--swse-accent) / 0.1);
+  border-left-color: oklch(var(--swse-accent) / 0.6);
+}
+
+.swse-accordion::before {
+  content: '▸';
+  display: inline-block;
+  margin-right: 8px;
+  transition: transform 0.2s;
+  color: var(--swse-accent);
+}
+
+.swse-accordion.open::before {
+  transform: rotate(90deg);
+}
+
+.swse-accordion-body {
+  display: none;
+  padding: 8px 0 8px 24px;
+  border-left: 1px solid oklch(var(--swse-accent) / 0.2);
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+.swse-accordion.open .swse-accordion-body {
+  display: block;
+}
+
+/* Small text for details */
+.swse-accordion-body .swse-text-small {
+  font-size: 11px;
+  color: var(--swse-ink-faint);
+  line-height: 1.4;
+}

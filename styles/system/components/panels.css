@@ -1,0 +1,21 @@
+/* ============================================================================
+   SWSE PANEL COMPONENT
+   Reusable content container with header
+   Used by: All tab sections, data displays
+   ============================================================================ */
+
+.swse-panel {
+  background: oklch(0 0 0 / 0.3);
+  border: 1px solid oklch(var(--swse-accent) / 0.2);
+  padding: 12px;
+}
+
+.swse-panel-head {
+  font-family: var(--swse-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--swse-accent);
+  border-bottom: 1px dashed oklch(var(--swse-accent) / 0.3);
+  margin-bottom: 8px;
+}

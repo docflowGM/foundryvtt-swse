@@ -1,0 +1,40 @@
+/* ============================================================================
+   SWSE NARRATOR COMPONENT
+   Mentor/guide dialogue system for progression steps
+   Used by: Progression Engine, Splash Screens, Tutorial Overlays
+   ============================================================================ */
+
+.swse-narrator {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 12px;
+  background: oklch(0 0 0 / 0.3);
+  border: 1px solid oklch(var(--swse-accent) / 0.2);
+  border-left: 3px solid var(--swse-accent);
+  padding: 12px;
+}
+
+.swse-narrator-avatar {
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--swse-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swse-narrator-body {
+  font-family: var(--swse-font-body);
+  font-size: 13px;
+  color: var(--swse-ink);
+  line-height: 1.5;
+}
+
+.swse-narrator-label {
+  font-family: var(--swse-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--swse-accent);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}

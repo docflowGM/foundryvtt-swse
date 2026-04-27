@@ -1,0 +1,28 @@
+/* ============================================================================
+   SWSE BUTTON SYSTEM
+   Unified button styling for all interactions
+   Variants: default, primary, disabled
+   ============================================================================ */
+
+.swse-btn {
+  font-family: var(--swse-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  cursor: pointer;
+  background: oklch(var(--swse-accent) / 0.1);
+  border: 1px solid oklch(var(--swse-accent) / 0.5);
+  color: var(--swse-accent);
+  transition: all 0.2s;
+}
+
+.swse-btn:hover {
+  background: oklch(var(--swse-accent) / 0.25);
+  box-shadow: 0 0 12px oklch(var(--swse-accent) / 0.4);
+}
+
+.swse-btn.primary {
+  color: var(--swse-pos);
+  border-color: var(--swse-pos);
+}

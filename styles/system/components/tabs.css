@@ -1,0 +1,35 @@
+/* ============================================================================
+   SWSE TABS COMPONENT
+   Navigation tabs for datapad sections
+   Used by: Character Sheet, All Multi-Tab Surfaces
+   ============================================================================ */
+
+.swse-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid oklch(var(--swse-accent) / 0.2);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+
+.swse-tab {
+  padding: 6px 12px;
+  font-family: var(--swse-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--swse-ink-faint);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.swse-tab.active {
+  color: var(--swse-accent);
+  border-bottom-color: var(--swse-accent);
+}
+
+.swse-tab:hover {
+  color: var(--swse-accent-soft);
+}
