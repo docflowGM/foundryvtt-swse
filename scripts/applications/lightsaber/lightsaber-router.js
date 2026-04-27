@@ -7,15 +7,30 @@ export function isLightsaberDocument(item) {
 
 export function openLightsaberInterface(actor, item = null, options = {}) {
   if (!actor) return;
+
+  // If an item is explicitly passed, use it
   if (item && isLightsaberDocument(item)) {
     new LightsaberConstructionApp(actor, item, { mode: "edit", ...options }).render(true);
     return;
   }
+
+  // Check if actor already owns a lightsaber (for post-construction access)
+  // If they do, open the first one in edit mode (they constructed it or have it as inventory)
+  const ownedSabers = LightsaberConstructionEngine.getOwnedLightsabers(actor);
+  if (ownedSabers.length > 0) {
+    const saber = ownedSabers[0];
+    new LightsaberConstructionApp(actor, saber, { mode: "edit", ...options }).render(true);
+    return;
+  }
+
+  // No owned saber; check if construction is available
   const eligibility = LightsaberConstructionEngine.getEligibility(actor);
   if (!eligibility?.eligible) {
     ui.notifications.warn('Lightsaber construction is not yet available for this character.');
     return;
   }
+
+  // Open construction mode
   new LightsaberConstructionApp(actor, { mode: "construct", ...options }).render(true);
 }
 
