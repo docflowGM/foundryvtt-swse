@@ -1,6 +1,7 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { LedgerService } from '/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js';
 import { UPGRADE_CATALOG } from '/systems/foundryvtt-swse/scripts/engine/customization/upgrade-catalog.js';
+import { EffectResolver } from '/systems/foundryvtt-swse/scripts/engine/customization/effect-resolver.js';
 
 function clone(data) { return foundry.utils.deepClone(data); }
 
@@ -31,6 +32,11 @@ export class InstallRemoveEngine {
     const cost = installSource === 'scratch' ? upgrade.cost * 2 : upgrade.cost;
     const funds = LedgerService.validateFunds(actor, cost);
     const difficulty = installDifficulty(upgrade.slotCost ?? 0, installSource);
+
+    // Resolve effect payload to preview what will actually change on the item
+    // Effect meaning belongs in the engine, not in UI templates
+    const effectResolution = EffectResolver.resolveUpgradeEffects(item, upgrade, { actor, source: installSource });
+
     return {
       success: funds.ok,
       reason: funds.ok ? null : funds.reason,
@@ -39,7 +45,10 @@ export class InstallRemoveEngine {
       mechanicsDC: difficulty.dc,
       timeHours: difficulty.timeHours,
       installSource,
-      resultingSlotState: this.slotEngine.getSlotAccounting(item)
+      resultingSlotState: this.slotEngine.getSlotAccounting(item),
+      // Include effect preview for UI rendering
+      effectPreview: effectResolution.success ? effectResolution.preview : null,
+      effectWarnings: effectResolution.warnings
     };
   }
 
@@ -58,6 +67,11 @@ export class InstallRemoveEngine {
       };
     }
 
+    // Resolve effects to get actual item mutations
+    // This is the canonical point where effects are applied to items
+    const upgrade = UPGRADE_CATALOG[upgradeKey];
+    const effectResolution = EffectResolver.resolveUpgradeEffects(item, upgrade, { actor, source: installSource });
+
     const customization = clone(this.slotEngine.getCustomizationState(item));
     customization.installedUpgrades = Array.isArray(customization.installedUpgrades) ? customization.installedUpgrades : [];
     customization.operationLog = Array.isArray(customization.operationLog) ? customization.operationLog : [];
@@ -68,7 +82,9 @@ export class InstallRemoveEngine {
       operationCost: preview.cost,
       restriction: preview.upgrade.restriction,
       installedAt: Date.now(),
-      installSource
+      installSource,
+      // Store effect mutations for potential removal/reversion later
+      appliedEffects: effectResolution.mutations || {}
     };
     customization.installedUpgrades.push(instance);
     customization.operationLog.push({
@@ -90,14 +106,30 @@ export class InstallRemoveEngine {
     });
 
     const delta = LedgerService.buildCreditDelta(actor, preview.cost);
-    await ActorEngine.applyMutationPlan(actor, {
+    const mutationPlan = {
       set: {
         ...delta.set,
         'flags.foundryvtt-swse.customization': customization,
         'system.installedUpgrades': legacyInstalled
       }
-    }, item);
-    return { success: true, instanceId: instance.instanceId, cost: preview.cost };
+    };
+
+    // Apply effect mutations to the item state
+    if (effectResolution.mutations) {
+      const expandedEffects = foundry.utils.expandObject(effectResolution.mutations);
+      mutationPlan.set = {
+        ...mutationPlan.set,
+        ...foundry.utils.flattenObject(expandedEffects)
+      };
+    }
+
+    await ActorEngine.applyMutationPlan(actor, mutationPlan, item);
+    return {
+      success: true,
+      instanceId: instance.instanceId,
+      cost: preview.cost,
+      appliedEffects: effectResolution.mutations ? Object.keys(effectResolution.mutations) : []
+    };
   }
 
   previewRemove(item, instanceId, { destructive = false } = {}) {
