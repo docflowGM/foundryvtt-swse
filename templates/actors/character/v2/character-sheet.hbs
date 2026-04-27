@@ -135,38 +135,11 @@
           <button type="button" data-action="cmd-levelup" class="header-btn {{#if xpLevelReady}}ready{{/if}}">Level Up</button>
         {{/if}}
         <button type="button" data-action="cmd-store" class="header-btn">Store</button>
-        <button type="button" data-action="open-mentor" class="header-btn"><i class="fas fa-user-astronaut"></i> Mentor</button>
+        <button type="button" data-action="open-settings-app" class="header-btn"><i class="fas fa-sliders-h"></i> Settings</button>
         <button type="button" data-action="toggle-help-mode" class="header-btn help-mode-toggle" title="{{helpLevelDescription}}">
           <i class="fas fa-question-circle"></i> {{helpLevelLabel}}
         </button>
       </div>
-
-      <!-- THEME & MOTION CONTROLS (separate row below buttons) -->
-      {{#if editable}}
-        <div class="swse-v2-control-dropdowns">
-          <!-- Theme Dropdown -->
-          <div class="swse-control-group">
-            <label class="swse-control-label" for="sheet-theme-select">Theme</label>
-            <select id="sheet-theme-select" class="swse-control-select" data-control="theme">
-              {{#each sheetThemeGroups}}
-                {{#each options}}
-                  <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
-                {{/each}}
-              {{/each}}
-            </select>
-          </div>
-
-          <!-- Motion Dropdown -->
-          <div class="swse-control-group">
-            <label class="swse-control-label" for="sheet-motion-select">Motion</label>
-            <select id="sheet-motion-select" class="swse-control-select" data-control="motion">
-              {{#each sheetMotionOptions}}
-                <option value="{{value}}" {{#if (eq value ../sheetMotionStyle)}}selected{{/if}}>{{label}}</option>
-              {{/each}}
-            </select>
-          </div>
-        </div>
-      {{/if}}
 
       <!-- SHEET SHELL: Flex container for nav + content (required by contract) -->
       <div class="sheet-shell">

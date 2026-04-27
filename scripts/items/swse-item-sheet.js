@@ -156,31 +156,25 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       }
     });
 
-    // Lightsaber customization entry
-    root.querySelector('.customize-lightsaber')?.addEventListener('click', (event) => {
+    // Customization entries route into the shell-native upgrade overlay when possible
+    const openShellCustomizer = async (event) => {
       event.preventDefault();
       try {
         const actor = this.item.actor;
-        if (!actor) {
-          ui.notifications.warn('Lightsaber customization requires an owned item on an actor.');
-          return;
+        if (!actor) return;
+        let shell = ShellRouter.getShell(actor.id);
+        if (!shell) {
+          await actor.sheet?.render(true);
+          await new Promise(resolve => setTimeout(resolve, 50));
         }
-        openLightsaberInterface(actor, this.item);
+        await ShellOverlayManager.openSingleItemUpgrade(actor, this.item);
       } catch (err) {
-        SWSELogger.error('[SWSEItemSheet] Failed to open LightsaberConstructionApp', err);
+        SWSELogger.error('[SWSEItemSheet] Failed to open shell customizer', err);
       }
-    });
+    };
 
-    // Blaster customization entry
-    root.querySelector('.customize-blaster')?.addEventListener('click', (event) => {
-      event.preventDefault();
-      try {
-        const actor = this.item.actor ?? this.item;
-        new BlasterCustomizationApp(actor, this.item).render(true);
-      } catch (err) {
-        SWSELogger.error('[SWSEItemSheet] Failed to open BlasterCustomizationApp', err);
-      }
-    });
+    root.querySelector('.customize-lightsaber')?.addEventListener('click', openShellCustomizer);
+    root.querySelector('.customize-blaster')?.addEventListener('click', openShellCustomizer);
 
     // Close button
     root.querySelector('.close-btn')?.addEventListener('click', (event) => {

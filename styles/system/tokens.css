@@ -21,12 +21,17 @@
   --swse-pos: oklch(0.82 0.19 145);
   --swse-neg: oklch(0.70 0.22 25);
   --swse-zero: oklch(0.88 0.17 95);
+  --swse-shell-start: #1a1a26;
+  --swse-shell-mid: #0b0b14;
+  --swse-shell-end: #12121c;
+  --swse-shell-rim: oklch(0.35 0.04 270 / 0.5);
 
   /* FONTS */
   --swse-font-body: 'Space Grotesk', system-ui, sans-serif;
   --swse-font-mono: 'JetBrains Mono', monospace;
   --swse-font-display: 'VT323', monospace;
   --swse-font-orbit: 'Orbitron', sans-serif;
+  --swse-font-aurebesh: 'Aurebesh', 'Aurebesh Condensed', monospace;
 
   /* EFFECTS */
   --swse-scan-strength: 0.03;

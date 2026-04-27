@@ -10,6 +10,11 @@ export function openLightsaberInterface(actor, item = null, options = {}) {
 
   // If an item is explicitly passed, use it
   if (item && isLightsaberDocument(item)) {
+    const shell = ShellRouter.getShell(actor.id);
+    if (shell) {
+      ShellOverlayManager.openSingleItemUpgrade(actor, item);
+      return;
+    }
     new LightsaberConstructionApp(actor, item, { mode: "edit", ...options }).render(true);
     return;
   }

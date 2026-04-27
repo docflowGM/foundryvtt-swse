@@ -7,6 +7,7 @@
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
 import { openLightsaberInterface } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-router.js";
+import { ShellOverlayManager } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellOverlayManager.js";
 import { BlasterCustomizationApp } from "/systems/foundryvtt-swse/scripts/apps/blaster/blaster-customization-app.js";
 import { ArmorModificationApp } from "/systems/foundryvtt-swse/scripts/apps/armor/armor-modification-app.js";
 import { MeleeWeaponModificationApp } from "/systems/foundryvtt-swse/scripts/apps/weapons/melee-modification-app.js";
@@ -151,31 +152,9 @@ export function activateForceUI(sheet, html, { signal } = {}) {
       const item = sheet.actor.items.get(itemId);
       if (!item) return;
 
-      // Route to correct customization modal based on item type / subtype
       try {
-        if (item.type === "lightsaber" || (item.type === "weapon" && (item.system?.subtype === "lightsaber" || item.system?.weaponCategory === "lightsaber"))) {
-          openLightsaberInterface(sheet.actor, item);
-        } else {
-          switch (item.type) {
-            case "blaster":
-              new BlasterCustomizationApp(sheet.actor, item).render(true);
-              break;
-            case "armor":
-              new ArmorModificationApp(sheet.actor, item).render(true);
-              break;
-            case "weapon":
-              new MeleeWeaponModificationApp(sheet.actor, item).render(true);
-              break;
-            case "gear":
-            case "equipment":
-              new GearModificationApp(sheet.actor, item).render(true);
-              break;
-            default:
-              ui?.notifications?.warn?.(`No customization available for ${item.type}`);
-          }
-        }
+        await ShellOverlayManager.openSingleItemUpgrade(sheet.actor, item);
       } catch (err) {
-        // console.error("Customization modal failed:", err);
         ui?.notifications?.error?.("Failed to open customization modal");
       }
     }, { signal });

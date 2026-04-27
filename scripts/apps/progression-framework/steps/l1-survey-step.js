@@ -191,7 +191,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
         template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/l1-survey-details.hbs',
         data: {
           title: `Question ${this._activeQuestionIndex + 1}`,
-          summary: 'Choose the answer that feels closest to the character you want to play. The detail rail will update once you make your call.',
+          summary: 'Pick the short answer that feels right. The details rail explains what that choice means for your build.',
           tags: [],
         },
       };

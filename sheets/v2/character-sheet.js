@@ -24,6 +24,7 @@ import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interact
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
 import { openLightsaberInterface } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-router.js";
+import { ShellOverlayManager } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellOverlayManager.js";
 import { BlasterCustomizationApp } from "/systems/foundryvtt-swse/scripts/apps/blaster/blaster-customization-app.js";
 import { ArmorModificationApp } from "/systems/foundryvtt-swse/scripts/apps/armor/armor-modification-app.js";
 import { MeleeWeaponModificationApp } from "/systems/foundryvtt-swse/scripts/apps/weapons/melee-modification-app.js";
@@ -31,6 +32,7 @@ import { GearModificationApp } from "/systems/foundryvtt-swse/scripts/apps/gear/
 import { launchProgression, launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { ShellSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceRegistry.js";
+import { ThemeManager } from "/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
@@ -366,7 +368,7 @@ export class SWSEV2CharacterSheet extends
     this._helpLevel = HelpModeManager.initializeForActor(document);
 
     // ─── Phase 11: Shell Host State ────────────────────────────────────────
-    // Active surface: 'sheet' | 'progression' | 'chargen' | 'upgrade'
+    // Active surface: 'sheet' | 'home' | 'progression' | 'chargen' | 'upgrade' | 'settings' | 'mentor'
     this._shellSurface = 'sheet';
     this._shellSurfaceOptions = {};
     this._shellOverlay = null;
@@ -441,6 +443,14 @@ export class SWSEV2CharacterSheet extends
       });
     });
 
+    root.querySelectorAll('[data-shell-action="return-to-home"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this.setSurface('home');
+        this.render(false);
+      });
+    });
+
     root.querySelectorAll('[data-shell-action="close-overlay"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
@@ -475,6 +485,14 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
+    root.querySelectorAll('[data-action="open-settings-app"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this.setSurface('settings', { source: 'sheet' });
+        this.render(false);
+      });
+    });
+
     // Open-home nav button (sheet mode and all non-home surfaces)
     root.querySelectorAll('[data-shell-action="open-home"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
@@ -492,6 +510,14 @@ export class SWSEV2CharacterSheet extends
     // Upgrade surface events wired when the upgrade route surface is active
     if (this._shellSurface === 'upgrade') {
       this._wireUpgradeSurfaceEvents(root);
+    }
+
+    if (this._shellSurface === 'settings') {
+      this._wireSettingsSurfaceEvents(root);
+    }
+
+    if (this._shellSurface === 'mentor') {
+      this._wireMentorSurfaceEvents(root);
     }
 
     // Upgrade single-item overlay events
@@ -514,6 +540,9 @@ export class SWSEV2CharacterSheet extends
         if (el.disabled) return;
         const routeId = el.dataset.routeId;
         if (!routeId) return;
+        homeRoot.querySelectorAll('.swse-app-tile--launching').forEach(tile => tile.classList.remove('swse-app-tile--launching'));
+        el.classList.add('swse-app-tile--launching');
+        await new Promise(resolve => setTimeout(resolve, 150));
         await this.setSurface(routeId, { source: 'home' });
         this.render(false);
       });
@@ -616,6 +645,104 @@ export class SWSEV2CharacterSheet extends
           await CommandBus.execute('REMOVE_ITEM_UPGRADE', { actor, itemId: focusedItemId, upgradeIndex: Number(el.dataset.upgradeIndex) });
           this.render(false);
         } catch (err) { ui.notifications?.error?.(`Failed to remove upgrade: ${err.message}`); }
+      });
+    });
+  }
+
+
+  _wireSettingsSurfaceEvents(root) {
+    const settingsRoot = root.querySelector('[data-shell-region="surface-settings"]');
+    if (!settingsRoot) return;
+
+    settingsRoot.querySelectorAll('[data-theme-preset]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await ThemeManager.setTheme({ theme: el.dataset.themePreset });
+        this.render(false);
+      });
+    });
+
+    settingsRoot.querySelectorAll('[data-shell-color]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await ThemeManager.setTheme({ shellColor: el.dataset.shellColor });
+        this.render(false);
+      });
+    });
+
+    settingsRoot.querySelectorAll('[data-theme-control]').forEach(el => {
+      el.addEventListener('input', async (ev) => {
+        const key = el.dataset.themeControl;
+        const value = Number(el.value);
+        await ThemeManager.setTheme({ [key]: value });
+        this.render(false);
+      });
+    });
+
+    settingsRoot.querySelectorAll('[data-theme-toggle]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const key = el.dataset.themeToggle;
+        const current = ThemeManager.getTheme() || ThemeManager.defaults;
+        await ThemeManager.setTheme({ [key]: !current[key] });
+        this.render(false);
+      });
+    });
+
+    settingsRoot.querySelectorAll('[data-language-setting]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await ThemeManager.setTheme({ language: el.dataset.languageSetting });
+        this.render(false);
+      });
+    });
+
+    settingsRoot.querySelector('[data-action="reset-theme-defaults"]')?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      await ThemeManager.setTheme(ThemeManager.defaults);
+      this.render(false);
+    });
+  }
+
+  _wireMentorSurfaceEvents(root) {
+    const mentorRoot = root.querySelector('[data-shell-region="surface-mentor"]');
+    if (!mentorRoot) return;
+
+    mentorRoot.querySelectorAll('[data-mentor-key]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        this._shellSurfaceOptions = { selectedMentorKey: el.dataset.mentorKey };
+        this.render(false);
+      });
+    });
+
+    mentorRoot.querySelectorAll('[data-mentor-topic]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        this._shellSurfaceOptions = {
+          ...this._shellSurfaceOptions,
+          topicKey: el.dataset.mentorTopic
+        };
+        this.render(false);
+      });
+    });
+
+    mentorRoot.querySelectorAll('[data-mentor-path]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const pathName = el.dataset.mentorPath;
+        const mentorKey = this._shellSurfaceOptions?.selectedMentorKey;
+        if (!pathName || !mentorKey) return;
+        try {
+          const { getMentorMemory, setCommittedPath, setMentorMemory } = await import('/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js');
+          const mentorId = String(mentorKey).toLowerCase();
+          const memory = getMentorMemory(this.actor, mentorId);
+          const updatedMemory = setCommittedPath(memory, pathName);
+          await setMentorMemory(this.actor, mentorId, updatedMemory);
+          ui.notifications?.info?.(`Committed to ${pathName}.`);
+        } catch (err) {
+          ui.notifications?.error?.(`Failed to commit mentor path: ${err.message}`);
+        }
       });
     });
   }
@@ -3686,8 +3813,7 @@ const forcePoints = [];
   ============================================================ */
 
   _openMentorConversation() {
-    const actor = this.actor;
-    new MentorChatDialog(actor).render(true);
+    this.setSurface('mentor', { source: 'sheet' }).then(() => this.render(false));
   }
 
   /* ============================================================

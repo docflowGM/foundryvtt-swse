@@ -167,9 +167,9 @@ export async function launchProgression(actor, options = {}) {
       .catch(() => {});
   }
 
-  // WINDOW AUTHORITY: Minimize actor sheet so it does not collide with progression.
-  // The shell surface state is set above so the shell can restore itself when done.
-  if (actor.sheet?.rendered) {
+  // WINDOW AUTHORITY: preserve the datapad shell when a shell host is open.
+  // Only minimize as a legacy fallback when no shell host is available.
+  if (!shell && actor.sheet?.rendered) {
     try {
       const pos = computeCenteredPosition(900, 950);
       actor.sheet.setPosition(pos);

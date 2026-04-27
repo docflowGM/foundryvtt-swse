@@ -16,6 +16,11 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
+
+function supportedTypesForMentor(actor) {
+  return ['character', 'droid', 'npc'].includes(actor?.type);
+}
+
 export class HomeSurfaceService {
 
   // ─── Entry Point ─────────────────────────────────────────────────────────────
@@ -58,6 +63,16 @@ export class HomeSurfaceService {
           description: progressionSummary.description
         },
         {
+          id: 'mentor',
+          label: 'Chat with Mentor',
+          icon: '✶',
+          routeId: 'mentor',
+          visible: supportedTypesForMentor(actor),
+          enabled: true,
+          badge: null,
+          description: 'Seek guidance and planning advice'
+        },
+        {
           id: 'upgrade',
           label: 'Workbench',
           icon: '✦',
@@ -66,6 +81,16 @@ export class HomeSurfaceService {
           enabled: upgradeSummary.enabled,
           badge: upgradeSummary.badge,
           description: 'Upgrade gear and equipment'
+        },
+        {
+          id: 'settings',
+          label: 'Settings',
+          icon: '⚙',
+          routeId: 'settings',
+          visible: true,
+          enabled: true,
+          badge: null,
+          description: 'Theme and interface options'
         }
       ]
     };

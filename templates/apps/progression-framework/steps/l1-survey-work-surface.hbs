@@ -1,9 +1,9 @@
 <div class="prog-l1-survey">
   <div class="prog-l1-survey__intro">
-    <h2 class="prog-l1-survey__title">Declare Your Intent</h2>
+    <h2 class="prog-l1-survey__title">Intent Survey</h2>
     <p class="prog-l1-survey__subtitle">
       {{#if surveyDefinition}}
-        {{surveyDefinition.classDisplayName}} path · one answer at a time.
+        {{surveyDefinition.classDisplayName}} path · short answers only.
       {{else}}
         The mentor is still reading the shape of your path.
       {{/if}}
@@ -24,8 +24,7 @@
           <input type="radio" name="survey-{{../activeQuestion.id}}" value="{{this.id}}" data-survey-question-id data-question-id="{{../activeQuestion.id}}" {{#if (eq ../activeQuestion.selected this.id)}}checked{{/if}}>
           <span class="prog-l1-survey__option-body">
             <span class="prog-l1-survey__option-label">{{this.label}}</span>
-            {{#if this.hint}}<span class="prog-l1-survey__option-hint">{{this.hint}}</span>{{/if}}
-          </span>
+                      </span>
         </label>
         {{/each}}
       </div>

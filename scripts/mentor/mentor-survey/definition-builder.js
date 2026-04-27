@@ -153,6 +153,226 @@ function optionFromCluster(id, label, hint, archetypes, layerKey, scalar = 0.16)
   };
 }
 
+
+function optionFromArchetypeIds(id, label, hint, archetypeIds, archetypeMap, scalar = 0.18) {
+  const reps = uniqueById((archetypeIds || []).map((entry) => archetypeMap.get(entry)).filter(Boolean));
+  return {
+    id,
+    label,
+    hint,
+    archetypeHint: reps[0]?.id || null,
+    biasLayers: mergeBiasLayers(reps, scalar),
+    biases: { archetype: reps[0]?.id || null }
+  };
+}
+
+const L1_SURVEY_BLUEPRINTS = {
+  jedi: {
+    combat: {
+      text: 'How do you want to handle combat?',
+      options: [
+        { id: 'protector', label: 'Protector', hint: 'Stand in the front, absorb pressure, and keep allies safe.', archetypeIds: ['tank_guardian'] },
+        { id: 'duelist', label: 'Duelist', hint: 'Win clean single-target fights with mobility, reactions, and precision.', archetypeIds: ['precision_striker'] },
+        { id: 'caster', label: 'Force Caster', hint: 'Use Force powers to shape the fight and punish clustered enemies.', archetypeIds: ['battlefield_controller','force_burst_striker'] },
+        { id: 'flex', label: 'Flexible', hint: 'Stay adaptable so you can fight, move, and solve problems in equal measure.', archetypeIds: ['sentinel_generalist'] }
+      ]
+    },
+    skills: {
+      text: 'Which kind of utility matters most?',
+      options: [
+        { id: 'awareness', label: 'Awareness', hint: 'Spot danger early and stay hard to surprise.', archetypeIds: ['tank_guardian','sentinel_generalist'] },
+        { id: 'mobility', label: 'Mobility', hint: 'Move well, reposition, and stay hard to pin down.', archetypeIds: ['precision_striker','sentinel_generalist'] },
+        { id: 'presence', label: 'Presence', hint: 'Lean into Force presence, resolve, and social confidence.', archetypeIds: ['battlefield_controller','force_burst_striker'] },
+        { id: 'breadth', label: 'Breadth', hint: 'Keep a wider toolkit so the class can answer more situations.', archetypeIds: ['sentinel_generalist'] }
+      ]
+    },
+    archetype: {
+      text: 'What role should define you?',
+      options: [
+        { id: 'frontline', label: 'Frontline', hint: 'You want to anchor the fight and be seen at the center of it.', archetypeIds: ['tank_guardian'] },
+        { id: 'skirmish', label: 'Skirmisher', hint: 'You want to dance through engagements and choose your moments.', archetypeIds: ['precision_striker','sentinel_generalist'] },
+        { id: 'control', label: 'Controller', hint: 'You want to decide where enemies stand and what they are allowed to do.', archetypeIds: ['battlefield_controller'] },
+        { id: 'burst', label: 'Burst', hint: 'You want to hit hard, create momentum, and punish openings.', archetypeIds: ['force_burst_striker'] }
+      ]
+    },
+    future: {
+      text: 'What future sounds best right now?',
+      options: [
+        { id: 'mastery', label: 'Mastery', hint: 'Double down on the core Jedi chassis and become sharper at what already works.', archetypeIds: ['precision_striker','tank_guardian'] },
+        { id: 'force', label: 'Force Growth', hint: 'Invest harder into powers, secrets, and a stronger Force identity.', archetypeIds: ['battlefield_controller','force_burst_striker'] },
+        { id: 'balance', label: 'Balance', hint: 'Keep your options broad so later prestige choices stay open.', archetypeIds: ['sentinel_generalist'] },
+        { id: 'survivability', label: 'Survivability', hint: 'Prioritize durability and consistency before anything flashy.', archetypeIds: ['tank_guardian'] }
+      ]
+    },
+    classSpecific: {
+      text: 'What type of Jedi do you want to be?',
+      options: [
+        { id: 'guardian', label: 'Guardian', hint: 'A durable battlefield protector who wins through steadiness and resolve.', archetypeIds: ['tank_guardian'] },
+        { id: 'sentinel', label: 'Sentinel', hint: 'A balanced, practical Jedi who mixes combat, utility, and awareness.', archetypeIds: ['sentinel_generalist'] },
+        { id: 'consular', label: 'Consular', hint: 'A Force-centric Jedi who controls space and solves problems with powers.', archetypeIds: ['battlefield_controller'] },
+        { id: 'duelist', label: 'Duelist', hint: 'A precise blade specialist who thrives in focused one-on-one fights.', archetypeIds: ['precision_striker'] }
+      ]
+    }
+  },
+  noble: {
+    combat: { text: 'How do you want to influence a fight?', options: [
+      { id:'command', label:'Command', hint:'Lead the team, call the tempo, and make everyone around you stronger.', archetypeIds:['battlefield_commander','tactical_coordinator'] },
+      { id:'inspire', label:'Inspire', hint:'Keep morale high and amplify the people doing the heavy lifting.', archetypeIds:['inspirational_supporter'] },
+      { id:'outtalk', label:'Outtalk', hint:'Win the fight before it starts by forcing the room to shift your way.', archetypeIds:['master_orator','political_strategist'] },
+      { id:'adapt', label:'Adapt', hint:'Stay broad and pick the kind of support the moment actually needs.', archetypeIds:['tactical_coordinator','inspirational_supporter'] }
+    ]},
+    skills: { text: 'What kind of skill edge do you want?', options: [
+      { id:'social', label:'Social', hint:'Charm, persuasion, and political leverage should be your strongest tools.', archetypeIds:['master_orator','political_strategist'] },
+      { id:'tactical', label:'Tactical', hint:'You want to read the board, assign jobs, and direct outcomes.', archetypeIds:['battlefield_commander','tactical_coordinator'] },
+      { id:'support', label:'Support', hint:'You want to make everyone else better without stealing the spotlight.', archetypeIds:['inspirational_supporter'] },
+      { id:'status', label:'Status', hint:'You want authority, reputation, and position to open doors.', archetypeIds:['political_strategist'] }
+    ]},
+    archetype: { text: 'What role should define you?', options: [
+      { id:'leader', label:'Leader', hint:'You want to be the person everyone looks to when decisions matter.', archetypeIds:['battlefield_commander'] },
+      { id:'speaker', label:'Speaker', hint:'You want your voice and presence to do the heavy lifting.', archetypeIds:['master_orator'] },
+      { id:'planner', label:'Planner', hint:'You want to win by positioning, preparation, and layered advantages.', archetypeIds:['tactical_coordinator','political_strategist'] },
+      { id:'anchor', label:'Anchor', hint:'You want to stabilize the group and keep them functioning under pressure.', archetypeIds:['inspirational_supporter'] }
+    ]},
+    future: { text: 'What future sounds best right now?', options: [
+      { id:'command', label:'Higher Command', hint:'You want this build to scale into stronger leadership and battlefield control.', archetypeIds:['battlefield_commander','tactical_coordinator'] },
+      { id:'influence', label:'More Influence', hint:'You want your social leverage and political reach to become the focus.', archetypeIds:['master_orator','political_strategist'] },
+      { id:'support', label:'Stronger Support', hint:'You want to become the cleanest force multiplier at the table.', archetypeIds:['inspirational_supporter'] },
+      { id:'flex', label:'Keep Options Open', hint:'You want room to pivot once the campaign reveals what the party needs.', archetypeIds:['tactical_coordinator','political_strategist'] }
+    ]},
+    classSpecific: { text: 'What kind of Noble are you building?', options: [
+      { id:'commander', label:'Commander', hint:'A battlefield leader who wins by directing allied action.', archetypeIds:['battlefield_commander'] },
+      { id:'orator', label:'Orator', hint:'A silver-tongued specialist who changes outcomes with presence and speech.', archetypeIds:['master_orator'] },
+      { id:'strategist', label:'Strategist', hint:'A planner who converts setup and positioning into victory.', archetypeIds:['tactical_coordinator','political_strategist'] },
+      { id:'patron', label:'Patron', hint:'A supportive noble who empowers allies and keeps the group composed.', archetypeIds:['inspirational_supporter'] }
+    ]}
+  },
+  scoundrel: {
+    combat: { text: 'How do you want to win fights?', options: [
+      { id:'dirty', label:'Dirty', hint:'You want tricks, debuffs, and disruption to do the real work.', archetypeIds:['debilitating_trickster','saboteur_technician'] },
+      { id:'shooting', label:'Shooting', hint:'You want fast accurate ranged damage to define your turns.', archetypeIds:['gunslinger_duelist','opportunistic_precision_striker'] },
+      { id:'setup', label:'Setup', hint:'You want to create openings and cash in when enemies slip.', archetypeIds:['opportunistic_precision_striker','debilitating_trickster'] },
+      { id:'utility', label:'Utility', hint:'You want combat success to come from clever tools and problem-solving.', archetypeIds:['saboteur_technician','social_manipulator'] }
+    ]},
+    skills: { text: 'What kind of skill edge matters most?', options: [
+      { id:'social', label:'Social', hint:'You want deception, charm, and influence to stay central.', archetypeIds:['social_manipulator'] },
+      { id:'tech', label:'Tech', hint:'You want gadgets, sabotage, and systems play to carry weight.', archetypeIds:['saboteur_technician'] },
+      { id:'stealth', label:'Stealth', hint:'You want positioning, infiltration, and getting away with things.', archetypeIds:['debilitating_trickster','opportunistic_precision_striker'] },
+      { id:'gunplay', label:'Gunplay', hint:'You want your skill package to serve fast and deadly ranged work.', archetypeIds:['gunslinger_duelist'] }
+    ]},
+    archetype: { text: 'What role should define you?', options: [
+      { id:'trickster', label:'Trickster', hint:'You want to win through misdirection and control.', archetypeIds:['debilitating_trickster'] },
+      { id:'gunslinger', label:'Gunslinger', hint:'You want to be known for clean and dangerous ranged pressure.', archetypeIds:['gunslinger_duelist'] },
+      { id:'operator', label:'Operator', hint:'You want to solve problems with tools, setup, and technical leverage.', archetypeIds:['saboteur_technician'] },
+      { id:'face', label:'Face', hint:'You want your social game to be your sharpest weapon.', archetypeIds:['social_manipulator'] }
+    ]},
+    future: { text: 'What future sounds best right now?', options: [
+      { id:'more-damage', label:'More Damage', hint:'You want to press harder into reliable striker output.', archetypeIds:['gunslinger_duelist','opportunistic_precision_striker'] },
+      { id:'more-tricks', label:'More Tricks', hint:'You want a deeper bag of control and dirty options.', archetypeIds:['debilitating_trickster','saboteur_technician'] },
+      { id:'more-social', label:'More Influence', hint:'You want to scale your face game and narrative leverage.', archetypeIds:['social_manipulator'] },
+      { id:'stay-flexible', label:'Stay Flexible', hint:'You want to keep the class broad and opportunistic.', archetypeIds:['saboteur_technician','social_manipulator'] }
+    ]},
+    classSpecific: { text: 'What kind of Scoundrel are you building?', options: [
+      { id:'sharpshooter', label:'Sharpshooter', hint:'A precise opportunist who turns small openings into big damage.', archetypeIds:['opportunistic_precision_striker','gunslinger_duelist'] },
+      { id:'saboteur', label:'Saboteur', hint:'A technical troublemaker who controls scenes through gear and disruption.', archetypeIds:['saboteur_technician'] },
+      { id:'con-artist', label:'Con Artist', hint:'A manipulator who bends people as easily as situations.', archetypeIds:['social_manipulator'] },
+      { id:'trickster', label:'Trickster', hint:'A battlefield nuisance who wins by ruining enemy plans.', archetypeIds:['debilitating_trickster'] }
+    ]}
+  },
+  scout: {
+    combat: { text: 'How do you want to fight?', options: [
+      { id:'mobile', label:'Mobile', hint:'Keep moving, strike from angles, and avoid static trades.', archetypeIds:['mobile_skirmisher','pilot_operative'] },
+      { id:'range', label:'Ranged', hint:'Use distance, sight lines, and clean shots to stay ahead.', archetypeIds:['recon_sniper'] },
+      { id:'pressure', label:'Pressure', hint:'Wear targets down with control, conditions, and relentless pursuit.', archetypeIds:['condition_harrier'] },
+      { id:'survival', label:'Endurance', hint:'Outlast the environment and the encounter alike.', archetypeIds:['wilderness_survivalist'] }
+    ]},
+    skills: { text: 'What kind of utility matters most?', options: [
+      { id:'tracking', label:'Tracking', hint:'You want to read terrain, follow signs, and never lose the trail.', archetypeIds:['wilderness_survivalist'] },
+      { id:'piloting', label:'Piloting', hint:'Vehicle mastery and movement skill should matter every session.', archetypeIds:['pilot_operative'] },
+      { id:'stealth', label:'Stealth', hint:'You want infiltration, scouting, and unseen positioning.', archetypeIds:['mobile_skirmisher','recon_sniper'] },
+      { id:'fieldcraft', label:'Fieldcraft', hint:'You want broad operational competence in wild or hostile spaces.', archetypeIds:['wilderness_survivalist','condition_harrier'] }
+    ]},
+    archetype: { text: 'What role should define you?', options: [
+      { id:'skirmisher', label:'Skirmisher', hint:'You want to stay in motion and create hard-to-answer turns.', archetypeIds:['mobile_skirmisher'] },
+      { id:'sniper', label:'Sniper', hint:'You want patience, vision, and ranged precision to define the class.', archetypeIds:['recon_sniper'] },
+      { id:'hunter', label:'Hunter', hint:'You want pursuit, pressure, and steady attrition.', archetypeIds:['condition_harrier','wilderness_survivalist'] },
+      { id:'pilot', label:'Pilot', hint:'You want the class to speak through vehicles and speed.', archetypeIds:['pilot_operative'] }
+    ]},
+    future: { text: 'What future sounds best right now?', options: [
+      { id:'specialize', label:'Specialize', hint:'You want to sharpen one lane until it becomes your signature.', archetypeIds:['recon_sniper','pilot_operative'] },
+      { id:'survive', label:'Survive Anything', hint:'You want the class to stay resilient across hostile environments.', archetypeIds:['wilderness_survivalist'] },
+      { id:'control', label:'Control Space', hint:'You want to dictate movement and pace more aggressively over time.', archetypeIds:['condition_harrier','mobile_skirmisher'] },
+      { id:'keep-open', label:'Stay Open', hint:'You want to leave room for later pivots based on the campaign.', archetypeIds:['mobile_skirmisher','pilot_operative'] }
+    ]},
+    classSpecific: { text: 'What kind of Scout are you building?', options: [
+      { id:'pathfinder', label:'Pathfinder', hint:'A field specialist who survives first and guides others through danger.', archetypeIds:['wilderness_survivalist'] },
+      { id:'sniper', label:'Sniper', hint:'A long-range eliminator who wins with range and information.', archetypeIds:['recon_sniper'] },
+      { id:'skirmisher', label:'Skirmisher', hint:'A fast-moving scout who fights through motion and angles.', archetypeIds:['mobile_skirmisher'] },
+      { id:'ace', label:'Ace', hint:'A pilot-first scout whose class identity is tied to vehicles and speed.', archetypeIds:['pilot_operative'] }
+    ]}
+  },
+  soldier: {
+    combat: { text: 'How do you want to fight?', options: [
+      { id:'heavy', label:'Heavy', hint:'Use raw firepower and area pressure to dominate space.', archetypeIds:['heavy_weapons_specialist'] },
+      { id:'breach', label:'Breacher', hint:'Get close, hit hard, and force the fight into your preferred range.', archetypeIds:['close_quarters_breacher'] },
+      { id:'rifle', label:'Rifleman', hint:'Lean on precision, range, and disciplined attack routines.', archetypeIds:['precision_rifleman'] },
+      { id:'tank', label:'Tank', hint:'Stand up front, absorb punishment, and keep moving anyway.', archetypeIds:['armored_shock_trooper'] }
+    ]},
+    skills: { text: 'What kind of edge matters most?', options: [
+      { id:'durability', label:'Durability', hint:'You want armor, endurance, and staying power to define the class.', archetypeIds:['armored_shock_trooper'] },
+      { id:'accuracy', label:'Accuracy', hint:'You want to hit what matters and waste as few actions as possible.', archetypeIds:['precision_rifleman'] },
+      { id:'control', label:'Control', hint:'You want to shape enemy behavior through suppression and conditions.', archetypeIds:['battlefield_enforcer','heavy_weapons_specialist'] },
+      { id:'pressure', label:'Pressure', hint:'You want every turn to threaten immediate damage.', archetypeIds:['close_quarters_breacher','heavy_weapons_specialist'] }
+    ]},
+    archetype: { text: 'What role should define you?', options: [
+      { id:'frontline', label:'Frontline', hint:'You want to be the one holding the line when the fight turns ugly.', archetypeIds:['armored_shock_trooper'] },
+      { id:'striker', label:'Striker', hint:'You want your turns to convert directly into enemy damage.', archetypeIds:['precision_rifleman','close_quarters_breacher'] },
+      { id:'controller', label:'Controller', hint:'You want to use weapons to shape the battlefield, not just damage it.', archetypeIds:['heavy_weapons_specialist','battlefield_enforcer'] },
+      { id:'bruiser', label:'Bruiser', hint:'You want to be aggressive, physical, and hard to stop once engaged.', archetypeIds:['close_quarters_breacher','armored_shock_trooper'] }
+    ]},
+    future: { text: 'What future sounds best right now?', options: [
+      { id:'bigger-guns', label:'Bigger Guns', hint:'You want more destructive output and stronger weapon scaling.', archetypeIds:['heavy_weapons_specialist','precision_rifleman'] },
+      { id:'harder-to-kill', label:'Harder to Kill', hint:'You want to become more dependable under focused enemy pressure.', archetypeIds:['armored_shock_trooper'] },
+      { id:'control-more', label:'More Control', hint:'You want conditions, suppression, and battlefield influence to grow.', archetypeIds:['battlefield_enforcer'] },
+      { id:'stay-versatile', label:'Stay Versatile', hint:'You want room to pivot depending on party needs and gear.', archetypeIds:['close_quarters_breacher','precision_rifleman'] }
+    ]},
+    classSpecific: { text: 'What kind of Soldier are you building?', options: [
+      { id:'heavy', label:'Heavy Gunner', hint:'A wide-area damage dealer who wins by forcing people out of safe positions.', archetypeIds:['heavy_weapons_specialist'] },
+      { id:'shock', label:'Shock Trooper', hint:'A heavily armored frontline soldier who keeps advancing.', archetypeIds:['armored_shock_trooper'] },
+      { id:'marksman', label:'Marksman', hint:'A disciplined ranged specialist built around precision fire.', archetypeIds:['precision_rifleman'] },
+      { id:'enforcer', label:'Enforcer', hint:'A pressure build that drives enemies down the condition track.', archetypeIds:['battlefield_enforcer'] }
+    ]}
+  }
+};
+
+function buildL1Questions({ classId, archetypes }) {
+  const blueprint = L1_SURVEY_BLUEPRINTS[classId];
+  if (!blueprint) return null;
+  const archetypeMap = new Map((archetypes || []).map((entry) => [entry.id, entry]));
+  const entries = [
+    ['combat', 'Combat'],
+    ['skills', 'Skills'],
+    ['archetype', 'Archetype'],
+    ['future', 'Future Plans'],
+    ['classSpecific', 'Class Focus']
+  ];
+  return entries.map(([key, fallbackLabel], index) => {
+    const question = blueprint[key];
+    return {
+      id: `${classId}_${key}`,
+      text: question?.text || fallbackLabel,
+      options: (question?.options || []).map((option) => optionFromArchetypeIds(
+        `${classId}_${key}_${option.id}`,
+        option.label,
+        option.hint,
+        option.archetypeIds,
+        archetypeMap,
+        key === 'classSpecific' ? 0.22 : 0.18
+      ))
+    };
+  }).filter((entry) => entry.options.length);
+}
+
+
 function makeQuestions({ classId, classDisplayName, archetypes, mentor }) {
   const profile = getMentorVoiceProfile(mentor, classDisplayName);
   const topArchetypes = uniqueById(archetypes).slice(0, 4);
@@ -238,6 +458,6 @@ export function buildSurveyDefinition(source) {
     mentorKey: source.mentorKey,
     mentor,
     archetypes,
-    questions: makeQuestions({ classId: source.classId, classDisplayName: source.displayName, archetypes, mentor })
+    questions: (surveyType === 'l1' ? buildL1Questions({ classId: source.classId, archetypes }) : null) || makeQuestions({ classId: source.classId, classDisplayName: source.displayName, archetypes, mentor })
   };
 }

@@ -1,0 +1,100 @@
+<div class="swse-shell-surface swse-shell-surface--mentor" data-shell-region="surface-mentor" data-surface-id="{{vm.id}}">
+  <div class="swse-shell-surface__header swse-mentor-header">
+    <button class="swse-shell-surface__back-btn" data-shell-action="return-to-home" type="button" title="Return to Home">
+      <i class="fas fa-arrow-left"></i>
+      <span>Home</span>
+    </button>
+    <div class="swse-shell-surface__title">
+      <span>✶</span>
+      <span>{{vm.title}}</span>
+    </div>
+    <div class="swse-mentor-header__actor">{{vm.actorName}}</div>
+  </div>
+
+  <div class="swse-shell-surface__body swse-mentor-surface">
+    {{#if vm.hasMentors}}
+      <aside class="swse-mentor-rail swse-panel">
+        <div class="swse-panel-head">◆ Mentors</div>
+        <div class="swse-mentor-list">
+          {{#each vm.unlockedMentors}}
+            <button class="swse-mentor-card {{#if (eq ../vm.selectedMentorKey this.key)}}active{{/if}}" data-mentor-key="{{this.key}}" type="button">
+              <span class="swse-mentor-card__name">{{this.mentor.name}}</span>
+              <span class="swse-mentor-card__title">{{this.mentor.title}}</span>
+              <span class="swse-mentor-card__class">{{this.unlockedBy}}</span>
+            </button>
+          {{/each}}
+        </div>
+      </aside>
+
+      <section class="swse-mentor-main">
+        <div class="swse-panel swse-mentor-dialogue-panel">
+          <div class="swse-panel-head">◇ Mentor Channel</div>
+          {{#if vm.selectedMentor}}
+            <div class="swse-mentor-identity">
+              <div class="swse-mentor-identity__portrait">
+                {{#if vm.selectedMentor.mentor.portrait}}
+                  <img src="{{vm.selectedMentor.mentor.portrait}}" alt="{{vm.selectedMentor.mentor.name}}">
+                {{else}}
+                  <span>✶</span>
+                {{/if}}
+              </div>
+              <div class="swse-mentor-identity__meta">
+                <div class="swse-mentor-identity__name">{{vm.selectedMentor.mentor.name}}</div>
+                <div class="swse-mentor-identity__title">{{vm.selectedMentor.mentor.title}}</div>
+              </div>
+            </div>
+
+            {{#if vm.currentResponse.introduction}}
+              <div class="swse-mentor-dialogue-line">{{{vm.currentResponse.introduction}}}</div>
+            {{/if}}
+            {{#if vm.currentResponse.advice}}
+              <div class="swse-mentor-dialogue-line swse-mentor-dialogue-line--advice">{{{vm.currentResponse.advice}}}</div>
+            {{/if}}
+
+            {{#if vm.currentResponse.reasonTexts.length}}
+              <div class="swse-mentor-reasons">
+                <div class="swse-mentor-reasons__title">System Read</div>
+                <ul>
+                  {{#each vm.currentResponse.reasonTexts}}
+                    <li>{{this.text}}</li>
+                  {{/each}}
+                </ul>
+              </div>
+            {{/if}}
+
+            {{#if vm.currentResponse.availablePaths.length}}
+              <div class="swse-mentor-paths">
+                <div class="swse-mentor-paths__title">Commit to a Path</div>
+                <div class="swse-mentor-paths__buttons">
+                  {{#each vm.currentResponse.availablePaths}}
+                    <button class="swse-btn" data-mentor-path="{{this.name}}" type="button">{{this.name}}</button>
+                  {{/each}}
+                </div>
+              </div>
+            {{/if}}
+          {{else}}
+            <div class="swse-shell-surface__empty">No mentor channel is currently available.</div>
+          {{/if}}
+        </div>
+
+        <div class="swse-panel swse-mentor-topics-panel">
+          <div class="swse-panel-head">▸ Topics</div>
+          {{#if vm.selectedMentor}}
+            <div class="swse-mentor-topic-list">
+              {{#each vm.topics}}
+                <button class="swse-topic-card {{#if (eq ../vm.currentTopic.key this.key)}}active{{/if}}" data-mentor-topic="{{this.key}}" type="button">
+                  <span class="swse-topic-card__title">{{this.title}}</span>
+                  <span class="swse-topic-card__desc">{{this.description}}</span>
+                </button>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="swse-shell-surface__empty">Select a mentor to open a conversation channel.</div>
+          {{/if}}
+        </div>
+      </section>
+    {{else}}
+      <div class="swse-shell-surface__empty">No mentors are unlocked for this character yet.</div>
+    {{/if}}
+  </div>
+</div>

@@ -6,10 +6,10 @@
 
 .swse-datapad {
   position: relative;
-  background: linear-gradient(140deg, #1a1a26 0%, #0b0b14 55%, #12121c 100%);
+  background: linear-gradient(140deg, var(--swse-shell-start) 0%, var(--swse-shell-mid) 55%, var(--swse-shell-end) 100%);
   border-radius: 18px;
   box-shadow:
-    inset 0 0 0 1px oklch(0.35 0.04 270 / 0.5),
+    inset 0 0 0 1px var(--swse-shell-rim),
     0 40px 80px oklch(0 0 0 / 0.7);
   padding: 16px;
 }
@@ -39,3 +39,26 @@
     oklch(1 0 0 / var(--swse-scan-strength)) 3px 4px
   );
 }
+
+
+body.swse-lang-aurebesh .swse-sheet-ui,
+body.swse-lang-aurebesh .swse-shell-surface,
+body.swse-lang-aurebesh .swse-shell-overlay,
+body.swse-lang-aurebesh .swse-shell-drawer,
+body.swse-lang-aurebesh .swse-sheet-ui :is(h1,h2,h3,h4,h5,h6,p,span,div,label,button,input,textarea,select,a),
+body.swse-lang-aurebesh .swse-shell-surface :is(h1,h2,h3,h4,h5,h6,p,span,div,label,button,input,textarea,select,a),
+body.swse-lang-aurebesh .swse-shell-overlay :is(h1,h2,h3,h4,h5,h6,p,span,div,label,button,input,textarea,select,a),
+body.swse-lang-aurebesh .swse-shell-drawer :is(h1,h2,h3,h4,h5,h6,p,span,div,label,button,input,textarea,select,a) {
+  font-family: var(--swse-font-aurebesh) !important;
+  letter-spacing: 0.04em;
+}
+
+body.swse-reduced-motion *, body.swse-reduced-motion *::before, body.swse-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+body.swse-no-breathing .swse-datapad,
+body.swse-no-breathing .swse-v2-tablet,
+body.swse-no-breathing .tablet { animation: none !important; }

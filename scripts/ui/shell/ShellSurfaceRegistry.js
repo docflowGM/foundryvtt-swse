@@ -36,6 +36,10 @@ export class ShellSurfaceRegistry {
         return this._buildChargenSurfaceVm(actor, surfaceOptions);
       case 'upgrade':
         return this._buildUpgradeSurfaceVm(actor, surfaceOptions, shellHost);
+      case 'settings':
+        return this._buildSettingsSurfaceVm(actor, surfaceOptions);
+      case 'mentor':
+        return this._buildMentorSurfaceVm(actor, surfaceOptions);
       default:
         SWSELogger.warn(`[ShellSurfaceRegistry] Unknown surface: ${surfaceId}`);
         return { id: surfaceId, title: surfaceId, error: `Unknown surface: ${surfaceId}` };
@@ -118,6 +122,31 @@ export class ShellSurfaceRegistry {
     } catch (err) {
       SWSELogger.error('[ShellSurfaceRegistry] Home surface VM failed:', err);
       return { id: 'home', title: 'Holopad Home', error: err.message };
+    }
+  }
+
+  static async _buildSettingsSurfaceVm(actor, options) {
+    try {
+      const { SettingsSurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceService.js'
+      );
+      return await SettingsSurfaceService.buildViewModel(actor, options);
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Settings surface VM failed:', err);
+      return { id: 'settings', title: 'Holopad Settings', error: err.message };
+    }
+  }
+
+
+  static async _buildMentorSurfaceVm(actor, options) {
+    try {
+      const { MentorSurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/MentorSurfaceService.js'
+      );
+      return await MentorSurfaceService.buildViewModel(actor, options);
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Mentor surface VM failed:', err);
+      return { id: 'mentor', title: 'Chat with Mentor', error: err.message };
     }
   }
 

@@ -1,0 +1,73 @@
+<div class="swse-shell-surface swse-shell-surface--settings" data-shell-region="surface-settings" data-surface-id="{{vm.id}}">
+  <div class="swse-shell-surface__header swse-settings-header">
+    <button class="swse-shell-surface__back-btn" data-shell-action="return-to-sheet" type="button">
+      <i class="fas fa-arrow-left"></i><span>Character Sheet</span>
+    </button>
+    <div class="swse-shell-surface__title swse-settings-header__title">⚙ SETTINGS</div>
+    <div class="swse-settings-actions">
+      <button class="swse-btn ghost" data-action="return-home" type="button">Home</button>
+      <button class="swse-btn ghost" data-action="reset-theme-defaults" type="button">Restore Defaults</button>
+    </div>
+  </div>
+
+  <div class="swse-shell-surface__body swse-settings-body">
+    <div class="swse-settings-intro">
+      <div class="swse-settings-intro__title">DEVICE INTERFACE TUNING</div>
+      <div class="swse-settings-intro__subtitle">The holopad reads from one shared configuration surface.</div>
+    </div>
+
+    <div class="swse-settings-grid">
+      <section class="swse-panel">
+        <div class="swse-panel-head">◆ Theme Presets</div>
+        <div class="swse-theme-presets">
+          {{#each vm.presets}}
+          <button class="swse-theme-preset {{#if this.selected}}active{{/if}}" data-theme-preset="{{this.id}}" type="button" style="--tc: {{this.cyan}}; --tp: {{this.pink}}; --tpu: {{this.purple}};">
+            <span class="swse-theme-swatch"></span>
+            <span class="swse-theme-label">{{this.label}}</span>
+          </button>
+          {{/each}}
+        </div>
+      </section>
+
+      <section class="swse-panel">
+        <div class="swse-panel-head">◇ Shell Color</div>
+        <div class="swse-shell-colors">
+          {{#each vm.shellColors}}
+          <button class="swse-shell-color {{#if this.selected}}active{{/if}}" data-shell-color="{{this.id}}" type="button" title="{{this.label}}" style="--swse-shell-chip-start: {{this.start}}; --swse-shell-chip-mid: {{this.mid}}; --swse-shell-chip-end: {{this.end}};"></button>
+          {{/each}}
+        </div>
+      </section>
+
+      <section class="swse-panel">
+        <div class="swse-panel-head">▸ Display</div>
+        <div class="swse-settings-control">
+          <label>Scanlines <span>{{vm.controls.scanStrength}}</span></label>
+          <input type="range" min="0" max="0.12" step="0.005" value="{{vm.controls.scanStrength}}" data-theme-control="scanStrength">
+        </div>
+        <div class="swse-settings-control">
+          <label>Animation Speed <span>{{vm.controls.animSpeed}}</span></label>
+          <input type="range" min="0.25" max="2.5" step="0.25" value="{{vm.controls.animSpeed}}" data-theme-control="animSpeed">
+        </div>
+        <div class="swse-settings-control">
+          <label>Glow <span>{{vm.controls.glow}}</span></label>
+          <input type="range" min="0" max="2" step="0.1" value="{{vm.controls.glow}}" data-theme-control="glow">
+        </div>
+        <button class="swse-settings-toggle {{#if vm.controls.breathing}}on{{/if}}" data-theme-toggle="breathing" type="button">
+          <span>Tablet Breathing</span><span class="swse-toggle-pill"></span>
+        </button>
+        <button class="swse-settings-toggle {{#if vm.controls.reducedMotion}}on{{/if}}" data-theme-toggle="reducedMotion" type="button">
+          <span>Reduced Motion</span><span class="swse-toggle-pill"></span>
+        </button>
+      </section>
+
+      <section class="swse-panel">
+        <div class="swse-panel-head">✦ Language</div>
+        <div class="swse-language-options">
+          <button class="swse-language-option {{#if (eq vm.controls.languageMode 'basic')}}active{{/if}}" data-language-mode="basic" type="button">Basic</button>
+          <button class="swse-language-option {{#if (eq vm.controls.languageMode 'aurabesh')}}active{{/if}}" data-language-mode="aurabesh" type="button">Aurabesh</button>
+        </div>
+        <p class="swse-settings-warning">{{vm.aurabeshWarning}}</p>
+      </section>
+    </div>
+  </div>
+</div>

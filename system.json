@@ -116,7 +116,9 @@
     "styles/apps/store-card-grid.css",
     "styles/apps/store-loading-overlay.css",
     "styles/apps/lightsaber-construction.css",
-    "styles/miraj-attunement.css"
+    "styles/miraj-attunement.css",
+    "styles/system/settings-surface.css",
+    "styles/system/mentor-surface.css"
   ],
   "languages": [
     {

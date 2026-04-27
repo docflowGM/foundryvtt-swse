@@ -261,3 +261,10 @@
     display: none;
   }
 }
+
+
+.swse-app-tile--launching {
+  transform: scale(1.06);
+  border-color: color-mix(in oklab, var(--swse-accent) 75%, transparent);
+  box-shadow: 0 0 28px color-mix(in oklab, var(--swse-accent) 35%, transparent), inset 0 0 18px color-mix(in oklab, var(--swse-accent) 20%, transparent);
+}

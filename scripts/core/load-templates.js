@@ -219,6 +219,8 @@ export const SWSE_TEMPLATES = [
   // Shell Surfaces (Phase 12)
   // ==============================
   'systems/foundryvtt-swse/templates/shell/partials/surface-home.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-settings.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-mentor.hbs',
 
 ];
 
