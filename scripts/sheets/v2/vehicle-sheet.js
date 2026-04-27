@@ -17,6 +17,7 @@ import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foun
 // PHASE 1: Import prepared context builders instead of direct engine access
 import { buildVehicleSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
 import { VehicleRulesAdapter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-rules-adapter.js";
+import { VehicleCustomizationRouter } from "/systems/foundryvtt-swse/scripts/applications/vehicle/vehicle-customization-router.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -571,6 +572,16 @@ export class SWSEV2VehicleSheet extends
         const item = this.actor.items?.get(itemId);
         if (!item) return;
         await ActorEngine.updateActor(this.actor, { [`items.${itemId}.system.spent`]: false });
+      }, { signal });
+    }
+
+    /* ---- VEHICLE CUSTOMIZATION ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="customize-vehicle"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        if (!this.actor) return;
+        VehicleCustomizationRouter.openVehicleCustomization(this.actor);
       }, { signal });
     }
 

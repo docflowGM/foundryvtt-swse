@@ -14,6 +14,7 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { DroidCustomizationRouter } from "/systems/foundryvtt-swse/scripts/applications/droid/droid-customization-router.js";
 import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
 import { StockDroidConversionDialog } from "/systems/foundryvtt-swse/scripts/apps/stock-droid-conversion-dialog.js";
 import { StockDroidComparisonDialog } from "/systems/foundryvtt-swse/scripts/apps/stock-droid-comparison-dialog.js";
@@ -40,6 +41,7 @@ export function wireDroidSheetListeners(sheet, root, signal) {
   wireConditionTrackControls(sheet, root, signal);
   wireInitiativeControls(sheet, root, signal);
   wireProgressionFrameworkButtons(sheet, root, signal);
+  wireDroidCustomization(sheet, root, signal);
   wireItemOpenControls(sheet, root, signal);
   wireEquipmentSellAndDelete(sheet, root, signal);
   wireArmorEquipToggle(sheet, root, signal);
@@ -171,6 +173,16 @@ function wireProgressionFrameworkButtons(sheet, root, signal) {
     ev.preventDefault();
     ui.notifications.info("Mentor interactions coming soon!");
   }, { signal });
+}
+
+function wireDroidCustomization(sheet, root, signal) {
+  for (const btn of root.querySelectorAll('[data-action="customize-droid"]')) {
+    btn.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      if (!sheet.actor) return;
+      DroidCustomizationRouter.openDroidCustomization(sheet.actor);
+    }, { signal });
+  }
 }
 
 function wireItemOpenControls(sheet, root, signal) {
