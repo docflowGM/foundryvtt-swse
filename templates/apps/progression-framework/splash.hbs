@@ -1,18 +1,12 @@
-<!-- Datapad Boot Sequence Splash Screen -->
-<div class="prog-intro-surface swse-ui-shell swse-splash-screen" data-boot-stage="init">
-  <!-- OS Header Bar -->
-  <div class="prog-intro-header">
-    <div class="prog-intro-system-name">VERSA-DATAPAD v13</div>
-    <div style="display: flex; gap: 24px; align-items: center;">
-      <div class="prog-intro-time" id="sys-time">14:32:08</div>
-      <div class="prog-intro-signal" id="signal-bars">
-        <div class="prog-intro-signal__bar" style="height: 6px;"></div>
-        <div class="prog-intro-signal__bar" style="height: 6px;"></div>
-        <div class="prog-intro-signal__bar" style="height: 6px;"></div>
-      </div>
-      <div class="prog-intro-battery">●●●●●</div>
-    </div>
-  </div>
+<!-- Datapad Boot Sequence Splash Screen (Foundation) -->
+<div class="swse-datapad prog-intro-surface swse-ui-shell swse-splash-screen" data-boot-stage="init">
+<div class="swse-screen">
+  <!-- HUD Status Bar -->
+  {{> "systems/foundryvtt-swse/templates/components/hud.hbs"
+      title="DROID INITIALIZATION"
+      left=(array "BOOT" "SEQUENCE")
+      right=(array "INITIALIZING")
+  }}
 
   <!-- Main Panel -->
   <div class="prog-intro-panel">
@@ -68,4 +62,5 @@
       <span>► CONTINUE</span>
     </button>
   </div>
-</div>
+</div>{{!-- /swse-screen --}}
+</div>{{!-- /swse-datapad --}}

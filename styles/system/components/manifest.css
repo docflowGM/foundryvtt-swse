@@ -1,0 +1,31 @@
+/* ============================================================================
+   SWSE MANIFEST COMPONENT
+   Left-rail summary display for progression/creation state
+   Shows current selections, progress, key data
+   ============================================================================ */
+
+.swse-manifest {
+  background: oklch(0 0 0 / 0.3);
+  border: 1px solid oklch(var(--swse-accent) / 0.2);
+  padding: 12px;
+}
+
+.swse-manifest-row {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 8px;
+  font-family: var(--swse-font-mono);
+  font-size: 11px;
+  padding: 6px 0;
+  border-bottom: 1px dotted oklch(var(--swse-accent) / 0.15);
+}
+
+.swse-manifest-key {
+  color: var(--swse-ink-faint);
+  text-transform: uppercase;
+  font-size: 9px;
+}
+
+.swse-manifest-val {
+  color: var(--swse-ink);
+}
