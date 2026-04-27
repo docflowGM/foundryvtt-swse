@@ -8,10 +8,12 @@ import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/cus
  * - Quantity management
  * - Item selling
  * - Gear tab interactions
+ * - Upgrade Workshop launch
  */
 
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
+import { SWSEUpgradeApp } from "/systems/foundryvtt-swse/scripts/apps/upgrade-app.js";
 
 /**
  * Activate inventory UI listeners
@@ -94,6 +96,14 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
   // ═══════════════════════════════════════════════════════════════════════════════
   // GEAR TAB HANDLERS (V2 sheet)
   // ═══════════════════════════════════════════════════════════════════════════════
+
+  // Upgrade Workshop launch from gear tab
+  html.querySelectorAll('[data-action="open-upgrade-workshop"]').forEach(button => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      SWSEUpgradeApp.openForActor(sheet.actor);
+    }, { signal });
+  });
 
   // Open item sheet
   html.querySelectorAll('[data-action="open-item"]').forEach(button => {

@@ -1,0 +1,43 @@
+{{!-- Upgrade Footer — credits summary + action controls --}}
+<div class="footer-inner">
+
+  <div class="footer-credits-group">
+    <div class="footer-credit-chip">
+      <span class="chip-label">Available</span>
+      <span class="chip-value">{{vm.footer.creditsAvailable}} cr</span>
+    </div>
+
+    {{#if (gt vm.footer.creditsCost 0)}}
+    <div class="footer-credit-chip cost-chip">
+      <span class="chip-label">Cost</span>
+      <span class="chip-value">−{{vm.footer.creditsCost}} cr</span>
+    </div>
+    <div class="footer-credit-chip after-chip {{#if (lt vm.footer.creditsAfter 0)}}insufficient{{/if}}">
+      <span class="chip-label">After</span>
+      <span class="chip-value">{{vm.footer.creditsAfter}} cr</span>
+    </div>
+    {{/if}}
+
+    {{#if (gt vm.footer.slotUsage.max 0)}}
+    <div class="footer-credit-chip slot-chip">
+      <span class="chip-label">Slots</span>
+      <span class="chip-value">{{vm.footer.slotUsage.used}} / {{vm.footer.slotUsage.max}}</span>
+    </div>
+    {{/if}}
+  </div>
+
+  <div class="footer-actions-group">
+    <button type="button"
+            class="footer-btn btn-finalize"
+            data-action="finalize-upgrades"
+            {{#unless vm.footer.canApply}}disabled{{/unless}}>
+      <i class="fas fa-check-circle"></i> Finalize
+    </button>
+    <button type="button"
+            class="footer-btn btn-close-app"
+            data-action="close-app">
+      <i class="fas fa-times"></i> Close
+    </button>
+  </div>
+
+</div>

@@ -1,179 +1,109 @@
+{{!--
+  Upgrade Workshop — Main Shell
+  Structure: mentor HUD · category tabs · [item rail | detail pane] · footer
+  vm.categories — only visible (count > 0) categories are included by the service layer
+--}}
 <div class="swse-upgrade-app">
-    {{!-- Header with NPC --}}
-    <header class="upgrade-header">
-        <div class="npc-portrait">
-            <img src="{{npc.image}}" alt="{{npc.name}}" />
-            <div class="npc-info">
-                <h2>{{npc.name}}</h2>
-                <p class="npc-title">{{npc.title}}</p>
-            </div>
-        </div>
-        <div class="item-info">
-            <h3>{{item.name}}</h3>
-            <p class="item-type">{{system.armorType}} {{item.type}}</p>
-        </div>
-    </header>
 
-    {{!-- NPC Dialogue --}}
-    <div class="npc-dialogue">
-        <div class="dialogue-bubble welcome">
-            <p>{{welcomeMessage}}</p>
+  {{!-- ═══════════════════ MENTOR HUD ═══════════════════ --}}
+  <header class="upgrade-hud">
+    <div class="upgrade-mentor">
+      <div class="mentor-avatar-wrap">
+        <div class="mentor-avatar-glow"></div>
+        <div class="mentor-avatar-icon">
+          <i class="fas fa-user-astronaut"></i>
         </div>
-        <div class="dialogue-bubble examining">
-            <p>{{examinMsg}}</p>
-        </div>
+      </div>
+      <div class="mentor-info">
+        <span class="mentor-name">{{vm.mentor.name}}</span>
+        <span class="mentor-role">{{vm.mentor.role}}</span>
+        <p class="mentor-text">{{vm.mentor.text}}</p>
+      </div>
     </div>
-
-    {{!-- Upgrade Slots Status --}}
-    <div class="upgrade-slots-status">
-        <h3>Upgrade Slots</h3>
-        <div class="slots-bar">
-            <div class="slots-used" style="width: {{multiply (divide usedSlots totalSlots) 100}}%">
-                <span>{{usedSlots}} / {{totalSlots}} Slots Used</span>
-            </div>
-        </div>
-        <p class="slots-available">
-            {{#if (gt availableSlots 0)}}
-                <span class="available">{{availableSlots}} slot(s) available</span>
-            {{else}}
-                <span class="full">No slots available</span>
-            {{/if}}
-        </p>
+    <div class="upgrade-title-block">
+      <h2 class="upgrade-title">UPGRADE WORKSHOP</h2>
+      {{#if vm.selectedItem}}
+        <span class="upgrade-subtitle">{{vm.selectedItem.name}}</span>
+      {{/if}}
     </div>
+  </header>
 
-    {{!-- Installed Upgrades --}}
-    <section class="installed-upgrades-section">
-        <h3>Installed Upgrades</h3>
-        {{#if installedUpgrades.length}}
-            <ul class="installed-upgrades-list">
-                {{#each installedUpgrades}}
-                <li class="installed-upgrade">
-                    <div class="upgrade-header">
-                        <h4>{{this.name}}</h4>
-                        <span class="slots-used">{{this.slotsUsed}} slot(s)</span>
-                    </div>
-                    <div class="upgrade-details">
-                        {{{this.description}}}
-                    </div>
-                    <div class="upgrade-actions">
-                        <button type="button" class="remove-upgrade" data-upgrade-index="{{@index}}">
-                            <i class="{{getIconClass 'times'}}"></i> Remove
-                        </button>
-                    </div>
-                </li>
-                {{/each}}
-            </ul>
-        {{else}}
-            <p class="no-upgrades">No upgrades installed</p>
-        {{/if}}
-    </section>
+  {{!-- ═══════════════════ CATEGORY TABS ═══════════════════ --}}
+  {{!-- Only categories with applicable items are present in vm.categories --}}
+  {{#if vm.categories.length}}
+  <nav class="upgrade-category-tabs">
+    {{#each vm.categories}}
+      <button type="button"
+        class="upgrade-tab {{#if this.active}}active{{/if}}"
+        data-category-id="{{this.id}}">
+        <span class="tab-label">{{this.label}}</span>
+        <span class="tab-badge">{{this.count}}</span>
+      </button>
+    {{/each}}
+  </nav>
+  {{/if}}
 
-    {{!-- Gear Templates --}}
-    <section class="gear-templates-section">
-        <h3>Gear Templates</h3>
-        <p class="template-info">Gear Templates represent unique manufacturing techniques. Templates are rare and cannot normally be purchased - only found or earned. Most templates cannot be stacked.</p>
+  {{!-- ═══════════════════ MAIN BODY ═══════════════════ --}}
+  <div class="upgrade-body">
 
-        {{#if appliedTemplate}}
-            <div class="applied-template">
-                <div class="template-header">
-                    <h4>{{appliedTemplate.name}}</h4>
-                    <span class="template-manufacturer">by {{appliedTemplate.manufacturer}}</span>
-                </div>
-                <div class="template-details">
-                    <p>{{{appliedTemplate.description}}}</p>
-                    <div class="template-meta">
-                        <span class="template-cost">Cost Adjustment: {{appliedTemplate.costAdjustment}} credits</span>
-                    </div>
-                </div>
-                <div class="template-actions">
-                    <button type="button" class="remove-template">
-                        <i class="{{getIconClass 'times'}}"></i> Remove Template
-                    </button>
-                </div>
+    {{#if vm.unavailableMessage}}
+
+      {{!-- No upgradeable items state --}}
+      <div class="upgrade-empty-state">
+        <div class="empty-state-icon"><i class="fas fa-tools"></i></div>
+        <p class="empty-state-text">{{vm.unavailableMessage}}</p>
+      </div>
+
+    {{else}}
+
+      {{!-- LEFT: Item Rail --}}
+      <aside class="upgrade-item-rail">
+        {{#if vm.items.length}}
+          {{#each vm.items}}
+            <div class="item-rail-row {{#if this.selected}}selected{{/if}}"
+                 data-item-id="{{this.id}}"
+                 title="{{this.name}}">
+              <img class="item-rail-icon"
+                   src="{{this.ui.icon}}"
+                   alt="{{this.name}}" />
+              <div class="item-rail-info">
+                <span class="item-rail-name">{{this.name}}</span>
+                <span class="item-rail-type">{{this.ui.displayType}}</span>
+                {{#if this.summary}}
+                  <span class="item-rail-summary">{{this.summary}}</span>
+                {{/if}}
+              </div>
+              {{#if this.equipped}}
+                <span class="item-equipped-badge" title="Equipped">●</span>
+              {{/if}}
             </div>
+          {{/each}}
         {{else}}
-            <p class="no-template">No template applied</p>
+          <div class="item-rail-empty">
+            <p>No items in this category.</p>
+          </div>
         {{/if}}
+      </aside>
 
-        {{#if availableTemplates.length}}
-            <details class="available-templates-details">
-                <summary>Available Templates ({{availableTemplates.length}})</summary>
-                <ul class="available-templates-list">
-                    {{#each availableTemplates}}
-                    <li class="available-template {{#if this.incompatible}}incompatible{{/if}}">
-                        <div class="template-header">
-                            <h4>{{this.name}}</h4>
-                            <div class="template-meta">
-                                <span class="template-manufacturer">{{this.manufacturer}}</span>
-                                <span class="template-cost-preview">+{{this.costPreview}} credits</span>
-                            </div>
-                        </div>
-                        <div class="template-details">
-                            <p>{{{this.description}}}</p>
-                            {{#if this.restrictions}}
-                                <p class="restrictions"><em>Restrictions: {{this.restrictions}}</em></p>
-                            {{/if}}
-                            {{#if this.incompatible}}
-                                <p class="incompatibility-warning"><strong>⚠ Cannot apply:</strong> {{this.incompatibilityReason}}</p>
-                            {{/if}}
-                        </div>
-                        <div class="template-actions">
-                            <button type="button" class="apply-template"
-                                    data-template-key="{{this.key}}"
-                                    data-template-name="{{this.name}}"
-                                    {{#if this.incompatible}}disabled{{/if}}>
-                                <i class="{{getIconClass 'magic'}}"></i> Apply Template
-                            </button>
-                        </div>
-                    </li>
-                    {{/each}}
-                </ul>
-            </details>
-        {{/if}}
-    </section>
-
-    {{!-- Available Upgrades --}}
-    <section class="available-upgrades-section">
-        <h3>Available {{npc.upgradeType}}s</h3>
-        {{#if availableUpgrades.length}}
-            <ul class="available-upgrades-list">
-                {{#each availableUpgrades}}
-                <li class="available-upgrade">
-                    <div class="upgrade-header">
-                        <h4>{{this.name}}</h4>
-                        <div class="upgrade-meta">
-                            <span class="cost">{{this.calculatedCost}} credits</span>
-                            <span class="slots">{{this.slotsRequired}} slot(s)</span>
-                            <span class="availability {{lower this.availability}}">{{this.availability}}</span>
-                        </div>
-                    </div>
-                    <div class="upgrade-details">
-                        {{{this.description}}}
-                        {{#if this.notes}}
-                            <p class="notes"><em>{{this.notes}}</em></p>
-                        {{/if}}
-                    </div>
-                    <div class="upgrade-actions">
-                        <button type="button" class="install-upgrade"
-                                data-upgrade-id="{{this.id}}"
-                                data-upgrade-name="{{this.name}}"
-                                data-upgrade-cost="{{this.calculatedCost}}"
-                                data-slots-required="{{this.slotsRequired}}">
-                            <i class="{{getIconClass 'plus'}}"></i> Install ({{this.calculatedCost}} credits)
-                        </button>
-                    </div>
-                </li>
-                {{/each}}
-            </ul>
+      {{!-- RIGHT: Detail Pane --}}
+      <main class="upgrade-detail-pane">
+        {{#if vm.selectedItem}}
+          {{> "systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-detail-pane.hbs"}}
         {{else}}
-            <p class="no-upgrades">No upgrades available for this item type</p>
+          <div class="detail-empty-state">
+            <i class="fas fa-arrow-left"></i>
+            <p>Select an item to view available upgrades.</p>
+          </div>
         {{/if}}
-    </section>
+      </main>
 
-    {{!-- Footer with Close Button --}}
-    <footer class="upgrade-footer">
-        <button type="button" class="close-btn">
-            <i class="{{getIconClass 'times'}}"></i> Close
-        </button>
-    </footer>
+    {{/if}}
+
+  </div>
+
+  {{!-- ═══════════════════ FOOTER ═══════════════════ --}}
+  <footer class="upgrade-footer-bar">
+    {{> "systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-footer.hbs"}}
+  </footer>
+
 </div>

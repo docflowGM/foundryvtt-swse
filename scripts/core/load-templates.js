@@ -207,6 +207,14 @@ export const SWSE_TEMPLATES = [
   // Chargen Partials
   'systems/foundryvtt-swse/templates/partials/chargen/near-human.hbs',
 
+  // ==============================
+  // Upgrade Workshop (Phase 10)
+  // ==============================
+  'systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs',
+  'systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-detail-pane.hbs',
+  'systems/foundryvtt-swse/templates/apps/upgrade/partials/lightsaber-detail.hbs',
+  'systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-footer.hbs',
+
 ];
 
 
