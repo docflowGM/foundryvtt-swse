@@ -1,0 +1,12 @@
+<div class="swse-mod-panel">
+  {{#each mods}}
+    <div class="swse-mod-row {{#if (gt this.value 0)}}positive{{else if (lt this.value 0)}}negative{{/if}}">
+      <span>{{this.label}}</span>
+      <span>{{#if (gt this.value 0)}}+{{/if}}{{this.value}}</span>
+    </div>
+  {{/each}}
+  <div class="swse-mod-row total">
+    <span>TOTAL</span>
+    <span>{{total}}</span>
+  </div>
+</div>

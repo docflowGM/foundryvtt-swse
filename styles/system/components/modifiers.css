@@ -1,0 +1,58 @@
+/* ============================================================================
+   SWSE MODIFIER BREAKDOWN COMPONENT
+   Shows breakdown of why a total is what it is
+   Hover to expand, click to pin
+   ============================================================================ */
+
+.swse-mod {
+  position: relative;
+  cursor: pointer;
+  transition: text-shadow 0.2s;
+}
+
+.swse-mod:hover {
+  text-shadow: 0 0 8px oklch(var(--swse-accent) / 0.6);
+}
+
+.swse-mod-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 50;
+  min-width: 220px;
+  margin-top: 6px;
+  background: oklch(0 0 0 / 0.95);
+  border: 1px solid oklch(var(--swse-accent) / 0.4);
+  padding: 10px;
+  font-family: var(--swse-font-mono);
+  font-size: 10px;
+  box-shadow: 0 0 20px oklch(0 0 0 / 0.8);
+  border-radius: 4px;
+}
+
+.swse-mod-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  gap: 12px;
+}
+
+.swse-mod-row span:last-child {
+  text-align: right;
+  min-width: 40px;
+}
+
+.swse-mod-row.total {
+  border-top: 1px solid oklch(var(--swse-accent) / 0.3);
+  margin-top: 4px;
+  padding-top: 4px;
+  font-weight: 600;
+}
+
+.swse-mod-row.positive span:last-child {
+  color: var(--swse-pos);
+}
+
+.swse-mod-row.negative span:last-child {
+  color: var(--swse-neg);
+}
