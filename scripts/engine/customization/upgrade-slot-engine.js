@@ -1,3 +1,4 @@
+import { SafetyEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/safety-engine.js';
 import { MELEE_UPGRADES } from '/systems/foundryvtt-swse/scripts/data/melee-upgrades.js';
 import { GEAR_MODS } from '/systems/foundryvtt-swse/scripts/data/gear-mods.js';
 import { ARMOR_UPGRADES } from '/systems/foundryvtt-swse/scripts/data/armor-upgrades.js';
@@ -8,87 +9,17 @@ export class UpgradeSlotEngine {
   }
 
   getCustomizationState(item) {
-    const existing = item?.flags?.['foundryvtt-swse']?.customization;
-    if (existing) return existing;
-
-    const strippedFeatures = item?.system?.strippedFeatures ?? {};
-    const strippedAreas = [];
-    if (strippedFeatures.damage) strippedAreas.push('damage');
-    if (strippedFeatures.range) strippedAreas.push('range');
-    if (strippedFeatures.design) strippedAreas.push('design');
-    if (strippedFeatures.stun) strippedAreas.push('stun_setting');
-    if (strippedFeatures.autofire) strippedAreas.push('autofire');
-    if (strippedFeatures.defensiveMaterial) strippedAreas.push('defensive_material');
-    if (strippedFeatures.jointProtection) strippedAreas.push('joint_protection');
-
-    const legacyInstalled = Array.isArray(item?.system?.installedUpgrades) ? item.system.installedUpgrades.map((upg, index) => ({
-      instanceId: upg.id || `legacy_${index}`,
-      upgradeKey: upg.key || upg.name?.toLowerCase?.().replace(/[^a-z0-9]+/g, '_') || `legacy_${index}`,
-      slotCost: Number(upg.slotsUsed) || 0,
-      operationCost: Number(upg.cost) || 0,
-      restriction: upg.restriction || 'common',
-      installedAt: 0,
-      installSource: 'legacy'
-    })) : [];
-
-    const legacyFlagKeys = [];
-    for (const key of (item?.flags?.swse?.meleeUpgrades ?? [])) {
-      const entry = MELEE_UPGRADES[key];
-      legacyFlagKeys.push({
-        instanceId: `legacy_flag_${key}`,
-        upgradeKey: key,
-        slotCost: 1,
-        operationCost: Number(entry?.costCredits) || 0,
-        restriction: entry?.restriction || 'common',
-        installedAt: 0,
-        installSource: 'legacy'
-      });
-    }
-    for (const key of (item?.flags?.swse?.gearMods ?? [])) {
-      const entry = GEAR_MODS[key];
-      legacyFlagKeys.push({
-        instanceId: `legacy_flag_${key}`,
-        upgradeKey: key,
-        slotCost: 1,
-        operationCost: Number(entry?.costCredits) || 0,
-        restriction: entry?.restriction || 'common',
-        installedAt: 0,
-        installSource: 'legacy'
-      });
-    }
-    for (const key of (item?.flags?.swse?.armorUpgrades ?? [])) {
-      const entry = ARMOR_UPGRADES[key];
-      legacyFlagKeys.push({
-        instanceId: `legacy_flag_${key}`,
-        upgradeKey: key,
-        slotCost: 1,
-        operationCost: Number(entry?.costCredits) || 0,
-        restriction: entry?.restriction || 'common',
-        installedAt: 0,
-        installSource: 'legacy'
-      });
+    // Normalize customization state defensively to handle legacy and malformed data
+    const normalization = SafetyEngine.normalizeCustomizationState(item);
+    if (normalization.success) {
+      return normalization.normalizedState;
     }
 
-    const mergedInstalled = [...legacyInstalled];
-    for (const inst of legacyFlagKeys) {
-      if (!mergedInstalled.some(existing => existing.upgradeKey === inst.upgradeKey)) mergedInstalled.push(inst);
-    }
-
+    // Fallback (SafetyEngine should always succeed, but be defensive)
     return {
-      structural: {
-        sizeIncreaseApplied: !!item?.system?.sizeIncreaseApplied,
-        strippedAreas
-      },
-      installedUpgrades: mergedInstalled,
-      appliedTemplates: [item?.system?.gearTemplate, item?.system?.gearTemplateSecondary].filter(Boolean).map((templateKey, index) => ({
-        instanceId: `legacy_template_${index}`,
-        templateKey,
-        source: item?.system?.restriction || 'common',
-        stackOrder: index,
-        effectiveRestriction: item?.system?.restriction || 'common',
-        operationCost: Number(item?.system?.templateCost) || 0
-      })),
-      overrides: { stockSlotOverride: null },
+      structural: { sizeIncreaseApplied: false, strippedAreas: [] },
+      installedUpgrades: [],
+      appliedTemplates: [],
       operationLog: []
     };
   }

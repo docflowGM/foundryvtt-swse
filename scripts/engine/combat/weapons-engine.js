@@ -484,6 +484,9 @@ export class WeaponsEngine {
 
     const flags = weapon.flags?.swse ?? {};
 
+    // Only self-built sabers can be attuned. Attunement is limited to the creator because
+    // attuning a lightsaber requires the creator's intimate knowledge of the blade they built.
+    // Granted/found/inventory sabers (which lack builtBy flag) cannot be attuned.
     if (flags.builtBy !== actor.id) {
       return { success: false, reason: 'not_builder' };
     }

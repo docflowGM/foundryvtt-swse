@@ -23,6 +23,7 @@ import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/in
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
+import { openLightsaberInterface } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-router.js";
 import { BlasterCustomizationApp } from "/systems/foundryvtt-swse/scripts/apps/blaster/blaster-customization-app.js";
 import { ArmorModificationApp } from "/systems/foundryvtt-swse/scripts/apps/armor/armor-modification-app.js";
 import { MeleeWeaponModificationApp } from "/systems/foundryvtt-swse/scripts/apps/weapons/melee-modification-app.js";
@@ -1321,6 +1322,10 @@ const forcePoints = [];
     // Log panel contract version for debugging
     const _sheetContractVersion = 1;
 
+    // Lightsaber construction context
+    const lightsaberConstructionAvailable = actor.getFlag?.("foundryvtt-swse", "lightsaberConstructionDeferred") === true || actor.getFlag?.("foundryvtt-swse", "lightsaberConstructionAvailable") === true;
+    const lightsaberConstructionDeferred = actor.getFlag?.("foundryvtt-swse", "lightsaberConstructionDeferred") === true;
+
     const finalContext = {
       ...context,
       _sheetContractVersion,
@@ -1409,6 +1414,11 @@ const forcePoints = [];
       // CUSTOM SKILLS UI FLAGS
       // ═════════════════════════════════════════════════════════════════
       customSkillsEditable: this.isEditable,  // Whether user can add/edit/delete custom skills
+      // ═════════════════════════════════════════════════════════════════
+      // LIGHTSABER CONSTRUCTION FLAGS
+      // ═════════════════════════════════════════════════════════════════
+      lightsaberConstructionAvailable,       // Whether construction is available for this character
+      lightsaberConstructionDeferred,        // Whether construction was deferred from progression prompt
       // ═════════════════════════════════════════════════════════════════
       // UNIFIED PANEL CONTEXTS (Primary data source)
       // Panels now own all character data through dedicated view models
@@ -1690,6 +1700,15 @@ const forcePoints = [];
 
       // Rerender sheet to apply motion style change
       this.render(true);
+    }, { signal });
+
+    // DELEGATED: Construct Lightsaber - Launch construction wizard
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest("[data-action='construct-lightsaber']");
+      if (!button) return;
+
+      ev.preventDefault();
+      openLightsaberInterface(this.actor);
     }, { signal });
 
     // DELEGATED: Tab Switching - Route through shared UI state manager
@@ -2797,7 +2816,7 @@ const forcePoints = [];
         try {
           switch (item.type) {
             case "lightsaber":
-              new LightsaberConstructionApp(this.actor).render(true);
+              new LightsaberConstructionApp(this.actor, item).render(true);
               break;
             case "blaster":
               new BlasterCustomizationApp(this.actor, item).render(true);

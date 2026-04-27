@@ -1,0 +1,134 @@
+{{! Droid Customization Template }}
+{{! Phase 4: Dedicated droid customization surface }}
+
+<style>
+  {{{ themeStyleInline }}}
+  {{{ motionStyleInline }}}
+</style>
+
+<div class="droid-customization-container">
+  {{#if error}}
+    <div class="error-message">{{ error }}</div>
+  {{else}}
+    <div class="customization-content">
+      {{! Droid Profile }}
+      <section class="droid-profile">
+        <h2>{{ actor.name }}</h2>
+        <div class="profile-info">
+          <div class="info-item">
+            <span class="label">Degree:</span>
+            <span class="value">{{ profile.degree }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Size:</span>
+            <span class="value">{{ profile.size }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Credits:</span>
+            <span class="value">{{ currentCredits }}</span>
+          </div>
+        </div>
+      </section>
+
+      {{! Available Systems }}
+      <section class="systems-section">
+        <h3>Available Systems</h3>
+
+        {{#each systemsByType}}
+          <div class="system-type-group" data-type="{{@key}}">
+            <h4>{{ humanize @key }}</h4>
+
+            {{#each this}}
+              <div class="system-option" data-system-id="{{this.id}}">
+                <div class="system-header">
+                  <span class="system-name">{{ this.name }}</span>
+                  <span class="system-cost">{{ this.cost }} credits</span>
+                </div>
+                <p class="system-description">{{ this.description }}</p>
+
+                {{#if this.installed}}
+                  <button class="system-button remove-btn" data-action="remove">
+                    <i class="fas fa-trash-alt"></i> Uninstall
+                  </button>
+                {{else}}
+                  <button class="system-button add-btn" data-action="add">
+                    <i class="fas fa-plus"></i> Install
+                  </button>
+                {{/if}}
+              </div>
+            {{/each}}
+          </div>
+        {{/each}}
+      </section>
+
+      {{! Preview }}
+      {{#if hasChanges}}
+        <section class="preview-section">
+          <h3>Preview</h3>
+
+          {{#if previewError}}
+            <div class="error-message">
+              <i class="fas fa-exclamation-circle"></i> {{ previewError }}
+            </div>
+          {{else if preview}}
+            <div class="preview-content">
+              {{#if preview.systemsAdded}}
+                <div class="preview-additions">
+                  <h4>Systems to Install</h4>
+                  <ul>
+                    {{#each preview.systemsAdded}}
+                      <li>{{ this.name }} - {{ this.cost }} credits</li>
+                    {{/each}}
+                  </ul>
+                </div>
+              {{/if}}
+
+              {{#if preview.systemsRemoved}}
+                <div class="preview-removals">
+                  <h4>Systems to Uninstall</h4>
+                  <ul>
+                    {{#each preview.systemsRemoved}}
+                      <li>{{ this.name }} - {{ this.resale }} credits (resale)</li>
+                    {{/each}}
+                  </ul>
+                </div>
+              {{/if}}
+
+              <div class="cost-summary">
+                <div class="cost-line">
+                  <span class="label">Purchase Cost:</span>
+                  <span class="value">{{ preview.totalAddCost }}</span>
+                </div>
+                <div class="cost-line">
+                  <span class="label">Resale Value:</span>
+                  <span class="value">{{ preview.totalRemoveSale }}</span>
+                </div>
+                <div class="cost-line total">
+                  <span class="label">Net Cost:</span>
+                  <span class="value">{{ preview.netCost }}</span>
+                </div>
+                <div class="cost-line final">
+                  <span class="label">New Balance:</span>
+                  <span class="value">{{ preview.newCredits }}</span>
+                </div>
+              </div>
+            </div>
+          {{/if}}
+        </section>
+      {{/if}}
+
+      {{! Action Buttons }}
+      <div class="action-buttons">
+        <button class="btn btn-primary" data-action="apply" {{#unless hasChanges}}disabled{{/unless}}>
+          <i class="fas fa-check"></i> Apply Changes
+        </button>
+        <button class="btn btn-secondary" data-action="reset">
+          <i class="fas fa-redo"></i> Reset
+        </button>
+        <button class="btn btn-default" data-action="close">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    </div>
+  {{/if}}
+</div>

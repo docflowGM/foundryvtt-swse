@@ -7,15 +7,31 @@ export function isLightsaberDocument(item) {
 
 export function openLightsaberInterface(actor, item = null, options = {}) {
   if (!actor) return;
+
+  // If an item is explicitly passed, use it
   if (item && isLightsaberDocument(item)) {
     new LightsaberConstructionApp(actor, item, { mode: "edit", ...options }).render(true);
     return;
   }
+
+  // Post-construction routing: If the actor owns a lightsaber, always open edit mode.
+  // This ensures that after construction (one-time wizard), future access defaults to edit
+  // mode for tuning crystal/accessories. The build wizard is not repeated unless explicitly rebuilding.
+  const ownedSabers = LightsaberConstructionEngine.getOwnedLightsabers(actor);
+  if (ownedSabers.length > 0) {
+    const saber = ownedSabers[0];
+    new LightsaberConstructionApp(actor, saber, { mode: "edit", ...options }).render(true);
+    return;
+  }
+
+  // No owned saber; check if construction is available
   const eligibility = LightsaberConstructionEngine.getEligibility(actor);
   if (!eligibility?.eligible) {
     ui.notifications.warn('Lightsaber construction is not yet available for this character.');
     return;
   }
+
+  // Open construction mode for eligible actors without a saber
   new LightsaberConstructionApp(actor, { mode: "construct", ...options }).render(true);
 }
 
@@ -25,7 +41,8 @@ export async function promptLightsaberConstructionIfEligible(actor, { newLevel =
   const eligibility = LightsaberConstructionEngine.getEligibility(actor);
   if (!eligibility?.eligible) return false;
   if (LightsaberConstructionEngine.hasSelfBuiltLightsaber(actor)) return false;
-  if (newLevel !== null && Number(newLevel) !== 7) return false;
+  // Only prompt once per levelup sequence; trigger at level 7 or higher
+  if (newLevel !== null && Number(newLevel) < 7) return false;
 
   const alreadyPrompted = actor.getFlag?.("foundryvtt-swse", "lightsaberConstructionPrompted") === true;
   if (source === "levelup" && alreadyPrompted) return false;

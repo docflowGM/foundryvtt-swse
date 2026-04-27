@@ -36,6 +36,11 @@ export class LightsaberConstructionApp extends ModificationModalShell {
 
     this.actor = actor;
     this.item = item;
+    // Mode is determined by whether an item was passed:
+    // - If item exists: edit mode (for existing sabers, whether self-built or granted)
+    // - If no item: construct mode (for building a new saber)
+    // Edit mode allows crystal/accessory tuning. Construction is a one-time wizard;
+    // after completion, future access always goes to edit mode via the router logic.
     this.mode = mergedOptions?.mode || (item ? 'edit' : 'construct');
     this.selectedBladeColor = DEFAULT_BLADE_COLOR;
     this.selectedAccessories = [];

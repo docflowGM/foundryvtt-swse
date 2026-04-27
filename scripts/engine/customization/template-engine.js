@@ -1,6 +1,8 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { TEMPLATE_CATALOG, getTemplateDefinition } from '/systems/foundryvtt-swse/scripts/engine/customization/upgrade-catalog.js';
 import { getMostRestrictive, normalizeRestriction } from '/systems/foundryvtt-swse/scripts/engine/customization/restriction-model.js';
+import { EffectResolver } from '/systems/foundryvtt-swse/scripts/engine/customization/effect-resolver.js';
+import { SafetyEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/safety-engine.js';
 
 function clone(data) { return foundry.utils.deepClone(data); }
 
@@ -19,48 +21,102 @@ export class TemplateEngine {
     const eligible = this.getEligibleTemplates(item).find(t => t.key === templateKey);
     if (!eligible) return { success: false, reason: 'unknown_template' };
     if (!eligible.allowed) return { success: false, reason: eligible.reason };
+
+    // Resolve effect payloads to show what the template will actually change
+    // Effect meaning belongs in engines/catalogs, not in UI layer
+    const templateDef = TEMPLATE_CATALOG[templateKey];
+    const effectResolution = EffectResolver.resolveTemplateEffects(item, templateDef);
+
     return {
       success: true,
       template: eligible,
-      notes: 'Template effects currently apply restriction, rarity, and metadata. Detailed stat deltas require source template effect data.'
+      effectPreview: effectResolution.success ? effectResolution.preview : null,
+      effectMutations: effectResolution.mutations,
+      notes: 'Template effects apply rarity, restriction, and cost modifiers. Detailed stat effects depend on template type.'
     };
   }
 
   async applyTemplate(actor, item, templateKey) {
+    // Guard against duplicate apply from double-click or network race
+    const operationKey = `template_${templateKey}`;
+    const dupeGuard = SafetyEngine.guardAgainstDuplicateApply(item.id, operationKey);
+    if (!dupeGuard.allowed) {
+      return {
+        success: false,
+        reason: 'operation_in_flight',
+        blockingReason: dupeGuard.reason
+      };
+    }
+
     const preview = this.previewApplyTemplate(item, templateKey);
     if (!preview.success) return preview;
-    const customization = clone(this.slotEngine.getCustomizationState(item));
-    customization.appliedTemplates = Array.isArray(customization.appliedTemplates) ? customization.appliedTemplates : [];
-    customization.operationLog = Array.isArray(customization.operationLog) ? customization.operationLog : [];
-    const instance = {
-      instanceId: foundry.utils.randomID(),
-      templateKey,
-      source: preview.template.restriction,
-      stackOrder: customization.appliedTemplates.length,
-      operationCost: 0,
-      rare: !!preview.template.rarity,
-      effectiveRestriction: normalizeRestriction(preview.template.restriction)
-    };
-    customization.appliedTemplates.push(instance);
-    customization.operationLog.push({
-      id: foundry.utils.randomID(),
-      type: 'template_apply',
-      timestamp: Date.now(),
-      appliedBy: actor.id,
-      details: { templateKey, instanceId: instance.instanceId }
-    });
-    const restriction = getMostRestrictive(item.system?.restriction, ...customization.appliedTemplates.map(t => t.effectiveRestriction));
-    const update = {
-      'flags.foundryvtt-swse.customization': customization,
-      'system.restriction': restriction
-    };
-    if (!item.system?.gearTemplate) {
-      update['system.gearTemplate'] = preview.template.key;
-    } else if (!item.system?.gearTemplateSecondary && preview.template.stackable) {
-      update['system.gearTemplateSecondary'] = preview.template.key;
+
+    // Revalidate template cap at apply time (state may have changed since preview)
+    const validation = SafetyEngine.validateCustomizationApply(item, { type: 'applyTemplate', templateKey });
+    if (!validation.success) {
+      return {
+        success: false,
+        reason: 'validation_failed',
+        validationErrors: validation.validationErrors,
+        blockingReason: validation.blockingReason
+      };
     }
-    await ActorEngine.applyMutationPlan(actor, { set: update }, item);
-    return { success: true, templateKey };
+
+    SafetyEngine.markOperationInFlight(item.id, operationKey);
+
+    try {
+      const customization = clone(this.slotEngine.getCustomizationState(item));
+      customization.appliedTemplates = Array.isArray(customization.appliedTemplates) ? customization.appliedTemplates : [];
+      customization.operationLog = Array.isArray(customization.operationLog) ? customization.operationLog : [];
+      const instance = {
+        instanceId: foundry.utils.randomID(),
+        templateKey,
+        source: preview.template.restriction,
+        stackOrder: customization.appliedTemplates.length,
+        operationCost: 0,
+        rare: !!preview.template.rarity,
+        effectiveRestriction: normalizeRestriction(preview.template.restriction),
+        appliedEffects: preview.effectMutations || {}
+      };
+      customization.appliedTemplates.push(instance);
+      customization.operationLog.push({
+        id: foundry.utils.randomID(),
+        type: 'template_apply',
+        timestamp: Date.now(),
+        appliedBy: actor.id,
+        details: { templateKey, instanceId: instance.instanceId }
+      });
+      const restriction = getMostRestrictive(item.system?.restriction, ...customization.appliedTemplates.map(t => t.effectiveRestriction));
+      // ActorEngine is the sole mutation authority
+      const mutationPlan = {
+        set: {
+          'flags.foundryvtt-swse.customization': customization,
+          'system.restriction': restriction
+        }
+      };
+
+      if (!item.system?.gearTemplate) {
+        mutationPlan.set['system.gearTemplate'] = preview.template.key;
+      } else if (!item.system?.gearTemplateSecondary && preview.template.stackable) {
+        mutationPlan.set['system.gearTemplateSecondary'] = preview.template.key;
+      }
+
+      if (preview.effectMutations) {
+        const expandedEffects = foundry.utils.expandObject(preview.effectMutations);
+        mutationPlan.set = {
+          ...mutationPlan.set,
+          ...foundry.utils.flattenObject(expandedEffects)
+        };
+      }
+
+      // MUTATION AUTHORITY: ActorEngine is the sole path for committing state changes
+      // This is the only point where item/actor data is written
+      // UI must never bypass this through direct update() calls
+      await ActorEngine.applyMutationPlan(actor, mutationPlan, item);
+      return { success: true, templateKey, appliedEffects: preview.effectMutations ? Object.keys(preview.effectMutations) : [] };
+    } finally {
+      SafetyEngine.clearOperationInFlight(item.id, operationKey);
+    }
   }
 }
 
