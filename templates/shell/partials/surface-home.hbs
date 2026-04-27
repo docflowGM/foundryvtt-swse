@@ -1,0 +1,102 @@
+{{!--
+  surface-home.hbs
+  Shell surface for the Holopad Home launcher route.
+
+  Container type: ROUTE
+  Route ID: home
+
+  Renders a grid of app tiles. Each tile fires a route change when clicked.
+  No logic lives here — vm.apps[] is built entirely by HomeSurfaceService.
+
+  vm:
+    id          — 'home'
+    title       — 'Holopad Home'
+    actorName   — actor.name
+    apps[]      — tile descriptors
+      .id           — tile identifier
+      .label        — display label
+      .icon         — unicode icon character
+      .routeId      — target shell surface id
+      .visible      — boolean (pre-filtered, but guard here for safety)
+      .enabled      — boolean
+      .badge        — string or null
+      .description  — short hint string
+--}}
+
+<div class="swse-shell-surface swse-shell-surface--home"
+     data-shell-region="surface-home"
+     data-surface-id="{{vm.id}}">
+
+  {{!-- ─── Header ─────────────────────────────────────────────────────── --}}
+  <div class="swse-shell-surface__header swse-home-header">
+    <button class="swse-shell-surface__back-btn"
+            data-shell-action="return-to-sheet"
+            type="button"
+            title="Return to Character Sheet">
+      <i class="fas fa-arrow-left"></i>
+      <span>Character Sheet</span>
+    </button>
+
+    <div class="swse-shell-surface__title swse-home-header__title">
+      <span class="swse-home-header__icon">⌂</span>
+      <span>HOLOPAD</span>
+    </div>
+
+    <div class="swse-home-header__actor">
+      {{vm.actorName}}
+    </div>
+  </div>
+
+  {{!-- ─── Body ────────────────────────────────────────────────────────── --}}
+  <div class="swse-shell-surface__body swse-home-body">
+
+    {{#if vm.error}}
+    <div class="swse-shell-surface__error">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Failed to load home data: {{vm.error}}</span>
+    </div>
+    {{else}}
+
+    <div class="swse-home-status-bar">
+      <span class="swse-home-status-bar__label">SYS // LAUNCHER</span>
+      <span class="swse-home-status-bar__dot"></span>
+      <span class="swse-home-status-bar__label">READY</span>
+    </div>
+
+    <div class="swse-home-grid">
+      {{#each vm.apps}}
+        {{#if this.visible}}
+        <button
+          class="swse-app-tile {{#unless this.enabled}}swse-app-tile--disabled{{/unless}}"
+          data-route-id="{{this.routeId}}"
+          type="button"
+          {{#unless this.enabled}}disabled{{/unless}}
+          title="{{this.description}}">
+
+          <div class="swse-app-tile__icon">{{this.icon}}</div>
+          <div class="swse-app-tile__label">{{this.label}}</div>
+
+          {{#if this.badge}}
+          <div class="swse-app-tile__badge">{{this.badge}}</div>
+          {{/if}}
+
+          {{#if this.description}}
+          <div class="swse-app-tile__description">{{this.description}}</div>
+          {{/if}}
+
+        </button>
+        {{/if}}
+      {{/each}}
+    </div>
+
+    <div class="swse-home-footer">
+      <span class="swse-home-footer__tag">DATAPAD OS</span>
+      <span class="swse-home-footer__sep">·</span>
+      <span class="swse-home-footer__tag">SWS/ENC</span>
+    </div>
+
+    {{/if}}
+
+  </div>
+
+</div>

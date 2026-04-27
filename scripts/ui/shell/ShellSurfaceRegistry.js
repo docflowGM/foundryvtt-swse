@@ -28,6 +28,8 @@ export class ShellSurfaceRegistry {
    */
   static async buildSurfaceVm({ actor, surfaceId, surfaceOptions, shellHost }) {
     switch (surfaceId) {
+      case 'home':
+        return this._buildHomeSurfaceVm(actor, surfaceOptions);
       case 'progression':
         return this._buildProgressionSurfaceVm(actor, surfaceOptions);
       case 'chargen':
@@ -100,6 +102,24 @@ export class ShellSurfaceRegistry {
   }
 
   // ─── Surface Builders (private) ─────────────────────────────────────────────
+
+  /**
+   * Home launcher surface VM — built using HomeSurfaceService.
+   *
+   * @param {Actor} actor
+   * @param {object} options
+   */
+  static async _buildHomeSurfaceVm(actor, options) {
+    try {
+      const { HomeSurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/HomeSurfaceService.js'
+      );
+      return await HomeSurfaceService.buildViewModel(actor);
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Home surface VM failed:', err);
+      return { id: 'home', title: 'Holopad Home', error: err.message };
+    }
+  }
 
   /**
    * Progression surface VM.

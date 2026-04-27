@@ -215,6 +215,11 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/upgrade/partials/lightsaber-detail.hbs',
   'systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-footer.hbs',
 
+  // ==============================
+  // Shell Surfaces (Phase 12)
+  // ==============================
+  'systems/foundryvtt-swse/templates/shell/partials/surface-home.hbs',
+
 ];
 
 

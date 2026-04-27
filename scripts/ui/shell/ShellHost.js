@@ -254,6 +254,11 @@ export function ShellHostMixin(BaseClass) {
         });
       });
 
+      // Home surface tile events
+      if (this._shellSurface === 'home') {
+        this._wireHomeSurfaceEvents(root);
+      }
+
       // Upgrade surface events (inline upgrade surface on the shell)
       if (this._shellSurface === 'upgrade') {
         this._wireUpgradeSurfaceEvents(root);
@@ -263,6 +268,35 @@ export function ShellHostMixin(BaseClass) {
       if (this._shellOverlay) {
         this._wireOverlayEvents(root);
       }
+
+      // Open-home nav button (available on all surfaces and sheet mode)
+      root.querySelectorAll('[data-shell-action="open-home"]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          await this.setSurface('home');
+          this.render(false);
+        });
+      });
+    }
+
+    /**
+     * Wire home surface tile click events.
+     * Each tile carries a data-route-id that maps to a shell surface.
+     */
+    _wireHomeSurfaceEvents(root) {
+      const homeRoot = root.querySelector('[data-shell-region="surface-home"]');
+      if (!homeRoot) return;
+
+      homeRoot.querySelectorAll('[data-route-id]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          if (el.disabled) return;
+          const routeId = el.dataset.routeId;
+          if (!routeId) return;
+          await this.setSurface(routeId, { source: 'home' });
+          this.render(false);
+        });
+      });
     }
 
     /**
