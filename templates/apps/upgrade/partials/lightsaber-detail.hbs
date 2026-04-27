@@ -1,0 +1,80 @@
+{{!-- Lightsaber Forge — rendered only when vm.selectedItem.lightsaberData is set --}}
+<section class="lightsaber-forge">
+  <div class="forge-heading">
+    <i class="fas fa-wand-magic-sparkles"></i>
+    <h4 class="forge-title">LIGHTSABER FORGE</h4>
+  </div>
+
+  {{!-- Blade Color --}}
+  <div class="forge-row">
+    <label class="forge-label">Blade Color</label>
+    <div class="forge-color-options">
+      {{#each vm.selectedItem.lightsaberData.colorOptions}}
+        <button type="button"
+          class="color-swatch {{#if (eq this.id ../vm.selectedItem.lightsaberData.selectedColorId)}}active{{/if}}"
+          data-lightsaber-action="set-color"
+          data-color-id="{{this.id}}"
+          title="{{this.label}}"
+          style="background-color: {{this.hex}}; box-shadow: 0 0 10px {{this.hex}}80;">
+          <span class="sr-only">{{this.label}}</span>
+        </button>
+      {{/each}}
+    </div>
+    <span class="forge-selected-value">{{vm.selectedItem.lightsaberData.selectedColorId}}</span>
+  </div>
+
+  {{!-- Crystal slot (only shown if options exist or one is selected) --}}
+  {{#if (or vm.selectedItem.lightsaberData.crystalOptions.length vm.selectedItem.lightsaberData.selectedCrystalId)}}
+  <div class="forge-row">
+    <label class="forge-label">Crystal</label>
+    {{#if vm.selectedItem.lightsaberData.crystalOptions.length}}
+      <div class="forge-option-list">
+        {{#each vm.selectedItem.lightsaberData.crystalOptions}}
+          <button type="button"
+            class="forge-option-btn {{#if (eq this.id ../vm.selectedItem.lightsaberData.selectedCrystalId)}}active{{/if}}"
+            data-lightsaber-action="set-crystal"
+            data-crystal-id="{{this.id}}">
+            {{this.name}}
+          </button>
+        {{/each}}
+      </div>
+    {{else}}
+      <span class="forge-selected-value">
+        {{#if vm.selectedItem.lightsaberData.selectedCrystalId}}
+          {{vm.selectedItem.lightsaberData.selectedCrystalId}}
+        {{else}}
+          None
+        {{/if}}
+      </span>
+    {{/if}}
+  </div>
+  {{/if}}
+
+  {{!-- Chassis slot (only shown if options exist or one is selected) --}}
+  {{#if (or vm.selectedItem.lightsaberData.chassisOptions.length vm.selectedItem.lightsaberData.selectedChassisId)}}
+  <div class="forge-row">
+    <label class="forge-label">Chassis</label>
+    {{#if vm.selectedItem.lightsaberData.chassisOptions.length}}
+      <div class="forge-option-list">
+        {{#each vm.selectedItem.lightsaberData.chassisOptions}}
+          <button type="button"
+            class="forge-option-btn {{#if (eq this.id ../vm.selectedItem.lightsaberData.selectedChassisId)}}active{{/if}}"
+            data-lightsaber-action="set-chassis"
+            data-chassis-id="{{this.id}}">
+            {{this.name}}
+          </button>
+        {{/each}}
+      </div>
+    {{else}}
+      <span class="forge-selected-value">
+        {{#if vm.selectedItem.lightsaberData.selectedChassisId}}
+          {{vm.selectedItem.lightsaberData.selectedChassisId}}
+        {{else}}
+          Standard
+        {{/if}}
+      </span>
+    {{/if}}
+  </div>
+  {{/if}}
+
+</section>

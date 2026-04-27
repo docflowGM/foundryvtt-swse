@@ -1,42 +1,63 @@
 /**
- * SWSE Item Upgrade Application (ApplicationV2)
+ * SWSEUpgradeApp — Upgrade Workshop Application (Phase 10)
+ *
+ * Supports two launch modes:
+ *   actor  — opened from the character sheet gear tab; browses all actor-owned upgradeable items
+ *   single-item — opened from an item sheet; locked to that item
  *
  * Contract:
- * - UI emits intent only
- * - Item mutations route through actor-owned APIs when owned
- * - Actor credits updates route through ActorEngine
+ *   - UI only requests data and sends commands
+ *   - All mutations route through CommandBus → UpgradeCommands → UpgradeService → ActorEngine
+ *   - No direct item/actor mutation in this file
  */
 
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { GearTemplatesEngine } from "/systems/foundryvtt-swse/scripts/apps/gear-templates-engine.js";
-import { UpgradeRulesEngine } from "/systems/foundryvtt-swse/scripts/apps/upgrade-rules-engine.js";
-import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
-import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
-import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from '/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js';
+import { UpgradeService } from '/systems/foundryvtt-swse/scripts/engine/upgrades/UpgradeService.js';
+import { CommandBus } from '/systems/foundryvtt-swse/scripts/engine/core/CommandBus.js';
+import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 export class SWSEUpgradeApp extends BaseSWSEAppV2 {
 
-  constructor(item, options = {}) {
+  /**
+   * @param {Actor|Item} actorOrItem
+   *   - Pass an Item document for legacy/single-item mode (item sheet launch)
+   *   - Pass an Actor document for actor-wide mode (character sheet launch)
+   * @param {object} options
+   *   - mode: 'actor' | 'single-item'  (default: auto-detected)
+   *   - focusedItemId: string  (required when mode === 'single-item' via actor API)
+   */
+  constructor(actorOrItem, options = {}) {
     super(options);
-    this.item = item;
-    this.itemType = item?.type;
-    this.npc = this.#getNPCForItemType(this.itemType);
+
+    // Auto-detect whether we received an Item or an Actor
+    if (actorOrItem?.documentName === 'Item') {
+      // Legacy item-sheet launch: new SWSEUpgradeApp(item)
+      const item = actorOrItem;
+      this.actor = item.actor ?? null;
+      this.mode = 'single-item';
+      this.focusedItemId = item.id;
+    } else {
+      // Actor-mode launch: new SWSEUpgradeApp(actor, { mode, focusedItemId })
+      this.actor = actorOrItem ?? null;
+      this.mode = options.mode ?? 'actor';
+      this.focusedItemId = options.focusedItemId ?? null;
+    }
+
+    this.selectedCategoryId = null;
+    this.selectedItemId = this.focusedItemId ?? null;
   }
 
   static DEFAULT_OPTIONS = {
     id: 'swse-upgrade-app',
     classes: ['swse', 'swse-app', 'swse-upgrade-app', 'swse-theme-holo'],
-    position: { width: 700, height: 600 },
-    window: { resizable: true }
+    position: { width: 960, height: 680 },
+    window: { resizable: true, title: 'Upgrade Workshop' }
   };
 
   static get defaultOptions() {
     const base = super.defaultOptions ?? super.DEFAULT_OPTIONS ?? {};
-    const legacy = this.DEFAULT_OPTIONS ?? {};
-    const clone = foundry.utils?.deepClone?.(base)
-      ?? foundry.utils?.duplicate?.(base)
-      ?? { ...base };
-    return foundry.utils.mergeObject(clone, legacy);
+    const clone = foundry.utils?.deepClone?.(base) ?? { ...base };
+    return foundry.utils.mergeObject(clone, this.DEFAULT_OPTIONS ?? {});
   }
 
   static PARTS = {
@@ -45,258 +66,202 @@ export class SWSEUpgradeApp extends BaseSWSEAppV2 {
     }
   };
 
+  // ─── Lifecycle ────────────────────────────────────────────────────────────────
+
   async _prepareContext(options) {
-    const system = this.item?.system ?? {};
-    const installedUpgrades = system.installedUpgrades ?? [];
+    // Call BaseSWSEAppV2 lifecycle tracking
+    await super._prepareContext(options);
 
-    const totalSlots = UpgradeRulesEngine.getBaseUpgradeSlots(this.item);
-    const usedSlots = installedUpgrades.reduce((sum, u) => sum + Number(u.slotsUsed ?? 1), 0);
+    try {
+      if (!this.actor) {
+        // Unowned item — show unavailable state
+        return { vm: UpgradeService.buildEmptyViewModel() };
+      }
 
-    return {
-      ...options,
-      item: this.item,
-      system,
-      npc: this.npc,
-      installedUpgrades,
-      totalSlots,
-      usedSlots,
-      availableSlots: Math.max(0, totalSlots - usedSlots),
-      appliedTemplate: this.#getAppliedTemplate(),
-      availableTemplates: this.#getAvailableTemplates(),
-      availableUpgrades: await this.#getAvailableUpgrades()
-    };
+      const appData = await UpgradeService.buildUpgradeAppData({
+        actor: this.actor,
+        mode: this.mode,
+        focusedItemId: this.focusedItemId,
+        selectedCategoryId: this.selectedCategoryId,
+        selectedItemId: this.selectedItemId
+      });
+
+      // Sync app state to resolved values (handles invalid/stale selections)
+      this.selectedCategoryId = appData.activeCategoryId;
+      this.selectedItemId = appData.activeItemId;
+
+      return { vm: appData.vm };
+    } catch (err) {
+      SWSELogger.error('[SWSEUpgradeApp] _prepareContext failed', err);
+      return { vm: UpgradeService.buildEmptyViewModel() };
+    }
   }
 
-  _onRender(context, options) {
-    super._onRender(context, options);
+  // ─── Event Wiring (BaseSWSEAppV2 contract) ───────────────────────────────────
 
+  wireEvents() {
     const root = this.element;
     if (!root) return;
 
-    root.querySelectorAll('.install-upgrade')
-      .forEach(el => el.addEventListener('click', this.#onInstallUpgrade.bind(this)));
+    // Category tab selection — only triggers re-render on actual change
+    root.querySelectorAll('[data-category-id]').forEach(el => {
+      el.addEventListener('click', () => {
+        if (this.selectedCategoryId === el.dataset.categoryId) return;
+        this.selectedCategoryId = el.dataset.categoryId;
+        this.selectedItemId = null;
+        this.render(false);
+      });
+    });
 
-    root.querySelectorAll('.remove-upgrade')
-      .forEach(el => el.addEventListener('click', this.#onRemoveUpgrade.bind(this)));
+    // Item rail row selection
+    root.querySelectorAll('[data-item-id]').forEach(el => {
+      el.addEventListener('click', () => {
+        if (this.selectedItemId === el.dataset.itemId) return;
+        this.selectedItemId = el.dataset.itemId;
+        this.render(false);
+      });
+    });
 
-    root.querySelectorAll('.apply-template')
-      .forEach(el => el.addEventListener('click', this.#onApplyTemplate.bind(this)));
-
-    root.querySelectorAll('.remove-template')
-      .forEach(el => el.addEventListener('click', this.#onRemoveTemplate.bind(this)));
-  }
-
-  /* ---------------------------------------------- */
-  /* INSTALL UPGRADE                               */
-  /* ---------------------------------------------- */
-
-  async #onInstallUpgrade(event) {
-    event.preventDefault();
-
-    const upgradeId = event.currentTarget?.dataset?.upgradeId;
-    const actor = this.item?.actor;
-    if (!actor) {
-      ui.notifications.error('Item must be owned to install upgrades.');
-      return;
-    }
-
-    const upgrade = await this.#findUpgrade(upgradeId);
-    if (!upgrade) {
-      ui.notifications.error('Upgrade not found.');
-      return;
-    }
-
-    const validation = UpgradeRulesEngine.validateUpgradeInstallation(this.item, upgrade, actor);
-    if (!validation.valid) {
-      ui.notifications.warn(validation.reason);
-      return;
-    }
-
-    const cost = validation.cost;
-    const slots = validation.slotsNeeded;
-    const tokens = Number(actor.system.modificationTokens ?? 0);
-
-    const fundValidation = LedgerService.validateFunds(actor, cost);
-    if (!fundValidation.ok) {
-      ui.notifications.error(`Insufficient credits: ${fundValidation.reason}`);
-      return;
-    }
-
-    try {
-      const creditPlan = LedgerService.buildCreditDelta(actor, cost);
-
-      let finalPlan = creditPlan;
-      if (actor.system.modificationTokens !== undefined) {
-        const tokenPlan = {
-          set: {
-            'system.modificationTokens': Math.max(0, tokens - 1)
-          }
-        };
-        finalPlan = mergeMutationPlans(creditPlan, tokenPlan);
-      }
-
-      const installed = this.item.system.installedUpgrades ?? [];
-      const nextInstalled = [
-        ...installed,
-        {
-          id: upgrade.id,
-          name: upgrade.name,
-          slotsUsed: slots,
-          cost,
-          restriction: upgrade.system.restriction ?? 'common',
-          description: upgrade.system.description ?? ''
-        }
-      ];
-
-      await ActorEngine.applyMutationPlan(actor, finalPlan);
-
-      // PHASE 2: Route embedded items through ActorEngine
-      if (actor && this.item.isEmbedded) {
+    // Apply upgrade
+    root.querySelectorAll('[data-upgrade-action="apply-upgrade"]').forEach(el => {
+      el.addEventListener('click', async (event) => {
+        event.stopPropagation();
+        if (!this.actor || !this.selectedItemId) return;
         try {
-          await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'system.installedUpgrades': nextInstalled }]);
+          await CommandBus.execute('APPLY_ITEM_UPGRADE', {
+            actor: this.actor,
+            itemId: this.selectedItemId,
+            upgradeId: el.dataset.upgradeId
+          });
+          this.render(false);
         } catch (err) {
-          console.error('[Upgrade App] ActorEngine update failed:', err);
-          ui.notifications.error(`Failed to install upgrade: ${err.message}`);
-          throw err;
+          ui.notifications?.error?.(`Failed to apply upgrade: ${err.message}`);
         }
-      } else {
-        // @mutation-exception: Unowned item update
-        // Unowned items (not on an actor) can update directly — UI-only operation
-        await this.item.update({ 'system.installedUpgrades': nextInstalled });  // @mutation-exception: UI-only unowned item
-      }
+      });
+    });
 
-      ui.notifications.info('Upgrade installed successfully.');
-      this.render({ force: true });
+    // Remove upgrade
+    root.querySelectorAll('[data-upgrade-action="remove-upgrade"]').forEach(el => {
+      el.addEventListener('click', async (event) => {
+        event.stopPropagation();
+        if (!this.actor || !this.selectedItemId) return;
+        try {
+          await CommandBus.execute('REMOVE_ITEM_UPGRADE', {
+            actor: this.actor,
+            itemId: this.selectedItemId,
+            upgradeIndex: Number(el.dataset.upgradeIndex)
+          });
+          this.render(false);
+        } catch (err) {
+          ui.notifications?.error?.(`Failed to remove upgrade: ${err.message}`);
+        }
+      });
+    });
 
-    } catch (err) {
-      ui.notifications.error(`Upgrade installation failed: ${err.message}`);
-      console.error(err);
-    }
-  }
-
-  /* ---------------------------------------------- */
-  /* REMOVE UPGRADE                                */
-  /* ---------------------------------------------- */
-
-  async #onRemoveUpgrade(event) {
-    event.preventDefault();
-
-    const actor = this.item?.actor;
-    const index = Number(event.currentTarget?.dataset?.upgradeIndex ?? event.currentTarget?.dataset?.index);
-    const installed = this.item.system.installedUpgrades ?? [];
-
-    if (!Number.isInteger(index) || !installed[index]) return;
-
-    const nextInstalled = installed.toSpliced
-      ? installed.toSpliced(index, 1)
-      : installed.filter((_, i) => i !== index);
-
-    // PHASE 2: Route embedded items through ActorEngine
-    if (actor && this.item.isEmbedded) {
+    // Finalize upgrades
+    root.querySelector('[data-action="finalize-upgrades"]')?.addEventListener('click', async () => {
+      if (!this.actor || !this.selectedItemId) return;
       try {
-        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'system.installedUpgrades': nextInstalled }]);
+        await CommandBus.execute('FINALIZE_ITEM_UPGRADES', {
+          actor: this.actor,
+          itemId: this.selectedItemId
+        });
+        ui.notifications?.info?.('Upgrades finalized.');
+        this.render(false);
       } catch (err) {
-        console.error('[Upgrade App] ActorEngine update failed:', err);
-        ui.notifications.error(`Failed to remove upgrade: ${err.message}`);
-        throw err;
+        ui.notifications?.error?.(`Failed to finalize: ${err.message}`);
       }
-    } else {
-      // @mutation-exception: Unowned item update
-      // Unowned items (not on an actor) can update directly — UI-only operation
-      await this.item.update({ 'system.installedUpgrades': nextInstalled });  // @mutation-exception: UI-only unowned item
-    }
+    });
 
-    ui.notifications.info('Upgrade removed.');
-    this.render({ force: true });
+    // Lightsaber: set blade color
+    root.querySelectorAll('[data-lightsaber-action="set-color"]').forEach(el => {
+      el.addEventListener('click', async (event) => {
+        event.stopPropagation();
+        if (!this.actor || !this.selectedItemId) return;
+        try {
+          await CommandBus.execute('SET_LIGHTSABER_COLOR', {
+            actor: this.actor,
+            itemId: this.selectedItemId,
+            colorId: el.dataset.colorId
+          });
+          this.render(false);
+        } catch (err) {
+          ui.notifications?.error?.(`Failed to set color: ${err.message}`);
+        }
+      });
+    });
+
+    // Lightsaber: set crystal
+    root.querySelectorAll('[data-lightsaber-action="set-crystal"]').forEach(el => {
+      el.addEventListener('click', async (event) => {
+        event.stopPropagation();
+        if (!this.actor || !this.selectedItemId) return;
+        try {
+          await CommandBus.execute('SET_LIGHTSABER_CRYSTAL', {
+            actor: this.actor,
+            itemId: this.selectedItemId,
+            crystalId: el.dataset.crystalId
+          });
+          this.render(false);
+        } catch (err) {
+          ui.notifications?.error?.(`Failed to set crystal: ${err.message}`);
+        }
+      });
+    });
+
+    // Lightsaber: set chassis
+    root.querySelectorAll('[data-lightsaber-action="set-chassis"]').forEach(el => {
+      el.addEventListener('click', async (event) => {
+        event.stopPropagation();
+        if (!this.actor || !this.selectedItemId) return;
+        try {
+          await CommandBus.execute('SET_LIGHTSABER_CHASSIS', {
+            actor: this.actor,
+            itemId: this.selectedItemId,
+            chassisId: el.dataset.chassisId
+          });
+          this.render(false);
+        } catch (err) {
+          ui.notifications?.error?.(`Failed to set chassis: ${err.message}`);
+        }
+      });
+    });
+
+    // Close
+    root.querySelector('[data-action="close-app"]')?.addEventListener('click', () => this.close());
   }
 
-  /* ---------------------------------------------- */
-  /* APPLY TEMPLATE                                */
-  /* ---------------------------------------------- */
+  // ─── Static launch helpers ────────────────────────────────────────────────────
 
-  async #onApplyTemplate(event) {
-    event.preventDefault();
-
-    const templateKey = event.currentTarget?.dataset?.templateKey;
-    const templateName = event.currentTarget?.dataset?.templateName;
-    const templateCost = GearTemplatesEngine.getTemplateCost(templateKey);
-
-    const actor = this.item.actor;
-    if (!actor) {
-      ui.notifications.warn('Item must be owned by a character.');
-      return;
+  /**
+   * Open upgrade app for an actor (gear tab launch).
+   * Warns and returns null if actor has no upgradeable items.
+   */
+  static openForActor(actor) {
+    if (!actor) return null;
+    const summary = UpgradeService.getUpgradeAppSummary(actor);
+    if (summary.totalApplicableItems <= 0) {
+      ui.notifications?.warn?.('No upgradeable items available.');
+      return null;
     }
-
-    const validation = GearTemplatesEngine.canApplyTemplate(this.item, templateKey);
-    if (!validation.valid) {
-      ui.notifications.warn(validation.reason);
-      return;
-    }
-
-    const tokens = Number(actor.system.modificationTokens ?? 0);
-
-    const fundValidation = LedgerService.validateFunds(actor, templateCost);
-    if (!fundValidation.ok) {
-      ui.notifications.error(`Insufficient credits: ${fundValidation.reason}`);
-      return;
-    }
-
-    if (actor.system.modificationTokens !== undefined && tokens <= 0) {
-      ui.notifications.warn('Insufficient Modification Tokens.');
-      return;
-    }
-
-    try {
-      const creditPlan = LedgerService.buildCreditDelta(actor, templateCost);
-
-      let finalPlan = creditPlan;
-      if (actor.system.modificationTokens !== undefined) {
-        const tokenPlan = {
-          set: {
-            'system.modificationTokens': Math.max(0, tokens - 1)
-          }
-        };
-        finalPlan = mergeMutationPlans(creditPlan, tokenPlan);
-      }
-
-      await ActorEngine.applyMutationPlan(actor, finalPlan, { diff: true });
-
-      await GearTemplatesEngine.applyTemplate(this.item, templateKey);
-
-      ui.notifications.info(`${templateName} template applied.`);
-      this.render({ force: true });
-
-    } catch (err) {
-      ui.notifications.error(`Template application failed: ${err.message}`);
-    }
+    const app = new SWSEUpgradeApp(actor, { mode: 'actor' });
+    app.render(true);
+    return app;
   }
 
-  async #onRemoveTemplate(event) {
-    event.preventDefault();
-    await GearTemplatesEngine.removeTemplate(this.item);
-    this.render({ force: true });
+  /**
+   * Open upgrade app focused on a single owned item.
+   * Warns and returns null if item is not upgradeable.
+   */
+  static openForItem(actor, item) {
+    if (!actor || !item) return null;
+    const applicability = UpgradeService.getItemApplicability(actor, item);
+    if (!applicability.upgradeable) {
+      ui.notifications?.warn?.('This item cannot be upgraded.');
+      return null;
+    }
+    const app = new SWSEUpgradeApp(actor, { mode: 'single-item', focusedItemId: item.id });
+    app.render(true);
+    return app;
   }
-
-  /* ---------------------------------------------- */
-  /* HELPERS                                        */
-  /* ---------------------------------------------- */
-
-  async #getAvailableUpgrades() {
-    return [];
-  }
-
-  async #findUpgrade(id) {
-    const world = game.items.get(id);
-    if (world) return world;
-    const pack = game.packs.get('foundryvtt-swse.equipment');
-    return pack ? await pack.getDocument(id) : null;
-  }
-
-  #getNPCForItemType(type) {
-    return { name: 'Technician', upgradeType: 'Universal Upgrade' };
-  }
-
-  #getAppliedTemplate() { return null; }
-  #getAvailableTemplates() { return []; }
-
 }

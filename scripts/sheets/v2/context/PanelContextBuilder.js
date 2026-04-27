@@ -17,6 +17,7 @@ import { RowTransformers } from './RowTransformers.js';
 import { captureHydrationSnapshot, emitHydrationError, emitHydrationWarning, getRecentHydrationMutation, summarizeBiographyPanel, summarizeDefensePanel } from '/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js';
 import { validatePanel } from './PanelValidators.js';
 import { buildHpViewModel, buildDefensesViewModel, buildAttributesViewModel, buildIdentityViewModel } from '/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js';
+import { UpgradeService } from '/systems/foundryvtt-swse/scripts/engine/upgrades/UpgradeService.js';
 
 export class PanelContextBuilder {
   constructor(actor, sheetInstance) {
@@ -388,6 +389,15 @@ export class PanelContextBuilder {
       ? RowTransformers.toArmorSummaryRow(equippedArmorItem)
       : null;
 
+    // Compute upgrade eligibility summary for the workshop launch button
+    let hasUpgradeableItems = false;
+    try {
+      const upgradeSummary = UpgradeService.getUpgradeAppSummary(this.actor);
+      hasUpgradeableItems = upgradeSummary.totalApplicableItems > 0;
+    } catch {
+      hasUpgradeableItems = false;
+    }
+
     const panel = {
       entries,
       grouped,
@@ -395,7 +405,8 @@ export class PanelContextBuilder {
       totalWeight,
       equippedArmor,
       emptyMessage: 'No equipment found.',
-      canEdit: this.sheet.isEditable
+      canEdit: this.sheet.isEditable,
+      hasUpgradeableItems
     };
 
     // Validate contract (strict mode throws, dev mode warns)

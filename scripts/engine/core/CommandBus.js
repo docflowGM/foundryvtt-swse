@@ -6,6 +6,7 @@
    ============================================================================ */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { UpgradeCommands } from '/systems/foundryvtt-swse/scripts/engine/upgrades/UpgradeCommands.js';
 
 export class CommandBus {
   /**
@@ -101,6 +102,26 @@ export class CommandBus {
       return await engine.setTheme?.(payload);
     }
 
+    // ── Upgrade commands ──────────────────────────────────────────
+    if (command === 'APPLY_ITEM_UPGRADE') {
+      return await UpgradeCommands.applyItemUpgrade(payload);
+    }
+    if (command === 'REMOVE_ITEM_UPGRADE') {
+      return await UpgradeCommands.removeItemUpgrade(payload);
+    }
+    if (command === 'FINALIZE_ITEM_UPGRADES') {
+      return await UpgradeCommands.finalizeItemUpgrades(payload);
+    }
+    if (command === 'SET_LIGHTSABER_CRYSTAL') {
+      return await UpgradeCommands.setLightsaberCrystal(payload);
+    }
+    if (command === 'SET_LIGHTSABER_CHASSIS') {
+      return await UpgradeCommands.setLightsaberChassis(payload);
+    }
+    if (command === 'SET_LIGHTSABER_COLOR') {
+      return await UpgradeCommands.setLightsaberColor(payload);
+    }
+
     // Unknown command
     throw new Error(`[CommandBus] Unknown command: ${command}`);
   }
@@ -124,7 +145,13 @@ export class CommandBus {
       'PROGRESS_TO_STEP',
       'COMPLETE_STEP',
       'REWIND_PROGRESSION',
-      'SET_THEME'
+      'SET_THEME',
+      'APPLY_ITEM_UPGRADE',
+      'REMOVE_ITEM_UPGRADE',
+      'FINALIZE_ITEM_UPGRADES',
+      'SET_LIGHTSABER_CRYSTAL',
+      'SET_LIGHTSABER_CHASSIS',
+      'SET_LIGHTSABER_COLOR'
     ];
   }
 

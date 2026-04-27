@@ -1,0 +1,117 @@
+{{!-- Upgrade Detail Pane — rendered when vm.selectedItem is set --}}
+<div class="upgrade-detail">
+
+  {{!-- Item header --}}
+  <div class="detail-header">
+    <div class="detail-name-block">
+      <h3 class="detail-item-name">{{vm.selectedItem.name}}</h3>
+      <span class="detail-item-category">{{vm.selectedItem.category}}</span>
+    </div>
+    {{!-- Stats strip --}}
+    <div class="detail-stats">
+      {{#each vm.selectedItem.stats}}
+        <div class="stat-chip">
+          <span class="stat-label">{{@key}}</span>
+          <span class="stat-value">{{this}}</span>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+
+  {{!-- Slot usage bar --}}
+  {{#if (gt vm.selectedItem.slotUsage.max 0)}}
+  <div class="detail-slot-bar">
+    <span class="slot-bar-label">Upgrade Slots</span>
+    <div class="slot-bar-track">
+      <div class="slot-bar-fill"
+           style="width: {{multiply (divide vm.selectedItem.slotUsage.used vm.selectedItem.slotUsage.max) 100}}%;">
+      </div>
+    </div>
+    <span class="slot-bar-count">{{vm.selectedItem.slotUsage.used}} / {{vm.selectedItem.slotUsage.max}}</span>
+  </div>
+  {{/if}}
+
+  {{!-- Lightsaber forge section (first-class; rendered before generic upgrades) --}}
+  {{#if vm.selectedItem.lightsaberData}}
+    {{> "systems/foundryvtt-swse/templates/apps/upgrade/partials/lightsaber-detail.hbs"}}
+  {{/if}}
+
+  {{!-- ─── Installed Upgrades ─── --}}
+  {{#if vm.selectedItem.currentUpgrades.length}}
+  <section class="detail-section installed-upgrades">
+    <h4 class="section-heading">Installed Upgrades
+      <span class="section-count">({{vm.selectedItem.currentUpgrades.length}})</span>
+    </h4>
+    <ul class="installed-list">
+      {{#each vm.selectedItem.currentUpgrades}}
+      <li class="installed-row">
+        <div class="installed-info">
+          <span class="installed-name">{{this.name}}</span>
+          {{#if this.description}}
+            <span class="installed-desc">{{this.description}}</span>
+          {{/if}}
+        </div>
+        <span class="installed-slots">{{this.slotsUsed}} slot(s)</span>
+        <button type="button"
+                class="btn-icon btn-remove"
+                data-upgrade-action="remove-upgrade"
+                data-upgrade-index="{{@index}}"
+                title="Remove upgrade">
+          <i class="fas fa-times"></i>
+        </button>
+      </li>
+      {{/each}}
+    </ul>
+  </section>
+  {{/if}}
+
+  {{!-- ─── Available Upgrades ─── --}}
+  <section class="detail-section available-upgrades">
+    <h4 class="section-heading">Available Upgrades</h4>
+    {{#if vm.selectedItem.availableUpgrades.length}}
+    <ul class="available-list">
+      {{#each vm.selectedItem.availableUpgrades}}
+      <li class="available-row {{#unless this.allowed}}blocked{{/unless}} {{#if this.alreadyInstalled}}already-installed{{/if}}">
+        <div class="upgrade-info">
+          <span class="upgrade-name">{{this.name}}</span>
+          {{#if this.description}}
+            <p class="upgrade-desc">{{this.description}}</p>
+          {{/if}}
+          <div class="upgrade-meta-row">
+            <span class="upgrade-cost">{{this.cost}} cr</span>
+            {{#if (gt this.slotCost 0)}}
+              <span class="upgrade-slots">{{this.slotCost}} slot(s)</span>
+            {{/if}}
+            {{#if this.restriction}}
+              <span class="upgrade-restriction restriction-{{this.restriction}}">{{this.restriction}}</span>
+            {{/if}}
+          </div>
+          {{#unless this.allowed}}
+            {{#if this.reason}}
+              <span class="upgrade-blocked-reason">{{this.reason}}</span>
+            {{/if}}
+          {{/unless}}
+        </div>
+        <div class="upgrade-actions">
+          {{#if this.alreadyInstalled}}
+            <span class="badge-installed">Installed</span>
+          {{else if this.allowed}}
+            <button type="button"
+                    class="btn-apply"
+                    data-upgrade-action="apply-upgrade"
+                    data-upgrade-id="{{this.key}}">
+              Install{{#if this.cost}} ({{this.cost}} cr){{/if}}
+            </button>
+          {{else}}
+            <span class="badge-blocked" title="{{this.reason}}">Unavailable</span>
+          {{/if}}
+        </div>
+      </li>
+      {{/each}}
+    </ul>
+    {{else}}
+    <p class="no-upgrades-msg">No upgrades available for this item.</p>
+    {{/if}}
+  </section>
+
+</div>
