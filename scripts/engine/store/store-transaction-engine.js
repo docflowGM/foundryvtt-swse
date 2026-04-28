@@ -152,6 +152,15 @@ export class StoreTransactionEngine {
       };
 
       swseLogger.log('[StoreTransactionEngine] purchaseItem completed successfully', result);
+
+      // Emit Holonet transaction hook
+      Hooks.call('swseStoreTransactionComplete', {
+        transaction: result,
+        buyer,
+        seller,
+        success: true
+      });
+
       return result;
     } catch (err) {
       // ============================================================
@@ -163,6 +172,26 @@ export class StoreTransactionEngine {
         buyer: buyer.name,
         seller: seller.name,
         itemId
+      });
+
+      // Emit Holonet transaction failure hook
+      Hooks.call('swseStoreTransactionComplete', {
+        transaction: {
+          success: false,
+          buyerId: buyer.id,
+          buyerName: buyer.name,
+          sellerId: seller.id,
+          sellerName: seller.name,
+          itemId,
+          itemName: item?.name,
+          price,
+          timestamp: Date.now(),
+          error: err.message,
+          metadata
+        },
+        buyer,
+        seller,
+        success: false
       });
 
       try {

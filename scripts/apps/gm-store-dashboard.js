@@ -478,6 +478,13 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
       pendingPurchases.splice(index, 1);
       await HouseRuleService.set('pendingCustomPurchases', pendingPurchases);
 
+      // 6. Emit Holonet approval hook
+      Hooks.call('swseCustomPurchaseApproved', {
+        approval,
+        actor: ownerActor,
+        decidedBy: game.user?.name ?? 'GM'
+      });
+
       ui.notifications.info(`Approved: ${approval.draftData.name} for ${ownerActor.name}`);
       SWSELogger.log('SWSE Store | Custom purchase approved:', approval);
       this.render();
@@ -494,6 +501,8 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
   async _denyPendingCustom(index) {
     const approval = this.pendingApprovals[index];
     if (!approval) return;
+
+    const ownerActor = game.actors.get(approval.ownerActorId);
 
     const confirmed = await SWSEDialogV2.confirm({
       title: 'Deny Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle'),
@@ -517,6 +526,15 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
       const pendingPurchases = SettingsHelper.getArray('pendingCustomPurchases', []);
       pendingPurchases.splice(index, 1);
       await HouseRuleService.set('pendingCustomPurchases', pendingPurchases);
+
+      // Emit Holonet denial hook
+      if (ownerActor) {
+        Hooks.call('swseCustomPurchaseDenied', {
+          approval,
+          actor: ownerActor,
+          decidedBy: game.user?.name ?? 'GM'
+        });
+      }
 
       ui.notifications.info(`Denied: ${approval.draftData.name}`);
       SWSELogger.log('SWSE Store | Custom purchase denied:', approval);
