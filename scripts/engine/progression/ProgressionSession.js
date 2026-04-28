@@ -104,13 +104,13 @@ export class ProgressionSession {
   async addClassLevel(classId, choices = {}) {
     swseLogger.log(`[SESSION] Staging class level: ${classId}`);
 
-    // Load class data for validation
-    const { PROGRESSION_RULES } = await import("/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js");
+    // Canonical class authority first; static PROGRESSION_RULES fallback for boot-time safety
     const { getClassData } = await import("/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js");
+    const { PROGRESSION_RULES } = await import("/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js");
 
-    let classData = PROGRESSION_RULES.classes[classId];
+    let classData = await getClassData(classId);
     if (!classData || !classData.levelProgression) {
-      classData = await getClassData(classId);
+      classData = PROGRESSION_RULES.classes[classId] ?? null;
     }
 
     if (!classData) {

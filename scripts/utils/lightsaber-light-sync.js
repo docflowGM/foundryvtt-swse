@@ -16,6 +16,7 @@
 
 import { BLADE_COLOR_MAP } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 
 export class LightsaberLightSync {
   /**
@@ -75,7 +76,7 @@ export class LightsaberLightSync {
     for (const saber of lightsabers) {
       const isActive = saber.system?.activated === true || saber.system?.active === true;
       const isEquipped = saber.system?.equipped === true || saber.system?.equippable?.equipped === true;
-      const emitsLight = saber.flags?.swse?.emitLight === true;
+      const emitsLight = getSwseFlag(saber, 'emitLight') === true;
 
       if (isActive && isEquipped && emitsLight) {
         return saber; // Found active, equipped, light-emitting saber
@@ -112,7 +113,7 @@ export class LightsaberLightSync {
     }
 
     // Active saber → apply light with blade color
-    const bladeColor = activeSaber.flags?.swse?.bladeColor || "blue";
+    const bladeColor = getSwseFlag(activeSaber, 'bladeColor') || "blue";
     const hex = BLADE_COLOR_MAP[bladeColor] ?? "#00ffff";
 
     await token.document.update({
@@ -215,7 +216,9 @@ export class LightsaberLightSync {
         "system.equipped",
         "system.equippable.equipped",
         "flags.swse.emitLight",
-        "flags.swse.bladeColor"
+        "flags.swse.bladeColor",
+        "flags.foundryvtt-swse.emitLight",
+        "flags.foundryvtt-swse.bladeColor"
       ];
 
       let needsSync = false;

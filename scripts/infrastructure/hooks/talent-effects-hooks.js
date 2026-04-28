@@ -5,7 +5,7 @@
  * when talent Items are created or deleted on an Actor.
  *
  * Provenance:
- * - Each created ActiveEffect gets flags.swse.talentEffect = { talentItemId, talentName }
+ * - Each created ActiveEffect gets flags['foundryvtt-swse'].talentEffect = { talentItemId, talentName }
  * - On talent deletion, only effects with matching provenance are removed.
  */
 
@@ -13,6 +13,7 @@ import { TALENT_EFFECTS } from "/systems/foundryvtt-swse/scripts/engine/talent/t
 import { TalentNormalizerEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/TalentNormalizerEngine.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 
 function _buildEffectData(actor, talentItem, effectDef, idx) {
   const label = `${talentItem.name} (${idx + 1})`;
@@ -29,7 +30,7 @@ function _buildEffectData(actor, talentItem, effectDef, idx) {
       priority: c.priority ?? 20
     })),
     flags: {
-      swse: {
+      'foundryvtt-swse': {
         talentEffect: {
           talentItemId: talentItem.id,
           talentName: talentItem.name
@@ -48,7 +49,7 @@ async function _applyTalentEffects(talentItem) {
 
   // Prevent duplicates if re-created / imported
   const existing = actor.effects.filter(e =>
-    e.getFlag?.('swse', 'talentEffect')?.talentItemId === talentItem.id
+    getSwseFlag(e, 'talentEffect')?.talentItemId === talentItem.id
   );
 
   if (existing.length) return;
@@ -68,7 +69,7 @@ async function _removeTalentEffects(talentItem) {
   if (!actor) return;
 
   const ids = actor.effects
-    .filter(e => e.getFlag?.('swse', 'talentEffect')?.talentItemId === talentItem.id)
+    .filter(e => getSwseFlag(e, 'talentEffect')?.talentItemId === talentItem.id)
     .map(e => e.id);
 
   if (!ids.length) return;

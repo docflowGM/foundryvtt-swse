@@ -21,6 +21,8 @@
  */
 
 import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
+import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
+import { normalizeClassId } from "/systems/foundryvtt-swse/scripts/data/class-normalizer.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 
@@ -53,14 +55,16 @@ export class HPCalculator {
     let isFirstLevel = true;
 
     for (const classLevel of classLevels) {
-      // Lookup from hardcoded data (should be precompiled for core classes)
-      const classData = PROGRESSION_RULES.classes?.[classLevel.class];
+      // Canonical lookup first (ClassesDB synchronous after boot), fall back to static map
+      const classData = (ClassesDB.isBuilt ? ClassesDB.get(normalizeClassId(classLevel.class)) : null)
+        ?? PROGRESSION_RULES.classes?.[classLevel.class];
 
       if (!classData) {
         swseLogger.warn(`HPCalculator: Unknown class "${classLevel.class}", assuming hitDie=6`);
       }
 
-      // Determine hit die: nonheroic uses d4, heroic uses class-defined die
+      // Canonical hitDie already correct for nonheroic (d4=4) and heroic classes.
+      // Legacy isNonheroic guard retained as fallback for PROGRESSION_RULES data shape.
       const isNonheroic = classData?.isNonheroic === true;
       const hitDie = isNonheroic ? 4 : (classData?.hitDie || 6);
 

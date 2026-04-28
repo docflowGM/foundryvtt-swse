@@ -5,12 +5,13 @@
  * Handles duration tracking and effect expiration
  *
  * Provenance tracking:
- * - Each created ActiveEffect gets flags.swse.forcePowerEffect = { powerItemId, powerName, rollTotal }
+ * - Each created ActiveEffect gets flags['foundryvtt-swse'].forcePowerEffect = { powerItemId, powerName, rollTotal }
  * - On power deletion, only effects with matching provenance are removed
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 
 export class ForcePowerEffectsEngine {
   /**
@@ -41,8 +42,8 @@ export class ForcePowerEffectsEngine {
         ...e,
         flags: {
           ...e.flags,
-          swse: {
-            ...(e.flags?.swse || {}),
+          'foundryvtt-swse': {
+            ...(e.flags?.['foundryvtt-swse'] || {}),
             forcePowerEffect: {
               powerItemId: powerItem.id,
               powerName: powerName,
@@ -929,7 +930,7 @@ export class ForcePowerEffectsEngine {
     }
 
     const ids = actor.effects
-      .filter(e => e.getFlag?.('swse', 'forcePowerEffect')?.powerItemId === powerItem.id)
+      .filter(e => getSwseFlag(e, 'forcePowerEffect')?.powerItemId === powerItem.id)
       .map(e => e.id);
 
     if (!ids.length) {
@@ -959,7 +960,7 @@ export class ForcePowerEffectsEngine {
     }
 
     return actor.effects.filter(e =>
-      e.getFlag?.('swse', 'forcePowerEffect')?.powerItemId === powerItem.id
+      getSwseFlag(e, 'forcePowerEffect')?.powerItemId === powerItem.id
     );
   }
 }
