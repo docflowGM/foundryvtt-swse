@@ -14,6 +14,14 @@ export class StoreEmitter {
   static #initialized = false;
   static #lastEmittedTransactions = new Set(); // Deduplication
 
+  static #rememberDedupeKey(dedupeKey) {
+    this.#rememberDedupeKey(dedupeKey);
+    if (this.#lastEmittedTransactions.size > 100) {
+      const arr = Array.from(this.#lastEmittedTransactions);
+      this.#lastEmittedTransactions = new Set(arr.slice(50));
+    }
+  }
+
   /**
    * Initialize store emitter
    * Registers hooks for transaction events
@@ -57,7 +65,7 @@ export class StoreEmitter {
     }
 
     // Check preferences
-    if (!HolonetPreferences.shouldNotify(HolonetPreferences.CATEGORIES.STORE_TRANSACTIONS)) {
+    if (!HolonetPreferences.shouldEmit(HolonetPreferences.CATEGORIES.STORE_TRANSACTIONS)) {
       return;
     }
 
@@ -66,7 +74,7 @@ export class StoreEmitter {
     if (this.#lastEmittedTransactions.has(dedupeKey)) {
       return;
     }
-    this.#lastEmittedTransactions.add(dedupeKey);
+    this.#rememberDedupeKey(dedupeKey);
 
     const ownerUser = game.users?.find(u => u.character?.id === buyer.id);
     if (!ownerUser) {
@@ -109,7 +117,7 @@ export class StoreEmitter {
       return;
     }
 
-    if (!HolonetPreferences.shouldNotify(HolonetPreferences.CATEGORIES.STORE_TRANSACTIONS)) {
+    if (!HolonetPreferences.shouldEmit(HolonetPreferences.CATEGORIES.STORE_TRANSACTIONS)) {
       return;
     }
 
@@ -117,7 +125,7 @@ export class StoreEmitter {
     if (this.#lastEmittedTransactions.has(dedupeKey)) {
       return;
     }
-    this.#lastEmittedTransactions.add(dedupeKey);
+    this.#rememberDedupeKey(dedupeKey);
 
     const ownerUser = game.users?.find(u => u.character?.id === actor.id);
     if (!ownerUser) {
@@ -159,7 +167,7 @@ export class StoreEmitter {
       return;
     }
 
-    if (!HolonetPreferences.shouldNotify(HolonetPreferences.CATEGORIES.STORE_TRANSACTIONS)) {
+    if (!HolonetPreferences.shouldEmit(HolonetPreferences.CATEGORIES.STORE_TRANSACTIONS)) {
       return;
     }
 
@@ -167,7 +175,7 @@ export class StoreEmitter {
     if (this.#lastEmittedTransactions.has(dedupeKey)) {
       return;
     }
-    this.#lastEmittedTransactions.add(dedupeKey);
+    this.#rememberDedupeKey(dedupeKey);
 
     const ownerUser = game.users?.find(u => u.character?.id === actor.id);
     if (!ownerUser) {

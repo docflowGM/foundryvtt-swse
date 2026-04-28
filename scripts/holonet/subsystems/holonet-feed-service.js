@@ -46,13 +46,30 @@ export class HolonetFeedService {
   }
 
   /**
-   * Get featured/pinned items
+   * Get featured items for a recipient.
+   * Pinned items are sorted first, but non-pinned featured items are still eligible.
+   */
+  static async getFeaturedItemsForRecipient(recipientId, surfaceType = SURFACE_TYPE.BULLETIN_FEATURED, limit = 10) {
+    const records = recipientId
+      ? await HolonetStorage.getRecordsForRecipient(recipientId, [DELIVERY_STATE.PUBLISHED])
+      : await HolonetStorage.getAllRecords();
+
+    return records
+      .filter(r => r.projections?.some(p => p.surfaceType === surfaceType))
+      .sort((a, b) => {
+        const aPinned = a.projections?.some(p => p.surfaceType === surfaceType && p.isPinned) ? 1 : 0;
+        const bPinned = b.projections?.some(p => p.surfaceType === surfaceType && p.isPinned) ? 1 : 0;
+        if (aPinned !== bPinned) return bPinned - aPinned;
+        return new Date(b.publishedAt || b.createdAt || 0) - new Date(a.publishedAt || a.createdAt || 0);
+      })
+      .slice(0, limit);
+  }
+
+  /**
+   * Get featured/pinned items globally.
    */
   static async getFeaturedItems(surfaceType = SURFACE_TYPE.BULLETIN_FEATURED) {
-    const records = await HolonetStorage.getAllRecords();
-    return records
-      .filter(r => r.projections?.some(p => p.surfaceType === surfaceType && p.isPinned))
-      .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+    return this.getFeaturedItemsForRecipient(null, surfaceType);
   }
 
   /**

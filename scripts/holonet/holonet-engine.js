@@ -1,8 +1,5 @@
 /**
  * Holonet Engine
- *
- * Main orchestrator for the Holonet system.
- * Publishes records, routes delivery, manages state.
  */
 
 import { HolonetStorage } from './subsystems/holonet-storage.js';
@@ -10,56 +7,43 @@ import { HolonetDeliveryRouter } from './subsystems/holonet-delivery-router.js';
 import { HolonetProjectionRouter } from './subsystems/holonet-projection-router.js';
 import { HolonetNotificationService } from './subsystems/holonet-notification-service.js';
 import { HolonetFeedService } from './subsystems/holonet-feed-service.js';
+import { HolonetSocketService } from './subsystems/holonet-socket-service.js';
 import { DELIVERY_STATE } from './contracts/enums.js';
 
 export class HolonetEngine {
   static #initialized = false;
 
-  /**
-   * Initialize Holonet
-   */
   static async initialize() {
     if (this.#initialized) return;
     this.#initialized = true;
-
+    HolonetSocketService.initialize();
     console.log('[Holonet] Engine initialized');
     return true;
   }
 
-  /**
-   * Publish a record
-   *
-   * @param {HolonetRecord} record
-   * @returns {Promise<boolean>}
-   */
-  static async publish(record) {
+  static async publish(record, { skipSocket = false } = {}) {
     if (!record) return false;
+    if (!game.user?.isGM && !skipSocket) {
+      HolonetSocketService.emitRequest('publish-record', { record: record.toJSON?.() ?? record });
+      return true;
+    }
 
     try {
-      // Publish
       record.publish();
-
-      // Resolve recipients
       const recipients = HolonetDeliveryRouter.resolveRecipients(record);
       record.recipients = recipients;
-
-      // Mark delivered
       for (const recipient of recipients) {
         record.setDeliveryState(recipient.id, DELIVERY_STATE.DELIVERED);
       }
-
-      // Resolve projections
-      const surfaces = HolonetProjectionRouter.resolveSurfaces(record);
+      const surfaces = record.projections?.length ? record.projections : HolonetProjectionRouter.resolveSurfaces(record);
       record.projections = surfaces;
-
-      // Save
       await HolonetStorage.saveRecord(record);
 
-      // Notify (if notification type)
-      if (record.type === 'notification') {
+      const currentRecipientId = HolonetDeliveryRouter.getCurrentRecipientId();
+      const localRecipientIds = recipients.filter(r => r.id === currentRecipientId).map(r => r.id);
+      if (localRecipientIds.length && record.type === 'notification') {
         HolonetNotificationService.notify(record);
       }
-
       return true;
     } catch (err) {
       console.error('[Holonet] Failed to publish record:', err);
@@ -67,103 +51,51 @@ export class HolonetEngine {
     }
   }
 
-  /**
-   * Create and publish a record in one step
-   */
-  static async publishRecord(recordClass, data) {
+  static async publishRecord(recordClass, data, options = {}) {
     const record = new recordClass(data);
-    return this.publish(record);
+    return this.publish(record, options);
   }
 
-  /**
-   * Get a record
-   */
   static async getRecord(recordId) {
     return HolonetStorage.getRecord(recordId);
   }
 
-  /**
-   * Get all records for a state
-   */
   static async getRecordsByState(state) {
     return HolonetStorage.getRecordsByState(state);
   }
 
-  /**
-   * Get records for a recipient
-   */
   static async getRecordsForRecipient(recipientId, states = null) {
     return HolonetStorage.getRecordsForRecipient(recipientId, states);
   }
 
-  /**
-   * Archive a record
-   */
   static async archiveRecord(recordId) {
     const record = await HolonetStorage.getRecord(recordId);
     if (!record) return false;
-
     record.archive();
     return HolonetStorage.saveRecord(record);
   }
 
-  /**
-   * Mark record as read by recipient
-   */
-  static async markRead(recordId, recipientId) {
+  static async markRead(recordId, recipientId, { skipSocket = false } = {}) {
+    if (!game.user?.isGM && !skipSocket) {
+      HolonetSocketService.emitRequest('mark-read', { recordId, recipientId });
+      return true;
+    }
     const record = await HolonetStorage.getRecord(recordId);
     if (!record) return false;
-
     record.markRead(recipientId);
     return HolonetStorage.saveRecord(record);
   }
 
-  /**
-   * Get feed for a recipient
-   */
   static async getFeedForRecipient(recipientId, surfaceType, limit) {
     return HolonetFeedService.getFeedForRecipient(recipientId, surfaceType, limit);
   }
 
-  /**
-   * Storage access
-   */
-  static get storage() {
-    return HolonetStorage;
-  }
+  static get storage() { return HolonetStorage; }
+  static get delivery() { return HolonetDeliveryRouter; }
+  static get projection() { return HolonetProjectionRouter; }
+  static get notifications() { return HolonetNotificationService; }
+  static get feed() { return HolonetFeedService; }
 
-  /**
-   * Delivery router access
-   */
-  static get delivery() {
-    return HolonetDeliveryRouter;
-  }
-
-  /**
-   * Projection router access
-   */
-  static get projection() {
-    return HolonetProjectionRouter;
-  }
-
-  /**
-   * Notification service access
-   */
-  static get notifications() {
-    return HolonetNotificationService;
-  }
-
-  /**
-   * Feed service access
-   */
-  static get feed() {
-    return HolonetFeedService;
-  }
-
-  /**
-   * Retrieve records for diagnostic/validation purposes (read-only)
-   * Usage: await SWSE.holonet.getRecordsForValidation()
-   */
   static async getRecordsForValidation(limit = 10) {
     const records = await HolonetStorage.getAllRecords();
     return records
@@ -181,19 +113,36 @@ export class HolonetEngine {
       }));
   }
 
-  /**
-   * Count records by intent (diagnostic)
-   */
   static async getRecordsByIntent(intent) {
     const records = await HolonetStorage.getAllRecords();
     return records.filter(r => r.intent === intent);
   }
 
-  /**
-   * Count all records (diagnostic)
-   */
   static async getRecordCount() {
     const records = await HolonetStorage.getAllRecords();
     return records.length;
+  }
+
+  static async getUnreadCountsForRecipient(recipientId, { bySourceFamily = false } = {}) {
+    const records = await HolonetStorage.getRecordsForRecipient(recipientId, [DELIVERY_STATE.PUBLISHED]);
+    const unread = records.filter(r => r.isUnreadBy?.(recipientId));
+    const summary = {
+      total: unread.length,
+      messages: unread.filter(r => r.type === 'message').length,
+      notifications: unread.filter(r => r.type === 'notification').length,
+      events: unread.filter(r => r.type === 'event').length,
+      requests: unread.filter(r => r.type === 'request').length,
+      transactions: unread.filter(r => String(r.intent).startsWith('system.transaction_')).length,
+      approvals: unread.filter(r => String(r.intent).includes('approval')).length,
+      mentor: unread.filter(r => r.sourceFamily === 'mentor').length
+    };
+    if (bySourceFamily) {
+      summary.bySourceFamily = unread.reduce((acc, record) => {
+        const key = record.sourceFamily || 'unknown';
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {});
+    }
+    return summary;
   }
 }

@@ -168,6 +168,7 @@ import { Upkeep } from './scripts/automation/upkeep.js';
 // ---- Holonet system ----
 import { registerHolonetSettings, registerHolonetSources, initializeHolonet } from './scripts/holonet/integration/holonet-init.js';
 import { HolonetEngine } from './scripts/holonet/holonet-engine.js';
+import { HolonetStateService } from './scripts/holonet/subsystems/holonet-state-service.js';
 
 // ---- Phase 5: Observability, Forward Compatibility ----
 import { initializePhase5, getPhaseSummary } from './scripts/core/phase5-init.js';
@@ -622,6 +623,8 @@ Hooks.once('ready', async () => {
     DropService,
     DroidValidationEngine,
     HolonetEngine,
+    HolonetStateService,
+    holonet: HolonetEngine,
     // Public APIs
     api: publicAPI,
     debug: {

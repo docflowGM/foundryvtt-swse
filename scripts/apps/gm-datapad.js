@@ -22,6 +22,16 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
+import { getActorSheetTheme, buildActorSheetThemeStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
+import { getActorSheetMotionStyle, buildActorSheetMotionStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
+import { HolonetEngine } from "/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js";
+import { HolonetStorage } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js";
+import { HolonetStateService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js";
+import { BulletinSource } from "/systems/foundryvtt-swse/scripts/holonet/sources/bulletin-source.js";
+import { HolonetAudience } from "/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-audience.js";
+import { HolonetMarkupService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js";
+import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
+import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js";
 
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -62,8 +72,11 @@ export class GMDatapad extends BaseSWSEAppV2 {
     super(options);
     this.currentPage = 'home';
     this.currentTab = 'transactions';
+    this.currentBulletinSection = 'events';
     this.pageData = {};
     this.NS = 'foundryvtt-swse';
+    this.bulletinEditor = { section: 'events', mode: 'create', recordId: null };
+    this.selectedPlayerStateActorId = null;
 
     // Store page state
     this.transactions = [];
@@ -81,13 +94,18 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
 
     const context = await super._prepareContext(options);
-
-    // Load page-specific data based on current page
     const pageContext = await this._loadPageContext(this.currentPage);
+    const themeKey = this._getDatapadThemeKey();
+    const motionStyle = this._getDatapadMotionStyle();
+    const appCounts = await this._getHomeBadgeCounts();
 
     return foundry.utils.mergeObject(context, {
       currentPage: this.currentPage,
-      apps: this._getAppCards(),
+      apps: this._getAppCards(appCounts),
+      themeKey,
+      motionStyle,
+      themeStyleInline: buildActorSheetThemeStyle(themeKey),
+      motionStyleInline: buildActorSheetMotionStyle(motionStyle),
       ...pageContext
     });
   }
@@ -114,13 +132,130 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
+
+  _getDatapadThemeKey() {
+    return getActorSheetTheme(SettingsHelper.getString('sheetTheme', 'holo'));
+  }
+
+  _getDatapadMotionStyle() {
+    return getActorSheetMotionStyle(SettingsHelper.getString('sheetMotionStyle', 'standard'));
+  }
+
+  async _getHomeBadgeCounts() {
+    const bulletinRecords = await HolonetStorage.getAllRecords();
+    const bulletinCount = bulletinRecords.filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN && record.state !== DELIVERY_STATE.ARCHIVED).length;
+
+    await this._loadStorePendingSales();
+    await this._loadStorePendingApprovals();
+    await this._loadPendingDroids();
+
+    return {
+      bulletin: bulletinCount,
+      approvals: (this.pendingDroids?.length ?? 0) + (this.storeApprovals?.length ?? 0),
+      store: (this.pendingSales?.length ?? 0) + (this.storeApprovals?.length ?? 0),
+      workspace: game.actors.filter((actor) => actor.isOwner).length
+    };
+  }
+
+  _getAudienceOptions() {
+    return [
+      { value: AUDIENCE_TYPE.ALL_PLAYERS, label: 'All Players' },
+      { value: AUDIENCE_TYPE.PARTY, label: 'Party' },
+      { value: AUDIENCE_TYPE.GM_ONLY, label: 'GM Only' },
+      { value: AUDIENCE_TYPE.GM_AND_PARTY, label: 'GM + Party' },
+      { value: AUDIENCE_TYPE.ONE_PLAYER, label: 'One Player' },
+      { value: AUDIENCE_TYPE.SELECTED_PLAYERS, label: 'Selected Players' }
+    ];
+  }
+
+  _getBulletinPlayers() {
+    return game.users
+      .filter((user) => !user.isGM)
+      .map((user) => ({
+        userId: user.id,
+        userName: user.name,
+        actorId: user.character?.id ?? null,
+        actorName: user.character?.name ?? user.name
+      }));
+  }
+
+  _getAudienceLabel(audience) {
+    if (!audience) return 'No audience';
+    switch (audience.type) {
+      case AUDIENCE_TYPE.ALL_PLAYERS: return 'All Players';
+      case AUDIENCE_TYPE.PARTY: return 'Party';
+      case AUDIENCE_TYPE.GM_ONLY: return 'GM Only';
+      case AUDIENCE_TYPE.GM_AND_PARTY: return 'GM + Party';
+      case AUDIENCE_TYPE.ONE_PLAYER:
+        return audience.playerIds?.length ? `Player: ${this._resolvePlayerName(audience.playerIds[0])}` : 'One Player';
+      case AUDIENCE_TYPE.SELECTED_PLAYERS:
+        return audience.playerIds?.length ? `Selected (${audience.playerIds.length})` : 'Selected Players';
+      default: return audience.type;
+    }
+  }
+
+  _resolvePlayerName(userId) {
+    return game.users.get(userId)?.character?.name ?? game.users.get(userId)?.name ?? 'Unknown';
+  }
+
+  _normalizeAudienceFromForm(formData) {
+    const audienceType = formData.get('audienceType') || AUDIENCE_TYPE.ALL_PLAYERS;
+    const playerIds = formData.getAll('playerIds').filter(Boolean);
+    switch (audienceType) {
+      case AUDIENCE_TYPE.ONE_PLAYER:
+        return HolonetAudience.singlePlayer(playerIds[0]);
+      case AUDIENCE_TYPE.SELECTED_PLAYERS:
+        return HolonetAudience.selectedPlayers(playerIds);
+      case AUDIENCE_TYPE.GM_ONLY:
+        return HolonetAudience.gmOnly();
+      case AUDIENCE_TYPE.ALL_PLAYERS:
+        return HolonetAudience.allPlayers();
+      case AUDIENCE_TYPE.PARTY:
+        return new HolonetAudience({ type: AUDIENCE_TYPE.PARTY });
+      case AUDIENCE_TYPE.GM_AND_PARTY:
+        return new HolonetAudience({ type: AUDIENCE_TYPE.GM_AND_PARTY });
+      default:
+        return HolonetAudience.allPlayers();
+    }
+  }
+
+  _buildBulletinRecordView(record) {
+    return {
+      id: record.id,
+      intent: record.intent,
+      title: record.title || 'Untitled',
+      body: record.body || '',
+      bodyPreview: (record.body || '').slice(0, 160),
+      renderedBodyPreview: HolonetMarkupService.preview(record.body || '', 160),
+      renderedBody: HolonetMarkupService.render(record.body || ''),
+      state: record.state,
+      stateLabel: (record.state || 'draft').toUpperCase(),
+      sourceFamily: record.sourceFamily,
+      category: record.metadata?.category || 'general',
+      priority: record.priority || record.metadata?.priority || 'normal',
+      audienceLabel: this._getAudienceLabel(record.audience),
+      audienceType: record.audience?.type || AUDIENCE_TYPE.ALL_PLAYERS,
+      audiencePlayerIds: record.audience?.playerIds || [],
+      senderName: record.sender?.actorName || record.sender?.systemLabel || 'GM Bulletin',
+      createdAt: record.createdAt ? new Date(record.createdAt).toLocaleString() : '—',
+      publishedAt: record.publishedAt ? new Date(record.publishedAt).toLocaleString() : null
+    };
+  }
+
+  _getBulletinEditorRecord(records, section) {
+    if (!this.bulletinEditor?.recordId || this.bulletinEditor.section !== section) return null;
+    return records.find((record) => record.id === this.bulletinEditor.recordId) ?? null;
+  }
+
   /**
    * Home page: app cards
    */
   async _loadHomeContext() {
+    const badgeCounts = await this._getHomeBadgeCounts();
     return {
       pageTitle: 'GM Operations',
-      pageDescription: 'Master control for store, rules, approvals, and party management'
+      pageDescription: 'Master control for store, rules, approvals, and party management',
+      badgeCounts
     };
   }
 
@@ -129,15 +264,43 @@ export class GMDatapad extends BaseSWSEAppV2 {
    * Phase 2 will back this with journals/flags
    */
   async _loadBulletinContext() {
+    const records = (await HolonetStorage.getAllRecords())
+      .filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN)
+      .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
+
+    const eventRecords = records.filter((record) => record.type === 'event');
+    const messageRecords = records.filter((record) => record.type === 'message');
+    const bulletinPlayers = this._getBulletinPlayers();
+    const selectedPlayerId = this.selectedPlayerStateActorId || bulletinPlayers[0]?.actorId || null;
+    const selectedPlayerState = selectedPlayerId ? await HolonetStateService.getPlayerState(selectedPlayerId) : null;
+    const partyState = await HolonetStateService.getPartyState();
+
     return {
       pageTitle: 'Bulletin',
-      pageDescription: 'Party and player notices',
-      partyBulletin: {
-        lastSession: 'Not yet configured',
-        currentSituation: 'Not yet configured',
-        currentLocation: 'Not yet configured'
-      },
-      playerBulletins: []
+      pageDescription: 'Broadcasts, direct messages, and current-state control',
+      bulletinSection: this.currentBulletinSection,
+      bulletinNav: [
+        { id: 'events', label: 'Events', count: eventRecords.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length },
+        { id: 'messages', label: 'Messages', count: messageRecords.filter((record) => record.state !== DELIVERY_STATE.ARCHIVED).length },
+        { id: 'players', label: 'Players', count: bulletinPlayers.length },
+        { id: 'party', label: 'Party', count: partyState?.situation || partyState?.objective || partyState?.location ? 1 : 0 }
+      ],
+      audienceOptions: this._getAudienceOptions(),
+      bulletinPlayers,
+      selectedPlayerId,
+      selectedPlayerState,
+      partyState,
+      eventRecords: eventRecords.map((record) => this._buildBulletinRecordView(record)),
+      messageRecords: messageRecords.map((record) => this._buildBulletinRecordView(record)),
+      eventEditorRecord: this._getBulletinEditorRecord(eventRecords, 'events') ? this._buildBulletinRecordView(this._getBulletinEditorRecord(eventRecords, 'events')) : null,
+      messageEditorRecord: this._getBulletinEditorRecord(messageRecords, 'messages') ? this._buildBulletinRecordView(this._getBulletinEditorRecord(messageRecords, 'messages')) : null,
+      syntaxGuide: [
+        '@ mention character, NPC, ship, faction, or location',
+        '# add emphasis or a topic tag',
+        '! mark urgent alerts',
+        '+800cr style credits/rewards',
+        'Examples: @Master Tholos wants @Kael at the #Jedi Temple. !urgent +800cr reward posted.'
+      ]
     };
   }
 
@@ -502,38 +665,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
   /**
    * Get app card definitions for home page
    */
-  _getAppCards() {
+  _getAppCards(counts = {}) {
     return [
-      {
-        id: 'bulletin',
-        label: 'Bulletin',
-        icon: 'fa-solid fa-newspaper',
-        description: 'Party and player notices'
-      },
-      {
-        id: 'house-rules',
-        label: 'House Rules',
-        icon: 'fa-solid fa-book',
-        description: 'Game rule modifications'
-      },
-      {
-        id: 'store',
-        label: 'Store',
-        icon: 'fa-solid fa-store',
-        description: 'Store governance'
-      },
-      {
-        id: 'approvals',
-        label: 'Approvals',
-        icon: 'fa-solid fa-check-circle',
-        description: 'Pending approvals'
-      },
-      {
-        id: 'workspace',
-        label: 'Workspace',
-        icon: 'fa-solid fa-users',
-        description: 'GM actor access'
-      }
+      { id: 'bulletin', label: 'Bulletin', icon: 'fa-solid fa-newspaper', description: 'Party and player notices', badgeCount: counts.bulletin ?? 0 },
+      { id: 'house-rules', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications', badgeCount: counts.houseRules ?? 0 },
+      { id: 'store', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance', badgeCount: counts.store ?? 0 },
+      { id: 'approvals', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending approvals', badgeCount: counts.approvals ?? 0 },
+      { id: 'workspace', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access', badgeCount: counts.workspace ?? 0 }
     ];
   }
 
@@ -571,13 +709,180 @@ export class GMDatapad extends BaseSWSEAppV2 {
     });
 
     // Wire page-specific events based on current page
-    if (this.currentPage === 'store') {
+    if (this.currentPage === 'bulletin') {
+      await this._wireBulletinEvents(root);
+    } else if (this.currentPage === 'store') {
       await this._wireStoreEvents(root);
     } else if (this.currentPage === 'house-rules') {
       await this._wireHouseRulesEvents(root);
     } else if (this.currentPage === 'approvals') {
       await this._wireApprovalsEvents(root);
     }
+  }
+
+  /**
+   * Wire bulletin page events
+   */
+  async _wireBulletinEvents(root) {
+    const pageElement = root.querySelector('.gm-datapad-bulletin');
+    if (!pageElement) return;
+
+    await HolonetComposerAssist.attach(pageElement);
+
+    pageElement.querySelectorAll('[data-bulletin-section]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        this.currentBulletinSection = event.currentTarget.dataset.bulletinSection;
+        this.bulletinEditor = { section: this.currentBulletinSection, mode: 'create', recordId: null };
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-edit"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        this.bulletinEditor = {
+          section: event.currentTarget.dataset.section,
+          mode: 'edit',
+          recordId: event.currentTarget.dataset.recordId
+        };
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-archive"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        await HolonetEngine.archiveRecord(event.currentTarget.dataset.recordId);
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-delete"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        await HolonetStorage.deleteRecord(event.currentTarget.dataset.recordId);
+        if (this.bulletinEditor?.recordId === event.currentTarget.dataset.recordId) {
+          this.bulletinEditor = { section: this.currentBulletinSection, mode: 'create', recordId: null };
+        }
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-action="bulletin-publish"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        const record = await HolonetStorage.getRecord(event.currentTarget.dataset.recordId);
+        if (!record) return;
+        await HolonetEngine.publish(record);
+        await this.render(false);
+      });
+    });
+
+    pageElement.querySelectorAll('[data-submit-mode]').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        const form = event.currentTarget.closest('form');
+        const hidden = form?.querySelector('[name="submitMode"]');
+        if (hidden) hidden.value = event.currentTarget.dataset.submitMode;
+      });
+    });
+
+    const eventsForm = pageElement.querySelector('[data-bulletin-form="events"]');
+    if (eventsForm) {
+      eventsForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await this._saveBulletinRecord(new FormData(eventsForm), 'events');
+      });
+    }
+
+    const messagesForm = pageElement.querySelector('[data-bulletin-form="messages"]');
+    if (messagesForm) {
+      messagesForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await this._saveBulletinRecord(new FormData(messagesForm), 'messages');
+      });
+    }
+
+    const playerStateForm = pageElement.querySelector('[data-player-state-form]');
+    if (playerStateForm) {
+      playerStateForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(playerStateForm);
+        const actorId = formData.get('actorId');
+        if (!actorId) return;
+        await HolonetStateService.savePlayerState(actorId, {
+          location: formData.get('location'),
+          objective: formData.get('objective'),
+          situation: formData.get('situation')
+        });
+        this.selectedPlayerStateActorId = actorId;
+        await this.render(false);
+      });
+    }
+
+    pageElement.querySelectorAll('[data-select-player-state]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        this.selectedPlayerStateActorId = event.currentTarget.dataset.selectPlayerState;
+        await this.render(false);
+      });
+    });
+
+    const partyStateForm = pageElement.querySelector('[data-party-state-form]');
+    if (partyStateForm) {
+      partyStateForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(partyStateForm);
+        await HolonetStateService.savePartyState({
+          location: formData.get('location'),
+          objective: formData.get('objective'),
+          situation: formData.get('situation')
+        });
+        await this.render(false);
+      });
+    }
+  }
+
+  async _saveBulletinRecord(formData, section) {
+    const recordId = formData.get('recordId') || null;
+    const shouldPublish = formData.get('submitMode') === 'publish';
+    const audience = this._normalizeAudienceFromForm(formData);
+    let record = recordId ? await HolonetStorage.getRecord(recordId) : null;
+
+    const baseData = {
+      id: recordId || undefined,
+      title: formData.get('title') || '',
+      body: formData.get('body') || '',
+      category: formData.get('category') || (section === 'events' ? 'news' : 'message'),
+      priority: formData.get('priority') || 'normal',
+      audience,
+      authorName: formData.get('authorName') || game.user?.name || 'GM Bulletin',
+      authorActorId: formData.get('authorActorId') || null,
+      authorActorName: formData.get('authorActorName') || null,
+      state: shouldPublish ? DELIVERY_STATE.PUBLISHED : DELIVERY_STATE.DRAFT,
+      metadata: {
+        category: formData.get('category') || (section === 'events' ? 'news' : 'message')
+      }
+    };
+
+    if (!record) {
+      record = section === 'events'
+        ? BulletinSource.createBulletinEvent(baseData)
+        : BulletinSource.createBulletinMessage(baseData);
+    } else {
+      record.title = baseData.title;
+      record.body = baseData.body;
+      record.audience = baseData.audience;
+      record.priority = baseData.priority;
+      record.metadata = { ...record.metadata, ...baseData.metadata };
+      record.sender = section === 'events'
+        ? BulletinSource.createBulletinEvent(baseData).sender
+        : BulletinSource.createBulletinMessage(baseData).sender;
+      record.updatedAt = new Date().toISOString();
+    }
+
+    if (shouldPublish) {
+      await HolonetEngine.publish(record);
+    } else {
+      await HolonetStorage.saveRecord(record);
+    }
+
+    this.bulletinEditor = { section, mode: 'create', recordId: null };
+    await this.render(false);
   }
 
   /**
@@ -827,6 +1132,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
       await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
 
+      Hooks.call('swseApprovalResolved', {
+        approval: { id: `droid-${actor.id}`, type: 'droid', draftData: { name: actor.name } },
+        actor,
+        decision: 'approved',
+        decidedBy: game.user?.name ?? 'GM'
+      });
+
       ui?.notifications?.info?.(`Droid "${actor.name}" approved`);
       this.render(false);
     } catch (err) {
@@ -864,6 +1176,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
         rejectedAt: new Date().toLocaleString()
       });
       await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
+
+      Hooks.call('swseApprovalResolved', {
+        approval: { id: `droid-${actor.id}`, type: 'droid', draftData: { name: actor.name } },
+        actor,
+        decision: 'denied',
+        decidedBy: game.user?.name ?? 'GM'
+      });
 
       ui?.notifications?.info?.(`Droid "${actor.name}" rejected`);
       this.render(false);

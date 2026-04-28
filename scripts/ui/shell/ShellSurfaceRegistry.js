@@ -40,6 +40,8 @@ export class ShellSurfaceRegistry {
         return this._buildSettingsSurfaceVm(actor, surfaceOptions);
       case 'mentor':
         return this._buildMentorSurfaceVm(actor, surfaceOptions);
+      case 'messenger':
+        return this._buildMessengerSurfaceVm(actor, surfaceOptions);
       default:
         SWSELogger.warn(`[ShellSurfaceRegistry] Unknown surface: ${surfaceId}`);
         return { id: surfaceId, title: surfaceId, error: `Unknown surface: ${surfaceId}` };
@@ -100,6 +102,8 @@ export class ShellSurfaceRegistry {
         return this._buildFilterDrawerVm(actor, drawerOptions);
       case 'mentor-advice':
         return this._buildMentorAdviceDrawerVm(actor, drawerOptions);
+      case 'holonet-notifications':
+        return this._buildHolonetNotificationsDrawerVm(actor, drawerOptions);
       default:
         return { drawerId, title: drawerId };
     }
@@ -230,6 +234,20 @@ export class ShellSurfaceRegistry {
     } catch (err) {
       SWSELogger.error('[ShellSurfaceRegistry] Upgrade surface VM failed:', err);
       return { id: 'upgrade', title: 'Upgrade Workshop', error: err.message };
+    }
+  }
+
+
+
+  static async _buildHolonetNotificationsDrawerVm(actor, options) {
+    try {
+      const { HolonetNoticeCenterService } = await import(
+        '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-notice-center-service.js'
+      );
+      return await HolonetNoticeCenterService.buildCenterVm({ actor, limit: options.limit ?? 18, previewLimit: options.previewLimit ?? 6 });
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Holonet notifications drawer VM failed:', err);
+      return { drawerId: 'holonet-notifications', title: 'Holonet Alerts', totalUnread: 0, notices: [], chips: [], error: err.message };
     }
   }
 

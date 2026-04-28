@@ -53,6 +53,11 @@
         vm=shellSurfaceVm}}
   {{/if}}
 
+  {{#if (eq shellSurface "messenger")}}
+    {{> "systems/foundryvtt-swse/templates/shell/partials/surface-messenger.hbs"
+        vm=shellSurfaceVm}}
+  {{/if}}
+
   {{!-- ═══════════════════════════════════════════════════════════════
     PERSISTENT HOME NAV
     Floating home button visible on all non-home surfaces.

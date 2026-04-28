@@ -1,8 +1,5 @@
 /**
  * Bulletin Source Adapter
- *
- * Source family for GM-authored bulletin events and messages
- * Skeleton-only in Phase 1.
  */
 
 import { SOURCE_FAMILY, INTENT_TYPE } from '../contracts/enums.js';
@@ -14,53 +11,53 @@ import { HolonetAudience } from '../contracts/holonet-audience.js';
 export class BulletinSource {
   static sourceFamily = SOURCE_FAMILY.BULLETIN;
 
-  /**
-   * Create a bulletin event
-   */
+  static #resolveSender(data) {
+    if (data.authorActorId) {
+      return HolonetSender.fromActor(data.authorActorId, data.authorActorName ?? data.authorName ?? null, data.authorAvatar ?? null);
+    }
+    return HolonetSender.system(data.authorName || 'GM Bulletin');
+  }
+
   static createBulletinEvent(data) {
-    const event = new HolonetEvent({
+    return new HolonetEvent({
+      id: data.id,
       sourceFamily: this.sourceFamily,
-      sourceId: data.eventId,
+      sourceId: data.eventId ?? data.id,
       intent: INTENT_TYPE.BULLETIN_EVENT,
-      sender: HolonetSender.fromActor(data.authorActorId, data.authorActorName),
+      sender: this.#resolveSender(data),
       audience: data.audience ?? HolonetAudience.allPlayers(),
       title: data.title ?? 'Event',
       body: data.body ?? '',
       priority: data.priority ?? 'normal',
-      metadata: data.metadata ?? {
-        category: data.category,
-        published: false // Skeleton: not yet published
+      state: data.state,
+      metadata: {
+        category: data.category ?? 'news',
+        published: data.published ?? false,
+        ...data.metadata
       }
     });
-
-    return event;
   }
 
-  /**
-   * Create a bulletin message
-   */
   static createBulletinMessage(data) {
-    const message = new HolonetMessage({
+    return new HolonetMessage({
+      id: data.id,
       sourceFamily: this.sourceFamily,
-      sourceId: data.messageId,
+      sourceId: data.messageId ?? data.id,
       intent: INTENT_TYPE.BULLETIN_MESSAGE,
-      sender: HolonetSender.fromActor(data.authorActorId, data.authorActorName),
+      sender: this.#resolveSender(data),
       audience: data.audience ?? HolonetAudience.allPlayers(),
-      title: data.title ?? 'Bulletin',
+      title: data.title ?? 'Message',
       body: data.body ?? '',
-      metadata: data.metadata ?? {
-        published: false
+      state: data.state,
+      metadata: {
+        category: data.category ?? 'message',
+        published: data.published ?? false,
+        ...data.metadata
       }
     });
-
-    return message;
   }
 
-  /**
-   * Initialize bulletin source
-   */
   static async initialize() {
-    console.log('[Holonet] Bulletin source initialized (skeleton)');
-    // Future: no full Bulletin editor yet in Phase 1
+    console.log('[Holonet] Bulletin source initialized');
   }
 }

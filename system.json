@@ -55,6 +55,7 @@
     "styles/system/shell-host.css",
     "styles/system/shell-overlays.css",
     "styles/system/home-surface.css",
+    "styles/system/messenger-surface.css",
     "styles/system/consistency-lock.css",
     "styles/system/micro-interactions.css",
     "styles/system/final-polish.css",

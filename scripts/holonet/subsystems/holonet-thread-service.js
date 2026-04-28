@@ -1,84 +1,55 @@
 /**
  * Holonet Thread Service
- *
- * Manages message threads and thread membership
  */
 
 import { HolonetThread } from '../contracts/holonet-thread.js';
 import { HolonetStorage } from './holonet-storage.js';
 
-export class HolonetThreadService {
-  /**
-   * Create a new thread
-   */
-  static async createThread(title, participants = []) {
-    const thread = new HolonetThread({
-      title,
-      participants
-    });
+function participantKeySet(participants = []) {
+  return new Set(participants.map(p => p.id));
+}
 
+export class HolonetThreadService {
+  static async createThread(title, participants = [], metadata = {}) {
+    const thread = new HolonetThread({ title, participants, metadata });
     await HolonetStorage.saveThread(thread);
     return thread;
   }
 
-  /**
-   * Get or create a thread with specific participants
-   */
-  static async getOrCreateThread(title, participants) {
+  static async getOrCreateThread(title, participants, metadata = {}) {
     const threads = await HolonetStorage.getAllThreads();
-
-    // Try to find existing thread with same participants
+    const target = participantKeySet(participants);
     const existing = threads.find(t => {
-      if (t.participants?.length !== participants.length) return false;
-      const pIds = new Set(t.participants.map(p => p.id));
-      return participants.every(p => pIds.has(p.id));
+      if ((t.participants?.length ?? 0) !== participants.length) return false;
+      const current = participantKeySet(t.participants);
+      return participants.every(p => current.has(p.id)) && Array.from(current).every(id => target.has(id));
     });
-
-    if (existing) {
-      return existing;
-    }
-
-    return this.createThread(title, participants);
+    if (existing) return existing;
+    return this.createThread(title, participants, metadata);
   }
 
-  /**
-   * Add message to thread
-   */
   static async addMessageToThread(threadId, messageId) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
-
     thread.addMessage(messageId);
     await HolonetStorage.saveThread(thread);
     return true;
   }
 
-  /**
-   * Get thread with messages
-   */
   static async getThreadWithMessages(threadId) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return null;
-
     const messages = [];
     for (const messageId of thread.messageIds) {
       const msg = await HolonetStorage.getRecord(messageId);
       if (msg) messages.push(msg);
     }
-
-    return {
-      ...thread,
-      messages
-    };
+    return { ...thread, messages };
   }
 
-  /**
-   * Archive a thread
-   */
   static async archiveThread(threadId) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
-
     thread.archive();
     await HolonetStorage.saveThread(thread);
     return true;

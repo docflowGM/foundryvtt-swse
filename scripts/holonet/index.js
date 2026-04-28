@@ -14,6 +14,8 @@ export { HolonetProjectionRouter } from './subsystems/holonet-projection-router.
 export { HolonetThreadService } from './subsystems/holonet-thread-service.js';
 export { HolonetNotificationService } from './subsystems/holonet-notification-service.js';
 export { HolonetFeedService } from './subsystems/holonet-feed-service.js';
+export { HolonetSocketService } from './subsystems/holonet-socket-service.js';
+export { HolonetMessengerService } from './subsystems/holonet-messenger-service.js';
 
 // Contracts & enums
 export * from './contracts/index.js';

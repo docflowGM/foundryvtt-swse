@@ -1,4 +1,4 @@
-<div class="gm-datapad-container swse-ui-shell swse-datapad flexcol">
+<div class="gm-datapad-container swse-ui-shell swse-datapad flexcol" data-theme="{{themeKey}}" data-motion-style="{{motionStyle}}" style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
   {{!-- GM Datapad Shell --}}
   <div class="swse-datapad swse-screen gm-datapad-screen flexcol">
 
@@ -19,10 +19,12 @@
           </div>
           <div class="app-card-label">{{this.label}}</div>
           <div class="app-card-desc">{{this.description}}</div>
+          {{#if this.badgeCount}}<span class="app-card-badge">{{this.badgeCount}}</span>{{/if}}
         </button>
         {{/each}}
       </div>
     </div>
+
 
     {{!-- Bulletin Page --}}
     {{else if (eq currentPage "bulletin")}}
@@ -33,30 +35,267 @@
         <p class="page-subtitle">{{pageDescription}}</p>
       </div>
 
-      <div class="bulletin-content">
-        <div class="bulletin-section">
-          <h3>Party Bulletin</h3>
-          <div class="bulletin-section-content swse-ui-panel">
-            <p class="placeholder">Party notices not yet configured</p>
-            <p class="note">Phase 2: Backed by journals and actor flags</p>
-          </div>
-        </div>
+      <div class="bulletin-shell">
+        <aside class="bulletin-nav-grid">
+          {{#each bulletinNav}}
+          <button class="bulletin-nav-card {{#if (eq ../bulletinSection this.id)}}is-active{{/if}}" data-bulletin-section="{{this.id}}">
+            <span class="bulletin-nav-label">{{this.label}}</span>
+            {{#if this.count}}<span class="bulletin-nav-count">{{this.count}}</span>{{/if}}
+          </button>
+          {{/each}}
+        </aside>
 
-        <div class="bulletin-section">
-          <h3>Player Bulletins</h3>
-          <div class="bulletin-section-content swse-ui-panel">
-            {{#if playerBulletins.length}}
-            {{#each playerBulletins}}
-            <div class="player-bulletin">
-              <strong>{{this.playerName}}</strong>
-              <p>{{this.notice}}</p>
+        <section class="bulletin-surface swse-ui-panel">
+          {{#if (eq bulletinSection "events")}}
+          <div class="bulletin-panel-header">
+            <div>
+              <h3>Manage Events</h3>
+              <p>Broadcast campaign news, session recaps, and public Holonet updates.</p>
             </div>
-            {{/each}}
-            {{else}}
-            <p class="placeholder">No individual player notices</p>
-            {{/if}}
           </div>
-        </div>
+
+          <form class="bulletin-composer" data-bulletin-form="events">
+            <input type="hidden" name="recordId" value="{{eventEditorRecord.id}}">
+            <input type="hidden" name="submitMode" value="draft">
+            <div class="bulletin-form-grid">
+              <label>
+                <span>Headline</span>
+                <input type="text" name="title" value="{{eventEditorRecord.title}}" placeholder="Hyperlane disruption at @Docking Ring Aurek">
+              </label>
+              <label>
+                <span>Category</span>
+                <input type="text" name="category" value="{{eventEditorRecord.category}}" placeholder="news / mission / warning">
+              </label>
+              <label>
+                <span>Priority</span>
+                <select name="priority">
+                  <option value="low" {{#if (eq eventEditorRecord.priority "low")}}selected{{/if}}>Low</option>
+                  <option value="normal" {{#if (or (not eventEditorRecord.priority) (eq eventEditorRecord.priority "normal"))}}selected{{/if}}>Normal</option>
+                  <option value="high" {{#if (eq eventEditorRecord.priority "high")}}selected{{/if}}>High</option>
+                  <option value="critical" {{#if (eq eventEditorRecord.priority "critical")}}selected{{/if}}>Critical</option>
+                </select>
+              </label>
+              <label>
+                <span>Published By</span>
+                <input type="text" name="authorName" value="{{eventEditorRecord.senderName}}" placeholder="Galactic News Service">
+              </label>
+            </div>
+
+            <div class="bulletin-form-grid bulletin-form-grid-audience">
+              <label>
+                <span>Audience</span>
+                <select name="audienceType">
+                  {{#each audienceOptions}}
+                  <option value="{{this.value}}" {{#if (eq ../eventEditorRecord.audienceType this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <div class="bulletin-recipient-picker">
+                <span>Recipients</span>
+                <div class="bulletin-recipient-list">
+                  {{#each bulletinPlayers}}
+                  <label class="bulletin-recipient-chip">
+                    <input type="checkbox" name="playerIds" value="{{this.userId}}" {{#if (contains ../eventEditorRecord.audiencePlayerIds this.userId)}}checked{{/if}}>
+                    <span>{{this.actorName}}</span>
+                  </label>
+                  {{/each}}
+                </div>
+              </div>
+            </div>
+
+            <label class="bulletin-body-field">
+              <span>Body</span>
+              <textarea name="body" rows="6" placeholder="Imperial patrols spotted near @Wayfarer. Avoid the #south docking ring until the patrol window closes." data-holonet-editor="bulletin-event">{{eventEditorRecord.body}}</textarea>
+            </label>
+
+            <div class="bulletin-syntax-guide">
+              {{#each syntaxGuide}}<span>{{this}}</span>{{/each}}
+            </div>
+
+            <div class="bulletin-form-actions">
+              <button type="submit" class="swse-ui-button" data-submit-mode="draft">Save Draft</button>
+              <button type="submit" class="swse-ui-button bulletin-primary-action" data-submit-mode="publish">Publish Event</button>
+            </div>
+          </form>
+
+          <div class="bulletin-record-grid">
+            {{#each eventRecords}}
+            <article class="bulletin-record-card {{this.state}}">
+              <div class="bulletin-record-meta">
+                <span class="bulletin-chip state">{{this.stateLabel}}</span>
+                <span class="bulletin-chip category">{{this.category}}</span>
+                <span class="bulletin-chip priority">{{this.priority}}</span>
+                <span class="bulletin-chip audience">{{this.audienceLabel}}</span>
+              </div>
+              <h4>{{this.title}}</h4>
+              <div class="bulletin-record-sender">{{this.senderName}}</div>
+              <p class="holonet-rendered-text">{{{this.renderedBodyPreview}}}</p>
+              <div class="bulletin-record-footer">
+                <span>{{this.createdAt}}</span>
+                <div class="bulletin-record-actions">
+                  <button type="button" class="swse-ui-button" data-action="bulletin-edit" data-section="events" data-record-id="{{this.id}}">Edit</button>
+                  {{#unless (eq this.state "published")}}<button type="button" class="swse-ui-button" data-action="bulletin-publish" data-record-id="{{this.id}}">Publish</button>{{/unless}}
+                  {{#unless (eq this.state "archived")}}<button type="button" class="swse-ui-button" data-action="bulletin-archive" data-record-id="{{this.id}}">Archive</button>{{/unless}}
+                  <button type="button" class="swse-ui-button" data-action="bulletin-delete" data-record-id="{{this.id}}">Delete</button>
+                </div>
+              </div>
+            </article>
+            {{else}}
+            <p class="placeholder">No bulletin events yet.</p>
+            {{/each}}
+          </div>
+
+          {{else if (eq bulletinSection "messages")}}
+          <div class="bulletin-panel-header">
+            <div>
+              <h3>Manage Messages</h3>
+              <p>Author direct communications, mentor pings, and sender-based Holonet notices.</p>
+            </div>
+          </div>
+
+          <form class="bulletin-composer" data-bulletin-form="messages">
+            <input type="hidden" name="recordId" value="{{messageEditorRecord.id}}">
+            <input type="hidden" name="submitMode" value="draft">
+            <div class="bulletin-form-grid">
+              <label>
+                <span>Subject</span>
+                <input type="text" name="title" value="{{messageEditorRecord.title}}" placeholder="@Master Tholos requests your presence">
+              </label>
+              <label>
+                <span>Category</span>
+                <input type="text" name="category" value="{{messageEditorRecord.category}}" placeholder="mentor / npc / reward / warning">
+              </label>
+              <label>
+                <span>Sender Label</span>
+                <input type="text" name="authorName" value="{{messageEditorRecord.senderName}}" placeholder="Rendarr / Master Tholos / GM">
+              </label>
+            </div>
+
+            <div class="bulletin-form-grid bulletin-form-grid-audience">
+              <label>
+                <span>Recipients</span>
+                <select name="audienceType">
+                  {{#each audienceOptions}}
+                  <option value="{{this.value}}" {{#if (eq ../messageEditorRecord.audienceType this.value)}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <div class="bulletin-recipient-picker">
+                <span>Recipient Players</span>
+                <div class="bulletin-recipient-list">
+                  {{#each bulletinPlayers}}
+                  <label class="bulletin-recipient-chip">
+                    <input type="checkbox" name="playerIds" value="{{this.userId}}" {{#if (contains ../messageEditorRecord.audiencePlayerIds this.userId)}}checked{{/if}}>
+                    <span>{{this.actorName}}</span>
+                  </label>
+                  {{/each}}
+                </div>
+              </div>
+            </div>
+
+            <label class="bulletin-body-field">
+              <span>Body</span>
+              <textarea name="body" rows="6" placeholder="@Kael Vorren, your stipend has arrived. Report to @Rendarr for the next #shipment." data-holonet-editor="bulletin-message">{{messageEditorRecord.body}}</textarea>
+            </label>
+
+            <div class="bulletin-syntax-guide">
+              {{#each syntaxGuide}}<span>{{this}}</span>{{/each}}
+            </div>
+
+            <div class="bulletin-form-actions">
+              <button type="submit" class="swse-ui-button" data-submit-mode="draft">Save Draft</button>
+              <button type="submit" class="swse-ui-button bulletin-primary-action" data-submit-mode="publish">Publish Message</button>
+            </div>
+          </form>
+
+          <div class="bulletin-record-grid">
+            {{#each messageRecords}}
+            <article class="bulletin-record-card message {{this.state}}">
+              <div class="bulletin-record-meta">
+                <span class="bulletin-chip state">{{this.stateLabel}}</span>
+                <span class="bulletin-chip category">{{this.category}}</span>
+                <span class="bulletin-chip audience">{{this.audienceLabel}}</span>
+              </div>
+              <h4>{{this.title}}</h4>
+              <div class="bulletin-record-sender">From {{this.senderName}}</div>
+              <p class="holonet-rendered-text">{{{this.renderedBodyPreview}}}</p>
+              <div class="bulletin-record-footer">
+                <span>{{this.createdAt}}</span>
+                <div class="bulletin-record-actions">
+                  <button type="button" class="swse-ui-button" data-action="bulletin-edit" data-section="messages" data-record-id="{{this.id}}">Edit</button>
+                  {{#unless (eq this.state "published")}}<button type="button" class="swse-ui-button" data-action="bulletin-publish" data-record-id="{{this.id}}">Publish</button>{{/unless}}
+                  {{#unless (eq this.state "archived")}}<button type="button" class="swse-ui-button" data-action="bulletin-archive" data-record-id="{{this.id}}">Archive</button>{{/unless}}
+                  <button type="button" class="swse-ui-button" data-action="bulletin-delete" data-record-id="{{this.id}}">Delete</button>
+                </div>
+              </div>
+            </article>
+            {{else}}
+            <p class="placeholder">No bulletin messages yet.</p>
+            {{/each}}
+          </div>
+
+          {{else if (eq bulletinSection "players")}}
+          <div class="bulletin-panel-header">
+            <div>
+              <h3>Manage Players</h3>
+              <p>Set current location, objective, and situation for individual player datapads.</p>
+            </div>
+          </div>
+          <div class="bulletin-state-layout">
+            <aside class="bulletin-player-list">
+              {{#each bulletinPlayers}}
+              <button class="bulletin-player-card {{#if (eq ../selectedPlayerId this.actorId)}}is-active{{/if}}" type="button" data-select-player-state="{{this.actorId}}">
+                <strong>{{this.actorName}}</strong>
+                <span>{{this.userName}}</span>
+              </button>
+              {{/each}}
+            </aside>
+            <form class="bulletin-state-editor" data-player-state-form>
+              <input type="hidden" name="actorId" value="{{selectedPlayerId}}">
+              <label>
+                <span>Current Location</span>
+                <input type="text" name="location" value="{{selectedPlayerState.location}}" placeholder="Wayfarer-class freighter">
+              </label>
+              <label>
+                <span>Current Objective</span>
+                <input type="text" name="objective" value="{{selectedPlayerState.objective}}" placeholder="Meet @Rendarr and confirm the shipment route">
+              </label>
+              <label>
+                <span>Current Situation</span>
+                <textarea name="situation" rows="6" placeholder="Currently onboard Wayfarer-class freighter. Last contact: Mid-Rim." data-holonet-editor="player-state">{{selectedPlayerState.situation}}</textarea>
+              </label>
+              <div class="bulletin-form-actions">
+                <button type="submit" class="swse-ui-button bulletin-primary-action">Save Player State</button>
+              </div>
+            </form>
+          </div>
+
+          {{else if (eq bulletinSection "party")}}
+          <div class="bulletin-panel-header">
+            <div>
+              <h3>Manage Party</h3>
+              <p>Set party-wide opening state for the player Home experience.</p>
+            </div>
+          </div>
+          <form class="bulletin-state-editor" data-party-state-form>
+            <label>
+              <span>Party Location</span>
+              <input type="text" name="location" value="{{partyState.location}}" placeholder="Docking Ring Aurek">
+            </label>
+            <label>
+              <span>Party Objective</span>
+              <input type="text" name="objective" value="{{partyState.objective}}" placeholder="Secure the spice shipment and avoid Imperial customs">
+            </label>
+            <label>
+              <span>Party Situation</span>
+              <textarea name="situation" rows="6" placeholder="The party is starting aboard the freighter with Imperial patrols nearby." data-holonet-editor="party-state">{{partyState.situation}}</textarea>
+            </label>
+            <div class="bulletin-form-actions">
+              <button type="submit" class="swse-ui-button bulletin-primary-action">Save Party State</button>
+            </div>
+          </form>
+          {{/if}}
+        </section>
       </div>
     </div>
 

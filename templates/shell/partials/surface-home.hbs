@@ -2,32 +2,14 @@
   surface-home.hbs
   Shell surface for the Holopad Home launcher route.
 
-  Container type: ROUTE
-  Route ID: home
-
-  Renders a grid of app tiles. Each tile fires a route change when clicked.
-  No logic lives here — vm.apps[] is built entirely by HomeSurfaceService.
-
-  vm:
-    id          — 'home'
-    title       — 'Holopad Home'
-    actorName   — actor.name
-    apps[]      — tile descriptors
-      .id           — tile identifier
-      .label        — display label
-      .icon         — unicode icon character
-      .routeId      — target shell surface id
-      .visible      — boolean (pre-filtered, but guard here for safety)
-      .enabled      — boolean
-      .badge        — string or null
-      .description  — short hint string
+  The Home surface renders both the launcher grid and lightweight Holonet
+  projections: current state, comm feed, and last-session recap.
 --}}
 
 <div class="swse-shell-surface swse-shell-surface--home"
      data-shell-region="surface-home"
      data-surface-id="{{vm.id}}">
 
-  {{!-- ─── Header ─────────────────────────────────────────────────────── --}}
   <div class="swse-shell-surface__header swse-home-header">
     <button class="swse-shell-surface__back-btn"
             data-shell-action="return-to-sheet"
@@ -42,12 +24,18 @@
       <span>HOLOPAD</span>
     </div>
 
-    <div class="swse-home-header__actor">
-      {{vm.actorName}}
+    <div class="swse-home-header__actions">
+      <button class="swse-home-header__notice-btn" data-shell-action="open-notifications" type="button" title="Holonet alerts">
+        <span class="swse-home-header__notice-icon">◌</span>
+        <span>Alerts</span>
+        {{#if vm.notificationCenter.totalUnread}}<span class="swse-home-header__notice-badge">{{vm.notificationCenter.totalUnread}}</span>{{/if}}
+      </button>
+      <div class="swse-home-header__actor">
+        {{vm.actorName}}
+      </div>
     </div>
   </div>
 
-  {{!-- ─── Body ────────────────────────────────────────────────────────── --}}
   <div class="swse-shell-surface__body swse-home-body">
 
     {{#if vm.error}}
@@ -57,37 +45,177 @@
     </div>
     {{else}}
 
-    <div class="swse-home-status-bar">
-      <span class="swse-home-status-bar__label">SYS // LAUNCHER</span>
-      <span class="swse-home-status-bar__dot"></span>
-      <span class="swse-home-status-bar__label">READY</span>
-    </div>
-
-    <div class="swse-home-grid">
-      {{#each vm.apps}}
-        {{#if this.visible}}
-        <button
-          class="swse-app-tile {{#unless this.enabled}}swse-app-tile--disabled{{/unless}}"
-          data-route-id="{{this.routeId}}"
-          type="button"
-          {{#unless this.enabled}}disabled{{/unless}}
-          title="{{this.description}}">
-
-          <div class="swse-app-tile__icon">{{this.icon}}</div>
-          <div class="swse-app-tile__label">{{this.label}}</div>
-
-          {{#if this.badge}}
-          <div class="swse-app-tile__badge">{{this.badge}}</div>
-          {{/if}}
-
-          {{#if this.description}}
-          <div class="swse-app-tile__description">{{this.description}}</div>
-          {{/if}}
-
-        </button>
-        {{/if}}
+    {{#if vm.notificationCenter.preview.length}}
+    <div class="swse-home-bubble-strip">
+      {{#each vm.notificationCenter.preview}}
+      <button class="swse-home-bubble {{#if this.isUnread}}is-unread{{/if}}" type="button" data-holonet-record-id="{{this.id}}">
+        <span class="swse-home-bubble__icon">{{this.icon}}</span>
+        <span class="swse-home-bubble__content">
+          <span class="swse-home-bubble__title">{{this.title}}</span>
+          <span class="holonet-rendered-text swse-home-bubble__preview">{{{this.previewHtml}}}</span>
+        </span>
+      </button>
       {{/each}}
     </div>
+    {{/if}}
+
+    <div class="swse-home-status-bar">
+      <span class="swse-home-status-bar__label">SYS // HOLO</span>
+      <span class="swse-home-status-bar__dot"></span>
+      <span class="swse-home-status-bar__label">READY</span>
+      {{#if vm.alerts.total}}
+      <span class="swse-home-status-pill">{{vm.alerts.total}} ACTIVE</span>
+      {{/if}}
+      {{#if vm.alerts.chips.length}}
+      <div class="swse-home-status-bar__chips">
+        {{#each vm.alerts.chips}}
+        <span class="swse-home-status-chip swse-home-status-chip--{{this.key}}">{{this.label}} {{this.count}}</span>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+
+    <div class="swse-home-dashboard">
+      <section class="swse-home-hero swse-home-panel">
+        <div class="swse-home-hero__portrait-wrap">
+          <img class="swse-home-hero__portrait" src="{{vm.actorImg}}" alt="{{vm.actorName}} portrait">
+        </div>
+
+        <div class="swse-home-hero__identity">
+          <div class="swse-home-section-label">CURRENT STATUS</div>
+          <h2 class="swse-home-hero__name">{{vm.actorName}}</h2>
+
+          <div class="swse-home-status-lines">
+            <div class="swse-home-status-line">
+              <span class="swse-home-status-line__label">Location</span>
+              <span class="swse-home-status-line__value">{{vm.currentState.location}}</span>
+            </div>
+            <div class="swse-home-status-line">
+              <span class="swse-home-status-line__label">Objective</span>
+              <span class="swse-home-status-line__value">{{vm.currentState.objective}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="swse-home-current-state">
+          <div class="swse-home-section-label">CURRENT SITUATION</div>
+          <p>{{vm.currentState.situation}}</p>
+          {{#if vm.currentState.updatedAt}}
+          <div class="swse-home-current-state__meta">
+            Updated {{vm.currentState.updatedAt}}
+            {{#if vm.currentState.updatedBy}} · {{vm.currentState.updatedBy}}{{/if}}
+          </div>
+          {{/if}}
+        </div>
+      </section>
+
+      <aside class="swse-home-sidebar">
+        <section class="swse-home-panel swse-home-feed-panel">
+          <div class="swse-home-panel__header">
+            <div>
+              <div class="swse-home-section-label">COMM FEED</div>
+              <h3>Recent Holonet Traffic</h3>
+            </div>
+            {{#if vm.alerts.total}}<span class="swse-home-panel__count">{{vm.alerts.total}}</span>{{/if}}
+          </div>
+
+          <div class="swse-home-feed-list">
+            {{#each vm.commFeed}}
+            <button class="swse-home-feed-card {{#if this.isUnread}}is-unread{{/if}}"
+                    data-holonet-record-id="{{this.id}}"
+                    type="button">
+              <div class="swse-home-feed-card__icon">{{this.icon}}</div>
+              <div class="swse-home-feed-card__content">
+                <div class="swse-home-feed-card__meta">
+                  <span class="swse-home-feed-card__sender">{{this.sender}}</span>
+                  <span class="swse-home-feed-card__category">{{this.category}}</span>
+                </div>
+                <h4>{{this.title}}</h4>
+                <div class="holonet-rendered-text swse-home-feed-card__preview">{{{this.preview}}}</div>
+                <div class="swse-home-feed-card__timestamp">{{this.timestamp}}</div>
+              </div>
+            </button>
+            {{else}}
+            <p class="swse-home-empty">No Holonet traffic yet.</p>
+            {{/each}}
+          </div>
+        </section>
+
+        <section class="swse-home-panel swse-home-last-session">
+          <div class="swse-home-panel__header">
+            <div>
+              <div class="swse-home-section-label">LAST SESSION</div>
+              <h3>Featured Briefing</h3>
+            </div>
+          </div>
+
+          {{#if vm.lastSession}}
+          <button class="swse-home-last-session__card {{#if vm.lastSession.isUnread}}is-unread{{/if}}"
+                  data-holonet-record-id="{{vm.lastSession.id}}"
+                  type="button">
+            <div class="swse-home-last-session__sender">{{vm.lastSession.sender}}</div>
+            <h4>{{vm.lastSession.title}}</h4>
+            <div class="holonet-rendered-text swse-home-last-session__body">{{{vm.lastSession.preview}}}</div>
+            <div class="swse-home-last-session__timestamp">{{vm.lastSession.timestamp}}</div>
+          </button>
+          {{else}}
+          <p class="swse-home-empty">No recap has been published yet.</p>
+          {{/if}}
+        </section>
+      </aside>
+    </div>
+
+    <section class="swse-home-panel swse-home-glance-panel">
+      <div class="swse-home-panel__header">
+        <div>
+          <div class="swse-home-section-label">QUICK GLANCE</div>
+          <h3>System Overview</h3>
+        </div>
+      </div>
+
+      <div class="swse-home-glance-grid">
+        {{#each vm.quickGlance}}
+        <div class="swse-home-glance-card swse-home-glance-card--{{this.tone}}">
+          <span class="swse-home-glance-card__label">{{this.label}}</span>
+          <span class="swse-home-glance-card__value">{{this.value}}</span>
+        </div>
+        {{/each}}
+      </div>
+    </section>
+
+    <section class="swse-home-panel swse-home-launcher-panel">
+      <div class="swse-home-panel__header">
+        <div>
+          <div class="swse-home-section-label">APPS</div>
+          <h3>Datapad Launcher</h3>
+        </div>
+      </div>
+
+      <div class="swse-home-grid">
+        {{#each vm.apps}}
+          {{#if this.visible}}
+          <button
+            class="swse-app-tile {{#unless this.enabled}}swse-app-tile--disabled{{/unless}}"
+            data-route-id="{{this.routeId}}"
+            type="button"
+            {{#unless this.enabled}}disabled{{/unless}}
+            title="{{this.description}}">
+
+            <div class="swse-app-tile__icon">{{this.icon}}</div>
+            <div class="swse-app-tile__label">{{this.label}}</div>
+
+            {{#if this.badge}}
+            <div class="swse-app-tile__badge">{{this.badge}}</div>
+            {{/if}}
+
+            {{#if this.description}}
+            <div class="swse-app-tile__description">{{this.description}}</div>
+            {{/if}}
+          </button>
+          {{/if}}
+        {{/each}}
+      </div>
+    </section>
 
     <div class="swse-home-footer">
       <span class="swse-home-footer__tag">DATAPAD OS</span>

@@ -15,3 +15,5 @@ export { HolonetProjectionSurface } from './holonet-projection-surface.js';
 export { HolonetDeliveryState } from './holonet-delivery-state.js';
 export { HolonetIntentRegistry } from './holonet-intent-registry.js';
 export { HolonetAudience } from './holonet-audience.js';
+
+export { hydrateHolonetRecord, hydrateHolonetThread } from './record-factory.js';

@@ -1,26 +1,39 @@
 /**
  * Holonet Recipient Contract
  *
- * Represents a target for message delivery
- * Can be player, GM, or persona (NPC, vendor, mentor, etc.)
+ * Represents a target for message delivery.
+ * Uses stable IDs so read/unread state and thread membership can be queried safely.
  */
 
 import { RECIPIENT_TYPE } from './enums.js';
 
+function buildStableRecipientId(data = {}) {
+  const type = data.recipientType ?? RECIPIENT_TYPE.PLAYER;
+  if (type === RECIPIENT_TYPE.GM) {
+    return data.userId ? `gm:${data.userId}` : 'gm';
+  }
+  if (type === RECIPIENT_TYPE.PERSONA) {
+    return `persona:${data.personaType ?? 'persona'}:${data.actorId ?? 'unknown'}`;
+  }
+  return `player:${data.userId ?? data.actorId ?? 'unknown'}`;
+}
+
 export class HolonetRecipient {
   constructor(data = {}) {
-    this.id = data.id ?? foundry.utils.randomID();
     this.recipientType = data.recipientType ?? RECIPIENT_TYPE.PLAYER;
-    this.actorId = data.actorId ?? null; // For player/persona recipient types
+    this.actorId = data.actorId ?? null;
     this.actorName = data.actorName ?? null;
-    this.userId = data.userId ?? null; // For player recipients
-    this.personaType = data.personaType ?? null; // 'npc', 'mentor', 'vendor', etc.
+    this.userId = data.userId ?? null;
+    this.personaType = data.personaType ?? null;
     this.metadata = data.metadata ?? {};
+    this.id = data.id ?? buildStableRecipientId({
+      recipientType: this.recipientType,
+      actorId: this.actorId,
+      userId: this.userId,
+      personaType: this.personaType
+    });
   }
 
-  /**
-   * Create a player recipient
-   */
   static player(userId, actorId, actorName) {
     return new HolonetRecipient({
       recipientType: RECIPIENT_TYPE.PLAYER,
@@ -30,18 +43,14 @@ export class HolonetRecipient {
     });
   }
 
-  /**
-   * Create a GM recipient
-   */
-  static gm() {
+  static gm(userId = null) {
     return new HolonetRecipient({
-      recipientType: RECIPIENT_TYPE.GM
+      recipientType: RECIPIENT_TYPE.GM,
+      userId,
+      actorName: 'Gamemaster'
     });
   }
 
-  /**
-   * Create a persona (NPC, mentor, etc.) recipient
-   */
   static persona(actorId, actorName, personaType) {
     return new HolonetRecipient({
       recipientType: RECIPIENT_TYPE.PERSONA,

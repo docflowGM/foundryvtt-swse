@@ -35,6 +35,8 @@
         <i class="fas fa-filter"></i>
       {{else if (eq drawerId "mentor-advice")}}
         <i class="fas fa-comment-dots"></i>
+      {{else if (eq drawerId "holonet-notifications")}}
+        <i class="fas fa-bell"></i>
       {{else}}
         <i class="fas fa-panel"></i>
       {{/if}}
@@ -123,6 +125,43 @@
     <div class="swse-shell-drawer__mentor-advice" data-mood="{{vm.mood}}">
       <div class="swse-shell-drawer__mentor-text">
         {{{vm.advice}}}
+      </div>
+    </div>
+    {{/if}}
+
+
+
+    {{!-- ─── Holonet Notifications ───────────────────────────────────── --}}
+    {{#if (eq drawerId "holonet-notifications")}}
+    <div class="swse-shell-drawer__holonet">
+      <div class="swse-shell-drawer__holonet-topline">
+        <div class="swse-shell-drawer__holonet-count">{{vm.totalUnread}} unread</div>
+        {{#if vm.totalUnread}}
+        <button class="swse-btn swse-btn--secondary" data-holonet-action="mark-all-read" type="button">Mark all read</button>
+        {{/if}}
+      </div>
+      {{#if vm.chips.length}}
+      <div class="swse-shell-drawer__holonet-chips">
+        {{#each vm.chips}}<span class="swse-home-status-chip swse-home-status-chip--{{this.key}}">{{this.label}} {{this.count}}</span>{{/each}}
+      </div>
+      {{/if}}
+      <div class="swse-shell-drawer__holonet-list">
+        {{#each vm.notices}}
+        <button class="swse-shell-drawer__holonet-card {{#if this.isUnread}}is-unread{{/if}}" type="button" data-holonet-record-id="{{this.id}}">
+          <span class="swse-shell-drawer__holonet-icon">{{this.icon}}</span>
+          <span class="swse-shell-drawer__holonet-content">
+            <span class="swse-shell-drawer__holonet-meta">
+              <span>{{this.sender}}</span>
+              <span>{{this.category}}</span>
+            </span>
+            <strong>{{this.title}}</strong>
+            <span class="holonet-rendered-text swse-shell-drawer__holonet-preview">{{{this.previewHtml}}}</span>
+            <span class="swse-shell-drawer__holonet-time">{{this.timestamp}}</span>
+          </span>
+        </button>
+        {{else}}
+        <p class="swse-shell-drawer__empty">No unread Holonet alerts.</p>
+        {{/each}}
       </div>
     </div>
     {{/if}}

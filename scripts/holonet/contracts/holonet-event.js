@@ -1,8 +1,5 @@
 /**
  * Holonet Event Contract
- *
- * Represents a system/campaign event published to party/players
- * (level-up available, bulletin event, story unlock, etc.)
  */
 
 import { HolonetRecord } from './holonet-record.js';
@@ -12,11 +9,19 @@ export class HolonetEvent extends HolonetRecord {
   constructor(data = {}) {
     data.type = RECORD_TYPE.EVENT;
     super(data);
+    this.eventType = data.eventType ?? null;
+    this.priority = data.priority ?? 'normal';
+    this.expiresAt = data.expiresAt ?? null;
+    this.actionUrl = data.actionUrl ?? null;
+  }
 
-    // Event-specific
-    this.eventType = data.eventType ?? null; // e.g., 'level_up', 'story_unlock', 'objective_update'
-    this.priority = data.priority ?? 'normal'; // 'low', 'normal', 'high', 'critical'
-    this.expiresAt = data.expiresAt ?? null; // Optional expiration
-    this.actionUrl = data.actionUrl ?? null; // Link to take action on event
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      eventType: this.eventType,
+      priority: this.priority,
+      expiresAt: this.expiresAt,
+      actionUrl: this.actionUrl
+    };
   }
 }

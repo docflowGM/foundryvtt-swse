@@ -1,0 +1,99 @@
+<div class="swse-shell-surface swse-shell-surface--messenger" data-shell-region="surface-messenger" data-surface-id="{{vm.id}}">
+  <div class="swse-shell-surface__header swse-messenger-header">
+    <button class="swse-shell-surface__back-btn" data-shell-action="return-to-home" type="button" title="Return to Home">
+      <i class="fas fa-arrow-left"></i>
+      <span>Home</span>
+    </button>
+
+    <div class="swse-shell-surface__title">
+      <span class="swse-home-header__icon">✉</span>
+      <span>MESSENGER</span>
+    </div>
+
+    <div class="swse-home-header__actions">
+      <button class="swse-home-header__notice-btn" data-shell-action="open-notifications" type="button" title="Holonet alerts">
+        <span class="swse-home-header__notice-icon">◌</span>
+        <span>Alerts</span>
+        {{#if vm.notificationCenter.totalUnread}}<span class="swse-home-header__notice-badge">{{vm.notificationCenter.totalUnread}}</span>{{/if}}
+      </button>
+      <div class="swse-home-header__actor">{{vm.actorName}}</div>
+    </div>
+  </div>
+
+  <div class="swse-shell-surface__body swse-messenger-body">
+    <aside class="swse-messenger-threads swse-panel">
+      <div class="swse-panel__title">Threads</div>
+      <div class="swse-messenger-thread-list">
+        {{#if vm.threads.length}}
+          {{#each vm.threads}}
+          <button class="swse-messenger-thread {{#if (eq ../vm.selectedThreadId this.id)}}active{{/if}}" data-thread-id="{{this.id}}" type="button">
+            <div class="swse-messenger-thread__topline">
+              <span class="swse-messenger-thread__title">{{this.title}}</span>
+              {{#if this.unreadCount}}
+              <span class="swse-messenger-thread__badge">{{this.unreadCount}}</span>
+              {{/if}}
+            </div>
+            <div class="swse-messenger-thread__preview">{{this.preview}}</div>
+          </button>
+          {{/each}}
+        {{else}}
+          <div class="swse-messenger-empty">No threads yet. Start one below.</div>
+        {{/if}}
+      </div>
+    </aside>
+
+    <section class="swse-messenger-main swse-panel">
+      <div class="swse-panel__title">{{#if vm.selectedThread}}{{vm.selectedThread.title}}{{else}}New Message{{/if}}</div>
+
+      {{#if vm.selectedThread}}
+      <div class="swse-messenger-conversation" data-thread-id="{{vm.selectedThread.id}}">
+        {{#if vm.messages.length}}
+          {{#each vm.messages}}
+          <article class="swse-msg {{#if this.isOwn}}swse-msg--own{{/if}} {{#if this.isUnread}}swse-msg--unread{{/if}}">
+            <div class="swse-msg__meta">
+              <span class="swse-msg__sender">{{this.senderLabel}}</span>
+              <span class="swse-msg__time">{{this.createdAt}}</span>
+            </div>
+            <div class="swse-msg__body">{{{this.bodyHtml}}}</div>
+          </article>
+          {{/each}}
+        {{else}}
+          <div class="swse-messenger-empty">Thread is empty.</div>
+        {{/if}}
+      </div>
+
+      <form class="swse-messenger-composer" data-holonet-action="send-message" data-thread-id="{{vm.selectedThread.id}}">
+        <textarea name="body" rows="3" placeholder="Transmit message..." data-holonet-editor="message"></textarea>
+        <div class="swse-messenger-composer__meta">
+          <div class="swse-messenger-help">
+            {{#each vm.composerHelp}}<span>{{this}}</span>{{/each}}
+          </div>
+          <button type="submit" class="swse-btn swse-btn--primary">Send</button>
+        </div>
+      </form>
+      {{else}}
+      <form class="swse-messenger-compose-new" data-holonet-action="send-message">
+        <div class="swse-messenger-recipient-picker">
+          <div class="swse-messenger-recipient-picker__title">Recipients</div>
+          <div class="swse-messenger-recipient-grid">
+            {{#each vm.recipientOptions}}
+            <label class="swse-messenger-recipient-option">
+              <input type="checkbox" name="recipientIds" value="{{this.id}}">
+              <span class="swse-messenger-recipient-option__label">{{this.label}}</span>
+              <span class="swse-messenger-recipient-option__type">{{this.typeLabel}}</span>
+            </label>
+            {{/each}}
+          </div>
+        </div>
+        <textarea name="body" rows="5" placeholder="Transmit message..." data-holonet-editor="message"></textarea>
+        <div class="swse-messenger-composer__meta">
+          <div class="swse-messenger-help">
+            {{#each vm.composerHelp}}<span>{{this}}</span>{{/each}}
+          </div>
+          <button type="submit" class="swse-btn swse-btn--primary">Start Thread</button>
+        </div>
+      </form>
+      {{/if}}
+    </section>
+  </div>
+</div>

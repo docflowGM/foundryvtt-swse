@@ -20,6 +20,7 @@
 import { ShellRouter } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js';
 import { ShellSurfaceRegistry } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceRegistry.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { HolonetComposerAssist } from '/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js';
 
 /**
  * @param {class} BaseClass - The ApplicationV2 base class to mix into
@@ -44,6 +45,9 @@ export function ShellHostMixin(BaseClass) {
 
     /** @type {{modalId: string, options: object}|null} Active modal */
     _shellModal = null;
+
+    /** @type {number|null} Holonet sync hook id */
+    _holonetSyncHookId = null;
 
     // ─── Accessors ──────────────────────────────────────────────────────────────
 
@@ -217,6 +221,15 @@ export function ShellHostMixin(BaseClass) {
         ShellRouter.register(actor.id, this);
       }
 
+      if (this._holonetSyncHookId == null) {
+        this._holonetSyncHookId = Hooks.on('swseHolonetUpdated', () => {
+          if (!this.rendered) return;
+          if (this._shellSurface === 'home' || this._shellSurface === 'messenger') {
+            this.render(false);
+          }
+        });
+      }
+
       this._wireShellEvents();
     }
 
@@ -236,11 +249,29 @@ export function ShellHostMixin(BaseClass) {
         });
       });
 
+
+      // Back to home
+      root.querySelectorAll('[data-shell-action="return-to-home"]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          await this.setSurface('home');
+          this.render(false);
+        });
+      });
+
       // Close overlay
       root.querySelectorAll('[data-shell-action="close-overlay"]').forEach(el => {
         el.addEventListener('click', async (ev) => {
           ev.preventDefault();
           await this.closeOverlay();
+          this.render(false);
+        });
+      });
+
+      root.querySelectorAll('[data-shell-action="open-notifications"]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          await this.openDrawer('holonet-notifications');
           this.render(false);
         });
       });
@@ -262,6 +293,14 @@ export function ShellHostMixin(BaseClass) {
       // Upgrade surface events (inline upgrade surface on the shell)
       if (this._shellSurface === 'upgrade') {
         this._wireUpgradeSurfaceEvents(root);
+      }
+
+      if (this._shellSurface === 'messenger') {
+        this._wireMessengerSurfaceEvents(root);
+      }
+
+      if (this._shellDrawer?.drawerId === 'holonet-notifications') {
+        this._wireHolonetNotificationDrawerEvents(root);
       }
 
       // Overlay-specific events
@@ -294,6 +333,93 @@ export function ShellHostMixin(BaseClass) {
           const routeId = el.dataset.routeId;
           if (!routeId) return;
           await this.setSurface(routeId, { source: 'home' });
+          this.render(false);
+        });
+      });
+
+      homeRoot.querySelectorAll('[data-holonet-record-id]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          const recordId = el.dataset.holonetRecordId;
+          if (!recordId) return;
+          try {
+            const { HolonetEngine } = await import('/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js');
+            const { HolonetDeliveryRouter } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-delivery-router.js');
+            const recipientId = HolonetDeliveryRouter.getCurrentRecipientId();
+            if (recipientId) {
+              await HolonetEngine.markRead(recordId, recipientId);
+              this.render(false);
+            }
+          } catch (err) {
+            SWSELogger.error('[ShellHost] Failed to mark Holonet record read:', err);
+          }
+        });
+      });
+    }
+
+    async _wireHolonetNotificationDrawerEvents(root) {
+      const drawerRoot = root.querySelector('[data-drawer-id="holonet-notifications"]');
+      if (!drawerRoot) return;
+
+      const { HolonetNoticeCenterService } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-notice-center-service.js');
+      const { HolonetEngine } = await import('/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js');
+      const recipientId = await HolonetNoticeCenterService.currentRecipientId();
+
+      drawerRoot.querySelectorAll('[data-holonet-record-id]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          const recordId = el.dataset.holonetRecordId;
+          if (!recordId || !recipientId) return;
+          await HolonetEngine.markRead(recordId, recipientId);
+          this.render(false);
+        });
+      });
+
+      drawerRoot.querySelectorAll('[data-holonet-action="mark-all-read"]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          await HolonetNoticeCenterService.markAllRead(recipientId);
+          this.render(false);
+        });
+      });
+    }
+
+    async _wireMessengerSurfaceEvents(root) {
+      const messengerRoot = root.querySelector('[data-shell-region="surface-messenger"]');
+      if (!messengerRoot) return;
+
+      const actor = this.actor || this.document;
+      const { HolonetMessengerService } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js');
+
+      await HolonetComposerAssist.attach(messengerRoot);
+
+      const conversation = messengerRoot.querySelector('.swse-messenger-conversation[data-thread-id]');
+      if (conversation?.querySelector('.swse-msg--unread')) {
+        await HolonetMessengerService.markThreadRead(conversation.dataset.threadId);
+        this.render(false);
+        return;
+      }
+
+      messengerRoot.querySelectorAll('.swse-messenger-thread[data-thread-id]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          const threadId = ev.currentTarget.dataset.threadId;
+          if (!threadId) return;
+          await this.setSurface('messenger', { threadId, source: 'home' });
+          this.render(false);
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="send-message"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const data = new FormData(form);
+          const body = String(data.get('body') || '').trim();
+          if (!body) return;
+          const threadId = form.dataset.threadId || null;
+          const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+          await HolonetMessengerService.sendMessage({ actor, body, threadId, recipientIds });
+          form.reset();
           this.render(false);
         });
       });
@@ -477,6 +603,10 @@ export function ShellHostMixin(BaseClass) {
       const actor = this.actor || this.document;
       if (actor?.id) {
         ShellRouter.unregister(actor.id);
+      }
+      if (this._holonetSyncHookId != null) {
+        Hooks.off('swseHolonetUpdated', this._holonetSyncHookId);
+        this._holonetSyncHookId = null;
       }
       return super.close(options);
     }

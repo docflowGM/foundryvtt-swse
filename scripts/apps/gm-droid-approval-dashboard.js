@@ -157,6 +157,13 @@ export class GMDroidApprovalDashboard extends BaseSWSEAppV2 {
         'system.droidSystems.buildHistory': buildHistory
       });
 
+      Hooks.call('swseApprovalResolved', {
+        approval: { id: `droid-${actor.id}`, type: 'droid', draftData: { name: actor.name } },
+        actor,
+        decision: 'approved',
+        decidedBy: game.user?.name ?? 'GM'
+      });
+
       ui.notifications.info(`✓ Droid "${actor.name}" approved and finalized.`);
       SWSELogger.log('GM Droid Approval | Droid approved:', {
         actor: actor.name,
@@ -237,6 +244,13 @@ export class GMDroidApprovalDashboard extends BaseSWSEAppV2 {
       });
       await ActorEngine.updateActor(actor, {
         'system.droidSystems.buildHistory': buildHistory
+      });
+
+      Hooks.call('swseApprovalResolved', {
+        approval: { id: `droid-${actor.id}`, type: 'droid', draftData: { name: actor.name } },
+        actor,
+        decision: 'denied',
+        decidedBy: game.user?.name ?? 'GM'
       });
 
       ui.notifications.warn(`Droid "${actor.name}" rejected. Player can edit and resubmit.`);
