@@ -119,7 +119,8 @@
     "styles/miraj-attunement.css",
     "styles/system/settings-surface.css",
     "styles/system/mentor-surface.css",
-    "styles/apps/gm-datapad.css"
+    "styles/apps/gm-datapad.css",
+    "styles/apps/gm-datapad-bulletin.css"
   ],
   "languages": [
     {

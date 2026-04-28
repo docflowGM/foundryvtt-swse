@@ -1,0 +1,359 @@
+/**
+ * GM Datapad Bulletin Styling
+ *
+ * Announcement-style cards with holo-terminal aesthetic
+ */
+
+.gm-datapad-bulletin {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Landing / Surface Navigation */
+.bulletin-landing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 2rem;
+}
+
+.bulletin-surfaces-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+.bulletin-surface-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem 1.5rem;
+  border: 1px solid rgba(0, 255, 200, 0.3);
+  background: linear-gradient(135deg, rgba(0, 50, 50, 0.3), rgba(0, 100, 80, 0.1));
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.bulletin-surface-card:hover {
+  border-color: rgba(0, 255, 200, 0.6);
+  background: linear-gradient(135deg, rgba(0, 60, 60, 0.5), rgba(0, 120, 100, 0.2));
+  box-shadow: 0 0 12px rgba(0, 255, 200, 0.2);
+}
+
+.surface-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.surface-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #0ff;
+}
+
+.surface-count {
+  font-size: 0.85rem;
+  color: rgba(0, 255, 200, 0.7);
+}
+
+.surface-desc {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.25rem;
+}
+
+/* Surface Container */
+.bulletin-surface {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.surface-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Lists */
+.events-list,
+.messages-list,
+.players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Bulletin Cards */
+.bulletin-card {
+  border: 1px solid rgba(0, 255, 200, 0.2);
+  background: rgba(0, 30, 30, 0.6);
+  border-radius: 4px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.bulletin-card:hover {
+  border-color: rgba(0, 255, 200, 0.4);
+  background: rgba(0, 40, 40, 0.8);
+  box-shadow: 0 0 8px rgba(0, 255, 200, 0.1);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0, 255, 200, 0.15);
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #0ff;
+  flex: 1;
+}
+
+.card-state {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(0, 255, 200, 0.1);
+  border: 1px solid rgba(0, 255, 200, 0.3);
+  border-radius: 3px;
+  color: rgba(0, 255, 200, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-body {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.card-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: rgba(0, 255, 200, 0.8);
+}
+
+.form-group input,
+.form-group textarea {
+  background: rgba(0, 50, 50, 0.4);
+  border: 1px solid rgba(0, 255, 200, 0.3);
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: rgba(0, 255, 200, 0.6);
+  background: rgba(0, 60, 60, 0.6);
+  box-shadow: 0 0 6px rgba(0, 255, 200, 0.15);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.card-footer {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0, 255, 200, 0.15);
+}
+
+/* Player and Party Cards */
+.player-card,
+.party-card {
+  border: 1px solid rgba(0, 255, 200, 0.25);
+  background: rgba(0, 40, 40, 0.5);
+}
+
+.player-card:hover,
+.party-card:hover {
+  border-color: rgba(0, 255, 200, 0.4);
+  background: rgba(0, 50, 50, 0.7);
+}
+
+/* Form Overlay and Modal */
+.bulletin-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.bulletin-form-modal {
+  background: rgba(0, 20, 20, 0.95);
+  border: 1px solid rgba(0, 255, 200, 0.3);
+  border-radius: 4px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.15);
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(0, 255, 200, 0.15);
+}
+
+.form-header h3 {
+  margin: 0;
+  color: #0ff;
+  font-size: 1.3rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: rgba(0, 255, 200, 0.6);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(0, 255, 200, 0.1);
+  color: #0ff;
+}
+
+.bulletin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.bulletin-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bulletin-form .form-group label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: rgba(0, 255, 200, 0.8);
+}
+
+.bulletin-form .form-group input[type="text"],
+.bulletin-form .form-group textarea,
+.bulletin-form .form-group select {
+  background: rgba(0, 50, 50, 0.4);
+  border: 1px solid rgba(0, 255, 200, 0.3);
+  color: #fff;
+  padding: 0.75rem;
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.bulletin-form .form-group input[type="text"]:focus,
+.bulletin-form .form-group textarea:focus,
+.bulletin-form .form-group select:focus {
+  outline: none;
+  border-color: rgba(0, 255, 200, 0.6);
+  background: rgba(0, 60, 60, 0.6);
+  box-shadow: 0 0 6px rgba(0, 255, 200, 0.15);
+}
+
+.bulletin-form textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.bulletin-form small {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.25rem;
+}
+
+.player-checkboxes,
+.recipient-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: #0ff;
+}
+
+.form-footer {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 255, 200, 0.15);
+}
+
+.form-footer button {
+  padding: 0.75rem 1.5rem;
+}

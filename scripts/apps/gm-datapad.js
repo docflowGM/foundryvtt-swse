@@ -22,6 +22,8 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
+import { HolonetEngine } from "/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js";
+import { BulletinStateService } from "/systems/foundryvtt-swse/scripts/holonet/services/bulletin-state-service.js";
 
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -72,6 +74,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     // Approvals page state
     this.pendingDroids = [];
+
+    // Bulletin form state
+    this.bulletinFormOpen = false;
+    this.bulletinFormType = null; // 'event' or 'message'
+    this.bulletinFormData = {};
+    this.bulletinFormEditId = null;
   }
 
   async _prepareContext(options) {
@@ -125,19 +133,76 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * Bulletin page: party/player notices
-   * Phase 2 will back this with journals/flags
+   * Bulletin page: Events, Messages, Players, Party management
    */
   async _loadBulletinContext() {
+    // Load Holonet events
+    const events = await HolonetEngine.getRecordsByIntent('authored.bulletin_event');
+    const formattedEvents = events.map(e => ({
+      id: e.id,
+      title: e.title || '(Untitled Event)',
+      body: e.body || '',
+      state: e.state || 'draft',
+      intent: e.intent,
+      audience: e.audience,
+      createdAt: e.createdAt,
+      sender: e.sender
+    }));
+
+    // Load Holonet messages
+    const messages = await HolonetEngine.getRecordsByIntent('authored.bulletin_message');
+    const formattedMessages = messages.map(m => ({
+      id: m.id,
+      title: m.title || '(Untitled Message)',
+      body: m.body || '',
+      state: m.state || 'draft',
+      intent: m.intent,
+      recipients: m.recipients,
+      createdAt: m.createdAt,
+      sender: m.sender
+    }));
+
+    // Load player states
+    const playerStates = await BulletinStateService.getAllPlayerStates();
+
+    // Load party state
+    const partyState = await BulletinStateService.getPartyState();
+
+    // Get list of character actors for audience/recipient selection
+    const players = game.actors
+      .filter(a => a.type === 'character')
+      .map(a => ({
+        id: a.id,
+        name: a.name,
+        isSelected: this.bulletinFormData.playerIds?.includes(a.id) || false,
+        isRecipient: this.bulletinFormData.recipientIds?.includes(a.id) || false
+      }));
+
     return {
       pageTitle: 'Bulletin',
-      pageDescription: 'Party and player notices',
-      partyBulletin: {
-        lastSession: 'Not yet configured',
-        currentSituation: 'Not yet configured',
-        currentLocation: 'Not yet configured'
-      },
-      playerBulletins: []
+      pageDescription: 'Events, Messages, Players, and Party management',
+
+      // Surfaces
+      events: formattedEvents,
+      messages: formattedMessages,
+      playerStates,
+      partyState,
+
+      // Players for dropdowns
+      players,
+
+      // Form state
+      bulletinFormOpen: this.bulletinFormOpen,
+      bulletinFormType: this.bulletinFormType,
+      bulletinFormData: this.bulletinFormData,
+
+      // UI state
+      activeSurface: 'landing', // landing, events, messages, players, party
+
+      // Metadata
+      eventCount: formattedEvents.length,
+      messageCount: formattedMessages.length,
+      playerCount: playerStates.length
     };
   }
 
@@ -571,7 +636,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
     });
 
     // Wire page-specific events based on current page
-    if (this.currentPage === 'store') {
+    if (this.currentPage === 'bulletin') {
+      await this._wireBulletinEvents(root);
+    } else if (this.currentPage === 'store') {
       await this._wireStoreEvents(root);
     } else if (this.currentPage === 'house-rules') {
       await this._wireHouseRulesEvents(root);
@@ -954,6 +1021,322 @@ export class GMDatapad extends BaseSWSEAppV2 {
       SWSELogger.error('[GMDatapad] Error denying custom purchase:', err);
       ui?.notifications?.error?.(`Failed to deny: ${err.message}`);
     }
+  }
+
+  /**
+   * Wire Bulletin page events
+   */
+  async _wireBulletinEvents(root) {
+    const bulletinPage = root.querySelector('.gm-datapad-bulletin');
+    if (!bulletinPage) return;
+
+    // Surface navigation buttons
+    for (const btn of bulletinPage.querySelectorAll('[data-surface]')) {
+      btn.addEventListener('click', (ev) => {
+        const surface = ev.currentTarget.dataset.surface;
+        this.currentPage = 'bulletin';
+        this.bulletinSurface = surface;
+        this.render(false);
+      });
+    }
+
+    // Event create button
+    const createEventBtn = bulletinPage.querySelector('[data-action="create-event"]');
+    if (createEventBtn) {
+      createEventBtn.addEventListener('click', () => this._showBulletinEventForm());
+    }
+
+    // Message create button
+    const createMessageBtn = bulletinPage.querySelector('[data-action="create-message"]');
+    if (createMessageBtn) {
+      createMessageBtn.addEventListener('click', () => this._showBulletinMessageForm());
+    }
+
+    // Event edit buttons
+    for (const btn of bulletinPage.querySelectorAll('[data-edit-event]')) {
+      btn.addEventListener('click', (ev) => {
+        const eventId = ev.currentTarget.dataset.editEvent;
+        this._showBulletinEventForm(eventId);
+      });
+    }
+
+    // Message edit buttons
+    for (const btn of bulletinPage.querySelectorAll('[data-edit-message]')) {
+      btn.addEventListener('click', (ev) => {
+        const messageId = ev.currentTarget.dataset.editMessage;
+        this._showBulletinMessageForm(messageId);
+      });
+    }
+
+    // Player state save buttons
+    for (const btn of bulletinPage.querySelectorAll('[data-save-player-state]')) {
+      btn.addEventListener('click', (ev) => {
+        const actorId = ev.currentTarget.dataset.savePlayerState;
+        this._savePlayerState(actorId, bulletinPage);
+      });
+    }
+
+    // Party state save button
+    const partyStateBtn = bulletinPage.querySelector('[data-save-party-state]');
+    if (partyStateBtn) {
+      partyStateBtn.addEventListener('click', () => this._savePartyState(bulletinPage));
+    }
+
+    // Form overlay handlers
+    const formOverlay = bulletinPage.querySelector('.bulletin-form-overlay');
+    if (formOverlay) {
+      // Close button
+      const closeBtn = formOverlay.querySelector('[data-action="close-form"]');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => this._closeBulletinForm());
+      }
+
+      // Cancel button
+      for (const btn of formOverlay.querySelectorAll('[data-action="close-form"]')) {
+        btn.addEventListener('click', () => this._closeBulletinForm());
+      }
+
+      // Form submission
+      const form = formOverlay.querySelector('.bulletin-form');
+      if (form) {
+        form.addEventListener('submit', (ev) => this._submitBulletinForm(ev, form));
+      }
+
+      // Audience type dropdown
+      const audienceSelect = formOverlay.querySelector('[name="audience-type"]');
+      if (audienceSelect) {
+        audienceSelect.addEventListener('change', (ev) => {
+          const group = formOverlay.querySelector('#selected-players-group');
+          if (group) {
+            group.style.display = ev.currentTarget.value === 'selected-players' ? 'flex' : 'none';
+          }
+        });
+      }
+    }
+  }
+
+  /**
+   * Show Bulletin event form (create/edit)
+   */
+  async _showBulletinEventForm(eventId = null) {
+    this.bulletinFormType = 'event';
+    this.bulletinFormEditId = eventId;
+
+    if (eventId) {
+      // Load existing event data
+      const event = await HolonetEngine.getRecord(eventId);
+      if (event) {
+        this.bulletinFormData = {
+          title: event.title || '',
+          body: event.body || '',
+          priority: event.priority || 'normal',
+          audienceType: event.audience?.type || 'all-players',
+          playerIds: event.audience?.playerIds || []
+        };
+      }
+    } else {
+      // Clear form for new event
+      this.bulletinFormData = {
+        title: '',
+        body: '',
+        priority: 'normal',
+        audienceType: 'all-players',
+        playerIds: []
+      };
+    }
+
+    this.bulletinFormOpen = true;
+    await this.render(false);
+  }
+
+  /**
+   * Show Bulletin message form (create/edit)
+   */
+  async _showBulletinMessageForm(messageId = null) {
+    this.bulletinFormType = 'message';
+    this.bulletinFormEditId = messageId;
+
+    if (messageId) {
+      // Load existing message data
+      const message = await HolonetEngine.getRecord(messageId);
+      if (message) {
+        this.bulletinFormData = {
+          title: message.title || '',
+          body: message.body || '',
+          recipientIds: message.recipients?.map(r => r.actorId) || []
+        };
+      }
+    } else {
+      // Clear form for new message
+      this.bulletinFormData = {
+        title: '',
+        body: '',
+        recipientIds: []
+      };
+    }
+
+    this.bulletinFormOpen = true;
+    await this.render(false);
+  }
+
+  /**
+   * Close bulletin form
+   */
+  async _closeBulletinForm() {
+    this.bulletinFormOpen = false;
+    this.bulletinFormType = null;
+    this.bulletinFormData = {};
+    this.bulletinFormEditId = null;
+    await this.render(false);
+  }
+
+  /**
+   * Submit bulletin form (create/update event or message)
+   */
+  async _submitBulletinForm(event, form) {
+    event.preventDefault();
+
+    try {
+      const formData = new FormData(form);
+      const title = formData.get('title');
+      const body = formData.get('body');
+      const action = formData.get('action') || 'draft';
+
+      if (!title || !body) {
+        ui.notifications.warn('Title and content are required');
+        return;
+      }
+
+      const { HolonetEvent } = await import('../holonet/contracts/holonet-event.js');
+      const { HolonetMessage } = await import('../holonet/contracts/holonet-message.js');
+      const { HolonetAudience } = await import('../holonet/contracts/holonet-audience.js');
+      const { HolonetRecipient } = await import('../holonet/contracts/holonet-recipient.js');
+      const { HolonetSender } = await import('../holonet/contracts/holonet-sender.js');
+
+      if (this.bulletinFormType === 'event') {
+        // Create/update event
+        const audienceType = formData.get('audience-type');
+        const priority = formData.get('priority') || 'normal';
+        const selectedPlayerIds = Array.from(formData.getAll('player-ids'));
+
+        let audience;
+        if (audienceType === 'selected-players') {
+          audience = HolonetAudience.selectedPlayers(selectedPlayerIds);
+        } else if (audienceType === 'party') {
+          // Get party member IDs
+          const partyMembers = game.actors.filter(a => a.type === 'character').map(a => a.id);
+          audience = HolonetAudience.selectedPlayers(partyMembers);
+        } else if (audienceType === 'gm-only') {
+          audience = HolonetAudience.gmOnly();
+        } else {
+          audience = HolonetAudience.allPlayers();
+        }
+
+        const sender = HolonetSender.system('Bulletin');
+        const eventRecord = new HolonetEvent({
+          id: this.bulletinFormEditId || undefined,
+          title,
+          body,
+          intent: 'authored.bulletin_event',
+          sender,
+          audience,
+          priority,
+          state: 'draft',
+          createdAt: this.bulletinFormEditId ? undefined : new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+
+        if (action === 'publish') {
+          await HolonetEngine.publish(eventRecord);
+          ui.notifications.success(`Event "${title}" published`);
+        } else {
+          // Save as draft
+          const { HolonetStorage } = await import('../holonet/subsystems/holonet-storage.js');
+          await HolonetStorage.saveRecord(eventRecord);
+          ui.notifications.success(`Event "${title}" saved as draft`);
+        }
+      } else if (this.bulletinFormType === 'message') {
+        // Create/update message
+        const recipientIds = Array.from(formData.getAll('recipient-ids'));
+
+        if (recipientIds.length === 0) {
+          ui.notifications.warn('At least one recipient is required');
+          return;
+        }
+
+        const sender = HolonetSender.system('Bulletin');
+        const recipients = recipientIds.map(actorId => {
+          const actor = game.actors.get(actorId);
+          const ownership = actor?.ownership || {};
+          const firstOwner = Object.keys(ownership).find(key => ownership[key] >= CONST.DOCUMENT_PERMISSION_LEVELS.OWNER);
+          const userId = firstOwner || null;
+          return HolonetRecipient.player(userId, actorId, actor?.name || 'Unknown');
+        });
+
+        const messageRecord = new HolonetMessage({
+          id: this.bulletinFormEditId || undefined,
+          title,
+          body,
+          intent: 'authored.bulletin_message',
+          sender,
+          recipients,
+          state: 'draft',
+          createdAt: this.bulletinFormEditId ? undefined : new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+
+        if (action === 'publish') {
+          await HolonetEngine.publish(messageRecord);
+          ui.notifications.success(`Message "${title}" published`);
+        } else {
+          // Save as draft
+          const { HolonetStorage } = await import('../holonet/subsystems/holonet-storage.js');
+          await HolonetStorage.saveRecord(messageRecord);
+          ui.notifications.success(`Message "${title}" saved as draft`);
+        }
+      }
+
+      await this._closeBulletinForm();
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error submitting bulletin form:', err);
+      ui.notifications.error(`Failed to save: ${err.message}`);
+    }
+  }
+
+  /**
+   * Save player state
+   */
+  async _savePlayerState(actorId, pageElement) {
+    const locationInput = pageElement.querySelector(`[name="player-location-${actorId}"]`);
+    const objectiveInput = pageElement.querySelector(`[name="player-objective-${actorId}"]`);
+    const situationInput = pageElement.querySelector(`[name="player-situation-${actorId}"]`);
+
+    const state = {
+      location: locationInput?.value || null,
+      objective: objectiveInput?.value || null,
+      situation: situationInput?.value || null
+    };
+
+    await BulletinStateService.setPlayerState(actorId, state);
+    ui.notifications.success(`Saved state for ${game.actors.get(actorId)?.name}`);
+  }
+
+  /**
+   * Save party state
+   */
+  async _savePartyState(pageElement) {
+    const locationInput = pageElement.querySelector('[name="party-location"]');
+    const objectiveInput = pageElement.querySelector('[name="party-objective"]');
+    const situationInput = pageElement.querySelector('[name="party-situation"]');
+
+    const state = {
+      location: locationInput?.value || null,
+      objective: objectiveInput?.value || null,
+      situation: situationInput?.value || null
+    };
+
+    await BulletinStateService.setPartyState(state);
+    ui.notifications.success('Saved party state');
   }
 
   /**
