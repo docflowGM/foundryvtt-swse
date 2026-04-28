@@ -80,6 +80,11 @@ import {
   getActorSheetMotionStyleOptions,
   buildActorSheetMotionStyle
 } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
+import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
+import { ShellSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceRegistry.js";
+import { ThemeManager } from "/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js";
+import { activateCustomSkillsUI } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/custom-skills-ui.js";
+import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -347,6 +352,14 @@ export class SWSEV2CharacterSheet extends
     // Phase 9: Tier-aware help system (per-character, persisted)
     // Initialize from actor flags or default to CORE
     this._helpLevel = HelpModeManager.initializeForActor(document);
+
+    // ─── Phase 11: Shell Host State ────────────────────────────────────────
+    // Active surface: 'sheet' | 'home' | 'progression' | 'chargen' | 'upgrade' | 'settings' | 'mentor'
+    this._shellSurface = 'sheet';
+    this._shellSurfaceOptions = {};
+    this._shellOverlay = null;
+    this._shellDrawer = null;
+    this._shellModal = null;
   }
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
@@ -389,6 +402,353 @@ export class SWSEV2CharacterSheet extends
         queueMicrotask(() => this.render(...queuedArgs));
       }
     }
+  }
+
+  // ─── Phase 11: Shell Host API ─────────────────────────────────────────────
+
+  /** @returns {string} Active surface ID */
+  get shellSurface() { return this._shellSurface; }
+
+  /**
+   * Switch to a route surface (progression | chargen | upgrade | settings | mentor | sheet).
+   * Clears any active overlay/drawer.
+   */
+  async setSurface(surfaceId, options = {}) {
+    swseLogger.debug(`[ShellHost] setSurface: ${this._shellSurface} → ${surfaceId}`);
+    this._shellSurface = surfaceId;
+    this._shellSurfaceOptions = options;
+    this._shellOverlay = null;
+    this._shellDrawer = null;
+  }
+
+  /** Return to the primary sheet surface. */
+  async returnToSheet() {
+    await this.setSurface('sheet');
+    this.render(false);
+  }
+
+  /** Open an overlay above the current surface. */
+  async openOverlay(overlayId, options = {}) {
+    this._shellOverlay = { overlayId, options };
+  }
+
+  /** Close the current overlay. */
+  async closeOverlay() {
+    this._shellOverlay = null;
+  }
+
+  /** Open a drawer alongside the current surface. */
+  async openDrawer(drawerId, options = {}) {
+    this._shellDrawer = { drawerId, options };
+  }
+
+  /** Close the current drawer. */
+  async closeDrawer() {
+    this._shellDrawer = null;
+  }
+
+  /**
+   * Wire shell-level navigation events after every render.
+   * Handles back-to-sheet, open-home, close-overlay, close-drawer, and surface-specific events.
+   */
+  _wireShellEvents(root) {
+    if (!root) return;
+
+    root.querySelectorAll('[data-shell-action="return-to-sheet"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this.returnToSheet();
+      });
+    });
+
+    root.querySelectorAll('[data-shell-action="return-to-home"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this.setSurface('home');
+        this.render(false);
+      });
+    });
+
+    root.querySelectorAll('[data-shell-action="close-overlay"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this.closeOverlay();
+        this.render(false);
+      });
+    });
+
+    root.querySelectorAll('[data-shell-action="close-drawer"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this.closeDrawer();
+        this.render(false);
+      });
+    });
+
+    // Overlay confirm/cancel callbacks
+    const overlayRoot = root.querySelector('[data-shell-region="overlay"]');
+    if (overlayRoot) {
+      overlayRoot.querySelector('[data-shell-overlay-action="confirm"]')?.addEventListener('click', async () => {
+        const onConfirm = this._shellOverlay?.options?.onConfirm;
+        if (typeof onConfirm === 'function') await onConfirm().catch(() => {});
+        await this.closeOverlay();
+        this.render(false);
+      });
+
+      overlayRoot.querySelector('[data-shell-overlay-action="cancel"]')?.addEventListener('click', async () => {
+        const onCancel = this._shellOverlay?.options?.onCancel;
+        if (typeof onCancel === 'function') await onCancel().catch(() => {});
+        await this.closeOverlay();
+        this.render(false);
+      });
+    }
+
+    root.querySelectorAll('[data-action="open-settings-app"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this.setSurface('settings', { source: 'sheet' });
+        this.render(false);
+      });
+    });
+
+    root.querySelectorAll('[data-shell-action="open-home"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this.setSurface('home');
+        this.render(false);
+      });
+    });
+
+    if (this._shellSurface === 'home') {
+      this._wireHomeSurfaceEvents(root);
+    }
+    if (this._shellSurface === 'upgrade') {
+      this._wireUpgradeSurfaceEvents(root);
+    }
+    if (this._shellSurface === 'settings') {
+      this._wireSettingsSurfaceEvents(root);
+    }
+    if (this._shellSurface === 'mentor') {
+      this._wireMentorSurfaceEvents(root);
+    }
+    if (this._shellOverlay?.overlayId === 'upgrade-single-item') {
+      this._wireUpgradeOverlayEvents(root);
+    }
+  }
+
+  /** Wire home surface tile click → setSurface(routeId). */
+  _wireHomeSurfaceEvents(root) {
+    const homeRoot = root.querySelector('[data-shell-region="surface-home"]');
+    if (!homeRoot) return;
+
+    homeRoot.querySelectorAll('[data-route-id]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        if (el.disabled) return;
+        const routeId = el.dataset.routeId;
+        if (!routeId) return;
+        homeRoot.querySelectorAll('.swse-app-tile--launching').forEach(tile => tile.classList.remove('swse-app-tile--launching'));
+        el.classList.add('swse-app-tile--launching');
+        await new Promise(resolve => setTimeout(resolve, 150));
+        await this.setSurface(routeId, { source: 'home' });
+        this.render(false);
+      });
+    });
+  }
+
+  /** Wire actor-wide upgrade surface events (category/item selection + apply/remove). */
+  _wireUpgradeSurfaceEvents(root) {
+    const upgradeRoot = root.querySelector('[data-shell-region="surface-upgrade"]');
+    if (!upgradeRoot) return;
+
+    const actor = this.actor;
+
+    upgradeRoot.querySelectorAll('[data-category-id]').forEach(el => {
+      el.addEventListener('click', () => {
+        const newCat = el.dataset.categoryId;
+        if (this._shellSurfaceOptions.selectedCategoryId === newCat) return;
+        this._shellSurfaceOptions = { ...this._shellSurfaceOptions, selectedCategoryId: newCat, selectedItemId: null };
+        this.render(false);
+      });
+    });
+
+    upgradeRoot.querySelectorAll('[data-item-id]').forEach(el => {
+      el.addEventListener('click', () => {
+        const newItem = el.dataset.itemId;
+        if (this._shellSurfaceOptions.selectedItemId === newItem) return;
+        this._shellSurfaceOptions = { ...this._shellSurfaceOptions, selectedItemId: newItem };
+        this.render(false);
+      });
+    });
+
+    upgradeRoot.querySelectorAll('[data-upgrade-action="apply-upgrade"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.stopPropagation();
+        const { selectedItemId } = this._shellSurfaceOptions;
+        if (!actor || !selectedItemId) return;
+        try {
+          const { CommandBus } = await import('/systems/foundryvtt-swse/scripts/engine/core/CommandBus.js');
+          await CommandBus.execute('APPLY_ITEM_UPGRADE', { actor, itemId: selectedItemId, upgradeId: el.dataset.upgradeId });
+          this.render(false);
+        } catch (err) { ui.notifications?.error?.(`Failed to apply upgrade: ${err.message}`); }
+      });
+    });
+
+    upgradeRoot.querySelectorAll('[data-upgrade-action="remove-upgrade"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.stopPropagation();
+        const { selectedItemId } = this._shellSurfaceOptions;
+        if (!actor || !selectedItemId) return;
+        try {
+          const { CommandBus } = await import('/systems/foundryvtt-swse/scripts/engine/core/CommandBus.js');
+          await CommandBus.execute('REMOVE_ITEM_UPGRADE', { actor, itemId: selectedItemId, upgradeIndex: Number(el.dataset.upgradeIndex) });
+          this.render(false);
+        } catch (err) { ui.notifications?.error?.(`Failed to remove upgrade: ${err.message}`); }
+      });
+    });
+
+    upgradeRoot.querySelector('[data-action="finalize-upgrades"]')?.addEventListener('click', async () => {
+      const { selectedItemId } = this._shellSurfaceOptions;
+      if (!actor || !selectedItemId) return;
+      try {
+        const { CommandBus } = await import('/systems/foundryvtt-swse/scripts/engine/core/CommandBus.js');
+        await CommandBus.execute('FINALIZE_ITEM_UPGRADES', { actor, itemId: selectedItemId });
+        ui.notifications?.info?.('Upgrades finalized.');
+        this.render(false);
+      } catch (err) { ui.notifications?.error?.(`Failed to finalize: ${err.message}`); }
+    });
+  }
+
+  /** Wire upgrade single-item overlay events. */
+  _wireUpgradeOverlayEvents(root) {
+    const overlayRoot = root.querySelector('[data-shell-region="overlay"]');
+    if (!overlayRoot) return;
+
+    const actor = this.actor;
+    const focusedItemId = this._shellOverlay?.options?.focusedItemId;
+
+    overlayRoot.querySelectorAll('[data-upgrade-action="apply-upgrade"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.stopPropagation();
+        if (!actor || !focusedItemId) return;
+        try {
+          const { CommandBus } = await import('/systems/foundryvtt-swse/scripts/engine/core/CommandBus.js');
+          await CommandBus.execute('APPLY_ITEM_UPGRADE', { actor, itemId: focusedItemId, upgradeId: el.dataset.upgradeId });
+          this.render(false);
+        } catch (err) { ui.notifications?.error?.(`Failed to apply upgrade: ${err.message}`); }
+      });
+    });
+
+    overlayRoot.querySelectorAll('[data-upgrade-action="remove-upgrade"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.stopPropagation();
+        if (!actor || !focusedItemId) return;
+        try {
+          const { CommandBus } = await import('/systems/foundryvtt-swse/scripts/engine/core/CommandBus.js');
+          await CommandBus.execute('REMOVE_ITEM_UPGRADE', { actor, itemId: focusedItemId, upgradeIndex: Number(el.dataset.upgradeIndex) });
+          this.render(false);
+        } catch (err) { ui.notifications?.error?.(`Failed to remove upgrade: ${err.message}`); }
+      });
+    });
+  }
+
+  /** Wire settings surface: theme presets, shell color, controls, toggles, language, reset. */
+  _wireSettingsSurfaceEvents(root) {
+    const settingsRoot = root.querySelector('[data-shell-region="surface-settings"]');
+    if (!settingsRoot) return;
+
+    settingsRoot.querySelectorAll('[data-theme-preset]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await ThemeManager.setTheme({ theme: el.dataset.themePreset });
+        this.render(false);
+      });
+    });
+
+    settingsRoot.querySelectorAll('[data-shell-color]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await ThemeManager.setTheme({ shellColor: el.dataset.shellColor });
+        this.render(false);
+      });
+    });
+
+    settingsRoot.querySelectorAll('[data-theme-control]').forEach(el => {
+      el.addEventListener('input', async (ev) => {
+        const key = el.dataset.themeControl;
+        const value = Number(el.value);
+        await ThemeManager.setTheme({ [key]: value });
+        this.render(false);
+      });
+    });
+
+    settingsRoot.querySelectorAll('[data-theme-toggle]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const key = el.dataset.themeToggle;
+        const current = ThemeManager.getTheme() || ThemeManager.defaults;
+        await ThemeManager.setTheme({ [key]: !current[key] });
+        this.render(false);
+      });
+    });
+
+    settingsRoot.querySelectorAll('[data-language-setting]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await ThemeManager.setTheme({ language: el.dataset.languageSetting });
+        this.render(false);
+      });
+    });
+
+    settingsRoot.querySelector('[data-action="reset-theme-defaults"]')?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      await ThemeManager.setTheme(ThemeManager.defaults);
+      this.render(false);
+    });
+  }
+
+  /** Wire mentor surface: key selection, topic selection, path commitment with mentor-memory. */
+  _wireMentorSurfaceEvents(root) {
+    const mentorRoot = root.querySelector('[data-shell-region="surface-mentor"]');
+    if (!mentorRoot) return;
+
+    mentorRoot.querySelectorAll('[data-mentor-key]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        this._shellSurfaceOptions = { selectedMentorKey: el.dataset.mentorKey };
+        this.render(false);
+      });
+    });
+
+    mentorRoot.querySelectorAll('[data-mentor-topic]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        this._shellSurfaceOptions = {
+          ...this._shellSurfaceOptions,
+          topicKey: el.dataset.mentorTopic
+        };
+        this.render(false);
+      });
+    });
+
+    mentorRoot.querySelectorAll('[data-mentor-path]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const pathName = el.dataset.mentorPath;
+        const mentorKey = this._shellSurfaceOptions?.selectedMentorKey;
+        if (!pathName || !mentorKey) return;
+        try {
+          const { getMentorMemory, setCommittedPath, setMentorMemory } = await import('/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js');
+          const mentorId = String(mentorKey).toLowerCase();
+          const memory = getMentorMemory(this.actor, mentorId);
+          const updatedMemory = setCommittedPath(memory, pathName);
+          await setMentorMemory(this.actor, mentorId, updatedMemory);
+          ui.notifications?.info?.(`Committed to ${pathName}.`);
+        } catch (err) {
+          ui.notifications?.error?.(`Failed to commit mentor path: ${err.message}`);
+        }
+      });
+    });
   }
 
   setPosition(position) {
@@ -508,6 +868,7 @@ export class SWSEV2CharacterSheet extends
 
     // Wire listeners to the sheet root
     this.activateListeners(root, { signal });
+    activateCustomSkillsUI(this, root, { signal });
     applyResourceNumberAnimations(this, root);
     applyResourceBarAnimations(this, root);
 
@@ -577,6 +938,12 @@ export class SWSEV2CharacterSheet extends
       CharacterSheetContractEnforcer.debugWindowContentMinHeight(this.element);
       CharacterSheetContractEnforcer.debugHeightChain(this.element);
     }, 100);
+
+    // ─── Phase 11: Shell Host Registration + Event Wiring ─────────────────
+    if (this.actor?.id) {
+      ShellRouter.register(this.actor.id, this);
+    }
+    this._wireShellEvents(root);
   }
 
   async _onClose(options) {
@@ -591,6 +958,12 @@ export class SWSEV2CharacterSheet extends
     this._shouldCenterOnRender = true; // Enable re-centering on next open
     this._openedAt = null;
     clearTimeout(this._centerTimer);
+
+    // Phase 11: Unregister from ShellRouter
+    if (this.actor?.id) {
+      ShellRouter.unregister(this.actor.id);
+    }
+
     return super._onClose(options);
   }
 
@@ -1362,6 +1735,62 @@ const forcePoints = [];
 
     this.panelDiagnostics.endSession();
 
+    registerCustomSkillsHelpers();
+
+    const _safeCloneVm = (vm) => {
+      if (!vm) return null;
+      try { return structuredClone(vm); } catch { return { error: 'VM contains non-serializable data' }; }
+    };
+
+    let shellSurfaceVm = null;
+    let shellOverlayVm = null;
+    let shellDrawerVm = null;
+
+    if (this._shellSurface !== 'sheet') {
+      try {
+        const raw = await ShellSurfaceRegistry.buildSurfaceVm({
+          actor,
+          surfaceId: this._shellSurface,
+          surfaceOptions: this._shellSurfaceOptions,
+          shellHost: this
+        });
+        shellSurfaceVm = _safeCloneVm(raw);
+      } catch (err) {
+        swseLogger.error('[ShellHost] Surface VM build failed:', err);
+        shellSurfaceVm = { error: err.message, surfaceId: this._shellSurface };
+      }
+    }
+
+    if (this._shellOverlay) {
+      try {
+        const raw = await ShellSurfaceRegistry.buildOverlayVm({
+          actor,
+          overlayId: this._shellOverlay.overlayId,
+          overlayOptions: this._shellOverlay.options,
+          shellHost: this
+        });
+        shellOverlayVm = _safeCloneVm(raw);
+      } catch (err) {
+        swseLogger.error('[ShellHost] Overlay VM build failed:', err);
+        shellOverlayVm = { error: err.message };
+      }
+    }
+
+    if (this._shellDrawer) {
+      try {
+        const raw = await ShellSurfaceRegistry.buildDrawerVm({
+          actor,
+          drawerId: this._shellDrawer.drawerId,
+          drawerOptions: this._shellDrawer.options,
+          shellHost: this
+        });
+        shellDrawerVm = _safeCloneVm(raw);
+      } catch (err) {
+        swseLogger.error('[ShellHost] Drawer VM build failed:', err);
+        shellDrawerVm = { error: err.message };
+      }
+    }
+
     // Log panel contract version for debugging
     const _sheetContractVersion = 1;
 
@@ -1452,7 +1881,17 @@ const forcePoints = [];
       // UNIFIED PANEL CONTEXTS (Primary data source)
       // Panels now own all character data through dedicated view models
       // ═════════════════════════════════════════════════════════════════
-      ...panelContexts
+      ...panelContexts,
+      // ─── Phase 11: Shell Host Context ──────────────────────────────────
+      customSkillsEditable: this.isEditable,
+      shellSurface: this._shellSurface,
+      shellSurfaceOptions: this._shellSurfaceOptions,
+      shellOverlay: this._shellOverlay,
+      shellDrawer: this._shellDrawer,
+      shellIsSheet: this._shellSurface === 'sheet',
+      shellSurfaceVm,
+      shellOverlayVm,
+      shellDrawerVm
     };
 
     // Verify context is serializable (no Document refs, circular refs, etc.)

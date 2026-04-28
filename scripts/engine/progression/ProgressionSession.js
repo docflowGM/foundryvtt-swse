@@ -125,8 +125,7 @@ export class ProgressionSession {
     this.stagedChanges.classLevels.push({
       classId,
       levelInClass,
-      choices,
-      classData // Cache for later use
+      choices
     });
 
     swseLogger.log(`[SESSION] Staged class level: ${classId} level ${levelInClass}`);
@@ -599,9 +598,10 @@ export class ProgressionSession {
       features: []
     };
 
-    // Calculate from staged class levels
+    // Calculate from staged class levels — resolve class data on demand
     for (const cl of this.stagedChanges.classLevels) {
-      const levelFeatures = cl.classData?.levelProgression?.[cl.levelInClass] || {};
+      const classData = await this._resolveClassData(cl.classId);
+      const levelFeatures = classData?.levelProgression?.[cl.levelInClass] || {};
       grants.talents += levelFeatures.talents || 0;
       grants.bonusFeats += levelFeatures.bonusFeats || 0;
       grants.forcePoints += levelFeatures.forcePoints || 0;
@@ -620,6 +620,18 @@ export class ProgressionSession {
     }
 
     return grants;
+  }
+
+  /**
+   * Resolve class data on demand — canonical getClassData first, static map fallback.
+   * Never cached on staged level objects; always fetched when needed.
+   */
+  async _resolveClassData(classId) {
+    const { getClassData } = await import("/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js");
+    const { PROGRESSION_RULES } = await import("/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js");
+    const canonical = await getClassData(classId);
+    if (canonical?.levelProgression) return canonical;
+    return PROGRESSION_RULES.classes[classId] ?? null;
   }
 
   /**
@@ -682,7 +694,7 @@ export class ProgressionSession {
             itemsToCreate.push({
               ...featDoc.toObject(),
               flags: {
-                swse: {
+                'foundryvtt-swse': {
                   source: 'progression',
                   sessionId: this.sessionId
                 }
@@ -742,7 +754,7 @@ export class ProgressionSession {
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         content,
         flags: {
-          swse: {
+          'foundryvtt-swse': {
             type: 'progressionSession',
             sessionId: this.sessionId,
             mode: this.mode
