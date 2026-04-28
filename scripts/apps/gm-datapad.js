@@ -1262,7 +1262,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
         }
 
         const sender = HolonetSender.system('Bulletin');
-        const recipients = recipientIds.map(id => HolonetRecipient.player(id));
+        const recipients = recipientIds.map(actorId => {
+          const actor = game.actors.get(actorId);
+          const ownership = actor?.ownership || {};
+          const firstOwner = Object.keys(ownership).find(key => ownership[key] >= CONST.DOCUMENT_PERMISSION_LEVELS.OWNER);
+          const userId = firstOwner || null;
+          return HolonetRecipient.player(userId, actorId, actor?.name || 'Unknown');
+        });
 
         const messageRecord = new HolonetMessage({
           title,
