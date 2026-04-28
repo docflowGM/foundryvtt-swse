@@ -18,11 +18,12 @@
  */
 
 /* ============================================================================
-   MENTOR RAIL: Hide SVG portrait frame, keep name/dialogue/buttons
+   MENTOR RAIL: Portrait visible, holographic decorative overlays hidden
    ============================================================================ */
 
-.progression-shell .prog-mentor__portrait {
-  /* Hide the decorative SVG frame with embedded portrait holographic effects */
+.progression-shell .prog-mentor__portrait::before,
+.progression-shell .prog-mentor__portrait::after {
+  /* Hide decorative SVG holographic overlays while keeping portrait image visible */
   display: none !important;
 }
 
