@@ -1,383 +1,330 @@
 <div class="swse-sheet">
-<form class="swse-store swse-store-ui card-grid-store store-shell" autocomplete="off">
-  <header class="store-mentor-rail swse-holo-frame" data-store-mentor>
-    <div class="shopkeeper-portrait">
+<form class="swse-store swse-store-ui store-shell" autocomplete="off">
+
+  <div class="store-header">
+    <div class="store-portrait">
       <img src="{{rendarrImage}}" alt="Rendarr" class="rendarr-image"/>
     </div>
-    <div class="holo-content">
-      <div class="holo-speaker">
-        <i class="{{getIconClass 'volumeUp'}}"></i>
-        <span class="speaker-name">RENDARR</span>
-        <span class="speaker-role">Quartermaster Exchange</span>
+    <div class="store-rendarr-meta">
+      <div class="store-rendarr-name">RENDARR'S EXCHANGE</div>
+      <div class="store-rendarr-sub">Quartermaster · Galactic Trade Network</div>
+      <div class="store-rendarr-quote">
+        <span class="holo-message">"{{rendarrWelcome}}"</span>
       </div>
-      <div class="holo-message">"{{rendarrWelcome}}"</div>
+      <div class="store-category-label">{{currentCategoryLabel}} · <span data-results-count>{{allItems.length}}</span> listings</div>
     </div>
-    <div class="store-mentor-meta">
-      <div class="store-meta-chip">Account ₢ {{credits}}</div>
-      <div class="store-meta-chip">Cart <span data-cart-count>{{cartCount}}</span></div>
-      <div class="store-meta-chip">History {{purchaseHistoryCount}}</div>
-      <div class="store-meta-chip">Mode {{pageContext.pageLabel}}</div>
-      <div class="store-meta-chip">Focus {{pageContext.currentCategoryLabel}}</div>
+    <div class="store-credits-block">
+      <div class="store-credits-label">ACCOUNT</div>
+      <div class="store-credits-val"><span class="credits-icon">₢</span>{{credits}}</div>
+      <div class="store-credits-reserve">Reserve ₢ {{pageContext.cartRemaining}}</div>
+      <div class="store-credits-cart">Cart: <span data-cart-count>{{cartCount}}</span></div>
     </div>
-  </header>
+  </div>
 
-  <div class="store-shell-body">
-    <aside class="store-left-rail swse-holo-frame">
-      <section class="store-rail-panel rail-wallet">
-        <div class="rail-panel-header">Account</div>
-        <div class="wallet-amount">
-          <span class="credits-icon">₢</span>
-          <span class="remaining-credits">{{credits}}</span>
-          <span class="credits-label">credits</span>
-        </div>
-        <div class="store-rail-kpis">
-          <div class="store-kpi-card">
-            <span class="kpi-label">Cart</span>
-            <strong data-cart-count>{{cartCount}}</strong>
-          </div>
-          <div class="store-kpi-card">
-            <span class="kpi-label">Total</span>
-            <strong>₢ {{cartTotal}}</strong>
-          </div>
-        </div>
-      </section>
+  <div class="store-tabs">
+    <button type="button" class="store-tab {{#if (eq currentView 'browse')}}active{{/if}}" data-action="show-browse">
+      <span class="store-tab-glyph">⊞</span> Browse
+    </button>
+    <button type="button" class="store-tab {{#if (eq currentView 'cart')}}active{{/if}}{{#if (eq currentView 'checkout')}} active{{/if}}" data-action="view-cart">
+      <span class="store-tab-glyph">◳</span> Cart
+      {{#if cartCount}}<span class="store-tab-badge">{{cartCount}}</span>{{/if}}
+    </button>
+    <button type="button" class="store-tab {{#if (eq currentView 'history')}}active{{/if}}" data-action="show-history">
+      <span class="store-tab-glyph">◎</span> History
+    </button>
+  </div>
 
-      <section class="store-rail-panel rail-vendor-intel">
-        <div class="rail-panel-header">Quartermaster Brief</div>
-        <div class="vendor-brief-card">
-          <div class="vendor-brief-title">{{pageContext.briefTitle}}</div>
-          <div class="vendor-brief-line">{{pageContext.briefBody}}</div>
-          <div class="vendor-brief-tags">
-            {{#each pageContext.briefTags}}
-              <div class="brief-tag detail-chip"><span>{{label}}</span>{{value}}</div>
-            {{/each}}
-          </div>
-        </div>
-        <div class="rail-utility-nav">
-          <button type="button" class="holo-btn secondary" data-action="show-browse">Browse</button>
-          <button type="button" class="holo-btn secondary" data-action="view-cart">Cart</button>
-          <button type="button" class="holo-btn secondary" data-action="show-checkout">Checkout</button>
-          <button type="button" class="holo-btn secondary" data-action="show-history">History</button>
-        </div>
-      </section>
+  {{#if (eq currentView 'browse')}}
+  <div class="store-filter-bar">
+    <div class="store-filter-search">
+      <i class="fa-solid fa-search store-filter-ico"></i>
+      <input type="text" id="store-search" class="store-search-input" placeholder="SEARCH LISTINGS..." aria-label="Search store items"/>
+    </div>
+    <div class="store-filter-cats">
+      <button type="button" class="store-chip {{#unless currentCategory}}active{{/unless}}" data-action="category-nav" data-category="">ALL</button>
+      {{#each categorySummary}}
+        <button type="button" class="store-chip {{#if (eq ../currentCategory key)}}active{{/if}}" data-action="category-nav" data-category="{{key}}">
+          {{label}}<span class="store-chip-count">{{count}}</span>
+        </button>
+      {{/each}}
+    </div>
+    <div class="store-filter-controls">
+      <select id="store-availability-filter" class="store-filter-select" aria-label="Filter by availability">
+        <option value="">All Availability</option>
+        <option value="Standard">Standard</option>
+        <option value="Licensed">Licensed</option>
+        <option value="Restricted">Restricted</option>
+        <option value="Military">Military</option>
+        <option value="Illegal">Illegal</option>
+        <option value="Rare">Rare</option>
+      </select>
+      <select id="store-sort" class="store-filter-select" aria-label="Sort items">
+        <option value="suggested">Suggested</option>
+        <option value="price-asc">Price ↑</option>
+        <option value="price-desc">Price ↓</option>
+        <option value="name-asc">Name A-Z</option>
+      </select>
+      <button type="button" class="store-chip" data-action="clear-filters" title="Reset filters">
+        <i class="fa-solid fa-filter-circle-xmark"></i>
+      </button>
+    </div>
+  </div>
+  {{/if}}
 
-      <section class="store-rail-panel rail-nav">
-        <div class="rail-panel-header">Catalog</div>
-        <div class="store-category-nav">
-          <button type="button" class="store-nav-btn is-all" data-action="category-nav" data-category="">All Listings</button>
-          {{#each categorySummary}}
-            <button type="button" class="store-nav-btn" data-action="category-nav" data-category="{{key}}">
-              <span>{{label}}</span>
-              <span class="nav-count">{{count}}</span>
-            </button>
-          {{/each}}
-        </div>
-      </section>
+  <div class="store-viewport">
 
-      <section class="store-rail-panel rail-controls">
-        <div class="rail-panel-header">Controls</div>
-        <div class="search-container">
-          <input type="text" id="store-search" class="store-search-input" placeholder="Search listings..." aria-label="Search store items"/>
-          <i class="fa-solid fa-search"></i>
+    {{#if (eq currentView 'detail')}}
+    <div class="store-pane store-pane-detail">
+      <div class="store-pane-header">
+        <button type="button" class="store-back-btn holo-btn secondary" data-action="show-browse">
+          <i class="fa-solid fa-chevron-left"></i> Back
+        </button>
+        <div class="store-pane-title-group">
+          <div class="store-page-kicker">Product Detail</div>
+          <h2 class="store-page-title">{{selectedProduct.name}}</h2>
         </div>
-        <select id="store-category-filter" class="store-filter" aria-label="Filter by category">
-          <option value="">All Categories</option>
-          {{#each categorySummary}}
-            <option value="{{key}}">{{label}}</option>
-          {{/each}}
-        </select>
-        <select id="store-availability-filter" class="store-filter" aria-label="Filter by availability">
-          <option value="">All Availability</option>
-          <option value="Standard">Standard</option>
-          <option value="Licensed">Licensed</option>
-          <option value="Restricted">Restricted</option>
-          <option value="Military">Military</option>
-          <option value="Illegal">Illegal</option>
-          <option value="Rare">Rare</option>
-        </select>
-        <select id="store-sort" class="store-sort" aria-label="Sort items">
-          <option value="suggested">Suggested for You</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="name-asc">Name: A-Z</option>
-        </select>
-        <div class="rail-action-cluster stacked">
-          <button type="button" class="holo-btn secondary" data-action="clear-filters">
-            <i class="fa-solid fa-filter-circle-xmark"></i>
-            <span>Reset Filters</span>
-          </button>
-          <button type="button" class="view-cart-btn holo-btn" data-action="view-cart">
-            <i class="fa-solid fa-shopping-cart"></i>
-            <span>Cart</span>
-            <span class="cart-count" id="cart-count">{{cartCount}}</span>
-          </button>
-          <button type="button" class="create-custom-droid holo-btn primary">
-            <i class="fa-solid fa-robot"></i>
-            <span>Build Droid</span>
-          </button>
-          <button type="button" class="build-droid-from-template holo-btn secondary">
-            <i class="fa-solid fa-clone"></i>
-            <span>From Template</span>
-          </button>
-        </div>
-      </section>
-    </aside>
-
-    <section class="store-work-surface swse-holo-frame">
-      {{#if (eq currentView 'detail')}}
-        <div class="store-page-header">
-          <button type="button" class="store-back-btn holo-btn secondary" data-action="show-browse">
-            <i class="fa-solid fa-chevron-left"></i> Back to Listings
-          </button>
-          <div class="store-page-title-group">
-            <div class="store-page-kicker">Product Detail</div>
-            <h2 class="store-page-title">{{selectedProduct.name}}</h2>
-          </div>
-        </div>
-
-        {{#if selectedProduct}}
-          <div class="store-detail-layout">
-            <div class="store-detail-hero swse-holo-card">
-              <div class="glyph-panel detail-glyph-panel"><div class="store-glyph">{{selectedProduct.category}}</div></div>
-              <div class="store-detail-meta">
-                <div class="detail-chip">{{selectedProduct.category}}</div>
-                <div class="detail-chip">{{selectedProduct.availability}}</div>
-                {{#if selectedProduct.suggestionTierLabel}}<div class="detail-chip highlight">{{selectedProduct.suggestionTierLabel}}</div>{{/if}}
-              </div>
-              <div class="store-detail-price">₢ {{selectedProduct.price}}</div>
-              <div class="store-detail-qty-row">
-                <button type="button" class="detail-qty-minus holo-btn secondary">−</button>
-                <input type="number" class="detail-qty-input" value="1" min="1" max="999" />
-                <button type="button" class="detail-qty-plus holo-btn secondary">+</button>
-                <button type="button" class="detail-add-btn holo-btn" data-action="detail-add-to-cart">Add to Cart</button>
-              </div>
+      </div>
+      {{#if selectedProduct}}
+        <div class="store-detail-layout">
+          <div class="store-detail-hero swse-holo-card">
+            <div class="glyph-panel detail-glyph-panel"><div class="store-glyph" aria-hidden="true">{{selectedProduct.category}}</div></div>
+            <div class="store-detail-meta">
+              <div class="detail-chip">{{selectedProduct.category}}</div>
+              <div class="detail-chip">{{selectedProduct.availability}}</div>
+              {{#if selectedProduct.suggestionTierLabel}}<div class="detail-chip highlight">{{selectedProduct.suggestionTierLabel}}</div>{{/if}}
             </div>
-
-            <div class="store-detail-main">
-              {{#if selectedProduct.suggestionBullets.length}}
-                <section class="detail-section swse-holo-card">
-                  <div class="detail-section-title">Recommendation Notes</div>
-                  <ul class="detail-bullets">
-                    {{#each selectedProduct.suggestionBullets}}
-                      <li>{{this}}</li>
-                    {{/each}}
-                  </ul>
-                </section>
-              {{/if}}
-
-              {{#if selectedProduct.techDetailsHtml}}
-                <section class="detail-section swse-holo-card">
-                  <div class="detail-section-title">Technical Specifications</div>
-                  <div class="detail-specs">{{{selectedProduct.techDetailsHtml}}}</div>
-                </section>
-              {{/if}}
-
-              {{#if selectedProduct.description}}
-                <section class="detail-section swse-holo-card">
-                  <div class="detail-section-title">Description</div>
-                  <div class="detail-description">{{{selectedProduct.description}}}</div>
-                </section>
-              {{/if}}
-
-              {{#if selectedProduct.mentorReview}}
-                <section class="detail-section swse-holo-card mentor-review-card">
-                  <div class="detail-section-title">Quartermaster Guidance</div>
-                  <p class="mentor-review-text">"{{selectedProduct.mentorReview}}"</p>
-                </section>
-              {{/if}}
-
-              {{#if selectedProduct.flavorReviewsHtml}}
-                <section class="detail-section swse-holo-card">
-                  <div class="detail-section-title">Marketplace Reviews</div>
-                  <div class="detail-reviews">{{{selectedProduct.flavorReviewsHtml}}}</div>
-                </section>
-              {{/if}}
+            <div class="store-detail-price">₢ {{selectedProduct.price}}</div>
+            <div class="store-detail-qty-row">
+              <button type="button" class="detail-qty-minus holo-btn secondary">−</button>
+              <input type="number" class="detail-qty-input" value="1" min="1" max="999" />
+              <button type="button" class="detail-qty-plus holo-btn secondary">+</button>
+              <button type="button" class="detail-add-btn holo-btn" data-action="detail-add-to-cart">Add to Cart</button>
             </div>
           </div>
-        {{/if}}
-      {{/if}}
-      {{#if (eq currentView 'cart')}}
-          <div class="store-page-header">
-            <button type="button" class="store-back-btn holo-btn secondary" data-action="show-browse">
-              <i class="fa-solid fa-chevron-left"></i> Back to Listings
-            </button>
-            <div class="store-page-title-group">
-              <div class="store-page-kicker">Cart Manifest</div>
-              <h2 class="store-page-title">Trade Ledger</h2>
-            </div>
-          </div>
-          <div class="store-cart-layout">
-            <div class="store-cart-list swse-holo-card">
-              {{#if cartEntries.length}}
-                {{#each cartEntries}}
-                  <div class="cart-item-row">
-                    <div class="glyph-panel cart-glyph-panel"><div class="store-glyph">{{type}}</div></div>
-                    <div class="cart-item-meta">
-                      <div class="cart-item-name">{{name}}</div>
-                      <div class="cart-item-type">{{type}}</div>
-                    </div>
-                    <div class="cart-item-cost">₢ {{cost}}</div>
-                    <button type="button" class="cart-item-remove holo-btn secondary" data-action="remove-cart-row" data-type="{{type}}" data-id="{{id}}"><i class="fa-solid fa-times"></i></button>
-                  </div>
-                {{/each}}
-              {{else}}
-                <div class="empty-state compact">
-                  <i class="fa-solid fa-cart-shopping"></i>
-                  <p>Your cart is empty.</p>
-                </div>
-              {{/if}}
-            </div>
-            <div class="store-cart-summary swse-holo-card">
-              <div class="detail-section-title">Totals</div>
-              <div class="summary-line"><span>Subtotal</span><strong>₢ {{cartTotal}}</strong></div>
-              <div class="summary-line"><span>Remaining</span><strong>₢ {{cartRemaining}}</strong></div>
-              <div class="rail-action-cluster stacked">
-                <button type="button" class="checkout-btn holo-btn" id="checkout-cart">Proceed to Checkout</button>
-                <button type="button" class="clear-cart-btn holo-btn secondary" id="clear-cart">Clear Cart</button>
-              </div>
-            </div>
-          </div>
-        {{else}}
-          {{#if (eq currentView 'checkout')}}
-            <div class="store-page-header">
-              <button type="button" class="store-back-btn holo-btn secondary" data-action="view-cart">
-                <i class="fa-solid fa-chevron-left"></i> Back to Cart
-              </button>
-              <div class="store-page-title-group">
-                <div class="store-page-kicker">Exchange Confirmation</div>
-                <h2 class="store-page-title">Finalize Trade</h2>
-              </div>
-            </div>
-            <div class="store-checkout-layout">
-              <section class="store-checkout-ledger swse-holo-card">
-                <div class="detail-section-title">Locked Manifest</div>
-                {{#if cartEntries.length}}
-                  <div class="checkout-ledger-list">
-                    {{#each cartEntries}}
-                      <div class="checkout-ledger-row">
-                        <span class="checkout-ledger-name">{{name}}</span>
-                        <span class="checkout-ledger-type">{{type}}</span>
-                        <span class="checkout-ledger-cost">₢ {{cost}}</span>
-                      </div>
-                    {{/each}}
-                  </div>
-                {{else}}
-                  <div class="empty-state compact"><i class="fa-solid fa-cart-shopping"></i><p>No items are staged for checkout.</p></div>
-                {{/if}}
+          <div class="store-detail-main">
+            {{#if selectedProduct.suggestionBullets.length}}
+              <section class="detail-section swse-holo-card">
+                <div class="detail-section-title">Recommendation Notes</div>
+                <ul class="detail-bullets">
+                  {{#each selectedProduct.suggestionBullets}}<li>{{this}}</li>{{/each}}
+                </ul>
               </section>
-              <aside class="store-checkout-summary swse-holo-card">
-                <div class="detail-section-title">Settlement</div>
-                <div class="summary-line"><span>Available</span><strong>₢ {{credits}}</strong></div>
-                <div class="summary-line"><span>Debit</span><strong>₢ {{cartTotal}}</strong></div>
-                <div class="summary-line"><span>Reserve After Trade</span><strong>₢ {{pageContext.cartRemaining}}</strong></div>
-                <div class="checkout-guidance">Confirm the trade to issue all manifest lines and archive the transaction in purchase history.</div>
-                <div class="rail-action-cluster stacked">
-                  <button type="button" class="checkout-btn holo-btn primary" id="confirm-checkout">Confirm Trade</button>
-                  <button type="button" class="holo-btn secondary" data-action="view-cart">Return to Cart</button>
-                </div>
-              </aside>
-            </div>
-          {{else}}
-          {{#if (eq currentView 'history')}}
-            <div class="store-page-header">
-              <button type="button" class="store-back-btn holo-btn secondary" data-action="show-browse">
-                <i class="fa-solid fa-chevron-left"></i> Back to Listings
-              </button>
-              <div class="store-page-title-group">
-                <div class="store-page-kicker">Account Archive</div>
-                <h2 class="store-page-title">Purchase History</h2>
-              </div>
-            </div>
-            <div class="store-history-layout swse-holo-card">
-              {{#if purchaseHistoryEntries.length}}
-                <div class="store-history-list">
-                  {{#each purchaseHistoryEntries}}
-                    <div class="history-entry">
-                      <div class="history-header">
-                        <span class="history-date"><i class="fa-solid fa-calendar"></i> {{timestamp}}</span>
-                        <span class="history-total"><span class="credits-icon">₢</span> {{total}}</span>
-                      </div>
-                      <div class="history-items">
-                        {{#each items}}
-                          <div class="history-item">
-                            <span class="item-name">{{name}}</span>
-                            <span class="item-qty">×{{qty}}</span>
-                            <span class="item-cost"><span class="credits-icon">₢</span>{{cost}}</span>
-                          </div>
-                        {{/each}}
-                      </div>
-                    </div>
-                  {{/each}}
-                </div>
-              {{else}}
-                <div class="empty-state compact store-history-empty"><i class="fa-solid fa-receipt"></i><p>No purchases have been logged yet.</p></div>
-              {{/if}}
-            </div>
-          {{else}}
-          <div class="store-page-header">
-            <div class="store-page-title-group">
-              <div class="store-page-kicker">Browse Exchange</div>
-              <h2 class="store-page-title">{{currentCategoryLabel}}</h2>
-              <div class="store-page-subline"><span data-results-count>{{allItems.length}}</span> visible listings routed through this terminal.</div>
-            </div>
-            <div class="store-page-actions">
-              <button type="button" class="holo-btn secondary" data-action="show-history">
-                <i class="fa-solid fa-clock-rotate-left"></i>
-                <span>History</span>
-              </button>
-              <button type="button" class="view-cart-btn holo-btn" data-action="view-cart">
-                <i class="fa-solid fa-shopping-cart"></i>
-                <span>View Cart</span>
-                <span class="cart-count" data-cart-count>{{cartCount}}</span>
-              </button>
-              <button type="button" class="holo-btn secondary" data-action="show-checkout">
-                <i class="fa-solid fa-file-invoice-dollar"></i>
-                <span>Checkout</span>
-              </button>
-            </div>
+            {{/if}}
+            {{#if selectedProduct.techDetailsHtml}}
+              <section class="detail-section swse-holo-card">
+                <div class="detail-section-title">Technical Specifications</div>
+                <div class="detail-specs">{{{selectedProduct.techDetailsHtml}}}</div>
+              </section>
+            {{/if}}
+            {{#if selectedProduct.description}}
+              <section class="detail-section swse-holo-card">
+                <div class="detail-section-title">Description</div>
+                <div class="detail-description">{{{selectedProduct.description}}}</div>
+              </section>
+            {{/if}}
+            {{#if selectedProduct.mentorReview}}
+              <section class="detail-section swse-holo-card mentor-review-card">
+                <div class="detail-section-title">Quartermaster Guidance</div>
+                <p class="mentor-review-text">"{{selectedProduct.mentorReview}}"</p>
+              </section>
+            {{/if}}
+            {{#if selectedProduct.flavorReviewsHtml}}
+              <section class="detail-section swse-holo-card">
+                <div class="detail-section-title">Marketplace Reviews</div>
+                <div class="detail-reviews">{{{selectedProduct.flavorReviewsHtml}}}</div>
+              </section>
+            {{/if}}
           </div>
+        </div>
+      {{/if}}
+    </div>
 
-          <div class="card-grid-container">
-            <div class="products-grid" id="products-grid">
-              {{#each allItems}}
-                <div class="holo-card product-card" data-item-id="{{this.id}}" data-category="{{this.category}}" data-availability="{{this.availability}}" data-rarity="{{this.rarityClass}}">
-                  <div class="card-header">
-                    {{#if this.suggestion}}
-                      <span class="suggestion-badge tier-{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>
-                    {{/if}}
-                  </div>
-                  <div class="card-body">
-                    <div class="glyph-panel"><div class="store-glyph" aria-hidden="true">{{this.glyph}}</div></div>
-                    <h4 class="card-title">{{this.name}}</h4>
-                    {{#if this.suggestion}}
-                      {{#if this.suggestion.bullets}}
-                        <div class="card-explanations">
-                          {{#each this.suggestion.bullets}}
-                            <div class="explanation-bullet">• {{this}}</div>
-                          {{/each}}
-                        </div>
-                      {{/if}}
-                    {{/if}}
-                    <div class="card-meta-row">
-                      <span class="detail-chip">{{this.category}}</span>
-                      <span class="detail-chip">{{this.availability}}</span>
-                    </div>
-                    <div class="card-price"><span class="credits-icon">₢</span><span class="price-amount">{{this.price}}</span></div>
-                  </div>
-                  <div class="card-footer">
-                    <button type="button" class="expand-btn holo-btn" data-action="expand-product" data-item-id="{{this.id}}">Open Listing</button>
-                    <button type="button" class="add-to-cart-btn holo-btn secondary" data-action="add-to-cart" data-item-id="{{this.id}}"><i class="fa-solid fa-plus"></i></button>
-                  </div>
+    {{else}}
+    {{#if (eq currentView 'cart')}}
+    <div class="store-pane store-pane-cart">
+      <div class="store-pane-header">
+        <button type="button" class="store-back-btn holo-btn secondary" data-action="show-browse">
+          <i class="fa-solid fa-chevron-left"></i> Back
+        </button>
+        <div class="store-pane-title-group">
+          <div class="store-page-kicker">Cart Manifest</div>
+          <h2 class="store-page-title">Trade Ledger</h2>
+        </div>
+      </div>
+      <div class="store-cart-layout">
+        <div class="store-cart-list swse-holo-card">
+          {{#if cartEntries.length}}
+            {{#each cartEntries}}
+              <div class="cart-item-row">
+                <div class="glyph-panel cart-glyph-panel"><div class="store-glyph" aria-hidden="true">{{type}}</div></div>
+                <div class="cart-item-meta">
+                  <div class="cart-item-name">{{name}}</div>
+                  <div class="cart-item-type">{{type}}</div>
+                </div>
+                <div class="cart-item-cost">₢ {{cost}}</div>
+                <button type="button" class="cart-item-remove holo-btn secondary" data-action="remove-cart-row" data-type="{{type}}" data-id="{{id}}">
+                  <i class="fa-solid fa-times"></i>
+                </button>
+              </div>
+            {{/each}}
+          {{else}}
+            <div class="empty-state compact">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <p>Your cart is empty.</p>
+            </div>
+          {{/if}}
+        </div>
+        <div class="store-cart-summary swse-holo-card">
+          <div class="detail-section-title">Totals</div>
+          <div class="summary-line"><span>Subtotal</span><strong>₢ {{cartTotal}}</strong></div>
+          <div class="summary-line"><span>Remaining</span><strong>₢ {{cartRemaining}}</strong></div>
+          <div class="rail-action-cluster stacked">
+            <button type="button" class="checkout-btn holo-btn" id="checkout-cart">Proceed to Checkout</button>
+            <button type="button" class="clear-cart-btn holo-btn secondary" id="clear-cart">Clear Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{else}}
+    {{#if (eq currentView 'checkout')}}
+    <div class="store-pane store-pane-checkout">
+      <div class="store-pane-header">
+        <button type="button" class="store-back-btn holo-btn secondary" data-action="view-cart">
+          <i class="fa-solid fa-chevron-left"></i> Back to Cart
+        </button>
+        <div class="store-pane-title-group">
+          <div class="store-page-kicker">Exchange Confirmation</div>
+          <h2 class="store-page-title">Finalize Trade</h2>
+        </div>
+      </div>
+      <div class="store-checkout-layout">
+        <section class="store-checkout-ledger swse-holo-card">
+          <div class="detail-section-title">Locked Manifest</div>
+          {{#if cartEntries.length}}
+            <div class="checkout-ledger-list">
+              {{#each cartEntries}}
+                <div class="checkout-ledger-row">
+                  <span class="checkout-ledger-name">{{name}}</span>
+                  <span class="checkout-ledger-type">{{type}}</span>
+                  <span class="checkout-ledger-cost">₢ {{cost}}</span>
                 </div>
               {{/each}}
             </div>
-            <div class="empty-state store-no-results" style="display:none;"><i class="fa-solid fa-box-open"></i><p>No items match the current filters.</p></div>
-          </div>
+          {{else}}
+            <div class="empty-state compact"><i class="fa-solid fa-cart-shopping"></i><p>No items staged.</p></div>
           {{/if}}
+        </section>
+        <aside class="store-checkout-summary swse-holo-card">
+          <div class="detail-section-title">Settlement</div>
+          <div class="summary-line"><span>Available</span><strong>₢ {{credits}}</strong></div>
+          <div class="summary-line"><span>Debit</span><strong>₢ {{cartTotal}}</strong></div>
+          <div class="summary-line"><span>Reserve After Trade</span><strong>₢ <span id="cart-remaining">{{pageContext.cartRemaining}}</span></strong></div>
+          <div class="checkout-guidance">Confirm the trade to issue all manifest lines and archive the transaction.</div>
+          <div class="rail-action-cluster stacked">
+            <button type="button" class="checkout-btn holo-btn primary" id="confirm-checkout">Confirm Trade</button>
+            <button type="button" class="holo-btn secondary" data-action="view-cart">Return to Cart</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    {{else}}
+    {{#if (eq currentView 'history')}}
+    <div class="store-pane store-pane-history">
+      <div class="store-pane-header">
+        <button type="button" class="store-back-btn holo-btn secondary" data-action="show-browse">
+          <i class="fa-solid fa-chevron-left"></i> Back
+        </button>
+        <div class="store-pane-title-group">
+          <div class="store-page-kicker">Account Archive</div>
+          <h2 class="store-page-title">Purchase History</h2>
+        </div>
+      </div>
+      <div class="store-history-layout swse-holo-card">
+        {{#if purchaseHistoryEntries.length}}
+          <div class="store-history-list">
+            {{#each purchaseHistoryEntries}}
+              <div class="history-entry">
+                <div class="history-header">
+                  <span class="history-date"><i class="fa-solid fa-calendar"></i> {{timestamp}}</span>
+                  <span class="history-total"><span class="credits-icon">₢</span> {{total}}</span>
+                </div>
+                <div class="history-items">
+                  {{#each items}}
+                    <div class="history-item">
+                      <span class="item-name">{{name}}</span>
+                      <span class="item-qty">×{{qty}}</span>
+                      <span class="item-cost"><span class="credits-icon">₢</span>{{cost}}</span>
+                    </div>
+                  {{/each}}
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="empty-state compact store-history-empty">
+            <i class="fa-solid fa-receipt"></i>
+            <p>No purchases have been logged yet.</p>
+          </div>
         {{/if}}
-      {{/if}}
-    </section>
+      </div>
+    </div>
+
+    {{else}}
+    <div class="store-pane store-pane-browse">
+      <div class="store-browse-actions">
+        <button type="button" class="create-custom-droid holo-btn secondary">
+          <i class="fa-solid fa-robot"></i> Build Droid
+        </button>
+        <button type="button" class="build-droid-from-template holo-btn secondary">
+          <i class="fa-solid fa-clone"></i> From Template
+        </button>
+      </div>
+      <div class="card-grid-container">
+        <div class="products-grid" id="products-grid">
+          {{#each allItems}}
+            <div class="holo-card product-card" data-item-id="{{this.id}}" data-category="{{this.category}}" data-availability="{{this.availability}}" data-rarity="{{this.rarityClass}}">
+              <div class="card-header">
+                {{#if this.suggestion}}
+                  <span class="suggestion-badge tier-{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>
+                {{/if}}
+              </div>
+              <div class="card-body">
+                <div class="glyph-panel"><div class="store-glyph" aria-hidden="true">{{this.glyph}}</div></div>
+                <h4 class="card-title">{{this.name}}</h4>
+                {{#if this.suggestion.bullets}}
+                  <div class="card-explanations">
+                    {{#each this.suggestion.bullets}}<div class="explanation-bullet">• {{this}}</div>{{/each}}
+                  </div>
+                {{/if}}
+                <div class="card-meta-row">
+                  <span class="detail-chip">{{this.category}}</span>
+                  <span class="detail-chip">{{this.availability}}</span>
+                </div>
+                <div class="card-price"><span class="credits-icon">₢</span><span class="price-amount">{{this.price}}</span></div>
+              </div>
+              <div class="card-footer">
+                <button type="button" class="expand-btn holo-btn" data-action="expand-product" data-item-id="{{this.id}}">Open Listing</button>
+                <button type="button" class="add-to-cart-btn holo-btn secondary" data-action="add-to-cart" data-item-id="{{this.id}}">
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+        <div class="empty-state store-no-results" style="display:none;">
+          <i class="fa-solid fa-box-open"></i>
+          <p>No items match the current filters.</p>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+    {{/if}}
+    {{/if}}
+    {{/if}}
+
   </div>
-  <div id="product-modal" class="product-modal store-product-modal" style="display:none;" role="dialog" aria-modal="true" aria-label="Product detail dialog"></div>
+
 </form>
 </div>

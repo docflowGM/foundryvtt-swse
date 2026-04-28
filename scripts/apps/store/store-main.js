@@ -115,7 +115,6 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this.totalVisibleItems = 0;
 
     this.cardInteractions = null;    // Card floating/expansion controller
-    this.isCheckoutMode = false;     // Checkout mode state (true = ledger view, locked cart)
 
     // Initialize loading overlay
     const useAurebesh = SettingsHelper.getSafe('useAurebesh', false);
@@ -202,6 +201,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       cartRemaining,
       cartEntries,
       currentView,
+      currentCategory: this.currentCategory,
       currentCategoryLabel,
       categorySummary,
       selectedProduct,
@@ -665,126 +665,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     };
   }
 
-  _viewFromDroid(actor) {
-    const sys = safeSystem(actor) ?? {};
-    return {
-      id: actor._id,
-      name: safeString(actor.name),
-      img: safeImg(actor),
-      finalCost: Number(sys.cost ?? 0) || 0,
-      rarityClass: null,
-      rarityLabel: '',
-      system: sys,
-      type: 'droid'
-    };
-  }
 
-  _buildCategoriesForTemplate() {
-    const categories = {
-      weapons: {
-        melee: { simple: [], advanced: [], lightsaber: [], exotic: [] },
-        ranged: { pistols: [], rifles: [], heavy_weapons: [], exotic: [] }
-      },
-      armor: [],
-      grenades: [],
-      medical: [],
-      tech: [],
-      tools: [],
-      survival: [],
-      security: [],
-      equipment: [],
-      droids: [],
-      vehicles: []
-      // NOTE: services removed — services are contextual expenses, not store inventory
-    };
-
-    for (const item of this.itemsById.values()) {
-      tryRender(() => {
-        const view = this._viewFromItem(item);
-        const sys = view.system ?? {};
-
-        if (view.type === 'weapon') {
-          const wc = (sys.weaponCategory || '').toString().toLowerCase();
-          const cat = (sys.category || sys.subcategory || '').toString().toLowerCase();
-
-          if (cat === 'grenade') {
-            categories.grenades.push(view);
-            return;
-          }
-
-          if (wc === 'melee') {
-            const key = ['simple', 'advanced', 'lightsaber', 'exotic'].includes(cat) ? cat : 'exotic';
-            categories.weapons.melee[key].push(view);
-            return;
-          }
-
-          // ranged
-          const rangedKey = cat === 'pistol' ? 'pistols' :
-                            cat === 'rifle' ? 'rifles' :
-                            cat === 'heavy' ? 'heavy_weapons' :
-                            'exotic';
-          categories.weapons.ranged[rangedKey].push(view);
-          return;
-        }
-
-        if (view.type === 'armor') {
-          categories.armor.push(view);
-          return;
-        }
-
-        if (view.type === 'vehicle') {
-          categories.vehicles.push(view);
-          return;
-        }
-
-        if (view.type === 'equipment') {
-          const bucket = this._categorizeEquipmentExtended(view);
-          categories[bucket].push(view);
-          return;
-        }
-
-        // NOTE: Services are not store inventory items (filtered by normalizer.js)
-      });
-    }
-
-    for (const droid of this.droidsById.values()) {
-      categories.droids.push(this._viewFromDroid(droid));
-    }
-
-    // Sort for consistent UX
-    categories.weapons.melee.simple = sortWeapons(categories.weapons.melee.simple);
-    categories.weapons.melee.advanced = sortWeapons(categories.weapons.melee.advanced);
-    categories.weapons.melee.lightsaber = sortWeapons(categories.weapons.melee.lightsaber);
-    categories.weapons.melee.exotic = sortWeapons(categories.weapons.melee.exotic);
-
-    categories.weapons.ranged.pistols = sortWeapons(categories.weapons.ranged.pistols);
-    categories.weapons.ranged.rifles = sortWeapons(categories.weapons.ranged.rifles);
-    categories.weapons.ranged.heavy_weapons = sortWeapons(categories.weapons.ranged.heavy_weapons);
-    categories.weapons.ranged.exotic = sortWeapons(categories.weapons.ranged.exotic);
-
-    categories.armor = sortArmor(categories.armor);
-    categories.grenades = sortWeapons(categories.grenades);
-    categories.droids = categories.droids.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-    categories.vehicles = categories.vehicles.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-
-    for (const key of ['medical','tech','tools','survival','security','equipment','services']) {
-      categories[key] = categories[key].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-    }
-
-    return categories;
-  }
-
-  _categorizeEquipmentExtended(view) {
-    const sys = view.system ?? {};
-    const name = (view.name || '').toLowerCase();
-    const desc = (sys.description || '').toString().toLowerCase();
-    const text = `${name} ${desc}`;
-
-    if (text.includes('ration') || text.includes('survival') || text.includes('tent') || text.includes('climbing') || text.includes('breather')) {return 'survival';}
-    if (text.includes('security') || text.includes('lock') || text.includes('binders') || text.includes('restraint') || text.includes('alarm')) {return 'security';}
-
-    return categorizeEquipment({ name: view.name, system: sys });
-  }
 
   async _onRender(context, options) {
     // Phase 3: Enforce super._onRender call (AppV2 contract)
@@ -806,71 +687,52 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
     // Search functionality
     const searchInput = root.querySelector('#store-search');
-    const categoryFilter = root.querySelector('#store-category-filter');
     const availabilityFilter = root.querySelector('#store-availability-filter');
     const sortSelect = root.querySelector('#store-sort');
 
     const updateGrid = () => this._filterAndSortGrid(root);
 
     if (searchInput) {
-      searchInput.addEventListener('input', updateGrid);
-    }
-    if (categoryFilter) {
-      categoryFilter.addEventListener('change', updateGrid);
+      searchInput.addEventListener('input', updateGrid, { signal });
     }
     if (availabilityFilter) {
-      availabilityFilter.addEventListener('change', updateGrid);
+      availabilityFilter.addEventListener('change', updateGrid, { signal });
     }
     if (sortSelect) {
-      sortSelect.addEventListener('change', updateGrid);
-    }
-    if (categoryFilter) {
-      categoryFilter.value = this.currentCategory || '';
+      sortSelect.addEventListener('change', updateGrid, { signal });
     }
 
     root.querySelectorAll('[data-action="show-browse"]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.currentView = 'browse';
         this.render();
-      });
+      }, { signal });
     });
     root.querySelectorAll('[data-action="view-cart"]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.currentView = 'cart';
         this.render();
-      });
-    });
-    root.querySelectorAll('[data-action="show-checkout"]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        this.currentView = 'checkout';
-        this.render();
-      });
+      }, { signal });
     });
     root.querySelectorAll('[data-action="show-history"]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.currentView = 'history';
         this.render();
-      });
+      }, { signal });
     });
     root.querySelectorAll('[data-action="category-nav"]').forEach(btn => {
       btn.addEventListener('click', ev => {
         this.currentCategory = ev.currentTarget?.dataset?.category || '';
         this.currentView = 'browse';
         this.render();
-      });
+      }, { signal });
     });
     root.querySelectorAll('[data-action="clear-filters"]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.currentCategory = '';
         this.currentPage = 1;
-        const search = root.querySelector('#store-search');
-        const availability = root.querySelector('#store-availability-filter');
-        if (search) search.value = '';
-        if (categoryFilter) categoryFilter.value = '';
-        if (availability) availability.value = '';
-        if (sortSelect) sortSelect.value = 'suggested';
-        updateGrid();
-      });
+        this.render();
+      }, { signal });
     });
     root.querySelectorAll('[data-action="remove-cart-row"]').forEach(btn => {
       btn.addEventListener('click', async ev => {
@@ -881,25 +743,57 @@ export class SWSEStore extends BaseSWSEAppV2 {
         removeFromCartById(this.cart, type, id);
         await this._persistCart();
         this.render();
-      });
+      }, { signal });
     });
+    // Detail qty controls
+    const detailQtyInput = root.querySelector('.detail-qty-input');
+    const detailQtyMinus = root.querySelector('.detail-qty-minus');
+    const detailQtyPlus = root.querySelector('.detail-qty-plus');
+
+    if (detailQtyMinus) {
+      detailQtyMinus.addEventListener('click', () => {
+        const val = Math.max(1, (parseInt(detailQtyInput?.value) || 1) - 1);
+        if (detailQtyInput) detailQtyInput.value = val;
+      }, { signal });
+    }
+
+    if (detailQtyPlus) {
+      detailQtyPlus.addEventListener('click', () => {
+        const val = Math.min(999, (parseInt(detailQtyInput?.value) || 1) + 1);
+        if (detailQtyInput) detailQtyInput.value = val;
+      }, { signal });
+    }
+
+    if (detailQtyInput) {
+      detailQtyInput.addEventListener('change', () => {
+        const val = Math.max(1, Math.min(999, parseInt(detailQtyInput.value) || 1));
+        detailQtyInput.value = val;
+      }, { signal });
+    }
+
     root.querySelectorAll('[data-action="detail-add-to-cart"]').forEach(btn => {
       btn.addEventListener('click', async () => {
         if (!this.selectedProductId) {return;}
-        addItemToCart(this, this.selectedProductId, line => this._setRendarrLine(line));
+        const qty = parseInt(detailQtyInput?.value) || 1;
+        for (let i = 0; i < qty; i++) {
+          addItemToCart(this, this.selectedProductId, i === 0 ? (line => this._setRendarrLine(line)) : null);
+        }
         await this._persistCart();
+        this.selectedProductId = null;
         this.currentView = 'cart';
         this.render();
-      });
+      }, { signal });
     });
-    // Card expand buttons
+    // Card expand buttons → Detail view
     root.querySelectorAll('[data-action="expand-product"]').forEach(btn => {
       btn.addEventListener('click', ev => {
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (itemId) {
-          this._showProductModal(itemId, root);
+          this.selectedProductId = itemId;
+          this.currentView = 'detail';
+          this.render();
         }
-      });
+      }, { signal });
     });
 
     // Add to cart buttons (cards)
@@ -911,58 +805,25 @@ export class SWSEStore extends BaseSWSEAppV2 {
         addItemToCart(this, id, line => this._setRendarrLine(line));
         await this._persistCart();
         this.render();
-      });
+      }, { signal });
     });
 
-    // Legacy buy item buttons (for backward compat)
-    root.querySelectorAll('.buy-item').forEach(btn => {
-      btn.addEventListener('click', async ev => {
-        const id = ev.currentTarget?.dataset?.itemId;
-        if (!id) {return;}
-        addItemToCart(this, id, line => this._setRendarrLine(line));
-        await this._persistCart();
-        this.render();
-      });
-    });
-
-    root.querySelectorAll('.buy-droid').forEach(btn => {
-      btn.addEventListener('click', async ev => {
-        const id = ev.currentTarget?.dataset?.actorId || ev.currentTarget?.dataset?.droidId;
-        if (!id) {return;}
-        addDroidToCart(this, id, line => this._setRendarrLine(line));
-        await this._persistCart();
-        this.render();
-      });
-    });
-
-    root.querySelectorAll('.buy-vehicle').forEach(btn => {
-      btn.addEventListener('click', async ev => {
-        const id = ev.currentTarget?.dataset?.actorId || ev.currentTarget?.dataset?.vehicleId;
-        const condition = ev.currentTarget?.dataset?.condition || 'new';
-        if (!id) {return;}
-        addVehicleToCart(this, id, condition, line => this._setRendarrLine(line));
-        await this._persistCart();
-        this.render();
-      });
-    });
 
     // Custom builders
     const customDroidBtn = root.querySelector('.create-custom-droid');
     if (customDroidBtn) {
       customDroidBtn.addEventListener('click', async () => {
         if (!this.actor) {return;}
-        // Phase 3b: Use new DroidBuilderApp instead of CharacterGenerator
         await buildDroidWithBuilder(this.actor, () => this.render());
-      });
+      }, { signal });
     }
 
-    // Phase 3d: Build from template
     const templateDroidBtn = root.querySelector('.build-droid-from-template');
     if (templateDroidBtn) {
       templateDroidBtn.addEventListener('click', async () => {
         if (!this.actor) {return;}
         await buildDroidFromTemplate(this.actor, () => this.render());
-      });
+      }, { signal });
     }
 
     const customStarshipBtn = root.querySelector('.create-custom-starship');
@@ -970,7 +831,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       customStarshipBtn.addEventListener('click', async () => {
         if (!this.actor) {return;}
         await createCustomStarship(this.actor, () => this.render());
-      });
+      }, { signal });
     }
 
     const checkoutBtn = root.querySelector('#checkout-cart');
@@ -978,7 +839,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       checkoutBtn.addEventListener('click', () => {
         this.currentView = 'checkout';
         this.render();
-      });
+      }, { signal });
     }
 
     const confirmCheckoutBtn = root.querySelector('#confirm-checkout');
@@ -989,7 +850,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
           this.currentView = 'history';
           this.render();
         }
-      });
+      }, { signal });
     }
 
     const clearBtn = root.querySelector('#clear-cart');
@@ -998,21 +859,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
         clearCart(this.cart);
         await this._persistCart();
         this.render();
-      });
+      }, { signal });
     }
-
-    // Escape key: Cancel checkout mode if active (Part 8)
-    // Remove old handler if it exists and register new one
-    if (this._escapeKeyHandler) {
-      document.removeEventListener('keydown', this._escapeKeyHandler);
-    }
-    this._escapeKeyHandler = (ev) => {
-      // Escape key handling (currently no-op as checkout flow no longer uses checkout mode)
-      if (ev.key === 'Escape') {
-        // Future: could handle other escape scenarios here
-      }
-    };
-    document.addEventListener('keydown', this._escapeKeyHandler);
 
     // Initial render once DOM exists
     this._renderCartUI();
@@ -1043,7 +891,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     // P2-4: Safe search term handling (Unicode-safe, case-insensitive)
     const rawSearchTerm = root.querySelector('#store-search')?.value || '';
     const searchTerm = rawSearchTerm.toLowerCase().trim();
-    const categoryFilter = root.querySelector('#store-category-filter')?.value || this.currentCategory || '';
+    const categoryFilter = this.currentCategory || '';
     const availabilityFilter = root.querySelector('#store-availability-filter')?.value || '';
     const sortValue = root.querySelector('#store-sort')?.value || 'suggested';
 
@@ -1178,170 +1026,6 @@ export class SWSEStore extends BaseSWSEAppV2 {
     }
   }
 
-  _showProductModal(itemId, root) {
-    const item = this.itemsById.get(itemId);
-    if (!item) {return;}
-
-    const modal = root.querySelector('#product-modal');
-    if (!modal) {return;}
-
-    const modalHTML = this._buildProductModalContent(item);
-    modal.innerHTML = modalHTML;
-    modal.style.display = 'flex';
-    modal.onclick = event => {
-      if (event.target === modal) {
-        modal.style.display = 'none';
-      }
-    };
-
-    // Close button handler
-    modal.querySelector('.close-modal-btn')?.addEventListener('click', () => {
-      modal.style.display = 'none';
-    });
-
-    // Quantity controls
-    const qtyInput = modal.querySelector('.qty-input');
-    const qtyMinus = modal.querySelector('.qty-minus');
-    const qtyPlus = modal.querySelector('.qty-plus');
-
-    if (qtyMinus) {
-      qtyMinus.addEventListener('click', () => {
-        const val = Math.max(1, (parseInt(qtyInput?.value) || 1) - 1);
-        if (qtyInput) qtyInput.value = val;
-      });
-    }
-
-    if (qtyPlus) {
-      qtyPlus.addEventListener('click', () => {
-        const val = Math.min(999, (parseInt(qtyInput?.value) || 1) + 1);
-        if (qtyInput) qtyInput.value = val;
-      });
-    }
-
-    if (qtyInput) {
-      qtyInput.addEventListener('change', () => {
-        const val = Math.max(1, Math.min(999, parseInt(qtyInput.value) || 1));
-        qtyInput.value = val;
-      });
-    }
-
-    // Add to cart from modal (with quantity)
-    modal.querySelector('.modal-add-to-cart')?.addEventListener('click', async () => {
-      const qty = parseInt(qtyInput?.value) || 1;
-      for (let i = 0; i < qty; i++) {
-        addItemToCart(this, itemId, i === 0 ? (line => this._setRendarrLine(line)) : null);
-      }
-      this._persistCart();
-      modal.style.display = 'none';
-      this.render();
-    });
-  }
-
-  _buildProductModalContent(item) {
-    const sys = safeSystem(item) ?? {};
-    const suggestion = this.suggestions.get(item.id);
-    const itemType = item.type || '';
-
-    // Build technical details based on item type
-    const techDetails = this._buildTechnicalDetails(item, sys, itemType);
-
-    // Generate mentor review
-    const mentorReview = this._generateMentorReview(suggestion);
-
-    // Generate flavor reviews
-    const flavorReviews = this._generateFlavorReviews(item, itemType);
-
-    return `
-      <div class="modal-content">
-        <button type="button" class="close-modal-btn" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--holo-cyan); cursor: pointer; font-size: 20px;">
-          <i class="fa-solid fa-times"></i>
-        </button>
-
-        <div class="modal-header">
-          <h2 style="color: var(--holo-cyan); margin: 0 0 8px 0;">${safeString(item.name)}</h2>
-          ${suggestion?.combined ? `
-            <span class="suggestion-badge tier-${suggestion.combined.tier.toLowerCase().replace(/_/g, '-')}" style="display: inline-block; padding: 4px 8px; border-radius: 3px; font-size: 11px; font-weight: bold;">
-              ${this._tierToDisplayLabel(suggestion.combined.tier)}
-            </span>
-          ` : ''}
-        </div>
-
-        <div class="modal-body" style="margin-top: 12px;">
-          <div class="modal-image-section">
-            <img src="${safeImg(item)}" alt="${safeString(item.name)}" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(0, 217, 255, 0.3);"/>
-          </div>
-
-          <div class="modal-price-section" style="margin: 16px 0; padding: 12px; background: rgba(255, 165, 0, 0.1); border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 4px;">
-            <strong style="color: var(--holo-amber); font-size: 18px;">₢${getCostValue(item)}</strong>
-          </div>
-
-          ${suggestion?.combined ? `
-            <div class="modal-suggestion-section" style="margin: 16px 0; padding: 12px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 4px;">
-              <strong style="color: var(--holo-cyan);">Why This Recommendation</strong>
-              <ul style="margin: 8px 0 0 20px; font-size: 13px; line-height: 1.5;">
-                ${(suggestion.explanations || []).map(b => `<li>${b}</li>`).join('')}
-              </ul>
-            </div>
-          ` : ''}
-
-          ${techDetails ? `
-            <div class="modal-tech-section" style="margin: 16px 0; padding: 12px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px;">
-              <strong style="color: var(--holo-cyan);">Technical Specifications</strong>
-              <div style="margin-top: 8px; font-size: 12px; line-height: 1.6;">
-                ${techDetails}
-              </div>
-            </div>
-          ` : ''}
-
-          ${sys.description ? `
-            <div class="modal-description-section" style="margin: 16px 0;">
-              <strong style="color: var(--holo-cyan);">Description</strong>
-              <p style="margin: 8px 0 0 0; font-size: 13px; line-height: 1.5;">${sys.description}</p>
-            </div>
-          ` : ''}
-
-          ${mentorReview || flavorReviews ? `
-            <div class="modal-reviews-section" style="margin: 16px 0; padding-top: 12px; border-top: 1px solid rgba(0, 217, 255, 0.2);">
-              <strong style="color: var(--holo-cyan); display: block; margin-bottom: 12px;">Reviews</strong>
-
-              ${mentorReview ? `
-                <div class="mentor-review" style="margin-bottom: 12px; padding: 12px; background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(255, 165, 0, 0.05)); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 4px;">
-                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-family: Consolas, monospace;">
-                    <i class="fa-solid fa-user-circle" style="color: var(--holo-amber); font-size: 16px;"></i>
-                    <strong style="color: var(--holo-amber);">Rendarr</strong>
-                  </div>
-                  <p style="margin: 0; font-size: 12px; line-height: 1.6; font-style: italic; font-family: Consolas, monospace; color: rgba(255, 255, 255, 0.9);">
-                    "${mentorReview}"
-                  </p>
-                </div>
-              ` : ''}
-
-              ${flavorReviews ? `
-                <div class="flavor-reviews" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 12px;">
-                  ${flavorReviews}
-                </div>
-              ` : ''}
-            </div>
-          ` : ''}
-        </div>
-
-        <div class="modal-footer" style="margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(0, 217, 255, 0.2);">
-          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-            <label style="font-size: 13px; color: rgba(255, 255, 255, 0.8);">Qty:</label>
-            <div style="display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 3px; padding: 4px;">
-              <button type="button" class="qty-minus" style="background: none; border: none; color: var(--holo-cyan); cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">−</button>
-              <input type="number" class="qty-input" value="1" min="1" max="999" style="width: 50px; text-align: center; background: transparent; border: none; color: var(--holo-cyan); font-weight: bold;"/>
-              <button type="button" class="qty-plus" style="background: none; border: none; color: var(--holo-cyan); cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">+</button>
-            </div>
-          </div>
-
-          <button type="button" class="modal-add-to-cart holo-btn" style="width: 100%; padding: 12px; background: rgba(0, 217, 255, 0.15); border: 1px solid var(--holo-cyan); color: var(--holo-cyan); font-weight: bold; cursor: pointer; border-radius: 4px;">
-            <i class="fa-solid fa-plus"></i> Add to Cart
-          </button>
-        </div>
-      </div>
-    `;
-  }
 
   _buildTechnicalDetails(item, sys, itemType) {
     const details = [];
