@@ -1234,24 +1234,27 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
         const sender = HolonetSender.system('Bulletin');
         const eventRecord = new HolonetEvent({
+          id: this.bulletinFormEditId || undefined,
           title,
           body,
           intent: 'authored.bulletin_event',
           sender,
           audience,
           priority,
-          state: action === 'publish' ? 'published' : 'draft',
-          createdAt: this.bulletinFormEditId ? new Date().toISOString() : new Date().toISOString(),
+          state: 'draft',
+          createdAt: this.bulletinFormEditId ? undefined : new Date().toISOString(),
           updatedAt: new Date().toISOString()
         });
 
-        if (this.bulletinFormEditId) {
-          // Update existing event
-          eventRecord.id = this.bulletinFormEditId;
+        if (action === 'publish') {
+          await HolonetEngine.publish(eventRecord);
+          ui.notifications.success(`Event "${title}" published`);
+        } else {
+          // Save as draft
+          const { HolonetStorage } = await import('../holonet/subsystems/holonet-storage.js');
+          await HolonetStorage.saveRecord(eventRecord);
+          ui.notifications.success(`Event "${title}" saved as draft`);
         }
-
-        await HolonetEngine.publish(eventRecord);
-        ui.notifications.success(`Event "${title}" ${action === 'publish' ? 'published' : 'saved as draft'}`);
       } else if (this.bulletinFormType === 'message') {
         // Create/update message
         const recipientIds = Array.from(formData.getAll('recipient-ids'));
@@ -1271,22 +1274,26 @@ export class GMDatapad extends BaseSWSEAppV2 {
         });
 
         const messageRecord = new HolonetMessage({
+          id: this.bulletinFormEditId || undefined,
           title,
           body,
           intent: 'authored.bulletin_message',
           sender,
           recipients,
-          state: action === 'publish' ? 'published' : 'draft',
-          createdAt: this.bulletinFormEditId ? new Date().toISOString() : new Date().toISOString(),
+          state: 'draft',
+          createdAt: this.bulletinFormEditId ? undefined : new Date().toISOString(),
           updatedAt: new Date().toISOString()
         });
 
-        if (this.bulletinFormEditId) {
-          messageRecord.id = this.bulletinFormEditId;
+        if (action === 'publish') {
+          await HolonetEngine.publish(messageRecord);
+          ui.notifications.success(`Message "${title}" published`);
+        } else {
+          // Save as draft
+          const { HolonetStorage } = await import('../holonet/subsystems/holonet-storage.js');
+          await HolonetStorage.saveRecord(messageRecord);
+          ui.notifications.success(`Message "${title}" saved as draft`);
         }
-
-        await HolonetEngine.publish(messageRecord);
-        ui.notifications.success(`Message "${title}" ${action === 'publish' ? 'published' : 'saved as draft'}`);
       }
 
       await this._closeBulletinForm();
