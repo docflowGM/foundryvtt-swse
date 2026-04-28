@@ -18,6 +18,10 @@ import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-s
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -57,8 +61,17 @@ export class GMDatapad extends BaseSWSEAppV2 {
   constructor(options = {}) {
     super(options);
     this.currentPage = 'home';
+    this.currentTab = 'transactions';
     this.pageData = {};
     this.NS = 'foundryvtt-swse';
+
+    // Store page state
+    this.transactions = [];
+    this.pendingSales = [];
+    this.storeApprovals = [];
+
+    // Approvals page state
+    this.pendingDroids = [];
   }
 
   async _prepareContext(options) {
@@ -130,41 +143,342 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   /**
    * House Rules page: rule configuration
-   * Will reuse HouseRuleService in Phase 2
+   * Migrated from HouseRulesApp - reuses HouseRuleService
    */
   async _loadHouseRulesContext() {
+    const rules = {
+      characterCreation: this._getRulesForCategory('characterCreation'),
+      combat: this._getRulesForCategory('combat'),
+      force: this._getRulesForCategory('force'),
+      recovery: this._getRulesForCategory('recovery'),
+      skills: this._getRulesForCategory('skills'),
+      vehicles: this._getRulesForCategory('vehicles')
+    };
+
+    const activeRuleCount = Object.values(rules)
+      .flat()
+      .filter(r => r.enabled)
+      .length;
+
     return {
       pageTitle: 'House Rules',
       pageDescription: 'Game rule modifications',
-      migrationTarget: 'HouseRuleService (Phase 2)',
-      placeholder: true
+      rules,
+      activeRuleCount
     };
+  }
+
+  /**
+   * Get all rules for a specific category
+   */
+  _getRulesForCategory(category) {
+    const categoryRules = HOUSE_RULES_CATEGORIES[category] || [];
+    return categoryRules.map(key => ({
+      key,
+      name: this._getRuleName(key),
+      description: this._getRuleDescription(key),
+      enabled: SettingsHelper.getBoolean(key, false),
+      type: this._getRuleType(key)
+    }));
+  }
+
+  /**
+   * Get display name for a rule
+   */
+  _getRuleName(key) {
+    const names = {
+      abilityScoreMethod: 'Ability Score Method',
+      pointBuyPool: 'Point Buy Pool',
+      allowAbilityReroll: 'Allow Ability Reroll',
+      allowPlayersNonheroic: 'Allow Non-Heroic Players',
+      maxStartingCredits: 'Maximum Starting Credits',
+      enableBackgrounds: 'Enable Backgrounds',
+      backgroundSelectionCount: 'Background Selection Count',
+      droidPointBuyPool: 'Droid Point Buy Pool',
+      livingPointBuyPool: 'Living Point Buy Pool',
+      droidConstructionCredits: 'Droid Construction Credits',
+      allowDroidDestiny: 'Allow Droids Destiny Points',
+      conditionTrackCap: 'Condition Track Damage Cap',
+      criticalHitVariant: 'Critical Hit Variant',
+      diagonalMovement: 'Diagonal Movement Cost',
+      weaponRangeReduction: 'Weapon Range Reduction',
+      weaponRangeMultiplier: 'Weapon Range Multiplier',
+      armoredDefenseForAll: 'Armored Defense for All',
+      trackBlasterCharges: 'Track Blaster Charges',
+      secondWindImproved: 'Improved Second Wind',
+      secondWindRecovery: 'Second Wind Recovery Timing',
+      secondWindWebEnhancement: 'Web Enhancement: Second Wind',
+      feintSkill: 'Feint Skill',
+      deathSystem: 'Death System',
+      deathSaveDC: 'Death Save DC',
+      forceTrainingAttribute: 'Force Training Ability',
+      blockDeflectTalents: 'Block & Deflect Behavior',
+      blockMechanicalAlternative: 'Block Mechanic Alternative',
+      forceSensitiveJediOnly: 'Force Sensitive Jedi Restriction',
+      darkSideMaxMultiplier: 'Dark Side Max Score Multiplier',
+      darkSidePowerIncreaseScore: 'Auto-Increase Dark Side Score',
+      darkInspirationEnabled: 'Enable Dark Inspiration',
+      forcePointRecovery: 'Force Point Recovery',
+      darkSideTemptation: 'Dark Side Temptation Mode',
+      skillFocusVariant: 'Skill Focus Variant',
+      skillFocusActivationLevel: 'Delayed Skill Focus Activation',
+      talentTreeRestriction: 'Talent Tree Access Rules',
+      talentEveryLevel: 'Talent Every Level',
+      talentEveryLevelExtraL1: 'Extra Talent at Level 1',
+      talentDoubleLevels: 'Talent Double Level Option',
+      crossClassSkillTraining: 'Cross-Class Skill Training',
+      retrainingEnabled: 'Retraining System',
+      skillTrainingEnabled: 'Skill Training Advancement',
+      trainingPointsPerLevel: 'Training Points Per Level',
+      multiclassBonusChoice: 'Multiclass Bonus Selection',
+      abilityIncreaseMethod: 'Ability Increase Method',
+      grappleEnabled: 'Enable Grapple',
+      grappleVariant: 'Grapple Variant',
+      grappleDCBonus: 'Grapple DC Bonus',
+      flankingEnabled: 'Enable Flanking',
+      flankingBonus: 'Flanking Bonus Type',
+      flankingRequiresConsciousness: 'Flanking Requires Consciousness',
+      flankingLargeCreatures: 'Flanking Large Creatures',
+      flankingDiagonalCounts: 'Diagonal Adjacency Counts',
+      recoveryEnabled: 'Enable Recovery & Healing',
+      recoveryHPType: 'Recovery HP Amount',
+      customRecoveryHP: 'Custom Recovery HP',
+      recoveryVitality: 'Recover Vitality Points',
+      conditionTrackEnabled: 'Enable Enhanced Condition Track',
+      conditionTrackVariant: 'Condition Track Variant',
+      conditionTrackAutoApply: 'Auto-Apply Condition Effects',
+      enableEnhancedMassiveDamage: 'Enable Enhanced Massive Damage',
+      persistentDTPenalty: 'Persistent Damage Threshold Penalty',
+      doubleThresholdPenalty: 'Double Threshold Penalty',
+      eliminateInstantDeath: 'Eliminate Instant Death',
+      healingSkillEnabled: 'Enable Healing Skill Integration',
+      firstAidEnabled: 'Allow First Aid',
+      longTermCareEnabled: 'Allow Long-Term Care',
+      performSurgeryEnabled: 'Allow Surgery',
+      revivifyEnabled: 'Allow Revivify',
+      criticalCareEnabled: 'Allow Critical Care',
+      spaceInitiativeSystem: 'Space Combat Initiative',
+      weaponsOperatorsRollInit: 'Weapons Operators Roll Initiative',
+      enableScaleEngine: 'Enable Scale Engine',
+      enableSWES: 'Enable Subsystem Engine',
+      enableEnhancedShields: 'Enable Enhanced Shields',
+      enableEnhancedEngineer: 'Enable Enhanced Engineer',
+      enableEnhancedPilot: 'Enable Enhanced Pilot',
+      enableEnhancedCommander: 'Enable Enhanced Commander',
+      enableVehicleTurnController: 'Enable Vehicle Turn Controller',
+      enableGlancingHit: 'Enable Glancing Hit Rule',
+      enableLastGrasp: 'Enable Last Grasp',
+      enableEmergencyPatch: 'Enable Emergency Patch',
+      enableExperienceSystem: 'Enable Experience System',
+      statusEffectsEnabled: 'Enable Status Effects',
+      bannedSpecies: 'Banned Species/Races'
+    };
+    return names[key] || key;
+  }
+
+  /**
+   * Get description for a rule
+   */
+  _getRuleDescription(key) {
+    const descriptions = {
+      abilityScoreMethod: 'How ability scores are generated for new characters',
+      pointBuyPool: 'Total ability score points available',
+      allowAbilityReroll: 'Allow players to reroll low stat sets',
+      allowPlayersNonheroic: 'Players can use the NPC generator',
+      maxStartingCredits: 'Receive maximum starting credits',
+      enableBackgrounds: 'Allow selecting backgrounds during creation',
+      allowDroidDestiny: 'Droid characters can have Destiny Points',
+      conditionTrackCap: 'Maximum CT steps moved by one hit',
+      criticalHitVariant: 'How critical hits deal damage',
+      diagonalMovement: 'Grid diagonal movement cost',
+      secondWindImproved: 'Second Wind also moves up Condition Track',
+      secondWindRecovery: 'When Second Wind recovers',
+      forceTrainingAttribute: 'Force Training ability (WIS or CHA)',
+      blockDeflectTalents: 'Block and Deflect as separate or combined',
+      blockMechanicalAlternative: 'Non-Jedi melee weapons can block attacks',
+      darkSideMaxMultiplier: 'Maximum Dark Side score multiplier',
+      darkSidePowerIncreaseScore: 'Using Dark Side power increases DSS',
+      darkInspirationEnabled: 'Dark Inspiration system available',
+      forcePointRecovery: 'When Force Points refresh',
+      darkSideTemptation: 'How Dark Side temptation is handled',
+      skillFocusVariant: 'How Skill Focus calculates bonus',
+      talentEveryLevel: 'Gain talent each level (not just odd)',
+      recoveryEnabled: 'Specialized recovery mechanics during rest',
+      recoveryHPType: 'How much HP is recovered per rest',
+      conditionTrackEnabled: 'Advanced condition track mechanics',
+      healingSkillEnabled: 'Treat Injury provides direct HP recovery',
+      flankingEnabled: 'Flanking bonuses/penalties in combat',
+      grappleEnabled: 'Specialized grapple mechanics',
+      spaceInitiativeSystem: 'Per-person or ship-based initiative',
+      statusEffectsEnabled: 'Condition/status effect tracking',
+      enableScaleEngine: 'Character/starship scale conversions'
+    };
+    return descriptions[key] || '';
+  }
+
+  /**
+   * Get the type of rule
+   */
+  _getRuleType(key) {
+    const defaults = SettingsHelper.DEFAULTS;
+    const value = defaults[key];
+
+    if (typeof value === 'boolean') return 'boolean';
+    if (typeof value === 'string') return 'string';
+    if (typeof value === 'number') return 'number';
+    if (Array.isArray(value)) return 'array';
+    if (typeof value === 'object') return 'object';
+
+    return 'unknown';
   }
 
   /**
    * Store page: governance dashboard
-   * Will migrate GMStoreDashboard content in Phase 2
+   * Migrated from GMStoreDashboard
    */
   async _loadStoreContext() {
+    await this._loadStoreTransactionHistory();
+    await this._loadStorePendingSales();
+    await this._loadStorePendingApprovals();
+
+    const storeOpen = SettingsHelper.getSafe('storeOpen', true);
+    const buyModifier = SettingsHelper.getSafe('globalBuyModifier', 0);
+    const autoAcceptSelling = SettingsHelper.getSafe('autoAcceptItemSales', false);
+    const autoSalePercent = SettingsHelper.getSafe('automaticSalePercentage', 50);
+    const disallowAutoSellNoPrice = SettingsHelper.getSafe('disallowAutoSellNoPrice', true);
+
+    const visibleRarities = SettingsHelper.getObject('visibleRarities', {
+      common: true,
+      uncommon: true,
+      rare: false,
+      restricted: false,
+      illegal: false
+    });
+
+    const visibleTypes = SettingsHelper.getObject('visibleItemTypes', {
+      weapons: true,
+      armor: true,
+      gear: true,
+      droids: true,
+      vehicles: true
+    });
+
+    const blacklistedItems = SettingsHelper.getArray('blacklistedItems', []);
+
     return {
       pageTitle: 'Store',
       pageDescription: 'Store governance and approvals',
-      migrationTarget: 'GMStoreDashboard (Phase 2)',
-      placeholder: true
+      transactions: this.transactions,
+      pendingSales: this.pendingSales,
+      pendingApprovals: this.storeApprovals,
+      storeOpen,
+      buyModifier,
+      autoAcceptSelling,
+      autoSalePercent,
+      disallowAutoSellNoPrice,
+      visibleRarities,
+      visibleTypes,
+      blacklistedItems,
+      actors: game.actors.filter(a => a.isOwner).map(a => ({ id: a.id, name: a.name })),
+      currentTab: this.currentTab
     };
   }
 
   /**
-   * Approvals page: droid, store, and custom approvals
-   * Will migrate GMDroidApprovalDashboard content in Phase 2
+   * Load transaction history from all actors
+   */
+  async _loadStoreTransactionHistory() {
+    this.transactions = [];
+
+    for (const actor of game.actors) {
+      const history = actor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
+      for (const purchase of history) {
+        for (const item of purchase.items) {
+          this.transactions.push({
+            timestamp: purchase.timestamp,
+            actor: actor.name,
+            type: 'Buy',
+            item: item.name,
+            amount: -normalizeCredits(item.cost),
+            source: 'Store',
+            actorId: actor.id,
+            purchaseId: purchase.timestamp
+          });
+        }
+      }
+    }
+
+    this.transactions.sort((a, b) => b.timestamp - a.timestamp);
+  }
+
+  /**
+   * Load pending sales
+   */
+  async _loadStorePendingSales() {
+    this.pendingSales = SettingsHelper.getArray('pendingSales', []);
+  }
+
+  /**
+   * Load pending store approvals (custom droids/vehicles)
+   */
+  async _loadStorePendingApprovals() {
+    this.storeApprovals = SettingsHelper.getArray('pendingCustomPurchases', []);
+
+    for (const approval of this.storeApprovals) {
+      const ownerActor = game.actors.get(approval.ownerActorId);
+      approval.ownerActorName = ownerActor?.name || 'Unknown Player';
+      approval.timeSubmitted = new Date(approval.requestedAt).toLocaleString();
+    }
+  }
+
+  /**
+   * Approvals page: droid and store approvals
+   * Migrated from GMDroidApprovalDashboard and GMStoreDashboard
    */
   async _loadApprovalsContext() {
+    await this._loadPendingDroids();
+    await this._loadStorePendingApprovals();
+
     return {
       pageTitle: 'Approvals',
       pageDescription: 'Pending droid and store approvals',
-      migrationTarget: 'GMDroidApprovalDashboard (Phase 2)',
-      placeholder: true
+      pendingDroids: this.pendingDroids,
+      storeApprovals: this.storeApprovals,
+      hasPendingDroids: this.pendingDroids.length > 0,
+      hasPendingApprovals: this.storeApprovals.length > 0
     };
+  }
+
+  /**
+   * Load pending droids from all actors
+   */
+  async _loadPendingDroids() {
+    this.pendingDroids = [];
+
+    for (const actor of game.actors) {
+      if (!actor.system?.droidSystems) continue;
+      if (actor.system.droidSystems.stateMode !== 'PENDING') continue;
+
+      const droidData = actor.system.droidSystems;
+      const owner = game.users.get(actor.ownership[Object.keys(actor.ownership)[0]]);
+
+      this.pendingDroids.push({
+        actorId: actor.id,
+        actorName: actor.name,
+        ownerName: owner?.name || 'Unknown',
+        degree: droidData.degree || 'Unknown',
+        size: droidData.size || 'Medium',
+        locomotion: droidData.locomotion?.name || 'None',
+        processor: droidData.processor?.name || 'None',
+        armor: droidData.armor?.name || 'None',
+        appendages: droidData.appendages?.length || 0,
+        sensors: droidData.sensors?.length || 0,
+        weapons: droidData.weapons?.length || 0,
+        accessories: droidData.accessories?.length || 0,
+        cost: droidData.credits?.spent || 0,
+        createdAt: droidData.buildHistory?.[0]?.timestamp || 'Unknown'
+      });
+    }
   }
 
   /**
@@ -255,6 +569,391 @@ export class GMDatapad extends BaseSWSEAppV2 {
         }
       });
     });
+
+    // Wire page-specific events based on current page
+    if (this.currentPage === 'store') {
+      await this._wireStoreEvents(root);
+    } else if (this.currentPage === 'house-rules') {
+      await this._wireHouseRulesEvents(root);
+    } else if (this.currentPage === 'approvals') {
+      await this._wireApprovalsEvents(root);
+    }
+  }
+
+  /**
+   * Wire store page events
+   */
+  async _wireStoreEvents(root) {
+    const pageElement = root.querySelector('.gm-datapad-store');
+    if (!pageElement) return;
+
+    // Store availability toggle
+    const storeOpenToggle = pageElement.querySelector('[name="storeOpen"]');
+    if (storeOpenToggle) {
+      storeOpenToggle.addEventListener('change', async (ev) => {
+        await HouseRuleService.set('storeOpen', ev.currentTarget.checked);
+        this.render(false);
+      });
+    }
+
+    // Buy price modifier slider
+    const buyModifierSlider = pageElement.querySelector('[name="buyModifier"]');
+    if (buyModifierSlider) {
+      buyModifierSlider.addEventListener('input', async (ev) => {
+        const value = normalizeCredits(ev.currentTarget.value);
+        await HouseRuleService.set('globalBuyModifier', value);
+      });
+    }
+
+    // Rarity visibility checkboxes
+    for (const rarity of ['common', 'uncommon', 'rare', 'restricted', 'illegal']) {
+      const checkbox = pageElement.querySelector(`[name="rarity-${rarity}"]`);
+      if (checkbox) {
+        checkbox.addEventListener('change', async (ev) => {
+          const visibleRarities = SettingsHelper.getObject('visibleRarities', {});
+          visibleRarities[rarity] = ev.currentTarget.checked;
+          await SettingsHelper.set('visibleRarities', visibleRarities);
+        });
+      }
+    }
+
+    // Item type visibility checkboxes
+    for (const type of ['weapons', 'armor', 'gear', 'droids', 'vehicles']) {
+      const checkbox = pageElement.querySelector(`[name="type-${type}"]`);
+      if (checkbox) {
+        checkbox.addEventListener('change', async (ev) => {
+          const visibleTypes = SettingsHelper.getObject('visibleItemTypes', {});
+          visibleTypes[type] = ev.currentTarget.checked;
+          await SettingsHelper.set('visibleItemTypes', visibleTypes);
+        });
+      }
+    }
+
+    // Auto-accept selling toggle
+    const autoAcceptToggle = pageElement.querySelector('[name="autoAcceptSelling"]');
+    if (autoAcceptToggle) {
+      autoAcceptToggle.addEventListener('change', async (ev) => {
+        await HouseRuleService.set('autoAcceptItemSales', ev.currentTarget.checked);
+        this.render(false);
+      });
+    }
+
+    // Auto-sale percentage slider
+    const autoSaleSlider = pageElement.querySelector('[name="autoSalePercent"]');
+    if (autoSaleSlider) {
+      autoSaleSlider.addEventListener('input', async (ev) => {
+        await HouseRuleService.set('automaticSalePercentage', Number(ev.currentTarget.value));
+      });
+    }
+
+    // Disallow auto-sell no-price toggle
+    const disallowToggle = pageElement.querySelector('[name="disallowAutoSellNoPrice"]');
+    if (disallowToggle) {
+      disallowToggle.addEventListener('change', async (ev) => {
+        await HouseRuleService.set('disallowAutoSellNoPrice', ev.currentTarget.checked);
+      });
+    }
+
+    // Transaction reversal buttons
+    for (const btn of pageElement.querySelectorAll('[data-action="reverse-transaction"]')) {
+      btn.addEventListener('click', async (ev) => {
+        const index = Number(ev.currentTarget.dataset.index);
+        await this._reverseTransaction(index);
+      });
+    }
+  }
+
+  /**
+   * Wire house rules page events
+   */
+  async _wireHouseRulesEvents(root) {
+    const pageElement = root.querySelector('.gm-datapad-house-rules');
+    if (!pageElement) return;
+
+    // Wire checkbox toggles for all rules
+    pageElement.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', async (event) => {
+        const key = event.target.dataset.ruleKey;
+        const checked = event.target.checked;
+
+        try {
+          await HouseRuleService.set(key, checked);
+          SWSELogger.info(`[GMDatapad House Rules] Updated ${key} = ${checked}`);
+        } catch (err) {
+          SWSELogger.error(`[GMDatapad House Rules] Failed to update ${key}:`, err);
+          event.target.checked = !checked;
+        }
+      });
+    });
+
+    // Animate category hover
+    pageElement.querySelectorAll('.rule-category').forEach(category => {
+      category.addEventListener('mouseenter', (event) => {
+        event.currentTarget.classList.add('hovered');
+      });
+      category.addEventListener('mouseleave', (event) => {
+        event.currentTarget.classList.remove('hovered');
+      });
+    });
+  }
+
+  /**
+   * Wire approvals page events
+   */
+  async _wireApprovalsEvents(root) {
+    const pageElement = root.querySelector('.gm-datapad-approvals');
+    if (!pageElement) return;
+
+    // DROID APPROVAL EVENTS
+    for (const btn of pageElement.querySelectorAll('.approve-droid-btn')) {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const actorId = ev.currentTarget?.dataset?.actorId;
+        if (actorId) await this._approveDroid(actorId);
+      });
+    }
+
+    for (const btn of pageElement.querySelectorAll('.reject-droid-btn')) {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const actorId = ev.currentTarget?.dataset?.actorId;
+        if (actorId) await this._rejectDroid(actorId);
+      });
+    }
+
+    for (const btn of pageElement.querySelectorAll('.view-droid-details-btn')) {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const actorId = ev.currentTarget?.dataset?.actorId;
+        if (actorId) {
+          const actor = game.actors.get(actorId);
+          if (actor) actor.sheet.render(true);
+        }
+      });
+    }
+
+    // STORE APPROVAL EVENTS
+    for (const btn of pageElement.querySelectorAll('[data-action="preview-approval"]')) {
+      btn.addEventListener('click', async (ev) => {
+        const approvalIndex = Number(ev.currentTarget.dataset.index);
+        await this._previewPendingCustom(approvalIndex);
+      });
+    }
+
+    for (const btn of pageElement.querySelectorAll('[data-action="edit-approval"]')) {
+      btn.addEventListener('click', async (ev) => {
+        const approvalIndex = Number(ev.currentTarget.dataset.index);
+        await this._editPendingCustom(approvalIndex);
+      });
+    }
+
+    for (const btn of pageElement.querySelectorAll('[data-action="approve-custom"]')) {
+      btn.addEventListener('click', async (ev) => {
+        const approvalIndex = Number(ev.currentTarget.dataset.index);
+        await this._approvePendingCustom(approvalIndex);
+      });
+    }
+
+    for (const btn of pageElement.querySelectorAll('[data-action="deny-custom"]')) {
+      btn.addEventListener('click', async (ev) => {
+        const approvalIndex = Number(ev.currentTarget.dataset.index);
+        await this._denyPendingCustom(approvalIndex);
+      });
+    }
+  }
+
+  /**
+   * Reverse a transaction and adjust credits
+   */
+  async _reverseTransaction(index) {
+    if (index < 0 || index >= this.transactions.length) {
+      ui?.notifications?.error?.('Invalid transaction index');
+      return;
+    }
+
+    const transaction = this.transactions[index];
+    const actor = game.actors.get(transaction.actorId);
+
+    if (!actor) {
+      ui?.notifications?.error?.('Actor not found');
+      return;
+    }
+
+    const currentCredits = Number(actor.system.credits) || 0;
+    const newCredits = currentCredits - transaction.amount;
+
+    try {
+      await ActorEngine.updateActor(actor, { 'system.credits': newCredits });
+      ui?.notifications?.info?.(`Reversed transaction: ${transaction.actor} now has ${newCredits} credits`);
+      this.render(false);
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error reversing transaction:', err);
+      ui?.notifications?.error?.(`Failed to reverse transaction: ${err.message}`);
+    }
+  }
+
+  /**
+   * Approve a pending droid
+   */
+  async _approveDroid(actorId) {
+    const actor = game.actors.get(actorId);
+    if (!actor) {
+      ui?.notifications?.error?.('Actor not found');
+      return;
+    }
+
+    const droidData = actor.system.droidSystems;
+    if (droidData.stateMode !== 'PENDING') {
+      ui?.notifications?.warn?.('This droid is not pending approval');
+      return;
+    }
+
+    const currentCredits = Number(actor.system.credits) || 0;
+    const cost = droidData.credits?.spent || 0;
+    const newCredits = Math.max(0, currentCredits - cost);
+
+    const updates = {
+      'system.credits': newCredits,
+      'system.droidSystems.stateMode': 'FINALIZED'
+    };
+
+    try {
+      await ActorEngine.updateActor(actor, updates);
+      const buildHistory = droidData.buildHistory || [];
+      buildHistory.push({
+        timestamp: Date.now(),
+        action: 'approved',
+        approvedAt: new Date().toLocaleString()
+      });
+      await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
+
+      ui?.notifications?.info?.(`Droid "${actor.name}" approved`);
+      this.render(false);
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error approving droid:', err);
+      ui?.notifications?.error?.(`Failed to approve droid: ${err.message}`);
+    }
+  }
+
+  /**
+   * Reject a pending droid
+   */
+  async _rejectDroid(actorId) {
+    const actor = game.actors.get(actorId);
+    if (!actor) {
+      ui?.notifications?.error?.('Actor not found');
+      return;
+    }
+
+    const droidData = actor.system.droidSystems;
+    if (droidData.stateMode !== 'PENDING') {
+      ui?.notifications?.warn?.('This droid is not pending approval');
+      return;
+    }
+
+    const updates = {
+      'system.droidSystems.stateMode': 'REJECTED'
+    };
+
+    try {
+      await ActorEngine.updateActor(actor, updates);
+      const buildHistory = droidData.buildHistory || [];
+      buildHistory.push({
+        timestamp: Date.now(),
+        action: 'rejected',
+        rejectedAt: new Date().toLocaleString()
+      });
+      await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
+
+      ui?.notifications?.info?.(`Droid "${actor.name}" rejected`);
+      this.render(false);
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error rejecting droid:', err);
+      ui?.notifications?.error?.(`Failed to reject droid: ${err.message}`);
+    }
+  }
+
+  /**
+   * Preview a pending custom purchase
+   */
+  async _previewPendingCustom(index) {
+    if (index < 0 || index >= this.storeApprovals.length) {
+      ui?.notifications?.error?.('Invalid approval index');
+      return;
+    }
+
+    const approval = this.storeApprovals[index];
+    const actor = game.actors.get(approval.ownerActorId);
+
+    if (actor) {
+      actor.sheet.render(true);
+    }
+  }
+
+  /**
+   * Edit a pending custom purchase (placeholder for Phase 3)
+   */
+  async _editPendingCustom(index) {
+    ui?.notifications?.info?.('Edit functionality coming in Phase 3');
+  }
+
+  /**
+   * Approve a pending custom purchase
+   */
+  async _approvePendingCustom(index) {
+    if (index < 0 || index >= this.storeApprovals.length) {
+      ui?.notifications?.error?.('Invalid approval index');
+      return;
+    }
+
+    const approval = this.storeApprovals[index];
+    const actor = game.actors.get(approval.ownerActorId);
+
+    if (!actor) {
+      ui?.notifications?.error?.('Actor not found');
+      return;
+    }
+
+    const currentCredits = Number(actor.system.credits) || 0;
+    const cost = approval.costCredits || 0;
+    const newCredits = Math.max(0, currentCredits - cost);
+
+    try {
+      await ActorEngine.updateActor(actor, { 'system.credits': newCredits });
+
+      const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+      approvals.splice(index, 1);
+      await SettingsHelper.set('pendingCustomPurchases', approvals);
+
+      ui?.notifications?.info?.(`Approved: ${approval.draftData.name}`);
+      this.render(false);
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error approving custom purchase:', err);
+      ui?.notifications?.error?.(`Failed to approve: ${err.message}`);
+    }
+  }
+
+  /**
+   * Deny a pending custom purchase
+   */
+  async _denyPendingCustom(index) {
+    if (index < 0 || index >= this.storeApprovals.length) {
+      ui?.notifications?.error?.('Invalid approval index');
+      return;
+    }
+
+    try {
+      const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+      const denial = approvals[index];
+      approvals.splice(index, 1);
+      await SettingsHelper.set('pendingCustomPurchases', approvals);
+
+      ui?.notifications?.info?.(`Denied: ${denial.draftData.name}`);
+      this.render(false);
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error denying custom purchase:', err);
+      ui?.notifications?.error?.(`Failed to deny: ${err.message}`);
+    }
   }
 
   /**
@@ -263,8 +962,53 @@ export class GMDatapad extends BaseSWSEAppV2 {
   async _navigateTo(pageId) {
     SWSELogger.log(`[GM Datapad] Navigating to: ${pageId}`);
     this.currentPage = pageId;
+    if (pageId === 'store') {
+      this.currentTab = 'transactions';
+    }
     await this.render(false);
   }
 }
+
+/**
+ * House Rules Categories
+ */
+const HOUSE_RULES_CATEGORIES = {
+  characterCreation: [
+    'abilityScoreMethod', 'pointBuyPool', 'allowAbilityReroll', 'allowPlayersNonheroic',
+    'maxStartingCredits', 'enableBackgrounds', 'backgroundSelectionCount',
+    'droidPointBuyPool', 'livingPointBuyPool', 'droidConstructionCredits', 'allowDroidDestiny'
+  ],
+  combat: [
+    'conditionTrackCap', 'criticalHitVariant', 'diagonalMovement', 'weaponRangeReduction',
+    'weaponRangeMultiplier', 'armoredDefenseForAll', 'trackBlasterCharges', 'secondWindImproved',
+    'secondWindRecovery', 'secondWindWebEnhancement', 'feintSkill', 'deathSystem', 'deathSaveDC'
+  ],
+  force: [
+    'forceTrainingAttribute', 'blockDeflectTalents', 'blockMechanicalAlternative',
+    'forceSensitiveJediOnly', 'darkSideMaxMultiplier', 'darkSidePowerIncreaseScore',
+    'darkInspirationEnabled', 'forcePointRecovery', 'darkSideTemptation'
+  ],
+  recovery: [
+    'recoveryEnabled', 'recoveryHPType', 'customRecoveryHP', 'recoveryVitality',
+    'conditionTrackEnabled', 'conditionTrackVariant', 'conditionTrackAutoApply',
+    'enableEnhancedMassiveDamage', 'persistentDTPenalty', 'doubleThresholdPenalty',
+    'eliminateInstantDeath', 'healingSkillEnabled', 'firstAidEnabled', 'longTermCareEnabled',
+    'performSurgeryEnabled', 'revivifyEnabled', 'criticalCareEnabled'
+  ],
+  skills: [
+    'skillFocusVariant', 'skillFocusActivationLevel', 'talentTreeRestriction', 'talentEveryLevel',
+    'talentEveryLevelExtraL1', 'talentDoubleLevels', 'crossClassSkillTraining', 'retrainingEnabled',
+    'skillTrainingEnabled', 'trainingPointsPerLevel', 'multiclassBonusChoice', 'abilityIncreaseMethod',
+    'grappleEnabled', 'grappleVariant', 'grappleDCBonus', 'flankingEnabled', 'flankingBonus',
+    'flankingRequiresConsciousness', 'flankingLargeCreatures', 'flankingDiagonalCounts'
+  ],
+  vehicles: [
+    'spaceInitiativeSystem', 'weaponsOperatorsRollInit', 'enableScaleEngine', 'enableSWES',
+    'enableEnhancedShields', 'enableEnhancedEngineer', 'enableEnhancedPilot',
+    'enableEnhancedCommander', 'enableVehicleTurnController', 'enableGlancingHit',
+    'enableLastGrasp', 'enableEmergencyPatch', 'enableExperienceSystem', 'statusEffectsEnabled',
+    'bannedSpecies'
+  ]
+};
 
 export default GMDatapad;
