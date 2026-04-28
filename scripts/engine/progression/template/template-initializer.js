@@ -10,6 +10,9 @@
  * Entry point:
  *   const session = await TemplateInitializer.initializeForChargen(actor, options);
  *   // session is ProgressionSession with template data populated, or null if freeform
+ *
+ * V2 COMPLIANCE: Template selection is session-only/draft-only. No actor mutations occur
+ * until confirmation through ProgressionFinalizer → ActorEngine.
  */
 
 import { TemplateSelectionDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/template-selection-dialog.js';
@@ -18,11 +21,45 @@ import { TemplateAdapter } from '/systems/foundryvtt-swse/scripts/engine/progres
 import { TemplateValidator } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-validator.js';
 import { ProgressionSession } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-session.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { DroidBuilderAdapter } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/droid-builder-adapter.js';
 
 export class TemplateInitializer {
   /**
+   * Resolve progression subtype for chargen based on actor and options.
+   * Used to determine which templates are eligible for filtering.
+   *
+   * @param {Actor} actor - Actor being created
+   * @param {Object} options - Options that may specify subtype
+   * @returns {string} Subtype: 'actor' (heroic), 'droid', 'nonheroic', 'beast', 'follower'
+   * @private
+   */
+  static _resolveChargenSubtype(actor, options = {}) {
+    // Explicit subtype override
+    if (options.subtype) {
+      return options.subtype;
+    }
+
+    if (!actor) {
+      return 'actor';
+    }
+
+    // Check if droid context is active (droid builder should be used)
+    if (DroidBuilderAdapter.shouldUseDroidBuilder(actor.system || {})) {
+      return 'droid';
+    }
+
+    // Check for nonheroic context
+    if (actor.flags?.swse?.beastData || actor.system?.isDroid === false) {
+      return 'nonheroic';
+    }
+
+    return 'actor';
+  }
+
+  /**
    * Initialize chargen with optional template selection.
    * Blocks until user makes a choice or cancels.
+   * Template selection is the ONLY entry point; no re-selection during progression.
    *
    * @param {Actor} actor - Actor being created
    * @param {Object} options - Initialization options
@@ -41,13 +78,17 @@ export class TemplateInitializer {
     }
 
     try {
+      // Resolve chargen subtype for filtering
+      const subtype = this._resolveChargenSubtype(actor, options);
+
       swseLogger.log('[TemplateInitializer] Starting chargen initialization', {
         actorName: actor.name,
         actorType: actor.type,
+        subtype,
       });
 
-      // Step 1: Show template selection dialog
-      const templateId = await TemplateSelectionDialog.showChoiceDialog(actor);
+      // Step 1: Show template selection dialog with subtype awareness
+      const templateId = await TemplateSelectionDialog.showChoiceDialog(actor, { subtype });
 
       // User cancelled (false) or chose freeform (null)
       if (templateId === false) {
@@ -104,6 +145,11 @@ export class TemplateInitializer {
         templateName: template.name,
         valid: validation.valid,
       });
+
+      // V2 COMPLIANCE GUARD: Ensure template data is session-only (not persisted to actor)
+      if (session && !session.isTemplateSession) {
+        swseLogger.warn('[TemplateInitializer] Template session not marked as template-session');
+      }
 
       return session;
     } catch (err) {
