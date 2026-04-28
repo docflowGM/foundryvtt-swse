@@ -217,33 +217,6 @@
 /* NEW SHELL — HUD / HEADER / TABS / FILTER BAR / VIEWPORT     */
 /* ============================================================ */
 
-.store-hud {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 14px 5px;
-  border-bottom: 1px solid rgba(79, 209, 197, 0.15);
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(79, 209, 197, 0.45);
-  flex-shrink: 0;
-}
-.store-hud-left, .store-hud-right { display: flex; align-items: center; gap: 10px; }
-.store-hud-title { color: rgba(79, 209, 197, 0.65); letter-spacing: 0.3em; }
-.store-hud-sep { opacity: 0.3; }
-.store-hud-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--holo-green);
-  box-shadow: 0 0 5px rgba(76, 255, 158, 0.5);
-  animation: storeHudPulse 2.2s ease-in-out infinite;
-}
-@keyframes storeHudPulse { 0%,100%{opacity:0.45;} 50%{opacity:1;} }
-@media (prefers-reduced-motion: reduce) { .store-hud-dot { animation: none; opacity: 0.8; } }
-.store-hud-status { color: rgba(76, 255, 158, 0.65); }
-.store-hud-cart-count { font-weight: 700; color: var(--holo-yellow); }
-.store-hud-label { color: rgba(79, 209, 197, 0.4); }
-
 .store-header {
   display: grid;
   grid-template-columns: 72px 1fr auto;
@@ -307,6 +280,11 @@
   font-size: 9px; letter-spacing: 0.18em;
   color: rgba(79, 209, 197, 0.45); text-transform: uppercase;
 }
+.store-credits-cart {
+  font-size: 9px; letter-spacing: 0.16em;
+  color: rgba(79, 209, 197, 0.4); text-transform: uppercase;
+}
+.store-credits-cart [data-cart-count] { color: var(--holo-yellow); font-weight: 700; }
 
 .store-tabs {
   display: flex;

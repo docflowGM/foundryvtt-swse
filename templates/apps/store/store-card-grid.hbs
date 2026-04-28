@@ -1,19 +1,6 @@
 <div class="swse-sheet">
 <form class="swse-store swse-store-ui store-shell" autocomplete="off">
 
-  <div class="store-hud">
-    <div class="store-hud-left">
-      <span class="store-hud-title">GALACTIC TRADE EXCHANGE</span>
-      <span class="store-hud-sep">·</span>
-      <span class="store-hud-dot"></span>
-      <span class="store-hud-status">LIVE</span>
-    </div>
-    <div class="store-hud-right">
-      <span data-cart-count class="store-hud-cart-count">{{cartCount}}</span>
-      <span class="store-hud-label">IN CART</span>
-    </div>
-  </div>
-
   <div class="store-header">
     <div class="store-portrait">
       <img src="{{rendarrImage}}" alt="Rendarr" class="rendarr-image"/>
@@ -30,6 +17,7 @@
       <div class="store-credits-label">ACCOUNT</div>
       <div class="store-credits-val"><span class="credits-icon">₢</span>{{credits}}</div>
       <div class="store-credits-reserve">Reserve ₢ {{pageContext.cartRemaining}}</div>
+      <div class="store-credits-cart">Cart: <span data-cart-count>{{cartCount}}</span></div>
     </div>
   </div>
 
