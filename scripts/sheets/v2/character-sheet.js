@@ -360,6 +360,7 @@ export class SWSEV2CharacterSheet extends
     this._shellOverlay = null;
     this._shellDrawer = null;
     this._shellModal = null;
+    this._shellRouterRegistered = false; // Guard to register only once per session
   }
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
@@ -941,8 +942,10 @@ export class SWSEV2CharacterSheet extends
     }, 100);
 
     // ─── Phase 11: Shell Host Registration + Event Wiring ─────────────────
-    if (this.actor?.id) {
+    // Register only once per session (first render) to avoid redundant re-registration
+    if (this.actor?.id && !this._shellRouterRegistered) {
       ShellRouter.register(this.actor.id, this);
+      this._shellRouterRegistered = true;
     }
     this._wireShellEvents(root, signal);
   }
@@ -3877,11 +3880,8 @@ const forcePoints = [];
       });
     };
 
-    // Add global listener with cleanup on signal abort
-    document.addEventListener("click", globalClose, { capture: false });
-    signal?.addEventListener("abort", () => {
-      document.removeEventListener("click", globalClose, { capture: false });
-    });
+    // Add global listener with signal-based cleanup (automatic teardown on rerender)
+    document.addEventListener("click", globalClose, { capture: false, signal });
   }
 
   /* ============================================================
