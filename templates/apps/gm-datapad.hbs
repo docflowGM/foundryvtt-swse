@@ -1,0 +1,155 @@
+<div class="gm-datapad-container swse-ui-shell swse-datapad flexcol">
+  {{!-- GM Datapad Shell --}}
+  <div class="swse-datapad swse-screen gm-datapad-screen flexcol">
+
+    {{!-- Home Page --}}
+    {{#if (eq currentPage "home")}}
+    <div class="gm-datapad-page gm-datapad-home">
+      <div class="page-header">
+        <h2>GM Operations</h2>
+        <p class="page-subtitle">Master control for store, rules, approvals, and party management</p>
+      </div>
+
+      <div class="app-cards-grid">
+        {{#each apps}}
+        <button class="app-card swse-ui-button" data-app-card="{{this.id}}"
+                title="{{this.description}}">
+          <div class="app-card-icon">
+            <i class="{{this.icon}}"></i>
+          </div>
+          <div class="app-card-label">{{this.label}}</div>
+          <div class="app-card-desc">{{this.description}}</div>
+        </button>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Bulletin Page --}}
+    {{else if (eq currentPage "bulletin")}}
+    <div class="gm-datapad-page gm-datapad-bulletin">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>{{pageTitle}}</h2>
+        <p class="page-subtitle">{{pageDescription}}</p>
+      </div>
+
+      <div class="bulletin-content">
+        <div class="bulletin-section">
+          <h3>Party Bulletin</h3>
+          <div class="bulletin-section-content swse-ui-panel">
+            <p class="placeholder">Party notices not yet configured</p>
+            <p class="note">Phase 2: Backed by journals and actor flags</p>
+          </div>
+        </div>
+
+        <div class="bulletin-section">
+          <h3>Player Bulletins</h3>
+          <div class="bulletin-section-content swse-ui-panel">
+            {{#if playerBulletins.length}}
+            {{#each playerBulletins}}
+            <div class="player-bulletin">
+              <strong>{{this.playerName}}</strong>
+              <p>{{this.notice}}</p>
+            </div>
+            {{/each}}
+            {{else}}
+            <p class="placeholder">No individual player notices</p>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- House Rules Page --}}
+    {{else if (eq currentPage "house-rules")}}
+    <div class="gm-datapad-page gm-datapad-house-rules">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>{{pageTitle}}</h2>
+        <p class="page-subtitle">{{pageDescription}}</p>
+      </div>
+
+      <div class="page-content swse-ui-panel">
+        <p class="placeholder">House rules configuration page</p>
+        <p class="note">Phase 2: Will migrate from HouseRulesApp and reuse HouseRuleService</p>
+        <p class="note">Target: {{migrationTarget}}</p>
+      </div>
+    </div>
+
+    {{!-- Store Page --}}
+    {{else if (eq currentPage "store")}}
+    <div class="gm-datapad-page gm-datapad-store">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>{{pageTitle}}</h2>
+        <p class="page-subtitle">{{pageDescription}}</p>
+      </div>
+
+      <div class="page-content swse-ui-panel">
+        <p class="placeholder">Store governance dashboard</p>
+        <p class="note">Phase 2: Will migrate GMStoreDashboard content</p>
+        <p class="note">Target: {{migrationTarget}}</p>
+      </div>
+    </div>
+
+    {{!-- Approvals Page --}}
+    {{else if (eq currentPage "approvals")}}
+    <div class="gm-datapad-page gm-datapad-approvals">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>{{pageTitle}}</h2>
+        <p class="page-subtitle">{{pageDescription}}</p>
+      </div>
+
+      <div class="page-content swse-ui-panel">
+        <p class="placeholder">Approvals dashboard</p>
+        <p class="note">Phase 2: Will migrate droid and store approvals</p>
+        <p class="note">Target: {{migrationTarget}}</p>
+      </div>
+    </div>
+
+    {{!-- Workspace Page --}}
+    {{else if (eq currentPage "workspace")}}
+    <div class="gm-datapad-page gm-datapad-workspace">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>{{pageTitle}}</h2>
+        <p class="page-subtitle">{{pageDescription}}</p>
+      </div>
+
+      <div class="workspace-content">
+        {{#if gmActors.length}}
+        <div class="actors-grid">
+          {{#each gmActors}}
+          <div class="actor-card swse-ui-panel">
+            <div class="actor-img">
+              <img src="{{this.img}}" alt="{{this.name}}">
+            </div>
+            <div class="actor-info">
+              <h4>{{this.name}}</h4>
+              <p class="actor-type">{{this.type}}</p>
+              <button class="swse-ui-button" data-open-actor="{{this.id}}">
+                Open Sheet
+              </button>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        {{else}}
+        <p class="placeholder">No GM-owned actors</p>
+        {{/if}}
+      </div>
+    </div>
+
+    {{else}}
+    <div class="gm-datapad-page gm-datapad-error">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>Unknown Page</h2>
+      </div>
+      <p class="error-message">Page "{{currentPage}}" not found</p>
+    </div>
+    {{/if}}
+
+  </div>
+</div>

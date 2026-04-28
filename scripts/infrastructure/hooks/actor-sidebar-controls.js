@@ -16,6 +16,7 @@ import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-mai
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 import { NPCTemplateImporter } from "/systems/foundryvtt-swse/scripts/apps/npc-template-importer.js";
 import { GMStoreDashboard } from "/systems/foundryvtt-swse/scripts/apps/gm-store-dashboard.js";
+import { GMDatapad } from "/systems/foundryvtt-swse/scripts/apps/gm-datapad.js";
 
 function onClickChargen(app) {
   // Chargen requires an actor
@@ -97,6 +98,22 @@ function onClickGMDashboard(app) {
   }
 }
 
+function onClickGMDatapad(app) {
+  // GM Datapad launcher - GMs only
+  if (!(game.user?.isGM ?? false)) {
+    ui?.notifications?.warn?.('Only GMs can access the GM Datapad.');
+    return;
+  }
+  SWSELogger.log('[Actor Sidebar] Opening GM Datapad');
+  try {
+    const datapad = new GMDatapad();
+    datapad.render(true);
+  } catch (err) {
+    SWSELogger.error('[Actor Sidebar] Error opening GM Datapad:', err);
+    ui?.notifications?.error?.(`Failed to open GM Datapad: ${err.message}`);
+  }
+}
+
 function onClickNPCTemplates(app) {
   // NPC Template Importer - GMs only
   if (!(game.user?.isGM ?? false)) {
@@ -175,6 +192,14 @@ export function registerActorSidebarControls() {
         icon: 'fa-solid fa-cog',
         label: 'Store Dashboard',
         handler: () => onClickGMDashboard(app)
+      });
+
+      // GM Datapad button (GM only)
+      controls.unshift({
+        action: 'swse-gm-datapad',
+        icon: 'fa-solid fa-display',
+        label: 'GM Datapad',
+        handler: () => onClickGMDatapad(app)
       });
     }
 
