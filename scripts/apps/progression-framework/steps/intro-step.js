@@ -772,55 +772,10 @@ export class IntroStep extends ProgressionStepPlugin {
       }
     });
 
-    // Phase 2: Pick Profile button handler (bound to data-role, not data-action)
-    $surface.on('click', '[data-role="intro-pick-profile"]', async (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-
-      swseLogger.debug('[IntroStep.activateListeners] Pick Profile button clicked');
-
-      try {
-        // Guard against double-click
-        if (this._transitionInProgress) {
-          swseLogger.warn('[IntroStep.activateListeners] Transition in progress, ignoring');
-          return;
-        }
-
-        const liveActor = this._shell?.actor;
-        if (!liveActor) {
-          swseLogger.error('[IntroStep.activateListeners] No actor available for template selection');
-          return;
-        }
-
-        // Open template selection dialog
-        const templateId = await TemplateSelectionDialog.showChoiceDialog(liveActor);
-
-        // Handle result
-        if (templateId) {
-          // User selected a template — advance to next step
-          swseLogger.debug('[IntroStep.activateListeners] Template selected', { templateId });
-          this._continueClicked = true;
-          this._state = INTRO_STATE.TRANSITIONING;
-          this._transitionInProgress = true;
-          await this._transitionToNextStep();
-        } else if (templateId === null) {
-          // User chose "Create from Scratch" — advance to next step
-          swseLogger.debug('[IntroStep.activateListeners] Freeform chargen chosen');
-          this._continueClicked = true;
-          this._state = INTRO_STATE.TRANSITIONING;
-          this._transitionInProgress = true;
-          await this._transitionToNextStep();
-        }
-        // templateId === false → user cancelled, no action
-      } catch (error) {
-        swseLogger.error('[IntroStep.activateListeners] ERROR handling Pick Profile button', {
-          error: error.message,
-          stack: error.stack,
-        });
-        this._transitionInProgress = false;
-        this._continueClicked = false;
-      }
-    });
+    // Phase 2 (REMOVED): Pick Profile button was a duplicate template selection path.
+    // Template selection now happens ONLY at boot time via TemplateInitializer.initializeForChargen().
+    // Session state is the single source of truth; no re-selection during intro step.
+    // This ensures v2 compliance: template selection is session-only and non-mutating.
 
     // Droid creation mode choice (Build Custom vs Select Standard Model)
     $surface.on('click', '[data-role="droid-build-custom"]', async (event) => {

@@ -254,6 +254,33 @@ export class TemplateValidator {
     const feats = session.draftSelections.feats;
     if (!feats || feats.length === 0) return;
 
+    // V2 HARDENING: Detect duplicate feats (data legality)
+    const featsByName = new Map();
+    const duplicates = [];
+    feats.forEach((feat, idx) => {
+      const name = feat.name || feat.id;
+      if (featsByName.has(name)) {
+        duplicates.push({
+          name,
+          indices: [featsByName.get(name), idx],
+        });
+      } else {
+        featsByName.set(name, idx);
+      }
+    });
+
+    if (duplicates.length > 0) {
+      report.invalid.push({
+        selection: 'feats',
+        reason: `Template contains duplicate feat entries: ${duplicates.map(d => d.name).join(', ')}`,
+        suggestion: 'Remove duplicate feat entries from template data',
+      });
+      session.dirtyNodes = session.dirtyNodes || new Set();
+      session.dirtyNodes.add('feats');
+      swseLogger.warn('[TemplateValidator] Duplicate feats detected in template', { duplicates });
+      return;
+    }
+
     // Check prerequisite constraints on each feat
     try {
       const mockActor = this._buildMockActorForValidation(session, actor);
@@ -299,6 +326,33 @@ export class TemplateValidator {
   static async _validateTalents(session, actor, report) {
     const talents = session.draftSelections.talents;
     if (!talents || talents.length === 0) return;
+
+    // V2 HARDENING: Detect duplicate talents (data legality)
+    const talentsByName = new Map();
+    const duplicates = [];
+    talents.forEach((talent, idx) => {
+      const name = talent.name || talent.id;
+      if (talentsByName.has(name)) {
+        duplicates.push({
+          name,
+          indices: [talentsByName.get(name), idx],
+        });
+      } else {
+        talentsByName.set(name, idx);
+      }
+    });
+
+    if (duplicates.length > 0) {
+      report.invalid.push({
+        selection: 'talents',
+        reason: `Template contains duplicate talent entries: ${duplicates.map(d => d.name).join(', ')}`,
+        suggestion: 'Remove duplicate talent entries from template data',
+      });
+      session.dirtyNodes = session.dirtyNodes || new Set();
+      session.dirtyNodes.add('talents');
+      swseLogger.warn('[TemplateValidator] Duplicate talents detected in template', { duplicates });
+      return;
+    }
 
     // Check class availability and slot constraints
     try {
