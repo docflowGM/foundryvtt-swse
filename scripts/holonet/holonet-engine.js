@@ -159,4 +159,41 @@ export class HolonetEngine {
   static get feed() {
     return HolonetFeedService;
   }
+
+  /**
+   * Retrieve records for diagnostic/validation purposes (read-only)
+   * Usage: await SWSE.holonet.getRecordsForValidation()
+   */
+  static async getRecordsForValidation(limit = 10) {
+    const records = await HolonetStorage.getAllRecords();
+    return records
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, limit)
+      .map(r => ({
+        id: r.id,
+        type: r.type,
+        intent: r.intent,
+        title: r.title,
+        state: r.state,
+        sourceFamily: r.sourceFamily,
+        createdAt: r.createdAt,
+        recipientCount: r.recipients?.length ?? 0
+      }));
+  }
+
+  /**
+   * Count records by intent (diagnostic)
+   */
+  static async getRecordsByIntent(intent) {
+    const records = await HolonetStorage.getAllRecords();
+    return records.filter(r => r.intent === intent);
+  }
+
+  /**
+   * Count all records (diagnostic)
+   */
+  static async getRecordCount() {
+    const records = await HolonetStorage.getAllRecords();
+    return records.length;
+  }
 }

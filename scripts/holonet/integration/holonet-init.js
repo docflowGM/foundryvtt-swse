@@ -1,7 +1,7 @@
 /**
  * Holonet Initialization
  *
- * Registers settings, sources, and hooks
+ * Registers settings, sources, emitters, and hooks
  */
 
 import { HolonetEngine } from '../holonet-engine.js';
@@ -14,6 +14,9 @@ import { ProgressionSource } from '../sources/progression-source.js';
 import { BulletinSource } from '../sources/bulletin-source.js';
 import { MessengerSource } from '../sources/messenger-source.js';
 import { SystemSource } from '../sources/system-source.js';
+import { ProgressionEmitter } from '../emitters/progression-emitter.js';
+import { ApprovalsEmitter } from '../emitters/approvals-emitter.js';
+import { StoreEmitter } from '../emitters/store-emitter.js';
 
 /**
  * Register Holonet settings
@@ -64,5 +67,10 @@ export async function initializeHolonet() {
   await HolonetEngine.initialize();
   await HolonetSourceRegistry.initializeAll();
 
-  console.log('[Holonet] Initialization complete');
+  // Initialize emitters (live paths)
+  await ProgressionEmitter.initialize();
+  await ApprovalsEmitter.initialize();
+  await StoreEmitter.initialize();
+
+  console.log('[Holonet] Initialization complete (emitters active)');
 }
