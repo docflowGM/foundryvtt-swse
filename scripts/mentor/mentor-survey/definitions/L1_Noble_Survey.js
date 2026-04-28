@@ -1,101 +1,87 @@
+
 import { buildSurveyDefinition } from '../definition-builder.js';
 
-const survey = buildSurveyDefinition({
-  surveyId: 'L1_Noble',
-  classId: 'noble',
-  displayName: "Noble",
-  mentorKey: "Noble",
-  archetypes: [
-  {
-    "id": "battlefield_commander",
-    "name": "Battlefield Commander",
-    "notes": "Combat-oriented Noble focused on improving allies' accuracy, morale, and coordination.",
-    "mechanicalBias": {
-      "moraleBonus": 3,
-      "initiative": 2,
-      "commandAuthority": 3
-    },
-    "roleBias": {
-      "support": 3,
-      "leader": 3
-    },
-    "attributeBias": {
-      "cha": 3,
-      "int": 2
-    }
-  },
-  {
-    "id": "master_orator",
-    "name": "Master Orator",
-    "notes": "Charisma-maximizing Noble focused on persuasion, negotiation, and narrative control.",
-    "mechanicalBias": {
-      "socialManipulation": 3,
-      "skillUtility": 3,
-      "networkInfluence": 3
-    },
-    "roleBias": {
-      "support": 2,
-      "controller": 3
-    },
-    "attributeBias": {
-      "cha": 3,
-      "int": 1
-    }
-  },
-  {
-    "id": "tactical_coordinator",
-    "name": "Tactical Coordinator",
-    "notes": "Optimized around granting allies extra actions, improving initiative flow, and battlefield coordination.",
-    "mechanicalBias": {
-      "initiative": 3,
-      "allySupport": 2
-    },
-    "roleBias": {
-      "support": 3,
-      "leader": 2
-    },
-    "attributeBias": {
-      "cha": 2,
-      "int": 2,
-      "dex": 1
-    }
-  },
-  {
-    "id": "political_strategist",
-    "name": "Political Strategist",
-    "notes": "Resource-focused Noble emphasizing contacts, influence networks, and long-term strategic advantage.",
-    "mechanicalBias": {
-      "skillUtility": 3,
-      "resourceControl": 3,
-      "networkInfluence": 3
-    },
-    "roleBias": {
-      "utility": 3,
-      "support": 2
-    },
-    "attributeBias": {
-      "int": 3,
-      "cha": 2
-    }
-  },
-  {
-    "id": "inspirational_supporter",
-    "name": "Inspirational Supporter",
-    "notes": "Defensive support Noble focused on morale bonuses and helping allies recover from condition penalties.",
-    "mechanicalBias": {
-      "moraleBonus": 3,
-      "damageMitigationAura": 3
-    },
-    "roleBias": {
-      "support": 3,
-      "defender": 1
-    },
-    "attributeBias": {
-      "cha": 3,
-      "wis": 1
+function mergeBiasLayers(archetypes, scalar = 1) {
+  const out = { mechanicalBias: {}, roleBias: {}, attributeBias: {} };
+  for (const archetype of archetypes || []) {
+    for (const layer of ['mechanicalBias', 'roleBias', 'attributeBias']) {
+      for (const [key, value] of Object.entries(archetype?.[layer] || {})) {
+        const normalizedKey = layer === 'attributeBias'
+          ? ({ str:'strength', dex:'dexterity', con:'constitution', int:'intelligence', wis:'wisdom', cha:'charisma' }[key] || key)
+          : key;
+        out[layer][normalizedKey] = (out[layer][normalizedKey] || 0) + (Number(value || 0) * scalar);
+      }
     }
   }
-]
-});
+  return out;
+}
+const answer = (d) => d;
+const archetypes = [
+  { id:'battlefield_commander', name:'Officer', notes:'A command-focused Noble built to coordinate allies, issue orders, and maintain battlefield discipline.', mechanicalBias:{ moraleBonus:3, initiative:2, commandAuthority:3 }, roleBias:{ support:3, leader:3 }, attributeBias:{ cha:3, int:2 } },
+  { id:'master_orator', name:'Diplomat', notes:'A social and political Noble who solves problems through negotiation, persuasion, and careful control of conversation.', mechanicalBias:{ socialManipulation:3, skillUtility:3, networkInfluence:3 }, roleBias:{ support:2, controller:3 }, attributeBias:{ cha:3, int:1 } },
+  { id:'tactical_coordinator', name:'Tactician', notes:'A planning-oriented Noble who wins by preparation, coordination, and timing.', mechanicalBias:{ initiative:3, allySupport:2 }, roleBias:{ support:3, leader:2 }, attributeBias:{ cha:2, int:2, dex:1 } },
+  { id:'political_strategist', name:'Mastermind', notes:'A long-game schemer who relies on leverage, manipulation, and layered plans rather than direct confrontation.', mechanicalBias:{ skillUtility:3, resourceControl:3, networkInfluence:3 }, roleBias:{ utility:3, support:2 }, attributeBias:{ int:3, cha:2 } },
+  { id:'inspirational_supporter', name:'Celebrity', notes:'A public-facing Noble who uses presence, reputation, and personal magnetism to influence others.', mechanicalBias:{ moraleBonus:3, damageMitigationAura:2, networkInfluence:2 }, roleBias:{ support:3, leader:1 }, attributeBias:{ cha:3, wis:1 } }
+];
+
+const q1 = { id:'q1_public_role', text:'Please select the description that best reflects your public role.', options: archetypes.map((entry)=>answer({ id:entry.id, label:entry.name, detailRailTitle:entry.name, detailRailText:entry.notes, detailTags:[entry.name,'Noble'], archetypeHint:entry.id, biasLayers:mergeBiasLayers([entry],0.24), biases:{ archetype:entry.id } })) };
+const q2 = { id:'q2_pressure_role', text:'When circumstances become strained, what function do you assume first?', options:[
+  answer({ id:'issue_commands', label:'Issue commands', detailRailTitle:'Issue Commands', detailRailText:'You respond to pressure by directing others toward coordinated action.', detailTags:['Command','Leadership','Morale','Initiative'], biasLayers:{ mechanicalBias:{ commandAuthority:3, moraleBonus:2, initiative:1 }, roleBias:{ leader:3, support:2 }, attributeBias:{ charisma:2, intelligence:1 } }, biases:{ skillBias:['initiative','persuasion'], talentBias:['leadership','command','morale'], featBias:['leadership','support'] } }),
+  answer({ id:'control_the_room', label:'Control the room', detailRailTitle:'Control the Room', detailRailText:'You solve pressure by shaping attention, emotion, and conversation.', detailTags:['Influence','Negotiation','Presence','Control'], biasLayers:{ mechanicalBias:{ socialManipulation:3, networkInfluence:2 }, roleBias:{ controller:3, support:1 }, attributeBias:{ charisma:3, wisdom:1 } }, biases:{ skillBias:['persuasion','gatherInformation','deception'], talentBias:['diplomacy','influence','control'], featBias:['social','utility'] } }),
+  answer({ id:'support_the_team', label:'Support the team', detailRailTitle:'Support the Team', detailRailText:'You steady the people around you and make the group stronger as a whole.', detailTags:['Support','Morale','Recovery','Loyalty'], biasLayers:{ mechanicalBias:{ moraleBonus:2, allySupport:3, damageMitigationAura:1 }, roleBias:{ support:3, defender:1 }, attributeBias:{ charisma:2, wisdom:1 } }, biases:{ skillBias:['persuasion','treatInjury'], talentBias:['support','morale'], featBias:['support','leadership'] } }),
+  answer({ id:'exploit_weaknesses', label:'Exploit weaknesses', detailRailTitle:'Exploit Weaknesses', detailRailText:'You prefer precision, leverage, and identifying the one weakness that matters most.', detailTags:['Leverage','Precision','Deception','Strategy'], biasLayers:{ mechanicalBias:{ skillUtility:2, resourceControl:2, socialManipulation:1 }, roleBias:{ utility:2, controller:1 }, attributeBias:{ intelligence:2, charisma:1 } }, biases:{ skillBias:['deception','gatherInformation','knowledge'], talentBias:['schemes','leverage','strategy'], featBias:['deception','utility'] } }),
+  answer({ id:'stay_one_step_ahead', label:'Stay one step ahead', detailRailTitle:'Stay One Step Ahead', detailRailText:'You value foresight, positioning, and never being surprised twice.', detailTags:['Preparation','Awareness','Initiative','Adaptability'], biasLayers:{ mechanicalBias:{ initiative:3, skillUtility:1 }, roleBias:{ utility:2, support:1 }, attributeBias:{ intelligence:2, dexterity:1, wisdom:1 } }, biases:{ skillBias:['initiative','perception','knowledge'], talentBias:['strategy','timing','coordination'], featBias:['initiative','utility'] } })
+]};
+const q3 = { id:'q3_education', text:'What course of study best reflects your education?', options:[
+  answer({ id:'veterinary_school', label:'Veterinary School', detailRailTitle:'Veterinary School', detailRailText:'Your education emphasized care, anatomy, and practical treatment, often with a field-oriented focus.', detailTags:['Treat Injury','Ride','Perception','Compassion'], biasLayers:{ mechanicalBias:{ skillUtility:2 }, roleBias:{ support:2 }, attributeBias:{ wisdom:2, charisma:1 } }, biases:{ skillBias:['treatInjury','ride','perception'], prestigeBias:['medic'] } }),
+  answer({ id:'technical_school', label:'Technical School', detailRailTitle:'Technical School', detailRailText:'Your education emphasized systems, machinery, and solving problems through technical competence.', detailTags:['Use Computer','Pilot','Technical Knowledge','Systems'], biasLayers:{ mechanicalBias:{ skillUtility:3 }, roleBias:{ utility:2 }, attributeBias:{ intelligence:2, dexterity:1 } }, biases:{ skillBias:['useComputer','pilot','knowledge'], prestigeBias:['corporate_agent','master_privateer'] } }),
+  answer({ id:'political_science_school', label:'Political Science School', detailRailTitle:'Political Science School', detailRailText:'Your education emphasized institutions, influence, negotiation, and the management of public power.', detailTags:['Persuasion','Deception','Gather Information','Bureaucracy'], biasLayers:{ mechanicalBias:{ socialManipulation:2, networkInfluence:3, skillUtility:1 }, roleBias:{ controller:2, utility:1 }, attributeBias:{ charisma:2, intelligence:2 } }, biases:{ skillBias:['persuasion','deception','gatherInformation','knowledge'], prestigeBias:['officer','corporate_agent','charlatan'] } }),
+  answer({ id:'medical_school', label:'Medical School', detailRailTitle:'Medical School', detailRailText:'Your education emphasized diagnosis, treatment, and preserving life when others would falter.', detailTags:['Treat Injury','Knowledge','Support','Calm Under Pressure'], biasLayers:{ mechanicalBias:{ skillUtility:2, allySupport:1 }, roleBias:{ support:3 }, attributeBias:{ wisdom:2, intelligence:2 } }, biases:{ skillBias:['treatInjury','knowledge','perception'], prestigeBias:['medic'] } }),
+  answer({ id:'holo_science_school', label:'Holo-Science School', detailRailTitle:'Holo-Science School', detailRailText:'Your education emphasized advanced analytical disciplines, research, and technical theory.', detailTags:['Knowledge','Use Computer','Analysis','Research'], biasLayers:{ mechanicalBias:{ skillUtility:3, resourceControl:1 }, roleBias:{ utility:3 }, attributeBias:{ intelligence:3, wisdom:1 } }, biases:{ skillBias:['knowledge','useComputer','gatherInformation'], prestigeBias:['corporate_agent'] } }),
+  answer({ id:'military_school', label:'Military School', detailRailTitle:'Military School', detailRailText:'Your education emphasized command hierarchy, battlefield readiness, discipline, and the ability to direct others under pressure.', detailTags:['Initiative','Persuasion','Pilot','Tactical Knowledge'], biasLayers:{ mechanicalBias:{ initiative:2, commandAuthority:2 }, roleBias:{ leader:2, support:1 }, attributeBias:{ charisma:1, intelligence:2, dexterity:1 } }, biases:{ skillBias:['initiative','persuasion','pilot','knowledge'], prestigeBias:['officer','master_privateer'] } }),
+  answer({ id:'business_school', label:'Business School', detailRailTitle:'Business School', detailRailText:'Your education emphasized markets, incentives, negotiation, and the practical use of influence.', detailTags:['Persuasion','Deception','Gather Information','Leverage'], biasLayers:{ mechanicalBias:{ networkInfluence:2, resourceControl:2, socialManipulation:1 }, roleBias:{ utility:2, controller:1 }, attributeBias:{ charisma:2, intelligence:2 } }, biases:{ skillBias:['persuasion','deception','gatherInformation','knowledge'], prestigeBias:['corporate_agent','crime_lord','charlatan'] } })
+]};
+const q4 = { id:'q4_future_path', text:'What future do you consider most fitting for yourself?', options:[
+  answer({ id:'future_officer', label:'Military service, commanding troops on the battlefield', detailRailTitle:'Officer', detailRailText:'You see your future in command, discipline, and battlefield authority.', detailTags:['Command','Leadership','Discipline','Morale'], biasLayers:{ mechanicalBias:{ commandAuthority:3, moraleBonus:2 }, roleBias:{ leader:3, support:1 }, attributeBias:{ charisma:2, intelligence:1 } }, biases:{ prestigeBias:['officer'] } }),
+  answer({ id:'future_master_privateer', label:'Finding my fortune in the stars', detailRailTitle:'Master Privateer', detailRailText:'You see your future in daring ventures, mobility, and profit beyond the safety of ordinary systems.', detailTags:['Risk','Mobility','Pilot','Enterprise'], biasLayers:{ mechanicalBias:{ initiative:1, resourceControl:2 }, roleBias:{ utility:2, leader:1 }, attributeBias:{ dexterity:2, charisma:1, intelligence:1 } }, biases:{ prestigeBias:['master_privateer'] } }),
+  answer({ id:'future_corporate_agent', label:'Joining the private sector', detailRailTitle:'Corporate Agent', detailRailText:'You expect to gain influence through institutions, contracts, and the quiet machinery of organized power.', detailTags:['Influence','Leverage','Bureaucracy','Systems'], biasLayers:{ mechanicalBias:{ networkInfluence:3, resourceControl:2 }, roleBias:{ utility:3, controller:1 }, attributeBias:{ intelligence:2, charisma:2 } }, biases:{ prestigeBias:['corporate_agent'] } }),
+  answer({ id:'future_charlatan', label:'Gaining riches by any means necessary', detailRailTitle:'Charlatan', detailRailText:'You are willing to use deception, performance, and flexible identity in pursuit of wealth and advantage.', detailTags:['Deception','Persona','Adaptability','Opportunism'], biasLayers:{ mechanicalBias:{ socialManipulation:3, skillUtility:1 }, roleBias:{ controller:2, utility:1 }, attributeBias:{ charisma:3, intelligence:1 } }, biases:{ prestigeBias:['charlatan'] } }),
+  answer({ id:'future_crime_lord', label:'Vying for control in the underworld', detailRailTitle:'Crime Lord', detailRailText:'You see your future in influence, fear, favors, and power built outside the law.', detailTags:['Control','Underworld','Influence','Ruthlessness'], biasLayers:{ mechanicalBias:{ resourceControl:3, networkInfluence:2 }, roleBias:{ leader:2, controller:2 }, attributeBias:{ charisma:2, intelligence:1, wisdom:1 } }, biases:{ prestigeBias:['crime_lord'] } }),
+  answer({ id:'future_medic', label:'Saving lives and healing the sick', detailRailTitle:'Medic', detailRailText:'You see your future in preserving life, stabilizing others, and remaining indispensable when things go wrong.', detailTags:['Treat Injury','Support','Recovery','Duty'], biasLayers:{ mechanicalBias:{ allySupport:2, skillUtility:2 }, roleBias:{ support:3 }, attributeBias:{ wisdom:2, intelligence:1, charisma:1 } }, biases:{ prestigeBias:['medic'] } })
+]};
+const q5Branches = {
+  battlefield_commander: [
+    answer({ id:'officer_1', label:'Order is mercy.', detailRailTitle:'Order Is Mercy', detailRailText:'You believe structure, command, and decisiveness protect people from chaos.', detailTags:['Command','Discipline','Protection','Morale'], biasLayers:{ mechanicalBias:{ commandAuthority:3, moraleBonus:2 }, roleBias:{ leader:3, support:1 }, attributeBias:{ charisma:2, wisdom:1 } }, biases:{ skillBias:['initiative','knowledge'], talentBias:['leadership','command','morale'], featBias:['leadership','support','improved_initiative'], prestigeBias:['officer'] } }),
+    answer({ id:'officer_2', label:'Someone must keep people moving.', detailRailTitle:'Keep People Moving', detailRailText:'You define yourself by keeping others coordinated, useful, and pointed in the right direction.', detailTags:['Coordination','Command','Efficiency','Momentum'], biasLayers:{ mechanicalBias:{ allySupport:2, commandAuthority:2, initiative:1 }, roleBias:{ leader:2, support:2 }, attributeBias:{ charisma:2, intelligence:1 } }, biases:{ skillBias:['initiative','persuasion'], talentBias:['command','coordination'], featBias:['support','leadership'], prestigeBias:['officer'] } }),
+    answer({ id:'officer_3', label:'A poor decision is more dangerous than enemy fire.', detailRailTitle:'Judgment Over Theater', detailRailText:'You believe correct decisions, made on time, matter more than charisma alone.', detailTags:['Judgment','Timing','Leadership','Discipline'], biasLayers:{ mechanicalBias:{ initiative:2, commandAuthority:2 }, roleBias:{ leader:2, utility:1 }, attributeBias:{ intelligence:2, charisma:1 } }, biases:{ skillBias:['initiative','knowledge','gatherInformation'], talentBias:['strategy','command'], featBias:['improved_initiative','support'], prestigeBias:['officer'] } }),
+    answer({ id:'officer_4', label:'Panic is contagious. So is confidence.', detailRailTitle:'Confidence Under Pressure', detailRailText:'You see leadership as emotional control as much as command authority.', detailTags:['Morale','Presence','Command','Confidence'], biasLayers:{ mechanicalBias:{ moraleBonus:3, commandAuthority:1 }, roleBias:{ leader:2, support:2 }, attributeBias:{ charisma:3 } }, biases:{ skillBias:['persuasion','initiative'], talentBias:['morale','leadership'], featBias:['leadership','support'], prestigeBias:['officer'] } })
+  ],
+  master_orator: [
+    answer({ id:'diplomat_1', label:'A conflict settled is worth more than a battle won.', detailRailTitle:'Peace Before Victory', detailRailText:'You believe the finest solution is the one that ends conflict without waste.', detailTags:['Negotiation','Peace','Influence','Composure'], biasLayers:{ mechanicalBias:{ socialManipulation:3, networkInfluence:1 }, roleBias:{ controller:2, support:1 }, attributeBias:{ charisma:3, wisdom:1 } }, biases:{ skillBias:['persuasion','gatherInformation'], talentBias:['diplomacy','influence'], featBias:['social','leadership'], prestigeBias:['corporate_agent'] } }),
+    answer({ id:'diplomat_2', label:'Most people simply wish to be heard.', detailRailTitle:'Hear Them First', detailRailText:'You believe understanding motives is the first requirement of changing outcomes.', detailTags:['Empathy','Persuasion','Insight','Influence'], biasLayers:{ mechanicalBias:{ socialManipulation:2, skillUtility:1 }, roleBias:{ support:2, controller:1 }, attributeBias:{ charisma:2, wisdom:2 } }, biases:{ skillBias:['persuasion','perception','gatherInformation'], talentBias:['social','support'], featBias:['social','insight'], prestigeBias:['corporate_agent'] } }),
+    answer({ id:'diplomat_3', label:'Courtesy is not weakness.', detailRailTitle:'Courtesy as Strength', detailRailText:'You believe civility, precision, and restraint grant you more influence than force ever could.', detailTags:['Courtesy','Control','Presence','Precision'], biasLayers:{ mechanicalBias:{ socialManipulation:2, networkInfluence:2 }, roleBias:{ controller:2 }, attributeBias:{ charisma:3, intelligence:1 } }, biases:{ skillBias:['persuasion','knowledge'], talentBias:['diplomacy','influence'], featBias:['social','utility'], prestigeBias:['corporate_agent'] } }),
+    answer({ id:'diplomat_4', label:'Words fail only when they are chosen poorly.', detailRailTitle:'Words Chosen Properly', detailRailText:'You believe language is a tool of precision, and that most failure begins with careless speech.', detailTags:['Language','Persuasion','Precision','Control'], biasLayers:{ mechanicalBias:{ socialManipulation:3, skillUtility:1 }, roleBias:{ controller:2 }, attributeBias:{ charisma:2, intelligence:2 } }, biases:{ skillBias:['persuasion','knowledge','gatherInformation'], talentBias:['social','precision'], featBias:['social','utility'], prestigeBias:['corporate_agent','charlatan'] } })
+  ],
+  tactical_coordinator: [
+    answer({ id:'tactician_1', label:'Preparation spares everyone unnecessary suffering.', detailRailTitle:'Preparation First', detailRailText:'You believe foresight is an obligation, not merely a preference.', detailTags:['Preparation','Strategy','Discipline','Efficiency'], biasLayers:{ mechanicalBias:{ initiative:3, allySupport:1 }, roleBias:{ support:2, utility:1 }, attributeBias:{ intelligence:3, charisma:1 } }, biases:{ skillBias:['initiative','knowledge','gatherInformation'], talentBias:['strategy','coordination'], featBias:['improved_initiative','support'], prestigeBias:['officer'] } }),
+    answer({ id:'tactician_2', label:'Victory belongs to the patient.', detailRailTitle:'Victory Belongs to the Patient', detailRailText:'You value timing, composure, and entering a contest only when the shape of it favors you.', detailTags:['Timing','Patience','Control','Planning'], biasLayers:{ mechanicalBias:{ initiative:2, resourceControl:1, allySupport:1 }, roleBias:{ utility:2, support:1 }, attributeBias:{ intelligence:2, wisdom:1, dexterity:1 } }, biases:{ skillBias:['initiative','perception','knowledge'], talentBias:['timing','strategy'], featBias:['improved_initiative','utility'], prestigeBias:['officer','master_privateer'] } }),
+    answer({ id:'tactician_3', label:'The field belongs to whoever understands it first.', detailRailTitle:'Understand the Field', detailRailText:'You see advantage as a matter of comprehension: whoever reads the whole field first controls it.', detailTags:['Awareness','Battlefield','Control','Analysis'], biasLayers:{ mechanicalBias:{ initiative:2, skillUtility:2 }, roleBias:{ utility:2, controller:1 }, attributeBias:{ intelligence:2, wisdom:1 } }, biases:{ skillBias:['initiative','perception','knowledge'], talentBias:['analysis','coordination'], featBias:['improved_initiative','utility'], prestigeBias:['officer'] } }),
+    answer({ id:'tactician_4', label:'Improvisation is only respectable when built on discipline.', detailRailTitle:'Disciplined Improvisation', detailRailText:'You value adaptability, but only when it is grounded in disciplined competence.', detailTags:['Adaptability','Discipline','Structure','Timing'], biasLayers:{ mechanicalBias:{ initiative:2, allySupport:1, skillUtility:1 }, roleBias:{ support:1, utility:2 }, attributeBias:{ intelligence:2, charisma:1, dexterity:1 } }, biases:{ skillBias:['initiative','useComputer','knowledge'], talentBias:['coordination','strategy'], featBias:['improved_initiative','utility'], prestigeBias:['officer','master_privateer'] } })
+  ],
+  political_strategist: [
+    answer({ id:'mastermind_1', label:'People reveal everything if one is patient enough.', detailRailTitle:'Patience Reveals Everything', detailRailText:'You believe control begins with understanding what others expose when they think they are safe.', detailTags:['Observation','Leverage','Patience','Control'], biasLayers:{ mechanicalBias:{ resourceControl:2, skillUtility:2, socialManipulation:1 }, roleBias:{ utility:3, controller:1 }, attributeBias:{ intelligence:3, wisdom:1 } }, biases:{ skillBias:['gatherInformation','deception','knowledge'], talentBias:['schemes','leverage'], featBias:['utility','social'], prestigeBias:['corporate_agent','crime_lord'] } }),
+    answer({ id:'mastermind_2', label:'It is preferable to arrange matters before they become untidy.', detailRailTitle:'Arrange Matters Early', detailRailText:'You prefer outcomes that are decided quietly, before others realize they were ever in doubt.', detailTags:['Schemes','Preparation','Leverage','Control'], biasLayers:{ mechanicalBias:{ resourceControl:3, networkInfluence:2 }, roleBias:{ utility:3, controller:1 }, attributeBias:{ intelligence:3, charisma:1 } }, biases:{ skillBias:['gatherInformation','deception','useComputer'], talentBias:['planning','schemes'], featBias:['utility','social'], prestigeBias:['corporate_agent','crime_lord','charlatan'] } }),
+    answer({ id:'mastermind_3', label:'A useful smile is still a weapon.', detailRailTitle:'A Smile Is a Weapon', detailRailText:'You treat charm, performance, and social grace as tools to obtain compliant outcomes.', detailTags:['Charm','Manipulation','Deception','Influence'], biasLayers:{ mechanicalBias:{ socialManipulation:3, networkInfluence:2 }, roleBias:{ controller:2, utility:1 }, attributeBias:{ charisma:3, intelligence:1 } }, biases:{ skillBias:['deception','persuasion','gatherInformation'], talentBias:['social','manipulation'], featBias:['social','deception'], prestigeBias:['charlatan','crime_lord'] } }),
+    answer({ id:'mastermind_4', label:'The obvious move is for other people.', detailRailTitle:'The Obvious Move Is for Others', detailRailText:'You value subtlety, indirection, and acting from angles others fail to account for.', detailTags:['Subtlety','Control','Indirection','Precision'], biasLayers:{ mechanicalBias:{ skillUtility:2, resourceControl:2, socialManipulation:1 }, roleBias:{ utility:2, controller:1 }, attributeBias:{ intelligence:3, dexterity:1 } }, biases:{ skillBias:['deception','useComputer','gatherInformation'], talentBias:['schemes','precision'], featBias:['utility','deception'], prestigeBias:['corporate_agent','charlatan'] } })
+  ],
+  inspirational_supporter: [
+    answer({ id:'celebrity_1', label:'People remember how you made them feel.', detailRailTitle:'People Remember the Feeling', detailRailText:'You believe memory, morale, and public feeling matter as much as formal power.', detailTags:['Morale','Presence','Public Influence','Memory'], biasLayers:{ mechanicalBias:{ moraleBonus:3, networkInfluence:2 }, roleBias:{ support:2, leader:1 }, attributeBias:{ charisma:3, wisdom:1 } }, biases:{ skillBias:['persuasion','gatherInformation'], talentBias:['morale','presence'], featBias:['social','support'], prestigeBias:['charlatan','crime_lord'] } }),
+    answer({ id:'celebrity_2', label:'Reputation opens doors before words are spoken.', detailRailTitle:'Reputation Opens Doors', detailRailText:'You understand that reputation does not merely decorate power; it creates access to it.', detailTags:['Reputation','Influence','Access','Presence'], biasLayers:{ mechanicalBias:{ networkInfluence:3, socialManipulation:1 }, roleBias:{ utility:1, support:1 }, attributeBias:{ charisma:3, intelligence:1 } }, biases:{ skillBias:['persuasion','deception','gatherInformation'], talentBias:['presence','influence'], featBias:['social','utility'], prestigeBias:['charlatan','corporate_agent'] } }),
+    answer({ id:'celebrity_3', label:'Charm is wasted if it serves no one.', detailRailTitle:'Charm in Service of Others', detailRailText:'You believe your public influence is most meaningful when it steadies and strengthens others.', detailTags:['Support','Morale','Presence','Loyalty'], biasLayers:{ mechanicalBias:{ moraleBonus:3, allySupport:1 }, roleBias:{ support:3 }, attributeBias:{ charisma:3, wisdom:1 } }, biases:{ skillBias:['persuasion','treatInjury'], talentBias:['morale','support'], featBias:['support','social'], prestigeBias:['medic'] } }),
+    answer({ id:'celebrity_4', label:'Attention is a current. One should learn to direct it.', detailRailTitle:'Direct the Attention', detailRailText:'You see public focus as a current to be guided, redirected, and shaped toward useful outcomes.', detailTags:['Attention','Control','Presence','Influence'], biasLayers:{ mechanicalBias:{ networkInfluence:2, socialManipulation:2 }, roleBias:{ controller:2, support:1 }, attributeBias:{ charisma:3, intelligence:1 } }, biases:{ skillBias:['persuasion','deception','gatherInformation'], talentBias:['presence','control'], featBias:['social','deception'], prestigeBias:['charlatan','crime_lord'] } })
+  ]
+};
+
+const survey = buildSurveyDefinition({ surveyId:'L1_Noble', classId:'noble', displayName:'Noble', mentorKey:'Noble', archetypes, questions:[q1,q2,q3,q4], resolveQuestions(answers={}) { const selected = answers?.[q1.id]?.id; return [q1,q2,q3,q4,{ id:'q5_identity_statement', text:'Which of the following would you consider most accurate?', options:q5Branches[selected] || [] }]; } });
 
 export default survey;

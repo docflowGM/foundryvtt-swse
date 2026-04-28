@@ -1,26 +1,38 @@
-import SURVEY_DEFINITIONS from './definitions/index.js';
+import JediSurvey from './definitions/L1_Jedi_Survey.js';
+import NobleSurvey from './definitions/L1_Noble_Survey.js';
+import ScoutSurvey from './definitions/L1_Scout_Survey.js';
+import SoldierSurvey from './definitions/L1_Soldier_Survey.js';
+import ScoundrelSurvey from './definitions/L1_Scoundrel_Survey.js';
+
+const REGISTRY = {
+  jedi: JediSurvey,
+  noble: NobleSurvey,
+  scout: ScoutSurvey,
+  soldier: SoldierSurvey,
+  scoundrel: ScoundrelSurvey,
+};
 
 function normalizeClassId(value) {
-  return String(value || '')
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_|_$/g, '');
+  const raw = String(value || '').trim();
+  if (!raw) return null;
+  const lowered = raw.toLowerCase();
+  const aliases = {
+    'jedi': 'jedi',
+    'noble': 'noble',
+    'scout': 'scout',
+    'soldier': 'soldier',
+    'scoundrel': 'scoundrel',
+  };
+  return aliases[lowered] || lowered;
 }
 
 export function getSurveyDefinition(classNameOrId) {
-  const classId = normalizeClassId(classNameOrId);
-  return SURVEY_DEFINITIONS[classId] || null;
-}
-
-export function getAllSurveyDefinitions() {
-  return Object.values(SURVEY_DEFINITIONS);
+  const key = normalizeClassId(classNameOrId);
+  return key ? REGISTRY[key] || null : null;
 }
 
 export function getSurveyDefinitionForActor(actor) {
-  const classItems = actor?.items?.filter?.((item) => item.type === 'class') || [];
+  const classItems = actor?.items?.filter?.((i) => i.type === 'class') || [];
   const latest = classItems[classItems.length - 1];
   return getSurveyDefinition(latest?.name || actor?.system?.details?.class?.name || null);
 }
-
-export { normalizeClassId, SURVEY_DEFINITIONS };

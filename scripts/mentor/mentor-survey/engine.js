@@ -1,5 +1,4 @@
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
-import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { getSurveyDefinition, getSurveyDefinitionForActor } from './registry.js';
 
 function mergeLayer(target, source) {
@@ -26,18 +25,15 @@ function buildArchetypeScores(definition, answers) {
         score += (biasLayers.roleBias?.[key] || 0) * Number(value || 0);
       }
       for (const [key, value] of Object.entries(archetype.attributeBias || {})) {
-        const attrKey = ['str','dex','con','int','wis','cha'].includes(key)
-          ? ({str:'strength',dex:'dexterity',con:'constitution',int:'intelligence',wis:'wisdom',cha:'charisma'})[key]
-          : key;
-        score += (biasLayers.attributeBias?.[attrKey] || 0) * Number(value || 0);
+        score += (biasLayers.attributeBias?.[key] || 0) * Number(value || 0);
       }
       scores[archetype.id] = (scores[archetype.id] || 0) + score;
     }
   }
   return Object.entries(scores)
-    .sort((a,b)=>b[1]-a[1])
-    .slice(0,3)
-    .map(([id, score]) => ({ id, score, archetype: definition?.archetypes?.find?.((entry)=>entry.id===id) || null }));
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([id, score]) => ({ id, score, archetype: definition?.archetypes?.find?.((e) => e.id === id) || null }));
 }
 
 export function getSurveyResponses(actor) {
@@ -61,12 +57,25 @@ export function convertSurveyAnswersToBias(surveyAnswers) {
   return biasLayers;
 }
 
+export function extractSurveyIntentTags(surveyAnswers) {
+  const out = {};
+  for (const answer of Object.values(surveyAnswers || {})) {
+    for (const [key, value] of Object.entries(answer?.biases || {})) {
+      if (typeof value === 'number') out[key] = Math.max(Number(out[key] || 0), value);
+      else if (Array.isArray(value)) out[key] = Array.from(new Set([...(out[key] || []), ...value]));
+      else if (value !== undefined && value !== null && value !== '') out[key] = value;
+    }
+  }
+  return out;
+}
+
 export function processSurveyAnswers(surveyAnswers, definition = null) {
   const out = {};
   const scores = definition ? buildArchetypeScores(definition, surveyAnswers) : [];
   for (const answer of Object.values(surveyAnswers || {})) {
     for (const [key, value] of Object.entries(answer?.biases || {})) {
       if (typeof value === 'number') out[key] = (out[key] || 0) + value;
+      else if (Array.isArray(value)) out[key] = Array.from(new Set([...(out[key] || []), ...value]));
       else if (value) out[key] = value;
     }
   }
@@ -78,12 +87,16 @@ export function processSurveyAnswers(surveyAnswers, definition = null) {
 }
 
 export function buildSurveyStepData(definition, answers = {}) {
+  const resolvedQuestions = typeof definition?.resolveQuestions === 'function'
+    ? definition.resolveQuestions(answers)
+    : (definition?.questions || []);
+
   return {
     surveyId: definition?.surveyId || null,
     surveyType: definition?.surveyType || 'l1',
     classDisplayName: definition?.classDisplayName || null,
     mentor: definition?.mentor || null,
-    questions: (definition?.questions || []).map((question) => ({
+    questions: (resolvedQuestions || []).map((question) => ({
       ...question,
       selected: answers?.[question.id]?.id || null
     })),

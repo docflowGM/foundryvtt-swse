@@ -12,6 +12,7 @@ import {
   getSurveyDefinition,
   buildSurveyStepData,
   convertSurveyAnswersToBias,
+  extractSurveyIntentTags,
   processSurveyAnswers,
 } from '/systems/foundryvtt-swse/scripts/apps/mentor/mentor-survey.js';
 import { IdentityEngine } from '/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js';
@@ -46,7 +47,7 @@ function summarizeBiasLayer(layer, prefix) {
     .sort((a, b) => Number(b[1] || 0) - Number(a[1] || 0))
     .slice(0, 3)
     .map(([key]) => ({
-      label: `${prefix}: ${String(key).replace(/[_-]+/g, ' ').replace(/(^|\s)\w/g, (m) => m.toUpperCase())}`,
+      label: `Tag: ${String(key).replace(/[_-]+/g, ' ').replace(/(^|\s)\w/g, (m) => m.toUpperCase())}`,
       cssClass: `is-${prefix.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
     }));
 }
@@ -87,7 +88,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       const input = event.currentTarget;
       const questionId = input?.dataset?.questionId;
       const optionId = input?.value;
-      const question = this._surveyDefinition?.questions?.find?.((entry) => entry.id === questionId);
+      const question = this._getRenderableQuestions()?.find?.((entry) => entry.id === questionId);
       const option = question?.options?.find?.((entry) => entry.id === optionId);
       if (!question || !option) return;
       this._surveyAnswers[questionId] = option;
@@ -104,14 +105,17 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   async onStepExit(shell) {
     if (!this._surveyDefinition) return;
     const surveyBias = convertSurveyAnswersToBias(this._surveyAnswers);
+    const surveyIntentTags = extractSurveyIntentTags(this._surveyAnswers);
     IdentityEngine.injectSurveyBias(shell.actor, surveyBias);
 
     if (!shell.actor.system.swse) shell.actor.system.swse = {};
+    shell.actor.system.swse.mentorBuildIntentBiases = { ...surveyIntentTags };
     if (!shell.actor.system.swse.surveyResponses) shell.actor.system.swse.surveyResponses = {};
     shell.actor.system.swse.surveyResponses[this._surveyDefinition.classId] = {
       completed: true,
       surveyId: this._surveyDefinition.surveyId,
       answers: { ...this._surveyAnswers },
+      intentTags: { ...surveyIntentTags },
     };
 
     const surveySummary = processSurveyAnswers(this._surveyAnswers, this._surveyDefinition);
@@ -121,6 +125,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       answers: { ...this._surveyAnswers },
       biasLayers: surveyBias,
       summary: surveySummary,
+      intentTags: surveyIntentTags,
     });
   }
 
@@ -172,7 +177,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   }
 
   renderDetailsPanel() {
-    const question = this._surveyDefinition?.questions?.[this._activeQuestionIndex] || null;
+    const question = this._getRenderableQuestions()?.[this._activeQuestionIndex] || null;
     const selectedOption = question ? this._surveyAnswers?.[question.id] || null : null;
 
     if (!question) {
@@ -191,23 +196,25 @@ export class L1SurveyStep extends ProgressionStepPlugin {
         template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/l1-survey-details.hbs',
         data: {
           title: `Question ${this._activeQuestionIndex + 1}`,
-          summary: 'Pick the short answer that feels right. The details rail explains what that choice means for your build.',
+          summary: 'Choose the answer that feels closest to the character you want to play. The detail rail will update once you make your call.',
           tags: [],
         },
       };
     }
 
-    const tags = [
-      ...summarizeBiasLayer(selectedOption?.biasLayers?.roleBias, 'Role'),
-      ...summarizeBiasLayer(selectedOption?.biasLayers?.mechanicalBias, 'Focus'),
-      ...summarizeBiasLayer(selectedOption?.biasLayers?.attributeBias, 'Lean')
-    ].slice(0, 6);
+    const tags = Array.isArray(selectedOption?.detailTags) && selectedOption.detailTags.length
+      ? selectedOption.detailTags.map((label) => ({ label: `Tag: ${label}`, cssClass: 'is-tag' }))
+      : [
+          ...summarizeBiasLayer(selectedOption?.biasLayers?.roleBias, 'Role'),
+          ...summarizeBiasLayer(selectedOption?.biasLayers?.mechanicalBias, 'Focus'),
+          ...summarizeBiasLayer(selectedOption?.biasLayers?.attributeBias, 'Lean')
+        ].slice(0, 6);
 
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/l1-survey-details.hbs',
       data: {
-        title: selectedOption.label,
-        summary: selectedOption.hint || 'This answer nudges the mentor read toward the style of play you just signaled.',
+        title: selectedOption.detailRailTitle || selectedOption.label,
+        summary: selectedOption.detailRailText || selectedOption.hint || 'This answer nudges the mentor read toward the style of play you just signaled.',
         tags,
       },
     };
@@ -224,8 +231,12 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     return [];
   }
 
+  _getRenderableQuestions() {
+    return buildSurveyStepData(this._surveyDefinition, this._surveyAnswers)?.questions || [];
+  }
+
   _findNextQuestionIndex(preferredQuestionId = null) {
-    const questions = this._surveyDefinition?.questions || [];
+    const questions = this._getRenderableQuestions() || [];
     if (!questions.length) return 0;
 
     if (preferredQuestionId) {
@@ -246,14 +257,14 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   }
 
   _getActiveMentorDialogue() {
-    const question = this._surveyDefinition?.questions?.[this._activeQuestionIndex] || null;
+    const question = this._getRenderableQuestions()?.[this._activeQuestionIndex] || null;
     if (!question) {
       return 'Good. I have the shape of your instincts now. Look over the read in the right rail, then move when you are ready.';
     }
 
     const cleanText = String(question.text || '').replace(/^\s*[^:]+ asks:\s*/i, '').trim();
     const questionNumber = this._activeQuestionIndex + 1;
-    const totalQuestions = this._surveyDefinition?.questions?.length || 0;
+    const totalQuestions = this._getRenderableQuestions()?.length || 0;
     return `${cleanText} (${questionNumber}/${totalQuestions})`;
   }
 }

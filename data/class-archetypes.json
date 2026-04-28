@@ -8,7 +8,7 @@
       "displayName": "Jedi",
       "archetypes": {
         "precision_striker": {
-          "name": "Precision Striker",
+          "name": "Jedi Guardian",
           "status": "active",
           "mechanicalBias": {
             "accuracy": 3,
@@ -40,7 +40,7 @@
           ]
         },
         "tank_guardian": {
-          "name": "Tank Guardian",
+          "name": "Jedi Watchman",
           "status": "active",
           "mechanicalBias": {
             "damageReduction": 2,
@@ -68,7 +68,7 @@
           ]
         },
         "battlefield_controller": {
-          "name": "Battlefield Controller",
+          "name": "Jedi Consular",
           "status": "active",
           "mechanicalBias": {
             "forceDC": 3,
@@ -95,7 +95,7 @@
           ]
         },
         "force_burst_striker": {
-          "name": "Force Burst Striker",
+          "name": "Jedi Duelist",
           "status": "experimental",
           "mechanicalBias": {
             "forceSecret": 3,
@@ -124,7 +124,7 @@
           ]
         },
         "sentinel_generalist": {
-          "name": "Sentinel Generalist",
+          "name": "Jedi Sentinel",
           "status": "active",
           "mechanicalBias": {
             "skillUtility": 3,
@@ -158,7 +158,7 @@
       "displayName": "Noble",
       "archetypes": {
         "battlefield_commander": {
-          "name": "Battlefield Commander",
+          "name": "Officer",
           "status": "active",
           "mechanicalBias": {
             "moraleBonus": 3,
@@ -185,7 +185,7 @@
           ]
         },
         "master_orator": {
-          "name": "Master Orator",
+          "name": "Diplomat",
           "status": "active",
           "mechanicalBias": {
             "socialManipulation": 3,
@@ -212,7 +212,7 @@
           ]
         },
         "tactical_coordinator": {
-          "name": "Tactical Coordinator",
+          "name": "Tactician",
           "status": "active",
           "mechanicalBias": {
             "initiative": 3,
@@ -239,7 +239,7 @@
           ]
         },
         "political_strategist": {
-          "name": "Political Strategist",
+          "name": "Mastermind",
           "status": "active",
           "mechanicalBias": {
             "skillUtility": 3,
@@ -266,7 +266,7 @@
           ]
         },
         "inspirational_supporter": {
-          "name": "Inspirational Supporter",
+          "name": "Celebrity",
           "status": "active",
           "mechanicalBias": {
             "moraleBonus": 3,
@@ -297,7 +297,7 @@
       "displayName": "Scoundrel",
       "archetypes": {
         "opportunistic_precision_striker": {
-          "name": "Opportunistic Precision Striker",
+          "name": "Pirate",
           "status": "active",
           "mechanicalBias": {
             "deadlyPrecision": 3,
@@ -326,7 +326,7 @@
           ]
         },
         "debilitating_trickster": {
-          "name": "Debilitating Trickster",
+          "name": "Trickster",
           "status": "active",
           "mechanicalBias": {
             "conditionTrack": 3,
@@ -353,7 +353,7 @@
           ]
         },
         "gunslinger_duelist": {
-          "name": "Gunslinger Duelist",
+          "name": "Gunslinger",
           "status": "active",
           "mechanicalBias": {
             "accuracy": 3,
@@ -381,7 +381,7 @@
           ]
         },
         "social_manipulator": {
-          "name": "Social Manipulator",
+          "name": "Con-Man",
           "status": "active",
           "mechanicalBias": {
             "socialManipulation": 3,
@@ -408,7 +408,7 @@
           ]
         },
         "saboteur_technician": {
-          "name": "Saboteur Technician",
+          "name": "Saboteur",
           "status": "active",
           "mechanicalBias": {
             "hackingSkills": 3,
@@ -440,7 +440,7 @@
       "displayName": "Scout",
       "archetypes": {
         "mobile_skirmisher": {
-          "name": "Mobile Skirmisher",
+          "name": "Skirmisher",
           "status": "active",
           "mechanicalBias": {
             "evasion": 3,
@@ -469,7 +469,7 @@
           ]
         },
         "wilderness_survivalist": {
-          "name": "Wilderness Survivalist",
+          "name": "Survivalist",
           "status": "active",
           "mechanicalBias": {
             "combatStamina": 3,
@@ -495,7 +495,7 @@
           ]
         },
         "recon_sniper": {
-          "name": "Recon Sniper",
+          "name": "Sniper",
           "status": "active",
           "mechanicalBias": {
             "singleTargetDamage": 3,
@@ -523,7 +523,7 @@
           ]
         },
         "condition_harrier": {
-          "name": "Condition Harrier",
+          "name": "Ranger",
           "status": "active",
           "mechanicalBias": {
             "conditionTrack": 3,
@@ -552,7 +552,7 @@
           ]
         },
         "pilot_operative": {
-          "name": "Pilot Operative",
+          "name": "Pilot",
           "status": "active",
           "mechanicalBias": {
             "pilotMastery": 3,
@@ -615,7 +615,7 @@
           ]
         },
         "armored_shock_trooper": {
-          "name": "Armored Shock Trooper",
+          "name": "Tank",
           "status": "active",
           "mechanicalBias": {
             "damageReduction": 2,
@@ -644,7 +644,7 @@
           ]
         },
         "precision_rifleman": {
-          "name": "Precision Rifleman",
+          "name": "Infantry",
           "status": "active",
           "mechanicalBias": {
             "singleTargetDamage": 3,
@@ -672,7 +672,7 @@
           ]
         },
         "close_quarters_breacher": {
-          "name": "Close-Quarters Breacher",
+          "name": "Brawler",
           "status": "active",
           "mechanicalBias": {
             "singleTargetDamage": 3,
@@ -702,7 +702,7 @@
           ]
         },
         "battlefield_enforcer": {
-          "name": "Battlefield Enforcer",
+          "name": "Sargent",
           "status": "active",
           "mechanicalBias": {
             "conditionTrack": 3,
