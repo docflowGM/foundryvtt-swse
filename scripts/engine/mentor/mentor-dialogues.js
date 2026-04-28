@@ -20,35 +20,79 @@ function _normalizeMentorLookup(value) {
         .replace(/^_+|_+$/g, '');
 }
 
-export function resolveMentorData(ref) {
-    if (!ref) {
-        return MENTORS.Scoundrel;
+/**
+ * Resolve mentor portrait path with fallback to .webp alternative if .png is missing.
+ * @param {string} portraitPath - The portrait path to resolve
+ * @returns {string} The resolved portrait path
+ */
+export function resolveMentorPortraitPath(portraitPath) {
+    // Empty path → default
+    if (!portraitPath) {
+        return 'systems/foundryvtt-swse/assets/mentors/salty.png';
     }
 
-    if (typeof ref === 'object' && ref.name && ref.title) {
-        return ref;
-    }
+    // If path ends in .png, try .webp fallback
+    if (portraitPath.endsWith('.png')) {
+        const webpPath = portraitPath.slice(0, -4) + '.webp';
+        // Since we can't check filesystem at runtime, we normalize the name.
+        // The template's onerror handler will catch actual missing files.
+        // Return webp path if it's a likely candidate (filename matches known webp mentors)
+        const filename = webpPath.split('/').pop();
+        const mentorName = filename.split('.')[0];
 
-    if (MENTORS[ref]) {
-        return MENTORS[ref];
-    }
+        // Check if this mentor likely has a webp (based on known data)
+        const knownWebpMentors = new Set([
+            'kharjo', 'tio', 'axiom', 'j0n1', 'kael', 'kex', 'kex_varon', 'korr', 'krag',
+            'kyber', 'lead', 'malbada', 'miraj', 'ol_salty', 'pegar', 'rajma', 'rax',
+            'riquis', 'rogue', 'salty', 'sela', 'seraphim', 'skindar', 'spark', 'theron',
+            'tideborn', 'vel', 'venn', 'zhen'
+        ]);
 
-    const normalized = _normalizeMentorLookup(ref);
-    for (const [key, mentor] of Object.entries(MENTORS)) {
-        const candidates = [
-            key,
-            mentor?.id,
-            mentor?.mentorId,
-            mentor?.mentor_id,
-            mentor?.name,
-            mentor?.displayName,
-        ];
-        if (candidates.some(candidate => _normalizeMentorLookup(candidate) == normalized)) {
-            return mentor;
+        if (knownWebpMentors.has(mentorName.toLowerCase())) {
+            return webpPath;
         }
     }
 
-    return MENTORS.Scoundrel;
+    // Otherwise return the path as-is; template onerror will handle missing files
+    return portraitPath;
+}
+
+export function resolveMentorData(ref) {
+    let mentor;
+
+    if (!ref) {
+        mentor = MENTORS.Scoundrel;
+    } else if (typeof ref === 'object' && ref.name && ref.title) {
+        mentor = ref;
+    } else if (MENTORS[ref]) {
+        mentor = MENTORS[ref];
+    } else {
+        const normalized = _normalizeMentorLookup(ref);
+        for (const [key, value] of Object.entries(MENTORS)) {
+            const candidates = [
+                key,
+                value?.id,
+                value?.mentorId,
+                value?.mentor_id,
+                value?.name,
+                value?.displayName,
+            ];
+            if (candidates.some(candidate => _normalizeMentorLookup(candidate) == normalized)) {
+                mentor = value;
+                break;
+            }
+        }
+        if (!mentor) {
+            mentor = MENTORS.Scoundrel;
+        }
+    }
+
+    // Resolve portrait path with webp fallback
+    if (mentor && mentor.portrait) {
+        mentor.portrait = resolveMentorPortraitPath(mentor.portrait);
+    }
+
+    return mentor;
 }
 
 export function getMentorKey(ref) {

@@ -52,6 +52,7 @@ import {
   getActorSheetMotionStyle,
   buildActorSheetMotionStyle
 } from '/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js';
+import { resolveMentorData, resolveMentorPortraitPath } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -799,18 +800,19 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
   /**
    * Initialize mentor state with Ol' Salty portrait loaded from mentor data.
+   * Applies portrait path resolution to handle webp fallbacks.
    * @private
    */
   _initializeMentorState() {
-    const MENTORS_DATA = game.system?.data?.mentors || {};
-    const olSalty = Object.values(MENTORS_DATA).find(m => m?.id === 'ol-salty');
+    const olSaltyData = resolveMentorData('Scoundrel') || {};
+    const portraitPath = olSaltyData.portrait || resolveMentorPortraitPath('systems/foundryvtt-swse/assets/mentors/salty.png');
 
     this.mentor = {
       id: 'ol-salty',
       mentorId: 'ol-salty',
-      name: olSalty?.name || "Ol' Salty",
-      title: olSalty?.title || 'Seasoned Spacer',
-      portrait: olSalty?.portrait || 'systems/foundryvtt-swse/assets/mentors/salty.png',
+      name: olSaltyData.name || "Ol' Salty",
+      title: olSaltyData.title || 'Seasoned Spacer',
+      portrait: portraitPath,
       currentDialogue: '',
       pendingDialogue: null,
       isAnimating: false,
