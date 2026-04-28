@@ -17,6 +17,7 @@ import { SystemSource } from '../sources/system-source.js';
 import { ProgressionEmitter } from '../emitters/progression-emitter.js';
 import { ApprovalsEmitter } from '../emitters/approvals-emitter.js';
 import { StoreEmitter } from '../emitters/store-emitter.js';
+import { BulletinStateService } from '../services/bulletin-state-service.js';
 
 /**
  * Register Holonet settings
@@ -41,6 +42,9 @@ export function registerHolonetSettings() {
 
   // Preferences
   HolonetPreferences.registerSettings();
+
+  // Bulletin State
+  BulletinStateService.registerSettings();
 
   console.log('[Holonet] Settings registered');
 }

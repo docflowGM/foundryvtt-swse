@@ -33,31 +33,242 @@
         <p class="page-subtitle">{{pageDescription}}</p>
       </div>
 
-      <div class="bulletin-content">
-        <div class="bulletin-section">
-          <h3>Party Bulletin</h3>
-          <div class="bulletin-section-content swse-ui-panel">
-            <p class="placeholder">Party notices not yet configured</p>
-            <p class="note">Phase 2: Backed by journals and actor flags</p>
-          </div>
+      {{!-- Bulletin Landing / Surface Navigation --}}
+      {{#if (or (eq bulletinSurface undefined) (eq bulletinSurface "landing"))}}
+      <div class="bulletin-landing">
+        <div class="bulletin-surfaces-grid">
+          <button class="bulletin-surface-card swse-ui-button" data-surface="events">
+            <div class="surface-icon">📋</div>
+            <div class="surface-title">Events</div>
+            <div class="surface-count">{{eventCount}} events</div>
+            <div class="surface-desc">Broadcast announcements</div>
+          </button>
+
+          <button class="bulletin-surface-card swse-ui-button" data-surface="messages">
+            <div class="surface-icon">💬</div>
+            <div class="surface-title">Messages</div>
+            <div class="surface-count">{{messageCount}} messages</div>
+            <div class="surface-desc">Direct communications</div>
+          </button>
+
+          <button class="bulletin-surface-card swse-ui-button" data-surface="players">
+            <div class="surface-icon">👤</div>
+            <div class="surface-title">Players</div>
+            <div class="surface-count">{{playerCount}} players</div>
+            <div class="surface-desc">Current state</div>
+          </button>
+
+          <button class="bulletin-surface-card swse-ui-button" data-surface="party">
+            <div class="surface-icon">🎭</div>
+            <div class="surface-title">Party</div>
+            <div class="surface-count">1 party</div>
+            <div class="surface-desc">Party-wide state</div>
+          </button>
+        </div>
+      </div>
+
+      {{!-- Events Surface --}}
+      {{else if (eq bulletinSurface "events")}}
+      <div class="bulletin-surface bulletin-events">
+        <div class="surface-toolbar">
+          <button class="swse-ui-button primary" data-action="create-event">+ New Event</button>
         </div>
 
-        <div class="bulletin-section">
-          <h3>Player Bulletins</h3>
-          <div class="bulletin-section-content swse-ui-panel">
-            {{#if playerBulletins.length}}
-            {{#each playerBulletins}}
-            <div class="player-bulletin">
-              <strong>{{this.playerName}}</strong>
-              <p>{{this.notice}}</p>
+        <div class="events-list">
+          {{#each events}}
+          <div class="bulletin-card event-card">
+            <div class="card-header">
+              <div class="card-title">{{this.title}}</div>
+              <div class="card-state">{{this.state}}</div>
             </div>
-            {{/each}}
-            {{else}}
-            <p class="placeholder">No individual player notices</p>
-            {{/if}}
+            <div class="card-body">{{this.body}}</div>
+            <div class="card-footer">
+              <button class="swse-ui-button sm" data-edit-event="{{this.id}}">Edit</button>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      {{!-- Messages Surface --}}
+      {{else if (eq bulletinSurface "messages")}}
+      <div class="bulletin-surface bulletin-messages">
+        <div class="surface-toolbar">
+          <button class="swse-ui-button primary" data-action="create-message">+ New Message</button>
+        </div>
+
+        <div class="messages-list">
+          {{#each messages}}
+          <div class="bulletin-card message-card">
+            <div class="card-header">
+              <div class="card-title">{{this.title}}</div>
+              <div class="card-state">{{this.state}}</div>
+            </div>
+            <div class="card-body">{{this.body}}</div>
+            <div class="card-footer">
+              <button class="swse-ui-button sm" data-edit-message="{{this.id}}">Edit</button>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      {{!-- Players Surface --}}
+      {{else if (eq bulletinSurface "players")}}
+      <div class="bulletin-surface bulletin-players">
+        <div class="players-list">
+          {{#each playerStates}}
+          <div class="bulletin-card player-card">
+            <div class="card-header">
+              <div class="card-title">{{this.actorName}}</div>
+            </div>
+            <div class="card-form">
+              <div class="form-group">
+                <label>Location</label>
+                <input type="text" name="player-location-{{this.actorId}}"
+                       value="{{this.location}}" placeholder="Current location">
+              </div>
+              <div class="form-group">
+                <label>Objective</label>
+                <input type="text" name="player-objective-{{this.actorId}}"
+                       value="{{this.objective}}" placeholder="Current objective">
+              </div>
+              <div class="form-group">
+                <label>Situation</label>
+                <textarea name="player-situation-{{this.actorId}}"
+                          placeholder="Current situation">{{this.situation}}</textarea>
+              </div>
+              <button class="swse-ui-button primary" data-save-player-state="{{this.actorId}}">Save</button>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      {{!-- Party Surface --}}
+      {{else if (eq bulletinSurface "party")}}
+      <div class="bulletin-surface bulletin-party">
+        <div class="bulletin-card party-card">
+          <div class="card-header">
+            <div class="card-title">Party State</div>
+          </div>
+          <div class="card-form">
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" name="party-location"
+                     value="{{partyState.location}}" placeholder="Party location">
+            </div>
+            <div class="form-group">
+              <label>Objective</label>
+              <input type="text" name="party-objective"
+                     value="{{partyState.objective}}" placeholder="Party objective">
+            </div>
+            <div class="form-group">
+              <label>Situation</label>
+              <textarea name="party-situation"
+                        placeholder="Party situation">{{partyState.situation}}</textarea>
+            </div>
+            <button class="swse-ui-button primary" data-save-party-state>Save</button>
           </div>
         </div>
       </div>
+      {{/if}}
+
+      {{!-- Event/Message Form Overlay --}}
+      {{#if bulletinFormOpen}}
+      <div class="bulletin-form-overlay" data-form-type="{{bulletinFormType}}">
+        <div class="bulletin-form-modal">
+          <div class="form-header">
+            <h3>{{#if (eq bulletinFormType "event")}}New Event{{else}}New Message{{/if}}</h3>
+            <button class="close-btn" data-action="close-form">×</button>
+          </div>
+
+          <form class="bulletin-form" data-form-type="{{bulletinFormType}}">
+            {{!-- Title --}}
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" name="title" placeholder="Event title" value="{{bulletinFormData.title}}" required>
+            </div>
+
+            {{!-- Body/Content --}}
+            <div class="form-group">
+              <label>Content</label>
+              <textarea name="body" placeholder="Event details" required>{{bulletinFormData.body}}</textarea>
+              <small>Tip: Use @playerName to mention players, #topic for hashtags</small>
+            </div>
+
+            {{!-- Audience Selection (Events only) --}}
+            {{#if (eq bulletinFormType "event")}}
+            <div class="form-group">
+              <label>Audience</label>
+              <select name="audience-type" required>
+                <option value="all-players" {{#if (eq bulletinFormData.audienceType "all-players")}}selected{{/if}}>All Players</option>
+                <option value="selected-players" {{#if (eq bulletinFormData.audienceType "selected-players")}}selected{{/if}}>Selected Players</option>
+                <option value="party" {{#if (eq bulletinFormData.audienceType "party")}}selected{{/if}}>Party Only</option>
+                <option value="gm-only" {{#if (eq bulletinFormData.audienceType "gm-only")}}selected{{/if}}>GM Only</option>
+              </select>
+            </div>
+
+            {{!-- Selected Players (if needed) --}}
+            <div class="form-group" id="selected-players-group" style="display:none;">
+              <label>Select Players</label>
+              <div class="player-checkboxes">
+                {{#each players}}
+                <label class="checkbox-label">
+                  <input type="checkbox" name="player-ids" value="{{this.id}}"
+                    {{#if (includes bulletinFormData.playerIds this.id)}}checked{{/if}}>
+                  {{this.name}}
+                </label>
+                {{/each}}
+              </div>
+            </div>
+
+            {{!-- Priority (Events only) --}}
+            <div class="form-group">
+              <label>Priority</label>
+              <select name="priority">
+                <option value="low" {{#if (eq bulletinFormData.priority "low")}}selected{{/if}}>Low</option>
+                <option value="normal" {{#if (eq bulletinFormData.priority "normal")}}selected{{/if}}>Normal</option>
+                <option value="high" {{#if (eq bulletinFormData.priority "high")}}selected{{/if}}>High</option>
+              </select>
+            </div>
+            {{/if}}
+
+            {{!-- Recipients (Messages only) --}}
+            {{#if (eq bulletinFormType "message")}}
+            <div class="form-group">
+              <label>Recipients</label>
+              <div class="recipient-checkboxes">
+                {{#each players}}
+                <label class="checkbox-label">
+                  <input type="checkbox" name="recipient-ids" value="{{this.id}}"
+                    {{#if (includes bulletinFormData.recipientIds this.id)}}checked{{/if}}>
+                  {{this.name}}
+                </label>
+                {{/each}}
+              </div>
+            </div>
+            {{/if}}
+
+            {{!-- Lifecycle --}}
+            <div class="form-group">
+              <label>Action</label>
+              <div class="button-group">
+                <button type="button" name="action" value="draft" class="swse-ui-button secondary">Save as Draft</button>
+                <button type="button" name="action" value="publish" class="swse-ui-button primary">Publish Now</button>
+              </div>
+            </div>
+
+            {{!-- Form Footer --}}
+            <div class="form-footer">
+              <button type="button" class="swse-ui-button secondary" data-action="close-form">Cancel</button>
+              <button type="submit" class="swse-ui-button primary">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      {{/if}}
+
     </div>
 
     {{!-- House Rules Page --}}
