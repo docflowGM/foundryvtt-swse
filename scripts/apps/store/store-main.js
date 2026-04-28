@@ -688,7 +688,6 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
     // Search functionality
     const searchInput = root.querySelector('#store-search');
-    const categoryFilter = root.querySelector('#store-category-filter');
     const availabilityFilter = root.querySelector('#store-availability-filter');
     const sortSelect = root.querySelector('#store-sort');
 
@@ -697,17 +696,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
     if (searchInput) {
       searchInput.addEventListener('input', updateGrid);
     }
-    if (categoryFilter) {
-      categoryFilter.addEventListener('change', updateGrid);
-    }
     if (availabilityFilter) {
       availabilityFilter.addEventListener('change', updateGrid);
     }
     if (sortSelect) {
       sortSelect.addEventListener('change', updateGrid);
-    }
-    if (categoryFilter) {
-      categoryFilter.value = this.currentCategory || '';
     }
 
     root.querySelectorAll('[data-action="show-browse"]').forEach(btn => {
@@ -741,10 +734,10 @@ export class SWSEStore extends BaseSWSEAppV2 {
         this.currentPage = 1;
         const search = root.querySelector('#store-search');
         const availability = root.querySelector('#store-availability-filter');
+        const sortCtl = root.querySelector('#store-sort');
         if (search) search.value = '';
-        if (categoryFilter) categoryFilter.value = '';
         if (availability) availability.value = '';
-        if (sortSelect) sortSelect.value = 'suggested';
+        if (sortCtl) sortCtl.value = 'suggested';
         updateGrid();
       });
     });
@@ -914,7 +907,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     // P2-4: Safe search term handling (Unicode-safe, case-insensitive)
     const rawSearchTerm = root.querySelector('#store-search')?.value || '';
     const searchTerm = rawSearchTerm.toLowerCase().trim();
-    const categoryFilter = root.querySelector('#store-category-filter')?.value || this.currentCategory || '';
+    const categoryFilter = this.currentCategory || '';
     const availabilityFilter = root.querySelector('#store-availability-filter')?.value || '';
     const sortValue = root.querySelector('#store-sort')?.value || 'suggested';
 
