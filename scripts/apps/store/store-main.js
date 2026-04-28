@@ -115,7 +115,6 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this.totalVisibleItems = 0;
 
     this.cardInteractions = null;    // Card floating/expansion controller
-    this.isCheckoutMode = false;     // Checkout mode state (true = ledger view, locked cart)
 
     // Initialize loading overlay
     const useAurebesh = SettingsHelper.getSafe('useAurebesh', false);
@@ -694,52 +693,46 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const updateGrid = () => this._filterAndSortGrid(root);
 
     if (searchInput) {
-      searchInput.addEventListener('input', updateGrid);
+      searchInput.addEventListener('input', updateGrid, { signal });
     }
     if (availabilityFilter) {
-      availabilityFilter.addEventListener('change', updateGrid);
+      availabilityFilter.addEventListener('change', updateGrid, { signal });
     }
     if (sortSelect) {
-      sortSelect.addEventListener('change', updateGrid);
+      sortSelect.addEventListener('change', updateGrid, { signal });
     }
 
     root.querySelectorAll('[data-action="show-browse"]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.currentView = 'browse';
         this.render();
-      });
+      }, { signal });
     });
     root.querySelectorAll('[data-action="view-cart"]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.currentView = 'cart';
         this.render();
-      });
+      }, { signal });
     });
     root.querySelectorAll('[data-action="show-history"]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.currentView = 'history';
         this.render();
-      });
+      }, { signal });
     });
     root.querySelectorAll('[data-action="category-nav"]').forEach(btn => {
       btn.addEventListener('click', ev => {
         this.currentCategory = ev.currentTarget?.dataset?.category || '';
         this.currentView = 'browse';
         this.render();
-      });
+      }, { signal });
     });
     root.querySelectorAll('[data-action="clear-filters"]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.currentCategory = '';
         this.currentPage = 1;
-        const search = root.querySelector('#store-search');
-        const availability = root.querySelector('#store-availability-filter');
-        const sortCtl = root.querySelector('#store-sort');
-        if (search) search.value = '';
-        if (availability) availability.value = '';
-        if (sortCtl) sortCtl.value = 'suggested';
-        updateGrid();
-      });
+        this.render();
+      }, { signal });
     });
     root.querySelectorAll('[data-action="remove-cart-row"]').forEach(btn => {
       btn.addEventListener('click', async ev => {
@@ -750,7 +743,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
         removeFromCartById(this.cart, type, id);
         await this._persistCart();
         this.render();
-      });
+      }, { signal });
     });
     // Detail qty controls
     const detailQtyInput = root.querySelector('.detail-qty-input');
@@ -761,27 +754,26 @@ export class SWSEStore extends BaseSWSEAppV2 {
       detailQtyMinus.addEventListener('click', () => {
         const val = Math.max(1, (parseInt(detailQtyInput?.value) || 1) - 1);
         if (detailQtyInput) detailQtyInput.value = val;
-      });
+      }, { signal });
     }
 
     if (detailQtyPlus) {
       detailQtyPlus.addEventListener('click', () => {
         const val = Math.min(999, (parseInt(detailQtyInput?.value) || 1) + 1);
         if (detailQtyInput) detailQtyInput.value = val;
-      });
+      }, { signal });
     }
 
     if (detailQtyInput) {
       detailQtyInput.addEventListener('change', () => {
         const val = Math.max(1, Math.min(999, parseInt(detailQtyInput.value) || 1));
         detailQtyInput.value = val;
-      });
+      }, { signal });
     }
 
     root.querySelectorAll('[data-action="detail-add-to-cart"]').forEach(btn => {
       btn.addEventListener('click', async () => {
         if (!this.selectedProductId) {return;}
-        // Get qty from detail view input
         const qty = parseInt(detailQtyInput?.value) || 1;
         for (let i = 0; i < qty; i++) {
           addItemToCart(this, this.selectedProductId, i === 0 ? (line => this._setRendarrLine(line)) : null);
@@ -790,7 +782,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
         this.selectedProductId = null;
         this.currentView = 'cart';
         this.render();
-      });
+      }, { signal });
     });
     // Card expand buttons → Detail view
     root.querySelectorAll('[data-action="expand-product"]').forEach(btn => {
@@ -801,7 +793,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
           this.currentView = 'detail';
           this.render();
         }
-      });
+      }, { signal });
     });
 
     // Add to cart buttons (cards)
@@ -813,7 +805,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
         addItemToCart(this, id, line => this._setRendarrLine(line));
         await this._persistCart();
         this.render();
-      });
+      }, { signal });
     });
 
 
@@ -822,18 +814,16 @@ export class SWSEStore extends BaseSWSEAppV2 {
     if (customDroidBtn) {
       customDroidBtn.addEventListener('click', async () => {
         if (!this.actor) {return;}
-        // Phase 3b: Use new DroidBuilderApp instead of CharacterGenerator
         await buildDroidWithBuilder(this.actor, () => this.render());
-      });
+      }, { signal });
     }
 
-    // Phase 3d: Build from template
     const templateDroidBtn = root.querySelector('.build-droid-from-template');
     if (templateDroidBtn) {
       templateDroidBtn.addEventListener('click', async () => {
         if (!this.actor) {return;}
         await buildDroidFromTemplate(this.actor, () => this.render());
-      });
+      }, { signal });
     }
 
     const customStarshipBtn = root.querySelector('.create-custom-starship');
@@ -841,7 +831,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       customStarshipBtn.addEventListener('click', async () => {
         if (!this.actor) {return;}
         await createCustomStarship(this.actor, () => this.render());
-      });
+      }, { signal });
     }
 
     const checkoutBtn = root.querySelector('#checkout-cart');
@@ -849,7 +839,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       checkoutBtn.addEventListener('click', () => {
         this.currentView = 'checkout';
         this.render();
-      });
+      }, { signal });
     }
 
     const confirmCheckoutBtn = root.querySelector('#confirm-checkout');
@@ -860,7 +850,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
           this.currentView = 'history';
           this.render();
         }
-      });
+      }, { signal });
     }
 
     const clearBtn = root.querySelector('#clear-cart');
@@ -869,13 +859,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
         clearCart(this.cart);
         await this._persistCart();
         this.render();
-      });
-    }
-
-    // Global escape key handler cleanup
-    if (this._escapeKeyHandler) {
-      document.removeEventListener('keydown', this._escapeKeyHandler);
-      this._escapeKeyHandler = null;
+      }, { signal });
     }
 
     // Initial render once DOM exists

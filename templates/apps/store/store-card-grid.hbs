@@ -219,7 +219,7 @@
           <div class="detail-section-title">Settlement</div>
           <div class="summary-line"><span>Available</span><strong>₢ {{credits}}</strong></div>
           <div class="summary-line"><span>Debit</span><strong>₢ {{cartTotal}}</strong></div>
-          <div class="summary-line"><span>Reserve After Trade</span><strong>₢ {{pageContext.cartRemaining}}</strong></div>
+          <div class="summary-line"><span>Reserve After Trade</span><strong>₢ <span id="cart-remaining">{{pageContext.cartRemaining}}</span></strong></div>
           <div class="checkout-guidance">Confirm the trade to issue all manifest lines and archive the transaction.</div>
           <div class="rail-action-cluster stacked">
             <button type="button" class="checkout-btn holo-btn primary" id="confirm-checkout">Confirm Trade</button>
