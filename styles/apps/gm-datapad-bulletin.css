@@ -346,19 +346,14 @@
   accent-color: #0ff;
 }
 
-.button-group {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.button-group button {
-  flex: 1;
-}
-
 .form-footer {
   display: flex;
   gap: 0.5rem;
   justify-content: flex-end;
   padding-top: 1rem;
   border-top: 1px solid rgba(0, 255, 200, 0.15);
+}
+
+.form-footer button {
+  padding: 0.75rem 1.5rem;
 }

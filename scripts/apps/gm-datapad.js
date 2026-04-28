@@ -171,7 +171,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
     // Get list of character actors for audience/recipient selection
     const players = game.actors
       .filter(a => a.type === 'character')
-      .map(a => ({ id: a.id, name: a.name }));
+      .map(a => ({
+        id: a.id,
+        name: a.name,
+        isSelected: this.bulletinFormData.playerIds?.includes(a.id) || false,
+        isRecipient: this.bulletinFormData.recipientIds?.includes(a.id) || false
+      }));
 
     return {
       pageTitle: 'Bulletin',
@@ -1091,17 +1096,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
         btn.addEventListener('click', () => this._closeBulletinForm());
       }
 
-      // Form submission with button handling
+      // Form submission
       const form = formOverlay.querySelector('.bulletin-form');
       if (form) {
-        // Track which button was clicked
-        const buttons = form.querySelectorAll('[name="action"]');
-        buttons.forEach(btn => {
-          btn.addEventListener('click', (ev) => {
-            form.dataset.action = ev.currentTarget.value;
-          });
-        });
-
         form.addEventListener('submit', (ev) => this._submitBulletinForm(ev, form));
       }
 
@@ -1203,7 +1200,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       const formData = new FormData(form);
       const title = formData.get('title');
       const body = formData.get('body');
-      const action = form.dataset.action || 'draft';
+      const action = formData.get('action') || 'draft';
 
       if (!title || !body) {
         ui.notifications.warn('Title and content are required');

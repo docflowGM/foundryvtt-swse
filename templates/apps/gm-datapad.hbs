@@ -216,7 +216,7 @@
                 {{#each players}}
                 <label class="checkbox-label">
                   <input type="checkbox" name="player-ids" value="{{this.id}}"
-                    {{#if (includes bulletinFormData.playerIds this.id)}}checked{{/if}}>
+                    {{#if this.isSelected}}checked{{/if}}>
                   {{this.name}}
                 </label>
                 {{/each}}
@@ -242,7 +242,7 @@
                 {{#each players}}
                 <label class="checkbox-label">
                   <input type="checkbox" name="recipient-ids" value="{{this.id}}"
-                    {{#if (includes bulletinFormData.recipientIds this.id)}}checked{{/if}}>
+                    {{#if this.isRecipient}}checked{{/if}}>
                   {{this.name}}
                 </label>
                 {{/each}}
@@ -250,19 +250,11 @@
             </div>
             {{/if}}
 
-            {{!-- Lifecycle --}}
-            <div class="form-group">
-              <label>Action</label>
-              <div class="button-group">
-                <button type="button" name="action" value="draft" class="swse-ui-button secondary">Save as Draft</button>
-                <button type="button" name="action" value="publish" class="swse-ui-button primary">Publish Now</button>
-              </div>
-            </div>
-
             {{!-- Form Footer --}}
             <div class="form-footer">
               <button type="button" class="swse-ui-button secondary" data-action="close-form">Cancel</button>
-              <button type="submit" class="swse-ui-button primary">Save</button>
+              <button type="submit" name="action" value="draft" class="swse-ui-button secondary">Save as Draft</button>
+              <button type="submit" name="action" value="publish" class="swse-ui-button primary">Publish Now</button>
             </div>
           </form>
         </div>
