@@ -1,5 +1,6 @@
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { getSurveyDefinition, getSurveyDefinitionForActor } from './registry.js';
+import { canonicalizeSkillKey } from '/systems/foundryvtt-swse/scripts/utils/skill-normalization.js';
 
 function mergeLayer(target, source) {
   for (const [key, value] of Object.entries(source || {})) {
@@ -36,6 +37,14 @@ function buildArchetypeScores(definition, answers) {
     .map(([id, score]) => ({ id, score, archetype: definition?.archetypes?.find?.((e) => e.id === id) || null }));
 }
 
+function addWeightedMap(target, values, canonicalizer = null, amount = 1) {
+  for (const raw of values || []) {
+    const key = canonicalizer ? canonicalizer(raw) : raw;
+    if (!key) continue;
+    target[key] = (target[key] || 0) + amount;
+  }
+}
+
 export function getSurveyResponses(actor) {
   return actor?.system?.swse?.surveyResponses || null;
 }
@@ -58,24 +67,57 @@ export function convertSurveyAnswersToBias(surveyAnswers) {
 }
 
 export function extractSurveyIntentTags(surveyAnswers) {
-  const out = {};
+  const out = {
+    skillBias: [],
+    featBias: [],
+    talentBias: [],
+    prestigeClassTargets: [],
+    skillBiasWeights: {},
+    featBiasWeights: {},
+    talentBiasWeights: {},
+    prestigeClassWeights: {},
+    attributeBiasWeights: {},
+    backgroundBias: [],
+    detailTags: []
+  };
+
   for (const answer of Object.values(surveyAnswers || {})) {
-    for (const [key, value] of Object.entries(answer?.biases || {})) {
-      if (typeof value === 'number') out[key] = Math.max(Number(out[key] || 0), value);
-      else if (Array.isArray(value)) out[key] = Array.from(new Set([...(out[key] || []), ...value]));
-      else if (value !== undefined && value !== null && value !== '') out[key] = value;
+    addWeightedMap(out.skillBiasWeights, answer?.biases?.skillBias || [], canonicalizeSkillKey, 1);
+    addWeightedMap(out.featBiasWeights, answer?.biases?.featBias || [], null, 1);
+    addWeightedMap(out.talentBiasWeights, answer?.biases?.talentBias || [], null, 1);
+    addWeightedMap(out.prestigeClassWeights, answer?.biases?.prestigeBias || [], null, 1);
+    addWeightedMap(out.backgroundBias, answer?.biases?.backgroundBias || [], null, 1);
+
+    for (const [key, value] of Object.entries(answer?.biasLayers?.attributeBias || {})) {
+      out.attributeBiasWeights[key] = (out.attributeBiasWeights[key] || 0) + Number(value || 0);
+    }
+
+    for (const tag of answer?.detailTags || []) {
+      if (tag && !out.detailTags.includes(tag)) out.detailTags.push(tag);
     }
   }
+
+  out.skillBias = Object.entries(out.skillBiasWeights).sort((a,b)=>b[1]-a[1]).map(([key]) => key);
+  out.featBias = Object.entries(out.featBiasWeights).sort((a,b)=>b[1]-a[1]).map(([key]) => key);
+  out.talentBias = Object.entries(out.talentBiasWeights).sort((a,b)=>b[1]-a[1]).map(([key]) => key);
+  out.prestigeClassTargets = Object.entries(out.prestigeClassWeights).sort((a,b)=>b[1]-a[1]).map(([key]) => key);
+  out.backgroundBias = Array.isArray(out.backgroundBias) ? out.backgroundBias : Object.keys(out.backgroundBias || {});
+
+  if (out.prestigeClassTargets.length) {
+    out.prestigeClassTarget = out.prestigeClassTargets[0];
+    out.prestigePrereqWeights = { ...out.prestigeClassWeights };
+  }
+
   return out;
 }
 
 export function processSurveyAnswers(surveyAnswers, definition = null) {
-  const out = {};
+  const out = extractSurveyIntentTags(surveyAnswers);
   const scores = definition ? buildArchetypeScores(definition, surveyAnswers) : [];
   for (const answer of Object.values(surveyAnswers || {})) {
     for (const [key, value] of Object.entries(answer?.biases || {})) {
+      if (Array.isArray(value)) continue;
       if (typeof value === 'number') out[key] = (out[key] || 0) + value;
-      else if (Array.isArray(value)) out[key] = Array.from(new Set([...(out[key] || []), ...value]));
       else if (value) out[key] = value;
     }
   }

@@ -863,16 +863,17 @@ export class SuggestionEngine {
         }
 
         // Check PRESTIGE SURVEY SIGNAL (weight: 0.15, same as archetype)
-        if (buildIntent && buildIntent.mentorBiases?.prestigeClassTarget) {
-            const prestigeMatch = this._checkFeatForPrestige(feat, buildIntent.mentorBiases.prestigeClassTarget, buildIntent);
+        for (const prestigeTarget of this._getPrestigeTargets(buildIntent)) {
+            const prestigeMatch = this._checkFeatForPrestige(feat, prestigeTarget, buildIntent);
             if (prestigeMatch) {
+                const scaled = TIER3_SUBPRIORITY.PRESTIGE * this._extractPrestigeBiasStrength(prestigeTarget, buildIntent);
                 matches.push({
                     type: 'PRESTIGE_SIGNAL',
-                    sourceId: `prestige:${buildIntent.mentorBiases.prestigeClassTarget}`,
+                    sourceId: `prestige:${prestigeTarget}`,
                     weight: TIER3_SUBPRIORITY.PRESTIGE,
-                    bonus: TIER3_SUBPRIORITY.PRESTIGE
+                    bonus: scaled
                 });
-                totalBonus += TIER3_SUBPRIORITY.PRESTIGE;
+                totalBonus += scaled;
             }
         }
 
@@ -962,16 +963,17 @@ export class SuggestionEngine {
         }
 
         // Check PRESTIGE SURVEY SIGNAL (weight: 0.15)
-        if (buildIntent && buildIntent.mentorBiases?.prestigeClassTarget) {
-            const prestigeMatch = this._checkTalentForPrestige(talent, buildIntent.mentorBiases.prestigeClassTarget, buildIntent);
+        for (const prestigeTarget of this._getPrestigeTargets(buildIntent)) {
+            const prestigeMatch = this._checkTalentForPrestige(talent, prestigeTarget, buildIntent);
             if (prestigeMatch) {
+                const scaled = TIER3_SUBPRIORITY.PRESTIGE * this._extractPrestigeBiasStrength(prestigeTarget, buildIntent);
                 matches.push({
                     type: 'PRESTIGE_SIGNAL',
-                    sourceId: `prestige:${buildIntent.mentorBiases.prestigeClassTarget}`,
+                    sourceId: `prestige:${prestigeTarget}`,
                     weight: TIER3_SUBPRIORITY.PRESTIGE,
-                    bonus: TIER3_SUBPRIORITY.PRESTIGE
+                    bonus: scaled
                 });
-                totalBonus += TIER3_SUBPRIORITY.PRESTIGE;
+                totalBonus += scaled;
             }
         }
 
@@ -1037,6 +1039,22 @@ export class SuggestionEngine {
 
         // Clamp between 0.0 and 1.0
         return Math.max(0.0, Math.min(1.0, biasValue));
+    }
+
+
+    static _getPrestigeTargets(buildIntent) {
+        const biases = buildIntent?.mentorBiases || {};
+        const multi = Array.isArray(biases.prestigeClassTargets) ? biases.prestigeClassTargets.filter(Boolean) : [];
+        if (multi.length) {
+            return multi;
+        }
+        return biases.prestigeClassTarget ? [biases.prestigeClassTarget] : [];
+    }
+
+    static _extractPrestigeBiasStrength(prestigeClassTarget, buildIntent) {
+        const weights = buildIntent?.mentorBiases?.prestigeClassWeights || buildIntent?.mentorBiases?.prestigePrereqWeights || {};
+        const raw = Number(weights?.[prestigeClassTarget] || 1);
+        return Math.max(0.25, Math.min(1.0, raw / 3));
     }
 
     /**
