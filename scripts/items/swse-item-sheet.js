@@ -13,6 +13,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ShellOverlayManager } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellOverlayManager.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { BLADE_COLOR_MAP } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
+import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { BlasterCustomizationApp } from "/systems/foundryvtt-swse/scripts/apps/blaster/blaster-customization-app.js";
 import { openLightsaberInterface } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-router.js";
@@ -280,7 +281,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     event.preventDefault();
 
     const actor = this.item?.actor;
-    const bladeColor = this.item?.flags?.swse?.bladeColor || actor?.getFlag?.('swse', 'preferredLightsaberColor') || 'blue';
+    const bladeColor = getSwseFlag(this.item, 'bladeColor') || actor?.getFlag?.('swse', 'preferredLightsaberColor') || 'blue';
 
     if (actor?.activateItem) {
       await actor.activateItem(this.item);
@@ -290,11 +291,11 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       await this.item.update({ 'system.activated': true });
     }
 
-    if (!this.item.flags?.swse?.emitLight) {
+    if (!getSwseFlag(this.item, 'emitLight')) {
       if (this.item?.isEmbedded && actor) {
-        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'flags.swse.emitLight': true, 'flags.swse.bladeColor': bladeColor }]);
+        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'flags.foundryvtt-swse.emitLight': true, 'flags.foundryvtt-swse.bladeColor': bladeColor }]);
       } else {
-        await this.item.update({ 'flags.swse.emitLight': true, 'flags.swse.bladeColor': bladeColor });
+        await this.item.update({ 'flags.foundryvtt-swse.emitLight': true, 'flags.foundryvtt-swse.bladeColor': bladeColor });
       }
     }
 
@@ -367,7 +368,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     // PHASE 2: Route embedded items through ActorEngine
     if (this.item?.isEmbedded && actor) {
       try {
-        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'flags.swse.emitLight': enabled }]);
+        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'flags.foundryvtt-swse.emitLight': enabled }]);
       } catch (err) {
         console.error('[Item Sheet] Light toggle failed:', err);
         ui.notifications.error(`Failed to toggle light: ${err.message}`);
@@ -376,7 +377,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     } else {
       // @mutation-exception: Unowned item update
       // Unowned items (not on an actor) can update directly — UI-only operation
-      await this.item.update({ 'flags.swse.emitLight': enabled });  // @mutation-exception: UI-only unowned item
+      await this.item.update({ 'flags.foundryvtt-swse.emitLight': enabled });  // @mutation-exception: UI-only unowned item
     }
 
     // Update token light if actor is on canvas

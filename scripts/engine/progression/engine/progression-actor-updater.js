@@ -45,18 +45,18 @@ export class ActorProgressionUpdater {
         }
       }
 
-      // Mark force sensitivity
+      // Mark force sensitivity — canonical ClassesDB first, static map fallback
       const { getClassData } = await import("/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js");
       let isForceSensitive = false;
 
       for (const cl of classLevels) {
-        const hardcodedClass = PROGRESSION_RULES.classes[cl.class];
-        if (hardcodedClass?.forceSensitive) {
+        const compendiumClass = await getClassData(cl.class);
+        if (compendiumClass?.forceSensitive) {
           isForceSensitive = true;
           break;
         }
-        const compendiumClass = await getClassData(cl.class);
-        if (compendiumClass?.forceSensitive) {
+        const hardcodedClass = PROGRESSION_RULES.classes[cl.class];
+        if (hardcodedClass?.forceSensitive) {
           isForceSensitive = true;
           break;
         }
@@ -74,10 +74,10 @@ export class ActorProgressionUpdater {
         updates['system.forceSensitive'] = true;
       }
 
-      // Track progression state in flags (for auditing)
-      updates['flags.swse.appliedFeats'] = prog.feats || [];
-      updates['flags.swse.appliedTalents'] = prog.talents || [];
-      updates['flags.swse.trainedSkills'] = prog.trainedSkills || [];
+      // Track progression state in flags (for auditing) — canonical namespace
+      updates['flags.foundryvtt-swse.appliedFeats'] = prog.feats || [];
+      updates['flags.foundryvtt-swse.appliedTalents'] = prog.talents || [];
+      updates['flags.foundryvtt-swse.trainedSkills'] = prog.trainedSkills || [];
 
       // Apply updates through ActorEngine
       if (Object.keys(updates).length > 0) {

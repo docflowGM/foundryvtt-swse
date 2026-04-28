@@ -1,5 +1,6 @@
 import { FOLLOWER_TALENT_CONFIG } from "/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 
 /**
  * Follower Hooks (AppV2-safe)
@@ -60,7 +61,7 @@ async function _removeGrantedItemsFromFollower(ownerActor, followerActorId, tale
   const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
   const toDelete = follower.items
-    .filter(i => i.getFlag?.('swse', 'grantedByTalent')?.talentItemId === talentItemId)
+    .filter(i => getSwseFlag(i, 'grantedByTalent')?.talentItemId === talentItemId)
     .map(i => i.id);
 
   if (toDelete.length) {

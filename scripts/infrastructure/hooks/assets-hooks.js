@@ -5,12 +5,13 @@
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 
 Hooks.on('createActor', async (actor, options, userId) => {
   try {
     if (!actor || !actor.type) {return;}
     // If a follower actor is created and has an 'owner' flag, attach it to owner actor.system.followers
-    const ownerId = actor.getFlag?.('swse','owner');
+    const ownerId = actor.getFlag?.('foundryvtt-swse', 'owner');
     if (actor.type === 'follower' && ownerId) {
       const owner = game.actors.get(ownerId);
       if (!owner) {return;}
@@ -32,7 +33,7 @@ Hooks.on('createActor', async (actor, options, userId) => {
     }
 
     // If a droid/vehicle actor is created with a 'purchasedBy' flag, attach it
-    const purchaser = actor.getFlag?.('swse','purchasedBy');
+    const purchaser = actor.getFlag?.('foundryvtt-swse', 'purchasedBy');
     if (actor.type === 'droid' && purchaser) {
       const owner = game.actors.get(purchaser);
       if (owner) {
@@ -65,14 +66,7 @@ Hooks.on('createActor', async (actor, options, userId) => {
 // Add fallback hook on item creation in case store created items with purchasedBy flag
 Hooks.on('createItem', async (item, options, userId) => {
   try {
-    let purchaser;
-    try {
-      purchaser = item.getFlag?.('swse', 'purchasedBy');
-    } catch (e) {
-      // Flag scope may not be initialized yet, fall back to direct access
-      purchaser = item.flags?.swse?.purchasedBy;
-    }
-    purchaser = purchaser || item.flags?.swse?.purchasedBy;
+    const purchaser = getSwseFlag(item, 'purchasedBy');
     if (!purchaser) {return;}
     // If an item representing a vehicle or droid was created directly as an Item, try to find an actor with the same name
     const owner = game.actors.get(purchaser);

@@ -22,6 +22,7 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 
 export class ActiveAdapter {
 
@@ -217,8 +218,8 @@ export class ActiveAdapter {
       const mode = meta?.mode;
       const persistentEffect = meta?.persistentEffect;
 
-      // Get current mode state from item flags
-      const isActive = ability.getFlag?.('swse', 'modeActive') ?? false;
+      // Get current mode state — canonical namespace first, legacy fallback via helper
+      const isActive = getSwseFlag(ability, 'modeActive') ?? false;
 
       // ─── 1. DEACTIVATION PATH ───────────────────────────────────────────────
       if (isActive) {
@@ -253,7 +254,7 @@ export class ActiveAdapter {
 
         // 2b. Deactivate other modes in same group
         for (const otherMode of otherModes) {
-          if (otherMode.getFlag?.('swse', 'modeActive')) {
+          if (getSwseFlag(otherMode, 'modeActive')) {
             await otherMode.setFlag('foundryvtt-swse', 'modeActive', false);
             // planned: Remove persistent effect from other mode (Phase 4)
             SWSELogger.log(`[ActiveAdapter] Deactivated conflicting MODE: ${otherMode.name}`);

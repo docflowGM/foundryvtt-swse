@@ -311,14 +311,21 @@ export class ProgressionEngineV2 {
     };
 
     const cadence = talentCadenceByClass[classId] || [1, 3, 6, 9, 12, 15, 18, 20];
-    const classData = PROGRESSION_RULES.classes?.[classId];
+
+    // Canonical-first: resolveClassModel covers all classes including prestige.
+    // PROGRESSION_RULES.classes is only 5 heroic bases — returns undefined for prestige classes.
+    const classModel = resolveClassModel({ id: classId, name: classId });
+    const availableTrees = classModel?.talentTreeNames
+      ?? classModel?.talentTreeIds
+      ?? PROGRESSION_RULES.classes?.[classId]?.talentTrees
+      ?? [];
 
     for (let lv = oldLevel + 1; lv <= newLevel; lv++) {
       if (cadence.includes(lv)) {
         talents.push({
           level: lv,
           id: `talent_${lv}_${classId}`,
-          availableTrees: classData?.talentTrees || []
+          availableTrees
         });
       }
     }

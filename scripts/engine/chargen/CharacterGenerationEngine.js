@@ -24,6 +24,8 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
 import { HPGeneratorEngine } from "/systems/foundryvtt-swse/scripts/engine/HP/HPGeneratorEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
+import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
+import { normalizeClassId } from "/systems/foundryvtt-swse/scripts/data/class-normalizer.js";
 
 export class CharacterGenerationEngine {
   /**
@@ -339,13 +341,18 @@ export class CharacterGenerationEngine {
     // Phase 3B: Prefer canonical system.class.id, fall back to legacy system.className
     const classId = actor.system.class?.id || actor.system.className || 'Soldier';
 
-    // Use PROGRESSION_RULES as SSOT
+    // Canonical-first: ClassesDB covers all classes including prestige
+    const canonicalClass = ClassesDB.isBuilt ? ClassesDB.get(normalizeClassId(classId)) : null;
+    if (canonicalClass?.hitDie) {
+      return canonicalClass.hitDie;
+    }
+
+    // Static map fallback (boot-time safety, heroic base classes only)
     const classData = PROGRESSION_RULES.classes?.[classId];
-    if (classData && classData.hitDie) {
+    if (classData?.hitDie) {
       return classData.hitDie;
     }
 
-    // Fallback if not found
     swseLogger.warn(`[ChargenEngine] No hit die found for class ${classId}, using default d8`);
     return 8;
   }
@@ -360,9 +367,17 @@ export class CharacterGenerationEngine {
     // Gated by class authority (ChargenEngine owns feat selection logic)
     // Use PROGRESSION_RULES as SSOT for starting feats
 
+    // Check canonical registry first to confirm class validity
+    const canonicalClass = ClassesDB.isBuilt ? ClassesDB.get(normalizeClassId(classId)) : null;
     const classData = PROGRESSION_RULES.classes?.[classId];
-    if (!classData || !classData.startingFeats) {
-      swseLogger.warn(`[ChargenEngine] No starting feats found for class ${classId}`);
+
+    if (!canonicalClass && !classData) {
+      swseLogger.warn(`[ChargenEngine] Unknown class ${classId}, no starting feats`);
+      return [];
+    }
+
+    // startingFeats only exists in PROGRESSION_RULES static data
+    if (!classData?.startingFeats) {
       return [];
     }
 
@@ -387,8 +402,9 @@ export class CharacterGenerationEngine {
     // Characters typically start with no talents - talents are chosen at level 1, 2, 4, etc.
     // This returns talents that must be granted at level 1 (currently none by RAW)
 
+    const canonicalClass = ClassesDB.isBuilt ? ClassesDB.get(normalizeClassId(classId)) : null;
     const classData = PROGRESSION_RULES.classes?.[classId];
-    if (!classData) {
+    if (!canonicalClass && !classData) {
       swseLogger.warn(`[ChargenEngine] No class data found for ${classId}`);
       return [];
     }

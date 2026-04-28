@@ -108,9 +108,7 @@ import { MutationPathGuard } from './scripts/governance/sentinel/mutation-path-g
 import { MutationBoundaryDefense } from './scripts/governance/sentinel/mutation-boundary-defense.js';
 import { Batch1Validation } from './scripts/governance/mutation/batch-1-validation.js';
 
-// ---- combat tests (PHASE 3) ----
-import { DamageEngineTest } from './scripts/engine/combat/damage-engine-test.js';
-import { Batch2ComprehensiveTest } from './tests/archived/batch-2-comprehensive-test.js';
+// Combat test classes are loaded lazily via SWSE.debug.batch2.* — not imported at boot.
 
 // ---- sheets ----
 import { SWSEV2CharacterSheet } from './scripts/sheets/v2/character-sheet.js';
@@ -121,16 +119,13 @@ import { SWSEV2DroidSheet } from './scripts/sheets/v2/droid-sheet.js';
 import { SWSEV2VehicleSheet } from './scripts/sheets/v2/vehicle-sheet.js';
 import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 
-// ---- audits (Phase A2 - dev-only diagnostics) ----
-import { SWSEV2CharacterSheetAudit } from './scripts/sheets/v2/character-sheet-integration-audit.js';
-import { CharacterSheetIntegrationTestHarness } from './scripts/sheets/v2/character-sheet-integration-test-harness.js';
-import { SWSEV2SheetDiagnostics } from './scripts/sheets/v2/sheet-diagnostics.js';
+// Sheet audit / diagnostics loaded lazily via SWSE.debug.auditors.characterSheetA2.* — not imported at boot.
 
 // ---- debug system ----
 import { SWSEDebugger } from './scripts/debug/swse-debugger.js';
 import { SentinelReports } from './scripts/debug/sentinel-reports.js';
 import { LayoutDebugManager } from './scripts/debug/layout-debug.js';
-import { PersistenceCanary } from './scripts/test/persistence-canary.js';
+// PersistenceCanary removed from production bootstrap — canary logic is inline below.
 
 // ---- handlebars ----
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
@@ -163,16 +158,16 @@ import { SuggestionService } from './scripts/engine/suggestion/SuggestionService
 import { registerSuggestionHooks } from './scripts/infrastructure/hooks/suggestion-hooks.js';
 import { registerCombatSuggestionHooks, requestCombatEvaluation } from './scripts/engine/suggestion/equipment/combat-hooks.js';
 import { CombatSuggestionEngine } from './scripts/engine/suggestion/equipment/combat-engine.js';
-import { testHarness } from './scripts/engine/suggestion/equipment/test-harness.js';
+// Suggestion test harness loaded lazily via SWSE.debug.testHarness — not imported at boot.
 import { initializeDiscoverySystem, onDiscoveryReady } from './scripts/ui/discovery/index.js';
 
 // ---- misc ----
 import { SystemInitHooks } from './scripts/engine/progression/hooks/system-init-hooks.js';
 import { Upkeep } from './scripts/automation/upkeep.js';
 
-// ---- Phase 5: Observability, Testing, Forward Compatibility ----
+// ---- Phase 5: Observability, Forward Compatibility ----
 import { initializePhase5, getPhaseSummary } from './scripts/core/phase5-init.js';
-import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.js';
+// Critical flow tests loaded lazily via SWSE.debug.tests — not imported at boot.
 
 import { SWSECombatDocument } from './scripts/combat/swse-combat.js';
 import { SWSECombatant } from './scripts/combat/swse-combatant.js';
@@ -349,9 +344,8 @@ Hooks.once('ready', async () => {
   /* ---------- phase 3: diagnostic mode ---------- */
   await DiagnosticMode.initialize();
 
-  /* ---------- Phase 5: Observability, Testing, Forward Compatibility ---------- */
+  /* ---------- Phase 5: Observability, Forward Compatibility ---------- */
   initializePhase5();
-  registerCriticalFlowTests();
 
   /* ---------- data & progression ---------- */
   // Check required packs exist
@@ -420,7 +414,8 @@ Hooks.once('ready', async () => {
   };
 
   const debugAPI = {
-    testHarness,
+    // Lazy-loaded: call as async fn → (await SWSE.debug.testHarness())
+    testHarness: async () => (await import('./scripts/engine/suggestion/equipment/test-harness.js')).testHarness,
     debounce,
     throttle,
     logError,
@@ -428,15 +423,28 @@ Hooks.once('ready', async () => {
     phase5: {
       summary: getPhaseSummary
     },
+    // Lazy-loaded: call as → await SWSE.debug.tests.registerCriticalFlows()
+    tests: {
+      registerCriticalFlows: async () => {
+        const { registerCriticalFlowTests } = await import('./scripts/tests/critical-flow-tests.js');
+        return registerCriticalFlowTests();
+      }
+    },
     // PHASE 3: Batch 1 Validation Suite
     batch1: {
       validate: () => Batch1Validation.runFullSuite(),
       healthCheck: () => Batch1Validation.healthCheck()
     },
-    // PHASE 3: Batch 2 Combat Tests
+    // PHASE 3: Batch 2 Combat Tests (lazy-loaded — not in production bootstrap)
     batch2: {
-      testDamage: () => DamageEngineTest.runFullSuite(),
-      testCombatComplete: () => Batch2ComprehensiveTest.runFullSuite()
+      testDamage: async () => {
+        const { DamageEngineTest } = await import('./scripts/engine/combat/damage-engine-test.js');
+        return DamageEngineTest.runFullSuite();
+      },
+      testCombatComplete: async () => {
+        const { Batch2ComprehensiveTest } = await import('./tests/archived/batch-2-comprehensive-test.js');
+        return Batch2ComprehensiveTest.runFullSuite();
+      }
     },
     // Sentinel Runtime Kernel API
     sentinel: {
@@ -454,20 +462,22 @@ Hooks.once('ready', async () => {
       appv2Audit: () => AppV2AuditRunner.runAudit(),
       appv2AuditQuick: () => AppV2AuditRunner.quickCheck(),
       appv2AuditExport: () => AppV2AuditRunner.exportReport(),
-      // Phase A2: Character Sheet Integration Audit (partials, rolls, fields, position, recalc)
+      // Phase A2: Character Sheet Integration Audit (lazy-loaded — not in production bootstrap)
       characterSheetA2: {
         audit: async (actor) => {
+          const { SWSEV2CharacterSheetAudit } = await import('./scripts/sheets/v2/character-sheet-integration-audit.js');
           const audit = new SWSEV2CharacterSheetAudit();
           await audit.runFullAudit(actor);
           return audit;
         },
         runOnSelected: async () => {
+          const { SWSEV2CharacterSheetAudit } = await import('./scripts/sheets/v2/character-sheet-integration-audit.js');
           const audit = new SWSEV2CharacterSheetAudit();
           await audit.runFullAudit();
           return audit;
         },
-        // Phase B: Quick smoke tests after fixes
         test: async (actor) => {
+          const { CharacterSheetIntegrationTestHarness } = await import('./scripts/sheets/v2/character-sheet-integration-test-harness.js');
           const harness = new CharacterSheetIntegrationTestHarness(actor);
           return await harness.runAll();
         }
