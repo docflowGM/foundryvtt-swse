@@ -60,24 +60,12 @@
           "id": "weapon-finesse",
           "name": "Weapon Finesse",
           "type": "feat"
-        },
-        {
-          "pack": "foundryvtt-swse.feats",
-          "id": "252b67d6e31c377e",
-          "name": "Weapon Finesse",
-          "type": "feat"
         }
       ],
       "talents": [
         {
           "pack": "foundryvtt-swse.talents",
           "id": "block",
-          "name": "Block",
-          "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "9379daa94a228c04",
           "name": "Block",
           "type": "talent"
         }
@@ -223,12 +211,6 @@
           "id": "force-focus",
           "name": "Force Focus",
           "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "af51d4e76675b183",
-          "name": "Force Focus",
-          "type": "talent"
         }
       ],
       "talentTreeId": {
@@ -359,12 +341,6 @@
           "id": "deflect",
           "name": "Deflect",
           "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "72c644f7a09b1186",
-          "name": "Deflect",
-          "type": "talent"
         }
       ],
       "talentTreeId": {
@@ -485,24 +461,12 @@
           "id": "force-training",
           "name": "Force Training",
           "type": "feat"
-        },
-        {
-          "pack": "foundryvtt-swse.feats",
-          "id": "9b7b869a86f39190",
-          "name": "Force Training",
-          "type": "feat"
         }
       ],
       "talents": [
         {
           "pack": "foundryvtt-swse.talents",
           "id": "dark-side-sense",
-          "name": "Dark Side Sense",
-          "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "e885f64758f5e2bd",
           "name": "Dark Side Sense",
           "type": "talent"
         }
@@ -667,12 +631,6 @@
           "id": "inspire-confidence",
           "name": "Inspire Confidence",
           "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "4d8882a28da30454",
-          "name": "Inspire Confidence",
-          "type": "talent"
         }
       ],
       "talentTreeId": {
@@ -784,24 +742,12 @@
           "id": "improved-defenses",
           "name": "Improved Defenses",
           "type": "feat"
-        },
-        {
-          "pack": "foundryvtt-swse.feats",
-          "id": "f8e2a30390d870e7",
-          "name": "Improved Defenses",
-          "type": "feat"
         }
       ],
       "talents": [
         {
           "pack": "foundryvtt-swse.talents",
           "id": "born-leader",
-          "name": "Born Leader",
-          "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "6a66ba6e0834dd6f",
           "name": "Born Leader",
           "type": "talent"
         }
@@ -935,24 +881,12 @@
           "id": "skill-training",
           "name": "Skill Training",
           "type": "feat"
-        },
-        {
-          "pack": "foundryvtt-swse.feats",
-          "id": "a9f6de36f24ef202",
-          "name": "Skill Training",
-          "type": "feat"
         }
       ],
       "talents": [
         {
           "pack": "foundryvtt-swse.talents",
           "id": "wealth",
-          "name": "Wealth",
-          "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "37bf53b4b2c0e539",
           "name": "Wealth",
           "type": "talent"
         }
@@ -1117,12 +1051,6 @@
           "id": "noble-fencing-style",
           "name": "Noble Fencing Style",
           "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "00c3231e4a4173fa",
-          "name": "Noble Fencing Style",
-          "type": "talent"
         }
       ],
       "talentTreeId": {
@@ -1241,24 +1169,12 @@
           "id": "precise-shot",
           "name": "Precise Shot",
           "type": "feat"
-        },
-        {
-          "pack": "foundryvtt-swse.feats",
-          "id": "c180eee7d3bc29b2",
-          "name": "Precise Shot",
-          "type": "feat"
         }
       ],
       "talents": [
         {
           "pack": "foundryvtt-swse.talents",
           "id": "sneak-attack",
-          "name": "Sneak Attack",
-          "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "1505abc8babeeb84",
           "name": "Sneak Attack",
           "type": "talent"
         }
@@ -1422,12 +1338,6 @@
           "id": "knack",
           "name": "Knack",
           "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "ac6baadb9d65ff7f",
-          "name": "Knack",
-          "type": "talent"
         }
       ],
       "talentTreeId": {
@@ -1563,24 +1473,12 @@
           "id": "weapon-finesse",
           "name": "Weapon Finesse",
           "type": "feat"
-        },
-        {
-          "pack": "foundryvtt-swse.feats",
-          "id": "252b67d6e31c377e",
-          "name": "Weapon Finesse",
-          "type": "feat"
         }
       ],
       "talents": [
         {
           "pack": "foundryvtt-swse.talents",
           "id": "dastardly-strike",
-          "name": "Dastardly Strike",
-          "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "9e4345faaaa94dd8",
           "name": "Dastardly Strike",
           "type": "talent"
         }
@@ -1721,24 +1619,12 @@
           "id": "improved-defenses",
           "name": "Improved Defenses",
           "type": "feat"
-        },
-        {
-          "pack": "foundryvtt-swse.feats",
-          "id": "f8e2a30390d870e7",
-          "name": "Improved Defenses",
-          "type": "feat"
         }
       ],
       "talents": [
         {
           "pack": "foundryvtt-swse.talents",
           "id": "fool's-luck",
-          "name": "Fool's Luck",
-          "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "5319a796f2c4ff64",
           "name": "Fool's Luck",
           "type": "talent"
         }
@@ -1908,12 +1794,6 @@
           "id": "opportunistic-strike",
           "name": "Opportunistic Strike",
           "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "93770927eba5446d",
-          "name": "Opportunistic Strike",
-          "type": "talent"
         }
       ],
       "talentTreeId": {
@@ -1960,7 +1840,7 @@
           "displayName": "Needler"
         }
       ],
-      "credits": 0,
+      "credits": 375,
       "mentor": "salty",
       "archetype": "Brigand",
       "roleTags": [
@@ -2058,12 +1938,6 @@
         {
           "pack": "foundryvtt-swse.talents",
           "id": "surveillance",
-          "name": "Surveillance",
-          "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "f23b63464e0aeff7",
           "name": "Surveillance",
           "type": "talent"
         }
@@ -2557,12 +2431,6 @@
           "id": "evasion",
           "name": "Evasion",
           "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "5400bc8cb1200624",
-          "name": "Evasion",
-          "type": "talent"
         }
       ],
       "talentTreeId": {
@@ -2736,12 +2604,6 @@
           "id": "improved-stealth",
           "name": "Improved Stealth",
           "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "073115894cad8cf9",
-          "name": "Improved Stealth",
-          "type": "talent"
         }
       ],
       "talentTreeId": {
@@ -2911,12 +2773,6 @@
           "id": "commanding-presence",
           "name": "Commanding Presence",
           "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "438e13c99c7b53a6",
-          "name": "Commanding Presence",
-          "type": "talent"
         }
       ],
       "talentTreeId": {
@@ -2987,7 +2843,7 @@
           "displayName": "Snap Baton"
         }
       ],
-      "credits": 1125,
+      "credits": 325,
       "mentor": "breach",
       "archetype": "Just A Dude",
       "roleTags": [
@@ -3053,12 +2909,6 @@
         {
           "pack": "foundryvtt-swse.feats",
           "id": "weapon-proficiency-(heavy-weapons)",
-          "name": "Weapon Proficiency (Heavy Weapons)",
-          "type": "feat"
-        },
-        {
-          "pack": "foundryvtt-swse.feats",
-          "id": "8329a353aa3899be",
           "name": "Weapon Proficiency (Heavy Weapons)",
           "type": "feat"
         }
@@ -3503,12 +3353,6 @@
           "id": "comrades-in-arms",
           "name": "Comrades in Arms",
           "type": "talent"
-        },
-        {
-          "pack": "foundryvtt-swse.talents",
-          "id": "d4dcafa34cda98c2",
-          "name": "Comrades in Arms",
-          "type": "talent"
         }
       ],
       "talentTreeId": {
@@ -3580,7 +3424,7 @@
           "displayName": "Smoke Grenade"
         }
       ],
-      "credits": 0,
+      "credits": 350,
       "mentor": "breach",
       "archetype": "Commando",
       "roleTags": [
@@ -3729,12 +3573,6 @@
           "id": "weapon-proficiency-(rifles)",
           "name": "Weapon Proficiency (Rifles)",
           "type": "feat"
-        },
-        {
-          "pack": "foundryvtt-swse.feats",
-          "id": "765ff8a34e58acac",
-          "name": "Weapon Proficiency (Rifles)",
-          "type": "feat"
         }
       ],
       "talents": [],
@@ -3844,12 +3682,6 @@
         {
           "pack": "foundryvtt-swse.feats",
           "id": "weapon-proficiency-(pistols)",
-          "name": "Weapon Proficiency (Pistols)",
-          "type": "feat"
-        },
-        {
-          "pack": "foundryvtt-swse.feats",
-          "id": "e5d361d01d1b44e4",
           "name": "Weapon Proficiency (Pistols)",
           "type": "feat"
         }
@@ -4027,12 +3859,6 @@
         {
           "pack": "foundryvtt-swse.feats",
           "id": "weapon-proficiency-(pistols)",
-          "name": "Weapon Proficiency (Pistols)",
-          "type": "feat"
-        },
-        {
-          "pack": "foundryvtt-swse.feats",
-          "id": "e5d361d01d1b44e4",
           "name": "Weapon Proficiency (Pistols)",
           "type": "feat"
         }

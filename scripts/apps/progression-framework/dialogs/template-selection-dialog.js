@@ -68,15 +68,31 @@ export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2
   /**
    * Show template selection dialog and return chosen template ID (or null for freeform).
    * BLOCKING: Does not return until user makes a choice.
+   * SUBTYPE-AWARE: Filters templates based on chargen subtype (actor, droid, nonheroic).
    *
    * @param {Actor} actor - The actor being created (for context)
+   * @param {Object} options - Options
+   * @param {string} options.subtype - Chargen subtype for filtering ('actor', 'droid', 'nonheroic', 'beast', 'follower')
    * @returns {Promise<string|null>} Template ID, or null if user chose freeform
    */
-  static async showChoiceDialog(actor) {
-    const templates = await TemplateRegistry.getAllTemplates();
+  static async showChoiceDialog(actor, options = {}) {
+    const { subtype = 'actor' } = options;
+    let templates = await TemplateRegistry.getAllTemplates();
 
     if (!templates || templates.length === 0) {
       swseLogger.warn('[TemplateSelectionDialog] No templates available; skipping dialog');
+      return null;
+    }
+
+    // V2 COMPLIANCE: Filter templates based on progression subtype
+    // Droid chargen should not see heroic-only templates, etc.
+    templates = this._filterTemplatesBySubtype(templates, subtype);
+
+    if (templates.length === 0) {
+      swseLogger.warn(
+        '[TemplateSelectionDialog] No templates available for subtype',
+        { subtype }
+      );
       return null;
     }
 
@@ -216,6 +232,51 @@ export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2
         this._onButtonClick(event);
       });
     });
+  }
+
+  /**
+   * Filter templates by progression subtype.
+   * V2 COMPLIANCE: Ensures droid chargen only sees droid-compatible templates.
+   *
+   * @param {Array} templates - All templates
+   * @param {string} subtype - Chargen subtype ('actor', 'droid', 'nonheroic', 'beast', 'follower')
+   * @returns {Array} Filtered templates
+   * @private
+   */
+  static _filterTemplatesBySubtype(templates, subtype) {
+    if (!templates || !Array.isArray(templates)) {
+      return [];
+    }
+
+    // Nonheroic, beast, and follower subtypes
+    if (subtype === 'nonheroic' || subtype === 'beast' || subtype === 'follower') {
+      // These subtypes should only see nonheroic templates
+      return templates.filter(t => t.isNonheroic === true);
+    }
+
+    // Droid subtype: Show droid-specific templates and class templates (exclude Force classes)
+    if (subtype === 'droid') {
+      return templates.filter(t => {
+        // Exclude nonheroic templates for droid
+        if (t.isNonheroic === true) {
+          return false;
+        }
+        // Exclude Force/Jedi classes for droid
+        const classId = t.classId?.id || t.classId;
+        if (classId && classId.toLowerCase().includes('force')) {
+          return false;
+        }
+        return true;
+      });
+    }
+
+    // Heroic actor subtype: Show heroic templates only
+    if (subtype === 'actor') {
+      return templates.filter(t => t.isNonheroic !== true);
+    }
+
+    // Fallback: no filtering
+    return templates;
   }
 
   async _onButtonClick(event) {
