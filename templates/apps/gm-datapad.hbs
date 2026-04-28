@@ -1,0 +1,681 @@
+<div class="gm-datapad-container swse-ui-shell swse-datapad flexcol">
+  {{!-- GM Datapad Shell --}}
+  <div class="swse-datapad swse-screen gm-datapad-screen flexcol">
+
+    {{!-- Home Page --}}
+    {{#if (eq currentPage "home")}}
+    <div class="gm-datapad-page gm-datapad-home">
+      <div class="page-header">
+        <h2>GM Operations</h2>
+        <p class="page-subtitle">Master control for store, rules, approvals, and party management</p>
+      </div>
+
+      <div class="app-cards-grid">
+        {{#each apps}}
+        <button class="app-card swse-ui-button" data-app-card="{{this.id}}"
+                title="{{this.description}}">
+          <div class="app-card-icon">
+            <i class="{{this.icon}}"></i>
+          </div>
+          <div class="app-card-label">{{this.label}}</div>
+          <div class="app-card-desc">{{this.description}}</div>
+        </button>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Bulletin Page --}}
+    {{else if (eq currentPage "bulletin")}}
+    <div class="gm-datapad-page gm-datapad-bulletin">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>{{pageTitle}}</h2>
+        <p class="page-subtitle">{{pageDescription}}</p>
+      </div>
+
+      <div class="bulletin-content">
+        <div class="bulletin-section">
+          <h3>Party Bulletin</h3>
+          <div class="bulletin-section-content swse-ui-panel">
+            <p class="placeholder">Party notices not yet configured</p>
+            <p class="note">Phase 2: Backed by journals and actor flags</p>
+          </div>
+        </div>
+
+        <div class="bulletin-section">
+          <h3>Player Bulletins</h3>
+          <div class="bulletin-section-content swse-ui-panel">
+            {{#if playerBulletins.length}}
+            {{#each playerBulletins}}
+            <div class="player-bulletin">
+              <strong>{{this.playerName}}</strong>
+              <p>{{this.notice}}</p>
+            </div>
+            {{/each}}
+            {{else}}
+            <p class="placeholder">No individual player notices</p>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- House Rules Page --}}
+    {{else if (eq currentPage "house-rules")}}
+    <div class="gm-datapad-page gm-datapad-house-rules swse-house-rules-datapad">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>{{pageTitle}}</h2>
+        <p class="page-subtitle">{{pageDescription}}</p>
+      </div>
+
+      <div class="datapad-body">
+
+        {{!-- CHARACTER CREATION --}}
+        {{#if rules.characterCreation}}
+        <div class="rule-category">
+          <div class="rule-category-header">
+            <span class="category-icon">⚙</span>
+            Character Creation
+          </div>
+
+          <div class="rule-list">
+            {{#each rules.characterCreation}}
+              <div class="rule-entry">
+                <div class="rule-info">
+                  <div class="rule-name">{{this.name}}</div>
+                  <div class="rule-description">{{this.description}}</div>
+                </div>
+
+                <div class="rule-toggle">
+                  <label class="cyber-switch">
+                    <input type="checkbox"
+                           data-rule-key="{{this.key}}"
+                           data-rule-type="{{this.type}}"
+                           {{#if this.enabled}}checked{{/if}}>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{!-- COMBAT --}}
+        {{#if rules.combat}}
+        <div class="rule-category">
+          <div class="rule-category-header">
+            <span class="category-icon">⚔</span>
+            Combat
+          </div>
+
+          <div class="rule-list">
+            {{#each rules.combat}}
+              <div class="rule-entry">
+                <div class="rule-info">
+                  <div class="rule-name">{{this.name}}</div>
+                  <div class="rule-description">{{this.description}}</div>
+                </div>
+
+                <div class="rule-toggle">
+                  <label class="cyber-switch">
+                    <input type="checkbox"
+                           data-rule-key="{{this.key}}"
+                           data-rule-type="{{this.type}}"
+                           {{#if this.enabled}}checked{{/if}}>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{!-- FORCE --}}
+        {{#if rules.force}}
+        <div class="rule-category">
+          <div class="rule-category-header">
+            <span class="category-icon">✦</span>
+            Force
+          </div>
+
+          <div class="rule-list">
+            {{#each rules.force}}
+              <div class="rule-entry">
+                <div class="rule-info">
+                  <div class="rule-name">{{this.name}}</div>
+                  <div class="rule-description">{{this.description}}</div>
+                </div>
+
+                <div class="rule-toggle">
+                  <label class="cyber-switch">
+                    <input type="checkbox"
+                           data-rule-key="{{this.key}}"
+                           data-rule-type="{{this.type}}"
+                           {{#if this.enabled}}checked{{/if}}>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{!-- RECOVERY & CONDITIONS --}}
+        {{#if rules.recovery}}
+        <div class="rule-category">
+          <div class="rule-category-header">
+            <span class="category-icon">❤</span>
+            Recovery & Conditions
+          </div>
+
+          <div class="rule-list">
+            {{#each rules.recovery}}
+              <div class="rule-entry">
+                <div class="rule-info">
+                  <div class="rule-name">{{this.name}}</div>
+                  <div class="rule-description">{{this.description}}</div>
+                </div>
+
+                <div class="rule-toggle">
+                  <label class="cyber-switch">
+                    <input type="checkbox"
+                           data-rule-key="{{this.key}}"
+                           data-rule-type="{{this.type}}"
+                           {{#if this.enabled}}checked{{/if}}>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{!-- SKILLS & TALENTS --}}
+        {{#if rules.skills}}
+        <div class="rule-category">
+          <div class="rule-category-header">
+            <span class="category-icon">📚</span>
+            Skills & Talents
+          </div>
+
+          <div class="rule-list">
+            {{#each rules.skills}}
+              <div class="rule-entry">
+                <div class="rule-info">
+                  <div class="rule-name">{{this.name}}</div>
+                  <div class="rule-description">{{this.description}}</div>
+                </div>
+
+                <div class="rule-toggle">
+                  <label class="cyber-switch">
+                    <input type="checkbox"
+                           data-rule-key="{{this.key}}"
+                           data-rule-type="{{this.type}}"
+                           {{#if this.enabled}}checked{{/if}}>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{!-- VEHICLES & SPACE --}}
+        {{#if rules.vehicles}}
+        <div class="rule-category">
+          <div class="rule-category-header">
+            <span class="category-icon">🚀</span>
+            Vehicles & Space Combat
+          </div>
+
+          <div class="rule-list">
+            {{#each rules.vehicles}}
+              <div class="rule-entry">
+                <div class="rule-info">
+                  <div class="rule-name">{{this.name}}</div>
+                  <div class="rule-description">{{this.description}}</div>
+                </div>
+
+                <div class="rule-toggle">
+                  <label class="cyber-switch">
+                    <input type="checkbox"
+                           data-rule-key="{{this.key}}"
+                           data-rule-type="{{this.type}}"
+                           {{#if this.enabled}}checked{{/if}}>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+      </div>
+
+      {{!-- FOOTER STATUS --}}
+      <div class="datapad-footer">
+        <div class="status-line">
+          <span class="status-label">SYSTEM INTEGRITY:</span>
+          <span class="status-value">100%</span>
+        </div>
+        <div class="status-line">
+          <span class="status-label">ACTIVE OVERRIDES:</span>
+          <span class="status-value">{{activeRuleCount}}</span>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Store Page --}}
+    {{else if (eq currentPage "store")}}
+    <div class="gm-datapad-page gm-datapad-store swse-store-ui swse-ui-shell swse-store-shell flexcol">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>{{pageTitle}}</h2>
+        <p class="page-subtitle">{{pageDescription}}</p>
+      </div>
+
+      {{!-- Store Tab Navigation --}}
+      <nav class="dashboard-tabs swse-ui-tabs swse-ui-frame">
+        <button class="tab-button swse-ui-tab" data-swse-tab="transactions" title="Review all completed buy and sell transactions. Transactions may be reversed here if a correction is required.">Transactions</button>
+        <button class="tab-button swse-ui-tab" data-swse-tab="pending" title="View and resolve sell offers that have not yet been accepted or denied.">Pending Sales</button>
+        <button class="tab-button swse-ui-tab" data-swse-tab="approvals" title="Review and approve custom droid and vehicle purchases awaiting GM authorization.">Pending Approvals</button>
+        <button class="tab-button swse-ui-tab" data-swse-tab="controls" title="Configure store availability, pricing modifiers, item visibility, and selling house rules.">Store Controls</button>
+      </nav>
+
+      {{!-- Store Tab Content --}}
+      <div class="dashboard-content flexcol swse-ui-panel">
+
+        {{!-- TAB 1: TRANSACTIONS LEDGER --}}
+        <div class="dashboard-tab swse-ui-panel" data-swse-tab="transactions">
+          <h3>TRANSACTION LEDGER</h3>
+          <p class="tab-description">A chronological record of all finalized store transactions. Use this to audit purchases and correct credits if necessary.</p>
+
+          {{#each transactions}}
+            <table class="transactions-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Actor</th>
+                  <th>Type</th>
+                  <th>Item</th>
+                  <th>Amount</th>
+                  <th>Source</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each ../transactions}}
+                  <tr data-index="{{@index}}">
+                    <td>{{#formatDate this.timestamp}}{{/formatDate}}</td>
+                    <td>{{this.actor}}</td>
+                    <td><span class="type-badge {{lowercase this.type}}">{{this.type}}</span></td>
+                    <td>{{this.item}}</td>
+                    <td class="amount {{#if (gt this.amount 0)}}positive{{else}}negative{{/if}}">
+                      {{#if (gt this.amount 0)}}+{{/if}}{{this.amount}}
+                    </td>
+                    <td><span class="source-badge">{{this.source}}</span></td>
+                    <td>
+                      <button class="action-btn swse-ui-button" data-action="reverse-transaction" data-index="{{@index}}" title="Adjust credits for this transaction.">
+                        Adjust Credits
+                      </button>
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          {{else}}
+            <p class="empty-state">No transactions yet.</p>
+          {{/each}}
+        </div>
+
+        {{!-- TAB 2: PENDING SALES --}}
+        <div class="dashboard-tab swse-ui-panel" data-swse-tab="pending">
+          <h3>PENDING SELL ATTEMPTS</h3>
+          <p class="tab-description">Sell offers awaiting resolution. These appear if a sell request was not immediately resolved or was dismissed earlier.</p>
+          <p style="color: #ff9900; padding: 1rem; background: rgba(255, 153, 0, 0.1); border-radius: 4px; margin-bottom: 1rem;">
+            <strong>⚠ Not Yet Implemented:</strong> Pending sale resolution is not yet available. This feature is under development.
+          </p>
+
+          {{#if (eq pendingSales.length 0)}}
+            <p class="empty-state">No pending sales.</p>
+          {{else}}
+            <table class="pending-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Actor</th>
+                  <th>Item</th>
+                  <th>Requested Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each pendingSales}}
+                  <tr data-index="{{@index}}">
+                    <td>{{#formatDate this.timestamp}}{{/formatDate}}</td>
+                    <td>{{this.actor}}</td>
+                    <td>{{this.item}}</td>
+                    <td>
+                      {{#if this.value}}
+                        {{this.value}} cr
+                      {{else}}
+                        <span class="no-price">No base price</span>
+                      {{/if}}
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          {{/if}}
+        </div>
+
+        {{!-- TAB 3: PENDING APPROVALS --}}
+        <div class="dashboard-tab swse-ui-panel" data-swse-tab="approvals">
+          <h3>PENDING CUSTOM PURCHASES</h3>
+          <p class="tab-description">Pending custom droid and vehicle purchases awaiting GM review and approval.</p>
+
+          {{#if (eq pendingApprovals.length 0)}}
+            <p class="empty-state">No pending custom purchases.</p>
+          {{else}}
+            <table class="approvals-table">
+              <thead>
+                <tr>
+                  <th>Submitted</th>
+                  <th>Player / Character</th>
+                  <th>Type</th>
+                  <th>Asset Name</th>
+                  <th>Cost</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each pendingApprovals}}
+                  <tr class="approval-row">
+                    <td><span class="timestamp">{{this.timeSubmitted}}</span></td>
+                    <td><span class="actor-name">{{this.ownerActorName}}</span></td>
+                    <td><span class="type-badge {{this.type}}">{{capitalize this.type}}</span></td>
+                    <td><strong>{{this.draftData.name}}</strong></td>
+                    <td><span class="credit-amount">{{this.costCredits}}</span></td>
+                    <td class="action-cell">
+                      <button class="action-btn icon-btn swse-ui-button" data-action="preview-approval" data-index="{{@index}}" title="View the finalized actor sheet as it will appear if approved.">👁️</button>
+                      <button class="action-btn icon-btn swse-ui-button" data-action="edit-approval" data-index="{{@index}}" title="Edit the draft before approval.">✏️</button>
+                      <button class="action-btn icon-btn approve" data-action="approve-custom" data-index="{{@index}}" title="Approve this purchase. Credits will be deducted.">✓</button>
+                      <button class="action-btn icon-btn deny" data-action="deny-custom" data-index="{{@index}}" title="Deny this purchase. No credits will be deducted.">✕</button>
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          {{/if}}
+        </div>
+
+        {{!-- TAB 4: STORE CONTROLS --}}
+        <div class="dashboard-tab swse-ui-panel" data-swse-tab="controls">
+          <h3>STORE CONTROLS</h3>
+
+          {{!-- Store Availability --}}
+          <div class="control-section swse-ui-frame">
+            <h4>STORE AVAILABILITY</h4>
+            <label class="toggle-label">
+              <input type="checkbox" name="storeOpen" {{#if storeOpen}}checked{{/if}}>
+              <span class="toggle-text">Store Open</span>
+            </label>
+            {{#unless storeOpen}}
+              <p class="warning-text">Store is currently closed to purchases.</p>
+            {{/unless}}
+          </div>
+
+          {{!-- Pricing Controls --}}
+          <div class="control-section swse-ui-frame">
+            <h4>PRICING MODIFIERS</h4>
+            <label>Global Buy Price Modifier (%)</label>
+            <div class="slider-container">
+              <input type="range" name="buyModifier" min="-50" max="200" step="5" value="{{buyModifier}}" class="slider">
+              <span class="slider-value">{{buyModifier}}%</span>
+            </div>
+            <p class="helper-text">Example: +25% represents scarcity or wartime inflation.</p>
+          </div>
+
+          {{!-- Item Visibility --}}
+          <div class="control-section swse-ui-frame">
+            <h4>ITEM VISIBILITY</h4>
+
+            <div class="visibility-subsection">
+              <h5>By Rarity</h5>
+              <label><input type="checkbox" name="rarity-common" {{#if visibleRarities.common}}checked{{/if}}> Common</label>
+              <label><input type="checkbox" name="rarity-uncommon" {{#if visibleRarities.uncommon}}checked{{/if}}> Uncommon</label>
+              <label><input type="checkbox" name="rarity-rare" {{#if visibleRarities.rare}}checked{{/if}}> Rare</label>
+              <label><input type="checkbox" name="rarity-restricted" {{#if visibleRarities.restricted}}checked{{/if}}> Restricted</label>
+              <label><input type="checkbox" name="rarity-illegal" {{#if visibleRarities.illegal}}checked{{/if}}> Illegal</label>
+            </div>
+
+            <div class="visibility-subsection">
+              <h5>By Item Type</h5>
+              <label><input type="checkbox" name="type-weapons" {{#if visibleTypes.weapons}}checked{{/if}}> Weapons</label>
+              <label><input type="checkbox" name="type-armor" {{#if visibleTypes.armor}}checked{{/if}}> Armor</label>
+              <label><input type="checkbox" name="type-gear" {{#if visibleTypes.gear}}checked{{/if}}> Gear</label>
+              <label><input type="checkbox" name="type-droids" {{#if visibleTypes.droids}}checked{{/if}}> Droids</label>
+              <label><input type="checkbox" name="type-vehicles" {{#if visibleTypes.vehicles}}checked{{/if}}> Vehicles</label>
+            </div>
+          </div>
+
+          {{!-- Selling Rules --}}
+          <div class="control-section swse-ui-frame">
+            <h4>SELLING RULES (HOUSE RULES)</h4>
+
+            <label class="toggle-label">
+              <input type="checkbox" name="autoAcceptSelling" {{#if autoAcceptSelling}}checked{{/if}}>
+              <span class="toggle-text">Automatically accept item sales</span>
+            </label>
+
+            <label>Automatic Sale Value (%)</label>
+            <div class="slider-container {{#unless autoAcceptSelling}}disabled{{/unless}}">
+              <input type="range" name="autoSalePercent" min="10" max="100" step="5" value="{{autoSalePercent}}" class="slider" {{#unless autoAcceptSelling}}disabled{{/unless}}>
+              <span class="slider-value">{{autoSalePercent}}%</span>
+            </div>
+
+            <label class="toggle-label">
+              <input type="checkbox" name="disallowAutoSellNoPrice" {{#if disallowAutoSellNoPrice}}checked{{/if}}>
+              <span class="toggle-text">Disallow auto-selling items with no base price</span>
+            </label>
+          </div>
+
+          {{!-- Footer --}}
+          <div class="control-footer">
+            <p class="credit-contract">All credit values are integers. Percentage calculations are rounded down.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {{!-- Approvals Page --}}
+    {{else if (eq currentPage "approvals")}}
+    <div class="gm-datapad-page gm-datapad-approvals flexcol">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>{{pageTitle}}</h2>
+        <p class="page-subtitle">{{pageDescription}}</p>
+      </div>
+
+      <div class="approvals-sections flexcol">
+        {{!-- PENDING DROIDS SECTION --}}
+        <div class="approval-section">
+          <h3>Pending Droids</h3>
+
+          {{#if hasPendingDroids}}
+            <div class="pending-droids-list flexcol">
+              {{#each pendingDroids}}
+                <div class="droid-approval-card">
+                  <div class="card-header">
+                    <div class="droid-name">
+                      <strong>{{actorName}}</strong>
+                      <span class="owner-tag">by {{ownerName}}</span>
+                    </div>
+                    <div class="card-actions">
+                      <button class="view-droid-details-btn holo-btn small secondary" data-actor-id="{{actorId}}" title="View full droid sheet">
+                        <i class="fa-solid fa-eye"></i> Details
+                      </button>
+                      <button class="approve-droid-btn holo-btn small" data-actor-id="{{actorId}}" title="Approve and deduct credits">
+                        <i class="fa-solid fa-check"></i> Approve
+                      </button>
+                      <button class="reject-droid-btn holo-btn small secondary" data-actor-id="{{actorId}}" title="Reject and revert to draft">
+                        <i class="fa-solid fa-times"></i> Reject
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="card-config">
+                    <div class="config-row">
+                      <div class="config-item">
+                        <span class="label">Degree:</span>
+                        <span class="value">{{degree}}</span>
+                      </div>
+                      <div class="config-item">
+                        <span class="label">Size:</span>
+                        <span class="value">{{size}}</span>
+                      </div>
+                      <div class="config-item">
+                        <span class="label">Locomotion:</span>
+                        <span class="value">{{locomotion}}</span>
+                      </div>
+                    </div>
+
+                    <div class="config-row">
+                      <div class="config-item">
+                        <span class="label">Processor:</span>
+                        <span class="value">{{processor}}</span>
+                      </div>
+                      <div class="config-item">
+                        <span class="label">Armor:</span>
+                        <span class="value">{{armor}}</span>
+                      </div>
+                      <div class="config-item cost-highlight">
+                        <span class="label">Cost:</span>
+                        <span class="value">{{cost}} credits</span>
+                      </div>
+                    </div>
+
+                    <div class="config-row">
+                      <div class="config-item">
+                        <span class="label">Appendages:</span>
+                        <span class="value">{{appendages}}</span>
+                      </div>
+                      <div class="config-item">
+                        <span class="label">Sensors:</span>
+                        <span class="value">{{sensors}}</span>
+                      </div>
+                      <div class="config-item">
+                        <span class="label">Weapons:</span>
+                        <span class="value">{{weapons}}</span>
+                      </div>
+                      <div class="config-item">
+                        <span class="label">Accessories:</span>
+                        <span class="value">{{accessories}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card-footer">
+                    <small class="submitted-date">Submitted: {{createdAt}}</small>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <p class="empty-state">No pending droids.</p>
+          {{/if}}
+        </div>
+
+        {{!-- PENDING STORE APPROVALS SECTION --}}
+        <div class="approval-section">
+          <h3>Pending Store Approvals</h3>
+
+          {{#if hasPendingApprovals}}
+            <table class="approvals-table">
+              <thead>
+                <tr>
+                  <th>Submitted</th>
+                  <th>Player / Character</th>
+                  <th>Type</th>
+                  <th>Asset Name</th>
+                  <th>Cost</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each storeApprovals}}
+                  <tr class="approval-row">
+                    <td><span class="timestamp">{{this.timeSubmitted}}</span></td>
+                    <td><span class="actor-name">{{this.ownerActorName}}</span></td>
+                    <td><span class="type-badge {{this.type}}">{{capitalize this.type}}</span></td>
+                    <td><strong>{{this.draftData.name}}</strong></td>
+                    <td><span class="credit-amount">{{this.costCredits}}</span></td>
+                    <td class="action-cell">
+                      <button class="action-btn icon-btn swse-ui-button" data-action="preview-approval" data-index="{{@index}}" title="View the finalized actor sheet as it will appear if approved.">👁️</button>
+                      <button class="action-btn icon-btn swse-ui-button" data-action="edit-approval" data-index="{{@index}}" title="Edit the draft before approval.">✏️</button>
+                      <button class="action-btn icon-btn approve" data-action="approve-custom" data-index="{{@index}}" title="Approve this purchase. Credits will be deducted.">✓</button>
+                      <button class="action-btn icon-btn deny" data-action="deny-custom" data-index="{{@index}}" title="Deny this purchase. No credits will be deducted.">✕</button>
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          {{else}}
+            <p class="empty-state">No pending store approvals.</p>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+
+    {{!-- Workspace Page --}}
+    {{else if (eq currentPage "workspace")}}
+    <div class="gm-datapad-page gm-datapad-workspace">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>{{pageTitle}}</h2>
+        <p class="page-subtitle">{{pageDescription}}</p>
+      </div>
+
+      <div class="workspace-content">
+        {{#if gmActors.length}}
+        <div class="actors-grid">
+          {{#each gmActors}}
+          <div class="actor-card swse-ui-panel">
+            <div class="actor-img">
+              <img src="{{this.img}}" alt="{{this.name}}">
+            </div>
+            <div class="actor-info">
+              <h4>{{this.name}}</h4>
+              <p class="actor-type">{{this.type}}</p>
+              <button class="swse-ui-button" data-open-actor="{{this.id}}">
+                Open Sheet
+              </button>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        {{else}}
+        <p class="placeholder">No GM-owned actors</p>
+        {{/if}}
+      </div>
+    </div>
+
+    {{else}}
+    <div class="gm-datapad-page gm-datapad-error">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>Unknown Page</h2>
+      </div>
+      <p class="error-message">Page "{{currentPage}}" not found</p>
+    </div>
+    {{/if}}
+
+  </div>
+</div>
