@@ -202,6 +202,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       cartRemaining,
       cartEntries,
       currentView,
+      currentCategory: this.currentCategory,
       currentCategoryLabel,
       categorySummary,
       selectedProduct,
