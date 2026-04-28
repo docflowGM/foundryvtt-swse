@@ -1,6 +1,42 @@
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { getSurveyDefinition, getSurveyDefinitionForActor } from './registry.js';
-import { canonicalizeSkillKey } from '/systems/foundryvtt-swse/scripts/utils/skill-normalization.js';
+
+
+function canonicalizeSkillKey(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return null;
+  const compact = raw.replace(/[()]/g, '').replace(/[^a-zA-Z0-9]+/g, '').toLowerCase();
+  const map = {
+    acrobatics: 'acrobatics',
+    climb: 'climb',
+    deception: 'deception',
+    endurance: 'endurance',
+    gatherinformation: 'gatherInfo',
+    gatherinfo: 'gatherInfo',
+    initiative: 'initiative',
+    jump: 'jump',
+    knowledge: 'knowledgeGalacticLore',
+    knowledgebureaucracy: 'knowledgeBureaucracy',
+    knowledgegalacticlore: 'knowledgeGalacticLore',
+    knowledgelifesciences: 'knowledgeLifeSciences',
+    knowledgephysicalsciences: 'knowledgePhysicalSciences',
+    knowledgesocialsciences: 'knowledgeSocialSciences',
+    knowledgetactics: 'knowledgeTactics',
+    knowledgetechnology: 'knowledgeTechnology',
+    mechanics: 'mechanics',
+    perception: 'perception',
+    persuasion: 'persuasion',
+    pilot: 'pilot',
+    ride: 'ride',
+    stealth: 'stealth',
+    survival: 'survival',
+    swim: 'swim',
+    treatinjury: 'treatInjury',
+    usecomputer: 'useComputer',
+    usetheforce: 'useTheForce'
+  };
+  return map[compact] || raw;
+}
 
 function mergeLayer(target, source) {
   for (const [key, value] of Object.entries(source || {})) {
