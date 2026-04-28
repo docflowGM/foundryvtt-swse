@@ -10,25 +10,26 @@
  * @param {string} itemType - Type of item ('feat' or 'talent')
  */
 function showItemSelectionModal(sheet, itemType) {
-  const modal = document.getElementById('item-selection-modal');
-  const titleEl = document.getElementById('modal-title');
-  const messageEl = document.getElementById('modal-message');
+  const root = sheet.element;
+  if (!root) return;
+  const modal = root.querySelector('#item-selection-modal');
+  const titleEl = root.querySelector('#modal-title');
+  const messageEl = root.querySelector('#modal-message');
+  if (!modal || !titleEl || !messageEl) return;
 
-  // Set content based on item type
   const capitalType = itemType.charAt(0).toUpperCase() + itemType.slice(1);
   titleEl.textContent = `Add ${capitalType}`;
   messageEl.textContent = `Would you like to choose a ${itemType} from the compendium?`;
 
-  // Store the current item type for the button handlers
   sheet._currentItemType = itemType;
-
-  // Show modal
   modal.style.display = 'flex';
 
-  // Wire up overlay click to close (if not already done)
+  // Wire overlay click using render-cycle signal so it tears down on rerender.
   const overlay = modal.querySelector('.modal-overlay');
-  if (!overlay._clickHandlerAttached) {
-    overlay.addEventListener('click', () => hideItemSelectionModal(sheet));
+  if (overlay && !overlay._clickHandlerAttached) {
+    overlay.addEventListener('click', () => hideItemSelectionModal(sheet), {
+      signal: sheet._renderAbort?.signal
+    });
     overlay._clickHandlerAttached = true;
   }
 }
@@ -38,7 +39,10 @@ function showItemSelectionModal(sheet, itemType) {
  * @param {SWSEV2CharacterSheet} sheet - The character sheet instance
  */
 function hideItemSelectionModal(sheet) {
-  const modal = document.getElementById('item-selection-modal');
+  const root = sheet.element;
+  if (!root) return;
+  const modal = root.querySelector('#item-selection-modal');
+  if (!modal) return;
   modal.style.display = 'none';
   sheet._currentItemType = null;
 }

@@ -451,14 +451,15 @@ export class SWSEV2CharacterSheet extends
    * Wire shell-level navigation events after every render.
    * Handles back-to-sheet, open-home, close-overlay, close-drawer, and surface-specific events.
    */
-  _wireShellEvents(root) {
+  // signal is the render-cycle AbortController signal — all listeners are torn down on next render.
+  _wireShellEvents(root, signal) {
     if (!root) return;
 
     root.querySelectorAll('[data-shell-action="return-to-sheet"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         await this.returnToSheet();
-      });
+      }, { signal });
     });
 
     root.querySelectorAll('[data-shell-action="return-to-home"]').forEach(el => {
@@ -466,7 +467,7 @@ export class SWSEV2CharacterSheet extends
         ev.preventDefault();
         await this.setSurface('home');
         this.render(false);
-      });
+      }, { signal });
     });
 
     root.querySelectorAll('[data-shell-action="close-overlay"]').forEach(el => {
@@ -474,7 +475,7 @@ export class SWSEV2CharacterSheet extends
         ev.preventDefault();
         await this.closeOverlay();
         this.render(false);
-      });
+      }, { signal });
     });
 
     root.querySelectorAll('[data-shell-action="close-drawer"]').forEach(el => {
@@ -482,7 +483,7 @@ export class SWSEV2CharacterSheet extends
         ev.preventDefault();
         await this.closeDrawer();
         this.render(false);
-      });
+      }, { signal });
     });
 
     // Overlay confirm/cancel callbacks
@@ -493,14 +494,14 @@ export class SWSEV2CharacterSheet extends
         if (typeof onConfirm === 'function') await onConfirm().catch(() => {});
         await this.closeOverlay();
         this.render(false);
-      });
+      }, { signal });
 
       overlayRoot.querySelector('[data-shell-overlay-action="cancel"]')?.addEventListener('click', async () => {
         const onCancel = this._shellOverlay?.options?.onCancel;
         if (typeof onCancel === 'function') await onCancel().catch(() => {});
         await this.closeOverlay();
         this.render(false);
-      });
+      }, { signal });
     }
 
     root.querySelectorAll('[data-action="open-settings-app"]').forEach(el => {
@@ -508,7 +509,7 @@ export class SWSEV2CharacterSheet extends
         ev.preventDefault();
         await this.setSurface('settings', { source: 'sheet' });
         this.render(false);
-      });
+      }, { signal });
     });
 
     root.querySelectorAll('[data-shell-action="open-home"]').forEach(el => {
@@ -516,28 +517,28 @@ export class SWSEV2CharacterSheet extends
         ev.preventDefault();
         await this.setSurface('home');
         this.render(false);
-      });
+      }, { signal });
     });
 
     if (this._shellSurface === 'home') {
-      this._wireHomeSurfaceEvents(root);
+      this._wireHomeSurfaceEvents(root, signal);
     }
     if (this._shellSurface === 'upgrade') {
-      this._wireUpgradeSurfaceEvents(root);
+      this._wireUpgradeSurfaceEvents(root, signal);
     }
     if (this._shellSurface === 'settings') {
-      this._wireSettingsSurfaceEvents(root);
+      this._wireSettingsSurfaceEvents(root, signal);
     }
     if (this._shellSurface === 'mentor') {
-      this._wireMentorSurfaceEvents(root);
+      this._wireMentorSurfaceEvents(root, signal);
     }
     if (this._shellOverlay?.overlayId === 'upgrade-single-item') {
-      this._wireUpgradeOverlayEvents(root);
+      this._wireUpgradeOverlayEvents(root, signal);
     }
   }
 
   /** Wire home surface tile click → setSurface(routeId). */
-  _wireHomeSurfaceEvents(root) {
+  _wireHomeSurfaceEvents(root, signal) {
     const homeRoot = root.querySelector('[data-shell-region="surface-home"]');
     if (!homeRoot) return;
 
@@ -552,12 +553,12 @@ export class SWSEV2CharacterSheet extends
         await new Promise(resolve => setTimeout(resolve, 150));
         await this.setSurface(routeId, { source: 'home' });
         this.render(false);
-      });
+      }, { signal });
     });
   }
 
   /** Wire actor-wide upgrade surface events (category/item selection + apply/remove). */
-  _wireUpgradeSurfaceEvents(root) {
+  _wireUpgradeSurfaceEvents(root, signal) {
     const upgradeRoot = root.querySelector('[data-shell-region="surface-upgrade"]');
     if (!upgradeRoot) return;
 
@@ -569,7 +570,7 @@ export class SWSEV2CharacterSheet extends
         if (this._shellSurfaceOptions.selectedCategoryId === newCat) return;
         this._shellSurfaceOptions = { ...this._shellSurfaceOptions, selectedCategoryId: newCat, selectedItemId: null };
         this.render(false);
-      });
+      }, { signal });
     });
 
     upgradeRoot.querySelectorAll('[data-item-id]').forEach(el => {
@@ -578,7 +579,7 @@ export class SWSEV2CharacterSheet extends
         if (this._shellSurfaceOptions.selectedItemId === newItem) return;
         this._shellSurfaceOptions = { ...this._shellSurfaceOptions, selectedItemId: newItem };
         this.render(false);
-      });
+      }, { signal });
     });
 
     upgradeRoot.querySelectorAll('[data-upgrade-action="apply-upgrade"]').forEach(el => {
@@ -591,7 +592,7 @@ export class SWSEV2CharacterSheet extends
           await CommandBus.execute('APPLY_ITEM_UPGRADE', { actor, itemId: selectedItemId, upgradeId: el.dataset.upgradeId });
           this.render(false);
         } catch (err) { ui.notifications?.error?.(`Failed to apply upgrade: ${err.message}`); }
-      });
+      }, { signal });
     });
 
     upgradeRoot.querySelectorAll('[data-upgrade-action="remove-upgrade"]').forEach(el => {
@@ -604,7 +605,7 @@ export class SWSEV2CharacterSheet extends
           await CommandBus.execute('REMOVE_ITEM_UPGRADE', { actor, itemId: selectedItemId, upgradeIndex: Number(el.dataset.upgradeIndex) });
           this.render(false);
         } catch (err) { ui.notifications?.error?.(`Failed to remove upgrade: ${err.message}`); }
-      });
+      }, { signal });
     });
 
     upgradeRoot.querySelector('[data-action="finalize-upgrades"]')?.addEventListener('click', async () => {
@@ -616,11 +617,11 @@ export class SWSEV2CharacterSheet extends
         ui.notifications?.info?.('Upgrades finalized.');
         this.render(false);
       } catch (err) { ui.notifications?.error?.(`Failed to finalize: ${err.message}`); }
-    });
+    }, { signal });
   }
 
   /** Wire upgrade single-item overlay events. */
-  _wireUpgradeOverlayEvents(root) {
+  _wireUpgradeOverlayEvents(root, signal) {
     const overlayRoot = root.querySelector('[data-shell-region="overlay"]');
     if (!overlayRoot) return;
 
@@ -636,7 +637,7 @@ export class SWSEV2CharacterSheet extends
           await CommandBus.execute('APPLY_ITEM_UPGRADE', { actor, itemId: focusedItemId, upgradeId: el.dataset.upgradeId });
           this.render(false);
         } catch (err) { ui.notifications?.error?.(`Failed to apply upgrade: ${err.message}`); }
-      });
+      }, { signal });
     });
 
     overlayRoot.querySelectorAll('[data-upgrade-action="remove-upgrade"]').forEach(el => {
@@ -648,12 +649,12 @@ export class SWSEV2CharacterSheet extends
           await CommandBus.execute('REMOVE_ITEM_UPGRADE', { actor, itemId: focusedItemId, upgradeIndex: Number(el.dataset.upgradeIndex) });
           this.render(false);
         } catch (err) { ui.notifications?.error?.(`Failed to remove upgrade: ${err.message}`); }
-      });
+      }, { signal });
     });
   }
 
   /** Wire settings surface: theme presets, shell color, controls, toggles, language, reset. */
-  _wireSettingsSurfaceEvents(root) {
+  _wireSettingsSurfaceEvents(root, signal) {
     const settingsRoot = root.querySelector('[data-shell-region="surface-settings"]');
     if (!settingsRoot) return;
 
@@ -662,7 +663,7 @@ export class SWSEV2CharacterSheet extends
         ev.preventDefault();
         await ThemeManager.setTheme({ theme: el.dataset.themePreset });
         this.render(false);
-      });
+      }, { signal });
     });
 
     settingsRoot.querySelectorAll('[data-shell-color]').forEach(el => {
@@ -670,7 +671,7 @@ export class SWSEV2CharacterSheet extends
         ev.preventDefault();
         await ThemeManager.setTheme({ shellColor: el.dataset.shellColor });
         this.render(false);
-      });
+      }, { signal });
     });
 
     settingsRoot.querySelectorAll('[data-theme-control]').forEach(el => {
@@ -679,7 +680,7 @@ export class SWSEV2CharacterSheet extends
         const value = Number(el.value);
         await ThemeManager.setTheme({ [key]: value });
         this.render(false);
-      });
+      }, { signal });
     });
 
     settingsRoot.querySelectorAll('[data-theme-toggle]').forEach(el => {
@@ -689,7 +690,7 @@ export class SWSEV2CharacterSheet extends
         const current = ThemeManager.getTheme() || ThemeManager.defaults;
         await ThemeManager.setTheme({ [key]: !current[key] });
         this.render(false);
-      });
+      }, { signal });
     });
 
     settingsRoot.querySelectorAll('[data-language-setting]').forEach(el => {
@@ -697,18 +698,18 @@ export class SWSEV2CharacterSheet extends
         ev.preventDefault();
         await ThemeManager.setTheme({ language: el.dataset.languageSetting });
         this.render(false);
-      });
+      }, { signal });
     });
 
     settingsRoot.querySelector('[data-action="reset-theme-defaults"]')?.addEventListener('click', async (ev) => {
       ev.preventDefault();
       await ThemeManager.setTheme(ThemeManager.defaults);
       this.render(false);
-    });
+    }, { signal });
   }
 
   /** Wire mentor surface: key selection, topic selection, path commitment with mentor-memory. */
-  _wireMentorSurfaceEvents(root) {
+  _wireMentorSurfaceEvents(root, signal) {
     const mentorRoot = root.querySelector('[data-shell-region="surface-mentor"]');
     if (!mentorRoot) return;
 
@@ -717,7 +718,7 @@ export class SWSEV2CharacterSheet extends
         ev.preventDefault();
         this._shellSurfaceOptions = { selectedMentorKey: el.dataset.mentorKey };
         this.render(false);
-      });
+      }, { signal });
     });
 
     mentorRoot.querySelectorAll('[data-mentor-topic]').forEach(el => {
@@ -728,7 +729,7 @@ export class SWSEV2CharacterSheet extends
           topicKey: el.dataset.mentorTopic
         };
         this.render(false);
-      });
+      }, { signal });
     });
 
     mentorRoot.querySelectorAll('[data-mentor-path]').forEach(el => {
@@ -747,7 +748,7 @@ export class SWSEV2CharacterSheet extends
         } catch (err) {
           ui.notifications?.error?.(`Failed to commit mentor path: ${err.message}`);
         }
-      });
+      }, { signal });
     });
   }
 
@@ -943,7 +944,7 @@ export class SWSEV2CharacterSheet extends
     if (this.actor?.id) {
       ShellRouter.register(this.actor.id, this);
     }
-    this._wireShellEvents(root);
+    this._wireShellEvents(root, signal);
   }
 
   async _onClose(options) {
@@ -2743,16 +2744,18 @@ const forcePoints = [];
   ============================================================ */
 
   _handleForceDiscardAnimation(itemId) {
-    const card = document.querySelector(
-      `.force-card[data-item-id="${itemId}"]`
-    );
+    const root = this.element;
+    if (!root) return;
+    const card = root.querySelector(`.force-card[data-item-id="${itemId}"]`);
     if (!card) return;
     card.classList.add("discarding");
     setTimeout(() => card.classList.remove("discarding"), 500);
   }
 
   _handleForceRecoveryAnimation(itemIds = [], full = false) {
-    const panel = document.querySelector(".force-panel");
+    const root = this.element;
+    if (!root) return;
+    const panel = root.querySelector(".force-panel");
     if (!panel) return;
 
     if (full) {
@@ -2761,9 +2764,7 @@ const forcePoints = [];
     }
 
     itemIds.forEach(id => {
-      const card = document.querySelector(
-        `.force-card[data-item-id="${id}"]`
-      );
+      const card = root.querySelector(`.force-card[data-item-id="${id}"]`);
       if (!card) return;
 
       card.classList.add("recovering");
@@ -3480,31 +3481,35 @@ const forcePoints = [];
   ============================================================ */
 
   _showItemSelectionModal(itemType) {
-    const modal = document.getElementById('item-selection-modal');
-    const titleEl = document.getElementById('modal-title');
-    const messageEl = document.getElementById('modal-message');
+    const root = this.element;
+    if (!root) return;
+    const modal = root.querySelector('#item-selection-modal');
+    const titleEl = root.querySelector('#modal-title');
+    const messageEl = root.querySelector('#modal-message');
+    if (!modal || !titleEl || !messageEl) return;
 
-    // Set content based on item type
     const capitalType = itemType.charAt(0).toUpperCase() + itemType.slice(1);
     titleEl.textContent = `Add ${capitalType}`;
     messageEl.textContent = `Would you like to choose a ${itemType} from the compendium?`;
 
-    // Store the current item type for the button handlers
     this._currentItemType = itemType;
-
-    // Show modal
     modal.style.display = 'flex';
 
-    // Wire up overlay click to close (if not already done)
+    // Wire overlay click using render-cycle signal so it tears down on rerender.
     const overlay = modal.querySelector('.modal-overlay');
-    if (!overlay._clickHandlerAttached) {
-      overlay.addEventListener('click', () => this._hideItemSelectionModal());
+    if (overlay && !overlay._clickHandlerAttached) {
+      overlay.addEventListener('click', () => this._hideItemSelectionModal(), {
+        signal: this._renderAbort?.signal
+      });
       overlay._clickHandlerAttached = true;
     }
   }
 
   _hideItemSelectionModal() {
-    const modal = document.getElementById('item-selection-modal');
+    const root = this.element;
+    if (!root) return;
+    const modal = root.querySelector('#item-selection-modal');
+    if (!modal) return;
     modal.style.display = 'none';
     this._currentItemType = null;
   }
