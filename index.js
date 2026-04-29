@@ -168,7 +168,6 @@ import { Upkeep } from './scripts/automation/upkeep.js';
 // ---- Holonet system ----
 import { registerHolonetSettings, registerHolonetSources, initializeHolonet } from './scripts/holonet/integration/holonet-init.js';
 import { HolonetEngine } from './scripts/holonet/holonet-engine.js';
-import { HolonetStateService } from './scripts/holonet/subsystems/holonet-state-service.js';
 
 // ---- Phase 5: Observability, Forward Compatibility ----
 import { initializePhase5, getPhaseSummary } from './scripts/core/phase5-init.js';
@@ -390,17 +389,21 @@ Hooks.once('ready', async () => {
   /* ---------- UI (DOM-safe) ---------- */
   initializeSceneControls();
   initializeActionPalette();
-  initSidebarIconFallback();
 
-  /* ---------- SIDEBAR DIAGNOSTICS (temporary surgical tracing) ---------- */
-  console.log('[SWSE] Initializing sidebar icon diagnostics...');
-  try {
-    initSidebarSentinelTrace();
-    initSidebarIconComparison();
-    initSidebarIconClassAudit();
-    console.log('[SWSE] Sidebar diagnostics initialized successfully');
-  } catch (err) {
-    console.error('[SWSE] Failed to initialize sidebar diagnostics:', err);
+  // Sidebar diagnostics and icon patching previously mutated native Foundry sidebar
+  // controls during boot. Leave the core sidebar alone unless explicitly opted in for
+  // targeted debugging.
+  if (globalThis.SWSE_DEBUG_SIDEBAR === true) {
+    console.log('[SWSE] Initializing sidebar icon diagnostics (debug mode)...');
+    try {
+      initSidebarIconFallback();
+      initSidebarSentinelTrace();
+      initSidebarIconComparison();
+      initSidebarIconClassAudit();
+      console.log('[SWSE] Sidebar diagnostics initialized successfully');
+    } catch (err) {
+      console.error('[SWSE] Failed to initialize sidebar diagnostics:', err);
+    }
   }
 
   MentorTranslationSettings.loadSettings();
@@ -623,8 +626,6 @@ Hooks.once('ready', async () => {
     DropService,
     DroidValidationEngine,
     HolonetEngine,
-    HolonetStateService,
-    holonet: HolonetEngine,
     // Public APIs
     api: publicAPI,
     debug: {

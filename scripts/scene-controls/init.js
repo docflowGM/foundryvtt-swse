@@ -90,7 +90,24 @@ export function initializeSceneControls() {
   // Hook into getSceneControlButtons to inject controls
   Hooks.on('getSceneControlButtons', (controls) => {
     const swseControls = sceneControlRegistry.getControls();
-    controls.push(...swseControls);
+
+    if (Array.isArray(controls)) {
+      for (const control of swseControls) {
+        if (!controls.some(existing => existing?.name === control?.name)) {
+          controls.push(control);
+        }
+      }
+      return;
+    }
+
+    if (controls && typeof controls === 'object') {
+      for (const control of swseControls) {
+        controls[control.name] ??= control;
+      }
+      return;
+    }
+
+    SWSELogger.warn('Unsupported getSceneControlButtons payload', controls);
   });
 }
 

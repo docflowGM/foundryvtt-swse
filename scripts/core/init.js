@@ -52,22 +52,25 @@ Hooks.once('init', () => {
 });
 
 // Phase 4: Register GM Droid Approval Dashboard
-Hooks.once('ready', () => {
-  // Add a button to the GM sidebar for droid approval
-  if (game.user.isGM) {
-    const btn = document.createElement('button');
-    btn.id = 'gm-droid-approval-btn';
-    btn.className = 'gm-droid-approval-button';
-    btn.innerHTML = '<i class="fa-solid fa-clipboard-check"></i> Droid Approvals';
-    btn.title = 'Review and approve pending custom droids';
-    btn.addEventListener('click', () => GMDroidApprovalDashboard.open());
+Hooks.on('getSceneControlButtons', (controls) => {
+  if (!game.user?.isGM) return;
 
-    // Add to GM tools section if it exists, otherwise add to a custom location
-    const sceneTools = document.querySelector('#scene-tools');
-    if (sceneTools) {
-      sceneTools.appendChild(btn);
-    }
-  }
+  const tokenControls = Array.isArray(controls)
+    ? controls.find(c => c?.name === 'token')
+    : controls?.token ?? Object.values(controls ?? {}).find(c => c?.name === 'token');
+
+  if (!tokenControls) return;
+  if (!Array.isArray(tokenControls.tools)) tokenControls.tools = [];
+  if (tokenControls.tools.some(tool => tool?.name === 'gm-droid-approvals')) return;
+
+  tokenControls.tools.push({
+    name: 'gm-droid-approvals',
+    title: 'Droid Approvals',
+    icon: 'fa-solid fa-clipboard-check',
+    button: true,
+    visible: true,
+    onClick: () => GMDroidApprovalDashboard.open()
+  });
 });
 
 

@@ -1,9 +1,36 @@
 export const arrayHelpers = {
+  /**
+   * Create an array from variable arguments, excluding the Handlebars options object.
+   * Usage: {{#each (array arg1 arg2 arg3) as |item|}} ... {{/each}}
+   * or: left=(array "value1" "value2")
+   * @param {...*} args - Values to include in the array
+   * @returns {Array} Array of the provided arguments (minus the Handlebars options)
+   */
+  array: (...args) => args.slice(0, -1),
+
+  /**
+   * Map over an array with a transformation function.
+   * Since Handlebars doesn't support inline lambda functions natively,
+   * the transformation should be computed in the context and passed pre-transformed.
+   * This helper is for compatibility but typically the array should be pre-mapped in JS.
+   * @param {Array} array - The array to map over
+   * @returns {Array} The same array (transformation should occur in context preparation)
+   */
+  map: (array) => Array.isArray(array) ? array : [],
+
   first: (array) => Array.isArray(array) ? array[0] : undefined,
   last: (array) => Array.isArray(array) ? array[array.length - 1] : undefined,
   length: (array) => Array.isArray(array) ? array.length : 0,
   join: (array, separator = ', ') => Array.isArray(array) ? array.join(separator) : '',
   contains: (array, value) => Array.isArray(array) && array.includes(value),
+  /**
+   * Check if an array includes a specific value.
+   * Usage: {{#if (arrayIncludes someArray someValue)}} ... {{/if}}
+   * @param {Array} array - The array to check
+   * @param {*} value - The value to look for in the array
+   * @returns {boolean} True if the array contains the value, false otherwise
+   */
+  arrayIncludes: (array, value) => Array.isArray(array) && array.includes(value),
   isEmpty: (array) => !Array.isArray(array) || array.length === 0,
   sort: (array, key) => {
     if (!Array.isArray(array)) {return [];}

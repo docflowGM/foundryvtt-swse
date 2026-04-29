@@ -213,19 +213,9 @@ function _ensureSidebarTabsVisible() {
         // native panels; that can make inactive panels visible simultaneously.
         _restoreSidebarDefaults();
 
-        if (!ui.sidebar || !ui.sidebar.activeTab) {
-          log.warn('SWSE | Sidebar activeTab was null; attempting to activate scenes tab');
-          try {
-            const scenesButton = document.querySelector('#sidebar-tabs button[data-tab="scenes"]');
-            if (scenesButton) {
-              scenesButton.click();
-              log.info('SWSE | Scenes tab activated via button click');
-            }
-          } catch (activateErr) {
-            log.warn('SWSE | Failed to activate sidebar tab:', activateErr.message);
-          }
-        }
-
+        // Do not synthesize sidebar clicks here. Foundry v13 owns sidebar tab state,
+        // and forcing button clicks during boot can leave the native sidebar
+        // controller in an inconsistent collapsed/no-content state.
         log.info('SWSE | Sidebar tab visibility normalization complete');
       } catch (err) {
         log.warn('SWSE | Sidebar tab visibility restoration failed:', err.message);
@@ -390,11 +380,8 @@ export function registerHardeningHooks() {
         if (scenes && combat) {
           _restoreSidebarDefaults();
 
-          if (!scenes.classList.contains('active') && !combat.classList.contains('active') && !ui.sidebar?.activeTab) {
-            const scenesButton = document.querySelector('#sidebar-tabs button[data-tab="scenes"]');
-            scenesButton?.click?.();
-            log.info('SWSE | Triggered native scenes tab activation');
-          }
+          // Do not force sidebar activation via DOM clicks. Foundry should restore
+          // its own tab state; SWSE only clears leaked classes and stale inline styles.
         }
       } catch (err) {
         log.warn('SWSE | Guaranteed sidebar fix failed:', err.message);

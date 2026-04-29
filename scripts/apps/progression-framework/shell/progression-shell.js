@@ -23,6 +23,7 @@
 
 import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { RecoverySessionDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/recovery-session-dialog.js';
 import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts/utils/sheet-position.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
@@ -370,7 +371,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
           }
           swseLogger.error('[ProgressionShell] Failed to restore session');
         } else {
-          swseLogger.debug('[ProgressionShell] User declined session recovery');
+          swseLogger.debug('[ProgressionShell] User chose Start Fresh - clearing old session');
+          // Clear old session so we start completely fresh
+          try {
+            await SessionStorage.clearSession(this.actor, this.mode);
+          } catch (err) {
+            swseLogger.warn('[ProgressionShell] Failed to clear old session:', err);
+          }
+          // Don't set _targetStepId - let the progression start from the beginning
+          return;
         }
       }
 
@@ -378,7 +387,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
         const summary = ChargenPersistence.getCheckpointSummary(checkpoint);
         const shouldRecoverCheckpoint = await this._promptSessionRecovery(summary);
         if (!shouldRecoverCheckpoint) {
-          swseLogger.debug('[ProgressionShell] User declined checkpoint recovery');
+          swseLogger.debug('[ProgressionShell] User chose Start Fresh - clearing checkpoint');
+          // Clear checkpoint so we start completely fresh
+          try {
+            this.clearCheckpoint?.();
+          } catch (err) {
+            swseLogger.warn('[ProgressionShell] Failed to clear checkpoint:', err);
+          }
           return;
         }
 
@@ -406,34 +421,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @private
    */
   async _promptSessionRecovery(summary) {
-    return new Promise((resolve) => {
-      const dialog = new Dialog({
-        title: 'Resume Progression?',
-        content: `
-          <div style="text-align: center; margin-bottom: 1em;">
-            <p>We found your previous progression session:</p>
-            <p><strong>${summary.preview}</strong></p>
-            <p style="font-size: 0.9em; color: #999;">
-              Saved ${new Date(summary.timestamp).toLocaleString()}
-            </p>
-          </div>
-          <p>Would you like to resume from where you left off, or start fresh?</p>
-        `,
-        buttons: {
-          resume: {
-            label: 'Resume',
-            callback: () => resolve(true),
-          },
-          fresh: {
-            label: 'Start Fresh',
-            callback: () => resolve(false),
-          },
-        },
-        default: 'resume',
-      });
-
-      dialog.render(true);
-    });
+    // Use custom SWSE recovery dialog (single-instance guard prevents duplicates)
+    return RecoverySessionDialog.prompt(summary);
   }
 
 
@@ -1152,6 +1141,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
       };
     });
 
+    // Transform stepProgress for stepper component (label, active, done)
+    const stepsTrans = stepProgress.map(step => ({
+      label: step.descriptor.label,
+      active: step.isCurrent,
+      done: step.isComplete,
+    }));
+
     // Step data from plugin
     const stepData = currentPlugin
       ? await currentPlugin.getStepData(context).catch(() => ({}))
@@ -1364,6 +1360,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       currentStepIndex: this.currentStepIndex,
       totalSteps: this.steps.length,
       stepProgress,
+      stepsTrans,
 
       // ─ PHASE 1 UX: Step context (you-are-here clarity)
       stepContext: {

@@ -1,0 +1,36 @@
+{{!-- Recovery Session Dialog Template --}}
+<div class="swse-recovery-dialog">
+  <div class="swse-recovery-dialog__chrome">
+    <div class="swse-recovery-dialog__chrome-title">
+      <i class="fas fa-history"></i> Progression Recovery
+    </div>
+    <button type="button" class="swse-recovery-dialog__chrome-close" data-action="close" title="Cancel">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="swse-recovery-dialog__body">
+    <div class="swse-recovery-dialog__headline">Resume Previous Session?</div>
+
+    <div class="swse-recovery-dialog__summary">
+      <div class="swse-recovery-dialog__summary-text">{{preview}}</div>
+      <div class="swse-recovery-dialog__meta">Saved {{savedAt}}</div>
+    </div>
+
+    <div class="swse-recovery-dialog__prompt">
+      Would you like to resume from where you left off, or start fresh with a new session?
+    </div>
+  </div>
+
+  <div class="swse-recovery-dialog__actions">
+    <button type="button" class="swse-recovery-dialog__button swse-recovery-dialog__button--primary" data-action="resume">
+      <i class="fas fa-play"></i> Resume
+    </button>
+    <button type="button" class="swse-recovery-dialog__button swse-recovery-dialog__button--danger" data-action="start-fresh">
+      <i class="fas fa-redo"></i> Start Fresh
+    </button>
+    <button type="button" class="swse-recovery-dialog__button" data-action="close">
+      <i class="fas fa-ban"></i> Cancel
+    </button>
+  </div>
+</div>

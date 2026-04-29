@@ -154,15 +154,19 @@ textarea:focus-visible {
 /* NO DRIFT — Remove any competing styles                                   */
 /* ═════════════════════════════════════════════════════════════════════════ */
 
-/* Legacy classes that should not exist anymore */
-.panel {
+/* Legacy classes that should not exist anymore inside SWSE application shells only.
+   Never target Foundry core containers like the sidebar with generic .tab/.panel/.hud selectors. */
+.application.swse .panel,
+.swse-app .panel {
   display: none !important;
 }
 
-.hud:not(.swse-hud) {
+.application.swse .hud:not(.swse-hud),
+.swse-app .hud:not(.swse-hud) {
   display: none !important;
 }
 
-.tab:not(.swse-tab) {
+.application.swse .tab:not(.swse-tab),
+.swse-app .tab:not(.swse-tab) {
   display: none !important;
 }

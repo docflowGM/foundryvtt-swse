@@ -1,0 +1,143 @@
+/* ============================================================================
+   MASTER BEZEL CHROME
+   Shared decorative bezel elements for the unified datapad shell
+   Applied at the tablet level, visible across all surfaces (Home, Sheet, etc.)
+   ============================================================================ */
+
+/* Tablet Bezel Rivets */
+.swse-master-bezel__rivet {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #5a5a6e 0%, #1a1a22 70%);
+  z-index: 2;
+}
+
+.swse-master-bezel__rivet.tl { top: 12px; left: 16px; }
+.swse-master-bezel__rivet.tr { top: 12px; right: 16px; }
+.swse-master-bezel__rivet.bl { bottom: 12px; left: 16px; }
+.swse-master-bezel__rivet.br { bottom: 12px; right: 16px; }
+
+/* Status Indicator LEDs (bezel perimeter) */
+.swse-master-bezel__led {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--vapor-cyan);
+  box-shadow: 0 0 8px var(--vapor-cyan), 0 0 18px var(--vapor-cyan);
+  z-index: 2;
+  animation: swse-master-led-pulse calc(1.6s / var(--anim-speed)) ease-in-out infinite;
+}
+
+.swse-master-bezel__led.a {
+  top: 22px;
+  left: 48px;
+  animation-duration: calc(1.6s / var(--anim-speed));
+}
+
+.swse-master-bezel__led.b {
+  top: 22px;
+  right: 48px;
+  background: var(--pos);
+  box-shadow: 0 0 8px var(--pos), 0 0 18px var(--pos);
+  animation-duration: calc(1.9s / var(--anim-speed));
+  animation-delay: 0.3s;
+}
+
+.swse-master-bezel__led.c {
+  bottom: 24px;
+  left: 48px;
+  background: var(--vapor-pink);
+  box-shadow: 0 0 8px var(--vapor-pink), 0 0 18px var(--vapor-pink);
+  animation-duration: calc(2.4s / var(--anim-speed));
+  animation-delay: 0.6s;
+}
+
+.swse-master-bezel__led.d {
+  bottom: 24px;
+  right: 48px;
+  background: oklch(0.80 0.16 60);
+  box-shadow: 0 0 8px oklch(0.80 0.16 60), 0 0 18px oklch(0.80 0.16 60);
+  animation-duration: calc(2.1s / var(--anim-speed));
+  animation-delay: 0.9s;
+}
+
+@keyframes swse-master-led-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+/* Device Labels (Serial, Manufacturer) */
+.swse-master-bezel__serial {
+  position: absolute;
+  top: 12px;
+  right: 38px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: oklch(0.55 0.05 260);
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.swse-master-bezel__manu {
+  position: absolute;
+  bottom: 14px;
+  right: 38px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.4em;
+  color: oklch(0.50 0.04 260);
+  z-index: 2;
+  white-space: nowrap;
+}
+
+/* Screen Decorative Corner Brackets */
+.swse-master-screen__corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--vapor-cyan);
+  pointer-events: none;
+  opacity: 0.6;
+  z-index: 8;
+}
+
+.swse-master-screen__corner.tl { top: 26px; left: 26px; border-right: none; border-bottom: none; }
+.swse-master-screen__corner.tr { top: 26px; right: 26px; border-left: none; border-bottom: none; }
+.swse-master-screen__corner.bl { bottom: 26px; left: 26px; border-right: none; border-top: none; }
+.swse-master-screen__corner.br { bottom: 26px; right: 26px; border-left: none; border-top: none; }
+
+/* Screen Decorative Scanline Accent (vertical sweep) */
+.swse-master-screen__scan-v {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 140px;
+  pointer-events: none;
+  z-index: 7;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.06) 50%,
+    oklch(1 0 0 / 0.1) 62%,
+    transparent 100%
+  );
+  animation: swse-master-scan-v calc(7s / var(--anim-speed)) linear infinite;
+}
+
+@keyframes swse-master-scan-v {
+  0% { transform: translateY(-160px); opacity: 0.6; }
+  100% { transform: translateY(1020px); opacity: 0.3; }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .swse-master-bezel__led,
+  .swse-master-screen__scan-v {
+    animation: none;
+  }
+}

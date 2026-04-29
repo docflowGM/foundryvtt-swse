@@ -60,12 +60,15 @@ class WelcomeDialog extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-welcome-dialog',
     classes: ['swse-app'],
+    position: {
+      width: 600,
+      height: 500
+    },
     window: {
       icon: 'fa-solid fa-star',
       title: '⭐ Welcome to SWSE for Foundry VTT',
       resizable: true
     }
-    // MOVED: position config moved to _onRender() to ensure element exists
   };
 
   static PARTS = {
@@ -83,12 +86,6 @@ class WelcomeDialog extends BaseSWSEAppV2 {
 
     const root = this.element;
     if (!root) return;
-
-    // Safe to position now - element is guaranteed to exist and be in DOM
-    this.setPosition({
-      width: 600,
-      height: 500
-    });
 
     const button = root.querySelector('[data-action="got-it"]');
     if (button) {

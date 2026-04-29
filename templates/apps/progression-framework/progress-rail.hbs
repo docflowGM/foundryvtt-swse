@@ -1,9 +1,4 @@
 {{!-- STEPPER COMPONENT (Foundation) --}}
 {{> "systems/foundryvtt-swse/templates/components/stepper.hbs"
-    steps=(map stepProgress (lambda (step) (
-      object
-        label=step.descriptor.label
-        active=step.isCurrent
-        done=step.isComplete
-      )))
+    steps=stepsTrans
 }}

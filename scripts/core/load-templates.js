@@ -112,6 +112,11 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/npc/npc-image.hbs',
 
   // ==============================
+  // Shared Components
+  // ==============================
+  'systems/foundryvtt-swse/templates/components/hud.hbs',
+
+  // ==============================
   // Shared Partials
   // ==============================
   'systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs',
@@ -216,11 +221,21 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-footer.hbs',
 
   // ==============================
+  // Shared Shell Components
+  // ==============================
+  'systems/foundryvtt-swse/templates/shell/partials/master-bezel-chrome.hbs',
+
+  // ==============================
   // Shell Surfaces (Phase 12)
   // ==============================
   'systems/foundryvtt-swse/templates/shell/partials/surface-home.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-settings.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-mentor.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-progression.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-chargen.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-upgrade.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-messenger.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs',
 
 ];
 

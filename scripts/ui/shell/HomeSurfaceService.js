@@ -83,79 +83,47 @@ export class HomeSurfaceService {
       this._getHolonetSummary(actor)
     ]);
 
+    const apps = this._buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary);
+    const actorData = this._buildActorData(actor);
+    const lockScreenState = this._buildLockScreenState(actor);
+
     return {
       id: 'home',
       title: 'Holopad Home',
       actorName: actor?.name ?? '',
       actorImg: actorPortrait(actor),
+      actorClass: actorData.classDisplay,
+      actorSpecies: actorData.species,
+      actorAffiliation: actorData.affiliation,
+      classDisplay: actorData.classDisplay,
+      species: actorData.species,
+      affiliation: actorData.affiliation,
+      deviceSerial: 'SN 7741-Δ-2206 · OS 4.7.2',
+      deviceManu: 'CZERKA · DATAPAD MK-VII',
       alerts: holonetSummary.alerts,
       badges: holonetSummary.badges,
-      quickGlance: holonetSummary.quickGlance,
+      quickGlance: this._enhanceQuickGlance(holonetSummary.quickGlance, actor),
       currentState: holonetSummary.currentState,
       commFeed: holonetSummary.commFeed,
       lastSession: holonetSummary.lastSession,
-      apps: [
-        {
-          id: 'sheet',
-          label: 'Character',
-          icon: '◇',
-          routeId: 'sheet',
-          visible: true,
-          enabled: true,
-          badge: null,
-          description: 'Character record'
-        },
-        {
-          id: 'progression',
-          label: 'Training',
-          icon: '▲',
-          routeId: progressionSummary.routeId,
-          visible: progressionSummary.visible,
-          enabled: progressionSummary.enabled,
-          badge: progressionSummary.badge,
-          description: progressionSummary.description
-        },
-        {
-          id: 'messenger',
-          label: 'Messenger',
-          icon: '✉',
-          routeId: 'messenger',
-          visible: true,
-          enabled: true,
-          badge: holonetSummary.badges.messages,
-          description: 'Private threads and updates'
-        },
-        {
-          id: 'mentor',
-          label: 'Chat with Mentor',
-          icon: '✶',
-          routeId: 'mentor',
-          visible: supportedTypesForMentor(actor),
-          enabled: true,
-          badge: holonetSummary.badges.mentor,
-          description: 'Seek guidance and planning advice'
-        },
-        {
-          id: 'upgrade',
-          label: 'Workbench',
-          icon: '✦',
-          routeId: 'upgrade',
-          visible: upgradeSummary.visible,
-          enabled: upgradeSummary.enabled,
-          badge: upgradeSummary.badge,
-          description: 'Upgrade gear and equipment'
-        },
-        {
-          id: 'settings',
-          label: 'Settings',
-          icon: '⚙',
-          routeId: 'settings',
-          visible: true,
-          enabled: true,
-          badge: null,
-          description: 'Theme and interface options'
-        }
-      ]
+      lastSeenAgo: this._formatLastSeen(),
+      stardate: this._formatStardate(),
+      hpCurrent: actorData.hpCurrent,
+      hpMax: actorData.hpMax,
+      hpPercent: actorData.hpPercent,
+      fpCurrent: actorData.fpCurrent,
+      fpMax: actorData.fpMax,
+      fpPercent: actorData.fpPercent,
+      dt: actorData.dt,
+      dtPercent: actorData.dtPercent,
+      xpCurrent: actorData.xpCurrent,
+      xpMax: actorData.xpMax,
+      xpPercent: actorData.xpPercent,
+      lockScreenEnabled: lockScreenState.enabled,
+      lockHp: lockScreenState.hp,
+      lockFp: lockScreenState.fp,
+      lockCredits: lockScreenState.credits,
+      apps
     };
   }
 
@@ -360,5 +328,278 @@ export class HomeSurfaceService {
     if (!actor.name || actor.name.trim() === '' || actor.name === 'New Character') return true;
     if (!actor.items?.some(item => item.type === 'class')) return true;
     return false;
+  }
+
+  /**
+   * Build app tiles with radial positioning, badge types, and state flags
+   */
+  static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary) {
+    // Radial layout: 7 tiles positioned at 360°/7 ≈ 51.43° intervals
+    const tilePositions = [
+      { left: 50.00, top: 8.00 },   // 0° - top
+      { left: 82.84, top: 23.81 },  // 51.43° - upper right
+      { left: 90.95, top: 59.35 },  // 102.86° - right
+      { left: 68.22, top: 87.84 },  // 154.29° - lower right
+      { left: 31.78, top: 87.84 },  // 205.71° - lower left
+      { left: 9.05, top: 59.35 },   // 257.14° - left
+      { left: 17.16, top: 23.81 }   // 308.57° - upper left
+    ];
+
+    const baseTiles = [
+      {
+        id: 'sheet',
+        label: 'Character\nSheet',
+        icon: '◇',
+        routeId: 'sheet',
+        visible: true,
+        enabled: true,
+        badge: null,
+        badgeType: null,
+        featured: true,
+        locked: false,
+        status: 'READY',
+        statusTone: '',
+        description: 'Character record'
+      },
+      {
+        id: 'progression',
+        label: 'Training',
+        icon: '▲',
+        routeId: progressionSummary.routeId,
+        visible: progressionSummary.visible,
+        enabled: progressionSummary.enabled,
+        badge: progressionSummary.badge,
+        badgeType: progressionSummary.badge === '+1' ? 'crit' : progressionSummary.badge ? 'info' : null,
+        featured: false,
+        locked: !progressionSummary.enabled && progressionSummary.visible,
+        status: progressionSummary.badge ? 'LVL UP' : 'READY',
+        statusTone: progressionSummary.badge ? 'warn' : '',
+        description: progressionSummary.description
+      },
+      {
+        id: 'workbench',
+        label: 'Workbench',
+        icon: '✦',
+        routeId: 'upgrade',
+        visible: upgradeSummary.visible,
+        enabled: upgradeSummary.enabled,
+        badge: upgradeSummary.badge,
+        badgeType: upgradeSummary.badge ? 'info' : null,
+        featured: false,
+        locked: !upgradeSummary.enabled && upgradeSummary.visible,
+        status: upgradeSummary.badge ? `${upgradeSummary.badge} ITEMS` : 'NONE',
+        statusTone: upgradeSummary.badge ? 'warn' : '',
+        description: 'Upgrade gear and equipment'
+      },
+      {
+        id: 'store',
+        label: 'Store',
+        icon: '¤',
+        routeId: 'store',
+        visible: true,
+        enabled: true,
+        badge: null,
+        badgeType: null,
+        featured: false,
+        locked: false,
+        status: 'OPEN',
+        statusTone: '',
+        description: 'Browse and purchase equipment'
+      },
+      {
+        id: 'ship',
+        label: 'Ship',
+        icon: '◈',
+        routeId: 'ship',
+        visible: true,
+        enabled: false,
+        badge: null,
+        badgeType: null,
+        featured: false,
+        locked: true,
+        status: 'LOCKED',
+        statusTone: 'crit',
+        description: 'Ship systems and status'
+      },
+      {
+        id: 'companion',
+        label: 'Droid\nCompanion',
+        icon: '⬡',
+        routeId: 'companion',
+        visible: true,
+        enabled: true,
+        badge: null,
+        badgeType: null,
+        featured: false,
+        locked: false,
+        status: 'ACTIVE',
+        statusTone: '',
+        description: 'Companion status and upgrades'
+      },
+      {
+        id: 'faction',
+        label: 'Faction',
+        icon: '✺',
+        routeId: 'faction',
+        visible: true,
+        enabled: true,
+        badge: holonetSummary.badges.mentor ? '!' : null,
+        badgeType: holonetSummary.badges.mentor ? 'jedi' : null,
+        featured: false,
+        locked: false,
+        status: 'ACTIVE',
+        statusTone: holonetSummary.badges.mentor ? 'warn' : '',
+        description: 'Faction standings and ranks'
+      }
+    ];
+
+    return baseTiles.map((tile, index) => ({
+      ...tile,
+      positionLeft: tilePositions[index]?.left ?? 50,
+      positionTop: tilePositions[index]?.top ?? 50
+    }));
+  }
+
+  /**
+   * Build actor identity and derived data
+   */
+  static _buildActorData(actor) {
+    if (!actor) {
+      return {
+        classDisplay: 'No Class',
+        species: 'No Species',
+        affiliation: 'Independent',
+        hpCurrent: 0,
+        hpMax: 0,
+        hpPercent: 0,
+        fpCurrent: 0,
+        fpMax: 0,
+        fpPercent: 0,
+        dt: 0,
+        dtPercent: 0,
+        xpCurrent: 0,
+        xpMax: 0,
+        xpPercent: 0
+      };
+    }
+
+    const classItem = actor.items?.find(item => item.type === 'class');
+    const classDisplay = classItem?.name || 'No Class';
+    const species = actor.system?.species || 'No Species';
+    const affiliation = actor.system?.affiliation || 'Independent';
+
+    const hpCurrent = asNumber(actor.system?.hp?.value, asNumber(actor.system?.hitPoints?.value, 0));
+    const hpMax = asNumber(actor.system?.hp?.max, asNumber(actor.system?.hitPoints?.max, 42));
+    const hpPercent = hpMax > 0 ? Math.max(0, Math.min(100, (hpCurrent / hpMax) * 100)) : 0;
+
+    const fpCurrent = asNumber(actor.system?.forcePoints?.value, asNumber(actor.system?.resources?.forcePoints?.value, 0));
+    const fpMax = asNumber(actor.system?.forcePoints?.max, asNumber(actor.system?.resources?.forcePoints?.max, 5));
+    const fpPercent = fpMax > 0 ? Math.max(0, Math.min(100, (fpCurrent / fpMax) * 100)) : 0;
+
+    const dt = asNumber(actor.system?.defenseStats?.physicalDefense, asNumber(actor.system?.dt, 0));
+    const dtMax = 30; // Reasonable max for DT
+    const dtPercent = Math.max(0, Math.min(100, (dt / dtMax) * 100));
+
+    const xpCurrent = asNumber(actor.system?.xp?.value, asNumber(actor.system?.xp?.current, 0));
+    const xpMax = asNumber(actor.system?.xp?.total, asNumber(actor.system?.xp?.experience, 10000));
+    const xpPercent = xpMax > 0 ? Math.max(0, Math.min(100, (xpCurrent / xpMax) * 100)) : 0;
+
+    return {
+      classDisplay,
+      species,
+      affiliation,
+      hpCurrent,
+      hpMax,
+      hpPercent,
+      fpCurrent,
+      fpMax,
+      fpPercent,
+      dt,
+      dtPercent,
+      xpCurrent,
+      xpMax,
+      xpPercent
+    };
+  }
+
+  /**
+   * Enhance quick-glance items with tone classes for coloring
+   */
+  static _enhanceQuickGlance(quickGlance, actor) {
+    if (!Array.isArray(quickGlance)) return [];
+    return quickGlance.map(item => ({
+      ...item,
+      tone: this._getToneCss(item.tone)
+    }));
+  }
+
+  /**
+   * Map tone names to CSS classes
+   */
+  static _getToneCss(tone) {
+    const toneMap = {
+      'accent': 'cyan',
+      'alert': 'neg',
+      'neutral': 'ink',
+      'positive': 'pos',
+      'negative': 'neg',
+      'cyan': 'cyan',
+      'pink': 'pink',
+      'pos': 'pos',
+      'neg': 'neg'
+    };
+    return toneMap[tone] || 'ink';
+  }
+
+  /**
+   * Build lock screen state
+   */
+  static _buildLockScreenState(actor) {
+    if (!actor) {
+      return {
+        enabled: false,
+        hp: '0 / 0',
+        fp: '0',
+        credits: '0'
+      };
+    }
+
+    const hpValue = asNumber(actor.system?.hp?.value, asNumber(actor.system?.hitPoints?.value, 0));
+    const hpMax = asNumber(actor.system?.hp?.max, asNumber(actor.system?.hitPoints?.max, 42));
+    const fpValue = asNumber(actor.system?.forcePoints?.value, asNumber(actor.system?.resources?.forcePoints?.value, 5));
+    const credits = asNumber(actor.system?.credits, 0);
+
+    return {
+      enabled: false, // Lock screen default-off per user requirement
+      hp: `${hpValue} / ${hpMax}`,
+      fp: String(fpValue),
+      credits: `${credits.toLocaleString()}`
+    };
+  }
+
+  /**
+   * Format time since last login/access
+   */
+  static _formatLastSeen() {
+    const now = new Date();
+    const pastHour = new Date(now.getTime() - 2 * 60 * 60 * 1000); // 2 hours ago
+    const diffMs = now - pastHour;
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (diffHours > 0) {
+      return `${diffHours}${diffMins > 0 ? ':' + String(diffMins).padStart(2, '0') : ''} ago`;
+    }
+    return `${diffMins} min ago`;
+  }
+
+  /**
+   * Format game stardate (fictional timestamp)
+   */
+  static _formatStardate() {
+    const baseDate = new Date(2025, 0, 1); // Anchor point
+    const now = new Date();
+    const dayOfYear = Math.floor((now - baseDate) / (1000 * 60 * 60 * 24));
+    return `35:${(dayOfYear + 200).toString().padStart(3, '0')}.4`;
   }
 }

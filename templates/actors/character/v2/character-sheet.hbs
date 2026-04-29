@@ -1,10 +1,33 @@
 <div class="swse-character-sheet-wrapper">
 <form class="swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui swse-sheet" autocomplete="off">
 
-<!-- V2 SHELL OUTER CONTAINER -->
+<!-- V2 SHELL OUTER CONTAINER (MASTER UNIFIED SHELL) -->
 <div class="swse-sheet-v2-shell" data-theme="{{sheetTheme}}" data-motion-style="{{sheetMotionStyle}}">
   <div class="swse-v2-tablet">
+    <!-- MASTER BEZEL DECORATION (shared across all surfaces) -->
+    {{> "systems/foundryvtt-swse/templates/shell/partials/master-bezel-chrome.hbs"}}
+
     <div class="swse-v2-screen">
+
+      <!-- SHELL SURFACE ROUTING -->
+      {{#if (eq shellSurface 'home')}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-home.hbs" vm=shellSurfaceVm actor=actor}}
+      {{else if (eq shellSurface 'progression')}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-progression.hbs" vm=shellSurfaceVm actor=actor}}
+      {{else if (eq shellSurface 'chargen')}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-chargen.hbs" vm=shellSurfaceVm actor=actor}}
+      {{else if (eq shellSurface 'upgrade')}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-upgrade.hbs" vm=shellSurfaceVm actor=actor}}
+      {{else if (eq shellSurface 'mentor')}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-mentor.hbs" vm=shellSurfaceVm actor=actor}}
+      {{else if (eq shellSurface 'settings')}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-settings.hbs" vm=shellSurfaceVm actor=actor}}
+      {{else if (eq shellSurface 'messenger')}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-messenger.hbs" vm=shellSurfaceVm actor=actor}}
+      {{else if (eq shellSurface 'store')}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs" vm=shellSurfaceVm actor=actor}}
+      {{else}}
+        <!-- DEFAULT SHEET SURFACE -->
 
       <!-- HUD/STATUS BAR (using foundation component) -->
       {{> "systems/foundryvtt-swse/templates/components/hud.hbs"
@@ -319,6 +342,7 @@
         </div>
       </div>
 
+      {{/if}}
     </div>    <!-- closes .swse-v2-screen -->
       </div>  <!-- closes .sheet-shell (nav + tabs container) -->
   </div>      <!-- closes .swse-v2-tablet -->

@@ -39,19 +39,17 @@ export function initializeActionPalette() {
 function _registerSceneControl() {
   // Hook into scene controls rendering
   Hooks.on('getSceneControlButtons', (controls) => {
-    // Find or create token controls group
-    let tokenControls = controls.find(c => c.name === 'token');
-    if (!tokenControls) {
-      tokenControls = {
-        name: 'token',
-        title: 'Token Controls',
-        icon: 'fas fa-circle-dot',
-        layer: 'TokenLayer',
-        visible: true,
-        tools: []
-      };
-      controls.push(tokenControls);
-    }
+    const tokenControls = _getOrCreateControlGroup(controls, 'token', {
+      name: 'token',
+      title: 'Token Controls',
+      icon: 'fas fa-circle-dot',
+      layer: 'TokenLayer',
+      visible: true,
+      tools: []
+    });
+
+    if (!Array.isArray(tokenControls.tools)) tokenControls.tools = [];
+    if (tokenControls.tools.some(t => t?.name === 'actionPalette')) return;
 
     // Add Action Palette as a tool
     tokenControls.tools.push({
@@ -63,6 +61,29 @@ function _registerSceneControl() {
       button: true
     });
   });
+}
+
+function _getOrCreateControlGroup(controls, name, fallback) {
+  if (Array.isArray(controls)) {
+    let group = controls.find(c => c?.name === name);
+    if (!group) {
+      group = structuredClone(fallback);
+      controls.push(group);
+    }
+    return group;
+  }
+
+  if (controls && typeof controls === 'object') {
+    let group = controls[name] ?? Object.values(controls).find(c => c?.name === name);
+    if (!group) {
+      group = structuredClone(fallback);
+      controls[name] = group;
+    }
+    return group;
+  }
+
+  console.warn('[Action Palette] Unsupported scene controls payload', controls);
+  return structuredClone(fallback);
 }
 
 /**

@@ -29,6 +29,7 @@ import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/comba
 import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-guardrails.js";
 import { bindV2CharacterSheetTooltips } from "/systems/foundryvtt-swse/scripts/sheets/v2/TooltipIntegration.js";
 import { bindV2SheetBreakdowns, closeBreakdown } from "/systems/foundryvtt-swse/scripts/sheets/v2/BreakdownIntegration.js";
+import { HomeSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/HomeSurfaceController.js";
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
@@ -355,7 +356,10 @@ export class SWSEV2CharacterSheet extends
 
     // ─── Phase 11: Shell Host State ────────────────────────────────────────
     // Active surface: 'sheet' | 'home' | 'progression' | 'chargen' | 'upgrade' | 'settings' | 'mentor'
-    this._shellSurface = 'sheet';
+    this._shellSurface = 'home';
+
+    // Home surface controller for compass/tile interaction
+    this._homeController = null;
     this._shellSurfaceOptions = {};
     this._shellOverlay = null;
     this._shellDrawer = null;
@@ -415,6 +419,14 @@ export class SWSEV2CharacterSheet extends
    * Clears any active overlay/drawer.
    */
   async setSurface(surfaceId, options = {}) {
+    // Valid surface IDs
+    const validSurfaces = ['sheet', 'home', 'progression', 'chargen', 'upgrade', 'settings', 'mentor', 'messenger', 'store'];
+
+    if (!validSurfaces.includes(surfaceId)) {
+      swseLogger.warn(`[ShellHost] Invalid surface ID: "${surfaceId}". Falling back to home.`);
+      surfaceId = 'home';
+    }
+
     swseLogger.debug(`[ShellHost] setSurface: ${this._shellSurface} → ${surfaceId}`);
     this._shellSurface = surfaceId;
     this._shellSurfaceOptions = options;
@@ -455,6 +467,12 @@ export class SWSEV2CharacterSheet extends
   // signal is the render-cycle AbortController signal — all listeners are torn down on next render.
   _wireShellEvents(root, signal) {
     if (!root) return;
+
+    // Destroy any previous home controller (surface changed or rerender)
+    if (this._homeController) {
+      this._homeController.destroy();
+      this._homeController = null;
+    }
 
     root.querySelectorAll('[data-shell-action="return-to-sheet"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
@@ -524,11 +542,14 @@ export class SWSEV2CharacterSheet extends
     if (this._shellSurface === 'home') {
       this._wireHomeSurfaceEvents(root, signal);
     }
-    if (this._shellSurface === 'upgrade') {
-      this._wireUpgradeSurfaceEvents(root, signal);
+    if (this._shellSurface === 'store') {
+      this._wireStoreSurfaceEvents(root, signal);
     }
     if (this._shellSurface === 'settings') {
       this._wireSettingsSurfaceEvents(root, signal);
+    }
+    if (this._shellSurface === 'upgrade') {
+      this._wireUpgradeSurfaceEvents(root, signal);
     }
     if (this._shellSurface === 'mentor') {
       this._wireMentorSurfaceEvents(root, signal);
@@ -538,11 +559,12 @@ export class SWSEV2CharacterSheet extends
     }
   }
 
-  /** Wire home surface tile click → setSurface(routeId). */
+  /** Wire home surface events: tile clicks and compass/aiming interaction. */
   _wireHomeSurfaceEvents(root, signal) {
     const homeRoot = root.querySelector('[data-shell-region="surface-home"]');
     if (!homeRoot) return;
 
+    // Wire tile clicks (routing via setSurface)
     homeRoot.querySelectorAll('[data-route-id]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
@@ -552,8 +574,134 @@ export class SWSEV2CharacterSheet extends
         homeRoot.querySelectorAll('.swse-app-tile--launching').forEach(tile => tile.classList.remove('swse-app-tile--launching'));
         el.classList.add('swse-app-tile--launching');
         await new Promise(resolve => setTimeout(resolve, 150));
-        await this.setSurface(routeId, { source: 'home' });
+
+        // Special-case progression/chargen: launch the real flow instead of routing to placeholder surface
+        if (routeId === 'chargen' || routeId === 'progression') {
+          await launchProgression(this.actor);
+          // Do NOT render - ChargenShell/ProgressionFramework opens as a separate window
+        } else {
+          await this.setSurface(routeId, { source: 'home' });
+          this.render(false);
+        }
+      }, { signal });
+    });
+
+    // Initialize home surface controller (compass needle, tile aiming)
+    this._homeController = new HomeSurfaceController({
+      root: homeRoot,
+      host: this
+    });
+    this._homeController.attach();
+  }
+
+  /** Wire store surface events (browse/cart/history tabs, add to cart, checkout). */
+  _wireStoreSurfaceEvents(root, signal) {
+    const storeRoot = root.querySelector('[data-shell-region="surface-store"]');
+    if (!storeRoot) return;
+
+    // Wire tab switches
+    storeRoot.querySelectorAll('[data-shell-action*="store-"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const action = el.dataset.shellAction;
+        if (!action) return;
+
+        // Update surface options to track current view/category
+        const view = action.replace('store-', '');
+        this._shellSurfaceOptions = { ...this._shellSurfaceOptions, currentView: view };
         this.render(false);
+      }, { signal });
+    });
+
+    // Wire category navigation
+    storeRoot.querySelectorAll('[data-action="category-nav"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const category = el.dataset.category || '';
+        this._shellSurfaceOptions = { ...this._shellSurfaceOptions, currentCategory: category };
+        this.render(false);
+      }, { signal });
+    });
+  }
+
+  /** Wire settings surface events (theme/motion/display controls). */
+  _wireSettingsSurfaceEvents(root, signal) {
+    const settingsRoot = root.querySelector('[data-shell-region="surface-settings"]');
+    if (!settingsRoot) return;
+
+    // Wire theme preset selection
+    settingsRoot.querySelectorAll('[data-theme-preset]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const themeId = el.dataset.themePreset;
+        if (!themeId) return;
+        try {
+          const { ThemeManager } = await import('/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js');
+          await ThemeManager.setTheme({ theme: themeId });
+          // Apply theme to shell immediately
+          const sheetShell = root.querySelector('.swse-sheet-v2-shell');
+          if (sheetShell) {
+            sheetShell.setAttribute('data-theme', themeId);
+          }
+          this.render(false);
+        } catch (err) {
+          swseLogger.error('[SETTINGS] Error setting theme:', err);
+          ui.notifications?.error?.(`Failed to set theme: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Wire shell color selection
+    settingsRoot.querySelectorAll('[data-shell-color]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const colorId = el.dataset.shellColor;
+        if (!colorId) return;
+        try {
+          const { ThemeManager } = await import('/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js');
+          await ThemeManager.setTheme({ shellColor: colorId });
+          this.render(false);
+        } catch (err) {
+          swseLogger.error('[SETTINGS] Error setting shell color:', err);
+          ui.notifications?.error?.(`Failed to set shell color: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Wire display control sliders
+    settingsRoot.querySelectorAll('[data-theme-control]').forEach(el => {
+      el.addEventListener('change', async (ev) => {
+        const controlName = el.dataset.themeControl;
+        const value = ev.target.value;
+        if (!controlName) return;
+        try {
+          const { ThemeManager } = await import('/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js');
+          const currentTheme = ThemeManager.getTheme();
+          const update = { ...currentTheme, [controlName]: parseFloat(value) };
+          await ThemeManager.setTheme(update);
+          this.render(false);
+        } catch (err) {
+          swseLogger.error('[SETTINGS] Error updating display control:', err);
+        }
+      }, { signal });
+    });
+
+    // Wire theme toggles (breathing, reduced motion)
+    settingsRoot.querySelectorAll('[data-theme-toggle]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const toggleName = el.dataset.themeToggle;
+        if (!toggleName) return;
+        try {
+          const { ThemeManager } = await import('/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js');
+          const currentTheme = ThemeManager.getTheme();
+          const newValue = !currentTheme[toggleName];
+          const update = { ...currentTheme, [toggleName]: newValue };
+          await ThemeManager.setTheme(update);
+          this.render(false);
+        } catch (err) {
+          swseLogger.error('[SETTINGS] Error toggling theme setting:', err);
+        }
       }, { signal });
     });
   }
@@ -897,49 +1045,53 @@ export class SWSEV2CharacterSheet extends
     // Wire tooltip bindings for micro-tooltips
     bindV2CharacterSheetTooltips(this.document, root, this._renderAbort);
 
-    // Run post-render assertions only for visible panels (phase 2 audit: contract verification)
-    const visiblePanels = this.visibilityManager.getPanelsToBuild(this.document);
-    PostRenderAssertions.runAll(root, this._currentContext || {}, visiblePanels);
+    // ═══ SHEET SURFACE ONLY: Run post-render assertions and contract enforcement ═══
+    // Non-sheet surfaces (home, settings, etc) have different structure and do not need these checks
+    if (this._shellSurface === 'sheet') {
+      // Run post-render assertions only for visible panels (phase 2 audit: contract verification)
+      const visiblePanels = this.visibilityManager.getPanelsToBuild(this.document);
+      PostRenderAssertions.runAll(root, this._currentContext || {}, visiblePanels);
 
-    // Wire pinned breakdown card interactions
-    bindV2SheetBreakdowns(this.document, root, this._renderAbort);
+      // Wire pinned breakdown card interactions
+      bindV2SheetBreakdowns(this.document, root, this._renderAbort);
 
-    // Close any open breakdown card on rerender (cleanup)
-    closeBreakdown();
+      // Close any open breakdown card on rerender (cleanup)
+      closeBreakdown();
 
-    // Wire action economy bindings for combat tab
-    ActionEconomyBindings.setupAttackButtons(root, this.document);
+      // Wire action economy bindings for combat tab
+      ActionEconomyBindings.setupAttackButtons(root, this.document);
 
-    // Verify listener cleanup mechanism is in place (AbortController signal cleanup)
-    verifyListenerCleanup(root, "SWSEV2CharacterSheet", signal);
+      // Verify listener cleanup mechanism is in place (AbortController signal cleanup)
+      verifyListenerCleanup(root, "SWSEV2CharacterSheet", signal);
 
-    // ═══ DIAGNOSTICS: Final snapshot after all listeners wired ═══
-    characterSheetDiagnostics.snapshot('_onRender COMPLETE (all listeners wired)', this);
+      // ═══ DIAGNOSTICS: Final snapshot after all listeners wired ═══
+      characterSheetDiagnostics.snapshot('_onRender COMPLETE (all listeners wired)', this);
 
-    // ═══ AUTO-DIAGNOSTICS: Run detailed analysis on every open ═══
-    setTimeout(() => {
-      // swseLogger.debug('[SWSE SheetDiag] ════════════════════════════════════');
-      // swseLogger.debug('[SWSE SheetDiag] AUTO-RUNNING CHARACTER SHEET DIAGNOSTICS');
-      // swseLogger.debug('[SWSE SheetDiag] ════════════════════════════════════');
-      characterSheetDiagnostics.inspectHeightChain(this);
-      characterSheetDiagnostics.listOverflowingElements(this);
-      characterSheetDiagnostics.inspectAppState(this);
-      // swseLogger.debug('[SWSE SheetDiag] ════════════════════════════════════');
+      // ═══ AUTO-DIAGNOSTICS: Run detailed analysis on every open ═══
+      setTimeout(() => {
+        // swseLogger.debug('[SWSE SheetDiag] ════════════════════════════════════');
+        // swseLogger.debug('[SWSE SheetDiag] AUTO-RUNNING CHARACTER SHEET DIAGNOSTICS');
+        // swseLogger.debug('[SWSE SheetDiag] ════════════════════════════════════');
+        characterSheetDiagnostics.inspectHeightChain(this);
+        characterSheetDiagnostics.listOverflowingElements(this);
+        characterSheetDiagnostics.inspectAppState(this);
+        // swseLogger.debug('[SWSE SheetDiag] ════════════════════════════════════');
 
-      // ═══ CONTRACT ENFORCEMENT: Validate architecture compliance ═══
-      // swseLogger.debug('[CHARACTER SHEET CONTRACT] RUNNING ENFORCEMENT VALIDATION');
-      CharacterSheetContractEnforcer.validateAndReport(this.element);
+        // ═══ CONTRACT ENFORCEMENT: Validate architecture compliance ═══
+        // swseLogger.debug('[CHARACTER SHEET CONTRACT] RUNNING ENFORCEMENT VALIDATION');
+        CharacterSheetContractEnforcer.validateAndReport(this.element);
 
-      // ═══ DEBUG: Print exact violation details for fixing ═══
-      // swseLogger.debug('\n');
-      // swseLogger.debug('╔════════════════════════════════════════════════════════════════╗');
-      // swseLogger.debug('║          EXACT VIOLATIONS FOR DEBUGGING AND FIXING             ║');
-      // swseLogger.debug('╚════════════════════════════════════════════════════════════════╝');
-      CharacterSheetContractEnforcer.debugScrollOwners(this.element);
-      CharacterSheetContractEnforcer.debugIllegalPanelScrollers(this.element);
-      CharacterSheetContractEnforcer.debugWindowContentMinHeight(this.element);
-      CharacterSheetContractEnforcer.debugHeightChain(this.element);
-    }, 100);
+        // ═══ DEBUG: Print exact violation details for fixing ═══
+        // swseLogger.debug('\n');
+        // swseLogger.debug('╔════════════════════════════════════════════════════════════════╗');
+        // swseLogger.debug('║          EXACT VIOLATIONS FOR DEBUGGING AND FIXING             ║');
+        // swseLogger.debug('╚════════════════════════════════════════════════════════════════╝');
+        CharacterSheetContractEnforcer.debugScrollOwners(this.element);
+        CharacterSheetContractEnforcer.debugIllegalPanelScrollers(this.element);
+        CharacterSheetContractEnforcer.debugWindowContentMinHeight(this.element);
+        CharacterSheetContractEnforcer.debugHeightChain(this.element);
+      }, 100);
+    }
 
     // ─── Phase 11: Shell Host Registration + Event Wiring ─────────────────
     // Register only once per session (first render) to avoid redundant re-registration
@@ -953,6 +1105,12 @@ export class SWSEV2CharacterSheet extends
   async _onClose(options) {
     // Cleanup all event listeners on close
     this._renderAbort?.abort();
+
+    // Cleanup home surface controller
+    if (this._homeController) {
+      this._homeController.destroy();
+      this._homeController = null;
+    }
 
     // Phase 6: Clear UI state on close (will be fresh on next open)
     this.uiStateManager.clear();

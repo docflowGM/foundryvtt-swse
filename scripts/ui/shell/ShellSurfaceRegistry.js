@@ -42,6 +42,8 @@ export class ShellSurfaceRegistry {
         return this._buildMentorSurfaceVm(actor, surfaceOptions);
       case 'messenger':
         return this._buildMessengerSurfaceVm(actor, surfaceOptions);
+      case 'store':
+        return this._buildStoreSurfaceVm(actor, surfaceOptions);
       default:
         SWSELogger.warn(`[ShellSurfaceRegistry] Unknown surface: ${surfaceId}`);
         return { id: surfaceId, title: surfaceId, error: `Unknown surface: ${surfaceId}` };
@@ -151,6 +153,18 @@ export class ShellSurfaceRegistry {
     } catch (err) {
       SWSELogger.error('[ShellSurfaceRegistry] Mentor surface VM failed:', err);
       return { id: 'mentor', title: 'Chat with Mentor', error: err.message };
+    }
+  }
+
+  static async _buildStoreSurfaceVm(actor, options) {
+    try {
+      const { StoreSurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceService.js'
+      );
+      return await StoreSurfaceService.buildViewModel(actor, options);
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Store surface VM failed:', err);
+      return { id: 'store', title: 'Galactic Trade Exchange', error: err.message };
     }
   }
 
