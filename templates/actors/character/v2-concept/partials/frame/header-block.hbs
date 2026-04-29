@@ -1,0 +1,121 @@
+<header class="swse-concept-header">
+  <div class="swse-concept-portrait-card">
+    <div class="swse-concept-portrait-frame" data-role="actor-portrait-dropzone">
+      <span class="swse-concept-portrait-cert">Verified</span>
+      <img class="swse-concept-portrait"
+           src="{{portraitPanel.img}}"
+           data-edit="img"
+           data-role="actor-portrait-image"
+           title="Click or drop image to update portrait"
+           alt="{{portraitPanel.name}} portrait" />
+    </div>
+    <div class="swse-concept-portrait-caption">
+      <span>{{conceptLayout.identity.species}}</span>
+      <span>{{conceptLayout.identity.size}}</span>
+    </div>
+  </div>
+
+  <div class="swse-concept-identity-card">
+    <div class="swse-concept-identity-topline">Operator Profile</div>
+    <h1 class="swse-concept-name">
+      <input name="name" type="text" value="{{biographyPanel.identity.name}}" placeholder="Name" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+    </h1>
+
+    <div class="swse-concept-identity-subline">
+      <span>{{conceptLayout.identity.classDisplay}}</span>
+      <span class="sep">•</span>
+      <span>{{conceptLayout.identity.species}}</span>
+      <span class="sep">•</span>
+      <span>{{conceptLayout.identity.player}}</span>
+      <span class="sep">•</span>
+      <span>{{conceptLayout.identity.homeworld}}</span>
+    </div>
+
+    <div class="swse-concept-badges">
+      <span class="swse-concept-badge swse-concept-badge--accent">{{conceptLayout.identity.classDisplay}}</span>
+      <span class="swse-concept-badge">Lvl {{conceptLayout.identity.level}}</span>
+      <span class="swse-concept-badge">{{conceptLayout.identity.background}}</span>
+      {{#if forceSensitive}}<span class="swse-concept-badge swse-concept-badge--force">Force-Sensitive</span>{{/if}}
+    </div>
+
+    <div class="swse-concept-identity-grid">
+      <label class="swse-concept-field">
+        <span>Player</span>
+        <input name="flags.swse.character.player" type="text" value="{{biographyPanel.identity.player}}" placeholder="Player Name" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+      </label>
+      <div class="swse-concept-readout">
+        <span>Homeworld</span>
+        <strong>{{conceptLayout.identity.homeworld}}</strong>
+      </div>
+      <div class="swse-concept-readout">
+        <span>Background</span>
+        <strong>{{conceptLayout.identity.background}}</strong>
+      </div>
+      <div class="swse-concept-readout">
+        <span>Profession</span>
+        <strong>{{conceptLayout.identity.profession}}</strong>
+      </div>
+    </div>
+
+    <div class="swse-concept-action-row">
+      {{#if isLevel0}}
+        <button type="button" data-action="cmd-chargen" class="swse-concept-btn swse-concept-btn--primary">Chargen</button>
+      {{else}}
+        <button type="button" data-action="cmd-levelup" class="swse-concept-btn swse-concept-btn--primary {{#if xpLevelReady}}ready{{/if}}">Level Up</button>
+      {{/if}}
+      <button type="button" data-action="cmd-store" class="swse-concept-btn">Store</button>
+      <button type="button" data-action="cmd-select-class" class="swse-concept-btn">Class</button>
+      <button type="button" data-action="cmd-select-species" class="swse-concept-btn">Species</button>
+      <button type="button" data-action="open-settings-app" class="swse-concept-btn">Settings</button>
+      <button type="button" data-action="toggle-help-mode" class="swse-concept-btn" title="{{helpLevelDescription}}">{{helpLevelLabel}}</button>
+    </div>
+  </div>
+
+  <div class="swse-concept-readouts-card">
+    <div class="swse-concept-level-block">
+      <div class="swse-concept-level-row">
+        <strong class="swse-concept-level-num">{{conceptLayout.identity.level}}</strong>
+        <div class="swse-concept-level-stack">
+          <span class="lbl">Class Track</span>
+          <span class="class">{{conceptLayout.identity.classDisplay}}</span>
+          <span class="half">Half Level {{derived.identity.halfLevel}}</span>
+        </div>
+      </div>
+      <div class="swse-concept-xp-bar">
+        <span class="swse-concept-xp-fill" style="width: {{xpData.percentRounded}}%;"></span>
+      </div>
+      <div class="swse-concept-xp-text">
+        <span>{{xpData.total}} XP</span>
+        <span>{{#if xpLevelReady}}Promotion Ready{{else}}{{xpData.percentRounded}}% to next level{{/if}}</span>
+      </div>
+    </div>
+
+    <div class="swse-concept-stat-stack">
+      <div class="swse-concept-stat-card">
+        <span class="swse-concept-stat-card__label">Damage Threshold</span>
+        <strong>{{derived.damageThreshold}}</strong>
+      </div>
+      <div class="swse-concept-stat-card">
+        <span class="swse-concept-stat-card__label">Credits</span>
+        <strong>{{numberFormat actor.system.credits decimals=0}}</strong>
+      </div>
+      <div class="swse-concept-stat-card">
+        <span class="swse-concept-stat-card__label">Force Points</span>
+        <strong>{{forcePointsValue}} / {{forcePointsMax}}</strong>
+      </div>
+      <div class="swse-concept-stat-card">
+        <span class="swse-concept-stat-card__label">Destiny</span>
+        <strong>{{destinyPointsValue}} / {{destinyPointsMax}}</strong>
+      </div>
+    </div>
+
+    <div class="swse-concept-defense-strip">
+      {{#each conceptLayout.defenses as |def|}}
+        <div class="swse-concept-defense-pill">
+          <span>{{def.label}}</span>
+          <strong class="{{def.totalClass}}">{{def.total}}</strong>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</header>

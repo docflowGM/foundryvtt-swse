@@ -1,0 +1,196 @@
+<div class="swse-concept-dashboard">
+  <div class="swse-concept-card-grid swse-concept-card-grid--force-top">
+    {{#each conceptLayout.force.metrics as |metric|}}
+      <article class="swse-concept-info-card swse-concept-info-card--stat">
+        <span>{{metric.label}}</span>
+        <strong>{{metric.value}}</strong>
+      </article>
+    {{/each}}
+  </div>
+
+  <section class="swse-concept-panel force-panel">
+    <header class="swse-concept-panel__header">
+      <div>
+        <h3 class="swse-concept-panel__title">Force Suite</h3>
+        <p class="swse-concept-panel__hint">Known powers, discard state, and advanced Force techniques in a single dossier lane.</p>
+      </div>
+      <div class="swse-concept-ledger-row__actions swse-concept-force-toolbar">
+        {{#if conceptLayout.force.constructionAvailable}}
+          <button type="button" class="swse-concept-btn" data-action="construct-lightsaber">
+            {{#if conceptLayout.force.constructionDeferred}}Construct Lightsaber{{else}}Lightsaber Ready{{/if}}
+          </button>
+        {{/if}}
+        <label class="swse-concept-toolfield swse-concept-toolfield--compact">
+          <span>Sort</span>
+          <select data-action="force-sort">
+            <option value="name">Name</option>
+            <option value="tag">Tag</option>
+          </select>
+        </label>
+      </div>
+    </header>
+
+    {{#if conceptLayout.force.tags.length}}
+      <div class="swse-concept-chip-row swse-concept-chip-row--force-filters">
+        {{#each conceptLayout.force.tags as |tag|}}
+          <button type="button" class="force-tag-filter swse-concept-chip swse-concept-chip--neutral" data-action="force-tag-filter" data-tag="{{tag}}">{{tag}}</button>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    <div class="swse-concept-grid swse-concept-grid--two">
+      <section class="swse-concept-panel swse-concept-panel--subledger">
+        <header class="swse-concept-panel__header">
+          <div>
+            <h3 class="swse-concept-panel__title">Available Powers</h3>
+            <p class="swse-concept-panel__hint">Currently available Force powers.</p>
+          </div>
+        </header>
+
+        {{#if conceptLayout.force.hand.length}}
+          <div class="force-card-grid swse-concept-force-grid">
+            {{#each conceptLayout.force.hand as |power|}}
+              <article class="force-card swse-concept-force-card" data-item-id="{{power.id}}" data-tags="{{power.tagString}}">
+                <div class="swse-concept-force-card__copy">
+                  <strong class="force-name">{{power.name}}</strong>
+                  <p>{{power.summary}}</p>
+                </div>
+                <div class="swse-concept-chip-row">
+                  {{#each power.tags as |tag|}}
+                    <span class="swse-concept-chip swse-concept-chip--neutral">{{tag}}</span>
+                  {{/each}}
+                </div>
+                <div class="swse-concept-ledger-row__actions">
+                  <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="activate-force" data-item-id="{{power.id}}">Use</button>
+                </div>
+              </article>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="swse-concept-empty-state">
+            <span class="swse-concept-empty-state__eyebrow">No powers ready</span>
+            <strong>This actor currently has no available Force powers.</strong>
+          </div>
+        {{/if}}
+      </section>
+
+      <section class="swse-concept-panel swse-concept-panel--subledger">
+        <header class="swse-concept-panel__header">
+          <div>
+            <h3 class="swse-concept-panel__title">Discarded Powers</h3>
+            <p class="swse-concept-panel__hint">Recoverable powers currently in the discard lane.</p>
+          </div>
+        </header>
+
+        {{#if conceptLayout.force.discard.length}}
+          <div class="force-card-grid swse-concept-force-grid discard">
+            {{#each conceptLayout.force.discard as |power|}}
+              <article class="force-card discarded swse-concept-force-card swse-concept-force-card--discarded" data-item-id="{{power.id}}" data-tags="{{power.tagString}}">
+                <div class="swse-concept-force-card__copy">
+                  <strong class="force-name">{{power.name}}</strong>
+                  <p>{{power.summary}}</p>
+                </div>
+                <div class="swse-concept-chip-row">
+                  {{#each power.tags as |tag|}}
+                    <span class="swse-concept-chip swse-concept-chip--neutral">{{tag}}</span>
+                  {{/each}}
+                </div>
+                <div class="swse-concept-ledger-row__actions">
+                  <button type="button" class="swse-concept-btn" data-action="activate-force" data-item-id="{{power.id}}">Recover</button>
+                </div>
+              </article>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="swse-concept-empty-state">
+            <span class="swse-concept-empty-state__eyebrow">Discard empty</span>
+            <strong>No discarded powers are currently waiting to be recovered.</strong>
+          </div>
+        {{/if}}
+      </section>
+    </div>
+  </section>
+
+  <div class="swse-concept-grid swse-concept-grid--two">
+    <section class="swse-concept-panel swse-concept-panel--ledger">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Force Techniques</h3>
+          <p class="swse-concept-panel__hint">Advanced technique entries sourced from the actor's derived Force suite.</p>
+        </div>
+      </header>
+
+      {{#if conceptLayout.force.techniques.length}}
+        <div class="swse-concept-ledger">
+          {{#each conceptLayout.force.techniques as |entry|}}
+            <article class="swse-concept-ledger-row">
+              <div class="swse-concept-ledger-row__main">
+                <div class="swse-concept-ledger-row__title">{{entry.name}}</div>
+                <div class="swse-concept-ledger-row__meta">
+                  {{#if entry.prerequisite}}<span>Requires {{entry.prerequisite}}</span>{{/if}}
+                  {{#if entry.summary}}<span>{{entry.summary}}</span>{{/if}}
+                </div>
+              </div>
+            </article>
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="swse-concept-empty-state">
+          <span class="swse-concept-empty-state__eyebrow">No techniques known</span>
+          <strong>This actor does not currently expose any Force techniques.</strong>
+        </div>
+      {{/if}}
+    </section>
+
+    <section class="swse-concept-panel swse-concept-panel--ledger">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Force Secrets</h3>
+          <p class="swse-concept-panel__hint">High-tier Force knowledge and secret disciplines.</p>
+        </div>
+      </header>
+
+      {{#if conceptLayout.force.secrets.length}}
+        <div class="swse-concept-ledger">
+          {{#each conceptLayout.force.secrets as |entry|}}
+            <article class="swse-concept-ledger-row">
+              <div class="swse-concept-ledger-row__main">
+                <div class="swse-concept-ledger-row__title">{{entry.name}}</div>
+                <div class="swse-concept-ledger-row__meta">
+                  {{#if entry.prerequisite}}<span>Requires {{entry.prerequisite}}</span>{{/if}}
+                  {{#if entry.summary}}<span>{{entry.summary}}</span>{{/if}}
+                </div>
+              </div>
+            </article>
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="swse-concept-empty-state">
+          <span class="swse-concept-empty-state__eyebrow">No secrets known</span>
+          <strong>No Force secrets are currently present on the actor record.</strong>
+        </div>
+      {{/if}}
+    </section>
+  </div>
+
+  <section class="swse-concept-panel swse-concept-panel--ledger">
+    <header class="swse-concept-panel__header">
+      <div>
+        <h3 class="swse-concept-panel__title">Dark Side Score</h3>
+        <p class="swse-concept-panel__hint">Clickable dark side track using the existing score setter.</p>
+      </div>
+    </header>
+
+    <div class="swse-concept-dsp-track {{#if darkSidePanel.danger}}is-danger{{/if}}">
+      {{#each darkSidePanel.segments as |segment|}}
+        <button type="button"
+                class="swse-concept-dsp-track__segment {{#if segment.filled}}filled{{/if}}"
+                data-action="set-dark-side-score"
+                data-index="{{segment.index}}"
+                title="Set Dark Side Points to {{segment.index}}">
+          <span>{{segment.index}}</span>
+        </button>
+      {{/each}}
+    </div>
+  </section>
+</div>

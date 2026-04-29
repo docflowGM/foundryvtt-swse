@@ -1,0 +1,115 @@
+<div class="swse-concept-dashboard">
+  <section class="swse-concept-panel swse-concept-panel--hero">
+    <div class="swse-concept-hero">
+      <div class="swse-concept-hero__copy">
+        <span class="swse-concept-empty-state__eyebrow">Mission Profile</span>
+        <h3 class="swse-concept-hero__title">Live Dossier Brief</h3>
+        <p class="swse-concept-hero__body">{{conceptLayout.summary.missionBrief}}</p>
+
+        <div class="swse-concept-chip-row">
+          {{#each conceptLayout.summary.dossierTags as |tag|}}
+            <span class="swse-concept-chip swse-concept-chip--{{tag.tone}}">{{tag.label}}</span>
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="swse-concept-hero__rail">
+        <div class="swse-concept-hero-status">
+          <span>Status</span>
+          <strong class="{{conceptLayout.summary.readinessClass}}">{{conceptLayout.summary.readinessLabel}}</strong>
+          <p>{{conceptLayout.summary.readinessNote}}</p>
+        </div>
+
+        <div class="swse-concept-card-grid swse-concept-card-grid--summary-hero">
+          {{#each conceptLayout.summary.heroMetrics as |metric|}}
+            <article class="swse-concept-info-card swse-concept-info-card--stat">
+              <span>{{metric.label}}</span>
+              <strong class="{{metric.valueClass}}">{{metric.value}}</strong>
+            </article>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="swse-concept-panel swse-concept-panel--summary">
+    <header class="swse-concept-panel__header">
+      <div>
+        <h3 class="swse-concept-panel__title">Dossier Summary</h3>
+        <p class="swse-concept-panel__hint">At-a-glance operator profile and current status.</p>
+      </div>
+    </header>
+
+    <div class="swse-concept-card-grid swse-concept-card-grid--summary">
+      {{#each conceptLayout.summary.cards as |card|}}
+        <article class="swse-concept-info-card">
+          <span>{{card.label}}</span>
+          <strong>{{card.value}}</strong>
+        </article>
+      {{/each}}
+    </div>
+  </section>
+
+  <section class="swse-concept-panel">
+    <header class="swse-concept-panel__header">
+      <div>
+        <h3 class="swse-concept-panel__title">Status Feed</h3>
+        <p class="swse-concept-panel__hint">Persistent conditions, shields, and readiness markers.</p>
+      </div>
+    </header>
+
+    <div class="swse-concept-chip-row">
+      {{#each conceptLayout.summary.statusChips as |chip|}}
+        <span class="swse-concept-chip swse-concept-chip--{{chip.tone}}">{{chip.label}}</span>
+      {{/each}}
+    </div>
+
+    <div class="swse-concept-metric-row">
+      {{#each conceptLayout.summary.quickReadouts as |metric|}}
+        <div class="swse-concept-metric-card">
+          <span>{{metric.label}}</span>
+          <strong>{{metric.value}}</strong>
+        </div>
+      {{/each}}
+    </div>
+  </section>
+
+  <div class="swse-concept-grid swse-concept-grid--two">
+    <section class="swse-concept-panel">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Character Notes</h3>
+          <p class="swse-concept-panel__hint">General dossier notes and table-facing reminders.</p>
+        </div>
+      </header>
+
+      <textarea name="system.notes"
+                class="swse-concept-textarea swse-concept-textarea--lg"
+                placeholder="Add character notes here...">{{system.notes}}</textarea>
+    </section>
+
+    <section class="swse-concept-panel">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Bio Snapshot</h3>
+          <p class="swse-concept-panel__hint">Current narrative summary sourced from biography fields.</p>
+        </div>
+      </header>
+
+      <p class="swse-concept-body-copy">{{conceptLayout.summary.biographyPreview}}</p>
+
+      <div class="swse-concept-subsection">
+        <span class="swse-concept-subsection__label">Known Languages</span>
+        <div class="swse-concept-chip-row">
+          {{#if conceptLayout.summary.languages.length}}
+            {{#each conceptLayout.summary.languages as |language|}}
+              <span class="swse-concept-chip swse-concept-chip--neutral">{{language}}</span>
+            {{/each}}
+          {{else}}
+            <span class="swse-concept-chip swse-concept-chip--neutral">No languages recorded</span>
+          {{/if}}
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

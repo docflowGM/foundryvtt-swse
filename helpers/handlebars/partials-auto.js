@@ -3,7 +3,27 @@
 /* Must match template usage exactly                                          */
 /* ========================================================================== */
 
+const CHARACTER_V2_CONCEPT_PARTIALS = [
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/hud-bar.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/title-strip.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/header-block.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/resource-strip.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/tabs-bar.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/sidebar.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/abilities-tab.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/skills-tab.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/combat-tab.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-tab.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/biography-tab.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/relationships-tab.hbs"
+];
+
 const PARTIALS = [
+  ...CHARACTER_V2_CONCEPT_PARTIALS,
+
   // Character V2 Panels
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs",

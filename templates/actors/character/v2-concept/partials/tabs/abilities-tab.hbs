@@ -1,0 +1,83 @@
+<div class="swse-concept-dashboard">
+  <div class="swse-concept-card-grid swse-concept-card-grid--abilities-top">
+    {{#each conceptLayout.abilitiesTab.summaryCards as |card|}}
+      <article class="swse-concept-info-card swse-concept-info-card--stat">
+        <span>{{card.label}}</span>
+        <strong>{{card.value}}</strong>
+      </article>
+    {{/each}}
+  </div>
+
+  <section class="swse-concept-panel">
+    <header class="swse-concept-panel__header">
+      <div>
+        <h3 class="swse-concept-panel__title">Ability Matrix</h3>
+        <p class="swse-concept-panel__hint">Direct access to the six core abilities with live total preview and roll hooks.</p>
+      </div>
+      <div class="swse-concept-ledger-row__actions">
+        {{#if (eq actor.type "character")}}
+          <button type="button" class="swse-concept-btn" data-action="roll-attributes">Roll for Attributes</button>
+        {{/if}}
+      </div>
+    </header>
+
+    <div class="swse-concept-ability-card-grid">
+      {{#each conceptLayout.abilitiesTab.entries as |ability|}}
+        <article class="swse-concept-ability-card ability-row {{#if ability.isPrimary}}is-primary{{/if}} {{#if ability.isSecondary}}is-secondary{{/if}} {{#if ability.isLowest}}is-lowest{{/if}}">
+          <div class="swse-concept-ability-card__topline">
+            <div>
+              <span class="swse-concept-ability-card__label">{{ability.label}}</span>
+              <strong class="swse-concept-ability-card__score">{{ability.total}}</strong>
+            </div>
+            <div class="swse-concept-ledger-row__actions">
+              <span class="swse-concept-ability-card__mod {{ability.modClass}}">{{numberFormat ability.mod decimals=0 sign=true}}</span>
+              <button type="button"
+                      class="swse-concept-iconbtn"
+                      data-action="roll-ability"
+                      data-ability="{{ability.key}}"
+                      title="Roll {{ability.label}}">
+                <i class="fa-solid fa-dice-d20"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="ability-expanded swse-concept-ability-card__math">
+            <label class="swse-concept-ability-field">
+              <span>Base</span>
+              <input type="number"
+                     data-field="base"
+                     name="system.abilities.{{ability.key}}.base"
+                     value="{{ability.base}}">
+            </label>
+
+            <label class="swse-concept-ability-field">
+              <span>Species</span>
+              <input type="number"
+                     data-field="racial"
+                     name="system.abilities.{{ability.key}}.racial"
+                     value="{{ability.racial}}">
+            </label>
+
+            <label class="swse-concept-ability-field">
+              <span>Temp</span>
+              <input type="number"
+                     data-field="temp"
+                     name="system.abilities.{{ability.key}}.temp"
+                     value="{{ability.temp}}">
+            </label>
+
+            <div class="swse-concept-ability-result">
+              <span>Total</span>
+              <strong class="math-result">{{ability.total}}</strong>
+            </div>
+
+            <div class="swse-concept-ability-result">
+              <span>Modifier</span>
+              <strong class="math-mod {{ability.modClass}}">{{numberFormat ability.mod decimals=0 sign=true}}</strong>
+            </div>
+          </div>
+        </article>
+      {{/each}}
+    </div>
+  </section>
+</div>

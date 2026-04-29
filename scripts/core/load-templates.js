@@ -14,6 +14,25 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+const CHARACTER_V2_CONCEPT_TEMPLATES = [
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/character-sheet.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/hud-bar.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/title-strip.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/header-block.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/resource-strip.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/tabs-bar.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/sidebar.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/abilities-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/skills-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/combat-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/biography-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/relationships-tab.hbs'
+];
+
 /**
  * All templates used by the system.
  * These paths MUST match exactly how they are referenced in {{> }} calls.
@@ -27,6 +46,11 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/droid/v2/droid-sheet.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/npc-sheet.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/vehicle-sheet.hbs',
+
+  // ==============================
+  // Character V2 Concept Sheet
+  // ==============================
+  ...CHARACTER_V2_CONCEPT_TEMPLATES,
 
   // ==============================
   // Character v2 Partials
@@ -110,11 +134,6 @@ export const SWSE_TEMPLATES = [
   // NPC Partials
   // ==============================
   'systems/foundryvtt-swse/templates/actors/npc/npc-image.hbs',
-
-  // ==============================
-  // Shared Components
-  // ==============================
-  'systems/foundryvtt-swse/templates/components/hud.hbs',
 
   // ==============================
   // Shared Partials
@@ -221,21 +240,11 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-footer.hbs',
 
   // ==============================
-  // Shared Shell Components
-  // ==============================
-  'systems/foundryvtt-swse/templates/shell/partials/master-bezel-chrome.hbs',
-
-  // ==============================
   // Shell Surfaces (Phase 12)
   // ==============================
   'systems/foundryvtt-swse/templates/shell/partials/surface-home.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-settings.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-mentor.hbs',
-  'systems/foundryvtt-swse/templates/shell/partials/surface-progression.hbs',
-  'systems/foundryvtt-swse/templates/shell/partials/surface-chargen.hbs',
-  'systems/foundryvtt-swse/templates/shell/partials/surface-upgrade.hbs',
-  'systems/foundryvtt-swse/templates/shell/partials/surface-messenger.hbs',
-  'systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs',
 
 ];
 

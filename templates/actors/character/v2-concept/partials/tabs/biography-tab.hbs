@@ -1,0 +1,70 @@
+<div class="swse-concept-dashboard">
+  <section class="swse-concept-panel">
+    <header class="swse-concept-panel__header">
+      <div>
+        <h3 class="swse-concept-panel__title">Identity Record</h3>
+        <p class="swse-concept-panel__hint">Reference metadata for the character dossier.</p>
+      </div>
+    </header>
+
+    <div class="swse-concept-card-grid swse-concept-card-grid--bio">
+      {{#each conceptLayout.biography.profileCards as |card|}}
+        <article class="swse-concept-info-card">
+          <span>{{card.label}}</span>
+          <strong>{{card.value}}</strong>
+        </article>
+      {{/each}}
+    </div>
+
+    <div class="swse-concept-subsection">
+      <span class="swse-concept-subsection__label">Known Languages</span>
+      <div class="swse-concept-chip-row">
+        {{#if conceptLayout.biography.languages.length}}
+          {{#each conceptLayout.biography.languages as |language|}}
+            <span class="swse-concept-chip swse-concept-chip--neutral">{{language}}</span>
+          {{/each}}
+        {{else}}
+          <span class="swse-concept-chip swse-concept-chip--neutral">No languages recorded</span>
+        {{/if}}
+      </div>
+    </div>
+  </section>
+
+  <div class="swse-concept-grid swse-concept-grid--two">
+    <section class="swse-concept-panel">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Background & History</h3>
+          <p class="swse-concept-panel__hint">Origin story, formative events, and biography text.</p>
+        </div>
+      </header>
+      <textarea name="flags.swse.character.biography"
+                class="swse-concept-textarea swse-concept-textarea--lg"
+                placeholder="Character background, origin story, key life events...">{{flags.swse.character.biography}}</textarea>
+    </section>
+
+    <section class="swse-concept-panel">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Campaign Log</h3>
+          <p class="swse-concept-panel__hint">Session notes, key story beats, and in-character journal entries.</p>
+        </div>
+      </header>
+      <textarea name="flags.swse.character.campaignLog"
+                class="swse-concept-textarea swse-concept-textarea--lg"
+                placeholder="Session notes, key story moments, in-character journal entries...">{{flags.swse.character.campaignLog}}</textarea>
+    </section>
+  </div>
+
+  <section class="swse-concept-panel">
+    <header class="swse-concept-panel__header">
+      <div>
+        <h3 class="swse-concept-panel__title">Profile & Beliefs</h3>
+        <p class="swse-concept-panel__hint">Goals, code of honor, quirks, ambitions, and roleplaying notes.</p>
+      </div>
+    </header>
+    <textarea name="flags.swse.character.profileSummary"
+              class="swse-concept-textarea swse-concept-textarea--lg"
+              placeholder="Character goals, beliefs, code of honor, quirks, ambitions...">{{flags.swse.character.profileSummary}}</textarea>
+  </section>
+</div>

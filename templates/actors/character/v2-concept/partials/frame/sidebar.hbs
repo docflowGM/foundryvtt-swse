@@ -1,0 +1,55 @@
+<div class="swse-concept-sidebar-stack">
+  <section class="swse-concept-sidecard">
+    <header>
+      <h3>Attributes</h3>
+      <span>Core chassis</span>
+    </header>
+    <div class="swse-concept-ability-grid">
+      {{#each conceptLayout.abilities as |ability|}}
+        <button type="button" class="swse-concept-ability" data-action="roll-ability" data-ability="{{ability.key}}">
+          <span class="swse-concept-ability__label">{{ability.shortLabel}}</span>
+          <strong>{{ability.total}}</strong>
+          <em class="{{ability.modClass}}">{{numberFormat ability.mod decimals=0 sign=true}}</em>
+        </button>
+      {{/each}}
+    </div>
+  </section>
+
+  <section class="swse-concept-sidecard">
+    <header>
+      <h3>Defenses</h3>
+      <span>Always hot</span>
+    </header>
+    <div class="swse-concept-defense-grid">
+      {{#each conceptLayout.defenses as |def|}}
+        <div class="swse-concept-defense-block swse-concept-defense-block--{{def.key}}">
+          <span>{{def.label}}</span>
+          <strong class="{{def.totalClass}}">{{def.total}}</strong>
+          <em>10 + {{def.abilityLabel}}</em>
+        </div>
+      {{/each}}
+    </div>
+  </section>
+
+  <section class="swse-concept-sidecard">
+    <header>
+      <h3>Quick Stats</h3>
+      <span>Combat telemetry</span>
+    </header>
+    <div class="swse-concept-quickstats">
+      {{#each conceptLayout.quickStats as |stat|}}
+        <div class="swse-concept-quickstat">
+          <span>{{stat.label}}</span>
+          <div class="swse-concept-quickstat__value">
+            <strong class="{{stat.valueClass}}">{{numberFormat stat.value decimals=0 sign=true}}{{stat.suffix}}</strong>
+            {{#if stat.dataAction}}
+              <button type="button" class="swse-concept-iconbtn" data-action="{{stat.dataAction}}" {{#if stat.dataSkill}}data-skill="{{stat.dataSkill}}"{{/if}}>
+                <i class="fa-solid fa-dice-d20"></i>
+              </button>
+            {{/if}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </section>
+</div>

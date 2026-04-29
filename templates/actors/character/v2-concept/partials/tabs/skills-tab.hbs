@@ -1,0 +1,251 @@
+<div class="swse-concept-dashboard">
+  <div class="swse-concept-card-grid swse-concept-card-grid--skills-top">
+    {{#each conceptLayout.skills.summaryCards as |card|}}
+      <article class="swse-concept-info-card swse-concept-info-card--stat">
+        <span>{{card.label}}</span>
+        <strong>{{card.value}}</strong>
+      </article>
+    {{/each}}
+  </div>
+
+  <section class="swse-concept-panel swse-concept-panel--ledger">
+    <header class="swse-concept-panel__header">
+      <div>
+        <h3 class="swse-concept-panel__title">Skill Ledger</h3>
+        <p class="swse-concept-panel__hint">Full skill matrix with sorting, favorites, training state, and expandable special uses.</p>
+      </div>
+    </header>
+
+    <div class="skills-tools-row swse-concept-skills-tools">
+      <div class="swse-concept-toolfield">
+        <label for="concept-skills-filter-select">Filter</label>
+        <select id="concept-skills-filter-select" data-action="filter-skills">
+          <option value="all">All Skills</option>
+          <option value="trained">Trained</option>
+          <option value="favorited">Favorited</option>
+          <option value="focused">Focused</option>
+        </select>
+      </div>
+      <div class="swse-concept-toolfield">
+        <label for="concept-skills-sort-select">Sort</label>
+        <select id="concept-skills-sort-select" data-action="sort-skills">
+          <option value="name">Name A→Z</option>
+          <option value="ability">Ability</option>
+          <option value="total-desc">Highest Total</option>
+          <option value="total-asc">Lowest Total</option>
+        </select>
+      </div>
+      <button type="button" class="swse-concept-btn" data-action="reset-skills-tools">Reset Filters</button>
+    </div>
+
+    <div class="swse-concept-chip-row swse-concept-chip-row--skills">
+      {{#each conceptLayout.skills.highlights as |skill|}}
+        <span class="swse-concept-chip swse-concept-chip--neutral">{{skill.label}} {{numberFormat skill.total decimals=0 sign=true}}</span>
+      {{/each}}
+    </div>
+
+    <div class="skills-list swse-concept-skills-list">
+      {{#each conceptLayout.skills.entries as |skill|}}
+        <article class="skill-row-container swse-concept-skill-row"
+                 data-skill="{{skill.key}}"
+                 data-label="{{skill.label}}"
+                 data-name="{{skill.key}}"
+                 data-total="{{skill.total}}"
+                 data-trained="{{#if skill.trained}}true{{else}}false{{/if}}"
+                 data-favorite="{{#if skill.favorite}}true{{else}}false{{/if}}"
+                 data-focused="{{#if skill.focused}}true{{else}}false{{/if}}"
+                 data-ability="{{skill.selectedAbility}}">
+          <div class="swse-concept-skill-row__identity">
+            <button type="button"
+                    class="favorite-btn swse-concept-favorite {{#if skill.favorite}}favorited{{/if}}"
+                    data-action="toggle-favorite"
+                    data-skill="{{skill.key}}"
+                    title="Toggle favorite">
+              ★
+            </button>
+
+            <div class="swse-concept-skill-row__copy">
+              <div class="swse-concept-skill-row__titleline">
+                {{#if skill.hasExtraUses}}
+                  <button type="button"
+                          class="skill-expand-toggle swse-concept-expand-toggle {{#if (gte skill.extraUsesCount 3)}}skill-expand-toggle--many{{/if}}"
+                          data-action="toggle-skill-expand"
+                          data-skill="{{skill.key}}"
+                          aria-expanded="false"
+                          title="Expand extra uses">
+                    {{#if (gte skill.extraUsesCount 3)}}
+                      <span class="expand-count">{{skill.extraUsesCount}}</span>
+                    {{else}}
+                      ▶
+                    {{/if}}
+                  </button>
+                {{/if}}
+
+                <button type="button"
+                        class="skill-name-btn rollable swse-concept-skill-name"
+                        data-skill="{{skill.key}}"
+                        data-mod-dialog="true"
+                        title="Roll {{skill.label}}">
+                  {{skill.label}}
+                </button>
+              </div>
+
+              <div class="swse-concept-ledger-row__meta">
+                <span>{{skill.selectedAbilityLabel}}</span>
+                {{#if skill.trained}}<span>Trained</span>{{/if}}
+                {{#if skill.focused}}<span>Focused</span>{{/if}}
+                {{#if skill.favorite}}<span>Favorite</span>{{/if}}
+                {{#if skill.hasExtraUses}}<span>{{skill.extraUsesCount}} uses</span>{{/if}}
+              </div>
+            </div>
+          </div>
+
+          <div class="swse-concept-skill-row__math">
+            <label class="swse-concept-toolfield swse-concept-toolfield--compact">
+              <span>Ability</span>
+              <select name="system.skills.{{skill.key}}.selectedAbility" class="ability-select">
+                {{#each skill.abilityChoices as |ab|}}
+                  <option value="{{ab.key}}" {{#if (eq ab.key skill.selectedAbility)}}selected{{/if}}>{{ab.label}}</option>
+                {{/each}}
+              </select>
+            </label>
+
+            <div class="swse-concept-skill-stat">
+              <span>Ability Mod</span>
+              <strong class="{{skill.abilityModClass}}">{{numberFormat skill.abilityMod decimals=0 sign=true}}</strong>
+            </div>
+
+            <div class="swse-concept-skill-stat">
+              <span>½ Lvl</span>
+              <strong class="{{skill.halfLevelClass}}">{{numberFormat skill.halfLevel decimals=0 sign=true}}</strong>
+            </div>
+
+            <label class="swse-concept-checkpill">
+              <input type="checkbox" name="system.skills.{{skill.key}}.trained" {{checked skill.trained}}>
+              <span>Trained</span>
+            </label>
+
+            <label class="swse-concept-checkpill">
+              <input type="checkbox" name="system.skills.{{skill.key}}.focused" {{checked skill.focused}}>
+              <span>Focus</span>
+            </label>
+
+            <label class="swse-concept-toolfield swse-concept-toolfield--compact swse-concept-toolfield--number">
+              <span>Misc</span>
+              <input type="number"
+                     class="misc-input {{skill.miscModClass}}"
+                     name="system.skills.{{skill.key}}.miscMod"
+                     value="{{skill.miscMod}}">
+            </label>
+
+            <div class="swse-concept-skill-stat swse-concept-skill-stat--total">
+              <span>Total</span>
+              <strong class="{{skill.totalClass}}">{{numberFormat skill.total decimals=0 sign=true}}</strong>
+            </div>
+
+            <button type="button" class="swse-concept-btn skill-roll-btn" data-action="roll-skill" data-skill="{{skill.key}}">Roll</button>
+          </div>
+        </article>
+
+        {{#if skill.hasExtraUses}}
+          <div class="skill-extra-uses skill-extra-uses--collapsed swse-concept-panel swse-concept-panel--subledger" data-skill="{{skill.key}}">
+            <div class="extra-uses-filter-bar skill-extra-uses-hidden">
+              <div class="filter-buttons">
+                <button type="button" class="filter-btn filter-btn--active" data-filter="all">All</button>
+                <button type="button" class="filter-btn" data-filter="available">Available</button>
+                <button type="button" class="filter-btn" data-filter="combat">Combat</button>
+              </div>
+            </div>
+
+            {{#each skill.extraUsesGrouped as |group|}}
+              <section class="extra-use-group" data-group="{{group.label}}">
+                <div class="group-header">{{group.label}}</div>
+                {{#each group.entries as |use|}}
+                  <article class="extra-use-row {{#if use.isBlocked}}use-blocked{{/if}}" data-use-key="{{use.key}}" data-category="{{use.category}}">
+                    <div class="extra-use-copy">
+                      <div class="use-label-line">
+                        <span class="extra-use-label">{{use.label}}</span>
+                        {{#if use.isBlocked}}
+                          <span class="use-status use-status--blocked">Locked</span>
+                        {{else if (and use.requiresTrained use.skillTrained)}}
+                          <span class="use-status use-status--trained">Trained</span>
+                        {{/if}}
+                      </div>
+                      {{#if use.description}}
+                        <span class="extra-use-description">{{use.description}}</span>
+                      {{/if}}
+                    </div>
+
+                    <div class="extra-use-meta">
+                      {{#if use.dc}}<span class="extra-use-dc">DC {{use.dc}}</span>{{/if}}
+                      {{#if use.actionTypeLabel.label}}<span class="action-type-tag {{use.actionType}}">{{use.actionTypeLabel.icon}} {{use.actionTypeLabel.label}}</span>{{/if}}
+                      {{#if use.timeLabel}}<span class="extra-use-time {{use.timeClass}}">{{use.timeLabel}}</span>{{/if}}
+                    </div>
+
+                    <div class="extra-use-action-right">
+                      <button type="button"
+                              class="swse-concept-btn {{#if use.isBlocked}}btn-disabled{{else}}swse-concept-btn--primary{{/if}}"
+                              data-action="execute-extra-skill-use"
+                              data-skill="{{../../key}}"
+                              data-use="{{use.key}}"
+                              data-use-key="{{use.useKey}}"
+                              data-blocked="{{#if use.isBlocked}}true{{else}}false{{/if}}"
+                              data-action-type="{{use.actionType}}"
+                              data-source-type="{{use.sourceType}}"
+                              data-source-label="{{use.sourceLabel}}"
+                              {{#if use.isBlocked}}disabled title="{{use.blockedReason}}"{{/if}}>
+                        {{use.actionTypeLabel.action}}
+                      </button>
+                    </div>
+                  </article>
+                {{/each}}
+              </section>
+            {{/each}}
+          </div>
+        {{/if}}
+      {{/each}}
+    </div>
+  </section>
+
+  {{#if conceptLayout.skills.customEntries.length}}
+    <section class="swse-concept-panel swse-concept-panel--ledger">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Custom Skills</h3>
+          <p class="swse-concept-panel__hint">User-authored skills currently stored on the actor profile.</p>
+        </div>
+      </header>
+
+      <div class="swse-concept-ledger">
+        {{#each conceptLayout.skills.customEntries as |skill|}}
+          <article class="swse-concept-ledger-row">
+            <div class="swse-concept-ledger-row__main">
+              <div class="swse-concept-ledger-row__title">{{skill.label}}</div>
+              <div class="swse-concept-ledger-row__meta">
+                <span>{{skill.abilityLabel}}</span>
+                {{#if skill.trained}}<span>Trained</span>{{/if}}
+                {{#if skill.focused}}<span>Focused</span>{{/if}}
+                {{#if skill.notes}}<span>{{skill.notes}}</span>{{/if}}
+              </div>
+            </div>
+
+            <div class="swse-concept-ledger-row__stats">
+              <div>
+                <span>Ability</span>
+                <strong>{{numberFormat skill.abilityMod decimals=0 sign=true}}</strong>
+              </div>
+              <div>
+                <span>½ Lvl</span>
+                <strong>{{numberFormat skill.halfLevel decimals=0 sign=true}}</strong>
+              </div>
+              <div>
+                <span>Total</span>
+                <strong class="{{skill.totalClass}}">{{numberFormat skill.total decimals=0 sign=true}}</strong>
+              </div>
+            </div>
+          </article>
+        {{/each}}
+      </div>
+    </section>
+  {{/if}}
+</div>

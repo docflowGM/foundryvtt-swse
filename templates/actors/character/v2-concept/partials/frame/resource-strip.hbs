@@ -1,0 +1,48 @@
+<section class="swse-concept-resource-strip">
+  <div class="swse-concept-resource-card swse-concept-resource-card--hp">
+    <div class="swse-concept-resource-card__header">
+      <span>Health</span>
+      <strong>{{healthPanel.hp.value}} / {{healthPanel.hp.max}}</strong>
+    </div>
+    <div class="swse-concept-segment-bar" data-resource-visual="hp" data-hp-current="{{healthPanel.hp.value}}" data-hp-max="{{healthPanel.hp.max}}" data-hp-temp="{{healthPanel.hp.temp}}">
+      {{#each headerHpSegments as |segment|}}
+        <span class="swse-concept-segment {{segment.colorClass}} {{#if segment.filled}}is-filled{{/if}}"></span>
+      {{/each}}
+    </div>
+    <div class="swse-concept-resource-card__meta">
+      <span>Temp {{healthPanel.hp.temp}}</span>
+      <span>{{healthPanel.stateLabel}}</span>
+    </div>
+  </div>
+
+  <div class="swse-concept-resource-card swse-concept-resource-card--xp">
+    <div class="swse-concept-resource-card__header">
+      <span>Experience</span>
+      <strong>{{xpData.total}}</strong>
+    </div>
+    <div class="swse-concept-segment-bar" data-resource-visual="xp" data-xp-total="{{xpData.total}}" data-xp-percent="{{xpData.percentRounded}}">
+      {{#each headerXpSegments as |segment|}}
+        <span class="swse-concept-segment {{#if segment.filled}}is-filled{{/if}}"></span>
+      {{/each}}
+    </div>
+    <div class="swse-concept-resource-card__meta">
+      <span>{{xpData.percentRounded}}% to next level</span>
+      <span>{{#if xpLevelReady}}Ready{{else}}Advancing{{/if}}</span>
+    </div>
+  </div>
+
+  <div class="swse-concept-resource-card swse-concept-resource-card--compact">
+    <div class="swse-concept-compact-resource">
+      <span>Force</span>
+      <strong class="{{#if (gt forcePointsValue 0)}}mod--positive{{else if (lt forcePointsValue 0)}}mod--negative{{else}}mod--zero{{/if}}">{{forcePointsValue}} / {{forcePointsMax}}</strong>
+    </div>
+    <div class="swse-concept-compact-resource">
+      <span>Destiny</span>
+      <strong class="{{#if (gt destinyPointsValue 0)}}mod--positive{{else if (lt destinyPointsValue 0)}}mod--negative{{else}}mod--zero{{/if}}">{{destinyPointsValue}} / {{destinyPointsMax}}</strong>
+    </div>
+    <div class="swse-concept-compact-resource">
+      <span>Condition</span>
+      <strong>{{healthPanel.currentConditionPenalty.label}}</strong>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,45 @@
+<div class="swse-concept-hud">
+  <div class="swse-concept-hud__left">
+    <span class="swse-concept-tag"><span class="dot"></span> LINK</span>
+    <span class="swse-concept-tag">CHAR-REC</span>
+    <span class="swse-concept-tag">{{#if xpLevelReady}}PROMOTION READY{{else}}FIELD ACTIVE{{/if}}</span>
+  </div>
+
+  <div class="swse-concept-hud__center">DATAPAD // CHARACTER DOSSIER</div>
+
+  <div class="swse-concept-hud__right">
+    <div class="swse-concept-hud__status">
+      <span class="swse-concept-signal" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </span>
+      <span class="swse-concept-battery" aria-hidden="true">
+        <span class="cell {{#unless (gt conceptLayout.vitals.hpPercent 15)}}empty{{/unless}}"></span>
+        <span class="cell {{#unless (gt conceptLayout.vitals.hpPercent 35)}}empty{{/unless}}"></span>
+        <span class="cell {{#unless (gt conceptLayout.vitals.hpPercent 60)}}empty{{/unless}}"></span>
+        <span class="cell {{#unless (gt conceptLayout.vitals.hpPercent 85)}}empty{{/unless}}"></span>
+      </span>
+      <span class="swse-concept-tag">HP {{conceptLayout.vitals.hpPercent}}%</span>
+    </div>
+
+    <label class="swse-concept-select">
+      <span>Theme</span>
+      <select data-control="theme">
+        {{#each sheetThemeGroups as |group|}}
+          <optgroup label="{{group.label}}">
+            {{#each group.options as |option|}}
+              <option value="{{option.key}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+            {{/each}}
+          </optgroup>
+        {{/each}}
+      </select>
+    </label>
+    <label class="swse-concept-select">
+      <span>Motion</span>
+      <select data-control="motion">
+        {{#each sheetMotionOptions as |option|}}
+          <option value="{{option.value}}" {{#if (eq ../sheetMotionStyle option.value)}}selected{{/if}}>{{option.label}}</option>
+        {{/each}}
+      </select>
+    </label>
+  </div>
+</div>
