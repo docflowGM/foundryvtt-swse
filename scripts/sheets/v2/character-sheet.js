@@ -29,6 +29,7 @@ import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/comba
 import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-guardrails.js";
 import { bindV2CharacterSheetTooltips } from "/systems/foundryvtt-swse/scripts/sheets/v2/TooltipIntegration.js";
 import { bindV2SheetBreakdowns, closeBreakdown } from "/systems/foundryvtt-swse/scripts/sheets/v2/BreakdownIntegration.js";
+import { StoreSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceController.js";
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
@@ -553,8 +554,134 @@ export class SWSEV2CharacterSheet extends
         homeRoot.querySelectorAll('.swse-app-tile--launching').forEach(tile => tile.classList.remove('swse-app-tile--launching'));
         el.classList.add('swse-app-tile--launching');
         await new Promise(resolve => setTimeout(resolve, 150));
-        await this.setSurface(routeId, { source: 'home' });
+
+        // Special-case progression/chargen: launch the real flow instead of routing to placeholder surface
+        if (routeId === 'chargen' || routeId === 'progression') {
+          await launchProgression(this.actor);
+          // Do NOT render - ChargenShell/ProgressionFramework opens as a separate window
+        } else {
+          await this.setSurface(routeId, { source: 'home' });
+          this.render(false);
+        }
+      }, { signal });
+    });
+
+    // Initialize home surface controller (compass needle, tile aiming)
+    this._homeController = new HomeSurfaceController({
+      root: homeRoot,
+      host: this
+    });
+    this._homeController.attach();
+  }
+
+  /** Wire store surface events (browse/cart/history tabs, add to cart, checkout). */
+  _wireStoreSurfaceEvents(root, signal) {
+    const storeRoot = root.querySelector('[data-shell-region="surface-store"]');
+    if (!storeRoot) return;
+
+    // Wire tab switches
+    storeRoot.querySelectorAll('[data-shell-action*="store-"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const action = el.dataset.shellAction;
+        if (!action) return;
+
+        // Update surface options to track current view/category
+        const view = action.replace('store-', '');
+        this._shellSurfaceOptions = { ...this._shellSurfaceOptions, currentView: view };
         this.render(false);
+      }, { signal });
+    });
+
+    // Wire category navigation
+    storeRoot.querySelectorAll('[data-action="category-nav"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const category = el.dataset.category || '';
+        this._shellSurfaceOptions = { ...this._shellSurfaceOptions, currentCategory: category };
+        this.render(false);
+      }, { signal });
+    });
+  }
+
+  /** Wire settings surface events (theme/motion/display controls). */
+  _wireSettingsSurfaceEvents(root, signal) {
+    const settingsRoot = root.querySelector('[data-shell-region="surface-settings"]');
+    if (!settingsRoot) return;
+
+    // Wire theme preset selection
+    settingsRoot.querySelectorAll('[data-theme-preset]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const themeId = el.dataset.themePreset;
+        if (!themeId) return;
+        try {
+          const { ThemeManager } = await import('/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js');
+          await ThemeManager.setTheme({ theme: themeId });
+          // Apply theme to shell immediately
+          const sheetShell = root.querySelector('.swse-sheet-v2-shell');
+          if (sheetShell) {
+            sheetShell.setAttribute('data-theme', themeId);
+          }
+          this.render(false);
+        } catch (err) {
+          swseLogger.error('[SETTINGS] Error setting theme:', err);
+          ui.notifications?.error?.(`Failed to set theme: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Wire shell color selection
+    settingsRoot.querySelectorAll('[data-shell-color]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const colorId = el.dataset.shellColor;
+        if (!colorId) return;
+        try {
+          const { ThemeManager } = await import('/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js');
+          await ThemeManager.setTheme({ shellColor: colorId });
+          this.render(false);
+        } catch (err) {
+          swseLogger.error('[SETTINGS] Error setting shell color:', err);
+          ui.notifications?.error?.(`Failed to set shell color: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Wire display control sliders
+    settingsRoot.querySelectorAll('[data-theme-control]').forEach(el => {
+      el.addEventListener('change', async (ev) => {
+        const controlName = el.dataset.themeControl;
+        const value = ev.target.value;
+        if (!controlName) return;
+        try {
+          const { ThemeManager } = await import('/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js');
+          const currentTheme = ThemeManager.getTheme();
+          const update = { ...currentTheme, [controlName]: parseFloat(value) };
+          await ThemeManager.setTheme(update);
+          this.render(false);
+        } catch (err) {
+          swseLogger.error('[SETTINGS] Error updating display control:', err);
+        }
+      }, { signal });
+    });
+
+    // Wire theme toggles (breathing, reduced motion)
+    settingsRoot.querySelectorAll('[data-theme-toggle]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const toggleName = el.dataset.themeToggle;
+        if (!toggleName) return;
+        try {
+          const { ThemeManager } = await import('/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js');
+          const currentTheme = ThemeManager.getTheme();
+          const newValue = !currentTheme[toggleName];
+          const update = { ...currentTheme, [toggleName]: newValue };
+          await ThemeManager.setTheme(update);
+          this.render(false);
+        } catch (err) {
+          swseLogger.error('[SETTINGS] Error toggling theme setting:', err);
+        }
       }, { signal });
     });
   }

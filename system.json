@@ -121,6 +121,7 @@
     "styles/miraj-attunement.css",
     "styles/system/settings-surface.css",
     "styles/system/mentor-surface.css",
+    "styles/system/store-surface.css",
     "styles/apps/gm-datapad.css"
   ],
   "languages": [
