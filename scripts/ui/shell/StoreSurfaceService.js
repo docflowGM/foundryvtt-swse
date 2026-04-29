@@ -52,17 +52,21 @@ export class StoreSurfaceService {
       // Get the view model from the store's _prepareContext
       const storeContext = await storeInstance._prepareContext();
 
-      // Extract only serializable fields from storeContext
+      // Extract all serializable fields needed by surface-store.hbs template
       const safeContext = {
+        allItems: storeContext.allItems,
         credits: storeContext.credits,
-        items: storeContext.items,
-        categories: storeContext.categories,
-        cart: storeContext.cart,
-        history: storeContext.history,
-        suggestions: storeContext.suggestions,
-        currentCategory: storeContext.currentCategory,
+        cartCount: storeContext.cartCount,
+        cartTotal: storeContext.cartTotal,
+        cartEntries: storeContext.cartEntries,
         currentView: storeContext.currentView,
-        selectedProductId: storeContext.selectedProductId
+        currentCategory: storeContext.currentCategory,
+        currentCategoryLabel: storeContext.currentCategoryLabel,
+        categorySummary: storeContext.categorySummary,
+        pageContext: storeContext.pageContext,
+        purchaseHistoryEntries: storeContext.purchaseHistoryEntries,
+        rendarrImage: storeContext.rendarrImage,
+        selectedProduct: storeContext.selectedProduct
       };
 
       return {
