@@ -1,175 +1,346 @@
 {{!--
   surface-store.hbs
-  Shell surface for the Galactic Trade Exchange store.
-
-  Embeds the store app's content directly into the datapad shell.
-  Reuses store-card-grid.hbs template context and styling.
+  Shell-native store surface. Concept-aligned layout, live store data.
 --}}
 
 <div class="swse-shell-surface swse-shell-surface--store"
      data-shell-region="surface-store"
      data-surface-id="{{vm.id}}">
 
-  <div class="swse-shell-surface__header swse-store-header">
-    <button class="swse-shell-surface__back-btn"
-            data-shell-action="return-to-home"
-            type="button"
-            title="Return to Home">
-      <i class="fas fa-arrow-left"></i>
-      <span>Home</span>
-    </button>
-
-    <div class="swse-shell-surface__title swse-store-header__title">
-      <span class="swse-store-header__icon">¤</span>
-      <span>TRADE EXCHANGE</span>
-    </div>
-
-    <div class="swse-store-header__credits">
-      <span class="swse-store-header__label">ACCOUNT</span>
-      <span class="swse-store-header__credits-value">₢ {{vm.actorCredits}}</span>
-    </div>
+  {{#if vm.error}}
+  <div class="ss-error">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{vm.error}}</span>
   </div>
+  {{else if vm.storeContext}}
 
-  <div class="swse-shell-surface__body swse-store-body">
+  <form class="ss-root" autocomplete="off">
 
-    {{#if vm.error}}
-    <div class="swse-shell-surface__error">
-      <i class="fas fa-exclamation-triangle"></i>
-      <span>Failed to load store data: {{vm.error}}</span>
+    {{!-- ═══ HUD BAR ═══ --}}
+    <div class="ss-hud">
+      <button class="ss-hud__back" data-shell-action="return-to-home" type="button" title="Return to Home">
+        <i class="fas fa-arrow-left"></i> HOME
+      </button>
+      <div class="ss-hud__center">
+        <span class="ss-hud__signal"><span></span><span></span><span></span><span></span></span>
+        <span class="ss-hud__title">RENDARR'S EXCHANGE</span>
+        <span class="ss-hud__dot {{#if vm.storeContext.cartCount}}warn{{/if}}"></span>
+      </div>
+      <div class="ss-hud__right">
+        <span class="ss-hud__lbl">RESERVE</span>
+        <span class="ss-hud__credits">₢ {{vm.actorCredits}}</span>
+      </div>
     </div>
-    {{else if vm.storeContext}}
 
-    <!-- Embed the store template context here -->
-    <form class="swse-store swse-store-ui store-shell-inline" autocomplete="off">
-
-      <div class="store-header-compact">
-        <div class="store-portrait-compact">
-          <img src="{{vm.storeContext.rendarrImage}}" alt="Rendarr" class="rendarr-image"/>
-        </div>
-        <div class="store-rendarr-meta-compact">
-          <div class="store-rendarr-name">RENDARR'S EXCHANGE</div>
-          <div class="store-rendarr-sub">Quartermaster · Galactic Trade Network</div>
-          <div class="store-category-label">{{vm.storeContext.currentCategoryLabel}} · <span data-results-count>{{vm.storeContext.allItems.length}}</span> listings</div>
-        </div>
-        <div class="store-credits-block-compact">
-          <div class="store-credits-label">RESERVE</div>
-          <div class="store-credits-val"><span class="credits-icon">₢</span>{{vm.storeContext.pageContext.cartRemaining}}</div>
-          <div class="store-credits-cart">Cart: <span data-cart-count>{{vm.storeContext.cartCount}}</span></div>
+    {{!-- ═══ PAGE HEADER (Rendarr identity) ═══ --}}
+    <div class="ss-page-header">
+      <div class="ss-rendarr-portrait">
+        {{#if vm.storeContext.rendarrImage}}
+        <img src="{{vm.storeContext.rendarrImage}}" alt="Rendarr" class="ss-rendarr-img"/>
+        {{else}}
+        <svg viewBox="0 0 64 64" class="ss-rendarr-svg"><circle cx="32" cy="24" r="14" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 60 Q32 38 56 60" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        {{/if}}
+      </div>
+      <div class="ss-rendarr-meta">
+        <div class="ss-rendarr-name"><span class="ss-rendarr-mark">⚡</span>RENDARR'S EXCHANGE</div>
+        <div class="ss-rendarr-sub">Quartermaster · Galactic Trade Network</div>
+        <div class="ss-rendarr-quote">
+          {{#if vm.storeContext.rendarrWelcome}}"{{vm.storeContext.rendarrWelcome}}"{{else}}"What can I do for you today?"{{/if}}
         </div>
       </div>
-
-      <div class="store-tabs">
-        <button type="button" class="store-tab {{#if (eq vm.storeContext.currentView 'browse')}}active{{/if}}" data-action="show-browse" data-shell-action="store-browse">
-          <span class="store-tab-glyph">⊞</span> Browse
-        </button>
-        <button type="button" class="store-tab {{#if (eq vm.storeContext.currentView 'cart')}}active{{/if}}{{#if (eq vm.storeContext.currentView 'checkout')}} active{{/if}}" data-action="view-cart" data-shell-action="store-cart">
-          <span class="store-tab-glyph">◳</span> Cart
-          {{#if vm.storeContext.cartCount}}<span class="store-tab-badge">{{vm.storeContext.cartCount}}</span>{{/if}}
-        </button>
-        <button type="button" class="store-tab {{#if (eq vm.storeContext.currentView 'history')}}active{{/if}}" data-action="show-history" data-shell-action="store-history">
-          <span class="store-tab-glyph">◎</span> History
-        </button>
+      <div class="ss-credits-block">
+        <span class="ss-credits-lbl">ACCOUNT</span>
+        <span class="ss-credits-val">₢ {{vm.actorCredits}}</span>
+        {{#if vm.storeContext.cartCount}}
+        <span class="ss-credits-delta neg">−₢ {{vm.storeContext.cartTotal}} staged</span>
+        <span class="ss-credits-reserve">₢ {{vm.storeContext.pageContext.cartRemaining}} after</span>
+        {{/if}}
       </div>
+    </div>
 
-      {{#if (eq vm.storeContext.currentView 'browse')}}
-      <div class="store-filter-bar">
-        <div class="store-filter-search">
-          <i class="fa-solid fa-search store-filter-ico"></i>
-          <input type="text" id="store-search" class="store-search-input" placeholder="SEARCH LISTINGS..." aria-label="Search store items"/>
-        </div>
-        <div class="store-filter-cats">
-          <button type="button" class="store-chip {{#unless vm.storeContext.currentCategory}}active{{/unless}}" data-action="category-nav" data-category="">ALL</button>
-          {{#each vm.storeContext.categorySummary}}
-            <button type="button" class="store-chip {{#if (eq ../vm.storeContext.currentCategory key)}}active{{/if}}" data-action="category-nav" data-category="{{key}}">
-              {{label}}<span class="store-chip-count">{{count}}</span>
-            </button>
-          {{/each}}
-        </div>
-      </div>
-      {{/if}}
+    {{!-- ═══ TABS ═══ --}}
+    <div class="ss-tabs">
+      <button type="button" class="ss-tab {{#if (eq vm.storeContext.currentView 'browse')}}active{{/if}} {{#if (eq vm.storeContext.currentView 'detail')}}active{{/if}}" data-ss-tab="browse">
+        <span class="ss-tab-glyph">⊞</span> BROWSE
+      </button>
+      <button type="button" class="ss-tab {{#if (eq vm.storeContext.currentView 'cart')}}active{{/if}}" data-ss-tab="cart">
+        <span class="ss-tab-glyph">◳</span> CART
+        {{#if vm.storeContext.cartCount}}<span class="ss-tab-count">{{vm.storeContext.cartCount}}</span>{{/if}}
+      </button>
+      <button type="button" class="ss-tab {{#if (eq vm.storeContext.currentView 'checkout')}}active{{/if}}" data-ss-tab="checkout">
+        <span class="ss-tab-glyph">◈</span> CHECKOUT
+      </button>
+      <button type="button" class="ss-tab {{#if (eq vm.storeContext.currentView 'history')}}active{{/if}}" data-ss-tab="history">
+        <span class="ss-tab-glyph">◎</span> HISTORY
+      </button>
+    </div>
 
-      <div class="store-viewport-compact">
-        {{#if (eq vm.storeContext.currentView 'browse')}}
-        <div class="store-pane store-pane-browse">
-          {{#if vm.storeContext.allItems.length}}
-          <div class="store-card-grid">
-            {{#each vm.storeContext.allItems}}
-              <button type="button" class="store-card {{#if this.isLocked}}locked{{/if}}" data-item-id="{{this.id}}" data-action="select-product">
-                <div class="store-card-img">
-                  <img src="{{this.img}}" alt="{{this.name}}" loading="lazy"/>
-                </div>
-                <div class="store-card-body">
-                  <div class="store-card-name">{{this.name}}</div>
-                  <div class="store-card-category">{{this.category}}</div>
-                  <div class="store-card-cost">₢ {{this.finalCost}}</div>
-                </div>
-              </button>
-            {{/each}}
-          </div>
-          {{else}}
-          <p class="store-empty">No items available in this category.</p>
-          {{/if}}
+    {{!-- ═══ BROWSE TAB ═══ --}}
+    {{#if vm.storeContext.isBrowseOrDetail}}
+    <div class="ss-pane ss-pane-browse">
+
+      {{!-- Filter bar --}}
+      <div class="ss-filters">
+        <div class="ss-filter-search">
+          <i class="fas fa-search ss-filter-ico"></i>
+          <input type="text" id="ss-search" class="ss-search-input" placeholder="SEARCH LISTINGS…" aria-label="Search store"/>
         </div>
-        {{else if (eq vm.storeContext.currentView 'cart')}}
-        <div class="store-pane store-pane-cart">
-          {{#if vm.storeContext.cartEntries.length}}
-          <div class="store-cart-items">
-            {{#each vm.storeContext.cartEntries}}
-              <div class="store-cart-item">
-                <img src="{{this.img}}" alt="{{this.name}}" class="store-cart-item-img"/>
-                <div class="store-cart-item-info">
-                  <div class="store-cart-item-name">{{this.name}}</div>
-                  <div class="store-cart-item-type">{{this.type}}</div>
-                </div>
-                <div class="store-cart-item-cost">₢ {{this.cost}}</div>
-                <button type="button" class="store-cart-remove-btn" data-action="remove-from-cart" data-item-id="{{this.id}}" title="Remove from cart">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            {{/each}}
-          </div>
-          <div class="store-cart-summary">
-            <div class="store-cart-total">
-              <span>Total:</span>
-              <span class="store-cart-total-value">₢ {{vm.storeContext.cartTotal}}</span>
-            </div>
-            <button type="button" class="holo-btn primary" data-action="proceed-checkout">
-              PROCEED TO CHECKOUT
-            </button>
-          </div>
-          {{else}}
-          <p class="store-empty">Your cart is empty.</p>
-          {{/if}}
+        <div class="ss-filter-group">
+          <span class="ss-filter-lbl">AVAIL</span>
+          <select id="ss-avail" class="ss-select">
+            <option value="all">All</option>
+            <option value="standard">Standard</option>
+            <option value="restricted">Restricted</option>
+            <option value="military">Military</option>
+            <option value="illegal">Illegal</option>
+          </select>
         </div>
-        {{else if (eq vm.storeContext.currentView 'history')}}
-        <div class="store-pane store-pane-history">
-          {{#if vm.storeContext.purchaseHistoryEntries.length}}
-          <div class="store-history-list">
-            {{#each vm.storeContext.purchaseHistoryEntries}}
-              <div class="store-history-entry">
-                <div class="store-history-date">{{this.timestamp}}</div>
-                <div class="store-history-items">
-                  {{#each this.items}}
-                    <span class="store-history-item-tag">{{this.name}} (₢{{this.cost}})</span>
-                  {{/each}}
-                </div>
-                <div class="store-history-total">₢ {{this.total}}</div>
-              </div>
-            {{/each}}
-          </div>
-          {{else}}
-          <p class="store-empty">No purchase history available.</p>
-          {{/if}}
+        <div class="ss-filter-group">
+          <span class="ss-filter-lbl">SORT</span>
+          <select id="ss-sort" class="ss-select">
+            <option value="default">Best Match</option>
+            <option value="price-asc">Price ↑</option>
+            <option value="price-desc">Price ↓</option>
+            <option value="name-asc">Name A–Z</option>
+          </select>
         </div>
+        <div class="ss-filter-count">
+          <span data-results-count>{{vm.storeContext.allItems.length}}</span> listings
+        </div>
+        {{#if vm.storeContext.currentCategory}}
+        <button type="button" class="ss-chip ss-chip--clear" data-action="clear-filters">✕ CLEAR</button>
         {{/if}}
       </div>
 
-    </form>
+      {{!-- Category chips --}}
+      <div class="ss-cats">
+        <button type="button" class="ss-chip {{#unless vm.storeContext.currentCategory}}active{{/unless}}" data-action="category-nav" data-category="">ALL</button>
+        {{#each vm.storeContext.categorySummary}}
+        <button type="button" class="ss-chip {{#if (eq ../vm.storeContext.currentCategory key)}}active{{/if}}" data-action="category-nav" data-category="{{key}}">
+          {{label}}<span class="ss-chip-count">{{count}}</span>
+        </button>
+        {{/each}}
+      </div>
 
-    {{else}}
-    <p class="swse-shell-surface__error">Unable to load store.</p>
+      {{!-- Detail panel (selected product) --}}
+      {{#if vm.storeContext.selectedProduct}}
+      <div class="ss-detail-panel">
+        <div class="ss-detail-header">
+          <button type="button" class="ss-detail-back" data-action="detail-back">← BACK</button>
+          <span class="ss-detail-rar ss-rar-{{vm.storeContext.selectedProduct.rarityClass}}">{{vm.storeContext.selectedProduct.rarityLabel}}</span>
+          <span class="ss-detail-avail">{{vm.storeContext.selectedProduct.availability}}</span>
+        </div>
+        <div class="ss-detail-body">
+          <div class="ss-detail-glyph">{{vm.storeContext.selectedProduct.glyph}}</div>
+          <div class="ss-detail-info">
+            <h2 class="ss-detail-name">{{vm.storeContext.selectedProduct.name}}</h2>
+            <div class="ss-detail-cat">{{vm.storeContext.selectedProduct.category}}</div>
+            {{#if vm.storeContext.selectedProduct.suggestionTierLabel}}
+            <div class="ss-detail-tier ss-tier-{{vm.storeContext.selectedProduct.suggestion.tier}}">
+              ◆ {{vm.storeContext.selectedProduct.suggestionTierLabel}} for your build
+            </div>
+            {{/if}}
+            {{#if vm.storeContext.selectedProduct.suggestionBullets.length}}
+            <ul class="ss-detail-bullets">
+              {{#each vm.storeContext.selectedProduct.suggestionBullets}}
+              <li>{{this}}</li>
+              {{/each}}
+            </ul>
+            {{/if}}
+            {{#if vm.storeContext.selectedProduct.description}}
+            <div class="ss-detail-desc">{{vm.storeContext.selectedProduct.description}}</div>
+            {{/if}}
+            {{#if vm.storeContext.selectedProduct.techDetailsHtml}}
+            <div class="ss-detail-tech">{{{vm.storeContext.selectedProduct.techDetailsHtml}}}</div>
+            {{/if}}
+          </div>
+        </div>
+        <div class="ss-detail-foot">
+          <span class="ss-detail-price">₢ {{vm.storeContext.selectedProduct.finalCost}}</span>
+          <button type="button" class="ss-btn ss-btn--primary" data-action="detail-add-to-cart">+ ADD TO CART</button>
+        </div>
+        {{#if vm.storeContext.selectedProduct.flavorReviewsHtml}}
+        <div class="ss-detail-reviews">{{{vm.storeContext.selectedProduct.flavorReviewsHtml}}}</div>
+        {{/if}}
+      </div>
+      {{/if}}
+
+      {{!-- Product grid --}}
+      {{#if vm.storeContext.allItems.length}}
+      <div class="store-card-grid ss-browse-grid">
+        {{#each vm.storeContext.allItems}}
+        <div class="store-card ss-rar-{{this.rarityClass}}"
+             data-item-id="{{this.id}}"
+             data-name="{{this.name}}"
+             data-category="{{this.category}}"
+             data-availability="{{this.availability}}"
+             data-price="{{this.finalCost}}"
+             data-score="{{this.suggestion.score}}">
+          <span class="sc-rar-tag">{{this.rarityLabel}}</span>
+          <div class="sc-glyph-panel">
+            <span class="sc-glyph">{{this.glyph}}</span>
+          </div>
+          <div class="sc-body">
+            <div class="sc-name">{{this.name}}</div>
+            <div class="sc-cat">{{this.category}}</div>
+            {{#if this.suggestion.tierLabel}}
+            <span class="sc-tier sc-tier--{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>
+            {{/if}}
+          </div>
+          <div class="sc-foot">
+            <span class="sc-price">₢ {{this.finalCost}}</span>
+            <div class="sc-actions">
+              <button type="button" class="sc-btn" data-action="expand-product" data-item-id="{{this.id}}">DETAILS</button>
+              <button type="button" class="sc-btn sc-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}">+ ADD</button>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+      <div class="store-browse-empty ss-empty" style="display:none">
+        <div class="ss-empty-glyph">▸</div>
+        <div class="ss-empty-msg">No matches on the floor.</div>
+        <div class="ss-empty-sub">"Try adjusting your filters." — Rendarr</div>
+      </div>
+      {{else}}
+      <div class="ss-empty">
+        <div class="ss-empty-glyph">◌</div>
+        <div class="ss-empty-msg">No inventory available.</div>
+      </div>
+      {{/if}}
+
+    </div>
     {{/if}}
 
+    {{!-- ═══ CART TAB ═══ --}}
+    {{#if (eq vm.storeContext.currentView 'cart')}}
+    <div class="ss-pane ss-pane-cart">
+      {{#if vm.storeContext.cartEntries.length}}
+      <div class="ss-cart-ledger">
+        {{#each vm.storeContext.cartEntries}}
+        <div class="ss-cart-row">
+          <div class="ss-cart-row-info">
+            <span class="ss-cart-row-name">{{this.name}}</span>
+            <span class="ss-cart-row-type">{{this.type}}</span>
+          </div>
+          <span class="ss-cart-row-cost">₢ {{this.cost}}</span>
+          <button type="button" class="ss-cart-remove" data-action="remove-from-cart"
+                  data-item-id="{{this.id}}" data-item-type="{{this.type}}" title="Remove">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+        {{/each}}
+      </div>
+      <div class="ss-cart-summary">
+        <div class="ss-cart-summary-row">
+          <span>TOTAL</span>
+          <span class="ss-cart-total">₢ {{vm.storeContext.cartTotal}}</span>
+        </div>
+        <div class="ss-cart-summary-row dim">
+          <span>AVAILABLE</span>
+          <span>₢ {{vm.actorCredits}}</span>
+        </div>
+        <div class="ss-cart-summary-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}}">
+          <span>RESERVE AFTER TRADE</span>
+          <span>₢ {{vm.storeContext.pageContext.cartRemaining}}</span>
+        </div>
+        <div class="ss-cart-actions">
+          <button type="button" class="ss-btn" data-action="clear-cart">CLEAR CART</button>
+          <button type="button" class="ss-btn ss-btn--primary" data-action="proceed-checkout">
+            PROCEED TO CHECKOUT →
+          </button>
+        </div>
+      </div>
+      {{else}}
+      <div class="ss-empty">
+        <div class="ss-empty-glyph">◳</div>
+        <div class="ss-empty-msg">Your cart is empty.</div>
+        <div class="ss-empty-sub">Browse listings and stage gear before checkout.</div>
+        <button type="button" class="ss-btn ss-btn--primary" data-ss-tab="browse">→ BROWSE LISTINGS</button>
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{!-- ═══ CHECKOUT TAB ═══ --}}
+    {{#if (eq vm.storeContext.currentView 'checkout')}}
+    <div class="ss-pane ss-pane-checkout">
+      <div class="ss-checkout-header">
+        <span class="ss-checkout-title">◈ SETTLEMENT WINDOW</span>
+        <span class="ss-checkout-sub">Review the locked manifest before confirming the trade.</span>
+      </div>
+      {{#if vm.storeContext.cartEntries.length}}
+      <div class="ss-checkout-manifest">
+        {{#each vm.storeContext.cartEntries}}
+        <div class="ss-checkout-row">
+          <span class="ss-checkout-row-name">{{this.name}}</span>
+          <span class="ss-checkout-row-type">{{this.type}}</span>
+          <span class="ss-checkout-row-cost">₢ {{this.cost}}</span>
+        </div>
+        {{/each}}
+      </div>
+      <div class="ss-checkout-ledger">
+        <div class="ss-checkout-ledger-row">
+          <span>AVAILABLE CREDITS</span><span>₢ {{vm.actorCredits}}</span>
+        </div>
+        <div class="ss-checkout-ledger-row debit">
+          <span>TRADE DEBIT</span><span>−₢ {{vm.storeContext.cartTotal}}</span>
+        </div>
+        <div class="ss-checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total">
+          <span>REMAINING RESERVE</span><span>₢ {{vm.storeContext.pageContext.cartRemaining}}</span>
+        </div>
+      </div>
+      <div class="ss-checkout-actions">
+        <button type="button" class="ss-btn" data-action="return-to-cart">← RETURN TO CART</button>
+        <button type="button" class="ss-btn ss-btn--confirm" data-action="confirm-checkout">
+          ◈ CONFIRM TRADE
+        </button>
+      </div>
+      {{else}}
+      <div class="ss-empty">
+        <div class="ss-empty-msg">Nothing to settle — cart is empty.</div>
+        <button type="button" class="ss-btn" data-action="return-to-cart">← RETURN TO CART</button>
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{!-- ═══ HISTORY TAB ═══ --}}
+    {{#if (eq vm.storeContext.currentView 'history')}}
+    <div class="ss-pane ss-pane-history">
+      {{#if vm.storeContext.purchaseHistoryEntries.length}}
+      <div class="ss-history-list">
+        {{#each vm.storeContext.purchaseHistoryEntries}}
+        <div class="ss-history-entry">
+          <div class="ss-history-entry-header">
+            <span class="ss-history-date">{{this.timestamp}}</span>
+            <span class="ss-history-total">₢ {{this.total}}</span>
+          </div>
+          <div class="ss-history-items">
+            {{#each this.items}}
+            <span class="ss-history-item">{{this.name}} (₢{{this.cost}})</span>
+            {{/each}}
+          </div>
+        </div>
+        {{/each}}
+      </div>
+      {{else}}
+      <div class="ss-empty">
+        <div class="ss-empty-glyph">◎</div>
+        <div class="ss-empty-msg">No purchase history.</div>
+        <div class="ss-empty-sub">Previous exchange logs will appear here.</div>
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+  </form>
+
+  {{else}}
+  <div class="ss-error">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>Unable to load store.</span>
   </div>
+  {{/if}}
 
 </div>

@@ -30,6 +30,7 @@ import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/govern
 import { bindV2CharacterSheetTooltips } from "/systems/foundryvtt-swse/scripts/sheets/v2/TooltipIntegration.js";
 import { bindV2SheetBreakdowns, closeBreakdown } from "/systems/foundryvtt-swse/scripts/sheets/v2/BreakdownIntegration.js";
 import { HomeSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/HomeSurfaceController.js";
+import { StoreSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceController.js";
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
@@ -594,34 +595,18 @@ export class SWSEV2CharacterSheet extends
     this._homeController.attach();
   }
 
-  /** Wire store surface events (browse/cart/history tabs, add to cart, checkout). */
-  _wireStoreSurfaceEvents(root, signal) {
+  /** Wire store surface events via dedicated StoreSurfaceController. */
+  _wireStoreSurfaceEvents(root, _signal) {
     const storeRoot = root.querySelector('[data-shell-region="surface-store"]');
     if (!storeRoot) return;
 
-    // Wire tab switches
-    storeRoot.querySelectorAll('[data-shell-action*="store-"]').forEach(el => {
-      el.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const action = el.dataset.shellAction;
-        if (!action) return;
-
-        // Update surface options to track current view/category
-        const view = action.replace('store-', '');
-        this._shellSurfaceOptions = { ...this._shellSurfaceOptions, currentView: view };
-        this.render(false);
-      }, { signal });
-    });
-
-    // Wire category navigation
-    storeRoot.querySelectorAll('[data-action="category-nav"]').forEach(el => {
-      el.addEventListener('click', async (ev) => {
-        ev.preventDefault();
-        const category = el.dataset.category || '';
-        this._shellSurfaceOptions = { ...this._shellSurfaceOptions, currentCategory: category };
-        this.render(false);
-      }, { signal });
-    });
+    // Create controller once per actor; reuse across re-renders
+    if (!this._storeSurfaceController || this._storeSurfaceController._actor !== this.actor) {
+      this._storeSurfaceController?.destroy();
+      this._storeSurfaceController = new StoreSurfaceController(this, this.actor);
+    }
+    // attach() self-cleans previous listeners before wiring new ones
+    this._storeSurfaceController.attach(storeRoot);
   }
 
   /** Wire settings surface events (theme/motion/display controls). */
