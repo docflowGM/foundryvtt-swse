@@ -1,0 +1,42 @@
+<section class="swse-concept-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Armor Profile</h3>
+      <p class="swse-concept-panel__hint">Current equipped armor summary and modifiers.</p>
+    </div>
+  </header>
+
+  {{#if conceptLayout.gear.equippedArmor}}
+    <div class="swse-concept-card-grid swse-concept-card-grid--armor">
+      <article class="swse-concept-info-card swse-concept-info-card--wide">
+        <span>Equipped Armor</span>
+        <strong>{{conceptLayout.gear.equippedArmor.name}}</strong>
+      </article>
+      <article class="swse-concept-info-card">
+        <span>Type</span>
+        <strong>{{conceptLayout.gear.equippedArmor.armorType}}</strong>
+      </article>
+      <article class="swse-concept-info-card">
+        <span>Reflex</span>
+        <strong>{{numberFormat conceptLayout.gear.equippedArmor.reflexBonus decimals=0 sign=true}}</strong>
+      </article>
+      <article class="swse-concept-info-card">
+        <span>Fort</span>
+        <strong>{{numberFormat conceptLayout.gear.equippedArmor.fortBonus decimals=0 sign=true}}</strong>
+      </article>
+      <article class="swse-concept-info-card">
+        <span>Max Dex</span>
+        <strong>{{conceptLayout.gear.equippedArmor.maxDexBonus}}</strong>
+      </article>
+      <article class="swse-concept-info-card">
+        <span>ACP</span>
+        <strong>{{conceptLayout.gear.equippedArmor.armorCheckPenalty}}</strong>
+      </article>
+    </div>
+  {{else}}
+    <div class="swse-concept-empty-state">
+      <span class="swse-concept-empty-state__eyebrow">No armor equipped</span>
+      <strong>Armor telemetry will appear here once a suit is equipped.</strong>
+    </div>
+  {{/if}}
+</section>

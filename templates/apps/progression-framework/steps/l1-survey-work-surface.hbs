@@ -1,47 +1,132 @@
-<div class="prog-l1-survey">
-  <div class="prog-l1-survey__intro">
-    <h2 class="prog-l1-survey__title">Intent Survey</h2>
-    <p class="prog-l1-survey__subtitle">
-      {{#if surveyDefinition}}
-        {{surveyDefinition.classDisplayName}} path · short answers only.
-      {{else}}
-        The mentor is still reading the shape of your path.
-      {{/if}}
-    </p>
-    <div class="prog-l1-survey__progress-row">
-      <span class="prog-chip">Answered {{answeredCount}} / {{totalQuestions}}</span>
-      {{#if remainingCount}}<span class="prog-chip prog-chip--dim">{{remainingCount}} remaining</span>{{else}}<span class="prog-chip prog-chip--positive">Survey complete</span>{{/if}}
+<div class="prog-l1-survey-shell">
+  <section class="prog-l1-survey-stage">
+    <div class="prog-l1-survey-stage__mentor-frame">
+      <div class="prog-l1-survey-stage__mentor-lines"></div>
+      <div class="prog-l1-survey-stage__mentor-portrait">
+        {{{mentorPortraitMarkup}}}
+        <div class="prog-l1-survey-stage__mentor-scan"></div>
+        <div class="prog-l1-survey-stage__mentor-nameplate">
+          <span class="prog-l1-survey-stage__mentor-name">{{mentorName}}</span>
+          {{#if mentorTitle}}<span class="prog-l1-survey-stage__mentor-title">{{mentorTitle}}</span>{{/if}}
+        </div>
+      </div>
     </div>
-  </div>
 
-  {{#if activeQuestion}}
-    <section class="prog-l1-survey__question prog-l1-survey__question--active">
-      <div class="prog-l1-survey__question-kicker">Question {{activeQuestionNumber}} of {{totalQuestions}}</div>
-      <h3 class="prog-l1-survey__q-title">{{activeQuestion.text}}</h3>
-      <div class="prog-l1-survey__options">
+    <div class="prog-l1-survey-stage__dialogue-panel" data-phase="{{surveyPhase}}">
+      <div class="prog-l1-survey-stage__header">
+        <div>
+          <div class="prog-l1-survey-stage__eyebrow">Level 1 Survey</div>
+          <h2 class="prog-l1-survey-stage__title">{{#if surveyDefinition}}{{surveyDefinition.classDisplayName}} Intent Read{{else}}Intent Read{{/if}}</h2>
+          <div class="prog-l1-survey-stage__subtitle">
+            {{answeredCount}} / {{totalQuestions}} answered
+            {{#if remainingCount}} · {{remainingCount}} remaining{{else}} · survey complete{{/if}}
+          </div>
+        </div>
+
+        {{#if progressDots.length}}
+        <div class="prog-l1-survey-stage__progress" aria-label="Survey progress">
+          {{#each progressDots}}
+          <span class="prog-l1-survey-stage__progress-dot {{#if isDone}}is-done{{/if}} {{#if isActive}}is-active{{/if}}"></span>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+
+      {{#if (eq surveyPhase "intro")}}
+      <div class="prog-l1-survey-stage__dialogue-text is-intro">{{introText}}</div>
+      <div class="prog-l1-survey-stage__command-row">
+        <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-start">
+          Begin Survey
+        </button>
+      </div>
+      {{/if}}
+
+      {{#if (eq surveyPhase "question")}}
+      <div class="prog-l1-survey-stage__question-block">
+        <div class="prog-l1-survey-stage__question-kicker">Question {{activeQuestionNumber}} of {{totalQuestions}}</div>
+        <div class="prog-l1-survey-stage__dialogue-text">{{promptText}}</div>
+      </div>
+      <div class="prog-l1-survey-stage__choices">
         {{#each activeQuestion.options}}
-        <label class="prog-l1-survey__option {{#if (eq ../activeQuestion.selected this.id)}}prog-l1-survey__option--selected{{/if}}">
-          <input type="radio" name="survey-{{../activeQuestion.id}}" value="{{this.id}}" data-survey-question-id data-question-id="{{../activeQuestion.id}}" {{#if (eq ../activeQuestion.selected this.id)}}checked{{/if}}>
-          <span class="prog-l1-survey__option-body">
-            <span class="prog-l1-survey__option-label">{{this.label}}</span>
-                      </span>
-        </label>
+        <button type="button"
+                class="prog-l1-survey-stage__choice"
+                data-action="survey-choose"
+                data-question-id="{{../activeQuestion.id}}"
+                data-option-id="{{this.id}}">
+          <span class="prog-l1-survey-stage__choice-index">{{add @index 1}}</span>
+          <span class="prog-l1-survey-stage__choice-copy">
+            <span class="prog-l1-survey-stage__choice-label">{{this.label}}</span>
+            {{#if this.detailTags.length}}
+            <span class="prog-l1-survey-stage__choice-tags">
+              {{#each this.detailTags}}
+              <span class="prog-l1-survey-stage__choice-tag">{{this}}</span>
+              {{/each}}
+            </span>
+            {{/if}}
+          </span>
+        </button>
         {{/each}}
       </div>
-    </section>
-  {{/if}}
+      {{/if}}
 
-  {{#if topMatches.length}}
-  <div class="prog-l1-survey__matches">
-    <div class="prog-l1-survey__matches-title">Current mentor read</div>
-    <div class="prog-l1-survey__match-list">
-      {{#each topMatches}}
-      <div class="prog-l1-survey__match">
-        <div class="prog-l1-survey__match-name">{{this.archetype.name}}</div>
-        <div class="prog-l1-survey__match-note">{{this.archetype.notes}}</div>
+      {{#if (eq surveyPhase "response")}}
+      <div class="prog-l1-survey-stage__question-block">
+        <div class="prog-l1-survey-stage__question-kicker">Question {{activeQuestionNumber}} of {{totalQuestions}}</div>
+        <div class="prog-l1-survey-stage__dialogue-text">{{responseText}}</div>
       </div>
-      {{/each}}
+
+      {{#if selectedOption}}
+      <div class="prog-l1-survey-stage__response-card">
+        <div class="prog-l1-survey-stage__response-label">Your answer</div>
+        <div class="prog-l1-survey-stage__response-choice">{{selectedOption.label}}</div>
+        {{#if selectedOption.detailTags.length}}
+        <div class="prog-l1-survey-stage__response-tags">
+          {{#each selectedOption.detailTags}}
+          <span class="prog-l1-survey-stage__choice-tag">{{this}}</span>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+      {{/if}}
+
+      <div class="prog-l1-survey-stage__command-row">
+        <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-continue">
+          {{#if remainingCount}}Next Question{{else}}Complete Survey{{/if}}
+        </button>
+      </div>
+      {{/if}}
+
+      {{#if (eq surveyPhase "complete")}}
+      <div class="prog-l1-survey-stage__dialogue-text is-complete">{{completionText}}</div>
+
+      {{#if topMatches.length}}
+      <div class="prog-l1-survey-stage__reads">
+        <div class="prog-l1-survey-stage__reads-title">Current mentor read</div>
+        <div class="prog-l1-survey-stage__reads-list">
+          {{#each topMatches}}
+          <article class="prog-l1-survey-stage__read-card">
+            <div class="prog-l1-survey-stage__read-name">{{this.archetype.name}}</div>
+            <div class="prog-l1-survey-stage__read-note">{{this.archetype.notes}}</div>
+          </article>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{#if completionTags.length}}
+      <div class="prog-l1-survey-stage__completion-tags">
+        {{#each completionTags}}
+        <span class="prog-l1-survey-stage__choice-tag {{cssClass}}">{{label}}</span>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      <div class="prog-l1-survey-stage__command-row">
+        <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-finish">
+          Continue to Background
+        </button>
+      </div>
+      {{/if}}
     </div>
-  </div>
-  {{/if}}
+  </section>
 </div>

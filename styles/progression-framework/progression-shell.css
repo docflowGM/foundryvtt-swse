@@ -1644,3 +1644,99 @@
     box-shadow: 0 0 28px var(--sheet-accent-primary) / 0.28, inset 0 0 14px var(--sheet-accent-primary) / 0.08;
   }
 }
+
+/* ===== Phase 2 concept fidelity pass ===== */
+.progression-shell .prog-phase-banner {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 18px 12px;
+  border-bottom: 1px solid var(--prog-border);
+  background: linear-gradient(90deg, oklch(var(--sheet-accent-primary) / 0.06), transparent 72%);
+  position: relative;
+  z-index: 1;
+}
+.progression-shell .prog-phase-banner__title {
+  font-family: var(--swse-font-display, "Orbitron", sans-serif);
+  font-size: 20px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--sheet-accent-primary);
+  text-shadow: 0 0 16px oklch(var(--sheet-accent-primary) / 0.22);
+}
+.progression-shell .prog-phase-banner__subtitle {
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--prog-ink-faint);
+}
+
+.progression-shell .prog-content-row {
+  position: relative;
+  border-top: 1px solid oklch(var(--sheet-accent-primary) / 0.08);
+}
+.progression-shell .prog-content-gridline {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.28;
+  z-index: 0;
+}
+.progression-shell .prog-content-gridline--h {
+  left: 0;
+  right: 0;
+  top: 46%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, oklch(var(--sheet-accent-primary) / 0.22), transparent);
+}
+.progression-shell .prog-content-gridline--v {
+  top: 14px;
+  bottom: 14px;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, transparent, oklch(var(--sheet-accent-primary) / 0.18), transparent);
+}
+
+.progression-shell [data-region="summary-panel"],
+.progression-shell [data-region="work-surface"],
+.progression-shell [data-region="details-panel"] {
+  position: relative;
+  z-index: 1;
+}
+
+/* =============================================================================
+ * L1 SURVEY MODE — preserve the datapad shell while letting the survey step
+ * take over the inner work environment. This is intentionally lighter than
+ * intro mode: HUD, progress rail, and footer remain, but summary/details/
+ * utility furniture drop away so the survey can read as a focused encounter.
+ * ============================================================================= */
+
+.progression-shell[data-step-id="l1-survey"] [data-region="mentor-rail"],
+.progression-shell[data-step-id="l1-survey"] [data-region="utility-bar"],
+.progression-shell[data-step-id="l1-survey"] [data-region="summary-panel"],
+.progression-shell[data-step-id="l1-survey"] [data-region="details-panel"] {
+  display: none !important;
+}
+
+.progression-shell[data-step-id="l1-survey"] .prog-content-row {
+  padding: 0;
+  gap: 0;
+}
+
+.progression-shell[data-step-id="l1-survey"] .prog-content-gridline {
+  display: none;
+}
+
+.progression-shell[data-step-id="l1-survey"] [data-region="work-surface"] {
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.progression-shell[data-step-id="l1-survey"] .prog-step-context-banner {
+  margin: 0 0 12px;
+  padding: 0 4px;
+}

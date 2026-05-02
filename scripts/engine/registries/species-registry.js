@@ -25,6 +25,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { buildSpeciesMetadataProfile } from "/systems/foundryvtt-swse/scripts/engine/species/species-tag-profile-utils.js";
 
 /**
  * Internal normalized species entry
@@ -346,8 +347,7 @@ export class SpeciesRegistry {
       SWSELogger.log('[SpeciesRegistry._normalizeEntry] Created entry for "' + doc.name + '" with id=' + (stableId || 'NULL'));
     }
 
-    // Create normalized entry
-    return {
+    const baseEntry = {
       id: stableId,
       uuid: doc.uuid || null,
       name: doc.name,
@@ -363,23 +363,19 @@ export class SpeciesRegistry {
       source: system.source || null,
       pack: doc.pack || 'unknown'
     };
-  }
 
-  /**
-   * Get all species entries
-   * @returns {SpeciesRegistryEntry[]}
-   */
-  static getAll() {
-    return this._entries.map((entry) => {
-      if (!entry) return entry;
-      if (entry.id) return { ...entry };
-      return {
-        ...entry,
-        id: this._buildNameFallbackId(entry.name, entry.source),
-      };
-    });
-  }
+    const metadataProfile = buildSpeciesMetadataProfile(baseEntry);
 
+    return {
+      ...baseEntry,
+      tags: metadataProfile.tags,
+      sourceTags: metadataProfile.sourceTags,
+      derivedTags: metadataProfile.derivedTags,
+      speciesSlug: metadataProfile.speciesSlug,
+      supplementaryTraits: metadataProfile.supplementaryTraits,
+      attributeForecast: metadataProfile.attributeForecast
+    };
+  }
   /**
    * Get species entry by ID
    * @param {string} id - Species ID (usually compendium _id)
@@ -424,7 +420,18 @@ export class SpeciesRegistry {
   }
 
   static getAll() {
-    return [...this._entries];
+    return this._entries.map((entry) => ({
+      ...entry,
+      tags: [...(entry?.tags || [])],
+      sourceTags: [...(entry?.sourceTags || [])],
+      derivedTags: [...(entry?.derivedTags || [])],
+      abilities: [...(entry?.abilities || [])],
+      languages: [...(entry?.languages || [])],
+      attributeForecast: {
+        boosts: [...(entry?.attributeForecast?.boosts || [])],
+        mitigations: [...(entry?.attributeForecast?.mitigations || [])]
+      }
+    }));
   }
 
   /**

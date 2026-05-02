@@ -46,6 +46,7 @@ import { selectReasonAtoms } from "/systems/foundryvtt-swse/scripts/engine/sugge
 import { REASON_TEXT_MAP } from "/systems/foundryvtt-swse/scripts/mentor/mentor-reason-renderer.js";
 import { ReasonSignalBuilder } from "/systems/foundryvtt-swse/scripts/engine/suggestion/reason-signal-builder.js";
 import { ArchetypeMetadataEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeMetadataEngine.js";
+import { buildMentorBiasAliases } from "/systems/foundryvtt-swse/scripts/engine/suggestion/tag-signal-engine.js";
 // PHASE 1: SuggestionV2 Retrofit
 import { scoreSuggestion } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionScorer.js";
 // Phase 2D: Force Techniques
@@ -110,6 +111,7 @@ export const TIER_CONFIDENCE = {
 export const TIER3_SUBPRIORITY = {
     ARCHETYPE: 0.15,      // Declared structural intent (highest authority)
     MENTOR: 0.10,         // Survey-derived preference (medium authority)
+    SPECIES: 0.08,        // Species profile / heritage alignment (moderate authority)
     SKILL: 0.05,          // Mechanical synergy heuristic (lowest authority)
     PRESTIGE: 0.15        // Prestige survey signal (same as archetype - declared intent)
 };
@@ -119,6 +121,56 @@ export const TIER3_MAX_BONUS = 0.25;  // Cap total Tier 3 bonus
 // ──────────────────────────────────────────────────────────────
 // SUGGESTION ENGINE CLASS
 // ──────────────────────────────────────────────────────────────
+
+
+const normalizeBiasTag = (tag) => String(tag || '').toLowerCase().replace(/[\s\/]+/g, '_').replace(/-/g, '_').replace(/[^a-z0-9_()]+/g, '').replace(/_+/g, '_').replace(/^_|_$/g, '');
+
+const normalizeSpeciesKey = (value) => String(value || '')
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+
+const buildSpeciesIdentityTagsForName = (name) => {
+    const normalized = normalizeSpeciesKey(name);
+    if (!normalized) return [];
+    const compact = normalized.replace(/_/g, '');
+    return Array.from(new Set([
+        'species',
+        'heritage',
+        `species_${normalized}`,
+        compact && compact !== normalized ? `species_${compact}` : null
+    ].filter(Boolean)));
+};
+
+const collectTextSnippets = (value, out = []) => {
+    if (!value) return out;
+    if (typeof value === 'string') {
+        out.push(value);
+        return out;
+    }
+    if (Array.isArray(value)) {
+        value.forEach((entry) => collectTextSnippets(entry, out));
+        return out;
+    }
+    if (typeof value === 'object') {
+        for (const candidate of Object.values(value)) {
+            collectTextSnippets(candidate, out);
+        }
+    }
+    return out;
+};
+
+const BIAS_TAG_ALIASES = {
+    melee: ['melee', 'offense_melee', 'lightsaber', 'unarmed', 'power_attack', 'martial_arts'],
+    ranged: ['ranged', 'offense_ranged', 'pistol', 'rifle', 'sniper', 'thrown', 'heavy_weapon'],
+    force: ['force', 'force_training', 'force_capacity', 'force_execution', 'use_the_force', 'force_power'],
+    stealth: ['stealth', 'skill_stealth', 'camouflage', 'infiltration', 'skirmisher'],
+    social: ['social', 'persuasion', 'deception', 'gather_information', 'leadership'],
+    tech: ['tech', 'mechanics', 'use_computer', 'skill_mechanics', 'skill_use_computer', 'droid'],
+    leadership: ['leadership', 'ally_support', 'command', 'buff'],
+    support: ['support', 'healing', 'defense', 'protective', 'ally_support']
+};
 
 export class SuggestionEngine {
 
@@ -371,6 +423,25 @@ export class SuggestionEngine {
      * @param {Array} items - Array of items with suggestion metadata
      * @returns {Array} Sorted items
      */
+    static _extractSuggestionScalar(item) {
+        const candidates = [
+            item?.suggestion?.score,
+            item?.suggestion?.finalScore,
+            item?.suggestion?.scoring?.final,
+            item?.suggestion?.scoring?.finalScore,
+            item?.scoring?.finalScore,
+            item?.suggestion?.confidence,
+            0
+        ];
+
+        for (const value of candidates) {
+            if (Number.isFinite(value)) {
+                return Number(value);
+            }
+        }
+        return 0;
+    }
+
     static sortBySuggestion(items) {
         return [...items].sort((a, b) => {
             const tierA = a.suggestion?.tier ?? -1;
@@ -381,14 +452,21 @@ export class SuggestionEngine {
                 return tierB - tierA;
             }
 
-            // Secondary: Higher confidence first (Phase 2.5 - Tier 3 subpriority)
+            // Secondary: higher scalar score first when available
+            const scoreA = this._extractSuggestionScalar(a);
+            const scoreB = this._extractSuggestionScalar(b);
+            if (Math.abs(scoreB - scoreA) > 0.0001) {
+                return scoreB - scoreA;
+            }
+
+            // Tertiary: Higher confidence first (Phase 2.5 - Tier 3 subpriority)
             const confA = a.suggestion?.confidence ?? 0;
             const confB = b.suggestion?.confidence ?? 0;
             if (Math.abs(confB - confA) > 0.01) {  // Account for floating point precision
                 return confB - confA;
             }
 
-            // Tertiary: Stable ID ordering for determinism
+            // Quaternary: Stable ID ordering for determinism
             const idA = a.id || a._id || '';
             const idB = b.id || b._id || '';
             if (idA !== idB) {
@@ -439,7 +517,7 @@ export class SuggestionEngine {
 
         // Use ForceTechniqueSuggestionEngine which already scores them
         try {
-            const scored = await ForceTechniqueSuggestionEngine.suggestForceOptions(techniques, actor, options);
+            const scored = await ForceTechniqueSuggestionEngine.suggestForceOptions(techniques, actor, { ...options, pendingData });
             return scored.map(suggestion => ({
                 ...suggestion,
                 isSuggested: true
@@ -561,9 +639,54 @@ export class SuggestionEngine {
             classes.add(pendingData.selectedClass.name.toLowerCase());
         }
 
-        // Get character's species
+        const speciesNames = new Set();
+        const speciesTags = new Set();
+        const addSpeciesName = (value) => {
+            const raw = String(value || '').trim().toLowerCase();
+            if (raw) speciesNames.add(raw);
+            const normalized = normalizeSpeciesKey(value).replace(/_/g, ' ');
+            if (normalized) speciesNames.add(normalized);
+        };
+        const addSpeciesTags = (tags) => {
+            for (const tag of tags || []) {
+                const normalized = normalizeBiasTag(tag);
+                if (normalized) speciesTags.add(normalized);
+            }
+        };
+        const addSpeciesIdentity = (name) => {
+            for (const tag of buildSpeciesIdentityTagsForName(name)) {
+                speciesTags.add(normalizeBiasTag(tag));
+            }
+        };
+        const addSpeciesSource = (source) => {
+            if (!source) return;
+            if (typeof source === 'string') {
+                addSpeciesName(source);
+                addSpeciesIdentity(source);
+                return;
+            }
+            if (typeof source === 'object') {
+                const candidateName = source.name || source.label || source.value || source.speciesName || source.id;
+                if (candidateName) {
+                    addSpeciesName(candidateName);
+                    addSpeciesIdentity(candidateName);
+                }
+                addSpeciesTags(source.tags);
+            }
+        };
+
         const speciesItem = actor.items.find(i => i.type === 'species');
-        const species = speciesItem?.name?.toLowerCase() || null;
+        addSpeciesSource(speciesItem?.name || null);
+        addSpeciesSource(actor.system?.species);
+        addSpeciesSource(actor.system?.species?.name);
+        addSpeciesSource(actor.system?.details?.species);
+        addSpeciesSource(actor.system?.race);
+        addSpeciesSource(pendingData.selectedSpecies);
+        addSpeciesSource(pendingData.selectedSpeciesName);
+        addSpeciesSource(pendingData.species);
+        addSpeciesTags(pendingData.selectedSpeciesTags);
+
+        const species = speciesNames.values().next().value || null;
 
         // Get character level
         const level = actor.system?.level || 1;
@@ -576,6 +699,9 @@ export class SuggestionEngine {
             highestScore,
             classes,
             species,
+            speciesNames,
+            speciesTags,
+            speciesIdentityTags: new Set([...speciesTags].filter((tag) => tag === 'species' || tag === 'heritage' || tag.startsWith('species_'))),
             level,
             // Combined set for chain checking (feats + talents)
             ownedPrereqs: new Set([...ownedFeats, ...ownedTalents])
@@ -732,37 +858,94 @@ export class SuggestionEngine {
      * @param {Object} actorState - Actor state
      * @returns {Object|null} { tier, sourceId } or null if no match
      */
-    static _checkSpeciesPrerequisite(feat, actorState) {
-        if (!actorState.species) {
+    static _checkSpeciesPrerequisite(candidate, actorState) {
+        if (!actorState?.speciesNames?.size && !actorState?.speciesIdentityTags?.size) {
             return null;
         }
 
-        // Check if feat has species as featType
-        if (feat.system?.featType === 'species') {
-            // Check if prerequisite matches species
-            const prereqString = feat.system?.prerequisite || '';
-            if (prereqString.toLowerCase().includes(actorState.species)) {
-                // Calculate level-based decay (3-level half-life)
-                const level = actorState.level || 1;
-                const halfLife = 3;
-                const decayFactor = Math.pow(0.5, level / halfLife);
-
-                // Species feat tier: TIER 4 (PATH_CONTINUATION), decays with level
-                // Apply decay: at level 1-2, full strength; level 3, 50%; level 6, 25%; etc.
-                const baseSpeciesTier = UNIFIED_TIERS.PATH_CONTINUATION;  // 4
-                const adjustedTier = baseSpeciesTier * decayFactor;
-
-                // Check if also uses trained skill for extra boost
-                const usesTrainedSkill = this._usesTrainedSkill(feat, actorState);
-                const skillBoost = usesTrainedSkill ? 1 : 0;
-
-                const finalTier = Math.min(Math.round(adjustedTier + skillBoost), UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW);
-
-                return { tier: finalTier, sourceId: `species:${actorState.species}` };
-            }
+        const candidateTags = this._extractCandidateTagSet(candidate);
+        const actorIdentityTags = [...(actorState.speciesIdentityTags || [])];
+        const explicitSpeciesTag = actorIdentityTags.find((tag) => candidateTags.has(tag));
+        if (explicitSpeciesTag) {
+            return {
+                tier: UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,
+                sourceId: `species:${actorState.species || explicitSpeciesTag.replace(/^species_/, '')}`,
+                mode: 'explicit_species_tag'
+            };
         }
 
-        return null;
+        const prereqText = collectTextSnippets([
+            candidate?.system?.prerequisite,
+            candidate?.system?.prerequisites,
+            candidate?.system?.requirements,
+            candidate?.system?.special,
+            candidate?.system?.species,
+            candidate?.prerequisite,
+            candidate?.requirements
+        ]).join(' | ').toLowerCase();
+        const normalizedPrereqText = normalizeSpeciesKey(prereqText).replace(/_/g, ' ');
+
+        if (!prereqText) {
+            return null;
+        }
+
+        const matchedSpecies = [...(actorState.speciesNames || [])].find((name) => {
+            const spaced = String(name || '').toLowerCase();
+            const compact = normalizeSpeciesKey(name).replace(/_/g, ' ');
+            return (spaced && prereqText.includes(spaced))
+                || (compact && normalizedPrereqText.includes(compact));
+        });
+
+        if (!matchedSpecies) {
+            return null;
+        }
+
+        return {
+            tier: UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,
+            sourceId: `species:${matchedSpecies}`,
+            mode: 'text_prerequisite'
+        };
+    }
+
+    static _extractCandidateTagSet(candidate) {
+        const tagSet = new Set();
+        const addTags = (tags) => {
+            if (!tags) return;
+            const list = Array.isArray(tags) ? tags : [tags];
+            for (const tag of list) {
+                const normalized = normalizeBiasTag(tag);
+                if (normalized) tagSet.add(normalized);
+            }
+        };
+
+        addTags(candidate?.tags);
+        addTags(candidate?.system?.tags);
+        addTags(candidate?.metadata?.tags);
+
+        return tagSet;
+    }
+
+    static _checkSpeciesTagAlignment(candidate, actorState) {
+        if (!actorState?.speciesTags?.size) {
+            return null;
+        }
+
+        const candidateTags = this._extractCandidateTagSet(candidate);
+        if (!candidateTags.size) {
+            return null;
+        }
+
+        const blocked = new Set(['species', 'heritage', 'species_locked']);
+        const overlaps = [...actorState.speciesTags].filter((tag) => !blocked.has(tag) && candidateTags.has(tag));
+        if (!overlaps.length) {
+            return null;
+        }
+
+        return {
+            overlapTags: overlaps,
+            sourceId: `species:${overlaps[0]}`,
+            bonus: Math.min(TIER3_SUBPRIORITY.SPECIES * Math.max(overlaps.length, 1), 0.16)
+        };
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -877,6 +1060,17 @@ export class SuggestionEngine {
             }
         }
 
+        const speciesTagMatch = this._checkSpeciesTagAlignment(feat, actorState);
+        if (speciesTagMatch) {
+            matches.push({
+                type: 'SPECIES_EARLY',
+                sourceId: speciesTagMatch.sourceId,
+                weight: TIER3_SUBPRIORITY.SPECIES,
+                bonus: speciesTagMatch.bonus
+            });
+            totalBonus += speciesTagMatch.bonus;
+        }
+
         // Check SKILL PREREQ MATCH (weight: 0.05)
         if (this._usesTrainedSkill(feat, actorState)) {
             matches.push({
@@ -975,6 +1169,17 @@ export class SuggestionEngine {
                 });
                 totalBonus += scaled;
             }
+        }
+
+        const speciesTagMatch = this._checkSpeciesTagAlignment(talent, actorState);
+        if (speciesTagMatch) {
+            matches.push({
+                type: 'SPECIES_EARLY',
+                sourceId: speciesTagMatch.sourceId,
+                weight: TIER3_SUBPRIORITY.SPECIES,
+                bonus: speciesTagMatch.bonus
+            });
+            totalBonus += speciesTagMatch.bonus;
         }
 
         // Check SKILL PREREQ MATCH (weight: 0.05)
@@ -1143,6 +1348,7 @@ export class SuggestionEngine {
 
         const biases = buildIntent.mentorBiases;
         const biasTypes = ['melee', 'ranged', 'force', 'stealth', 'social', 'tech', 'leadership', 'support', 'survival'];
+        const biasAliases = buildMentorBiasAliases();
 
         // Extract item name (handle both object and legacy string format)
         const itemName = typeof item === 'string' ? item : (item?.name || '');
@@ -1159,14 +1365,14 @@ export class SuggestionEngine {
 
         // TIER 2: Tag-based bias (Phase 3 enhancement)
         if (typeof item === 'object' && item?.system?.tags && Array.isArray(item.system.tags)) {
-            for (const tag of item.system.tags) {
-                const tagLower = tag.toLowerCase();
-                for (const biasType of biasTypes) {
-                    if (biases[biasType] > 0 && tagLower === biasType) {
-                        return {
-                            sourceId: `mentor_bias:${biasType}`
-                        };
-                    }
+            const normalizedTags = new Set(item.system.tags.map(tag => normalizeBiasTag(tag)));
+            for (const biasType of biasTypes) {
+                if (biases[biasType] <= 0) continue;
+                const aliases = BIAS_TAG_ALIASES[biasType] || [biasType];
+                if (aliases.some(alias => normalizedTags.has(normalizeBiasTag(alias)))) {
+                    return {
+                        sourceId: `mentor_bias:${biasType}`
+                    };
                 }
             }
         }
@@ -1556,6 +1762,18 @@ export class SuggestionEngine {
                     buildSuggestionOptions
                 );
             }
+        }
+
+        const speciesCheck = this._checkSpeciesPrerequisite(talent, actorState);
+        if (speciesCheck) {
+            return this._buildSuggestionWithArchetype(
+                speciesCheck.tier,
+                'SPECIES_EARLY',
+                speciesCheck.sourceId,
+                talent,
+                archetype,
+                buildSuggestionOptions
+            );
         }
 
         // Tier 4: Chain continuation

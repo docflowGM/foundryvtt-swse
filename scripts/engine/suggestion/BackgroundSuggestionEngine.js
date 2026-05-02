@@ -1,294 +1,185 @@
 /**
  * Background Suggestion Engine for Character Generation
- * (PHASE 5D: UNIFIED_TIERS Refactor)
  *
- * Suggests backgrounds based on character's current class, species, abilities, and build direction.
- * Used in character generation to help players choose narratively and mechanically appropriate backgrounds.
- * Now uses UNIFIED_TIERS system for consistent tier definitions.
+ * Strongly weights backgrounds that:
+ * - expand class-skill access at the last meaningful chargen window
+ * - reinforce survey-declared intended skills and archetype goals
+ * - support prestige prerequisites and future build lanes
+ * - provide ability synergy without ignoring species/class context
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
 import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
+import { resolveClassModel, getClassSkills } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
+import { getSkillAbility, buildAttributePlanningProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/attribute-planner.js";
+import { getPrestigeTargets, getSkillPrestigeTags } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-path-signals.js";
 
-// DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
-// Use UNIFIED_TIERS from suggestion-unified-tiers.js instead
-export const BACKGROUND_SUGGESTION_TIERS = {
-  CLASS_SYNERGY: UNIFIED_TIERS.CATEGORY_SYNERGY,    // 3
-  ABILITY_SYNERGY: UNIFIED_TIERS.ABILITY_SYNERGY,   // 2
-  THEME_SYNERGY: UNIFIED_TIERS.ABILITY_SYNERGY,     // 2
-  SPECIES_SYNERGY: UNIFIED_TIERS.THEMATIC_FIT,      // 1
-  LANGUAGE_BONUS: UNIFIED_TIERS.THEMATIC_FIT,       // 1
-  FALLBACK: UNIFIED_TIERS.AVAILABLE                 // 0
-};
+function norm(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function toSkillList(background) {
+  return [
+    ...(background?.relevantSkills || []),
+    ...(background?.trainedSkills || []),
+    ...(background?.classSkillsGranted || [])
+  ].filter(Boolean);
+}
 
 export class BackgroundSuggestionEngine {
-  /**
-   * Generate suggestions for available backgrounds
-   * @param {Array} backgrounds - Array of background objects
-   * @param {Actor} actor - The character actor (or temp actor for chargen)
-   * @param {Object} pendingData - Character data being built (from chargen)
-   * @returns {Promise<Array>} Backgrounds with suggestion metadata
-   */
   static async suggestBackgrounds(backgrounds, actor, pendingData = {}) {
-    if (!backgrounds || backgrounds.length === 0) {return [];}
+    if (!Array.isArray(backgrounds) || backgrounds.length === 0) return [];
 
     try {
-      // Build character profile from actor + pending data
       const profile = this._buildCharacterProfile(actor, pendingData);
-
-      // Analyze each background
-      const suggestedBackgrounds = backgrounds.map(bg => ({
-        ...bg,
-        suggestion: this._scoringBackground(bg, profile)
+      const suggested = backgrounds.map((background) => ({
+        ...background,
+        suggestion: this._scoreBackground(background, profile)
       }));
 
-      // Sort by tier (highest first), then by score within tier
-      suggestedBackgrounds.sort((a, b) => {
-        if (a.suggestion.tier !== b.suggestion.tier) {
-          return b.suggestion.tier - a.suggestion.tier;
+      suggested.sort((a, b) => {
+        if ((b.suggestion?.tier || 0) !== (a.suggestion?.tier || 0)) {
+          return (b.suggestion?.tier || 0) - (a.suggestion?.tier || 0);
         }
-        return (b.suggestion.score || 0) - (a.suggestion.score || 0);
+        return (b.suggestion?.score || 0) - (a.suggestion?.score || 0);
       });
 
-      SWSELogger.log('BackgroundSuggestionEngine | Suggested backgrounds:', suggestedBackgrounds);
-      return suggestedBackgrounds;
+      return suggested;
     } catch (err) {
       SWSELogger.error('BackgroundSuggestionEngine | Error suggesting backgrounds:', err);
-      return backgrounds; // Return unsorted if error
+      return backgrounds;
     }
   }
 
-  /**
-   * Build a character profile from actor or pending data
-   * @private
-   */
   static _buildCharacterProfile(actor, pendingData) {
-    const profile = {
-      class: null,
-      species: null,
-      highestAbility: null,
-      highestAbilityScore: 0,
-      trainedSkills: [],
-      themes: {},
-      mentorBiases: {}
+    const mentorBiases = pendingData?.mentorBiases || actor?.system?.swse?.mentorBuildIntentBiases || {};
+    const planningProfile = buildAttributePlanningProfile({ actor, pendingData });
+    const classSelection = pendingData?.selectedClass || pendingData?.classes?.[0] || null;
+    const classModel = resolveClassModel(classSelection);
+    const classSkillRefs = getClassSkills(classModel);
+    const classSkillKeys = new Set(classSkillRefs.map((ref) => norm(ref?.name || ref?.label || ref?.id || ref)));
+    const trainedSkills = new Set(
+      (pendingData?.selectedSkills || pendingData?.trainedSkills || []).map((entry) => norm(entry?.name || entry?.label || entry?.key || entry))
+    );
+
+    return {
+      classModel,
+      classSkillKeys,
+      trainedSkills,
+      mentorBiases,
+      planningProfile,
+      prestigeTargets: new Set(getPrestigeTargets({ mentorBiases })),
+      intendedSkills: mentorBiases?.skillBiasWeights || {},
+      intendedAttributes: mentorBiases?.attributeBiasWeights || {},
+      featBiasWeights: mentorBiases?.featBiasWeights || {},
+      talentBiasWeights: mentorBiases?.talentBiasWeights || {},
+      species: pendingData?.species || actor?.system?.species || null
     };
-
-    // Get class
-    if (pendingData?.classes?.[0]?.name) {
-      profile.class = pendingData.classes[0].name;
-      SWSELogger.log(`[BGSuggest] _buildCharacterProfile: Class from pendingData`, {
-        className: profile.class,
-        pendingDataClasses: pendingData.classes
-      });
-    } else if (actor?.items) {
-      const classItem = actor.items.find(i => i.type === 'class');
-      profile.class = classItem?.name || null;
-      SWSELogger.log(`[BGSuggest] _buildCharacterProfile: Class from actor items`, {
-        className: profile.class,
-        classItem: classItem?.name
-      });
-    } else {
-      SWSELogger.log(`[BGSuggest] _buildCharacterProfile: No class found in either pendingData or actor items`);
-    }
-
-    // Get species
-    profile.species = pendingData?.species || actor?.system?.species || null;
-
-    // Get highest ability and abilities
-    const abilities = pendingData?.abilities || actor?.system?.attributes || {};
-    for (const [key, ability] of Object.entries(abilities)) {
-      const total = ability.total || ability.value || (key === 'int' ? 10 : ability.base || 10);
-      if (total > profile.highestAbilityScore) {
-        profile.highestAbilityScore = total;
-        profile.highestAbility = key.toUpperCase().substring(0, 3); // STR, DEX, etc.
-      }
-    }
-
-    // Get trained skills
-    profile.trainedSkills = (pendingData?.trainedSkills || []).map(s => s.toLowerCase());
-
-    // Get mentor biases
-    profile.mentorBiases = pendingData?.mentorBiases || {};
-
-    return profile;
   }
 
-  /**
-   * Score a background based on character profile
-   * Uses UNIFIED_TIERS for consistent tier metadata
-   * @private
-   */
-  static _scoringBackground(background, profile) {
-    let tier = UNIFIED_TIERS.AVAILABLE;  // Start at lowest tier
+  static _scoreBackground(background, profile) {
+    const skillList = toSkillList(background);
+    const normalizedSkills = skillList.map((s) => norm(s));
+    const reasons = [];
     let score = 0;
 
-    // CLASS SYNERGY: Check if background's relevant skills match class
-    if (profile.class && background.relevantSkills) {
-      const classSkillMatches = this._countClassSkillMatches(profile.class, background.relevantSkills);
-      if (classSkillMatches > 0) {
-        tier = Math.max(tier, UNIFIED_TIERS.CATEGORY_SYNERGY);
-        score += classSkillMatches * 0.5;
-      }
+    // 1) Last-class-skill window: reward backgrounds that open important skills the class lacks.
+    const expansionSkills = normalizedSkills.filter((skill) => !profile.classSkillKeys.has(skill));
+    if (expansionSkills.length > 0) {
+      score += expansionSkills.length * 1.35;
+      reasons.push('Expands your class-skill access');
     }
 
-    // ABILITY SYNERGY: Check if relevant skills match character's high abilities
-    if (background.relevantSkills) {
-      const abilityMatches = this._countAbilityMatches(background.relevantSkills, profile.highestAbility);
-      if (abilityMatches > 0) {
-        tier = Math.max(tier, UNIFIED_TIERS.ABILITY_SYNERGY);
-        score += abilityMatches * 0.3;
-      }
+    // 2) Survey-intended skills: the heaviest direct bias.
+    const surveySkillHits = skillList.reduce((sum, skill) => {
+      const weight = Number(profile.intendedSkills[norm(skill)] || 0);
+      return sum + Math.max(0, weight);
+    }, 0);
+    if (surveySkillHits > 0) {
+      score += surveySkillHits * 1.8;
+      reasons.push('Supports the skills you said you want to build around');
     }
 
-    // THEME SYNERGY: Check if background aligns with mentor biases/themes
-    if (profile.mentorBiases && Object.keys(profile.mentorBiases).length > 0) {
-      const themeMatch = this._checkThemeAlignment(background, profile.mentorBiases);
-      if (themeMatch) {
-        tier = Math.max(tier, UNIFIED_TIERS.ABILITY_SYNERGY);
-        score += 0.4;
-      }
+    // 3) Prestige path readiness via required skills.
+    const prestigeHits = skillList.reduce((sum, skill) => {
+      const tags = getSkillPrestigeTags(skill);
+      return sum + tags.filter((tag) => profile.prestigeTargets.has(String(tag).replace(/^Prereq_/, ''))).length;
+    }, 0);
+    if (prestigeHits > 0) {
+      score += prestigeHits * 1.6;
+      reasons.push('Builds toward a declared prestige path');
     }
 
-    // SPECIES SYNERGY: Check if background fits species narrative
-    if (profile.species && this._isSpeciesBackground(background, profile.species)) {
-      tier = Math.max(tier, UNIFIED_TIERS.THEMATIC_FIT);
-      score += 0.2;
+    // 4) Attribute synergy through the actual skills the background supports.
+    const abilitySynergy = skillList.reduce((sum, skill) => {
+      const ability = getSkillAbility(skill);
+      return sum + Number(profile.planningProfile.abilityWeights?.[ability] || 0);
+    }, 0);
+    if (abilitySynergy > 0) {
+      score += Math.min(2.5, abilitySynergy / 4);
+      reasons.push('Matches your strongest or planned attributes');
     }
 
-    // LANGUAGE BONUS: If background offers bonus language
-    if (background.bonusLanguage) {
-      tier = Math.max(tier, UNIFIED_TIERS.THEMATIC_FIT);
+    // 5) Species/narrative fit remains soft, never dominant.
+    if (profile.species && this._isSpeciesBackground(background, profile.species?.name || profile.species)) {
+      score += 0.35;
+      reasons.push('Narratively coherent with your species');
+    }
+
+    // 6) Bonus language / utility remains mild.
+    if (background?.bonusLanguage) {
       score += 0.1;
     }
 
-    // Apply mentor biases to influence scoring
-    if (profile.mentorBiases?.control) {score += 0.2;}
-    if (profile.mentorBiases?.pragmatic) {score += 0.15;}
-    if (profile.mentorBiases?.riskTolerance) {score += 0.1;}
+    // 7) Mechanical bonus text can reinforce forecast lanes.
+    const bonusText = [
+      background?.specialAbility,
+      background?.mechanicalEffect?.description,
+      background?.description,
+      background?.narrativeDescription
+    ].filter(Boolean).join(' ').toLowerCase();
+
+    if ((bonusText.includes('stealth') && profile.intendedSkills.stealth) ||
+        (bonusText.includes('knowledge') && Object.keys(profile.intendedSkills).some((k) => k.includes('knowledge')))) {
+      score += 1.0;
+      reasons.push('Its bonus text lines up with your stated build lane');
+    }
+
+    // Tier derivation.
+    let tier = UNIFIED_TIERS.AVAILABLE;
+    if (score >= 5.5) tier = UNIFIED_TIERS.PRESTIGE_PREREQUISITE;
+    else if (score >= 4.0) tier = UNIFIED_TIERS.PATH_CONTINUATION;
+    else if (score >= 2.5) tier = UNIFIED_TIERS.CATEGORY_SYNERGY;
+    else if (score >= 1.2) tier = UNIFIED_TIERS.ABILITY_SYNERGY;
+    else if (score > 0) tier = UNIFIED_TIERS.THEMATIC_FIT;
 
     const tierMetadata = getTierMetadata(tier);
     return {
       tier,
-      reason: tierMetadata.description,
       score,
       icon: tierMetadata.icon,
       color: tierMetadata.color,
-      label: tierMetadata.label
+      label: tierMetadata.label,
+      reason: reasons.length ? Array.from(new Set(reasons)).join('; ') : tierMetadata.description
     };
   }
 
-  /**
-   * Count how many of a background's skills match the class's trained skills
-   * @private
-   */
-  static _countClassSkillMatches(className, backgroundSkills) {
-    // Map of class → commonly trained skills (simplified)
-    const classSkillMap = {
-      'Jedi': ['lightsaber', 'force', 'awareness', 'perception', 'acrobatics'],
-      'Soldier': ['weapons', 'armor', 'tactics', 'climb', 'swim'],
-      'Scout': ['stealth', 'survival', 'perception', 'acrobatics', 'knowledge'],
-      'Scoundrel': ['deception', 'stealth', 'sleight of hand', 'perception', 'persuasion'],
-      'Tech Specialist': ['mechanics', 'computers', 'knowledge', 'perception', 'technology'],
-      'Noble': ['persuasion', 'deception', 'knowledge', 'gather information', 'gatherinformation']
-    };
-
-    const classSkills = classSkillMap[className] || [];
-    if (!classSkills.length) {
-      SWSELogger.warn(`[BGSuggest] _countClassSkillMatches: No match for className "${className}"`, {
-        availableClasses: Object.keys(classSkillMap),
-        classNameType: typeof className
-      });
-    }
-    const matches = backgroundSkills.filter(s =>
-      classSkills.some(cs => s.toLowerCase().includes(cs.toLowerCase()) || cs.toLowerCase().includes(s.toLowerCase()))
-    ).length;
-    if (matches > 0) {
-      SWSELogger.log(`[BGSuggest] _countClassSkillMatches: Found ${matches} skill matches for class "${className}"`);
-    }
-    return matches;
-  }
-
-  /**
-   * Count how many background skills match character's highest ability
-   * @private
-   */
-  static _countAbilityMatches(backgroundSkills, highestAbility) {
-    // Map of ability → skills that use that ability
-    const abilitySkillMap = {
-      'STR': ['climb', 'swim', 'jump', 'break'],
-      'DEX': ['acrobatics', 'stealth', 'sleight of hand', 'initiative'],
-      'CON': ['endurance', 'stamina'],
-      'INT': ['knowledge', 'mechanics', 'computers', 'science'],
-      'WIS': ['perception', 'survival', 'sense motive', 'insight'],
-      'CHA': ['persuasion', 'deception', 'gather information', 'gatherinformation', 'bluff']
-    };
-
-    const abilitySkills = abilitySkillMap[highestAbility] || [];
-    return backgroundSkills.filter(s =>
-      abilitySkills.some(as => s.toLowerCase().includes(as.toLowerCase()) || as.toLowerCase().includes(s.toLowerCase()))
-    ).length;
-  }
-
-  /**
-   * Check if background theme aligns with mentor biases
-   * @private
-   */
-  static _checkThemeAlignment(background, mentorBiases) {
-    // Simple check: does background have relevant skills for mentor's emphasized areas
-    if (!background.relevantSkills) {return false;}
-
-    const hasSocialBias = mentorBiases.social || mentorBiases.persuasion;
-    const hasStealthBias = mentorBiases.stealth;
-    const hasTechBias = mentorBiases.tech;
-
-    const skillSet = background.relevantSkills.map(s => s.toLowerCase()).join(' ');
-
-    if (hasSocialBias && (skillSet.includes('persuasion') || skillSet.includes('deception'))) {return true;}
-    if (hasStealthBias && skillSet.includes('stealth')) {return true;}
-    if (hasTechBias && (skillSet.includes('mechanics') || skillSet.includes('computer'))) {return true;}
-
-    return Object.keys(mentorBiases).some(bias => skillSet.includes(bias.toLowerCase()));
-  }
-
-  /**
-   * Check if background fits the character's species
-   * @private
-   */
   static _isSpeciesBackground(background, species) {
-    // Check if background narrative mentions or suits the species
-    const narrative = (background.narrativeDescription || '').toLowerCase();
-    const bgName = (background.name || '').toLowerCase();
-    const combined = `${bgName} ${narrative}`;
-
-    // Species-specific background indicators (simplified)
-    const speciesIndicators = {
-      'Human': ['military', 'politics', 'bureaucracy', 'urban'],
-      'Cerean': ['knowledge', 'science', 'philosophy'],
-      'Droid': ['technology', 'mechanics', 'service', 'slave', 'free'],
-      'Kel Dor': ['warrior', 'pilot', 'merchant'],
-      'Miraluka': ['force', 'sensitive', 'blind'],
-      'Mirialan': ['spiritual', 'mystic', 'tattoo'],
-      'Rodian': ['bounty', 'hunter', 'merchant'],
-      'Trandoshan': ['bounty', 'hunter', 'warrior'],
-      'Twi\'lek': ['dancer', 'slave', 'free'],
-      'Wookiee': ['warrior', 'honor', 'tribe']
+    const narrative = `${background?.name || ''} ${background?.narrativeDescription || ''} ${background?.description || ''}`.toLowerCase();
+    const speciesName = String(species || '').toLowerCase();
+    if (!speciesName) return false;
+    if (narrative.includes(speciesName)) return true;
+    const soft = {
+      twilek: ['slave', 'dancer', 'smuggler', 'diplomat'],
+      miraluka: ['force', 'mystic', 'seeker'],
+      wookiee: ['tribe', 'honor', 'warrior'],
+      droid: ['mechanic', 'service', 'program']
     };
-
-    const indicators = speciesIndicators[species] || [];
-    return indicators.some(indicator => combined.includes(indicator));
+    return (soft[norm(species)] || []).some((entry) => narrative.includes(entry));
   }
 
-  /**
-   * Sort backgrounds by suggestion tier
-   * @static
-   */
   static sortBySuggestion(backgrounds) {
-    return backgrounds.sort((a, b) => {
-      const tierDiff = (b.suggestion?.tier || 0) - (a.suggestion?.tier || 0);
-      if (tierDiff !== 0) {return tierDiff;}
-      return (b.suggestion?.score || 0) - (a.suggestion?.score || 0);
-    });
+    return backgrounds.sort((a, b) => ((b.suggestion?.tier || 0) - (a.suggestion?.tier || 0)) || ((b.suggestion?.score || 0) - (a.suggestion?.score || 0)));
   }
 }
 

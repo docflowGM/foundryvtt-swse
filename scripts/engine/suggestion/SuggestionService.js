@@ -23,6 +23,7 @@ import { getReasonRelevance } from "/systems/foundryvtt-swse/scripts/suggestions
 import { ReasonFactory } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonFactory.js";
 import { ConfidenceScoring } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ConfidenceScoring.js";
 import { SnapshotBuilder } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SnapshotBuilder.js";
+import { SuggestionReasonEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionReasonEngine.js";
 import { getPlannedHeroicLevel, isEpicActor } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import {
   validateDomain,
@@ -657,17 +658,49 @@ export class SuggestionService {
         suggestion.advisory = true;
       }
 
-      // Explanation: prefer SuggestionExplainer (mentor-safe, build-aware). Fallback to minimal.
-      if (!suggestion.explanation || !suggestion.explanation.short) {
-        try {
-          const explained = SuggestionExplainer.explain(suggestion, actor);
-          if (explained?.explanation) {suggestion.explanation = explained.explanation;}
-          if (explained?.tone) {suggestion.tone = explained.tone;}
-        } catch (err) {
-          const tier = suggestion?.suggestion?.tier ?? suggestion?.tier ?? 0;
-          suggestion.explanation = {
-            short: suggestion?.suggestion?.reason || (tier >= 3 ? 'High-fit option for your build.' : tier === 2 ? 'Good-fit option for your build.' : 'Legal option.')
-          };
+      // Build structured reasoning packet and synthesize concrete explanation text.
+      try {
+        const packet = SuggestionReasonEngine.buildPacket(suggestion, actor, options);
+        suggestion.reasonPacket = packet;
+        suggestion.reason = packet.fullReason;
+        suggestion.reasonText = packet.fullReason;
+        suggestion.reasonSummary = packet.shortReason;
+        suggestion.reasonBullets = packet.bullets;
+        suggestion.primaryReasons = packet.primary;
+        suggestion.cautionReasons = packet.caution;
+        suggestion.forecastReasons = packet.forecast;
+        if (!Array.isArray(suggestion.reasons) || suggestion.reasons.length === 0) {
+          suggestion.reasons = packet.allReasons;
+        } else {
+          suggestion.reasons = ReasonFactory.limitByStrength(
+            ReasonFactory.deduplicate([...(suggestion.reasons || []), ...(packet.allReasons || [])]),
+            6
+          );
+        }
+        suggestion.suggestion = suggestion.suggestion || {};
+        if (!suggestion.suggestion.reason || suggestion.suggestion.reason === 'available') {
+          suggestion.suggestion.reason = packet.shortReason;
+        }
+        suggestion.suggestion.reasonText = packet.fullReason;
+        suggestion.suggestion.reasonSummary = packet.shortReason;
+        suggestion.explanation = {
+          ...(suggestion.explanation || {}),
+          short: packet.shortReason,
+          full: packet.fullReason,
+          bullets: packet.bullets
+        };
+      } catch (err) {
+        if (!suggestion.explanation || !suggestion.explanation.short) {
+          try {
+            const explained = SuggestionExplainer.explain(suggestion, actor);
+            if (explained?.explanation) {suggestion.explanation = explained.explanation;}
+            if (explained?.tone) {suggestion.tone = explained.tone;}
+          } catch (err2) {
+            const tier = suggestion?.suggestion?.tier ?? suggestion?.tier ?? 0;
+            suggestion.explanation = {
+              short: suggestion?.suggestion?.reason || (tier >= 3 ? 'High-fit option for your build.' : tier === 2 ? 'Good-fit option for your build.' : 'Legal option.')
+            };
+          }
         }
       }
 

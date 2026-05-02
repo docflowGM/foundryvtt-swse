@@ -22,6 +22,16 @@
   {{/if}}
 
   {{!-- 5. Key stats: size, speed --}}
+
+  {{#if speciesTags.length}}
+    <div class="prog-species-details__tags">
+      <h4>Build Signals</h4>
+      <div class="prog-tags">
+        {{#each speciesTags}}<span class="prog-chip">{{this.label}}</span>{{/each}}
+      </div>
+    </div>
+  {{/if}}
+
   <div class="prog-species-details__stats">
     {{#if size}}<div><strong>Size:</strong> {{size}}</div>{{/if}}
     {{#if speed}}<div><strong>Speed:</strong> {{speed}}</div>{{/if}}
@@ -37,6 +47,25 @@
             {{#if (gt this.value 0)}}+{{/if}}{{this.value}}
           </span>
         </div>
+      {{/each}}
+    </div>
+  {{/if}}
+
+
+  {{#if attributeForecast.boosts.length}}
+    <div class="prog-species-details__forecast">
+      <h4>Attribute Outlook</h4>
+      {{#each attributeForecast.boosts}}
+        <div class="prog-species-details__ability"><strong>{{this.signedValue}} {{this.ability}}</strong> — {{this.summary}}</div>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  {{#if attributeForecast.mitigations.length}}
+    <div class="prog-species-details__forecast prog-species-details__forecast--mitigation">
+      <h4>Potential Weak Spots</h4>
+      {{#each attributeForecast.mitigations}}
+        <div class="prog-species-details__ability"><strong>{{this.signedValue}} {{this.ability}}</strong> — {{this.summary}}</div>
       {{/each}}
     </div>
   {{/if}}

@@ -216,15 +216,68 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
   _buildCartEntries() {
     const entries = [];
+    const grouped = new Map();
+
+    const pushEntry = (payload) => {
+      const key = [payload.id, payload.type, payload.condition || 'standard'].join('::');
+      const existing = grouped.get(key);
+      if (existing) {
+        existing.qty += 1;
+        existing.lineCost += Number(payload.unitCost ?? payload.cost ?? 0) || 0;
+        return;
+      }
+      grouped.set(key, {
+        ...payload,
+        qty: 1,
+        unitCost: Number(payload.unitCost ?? payload.cost ?? 0) || 0,
+        lineCost: Number(payload.unitCost ?? payload.cost ?? 0) || 0
+      });
+    };
+
     for (const item of this.cart?.items || []) {
-      entries.push({ id: item.id, name: item.name, cost: item.cost ?? 0, type: 'Item', img: item.img || '' });
+      pushEntry({
+        id: item.id,
+        name: item.name,
+        type: 'Item',
+        itemType: 'item',
+        img: item.img || '',
+        unitCost: item.cost ?? 0,
+        glyph: '◈'
+      });
     }
     for (const droid of this.cart?.droids || []) {
-      entries.push({ id: droid.id, name: droid.name, cost: droid.cost ?? 0, type: 'Droid', img: droid.img || '' });
+      pushEntry({
+        id: droid.id,
+        name: droid.name,
+        type: 'Droid',
+        itemType: 'droid',
+        img: droid.img || droid.actor?.img || '',
+        unitCost: droid.cost ?? 0,
+        glyph: '🤖'
+      });
     }
     for (const vehicle of this.cart?.vehicles || []) {
-      entries.push({ id: vehicle.id, name: vehicle.name, cost: vehicle.cost ?? 0, type: 'Vehicle', img: vehicle.img || '' });
+      pushEntry({
+        id: vehicle.id,
+        name: vehicle.name,
+        type: 'Vehicle',
+        itemType: 'vehicle',
+        img: vehicle.img || vehicle.template?.img || '',
+        unitCost: vehicle.cost ?? 0,
+        condition: vehicle.condition || 'new',
+        glyph: '⛭'
+      });
     }
+
+    for (const entry of grouped.values()) {
+      entries.push({
+        ...entry,
+        cost: entry.lineCost,
+        costLabel: entry.qty > 1 ? `${entry.qty} × ${entry.unitCost}` : `${entry.unitCost}`,
+        summary: entry.condition ? `${entry.type} · ${entry.condition}` : entry.type
+      });
+    }
+
     return entries;
   }
 
@@ -296,17 +349,42 @@ export class SWSEStore extends BaseSWSEAppV2 {
     if (!item) {return null;}
     const view = this._viewFromItem(item);
     const suggestion = this.suggestions.get(view.id);
+    const sys = safeSystem(item) ?? {};
+    const vehiclePricing = item.type === 'vehicle'
+      ? {
+          requiresCondition: true,
+          newCost: Number(item.finalCostNew ?? item.finalCost ?? 0) || 0,
+          usedCost: Number(item.finalCostUsed ?? item.finalCost ?? 0) || 0
+        }
+      : {
+          requiresCondition: false,
+          newCost: Number(view.finalCost ?? 0) || 0,
+          usedCost: null
+        };
+
     return {
       ...view,
       price: view.finalCost,
       category: item.category || item.type || '',
+      subcategory: item.subcategory || sys.subcategory || sys.category || '',
       availability: item.system?.availability || 'Standard',
+      typeLabel: this._getItemTypeLabel(item.type || ''),
+      suggestion: suggestion?.combined
+        ? {
+            score: suggestion.combined.finalScore,
+            tier: this._tierToLabel(suggestion.combined.tier)
+          }
+        : null,
       suggestionBullets: suggestion?.explanations || [],
       suggestionTierLabel: suggestion?.combined ? this._tierToDisplayLabel(suggestion.combined.tier) : '',
-      techDetailsHtml: this._buildTechnicalDetails(item, safeSystem(item) ?? {}, item.type || ''),
+      techDetailsHtml: this._buildTechnicalDetails(item, sys, item.type || ''),
       description: safeSystem(item)?.description || '',
       mentorReview: this._generateMentorReview(suggestion),
-      flavorReviewsHtml: this._generateFlavorReviews(item, item.type || '')
+      flavorReviewsHtml: this._generateFlavorReviews(item, item.type || ''),
+      requiresCondition: vehiclePricing.requiresCondition,
+      newCost: vehiclePricing.newCost,
+      usedCost: vehiclePricing.usedCost,
+      img: view.img || safeImg(item)
     };
   }
 
@@ -661,8 +739,21 @@ export class SWSEStore extends BaseSWSEAppV2 {
       rarityClass,
       rarityLabel: getRarityLabel(rarityClass),
       system: sys,
-      type: item.type
+      type: item.type,
+      subcategory: item.subcategory || sys.subcategory || sys.category || '',
+      typeLabel: this._getItemTypeLabel(item.type)
     };
+  }
+
+  _getItemTypeLabel(type) {
+    const typeMap = {
+      weapon: 'Weapon',
+      armor: 'Armor',
+      equipment: 'Equipment',
+      droid: 'Droid',
+      vehicle: 'Vehicle'
+    };
+    return typeMap[type] || safeString(type || 'Item');
   }
 
 
@@ -1029,33 +1120,82 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
   _buildTechnicalDetails(item, sys, itemType) {
     const details = [];
+    const add = (label, value) => {
+      if (value === undefined || value === null || value === '') return;
+      details.push(`<div class="ss-tech-row"><span class="ss-tech-label">${label}</span><span class="ss-tech-value">${value}</span></div>`);
+    };
 
-    // Armor specs
     if (itemType === 'armor') {
-      if (sys.armorBonus) details.push(`<div>Armor Bonus: +${sys.armorBonus}</div>`);
-      if (sys.category) details.push(`<div>Category: ${sys.category}</div>`);
-      if (sys.maxDexBonus !== undefined) details.push(`<div>Max Dex Bonus: ${sys.maxDexBonus === -1 ? 'None' : '+' + sys.maxDexBonus}</div>`);
-      if (sys.checkPenalty) details.push(`<div>Armor Check Penalty: ${sys.checkPenalty}</div>`);
-      if (sys.speed) details.push(`<div>Speed: ${sys.speed}</div>`);
+      add('Type', sys.armorType || item.subcategory || 'Armor');
+      const reflexBonus = sys.defenseBonus ?? sys.reflexBonus;
+      const fortitudeBonus = sys.fortBonus ?? sys.fortitudeBonus;
+      add('Reflex Bonus', reflexBonus !== undefined && reflexBonus !== null ? `+${reflexBonus}` : '');
+      add('Fortitude Bonus', fortitudeBonus !== undefined && fortitudeBonus !== null ? `+${fortitudeBonus}` : '');
+      add('Max Dex', sys.maxDexBonus ?? sys.maxDex);
+      add('Armor Check', sys.armorCheckPenalty ?? sys.checkPenalty);
+      add('Speed Penalty', sys.speedPenalty);
+      add('Weight', sys.weight);
+      add('Source', sys.sourcebook);
     }
 
-    // Weapon specs
     if (itemType === 'weapon') {
-      if (sys.damage) details.push(`<div>Damage: ${sys.damage}</div>`);
-      if (sys.damageType) details.push(`<div>Type: ${sys.damageType}</div>`);
-      if (sys.range) details.push(`<div>Range: ${sys.range}</div>`);
-      if (sys.category) details.push(`<div>Category: ${sys.category}</div>`);
-      if (sys.size) details.push(`<div>Size: ${sys.size}</div>`);
+      add('Category', item.subcategory || sys.category || sys.weaponCategory);
+      add('Damage', sys.damage);
+      add('Damage Type', sys.damageType);
+      add('Range', sys.range);
+      add('Proficiency', sys.proficiency);
+      add('Size', sys.size);
+      add('Weight', sys.weight);
+      add('Properties', Array.isArray(sys.properties) ? sys.properties.join(', ') : sys.properties);
+      add('Source', sys.sourcebook);
     }
 
-    // Equipment/Gear specs
     if (itemType === 'equipment') {
-      if (sys.weight) details.push(`<div>Weight: ${sys.weight}</div>`);
-      if (sys.rarity) details.push(`<div>Rarity: ${sys.rarity}</div>`);
+      add('Class', item.subcategory || (Array.isArray(sys.tags) ? sys.tags.join(', ') : sys.category));
+      add('Size', sys.size);
+      add('Weight', sys.weight);
+      add('Quantity', sys.quantity);
+      add('Source', sys.sourcebook);
     }
 
-    // Availability
-    if (sys.availability) details.push(`<div>Availability: ${sys.availability}</div>`);
+    if (itemType === 'droid') {
+      add('Degree', sys.degree);
+      add('Size', sys.size);
+      add('Hit Points', sys.HP);
+      add('Damage Threshold', sys.damageThreshold);
+      add('Reflex', sys.reflexDefense);
+      add('Fortitude', sys.fortitudeDefense);
+      add('Will', sys.willDefense);
+      add('Speed', sys.speed || item.flags?.swse?.speedText || item.doc?.flags?.swse?.speedText);
+      add('Perception', sys.perception);
+      const melee = Array.isArray(sys.attacks?.melee) ? sys.attacks.melee.map(a => `${a.name} ${a.damage ? `(${a.damage})` : ''}`.trim()).join(', ') : '';
+      const ranged = Array.isArray(sys.attacks?.ranged) ? sys.attacks.ranged.map(a => `${a.name} ${a.damage ? `(${a.damage})` : ''}`.trim()).join(', ') : '';
+      add('Melee', melee);
+      add('Ranged', ranged);
+    }
+
+    if (itemType === 'vehicle') {
+      add('Class', sys.type || item.subcategory);
+      add('Size', sys.size);
+      add('Hull', sys.hull?.max ?? sys.hull?.value ?? sys.hull);
+      add('Shields', sys.shields?.max ?? sys.shields?.value ?? sys.shields);
+      add('Damage Reduction', sys.damageReduction);
+      add('Damage Threshold', sys.damageThreshold);
+      add('Reflex', sys.reflexDefense);
+      add('Fortitude', sys.fortitudeDefense);
+      add('Speed', sys.speed || sys.maxVelocity);
+      add('Maneuver', sys.maneuver);
+      add('Crew', sys.crew);
+      add('Passengers', sys.passengers);
+      add('Cargo', sys.cargo);
+      add('Consumables', sys.consumables);
+      add('Hyperdrive', sys.hyperdrive_class);
+      if (Array.isArray(sys.weapons) && sys.weapons.length) {
+        add('Weapons', sys.weapons.map(w => `${w.name}${w.damage ? ` (${w.damage})` : ''}`).join(', '));
+      }
+    }
+
+    add('Availability', sys.availability);
 
     return details.length > 0 ? details.join('') : '';
   }

@@ -1,0 +1,23 @@
+<section class="swse-concept-panel swse-concept-panel--subledger">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Identity Strip</h3>
+      <p class="swse-concept-panel__hint">Compact dossier tags for the actor's canonical identity record.</p>
+    </div>
+  </header>
+
+  <div class="swse-concept-chip-row swse-concept-chip-row--wrap">
+    <span class="swse-concept-chip swse-concept-chip--accent">{{conceptLayout.identity.classDisplay}}</span>
+    <span class="swse-concept-chip swse-concept-chip--neutral">{{conceptLayout.identity.species}}</span>
+    <span class="swse-concept-chip swse-concept-chip--ok">Level {{conceptLayout.identity.level}}</span>
+    <span class="swse-concept-chip swse-concept-chip--neutral">{{conceptLayout.identity.size}}</span>
+    <span class="swse-concept-chip swse-concept-chip--accent-soft">{{conceptLayout.identity.homeworld}}</span>
+    <span class="swse-concept-chip swse-concept-chip--neutral">{{conceptLayout.identity.background}}</span>
+    {{#if conceptLayout.identity.profession}}
+      <span class="swse-concept-chip swse-concept-chip--neutral">{{conceptLayout.identity.profession}}</span>
+    {{/if}}
+    {{#if forceSensitive}}
+      <span class="swse-concept-chip swse-concept-chip--force">Force-Sensitive</span>
+    {{/if}}
+  </div>
+</section>

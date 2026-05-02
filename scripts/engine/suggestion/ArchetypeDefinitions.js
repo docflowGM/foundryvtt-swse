@@ -34,7 +34,8 @@ function mapSsotArchetypeToLegacy(key, a) {
     talentKeywords: a.talentKeywords || [],
     philosophyStatement: a.philosophyStatement || '',
     mentorQuote: a.mentorQuote || '',
-    warning: a.warning || ''
+    warning: a.warning || '',
+    tagBias: a.tagBias || {}
   };
 }
 

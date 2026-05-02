@@ -3476,3 +3476,75 @@
     opacity: 0.4;
   }
 }
+
+
+/* ==========================================================================
+   Live splash foreign-mode typography refinements
+   ========================================================================== */
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .hud,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .pane-head,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .stage-marquee,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .status,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .thread,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .prompt,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .identity,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .channels .lbl,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .translate .lbl {
+  font-family: var(--swse-font-aurabesh, "Aurebesh", "Orbitron", sans-serif);
+}
+
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .pane-head,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .status .label,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .stage-marquee .stg-name,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .translate .lbl,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .identity .badge,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .thread .k {
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .hud .tag:nth-child(odd),
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .channels .channel:nth-child(odd) .lbl,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .identity .meta-grid .k,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .prompt {
+  font-style: italic;
+}
+
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .intro-foreign-bezel,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .intro-foreign-accent,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .intro-foreign-tech {
+  font-family: var(--swse-font-aurabesh, "Aurebesh", "Orbitron", sans-serif);
+  letter-spacing: 0.16em;
+}
+
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .intro-foreign-accent {
+  font-style: italic;
+}
+
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .intro-foreign-tech,
+.prog-intro-surface--actor-v2.prog-intro-surface--foreign .intro-foreign-bezel--strong {
+  font-weight: 700;
+}
+
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .hud,
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .diag-head,
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .status,
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .translate,
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .stream,
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .identity,
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .actions,
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .channel .lbl,
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .droid-registry-card,
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .droid-process-card {
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.08em;
+  word-break: break-word;
+}
+
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .hint,
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .status .msg,
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .translate .src,
+.prog-intro-surface--droid-v2.prog-intro-surface--foreign .log .txt {
+  font-size: 0.73em;
+  line-height: 1.55;
+}

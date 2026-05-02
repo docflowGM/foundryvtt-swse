@@ -1,0 +1,226 @@
+{
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "node": false
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "globals": {
+    "game": "readonly",
+    "ui": "readonly",
+    "canvas": "readonly",
+    "CONFIG": "writable",
+    "Hooks": "readonly",
+    "Actor": "readonly",
+    "ActorSheet": "readonly",
+    "Item": "readonly",
+    "ItemSheet": "readonly",
+    "Combat": "readonly",
+    "Combatant": "readonly",
+    "Roll": "readonly",
+    "Dialog": "readonly",
+    "Application": "readonly",
+    "ApplicationV2": "readonly",
+    "FormApplication": "readonly",
+    "ChatMessage": "readonly",
+    "foundry": "readonly",
+    "Handlebars": "readonly",
+    "CONST": "readonly",
+    "loadTemplates": "readonly",
+    "renderTemplate": "readonly",
+    "mergeObject": "readonly",
+    "duplicate": "readonly",
+    "getProperty": "readonly",
+    "setProperty": "readonly",
+    "hasProperty": "readonly",
+    "expandObject": "readonly",
+    "flattenObject": "readonly",
+    "globalThis": "readonly",
+    "fromUuid": "readonly",
+    "jQuery": "readonly",
+    "$": "readonly",
+    "process": "readonly"
+  },
+  "rules": {
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "no-console": "off",
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-irregular-whitespace": "warn",
+    "prefer-const": "warn",
+    "no-var": "warn",
+    "eqeqeq": ["warn", "smart"],
+    "curly": ["warn", "all"],
+    "brace-style": ["warn", "1tbs", { "allowSingleLine": true }],
+    "quotes": [
+      "warn",
+      "single",
+      { "avoidEscape": true, "allowTemplateLiterals": true }
+    ],
+    "semi": ["warn", "always"],
+    "no-trailing-spaces": "warn",
+    "comma-dangle": ["warn", "never"],
+    "arrow-spacing": "warn",
+    "keyword-spacing": "warn",
+    "space-before-blocks": "warn",
+    "space-in-parens": ["warn", "never"],
+    "object-curly-spacing": ["warn", "always"],
+    "array-bracket-spacing": ["warn", "never"],
+    "no-multiple-empty-lines": ["warn", { "max": 2, "maxEOF": 1 }],
+
+    /* =================================================================
+       V13 COMPATIBILITY RULES (Strict Enforcement)
+       Prevent jQuery patterns and deprecated Foundry v12 DOM access.
+       ================================================================= */
+
+    "no-restricted-properties": [
+      "error",
+      {
+        "object": "HTMLElement",
+        "property": "find",
+        "message": "jQuery .find() not available on HTMLElement in v13+. Use .querySelector() instead."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "text",
+        "message": "jQuery .text() not available in v13+. Use .textContent instead."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "show",
+        "message": "jQuery .show() not available in v13+. Use .style.display = 'block' instead."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "hide",
+        "message": "jQuery .hide() not available in v13+. Use .style.display = 'none' instead."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "empty",
+        "message": "jQuery .empty() not available in v13+. Use .innerHTML = '' instead."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "append",
+        "message": "jQuery .append() not available on HTMLElement. Use .appendChild() or .insertAdjacentHTML()."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "click",
+        "message": "jQuery .click() not available in v13+. Use .addEventListener('click', ...) instead."
+      },
+      {
+        "object": "HTMLElement",
+        "property": "change",
+        "message": "jQuery .change() not available in v13+. Use .addEventListener('change', ...) instead."
+      }
+    ],
+
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "MemberExpression[object.property.name='element'][property.name=0]",
+        "message": "this.element[0] is no longer valid in v13+. Use this.element directly (it's already an HTMLElement)."
+      },
+      {
+        "selector": "CallExpression[callee.property.name='find'][callee.object.object.property.name='element']",
+        "message": "this.element.find() not available in v13+. Use this.element.querySelector() instead."
+      },
+      {
+        "selector": "CallExpression[callee.object.name='Actor'][callee.property.name='create']",
+        "message": "Actor.create() is deprecated in v13+. Use createActor() from core/document-api-v13.js instead."
+      },
+      {
+        "selector": "CallExpression[callee.object.name='Item'][callee.property.name='create']",
+        "message": "Item.create() is deprecated in v13+. Use createItemInActor() from core/document-api-v13.js instead."
+      },
+      {
+        "selector": "CallExpression[callee.object.name='ChatMessage'][callee.property.name='create']",
+        "message": "Consider using createChatMessage() wrapper from core/document-api-v13.js for consistency with v13 patterns."
+      }
+    ],
+
+    /* =================================================================
+       PHASE 3B: COMBAT ARCHITECTURE RULES (Locked via linting)
+       ================================================================= */
+
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "./damage-system",
+            "message": "@swse/ui-engine-separation: Legacy UI dialog system should not be imported in engine layer. Use DamageEngine directly."
+          },
+          {
+            "name": "../damage-system",
+            "message": "@swse/ui-engine-separation: Legacy UI dialog system should not be imported in engine layer. Use DamageEngine directly."
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["**/combat/aid-another", "**/combat/autofire*", "**/combat/burst-fire", "**/combat/feign*", "**/combat/feint*", "**/combat/ion-damage", "**/combat/maiming", "**/combat/saber-lock*", "**/combat/tactics", "**/combat/treat-poison", "**/combat/weapon-mode"],
+            "importNames": ["*"],
+            "message": "@swse/combat-engine-authority: Legacy mechanics deleted in Phase 3A. Use CombatEngine.resolveAttack() instead."
+          },
+          {
+            "group": ["**/engine/combat/**", "!**/engine/combat/ui/**"],
+            "importNames": ["*"],
+            "importNamePattern": "^.*UI.*|^.*Dialog.*|^.*Template.*",
+            "message": "@swse/ui-engine-separation: UI components forbidden in engine layer (except CombatUIAdapter). Use createChatMessage() only."
+          }
+        ]
+      }
+    ],
+
+    "no-restricted-globals": [
+      "error",
+      {
+        "name": "actor",
+        "message": "@swse/mutations-through-actor-engine: Direct actor object mutation forbidden. Use ActorEngine.applyDamage() or ActorEngine.updateActor()."
+      }
+    ]
+  },
+
+  "overrides": [
+    {
+      "files": ["scripts/engine/combat/**/*.js"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["**/combat/"],
+                "message": "@swse/no-legacy-imports-in-engine: Engine domain cannot import from legacy combat domain",
+                "allowRelativePaths": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["scripts/combat/**/*.js"],
+      "rules": {
+        "no-restricted-patterns": [
+          "warn",
+          {
+            "pattern": "export\\s+(async\\s+)?(function|class)\\s+\\w*[Aa]ttack",
+            "message": "@swse/combat-engine-authority: New attack resolution methods must extend CombatEngine, not create siblings"
+          }
+        ]
+      }
+    }
+  ]
+}

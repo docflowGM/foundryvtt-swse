@@ -21,6 +21,7 @@ import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 // PHASE 2: Pending species context builder
 import { buildPendingSpeciesContext } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js';
+import { humanizeSpeciesTag } from '/systems/foundryvtt-swse/scripts/engine/species/species-tag-profile-utils.js';
 
 // Maps stepId → mentor guidance choiceType
 const STEP_CHOICE_TYPE = {
@@ -431,6 +432,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
         defaultSpeciesGuidance,
         canonicalDescription: normalized.description,
         hasMentorProse: normalized.fallbacks.hasMentorProse,
+        speciesTags: this._getDisplaySpeciesTags(species),
+        attributeForecast: species.attributeForecast ?? { boosts: [], mitigations: [] },
       };
 
       swseLogger.log('[SpeciesStep] STEP 6: ✓ Details data object built', {
@@ -1248,7 +1251,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       description: species.description ?? '',
       abilityModLine,
       abilityRows,
-      tags: (species.abilities ?? []).slice(0, 3),
+      tags: this._getDisplaySpeciesTags(species).slice(0, 3),
       abilities: species.abilities ?? [],
       languages: species.languages ?? [],
       isSuggested,
@@ -1256,6 +1259,15 @@ export class SpeciesStep extends ProgressionStepPlugin {
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
       confidenceLevel: confidenceData?.confidenceLevel || null,
     };
+  }
+
+
+  _getDisplaySpeciesTags(species) {
+    const blocked = new Set(['species', 'heritage', 'humanoid']);
+    return (species?.tags || [])
+      .filter(tag => tag && !blocked.has(String(tag).toLowerCase()))
+      .slice(0, 12)
+      .map(tag => ({ key: tag, label: humanizeSpeciesTag(tag) }));
   }
 
   _abilityLabel(key) {
@@ -1294,7 +1306,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       });
 
       // Store top suggestions
-      this._suggestedSpecies = (suggested || []).slice(0, 3);
+      this._suggestedSpecies = (suggested || []).slice(0, 6);
     } catch (err) {
       swseLogger.warn('[SpeciesStep] Suggestion service error:', err);
       this._suggestedSpecies = [];

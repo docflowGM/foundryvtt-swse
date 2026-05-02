@@ -1,0 +1,24 @@
+{{#if racialAbilitiesPanel.entries.length}}
+<section class="swse-concept-panel swse-concept-panel--ledger">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Species &amp; Racial Abilities</h3>
+      <p class="swse-concept-panel__hint">Passive species features and inherent abilities applied by the actor engine.</p>
+    </div>
+  </header>
+
+  <div class="swse-concept-ledger">
+    {{#each racialAbilitiesPanel.entries as |entry|}}
+      <article class="swse-concept-ledger-row">
+        <div class="swse-concept-ledger-row__main">
+          <div class="swse-concept-ledger-row__title">{{entry.name}}</div>
+          <div class="swse-concept-ledger-row__meta">
+            {{#if entry.source}}<span>{{entry.source}}</span>{{/if}}
+            {{#if entry.summary}}<span>{{entry.summary}}</span>{{else if entry.description}}<span>{{entry.description}}</span>{{/if}}
+          </div>
+        </div>
+      </article>
+    {{/each}}
+  </div>
+</section>
+{{/if}}

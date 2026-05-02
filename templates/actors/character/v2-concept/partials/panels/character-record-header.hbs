@@ -1,0 +1,90 @@
+<section class="swse-concept-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Character Identity</h3>
+      <p class="swse-concept-panel__hint">Editable identity record and canonical biography fields.</p>
+    </div>
+  </header>
+
+  <div class="swse-concept-identity-grid swse-concept-identity-grid--record">
+    <label class="swse-concept-field">
+      <span>Name</span>
+      <input type="text" name="name" value="{{biographyPanel.identity.name}}" placeholder="Name" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+    </label>
+
+    <label class="swse-concept-field">
+      <span>Player</span>
+      <input type="text" name="flags.swse.character.player" value="{{biographyPanel.identity.player}}" placeholder="Player" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+    </label>
+
+    <div class="swse-concept-action-row">
+      <label class="swse-concept-field swse-concept-field--action">
+        <span>Class</span>
+        <input type="text" name="system.class" value="{{biographyPanel.identity.class}}" placeholder="Class" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+      </label>
+      {{#if biographyPanel.identity.canEdit}}<button type="button" class="swse-concept-btn" data-action="cmd-select-class">Select</button>{{/if}}
+    </div>
+
+    <div class="swse-concept-action-row">
+      <label class="swse-concept-field swse-concept-field--action">
+        <span>Species</span>
+        <input type="text" name="system.race" value="{{biographyPanel.identity.species}}" placeholder="Species" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+      </label>
+      {{#if biographyPanel.identity.canEdit}}<button type="button" class="swse-concept-btn" data-action="cmd-select-species">Select</button>{{/if}}
+    </div>
+
+    <label class="swse-concept-field">
+      <span>Level</span>
+      <input type="number" name="system.level" value="{{biographyPanel.identity.level}}" min="1" max="20" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+    </label>
+
+    <div class="swse-concept-readout">
+      <span>Size</span>
+      <strong>{{conceptLayout.identity.size}}</strong>
+    </div>
+
+    <label class="swse-concept-field">
+      <span>Age</span>
+      <input type="text" name="flags.swse.character.age" value="{{biographyPanel.identity.age}}" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+    </label>
+
+    <label class="swse-concept-field">
+      <span>Gender</span>
+      <input type="text" name="flags.swse.character.gender" value="{{biographyPanel.identity.gender}}" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+    </label>
+
+    <label class="swse-concept-field">
+      <span>Height</span>
+      <input type="text" name="flags.swse.character.height" value="{{biographyPanel.identity.height}}" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+    </label>
+
+    <label class="swse-concept-field">
+      <span>Weight</span>
+      <input type="text" name="flags.swse.character.weight" value="{{biographyPanel.identity.weight}}" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+    </label>
+
+    <div class="swse-concept-action-row">
+      <label class="swse-concept-field swse-concept-field--action">
+        <span>Homeworld</span>
+        <input type="text" name="system.planetOfOrigin" value="{{biographyPanel.identity.homeworld}}" placeholder="Homeworld" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+      </label>
+      {{#if biographyPanel.identity.canEdit}}<button type="button" class="swse-concept-btn" data-action="cmd-select-homeworld">Select</button>{{/if}}
+    </div>
+
+    <div class="swse-concept-action-row">
+      <label class="swse-concept-field swse-concept-field--action">
+        <span>Profession</span>
+        <input type="text" name="system.profession" value="{{biographyPanel.identity.profession}}" placeholder="Profession" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+      </label>
+      {{#if biographyPanel.identity.canEdit}}<button type="button" class="swse-concept-btn" data-action="cmd-select-profession">Select</button>{{/if}}
+    </div>
+
+    <div class="swse-concept-action-row">
+      <label class="swse-concept-field swse-concept-field--action">
+        <span>Background</span>
+        <input type="text" name="system.event" value="{{biographyPanel.identity.background}}" placeholder="Background" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+      </label>
+      {{#if biographyPanel.identity.canEdit}}<button type="button" class="swse-concept-btn" data-action="cmd-select-background">Select</button>{{/if}}
+    </div>
+  </div>
+</section>

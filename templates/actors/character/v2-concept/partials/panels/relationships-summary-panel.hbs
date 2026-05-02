@@ -1,0 +1,12 @@
+<div class="swse-concept-card-grid swse-concept-card-grid--relationships-top">
+  <article class="swse-concept-info-card swse-concept-info-card--stat">
+    <span>Total Links</span>
+    <strong>{{conceptLayout.relationships.entries.length}}</strong>
+  </article>
+  {{#each conceptLayout.relationships.summary as |entry|}}
+    <article class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>{{entry.label}}</span>
+      <strong>{{entry.count}}</strong>
+    </article>
+  {{/each}}
+</div>

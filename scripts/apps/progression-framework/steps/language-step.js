@@ -72,7 +72,7 @@ export class LanguageStep extends ProgressionStepPlugin {
     await this._getSuggestedLanguages(shell.actor, shell);
 
     // Wire up mentor
-    shell.mentor.askMentorEnabled = true;
+    shell.mentor.askMentorEnabled = false;
   }
 
   async onDataReady(shell) {
@@ -505,7 +505,7 @@ export class LanguageStep extends ProgressionStepPlugin {
   }
 
   getMentorMode() {
-    return 'context-only';
+    return null;
   }
 
   // ---------------------------------------------------------------------------

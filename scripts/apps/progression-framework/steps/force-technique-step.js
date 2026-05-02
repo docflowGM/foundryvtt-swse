@@ -8,7 +8,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
-import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -267,9 +267,16 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   async onAskMentor(shell) {
     // If we have suggestions, use the advisory system instead of standard guidance
     if (this._suggestedTechniques && this._suggestedTechniques.length > 0) {
-      await handleAskMentorWithSuggestions(shell.actor, 'force-techniques', this._suggestedTechniques, shell, {
+      await handleAskMentorWithPicker(shell.actor, 'force-techniques', this._suggestedTechniques, shell, {
         domain: 'force-techniques',
-        archetype: 'your force technique choice'
+        archetype: 'your force technique choice',
+        stepLabel: 'Force techniques'
+      }, async (selected) => {
+        const id = selected?.id || selected?._id || selected?.techniqueId;
+        if (!id) return;
+        await this.onItemFocused(id, shell);
+        await this.onItemCommitted(id, shell);
+        shell.render();
       });
     } else {
       // Fallback to standard guidance if no suggestions
@@ -277,7 +284,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     }
   }
 
-  getMentorMode() { return 'context-only'; }
+  getMentorMode() { return 'interactive'; }
 
   // Private
 
@@ -382,7 +389,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       const characterData = this._buildCharacterDataFromShell(shell);
 
       // Get suggestions from SuggestionService
-      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+      const suggested = await SuggestionService.getSuggestions(actor, (shell?.mode || shell?.progressionSession?.mode || 'chargen'), {
         domain: 'force-techniques',
         available: this._legalTechniques,
         pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),

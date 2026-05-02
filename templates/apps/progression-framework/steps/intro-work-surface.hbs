@@ -12,19 +12,19 @@
       <div class="vent"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
       <div class="cam"></div>
       <div class="bezel-led a"></div><div class="bezel-led b"></div><div class="bezel-led c"></div><div class="bezel-led d"></div>
-      <div class="bezel-label">{{bezelLabel}}</div>
-      <div class="bezel-serial">{{bezelSerial}}</div>
-      <div class="bezel-fcc">{{bezelCertification}}</div>
-      <div class="bezel-manu">{{bezelManufacturer}}</div>
+      <div class="bezel-label intro-foreign-bezel">{{bezelLabel}}</div>
+      <div class="bezel-serial intro-foreign-bezel">{{bezelSerial}}</div>
+      <div class="bezel-fcc intro-foreign-bezel">{{bezelCertification}}</div>
+      <div class="bezel-manu intro-foreign-bezel intro-foreign-bezel--strong">{{bezelManufacturer}}</div>
 
       <div class="screen" data-role="intro-screen">
         {{#if showManufacturerCard}}
         <div class="manu-card" data-role="intro-manu-card">
-          <div class="tag">{{manufacturerTag}}</div>
+          <div class="tag intro-foreign-accent">{{manufacturerTag}}</div>
           <div class="logo">{{manufacturerLogo}}</div>
           <div class="spin"></div>
-          <div class="version">{{manufacturerVersion}}</div>
-          <div class="tag intro-subtag">{{manufacturerSubtag}}</div>
+          <div class="version intro-foreign-tech">{{manufacturerVersion}}</div>
+          <div class="tag intro-subtag intro-foreign-accent">{{manufacturerSubtag}}</div>
         </div>
         {{/if}}
 
@@ -185,7 +185,7 @@
         <div class="actions">
           <div class="hint"><kbd>SPACE</kbd> skip · <kbd>ENTER</kbd> continue · <kbd>R</kbd> replay</div>
           <div class="intro-action-row">
-            <button class="btn ghost" type="button" data-action="skip-intro">Skip Boot</button>
+            <button class="btn ghost" type="button" data-action="skip-intro">{{skipLabel}}</button>
             <button class="btn primary" type="button" data-action="next-step" {{#unless isComplete}}disabled{{/unless}}>{{continueLabel}}</button>
           </div>
         </div>
@@ -198,12 +198,12 @@
 {{!-- ========================================================================
      DROID V2 SPLASH VARIANT
      ======================================================================== --}}
-<div class="prog-intro-surface prog-intro-surface--droid-v2 swse-ui-shell {{#if isComplete}}is-complete{{/if}}">
+<div class="prog-intro-surface prog-intro-surface--droid-v2 swse-ui-shell {{#if localizedMode}}prog-intro-surface--localized{{else}}prog-intro-surface--foreign{{/if}} {{#if isComplete}}is-complete{{/if}}">
   <div class="stage">
     <div class="datapad">
       <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
-      <div class="bezel-label">{{bezelLabel}}</div>
-      <div class="bezel-serial">{{bezelSerial}}</div>
+      <div class="bezel-label intro-foreign-bezel">{{bezelLabel}}</div>
+      <div class="bezel-serial intro-foreign-bezel">{{bezelSerial}}</div>
       <div class="vent"></div>
       <div class="power-led"></div>
 
@@ -213,9 +213,9 @@
 
           <div class="hud">
             <div class="hud-left">
-              <span class="tag"><span class="dot"></span>BUS</span>
+              <span class="tag"><span class="dot"></span>{{#if localizedMode}}BUS{{else}}01000010 01010101 01010011{{/if}}</span>
               <span class="tag" data-role="boot-stage-tag"><span class="dot warn"></span>{{bootStageTag}}</span>
-              <span class="tag">BOLT · DISENGAGED</span>
+              <span class="tag">{{#if localizedMode}}BOLT · DISENGAGED{{else}}01000010 01001111 01001100 01010100 00000000 01000100 01001001 01010011 01000101 01001110 01000111 01000001 01000111 01000101 01000100{{/if}}</span>
             </div>
             <div class="hud-title">{{hudTitle}}</div>
             <div class="hud-right">
@@ -231,7 +231,7 @@
 
           <div class="boot">
             <div class="diag">
-              <div class="diag-head">Channel Diagnostics</div>
+              <div class="diag-head">{{diagTitle}}</div>
               {{#each channels}}
               <div class="channel {{stateClass}}" data-ch="{{id}}">
                 <div class="lbl">{{label}}</div>
@@ -240,12 +240,11 @@
               </div>
               {{/each}}
 
-              <div class="diag-head droid-registry-head">Chassis Registry</div>
+              <div class="diag-head droid-registry-head">{{registryTitle}}</div>
               <div class="droid-registry-card">
-                <div><span class="k">FIRM</span> <span class="v">DROID-OS 9.3.1</span></div>
-                <div><span class="k">FRAME</span> <span class="v">CX-7 BIPED</span></div>
-                <div><span class="k">DEG</span> <span class="v">1ST · AUTONOMOUS</span></div>
-                <div><span class="k">OWNER</span> <span class="v">UNASSIGNED</span></div>
+                {{#each registryMeta}}
+                <div><span class="k">{{key}}</span> <span class="v">{{value}}</span></div>
+                {{/each}}
               </div>
             </div>
 
@@ -279,7 +278,7 @@
 
               <div class="loader-block">
                 <div class="loader-row">
-                  <span>Progress</span>
+                  <span>{{loaderLabel}}</span>
                   <span class="pct" data-role="intro-progress-percent">{{progressPercent}}%</span>
                 </div>
                 <div class="loader-bar">
@@ -300,7 +299,7 @@
             </div>
 
             <div class="stream">
-              <div class="diag-head">POST Log // Stream</div>
+              <div class="diag-head">{{postLogTitle}}</div>
               <div class="log" data-role="boot-log">
                 {{#each logLines}}
                 <div class="log-line">
@@ -310,14 +309,11 @@
                 {{/each}}
               </div>
 
-              <div class="diag-head droid-process-head">Active Process</div>
+              <div class="diag-head droid-process-head">{{processTitle}}</div>
               <div class="droid-process-card">
-                <div><span class="k">pid:</span> <span class="v">0x0C0D · droid.assemble</span></div>
-                <div><span class="k">cpu:</span> <span class="v pos">12%</span></div>
-                <div><span class="k">mem:</span> <span class="v">48M / 512M</span></div>
-                <div><span class="k">pkts:</span> <span class="v">0</span></div>
-                <div><span class="k">warn:</span> <span class="v zero">0</span></div>
-                <div><span class="k">err:</span> <span class="v neg">0</span></div>
+                {{#each processMeta}}
+                <div><span class="k">{{key}}</span> <span class="v {{valueClass}}">{{value}}</span></div>
+                {{/each}}
               </div>
 
               <div class="identity {{#if showIdentity}}on{{/if}}" data-role="identity-card">
@@ -355,22 +351,18 @@
           </div>
 
           <div class="actions">
-            <div class="hint">
-              <kbd>SPACE</kbd> skip ·
-              <kbd>ENTER</kbd> continue ·
-              <kbd>R</kbd> replay
-            </div>
+            <div class="hint">{{hintLabel}}</div>
             <div class="intro-action-row">
-              <button class="btn ghost" type="button" data-action="skip-intro">Skip Boot</button>
+              <button class="btn ghost" type="button" data-action="skip-intro">{{skipLabel}}</button>
               {{#if showDroidCreationModeChoice}}
               {{!-- DROID CREATION MODE CHOICE: Custom vs Standard Model --}}
               <button class="btn primary" type="button" data-role="droid-build-custom" title="Build a custom droid from scratch" aria-label="Build a custom droid from scratch" {{#if continueDisabled}}disabled{{/if}}>
                 <i class="fas fa-wrench"></i>
-                Build Custom
+                {{buildCustomLabel}}
               </button>
               <button class="btn primary" type="button" data-role="droid-select-standard" title="Import a published standard droid model" aria-label="Import a published standard droid model" {{#if continueDisabled}}disabled{{/if}}>
                 <i class="fas fa-database"></i>
-                Select Model
+                {{selectModelLabel}}
               </button>
               {{/if}}
               {{#unless showDroidCreationModeChoice}}

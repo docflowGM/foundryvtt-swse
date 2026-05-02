@@ -1,0 +1,83 @@
+<div class="scan-v" aria-hidden="true"></div>
+<div class="corner tl" aria-hidden="true"></div>
+<div class="corner tr" aria-hidden="true"></div>
+<div class="corner bl" aria-hidden="true"></div>
+<div class="corner br" aria-hidden="true"></div>
+
+{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/hud-bar.hbs"}}
+{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/title-strip.hbs"}}
+{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/header-block.hbs"}}
+{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/resource-strip.hbs"}}
+{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/tabs-bar.hbs"}}
+
+<div class="swse-concept-body">
+  <aside class="swse-concept-sidebar">
+    {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/sidebar.hbs"}}
+  </aside>
+
+  <section class="swse-concept-main sheet-body sheet-content">
+    <section class="tab active flexcol" data-group="primary" data-tab-group="primary" data-tab="overview">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs"}}
+    </section>
+
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="abilities">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/abilities-tab.hbs"}}
+    </section>
+
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="skills">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/skills-tab.hbs"}}
+    </section>
+
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="combat">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/combat-tab.hbs"}}
+    </section>
+
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="talents">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs"}}
+    </section>
+
+    {{#if actor.system.forceSensitive}}
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="force">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-tab.hbs"}}
+    </section>
+    {{/if}}
+
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="gear">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs"}}
+    </section>
+
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="biography">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/biography-tab.hbs"}}
+    </section>
+
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="relationships">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/relationships-tab.hbs"}}
+    </section>
+  </section>
+</div>
+
+<div id="item-selection-modal" class="item-selection-modal" style="display: none;">
+  <div class="modal-overlay"></div>
+  <div class="modal-dialog">
+    <svg class="modal-frame" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet">
+      <rect x="10" y="10" width="580" height="280" fill="rgba(10, 25, 50, 0.95)" stroke="rgba(0, 255, 136, 0.3)" stroke-width="2" rx="8"/>
+      <line x1="10" y1="70" x2="590" y2="70" stroke="rgba(0, 255, 136, 0.2)" stroke-width="1"/>
+      <rect x="200" y="220" width="140" height="45" fill="none" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1" rx="4"/>
+      <rect x="360" y="220" width="140" height="45" fill="none" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1" rx="4"/>
+    </svg>
+
+    <div class="modal-content">
+      <h2 id="modal-title" class="modal-title"></h2>
+      <p id="modal-message" class="modal-message"></p>
+
+      <div class="modal-buttons">
+        <button id="modal-btn-yes" class="modal-button modal-button-yes" data-action="modal-yes">
+          Yes, Browse Compendium
+        </button>
+        <button id="modal-btn-no" class="modal-button modal-button-no" data-action="modal-no">
+          No, Create Blank
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -100,7 +100,8 @@
   height: 160px;
   pointer-events: none;
   background: linear-gradient(180deg, transparent 0%, rgba(111, 215, 255, 0.08) 42%, rgba(255,255,255,0.10) 50%, transparent 100%);
-  animation: swse-concept-scan 7s linear infinite;
+  opacity: calc(0.8 * var(--motion-enabled, 1));
+  animation: swse-concept-scan var(--motion-scan-speed, 7s) linear infinite;
 }
 
 @keyframes swse-concept-scan {
@@ -1881,5 +1882,135 @@
 @media (max-width: 1080px) {
   .swse-concept-hero {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Phase 2 concept fidelity pass ===== */
+.swse-concept-operator-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0 16px;
+  padding: 8px 12px;
+  border: 1px solid rgba(111, 215, 255, 0.14);
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(9, 17, 28, 0.82), rgba(16, 28, 42, 0.72));
+  font-family: var(--swse-font-mono, "JetBrains Mono", monospace);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.swse-concept-operator-line__label { color: var(--swse-concept-text-faint); }
+.swse-concept-operator-line__value { color: var(--swse-concept-text); }
+.swse-concept-operator-line__sep { color: color-mix(in srgb, var(--swse-accent-2, #ff6ef4) 70%, transparent); }
+
+.swse-concept-action-row {
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.swse-concept-btn {
+  background: linear-gradient(180deg, rgba(10, 20, 32, 0.92), rgba(7, 13, 21, 0.82));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 0 18px rgba(85, 175, 255, 0.08);
+}
+
+.swse-concept-command-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.swse-concept-command-chip {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(111, 215, 255, 0.16);
+  background: linear-gradient(180deg, rgba(15, 26, 41, 0.94), rgba(8, 14, 22, 0.92));
+  text-align: center;
+  font-family: var(--swse-font-display, "Orbitron", sans-serif);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--swse-concept-text);
+}
+
+.swse-concept-tab {
+  border-radius: 14px 14px 0 0;
+  background: linear-gradient(180deg, rgba(14, 26, 40, 0.9), rgba(7, 12, 20, 0.84));
+}
+
+.swse-concept-tab.active {
+  box-shadow: 0 0 22px rgba(111,215,255,0.16);
+}
+
+
+@keyframes swse-concept-text-breathe {
+  0%, 100% {
+    filter: brightness(1);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent);
+  }
+  50% {
+    filter: brightness(1.08);
+    text-shadow:
+      0 0 18px color-mix(in srgb, var(--swse-accent, #70e2ff) 32%, transparent),
+      0 0 24px color-mix(in srgb, var(--swse-accent-2, #ff6ef4) 18%, transparent);
+  }
+}
+
+@keyframes swse-concept-indicator-pulse {
+  0%, 100% {
+    opacity: 0.55;
+    transform: translateY(0);
+    box-shadow: none;
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-1px);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--swse-accent, #70e2ff) 32%, transparent);
+  }
+}
+
+.swse-sheet-v2-shell[data-motion-style="off"] .scan-v {
+  display: none;
+}
+
+.swse-concept-hud__center,
+.swse-concept-title-strip {
+  animation: swse-concept-text-breathe calc(var(--motion-breathe-speed, 4.8s) * 1.1) ease-in-out infinite;
+}
+
+.swse-concept-tag .dot,
+.swse-concept-signal span,
+.swse-concept-battery .cell:not(.empty) {
+  animation: swse-concept-indicator-pulse calc(var(--motion-tick-speed, 2.2s) * 1.15) ease-in-out infinite;
+}
+
+.swse-concept-signal span:nth-child(2) { animation-delay: 80ms; }
+.swse-concept-signal span:nth-child(3) { animation-delay: 160ms; }
+.swse-concept-signal span:nth-child(4) { animation-delay: 240ms; }
+
+.swse-sheet-v2-shell[data-motion-style="off"] .swse-concept-hud__center,
+.swse-sheet-v2-shell[data-motion-style="off"] .swse-concept-title-strip,
+.swse-sheet-v2-shell[data-motion-style="off"] .swse-concept-tag .dot,
+.swse-sheet-v2-shell[data-motion-style="off"] .swse-concept-signal span,
+.swse-sheet-v2-shell[data-motion-style="off"] .swse-concept-battery .cell {
+  animation: none !important;
+  transition: none !important;
+  filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan-v,
+  .swse-concept-hud__center,
+  .swse-concept-title-strip,
+  .swse-concept-tag .dot,
+  .swse-concept-signal span,
+  .swse-concept-battery .cell {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .scan-v {
+    display: none;
   }
 }

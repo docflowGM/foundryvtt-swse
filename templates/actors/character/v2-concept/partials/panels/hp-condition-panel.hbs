@@ -1,0 +1,68 @@
+<section class="swse-concept-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Health &amp; Conditions</h3>
+      <p class="swse-concept-panel__hint">Canonical resolution stack: shields, reduction, bonus HP, real HP, threshold, and condition track.</p>
+    </div>
+    <div class="swse-concept-ledger-row__actions">
+      <span class="swse-concept-chip swse-concept-chip--neutral">{{healthPanel.stateLabel}}</span>
+    </div>
+  </header>
+
+  <div class="swse-concept-card-grid swse-concept-card-grid--summary">
+    <label class="swse-concept-toolfield">
+      <span>Current HP</span>
+      <input type="number" name="system.hp.value" value="{{healthPanel.hp.value}}" min="0" {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
+    </label>
+    <label class="swse-concept-toolfield">
+      <span>Max HP</span>
+      <input type="number" name="system.hp.max" value="{{healthPanel.hp.max}}" min="1" {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
+    </label>
+    <label class="swse-concept-toolfield">
+      <span>Temp / Bonus HP</span>
+      <input type="number" name="system.hp.temp" value="{{healthPanel.hp.temp}}" min="0" {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
+    </label>
+    <div class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>Shield Rating</span>
+      <strong>{{healthPanel.shield.current}} / {{healthPanel.shield.max}}</strong>
+    </div>
+    <label class="swse-concept-toolfield">
+      <span>Damage Reduction</span>
+      <input type="number" name="system.damageReduction" value="{{healthPanel.damageReductionValue}}" min="0" {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
+    </label>
+    <div class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>Damage Threshold</span>
+      <strong>{{derived.damageThreshold}}</strong>
+    </div>
+  </div>
+
+  {{#if healthPanel.bonusHp.hasBonus}}
+    <div class="swse-concept-chip-row">
+      <span class="swse-concept-chip swse-concept-chip--accent">Bonus HP {{healthPanel.bonusHp.value}}</span>
+    </div>
+  {{/if}}
+
+  <div class="swse-concept-subsection">
+    <span class="swse-concept-subsection__label">Condition Track</span>
+    <div class="swse-concept-chip-row swse-concept-chip-row--wrap">
+      {{#each healthPanel.conditionSlots as |slot|}}
+        <button type="button"
+                class="swse-concept-chip {{#if slot.active}}swse-concept-chip--warn{{else}}swse-concept-chip--neutral{{/if}}"
+                data-action="set-condition-step"
+                data-step="{{slot.step}}"
+                title="{{slot.description}}"
+                {{#unless slot.canEdit}}disabled{{/unless}}>
+          {{slot.label}}
+        </button>
+      {{/each}}
+    </div>
+    <label class="swse-concept-checkpill">
+      <input type="checkbox"
+             name="system.conditionTrack.persistent"
+             data-action="toggle-condition-persistent"
+             {{#if healthPanel.conditionTrack.persistent}}checked{{/if}}
+             {{#unless healthPanel.conditionTrack.canEdit}}disabled{{/unless}}>
+      <span>Persistent Condition</span>
+    </label>
+  </div>
+</section>

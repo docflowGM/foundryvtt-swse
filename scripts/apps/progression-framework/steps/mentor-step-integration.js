@@ -37,6 +37,8 @@
 
 import { getMentorGuidance, getMentorForClass, MENTORS } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { MentorAdvisoryCoordinator } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-advisory-coordinator.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { MentorSuggestionPickerDialog } from '/systems/foundryvtt-swse/scripts/apps/mentor/mentor-suggestion-picker-dialog.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 /**
@@ -192,5 +194,65 @@ export async function handleAskMentorWithSuggestions(actor, stepId, suggestions,
     if (guidance && shell?.mentorRail) {
       await shell.mentorRail.speak(guidance, 'encouraging');
     }
+  }
+}
+
+
+function sortSuggestionsForPicker(suggestions = []) {
+  return SuggestionService.sortBySuggestion(suggestions || []).filter(entry => {
+    const tier = entry?.suggestion?.tier ?? entry?.tier ?? 0;
+    return tier > 0;
+  });
+}
+
+function humanizeStepLabel(stepId) {
+  return String(stepId || 'this step').replace(/[-_]+/g, ' ');
+}
+
+export async function handleAskMentorWithPicker(actor, stepId, suggestions, shell, context = {}, applySuggestion = null) {
+  try {
+    const rankedSuggestions = sortSuggestionsForPicker(suggestions).slice(0, context.limit ?? 5);
+    if (!rankedSuggestions.length) {
+      await handleAskMentor(actor, stepId, shell);
+      return null;
+    }
+
+    const mentor = getStepMentorObject(actor, shell);
+    if (!mentor) {
+      await handleAskMentor(actor, stepId, shell);
+      return null;
+    }
+
+    let mentorId = mentor.id || (mentor.name || '').toLowerCase().replace(/\s+/g, '_');
+    const advisory = await MentorAdvisoryCoordinator.generateSuggestionAdvisory(
+      actor,
+      mentorId,
+      rankedSuggestions,
+      {
+        stepId,
+        domain: context.domain || stepId,
+        archetype: context.archetype || 'your path',
+        relatedGrowth: context.relatedGrowth || 'future growth',
+        ...context,
+      }
+    );
+
+    const selected = await MentorSuggestionPickerDialog.show({
+      mentor,
+      advisory,
+      suggestions: rankedSuggestions,
+      stepLabel: context.stepLabel || humanizeStepLabel(stepId),
+      title: `${mentor.name || 'Mentor'}'s Top Picks`,
+    });
+
+    if (selected && typeof applySuggestion === 'function') {
+      await applySuggestion(selected);
+    }
+
+    return selected;
+  } catch (err) {
+    swseLogger.warn('[MentorStepIntegration] Error in handleAskMentorWithPicker:', err);
+    await handleAskMentor(actor, stepId, shell);
+    return null;
   }
 }

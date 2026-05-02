@@ -95,6 +95,7 @@
     "styles/progression-framework/steps/class-step.css",
     "styles/progression-framework/steps/l1-survey-step.css",
     "styles/progression-framework/steps/attribute-step.css",
+    "styles/progression-framework/steps/attribute-mentor-dialog.css",
     "styles/progression-framework/steps/background-step.css",
     "styles/progression-framework/steps/language-step.css",
     "styles/progression-framework/steps/feat-step.css",
@@ -132,12 +133,12 @@
     },
     {
       "lang": "es",
-      "name": "Espa\u00f1ol",
+      "name": "Español",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Fran\u00e7ais",
+      "name": "Français",
       "path": "lang/fr.json"
     },
     {
@@ -147,7 +148,7 @@
     },
     {
       "lang": "ru",
-      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "name": "Русский",
       "path": "lang/ru.json"
     }
   ],
@@ -601,7 +602,7 @@
       "type": "Number",
       "default": 50,
       "name": "Automatic Sale Value (%)",
-      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10\u2013100%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
       "range": {
         "min": 10,
         "max": 100,

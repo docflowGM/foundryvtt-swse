@@ -1230,3 +1230,82 @@
     align-self: auto;
   }
 }
+
+/* ===== Phase 2 concept-fidelity refinements ===== */
+.swse-home-page-kicker {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: color-mix(in oklab, var(--vapor-pink) 58%, var(--ink-faint));
+  text-transform: uppercase;
+}
+
+.swse-home-disc-caption {
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan) 28%, transparent);
+  background: linear-gradient(180deg, rgba(8, 18, 28, 0.88), rgba(8, 18, 28, 0.55));
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--vapor-cyan);
+  box-shadow: 0 0 22px color-mix(in oklab, var(--vapor-cyan) 16%, transparent);
+}
+
+.swse-home-side-card {
+  background:
+    linear-gradient(180deg, rgba(12, 22, 34, 0.92), rgba(6, 12, 20, 0.9)),
+    radial-gradient(circle at top right, color-mix(in oklab, var(--vapor-cyan) 12%, transparent), transparent 40%);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.03),
+    0 0 26px rgba(38, 145, 189, 0.08);
+}
+
+.swse-home-feed-row,
+.swse-home-glance,
+.swse-home-actor-widget {
+  backdrop-filter: blur(10px);
+}
+
+.swse-home-footer {
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+}
+
+.swse-home-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.swse-home-footer-label {
+  margin-right: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+.swse-home-nav-pill {
+  min-width: 124px;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(11, 20, 31, 0.95), rgba(10, 16, 25, 0.72));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 0 24px rgba(0, 225, 255, 0.06);
+}
+
+.swse-home-tile {
+  background:
+    linear-gradient(180deg, rgba(9, 18, 28, 0.95), rgba(8, 13, 21, 0.78)),
+    radial-gradient(circle at top, color-mix(in oklab, var(--vapor-cyan) 14%, transparent), transparent 60%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.04),
+    0 0 24px color-mix(in oklab, var(--vapor-cyan) 10%, transparent);
+}

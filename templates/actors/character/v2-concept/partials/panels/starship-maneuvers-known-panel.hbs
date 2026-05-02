@@ -1,0 +1,23 @@
+{{#if starshipManeuversPanel.entries.length}}
+<section class="swse-concept-panel swse-concept-panel--ledger">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Starship Maneuvers</h3>
+      <p class="swse-concept-panel__hint">Known vehicle or starship maneuvers exposed by the actor's derived systems.</p>
+    </div>
+  </header>
+
+  <div class="swse-concept-ledger">
+    {{#each starshipManeuversPanel.entries as |entry|}}
+      <article class="swse-concept-ledger-row">
+        <div class="swse-concept-ledger-row__main">
+          <div class="swse-concept-ledger-row__title">{{entry.name}}</div>
+          <div class="swse-concept-ledger-row__meta">
+            {{#if entry.summary}}<span>{{entry.summary}}</span>{{/if}}
+          </div>
+        </div>
+      </article>
+    {{/each}}
+  </div>
+</section>
+{{/if}}

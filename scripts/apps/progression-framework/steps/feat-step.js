@@ -25,7 +25,7 @@ import { FeatEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveClassModel, resolveSelectedClassFromShell, getClassBonusFeatsLookupKeys } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
@@ -341,11 +341,28 @@ export class FeatStep extends ProgressionStepPlugin {
       // This ensures suggestion engine understands the build-in-progress
       const characterData = this._buildCharacterDataFromShell(shell);
 
+      const mode = shell?.mode || this.descriptor?.mode || 'chargen';
+      const pendingData = SuggestionContextBuilder.buildPendingData(actor, characterData);
+      pendingData.activeSlotContext = {
+        slotKind: 'feat',
+        slotType: this._slotType,
+        classId: this._classId || null,
+        activeSlotIndex: 0,
+        domains: null
+      };
+      pendingData.classFeatLookupKeys = this._getCurrentClassLookupKeys(shell);
+      const selectedClass = characterData.classes?.[0] || shell?.committedSelections?.get?.('class') || null;
+      if (selectedClass && actor) {
+        const ledger = buildClassGrantLedger(actor, selectedClass, pendingData);
+        const merged = mergeLedgerIntoPending(pendingData, ledger);
+        Object.assign(pendingData, merged);
+      }
+
       // Get suggestions from SuggestionService
-      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+      const suggested = await SuggestionService.getSuggestions(actor, mode, {
         domain: 'feats',
         available: availableFeats,
-        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        pendingData,
         engineOptions: { includeFutureAvailability: true },
         persist: true
       });
@@ -897,6 +914,20 @@ export class FeatStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
+    if (this._suggestedFeats?.length) {
+      await handleAskMentorWithPicker(shell.actor, 'general-feat', this._suggestedFeats, shell, {
+        domain: 'feats',
+        archetype: 'your feat choice',
+        stepLabel: 'feats'
+      }, async (selected) => {
+        const item = selected?.id || selected?._id ? selected : (selected?.name ? selected : null);
+        if (!item) return;
+        await this.onItemFocused(item);
+        await this.onItemCommitted(item, shell);
+        shell.render();
+      });
+      return;
+    }
     await handleAskMentor(shell.actor, 'general-feat', shell);
   }
 
@@ -917,7 +948,7 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   getMentorMode() {
-    return 'context-only';
+    return 'interactive';
   }
 
   // ---------------------------------------------------------------------------

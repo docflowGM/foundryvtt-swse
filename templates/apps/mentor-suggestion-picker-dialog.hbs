@@ -1,0 +1,90 @@
+<div class="mentor-suggestion-picker">
+  <div class="mentor-suggestion-picker__header">
+    <div class="mentor-suggestion-picker__mentor">
+      <div class="mentor-suggestion-picker__portrait-wrap">
+        <img class="mentor-suggestion-picker__portrait"
+             src="{{mentor.portrait}}"
+             alt="{{mentor.name}}"
+             onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.png';" />
+      </div>
+      <div class="mentor-suggestion-picker__identity">
+        <div class="mentor-suggestion-picker__name">{{mentor.name}}</div>
+        <div class="mentor-suggestion-picker__title">{{mentor.title}}</div>
+        <div class="mentor-suggestion-picker__step">Top picks for {{stepLabel}}</div>
+      </div>
+    </div>
+
+    <button class="prog-btn mentor-suggestion-picker__close" data-action="dismiss" type="button">
+      Close
+    </button>
+  </div>
+
+  {{#if advisory}}
+  <div class="mentor-suggestion-picker__advisory">
+    <p>{{advisory.observation}} {{advisory.impact}} {{advisory.guidance}}</p>
+  </div>
+  {{/if}}
+
+  {{#if hasSuggestions}}
+  <div class="mentor-suggestion-picker__list">
+    {{#each suggestions}}
+    <article class="mentor-suggestion-picker__item" data-index="{{index}}">
+      <div class="mentor-suggestion-picker__item-main">
+        <div class="mentor-suggestion-picker__rank">{{rank}}</div>
+        <div class="mentor-suggestion-picker__text">
+          <div class="mentor-suggestion-picker__item-title-row">
+            <h3 class="mentor-suggestion-picker__item-title">{{name}}</h3>
+            {{#if tierLabel}}<span class="mentor-suggestion-picker__tier">{{tierLabel}}</span>{{/if}}
+          </div>
+          {{#if reasonSummary}}
+          <p class="mentor-suggestion-picker__summary">{{reasonSummary}}</p>
+          {{/if}}
+        </div>
+        <button class="prog-btn mentor-suggestion-picker__choose" data-action="choose-suggestion" data-index="{{index}}" type="button">
+          Choose
+        </button>
+      </div>
+
+      <div class="mentor-suggestion-picker__rollover">
+        {{#if bullets.length}}
+        <div class="mentor-suggestion-picker__section">
+          <div class="mentor-suggestion-picker__section-label">Why your mentor likes it</div>
+          <ul>
+            {{#each bullets}}
+            <li>{{this}}</li>
+            {{/each}}
+          </ul>
+        </div>
+        {{/if}}
+
+        {{#if cautions.length}}
+        <div class="mentor-suggestion-picker__section mentor-suggestion-picker__section--caution">
+          <div class="mentor-suggestion-picker__section-label">Cautions</div>
+          <ul>
+            {{#each cautions}}
+            <li>{{this}}</li>
+            {{/each}}
+          </ul>
+        </div>
+        {{/if}}
+
+        {{#if forecast.length}}
+        <div class="mentor-suggestion-picker__section mentor-suggestion-picker__section--forecast">
+          <div class="mentor-suggestion-picker__section-label">Forecast</div>
+          <ul>
+            {{#each forecast}}
+            <li>{{this}}</li>
+            {{/each}}
+          </ul>
+        </div>
+        {{/if}}
+      </div>
+    </article>
+    {{/each}}
+  </div>
+  {{else}}
+  <div class="mentor-suggestion-picker__empty">
+    <p>Your mentor does not have a strong ranked recommendation here yet. You can still choose freely.</p>
+  </div>
+  {{/if}}
+</div>

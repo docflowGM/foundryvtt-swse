@@ -353,7 +353,7 @@ export function buildActorSheetThemeStyle(themeKey) {
 
   const styles = [];
 
-  // Add color tokens
+  // Add canonical shell tokens
   if (entry.tokens) {
     Object.entries(entry.tokens).forEach(([k, v]) => {
       styles.push(`${k}: ${v}`);
@@ -366,6 +366,35 @@ export function buildActorSheetThemeStyle(themeKey) {
       styles.push(`${k}: ${v}`);
     });
   }
+
+  // Add compatibility aliases used by the concept sheet and shared UI surfaces.
+  // This keeps the theme registry as the single authority while allowing newer
+  // concept surfaces to consume the same palette without hard-coding per-theme CSS.
+  styles.push(
+    '--swse-primary: var(--vapor-cyan)',
+    '--swse-secondary: var(--vapor-pink)',
+    '--swse-accent: var(--vapor-cyan)',
+    '--swse-accent-2: var(--vapor-pink)',
+    '--swse-accent-soft: color-mix(in oklch, var(--vapor-cyan) 24%, transparent)',
+    '--swse-bg-dark: var(--screen)',
+    '--swse-bg-mid: var(--screen-2)',
+    '--swse-bg-light: color-mix(in oklch, var(--screen-2) 78%, white 6%)',
+    '--swse-surface-1: var(--screen)',
+    '--swse-surface-2: var(--screen-2)',
+    '--swse-surface-3: color-mix(in oklch, var(--screen-2) 86%, white 8%)',
+    '--swse-text: var(--ink-dim)',
+    '--swse-text-strong: var(--ink)',
+    '--swse-text-primary: var(--ink)',
+    '--swse-text-secondary: var(--ink-dim)',
+    '--swse-text-light: var(--ink)',
+    '--swse-text-muted: color-mix(in oklch, var(--ink-dim) 64%, transparent)',
+    '--swse-border-default: color-mix(in oklch, var(--vapor-cyan) 28%, transparent)',
+    '--swse-border-active: color-mix(in oklch, var(--vapor-cyan) 54%, transparent)',
+    '--swse-border-hover: color-mix(in oklch, var(--vapor-pink) 46%, transparent)',
+    '--swse-border-subtle: color-mix(in oklch, var(--ink-dim) 24%, transparent)',
+    '--swse-shadow-glow-cyan: 0 0 14px color-mix(in oklch, var(--vapor-cyan) 42%, transparent)',
+    '--swse-shadow-glow-blue: 0 0 22px color-mix(in oklch, var(--vapor-pink) 30%, transparent)'
+  );
 
   return styles.join('; ');
 }

@@ -1,0 +1,41 @@
+<div class="swse-concept-card-grid swse-concept-card-grid--force-top">
+  {{#each conceptLayout.force.metrics as |metric|}}
+    <article class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>{{metric.label}}</span>
+      <strong>{{metric.value}}</strong>
+    </article>
+  {{/each}}
+</div>
+
+<section class="swse-concept-panel force-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Force Suite</h3>
+      <p class="swse-concept-panel__hint">Known powers, discard state, and advanced Force techniques in a single dossier lane.</p>
+    </div>
+    <div class="swse-concept-ledger-row__actions swse-concept-force-toolbar">
+      {{#if conceptLayout.force.constructionAvailable}}
+        <button type="button" class="swse-concept-btn" data-action="construct-lightsaber">
+          {{#if conceptLayout.force.constructionDeferred}}Construct Lightsaber{{else}}Lightsaber Ready{{/if}}
+        </button>
+      {{/if}}
+      <label class="swse-concept-toolfield swse-concept-toolfield--compact">
+        <span>Sort</span>
+        <select data-action="force-sort">
+          <option value="name">Name</option>
+          <option value="tag">Tag</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  {{#if conceptLayout.force.tags.length}}
+    <div class="swse-concept-chip-row swse-concept-chip-row--force-filters">
+      {{#each conceptLayout.force.tags as |tag|}}
+        <button type="button" class="force-tag-filter swse-concept-chip swse-concept-chip--neutral" data-action="force-tag-filter" data-tag="{{tag}}">{{tag}}</button>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-powers-known-panel.hbs"}}
+</section>

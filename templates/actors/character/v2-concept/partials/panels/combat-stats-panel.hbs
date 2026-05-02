@@ -1,0 +1,8 @@
+<div class="swse-concept-metric-row swse-concept-metric-row--combat">
+  {{#each conceptLayout.combat.telemetry as |metric|}}
+    <div class="swse-concept-metric-card swse-concept-metric-card--combat">
+      <span>{{metric.label}}</span>
+      <strong class="{{metric.valueClass}}">{{numberFormat metric.value decimals=0 sign=true}}{{metric.suffix}}</strong>
+    </div>
+  {{/each}}
+</div>

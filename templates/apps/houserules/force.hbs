@@ -23,6 +23,22 @@
           <strong>Charisma:</strong> Alternative rule. Force users project their will through personality and presence.
         </p>
       </div>
+
+
+      <div class="form-group">
+        <label>Use the Force Attribute</label>
+        <select name="useTheForceAttribute">
+          <option value="charisma" {{#if (eq useTheForceAttribute "charisma")}}selected{{/if}}>
+            Charisma (Standard) - Force use keyed to presence and will
+          </option>
+          <option value="wisdom" {{#if (eq useTheForceAttribute "wisdom")}}selected{{/if}}>
+            Wisdom - Force use keyed to attunement and insight
+          </option>
+        </select>
+        <p class="notes">
+          This affects Use the Force checks and any suggestion logic that evaluates Force execution strength.
+        </p>
+      </div>
     </div>
     
     <div class="tab" data-group="primary-tabs" data-swse-tab="talents">

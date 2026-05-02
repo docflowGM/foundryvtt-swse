@@ -13,7 +13,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { BackgroundRegistry } from '/systems/foundryvtt-swse/scripts/registries/background-registry.js';
 import { normalizeBackground } from './step-normalizers.js';
-import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
@@ -375,9 +375,15 @@ getUtilityBarConfig() {
   async onAskMentor(shell) {
     // If we have suggestions, use the advisory system instead of standard guidance
     if (this._suggestedBackgrounds && this._suggestedBackgrounds.length > 0) {
-      await handleAskMentorWithSuggestions(shell.actor, 'background', this._suggestedBackgrounds, shell, {
+      await handleAskMentorWithPicker(shell.actor, 'background', this._suggestedBackgrounds, shell, {
         domain: 'backgrounds',
-        archetype: 'your background'
+        archetype: 'your background',
+        stepLabel: 'backgrounds'
+      }, async (selected) => {
+        const id = selected?.id || selected?._id || selected?.backgroundId;
+        if (!id) return;
+        await this.onItemCommitted(id, shell);
+        shell.render();
       });
     } else {
       // Fallback to standard guidance if no suggestions
@@ -407,7 +413,7 @@ getUtilityBarConfig() {
   }
 
   getMentorMode() {
-    return 'context-only';
+    return 'interactive';
   }
 
   // ---------------------------------------------------------------------------

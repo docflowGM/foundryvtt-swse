@@ -1,0 +1,52 @@
+<section class="swse-concept-panel swse-concept-panel--ledger">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Attack Ledger</h3>
+      <p class="swse-concept-panel__hint">Use current attacks without leaving the dossier shell.</p>
+    </div>
+  </header>
+
+  {{#if conceptLayout.combat.attacks.length}}
+    <div class="swse-concept-ledger">
+      {{#each conceptLayout.combat.attacks as |attack|}}
+        <article class="swse-concept-ledger-row swse-concept-ledger-row--attack" data-attack-id="{{attack.id}}">
+          <div class="swse-concept-ledger-row__main">
+            <div class="swse-concept-ledger-row__title">{{attack.name}}</div>
+            <div class="swse-concept-ledger-row__meta">
+              {{#if attack.weaponName}}<span>{{attack.weaponName}}</span>{{/if}}
+              {{#if attack.weaponType}}<span>{{attack.weaponType}}</span>{{/if}}
+              {{#each attack.tags as |tag|}}<span>{{tag}}</span>{{/each}}
+            </div>
+          </div>
+
+          <div class="swse-concept-ledger-row__stats">
+            <div>
+              <span>To Hit</span>
+              <strong class="{{attack.attackTotalClass}}">{{numberFormat attack.attackTotal decimals=0 sign=true}}</strong>
+            </div>
+            <div>
+              <span>Damage</span>
+              <strong>{{attack.damageFormula}}</strong>
+            </div>
+            <div>
+              <span>Crit</span>
+              <strong>{{attack.critRange}}x{{attack.critMult}}</strong>
+            </div>
+          </div>
+
+          <div class="swse-concept-ledger-row__actions">
+            <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="roll-attack" data-weapon-id="{{attack.weaponId}}">Roll</button>
+            {{#if attack.weaponId}}
+              <button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{attack.weaponId}}">Inspect</button>
+            {{/if}}
+          </div>
+        </article>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="swse-concept-empty-state">
+      <span class="swse-concept-empty-state__eyebrow">No attacks available</span>
+      <strong>Equip a weapon in Gear to populate attack telemetry here.</strong>
+    </div>
+  {{/if}}
+</section>

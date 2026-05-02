@@ -259,6 +259,9 @@ export class ProgressionSession {
       background: this.draftSelections.background,
       languages: this.draftSelections.languages || [],
       forcePowers: this.draftSelections.forcePowers || [],
+      forceTechniques: this.draftSelections.forceTechniques || [],
+      forceSecrets: this.draftSelections.forceSecrets || [],
+      survey: this.draftSelections.survey || null,
     };
   }
 

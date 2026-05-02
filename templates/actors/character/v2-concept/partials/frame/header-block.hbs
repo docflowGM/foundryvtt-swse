@@ -57,6 +57,15 @@
       </div>
     </div>
 
+    <div class="swse-concept-operator-line">
+      <span class="swse-concept-operator-line__label">Operator Status</span>
+      <span class="swse-concept-operator-line__value">{{conceptLayout.summary.readinessLabel}}</span>
+      <span class="swse-concept-operator-line__sep">//</span>
+      <span class="swse-concept-operator-line__value">{{conceptLayout.identity.alignment}}</span>
+      <span class="swse-concept-operator-line__sep">//</span>
+      <span class="swse-concept-operator-line__value">{{conceptLayout.identity.destiny}}</span>
+    </div>
+
     <div class="swse-concept-action-row">
       {{#if isLevel0}}
         <button type="button" data-action="cmd-chargen" class="swse-concept-btn swse-concept-btn--primary">Chargen</button>
@@ -107,6 +116,13 @@
         <span class="swse-concept-stat-card__label">Destiny</span>
         <strong>{{destinyPointsValue}} / {{destinyPointsMax}}</strong>
       </div>
+    </div>
+
+    <div class="swse-concept-command-strip">
+      <div class="swse-concept-command-chip">HP {{hpData.value}} / {{hpData.max}}</div>
+      <div class="swse-concept-command-chip">CT {{conditionData.currentLabel}}</div>
+      <div class="swse-concept-command-chip">Init {{derived.initiative.total}}</div>
+      <div class="swse-concept-command-chip">Speed {{derived.speed.value}}</div>
     </div>
 
     <div class="swse-concept-defense-strip">

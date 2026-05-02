@@ -1,0 +1,50 @@
+<section class="swse-concept-panel swse-concept-panel--subledger">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Action Economy</h3>
+      <p class="swse-concept-panel__hint">Live turn-state telemetry from the combat action engine.</p>
+    </div>
+  </header>
+
+  {{#if actionEconomy}}
+    <div class="swse-concept-action-economy">
+      <div class="swse-concept-action-economy__nodes">
+        <article class="swse-concept-action-node swse-concept-action-node--{{actionEconomy.state.full}}">
+          <span>Full Round</span>
+          <strong>{{actionEconomy.state.full}}</strong>
+        </article>
+        <article class="swse-concept-action-node swse-concept-action-node--{{actionEconomy.state.standard}}">
+          <span>Standard</span>
+          <strong>{{actionEconomy.state.standard}}</strong>
+        </article>
+        <article class="swse-concept-action-node swse-concept-action-node--{{actionEconomy.state.move}}">
+          <span>Move</span>
+          <strong>{{actionEconomy.state.move}}</strong>
+        </article>
+        <article class="swse-concept-action-node swse-concept-action-node--{{actionEconomy.state.swift}}">
+          <span>Swift</span>
+          <strong>{{actionEconomy.state.swift}}</strong>
+        </article>
+      </div>
+
+      <div class="swse-concept-chip-row">
+        <span class="swse-concept-chip swse-concept-chip--neutral">Mode {{actionEconomy.enforcementMode}}</span>
+      </div>
+
+      <div class="swse-concept-list-stack">
+        {{#each actionEconomy.breakdown as |line|}}
+          <article class="swse-concept-simple-row swse-concept-simple-row--compact">
+            <div class="swse-concept-simple-row__copy">
+              <strong>{{line}}</strong>
+            </div>
+          </article>
+        {{/each}}
+      </div>
+    </div>
+  {{else}}
+    <div class="swse-concept-empty-state">
+      <span class="swse-concept-empty-state__eyebrow">No active encounter</span>
+      <strong>Action economy appears when this actor is in the current combat tracker.</strong>
+    </div>
+  {{/if}}
+</section>

@@ -1,0 +1,55 @@
+<section class="swse-concept-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Action Economy</h3>
+      <p class="swse-concept-panel__hint">Condensed action browser grouped by economy bucket.</p>
+    </div>
+  </header>
+
+  {{#if conceptLayout.combat.actionGroups.length}}
+    <div class="swse-concept-action-groups">
+      {{#each conceptLayout.combat.actionGroups as |group|}}
+        <article class="swse-concept-action-group">
+          <div class="swse-concept-action-group__header">
+            <strong>{{group.label}}</strong>
+            <span>{{group.count}}</span>
+          </div>
+
+          {{#each group.subgroups as |subgroup|}}
+            <div class="swse-concept-action-subgroup">
+              <div class="swse-concept-action-subgroup__header">
+                <span>{{subgroup.label}}</span>
+                <span>{{subgroup.count}}</span>
+              </div>
+              <div class="swse-concept-action-list">
+                {{#each subgroup.items as |item|}}
+                  <div class="swse-concept-action-row">
+                    <div class="swse-concept-action-row__copy">
+                      <strong>{{item.name}}</strong>
+                      <small>{{item.sourceName}}</small>
+                    </div>
+                    <div class="swse-concept-action-row__actions">
+                      {{#if item.itemId}}
+                        <button type="button" class="swse-concept-iconbtn" data-action="open-item" data-item-id="{{item.itemId}}" title="Inspect source item">
+                          <i class="fa-solid fa-up-right-from-square"></i>
+                        </button>
+                      {{/if}}
+                      {{#if item.executable}}
+                        <button type="button" class="swse-concept-btn" data-action="swse-v2-use-action" data-action-id="{{item.key}}">{{item.useLabel}}</button>
+                      {{/if}}
+                    </div>
+                  </div>
+                {{/each}}
+              </div>
+            </div>
+          {{/each}}
+        </article>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="swse-concept-empty-state">
+      <span class="swse-concept-empty-state__eyebrow">No action cards</span>
+      <strong>This actor does not currently expose any executable action groups.</strong>
+    </div>
+  {{/if}}
+</section>

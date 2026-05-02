@@ -1,0 +1,29 @@
+<section class="swse-concept-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Experience Track</h3>
+      <p class="swse-concept-panel__hint">Live advancement telemetry from the XP engine.</p>
+    </div>
+    <div class="swse-concept-ledger-row__actions">
+      <span class="swse-concept-chip swse-concept-chip--{{#if xpLevelReady}}ok{{else}}neutral{{/if}}">{{#if xpLevelReady}}Level Ready{{else}}{{xpData.percentRounded}}%{{/if}}</span>
+    </div>
+  </header>
+
+  <div class="swse-concept-level-block">
+    <div class="swse-concept-level-row">
+      <strong class="swse-concept-level-num">{{conceptLayout.identity.level}}</strong>
+      <div class="swse-concept-level-stack">
+        <span class="lbl">Class Track</span>
+        <span class="class">{{conceptLayout.identity.classDisplay}}</span>
+        <span class="half">Half Level {{derived.identity.halfLevel}}</span>
+      </div>
+    </div>
+    <div class="swse-concept-xp-bar">
+      <span class="swse-concept-xp-fill" style="width: {{xpData.percentRounded}}%;"></span>
+    </div>
+    <div class="swse-concept-xp-text">
+      <span>{{xpData.total}} XP</span>
+      <span>{{#if xpLevelReady}}Promotion Ready{{else}}{{xpData.percentRounded}}% to next level{{/if}}</span>
+    </div>
+  </div>
+</section>

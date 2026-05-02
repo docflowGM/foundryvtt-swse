@@ -1,0 +1,52 @@
+<section class="swse-concept-panel swse-concept-panel--ledger">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Relationship Network</h3>
+      <p class="swse-concept-panel__hint">Linked contacts, followers, assets, and companions kept on the actor dossier.</p>
+    </div>
+    {{#if conceptLayout.relationships.canAdd}}
+      <button type="button" class="swse-concept-btn" data-action="build-follower">Add Relationship</button>
+    {{/if}}
+  </header>
+
+  {{#if conceptLayout.relationships.entries.length}}
+    <div class="swse-concept-relationship-grid">
+      {{#each conceptLayout.relationships.entries as |entry|}}
+        <article class="swse-concept-relationship-card swse-concept-relationship-card--{{entry.typeKey}}" data-uuid="{{entry.uuid}}">
+          <div class="swse-concept-relationship-card__media">
+            <img src="{{entry.img}}" alt="{{entry.name}}">
+          </div>
+          <div class="swse-concept-relationship-card__copy">
+            <div class="swse-concept-relationship-card__topline">
+              <strong>{{entry.name}}</strong>
+              <span class="swse-concept-chip swse-concept-chip--neutral">{{entry.typeLabel}}</span>
+            </div>
+            {{#if entry.notes}}
+              <p>{{entry.notes}}</p>
+            {{else}}
+              <p>No relationship notes recorded yet.</p>
+            {{/if}}
+          </div>
+        </article>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="swse-concept-empty-state">
+      <span class="swse-concept-empty-state__eyebrow">No linked actors</span>
+      <strong>Drop actors onto the sheet or use Add Relationship to populate this network.</strong>
+    </div>
+  {{/if}}
+</section>
+
+<section class="swse-concept-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Relationship Notes</h3>
+      <p class="swse-concept-panel__hint">Campaign-facing notes about loyalties, debts, rivalries, and obligations.</p>
+    </div>
+  </header>
+
+  <textarea name="flags.swse.character.relationshipNotes"
+            class="swse-concept-textarea swse-concept-textarea--lg"
+            placeholder="Alliance notes, patron details, rivalries, contact procedures...">{{flags.swse.character.relationshipNotes}}</textarea>
+</section>

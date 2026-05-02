@@ -114,6 +114,7 @@ export function extractSurveyIntentTags(surveyAnswers) {
     prestigeClassWeights: {},
     attributeBiasWeights: {},
     backgroundBias: [],
+    backgroundBiasWeights: {},
     detailTags: []
   };
 
@@ -122,7 +123,7 @@ export function extractSurveyIntentTags(surveyAnswers) {
     addWeightedMap(out.featBiasWeights, answer?.biases?.featBias || [], null, 1);
     addWeightedMap(out.talentBiasWeights, answer?.biases?.talentBias || [], null, 1);
     addWeightedMap(out.prestigeClassWeights, answer?.biases?.prestigeBias || [], null, 1);
-    addWeightedMap(out.backgroundBias, answer?.biases?.backgroundBias || [], null, 1);
+    addWeightedMap(out.backgroundBiasWeights, answer?.biases?.backgroundBias || [], null, 1);
 
     for (const [key, value] of Object.entries(answer?.biasLayers?.attributeBias || {})) {
       out.attributeBiasWeights[key] = (out.attributeBiasWeights[key] || 0) + Number(value || 0);
@@ -137,7 +138,9 @@ export function extractSurveyIntentTags(surveyAnswers) {
   out.featBias = Object.entries(out.featBiasWeights).sort((a,b)=>b[1]-a[1]).map(([key]) => key);
   out.talentBias = Object.entries(out.talentBiasWeights).sort((a,b)=>b[1]-a[1]).map(([key]) => key);
   out.prestigeClassTargets = Object.entries(out.prestigeClassWeights).sort((a,b)=>b[1]-a[1]).map(([key]) => key);
-  out.backgroundBias = Array.isArray(out.backgroundBias) ? out.backgroundBias : Object.keys(out.backgroundBias || {});
+  out.backgroundBias = Object.entries(out.backgroundBiasWeights)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([key]) => key);
 
   if (out.prestigeClassTargets.length) {
     out.prestigeClassTarget = out.prestigeClassTargets[0];

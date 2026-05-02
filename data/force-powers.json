@@ -6,9 +6,26 @@
     "description": "You channel the Force to heal injuries and restore vitality. The target recovers hit points based on your Use the Force check result.",
     "actionType": "action",
     "tags": [
+      "ability_con",
+      "durability",
       "Force",
+      "force",
+      "force-defense",
+      "force-support",
+      "force_defense",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "force_support",
+      "Healing",
+      "healing",
+      "hit_points",
+      "medicine",
+      "skill_use_the_force",
+      "support",
+      "use_the_force",
       "Vital",
-      "Healing"
+      "vital"
     ],
     "usage": {
       "charges": 0,
@@ -60,9 +77,16 @@
     "description": "You peer through the Force to see distant locations or events. You can observe a place you've been before or a person you know, regardless of distance.",
     "actionType": "extended",
     "tags": [
+      "activated",
       "Force",
+      "force",
+      "force_power",
+      "gateway",
       "Mind-Affecting",
-      "Scrying"
+      "mind_affecting",
+      "prereq_force_disciple",
+      "Scrying",
+      "scrying"
     ],
     "usage": {
       "charges": 0,
@@ -93,9 +117,21 @@
     "description": "You unleash devastating arcs of Force Lightning from your fingertips. The target takes lightning damage based on your Use the Force check result.",
     "actionType": "action",
     "tags": [
-      "Force",
       "Dark Side",
-      "Force Lightning"
+      "dark-side",
+      "dark_side",
+      "Force",
+      "force",
+      "Force Lightning",
+      "force-offense",
+      "force_execution",
+      "force_lightning",
+      "force_offense",
+      "force_power",
+      "force_power_check",
+      "offense_ranged",
+      "skill_use_the_force",
+      "use_the_force"
     ],
     "usage": {
       "charges": 0,
@@ -147,8 +183,19 @@
     "description": "You bend light and perceptions around yourself, becoming invisible. You gain total concealment and a +10 bonus to Stealth checks.",
     "actionType": "action",
     "tags": [
+      "ability_dex",
+      "concealment",
+      "cover",
+      "defense",
       "Force",
-      "Mind-Affecting"
+      "force",
+      "force_power",
+      "Mind-Affecting",
+      "mind_affecting",
+      "positioning",
+      "skill_stealth",
+      "skirmisher",
+      "stealth"
     ],
     "usage": {
       "charges": 0,
@@ -179,8 +226,18 @@
     "description": "You use telekinetic force to wrench a weapon or object from your target's grasp. Make a Use the Force check opposed by the target's Strength check or Will Defense (whichever is higher).",
     "actionType": "action",
     "tags": [
+      "ability_wis",
+      "defense",
       "Force",
-      "Telekinetic"
+      "force",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "skill_use_the_force",
+      "Telekinetic",
+      "telekinetic",
+      "use_the_force",
+      "will"
     ],
     "usage": {
       "charges": 0,
@@ -212,8 +269,24 @@
     "description": "You use the Force to push your body beyond normal limits. You gain an additional move action this turn.",
     "actionType": "free",
     "tags": [
+      "controller",
       "Force",
-      "Vital"
+      "force",
+      "force-control",
+      "force_control",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "mobility",
+      "move_action",
+      "multiplier",
+      "new_action",
+      "positioning",
+      "scaling",
+      "skill_use_the_force",
+      "use_the_force",
+      "Vital",
+      "vital"
     ],
     "usage": {
       "charges": 0,
@@ -244,8 +317,15 @@
     "description": "You place a Force 'mark' on your target, allowing you to track them through the Force. You always know the target's direction and approximate distance for the duration.",
     "actionType": "extended",
     "tags": [
+      "ability_wis",
+      "awareness",
       "Force",
-      "Mind-Affecting"
+      "force",
+      "force_power",
+      "Mind-Affecting",
+      "mind_affecting",
+      "skill_survival",
+      "utility"
     ],
     "usage": {
       "charges": 0,
@@ -276,8 +356,21 @@
     "description": "You move objects or creatures through the air using telekinesis. The maximum size/weight you can move depends on your Use the Force check result.",
     "actionType": "action",
     "tags": [
+      "activated",
+      "controller",
       "Force",
-      "Telekinetic"
+      "force",
+      "force-control",
+      "force_control",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "mobility",
+      "positioning",
+      "skill_use_the_force",
+      "Telekinetic",
+      "telekinetic",
+      "use_the_force"
     ],
     "usage": {
       "charges": 0,
@@ -334,8 +427,16 @@
     "description": "You overwhelm a Force user with a powerful Force presence. If the target is Force-sensitive, they must make a Will save (DC = your UTF check) or be dazed for 1 round.",
     "actionType": "action",
     "tags": [
+      "ability_wis",
       "Force",
-      "Mind-Affecting"
+      "force",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "Mind-Affecting",
+      "mind_affecting",
+      "use_the_force",
+      "will"
     ],
     "usage": {
       "charges": 0,
@@ -366,8 +467,13 @@
     "description": "You use telekinetic force to violently slam your target against a surface. The target takes 4d6 damage and is knocked prone.",
     "actionType": "action",
     "tags": [
+      "control",
+      "debuff",
       "Force",
-      "Telekinetic"
+      "force",
+      "force_power",
+      "Telekinetic",
+      "telekinetic"
     ],
     "usage": {
       "charges": 0,
@@ -398,8 +504,23 @@
     "description": "You use the Force to deflect an incoming attack. You gain a +5 Force bonus to your Reflex Defense against one attack.",
     "actionType": "reaction",
     "tags": [
+      "ability_dex",
+      "action-economy",
+      "action_economy",
+      "defense",
+      "deflect",
       "Force",
-      "Telekinetic"
+      "force",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "new_action",
+      "reaction",
+      "reflex",
+      "skill_use_the_force",
+      "Telekinetic",
+      "telekinetic",
+      "use_the_force"
     ],
     "usage": {
       "charges": 0,
@@ -430,9 +551,26 @@
     "description": "You unleash a Force-amplified scream that can shatter objects and stun enemies. All creatures in the area must make a Fortitude save (DC = your Use the Force check) or be stunned for 1 round.",
     "actionType": "action",
     "tags": [
-      "Force",
+      "ability_con",
+      "area_effect",
+      "control",
+      "controller",
       "Dark Side",
-      "Sonic"
+      "dark-side",
+      "dark_side",
+      "debuff",
+      "Force",
+      "force",
+      "force-control",
+      "force_control",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "fortitude",
+      "skill_use_the_force",
+      "Sonic",
+      "sonic",
+      "use_the_force"
     ],
     "usage": {
       "charges": 0,
@@ -463,10 +601,21 @@
     "description": "You disrupt your target's inner ear and equilibrium through the Force. The target must make a Fortitude save (DC = your UTF check) or become nauseated for the duration.",
     "actionType": "action",
     "tags": [
+      "ability_con",
       "Force",
-      "Vital",
+      "force",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "fortitude",
+      "Light Side",
+      "light-side",
+      "light_side",
       "Mind-Affecting",
-      "Light Side"
+      "mind_affecting",
+      "use_the_force",
+      "Vital",
+      "vital"
     ],
     "usage": {
       "charges": 0,
@@ -497,9 +646,21 @@
     "description": "You bolster the morale and combat effectiveness of your allies through the Force. All allies within range gain a +2 morale bonus to attack rolls, damage rolls, and Will Defense.",
     "actionType": "action",
     "tags": [
+      "ability_wis",
+      "accuracy",
+      "ally_support",
+      "defense",
       "Force",
+      "force",
+      "force_power",
+      "Light Side",
+      "light-side",
+      "light_side",
       "Mind-Affecting",
-      "Light Side"
+      "mind_affecting",
+      "support",
+      "sustained_damage",
+      "will"
     ],
     "usage": {
       "charges": 0,
@@ -530,8 +691,15 @@
     "description": "You imbue a weapon with the Force, allowing it to bypass damage reduction and strike incorporeal creatures normally.",
     "actionType": "free",
     "tags": [
+      "damage-reduction",
+      "damage_reduction",
+      "defense",
+      "durability",
       "Force",
-      "Telekinetic"
+      "force",
+      "force_power",
+      "Telekinetic",
+      "telekinetic"
     ],
     "usage": {
       "charges": 0,
@@ -562,9 +730,21 @@
     "description": "You drain the life force from your target, transferring their vitality to yourself. The target takes damage and you heal an equal amount.",
     "actionType": "action",
     "tags": [
-      "Force",
       "Dark Side",
-      "Life Drain"
+      "dark-side",
+      "dark_side",
+      "Force",
+      "force",
+      "force-defense",
+      "force-support",
+      "force_defense",
+      "force_power",
+      "force_support",
+      "healing",
+      "Life Drain",
+      "life_drain",
+      "medicine",
+      "support"
     ],
     "usage": {
       "charges": 0,
@@ -616,8 +796,22 @@
     "description": "You use the Force to overwhelm your target's mind, stunning them. The target must make a Will save (DC = your UTF check) or be stunned for 1 round.",
     "actionType": "action",
     "tags": [
+      "ability_wis",
+      "control",
+      "controller",
+      "debuff",
       "Force",
-      "Mind-Affecting"
+      "force",
+      "force-control",
+      "force_control",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "Mind-Affecting",
+      "mind_affecting",
+      "skill_use_the_force",
+      "use_the_force",
+      "will"
     ],
     "usage": {
       "charges": 0,
@@ -648,9 +842,14 @@
     "description": "You temporarily sever your target's connection to the Force. The target cannot use Force Powers or Force Talents for the duration.",
     "actionType": "action",
     "tags": [
-      "Force",
       "Dark Side",
-      "Force Drain"
+      "dark-side",
+      "dark_side",
+      "Force",
+      "force",
+      "Force Drain",
+      "force_drain",
+      "force_power"
     ],
     "usage": {
       "charges": 0,
@@ -681,10 +880,26 @@
     "description": "You create a massive Force storm of lightning and violent energy. All creatures in the area take 10d6 lightning damage each round (Reflex half, DC = your UTF check).",
     "actionType": "action",
     "tags": [
-      "Force",
+      "ability_dex",
+      "Area",
+      "area",
+      "area_effect",
+      "controller",
       "Dark Side",
+      "dark-side",
+      "dark_side",
+      "Force",
+      "force",
       "Force Lightning",
-      "Area"
+      "force-offense",
+      "force_execution",
+      "force_lightning",
+      "force_offense",
+      "force_power",
+      "force_power_check",
+      "offense_ranged",
+      "reflex",
+      "use_the_force"
     ],
     "usage": {
       "charges": 0,
@@ -731,9 +946,14 @@
     "description": "You permanently sever a Force user's connection to the Force. The target loses all Force abilities permanently.",
     "actionType": "extended",
     "tags": [
-      "Force",
       "Dark Side",
-      "Force Drain"
+      "dark-side",
+      "dark_side",
+      "Force",
+      "force",
+      "Force Drain",
+      "force_drain",
+      "force_power"
     ],
     "usage": {
       "charges": 0,
@@ -764,8 +984,26 @@
     "description": "You use the Force to push your body beyond its normal limits. You gain Damage Reduction 10 and a +4 bonus to Strength until the start of your next turn.",
     "actionType": "reaction",
     "tags": [
+      "action-economy",
+      "action_economy",
+      "controller",
+      "damage-reduction",
+      "damage_reduction",
+      "defense",
+      "durability",
       "Force",
-      "Vital"
+      "force",
+      "force-control",
+      "force_control",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "new_action",
+      "reaction",
+      "skill_use_the_force",
+      "use_the_force",
+      "Vital",
+      "vital"
     ],
     "usage": {
       "charges": 0,
@@ -796,8 +1034,21 @@
     "description": "You use the Force to absorb or deflect energy damage. The target gains energy resistance 20 against one energy attack.",
     "actionType": "reaction",
     "tags": [
+      "action-economy",
+      "action_economy",
+      "defense",
+      "deflect",
       "Force",
-      "Telekinetic"
+      "force",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "new_action",
+      "reaction",
+      "skill_use_the_force",
+      "Telekinetic",
+      "telekinetic",
+      "use_the_force"
     ],
     "usage": {
       "charges": 0,
@@ -828,8 +1079,15 @@
     "description": "You open yourself to the Force, sensing danger and gaining heightened awareness. You cannot be surprised and gain a +5 bonus to Perception checks until the start of your next turn.",
     "actionType": "free",
     "tags": [
+      "ability_wis",
+      "awareness",
       "Force",
-      "Mind-Affecting"
+      "force",
+      "force_power",
+      "Mind-Affecting",
+      "mind_affecting",
+      "skill_perception",
+      "utility"
     ],
     "usage": {
       "charges": 0,
@@ -860,8 +1118,14 @@
     "description": "You focus your mind through the Force, gaining tactical clarity. You gain a +2 insight bonus to Reflex Defense until the start of your next turn.",
     "actionType": "free",
     "tags": [
+      "ability_dex",
+      "defense",
       "Force",
-      "Mind-Affecting"
+      "force",
+      "force_power",
+      "Mind-Affecting",
+      "mind_affecting",
+      "reflex"
     ],
     "usage": {
       "charges": 0,
@@ -892,8 +1156,16 @@
     "description": "You violently push your target away with telekinetic force. The target is pushed 6 squares away from you and knocked prone, taking 2d6 damage.",
     "actionType": "action",
     "tags": [
+      "control",
+      "controller",
+      "debuff",
       "Force",
-      "Telekinetic"
+      "force",
+      "force-control",
+      "force_control",
+      "force_power",
+      "Telekinetic",
+      "telekinetic"
     ],
     "usage": {
       "charges": 0,
@@ -924,8 +1196,20 @@
     "description": "You drain the energy from technological devices through the Force. The target takes energy damage based on your Use the Force check result.",
     "actionType": "action",
     "tags": [
+      "Dark Side",
+      "dark-side",
+      "dark_side",
+      "droid",
       "Force",
-      "Dark Side"
+      "force",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "racial",
+      "skill_use_the_force",
+      "species_droid",
+      "species_locked",
+      "use_the_force"
     ],
     "usage": {
       "charges": 0,
@@ -977,8 +1261,19 @@
     "description": "You inspire an ally through the Force, granting them confidence and clarity. The target gains a +2 morale bonus to their next attack roll or skill check.",
     "actionType": "free",
     "tags": [
+      "ability_cha",
+      "accuracy",
+      "ally_support",
       "Force",
-      "Mind-Affecting"
+      "force",
+      "force_power",
+      "leadership",
+      "Mind-Affecting",
+      "mind_affecting",
+      "racial",
+      "species_gran",
+      "species_locked",
+      "support"
     ],
     "usage": {
       "charges": 0,
@@ -1009,8 +1304,18 @@
     "description": "You strike your target with a telekinetic blow. The target takes 2d6 Force damage and must make a Fortitude save (DC = your UTF check) or be knocked prone.",
     "actionType": "action",
     "tags": [
+      "ability_con",
+      "control",
+      "debuff",
       "Force",
-      "Telekinetic"
+      "force",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "fortitude",
+      "Telekinetic",
+      "telekinetic",
+      "use_the_force"
     ],
     "usage": {
       "charges": 0,
@@ -1041,8 +1346,19 @@
     "description": "You influence a weak mind to believe what you tell them or follow a simple suggestion. The target must make a Will save (DC = your UTF check) or be affected.",
     "actionType": "action",
     "tags": [
+      "ability_wis",
+      "controller",
       "Force",
-      "Mind-Affecting"
+      "force",
+      "force-control",
+      "force_control",
+      "force_execution",
+      "force_power",
+      "force_power_check",
+      "Mind-Affecting",
+      "mind_affecting",
+      "use_the_force",
+      "will"
     ],
     "usage": {
       "charges": 0,
@@ -1073,8 +1389,14 @@
     "description": "You channel the Force to enhance your next melee attack. Your next melee attack this round gains a +1d6 bonus to damage.",
     "actionType": "free",
     "tags": [
+      "ability_str",
       "Force",
-      "Telekinetic"
+      "force",
+      "force_power",
+      "melee",
+      "offense_melee",
+      "Telekinetic",
+      "telekinetic"
     ],
     "usage": {
       "charges": 0,
@@ -1105,9 +1427,21 @@
     "description": "You use the Force to telekinetically choke or crush your target. The target takes damage each round based on your Use the Force check result.",
     "actionType": "action",
     "tags": [
-      "Force",
       "Dark Side",
-      "Telekinetic"
+      "dark-side",
+      "dark_side",
+      "Force",
+      "force",
+      "force-offense",
+      "force_execution",
+      "force_offense",
+      "force_power",
+      "force_power_check",
+      "offense_ranged",
+      "skill_use_the_force",
+      "Telekinetic",
+      "telekinetic",
+      "use_the_force"
     ],
     "usage": {
       "charges": 0,

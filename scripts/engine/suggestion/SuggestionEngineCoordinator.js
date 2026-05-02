@@ -473,7 +473,10 @@ export class SuggestionEngineCoordinator {
       const secretsSuggested = await ForceSecretSuggestionEngine.suggestForceSecrets(
         secrets,
         actor,
-        options
+        {
+          ...options,
+          pendingData
+        }
       );
 
       return secretsSuggested;
@@ -504,7 +507,10 @@ export class SuggestionEngineCoordinator {
       const techniquesSuggested = await ForceTechniqueSuggestionEngine.suggestForceOptions(
         techniques,
         actor,
-        options
+        {
+          ...options,
+          pendingData
+        }
       );
 
       return techniquesSuggested;

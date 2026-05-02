@@ -24,6 +24,7 @@ import { PrestigeAffinityEngine, initializePrestigeSignals } from "/systems/foun
 // Re-export initializePrestigeSignals for external consumers
 export { initializePrestigeSignals };
 import { MilestoneComputer } from "/systems/foundryvtt-swse/scripts/engine/suggestion/MilestoneComputer.js";
+import { getPrimaryArchetypeForActor } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry-integration.js";
 
 // ──────────────────────────────────────────────────────────────
 // PRESTIGE SIGNALS LOADER
@@ -216,6 +217,19 @@ export class BuildIntent {
         // BuildIntent no longer computes or owns identity.
         // SuggestionEngine and callers now compute identityBias directly via IdentityEngine.computeTotalBias()
         SWSELogger.log(`[BUILD-INTENT] analyze() - Identity authority shifted to IdentityEngine.computeTotalBias()`);
+
+        // Resolve class/archetype metadata for richer tag-aware suggestion scoring
+        try {
+            const primaryArchetype = await getPrimaryArchetypeForActor(actor);
+            if (primaryArchetype) {
+                intent.primaryArchetypeMeta = primaryArchetype;
+                if (!intent.primaryArchetypeId) {
+                    intent.primaryArchetypeId = primaryArchetype.id || null;
+                }
+            }
+        } catch (err) {
+            SWSELogger.warn('[BUILD-INTENT] Failed to resolve primary archetype metadata:', err);
+        }
 
         // Apply template archetype bias if available
         if (appliedTemplate && appliedTemplate.archetype) {

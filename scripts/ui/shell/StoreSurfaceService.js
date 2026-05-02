@@ -77,8 +77,15 @@ export class StoreSurfaceService {
 
       const currentView = storeContext.currentView ?? 'browse';
       const cartRemaining = storeContext.pageContext?.cartRemaining ?? 0;
+      const currentCategory = (storeContext.currentCategory ?? '').toLowerCase();
+      const allItems = Array.isArray(storeContext.allItems) ? storeContext.allItems : [];
+      const visibleItems = currentCategory
+        ? allItems.filter(item => (item.category ?? '').toLowerCase() === currentCategory)
+        : allItems;
       const safeContext = {
-        allItems: storeContext.allItems ?? [],
+        allItems: visibleItems,
+        totalItems: allItems.length,
+        visibleItemCount: visibleItems.length,
         credits: storeContext.credits ?? 0,
         cartCount: storeContext.cartCount ?? 0,
         cartTotal: storeContext.cartTotal ?? 0,
@@ -95,7 +102,13 @@ export class StoreSurfaceService {
         rendarrImage: storeContext.rendarrImage ?? '',
         rendarrWelcome: storeContext.rendarrWelcome ?? '',
         selectedProduct: storeContext.selectedProduct ?? null,
-        isGM: storeContext.isGM ?? false
+        selectedProductId: options.selectedProductId ?? storeContext.selectedProduct?.id ?? null,
+        isGM: storeContext.isGM ?? false,
+        filters: {
+          search: options.search ?? '',
+          availability: options.availability ?? 'all',
+          sort: options.sort ?? 'default'
+        }
       };
 
       return {

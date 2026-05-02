@@ -239,6 +239,7 @@ export class ArchetypeRegistry {
                 mechanicalBias: archData.mechanicalBias || {},
                 roleBias: roleBias,
                 attributeBias: attributeBias,
+                tagBias: archData.tagBias || {},
                 notes: archData.notes || '',
                 status: archData.status || 'active'
             };

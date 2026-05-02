@@ -49,6 +49,25 @@
   </div>
   {{/if}}
 
+
+  {{#if recommendation}}
+  <div class="prog-class-details__mentor-read">
+    <h4 class="prog-class-details__section-title">Mentor Read</h4>
+    {{#if recommendation.reasonSummary}}<p class="prog-class-details__description">{{recommendation.reasonSummary}}</p>{{/if}}
+    {{#if recommendation.bullets.length}}
+    <ul class="prog-class-details__list">{{#each recommendation.bullets}}<li>{{this}}</li>{{/each}}</ul>
+    {{/if}}
+    {{#if recommendation.cautions.length}}
+    <h4 class="prog-class-details__section-title">Cautions</h4>
+    <ul class="prog-class-details__list">{{#each recommendation.cautions}}<li>{{this}}</li>{{/each}}</ul>
+    {{/if}}
+    {{#if recommendation.forecast.length}}
+    <h4 class="prog-class-details__section-title">Forecast</h4>
+    <ul class="prog-class-details__list">{{#each recommendation.forecast}}<li>{{this}}</li>{{/each}}</ul>
+    {{/if}}
+  </div>
+  {{/if}}
+
   <div class="prog-class-details__actions">
     <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{class.id}}" type="button"><i class="fas fa-check"></i> Choose {{class.name}}</button>
   </div>

@@ -24,6 +24,9 @@ import { isEpicActor, getPlannedHeroicLevel } from "/systems/foundryvtt-swse/scr
 import { CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/suggestion/shared-suggestion-utilities.js";
 import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
 import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
+import { getActorSpeciesNames, namesMatchLoosely, resolveCanonicalSpeciesName } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
+import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
+import { calculatePrestigeDelay } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-delay-calculator.js";
 
 // ──────────────────────────────────────────────────────────────
 // DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
@@ -53,6 +56,22 @@ export const PRESTIGE_BIAS = {
 // ──────────────────────────────────────────────────────────────
 
 export { CLASS_SYNERGY_DATA };
+
+const SPECIES_CLASS_AFFINITY = {
+    miraluka: ['Jedi', 'Force Adept', 'Force Disciple', 'Jedi Knight', 'Jedi Master', 'Sith Apprentice', 'Sith Lord'],
+    twilek: ['Noble', 'Scoundrel', 'Crime Lord'],
+    rodian: ['Scout', 'Scoundrel', 'Bounty Hunter', 'Gunslinger'],
+    wookiee: ['Soldier', 'Jedi', 'Elite Trooper', 'Melee Duelist'],
+    yarkora: ['Scoundrel', 'Noble', 'Scout', 'Crime Lord', 'Officer'],
+    cerean: ['Jedi', 'Noble', 'Officer'],
+    moncalamari: ['Scout', 'Noble', 'Ace Pilot', 'Officer'],
+    sullustan: ['Scout', 'Scoundrel', 'Ace Pilot'],
+    zabrak: ['Soldier', 'Jedi', 'Elite Trooper'],
+    bothan: ['Scoundrel', 'Noble', 'Scout', 'Crime Lord'],
+    human: ['Jedi', 'Noble', 'Scout', 'Scoundrel', 'Soldier']
+};
+const SPECIES_TAPER_END_LEVEL = 8;
+const STARTING_CLASS_DECAY_END_LEVEL = 5;
 
 // ──────────────────────────────────────────────────────────────
 // CLASS SUGGESTION ENGINE CLASS
@@ -99,11 +118,13 @@ export class ClassSuggestionEngine {
             feats: actorState.ownedFeats.size,
             talents: actorState.ownedTalents.size,
             skills: actorState.trainedSkills.size,
-            classes: Object.keys(actorState.classes)
+            classes: Object.keys(actorState.classes),
+            baseClassLevel: actorState.baseClassLevel,
+            startingClass: actorState.startingClass
         });
 
         // Check for prestige class target from L1 survey
-        const prestigeClassTarget = actor.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
+        const prestigeClassTarget = pendingData?.prestigeClassTarget || actor.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
         if (prestigeClassTarget) {
             SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target detected: "${prestigeClassTarget}"`);
         }
@@ -116,11 +137,16 @@ export class ClassSuggestionEngine {
 
         for (const cls of classes) {
             SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Evaluating class "${cls.name}"...`);
-            const suggestion = await this._evaluateClass(cls, actorState, prestigePrereqs, { ...options, prestigeClassTarget });
+            const suggestion = await this._evaluateClass(cls, actorState, prestigePrereqs, { ...options, prestigeClassTarget, actor });
 
             // Calculate bias for sorting
             const classType = cls.isPrestige ? 'prestige' : 'base';
             let bias = PRESTIGE_BIAS[classType] || 0;
+            const prereqData = cls.isPrestige ? prestigePrereqs[cls.name] : null;
+
+            if (cls.isPrestige && this._matchesRequiredSpecies(prereqData?.species, actorState)) {
+                bias += 2;
+            }
 
             // Boost prestige classes that match the player's target
             if (cls.isPrestige && cls.name === prestigeClassTarget) {
@@ -276,6 +302,12 @@ export class ClassSuggestionEngine {
             Object.values(classes).reduce((sum, level) => sum + level, 0);
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Character level: ${characterLevel}`);
 
+        const speciesNames = getActorSpeciesNames(actor, pendingData);
+        const startingClass = pendingData?.startingClass || actor.getFlag?.('foundryvtt-swse', 'startingClass') || actor.getFlag?.('swse', 'startingClass') || null;
+        const baseClassLevel = Object.entries(actor.system?.classes || {})
+            .filter(([className]) => BASE_CLASSES.includes(className))
+            .reduce((sum, [, classData]) => sum + (classData?.level || 0), 0);
+
         const actorState = {
             ownedFeats,
             ownedTalents,
@@ -287,6 +319,9 @@ export class ClassSuggestionEngine {
             classes,
             bab,
             characterLevel,
+            baseClassLevel,
+            startingClass,
+            speciesNames,
             // Combined set for prereq checking
             ownedPrereqs: new Set([...ownedFeats, ...ownedTalents])
         };
@@ -343,6 +378,7 @@ export class ClassSuggestionEngine {
                 talentTrees: prereqs.talents?.trees,
                 techniques: prereqs.forceTechniques?.count,
                 powers: prereqs.forcePowers,
+                species: prereqs.species,
                 other: prereqs.special ? [prereqs.special] : []
             };
         }
@@ -361,6 +397,24 @@ export class ClassSuggestionEngine {
      * @param {Object} actorState - Actor state
      * @returns {{met: boolean, missing: Array<Object>}}
      */
+
+    static _matchesRequiredSpecies(requiredSpecies, actorState) {
+        if (!Array.isArray(requiredSpecies) || requiredSpecies.length === 0) {
+            return false;
+        }
+
+        const actorSpecies = actorState?.speciesNames || [];
+        if (!actorSpecies.length) {
+            return false;
+        }
+
+        const canonicalRequired = requiredSpecies
+            .map((entry) => resolveCanonicalSpeciesName(entry))
+            .filter(Boolean);
+
+        return canonicalRequired.some((required) => actorSpecies.some((owned) => namesMatchLoosely(owned, required)));
+    }
+
     static _checkPrerequisites(className, prereqData, actorState) {
         const missing = [];
 
@@ -483,6 +537,20 @@ export class ClassSuggestionEngine {
                 display: `${prereqData.techniques} Force Technique(s)`,
                 shortDisplay: `${prereqData.techniques} Technique(s)`
             });
+        }
+
+        if (prereqData.species && prereqData.species.length > 0) {
+            const requiredSpecies = prereqData.species.map((entry) => resolveCanonicalSpeciesName(entry)).filter(Boolean);
+            const actorSpecies = actorState.speciesNames || [];
+            const hasRequiredSpecies = requiredSpecies.some((required) => actorSpecies.some((owned) => namesMatchLoosely(owned, required)));
+            if (!hasRequiredSpecies) {
+                missing.push({
+                    type: 'species',
+                    options: requiredSpecies,
+                    display: `Species: ${requiredSpecies.join(' or ')}`,
+                    shortDisplay: requiredSpecies.join('/')
+                });
+            }
         }
 
         // Check Force powers
@@ -624,18 +692,34 @@ export class ClassSuggestionEngine {
                     const providedTreeNames = unlockedTrees.filter(t =>
                         neededTrees.some(n => n.toLowerCase() === t.toLowerCase())
                     ).join(', ');
-                    benefits.push(`Unlocks ${providedTreeNames} talents`);
+                    benefits.push(`unlocks ${providedTreeNames} talents`);
                 }
 
                 if (providesNeededSkills) {
-                    benefits.push(`Trains needed skills`);
+                    benefits.push('trains skills that target path needs');
                 }
 
                 if (providesNeededFeats) {
-                    benefits.push(`Provides required feats`);
+                    benefits.push('supports prerequisite feat progress');
                 }
 
-                const reason = `${benefits.join('; ')} for ${prestigeClassTarget}`;
+                let reason = `${cls.name} helps set up ${prestigeClassTarget}`;
+                try {
+                    const delay = await calculatePrestigeDelay(options.actor || {}, prestigeClassTarget, cls.name);
+                    if (Number.isFinite(delay?.earliestLevel)) {
+                        const levelsUntil = Math.max(0, delay.earliestLevel - ((options.actor?.system?.level || actorState.characterLevel) || 1));
+                        const timingText = levelsUntil <= 1
+                            ? `and can open ${prestigeClassTarget} on your next level`
+                            : `and can open ${prestigeClassTarget} in ${levelsUntil} levels`;
+                        reason = `${cls.name} ${timingText}`;
+                    }
+                } catch (_err) {
+                    // Keep setup reason if the forecast helper cannot project this path cleanly.
+                }
+
+                if (benefits.length > 0) {
+                    reason += ` by ${benefits.join(', ')}`;
+                }
 
                 return this._buildSuggestion(
                     UNIFIED_TIERS.PATH_CONTINUATION,
@@ -839,6 +923,57 @@ export class ClassSuggestionEngine {
     static _getUnlockedTalentTrees(className) {
         const synergy = CLASS_SYNERGY_DATA[className];
         return synergy?.talentTrees || [];
+    }
+
+    static _getClassPatternBiasScore(actor, className) {
+        try {
+            const classBias = IdentityEngine.computeClassBias(actor);
+            const normalized = String(className || '').toLowerCase();
+            const exact = classBias?.mechanicalBias?.[normalized] ?? classBias?.roleBias?.[normalized] ?? classBias?.attributeBias?.[normalized] ?? 0;
+            return Number.isFinite(exact) ? exact * 2 : 0;
+        } catch (_err) {
+            return 0;
+        }
+    }
+
+    static _getStartingClassDecayBonus(actorState, className) {
+        const startingClass = String(actorState?.startingClass || '').toLowerCase();
+        const candidate = String(className || '').toLowerCase();
+        if (!startingClass || !candidate || startingClass !== candidate) {
+            return 0;
+        }
+
+        const baseLevel = Number(actorState?.baseClassLevel || actorState?.characterLevel || 1);
+        if (baseLevel >= STARTING_CLASS_DECAY_END_LEVEL) {
+            return 0;
+        }
+
+        const progress = Math.max(0, (baseLevel - 1) / Math.max(1, STARTING_CLASS_DECAY_END_LEVEL - 1));
+        return Math.max(0, 1.5 * (1 - progress));
+    }
+
+    static _getSpeciesAffinityBias(actorState, className) {
+        const speciesNames = Array.isArray(actorState?.speciesNames) ? actorState.speciesNames : [];
+        if (!speciesNames.length) {
+            return 0;
+        }
+
+        const baseLevel = Number(actorState?.baseClassLevel || actorState?.characterLevel || 1);
+        const taper = Math.max(0, 1 - ((Math.max(1, baseLevel) - 1) / Math.max(1, SPECIES_TAPER_END_LEVEL - 1)));
+        if (taper <= 0) {
+            return 0;
+        }
+
+        const candidate = String(className || '').toLowerCase();
+        for (const speciesName of speciesNames) {
+            const key = String(speciesName || '').toLowerCase().replace(/[^a-z]/g, '');
+            const affinities = SPECIES_CLASS_AFFINITY[key] || [];
+            if (affinities.some(name => String(name).toLowerCase() === candidate)) {
+                return 1.25 * taper;
+            }
+        }
+
+        return 0;
     }
 
     // ──────────────────────────────────────────────────────────────

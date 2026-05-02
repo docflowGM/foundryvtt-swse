@@ -16,7 +16,6 @@
 
   <form class="ss-root" autocomplete="off">
 
-    {{!-- ═══ HUD BAR ═══ --}}
     <div class="ss-hud">
       <button class="ss-hud__back" data-shell-action="return-to-home" type="button" title="Return to Home">
         <i class="fas fa-arrow-left"></i> HOME
@@ -32,7 +31,6 @@
       </div>
     </div>
 
-    {{!-- ═══ PAGE HEADER (Rendarr identity) ═══ --}}
     <div class="ss-page-header">
       <div class="ss-rendarr-portrait">
         {{#if vm.storeContext.rendarrImage}}
@@ -58,9 +56,8 @@
       </div>
     </div>
 
-    {{!-- ═══ TABS ═══ --}}
     <div class="ss-tabs">
-      <button type="button" class="ss-tab {{#if (eq vm.storeContext.currentView 'browse')}}active{{/if}} {{#if (eq vm.storeContext.currentView 'detail')}}active{{/if}}" data-ss-tab="browse">
+      <button type="button" class="ss-tab {{#if (eq vm.storeContext.currentView 'browse')}}active{{/if}} {{#if vm.storeContext.selectedProduct}}active{{/if}}" data-ss-tab="browse">
         <span class="ss-tab-glyph">⊞</span> BROWSE
       </button>
       <button type="button" class="ss-tab {{#if (eq vm.storeContext.currentView 'cart')}}active{{/if}}" data-ss-tab="cart">
@@ -75,24 +72,23 @@
       </button>
     </div>
 
-    {{!-- ═══ BROWSE TAB ═══ --}}
     {{#if vm.storeContext.isBrowseOrDetail}}
     <div class="ss-pane ss-pane-browse">
-
-      {{!-- Filter bar --}}
       <div class="ss-filters">
         <div class="ss-filter-search">
           <i class="fas fa-search ss-filter-ico"></i>
-          <input type="text" id="ss-search" class="ss-search-input" placeholder="SEARCH LISTINGS…" aria-label="Search store"/>
+          <input type="text" id="ss-search" class="ss-search-input" placeholder="SEARCH LISTINGS…" aria-label="Search store" value="{{vm.storeContext.filters.search}}"/>
         </div>
         <div class="ss-filter-group">
           <span class="ss-filter-lbl">AVAIL</span>
           <select id="ss-avail" class="ss-select">
             <option value="all">All</option>
             <option value="standard">Standard</option>
+            <option value="licensed">Licensed</option>
             <option value="restricted">Restricted</option>
             <option value="military">Military</option>
             <option value="illegal">Illegal</option>
+            <option value="rare">Rare</option>
           </select>
         </div>
         <div class="ss-filter-group">
@@ -105,14 +101,11 @@
           </select>
         </div>
         <div class="ss-filter-count">
-          <span data-results-count>{{vm.storeContext.allItems.length}}</span> listings
+          <span data-results-count>{{vm.storeContext.visibleItemCount}}</span> listings
         </div>
-        {{#if vm.storeContext.currentCategory}}
         <button type="button" class="ss-chip ss-chip--clear" data-action="clear-filters">✕ CLEAR</button>
-        {{/if}}
       </div>
 
-      {{!-- Category chips --}}
       <div class="ss-cats">
         <button type="button" class="ss-chip {{#unless vm.storeContext.currentCategory}}active{{/unless}}" data-action="category-nav" data-category="">ALL</button>
         {{#each vm.storeContext.categorySummary}}
@@ -122,7 +115,6 @@
         {{/each}}
       </div>
 
-      {{!-- Detail panel (selected product) --}}
       {{#if vm.storeContext.selectedProduct}}
       <div class="ss-detail-panel">
         <div class="ss-detail-header">
@@ -131,10 +123,28 @@
           <span class="ss-detail-avail">{{vm.storeContext.selectedProduct.availability}}</span>
         </div>
         <div class="ss-detail-body">
-          <div class="ss-detail-glyph">{{vm.storeContext.selectedProduct.glyph}}</div>
+          <div class="ss-detail-media">
+            {{#if vm.storeContext.selectedProduct.img}}
+            <img class="ss-detail-img" src="{{vm.storeContext.selectedProduct.img}}" alt="{{vm.storeContext.selectedProduct.name}}"/>
+            {{else}}
+            <div class="ss-detail-glyph">{{vm.storeContext.selectedProduct.glyph}}</div>
+            {{/if}}
+            <div class="ss-detail-price-stack">
+              {{#if vm.storeContext.selectedProduct.requiresCondition}}
+              <div class="ss-detail-price-line"><span>NEW</span><strong>₢ {{vm.storeContext.selectedProduct.newCost}}</strong></div>
+              <div class="ss-detail-price-line"><span>USED</span><strong>₢ {{vm.storeContext.selectedProduct.usedCost}}</strong></div>
+              {{else}}
+              <div class="ss-detail-price-line is-primary"><span>PRICE</span><strong>₢ {{vm.storeContext.selectedProduct.price}}</strong></div>
+              {{/if}}
+            </div>
+          </div>
           <div class="ss-detail-info">
             <h2 class="ss-detail-name">{{vm.storeContext.selectedProduct.name}}</h2>
-            <div class="ss-detail-cat">{{vm.storeContext.selectedProduct.category}}</div>
+            <div class="ss-detail-catline">
+              <span>{{vm.storeContext.selectedProduct.typeLabel}}</span>
+              {{#if vm.storeContext.selectedProduct.category}}<span>{{vm.storeContext.selectedProduct.category}}</span>{{/if}}
+              {{#if vm.storeContext.selectedProduct.subcategory}}<span>{{vm.storeContext.selectedProduct.subcategory}}</span>{{/if}}
+            </div>
             {{#if vm.storeContext.selectedProduct.suggestionTierLabel}}
             <div class="ss-detail-tier ss-tier-{{vm.storeContext.selectedProduct.suggestion.tier}}">
               ◆ {{vm.storeContext.selectedProduct.suggestionTierLabel}} for your build
@@ -148,7 +158,7 @@
             </ul>
             {{/if}}
             {{#if vm.storeContext.selectedProduct.description}}
-            <div class="ss-detail-desc">{{vm.storeContext.selectedProduct.description}}</div>
+            <div class="ss-detail-desc">{{{vm.storeContext.selectedProduct.description}}}</div>
             {{/if}}
             {{#if vm.storeContext.selectedProduct.techDetailsHtml}}
             <div class="ss-detail-tech">{{{vm.storeContext.selectedProduct.techDetailsHtml}}}</div>
@@ -156,78 +166,90 @@
           </div>
         </div>
         <div class="ss-detail-foot">
-          <span class="ss-detail-price">₢ {{vm.storeContext.selectedProduct.finalCost}}</span>
-          <button type="button" class="ss-btn ss-btn--primary" data-action="detail-add-to-cart">+ ADD TO CART</button>
+          {{#if vm.storeContext.selectedProduct.requiresCondition}}
+          <button type="button" class="ss-btn" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="used">+ ADD USED</button>
+          <button type="button" class="ss-btn ss-btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="new">+ ADD NEW</button>
+          {{else}}
+          <button type="button" class="ss-btn ss-btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="{{vm.storeContext.selectedProduct.type}}">+ ADD TO CART</button>
+          {{/if}}
         </div>
         {{#if vm.storeContext.selectedProduct.flavorReviewsHtml}}
-        <div class="ss-detail-reviews">{{{vm.storeContext.selectedProduct.flavorReviewsHtml}}}</div>
+        <div class="ss-detail-reviews">
+          <div class="ss-detail-reviews-title">Marketplace Reviews</div>
+          {{{vm.storeContext.selectedProduct.flavorReviewsHtml}}}
+        </div>
         {{/if}}
       </div>
       {{/if}}
 
-      {{!-- Product grid --}}
-      {{#if vm.storeContext.allItems.length}}
       <div class="store-card-grid ss-browse-grid">
         {{#each vm.storeContext.allItems}}
-        <div class="store-card ss-rar-{{this.rarityClass}}"
+        <div class="store-card ss-rar-{{this.rarityClass}} {{#if (eq ../vm.storeContext.selectedProductId this.id)}}is-selected{{/if}}"
              data-item-id="{{this.id}}"
+             data-item-type="{{this.type}}"
              data-name="{{this.name}}"
              data-category="{{this.category}}"
+             data-subcategory="{{this.subcategory}}"
              data-availability="{{this.availability}}"
-             data-price="{{this.finalCost}}"
-             data-score="{{this.suggestion.score}}">
+             data-price="{{#if this.cost}}{{this.cost}}{{else}}{{this.finalCost}}{{/if}}"
+             data-score="{{#if this.suggestion}}{{this.suggestion.score}}{{else}}0{{/if}}">
           <span class="sc-rar-tag">{{this.rarityLabel}}</span>
-          <div class="sc-glyph-panel">
-            <span class="sc-glyph">{{this.glyph}}</span>
+          <div class="sc-hero">
+            {{#if this.img}}
+            <img class="sc-thumb" src="{{this.img}}" alt="{{this.name}}"/>
+            {{else}}
+            <div class="sc-glyph-panel"><span class="sc-glyph">{{this.glyph}}</span></div>
+            {{/if}}
           </div>
           <div class="sc-body">
             <div class="sc-name">{{this.name}}</div>
-            <div class="sc-cat">{{this.category}}</div>
-            {{#if this.suggestion.tierLabel}}
-            <span class="sc-tier sc-tier--{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>
-            {{/if}}
+            <div class="sc-cat">{{this.typeLabel}} · {{this.category}}{{#if this.subcategory}} · {{this.subcategory}}{{/if}}</div>
+            <div class="sc-meta-row">
+              <span class="sc-meta-pill">{{this.availability}}</span>
+              {{#if this.suggestion.tierLabel}}<span class="sc-tier sc-tier--{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>{{/if}}
+            </div>
           </div>
           <div class="sc-foot">
+            {{#if this.costUsed}}
+            <span class="sc-price">NEW ₢ {{this.cost}} · USED ₢ {{this.costUsed}}</span>
+            {{else}}
             <span class="sc-price">₢ {{this.finalCost}}</span>
+            {{/if}}
             <div class="sc-actions">
               <button type="button" class="sc-btn" data-action="expand-product" data-item-id="{{this.id}}">DETAILS</button>
-              <button type="button" class="sc-btn sc-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}">+ ADD</button>
+              {{#if (eq this.type 'vehicle')}}
+              <button type="button" class="sc-btn" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="used">USED</button>
+              <button type="button" class="sc-btn sc-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="new">NEW</button>
+              {{else}}
+              <button type="button" class="sc-btn sc-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="{{this.type}}">+ ADD</button>
+              {{/if}}
             </div>
           </div>
         </div>
         {{/each}}
       </div>
       <div class="store-browse-empty ss-empty" style="display:none">
-        <div class="ss-empty-glyph">▸</div>
-        <div class="ss-empty-msg">No matches on the floor.</div>
-        <div class="ss-empty-sub">"Try adjusting your filters." — Rendarr</div>
-      </div>
-      {{else}}
-      <div class="ss-empty">
         <div class="ss-empty-glyph">◌</div>
-        <div class="ss-empty-msg">No inventory available.</div>
+        <div class="ss-empty-msg">No listings match the current filters.</div>
+        <div class="ss-empty-sub">Try another category or clear the search parameters.</div>
       </div>
-      {{/if}}
-
     </div>
     {{/if}}
 
-    {{!-- ═══ CART TAB ═══ --}}
     {{#if (eq vm.storeContext.currentView 'cart')}}
     <div class="ss-pane ss-pane-cart">
       {{#if vm.storeContext.cartEntries.length}}
-      <div class="ss-cart-ledger">
+      <div class="ss-cart-list">
         {{#each vm.storeContext.cartEntries}}
         <div class="ss-cart-row">
-          <div class="ss-cart-row-info">
-            <span class="ss-cart-row-name">{{this.name}}</span>
-            <span class="ss-cart-row-type">{{this.type}}</span>
+          {{#if this.img}}<img class="ss-cart-img" src="{{this.img}}" alt="{{this.name}}"/>{{else}}<div class="ss-cart-glyph">{{this.glyph}}</div>{{/if}}
+          <div class="ss-cart-meta">
+            <div class="ss-cart-name">{{this.name}}</div>
+            <div class="ss-cart-type">{{this.summary}}</div>
           </div>
-          <span class="ss-cart-row-cost">₢ {{this.cost}}</span>
-          <button type="button" class="ss-cart-remove" data-action="remove-from-cart"
-                  data-item-id="{{this.id}}" data-item-type="{{this.type}}" title="Remove">
-            <i class="fas fa-trash-alt"></i>
-          </button>
+          <div class="ss-cart-qty">×{{this.qty}}</div>
+          <div class="ss-cart-linecost">₢ {{this.cost}}</div>
+          <button type="button" class="ss-btn ss-btn--ghost" data-action="remove-from-cart" data-item-id="{{this.id}}" data-item-type="{{this.itemType}}" data-condition="{{this.condition}}">REMOVE</button>
         </div>
         {{/each}}
       </div>
@@ -246,9 +268,7 @@
         </div>
         <div class="ss-cart-actions">
           <button type="button" class="ss-btn" data-action="clear-cart">CLEAR CART</button>
-          <button type="button" class="ss-btn ss-btn--primary" data-action="proceed-checkout">
-            PROCEED TO CHECKOUT →
-          </button>
+          <button type="button" class="ss-btn ss-btn--primary" data-action="proceed-checkout">PROCEED TO CHECKOUT →</button>
         </div>
       </div>
       {{else}}
@@ -262,7 +282,6 @@
     </div>
     {{/if}}
 
-    {{!-- ═══ CHECKOUT TAB ═══ --}}
     {{#if (eq vm.storeContext.currentView 'checkout')}}
     <div class="ss-pane ss-pane-checkout">
       <div class="ss-checkout-header">
@@ -274,27 +293,19 @@
         {{#each vm.storeContext.cartEntries}}
         <div class="ss-checkout-row">
           <span class="ss-checkout-row-name">{{this.name}}</span>
-          <span class="ss-checkout-row-type">{{this.type}}</span>
+          <span class="ss-checkout-row-type">{{this.summary}} · ×{{this.qty}}</span>
           <span class="ss-checkout-row-cost">₢ {{this.cost}}</span>
         </div>
         {{/each}}
       </div>
       <div class="ss-checkout-ledger">
-        <div class="ss-checkout-ledger-row">
-          <span>AVAILABLE CREDITS</span><span>₢ {{vm.actorCredits}}</span>
-        </div>
-        <div class="ss-checkout-ledger-row debit">
-          <span>TRADE DEBIT</span><span>−₢ {{vm.storeContext.cartTotal}}</span>
-        </div>
-        <div class="ss-checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total">
-          <span>REMAINING RESERVE</span><span>₢ {{vm.storeContext.pageContext.cartRemaining}}</span>
-        </div>
+        <div class="ss-checkout-ledger-row"><span>AVAILABLE CREDITS</span><span>₢ {{vm.actorCredits}}</span></div>
+        <div class="ss-checkout-ledger-row debit"><span>TRADE DEBIT</span><span>−₢ {{vm.storeContext.cartTotal}}</span></div>
+        <div class="ss-checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total"><span>REMAINING RESERVE</span><span>₢ {{vm.storeContext.pageContext.cartRemaining}}</span></div>
       </div>
       <div class="ss-checkout-actions">
         <button type="button" class="ss-btn" data-action="return-to-cart">← RETURN TO CART</button>
-        <button type="button" class="ss-btn ss-btn--confirm" data-action="confirm-checkout">
-          ◈ CONFIRM TRADE
-        </button>
+        <button type="button" class="ss-btn ss-btn--confirm" data-action="confirm-checkout">◈ CONFIRM TRADE</button>
       </div>
       {{else}}
       <div class="ss-empty">
@@ -305,7 +316,6 @@
     </div>
     {{/if}}
 
-    {{!-- ═══ HISTORY TAB ═══ --}}
     {{#if (eq vm.storeContext.currentView 'history')}}
     <div class="ss-pane ss-pane-history">
       {{#if vm.storeContext.purchaseHistoryEntries.length}}
@@ -318,7 +328,7 @@
           </div>
           <div class="ss-history-items">
             {{#each this.items}}
-            <span class="ss-history-item">{{this.name}} (₢{{this.cost}})</span>
+            <span class="ss-history-item">{{this.name}} ×{{this.qty}} (₢{{this.cost}})</span>
             {{/each}}
           </div>
         </div>

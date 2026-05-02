@@ -1,0 +1,17 @@
+<section class="swse-concept-panel swse-concept-panel--summary">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Dossier Summary</h3>
+      <p class="swse-concept-panel__hint">At-a-glance operator profile and current status.</p>
+    </div>
+  </header>
+
+  <div class="swse-concept-card-grid swse-concept-card-grid--summary">
+    {{#each conceptLayout.summary.cards as |card|}}
+      <article class="swse-concept-info-card">
+        <span>{{card.label}}</span>
+        <strong>{{card.value}}</strong>
+      </article>
+    {{/each}}
+  </div>
+</section>

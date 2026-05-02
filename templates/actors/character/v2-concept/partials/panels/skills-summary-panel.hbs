@@ -1,0 +1,8 @@
+<div class="swse-concept-card-grid swse-concept-card-grid--skills-top">
+  {{#each conceptLayout.skills.summaryCards as |card|}}
+    <article class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>{{card.label}}</span>
+      <strong>{{card.value}}</strong>
+    </article>
+  {{/each}}
+</div>

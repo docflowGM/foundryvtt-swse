@@ -18,7 +18,7 @@ import { ForcePowerPicker } from '../../../apps/progression/force-power-picker.j
 import { ForcePowerEngine } from '../../../engine/progression/engine/force-power-engine.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
-import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -495,9 +495,16 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   async onAskMentor(shell) {
     // If we have suggestions, use the advisory system instead of standard guidance
     if (this._suggestedPowers && this._suggestedPowers.length > 0) {
-      await handleAskMentorWithSuggestions(shell.actor, 'force-powers', this._suggestedPowers, shell, {
-        domain: 'force-powers',
-        archetype: 'your force power choice'
+      await handleAskMentorWithPicker(shell.actor, 'force-powers', this._suggestedPowers, shell, {
+        domain: 'forcepowers',
+        archetype: 'your force power choice',
+        stepLabel: 'Force powers'
+      }, async (selected) => {
+        const id = selected?.id || selected?._id || selected?.powerId;
+        if (!id) return;
+        await this.onItemFocused(id, shell);
+        await this.onItemCommitted(id, shell);
+        shell.render();
       });
     } else {
       // Fallback to standard guidance if no suggestions
@@ -506,7 +513,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   }
 
   getMentorMode() {
-    return 'context-only'; // Could be 'interactive' with modal in future
+    return 'interactive';
   }
 
   // ---------------------------------------------------------------------------
@@ -650,7 +657,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
 
       // Get suggestions from SuggestionService
       // NOTE: Domain is 'forcepowers' per canonical domain registry (not 'force-powers')
-      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+      const suggested = await SuggestionService.getSuggestions(actor, (shell?.mode || shell?.progressionSession?.mode || 'chargen'), {
         domain: 'forcepowers',
         available: this._legalPowers,
         pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),

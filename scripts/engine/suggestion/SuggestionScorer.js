@@ -25,6 +25,7 @@ import { generateAdvisory } from "/systems/foundryvtt-swse/scripts/engine/sugges
 import { ChainRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/chain-registry.js";
 import { calculateMentorBias, applyMentorBias } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-bias.js";
 import { getMentorForClass } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
+import { scoreTagAlignment, scoreAttributeRealization } from "/systems/foundryvtt-swse/scripts/engine/suggestion/tag-signal-engine.js";
 
 // ─────────────────────────────────────────────────────────────────
 // DEBUG MODE CONFIGURATION
@@ -297,43 +298,58 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
   let totalWeight = 0;
   let weightedSum = 0;
 
-  // METRIC 1: Force Synergy
-  if (candidateHasTag(candidate, 'force') || candidateHasTag(candidate, 'forcePower')) {
-    const forceBias = Math.min(
+  // METRIC 1: Rich Tag Alignment
+  const tagAlignment = scoreTagAlignment(candidate, buildIntent, identityBias, options);
+  if (tagAlignment.score > 0) {
+    metrics.tagAlignment = tagAlignment.score;
+    metrics.tagMatches = tagAlignment.matches.slice(0, 4).map(m => m.tag);
+    totalWeight += 0.20;
+    weightedSum += tagAlignment.score * 0.20;
+  }
+
+  // METRIC 2: Force Synergy
+  if (candidateHasTag(candidate, 'force') || candidateHasTag(candidate, 'force_power') || candidateHasTag(candidate, 'force_capacity') || candidateHasTag(candidate, 'force_execution')) {
+    const forceBias = Math.max(
       identityBias.mechanicalBias.forceSecret || 0,
-      identityBias.mechanicalBias.forceDC || 0
+      identityBias.mechanicalBias.forceDC || 0,
+      identityBias.mechanicalBias.forceRecovery || 0
     );
     const metricScore = normalizeMetricScore(forceBias);
     metrics.forceSynergy = metricScore;
-    totalWeight += 0.15;
-    weightedSum += metricScore * 0.15;
+    totalWeight += 0.12;
+    weightedSum += metricScore * 0.12;
   }
 
-  // METRIC 2: Damage Output Alignment
-  if (candidateHasTag(candidate, 'damage') || candidateHasTag(candidate, 'combat') || candidateHasTag(candidate, 'weapon')) {
-    const damageType = candidate.system?.damageType || 'melee';
-    const damageKey = `${damageType}Damage`;
-    const damageBias = identityBias.mechanicalBias[damageKey] || 0;
+  // METRIC 3: Damage Output Alignment
+  if (candidateHasTag(candidate, 'damage') || candidateHasTag(candidate, 'combat') || candidateHasTag(candidate, 'weapon') || candidateHasTag(candidate, 'offense_melee') || candidateHasTag(candidate, 'offense_ranged')) {
+    const damageType = candidateHasTag(candidate, 'offense_ranged') ? 'firepower' : 'meleeDamage';
+    const damageBias = identityBias.mechanicalBias[damageType] || identityBias.mechanicalBias.singleTargetDamage || identityBias.mechanicalBias.burstDamage || 0;
     const metricScore = normalizeMetricScore(damageBias);
     metrics.damageAlignment = metricScore;
-    totalWeight += 0.15;
-    weightedSum += metricScore * 0.15;
+    totalWeight += 0.12;
+    weightedSum += metricScore * 0.12;
   }
 
-  // METRIC 3: Ability Alignment
-  if (candidate.system?.abilityScaling) {
-    const scaling = candidate.system.abilityScaling; // 'str', 'dex', etc.
+  // METRIC 4: Ability Realization / Alignment
+  const attributeRealization = scoreAttributeRealization(candidate, actor);
+  if (attributeRealization.score > 0) {
+    metrics.abilityAlignment = attributeRealization.score;
+    metrics.abilityAxes = attributeRealization.axes.slice(0, 3).map(a => a.ability);
+    totalWeight += 0.16;
+    weightedSum += attributeRealization.score * 0.16;
+  } else if (candidate.system?.abilityScaling) {
+    const scaling = candidate.system.abilityScaling;
     const abilityScore = actor.system?.abilities?.[scaling]?.value || 10;
     const abilityBias = identityBias.attributeBias[scaling] || 0;
     const abilityModifier = (abilityScore - 10) / 10;
     const combined = (abilityBias + abilityModifier) / 2;
     const metricScore = Math.max(0, Math.min(combined, 1.0));
     metrics.abilityAlignment = metricScore;
-    totalWeight += 0.15;
-    weightedSum += metricScore * 0.15;
+    totalWeight += 0.16;
+    weightedSum += metricScore * 0.16;
   }
 
-  // METRIC 4: Role/Theme Alignment
+  // METRIC 5: Role/Theme Alignment
   if (buildIntent?.primaryThemes?.length > 0) {
     const themeMatch = buildIntent.primaryThemes.some(t => candidateHasTag(candidate, t));
     let themeBias = 0;
@@ -344,18 +360,18 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
     }
     const metricScore = normalizeMetricScore(themeBias);
     metrics.themeAlignment = metricScore;
-    totalWeight += 0.15;
-    weightedSum += metricScore * 0.15;
+    totalWeight += 0.08;
+    weightedSum += metricScore * 0.08;
   }
 
-  // METRIC 5: Feat Chain Continuation
+  // METRIC 6: Feat Chain Continuation
   if (_isFeatChainContinuation(candidate, actor)) {
     metrics.chainContinuation = 0.5; // Moderate boost for chain continuation
-    totalWeight += 0.15;
-    weightedSum += 0.5 * 0.15;
+    totalWeight += 0.10;
+    weightedSum += 0.5 * 0.10;
   }
 
-  // METRIC 6: Equipment Affinity (from IdentityEngine)
+  // METRIC 7: Equipment Affinity (from IdentityEngine)
   if (candidateHasTag(candidate, 'weapon') || candidateHasTag(candidate, 'armor')) {
     const equipBias = identityBias.mechanicalBias.armorMastery ||
                       identityBias.mechanicalBias.weaponMastery || 0;
@@ -365,7 +381,7 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
     weightedSum += metricScore * 0.10;
   }
 
-  // METRIC 7: Skill Synergy
+  // METRIC 8: Skill Synergy
   if (candidate.system?.prerequisite) {
     // Check if actor has relevant skill trained
     const prereqText = (candidate.system.prerequisite || '').toLowerCase();
@@ -378,7 +394,7 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
     }
   }
 
-  // METRIC 8: Defense Need (Phase 2C)
+  // METRIC 9: Defense Need (Phase 2C)
   if (candidateHasTag(candidate, 'defense')) {
     const defenseNeed = _computeDefenseNeedBoost(actor);
     if (defenseNeed > 0) {
@@ -512,6 +528,14 @@ function _computeIdentityProjectionScore(candidate, actor, buildIntent, identity
     const prestige = Math.min(CAP_PRESTIGE, topPrestige.confidence * 0.25);
     breakdown.prestigeTrajectory = prestige;
     score += prestige;
+  }
+
+  const identityTagAlignment = scoreTagAlignment(candidate, buildIntent, identityBias, options);
+  if (identityTagAlignment.score > 0) {
+    const identityTagBoost = Math.min(0.08, identityTagAlignment.score * 0.08);
+    breakdown.identityTagAlignment = identityTagBoost;
+    breakdown.identityTagMatches = identityTagAlignment.matches.slice(0, 3).map(m => m.tag);
+    score += identityTagBoost;
   }
 
   // ─────────────────────────────────────────────────────────────

@@ -1,0 +1,44 @@
+<section class="swse-concept-panel swse-concept-panel--ledger">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Talent Trees</h3>
+      <p class="swse-concept-panel__hint">Grouped by originating tree so the progression path stays readable.</p>
+    </div>
+    {{#if conceptLayout.talents.canEditTalents}}
+      <button type="button" class="swse-concept-btn" data-action="add-talent">Add Talent</button>
+    {{/if}}
+  </header>
+
+  {{#if conceptLayout.talents.talentGroups.length}}
+    <div class="swse-concept-tree-stack">
+      {{#each conceptLayout.talents.talentGroups as |group|}}
+        <article class="swse-concept-action-group swse-concept-action-group--tree">
+          <div class="swse-concept-action-group__header">
+            <strong>{{group.label}}</strong>
+            <span>{{group.count}}</span>
+          </div>
+
+          <div class="swse-concept-action-list">
+            {{#each group.entries as |talent|}}
+              <div class="swse-concept-action-row swse-concept-action-row--talent">
+                <div class="swse-concept-action-row__copy">
+                  <strong>{{talent.name}}</strong>
+                  <small>{{talent.description}}</small>
+                </div>
+                <div class="swse-concept-action-row__actions">
+                  {{#if talent.source}}<span class="swse-concept-chip swse-concept-chip--neutral">{{talent.source}}</span>{{/if}}
+                  <button type="button" class="swse-concept-btn" data-action="open-ability" data-item-id="{{talent.id}}">Inspect</button>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </article>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="swse-concept-empty-state">
+      <span class="swse-concept-empty-state__eyebrow">No talent trees recorded</span>
+      <strong>Use Add Talent to begin building out talent tree progression.</strong>
+    </div>
+  {{/if}}
+</section>

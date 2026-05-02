@@ -19,6 +19,52 @@
 // to access class data instead of reading raw compendium entries directly.
 // ============================================
 
+import { getClassTagMetadata } from './class-tag-metadata.js';
+
+const ATTRIBUTE_TAGS = {
+    str: 'strength', dex: 'dexterity', con: 'constitution',
+    int: 'intelligence', wis: 'wisdom', cha: 'charisma'
+};
+
+function normalizeSemanticTag(tag) {
+    if (!tag) return null;
+    return String(tag)
+        .replace(/([a-z])([A-Z])/g, '$1_$2')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+}
+
+function deriveClassTags({ name, role, baseClass, prestigeClass, forceSensitive, classSkills = [], talentTrees = [], metadata = {}, rawTags = [] }) {
+    const tags = new Set();
+    const add = (value) => {
+        const normalized = normalizeSemanticTag(value);
+        if (normalized) tags.add(normalized);
+    };
+
+    add(baseClass ? 'base_class' : 'prestige_class');
+    add(baseClass ? 'heroic_base' : 'advanced_class');
+    add(role);
+    add(name);
+
+    if (forceSensitive) {
+        add('force');
+        add('force_sensitive');
+        add('use_the_force');
+    }
+
+    for (const tag of rawTags || []) add(tag);
+    for (const tag of metadata.tags || []) add(tag);
+    for (const ability of metadata.abilities || []) add(ATTRIBUTE_TAGS[ability] || ability);
+    for (const skill of classSkills || []) add(skill);
+    for (const skill of metadata.skills || []) add(skill);
+    for (const tree of talentTrees || []) add(tree);
+    for (const tree of metadata.talentTrees || []) add(tree);
+    add(metadata.theme);
+
+    return Array.from(tags);
+}
+
 /**
  * Normalize a class ID from a name string.
  * Ensures stable, machine-addressable identifiers.
@@ -132,6 +178,9 @@ export function normalizeClass(rawClass) {
                           sys.forceSensitive === true ||
                           hasForceStartingFeat ||
                           (hasForceKeywordInName && (hasForceTalentTree || hasForceStartingFeat));
+    const metadata = getClassTagMetadata(name) || {};
+    const rawTags = sys.tags || sys.class_tags || [];
+    const role = inferClassRole(talentTrees);
 
     return {
         // Identity
@@ -178,7 +227,19 @@ export function normalizeClass(rawClass) {
         forcePointBase: sys.force_point_base ?? null,  // 7 for Force Disciple/Jedi Master/Sith Lord, null otherwise
 
         // Role (derived)
-        role: inferClassRole(talentTrees),
+        role: role,
+
+        tags: deriveClassTags({
+            name,
+            role,
+            baseClass,
+            prestigeClass,
+            forceSensitive,
+            classSkills: sys.class_skills || sys.classSkills || [],
+            talentTrees,
+            metadata,
+            rawTags
+        }),
 
         // Starting Resources
         baseHp: sys.base_hp ?? 0,

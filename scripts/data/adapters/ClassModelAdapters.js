@@ -100,6 +100,7 @@ export function adaptClassForCharGen(classModel) {
     forcePointBase: classModel.forcePointBase,
 
     role: classModel.role,
+    tags: classModel.tags,
 
     baseHp: classModel.baseHp,
     startingCredits: classModel.startingCredits,
@@ -157,6 +158,9 @@ export function adaptClassForEngineMutation(classModel) {
     force_point_base: classModel.forcePointBase,
     forcePointBase: classModel.forcePointBase,
 
+    tags: classModel.tags,
+    class_tags: classModel.tags,
+
     _canonical: classModel
   };
 }
@@ -211,6 +215,7 @@ export function adaptClassForLoaderCompatibility(classModel) {
     defenses: classModel.defenses,
     forceSensitive: classModel.forceSensitive,
     prestigeClass: !classModel.baseClass,
+    tags: classModel.tags,
     levelProgression: featuresByLevel,
     _raw: null,  // Loader kept _raw for debugging, we don't need it
     _canonical: classModel

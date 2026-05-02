@@ -1,0 +1,23 @@
+<section class="swse-concept-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Status Feed</h3>
+      <p class="swse-concept-panel__hint">Persistent conditions, shields, and readiness markers.</p>
+    </div>
+  </header>
+
+  <div class="swse-concept-chip-row">
+    {{#each conceptLayout.summary.statusChips as |chip|}}
+      <span class="swse-concept-chip swse-concept-chip--{{chip.tone}}">{{chip.label}}</span>
+    {{/each}}
+  </div>
+
+  <div class="swse-concept-metric-row">
+    {{#each conceptLayout.summary.quickReadouts as |metric|}}
+      <div class="swse-concept-metric-card">
+        <span>{{metric.label}}</span>
+        <strong>{{metric.value}}</strong>
+      </div>
+    {{/each}}
+  </div>
+</section>

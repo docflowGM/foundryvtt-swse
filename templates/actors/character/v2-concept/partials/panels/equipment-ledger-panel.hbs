@@ -1,0 +1,16 @@
+{{#each conceptLayout.gear.groups as |group|}}
+  <section class="swse-concept-panel swse-concept-panel--ledger">
+    <header class="swse-concept-panel__header">
+      <div>
+        <h3 class="swse-concept-panel__title">{{group.label}}</h3>
+        <p class="swse-concept-panel__hint">{{group.count}} entries in this category.</p>
+      </div>
+    </header>
+
+    <div class="swse-concept-ledger">
+      {{#each group.entries as |entry|}}
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-item-row.hbs" entry=entry}}
+      {{/each}}
+    </div>
+  </section>
+{{/each}}

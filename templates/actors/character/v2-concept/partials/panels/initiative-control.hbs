@@ -1,0 +1,20 @@
+<section class="swse-concept-panel swse-concept-panel--subledger">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Initiative Control</h3>
+      <p class="swse-concept-panel__hint">Roll initiative directly from the combat lane.</p>
+    </div>
+  </header>
+
+  <div class="swse-concept-initiative-control">
+    <article class="swse-concept-info-card swse-concept-info-card--stat swse-concept-initiative-control__value">
+      <span>Initiative</span>
+      <strong class="{{#if (gt initiativeTotal 0)}}mod--positive{{else}}{{#if (lt initiativeTotal 0)}}mod--negative{{else}}mod--zero{{/if}}{{/if}}">{{numberFormat initiativeTotal decimals=0 sign=true}}</strong>
+    </article>
+
+    <div class="swse-concept-ledger-row__actions swse-concept-initiative-control__actions">
+      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="roll-initiative">Roll</button>
+      <button type="button" class="swse-concept-btn" data-action="roll-initiative-take10">Take 10</button>
+    </div>
+  </div>
+</section>

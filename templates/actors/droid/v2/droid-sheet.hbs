@@ -1,271 +1,34 @@
-<div class="swse-character-sheet-wrapper">
-<form class="swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui" autocomplete="off">
-<div class="swse swse-sheet swse-droid-sheet v2 flexcol swse-sheet-ui swse-ui-shell">
-  <header class="sheet-header holo-header">
-    <div class="sheet-header-left" data-role="actor-portrait-dropzone">
-      <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="64" width="64"/>
+<form class="swse-recovery-sheet swse-character-sheet-form {{cssClass}}" autocomplete="off">
+  <div class="swse-datapad-frame droid-mode">
+    <div class="swse-datapad-header">
+      <div class="swse-datapad-ident">TYPES.ACTOR.DROID: {{actor.name}}</div>
+      <div class="swse-datapad-controls"><span></span><span></span><span></span></div>
     </div>
-
-    <div class="sheet-header-center">
-      <div class="sheet-header-topline">
-        <div class="header-name-block">
-          <h1 class="charname"><input name="name" type="text" value="{{biographyPanel.identity.name}}" placeholder="Name"/></h1>
-        </div>
-        <div class="header-player">
-          <label>Player:</label>
-          <input name="flags.swse.character.player" type="text" value="{{biographyPanel.identity.player}}" placeholder="Player Name"/>
-        </div>
-      </div>
-
-      <div class="sheet-header-meta-grid">
-        <div class="header-field">
-          <label>Class:</label>
-          <input type="text" value="{{biographyPanel.identity.class}}" placeholder="Droid" disabled />
-        </div>
-        <div class="header-field">
-          <label>Type:</label>
-          <input name="system.droidType" type="text" value="{{biographyPanel.identity.species}}" placeholder="Droid Type"/>
-        </div>
-        <div class="header-field">
-          <label>Level:</label>
-          <input name="system.level" type="number" value="{{biographyPanel.identity.level}}" min="1" max="20" placeholder="1"/>
-        </div>
-      </div>
-
-      <div class="header-tactical-strip">
-        <div class="tactical-resource tactical-resource--hp">
-          <span class="tactical-resource__label">HP</span>
-          <div class="resource-segment-bar resource-segment-bar--hp"
-               data-resource-visual="hp"
-               data-hp-current="{{healthPanel.hp.value}}"
-               data-hp-max="{{healthPanel.hp.max}}"
-               data-hp-temp="{{healthPanel.hp.temp}}">
-            {{#each headerHpSegments as |segment|}}
-              <span class="resource-segment {{segment.colorClass}} {{#if segment.filled}}is-filled{{/if}}"></span>
-            {{/each}}
-          </div>
-        </div>
-
-        <div class="tactical-resource tactical-resource--xp">
-          <span class="tactical-resource__label">XP</span>
-          <div class="resource-segment-bar resource-segment-bar--xp"
-               data-resource-visual="xp"
-               data-xp-total="{{xpData.total}}"
-               data-xp-percent="{{xpData.percentRounded}}">
-            {{#each headerXpSegments as |segment|}}
-              <span class="resource-segment {{#if segment.filled}}is-filled{{/if}}"></span>
-            {{/each}}
-          </div>
-        </div>
-
-        <div class="tactical-resource tactical-resource--fp">
-          <span class="tactical-resource__label">MP</span>
-          <span class="tactical-resource__value mod {{#if droidPanels.droidSummary.availableModificationPoints}}mod--positive{{else}}mod--zero{{/if}}">{{droidPanels.droidSummary.usedModificationPoints}} / {{droidPanels.droidSummary.maxModificationPoints}}</span>
-        </div>
-
-        <div class="tactical-resource tactical-resource--dp">
-          <span class="tactical-resource__label">Budget</span>
-          <span class="tactical-resource__value mod {{#if droidPanels.droidSummary.isOverBudget}}mod--negative{{else}}mod--positive{{/if}}">{{droidPanels.droidSummary.creditsSpent}} / {{droidPanels.droidSummary.creditsTotal}}</span>
-        </div>
-
-        <div class="tactical-resource tactical-resource--sw">
-          <div class="tactical-resource__sw-head">
-            <span class="tactical-resource__label">Config</span>
-            <span class="tactical-resource__meta">{{#if droidPanels.droidSummary.degree}}{{droidPanels.droidSummary.degree}}{{else}}Unconfigured{{/if}}</span>
-          </div>
-          <div class="tactical-resource__sw-body">
-            <span class="tactical-resource__meta">{{#if droidPanels.droidSummary.size}}{{droidPanels.droidSummary.size}}{{else}}No chassis selected{{/if}}</span>
-            <button type="button" class="sw-use-btn edit-droid-systems">{{#if droidPanels.droidSummary.degree}}Edit{{else}}Create{{/if}}</button>
-          </div>
-        </div>
+    <div class="swse-home-console compact">
+      <div class="swse-console-topline"><span>DROID CONTROL</span><span>·</span><span>WORKBENCH</span><span class="swse-console-power">{{system.level}} LVL</span></div>
+      <div class="swse-home-hero compact-hero">
+        <div class="swse-home-left"><div class="swse-panel swse-profile-card"><img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="{{actor.name}}"/><div class="swse-status-line">[CHASSIS] droid systems nominal.</div></div></div>
+        <div class="swse-home-center"><div class="swse-radial-shell droid-shell"><div class="swse-radial-ring swse-radial-ring--outer"></div><div class="swse-radial-ring swse-radial-ring--mid"></div><div class="swse-radial-core"><span>{{system.class}}</span></div><button type="button" class="swse-radial-app app-character">Overview</button><button type="button" class="swse-radial-app app-progress">Training</button><button type="button" class="swse-radial-app app-workbench">Systems</button><button type="button" class="swse-radial-app app-store">Store</button></div></div>
+        <div class="swse-home-right"><div class="swse-panel swse-glance-card"><div class="swse-panel-title">QUICK GLANCE</div><div class="swse-glance-grid"><div><span>HP</span><strong>{{system.hp.value}}/{{system.hp.max}}</strong></div><div><span>SPEED</span><strong>{{system.speed.total}}</strong></div><div><span>REF</span><strong>{{system.defenses.reflex.total}}</strong></div><div><span>FORT</span><strong>{{system.defenses.fortitude.total}}</strong></div></div></div></div>
       </div>
     </div>
-
-    <div class="sheet-header-right sheet-header-right--compact">
-      {{#each defensePanel.defenses as |def|}}
-        {{#if (eq def.key "fort")}}
-          <div class="header-defense-readout">
-            <span class="header-defense-readout__label">FORT</span>
-            <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
-          </div>
-        {{else if (eq def.key "ref")}}
-          <div class="header-defense-readout">
-            <span class="header-defense-readout__label">REF</span>
-            <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
-          </div>
-        {{else if (eq def.key "will")}}
-          <div class="header-defense-readout">
-            <span class="header-defense-readout__label">WILL</span>
-            <span class="header-defense-readout__value mod {{#if (gt def.total 10)}}mod--positive{{else if (lt def.total 10)}}mod--negative{{else}}mod--zero{{/if}}">{{def.total}}</span>
-          </div>
-        {{/if}}
-      {{/each}}
-      <div class="header-defense-readout">
-        <span class="header-defense-readout__label">DT</span>
-        <span class="header-defense-readout__value mod {{#if (gt derived.damageThreshold 10)}}mod--positive{{else if (lt derived.damageThreshold 10)}}mod--negative{{else}}mod--zero{{/if}}">{{derived.damageThreshold}}</span>
-      </div>
-    </div>
-  </header>
-
-  <div class="sheet-actions">
-    <button type="button" class="header-btn edit-droid-systems">{{#if droidPanels.droidSummary.degree}}Configure{{else}}Create Configuration{{/if}}</button>
-    <button type="button" data-action="level-up" class="header-btn {{#if xpLevelReady}}ready{{/if}}">Level Up</button>
-    <button type="button" data-action="cmd-store" class="header-btn">Store</button>
-    <button type="button" data-action="open-mentor" class="header-btn"><i class="fas fa-comments"></i> Mentor</button>
+    <nav class="sheet-tabs swse-sheet-tabs tabs" data-group="primary">
+      <a class="item active" data-tab="overview">Overview</a>
+      <a class="item" data-tab="abilities">Abilities</a>
+      <a class="item" data-tab="skills">Skills</a>
+      <a class="item" data-tab="combat">Combat</a>
+      <a class="item" data-tab="talents">Talents</a>
+      <a class="item" data-tab="gear">Gear</a>
+      <a class="item" data-tab="biography">Notes</a>
+    </nav>
+    <section class="sheet-body swse-sheet-body">
+      <section class="tab active" data-group="primary" data-tab="overview"><div class="swse-content-grid swse-overview-grid"><div class="swse-panel"><div class="swse-panel-title">Identity</div><div class="swse-form-grid two-col"><label>Name<input name="name" type="text" value="{{actor.name}}"/></label><label>Model<input name="system.class" type="text" value="{{system.class}}"/></label><label>Level<input name="system.level" type="number" value="{{system.level}}" min="1"/></label><label>Credits<input name="system.credits" type="number" value="{{system.credits}}"/></label></div></div><div class="swse-panel"><div class="swse-panel-title">Defenses</div><div class="swse-defense-grid">{{#each defenseList as |def|}}<div class="swse-defense-chip"><span>{{def.label}}</span><strong>{{def.total}}</strong></div>{{/each}}</div></div></div></section>
+      <section class="tab" data-group="primary" data-tab="abilities"><div class="swse-content-grid ability-grid">{{#each abilitiesList as |ability|}}<div class="swse-panel swse-ability-card"><div class="swse-panel-title">{{ability.label}}</div><input name="system.abilities.{{ability.key}}.base" type="number" value="{{ability.base}}"/><div class="swse-ability-total">{{ability.total}}</div><div class="swse-ability-mod">{{ability.mod}}</div></div>{{/each}}</div></section>
+      <section class="tab" data-group="primary" data-tab="skills"><div class="swse-panel"><div class="swse-panel-title">Skills</div><div class="swse-list">{{#each skillsList as |skill|}}<div class="swse-list-row"><span>{{skill.label}}</span><span>{{skill.ability}}</span><strong>{{skill.value}}</strong></div>{{else}}<div class="swse-empty">No skills configured yet.</div>{{/each}}</div></div></section>
+      <section class="tab" data-group="primary" data-tab="combat"><div class="swse-panel"><div class="swse-panel-title">Weapons</div><div class="swse-list">{{#each weaponsList as |weapon index|}}<div class="swse-list-row weapon-entry" data-index="{{index}}"><input type="text" name="system.weapons.{{index}}.name" value="{{weapon.name}}"/><input type="text" name="system.weapons.{{index}}.damage" value="{{weapon.damage}}"/><div class="swse-inline-actions"><button type="button" class="roll-weapon">Roll</button><button type="button" class="remove-weapon">Delete</button></div></div>{{else}}<div class="swse-empty">No weapons recorded.</div>{{/each}}</div><button type="button" class="header-btn add-weapon">Add Weapon</button></div></section>
+      <section class="tab" data-group="primary" data-tab="talents"><div class="swse-content-grid two-up"><div class="swse-panel"><div class="swse-panel-title">Feats</div><div class="swse-list">{{#each system.feats as |feat index|}}<div class="swse-list-row list-entry" data-index="{{index}}"><input type="text" name="system.feats.{{index}}.name" value="{{feat.name}}"/><button type="button" class="remove-feat">Delete</button></div>{{else}}<div class="swse-empty">No feats yet.</div>{{/each}}</div><button type="button" class="header-btn add-feat">Add Feat</button></div><div class="swse-panel"><div class="swse-panel-title">Talents</div><div class="swse-list">{{#each system.talents as |talent index|}}<div class="swse-list-row list-entry" data-index="{{index}}"><input type="text" name="system.talents.{{index}}.name" value="{{talent.name}}"/><button type="button" class="remove-talent">Delete</button></div>{{else}}<div class="swse-empty">No talents yet.</div>{{/each}}</div><button type="button" class="header-btn add-talent">Add Talent</button></div></div></section>
+      <section class="tab" data-group="primary" data-tab="gear"><div class="swse-panel"><div class="swse-panel-title">Inventory &amp; Workbench</div><div class="swse-list">{{#each inventoryItems as |item|}}<div class="swse-list-row"><span>{{item.name}}</span><span>{{item.type}}</span></div>{{else}}<div class="swse-empty">No inventory items found.</div>{{/each}}</div><div class="swse-inline-actions"><button type="button" class="header-btn app-store">Open Store</button><button type="button" class="header-btn app-progress">Open Progression</button></div></div></section>
+      <section class="tab" data-group="primary" data-tab="biography"><div class="swse-content-grid two-up"><div class="swse-panel"><div class="swse-panel-title">Biography</div><textarea name="system.bio" rows="12">{{bio}}</textarea></div><div class="swse-panel"><div class="swse-panel-title">Notes</div><textarea name="system.notes" rows="12">{{notes}}</textarea></div></div></section>
+    </section>
   </div>
-
-  <nav class="sheet-tabs tabs flexrow" data-group="primary" data-tab-group="primary">
-    <a class="item active" data-action="tab" data-tab="overview" data-group="primary" data-tab-group="primary">Overview</a>
-    <a class="item" data-action="tab" data-tab="systems" data-group="primary" data-tab-group="primary">Systems</a>
-    <a class="item" data-action="tab" data-tab="combat" data-group="primary" data-tab-group="primary">Combat</a>
-    <a class="item" data-action="tab" data-tab="skills" data-group="primary" data-tab-group="primary">Skills</a>
-    <a class="item" data-action="tab" data-tab="abilities" data-group="primary" data-tab-group="primary">Abilities</a>
-    <a class="item" data-action="tab" data-tab="talents" data-group="primary" data-tab-group="primary">Talents</a>
-    <a class="item" data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary">Gear</a>
-    <a class="item" data-action="tab" data-tab="relationships" data-group="primary" data-tab-group="primary">Relationships</a>
-    <a class="item" data-action="tab" data-tab="notes" data-group="primary" data-tab-group="primary">Notes</a>
-  </nav>
-
-  <section class="sheet-body flexcol">
-    <section class="tab active flexcol" data-group="primary" data-tab-group="primary" data-tab="overview">
-      <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-left flexcol">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/stock-droid-provenance-panel.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
-        </div>
-        <div class="swse-v2-right flexcol">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs"}}
-        </div>
-      </div>
-    </section>
-
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="systems">
-      <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-armor-panel.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-sensors-panel.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-weapons-panel.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-budget-breakdown-panel.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-validation-panel.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history-panel.hbs"}}
-        </div>
-      </div>
-    </section>
-
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="combat">
-      <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/initiative-panel.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
-        </div>
-      </div>
-    </section>
-
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="skills">
-      <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
-        </div>
-      </div>
-    </section>
-
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="abilities">
-      <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs"}}
-        </div>
-      </div>
-    </section>
-
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="talents">
-      <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs"}}
-        </div>
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs"}}
-        </div>
-      </div>
-    </section>
-
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="gear">
-      <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/equipment-panel.hbs"}}
-        </div>
-
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/armor-panel.hbs"}}
-        </div>
-
-        {{#if weapons}}
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/weapons-panel.hbs"}}
-        </div>
-        {{/if}}
-      </div>
-    </section>
-
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="relationships">
-      <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/owned-actors-panel.hbs"}}
-        </div>
-      </div>
-    </section>
-
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="notes">
-      <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs"}}
-        </div>
-      </div>
-    </section>
-  </section>
-</div>
 </form>
-</div>

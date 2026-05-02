@@ -1,0 +1,65 @@
+<section class="swse-concept-panel swse-concept-panel--ledger">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Combat Actions</h3>
+      <p class="swse-concept-panel__hint">Executable combat actions organized by economy lane.</p>
+    </div>
+  </header>
+
+  {{#if conceptLayout.combat.actionGroups.length}}
+    <div class="swse-concept-action-groups">
+      {{#each conceptLayout.combat.actionGroups as |group|}}
+        <article class="swse-concept-action-group swse-concept-action-group--combat">
+          <div class="swse-concept-action-group__header">
+            <strong>{{group.label}}</strong>
+            <span>{{group.count}} entries</span>
+          </div>
+
+          {{#each group.subgroups as |subgroup|}}
+            <section class="swse-concept-action-subgroup">
+              <div class="swse-concept-action-subgroup__header">
+                <strong>{{subgroup.label}}</strong>
+                <span>{{subgroup.count}}</span>
+              </div>
+
+              <div class="swse-concept-action-list">
+                {{#each subgroup.items as |item|}}
+                  <article class="swse-concept-action-row swse-concept-action-row--combat">
+                    <div class="swse-concept-action-row__copy">
+                      <strong>{{item.name}}</strong>
+                      <small>
+                        {{#if item.sourceName}}{{item.sourceName}}{{else}}Combat Action{{/if}}
+                        {{#if item.description}} · {{item.description}}{{/if}}
+                      </small>
+                      {{#if item.resources.length}}
+                        <div class="swse-concept-ledger-row__meta">
+                          {{#each item.resources as |resource|}}
+                            <span>{{resource}}</span>
+                          {{/each}}
+                        </div>
+                      {{/if}}
+                    </div>
+
+                    <div class="swse-concept-action-row__actions">
+                      {{#if item.itemId}}
+                        <button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{item.itemId}}">Inspect</button>
+                      {{/if}}
+                      {{#if item.executable}}
+                        <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="swse-v2-use-action" data-action-id="{{item.key}}">{{item.useLabel}}</button>
+                      {{/if}}
+                    </div>
+                  </article>
+                {{/each}}
+              </div>
+            </section>
+          {{/each}}
+        </article>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="swse-concept-empty-state">
+      <span class="swse-concept-empty-state__eyebrow">No action cards</span>
+      <strong>The actor currently has no grouped combat actions to surface here.</strong>
+    </div>
+  {{/if}}
+</section>

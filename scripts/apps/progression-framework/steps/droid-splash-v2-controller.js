@@ -125,6 +125,21 @@ export const DROID_SPLASH_V2_STAGES = [
   }
 ];
 
+
+function toBinaryText(text) {
+  const source = String(text || '').toUpperCase();
+  return Array.from(source)
+    .map((char) => {
+      if (char === ' ') return '00000000';
+      return char.charCodeAt(0).toString(2).padStart(8, '0');
+    })
+    .join(' ');
+}
+
+function asDisplayText(englishText, localizedMode) {
+  return localizedMode ? englishText : toBinaryText(englishText);
+}
+
 const DEFAULT_CHANNELS = [
   { id: 'power', label: 'Fusion', pct: 98 },
   { id: 'neural', label: 'Logic', pct: 0 },
@@ -178,7 +193,7 @@ function buildProgressSegments(progressPercent) {
   }));
 }
 
-function buildLogLines(upToStageIndex) {
+function buildLogLines(upToStageIndex, localizedMode = false) {
   const lines = [];
   for (let i = 0; i <= upToStageIndex; i += 1) {
     const stage = DROID_SPLASH_V2_STAGES[i];
@@ -188,25 +203,25 @@ function buildLogLines(upToStageIndex) {
         time: '00:00:00',
         tag: String(entry.tag || 'INFO'),
         tagClass: `tag-${String(entry.tag || 'INFO').toLowerCase()}`,
-        text: entry.text
+        text: localizedMode ? entry.text : toBinaryText(entry.text)
       });
     }
   }
   return lines.slice(-20);
 }
 
-function buildIdentityState(isComplete, sessionId = 'DR-00000') {
+function buildIdentityState(isComplete, sessionId = 'DR-00000', localizedMode = false) {
   return {
     showIdentity: isComplete,
     identity: {
-      badge: '✓ CHASSIS ACTIVE',
-      name: 'UNNAMED UNIT',
-      sub: 'Awaiting Designation · Degree 01 · Autonomous',
+      badge: asDisplayText('CHASSIS ACTIVE', localizedMode),
+      name: asDisplayText('UNNAMED UNIT', localizedMode),
+      sub: asDisplayText('Awaiting Designation · Degree 01 · Autonomous', localizedMode),
       meta: [
-        { key: 'Serial', value: sessionId },
-        { key: 'Owner', value: 'NONE' },
-        { key: 'Bolt', value: 'OFF' },
-        { key: 'Degree', value: '01' }
+        { key: localizedMode ? 'Serial' : 'SER', value: localizedMode ? sessionId : toBinaryText(sessionId) },
+        { key: localizedMode ? 'Owner' : 'OWN', value: asDisplayText('NONE', localizedMode) },
+        { key: localizedMode ? 'Bolt' : 'BLT', value: asDisplayText('OFF', localizedMode) },
+        { key: localizedMode ? 'Degree' : 'DEG', value: localizedMode ? '01' : toBinaryText('01') }
       ]
     }
   };
@@ -217,7 +232,8 @@ export function buildDroidSplashV2Context(options = {}) {
     stageIndex = 0,
     sessionId = 'DR-00000',
     isComplete = false,
-    currentTime = '00:00 · UTC'
+    currentTime = '00:00 · UTC',
+    localizedMode = false
   } = options;
 
   const safeStageIndex = Math.max(0, Math.min(DROID_SPLASH_V2_STAGES.length - 1, stageIndex));
@@ -229,18 +245,19 @@ export function buildDroidSplashV2Context(options = {}) {
   return {
     introVariant: 'droid-v2',
     isComplete: complete,
+    localizedMode,
 
-    bezelLabel: 'CHASSIS-PANEL // MAINT · POST-IN-PROGRESS',
-    bezelSerial: 'CHASSIS SN 882-CX-ΛΩ-44179',
-    hudTitle: 'DROID ASSEMBLY // COLD BOOT',
+    bezelLabel: asDisplayText('CHASSIS-PANEL // MAINT · POST-IN-PROGRESS', localizedMode),
+    bezelSerial: asDisplayText('CHASSIS SN 882-CX-44179', localizedMode),
+    hudTitle: asDisplayText('DROID ASSEMBLY // COLD BOOT', localizedMode),
 
     currentTime,
-    bootStageTag: safeStageIndex < DROID_SPLASH_V2_STAGES.length - 1 ? 'POST' : 'READY',
+    bootStageTag: asDisplayText(safeStageIndex < DROID_SPLASH_V2_STAGES.length - 1 ? 'POST' : 'READY', localizedMode),
 
-    stageLabel: stage?.label || 'READY',
-    statusLabel: stage?.label || 'SYSTEM INITIALIZE',
-    statusMessage: stage?.msg || '▸ CHASSIS ONLINE',
-    statusSource: stage?.src || '<all subsystems · nominal>',
+    stageLabel: asDisplayText(stage?.label || 'READY', localizedMode),
+    statusLabel: asDisplayText(stage?.label || 'SYSTEM INITIALIZE', localizedMode),
+    statusMessage: localizedMode ? (stage?.msg || '▸ CHASSIS ONLINE') : toBinaryText((stage?.msg || 'CHASSIS ONLINE').replace('▸ ', '')),
+    statusSource: localizedMode ? (stage?.src || '<all subsystems · nominal>') : toBinaryText((stage?.src || 'all subsystems nominal').replace(/[<>]/g, '')),
     coreGlyph: stage?.glyph || '◉',
 
     progressPercent,
@@ -248,20 +265,47 @@ export function buildDroidSplashV2Context(options = {}) {
     taskCount: `${safeStageIndex + 1} / ${DROID_SPLASH_V2_STAGE_COUNT}`,
     progressSegments: buildProgressSegments(progressPercent),
 
-    channels: buildChannels(stage),
-    logLines: buildLogLines(safeStageIndex),
+    channels: buildChannels(stage).map((channel) => ({
+      ...channel,
+      label: localizedMode ? channel.label : toBinaryText(channel.label)
+    })),
+    logLines: buildLogLines(safeStageIndex, localizedMode),
 
     isTranslating: Boolean(translation),
-    translationLabel: translation?.label || 'Binary translation',
+    translationLabel: localizedMode ? (translation?.label || 'Binary translation') : toBinaryText(translation?.label || 'Binary translation'),
     translationSource: translation?.sourceText || '01010101 01001110 01001001 01010100',
     translationTarget: translation?.targetText || 'Unit online. Droid assembly complete.',
     sourceMode: 'binary',
 
+    diagTitle: localizedMode ? 'Channel Diagnostics' : toBinaryText('Channel Diagnostics'),
+    registryTitle: localizedMode ? 'Chassis Registry' : toBinaryText('Chassis Registry'),
+    registryMeta: [
+      { key: localizedMode ? 'FIRM' : 'FRM', value: localizedMode ? 'DROID-OS 9.3.1' : toBinaryText('DROID-OS 9.3.1') },
+      { key: localizedMode ? 'FRAME' : 'CHS', value: localizedMode ? 'CX-7 BIPED' : toBinaryText('CX-7 BIPED') },
+      { key: localizedMode ? 'DEG' : 'DEG', value: localizedMode ? '1ST · AUTONOMOUS' : toBinaryText('1ST AUTONOMOUS') },
+      { key: localizedMode ? 'OWNER' : 'OWN', value: localizedMode ? 'UNASSIGNED' : toBinaryText('UNASSIGNED') }
+    ],
+    loaderLabel: localizedMode ? 'Progress' : toBinaryText('Progress'),
+    postLogTitle: localizedMode ? 'POST Log // Stream' : toBinaryText('POST Log // Stream'),
+    processTitle: localizedMode ? 'Active Process' : toBinaryText('Active Process'),
+    processMeta: [
+      { key: 'pid:', value: localizedMode ? '0x0C0D · droid.assemble' : toBinaryText('0x0C0D droid assemble') },
+      { key: 'cpu:', value: localizedMode ? '12%' : toBinaryText('12 PERCENT'), valueClass: 'pos' },
+      { key: 'mem:', value: localizedMode ? '48M / 512M' : toBinaryText('48M 512M') },
+      { key: 'pkts:', value: localizedMode ? '0' : toBinaryText('0') },
+      { key: 'warn:', value: localizedMode ? '0' : toBinaryText('0'), valueClass: 'zero' },
+      { key: 'err:', value: localizedMode ? '0' : toBinaryText('0'), valueClass: 'neg' }
+    ],
+    hintLabel: localizedMode ? 'SPACE skip · ENTER continue · R replay' : toBinaryText('SPACE SKIP ENTER CONTINUE R REPLAY'),
+    skipLabel: localizedMode ? 'Skip Boot' : toBinaryText('Skip Boot'),
+    buildCustomLabel: localizedMode ? 'Build Custom' : toBinaryText('Build Custom'),
+    selectModelLabel: localizedMode ? 'Select Model' : toBinaryText('Select Model'),
+    continueLabel: localizedMode ? 'Register New Unit' : toBinaryText('Register New Unit'),
+
     // When complete, show creation mode choice instead of single continue button
     showDroidCreationModeChoice: complete,
-    continueLabel: 'Register New Unit',
     continueDisabled: !complete,
 
-    ...buildIdentityState(complete, sessionId)
+    ...buildIdentityState(complete, sessionId, localizedMode)
   };
 }

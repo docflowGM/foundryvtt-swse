@@ -1,0 +1,34 @@
+<article class="swse-concept-loadout-card swse-concept-loadout-card--armor" data-item-id="{{entry.id}}">
+  <div class="swse-concept-loadout-card__header">
+    <div>
+      <strong>{{entry.name}}</strong>
+      <small>Armor</small>
+    </div>
+    <span class="swse-concept-chip swse-concept-chip--accent-soft">Equipped</span>
+  </div>
+
+  <div class="swse-concept-loadout-card__stats">
+    <div>
+      <span>Reflex</span>
+      <strong>{{numberFormat entry.reflexBonus decimals=0 sign=true}}</strong>
+    </div>
+    <div>
+      <span>Fortitude</span>
+      <strong>{{numberFormat entry.fortBonus decimals=0 sign=true}}</strong>
+    </div>
+    <div>
+      <span>Max Dex</span>
+      <strong>{{numberFormat entry.maxDexBonus decimals=0 sign=true}}</strong>
+    </div>
+  </div>
+
+  <div class="swse-concept-loadout-card__meta">
+    <span>{{#if entry.weight}}{{numberFormat entry.weight decimals=1}} kg{{else}}No weight{{/if}}</span>
+    <span>ACP {{numberFormat entry.armorCheckPenalty decimals=0 sign=true}}</span>
+    <span>{{numberFormat entry.value decimals=0}} cr</span>
+  </div>
+
+  <div class="swse-concept-ledger-row__actions">
+    <button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{entry.id}}">Inspect</button>
+  </div>
+</article>

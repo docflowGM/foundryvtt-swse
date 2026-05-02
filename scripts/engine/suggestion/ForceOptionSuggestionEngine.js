@@ -17,6 +17,7 @@ import {
   validateForcePowerCategories
 } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-categories.js";
 import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
+import { getForceAxisSnapshot } from "/systems/foundryvtt-swse/scripts/engine/suggestion/force-rule-adapter.js";
 
 // DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
 // Use UNIFIED_TIERS from suggestion-unified-tiers.js instead
@@ -29,6 +30,76 @@ export const FORCE_OPTION_TIERS = {
   AVAILABLE: UNIFIED_TIERS.AVAILABLE                       // 0
 };
 
+
+const FORCE_OPTION_TAGS = {
+  move_object: ['force_control', 'controller', 'utility'],
+  negate_energy: ['force_defense', 'defense', 'support'],
+  surge: ['mobility', 'buff'],
+  force_slam: ['force_control', 'controller', 'offense_ranged', 'area_effect'],
+  mind_trick: ['force_control', 'social', 'debuff'],
+  enlighten: ['force_support', 'buff', 'ally_support'],
+  force_lightning: ['force_offense', 'offense_ranged', 'area_effect', 'dark_side'],
+  battle_strike: ['force_offense', 'offense_melee', 'lightsaber', 'buff', 'force_multiplier'],
+  stun: ['force_control', 'debuff'],
+  force_grip: ['force_control', 'offense_ranged', 'single_target', 'dark_side'],
+  quicken_power: ['force_multiplier', 'action_economy', 'swift_action'],
+  force_regeneration: ['force_support', 'healing', 'force_multiplier'],
+  shatterpoint: ['force_control', 'precision', 'force_execution'],
+  dark_side_mastery: ['dark_side', 'force_multiplier', 'force_offense'],
+  force_resistance: ['force_defense', 'defense'],
+  telekinetic_savant: ['force_control', 'force_multiplier', 'force_execution'],
+  improved_battle_meditation: ['force_support', 'leadership', 'ally_support', 'force_multiplier'],
+  power_recovery: ['force_capacity', 'force_multiplier', 'resource_recovery'],
+  force_sensitivity_focus: ['force_execution', 'force_multiplier']
+};
+
+function getOptionTagSet(option) {
+  return new Set([...(option?.tags || []), ...(FORCE_OPTION_TAGS[option?.id] || [])].map((tag) => String(tag || '').toLowerCase()));
+}
+
+function normalizeDescriptorTag(tag) {
+  return String(tag || '').toLowerCase().replace(/[\s-]+/g, '_');
+}
+
+function getDescriptorState(option, forceCategoryData = null) {
+  const normalizedTags = new Set([...(option?.tags || []), ...(FORCE_OPTION_TAGS[option?.id] || [])].map(normalizeDescriptorTag));
+  const hasDarkDescriptor = normalizedTags.has('dark_side');
+  const hasLightDescriptor = normalizedTags.has('light_side');
+  const moralSlant = forceCategoryData?.moralSlant || null;
+
+  return {
+    hasDarkDescriptor,
+    hasLightDescriptor,
+    moralSlant,
+    isDarkAligned: hasDarkDescriptor || moralSlant === 'sith_favored' || moralSlant === 'sith_only',
+    isLightAligned: hasLightDescriptor || moralSlant === 'jedi_favored' || moralSlant === 'jedi_only'
+  };
+}
+
+function getDSPAlignmentAdjustment(option, forceCategoryData, dspValue = 0) {
+  const state = getDescriptorState(option, forceCategoryData);
+
+  if (state.hasLightDescriptor && dspValue > 0) {
+    if (dspValue >= 3) {
+      return { tierPenalty: 2, reason: 'Light Side power clashes with your current Dark Side score' };
+    }
+    return { tierPenalty: 1, reason: 'Light Side power is a weaker fit for your current Dark Side score' };
+  }
+
+  if (state.hasDarkDescriptor && dspValue <= 0) {
+    return { tierPenalty: 1, reason: 'Dark Side power is a weaker fit for your current moral posture' };
+  }
+
+  if (state.isDarkAligned && dspValue >= 1) {
+    return { tierPenalty: 0, reason: 'Dark Side leaning power fits your current Force alignment' };
+  }
+
+  if (state.isLightAligned && dspValue <= 0) {
+    return { tierPenalty: 0, reason: 'Light Side leaning power fits your current Force alignment' };
+  }
+
+  return { tierPenalty: 0, reason: '' };
+}
 // Force Option Catalog
 export const FORCE_OPTIONS_CATALOG = {
   // Powers
@@ -222,6 +293,9 @@ export class ForceOptionSuggestionEngine {
     try {
       const buildIntent = contextOptions.buildIntent || {};
       const ruleset = HouseRuleService.get('houseRules') || {};
+      const forceAxes = getForceAxisSnapshot(actor);
+      const { DSPEngine } = await import("/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js").catch(() => ({ DSPEngine: null }));
+      const dspValue = DSPEngine?.getValue(actor) ?? actor?.system?.darkSide?.value ?? 0;
 
       // Get prestige class target from L1 survey if available
       const prestigeClassTarget = actor.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
@@ -229,6 +303,7 @@ export class ForceOptionSuggestionEngine {
       const suggestedOptions = options.map(option => {
         let tier = FORCE_OPTION_TIERS.AVAILABLE;
         const reasons = [];
+        const tags = getOptionTagSet(option);
 
         // Skip if no Force focus
         if (!buildIntent.forceFocus) {
@@ -251,14 +326,29 @@ export class ForceOptionSuggestionEngine {
 
         // Combat style alignment
         const combatStyle = buildIntent.combatStyle || 'mixed';
-        if (combatStyle === 'lightsaber' && ['battle_strike', 'force_slam', 'surge'].includes(option.id)) {
+        if (combatStyle === 'lightsaber' && (tags.has('offense_melee') || tags.has('lightsaber') || ['battle_strike', 'force_slam', 'surge'].includes(option.id))) {
           tier = Math.max(tier, FORCE_OPTION_TIERS.COMBAT_SYNERGY);
           reasons.push('Enhances lightsaber combat');
         }
 
-        if (combatStyle === 'caster' && ['force_lightning', 'mind_trick', 'move_object'].includes(option.id)) {
+        if (combatStyle === 'caster' && (tags.has('force_control') || tags.has('force_offense') || ['force_lightning', 'mind_trick', 'move_object'].includes(option.id))) {
           tier = Math.max(tier, FORCE_OPTION_TIERS.COMBAT_SYNERGY);
           reasons.push('Supports Force caster build');
+        }
+
+        if ((tags.has('force_capacity') || tags.has('force_multiplier')) && forceAxes.capacityMod >= 2) {
+          tier = Math.max(tier, FORCE_OPTION_TIERS.COMPATIBLE);
+          reasons.push(`Fits your Force capacity (${forceAxes.capacityAbility.toUpperCase()})`);
+        }
+
+        if ((tags.has('force_execution') || tags.has('force_power_check')) && forceAxes.executionMod >= 2) {
+          tier = Math.max(tier, FORCE_OPTION_TIERS.COMPATIBLE);
+          reasons.push(`Fits your Force execution (${forceAxes.executionAbility.toUpperCase()})`);
+        }
+
+        if (tags.has('action_economy') || tags.has('swift_action')) {
+          tier = Math.max(tier, FORCE_OPTION_TIERS.COMPATIBLE);
+          reasons.push('Improves action economy');
         }
 
         // Prestige class alignment from L1 survey (highest priority)
@@ -308,14 +398,28 @@ export class ForceOptionSuggestionEngine {
 
         // Primary theme alignment
         const primaryThemes = buildIntent.primaryThemes || [];
-        if (primaryThemes.includes('control') && option.category === 'control') {
+        if (primaryThemes.includes('control') && (option.category === 'control' || tags.has('force_control') || tags.has('controller'))) {
           tier = Math.max(tier, FORCE_OPTION_TIERS.COMPATIBLE);
           reasons.push('Aligns with control-focused build');
         }
 
-        if (primaryThemes.includes('defense') && option.category === 'defense') {
+        if (primaryThemes.includes('defense') && (option.category === 'defense' || tags.has('force_defense') || tags.has('defense'))) {
           tier = Math.max(tier, FORCE_OPTION_TIERS.COMPATIBLE);
           reasons.push('Supports defensive playstyle');
+        }
+
+        if (primaryThemes.includes('support') && (tags.has('force_support') || tags.has('ally_support') || tags.has('healing'))) {
+          tier = Math.max(tier, FORCE_OPTION_TIERS.COMPATIBLE);
+          reasons.push('Supports your support-oriented Force path');
+        }
+
+        const forcePowerCategoryData = Object.values(FORCE_POWER_CATEGORIES).find((p) => p.name === (option.name || '')) || null;
+        const dspAdjustment = getDSPAlignmentAdjustment(option, forcePowerCategoryData, dspValue);
+        if (dspAdjustment.reason) {
+          reasons.push(dspAdjustment.reason);
+        }
+        if (dspAdjustment.tierPenalty > 0) {
+          tier = Math.max(FORCE_OPTION_TIERS.AVAILABLE, tier - dspAdjustment.tierPenalty);
         }
 
         const tierMetadata = getTierMetadata(tier);

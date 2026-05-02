@@ -134,6 +134,12 @@ export class ForceSecretSuggestionEngine {
     const minimumTechniques = enrichedData.minimumTechniques || 1;
     const archetypeBias = enrichedData.archetypeBias || {};
     const institutionBias = enrichedData.institutionBias || {};
+    const powerNames = knownPowers.map(power => this._normalizePowerName(power?.name || power));
+    const formPowers = knownPowers.filter(power => power?.isForm);
+    const formPowerRatio = knownPowers.length > 0 ? (formPowers.length / knownPowers.length) : 0;
+    const hasFormSuite = formPowers.length > 0;
+    const isFormFocusedSuite = formPowerRatio >= 0.5;
+    const isPureFormSuite = knownPowers.length > 0 && formPowers.length === knownPowers.length;
 
     let requirementsMetCount = 0;
     const reasons = [];
@@ -143,10 +149,12 @@ export class ForceSecretSuggestionEngine {
       // No specific category requirement - more permissive
       requirementsMetCount++;
     } else {
-      // Simplified check: if player has multiple powers, likely has some categories
-      if (knownPowers.length >= minimumPowers) {
+      const hasCategoryMatch = this._knownPowersMeetCategoryRequirement(requiredCategories, knownPowers);
+      if (hasCategoryMatch || knownPowers.length >= minimumPowers) {
         requirementsMetCount++;
-        reasons.push(`Demonstrated knowledge of relevant Force categories`);
+        reasons.push(hasCategoryMatch
+          ? "Your Force suite already covers this secret's power lane"
+          : 'Demonstrated knowledge of relevant Force categories');
       }
     }
 
@@ -198,12 +206,34 @@ export class ForceSecretSuggestionEngine {
       reasons.push(`Aligned with ${institution} teachings`);
     }
 
+    if (hasFormSuite) {
+      score *= isPureFormSuite ? 1.2 : (isFormFocusedSuite ? 1.12 : 1.06);
+      reasons.push(isPureFormSuite
+        ? 'Amplifies your lightsaber form power suite'
+        : 'Applies cleanly across your Force powers, including lightsaber forms');
+    }
+
     return {
       tier,
       score: Number(score.toFixed(2)),
       reasons,
       requirementsMetCount
     };
+  }
+
+
+  static _knownPowersMeetCategoryRequirement(requiredCategories = [], knownPowers = []) {
+    if (!requiredCategories.length) return true;
+    const normalizedRequired = new Set(requiredCategories.map((category) => String(category || '').trim().toLowerCase()).filter(Boolean));
+    return knownPowers.some((power) => {
+      const categories = new Set((power?.categories || []).map((category) => String(category || '').trim().toLowerCase()).filter(Boolean));
+      const tags = new Set((power?.tags || []).map((tag) => String(tag || '').trim().toLowerCase()).filter(Boolean));
+      return [...normalizedRequired].some((category) => categories.has(category) || tags.has(category));
+    });
+  }
+
+  static _normalizePowerName(value = '') {
+    return String(value || '').trim().toLowerCase();
   }
 
   /**
@@ -217,7 +247,17 @@ export class ForceSecretSuggestionEngine {
       // From full actor (levelup/play mode)
       actor.items
         .filter(item => item.type === ITEM_TYPES.FORCE_POWER)
-        .forEach(power => powers.push(power.name));
+        .forEach(power => {
+          const tags = Array.isArray(power.system?.tags) ? power.system.tags : [];
+          const categories = Array.isArray(power.system?.categories) ? power.system.categories : [];
+          const isForm = Boolean(power.system?.form) || tags.some(tag => String(tag || '').toLowerCase() === 'lightsaber-form');
+          powers.push({
+            name: power.name,
+            isForm,
+            tags,
+            categories
+          });
+        });
     }
 
     return powers;

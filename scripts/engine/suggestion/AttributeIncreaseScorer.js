@@ -12,6 +12,8 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { AttributeIncreaseHandler } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/attribute-increase-handler.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { buildAttributePlanningProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/attribute-planner.js";
+import { getForceAbilityConfig } from "/systems/foundryvtt-swse/scripts/engine/suggestion/force-rule-adapter.js";
 
 /**
  * Score attribute increase allocations
@@ -53,10 +55,12 @@ export async function scoreAttributeAllocations(actor, buildIntent = {}) {
   // Generate allocation candidates
   const candidates = _generateAllocations(availablePoints);
 
+  const planningProfile = buildAttributePlanningProfile({ actor, pendingData: { mentorBiases: buildIntent?.mentorBiases || {} } });
+
   // Score each allocation
   const scored = [];
   for (const allocation of candidates) {
-    const score = await _scoreAllocation(actor, allocation, currentScores, buildIntent);
+    const score = await _scoreAllocation(actor, allocation, currentScores, buildIntent, planningProfile);
     if (score) {
       scored.push({
         allocation,
@@ -119,7 +123,7 @@ function _generateAllocations(availablePoints) {
  * Score a single allocation
  * @private
  */
-async function _scoreAllocation(actor, allocation, currentScores, buildIntent = {}) {
+async function _scoreAllocation(actor, allocation, currentScores, buildIntent = {}, planningProfile = null) {
   let immediateScore = 0;
   let shortTermScore = 0;
   let identityScore = 0;
@@ -172,10 +176,18 @@ async function _scoreAllocation(actor, allocation, currentScores, buildIntent = 
   // ─────────────────────────────────────────────────────────────
 
   if (buildIntent.primaryThemes && buildIntent.primaryThemes.length > 0) {
-    identityScore = _getIdentityAlignment(allocation, buildIntent);
+    identityScore = _getIdentityAlignment(allocation, buildIntent, planningProfile);
     if (identityScore > 0) {
       reasons.push(`Supports build direction (${buildIntent.primaryThemes[0]} focus)`);
     }
+  }
+
+  const { capacityAbility, executionAbility } = getForceAbilityConfig();
+  if ((allocation[capacityAbility] || 0) > 0) {
+    reasons.push(`Improves Force capacity (${capacityAbility.toUpperCase()})`);
+  }
+  if ((allocation[executionAbility] || 0) > 0 && executionAbility !== capacityAbility) {
+    reasons.push(`Improves Force execution (${executionAbility.toUpperCase()})`);
   }
 
   // Final score (0-1)
@@ -197,26 +209,20 @@ async function _scoreAllocation(actor, allocation, currentScores, buildIntent = 
  * Get identity alignment score for allocation
  * @private
  */
-function _getIdentityAlignment(allocation, buildIntent = {}) {
-  const themes = buildIntent.primaryThemes || [];
-  const abilityThemeMap = {
-    str: ['melee', 'combat', 'leadership'],
-    dex: ['ranged', 'stealth', 'vehicle'],
-    con: ['combat', 'durability'],
-    int: ['tech', 'slicing'],
-    wis: ['force', 'survival', 'medicine', 'investigation'],
-    cha: ['social', 'leadership', 'influence']
-  };
-
+function _getIdentityAlignment(allocation, buildIntent = {}, planningProfile = null) {
   let alignmentScore = 0;
+  const weighted = new Map(planningProfile?.weightedAbilities || []);
   for (const [ability, increase] of Object.entries(allocation)) {
-    const supportedThemes = abilityThemeMap[ability] || [];
-    const matches = supportedThemes.filter(t => themes.includes(t));
-    if (matches.length > 0) {
-      alignmentScore += 0.1 * increase;
+    const contextual = Number(planningProfile?.abilityWeights?.[ability] || 0);
+    if (contextual > 0) {
+      alignmentScore += Math.min(0.12, contextual * 0.02) * increase;
+      continue;
+    }
+    const orderIndex = planningProfile?.weightedAbilities?.findIndex?.(([k]) => k === ability) ?? -1;
+    if (orderIndex >= 0 && orderIndex < 3) {
+      alignmentScore += 0.05 * increase;
     }
   }
-
   return Math.min(0.25, alignmentScore);
 }
 

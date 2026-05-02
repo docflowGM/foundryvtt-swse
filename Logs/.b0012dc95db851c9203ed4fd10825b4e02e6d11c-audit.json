@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": false,
+        "amount": 5
+    },
+    "auditLog": "C:\\Users\\Owner\\Documents\\GitHub\\foundryvtt-swse\\Logs\\.b0012dc95db851c9203ed4fd10825b4e02e6d11c-audit.json",
+    "files": [
+        {
+            "date": 1777507325954,
+            "name": "C:\\Users\\Owner\\Documents\\GitHub\\foundryvtt-swse\\Logs\\debug.2026-04-29.log",
+            "hash": "304e65690bc091758fd77d53d3d68b995854330df83ad193feba8d4e68837e47"
+        }
+    ],
+    "hashType": "sha256"
+}

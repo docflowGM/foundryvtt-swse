@@ -1,0 +1,10 @@
+node_modules/
+packs/
+assets/
+lang/
+*.min.js
+*.min.css
+*.bak
+*.backup
+.git/
+package-lock.json

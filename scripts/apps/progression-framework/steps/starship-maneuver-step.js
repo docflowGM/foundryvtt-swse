@@ -16,7 +16,7 @@ import { ManeuverAuthorityEngine } from '../../../engine/progression/engine/mane
 import { StarshipManeuverEngine } from '../../../engine/progression/engine/starship-maneuver-engine.js';
 import { StarshipManeuverManager } from '../../../utils/starship-maneuver-manager.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
-import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -516,9 +516,16 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   async onAskMentor(shell) {
     // If we have suggestions, use the advisory system instead of standard guidance
     if (this._suggestedManeuvers && this._suggestedManeuvers.length > 0) {
-      await handleAskMentorWithSuggestions(shell.actor, 'starship-maneuvers', this._suggestedManeuvers, shell, {
+      await handleAskMentorWithPicker(shell.actor, 'starship-maneuvers', this._suggestedManeuvers, shell, {
         domain: 'starship-maneuvers',
-        archetype: 'your starship maneuver choice'
+        archetype: 'your starship maneuver choice',
+        stepLabel: 'starship maneuvers'
+      }, async (selected) => {
+        const id = selected?.id || selected?._id || selected?.maneuverId;
+        if (!id) return;
+        await this.onItemFocused(id, shell);
+        await this.onItemCommitted(id, shell);
+        shell.render();
       });
     } else {
       // Fallback to standard guidance if no suggestions
@@ -526,7 +533,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     }
   }
 
-  getMentorMode() { return 'context-only'; }
+  getMentorMode() { return 'interactive'; }
 
   // Private
 

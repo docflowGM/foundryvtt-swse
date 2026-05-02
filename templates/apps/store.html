@@ -1,0 +1,43 @@
+<form class="swse-store-app swse-recovery-sheet {{cssClass}}" autocomplete="off">
+  <div class="swse-datapad-frame store-mode">
+    <div class="swse-datapad-header"><div class="swse-datapad-ident">GALACTIC TRADE EXCHANGE</div><div class="swse-datapad-controls"><span></span><span></span><span></span></div></div>
+    <div class="swse-home-console compact">
+      <div class="swse-console-topline"><span>WORKBENCH STORE</span><span>·</span><span>LIVE INVENTORY</span><span class="swse-console-power">{{actor.system.credits}} CR</span></div>
+    </div>
+    <nav class="sheet-tabs swse-sheet-tabs tabs" data-group="primary">
+      <a class="item active" data-tab="weapons">Weapons</a>
+      <a class="item" data-tab="armor">Armor</a>
+      <a class="item" data-tab="equipment">Equipment</a>
+      <a class="item" data-tab="vehicles">Vehicles</a>
+      <a class="item" data-tab="droids">Droids</a>
+      <a class="item" data-tab="misc">Misc</a>
+    </nav>
+    <section class="sheet-body swse-sheet-body">
+      {{#each categories as |items key|}}
+      <section class="tab {{#if (eq key 'weapons')}}active{{/if}}" data-group="primary" data-tab="{{key}}">
+        <div class="swse-store-grid">
+          {{#each items as |item|}}
+            <article class="swse-store-card store-item" data-item-id="{{item.id}}">
+              <h3>{{item.name}}</h3>
+              <p>{{item.type}}</p>
+              <div class="swse-store-card__footer">
+                <strong>{{item.system.cost}} cr</strong>
+                <button type="button" class="buy-item">Buy</button>
+              </div>
+            </article>
+          {{else}}
+            <div class="swse-empty">No {{key}} available.</div>
+          {{/each}}
+        </div>
+      </section>
+      {{/each}}
+    </section>
+    {{#if isGM}}
+    <footer class="swse-store-admin">
+      <label>Markup %<input type="number" name="markup" value="{{markup}}" /></label>
+      <label>Discount %<input type="number" name="discount" value="{{discount}}" /></label>
+      <button type="button" class="save-gm">Save</button>
+    </footer>
+    {{/if}}
+  </div>
+</form>

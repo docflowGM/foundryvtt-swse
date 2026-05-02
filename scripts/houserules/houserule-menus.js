@@ -279,14 +279,22 @@ export class ForceMenu extends SWSEFormApplicationV2 {
 
   async _prepareContext(options) {
     return {
+      forceTrainingAttribute: safeGet('forceTrainingAttribute'),
+      useTheForceAttribute: safeGet('useTheForceAttribute'),
       forcePointRecovery: safeGet('forcePointRecovery'),
       darkSideTemptation: safeGet('darkSideTemptation'),
       darkSidePowerIncreaseScore: safeGet('darkSidePowerIncreaseScore'),
+      blockDeflectTalents: safeGet('blockDeflectTalents'),
+      forceSensitiveJediOnly: safeGet('forceSensitiveJediOnly'),
       isGM: game.user.isGM
     };
   }
 
   async _updateObject(event, formData) {
+    await safeSet('forceTrainingAttribute', formData.forceTrainingAttribute);
+    await safeSet('useTheForceAttribute', formData.useTheForceAttribute);
+    await safeSet('blockDeflectTalents', formData.blockDeflectTalents);
+    await safeSet('forceSensitiveJediOnly', _bool(formData.forceSensitiveJediOnly));
     await safeSet('forcePointRecovery', formData.forcePointRecovery);
     await safeSet('darkSideTemptation', formData.darkSideTemptation);
     await safeSet('darkSidePowerIncreaseScore', _bool(formData.darkSidePowerIncreaseScore));

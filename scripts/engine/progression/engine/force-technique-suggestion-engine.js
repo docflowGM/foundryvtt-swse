@@ -127,12 +127,17 @@ export class ForceTechniqueSuggestionEngine {
     const associatedPowers = enrichedData.associatedPowers || [];
     const powerSynergyWeight = enrichedData.powerSynergyWeight || 1.5;
     const archBias = enrichedData.archetypeBias || {};
+    const normalizedKnownPowers = knownPowers.map((power) => ({
+      ...power,
+      normalizedName: this._normalizePowerName(power?.name || power)
+    }));
+    const formPowerCount = normalizedKnownPowers.filter((power) => power.isForm).length;
+    const isFormFocusedSuite = normalizedKnownPowers.length > 0 && formPowerCount / normalizedKnownPowers.length >= 0.75;
+    const isUtfTechnique = this._isUseTheForceTechnique(technique);
 
     // PRIMARY: Power Synergy Check
     const matchedPowers = associatedPowers.filter(powerName =>
-      knownPowers.some(kp =>
-        kp.toLowerCase().trim() === powerName.toLowerCase().trim()
-      )
+      normalizedKnownPowers.some(kp => kp.normalizedName === this._normalizePowerName(powerName))
     );
 
     if (matchedPowers.length > 0) {
@@ -146,6 +151,12 @@ export class ForceTechniqueSuggestionEngine {
 
       if (archetypeBonus > 1.0) {
         reasons.push(`${archetype} specializes in this technique`);
+      }
+
+      const matchedFormPowers = matchedPowers.filter((powerName) => normalizedKnownPowers.some((power) => power.normalizedName === this._normalizePowerName(powerName) && power.isForm));
+      if (matchedFormPowers.length > 0) {
+        score *= 1.15;
+        reasons.push('Refines lightsaber form powers already central to your suite');
       }
 
       // Set tier based on synergy strength
@@ -164,11 +175,16 @@ export class ForceTechniqueSuggestionEngine {
       reasons.push(`Requires known Force Power`);
 
       const archetypeBonus = archBias[archetype] || 1.0;
+      if (isFormFocusedSuite && isUtfTechnique) {
+        score *= 1.35;
+        tier = FORCE_TECHNIQUE_TIERS.ARCHETYPE_ONLY;
+        reasons.push('Your suite is dominated by lightsaber forms, so refining Use the Force execution has extra value');
+      }
       if (archetypeBonus > 1.0) {
         score *= archetypeBonus;
-        tier = FORCE_TECHNIQUE_TIERS.ARCHETYPE_ONLY;
+        tier = Math.max(tier, FORCE_TECHNIQUE_TIERS.ARCHETYPE_ONLY);
         reasons.push(`${archetype} has strong affinity`);
-      } else {
+      } else if (tier !== FORCE_TECHNIQUE_TIERS.ARCHETYPE_ONLY) {
         tier = FORCE_TECHNIQUE_TIERS.AVAILABLE;
       }
     }
@@ -178,6 +194,27 @@ export class ForceTechniqueSuggestionEngine {
       score: Number(score.toFixed(2)),
       reasons
     };
+  }
+
+
+  static _normalizePowerName(value = '') {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  static _isUseTheForceTechnique(technique = {}) {
+    const benefit = String(technique.system?.benefit || technique.system?.description || technique.description || '').toLowerCase();
+    const name = String(technique.name || '').toLowerCase();
+    const prerequisite = String(technique.system?.prerequisite || '').toLowerCase();
+    return benefit.includes('use the force')
+      || benefit.includes('telepathy ability')
+      || benefit.includes('sense surroundings')
+      || benefit.includes('sense force')
+      || name.includes('sense surroundings')
+      || name.includes('sense force')
+      || name.includes('telepathy')
+      || prerequisite.includes('sense surroundings')
+      || prerequisite.includes('sense force')
+      || prerequisite.includes('telepathy');
   }
 
   /**
@@ -191,7 +228,14 @@ export class ForceTechniqueSuggestionEngine {
       // From full actor (levelup/play mode)
       actor.items
         .filter(item => item.type === ITEM_TYPES.FORCE_POWER)
-        .forEach(power => powers.push(power.name));
+        .forEach(power => {
+          const tags = Array.isArray(power.system?.tags) ? power.system.tags : [];
+          powers.push({
+            name: power.name,
+            isForm: Boolean(power.system?.form) || tags.some(tag => String(tag || '').toLowerCase() === 'lightsaber-form'),
+            tags
+          });
+        });
     }
 
     return powers;

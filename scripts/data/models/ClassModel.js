@@ -56,6 +56,7 @@
  * @property {number} baseHp - Starting HP
  * @property {number|null} startingCredits - Starting credits (null if not specified)
  *
+ * @property {string[]} tags - Semantic tags used by the suggestion ecosystem
  * @property {string} description - Class description
  * @property {string} img - Icon URL
  */
@@ -87,7 +88,7 @@ export function isClassModel(obj) {
     'talentTreeNames', 'talentTreeIds',
     'defenses', 'startingFeatures', 'levelProgression',
     'forceSensitive', 'grantsForcePoints',
-    'baseHp', 'description', 'img'
+    'baseHp', 'tags', 'description', 'img'
   ];
 
   return required.every(key => key in obj);
@@ -132,6 +133,8 @@ export function createEmptyClassModel() {
 
     baseHp: 0,
     startingCredits: null,
+
+    tags: [],
 
     description: '',
     img: 'icons/svg/item-bag.svg'

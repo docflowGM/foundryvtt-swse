@@ -1,0 +1,100 @@
+<div class="attr-mentor-dialog">
+  <div class="attr-mentor-dialog__header">
+    <div>
+      <h2>Suggested {{methodLabel}} Builds</h2>
+      <p>{{intro}}</p>
+    </div>
+    <button type="button" class="prog-btn prog-btn--secondary" data-action="close-dialog">Close</button>
+  </div>
+
+  <div class="attr-mentor-dialog__cards">
+    {{#each builds}}
+      <section class="attr-mentor-card {{#if recommended}}is-recommended{{/if}}">
+        <div class="attr-mentor-card__head">
+          <div>
+            <div class="attr-mentor-card__title-row">
+              <h3>{{title}}</h3>
+              {{#if recommended}}<span class="attr-mentor-card__recommended">Recommended</span>{{/if}}
+            </div>
+            <p class="attr-mentor-card__subtitle">{{subtitle}}</p>
+            <p class="attr-mentor-card__summary">{{reasonSummary}}</p>
+          </div>
+          <div class="attr-mentor-card__actions">
+            {{#if pointBuySpent}}
+              <div class="attr-mentor-card__budget">{{pointBuySpent}} / {{../pointBuyPool}} points</div>
+            {{else}}
+              <div class="attr-mentor-card__budget">{{poolSource}}</div>
+            {{/if}}
+            <button type="button" class="prog-btn prog-btn--primary" data-build-apply="{{id}}">Apply Build</button>
+          </div>
+        </div>
+
+        <div class="attr-mentor-card__stats">
+          {{#each displayRows}}
+            <div class="attr-mentor-stat">
+              <div class="attr-mentor-stat__label">{{label}}</div>
+              <div class="attr-mentor-stat__numbers">
+                <span class="attr-mentor-stat__base">{{base}}</span>
+                <span class="attr-mentor-stat__species">{{speciesModFormatted}}</span>
+                <span class="attr-mentor-stat__final">{{final}}</span>
+                <span class="attr-mentor-stat__mod">{{modifier}}</span>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+
+        <div class="attr-mentor-card__legend">
+          <span>Base</span>
+          <span>Species</span>
+          <span>Final</span>
+          <span>Mod</span>
+        </div>
+
+        <div class="attr-mentor-card__details-grid">
+          <div class="attr-mentor-detail-group">
+            <div class="attr-mentor-detail-group__label">Reasons</div>
+            <ul>
+              {{#each reasons}}
+                <li>{{this}}</li>
+              {{/each}}
+            </ul>
+          </div>
+
+          <div class="attr-mentor-detail-group attr-mentor-detail-group--hoverable">
+            <div class="attr-mentor-detail-group__label">Cautions</div>
+            <div class="attr-mentor-hover-anchor">Hover for tradeoffs
+              <div class="attr-mentor-hover-panel">
+                <ul>
+                  {{#if cautions.length}}
+                    {{#each cautions}}
+                      <li>{{this}}</li>
+                    {{/each}}
+                  {{else}}
+                    <li>No major caution beyond the normal tradeoff of specializing.</li>
+                  {{/if}}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="attr-mentor-detail-group attr-mentor-detail-group--hoverable">
+            <div class="attr-mentor-detail-group__label">Forecast</div>
+            <div class="attr-mentor-hover-anchor">Hover for downstream value
+              <div class="attr-mentor-hover-panel">
+                <ul>
+                  {{#if forecasts.length}}
+                    {{#each forecasts}}
+                      <li>{{this}}</li>
+                    {{/each}}
+                  {{else}}
+                    <li>This build keeps your next few steps flexible without overcommitting.</li>
+                  {{/if}}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    {{/each}}
+  </div>
+</div>

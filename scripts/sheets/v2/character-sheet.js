@@ -73,7 +73,6 @@ import {
 import {
   getActorSheetTheme,
   getActorSheetThemeGroups,
-  getActorSheetThemeEntry,
   buildActorSheetThemeStyle
 } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
 import {
@@ -529,6 +528,12 @@ export class SWSEV2CharacterSheet extends
     if (this._shellSurface === 'upgrade') {
       this._wireUpgradeSurfaceEvents(root, signal);
     }
+    if (this._shellSurface === 'store') {
+      this._storeSurfaceController ??= new StoreSurfaceController(this, this.actor);
+      this._storeSurfaceController.attach(root);
+    } else {
+      this._storeSurfaceController?.destroy?.();
+    }
     if (this._shellSurface === 'settings') {
       this._wireSettingsSurfaceEvents(root, signal);
     }
@@ -976,20 +981,14 @@ export class SWSEV2CharacterSheet extends
       const currentTheme = getActorSheetTheme(this.document.getFlag('foundryvtt-swse', 'sheetTheme'));
       const currentMotion = getActorSheetMotionStyle(this.document.getFlag('foundryvtt-swse', 'sheetMotionStyle'));
 
-      // Set data-theme attribute for CSS-based color theming
+      // Set theme/motion attributes for CSS-based presentation switching
       sheetShell.setAttribute('data-theme', currentTheme);
+      sheetShell.setAttribute('data-motion-style', currentMotion);
 
-      // Build combined style string with motion animations AND fonts
-      let styleString = buildActorSheetMotionStyle(currentMotion);
-
-      // Add font styles from theme registry
-      const themeEntry = getActorSheetThemeEntry(currentTheme);
-      if (themeEntry && themeEntry.fonts) {
-        const fontStyles = Object.entries(themeEntry.fonts)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join('; ');
-        styleString = styleString ? `${styleString}; ${fontStyles}` : fontStyles;
-      }
+      // Apply both canonical theme tokens and motion tokens from the registries.
+      const themeStyle = buildActorSheetThemeStyle(currentTheme);
+      const motionStyle = buildActorSheetMotionStyle(currentMotion);
+      const styleString = [themeStyle, motionStyle].filter(Boolean).join('; ');
 
       if (styleString) {
         sheetShell.setAttribute('style', styleString);
@@ -2305,16 +2304,12 @@ const forcePoints = [];
         await this.document.setFlag('foundryvtt-swse', 'sheetTheme', themeKey);
         const sheetShell = html.querySelector('.sheet-shell');
         if (sheetShell) {
-          sheetShell.setAttribute('data-theme', themeKey);
           const currentMotion = getActorSheetMotionStyle(this.document.getFlag('foundryvtt-swse', 'sheetMotionStyle'));
-          let styleString = buildActorSheetMotionStyle(currentMotion);
-          const themeEntry = getActorSheetThemeEntry(themeKey);
-          if (themeEntry && themeEntry.fonts) {
-            const fontStyles = Object.entries(themeEntry.fonts)
-              .map(([k, v]) => `${k}: ${v}`)
-              .join('; ');
-            styleString = styleString ? `${styleString}; ${fontStyles}` : fontStyles;
-          }
+          sheetShell.setAttribute('data-theme', themeKey);
+          sheetShell.setAttribute('data-motion-style', currentMotion);
+          const styleString = [buildActorSheetThemeStyle(themeKey), buildActorSheetMotionStyle(currentMotion)]
+            .filter(Boolean)
+            .join('; ');
           if (styleString) {
             sheetShell.setAttribute('style', styleString);
           }
@@ -2338,14 +2333,11 @@ const forcePoints = [];
         const sheetShell = html.querySelector('.sheet-shell');
         if (sheetShell) {
           const currentTheme = getActorSheetTheme(this.document.getFlag('foundryvtt-swse', 'sheetTheme'));
-          let styleString = buildActorSheetMotionStyle(motionStyle);
-          const themeEntry = getActorSheetThemeEntry(currentTheme);
-          if (themeEntry && themeEntry.fonts) {
-            const fontStyles = Object.entries(themeEntry.fonts)
-              .map(([k, v]) => `${k}: ${v}`)
-              .join('; ');
-            styleString = styleString ? `${styleString}; ${fontStyles}` : fontStyles;
-          }
+          sheetShell.setAttribute('data-theme', currentTheme);
+          sheetShell.setAttribute('data-motion-style', motionStyle);
+          const styleString = [buildActorSheetThemeStyle(currentTheme), buildActorSheetMotionStyle(motionStyle)]
+            .filter(Boolean)
+            .join('; ');
           if (styleString) {
             sheetShell.setAttribute('style', styleString);
           }

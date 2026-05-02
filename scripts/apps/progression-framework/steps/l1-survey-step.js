@@ -52,6 +52,36 @@ function summarizeBiasLayer(layer, prefix) {
     }));
 }
 
+function buildProgressDots(totalQuestions, activeIndex, answeredCount, phase) {
+  return Array.from({ length: Math.max(totalQuestions, 0) }, (_, index) => ({
+    index: index + 1,
+    isDone: index < answeredCount,
+    isActive: phase !== 'complete' && index === activeIndex,
+  }));
+}
+
+function buildMentorPortraitMarkup(portrait, mentorName) {
+  const safeName = escapeHtml(mentorName || 'Mentor');
+  const safePortrait = escapeHtml(portrait || 'systems/foundryvtt-swse/assets/mentors/salty.png');
+  return `<img class="prog-l1-survey__mentor-image" src="${safePortrait}" alt="${safeName}" title="${safeName}" onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.png';"/>`;
+}
+
+function buildCompletionTags(surveySummary, topMatches = []) {
+  const tags = [];
+  for (const label of surveySummary?.detailTags || []) {
+    if (!label || tags.some((entry) => entry.label === label)) continue;
+    tags.push({ label, cssClass: 'is-tag' });
+  }
+
+  for (const match of topMatches || []) {
+    const name = match?.archetype?.name;
+    if (!name || tags.some((entry) => entry.label === name)) continue;
+    tags.push({ label: name, cssClass: 'is-match' });
+  }
+
+  return tags.slice(0, 6);
+}
+
 export class L1SurveyStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
@@ -62,6 +92,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     this._renderAbort = null;
     this._activeQuestionIndex = 0;
     this._lastPromptSpoken = null;
+    this._surveyPhase = 'intro';
   }
 
   async onStepEnter(shell) {
@@ -75,7 +106,8 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       console.warn('[L1SurveyStep] Build analysis failed:', err);
     }
 
-    await this._speakActiveQuestion(shell, true);
+    this._surveyPhase = this._resolveInitialPhase();
+    await this._speakCurrentPhase(shell, true);
   }
 
   async onDataReady(shell) {
@@ -84,21 +116,62 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     this._renderAbort = new AbortController();
     const { signal } = this._renderAbort;
 
-    const onAnswerChanged = async (event) => {
-      const input = event.currentTarget;
-      const questionId = input?.dataset?.questionId;
-      const optionId = input?.value;
-      const question = this._getRenderableQuestions()?.find?.((entry) => entry.id === questionId);
-      const option = question?.options?.find?.((entry) => entry.id === optionId);
-      if (!question || !option) return;
-      this._surveyAnswers[questionId] = option;
-      this._activeQuestionIndex = this._findNextQuestionIndex(questionId);
-      await this._speakActiveQuestion(shell);
+    const onStartSurvey = async () => {
+      this._surveyPhase = 'question';
+      this._activeQuestionIndex = this._findNextQuestionIndex();
+      await this._speakCurrentPhase(shell, true);
       shell.render();
     };
 
-    shell.element.querySelectorAll('[data-survey-question-id]').forEach((input) => {
-      input.addEventListener('change', onAnswerChanged, { signal });
+    const onChooseAnswer = async (event) => {
+      const button = event.currentTarget;
+      const questionId = button?.dataset?.questionId;
+      const optionId = button?.dataset?.optionId;
+      const question = this._getRenderableQuestions()?.find?.((entry) => entry.id === questionId);
+      const option = question?.options?.find?.((entry) => entry.id === optionId);
+      if (!question || !option) return;
+
+      this._surveyAnswers[questionId] = option;
+      this._activeQuestionIndex = this._findQuestionIndex(questionId);
+      this._surveyPhase = 'response';
+      await this._speakCurrentPhase(shell, true);
+      shell.render();
+    };
+
+    const onAdvanceResponse = async () => {
+      const questions = this._getRenderableQuestions();
+      const nextIndex = questions.findIndex((question) => !this._surveyAnswers?.[question.id]);
+      if (nextIndex >= 0) {
+        this._activeQuestionIndex = nextIndex;
+        this._surveyPhase = 'question';
+      } else {
+        this._activeQuestionIndex = Math.max(questions.length - 1, 0);
+        this._surveyPhase = 'complete';
+      }
+      await this._speakCurrentPhase(shell, true);
+      shell.render();
+    };
+
+    const onFinishSurvey = async () => {
+      this._surveyPhase = 'complete';
+      await this._speakCurrentPhase(shell, true);
+      await shell?._onNextStep?.();
+    };
+
+    shell.element.querySelectorAll('[data-action="survey-start"]').forEach((button) => {
+      button.addEventListener('click', onStartSurvey, { signal });
+    });
+
+    shell.element.querySelectorAll('[data-action="survey-choose"]').forEach((button) => {
+      button.addEventListener('click', onChooseAnswer, { signal });
+    });
+
+    shell.element.querySelectorAll('[data-action="survey-continue"]').forEach((button) => {
+      button.addEventListener('click', onAdvanceResponse, { signal });
+    });
+
+    shell.element.querySelectorAll('[data-action="survey-finish"]').forEach((button) => {
+      button.addEventListener('click', onFinishSurvey, { signal });
     });
   }
 
@@ -136,25 +209,45 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       ? buildSurveyStepData(this._surveyDefinition, this._surveyAnswers)
       : { questions: [], topMatches: [], mentor: mentor || null };
 
-    const activeQuestion = surveyData.questions?.[this._activeQuestionIndex] || null;
+    const questions = surveyData.questions || [];
+    const activeQuestion = questions?.[this._activeQuestionIndex] || null;
+    const selectedOption = activeQuestion ? this._surveyAnswers?.[activeQuestion.id] || null : null;
     const answeredCount = Object.keys(this._surveyAnswers).length;
-    const totalQuestions = surveyData.questions?.length || 0;
+    const totalQuestions = questions.length || 0;
     const isComplete = totalQuestions > 0 && answeredCount >= totalQuestions;
+    const surveySummary = processSurveyAnswers(this._surveyAnswers, this._surveyDefinition);
+    const completionTags = buildCompletionTags(surveySummary, surveyData.topMatches);
 
     return {
       surveyAnswers: { ...this._surveyAnswers },
       mentorName: surveyData.mentor?.name || mentor?.name || null,
       mentorTitle: surveyData.mentor?.title || mentor?.title || mentor?.class || null,
       mentorPortrait: surveyData.mentor?.portrait || mentor?.portrait || null,
+      mentorPortraitMarkup: buildMentorPortraitMarkup(
+        surveyData.mentor?.portrait || mentor?.portrait || null,
+        surveyData.mentor?.name || mentor?.name || 'Mentor'
+      ),
       mentorGuidance: surveyData.mentor?.classGuidance || mentorGuidance,
       surveyDefinition: this._surveyDefinition,
-      surveyQuestions: surveyData.questions,
+      surveyQuestions: questions,
       activeQuestion,
+      selectedOption,
       activeQuestionNumber: Math.min(this._activeQuestionIndex + 1, Math.max(totalQuestions, 1)),
       answeredCount,
       remainingCount: Math.max(totalQuestions - answeredCount, 0),
       totalQuestions,
       isComplete,
+      surveyPhase: this._surveyPhase,
+      progressDots: buildProgressDots(totalQuestions, this._activeQuestionIndex, answeredCount, this._surveyPhase),
+      promptText: this._getPromptText(activeQuestion),
+      responseText: this._getResponseText(selectedOption),
+      completionText: this._getCompletionText(),
+      introText: surveyData.mentor?.summaryGuidance
+        || surveyData.mentor?.classGuidance
+        || mentorGuidance
+        || 'Answer honestly so your mentor can read the shape of your path.',
+      surveySummary,
+      completionTags,
       topMatches: surveyData.topMatches,
       analysisResult: this._analysisResult,
       emergentArchetype: this._emergentArchetype,
@@ -162,10 +255,12 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   }
 
   getSelection() {
+    const questions = this._getRenderableQuestions();
+    const selected = Object.keys(this._surveyAnswers);
     return {
-      selected: Object.keys(this._surveyAnswers),
-      count: Object.keys(this._surveyAnswers).length,
-      isComplete: true,
+      selected,
+      count: selected.length,
+      isComplete: questions.length > 0 && selected.length >= questions.length,
     };
   }
 
@@ -235,6 +330,11 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     return buildSurveyStepData(this._surveyDefinition, this._surveyAnswers)?.questions || [];
   }
 
+  _findQuestionIndex(questionId = null) {
+    if (!questionId) return 0;
+    return Math.max(this._getRenderableQuestions().findIndex((question) => question.id === questionId), 0);
+  }
+
   _findNextQuestionIndex(preferredQuestionId = null) {
     const questions = this._getRenderableQuestions() || [];
     if (!questions.length) return 0;
@@ -248,18 +348,57 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     return unansweredIndex >= 0 ? unansweredIndex : Math.max(questions.length - 1, 0);
   }
 
-  async _speakActiveQuestion(shell, force = false) {
-    const mentorDialogue = this._getActiveMentorDialogue();
+  _resolveInitialPhase() {
+    const questions = this._getRenderableQuestions();
+    if (!questions.length) return 'complete';
+    const answeredCount = Object.keys(this._surveyAnswers || {}).length;
+    if (answeredCount <= 0) return 'intro';
+    if (answeredCount >= questions.length) return 'complete';
+    return 'question';
+  }
+
+  _getPromptText(activeQuestion) {
+    if (!activeQuestion) {
+      return 'The survey is complete. Your mentor has enough to read the shape of your path.';
+    }
+    return activeQuestion.text || 'Choose the answer that fits your character best.';
+  }
+
+  _getResponseText(selectedOption) {
+    if (!selectedOption) return null;
+    return selectedOption.detailRailText || selectedOption.hint || 'That answer tells your mentor a lot about how you want this character to play.';
+  }
+
+  _getCompletionText() {
+    return 'Profile logged. Your mentor has enough to read the shape of your path. Review the strongest readings, then continue into background.';
+  }
+
+  async _speakCurrentPhase(shell, force = false) {
+    const mentorDialogue = this._getCurrentMentorDialogue();
     if (!mentorDialogue) return;
     if (!force && mentorDialogue === this._lastPromptSpoken) return;
     this._lastPromptSpoken = mentorDialogue;
     await shell?.mentorRail?.speak?.(mentorDialogue, 'encouraging');
   }
 
-  _getActiveMentorDialogue() {
+  _getCurrentMentorDialogue() {
+    if (this._surveyPhase === 'intro') {
+      return 'Before we lock your path in, I want to hear how you think. Answer honestly. The shape of your build starts here.';
+    }
+
+    if (this._surveyPhase === 'response') {
+      const question = this._getRenderableQuestions()?.[this._activeQuestionIndex] || null;
+      const selectedOption = question ? this._surveyAnswers?.[question.id] || null : null;
+      return this._getResponseText(selectedOption);
+    }
+
+    if (this._surveyPhase === 'complete') {
+      return 'Good. I have the shape of your instincts now. Carry that forward into the rest of the build.';
+    }
+
     const question = this._getRenderableQuestions()?.[this._activeQuestionIndex] || null;
     if (!question) {
-      return 'Good. I have the shape of your instincts now. Look over the read in the right rail, then move when you are ready.';
+      return 'Good. I have the shape of your instincts now. Carry that forward into the rest of the build.';
     }
 
     const cleanText = String(question.text || '').replace(/^\s*[^:]+ asks:\s*/i, '').trim();

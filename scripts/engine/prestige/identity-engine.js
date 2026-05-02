@@ -614,7 +614,7 @@ export class IdentityEngine {
         }
         totalLevel = Math.max(1, totalLevel);
 
-        const surveyWeight = Math.max(0.25, 1 - (totalLevel / 20));
+        const surveyWeight = Math.max(0.175, 1 - (totalLevel / 20));
 
         return this.#scaleAllBias(rawSurveyBias, surveyWeight);
     }

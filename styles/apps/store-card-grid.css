@@ -375,3 +375,43 @@
   .store-header { grid-template-columns: 56px 1fr; }
   .store-credits-block { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 10px; border-left: none; border-top: 1px dashed rgba(79,209,197,0.2); padding: 6px 0 0; }
 }
+
+/* ===== Phase 2 concept fidelity pass ===== */
+.store-shell {
+  background:
+    radial-gradient(circle at 15% 12%, rgba(255, 110, 244, 0.10), transparent 22%),
+    radial-gradient(circle at 85% 88%, rgba(0, 220, 255, 0.08), transparent 20%),
+    linear-gradient(180deg, rgba(7, 10, 18, 0.98), rgba(5, 8, 14, 0.98));
+}
+
+.store-scanline {
+  height: 1px;
+  margin: 0 14px;
+  background: linear-gradient(90deg, transparent, rgba(79, 209, 197, 0.55), transparent);
+  box-shadow: 0 0 14px rgba(79, 209, 197, 0.16);
+}
+
+.store-rendarr-kicker {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.42);
+}
+
+.store-tabs,
+.store-filter-bar,
+.store-pane,
+.store-card,
+.swse-holo-card {
+  backdrop-filter: blur(10px);
+}
+
+.store-card,
+.swse-holo-card,
+.store-cart-summary,
+.store-cart-list,
+.store-detail-hero,
+.detail-section {
+  background: linear-gradient(180deg, rgba(14, 18, 28, 0.92), rgba(8, 12, 20, 0.9));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 0 24px rgba(56, 180, 209, 0.08);
+}

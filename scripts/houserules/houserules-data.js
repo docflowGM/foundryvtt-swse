@@ -317,6 +317,17 @@ export function getForceTrainingAttribute() {
     : HouserulesData.force.attributes.wisdom.key;
 }
 
+
+/**
+ * Use the Force check attribute (charisma or wisdom).
+ */
+export function getUseTheForceAttribute() {
+  const setting = getSafe('useTheForceAttribute', 'charisma');
+  return setting === 'wisdom'
+    ? HouserulesData.force.attributes.wisdom.key
+    : HouserulesData.force.attributes.charisma.key;
+}
+
 /**
  * Combined Block/Deflect?
  */

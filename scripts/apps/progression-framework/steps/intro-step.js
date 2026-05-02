@@ -540,6 +540,7 @@ export class IntroStep extends ProgressionStepPlugin {
         sessionId: this._shell?.actor?.id || 'DR-00000',
         isComplete: this._complete,
         currentTime: this._getCurrentTime(),
+        localizedMode: this._localizedMode,
       });
 
       swseLogger.debug('[IntroStep.getStepData] Droid-v2 step data', {
@@ -1327,6 +1328,9 @@ export class IntroStep extends ProgressionStepPlugin {
 
       if (session) {
         await this._translationEngine.runSession(session);
+        this._localizedMode = true;
+        this._setSurfaceLocalizationDOM(true);
+        if (shell?.render) shell.render();
       }
 
       swseLogger.debug('[IntroStep.runSplashTranslation] Translation animation complete');

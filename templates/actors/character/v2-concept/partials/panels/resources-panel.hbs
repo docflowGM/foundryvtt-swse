@@ -1,0 +1,90 @@
+<section class="swse-concept-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Combat Metrics &amp; Resources</h3>
+      <p class="swse-concept-panel__hint">Engine-owned combat telemetry and heroic resource pools.</p>
+    </div>
+  </header>
+
+  <div class="swse-concept-card-grid swse-concept-card-grid--summary">
+    <article class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>Speed</span>
+      <strong>{{resourcesPanel.combatMetrics.speed}}</strong>
+    </article>
+    <article class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>Initiative</span>
+      <strong>{{numberFormat resourcesPanel.combatMetrics.initiativeTotal decimals=0 sign=true}}</strong>
+    </article>
+    <article class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>Perception</span>
+      <strong>{{numberFormat resourcesPanel.combatMetrics.perceptionTotal decimals=0 sign=true}}</strong>
+    </article>
+    <article class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>Base Attack</span>
+      <strong>{{numberFormat resourcesPanel.combatMetrics.bab decimals=0 sign=true}}</strong>
+    </article>
+    <article class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>Grapple</span>
+      <strong>{{numberFormat resourcesPanel.combatMetrics.grappleBonus decimals=0 sign=true}}</strong>
+    </article>
+    <article class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>Threshold</span>
+      <strong>{{resourcesPanel.combatMetrics.damageThreshold}}</strong>
+    </article>
+  </div>
+
+  <div class="swse-concept-grid swse-concept-grid--two">
+    <section class="swse-concept-panel swse-concept-panel--subledger">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Force Points</h3>
+          <p class="swse-concept-panel__hint">Spend or restore points and set the heroic force die.</p>
+        </div>
+      </header>
+      <div class="swse-concept-card-grid swse-concept-card-grid--summary">
+        <label class="swse-concept-toolfield">
+          <span>Current</span>
+          <input type="number" name="system.forcePoints.value" value="{{resourcesPanel.resources.forcePointsValue}}" min="0" />
+        </label>
+        <label class="swse-concept-toolfield">
+          <span>Max</span>
+          <input type="number" name="system.forcePoints.max" value="{{resourcesPanel.resources.forcePointsMax}}" min="0" />
+        </label>
+        <label class="swse-concept-toolfield">
+          <span>Force Die</span>
+          <select name="system.forcePointDie">
+            <option value="d6" {{#if (eq resourcesPanel.resources.forcePointDie "d6")}}selected{{/if}}>d6</option>
+            <option value="d8" {{#if (eq resourcesPanel.resources.forcePointDie "d8")}}selected{{/if}}>d8</option>
+          </select>
+        </label>
+      </div>
+      <div class="swse-concept-ledger-row__actions">
+        <button type="button" class="swse-concept-btn" data-action="spend-force-point">Spend 1</button>
+        <button type="button" class="swse-concept-btn" data-action="gain-force-point">Restore 1</button>
+      </div>
+    </section>
+
+    <section class="swse-concept-panel swse-concept-panel--subledger">
+      <header class="swse-concept-panel__header">
+        <div>
+          <h3 class="swse-concept-panel__title">Destiny &amp; Credits</h3>
+          <p class="swse-concept-panel__hint">Long-tail heroic resources and current credits on hand.</p>
+        </div>
+      </header>
+      <div class="swse-concept-card-grid swse-concept-card-grid--summary">
+        <label class="swse-concept-toolfield">
+          <span>Destiny</span>
+          <input type="number" name="system.destinyPoints.value" value="{{resourcesPanel.resources.destinyPointsValue}}" min="0" />
+        </label>
+        <label class="swse-concept-toolfield">
+          <span>Destiny Max</span>
+          <input type="number" name="system.destinyPoints.max" value="{{resourcesPanel.resources.destinyPointsMax}}" min="0" />
+        </label>
+        <label class="swse-concept-toolfield">
+          <span>Credits</span>
+          <input type="number" name="system.credits" value="{{actor.system.credits}}" min="0" />
+        </label>
+      </div>
+    </section>
+  </div>
+</section>

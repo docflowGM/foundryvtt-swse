@@ -1,0 +1,32 @@
+<section class="swse-concept-panel swse-concept-panel--hero">
+  <div class="swse-concept-hero">
+    <div class="swse-concept-hero__copy">
+      <span class="swse-concept-empty-state__eyebrow">Mission Profile</span>
+      <h3 class="swse-concept-hero__title">Live Dossier Brief</h3>
+      <p class="swse-concept-hero__body">{{conceptLayout.summary.missionBrief}}</p>
+
+      <div class="swse-concept-chip-row">
+        {{#each conceptLayout.summary.dossierTags as |tag|}}
+          <span class="swse-concept-chip swse-concept-chip--{{tag.tone}}">{{tag.label}}</span>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="swse-concept-hero__rail">
+      <div class="swse-concept-hero-status">
+        <span>Status</span>
+        <strong class="{{conceptLayout.summary.readinessClass}}">{{conceptLayout.summary.readinessLabel}}</strong>
+        <p>{{conceptLayout.summary.readinessNote}}</p>
+      </div>
+
+      <div class="swse-concept-card-grid swse-concept-card-grid--summary-hero">
+        {{#each conceptLayout.summary.heroMetrics as |metric|}}
+          <article class="swse-concept-info-card swse-concept-info-card--stat">
+            <span>{{metric.label}}</span>
+            <strong class="{{metric.valueClass}}">{{metric.value}}</strong>
+          </article>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</section>

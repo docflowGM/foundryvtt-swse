@@ -3,6 +3,15 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
+import { AttributeMentorDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/attribute-mentor-dialog.js';
+import {
+  buildAttributePlanningProfile,
+  buildSuggestedAttributeBuilds,
+  planPointBuyAllocation,
+  planPooledAssignment
+} from '/systems/foundryvtt-swse/scripts/engine/suggestion/attribute-planner.js';
+import { getStepGuidance } from './mentor-step-integration.js';
 
 const POINT_BUY_BASE = 8;
 const POINT_BUY_COST = Object.freeze({
@@ -75,7 +84,8 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   getPointBuyPool(shell) {
-    return shell?.progressionSession?.droidContext?.pointBuyPool ?? 25;
+    return shell?.progressionSession?.droidContext?.pointBuyPool
+      ?? HouseRuleService.getNumber('livingPointBuyPool', HouseRuleService.getNumber('pointBuyPool', 25));
   }
 
   _getAbilityKeys(shell) {
@@ -254,32 +264,108 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   _autoAssignCurrent(shell) {
+    const pendingData = this._getPendingData(shell);
+    const profile = buildAttributePlanningProfile({ actor: shell?.actor, pendingData, shell });
+
     if (this._method === 'point-buy') {
-      this._attributes = this._randomPointBuy(shell);
+      this._attributes = planPointBuyAllocation(profile, this.getPointBuyPool(shell), {
+        style: profile.recommendedStyle || 'balanced'
+      });
       this._committed = false;
       return;
     }
 
     if (!Array.isArray(this._scorePool) || !this._scorePool.length) return;
 
-    const shuffled = shuffle(this._scorePool.map(item => ({ ...item, assignedTo: null })));
-    const abilityKeys = this._getAssignableAbilityKeys(shell);
-    const slotsPerAbility = this._getAssignmentsPerAbility(shell);
+    if (this._method === 'organic') {
+      const organicPlan = planPooledAssignment(this._scorePool.map(item => item.value), profile, 'organic', {
+        style: profile.recommendedStyle || 'balanced'
+      });
+      this._applyPooledAssignmentPlan(organicPlan, shell, 'organic');
+    } else {
+      const standardPlan = planPooledAssignment(this._scorePool.map(item => item.value), profile, 'standard', {
+        style: profile.recommendedStyle || 'balanced'
+      });
+      this._applyPooledAssignmentPlan(standardPlan, shell, 'standard');
+    }
+  }
 
-    let cursor = 0;
-    for (const ability of abilityKeys) {
-      for (let slotIndex = 0; slotIndex < slotsPerAbility; slotIndex++) {
-        const item = shuffled[cursor++];
-        if (!item) break;
-        item.assignedTo = ability;
+  _applyPooledAssignmentPlan(plan, shell, mode = 'standard') {
+    const cleanPool = this._scorePool.map(item => ({ ...item, assignedTo: null }));
+    const byValue = [...cleanPool].sort((a, b) => Number(b.value || 0) - Number(a.value || 0));
+    const used = new Set();
+
+    for (const [ability, assignedValues] of Object.entries(plan || {})) {
+      const values = mode === 'organic'
+        ? (Array.isArray(assignedValues) ? assignedValues : [])
+        : [assignedValues];
+
+      for (const value of values) {
+        const idx = byValue.findIndex((item, i) => !used.has(i) && Number(item.value) === Number(value));
+        if (idx >= 0) {
+          used.add(idx);
+          byValue[idx].assignedTo = ability;
+        }
       }
     }
 
-    this._scorePool = shuffled;
+    this._scorePool = byValue;
     this._selectedPoolId = null;
     this._dragPoolId = null;
     this._recomputeAttributesFromPool(shell);
     this._committed = false;
+  }
+
+  _getPendingData(shell) {
+    return shell?.buildIntent?.toCharacterData?.() || {};
+  }
+
+  _getCurrentMethodValues(shell) {
+    if (this._method === 'point-buy') return [];
+    if (Array.isArray(this._scorePool) && this._scorePool.length) {
+      return this._scorePool.map(item => Number(item.value)).filter(value => Number.isFinite(value));
+    }
+    return this._buildGeneratedValuesForCurrentMethod(shell);
+  }
+
+  _buildMentorIntro(shell) {
+    const guidance = getStepGuidance(shell?.actor, 'attribute', shell);
+    const methodLabel = this._method === 'point-buy'
+      ? 'point-buy budget'
+      : this._method === 'array'
+        ? 'live array values'
+        : this._method === 'standard'
+          ? 'rolled results'
+          : 'organic dice pool';
+    return `${guidance || 'Attribute choices shape the whole build.'} I built these options from your ${methodLabel}, so you can apply one and still tweak it afterward.`;
+  }
+
+  _generateMentorBuilds(shell) {
+    return buildSuggestedAttributeBuilds({
+      actor: shell?.actor,
+      pendingData: this._getPendingData(shell),
+      shell,
+      method: this._method,
+      pool: this.getPointBuyPool(shell),
+      values: this._getCurrentMethodValues(shell),
+      arrayType: this._arrayType
+    });
+  }
+
+  async _applyMentorBuild(build, shell) {
+    if (!build) return;
+
+    if (this._method === 'point-buy') {
+      this._attributes = { ...build.baseScores };
+      this._committed = false;
+      shell.render();
+      return;
+    }
+
+    if (build.assignment) {
+      this._applyPooledAssignmentPlan(build.assignment, shell, this._method === 'organic' ? 'organic' : 'standard');
+      shell.render();
+    }
   }
 
   _setSelectedPoolItem(poolId) {
@@ -574,6 +660,35 @@ export class AttributeStep extends ProgressionStepPlugin {
     shell.render();
   }
 
+  async onAskMentor(shell) {
+    const builds = this._generateMentorBuilds(shell);
+    if (!builds.length) {
+      ui?.notifications?.warn?.('No attribute builds are available yet for this method.');
+      return;
+    }
+
+    const dialog = new AttributeMentorDialog({
+      builds,
+      method: this._method,
+      pointBuyPool: this._method === 'point-buy' ? this.getPointBuyPool(shell) : null,
+      intro: this._buildMentorIntro(shell),
+      onApply: async (build) => {
+        await this._applyMentorBuild(build, shell);
+      }
+    });
+
+    await dialog.render(true);
+  }
+
+  getMentorContext(shell) {
+    return getStepGuidance(shell?.actor, 'attribute', shell)
+      || 'Think in breakpoints, not just raw numbers. A strong build either amplifies your species strengths or patches its weak spots.';
+  }
+
+  getMentorMode() {
+    return 'interactive';
+  }
+
   getSelection() {
     const selected = this._attributes
       ? Object.entries(this._attributes).filter(([_, value]) => Number.isFinite(Number(value))).map(([key]) => key)
@@ -716,15 +831,15 @@ export class AttributeStep extends ProgressionStepPlugin {
       remainingPoolAssignments,
       currentMethodDescription:
         this._method === 'point-buy'
-          ? 'Adjust scores with +/- as needed. Auto Assign builds a randomized point-buy spread for you.'
+          ? 'Adjust scores with +/- as needed. Auto Assign uses the suggestion engine, and Ask Mentor can apply a full build while still leaving everything editable.'
           : this._method === 'array'
-            ? `Using the ${this._arrayType === 'highPower' ? 'high power' : 'standard'} array. Drag scores onto attributes or use Auto Assign.`
+            ? `Using the ${this._arrayType === 'highPower' ? 'high power' : 'standard'} array. Drag scores onto attributes, use Auto Assign, or ask your mentor for build placements.`
             : this._method === 'standard'
-              ? 'Reroll generates six fresh 4d6 drop-lowest scores. Drag a score onto an attribute row or click to assign it.'
-              : 'Reroll generates 18 organic dice. Drag three dice into each attribute row or use Auto Assign.',
+              ? 'Reroll generates six fresh 4d6 drop-lowest scores. Drag a score onto an attribute row, or let Ask Mentor suggest placements from the rolls you have now.'
+              : 'Reroll generates 18 organic dice. Drag three dice into each attribute row, or ask your mentor for a suggested allocation from the live dice pool.',
       poolInstruction:
         this._method === 'point-buy'
-          ? 'Use Auto Assign if you want the system to spend the point-buy pool for you.'
+          ? 'Use Ask Mentor if you want three live build plans based on the point budget currently available.'
           : this._selectedPoolId
             ? (this._method === 'organic'
               ? 'Selected die is armed. Drag it or click an attribute row to add it. Each attribute needs 3 dice.'

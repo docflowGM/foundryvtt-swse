@@ -13,7 +13,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { normalizeSkills } from './step-normalizers.js';
-import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SkillRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
@@ -476,8 +476,33 @@ renderDetailsPanel(focusedItem) {
     return 'Choose your skills wisely.';
   }
 
+  async onAskMentor(shell) {
+    if (this._suggestedSkills?.length) {
+      await handleAskMentorWithPicker(shell.actor, 'skills', this._suggestedSkills, shell, {
+        domain: 'skills_l1',
+        archetype: 'your early training',
+        stepLabel: 'skills'
+      }, async (selected) => {
+        const skillKey = selected?.key || selected?.id || selected?._id || selected?.name;
+        if (!skillKey) return;
+        this._trainSkill(skillKey);
+
+        const trainedList = Array.from(this._trainedSkills.entries())
+          .filter(([, state]) => state?.trained)
+          .map(([key, state]) => ({ key, trained: !!state.trained }));
+
+        await this._commitNormalized(shell, 'skills', trainedList);
+        const focused = this._availableSkills.find(skill => skill.key === skillKey || skill.id === skillKey || skill._id === skillKey || skill.name === skillKey);
+        if (focused) shell.focusedItem = focused;
+        shell.render();
+      });
+      return;
+    }
+    await handleAskMentor(shell.actor, 'skills', shell);
+  }
+
   getMentorMode() {
-    return 'context-only';
+    return 'interactive';
   }
 
   // ---------------------------------------------------------------------------
@@ -499,7 +524,7 @@ renderDetailsPanel(focusedItem) {
       const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
         domain: 'skills_l1',
         available: this._allSkills,
-        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        pendingData: { ...SuggestionContextBuilder.buildPendingData(actor, characterData), slotContext: { slotKind: 'skill', slotType: 'heroic', classId: null } },
         engineOptions: { includeFutureAvailability: true },
         persist: true
       });

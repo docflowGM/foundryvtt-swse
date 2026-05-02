@@ -1,0 +1,24 @@
+<section class="swse-concept-panel swse-concept-panel--portrait">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Portrait Record</h3>
+      <p class="swse-concept-panel__hint">Actor image used across the dossier shell, mentor rail, and linked cards.</p>
+    </div>
+  </header>
+
+  <div class="swse-concept-portrait-card swse-concept-portrait-card--panel">
+    <div class="swse-concept-portrait-frame" data-role="actor-portrait-dropzone">
+      <span class="swse-concept-portrait-cert">Verified</span>
+      <img class="swse-concept-portrait"
+           src="{{portraitPanel.img}}"
+           data-edit="img"
+           data-role="actor-portrait-image"
+           title="Click or drop image to update portrait"
+           alt="{{portraitPanel.name}} portrait" />
+    </div>
+    <div class="swse-concept-portrait-caption">
+      <span>{{conceptLayout.identity.name}}</span>
+      <span>{{conceptLayout.identity.species}} · Level {{conceptLayout.identity.level}}</span>
+    </div>
+  </div>
+</section>

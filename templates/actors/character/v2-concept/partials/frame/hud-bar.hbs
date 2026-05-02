@@ -27,7 +27,7 @@
         {{#each sheetThemeGroups as |group|}}
           <optgroup label="{{group.label}}">
             {{#each group.options as |option|}}
-              <option value="{{option.key}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+              <option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
             {{/each}}
           </optgroup>
         {{/each}}

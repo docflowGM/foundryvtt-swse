@@ -1,0 +1,685 @@
+{
+  "Actor": {
+    "types": [
+      "character",
+      "npc",
+      "droid",
+      "vehicle"
+    ],
+    "templates": {
+      "base": {
+        "hp": {
+          "value": 10,
+          "max": 10,
+          "temp": 0
+        },
+        "defenses": {
+          "fortitude": {
+            "base": 10,
+            "misc": 0,
+            "total": 10,
+            "ability": 0,
+            "class": 0,
+            "armorMastery": 0,
+            "modifier": 0
+          },
+          "reflex": {
+            "base": 10,
+            "misc": 0,
+            "total": 10,
+            "ability": 0,
+            "class": 0,
+            "armorMastery": 0,
+            "modifier": 0
+          },
+          "will": {
+            "base": 10,
+            "misc": 0,
+            "total": 10,
+            "ability": 0,
+            "class": 0,
+            "armorMastery": 0,
+            "modifier": 0
+          },
+          "flatFooted": {
+            "total": 10
+          }
+        },
+        "abilities": {
+          "str": {
+            "base": 10,
+            "racial": 0,
+            "temp": 0,
+            "total": 10,
+            "mod": 0
+          },
+          "dex": {
+            "base": 10,
+            "racial": 0,
+            "temp": 0,
+            "total": 10,
+            "mod": 0
+          },
+          "con": {
+            "base": 10,
+            "racial": 0,
+            "temp": 0,
+            "total": 10,
+            "mod": 0
+          },
+          "int": {
+            "base": 10,
+            "racial": 0,
+            "temp": 0,
+            "total": 10,
+            "mod": 0
+          },
+          "wis": {
+            "base": 10,
+            "racial": 0,
+            "temp": 0,
+            "total": 10,
+            "mod": 0
+          },
+          "cha": {
+            "base": 10,
+            "racial": 0,
+            "temp": 0,
+            "total": 10,
+            "mod": 0
+          }
+        },
+        "level": 1,
+        "race": "custom",
+        "size": "medium",
+        "event": "",
+        "profession": "",
+        "planetOfOrigin": "",
+        "conditionTrack": {
+          "current": 0,
+          "persistent": false
+        },
+        "speed": 6,
+        "species": "",
+        "speciesMovement": {
+          "walk": 6,
+          "swim": null,
+          "fly": null,
+          "hover": null,
+          "glide": null,
+          "burrow": null,
+          "climb": null
+        },
+        "forcePoints": {
+          "value": 0,
+          "max": 0
+        },
+        "destinyPoints": {
+          "value": 1,
+          "max": 1
+        },
+        "darkSideScore": 0,
+        "darkSide": {
+          "value": 0,
+          "max": 0
+        },
+        "languages": [],
+        "starshipManeuverSuite": {
+          "max": 0,
+          "maneuvers": []
+        },
+        "forceSensitive": false,
+        "freeForcePowers": {
+          "current": 0,
+          "max": 0
+        },
+        "forceSecrets": [],
+        "forceTechniques": [],
+        "secondWind": {
+          "uses": 1,
+          "max": 1,
+          "misc": 0,
+          "healing": 0
+        },
+        "shields": {
+          "value": 0,
+          "max": 0,
+          "rating": 0,
+          "regenRate": 0
+        },
+        "damageReduction": 0,
+        "skills": {
+          "acrobatics": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "climb": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "deception": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "endurance": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "gatherInformation": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "initiative": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "jump": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgeBureaucracy": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgeGalacticLore": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgeLifeSciences": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgePhysicalSciences": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgeSocialSciences": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgeTactics": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "knowledgeTechnology": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "mechanics": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "perception": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "persuasion": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "pilot": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "ride": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "stealth": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "survival": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "swim": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "treatInjury": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "useComputer": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          },
+          "useTheForce": {
+            "trained": false,
+            "miscMod": 0,
+            "focused": false,
+            "selectedAbility": ""
+          }
+        },
+        "weapons": [],
+        "feats": [],
+        "talents": [],
+        "customSkills": [],
+        "classes": [],
+        "credits": 0,
+        "xp": {
+          "total": 0
+        },
+        "weaponTalentFlags": {
+          "dexterousDamage": false,
+          "weaponFinesse": false,
+          "preciseStrike": false,
+          "meleeFiness": false,
+          "powerAttack": false
+        },
+        "combatActions": {
+          "maxSwiftPerTurn": 1,
+          "maxStandardPerTurn": 1,
+          "maxMovePerTurn": 1
+        },
+        "combatTurnState": {
+          "actorId": "",
+          "hasStandardAction": true,
+          "hasMoveAction": true,
+          "swiftActionsUsed": 0,
+          "maxSwiftActions": 1,
+          "actionsUsed": []
+        },
+        "sizeMod": 0,
+        "attackPenalty": 0,
+        "speciesCombatBonuses": {
+          "meleeAttack": 0,
+          "rangedAttack": 0,
+          "defense": 0
+        },
+        "forceGrantLedger": {
+          "lastReconciled": null,
+          "lastReconciliationContext": "",
+          "grants": {},
+          "legacy": {
+            "unknownPowers": 0,
+            "issues": []
+          }
+        },
+        "relationships": []
+      }
+    },
+    "character": {
+      "templates": [
+        "base"
+      ],
+      "level": 1,
+      "race": "human",
+      "isDroid": false,
+      "droidDegree": ""
+    },
+    "npc": {
+      "templates": [
+        "base"
+      ],
+      "level": 1,
+      "sheetMode": "combat"
+    },
+    "droid": {
+      "templates": [
+        "base"
+      ],
+      "level": 1
+    },
+    "vehicle": {
+      "hp": {
+        "value": 100,
+        "max": 100
+      },
+      "speed": 0,
+      "subsystems": {
+        "engines": "normal",
+        "weapons": "normal",
+        "shields": "normal",
+        "sensors": "normal",
+        "comms": "normal",
+        "lifeSupport": "normal"
+      },
+      "enhancedShields": {
+        "fore": 0,
+        "aft": 0,
+        "port": 0,
+        "starboard": 0
+      },
+      "powerAllocation": {
+        "weapons": 2,
+        "shields": 2,
+        "engines": 2
+      },
+      "crew": [],
+      "pilotManeuver": "none",
+      "commanderOrder": "none",
+      "turnState": {
+        "currentPhase": "commander",
+        "phaseIndex": 0,
+        "completedPhases": [],
+        "crewActed": {}
+      }
+    }
+  },
+  "Item": {
+    "types": [
+      "class",
+      "feat",
+      "talent",
+      "talenttree",
+      "forcepower",
+      "skill",
+      "combat-action",
+      "weapon",
+      "armor",
+      "equipment",
+      "species",
+      "condition",
+      "force-power",
+      "maneuver",
+      "vehicleWeapon",
+      "vehicleWeaponRange"
+    ],
+    "templates": {
+      "base": {
+        "description": "",
+        "source": ""
+      }
+    },
+    "class": {
+      "templates": [
+        "base"
+      ],
+      "level": 1,
+      "hitDie": 6
+    },
+    "feat": {
+      "templates": [
+        "base"
+      ],
+      "prerequisites": "",
+      "grantsActions": [],
+      "grantsBonuses": {
+        "skills": {},
+        "combat": {},
+        "other": {}
+      },
+      "toggleable": false,
+      "toggled": false,
+      "variable": false,
+      "variableValue": 0,
+      "archetype": "",
+      "playstyle": "",
+      "tier": 0
+    },
+    "talent": {
+      "templates": [
+        "base"
+      ],
+      "tree": "",
+      "grantsActions": [],
+      "grantsBonuses": {
+        "skills": {},
+        "combat": {},
+        "other": {}
+      },
+      "toggleable": false,
+      "toggled": false,
+      "variable": false,
+      "variableValue": 0,
+      "archetype": "",
+      "playstyle": "",
+      "tier": 0
+    },
+    "forcepower": {
+      "templates": [
+        "base"
+      ],
+      "level": 1,
+      "uses": {
+        "current": 1,
+        "max": 1
+      },
+      "provenance": {
+        "grantSourceType": "force-sensitivity",
+        "grantSourceId": null,
+        "grantSubtype": "baseline",
+        "isLocked": false,
+        "migratedAt": null,
+        "legacyIssues": []
+      }
+    },
+    "weapon": {
+      "templates": [
+        "base"
+      ],
+      "weaponCategory": "simple",
+      "proficiency": "simple",
+      "damage": "1d6",
+      "damageBonus": "",
+      "attackBonus": 0,
+      "attackAttribute": "str",
+      "critRange": 20,
+      "critMultiplier": 2,
+      "damageType": "energy",
+      "armorPiercing": 0,
+      "autofire": false,
+      "meleeOrRanged": "melee",
+      "range": "melee",
+      "ranged": false,
+      "reachBonus": 0,
+      "ranges": {
+        "short": null,
+        "medium": null,
+        "long": null
+      },
+      "specialEffects": "",
+      "ammunition": {
+        "type": "",
+        "current": 0,
+        "max": 0
+      },
+      "equipped": false,
+      "dualWielded": false,
+      "wieldedTwoHanded": false,
+      "weight": 0,
+      "gearTemplate": "",
+      "gearTemplateSecondary": "",
+      "templateCost": 0,
+      "proficient": true,
+      "damageDice": 1,
+      "damageDiceType": "d6",
+      "weaponProperties": {
+        "isLight": false,
+        "isTwoHanded": false,
+        "keen": false,
+        "flaming": false,
+        "frost": false,
+        "shock": false,
+        "vorpal": false
+      }
+    },
+    "armor": {
+      "templates": [
+        "base"
+      ],
+      "armorType": "light",
+      "reflexBonus": 0,
+      "fortitudeBonus": 0,
+      "maxDex": 999,
+      "weight": 0,
+      "equipmentPerceptionBonus": 0,
+      "armorProficiency": false,
+      "features": "",
+      "shieldRating": 0,
+      "currentSR": 0,
+      "armorProficiencyRequired": "",
+      "charges": {
+        "current": 5,
+        "max": 5
+      },
+      "activated": false,
+      "gearTemplate": "",
+      "gearTemplateSecondary": "",
+      "templateCost": 0
+    },
+    "equipment": {
+      "templates": [
+        "base"
+      ],
+      "weight": 0,
+      "cost": 0,
+      "upgradeSlots": 1,
+      "installedUpgrades": []
+    },
+    "species": {
+      "templates": [
+        "base"
+      ],
+      "bonuses": {
+        "str": 0,
+        "dex": 0,
+        "con": 0,
+        "int": 0,
+        "wis": 0,
+        "cha": 0
+      }
+    },
+    "talenttree": {
+      "templates": [],
+      "description": ""
+    },
+    "skill": {
+      "templates": [],
+      "description": ""
+    },
+    "combat-action": {
+      "templates": ["base"],
+      "actionType": "standard",
+      "actionCost": {
+        "standard": 0,
+        "move": 0,
+        "swift": 0
+      }
+    },
+    "attribute": {
+      "templates": [
+        "base"
+      ]
+    },
+    "extra-skill-use": {
+      "templates": [
+        "base"
+      ]
+    },
+    "condition": {
+      "templates": [
+        "base"
+      ],
+      "severity": 0,
+      "duration": "",
+      "persistent": false
+    },
+    "force-power": {
+      "templates": [
+        "base"
+      ],
+      "level": 1,
+      "uses": {
+        "current": 1,
+        "max": 1
+      }
+    },
+    "maneuver": {
+      "templates": [
+        "base"
+      ],
+      "actionType": "standard",
+      "talentTree": "Ace Pilot",
+      "spent": false,
+      "inSuite": false,
+      "uses": {
+        "current": 1,
+        "max": 1
+      },
+      "prerequisites": [],
+      "tags": [],
+      "icon": "fa-solid fa-fighter-jet"
+    },
+    "vehicleWeapon": {
+      "templates": [
+        "base"
+      ],
+      "slug": "",
+      "damage": null,
+      "placementPoints": null,
+      "availability": null,
+      "cost": null,
+      "mountRestriction": null
+    },
+    "vehicleWeaponRange": {
+      "templates": [
+        "base"
+      ],
+      "slug": "",
+      "character": {
+        "pb": null,
+        "short": null,
+        "medium": null,
+        "long": null
+      },
+      "starship": {
+        "pb": null,
+        "short": null,
+        "medium": null,
+        "long": null
+      },
+      "notes": null
+    }
+  }
+}

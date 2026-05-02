@@ -37,7 +37,36 @@
             "Weapon Specialization (Lightsabers)",
             "Improved Critical (Lightsabers)",
             "Acrobatic Strike"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 1,
+            "ability_dex": 3,
+            "ability_str": 2,
+            "accuracy": 3,
+            "athletics": 2,
+            "damage": 3,
+            "defense": 3,
+            "duelist": 3,
+            "force": 3,
+            "force_execution": 1,
+            "guard": 3,
+            "initiative": 3,
+            "jump": 2,
+            "leadership": 1,
+            "lightsaber": 3,
+            "melee_defense": 2,
+            "mobility": 3,
+            "offense_melee": 2,
+            "offense_ranged": 3,
+            "positioning": 2,
+            "precision_damage": 3,
+            "ranged_defense": 2,
+            "reaction": 2,
+            "reflex_defense": 3,
+            "social": 1,
+            "striker": 3,
+            "use_the_force": 2
+          }
         },
         "tank_guardian": {
           "name": "Jedi Watchman",
@@ -65,7 +94,29 @@
             "Toughness",
             "Improved Defenses",
             "Weapon Focus (Lightsabers)"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 3,
+            "ability_str": 2,
+            "ability_wis": 1,
+            "athletics": 2,
+            "defense": 3,
+            "duelist": 2,
+            "force": 3,
+            "force_capacity": 1,
+            "fortitude_defense": 3,
+            "guard": 3,
+            "jump": 2,
+            "lightsaber": 3,
+            "melee_defense": 2,
+            "offense_melee": 2,
+            "perception": 1,
+            "ranged_defense": 2,
+            "reaction": 2,
+            "survivability": 3,
+            "survival": 1,
+            "use_the_force": 2
+          }
         },
         "battlefield_controller": {
           "name": "Jedi Consular",
@@ -92,7 +143,25 @@
           "feats": [
             "Force Training",
             "Skill Focus (Use the Force)"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 3,
+            "ability_wis": 2,
+            "ally_support": 1,
+            "area_control": 3,
+            "control": 3,
+            "force": 3,
+            "force_capacity": 2,
+            "force_execution": 3,
+            "leadership": 3,
+            "lightsaber": 3,
+            "offense_melee": 2,
+            "perception": 2,
+            "social": 3,
+            "support": 3,
+            "survival": 2,
+            "use_the_force": 2
+          }
         },
         "force_burst_striker": {
           "name": "Jedi Duelist",
@@ -121,7 +190,30 @@
             "Force Training",
             "Strong in the Force",
             "Skill Focus (Use the Force)"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 3,
+            "ability_dex": 1,
+            "ability_str": 1,
+            "athletics": 1,
+            "burst_damage": 3,
+            "damage": 3,
+            "duelist": 3,
+            "finesse": 3,
+            "force": 3,
+            "force_execution": 3,
+            "initiative": 1,
+            "jump": 1,
+            "leadership": 3,
+            "lightsaber": 3,
+            "mobility": 1,
+            "offense_melee": 3,
+            "offense_ranged": 1,
+            "reflex_defense": 1,
+            "social": 3,
+            "striker": 3,
+            "use_the_force": 2
+          }
         },
         "sentinel_generalist": {
           "name": "Jedi Sentinel",
@@ -150,7 +242,33 @@
             "Skill Focus (Use the Force)",
             "Weapon Focus (Lightsabers)",
             "Force Training"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 2,
+            "ability_dex": 2,
+            "ability_int": 1,
+            "duelist": 2,
+            "force": 3,
+            "force_execution": 2,
+            "initiative": 2,
+            "knowledge": 1,
+            "leadership": 2,
+            "lightsaber": 3,
+            "melee_defense": 2,
+            "mobility": 3,
+            "offense_melee": 2,
+            "offense_ranged": 2,
+            "perception": 3,
+            "positioning": 2,
+            "reaction": 2,
+            "reflex_defense": 2,
+            "skill_training": 1,
+            "social": 2,
+            "stealth": 3,
+            "tech": 1,
+            "use_the_force": 2,
+            "utility": 3
+          }
         }
       }
     },
@@ -182,7 +300,21 @@
           "feats": [
             "Skill Focus (Persuasion)",
             "Improved Initiative"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 3,
+            "ability_int": 2,
+            "ally_support": 3,
+            "command": 3,
+            "force_execution": 3,
+            "knowledge": 2,
+            "leadership": 3,
+            "persuasion": 2,
+            "skill_training": 2,
+            "social": 3,
+            "support": 3,
+            "tech": 2
+          }
         },
         "master_orator": {
           "name": "Diplomat",
@@ -209,7 +341,22 @@
           "feats": [
             "Skill Focus (Persuasion)",
             "Skill Focus (Deception)"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 3,
+            "ability_int": 1,
+            "ally_support": 3,
+            "area_control": 3,
+            "control": 3,
+            "force_execution": 3,
+            "knowledge": 1,
+            "leadership": 3,
+            "persuasion": 2,
+            "skill_training": 1,
+            "social": 3,
+            "support": 2,
+            "tech": 1
+          }
         },
         "tactical_coordinator": {
           "name": "Tactician",
@@ -236,7 +383,26 @@
           "feats": [
             "Improved Initiative",
             "Skill Focus (Persuasion)"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 2,
+            "ability_dex": 1,
+            "ability_int": 2,
+            "ally_support": 3,
+            "command": 2,
+            "force_execution": 2,
+            "initiative": 1,
+            "knowledge": 2,
+            "leadership": 3,
+            "mobility": 1,
+            "offense_ranged": 1,
+            "persuasion": 2,
+            "reflex_defense": 1,
+            "skill_training": 2,
+            "social": 3,
+            "support": 3,
+            "tech": 2
+          }
         },
         "political_strategist": {
           "name": "Mastermind",
@@ -263,7 +429,20 @@
           "feats": [
             "Skill Focus (Gather Information)",
             "Skill Focus (Knowledge)"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 2,
+            "ability_int": 3,
+            "ally_support": 3,
+            "force_execution": 2,
+            "knowledge": 3,
+            "leadership": 3,
+            "skill_training": 3,
+            "social": 3,
+            "support": 2,
+            "tech": 3,
+            "utility": 3
+          }
         },
         "inspirational_supporter": {
           "name": "Celebrity",
@@ -289,7 +468,24 @@
           "feats": [
             "Skill Focus (Persuasion)",
             "Improved Defenses"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 3,
+            "ability_wis": 1,
+            "ally_support": 3,
+            "defense": 1,
+            "force_capacity": 1,
+            "force_execution": 3,
+            "guard": 1,
+            "knowledge": 1,
+            "leadership": 3,
+            "perception": 1,
+            "persuasion": 2,
+            "social": 3,
+            "support": 3,
+            "survivability": 1,
+            "survival": 1
+          }
         }
       }
     },
@@ -323,7 +519,30 @@
             "Point Blank Shot",
             "Precise Shot",
             "Improved Critical (Pistols)"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 1,
+            "ability_dex": 3,
+            "ability_int": 1,
+            "accuracy": 3,
+            "damage": 3,
+            "deception": 3,
+            "duelist": 3,
+            "force_execution": 1,
+            "initiative": 3,
+            "knowledge": 1,
+            "leadership": 1,
+            "mobility": 3,
+            "offense_ranged": 3,
+            "pistol": 2,
+            "precision_damage": 3,
+            "reflex_defense": 3,
+            "skill_training": 1,
+            "social": 2,
+            "stealth": 3,
+            "striker": 3,
+            "tech": 2
+          }
         },
         "debilitating_trickster": {
           "name": "Trickster",
@@ -350,7 +569,29 @@
           "feats": [
             "Skill Focus (Deception)",
             "Weapon Focus (Pistols)"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 2,
+            "ability_dex": 2,
+            "ability_int": 1,
+            "area_control": 3,
+            "control": 3,
+            "damage": 1,
+            "deception": 3,
+            "force_execution": 2,
+            "initiative": 2,
+            "knowledge": 1,
+            "leadership": 2,
+            "mobility": 2,
+            "offense_ranged": 2,
+            "pistol": 2,
+            "reflex_defense": 2,
+            "skill_training": 1,
+            "social": 2,
+            "stealth": 3,
+            "striker": 1,
+            "tech": 2
+          }
         },
         "gunslinger_duelist": {
           "name": "Gunslinger",
@@ -378,7 +619,28 @@
             "Weapon Focus (Pistols)",
             "Improved Critical (Pistols)",
             "Rapid Shot"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 1,
+            "ability_dex": 3,
+            "damage": 3,
+            "deception": 3,
+            "duelist": 3,
+            "finesse": 3,
+            "force_execution": 1,
+            "initiative": 3,
+            "leadership": 1,
+            "mobility": 3,
+            "offense_melee": 3,
+            "offense_ranged": 3,
+            "pistol": 2,
+            "positioning": 2,
+            "reflex_defense": 3,
+            "social": 2,
+            "stealth": 3,
+            "striker": 3,
+            "tech": 2
+          }
         },
         "social_manipulator": {
           "name": "Con-Man",
@@ -405,7 +667,25 @@
           "feats": [
             "Skill Focus (Persuasion)",
             "Skill Focus (Deception)"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 3,
+            "ability_int": 2,
+            "ally_support": 3,
+            "area_control": 2,
+            "control": 2,
+            "deception": 3,
+            "force_execution": 3,
+            "knowledge": 2,
+            "leadership": 3,
+            "offense_ranged": 2,
+            "persuasion": 2,
+            "skill_training": 2,
+            "social": 3,
+            "stealth": 3,
+            "support": 3,
+            "tech": 2
+          }
         },
         "saboteur_technician": {
           "name": "Saboteur",
@@ -432,7 +712,24 @@
           "feats": [
             "Skill Focus (Mechanics)",
             "Gearhead"
-          ]
+          ],
+          "tagBias": {
+            "ability_dex": 2,
+            "ability_int": 3,
+            "area_control": 3,
+            "control": 3,
+            "deception": 3,
+            "initiative": 2,
+            "knowledge": 3,
+            "mobility": 2,
+            "offense_ranged": 2,
+            "reflex_defense": 2,
+            "skill_training": 3,
+            "social": 2,
+            "stealth": 3,
+            "tech": 3,
+            "utility": 3
+          }
         }
       }
     },
@@ -466,7 +763,28 @@
             "Running Attack",
             "Point Blank Shot",
             "Weapon Focus (Rifles)"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 1,
+            "ability_dex": 3,
+            "ability_wis": 1,
+            "damage": 2,
+            "force_capacity": 1,
+            "fortitude_defense": 1,
+            "initiative": 3,
+            "mobility": 3,
+            "offense_ranged": 3,
+            "perception": 1,
+            "pilot": 1,
+            "positioning": 3,
+            "reflex_defense": 3,
+            "rifle": 2,
+            "stealth": 2,
+            "striker": 2,
+            "survivability": 1,
+            "survival": 2,
+            "tracking": 2
+          }
         },
         "wilderness_survivalist": {
           "name": "Survivalist",
@@ -492,7 +810,26 @@
           "feats": [
             "Skill Focus (Survival)",
             "Skill Focus (Perception)"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 2,
+            "ability_wis": 3,
+            "defense": 1,
+            "force_capacity": 3,
+            "fortitude_defense": 2,
+            "guard": 1,
+            "mobility": 2,
+            "offense_ranged": 3,
+            "perception": 3,
+            "pilot": 1,
+            "reflex_defense": 2,
+            "stealth": 2,
+            "survivability": 2,
+            "survival": 3,
+            "tech": 3,
+            "tracking": 2,
+            "utility": 3
+          }
         },
         "recon_sniper": {
           "name": "Sniper",
@@ -520,7 +857,26 @@
             "Weapon Focus (Rifles)",
             "Improved Critical (Rifles)",
             "Careful Shot"
-          ]
+          ],
+          "tagBias": {
+            "ability_dex": 3,
+            "ability_wis": 1,
+            "accuracy": 3,
+            "damage": 3,
+            "force_capacity": 1,
+            "initiative": 3,
+            "mobility": 3,
+            "offense_ranged": 3,
+            "perception": 3,
+            "pilot": 1,
+            "reflex_defense": 3,
+            "rifle": 2,
+            "sniper": 3,
+            "stealth": 3,
+            "striker": 3,
+            "survival": 2,
+            "tracking": 3
+          }
         },
         "condition_harrier": {
           "name": "Ranger",
@@ -549,7 +905,29 @@
             "Running Attack",
             "Weapon Focus (Rifles)",
             "Rapid Shot"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 1,
+            "ability_dex": 2,
+            "ability_wis": 2,
+            "area_control": 3,
+            "control": 3,
+            "force_capacity": 2,
+            "fortitude_defense": 1,
+            "initiative": 2,
+            "mobility": 2,
+            "offense_ranged": 3,
+            "perception": 2,
+            "pilot": 1,
+            "positioning": 2,
+            "reflex_defense": 2,
+            "rifle": 2,
+            "stealth": 2,
+            "striker": 2,
+            "survivability": 1,
+            "survival": 2,
+            "tracking": 2
+          }
         },
         "pilot_operative": {
           "name": "Pilot",
@@ -576,7 +954,26 @@
           "feats": [
             "Skill Focus (Pilot)",
             "Vehicular Combat"
-          ]
+          ],
+          "tagBias": {
+            "ability_dex": 3,
+            "ability_int": 2,
+            "initiative": 3,
+            "knowledge": 2,
+            "mobility": 3,
+            "offense_ranged": 3,
+            "pilot": 3,
+            "positioning": 1,
+            "reflex_defense": 3,
+            "skill_training": 2,
+            "starship": 3,
+            "stealth": 2,
+            "survival": 2,
+            "tech": 2,
+            "tracking": 2,
+            "utility": 3,
+            "vehicle": 3
+          }
         }
       }
     },
@@ -612,7 +1009,27 @@
             "Autofire Sweep",
             "Weapon Focus (Heavy Weapons)",
             "Weapon Specialization (Heavy Weapons)"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 2,
+            "ability_dex": 1,
+            "ability_str": 3,
+            "area_control": 2,
+            "armor": 2,
+            "athletics": 3,
+            "control": 2,
+            "damage": 3,
+            "defense": 2,
+            "fortitude_defense": 2,
+            "initiative": 1,
+            "jump": 3,
+            "mobility": 1,
+            "offense_melee": 3,
+            "offense_ranged": 2,
+            "reflex_defense": 1,
+            "striker": 3,
+            "survivability": 2
+          }
         },
         "armored_shock_trooper": {
           "name": "Tank",
@@ -641,7 +1058,20 @@
             "Power Attack",
             "Toughness",
             "Weapon Focus (Advanced Melee)"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 3,
+            "ability_str": 3,
+            "armor": 2,
+            "athletics": 3,
+            "defense": 3,
+            "fortitude_defense": 3,
+            "guard": 3,
+            "jump": 3,
+            "offense_melee": 3,
+            "offense_ranged": 2,
+            "survivability": 3
+          }
         },
         "precision_rifleman": {
           "name": "Infantry",
@@ -669,7 +1099,30 @@
             "Weapon Focus (Rifles)",
             "Improved Critical (Rifles)",
             "Careful Shot"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 1,
+            "ability_dex": 3,
+            "ability_int": 1,
+            "accuracy": 3,
+            "armor": 2,
+            "damage": 3,
+            "defense": 2,
+            "duelist": 3,
+            "fortitude_defense": 1,
+            "initiative": 3,
+            "knowledge": 1,
+            "mobility": 3,
+            "offense_melee": 2,
+            "offense_ranged": 3,
+            "precision_damage": 3,
+            "reflex_defense": 3,
+            "rifle": 2,
+            "skill_training": 1,
+            "striker": 3,
+            "survivability": 2,
+            "tech": 1
+          }
         },
         "close_quarters_breacher": {
           "name": "Brawler",
@@ -699,7 +1152,26 @@
             "Point Blank Shot",
             "Rapid Shot",
             "Weapon Focus (Rifles)"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 2,
+            "ability_dex": 2,
+            "ability_str": 2,
+            "armor": 2,
+            "athletics": 2,
+            "damage": 3,
+            "defense": 2,
+            "fortitude_defense": 2,
+            "initiative": 2,
+            "jump": 2,
+            "mobility": 2,
+            "offense_melee": 2,
+            "offense_ranged": 2,
+            "reflex_defense": 2,
+            "rifle": 2,
+            "striker": 3,
+            "survivability": 2
+          }
         },
         "battlefield_enforcer": {
           "name": "Sargent",
@@ -727,7 +1199,25 @@
             "Power Attack",
             "Weapon Focus (Advanced Melee)",
             "Improved Trip"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 2,
+            "ability_dex": 2,
+            "ability_str": 2,
+            "area_control": 3,
+            "armor": 2,
+            "athletics": 2,
+            "control": 3,
+            "defense": 2,
+            "fortitude_defense": 2,
+            "initiative": 2,
+            "jump": 2,
+            "mobility": 2,
+            "offense_melee": 2,
+            "offense_ranged": 2,
+            "reflex_defense": 2,
+            "survivability": 2
+          }
         }
       }
     },
@@ -763,7 +1253,32 @@
           ],
           "feats": [
             "9b7b869a86f39190"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_con": 0.35,
+            "ability_str": 0.1,
+            "ability_wis": 0.2,
+            "ally_support": 1.1,
+            "area_control": 0.2,
+            "athletics": 0.1,
+            "control": 0.2,
+            "damage": 1,
+            "defense": 1.4,
+            "force_capacity": 0.2,
+            "force_execution": 0.35,
+            "fortitude_defense": 0.35,
+            "jump": 0.1,
+            "leadership": 0.35,
+            "offense_melee": 0.1,
+            "perception": 0.2,
+            "social": 0.35,
+            "support": 1.1,
+            "survivability": 1.4,
+            "survival": 0.2,
+            "tech": 0.8,
+            "utility": 0.8
+          }
         },
         "knight_inquisitor": {
           "name": "Knight Inquisitor",
@@ -794,7 +1309,34 @@
           "feats": [
             "c41814601364b643",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.15,
+            "ability_str": 0.2,
+            "ability_wis": 0.35,
+            "ally_support": 0.8,
+            "area_control": 0.3,
+            "athletics": 0.2,
+            "control": 0.3,
+            "damage": 1.3,
+            "defense": 1.2,
+            "force": 3,
+            "force_capacity": 0.35,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.15,
+            "jump": 0.2,
+            "leadership": 0.3,
+            "lightsaber": 3,
+            "offense_melee": 3,
+            "perception": 0.35,
+            "social": 0.3,
+            "support": 0.8,
+            "survivability": 1.2,
+            "survival": 0.35,
+            "tech": 0.9,
+            "utility": 0.9
+          }
         },
         "errant_knight": {
           "name": "Errant Knight",
@@ -824,7 +1366,36 @@
           "feats": [
             "9b7b869a86f39190",
             "12d064d086102ff0"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.2,
+            "ability_dex": 0.2,
+            "ability_wis": 0.3,
+            "ally_support": 1,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 1.1,
+            "defense": 1.1,
+            "force": 3,
+            "force_capacity": 0.3,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.2,
+            "initiative": 0.2,
+            "leadership": 0.3,
+            "lightsaber": 3,
+            "mobility": 0.2,
+            "offense_melee": 3,
+            "offense_ranged": 0.2,
+            "perception": 0.3,
+            "reflex_defense": 0.2,
+            "social": 0.3,
+            "support": 1,
+            "survivability": 1.1,
+            "survival": 0.3,
+            "tech": 1,
+            "utility": 1
+          }
         },
         "imperial_knight_inquisitor": {
           "name": "Imperial Knight Inquisitor",
@@ -850,7 +1421,34 @@
           "feats": [
             "1592aaedf4b6e40a",
             "9b7b869a86f39190"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.15,
+            "ability_dex": 0.2,
+            "ability_wis": 0.35,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 1.1,
+            "force": 3,
+            "force_capacity": 0.35,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.15,
+            "initiative": 0.2,
+            "leadership": 0.3,
+            "lightsaber": 3,
+            "mobility": 0.2,
+            "offense_melee": 3,
+            "offense_ranged": 0.2,
+            "perception": 0.35,
+            "reflex_defense": 0.2,
+            "social": 0.3,
+            "striker": 0.4,
+            "survivability": 0.15,
+            "survival": 0.35,
+            "tech": 0.2,
+            "utility": 0.2
+          }
         },
         "imperial_knight_errant": {
           "name": "Imperial Knight Errant",
@@ -875,7 +1473,34 @@
           "feats": [
             "ff8eaa4e2f6d1cf1",
             "9b7b869a86f39190"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.15,
+            "ability_dex": 0.3,
+            "ability_wis": 0.25,
+            "ally_support": 0.3,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 1.1,
+            "force": 3,
+            "force_capacity": 0.25,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.15,
+            "initiative": 0.3,
+            "leadership": 0.3,
+            "lightsaber": 3,
+            "mobility": 0.3,
+            "offense_melee": 3,
+            "offense_ranged": 0.3,
+            "perception": 0.25,
+            "reflex_defense": 0.3,
+            "social": 0.3,
+            "striker": 0.4,
+            "support": 0.3,
+            "survivability": 0.15,
+            "survival": 0.25
+          }
         }
       }
     },
@@ -905,7 +1530,30 @@
           ],
           "feats": [
             "c41814601364b643"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.15,
+            "ability_str": 0.3,
+            "ability_wis": 0.25,
+            "ally_support": 0.2,
+            "area_control": 0.4,
+            "athletics": 0.3,
+            "control": 0.4,
+            "damage": 1.1,
+            "force_capacity": 0.25,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.15,
+            "jump": 0.3,
+            "leadership": 0.3,
+            "offense_melee": 0.3,
+            "perception": 0.25,
+            "social": 0.3,
+            "striker": 0.4,
+            "support": 0.2,
+            "survivability": 0.15,
+            "survival": 0.25
+          }
         },
         "force_duelist": {
           "name": "Force Duelist",
@@ -930,7 +1578,34 @@
           "feats": [
             "252b67d6e31c377e",
             "ccb33e58342499a3"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.1,
+            "ability_con": 0.2,
+            "ability_dex": 0.4,
+            "ability_wis": 0.3,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 1.3,
+            "duelist": 3,
+            "finesse": 3,
+            "force_capacity": 0.3,
+            "force_execution": 0.1,
+            "fortitude_defense": 0.2,
+            "initiative": 0.4,
+            "leadership": 0.1,
+            "mobility": 0.4,
+            "offense_melee": 3,
+            "offense_ranged": 0.4,
+            "perception": 0.3,
+            "reflex_defense": 0.4,
+            "social": 0.1,
+            "striker": 0.6,
+            "survivability": 0.2,
+            "survival": 0.3,
+            "tech": 0.1,
+            "utility": 0.1
+          }
         },
         "lightsaber_vanguard": {
           "name": "Lightsaber Vanguard",
@@ -957,7 +1632,31 @@
           "feats": [
             "7cd5ebe725910cb2",
             "3f76464c43c73f84"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.3,
+            "ability_str": 0.35,
+            "ability_wis": 0.15,
+            "area_control": 0.2,
+            "athletics": 0.35,
+            "control": 0.2,
+            "damage": 1.2,
+            "defense": 3,
+            "force_capacity": 0.15,
+            "fortitude_defense": 0.2,
+            "guard": 0.3,
+            "initiative": 0.3,
+            "jump": 0.35,
+            "mobility": 0.3,
+            "offense_melee": 3,
+            "offense_ranged": 3,
+            "perception": 0.15,
+            "reflex_defense": 0.3,
+            "striker": 0.5,
+            "survivability": 1.1,
+            "survival": 0.15
+          }
         },
         "jedi_shadow": {
           "name": "Jedi Shadow",
@@ -982,7 +1681,31 @@
           "feats": [
             "1592aaedf4b6e40a",
             "9b7b869a86f39190"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.1,
+            "ability_dex": 0.35,
+            "ability_int": 0.2,
+            "ability_wis": 0.35,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.2,
+            "force_capacity": 0.35,
+            "force_execution": 0.1,
+            "initiative": 0.35,
+            "knowledge": 0.2,
+            "leadership": 0.1,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "perception": 0.35,
+            "reflex_defense": 0.35,
+            "skill_training": 0.2,
+            "social": 0.1,
+            "striker": 0.2,
+            "survival": 0.35,
+            "tech": 0.4,
+            "utility": 0.4
+          }
         },
         "jedi_watchman": {
           "name": "Jedi Watchman",
@@ -1007,7 +1730,31 @@
           "feats": [
             "1592aaedf4b6e40a",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.15,
+            "ability_dex": 0.3,
+            "ability_int": 0.25,
+            "ability_wis": 0.3,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.3,
+            "force_capacity": 0.3,
+            "force_execution": 0.15,
+            "initiative": 0.3,
+            "knowledge": 0.25,
+            "leadership": 0.15,
+            "mobility": 0.3,
+            "offense_ranged": 0.3,
+            "perception": 0.3,
+            "reflex_defense": 0.3,
+            "skill_training": 0.25,
+            "social": 0.15,
+            "striker": 0.3,
+            "survival": 0.3,
+            "tech": 0.3,
+            "utility": 0.3
+          }
         },
         "jedi_battlemaster": {
           "name": "Jedi Battlemaster",
@@ -1031,7 +1778,30 @@
           ],
           "feats": [
             "c41814601364b643"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.15,
+            "ability_str": 0.3,
+            "ability_wis": 0.25,
+            "ally_support": 0.2,
+            "area_control": 0.4,
+            "athletics": 0.3,
+            "control": 0.4,
+            "damage": 0.4,
+            "force_capacity": 0.25,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.15,
+            "jump": 0.3,
+            "leadership": 0.3,
+            "offense_melee": 0.3,
+            "perception": 0.25,
+            "social": 0.3,
+            "striker": 0.4,
+            "support": 0.2,
+            "survivability": 0.15,
+            "survival": 0.25
+          }
         }
       }
     },
@@ -1058,7 +1828,24 @@
           "feats": [
             "9b7b869a86f39190",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_con": 0.2,
+            "ability_wis": 0.45,
+            "ally_support": 0.3,
+            "area_control": 0.2,
+            "control": 0.2,
+            "force_capacity": 0.45,
+            "force_execution": 0.35,
+            "fortitude_defense": 0.2,
+            "leadership": 0.35,
+            "perception": 0.45,
+            "social": 0.35,
+            "support": 0.3,
+            "survivability": 0.2,
+            "survival": 0.45
+          }
         },
         "battle_sage": {
           "name": "Battle Sage",
@@ -1083,7 +1870,25 @@
           "feats": [
             "9b7b869a86f39190",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_int": 0.3,
+            "ability_wis": 0.4,
+            "ally_support": 0.2,
+            "area_control": 0.4,
+            "control": 0.4,
+            "force_capacity": 3,
+            "force_execution": 0.3,
+            "knowledge": 3,
+            "leadership": 0.3,
+            "perception": 0.4,
+            "skill_training": 0.3,
+            "social": 0.3,
+            "support": 0.2,
+            "survival": 0.4,
+            "tech": 0.3
+          }
         },
         "spiritual_guide": {
           "name": "Spiritual Guide",
@@ -1106,7 +1911,26 @@
           "feats": [
             "1592aaedf4b6e40a",
             "9b7b869a86f39190"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_int": 0.25,
+            "ability_wis": 0.4,
+            "ally_support": 0.5,
+            "area_control": 0.2,
+            "control": 0.2,
+            "force_capacity": 0.4,
+            "force_execution": 0.35,
+            "knowledge": 0.25,
+            "leadership": 0.35,
+            "perception": 0.4,
+            "skill_training": 0.25,
+            "social": 0.35,
+            "support": 0.5,
+            "survival": 0.4,
+            "tech": 0.3,
+            "utility": 0.3
+          }
         }
       }
     },
@@ -1134,7 +1958,29 @@
           "feats": [
             "9b7b869a86f39190",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_con": 0.15,
+            "ability_dex": 0.1,
+            "ability_wis": 0.4,
+            "area_control": 0.2,
+            "control": 0.2,
+            "damage": 0.3,
+            "force_capacity": 0.4,
+            "force_execution": 0.35,
+            "fortitude_defense": 0.15,
+            "initiative": 0.1,
+            "leadership": 0.35,
+            "mobility": 0.1,
+            "offense_ranged": 0.1,
+            "perception": 0.4,
+            "reflex_defense": 0.1,
+            "social": 0.35,
+            "striker": 0.3,
+            "survivability": 0.15,
+            "survival": 0.4
+          }
         },
         "aggressive_disciple": {
           "name": "Aggressive Disciple",
@@ -1157,7 +2003,29 @@
           "feats": [
             "3f76464c43c73f84",
             "c41814601364b643"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.15,
+            "ability_dex": 0.25,
+            "ability_str": 0.35,
+            "ability_wis": 0.25,
+            "area_control": 0.1,
+            "athletics": 0.35,
+            "control": 0.1,
+            "damage": 0.6,
+            "force_capacity": 0.25,
+            "fortitude_defense": 0.15,
+            "initiative": 0.25,
+            "jump": 0.35,
+            "mobility": 0.25,
+            "offense_melee": 0.35,
+            "offense_ranged": 0.25,
+            "perception": 0.25,
+            "reflex_defense": 0.25,
+            "striker": 0.6,
+            "survivability": 0.15,
+            "survival": 0.25
+          }
         },
         "manipulative_student": {
           "name": "Manipulative Student",
@@ -1180,7 +2048,26 @@
           "feats": [
             "1592aaedf4b6e40a",
             "9b7b869a86f39190"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.45,
+            "ability_int": 0.25,
+            "ability_wis": 0.3,
+            "ally_support": 0.3,
+            "area_control": 0.5,
+            "control": 0.5,
+            "force_capacity": 0.3,
+            "force_execution": 0.45,
+            "knowledge": 0.25,
+            "leadership": 0.45,
+            "perception": 0.3,
+            "skill_training": 0.25,
+            "social": 0.45,
+            "support": 0.3,
+            "survival": 0.3,
+            "tech": 0.25,
+            "utility": 0.2
+          }
         }
       }
     },
@@ -1207,7 +2094,24 @@
           "feats": [
             "9b7b869a86f39190",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_con": 0.25,
+            "ability_wis": 0.4,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.2,
+            "force_capacity": 0.4,
+            "force_execution": 0.35,
+            "fortitude_defense": 0.25,
+            "leadership": 0.35,
+            "perception": 0.4,
+            "social": 0.35,
+            "striker": 0.2,
+            "survivability": 0.25,
+            "survival": 0.4
+          }
         },
         "force_tyrant": {
           "name": "Force Tyrant",
@@ -1229,7 +2133,24 @@
           "feats": [
             "9b7b869a86f39190",
             "96666de28ba99b64"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.3,
+            "ability_wis": 0.4,
+            "area_control": 0.2,
+            "control": 0.2,
+            "damage": 0.3,
+            "force_capacity": 0.4,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.3,
+            "leadership": 0.3,
+            "perception": 0.4,
+            "social": 0.3,
+            "striker": 0.3,
+            "survivability": 0.3,
+            "survival": 0.4
+          }
         },
         "master_manipulator": {
           "name": "Master Manipulator",
@@ -1253,7 +2174,26 @@
           "feats": [
             "1592aaedf4b6e40a",
             "9b7b869a86f39190"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.45,
+            "ability_int": 0.3,
+            "ability_wis": 0.25,
+            "ally_support": 0.3,
+            "area_control": 0.5,
+            "control": 0.5,
+            "force_capacity": 0.25,
+            "force_execution": 0.45,
+            "knowledge": 0.3,
+            "leadership": 0.45,
+            "perception": 0.25,
+            "skill_training": 0.3,
+            "social": 0.45,
+            "support": 0.3,
+            "survival": 0.25,
+            "tech": 0.3,
+            "utility": 0.2
+          }
         },
         "sith_sorcerer": {
           "name": "Sith Sorcerer",
@@ -1275,7 +2215,25 @@
           "feats": [
             "9b7b869a86f39190",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_int": 0.2,
+            "ability_wis": 0.45,
+            "ally_support": 0.1,
+            "area_control": 0.3,
+            "control": 0.3,
+            "force_capacity": 0.45,
+            "force_execution": 0.35,
+            "knowledge": 0.2,
+            "leadership": 0.35,
+            "perception": 0.45,
+            "skill_training": 0.2,
+            "social": 0.35,
+            "support": 0.1,
+            "survival": 0.45,
+            "tech": 0.2
+          }
         }
       }
     },
@@ -1303,7 +2261,27 @@
           ],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.25,
+            "ability_dex": 0.35,
+            "ability_wis": 0.4,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 0.3,
+            "force_capacity": 0.4,
+            "fortitude_defense": 0.25,
+            "initiative": 0.35,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "perception": 0.4,
+            "reflex_defense": 0.35,
+            "striker": 0.3,
+            "survivability": 0.25,
+            "survival": 0.4,
+            "tech": 0.4,
+            "utility": 0.4
+          }
         },
         "guns_for_hire": {
           "name": "Guns-for-Hire",
@@ -1328,7 +2306,31 @@
           "feats": [
             "c301a0f533f15ce4",
             "c180eee7d3bc29b2"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.3,
+            "ability_dex": 0.4,
+            "ability_str": 0.2,
+            "ability_wis": 0.1,
+            "area_control": 0.2,
+            "athletics": 0.2,
+            "control": 0.2,
+            "damage": 1.3,
+            "force_capacity": 0.1,
+            "fortitude_defense": 0.3,
+            "initiative": 0.4,
+            "jump": 0.2,
+            "mobility": 0.4,
+            "offense_melee": 0.2,
+            "offense_ranged": 0.4,
+            "perception": 0.1,
+            "reflex_defense": 0.4,
+            "striker": 0.6,
+            "survivability": 0.3,
+            "survival": 0.1,
+            "tech": 0.2,
+            "utility": 0.2
+          }
         },
         "close_quarters_enforcer": {
           "name": "Close-Quarters Enforcer",
@@ -1352,7 +2354,27 @@
           ],
           "feats": [
             "96666de28ba99b64"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.35,
+            "ability_dex": 0.2,
+            "ability_str": 0.45,
+            "area_control": 0.2,
+            "athletics": 0.45,
+            "control": 0.2,
+            "damage": 1.3,
+            "defense": 0.2,
+            "fortitude_defense": 0.35,
+            "guard": 0.2,
+            "initiative": 0.2,
+            "jump": 0.45,
+            "mobility": 0.2,
+            "offense_melee": 0.45,
+            "offense_ranged": 0.2,
+            "reflex_defense": 0.2,
+            "striker": 0.6,
+            "survivability": 0.35
+          }
         },
         "tech_hunter": {
           "name": "Tech Hunter",
@@ -1375,7 +2397,27 @@
           "feats": [
             "1592aaedf4b6e40a",
             "42e2404790756700"
-          ]
+          ],
+          "tagBias": {
+            "ability_dex": 0.3,
+            "ability_int": 0.45,
+            "ability_wis": 0.25,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 0.2,
+            "force_capacity": 0.25,
+            "initiative": 0.3,
+            "knowledge": 0.45,
+            "mobility": 0.3,
+            "offense_ranged": 0.3,
+            "perception": 0.25,
+            "reflex_defense": 0.3,
+            "skill_training": 0.45,
+            "striker": 0.2,
+            "survival": 0.25,
+            "tech": 3,
+            "utility": 0.5
+          }
         },
         "silent_tracker": {
           "name": "Silent Tracker",
@@ -1401,7 +2443,32 @@
           "feats": [
             "1592aaedf4b6e40a",
             "56367f3943ee8c17"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.35,
+            "ability_int": 0.1,
+            "ability_wis": 0.35,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 0.3,
+            "force_capacity": 0.35,
+            "fortitude_defense": 0.2,
+            "initiative": 1.2,
+            "knowledge": 0.1,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "perception": 1.2,
+            "reflex_defense": 0.35,
+            "skill_training": 0.1,
+            "stealth": 1.2,
+            "striker": 0.3,
+            "survivability": 0.2,
+            "survival": 0.35,
+            "tech": 0.4,
+            "tracking": 1.2,
+            "utility": 0.4
+          }
         },
         "gunslinger_hunter": {
           "name": "Gunslinger Hunter",
@@ -1425,7 +2492,31 @@
           "feats": [
             "44705a692e2f01a6",
             "c180eee7d3bc29b2"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.25,
+            "ability_dex": 0.4,
+            "ability_str": 0.2,
+            "ability_wis": 0.15,
+            "area_control": 0.2,
+            "athletics": 0.2,
+            "control": 0.2,
+            "damage": 0.6,
+            "force_capacity": 0.15,
+            "fortitude_defense": 0.25,
+            "initiative": 0.4,
+            "jump": 0.2,
+            "mobility": 0.4,
+            "offense_melee": 0.2,
+            "offense_ranged": 0.4,
+            "perception": 0.15,
+            "reflex_defense": 0.4,
+            "striker": 0.6,
+            "survivability": 0.25,
+            "survival": 0.15,
+            "tech": 0.2,
+            "utility": 0.2
+          }
         },
         "tech_bounty_hunter": {
           "name": "Tech Bounty Hunter",
@@ -1449,7 +2540,30 @@
           "feats": [
             "42e2404790756700",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.1,
+            "ability_dex": 0.3,
+            "ability_int": 0.4,
+            "ability_wis": 0.2,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 0.2,
+            "force_capacity": 0.2,
+            "fortitude_defense": 0.1,
+            "initiative": 0.3,
+            "knowledge": 0.4,
+            "mobility": 0.3,
+            "offense_ranged": 0.3,
+            "perception": 0.2,
+            "reflex_defense": 0.3,
+            "skill_training": 0.4,
+            "striker": 0.2,
+            "survivability": 0.1,
+            "survival": 0.2,
+            "tech": 3,
+            "utility": 0.5
+          }
         }
       }
     },
@@ -1475,7 +2589,27 @@
           "talents": [],
           "feats": [
             "c301a0f533f15ce4"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.25,
+            "ability_dex": 0.45,
+            "area_control": 0.2,
+            "control": 0.2,
+            "damage": 1.3,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.25,
+            "initiative": 0.45,
+            "leadership": 0.3,
+            "mobility": 0.45,
+            "offense_ranged": 0.45,
+            "reflex_defense": 0.45,
+            "social": 0.3,
+            "striker": 0.6,
+            "survivability": 0.25,
+            "tech": 0.2,
+            "utility": 0.2
+          }
         },
         "precision_shooter": {
           "name": "Precision Shooter",
@@ -1497,7 +2631,30 @@
           "feats": [
             "b5a8d5899e02139c",
             "56367f3943ee8c17"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.5,
+            "ability_wis": 0.3,
+            "accuracy": 3,
+            "area_control": 0.2,
+            "control": 0.2,
+            "damage": 1.3,
+            "duelist": 3,
+            "force_capacity": 0.3,
+            "fortitude_defense": 0.2,
+            "initiative": 0.5,
+            "mobility": 0.5,
+            "offense_ranged": 0.5,
+            "perception": 0.3,
+            "precision_damage": 3,
+            "reflex_defense": 0.5,
+            "striker": 0.7,
+            "survivability": 0.2,
+            "survival": 0.3,
+            "tech": 0.1,
+            "utility": 0.1
+          }
         },
         "dual_wield_specialist": {
           "name": "Dual-Wield Specialist",
@@ -1518,7 +2675,27 @@
           "talents": [],
           "feats": [
             "44705a692e2f01a6"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.3,
+            "ability_dex": 0.45,
+            "ability_str": 0.25,
+            "area_control": 0.3,
+            "athletics": 0.25,
+            "control": 0.3,
+            "damage": 1.3,
+            "fortitude_defense": 0.3,
+            "initiative": 0.45,
+            "jump": 0.25,
+            "mobility": 0.45,
+            "offense_melee": 0.25,
+            "offense_ranged": 0.45,
+            "reflex_defense": 0.45,
+            "striker": 0.6,
+            "survivability": 0.3,
+            "tech": 0.1,
+            "utility": 0.1
+          }
         },
         "duelist_gunslinger": {
           "name": "Duelist Gunslinger",
@@ -1541,7 +2718,30 @@
           "feats": [
             "c301a0f533f15ce4",
             "c180eee7d3bc29b2"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.25,
+            "ability_dex": 0.45,
+            "area_control": 0.2,
+            "control": 0.2,
+            "damage": 0.6,
+            "duelist": 3,
+            "finesse": 3,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.25,
+            "initiative": 0.45,
+            "leadership": 0.3,
+            "mobility": 0.45,
+            "offense_melee": 3,
+            "offense_ranged": 0.45,
+            "reflex_defense": 0.45,
+            "social": 0.3,
+            "striker": 0.6,
+            "survivability": 0.25,
+            "tech": 0.2,
+            "utility": 0.2
+          }
         },
         "trick_shooter": {
           "name": "Trick Shooter",
@@ -1561,7 +2761,27 @@
           "talents": [],
           "feats": [
             "c180eee7d3bc29b2"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_dex": 0.4,
+            "ability_int": 0.3,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.4,
+            "force_execution": 0.3,
+            "initiative": 0.4,
+            "knowledge": 0.3,
+            "leadership": 0.3,
+            "mobility": 0.4,
+            "offense_ranged": 0.4,
+            "reflex_defense": 0.4,
+            "skill_training": 0.3,
+            "social": 0.3,
+            "striker": 0.4,
+            "tech": 0.3,
+            "utility": 0.2
+          }
         },
         "precision_marksman": {
           "name": "Precision Marksman",
@@ -1582,7 +2802,30 @@
           "feats": [
             "56367f3943ee8c17",
             "b5a8d5899e02139c"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.5,
+            "ability_wis": 0.3,
+            "accuracy": 3,
+            "area_control": 0.2,
+            "control": 0.2,
+            "damage": 0.7,
+            "duelist": 3,
+            "force_capacity": 0.3,
+            "fortitude_defense": 0.2,
+            "initiative": 0.5,
+            "mobility": 0.5,
+            "offense_ranged": 3,
+            "perception": 0.3,
+            "precision_damage": 3,
+            "reflex_defense": 0.5,
+            "striker": 0.7,
+            "survivability": 0.2,
+            "survival": 0.3,
+            "tech": 0.1,
+            "utility": 0.1
+          }
         }
       }
     },
@@ -1609,7 +2852,26 @@
           ],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.45,
+            "ability_int": 0.35,
+            "ability_wis": 0.2,
+            "ally_support": 0.3,
+            "area_control": 0.5,
+            "control": 0.5,
+            "force_capacity": 0.2,
+            "force_execution": 0.45,
+            "knowledge": 0.35,
+            "leadership": 0.45,
+            "perception": 0.2,
+            "skill_training": 0.35,
+            "social": 0.45,
+            "support": 0.3,
+            "survival": 0.2,
+            "tech": 0.35,
+            "utility": 0.2
+          }
         },
         "shadow_broker": {
           "name": "Shadow Broker",
@@ -1630,7 +2892,26 @@
           "feats": [
             "1592aaedf4b6e40a",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_int": 0.45,
+            "ability_wis": 0.2,
+            "ally_support": 0.1,
+            "area_control": 0.5,
+            "control": 0.5,
+            "force_capacity": 0.2,
+            "force_execution": 0.35,
+            "knowledge": 0.45,
+            "leadership": 0.35,
+            "perception": 0.2,
+            "skill_training": 0.45,
+            "social": 0.35,
+            "support": 0.1,
+            "survival": 0.2,
+            "tech": 0.45,
+            "utility": 0.4
+          }
         },
         "criminal_mastermind": {
           "name": "Criminal Mastermind",
@@ -1650,7 +2931,26 @@
           "talents": [],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_int": 0.5,
+            "ability_wis": 0.2,
+            "ally_support": 0.1,
+            "area_control": 0.6,
+            "control": 0.6,
+            "force_capacity": 0.2,
+            "force_execution": 0.3,
+            "knowledge": 0.5,
+            "leadership": 0.3,
+            "perception": 0.2,
+            "skill_training": 0.5,
+            "social": 0.3,
+            "support": 0.1,
+            "survival": 0.2,
+            "tech": 0.5,
+            "utility": 0.3
+          }
         },
         "gang_leader": {
           "name": "Gang Leader",
@@ -1672,7 +2972,26 @@
           ],
           "feats": [
             "11db29efd899c438"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.4,
+            "ability_con": 0.3,
+            "ability_str": 0.3,
+            "ally_support": 0.4,
+            "area_control": 0.4,
+            "athletics": 0.3,
+            "control": 0.4,
+            "damage": 0.2,
+            "force_execution": 0.4,
+            "fortitude_defense": 0.3,
+            "jump": 0.3,
+            "leadership": 0.4,
+            "offense_melee": 0.3,
+            "social": 0.4,
+            "striker": 0.2,
+            "support": 0.4,
+            "survivability": 0.3
+          }
         },
         "smuggling_kingpin": {
           "name": "Smuggling Kingpin",
@@ -1695,7 +3014,26 @@
           "feats": [
             "1592aaedf4b6e40a",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.4,
+            "ability_int": 0.4,
+            "ability_wis": 0.2,
+            "ally_support": 0.2,
+            "area_control": 0.3,
+            "control": 0.3,
+            "force_capacity": 0.2,
+            "force_execution": 0.4,
+            "knowledge": 0.4,
+            "leadership": 0.4,
+            "perception": 0.2,
+            "skill_training": 0.4,
+            "social": 0.4,
+            "support": 0.2,
+            "survival": 0.2,
+            "tech": 0.5,
+            "utility": 0.5
+          }
         },
         "information_broker": {
           "name": "Information Broker",
@@ -1716,7 +3054,26 @@
           "feats": [
             "1592aaedf4b6e40a",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_int": 0.45,
+            "ability_wis": 0.2,
+            "ally_support": 0.1,
+            "area_control": 0.5,
+            "control": 0.5,
+            "force_capacity": 0.2,
+            "force_execution": 0.35,
+            "knowledge": 0.45,
+            "leadership": 0.35,
+            "perception": 0.2,
+            "skill_training": 0.45,
+            "social": 0.35,
+            "support": 0.1,
+            "survival": 0.2,
+            "tech": 0.45,
+            "utility": 0.4
+          }
         },
         "information_broker__shadow_master": {
           "name": "Information Broker / Shadow Master",
@@ -1726,7 +3083,8 @@
           "attributeBias": {},
           "notes": "",
           "talents": [],
-          "feats": []
+          "feats": [],
+          "tagBias": {}
         }
       }
     },
@@ -1755,7 +3113,27 @@
           "feats": [
             "0d4d7c147c48cdab",
             "c41814601364b643"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.35,
+            "ability_dex": 0.25,
+            "ability_str": 0.4,
+            "area_control": 0.2,
+            "athletics": 0.4,
+            "control": 0.2,
+            "damage": 1.3,
+            "defense": 0.2,
+            "fortitude_defense": 0.35,
+            "guard": 0.2,
+            "initiative": 0.25,
+            "jump": 0.4,
+            "mobility": 0.25,
+            "offense_melee": 0.4,
+            "offense_ranged": 0.25,
+            "reflex_defense": 0.25,
+            "striker": 0.6,
+            "survivability": 0.35
+          }
         },
         "shock_commander": {
           "name": "Shock Commander",
@@ -1776,7 +3154,31 @@
           "talents": [],
           "feats": [
             "964f0781b3e3fc37"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_con": 0.25,
+            "ability_str": 0.3,
+            "ability_wis": 0.1,
+            "ally_support": 3,
+            "area_control": 0.2,
+            "athletics": 0.3,
+            "command": 3,
+            "control": 0.2,
+            "damage": 0.4,
+            "force_capacity": 0.1,
+            "force_execution": 0.35,
+            "fortitude_defense": 0.25,
+            "jump": 0.3,
+            "leadership": 3,
+            "offense_melee": 0.3,
+            "perception": 0.1,
+            "social": 0.35,
+            "striker": 0.4,
+            "support": 0.4,
+            "survivability": 0.25,
+            "survival": 0.1
+          }
         },
         "elite_enforcer": {
           "name": "Elite Enforcer",
@@ -1799,7 +3201,27 @@
           ],
           "feats": [
             "96666de28ba99b64"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.35,
+            "ability_dex": 0.25,
+            "ability_str": 0.4,
+            "area_control": 0.2,
+            "athletics": 0.4,
+            "control": 0.2,
+            "damage": 1.2,
+            "defense": 0.3,
+            "fortitude_defense": 0.35,
+            "guard": 0.3,
+            "initiative": 0.25,
+            "jump": 0.4,
+            "mobility": 0.25,
+            "offense_melee": 0.4,
+            "offense_ranged": 0.25,
+            "reflex_defense": 0.25,
+            "striker": 0.5,
+            "survivability": 0.35
+          }
         },
         "specops_commando": {
           "name": "SpecOps Commando",
@@ -1824,7 +3246,30 @@
           "feats": [
             "1592aaedf4b6e40a",
             "c301a0f533f15ce4"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.35,
+            "ability_int": 0.25,
+            "ability_wis": 0.2,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.4,
+            "force_capacity": 0.2,
+            "fortitude_defense": 0.2,
+            "initiative": 0.35,
+            "knowledge": 0.25,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "perception": 0.2,
+            "reflex_defense": 0.35,
+            "skill_training": 0.25,
+            "striker": 0.4,
+            "survivability": 0.2,
+            "survival": 0.2,
+            "tech": 0.25,
+            "utility": 0.2
+          }
         },
         "bodyguard_enforcer": {
           "name": "Bodyguard Enforcer",
@@ -1848,7 +3293,31 @@
           "feats": [
             "11db29efd899c438",
             "96666de28ba99b64"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.4,
+            "ability_dex": 0.1,
+            "ability_str": 0.3,
+            "ability_wis": 0.2,
+            "ally_support": 0.2,
+            "area_control": 0.2,
+            "athletics": 0.3,
+            "control": 0.2,
+            "defense": 0.6,
+            "force_capacity": 0.2,
+            "fortitude_defense": 0.4,
+            "guard": 0.6,
+            "initiative": 0.1,
+            "jump": 0.3,
+            "mobility": 0.1,
+            "offense_melee": 0.3,
+            "offense_ranged": 0.1,
+            "perception": 0.2,
+            "reflex_defense": 0.1,
+            "support": 0.2,
+            "survivability": 0.6,
+            "survival": 0.2
+          }
         },
         "heavy_weapons_specialist": {
           "name": "Heavy Weapons Specialist",
@@ -1873,7 +3342,31 @@
           "feats": [
             "0d4d7c147c48cdab",
             "c41814601364b643"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.35,
+            "ability_dex": 0.2,
+            "ability_str": 0.35,
+            "ability_wis": 0.1,
+            "area_control": 0.2,
+            "athletics": 0.35,
+            "control": 0.2,
+            "damage": 0.6,
+            "defense": 0.2,
+            "force_capacity": 0.1,
+            "fortitude_defense": 0.35,
+            "guard": 0.2,
+            "initiative": 0.2,
+            "jump": 0.35,
+            "mobility": 0.2,
+            "offense_melee": 0.35,
+            "offense_ranged": 0.2,
+            "perception": 0.1,
+            "reflex_defense": 0.2,
+            "striker": 0.6,
+            "survivability": 0.35,
+            "survival": 0.1
+          }
         },
         "infiltrator": {
           "name": "Infiltrator",
@@ -1898,7 +3391,32 @@
           "feats": [
             "1592aaedf4b6e40a",
             "44705a692e2f01a6"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.1,
+            "ability_dex": 0.35,
+            "ability_int": 0.25,
+            "ability_wis": 0.3,
+            "area_control": 0.5,
+            "control": 0.5,
+            "damage": 0.2,
+            "force_capacity": 0.3,
+            "fortitude_defense": 0.1,
+            "infiltration": 3,
+            "initiative": 0.35,
+            "knowledge": 0.25,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "perception": 0.3,
+            "reflex_defense": 0.35,
+            "skill_training": 0.25,
+            "stealth": 3,
+            "striker": 0.2,
+            "survivability": 0.1,
+            "survival": 0.3,
+            "tech": 0.3,
+            "utility": 0.3
+          }
         },
         "sharpshooter": {
           "name": "Sharpshooter",
@@ -1921,7 +3439,27 @@
           "feats": [
             "56367f3943ee8c17",
             "b5a8d5899e02139c"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.45,
+            "ability_wis": 0.35,
+            "area_control": 0.2,
+            "control": 0.2,
+            "damage": 0.6,
+            "force_capacity": 0.35,
+            "fortitude_defense": 0.2,
+            "initiative": 0.45,
+            "mobility": 0.45,
+            "offense_ranged": 0.45,
+            "perception": 0.35,
+            "reflex_defense": 0.45,
+            "striker": 0.6,
+            "survivability": 0.2,
+            "survival": 0.35,
+            "tech": 0.2,
+            "utility": 0.2
+          }
         }
       }
     },
@@ -1949,7 +3487,26 @@
           "feats": [
             "1f2f70d34a17667d",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_dex": 0.45,
+            "ability_int": 0.3,
+            "ability_wis": 0.25,
+            "area_control": 0.1,
+            "control": 0.1,
+            "damage": 1.3,
+            "force_capacity": 0.25,
+            "initiative": 0.45,
+            "knowledge": 0.3,
+            "mobility": 0.45,
+            "offense_ranged": 0.45,
+            "perception": 0.25,
+            "reflex_defense": 0.45,
+            "skill_training": 0.3,
+            "striker": 0.6,
+            "survival": 0.25,
+            "tech": 0.3
+          }
         },
         "interceptor_ace": {
           "name": "Interceptor Ace",
@@ -1973,7 +3530,28 @@
           ],
           "feats": [
             "1f2f70d34a17667d"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.3,
+            "ability_dex": 0.45,
+            "ability_wis": 0.25,
+            "damage": 1.2,
+            "force_capacity": 0.25,
+            "fortitude_defense": 0.3,
+            "initiative": 0.45,
+            "mobility": 3,
+            "offense_ranged": 0.45,
+            "perception": 0.25,
+            "pilot": 3,
+            "reflex_defense": 0.45,
+            "starship": 3,
+            "striker": 0.5,
+            "survivability": 0.3,
+            "survival": 0.25,
+            "tech": 0.1,
+            "utility": 0.1,
+            "vehicle": 3
+          }
         },
         "daredevil_pilot": {
           "name": "Daredevil Pilot",
@@ -1994,7 +3572,28 @@
           "talents": [],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.3,
+            "ability_dex": 0.5,
+            "ability_wis": 0.2,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.2,
+            "force_capacity": 0.2,
+            "fortitude_defense": 0.3,
+            "initiative": 0.5,
+            "mobility": 0.5,
+            "offense_ranged": 0.5,
+            "perception": 0.2,
+            "pilot": 3,
+            "reflex_defense": 0.5,
+            "starship": 3,
+            "striker": 0.2,
+            "survivability": 0.3,
+            "survival": 0.2,
+            "vehicle": 3
+          }
         },
         "starfighter_ace": {
           "name": "Starfighter Ace",
@@ -2017,7 +3616,31 @@
           "feats": [
             "1f2f70d34a17667d",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_dex": 0.45,
+            "ability_int": 0.3,
+            "ability_wis": 0.25,
+            "ally_support": 0.9,
+            "area_control": 0.1,
+            "control": 0.1,
+            "damage": 0.3,
+            "force_capacity": 0.25,
+            "initiative": 0.45,
+            "knowledge": 0.3,
+            "mobility": 3,
+            "offense_ranged": 0.45,
+            "perception": 0.25,
+            "pilot": 3,
+            "reflex_defense": 0.45,
+            "skill_training": 0.3,
+            "starship": 3,
+            "striker": 0.3,
+            "support": 0.9,
+            "survival": 0.25,
+            "tech": 0.3,
+            "vehicle": 3
+          }
         },
         "freighter_captain": {
           "name": "Freighter Captain",
@@ -2038,7 +3661,25 @@
           "talents": [],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_dex": 0.35,
+            "ability_int": 0.35,
+            "ally_support": 0.2,
+            "force_execution": 0.3,
+            "initiative": 0.35,
+            "knowledge": 0.35,
+            "leadership": 0.3,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "reflex_defense": 0.35,
+            "skill_training": 0.35,
+            "social": 0.3,
+            "support": 0.2,
+            "tech": 0.5,
+            "utility": 0.5
+          }
         },
         "speeder_ace": {
           "name": "Speeder Ace",
@@ -2061,7 +3702,30 @@
           "feats": [
             "1f2f70d34a17667d",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.3,
+            "ability_dex": 0.45,
+            "ability_wis": 0.25,
+            "area_control": 1,
+            "control": 1,
+            "damage": 0.3,
+            "force_capacity": 0.25,
+            "fortitude_defense": 0.3,
+            "initiative": 0.45,
+            "mobility": 3,
+            "offense_ranged": 0.45,
+            "perception": 0.25,
+            "pilot": 3,
+            "reflex_defense": 0.45,
+            "starship": 3,
+            "striker": 0.3,
+            "survivability": 0.3,
+            "survival": 0.25,
+            "tech": 0.2,
+            "utility": 0.2,
+            "vehicle": 3
+          }
         },
         "blockade_runner": {
           "name": "Blockade Runner",
@@ -2087,7 +3751,27 @@
           "feats": [
             "1f2f70d34a17667d",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_dex": 0.35,
+            "ability_int": 0.3,
+            "ally_support": 1.2,
+            "area_control": 0.2,
+            "control": 0.2,
+            "force_execution": 0.35,
+            "initiative": 0.35,
+            "knowledge": 0.3,
+            "leadership": 0.35,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "reflex_defense": 0.35,
+            "skill_training": 0.3,
+            "social": 0.35,
+            "support": 1.2,
+            "tech": 0.5,
+            "utility": 0.5
+          }
         },
         "daredevil_racer": {
           "name": "Daredevil Racer",
@@ -2108,7 +3792,25 @@
           "talents": [],
           "feats": [
             "1f2f70d34a17667d"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.3,
+            "ability_dex": 0.5,
+            "ability_wis": 0.2,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.2,
+            "force_capacity": 0.2,
+            "fortitude_defense": 0.3,
+            "initiative": 0.5,
+            "mobility": 0.5,
+            "offense_ranged": 0.5,
+            "perception": 0.2,
+            "reflex_defense": 0.5,
+            "striker": 0.2,
+            "survivability": 0.3,
+            "survival": 0.2
+          }
         },
         "walker_ace": {
           "name": "Walker Ace",
@@ -2133,7 +3835,36 @@
           "feats": [
             "8329a353aa3899be",
             "1f2f70d34a17667d"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.15,
+            "ability_dex": 0.2,
+            "ability_int": 0.35,
+            "ability_str": 0.3,
+            "ally_support": 0.8,
+            "area_control": 0.3,
+            "athletics": 0.3,
+            "control": 0.3,
+            "damage": 0.2,
+            "defense": 0.5,
+            "fortitude_defense": 0.15,
+            "guard": 0.5,
+            "initiative": 0.2,
+            "jump": 0.3,
+            "knowledge": 0.35,
+            "mobility": 3,
+            "offense_melee": 0.3,
+            "offense_ranged": 0.2,
+            "pilot": 3,
+            "reflex_defense": 0.2,
+            "skill_training": 0.35,
+            "starship": 3,
+            "striker": 0.2,
+            "support": 0.8,
+            "survivability": 0.5,
+            "tech": 0.35,
+            "vehicle": 3
+          }
         }
       }
     },
@@ -2161,7 +3892,27 @@
           ],
           "feats": [
             "964f0781b3e3fc37"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_int": 0.4,
+            "ability_wis": 0.25,
+            "ally_support": 3,
+            "area_control": 0.4,
+            "command": 3,
+            "control": 0.4,
+            "force_capacity": 0.25,
+            "force_execution": 0.35,
+            "knowledge": 0.4,
+            "leadership": 3,
+            "perception": 0.25,
+            "skill_training": 0.4,
+            "social": 0.35,
+            "support": 0.4,
+            "survival": 0.25,
+            "tech": 0.4,
+            "utility": 0.2
+          }
         },
         "support_officer": {
           "name": "Support Officer",
@@ -2185,7 +3936,26 @@
           "feats": [
             "1592aaedf4b6e40a",
             "3036290329d5b3e6"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.4,
+            "ability_int": 0.35,
+            "ability_wis": 0.25,
+            "ally_support": 0.5,
+            "area_control": 0.2,
+            "control": 0.2,
+            "force_capacity": 0.25,
+            "force_execution": 0.4,
+            "knowledge": 0.35,
+            "leadership": 0.4,
+            "perception": 0.25,
+            "skill_training": 0.35,
+            "social": 0.4,
+            "support": 0.5,
+            "survival": 0.25,
+            "tech": 0.35,
+            "utility": 0.3
+          }
         },
         "strategic_leader": {
           "name": "Strategic Leader",
@@ -2207,7 +3977,26 @@
           ],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_int": 0.45,
+            "ability_wis": 0.25,
+            "ally_support": 0.3,
+            "area_control": 0.5,
+            "control": 0.5,
+            "force_capacity": 0.25,
+            "force_execution": 0.3,
+            "knowledge": 0.45,
+            "leadership": 0.3,
+            "perception": 0.25,
+            "skill_training": 0.45,
+            "social": 0.3,
+            "support": 0.3,
+            "survival": 0.25,
+            "tech": 0.45,
+            "utility": 0.2
+          }
         },
         "strategic_commander": {
           "name": "Strategic Commander",
@@ -2231,7 +4020,27 @@
           "feats": [
             "1592aaedf4b6e40a",
             "964f0781b3e3fc37"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_int": 0.4,
+            "ability_wis": 0.25,
+            "ally_support": 3,
+            "area_control": 0.3,
+            "command": 3,
+            "control": 0.3,
+            "force_capacity": 0.25,
+            "force_execution": 0.35,
+            "knowledge": 0.4,
+            "leadership": 3,
+            "perception": 0.25,
+            "skill_training": 0.4,
+            "social": 0.35,
+            "support": 0.5,
+            "survival": 0.25,
+            "tech": 0.4,
+            "utility": 0.2
+          }
         },
         "logistics_officer": {
           "name": "Logistics Officer",
@@ -2252,7 +4061,26 @@
           "feats": [
             "1592aaedf4b6e40a",
             "5afd91fb081e576b"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_int": 0.45,
+            "ability_wis": 0.25,
+            "ally_support": 0.3,
+            "area_control": 0.2,
+            "control": 0.2,
+            "force_capacity": 0.25,
+            "force_execution": 0.3,
+            "knowledge": 0.45,
+            "leadership": 0.3,
+            "perception": 0.25,
+            "skill_training": 0.45,
+            "social": 0.3,
+            "support": 0.3,
+            "survival": 0.25,
+            "tech": 0.5,
+            "utility": 0.5
+          }
         }
       }
     },
@@ -2278,7 +4106,27 @@
           "feats": [
             "1592aaedf4b6e40a",
             "0d4d7c147c48cdab"
-          ]
+          ],
+          "tagBias": {
+            "ability_dex": 0.3,
+            "ability_int": 0.45,
+            "ability_wis": 0.25,
+            "area_control": 0.6,
+            "control": 0.6,
+            "damage": 0.3,
+            "force_capacity": 0.25,
+            "initiative": 0.3,
+            "knowledge": 0.45,
+            "mobility": 0.3,
+            "offense_ranged": 0.3,
+            "perception": 0.25,
+            "reflex_defense": 0.3,
+            "skill_training": 0.45,
+            "striker": 0.3,
+            "survival": 0.25,
+            "tech": 0.45,
+            "utility": 0.1
+          }
         },
         "covert_disruptor": {
           "name": "Covert Disruptor",
@@ -2300,7 +4148,30 @@
           "feats": [
             "1592aaedf4b6e40a",
             "42e2404790756700"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.1,
+            "ability_dex": 0.35,
+            "ability_int": 0.3,
+            "ability_wis": 0.25,
+            "area_control": 0.5,
+            "control": 0.5,
+            "damage": 0.2,
+            "force_capacity": 0.25,
+            "fortitude_defense": 0.1,
+            "initiative": 0.35,
+            "knowledge": 0.3,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "perception": 0.25,
+            "reflex_defense": 0.35,
+            "skill_training": 0.3,
+            "striker": 0.2,
+            "survivability": 0.1,
+            "survival": 0.25,
+            "tech": 0.3,
+            "utility": 0.3
+          }
         },
         "infrastructure_breaker": {
           "name": "Infrastructure Breaker",
@@ -2322,7 +4193,30 @@
           "feats": [
             "1592aaedf4b6e40a",
             "42e2404790756700"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.1,
+            "ability_dex": 0.25,
+            "ability_int": 0.45,
+            "ability_wis": 0.2,
+            "area_control": 0.6,
+            "control": 0.6,
+            "damage": 0.1,
+            "force_capacity": 0.2,
+            "fortitude_defense": 0.1,
+            "initiative": 0.25,
+            "knowledge": 0.45,
+            "mobility": 0.25,
+            "offense_ranged": 0.25,
+            "perception": 0.2,
+            "reflex_defense": 0.25,
+            "skill_training": 0.45,
+            "striker": 0.1,
+            "survivability": 0.1,
+            "survival": 0.2,
+            "tech": 0.45,
+            "utility": 0.3
+          }
         },
         "demolition_expert": {
           "name": "Demolition Expert",
@@ -2344,7 +4238,30 @@
           "feats": [
             "1592aaedf4b6e40a",
             "0d4d7c147c48cdab"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.1,
+            "ability_dex": 0.3,
+            "ability_int": 0.4,
+            "ability_wis": 0.2,
+            "area_control": 0.5,
+            "control": 0.5,
+            "damage": 0.3,
+            "force_capacity": 0.2,
+            "fortitude_defense": 0.1,
+            "initiative": 0.3,
+            "knowledge": 0.4,
+            "mobility": 0.3,
+            "offense_ranged": 0.3,
+            "perception": 0.2,
+            "reflex_defense": 0.3,
+            "skill_training": 0.4,
+            "striker": 0.3,
+            "survivability": 0.1,
+            "survival": 0.2,
+            "tech": 0.4,
+            "utility": 0.2
+          }
         }
       }
     },
@@ -2372,7 +4289,30 @@
           ],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.1,
+            "ability_dex": 0.4,
+            "ability_int": 0.3,
+            "ability_wis": 0.2,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.2,
+            "force_capacity": 0.2,
+            "fortitude_defense": 0.1,
+            "initiative": 0.4,
+            "knowledge": 0.3,
+            "mobility": 0.4,
+            "offense_ranged": 0.4,
+            "perception": 0.2,
+            "reflex_defense": 0.4,
+            "skill_training": 0.3,
+            "striker": 0.2,
+            "survivability": 0.1,
+            "survival": 0.2,
+            "tech": 0.4,
+            "utility": 0.4
+          }
         },
         "shadow_agent": {
           "name": "Shadow Agent",
@@ -2394,7 +4334,31 @@
           "feats": [
             "1592aaedf4b6e40a",
             "5afd91fb081e576b"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_dex": 0.35,
+            "ability_int": 0.25,
+            "ability_wis": 0.1,
+            "ally_support": 0.2,
+            "area_control": 0.5,
+            "control": 0.5,
+            "force_capacity": 0.1,
+            "force_execution": 0.3,
+            "initiative": 0.35,
+            "knowledge": 0.25,
+            "leadership": 0.3,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "perception": 0.1,
+            "reflex_defense": 0.35,
+            "skill_training": 0.25,
+            "social": 0.3,
+            "support": 0.2,
+            "survival": 0.1,
+            "tech": 0.3,
+            "utility": 0.3
+          }
         },
         "silent_eliminator": {
           "name": "Silent Eliminator",
@@ -2418,7 +4382,31 @@
           ],
           "feats": [
             "252b67d6e31c377e"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.45,
+            "ability_str": 0.25,
+            "ability_wis": 0.1,
+            "area_control": 0.3,
+            "athletics": 0.25,
+            "control": 0.3,
+            "damage": 1.3,
+            "force_capacity": 0.1,
+            "fortitude_defense": 0.2,
+            "initiative": 0.45,
+            "jump": 0.25,
+            "mobility": 0.45,
+            "offense_melee": 0.25,
+            "offense_ranged": 0.45,
+            "perception": 0.1,
+            "reflex_defense": 0.45,
+            "striker": 0.5,
+            "survivability": 0.2,
+            "survival": 0.1,
+            "tech": 0.2,
+            "utility": 0.2
+          }
         },
         "specops_infiltrator": {
           "name": "SpecOps Infiltrator",
@@ -2439,7 +4427,32 @@
           "talents": [],
           "feats": [
             "0d4d7c147c48cdab"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.1,
+            "ability_dex": 0.35,
+            "ability_int": 0.25,
+            "ability_wis": 0.3,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.4,
+            "force_capacity": 0.3,
+            "fortitude_defense": 0.1,
+            "infiltration": 3,
+            "initiative": 0.35,
+            "knowledge": 0.25,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "perception": 0.3,
+            "reflex_defense": 0.35,
+            "skill_training": 0.25,
+            "stealth": 3,
+            "striker": 0.4,
+            "survivability": 0.1,
+            "survival": 0.3,
+            "tech": 0.25,
+            "utility": 0.2
+          }
         },
         "covert_recon_agent": {
           "name": "Covert Recon Agent",
@@ -2461,7 +4474,30 @@
           "feats": [
             "1592aaedf4b6e40a",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.1,
+            "ability_dex": 0.25,
+            "ability_int": 0.3,
+            "ability_wis": 0.35,
+            "ally_support": 0.2,
+            "area_control": 0.3,
+            "control": 0.3,
+            "force_capacity": 0.35,
+            "fortitude_defense": 0.1,
+            "initiative": 0.25,
+            "knowledge": 0.3,
+            "mobility": 0.25,
+            "offense_ranged": 0.25,
+            "perception": 0.35,
+            "reflex_defense": 0.25,
+            "skill_training": 0.3,
+            "support": 0.2,
+            "survivability": 0.1,
+            "survival": 0.35,
+            "tech": 0.5,
+            "utility": 0.5
+          }
         }
       }
     },
@@ -2487,7 +4523,29 @@
           "feats": [
             "56367f3943ee8c17",
             "b5a8d5899e02139c"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.5,
+            "ability_wis": 0.3,
+            "accuracy": 3,
+            "area_control": 0.2,
+            "control": 0.2,
+            "damage": 0.7,
+            "force_capacity": 0.3,
+            "fortitude_defense": 0.2,
+            "initiative": 0.5,
+            "mobility": 0.5,
+            "offense_ranged": 3,
+            "perception": 0.3,
+            "reflex_defense": 0.5,
+            "sniper": 3,
+            "striker": 0.7,
+            "survivability": 0.2,
+            "survival": 0.3,
+            "tech": 0.1,
+            "utility": 0.1
+          }
         },
         "shadow_blade": {
           "name": "Shadow Blade",
@@ -2511,7 +4569,31 @@
           ],
           "feats": [
             "252b67d6e31c377e"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.45,
+            "ability_str": 0.25,
+            "ability_wis": 0.1,
+            "area_control": 0.3,
+            "athletics": 0.25,
+            "control": 0.3,
+            "damage": 1.4,
+            "force_capacity": 0.1,
+            "fortitude_defense": 0.2,
+            "initiative": 0.45,
+            "jump": 0.25,
+            "mobility": 0.45,
+            "offense_melee": 0.25,
+            "offense_ranged": 0.45,
+            "perception": 0.1,
+            "reflex_defense": 0.45,
+            "striker": 0.6,
+            "survivability": 0.2,
+            "survival": 0.1,
+            "tech": 0.1,
+            "utility": 0.1
+          }
         },
         "venomous_infiltrator": {
           "name": "Venomous Infiltrator",
@@ -2533,7 +4615,32 @@
           "feats": [
             "1592aaedf4b6e40a",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.1,
+            "ability_dex": 0.4,
+            "ability_int": 0.3,
+            "ability_wis": 0.2,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.4,
+            "force_capacity": 0.2,
+            "fortitude_defense": 0.1,
+            "infiltration": 3,
+            "initiative": 0.4,
+            "knowledge": 0.3,
+            "mobility": 0.4,
+            "offense_ranged": 0.4,
+            "perception": 0.2,
+            "reflex_defense": 0.4,
+            "skill_training": 0.3,
+            "stealth": 3,
+            "striker": 0.4,
+            "survivability": 0.1,
+            "survival": 0.2,
+            "tech": 0.3,
+            "utility": 0.2
+          }
         },
         "silent_killer": {
           "name": "Silent Killer",
@@ -2556,7 +4663,30 @@
           ],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.45,
+            "ability_int": 0.1,
+            "ability_wis": 0.25,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 0.6,
+            "force_capacity": 0.25,
+            "fortitude_defense": 0.2,
+            "initiative": 0.45,
+            "knowledge": 0.1,
+            "mobility": 0.45,
+            "offense_ranged": 0.45,
+            "perception": 0.25,
+            "reflex_defense": 0.45,
+            "skill_training": 0.1,
+            "striker": 0.6,
+            "survivability": 0.2,
+            "survival": 0.25,
+            "tech": 0.1,
+            "utility": 0.1
+          }
         },
         "shadow_blade_assassin": {
           "name": "Shadow Blade Assassin",
@@ -2579,7 +4709,31 @@
           ],
           "feats": [
             "252b67d6e31c377e"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.45,
+            "ability_str": 0.25,
+            "ability_wis": 0.1,
+            "area_control": 0.3,
+            "athletics": 0.25,
+            "control": 0.3,
+            "damage": 0.6,
+            "force_capacity": 0.1,
+            "fortitude_defense": 0.2,
+            "initiative": 0.45,
+            "jump": 0.25,
+            "mobility": 0.45,
+            "offense_melee": 0.25,
+            "offense_ranged": 0.45,
+            "perception": 0.1,
+            "reflex_defense": 0.45,
+            "striker": 0.6,
+            "survivability": 0.2,
+            "survival": 0.1,
+            "tech": 0.1,
+            "utility": 0.1
+          }
         }
       }
     },
@@ -2606,7 +4760,31 @@
           "feats": [
             "1592aaedf4b6e40a",
             "f9ae5b531ae01fd0"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.1,
+            "ability_con": 0.2,
+            "ability_int": 0.3,
+            "ability_wis": 0.4,
+            "ally_support": 0.6,
+            "area_control": 0.2,
+            "control": 0.2,
+            "force_capacity": 0.4,
+            "force_execution": 0.1,
+            "fortitude_defense": 0.2,
+            "healing": 3,
+            "knowledge": 0.3,
+            "leadership": 0.1,
+            "medical": 3,
+            "perception": 0.4,
+            "skill_training": 0.3,
+            "social": 0.1,
+            "support": 3,
+            "survivability": 0.2,
+            "survival": 0.4,
+            "tech": 0.3,
+            "utility": 0.2
+          }
         },
         "chief_surgeon": {
           "name": "Chief Surgeon",
@@ -2627,7 +4805,26 @@
           "feats": [
             "1592aaedf4b6e40a",
             "5cc1216874c79087"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.2,
+            "ability_int": 0.45,
+            "ability_wis": 0.35,
+            "ally_support": 0.5,
+            "area_control": 0.2,
+            "control": 0.2,
+            "force_capacity": 0.35,
+            "force_execution": 0.2,
+            "knowledge": 0.45,
+            "leadership": 0.2,
+            "perception": 0.35,
+            "skill_training": 0.45,
+            "social": 0.2,
+            "support": 0.5,
+            "survival": 0.35,
+            "tech": 0.45,
+            "utility": 0.3
+          }
         },
         "support_field_officer": {
           "name": "Support Field Officer",
@@ -2651,7 +4848,29 @@
           "feats": [
             "1592aaedf4b6e40a",
             "3036290329d5b3e6"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.1,
+            "ability_int": 0.25,
+            "ability_wis": 0.35,
+            "ally_support": 0.5,
+            "area_control": 0.3,
+            "control": 0.3,
+            "force_capacity": 0.35,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.1,
+            "knowledge": 0.25,
+            "leadership": 0.3,
+            "perception": 0.35,
+            "skill_training": 0.25,
+            "social": 0.3,
+            "support": 0.5,
+            "survivability": 0.1,
+            "survival": 0.35,
+            "tech": 0.25,
+            "utility": 0.2
+          }
         }
       }
     },
@@ -2680,7 +4899,29 @@
             "5bedd71f0eead6b9",
             "97dbebe63aa6af79",
             "f8e2a30390d870e7"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.4,
+            "ability_str": 0.25,
+            "ability_wis": 0.35,
+            "ally_support": 1.1,
+            "area_control": 0.3,
+            "athletics": 0.25,
+            "control": 0.3,
+            "damage": 0.2,
+            "defense": 3,
+            "force_capacity": 0.35,
+            "fortitude_defense": 0.4,
+            "guard": 3,
+            "jump": 0.25,
+            "lightsaber": 3,
+            "offense_melee": 0.25,
+            "perception": 0.35,
+            "striker": 0.2,
+            "support": 1.1,
+            "survivability": 1.4,
+            "survival": 0.35
+          }
         },
         "bonecrusher_brawler": {
           "name": "Bonecrusher Brawler",
@@ -2704,7 +4945,27 @@
           "feats": [
             "97dbebe63aa6af79",
             "3f76464c43c73f84"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.3,
+            "ability_dex": 0.2,
+            "ability_str": 0.5,
+            "area_control": 0.1,
+            "athletics": 0.5,
+            "control": 0.1,
+            "damage": 1.3,
+            "defense": 0.3,
+            "fortitude_defense": 0.3,
+            "guard": 0.3,
+            "initiative": 0.2,
+            "jump": 0.5,
+            "mobility": 0.2,
+            "offense_melee": 0.5,
+            "offense_ranged": 0.2,
+            "reflex_defense": 0.2,
+            "striker": 0.6,
+            "survivability": 0.3
+          }
         },
         "zen_duelist": {
           "name": "Zen Duelist",
@@ -2727,7 +4988,30 @@
           ],
           "feats": [
             "3036290329d5b3e6"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.25,
+            "ability_dex": 0.3,
+            "ability_wis": 0.45,
+            "ally_support": 0.3,
+            "area_control": 0.4,
+            "control": 0.4,
+            "defense": 1.3,
+            "duelist": 3,
+            "finesse": 3,
+            "force_capacity": 0.45,
+            "fortitude_defense": 0.25,
+            "guard": 0.3,
+            "initiative": 0.3,
+            "mobility": 0.3,
+            "offense_melee": 3,
+            "offense_ranged": 0.3,
+            "perception": 0.45,
+            "reflex_defense": 0.3,
+            "support": 0.3,
+            "survivability": 1.3,
+            "survival": 0.45
+          }
         },
         "unarmed_weapon_master": {
           "name": "Unarmed Weapon Master",
@@ -2752,7 +5036,31 @@
           "feats": [
             "97dbebe63aa6af79",
             "7146640744fdf052"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.35,
+            "ability_str": 0.35,
+            "ability_wis": 0.1,
+            "area_control": 0.2,
+            "athletics": 0.35,
+            "control": 0.2,
+            "damage": 0.6,
+            "defense": 0.2,
+            "force_capacity": 0.1,
+            "fortitude_defense": 0.2,
+            "guard": 0.2,
+            "initiative": 0.35,
+            "jump": 0.35,
+            "mobility": 0.35,
+            "offense_melee": 0.35,
+            "offense_ranged": 0.35,
+            "perception": 0.1,
+            "reflex_defense": 0.35,
+            "striker": 0.6,
+            "survivability": 0.2,
+            "survival": 0.1
+          }
         },
         "zen_combatant": {
           "name": "Zen Combatant",
@@ -2774,7 +5082,27 @@
           ],
           "feats": [
             "3036290329d5b3e6"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.3,
+            "ability_dex": 0.3,
+            "ability_wis": 0.4,
+            "ally_support": 0.3,
+            "area_control": 0.4,
+            "control": 0.4,
+            "defense": 0.3,
+            "force_capacity": 0.4,
+            "fortitude_defense": 0.3,
+            "guard": 0.3,
+            "initiative": 0.3,
+            "mobility": 0.3,
+            "offense_ranged": 0.3,
+            "perception": 0.4,
+            "reflex_defense": 0.3,
+            "support": 0.3,
+            "survivability": 0.3,
+            "survival": 0.4
+          }
         }
       }
     },
@@ -2802,7 +5130,30 @@
           ],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.3,
+            "ability_int": 0.15,
+            "ability_wis": 0.35,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 0.3,
+            "force_capacity": 0.35,
+            "fortitude_defense": 0.2,
+            "initiative": 0.3,
+            "knowledge": 0.15,
+            "mobility": 0.3,
+            "offense_ranged": 0.3,
+            "perception": 0.35,
+            "reflex_defense": 0.3,
+            "skill_training": 0.15,
+            "striker": 0.3,
+            "survivability": 0.2,
+            "survival": 0.35,
+            "tech": 0.4,
+            "utility": 0.4
+          }
         },
         "forward_spotter": {
           "name": "Forward Spotter",
@@ -2823,7 +5174,27 @@
           "feats": [
             "1592aaedf4b6e40a",
             "964f0781b3e3fc37"
-          ]
+          ],
+          "tagBias": {
+            "ability_dex": 0.3,
+            "ability_int": 0.3,
+            "ability_wis": 0.4,
+            "ally_support": 0.4,
+            "area_control": 0.4,
+            "control": 0.4,
+            "force_capacity": 0.4,
+            "initiative": 0.3,
+            "knowledge": 0.3,
+            "mobility": 0.3,
+            "offense_ranged": 0.3,
+            "perception": 0.4,
+            "reflex_defense": 0.3,
+            "skill_training": 0.3,
+            "support": 0.4,
+            "survival": 0.4,
+            "tech": 0.3,
+            "utility": 0.2
+          }
         },
         "speeder_interceptor": {
           "name": "Speeder Interceptor",
@@ -2845,7 +5216,27 @@
           "feats": [
             "1f2f70d34a17667d",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.3,
+            "ability_dex": 0.45,
+            "ability_wis": 0.25,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 1.1,
+            "force_capacity": 0.25,
+            "fortitude_defense": 0.3,
+            "initiative": 0.45,
+            "mobility": 0.45,
+            "offense_ranged": 0.45,
+            "perception": 0.25,
+            "reflex_defense": 0.45,
+            "striker": 0.4,
+            "survivability": 0.3,
+            "survival": 0.25,
+            "tech": 0.3,
+            "utility": 0.3
+          }
         },
         "forward_recon": {
           "name": "Forward Recon",
@@ -2870,7 +5261,32 @@
           ],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.35,
+            "ability_int": 0.15,
+            "ability_wis": 0.3,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 0.3,
+            "force_capacity": 0.3,
+            "fortitude_defense": 0.2,
+            "initiative": 1.3,
+            "knowledge": 0.15,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "perception": 1.3,
+            "reflex_defense": 0.35,
+            "skill_training": 0.15,
+            "stealth": 1.3,
+            "striker": 0.3,
+            "survivability": 0.2,
+            "survival": 0.3,
+            "tech": 0.4,
+            "tracking": 1.3,
+            "utility": 0.4
+          }
         },
         "deep_insertion_scout": {
           "name": "Deep Insertion Scout",
@@ -2893,7 +5309,32 @@
           "feats": [
             "1592aaedf4b6e40a",
             "0c53cb8b7c29d865"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.1,
+            "ability_dex": 0.35,
+            "ability_int": 0.3,
+            "ability_wis": 0.25,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.2,
+            "force_capacity": 0.25,
+            "fortitude_defense": 0.1,
+            "initiative": 1.2,
+            "knowledge": 0.3,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "perception": 1.2,
+            "reflex_defense": 0.35,
+            "skill_training": 0.3,
+            "stealth": 1.2,
+            "striker": 0.2,
+            "survivability": 0.1,
+            "survival": 0.25,
+            "tech": 0.4,
+            "tracking": 1.2,
+            "utility": 0.4
+          }
         }
       }
     },
@@ -2923,7 +5364,32 @@
           "feats": [
             "1592aaedf4b6e40a",
             "42e2404790756700"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.1,
+            "ability_dex": 0.25,
+            "ability_int": 0.45,
+            "ability_wis": 0.2,
+            "ally_support": 0.2,
+            "area_control": 0.3,
+            "control": 0.3,
+            "engineering": 3,
+            "force_capacity": 0.2,
+            "fortitude_defense": 0.1,
+            "initiative": 0.25,
+            "knowledge": 0.45,
+            "mechanics": 3,
+            "mobility": 0.25,
+            "offense_ranged": 0.25,
+            "perception": 0.2,
+            "reflex_defense": 0.25,
+            "skill_training": 0.45,
+            "support": 0.2,
+            "survivability": 0.1,
+            "survival": 0.2,
+            "tech": 3,
+            "utility": 0.5
+          }
         },
         "combat_improviser": {
           "name": "Combat Improviser",
@@ -2945,7 +5411,31 @@
           "feats": [
             "c301a0f533f15ce4",
             "44705a692e2f01a6"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_dex": 0.3,
+            "ability_int": 0.35,
+            "ability_wis": 0.15,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.3,
+            "force_capacity": 0.15,
+            "fortitude_defense": 0.2,
+            "initiative": 0.3,
+            "knowledge": 0.35,
+            "mobility": 0.3,
+            "offense_ranged": 0.3,
+            "perception": 0.15,
+            "reflex_defense": 0.3,
+            "resourcefulness": 3,
+            "skill_training": 0.35,
+            "striker": 0.3,
+            "survivability": 0.2,
+            "survival": 0.15,
+            "tech": 0.35,
+            "utility": 3
+          }
         },
         "holo_hacker": {
           "name": "Holo-Hacker",
@@ -2966,7 +5456,28 @@
           "feats": [
             "1592aaedf4b6e40a",
             "42e2404790756700"
-          ]
+          ],
+          "tagBias": {
+            "ability_dex": 0.25,
+            "ability_int": 0.5,
+            "ability_wis": 0.25,
+            "ally_support": 0.1,
+            "area_control": 0.3,
+            "control": 0.3,
+            "force_capacity": 0.25,
+            "hacking": 3,
+            "initiative": 0.25,
+            "knowledge": 0.5,
+            "mobility": 0.25,
+            "offense_ranged": 0.25,
+            "perception": 0.25,
+            "reflex_defense": 0.25,
+            "skill_training": 0.5,
+            "support": 0.1,
+            "survival": 0.25,
+            "tech": 3,
+            "utility": 0.6
+          }
         }
       }
     },
@@ -2992,7 +5503,27 @@
           "talents": [],
           "feats": [
             "c301a0f533f15ce4"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.25,
+            "ability_dex": 0.45,
+            "area_control": 0.2,
+            "control": 0.2,
+            "damage": 1.3,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.25,
+            "initiative": 0.45,
+            "leadership": 0.3,
+            "mobility": 0.45,
+            "offense_ranged": 0.45,
+            "reflex_defense": 0.45,
+            "social": 0.3,
+            "striker": 0.6,
+            "survivability": 0.25,
+            "tech": 0.2,
+            "utility": 0.2
+          }
         },
         "rebel_outlaw": {
           "name": "Rebel Outlaw",
@@ -3016,7 +5547,33 @@
           "feats": [
             "964f0781b3e3fc37",
             "c301a0f533f15ce4"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.2,
+            "ability_dex": 0.35,
+            "ability_wis": 0.15,
+            "ally_support": 0.3,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 0.4,
+            "deception": 3,
+            "force_capacity": 0.15,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.2,
+            "initiative": 0.35,
+            "leadership": 0.3,
+            "mobility": 0.35,
+            "offense_ranged": 3,
+            "perception": 0.15,
+            "reflex_defense": 0.35,
+            "social": 0.3,
+            "stealth": 3,
+            "striker": 0.4,
+            "support": 0.3,
+            "survivability": 0.2,
+            "survival": 0.15
+          }
         },
         "shadow_smuggler": {
           "name": "Shadow Smuggler",
@@ -3040,7 +5597,30 @@
           "feats": [
             "1592aaedf4b6e40a",
             "1f2f70d34a17667d"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.15,
+            "ability_dex": 0.35,
+            "ability_int": 0.2,
+            "area_control": 0.3,
+            "control": 0.3,
+            "damage": 0.3,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.15,
+            "initiative": 0.35,
+            "knowledge": 0.2,
+            "leadership": 0.3,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "reflex_defense": 0.35,
+            "skill_training": 0.2,
+            "social": 0.3,
+            "striker": 0.3,
+            "survivability": 0.15,
+            "tech": 0.4,
+            "utility": 0.4
+          }
         }
       }
     },
@@ -3069,7 +5649,31 @@
           "feats": [
             "1592aaedf4b6e40a",
             "6d8ce2807c579289"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.5,
+            "ability_dex": 0.1,
+            "ability_int": 0.25,
+            "ability_wis": 0.15,
+            "ally_support": 0.4,
+            "area_control": 0.3,
+            "control": 0.3,
+            "force_capacity": 0.15,
+            "force_execution": 0.5,
+            "initiative": 0.1,
+            "knowledge": 0.25,
+            "leadership": 0.5,
+            "mobility": 0.1,
+            "offense_ranged": 0.1,
+            "perception": 0.15,
+            "reflex_defense": 0.1,
+            "skill_training": 0.25,
+            "social": 0.5,
+            "support": 0.4,
+            "survival": 0.15,
+            "tech": 0.3,
+            "utility": 0.3
+          }
         },
         "master_of_disguise": {
           "name": "Master of Disguise",
@@ -3091,7 +5695,31 @@
           "feats": [
             "1592aaedf4b6e40a",
             "5afd91fb081e576b"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.45,
+            "ability_dex": 0.15,
+            "ability_int": 0.3,
+            "ability_wis": 0.1,
+            "ally_support": 0.2,
+            "area_control": 0.4,
+            "control": 0.4,
+            "force_capacity": 0.1,
+            "force_execution": 0.45,
+            "initiative": 0.15,
+            "knowledge": 0.3,
+            "leadership": 0.45,
+            "mobility": 0.15,
+            "offense_ranged": 0.15,
+            "perception": 0.1,
+            "reflex_defense": 0.15,
+            "skill_training": 0.3,
+            "social": 0.45,
+            "support": 0.2,
+            "survival": 0.1,
+            "tech": 0.4,
+            "utility": 0.4
+          }
         },
         "holostar_propagandist": {
           "name": "Holostar Propagandist",
@@ -3112,7 +5740,26 @@
           "feats": [
             "1592aaedf4b6e40a",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.5,
+            "ability_int": 0.3,
+            "ability_wis": 0.2,
+            "ally_support": 0.3,
+            "area_control": 0.5,
+            "control": 0.5,
+            "force_capacity": 0.2,
+            "force_execution": 0.5,
+            "knowledge": 0.3,
+            "leadership": 0.5,
+            "perception": 0.2,
+            "skill_training": 0.3,
+            "social": 0.5,
+            "support": 0.3,
+            "survival": 0.2,
+            "tech": 0.3,
+            "utility": 0.2
+          }
         }
       }
     },
@@ -3142,7 +5789,26 @@
           "feats": [
             "9b7b869a86f39190",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_int": 0.25,
+            "ability_wis": 0.45,
+            "ally_support": 1,
+            "area_control": 0.2,
+            "control": 0.2,
+            "force_capacity": 0.45,
+            "force_execution": 0.3,
+            "knowledge": 0.25,
+            "leadership": 0.3,
+            "perception": 0.45,
+            "skill_training": 0.25,
+            "social": 0.3,
+            "support": 1,
+            "survival": 0.45,
+            "tech": 0.3,
+            "utility": 0.3
+          }
         },
         "force_savant": {
           "name": "Force Savant",
@@ -3165,7 +5831,29 @@
           "feats": [
             "9b7b869a86f39190",
             "53444cc061d81627"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_con": 0.15,
+            "ability_dex": 0.1,
+            "ability_wis": 0.4,
+            "area_control": 0.2,
+            "control": 0.2,
+            "damage": 0.4,
+            "force_capacity": 0.4,
+            "force_execution": 0.35,
+            "fortitude_defense": 0.15,
+            "initiative": 0.1,
+            "leadership": 0.35,
+            "mobility": 0.1,
+            "offense_ranged": 0.1,
+            "perception": 0.4,
+            "reflex_defense": 0.1,
+            "social": 0.35,
+            "striker": 0.4,
+            "survivability": 0.15,
+            "survival": 0.4
+          }
         },
         "tradition_keeper": {
           "name": "Tradition Keeper",
@@ -3186,7 +5874,26 @@
           "feats": [
             "1592aaedf4b6e40a",
             "9b7b869a86f39190"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.25,
+            "ability_int": 0.35,
+            "ability_wis": 0.4,
+            "ally_support": 0.4,
+            "area_control": 0.2,
+            "control": 0.2,
+            "force_capacity": 0.4,
+            "force_execution": 0.25,
+            "knowledge": 0.35,
+            "leadership": 0.25,
+            "perception": 0.4,
+            "skill_training": 0.35,
+            "social": 0.25,
+            "support": 0.4,
+            "survival": 0.4,
+            "tech": 0.4,
+            "utility": 0.4
+          }
         }
       }
     },
@@ -3212,7 +5919,26 @@
           "feats": [
             "9b7b869a86f39190",
             "3036290329d5b3e6"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.25,
+            "ability_con": 0.3,
+            "ability_wis": 0.45,
+            "ally_support": 0.4,
+            "area_control": 0.4,
+            "control": 0.4,
+            "force_capacity": 0.45,
+            "force_execution": 0.25,
+            "fortitude_defense": 0.3,
+            "leadership": 0.25,
+            "perception": 0.45,
+            "social": 0.25,
+            "support": 0.4,
+            "survivability": 0.3,
+            "survival": 0.45,
+            "tech": 0.2,
+            "utility": 0.2
+          }
         },
         "living_force_channeler": {
           "name": "Living Force Channeler",
@@ -3236,7 +5962,24 @@
           "feats": [
             "9b7b869a86f39190",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.35,
+            "ability_con": 0.25,
+            "ability_wis": 0.4,
+            "ally_support": 0.3,
+            "area_control": 0.2,
+            "control": 0.2,
+            "force_capacity": 0.4,
+            "force_execution": 0.35,
+            "fortitude_defense": 0.25,
+            "leadership": 0.35,
+            "perception": 0.4,
+            "social": 0.35,
+            "support": 0.3,
+            "survivability": 0.25,
+            "survival": 0.4
+          }
         }
       }
     },
@@ -3261,7 +6004,26 @@
           "talents": [],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_int": 0.5,
+            "ability_wis": 0.2,
+            "ally_support": 0.3,
+            "area_control": 0.6,
+            "control": 0.6,
+            "force_capacity": 0.2,
+            "force_execution": 0.3,
+            "knowledge": 0.5,
+            "leadership": 0.3,
+            "perception": 0.2,
+            "skill_training": 0.5,
+            "social": 0.3,
+            "support": 0.3,
+            "survival": 0.2,
+            "tech": 0.5,
+            "utility": 0.1
+          }
         },
         "droid_overmind": {
           "name": "Droid Overmind",
@@ -3281,7 +6043,24 @@
           "feats": [
             "1592aaedf4b6e40a",
             "42e2404790756700"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.15,
+            "ability_int": 0.6,
+            "ability_wis": 0.25,
+            "area_control": 0.7,
+            "control": 0.7,
+            "force_capacity": 0.25,
+            "force_execution": 0.15,
+            "knowledge": 0.6,
+            "leadership": 0.15,
+            "perception": 0.25,
+            "skill_training": 0.6,
+            "social": 0.15,
+            "survival": 0.25,
+            "tech": 0.6,
+            "utility": 0.3
+          }
         },
         "mechanized_tactician": {
           "name": "Mechanized Tactician",
@@ -3303,7 +6082,26 @@
           ],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_int": 0.45,
+            "ability_wis": 0.25,
+            "ally_support": 0.3,
+            "area_control": 0.5,
+            "control": 0.5,
+            "force_capacity": 0.25,
+            "force_execution": 0.3,
+            "knowledge": 0.45,
+            "leadership": 0.3,
+            "perception": 0.25,
+            "skill_training": 0.45,
+            "social": 0.3,
+            "support": 0.3,
+            "survival": 0.25,
+            "tech": 0.45,
+            "utility": 0.2
+          }
         }
       }
     },
@@ -3328,7 +6126,25 @@
           "talents": [],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.2,
+            "ability_int": 0.5,
+            "ability_wis": 0.3,
+            "ally_support": 0.2,
+            "area_control": 0.5,
+            "control": 0.5,
+            "force_capacity": 0.3,
+            "fortitude_defense": 0.2,
+            "knowledge": 0.5,
+            "perception": 0.3,
+            "skill_training": 0.5,
+            "support": 0.2,
+            "survivability": 0.2,
+            "survival": 0.3,
+            "tech": 0.5,
+            "utility": 0.3
+          }
         },
         "siege_specialist": {
           "name": "Siege Specialist",
@@ -3349,7 +6165,25 @@
           "feats": [
             "0d4d7c147c48cdab",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.35,
+            "ability_int": 0.45,
+            "ability_str": 0.2,
+            "area_control": 0.6,
+            "athletics": 0.2,
+            "control": 0.6,
+            "damage": 0.3,
+            "fortitude_defense": 0.35,
+            "jump": 0.2,
+            "knowledge": 0.45,
+            "offense_melee": 0.2,
+            "skill_training": 0.45,
+            "striker": 0.3,
+            "survivability": 0.35,
+            "tech": 0.45,
+            "utility": 0.1
+          }
         },
         "vehicle_systems_engineer": {
           "name": "Vehicle Systems Engineer",
@@ -3370,7 +6204,29 @@
           "feats": [
             "1592aaedf4b6e40a",
             "1f2f70d34a17667d"
-          ]
+          ],
+          "tagBias": {
+            "ability_dex": 0.25,
+            "ability_int": 0.5,
+            "ability_wis": 0.25,
+            "ally_support": 0.3,
+            "area_control": 0.2,
+            "control": 0.2,
+            "engineering": 3,
+            "force_capacity": 0.25,
+            "initiative": 0.25,
+            "knowledge": 0.5,
+            "mechanics": 3,
+            "mobility": 0.25,
+            "offense_ranged": 0.25,
+            "perception": 0.25,
+            "reflex_defense": 0.25,
+            "skill_training": 0.5,
+            "support": 0.3,
+            "survival": 0.25,
+            "tech": 3,
+            "utility": 0.5
+          }
         }
       }
     },
@@ -3396,7 +6252,31 @@
           "talents": [],
           "feats": [
             "c301a0f533f15ce4"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.25,
+            "ability_dex": 0.3,
+            "ability_str": 0.35,
+            "ability_wis": 0.1,
+            "area_control": 0.3,
+            "athletics": 0.35,
+            "control": 0.3,
+            "damage": 0.5,
+            "defense": 0.2,
+            "force_capacity": 0.1,
+            "fortitude_defense": 0.25,
+            "guard": 0.2,
+            "initiative": 0.3,
+            "jump": 0.35,
+            "mobility": 0.3,
+            "offense_melee": 0.35,
+            "offense_ranged": 0.3,
+            "perception": 0.1,
+            "reflex_defense": 0.3,
+            "striker": 0.5,
+            "survivability": 0.25,
+            "survival": 0.1
+          }
         },
         "forward_assault_leader": {
           "name": "Forward Assault Leader",
@@ -3417,7 +6297,31 @@
           "talents": [],
           "feats": [
             "964f0781b3e3fc37"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.25,
+            "ability_dex": 0.15,
+            "ability_str": 0.3,
+            "ally_support": 0.3,
+            "area_control": 0.3,
+            "athletics": 0.3,
+            "control": 0.3,
+            "damage": 0.4,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.25,
+            "initiative": 0.15,
+            "jump": 0.3,
+            "leadership": 0.3,
+            "mobility": 0.15,
+            "offense_melee": 0.3,
+            "offense_ranged": 0.15,
+            "reflex_defense": 0.15,
+            "social": 0.3,
+            "striker": 0.4,
+            "support": 0.3,
+            "survivability": 0.25
+          }
         },
         "urban_breach_operative": {
           "name": "Urban Breach Operative",
@@ -3438,7 +6342,30 @@
           "talents": [],
           "feats": [
             "0d4d7c147c48cdab"
-          ]
+          ],
+          "tagBias": {
+            "ability_con": 0.25,
+            "ability_dex": 0.35,
+            "ability_int": 0.25,
+            "ability_wis": 0.15,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.4,
+            "force_capacity": 0.15,
+            "fortitude_defense": 0.25,
+            "initiative": 0.35,
+            "knowledge": 0.25,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "perception": 0.15,
+            "reflex_defense": 0.35,
+            "skill_training": 0.25,
+            "striker": 0.4,
+            "survivability": 0.25,
+            "survival": 0.15,
+            "tech": 0.25,
+            "utility": 0.2
+          }
         }
       }
     },
@@ -3463,7 +6390,27 @@
           "talents": [],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.4,
+            "ability_dex": 0.25,
+            "ability_int": 0.35,
+            "ally_support": 0.4,
+            "area_control": 0.3,
+            "control": 0.3,
+            "force_execution": 0.4,
+            "initiative": 0.25,
+            "knowledge": 0.35,
+            "leadership": 0.4,
+            "mobility": 0.25,
+            "offense_ranged": 0.25,
+            "reflex_defense": 0.25,
+            "skill_training": 0.35,
+            "social": 0.4,
+            "support": 0.4,
+            "tech": 0.35,
+            "utility": 0.3
+          }
         },
         "freebooter_admiral": {
           "name": "Freebooter Admiral",
@@ -3483,7 +6430,26 @@
           "talents": [],
           "feats": [
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.4,
+            "ability_int": 0.35,
+            "ability_wis": 0.25,
+            "ally_support": 0.3,
+            "area_control": 0.5,
+            "control": 0.5,
+            "force_capacity": 0.25,
+            "force_execution": 0.4,
+            "knowledge": 0.35,
+            "leadership": 0.4,
+            "perception": 0.25,
+            "skill_training": 0.35,
+            "social": 0.4,
+            "support": 0.3,
+            "survival": 0.25,
+            "tech": 0.35,
+            "utility": 0.2
+          }
         },
         "trade_war_corsair": {
           "name": "Trade War Corsair",
@@ -3505,7 +6471,30 @@
           "feats": [
             "1f2f70d34a17667d",
             "1592aaedf4b6e40a"
-          ]
+          ],
+          "tagBias": {
+            "ability_cha": 0.3,
+            "ability_con": 0.1,
+            "ability_dex": 0.35,
+            "ability_int": 0.25,
+            "area_control": 0.4,
+            "control": 0.4,
+            "damage": 0.3,
+            "force_execution": 0.3,
+            "fortitude_defense": 0.1,
+            "initiative": 0.35,
+            "knowledge": 0.25,
+            "leadership": 0.3,
+            "mobility": 0.35,
+            "offense_ranged": 0.35,
+            "reflex_defense": 0.35,
+            "skill_training": 0.25,
+            "social": 0.3,
+            "striker": 0.3,
+            "survivability": 0.1,
+            "tech": 0.3,
+            "utility": 0.3
+          }
         }
       }
     }

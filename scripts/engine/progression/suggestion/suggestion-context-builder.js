@@ -8,6 +8,7 @@
  */
 
 import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
 
 export class SuggestionContextBuilder {
   /**
@@ -43,14 +44,127 @@ export class SuggestionContextBuilder {
           .map(([key]) => ({ key }));
 
     const abilityIncreases = characterData.abilityIncreases || {};
+    const selectedPowers = characterData.forcePowers !== undefined
+      ? characterData.forcePowers
+      : actor.items?.filter(i => i.type === 'force-power').map(i => ({ id: i._id, name: i.name })) || [];
+
+    const selectedForceTechniques = characterData.forceTechniques !== undefined
+      ? characterData.forceTechniques
+      : actor.items?.filter(i => i.type === 'force-technique').map(i => ({ id: i._id, name: i.name })) || [];
+
+    const selectedForceSecrets = characterData.forceSecrets !== undefined
+      ? characterData.forceSecrets
+      : actor.items?.filter(i => i.type === 'force-secret').map(i => ({ id: i._id, name: i.name })) || [];
+
+    const selectedSpecies = this._resolveSelectedSpecies(actor, characterData);
+    const selectedSpeciesName = selectedSpecies?.name || this._resolveFallbackSpeciesName(actor, characterData) || null;
+    const selectedSpeciesTags = Array.from(new Set([
+      ...(selectedSpecies?.tags || []),
+      ...this._buildSpeciesIdentityTags(selectedSpeciesName)
+    ]));
 
     return {
       selectedFeats,
       selectedClass,
       selectedTalents,
       selectedSkills,
-      abilityIncreases
+      abilityIncreases,
+      selectedSpecies,
+      selectedSpeciesName,
+      selectedSpeciesTags,
+      selectedPowers,
+      selectedForceTechniques,
+      selectedForceSecrets,
+      background: characterData.background ?? actor.system?.background ?? null,
+      survey: characterData.survey ?? actor.system?.survey ?? null,
+      species: selectedSpecies ?? characterData.species ?? null
     };
+  }
+
+  static _resolveSelectedSpecies(actor, characterData = {}) {
+    const candidates = [
+      characterData.selectedSpecies,
+      characterData.species,
+      characterData.speciesId,
+      characterData.speciesName,
+      actor?.items?.find?.((item) => item.type === 'species')?.name,
+      actor?.system?.species,
+      actor?.system?.species?.name,
+      actor?.system?.details?.species,
+      actor?.system?.race
+    ];
+
+    for (const candidate of candidates) {
+      const resolved = this._lookupSpecies(candidate);
+      if (resolved) return resolved;
+    }
+
+    return null;
+  }
+
+  static _lookupSpecies(candidate) {
+    if (!candidate) return null;
+
+    if (candidate && typeof candidate === 'object') {
+      if (candidate.name && Array.isArray(candidate.tags) && candidate.abilityScores) {
+        return {
+          ...candidate,
+          tags: [...(candidate.tags || [])]
+        };
+      }
+
+      const candidateId = candidate.id || candidate._id || candidate.speciesId || null;
+      const candidateName = candidate.name || candidate.label || candidate.value || candidate.speciesName || null;
+      if (candidateId && SpeciesRegistry.getById?.(candidateId)) {
+        return SpeciesRegistry.getById(candidateId);
+      }
+      if (candidateName && SpeciesRegistry.getByName?.(candidateName)) {
+        return SpeciesRegistry.getByName(candidateName);
+      }
+    }
+
+    if (typeof candidate === 'string') {
+      const trimmed = candidate.trim();
+      if (!trimmed) return null;
+      return SpeciesRegistry.getById?.(trimmed)
+        || SpeciesRegistry.getByName?.(trimmed)
+        || (SpeciesRegistry.getAll?.() || []).find((entry) => String(entry?.name || '').toLowerCase() == trimmed.toLowerCase())
+        || null;
+    }
+
+    return null;
+  }
+
+  static _resolveFallbackSpeciesName(actor, characterData = {}) {
+    const candidates = [
+      characterData.selectedSpecies?.name,
+      characterData.speciesName,
+      typeof characterData.species === 'string' ? characterData.species : characterData.species?.name,
+      actor?.items?.find?.((item) => item.type === 'species')?.name,
+      actor?.system?.species?.name,
+      typeof actor?.system?.species === 'string' ? actor.system.species : null,
+      actor?.system?.details?.species,
+      actor?.system?.race
+    ];
+
+    return candidates.find((value) => typeof value === 'string' && value.trim()) || null;
+  }
+
+  static _buildSpeciesIdentityTags(name) {
+    if (!name) return [];
+    const normalized = String(name)
+      .toLowerCase()
+      .replace(/[’']/g, '')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+    if (!normalized) return [];
+    const compact = normalized.replace(/_/g, '');
+    return Array.from(new Set([
+      'species',
+      'heritage',
+      `species_${normalized}`,
+      compact && compact !== normalized ? `species_${compact}` : null
+    ].filter(Boolean)));
   }
 
   /**

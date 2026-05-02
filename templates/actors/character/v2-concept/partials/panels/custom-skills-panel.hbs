@@ -1,0 +1,41 @@
+{{#if conceptLayout.skills.customEntries.length}}
+<section class="swse-concept-panel swse-concept-panel--ledger">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Custom Skills</h3>
+      <p class="swse-concept-panel__hint">User-authored skills currently stored on the actor profile.</p>
+    </div>
+  </header>
+
+  <div class="swse-concept-ledger">
+    {{#each conceptLayout.skills.customEntries as |skill|}}
+      <article class="swse-concept-ledger-row">
+        <div class="swse-concept-ledger-row__main">
+          <div class="swse-concept-ledger-row__title">{{skill.label}}</div>
+          <div class="swse-concept-ledger-row__meta">
+            <span>{{skill.abilityLabel}}</span>
+            {{#if skill.trained}}<span>Trained</span>{{/if}}
+            {{#if skill.focused}}<span>Focused</span>{{/if}}
+            {{#if skill.notes}}<span>{{skill.notes}}</span>{{/if}}
+          </div>
+        </div>
+
+        <div class="swse-concept-ledger-row__stats">
+          <div>
+            <span>Ability</span>
+            <strong>{{numberFormat skill.abilityMod decimals=0 sign=true}}</strong>
+          </div>
+          <div>
+            <span>½ Lvl</span>
+            <strong>{{numberFormat skill.halfLevel decimals=0 sign=true}}</strong>
+          </div>
+          <div>
+            <span>Total</span>
+            <strong class="{{skill.totalClass}}">{{numberFormat skill.total decimals=0 sign=true}}</strong>
+          </div>
+        </div>
+      </article>
+    {{/each}}
+  </div>
+</section>
+{{/if}}

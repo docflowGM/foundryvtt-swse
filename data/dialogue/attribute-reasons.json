@@ -1,0 +1,67 @@
+{
+  "abilityLabels": {
+    "str": "Strength",
+    "dex": "Dexterity",
+    "con": "Constitution",
+    "int": "Intelligence",
+    "wis": "Wisdom",
+    "cha": "Charisma"
+  },
+  "abilityOutlooks": {
+    "str": {
+      "reason": "This build pushes {{ability}} so you hit melee breakpoints early.",
+      "forecast": "Higher {{ability}} feeds melee attacks, melee damage, and other front-line options later."
+    },
+    "dex": {
+      "reason": "This build keeps {{ability}} high for accuracy, defense, and initiative.",
+      "forecast": "Higher {{ability}} supports ranged pressure, Reflex, and general defensive play later."
+    },
+    "con": {
+      "reason": "This build protects {{ability}} so you do not feel fragile at level 1.",
+      "forecast": "Higher {{ability}} raises hit points, Fortitude, and overall staying power later."
+    },
+    "int": {
+      "reason": "This build invests in {{ability}} for broader training and problem-solving lanes.",
+      "forecast": "Higher {{ability}} supports skill training, technical lanes, and language breadth later."
+    },
+    "wis": {
+      "reason": "This build values {{ability}} for awareness, judgment, and force capacity.",
+      "forecast": "Higher {{ability}} supports Will, Force Training capacity, and perception-driven paths later."
+    },
+    "cha": {
+      "reason": "This build keeps {{ability}} relevant for presence, leadership, and force expression.",
+      "forecast": "Higher {{ability}} supports social scenes, leadership options, and many Force power checks later."
+    }
+  },
+  "styles": {
+    "amplify": {
+      "title": "Lean Into Species",
+      "subtitle": "Doubles down on what your species already does well.",
+      "summary": "This build amplifies your species strengths instead of spending early points fighting them.",
+      "caution": "It can leave off-plan abilities thin, so you may feel more specialized early on."
+    },
+    "balanced": {
+      "title": "Balanced Starter",
+      "subtitle": "A safer all-purpose spread for new players.",
+      "summary": "This build chases efficient modifier breakpoints while avoiding the most painful early dumps.",
+      "caution": "It is steadier than sharper, so it may not spike one lane as hard as the focused plan."
+    },
+    "mitigate": {
+      "title": "Patch Weaknesses",
+      "subtitle": "Smooths penalties and keeps rough edges playable.",
+      "summary": "This build spends more of your budget covering weak spots so the species penalties hurt less.",
+      "caution": "It sacrifices some top-end specialization in exchange for a safer floor."
+    }
+  },
+  "reasons": {
+    "species_bonus_amplified": "{{ability}} already has a species bonus, so this build pushes it to a cleaner breakpoint.",
+    "species_penalty_mitigated": "{{ability}} has a species penalty, so this build spends points to keep it from lagging too far behind.",
+    "survivability_floor": "It preserves a minimum floor in {{ability}} so the character still feels playable at level 1.",
+    "breakpoint_focus": "It prefers even-number breakpoints where point buy actually turns into a new modifier.",
+    "odd_score_setup": "It accepts an odd score in {{ability}} only because that point is setting up a later breakpoint instead of being wasted.",
+    "top_roll_assignment": "It places one of your best numbers into {{ability}} because that is where the build gets the most immediate return.",
+    "species_signal_absent": "Because this step comes so early, this build focuses on honest fundamentals instead of pretending the system already knows your class.",
+    "live_budget": "This spread was generated from your live {{budget}}-point budget, not from a hardcoded array.",
+    "live_pool": "This spread was generated from the numbers you rolled, not from a prewritten preset."
+  }
+}

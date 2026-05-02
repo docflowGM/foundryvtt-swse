@@ -1,0 +1,23 @@
+<section class="swse-concept-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Bio Snapshot</h3>
+      <p class="swse-concept-panel__hint">Current narrative summary sourced from biography fields.</p>
+    </div>
+  </header>
+
+  <p class="swse-concept-body-copy">{{conceptLayout.summary.biographyPreview}}</p>
+
+  <div class="swse-concept-subsection">
+    <span class="swse-concept-subsection__label">Known Languages</span>
+    <div class="swse-concept-chip-row">
+      {{#if conceptLayout.summary.languages.length}}
+        {{#each conceptLayout.summary.languages as |language|}}
+          <span class="swse-concept-chip swse-concept-chip--neutral">{{language}}</span>
+        {{/each}}
+      {{else}}
+        <span class="swse-concept-chip swse-concept-chip--neutral">No languages recorded</span>
+      {{/if}}
+    </div>
+  </div>
+</section>

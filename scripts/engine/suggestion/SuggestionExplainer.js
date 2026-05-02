@@ -138,10 +138,11 @@ export class SuggestionExplainer {
         explanation = this._addOpportunityCostWarning(explanation, costReasons);
       }
 
-      return explanation;
+      return { explanation: { short: explanation, full: explanation, bullets: [explanation] }, tone: 'advisor' };
     } catch (err) {
       SWSELogger.error('[SuggestionExplainer] Error generating explanation:', err);
-      return `${suggestion.itemName} is available for your character.`;
+      const fallback = `${suggestion.itemName} is available for your character.`;
+      return { explanation: { short: fallback, full: fallback, bullets: [fallback] }, tone: 'advisor' };
     }
   }
 

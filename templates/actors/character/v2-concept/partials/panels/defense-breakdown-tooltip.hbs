@@ -1,0 +1,28 @@
+<div class="swse-concept-defense-breakdown">
+  <div class="swse-concept-defense-breakdown__row">
+    <span>Base</span>
+    <strong>10</strong>
+  </div>
+  <div class="swse-concept-defense-breakdown__row">
+    <span>{{defense.abilityLabel}}</span>
+    <strong class="{{defense.abilityModClass}}">{{numberFormat defense.abilityMod decimals=0 sign=true}}</strong>
+  </div>
+  <div class="swse-concept-defense-breakdown__row">
+    <span>Class Bonus</span>
+    <strong>{{numberFormat defense.classDef decimals=0 sign=true}}</strong>
+  </div>
+  <div class="swse-concept-defense-breakdown__row">
+    <span>Armor</span>
+    <strong>{{numberFormat defense.armorBonus decimals=0 sign=true}}</strong>
+  </div>
+  <div class="swse-concept-defense-breakdown__row">
+    <span>Misc</span>
+    <strong class="{{defense.miscModClass}}">{{numberFormat defense.miscMod decimals=0 sign=true}}</strong>
+  </div>
+  {{#if defense.conditionPenalty}}
+    <div class="swse-concept-defense-breakdown__row">
+      <span>Condition</span>
+      <strong class="mod--negative">{{numberFormat defense.conditionPenalty decimals=0 sign=true}}</strong>
+    </div>
+  {{/if}}
+</div>

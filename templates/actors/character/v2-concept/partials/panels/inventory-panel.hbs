@@ -1,0 +1,48 @@
+<div class="swse-concept-card-grid swse-concept-card-grid--gear-top">
+  <article class="swse-concept-info-card swse-concept-info-card--stat">
+    <span>Credits</span>
+    <strong>{{numberFormat conceptLayout.gear.credits decimals=0}}</strong>
+  </article>
+  <article class="swse-concept-info-card swse-concept-info-card--stat">
+    <span>Inventory Items</span>
+    <strong>{{conceptLayout.gear.totalItems}}</strong>
+  </article>
+  <article class="swse-concept-info-card swse-concept-info-card--stat">
+    <span>Total Weight</span>
+    <strong>{{#if conceptLayout.gear.ledgerWeight}}{{conceptLayout.gear.ledgerWeight}}{{else}}{{numberFormat conceptLayout.gear.totalWeight decimals=1}} kg{{/if}}</strong>
+  </article>
+  <article class="swse-concept-info-card swse-concept-info-card--stat">
+    <span>Workshop</span>
+    <strong>{{#if conceptLayout.gear.hasUpgradeableItems}}Upgrade Ready{{else}}No Eligible Mods{{/if}}</strong>
+  </article>
+</div>
+
+<section class="swse-concept-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Equipped Loadout</h3>
+      <p class="swse-concept-panel__hint">Currently active weapons, armor, and field gear.</p>
+    </div>
+  </header>
+
+  {{#if conceptLayout.gear.equippedEntries.length}}
+    <div class="swse-concept-loadout-grid">
+      {{#each conceptLayout.gear.equippedEntries as |entry|}}
+        {{#if (eq entry.type "weapon")}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-weapon-card.hbs" entry=entry}}
+        {{else}}
+          {{#if (eq entry.type "armor")}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-armor-card.hbs" entry=entry}}
+          {{else}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-item-card.hbs" entry=entry}}
+          {{/if}}
+        {{/if}}
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="swse-concept-empty-state">
+      <span class="swse-concept-empty-state__eyebrow">Nothing equipped</span>
+      <strong>Equip items from the ledger below to populate the active loadout.</strong>
+    </div>
+  {{/if}}
+</section>

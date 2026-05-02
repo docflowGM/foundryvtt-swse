@@ -461,6 +461,7 @@ export function buildActorSplashV2Context(options = {}) {
     ...identityState,
     bannerText: stage?.bannerText || '',
     bannerClass: stage?.bannerClass || '',
+    skipLabel: localizedMode ? 'Skip Boot' : 'Skip Boot',
     continueLabel: isComplete || progressPercent >= 100 ? 'Begin Registration' : 'Begin Registration',
   };
 }

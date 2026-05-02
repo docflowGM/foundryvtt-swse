@@ -24,6 +24,8 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { extractAbilityScores } from "/systems/foundryvtt-swse/scripts/engine/suggestion/shared-suggestion-utilities.js";
 import { Level1SkillSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/Level1SkillSuggestionEngine.js";
+import { getConfiguredSkillAbilityMap, getSkillAbility, buildAttributePlanningProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/attribute-planner.js";
+import { getForceAbilityConfig } from "/systems/foundryvtt-swse/scripts/engine/suggestion/force-rule-adapter.js";
 
 export class ProgressionAdvisor {
   /**
@@ -32,28 +34,22 @@ export class ProgressionAdvisor {
    * @param {Actor} actor - The character
    * @returns {Object} Attribute-aware build profile
    */
-  static deriveAttributeBuildIntent(actor) {
+  static deriveAttributeBuildIntent(actor, pendingData = {}) {
     try {
-      // Get ability scores (consolidated from shared utilities)
       const scores = extractAbilityScores(actor);
-
-      // Find primary and secondary abilities
       const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
       const primaryAbility = sorted[0]?.[0];
       const primaryScore = sorted[0]?.[1] || 10;
       const secondaryAbility = sorted[1]?.[0];
       const secondaryScore = sorted[1]?.[1] || 10;
-
-      // Determine focus areas
-      const forceFocus = (scores.wis >= 16 || scores.cha >= 16);
-      const rangedBias = scores.dex >= 16;
-      const meleeBias = scores.str >= 16;
-
-      // Determine combat style
+      const { capacityAbility, executionAbility } = getForceAbilityConfig();
+      const forceFocus = (scores[capacityAbility] >= 14 || scores[executionAbility] >= 14);
+      const rangedBias = scores.dex >= 14;
+      const meleeBias = scores.str >= 14;
+      const planningProfile = buildAttributePlanningProfile({ actor, pendingData });
+      const weightedOrder = Object.entries(planningProfile.abilityWeights || {}).sort((a, b) => b[1] - a[1]);
       let combatStyle = 'mixed';
       if (forceFocus) {combatStyle = 'force-caster';} else if (meleeBias) {combatStyle = 'melee';} else if (rangedBias) {combatStyle = 'ranged';}
-
-      // Confidence score (how optimized the build is)
       const maxScore = Math.max(...Object.values(scores));
       const confidence = Math.min(maxScore / 20, 1.0);
 
@@ -67,7 +63,10 @@ export class ProgressionAdvisor {
         confidence,
         meleeBias,
         rangedBias,
-        allScores: scores
+        allScores: scores,
+        forceAxes: { capacityAbility, executionAbility },
+        weightedAbilities: weightedOrder,
+        planningProfile
       };
     } catch (err) {
       SWSELogger.error('Failed to derive attribute build intent:', err);
@@ -177,21 +176,7 @@ export class ProgressionAdvisor {
    * @private
    */
   static _getAttributeForSkill(skillName) {
-    // Import the mapping from Level1SkillSuggestionEngine
-    const { ATTRIBUTE_SKILL_MAP } = Level1SkillSuggestionEngine;
-    if (!ATTRIBUTE_SKILL_MAP) {return null;}
-
-    const normalized = this._normalizeSkillName(skillName);
-
-    for (const [attr, skills] of Object.entries(ATTRIBUTE_SKILL_MAP)) {
-      for (const skill of skills) {
-        if (this._normalizeSkillName(skill) === normalized) {
-          return attr;
-        }
-      }
-    }
-
-    return null;
+    return getSkillAbility(skillName);
   }
 
   /**

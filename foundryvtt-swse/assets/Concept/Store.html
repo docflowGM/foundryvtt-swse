@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Rendarr's Exchange — Datapad Holo</title>
+<meta name="viewport" content="width=1280" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@400;600;700;900&family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --vapor-pink:   oklch(0.72 0.26 350);
+    --vapor-purple: oklch(0.55 0.26 300);
+    --vapor-cyan:   oklch(0.85 0.18 200);
+    --screen-h: 278;
+    --ink-h: 190;
+    --accent-h: var(--ink-h); --accent-c: 0.17; --accent-l: 0.82;
+    --accent: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
+    --bg: oklch(0.10 0.03 285);
+    --screen:   oklch(0.13 0.055 var(--screen-h));
+    --screen-2: oklch(0.18 0.07  var(--screen-h));
+    --ink:       oklch(0.94 0.04 var(--accent-h));
+    --ink-dim:   oklch(0.72 0.06 var(--accent-h));
+    --ink-faint: oklch(0.50 0.05 var(--accent-h));
+    --pos: oklch(0.82 0.19 145);
+    --neg: oklch(0.70 0.22 25);
+    --zero: oklch(0.88 0.17 95);
+    --jedi: oklch(0.85 0.18 145);
+    /* Rarity tints */
+    --rar-common:  oklch(0.78 0.04 220);
+    --rar-uncommon:oklch(0.82 0.18 145);
+    --rar-rare:    oklch(0.80 0.20 240);
+    --rar-restrict:oklch(0.80 0.20 60);
+    --rar-illegal: oklch(0.70 0.26 20);
+    --font-body: 'Space Grotesk', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --font-display: 'VT323', monospace;
+    --font-orbit: 'Orbitron', sans-serif;
+    --scan-strength: 0.03;
+    --anim-speed: 1;
+    --glow-mult: 1;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #05050a; color: var(--ink); font-family: var(--font-body); min-height: 100vh; overflow-x: auto; }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: -2;
+    background:
+      radial-gradient(ellipse at 30% 20%, oklch(0.18 0.10 320 / 0.55), transparent 55%),
+      radial-gradient(ellipse at 80% 88%, oklch(0.18 0.10 200 / 0.5), transparent 55%),
+      linear-gradient(180deg, #060612 0%, #020205 100%);
+  }
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 100; mix-blend-mode: screen;
+    background: repeating-linear-gradient(0deg, transparent 0 2px, oklch(1 0 0 / 0.018) 2px 3px);
+  }
+  .stage { min-height: 100vh; display:flex; justify-content:center; padding: 28px; }
+
+  /* ================= Tablet bezel ================= */
+  .tablet {
+    position:relative; width: 1240px; padding: 32px 30px 38px; border-radius: 22px;
+    background: linear-gradient(140deg, #1a1a26 0%, #0b0b14 55%, #12121c 100%);
+    box-shadow:
+      inset 0 0 0 1px oklch(0.35 0.04 270 / 0.5),
+      inset 0 2px 0 0 oklch(0.55 0.03 270 / 0.4),
+      inset 0 -2px 0 0 oklch(0.05 0.02 270 / 0.9),
+      0 40px 80px oklch(0 0 0 / 0.7),
+      0 0 140px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.12);
+    animation: breathe calc(5.4s / var(--anim-speed)) ease-in-out infinite;
+  }
+  @keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.002); } }
+  .rivet { position:absolute; width:6px; height:6px; border-radius:50%;
+    background: radial-gradient(circle at 35% 35%, #5a5a6e 0%, #1a1a22 70%);}
+  .rivet.tl{top:12px;left:16px;} .rivet.tr{top:12px;right:16px;} .rivet.bl{bottom:12px;left:16px;} .rivet.br{bottom:12px;right:16px;}
+  .bezel-led { position:absolute; width:5px; height:5px; border-radius:50%; background:var(--vapor-cyan); box-shadow:0 0 8px var(--vapor-cyan), 0 0 18px var(--vapor-cyan); }
+  .bezel-led.a{top:22px;left:48px; animation: ledPulse calc(1.6s / var(--anim-speed)) ease-in-out infinite;}
+  .bezel-led.b{top:22px;right:48px; animation: ledPulse calc(1.9s / var(--anim-speed)) ease-in-out infinite 0.3s; background:var(--pos); box-shadow:0 0 8px var(--pos),0 0 18px var(--pos);}
+  .bezel-led.c{bottom:24px;left:48px; animation: ledPulse calc(2.4s / var(--anim-speed)) ease-in-out infinite 0.6s; background:var(--vapor-pink); box-shadow:0 0 8px var(--vapor-pink),0 0 18px var(--vapor-pink);}
+  .bezel-led.d{bottom:24px;right:48px; animation: ledPulse calc(2.1s / var(--anim-speed)) ease-in-out infinite 0.9s; background:oklch(0.80 0.16 60); box-shadow:0 0 8px oklch(0.80 0.16 60),0 0 18px oklch(0.80 0.16 60);}
+  @keyframes ledPulse { 0%,100% { opacity:0.35; } 50% { opacity:1; } }
+  .bezel-serial { position:absolute; top:12px; right:38px; font-family:var(--font-mono); font-size:9px; letter-spacing:0.22em; color: oklch(0.55 0.05 260); }
+  .bezel-manu { position:absolute; bottom:14px; right:38px; font-family:var(--font-display); font-size:12px; letter-spacing:0.4em; color: oklch(0.50 0.04 260); }
+
+  /* ================= Screen ================= */
+  .screen {
+    position:relative;
+    background: radial-gradient(ellipse at 30% 10%, var(--screen-2) 0%, var(--screen) 50%, oklch(0.08 0.04 var(--screen-h)) 100%);
+    border: 1px solid oklch(0.3 0.04 260 / 0.6);
+    border-radius: 10px;
+    padding: 18px;
+    min-height: 1150px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.6), inset 0 2px 14px oklch(0 0 0 / 0.5), inset 0 0 80px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.08);
+    display: grid;
+    grid-template-rows: auto auto auto auto 1fr auto;
+    gap: 14px;
+  }
+  .screen::before {
+    content:''; position:absolute; inset:0; pointer-events:none; z-index:5;
+    background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(1 0 0 / var(--scan-strength)) 3px 4px);
+  }
+  .scan-v {
+    position:absolute; left:0; right:0; top:0; height:140px; pointer-events:none; z-index:7;
+    background: linear-gradient(180deg, transparent 0%, oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.06) 50%, oklch(1 0 0 / 0.1) 62%, transparent 100%);
+    animation: scanV calc(7s / var(--anim-speed)) linear infinite;
+  }
+  @keyframes scanV { 0%{transform:translateY(-160px);opacity:0.6;} 100%{transform:translateY(1280px);opacity:0.3;} }
+  .corner { position:absolute; width:18px; height:18px; border:1px solid var(--vapor-cyan); pointer-events:none; opacity:0.6; z-index:8; }
+  .corner.tl{top:26px;left:26px;border-right:none;border-bottom:none;}
+  .corner.tr{top:26px;right:26px;border-left:none;border-bottom:none;}
+  .corner.bl{bottom:26px;left:26px;border-right:none;border-top:none;}
+  .corner.br{bottom:26px;right:26px;border-left:none;border-top:none;}
+
+  /* ================= HUD ================= */
+  .hud {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 4px 10px 10px;
+    border-bottom: 1px solid color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+    font-family: var(--font-mono); font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--ink-dim);
+    position: relative; z-index: 10;
+  }
+  .hud-left,.hud-right{display:flex; gap:14px; align-items:center;}
+  .hud-title { font-family: var(--font-display); font-size:18px; letter-spacing:0.3em;
+    color: var(--vapor-cyan); text-shadow: 0 0 calc(10px * var(--glow-mult)) color-mix(in oklab, var(--vapor-cyan) 50%, transparent); }
+  .dot { width:6px; height:6px; border-radius:50%; background:var(--pos); box-shadow:0 0 6px var(--pos); animation: ledPulse calc(1.4s / var(--anim-speed)) ease-in-out infinite; }
+  .dot.warn{background:var(--zero); box-shadow:0 0 6px var(--zero);}
+  .dot.crit{background:var(--neg); box-shadow:0 0 6px var(--neg);}
+  .tag{display:inline-flex; align-items:center; gap:6px;}
+  .signal{display:inline-flex; gap:2px; align-items:flex-end; height:10px;}
+  .signal span{width:3px; background:var(--vapor-cyan); opacity:0.5;}
+  .signal span:nth-child(1){height:30%;} .signal span:nth-child(2){height:55%; opacity:0.7;}
+  .signal span:nth-child(3){height:80%; opacity:0.85;} .signal span:nth-child(4){height:100%; opacity:1;}
+
+  /* ================= Page header (Rendarr) ================= */
+  .page-header {
+    display:grid; grid-template-columns: 88px 1fr auto;
+    gap: 18px; align-items: center;
+    padding: 10px 12px;
+    background: linear-gradient(90deg, oklch(0 0 0 / 0.45) 0%, oklch(var(--vapor-pink) / 0.06) 60%, oklch(0 0 0 / 0.4) 100%);
+    border: 1px solid color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+    border-left: 3px solid var(--vapor-pink);
+    position: relative; z-index: 10;
+  }
+  .page-header::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in oklab, var(--vapor-pink) 4%, transparent) 3px 4px);
+  }
+  .rendarr-portrait {
+    width: 84px; height: 84px;
+    background:
+      radial-gradient(circle at 50% 35%, color-mix(in oklab, var(--vapor-pink) 32%, transparent) 0%, transparent 60%),
+      linear-gradient(140deg, oklch(0.05 0.02 270) 0%, color-mix(in oklab, var(--vapor-purple) 30%, transparent) 100%);
+    border: 1px solid color-mix(in oklab, var(--vapor-pink) 60%, transparent);
+    box-shadow: 0 0 calc(20px * var(--glow-mult)) color-mix(in oklab, var(--vapor-pink) 30%, transparent),
+                inset 0 0 14px oklch(0 0 0 / 0.7);
+    position: relative; overflow: hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .rendarr-portrait::before {
+    content:''; position:absolute; inset:0;
+    background: repeating-linear-gradient(0deg, transparent 0 2px, color-mix(in oklab, var(--vapor-pink) 12%, transparent) 2px 3px);
+  }
+  .rendarr-portrait::after {
+    content:''; position:absolute; left: -100%; top: 0; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--vapor-cyan) 30%, transparent), transparent);
+    animation: scanH calc(4s / var(--anim-speed)) ease-in-out infinite;
+  }
+  @keyframes scanH { 0% { left: -100%;} 100% { left: 200%;} }
+  .rendarr-portrait svg { width: 70%; height: 70%; color: var(--vapor-pink); position: relative; z-index: 1;
+    filter: drop-shadow(0 0 6px color-mix(in oklab, var(--vapor-pink) 70%, transparent));}
+
+  .rendarr-meta { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .rendarr-name {
+    font-family: var(--font-orbit); font-weight: 900; font-size: 22px; letter-spacing: 0.1em;
+    color: var(--ink); text-transform: uppercase;
+    text-shadow:
+      0 0 calc(10px * var(--glow-mult)) color-mix(in oklab, var(--vapor-pink) 35%, transparent),
+      2px 0 0 color-mix(in oklab, var(--vapor-pink) 30%, transparent),
+     -2px 0 0 color-mix(in oklab, var(--vapor-cyan) 26%, transparent);
+  }
+  .rendarr-name .mark {
+    font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em; color: var(--vapor-pink);
+    margin-right: 6px;
+  }
+  .rendarr-sub {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.3em; color: var(--ink-faint); text-transform: uppercase;
+  }
+  .rendarr-quote {
+    grid-column: 2 / 3;
+    font-family: var(--font-mono); font-size: 13px; line-height: 1.4; color: var(--ink-dim);
+    padding: 8px 12px;
+    background: oklch(0 0 0 / 0.5);
+    border-left: 2px solid var(--vapor-cyan);
+    margin-top: 4px;
+    position: relative;
+    min-height: 44px;
+  }
+  .rendarr-quote::before {
+    content: '▸'; position:absolute; left: -4px; top: 50%; transform: translateY(-50%);
+    font-family: var(--font-display); color: var(--vapor-cyan); font-size: 14px;
+    background: var(--screen); padding: 0 2px;
+  }
+  .rendarr-quote .typing {
+    display: inline-block; width: 7px; height: 14px; background: var(--vapor-cyan);
+    vertical-align: -2px; margin-left: 2px; animation: blink 0.7s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .credits-block {
+    display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
+    padding-left: 12px; border-left: 1px dashed color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+  }
+  .credits-block .lbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.32em; color: var(--ink-faint); text-transform: uppercase;}
+  .credits-block .val {
+    font-family: var(--font-display); font-size: 38px; line-height: 1; letter-spacing: 0.04em;
+    color: var(--vapor-pink);
+    text-shadow: 0 0 calc(12px * var(--glow-mult)) color-mix(in oklab, var(--vapor-pink) 60%, transparent);
+  }
+  .credits-block .val::after { content: ' cr'; font-size: 16px; color: var(--ink-dim); letter-spacing: 0.2em;}
+  .credits-block .delta { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em; color: var(--ink-faint); text-transform: uppercase;}
+  .credits-block .delta.neg { color: var(--neg);}
+  .credits-block .delta.pos { color: var(--pos);}
+
+  /* ================= Tabs ================= */
+  .tabs-row {
+    display: flex; gap: 4px; align-items: stretch;
+    padding: 0 6px;
+    position: relative; z-index: 10;
+  }
+  .tab-btn {
+    flex: 1; padding: 12px 14px;
+    background: oklch(0 0 0 / 0.32);
+    border: 1px solid color-mix(in oklab, var(--vapor-cyan) 22%, transparent);
+    border-bottom: none;
+    color: var(--ink-dim);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+    cursor: pointer; position: relative;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 100%, 0 100%);
+    transition: all 0.15s;
+  }
+  .tab-btn .glyph { font-family: var(--font-display); font-size: 18px; color: var(--vapor-cyan); line-height: 1;}
+  .tab-btn:hover { color: var(--ink); border-color: color-mix(in oklab, var(--vapor-cyan) 50%, transparent);}
+  .tab-btn.active {
+    background: linear-gradient(180deg, color-mix(in oklab, var(--vapor-pink) 18%, transparent) 0%, color-mix(in oklab, var(--vapor-cyan) 12%, transparent) 100%);
+    border-color: var(--vapor-cyan); color: var(--vapor-cyan);
+    box-shadow: 0 0 calc(18px * var(--glow-mult)) color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+  }
+  .tab-btn.active .glyph { color: var(--vapor-pink); text-shadow: 0 0 calc(8px * var(--glow-mult)) var(--vapor-pink);}
+  .tab-btn .count {
+    background: var(--vapor-pink); color: oklch(0.10 0.03 285); font-family: var(--font-orbit); font-weight: 700;
+    font-size: 9px; letter-spacing: 0.05em; padding: 2px 7px; min-width: 18px; text-align: center;
+    box-shadow: 0 0 8px color-mix(in oklab, var(--vapor-pink) 60%, transparent);
+  }
+
+  /* ================= Filters bar ================= */
+  .filters {
+    display: grid; grid-template-columns: 1fr auto auto auto; gap: 10px; align-items: center;
+    padding: 10px 12px;
+    background: oklch(0 0 0 / 0.3);
+    border: 1px solid color-mix(in oklab, var(--vapor-cyan) 20%, transparent);
+    border-top: 2px solid var(--vapor-cyan);
+    position: relative; z-index: 9;
+  }
+  .filter-search {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 10px;
+    background: oklch(0 0 0 / 0.5);
+    border: 1px solid color-mix(in oklab, var(--vapor-cyan) 30%, transparent);
+  }
+  .filter-search:focus-within { border-color: var(--vapor-cyan); box-shadow: 0 0 calc(12px * var(--glow-mult)) color-mix(in oklab, var(--vapor-cyan) 40%, transparent);}
+  .filter-search .ico { font-family: var(--font-display); color: var(--vapor-cyan); font-size: 18px; line-height: 1;}
+  .filter-search input {
+    flex: 1; background: transparent; border: none; outline: none; color: var(--ink);
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em;
+  }
+  .filter-search input::placeholder { color: var(--ink-faint); letter-spacing: 0.2em; text-transform: uppercase; font-size: 10px;}
+  .filter-group { display: flex; align-items: center; gap: 6px; }
+  .filter-lbl { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.28em; color: var(--ink-faint); text-transform: uppercase;}
+  .chip {
+    padding: 5px 10px;
+    background: oklch(0 0 0 / 0.4);
+    border: 1px solid color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+    color: var(--ink-dim);
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.15s;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .chip:hover { color: var(--ink); border-color: color-mix(in oklab, var(--vapor-cyan) 60%, transparent);}
+  .chip.active {
+    background: linear-gradient(90deg, color-mix(in oklab, var(--vapor-pink) 20%, transparent), color-mix(in oklab, var(--vapor-cyan) 14%, transparent));
+    border-color: var(--vapor-cyan); color: var(--vapor-cyan);
+    box-shadow: 0 0 calc(8px * var(--glow-mult)) color-mix(in oklab, var(--vapor-cyan) 35%, transparent);
+  }
+  .chip .swatch { width: 8px; height: 8px; background: var(--c, var(--vapor-cyan)); box-shadow: 0 0 4px var(--c, var(--vapor-cyan));}
+  .price-range {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim);
+    padding: 5px 10px;
+    border: 1px solid color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+    background: oklch(0 0 0 / 0.4);
+  }
+  .price-range .v { color: var(--vapor-cyan); font-family: var(--font-display); font-size: 13px;}
+  .price-range input[type=range] {
+    width: 110px; -webkit-appearance: none; appearance: none; height: 3px;
+    background: oklch(0 0 0 / 0.6); border: 1px solid color-mix(in oklab, var(--vapor-cyan) 30%, transparent); outline: none;
+  }
+  .price-range input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 12px; height: 12px; background: var(--vapor-pink);
+    border: 1px solid var(--vapor-cyan); cursor: pointer; box-shadow: 0 0 6px var(--vapor-pink);
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  }
+  .price-range input[type=range]::-moz-range-thumb {
+    width: 12px; height: 12px; background: var(--vapor-pink);
+    border: 1px solid var(--vapor-cyan); cursor: pointer; box-shadow: 0 0 6px var(--vapor-pink); border-radius: 0;
+  }
+
+  /* ================= Browse — main 3-col layout ================= */
+  .browse-layout {
+    display: grid; grid-template-columns: 1fr 280px; gap: 14px;
+    padding: 0 6px;
+    align-items: flex-start;
+    position: relative; z-index: 1;
+  }
+
+  /* Cards grid */
+  .cards-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  }
+  .card {
+    position: relative;
+    background: linear-gradient(140deg, oklch(0 0 0 / 0.55) 0%, color-mix(in oklab, var(--vapor-purple) 15%, transparent) 100%);
+    border: 1px solid color-mix(in oklab, var(--rar, var(--vapor-cyan)) 50%, transparent);
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.18s;
+    display: grid; grid-template-rows: auto auto auto auto auto;
+    gap: 6px;
+    color: var(--ink); overflow: hidden;
+    clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+  }
+  .card::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in oklab, var(--rar, var(--vapor-cyan)) 5%, transparent) 3px 4px);
+  }
+  .card::after {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background: linear-gradient(180deg, color-mix(in oklab, var(--rar, var(--vapor-cyan)) 8%, transparent) 0%, transparent 25%, transparent 75%, oklch(0 0 0 / 0.4) 100%);
+  }
+  .card:hover {
+    border-color: var(--rar, var(--vapor-cyan));
+    box-shadow: 0 0 calc(20px * var(--glow-mult)) color-mix(in oklab, var(--rar, var(--vapor-cyan)) 40%, transparent), inset 0 0 14px color-mix(in oklab, var(--rar, var(--vapor-cyan)) 18%, transparent);
+    transform: translateY(-2px);
+  }
+  .card.unaffordable { opacity: 0.5; }
+  .card.unaffordable:hover { transform: none; }
+  .card.expanded {
+    grid-column: 1 / -1; cursor: default;
+    border-color: var(--rar, var(--vapor-cyan));
+    box-shadow: 0 0 calc(28px * var(--glow-mult)) color-mix(in oklab, var(--rar, var(--vapor-cyan)) 38%, transparent);
+  }
+  .card.expanded:hover { transform: none; }
+
+  .card-rar-tag {
+    position: absolute; top: 8px; right: 8px;
+    font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.24em; text-transform: uppercase;
+    padding: 2px 6px; background: oklch(0 0 0 / 0.65);
+    border: 1px solid var(--rar, var(--vapor-cyan));
+    color: var(--rar, var(--vapor-cyan));
+    z-index: 3;
+  }
+  .card-id {
+    font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.24em; color: var(--ink-faint); text-transform: uppercase;
+    z-index: 2;
+  }
+  .glyph-panel {
+    position: relative;
+    height: 100px;
+    display: flex; align-items: center; justify-content: center;
+    background:
+      linear-gradient(135deg, oklch(0 0 0 / 0.4), color-mix(in oklab, var(--rar, var(--vapor-cyan)) 8%, transparent)),
+      repeating-linear-gradient(0deg, transparent 0 9px, color-mix(in oklab, var(--rar, var(--vapor-cyan)) 6%, transparent) 9px 10px),
+      repeating-linear-gradient(90deg, transparent 0 9px, color-mix(in oklab, var(--rar, var(--vapor-cyan)) 6%, transparent) 9px 10px);
+    border: 1px solid color-mix(in oklab, var(--rar, var(--vapor-cyan)) 25%, transparent);
+    z-index: 2;
+  }
+  .store-glyph {
+    font-family: var(--font-display); font-size: 4.4rem; line-height: 1;
+    color: var(--rar, var(--vapor-cyan));
+    text-shadow:
+      0 0 calc(14px * var(--glow-mult)) color-mix(in oklab, var(--rar, var(--vapor-cyan)) 70%, transparent),
+      0 0 calc(28px * var(--glow-mult)) color-mix(in oklab, var(--rar, var(--vapor-cyan)) 35%, transparent);
+    letter-spacing: -0.04em;
+    transition: transform 0.22s;
+  }
+  .card:hover .store-glyph { transform: scale(1.06);}
+  .card.expanded .glyph-panel { height: 160px;}
+  .card.expanded .store-glyph { font-size: 6.4rem;}
+
+  .card-title {
+    font-family: var(--font-orbit); font-weight: 700; font-size: 12px; letter-spacing: 0.06em; color: var(--ink); text-transform: uppercase;
+    line-height: 1.2;
+    z-index: 2;
+  }
+  .card-meta {
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.18em; color: var(--ink-faint); text-transform: uppercase;
+    display: flex; gap: 8px; flex-wrap: wrap;
+    z-index: 2;
+  }
+  .card-meta .slot { color: var(--vapor-cyan);}
+  .card-stars {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.18em; color: var(--ink-faint); text-transform: uppercase;
+    z-index: 2;
+  }
+  .card-stars .stars { color: var(--zero); letter-spacing: 0.05em; font-size: 12px; line-height: 1;}
+  .card-stars .stars .empty { color: oklch(0.30 0.02 60);}
+  .card-foot {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    padding-top: 6px;
+    border-top: 1px dashed color-mix(in oklab, var(--rar, var(--vapor-cyan)) 25%, transparent);
+    z-index: 2;
+  }
+  .card-price {
+    font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em; line-height: 1;
+    color: var(--vapor-pink);
+    text-shadow: 0 0 calc(8px * var(--glow-mult)) color-mix(in oklab, var(--vapor-pink) 50%, transparent);
+  }
+  .card-price::after { content: 'cr'; font-size: 10px; color: var(--ink-dim); margin-left: 3px; letter-spacing: 0.18em;}
+  .card.unaffordable .card-price { color: var(--neg); text-shadow: 0 0 8px color-mix(in oklab, var(--neg) 40%, transparent);}
+  .card-actions { display: flex; gap: 4px;}
+  .card-btn {
+    padding: 5px 10px;
+    background: oklch(0 0 0 / 0.5);
+    border: 1px solid var(--rar, var(--vapor-cyan));
+    color: var(--rar, var(--vapor-cyan));
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.15s;
+    clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+  }
+  .card-btn:hover {
+    background: color-mix(in oklab, var(--rar, var(--vapor-cyan)) 18%, transparent);
+    box-shadow: 0 0 8px color-mix(in oklab, var(--rar, var(--vapor-cyan)) 40%, transparent);
+  }
+  .card-btn.primary {
+    background: linear-gradient(90deg, color-mix(in oklab, var(--vapor-pink) 22%, transparent), color-mix(in oklab, var(--vapor-cyan) 18%, transparent));
+    border-color: var(--vapor-pink); color: var(--vapor-pink);
+    text-shadow: 0 0 6px color-mix(in oklab, var(--vapor-pink) 60%, transparent);
+  }
+  .card-btn.primary:hover { background: color-mix(in oklab, var(--vapor-pink) 30%, transparent); box-shadow: 0 0 12px var(--vapor-pink);}
+  .card-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .card-btn:disabled:hover { background: oklch(0 0 0 / 0.5); box-shadow: none; }
+
+  /* Card expanded body */
+  .expand-body {
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    padding: 12px 4px 4px;
+    border-top: 1px dashed color-mix(in oklab, var(--rar, var(--vapor-cyan)) 30%, transparent);
+    z-index: 2;
+  }
+  .expand-section h4 {
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.3em; color: var(--vapor-cyan);
+    text-transform: uppercase; margin: 0 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+  }
+  .desc-block {
+    font-family: var(--font-mono); font-size: 11px; line-height: 1.5; color: var(--ink-dim);
+  }
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
+    margin-top: 10px;
+  }
+  .stat {
+    background: oklch(0 0 0 / 0.4); border: 1px solid color-mix(in oklab, var(--vapor-cyan) 18%, transparent);
+    padding: 6px 8px;
+  }
+  .stat .k { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.22em; color: var(--ink-faint); text-transform: uppercase;}
+  .stat .v { font-family: var(--font-display); font-size: 16px; color: var(--ink); margin-top: 2px;}
+
+  /* Reviews */
+  .review-thread { display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; padding-right: 4px;}
+  .review-thread::-webkit-scrollbar { width: 4px;}
+  .review-thread::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--vapor-cyan) 30%, transparent);}
+  .review {
+    padding: 8px 10px;
+    background: oklch(0 0 0 / 0.35);
+    border-left: 2px solid color-mix(in oklab, var(--rar, var(--vapor-cyan)) 60%, transparent);
+    position: relative;
+  }
+  .review-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;}
+  .review-author {
+    font-family: var(--font-orbit); font-weight: 600; font-size: 10px; letter-spacing: 0.12em; color: var(--ink); text-transform: uppercase;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .review-author .verified { color: var(--pos); font-size: 10px;}
+  .review-author .species { color: var(--ink-faint); font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.2em; font-weight: 400;}
+  .review-stars { color: var(--zero); font-size: 12px; letter-spacing: 0.06em; line-height: 1;}
+  .review-stars .empty { color: oklch(0.30 0.02 60);}
+  .review-body {
+    font-family: var(--font-mono); font-size: 10.5px; line-height: 1.45; color: var(--ink-dim);
+  }
+  .review-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 5px; padding-top: 4px;
+    border-top: 1px dashed color-mix(in oklab, var(--vapor-cyan) 12%, transparent);
+    font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.2em; color: var(--ink-faint); text-transform: uppercase;
+  }
+  .review-foot .helpful { color: var(--vapor-cyan);}
+  .review-reply {
+    margin-top: 6px; padding: 6px 8px;
+    background: oklch(0 0 0 / 0.5);
+    border-left: 2px solid var(--vapor-pink);
+    font-family: var(--font-mono); font-size: 10px; line-height: 1.4; color: var(--ink-dim);
+  }
+  .review-reply .reply-author {
+    font-family: var(--font-orbit); font-weight: 700; font-size: 9px; letter-spacing: 0.18em; color: var(--vapor-pink); text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  /* Recommended strip in expand */
+  .recs-row {
+    grid-column: 1 / -1;
+    display: flex; flex-direction: column; gap: 8px;
+    padding-top: 10px; margin-top: 4px;
+    border-top: 1px solid color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+  }
+  .recs-row h4 {
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.28em; color: var(--vapor-pink);
+    text-transform: uppercase; margin: 0;
+  }
+  .recs-row h4 .hint { color: var(--ink-faint); letter-spacing: 0.18em; margin-left: 8px; font-weight: 400;}
+  .recs {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .rec {
+    display: grid; grid-template-columns: 56px 1fr auto; gap: 8px; align-items: center;
+    padding: 8px;
+    background: oklch(0 0 0 / 0.4);
+    border: 1px solid color-mix(in oklab, var(--rar2, var(--vapor-cyan)) 35%, transparent);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .rec:hover { border-color: var(--rar2, var(--vapor-cyan)); transform: translateY(-1px);}
+  .rec .glyph-mini {
+    font-family: var(--font-display); font-size: 30px; line-height: 1;
+    color: var(--rar2, var(--vapor-cyan));
+    text-shadow: 0 0 calc(8px * var(--glow-mult)) color-mix(in oklab, var(--rar2, var(--vapor-cyan)) 60%, transparent);
+    text-align: center;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 6px, color-mix(in oklab, var(--rar2, var(--vapor-cyan)) 8%, transparent) 6px 7px),
+      repeating-linear-gradient(90deg, transparent 0 6px, color-mix(in oklab, var(--rar2, var(--vapor-cyan)) 8%, transparent) 6px 7px),
+      oklch(0 0 0 / 0.4);
+    border: 1px solid color-mix(in oklab, var(--rar2, var(--vapor-cyan)) 30%, transparent);
+    padding: 8px 0;
+  }
+  .rec-text { display: flex; flex-direction: column; gap: 2px; min-width: 0;}
+  .rec-name { font-family: var(--font-orbit); font-weight: 600; font-size: 10px; letter-spacing: 0.05em; color: var(--ink); text-transform: uppercase; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+  .rec-stars { font-size: 10px; color: var(--zero); letter-spacing: 0.06em; line-height: 1;}
+  .rec-stars .empty { color: oklch(0.30 0.02 60);}
+  .rec-stars .ct { color: var(--ink-faint); margin-left: 4px; font-family: var(--font-mono); letter-spacing: 0.18em;}
+  .rec-price { font-family: var(--font-display); font-size: 16px; color: var(--vapor-pink); letter-spacing: 0.04em;}
+
+  /* ================= Right side rail ================= */
+  .side-rail { display: flex; flex-direction: column; gap: 12px; }
+  .side-card {
+    background: oklch(0 0 0 / 0.32);
+    border: 1px solid color-mix(in oklab, var(--vapor-cyan) 22%, transparent);
+    padding: 12px 14px;
+    position: relative;
+  }
+  .side-card::before {
+    content:''; position:absolute; inset: 0; pointer-events:none;
+    background: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in oklab, var(--vapor-cyan) 3%, transparent) 3px 4px);
+  }
+  .side-card .head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 8px; margin-bottom: 8px;
+    border-bottom: 1px dashed color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.28em; color: var(--vapor-cyan); text-transform: uppercase;
+  }
+  .side-card .head .hint { color: var(--ink-faint); letter-spacing: 0.18em;}
+
+  .cart-mini { display: flex; flex-direction: column; gap: 8px; min-height: 80px;}
+  .cart-empty {
+    font-family: var(--font-mono); font-size: 10px; line-height: 1.5; color: var(--ink-faint);
+    text-align: center; padding: 18px 4px; font-style: italic;
+  }
+  .cart-line {
+    display: grid; grid-template-columns: 26px 1fr auto auto; gap: 8px; align-items: center;
+    padding: 6px 8px;
+    background: oklch(0 0 0 / 0.35);
+    border-left: 2px solid var(--rar, var(--vapor-cyan));
+    font-family: var(--font-mono); font-size: 10px;
+  }
+  .cart-line .gly { font-family: var(--font-display); font-size: 18px; color: var(--rar, var(--vapor-cyan)); text-align: center;}
+  .cart-line .name { color: var(--ink); font-family: var(--font-orbit); font-weight: 600; font-size: 9.5px; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+  .cart-line .qty {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--font-display); font-size: 13px; color: var(--vapor-cyan);
+  }
+  .cart-line .qty button {
+    background: oklch(0 0 0 / 0.6); border: 1px solid color-mix(in oklab, var(--vapor-cyan) 30%, transparent);
+    color: var(--ink-dim); width: 16px; height: 16px; cursor: pointer; line-height: 1;
+    font-family: var(--font-mono); font-size: 11px; padding: 0;
+  }
+  .cart-line .qty button:hover { color: var(--vapor-cyan); border-color: var(--vapor-cyan);}
+  .cart-line .ln-price { color: var(--vapor-pink); font-family: var(--font-display); font-size: 14px; letter-spacing: 0.04em;}
+  .cart-totals {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 8px 10px;
+    background: oklch(0 0 0 / 0.5);
+    border: 1px dashed color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+    margin-top: 4px;
+  }
+  .cart-totals .row { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-dim);}
+  .cart-totals .row.total {
+    font-family: var(--font-orbit); font-weight: 700; font-size: 12px; letter-spacing: 0.12em; color: var(--ink);
+    padding-top: 5px; margin-top: 3px;
+    border-top: 1px solid color-mix(in oklab, var(--vapor-cyan) 30%, transparent);
+  }
+  .cart-totals .row.total .v { color: var(--vapor-pink); font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em; line-height: 1;}
+  .cart-totals .row .v { color: var(--ink); font-family: var(--font-display); font-size: 14px; letter-spacing: 0.04em;}
+  .cart-totals .row.discount .v { color: var(--pos);}
+  .cart-totals .row.markup .v { color: var(--neg);}
+  .check-out-btn {
+    width: 100%; padding: 10px 14px; margin-top: 4px;
+    background: linear-gradient(90deg, color-mix(in oklab, var(--vapor-pink) 30%, transparent), color-mix(in oklab, var(--vapor-cyan) 22%, transparent));
+    border: 1px solid var(--vapor-pink); color: var(--ink);
+    font-family: var(--font-orbit); font-weight: 700; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.15s;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    text-shadow: 0 0 6px color-mix(in oklab, var(--vapor-pink) 60%, transparent);
+  }
+  .check-out-btn:hover { box-shadow: 0 0 calc(20px * var(--glow-mult)) color-mix(in oklab, var(--vapor-pink) 60%, transparent);}
+  .check-out-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .check-out-btn:disabled:hover { box-shadow: none;}
+
+  /* Rumors ticker */
+  .ticker {
+    overflow: hidden; height: 18px; position: relative;
+  }
+  .ticker-track { position: absolute; top: 0; left: 0; white-space: nowrap; animation: tickerScroll 60s linear infinite;}
+  .ticker-track span {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; color: var(--ink-dim);
+    margin-right: 32px;
+  }
+  .ticker-track span .em { color: var(--vapor-cyan);}
+  .ticker-track span .hot { color: var(--neg);}
+  @keyframes tickerScroll { 0% { transform: translateX(0);} 100% { transform: translateX(-50%);} }
+
+  /* ================= Cart full tab ================= */
+  .cart-full {
+    display: grid; grid-template-columns: 1fr 320px; gap: 14px;
+    padding: 0 6px;
+  }
+  .cart-list { display: flex; flex-direction: column; gap: 6px;}
+  .cart-row {
+    display: grid; grid-template-columns: 70px 1fr auto auto auto; gap: 12px; align-items: center;
+    padding: 10px 12px;
+    background: oklch(0 0 0 / 0.4);
+    border: 1px solid color-mix(in oklab, var(--rar, var(--vapor-cyan)) 30%, transparent);
+    border-left: 3px solid var(--rar, var(--vapor-cyan));
+  }
+  .cart-row .glyph-mini {
+    font-family: var(--font-display); font-size: 38px; line-height: 1;
+    color: var(--rar, var(--vapor-cyan));
+    text-shadow: 0 0 calc(10px * var(--glow-mult)) color-mix(in oklab, var(--rar, var(--vapor-cyan)) 60%, transparent);
+    text-align: center;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 6px, color-mix(in oklab, var(--rar, var(--vapor-cyan)) 8%, transparent) 6px 7px),
+      repeating-linear-gradient(90deg, transparent 0 6px, color-mix(in oklab, var(--rar, var(--vapor-cyan)) 8%, transparent) 6px 7px),
+      oklch(0 0 0 / 0.4);
+    border: 1px solid color-mix(in oklab, var(--rar, var(--vapor-cyan)) 30%, transparent);
+    padding: 8px 0;
+  }
+  .cart-row-text { display: flex; flex-direction: column; gap: 4px;}
+  .cart-row-name { font-family: var(--font-orbit); font-weight: 700; font-size: 13px; letter-spacing: 0.06em; color: var(--ink); text-transform: uppercase;}
+  .cart-row-meta { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; color: var(--ink-faint); text-transform: uppercase;}
+  .cart-row-meta .rar { color: var(--rar, var(--vapor-cyan));}
+  .cart-row-qty {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-display); font-size: 18px; color: var(--vapor-cyan);
+  }
+  .cart-row-qty button {
+    background: oklch(0 0 0 / 0.6); border: 1px solid color-mix(in oklab, var(--vapor-cyan) 30%, transparent);
+    color: var(--ink-dim); width: 22px; height: 22px; cursor: pointer; line-height: 1;
+    font-family: var(--font-mono); font-size: 14px;
+  }
+  .cart-row-qty button:hover { color: var(--vapor-cyan); border-color: var(--vapor-cyan);}
+  .cart-row-price { font-family: var(--font-display); font-size: 22px; color: var(--vapor-pink); letter-spacing: 0.04em; min-width: 90px; text-align: right;}
+  .cart-row-x {
+    background: transparent; border: 1px solid color-mix(in oklab, var(--neg) 50%, transparent); color: var(--neg);
+    width: 24px; height: 24px; cursor: pointer; line-height: 1; font-family: var(--font-mono); font-size: 11px; padding: 0;
+  }
+  .cart-row-x:hover { background: color-mix(in oklab, var(--neg) 18%, transparent);}
+
+  /* Haggle panel */
+  .haggle {
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 12px 14px;
+    background: oklch(0 0 0 / 0.45);
+    border: 1px solid color-mix(in oklab, var(--vapor-pink) 35%, transparent);
+    border-left: 3px solid var(--vapor-pink);
+    position: relative;
+  }
+  .haggle::before {
+    content: 'NEGOTIATION'; position: absolute; top: -8px; left: 12px;
+    background: var(--screen); padding: 0 6px;
+    font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.34em; color: var(--vapor-pink);
+  }
+  .haggle-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; color: var(--ink-dim); text-transform: uppercase;}
+  .haggle-row .v { font-family: var(--font-display); font-size: 16px; color: var(--vapor-cyan); letter-spacing: 0.04em;}
+  .haggle-roll-btn {
+    padding: 8px 12px;
+    background: linear-gradient(90deg, color-mix(in oklab, var(--vapor-pink) 28%, transparent), color-mix(in oklab, var(--vapor-purple) 22%, transparent));
+    border: 1px solid var(--vapor-pink); color: var(--ink);
+    font-family: var(--font-orbit); font-weight: 700; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+    cursor: pointer; clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    transition: all 0.15s;
+  }
+  .haggle-roll-btn:hover { box-shadow: 0 0 14px color-mix(in oklab, var(--vapor-pink) 60%, transparent);}
+  .haggle-die {
+    display: flex; align-items: center; justify-content: center;
+    width: 60px; height: 60px;
+    background: oklch(0 0 0 / 0.6);
+    border: 1px solid color-mix(in oklab, var(--vapor-cyan) 40%, transparent);
+    font-family: var(--font-display); font-size: 30px; color: var(--vapor-cyan);
+    text-shadow: 0 0 12px color-mix(in oklab, var(--vapor-cyan) 60%, transparent);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+  .haggle-die.rolling { animation: dieRoll 0.5s linear infinite;}
+  @keyframes dieRoll { 0% { transform: rotate(0);} 100% { transform: rotate(360deg);} }
+  .haggle-status {
+    font-family: var(--font-mono); font-size: 10.5px; line-height: 1.4; color: var(--ink-dim); letter-spacing: 0.06em;
+  }
+  .haggle-status .em { color: var(--vapor-cyan); font-family: var(--font-display); font-size: 13px; letter-spacing: 0.06em;}
+  .haggle-status .em.pos { color: var(--pos);}
+  .haggle-status .em.neg { color: var(--neg);}
+  .haggle-row .skill-input {
+    background: oklch(0 0 0 / 0.5); border: 1px solid color-mix(in oklab, var(--vapor-cyan) 30%, transparent);
+    color: var(--vapor-cyan); font-family: var(--font-display); font-size: 16px; width: 60px; padding: 4px 8px;
+    text-align: center; outline: none;
+  }
+  .haggle-row .skill-input:focus { border-color: var(--vapor-cyan); box-shadow: 0 0 8px color-mix(in oklab, var(--vapor-cyan) 40%, transparent);}
+
+  /* GM-only adjuster */
+  .gm-adjust {
+    display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center;
+    padding: 8px 10px;
+    background: oklch(0 0 0 / 0.35);
+    border: 1px dashed color-mix(in oklab, var(--zero) 40%, transparent);
+    margin-top: 6px;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; color: var(--zero); text-transform: uppercase;
+  }
+  .gm-adjust input {
+    background: oklch(0 0 0 / 0.6); border: 1px solid color-mix(in oklab, var(--zero) 40%, transparent);
+    color: var(--zero); font-family: var(--font-display); font-size: 14px; width: 70px; padding: 4px 8px;
+    text-align: right; outline: none;
+  }
+  .gm-adjust .hint { color: var(--ink-faint); letter-spacing: 0.16em; font-size: 8px; margin-top: 4px; grid-column: 1 / -1;}
+
+  /* ================= Sell tab ================= */
+  .sell-layout {
+    display: grid; grid-template-columns: 1fr 320px; gap: 14px;
+    padding: 0 6px;
+  }
+  .sell-list { display: flex; flex-direction: column; gap: 6px;}
+  .sell-row {
+    display: grid; grid-template-columns: 60px 1fr auto auto auto; gap: 12px; align-items: center;
+    padding: 8px 10px;
+    background: oklch(0 0 0 / 0.35);
+    border: 1px solid color-mix(in oklab, var(--rar, var(--vapor-cyan)) 30%, transparent);
+    border-left: 3px solid var(--rar, var(--vapor-cyan));
+    transition: all 0.15s;
+  }
+  .sell-row:hover { background: oklch(0 0 0 / 0.55);}
+  .sell-row.offered {
+    background: oklch(var(--vapor-pink) / 0.08);
+    border-color: var(--vapor-pink);
+    border-left-color: var(--vapor-pink);
+  }
+  .sell-row .glyph-mini {
+    font-family: var(--font-display); font-size: 30px; line-height: 1;
+    color: var(--rar, var(--vapor-cyan));
+    text-align: center; padding: 6px 0;
+    background: oklch(0 0 0 / 0.4);
+    border: 1px solid color-mix(in oklab, var(--rar, var(--vapor-cyan)) 30%, transparent);
+  }
+  .sell-row-name { font-family: var(--font-orbit); font-weight: 600; font-size: 11px; letter-spacing: 0.05em; color: var(--ink); text-transform: uppercase;}
+  .sell-row-meta { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; color: var(--ink-faint); text-transform: uppercase; margin-top: 2px;}
+  .sell-row-base { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.18em; color: var(--ink-faint); text-transform: uppercase;}
+  .sell-row-base .v { color: var(--ink-dim); font-family: var(--font-display); font-size: 14px; margin-left: 4px;}
+  .sell-row-offer {
+    font-family: var(--font-display); font-size: 18px; color: var(--vapor-pink); letter-spacing: 0.04em;
+    min-width: 80px; text-align: right;
+  }
+  .sell-row-offer .strike { color: var(--ink-faint); font-size: 11px; text-decoration: line-through; margin-right: 6px;}
+  .sell-row-btn {
+    padding: 5px 10px;
+    background: oklch(0 0 0 / 0.6);
+    border: 1px solid color-mix(in oklab, var(--vapor-pink) 50%, transparent);
+    color: var(--vapor-pink);
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+    cursor: pointer; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+  }
+  .sell-row-btn:hover { background: color-mix(in oklab, var(--vapor-pink) 20%, transparent);}
+  .sell-row-btn.added { background: color-mix(in oklab, var(--vapor-pink) 25%, transparent); color: var(--ink); border-color: var(--vapor-pink);}
+
+  .offer-summary {
+    background: oklch(0 0 0 / 0.5);
+    border: 1px solid var(--vapor-pink);
+    padding: 14px;
+  }
+  .offer-summary h4 {
+    font-family: var(--font-orbit); font-weight: 700; font-size: 12px; letter-spacing: 0.18em; color: var(--vapor-pink); text-transform: uppercase;
+    margin: 0 0 10px;
+    text-shadow: 0 0 8px color-mix(in oklab, var(--vapor-pink) 50%, transparent);
+  }
+  .offer-line { display: grid; grid-template-columns: 1fr auto; gap: 10px;
+    padding: 5px 0; border-bottom: 1px dashed color-mix(in oklab, var(--vapor-cyan) 18%, transparent);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; color: var(--ink-dim);}
+  .offer-line:last-child { border-bottom: none;}
+  .offer-line .v { font-family: var(--font-display); font-size: 14px; color: var(--ink); letter-spacing: 0.04em;}
+  .offer-total {
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid var(--vapor-cyan);
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-orbit); font-weight: 700; font-size: 12px; letter-spacing: 0.18em; color: var(--ink); text-transform: uppercase;
+  }
+  .offer-total .v { font-family: var(--font-display); font-size: 30px; color: var(--vapor-pink); letter-spacing: 0.04em;
+    text-shadow: 0 0 calc(12px * var(--glow-mult)) color-mix(in oklab, var(--vapor-pink) 60%, transparent);}
+  .offer-actions { display: flex; gap: 8px; margin-top: 10px;}
+  .offer-actions button { flex: 1; padding: 8px;
+    font-family: var(--font-orbit); font-weight: 700; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    cursor: pointer; clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);}
+  .offer-submit {
+    background: linear-gradient(90deg, color-mix(in oklab, var(--vapor-pink) 28%, transparent), color-mix(in oklab, var(--vapor-cyan) 22%, transparent));
+    border: 1px solid var(--vapor-pink); color: var(--ink);}
+  .offer-submit:hover { box-shadow: 0 0 12px var(--vapor-pink);}
+  .offer-clear {
+    background: oklch(0 0 0 / 0.6); border: 1px solid color-mix(in oklab, var(--ink-faint) 60%, transparent); color: var(--ink-dim);
+  }
+
+  /* Offer status + banter */
+  .offer-banter {
+    margin-top: 10px; padding: 8px 10px;
+    background: oklch(0 0 0 / 0.45);
+    border-left: 2px solid var(--vapor-cyan);
+    font-family: var(--font-mono); font-size: 11px; line-height: 1.4; color: var(--ink-dim); font-style: italic;
+    min-height: 36px;
+  }
+  .offer-banter .em { color: var(--vapor-pink); font-style: normal;}
+  .offer-state {
+    margin-top: 6px;
+    padding: 6px 10px;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+    border: 1px solid var(--c, var(--vapor-cyan)); color: var(--c, var(--vapor-cyan));
+    text-align: center;
+    background: color-mix(in oklab, var(--c, var(--vapor-cyan)) 12%, transparent);
+  }
+  .offer-state.accepted { --c: var(--pos);}
+  .offer-state.pending  { --c: var(--zero);}
+  .offer-state.denied   { --c: var(--neg);}
+
+  /* ================= Confirmation modal ================= */
+  .modal-back {
+    position: absolute; inset: 0; z-index: 80;
+    background: oklch(0 0 0 / 0.78);
+    backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .modal-back.open { opacity: 1; pointer-events: auto;}
+  .modal {
+    width: 600px; max-width: 90%;
+    background: linear-gradient(180deg, var(--screen-2) 0%, var(--screen) 100%);
+    border: 1px solid var(--vapor-cyan);
+    box-shadow: 0 0 60px color-mix(in oklab, var(--vapor-cyan) 30%, transparent), 0 24px 70px oklch(0 0 0 / 0.7);
+    transform: translateY(20px) scale(0.96); transition: transform 0.3s;
+  }
+  .modal-back.open .modal { transform: translateY(0) scale(1);}
+  .modal-head {
+    padding: 14px 18px;
+    background: linear-gradient(90deg, color-mix(in oklab, var(--vapor-pink) 25%, transparent), color-mix(in oklab, var(--vapor-cyan) 18%, transparent));
+    border-bottom: 1px solid var(--vapor-cyan);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .modal-head .title {
+    font-family: var(--font-orbit); font-weight: 900; font-size: 18px; letter-spacing: 0.18em; color: var(--ink); text-transform: uppercase;
+    text-shadow: 0 0 10px color-mix(in oklab, var(--vapor-pink) 50%, transparent);
+  }
+  .modal-head .x {
+    background: transparent; border: 1px solid color-mix(in oklab, var(--ink) 40%, transparent); color: var(--ink-dim);
+    width: 24px; height: 24px; cursor: pointer; font-family: var(--font-mono); font-size: 12px; line-height: 1; padding: 0;
+  }
+  .modal-head .x:hover { color: var(--vapor-pink); border-color: var(--vapor-pink);}
+  .modal-body { padding: 18px; display: flex; flex-direction: column; gap: 12px;}
+  .modal-rendarr {
+    font-family: var(--font-mono); font-size: 13px; line-height: 1.5; color: var(--ink-dim); font-style: italic;
+    padding: 10px 12px;
+    background: oklch(0 0 0 / 0.45);
+    border-left: 2px solid var(--vapor-pink);
+  }
+  .modal-rendarr .em { color: var(--vapor-pink); font-style: normal; font-family: var(--font-orbit); letter-spacing: 0.08em;}
+  .modal-summary {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 10px 12px;
+    background: oklch(0 0 0 / 0.45);
+    border: 1px dashed color-mix(in oklab, var(--vapor-cyan) 30%, transparent);
+  }
+  .modal-summary .row {
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--ink-dim);
+  }
+  .modal-summary .row.total {
+    margin-top: 6px; padding-top: 6px;
+    border-top: 1px solid var(--vapor-cyan);
+    font-family: var(--font-orbit); font-weight: 700; font-size: 13px; letter-spacing: 0.18em; color: var(--ink); text-transform: uppercase;
+  }
+  .modal-summary .row .v { color: var(--ink); font-family: var(--font-display); font-size: 14px; letter-spacing: 0.04em;}
+  .modal-summary .row.total .v { color: var(--vapor-pink); font-size: 26px;
+    text-shadow: 0 0 10px color-mix(in oklab, var(--vapor-pink) 50%, transparent);}
+  .modal-actions { display: flex; gap: 10px; padding: 0 18px 18px;}
+  .modal-actions button { flex: 1; padding: 10px;
+    font-family: var(--font-orbit); font-weight: 700; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    cursor: pointer; clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);}
+  .modal-confirm {
+    background: linear-gradient(90deg, color-mix(in oklab, var(--vapor-pink) 30%, transparent), color-mix(in oklab, var(--vapor-cyan) 22%, transparent));
+    border: 1px solid var(--vapor-pink); color: var(--ink);}
+  .modal-confirm:hover { box-shadow: 0 0 18px var(--vapor-pink);}
+  .modal-cancel { background: oklch(0 0 0 / 0.6); border: 1px solid color-mix(in oklab, var(--ink-faint) 60%, transparent); color: var(--ink-dim);}
+
+  /* ================= Footer ================= */
+  .footer-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px;
+    border-top: 1px solid color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform:uppercase; color:var(--ink-dim);
+    position: relative; z-index: 10;
+  }
+  .footer-bar .left, .footer-bar .right { display: flex; gap: 18px; align-items: center;}
+  .footer-bar .quote { color: var(--ink-faint); font-style: italic; letter-spacing: 0.08em; text-transform: none; font-size: 10px;}
+  .nav-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border: 1px solid color-mix(in oklab, var(--vapor-cyan) 40%, transparent); background: color-mix(in oklab, var(--vapor-cyan) 6%, transparent);
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.24em; color: var(--vapor-cyan); cursor: pointer;
+  }
+  .nav-pill:hover { border-color: var(--vapor-cyan); background: color-mix(in oklab, var(--vapor-cyan) 14%, transparent); color: var(--ink);}
+  .nav-pill .key { font-family: var(--font-display); font-size: 11px; color: var(--vapor-pink); letter-spacing: 0;}
+
+  /* Tab visibility */
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* Toast */
+  .toast {
+    position: fixed; right: 28px; bottom: 28px; z-index: 200;
+    padding: 10px 16px;
+    background: linear-gradient(90deg, color-mix(in oklab, var(--vapor-pink) 25%, transparent), color-mix(in oklab, var(--vapor-cyan) 18%, transparent));
+    border: 1px solid var(--vapor-cyan);
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.22em; color: var(--ink); text-transform: uppercase;
+    box-shadow: 0 8px 28px oklch(0 0 0 / 0.5), 0 0 24px color-mix(in oklab, var(--vapor-cyan) 30%, transparent);
+    transform: translateY(80px); opacity: 0; transition: all 0.32s;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1;}
+
+  @media (prefers-reduced-motion: reduce) {
+    .tablet, .scan-v, .ticker-track, .haggle-die.rolling, .rendarr-portrait::after { animation: none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="tablet">
+    <div class="rivet tl"></div><div class="rivet tr"></div><div class="rivet bl"></div><div class="rivet br"></div>
+    <div class="bezel-led a"></div><div class="bezel-led b"></div><div class="bezel-led c"></div><div class="bezel-led d"></div>
+    <div class="bezel-serial">SN 7741-Δ-2206 · OS 4.7.2</div>
+    <div class="bezel-manu">CZERKA · DATAPAD MK-VII</div>
+
+    <div class="screen">
+      <div class="scan-v"></div>
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+
+      <!-- HUD -->
+      <div class="hud">
+        <div class="hud-left">
+          <span class="tag"><span class="dot"></span> ONLINE</span>
+          <span class="hud-title">RENDARR'S EXCHANGE</span>
+          <span class="tag"><span class="dot warn"></span> NAR SHADDAA UPPER</span>
+        </div>
+        <div class="hud-right">
+          <span id="clock">— : —</span>
+          <span class="signal"><span></span><span></span><span></span><span></span></span>
+          <span>STARDOCK 7 · SLIP G-12</span>
+          <span>SEC 2 · TIER 4</span>
+        </div>
+      </div>
+
+      <!-- Rendarr greeter / page header -->
+      <div class="page-header">
+        <div class="rendarr-portrait" title="Rendarr — Proprietor">
+          <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.5">
+            <!-- helmet/skull-ish silhouette: ex-soldier turned merchant -->
+            <path d="M22 78 q0 -28 28 -34 t28 34" />
+            <path d="M28 60 q-3 -28 22 -34 t22 34" opacity="0.7"/>
+            <line x1="36" y1="46" x2="44" y2="46"/>
+            <line x1="56" y1="46" x2="64" y2="46"/>
+            <path d="M40 56 q5 4 10 4 t10 -4" opacity="0.7"/>
+            <!-- scar -->
+            <path d="M62 30 l4 14" opacity="0.55" stroke-width="1"/>
+            <!-- collar -->
+            <path d="M28 78 l44 0" opacity="0.4"/>
+          </svg>
+        </div>
+        <div class="rendarr-meta">
+          <div class="rendarr-name"><span class="mark">⚐</span>RENDARR</div>
+          <div class="rendarr-sub">PROPRIETOR · EX-CLONE · STOCK INDEX 4,712</div>
+        </div>
+        <div class="credits-block">
+          <span class="lbl">Credit Balance</span>
+          <span class="val" id="credits-val">2,400</span>
+          <span class="delta" id="credits-delta">▸ wallet stable</span>
+        </div>
+        <div class="rendarr-quote" id="rendarr-quote">
+          <span id="rendarr-quote-text">Boot the terminal, friend. I don't care why you're here, I care what you're spending.</span><span class="typing"></span>
+        </div>
+      </div>
+
+      <!-- Tab buttons -->
+      <div class="tabs-row">
+        <button class="tab-btn active" data-tab="browse"><span class="glyph">A</span><span>Browse</span></button>
+        <button class="tab-btn" data-tab="cart"><span class="glyph">O</span><span>Cart</span><span class="count" id="cart-count">0</span></button>
+        <button class="tab-btn" data-tab="sell"><span class="glyph">T</span><span>Sell</span></button>
+        <button class="tab-btn" data-tab="orders"><span class="glyph">Eo</span><span>Orders</span></button>
+      </div>
+
+      <!-- Content panes -->
+      <div id="content">
+
+        <!-- BROWSE TAB -->
+        <div class="tab-pane active" data-tab="browse">
+
+          <!-- Filters -->
+          <div class="filters">
+            <div class="filter-search">
+              <span class="ico">⌕</span>
+              <input type="text" id="search" placeholder="Search the floor (name, slot, tag)…">
+            </div>
+            <div class="filter-group" id="cat-group">
+              <span class="filter-lbl">Aisle</span>
+              <button class="chip active" data-cat="all">All</button>
+              <button class="chip" data-cat="weapons">Weapons</button>
+              <button class="chip" data-cat="armor">Armor</button>
+              <button class="chip" data-cat="equipment">Gear</button>
+              <button class="chip" data-cat="droids">Droids</button>
+              <button class="chip" data-cat="vehicles">Vehicles</button>
+            </div>
+            <div class="filter-group" id="rar-group">
+              <span class="filter-lbl">Rarity</span>
+              <button class="chip active" data-rar="all">All</button>
+              <button class="chip" data-rar="common" style="--c: var(--rar-common);"><span class="swatch"></span>Common</button>
+              <button class="chip" data-rar="uncommon" style="--c: var(--rar-uncommon);"><span class="swatch"></span>Uncommon</button>
+              <button class="chip" data-rar="rare" style="--c: var(--rar-rare);"><span class="swatch"></span>Rare</button>
+              <button class="chip" data-rar="restricted" style="--c: var(--rar-restrict);"><span class="swatch"></span>Restricted</button>
+              <button class="chip" data-rar="illegal" style="--c: var(--rar-illegal);"><span class="swatch"></span>Illegal</button>
+            </div>
+            <div class="price-range">
+              <span class="filter-lbl">Max</span>
+              <input type="range" id="price-max" min="100" max="50000" step="100" value="50000">
+              <span class="v" id="price-max-val">∞</span>
+            </div>
+          </div>
+
+          <!-- Browse layout -->
+          <div class="browse-layout">
+            <div class="cards-grid" id="cards-grid"></div>
+            <div class="side-rail">
+              <div class="side-card">
+                <div class="head"><span>◇ Cart</span><span class="hint" id="cart-hint">empty</span></div>
+                <div class="cart-mini" id="cart-mini">
+                  <div class="cart-empty">No items selected.<br>Click a card's <span style="color:var(--vapor-pink)">+ ADD</span> to start a haul.</div>
+                </div>
+                <div class="cart-totals" id="cart-totals" style="display:none;">
+                  <div class="row"><span>Subtotal</span><span class="v" id="mini-subtotal">0 cr</span></div>
+                  <div class="row markup" id="mini-markup-row" style="display:none;"><span>Wartime markup</span><span class="v" id="mini-markup">0</span></div>
+                  <div class="row discount" id="mini-discount-row" style="display:none;"><span>Haggle discount</span><span class="v" id="mini-discount">0</span></div>
+                  <div class="row total"><span>Total</span><span class="v" id="mini-total">0 cr</span></div>
+                </div>
+                <button class="check-out-btn" id="mini-checkout" disabled>▸ Open Cart</button>
+              </div>
+              <div class="side-card">
+                <div class="head"><span>◇ Floor Chatter</span><span class="hint">live</span></div>
+                <div class="ticker"><div class="ticker-track" id="ticker"></div></div>
+              </div>
+              <div class="side-card">
+                <div class="head"><span>◇ Wallet</span><span class="hint">SAGA std.</span></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px;">
+                  <div style="background:oklch(0 0 0 / 0.4); border: 1px solid color-mix(in oklab, var(--vapor-cyan) 18%, transparent); padding:8px 10px;">
+                    <div style="font-family:var(--font-mono); font-size:8px; letter-spacing:0.25em; color:var(--ink-faint); text-transform:uppercase;">Balance</div>
+                    <div style="font-family:var(--font-display); font-size:20px; color:var(--vapor-pink); margin-top:3px; line-height:1.1;" id="wallet-balance">2,400</div>
+                  </div>
+                  <div style="background:oklch(0 0 0 / 0.4); border: 1px solid color-mix(in oklab, var(--vapor-cyan) 18%, transparent); padding:8px 10px;">
+                    <div style="font-family:var(--font-mono); font-size:8px; letter-spacing:0.25em; color:var(--ink-faint); text-transform:uppercase;">After haul</div>
+                    <div style="font-family:var(--font-display); font-size:20px; color:var(--vapor-cyan); margin-top:3px; line-height:1.1;" id="wallet-after">2,400</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CART TAB -->
+        <div class="tab-pane" data-tab="cart">
+          <div class="cart-full">
+            <div class="cart-list" id="cart-list">
+              <div class="cart-empty" style="padding: 60px 12px; text-align:center; font-family:var(--font-mono); font-size: 12px; color: var(--ink-faint); font-style: italic;">
+                Empty cart. Rendarr says: <span style="color:var(--vapor-pink); font-style:normal;">"Browsing's free, kid. Spending isn't."</span>
+              </div>
+            </div>
+            <div class="side-rail">
+              <div class="side-card">
+                <div class="head"><span>◇ Tally</span><span class="hint">running total</span></div>
+                <div class="cart-totals">
+                  <div class="row"><span>Items</span><span class="v" id="full-count">0</span></div>
+                  <div class="row"><span>Subtotal</span><span class="v" id="full-subtotal">0 cr</span></div>
+                  <div class="row markup" id="full-markup-row" style="display:none;"><span>Wartime markup</span><span class="v" id="full-markup">0</span></div>
+                  <div class="row discount" id="full-discount-row" style="display:none;"><span>Haggle discount</span><span class="v" id="full-discount">0</span></div>
+                  <div class="row total"><span>Total</span><span class="v" id="full-total">0 cr</span></div>
+                </div>
+              </div>
+
+              <div class="haggle">
+                <div class="haggle-row">
+                  <div style="display:flex;flex-direction:column;gap:3px;">
+                    <span>Persuasion modifier</span>
+                    <span style="color:var(--ink-faint); font-size:8px; letter-spacing:0.18em;">your character's bonus</span>
+                  </div>
+                  <input type="number" class="skill-input" id="skill-mod" value="6">
+                </div>
+                <div style="display:flex; align-items:center; gap:12px;">
+                  <div class="haggle-die" id="haggle-die">d20</div>
+                  <button class="haggle-roll-btn" id="haggle-roll">▸ Roll persuasion</button>
+                </div>
+                <div class="haggle-status" id="haggle-status">
+                  Rolling lowers Rendarr's posted price. <span class="em">GM decides the discount</span> from the result you show them.
+                </div>
+                <div class="gm-adjust" id="gm-adjust" style="display:none;">
+                  <span>GM-set discount</span>
+                  <span><input type="number" id="gm-discount-input" value="0" step="5" min="0" max="50">%</span>
+                  <span class="hint">▸ Applies to subtotal. 0–50% range. Ledger-only; flip the panel off when done.</span>
+                </div>
+              </div>
+
+              <button class="check-out-btn" id="checkout-btn" disabled>▸ Confirm Purchase</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SELL TAB -->
+        <div class="tab-pane" data-tab="sell">
+          <div class="sell-layout">
+            <div class="sell-list" id="sell-list"></div>
+            <div class="side-rail">
+              <div class="offer-summary">
+                <h4>◇ Sell Offer</h4>
+                <div id="offer-lines">
+                  <div style="font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); font-style:italic; padding:14px 0;">
+                    Select inventory items to offer. Rendarr pays at <span style="color:var(--vapor-cyan); font-style:normal;">50% base</span> by default; he might come up if you make him work.
+                  </div>
+                </div>
+                <div class="offer-total">
+                  <span>You receive</span>
+                  <span class="v" id="offer-total">0 cr</span>
+                </div>
+                <div class="offer-actions">
+                  <button class="offer-clear" id="offer-clear">Clear</button>
+                  <button class="offer-submit" id="offer-submit" disabled>▸ Make Offer</button>
+                </div>
+                <div class="offer-banter" id="offer-banter">
+                  <span class="em">Rendarr:</span> Show me what you've got. I might be in a buying mood — or might not.
+                </div>
+                <div class="offer-state" id="offer-state" style="display:none;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ORDERS TAB -->
+        <div class="tab-pane" data-tab="orders">
+          <div style="padding: 0 6px; display: flex; flex-direction: column; gap: 12px;">
+            <div class="side-card" style="border-color: color-mix(in oklab, var(--vapor-pink) 35%, transparent); border-left: 3px solid var(--vapor-pink);">
+              <div class="head"><span>◇ Recent Transactions</span><span class="hint">your ledger</span></div>
+              <table style="width:100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 11px;">
+                <thead>
+                  <tr style="border-bottom: 1px solid color-mix(in oklab, var(--vapor-cyan) 30%, transparent);">
+                    <th style="text-align:left; padding: 6px 8px; font-size: 9px; letter-spacing: 0.24em; color: var(--vapor-cyan); text-transform: uppercase;">Stardate</th>
+                    <th style="text-align:left; padding: 6px 8px; font-size: 9px; letter-spacing: 0.24em; color: var(--vapor-cyan); text-transform: uppercase;">Direction</th>
+                    <th style="text-align:left; padding: 6px 8px; font-size: 9px; letter-spacing: 0.24em; color: var(--vapor-cyan); text-transform: uppercase;">Items</th>
+                    <th style="text-align:right; padding: 6px 8px; font-size: 9px; letter-spacing: 0.24em; color: var(--vapor-cyan); text-transform: uppercase;">Δ Credits</th>
+                    <th style="text-align:left; padding: 6px 8px; font-size: 9px; letter-spacing: 0.24em; color: var(--vapor-cyan); text-transform: uppercase;">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-body">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="footer-bar">
+        <div class="left">
+          <button class="nav-pill"><span class="key">⇠</span> Datapad Home</button>
+          <span>RENDARR'S EXCHANGE · ENC-LICENSED</span>
+        </div>
+        <div class="right">
+          <span class="quote" id="rendarr-foot">"Take a look around, friend. Just don't touch what you can't pay for."</span>
+        </div>
+      </div>
+
+      <!-- Confirm purchase modal -->
+      <div class="modal-back" id="confirm-modal">
+        <div class="modal">
+          <div class="modal-head">
+            <span class="title">▸ Confirm Purchase</span>
+            <button class="x" id="modal-x">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="modal-rendarr"><span class="em">Rendarr:</span> <span id="modal-rendarr-line"></span></div>
+            <div class="modal-summary">
+              <div class="row"><span>Items</span><span class="v" id="m-items">0</span></div>
+              <div class="row"><span>Subtotal</span><span class="v" id="m-subtotal">0 cr</span></div>
+              <div class="row" id="m-markup-row" style="display:none;"><span>Markup</span><span class="v" id="m-markup">0</span></div>
+              <div class="row" id="m-discount-row" style="display:none;"><span>Discount</span><span class="v" id="m-discount">0</span></div>
+              <div class="row"><span>Wallet (now)</span><span class="v" id="m-wallet">0 cr</span></div>
+              <div class="row total"><span>Charge</span><span class="v" id="m-total">0 cr</span></div>
+              <div class="row"><span>Wallet (after)</span><span class="v" id="m-after">0 cr</span></div>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="modal-cancel" id="modal-cancel">Cancel</button>
+            <button class="modal-confirm" id="modal-confirm">▸ Pay & Take Cargo</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toast" id="toast"></div>
+
+    </div><!-- /.screen -->
+  </div><!-- /.tablet -->
+</div>
+
+<script src="store-data.js"></script>
+<script src="store-app.js"></script>
+<script src="store-tweaks.js"></script>
+</body>
+</html>

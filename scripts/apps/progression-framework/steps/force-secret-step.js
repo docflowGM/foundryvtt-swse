@@ -12,7 +12,7 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ForceSecretEngine } from '../../../engine/progression/engine/force-secret-engine.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
-import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -290,9 +290,16 @@ export class ForceSecretStep extends ProgressionStepPlugin {
   async onAskMentor(shell) {
     // If we have suggestions, use the advisory system instead of standard guidance
     if (this._suggestedSecrets && this._suggestedSecrets.length > 0) {
-      await handleAskMentorWithSuggestions(shell.actor, 'force-secrets', this._suggestedSecrets, shell, {
+      await handleAskMentorWithPicker(shell.actor, 'force-secrets', this._suggestedSecrets, shell, {
         domain: 'force-secrets',
-        archetype: 'your force secret choice'
+        archetype: 'your force secret choice',
+        stepLabel: 'Force secrets'
+      }, async (selected) => {
+        const id = selected?.id || selected?._id || selected?.secretId;
+        if (!id) return;
+        await this.onItemFocused(id, shell);
+        await this.onItemCommitted(id, shell);
+        shell.render();
       });
     } else {
       // Fallback to standard guidance if no suggestions
@@ -301,7 +308,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
   }
 
   getMentorMode() {
-    return 'context-only';
+    return 'interactive';
   }
 
   // Private helpers
@@ -404,7 +411,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       const characterData = this._buildCharacterDataFromShell(shell);
 
       // Get suggestions from SuggestionService
-      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+      const suggested = await SuggestionService.getSuggestions(actor, (shell?.mode || shell?.progressionSession?.mode || 'chargen'), {
         domain: 'force-secrets',
         available: this._legalSecrets,
         pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),

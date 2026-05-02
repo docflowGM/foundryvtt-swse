@@ -1,0 +1,38 @@
+<section class="swse-concept-panel">
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Second Wind</h3>
+      <p class="swse-concept-panel__hint">Track uses, healing value, and reset cadence without leaving the dossier shell.</p>
+    </div>
+  </header>
+
+  <div class="swse-concept-card-grid swse-concept-card-grid--summary">
+    <article class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>Base Healing</span>
+      <strong>{{secondWindPanel.baseHealing}}</strong>
+    </article>
+    <label class="swse-concept-toolfield">
+      <span>Healing</span>
+      <input type="number" name="system.secondWind.healing" value="{{secondWindPanel.healing}}" min="0" {{#unless secondWindPanel.canEdit}}disabled{{/unless}} />
+    </label>
+    <label class="swse-concept-toolfield">
+      <span>Uses</span>
+      <input type="number" name="system.secondWind.uses" value="{{secondWindPanel.uses}}" min="0" {{#unless secondWindPanel.canEdit}}disabled{{/unless}} />
+    </label>
+    <label class="swse-concept-toolfield">
+      <span>Max Uses</span>
+      <input type="number" name="system.secondWind.max" value="{{secondWindPanel.max}}" min="0" {{#unless secondWindPanel.canEdit}}disabled{{/unless}} />
+    </label>
+  </div>
+
+  <div class="swse-concept-chip-row">
+    {{#each (range 0 secondWindPanel.max) as |i|}}
+      <span class="swse-concept-chip {{#if (lt i ../secondWindPanel.uses)}}swse-concept-chip--ok{{else}}swse-concept-chip--neutral{{/if}}">SW</span>
+    {{/each}}
+  </div>
+
+  <div class="swse-concept-ledger-row__actions">
+    <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="use-second-wind" {{#unless secondWindPanel.hasUses}}disabled{{/unless}}>Use Second Wind</button>
+    <button type="button" class="swse-concept-btn" data-action="rest-second-wind" {{#unless secondWindPanel.canEdit}}disabled{{/unless}}>Reset Uses</button>
+  </div>
+</section>

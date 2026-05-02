@@ -423,6 +423,19 @@ export function registerHouseruleSettings() {
     default: 'wisdom'
   });
 
+  register('useTheForceAttribute', {
+    name: 'Use the Force Ability',
+    hint: 'Which ability is used for Use the Force checks and force execution scaling.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      charisma: 'Charisma',
+      wisdom: 'Wisdom'
+    },
+    default: 'charisma'
+  });
+
   register('blockDeflectTalents', {
     name: 'Block + Deflect Behavior',
     hint: 'Determines whether Block and Deflect are separate or combined talents.',

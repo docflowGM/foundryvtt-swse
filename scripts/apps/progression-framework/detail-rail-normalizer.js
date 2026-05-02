@@ -16,6 +16,7 @@
  */
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { buildSpeciesTags } from '/systems/foundryvtt-swse/scripts/engine/species/species-profile-utils.js';
 import { SkillsMechanicsResolver } from './skills-mechanics-resolver.js';
 
 // ============================================================================
@@ -191,6 +192,11 @@ const NORMALIZER_HANDLERS = {
   species: (itemData, context) => {
     const desc = itemData.description || itemData.system?.description || null;
     const mentorProse = context.mentorProseSource?.[itemData.name] || null;
+    const derivedTags = buildSpeciesTags(itemData).slice(0, 6).map(tag =>
+      String(tag)
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, char => char.toUpperCase())
+    );
 
     return {
       description: desc,
@@ -198,6 +204,7 @@ const NORMALIZER_HANDLERS = {
       metadataTags: [
         itemData.size && `Size: ${itemData.size}`,
         itemData.speed && `Speed: ${itemData.speed} ft.`,
+        ...derivedTags,
       ].filter(Boolean),
       mentorProse,  // Ol' Salty dialogue (canonical source)
       fallbacks: {

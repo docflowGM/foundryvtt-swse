@@ -23,7 +23,7 @@ import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { buildDependencyGraph } from '/systems/foundryvtt-swse/scripts/apps/chargen/chargen-talent-tree-graph.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveClassModel, getClassTalentTreeLookupKeys } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
@@ -360,10 +360,23 @@ export class TalentStep extends ProgressionStepPlugin {
       // This ensures suggestion engine understands the build-in-progress
       const characterData = this._buildCharacterDataFromShell(shell);
 
-      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+      const mode = shell?.mode || this.descriptor?.mode || 'chargen';
+      const pendingData = SuggestionContextBuilder.buildPendingData(actor, characterData);
+      pendingData.activeSlotContext = {
+        slotKind: 'talent',
+        slotType: this._slotType,
+        classId: this._classId || null,
+        activeSlotIndex: 0,
+        domains: Array.isArray(this._allowedTreeIds) ? [...this._allowedTreeIds] : null
+      };
+      pendingData.allowedTalentTrees = (availableTrees || []).map((tree) => tree?.id || tree?._id || tree?.sourceId || tree?.name).filter(Boolean);
+      const pendingAbilityData = this._buildPendingAbilityData(shell);
+      Object.assign(pendingData, pendingAbilityData || {});
+
+      const suggested = await SuggestionService.getSuggestions(actor, mode, {
         domain: 'talents',
         available: availableTrees,
-        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        pendingData,
         engineOptions: { includeFutureAvailability: true },
         persist: true
       });
@@ -888,6 +901,21 @@ export class TalentStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
+    if (this._suggestedTrees?.length) {
+      await handleAskMentorWithPicker(shell.actor, 'general-talent', this._suggestedTrees, shell, {
+        domain: 'talents',
+        archetype: 'your talent path',
+        stepLabel: 'talent trees'
+      }, async (selected) => {
+        const id = selected?.id || selected?._id || selected?.treeId;
+        if (!id) return;
+        this._stage = 'browser';
+        await this.onItemFocused(id);
+        await this.onItemCommitted(id, shell);
+        shell.render();
+      });
+      return;
+    }
     await handleAskMentor(shell.actor, 'general-talent', shell);
   }
 
@@ -906,7 +934,7 @@ export class TalentStep extends ProgressionStepPlugin {
   }
 
   getMentorMode() {
-    return 'context-only';
+    return 'interactive';
   }
 
   // ---------------------------------------------------------------------------

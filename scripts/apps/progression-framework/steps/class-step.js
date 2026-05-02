@@ -10,7 +10,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
 import { normalizeClass } from './step-normalizers.js';
-import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
+import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { getMentorGuidance, getMentorForClass, getMentorKey, getMentorIntroText } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
@@ -387,9 +387,16 @@ export class ClassStep extends ProgressionStepPlugin {
   async onAskMentor(shell) {
     // If we have suggestions, use the advisory system instead of standard guidance
     if (this._suggestedClasses && this._suggestedClasses.length > 0) {
-      await handleAskMentorWithSuggestions(shell.actor, 'class', this._suggestedClasses, shell, {
+      await handleAskMentorWithPicker(shell.actor, 'class', this._suggestedClasses, shell, {
         domain: 'classes',
-        archetype: 'your class choice'
+        archetype: 'your class choice',
+        stepLabel: 'class selection'
+      }, async (selected) => {
+        const id = selected?.id || selected?._id || selected?.classId;
+        if (!id) return;
+        await this.onItemFocused(id, shell);
+        await this.onItemCommitted(id, shell);
+        shell.render();
       });
     } else {
       // Fallback to standard guidance if no suggestions
@@ -414,7 +421,7 @@ export class ClassStep extends ProgressionStepPlugin {
   }
 
   getMentorMode() {
-    return 'context-only';
+    return 'interactive';
   }
 
   // ---------------------------------------------------------------------------
@@ -530,16 +537,17 @@ export class ClassStep extends ProgressionStepPlugin {
       const characterData = this._buildCharacterDataFromShell(shell);
 
       // Get suggestions from SuggestionService
-      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+      const mode = shell?.mode || shell?.progressionSession?.mode || 'chargen';
+      const suggested = await SuggestionService.getSuggestions(actor, mode, {
         domain: 'classes',
         available: this._allClasses,
         pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
-        engineOptions: { includeFutureAvailability: true },
+        engineOptions: { includeFutureAvailability: true, mode },
         persist: true
       });
 
       // Store top suggestions
-      this._suggestedClasses = (suggested || []).slice(0, 3);
+      this._suggestedClasses = (suggested || []).slice(0, mode === 'chargen' ? 2 : 3);
     } catch (err) {
       swseLogger.warn('[ClassStep] Suggestion service error:', err);
       this._suggestedClasses = [];

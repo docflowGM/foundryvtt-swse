@@ -23,7 +23,7 @@
   "skill_specialization_forming": "because your skill choices show a clear specialization forming",
   "skill_breadth_supports_choice": "because your range of skills supports this option",
   "skill_chain_continuity": "because this continues a pattern in your skill development",
-  "skill_prerequisite_met": "because existing requirements for this option are already satisfied",
+  "skill_prerequisite_met": "because the skill foundation for this option is already in place",
   "defensive_skill_investment": "because your skill investment emphasizes protection and survival",
   "mobility_skill_investment": "because your skill investment emphasizes movement and positioning",
   "social_skill_investment": "because your skill investment emphasizes interaction and influence",
@@ -36,7 +36,7 @@
   "feat_synergy_present": "because your existing capabilities reinforce this choice",
   "repeated_feat_theme": "because your previous selections share a consistent theme",
   "feat_supports_existing_style": "because this aligns with how you already operate",
-  "feat_supports_existing_role": "because this supports the role you have established",
+  "feat_supports_existing_role": "because this feat supports the role you are already settling into",
   "feat_unlocked_by_recent_choice": "because a recent decision made this option available",
   "feat_reinforces_core_strength": "because this reinforces what you already do well",
   "defensive_feat_investment": "because your capabilities emphasize defense and durability",
@@ -47,7 +47,7 @@
   "talent_tree_continuation": "because this continues a path you are already on",
   "talent_synergy_present": "because your existing talents work well with this option",
   "talent_prerequisite_met": "because the conditions for this option are already satisfied",
-  "talent_supports_existing_role": "because this reinforces your current role",
+  "talent_supports_existing_role": "because this talent reinforces the role you are already expressing in play",
   "repeated_talent_theme": "because your talents show a consistent focus",
   "talent_specialization_forming": "because your talent choices indicate a specialization",
   "defensive_talent_path": "because your talents emphasize protection and resilience",
@@ -78,7 +78,7 @@
   "prestige_prerequisites_met": "because all advanced entry conditions are satisfied",
   "prestige_identity_alignment": "because this aligns with the identity you are forming",
   "prestige_synergy_with_current_build": "because this option fits your current development pattern",
-  "prestige_path_consistency": "because this continues your established direction",
+  "prestige_path_consistency": "because it keeps your long-term specialization path coherent",
   "prestige_path_divergence": "because this represents a meaningful shift from your current path",
   "prestige_unlocked_by_recent_choice": "because a recent decision opened this path",
   "prestige_scaling_synergy": "because this option benefits from ongoing progression",
@@ -207,6 +207,8 @@
   "rare_choice": "because this is a rare choice at this stage",
   "new_option_revealed": "because a new option has become available",
   "growth_stage_shift": "because you have shifted to a new growth stage",
-  "pattern_alignment": "because this aligns with established patterns"
+  "pattern_alignment": "because this aligns with established patterns",
+  "goal_advancement": "because it moves you closer to a goal your build is already signaling",
+  "class_synergy": "because your class features and progression model already support this direction",
+  "available_for_selection": "because it is legal now, even if the fit is broader than some of your strongest options"
 }
-
