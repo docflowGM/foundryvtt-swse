@@ -344,13 +344,15 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       this._committedManeuverCounts.set(maneuverId, currentCount + 1);
     }
 
+    const maneuversList = Array.from(this._committedManeuverCounts.entries())
+      .filter(([_, count]) => count > 0)
+      .map(([maneuverId, count]) => ({ id: maneuverId, count }));
+
+    await this._commitNormalized(shell, 'starshipManeuvers', maneuversList);
+
     // Update observable build intent (Phase 6 solution)
     if (shell?.buildIntent && this.descriptor?.stepId) {
-      const maneuversList = Array.from(this._committedManeuverCounts.entries())
-        .filter(([_, count]) => count > 0)
-        .map(([maneuverId, count]) => ({ id: maneuverId, count }));
-
-      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, maneuversList);
+      shell.buildIntent.commitSelection(this.descriptor.stepId, 'starshipManeuvers', maneuversList);
     }
 
     this._focusedManeuverID = maneuverId;
@@ -373,12 +375,14 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     if (totalSelected < this._remainingPicks) {
       this._committedManeuverCounts.set(maneuverId, currentCount + 1);
 
+      const maneuversList = Array.from(this._committedManeuverCounts.entries())
+        .filter(([_, count]) => count > 0)
+        .map(([id, count]) => ({ id, count }));
+      await this._commitNormalized(shell, 'starshipManeuvers', maneuversList);
+
       // Update buildIntent
       if (shell?.buildIntent && this.descriptor?.stepId) {
-        const maneuversList = Array.from(this._committedManeuverCounts.entries())
-          .filter(([_, count]) => count > 0)
-          .map(([id, count]) => ({ id, count }));
-        shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, maneuversList);
+        shell.buildIntent.commitSelection(this.descriptor.stepId, 'starshipManeuvers', maneuversList);
       }
 
       shell.render();
@@ -404,12 +408,14 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
         this._committedManeuverCounts.delete(maneuverId);
       }
 
+      const maneuversList = Array.from(this._committedManeuverCounts.entries())
+        .filter(([_, count]) => count > 0)
+        .map(([id, count]) => ({ id, count }));
+      await this._commitNormalized(shell, 'starshipManeuvers', maneuversList);
+
       // Update buildIntent
       if (shell?.buildIntent && this.descriptor?.stepId) {
-        const maneuversList = Array.from(this._committedManeuverCounts.entries())
-          .filter(([_, count]) => count > 0)
-          .map(([id, count]) => ({ id, count }));
-        shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, maneuversList);
+        shell.buildIntent.commitSelection(this.descriptor.stepId, 'starshipManeuvers', maneuversList);
       }
 
       shell.render();

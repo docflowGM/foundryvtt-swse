@@ -80,6 +80,9 @@ export class ProgressionSession {
       starshipManeuvers: [],
       survey: null,
       droid: null,
+      pendingSpeciesContext: null,
+      pendingBackgroundContext: null,
+      backgroundLedger: null,
       // NEW: Pending entitlements & immediate choices (Phase 1)
       pendingEntitlements: [],  // Subsystem picks resolved elsewhere
       immediateChoices: [],     // Resolved immediately in owning step
@@ -352,6 +355,18 @@ export class ProgressionSession {
         type: 'object',
         description:
           '{frame, systems, locomotion, creditsUsed, metadata}',
+      },
+      pendingSpeciesContext: {
+        type: 'object',
+        description: 'Canonical pending species materialization context from species ledger builder',
+      },
+      pendingBackgroundContext: {
+        type: 'object',
+        description: 'Canonical pending background materialization context from background ledger builder',
+      },
+      backgroundLedger: {
+        type: 'object',
+        description: 'Canonical background grant ledger for selected background set',
       },
     };
   }

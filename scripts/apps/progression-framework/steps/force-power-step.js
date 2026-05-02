@@ -277,12 +277,14 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     // If all picks are used and this power is selected, allow deselection (count → 0)
     // This is handled via a separate deselect action in the details panel, if needed
 
+    const powersList = Array.from(this._committedPowerCounts.entries())
+      .filter(([_, count]) => count > 0)
+      .map(([powerId, count]) => ({ id: powerId, count }));
+
+    await this._commitNormalized(shell, 'forcePowers', powersList);
+
     // Update observable build intent (Phase 6 solution)
     if (shell?.buildIntent && this.descriptor?.stepId) {
-      const powersList = Array.from(this._committedPowerCounts.entries())
-        .filter(([_, count]) => count > 0)
-        .map(([powerId, count]) => ({ id: powerId, count }));
-
       shell.buildIntent.commitSelection(this.descriptor.stepId, 'forcePowers', powersList);
     }
 
@@ -306,11 +308,13 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     if (totalSelected < this._remainingPicks) {
       this._committedPowerCounts.set(powerId, currentCount + 1);
 
+      const powersList = Array.from(this._committedPowerCounts.entries())
+        .filter(([_, count]) => count > 0)
+        .map(([id, count]) => ({ id, count }));
+      await this._commitNormalized(shell, 'forcePowers', powersList);
+
       // Update buildIntent
       if (shell?.buildIntent && this.descriptor?.stepId) {
-        const powersList = Array.from(this._committedPowerCounts.entries())
-          .filter(([_, count]) => count > 0)
-          .map(([id, count]) => ({ id, count }));
         shell.buildIntent.commitSelection(this.descriptor.stepId, 'forcePowers', powersList);
       }
 
@@ -337,11 +341,13 @@ export class ForcePowerStep extends ProgressionStepPlugin {
         this._committedPowerCounts.delete(powerId);
       }
 
+      const powersList = Array.from(this._committedPowerCounts.entries())
+        .filter(([_, count]) => count > 0)
+        .map(([id, count]) => ({ id, count }));
+      await this._commitNormalized(shell, 'forcePowers', powersList);
+
       // Update buildIntent
       if (shell?.buildIntent && this.descriptor?.stepId) {
-        const powersList = Array.from(this._committedPowerCounts.entries())
-          .filter(([_, count]) => count > 0)
-          .map(([id, count]) => ({ id, count }));
         shell.buildIntent.commitSelection(this.descriptor.stepId, 'forcePowers', powersList);
       }
 

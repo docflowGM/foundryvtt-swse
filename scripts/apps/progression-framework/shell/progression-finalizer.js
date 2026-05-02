@@ -20,6 +20,7 @@ import { ProgressionDocumentTargetPolicy } from '../policies/progression-documen
 import { applyCanonicalSpeciesToActor } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-species-to-actor.js';
 // PHASE 3: Background materialization
 import { applyCanonicalBackgroundsToActor } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-backgrounds-to-actor.js';
+import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 
 export class ProgressionFinalizer {
   /**
@@ -361,10 +362,10 @@ export class ProgressionFinalizer {
     const summary = selections.survey || {};
     const attr = selections.attributes || {};
     const species = selections.species || null;
-    const pendingSpeciesContext = selections.pendingSpeciesContext || null;
+    const pendingSpeciesContext = selections.pendingSpeciesContext || species?.pendingContext || null;
     const clazz = selections.class || null;
     const background = selections.background || null;
-    const pendingBackgroundContext = selections.pendingBackgroundContext || null;
+    const pendingBackgroundContext = selections.pendingBackgroundContext || background?.pendingContext || null;
     const languages = selections.languages || [];
     const skills = selections.skills || [];
 
@@ -458,7 +459,20 @@ export class ProgressionFinalizer {
       // Legacy scalar paths (system.className, system.classes) remain for compatibility only
       set['system.class'] = clazz;
       // DO NOT write system.className or system.classes - these are derived/legacy
-      add.items.push({ name: clazz.name || clazz.label || String(clazz), type: 'class', system: clazz.system || {} });
+      add.items.push({
+        name: clazz.name || clazz.label || String(clazz),
+        type: 'class',
+        system: clazz.system || {},
+        flags: {
+          swse: {
+            progression: {
+              sourceSession: sessionState.sessionId || 'unknown',
+              selectionKey: 'class',
+              selectionId: clazz.id || clazz.sourceId || clazz.name || null,
+            },
+          },
+        },
+      });
     }
     // Canonical stored ability path is system.abilities.<key>.base
     // Progression writes base values here; derived computes modifiers and totals
@@ -501,23 +515,18 @@ export class ProgressionFinalizer {
       });
     }
 
-    const appendItem = (entry, fallbackType) => {
-      if (!entry) return;
-      if (Array.isArray(entry)) return entry.forEach(e => appendItem(e, fallbackType));
-      add.items.push({
-        name: entry.name || String(entry),
-        type: entry.type || fallbackType,
-        system: entry.system || {},
-        img: entry.img || undefined
-      });
-    };
-    // PHASE 1: Read feats, talents, force powers from canonical session ONLY
-    appendItem(selections.feats, 'feat');
-    appendItem(selections.talents, 'talent');
-    appendItem(selections.forcePowers, 'forcepower');
-    appendItem(selections.forceTechniques, 'forcetechnique');
-    appendItem(selections.forceSecrets, 'forcesecret');
-    appendItem(selections.starshipManeuvers, 'maneuver');
+    await ProgressionContentAuthority.initialize?.();
+
+    const compiledAbilityItems = await this._compileProgressionAbilityItems(actor, selections, sessionState);
+    add.items.push(...compiledAbilityItems.items);
+
+    if (compiledAbilityItems.postApply?.starshipManeuverNames?.length) {
+      const currentSuite = actor.system?.starshipManeuverSuite || {};
+      set['system.starshipManeuverSuite.max'] = Math.max(
+        Number(currentSuite.max || 0),
+        Number((currentSuite.maneuvers || []).length || 0) + compiledAbilityItems.postApply.starshipManeuverNames.length
+      );
+    }
 
     return {
       create: {},
@@ -528,7 +537,8 @@ export class ProgressionFinalizer {
         mode: sessionState.mode,
         timestamp: new Date().toISOString(),
         actorId: actor.id,
-        sourceSession: sessionState.sessionId || 'unknown'
+        sourceSession: sessionState.sessionId || 'unknown',
+        postApply: compiledAbilityItems.postApply || {}
       }
     };
   }
@@ -694,6 +704,140 @@ export class ProgressionFinalizer {
     return result;
   }
 
+  static async _compileProgressionAbilityItems(actor, selections, sessionState) {
+    const sessionId = sessionState.sessionId || 'unknown';
+    const itemSpecs = [];
+    const postApply = { starshipManeuverNames: [] };
+    const domainConfig = [
+      { key: 'feats', type: 'feat', docGetter: (entry) => ProgressionContentAuthority.getFeatDocument(entry), allowDuplicates: false },
+      { key: 'talents', type: 'talent', docGetter: (entry) => ProgressionContentAuthority.getTalentDocument(entry), allowDuplicates: false },
+      { key: 'forcePowers', type: 'forcepower', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'power'), allowDuplicates: true },
+      { key: 'forceTechniques', type: 'forcetechnique', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'technique'), allowDuplicates: false },
+      { key: 'forceSecrets', type: 'forcesecret', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'secret'), allowDuplicates: false },
+    ];
+
+    const existingByTypeAndName = new Set(
+      actor.items.map((item) => `${String(item.type || '').toLowerCase()}::${String(item.name || '').toLowerCase()}`)
+    );
+    const existingBySessionMarker = new Set(
+      actor.items.map((item) => {
+        const meta = item.flags?.swse?.progression;
+        if (!meta?.sourceSession || !meta?.selectionKey || !meta?.selectionId) return null;
+        return `${meta.sourceSession}::${meta.selectionKey}::${meta.selectionId}::${meta.countIndex || 0}`;
+      }).filter(Boolean)
+    );
+
+    for (const domain of domainConfig) {
+      const rawValues = Array.isArray(selections[domain.key]) ? selections[domain.key] : [];
+      for (const rawEntry of rawValues) {
+        const count = Math.max(1, Number(rawEntry?.count || 1));
+        const resolvedDoc = await domain.docGetter(rawEntry);
+        const resolvedData = resolvedDoc?.toObject ? resolvedDoc.toObject() : null;
+        const resolvedName = resolvedData?.name || rawEntry?.name || rawEntry?.id || String(rawEntry);
+
+        for (let idx = 0; idx < count; idx += 1) {
+          const sessionMarker = `${sessionId}::${domain.key}::${rawEntry?.id || resolvedName}::${idx}`;
+          const dedupeKey = `${domain.type}::${String(resolvedName || '').toLowerCase()}`;
+          if (existingBySessionMarker.has(sessionMarker)) continue;
+          if (!domain.allowDuplicates && existingByTypeAndName.has(dedupeKey)) continue;
+
+          const baseItem = resolvedData || {
+            name: resolvedName,
+            type: domain.type,
+            system: rawEntry?.system || {},
+            img: rawEntry?.img || undefined,
+          };
+
+          baseItem.name = baseItem.name || resolvedName;
+          baseItem.type = baseItem.type || domain.type;
+          baseItem.flags = foundry.utils.mergeObject(baseItem.flags || {}, {
+            swse: {
+              progression: {
+                sourceSession: sessionId,
+                selectionKey: domain.key,
+                selectionId: rawEntry?.id || resolvedName,
+                countIndex: idx,
+              },
+            },
+          }, { inplace: false, recursive: true });
+
+          itemSpecs.push(baseItem);
+          existingBySessionMarker.add(sessionMarker);
+          if (!domain.allowDuplicates) existingByTypeAndName.add(dedupeKey);
+        }
+      }
+    }
+
+    const starshipSelections = Array.isArray(selections.starshipManeuvers) ? selections.starshipManeuvers : [];
+    for (const rawEntry of starshipSelections) {
+      const count = Math.max(1, Number(rawEntry?.count || 1));
+      const maneuverName = rawEntry?.name || rawEntry?.id || String(rawEntry);
+      const existingCount = actor.items.filter((item) => item.type === 'maneuver' && String(item.name || '').toLowerCase() === String(maneuverName).toLowerCase()).length;
+
+      for (let idx = 0; idx < count; idx += 1) {
+        const sessionMarker = `${sessionId}::starshipManeuvers::${rawEntry?.id || maneuverName}::${idx}`;
+        if (existingBySessionMarker.has(sessionMarker)) continue;
+
+        const maneuverItem = {
+          name: maneuverName,
+          type: 'maneuver',
+          system: {
+            ...(rawEntry?.system || {}),
+            description: rawEntry?.description || rawEntry?.system?.description || '',
+            uses: rawEntry?.system?.uses || { current: 1, max: 1 },
+            spent: rawEntry?.system?.spent || false,
+            inSuite: true,
+          },
+          img: rawEntry?.img || undefined,
+          flags: {
+            swse: {
+              progression: {
+                sourceSession: sessionId,
+                selectionKey: 'starshipManeuvers',
+                selectionId: rawEntry?.id || maneuverName,
+                countIndex: idx,
+              },
+            },
+          },
+        };
+
+        itemSpecs.push(maneuverItem);
+        existingBySessionMarker.add(sessionMarker);
+        postApply.starshipManeuverNames.push(maneuverName);
+        existingByTypeAndName.add(`maneuver::${String(maneuverName || '').toLowerCase()}::${existingCount + idx}`);
+      }
+    }
+
+    return { items: itemSpecs, postApply };
+  }
+
+  static async _syncPostApplyState(actor, mutationPlan) {
+    const engine = globalThis.SWSE?.ActorEngine || globalThis.game?.swse?.ActorEngine;
+    const starshipManeuverNames = mutationPlan?.metadata?.postApply?.starshipManeuverNames || [];
+    if (!engine?.updateActor || !starshipManeuverNames.length) return;
+
+    const suite = actor.system?.starshipManeuverSuite || { maneuvers: [] };
+    const existing = new Set(Array.isArray(suite.maneuvers) ? suite.maneuvers : []);
+    const matchingIds = actor.items
+      .filter((item) => item.type === 'maneuver' && starshipManeuverNames.includes(item.name))
+      .map((item) => item.id)
+      .filter(Boolean);
+
+    let changed = false;
+    for (const id of matchingIds) {
+      if (existing.has(id)) continue;
+      existing.add(id);
+      changed = true;
+    }
+
+    if (changed) {
+      await engine.updateActor(actor, {
+        'system.starshipManeuverSuite.maneuvers': Array.from(existing),
+        'system.starshipManeuverSuite.max': Math.max(Number(suite.max || 0), existing.size),
+      }, { source: 'ProgressionFinalizer._syncPostApplyState' });
+    }
+  }
+
   /**
    * Apply the compiled mutation plan through ActorEngine.
    *
@@ -711,6 +855,7 @@ export class ProgressionFinalizer {
         throw new Error('ActorEngine.applyMutationPlan unavailable');
       }
       await engine.applyMutationPlan(actor, mutationPlan);
+      await this._syncPostApplyState(actor, mutationPlan);
       return { success: true, result: { actorId: actor.id } };
     } catch (error) {
       swseLogger.error('[ProgressionFinalizer] Mutation plan application failed', error);

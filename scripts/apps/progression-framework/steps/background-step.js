@@ -267,6 +267,27 @@ async onStepExit(shell) {
       { multiMode: this._maxBackgrounds > 1 }
     );
 
+    const normalizedBackground = normalizeBackground({
+      id: background.id,
+      name: background.name,
+      category: background.category,
+      source: background.source,
+      backgroundIds: [...this._committedBackgroundIds],
+      backgrounds: this._committedBackgroundIds
+        .map(bgId => this._allBackgrounds.find(b => b.id === bgId))
+        .filter(Boolean),
+      ledger: pendingBackgroundContext?.ledger || null,
+      pendingContext: pendingBackgroundContext || null,
+      skills: background.relevantSkills || background.skills || [],
+      languages: background.languages || [],
+      feats: background.feats || [],
+      traits: background.traits || [],
+    });
+
+    if (normalizedBackground) {
+      await this._commitNormalized(shell, 'background', normalizedBackground);
+    }
+
     if (pendingBackgroundContext && pendingBackgroundContext.ledger) {
       // Commit the full Background Grant Ledger to canonical session
       // This becomes the authoritative source for all background-derived grants

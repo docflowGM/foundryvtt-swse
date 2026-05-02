@@ -665,6 +665,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
     // Commit to canonical session (also updates committedSelections for backward compat)
     await this._commitNormalized(shell, 'species', normalizedSpecies);
+    await this._commitNormalized(shell, 'pendingSpeciesContext', pendingContext);
 
     this._committedSpeciesId   = id;
     this._committedSpeciesName = entry.name;
@@ -734,6 +735,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
     // Commit to canonical session (also updates committedSelections for backward compat)
     await this._commitNormalized(shell, 'species', normalizedSpecies);
+    await this._commitNormalized(shell, 'pendingSpeciesContext', pendingContext);
 
     this._committedSpeciesId = 'near-human';
     this._committedSpeciesName = 'Near-Human';

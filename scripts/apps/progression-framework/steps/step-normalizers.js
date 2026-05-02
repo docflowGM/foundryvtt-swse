@@ -138,6 +138,10 @@ export function normalizeBackground(raw) {
         languages: raw.languages || [],
         traits: raw.traits || [],
       },
+      backgroundIds: Array.isArray(raw.backgroundIds) ? [...raw.backgroundIds] : [id],
+      backgrounds: Array.isArray(raw.backgrounds) ? [...raw.backgrounds] : [],
+      ledger: raw.ledger || null,
+      pendingContext: raw.pendingContext || null,
       metadata: {
         source: raw.source || 'core',
         createdAt: Date.now(),

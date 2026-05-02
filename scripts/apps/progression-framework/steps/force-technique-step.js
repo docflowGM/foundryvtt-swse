@@ -152,13 +152,15 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       this._committedTechniqueCounts.set(techniqueId, currentCount + 1);
     }
 
+    const techniquesList = Array.from(this._committedTechniqueCounts.entries())
+      .filter(([_, count]) => count > 0)
+      .map(([techniqueId, count]) => ({ id: techniqueId, count }));
+
+    await this._commitNormalized(shell, 'forceTechniques', techniquesList);
+
     // Update observable build intent (Phase 6 solution)
     if (shell?.buildIntent && this.descriptor?.stepId) {
-      const techniquesList = Array.from(this._committedTechniqueCounts.entries())
-        .filter(([_, count]) => count > 0)
-        .map(([techniqueId, count]) => ({ id: techniqueId, count }));
-
-      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, techniquesList);
+      shell.buildIntent.commitSelection(this.descriptor.stepId, 'forceTechniques', techniquesList);
     }
 
     this._focusedTechniqueId = techniqueId;

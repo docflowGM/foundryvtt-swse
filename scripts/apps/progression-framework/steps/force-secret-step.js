@@ -165,13 +165,15 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       this._committedSecretCounts.set(secretId, currentCount + 1);
     }
 
+    const secretsList = Array.from(this._committedSecretCounts.entries())
+      .filter(([_, count]) => count > 0)
+      .map(([secretId, count]) => ({ id: secretId, count }));
+
+    await this._commitNormalized(shell, 'forceSecrets', secretsList);
+
     // Update observable build intent (Phase 6 solution)
     if (shell?.buildIntent && this.descriptor?.stepId) {
-      const secretsList = Array.from(this._committedSecretCounts.entries())
-        .filter(([_, count]) => count > 0)
-        .map(([secretId, count]) => ({ id: secretId, count }));
-
-      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, secretsList);
+      shell.buildIntent.commitSelection(this.descriptor.stepId, 'forceSecrets', secretsList);
     }
 
     this._focusedSecretId = secretId;
