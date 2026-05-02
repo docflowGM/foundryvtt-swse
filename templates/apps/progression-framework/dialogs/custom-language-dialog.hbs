@@ -1,0 +1,44 @@
+<div class="swse-custom-language-dialog">
+  <div class="swse-custom-language-dialog__chrome">
+    <div class="swse-custom-language-dialog__chrome-title">
+      <i class="fas fa-language"></i>
+      Add Custom Language
+    </div>
+    <button type="button" class="swse-custom-language-dialog__chrome-close" data-action="close" title="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <form class="swse-custom-language-dialog__form">
+    <div class="swse-custom-language-dialog__body">
+      <div class="swse-custom-language-dialog__headline">Name the language your character knows.</div>
+      <p class="swse-custom-language-dialog__copy">
+        Enter a custom language below. This will be added as one of this step's selected bonus languages.
+      </p>
+
+      <label class="swse-custom-language-dialog__field">
+        <span class="swse-custom-language-dialog__label">Language Name</span>
+        <input
+          type="text"
+          name="languageName"
+          class="swse-custom-language-dialog__input"
+          value="{{suggestedName}}"
+          maxlength="60"
+          placeholder="Enter custom language"
+          autocomplete="off"
+        />
+      </label>
+    </div>
+
+    <div class="swse-custom-language-dialog__actions">
+      <button type="button" class="swse-custom-language-dialog__button" data-action="cancel">
+        <i class="fas fa-ban"></i>
+        Cancel
+      </button>
+      <button type="submit" class="swse-custom-language-dialog__button swse-custom-language-dialog__button--primary" data-action="confirm">
+        <i class="fas fa-check"></i>
+        Add Language
+      </button>
+    </div>
+  </form>
+</div>

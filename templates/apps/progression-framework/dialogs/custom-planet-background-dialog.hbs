@@ -1,0 +1,54 @@
+<div class="swse-custom-planet-dialog">
+  <div class="swse-custom-planet-dialog__intro">
+    <p>Create a custom homeworld background for a world not listed in the standard catalog.</p>
+    <p class="swse-custom-planet-dialog__hint">Choose exactly three relevant skills. The resulting homeworld background will grant the normal planet-style background package: pick 2 class skills from those 3 options, plus the selected language.</p>
+    {{#unless allowUTF}}
+      <p class="swse-custom-planet-dialog__hint">Use the Force is excluded by default. Enable the homeworld UTF houserule to include it.</p>
+    {{/unless}}
+  </div>
+
+  <div class="swse-custom-planet-dialog__field">
+    <label for="swse-custom-planet-name">Planet Name</label>
+    <input id="swse-custom-planet-name" name="planetName" type="text" placeholder="e.g., Ord Kharos" autofocus />
+  </div>
+
+  <div class="swse-custom-planet-dialog__field">
+    <div class="swse-custom-planet-dialog__label-row">
+      <label>Choose 3 Relevant Skills</label>
+      <span class="swse-custom-planet-dialog__meta">Exactly 3 required</span>
+    </div>
+    <div class="swse-custom-planet-dialog__skill-grid">
+      {{#each skills}}
+        <label class="swse-custom-planet-dialog__skill-option">
+          <input type="checkbox" name="skills" value="{{id}}" />
+          <span>{{name}}</span>
+        </label>
+      {{/each}}
+    </div>
+  </div>
+
+  <div class="swse-custom-planet-dialog__field">
+    <div class="swse-custom-planet-dialog__label-row">
+      <label for="swse-custom-planet-language">Bonus Language</label>
+      <button type="button" class="swse-custom-planet-dialog__toggle" data-action="toggle-custom-language">
+        {{#if customLanguageMode}}Choose from List{{else}}Add Custom Language{{/if}}
+      </button>
+    </div>
+
+    {{#if customLanguageMode}}
+      <input name="customLanguage" type="text" placeholder="e.g., Clan Cant, Founders' Script" />
+    {{else}}
+      <select id="swse-custom-planet-language" name="language">
+        <option value="">Choose a language…</option>
+        {{#each languages}}
+          <option value="{{name}}">{{name}}</option>
+        {{/each}}
+      </select>
+    {{/if}}
+  </div>
+
+  <div class="swse-custom-planet-dialog__actions">
+    <button type="button" class="swse-btn swse-btn--ghost" data-action="cancel-dialog">Cancel</button>
+    <button type="button" class="swse-btn swse-btn--primary" data-action="submit-dialog">Create Planet</button>
+  </div>
+</div>

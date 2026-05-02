@@ -190,6 +190,7 @@ export const SWSE_TEMPLATES = [
   // Step Work Surfaces
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/attribute-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/background-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/dialogs/custom-planet-background-dialog.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/class-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/confirm-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/droid-builder-work-surface.hbs',

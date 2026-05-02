@@ -19,6 +19,9 @@ import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engin
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveSelectedClassFromShell, getClassSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 import { buildPendingBackgroundContext } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
+import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
+import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
+import { CustomPlanetBackgroundDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-planet-background-dialog.js';
 
 const CATEGORY_LABELS = {
   event: 'Event',
@@ -45,6 +48,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
     this._searchQuery = '';
     this._activeCategory = 'all';  // which category tab is active
     this._sortBy = 'alpha';
+    this._customBackgrounds = [];
 
     // House rule state
     this._maxBackgrounds = 1;        // from backgroundSelectionCount setting
@@ -67,6 +71,8 @@ export class BackgroundStep extends ProgressionStepPlugin {
     // Load house rule: max background selections
     const houseSetting = game?.settings?.get('foundryvtt-swse', 'backgroundSelectionCount');
     this._maxBackgrounds = houseSetting ?? 1;
+
+    await this._restoreCustomBackgrounds(shell);
 
     // Group backgrounds by category
     this._groupBackgrounds();
@@ -255,8 +261,9 @@ async onStepExit(shell) {
 
     // PHASE 2: Build canonical Background Grant Ledger for all selected backgrounds
     // This replaces the Phase 1 single-background normalization with full multi-background support
+    const pendingBackgroundRefs = this._committedBackgroundIds.map((bgId) => this._allBackgrounds.find((b) => b.id === bgId) || bgId);
     const pendingBackgroundContext = await buildPendingBackgroundContext(
-      this._committedBackgroundIds,
+      pendingBackgroundRefs,
       { multiMode: this._maxBackgrounds > 1 }
     );
 
@@ -364,9 +371,25 @@ getUtilityBarConfig() {
         label: `Mode: ${this._maxBackgrounds > 1 ? `Multi (${this._maxBackgrounds} max)` : 'Single'}`,
         type: 'label',
       },
+      {
+        id: 'custom-planet',
+        label: 'Create Custom Planet',
+        type: 'button',
+        action: 'create-custom-planet'
+      },
     ],
   };
 }
+
+
+
+  async onAction(action, event, shell) {
+    if (action === 'create-custom-planet') {
+      await this._openCustomPlanetDialog(shell);
+      return true;
+    }
+    return false;
+  }
 
 // ---------------------------------------------------------------------------
 // Mentor
@@ -617,4 +640,94 @@ _getCategoryChips() {
       .filter(Boolean)
       .join(', ');
   }
+
+  async _restoreCustomBackgrounds(shell) {
+    const restored = [];
+    const pending = shell?.progressionSession?.currentPendingBackgroundContext;
+    const selected = Array.isArray(pending?.selectedBackgrounds) ? pending.selectedBackgrounds : [];
+    for (const bg of selected) {
+      if (!bg || bg.category !== 'planet') continue;
+      const id = bg.id || bg.slug;
+      if (!id || !String(id).startsWith('custom-planet-')) continue;
+      if (this._allBackgrounds.some((entry) => entry.id === id)) continue;
+      restored.push(bg);
+    }
+    this._customBackgrounds = restored;
+    if (restored.length) {
+      this._allBackgrounds = [...this._allBackgrounds, ...restored];
+    }
+  }
+
+  async _openCustomPlanetDialog(shell) {
+    try {
+      if (!SkillRegistry.isBuilt) await SkillRegistry.build?.();
+      await LanguageRegistry.ensureLoaded();
+
+      const allowUTF = Boolean(game?.settings?.get('foundryvtt-swse', 'allowCustomPlanetUTF'));
+      const rawSkills = SkillRegistry.list?.() || [];
+      const skills = rawSkills
+        .filter((skill) => allowUTF || String(skill.name || '').toLowerCase() !== 'use the force')
+        .sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+      const languages = (await LanguageRegistry.all?.() || []).slice().sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+
+      const dialog = new CustomPlanetBackgroundDialog({
+        skills,
+        languages,
+        allowUTF,
+        onSubmit: async (payload) => {
+          await this._createCustomPlanetBackground(payload, shell);
+        }
+      });
+
+      await dialog.render(true);
+    } catch (error) {
+      console.error('[BackgroundStep] Failed to open custom planet dialog:', error);
+      ui.notifications?.error('Could not open the custom planet builder.');
+    }
+  }
+
+  async _createCustomPlanetBackground(payload, shell) {
+    const planetName = String(payload?.planetName || '').trim();
+    const relevantSkills = Array.isArray(payload?.relevantSkills) ? payload.relevantSkills.map((entry) => String(entry).trim()).filter(Boolean) : [];
+    const bonusLanguage = String(payload?.bonusLanguage || '').trim();
+    if (!planetName || relevantSkills.length !== 3 || !bonusLanguage) return;
+
+    const idBase = planetName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'custom-planet';
+    const id = `custom-planet-${idBase}`;
+
+    const background = {
+      id,
+      slug: id,
+      name: planetName,
+      category: 'planet',
+      source: 'Custom Planetary Background',
+      description: `Custom homeworld background for ${planetName}.`,
+      narrativeDescription: `${planetName} shaped your early life and perspective.`,
+      relevantSkills,
+      skillChoiceCount: 2,
+      bonusLanguage,
+      mechanicalEffect: {
+        type: 'class_skills',
+        count: 2,
+        description: `Choose 2 class skills from ${relevantSkills.join(', ')}.`,
+        skills: []
+      },
+      metadata: {
+        isCustomPlanet: true
+      }
+    };
+
+    this._allBackgrounds = this._allBackgrounds.filter((entry) => entry.id !== id);
+    this._customBackgrounds = this._customBackgrounds.filter((entry) => entry.id !== id);
+    this._allBackgrounds.push(background);
+    this._customBackgrounds.push(background);
+    this._groupBackgrounds();
+    this._focusedBackgroundId = id;
+
+    await this.onItemCommitted(id, shell);
+
+    const flavorText = `A custom homeworld then: ${planetName}. That gives you 2 class skills from ${relevantSkills.join(', ')} and ${bonusLanguage} as its language.`;
+    void shell.mentorRail?.speak?.(flavorText, 'neutral');
+  }
+
 }

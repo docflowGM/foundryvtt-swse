@@ -119,6 +119,15 @@ export function registerHouseruleSettings() {
     default: 1
   });
 
+  register('allowCustomPlanetUTF', {
+    name: 'Custom Planet Builder: Allow Use the Force',
+    hint: 'Allow Use the Force to appear in the Create Custom Planet skill list.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   /* -------------------------------------------------------------------------- */
   /*                                    DROIDS                                  */
   /* -------------------------------------------------------------------------- */
