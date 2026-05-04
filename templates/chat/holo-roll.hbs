@@ -1,4 +1,4 @@
-<div class="swse-chat-card swse-roll-card swse-roll-card--{{category}}">
+<div class="swse-chat-card swse-roll-card swse-roll-card--{{category}}" data-swse-chat-surface="roll">
   {{#if title}}
   <header class="card-header">
     <h3>{{title}}</h3>
@@ -11,6 +11,12 @@
     {{#if context.baseBonus}}<div><strong>Base Bonus:</strong> {{numberFormat context.baseBonus decimals=0 sign=true}}</div>{{/if}}
     {{#if context.situationalMods}}<div><strong>Situational Mods:</strong> {{numberFormat context.situationalMods decimals=0 sign=true}}</div>{{/if}}
     {{#if context.customModifier}}<div><strong>Custom Modifier:</strong> {{numberFormat context.customModifier decimals=0 sign=true}}</div>{{/if}}
+    {{#if context.hasDc}}
+      <div class="swse-roll-dc"><strong>DC:</strong> {{context.dc}}</div>
+      <div class="swse-roll-outcome swse-roll-outcome--{{#if context.passed}}success{{else}}failure{{/if}}">
+        <strong>Outcome:</strong> {{context.outcomeLabel}}
+      </div>
+    {{/if}}
   </div>
   {{/if}}
 

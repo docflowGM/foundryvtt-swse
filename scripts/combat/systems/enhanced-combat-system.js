@@ -4,6 +4,7 @@ import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/documen
 import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resolution/resolution-context.js";
+import { registerChatInteractionBridge } from "/systems/foundryvtt-swse/scripts/ui/chat/chat-interaction-bridge.js";
 
 /**
  * SWSE Enhanced Combat System (UI Adapter)
@@ -135,7 +136,7 @@ export class SWSECombat {
     const dmgBonus = computeDamageBonus(attacker, weapon);
     const base = weapon.system?.damage ?? '1d6';
     const formula = `${base} + ${dmgBonus}`;
-    const roll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(formula, attacker.getRollData?.() ?? {}, { actor: attacker, domain: 'combat.damage', context: { weaponId: weapon.id, targetId: target?.id ?? null } });
 
     const result = {
       attacker,
@@ -253,25 +254,9 @@ export class SWSECombat {
   }
 
   static init() {
-    Hooks.on('renderChatMessageHTML', (msg, html, user) => {
-      html.querySelector('.swse-roll-damage-btn')?.addEventListener('click', async ev => {
-        const btn = ev.currentTarget;
-        const attacker = game.actors.get(btn.dataset.attacker);
-        const weapon = attacker.items.get(btn.dataset.weapon);
-        const target = game.actors.get(btn.dataset.target);
-        await SWSECombat.rollDamage(attacker, weapon, target);
-      });
-
-      html.querySelector('.swse-apply-damage-btn')?.addEventListener('click', async ev => {
-        const btn = ev.currentTarget;
-        await SWSECombat.applyDamage(
-          btn.dataset.attacker,
-          btn.dataset.target,
-          btn.dataset.weapon,
-          parseInt(btn.dataset.amount, 10)
-        );
-      });
-    });
+    // Chat button listeners are centralized in ChatInteractionBridge.
+    // This legacy init remains as a compatibility entry point.
+    return registerChatInteractionBridge();
   }
 }
 

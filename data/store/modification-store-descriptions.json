@@ -1,0 +1,1580 @@
+[
+  {
+    "slug": "upgrade-aquatic-adaptation",
+    "id": "upgrade-aquatic-adaptation",
+    "name": "Aquatic Adaptation",
+    "description": "Aquatic Adaptation, armor upgrade, 1 slot, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-armorplast",
+    "id": "upgrade-armorplast",
+    "name": "Armorplast",
+    "description": "Armorplast, armor upgrade, 0 slots, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-climbing-claws",
+    "id": "upgrade-climbing-claws",
+    "name": "Climbing Claws",
+    "description": "Climbing Claws, armor upgrade, 1 slot, common. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "upgrade-diagnostics-system",
+    "id": "upgrade-diagnostics-system",
+    "name": "Diagnostics System",
+    "description": "Diagnostics System, armor upgrade, 1 slot, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-environmental-systems",
+    "id": "upgrade-environmental-systems",
+    "name": "Environmental Systems",
+    "description": "Environmental Systems, armor upgrade, 1 slot, common. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "upgrade-gyro",
+    "id": "upgrade-gyro",
+    "name": "Gyro",
+    "description": "Gyro, armor upgrade, 1 slot, common. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "upgrade-helmet-package",
+    "id": "upgrade-helmet-package",
+    "name": "Helmet Package",
+    "description": "Helmet Package, armor upgrade, 0 slots, common. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "upgrade-holoshroud",
+    "id": "upgrade-holoshroud",
+    "name": "Holoshroud",
+    "description": "Holoshroud, armor upgrade, 1 slot, rare. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "upgrade-integrated-equipment-1-slot",
+    "id": "upgrade-integrated-equipment-1-slot",
+    "name": "Integrated Equipment, 1 Slot",
+    "description": "Integrated Equipment, 1 Slot, armor upgrade, 1 slot, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-integrated-equipment-2-slots",
+    "id": "upgrade-integrated-equipment-2-slots",
+    "name": "Integrated Equipment, 2 Slots",
+    "description": "Integrated Equipment, 2 Slots, armor upgrade, 1 slot, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-integrated-equipment-5-slots",
+    "id": "upgrade-integrated-equipment-5-slots",
+    "name": "Integrated Equipment, 5 Slots",
+    "description": "Integrated Equipment, 5 Slots, armor upgrade, 1 slot, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-integrated-equipment-10-slots",
+    "id": "upgrade-integrated-equipment-10-slots",
+    "name": "Integrated Equipment, 10 Slots",
+    "description": "Integrated Equipment, 10 Slots, armor upgrade, 2 slots, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-internal-generator",
+    "id": "upgrade-internal-generator",
+    "name": "Internal Generator",
+    "description": "Internal Generator, armor upgrade, 1 slot, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-jump-servos",
+    "id": "upgrade-jump-servos",
+    "name": "Jump Servos",
+    "description": "Jump Servos, armor upgrade, 1 slot, common. A tasteful little add-on for buyers who heard 'factory standard' and took it personally."
+  },
+  {
+    "slug": "upgrade-powered-exoskeleton",
+    "id": "upgrade-powered-exoskeleton",
+    "name": "Powered Exoskeleton",
+    "description": "Powered Exoskeleton, armor upgrade, 2 slots, licensed. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "upgrade-radiation-shielding",
+    "id": "upgrade-radiation-shielding",
+    "name": "Radiation Shielding",
+    "description": "Radiation Shielding, armor upgrade, 1 slot, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-armor-rangefinder",
+    "id": "upgrade-armor-rangefinder",
+    "name": "Rangefinder",
+    "description": "Rangefinder, armor upgrade, 1 slot, licensed. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "upgrade-ready-harness",
+    "id": "upgrade-ready-harness",
+    "name": "Ready Harness",
+    "description": "Ready Harness, armor upgrade, 1 slot, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-repulsorlift-unit",
+    "id": "upgrade-repulsorlift-unit",
+    "name": "Repulsorlift Unit",
+    "description": "Repulsorlift Unit, armor upgrade, 1 slot, common. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "upgrade-shadowskin",
+    "id": "upgrade-shadowskin",
+    "name": "Shadowskin",
+    "description": "Shadowskin, armor upgrade, 1 slot, restricted. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "upgrade-reflec-shadowskin",
+    "id": "upgrade-reflec-shadowskin",
+    "name": "Reflec Shadowskin",
+    "description": "Reflec Shadowskin, armor upgrade, 1 slot, military. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "upgrade-shield-generator-sr5",
+    "id": "upgrade-shield-generator-sr5",
+    "name": "Shield Generator, SR 5",
+    "description": "Shield Generator, SR 5, armor upgrade, 2 slots, restricted. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-shield-generator-sr10",
+    "id": "upgrade-shield-generator-sr10",
+    "name": "Shield Generator, SR 10",
+    "description": "Shield Generator, SR 10, armor upgrade, 3 slots, military. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-shockweb",
+    "id": "upgrade-shockweb",
+    "name": "Shockweb",
+    "description": "Shockweb, armor upgrade, 1 slot, military. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-vacuum-seals-standard",
+    "id": "upgrade-vacuum-seals-standard",
+    "name": "Vacuum Seals, Standard",
+    "description": "Vacuum Seals, Standard, armor upgrade, 0 slots, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-vacuum-seals-improved",
+    "id": "upgrade-vacuum-seals-improved",
+    "name": "Vacuum Seals, Improved",
+    "description": "Vacuum Seals, Improved, armor upgrade, 1 slot, common. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "upgrade-weapon-mount-standard",
+    "id": "upgrade-weapon-mount-standard",
+    "name": "Weapon Mount, Standard",
+    "description": "Weapon Mount, Standard, armor upgrade, 1 slot, restricted. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-armor-reinforcement",
+    "id": "upgrade-armor-reinforcement",
+    "name": "Armor Reinforcement",
+    "description": "Armor Reinforcement, armor upgrade, 1 slot, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-mesh-underlay",
+    "id": "upgrade-mesh-underlay",
+    "name": "Mesh Underlay",
+    "description": "Mesh Underlay, armor upgrade, 2 slots, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-cheater",
+    "id": "upgrade-cheater",
+    "name": "Cheater",
+    "description": "Cheater, universal upgrade, 1 slot, illegal. Officially unavailable, which of course only improves the pitch."
+  },
+  {
+    "slug": "upgrade-cloaked",
+    "id": "upgrade-cloaked",
+    "name": "Cloaked",
+    "description": "Cloaked, universal upgrade, 1 slot, licensed. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "upgrade-droidification",
+    "id": "upgrade-droidification",
+    "name": "Droidification",
+    "description": "Droidification, universal upgrade, 2 slots, licensed. For buyers who looked at manual labor and decided it lacked enough resentment."
+  },
+  {
+    "slug": "upgrade-dual-gear",
+    "id": "upgrade-dual-gear",
+    "name": "Dual Gear",
+    "description": "Dual Gear, universal upgrade, 1 slot, common. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "upgrade-electrograpple-handle",
+    "id": "upgrade-electrograpple-handle",
+    "name": "Electrograpple Handle",
+    "description": "Electrograpple Handle, universal upgrade, 1 slot, licensed. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "upgrade-environmental-sealing",
+    "id": "upgrade-environmental-sealing",
+    "name": "Environmental Sealing",
+    "description": "Environmental Sealing, universal upgrade, 1 slot, common. Great for owners who keep taking standard equipment to deeply nonstandard places."
+  },
+  {
+    "slug": "upgrade-extra-power-source",
+    "id": "upgrade-extra-power-source",
+    "name": "Extra Power Source",
+    "description": "Extra Power Source, universal upgrade, 1 slot, common. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "upgrade-memory-upgrade",
+    "id": "upgrade-memory-upgrade",
+    "name": "Memory Upgrade",
+    "description": "Memory Upgrade, universal upgrade, 1 slot, common. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "upgrade-advanced-memory-upgrade",
+    "id": "upgrade-advanced-memory-upgrade",
+    "name": "Advanced Memory Upgrade",
+    "description": "Advanced Memory Upgrade, universal upgrade, 2 slots, common. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "upgrade-miniaturized",
+    "id": "upgrade-miniaturized",
+    "name": "Miniaturized",
+    "description": "Miniaturized, universal upgrade, 1 slot, common. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "upgrade-recognition-system",
+    "id": "upgrade-recognition-system",
+    "name": "Recognition System",
+    "description": "Recognition System, universal upgrade, 1 slot, common. A tasteful little add-on for buyers who heard 'factory standard' and took it personally."
+  },
+  {
+    "slug": "upgrade-remote-activation",
+    "id": "upgrade-remote-activation",
+    "name": "Remote Activation",
+    "description": "Remote Activation, universal upgrade, 0 slots, common. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "upgrade-secret-compartment",
+    "id": "upgrade-secret-compartment",
+    "name": "Secret Compartment",
+    "description": "Secret Compartment, universal upgrade, 1 slot, common. Perfect for owners who want the upgrade noticed by absolutely no one important."
+  },
+  {
+    "slug": "upgrade-silverplate",
+    "id": "upgrade-silverplate",
+    "name": "Silverplate",
+    "description": "Silverplate, universal upgrade, 1 slot, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-spring-loaded",
+    "id": "upgrade-spring-loaded",
+    "name": "Spring-Loaded",
+    "description": "Spring-Loaded, universal upgrade, 1 slot, common. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "upgrade-storage-capacity",
+    "id": "upgrade-storage-capacity",
+    "name": "Storage Capacity",
+    "description": "Storage Capacity, universal upgrade, 0 slots, common. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "upgrade-ion-shielding",
+    "id": "upgrade-ion-shielding",
+    "name": "Ion-Shielding",
+    "description": "Ion-Shielding, universal upgrade, 1 slot, common. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "upgrade-componentization-basic",
+    "id": "upgrade-componentization-basic",
+    "name": "Componentization (Basic)",
+    "description": "Componentization (Basic), universal upgrade, 1 slot, common. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "upgrade-componentization-deluxe",
+    "id": "upgrade-componentization-deluxe",
+    "name": "Componentization (Deluxe)",
+    "description": "Componentization (Deluxe), universal upgrade, 2 slots, common. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "upgrade-bayonet-ring",
+    "id": "upgrade-bayonet-ring",
+    "name": "Bayonet Ring",
+    "description": "Bayonet Ring, weapon upgrade, 0 slots, common. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-bipod",
+    "id": "upgrade-bipod",
+    "name": "Bipod",
+    "description": "Bipod, weapon upgrade, 0 slots, common. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-double-trigger",
+    "id": "upgrade-double-trigger",
+    "name": "Double Trigger",
+    "description": "Double Trigger, weapon upgrade, 0 slots, common. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-ion-charger",
+    "id": "upgrade-ion-charger",
+    "name": "Ion Charger",
+    "description": "Ion Charger, weapon upgrade, 1 slot, licensed. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-missile-load",
+    "id": "upgrade-missile-load",
+    "name": "Missile Load",
+    "description": "Missile Load, weapon upgrade, 1 slot, military. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-neutronium-reinforcement",
+    "id": "upgrade-neutronium-reinforcement",
+    "name": "Neutronium Reinforcement",
+    "description": "Neutronium Reinforcement, weapon upgrade, 1 slot, military. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-overload-switch",
+    "id": "upgrade-overload-switch",
+    "name": "Overload Switch",
+    "description": "Overload Switch, weapon upgrade, 1 slot, military. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-pulse-charger",
+    "id": "upgrade-pulse-charger",
+    "name": "Pulse Charger",
+    "description": "Pulse Charger, weapon upgrade, 1 slot, military. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-rangefinder",
+    "id": "upgrade-rangefinder",
+    "name": "Rangefinder",
+    "description": "Rangefinder, weapon upgrade, 1 slot, licensed. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "upgrade-rapid-recycler",
+    "id": "upgrade-rapid-recycler",
+    "name": "Rapid Recycler",
+    "description": "Rapid Recycler, weapon upgrade, 1 slot, military. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "upgrade-retractable-stock",
+    "id": "upgrade-retractable-stock",
+    "name": "Retractable Stock",
+    "description": "Retractable Stock, weapon upgrade, 0 slots, common. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-slinker",
+    "id": "upgrade-slinker",
+    "name": "Slinker",
+    "description": "Slinker, weapon upgrade, 1 slot, licensed. Perfect for owners who want the upgrade noticed by absolutely no one important."
+  },
+  {
+    "slug": "upgrade-sniper-switch",
+    "id": "upgrade-sniper-switch",
+    "name": "Sniper Switch",
+    "description": "Sniper Switch, weapon upgrade, 0 slots, licensed. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-targeting-scope-standard",
+    "id": "upgrade-targeting-scope-standard",
+    "name": "Targeting Scope, Standard",
+    "description": "Targeting Scope, Standard, weapon upgrade, 0 slots, common. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-targeting-scope-low-light",
+    "id": "upgrade-targeting-scope-low-light",
+    "name": "Targeting Scope, Low-Light",
+    "description": "Targeting Scope, Low-Light, weapon upgrade, 0 slots, common. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "upgrade-beam-splitter",
+    "id": "upgrade-beam-splitter",
+    "name": "Beam Splitter",
+    "description": "Beam Splitter, weapon upgrade, 2 slots, common. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-durasteel-bonding",
+    "id": "upgrade-durasteel-bonding",
+    "name": "Durasteel Bonding",
+    "description": "Durasteel Bonding, weapon upgrade, 1 slot, common. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "upgrade-enhanced-energy-projector",
+    "id": "upgrade-enhanced-energy-projector",
+    "name": "Enhanced Energy Projector",
+    "description": "Enhanced Energy Projector, weapon upgrade, 1 slot, common. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-hair-trigger",
+    "id": "upgrade-hair-trigger",
+    "name": "Hair Trigger",
+    "description": "Hair Trigger, weapon upgrade, 1 slot, common. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "upgrade-improved-energy-cell",
+    "id": "upgrade-improved-energy-cell",
+    "name": "Improved Energy Cell",
+    "description": "Improved Energy Cell, weapon upgrade, 1 slot, common. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "upgrade-tremor-cell",
+    "id": "upgrade-tremor-cell",
+    "name": "Tremor Cell",
+    "description": "Tremor Cell, weapon upgrade, 1 slot, common. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "upgrade-computerized-interface-scope",
+    "id": "upgrade-computerized-interface-scope",
+    "name": "Computerized Interface Scope",
+    "description": "Computerized Interface Scope, weapon upgrade, 0 slots, common. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "upgrade-flash-suppressor-silencer",
+    "id": "upgrade-flash-suppressor-silencer",
+    "name": "Flash Suppressor/Silencer",
+    "description": "Flash Suppressor/Silencer, weapon upgrade, 0 slots, common. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "cargo-jettison",
+    "id": "cargo-jettison",
+    "name": "Cargo Jettison System",
+    "description": "Cargo Jettison System, accessory, 1 EP. A practical choice for operators whose shipping needs keep becoming more creative."
+  },
+  {
+    "slug": "cargo-pod-light",
+    "id": "cargo-pod-light",
+    "name": "Cargo Pod, Light",
+    "description": "Cargo Pod, Light, accessory, 0 EP. A practical choice for operators whose shipping needs keep becoming more creative."
+  },
+  {
+    "slug": "cargo-pod-medium",
+    "id": "cargo-pod-medium",
+    "name": "Cargo Pod, Medium",
+    "description": "Cargo Pod, Medium, accessory, 1 EP. A practical choice for operators whose shipping needs keep becoming more creative."
+  },
+  {
+    "slug": "cargo-pod-heavy",
+    "id": "cargo-pod-heavy",
+    "name": "Cargo Pod, Heavy",
+    "description": "Cargo Pod, Heavy, accessory, 2 EP. A practical choice for operators whose shipping needs keep becoming more creative."
+  },
+  {
+    "slug": "cloaking-hibridium",
+    "id": "cloaking-hibridium",
+    "name": "Cloaking Device, Hibridium",
+    "description": "Cloaking Device, Hibridium, accessory, 3 EP. Perfect for owners who want the upgrade noticed by absolutely no one important."
+  },
+  {
+    "slug": "cloaking-stygium",
+    "id": "cloaking-stygium",
+    "name": "Cloaking Device, Stygium",
+    "description": "Cloaking Device, Stygium, accessory, 1 EP. Perfect for owners who want the upgrade noticed by absolutely no one important."
+  },
+  {
+    "slug": "cryogenic-chambers",
+    "id": "cryogenic-chambers",
+    "name": "Cryogenic Chambers",
+    "description": "Cryogenic Chambers, accessory, 2 EP. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "docking-clamps",
+    "id": "docking-clamps",
+    "name": "Docking Clamps",
+    "description": "Docking Clamps, accessory, 1 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "droid-repair-team",
+    "id": "droid-repair-team",
+    "name": "Droid Repair Team",
+    "description": "Droid Repair Team, accessory, 1 EP. For buyers who looked at manual labor and decided it lacked enough resentment."
+  },
+  {
+    "slug": "escape-pod-small",
+    "id": "escape-pod-small",
+    "name": "Escape Pod, Small Lifeboat",
+    "description": "Escape Pod, Small Lifeboat, accessory, 1 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "escape-pod-large",
+    "id": "escape-pod-large",
+    "name": "Escape Pod, Large Lifeboat",
+    "description": "Escape Pod, Large Lifeboat, accessory, 2 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "extended-range",
+    "id": "extended-range",
+    "name": "Extended Range",
+    "description": "Extended Range, accessory, 1 EP. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "hangar-bay",
+    "id": "hangar-bay",
+    "name": "Hangar Bay",
+    "description": "Hangar Bay, accessory, 8 EP. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "hangar-bay-concealed",
+    "id": "hangar-bay-concealed",
+    "name": "Hangar Bay, Concealed",
+    "description": "Hangar Bay, Concealed, accessory, 40 EP. Perfect for owners who want the upgrade noticed by absolutely no one important."
+  },
+  {
+    "slug": "holonet-transceiver",
+    "id": "holonet-transceiver",
+    "name": "Transceiver, HoloNet",
+    "description": "Transceiver, HoloNet, accessory, 4 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "hyper-transceiver",
+    "id": "hyper-transceiver",
+    "name": "Transceiver, Hyper",
+    "description": "Transceiver, Hyper, accessory, 1 EP. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "luxury-basic",
+    "id": "luxury-basic",
+    "name": "Luxury Upgrade, Basic",
+    "description": "Luxury Upgrade, Basic, accessory, 1 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "luxury-advanced",
+    "id": "luxury-advanced",
+    "name": "Luxury Upgrade, Advanced",
+    "description": "Luxury Upgrade, Advanced, accessory, 1 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "luxury-extreme",
+    "id": "luxury-extreme",
+    "name": "Luxury Upgrade, Extreme",
+    "description": "Luxury Upgrade, Extreme, accessory, 1 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "medical-suite",
+    "id": "medical-suite",
+    "name": "Medical Suite",
+    "description": "Medical Suite, accessory, 1 EP. Useful, respectable, and only slightly insulting to whoever has to use it."
+  },
+  {
+    "slug": "passenger-seating",
+    "id": "passenger-seating",
+    "name": "Passenger Conversion, Seating",
+    "description": "Passenger Conversion, Seating, accessory, 1 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "passenger-quarters",
+    "id": "passenger-quarters",
+    "name": "Passenger Conversion, Quarters",
+    "description": "Passenger Conversion, Quarters, accessory, 10 EP. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "sensor-array-2",
+    "id": "sensor-array-2",
+    "name": "Sensor Array Computer +2",
+    "description": "Sensor Array Computer +2, accessory, 1 EP. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "sensor-array-4",
+    "id": "sensor-array-4",
+    "name": "Sensor Array Computer +4",
+    "description": "Sensor Array Computer +4, accessory, 2 EP. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "sensor-array-6",
+    "id": "sensor-array-6",
+    "name": "Sensor Array Computer +6",
+    "description": "Sensor Array Computer +6, accessory, 3 EP. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "sensor-enhancement",
+    "id": "sensor-enhancement",
+    "name": "Sensor Enhancement Package",
+    "description": "Sensor Enhancement Package, accessory, 1 EP. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "slave-circuits-basic",
+    "id": "slave-circuits-basic",
+    "name": "Slave Circuits, Basic",
+    "description": "Slave Circuits, Basic, accessory, 1 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "slave-circuits-advanced",
+    "id": "slave-circuits-advanced",
+    "name": "Slave Circuits, Advanced",
+    "description": "Slave Circuits, Advanced, accessory, 1 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "slave-circuits-recall",
+    "id": "slave-circuits-recall",
+    "name": "Slave Circuits, Recall",
+    "description": "Slave Circuits, Recall, accessory, 0 EP. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "smuggler-compartments",
+    "id": "smuggler-compartments",
+    "name": "Smuggler's Compartments",
+    "description": "Smuggler's Compartments, accessory, 1 EP. Perfect for owners who want the upgrade noticed by absolutely no one important."
+  },
+  {
+    "slug": "transponder-iff",
+    "id": "transponder-iff",
+    "name": "Transponder, IFF",
+    "description": "Transponder, IFF, accessory, 0 EP. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "transponder-masked",
+    "id": "transponder-masked",
+    "name": "Transponder, Masked",
+    "description": "Transponder, Masked, accessory, 0 EP. Officially unavailable, which of course only improves the pitch."
+  },
+  {
+    "slug": "transponder-disguised-1",
+    "id": "transponder-disguised-1",
+    "name": "Transponder, Disguised (Basic)",
+    "description": "Transponder, Disguised (Basic), accessory, 0 EP. Officially unavailable, which of course only improves the pitch."
+  },
+  {
+    "slug": "transponder-disguised-2",
+    "id": "transponder-disguised-2",
+    "name": "Transponder, Disguised (Improved)",
+    "description": "Transponder, Disguised (Improved), accessory, 0 EP. Officially unavailable, which of course only improves the pitch."
+  },
+  {
+    "slug": "transponder-disguised-3",
+    "id": "transponder-disguised-3",
+    "name": "Transponder, Disguised (Superior)",
+    "description": "Transponder, Disguised (Superior), accessory, 0 EP. Officially unavailable, which of course only improves the pitch."
+  },
+  {
+    "slug": "amphibious-seals",
+    "id": "amphibious-seals",
+    "name": "Amphibious Seals",
+    "description": "Amphibious Seals, accessory, 2 EP. Great for owners who keep taking standard equipment to deeply nonstandard places."
+  },
+  {
+    "slug": "auxiliary-generators-2",
+    "id": "auxiliary-generators-2",
+    "name": "Auxiliary Generators +2",
+    "description": "Auxiliary Generators +2, accessory, 2 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "auxiliary-generators-4",
+    "id": "auxiliary-generators-4",
+    "name": "Auxiliary Generators +4",
+    "description": "Auxiliary Generators +4, accessory, 3 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "auxiliary-generators-6",
+    "id": "auxiliary-generators-6",
+    "name": "Auxiliary Generators +6",
+    "description": "Auxiliary Generators +6, accessory, 4 EP. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "backup-battery",
+    "id": "backup-battery",
+    "name": "Backup Battery",
+    "description": "Backup Battery, accessory, 0 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "baffled-drive",
+    "id": "baffled-drive",
+    "name": "Baffled Drive",
+    "description": "Baffled Drive, accessory, 1 EP. Perfect for owners who want the upgrade noticed by absolutely no one important."
+  },
+  {
+    "slug": "cockpit-ejection",
+    "id": "cockpit-ejection",
+    "name": "Cockpit Ejection System",
+    "description": "Cockpit Ejection System, accessory, 2 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "cofferdam",
+    "id": "cofferdam",
+    "name": "Cofferdam",
+    "description": "Cofferdam, accessory, 1 EP. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "environmental-filters",
+    "id": "environmental-filters",
+    "name": "Environmental Filters",
+    "description": "Environmental Filters, accessory, 2 EP. Great for owners who keep taking standard equipment to deeply nonstandard places."
+  },
+  {
+    "slug": "fuel-converters",
+    "id": "fuel-converters",
+    "name": "Fuel Converters",
+    "description": "Fuel Converters, accessory, 1 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "grappler-mag",
+    "id": "grappler-mag",
+    "name": "Grappler Mag",
+    "description": "Grappler Mag, accessory, 1 EP. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "hardpoint",
+    "id": "hardpoint",
+    "name": "Hardpoint",
+    "description": "Hardpoint, accessory, 1 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "hidden-cargo-25",
+    "id": "hidden-cargo-25",
+    "name": "Hidden Cargo Hold (25% of Cargo)",
+    "description": "Hidden Cargo Hold (25% of Cargo), accessory, 1 EP. Perfect for owners who want the upgrade noticed by absolutely no one important."
+  },
+  {
+    "slug": "hidden-cargo-50",
+    "id": "hidden-cargo-50",
+    "name": "Hidden Cargo Hold (50% of Cargo)",
+    "description": "Hidden Cargo Hold (50% of Cargo), accessory, 2 EP. Perfect for owners who want the upgrade noticed by absolutely no one important."
+  },
+  {
+    "slug": "hidden-cargo-75",
+    "id": "hidden-cargo-75",
+    "name": "Hidden Cargo Hold (75% of Cargo)",
+    "description": "Hidden Cargo Hold (75% of Cargo), accessory, 4 EP. Perfect for owners who want the upgrade noticed by absolutely no one important."
+  },
+  {
+    "slug": "holding-cells-25",
+    "id": "holding-cells-25",
+    "name": "Holding Cells (25% of Passengers)",
+    "description": "Holding Cells (25% of Passengers), accessory, 1 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "holding-cells-50",
+    "id": "holding-cells-50",
+    "name": "Holding Cells (50% of Passengers)",
+    "description": "Holding Cells (50% of Passengers), accessory, 2 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "holding-cells-75",
+    "id": "holding-cells-75",
+    "name": "Holding Cells (75% of Passengers)",
+    "description": "Holding Cells (75% of Passengers), accessory, 4 EP. A tasteful little add-on for buyers who heard 'factory standard' and took it personally."
+  },
+  {
+    "slug": "interrogation-chamber",
+    "id": "interrogation-chamber",
+    "name": "Interrogation Chamber",
+    "description": "Interrogation Chamber, accessory, 0 EP. Officially unavailable, which of course only improves the pitch."
+  },
+  {
+    "slug": "personalized-controls",
+    "id": "personalized-controls",
+    "name": "Personalized Controls",
+    "description": "Personalized Controls, accessory, 0 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "sensor-baffling",
+    "id": "sensor-baffling",
+    "name": "Sensor Baffling",
+    "description": "Sensor Baffling, accessory, 0 EP. Perfect for owners who want the upgrade noticed by absolutely no one important."
+  },
+  {
+    "slug": "sensor-decoy",
+    "id": "sensor-decoy",
+    "name": "Sensor Decoy",
+    "description": "Sensor Decoy, accessory, 1 EP. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "sensor-mask",
+    "id": "sensor-mask",
+    "name": "Sensor Mask",
+    "description": "Sensor Mask, accessory, 1 EP. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "workshop",
+    "id": "workshop",
+    "name": "Workshop",
+    "description": "Workshop, accessory, 1 EP. Useful, respectable, and only slightly insulting to whoever has to use it."
+  },
+  {
+    "slug": "launch-bay",
+    "id": "launch-bay",
+    "name": "Launch Bay",
+    "description": "Launch Bay, accessory, 4 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "plasma-punch",
+    "id": "plasma-punch",
+    "name": "Plasma Punch",
+    "description": "Plasma Punch, accessory, 1 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "plasma-torch",
+    "id": "plasma-torch",
+    "name": "Plasma Torch",
+    "description": "Plasma Torch, accessory, 1 EP. Useful, respectable, and only slightly insulting to whoever has to use it."
+  },
+  {
+    "slug": "tractor-clamp",
+    "id": "tractor-clamp",
+    "name": "Tractor Clamp",
+    "description": "Tractor Clamp, accessory, 12 EP. A tasteful little add-on for buyers who heard 'factory standard' and took it personally."
+  },
+  {
+    "slug": "armor-1",
+    "id": "armor-1",
+    "name": "Starship Armor, +1",
+    "description": "Starship Armor, +1, defense, 2 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "armor-2",
+    "id": "armor-2",
+    "name": "Starship Armor, +2",
+    "description": "Starship Armor, +2, defense, 5 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "armor-3",
+    "id": "armor-3",
+    "name": "Starship Armor, +3",
+    "description": "Starship Armor, +3, defense, 10 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "armor-4",
+    "id": "armor-4",
+    "name": "Starship Armor, +4",
+    "description": "Starship Armor, +4, defense, 20 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "jamming-suite",
+    "id": "jamming-suite",
+    "name": "Jamming Suite",
+    "description": "Jamming Suite, defense, 1 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "jamming-array",
+    "id": "jamming-array",
+    "name": "Jamming Array",
+    "description": "Jamming Array, defense, 5 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "regenerating-shields",
+    "id": "regenerating-shields",
+    "name": "Regenerating Shields",
+    "description": "Regenerating Shields, defense, 2 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "reinforced-bulkheads-10",
+    "id": "reinforced-bulkheads-10",
+    "name": "Reinforced Bulkheads, +10%",
+    "description": "Reinforced Bulkheads, +10%, defense, 2 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "reinforced-bulkheads-20",
+    "id": "reinforced-bulkheads-20",
+    "name": "Reinforced Bulkheads, +20%",
+    "description": "Reinforced Bulkheads, +20%, defense, 5 EP. A tasteful little add-on for buyers who heard 'factory standard' and took it personally."
+  },
+  {
+    "slug": "reinforced-bulkheads-30",
+    "id": "reinforced-bulkheads-30",
+    "name": "Reinforced Bulkheads, +30%",
+    "description": "Reinforced Bulkheads, +30%, defense, 10 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "shields-10",
+    "id": "shields-10",
+    "name": "Starship Shields, SR 10",
+    "description": "Starship Shields, SR 10, defense, 1 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-15",
+    "id": "shields-15",
+    "name": "Starship Shields, SR 15",
+    "description": "Starship Shields, SR 15, defense, 1 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-20",
+    "id": "shields-20",
+    "name": "Starship Shields, SR 20",
+    "description": "Starship Shields, SR 20, defense, 1 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-25",
+    "id": "shields-25",
+    "name": "Starship Shields, SR 25",
+    "description": "Starship Shields, SR 25, defense, 1 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-30",
+    "id": "shields-30",
+    "name": "Starship Shields, SR 30",
+    "description": "Starship Shields, SR 30, defense, 2 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-35",
+    "id": "shields-35",
+    "name": "Starship Shields, SR 35",
+    "description": "Starship Shields, SR 35, defense, 2 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-40",
+    "id": "shields-40",
+    "name": "Starship Shields, SR 40",
+    "description": "Starship Shields, SR 40, defense, 2 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-45",
+    "id": "shields-45",
+    "name": "Starship Shields, SR 45",
+    "description": "Starship Shields, SR 45, defense, 2 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-50",
+    "id": "shields-50",
+    "name": "Starship Shields, SR 50",
+    "description": "Starship Shields, SR 50, defense, 3 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-55",
+    "id": "shields-55",
+    "name": "Starship Shields, SR 55",
+    "description": "Starship Shields, SR 55, defense, 3 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-60",
+    "id": "shields-60",
+    "name": "Starship Shields, SR 60",
+    "description": "Starship Shields, SR 60, defense, 3 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-70",
+    "id": "shields-70",
+    "name": "Starship Shields, SR 70",
+    "description": "Starship Shields, SR 70, defense, 3 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-80",
+    "id": "shields-80",
+    "name": "Starship Shields, SR 80",
+    "description": "Starship Shields, SR 80, defense, 4 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-90",
+    "id": "shields-90",
+    "name": "Starship Shields, SR 90",
+    "description": "Starship Shields, SR 90, defense, 4 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-100",
+    "id": "shields-100",
+    "name": "Starship Shields, SR 100",
+    "description": "Starship Shields, SR 100, defense, 5 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-125",
+    "id": "shields-125",
+    "name": "Starship Shields, SR 125",
+    "description": "Starship Shields, SR 125, defense, 6 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-150",
+    "id": "shields-150",
+    "name": "Starship Shields, SR 150",
+    "description": "Starship Shields, SR 150, defense, 7 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-175",
+    "id": "shields-175",
+    "name": "Starship Shields, SR 175",
+    "description": "Starship Shields, SR 175, defense, 8 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shields-200",
+    "id": "shields-200",
+    "name": "Starship Shields, SR 200",
+    "description": "Starship Shields, SR 200, defense, 10 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "anti-boarding-systems",
+    "id": "anti-boarding-systems",
+    "name": "Anti-Boarding Systems",
+    "description": "Anti-Boarding Systems, defense, 5 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "com-jammers",
+    "id": "com-jammers",
+    "name": "Com Jammers",
+    "description": "Com Jammers, defense, 1 EP. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "reinforced-keel",
+    "id": "reinforced-keel",
+    "name": "Reinforced Keel",
+    "description": "Reinforced Keel, defense, 2 EP. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "reinforced-keel-boarding",
+    "id": "reinforced-keel-boarding",
+    "name": "Reinforced Keel, Boarding",
+    "description": "Reinforced Keel, Boarding, defense, 4 EP. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "security-bracing",
+    "id": "security-bracing",
+    "name": "Security Bracing",
+    "description": "Security Bracing, defense, 2 EP. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "atmospheric-thrusters",
+    "id": "atmospheric-thrusters",
+    "name": "Atmospheric Thrusters",
+    "description": "Atmospheric Thrusters, movement, 2 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "atmospheric-thrusters-advanced",
+    "id": "atmospheric-thrusters-advanced",
+    "name": "Atmospheric Thrusters, Advanced",
+    "description": "Atmospheric Thrusters, Advanced, movement, 5 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "combat-thrusters",
+    "id": "combat-thrusters",
+    "name": "Combat Thrusters",
+    "description": "Combat Thrusters, movement, 1 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "hyperdrive-075",
+    "id": "hyperdrive-075",
+    "name": "Hyperdrive, Class 0.75",
+    "description": "Hyperdrive, Class 0.75, movement, 4 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "hyperdrive-1",
+    "id": "hyperdrive-1",
+    "name": "Hyperdrive, Class 1",
+    "description": "Hyperdrive, Class 1, movement, 3 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "hyperdrive-15",
+    "id": "hyperdrive-15",
+    "name": "Hyperdrive, Class 1.5",
+    "description": "Hyperdrive, Class 1.5, movement, 3 EP. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "hyperdrive-2",
+    "id": "hyperdrive-2",
+    "name": "Hyperdrive, Class 2",
+    "description": "Hyperdrive, Class 2, movement, 3 EP. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "hyperdrive-3",
+    "id": "hyperdrive-3",
+    "name": "Hyperdrive, Class 3",
+    "description": "Hyperdrive, Class 3, movement, 2 EP. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "hyperdrive-4",
+    "id": "hyperdrive-4",
+    "name": "Hyperdrive, Class 4",
+    "description": "Hyperdrive, Class 4, movement, 2 EP. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "hyperdrive-5",
+    "id": "hyperdrive-5",
+    "name": "Hyperdrive, Class 5",
+    "description": "Hyperdrive, Class 5, movement, 2 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "hyperdrive-6",
+    "id": "hyperdrive-6",
+    "name": "Hyperdrive, Class 6",
+    "description": "Hyperdrive, Class 6, movement, 2 EP. A tasteful little add-on for buyers who heard 'factory standard' and took it personally."
+  },
+  {
+    "slug": "hyperdrive-8",
+    "id": "hyperdrive-8",
+    "name": "Hyperdrive, Class 8",
+    "description": "Hyperdrive, Class 8, movement, 1 EP. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "hyperdrive-10",
+    "id": "hyperdrive-10",
+    "name": "Hyperdrive, Class 10",
+    "description": "Hyperdrive, Class 10, movement, 1 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "maneuvering-jets-2",
+    "id": "maneuvering-jets-2",
+    "name": "Maneuvering Jets +2",
+    "description": "Maneuvering Jets +2, movement, 2 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "maneuvering-jets-4",
+    "id": "maneuvering-jets-4",
+    "name": "Maneuvering Jets +4",
+    "description": "Maneuvering Jets +4, movement, 3 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "maneuvering-jets-6",
+    "id": "maneuvering-jets-6",
+    "name": "Maneuvering Jets +6",
+    "description": "Maneuvering Jets +6, movement, 4 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "navicomputer-limited",
+    "id": "navicomputer-limited",
+    "name": "Navicomputer, Limited",
+    "description": "Navicomputer, Limited, movement, 0 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "navicomputer",
+    "id": "navicomputer",
+    "name": "Navicomputer",
+    "description": "Navicomputer, movement, 1 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "navicomputer-advanced",
+    "id": "navicomputer-advanced",
+    "name": "Navicomputer, Advanced",
+    "description": "Navicomputer, Advanced, movement, 2 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "sublight-accelerator",
+    "id": "sublight-accelerator",
+    "name": "SubLight Accelerator Motor (SLAM)",
+    "description": "SubLight Accelerator Motor (SLAM), movement, 2 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "sublight-drive-1",
+    "id": "sublight-drive-1",
+    "name": "Sublight Drive (Speed 1 Square)",
+    "description": "Sublight Drive (Speed 1 Square), movement, 2 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "sublight-drive-2",
+    "id": "sublight-drive-2",
+    "name": "Sublight Drive (Speed 2 Squares)",
+    "description": "Sublight Drive (Speed 2 Squares), movement, 3 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "sublight-drive-3",
+    "id": "sublight-drive-3",
+    "name": "Sublight Drive (Speed 3 Squares)",
+    "description": "Sublight Drive (Speed 3 Squares), movement, 4 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "sublight-drive-4",
+    "id": "sublight-drive-4",
+    "name": "Sublight Drive (Speed 4 Squares)",
+    "description": "Sublight Drive (Speed 4 Squares), movement, 5 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "sublight-drive-5",
+    "id": "sublight-drive-5",
+    "name": "Sublight Drive (Speed 5 Squares)",
+    "description": "Sublight Drive (Speed 5 Squares), movement, 6 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "sublight-drive-6",
+    "id": "sublight-drive-6",
+    "name": "Sublight Drive (Speed 6 Squares)",
+    "description": "Sublight Drive (Speed 6 Squares), movement, 7 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "autoblaster",
+    "id": "autoblaster",
+    "name": "Autoblaster",
+    "description": "Autoblaster, weapon, blaster, 3d8x2, 0 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "blaster-cannon-light",
+    "id": "blaster-cannon-light",
+    "name": "Blaster Cannon, Light",
+    "description": "Blaster Cannon, Light, weapon, blaster, 3d10x2, 1 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "blaster-cannon-medium",
+    "id": "blaster-cannon-medium",
+    "name": "Blaster Cannon, Medium",
+    "description": "Blaster Cannon, Medium, weapon, blaster, 4d10x2, 1 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "blaster-cannon-heavy",
+    "id": "blaster-cannon-heavy",
+    "name": "Blaster Cannon, Heavy",
+    "description": "Blaster Cannon, Heavy, weapon, blaster, 5d10x2, 2 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "cannon-double",
+    "id": "cannon-double",
+    "name": "Cannon, Double",
+    "description": "Cannon, Double, weapon, enhancement, +1d10, 0 EP. A tasteful little add-on for buyers who heard 'factory standard' and took it personally."
+  },
+  {
+    "slug": "cannon-quad",
+    "id": "cannon-quad",
+    "name": "Cannon, Quad",
+    "description": "Cannon, Quad, weapon, enhancement, +2d10, 1 EP. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "cannon-enhancement",
+    "id": "cannon-enhancement",
+    "name": "Cannon Enhancements",
+    "description": "Cannon Enhancements, weapon, enhancement, +1d10, 1 EP. A tasteful little add-on for buyers who heard 'factory standard' and took it personally."
+  },
+  {
+    "slug": "cannon-enhancement-advanced",
+    "id": "cannon-enhancement-advanced",
+    "name": "Cannon Enhancements, Advanced",
+    "description": "Cannon Enhancements, Advanced, weapon, enhancement, +2d10, 2 EP. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "concussion-missile-launcher-light",
+    "id": "concussion-missile-launcher-light",
+    "name": "Concussion Missile Launcher, Light",
+    "description": "Concussion Missile Launcher, Light, weapon, missile, See Ammunition, 2 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "concussion-missile-light",
+    "id": "concussion-missile-light",
+    "name": "Concussion Missile, Light",
+    "description": "Concussion Missile, Light, ammunition, 7d10x2, 0 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "concussion-missile-launcher-medium",
+    "id": "concussion-missile-launcher-medium",
+    "name": "Concussion Missile Launcher, Medium",
+    "description": "Concussion Missile Launcher, Medium, weapon, missile, See Ammunition, 5 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "concussion-missile-medium",
+    "id": "concussion-missile-medium",
+    "name": "Concussion Missile, Medium",
+    "description": "Concussion Missile, Medium, ammunition, 9d10x2, 0 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "concussion-missile-launcher-heavy",
+    "id": "concussion-missile-launcher-heavy",
+    "name": "Concussion Missile Launcher, Heavy",
+    "description": "Concussion Missile Launcher, Heavy, weapon, missile, See Ammunition, 20 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "concussion-missile-heavy",
+    "id": "concussion-missile-heavy",
+    "name": "Concussion Missile, Heavy",
+    "description": "Concussion Missile, Heavy, ammunition, 9d10x5, 0 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "ion-cannon-light",
+    "id": "ion-cannon-light",
+    "name": "Ion Cannon, Light",
+    "description": "Ion Cannon, Light, weapon, ion, 3d10x2 (Ion), 1 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "ion-cannon-medium",
+    "id": "ion-cannon-medium",
+    "name": "Ion Cannon, Medium",
+    "description": "Ion Cannon, Medium, weapon, ion, 5d10x2 (Ion), 2 EP. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "ion-cannon-heavy",
+    "id": "ion-cannon-heavy",
+    "name": "Ion Cannon, Heavy",
+    "description": "Ion Cannon, Heavy, weapon, ion, 3d10x5 (Ion), 5 EP. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "laser-cannon-light",
+    "id": "laser-cannon-light",
+    "name": "Laser Cannon, Light",
+    "description": "Laser Cannon, Light, weapon, laser, 3d10x2, 1 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "laser-cannon-medium",
+    "id": "laser-cannon-medium",
+    "name": "Laser Cannon, Medium",
+    "description": "Laser Cannon, Medium, weapon, laser, 4d10x2, 1 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "laser-cannon-heavy",
+    "id": "laser-cannon-heavy",
+    "name": "Laser Cannon, Heavy",
+    "description": "Laser Cannon, Heavy, weapon, laser, 5d10x2, 2 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "proton-torpedo-launcher",
+    "id": "proton-torpedo-launcher",
+    "name": "Proton Torpedo Launcher",
+    "description": "Proton Torpedo Launcher, weapon, torpedo, See Ammunition, 1 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "proton-torpedo",
+    "id": "proton-torpedo",
+    "name": "Proton Torpedo",
+    "description": "Proton Torpedo, ammunition, 9d10x2, 0 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "turbolaser-light",
+    "id": "turbolaser-light",
+    "name": "Turbolaser, Light",
+    "description": "Turbolaser, Light, weapon, turbolaser, 3d10x5, 2 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "turbolaser-medium",
+    "id": "turbolaser-medium",
+    "name": "Turbolaser, Medium",
+    "description": "Turbolaser, Medium, weapon, turbolaser, 5d10x5, 5 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "turbolaser-heavy",
+    "id": "turbolaser-heavy",
+    "name": "Turbolaser, Heavy",
+    "description": "Turbolaser, Heavy, weapon, turbolaser, 7d10x5, 10 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "tractor-beam",
+    "id": "tractor-beam",
+    "name": "Tractor Beam",
+    "description": "Tractor Beam, weapon, special, Special, 10 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "point-defense",
+    "id": "point-defense",
+    "name": "Point-Defense System",
+    "description": "Point-Defense System, weapon, defense, Special, 0 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "fire-linked-2",
+    "id": "fire-linked-2",
+    "name": "Fire-Linked Weapon, 2",
+    "description": "Fire-Linked Weapon, 2, weapon, enhancement, +1d10, 1 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "fire-linked-4",
+    "id": "fire-linked-4",
+    "name": "Fire-Linked Weapon, 4",
+    "description": "Fire-Linked Weapon, 4, weapon, enhancement, +2d10, 2 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "space-mine-launcher",
+    "id": "space-mine-launcher",
+    "name": "Space Mine Launcher",
+    "description": "Space Mine Launcher, weapon, mine, See Ammunition, 2 EP. For clients who enjoy practical improvements and implausible deniability in equal measure."
+  },
+  {
+    "slug": "space-mine-standard",
+    "id": "space-mine-standard",
+    "name": "Space Mine, Standard",
+    "description": "Space Mine, Standard, ammunition, 7d10x2, 0 EP. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "ion-bomb-rack",
+    "id": "ion-bomb-rack",
+    "name": "Ion Bomb Rack",
+    "description": "Ion Bomb Rack, weapon, bomb, See Ammunition, 1 EP. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "ion-bomb",
+    "id": "ion-bomb",
+    "name": "Ion Bomb",
+    "description": "Ion Bomb, ammunition, 5d10 (Ion), 0 EP. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "shieldbuster-torpedo-launcher",
+    "id": "shieldbuster-torpedo-launcher",
+    "name": "Shieldbuster Torpedo Launcher",
+    "description": "Shieldbuster Torpedo Launcher, weapon, torpedo, See Ammunition, 3 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "shieldbuster-torpedo",
+    "id": "shieldbuster-torpedo",
+    "name": "Shieldbuster Torpedo",
+    "description": "Shieldbuster Torpedo, ammunition, 10d10x2, 0 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "discord-missile-launcher",
+    "id": "discord-missile-launcher",
+    "name": "Discord Missile Launcher",
+    "description": "Discord Missile Launcher, weapon, missile, See Ammunition, 2 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "discord-missile",
+    "id": "discord-missile",
+    "name": "Discord Missile",
+    "description": "Discord Missile, ammunition, Special, 0 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "gravity-mine-launcher",
+    "id": "gravity-mine-launcher",
+    "name": "Gravity Mine Launcher",
+    "description": "Gravity Mine Launcher, weapon, mine, See Ammunition, 2 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "gravity-mine-standard",
+    "id": "gravity-mine-standard",
+    "name": "Gravity Mine, Standard",
+    "description": "Gravity Mine, Standard, ammunition, Special, 0 EP. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "harpoon-gun",
+    "id": "harpoon-gun",
+    "name": "Harpoon Gun",
+    "description": "Harpoon Gun, weapon, special, Special, 1 EP. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "droid-jammer",
+    "id": "droid-jammer",
+    "name": "Droid Jammer",
+    "description": "Droid Jammer, weapon, special, Special, 1 EP. For buyers who looked at manual labor and decided it lacked enough resentment."
+  },
+  {
+    "slug": "gravity-well-projector",
+    "id": "gravity-well-projector",
+    "name": "Gravity Well Projector",
+    "description": "Gravity Well Projector, weapon, special, Special, 5 EP. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "docking-gun",
+    "id": "docking-gun",
+    "name": "Docking Gun",
+    "description": "Docking Gun, weapon, special, By Weapon, 1 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "fire-linked-optional",
+    "id": "fire-linked-optional",
+    "name": "Fire-Linked Weapon, Optional",
+    "description": "Fire-Linked Weapon, Optional, weapon, enhancement, Special, 0 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "ion-cannon-hapan-triple",
+    "id": "ion-cannon-hapan-triple",
+    "name": "Ion Cannon, Hapan Triple",
+    "description": "Ion Cannon, Hapan Triple, weapon, ion, 5d10x5 (Ion), 3 EP. Officially unavailable, which of course only improves the pitch."
+  },
+  {
+    "slug": "space-mine-launcher-heavy",
+    "id": "space-mine-launcher-heavy",
+    "name": "Space Mine Launcher, Heavy",
+    "description": "Space Mine Launcher, Heavy, weapon, mine, See Ammunition, 4 EP. A tasteful little add-on for buyers who heard 'factory standard' and took it personally."
+  },
+  {
+    "slug": "space-mine-advanced",
+    "id": "space-mine-advanced",
+    "name": "Space Mine, Advanced",
+    "description": "Space Mine, Advanced, ammunition, 9d10x2, 0 EP. Ideal for anyone who looked at the stock version and decided restraint was somebody else's job."
+  },
+  {
+    "slug": "space-mine-heavy",
+    "id": "space-mine-heavy",
+    "name": "Space Mine, Heavy",
+    "description": "Space Mine, Heavy, ammunition, 6d10x5, 0 EP. Because apparently the original model was not quite committed enough."
+  },
+  {
+    "slug": "gravity-mine-magnetic",
+    "id": "gravity-mine-magnetic",
+    "name": "Gravity Mine, Magnetic",
+    "description": "Gravity Mine, Magnetic, ammunition, Special, 0 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "composite-beam-cannon",
+    "id": "composite-beam-cannon",
+    "name": "Composite Beam Cannon",
+    "description": "Composite Beam Cannon, weapon, energy, 8d10, 3 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "energy-bomblet-generator",
+    "id": "energy-bomblet-generator",
+    "name": "Energy Bomblet Generator",
+    "description": "Energy Bomblet Generator, weapon, bomb, 8d10x5, 5 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "heavy-ordnance-launcher",
+    "id": "heavy-ordnance-launcher",
+    "name": "Heavy Ordnance Launcher",
+    "description": "Heavy Ordnance Launcher, weapon, launcher, 5d10x5, 8 EP. Exactly the sort of aftermarket decision that starts with confidence and ends with receipts."
+  },
+  {
+    "slug": "ion-pulse-cannon",
+    "id": "ion-pulse-cannon",
+    "name": "Ion Pulse Cannon",
+    "description": "Ion Pulse Cannon, weapon, ion, 9d10x10 (Ion, Special), 10 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "mass-driver-cannon-standard",
+    "id": "mass-driver-cannon-standard",
+    "name": "Mass-Driver Cannon, Standard",
+    "description": "Mass-Driver Cannon, Standard, weapon, kinetic, 6d10x2, 3 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "mass-driver-cannon-heavy",
+    "id": "mass-driver-cannon-heavy",
+    "name": "Mass-Driver Cannon, Heavy",
+    "description": "Mass-Driver Cannon, Heavy, weapon, kinetic, 7d10x2, 5 EP. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "microtractor-pressor",
+    "id": "microtractor-pressor",
+    "name": "Microtractor-Pressor",
+    "description": "Microtractor-Pressor, weapon, special, Special, 2 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "proton-grenade-launcher",
+    "id": "proton-grenade-launcher",
+    "name": "Proton Grenade Launcher",
+    "description": "Proton Grenade Launcher, weapon, grenade, See Ammunition, 1 EP. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "proton-grenade",
+    "id": "proton-grenade",
+    "name": "Proton Grenade",
+    "description": "Proton Grenade, ammunition, 8d6, 0 EP. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "rail-cannon",
+    "id": "rail-cannon",
+    "name": "Rail Cannon",
+    "description": "Rail Cannon, weapon, kinetic, 5d10x5, 6 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "anti-aircraft-flak-pod",
+    "id": "anti-aircraft-flak-pod",
+    "name": "Anti-Aircraft Flak Pod",
+    "description": "Anti-Aircraft Flak Pod, weapon, flak, 5d10x5, 3 EP. A clean retrofit for owners who think 'leave it alone' is defeatist talk."
+  },
+  {
+    "slug": "chaff-gun",
+    "id": "chaff-gun",
+    "name": "Chaff Gun",
+    "description": "Chaff Gun, weapon, defense, Special, 1 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "defoliator-launcher",
+    "id": "defoliator-launcher",
+    "name": "Defoliator Launcher",
+    "description": "Defoliator Launcher, weapon, special, See Ammunition, 2 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "defoliator-shell",
+    "id": "defoliator-shell",
+    "name": "Defoliator Shell",
+    "description": "Defoliator Shell, ammunition, 4d10x2, 0 EP. A fine upgrade for anyone who thinks subtlety is an aftermarket option."
+  },
+  {
+    "slug": "advanced-sensors",
+    "id": "advanced-sensors",
+    "name": "Advanced Sensors",
+    "description": "Advanced Sensors, droid modification, 1 hardpoint, 500 credits. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "targeting-computer",
+    "id": "targeting-computer",
+    "name": "Targeting Computer",
+    "description": "Targeting Computer, droid modification, 1 hardpoint, 750 credits. Ideal for customers who prefer to spot the problem before the problem spots them."
+  },
+  {
+    "slug": "armor-plating",
+    "id": "armor-plating",
+    "name": "Armor Plating Enhancement",
+    "description": "Armor Plating Enhancement, droid modification, 2 hardpoints, 1000 credits. For buyers who consider incoming fire a design problem."
+  },
+  {
+    "slug": "speed-governor",
+    "id": "speed-governor",
+    "name": "Speed Governor Override",
+    "description": "Speed Governor Override, droid modification, 1 hardpoint, 600 credits. For pilots convinced the real flaw was not going fast enough to outrun the consequences."
+  },
+  {
+    "slug": "reinforced-frame",
+    "id": "reinforced-frame",
+    "name": "Reinforced Frame",
+    "description": "Reinforced Frame, droid modification, 2 hardpoints, 800 credits. A tasteful little add-on for buyers who heard 'factory standard' and took it personally."
+  },
+  {
+    "slug": "stealth-coating",
+    "id": "stealth-coating",
+    "name": "Stealth Coating",
+    "description": "Stealth Coating, droid modification, 2 hardpoints, 1500 credits. Because apparently the original model was not quite committed enough."
+  }
+]

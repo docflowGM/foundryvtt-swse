@@ -11,6 +11,7 @@ import { SPECIES_TRAIT_TYPES } from "/systems/foundryvtt-swse/scripts/species/sp
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { registerChatInteractionBridge } from "/systems/foundryvtt-swse/scripts/ui/chat/chat-interaction-bridge.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 
 /**
@@ -270,6 +271,72 @@ export class SpeciesRerollHandler {
     // Append button before closing div
     return content + buttonHtml;
   }
+
+  /**
+   * Resolve a species reroll chat button. Chat bridge delegates here so the
+   * render hook remains UI-only and this domain helper owns reroll behavior.
+   */
+  static async resolveChatRerollButton(button, { message = null } = {}) {
+    if (!(button instanceof HTMLElement)) return null;
+
+    const actorId = button.dataset.actorId;
+    const skillKey = button.dataset.skill;
+    const traitId = button.dataset.traitId;
+    const originalTotal = Number.parseInt(button.dataset.rollTotal, 10);
+
+    const actor = game.actors.get(actorId);
+    if (!actor) {
+      ui.notifications.error('Actor not found');
+      return null;
+    }
+
+    if (!actor.isOwner) {
+      ui.notifications.warn('You do not control this actor');
+      return null;
+    }
+
+    const rerollTraits = this.getApplicableRerolls(actor, skillKey);
+    const trait = rerollTraits.find(t => t.id === traitId);
+
+    if (!trait) {
+      ui.notifications.warn('Reroll ability no longer available');
+      return null;
+    }
+
+    const mod = actor.system.skills?.[skillKey]?.total || 0;
+    const fullFormula = `1d20 + ${mod}`;
+    const newRoll = await RollEngine.safeRoll(fullFormula);
+    if (!newRoll) {
+      ui.notifications.error('Reroll failed');
+      return null;
+    }
+
+    const acceptWorse = trait.acceptWorse !== false;
+    let finalRoll = newRoll;
+    if (!acceptWorse && newRoll.total < originalTotal) {
+      finalRoll = { total: originalTotal };
+    }
+
+    if (trait.type === SPECIES_TRAIT_TYPES.ONCE_PER_ENCOUNTER) {
+      await this._markTraitUsed(actor, trait.id);
+    }
+
+    button.disabled = true;
+    button.innerHTML = '<i class="fa-solid fa-check"></i> Reroll Used';
+
+    await this._sendRerollMessage(
+      actor,
+      skillKey,
+      { total: originalTotal },
+      newRoll,
+      finalRoll,
+      trait.name || 'Species Ability',
+      acceptWorse
+    );
+
+    return { actor, skillKey, trait, message, originalTotal, newRoll, finalRoll };
+  }
+
 }
 
 /**
@@ -277,78 +344,9 @@ export class SpeciesRerollHandler {
  * Call this in system init
  */
 export function registerRerollListeners() {
-  Hooks.on('renderChatMessageHTML', (message, html, user) => {
-    // Find reroll buttons in the message
-    html.querySelector('.species-reroll-btn')?.addEventListener('click', async (event) => {
-      event.preventDefault();
-      const button = event.currentTarget;
-
-      const actorId = button.dataset.actorId;
-      const skillKey = button.dataset.skill;
-      const traitId = button.dataset.traitId;
-      const originalTotal = parseInt(button.dataset.rollTotal, 10);
-
-      const actor = game.actors.get(actorId);
-      if (!actor) {
-        ui.notifications.error('Actor not found');
-        return;
-      }
-
-      // Check if user can control the actor
-      if (!actor.isOwner) {
-        ui.notifications.warn('You do not control this actor');
-        return;
-      }
-
-      // Get the trait
-      const rerollTraits = SpeciesRerollHandler.getApplicableRerolls(actor, skillKey);
-      const trait = rerollTraits.find(t => t.id === traitId);
-
-      if (!trait) {
-        ui.notifications.warn('Reroll ability no longer available');
-        return;
-      }
-
-      // Perform the reroll
-      const formula = '1d20'; // Base roll
-      const mod = actor.system.skills?.[skillKey]?.total || 0;
-      const fullFormula = `1d20 + ${mod}`;
-
-      const originalRoll = { total: originalTotal, formula: fullFormula };
-      const newRoll = await RollEngine.safeRoll(fullFormula);
-      if (!newRoll) {
-        ui.notifications.error('Reroll failed');
-        return;
-      }
-
-      // Determine result
-      const acceptWorse = trait.acceptWorse !== false;
-      let finalRoll = newRoll;
-      if (!acceptWorse && newRoll.total < originalTotal) {
-        finalRoll = { total: originalTotal };
-      }
-
-      // Mark trait as used if once-per-encounter
-      if (trait.type === SPECIES_TRAIT_TYPES.ONCE_PER_ENCOUNTER) {
-        await SpeciesRerollHandler._markTraitUsed(actor, trait.id);
-      }
-
-      // Disable the button
-      button.disabled = true;
-      button.innerHTML = '<i class="fa-solid fa-check"></i> Reroll Used';
-
-      // Send result to chat
-      await SpeciesRerollHandler._sendRerollMessage(
-        actor,
-        skillKey,
-        { total: originalTotal },
-        newRoll,
-        finalRoll,
-        trait.name || 'Species Ability',
-        acceptWorse
-      );
-    });
-  });
+  // Centralized in ChatInteractionBridge. Keep this function as the public
+  // compatibility entry point used by init hooks/species index.
+  return registerChatInteractionBridge();
 }
 
 export default SpeciesRerollHandler;

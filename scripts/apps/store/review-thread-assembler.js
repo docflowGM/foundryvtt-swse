@@ -1,47 +1,15 @@
 /**
  * ReviewThreadAssembler
  *
- * Pure content assembly engine for marketplace review threads.
+ * Marketplace review assembler with diegetic flavor only.
  *
- * CORE CONTRACT:
- * - Zero generated dialogue (all text from packs)
- * - Dialogue packs are immutable
- * - Mentor reviews are pinned, never contested
- * - Probability weights are deterministic (base 75% / overflow 25%)
- * - Star ratings are noise, never correlated with suggestion scores
- * - All text must validate against dialect packs
- *
- * RESPONSIBILITIES:
- * - Select reviews from weighted pools
- * - Assemble threads with optional seller content
- * - Add reviewer replies and responses (rare)
- * - Inject thread enders (very rare)
- * - Validate no generated or mechanic text leaks
- *
- * NON-RESPONSIBILITIES:
- * - Rendering (output is data structure)
- * - Suggestion logic (input only)
- * - Merchant decision-making (assembly only)
- *
- * NOTE ON SERVICES:
- * Services (itemType === 'service') are NOT store inventory items.
- * They are contextual expenses managed separately.
- * Service reviews in this assembler are FLAVOR TEXT ONLY.
- * Services never have affordability checks, availability restrictions, or mechanical interactions.
+ * Constraints:
+ * - all prose must come from provided packs
+ * - reviews are noisy flavor, not mechanics
+ * - seller/competitor voices are explicit (Rendarr / Neeko)
  */
 
 export class ReviewThreadAssembler {
-  /**
-   * Build a marketplace review thread for an item.
-   *
-   * @param {Object} config
-   * @param {string} config.itemType - 'armor', 'weapon', 'equipment'
-   * @param {Object} config.dialoguePacks - { main, overflow, usernames }
-   * @param {boolean} config.hasMentorReview - Whether to include mentor at top
-   * @param {string|null} config.mentorText - Pre-generated mentor prose
-   * @param {number} config.seed - Optional deterministic seed
-   * @returns {Object} ReviewThread { reviews: [], isValid: bool }
-   */
   static build(config) {
     const {
       itemType,
@@ -51,202 +19,161 @@ export class ReviewThreadAssembler {
       seed = null
     } = config;
 
-    // Validate inputs
     if (!dialoguePacks) {
       console.warn('[ReviewThreadAssembler] No dialogue packs provided');
       return { reviews: [], isValid: false };
     }
 
-    // Deterministic RNG if seed provided; otherwise use Math.random
-    // SeededRandom is defined below this class
-    let rng;
-    if (seed !== null) {
-      const seededInstance = new SeededRandom(seed);
-      rng = () => seededInstance.next();
-    } else {
-      rng = Math.random;
-    }
-
+    const seeded = seed !== null ? new SeededRandom(seed) : null;
+    const rng = seeded ? () => seeded.next() : Math.random;
     const thread = [];
 
-    // Phase 1: Mentor review (if present, pinned at top)
     if (hasMentorReview && mentorText) {
       thread.push({
         author: 'Rendarr',
         type: 'mentor',
         text: mentorText,
-        stars: null, // Mentor never has star rating
+        stars: null,
+        helpfulCount: null,
         replies: []
       });
     }
 
-    // Phase 2: Fake customer reviews (6-12 total)
-    const reviewCount = this._randomInt(rng, 6, 12);
     const basePool = this._getBasePool(itemType, dialoguePacks);
     const overflowPool = this._getOverflowPool(itemType, dialoguePacks);
-
-    if (!basePool || basePool.length === 0) {
-      console.warn(`[ReviewThreadAssembler] No review pool for type: ${itemType}`);
+    if (!basePool.length && !overflowPool.length) {
       return { reviews: thread, isValid: false };
     }
 
-    for (let i = 0; i < reviewCount; i++) {
-      // Weighted selection: 75% base, 25% overflow
-      const useBase = rng() < 0.75;
-      const pool = useBase ? basePool : (overflowPool || basePool);
-      const reviewText = pool[Math.floor(rng() * pool.length)];
-      const username = this._pickUsername(rng, dialoguePacks);
-      const stars = this._randomStarRating(rng);
+    // 3–6 visible reviews. Reply density then lifts total thread size closer to 6–12.
+    const desiredReviews = this._randomInt(rng, 3, 6);
+    const maxThreadEntries = this._randomInt(rng, 6, 12);
+    let currentEntryCount = thread.length;
 
+    for (let i = 0; i < desiredReviews; i++) {
+      const pool = (overflowPool.length && rng() < 0.25) ? overflowPool : basePool;
+      const reviewText = pool[Math.floor(rng() * pool.length)] || basePool[0] || '';
+      const username = this._pickUsername(rng, dialoguePacks);
       const review = {
         author: username,
         type: 'customer',
         text: reviewText,
-        stars: stars,
+        stars: this._randomStarRating(rng),
+        helpfulCount: this._randomInt(rng, 0, 1000),
         replies: []
       };
 
-      // Phase 3: Reviewer replies (40% chance per review)
-      if (rng() < 0.4) {
-        const replyCount = this._randomInt(rng, 1, 3);
-        const repliesPool = [
-          ...(dialoguePacks.main?.reviewerReplies || []),
-          ...(dialoguePacks.overflow?.reviewerRepliesOverflow || [])
-        ];
+      currentEntryCount += 1;
 
-        for (let j = 0; j < replyCount; j++) {
-          if (repliesPool.length === 0) break;
+      // 0–3 replies, but cap total thread density near 6–12 combined entries.
+      const replyBudget = Math.max(0, maxThreadEntries - currentEntryCount);
+      const replyCount = Math.min(replyBudget, this._randomInt(rng, 0, 3));
+      const repliesPool = [
+        ...(dialoguePacks.main?.reviewerReplies || []),
+        ...(dialoguePacks.overflow?.reviewerRepliesOverflow || [])
+      ];
+      const responsePool = [
+        ...(dialoguePacks.main?.responsesToReplies || []),
+        ...(dialoguePacks.overflow?.responsesToRepliesOverflow || [])
+      ];
 
-          const replyText = repliesPool[Math.floor(rng() * repliesPool.length)];
-          const replyAuthor = this._pickUsername(rng, dialoguePacks);
+      for (let j = 0; j < replyCount; j++) {
+        let author = this._pickUsername(rng, dialoguePacks);
+        let text = repliesPool[Math.floor(rng() * Math.max(1, repliesPool.length))] || reviewText;
+        let role = 'customer-reply';
 
+        // Explicit seller / competitor lane.
+        const roll = rng();
+        if (roll < 0.14) {
+          author = 'Neeko';
+          role = 'competitor';
+          text = this._pickFrom(dialoguePacks.main?.neekoReviews?.selfPromo || [], rng, text);
+        } else if (roll < 0.28) {
+          author = 'Rendarr';
+          role = 'seller';
+          text = this._pickFrom(dialoguePacks.main?.rendarrReviews?.toxicPositive || [], rng, text);
+        }
+
+        review.replies.push({ author, text, role });
+        currentEntryCount += 1;
+
+        // If Neeko appears, Rendarr may specifically reply back.
+        if (author === 'Neeko' && currentEntryCount < maxThreadEntries && rng() < 0.55) {
           review.replies.push({
-            author: replyAuthor,
-            text: replyText
+            author: 'Rendarr',
+            text: this._pickFrom(dialoguePacks.main?.rendarrReviews?.toxicPositive || responsePool, rng, text),
+            role: 'seller',
+            isResponse: true,
+            directedAt: 'Neeko'
           });
-
-          // Phase 4: Response to reply (15% chance, very rare)
-          if (rng() < 0.15) {
-            const responsesPool = [
-              ...(dialoguePacks.main?.responsesToReplies || []),
-              ...(dialoguePacks.overflow?.responsesToRepliesOverflow || [])
-            ];
-
-            if (responsesPool.length > 0) {
-              const responseText = responsesPool[Math.floor(rng() * responsesPool.length)];
-              const responder = this._pickUsername(rng, dialoguePacks);
-
-              review.replies.push({
-                author: responder,
-                text: responseText,
-                isResponse: true
-              });
-            }
-          }
+          currentEntryCount += 1;
+        } else if (currentEntryCount < maxThreadEntries && rng() < 0.15) {
+          review.replies.push({
+            author: this._pickUsername(rng, dialoguePacks),
+            text: this._pickFrom(responsePool, rng, text),
+            role: 'customer-reply',
+            isResponse: true
+          });
+          currentEntryCount += 1;
         }
       }
 
       thread.push(review);
     }
 
-    // Phase 5: Maybe inject seller content (25% chance)
-    if (rng() < 0.25) {
-      const sellerType = rng() < 0.6 ? 'rendarr' : 'neeko';
-
-      if (sellerType === 'rendarr') {
-        const rendarrPool = dialoguePacks.main?.rendarrReviews?.toxicPositive || [];
-        if (rendarrPool.length > 0) {
-          const text = rendarrPool[Math.floor(rng() * rendarrPool.length)];
-          thread.push({
-            author: 'Rendarr',
-            type: 'seller',
-            text: text,
-            stars: null,
-            replies: []
-          });
-        }
-      } else {
-        const neekoPool = dialoguePacks.main?.neekoReviews?.selfPromo || [];
-        if (neekoPool.length > 0) {
-          const text = neekoPool[Math.floor(rng() * neekoPool.length)];
-          thread.push({
-            author: 'Neeko',
-            type: 'competitor',
-            text: text,
-            stars: null,
-            replies: []
-          });
-        }
-      }
+    // Optional top-level seller/competitor post if room remains.
+    if (currentEntryCount < maxThreadEntries && rng() < 0.35) {
+      const isRendarr = rng() < 0.6;
+      const author = isRendarr ? 'Rendarr' : 'Neeko';
+      const text = isRendarr
+        ? this._pickFrom(dialoguePacks.main?.rendarrReviews?.toxicPositive || [], rng, 'Premium stock. Minimal whining.')
+        : this._pickFrom(dialoguePacks.main?.neekoReviews?.selfPromo || [], rng, 'You could always shop somewhere with standards.');
+      thread.push({
+        author,
+        type: isRendarr ? 'seller' : 'competitor',
+        text,
+        stars: null,
+        helpfulCount: this._randomInt(rng, 0, 1000),
+        replies: []
+      });
     }
 
-    // Phase 6: Thread ender (5% chance, extremely rare)
-    if (rng() < 0.05) {
-      const endersPool = dialoguePacks.overflow?.threadEnders || [];
-      if (endersPool.length > 0) {
-        const enderText = endersPool[Math.floor(rng() * endersPool.length)];
-        thread.push({
-          author: 'System',
-          type: 'system-message',
-          text: enderText,
-          stars: null,
-          replies: []
-        });
-      }
-    }
-
-    // Validation pass
-    const isValid = this._validateThread(thread, dialoguePacks);
-
+    const isValid = this._validateThread(thread);
     return {
       reviews: thread,
-      isValid: isValid,
+      isValid,
       stats: {
         totalReviews: thread.length,
         customerCount: thread.filter(r => r.type === 'customer').length,
-        replyCount: thread.reduce((acc, r) => acc + r.replies.length, 0),
+        replyCount: thread.reduce((acc, r) => acc + (r.replies?.length || 0), 0),
         mentorPresent: thread.some(r => r.type === 'mentor')
       }
     };
   }
 
-  /**
-   * Get base review pool for item type
-   */
+  static _pickFrom(pool, rng, fallback = '') {
+    if (!Array.isArray(pool) || pool.length === 0) return fallback;
+    return pool[Math.floor(rng() * pool.length)] || fallback;
+  }
+
   static _getBasePool(itemType, dialoguePacks) {
     const main = dialoguePacks.main || {};
-
-    if (itemType === 'armor') {
-      return main.armorReviews?.short || [];
-    }
-    if (itemType === 'weapon') {
-      const general = main.weaponReviews?.general || [];
-      const chaotic = main.weaponReviews?.chaotic || [];
-      return [...general, ...chaotic];
-    }
-    if (itemType === 'equipment') {
-      return main.gearReviews?.general || [];
-    }
-    if (itemType === 'vehicle') {
-      return main.vehicleReviews || [];
-    }
+    if (itemType === 'armor') return main.armorReviews?.short || [];
+    if (itemType === 'weapon') return [ ...(main.weaponReviews?.general || []), ...(main.weaponReviews?.chaotic || []) ];
+    if (itemType === 'equipment') return main.gearReviews?.general || [];
+    if (itemType === 'vehicle') return main.vehicleReviews || [];
     if (itemType === 'droid') {
-      // Mix all droid degrees for variety
-      const allDroids = [
+      return [
         ...(main.firstDegreeDroids || []),
         ...(main.secondDegreeDroids || []),
         ...(main.thirdDegreeDroids || []),
         ...(main.fourthDegreeDroids || []),
         ...(main.fifthDegreeDroids || [])
       ];
-      return allDroids.length > 0 ? allDroids : [];
     }
-    if (itemType === 'modification') {
-      return main.modificationReviews || [];
-    }
+    if (itemType === 'modification') return main.modificationReviews || [];
     if (itemType === 'service') {
-      // Mix all service categories for variety
-      const allServices = [
+      return [
         ...(main.dining || []),
         ...(main.lodging || []),
         ...(main.medicalCare || []),
@@ -254,48 +181,27 @@ export class ReviewThreadAssembler {
         ...(main.upkeep || []),
         ...(main.vehicleRental || [])
       ];
-      return allServices.length > 0 ? allServices : [];
     }
-
     return [];
   }
 
-  /**
-   * Get overflow review pool for item type
-   */
   static _getOverflowPool(itemType, dialoguePacks) {
     const overflow = dialoguePacks.overflow || {};
-
-    if (itemType === 'armor') {
-      return overflow.armorReviewsOverflow || [];
-    }
+    if (itemType === 'armor') return overflow.armorReviewsOverflow || [];
     if (itemType === 'weapon') {
-      const pools = [
-        overflow.weaponReviewsOverflow?.fireRate || [],
-        overflow.weaponReviewsOverflow?.power || [],
-        overflow.weaponReviewsOverflow?.sound || [],
-        overflow.weaponReviewsOverflow?.ergonomics || []
+      return [
+        ...(overflow.weaponReviewsOverflow?.fireRate || []),
+        ...(overflow.weaponReviewsOverflow?.power || []),
+        ...(overflow.weaponReviewsOverflow?.sound || []),
+        ...(overflow.weaponReviewsOverflow?.ergonomics || [])
       ];
-      return pools.flat();
     }
-    if (itemType === 'equipment') {
-      return overflow.gearReviewsOverflow || [];
-    }
-    if (itemType === 'vehicle') {
-      // Vehicles don't have overflow yet, but gracefully handle if they do
-      return overflow.vehicleReviewsOverflow || [];
-    }
-    if (itemType === 'droid') {
-      // Droids don't have overflow yet, but gracefully handle if they do
-      return overflow.droidReviewsOverflow || [];
-    }
-    if (itemType === 'modification') {
-      // Modifications don't have overflow yet, but gracefully handle if they do
-      return overflow.modificationReviewsOverflow || [];
-    }
+    if (itemType === 'equipment') return overflow.gearReviewsOverflow || [];
+    if (itemType === 'vehicle') return overflow.vehicleReviewsOverflow || [];
+    if (itemType === 'droid') return overflow.droidReviewsOverflow || [];
+    if (itemType === 'modification') return overflow.modificationReviewsOverflow || [];
     if (itemType === 'service') {
-      // Services don't have overflow yet, but gracefully handle if they do
-      const allServicesOverflow = [
+      return [
         ...(overflow.diningOverflow || []),
         ...(overflow.lodgingOverflow || []),
         ...(overflow.medicalCareOverflow || []),
@@ -303,111 +209,51 @@ export class ReviewThreadAssembler {
         ...(overflow.upkeepOverflow || []),
         ...(overflow.vehicleRentalOverflow || [])
       ];
-      return allServicesOverflow;
     }
-
     return [];
   }
 
-  /**
-   * Pick random username with fallback
-   */
   static _pickUsername(rng, dialoguePacks) {
     const usernames = dialoguePacks.usernames || [];
-    if (usernames.length === 0) {
-      return 'Marketplace Customer';
-    }
+    if (!usernames.length) return 'Marketplace Customer';
     return usernames[Math.floor(rng() * usernames.length)];
   }
 
-  /**
-   * Generate random star rating (noise, never correlated with scores)
-   */
   static _randomStarRating(rng) {
-    const rand = rng();
-    if (rand < 0.15) return 1;
-    if (rand < 0.35) return 2;
-    if (rand < 0.65) return 3;
-    if (rand < 0.85) return 4;
-    return 5;
+    const whole = this._randomInt(rng, 0, 5);
+    const fractions = [0, 0, 0, 0.5];
+    const fraction = fractions[Math.floor(rng() * fractions.length)];
+    return Math.max(0, Math.min(5, whole + fraction));
   }
 
-  /**
-   * Random integer [min, max] inclusive
-   */
   static _randomInt(rng, min, max) {
     return Math.floor(rng() * (max - min + 1)) + min;
   }
 
-  /**
-   * VALIDATION PASS: Ensure no generated or mechanic text leaked
-   */
-  static _validateThread(thread, dialoguePacks) {
-    const rules = {
-      // Banned words that indicate mechanics
-      mechanics: [
-        'bonus', 'damage', 'armor class', 'ac', 'save', 'fort', 'reflex',
-        'will', 'check penalty', 'level', 'talent', 'feat', 'proficiency',
-        'initiative', 'attack roll', 'skill', 'ability'
-      ],
-      // All text must come from packs or be mentor/system
-      mustOriginateFrom: 'dialoguePacks'
-    };
+  static _validateThread(thread) {
+    const mechanics = [
+      'bonus', 'armor class', 'save', 'fort', 'reflex', 'will',
+      'check penalty', 'level', 'talent', 'feat', 'proficiency',
+      'initiative', 'attack roll', 'skill', 'ability'
+    ];
 
     for (const entry of thread) {
-      // Mentor and system messages are exempt
-      if (entry.type === 'mentor' || entry.type === 'system-message') {
-        continue;
-      }
-
-      // Check for mechanics
-      const textLower = (entry.text || '').toLowerCase();
-      for (const banned of rules.mechanics) {
-        if (textLower.includes(banned)) {
-          console.warn(`[ReviewThreadAssembler] Mechanics word detected: "${banned}" in "${entry.text}"`);
-          return false;
-        }
-      }
-
-      // Check for generated markers (triple-dots, em-dashes, etc. that might indicate stubs)
-      if (textLower.includes('...') || textLower.includes('[[') || textLower.includes('{{')) {
-        console.warn(`[ReviewThreadAssembler] Generated text marker detected: "${entry.text}"`);
-        return false;
+      if (entry.type === 'mentor' || entry.type === 'system-message') continue;
+      const chunks = [entry.text, ...(entry.replies || []).map(r => r.text)].filter(Boolean);
+      for (const text of chunks) {
+        const lower = String(text).toLowerCase();
+        if (lower.includes('...') || lower.includes('[[') || lower.includes('{{')) return false;
+        if (mechanics.some(word => lower.includes(word))) return false;
       }
     }
-
     return true;
   }
 }
 
-/**
- * Seeded random number generator for deterministic testing
- */
 class SeededRandom {
-  constructor(seed) {
-    this.seed = seed;
-  }
-
+  constructor(seed) { this.seed = seed; }
   next() {
     this.seed = (this.seed * 9301 + 49297) % 233280;
     return this.seed / 233280;
   }
-
-  // Make it callable like Math.random
-  [Symbol.call]() {
-    return this.next();
-  }
-
-  // Support apply() method for function-like behavior
-  apply(thisArg) {
-    return this.next();
-  }
-
-  // String tag for debugging
-  get [Symbol.toStringTag]() {
-    return 'SeededRandom';
-  }
 }
-
-// Allow usage as `rng()` directly
-const wrapSeeded = (seeded) => () => seeded.next();

@@ -9,7 +9,7 @@
         <div class="prog-intro-signal__bar" style="height: 14px;"></div>
         <div class="prog-intro-signal__bar" style="height: 18px;"></div>
       </div>
-      <div class="prog-intro-battery">₢ {{credits}}</div>
+      <div class="prog-intro-battery">{{currencySymbol}} {{credits}}</div>
     </div>
   </div>
 
@@ -19,7 +19,7 @@
     <div class="prog-intro-text-area">
       <div class="prog-intro-text-container swse-store-splash-screen__stack">
         <div class="swse-store-splash-screen__identity">
-          <div class="swse-store-splash-screen__kicker">Trade Terminal Sync</div>
+          <div class="swse-store-splash-screen__kicker">Trade Terminal Sync · <span class="store-open-indicator {{#if storeOpen}}is-open{{else}}is-closed{{/if}}">{{storeStatusLabel}}</span></div>
           <div class="swse-store-splash-screen__account">{{actorName}}</div>
           <div class="swse-store-splash-screen__meta-row">
             <div class="metric-chip"><span class="metric-chip__label">Tier</span><strong>{{accountTier}}</strong></div>
@@ -49,7 +49,7 @@
             <div class="swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
               <div class="swse-card-schema__eyebrow">Account</div>
               <div class="swse-card-schema__title">{{actorName}}</div>
-              <div class="swse-card-schema__body">Funds available: {{credits}} credits</div>
+              <div class="swse-card-schema__body">Funds available: {{credits}} credits · Market {{storeStatusLabel}}</div>
             </div>
             <div class="swse-card-schema swse-card-schema--choice swse-card-schema--filled">
               <div class="swse-card-schema__eyebrow">Access</div>

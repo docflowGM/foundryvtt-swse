@@ -1,0 +1,2144 @@
+[
+  {
+    "slug": "hyperspace-beacon",
+    "id": "018b27e131839627",
+    "name": "Hyperspace Beacon",
+    "description": "Hyperspace beacon, fixed navigation platform, immobile and built to tell lost ships where not to die. For captains who think star charts are for cowards."
+  },
+  {
+    "slug": "advanced-v-19-torrent-starfighter",
+    "id": "0320533019f46bf9",
+    "name": "Advanced V-19 Torrent Starfighter",
+    "description": "Slayn & Korpil V-19 Torrent, single-seat starfighter with Republic service history and a need for speed. For buyers who want to feel like a being in a coffin with engines."
+  },
+  {
+    "slug": "corellian-yt-1300-transport",
+    "id": "0359b2013c9b24ba",
+    "name": "Corellian YT-1300 Transport",
+    "description": "Corellian Engineering Corporation YT-1300, light freighter, crew two with room for six and a serious cargo hold. Built like a steakhouse and handles like a bistro."
+  },
+  {
+    "slug": "aeg-77-vigo-transport",
+    "id": "0376140346a53519",
+    "name": "AEG-77 Vigo Transport",
+    "description": "AEG-77 Vigo, armed transport, eight crew and six passengers with enough guns to discourage enthusiasm. Perfect for convoy escort, discreet freight work, and very public denials."
+  },
+  {
+    "slug": "corellian-yt-1930-transport",
+    "id": "04066add17ae52d9",
+    "name": "Corellian YT-1930 Transport",
+    "description": "Corellian Engineering Corporation YT-1930, transport, crew two and six passengers with bigger cargo ambitions than its older cousin. For operators who liked the classic model but wanted more hold and less romance."
+  },
+  {
+    "slug": "tt-6-landspeeder",
+    "id": "04bab2cf527d8fd7",
+    "name": "TT-6 Landspeeder",
+    "description": "SoroSuub TT-6, two-seat landspeeder, cheap, reliable, and easy to fix with whatever is in the garage."
+  },
+  {
+    "slug": "hardcell-class-interstellar-transport",
+    "id": "051b694531ac603e",
+    "name": "Hardcell-Class Interstellar Transport",
+    "description": "Techno Union Hardcell-class, heavy interstellar transport with troop room, cargo volume, and all the grace of a flying tax office."
+  },
+  {
+    "slug": "cloakshape-fighter",
+    "id": "05ace367c8687e06",
+    "name": "CloakShape Fighter",
+    "description": "CloakShape fighter, one-seat starfighter with laser cannons and concussion missiles. Please sign this waiver before test flying."
+  },
+  {
+    "slug": "the-visionary",
+    "id": "064fdfc8a891720b",
+    "name": "The Visionary",
+    "description": "Eleaor Propulsion Starscape-class yacht, cloaked luxury transport with a droid crew and privateer attitude. Don't like paying crew wages huh?"
+  },
+  {
+    "slug": "lavr-qh-7-chariot",
+    "id": "06ce59f188b2e870",
+    "name": "LAVr QH-7 Chariot",
+    "description": "Uulshos Manufacturing LAVr QH-7 Chariot, command speeder, three crew, armored enough for officers who prefer danger at a respectful distance."
+  },
+  {
+    "slug": "og-9-homing-spider-droid",
+    "id": "06cf8529c6bcfb7a",
+    "name": "OG-9 Homing Spider Droid",
+    "description": "Baktoid Armor Workshop OG-9, heavy walker-droid with long legs, big guns, and no opinions worth hearing."
+  },
+  {
+    "slug": "rc-2-twilight-scoutship",
+    "id": "071c07c5c47c6ae9",
+    "name": "RC-2 Twilight Scoutship",
+    "description": "Incom RC-2 Twilight scoutship, one pilot plus two extra seats, long-ranged and built for stealthy recon. Are you a spook?"
+  },
+  {
+    "slug": "corellian-yt-2000-transport",
+    "id": "07afe61c52fae3aa",
+    "name": "Corellian YT-2000 Transport",
+    "description": "Corellian Engineering Corporation YT-2000, light transport with room for crew, passengers, and a respectable amount of cargo. Too expensive for nerfherders, too cheap for royalty."
+  },
+  {
+    "slug": "venator-class-star-destroyer",
+    "id": "07e67899beec5c53",
+    "name": "Venator-Class Star Destroyer",
+    "description": "Kuat Drive Yards Venator-class, carrier-destroyer built to launch fighters and end arguments at fleet scale. Spacious, authoritative, and only slightly overqualified for most neighborhood disputes."
+  },
+  {
+    "slug": "n-1-royal-starfighter",
+    "id": "08b9066c71cd8b4c",
+    "name": "N-1 Royal Starfighter",
+    "description": "Theed Palace Space Vessel Engineering Corps N-1, single-seat royal starfighter with astromech socket and more polish than shame. Please, don't put your dirty hands on the chrome."
+  },
+  {
+    "slug": "barc-speeder",
+    "id": "08bd99112f4bc215",
+    "name": "BARC Speeder",
+    "description": "Aratech BARC speeder, one rider plus one passenger, built for recon, speed, and regrettable confidence. The preferred choice for couriers who think brakes are a personal insult."
+  },
+  {
+    "slug": "strike-class-medium-cruiser",
+    "id": "0974dc34c7d10b11",
+    "name": "Strike-Class Medium Cruiser",
+    "description": "Strike-class medium cruiser, compact warship with enough guns to seem polite right up until it isn't."
+  },
+  {
+    "slug": "mc80-star-cruiser",
+    "id": "0ac9d6faac9b961a",
+    "name": "MC80 Star Cruiser",
+    "description": "Mon Calamari MC80 star cruiser, deep-space capital ship with heavy shields and flagship energy. For trap sensing admirals."
+  },
+  {
+    "slug": "delta-7-aethersprite-interceptor",
+    "id": "0b91df2ddbf554c1",
+    "name": "Delta-7 Aethersprite Interceptor",
+    "description": "Kuat Systems Engineering Delta-7 Aethersprite, Jedi interceptor, one pilot plus astromech and very little spare room for comfort. Built for those annoying cheddar monks."
+  },
+  {
+    "slug": "corellian-barloz-class-medium-freighter",
+    "id": "0bc08f8a7b603545",
+    "name": "Corellian Barloz-Class Medium Freighter",
+    "description": "Corellian Engineering Corporation Barloz-class, medium freighter, crew two with room for four and plenty of cargo. Workmanlike, dependable, and very ugly."
+  },
+  {
+    "slug": "y164-slave-transport",
+    "id": "0c033f8b8d23ab2f",
+    "name": "Y164 Slave Transport",
+    "description": "Y164 slave transport, prison-hauler with a big crew and a worse reputation. I wouldn't fly one of these in polite society."
+  },
+  {
+    "slug": "the-virago",
+    "id": "0c14958cfe0227cf",
+    "name": "The Virago",
+    "description": "MandalMotors StarViper prototype, single-seat assault craft with teeth, speed, and no interest in blending in."
+  },
+  {
+    "slug": "i4-ionizer-starfighter",
+    "id": "0ce1fefc9b0ecd43",
+    "name": "I4 Ionizer Starfighter",
+    "description": "I4 Ionizer, single-seat starfighter with astromech support and a clear interest in ruining somebody else's electronics."
+  },
+  {
+    "slug": "skyblind-recon-ship",
+    "id": "10f8b6a11d9161c2",
+    "name": "SkyBlind Recon Ship",
+    "description": "SkyBlind recon ship, light scout transport with room for a team and enough hold space to justify the paperwork."
+  },
+  {
+    "slug": "the-bloody-credit",
+    "id": "115f039b91809379",
+    "name": "The Bloody Credit",
+    "description": "Gallofree Yards GR-75 medium transport, eighteen crew and a cargo profile that has seen some ugly manifests. As-is sale, and no, no shipfax."
+  },
+  {
+    "slug": "maka-eekai-l4000-transport",
+    "id": "1197b84ab276fa61",
+    "name": "Maka-Eekai L4000 Transport",
+    "description": "Maka-Eekai L4000, mid-size transport with room for crew, passengers, and serious freight volume. A practical long-hauler for buyers who think glamour is what delays delivery."
+  },
+  {
+    "slug": "f9-tz-transport",
+    "id": "126198b3a3e53712",
+    "name": "F9-TZ Transport",
+    "description": "F9-TZ transport, heavy repulsor hauler with forty-passenger capacity and all the charm of a loading dock. Slow, sturdy, and perfect for moving troops who have already accepted disappointment."
+  },
+  {
+    "slug": "aerosled-mark-iii",
+    "id": "12d66e79cc2d02e5",
+    "name": "Aerosled Mark III",
+    "description": "Aerosled Mark III, one-seat speeder built for simple travel and uncomplicated excuses. Reliable local transport for someone who swears they only need it for errands."
+  },
+  {
+    "slug": "pl-90-luxury-speeder",
+    "id": "136a536a149de68d",
+    "name": "PL-90 Luxury Speeder",
+    "description": "PL-90 luxury speeder, chauffeur-friendly repulsor limo with seating for seven and no tolerance for dust. For buyers who want traffic to feel like a class system."
+  },
+  {
+    "slug": "imperial-radair",
+    "id": "13d08c6a067fb7db",
+    "name": "Imperial RaDAir",
+    "description": "Imperial RaDAir, compact Imperial airspeeder with official lines and unofficial uses. Fleet gray, tidy profile, and guaranteed to make every checkpoint feel personal."
+  },
+  {
+    "slug": "y-wing-longprobe",
+    "id": "13dde459a74afe6c",
+    "name": "Y-Wing \"LongProbe\"",
+    "description": "Koensayr Y-wing LongProbe, reconnaissance refit with extended sensors and the same old workhorse attitude. For crews who like their starfighters ugly, durable, and still somehow employed."
+  },
+  {
+    "slug": "corellian-yz-2500-heavy-transport",
+    "id": "16b108588a91e0ba",
+    "name": "Corellian YZ-2500 Heavy Transport",
+    "description": "Corellian Engineering Corporation YZ-2500, heavy transport with commercial bones and enough space to make accountants smile. A serious freighter for serious operators and slightly unserious cargo declarations."
+  },
+  {
+    "slug": "punworcca-116-class-interstellar-sloop",
+    "id": "16d27eced412ae5c",
+    "name": "Punworcca 116-Class Interstellar Sloop",
+    "description": "Punworcca 116-class interstellar sloop, fast small craft with two crew and room for eleven. A genteel little star-yacht for people who like their travel elegant and faintly suspicious."
+  },
+  {
+    "slug": "baas-class-space-station",
+    "id": "17b2c6f703fc0e25",
+    "name": "Baas-Class Space Station",
+    "description": "Baas-class space station, large orbital installation with a heavy crew requirement and all the mobility of a building. Excellent parking, terrible getaway options."
+  },
+  {
+    "slug": "cr70-corellian-corvette",
+    "id": "18cd29422b66693d",
+    "name": "CR70 Corellian Corvette",
+    "description": "Corellian Engineering Corporation CR70, early corvette with a diplomatic silhouette and plenty of conversion potential. For buyers who want one hull that can do escort duty, relief work, or mildly deniable rebellion."
+  },
+  {
+    "slug": "gymsnor-3-light-freighter",
+    "id": "19234a2c6fec09e5",
+    "name": "Gymsnor-3 Light Freighter",
+    "description": "Gymsnor-3 light freighter, small cargo ship with four passenger seats and enough hold for real work. A no-nonsense hauler for captains who consider style to be wasted mass."
+  },
+  {
+    "slug": "tie-defender",
+    "id": "19310142001b1b47",
+    "name": "TIE Defender",
+    "description": "Sienar Fleet Systems TIE Defender, single-seat high-end starfighter with shields, hyperdrive, and Imperial overcompensation in physical form. For the pilot who looked at a regular TIE and said, 'Yes, but more.'"
+  },
+  {
+    "slug": "laat-i-gunship",
+    "id": "19b8785889fe3bbf",
+    "name": "LAAT/i Gunship",
+    "description": "Rothana Heavy Engineering LAAT/i, assault gunship, six crew and thirty troops with very direct ideas about insertion. If diplomacy fails, this is what low-altitude diplomacy looks like."
+  },
+  {
+    "slug": "at-kt",
+    "id": "19b96a9f5389e2c3",
+    "name": "AT-KT",
+    "description": "AT-KT walker, two-crew custom walker with the usual armored stomp-and-glare package. A battlefield mascot if your idea of a mascot can step on a bunker."
+  },
+  {
+    "slug": "corellian-vcx-350-light-freighter",
+    "id": "1c2f2dcf6f7daabe",
+    "name": "Corellian VCX-350 Light Freighter",
+    "description": "Corellian Engineering Corporation VCX-350, light freighter, crew three with room for eight and a real cargo appetite. Ideal for merchants, smugglers, and merchants who resent the distinction."
+  },
+  {
+    "slug": "the-crimson-axe",
+    "id": "1c4a63210096dcf0",
+    "name": "The Crimson Axe",
+    "description": "Crimson Axe, pirate frigate with hangars, prisoners, and exactly the kind of silhouette insurance adjusters hate. A roaming headquarters for anyone who thinks boarding actions are a personality trait."
+  },
+  {
+    "slug": "s-130-shelter-medical-speeder",
+    "id": "1d461e0224c794dc",
+    "name": "S-130 Shelter Medical Speeder",
+    "description": "S-130 Shelter, medical speeder built for casualty pickup and urgent exits. Clean panels, soft ride, and only slightly haunted."
+  },
+  {
+    "slug": "mobile-spacedock-220",
+    "id": "2046a5248c6ada29",
+    "name": "Mobile Spacedock 220",
+    "description": "Mobile Spacedock 220, slow support platform built to repair ships rather than impress anyone. The galactic equivalent of bringing a garage a war zone."
+  },
+  {
+    "slug": "cutlass-9-patrol-fighter",
+    "id": "2178b6bd1be3822d",
+    "name": "Cutlass-9 Patrol Fighter",
+    "description": "Cutlass-9 patrol fighter, single-seat interceptor with just enough cargo room to pretend it has hobbies. A trim little customs headache for anyone on the wrong side of an inspection."
+  },
+  {
+    "slug": "mu-2-long-range-shuttle",
+    "id": "222e14042c655420",
+    "name": "Mu-2 Long Range Shuttle",
+    "description": "Mu-2 long-range shuttle, utility transport built to go farther than its pilot wants to talk about. The sort of ship sold as 'versatile' right before you discover what it was versatile at."
+  },
+  {
+    "slug": "archaic-dreadnaught-class-heavy-cruiser",
+    "id": "22f5751fff948d39",
+    "name": "Archaic Dreadnaught-Class Heavy Cruiser",
+    "description": "Rendili StarDrive Dreadnaught-class, old heavy cruiser with enormous crew requirements and an even older reputation. Still intimidating, if you can afford to staff every corridor and every grudge."
+  },
+  {
+    "slug": "cardan-iii-class-space-station",
+    "id": "24bb4805e8431929",
+    "name": "Cardan III-Class Space Station",
+    "description": "Cardan III-class space station, armed orbital platform with batteries, torpedoes, and nowhere urgent to be. A fixed address for anyone who wants their hospitality backed by turbolasers."
+  },
+  {
+    "slug": "j-1-shuttle",
+    "id": "24be8737c088d433",
+    "name": "J-1 Shuttle",
+    "description": "J-1 shuttle, two-crew transport with seating for twenty and enough hold space to matter. A practical box with engines for buyers who judge ships by whether they arrive."
+  },
+  {
+    "slug": "74-m-speeder-bike",
+    "id": "24dbefb71f4a18f5",
+    "name": "74-M Speeder Bike",
+    "description": "74-M speeder bike, one rider plus one passenger, all speed and very little patience. Perfect for scouts, couriers, and anyone who thinks the safe route is for other people."
+  },
+  {
+    "slug": "a-a5-speeder-truck",
+    "id": "25179ee92183a29d",
+    "name": "A-A5 Speeder Truck",
+    "description": "A-A5 speeder truck, heavy civilian hauler, three crew and room for twenty-five plus cargo worth declaring creatively. Rugged, roomy, and ideal for entrepreneurs with a flexible relationship to customs law."
+  },
+  {
+    "slug": "flare-s-swoop",
+    "id": "2560be4261576d94",
+    "name": "Flare-S Swoop",
+    "description": "Mobquet Flare-S, sport swoop, one rider and one passenger with a habit of reaching 650 km/h before your judgment catches up. Clean frame, responsive throttle, and ideal for buyers who hear 'reckless' as a compliment."
+  },
+  {
+    "slug": "imperious-class-star-destroyer",
+    "id": "25e6df5a434f4406",
+    "name": "Imperious-Class Star Destroyer",
+    "description": "Imperious-class Star Destroyer, capital warship, crewed heavy and built to carry troops, guns, and administrative overreach. A fine flagship for anyone who likes their diplomacy visible from orbit."
+  },
+  {
+    "slug": "vt-49-decimator",
+    "id": "26b2120c82ebebc9",
+    "name": "VT-49 Decimator",
+    "description": "Kuat Drive Yards VT-49 Decimator, assault ship, crew two to four with six passenger seats and eighty tons of cargo. Imperial styling, generous firepower, and enough interior space for all your worst intentions."
+  },
+  {
+    "slug": "sentinel-class-landing-craft",
+    "id": "27dd7404bcdb0f3d",
+    "name": "Sentinel-Class Landing Craft",
+    "description": "Sienar and Cygnus Sentinel-class, assault shuttle, crew six with room for fifty-four troops and a 1,000 km/h approach speed. Perfect for rapid deployment, stern arrivals, and making a landing zone feel judged."
+  },
+  {
+    "slug": "corellian-consular-class-cruiser",
+    "id": "28f748f51896aa1b",
+    "name": "Corellian Consular-Class Cruiser",
+    "description": "Corellian Engineering Consular-class cruiser, sleek diplomatic hull with more speed than armor and better manners than most corvettes. A tasteful little starship for clients who prefer their trouble wrapped in ceremony."
+  },
+  {
+    "slug": "a-7-hunter-interceptor",
+    "id": "294ac13421bb25ab",
+    "name": "A-7 Hunter Interceptor",
+    "description": "Kuat Drive Yards A-7 Hunter, one-seat interceptor with no hyperdrive, no shields, and no patience. For pilots who looked at a TIE and thought, 'Almost, but let me pay extra for better taste.'"
+  },
+  {
+    "slug": "at-ap",
+    "id": "29be46106af3a375",
+    "name": "AT-AP",
+    "description": "Rothana AT-AP, three-crew artillery walker, sixty kilometers per hour and enough guns to overcorrect a battlefield. Stable platform, long reach, and only mildly embarrassing to park."
+  },
+  {
+    "slug": "pelagia-duplex-command-assault-gunship",
+    "id": "2a2b79277902bafd",
+    "name": "Pelagia Duplex Command Assault Gunship",
+    "description": "Pelagia Duplex command assault gunship, compact military flyer with gunship teeth and command deck attitude. For officers who want to supervise the fight while also being the loudest part of it."
+  },
+  {
+    "slug": "hounds-tooth",
+    "id": "2a7567cb3405bbc5",
+    "name": "Hound's Tooth",
+    "description": "Corellian YV-666, heavy freighter, single pilot with prisoner space, twenty tons of cargo, and the subtle charm of a bounty notice. Rugged, roomy, and ideal if your passenger list is mostly unwilling."
+  },
+  {
+    "slug": "spha-m",
+    "id": "2ab517054489ff82",
+    "name": "SPHA-M",
+    "description": "SPHA-M, self-propelled heavy artillery, siege platform built to solve distant problems very permanently. Factory-fresh intimidation for buyers who think range is a moral virtue."
+  },
+  {
+    "slug": "air-2-racing-swoop",
+    "id": "2b328a0472da2ba5",
+    "name": "Air-2 Racing Swoop",
+    "description": "Air-2 racing swoop, one rider and one passenger, all engine with just enough chassis to make it legal somewhere. Fast, twitchy, and sold only to people who sign waivers without reading them."
+  },
+  {
+    "slug": "the-last-resort",
+    "id": "2b8eed57601be978",
+    "name": "The Last Resort",
+    "description": "The Last Resort, armed light transport, crew two with ten passenger seats and forty tons of hold space. Name aside, it runs fine, and desperation is just another form of customer loyalty."
+  },
+  {
+    "slug": "corellian-cr-20-troop-transport",
+    "id": "2baf011a04a21a09",
+    "name": "Corellian CR-20 Troop Transport",
+    "description": "Corellian Engineering CR-20, troop transport, crew six with forty soldiers and fifteen tons of cargo. A dependable box of engines and doctrine, now available without the usual paperwork."
+  },
+  {
+    "slug": "charger-c70-corellian-consular-class-cruiser",
+    "id": "2c345f4840b92e05",
+    "name": "Charger c70 Corellian Consular-Class Cruiser",
+    "description": "Corellian Engineering Charger c70, consular cruiser turned warship with a cleaner silhouette than its intentions. Ideal for customers who like their republics armed and their escorts deniable."
+  },
+  {
+    "slug": "scimitar-assault-bomber",
+    "id": "2cafb8852c254a35",
+    "name": "Scimitar Assault Bomber",
+    "description": "Sienar Scimitar, two-crew assault bomber, shielded, fast, and built to carry a very convincing amount of explosives. For refined buyers who want their bombing runs to feel almost upscale."
+  },
+  {
+    "slug": "tie-bomber",
+    "id": "2ec63b561379cc09",
+    "name": "TIE Bomber",
+    "description": "Sienar TIE Bomber, one-seat strike craft with a bomb bay, no shield bubble worth bragging about, and all the personality of an invoice. Honest Imperial hardware for when precision has already failed."
+  },
+  {
+    "slug": "manta-droid-subfighter",
+    "id": "2f41147310c1409f",
+    "name": "Manta Droid Subfighter",
+    "description": "Manta droid subfighter, unmanned aquatic attack craft built for underwater pursuit and deeply unpleasant surprises. Low crew costs, low conversation, and excellent commitment to the bit."
+  },
+  {
+    "slug": "prototype-dreadnaught-class-heavy-cruiser",
+    "id": "30bb51d6499a5d3e",
+    "name": "Prototype Dreadnaught-Class Heavy Cruiser",
+    "description": "Rendili prototype Dreadnaught-class, heavy cruiser with the usual oversized hull and prototype-level confidence. A collector's piece for admirals who think teething problems count as character."
+  },
+  {
+    "slug": "aeg-77-vigo-gunship",
+    "id": "30c19642ca2c0865",
+    "name": "AEG-77 Vigo Gunship",
+    "description": "AEG-77 Vigo, gunship variant, compact transport chassis upgraded with less patience and more weapons. Same reliable frame, now marketed to customers with stronger opinions."
+  },
+  {
+    "slug": "m3-a-scyk-fighter",
+    "id": "3366cbce3aad563d",
+    "name": "M3-A Scyk Fighter",
+    "description": "MandalMotors M3-A Scyk, light interceptor, one pilot, tight cockpit, and just enough ship to start a bad idea. Cheap, nimble, and beloved by everyone who considers fragility somebody else's problem."
+  },
+  {
+    "slug": "the-grinning-liar",
+    "id": "33a9ba3cab659fc0",
+    "name": "The Grinning Liar",
+    "description": "The Grinning Liar, armed freighter, crew two with six passenger seats and ninety tons of cargo. The name is branding, the hold is spacious, and nothing in the registry should concern you."
+  },
+  {
+    "slug": "u-lav",
+    "id": "33bb63ccc0efb3f2",
+    "name": "U-LAV",
+    "description": "U-LAV, two-crew air vehicle, four hundred kilometers per hour and a profile that says 'military budget meeting.' Crisp handling for anyone who wants a gunship without the extra ceremony."
+  },
+  {
+    "slug": "v-35-courier",
+    "id": "348f2e6b6b8b737d",
+    "name": "V-35 Courier",
+    "description": "V-35 Courier, one pilot, two passengers, and just enough cargo room for a package worth lying about. Modest, practical, and perfect for errands that become stories later."
+  },
+  {
+    "slug": "munificent-class-frigate",
+    "id": "34968367d63d0ea9",
+    "name": "Munificent-Class Frigate",
+    "description": "Hoersch-Kessel Munificent-class, frigate, crew-heavy with room for troops and the broadside to prove a point. A Banking Clan classic for clients who want compound interest with turbolasers."
+  },
+  {
+    "slug": "herald-class-shuttle",
+    "id": "34cf3693b3f294fc",
+    "name": "Herald-Class Shuttle",
+    "description": "Herald-class shuttle, crew two with five to ten passengers and enough cargo space to feel useful. Smart little courier for buyers who want their business to arrive before the rumors do."
+  },
+  {
+    "slug": "tie-shuttle",
+    "id": "36c01effc5a6ca11",
+    "name": "TIE Shuttle",
+    "description": "Sienar TIE Shuttle, one pilot, two passengers, and one ton of cargo squeezed into an Imperial compromise. All the charm of a TIE, now with just enough legroom to file a complaint."
+  },
+  {
+    "slug": "tri-scythe-class-frigate",
+    "id": "36d601436a8c916b",
+    "name": "Tri-Scythe-Class Frigate",
+    "description": "Tri-Scythe-class frigate, sharp-nosed warship with troop capacity and a very committed silhouette. Ideal for customers who want their frigate to look like it already bit someone."
+  },
+  {
+    "slug": "nune-class-imperial-shuttle",
+    "id": "36dffdb2327a993d",
+    "name": "Nune-Class Imperial Shuttle",
+    "description": "Nune-class Imperial shuttle, crew eight with thirty-five passengers and two hundred fifty tons of hold space. Plenty of room for personnel, materiel, and the sort of orders nobody enjoys."
+  },
+  {
+    "slug": "the-ebon-hawk",
+    "id": "377d94c1aee1912e",
+    "name": "The Ebon Hawk",
+    "description": "Dynamic-class freighter, crew three with room for eight and forty tons of cargo under the floor and behind the legend. Well-traveled, heavily storied, and somehow still easier to buy than replicate."
+  },
+  {
+    "slug": "mr-rv",
+    "id": "3812f5378efa4bb9",
+    "name": "MR/RV",
+    "description": "MR/RV, reconnaissance and recovery vehicle, six crew, four passengers, two tons of kit, and all the warmth of military utility. A dependable crawler for buyers who enjoy terrain the hard way."
+  },
+  {
+    "slug": "toscan-8-q-starfighter",
+    "id": "38afc76852971649",
+    "name": "Toscan 8-Q Starfighter",
+    "description": "Toscan 8-Q, two-seat starfighter with extra passenger room and more cargo than a ship this awkward deserves. Ugly, capable, and perfect for pilots who value function over every other human experience."
+  },
+  {
+    "slug": "corellian-yv-545-light-freighter",
+    "id": "38bf78598594016a",
+    "name": "Corellian YV-545 Light Freighter",
+    "description": "Corellian Engineering YV-545, light freighter, crew two with five passenger seats and eighty tons of cargo. Straightforward hull, healthy hold, and no pretensions beyond getting paid."
+  },
+  {
+    "slug": "ck-6-freeco-speeder-bike",
+    "id": "397736aae71874d9",
+    "name": "CK-6 Freeco Speeder Bike",
+    "description": "CK-6 Freeco, one-seat speeder bike with cold-weather attitude and just enough cargo for a survival kit. Starts in ugly climates and looks proud of it."
+  },
+  {
+    "slug": "the-banshee",
+    "id": "3bbdbb9222fde2e3",
+    "name": "The Banshee",
+    "description": "The Banshee, fast transport, crew two with eight seats and thirty-five tons of cargo behind the bulkheads. Smooth ride, strong engines, and a name chosen so the approach is half the sale."
+  },
+  {
+    "slug": "nova-class-battlecruiser-refit",
+    "id": "3c425a4e833d2542",
+    "name": "Nova-Class Battlecruiser Refit",
+    "description": "Nova-class battlecruiser refit, old heavy bruiser brought up to newer standards and older grudges. Perfect for buyers who think modernization should still feel vindictive."
+  },
+  {
+    "slug": "droch-class-boarding-ship",
+    "id": "3d0a8c7ae225886e",
+    "name": "Droch-Class Boarding Ship",
+    "description": "Droch-class boarding ship, compact assault craft with room for six droid troops and a deeply transactional worldview. A fine choice if knocking politely has never tested well."
+  },
+  {
+    "slug": "corellian-crix-class-courier-shuttle",
+    "id": "3d2d52cef2f638e7",
+    "name": "Corellian Crix-Class Courier Shuttle",
+    "description": "Corellian Crix-class courier shuttle, crew five with thirty passenger seats and fifty tons of cargo. Fast enough for urgent deliveries and respectable enough to lie about them."
+  },
+  {
+    "slug": "cx-133-chaos-fighter",
+    "id": "3ea7ddb25909cd05",
+    "name": "CX-133 Chaos Fighter",
+    "description": "CX-133 Chaos Fighter, one-seat starfighter, fast, compact, and exactly as trustworthy as the name suggests. A flashy little purchase for pilots who enjoy alarms as ambient sound."
+  },
+  {
+    "slug": "at-aa",
+    "id": "3fb527f7e2dde6c7",
+    "name": "AT-AA",
+    "description": "AT-AA, anti-air walker, three crew, sixty kilometers per hour, and built entirely around ruining somebody else's flyby. Fresh from the factory and already looking upward with intent."
+  },
+  {
+    "slug": "miytil-command-starfighter",
+    "id": "4170ccc895632966",
+    "name": "Miy'til Command Starfighter",
+    "description": "MandalMotors Miy'til command starfighter, one pilot, command-grade systems, and enough edge to offend a standard cockpit. For commanders who prefer to lead from the sharp end."
+  },
+  {
+    "slug": "canderous-class-assault-tank",
+    "id": "432c5ed5607b346d",
+    "name": "Canderous-Class Assault Tank",
+    "description": "Canderous-class assault tank, three-crew tracked brute, fifty kilometers per hour and built to settle arguments at street level. A tasteful amount of overkill for the discerning ground campaign."
+  },
+  {
+    "slug": "h-60-tempest-bomber",
+    "id": "43ae0fdd03ac2689",
+    "name": "H-60 Tempest Bomber",
+    "description": "H-60 Tempest, four-crew bomber with a fast approach and the carrying capacity to make that everybody's problem. Elegant in the way only ordnance platforms think they are."
+  },
+  {
+    "slug": "protector-vi-patrol-speeder",
+    "id": "443ed10a744020d0",
+    "name": "Protector VI Patrol Speeder",
+    "description": "Protector VI, patrol speeder, one driver and six seats for passengers, deputies, or other complications. City-ready, official-looking, and excellent for pretending this stop is routine."
+  },
+  {
+    "slug": "tsmeu-6-personal-wheel-bike",
+    "id": "45b774b3bf732676",
+    "name": "Tsmeu-6 Personal Wheel Bike",
+    "description": "Tsmeu-6, personal wheel bike, one rider and one passenger with walking mode for when dignity must briefly return. Distinctive engineering for buyers tired of ordinary mistakes."
+  },
+  {
+    "slug": "helot-class-medium-space-transport",
+    "id": "45bc8273c9fcb833",
+    "name": "Helot-Class Medium Space Transport",
+    "description": "Helot-class medium transport, workaday cargo hauler with the glamorous profile of a receipt. Reliable lift, respectable volume, and none of the charm that drives up the price."
+  },
+  {
+    "slug": "corellian-crix-class-assault-shuttle",
+    "id": "45f8514d75ceb812",
+    "name": "Corellian Crix-Class Assault Shuttle",
+    "description": "Corellian Crix-class assault shuttle, crew five with fifty passengers and fifty tons of cargo when the mission gets crowded. A courier line that clearly made some new friends in weapons procurement."
+  },
+  {
+    "slug": "starviper-class-attack-platform",
+    "id": "46df2e51d48660f4",
+    "name": "StarViper-Class Attack Platform",
+    "description": "MandalMotors StarViper, one-seat attack platform with elegant lines and deeply unelegant intentions. Premium handling for customers who want menace to come with curves."
+  },
+  {
+    "slug": "star-saber-xc-01-starfighter",
+    "id": "488f397ddff8a122",
+    "name": "Star Saber XC-01 Starfighter",
+    "description": "Star Saber XC-01, one-seat starfighter with interceptor speed and barely enough room for restraint. A sleek little rocket for pilots who think subtlety is dead weight."
+  },
+  {
+    "slug": "aerochaser-speeder-bike",
+    "id": "493acf0818a5bebc",
+    "name": "AeroChaser Speeder Bike",
+    "description": "AeroChaser, one-seat speeder bike, light, quick, and carrying exactly four kilograms of priorities. Great starter model for anyone eager to make local authorities familiar with their silhouette."
+  },
+  {
+    "slug": "dp20-corellian-frigate",
+    "id": "496a34c9ac191c1c",
+    "name": "DP20 Corellian Frigate",
+    "description": "Corellian Engineering DP20, fast frigate, ninety-one crew and enough guns to make escorts feel underdressed. Sharp profile, quick response, and ideal for owners who prefer their corvettes angry."
+  },
+  {
+    "slug": "the-millennium-falcon",
+    "id": "49b4a29adf57bf39",
+    "name": "The Millennium Falcon",
+    "description": "Corellian YT-1300, heavily modified light freighter, crew four and six passengers with a hold that has seen things. Fast, famous-looking, and previously loved by someone who treated maintenance like a philosophical concept."
+  },
+  {
+    "slug": "recusant-class-light-destroyer",
+    "id": "4a12db341764d71c",
+    "name": "Recusant-Class Light Destroyer",
+    "description": "Recusant-class light destroyer, long-hulled warship, three hundred crew and forty passengers. Slim profile, heavy guns, and ideal for buyers who want a capital ship with a permanent sneer."
+  },
+  {
+    "slug": "ghtroc-720-freighter",
+    "id": "4d5b3422047f5eb8",
+    "name": "Ghtroc 720 Freighter",
+    "description": "Ghtroc 720, light freighter, crew two and ten passengers with 135 tons of cargo space. Honest commercial lines for captains who want their smuggling to look aggressively middle-management."
+  },
+  {
+    "slug": "wlo-5-speeder-tank",
+    "id": "4da037b31df14f2b",
+    "name": "WLO-5 Speeder Tank",
+    "description": "Ubrikkian WLO-5, speeder tank, crew three and four passengers at 110 kilometers per hour. Rugged pirate chic, lightly used, and only fired in self-defense if you ask the seller."
+  },
+  {
+    "slug": "corellian-yu-410-light-freighter",
+    "id": "4edc074a76cbd27d",
+    "name": "Corellian YU-410 Light Freighter",
+    "description": "Corellian Engineering YU-410, light freighter, crew four and twelve passengers with 250 tons of hold space. Roomy, respectable, and perfect for the buyer whose cargo manifests read like fiction."
+  },
+  {
+    "slug": "seltiss-2-caravel-cabin",
+    "id": "4f76657dc2450284",
+    "name": "Seltiss-2 Caravel Cabin",
+    "description": "Seltiss-2 Caravel Cabin, small transport, one pilot and six passengers with five tons of cargo. Civilized little shuttle for clients who want their travel modest, tasteful, and plausibly billable."
+  },
+  {
+    "slug": "corellian-yt-1250-freighter",
+    "id": "4fa15c10288bc665",
+    "name": "Corellian YT-1250 Freighter",
+    "description": "Corellian Engineering YT-1250, light freighter, crew two and five passengers with eighty tons of cargo. Strong bones, clean silhouette, and enough hold space to support several regrettable ventures."
+  },
+  {
+    "slug": "tl-1800-light-freighter",
+    "id": "4ff55164176f9c8c",
+    "name": "TL-1800 Light Freighter",
+    "description": "TL-1800, light freighter, crew two and seven passengers with 110 tons of cargo. Reliable independent-trader energy for buyers who like their ships practical and their paperwork imaginative."
+  },
+  {
+    "slug": "jumpstar-hpf-starfighter",
+    "id": "5287374682e121f2",
+    "name": "Jumpstar HPF Starfighter",
+    "description": "JumpStar HPF, single-seat starfighter, fast, compact, and carrying just seventy kilos of priorities. A tidy interceptor for pilots who want hyperdrive and poor impulse control in one package."
+  },
+  {
+    "slug": "eta-2-actis-heavy-defense-interceptor",
+    "id": "530081cc8c5cc709",
+    "name": "Eta-2 Actis Heavy-Defense Interceptor",
+    "description": "Kuat Systems Engineering Eta-2 Actis, one-seat interceptor, tiny, sharp, and built to turn harder than your nerves can. Premium Jedi-adjacent styling for owners who enjoy flying something that looks annoyed."
+  },
+  {
+    "slug": "davaab-type-starfighter",
+    "id": "540fd8bd8cd2663f",
+    "name": "Davaab-Type Starfighter",
+    "description": "Davaab-type starfighter, single-seat interceptor with forty kilos of cargo and no spare patience. Fast little predator for customers who think comfort is just wasted mass."
+  },
+  {
+    "slug": "dreadnaught-class-heavy-cruiser",
+    "id": "54a156756449ad0f",
+    "name": "Dreadnaught-Class Heavy Cruiser",
+    "description": "Rendili Dreadnaught-class, heavy cruiser, big-gun bruiser with a crew bill that never quite stops hurting. A classic naval brick for admirals who mistake endurance for charm."
+  },
+  {
+    "slug": "lucrehulk-class-battleship",
+    "id": "552006bf68fe1c72",
+    "name": "Lucrehulk-Class Battleship",
+    "description": "Lucrehulk-class battleship, gigantic trade-ring warship, crewed by the hundreds and visibly compensating from orbit. Spacious, ominous, and excellent for buyers who prefer their commerce armed."
+  },
+  {
+    "slug": "victory-ii-class-star-destroyer",
+    "id": "554cba7f2802186a",
+    "name": "Victory II-Class Star Destroyer",
+    "description": "Victory II-class Star Destroyer, wedge-shaped capital ship with enough mass to make diplomacy feel performative. Solid Imperial curb appeal for clients who want every arrival to count as a warning."
+  },
+  {
+    "slug": "scarab-class-droid-starfighter",
+    "id": "55c2d5eadebaeb04",
+    "name": "Scarab-Class Droid Starfighter",
+    "description": "Scarab-class droid starfighter, unmanned attack craft, quick, disposable, and utterly free of cockpit complaints. Low overhead, high aggression, and ideal for buyers who dislike pilot unions."
+  },
+  {
+    "slug": "medlifter-troop-transport",
+    "id": "567c1d05fae6ec15",
+    "name": "Medlifter Troop Transport",
+    "description": "Medlifter troop transport, crew two and four passengers with a ton of hold space for urgent problems. A practical little evac crate for anyone who calls chaos 'field conditions.'"
+  },
+  {
+    "slug": "gat-12h-skipray-blastboat",
+    "id": "56854de644ae725b",
+    "name": "GAT-12h Skipray Blastboat",
+    "description": "Sienar GAT-12h Skipray, attack boat, one pilot, heavy weapons, and a very unhealthy attitude toward targets. A gentleman's gunship for buyers who want subtlety available only as an optional accessory."
+  },
+  {
+    "slug": "tx-130t-fighter-tank",
+    "id": "5786362ca9bd5b47",
+    "name": "TX-130T Fighter Tank",
+    "description": "TX-130T, repulsor tank, crew two and five passengers at 193 kilometers per hour. Sleek armor for customers who want battlefield presence without giving up the joy of reckless cornering."
+  },
+  {
+    "slug": "talon-i-combat-cloud-car",
+    "id": "579222afabfe8abe",
+    "name": "Talon I Combat Cloud Car",
+    "description": "Talon I combat cloud car, compact aerial fighter, single pilot, fast climb, and no social grace whatsoever. A fine weatherproof purchase for patrol work and dramatic overreactions."
+  },
+  {
+    "slug": "gpe-7300-space-transport",
+    "id": "57ff0258c074d9a9",
+    "name": "GPE-7300 Space Transport",
+    "description": "GPE-7300, space transport, one pilot and four passengers with forty-five tons of cargo. Efficient, unglamorous, and perfect for buyers who treat starships like spreadsheets with engines."
+  },
+  {
+    "slug": "the-glorious-chariot",
+    "id": "590a4746e1dbc9f2",
+    "name": "The Glorious Chariot",
+    "description": "Royal Naboo N-1 derivative, one-seat starfighter with polished lines and absolutely no humility. Tasteful finish, spirited performance, and previously owned by someone who enjoyed entrances."
+  },
+  {
+    "slug": "t-65b-x-wing-starfighter",
+    "id": "5b069868bdf294db",
+    "name": "T-65B X-Wing Starfighter",
+    "description": "Incom T-65B, one pilot and astromech, long-range starfighter with 110 kilos of cargo and very strong opinions. The dependable classic for farmboys, idealists, and anyone else who keeps ruining empires."
+  },
+  {
+    "slug": "t2-b-repulsor-tank",
+    "id": "5c474dfe728a9841",
+    "name": "T2-B Repulsor Tank",
+    "description": "T2-B, repulsor tank, crew three, eighty kilometers per hour, and enough armor to make infantry feel judged. A sturdy field piece for buyers who like their support vehicles blunt and loyal."
+  },
+  {
+    "slug": "sct-scout-craft",
+    "id": "5c652a4173f9e2cc",
+    "name": "SCT Scout Craft",
+    "description": "SCT scout craft, crew two and eight passengers with 275 tons of cargo and a scout label that feels generous. Long-legged utility ship for operators whose recon somehow always requires freight capacity."
+  },
+  {
+    "slug": "vulture-droid-starfighter",
+    "id": "5c8f3b82c32077d2",
+    "name": "\"Vulture\" Droid Starfighter",
+    "description": "Baktoid Vulture droid starfighter, unmanned interceptor, fast, ugly, and entirely committed to the cause of swarming. Economical fleet filler for buyers who value quantity over survival instincts."
+  },
+  {
+    "slug": "star-galleon-class-frigate",
+    "id": "5cbbd34d518f321f",
+    "name": "Star Galleon-Class Frigate",
+    "description": "Star Galleon-class frigate, bulky transport-escort, crew 150 with room for 300 troops and cargo that arrives under guard. A sensible purchase if your shipping philosophy begins with 'comply.'"
+  },
+  {
+    "slug": "conqueror-class-assault-ship",
+    "id": "5cdf9275e39937d4",
+    "name": "Conqueror-Class Assault Ship",
+    "description": "Conqueror-class assault ship, crew three with twenty-five tons of hold space and a thousand-kilometer pace. Compact, aggressive, and named with the sort of confidence that voids warranties."
+  },
+  {
+    "slug": "novasword-space-superiority-fighter",
+    "id": "5d7fcaaf39c4e5ee",
+    "name": "NovaSword Space Superiority Fighter",
+    "description": "NovaSword, single-seat superiority fighter with clean lines and a deeply competitive worldview. A polished duelist for pilots who want every dogfight to feel like a résumé."
+  },
+  {
+    "slug": "at-te",
+    "id": "5ddd398a1cfd7b7c",
+    "name": "AT-TE",
+    "description": "All Terrain Tactical Enforcer, seven crew and thirty-eight passengers with ten tons of cargo and zero interest in subtle movement. Battlefield-proven walker for buyers who like their transport to also be an argument."
+  },
+  {
+    "slug": "starforge-station",
+    "id": "5ec4e8ae2ce4722c",
+    "name": "StarForge Station",
+    "description": "StarForge station, fixed orbital industrial nightmare, one operator and ten passengers in theory, much more dread in practice. Rare legacy infrastructure for clients who prefer their factories spiritually hostile."
+  },
+  {
+    "slug": "stap",
+    "id": "5f6ebbce3c11657c",
+    "name": "STAP",
+    "description": "Baktoid STAP, one-rider hover scout, four hundred kilometers per hour and barely enough vehicle to count. Great fuel economy, excellent panic factor, and no room at all for second thoughts."
+  },
+  {
+    "slug": "ilh-kk-citadel-class-civilian-cruiser",
+    "id": "6094d459e34e0395",
+    "name": "ILH-KK Citadel-Class Civilian Cruiser",
+    "description": "ILH-KK Citadel-class, civilian cruiser with unusually stern lines and the confidence of a warship wearing a fake mustache. A tasteful option for buyers who want 'non-military' to sound negotiable."
+  },
+  {
+    "slug": "t-65xj3-x-wing-starfighter",
+    "id": "622924c83d0c90be",
+    "name": "T-65XJ3 X-Wing Starfighter",
+    "description": "Incom T-65XJ3, one pilot and astromech, updated X-wing with better speed and less patience. Same iconic silhouette, now for customers who liked the classic but wanted the sequel budget."
+  },
+  {
+    "slug": "gladius-class-light-freighter",
+    "id": "62326bc644ab34a3",
+    "name": "Gladius-Class Light Freighter",
+    "description": "Gladius-class light freighter, crew one and two passengers with fifty tons of cargo. Lean little courier-hauler for owners who want their shipping solution to look faintly threatening."
+  },
+  {
+    "slug": "lukes-snowspeeder",
+    "id": "6280b130c593def2",
+    "name": "Luke's Snowspeeder",
+    "description": "Incom T-47, two-seat airspeeder refit for cold weather. Don't pay any mind to the crushed skeleton in the back."
+  },
+  {
+    "slug": "ministry-class-orbital-shuttle",
+    "id": "63cbcd06232631b8",
+    "name": "Ministry-Class Orbital Shuttle",
+    "description": "Ministry-class orbital shuttle, crew two and thirty-six passengers at a respectable 750 kilometers per hour. Official-looking transport for clients who want their bureaucracy to arrive in person."
+  },
+  {
+    "slug": "swift-assault-5-hovercraft",
+    "id": "6421402f6eec8fe1",
+    "name": "Swift Assault 5 Hovercraft",
+    "description": "Swift Assault 5, hovercraft, crew four and six passengers at 200 kilometers per hour with a very literal product name. If you need a raid vehicle that sounds like a marketing meeting, this is the one."
+  },
+  {
+    "slug": "miytil-starfighter",
+    "id": "646e74061e4c786b",
+    "name": "Miy'til Starfighter",
+    "description": "MandalMotors Miy'til, single-seat starfighter, sharp, compact, and designed like it resents compromise. A premium purchase for pilots who think armor and culture should both be visible."
+  },
+  {
+    "slug": "nova-class-battlecruiser",
+    "id": "649d1f1e553ef572",
+    "name": "Nova-Class Battlecruiser",
+    "description": "Nova-class battlecruiser, heavy fleet ship with six hundred troops and six hundred tons of cargo because moderation failed. A proper statement piece for governments in a threatening mood."
+  },
+  {
+    "slug": "delta-7-aethersprite-high-speed-interceptor",
+    "id": "65085439e17ee834",
+    "name": "Delta-7 Aethersprite High-Speed Interceptor",
+    "description": "Kuat Systems Engineering Delta-7 Aethersprite, one-seat interceptor, tiny cockpit, sharp turns, and cheddar monk-grade visibility problems. Very responsive craft for buyers who mistake serenity for overconfidence."
+  },
+  {
+    "slug": "r-41-starchaser",
+    "id": "65fff59567224c72",
+    "name": "R-41 Starchaser",
+    "description": "Hoersch-Kessel R-41 Starchaser, single-seat starfighter with 110 kilos of cargo and enough speed to attract the wrong sort of attention. Budget menace for pilots who want performance and can live without dignity."
+  },
+  {
+    "slug": "e-wing-escort-starfighter",
+    "id": "66316bf2c49653d4",
+    "name": "E-Wing Escort Starfighter",
+    "description": "FreiTek E-wing, advanced escort starfighter, one pilot, modern systems, and the kind of confidence only New Republic procurement can buy. A sleek next-generation choice for customers who enjoy winning with paperwork."
+  },
+  {
+    "slug": "subjugator-class-heavy-cruiser",
+    "id": "67b48f413f383f35",
+    "name": "Subjugator-Class Heavy Cruiser",
+    "description": "Subjugator-class heavy cruiser, oversized warship, crew twenty-five with sixty passengers and a title that really tells on itself. Ideal for fleet buyers who find diplomacy too slow and subtle."
+  },
+  {
+    "slug": "b-wing-shuttle",
+    "id": "6961ef5dc84dd965",
+    "name": "B-Wing Shuttle",
+    "description": "B-wing shuttle conversion, one pilot and two passengers with just forty-five kilos of spare room. A practical refit for anyone who looked at a starfighter and said, 'Yes, but errands.'"
+  },
+  {
+    "slug": "x-83-twintail-starfighter",
+    "id": "6980cf77e32f812d",
+    "name": "X-83 TwinTail Starfighter",
+    "description": "X-83 TwinTail, one pilot and astromech, high-speed starfighter pushing 1,200 kilometers per hour. Sharp-nosed and expensive-looking, perfect for buyers who want their heroics factory-installed."
+  },
+  {
+    "slug": "ton-falk-class-escort-carrier",
+    "id": "6a4157672eb17c2b",
+    "name": "Ton-Falk-Class Escort Carrier",
+    "description": "Ton-Falk-class escort carrier, fleet support hull with troops, hangars, and the social warmth of a docking invoice. A sensible acquisition if you need a carrier that looks like it means overtime."
+  },
+  {
+    "slug": "modified-ilh-kk-citadel-class-civilian-cruiser",
+    "id": "6b096946ebbdd5b5",
+    "name": "Modified ILH-KK Citadel-Class Civilian Cruiser",
+    "description": "Modified ILH-KK Citadel-class, civilian cruiser refit by someone who clearly did not trust the word civilian. Same elegant shell, now with the kind of upgrades sellers describe as 'tasteful improvements.'"
+  },
+  {
+    "slug": "junker-tye-wing",
+    "id": "6b2f0741da3cdda3",
+    "name": "Junker TYE-Wing",
+    "description": "Junker TYE-Wing, single-seat salvage special at 1,200 kilometers per hour with sixty-six kilos of whatever still fits. Patchwork charm for buyers who think symmetry is for rich people."
+  },
+  {
+    "slug": "golan-viii-space-defense-platform",
+    "id": "6bd57bd1ac2bebfc",
+    "name": "Golan VIII Space Defense Platform",
+    "description": "Golan VIII, orbital defense platform with troop space, cargo room, and absolutely no intention of moving. Permanent security solution for systems that prefer their welcome mats armed."
+  },
+  {
+    "slug": "spha-i",
+    "id": "6bf3b19378e45406",
+    "name": "SPHA-I",
+    "description": "SPHA-I, self-propelled heavy artillery, siege gun on legs for customers who believe range is kindness. Factory-standard overreaction, now available in a convenient battlefield footprint."
+  },
+  {
+    "slug": "the-blood-brother",
+    "id": "6cc4022275ddeb94",
+    "name": "The Blood Brother",
+    "description": "The Blood Brother, craft, 8 crew and 16 passengers, 800 km/h. Solid value for customers who measure success in completed objectives."
+  },
+  {
+    "slug": "pursuer-class-enforcement-ship",
+    "id": "6cf1335df6886b1b",
+    "name": "Pursuer-Class Enforcement Ship",
+    "description": "Pursuer-Class Enforcement Ship, ship, single-crew and 7 passengers, 1,000 km/h. Plenty of room for cargo, side work, and very selective bookkeeping."
+  },
+  {
+    "slug": "lucrehulk-class-droid-control-ship",
+    "id": "6d4977bd7de6eeb3",
+    "name": "Lucrehulk-Class Droid Control Ship",
+    "description": "Lucrehulk-Class Droid Control Ship, control ship, 150-300 crew and 150 passengers, 800 km/h. A proper acquisition for clients who like their authority visible from orbit."
+  },
+  {
+    "slug": "providence-class-destroyer",
+    "id": "6db38a19ed4fb963",
+    "name": "Providence-Class Destroyer",
+    "description": "Providence-Class Destroyer, destroyer, 22 crew and 48 passengers, 1,050 km/h. Built for governments, warlords, and anyone else with expansive feelings."
+  },
+  {
+    "slug": "laser-borer",
+    "id": "6dc780b5f78d8cf1",
+    "name": "Laser Borer",
+    "description": "Laser Borer, craft, single-crew, 60 km/h. Solid value for customers who measure success in completed objectives."
+  },
+  {
+    "slug": "ptv-2100-incarcerator",
+    "id": "6de2b3f281e33eb3",
+    "name": "PTV-2100 Incarcerator",
+    "description": "PTV-2100 Incarcerator, craft, 250 crew and one passenger, 800 km/h. Solid value for customers who measure success in completed objectives."
+  },
+  {
+    "slug": "medstar-class-frigate",
+    "id": "6e3666903b5e71c3",
+    "name": "MedStar-Class Frigate",
+    "description": "MedStar-Class Frigate, frigate, 440 crew and 655 passengers, 800 km/h. Strong fleet presence for buyers who want every arrival to count as policy."
+  },
+  {
+    "slug": "sigma-class-long-range-shuttle",
+    "id": "6f5103dd8ef919df",
+    "name": "Sigma-Class Long-Range Shuttle",
+    "description": "Sigma-Class Long-Range Shuttle, shuttle, single-crew and 10 passengers, 950 km/h. For operators who want capability first and explanations only if required."
+  },
+  {
+    "slug": "oevvaor-jet-catamaran",
+    "id": "736e326c114c2348",
+    "name": "\"Oevvaor\" Jet Catamaran",
+    "description": "\"Oevvaor\" Jet Catamaran, catamaran, 2 crew and 2 passengers, 370 km/h. Solid local transport for anyone who enjoys speed more than consequences."
+  },
+  {
+    "slug": "krayts-honor",
+    "id": "73dd2df9378c57ab",
+    "name": "Krayt's Honor",
+    "description": "Krayt's Honor, craft, 6 crew and 12 passengers, 400 km/h. Ideal for anyone whose day job occasionally becomes a problem statement."
+  },
+  {
+    "slug": "imperial-customs-corvette",
+    "id": "73f20f97d0b301a3",
+    "name": "Imperial Customs Corvette",
+    "description": "Imperial Customs Corvette, corvette, 58 crew and 20 passengers, 1,050 km/h. Perfect for admirals who think moderation is a staffing problem."
+  },
+  {
+    "slug": "tartan-class-patrol-cruiser",
+    "id": "740fc03e94d61123",
+    "name": "Tartan-Class Patrol Cruiser",
+    "description": "Tartan-Class Patrol Cruiser, patrol cruiser, 70 crew and 50 passengers, 800 km/h. Perfect for admirals who think moderation is a staffing problem."
+  },
+  {
+    "slug": "corellian-g9-rigger-class-light-freighter",
+    "id": "7410dc3a31cb7889",
+    "name": "Corellian G9 Rigger-Class Light Freighter",
+    "description": "Corellian G9 Rigger-Class Light Freighter, freighter, single-crew, 800 km/h. A dependable hull for clients whose freight gets more interesting after dark."
+  },
+  {
+    "slug": "wlo-5-speeder-tank",
+    "id": "744a157443172498",
+    "name": "WLO-5 Speeder Tank",
+    "description": "WLO-5 Speeder Tank, speeder, 3 crew and 4 passengers, 110 km/h. Professional-grade overkill in a chassis that takes stairs personally."
+  },
+  {
+    "slug": "sith-interceptor",
+    "id": "745cd0ead5a1ba0d",
+    "name": "Sith Interceptor",
+    "description": "Sith Interceptor, single-seat, interceptor, 1,250 km/h. For pilots who think diplomacy works better at attack speed."
+  },
+  {
+    "slug": "lethisk-class-armed-freighter",
+    "id": "747aa8037a8b70ba",
+    "name": "Lethisk-Class Armed Freighter",
+    "description": "Lethisk-Class Armed Freighter, freighter, 3 crew and 8 passengers, 900 km/h. Ideal for operators who think customs forms are just opening offers."
+  },
+  {
+    "slug": "x-34-landspeeder",
+    "id": "753a05bc31371d0f",
+    "name": "X-34 Landspeeder",
+    "description": "X-34 Landspeeder, two-seat, landspeeder, 330 km/h. For buyers who believe local traffic laws are mostly aspirational."
+  },
+  {
+    "slug": "conductor-class-short-haul-landing-craft",
+    "id": "7540343f749d69d4",
+    "name": "Conductor-Class Short-Haul Landing Craft",
+    "description": "Conductor-Class Short-Haul Landing Craft, landing craft, single-crew and 5 passengers, 500 km/h. For operators who like their logistics escorted by several bad ideas."
+  },
+  {
+    "slug": "mtt",
+    "id": "766c23ef78146420",
+    "name": "MTT",
+    "description": "MTT, craft, 4 crew and 112 passengers, 35 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "the-moomo-williwaw",
+    "id": "773367688009cf5e",
+    "name": "The Moomo Williwaw",
+    "description": "The Moomo Williwaw, craft, 4 crew and 6 passengers, 870 km/h. A practical purchase for clients with specific needs and vague ethics."
+  },
+  {
+    "slug": "tx-130-saber-class-fighter-tank",
+    "id": "777bd4c16168d05f",
+    "name": "TX-130 Saber-Class Fighter Tank",
+    "description": "TX-130 Saber-Class Fighter Tank, fighter, 3 crew and 2 passengers, 200 km/h. Professional-grade overkill in a chassis that takes stairs personally."
+  },
+  {
+    "slug": "rebel-assault-frigate-mark-i",
+    "id": "7788cc6a838b9945",
+    "name": "Rebel Assault Frigate Mark I",
+    "description": "Rebel Assault Frigate Mark I, frigate, single-crew, 800 km/h. Perfect for admirals who think moderation is a staffing problem."
+  },
+  {
+    "slug": "nebulon-b-escort-frigate",
+    "id": "782e16ef209c671e",
+    "name": "Nebulon-B Escort Frigate",
+    "description": "Nebulon-B Escort Frigate, frigate, single-crew, 800 km/h. Perfect for admirals who think moderation is a staffing problem."
+  },
+  {
+    "slug": "xq2-space-platform",
+    "id": "78ebcd7ac064ce79",
+    "name": "XQ2 Space Platform",
+    "description": "XQ2 Space Platform, orbital platform, single-crew and 10 passengers, 800 km/h. Excellent for owners who prefer their real estate armed and orbiting."
+  },
+  {
+    "slug": "at-pt",
+    "id": "796a7e5f7974f3d1",
+    "name": "AT-PT",
+    "description": "AT-PT, walker, single-crew and one passenger, 60 km/h. Perfect for operations that benefit from armor, height, and very poor subtlety."
+  },
+  {
+    "slug": "gladiator-class-star-destroyer",
+    "id": "796aeb5e9e466581",
+    "name": "Gladiator-Class Star Destroyer",
+    "description": "Gladiator-Class Star Destroyer, star destroyer, single-crew and one passenger, 800 km/h. A proper acquisition for clients who like their authority visible from orbit."
+  },
+  {
+    "slug": "mekuun-heavy-tracker",
+    "id": "797f2967589af203",
+    "name": "Mekuun Heavy Tracker",
+    "description": "Mekuun Heavy Tracker, craft, 6 crew and 5 passengers, 130 km/h. Ideal for anyone whose day job occasionally becomes a problem statement."
+  },
+  {
+    "slug": "model-67-shrieker-speeder-bike",
+    "id": "79aa0d2017000e59",
+    "name": "Model 67 Shrieker Speeder Bike",
+    "description": "Model 67 Shrieker Speeder Bike, speeder bike, single-crew, 800 km/h. For buyers who believe local traffic laws are mostly aspirational."
+  },
+  {
+    "slug": "ardent-class-fast-frigate",
+    "id": "7aa9f976cffb1343",
+    "name": "Ardent-Class Fast Frigate",
+    "description": "Ardent-Class Fast Frigate, frigate, single-crew and 200 passengers, 800 km/h. Built for governments, warlords, and anyone else with expansive feelings."
+  },
+  {
+    "slug": "vindicator-class-heavy-cruiser",
+    "id": "7aad64ca9081b180",
+    "name": "Vindicator-Class Heavy Cruiser",
+    "description": "Vindicator-Class Heavy Cruiser, heavy cruiser, 2 crew and 400 passengers, 800 km/h. A proper acquisition for clients who like their authority visible from orbit."
+  },
+  {
+    "slug": "storm-iv-twin-pod-cloud-car",
+    "id": "7b133266e96b30e8",
+    "name": "Storm IV Twin-Pod Cloud Car",
+    "description": "Storm IV Twin-Pod Cloud Car, cloud car, single-crew, 800 km/h. Clean handling, fast starts, and just enough dignity left over for parking."
+  },
+  {
+    "slug": "belbullab-heavy-starfighter",
+    "id": "7b6e9f4727d3897f",
+    "name": "Belbullab Heavy Starfighter",
+    "description": "Belbullab Heavy Starfighter, single-seat, starfighter, 1,100 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "ye-4-gunship",
+    "id": "7d5594875eeaab67",
+    "name": "YE-4 Gunship",
+    "description": "YE-4 Gunship, gunship, 8 crew and 6 passengers, 900 km/h. Ideal for buyers who want troop transport with stronger opinions."
+  },
+  {
+    "slug": "viper-swoop-bike",
+    "id": "7dd7b3531751bf7f",
+    "name": "Viper Swoop Bike",
+    "description": "Viper Swoop Bike, swoop, single-crew, 600 km/h. For buyers who believe local traffic laws are mostly aspirational."
+  },
+  {
+    "slug": "lancet-aerial-artillery",
+    "id": "7e5e6b2b32a0cf15",
+    "name": "Lancet Aerial Artillery",
+    "description": "Lancet Aerial Artillery, walker, 3 crew, 850 km/h. Perfect for operations that benefit from armor, height, and very poor subtlety."
+  },
+  {
+    "slug": "dianoga-class-assault-starfighter",
+    "id": "7ee0f86c060013ed",
+    "name": "Dianoga-Class Assault Starfighter",
+    "description": "Dianoga-Class Assault Starfighter, single-seat, starfighter, 950 km/h. Ideal for buyers who want every problem to become a dogfight."
+  },
+  {
+    "slug": "urban-bombardier-speeder-bike",
+    "id": "7f2baba9363028e7",
+    "name": "Urban Bombardier Speeder Bike",
+    "description": "Urban Bombardier Speeder Bike, speeder bike, single-crew, 500 km/h. Great for errands, getaways, and explaining later that it seemed like a good idea."
+  },
+  {
+    "slug": "imperial-ii-class-star-destroyer",
+    "id": "8039a5078ba1e089",
+    "name": "Imperial II-Class Star Destroyer",
+    "description": "Imperial II-Class Star Destroyer, star destroyer, 37 crew and 9 passengers, 800 km/h. Strong fleet presence for buyers who want every arrival to count as policy."
+  },
+  {
+    "slug": "hapan-battle-dragon",
+    "id": "808c8fcae4a3011a",
+    "name": "Hapan Battle Dragon",
+    "description": "Hapan Battle Dragon, craft, 12 crew and 500 passengers, 800 km/h. A practical purchase for clients with specific needs and vague ethics."
+  },
+  {
+    "slug": "gr-75-medium-transport",
+    "id": "80bfcd9706512bdf",
+    "name": "GR-75 Medium Transport",
+    "description": "GR-75 Medium Transport, transport, 6 crew and 40 passengers, 650 km/h. Roomy, practical, and perfectly shaped for invoices that need editing."
+  },
+  {
+    "slug": "nssis-class-clawcraft",
+    "id": "817ed19b8480d64b",
+    "name": "Nssis-Class Clawcraft",
+    "description": "Nssis-Class Clawcraft, single-seat, clawcraft, 1,000 km/h. Ideal for buyers who want every problem to become a dogfight."
+  },
+  {
+    "slug": "the-azure-angel",
+    "id": "81f7baa8b6c1f0d8",
+    "name": "The Azure Angel",
+    "description": "The Azure Angel, craft, single-crew, 1,260 km/h. Solid value for customers who measure success in completed objectives."
+  },
+  {
+    "slug": "corellian-s-250-chela-class-starfighter",
+    "id": "830a3f43ff4cb94e",
+    "name": "Corellian S-250 Chela-Class Starfighter",
+    "description": "Corellian S-250 Chela-Class Starfighter, single-seat, starfighter, 1,200 km/h. For pilots who think diplomacy works better at attack speed."
+  },
+  {
+    "slug": "dagger-class-starfighter",
+    "id": "836f49a57c1dbd9b",
+    "name": "Dagger-Class Starfighter",
+    "description": "Dagger-Class Starfighter, single-seat, starfighter, 1,000 km/h. Ideal for buyers who want every problem to become a dogfight."
+  },
+  {
+    "slug": "belbullab-heavy-starfighter",
+    "id": "8372f4f23584ca66",
+    "name": "Belbullab Heavy Starfighter",
+    "description": "Belbullab Heavy Starfighter, single-seat, starfighter, 1,100 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "bc-714-luxury-transport",
+    "id": "8422dfb883e081a6",
+    "name": "BC-714 Luxury Transport",
+    "description": "BC-714 Luxury Transport, transport, 17 crew and 30 passengers, 1,800 km/h. For buyers who want honest capacity and flexible definitions of legitimate trade."
+  },
+  {
+    "slug": "carrack-class-light-cruiser",
+    "id": "848065461dd7a5d9",
+    "name": "Carrack-Class Light Cruiser",
+    "description": "Carrack-Class Light Cruiser, cruiser, single-crew and 142 passengers, 800 km/h. Strong fleet presence for buyers who want every arrival to count as policy."
+  },
+  {
+    "slug": "kazellis-class-light-freighter",
+    "id": "85319dc7c961624c",
+    "name": "Kazellis-Class Light Freighter",
+    "description": "Kazellis-Class Light Freighter, freighter, single-crew and 3 passengers, 1,000 km/h. Plenty of room for cargo, side work, and very selective bookkeeping."
+  },
+  {
+    "slug": "wind-skiff",
+    "id": "85501100efd135ac",
+    "name": "Wind Skiff",
+    "description": "Wind Skiff, skiff, single-crew and 4 passengers, 300 km/h. Plenty of room for cargo, side work, and very selective bookkeeping."
+  },
+  {
+    "slug": "mc-24a-light-shuttle",
+    "id": "85db4bc7a94b61ce",
+    "name": "MC-24a Light Shuttle",
+    "description": "MC-24a Light Shuttle, shuttle, 2 crew and 6 passengers, 1,030 km/h. For operators who want capability first and explanations only if required."
+  },
+  {
+    "slug": "kybuck-speeder-bike",
+    "id": "85dfcaef907bb2e6",
+    "name": "Kybuck Speeder Bike",
+    "description": "Kybuck Speeder Bike, two-seat, speeder bike, 500 km/h. Ideal for customers whose commute could use more plausible deniability."
+  },
+  {
+    "slug": "nantex-class-territorial-starfighter",
+    "id": "876ef92617055f48",
+    "name": "Nantex-Class Territorial Starfighter",
+    "description": "Nantex-Class Territorial Starfighter, single-seat, starfighter, 1,250 km/h. For pilots who think diplomacy works better at attack speed."
+  },
+  {
+    "slug": "seltiss-2-caravel",
+    "id": "88b906955bbf8a7a",
+    "name": "Seltiss-2 Caravel",
+    "description": "Seltiss-2 Caravel, craft, 4 crew and 12 passengers, 850 km/h. Solid value for customers who measure success in completed objectives."
+  },
+  {
+    "slug": "gs-100-salvage-ship",
+    "id": "89423a7a2847657d",
+    "name": "GS-100 Salvage Ship",
+    "description": "GS-100 Salvage Ship, salvage ship, 3 crew and 20 passengers, 400 km/h. Ideal for operators who think customs forms are just opening offers."
+  },
+  {
+    "slug": "neutralizer-class-bomber",
+    "id": "89cc0051de7d792e",
+    "name": "Neutralizer-Class Bomber",
+    "description": "Neutralizer-Class Bomber, single-seat, bomber, 1,500 km/h. Ideal for customers who think precision should still feel excessive."
+  },
+  {
+    "slug": "tie-fighter",
+    "id": "89ef13f5221988dd",
+    "name": "TIE Fighter",
+    "description": "TIE Fighter, single-seat, fighter, 1,200 km/h. Clean lines, fast approach, and no patience for the long way around."
+  },
+  {
+    "slug": "shashore-class-frigate",
+    "id": "8a02cf1725a156c5",
+    "name": "ShaShore-Class Frigate",
+    "description": "ShaShore-Class Frigate, frigate, single-crew and 250 passengers, 800 km/h. A proper acquisition for clients who like their authority visible from orbit."
+  },
+  {
+    "slug": "tie-advanced",
+    "id": "8a501b88b33ee576",
+    "name": "TIE Advanced",
+    "description": "TIE Advanced, craft, single-crew, 1,200 km/h. A practical purchase for clients with specific needs and vague ethics."
+  },
+  {
+    "slug": "if-120-landing-craft",
+    "id": "8d59d0b5cc0e1f97",
+    "name": "IF-120 Landing Craft",
+    "description": "IF-120 Landing Craft, landing craft, 8 crew and 120 passengers, 800 km/h. Ideal for buyers who want troop transport with stronger opinions."
+  },
+  {
+    "slug": "corellian-kr-tb-doomtreader",
+    "id": "8df21963e8ec4e72",
+    "name": "Corellian KR-TB \"Doomtreader\"",
+    "description": "Corellian KR-TB \"Doomtreader\", craft, single-crew, 800 km/h. A practical purchase for clients with specific needs and vague ethics."
+  },
+  {
+    "slug": "ginivex-class-starfighter",
+    "id": "8fbc360c9990cc1d",
+    "name": "Ginivex-Class Starfighter",
+    "description": "Ginivex-Class Starfighter, single-seat, starfighter, 1,250 km/h. For pilots who think diplomacy works better at attack speed."
+  },
+  {
+    "slug": "vulture-droid-starfighter",
+    "id": "8fe5f39559ae38a9",
+    "name": "\"Vulture\" Droid Starfighter",
+    "description": "\"Vulture\" Droid Starfighter, starfighter, 1,180 km/h. Ideal for buyers who want every problem to become a dogfight."
+  },
+  {
+    "slug": "at-rct",
+    "id": "903f84338c4ad3d3",
+    "name": "AT-RCT",
+    "description": "AT-RCT, walker, 2 crew, 90 km/h. A battlefield purchase for customers who enjoy arriving one heavy footstep at a time."
+  },
+  {
+    "slug": "the-scarlet-star",
+    "id": "9406bf5ba30a9b25",
+    "name": "The Scarlet Star",
+    "description": "The Scarlet Star, craft, 3 crew and 6 passengers, 850 km/h. For operators who want capability first and explanations only if required."
+  },
+  {
+    "slug": "lancer-class-frigate",
+    "id": "94087f4f647f386e",
+    "name": "Lancer-Class Frigate",
+    "description": "Lancer-Class Frigate, frigate, 850 crew and 40 passengers, 800 km/h. Tasteful large-format intimidation for the customer with regional ambitions."
+  },
+  {
+    "slug": "belbullab-heavy-starfighter",
+    "id": "956b75f8b9f3e6bc",
+    "name": "Belbullab Heavy Starfighter",
+    "description": "Belbullab Heavy Starfighter, single-seat, starfighter, 1,100 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "gozanti-cruiser",
+    "id": "96a060d1ee802fd1",
+    "name": "Gozanti Cruiser",
+    "description": "Gozanti Cruiser, cruiser, 12 crew and 12 passengers, 400 km/h. Strong fleet presence for buyers who want every arrival to count as policy."
+  },
+  {
+    "slug": "neutron-star-class-bulk-cruiser",
+    "id": "96d1bdb3efbfade3",
+    "name": "Neutron Star-Class Bulk Cruiser",
+    "description": "Neutron Star-Class Bulk Cruiser, cruiser, 2 crew and 200 passengers, 800 km/h. A proper acquisition for clients who like their authority visible from orbit."
+  },
+  {
+    "slug": "at-at",
+    "id": "975f4279df3907e9",
+    "name": "AT-AT",
+    "description": "AT-AT, walker, 5 crew and 40 passengers, 60 km/h. For buyers who want their transport to also feel like a threat assessment."
+  },
+  {
+    "slug": "corellian-action-vi-bulk-transport",
+    "id": "97c5c070d93b7a0a",
+    "name": "Corellian Action VI Bulk Transport",
+    "description": "Corellian Action VI Bulk Transport, transport, single-crew, 800 km/h. For buyers who want honest capacity and flexible definitions of legitimate trade."
+  },
+  {
+    "slug": "arrow-23-landspeeder",
+    "id": "985bea32d48a19df",
+    "name": "Arrow-23 Landspeeder",
+    "description": "Arrow-23 Landspeeder, landspeeder, 2 crew and 5 passengers, 400 km/h. For buyers who believe local traffic laws are mostly aspirational."
+  },
+  {
+    "slug": "g-type-light-shuttle",
+    "id": "99392b366e8c48f2",
+    "name": "G-Type Light Shuttle",
+    "description": "G-Type Light Shuttle, shuttle, single-crew and 3 passengers, 950 km/h. For operators who want capability first and explanations only if required."
+  },
+  {
+    "slug": "cardan-i-class-space-station",
+    "id": "995bc95571c8e456",
+    "name": "Cardan I-Class Space Station",
+    "description": "Cardan I-Class Space Station, space station, single-crew and 300 passengers, 800 km/h. Good parking, strong guns, and no realistic chance of being towed."
+  },
+  {
+    "slug": "modified-lambda-class-shuttle",
+    "id": "99c042f1eb7fc1d7",
+    "name": "Modified Lambda-Class Shuttle",
+    "description": "Modified Lambda-Class Shuttle, shuttle, single-crew, 800 km/h. For operators who want capability first and explanations only if required."
+  },
+  {
+    "slug": "mc80a-star-cruiser",
+    "id": "9a2073dc658b29d5",
+    "name": "MC80a Star Cruiser",
+    "description": "MC80a Star Cruiser, cruiser, 5 crew and one passenger, 800 km/h. Tasteful large-format intimidation for the customer with regional ambitions."
+  },
+  {
+    "slug": "a-wing-starfighter",
+    "id": "9a8e2af942c66079",
+    "name": "A-Wing Starfighter",
+    "description": "A-Wing Starfighter, single-seat, starfighter, 1,300 km/h. Ideal for buyers who want every problem to become a dogfight."
+  },
+  {
+    "slug": "pellaeon-class-star-destroyer",
+    "id": "9d7f42e1fb7dcda9",
+    "name": "Pellaeon-Class Star Destroyer",
+    "description": "Pellaeon-Class Star Destroyer, star destroyer, 8 crew and 2 passengers, 800 km/h. Strong fleet presence for buyers who want every arrival to count as policy."
+  },
+  {
+    "slug": "gamma-class-assault-shuttle",
+    "id": "9dc842abe43e7559",
+    "name": "Gamma-Class Assault Shuttle",
+    "description": "Gamma-Class Assault Shuttle, shuttle, 5 crew and 40 passengers, 1,050 km/h. Ideal for buyers who want troop transport with stronger opinions."
+  },
+  {
+    "slug": "r-28-starfighter",
+    "id": "9e4fb3eeee825e62",
+    "name": "R-28 Starfighter",
+    "description": "R-28 Starfighter, single-seat, starfighter, 1,050 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "cardan-ii-class-space-station",
+    "id": "9ee676a97e4ff9f6",
+    "name": "Cardan II-Class Space Station",
+    "description": "Cardan II-Class Space Station, space station, 2 crew and 600 passengers, 800 km/h. Perfect for clients who want a permanent address with defensive batteries."
+  },
+  {
+    "slug": "mc140-scythe-class-battlecruiser",
+    "id": "9f187d476e02180a",
+    "name": "MC140 Scythe-Class Battlecruiser",
+    "description": "MC140 Scythe-Class Battlecruiser, battlecruiser, single-crew, 800 km/h. Strong fleet presence for buyers who want every arrival to count as policy."
+  },
+  {
+    "slug": "pelta-class-frigate",
+    "id": "a06eeacf82742458",
+    "name": "Pelta-Class Frigate",
+    "description": "Pelta-Class Frigate, frigate, single-crew, 800 km/h. Strong fleet presence for buyers who want every arrival to count as policy."
+  },
+  {
+    "slug": "modified-t-47-airspeeder",
+    "id": "a08abb3013c39ee7",
+    "name": "Modified T-47 Airspeeder",
+    "description": "Modified T-47 Airspeeder, airspeeder, 2 crew, 1,100 km/h. Clean handling, fast starts, and just enough dignity left over for parking."
+  },
+  {
+    "slug": "delta-7-aethersprite-high-maneuver-interceptor",
+    "id": "a1bfc9f28ca0314a",
+    "name": "Delta-7 Aethersprite High-Maneuver Interceptor",
+    "description": "Delta-7 Aethersprite High-Maneuver Interceptor, single-seat, interceptor, 800 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "miytil-assault-bomber",
+    "id": "a1ed5e2e44cfade5",
+    "name": "Miy'til Assault Bomber",
+    "description": "Miy'til Assault Bomber, bomber, 2 crew, 1,000 km/h. All the grace of a freight invoice, but much louder on arrival."
+  },
+  {
+    "slug": "acclamator-i-class-assault-ship",
+    "id": "a24beff526d08d95",
+    "name": "Acclamator I-Class Assault Ship",
+    "description": "Acclamator I-Class Assault Ship, ship, single-crew, 800 km/h. Plenty of room for cargo, side work, and very selective bookkeeping."
+  },
+  {
+    "slug": "z-95-headhunter",
+    "id": "a302167f7b47f02f",
+    "name": "Z-95 Headhunter",
+    "description": "Z-95 Headhunter, craft, single-crew, 1,150 km/h. Solid value for customers who measure success in completed objectives."
+  },
+  {
+    "slug": "y-wing-starfighter",
+    "id": "a30a3c99f6452912",
+    "name": "Y-Wing Starfighter",
+    "description": "Y-Wing Starfighter, starfighter, 2 crew, 1,000 km/h. Ideal for buyers who want every problem to become a dogfight."
+  },
+  {
+    "slug": "vaya-class-scout-ship",
+    "id": "a41525adb7a92281",
+    "name": "Vaya-Class Scout Ship",
+    "description": "Vaya-Class Scout Ship, ship, 3 crew and 4 passengers, 700 km/h. A dependable hull for clients whose freight gets more interesting after dark."
+  },
+  {
+    "slug": "at-xt",
+    "id": "a6b24a432472faa4",
+    "name": "AT-XT",
+    "description": "AT-XT, walker, single-crew, 25 km/h. Stable, armed, and ideal for anyone who thinks roads are somebody else's limitation."
+  },
+  {
+    "slug": "dc0052-intergalactic-speeder",
+    "id": "a85ca01e4f3ebbf7",
+    "name": "DC0052 \"Intergalactic\" Speeder",
+    "description": "DC0052 \"Intergalactic\" Speeder, speeder, single-crew, 800 km/h. Solid local transport for anyone who enjoys speed more than consequences."
+  },
+  {
+    "slug": "74-z-speeder-bike",
+    "id": "a8f94b1ab41d81a8",
+    "name": "74-Z Speeder Bike",
+    "description": "74-Z Speeder Bike, two-seat, speeder bike, 500 km/h. Great for errands, getaways, and explaining later that it seemed like a good idea."
+  },
+  {
+    "slug": "guardian-class-light-cruiser",
+    "id": "a95402d30dc149d4",
+    "name": "Guardian-Class Light Cruiser",
+    "description": "Guardian-Class Light Cruiser, cruiser, 8 crew and 6 passengers, 800 km/h. Built for governments, warlords, and anyone else with expansive feelings."
+  },
+  {
+    "slug": "corellian-yz-775-medium-transport",
+    "id": "a969a04369116d48",
+    "name": "Corellian YZ-775 Medium Transport",
+    "description": "Corellian YZ-775 Medium Transport, transport, 8 crew and 14 passengers, 950 km/h. Plenty of room for cargo, side work, and very selective bookkeeping."
+  },
+  {
+    "slug": "arc-170-starfighter",
+    "id": "a9b019928bcb59bc",
+    "name": "ARC-170 Starfighter",
+    "description": "ARC-170 Starfighter, starfighter, 3 crew, 1,050 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "kappa-class-shuttle",
+    "id": "a9d748ac5ce8f372",
+    "name": "Kappa-Class Shuttle",
+    "description": "Kappa-Class Shuttle, shuttle, 4 crew and 40 passengers, 820 km/h. Solid value for customers who measure success in completed objectives."
+  },
+  {
+    "slug": "v-wing-starfighter",
+    "id": "aa425a2e2d1f2114",
+    "name": "V-Wing Starfighter",
+    "description": "V-Wing Starfighter, single-seat, starfighter, 1,450 km/h. Clean lines, fast approach, and no patience for the long way around."
+  },
+  {
+    "slug": "executor-class-star-dreadnought",
+    "id": "ab1b24a83a399e60",
+    "name": "Executor-Class Star Dreadnought",
+    "description": "Executor-Class Star Dreadnought, star dreadnought, 280 crew and 38 passengers, 800 km/h. A proper acquisition for clients who like their authority visible from orbit."
+  },
+  {
+    "slug": "t-65br-x-wing-starfighter",
+    "id": "ac8000efcc26d5f7",
+    "name": "T-65BR X-Wing Starfighter",
+    "description": "T-65BR X-Wing Starfighter, single-seat, starfighter, 1,150 km/h. Ideal for buyers who want every problem to become a dogfight."
+  },
+  {
+    "slug": "tibanna-gas-hauler",
+    "id": "acd53fef4d37860a",
+    "name": "Tibanna Gas Hauler",
+    "description": "Tibanna Gas Hauler, freighter, 800 km/h. For buyers who want honest capacity and flexible definitions of legitimate trade."
+  },
+  {
+    "slug": "victory-i-class-star-destroyer",
+    "id": "ad3c5c333114c129",
+    "name": "Victory I-Class Star Destroyer",
+    "description": "Victory I-Class Star Destroyer, star destroyer, 5 crew and 2 passengers, 800 km/h. Perfect for admirals who think moderation is a staffing problem."
+  },
+  {
+    "slug": "p-38-starfighter",
+    "id": "ae9684dfffbcfa21",
+    "name": "P-38 Starfighter",
+    "description": "P-38 Starfighter, single-seat, starfighter, 1,200 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "spha-v",
+    "id": "b0874fab8f821594",
+    "name": "SPHA-V",
+    "description": "SPHA-V, craft, single-crew, 800 km/h. A practical purchase for clients with specific needs and vague ethics."
+  },
+  {
+    "slug": "phoebos-class-starfighter",
+    "id": "b17113bb7ebae3bf",
+    "name": "Phoebos-Class Starfighter",
+    "description": "Phoebos-Class Starfighter, starfighter, single-crew and one passenger, 1,350 km/h. Perfect for anyone who treats space lanes like a personal challenge."
+  },
+  {
+    "slug": "corellian-jumpmaster-5000-scout-ship",
+    "id": "b183b8b750f393dd",
+    "name": "Corellian JumpMaster 5000 Scout Ship",
+    "description": "Corellian JumpMaster 5000 Scout Ship, ship, single-crew, 800 km/h. Roomy, practical, and perfectly shaped for invoices that need editing."
+  },
+  {
+    "slug": "corona-luxury-groundspeeder",
+    "id": "b1b0044021922303",
+    "name": "Corona Luxury Groundspeeder",
+    "description": "Corona Luxury Groundspeeder, speeder, single-crew and 6 passengers, 300 km/h. For buyers who believe local traffic laws are mostly aspirational."
+  },
+  {
+    "slug": "sheathipede-class-shuttle",
+    "id": "b2e50d7a9cd4913d",
+    "name": "Sheathipede-Class Shuttle",
+    "description": "Sheathipede-Class Shuttle, shuttle, single-crew and 6 passengers, 880 km/h. Solid value for customers who measure success in completed objectives."
+  },
+  {
+    "slug": "zebra-starfighter",
+    "id": "b35bf65216e18c3f",
+    "name": "Zebra Starfighter",
+    "description": "Zebra Starfighter, single-seat, starfighter, 1,000 km/h. Ideal for buyers who want every problem to become a dogfight."
+  },
+  {
+    "slug": "derriphan-class-battleship",
+    "id": "b43fbbfdb65c202f",
+    "name": "Derriphan-Class Battleship",
+    "description": "Derriphan-Class Battleship, battleship, 25 crew and 850 passengers, 800 km/h. Tasteful large-format intimidation for the customer with regional ambitions."
+  },
+  {
+    "slug": "hyena-class-bomber",
+    "id": "b55d3e927b9d0481",
+    "name": "Hyena-Class Bomber",
+    "description": "Hyena-Class Bomber, bomber, 1,150 km/h. Ideal for customers who think precision should still feel excessive."
+  },
+  {
+    "slug": "fc-20-speeder-bike",
+    "id": "b647cb328647970d",
+    "name": "FC-20 Speeder Bike",
+    "description": "FC-20 Speeder Bike, speeder bike, single-crew, 180 km/h. Clean handling, fast starts, and just enough dignity left over for parking."
+  },
+  {
+    "slug": "the-indomitable",
+    "id": "b715ca45523cf1f9",
+    "name": "The Indomitable",
+    "description": "The Indomitable, craft, 5 crew and one passenger, 800 km/h. Ideal for anyone whose day job occasionally becomes a problem statement."
+  },
+  {
+    "slug": "dynamic-class-freighter",
+    "id": "b74b5417d608730c",
+    "name": "Dynamic-Class Freighter",
+    "description": "Dynamic-Class Freighter, freighter, 2 crew and 6 passengers, 800 km/h. For buyers who want honest capacity and flexible definitions of legitimate trade."
+  },
+  {
+    "slug": "besh-type-personal-starfighter",
+    "id": "b7f092af1705acde",
+    "name": "Besh-Type Personal Starfighter",
+    "description": "Besh-Type Personal Starfighter, single-seat, starfighter, 800 km/h. Perfect for anyone who treats space lanes like a personal challenge."
+  },
+  {
+    "slug": "corellian-hwk-290-light-freighter",
+    "id": "b7f0acffa5cfaac3",
+    "name": "Corellian HWK-290 Light Freighter",
+    "description": "Corellian HWK-290 Light Freighter, freighter, 2 crew and 6 passengers, 800 km/h. Roomy, practical, and perfectly shaped for invoices that need editing."
+  },
+  {
+    "slug": "ur-40m-patrol-speeder",
+    "id": "b81b7d1ab424ba83",
+    "name": "UR-40M Patrol Speeder",
+    "description": "UR-40M Patrol Speeder, speeder, single-crew and 7 passengers, 800 km/h. Clean handling, fast starts, and just enough dignity left over for parking."
+  },
+  {
+    "slug": "nebula-class-star-destroyer",
+    "id": "b8e5cdacf5130403",
+    "name": "Nebula-Class Star Destroyer",
+    "description": "Nebula-Class Star Destroyer, star destroyer, 7 crew and one passenger, 800 km/h. A proper acquisition for clients who like their authority visible from orbit."
+  },
+  {
+    "slug": "penumbra-class-attack-shuttle",
+    "id": "ba97752ccc7339a4",
+    "name": "Penumbra-Class Attack Shuttle",
+    "description": "Penumbra-Class Attack Shuttle, shuttle, 3 crew and 10 passengers, 1,175 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "at-st",
+    "id": "bb60c0e341514526",
+    "name": "AT-ST",
+    "description": "AT-ST, walker, 2 crew, 90 km/h. Professional-grade overkill in a chassis that takes stairs personally."
+  },
+  {
+    "slug": "eclipse-class-star-dreadnought",
+    "id": "bd0c972f8a5599ab",
+    "name": "Eclipse-Class Star Dreadnought",
+    "description": "Eclipse-Class Star Dreadnought, star dreadnought, 712 crew and 150 passengers, 800 km/h. Strong fleet presence for buyers who want every arrival to count as policy."
+  },
+  {
+    "slug": "corellian-yx-1980-transport",
+    "id": "bfbd86ebb5fb439b",
+    "name": "Corellian YX-1980 Transport",
+    "description": "Corellian YX-1980 Transport, transport, 2 crew and 6 passengers, 950 km/h. Plenty of room for cargo, side work, and very selective bookkeeping."
+  },
+  {
+    "slug": "cf9-crossfire-starfighter",
+    "id": "bff71d9d7624a825",
+    "name": "CF9 Crossfire Starfighter",
+    "description": "CF9 Crossfire Starfighter, starfighter, single-crew and one passenger, 1,200 km/h. Ideal for buyers who want every problem to become a dogfight."
+  },
+  {
+    "slug": "twin-228-airspeeder",
+    "id": "c0e7695feb489f49",
+    "name": "Twin-228 Airspeeder",
+    "description": "Twin-228 Airspeeder, two-seat, airspeeder, 800 km/h. Solid local transport for anyone who enjoys speed more than consequences."
+  },
+  {
+    "slug": "immobilizer-418-interdictor-class-heavy-cruiser",
+    "id": "c1728af79988eab9",
+    "name": "Immobilizer 418 Interdictor-Class Heavy Cruiser",
+    "description": "Immobilizer 418 Interdictor-Class Heavy Cruiser, heavy cruiser, single-crew, 800 km/h. Strong fleet presence for buyers who want every arrival to count as policy."
+  },
+  {
+    "slug": "bb-2-starfire-fighter-bomber",
+    "id": "c2b9ec949d7fa343",
+    "name": "BB-2 Starfire Fighter/Bomber",
+    "description": "BB-2 Starfire Fighter/Bomber, single-seat, fighter/bomber, 800 km/h. Guaranteed to improve local real estate values somewhere else."
+  },
+  {
+    "slug": "predator-class-starfighter",
+    "id": "c6656beef72ba7b0",
+    "name": "Predator-Class Starfighter",
+    "description": "Predator-Class Starfighter, single-seat, starfighter, 1,500 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "corellian-nemesis-class-patrol-ship",
+    "id": "c71900d4eed17dfc",
+    "name": "Corellian Nemesis-Class Patrol Ship",
+    "description": "Corellian Nemesis-Class Patrol Ship, ship, 4 crew and 10 passengers, 830 km/h. For buyers who want honest capacity and flexible definitions of legitimate trade."
+  },
+  {
+    "slug": "marauder-class-rebel-cruiser",
+    "id": "c71b674fd7cae2b6",
+    "name": "Marauder-Class Rebel Cruiser",
+    "description": "Marauder-Class Rebel Cruiser, cruiser, single-crew, 800 km/h. A proper acquisition for clients who like their authority visible from orbit."
+  },
+  {
+    "slug": "spinward-class-tender",
+    "id": "c7b8043699daebf3",
+    "name": "Spinward-Class Tender",
+    "description": "Spinward-Class Tender, craft, single-crew and 500 passengers, 800 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "aat-1",
+    "id": "c85afc9c8f7fed24",
+    "name": "AAT-1",
+    "description": "AAT-1, walker, 4 crew and 6 passengers, 55 km/h. For buyers who want their transport to also feel like a threat assessment."
+  },
+  {
+    "slug": "marauder-class-corvette",
+    "id": "c8b472f1a074a5ca",
+    "name": "Marauder-Class Corvette",
+    "description": "Marauder-Class Corvette, corvette, single-crew, 800 km/h. A proper acquisition for clients who like their authority visible from orbit."
+  },
+  {
+    "slug": "junker-class-720-freighter",
+    "id": "c9836c537ad6f9bf",
+    "name": "Junker Class 720 Freighter",
+    "description": "Junker Class 720 Freighter, freighter, single-crew, 800 km/h. For buyers who want honest capacity and flexible definitions of legitimate trade."
+  },
+  {
+    "slug": "y-wing-courier-variant",
+    "id": "cb42aa01ec1e0bd7",
+    "name": "Y-Wing \"Courier\" Variant",
+    "description": "Y-Wing \"Courier\" Variant, shuttle, single-crew, 800 km/h. Good for personnel transfers, polite lies, and anything filed under logistics."
+  },
+  {
+    "slug": "broadside-class-cruiser",
+    "id": "cbbe4cc4f5aeac27",
+    "name": "Broadside-Class Cruiser",
+    "description": "Broadside-Class Cruiser, cruiser, single-crew and one passenger, 800 km/h. Built for governments, warlords, and anyone else with expansive feelings."
+  },
+  {
+    "slug": "gpe-3300-airspeeder",
+    "id": "cbc8bb76d5180073",
+    "name": "GPE-3300 Airspeeder",
+    "description": "GPE-3300 Airspeeder, airspeeder, single-crew, 1,000 km/h. Clean handling, fast starts, and just enough dignity left over for parking."
+  },
+  {
+    "slug": "tibanna-refinery-platform",
+    "id": "cc3e680a84e32211",
+    "name": "Tibanna Refinery Platform",
+    "description": "Tibanna Refinery Platform, orbital platform, 800 km/h. For buyers who think the best infrastructure is the kind that can return fire."
+  },
+  {
+    "slug": "c-9979-landing-craft",
+    "id": "cc75a591ec5899a6",
+    "name": "C-9979 Landing Craft",
+    "description": "C-9979 Landing Craft, landing craft, 88 crew and 90 passengers, 590 km/h. Ideal for buyers who want troop transport with stronger opinions."
+  },
+  {
+    "slug": "bantha-ii-cargo-skiff",
+    "id": "ccab1bbb68848335",
+    "name": "Bantha-II Cargo Skiff",
+    "description": "Bantha-II Cargo Skiff, skiff, single-crew and 16 passengers, 250 km/h. Ideal for operators who think customs forms are just opening offers."
+  },
+  {
+    "slug": "spha",
+    "id": "cdf811c546938680",
+    "name": "SPHA",
+    "description": "SPHA, craft, 25 crew and 30 passengers, 35 km/h. For operators who want capability first and explanations only if required."
+  },
+  {
+    "slug": "acclamator-ii-class-assault-ship",
+    "id": "ce15f9e8cf42a737",
+    "name": "Acclamator II-Class Assault Ship",
+    "description": "Acclamator II-Class Assault Ship, ship, 20 crew and 3 passengers, 1,200 km/h. Ideal for operators who think customs forms are just opening offers."
+  },
+  {
+    "slug": "mankvim-814-light-interceptor",
+    "id": "cec635a11fef6cc3",
+    "name": "Mankvim-814 Light Interceptor",
+    "description": "Mankvim-814 Light Interceptor, single-seat, interceptor, 1,450 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "ipv-1-system-patrol-craft",
+    "id": "d04ed2de5c730ff7",
+    "name": "IPV-1 System Patrol Craft",
+    "description": "IPV-1 System Patrol Craft, craft, single-crew, 800 km/h. Solid value for customers who measure success in completed objectives."
+  },
+  {
+    "slug": "coralskipper",
+    "id": "d2ce9daa946bf2a0",
+    "name": "Coralskipper",
+    "description": "Coralskipper, craft, single-crew, 400 km/h. A practical purchase for clients with specific needs and vague ethics."
+  },
+  {
+    "slug": "sabaoth-destroyer",
+    "id": "d2f0ecde57026553",
+    "name": "Sabaoth Destroyer",
+    "description": "Sabaoth Destroyer, destroyer, 250 crew and 3 passengers, 800 km/h. A proper acquisition for clients who like their authority visible from orbit."
+  },
+  {
+    "slug": "nu-class-attack-shuttle",
+    "id": "d338737b2858f19f",
+    "name": "Nu-Class Attack Shuttle",
+    "description": "Nu-Class Attack Shuttle, shuttle, 2 crew and 30 passengers, 850 km/h. A practical purchase for clients with specific needs and vague ethics."
+  },
+  {
+    "slug": "spha-c",
+    "id": "d3aabf93196cd414",
+    "name": "SPHA-C",
+    "description": "SPHA-C, craft, single-crew, 800 km/h. A practical purchase for clients with specific needs and vague ethics."
+  },
+  {
+    "slug": "slave-i",
+    "id": "d3e7bfb3714e6a15",
+    "name": "Slave I",
+    "description": "Slave I, craft, single-crew and 6 passengers, 1,000 km/h. For operators who want capability first and explanations only if required."
+  },
+  {
+    "slug": "diamond-class-cruiser",
+    "id": "d451d1f8988e20e8",
+    "name": "Diamond-Class Cruiser",
+    "description": "Diamond-Class Cruiser, cruiser, 148 crew and 45 passengers, 1,450 km/h. A proper acquisition for clients who like their authority visible from orbit."
+  },
+  {
+    "slug": "kaac-freerunner",
+    "id": "d48cc42199dfc25f",
+    "name": "KAAC Freerunner",
+    "description": "KAAC Freerunner, craft, 5 crew and 6 passengers, 300 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "skyblind-landing-sphere",
+    "id": "d660068cf3dc720b",
+    "name": "SkyBlind Landing Sphere",
+    "description": "SkyBlind Landing Sphere, craft, single-crew and 7 passengers, 650 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "drop-pod",
+    "id": "d6b9a4ba2a28a37a",
+    "name": "Drop Pod",
+    "description": "Drop Pod, drop pod, 600 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "the-wheel",
+    "id": "d6d0b100e7516ce5",
+    "name": "The Wheel",
+    "description": "The Wheel, orbital platform, 10 crew and 15 passengers, 800 km/h. For buyers who think the best infrastructure is the kind that can return fire."
+  },
+  {
+    "slug": "g-type-escape-shuttle",
+    "id": "d81d10e9e2378b32",
+    "name": "G-Type Escape Shuttle",
+    "description": "G-Type Escape Shuttle, shuttle, single-crew, 800 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "raddaugh-gnasp-fluttercraft",
+    "id": "d826ec852734ece9",
+    "name": "Raddaugh Gnasp Fluttercraft",
+    "description": "Raddaugh Gnasp Fluttercraft, craft, single-crew, 800 km/h. Ideal for anyone whose day job occasionally becomes a problem statement."
+  },
+  {
+    "slug": "corellian-mt-dropship",
+    "id": "d9a86dd8619fcad7",
+    "name": "Corellian MT Dropship",
+    "description": "Corellian MT Dropship, dropship, 15 crew and 50-200 passengers, 850 km/h. Ideal for buyers who want troop transport with stronger opinions."
+  },
+  {
+    "slug": "the-invisible-hand",
+    "id": "d9ee18d73ec98ad9",
+    "name": "The Invisible Hand",
+    "description": "The Invisible Hand, craft, 350 crew and 125 passengers, 1,050 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "fury-class-starfighter",
+    "id": "da8f5d27c8db9648",
+    "name": "Fury-Class Starfighter",
+    "description": "Fury-Class Starfighter, single-seat, starfighter, 1,320 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "x-34-speeder-escort",
+    "id": "db79151db1425b08",
+    "name": "X-34 Speeder Escort",
+    "description": "X-34 Speeder Escort, two-seat, speeder, 330 km/h. Great for errands, getaways, and explaining later that it seemed like a good idea."
+  },
+  {
+    "slug": "lucrehulk-class-core-ship",
+    "id": "dcd88a4316a236d5",
+    "name": "Lucrehulk-Class Core Ship",
+    "description": "Lucrehulk-Class Core Ship, ship, 150-300 crew and 30 passengers, 800 km/h. For buyers who want honest capacity and flexible definitions of legitimate trade."
+  },
+  {
+    "slug": "corellian-s-100-stinger-class-starfighter",
+    "id": "dddfba8968c1cd60",
+    "name": "Corellian S-100 Stinger-Class Starfighter",
+    "description": "Corellian S-100 Stinger-Class Starfighter, single-seat, starfighter, 1,150 km/h. Clean lines, fast approach, and no patience for the long way around."
+  },
+  {
+    "slug": "shaadlar-type-troopship",
+    "id": "df6941a397c2a3a2",
+    "name": "Shaadlar-Type Troopship",
+    "description": "Shaadlar-Type Troopship, troopship, 30 crew and 800 passengers, 800 km/h. Built for rapid arrivals and immediate changes in the local mood."
+  },
+  {
+    "slug": "pac",
+    "id": "e11ab50379823f4b",
+    "name": "PAC",
+    "description": "PAC, craft, 2 crew and 112 passengers, 50 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "corellian-yt-2400-transport",
+    "id": "e28de7e3b63ddfa0",
+    "name": "Corellian YT-2400 Transport",
+    "description": "Corellian YT-2400 Transport, transport, 3 crew and 6 passengers, 800 km/h. Ideal for operators who think customs forms are just opening offers."
+  },
+  {
+    "slug": "r-42-starchaser",
+    "id": "e336b051646e1f9a",
+    "name": "R-42 Starchaser",
+    "description": "R-42 Starchaser, craft, 2 crew, 1,050 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "escape-pod",
+    "id": "e34b04f3a0be253e",
+    "name": "Escape Pod",
+    "description": "Escape Pod, craft, 8 passengers, 250 km/h. A practical purchase for clients with specific needs and vague ethics."
+  },
+  {
+    "slug": "outbound-flight",
+    "id": "e3c94585a5ef0a68",
+    "name": "Outbound Flight",
+    "description": "Outbound Flight, craft, 5 crew and 46 passengers, 800 km/h. Ideal for anyone whose day job occasionally becomes a problem statement."
+  },
+  {
+    "slug": "rebel-assault-frigate-mark-ii",
+    "id": "e53ef39815e316ea",
+    "name": "Rebel Assault Frigate Mark II",
+    "description": "Rebel Assault Frigate Mark II, frigate, single-crew, 800 km/h. Strong fleet presence for buyers who want every arrival to count as policy."
+  },
+  {
+    "slug": "foray-class-blockade-runner",
+    "id": "e545208e67180296",
+    "name": "Foray-Class Blockade Runner",
+    "description": "Foray-Class Blockade Runner, craft, 40 crew and 300 passengers, 800 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "rtt",
+    "id": "e63ecda0d3f95255",
+    "name": "RTT",
+    "description": "RTT, craft, 2 crew and 12 passengers, 580 km/h. Solid value for customers who measure success in completed objectives."
+  },
+  {
+    "slug": "laat-c-gunship",
+    "id": "e675a20dc7b5234c",
+    "name": "LAAT/c Gunship",
+    "description": "LAAT/c Gunship, gunship, single-crew, 620 km/h. Ideal for buyers who want troop transport with stronger opinions."
+  },
+  {
+    "slug": "shackles-of-nizon",
+    "id": "e6a61db902799693",
+    "name": "Shackles of Nizon",
+    "description": "Shackles of Nizon, craft, 6 crew and 40 passengers, 650 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "cis-advanced-starfighter",
+    "id": "e6dc616f60777503",
+    "name": "CIS-Advanced Starfighter",
+    "description": "CIS-Advanced Starfighter, single-seat, starfighter, 1,300 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "k-wing-assault-starfighter",
+    "id": "e757ca9a96c28a41",
+    "name": "K-Wing Assault Starfighter",
+    "description": "K-Wing Assault Starfighter, starfighter, 4 crew, 1,000 km/h. Clean lines, fast approach, and no patience for the long way around."
+  },
+  {
+    "slug": "the-mynock",
+    "id": "e75e45654ea5bd61",
+    "name": "The Mynock",
+    "description": "The Mynock, craft, 3 crew and 6 passengers, 850 km/h. For operators who want capability first and explanations only if required."
+  },
+  {
+    "slug": "basilisk-war-droid",
+    "id": "e771e8b8a2d98e41",
+    "name": "Basilisk War Droid",
+    "description": "Basilisk War Droid, walker, one passenger, 550 km/h. Professional-grade overkill in a chassis that takes stairs personally."
+  },
+  {
+    "slug": "b-wing-e2-starfighter",
+    "id": "e7b30f18b8c18134",
+    "name": "B-Wing/E2 Starfighter",
+    "description": "B-Wing/E2 Starfighter, starfighter, 2 crew, 950 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "urban-navigator-speeder-bike",
+    "id": "e8c5f0dc730089f0",
+    "name": "Urban Navigator Speeder Bike",
+    "description": "Urban Navigator Speeder Bike, two-seat, speeder bike, 500 km/h. Great for errands, getaways, and explaining later that it seemed like a good idea."
+  },
+  {
+    "slug": "mrx-br-pacifier",
+    "id": "e91b8d00d43627de",
+    "name": "MRX-BR Pacifier",
+    "description": "MRX-BR Pacifier, craft, 2 crew and 3 passengers, 1,200 km/h. A practical purchase for clients with specific needs and vague ethics."
+  },
+  {
+    "slug": "at-aht",
+    "id": "ea1f1f7506f7e616",
+    "name": "AT-AHT",
+    "description": "AT-AHT, walker, 5 crew and 60 passengers, 800 km/h. Professional-grade overkill in a chassis that takes stairs personally."
+  },
+  {
+    "slug": "octuptarra-magna-tri-droid",
+    "id": "eb843fcf3470f514",
+    "name": "Octuptarra Magna Tri-Droid",
+    "description": "Octuptarra Magna Tri-Droid, walker, 50 km/h. Stable, armed, and ideal for anyone who thinks roads are somebody else's limitation."
+  },
+  {
+    "slug": "hsp-10-pursuit-airspeeder",
+    "id": "ecf2915cece98cf9",
+    "name": "HSP-10 Pursuit Airspeeder",
+    "description": "HSP-10 Pursuit Airspeeder, airspeeder, single-crew and 3 passengers, 620 km/h. Clean handling, fast starts, and just enough dignity left over for parking."
+  },
+  {
+    "slug": "b-wing-starfighter",
+    "id": "ed70a104feefea45",
+    "name": "B-Wing Starfighter",
+    "description": "B-Wing Starfighter, single-seat, starfighter, 950 km/h. Clean lines, fast approach, and no patience for the long way around."
+  },
+  {
+    "slug": "at-ct",
+    "id": "efc5b6ec026476de",
+    "name": "AT-CT",
+    "description": "AT-CT, walker, 2 crew, 90 km/h. For buyers who want their transport to also feel like a threat assessment."
+  },
+  {
+    "slug": "modified-tsmeu-6-personal-wheel-bike",
+    "id": "f1f1f104a9037454",
+    "name": "Modified Tsmeu-6 Personal Wheel Bike",
+    "description": "Modified Tsmeu-6 Personal Wheel Bike, speeder, single-crew, 800 km/h. Ideal for customers whose commute could use more plausible deniability."
+  },
+  {
+    "slug": "v-19-torrent-starfighter",
+    "id": "f2680980c1dec163",
+    "name": "V-19 Torrent Starfighter",
+    "description": "V-19 Torrent Starfighter, single-seat, starfighter, 1,150 km/h. For pilots who think diplomacy works better at attack speed."
+  },
+  {
+    "slug": "tie-interceptor",
+    "id": "f29be1725458449a",
+    "name": "TIE Interceptor",
+    "description": "TIE Interceptor, single-seat, interceptor, 1,250 km/h. Ideal for buyers who want every problem to become a dogfight."
+  },
+  {
+    "slug": "eta-2-actis-interceptor",
+    "id": "f2e6caac6a9bc1d3",
+    "name": "Eta-2 Actis Interceptor",
+    "description": "Eta-2 Actis Interceptor, single-seat, interceptor, 1,500 km/h. Perfect for anyone who treats space lanes like a personal challenge."
+  },
+  {
+    "slug": "a519-invader-close-support-starfighter",
+    "id": "f2ff16315cb0117f",
+    "name": "A519 Invader Close Support Starfighter",
+    "description": "A519 Invader Close Support Starfighter, single-seat, starfighter, 1,450 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "teroch-type-gunship",
+    "id": "f4a08c0d2d1f5747",
+    "name": "Teroch-Type Gunship",
+    "description": "Teroch-Type Gunship, gunship, 8 crew and 6 passengers, 1,000 km/h. Ideal for buyers who want troop transport with stronger opinions."
+  },
+  {
+    "slug": "cs-1-cargo-sled",
+    "id": "f57ceab71d6df059",
+    "name": "CS-1 Cargo Sled",
+    "description": "CS-1 Cargo Sled, sled, single-crew and 3 passengers, 225 km/h. A dependable hull for clients whose freight gets more interesting after dark."
+  },
+  {
+    "slug": "veltiss-2-airspeeder",
+    "id": "f5ae1d9e7bb0452d",
+    "name": "Veltiss-2 Airspeeder",
+    "description": "Veltiss-2 Airspeeder, two-seat, airspeeder, 950 km/h. Ideal for customers whose commute could use more plausible deniability."
+  },
+  {
+    "slug": "droid-tri-fighter",
+    "id": "f6674c592d860b9c",
+    "name": "Droid Tri-Fighter",
+    "description": "Droid Tri-Fighter, fighter, 1,050 km/h. For pilots who think diplomacy works better at attack speed."
+  },
+  {
+    "slug": "theta-class-shuttle",
+    "id": "fa1f202bc57c3636",
+    "name": "Theta-Class Shuttle",
+    "description": "Theta-Class Shuttle, shuttle, 5 crew and 16 passengers, 825 km/h. Solid value for customers who measure success in completed objectives."
+  },
+  {
+    "slug": "centurion-class-battlecruiser",
+    "id": "fa2b78a2da87a9d0",
+    "name": "Centurion-Class Battlecruiser",
+    "description": "Centurion-Class Battlecruiser, battlecruiser, 31 crew and 7 passengers, 800 km/h. A proper acquisition for clients who like their authority visible from orbit."
+  },
+  {
+    "slug": "baronial-class-yacht",
+    "id": "faf3df91ac9ade69",
+    "name": "Baronial-Class Yacht",
+    "description": "Baronial-Class Yacht, yacht, single-crew and 4 passengers, 900 km/h. For buyers who want honest capacity and flexible definitions of legitimate trade."
+  },
+  {
+    "slug": "tie-prototype",
+    "id": "faf57d5becd726f4",
+    "name": "TIE Prototype",
+    "description": "TIE Prototype, craft, single-crew, 1,200 km/h. Built for buyers who want useful hardware and fewer follow-up questions."
+  },
+  {
+    "slug": "sabertooth-class-assault-rescue-vessel",
+    "id": "fc6e1a70eeb609a7",
+    "name": "Sabertooth-Class Assault/Rescue Vessel",
+    "description": "Sabertooth-Class Assault/Rescue Vessel, craft, single-crew, 800 km/h. For operators who want capability first and explanations only if required."
+  },
+  {
+    "slug": "endurance-class-fleet-carrier",
+    "id": "fcd1f55d1e7a4f6f",
+    "name": "Endurance-Class Fleet Carrier",
+    "description": "Endurance-Class Fleet Carrier, carrier, 7 crew and one passenger, 800 km/h. Strong fleet presence for buyers who want every arrival to count as policy."
+  },
+  {
+    "slug": "baudo-class-star-yacht",
+    "id": "fd61d4e5c62bc61e",
+    "name": "Baudo-Class Star Yacht",
+    "description": "Baudo-Class Star Yacht, yacht, single-crew and 8 passengers, 1,200 km/h. For buyers who want honest capacity and flexible definitions of legitimate trade."
+  },
+  {
+    "slug": "sith-infiltrator",
+    "id": "fe7857dceb1545c1",
+    "name": "Sith Infiltrator",
+    "description": "Sith Infiltrator, infiltrator, single-crew and 6 passengers, 1,180 km/h. Factory-approved for customers with quick reflexes and poor restraint."
+  },
+  {
+    "slug": "kt-400-military-droid-carrier",
+    "id": "feeb97f537cc6e6b",
+    "name": "KT-400 Military Droid Carrier",
+    "description": "KT-400 Military Droid Carrier, carrier, 8 crew and 400 passengers, 800 km/h. Built for governments, warlords, and anyone else with expansive feelings."
+  },
+  {
+    "slug": "lambda-class-shuttle",
+    "id": "ff126d283ec3f7e0",
+    "name": "Lambda-Class Shuttle",
+    "description": "Lambda-Class Shuttle, shuttle, 6 crew and 20 passengers, 850 km/h. Solid value for customers who measure success in completed objectives."
+  },
+  {
+    "slug": "aurek-tactical-strikefighter",
+    "id": "ff62090be1e13d77",
+    "name": "Aurek Tactical Strikefighter",
+    "description": "Aurek Tactical Strikefighter, single-seat, fighter, 1,400 km/h. Clean lines, fast approach, and no patience for the long way around."
+  },
+  {
+    "slug": "ykl-37r-nova-courier",
+    "id": "ff7e7d649f2823ce",
+    "name": "YKL-37R Nova Courier",
+    "description": "YKL-37R Nova Courier, shuttle, 4 crew and 6 passengers, 800 km/h. Ideal for operators who want practical lift and just a hint of ceremony."
+  },
+  {
+    "slug": "at-rt",
+    "id": "ffbb4a8cd3a7a771",
+    "name": "AT-RT",
+    "description": "AT-RT, walker, single-crew, 70 km/h. Professional-grade overkill in a chassis that takes stairs personally."
+  },
+  {
+    "slug": "j-type-star-skiff",
+    "id": "ffcc2a8cd4d8dd70",
+    "name": "J-Type Star Skiff",
+    "description": "J-Type Star Skiff, skiff, 3 crew and 3 passengers, 1,050 km/h. Ideal for operators who think customs forms are just opening offers."
+  },
+  {
+    "slug": "ut-at",
+    "id": "ffeae738ca47df1b",
+    "name": "UT-AT",
+    "description": "UT-AT, walker, 6 crew and 20 passengers, 45 km/h. For buyers who want their transport to also feel like a threat assessment."
+  }
+]

@@ -68,8 +68,8 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
     }, { signal });
   });
 
-  // Delete/Remove item
-  html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="edit"], [data-action="configure"]').forEach(button => {
+  // Delete/Remove/toggle item state
+  html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="edit"], [data-action="configure"], [data-action="toggle-activated"]').forEach(button => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
       const action = button.dataset.action;
@@ -91,6 +91,9 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
           break;
         case "configure":
           openItemCustomization(sheet.actor, item);
+          break;
+        case "toggle-activated":
+          await InventoryEngine.toggleActivated(sheet.actor, itemId);
           break;
       }
     }, { signal });

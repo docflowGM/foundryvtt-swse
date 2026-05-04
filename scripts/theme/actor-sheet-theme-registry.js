@@ -367,6 +367,26 @@ export function buildActorSheetThemeStyle(themeKey) {
     });
   }
 
+  // Add canonical derived shell tokens so the same theme can be applied to
+  // document-root secondary surfaces that are not descendants of .swse-sheet-v2-shell.
+  styles.push(
+    '--screen-c-base: var(--screen-c-base, 0.055)',
+    '--screen-c-alt: var(--screen-c-alt, 0.070)',
+    '--accent-h: var(--ink-h)',
+    '--accent-c: 0.17',
+    '--accent-l: 0.82',
+    '--accent: oklch(var(--accent-l) var(--accent-c) var(--accent-h))',
+    '--holo-blue: oklch(0.82 0.15 220)',
+    '--screen: oklch(0.13 var(--screen-c-base) var(--screen-h))',
+    '--screen-2: oklch(0.18 var(--screen-c-alt) var(--screen-h))',
+    '--ink: oklch(0.94 0.04 var(--accent-h))',
+    '--ink-dim: oklch(0.72 0.06 var(--accent-h))',
+    '--ink-faint: oklch(0.50 0.05 var(--accent-h))',
+    '--pos: oklch(0.82 0.19 145)',
+    '--neg: oklch(0.70 0.22 25)',
+    '--zero: oklch(0.88 0.17 95)'
+  );
+
   // Add compatibility aliases used by the concept sheet and shared UI surfaces.
   // This keeps the theme registry as the single authority while allowing newer
   // concept surfaces to consume the same palette without hard-coding per-theme CSS.

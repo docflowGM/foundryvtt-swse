@@ -32,7 +32,19 @@ export const STORE_PACKS = {
   ],
   ARMOR_CANONICAL: 'foundryvtt-swse.armor',
 
-  // Equipment: current single-source (can be migrated later)
+  // Equipment: subtype-first where available, aggregate fallback remains canonical.
+  EQUIPMENT_PACKS: [
+    'foundryvtt-swse.equipment-accessories',
+    'foundryvtt-swse.equipment-computers',
+    'foundryvtt-swse.equipment-communications',
+    'foundryvtt-swse.equipment-detection',
+    'foundryvtt-swse.equipment-explosives',
+    'foundryvtt-swse.equipment-life-support',
+    'foundryvtt-swse.equipment-medical',
+    'foundryvtt-swse.equipment-survival',
+    'foundryvtt-swse.equipment-tools',
+    'foundryvtt-swse.equipment-upgrades'
+  ],
   EQUIPMENT: 'foundryvtt-swse.equipment',
 
   // Droids: current single-source
@@ -66,6 +78,6 @@ export const STORE_RULES = {
   },
 
   // Cache invalidation
-  CACHE_KEY: 'swse-store-cache-v2',
+  CACHE_KEY: 'swse-store-cache-v3',
   CACHE_TTL: 1000 * 60 * 60 * 24  // 24 hours
 };

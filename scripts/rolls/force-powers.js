@@ -107,9 +107,17 @@ export async function narrateForcePowerResult(actor, powerItem, roll) {
     let extra = `It does ${effectText}`;
     if (powerItem.system?.itemFormula) {
       try {
-        const r = new Roll(powerItem.system.itemFormula, actor.getRollData?.() ?? {});
-        await r.evaluate({ async: true });
-        extra = `It does ${effectText} (rolled ${powerItem.system.itemFormula} = ${r.total}).`;
+        const formulaResult = await RollCore.executeFormula({
+          formula: powerItem.system.itemFormula,
+          actor,
+          rollData: actor.getRollData?.() ?? {},
+          domain: 'force-power.item-formula',
+          context: { powerId: powerItem.id, powerName: powerItem.name }
+        });
+        if (!formulaResult.success || !formulaResult.roll) {
+          throw new Error(formulaResult.error || 'Item formula roll failed');
+        }
+        extra = `It does ${effectText} (rolled ${powerItem.system.itemFormula} = ${formulaResult.roll.total}).`;
       } catch (err) {
         swseLogger.warn('[ForcePowers] Item formula evaluation failed:', err);
       }

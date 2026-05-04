@@ -11,11 +11,7 @@ import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interact
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
-import { openLightsaberInterface } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-router.js";
-import { BlasterCustomizationApp } from "/systems/foundryvtt-swse/scripts/apps/blaster/blaster-customization-app.js";
-import { ArmorModificationApp } from "/systems/foundryvtt-swse/scripts/apps/armor/armor-modification-app.js";
-import { MeleeWeaponModificationApp } from "/systems/foundryvtt-swse/scripts/apps/weapons/melee-modification-app.js";
-import { GearModificationApp } from "/systems/foundryvtt-swse/scripts/apps/gear/gear-modification-app.js";
+import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { launchProgression, launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
@@ -70,19 +66,11 @@ import {
   getWarningsSummary
 } from "/systems/foundryvtt-swse/scripts/debug/contract-warning-helper.js";
 // Theme and motion control imports
-import {
-  getActorSheetTheme,
-  getActorSheetThemeGroups,
-  buildActorSheetThemeStyle
-} from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
-import {
-  getActorSheetMotionStyle,
-  getActorSheetMotionStyleOptions,
-  buildActorSheetMotionStyle
-} from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
+import { getActorSheetThemeGroups } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { ShellSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellSurfaceRegistry.js";
 import { ThemeManager } from "/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js";
+import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { activateCustomSkillsUI } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/custom-skills-ui.js";
 import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
 import { buildConceptSheetViewModel } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
@@ -978,21 +966,7 @@ export class SWSEV2CharacterSheet extends
     // Apply fonts and motion styles via inline CSS variables
     const sheetShell = root.querySelector('.sheet-shell');
     if (sheetShell) {
-      const currentTheme = getActorSheetTheme(this.document.getFlag('foundryvtt-swse', 'sheetTheme'));
-      const currentMotion = getActorSheetMotionStyle(this.document.getFlag('foundryvtt-swse', 'sheetMotionStyle'));
-
-      // Set theme/motion attributes for CSS-based presentation switching
-      sheetShell.setAttribute('data-theme', currentTheme);
-      sheetShell.setAttribute('data-motion-style', currentMotion);
-
-      // Apply both canonical theme tokens and motion tokens from the registries.
-      const themeStyle = buildActorSheetThemeStyle(currentTheme);
-      const motionStyle = buildActorSheetMotionStyle(currentMotion);
-      const styleString = [themeStyle, motionStyle].filter(Boolean).join('; ');
-
-      if (styleString) {
-        sheetShell.setAttribute('style', styleString);
-      }
+      ThemeResolutionService.applyToElement(sheetShell, { actor: this.document });
     }
 
     // Wire listeners to the sheet root
@@ -1982,10 +1956,10 @@ const forcePoints = [];
       // ═════════════════════════════════════════════════════════════════
       // PHASE 11: THEME & MOTION CONTROL CONTEXT
       // ═════════════════════════════════════════════════════════════════
-      sheetTheme: getActorSheetTheme(actor.getFlag('foundryvtt-swse', 'sheetTheme')),
-      sheetThemeGroups: getActorSheetThemeGroups(getActorSheetTheme(actor.getFlag('foundryvtt-swse', 'sheetTheme'))),
-      sheetMotionStyle: getActorSheetMotionStyle(actor.getFlag('foundryvtt-swse', 'sheetMotionStyle')),
-      sheetMotionOptions: getActorSheetMotionStyleOptions(),
+      sheetTheme: ThemeResolutionService.resolveThemeKey(null, { actor }),
+      sheetThemeGroups: getActorSheetThemeGroups(ThemeResolutionService.resolveThemeKey(null, { actor })),
+      sheetMotionStyle: ThemeResolutionService.resolveMotionStyle(null, { actor }),
+      sheetMotionOptions: ThemeResolutionService.getMotionOptions(),
       // ═════════════════════════════════════════════════════════════════
       // PHASE 2: MISSING CONTEXT KEYS (REMEDIATION)
       // ═════════════════════════════════════════════════════════════════
@@ -2304,15 +2278,7 @@ const forcePoints = [];
         await this.document.setFlag('foundryvtt-swse', 'sheetTheme', themeKey);
         const sheetShell = html.querySelector('.sheet-shell');
         if (sheetShell) {
-          const currentMotion = getActorSheetMotionStyle(this.document.getFlag('foundryvtt-swse', 'sheetMotionStyle'));
-          sheetShell.setAttribute('data-theme', themeKey);
-          sheetShell.setAttribute('data-motion-style', currentMotion);
-          const styleString = [buildActorSheetThemeStyle(themeKey), buildActorSheetMotionStyle(currentMotion)]
-            .filter(Boolean)
-            .join('; ');
-          if (styleString) {
-            sheetShell.setAttribute('style', styleString);
-          }
+          ThemeResolutionService.applyToElement(sheetShell, { actor: this.document, themeKey });
         }
         await this.render(false);
       } catch (err) {
@@ -2332,15 +2298,7 @@ const forcePoints = [];
         await this.document.setFlag('foundryvtt-swse', 'sheetMotionStyle', motionStyle);
         const sheetShell = html.querySelector('.sheet-shell');
         if (sheetShell) {
-          const currentTheme = getActorSheetTheme(this.document.getFlag('foundryvtt-swse', 'sheetTheme'));
-          sheetShell.setAttribute('data-theme', currentTheme);
-          sheetShell.setAttribute('data-motion-style', motionStyle);
-          const styleString = [buildActorSheetThemeStyle(currentTheme), buildActorSheetMotionStyle(motionStyle)]
-            .filter(Boolean)
-            .join('; ');
-          if (styleString) {
-            sheetShell.setAttribute('style', styleString);
-          }
+          ThemeResolutionService.applyToElement(sheetShell, { actor: this.document, motionStyle });
         }
         await this.render(false);
       } catch (err) {
@@ -2996,11 +2954,7 @@ const forcePoints = [];
             item.sheet.render(true);
             break;
           case "configure":
-            if (item.type === "weapon" && (item.system?.subtype === "lightsaber" || item.system?.weaponCategory === "lightsaber")) {
-              openLightsaberInterface(this.actor, item);
-            } else if (item.type === "weapon") {
-              item.sheet.render(true);
-            }
+            openItemCustomization(this.actor, item);
             break;
         }
       }, { signal });
@@ -3463,32 +3417,11 @@ const forcePoints = [];
         const item = this.actor.items.get(itemId);
         if (!item) return;
 
-        // Route to correct customization modal based on item type / subtype
         try {
-          if (item.type === "lightsaber" || (item.type === "weapon" && (item.system?.subtype === "lightsaber" || item.system?.weaponCategory === "lightsaber"))) {
-            openLightsaberInterface(this.actor, item);
-          } else {
-            switch (item.type) {
-              case "blaster":
-                new BlasterCustomizationApp(this.actor, item).render(true);
-                break;
-              case "armor":
-                new ArmorModificationApp(this.actor, item).render(true);
-                break;
-              case "weapon":
-                new MeleeWeaponModificationApp(this.actor, item).render(true);
-                break;
-              case "gear":
-              case "equipment":
-                new GearModificationApp(this.actor, item).render(true);
-                break;
-              default:
-                ui?.notifications?.warn?.(`No customization available for ${item.type}`);
-            }
-          }
+          openItemCustomization(this.actor, item);
         } catch (err) {
-          // console.error("Customization modal failed:", err);
-          ui?.notifications?.error?.("Failed to open customization modal");
+          // console.error("Customization workbench failed:", err);
+          ui?.notifications?.error?.("Failed to open customization workbench");
         }
       }, { signal });
     });

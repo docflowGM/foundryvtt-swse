@@ -15,8 +15,7 @@ import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRout
 import { BLADE_COLOR_MAP } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
 import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { BlasterCustomizationApp } from "/systems/foundryvtt-swse/scripts/apps/blaster/blaster-customization-app.js";
-import { openLightsaberInterface } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-router.js";
+import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -138,13 +137,13 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
           const shell = ShellRouter.getShell(actor.id);
           if (shell) {
             // Shell host is open — open as overlay (Overlay classification)
-            await ShellOverlayManager.openSingleItemUpgrade(actor, this.item);
+            openItemCustomization(actor, this.item);
           } else {
             // No shell host open — open actor sheet first, then overlay
             await actor.sheet?.render(true);
             // Give sheet time to render and register
             await new Promise(resolve => setTimeout(resolve, 50));
-            await ShellOverlayManager.openSingleItemUpgrade(actor, this.item);
+            openItemCustomization(actor, this.item);
           }
         } else {
           // Unowned item — fall back to standalone upgrade app (legacy path)
@@ -168,7 +167,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
           await actor.sheet?.render(true);
           await new Promise(resolve => setTimeout(resolve, 50));
         }
-        await ShellOverlayManager.openSingleItemUpgrade(actor, this.item);
+        openItemCustomization(actor, this.item);
       } catch (err) {
         SWSELogger.error('[SWSEItemSheet] Failed to open shell customizer', err);
       }

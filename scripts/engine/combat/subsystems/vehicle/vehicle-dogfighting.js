@@ -111,8 +111,8 @@ export class VehicleDogfighting {
     const atkBonus = computeDogfightingModifier(attacker, defender, atkTok, defTok);
     const defBonus = computeDogfightingModifier(defender, attacker, defTok, atkTok);
 
-    const atkRoll = await RollEngine.safeRoll(`1d20 + ${atkBonus}`).evaluate({ async: true });
-    const defRoll = await RollEngine.safeRoll(`1d20 + ${defBonus}`).evaluate({ async: true });
+    const atkRoll = await RollEngine.safeRoll(`1d20 + ${atkBonus}`, {}, { actor: attacker, domain: 'vehicle.dogfight.attack' });
+    const defRoll = await RollEngine.safeRoll(`1d20 + ${defBonus}`, {}, { actor: defender, domain: 'vehicle.dogfight.defense' });
 
     const attackerWins = atkRoll.total > defRoll.total;
 

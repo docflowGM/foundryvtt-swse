@@ -31,7 +31,7 @@ import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-
  * @param {string} itemId - ID of item to add
  * @param {Function} updateDialogueCallback - Callback to update dialogue
  */
-export async function addItemToCart(store, itemId, updateDialogueCallback) {
+export async function addItemToCart(store, itemId, updateDialogueCallback, options = {}) {
     if (!itemId) {
         ui.notifications.warn('Invalid item selection. The item may be missing an ID.');
         SWSELogger.error('SWSE Store | addItemToCart called with empty itemId');
@@ -71,15 +71,17 @@ export async function addItemToCart(store, itemId, updateDialogueCallback) {
     }
 
     // Engine provides finalCost already calculated
-    const finalCost = normalizeCredits(item.finalCost);
+    const finalCost = normalizeCredits(options.costOverride ?? item.finalCost);
+    const stagedCustomization = options.stagedCustomization || null;
 
     // Add to cart
     store.cart.items.push({
         id: itemId,
-        name: item.name,
-        img: item.img,
+        name: options.nameOverride || item.name,
+        img: options.imgOverride || item.img,
         cost: finalCost,
-        item: item
+        item: item,
+        stagedCustomization
     });
 
     ui.notifications.info(`${item.name} added to cart.`);
@@ -218,12 +220,13 @@ async function revalidateCart(store, actor, originalTotal) {
             }
 
             // Check price hasn't changed more than 5%
-            const priceDiff = Math.abs(currentItem.finalCost - item.cost);
-            const threshold = item.cost * 0.05;
+            const expectedCost = item.stagedCustomization?.finalCost ?? item.cost;
+            const priceDiff = item.stagedCustomization ? 0 : Math.abs(currentItem.finalCost - expectedCost);
+            const threshold = expectedCost * 0.05;
             if (priceDiff > threshold) {
                 return {
                     valid: false,
-                    error: `Price of "${item.name}" changed from ${item.cost} to ${currentItem.finalCost} credits. Please review your cart.`
+                    error: `Price of "${item.name}" changed from ${expectedCost} to ${currentItem.finalCost} credits. Please review your cart.`
                 };
             }
         }
@@ -735,6 +738,9 @@ function createItemPlans(cartItems) {
   if (!cartItems || cartItems.length === 0) return [];
 
   const itemsToCreate = cartItems.map(cartItem => {
+    if (cartItem.stagedCustomization?.itemData) {
+      return foundry.utils.deepClone(cartItem.stagedCustomization.itemData);
+    }
     const item = cartItem.item;
     return item.toObject ? item.toObject() : item;
   });
@@ -826,8 +832,12 @@ function flattenCartForPurchase(cart) {
         flattened.push({
             id: item.id,
             name: item.name,
-            type: 'item',
-            finalCost: normalizeCredits(item.cost)
+            type: item.stagedCustomization ? 'customized-item' : 'item',
+            finalCost: normalizeCredits(item.cost),
+            stagedCustomization: item.stagedCustomization ? {
+                customizationCost: normalizeCredits(item.stagedCustomization.customizationCost ?? 0),
+                finalCost: normalizeCredits(item.stagedCustomization.finalCost ?? item.cost)
+            } : null
         });
     }
 
@@ -904,6 +914,7 @@ export async function checkout(store, animateNumberCallback) {
             actor,
             items: flattenCartForPurchase(store.cart),
             totalCost: total,
+            transactionContext: (store.cart.items || []).some(item => item.stagedCustomization) ? 'store-customization-checkout' : 'store-purchase',
             itemGrantCallback: async (purchasingActor, cartItems) => {
                 // Compile all MutationPlans
                 const plans = [];

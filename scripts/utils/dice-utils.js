@@ -1,160 +1,95 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 // ============================================
 // FILE: dice-utils.js
-// Merged dice rolling utilities for SWSE
+// Compatibility dice utilities backed by RollEngine + SWSEChat
 // ============================================
 
-/**
- * Evaluate a roll and send to chat
- * @param {Roll} roll - The roll to evaluate
- * @param {object} options - Chat message options
- * @returns {Promise<Roll>} Evaluated roll
- */
-async function evaluateRoll(roll, options = {}) {
-    await roll.evaluate({ async: true });
-    await roll.toMessage(options , { create: true });
-    return roll;
+async function postRoll(roll, flavor, context = {}) {
+  if (!roll) return null;
+  await SWSEChat.postRoll({
+    roll,
+    speaker: ChatMessage.getSpeaker(),
+    flavor,
+    context
+  });
+  return roll;
 }
 
-/**
- * Roll dice with a formula
- * @param {string} formula - Dice formula (e.g., "2d6+3")
- * @param {object} data - Data for formula variables
- * @param {string} label - Label for the roll
- * @returns {Promise<Roll>} The roll result
- */
+/** Roll dice with a formula. */
 export async function rollDice(formula, data = {}, label = 'Roll') {
-    try {
-        const roll = await globalThis.SWSE.RollEngine.safeRoll(formula, data).evaluate({ async: true });
-
-        await roll.toMessage({
-            speaker: ChatMessage.getSpeaker(),
-            flavor: label
-        } , { create: true });
-
-        return roll;
-    } catch (err) {
-        ui.notifications.error(`Dice roll failed: ${err.message}`);
-        SWSELogger.error(err);
-        return null;
-    }
+  try {
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(formula, data, {
+      domain: 'utility.dice',
+      context: { label }
+    });
+    return await postRoll(roll, label, { type: 'utility', label, formula });
+  } catch (err) {
+    ui.notifications.error(`Dice roll failed: ${err.message}`);
+    SWSELogger.error(err);
+    return null;
+  }
 }
 
-/**
- * Qassets/uick d20 roll
- * @param {number} modifier - Modifier to add
- * @param {string} label - Label for the roll
- * @returns {Promise<Roll>} The roll result
- */
+/** Quick d20 roll. */
 export async function d20(modifier = 0, label = 'd20') {
-    return rollDice(`1d20 + ${modifier}`, {}, label);
+  return rollDice(`1d20 + ${modifier}`, {}, label);
 }
 
-/**
- * Roll an attack with modifiers
- * @param {number} baseAttack - Base attack bonus
- * @param {number[]} modifiers - Array of additional modifiers
- * @param {object} rollData - Additional roll data
- * @returns {Promise<Roll>} The evaluated roll
- */
+/** Roll an attack with modifiers. */
 export async function rollAttack(baseAttack, modifiers = [], rollData = {}) {
-    const totalMod = modifiers.reduce((sum, mod) => sum + mod, baseAttack);
-    const roll = globalThis.SWSE.RollEngine.safeRoll('1d20 + @total', { ...rollData, total: totalMod });
-    return await evaluateRoll(roll, {
-        speaker: ChatMessage.getSpeaker(),
-        flavor: 'Attack Roll'
-    });
+  const totalMod = modifiers.reduce((sum, mod) => sum + mod, baseAttack);
+  const roll = await globalThis.SWSE.RollEngine.safeRoll('1d20 + @total', { ...rollData, total: totalMod }, {
+    domain: 'utility.attack',
+    context: { baseAttack, modifiers }
+  });
+  return await postRoll(roll, 'Attack Roll', { type: 'attack', baseAttack, modifiers, totalMod });
 }
 
-/**
- * Roll damage dice
- * @param {string} damageDice - Damage dice formula (e.g., "2d6")
- * @param {number} modifier - Damage modifier
- * @param {object} rollData - Additional roll data
- * @returns {Promise<Roll>} The evaluated roll
- */
+/** Roll damage dice. */
 export async function rollDamage(damageDice, modifier = 0, rollData = {}) {
-    const roll = globalThis.SWSE.RollEngine.safeRoll(`${damageDice} + @mod`, { ...rollData, mod: modifier });
-    return await evaluateRoll(roll, {
-        speaker: ChatMessage.getSpeaker(),
-        flavor: 'Damage'
-    });
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(`${damageDice} + @mod`, { ...rollData, mod: modifier }, {
+    domain: 'utility.damage',
+    context: { damageDice, modifier }
+  });
+  return await postRoll(roll, 'Damage', { type: 'damage', damageDice, modifier });
 }
 
-/**
- * Roll for initiative
- * @param {number} initiativeBonus - Initiative bonus
- * @param {object} rollData - Additional roll data
- * @returns {Promise<Roll>} The evaluated roll
- */
+/** Roll for initiative. */
 export async function rollInitiative(initiativeBonus = 0, rollData = {}) {
-    const roll = globalThis.SWSE.RollEngine.safeRoll('1d20 + @init', { ...rollData, init: initiativeBonus });
-    return await evaluateRoll(roll, {
-        speaker: ChatMessage.getSpeaker(),
-        flavor: 'Initiative'
-    });
+  const roll = await globalThis.SWSE.RollEngine.safeRoll('1d20 + @init', { ...rollData, init: initiativeBonus }, {
+    domain: 'utility.initiative',
+    context: { initiativeBonus }
+  });
+  return await postRoll(roll, 'Initiative', { type: 'initiative', initiativeBonus });
 }
 
-/**
- * Roll a skill check
- * @param {number} skillModifier - Total skill modifier
- * @param {object} rollData - Additional roll data
- * @returns {Promise<Roll>} The evaluated roll
- */
+/** Roll a skill check. */
 export async function rollSkillCheck(skillModifier = 0, rollData = {}) {
-    const roll = globalThis.SWSE.RollEngine.safeRoll('1d20 + @skill', { ...rollData, skill: skillModifier });
-    return await evaluateRoll(roll, {
-        speaker: ChatMessage.getSpeaker(),
-        flavor: 'Skill Check'
-    });
+  const roll = await globalThis.SWSE.RollEngine.safeRoll('1d20 + @skill', { ...rollData, skill: skillModifier }, {
+    domain: 'utility.skill',
+    context: { skillModifier }
+  });
+  return await postRoll(roll, 'Skill Check', { type: 'skill', skillModifier });
 }
 
-/**
- * Check for a critical hit
- * @param {number} rollResult - The d20 roll result
- * @param {number} criticalRange - The critical threat range (default 20)
- * @returns {boolean} True if critical threat
- */
+/** Check for a critical hit. */
 export function isCriticalThreat(rollResult, criticalRange = 20) {
-    return rollResult >= criticalRange;
+  return rollResult >= criticalRange;
 }
 
-/**
- * Roll with advantage (roll twice, take higher)
- * @param {string} formula - Dice formula
- * @param {string} label - Label for the roll
- * @returns {Promise<Roll>} The higher roll
- */
+/** Roll with advantage. */
 export async function rollWithAdvantage(formula, label = 'Roll with Advantage') {
-    const roll1 = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
-    const roll2 = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
-
-    const higherRoll = roll1.total >= roll2.total ? roll1 : roll2;
-
-    await higherRoll.toMessage({
-        speaker: ChatMessage.getSpeaker(),
-        flavor: `${label} (${roll1.total} vs ${roll2.total})`
-    } , { create: true });
-
-    return higherRoll;
+  const roll1 = await globalThis.SWSE.RollEngine.safeRoll(formula, {}, { domain: 'utility.advantage', context: { label, instance: 1 } });
+  const roll2 = await globalThis.SWSE.RollEngine.safeRoll(formula, {}, { domain: 'utility.advantage', context: { label, instance: 2 } });
+  const higherRoll = roll1.total >= roll2.total ? roll1 : roll2;
+  return await postRoll(higherRoll, `${label} (${roll1.total} vs ${roll2.total})`, { type: 'advantage', label, firstTotal: roll1.total, secondTotal: roll2.total });
 }
 
-/**
- * Roll with disadvantage (roll twice, take lower)
- * @param {string} formula - Dice formula
- * @param {string} label - Label for the roll
- * @returns {Promise<Roll>} The lower roll
- */
+/** Roll with disadvantage. */
 export async function rollWithDisadvantage(formula, label = 'Roll with Disadvantage') {
-    const roll1 = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
-    const roll2 = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
-
-    const lowerRoll = roll1.total <= roll2.total ? roll1 : roll2;
-
-    await lowerRoll.toMessage({
-        speaker: ChatMessage.getSpeaker(),
-        flavor: `${label} (${roll1.total} vs ${roll2.total})`
-    } , { create: true });
-
-    return lowerRoll;
+  const roll1 = await globalThis.SWSE.RollEngine.safeRoll(formula, {}, { domain: 'utility.disadvantage', context: { label, instance: 1 } });
+  const roll2 = await globalThis.SWSE.RollEngine.safeRoll(formula, {}, { domain: 'utility.disadvantage', context: { label, instance: 2 } });
+  const lowerRoll = roll1.total <= roll2.total ? roll1 : roll2;
+  return await postRoll(lowerRoll, `${label} (${roll1.total} vs ${roll2.total})`, { type: 'disadvantage', label, firstTotal: roll1.total, secondTotal: roll2.total });
 }

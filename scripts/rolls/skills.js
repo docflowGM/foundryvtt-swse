@@ -198,6 +198,15 @@ export async function rollOpposedCheck(actor1, skill1, actor2, skill2) {
 }
 
 
+const ABILITY_LABELS = {
+  str: 'Strength',
+  dex: 'Dexterity',
+  con: 'Constitution',
+  int: 'Intelligence',
+  wis: 'Wisdom',
+  cha: 'Charisma'
+};
+
 /**
  * Roll an ability check using unified RollCore pipeline
  * Routes through ModifierEngine so all bonuses apply (species traits, feats, effects, etc.)
@@ -206,7 +215,7 @@ export async function rollOpposedCheck(actor1, skill1, actor2, skill2) {
  * @param {string} abilityKey - str|dex|con|int|wis|cha
  * @returns {Promise<Roll|null>}
  */
-export async function rollAbilityCheck(actor, abilityKey) {
+export async function rollAbilityCheck(actor, abilityKey, options = {}) {
   const utils = game.swse.utils;
   const key = String(abilityKey || '').toLowerCase();
 
@@ -223,10 +232,19 @@ export async function rollAbilityCheck(actor, abilityKey) {
   const rollResult = await RollCore.execute({
     actor,
     domain,
+    baseBonus: Number(options?.customModifier || 0),
     rollOptions: {
-      baseDice: '1d20'
+      baseDice: '1d20',
+      useForce: options?.useForcePoint === true,
+      isTakeX: options?.take10 === true,
+      takeXValue: 10
     },
-    context: { abilityKey: key }
+    context: {
+      abilityKey: key,
+      dc: options?.dc,
+      category: options?.category,
+      label: ABILITY_LABELS[key] || key.toUpperCase()
+    }
   });
 
   if (!rollResult.success) {
@@ -235,15 +253,21 @@ export async function rollAbilityCheck(actor, abilityKey) {
   }
 
   // === RENDER TO CHAT ===
-  const abilityLabel = utils.string.capitalize(key);
+  const abilityLabel = ABILITY_LABELS[key] || utils.string.capitalize(key);
   if (rollResult.roll) {
     await SWSEChat.postRoll({
       roll: rollResult.roll,
       actor,
-      flavor: `<strong>${abilityLabel} Check</strong><br/>Modifier: ${rollResult.modifierTotal}`
+      flavor: `<strong>${abilityLabel} Check</strong><br/>Modifier: ${rollResult.modifierTotal >= 0 ? '+' : ''}${rollResult.modifierTotal}`,
+      context: {
+        label: `${abilityLabel} Check`,
+        abilityKey: key,
+        dc: options?.dc,
+        customModifier: Number(options?.customModifier || 0)
+      }
     });
   }
 
-  return rollResult.roll;
+  return rollResult;
 }
 

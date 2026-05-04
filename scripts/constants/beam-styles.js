@@ -114,9 +114,10 @@ export const BEAM_STYLES = {
  * Matches BLADE_COLOR_MAP hex values from blade-colors.js
  */
 export const BOLT_COLORS = {
-  red: { name: "Red", hex: "#ff0000" },
-  green: { name: "Green", hex: "#00ff00" },
-  blue: { name: "Blue", hex: "#0080ff" },
+  red: { name: "Red", hex: "#ff3333" },
+  green: { name: "Green", hex: "#00ff66" },
+  blue: { name: "Blue", hex: "#1e90ff" },
+  yellow: { name: "Yellow", hex: "#ffff00" },
   cyan: { name: "Cyan", hex: "#00ffff" },
   orange: { name: "Orange", hex: "#ff8800" }
 };
@@ -136,7 +137,10 @@ export function getBeamStyle(styleId) {
  * @returns {string} hex color code
  */
 export function getBoltColor(colorId) {
-  return BOLT_COLORS[colorId]?.hex ?? BOLT_COLORS.blue.hex;
+  if (typeof colorId === "string" && /^#[0-9a-fA-F]{6}$/.test(colorId.trim())) {
+    return colorId.trim();
+  }
+  return BOLT_COLORS[String(colorId || '').toLowerCase()]?.hex ?? BOLT_COLORS.blue.hex;
 }
 
 /**

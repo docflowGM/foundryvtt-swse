@@ -3,11 +3,11 @@
  *
  * PHASE 4 CONSOLIDATION NOTE:
  * As of Phase 4 consolidation, StoreEngine is the single authority for store operations.
- * TransactionEngine is kept as a reference implementation showing the atomic coordinator pattern.
+ * TransactionEngine is the shared actor-scoped coordinator for mutation + credit exchange contexts.
  *
  * Status:
  * ├─ StoreEngine.purchase() ............... ACTIVE (single public API)
- * ├─ TransactionEngine.execute() ......... REFERENCE (not actively used)
+ * ├─ TransactionEngine.executeMutationTransaction() ACTIVE (contextual mutation exchange)
  * └─ Future: Can be integrated if StoreEngine needs rearchitecture
  *
  * Purpose (when active):
@@ -41,6 +41,182 @@ import { PlacementRouter } from "/systems/foundryvtt-swse/scripts/engine/store/p
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class TransactionEngine {
+  static _mutationLocks = new Set();
+
+  static _allowedMutationContexts = new Set([
+    'owned-customization',
+    'store-purchase',
+    'store-customization-checkout'
+  ]);
+
+  static _blockedMutationContexts = new Set([
+    'store-customization-stage'
+  ]);
+
+  /**
+   * Execute one actor-scoped contextual mutation transaction.
+   *
+   * This is the required path when credits and actor/item mutation must succeed
+   * or fail as one operation. Store customization staging is intentionally not a
+   * mutating context and is rejected here.
+   *
+   * @param {Object} context
+   * @param {Actor} context.actor
+   * @param {Object|Object[]} context.mutationPlan
+   * @param {number} context.cost
+   * @param {string} context.transactionContext
+   * @param {Object} context.audit
+   * @param {Object} options
+   * @returns {Promise<{success:boolean, transactionId:string, error?:string}>}
+   */
+  static async executeMutationTransaction(context = {}, options = {}) {
+    const {
+      actor,
+      mutationPlan = {},
+      cost = 0,
+      transactionContext = 'store-purchase',
+      audit = {}
+    } = context;
+
+    const {
+      validate = true,
+      rederive = true,
+      source = 'TransactionEngine.executeMutationTransaction'
+    } = options;
+
+    const transactionId = `tx_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
+    if (this._blockedMutationContexts.has(transactionContext)) {
+      return {
+        success: false,
+        transactionId,
+        error: `${transactionContext} is a staging context and must not mutate actor state`
+      };
+    }
+
+    if (!this._allowedMutationContexts.has(transactionContext)) {
+      return {
+        success: false,
+        transactionId,
+        error: `Unsupported transaction context: ${transactionContext}`
+      };
+    }
+
+    if (!actor) {
+      return { success: false, transactionId, error: 'No actor provided' };
+    }
+
+    const freshActor = game?.actors?.get?.(actor.id) || actor;
+    if (!freshActor) {
+      return { success: false, transactionId, error: 'Actor no longer exists' };
+    }
+
+    if (freshActor.isOwner === false) {
+      return { success: false, transactionId, error: 'Insufficient permissions for transaction' };
+    }
+
+    const normalizedCost = Number(cost) || 0;
+    if (!Number.isFinite(normalizedCost) || normalizedCost < 0) {
+      return { success: false, transactionId, error: 'Invalid transaction cost' };
+    }
+
+    const lockKey = `${freshActor.id}:${transactionContext}`;
+    if (this._mutationLocks.has(lockKey)) {
+      return { success: false, transactionId, error: 'Transaction already in progress' };
+    }
+
+    this._mutationLocks.add(lockKey);
+
+    let snapshotId = null;
+    try {
+      const funds = LedgerService.validateFunds(freshActor, normalizedCost);
+      if (!funds.ok) {
+        return {
+          success: false,
+          transactionId,
+          error: `Insufficient credits (have ${funds.current}, need ${funds.required})`
+        };
+      }
+
+      const plans = Array.isArray(mutationPlan) ? mutationPlan : [mutationPlan];
+      const creditPlan = normalizedCost > 0 ? LedgerService.buildCreditDelta(freshActor, normalizedCost) : null;
+
+      const transactionAudit = {
+        set: {
+          [`flags.foundryvtt-swse.transactions.${transactionId}`]: {
+            id: transactionId,
+            context: transactionContext,
+            cost: normalizedCost,
+            createdAt: Date.now(),
+            actorId: freshActor.id,
+            audit
+          }
+        }
+      };
+
+      const mergedPlan = mergeMutationPlans(...plans, ...(creditPlan ? [creditPlan] : []), transactionAudit);
+
+      try {
+        const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+        snapshotId = await SnapshotManager.createSnapshot(
+          freshActor,
+          `${transactionContext} transaction (${normalizedCost} credits)`
+        );
+      } catch (snapshotError) {
+        swseLogger.warn('TransactionEngine: Snapshot creation failed; continuing without rollback snapshot', {
+          transactionId,
+          context: transactionContext,
+          error: snapshotError.message
+        });
+      }
+
+      await ActorEngine.applyMutationPlan(freshActor, mergedPlan, {
+        validate,
+        rederive,
+        source: `${source}.${transactionContext}`
+      });
+
+      swseLogger.info('TransactionEngine: Mutation transaction complete', {
+        transactionId,
+        context: transactionContext,
+        actor: freshActor.id,
+        cost: normalizedCost
+      });
+
+      return { success: true, transactionId, error: null };
+    } catch (error) {
+      swseLogger.error('TransactionEngine: Mutation transaction failed', {
+        transactionId,
+        context: transactionContext,
+        actor: freshActor?.id,
+        error: error.message
+      });
+
+      if (snapshotId) {
+        try {
+          const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+          await SnapshotManager.restoreSnapshot(freshActor, snapshotId);
+          swseLogger.info('TransactionEngine: Rollback successful', { transactionId, snapshotId });
+        } catch (rollbackError) {
+          swseLogger.error('TransactionEngine: Rollback failed', {
+            transactionId,
+            snapshotId,
+            error: rollbackError.message
+          });
+          return {
+            success: false,
+            transactionId,
+            error: `Transaction failed and rollback failed: ${error.message}`
+          };
+        }
+      }
+
+      return { success: false, transactionId, error: error.message };
+    } finally {
+      this._mutationLocks.delete(lockKey);
+    }
+  }
+
   /**
    * Execute atomic commerce transaction
    * @param {Object} context

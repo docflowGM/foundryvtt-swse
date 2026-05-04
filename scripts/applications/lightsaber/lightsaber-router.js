@@ -1,43 +1,17 @@
-import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
+import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 
 export function isLightsaberDocument(item) {
   return LightsaberConstructionEngine.isLightsaberItem(item);
 }
 
 export function openLightsaberInterface(actor, item = null, options = {}) {
-  if (!actor) return;
-
-  // If an item is explicitly passed, use it
-  if (item && isLightsaberDocument(item)) {
-    const shell = ShellRouter.getShell(actor.id);
-    if (shell) {
-      ShellOverlayManager.openSingleItemUpgrade(actor, item);
-      return;
-    }
-    new LightsaberConstructionApp(actor, item, { mode: "edit", ...options }).render(true);
-    return;
-  }
-
-  // Post-construction routing: If the actor owns a lightsaber, always open edit mode.
-  // This ensures that after construction (one-time wizard), future access defaults to edit
-  // mode for tuning crystal/accessories. The build wizard is not repeated unless explicitly rebuilding.
-  const ownedSabers = LightsaberConstructionEngine.getOwnedLightsabers(actor);
-  if (ownedSabers.length > 0) {
-    const saber = ownedSabers[0];
-    new LightsaberConstructionApp(actor, saber, { mode: "edit", ...options }).render(true);
-    return;
-  }
-
-  // No owned saber; check if construction is available
-  const eligibility = LightsaberConstructionEngine.getEligibility(actor);
-  if (!eligibility?.eligible) {
-    ui.notifications.warn('Lightsaber construction is not yet available for this character.');
-    return;
-  }
-
-  // Open construction mode for eligible actors without a saber
-  new LightsaberConstructionApp(actor, { mode: "construct", ...options }).render(true);
+  if (!actor) return null;
+  return openItemCustomization(actor, item, {
+    ...options,
+    initialCategory: 'lightsaber',
+    mode: options.mode || (item ? 'owned' : 'construct')
+  });
 }
 
 export async function promptLightsaberConstructionIfEligible(actor, { newLevel = null, source = "levelup" } = {}) {

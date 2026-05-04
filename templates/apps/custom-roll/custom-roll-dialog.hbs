@@ -1,0 +1,76 @@
+<form class="swse-datapad swse-ui-shell swse-custom-roll-dialog"
+      data-swse-custom-roll-form
+      data-roll-source="die"
+      data-theme="{{themeKey}}"
+      data-motion-style="{{motionStyle}}"
+      style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
+  <header class="swse-custom-roll-dialog__header">
+    <div>
+      <p class="swse-custom-roll-dialog__eyebrow">Unified Roller</p>
+      <h2>Custom Roll</h2>
+      <p class="swse-custom-roll-dialog__subtitle">
+        {{#if hasActor}}Speaker: {{actorName}}{{else}}No controlled/user character selected{{/if}}
+      </p>
+    </div>
+  </header>
+
+  <section class="swse-custom-roll-dialog__body">
+    <label class="swse-custom-roll-field swse-custom-roll-field--full">
+      <span>Roll Label</span>
+      <input type="text" name="label" value="Custom Roll" autocomplete="off">
+    </label>
+
+    <fieldset class="swse-custom-roll-choice">
+      <legend>Roll Source</legend>
+      <label>
+        <input type="radio" name="rollSource" value="die" checked>
+        <span>Die</span>
+      </label>
+      <label>
+        <input type="radio" name="rollSource" value="formula">
+        <span>Formula</span>
+      </label>
+    </fieldset>
+
+    <div class="swse-custom-roll-grid">
+      <label class="swse-custom-roll-field swse-custom-roll-field--die">
+        <span>Die</span>
+        <select name="die">
+          {{#each diceOptions}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+      </label>
+
+      <label class="swse-custom-roll-field swse-custom-roll-field--formula">
+        <span>Formula</span>
+        <input type="text" name="customFormula" placeholder="2d6 + 3" autocomplete="off">
+      </label>
+
+      <label class="swse-custom-roll-field">
+        <span>Modifier</span>
+        <input type="number" name="modifier" value="0" step="1">
+      </label>
+
+      <label class="swse-custom-roll-field">
+        <span>DC</span>
+        <input type="number" name="dc" placeholder="Optional" step="1">
+      </label>
+
+      <label class="swse-custom-roll-field swse-custom-roll-field--full">
+        <span>Visibility</span>
+        <select name="rollMode">
+          {{#each rollModeOptions}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <footer class="swse-custom-roll-dialog__footer">
+    <button type="button" class="swse-custom-roll-button secondary" data-action="reset">Reset</button>
+    <button type="button" class="swse-custom-roll-button ghost" data-action="cancel">Close</button>
+    <button type="submit" class="swse-custom-roll-button primary">Roll</button>
+  </footer>
+</form>

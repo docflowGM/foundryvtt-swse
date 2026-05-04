@@ -621,7 +621,7 @@ export function bindAbilitiesUI(root) {
   const rollStandard = async () => {
     const results = [];
     for (let i = 0; i < 6; i++) {
-      const r = await globalThis.SWSE.RollEngine.safeRoll('4d6kh3').evaluate();
+      const r = await globalThis.SWSE.RollEngine.safeRoll('4d6kh3', {}, { domain: 'levelup.hit-points' });
       const total = r.total;
       results.push({ total });
     }
@@ -657,7 +657,7 @@ export function bindAbilitiesUI(root) {
 
   // Organic roll
   const rollOrganic = async () => {
-    const r = await globalThis.SWSE.RollEngine.safeRoll('24d6').evaluate();
+    const r = await globalThis.SWSE.RollEngine.safeRoll('24d6', {}, { domain: 'levelup.heroic-array' });
     if (!r.dice || !r.dice[0] || !r.dice[0].results) {
       ui.notifications.error('Failed to roll dice. Please try again.');
       SWSELogger.error('SWSE | Roll failed:', r);

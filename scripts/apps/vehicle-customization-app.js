@@ -30,8 +30,7 @@
 import { ModificationModalShell } from "/systems/foundryvtt-swse/scripts/apps/base/modification-modal-shell.js";
 import { VehicleCustomizationEngine } from "/systems/foundryvtt-swse/scripts/engine/customization/vehicle-customization-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
-import { getActorSheetTheme, buildActorSheetThemeStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
-import { getActorSheetMotionStyle, buildActorSheetMotionStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
+import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 
 export class VehicleCustomizationApp extends ModificationModalShell {
   constructor(actor, options = {}) {
@@ -65,10 +64,7 @@ export class VehicleCustomizationApp extends ModificationModalShell {
     const context = await super._prepareContext(options);
 
     // Load theme and motion styles (reuse same authority as other v2 windows)
-    const themeKey = getActorSheetTheme(this.actor?.getFlag?.('foundryvtt-swse', 'sheetTheme'));
-    const motionStyle = getActorSheetMotionStyle(this.actor?.getFlag?.('foundryvtt-swse', 'sheetMotionStyle'));
-    const themeStyleInline = buildActorSheetThemeStyle(themeKey);
-    const motionStyleInline = buildActorSheetMotionStyle(motionStyle);
+    const shellContext = ThemeResolutionService.buildSurfaceContext({ actor: this.actor });
 
     // Get vehicle profile and customization state
     const profileResult = VehicleCustomizationEngine.getNormalizedVehicleProfile(this.actor);
@@ -79,8 +75,7 @@ export class VehicleCustomizationApp extends ModificationModalShell {
         ...context,
         actor: this.actor,
         error: 'Failed to load vehicle customization state',
-        themeStyleInline,
-        motionStyleInline
+        ...shellContext
       };
     }
 
@@ -117,8 +112,7 @@ export class VehicleCustomizationApp extends ModificationModalShell {
       preview: preview.success ? preview.preview : null,
       previewError: !preview.success ? preview.error : null,
       currentCredits: this.actor.system?.credits ?? 0,
-      themeStyleInline,
-      motionStyleInline
+      ...shellContext
     };
   }
 

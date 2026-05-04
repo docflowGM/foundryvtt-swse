@@ -16,8 +16,8 @@
     </div>
     <div class="store-credits-block">
       <div class="store-credits-label">ACCOUNT</div>
-      <div class="store-credits-val"><span class="credits-icon">₢</span>{{credits}}</div>
-      <div class="store-credits-reserve">Reserve ₢ {{pageContext.cartRemaining}}</div>
+      <div class="store-credits-val"><span class="credits-icon">{{currencySymbol}}</span>{{credits}}</div>
+      <div class="store-credits-reserve">Reserve {{currencySymbol}} {{pageContext.cartRemaining}}</div>
       <div class="store-credits-cart">Cart: <span data-cart-count>{{cartCount}}</span></div>
     </div>
   </div>
@@ -90,18 +90,20 @@
       {{#if selectedProduct}}
         <div class="store-detail-layout">
           <div class="store-detail-hero swse-holo-card">
-            <div class="glyph-panel detail-glyph-panel"><div class="store-glyph" aria-hidden="true">{{selectedProduct.category}}</div></div>
+            <div class="glyph-panel detail-glyph-panel"><div class="store-glyph" aria-hidden="true">{{selectedProduct.glyph}}</div></div>
             <div class="store-detail-meta">
               <div class="detail-chip">{{selectedProduct.category}}</div>
               <div class="detail-chip">{{selectedProduct.availability}}</div>
               {{#if selectedProduct.suggestionTierLabel}}<div class="detail-chip highlight">{{selectedProduct.suggestionTierLabel}}</div>{{/if}}
             </div>
-            <div class="store-detail-price">₢ {{selectedProduct.price}}</div>
+            <div class="store-detail-price"><span class="credits-icon">{{currencySymbol}}</span> {{selectedProduct.price}}</div>
             <div class="store-detail-qty-row">
               <button type="button" class="detail-qty-minus holo-btn secondary">−</button>
               <input type="number" class="detail-qty-input" value="1" min="1" max="999" />
               <button type="button" class="detail-qty-plus holo-btn secondary">+</button>
               <button type="button" class="detail-add-btn holo-btn" data-action="detail-add-to-cart">Add to Cart</button>
+              <button type="button" class="detail-customize-btn holo-btn secondary" data-action="detail-customize-item">Customize</button>
+              <button type="button" class="detail-save-btn holo-btn secondary" data-action="detail-save-for-later">Save for Later</button>
             </div>
           </div>
           <div class="store-detail-main">
@@ -121,8 +123,11 @@
             {{/if}}
             {{#if selectedProduct.description}}
               <section class="detail-section swse-holo-card">
-                <div class="detail-section-title">Description</div>
-                <div class="detail-description">{{{selectedProduct.description}}}</div>
+                <div class="detail-section-title">Item Brief</div>
+                <div class="detail-description store-item-brief" data-description-source="{{selectedProduct.descriptionSource}}">
+                  <div class="store-item-brief-aurebesh" data-role="translation-text">{{selectedProduct.descriptionAurebesh}}</div>
+                  <div class="store-item-brief-basic">{{selectedProduct.descriptionBasic}}</div>
+                </div>
               </section>
             {{/if}}
             {{#if selectedProduct.mentorReview}}
@@ -164,7 +169,7 @@
                   <div class="cart-item-name">{{name}}</div>
                   <div class="cart-item-type">{{type}}</div>
                 </div>
-                <div class="cart-item-cost">₢ {{cost}}</div>
+                <div class="cart-item-cost">{{../currencySymbol}} {{cost}}</div>
                 <button type="button" class="cart-item-remove holo-btn secondary" data-action="remove-cart-row" data-type="{{type}}" data-id="{{id}}">
                   <i class="fa-solid fa-times"></i>
                 </button>
@@ -179,8 +184,8 @@
         </div>
         <div class="store-cart-summary swse-holo-card">
           <div class="detail-section-title">Totals</div>
-          <div class="summary-line"><span>Subtotal</span><strong>₢ {{cartTotal}}</strong></div>
-          <div class="summary-line"><span>Remaining</span><strong>₢ {{cartRemaining}}</strong></div>
+          <div class="summary-line"><span>Subtotal</span><strong>{{currencySymbol}} {{cartTotal}}</strong></div>
+          <div class="summary-line"><span>Remaining</span><strong>{{currencySymbol}} {{cartRemaining}}</strong></div>
           <div class="rail-action-cluster stacked">
             <button type="button" class="checkout-btn holo-btn" id="checkout-cart">Proceed to Checkout</button>
             <button type="button" class="clear-cart-btn holo-btn secondary" id="clear-cart">Clear Cart</button>
@@ -210,7 +215,7 @@
                 <div class="checkout-ledger-row">
                   <span class="checkout-ledger-name">{{name}}</span>
                   <span class="checkout-ledger-type">{{type}}</span>
-                  <span class="checkout-ledger-cost">₢ {{cost}}</span>
+                  <span class="checkout-ledger-cost">{{../currencySymbol}} {{cost}}</span>
                 </div>
               {{/each}}
             </div>
@@ -220,9 +225,9 @@
         </section>
         <aside class="store-checkout-summary swse-holo-card">
           <div class="detail-section-title">Settlement</div>
-          <div class="summary-line"><span>Available</span><strong>₢ {{credits}}</strong></div>
-          <div class="summary-line"><span>Debit</span><strong>₢ {{cartTotal}}</strong></div>
-          <div class="summary-line"><span>Reserve After Trade</span><strong>₢ <span id="cart-remaining">{{pageContext.cartRemaining}}</span></strong></div>
+          <div class="summary-line"><span>Available</span><strong>{{currencySymbol}} {{credits}}</strong></div>
+          <div class="summary-line"><span>Debit</span><strong>{{currencySymbol}} {{cartTotal}}</strong></div>
+          <div class="summary-line"><span>Reserve After Trade</span><strong>{{currencySymbol}} <span id="cart-remaining">{{pageContext.cartRemaining}}</span></strong></div>
           <div class="checkout-guidance">Confirm the trade to issue all manifest lines and archive the transaction.</div>
           <div class="rail-action-cluster stacked">
             <button type="button" class="checkout-btn holo-btn primary" id="confirm-checkout">Confirm Trade</button>
@@ -251,14 +256,14 @@
               <div class="history-entry">
                 <div class="history-header">
                   <span class="history-date"><i class="fa-solid fa-calendar"></i> {{timestamp}}</span>
-                  <span class="history-total"><span class="credits-icon">₢</span> {{total}}</span>
+                  <span class="history-total"><span class="credits-icon">{{../currencySymbol}}</span> {{total}}</span>
                 </div>
                 <div class="history-items">
                   {{#each items}}
                     <div class="history-item">
                       <span class="item-name">{{name}}</span>
                       <span class="item-qty">×{{qty}}</span>
-                      <span class="item-cost"><span class="credits-icon">₢</span>{{cost}}</span>
+                      <span class="item-cost"><span class="credits-icon">{{../../currencySymbol}}</span>{{cost}}</span>
                     </div>
                   {{/each}}
                 </div>
@@ -305,7 +310,7 @@
                   <span class="detail-chip">{{this.category}}</span>
                   <span class="detail-chip">{{this.availability}}</span>
                 </div>
-                <div class="card-price"><span class="credits-icon">₢</span><span class="price-amount">{{this.price}}</span></div>
+                <div class="card-price"><span class="credits-icon">{{../currencySymbol}}</span><span class="price-amount">{{this.price}}</span></div>
               </div>
               <div class="card-footer">
                 <button type="button" class="expand-btn holo-btn" data-action="expand-product" data-item-id="{{this.id}}">Open Listing</button>

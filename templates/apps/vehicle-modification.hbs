@@ -43,7 +43,7 @@
               <span class="stat-item"><i class="{{getIconClass 'plug'}}"></i> {{this.emplacementPoints}} EP</span>
             </div>
             <div class="ship-cost">
-              <span class="credits-icon">₢</span>
+              <span class="credits-icon">$</span>
               <span>{{this.cost}}</span>
             </div>
           </div>
@@ -70,7 +70,7 @@
           </div>
           <div class="stat-box">
             <label>Base Cost</label>
-            <span>₢{{baseCost}}</span>
+            <span>${{baseCost}}</span>
           </div>
           <div class="stat-box {{#if (gt emplacementPoints.used emplacementPoints.available)}}over-limit{{/if}}">
             <label>Emplacement Points</label>
@@ -78,7 +78,7 @@
           </div>
           <div class="stat-box">
             <label>Total Cost</label>
-            <span class="total-cost">₢{{totalCost}}</span>
+            <span class="total-cost">${{totalCost}}</span>
           </div>
         </div>
       </div>
@@ -101,7 +101,7 @@
             <div class="modification-item" data-mod-id="{{this.id}}">
               <div class="mod-header">
                 <h5>{{this.name}}</h5>
-                <span class="mod-cost">₢{{this.cost}}</span>
+                <span class="mod-cost">${{this.cost}}</span>
               </div>
               <div class="mod-details">
                 <p class="mod-description">{{this.description}}</p>
@@ -140,7 +140,7 @@
               </div>
               <div class="mod-stats-compact">
                 <span>{{this.emplacementPoints}} EP</span>
-                <span>₢{{this.cost}}</span>
+                <span>${{this.cost}}</span>
               </div>
               <button type="button" class="remove-modification" data-mod-id="{{this.id}}" title="Remove">
                 <i class="{{getIconClass 'times'}}"></i>

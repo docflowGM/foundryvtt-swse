@@ -185,18 +185,14 @@ export class HouseruleMechanics {
           return Math.floor(hitDie / 2) + 1 + conMod;
 
         case 'average_minimum': {
-          const roll = await rollEngine.safeRoll(`1d${hitDie}`).evaluate({
-            async: true
-          });
+          const roll = await rollEngine.safeRoll(`1d${hitDie}`, {}, { domain: 'houserule.hit-points' });
           const avg = Math.floor(hitDie / 2) + 1;
           return Math.max(roll.total, avg) + conMod;
         }
 
         case 'roll':
         default: {
-          const roll = await rollEngine.safeRoll(`1d${hitDie}`).evaluate({
-            async: true
-          });
+          const roll = await rollEngine.safeRoll(`1d${hitDie}`, {}, { domain: 'houserule.hit-points' });
           return roll.total + conMod;
         }
       }

@@ -351,12 +351,13 @@ export class PanelContextBuilder {
 
     // Normalize all inventory rows
     const entries = items
-      .filter(item => ['weapon', 'equipment', 'armor'].includes(item.type))
+      .filter(item => ['weapon', 'lightsaber', 'equipment', 'armor'].includes(item.type))
       .map(item => RowTransformers.toInventoryRow(item, this.sheet.isEditable));
 
     // Group entries by type category for card-based display
     const typeToCategory = {
       weapon: 'Weapons',
+      lightsaber: 'Weapons',
       armor: 'Armor',
       equipment: 'Equipment'
     };

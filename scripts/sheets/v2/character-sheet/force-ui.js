@@ -5,13 +5,8 @@
  */
 
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
-import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
-import { openLightsaberInterface } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-router.js";
+import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { ShellOverlayManager } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellOverlayManager.js";
-import { BlasterCustomizationApp } from "/systems/foundryvtt-swse/scripts/apps/blaster/blaster-customization-app.js";
-import { ArmorModificationApp } from "/systems/foundryvtt-swse/scripts/apps/armor/armor-modification-app.js";
-import { MeleeWeaponModificationApp } from "/systems/foundryvtt-swse/scripts/apps/weapons/melee-modification-app.js";
-import { GearModificationApp } from "/systems/foundryvtt-swse/scripts/apps/gear/gear-modification-app.js";
 
 /**
  * Handle force card discard animation
@@ -153,7 +148,7 @@ export function activateForceUI(sheet, html, { signal } = {}) {
       if (!item) return;
 
       try {
-        await ShellOverlayManager.openSingleItemUpgrade(sheet.actor, item);
+        openItemCustomization(sheet.actor, item);
       } catch (err) {
         ui?.notifications?.error?.("Failed to open customization modal");
       }
@@ -164,7 +159,7 @@ export function activateForceUI(sheet, html, { signal } = {}) {
   html.querySelectorAll('[data-action="construct-lightsaber"]').forEach(button => {
     button.addEventListener('click', async (event) => {
       event.preventDefault();
-      openLightsaberInterface(sheet.actor, null, { mode: 'construct' });
+      openItemCustomization(sheet.actor, null, { initialCategory: 'lightsaber', mode: 'construct' });
     }, { signal });
   });
 

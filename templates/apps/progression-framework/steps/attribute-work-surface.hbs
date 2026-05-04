@@ -89,7 +89,7 @@
             type="button"
           >
             <span class="prog-attribute-tile__value">{{value}}</span>
-            <span class="prog-attribute-tile__label">{{assignedLabel}}</span>
+            <span class="prog-attribute-tile__label swse-ability-pool-label" data-assigned-label="{{assignedLabel}}">{{assignedLabel}}</span>
           </button>
         {{/each}}
       </div>
@@ -98,10 +98,10 @@
 
   <div class="prog-attribute-rows">
     {{#each abilities}}
-      <div class="prog-attribute-row {{#if isFocused}}prog-attribute-row--focused{{/if}} {{#if isUnassigned}}prog-attribute-row--pending{{/if}}" data-ability-row="{{id}}" role="button" tabindex="0">
+      <div class="prog-attribute-row swse-ability-surface swse-ability-surface--{{id}} {{#if isFocused}}prog-attribute-row--focused{{/if}} {{#if isUnassigned}}prog-attribute-row--pending{{/if}}" data-ability-row="{{id}}" data-ability="{{id}}" role="button" tabindex="0">
         <div class="prog-attribute-row__header">
           <div>
-            <div class="prog-attribute-row__label">{{label}}</div>
+            <div class="prog-attribute-row__label swse-ability-label swse-ability-label--{{id}}" data-ability="{{id}}">{{label}}</div>
             {{#if assignmentHint}}
               <div class="prog-attribute-row__subtext">{{assignmentHint}}</div>
             {{/if}}

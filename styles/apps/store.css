@@ -991,3 +991,36 @@
 .product-actions {
   pointer-events: auto;
 }
+
+.store-item-brief {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.store-item-brief-aurebesh {
+  font-family: 'Aurebesh', serif;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.88);
+}
+
+.store-item-brief-basic {
+  font-size: 0.92em;
+  color: rgba(255,255,255,0.62);
+}
+
+.store-open-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.store-open-indicator.is-open {
+  color: #7cff9a;
+  box-shadow: 0 0 10px rgba(124,255,154,0.35);
+}
+
+.store-open-indicator.is-closed {
+  color: rgba(255,255,255,0.45);
+}

@@ -28,6 +28,8 @@ import {
   generateFullAttackCard
 } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { rollSkillCheck as canonicalRollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 
 /**
@@ -1236,82 +1238,95 @@ export class SWSERoll {
    * @returns {Promise<Object|null>} Ability roll result
    */
   static async rollAbility(actor, abilityKey, options = {}) {
-    const ability = actor.system.abilities?.[abilityKey];
-    if (!ability) {
+    const ability = actor?.system?.abilities?.[abilityKey];
+    if (!actor || !ability) {
       ui.notifications.warn(`Ability ${abilityKey} not found.`);
       return null;
     }
 
+    const abilityLabels = {
+      str: 'Strength',
+      dex: 'Dexterity',
+      con: 'Constitution',
+      int: 'Intelligence',
+      wis: 'Wisdom',
+      cha: 'Charisma'
+    };
+    const abilityLabel = abilityLabels[abilityKey] || abilityKey.toUpperCase();
+
     try {
-      const abilityMod = ability.mod;
-      const formula = `1d20 + ${abilityMod}`;
+      const abilityMod = Number(ability.mod ?? 0);
+      const rollResult = await RollCore.execute({
+        actor,
+        domain: `ability.${abilityKey}`,
+        baseBonus: abilityMod,
+        context: {
+          ...options,
+          rollType: 'ability',
+          abilityKey,
+          abilityLabel,
+          label: `${abilityLabel} Check`
+        },
+        rollOptions: {
+          baseDice: '1d20',
+          useForce: options.useForce === true,
+          isTakeX: options.isTakeX === true,
+          takeXValue: options.takeXValue
+        },
+        rollData: actor.getRollData?.() ?? {}
+      });
 
-      const roll = await this._safeRoll(formula);
-      if (!roll) {return null;}
+      if (!rollResult?.success) {
+        ui.notifications.warn(rollResult?.error || 'Ability roll failed.');
+        return null;
+      }
 
-      const d20 = roll.dice[0].results[0].result;
-
-      // Ability label map
-      const abilityLabels = {
-        str: 'Strength',
-        dex: 'Dexterity',
-        con: 'Constitution',
-        int: 'Intelligence',
-        wis: 'Wisdom',
-        cha: 'Charisma'
-      };
-      const abilityLabel = abilityLabels[abilityKey] || abilityKey.toUpperCase();
-
-      // DC comparison
+      const roll = rollResult.roll;
+      const total = rollResult.finalTotal;
+      const d20 = rollResult.baseRoll;
       const dc = options.dc;
-      const success = dc != null ? roll.total >= dc : null;
+      const success = dc != null ? total >= dc : null;
+      const margin = dc != null ? total - dc : null;
 
       const result = {
         roll,
         d20,
-        total: roll.total,
+        total,
         abilityMod,
         dc,
-        success
+        success,
+        margin,
+        breakdown: rollResult.breakdown,
+        domain: rollResult.domain
       };
 
-      // Build chat card
-      const dcHTML = dc != null ? `
-        <div class="ability-dc">
-          <span>vs DC ${dc}</span>
-          <span class="dc-result ${success ? 'success' : 'failure'}">
-            ${success ? '<i class="fa-solid fa-check"></i> Success' : '<i class="fa-solid fa-times"></i> Failure'}
-            (${roll.total - dc >= 0 ? '+' : ''}${roll.total - dc})
-          </span>
-        </div>
-      ` : '';
+      if (roll) {
+        const msg = await SWSEChat.postRoll({
+          roll,
+          actor,
+          flavor: `${abilityLabel} Check`,
+          flags: { swse: { rollType: 'ability', abilityKey } },
+          context: {
+            ...options,
+            rollType: 'ability',
+            abilityKey,
+            abilityLabel,
+            label: `${abilityLabel} Check`,
+            baseBonus: abilityMod,
+            dc,
+            success,
+            margin,
+            category: success === true ? 'success' : success === false ? 'fail' : undefined
+          }
+        });
+        result.message = msg;
 
-      const html = `
-        <div class="swse-ability-card">
-          <h3>${abilityLabel} Check</h3>
-          <div class="roll-total">${roll.total}</div>
-          <div class="roll-d20">d20: ${d20}${d20 === 20 ? ' <i class="fa-solid fa-star"></i>' : d20 === 1 ? ' <i class="fa-solid fa-skull"></i>' : ''}</div>
-          <div class="roll-formula">${formula}</div>
-          <div class="roll-breakdown">${abilityLabel} ${abilityMod >= 0 ? '+' : ''}${abilityMod}</div>
-          ${dcHTML}
-        </div>
-      `;
-
-      const msg = await createChatMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: html,
-        rolls: [roll],
-        flags: { swse: { roll: roll.toJSON() } }
-      });
-
-      result.message = msg;
-
-      if (game.dice3d) {
-        await game.dice3d.showForRoll(roll, game.user, true);
+        if (game.dice3d) {
+          await game.dice3d.showForRoll(roll, game.user, true);
+        }
       }
 
       return result;
-
     } catch (err) {
       console.error('Ability roll failed:', err);
       ui.notifications.error('Ability roll failed. Check console for details.');
@@ -1889,26 +1904,8 @@ if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
 /* CHAT BUTTON HANDLERS                                                         */
 /* ============================================================================ */
 
-Hooks.on('renderChatMessageHTML', (message, html, user) => {
-  html.querySelector('.swse-roll-damage')?.addEventListener('click', async ev => {
-    const btn = ev.currentTarget;
-    const weaponId = btn.dataset.weaponId;
-    const isCrit = btn.dataset.isCrit === 'true';
-    const critMult = parseInt(btn.dataset.critMult, 10) || 2;
-    const twoHanded = btn.dataset.twoHanded === 'true';
-
-    const actor = game.actors.get(message.speaker.actor);
-    const weapon = actor?.items.get(weaponId);
-
-    if (actor && weapon) {
-      await SWSERoll.rollDamage(actor, weapon, {
-        isCritical: isCrit,
-        critMultiplier: critMult,
-        twoHanded
-      });
-    }
-  });
-});
+// Chat button rendering is centralized in ChatInteractionBridge.
+// Keep SWSERoll as the compatibility facade; do not register independent chat hooks here.
 
 /* ============================================================================ */
 /* GLOBAL EXPORTS                                                               */

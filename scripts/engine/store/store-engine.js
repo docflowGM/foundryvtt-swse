@@ -284,7 +284,8 @@ export class StoreEngine {
       actor,
       items = [],
       totalCost = 0,
-      itemGrantCallback = null
+      itemGrantCallback = null,
+      transactionContext = null
     } = context;
 
     if (!actor) {
@@ -292,295 +293,94 @@ export class StoreEngine {
       return { success: false, error: 'No actor provided', transactionId: null };
     }
 
-    // HARDENING 1: Ownership enforcement
     if (!actor.isOwner) {
-      logger().error('StoreEngine.purchase: Insufficient permissions', {
-        actor: actor.id,
-        isOwner: actor.isOwner
-      });
-      return {
-        success: false,
-        error: 'Insufficient permissions to complete purchase.',
-        transactionId: null
-      };
+      logger().error('StoreEngine.purchase: Insufficient permissions', { actor: actor.id, isOwner: actor.isOwner });
+      return { success: false, error: 'Insufficient permissions to complete purchase.', transactionId: null };
     }
 
-    // HARDENING 2: Atomic purchase lock per actor (prevent concurrent purchases)
-    if (this._purchasingActors.has(actor.id)) {
-      logger().error('StoreEngine.purchase: Purchase already in progress', {
-        actor: actor.id
-      });
-      return {
-        success: false,
-        error: 'Purchase already in progress. Please wait.',
-        transactionId: null
-      };
-    }
-
-    const transactionId = `tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    this._purchasingActors.add(actor.id);
-
-    // P2-2: Freeze pricing to prevent mid-transaction changes
     freezePricing();
-
     try {
-      // HARDENING 3: Re-read fresh actor state immediately before write (closes race window)
       const freshActor = game.actors.get(actor.id);
-      if (!freshActor) {
-        logger().error('StoreEngine.purchase: Actor no longer exists', {
-          transactionId,
-          actor: actor.id
-        });
-        return {
-          success: false,
-          error: 'Actor no longer exists.',
-          transactionId
-        };
-      }
+      if (!freshActor) return { success: false, error: 'Actor no longer exists.', transactionId: null };
 
-      // HARDENING 7: Defensive numeric validation
       const currentCredits = Number(freshActor.system?.credits) ?? 0;
       if (!Number.isFinite(currentCredits) || currentCredits < 0) {
-        logger().error('StoreEngine.purchase: Invalid credit state', {
-          transactionId,
-          actor: actor.id,
-          currentCredits
-        });
-        return {
-          success: false,
-          error: 'Invalid credit state.',
-          transactionId
-        };
+        return { success: false, error: 'Invalid credit state.', transactionId: null };
       }
 
       if (!Number.isFinite(totalCost) || totalCost < 0) {
-        logger().error('StoreEngine.purchase: Invalid cart total', {
-          transactionId,
-          actor: actor.id,
-          totalCost
-        });
-        return {
-          success: false,
-          error: 'Invalid cart total.',
-          transactionId
-        };
+        return { success: false, error: 'Invalid cart total.', transactionId: null };
       }
 
-      // PHASE 3A: Validate prices haven't changed significantly
-      // (P0-3: Re-validate prices at purchase time)
       const priceValidation = await this._validatePricesAtPurchaseTime(items, totalCost);
       if (!priceValidation.valid) {
-        logger().warn('StoreEngine: Price validation failed - rejecting purchase', {
-          transactionId,
-          actor: actor.id,
-          reason: priceValidation.reason
-        });
-        return {
-          success: false,
-          error: priceValidation.reason,
-          transactionId
-        };
+        return { success: false, error: priceValidation.reason, transactionId: null };
       }
 
-      // PHASE 3B: Validate via LedgerService (pure, no mutations)
       const ledgerValidation = LedgerService.validateFunds(freshActor, totalCost);
       if (!ledgerValidation.ok) {
-        logger().warn('StoreEngine: Insufficient credits at execution time', {
-          transactionId,
-          actor: actor.id,
-          reason: ledgerValidation.reason,
-          have: ledgerValidation.current,
-          need: ledgerValidation.required
-        });
         return {
           success: false,
           error: `Insufficient credits at time of transaction (have ${ledgerValidation.current}, need ${ledgerValidation.required}).`,
-          transactionId
+          transactionId: null
         };
       }
 
-      // PHASE 2: PRE-VALIDATE ALL GRANT PLANS BEFORE DEDUCTING CREDITS
-      // =========================================================
       let grantPlans = [];
       if (itemGrantCallback && typeof itemGrantCallback === 'function') {
-        try {
-          grantPlans = await itemGrantCallback(freshActor, items) || [];
-
-          // Validate callback return type
-          if (!Array.isArray(grantPlans)) {
-            throw new Error('itemGrantCallback must return an array of MutationPlans');
-          }
-
-          // Validate each plan is an object (accept bucketed mutation plans as-is)
-          for (const plan of grantPlans) {
-            if (!plan || typeof plan !== 'object') {
-              throw new Error('Plan must be a valid object');
-            }
-          }
-
-          logger().debug('StoreEngine: Pre-validated all grant plans', {
-            transactionId,
-            planCount: grantPlans.length
-          });
-        } catch (planErr) {
-          logger().error('StoreEngine: Plan validation failed (NO CREDITS DEDUCTED)', {
-            transactionId,
-            error: planErr.message
-          });
-          throw planErr;
+        grantPlans = await itemGrantCallback(freshActor, items) || [];
+        if (!Array.isArray(grantPlans)) throw new Error('itemGrantCallback must return an array of MutationPlans');
+        for (const plan of grantPlans) {
+          if (!plan || typeof plan !== 'object') throw new Error('Plan must be a valid object');
         }
       }
 
-      // PHASE 3: BUILD CREDIT PLAN & METADATA
-      // =====================================
-      const creditPlan = LedgerService.buildCreditDelta(freshActor, totalCost);
+      const hasCustomizedStoreItem = items.some(item => !!item.stagedCustomization || item.type === 'customized-item');
+      const resolvedContext = transactionContext || (hasCustomizedStoreItem ? 'store-customization-checkout' : 'store-purchase');
 
-      // Guard against invalid credit plan
-      if (!creditPlan || !creditPlan.set || !Number.isFinite(creditPlan.set['system.credits'])) {
-        throw new Error('LedgerService produced invalid credit plan');
-      }
-      if (creditPlan.set['system.credits'] < 0) {
-        throw new Error('Credit deduction would result in negative balance');
-      }
-
-      const creditMetadata = LedgerService.buildMetadata(freshActor, totalCost);
-
-      logger().info('StoreEngine: Purchase pre-validated and ready', {
-        transactionId,
-        ...creditMetadata,
-        grantPlanCount: grantPlans.length
+      const result = await TransactionEngine.executeMutationTransaction({
+        actor: freshActor,
+        mutationPlan: grantPlans,
+        cost: totalCost,
+        transactionContext: resolvedContext,
+        audit: {
+          itemCount: items.length,
+          totalCost,
+          itemNames: items.map(item => item.name).filter(Boolean),
+          hasCustomizedStoreItem
+        }
+      }, {
+        source: 'StoreEngine.purchase',
+        validate: true,
+        rederive: true
       });
 
-      // PHASE 4: CREATE SNAPSHOT FOR ROLLBACK
-      // ====================================
-      let snapshotId = null;
-      try {
-        // Import SnapshotManager dynamically to avoid circular deps
-        const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-        snapshotId = await SnapshotManager.createSnapshot(
-          freshActor,
-          `Store purchase snapshot (${totalCost} credits, ${grantPlans.length} items)`
-        );
-        logger().debug('StoreEngine: Snapshot created for rollback', {
-          transactionId,
-          snapshotId
+      if (!result.success) {
+        logger().error('StoreEngine.purchase: TransactionEngine rejected purchase', {
+          actor: actor.id,
+          error: result.error,
+          transactionId: result.transactionId
         });
-      } catch (snapErr) {
-        logger().warn('StoreEngine: Snapshot creation failed (continuing without rollback)', {
-          transactionId,
-          error: snapErr.message
-        });
-        // Non-fatal: continue without rollback capability
-      }
-
-      // PHASE 5: INITIALIZE FLAGS BEFORE MUTATIONS
-      // ==========================================
-      // P2-5: Defensive null guards for flags
-      if (!freshActor.flags) {
-        freshActor.flags = {};
-      }
-      const existingFlags = freshActor.flags['foundryvtt-swse'] || {};
-      if (!existingFlags.meta) {
-        existingFlags.meta = {
-          schemaVersion: 1,
-          cartVersion: 1
-        };
-      }
-
-      // Add purchase idempotency token (guard against null/undefined)
-      if (!existingFlags.sessionPurchaseIds || !Array.isArray(existingFlags.sessionPurchaseIds)) {
-        existingFlags.sessionPurchaseIds = [];
-      }
-      existingFlags.sessionPurchaseIds.push(transactionId);
-      // Keep only last 100 transactions to avoid memory bloat
-      if (existingFlags.sessionPurchaseIds.length > 100) {
-        existingFlags.sessionPurchaseIds = existingFlags.sessionPurchaseIds.slice(-100);
-      }
-
-      // PHASE 6: MERGE PLANS AND BUILD FINAL TRANSACTION
-      // ===============================================
-      let mergedPlan = { set: { 'flags.foundryvtt-swse': existingFlags } };
-
-      try {
-        // Build credit plan from ledger
-        const creditMutation = creditPlan;
-
-        // Merge all grant plans with credit plan
-        const allPlans = [...grantPlans, creditMutation];
-        mergedPlan = mergeMutationPlans(...allPlans);
-
-        logger().debug('StoreEngine: Plans merged for atomic transaction', {
-          transactionId,
-          grantPlanCount: grantPlans.length,
-          mergedPlanBuckets: Object.keys(mergedPlan).length
-        });
-
-        // Apply merged plan atomically
-        await ActorEngine.applyMutationPlan(freshActor, mergedPlan, {
-          validate: true,
-          rederive: true,
-          source: 'StoreEngine.purchase'
-        });
-
-        logger().info('StoreEngine: Atomic transaction applied successfully', {
-          transactionId,
-          grantPlanCount: grantPlans.length,
-          newBalance: mergedPlan.set?.['system.credits'] ?? freshActor.system?.credits
-        });
-      } catch (transactionErr) {
-        logger().error('StoreEngine: Atomic transaction failed (attempting rollback)', {
-          transactionId,
-          error: transactionErr.message
-        });
-
-        // ROLLBACK: Restore from snapshot if available
-        if (snapshotId) {
-          try {
-            const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
-            await SnapshotManager.restoreSnapshot(freshActor, snapshotId);
-            logger().info('StoreEngine: Rollback successful - actor restored to pre-purchase state', {
-              transactionId,
-              snapshotId
-            });
-          } catch (rollbackErr) {
-            logger().error('StoreEngine: ROLLBACK FAILED - manual intervention may be required', {
-              transactionId,
-              rollbackError: rollbackErr.message
-            });
-            throw new Error(`Transaction failed and rollback failed: ${transactionErr.message}`);
-          }
-        }
-
-        throw transactionErr;
+        return result;
       }
 
       logger().info('StoreEngine: Purchase completed', {
-        transactionId,
+        transactionId: result.transactionId,
         actor: actor.id,
         itemCount: items.length,
-        costDeducted: totalCost
+        costDeducted: totalCost,
+        context: resolvedContext
       });
 
-      return {
-        success: true,
-        error: null,
-        transactionId
-      };
+      return result;
     } catch (err) {
       logger().error('StoreEngine.purchase: Transaction failed', {
-        transactionId,
         actor: actor.id,
         error: err.message,
         stack: err.stack
       });
-      return {
-        success: false,
-        error: err.message,
-        transactionId
-      };
+      return { success: false, error: err.message, transactionId: null };
     } finally {
-      // Always release the lock and unfreeze pricing
-      this._purchasingActors.delete(actor.id);
       unfreezePricing();
     }
   }

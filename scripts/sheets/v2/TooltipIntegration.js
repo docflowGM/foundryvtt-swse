@@ -9,6 +9,7 @@
  */
 
 import { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
+import { AbilityKeywordHighlighter } from "/systems/foundryvtt-swse/scripts/ui/ability-keyword-highlighter.js";
 
 /**
  * Bind all tooltips in the V2 character sheet.
@@ -26,6 +27,7 @@ export function bindV2CharacterSheetTooltips(actor, root, abortController) {
   // 1. Bind micro-tooltips via TooltipRegistry
   // This handles all [data-swse-tooltip] elements globally
   TooltipRegistry.bind(root);
+  AbilityKeywordHighlighter.refresh(root);
 
   // 2. Note: Defense and weapon breakdowns can be bound via the registry
   // if the sheet templates use data-swse-tooltip attributes.

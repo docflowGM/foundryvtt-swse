@@ -19,6 +19,7 @@
 
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
+import { registerChatInteractionBridge } from "/systems/foundryvtt-swse/scripts/ui/chat/chat-interaction-bridge.js";
 
 export class CombatUIAdapter {
 
@@ -229,7 +230,7 @@ export class CombatUIAdapter {
     const dmgBonus = computeDamageBonus(attacker, weapon);
     const base = weapon.system?.damage ?? '1d6';
     const formula = `${base} + ${dmgBonus}`;
-    const roll = await RollEngine.safeRoll(formula).evaluate({ async: true });
+    const roll = await RollEngine.safeRoll(formula, attacker.getRollData?.() ?? {}, { actor: attacker, domain: 'combat.damage.ui', context: { weaponId: weapon.id, targetId: target?.id ?? null } });
 
     const result = {
       attacker,
@@ -272,31 +273,11 @@ export class CombatUIAdapter {
 
   /**
    * Register chat message button listeners.
-   * Hooks into Foundry's renderChatMessageHTML to attach click handlers.
+   * Compatibility entry point; ChatInteractionBridge owns renderChatMessageHTML binding.
    */
   static registerChatListeners() {
-    Hooks.on('renderChatMessageHTML', (msg, html, user) => {
-      /* Roll Damage button */
-      html.querySelector('.swse-roll-damage-btn')?.addEventListener('click', async ev => {
-        const btn = ev.currentTarget;
-        const attacker = game.actors.get(btn.dataset.attacker);
-        const weapon = attacker?.items.get(btn.dataset.weapon);
-        const target = game.actors.get(btn.dataset.target);
-        if (attacker && weapon && target) {
-          await CombatUIAdapter.rollDamageUI(attacker, weapon, target);
-        }
-      });
-
-      /* Apply Damage button */
-      html.querySelector('.swse-apply-damage-btn')?.addEventListener('click', async ev => {
-        const btn = ev.currentTarget;
-        await CombatUIAdapter.applyDamageUI(
-          btn.dataset.attacker,
-          btn.dataset.target,
-          btn.dataset.weapon,
-          parseInt(btn.dataset.amount, 10)
-        );
-      });
-    });
+    // Chat button listeners are centralized in ChatInteractionBridge.
+    // This legacy method remains as a compatibility entry point.
+    return registerChatInteractionBridge();
   }
 }

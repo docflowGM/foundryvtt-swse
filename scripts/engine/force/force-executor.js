@@ -16,6 +16,7 @@
 import { ForceEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
@@ -126,11 +127,21 @@ export class ForceExecutor {
         spentForce = true;
       }
 
-      // Roll the force power check
-      const roll = new Roll("1d20", actor.system || {});
-      await roll.evaluate({ async: true });
+      // Roll the force power check through the shared roll execution layer.
+      const rollResult = await RollCore.execute({
+        actor,
+        domain: 'force-power.activation',
+        baseBonus: bonus,
+        rollOptions: { baseDice: '1d20' },
+        rollData: actor.getRollData?.() ?? {},
+        context: { powerId, powerName: power.name }
+      });
+      if (!rollResult.success || !rollResult.roll) {
+        throw new Error(rollResult.error || 'Force power roll failed');
+      }
+      const roll = rollResult.roll;
 
-      const total = roll.total + bonus;
+      const total = rollResult.finalTotal;
       const isCritical = roll.dice[0].results[0].result === 20;
       const isFumble = roll.dice[0].results[0].result === 1;
 

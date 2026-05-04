@@ -1,0 +1,2330 @@
+[
+  {
+    "slug": "viper-series-probe-droid",
+    "id": "02e1a7198873937f",
+    "name": "Viper-Series Probe Droid",
+    "description": "Viper-Series Probe Droid, fourth-degree probe droid, hovering chassis, modest durability, armed package. Built for scouting, spying, and making remote areas feel suddenly observed."
+  },
+  {
+    "slug": "imperial-warden-droid",
+    "id": "02e36b37b1f5a328",
+    "name": "Imperial Warden Droid",
+    "description": "Imperial Warden Droid, fourth-degree security droid, walking chassis, modest durability, basic combat tools. A fine purchase if you believe hospitality should include checkpoints."
+  },
+  {
+    "slug": "junk-droid",
+    "id": "044c875d3ac10d14",
+    "name": "Junk Droid",
+    "description": "Junk Droid, fourth-degree utility droid, walking chassis, fragile durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "t1-bulk-loader-droid",
+    "id": "06e4112afce783f0",
+    "name": "T1 Bulk Loader Droid",
+    "description": "T1 Bulk Loader Droid, fifth-degree labor droid, walking chassis, modest durability, basic combat tools. For buyers who want freight moved and feelings kept completely out of it."
+  },
+  {
+    "slug": "vigilant-2x-series-picket-droid",
+    "id": "08e3e2edca6d89a0",
+    "name": "Vigilant 2X-Series Picket Droid",
+    "description": "Vigilant 2X-Series Picket Droid, fourth-degree sentry droid, tracked chassis, modest durability, heavy weapons package. For keeping watch, holding lines, and ruining quiet approaches."
+  },
+  {
+    "slug": "rt-sifter-droid",
+    "id": "0ad9b89d957ec699",
+    "name": "RT Sifter Droid",
+    "description": "RT Sifter Droid, fifth-degree utility droid, tracked chassis, fragile durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "sd-6-hulk-infantry-droid",
+    "id": "0c99b0f8e9146275",
+    "name": "SD-6 \"Hulk\" Infantry Droid",
+    "description": "SD-6 \"Hulk\" Infantry Droid, unclassified battle droid, fixed chassis, autofire package. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "wanderer-scout-surveyor-droid",
+    "id": "0ecb09a9d105d4ed",
+    "name": "Wanderer Scout Surveyor Droid",
+    "description": "Wanderer Scout Surveyor Droid, fifth-degree scout droid, walking chassis, modest durability, armed package. For buyers who prefer the terrain disappoint a machine before it disappoints them."
+  },
+  {
+    "slug": "hk-50-assassin-droid",
+    "id": "0ed54bac41526055",
+    "name": "HK-50 Assassin Droid",
+    "description": "HK-50 Assassin Droid, fourth-degree assassin droid, walking chassis, heavy durability, basic combat tools. For buyers who want professional violence without the expense of a conscience."
+  },
+  {
+    "slug": "fltch-series-battle-droid",
+    "id": "0fcc160c24bacfe5",
+    "name": "FLTCH-Series Battle Droid",
+    "description": "FLTCH-Series Battle Droid, fourth-degree battle droid, jet-assisted chassis, modest durability, heavy weapons package. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "b1-a-air-battle-droid",
+    "id": "1036283b0586c23b",
+    "name": "B1-A Air Battle Droid",
+    "description": "B1-A Air Battle Droid, fourth-degree battle droid, jet-assisted chassis, modest durability, armed package. Perfect for commanders who want obedience, volume, and fewer questions than a clone would ask."
+  },
+  {
+    "slug": "a-series-assassin-droid",
+    "id": "1139f47cf0d10d86",
+    "name": "A-Series Assassin Droid",
+    "description": "A-Series Assassin Droid, fourth-degree assassin droid, walking chassis, solid durability, armed package. For buyers who want professional violence without the expense of a conscience."
+  },
+  {
+    "slug": "dsh-3-probe-droid",
+    "id": "13ad17827ba38b69",
+    "name": "DSH-3 Probe Droid",
+    "description": "DSH-3 Probe Droid, fourth-degree probe droid, hovering chassis, fragile durability. Built for scouting, spying, and making remote areas feel suddenly observed."
+  },
+  {
+    "slug": "iw-37-pincer-loader-droid",
+    "id": "143463fc7703a692",
+    "name": "IW-37 Pincer Loader Droid",
+    "description": "IW-37 Pincer Loader Droid, fifth-degree labor droid, walking chassis, fragile durability, basic combat tools. A warehouse classic for managers who think backs are overrated."
+  },
+  {
+    "slug": "ig-series-lancer-droid",
+    "id": "14964b4140892a57",
+    "name": "IG-Series Lancer Droid",
+    "description": "IG-Series Lancer Droid, fourth-degree utility droid, walking chassis, modest durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "mark-vii-inquisitor-seeker-droid",
+    "id": "14bce5078f084543",
+    "name": "Mark VII \"Inquisitor\" Seeker Droid",
+    "description": "Mark VII \"Inquisitor\" Seeker Droid, unclassified probe droid, fixed chassis, armed package. Built for scouting, spying, and making remote areas feel suddenly observed."
+  },
+  {
+    "slug": "wing-guard-patrol-droid",
+    "id": "152d7c5f5bd0687d",
+    "name": "Wing Guard Patrol Droid",
+    "description": "Wing Guard Patrol Droid, fourth-degree utility droid, flying chassis, solid durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "k-series-spaceport-control-droid",
+    "id": "1662cc4a1006e443",
+    "name": "K-Series Spaceport Control Droid",
+    "description": "K-Series Spaceport Control Droid, third-degree utility droid, walking chassis, fragile durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "3px-espionage-droid",
+    "id": "172172dfd5996a92",
+    "name": "3PX Espionage Droid",
+    "description": "3PX Espionage Droid, fourth-degree espionage droid, walking chassis, solid durability, armed package. Perfect for quiet data theft, awkward secrets, and jobs nobody will admit assigning."
+  },
+  {
+    "slug": "scorpenek-annihilator-droid",
+    "id": "183ff44f3cd47f3e",
+    "name": "Scorpenek Annihilator Droid",
+    "description": "Scorpenek Annihilator Droid, fourth-degree utility droid, walking chassis, heavy durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "b3-series-ultra-battle-droid",
+    "id": "18cad4d46e201ae8",
+    "name": "B3-Series Ultra Battle Droid",
+    "description": "B3-Series Ultra Battle Droid, fourth-degree battle droid, walking chassis, solid durability, heavy weapons package. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "drk-1-probe-droid",
+    "id": "1b79b286425e30a1",
+    "name": "DRK-1 Probe Droid",
+    "description": "DRK-1 Probe Droid, fourth-degree probe droid, hovering chassis, fragile durability, basic combat tools. Built for scouting, spying, and making remote areas feel suddenly observed."
+  },
+  {
+    "slug": "v6-series-pilot-droid",
+    "id": "1c35fd1acf5a8620",
+    "name": "V6-Series Pilot Droid",
+    "description": "V6-Series Pilot Droid, second-degree utility droid, wheeled chassis, fragile durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "mionne-security-droid",
+    "id": "1cf5ee7105e0954b",
+    "name": "Mionne Security Droid",
+    "description": "Mionne Security Droid, fourth-degree security droid, walking chassis, solid durability, armed package. For buyers who call suspicion a customer service philosophy."
+  },
+  {
+    "slug": "dd-13-medical-assistant-droid",
+    "id": "1f83fdea732e53bb",
+    "name": "DD-13 Medical Assistant Droid",
+    "description": "DD-13 Medical Assistant Droid, first-degree medical droid, walking chassis, fragile durability, basic combat tools. Clean bedside manner sold separately, but the tools are excellent."
+  },
+  {
+    "slug": "ic-m-general-utility-droid",
+    "id": "2038f2da098a3957",
+    "name": "IC-M General Utility Droid",
+    "description": "IC-M General Utility Droid, fifth-degree utility droid, tracked chassis, fragile durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "ge3-series-protocol-droid",
+    "id": "225b00794765e360",
+    "name": "GE3-Series Protocol Droid",
+    "description": "GE3-Series Protocol Droid, third-degree protocol droid, walking chassis, fragile durability, basic combat tools. The preferred model for buyers who want panic delivered in six million forms of politeness."
+  },
+  {
+    "slug": "mark-i-assault-droid",
+    "id": "229ba927dee878c0",
+    "name": "Mark I Assault Droid",
+    "description": "Mark I Assault Droid, fourth-degree utility droid, walking chassis, modest durability, armed package. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "bd-explorer-droid",
+    "id": "239ca43369d6513a",
+    "name": "BD Explorer Droid",
+    "description": "BD Explorer Droid, second-degree utility droid, walking chassis, fragile durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "mev-series-medical-droid",
+    "id": "23d7ea5d3e0c8c7a",
+    "name": "MEV-Series Medical Droid",
+    "description": "MEV-Series Medical Droid, first-degree medical droid, hovering chassis, modest durability, basic combat tools. A very steady pair of hands for situations that have already gone badly."
+  },
+  {
+    "slug": "km1-mining-droid",
+    "id": "262e21c29f6f8ea4",
+    "name": "KM1 Mining Droid",
+    "description": "KM1 Mining Droid, fifth-degree labor droid, walking chassis, modest durability, basic combat tools. Perfect for customers who hear hazard pay and start looking for alternatives."
+  },
+  {
+    "slug": "bl-series-legionnaire-droid",
+    "id": "28f821fb807d627c",
+    "name": "BL-Series Legionnaire Droid",
+    "description": "BL-Series Legionnaire Droid, fourth-degree utility droid, walking chassis, modest durability, autofire package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "lom-series-protocol-droid",
+    "id": "2aec4c8b47b58535",
+    "name": "LOM-Series Protocol Droid",
+    "description": "LOM-Series Protocol Droid, third-degree protocol droid, walking chassis, fragile durability, basic combat tools. The preferred model for buyers who want panic delivered in six million forms of politeness."
+  },
+  {
+    "slug": "b4j4-security-droid",
+    "id": "2b41c19d03d92d7e",
+    "name": "B4J4 Security Droid",
+    "description": "B4J4 Security Droid, fourth-degree security droid, flying chassis, fragile durability, armed package. Ideal for owners who want every hallway to feel mildly accused."
+  },
+  {
+    "slug": "asn-121-assassin-droid",
+    "id": "2bb87d9b4655e381",
+    "name": "ASN-121 Assassin Droid",
+    "description": "ASN-121 Assassin Droid, fourth-degree assassin droid, flying chassis, heavy durability, armed package. Factory-built for deniable homicide and the sort of silence management that keeps careers moving."
+  },
+  {
+    "slug": "fa-5-valet-droid",
+    "id": "2c45cc0358e490c8",
+    "name": "FA-5 Valet Droid",
+    "description": "FA-5 Valet Droid, fifth-degree service droid, walking chassis, fragile durability, basic combat tools. A luxury accessory for anyone who thinks chores should come with a vocabulator."
+  },
+  {
+    "slug": "tt-8l-gatekeeper-droid",
+    "id": "2cdc3e761128b6e0",
+    "name": "TT-8L Gatekeeper Droid",
+    "description": "TT-8L Gatekeeper Droid, third-degree gatekeeper droid, fixed chassis, fragile durability, basic combat tools. An immobile little bureaucrat with better memory than mercy."
+  },
+  {
+    "slug": "droideka-series-destroyer-droid",
+    "id": "2ddb24a2229229a8",
+    "name": "Droideka-Series Destroyer Droid",
+    "description": "Droideka-Series Destroyer Droid, fourth-degree destroyer droid, wheeled chassis, solid durability, armed package. For commanders who want suppression fire to arrive pre-folded."
+  },
+  {
+    "slug": "kx-series-security-droid",
+    "id": "2e182a32233a1b9e",
+    "name": "KX-Series Security Droid",
+    "description": "KX-Series Security Droid, fourth-degree security droid, walking chassis, solid durability, armed package. For buyers who call suspicion a customer service philosophy."
+  },
+  {
+    "slug": "rww-series-protocol-droid",
+    "id": "2ea9e1f3f6800831",
+    "name": "RWW-Series Protocol Droid",
+    "description": "RWW-Series Protocol Droid, third-degree protocol droid, walking chassis, fragile durability, basic combat tools. Elegant manners, endless translations, and just enough personality to become somebody else's problem."
+  },
+  {
+    "slug": "hk-24-assassin-droid",
+    "id": "2fcf39ab1e0fec32",
+    "name": "HK-24 Assassin Droid",
+    "description": "HK-24 Assassin Droid, fourth-degree assassin droid, walking chassis, solid durability, basic combat tools. Factory-built for deniable homicide and the sort of silence management that keeps careers moving."
+  },
+  {
+    "slug": "g2-repair-droid",
+    "id": "3032ff5a0e8c2ccc",
+    "name": "G2 Repair Droid",
+    "description": "G2 Repair Droid, second-degree maintenance droid, walking chassis, fragile durability, basic combat tools. Excellent for upkeep, patchwork, and silent judgment of your maintenance habits."
+  },
+  {
+    "slug": "independent-hk-series-droid",
+    "id": "30d0382d290efb10",
+    "name": "Independent HK-Series Droid",
+    "description": "Independent HK-Series Droid, fourth-degree utility droid, walking chassis, modest durability, armed package. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "r8-series-astromech-droid",
+    "id": "3520596115f9254b",
+    "name": "R8-Series Astromech Droid",
+    "description": "R8-Series Astromech Droid, second-degree astromech droid, wheeled chassis, fragile durability, basic combat tools. For pilots who want loyalty, diagnostics, and occasional emotional blackmail in one cylinder."
+  },
+  {
+    "slug": "ig-110-lightsaber-droid",
+    "id": "35df1695827441e5",
+    "name": "IG-110 Lightsaber Droid",
+    "description": "IG-110 Lightsaber Droid, fourth-degree utility droid, walking chassis, solid durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "3d-4-administrative-droid",
+    "id": "36c8ed4430646a07",
+    "name": "3D-4 Administrative Droid",
+    "description": "3D-4 Administrative Droid, third-degree utility droid, walking chassis, fragile durability, armed package. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "5yq-series-protocol-droid",
+    "id": "38d7cbb8e5bf6cfe",
+    "name": "5YQ-Series Protocol Droid",
+    "description": "5YQ-Series Protocol Droid, third-degree protocol droid, walking chassis, fragile durability, basic combat tools. For households that need etiquette, diplomacy, and an extra witness with polished plating."
+  },
+  {
+    "slug": "behemoth-junk-droid",
+    "id": "39ab00a114c69108",
+    "name": "Behemoth Junk Droid",
+    "description": "Behemoth Junk Droid, fourth-degree utility droid, walking chassis, solid durability. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "r4-series-agromech-droid",
+    "id": "3b35d8e850316efd",
+    "name": "R4-Series Agromech Droid",
+    "description": "R4-Series Agromech Droid, second-degree utility droid, wheeled chassis, fragile durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "v2-series-commando-droid",
+    "id": "3cfedfaf5defea79",
+    "name": "V2-Series Commando Droid",
+    "description": "V2-Series Commando Droid, fourth-degree utility droid, walking chassis, modest durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "ro-d-droid",
+    "id": "3e604fabd66eaf1e",
+    "name": "RO-D Droid",
+    "description": "RO-D Droid, fifth-degree utility droid, walking chassis, fragile durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "0-lt-utility-droid",
+    "id": "3f0a9287e1b7bbb9",
+    "name": "0-LT Utility Droid",
+    "description": "0-LT Utility Droid, second-degree utility droid, tracked chassis, fragile durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "asp-labor-droid",
+    "id": "3f586d8eb62ebb9e",
+    "name": "ASP Labor Droid",
+    "description": "ASP Labor Droid, fifth-degree labor droid, walking chassis, fragile durability, basic combat tools. A warehouse classic for managers who think backs are overrated."
+  },
+  {
+    "slug": "et-74-communications-droid",
+    "id": "3f8f88bef578be02",
+    "name": "ET-74 Communications Droid",
+    "description": "ET-74 Communications Droid, first-degree utility droid, walking chassis, fragile durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "lr-57-combat-droid",
+    "id": "4096bd9a7a0b667e",
+    "name": "LR-57 Combat Droid",
+    "description": "LR-57 Combat Droid, fourth-degree utility droid, walking chassis, modest durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "nr-1100-slicer-droid",
+    "id": "41075645cfa903ba",
+    "name": "NR-1100 Slicer Droid",
+    "description": "NR-1100 Slicer Droid, second-degree utility droid, hovering chassis, modest durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "sp-4-analysis-droid",
+    "id": "4344dced4548f220",
+    "name": "SP-4 Analysis Droid",
+    "description": "SP-4 Analysis Droid, first-degree utility droid, walking chassis, fragile durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "s19-astromech-droid",
+    "id": "4375445748385b1f",
+    "name": "S19 Astromech Droid",
+    "description": "S19 Astromech Droid, second-degree astromech droid, tracked chassis, fragile durability, basic combat tools. A compact mechanic with opinions, tools, and a dangerous amount of initiative for something this short."
+  },
+  {
+    "slug": "5-bt-threat-analysis-droid",
+    "id": "480b2a32a6a3ea82",
+    "name": "5-BT Threat Analysis Droid",
+    "description": "5-BT Threat Analysis Droid, first-degree utility droid, hovering chassis, fragile durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "gd16-series-pilot-droid",
+    "id": "4885e536eae4060e",
+    "name": "GD16-Series Pilot Droid",
+    "description": "GD16-Series Pilot Droid, fifth-degree utility droid, walking chassis, solid durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "buzz-droid",
+    "id": "496dbea2439e53d4",
+    "name": "Buzz Droid",
+    "description": "Buzz Droid, fourth-degree utility droid, flying chassis, solid durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "dsd1-dwarf-spider-droid",
+    "id": "52995c4bc843714c",
+    "name": "DSD1 Dwarf Spider Droid",
+    "description": "DSD1 Dwarf Spider Droid, fourth-degree utility droid, walking chassis, modest durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "x-1-viper-droid",
+    "id": "53b57e9a21601917",
+    "name": "X-1 Viper Droid",
+    "description": "X-1 Viper Droid, fourth-degree utility droid, walking chassis, heavy durability, heavy weapons package. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "fsd-6d-surveillance-droid",
+    "id": "54264cb25b57cefb",
+    "name": "FSD-6D Surveillance Droid",
+    "description": "FSD-6D Surveillance Droid, fourth-degree utility droid, flying chassis, solid durability, armed package. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "ix-6-heavy-combat-droid",
+    "id": "542c5a4dc31b2406",
+    "name": "IX-6 Heavy Combat Droid",
+    "description": "IX-6 Heavy Combat Droid, fourth-degree utility droid, walking chassis, solid durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "ig-86-sentinel-droid",
+    "id": "54d16f274bd15fd8",
+    "name": "IG-86 Sentinel Droid",
+    "description": "IG-86 Sentinel Droid, fourth-degree utility droid, walking chassis, modest durability, armed package. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "mark-iv-assault-droid",
+    "id": "555727a7e78c41c4",
+    "name": "Mark IV Assault Droid",
+    "description": "Mark IV Assault Droid, fourth-degree utility droid, walking chassis, solid durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "e522-assassin-droid",
+    "id": "57a5e7414a94a073",
+    "name": "E522 Assassin Droid",
+    "description": "E522 Assassin Droid, fourth-degree assassin droid, tracked chassis, heavy durability, heavy weapons package. Factory-built for deniable homicide and the sort of silence management that keeps careers moving."
+  },
+  {
+    "slug": "gy-i-information-analysis-droid",
+    "id": "57f7b1bec812e3a5",
+    "name": "GY-I Information Analysis Droid",
+    "description": "GY-I Information Analysis Droid, third-degree utility droid, walking chassis, modest durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "8d-smelter-droid",
+    "id": "58de8bb1bee46be5",
+    "name": "8D Smelter Droid",
+    "description": "8D Smelter Droid, fifth-degree utility droid, walking chassis, fragile durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "pg-5-gunnery-droid",
+    "id": "58ff485d198fa06f",
+    "name": "PG-5 Gunnery Droid",
+    "description": "PG-5 Gunnery Droid, second-degree utility droid, wheeled chassis, modest durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "probe-droid",
+    "id": "591ede17771d08c1",
+    "name": "Probe Droid",
+    "description": "Probe Droid, unclassified probe droid, fixed chassis, basic combat tools. A tidy surveillance package for employers who prefer their paranoia airborne."
+  },
+  {
+    "slug": "g0-t0-infrastructure-planning-droid",
+    "id": "5bef6dc47b6d0098",
+    "name": "G0-T0 Infrastructure-Planning Droid",
+    "description": "G0-T0 Infrastructure-Planning Droid, second-degree utility droid, hovering chassis, fragile durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "3z3-medical-droid",
+    "id": "5e97f6920c5d6790",
+    "name": "3Z3 Medical Droid",
+    "description": "3Z3 Medical Droid, first-degree medical droid, walking chassis, fragile durability, basic combat tools. For clinics, battlefields, and employers who think organic pain should be delegated."
+  },
+  {
+    "slug": "tc-series-protocol-droid",
+    "id": "601b62d4ff595e9c",
+    "name": "TC-Series Protocol Droid",
+    "description": "TC-Series Protocol Droid, third-degree protocol droid, walking chassis, modest durability, basic combat tools. The preferred model for buyers who want panic delivered in six million forms of politeness."
+  },
+  {
+    "slug": "t4-turret-droid",
+    "id": "60be55c70da399b1",
+    "name": "T4 Turret Droid",
+    "description": "T4 Turret Droid, fourth-degree utility droid, walking chassis, modest durability, heavy weapons package. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "gh-7-medical-droid",
+    "id": "60c47cfc08d7deb4",
+    "name": "GH-7 Medical Droid",
+    "description": "GH-7 Medical Droid, first-degree medical droid, hovering chassis, fragile durability, basic combat tools. For clinics, battlefields, and employers who think organic pain should be delegated."
+  },
+  {
+    "slug": "feg-series-pilot-droid",
+    "id": "63715c48433f2806",
+    "name": "FEG-Series Pilot Droid",
+    "description": "FEG-Series Pilot Droid, second-degree utility droid, walking chassis, modest durability, armed package. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "brute-junk-droid",
+    "id": "645446394a5e5ccc",
+    "name": "Brute Junk Droid",
+    "description": "Brute Junk Droid, fourth-degree utility droid, walking chassis, solid durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "tc-sc-infiltration-droid",
+    "id": "65dd33b2c671a897",
+    "name": "TC-SC Infiltration Droid",
+    "description": "TC-SC Infiltration Droid, fourth-degree utility droid, walking chassis, modest durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "mark-i-patrol-droid",
+    "id": "6618a93fa83ff4b6",
+    "name": "Mark I Patrol Droid",
+    "description": "Mark I Patrol Droid, fourth-degree utility droid, hovering chassis, fragile durability, armed package. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "p2-series-astromech-droid",
+    "id": "6690525f8fec8b3a",
+    "name": "P2-Series Astromech Droid",
+    "description": "P2-Series Astromech Droid, second-degree astromech droid, wheeled chassis, fragile durability, basic combat tools. A compact mechanic with opinions, tools, and a dangerous amount of initiative for something this short."
+  },
+  {
+    "slug": "holocam-droid",
+    "id": "672eec7f0347c8ed",
+    "name": "Holocam Droid",
+    "description": "Holocam Droid, second-degree utility droid, hovering chassis, fragile durability. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "f1-exploration-droid",
+    "id": "69a2e074d7442dbd",
+    "name": "F1 Exploration Droid",
+    "description": "F1 Exploration Droid, fifth-degree utility droid, walking chassis, modest durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "a-series-medical-droid",
+    "id": "6be667ae63e303ee",
+    "name": "A-Series Medical Droid",
+    "description": "A-Series Medical Droid, first-degree medical droid, walking chassis, modest durability, basic combat tools. Clean bedside manner sold separately, but the tools are excellent."
+  },
+  {
+    "slug": "lep-service-droid",
+    "id": "6f2487c5d9fac65a",
+    "name": "LEP Service Droid",
+    "description": "LEP Service Droid, third-degree utility droid, walking chassis, fragile durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "security-droid",
+    "id": "7207a1e0106c5a1e",
+    "name": "Security Droid",
+    "description": "Security Droid, unclassified security droid, fixed chassis, basic combat tools. For buyers who call suspicion a customer service philosophy."
+  },
+  {
+    "slug": "cz-series-secretary-droid",
+    "id": "720a91b9ab9aaef6",
+    "name": "CZ-Series Secretary Droid",
+    "description": "CZ-Series Secretary Droid, third-degree utility droid, walking chassis, fragile durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "11-17-series-mining-droid",
+    "id": "72395550978edc04",
+    "name": "11-17-Series Mining Droid",
+    "description": "11-17-Series Mining Droid, fifth-degree labor droid, tracked chassis, fragile durability, basic combat tools. A sturdy industrial answer to work nobody wants to do twice."
+  },
+  {
+    "slug": "x-training-droid",
+    "id": "73adaa9462a1ef35",
+    "name": "X Training Droid",
+    "description": "X Training Droid, unclassified utility droid, fixed chassis, armed package. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "gnk-series-power-droid",
+    "id": "73edb07a67b6fe9c",
+    "name": "GNK-Series Power Droid",
+    "description": "GNK-Series Power Droid, fifth-degree utility droid, walking chassis, fragile durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "dt-16-destructor-battle-droid",
+    "id": "747cee85e62c1cae",
+    "name": "DT-16 \"Destructor\" Battle Droid",
+    "description": "DT-16 \"Destructor\" Battle Droid, unclassified battle droid, fixed chassis, heavy weapons package. Perfect for commanders who want obedience, volume, and fewer questions than a clone would ask."
+  },
+  {
+    "slug": "r-4-recon-droid",
+    "id": "7551abb0e914a6da",
+    "name": "R-4 Recon Droid",
+    "description": "R-4 Recon Droid, fourth-degree utility droid, hovering chassis, fragile durability, armed package. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "devastator-war-droid",
+    "id": "76a55fecf7c3bbc2",
+    "name": "Devastator War Droid",
+    "description": "Devastator War Droid, fourth-degree utility droid, walking chassis, solid durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "lv8-series-guard-droid",
+    "id": "793dd3872738203d",
+    "name": "LV8-Series Guard Droid",
+    "description": "LV8-Series Guard Droid, fourth-degree utility droid, walking chassis, modest durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "pk-worker-droid",
+    "id": "79c5ea6553c3c644",
+    "name": "PK Worker Droid",
+    "description": "PK Worker Droid, fifth-degree utility droid, walking chassis, modest durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "ad-series-weapons-maintenance-droid",
+    "id": "7a6cfec45fe3d6a5",
+    "name": "AD-Series Weapons Maintenance Droid",
+    "description": "AD-Series Weapons Maintenance Droid, first-degree maintenance droid, hovering chassis, modest durability, basic combat tools. Built to fix the ship, the wiring, or the consequences of your last idea."
+  },
+  {
+    "slug": "ei-9-network-security-droid",
+    "id": "7bb92955fe42cdc2",
+    "name": "EI-9 Network Security Droid",
+    "description": "EI-9 Network Security Droid, second-degree security droid, walking chassis, solid durability, armed package. A fine purchase if you believe hospitality should include checkpoints."
+  },
+  {
+    "slug": "sabacc-dealer-droid",
+    "id": "7ced0246eecb3a42",
+    "name": "Sabacc Dealer Droid",
+    "description": "Sabacc Dealer Droid, first-degree utility droid, fixed chassis, modest durability, armed package. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "b2-ha-series-super-battle-droid",
+    "id": "7e6f68841c6529b6",
+    "name": "B2-HA-Series Super Battle Droid",
+    "description": "B2-HA-Series Super Battle Droid, fourth-degree battle droid, walking chassis, solid durability, heavy weapons package. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "maintenance-droid",
+    "id": "7ec12cdd395593fe",
+    "name": "Maintenance Droid",
+    "description": "Maintenance Droid, unclassified maintenance droid, fixed chassis. For buyers who need a toolkit that can follow orders."
+  },
+  {
+    "slug": "bt-16-perimeter-security-droid",
+    "id": "806a15ebd611628b",
+    "name": "BT-16 Perimeter Security Droid",
+    "description": "BT-16 Perimeter Security Droid, fourth-degree security droid, walking chassis, solid durability, autofire package. For buyers who call suspicion a customer service philosophy."
+  },
+  {
+    "slug": "88-series-administration-droid",
+    "id": "8174aef071163519",
+    "name": "88-Series Administration Droid",
+    "description": "88-Series Administration Droid, first-degree utility droid, walking chassis, modest durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "a9g-series-archive-droid",
+    "id": "820b79bc8916569e",
+    "name": "A9G-Series Archive Droid",
+    "description": "A9G-Series Archive Droid, first-degree utility droid, walking chassis, fragile durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "xk-v8-excavation-droid",
+    "id": "8348b69990e406b5",
+    "name": "XK-V8 Excavation Droid",
+    "description": "XK-V8 Excavation Droid, fifth-degree utility droid, walking chassis, modest durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "eradicator-series-battle-droid",
+    "id": "840c3fdd3650a47f",
+    "name": "Eradicator-Series Battle Droid",
+    "description": "Eradicator-Series Battle Droid, fourth-degree battle droid, walking chassis, modest durability, autofire package. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "b2-aa-air-assault-super-battle-droid",
+    "id": "8427d6d203b45d80",
+    "name": "B2-AA Air Assault Super Battle Droid",
+    "description": "B2-AA Air Assault Super Battle Droid, fourth-degree battle droid, jet-assisted chassis, modest durability, armed package. Perfect for commanders who want obedience, volume, and fewer questions than a clone would ask."
+  },
+  {
+    "slug": "mse-6-repair-droid",
+    "id": "852ed7a4f928ffde",
+    "name": "MSE-6 Repair Droid",
+    "description": "MSE-6 Repair Droid, fifth-degree maintenance droid, wheeled chassis, fragile durability, basic combat tools. Excellent for upkeep, patchwork, and silent judgment of your maintenance habits."
+  },
+  {
+    "slug": "hv-7-loading-droid",
+    "id": "85d9b1f73fc97dc7",
+    "name": "HV-7 Loading Droid",
+    "description": "HV-7 Loading Droid, fifth-degree utility droid, hovering chassis, fragile durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "rakatan-guardian-droid",
+    "id": "868b8592e6c0aac6",
+    "name": "Rakatan Guardian Droid",
+    "description": "Rakatan Guardian Droid, fourth-degree utility droid, walking chassis, solid durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "oom-series-battle-droid",
+    "id": "86a7b6e5e2168e85",
+    "name": "OOM-Series Battle Droid",
+    "description": "OOM-Series Battle Droid, fourth-degree battle droid, walking chassis, modest durability, armed package. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "t0-d-interrogation-droid",
+    "id": "86ec0384fbb1a08a",
+    "name": "T0-D Interrogation Droid",
+    "description": "T0-D Interrogation Droid, first-degree utility droid, wheeled chassis, modest durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "mr-200-series-minesweeper-droid",
+    "id": "875201235523d5dd",
+    "name": "MR-200-Series Minesweeper Droid",
+    "description": "MR-200-Series Minesweeper Droid, fifth-degree utility droid, hovering chassis, solid durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "ca-b2-cold-assault-battle-droid",
+    "id": "895b51eed243a45d",
+    "name": "CA-B2 Cold Assault Battle Droid",
+    "description": "CA-B2 Cold Assault Battle Droid, fourth-degree battle droid, walking chassis, modest durability, armed package. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "az-series-battle-droid",
+    "id": "89e83b7c9a128d27",
+    "name": "AZ-Series Battle Droid",
+    "description": "AZ-Series Battle Droid, fourth-degree battle droid, walking chassis, heavy durability, armed package. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "gg-series-hospitality-droid",
+    "id": "8a5101c0b51cd2dd",
+    "name": "GG-Series Hospitality Droid",
+    "description": "GG-Series Hospitality Droid, third-degree utility droid, walking chassis, fragile durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "plnk-series-power-droid",
+    "id": "8b0f82d985ea3401",
+    "name": "PLNK-Series Power Droid",
+    "description": "PLNK-Series Power Droid, fifth-degree utility droid, walking chassis, fragile durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "yvh-battle-droid",
+    "id": "8d3ba74f7dae08e2",
+    "name": "YVH Battle Droid",
+    "description": "YVH Battle Droid, fourth-degree battle droid, walking chassis, solid durability, armed package. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "infiltrator-series-droid",
+    "id": "8d4d7a30226b8839",
+    "name": "Infiltrator-Series Droid",
+    "description": "Infiltrator-Series Droid, fourth-degree utility droid, walking chassis, solid durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "imperial-espionage-droid",
+    "id": "8e031fcedd699624",
+    "name": "Imperial Espionage Droid",
+    "description": "Imperial Espionage Droid, third-degree espionage droid, walking chassis, fragile durability, basic combat tools. Built to overhear the room and outlive the meeting minutes."
+  },
+  {
+    "slug": "mrd-39b-assassin-droid",
+    "id": "900767ab8c9d0c15",
+    "name": "MRD-39B Assassin Droid",
+    "description": "MRD-39B Assassin Droid, fourth-degree assassin droid, walking chassis, solid durability, armed package. A premium murder appliance for clients who prefer their betrayals punctual."
+  },
+  {
+    "slug": "droideka-mk-ii-destroyer-droid",
+    "id": "917cbcbc5d1f76ad",
+    "name": "Droideka Mk II Destroyer Droid",
+    "description": "Droideka Mk II Destroyer Droid, fourth-degree destroyer droid, wheeled chassis, heavy durability, armed package. For commanders who want suppression fire to arrive pre-folded."
+  },
+  {
+    "slug": "eg-6-power-droid",
+    "id": "92ce7ae00cfbdeed",
+    "name": "EG-6 Power Droid",
+    "description": "EG-6 Power Droid, fifth-degree utility droid, walking chassis, fragile durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "krath-war-droid",
+    "id": "932c593917021af9",
+    "name": "Krath War Droid",
+    "description": "Krath War Droid, fourth-degree utility droid, walking chassis, modest durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "r-8009-utility-droid",
+    "id": "95642a5452cd1a0d",
+    "name": "R-8009 Utility Droid",
+    "description": "R-8009 Utility Droid, fifth-degree utility droid, hovering chassis, fragile durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "as23-aerial-survey-droid",
+    "id": "9a23cbfa06eeb7ef",
+    "name": "AS23 Aerial Survey Droid",
+    "description": "AS23 Aerial Survey Droid, third-degree utility droid, flying chassis, fragile durability. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "bd-3000-luxury-droid",
+    "id": "9ac2479e02ffae34",
+    "name": "BD-3000 Luxury Droid",
+    "description": "BD-3000 Luxury Droid, third-degree utility droid, walking chassis, fragile durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "xlt-014-labor-droid",
+    "id": "9d4c0dc59699a9e6",
+    "name": "XLT-014 Labor Droid",
+    "description": "XLT-014 Labor Droid, fifth-degree labor droid, hovering chassis, fragile durability, basic combat tools. A warehouse classic for managers who think backs are overrated."
+  },
+  {
+    "slug": "jk-13-security-droid",
+    "id": "9e8bcb290ea3dd4b",
+    "name": "JK-13 Security Droid",
+    "description": "JK-13 Security Droid, fourth-degree security droid, walking chassis, heavy durability, basic combat tools. For buyers who call suspicion a customer service philosophy."
+  },
+  {
+    "slug": "gx1-series-battle-droid",
+    "id": "a1772643884db41f",
+    "name": "GX1-Series Battle Droid",
+    "description": "GX1-Series Battle Droid, fourth-degree battle droid, walking chassis, solid durability, armed package. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "blx-labor-droid",
+    "id": "a302ea1630237849",
+    "name": "BLX Labor Droid",
+    "description": "BLX Labor Droid, fifth-degree labor droid, walking chassis, fragile durability, basic combat tools. A warehouse classic for managers who think backs are overrated."
+  },
+  {
+    "slug": "c-b3-cortosis-battle-droid",
+    "id": "a33f9cdb9d85ea68",
+    "name": "C-B3 Cortosis Battle Droid",
+    "description": "C-B3 Cortosis Battle Droid, fourth-degree battle droid, walking chassis, solid durability, armed package. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "m4-series-messenger-droid",
+    "id": "a45746ea6916df8f",
+    "name": "M4-Series Messenger Droid",
+    "description": "M4-Series Messenger Droid, third-degree utility droid, flying chassis, fragile durability, armed package. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "ev-series-supervisor-droid",
+    "id": "a561802871c1aa2e",
+    "name": "EV-Series Supervisor Droid",
+    "description": "EV-Series Supervisor Droid, third-degree utility droid, walking chassis, fragile durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "t-series-tactical-droid",
+    "id": "a562c7a1ea3c6839",
+    "name": "T-Series Tactical Droid",
+    "description": "T-Series Tactical Droid, fourth-degree utility droid, walking chassis, modest durability, armed package. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "wsb-15-sabotage-droid",
+    "id": "a58dc3367c2b2f3e",
+    "name": "WSB-15 Sabotage Droid",
+    "description": "WSB-15 Sabotage Droid, fourth-degree utility droid, tracked chassis, solid durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "pit-droid",
+    "id": "a7f6d12608f6a5f6",
+    "name": "Pit Droid",
+    "description": "Pit Droid, second-degree utility droid, walking chassis, fragile durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "pi-series-medical-assistant-droid",
+    "id": "ac6ef021fb7c8e02",
+    "name": "PI-Series Medical Assistant Droid",
+    "description": "PI-Series Medical Assistant Droid, first-degree medical droid, hovering chassis, fragile durability, basic combat tools. A very steady pair of hands for situations that have already gone badly."
+  },
+  {
+    "slug": "pk-2m-mining-droid",
+    "id": "acb9e30dcae8a4e5",
+    "name": "PK-2M Mining Droid",
+    "description": "PK-2M Mining Droid, fifth-degree labor droid, walking chassis, modest durability, basic combat tools. Perfect for customers who hear hazard pay and start looking for alternatives."
+  },
+  {
+    "slug": "k-x12-probe-droid",
+    "id": "adb083927f371330",
+    "name": "K-X12 Probe Droid",
+    "description": "K-X12 Probe Droid, fourth-degree probe droid, hovering chassis, fragile durability, armed package. For buyers who consider privacy an obstacle rather than a principle."
+  },
+  {
+    "slug": "le-series-repair-droid",
+    "id": "ae2cb5c31be89b53",
+    "name": "LE-Series Repair Droid",
+    "description": "LE-Series Repair Droid, second-degree maintenance droid, walking chassis, fragile durability, basic combat tools. Excellent for upkeep, patchwork, and silent judgment of your maintenance habits."
+  },
+  {
+    "slug": "it-0-interrogator-droid",
+    "id": "af04ffc275d87645",
+    "name": "IT-0 Interrogator Droid",
+    "description": "IT-0 Interrogator Droid, second-degree interrogation droid, hovering chassis, modest durability, armed package. A tasteful little reminder that some professions should have stayed hypothetical."
+  },
+  {
+    "slug": "r2-series-astromech-droid",
+    "id": "af71e64a8802bc62",
+    "name": "R2-Series Astromech Droid",
+    "description": "R2-Series Astromech Droid, second-degree astromech droid, flying chassis, fragile durability, basic combat tools. For pilots who want loyalty, diagnostics, and occasional emotional blackmail in one cylinder."
+  },
+  {
+    "slug": "shadow-droid",
+    "id": "b2a42a82322eaacd",
+    "name": "Shadow Droid",
+    "description": "Shadow Droid, fourth-degree utility droid, flying chassis, heavy durability, heavy weapons package. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "mule-droid",
+    "id": "b2e515be636b71d2",
+    "name": "MULE Droid",
+    "description": "MULE Droid, fifth-degree utility droid, hovering chassis, fragile durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "z65-patrol-droid",
+    "id": "b4b1aa32607adcb1",
+    "name": "Z65 Patrol Droid",
+    "description": "Z65 Patrol Droid, fourth-degree utility droid, walking chassis, modest durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "droideka-series-ultra-destroyer-droid",
+    "id": "b54f7fbb69bc4158",
+    "name": "Droideka-Series Ultra Destroyer Droid",
+    "description": "Droideka-Series Ultra Destroyer Droid, fourth-degree destroyer droid, wheeled chassis, solid durability, autofire package. Compact, theatrical, and deeply committed to escalating the room."
+  },
+  {
+    "slug": "hk-77-assassin-droid",
+    "id": "b58ed0896362100e",
+    "name": "HK-77 Assassin Droid",
+    "description": "HK-77 Assassin Droid, fourth-degree assassin droid, walking chassis, solid durability, armed package. A premium murder appliance for clients who prefer their betrayals punctual."
+  },
+  {
+    "slug": "m38-series-explorer-droid",
+    "id": "b95c8c88f1f002c1",
+    "name": "M38-Series Explorer Droid",
+    "description": "M38-Series Explorer Droid, second-degree utility droid, tracked chassis, modest durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "q7-series-astromech-droid",
+    "id": "bf2a02322b8ed642",
+    "name": "Q7-Series Astromech Droid",
+    "description": "Q7-Series Astromech Droid, second-degree astromech droid, hovering chassis, fragile durability, basic combat tools. Small chassis, big utility, and the sort of attachment owners swear they are not developing."
+  },
+  {
+    "slug": "r3-series-astromech-droid",
+    "id": "bfedd297b16f60f2",
+    "name": "R3-Series Astromech Droid",
+    "description": "R3-Series Astromech Droid, second-degree astromech droid, wheeled chassis, fragile durability, basic combat tools. A compact mechanic with opinions, tools, and a dangerous amount of initiative for something this short."
+  },
+  {
+    "slug": "b2-gr-series-super-battle-droid",
+    "id": "c133df78c1011d2a",
+    "name": "B2-GR-Series Super Battle Droid",
+    "description": "B2-GR-Series Super Battle Droid, fourth-degree battle droid, walking chassis, solid durability, basic combat tools. Perfect for commanders who want obedience, volume, and fewer questions than a clone would ask."
+  },
+  {
+    "slug": "hkb-3-hunter-killer-droid",
+    "id": "c23355ec28d87e31",
+    "name": "HKB-3 Hunter-Killer Droid",
+    "description": "HKB-3 Hunter-Killer Droid, fourth-degree utility droid, walking chassis, modest durability, armed package. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "mk-series-maintenance-droid",
+    "id": "c31efa8505462180",
+    "name": "MK-Series Maintenance Droid",
+    "description": "MK-Series Maintenance Droid, second-degree maintenance droid, tracked chassis, modest durability, basic combat tools. Built to fix the ship, the wiring, or the consequences of your last idea."
+  },
+  {
+    "slug": "rx-series-pilot-droid",
+    "id": "c9506459353f4e1b",
+    "name": "RX-Series Pilot Droid",
+    "description": "RX-Series Pilot Droid, second-degree utility droid, hovering chassis, fragile durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "fx-6-medical-assistance-droid",
+    "id": "c9e15e74df580272",
+    "name": "FX-6 Medical Assistance Droid",
+    "description": "FX-6 Medical Assistance Droid, first-degree medical droid, tracked chassis, fragile durability, basic combat tools. A very steady pair of hands for situations that have already gone badly."
+  },
+  {
+    "slug": "fa-4-pilot-droid",
+    "id": "ca2b88abea754169",
+    "name": "FA-4 Pilot Droid",
+    "description": "FA-4 Pilot Droid, second-degree utility droid, wheeled chassis, fragile durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "r7-series-astromech-droid",
+    "id": "cb14ac075dd8c7d7",
+    "name": "R7-Series Astromech Droid",
+    "description": "R7-Series Astromech Droid, second-degree astromech droid, wheeled chassis, modest durability, basic combat tools. For pilots who want loyalty, diagnostics, and occasional emotional blackmail in one cylinder."
+  },
+  {
+    "slug": "h-1me-battle-mechanic-droid",
+    "id": "cb4623db84f6191e",
+    "name": "H-1ME Battle Mechanic Droid",
+    "description": "H-1ME Battle Mechanic Droid, second-degree battle droid, walking chassis, modest durability, basic combat tools. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "ew-3-midwife-droid",
+    "id": "cb5e1b8aae371217",
+    "name": "EW-3 Midwife Droid",
+    "description": "EW-3 Midwife Droid, first-degree utility droid, hovering chassis, fragile durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "t3-series-utility-droid",
+    "id": "cb64a22efe403163",
+    "name": "T3-Series Utility Droid",
+    "description": "T3-Series Utility Droid, second-degree utility droid, wheeled chassis, fragile durability, basic combat tools. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "kdy-4-tech-droid",
+    "id": "ceea238d8afef2a8",
+    "name": "KDY-4 Tech Droid",
+    "description": "KDY-4 Tech Droid, second-degree utility droid, walking chassis, fragile durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "shadow-security-droid",
+    "id": "d18f615e76f42e10",
+    "name": "Shadow Security Droid",
+    "description": "Shadow Security Droid, fourth-degree security droid, flying chassis, heavy durability, autofire package. Ideal for owners who want every hallway to feel mildly accused."
+  },
+  {
+    "slug": "r-1-recon-droid",
+    "id": "d464923ab5d2babc",
+    "name": "R-1 Recon Droid",
+    "description": "R-1 Recon Droid, fourth-degree utility droid, hovering chassis, modest durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "b1-series-battle-droid",
+    "id": "d5c5daf4f401b776",
+    "name": "B1-Series Battle Droid",
+    "description": "B1-Series Battle Droid, fourth-degree battle droid, walking chassis, fragile durability, armed package. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "evs-construction-droid",
+    "id": "d6339ec28a58755a",
+    "name": "EVS Construction Droid",
+    "description": "EVS Construction Droid, fifth-degree utility droid, walking chassis, heavy durability, armed package. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "sd-x-stealth-battle-droid",
+    "id": "d6500d615e92ae16",
+    "name": "SD-X Stealth Battle Droid",
+    "description": "SD-X Stealth Battle Droid, fourth-degree battle droid, walking chassis, solid durability, armed package. Perfect for commanders who want obedience, volume, and fewer questions than a clone would ask."
+  },
+  {
+    "slug": "aggressor-series-battle-droid",
+    "id": "d774b4c6d6830639",
+    "name": "Aggressor-Series Battle Droid",
+    "description": "Aggressor-Series Battle Droid, fourth-degree battle droid, walking chassis, modest durability, basic combat tools. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "m-3po-series-protocol-droid",
+    "id": "d9941e2ab2e505e6",
+    "name": "M-3PO-Series Protocol Droid",
+    "description": "M-3PO-Series Protocol Droid, third-degree protocol droid, walking chassis, fragile durability, basic combat tools. Elegant manners, endless translations, and just enough personality to become somebody else's problem."
+  },
+  {
+    "slug": "spelunker-probe-droid",
+    "id": "da58493c166be763",
+    "name": "Spelunker Probe Droid",
+    "description": "Spelunker Probe Droid, fourth-degree probe droid, walking chassis, modest durability, armed package. For buyers who consider privacy an obstacle rather than a principle."
+  },
+  {
+    "slug": "sd-9-battle-droid",
+    "id": "dba50f4640e22c5c",
+    "name": "SD-9 Battle Droid",
+    "description": "SD-9 Battle Droid, fourth-degree battle droid, walking chassis, heavy durability, autofire package. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "vx-series-artillery-droid",
+    "id": "dda2c68205846f4c",
+    "name": "VX-Series Artillery Droid",
+    "description": "VX-Series Artillery Droid, fourth-degree utility droid, tracked chassis, heavy durability, heavy weapons package. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "a-dsd-advanced-dwarf-spider-droid",
+    "id": "ddfd9b7e0b43cfb6",
+    "name": "A-DSD Advanced Dwarf Spider Droid",
+    "description": "A-DSD Advanced Dwarf Spider Droid, fourth-degree utility droid, walking chassis, solid durability, armed package. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "b2-series-super-battle-droid",
+    "id": "e1c9f735b6bf9f33",
+    "name": "B2-Series Super Battle Droid",
+    "description": "B2-Series Super Battle Droid, fourth-degree battle droid, walking chassis, modest durability, armed package. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "lm-432-muckraker-crab-droid",
+    "id": "e391bc0dec6c8034",
+    "name": "LM-432 \"Muckraker\" Crab Droid",
+    "description": "LM-432 \"Muckraker\" Crab Droid, unclassified utility droid, fixed chassis, armed package. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "r4-series-astromech-droid",
+    "id": "e3ff855f4ce96c56",
+    "name": "R4-Series Astromech Droid",
+    "description": "R4-Series Astromech Droid, second-degree astromech droid, wheeled chassis, fragile durability, basic combat tools. For pilots who want loyalty, diagnostics, and occasional emotional blackmail in one cylinder."
+  },
+  {
+    "slug": "im-6-medical-droid",
+    "id": "e4f542788ff01596",
+    "name": "IM-6 Medical Droid",
+    "description": "IM-6 Medical Droid, first-degree medical droid, hovering chassis, fragile durability, basic combat tools. A very steady pair of hands for situations that have already gone badly."
+  },
+  {
+    "slug": "de-training-droid",
+    "id": "e56173b369a17c07",
+    "name": "DE Training Droid",
+    "description": "DE Training Droid, fourth-degree utility droid, walking chassis, modest durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "mark-iv-sentry-droid",
+    "id": "e5ad4c20dbafdb2f",
+    "name": "Mark IV Sentry Droid",
+    "description": "Mark IV Sentry Droid, fourth-degree utility droid, hovering chassis, modest durability. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "grz-6b-demolitions-droid",
+    "id": "e954247a452663d9",
+    "name": "GRZ-6B Demolitions Droid",
+    "description": "GRZ-6B Demolitions Droid, fifth-degree utility droid, walking chassis, heavy durability, basic combat tools. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "3po-series-protocol-droid",
+    "id": "ea17aa5e6fad78ef",
+    "name": "3PO-Series Protocol Droid",
+    "description": "3PO-Series Protocol Droid, third-degree protocol droid, walking chassis, fragile durability, basic combat tools. Elegant manners, endless translations, and just enough personality to become somebody else's problem."
+  },
+  {
+    "slug": "fx-7-medical-droid",
+    "id": "ec59206e49bb7fbd",
+    "name": "FX-7 Medical Droid",
+    "description": "FX-7 Medical Droid, first-degree medical droid, fixed chassis, fragile durability, basic combat tools. For clinics, battlefields, and employers who think organic pain should be delegated."
+  },
+  {
+    "slug": "b3-a-series-ultra-battle-droid",
+    "id": "ec990103dbc4e804",
+    "name": "B3-A-Series Ultra Battle Droid",
+    "description": "B3-A-Series Ultra Battle Droid, fourth-degree battle droid, walking chassis, heavy durability, heavy weapons package. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "r2-r-series-astromech-droid",
+    "id": "ece3bfeabdffbc63",
+    "name": "R2-R-Series Astromech Droid",
+    "description": "R2-R-Series Astromech Droid, second-degree astromech droid, wheeled chassis, modest durability, armed package. A compact mechanic with opinions, tools, and a dangerous amount of initiative for something this short."
+  },
+  {
+    "slug": "ra-7-protocol-droid",
+    "id": "f011c4ed38879500",
+    "name": "RA-7 Protocol Droid",
+    "description": "RA-7 Protocol Droid, third-degree protocol droid, walking chassis, fragile durability, basic combat tools. For households that need etiquette, diplomacy, and an extra witness with polished plating."
+  },
+  {
+    "slug": "chiba-dr-10-protocol-droid",
+    "id": "f1f38226bc9215f3",
+    "name": "Chiba DR-10 Protocol Droid",
+    "description": "Chiba DR-10 Protocol Droid, third-degree protocol droid, hovering chassis, fragile durability, armed package. The preferred model for buyers who want panic delivered in six million forms of politeness."
+  },
+  {
+    "slug": "juggernaut-war-droid",
+    "id": "f2fed9f7f114dc87",
+    "name": "Juggernaut War Droid",
+    "description": "Juggernaut War Droid, fourth-degree utility droid, jet-assisted chassis, modest durability, armed package. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "2-1b-medical-droid",
+    "id": "f33f22a717031d35",
+    "name": "2-1B Medical Droid",
+    "description": "2-1B Medical Droid, first-degree medical droid, walking chassis, fragile durability, basic combat tools. For clinics, battlefields, and employers who think organic pain should be delegated."
+  },
+  {
+    "slug": "mark-i-sentinel-droid",
+    "id": "f42c7c088bff1935",
+    "name": "Mark I Sentinel Droid",
+    "description": "Mark I Sentinel Droid, fourth-degree utility droid, walking chassis, fragile durability, armed package. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "roving-eye-observation-droid",
+    "id": "f4d6f71ba980e79a",
+    "name": "Roving Eye Observation Droid",
+    "description": "Roving Eye Observation Droid, second-degree utility droid, hovering chassis, fragile durability. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "bt7-series-valet-droid",
+    "id": "f74f3aa9fbefef62",
+    "name": "BT7-Series Valet Droid",
+    "description": "BT7-Series Valet Droid, third-degree service droid, walking chassis, fragile durability, basic combat tools. For owners who want convenience plated and standing by."
+  },
+  {
+    "slug": "bl-39-interrogator-droid",
+    "id": "f83394c4e64ece68",
+    "name": "BL-39 Interrogator Droid",
+    "description": "BL-39 Interrogator Droid, first-degree interrogation droid, hovering chassis, fragile durability, armed package. Built to ask follow-up questions nobody enjoys answering."
+  },
+  {
+    "slug": "fiii-footman-droid",
+    "id": "f9b248f8d74286aa",
+    "name": "FIII Footman Droid",
+    "description": "FIII Footman Droid, fourth-degree utility droid, walking chassis, solid durability, basic combat tools. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "r5-series-astromech-droid",
+    "id": "fc64b4e2269200da",
+    "name": "R5-Series Astromech Droid",
+    "description": "R5-Series Astromech Droid, second-degree astromech droid, wheeled chassis, fragile durability, basic combat tools. For pilots who want loyalty, diagnostics, and occasional emotional blackmail in one cylinder."
+  },
+  {
+    "slug": "0-lt-utility-droid",
+    "id": "npc-0-lt_utility_droid",
+    "name": "0-LT Utility Droid",
+    "description": "0-LT Utility Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "11-17-series-mining-droid",
+    "id": "npc-11-17-series_mining_droid",
+    "name": "11-17-Series Mining Droid",
+    "description": "11-17-Series Mining Droid, unclassified labor droid, mobile chassis. Perfect for customers who hear hazard pay and start looking for alternatives."
+  },
+  {
+    "slug": "2-1b-medical-droid",
+    "id": "npc-2-1b_medical_droid",
+    "name": "2-1B Medical Droid",
+    "description": "2-1B Medical Droid, unclassified medical droid, mobile chassis. For clinics, battlefields, and employers who think organic pain should be delegated."
+  },
+  {
+    "slug": "3d-4-administrative-droid",
+    "id": "npc-3d-4_administrative_droid",
+    "name": "3D-4 Administrative Droid",
+    "description": "3D-4 Administrative Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "3po-series-protocol-droid",
+    "id": "npc-3po-series_protocol_droid",
+    "name": "3PO-Series Protocol Droid",
+    "description": "3PO-Series Protocol Droid, unclassified protocol droid, mobile chassis. Elegant manners, endless translations, and just enough personality to become somebody else's problem."
+  },
+  {
+    "slug": "3px-espionage-droid",
+    "id": "npc-3px_espionage_droid",
+    "name": "3PX Espionage Droid",
+    "description": "3PX Espionage Droid, unclassified espionage droid, mobile chassis. For clients who want discretion from a machine they can disavow later."
+  },
+  {
+    "slug": "3z3-medical-droid",
+    "id": "npc-3z3_medical_droid",
+    "name": "3Z3 Medical Droid",
+    "description": "3Z3 Medical Droid, unclassified medical droid, mobile chassis. A very steady pair of hands for situations that have already gone badly."
+  },
+  {
+    "slug": "5-bt-threat-analysis-droid",
+    "id": "npc-5-bt_threat_analysis_droid",
+    "name": "5-BT Threat Analysis Droid",
+    "description": "5-BT Threat Analysis Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "5yq-series-protocol-droid",
+    "id": "npc-5yq-series_protocol_droid",
+    "name": "5YQ-Series Protocol Droid",
+    "description": "5YQ-Series Protocol Droid, unclassified protocol droid, mobile chassis. For households that need etiquette, diplomacy, and an extra witness with polished plating."
+  },
+  {
+    "slug": "88-series-administration-droid",
+    "id": "npc-88-series_administration_droid",
+    "name": "88-Series Administration Droid",
+    "description": "88-Series Administration Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "8d-smelter-droid",
+    "id": "npc-8d_smelter_droid",
+    "name": "8D Smelter Droid",
+    "description": "8D Smelter Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "a-dsd-advanced-dwarf-spider-droid",
+    "id": "npc-a-dsd_advanced_dwarf_spider_droid",
+    "name": "A-DSD Advanced Dwarf Spider Droid",
+    "description": "A-DSD Advanced Dwarf Spider Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "a-series-assassin-droid",
+    "id": "npc-a-series_assassin_droid",
+    "name": "A-Series Assassin Droid",
+    "description": "A-Series Assassin Droid, unclassified assassin droid, mobile chassis. For buyers who want professional violence without the expense of a conscience."
+  },
+  {
+    "slug": "a-series-medical-droid",
+    "id": "npc-a-series_medical_droid",
+    "name": "A-Series Medical Droid",
+    "description": "A-Series Medical Droid, unclassified medical droid, mobile chassis. Clean bedside manner sold separately, but the tools are excellent."
+  },
+  {
+    "slug": "a9g-series-archive-droid",
+    "id": "npc-a9g-series_archive_droid",
+    "name": "A9G-Series Archive Droid",
+    "description": "A9G-Series Archive Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "ad-series-weapons-maintenance-droid",
+    "id": "npc-ad-series_weapons_maintenance_droid",
+    "name": "AD-Series Weapons Maintenance Droid",
+    "description": "AD-Series Weapons Maintenance Droid, unclassified maintenance droid, mobile chassis. Excellent for upkeep, patchwork, and silent judgment of your maintenance habits."
+  },
+  {
+    "slug": "aggressor-series-battle-droid",
+    "id": "npc-aggressor-series_battle_droid",
+    "name": "Aggressor-Series Battle Droid",
+    "description": "Aggressor-Series Battle Droid, unclassified battle droid, mobile chassis. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "as23-aerial-survey-droid",
+    "id": "npc-as23_aerial_survey_droid",
+    "name": "AS23 Aerial Survey Droid",
+    "description": "AS23 Aerial Survey Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "asn-121-assassin-droid",
+    "id": "npc-asn-121_assassin_droid",
+    "name": "ASN-121 Assassin Droid",
+    "description": "ASN-121 Assassin Droid, unclassified assassin droid, mobile chassis. For buyers who want professional violence without the expense of a conscience."
+  },
+  {
+    "slug": "asp-labor-droid",
+    "id": "npc-asp_labor_droid",
+    "name": "ASP Labor Droid",
+    "description": "ASP Labor Droid, unclassified labor droid, mobile chassis. For buyers who want freight moved and feelings kept completely out of it."
+  },
+  {
+    "slug": "az-series-battle-droid",
+    "id": "npc-az-series_battle_droid",
+    "name": "AZ-Series Battle Droid",
+    "description": "AZ-Series Battle Droid, unclassified battle droid, mobile chassis. Perfect for commanders who want obedience, volume, and fewer questions than a clone would ask."
+  },
+  {
+    "slug": "b1-a-air-battle-droid",
+    "id": "npc-b1-a_air_battle_droid",
+    "name": "B1-A Air Battle Droid",
+    "description": "B1-A Air Battle Droid, unclassified battle droid, mobile chassis. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "b1-series-battle-droid",
+    "id": "npc-b1-series_battle_droid",
+    "name": "B1-Series Battle Droid",
+    "description": "B1-Series Battle Droid, unclassified battle droid, mobile chassis. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "b2-aa-air-assault-super-battle-droid",
+    "id": "npc-b2-aa_air_assault_super_battle_droid",
+    "name": "B2-AA Air Assault Super Battle Droid",
+    "description": "B2-AA Air Assault Super Battle Droid, unclassified battle droid, mobile chassis. Perfect for commanders who want obedience, volume, and fewer questions than a clone would ask."
+  },
+  {
+    "slug": "b2-gr-series-super-battle-droid",
+    "id": "npc-b2-gr-series_super_battle_droid",
+    "name": "B2-GR-Series Super Battle Droid",
+    "description": "B2-GR-Series Super Battle Droid, unclassified battle droid, mobile chassis. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "b2-ha-series-super-battle-droid",
+    "id": "npc-b2-ha-series_super_battle_droid",
+    "name": "B2-HA-Series Super Battle Droid",
+    "description": "B2-HA-Series Super Battle Droid, unclassified battle droid, mobile chassis. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "b2-series-super-battle-droid",
+    "id": "npc-b2-series_super_battle_droid",
+    "name": "B2-Series Super Battle Droid",
+    "description": "B2-Series Super Battle Droid, unclassified battle droid, mobile chassis. Perfect for commanders who want obedience, volume, and fewer questions than a clone would ask."
+  },
+  {
+    "slug": "b3-a-series-ultra-battle-droid",
+    "id": "npc-b3-a-series_ultra_battle_droid",
+    "name": "B3-A-Series Ultra Battle Droid",
+    "description": "B3-A-Series Ultra Battle Droid, unclassified battle droid, mobile chassis. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "b3-series-ultra-battle-droid",
+    "id": "npc-b3-series_ultra_battle_droid",
+    "name": "B3-Series Ultra Battle Droid",
+    "description": "B3-Series Ultra Battle Droid, unclassified battle droid, mobile chassis. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "b4j4-security-droid",
+    "id": "npc-b4j4_security_droid",
+    "name": "B4J4 Security Droid",
+    "description": "B4J4 Security Droid, unclassified security droid, mobile chassis. A fine purchase if you believe hospitality should include checkpoints."
+  },
+  {
+    "slug": "bd-3000-luxury-droid",
+    "id": "npc-bd-3000_luxury_droid",
+    "name": "BD-3000 Luxury Droid",
+    "description": "BD-3000 Luxury Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "bd-explorer-droid",
+    "id": "npc-bd_explorer_droid",
+    "name": "BD Explorer Droid",
+    "description": "BD Explorer Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "behemoth-junk-droid",
+    "id": "npc-behemoth_junk_droid",
+    "name": "Behemoth Junk Droid",
+    "description": "Behemoth Junk Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "bl-39-interrogator-droid",
+    "id": "npc-bl-39_interrogator_droid",
+    "name": "BL-39 Interrogator Droid",
+    "description": "BL-39 Interrogator Droid, unclassified interrogation droid, mobile chassis. Built to ask follow-up questions nobody enjoys answering."
+  },
+  {
+    "slug": "bl-series-legionnaire-droid",
+    "id": "npc-bl-series_legionnaire_droid",
+    "name": "BL-Series Legionnaire Droid",
+    "description": "BL-Series Legionnaire Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "blx-labor-droid",
+    "id": "npc-blx_labor_droid",
+    "name": "BLX Labor Droid",
+    "description": "BLX Labor Droid, unclassified labor droid, mobile chassis. A warehouse classic for managers who think backs are overrated."
+  },
+  {
+    "slug": "brute-junk-droid",
+    "id": "npc-brute_junk_droid",
+    "name": "Brute Junk Droid",
+    "description": "Brute Junk Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "bt-16-perimeter-security-droid",
+    "id": "npc-bt-16_perimeter_security_droid",
+    "name": "BT-16 Perimeter Security Droid",
+    "description": "BT-16 Perimeter Security Droid, unclassified security droid, mobile chassis. Ideal for owners who want every hallway to feel mildly accused."
+  },
+  {
+    "slug": "bt7-series-valet-droid",
+    "id": "npc-bt7-series_valet_droid",
+    "name": "BT7-Series Valet Droid",
+    "description": "BT7-Series Valet Droid, unclassified service droid, mobile chassis. For owners who want convenience plated and standing by."
+  },
+  {
+    "slug": "buzz-droid",
+    "id": "npc-buzz_droid",
+    "name": "Buzz Droid",
+    "description": "Buzz Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "c-b3-cortosis-battle-droid",
+    "id": "npc-c-b3_cortosis_battle_droid",
+    "name": "C-B3 Cortosis Battle Droid",
+    "description": "C-B3 Cortosis Battle Droid, unclassified battle droid, mobile chassis. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "ca-b2-cold-assault-battle-droid",
+    "id": "npc-ca-b2_cold_assault_battle_droid",
+    "name": "CA-B2 Cold Assault Battle Droid",
+    "description": "CA-B2 Cold Assault Battle Droid, unclassified battle droid, mobile chassis. Perfect for commanders who want obedience, volume, and fewer questions than a clone would ask."
+  },
+  {
+    "slug": "chiba-dr-10-protocol-droid",
+    "id": "npc-chiba_dr-10_protocol_droid",
+    "name": "Chiba DR-10 Protocol Droid",
+    "description": "Chiba DR-10 Protocol Droid, unclassified protocol droid, mobile chassis. The preferred model for buyers who want panic delivered in six million forms of politeness."
+  },
+  {
+    "slug": "cz-series-secretary-droid",
+    "id": "npc-cz-series_secretary_droid",
+    "name": "CZ-Series Secretary Droid",
+    "description": "CZ-Series Secretary Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "dd-13-medical-assistant-droid",
+    "id": "npc-dd-13_medical_assistant_droid",
+    "name": "DD-13 Medical Assistant Droid",
+    "description": "DD-13 Medical Assistant Droid, unclassified medical droid, mobile chassis. For clinics, battlefields, and employers who think organic pain should be delegated."
+  },
+  {
+    "slug": "de-training-droid",
+    "id": "npc-de_training_droid",
+    "name": "DE Training Droid",
+    "description": "DE Training Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "devastator-war-droid",
+    "id": "npc-devastator_war_droid",
+    "name": "Devastator War Droid",
+    "description": "Devastator War Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "drk-1-probe-droid",
+    "id": "npc-drk-1_probe_droid",
+    "name": "DRK-1 Probe Droid",
+    "description": "DRK-1 Probe Droid, unclassified probe droid, mobile chassis. For buyers who consider privacy an obstacle rather than a principle."
+  },
+  {
+    "slug": "droideka-series-destroyer-droid",
+    "id": "npc-droideka-series_destroyer_droid",
+    "name": "Droideka-Series Destroyer Droid",
+    "description": "Droideka-Series Destroyer Droid, unclassified destroyer droid, mobile chassis. Compact, theatrical, and deeply committed to escalating the room."
+  },
+  {
+    "slug": "droideka-series-ultra-destroyer-droid",
+    "id": "npc-droideka-series_ultra_destroyer_droid",
+    "name": "Droideka-Series Ultra Destroyer Droid",
+    "description": "Droideka-Series Ultra Destroyer Droid, unclassified destroyer droid, mobile chassis. A rolling legal argument for why shields were a mistake."
+  },
+  {
+    "slug": "droideka-mk-ii-destroyer-droid",
+    "id": "npc-droideka_mk_ii_destroyer_droid",
+    "name": "Droideka Mk II Destroyer Droid",
+    "description": "Droideka Mk II Destroyer Droid, unclassified destroyer droid, mobile chassis. For commanders who want suppression fire to arrive pre-folded."
+  },
+  {
+    "slug": "dsd1-dwarf-spider-droid",
+    "id": "npc-dsd1_dwarf_spider_droid",
+    "name": "DSD1 Dwarf Spider Droid",
+    "description": "DSD1 Dwarf Spider Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "dsh-3-probe-droid",
+    "id": "npc-dsh-3_probe_droid",
+    "name": "DSH-3 Probe Droid",
+    "description": "DSH-3 Probe Droid, unclassified probe droid, mobile chassis. Built for scouting, spying, and making remote areas feel suddenly observed."
+  },
+  {
+    "slug": "dt-16-destructor-battle-droid",
+    "id": "npc-dt-16_22destructor22_battle_droid",
+    "name": "DT-16 \"Destructor\" Battle Droid",
+    "description": "DT-16 \"Destructor\" Battle Droid, unclassified battle droid, mobile chassis. Perfect for commanders who want obedience, volume, and fewer questions than a clone would ask."
+  },
+  {
+    "slug": "e522-assassin-droid",
+    "id": "npc-e522_assassin_droid",
+    "name": "E522 Assassin Droid",
+    "description": "E522 Assassin Droid, unclassified assassin droid, mobile chassis. For buyers who want professional violence without the expense of a conscience."
+  },
+  {
+    "slug": "eg-6-power-droid",
+    "id": "npc-eg-6_power_droid",
+    "name": "EG-6 Power Droid",
+    "description": "EG-6 Power Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "ei-9-network-security-droid",
+    "id": "npc-ei-9_network_security_droid",
+    "name": "EI-9 Network Security Droid",
+    "description": "EI-9 Network Security Droid, unclassified security droid, mobile chassis. A fine purchase if you believe hospitality should include checkpoints."
+  },
+  {
+    "slug": "eradicator-series-battle-droid",
+    "id": "npc-eradicator-series_battle_droid",
+    "name": "Eradicator-Series Battle Droid",
+    "description": "Eradicator-Series Battle Droid, unclassified battle droid, mobile chassis. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "et-74-communications-droid",
+    "id": "npc-et-74_communications_droid",
+    "name": "ET-74 Communications Droid",
+    "description": "ET-74 Communications Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "ev-series-supervisor-droid",
+    "id": "npc-ev-series_supervisor_droid",
+    "name": "EV-Series Supervisor Droid",
+    "description": "EV-Series Supervisor Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "evs-construction-droid",
+    "id": "npc-evs_construction_droid",
+    "name": "EVS Construction Droid",
+    "description": "EVS Construction Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "ew-3-midwife-droid",
+    "id": "npc-ew-3_midwife_droid",
+    "name": "EW-3 Midwife Droid",
+    "description": "EW-3 Midwife Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "f1-exploration-droid",
+    "id": "npc-f1_exploration_droid",
+    "name": "F1 Exploration Droid",
+    "description": "F1 Exploration Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "fa-4-pilot-droid",
+    "id": "npc-fa-4_pilot_droid",
+    "name": "FA-4 Pilot Droid",
+    "description": "FA-4 Pilot Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "fa-5-valet-droid",
+    "id": "npc-fa-5_valet_droid",
+    "name": "FA-5 Valet Droid",
+    "description": "FA-5 Valet Droid, unclassified service droid, mobile chassis. Polished enough for high society and obedient enough for the people pretending to deserve it."
+  },
+  {
+    "slug": "feg-series-pilot-droid",
+    "id": "npc-feg-series_pilot_droid",
+    "name": "FEG-Series Pilot Droid",
+    "description": "FEG-Series Pilot Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "fiii-footman-droid",
+    "id": "npc-fiii_footman_droid",
+    "name": "FIII Footman Droid",
+    "description": "FIII Footman Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "fltch-series-battle-droid",
+    "id": "npc-fltch-series_battle_droid",
+    "name": "FLTCH-Series Battle Droid",
+    "description": "FLTCH-Series Battle Droid, unclassified battle droid, mobile chassis. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "fsd-6d-surveillance-droid",
+    "id": "npc-fsd-6d_surveillance_droid",
+    "name": "FSD-6D Surveillance Droid",
+    "description": "FSD-6D Surveillance Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "fx-6-medical-assistance-droid",
+    "id": "npc-fx-6_medical_assistance_droid",
+    "name": "FX-6 Medical Assistance Droid",
+    "description": "FX-6 Medical Assistance Droid, unclassified medical droid, mobile chassis. A very steady pair of hands for situations that have already gone badly."
+  },
+  {
+    "slug": "fx-7-medical-droid",
+    "id": "npc-fx-7_medical_droid",
+    "name": "FX-7 Medical Droid",
+    "description": "FX-7 Medical Droid, unclassified medical droid, mobile chassis. Clean bedside manner sold separately, but the tools are excellent."
+  },
+  {
+    "slug": "g0-t0-infrastructure-planning-droid",
+    "id": "npc-g0-t0_infrastructure-planning_droid",
+    "name": "G0-T0 Infrastructure-Planning Droid",
+    "description": "G0-T0 Infrastructure-Planning Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "g2-repair-droid",
+    "id": "npc-g2_repair_droid",
+    "name": "G2 Repair Droid",
+    "description": "G2 Repair Droid, unclassified maintenance droid, mobile chassis. Excellent for upkeep, patchwork, and silent judgment of your maintenance habits."
+  },
+  {
+    "slug": "gd16-series-pilot-droid",
+    "id": "npc-gd16-series_pilot_droid",
+    "name": "GD16-Series Pilot Droid",
+    "description": "GD16-Series Pilot Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "ge3-series-protocol-droid",
+    "id": "npc-ge3-series_protocol_droid",
+    "name": "GE3-Series Protocol Droid",
+    "description": "GE3-Series Protocol Droid, unclassified protocol droid, mobile chassis. For households that need etiquette, diplomacy, and an extra witness with polished plating."
+  },
+  {
+    "slug": "gg-series-hospitality-droid",
+    "id": "npc-gg-series_hospitality_droid",
+    "name": "GG-Series Hospitality Droid",
+    "description": "GG-Series Hospitality Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "gh-7-medical-droid",
+    "id": "npc-gh-7_medical_droid",
+    "name": "GH-7 Medical Droid",
+    "description": "GH-7 Medical Droid, unclassified medical droid, mobile chassis. Clean bedside manner sold separately, but the tools are excellent."
+  },
+  {
+    "slug": "gnk-series-power-droid",
+    "id": "npc-gnk-series_power_droid",
+    "name": "GNK-Series Power Droid",
+    "description": "GNK-Series Power Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "grz-6b-demolitions-droid",
+    "id": "npc-grz-6b_demolitions_droid",
+    "name": "GRZ-6B Demolitions Droid",
+    "description": "GRZ-6B Demolitions Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "gx1-series-battle-droid",
+    "id": "npc-gx1-series_battle_droid",
+    "name": "GX1-Series Battle Droid",
+    "description": "GX1-Series Battle Droid, unclassified battle droid, mobile chassis. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "gy-i-information-analysis-droid",
+    "id": "npc-gy-i_information_analysis_droid",
+    "name": "GY-I Information Analysis Droid",
+    "description": "GY-I Information Analysis Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "h-1me-battle-mechanic-droid",
+    "id": "npc-h-1me_battle_mechanic_droid",
+    "name": "H-1ME Battle Mechanic Droid",
+    "description": "H-1ME Battle Mechanic Droid, unclassified battle droid, mobile chassis. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "hk-24-assassin-droid",
+    "id": "npc-hk-24_assassin_droid",
+    "name": "HK-24 Assassin Droid",
+    "description": "HK-24 Assassin Droid, unclassified assassin droid, mobile chassis. A premium murder appliance for clients who prefer their betrayals punctual."
+  },
+  {
+    "slug": "hk-50-assassin-droid",
+    "id": "npc-hk-50_assassin_droid",
+    "name": "HK-50 Assassin Droid",
+    "description": "HK-50 Assassin Droid, unclassified assassin droid, mobile chassis. Factory-built for deniable homicide and the sort of silence management that keeps careers moving."
+  },
+  {
+    "slug": "hk-77-assassin-droid",
+    "id": "npc-hk-77_assassin_droid",
+    "name": "HK-77 Assassin Droid",
+    "description": "HK-77 Assassin Droid, unclassified assassin droid, mobile chassis. For buyers who want professional violence without the expense of a conscience."
+  },
+  {
+    "slug": "hkb-3-hunter-killer-droid",
+    "id": "npc-hkb-3_hunter-killer_droid",
+    "name": "HKB-3 Hunter-Killer Droid",
+    "description": "HKB-3 Hunter-Killer Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "holocam-droid",
+    "id": "npc-holocam_droid",
+    "name": "Holocam Droid",
+    "description": "Holocam Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "hv-7-loading-droid",
+    "id": "npc-hv-7_loading_droid",
+    "name": "HV-7 Loading Droid",
+    "description": "HV-7 Loading Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "ic-m-general-utility-droid",
+    "id": "npc-ic-m_general_utility_droid",
+    "name": "IC-M General Utility Droid",
+    "description": "IC-M General Utility Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "ig-110-lightsaber-droid",
+    "id": "npc-ig-110_lightsaber_droid",
+    "name": "IG-110 Lightsaber Droid",
+    "description": "IG-110 Lightsaber Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "ig-86-sentinel-droid",
+    "id": "npc-ig-86_sentinel_droid",
+    "name": "IG-86 Sentinel Droid",
+    "description": "IG-86 Sentinel Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "ig-series-lancer-droid",
+    "id": "npc-ig-series_lancer_droid",
+    "name": "IG-Series Lancer Droid",
+    "description": "IG-Series Lancer Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "im-6-medical-droid",
+    "id": "npc-im-6_medical_droid",
+    "name": "IM-6 Medical Droid",
+    "description": "IM-6 Medical Droid, unclassified medical droid, mobile chassis. For clinics, battlefields, and employers who think organic pain should be delegated."
+  },
+  {
+    "slug": "imperial-espionage-droid",
+    "id": "npc-imperial_espionage_droid",
+    "name": "Imperial Espionage Droid",
+    "description": "Imperial Espionage Droid, unclassified espionage droid, mobile chassis. Built to overhear the room and outlive the meeting minutes."
+  },
+  {
+    "slug": "imperial-warden-droid",
+    "id": "npc-imperial_warden_droid",
+    "name": "Imperial Warden Droid",
+    "description": "Imperial Warden Droid, unclassified security droid, mobile chassis. Ideal for owners who want every hallway to feel mildly accused."
+  },
+  {
+    "slug": "independent-hk-series-droid",
+    "id": "npc-independent_hk-series_droid",
+    "name": "Independent HK-Series Droid",
+    "description": "Independent HK-Series Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "infiltrator-series-droid",
+    "id": "npc-infiltrator-series_droid",
+    "name": "Infiltrator-Series Droid",
+    "description": "Infiltrator-Series Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "it-0-interrogator-droid",
+    "id": "npc-it-0_interrogator_droid",
+    "name": "IT-0 Interrogator Droid",
+    "description": "IT-0 Interrogator Droid, unclassified interrogation droid, mobile chassis. A tasteful little reminder that some professions should have stayed hypothetical."
+  },
+  {
+    "slug": "iw-37-pincer-loader-droid",
+    "id": "npc-iw-37_pincer_loader_droid",
+    "name": "IW-37 Pincer Loader Droid",
+    "description": "IW-37 Pincer Loader Droid, unclassified labor droid, mobile chassis. A warehouse classic for managers who think backs are overrated."
+  },
+  {
+    "slug": "ix-6-heavy-combat-droid",
+    "id": "npc-ix-6_heavy_combat_droid",
+    "name": "IX-6 Heavy Combat Droid",
+    "description": "IX-6 Heavy Combat Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "jk-13-security-droid",
+    "id": "npc-jk-13_security_droid",
+    "name": "JK-13 Security Droid",
+    "description": "JK-13 Security Droid, unclassified security droid, mobile chassis. Ideal for owners who want every hallway to feel mildly accused."
+  },
+  {
+    "slug": "juggernaut-war-droid",
+    "id": "npc-juggernaut_war_droid",
+    "name": "Juggernaut War Droid",
+    "description": "Juggernaut War Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "junk-droid",
+    "id": "npc-junk_droid",
+    "name": "Junk Droid",
+    "description": "Junk Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "k-series-spaceport-control-droid",
+    "id": "npc-k-series_spaceport_control_droid",
+    "name": "K-Series Spaceport Control Droid",
+    "description": "K-Series Spaceport Control Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "k-x12-probe-droid",
+    "id": "npc-k-x12_probe_droid",
+    "name": "K-X12 Probe Droid",
+    "description": "K-X12 Probe Droid, unclassified probe droid, mobile chassis. For buyers who consider privacy an obstacle rather than a principle."
+  },
+  {
+    "slug": "kdy-4-tech-droid",
+    "id": "npc-kdy-4_tech_droid",
+    "name": "KDY-4 Tech Droid",
+    "description": "KDY-4 Tech Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "km1-mining-droid",
+    "id": "npc-km1_mining_droid",
+    "name": "KM1 Mining Droid",
+    "description": "KM1 Mining Droid, unclassified labor droid, mobile chassis. Perfect for customers who hear hazard pay and start looking for alternatives."
+  },
+  {
+    "slug": "krath-war-droid",
+    "id": "npc-krath_war_droid",
+    "name": "Krath War Droid",
+    "description": "Krath War Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "kx-series-security-droid",
+    "id": "npc-kx-series_security_droid",
+    "name": "KX-Series Security Droid",
+    "description": "KX-Series Security Droid, unclassified security droid, mobile chassis. For buyers who call suspicion a customer service philosophy."
+  },
+  {
+    "slug": "le-series-repair-droid",
+    "id": "npc-le-series_repair_droid",
+    "name": "LE-Series Repair Droid",
+    "description": "LE-Series Repair Droid, unclassified maintenance droid, mobile chassis. Built to fix the ship, the wiring, or the consequences of your last idea."
+  },
+  {
+    "slug": "lep-service-droid",
+    "id": "npc-lep_service_droid",
+    "name": "LEP Service Droid",
+    "description": "LEP Service Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "lm-432-muckraker-crab-droid",
+    "id": "npc-lm-432_22muckraker22_crab_droid",
+    "name": "LM-432 \"Muckraker\" Crab Droid",
+    "description": "LM-432 \"Muckraker\" Crab Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "lom-series-protocol-droid",
+    "id": "npc-lom-series_protocol_droid",
+    "name": "LOM-Series Protocol Droid",
+    "description": "LOM-Series Protocol Droid, unclassified protocol droid, mobile chassis. Elegant manners, endless translations, and just enough personality to become somebody else's problem."
+  },
+  {
+    "slug": "lr-57-combat-droid",
+    "id": "npc-lr-57_combat_droid",
+    "name": "LR-57 Combat Droid",
+    "description": "LR-57 Combat Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "lv8-series-guard-droid",
+    "id": "npc-lv8-series_guard_droid",
+    "name": "LV8-Series Guard Droid",
+    "description": "LV8-Series Guard Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "m-3po-series-protocol-droid",
+    "id": "npc-m-3po-series_protocol_droid",
+    "name": "M-3PO-Series Protocol Droid",
+    "description": "M-3PO-Series Protocol Droid, unclassified protocol droid, mobile chassis. Elegant manners, endless translations, and just enough personality to become somebody else's problem."
+  },
+  {
+    "slug": "m38-series-explorer-droid",
+    "id": "npc-m38-series_explorer_droid",
+    "name": "M38-Series Explorer Droid",
+    "description": "M38-Series Explorer Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "m4-series-messenger-droid",
+    "id": "npc-m4-series_messenger_droid",
+    "name": "M4-Series Messenger Droid",
+    "description": "M4-Series Messenger Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "maintenance-droid",
+    "id": "npc-maintenance_droid",
+    "name": "Maintenance Droid",
+    "description": "Maintenance Droid, unclassified maintenance droid, mobile chassis. Built to fix the ship, the wiring, or the consequences of your last idea."
+  },
+  {
+    "slug": "mark-i-assault-droid",
+    "id": "npc-mark_i_assault_droid",
+    "name": "Mark I Assault Droid",
+    "description": "Mark I Assault Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "mark-i-patrol-droid",
+    "id": "npc-mark_i_patrol_droid",
+    "name": "Mark I Patrol Droid",
+    "description": "Mark I Patrol Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "mark-i-sentinel-droid",
+    "id": "npc-mark_i_sentinel_droid",
+    "name": "Mark I Sentinel Droid",
+    "description": "Mark I Sentinel Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "mark-iv-assault-droid",
+    "id": "npc-mark_iv_assault_droid",
+    "name": "Mark IV Assault Droid",
+    "description": "Mark IV Assault Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "mark-iv-sentry-droid",
+    "id": "npc-mark_iv_sentry_droid",
+    "name": "Mark IV Sentry Droid",
+    "description": "Mark IV Sentry Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "mark-vii-inquisitor-seeker-droid",
+    "id": "npc-mark_vii_22inquisitor22_seeker_droid",
+    "name": "Mark VII \"Inquisitor\" Seeker Droid",
+    "description": "Mark VII \"Inquisitor\" Seeker Droid, unclassified probe droid, mobile chassis. Built for scouting, spying, and making remote areas feel suddenly observed."
+  },
+  {
+    "slug": "mev-series-medical-droid",
+    "id": "npc-mev-series_medical_droid",
+    "name": "MEV-Series Medical Droid",
+    "description": "MEV-Series Medical Droid, unclassified medical droid, mobile chassis. For clinics, battlefields, and employers who think organic pain should be delegated."
+  },
+  {
+    "slug": "mionne-security-droid",
+    "id": "npc-mionne_security_droid",
+    "name": "Mionne Security Droid",
+    "description": "Mionne Security Droid, unclassified security droid, mobile chassis. For buyers who call suspicion a customer service philosophy."
+  },
+  {
+    "slug": "mk-series-maintenance-droid",
+    "id": "npc-mk-series_maintenance_droid",
+    "name": "MK-Series Maintenance Droid",
+    "description": "MK-Series Maintenance Droid, unclassified maintenance droid, mobile chassis. Built to fix the ship, the wiring, or the consequences of your last idea."
+  },
+  {
+    "slug": "mr-200-series-minesweeper-droid",
+    "id": "npc-mr-200-series_minesweeper_droid",
+    "name": "MR-200-Series Minesweeper Droid",
+    "description": "MR-200-Series Minesweeper Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "mrd-39b-assassin-droid",
+    "id": "npc-mrd-39b_assassin_droid",
+    "name": "MRD-39B Assassin Droid",
+    "description": "MRD-39B Assassin Droid, unclassified assassin droid, mobile chassis. For buyers who want professional violence without the expense of a conscience."
+  },
+  {
+    "slug": "mse-6-repair-droid",
+    "id": "npc-mse-6_repair_droid",
+    "name": "MSE-6 Repair Droid",
+    "description": "MSE-6 Repair Droid, unclassified maintenance droid, mobile chassis. Built to fix the ship, the wiring, or the consequences of your last idea."
+  },
+  {
+    "slug": "mule-droid",
+    "id": "npc-mule_droid",
+    "name": "MULE Droid",
+    "description": "MULE Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "nr-1100-slicer-droid",
+    "id": "npc-nr-1100_slicer_droid",
+    "name": "NR-1100 Slicer Droid",
+    "description": "NR-1100 Slicer Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "oom-series-battle-droid",
+    "id": "npc-oom-series_battle_droid",
+    "name": "OOM-Series Battle Droid",
+    "description": "OOM-Series Battle Droid, unclassified battle droid, mobile chassis. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "p2-series-astromech-droid",
+    "id": "npc-p2-series_astromech_droid",
+    "name": "P2-Series Astromech Droid",
+    "description": "P2-Series Astromech Droid, unclassified astromech droid, mobile chassis. For pilots who want loyalty, diagnostics, and occasional emotional blackmail in one cylinder."
+  },
+  {
+    "slug": "pg-5-gunnery-droid",
+    "id": "npc-pg-5_gunnery_droid",
+    "name": "PG-5 Gunnery Droid",
+    "description": "PG-5 Gunnery Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "pi-series-medical-assistant-droid",
+    "id": "npc-pi-series_medical_assistant_droid",
+    "name": "PI-Series Medical Assistant Droid",
+    "description": "PI-Series Medical Assistant Droid, unclassified medical droid, mobile chassis. Clean bedside manner sold separately, but the tools are excellent."
+  },
+  {
+    "slug": "pit-droid",
+    "id": "npc-pit_droid",
+    "name": "Pit Droid",
+    "description": "Pit Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "pk-2m-mining-droid",
+    "id": "npc-pk-2m_mining_droid",
+    "name": "PK-2M Mining Droid",
+    "description": "PK-2M Mining Droid, unclassified labor droid, mobile chassis. For operators who prefer their labor force spark-resistant and underappreciated."
+  },
+  {
+    "slug": "pk-worker-droid",
+    "id": "npc-pk_worker_droid",
+    "name": "PK Worker Droid",
+    "description": "PK Worker Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "plnk-series-power-droid",
+    "id": "npc-plnk-series_power_droid",
+    "name": "PLNK-Series Power Droid",
+    "description": "PLNK-Series Power Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "probe-droid",
+    "id": "npc-probe_droid",
+    "name": "Probe Droid",
+    "description": "Probe Droid, unclassified probe droid, mobile chassis. A tidy surveillance package for employers who prefer their paranoia airborne."
+  },
+  {
+    "slug": "q7-series-astromech-droid",
+    "id": "npc-q7-series_astromech_droid",
+    "name": "Q7-Series Astromech Droid",
+    "description": "Q7-Series Astromech Droid, unclassified astromech droid, mobile chassis. A compact mechanic with opinions, tools, and a dangerous amount of initiative for something this short."
+  },
+  {
+    "slug": "r-1-recon-droid",
+    "id": "npc-r-1_recon_droid",
+    "name": "R-1 Recon Droid",
+    "description": "R-1 Recon Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "r-4-recon-droid",
+    "id": "npc-r-4_recon_droid",
+    "name": "R-4 Recon Droid",
+    "description": "R-4 Recon Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "r-8009-utility-droid",
+    "id": "npc-r-8009_utility_droid",
+    "name": "R-8009 Utility Droid",
+    "description": "R-8009 Utility Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "r2-r-series-astromech-droid",
+    "id": "npc-r2-r-series_astromech_droid",
+    "name": "R2-R-Series Astromech Droid",
+    "description": "R2-R-Series Astromech Droid, unclassified astromech droid, mobile chassis. For pilots who want loyalty, diagnostics, and occasional emotional blackmail in one cylinder."
+  },
+  {
+    "slug": "r2-series-astromech-droid",
+    "id": "npc-r2-series_astromech_droid",
+    "name": "R2-Series Astromech Droid",
+    "description": "R2-Series Astromech Droid, unclassified astromech droid, mobile chassis. Small chassis, big utility, and the sort of attachment owners swear they are not developing."
+  },
+  {
+    "slug": "r3-series-astromech-droid",
+    "id": "npc-r3-series_astromech_droid",
+    "name": "R3-Series Astromech Droid",
+    "description": "R3-Series Astromech Droid, unclassified astromech droid, mobile chassis. A compact mechanic with opinions, tools, and a dangerous amount of initiative for something this short."
+  },
+  {
+    "slug": "r4-series-agromech-droid",
+    "id": "npc-r4-series_agromech_droid",
+    "name": "R4-Series Agromech Droid",
+    "description": "R4-Series Agromech Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "r4-series-astromech-droid",
+    "id": "npc-r4-series_astromech_droid",
+    "name": "R4-Series Astromech Droid",
+    "description": "R4-Series Astromech Droid, unclassified astromech droid, mobile chassis. Small chassis, big utility, and the sort of attachment owners swear they are not developing."
+  },
+  {
+    "slug": "r5-series-astromech-droid",
+    "id": "npc-r5-series_astromech_droid",
+    "name": "R5-Series Astromech Droid",
+    "description": "R5-Series Astromech Droid, unclassified astromech droid, mobile chassis. A compact mechanic with opinions, tools, and a dangerous amount of initiative for something this short."
+  },
+  {
+    "slug": "r7-series-astromech-droid",
+    "id": "npc-r7-series_astromech_droid",
+    "name": "R7-Series Astromech Droid",
+    "description": "R7-Series Astromech Droid, unclassified astromech droid, mobile chassis. For pilots who want loyalty, diagnostics, and occasional emotional blackmail in one cylinder."
+  },
+  {
+    "slug": "r8-series-astromech-droid",
+    "id": "npc-r8-series_astromech_droid",
+    "name": "R8-Series Astromech Droid",
+    "description": "R8-Series Astromech Droid, unclassified astromech droid, mobile chassis. Small chassis, big utility, and the sort of attachment owners swear they are not developing."
+  },
+  {
+    "slug": "ra-7-protocol-droid",
+    "id": "npc-ra-7_protocol_droid",
+    "name": "RA-7 Protocol Droid",
+    "description": "RA-7 Protocol Droid, unclassified protocol droid, mobile chassis. Elegant manners, endless translations, and just enough personality to become somebody else's problem."
+  },
+  {
+    "slug": "rakatan-guardian-droid",
+    "id": "npc-rakatan_guardian_droid",
+    "name": "Rakatan Guardian Droid",
+    "description": "Rakatan Guardian Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "ro-d-droid",
+    "id": "npc-ro-d_droid",
+    "name": "RO-D Droid",
+    "description": "RO-D Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "roving-eye-observation-droid",
+    "id": "npc-roving_eye_observation_droid",
+    "name": "Roving Eye Observation Droid",
+    "description": "Roving Eye Observation Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "rt-sifter-droid",
+    "id": "npc-rt_sifter_droid",
+    "name": "RT Sifter Droid",
+    "description": "RT Sifter Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "rww-series-protocol-droid",
+    "id": "npc-rww-series_protocol_droid",
+    "name": "RWW-Series Protocol Droid",
+    "description": "RWW-Series Protocol Droid, unclassified protocol droid, mobile chassis. The preferred model for buyers who want panic delivered in six million forms of politeness."
+  },
+  {
+    "slug": "rx-series-pilot-droid",
+    "id": "npc-rx-series_pilot_droid",
+    "name": "RX-Series Pilot Droid",
+    "description": "RX-Series Pilot Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "s19-astromech-droid",
+    "id": "npc-s19_astromech_droid",
+    "name": "S19 Astromech Droid",
+    "description": "S19 Astromech Droid, unclassified astromech droid, mobile chassis. For pilots who want loyalty, diagnostics, and occasional emotional blackmail in one cylinder."
+  },
+  {
+    "slug": "sabacc-dealer-droid",
+    "id": "npc-sabacc_dealer_droid",
+    "name": "Sabacc Dealer Droid",
+    "description": "Sabacc Dealer Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "scorpenek-annihilator-droid",
+    "id": "npc-scorpenek_annihilator_droid",
+    "name": "Scorpenek Annihilator Droid",
+    "description": "Scorpenek Annihilator Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "sd-6-hulk-infantry-droid",
+    "id": "npc-sd-6_22hulk22_infantry_droid",
+    "name": "SD-6 \"Hulk\" Infantry Droid",
+    "description": "SD-6 \"Hulk\" Infantry Droid, unclassified battle droid, mobile chassis. Perfect for commanders who want obedience, volume, and fewer questions than a clone would ask."
+  },
+  {
+    "slug": "sd-9-battle-droid",
+    "id": "npc-sd-9_battle_droid",
+    "name": "SD-9 Battle Droid",
+    "description": "SD-9 Battle Droid, unclassified battle droid, mobile chassis. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "sd-x-stealth-battle-droid",
+    "id": "npc-sd-x_stealth_battle_droid",
+    "name": "SD-X Stealth Battle Droid",
+    "description": "SD-X Stealth Battle Droid, unclassified battle droid, mobile chassis. Sold as a force multiplier, delivered as a very literal staffing solution."
+  },
+  {
+    "slug": "security-droid",
+    "id": "npc-security_droid",
+    "name": "Security Droid",
+    "description": "Security Droid, unclassified security droid, mobile chassis. A fine purchase if you believe hospitality should include checkpoints."
+  },
+  {
+    "slug": "shadow-droid",
+    "id": "npc-shadow_droid",
+    "name": "Shadow Droid",
+    "description": "Shadow Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "shadow-security-droid",
+    "id": "npc-shadow_security_droid",
+    "name": "Shadow Security Droid",
+    "description": "Shadow Security Droid, unclassified security droid, mobile chassis. Ideal for owners who want every hallway to feel mildly accused."
+  },
+  {
+    "slug": "sp-4-analysis-droid",
+    "id": "npc-sp-4_analysis_droid",
+    "name": "SP-4 Analysis Droid",
+    "description": "SP-4 Analysis Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "spelunker-probe-droid",
+    "id": "npc-spelunker_probe_droid",
+    "name": "Spelunker Probe Droid",
+    "description": "Spelunker Probe Droid, unclassified probe droid, mobile chassis. A tidy surveillance package for employers who prefer their paranoia airborne."
+  },
+  {
+    "slug": "t-series-tactical-droid",
+    "id": "npc-t-series_tactical_droid",
+    "name": "T-Series Tactical Droid",
+    "description": "T-Series Tactical Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "t0-d-interrogation-droid",
+    "id": "npc-t0-d_interrogation_droid",
+    "name": "T0-D Interrogation Droid",
+    "description": "T0-D Interrogation Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "t1-bulk-loader-droid",
+    "id": "npc-t1_bulk_loader_droid",
+    "name": "T1 Bulk Loader Droid",
+    "description": "T1 Bulk Loader Droid, unclassified labor droid, mobile chassis. Heavy lift capacity and no union literature anywhere in the chassis."
+  },
+  {
+    "slug": "t3-series-utility-droid",
+    "id": "npc-t3-series_utility_droid",
+    "name": "T3-Series Utility Droid",
+    "description": "T3-Series Utility Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "t4-turret-droid",
+    "id": "npc-t4_turret_droid",
+    "name": "T4 Turret Droid",
+    "description": "T4 Turret Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "tc-sc-infiltration-droid",
+    "id": "npc-tc-sc_infiltration_droid",
+    "name": "TC-SC Infiltration Droid",
+    "description": "TC-SC Infiltration Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "tc-series-protocol-droid",
+    "id": "npc-tc-series_protocol_droid",
+    "name": "TC-Series Protocol Droid",
+    "description": "TC-Series Protocol Droid, unclassified protocol droid, mobile chassis. Elegant manners, endless translations, and just enough personality to become somebody else's problem."
+  },
+  {
+    "slug": "tt-8l-gatekeeper-droid",
+    "id": "npc-tt-8l_gatekeeper_droid",
+    "name": "TT-8L Gatekeeper Droid",
+    "description": "TT-8L Gatekeeper Droid, unclassified gatekeeper droid, mobile chassis. For facilities that want the front desk experience to feel slightly adversarial."
+  },
+  {
+    "slug": "v2-series-commando-droid",
+    "id": "npc-v2-series_commando_droid",
+    "name": "V2-Series Commando Droid",
+    "description": "V2-Series Commando Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "v6-series-pilot-droid",
+    "id": "npc-v6-series_pilot_droid",
+    "name": "V6-Series Pilot Droid",
+    "description": "V6-Series Pilot Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "vigilant-2x-series-picket-droid",
+    "id": "npc-vigilant_2x-series_picket_droid",
+    "name": "Vigilant 2X-Series Picket Droid",
+    "description": "Vigilant 2X-Series Picket Droid, unclassified sentry droid, mobile chassis. For keeping watch, holding lines, and ruining quiet approaches."
+  },
+  {
+    "slug": "viper-series-probe-droid",
+    "id": "npc-viper-series_probe_droid",
+    "name": "Viper-Series Probe Droid",
+    "description": "Viper-Series Probe Droid, unclassified probe droid, mobile chassis. A tidy surveillance package for employers who prefer their paranoia airborne."
+  },
+  {
+    "slug": "vx-series-artillery-droid",
+    "id": "npc-vx-series_artillery_droid",
+    "name": "VX-Series Artillery Droid",
+    "description": "VX-Series Artillery Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "wanderer-scout-surveyor-droid",
+    "id": "npc-wanderer_scout_surveyor_droid",
+    "name": "Wanderer Scout Surveyor Droid",
+    "description": "Wanderer Scout Surveyor Droid, unclassified scout droid, mobile chassis. For buyers who prefer the terrain disappoint a machine before it disappoints them."
+  },
+  {
+    "slug": "wing-guard-patrol-droid",
+    "id": "npc-wing_guard_patrol_droid",
+    "name": "Wing Guard Patrol Droid",
+    "description": "Wing Guard Patrol Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "wsb-15-sabotage-droid",
+    "id": "npc-wsb-15_sabotage_droid",
+    "name": "WSB-15 Sabotage Droid",
+    "description": "WSB-15 Sabotage Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "x-1-viper-droid",
+    "id": "npc-x-1_viper_droid",
+    "name": "X-1 Viper Droid",
+    "description": "X-1 Viper Droid, unclassified utility droid, mobile chassis. Useful, dependable, and just specialized enough to become your problem in a memorable way."
+  },
+  {
+    "slug": "x-training-droid",
+    "id": "npc-x_training_droid",
+    "name": "X Training Droid",
+    "description": "X Training Droid, unclassified utility droid, mobile chassis. For owners who need another machine around and have stopped asking larger questions."
+  },
+  {
+    "slug": "xk-v8-excavation-droid",
+    "id": "npc-xk-v8_excavation_droid",
+    "name": "XK-V8 Excavation Droid",
+    "description": "XK-V8 Excavation Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  },
+  {
+    "slug": "xlt-014-labor-droid",
+    "id": "npc-xlt-014_labor_droid",
+    "name": "XLT-014 Labor Droid",
+    "description": "XLT-014 Labor Droid, unclassified labor droid, mobile chassis. A warehouse classic for managers who think backs are overrated."
+  },
+  {
+    "slug": "yvh-battle-droid",
+    "id": "npc-yvh_battle_droid",
+    "name": "YVH Battle Droid",
+    "description": "YVH Battle Droid, unclassified battle droid, mobile chassis. For customers who think infantry should be cheaper, louder, and more replaceable."
+  },
+  {
+    "slug": "z65-patrol-droid",
+    "id": "npc-z65_patrol_droid",
+    "name": "Z65 Patrol Droid",
+    "description": "Z65 Patrol Droid, unclassified utility droid, mobile chassis. A general-purpose mechanical coworker for buyers who want competence without conversation."
+  }
+]

@@ -58,8 +58,8 @@ export class SWSEGrappling {
     const atk = await this._rollGrappleBonus(attacker);
     const def = await this._rollGrappleBonus(defender);
 
-    const atkRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${atk}`).evaluate({ async: true });
-    const defRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${def}`).evaluate({ async: true });
+    const atkRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${atk}`, {}, { domain: 'combat.grapple.attack' });
+    const defRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${def}`, {}, { domain: 'combat.grapple.defense' });
 
     const attackerWins = atkRoll.total > defRoll.total;
 

@@ -68,9 +68,13 @@ export class LightsaberLightSync {
    */
   static #getActiveLightsaber(actor) {
     const lightsabers = actor.items?.filter(
-      item =>
-        item.type === "weapon" &&
-        item.system?.subtype === "lightsaber"
+      item => {
+        const system = item.system ?? {};
+        return item.type === "lightsaber"
+          || (item.type === "weapon" && (system.subtype === "lightsaber" || system.weaponCategory === "lightsaber" || system.isLightsaber === true))
+          || item.flags?.["foundryvtt-swse"]?.isLightsaber === true
+          || item.flags?.swse?.isLightsaber === true;
+      }
     ) || [];
 
     for (const saber of lightsabers) {
@@ -230,7 +234,13 @@ export class LightsaberLightSync {
         }
       }
 
-      if (needsSync && item.type === "weapon" && item.system?.subtype === "lightsaber") {
+      const system = item.system ?? {};
+      const isLightsaber = item.type === "lightsaber"
+        || (item.type === "weapon" && (system.subtype === "lightsaber" || system.weaponCategory === "lightsaber" || system.isLightsaber === true))
+        || item.flags?.["foundryvtt-swse"]?.isLightsaber === true
+        || item.flags?.swse?.isLightsaber === true;
+
+      if (needsSync && isLightsaber) {
         // Schedule sync after update completes
         Hooks.once("updateItem", () => {
           this.syncActorTokenLight(actor, item);

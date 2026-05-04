@@ -661,7 +661,7 @@ export const ActorEngine = {
       MutationInterceptor.setContext(`ActorEngine.updateEmbeddedDocuments[${embeddedName}]`);
       try {
         const result = await actor.updateEmbeddedDocuments(embeddedName, updates, options);
-        await this.recalcAll(actor);
+        if (!options.skipRecalc && !options.deferRecalc) await this.recalcAll(actor);
         return result;
       } finally {
         MutationInterceptor.clearContext();
@@ -2896,6 +2896,7 @@ export const ActorEngine = {
         source,
         hasCreates: !!mutationPlan.create && !!mutationPlan.create.actors && mutationPlan.create.actors.length > 0,
         hasSets: !!mutationPlan.set && Object.keys(mutationPlan.set).length > 0,
+        hasUpdates: !!mutationPlan.update && Object.keys(mutationPlan.update).length > 0,
         hasAdds: !!mutationPlan.add && Object.keys(mutationPlan.add).length > 0,
         hasDeletes: !!mutationPlan.delete && Object.keys(mutationPlan.delete).length > 0
       });
@@ -2904,6 +2905,7 @@ export const ActorEngine = {
       const plan = {
         create: mutationPlan.create || {},
         set: mutationPlan.set || {},
+        update: mutationPlan.update || {},
         add: mutationPlan.add || {},
         delete: mutationPlan.delete || {}
       };
@@ -2930,6 +2932,9 @@ export const ActorEngine = {
 
       // SET next (modify scalars)
       await this._applySetOps(actor, plan.set, source);
+
+      // UPDATE embedded documents after actor-level SETs and before ADDs.
+      await this._applyUpdateOps(actor, plan.update, source);
 
       // ADD last (create new embedded docs)
       await this._applyAddOps(actor, plan.add, source);
@@ -2989,6 +2994,35 @@ export const ActorEngine = {
     // Validate set bucket
     if (plan.set && typeof plan.set !== 'object') {
       throw new MutationApplicationError('set bucket must be an object', { operation: 'set' });
+    }
+
+    // Validate update bucket
+    if (plan.update && typeof plan.update !== 'object') {
+      throw new MutationApplicationError('update bucket must be an object', { operation: 'update' });
+    }
+    if (plan.update) {
+      for (const [collection, updates] of Object.entries(plan.update)) {
+        if (!Array.isArray(updates)) {
+          throw new MutationApplicationError(
+            `update bucket "${collection}" must be an array`,
+            { operation: 'update', collection }
+          );
+        }
+        for (const update of updates) {
+          if (!update || typeof update !== 'object') {
+            throw new MutationApplicationError(
+              `update bucket "${collection}" entries must be objects`,
+              { operation: 'update', collection }
+            );
+          }
+          if (!update._id && !update.id) {
+            throw new MutationApplicationError(
+              `update bucket "${collection}" entries must include _id or id`,
+              { operation: 'update', collection }
+            );
+          }
+        }
+      }
     }
 
     // Validate add bucket
@@ -3172,6 +3206,59 @@ export const ActorEngine = {
         {
           operation: 'set',
           paths: Object.keys(setOps),
+          underlyingError: error
+        }
+      );
+    }
+  },
+
+  /**
+   * Apply UPDATE operations to embedded documents.
+   * @private
+   */
+  async _applyUpdateOps(actor, updateOps, source) {
+    if (!updateOps || Object.keys(updateOps).length === 0) {
+      return;
+    }
+
+    try {
+      for (const [collection, updates] of Object.entries(updateOps)) {
+        if (!Array.isArray(updates) || updates.length === 0) continue;
+
+        const embeddedName = collection === 'items'
+          ? 'Item'
+          : collection === 'effects'
+            ? 'ActiveEffect'
+            : collection.charAt(0).toUpperCase() + collection.slice(1, -1);
+
+        const normalizedUpdates = updates.map(update => {
+          const clone = foundry.utils.deepClone(update);
+          if (!clone._id && clone.id) {
+            clone._id = clone.id;
+            delete clone.id;
+          }
+          return clone;
+        });
+
+        SWSELogger.debug('ActorEngine._applyUpdateOps', {
+          actor: actor.id,
+          collection,
+          embeddedName,
+          count: normalizedUpdates.length
+        });
+
+        await this.updateEmbeddedDocuments(actor, embeddedName, normalizedUpdates, {
+          source,
+          skipRecalc: true
+        });
+      }
+    } catch (error) {
+      const { MutationApplicationError } = await import("/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js");
+      throw new MutationApplicationError(
+        `Failed to apply update operations: ${error.message}`,
+        {
+          operation: 'update',
+          collections: Object.keys(updateOps),
           underlyingError: error
         }
       );

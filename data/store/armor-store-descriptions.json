@@ -1,0 +1,422 @@
+[
+  {
+    "slug": "armored-flight-suit",
+    "id": "armor-armored-flight-suit",
+    "name": "Armored Flight Suit",
+    "description": "Armored Flight Suit, light, +5 Reflex, +2 Fort, max Dex +3, 10, 4000 credits. For pilots who want to look regulation while surviving the part where the cockpit stops being a cockpit."
+  },
+  {
+    "slug": "blast-helmet-and-vest",
+    "id": "armor-blast-helmet-and-vest",
+    "name": "Blast Helmet and Vest",
+    "description": "Blast Helmet and Vest, light, +2 Reflex, max Dex +5, 3, 500 credits. Entry-level protection for buyers who know optimism is not technically armor."
+  },
+  {
+    "slug": "blinding-helmet",
+    "id": "armor-blinding-helmet",
+    "name": "Blinding Helmet",
+    "description": "Blinding Helmet, light, +0 Reflex, 2, 200 credits. A niche purchase for customers who want discipline, symbolism, and a truly difficult fitting process."
+  },
+  {
+    "slug": "combat-jumpsuit",
+    "id": "armor-combat-jumpsuit",
+    "name": "Combat Jumpsuit",
+    "description": "Combat Jumpsuit, light, +4 Reflex, max Dex +4, 8, 1500 credits. Entry-level protection for buyers who know optimism is not technically armor."
+  },
+  {
+    "slug": "fiber-armor",
+    "id": "armor-fiber-armor",
+    "name": "Fiber Armor",
+    "description": "Fiber Armor, light, +4 Reflex, +1 Fort, max Dex +2, 10, 3000 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "galactic-alliance-armor",
+    "id": "armor-galactic-alliance-armor",
+    "name": "Galactic Alliance Armor",
+    "description": "Galactic Alliance Armor, light, +4 Reflex, +1 Fort, max Dex +3, 9, 6000 credits. Entry-level protection for buyers who know optimism is not technically armor."
+  },
+  {
+    "slug": "half-vest",
+    "id": "armor-half-vest",
+    "name": "Half-Vest",
+    "description": "Half-Vest, light, +1 Reflex, max Dex +5, 2, 250 credits. A tasteful option for anyone who prefers being difficult to notice right up until the bill arrives."
+  },
+  {
+    "slug": "kzz-riot-armor",
+    "id": "armor-kzz-riot-armor",
+    "name": "KZZ Riot Armor",
+    "description": "KZZ Riot Armor, light, +2 Reflex, +2 Fort, max Dex +5, 6, 2500 credits. For the practical buyer who thinks getting shot should feel more like a policy disagreement."
+  },
+  {
+    "slug": "light-battle-armor",
+    "id": "armor-light-battle-armor",
+    "name": "Light Battle Armor",
+    "description": "Light Battle Armor, light, +5 Reflex, +2 Fort, max Dex +3, 10, 3500 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "light-beskar-gam",
+    "id": "armor-light-beskargam",
+    "name": "Light Beskar'gam",
+    "description": "Light Beskar'gam, light, +5 Reflex, +2 Fort, max Dex +3, 10, 33500 credits. A premium buy for people who prefer family traditions to include visible plating."
+  },
+  {
+    "slug": "light-dark-armor",
+    "id": "armor-light-dark-armor",
+    "name": "Light Dark Armor",
+    "description": "Light Dark Armor, light, +4 Reflex, +3 Fort, max Dex +3, 10, 10000 credits. Perfect for clients who want their wardrobe to imply poor life choices and excellent conviction."
+  },
+  {
+    "slug": "light-jedi-battle-armor",
+    "id": "armor-light-jedi-battle-armor",
+    "name": "Light Jedi Battle Armor",
+    "description": "Light Jedi Battle Armor, light, +3 Reflex, +3 Fort, max Dex +4, 6, 4000 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "light-powered-battle-armor",
+    "id": "armor-light-powered-battle-armor",
+    "name": "Light Powered Battle Armor",
+    "description": "Light Powered Battle Armor, light, +4 Reflex, +2 Fort, max Dex +3, 12, 6500 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "light-pressure-suit",
+    "id": "armor-light-pressure-suit",
+    "name": "Light Pressure Suit",
+    "description": "Light Pressure Suit, light, +5 Reflex, +2 Fort, max Dex +3, 10, 4000 credits. A strong choice for buyers who expect their workday to include hard vacuum and worse company."
+  },
+  {
+    "slug": "mandalorian-combat-suit",
+    "id": "armor-mandalorian-combat-suit",
+    "name": "Mandalorian Combat Suit",
+    "description": "Mandalorian Combat Suit, light, +4 Reflex, +1 Fort, max Dex +5, 8, 0 credits. A strong choice for buyers who expect their workday to include hard vacuum and worse company."
+  },
+  {
+    "slug": "marine-armor",
+    "id": "armor-marine-armor",
+    "name": "Marine Armor",
+    "description": "Marine Armor, light, +5 Reflex, +2 Fort, max Dex +3, 12, 5000 credits. A strong choice for buyers who expect their workday to include hard vacuum and worse company."
+  },
+  {
+    "slug": "microbe-armor",
+    "id": "armor-microbe-armor",
+    "name": "Microbe Armor",
+    "description": "Microbe Armor, light, +2 Reflex, max Dex +3, 6, 4000 credits. Entry-level protection for buyers who know optimism is not technically armor."
+  },
+  {
+    "slug": "neo-crusader-light-armor",
+    "id": "armor-neo-crusader-light-armor",
+    "name": "Neo-Crusader Light Armor",
+    "description": "Neo-Crusader Light Armor, light, +6 Reflex, +2 Fort, max Dex +3, 42, 0 credits. A strong choice for buyers who expect their workday to include hard vacuum and worse company."
+  },
+  {
+    "slug": "padded-flight-suit",
+    "id": "armor-padded-flight-suit",
+    "name": "Padded Flight Suit",
+    "description": "Padded Flight Suit, light, +3 Reflex, +1 Fort, max Dex +4, 5, 2000 credits. For pilots who want to look regulation while surviving the part where the cockpit stops being a cockpit."
+  },
+  {
+    "slug": "republic-light-armor",
+    "id": "armor-republic-light-armor",
+    "name": "Republic Light Armor",
+    "description": "Republic Light Armor, light, +4 Reflex, +1 Fort, max Dex +3, 7, 0 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "seatrooper-armor",
+    "id": "armor-seatrooper-armor",
+    "name": "Seatrooper Armor",
+    "description": "Seatrooper Armor, light, +4 Reflex, +2 Fort, max Dex +2, 14, 6750 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "shadowsuit",
+    "id": "armor-shadowsuit",
+    "name": "Shadowsuit",
+    "description": "Shadowsuit, light, +1 Reflex, +1 Fort, max Dex +5, 2, 600 credits. A tasteful option for anyone who prefers being difficult to notice right up until the bill arrives."
+  },
+  {
+    "slug": "stormtrooper-armor",
+    "id": "armor-stormtrooper-armor",
+    "name": "Stormtrooper Armor",
+    "description": "Stormtrooper Armor, light, +6 Reflex, +2 Fort, max Dex +3, 10, 8000 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "stun-cloak",
+    "id": "armor-stun-cloak",
+    "name": "Stun Cloak",
+    "description": "Stun Cloak, light, +1 Reflex, max Dex +5, 2, 3500 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "thinsuit",
+    "id": "armor-thinsuit",
+    "name": "Thinsuit",
+    "description": "Thinsuit, light, +0 Reflex, max Dex +6, 1, 900 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "tracker-utility-vest",
+    "id": "armor-tracker-utility-vest",
+    "name": "Tracker Utility Vest",
+    "description": "Tracker Utility Vest, light, +1 Reflex, max Dex +5, 0.5, 300 credits. Entry-level protection for buyers who know optimism is not technically armor."
+  },
+  {
+    "slug": "vonduun-crabshell",
+    "id": "armor-vonduun-crabshell",
+    "name": "Vonduun Crabshell",
+    "description": "Vonduun Crabshell, light, +5 Reflex, +5 Fort, max Dex +4, 5, 0 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "av-1s-scout-armor",
+    "id": "armor-av1s-scout-armor",
+    "name": "AV-1S Scout Armor",
+    "description": "AV-1S Scout Armor, medium, +7 Reflex, +2 Fort, max Dex +2, 18, 15000 credits. Light enough for long days, respectable enough to pretend this is still just reconnaissance."
+  },
+  {
+    "slug": "battle-armor",
+    "id": "armor-battle-armor",
+    "name": "Battle Armor",
+    "description": "Battle Armor, medium, +8 Reflex, +2 Fort, max Dex +2, 16, 7000 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "biohazard-suit",
+    "id": "armor-biohazard-suit",
+    "name": "Biohazard Suit",
+    "description": "Biohazard Suit, medium, +0 Reflex, +3 Fort, max Dex +0, 9, 4000 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "camo-armor",
+    "id": "armor-camo-armor",
+    "name": "Camo Armor",
+    "description": "Camo Armor, medium, +5 Reflex, +-3 Fort, max Dex +3, 6, 6000 credits. A tasteful option for anyone who prefers being difficult to notice right up until the bill arrives."
+  },
+  {
+    "slug": "camo-scout-armor",
+    "id": "armor-camo-scout-armor",
+    "name": "Camo Scout Armor",
+    "description": "Camo Scout Armor, medium, +6 Reflex, +2 Fort, max Dex +3, 13, 6000 credits. Light enough for long days, respectable enough to pretend this is still just reconnaissance."
+  },
+  {
+    "slug": "ceremonial-armor",
+    "id": "armor-ceremonial-armor",
+    "name": "Ceremonial Armor",
+    "description": "Ceremonial Armor, medium, +7 Reflex, max Dex +2, 13, 5000 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "corellian-powersuit",
+    "id": "armor-corellian-powersuit",
+    "name": "Corellian Powersuit",
+    "description": "Corellian Powersuit, medium, +7 Reflex, +3 Fort, max Dex +3, 20, 10000 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "cortosis-gauntlet",
+    "id": "armor-cortosis-gauntlet",
+    "name": "Cortosis Gauntlet",
+    "description": "Cortosis Gauntlet, medium, +0 Reflex, +-1 Fort, 1, 1500 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "dark-armor",
+    "id": "armor-dark-armor",
+    "name": "Dark Armor",
+    "description": "Dark Armor, medium, +7 Reflex, +4 Fort, max Dex +2, 16, 15000 credits. Perfect for clients who want their wardrobe to imply poor life choices and excellent conviction."
+  },
+  {
+    "slug": "imperial-knight-armor",
+    "id": "armor-imperial-knight-armor",
+    "name": "Imperial Knight Armor",
+    "description": "Imperial Knight Armor, medium, +8 Reflex, +2 Fort, max Dex +3, 16, 7000 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "jedi-battle-armor",
+    "id": "armor-jedi-battle-armor",
+    "name": "Jedi Battle Armor",
+    "description": "Jedi Battle Armor, medium, +5 Reflex, +5 Fort, max Dex +3, 12, 6000 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "katarn-class-commando-armor",
+    "id": "armor-katarn-class-commando-armor",
+    "name": "Katarn-Class Commando Armor",
+    "description": "Katarn-Class Commando Armor, medium, +9 Reflex, +4 Fort, max Dex +1, 20, 30000 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "knighthunter-armor",
+    "id": "armor-knighthunter-armor",
+    "name": "Knighthunter Armor",
+    "description": "Knighthunter Armor, medium, +7 Reflex, +2 Fort, max Dex +3, 13, 6000 credits. Perfect for clients who want their wardrobe to imply poor life choices and excellent conviction."
+  },
+  {
+    "slug": "m1-10-stalker-armor",
+    "id": "armor-m110-stalker-armor",
+    "name": "M1-10 Stalker Armor",
+    "description": "M1-10 Stalker Armor, medium, +7 Reflex, +3 Fort, 10, 7500 credits. A tasteful option for anyone who prefers being difficult to notice right up until the bill arrives."
+  },
+  {
+    "slug": "mandalorian-battle-armor",
+    "id": "armor-mandalorian-battle-armor",
+    "name": "Mandalorian Battle Armor",
+    "description": "Mandalorian Battle Armor, medium, +8 Reflex, +2 Fort, max Dex +2, 18, 0 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "medium-beskar-gam",
+    "id": "armor-medium-beskargam",
+    "name": "Medium Beskar'gam",
+    "description": "Medium Beskar'gam, medium, +8 Reflex, +2 Fort, max Dex +2, 17, 37000 credits. A premium buy for people who prefer family traditions to include visible plating."
+  },
+  {
+    "slug": "medium-pressure-suit",
+    "id": "armor-medium-pressure-suit",
+    "name": "Medium Pressure Suit",
+    "description": "Medium Pressure Suit, medium, +8 Reflex, +2 Fort, max Dex +2, 16, 7000 credits. A strong choice for buyers who expect their workday to include hard vacuum and worse company."
+  },
+  {
+    "slug": "mesh-armor",
+    "id": "armor-mesh-armor",
+    "name": "Mesh Armor",
+    "description": "Mesh Armor, medium, +6 Reflex, +2 Fort, max Dex +2, 13, 6000 credits. Entry-level protection for buyers who know optimism is not technically armor."
+  },
+  {
+    "slug": "model-210-personal-armor",
+    "id": "armor-model-210-personal-armor",
+    "name": "Model 210 Personal Armor",
+    "description": "Model 210 Personal Armor, medium, +7 Reflex, +1 Fort, max Dex +3, 17, 16300 credits. For professionals who like their armor to suggest both budget and unresolved workplace issues."
+  },
+  {
+    "slug": "powered-battle-armor",
+    "id": "armor-powered-battle-armor",
+    "name": "Powered Battle Armor",
+    "description": "Powered Battle Armor, medium, +7 Reflex, +2 Fort, max Dex +2, 17, 11000 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "republic-combat-armor",
+    "id": "armor-republic-combat-armor",
+    "name": "Republic Combat Armor",
+    "description": "Republic Combat Armor, medium, +6 Reflex, +2 Fort, max Dex +2, 14, 0 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "weave-armor",
+    "id": "armor-weave-armor",
+    "name": "Weave Armor",
+    "description": "Weave Armor, medium, +6 Reflex, +2 Fort, max Dex +3, 15, 5000 credits. A tasteful option for anyone who prefers being difficult to notice right up until the bill arrives."
+  },
+  {
+    "slug": "armored-space-suit",
+    "id": "armor-armored-space-suit",
+    "name": "Armored Space Suit",
+    "description": "Armored Space Suit, heavy, +9 Reflex, +3 Fort, max Dex +1, 35, 12000 credits. A strong choice for buyers who expect their workday to include hard vacuum and worse company."
+  },
+  {
+    "slug": "av-1c-combat-armor",
+    "id": "armor-av1c-combat-armor",
+    "name": "AV-1C Combat Armor",
+    "description": "AV-1C Combat Armor, heavy, +9 Reflex, +4 Fort, max Dex +1, 25, 25000 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "heavy-battle-armor",
+    "id": "armor-heavy-battle-armor",
+    "name": "Heavy Battle Armor",
+    "description": "Heavy Battle Armor, heavy, +10 Reflex, +4 Fort, max Dex +1, 30, 15000 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "heavy-beskar-gam",
+    "id": "armor-heavy-beskargam",
+    "name": "Heavy Beskar'gam",
+    "description": "Heavy Beskar'gam, heavy, +10 Reflex, +4 Fort, max Dex +1, 32, 45000 credits. A premium buy for people who prefer family traditions to include visible plating."
+  },
+  {
+    "slug": "heavy-dark-armor",
+    "id": "armor-heavy-dark-armor",
+    "name": "Heavy Dark Armor",
+    "description": "Heavy Dark Armor, heavy, +8 Reflex, +5 Fort, max Dex +1, 30, 25000 credits. Perfect for clients who want their wardrobe to imply poor life choices and excellent conviction."
+  },
+  {
+    "slug": "heavy-powered-battle-armor",
+    "id": "armor-heavy-powered-battle-armor",
+    "name": "Heavy Powered Battle Armor",
+    "description": "Heavy Powered Battle Armor, heavy, +9 Reflex, +4 Fort, max Dex +1, 32, 19000 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "heavy-pressure-suit",
+    "id": "armor-heavy-pressure-suit",
+    "name": "Heavy Pressure Suit",
+    "description": "Heavy Pressure Suit, heavy, +9 Reflex, +3 Fort, max Dex +1, 35, 12000 credits. A strong choice for buyers who expect their workday to include hard vacuum and worse company."
+  },
+  {
+    "slug": "matrix-armor",
+    "id": "armor-matrix-armor",
+    "name": "Matrix Armor",
+    "description": "Matrix Armor, heavy, +9 Reflex, +3 Fort, max Dex +1, 25, 9000 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "neo-crusader-assault-armor",
+    "id": "armor-neo-crusader-assault-armor",
+    "name": "Neo-Crusader Assault Armor",
+    "description": "Neo-Crusader Assault Armor, heavy, +10 Reflex, +4 Fort, max Dex +1, 65, 0 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "orbalisk-armor",
+    "id": "armor-orbalisk-armor",
+    "name": "Orbalisk Armor",
+    "description": "Orbalisk Armor, heavy, +10 Reflex, +2 Fort, max Dex +1, 26, 0 credits. A respectable purchase for buyers who prefer their protection obvious and their life expectancy improved."
+  },
+  {
+    "slug": "republic-heavy-armor",
+    "id": "armor-republic-heavy-armor",
+    "name": "Republic Heavy Armor",
+    "description": "Republic Heavy Armor, heavy, +8 Reflex, +3 Fort, max Dex +1, 26, 0 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "vacuum-pod",
+    "id": "armor-vacuum-pod",
+    "name": "Vacuum Pod",
+    "description": "Vacuum Pod, heavy, +4 Reflex, +1 Fort, max Dex +0, 35, 15000 credits. A strong choice for buyers who expect their workday to include hard vacuum and worse company."
+  },
+  {
+    "slug": "venom-assault-armor",
+    "id": "armor-venom-assault-armor",
+    "name": "Venom Assault Armor",
+    "description": "Venom Assault Armor, heavy, +10 Reflex, +4 Fort, max Dex +1, 38, 17000 credits. For customers who hear \"front line\" and immediately ask about financing."
+  },
+  {
+    "slug": "zero-gravity-stormtrooper-armor",
+    "id": "armor-zero-gravity-stormtrooper-armor",
+    "name": "Zero-Gravity Stormtrooper Armor",
+    "description": "Zero-Gravity Stormtrooper Armor, heavy, +9 Reflex, +3 Fort, max Dex +0, 38, 21000 credits. A strong choice for buyers who expect their workday to include hard vacuum and worse company."
+  },
+  {
+    "slug": "energy-shield-sr-10",
+    "id": "armor-energy-shield-sr10",
+    "name": "Energy Shield (SR 10)",
+    "description": "Energy Shield (SR 10), shield, +0 Reflex, max Dex +4, 1, 2000 credits. For the practical buyer who thinks getting shot should feel more like a policy disagreement."
+  },
+  {
+    "slug": "energy-shield-sr-15",
+    "id": "armor-energy-shield-sr15",
+    "name": "Energy Shield (SR 15)",
+    "description": "Energy Shield (SR 15), shield, +0 Reflex, max Dex +3, 1, 4500 credits. For the practical buyer who thinks getting shot should feel more like a policy disagreement."
+  },
+  {
+    "slug": "energy-shield-sr-20",
+    "id": "armor-energy-shield-sr20",
+    "name": "Energy Shield (SR 20)",
+    "description": "Energy Shield (SR 20), shield, +0 Reflex, max Dex +3, 1, 8000 credits. For the practical buyer who thinks getting shot should feel more like a policy disagreement."
+  },
+  {
+    "slug": "energy-shield-sr-25",
+    "id": "armor-energy-shield-sr25",
+    "name": "Energy Shield (SR 25)",
+    "description": "Energy Shield (SR 25), shield, +0 Reflex, max Dex +2, 1, 12500 credits. For the practical buyer who thinks getting shot should feel more like a policy disagreement."
+  },
+  {
+    "slug": "energy-shield-sr-30",
+    "id": "armor-energy-shield-sr30",
+    "name": "Energy Shield (SR 30)",
+    "description": "Energy Shield (SR 30), shield, +0 Reflex, max Dex +2, 1, 18000 credits. For the practical buyer who thinks getting shot should feel more like a policy disagreement."
+  },
+  {
+    "slug": "energy-shield-sr-5",
+    "id": "armor-energy-shield-sr5",
+    "name": "Energy Shield (SR 5)",
+    "description": "Energy Shield (SR 5), shield, +0 Reflex, max Dex +4, 1, 500 credits. For the practical buyer who thinks getting shot should feel more like a policy disagreement."
+  },
+  {
+    "slug": "shield-gauntlet",
+    "id": "armor-shield-gauntlet",
+    "name": "Shield Gauntlet",
+    "description": "Shield Gauntlet, shield, +0 Reflex, 1, 1500 credits. For the practical buyer who thinks getting shot should feel more like a policy disagreement."
+  }
+]

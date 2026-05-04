@@ -16,14 +16,12 @@
 
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
-import { getActorSheetTheme, buildActorSheetThemeStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
-import { getActorSheetMotionStyle, buildActorSheetMotionStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
+import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { HolonetEngine } from "/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js";
 import { HolonetStorage } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js";
 import { HolonetStateService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js";
@@ -95,17 +93,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
     const context = await super._prepareContext(options);
     const pageContext = await this._loadPageContext(this.currentPage);
-    const themeKey = this._getDatapadThemeKey();
-    const motionStyle = this._getDatapadMotionStyle();
+    const surfaceContext = ThemeResolutionService.buildSurfaceContext({ preferActor: false });
     const appCounts = await this._getHomeBadgeCounts();
 
     return foundry.utils.mergeObject(context, {
       currentPage: this.currentPage,
       apps: this._getAppCards(appCounts),
-      themeKey,
-      motionStyle,
-      themeStyleInline: buildActorSheetThemeStyle(themeKey),
-      motionStyleInline: buildActorSheetMotionStyle(motionStyle),
+      ...surfaceContext,
       ...pageContext
     });
   }
@@ -132,14 +126,6 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
-
-  _getDatapadThemeKey() {
-    return getActorSheetTheme(SettingsHelper.getString('sheetTheme', 'holo'));
-  }
-
-  _getDatapadMotionStyle() {
-    return getActorSheetMotionStyle(SettingsHelper.getString('sheetMotionStyle', 'standard'));
-  }
 
   async _getHomeBadgeCounts() {
     const bulletinRecords = await HolonetStorage.getAllRecords();

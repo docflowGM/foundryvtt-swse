@@ -1,5 +1,5 @@
 {{!-- Weapon Item Card for Inventory Display --}}
-<div class="inventory-weapon-card {{#if equipped}}is-equipped{{/if}}" data-item-id="{{id}}">
+<div class="inventory-weapon-card {{#if equipped}}is-equipped{{/if}} {{#if activated}}is-activated{{/if}} {{#if isLightsaber}}is-lightsaber{{/if}}" data-item-id="{{id}}">
 
   {{!-- CARD HEADER: Name + Quick Roll Buttons --}}
   <div class="card-header weapon-header">
@@ -26,6 +26,16 @@
               title="Roll {{name}} damage with modifiers">
         💥
       </button>
+      {{#if canToggleActivated}}
+        <button type="button"
+                class="quick-action-btn lightsaber-activation-btn {{#if activated}}is-active{{/if}}"
+                data-action="toggle-activated"
+                data-item-id="{{id}}"
+                title="{{activationTitle}}"
+                aria-pressed="{{#if activated}}true{{else}}false{{/if}}">
+          {{#if activated}}I{{else}}O{{/if}}
+        </button>
+      {{/if}}
       {{#if equipped}}
         <span class="equipped-badge" title="Equipped">✓</span>
       {{/if}}
@@ -96,6 +106,9 @@
     <button type="button" class="btn btn-equip" title="Equip/Unequip" data-action="equip" data-item-id="{{id}}">
       {{#if equipped}}Unequip{{else}}Equip{{/if}}
     </button>
+    {{#if canToggleActivated}}
+      <button type="button" class="btn btn-activate {{#if activated}}is-active{{/if}}" title="{{activationTitle}}" data-action="toggle-activated" data-item-id="{{id}}">{{activationLabel}}</button>
+    {{/if}}
     <button type="button" class="btn btn-config" title="Configure Weapon Properties" data-action="configure" data-item-id="{{id}}">⚙</button>
     <button type="button" class="btn btn-edit" title="Edit Item" data-action="edit" data-item-id="{{id}}">Edit</button>
     <button type="button" class="btn btn-sell" title="Sell Item" data-action="sell-item" data-item-id="{{id}}">Sell</button>
@@ -113,6 +126,30 @@
   background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
   overflow: hidden;
   transition: all 0.2s ease;
+}
+
+
+.inventory-weapon-card.is-lightsaber.is-activated {
+  border-color: rgba(120, 255, 190, 0.55);
+  box-shadow: 0 0 10px rgba(80, 255, 180, 0.22);
+}
+
+.lightsaber-activation-btn {
+  border: 1px solid rgba(120, 220, 255, 0.45);
+  color: #9beeff;
+}
+
+.lightsaber-activation-btn.is-active,
+.btn-activate.is-active {
+  border-color: rgba(120, 255, 190, 0.75);
+  color: #b9ffd8;
+  background: rgba(80, 255, 180, 0.16);
+  box-shadow: 0 0 8px rgba(80, 255, 180, 0.22);
+}
+
+.btn-activate {
+  border-color: rgba(120, 220, 255, 0.6);
+  color: #9beeff;
 }
 
 .inventory-weapon-card.is-equipped {

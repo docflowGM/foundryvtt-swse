@@ -34,7 +34,7 @@ export class ForcePointsUtil {
     const forceDice = `${diceCount}${dieSize}`;
 
     // Roll the dice with heroic scaling
-    const roll = await globalThis.SWSE.RollEngine.safeRoll(forceDice).evaluate();
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(forceDice, {}, { domain: 'force-point' });
 
     // For multiple dice, take the highest
     let bonus = 0;
@@ -48,7 +48,7 @@ export class ForcePointsUtil {
     let darkSideBonus = 0;
     let darkSideUsed = false;
     if (useDarkSide) {
-      const darkSideRoll = await globalThis.SWSE.RollEngine.safeRoll(`1${dieSize}`).evaluate();
+      const darkSideRoll = await globalThis.SWSE.RollEngine.safeRoll(`1${dieSize}`, {}, { domain: 'force-point.dark-side' });
       darkSideBonus = darkSideRoll.total;
       darkSideUsed = true;
     }

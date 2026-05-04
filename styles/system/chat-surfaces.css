@@ -1,0 +1,193 @@
+/* SWSE chat surface theme bridge
+   Scoped to SWSE-owned chat content only. It does not restyle Foundry's whole
+   chat log, message chrome, or canvas DOM. */
+
+:root {
+  --swse-chat-bg: var(--swse-surface-bg, var(--swse-theme-surface-bg, rgba(8, 18, 28, 0.94)));
+  --swse-chat-panel: var(--swse-panel-bg, var(--swse-theme-panel-bg, rgba(10, 24, 38, 0.92)));
+  --swse-chat-panel-raised: var(--swse-panel-raised-bg, rgba(16, 34, 52, 0.95));
+  --swse-chat-text: var(--swse-text-primary, var(--swse-theme-text-primary, #d8f7ff));
+  --swse-chat-muted: var(--swse-text-muted, var(--swse-theme-text-muted, #8fb8c5));
+  --swse-chat-border: var(--swse-border-color, var(--swse-theme-border, rgba(120, 220, 255, 0.3)));
+  --swse-chat-accent: var(--swse-accent, var(--swse-theme-accent, #7ee7ff));
+  --swse-chat-glow: var(--swse-glow, 0 0 18px rgba(126, 231, 255, 0.22));
+  --swse-chat-font-body: var(--swse-font-body, var(--swse-theme-font-body, var(--font-primary)));
+  --swse-chat-font-mono: var(--swse-font-mono, var(--font-monospace, monospace));
+
+  --swse-state-positive: var(--swse-state-positive-color, #63e6a5);
+  --swse-state-neutral: var(--swse-state-neutral-color, #ffc857);
+  --swse-state-negative: var(--swse-state-negative-color, #ff6b6b);
+
+  --swse-ability-strength: var(--swse-ability-strength-color, #d8dde6);
+  --swse-ability-dexterity: var(--swse-ability-dexterity-color, #42d9d2);
+  --swse-ability-constitution: var(--swse-ability-constitution-color, #d2764a);
+  --swse-ability-intelligence: var(--swse-ability-intelligence-color, #ff62d4);
+  --swse-ability-wisdom: var(--swse-ability-wisdom-color, #a987ff);
+  --swse-ability-charisma: var(--swse-ability-charisma-color, #5aa7ff);
+}
+
+.chat-message.swse-chat-message,
+.chat-message:has(.swse-chat-card),
+.chat-message:has(.damage-log-container),
+.chat-message:has(.swse-attack-card),
+.chat-message:has(.swse-damage-card) {
+  background: color-mix(in srgb, var(--swse-chat-bg) 90%, transparent);
+  border-color: var(--swse-chat-border);
+  color: var(--swse-chat-text);
+}
+
+.chat-message .swse-chat-card,
+.chat-message .swse-roll-card,
+.chat-message .swse-chat-roll,
+.chat-message .swse-holo-roll-card,
+.chat-message .swse-attack-card,
+.chat-message .swse-damage-card,
+.chat-message .swse-level-up-summary,
+.chat-message .swse-progression-session,
+.chat-message .swse-species-reroll-card,
+.chat-message [data-swse-chat-surface] {
+  position: relative;
+  overflow: hidden;
+  font-family: var(--swse-chat-font-body);
+  color: var(--swse-chat-text);
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--swse-chat-panel) 92%, white 8%),
+      color-mix(in srgb, var(--swse-chat-bg) 92%, black 8%)
+    );
+  border: 1px solid var(--swse-chat-border);
+  border-radius: 12px;
+  box-shadow: var(--swse-chat-glow), inset 0 0 0 1px rgba(255,255,255,0.04);
+  padding: 0.75rem;
+}
+
+.chat-message .swse-chat-card h3,
+.chat-message .swse-roll-card h3,
+.chat-message .swse-attack-card h3,
+.chat-message .swse-damage-card h3 {
+  margin: 0 0 0.45rem;
+  color: var(--swse-chat-accent);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.chat-message .swse-chat-card .card-subtitle,
+.chat-message .swse-chat-card .card-content,
+.chat-message .swse-roll-card .card-subtitle,
+.chat-message .swse-roll-card .card-content {
+  color: var(--swse-chat-text);
+}
+
+.chat-message .swse-chat-card .dice-formula,
+.chat-message .swse-roll-card .dice-formula,
+.chat-message .swse-ability-card .roll-formula,
+.chat-message .swse-attack-card .roll-line,
+.chat-message .swse-damage-card .roll-line {
+  font-family: var(--swse-chat-font-mono);
+  color: var(--swse-chat-muted);
+}
+
+.chat-message .swse-chat-card .dice-total,
+.chat-message .swse-roll-card .dice-total,
+.chat-message .swse-ability-card .roll-total {
+  color: var(--swse-chat-accent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--swse-chat-accent) 35%, transparent);
+}
+
+.chat-message .swse-chat-card button,
+.chat-message .swse-attack-card button,
+.chat-message .swse-damage-card button,
+.chat-message .species-reroll-btn,
+.chat-message .swse-roll-damage,
+.chat-message .swse-roll-damage-btn,
+.chat-message .swse-apply-damage-btn {
+  color: var(--swse-chat-text);
+  background: color-mix(in srgb, var(--swse-chat-panel-raised) 82%, var(--swse-chat-accent) 18%);
+  border: 1px solid color-mix(in srgb, var(--swse-chat-border) 70%, var(--swse-chat-accent) 30%);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+.chat-message .swse-chat-card button:hover,
+.chat-message .swse-attack-card button:hover,
+.chat-message .swse-damage-card button:hover,
+.chat-message .species-reroll-btn:hover,
+.chat-message .swse-roll-damage:hover,
+.chat-message .swse-roll-damage-btn:hover,
+.chat-message .swse-apply-damage-btn:hover {
+  border-color: var(--swse-chat-accent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--swse-chat-accent) 28%, transparent);
+}
+
+.swse-signed-number {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.swse-signed-number--negative {
+  color: var(--swse-state-negative) !important;
+}
+
+.swse-signed-number--neutral {
+  color: var(--swse-state-neutral) !important;
+}
+
+.swse-signed-number--positive {
+  color: var(--swse-state-positive) !important;
+}
+
+.swse-ability-word {
+  font-weight: 700;
+  text-shadow: 0 0 8px currentColor;
+}
+
+.swse-ability--strength { color: var(--swse-ability-strength) !important; }
+.swse-ability--dexterity { color: var(--swse-ability-dexterity) !important; }
+.swse-ability--constitution { color: var(--swse-ability-constitution) !important; }
+.swse-ability--intelligence { color: var(--swse-ability-intelligence) !important; }
+.swse-ability--wisdom { color: var(--swse-ability-wisdom) !important; }
+.swse-ability--charisma { color: var(--swse-ability-charisma) !important; }
+
+.chat-message .dc-result.success,
+.chat-message .hit-line:has(.success),
+.chat-message .status-normal {
+  color: var(--swse-state-positive);
+}
+
+.chat-message .dc-result.failure,
+.chat-message .status-critical {
+  color: var(--swse-state-negative);
+}
+
+.chat-message .crit-threat,
+.chat-message .status-warning {
+  color: var(--swse-state-neutral);
+}
+
+[data-motion-style="reduced"] .chat-message .swse-chat-card,
+[data-motion-style="reduced"] .chat-message .swse-roll-card,
+[data-motion-style="reduced"] .chat-message .damage-log-container,
+[data-motion-style="none"] .chat-message .swse-chat-card,
+[data-motion-style="none"] .chat-message .swse-roll-card,
+[data-motion-style="none"] .chat-message .damage-log-container {
+  animation: none !important;
+  transition: none !important;
+}
+
+.chat-message .swse-roll-dc {
+  color: var(--swse-chat-muted);
+}
+
+.chat-message .swse-roll-outcome {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.chat-message .swse-roll-outcome--success {
+  color: var(--swse-state-positive);
+}
+
+.chat-message .swse-roll-outcome--failure {
+  color: var(--swse-state-negative);
+}

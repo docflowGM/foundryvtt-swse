@@ -217,6 +217,70 @@ export class RollCore {
   }
 
   /**
+   * Execute an arbitrary formula through the engine layer.
+   *
+   * This is the V2-safe escape hatch for formula rolls that do not yet have a
+   * domain-specific resolver. It deliberately performs roll execution only;
+   * chat output and actor mutation remain caller-owned service/UI decisions.
+   *
+   * @param {Object} options
+   * @param {string} options.formula - Foundry roll formula.
+   * @param {Object} [options.rollData={}] - Formula data.
+   * @param {Actor|null} [options.actor=null] - Optional actor for diagnostics.
+   * @param {string} [options.domain="formula"] - Diagnostic roll domain.
+   * @param {Object} [options.context={}] - Additional diagnostic context.
+   * @returns {Promise<Object>} Structured formula result.
+   */
+  static async executeFormula({
+    formula,
+    rollData = {},
+    actor = null,
+    domain = 'formula',
+    context = {}
+  } = {}) {
+    if (!formula || typeof formula !== 'string') {
+      return {
+        success: false,
+        error: 'RollCore.executeFormula() requires a formula string',
+        domain,
+        context
+      };
+    }
+
+    try {
+      const roll = await this._executeRoll(formula, rollData);
+      const baseRoll = this._extractBaseRoll(roll, formula);
+      return {
+        success: true,
+        actor,
+        domain,
+        context,
+        formula,
+        roll,
+        baseRoll,
+        finalTotal: roll.total,
+        breakdown: {
+          baseRoll,
+          baseBonus: 0,
+          modifiers: 0,
+          modifierBreakdown: {},
+          forcePointBonus: 0,
+          total: roll.total
+        }
+      };
+    } catch (err) {
+      swseLogger.error(`[RollCore.executeFormula] Failed for domain "${domain}":`, err);
+      return {
+        success: false,
+        error: err.message,
+        domain,
+        context,
+        formula
+      };
+    }
+  }
+
+  /**
    * Apply Force Point logic - Roll scaled Force dice with heroic level support
    *
    * Uses ForcePointsService for canonical scaling rules:

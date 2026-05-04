@@ -27,7 +27,7 @@
       </div>
       <div class="ss-hud__right">
         <span class="ss-hud__lbl">RESERVE</span>
-        <span class="ss-hud__credits">₢ {{vm.actorCredits}}</span>
+        <span class="ss-hud__credits">$ {{vm.actorCredits}}</span>
       </div>
     </div>
 
@@ -48,10 +48,10 @@
       </div>
       <div class="ss-credits-block">
         <span class="ss-credits-lbl">ACCOUNT</span>
-        <span class="ss-credits-val">₢ {{vm.actorCredits}}</span>
+        <span class="ss-credits-val">$ {{vm.actorCredits}}</span>
         {{#if vm.storeContext.cartCount}}
-        <span class="ss-credits-delta neg">−₢ {{vm.storeContext.cartTotal}} staged</span>
-        <span class="ss-credits-reserve">₢ {{vm.storeContext.pageContext.cartRemaining}} after</span>
+        <span class="ss-credits-delta neg">−$ {{vm.storeContext.cartTotal}} staged</span>
+        <span class="ss-credits-reserve">$ {{vm.storeContext.pageContext.cartRemaining}} after</span>
         {{/if}}
       </div>
     </div>
@@ -131,10 +131,10 @@
             {{/if}}
             <div class="ss-detail-price-stack">
               {{#if vm.storeContext.selectedProduct.requiresCondition}}
-              <div class="ss-detail-price-line"><span>NEW</span><strong>₢ {{vm.storeContext.selectedProduct.newCost}}</strong></div>
-              <div class="ss-detail-price-line"><span>USED</span><strong>₢ {{vm.storeContext.selectedProduct.usedCost}}</strong></div>
+              <div class="ss-detail-price-line"><span>NEW</span><strong>$ {{vm.storeContext.selectedProduct.newCost}}</strong></div>
+              <div class="ss-detail-price-line"><span>USED</span><strong>$ {{vm.storeContext.selectedProduct.usedCost}}</strong></div>
               {{else}}
-              <div class="ss-detail-price-line is-primary"><span>PRICE</span><strong>₢ {{vm.storeContext.selectedProduct.price}}</strong></div>
+              <div class="ss-detail-price-line is-primary"><span>PRICE</span><strong>$ {{vm.storeContext.selectedProduct.price}}</strong></div>
               {{/if}}
             </div>
           </div>
@@ -211,9 +211,9 @@
           </div>
           <div class="sc-foot">
             {{#if this.costUsed}}
-            <span class="sc-price">NEW ₢ {{this.cost}} · USED ₢ {{this.costUsed}}</span>
+            <span class="sc-price">NEW $ {{this.cost}} · USED $ {{this.costUsed}}</span>
             {{else}}
-            <span class="sc-price">₢ {{this.finalCost}}</span>
+            <span class="sc-price">$ {{this.finalCost}}</span>
             {{/if}}
             <div class="sc-actions">
               <button type="button" class="sc-btn" data-action="expand-product" data-item-id="{{this.id}}">DETAILS</button>
@@ -248,7 +248,7 @@
             <div class="ss-cart-type">{{this.summary}}</div>
           </div>
           <div class="ss-cart-qty">×{{this.qty}}</div>
-          <div class="ss-cart-linecost">₢ {{this.cost}}</div>
+          <div class="ss-cart-linecost">$ {{this.cost}}</div>
           <button type="button" class="ss-btn ss-btn--ghost" data-action="remove-from-cart" data-item-id="{{this.id}}" data-item-type="{{this.itemType}}" data-condition="{{this.condition}}">REMOVE</button>
         </div>
         {{/each}}
@@ -256,15 +256,15 @@
       <div class="ss-cart-summary">
         <div class="ss-cart-summary-row">
           <span>TOTAL</span>
-          <span class="ss-cart-total">₢ {{vm.storeContext.cartTotal}}</span>
+          <span class="ss-cart-total">$ {{vm.storeContext.cartTotal}}</span>
         </div>
         <div class="ss-cart-summary-row dim">
           <span>AVAILABLE</span>
-          <span>₢ {{vm.actorCredits}}</span>
+          <span>$ {{vm.actorCredits}}</span>
         </div>
         <div class="ss-cart-summary-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}}">
           <span>RESERVE AFTER TRADE</span>
-          <span>₢ {{vm.storeContext.pageContext.cartRemaining}}</span>
+          <span>$ {{vm.storeContext.pageContext.cartRemaining}}</span>
         </div>
         <div class="ss-cart-actions">
           <button type="button" class="ss-btn" data-action="clear-cart">CLEAR CART</button>
@@ -294,14 +294,14 @@
         <div class="ss-checkout-row">
           <span class="ss-checkout-row-name">{{this.name}}</span>
           <span class="ss-checkout-row-type">{{this.summary}} · ×{{this.qty}}</span>
-          <span class="ss-checkout-row-cost">₢ {{this.cost}}</span>
+          <span class="ss-checkout-row-cost">$ {{this.cost}}</span>
         </div>
         {{/each}}
       </div>
       <div class="ss-checkout-ledger">
-        <div class="ss-checkout-ledger-row"><span>AVAILABLE CREDITS</span><span>₢ {{vm.actorCredits}}</span></div>
-        <div class="ss-checkout-ledger-row debit"><span>TRADE DEBIT</span><span>−₢ {{vm.storeContext.cartTotal}}</span></div>
-        <div class="ss-checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total"><span>REMAINING RESERVE</span><span>₢ {{vm.storeContext.pageContext.cartRemaining}}</span></div>
+        <div class="ss-checkout-ledger-row"><span>AVAILABLE CREDITS</span><span>$ {{vm.actorCredits}}</span></div>
+        <div class="ss-checkout-ledger-row debit"><span>TRADE DEBIT</span><span>−$ {{vm.storeContext.cartTotal}}</span></div>
+        <div class="ss-checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total"><span>REMAINING RESERVE</span><span>$ {{vm.storeContext.pageContext.cartRemaining}}</span></div>
       </div>
       <div class="ss-checkout-actions">
         <button type="button" class="ss-btn" data-action="return-to-cart">← RETURN TO CART</button>
@@ -324,11 +324,11 @@
         <div class="ss-history-entry">
           <div class="ss-history-entry-header">
             <span class="ss-history-date">{{this.timestamp}}</span>
-            <span class="ss-history-total">₢ {{this.total}}</span>
+            <span class="ss-history-total">$ {{this.total}}</span>
           </div>
           <div class="ss-history-items">
             {{#each this.items}}
-            <span class="ss-history-item">{{this.name}} ×{{this.qty}} (₢{{this.cost}})</span>
+            <span class="ss-history-item">{{this.name}} ×{{this.qty}} (${{this.cost}})</span>
             {{/each}}
           </div>
         </div>

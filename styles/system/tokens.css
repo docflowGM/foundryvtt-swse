@@ -21,6 +21,34 @@
   --swse-pos: oklch(0.82 0.19 145);
   --swse-neg: oklch(0.70 0.22 25);
   --swse-zero: oklch(0.88 0.17 95);
+
+  /* Canonical semantic number colors. Keep these distinct from ability colors. */
+  --swse-state-positive: #65e6a5;
+  --swse-state-neutral: #ffc857;
+  --swse-state-negative: #ff6b6b;
+  --swse-signed-positive: var(--swse-state-positive);
+  --swse-signed-neutral: var(--swse-state-neutral);
+  --swse-signed-negative: var(--swse-state-negative);
+
+  /* Ability identity colors. These are visual labels, not numeric state colors. */
+  --swse-ability-strength: #d6d9df;      /* Argent */
+  --swse-ability-dexterity: #35e0d2;     /* Teal */
+  --swse-ability-constitution: #c46a3a;  /* Rust */
+  --swse-ability-intelligence: #ff5fd2;  /* Magenta */
+  --swse-ability-wisdom: #b08cff;        /* Purple */
+  --swse-ability-charisma: #61a8ff;      /* Blue */
+
+  /* Shared datapad surface aliases. Runtime values are applied by ThemeResolutionService. */
+  --swse-theme-bg: var(--screen, var(--swse-screen));
+  --swse-theme-panel-bg: var(--screen-2, var(--swse-screen-2));
+  --swse-theme-surface-bg: color-mix(in oklch, var(--screen, var(--swse-screen)) 82%, black 18%);
+  --swse-theme-text-primary: var(--ink, var(--swse-ink));
+  --swse-theme-text-secondary: var(--ink-dim, var(--swse-ink-dim));
+  --swse-theme-text-muted: var(--ink-faint, var(--swse-ink-faint));
+  --swse-theme-accent: var(--vapor-cyan, var(--swse-accent));
+  --swse-theme-accent-secondary: var(--vapor-pink, var(--swse-accent-soft));
+  --swse-theme-border: color-mix(in oklch, var(--vapor-cyan, var(--swse-accent)) 32%, transparent);
+  --swse-theme-glow: 0 0 16px color-mix(in oklch, var(--vapor-cyan, var(--swse-accent)) 35%, transparent);
   --swse-shell-start: #1a1a26;
   --swse-shell-mid: #0b0b14;
   --swse-shell-end: #12121c;

@@ -3,6 +3,21 @@
  * Shared by HouseRuleService and SettingsHelper to avoid split-brain defaults.
  */
 export const SETTINGS_DEFAULTS = {
+    // Datapad Theme / Motion
+    sheetTheme: 'holo',
+    sheetMotionStyle: 'standard',
+    uiTheme: {
+        theme: 'holo',
+        motionStyle: 'standard',
+        shellColor: 'cyan',
+        scanStrength: 0.03,
+        animSpeed: 1,
+        glow: 1,
+        breathing: true,
+        reducedMotion: false,
+        language: 'basic'
+    },
+
     // Character Creation
     abilityScoreMethod: '4d6drop',
     pointBuyPool: 32,

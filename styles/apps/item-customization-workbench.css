@@ -296,3 +296,334 @@
   .detail-grid, .appearance-blocks { grid-template-columns: 1fr; }
   .swse-customization-footer { grid-template-columns: 1fr; }
 }
+
+/* Lightsaber forge lane — unique workspace inside the shared armory shell */
+.workbench-tab.special {
+  color: var(--icw-positive);
+  border-bottom-color: oklch(0.82 0.19 145 / 0.55);
+}
+.workbench-tab.special.active {
+  background: linear-gradient(180deg, oklch(0.82 0.19 145 / 0.16), oklch(0.85 0.18 200 / 0.04));
+  border-color: oklch(0.82 0.19 145 / 0.45);
+}
+.lightsaber-workspace {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1fr);
+  grid-template-areas:
+    "stage chassis"
+    "stage crystal"
+    "accessories color";
+  gap: 12px;
+  min-height: 0;
+}
+.ls-forge-stage { grid-area: stage; min-height: 440px; }
+.ls-panel-chassis { grid-area: chassis; }
+.ls-panel-crystal { grid-area: crystal; }
+.ls-panel-accessories { grid-area: accessories; }
+.ls-panel-color { grid-area: color; }
+.ls-blade-render {
+  --blade-color: var(--icw-cyan);
+  min-height: 210px;
+  border: 1px solid var(--icw-border);
+  background:
+    radial-gradient(ellipse at center, color-mix(in oklch, var(--blade-color), transparent 78%), transparent 58%),
+    linear-gradient(180deg, oklch(0 0 0 / 0.55), oklch(0 0 0 / 0.78));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+.ls-blade-render::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(1 0 0 / 0.035) 3px 4px);
+  pointer-events: none;
+}
+.ls-hilt {
+  width: 92px;
+  height: 28px;
+  border: 1px solid oklch(0.75 0.03 260 / 0.55);
+  border-radius: 4px;
+  background: linear-gradient(180deg, oklch(0.72 0.02 260), oklch(0.28 0.03 260) 48%, oklch(0.48 0.03 260));
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.22), 0 0 18px oklch(0 0 0 / 0.65);
+  position: relative;
+  z-index: 2;
+}
+.ls-hilt::before,
+.ls-hilt::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 8px;
+  border: 1px solid oklch(0.15 0.02 260);
+  background: linear-gradient(180deg, oklch(0.85 0.02 260), oklch(0.28 0.03 260));
+}
+.ls-hilt::before { left: 14px; }
+.ls-hilt::after { right: 14px; }
+.ls-blade {
+  height: 9px;
+  flex: 0 0 230px;
+  border-radius: 999px;
+  background: var(--blade-color);
+  box-shadow:
+    0 0 8px var(--blade-color),
+    0 0 20px var(--blade-color),
+    0 0 44px var(--blade-color),
+    inset 0 0 7px oklch(1 0 0 / 0.85);
+  animation: icw-ls-blade-pulse calc(1.7s / var(--anim-speed, 1)) ease-in-out infinite;
+}
+.ls-left { display: none; }
+.ls-blade-render.double .ls-left,
+.ls-blade-render.double-bladed .ls-left { display: block; }
+.ls-blade-render.short .ls-blade,
+.ls-blade-render.shoto .ls-blade { flex-basis: 150px; }
+.ls-crossguard {
+  display: none;
+  position: absolute;
+  width: 86px;
+  height: 5px;
+  left: calc(50% - 142px);
+  background: var(--blade-color);
+  box-shadow: 0 0 8px var(--blade-color), 0 0 18px var(--blade-color);
+  z-index: 1;
+}
+.ls-blade-render.crossguard .ls-crossguard,
+.ls-blade-render.cross .ls-crossguard {
+  display: block;
+}
+.ls-crossguard-a { transform: rotate(18deg); top: calc(50% - 22px); }
+.ls-crossguard-b { transform: rotate(-18deg); top: calc(50% + 18px); }
+@keyframes icw-ls-blade-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.22); }
+}
+.ls-forge-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.ls-check-mode {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+.blade-color-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+[data-motion-style="off"] .ls-blade,
+[data-motion-style="reduced"] .ls-blade {
+  animation: none;
+}
+
+@media (max-width: 1180px) {
+  .lightsaber-workspace {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "stage"
+      "chassis"
+      "crystal"
+      "accessories"
+      "color";
+  }
+}
+
+.ls-blade-render.pike .ls-blade,
+.ls-blade-render.longhandle .ls-blade { flex-basis: 280px; }
+.ls-blade-render.lightwhip .ls-blade { flex-basis: 310px; height: 6px; border-radius: 60% 40% 55% 45%; filter: saturate(1.25); }
+.ls-blade-render.curved .ls-hilt { transform: skewX(-8deg); border-radius: 10px 3px 10px 3px; }
+.ls-blade-render.tech .ls-hilt { box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.22), 0 0 18px oklch(0 0 0 / 0.65), 0 0 16px var(--blade-color); }
+.config-card:disabled { cursor: not-allowed; }
+
+.swse-item-customization-workbench .filter-reset {
+  border: 1px solid color-mix(in srgb, var(--swse-theme-accent, var(--vapor-cyan)) 45%, transparent);
+  background: color-mix(in srgb, var(--swse-theme-accent, var(--vapor-cyan)) 12%, transparent);
+  color: var(--swse-theme-accent, var(--vapor-cyan));
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 6px 9px;
+  cursor: pointer;
+}
+
+.swse-item-customization-workbench .store-stage-banner,
+.swse-item-customization-workbench .inventory-empty,
+.swse-item-customization-workbench .footer-blocker {
+  border: 1px solid color-mix(in srgb, var(--swse-theme-warning, #ffd36a) 45%, transparent);
+  background: color-mix(in srgb, var(--swse-theme-warning, #ffd36a) 10%, transparent);
+  color: var(--swse-theme-warning, #ffd36a);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 10px;
+  line-height: 1.45;
+  letter-spacing: 0.08em;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+.swse-item-customization-workbench .inventory-empty {
+  color: var(--swse-theme-text-muted, var(--ink-dim));
+  border-color: color-mix(in srgb, var(--swse-theme-accent, var(--vapor-cyan)) 25%, transparent);
+  background: color-mix(in srgb, #000 35%, transparent);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.swse-item-customization-workbench button:disabled,
+.swse-item-customization-workbench .disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+  filter: saturate(0.65);
+}
+
+.swse-item-customization-workbench .footer-blocker {
+  margin: 0 10px 0 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Unified weapon color selectors -------------------------------------------------
+ * Blaster bolt colors and lightsaber blade colors use the same HTML/CSS concept:
+ * a live energy preview plus labeled selectable cells. The data authority remains
+ * item flags/workbench draft state; this is presentation only.
+ */
+.weapon-color-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.weapon-color-cell {
+  --weapon-color: var(--icw-cyan);
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 8px 6px;
+  border: 1px solid color-mix(in oklch, var(--weapon-color), var(--icw-border) 42%);
+  background:
+    radial-gradient(circle at 50% 18%, color-mix(in oklch, var(--weapon-color), transparent 78%), transparent 42%),
+    linear-gradient(180deg, oklch(0 0 0 / 0.35), oklch(0 0 0 / 0.62));
+  color: var(--icw-ink);
+  cursor: pointer;
+  text-align: center;
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.045), 0 0 10px color-mix(in oklch, var(--weapon-color), transparent 76%);
+}
+.weapon-color-cell:hover,
+.weapon-color-cell:focus-visible {
+  border-color: var(--weapon-color);
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.08), 0 0 16px color-mix(in oklch, var(--weapon-color), transparent 50%);
+  outline: none;
+}
+.weapon-color-cell.selected {
+  border-color: var(--weapon-color);
+  background:
+    radial-gradient(circle at 50% 18%, color-mix(in oklch, var(--weapon-color), transparent 62%), transparent 48%),
+    linear-gradient(180deg, color-mix(in oklch, var(--weapon-color), transparent 88%), oklch(0 0 0 / 0.66));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklch, var(--weapon-color), white 28%),
+    0 0 12px color-mix(in oklch, var(--weapon-color), transparent 38%),
+    0 0 0 1px color-mix(in oklch, var(--weapon-color), white 16%);
+}
+.weapon-color-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22px;
+  overflow: hidden;
+}
+.weapon-color-beam {
+  display: block;
+  width: 80%;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--weapon-color);
+  box-shadow:
+    0 0 6px var(--weapon-color),
+    0 0 14px var(--weapon-color),
+    0 0 28px color-mix(in oklch, var(--weapon-color), transparent 35%),
+    inset 0 0 6px oklch(1 0 0 / 0.82);
+  animation: icw-weapon-energy-pulse calc(1.8s / var(--anim-speed, 1)) ease-in-out infinite;
+}
+.bolt-preview .weapon-color-beam {
+  width: 58%;
+  height: 6px;
+  border-radius: 999px 35% 35% 999px;
+  transform: skewX(-12deg);
+}
+.saber-preview .weapon-color-beam {
+  width: 86%;
+  height: 8px;
+}
+.weapon-color-label {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklch, var(--weapon-color), white 38%);
+  text-shadow: 0 0 8px color-mix(in oklch, var(--weapon-color), transparent 36%);
+}
+.blaster-bolt-preview {
+  --weapon-color: var(--icw-cyan);
+  display: grid;
+  grid-template-columns: 34px minmax(84px, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in oklch, var(--weapon-color), var(--icw-border) 45%);
+  background:
+    radial-gradient(ellipse at 44% 50%, color-mix(in oklch, var(--weapon-color), transparent 75%), transparent 54%),
+    linear-gradient(90deg, oklch(0 0 0 / 0.58), color-mix(in oklch, var(--weapon-color), transparent 91%));
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.035), 0 0 12px color-mix(in oklch, var(--weapon-color), transparent 76%);
+}
+.blaster-bolt-preview__muzzle {
+  width: 32px;
+  height: 16px;
+  border: 1px solid oklch(0.75 0.03 260 / 0.58);
+  border-radius: 3px;
+  background: linear-gradient(180deg, oklch(0.64 0.03 260), oklch(0.20 0.03 260));
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.2), 0 0 10px oklch(0 0 0 / 0.6);
+}
+.blaster-bolt-preview__beam {
+  display: block;
+  height: 8px;
+  border-radius: 999px 36% 36% 999px;
+  background: var(--weapon-color);
+  box-shadow:
+    0 0 7px var(--weapon-color),
+    0 0 18px var(--weapon-color),
+    0 0 34px color-mix(in oklch, var(--weapon-color), transparent 34%),
+    inset 0 0 7px oklch(1 0 0 / 0.8);
+  transform: skewX(-12deg);
+  animation: icw-weapon-energy-pulse calc(1.45s / var(--anim-speed, 1)) ease-in-out infinite;
+}
+.blaster-bolt-preview__label {
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklch, var(--weapon-color), white 42%);
+  text-shadow: 0 0 8px color-mix(in oklch, var(--weapon-color), transparent 42%);
+}
+@keyframes icw-weapon-energy-pulse {
+  0%, 100% { filter: brightness(1); opacity: 0.92; }
+  50% { filter: brightness(1.25); opacity: 1; }
+}
+[data-motion-style="off"] .weapon-color-beam,
+[data-motion-style="reduced"] .weapon-color-beam,
+[data-motion-style="off"] .blaster-bolt-preview__beam,
+[data-motion-style="reduced"] .blaster-bolt-preview__beam {
+  animation: none;
+}
+
+@media (max-width: 1180px) {
+  .weapon-color-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .blaster-bolt-preview { grid-template-columns: 34px 1fr; }
+  .blaster-bolt-preview__label { grid-column: 1 / -1; }
+}

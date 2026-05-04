@@ -31,13 +31,13 @@
 
         <div class="attr-mentor-card__stats">
           {{#each displayRows}}
-            <div class="attr-mentor-stat">
-              <div class="attr-mentor-stat__label">{{label}}</div>
+            <div class="attr-mentor-stat swse-ability-surface swse-ability-surface--{{id}}" data-ability="{{id}}">
+              <div class="attr-mentor-stat__label swse-ability-label swse-ability-label--{{id}}" data-ability="{{id}}">{{label}}</div>
               <div class="attr-mentor-stat__numbers">
                 <span class="attr-mentor-stat__base">{{base}}</span>
-                <span class="attr-mentor-stat__species">{{speciesModFormatted}}</span>
+                <span class="attr-mentor-stat__species swse-signed-number {{speciesModClass}}">{{speciesModFormatted}}</span>
                 <span class="attr-mentor-stat__final">{{final}}</span>
-                <span class="attr-mentor-stat__mod">{{modifier}}</span>
+                <span class="attr-mentor-stat__mod swse-signed-number {{modifierClass}}">{{modifier}}</span>
               </div>
             </div>
           {{/each}}

@@ -1,0 +1,770 @@
+[
+  {
+    "slug": "all-temperature-cloak",
+    "id": "survival-all-temperature-cloak",
+    "name": "All-Temperature Cloak",
+    "description": "All-Temperature Cloak, Survival, 1.5 kg weight, 100 credits. a versatile cloak that provides protection against extreme temperatures. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "ambient-aural-amplifier",
+    "id": "detect-ambient-aural-amplifier",
+    "name": "Ambient Aural Amplifier",
+    "description": "Ambient Aural Amplifier, Detection/Surveillance, 0.5 kg weight, 3000 credits. an advanced sound amplification system that filters ambient noise while enhancing relevant sounds. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "anti-rad-dose",
+    "id": "medical-anti-rad-dose",
+    "name": "Anti-Rad Dose",
+    "description": "Anti-Rad Dose, Medical, 0 kg weight, 50 credits. an injection that provides temporary protection against radiation exposure. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "antidote-synthesizer",
+    "id": "medical-antidote-synthesizer",
+    "name": "Antidote Synthesizer",
+    "description": "Antidote Synthesizer, Medical, 0.8 kg weight, 2500 credits. a portable device that analyzes toxins and synthesizes custom antidotes on demand. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "antitoxin-patch",
+    "id": "medical-antitoxin-patch",
+    "name": "Antitoxin Patch",
+    "description": "Antitoxin Patch, Medical, 0 kg weight, 25 credits. a dermal patch that releases broad-spectrum antitoxins when applied. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "aquata-breather",
+    "id": "life-aquata-breather",
+    "name": "Aquata Breather",
+    "description": "Aquata Breather, Life Support, 0.2 kg weight, 350 credits. a small mouthpiece that extracts oxygen from water, allowing breathing underwater indefinitely. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "aquatic-adaptation-armor-upgrade",
+    "id": "upgrade-armor-aquatic-adaptation",
+    "name": "Aquatic Adaptation (Armor Upgrade)",
+    "description": "Aquatic Adaptation (Armor Upgrade), Armor Upgrade, 0 kg weight, 500 credits. modifies armor for underwater operations with integrated rebreather and propulsion. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "armorplast-armor-upgrade",
+    "id": "upgrade-armor-armorplast",
+    "name": "Armorplast (Armor Upgrade)",
+    "description": "Armorplast (Armor Upgrade), Armor Upgrade, 0 kg weight, 900 credits. reinforces armor with armorplast plating for additional protection. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
+  },
+  {
+    "slug": "audiorecorder",
+    "id": "detect-audiorecorder",
+    "name": "Audiorecorder",
+    "description": "Audiorecorder, Detection/Surveillance, 0.1 kg weight, 25 credits. a compact device for recording audio. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "aural-amplifier",
+    "id": "detect-aural-amplifier",
+    "name": "Aural Amplifier",
+    "description": "Aural Amplifier, Detection/Surveillance, 0.5 kg weight, 2000 credits. a headset that amplifies sound, allowing the wearer to hear conversations and sounds at great distances. A smart little purchase for buyers who like to call being overprepared a lifestyle."
+  },
+  {
+    "slug": "bacta-per-liter",
+    "id": "medical-bacta-per-liter",
+    "name": "Bacta (Per Liter)",
+    "description": "Bacta (Per Liter), Medical, 2 kg weight, 100 credits. a liter of bacta, the galaxy's most effective healing fluid. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "bacta-tank-empty",
+    "id": "medical-bacta-tank-empty",
+    "name": "Bacta Tank (Empty)",
+    "description": "Bacta Tank (Empty), Medical, 500 kg weight, 100000 credits. a large medical tank for immersing patients in bacta for advanced healing. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "bandolier",
+    "id": "accessory-bandolier",
+    "name": "Bandolier",
+    "description": "Bandolier, Weapon/Armor Accessory, 2 kg weight, 100 credits. a bandolier for carrying ammunition, power packs, and grenades. A tasteful accessory for clients who believe equipment should keep up with their worst decisions."
+  },
+  {
+    "slug": "bayonet-ring-weapon-upgrade",
+    "id": "upgrade-weapon-bayonet-ring",
+    "name": "Bayonet Ring (Weapon Upgrade)",
+    "description": "Bayonet Ring (Weapon Upgrade), Weapon Upgrade, 0 kg weight, 0 credits. a mounting ring that allows attachment of a blade or bayonet to a ranged weapon. A tasteful accessory for clients who believe equipment should keep up with their worst decisions."
+  },
+  {
+    "slug": "binder-cuffs",
+    "id": "tool-binder-cuffs",
+    "name": "Binder Cuffs",
+    "description": "Binder Cuffs, Tool, 0.5 kg weight, 50 credits. electronic restraints that lock around wrists or ankles. A workbench in portable form for people who trust tools more than technicians."
+  },
+  {
+    "slug": "bioscanner",
+    "id": "medical-bioscanner",
+    "name": "Bioscanner",
+    "description": "Bioscanner, Medical, 0.5 kg weight, 3500 credits. an advanced medical scanner that provides detailed biological analysis and life sign detection. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "blank-datacards-10",
+    "id": "computer-datacards-blank-10",
+    "name": "Blank Datacards (10)",
+    "description": "Blank Datacards (10), Computer, 0.1 kg weight, 10 credits. a pack of 10 blank datacards for storing information. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
+  },
+  {
+    "slug": "bracer-computer",
+    "id": "computer-bracer-computer",
+    "name": "Bracer Computer",
+    "description": "Bracer Computer, Computer, 0.5 kg weight, 1300 credits. a wrist-mounted computer system with integrated display and controls. Factory-fresh utility for customers who insist this is for legitimate work."
+  },
+  {
+    "slug": "breath-mask",
+    "id": "life-breath-mask",
+    "name": "Breath Mask",
+    "description": "Breath Mask, Life Support, 2 kg weight, 200 credits. a face-covering mask with air filters and a 1-hour oxygen supply. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "camouflage-poncho",
+    "id": "survival-camouflage-poncho",
+    "name": "Camouflage Poncho",
+    "description": "Camouflage Poncho, Survival, 1.5 kg weight, 125 credits. a poncho with adaptive camouflage pattern. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "chain-3-meters",
+    "id": "survival-chain-3m",
+    "name": "Chain (3 meters)",
+    "description": "Chain (3 meters), Survival, 2.5 kg weight, 25 credits. a sturdy metal chain for securing objects or climbing. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "cheater-universal-upgrade",
+    "id": "upgrade-universal-cheater",
+    "name": "Cheater (Universal Upgrade)",
+    "description": "Cheater (Universal Upgrade), Universal Upgrade, 0 kg weight, 500 credits. hidden compartment or mechanism for concealing cheating devices. A dependable addition for operators who prefer to solve small problems before they become blaster-sized ones."
+  },
+  {
+    "slug": "cloaked-universal-upgrade",
+    "id": "upgrade-universal-cloaked",
+    "name": "Cloaked (Universal Upgrade)",
+    "description": "Cloaked (Universal Upgrade), Universal Upgrade, 0 kg weight, 750 credits. coating or design that makes equipment harder to detect with sensors. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "code-cylinder",
+    "id": "computer-code-cylinder",
+    "name": "Code Cylinder",
+    "description": "Code Cylinder, Computer, 0.1 kg weight, 500 credits. a small cylindrical device containing security clearance codes and identification data. Ideal for customers who say this is strictly precautionary and then lock the door anyway."
+  },
+  {
+    "slug": "com-scrambler",
+    "id": "comms-com-scrambler",
+    "name": "Com Scrambler",
+    "description": "Com Scrambler, Communications, 10 kg weight, 6000 credits. a powerful military-grade communication scrambler that can encrypt transmissions across multiple frequencies simultaneously. Clean, practical, and ideal for anyone whose definition of standard procedure is flexible."
+  },
+  {
+    "slug": "comlink-long-range",
+    "id": "comms-comlink-long-range",
+    "name": "Comlink, Long-Range",
+    "description": "Comlink, Long-Range, Communications, 1 kg weight, 250 credits. a long-range comlink allows communication up to 200 kilometers. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "comlink-short-range",
+    "id": "comms-comlink-short-range",
+    "name": "Comlink, Short-Range",
+    "description": "Comlink, Short-Range, Communications, 0.1 kg weight, 25 credits. a short-range comlink allows audio communication up to 10 kilometers. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "communication-scanner",
+    "id": "detect-communication-scanner",
+    "name": "Communication Scanner",
+    "description": "Communication Scanner, Detection/Surveillance, 1 kg weight, 1000 credits. a device that intercepts and monitors comlink transmissions within range. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "computer-interface-visor",
+    "id": "computer-interface-visor",
+    "name": "Computer Interface Visor",
+    "description": "Computer Interface Visor, Computer, 0.5 kg weight, 1200 credits. a heads-up display visor that provides direct neural interface with computer systems, allowing hands-free operation. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
+  },
+  {
+    "slug": "computer-spike",
+    "id": "computer-spike",
+    "name": "Computer Spike",
+    "description": "Computer Spike, Computer, 1 kg weight, 1500 credits. an illegal device used to slice into computer systems. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
+  },
+  {
+    "slug": "credit-chip",
+    "id": "computer-credit-chip",
+    "name": "Credit Chip",
+    "description": "Credit Chip, Computer, 0.1 kg weight, 100 credits. a secure data chip for storing and transferring credits. Exactly the sort of kit someone buys right before a routine errand stops being routine."
+  },
+  {
+    "slug": "cryogenic-pouch",
+    "id": "medical-cryogenic-pouch",
+    "name": "Cryogenic Pouch",
+    "description": "Cryogenic Pouch, Medical, 1.5 kg weight, 600 credits. a portable cryogenic container that preserves critically injured patients in stasis for transport. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "cybernetic-prosthesis",
+    "id": "cyber-prosthesis",
+    "name": "Cybernetic Prosthesis",
+    "description": "Cybernetic Prosthesis, Cybernetic, 0 kg weight, 1500 credits. a cybernetic replacement for a lost limb or damaged organ. Clean, practical, and ideal for anyone whose definition of standard procedure is flexible."
+  },
+  {
+    "slug": "datapad-basic",
+    "id": "computer-datapad-basic",
+    "name": "Datapad, Basic",
+    "description": "Datapad, Basic, Computer, 0.3 kg weight, 100 credits. a basic handheld computer for reading datacards, taking notes, and performing simple calculations. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "datapad-standard",
+    "id": "computer-datapad-standard",
+    "name": "Datapad, Standard",
+    "description": "Datapad, Standard, Computer, 0.5 kg weight, 1000 credits. a full-featured datapad with substantial processing power, networking capabilities, and extensive data storage. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "decoy-glow-rod",
+    "id": "detect-decoy-glow-rod",
+    "name": "Decoy Glow Rod",
+    "description": "Decoy Glow Rod, Detection/Surveillance, 4 kg weight, 100 credits. a glow rod that can be thrown to create a distraction. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "demolitions-sensor",
+    "id": "detect-demolitions-sensor",
+    "name": "Demolitions Sensor",
+    "description": "Demolitions Sensor, Detection/Surveillance, 0.5 kg weight, 1000 credits. a specialized sensor for detecting explosives, mines, and booby traps. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "detonite",
+    "id": "explosive-detonite",
+    "name": "Detonite",
+    "description": "Detonite, Explosive, 0.1 kg weight, 500 credits. a compact, stable explosive compound used for demolitions and breaching. Ideal for customers who say this is strictly precautionary and then lock the door anyway."
+  },
+  {
+    "slug": "detonite-cord",
+    "id": "explosive-detonite-cord",
+    "name": "Detonite Cord",
+    "description": "Detonite Cord, Explosive, 1 kg weight, 1000 credits. a flexible cord of detonite explosive, useful for cutting through doors, walls, and other obstacles. Factory-fresh utility for customers who insist this is for legitimate work."
+  },
+  {
+    "slug": "earbud-comlink",
+    "id": "comms-earbud-comlink",
+    "name": "Earbud Comlink",
+    "description": "Earbud Comlink, Communications, 0 kg weight, 200 credits. an extremely small comlink that fits inside the ear canal, virtually invisible to casual observation. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "electrobinoculars",
+    "id": "detect-electrobinoculars",
+    "name": "Electrobinoculars",
+    "description": "Electrobinoculars, Detection/Surveillance, 1 kg weight, 1000 credits. high-powered binoculars with electronic magnification, range-finding, and low-light enhancement capabilities. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "emergency-vacuum-seal",
+    "id": "life-emergency-vacuum-seal",
+    "name": "Emergency Vacuum Seal",
+    "description": "Emergency Vacuum Seal, Life Support, 0.9 kg weight, 750 credits. a compact emergency kit that creates a temporary seal around hull breaches or provides emergency pressure protection. A workbench in portable form for people who trust tools more than technicians."
+  },
+  {
+    "slug": "energy-cell",
+    "id": "tool-energy-cell",
+    "name": "Energy Cell",
+    "description": "Energy Cell, Tool, 0 kg weight, 10 credits. a standard energy cell for powering small devices. A workbench in portable form for people who trust tools more than technicians."
+  },
+  {
+    "slug": "energy-binding-prosthesis",
+    "id": "cyber-energy-binding-prosthesis",
+    "name": "Energy-Binding Prosthesis",
+    "description": "Energy-Binding Prosthesis, Cybernetic, 0 kg weight, 0 credits. a rare and experimental cybernetic prosthesis that can channel Force energy. A smart little purchase for buyers who like to call being overprepared a lifestyle."
+  },
+  {
+    "slug": "environmental-systems-armor-upgrade",
+    "id": "upgrade-armor-environmental-systems",
+    "name": "Environmental Systems (Armor Upgrade)",
+    "description": "Environmental Systems (Armor Upgrade), Armor Upgrade, 0 kg weight, 600 credits. adds climate control and atmospheric filtration to armor. Factory-fresh utility for customers who insist this is for legitimate work."
+  },
+  {
+    "slug": "explosive-charge",
+    "id": "explosive-charge",
+    "name": "Explosive Charge",
+    "description": "Explosive Charge, Explosive, 0.5 kg weight, 1500 credits. a powerful explosive charge that can be attached to surfaces and detonated remotely or by timer. Built for technical people who would rather delegate the annoying part to a machine."
+  },
+  {
+    "slug": "fastflesh-medpac",
+    "id": "medical-fastflesh-medpac",
+    "name": "FastFlesh Medpac",
+    "description": "FastFlesh Medpac, Medical, 0.5 kg weight, 600 credits. an advanced medpac with fast-acting tissue regeneration compounds. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "field-camouflage-netting",
+    "id": "survival-field-camouflage-netting",
+    "name": "Field Camouflage Netting",
+    "description": "Field Camouflage Netting, Survival, 5 kg weight, 2000 credits. lightweight camouflage netting for concealing equipment or positions. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "field-kit",
+    "id": "survival-field-kit",
+    "name": "Field Kit",
+    "description": "Field Kit, Survival, 10 kg weight, 1000 credits. a comprehensive survival kit with tent, rations, water purification, and basic tools. A workbench in portable form for people who trust tools more than technicians."
+  },
+  {
+    "slug": "flight-suit",
+    "id": "life-flight-suit",
+    "name": "Flight Suit",
+    "description": "Flight Suit, Life Support, 3 kg weight, 1000 credits. a sealed flight suit with integrated life support. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
+  },
+  {
+    "slug": "fusion-lantern",
+    "id": "detect-fusion-lantern",
+    "name": "Fusion Lantern",
+    "description": "Fusion Lantern, Detection/Surveillance, 2 kg weight, 25 credits. a powerful portable light source using a small fusion cell. A smart little purchase for buyers who like to call being overprepared a lifestyle."
+  },
+  {
+    "slug": "glow-rod",
+    "id": "detect-glow-rod",
+    "name": "Glow Rod",
+    "description": "Glow Rod, Detection/Surveillance, 1 kg weight, 10 credits. a handheld light source that provides illumination in darkness. Factory-fresh utility for customers who insist this is for legitimate work."
+  },
+  {
+    "slug": "halo-lamp",
+    "id": "detect-halo-lamp",
+    "name": "Halo Lamp",
+    "description": "Halo Lamp, Detection/Surveillance, 1 kg weight, 30 credits. a portable light source that creates a broad, diffuse illumination. A smart little purchase for buyers who like to call being overprepared a lifestyle."
+  },
+  {
+    "slug": "hands-free-comlink",
+    "id": "comms-hands-free-comlink",
+    "name": "Hands-Free Comlink",
+    "description": "Hands-Free Comlink, Communications, 0.1 kg weight, 150 credits. a miniature comlink that clips to clothing or fits in the ear, allowing hands-free communication. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "heat-sensor",
+    "id": "detect-heat-sensor",
+    "name": "Heat Sensor",
+    "description": "Heat Sensor, Detection/Surveillance, 0.2 kg weight, 250 credits. a handheld thermal imaging device that detects heat signatures through walls and in darkness. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "helmet-package",
+    "id": "accessory-helmet-package",
+    "name": "Helmet Package",
+    "description": "Helmet Package, Weapon/Armor Accessory, 1 kg weight, 4000 credits. an integrated helmet system with comlink, low-light vision, and tactical display. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "helmet-package-armor-upgrade",
+    "id": "upgrade-armor-helmet-package",
+    "name": "Helmet Package (Armor Upgrade)",
+    "description": "Helmet Package (Armor Upgrade), Armor Upgrade, 0 kg weight, 4000 credits. integrated helmet with comlink, low-light vision, and HUD. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "hibaka-2000-mem-stik",
+    "id": "computer-hibaka-2000-mem-stik",
+    "name": "HiBaka 2000 Mem-Stik",
+    "description": "HiBaka 2000 Mem-Stik, Computer, 0 kg weight, 50 credits. a high-capacity memory stick for portable data storage. Factory-fresh utility for customers who insist this is for legitimate work."
+  },
+  {
+    "slug": "holo-converter",
+    "id": "comms-holo-converter",
+    "name": "Holo Converter",
+    "description": "Holo Converter, Communications, 2 kg weight, 3000 credits. a device that converts standard comlink transmissions to holographic format, allowing 3D visualization of the speaker. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "holorecorder",
+    "id": "detect-holorecorder",
+    "name": "Holorecorder",
+    "description": "Holorecorder, Detection/Surveillance, 0.1 kg weight, 100 credits. a device for recording three-dimensional holographic images and video. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "holoshroud",
+    "id": "detect-holoshroud",
+    "name": "Holoshroud",
+    "description": "Holoshroud, Detection/Surveillance, 0.5 kg weight, 25000 credits. an advanced holographic disguise system that projects a false image over the wearer, creating a perfect visual disguise. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
+  },
+  {
+    "slug": "holster-concealed",
+    "id": "accessory-holster-concealed",
+    "name": "Holster, Concealed",
+    "description": "Holster, Concealed, Weapon/Armor Accessory, 0.2 kg weight, 50 credits. a concealed holster that hides a pistol under clothing. A tasteful accessory for clients who believe equipment should keep up with their worst decisions."
+  },
+  {
+    "slug": "holster-hip",
+    "id": "accessory-holster-hip",
+    "name": "Holster, Hip",
+    "description": "Holster, Hip, Weapon/Armor Accessory, 0.5 kg weight, 25 credits. a standard hip holster for quick-draw access to a pistol. A tasteful accessory for clients who believe equipment should keep up with their worst decisions."
+  },
+  {
+    "slug": "hypoinjector-wristband",
+    "id": "medical-hypoinjector-wristband",
+    "name": "Hypoinjector Wristband",
+    "description": "Hypoinjector Wristband, Medical, 0.1 kg weight, 350 credits. a wrist-mounted auto-injector that can deliver pre-loaded medications with a button press. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "ion-charger-weapon-upgrade",
+    "id": "upgrade-weapon-ion-charger",
+    "name": "Ion Charger (Weapon Upgrade)",
+    "description": "Ion Charger (Weapon Upgrade), Weapon Upgrade, 0 kg weight, 3000 credits. modifies an energy weapon to deal ion damage instead of normal damage. A tasteful accessory for clients who believe equipment should keep up with their worst decisions."
+  },
+  {
+    "slug": "jet-pack",
+    "id": "survival-jetpack",
+    "name": "Jet Pack",
+    "description": "Jet Pack, Survival, 30 kg weight, 300 credits. a basic jet pack allowing short-distance flight. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "jump-servos-armor-upgrade",
+    "id": "upgrade-armor-jump-servos",
+    "name": "Jump Servos (Armor Upgrade)",
+    "description": "Jump Servos (Armor Upgrade), Armor Upgrade, 0 kg weight, 100 credits. powered leg servos that enhance jumping ability. Clean, practical, and ideal for anyone whose definition of standard procedure is flexible."
+  },
+  {
+    "slug": "lectroticker",
+    "id": "computer-lectroticker",
+    "name": "Lectroticker",
+    "description": "Lectroticker, Computer, 1 kg weight, 1500 credits. a specialized device that receives and displays real-time data feeds from financial markets, news services, and information networks. A dependable addition for operators who prefer to solve small problems before they become blaster-sized ones."
+  },
+  {
+    "slug": "liquid-cable-dispenser-15-meters",
+    "id": "survival-liquid-cable-dispenser",
+    "name": "Liquid Cable Dispenser (15 meters)",
+    "description": "Liquid Cable Dispenser (15 meters), Survival, 0.2 kg weight, 10 credits. a device that sprays liquid cable that hardens instantly. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "manual-trigger",
+    "id": "explosive-manual-trigger",
+    "name": "Manual Trigger",
+    "description": "Manual Trigger, Explosive, 0.1 kg weight, 100 credits. a handheld detonator switch for remotely triggering explosives. Built for technical people who would rather delegate the annoying part to a machine."
+  },
+  {
+    "slug": "medical-bundle",
+    "id": "medical-bundle",
+    "name": "Medical Bundle",
+    "description": "Medical Bundle, Medical, 1 kg weight, 200 credits. a basic medical supply pack with bandages, antiseptics, and emergency medications. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "medical-interface-visor",
+    "id": "medical-interface-visor",
+    "name": "Medical Interface Visor",
+    "description": "Medical Interface Visor, Medical, 0.5 kg weight, 1500 credits. a visor that provides real-time medical data overlay and diagnostic information. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "medical-kit",
+    "id": "medical-kit",
+    "name": "Medical Kit",
+    "description": "Medical Kit, Medical, 20 kg weight, 600 credits. a comprehensive medical kit with diagnostic equipment, surgical tools, and medical supplies for field treatment. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "medisensor",
+    "id": "medical-medisensor",
+    "name": "Medisensor",
+    "description": "Medisensor, Medical, 0.1 kg weight, 75 credits. a handheld diagnostic device that scans vital signs and identifies injuries and diseases. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "medpac",
+    "id": "medical-medpac",
+    "name": "Medpac",
+    "description": "Medpac, Medical, 1 kg weight, 100 credits. a portable medical kit with sterile bandages, antibiotics, and basic medical supplies. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "miniaturized-universal-upgrade",
+    "id": "upgrade-universal-miniaturized",
+    "name": "Miniaturized (Universal Upgrade)",
+    "description": "Miniaturized (Universal Upgrade), Universal Upgrade, 0 kg weight, 500 credits. equipment is reduced in size by one category. Clean, practical, and ideal for anyone whose definition of standard procedure is flexible."
+  },
+  {
+    "slug": "motion-sensing-visor",
+    "id": "detect-motion-sensing-visor",
+    "name": "Motion Sensing Visor",
+    "description": "Motion Sensing Visor, Detection/Surveillance, 0.5 kg weight, 2500 credits. a visor that displays motion tracking overlays, highlighting moving objects and creatures. A smart little purchase for buyers who like to call being overprepared a lifestyle."
+  },
+  {
+    "slug": "neural-band",
+    "id": "detect-neural-band",
+    "name": "Neural Band",
+    "description": "Neural Band, Detection/Surveillance, 0.5 kg weight, 3500 credits. a headband that monitors neural activity and provides feedback on mental state and stress levels. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
+  },
+  {
+    "slug": "panic-ring",
+    "id": "comms-panic-ring",
+    "name": "Panic Ring",
+    "description": "Panic Ring, Communications, 0 kg weight, 300 credits. a ring with an embedded distress beacon that can be activated by squeezing. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
+  },
+  {
+    "slug": "personal-holoprojector",
+    "id": "computer-personal-holoprojector",
+    "name": "Personal Holoprojector",
+    "description": "Personal Holoprojector, Computer, 0.5 kg weight, 1000 credits. a handheld device that projects three-dimensional holographic images for viewing recorded holos or conducting holoconferences. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "pocket-scrambler",
+    "id": "comms-pocket-scrambler",
+    "name": "Pocket Scrambler",
+    "description": "Pocket Scrambler, Communications, 0.5 kg weight, 400 credits. a pocket scrambler encrypts comlink transmissions, making them extremely difficult to intercept or decode without the matching descrambler. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "portable-computer",
+    "id": "computer-portable-computer",
+    "name": "Portable Computer",
+    "description": "Portable Computer, Computer, 2 kg weight, 5000 credits. a powerful portable computing system with advanced processing capabilities, extensive storage, and sophisticated software packages. A dependable addition for operators who prefer to solve small problems before they become blaster-sized ones."
+  },
+  {
+    "slug": "power-pack",
+    "id": "tool-power-pack",
+    "name": "Power Pack",
+    "description": "Power Pack, Tool, 0.1 kg weight, 25 credits. a rechargeable power pack for weapons and larger devices. A workbench in portable form for people who trust tools more than technicians."
+  },
+  {
+    "slug": "power-pack-bomb",
+    "id": "explosive-power-pack-bomb",
+    "name": "Power Pack Bomb",
+    "description": "Power Pack Bomb, Explosive, 0.2 kg weight, 0 credits. a weapon power pack modified to explode when triggered. A workbench in portable form for people who trust tools more than technicians."
+  },
+  {
+    "slug": "power-recharger",
+    "id": "tool-power-recharger",
+    "name": "Power Recharger",
+    "description": "Power Recharger, Tool, 1 kg weight, 100 credits. a device for recharging energy cells and power packs. A workbench in portable form for people who trust tools more than technicians."
+  },
+  {
+    "slug": "propulsion-pack",
+    "id": "life-propulsion-pack",
+    "name": "Propulsion Pack",
+    "description": "Propulsion Pack, Life Support, 10 kg weight, 200 credits. a backpack-mounted maneuvering system for zero-gravity environments. Factory-fresh utility for customers who insist this is for legitimate work."
+  },
+  {
+    "slug": "proximity-flare",
+    "id": "detect-proximity-flare",
+    "name": "Proximity Flare",
+    "description": "Proximity Flare, Detection/Surveillance, 0.5 kg weight, 50 credits. a motion-activated flare that ignites when detecting nearby movement. Ideal for customers who say this is strictly precautionary and then lock the door anyway."
+  },
+  {
+    "slug": "radiation-detector",
+    "id": "detect-radiation-detector",
+    "name": "Radiation Detector",
+    "description": "Radiation Detector, Detection/Surveillance, 0 kg weight, 20 credits. a handheld device that detects and measures radiation levels. Exactly the sort of kit someone buys right before a routine errand stops being routine."
+  },
+  {
+    "slug": "rangefinder-weapon-upgrade",
+    "id": "upgrade-weapon-rangefinder",
+    "name": "Rangefinder (Weapon Upgrade)",
+    "description": "Rangefinder (Weapon Upgrade), Weapon Upgrade, 0 kg weight, 200 credits. an integrated rangefinder that calculates distance and trajectory. A tasteful accessory for clients who believe equipment should keep up with their worst decisions."
+  },
+  {
+    "slug": "rapid-recycler-weapon-upgrade",
+    "id": "upgrade-weapon-rapid-recycler",
+    "name": "Rapid Recycler (Weapon Upgrade)",
+    "description": "Rapid Recycler (Weapon Upgrade), Weapon Upgrade, 0 kg weight, 500 credits. enhances the weapon's power recycling system for faster firing. A tasteful accessory for clients who believe equipment should keep up with their worst decisions."
+  },
+  {
+    "slug": "ration-pack",
+    "id": "survival-ration-pack",
+    "name": "Ration Pack",
+    "description": "Ration Pack, Survival, 0.1 kg weight, 5 credits. a single day's worth of concentrated, preserved food rations. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "remote-activation-universal-upgrade",
+    "id": "upgrade-universal-remote-activation",
+    "name": "Remote Activation (Universal Upgrade)",
+    "description": "Remote Activation (Universal Upgrade), Universal Upgrade, 0 kg weight, 100 credits. allows remote activation of equipment via comlink. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "rhen-orm-biocomputer",
+    "id": "cyber-rhen-orm-biocomputer",
+    "name": "Rhen-Orm Biocomputer",
+    "description": "Rhen-Orm Biocomputer, Cybernetic, 0.2 kg weight, 3500 credits. an organic computer implanted in the brain, providing enhanced mental processing and data storage capabilities. A smart little purchase for buyers who like to call being overprepared a lifestyle."
+  },
+  {
+    "slug": "secret-compartment-universal-upgrade",
+    "id": "upgrade-universal-secret-compartment",
+    "name": "Secret Compartment (Universal Upgrade)",
+    "description": "Secret Compartment (Universal Upgrade), Universal Upgrade, 0 kg weight, 600 credits. a hidden compartment for concealing small items. Exactly the sort of kit someone buys right before a routine errand stops being routine."
+  },
+  {
+    "slug": "security-kit",
+    "id": "tool-security-kit",
+    "name": "Security Kit",
+    "description": "Security Kit, Tool, 1 kg weight, 750 credits. tools for bypassing locks and security systems. A workbench in portable form for people who trust tools more than technicians."
+  },
+  {
+    "slug": "sensor-pack",
+    "id": "detect-sensor-pack",
+    "name": "Sensor Pack",
+    "description": "Sensor Pack, Detection/Surveillance, 9 kg weight, 1500 credits. a portable sensor suite capable of detecting motion, heat signatures, electromagnetic emissions, and various atmospheric conditions. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "shadowskin-armor-upgrade",
+    "id": "upgrade-armor-shadowskin",
+    "name": "Shadowskin (Armor Upgrade)",
+    "description": "Shadowskin (Armor Upgrade), Armor Upgrade, 0 kg weight, 5000 credits. light-absorbing coating that makes armor harder to detect. A smart little purchase for buyers who like to call being overprepared a lifestyle."
+  },
+  {
+    "slug": "shield-generator-sr-5-armor-upgrade",
+    "id": "upgrade-armor-shield-generator-sr5",
+    "name": "Shield Generator SR 5 (Armor Upgrade)",
+    "description": "Shield Generator SR 5 (Armor Upgrade), Armor Upgrade, 0 kg weight, 5000 credits. an integrated personal shield generator. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
+  },
+  {
+    "slug": "shipsuit",
+    "id": "life-shipsuit",
+    "name": "Shipsuit",
+    "description": "Shipsuit, Life Support, 1 kg weight, 200 credits. a lightweight shipboard garment that provides basic pressure protection and temperature regulation. Clean, practical, and ideal for anyone whose definition of standard procedure is flexible."
+  },
+  {
+    "slug": "signal-wand",
+    "id": "comms-signal-wand",
+    "name": "Signal Wand",
+    "description": "Signal Wand, Communications, 0.2 kg weight, 300 credits. a handheld signaling device that can transmit audio messages and location beacons. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
+  },
+  {
+    "slug": "sonar-mapper",
+    "id": "detect-sonar-mapper",
+    "name": "Sonar Mapper",
+    "description": "Sonar Mapper, Detection/Surveillance, 1 kg weight, 400 credits. a device that uses sonar to map surroundings underwater or in darkness. A dependable addition for operators who prefer to solve small problems before they become blaster-sized ones."
+  },
+  {
+    "slug": "sound-sponge",
+    "id": "detect-sound-sponge",
+    "name": "Sound Sponge",
+    "description": "Sound Sponge, Detection/Surveillance, 1 kg weight, 3500 credits. a device that absorbs sound in a localized area, creating a zone of silence. Clean, practical, and ideal for anyone whose definition of standard procedure is flexible."
+  },
+  {
+    "slug": "space-suit",
+    "id": "life-space-suit",
+    "name": "Space Suit",
+    "description": "Space Suit, Life Support, 15 kg weight, 2000 credits. a bulky sealed suit designed for extended operations in vacuum. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "spy-bug",
+    "id": "detect-spy-bug",
+    "name": "Spy Bug",
+    "description": "Spy Bug, Detection/Surveillance, 0.5 kg weight, 1300 credits. a miniature listening device that can be planted to record conversations remotely. Built for technical people who would rather delegate the annoying part to a machine."
+  },
+  {
+    "slug": "stealth-field-generator",
+    "id": "detect-stealth-field-generator",
+    "name": "Stealth Field Generator",
+    "description": "Stealth Field Generator, Detection/Surveillance, 0.2 kg weight, 5000 credits. a personal cloaking device that bends light around the user, providing near-invisibility. A dependable addition for operators who prefer to solve small problems before they become blaster-sized ones."
+  },
+  {
+    "slug": "subelectronic-converter",
+    "id": "cyber-subelectronic-converter",
+    "name": "Subelectronic Converter",
+    "description": "Subelectronic Converter, Cybernetic, 0 kg weight, 23000 credits. an advanced cybernetic implant that enhances neural processing speed and reflex response times. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
+  },
+  {
+    "slug": "surgery-kit",
+    "id": "medical-surgery-kit",
+    "name": "Surgery Kit",
+    "description": "Surgery Kit, Medical, 10 kg weight, 1000 credits. advanced surgical tools and equipment for performing complex medical procedures. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "surveillance-detector",
+    "id": "detect-surveillance-detector",
+    "name": "Surveillance Detector",
+    "description": "Surveillance Detector, Detection/Surveillance, 0.5 kg weight, 450 credits. a device that scans for hidden cameras, microphones, and other surveillance equipment. A smart little purchase for buyers who like to call being overprepared a lifestyle."
+  },
+  {
+    "slug": "surveillance-tagger",
+    "id": "detect-surveillance-tagger",
+    "name": "Surveillance Tagger",
+    "description": "Surveillance Tagger, Detection/Surveillance, 0.5 kg weight, 450 credits. a device that plants miniature tracking tags on targets without their knowledge. A dependable addition for operators who prefer to solve small problems before they become blaster-sized ones."
+  },
+  {
+    "slug": "syntherope-45-meters",
+    "id": "survival-syntherope-45m",
+    "name": "Syntherope (45 meters)",
+    "description": "Syntherope (45 meters), Survival, 2.5 kg weight, 20 credits. 45 meters of strong synthetic rope. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "targeting-beacon",
+    "id": "comms-targeting-beacon",
+    "name": "Targeting Beacon",
+    "description": "Targeting Beacon, Communications, 0.1 kg weight, 300 credits. a specialized transmitter that broadcasts a homing signal for orbital strikes, airstrikes, or guided missiles. Exactly the sort of kit someone buys right before a routine errand stops being routine."
+  },
+  {
+    "slug": "targeting-scope-enhanced-low-light",
+    "id": "accessory-targeting-scope-enhanced-low-light",
+    "name": "Targeting Scope, Enhanced Low-Light",
+    "description": "Targeting Scope, Enhanced Low-Light, Weapon/Armor Accessory, 1.2 kg weight, 1000 credits. an advanced scope with electronic magnification and low-light enhancement. A tasteful accessory for clients who believe equipment should keep up with their worst decisions."
+  },
+  {
+    "slug": "targeting-scope-standard",
+    "id": "accessory-targeting-scope-standard",
+    "name": "Targeting Scope, Standard",
+    "description": "Targeting Scope, Standard, Weapon/Armor Accessory, 0.2 kg weight, 100 credits. a basic optical scope that aids with ranged attacks. A tasteful accessory for clients who believe equipment should keep up with their worst decisions."
+  },
+  {
+    "slug": "tightbeam-comlink",
+    "id": "comms-tightbeam-comlink",
+    "name": "Tightbeam Comlink",
+    "description": "Tightbeam Comlink, Communications, 0.5 kg weight, 300 credits. a highly directional comlink that transmits in a narrow beam, making interception extremely difficult. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "timer",
+    "id": "explosive-timer",
+    "name": "Timer",
+    "description": "Timer, Explosive, 0.1 kg weight, 250 credits. an electronic timer that can be attached to explosives for delayed detonation. A dependable addition for operators who prefer to solve small problems before they become blaster-sized ones."
+  },
+  {
+    "slug": "tool-kit",
+    "id": "tool-kit",
+    "name": "Tool Kit",
+    "description": "Tool Kit, Tool, 1 kg weight, 250 credits. a basic tool kit with mechanical tools for repairs. A workbench in portable form for people who trust tools more than technicians."
+  },
+  {
+    "slug": "toxin-detector",
+    "id": "medical-toxin-detector",
+    "name": "Toxin Detector",
+    "description": "Toxin Detector, Medical, 0.5 kg weight, 700 credits. a handheld device that detects and identifies toxins, poisons, and harmful chemicals. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "triangulation-visor",
+    "id": "computer-triangulation-visor",
+    "name": "Triangulation Visor",
+    "description": "Triangulation Visor, Computer, 0.5 kg weight, 1400 credits. a tactical visor that calculates distances, angles, and trajectories in real-time, assisting with ranged attacks and navigation. Clean, practical, and ideal for anyone whose definition of standard procedure is flexible."
+  },
+  {
+    "slug": "utility-belt-empty",
+    "id": "tool-utility-belt-empty",
+    "name": "Utility Belt (Empty)",
+    "description": "Utility Belt (Empty), Tool, 0.3 kg weight, 55 credits. an empty utility belt with pouches for carrying small items. A workbench in portable form for people who trust tools more than technicians."
+  },
+  {
+    "slug": "utility-belt-standard",
+    "id": "tool-utility-belt-standard",
+    "name": "Utility Belt (Standard)",
+    "description": "Utility Belt (Standard), Tool, 4 kg weight, 500 credits. a belt with pouches and tools. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
+  },
+  {
+    "slug": "vacuum-mask",
+    "id": "life-vacuum-mask",
+    "name": "Vacuum Mask",
+    "description": "Vacuum Mask, Life Support, 0.3 kg weight, 650 credits. a compact mask that provides emergency oxygen supply and pressure protection for short-term vacuum exposure. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "veridicator",
+    "id": "detect-veridicator",
+    "name": "Veridicator",
+    "description": "Veridicator, Detection/Surveillance, 0.1 kg weight, 4000 credits. a portable lie detector that monitors stress responses and physiological signs of deception. A dependable addition for operators who prefer to solve small problems before they become blaster-sized ones."
+  },
+  {
+    "slug": "vid-vox-scrambler",
+    "id": "detect-vid-vox-scrambler",
+    "name": "Vid-Vox Scrambler",
+    "description": "Vid-Vox Scrambler, Detection/Surveillance, 0.5 kg weight, 3400 credits. a device that disrupts video and audio surveillance equipment in the immediate area. Ideal for customers who say this is strictly precautionary and then lock the door anyway."
+  },
+  {
+    "slug": "videorecorder",
+    "id": "detect-videorecorder",
+    "name": "Videorecorder",
+    "description": "Videorecorder, Detection/Surveillance, 0.1 kg weight, 50 credits. a compact device for recording two-dimensional video and images. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "visual-wrist-comm",
+    "id": "comms-visual-wrist-comm",
+    "name": "Visual Wrist Comm",
+    "description": "Visual Wrist Comm, Communications, 0.25 kg weight, 1300 credits. a wrist-mounted comlink with integrated video display, popular among Republic officers and clone commanders. For buyers who like having more information than the other side and fewer questions than the paperwork."
+  },
+  {
+    "slug": "vox-box",
+    "id": "comms-vox-box",
+    "name": "Vox-Box",
+    "description": "Vox-Box, Communications, 0.1 kg weight, 200 credits. a vox-box is a voice-only communicator, often used in military and industrial settings where visual data is unnecessary. Factory-fresh utility for customers who insist this is for legitimate work."
+  },
+  {
+    "slug": "xcalq-stealth-pack",
+    "id": "computer-xcalq-stealth-pack",
+    "name": "Xcalq Stealth Pack",
+    "description": "Xcalq Stealth Pack, Computer, 0 kg weight, 1500 credits. a software and hardware package that makes slicing attempts harder to trace and detect. A dependable addition for operators who prefer to solve small problems before they become blaster-sized ones."
+  },
+  {
+    "slug": "xcalq-3ga-slicer-special-portable-computer",
+    "id": "computer-xcalq-3ga-slicer-special",
+    "name": "Xcalq-3GA \"Slicer Special\" Portable Computer",
+    "description": "Xcalq-3GA \"Slicer Special\" Portable Computer, Computer, 2 kg weight, 7500 credits. a heavily modified portable computer optimized for slicing and hacking operations. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  }
+]

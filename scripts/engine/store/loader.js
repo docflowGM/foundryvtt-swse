@@ -34,6 +34,14 @@ function loadCache() {
     if (!raw) {return null;}
 
     const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.items) || !Array.isArray(parsed.actors) || !parsed.metadata) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+    if (!parsed.metadata.loadedAt || !parsed.metadata.version || (parsed.items.length + parsed.actors.length) === 0) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
 
     // Expired cache?
     if (Date.now() - parsed.metadata.loadedAt > CACHE_TTL) {
@@ -135,12 +143,17 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* LOAD PACK ITEMS                              */
   /* ------------------------------------------- */
 
-  const itemPackNames = [...STORE_PACKS.WEAPON_PACKS, ...STORE_PACKS.ARMOR_PACKS, STORE_PACKS.EQUIPMENT];
+  const itemPackNames = [...STORE_PACKS.WEAPON_PACKS, ...STORE_PACKS.ARMOR_PACKS, ...(STORE_PACKS.EQUIPMENT_PACKS || []), STORE_PACKS.EQUIPMENT];
   const itemPackResults = await Promise.all(itemPackNames.map(safeGetPackDocuments));
-  let packItemDocs = itemPackResults.flatMap(result => result.docs);
+
+  const weaponDocs = itemPackResults.filter(result => (STORE_PACKS.WEAPON_PACKS || []).includes(result.packName)).flatMap(result => result.docs);
+  const armorDocs = itemPackResults.filter(result => (STORE_PACKS.ARMOR_PACKS || []).includes(result.packName)).flatMap(result => result.docs);
+  const equipmentDocs = itemPackResults.filter(result => ([...(STORE_PACKS.EQUIPMENT_PACKS || []), STORE_PACKS.EQUIPMENT]).includes(result.packName)).flatMap(result => result.docs);
+
+  let packItemDocs = [...weaponDocs, ...armorDocs, ...equipmentDocs];
 
   // Canonical weapons pack fallback: only use when split weapon packs return no items.
-  if (packItemDocs.length === 0 && STORE_PACKS.WEAPONS_CANONICAL) {
+  if (weaponDocs.length === 0 && STORE_PACKS.WEAPONS_CANONICAL) {
     const canonicalWeapons = await safeGetPackDocuments(STORE_PACKS.WEAPONS_CANONICAL);
     if (canonicalWeapons.found) {
       itemPackResults.push(canonicalWeapons);
@@ -149,11 +162,19 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   }
 
   // Canonical armor pack fallback: only use when split armor packs return no items.
-  if (packItemDocs.length === 0 && STORE_PACKS.ARMOR_CANONICAL) {
+  if (armorDocs.length === 0 && STORE_PACKS.ARMOR_CANONICAL) {
     const canonicalArmor = await safeGetPackDocuments(STORE_PACKS.ARMOR_CANONICAL);
     if (canonicalArmor.found) {
       itemPackResults.push(canonicalArmor);
       packItemDocs = [...packItemDocs, ...canonicalArmor.docs];
+    }
+  }
+
+  if (equipmentDocs.length === 0 && STORE_PACKS.EQUIPMENT) {
+    const canonicalEquipment = await safeGetPackDocuments(STORE_PACKS.EQUIPMENT);
+    if (canonicalEquipment.found) {
+      itemPackResults.push(canonicalEquipment);
+      packItemDocs = [...packItemDocs, ...canonicalEquipment.docs];
     }
   }
 
@@ -194,7 +215,7 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* ------------------------------------------- */
 
   const metadata = {
-    version: 2,
+    version: 3,
     loadedAt: Date.now(),
     packsUsed: flattenPackNames([
       STORE_PACKS.WEAPON_PACKS,

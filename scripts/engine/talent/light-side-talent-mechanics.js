@@ -22,6 +22,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export class LightSideTalentMechanics {
 
@@ -743,15 +744,17 @@ export class LightSideTalentMechanics {
     }
 
     // PHASE 3: SIDE-EFFECTS (Roll and notifications)
-    const fpRoll = await RollEngine.safeRoll('1d6');
+    const fpRoll = await RollEngine.safeRoll('1d6', {}, { actor, domain: 'talent.apprentice-boon' });
     if (!fpRoll) {
       ui.notifications.error('Force Point roll failed');
       return { success: false, message: 'Roll failed' };
     }
-    await fpRoll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: actor }),
-      flavor: `Apprentice Boon - Force Point for ${ally.name}`
-    } , { create: true });
+    await SWSEChat.postRoll({
+      roll: fpRoll,
+      actor,
+      flavor: `Apprentice Boon - Force Point for ${ally.name}`,
+      context: { type: 'talent', talent: 'Apprentice Boon', allyId, allyName: ally.name }
+    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Apprentice Boon on ${ally.name}, granting +${fpRoll.total}`);
     ui.notifications.info(`${ally.name} gains +${fpRoll.total} bonus from Apprentice Boon!`);

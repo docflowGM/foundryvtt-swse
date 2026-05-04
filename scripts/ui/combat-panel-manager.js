@@ -10,6 +10,8 @@
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import WeaponTooltip from "/systems/foundryvtt-swse/scripts/ui/weapon-tooltip.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export class CombatPanelManager {
   /**
@@ -101,25 +103,36 @@ export class CombatPanelManager {
       // Create roll flavor
       const flavor = `<b>${attackName}</b> with ${weaponName}`;
 
-      // Roll attack
-      const attackRoll = new Roll(`d20 + ${bonusValue}`, actor.getRollData());
-      const attackResult = await attackRoll.evaluate({ async: true });
+      // Roll attack through the shared roll facade. This UI layer triggers only;
+      // RollEngine delegates execution to RollCore.
+      const attackResult = await RollEngine.safeRoll(`1d20 + ${bonusValue}`, actor.getRollData?.() ?? {}, {
+        actor,
+        domain: 'combat-panel.attack',
+        context: { attackName, weaponName, weaponId }
+      });
 
-      // Roll damage
-      const damageRoll = new Roll(damageValue, actor.getRollData());
-      const damageResult = await damageRoll.evaluate({ async: true });
+      // Roll damage through the shared roll facade.
+      const damageResult = await RollEngine.safeRoll(damageValue, actor.getRollData?.() ?? {}, {
+        actor,
+        domain: 'combat-panel.damage',
+        context: { attackName, weaponName, weaponId }
+      });
 
-      // Display attack roll
-      attackResult.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        flavor: `${flavor} — <b>Attack Roll</b>`
+      // Display attack roll through the shared chat surface.
+      await SWSEChat.postRoll({
+        roll: attackResult,
+        actor,
+        flavor: `${flavor} — Attack Roll`,
+        context: { type: 'attack', attackName, weaponName, weaponId }
       });
 
       // Display damage roll (if attack hit on natural 20 or after confirmation)
       if (attackResult.total >= 20) {
-        damageResult.toMessage({
-          speaker: ChatMessage.getSpeaker({ actor }),
-          flavor: `${flavor} — <b>Damage</b>`
+        await SWSEChat.postRoll({
+          roll: damageResult,
+          actor,
+          flavor: `${flavor} — Damage`,
+          context: { type: 'damage', attackName, weaponName, weaponId }
         });
       }
 

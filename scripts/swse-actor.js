@@ -2,6 +2,8 @@
 // FILE: scripts/swse-actor.js
 // ============================================
 import { SWSE_RACES } from "./races.js";
+import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
+import { rollForcePower } from "/systems/foundryvtt-swse/scripts/rolls/force-powers.js";
 
 const CONDITION_PENALTIES = {
   normal: 0, "-1": -1, "-2": -2, "-5": -5, "-10": -10, helpless: -100
@@ -330,14 +332,25 @@ export class SWSEActorSheet extends ActorSheet {
 
   async _onAddWeapon(event) { event.preventDefault(); const weapons = foundry.utils.duplicate(this.actor.system.weapons || []); weapons.push({ name: "New Weapon", description: "", damage: "1d8", attackAttr: "str", damageAttr: "str", focus: false, specialization: false, modifier: 0 }); await this.actor.update({"system.weapons": weapons}); }
   async _onRemoveWeapon(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".weapon-entry")?.dataset.index); const weapons = foundry.utils.duplicate(this.actor.system.weapons || []); weapons.splice(idx, 1); await this.actor.update({"system.weapons": weapons}); }
-  async _onRollWeapon(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".weapon-entry")?.dataset.index); const weapon = this.actor.system.weapons?.[idx]; if (!weapon) return; const abs = this.actor.system.abilities || {}; const halfLevel = this.actor.getHalfLevel(); const bab = this.actor.system.bab || 0; const atkMod = halfLevel + bab + (abs[weapon.attackAttr]?.mod || 0) + (weapon.focus ? 1 : 0) + (weapon.modifier || 0); const atkRoll = await new Roll(`1d20 + ${atkMod}`).evaluate({async: true}); await atkRoll.toMessage({ speaker: ChatMessage.getSpeaker({actor: this.actor}), flavor: `${weapon.name} Attack` }); let dmgMod = halfLevel + (weapon.modifier || 0); if (weapon.damageAttr === "str") dmgMod += abs.str?.mod || 0; if (weapon.damageAttr === "dex") dmgMod += abs.dex?.mod || 0; if (weapon.damageAttr === "2str") dmgMod += (abs.str?.mod || 0) * 2; if (weapon.damageAttr === "2dex") dmgMod += (abs.dex?.mod || 0) * 2; if (weapon.specialization) dmgMod += 1; const dmgRoll = await new Roll(`${weapon.damage} + ${dmgMod}`).evaluate({async: true}); await dmgRoll.toMessage({ speaker: ChatMessage.getSpeaker({actor: this.actor}), flavor: `${weapon.name} Damage` }); }
+  async _onRollWeapon(event) {
+    event.preventDefault();
+    const idx = Number(event.currentTarget.closest(".weapon-entry")?.dataset.index);
+    const weapon = this.actor.items?.at?.(idx) ?? this.actor.system.weapons?.[idx];
+    if (!weapon) return;
+    await SWSERoll.rollAttack(this.actor, weapon, { showDialog: true });
+  }
   async _onAddFeat(event) { event.preventDefault(); const feats = foundry.utils.duplicate(this.actor.system.feats || []); feats.push({ name: "New Feat", description: "" }); await this.actor.update({"system.feats": feats}); }
   async _onRemoveFeat(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".list-entry")?.dataset.index); const feats = foundry.utils.duplicate(this.actor.system.feats || []); feats.splice(idx, 1); await this.actor.update({"system.feats": feats}); }
   async _onAddTalent(event) { event.preventDefault(); const talents = foundry.utils.duplicate(this.actor.system.talents || []); talents.push({ name: "New Talent", description: "" }); await this.actor.update({"system.talents": talents}); }
   async _onRemoveTalent(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".list-entry")?.dataset.index); const talents = foundry.utils.duplicate(this.actor.system.talents || []); talents.splice(idx, 1); await this.actor.update({"system.talents": talents}); }
   async _onAddForcePower(event) { event.preventDefault(); await this.actor.createEmbeddedDocuments("Item", [{ name: "New Force Power", type: "forcepower", system: { uses: { current: 1, max: 1 } } }]); }
   async _onRemoveForcePower(event) { event.preventDefault(); const itemId = event.currentTarget.closest(".forcepower-entry")?.dataset.itemId; if (itemId) { const item = this.actor.items.get(itemId); if (item) await item.delete(); } }
-  async _onRollForcePower(event) { event.preventDefault(); const itemId = event.currentTarget.closest(".forcepower-entry")?.dataset.itemId; const power = this.actor.items.get(itemId); if (!power) return; if (power.system.uses.current <= 0) { ui.notifications.warn("No uses remaining!"); return; } const wisMod = this.actor.system.abilities.wis?.mod || 0; const roll = await new Roll(`1d20 + ${wisMod}`).evaluate({async: true}); await roll.toMessage({ speaker: ChatMessage.getSpeaker({actor: this.actor}), flavor: `Use the Force: ${power.name}` }); await power.update({"system.uses.current": power.system.uses.current - 1}); }
+  async _onRollForcePower(event) {
+    event.preventDefault();
+    const itemId = event.currentTarget.closest(".forcepower-entry")?.dataset.itemId;
+    if (!itemId) return;
+    await rollForcePower(this.actor, itemId);
+  }
   async _onRefreshForcePowers(event) { event.preventDefault(); for (const item of this.actor.items.filter(i => i.type === "forcepower")) { await item.update({"system.uses.current": item.system.uses.max}); } ui.notifications.info("All Force Powers refreshed!"); }
   async _onReloadForcePower(event) { event.preventDefault(); if (this.actor.system.forcePoints.value <= 0) { ui.notifications.warn("No Force Points remaining!"); return; } const itemId = event.currentTarget.closest(".forcepower-entry")?.dataset.itemId; const power = this.actor.items.get(itemId); if (!power) return; await this.actor.update({"system.forcePoints.value": this.actor.system.forcePoints.value - 1}); await power.update({"system.uses.current": power.system.uses.max}); ui.notifications.info(`${power.name} reloaded with Force Point!`); }
   async _onAddSkill(event) { event.preventDefault(); const skills = foundry.utils.duplicate(this.actor.system.customSkills || []); skills.push({ name: "New Skill", value: 0, ability: "str" }); await this.actor.update({"system.customSkills": skills}); }

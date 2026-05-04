@@ -11,6 +11,7 @@
  */
 
 import { ShellRouter } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js';
+import { openItemCustomization } from '/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js';
 
 export class ShellOverlayManager {
 
@@ -24,9 +25,7 @@ export class ShellOverlayManager {
    */
   static async openSingleItemUpgrade(actor, item) {
     if (!actor || !item) return null;
-    return ShellRouter.openOverlay(actor, 'upgrade-single-item', {
-      focusedItemId: item.id
-    });
+    return openItemCustomization(actor, item);
   }
 
   /**

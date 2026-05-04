@@ -9,9 +9,20 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { LightsaberLightSync } from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
+import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 
 const STACKABLE_TYPES = ["consumable", "equipment", "misc", "ammo"];
-const NON_STACKABLE_TYPES = ["weapon", "armor", "shield"];
+const NON_STACKABLE_TYPES = ["weapon", "armor", "shield", "lightsaber"];
+
+function isLightsaberItem(item) {
+  const system = item?.system ?? {};
+  return item?.type === "lightsaber"
+    || (item?.type === "weapon" && (system.subtype === "lightsaber" || system.weaponCategory === "lightsaber" || system.isLightsaber === true))
+    || item?.flags?.["foundryvtt-swse"]?.isLightsaber === true
+    || item?.flags?.swse?.isLightsaber === true;
+}
+
 
 export class InventoryEngine {
   /**
@@ -63,6 +74,43 @@ export class InventoryEngine {
     await ActorEngine.updateOwnedItems(actor, updates, {
       source: "InventoryEngine.toggleEquip"
     });
+  }
+
+
+  /**
+   * Toggle an item's active state through the inventory engine.
+   *
+   * V2 contract: sheets may request the toggle, but this engine owns the
+   * mutation. Lightsaber token light remains a visual consumer of item state,
+   * not a sheet-side effect.
+   */
+  static async toggleActivated(actor, itemId) {
+    const item = actor?.items?.get?.(itemId);
+    if (!actor || !item) return;
+
+    const current = item.system?.activated === true || item.system?.active === true;
+    const next = !current;
+    const update = {
+      _id: itemId,
+      "system.activated": next
+    };
+
+    if (isLightsaberItem(item) && next) {
+      const bladeColor = getSwseFlag(item, "bladeColor")
+        || actor.getFlag?.("swse", "preferredLightsaberColor")
+        || "blue";
+
+      update["flags.foundryvtt-swse.emitLight"] = true;
+      update["flags.foundryvtt-swse.bladeColor"] = bladeColor;
+    }
+
+    await ActorEngine.updateOwnedItems(actor, [update], {
+      source: "InventoryEngine.toggleActivated"
+    });
+
+    if (isLightsaberItem(item)) {
+      await LightsaberLightSync.syncActorTokenLight(actor, item);
+    }
   }
 
   /**

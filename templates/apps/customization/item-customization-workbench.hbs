@@ -1,4 +1,4 @@
-<div class="swse-customization-stage">
+<div class="swse-customization-stage swse-datapad swse-ui-shell swse-sheet-ui" data-theme="{{themeKey}}" data-motion-style="{{motionStyle}}" style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
   <div class="swse-customization-tablet">
     <div class="swse-customization-screen" data-application-content>
       <header class="swse-customization-hud">
@@ -9,14 +9,14 @@
         <div class="hud-title">ARMORY // CUSTOMIZATION</div>
         <div class="hud-side right">
           <span>{{actor.name}}</span>
-          <span>{{footer.credits}} CR</span>
+          <span>{{footer.credits}} CR</span>{{#if isStoreStageMode}}<span>STORE-STAGE</span>{{/if}}
         </div>
       </header>
 
       <section class="swse-customization-mentor">
         <div class="mentor-avatar">⌬</div>
         <div class="mentor-copy">
-          <div class="mentor-head">RYNN-K7 · QUARTERMASTER</div>
+          <div class="mentor-head">{{#if isLightsaber}}MIRAJ · CRYSTAL-SINGER{{else}}RYNN-K7 · QUARTERMASTER{{/if}}</div>
           <div class="mentor-text">{{mentorText}}</div>
         </div>
       </section>
@@ -24,7 +24,7 @@
       {{#if hasItems}}
       <nav class="swse-customization-tabs">
         {{#each categories}}
-        <button type="button" class="workbench-tab {{#if active}}active{{/if}}" data-action="select-category" data-category="{{key}}">
+        <button type="button" class="workbench-tab {{#if active}}active{{/if}} {{#if special}}special{{/if}}" data-action="select-category" data-category="{{key}}">
           <span class="icon">{{icon}}</span>
           <span>{{label}}</span>
           <span class="count">{{count}}</span>
@@ -38,10 +38,17 @@
             <span>Inventory</span>
             <span class="hint">{{currentItem.category}}</span>
           </div>
+          {{#if isStoreStageMode}}
+          <div class="store-stage-banner">Staging mode: no credits are charged here. This customized listing is added to cart and paid at checkout.</div>
+          {{/if}}
           <div class="search-row">
             <input type="text" class="search-input" data-action="search-items" placeholder="Search items" value="{{search}}">
+            {{#if hasSearch}}<button type="button" class="filter-reset" data-action="reset-filter">Reset</button>{{/if}}
           </div>
           <div class="inventory-list">
+            {{#unless hasInventoryResults}}
+            <div class="inventory-empty">No items match this filter.</div>
+            {{/unless}}
             {{#each inventoryItems}}
             <button type="button" class="inventory-item {{#if active}}active{{/if}}" data-action="select-item" data-item-id="{{id}}">
               <img class="inventory-icon" src="{{img}}" alt="{{name}}">
@@ -80,6 +87,89 @@
             </div>
           </div>
 
+          {{#if isLightsaber}}
+          <div class="lightsaber-workspace">
+            <section class="detail-panel panel ls-forge-stage">
+              <div class="panel-head">
+                <span>✦ Forge Preview</span>
+                <span class="hint">{{lightsaber.mode}}</span>
+              </div>
+              <div class="ls-blade-render {{lightsaber.hiltKind}}" style="--blade-color: {{lightsaber.bladeHex}};">
+                <span class="ls-blade ls-left"></span>
+                <span class="ls-hilt"></span>
+                <span class="ls-blade ls-right"></span>
+                <span class="ls-crossguard ls-crossguard-a"></span>
+                <span class="ls-crossguard ls-crossguard-b"></span>
+              </div>
+              <div class="ls-forge-summary">
+                {{#each currentItem.stats}}
+                <div class="hero-stat"><span class="key">{{key}}</span><span class="value">{{value}}</span></div>
+                {{/each}}
+              </div>
+              <div class="ls-check-mode">
+                <button type="button" class="variant-row {{#if lightsaber.rollSelected}}selected{{/if}}" data-action="set-lightsaber-check-mode" data-key="roll">
+                  <span class="variant-name">Roll Use the Force</span>
+                  <span class="variant-desc">Let the dice decide whether Miraj smiles.</span>
+                </button>
+                <button type="button" class="variant-row {{#if lightsaber.take10Selected}}selected{{/if}} {{#unless lightsaber.preview.canTake10}}disabled{{/unless}}" data-action="set-lightsaber-check-mode" data-key="take10" {{#unless lightsaber.preview.canTake10}}disabled{{/unless}}>
+                  <span class="variant-name">Take 10</span>
+                  <span class="variant-desc">Allowed only when UTF + 10 meets the build DC.</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="detail-panel panel ls-panel-chassis">
+              <div class="panel-head"><span>Chassis</span><span class="hint">{{lightsaber.chassis.length}} frames</span></div>
+              <div class="card-list">
+                {{#each lightsaber.chassis}}
+                <button type="button" class="config-card {{#if selected}}selected{{/if}}" data-action="select-lightsaber-chassis" data-key="{{id}}">
+                  <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
+                  <span class="card-desc">{{description}}</span>
+                  <span class="card-tags"><span class="tag">DC {{system.baseBuildDc}}</span><span class="tag">{{system.chassisId}}</span></span>
+                </button>
+                {{/each}}
+              </div>
+            </section>
+
+            <section class="detail-panel panel ls-panel-crystal">
+              <div class="panel-head"><span>Kyber Crystal</span><span class="hint">{{lightsaber.crystals.length}} crystals</span></div>
+              <div class="card-list">
+                {{#each lightsaber.crystals}}
+                <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="select-lightsaber-crystal" data-key="{{id}}" {{#if incompatible}}disabled{{/if}}>
+                  <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
+                  <span class="card-desc">{{description}}</span>
+                  <span class="card-tags"><span class="tag">{{rarity}}</span><span class="tag">{{bladeColor}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
+                </button>
+                {{/each}}
+              </div>
+            </section>
+
+            <section class="detail-panel panel ls-panel-accessories">
+              <div class="panel-head"><span>Hilt Accessories</span><span class="hint">{{lightsaber.slotState.usedSlots}}/{{lightsaber.slotState.totalAvailable}} slots</span></div>
+              <div class="card-list">
+                {{#each lightsaber.accessories}}
+                <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="toggle-lightsaber-accessory" data-key="{{id}}" {{#if incompatible}}disabled{{/if}}>
+                  <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
+                  <span class="card-desc">{{description}}</span>
+                  <span class="card-tags"><span class="tag">{{slotCost}} slot</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
+                </button>
+                {{/each}}
+              </div>
+            </section>
+
+            <section class="detail-panel panel ls-panel-color appearance-panel">
+              <div class="panel-head"><span>Blade Color</span><span class="hint">live emitter</span></div>
+              <div class="weapon-color-picker blade-color-grid" aria-label="Blade Color">
+                {{#each lightsaber.colorOptions}}
+                <button type="button" class="weapon-color-cell lightsaber-color-cell {{#if selected}}selected{{/if}}" style="--weapon-color: {{hex}}" data-action="set-lightsaber-color" data-key="{{key}}" title="{{label}}" aria-label="Blade color {{label}}">
+                  <span class="weapon-color-preview saber-preview" aria-hidden="true"><span class="weapon-color-beam"></span></span>
+                  <span class="weapon-color-label">{{label}}</span>
+                </button>
+                {{/each}}
+              </div>
+            </section>
+          </div>
+          {{else}}
           <div class="detail-grid">
             <section class="detail-panel panel">
               <div class="panel-head">
@@ -99,6 +189,7 @@
                       {{#if effect}}<span class="tag">{{effect}}</span>{{/if}}
                       <span class="tag">{{slotCost}} slot</span>
                       {{#if installed}}<span class="tag state">Installed</span>{{/if}}
+                      {{#if selected}}{{#unless installed}}<span class="tag state">Staged</span>{{/unless}}{{/if}}
                     </span>
                   </button>
                   {{/each}}
@@ -127,6 +218,7 @@
                       <span class="tag">{{restriction}}</span>
                       {{#if rarity}}<span class="tag rare">Rare</span>{{/if}}
                       {{#if installed}}<span class="tag state">Applied</span>{{/if}}
+                      {{#if selected}}{{#unless installed}}<span class="tag state">Staged</span>{{/unless}}{{/if}}
                     </span>
                   </button>
                   {{/each}}
@@ -166,11 +258,27 @@
                 <div class="appearance-block">
                   <div class="appearance-label">{{key}}</div>
                   {{#if options}}
-                  <div class="swatch-grid">
-                    {{#each options}}
-                    <button type="button" class="swatch {{#if selected}}selected{{/if}}" style="--swatch: {{hex}}" data-action="{{../action}}" data-key="{{key}}" title="{{label}}"></button>
-                    {{/each}}
-                  </div>
+                    {{#if selectedHex}}
+                    <div class="blaster-bolt-preview" style="--weapon-color: {{selectedHex}}" aria-label="Selected bolt color {{selectedLabel}}">
+                      <span class="blaster-bolt-preview__muzzle" aria-hidden="true"></span>
+                      <span class="blaster-bolt-preview__beam" aria-hidden="true"></span>
+                      <span class="blaster-bolt-preview__label">{{selectedLabel}} bolt package</span>
+                    </div>
+                    <div class="weapon-color-picker bolt-color-grid" aria-label="{{key}}">
+                      {{#each options}}
+                      <button type="button" class="weapon-color-cell blaster-color-cell {{#if selected}}selected{{/if}}" style="--weapon-color: {{hex}}" data-action="{{../action}}" data-key="{{key}}" title="{{label}}" aria-label="Bolt color {{label}}">
+                        <span class="weapon-color-preview bolt-preview" aria-hidden="true"><span class="weapon-color-beam"></span></span>
+                        <span class="weapon-color-label">{{label}}</span>
+                      </button>
+                      {{/each}}
+                    </div>
+                    {{else}}
+                    <div class="swatch-grid">
+                      {{#each options}}
+                      <button type="button" class="swatch {{#if selected}}selected{{/if}}" style="--swatch: {{hex}}" data-action="{{../action}}" data-key="{{key}}" title="{{label}}"></button>
+                      {{/each}}
+                    </div>
+                    {{/if}}
                   {{/if}}
                   {{#if variantOptions}}
                   <div class="variant-list">
@@ -185,26 +293,9 @@
                 </div>
                 {{/each}}
               </div>
-              <div class="appearance-actions">
-                {{#each currentItem.appearance}}
-                  {{#if options}}
-                    {{#each options}}
-                      {{#if selected}}
-                      <span class="appearance-current">{{../key}}: {{label}}</span>
-                      {{/if}}
-                    {{/each}}
-                  {{/if}}
-                  {{#if variantOptions}}
-                    {{#each variantOptions}}
-                      {{#if selected}}
-                      <span class="appearance-current">{{../key}}: {{name}}</span>
-                      {{/if}}
-                    {{/each}}
-                  {{/if}}
-                {{/each}}
-              </div>
             </section>
           </div>
+          {{/if}}
         </section>
       </section>
 
@@ -232,6 +323,7 @@
         <div class="footer-actions">
           <button type="button" class="action ghost" data-action="reset-item">Reset</button>
           <button type="button" class="action ghost" data-action="close-workbench">Close</button>
+          {{#if footer.blockedReason}}<span class="footer-blocker">{{footer.blockedReason}}</span>{{/if}}
           <button type="button" class="action primary" data-action="apply-item" {{#unless footer.canApply}}disabled{{/unless}}>{{footer.applyLabel}}</button>
         </div>
       </footer>

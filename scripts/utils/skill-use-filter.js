@@ -1,4 +1,5 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 /**
  * Skill Use Application Filtering and Rolling Utility
  * Handles filtering skill use applications based on character capabilities
@@ -254,7 +255,7 @@ export class SkillUseFilter {
     if (options.situational) {modifier += options.situational;}
 
     // Create and evaluate the roll
-    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${modifier}`).evaluate({ async: true });
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${modifier}`, actor.getRollData?.() ?? {}, { actor, domain: `skill-use.${skillKey}`, context: { useKey: skillUse?.key ?? skillUse?.id ?? null } });
 
     // Prepare flavor text
     const dc = skillUse.DC || 'varies';
@@ -269,11 +270,18 @@ export class SkillUseFilter {
       <p><strong>Skill:</strong> ${this._getSkillLabel(skillKey)} (${modifier >= 0 ? '+' : ''}${modifier})</p>
     </div>`;
 
-    // Send to chat
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: flavor
-    } , { create: true });
+    // Send to chat through the shared SWSE chat surface.
+    await SWSEChat.postRoll({
+      roll,
+      actor,
+      flavor,
+      context: {
+        type: 'skill-use',
+        skillKey,
+        useKey: skillUse?.key ?? skillUse?.id ?? null,
+        modifier
+      }
+    });
 
     return roll;
   }

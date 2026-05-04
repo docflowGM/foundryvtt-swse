@@ -11,7 +11,7 @@
 --}}
 
 {{!-- Preserve old class names for backward compatibility with JS selectors --}}
-<div class="inventory-item-row v2-gear-row inventory-{{type}}-card {{#if equipped}}is-equipped{{/if}}" data-item-id="{{id}}">
+<div class="inventory-item-row v2-gear-row inventory-{{type}}-card {{#if equipped}}is-equipped{{/if}} {{#if activated}}is-activated{{/if}} {{#if isLightsaber}}is-lightsaber{{/if}}" data-item-id="{{id}}">
 
 <style>
 /* Inventory Row Layout */
@@ -183,6 +183,39 @@
   color: #ccc;
 }
 
+
+.quick-action-btn.lightsaber-activation-btn {
+  border-color: rgba(120, 220, 255, 0.45);
+  color: #9beeff;
+}
+
+.quick-action-btn.lightsaber-activation-btn.is-active {
+  border-color: rgba(120, 255, 190, 0.75);
+  color: #b9ffd8;
+  background: rgba(80, 255, 180, 0.16);
+  box-shadow: 0 0 8px rgba(80, 255, 180, 0.22);
+}
+
+.inventory-item-row.is-lightsaber.is-activated {
+  border-color: rgba(120, 255, 190, 0.55);
+  box-shadow: 0 0 10px rgba(80, 255, 180, 0.18);
+}
+
+.btn-activate {
+  border-color: rgba(120, 220, 255, 0.6);
+  color: #9beeff;
+}
+
+.btn-activate.is-active {
+  border-color: rgba(120, 255, 190, 0.75);
+  color: #b9ffd8;
+  background: rgba(80, 255, 180, 0.14);
+}
+
+.btn-activate:hover {
+  background: rgba(120, 220, 255, 0.15);
+}
+
 /* SECONDARY ROW: Management actions */
 .item-row-actions {
   display: flex;
@@ -334,6 +367,18 @@
         <button type="button" class="quick-action-btn damage-btn" data-item-id="{{id}}" title="Roll {{name}} damage">💥</button>
       {{/if}}
 
+      {{#if canToggleActivated}}
+        <button
+          type="button"
+          class="quick-action-btn lightsaber-activation-btn {{#if activated}}is-active{{/if}}"
+          data-action="toggle-activated"
+          data-item-id="{{id}}"
+          title="{{activationTitle}}"
+          aria-pressed="{{#if activated}}true{{else}}false{{/if}}">
+          {{#if activated}}I{{else}}O{{/if}}
+        </button>
+      {{/if}}
+
       {{#if equipped}}<span class="equipped-indicator" title="Equipped">✓</span>{{/if}}
     </div>
 
@@ -348,6 +393,13 @@
     <button type="button" class="btn btn-equip" data-action="equip" data-item-id="{{id}}" title="Equip/Unequip item">
       {{#if equipped}}Unequip{{else}}Equip{{/if}}
     </button>
+
+    {{!-- Activate/deactivate lightsaber blade --}}
+    {{#if canToggleActivated}}
+      <button type="button" class="btn btn-activate {{#if activated}}is-active{{/if}}" data-action="toggle-activated" data-item-id="{{id}}" title="{{activationTitle}}">
+        {{activationLabel}}
+      </button>
+    {{/if}}
 
     {{!-- Configure (weapon-specific) --}}
     {{#if (eq type "weapon")}}

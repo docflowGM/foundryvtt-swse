@@ -12,6 +12,10 @@ import { preloadHandlebarsTemplates } from "./scripts/load-templates.js";
 import { SWSEStore } from "./store/store.js";
 import * as SWSEData from "./scripts/swse-data.js";
 import { WorldDataLoader } from "./scripts/world-data-loader.js";
+import { registerSystemSettings } from "./scripts/core/settings.js";
+import { UIManager } from "./scripts/ui/ui-manager.js";
+
+UIManager.init();
 
 // ============================================
 // INIT HOOK
@@ -71,7 +75,8 @@ Hooks.once("init", async () => {
   // -------------------------------
   // Register Game Settings
   // -------------------------------
-  registerSettings();
+  registerSettings(); // Legacy swse namespace settings retained for compatibility.
+  await registerSystemSettings();
 
   // -------------------------------
   // Preload Templates

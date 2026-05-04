@@ -33,7 +33,9 @@ import {
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { getRendarrLine } from "/systems/foundryvtt-swse/scripts/apps/store/dialogue/rendarr-dialogue.js";
+import { resolveStoreDescription, getStoreCurrencySymbol } from "/systems/foundryvtt-swse/scripts/apps/store/store-description-resolver.js";
 import {
   addItemToCart,
   addDroidToCart,
@@ -136,6 +138,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this.currentView = 'browse';
     this.currentCategory = '';
     this.selectedProductId = null;
+    this.entryOrigin = options.entryOrigin || options.origin || 'unknown';
+    this.storeCurrencySymbol = getStoreCurrencySymbol();
   }
 
 
@@ -191,7 +195,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const currentView = this.currentView || 'browse';
     const categorySummary = this._buildCategorySummary(allItems);
     const currentCategoryLabel = this._getCurrentCategoryLabel(categorySummary);
-    const selectedProduct = this._buildSelectedProductView();
+    const selectedProduct = await this._buildSelectedProductView();
 
     return {
       allItems,
@@ -210,7 +214,9 @@ export class SWSEStore extends BaseSWSEAppV2 {
       pageContext: this._buildPageContext({ currentView, currentCategoryLabel, cartRemaining }),
       isGM: game.user?.isGM ?? false,
       rendarrWelcome: getRendarrLine('welcome'),
-      rendarrImage: 'systems/foundryvtt-swse/assets/mentors/rendarr.webp'
+      rendarrImage: 'systems/foundryvtt-swse/assets/mentors/rendarr.webp',
+      entryOrigin: this.entryOrigin,
+      currencySymbol: this.storeCurrencySymbol
     };
   }
 
@@ -337,19 +343,21 @@ export class SWSEStore extends BaseSWSEAppV2 {
       briefTags: [
         { label: 'Category', value: currentCategoryLabel },
         { label: 'Inventory', value: String(this.storeInventory?.allItems?.length || 0) },
-        { label: 'Reserve', value: `₢ ${cartRemaining}` }
+        { label: 'Reserve', value: `${this.storeCurrencySymbol} ${cartRemaining}` }
       ],
       cartRemaining
     };
   }
 
-  _buildSelectedProductView() {
+  async _buildSelectedProductView() {
     if (!this.selectedProductId) {return null;}
     const item = this.itemsById.get(this.selectedProductId);
     if (!item) {return null;}
     const view = this._viewFromItem(item);
     const suggestion = this.suggestions.get(view.id);
     const sys = safeSystem(item) ?? {};
+    const useAurebesh = SettingsHelper.getSafe('useAurebesh', false);
+    const glyphData = resolveStoreGlyph(item.category || item.type || '', item.type, useAurebesh);
     const vehiclePricing = item.type === 'vehicle'
       ? {
           requiresCondition: true,
@@ -362,6 +370,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
           usedCost: null
         };
 
+    const descriptionRecord = await resolveStoreDescription(item);
     return {
       ...view,
       price: view.finalCost,
@@ -378,13 +387,19 @@ export class SWSEStore extends BaseSWSEAppV2 {
       suggestionBullets: suggestion?.explanations || [],
       suggestionTierLabel: suggestion?.combined ? this._tierToDisplayLabel(suggestion.combined.tier) : '',
       techDetailsHtml: this._buildTechnicalDetails(item, sys, item.type || ''),
-      description: safeSystem(item)?.description || '',
+      description: descriptionRecord.description || safeSystem(item)?.description || '',
+      descriptionBasic: descriptionRecord.basicText || '',
+      descriptionAurebesh: descriptionRecord.aurebeshText || '',
+      descriptionSource: descriptionRecord.source || 'none',
       mentorReview: this._generateMentorReview(suggestion),
       flavorReviewsHtml: this._generateFlavorReviews(item, item.type || ''),
       requiresCondition: vehiclePricing.requiresCondition,
       newCost: vehiclePricing.newCost,
       usedCost: vehiclePricing.usedCost,
-      img: view.img || safeImg(item)
+      img: view.img || safeImg(item),
+      glyph: glyphData.text,
+      glyphLabel: glyphData.label,
+      currencySymbol: this.storeCurrencySymbol
     };
   }
 
@@ -822,6 +837,12 @@ export class SWSEStore extends BaseSWSEAppV2 {
       btn.addEventListener('click', () => {
         this.currentCategory = '';
         this.currentPage = 1;
+        const searchInput = root.querySelector('#store-search');
+        const availability = root.querySelector('#store-availability-filter');
+        const sort = root.querySelector('#store-sort');
+        if (searchInput) searchInput.value = '';
+        if (availability) availability.value = '';
+        if (sort) sort.value = 'suggested';
         this.render();
       }, { signal });
     });
@@ -867,12 +888,51 @@ export class SWSEStore extends BaseSWSEAppV2 {
         if (!this.selectedProductId) {return;}
         const qty = parseInt(detailQtyInput?.value) || 1;
         for (let i = 0; i < qty; i++) {
-          addItemToCart(this, this.selectedProductId, i === 0 ? (line => this._setRendarrLine(line)) : null);
+          addItemToCart(this, this.selectedProductId, i === 0 ? (line => this._setRendarrLine(line)) : null, { quantity: 1 });
         }
         await this._persistCart();
         this.selectedProductId = null;
         this.currentView = 'cart';
         this.render();
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="detail-customize-item"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const item = this.itemsById.get(this.selectedProductId);
+        if (!item || !this.actor) return;
+        openItemCustomization(this.actor, item, {
+          mode: 'store-stage',
+          applyMode: 'stage-to-cart',
+          sourceItem: item,
+          onStage: async ({ cartEntry }) => {
+            this.cart.items.push(cartEntry);
+            await this._persistCart?.();
+            this.selectedProductId = null;
+            this.currentView = 'cart';
+            this.render();
+          }
+        });
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="detail-save-for-later"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const item = this.itemsById.get(this.selectedProductId);
+        if (!item || !this.actor) return;
+        const current = this.actor.getFlag('foundryvtt-swse', 'storeSavedForLater') || [];
+        const exists = current.some(entry => entry?.id === item.id);
+        if (!exists) {
+          current.push({
+            id: item.id,
+            name: item.name,
+            type: item.type,
+            cost: Number(item.finalCost ?? item.finalCostNew ?? 0) || 0,
+            savedAt: Date.now()
+          });
+          await this.actor.setFlag('foundryvtt-swse', 'storeSavedForLater', current);
+        }
+        ui.notifications.info(`${item.name} saved for later.`);
       }, { signal });
     });
     // Card expand buttons → Detail view
@@ -1281,7 +1341,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
       }
 
       // Star rating display (if present)
-      const starDisplay = review.stars ? `<span style="color: #ffc800; font-size: 11px; margin-left: 4px;">★ ${review.stars}/5</span>` : '';
+      const starDisplay = review.stars !== null && review.stars !== undefined ? `<span style="color: #ffc800; font-size: 11px; margin-left: 4px;">★ ${review.stars}/5</span>` : '';
+      const helpfulDisplay = Number.isFinite(review.helpfulCount) ? `<span style="color: rgba(255,255,255,0.5); font-size: 10px; margin-left: 8px;">${review.helpfulCount} found this helpful</span>` : '';
 
       // Build reviews + replies
       // Username & metadata in Consolas (readable)
@@ -1289,7 +1350,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       let reviewHTML = `
         <div class="flavor-review" style="margin-bottom: 12px; padding: 8px; background: ${bgColor}; border-left: 2px solid ${borderColor}; border-radius: 2px;">
           <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); font-weight: bold; margin-bottom: 4px; font-family: Consolas, monospace;">
-            ${icon} ${displayAuthor} ${starDisplay}
+            ${icon} ${displayAuthor} ${starDisplay}${helpfulDisplay}
           </div>
           <p style="margin: 0; font-size: 12px; line-height: 1.5; color: rgba(255, 255, 255, 0.8); font-family: 'Aurebesh', serif; letter-spacing: 0.3px;">
             "${review.text}"
@@ -1316,6 +1377,10 @@ export class SWSEStore extends BaseSWSEAppV2 {
       reviewHTML += '</div>';
       return reviewHTML;
     }).join('');
+  }
+
+  _getCurrencySymbol() {
+    return this.storeCurrencySymbol || getStoreCurrencySymbol();
   }
 
   _renderCartUI() {

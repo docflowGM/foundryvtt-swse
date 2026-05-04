@@ -2,6 +2,9 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { registerMetaTuningSettings } from "/systems/foundryvtt-swse/scripts/engine/MetaTuning.js";
 import { registerEpicOverrideSetting } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
 import { registerActionEconomySettings } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-settings.js";
+import { getActorSheetThemeOptions } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
+import { getActorSheetMotionStyleOptions } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
+import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 
 /**
  * System settings for SWSE
@@ -179,28 +182,51 @@ game.settings.register('foundryvtt-swse', 'debugMode', {
   registerEpicOverrideSetting();
 
   // Theme Settings
+  // Player-facing client theme authority for all SWSE datapad surfaces.
+  // Palettes are owned by ACTOR_SHEET_THEME_REGISTRY and resolved via
+  // ThemeResolutionService; the older uiTheme object is compatibility-only.
   game.settings.register('foundryvtt-swse', 'sheetTheme', {
-    name: 'Sheet Theme',
-    hint: 'Select the visual theme for character sheets and UI elements',
+    name: 'SWSE Datapad Theme',
+    hint: 'Select the visual theme used by character sheets, workbenches, dialogs, chat cards, tooltips, and other SWSE datapad surfaces.',
     scope: 'client',
     config: true,
     type: String,
-    choices: {
-      'holo': 'Default (Holo)',
-      'high-contrast': 'High Contrast',
-      'starship': 'Starship',
-      'sand-people': 'Sand People',
-      'jedi': 'Jedi',
-      'high-republic': 'High Republic'
-    },
-    default: 'holo',
+    choices: Object.fromEntries(getActorSheetThemeOptions().map(option => [option.value, option.label])),
+    default: ThemeResolutionService.defaultTheme,
     onChange: async (value) => {
       if (game.ready) {
         const { UIManager } = await import("/systems/foundryvtt-swse/scripts/ui/ui-manager.js");
-        await UIManager.setTheme(value);
+        UIManager.applyTheme(value);
       }
     }
   });
+
+  game.settings.register('foundryvtt-swse', 'sheetMotionStyle', {
+    name: 'SWSE Datapad Motion Style',
+    hint: 'Controls decorative motion for character sheets, workbenches, dialogs, chat cards, tooltips, and other SWSE datapad surfaces.',
+    scope: 'client',
+    config: true,
+    type: String,
+    choices: Object.fromEntries(getActorSheetMotionStyleOptions().map(option => [option.value, option.label])),
+    default: ThemeResolutionService.defaultMotionStyle,
+    onChange: async (value) => {
+      if (game.ready) {
+        const { UIManager } = await import("/systems/foundryvtt-swse/scripts/ui/ui-manager.js");
+        UIManager.applyMotionStyle(value);
+      }
+    }
+  });
+
+  if (!game.settings.settings.has('foundryvtt-swse.uiTheme')) {
+    game.settings.register('foundryvtt-swse', 'uiTheme', {
+      name: 'Deprecated UI Theme Compatibility Settings',
+      hint: 'Legacy adapter object. Palettes are resolved through sheetTheme and the actor-sheet theme registry.',
+      scope: 'client',
+      config: false,
+      type: Object,
+      default: ThemeResolutionService.legacyDefaults
+    });
+  }
 
   // Migration tracking setting (hidden from config UI)
   game.settings.register('foundryvtt-swse', 'actorValidationMigration', {

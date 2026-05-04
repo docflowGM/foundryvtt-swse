@@ -10,6 +10,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { canonicalizeSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { calculateSkillPointGrant, isRankedModeEnabled } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { FeatRulesAdapter } from "/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js";
@@ -358,6 +359,16 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       type: t.type,
       system: t.system
     }));
+
+    const actorCredits = Number(system.credits ?? 0);
+    if (Number.isFinite(actorCredits)) {
+      if (this.characterData.isDroid) {
+        this.characterData.droidCredits = this.characterData.droidCredits || {};
+        this.characterData.droidCredits.remaining = actorCredits;
+      } else {
+        this.characterData.credits = actorCredits;
+      }
+    }
   }
 
   static get defaultOptions() {
@@ -1279,22 +1290,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     context.isFinalStep = this.currentStep === 'summary';
     context.isShopStep = this.currentStep === 'shop';
 
-    // summaryFinance — structured credits object for summary/shop steps (preview-only, no actor read)
+    // summary/shop finance — preview before actor creation, actor-backed after live handoff to store
     if (this.currentStep === 'summary' || this.currentStep === 'shop') {
-      if (this.characterData.isDroid) {
-        context.summaryFinance = {
-          totalCredits: this.characterData.droidCredits?.base || 0,
-          spentCredits: this.characterData.droidSystems?.totalCost || 0,
-          remainingCredits: this.characterData.droidCredits?.remaining || 0
-        };
-      } else {
-        const total = this.characterData.credits || 0;
-        context.summaryFinance = {
-          totalCredits: total,
-          spentCredits: 0,
-          remainingCredits: total
-        };
-      }
+      context.summaryFinance = this._buildSummaryFinanceContext();
 
       // PHASE 7: Generate mentor reflection on chargen choices for summary step
       if (this.currentStep === 'summary' && this.mentor) {
@@ -1872,7 +1870,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
   }
 
   _getSteps() {
-    if (this.actor) {
+    if (this.actor && this._startedWithActor && !this._createdActorDuringSession) {
       return ['abilities', 'class', 'background', 'feats', 'talents', 'skills', 'languages', 'summary'];
     }
 
@@ -2941,8 +2939,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Import and open the store
     try {
-      const { SWSEStore } = await import("/systems/foundryvtt-swse/scripts/apps/store/store-main.js");
-      await SWSEStore.open(this.actor);
+      await this._openStoreWithChargenCallbacks();
     } catch (err) {
       SWSELogger.error('SWSE | Failed to open store:', err);
       ui.notifications.error('Failed to open the shop. You can access it from your character sheet.');
@@ -2965,7 +2962,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Roll the dice
     const rollFormula = `${numDice}d${dieSize}`;
-    const roll = await RollEngine.safeRoll(rollFormula);
+    const roll = await RollEngine.safeRoll(rollFormula, {}, { domain: 'chargen.starting-credits' });
     if (!roll) {
       SWSELogger.error('Starting credits roll failed');
       return 1000; // Fallback value
@@ -2974,11 +2971,18 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     // Calculate credits
     const credits = roll.total * multiplier;
 
-    // Show the roll in chat
-    await roll.toMessage({
-      flavor: `<h3>Starting Credits Roll</h3><p><strong>${this.characterData.name}</strong> rolls ${rollFormula} × ${multiplier.toLocaleString()}</p>`,
-      speaker: ChatMessage.getSpeaker({ alias: this.characterData.name || 'Character' })
-    } , { create: true });
+    // Show the roll in chat through the shared SWSE chat surface.
+    await SWSEChat.postRoll({
+      roll,
+      speaker: ChatMessage.getSpeaker({ alias: this.characterData.name || 'Character' }),
+      flavor: `Starting Credits Roll — ${this.characterData.name} rolls ${rollFormula} × ${multiplier.toLocaleString()}`,
+      context: {
+        type: 'chargen.starting-credits',
+        characterName: this.characterData.name,
+        multiplier,
+        credits
+      }
+    });
 
     // Set credits and mark as chosen
     this.characterData.credits = credits;
@@ -3416,6 +3420,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       // Store the actor reference
       this.actor = created;
+      this._createdActorDuringSession = true;
+      this._syncChargenEconomyFromActor(created);
 
       // Emit chargen completion hook for modules to handle
       Hooks.call('swse:progression:completed', {
@@ -3511,7 +3517,109 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', items);
     }
 
+    this._syncChargenEconomyFromActor(this.actor);
     ui.notifications.info(`${this.actor.name} leveled up to level ${newLevel}!`);
+  }
+
+  _buildSummaryFinanceContext() {
+    const actorFinance = this._getActorStoreFinanceSnapshot();
+    if (actorFinance) {
+      return actorFinance;
+    }
+
+    if (this.characterData.isDroid) {
+      return {
+        source: 'chargen-preview',
+        isLiveActor: false,
+        totalCredits: this.characterData.droidCredits?.base || 0,
+        spentCredits: this.characterData.droidSystems?.totalCost || 0,
+        remainingCredits: this.characterData.droidCredits?.remaining || 0,
+        cartTotal: 0,
+        cartItems: 0,
+        purchaseHistoryCount: 0
+      };
+    }
+
+    const total = Number(this.characterData.credits || 0) || 0;
+    return {
+      source: 'chargen-preview',
+      isLiveActor: false,
+      totalCredits: total,
+      spentCredits: 0,
+      remainingCredits: total,
+      cartTotal: 0,
+      cartItems: 0,
+      purchaseHistoryCount: 0
+    };
+  }
+
+  _getActorStoreFinanceSnapshot(actor = this.actor) {
+    if (!actor) {return null;}
+
+    const credits = Number(actor.system?.credits ?? 0);
+    const history = actor.getFlag?.('foundryvtt-swse', 'purchaseHistory') || [];
+    const cart = actor.getFlag?.('foundryvtt-swse', 'storeCart') || {};
+    const cartItems = [
+      ...(Array.isArray(cart.items) ? cart.items : []),
+      ...(Array.isArray(cart.droids) ? cart.droids : []),
+      ...(Array.isArray(cart.vehicles) ? cart.vehicles : [])
+    ];
+    const cartTotal = cartItems.reduce((sum, entry) => sum + (Number(entry?.cost ?? 0) || 0), 0);
+
+    const basePreview = this.characterData.isDroid
+      ? Number(this.characterData.droidCredits?.base ?? credits ?? 0) || 0
+      : Number(this.characterData.credits ?? credits ?? 0) || 0;
+
+    return {
+      source: 'actor-store',
+      isLiveActor: true,
+      totalCredits: basePreview,
+      spentCredits: Math.max(0, basePreview - (Number.isFinite(credits) ? credits : 0)),
+      remainingCredits: Number.isFinite(credits) ? credits : 0,
+      cartTotal,
+      cartItems: cartItems.length,
+      purchaseHistoryCount: Array.isArray(history) ? history.length : 0
+    };
+  }
+
+  _syncChargenEconomyFromActor(actor = this.actor) {
+    if (!actor) {return;}
+
+    const liveCredits = Number(actor.system?.credits ?? 0);
+    if (!Number.isFinite(liveCredits)) {return;}
+
+    if (this.characterData.isDroid) {
+      this.characterData.droidCredits = this.characterData.droidCredits || {};
+      if (!Number.isFinite(Number(this.characterData.droidCredits.base))) {
+        this.characterData.droidCredits.base = liveCredits;
+      }
+      this.characterData.droidCredits.remaining = liveCredits;
+    } else {
+      this.characterData.credits = liveCredits;
+    }
+  }
+
+  async _openStoreWithChargenCallbacks() {
+    if (!this.actor) {
+      throw new Error('Cannot open store without an actor.');
+    }
+
+    const { SWSEStore } = await import('/systems/foundryvtt-swse/scripts/apps/store/store-main.js');
+    await SWSEStore.open(this.actor, {
+      onCheckoutComplete: async ({ actor }) => {
+        this._syncChargenEconomyFromActor(actor || this.actor);
+        if (this.currentStep === 'shop') {
+          this.currentStep = 'summary';
+        }
+        await this.render();
+      },
+      onClose: async ({ actor }) => {
+        this._syncChargenEconomyFromActor(actor || this.actor);
+        if (this.rendered) {
+          await this.render();
+        }
+      }
+    });
   }
 
   /**

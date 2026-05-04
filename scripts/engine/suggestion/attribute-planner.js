@@ -678,14 +678,18 @@ function buildPlanDisplayRows(baseScores, finalScores, speciesMods, allowed) {
     const base = baseScores?.[ability];
     const finalScore = finalScores?.[ability];
     const speciesMod = Number(speciesMods?.[ability] || 0);
+    const modValue = Number.isFinite(Number(finalScore)) ? modifier(Number(finalScore)) : null;
     return {
       id: ability,
       label: labelForAbility(ability),
       base: Number.isFinite(Number(base)) ? Number(base) : '—',
       speciesMod,
+      speciesModClass: speciesMod > 0 ? 'is-positive' : speciesMod < 0 ? 'is-negative' : 'is-zero',
       speciesModFormatted: speciesMod > 0 ? `+${speciesMod}` : `${speciesMod}`,
       final: Number.isFinite(Number(finalScore)) ? Number(finalScore) : '—',
-      modifier: Number.isFinite(Number(finalScore)) ? (modifier(Number(finalScore)) >= 0 ? `+${modifier(Number(finalScore))}` : `${modifier(Number(finalScore))}`) : '—'
+      modifierValue: modValue,
+      modifierClass: modValue > 0 ? 'is-positive' : modValue < 0 ? 'is-negative' : 'is-zero',
+      modifier: Number.isFinite(Number(modValue)) ? (modValue >= 0 ? `+${modValue}` : `${modValue}`) : '—'
     };
   });
 }

@@ -13,6 +13,7 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class SWSEInitiative {
@@ -106,10 +107,16 @@ export class SWSEInitiative {
       for (const c of combatants) {
         const mod = this._getInitMod(c);
         const formula = `1d20 + ${mod}`;
-        const roll = new Roll(formula);
-        await roll.evaluate({ async: true });
-        updates.push({ _id: c.id, initiative: roll.total });
-        totals.push(roll.total);
+        const rollResult = await RollCore.executeFormula({
+          formula,
+          actor: c.actor ?? null,
+          domain: 'initiative.tie-breaker',
+          rollData: c.actor?.getRollData?.() ?? {},
+          context: { combatantId: c.id }
+        });
+        if (!rollResult.success || !rollResult.roll) continue;
+        updates.push({ _id: c.id, initiative: rollResult.roll.total });
+        totals.push(rollResult.roll.total);
       }
 
       if (updates.length) {
@@ -185,12 +192,18 @@ export class SWSEInitiative {
 
     // === POST THE ROLL TO CHAT ===
     if (rollResult.roll) {
-      await rollResult.roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
+      await SWSEChat.postRoll({
+        roll: rollResult.roll,
+        actor,
         flavor: forceBonus > 0
-          ? `<strong>Initiative Roll</strong><br/>+${forceBonus} (Force Point)`
-          : '<strong>Initiative Roll</strong>',
-        flags: { 'core.initiativeRoll': true }
+          ? `Initiative Roll — Force Point +${forceBonus}`
+          : 'Initiative Roll',
+        flags: { swse: { rollType: 'initiative' }, core: { initiativeRoll: true } },
+        context: {
+          type: 'initiative',
+          forceBonus,
+          usedForce
+        }
       });
     }
 

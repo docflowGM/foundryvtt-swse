@@ -1,0 +1,395 @@
+/* ============================================================================
+   SWSE Secondary Surfaces Theme Pass
+   Uses the existing actor-sheet theme/motion registries. No parallel palette.
+   The root receives the same CSS variables that v2 sheets already use.
+   ============================================================================ */
+
+:root,
+body {
+  --swse-ui-bg: var(--swse-surface-1, var(--screen, #071019));
+  --swse-ui-bg-2: var(--swse-surface-2, var(--screen-2, #0b1a26));
+  --swse-ui-bg-3: var(--swse-surface-3, color-mix(in srgb, var(--swse-ui-bg-2) 84%, white 8%));
+  --swse-ui-text: var(--swse-text-primary, var(--ink, #e8fbff));
+  --swse-ui-text-muted: var(--swse-text-muted, var(--ink-dim, #96bdc8));
+  --swse-ui-accent: var(--swse-accent, var(--vapor-cyan, #75e8ff));
+  --swse-ui-accent-2: var(--swse-accent-2, var(--vapor-pink, #ff72db));
+  --swse-ui-border: var(--swse-border-default, color-mix(in srgb, var(--swse-ui-accent) 38%, transparent));
+  --swse-ui-border-active: var(--swse-border-active, color-mix(in srgb, var(--swse-ui-accent) 62%, transparent));
+  --swse-ui-glow: var(--swse-shadow-glow-cyan, 0 0 16px color-mix(in srgb, var(--swse-ui-accent) 35%, transparent));
+  --swse-ui-font: var(--swse-font-body, var(--font-primary, system-ui, sans-serif));
+  --swse-ui-font-display: var(--swse-font-display, var(--swse-ui-font));
+  --swse-ui-font-mono: var(--swse-font-mono, ui-monospace, monospace);
+
+  /* Floating math sign colors. Deliberately separate from ability colors. */
+  --swse-sign-positive: oklch(0.82 0.18 150);
+  --swse-sign-neutral: oklch(0.83 0.15 82);
+  --swse-sign-negative: oklch(0.70 0.20 27);
+  --swse-sign-positive-bg: color-mix(in oklch, var(--swse-sign-positive) 16%, transparent);
+  --swse-sign-neutral-bg: color-mix(in oklch, var(--swse-sign-neutral) 15%, transparent);
+  --swse-sign-negative-bg: color-mix(in oklch, var(--swse-sign-negative) 16%, transparent);
+
+  /* Ability identity colors. They are not the red/amber/green math colors. */
+  --swse-ability-str: oklch(0.86 0.025 96);   /* Argent */
+  --swse-ability-dex: oklch(0.78 0.145 190);  /* Teal */
+  --swse-ability-con: oklch(0.68 0.155 44);   /* Rust */
+  --swse-ability-int: oklch(0.74 0.205 330);  /* Magenta */
+  --swse-ability-wis: oklch(0.73 0.165 292);  /* Purple */
+  --swse-ability-cha: oklch(0.76 0.155 238);  /* Blue */
+}
+
+/* --------------------------------------------------------------------------
+   Shared SWSE-owned secondary surfaces: dialogs, modals, popups, app shells
+   -------------------------------------------------------------------------- */
+.application.swse,
+.app.swse,
+.swse-dialog,
+.swse-dialog-v2,
+.swse-themed-surface,
+.swse-ui-shell,
+.swse-datapad,
+.swse-modal-shell,
+.window-app.swse {
+  color: var(--swse-ui-text);
+  font-family: var(--swse-ui-font);
+}
+
+.application.swse .window-content,
+.app.swse .window-content,
+.swse-dialog .window-content,
+.swse-dialog-v2 .window-content,
+.swse-modal-shell,
+.swse-themed-surface {
+  background:
+    radial-gradient(ellipse at 18% 0%, color-mix(in oklch, var(--swse-ui-accent) 13%, transparent), transparent 48%),
+    linear-gradient(180deg, var(--swse-ui-bg-2), var(--swse-ui-bg));
+  color: var(--swse-ui-text);
+  border-color: var(--swse-ui-border);
+}
+
+.application.swse .window-header,
+.app.swse .window-header,
+.swse-dialog .window-header,
+.swse-dialog-v2 .window-header {
+  background: linear-gradient(90deg, color-mix(in oklch, var(--swse-ui-bg-3) 86%, black 10%), var(--swse-ui-bg-2));
+  color: var(--swse-ui-text);
+  border-bottom: 1px solid var(--swse-ui-border);
+  font-family: var(--swse-ui-font-display);
+  letter-spacing: 0.08em;
+}
+
+/* --------------------------------------------------------------------------
+   Safe native dropdown/select styling
+   Only styles the pieces Electron/Chromium lets us control reliably.
+   -------------------------------------------------------------------------- */
+.swse-ui-shell select,
+.swse-datapad select,
+.swse-themed-surface select,
+.application.swse select,
+.app.swse select,
+.swse-chat-card select,
+.swse-sheet-v2-shell select,
+.progression-shell select,
+.swse-prog-v2-shell select {
+  appearance: none;
+  -webkit-appearance: none;
+  color: var(--swse-ui-text);
+  background-color: var(--swse-ui-bg-2);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--swse-ui-text) 50%),
+    linear-gradient(135deg, var(--swse-ui-text) 50%, transparent 50%),
+    linear-gradient(180deg, color-mix(in oklch, var(--swse-ui-bg-2) 84%, white 6%), var(--swse-ui-bg));
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 9px) 50%,
+    0 0;
+  background-size: 5px 5px, 5px 5px, 100% 100%;
+  background-repeat: no-repeat;
+  border: 1px solid var(--swse-ui-border);
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--swse-ui-bg) 60%, transparent);
+  font-family: var(--swse-ui-font);
+  min-height: 1.75rem;
+  padding: 0.25rem 1.75rem 0.25rem 0.55rem;
+}
+
+.swse-ui-shell select:focus,
+.swse-datapad select:focus,
+.swse-themed-surface select:focus,
+.application.swse select:focus,
+.app.swse select:focus,
+.swse-chat-card select:focus,
+.swse-sheet-v2-shell select:focus,
+.progression-shell select:focus,
+.swse-prog-v2-shell select:focus {
+  border-color: var(--swse-ui-border-active);
+  box-shadow: 0 0 0 1px var(--swse-ui-border-active), var(--swse-ui-glow);
+  outline: none;
+}
+
+.swse-ui-shell select:disabled,
+.swse-datapad select:disabled,
+.swse-themed-surface select:disabled,
+.application.swse select:disabled,
+.app.swse select:disabled,
+.swse-chat-card select:disabled,
+.swse-sheet-v2-shell select:disabled,
+.progression-shell select:disabled,
+.swse-prog-v2-shell select:disabled {
+  color: var(--swse-ui-text-muted);
+  opacity: 0.68;
+}
+
+.swse-ui-shell select option,
+.swse-datapad select option,
+.swse-themed-surface select option,
+.application.swse select option,
+.app.swse select option,
+.swse-chat-card select option,
+.swse-sheet-v2-shell select option,
+.progression-shell select option,
+.swse-prog-v2-shell select option,
+.swse-ui-shell select optgroup,
+.swse-datapad select optgroup,
+.swse-themed-surface select optgroup,
+.application.swse select optgroup,
+.app.swse select optgroup,
+.swse-chat-card select optgroup,
+.swse-sheet-v2-shell select optgroup,
+.progression-shell select optgroup,
+.swse-prog-v2-shell select optgroup {
+  color: var(--swse-ui-text);
+  background-color: var(--swse-ui-bg-2);
+  font-family: var(--swse-ui-font);
+}
+
+/* --------------------------------------------------------------------------
+   Themed tooltip/discovery layer
+   -------------------------------------------------------------------------- */
+.swse-discovery-tooltip {
+  position: fixed;
+  z-index: 1100;
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 10px 12px;
+  color: var(--swse-ui-text);
+  background:
+    radial-gradient(ellipse at 12% 0%, color-mix(in oklch, var(--swse-ui-accent) 15%, transparent), transparent 48%),
+    linear-gradient(180deg, var(--swse-ui-bg-2), var(--swse-ui-bg));
+  border: 1px solid var(--swse-ui-border-active);
+  border-radius: 8px;
+  box-shadow: var(--swse-ui-glow), 0 10px 28px rgb(0 0 0 / 0.55);
+  pointer-events: none;
+  font-family: var(--swse-ui-font);
+  font-size: 12px;
+  line-height: 1.45;
+  opacity: 0;
+  animation: swse-tooltip-fade-in calc(150ms * max(var(--motion-enabled, 1), 0)) ease-out forwards;
+}
+
+.swse-discovery-tooltip__title {
+  margin-bottom: 3px;
+  color: var(--swse-ui-accent);
+  font-family: var(--swse-ui-font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-discovery-tooltip__body {
+  color: var(--swse-ui-text-muted);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+[data-motion-style="off"] .swse-discovery-tooltip,
+[data-motion-style="quiet"] .swse-discovery-tooltip {
+  animation-duration: 1ms;
+}
+
+[data-swse-tooltip],
+[data-swse-tooltip-key],
+[data-swse-tooltip-text] {
+  cursor: help;
+}
+
+/* --------------------------------------------------------------------------
+   Chat cards/messages use the same datapad tokens.
+   -------------------------------------------------------------------------- */
+.chat-message .swse-chat-card,
+.chat-message .swse-roll-card,
+.chat-message .swse-chat-roll,
+.chat-message .swse-ability-chat-card,
+.chat-message .damage-log-container,
+.swse-chat-card,
+.swse-roll-card,
+.swse-chat-roll,
+.swse-ability-chat-card,
+.damage-log-container {
+  color: var(--swse-ui-text);
+  background:
+    radial-gradient(ellipse at 20% 0%, color-mix(in oklch, var(--swse-ui-accent) 14%, transparent), transparent 55%),
+    linear-gradient(180deg, var(--swse-ui-bg-2), var(--swse-ui-bg));
+  border: 1px solid var(--swse-ui-border);
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--swse-ui-bg) 68%, transparent), var(--swse-ui-glow);
+  font-family: var(--swse-ui-font);
+}
+
+.chat-message .swse-chat-card h1,
+.chat-message .swse-chat-card h2,
+.chat-message .swse-chat-card h3,
+.chat-message .swse-roll-card h1,
+.chat-message .swse-roll-card h2,
+.chat-message .swse-roll-card h3,
+.swse-chat-card h1,
+.swse-chat-card h2,
+.swse-chat-card h3,
+.swse-roll-card h1,
+.swse-roll-card h2,
+.swse-roll-card h3,
+.damage-log-header {
+  color: var(--swse-ui-accent);
+  font-family: var(--swse-ui-font-display);
+}
+
+/* --------------------------------------------------------------------------
+   Floating math sign colors: negative red, zero amber, positive green.
+   -------------------------------------------------------------------------- */
+.number-display.positive,
+.mod-value.positive,
+.positive-mod,
+.prog-num--pos,
+.swse-signed-number.is-positive,
+.swse-sign-positive,
+.roll-mod.positive {
+  color: var(--swse-sign-positive) !important;
+  text-shadow: 0 0 8px color-mix(in oklch, var(--swse-sign-positive) 40%, transparent);
+}
+
+.number-display.zero,
+.mod-value.zero,
+.prog-num--zero,
+.swse-signed-number.is-zero,
+.swse-sign-zero,
+.roll-mod.zero {
+  color: var(--swse-sign-neutral) !important;
+  text-shadow: 0 0 8px color-mix(in oklch, var(--swse-sign-neutral) 32%, transparent);
+}
+
+.number-display.negative,
+.mod-value.negative,
+.prog-num--neg,
+.swse-signed-number.is-negative,
+.swse-sign-negative,
+.roll-mod.negative {
+  color: var(--swse-sign-negative) !important;
+  text-shadow: 0 0 8px color-mix(in oklch, var(--swse-sign-negative) 40%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   Ability identity colors: words, labels, rows, dropdown choices.
+   -------------------------------------------------------------------------- */
+.swse-ability-keyword,
+.swse-ability-label,
+.ability-label,
+.attr-mentor-stat__label,
+.prog-attribute-row__label,
+.prog-attribute-details__name {
+  font-weight: 700;
+  text-shadow: 0 0 8px color-mix(in oklch, currentColor 30%, transparent);
+}
+
+.swse-ability-keyword--str,
+.swse-ability-label--str,
+.ability-str .ability-label,
+.swse-ability-surface--str .swse-ability-label,
+.ability-option--str,
+.ability-select--str,
+.swse-ability-label[data-ability="str"],
+.swse-ability-keyword[data-ability="str"],
+.ability-option[data-ability="str"],
+.swse-discovery-tooltip[data-ability="str"] { color: var(--swse-ability-str); }
+
+.swse-ability-keyword--dex,
+.swse-ability-label--dex,
+.ability-dex .ability-label,
+.swse-ability-surface--dex .swse-ability-label,
+.ability-option--dex,
+.ability-select--dex,
+.swse-ability-label[data-ability="dex"],
+.swse-ability-keyword[data-ability="dex"],
+.ability-option[data-ability="dex"],
+.swse-discovery-tooltip[data-ability="dex"] { color: var(--swse-ability-dex); }
+
+.swse-ability-keyword--con,
+.swse-ability-label--con,
+.ability-con .ability-label,
+.swse-ability-surface--con .swse-ability-label,
+.ability-option--con,
+.ability-select--con,
+.swse-ability-label[data-ability="con"],
+.swse-ability-keyword[data-ability="con"],
+.ability-option[data-ability="con"],
+.swse-discovery-tooltip[data-ability="con"] { color: var(--swse-ability-con); }
+
+.swse-ability-keyword--int,
+.swse-ability-label--int,
+.ability-int .ability-label,
+.swse-ability-surface--int .swse-ability-label,
+.ability-option--int,
+.ability-select--int,
+.swse-ability-label[data-ability="int"],
+.swse-ability-keyword[data-ability="int"],
+.ability-option[data-ability="int"],
+.swse-discovery-tooltip[data-ability="int"] { color: var(--swse-ability-int); }
+
+.swse-ability-keyword--wis,
+.swse-ability-label--wis,
+.ability-wis .ability-label,
+.swse-ability-surface--wis .swse-ability-label,
+.ability-option--wis,
+.ability-select--wis,
+.swse-ability-label[data-ability="wis"],
+.swse-ability-keyword[data-ability="wis"],
+.ability-option[data-ability="wis"],
+.swse-discovery-tooltip[data-ability="wis"] { color: var(--swse-ability-wis); }
+
+.swse-ability-keyword--cha,
+.swse-ability-label--cha,
+.ability-cha .ability-label,
+.swse-ability-surface--cha .swse-ability-label,
+.ability-option--cha,
+.ability-select--cha,
+.swse-ability-label[data-ability="cha"],
+.swse-ability-keyword[data-ability="cha"],
+.ability-option[data-ability="cha"],
+.swse-discovery-tooltip[data-ability="cha"] { color: var(--swse-ability-cha); }
+
+.swse-ability-surface--str,
+.swse-ability-surface[data-ability="str"] { --swse-current-ability-color: var(--swse-ability-str); }
+.swse-ability-surface--dex,
+.swse-ability-surface[data-ability="dex"] { --swse-current-ability-color: var(--swse-ability-dex); }
+.swse-ability-surface--con,
+.swse-ability-surface[data-ability="con"] { --swse-current-ability-color: var(--swse-ability-con); }
+.swse-ability-surface--int,
+.swse-ability-surface[data-ability="int"] { --swse-current-ability-color: var(--swse-ability-int); }
+.swse-ability-surface--wis,
+.swse-ability-surface[data-ability="wis"] { --swse-current-ability-color: var(--swse-ability-wis); }
+.swse-ability-surface--cha,
+.swse-ability-surface[data-ability="cha"] { --swse-current-ability-color: var(--swse-ability-cha); }
+
+.swse-ability-surface {
+  border-color: color-mix(in oklch, var(--swse-current-ability-color, var(--swse-ui-border)) 42%, var(--swse-ui-border));
+}
+
+.ability-select[data-ability-select],
+.skill-row-container[data-ability] .ability-select {
+  border-color: color-mix(in oklch, currentColor 34%, var(--swse-ui-border));
+}
+
+.swse-discovery-tooltip--str { --swse-ui-accent: var(--swse-ability-str); }
+.swse-discovery-tooltip--dex { --swse-ui-accent: var(--swse-ability-dex); }
+.swse-discovery-tooltip--con { --swse-ui-accent: var(--swse-ability-con); }
+.swse-discovery-tooltip--int { --swse-ui-accent: var(--swse-ability-int); }
+.swse-discovery-tooltip--wis { --swse-ui-accent: var(--swse-ability-wis); }
+.swse-discovery-tooltip--cha { --swse-ui-accent: var(--swse-ability-cha); }

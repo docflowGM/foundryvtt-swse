@@ -22,6 +22,8 @@ import registerChargenSheetHooks from "/systems/foundryvtt-swse/scripts/infrastr
 import registerStoreSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/store-sheet-hooks.js";
 import registerMentorSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/mentor-sheet-hooks.js";
 import registerActorSidebarControls from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/actor-sidebar-controls.js";
+import registerCustomRollSidebarControl from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/custom-roll-sidebar-control.js";
+import { registerChatInteractionBridge } from "/systems/foundryvtt-swse/scripts/ui/chat/chat-interaction-bridge.js";
 
 /**
  * Register all UI-related hooks
@@ -29,6 +31,8 @@ import registerActorSidebarControls from "/systems/foundryvtt-swse/scripts/infra
  */
 export function registerUIHooks() {
     SWSELogger.log('Registering UI hooks');
+
+    registerChatInteractionBridge();
 
     // Chat message rendering (non-application, safe)
     HooksRegistry.register('renderChatMessageHTML', handleRenderChatMessage, {
@@ -59,6 +63,9 @@ export function registerUIHooks() {
     // Actor sidebar controls (Chargen, Store, Templates)
     registerActorSidebarControls();
 
+    // Chat sidebar custom roll launcher
+    registerCustomRollSidebarControl();
+
     SWSELogger.log('SWSE | UI hooks initialized');
 }
 
@@ -71,8 +78,12 @@ export function registerUIHooks() {
  * @param {Object} data - The message data
  */
 function handleRenderChatMessage(message, html, data) {
-    // Add any custom chat message processing here
-    // Currently handles roll damage buttons, which are managed by the chat system
+    // Central, V2-safe chat binding/enhancement. The bridge only touches SWSE-owned
+    // chat card surfaces and delegates roll/damage/reaction work to engines.
+    registerChatInteractionBridge();
+    // Safe fallback for registries that dispatch this handler directly. The bridge
+    // is idempotent, so duplicate render-hook paths do not double-bind controls.
+    globalThis.SWSE?.ChatInteractionBridge?.bind?.(message, html, data);
 }
 
 /**

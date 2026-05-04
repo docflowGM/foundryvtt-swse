@@ -1,5 +1,6 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { centerApplication } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -43,6 +44,7 @@ export class SWSEStoreSplashV2 extends HandlebarsApplicationMixin(ApplicationV2)
   async _prepareContext(_options) {
     const credits = Number(this.actor?.system?.credits ?? 0) || 0;
     const creditTier = credits >= 5000 ? 'Priority Trade Access' : credits >= 1000 ? 'Verified Customer Account' : 'Public Exchange Access';
+    const storeOpen = SettingsHelper.getSafe('storeOpen', true);
     return {
       actorName: this.actor?.name || 'GUEST ACCOUNT',
       credits,
@@ -52,6 +54,9 @@ export class SWSEStoreSplashV2 extends HandlebarsApplicationMixin(ApplicationV2)
       welcomeLine: this.actor
         ? 'Authorizing customer profile and syncing trade permissions...'
         : 'Initializing public exchange terminal and market index...',
+      storeOpen,
+      storeStatusLabel: storeOpen ? 'OPEN' : 'CLOSED',
+      currencySymbol: '$'
     };
   }
 
@@ -157,7 +162,7 @@ export class SWSEStoreSplashV2 extends HandlebarsApplicationMixin(ApplicationV2)
       this._setTimeout(() => this._showStage(message, state, pct), 450 + (idx * 1050));
     });
 
-    this._setTimeout(() => this._finishSequence(), 450 + (sequence.length * 1050) + 250);
+    this._setTimeout(() => this._finishSequence(), 10000);
   }
 
   _showStage(message, state, targetPercent) {

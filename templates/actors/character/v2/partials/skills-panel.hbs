@@ -107,10 +107,13 @@
         <!-- Ability Modifier (selected ability) -->
         <div class="col-ability-mod">
           <select name="system.skills.{{skill.key}}.selectedAbility"
-                  class="ability-select"
+                  class="ability-select ability-select--{{skill.selectedAbility}}"
+                  data-ability-select="{{skill.selectedAbility}}"
                   title="Select ability modifier for {{skill.label}}">
             {{#each @root.derived.identity.abilities as |ab|}}
               <option value="{{ab.key}}"
+                class="ability-option ability-option--{{ab.key}}"
+                data-ability="{{ab.key}}"
                 {{#if (eq ab.key skill.selectedAbility)}}selected{{/if}}>
                 {{ab.label}}
               </option>
@@ -299,10 +302,13 @@
           <!-- Ability Modifier Selector -->
           <div class="col-ability-mod">
             <select name="system.customSkills.{{@index}}.ability"
-                    class="ability-select"
+                    class="ability-select ability-select--{{customSkill.ability}}"
+                    data-ability-select="{{customSkill.ability}}"
                     title="Select governing ability">
               {{#each @root.derived.identity.abilities as |ab|}}
                 <option value="{{ab.key}}"
+                  class="ability-option ability-option--{{ab.key}}"
+                  data-ability="{{ab.key}}"
                   {{#if (eq ab.key customSkill.ability)}}selected{{/if}}>
                   {{ab.label}}
                 </option>

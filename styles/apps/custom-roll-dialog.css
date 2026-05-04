@@ -1,0 +1,194 @@
+/* Custom Roll Dialog — shared datapad/theme-token consumer */
+
+.swse-custom-roll-app .window-content,
+.swse-custom-roll-app [data-application-content] {
+  padding: 0;
+  background: transparent;
+}
+
+.swse-custom-roll-dialog {
+  --custom-roll-accent: var(--swse-theme-accent, var(--vapor-cyan, #7ee7ff));
+  --custom-roll-panel: var(--swse-theme-panel-bg, rgba(7, 18, 31, 0.94));
+  --custom-roll-surface: var(--swse-theme-surface-bg, rgba(4, 12, 22, 0.96));
+  --custom-roll-border: var(--swse-theme-border, rgba(126, 231, 255, 0.32));
+  --custom-roll-text: var(--swse-theme-text-primary, #dff8ff);
+  --custom-roll-muted: var(--swse-theme-text-muted, rgba(210, 242, 255, 0.7));
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: min(460px, 92vw);
+  padding: 1rem;
+  color: var(--custom-roll-text);
+  font-family: var(--swse-theme-font-body, var(--font-primary));
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--custom-roll-accent) 20%, transparent), transparent 40%),
+    linear-gradient(180deg, var(--custom-roll-panel), var(--custom-roll-surface));
+  border: 1px solid var(--custom-roll-border);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--custom-roll-accent) 24%, transparent);
+}
+
+.swse-custom-roll-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--custom-roll-border) 80%, transparent);
+}
+
+.swse-custom-roll-dialog__eyebrow,
+.swse-custom-roll-dialog__subtitle {
+  margin: 0;
+  color: var(--custom-roll-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-custom-roll-dialog h2 {
+  margin: 0.1rem 0;
+  color: var(--custom-roll-accent);
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.swse-custom-roll-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.swse-custom-roll-choice {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  margin: 0;
+  padding: 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--custom-roll-border) 70%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--custom-roll-surface) 82%, transparent);
+}
+
+.swse-custom-roll-choice legend,
+.swse-custom-roll-field > span {
+  color: var(--custom-roll-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-custom-roll-choice label {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  color: var(--custom-roll-text);
+}
+
+.swse-custom-roll-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.swse-custom-roll-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.swse-custom-roll-field--full,
+.swse-custom-roll-field--formula {
+  grid-column: 1 / -1;
+}
+
+.swse-custom-roll-dialog[data-roll-source="die"] .swse-custom-roll-field--formula,
+.swse-custom-roll-dialog[data-roll-source="formula"] .swse-custom-roll-field--die {
+  display: none;
+}
+
+.swse-custom-roll-dialog input,
+.swse-custom-roll-dialog select {
+  width: 100%;
+  min-height: 2.25rem;
+  color: var(--custom-roll-text);
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--custom-roll-surface) 88%, white 5%),
+      var(--custom-roll-surface));
+  border: 1px solid var(--custom-roll-border);
+  border-radius: 8px;
+  padding: 0.4rem 0.55rem;
+  font: inherit;
+}
+
+.swse-custom-roll-dialog select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 1.75rem;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--custom-roll-accent) 50%),
+    linear-gradient(135deg, var(--custom-roll-accent) 50%, transparent 50%),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--custom-roll-surface) 88%, white 5%),
+      var(--custom-roll-surface));
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 9px) 50%,
+    0 0;
+  background-repeat: no-repeat;
+  background-size: 5px 5px, 5px 5px, 100% 100%;
+}
+
+.swse-custom-roll-dialog select option {
+  color: var(--custom-roll-text);
+  background-color: var(--custom-roll-surface);
+}
+
+.swse-custom-roll-dialog input:focus,
+.swse-custom-roll-dialog select:focus {
+  outline: none;
+  border-color: var(--custom-roll-accent);
+  box-shadow: 0 0 0 1px var(--custom-roll-accent), 0 0 12px color-mix(in srgb, var(--custom-roll-accent) 30%, transparent);
+}
+
+.swse-custom-roll-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--custom-roll-border) 70%, transparent);
+}
+
+.swse-custom-roll-button {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--custom-roll-border);
+  border-radius: 999px;
+  color: var(--custom-roll-text);
+  background: color-mix(in srgb, var(--custom-roll-surface) 82%, transparent);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.swse-custom-roll-button.primary {
+  color: color-mix(in srgb, var(--custom-roll-accent) 25%, white 75%);
+  border-color: var(--custom-roll-accent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--custom-roll-accent) 26%, transparent);
+}
+
+.swse-custom-roll-button:hover,
+.swse-custom-roll-button:focus-visible {
+  border-color: var(--custom-roll-accent);
+  box-shadow: 0 0 0 1px var(--custom-roll-accent);
+}
+
+[data-motion-style="reduced"] .swse-custom-roll-dialog *,
+[data-motion-style="off"] .swse-custom-roll-dialog * {
+  transition: none !important;
+  animation: none !important;
+}

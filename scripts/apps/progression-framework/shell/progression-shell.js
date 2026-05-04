@@ -24,7 +24,6 @@
 import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { RecoverySessionDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/recovery-session-dialog.js';
-import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts/utils/sheet-position.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
 import { ProgressionFinalizer } from './progression-finalizer.js';
@@ -45,14 +44,7 @@ import { RolloutController } from '../rollout/rollout-controller.js';
 import { SelectedRailContext } from './selected-rail-context.js';
 import { ProjectionEngine } from './projection-engine.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
-import {
-  getActorSheetTheme,
-  buildActorSheetThemeStyle
-} from '/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js';
-import {
-  getActorSheetMotionStyle,
-  buildActorSheetMotionStyle
-} from '/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js';
+import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
 import { resolveMentorData, resolveMentorPortraitPath } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 
 /**
@@ -474,19 +466,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @returns {string} Theme key ('holo' | 'high-contrast' | 'starship' | 'sand-people' | 'jedi' | 'high-republic')
    */
   _getProgressionThemeKey() {
-    if (!this.actor) {
-      // No actor: use global client setting
-      const globalTheme = SettingsHelper.getString('sheetTheme', 'holo');
-      return getActorSheetTheme(globalTheme);
-    }
-    const flagValue = this.actor?.getFlag?.('foundryvtt-swse', 'sheetTheme');
-    if (flagValue) {
-      // Actor flag set: use it
-      return getActorSheetTheme(flagValue);
-    }
-    // Actor flag not set: fall back to global setting
-    const globalTheme = SettingsHelper.getString('sheetTheme', 'holo');
-    return getActorSheetTheme(globalTheme);
+    return ThemeResolutionService.resolveThemeKey(null, { actor: this.actor });
   }
 
   /**
@@ -495,19 +475,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @returns {string} Motion style key ('standard' | 'reduced' | 'none')
    */
   _getProgressionMotionStyle() {
-    if (!this.actor) {
-      // No actor: use global client setting
-      const globalMotion = SettingsHelper.getString('sheetMotionStyle', 'standard');
-      return getActorSheetMotionStyle(globalMotion);
-    }
-    const flagValue = this.actor?.getFlag?.('foundryvtt-swse', 'sheetMotionStyle');
-    if (flagValue) {
-      // Actor flag set: use it
-      return getActorSheetMotionStyle(flagValue);
-    }
-    // Actor flag not set: fall back to global setting
-    const globalMotion = SettingsHelper.getString('sheetMotionStyle', 'standard');
-    return getActorSheetMotionStyle(globalMotion);
+    return ThemeResolutionService.resolveMotionStyle(null, { actor: this.actor });
   }
 
   // ═══ PHASE 4: SHELL-OWNED PRESENTATION HELPERS ═══
@@ -1054,13 +1022,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // This sets feature gates, UI visibility, debug tools, etc. based on world settings
     RolloutController.configureShell(this);
 
-    // ✓ PHASE 1: Expose theme and motion for future shared actor-sheet inheritance
-    context.themeKey = this._getProgressionThemeKey();
-    context.motionStyle = this._getProgressionMotionStyle();
-
-    // ✓ PHASE 3: Build inline style strings from actor-sheet theme/motion registries
-    context.themeStyleInline = buildActorSheetThemeStyle(context.themeKey);
-    context.motionStyleInline = buildActorSheetMotionStyle(context.motionStyle);
+    // Theme/motion for shared datapad presentation.
+    // Resolved through the same authority used by v2 sheets and secondary surfaces.
+    Object.assign(context, ThemeResolutionService.buildSurfaceContext({ actor: this.actor }));
 
     // ✓ PHASE 4: Build shell-owned presentation data for HUD/manifest/canvas enrichment
     context.sessionLabel = this._buildSessionLabel();

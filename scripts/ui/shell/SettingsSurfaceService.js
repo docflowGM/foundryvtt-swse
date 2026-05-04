@@ -3,8 +3,8 @@ import { ThemeManager } from "/systems/foundryvtt-swse/scripts/ui/theme/ThemeMan
 const LABELS = {
   vapor: 'Vaporwave',
   holo: 'Holo Blue',
-  imp: 'Imperial',
-  reb: 'Rebel Alert',
+  imperial: 'Imperial',
+  rebel: 'Rebel Alert',
   jedi: 'Jedi Archive',
   sith: 'Sith Holocron',
   droid: 'Droid Amber',

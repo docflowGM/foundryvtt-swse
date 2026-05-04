@@ -125,7 +125,7 @@ export class BlockMechanicalAlternative {
 
       // Roll the block attack
       const rollFormula = `1d20 + ${totalBonus}`;
-      const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula).evaluate({ async: true });
+      const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula, actor.getRollData?.() ?? {}, { actor, domain: 'houserule.block' });
 
       const blockRoll = roll.total;
       const success = blockRoll >= incomingAttackRoll;

@@ -1,6 +1,7 @@
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 
 export class UIManager {
 
@@ -9,10 +10,7 @@ export class UIManager {
   }
 
   static _onReady() {
-    const theme = this.getTheme();
-    const motionStyle = this.getMotionStyle();
-    this.applyTheme(theme);
-    this.applyMotionStyle(motionStyle);
+    this.applyThemeAndMotion();
     this._watchThemeSetting();
     this._watchMotionSetting();
     this._handleFirstRun();
@@ -20,42 +18,50 @@ export class UIManager {
   }
 
   static getTheme() {
-    try {
-      return SettingsHelper.getString('sheetTheme', 'holo');
-    } catch {
-      return "holo";
-    }
+    return ThemeResolutionService.resolveThemeKey(SettingsHelper.getString('sheetTheme', 'holo'), { preferActor: false });
   }
 
   static getMotionStyle() {
-    try {
-      return SettingsHelper.getString('sheetMotionStyle', 'standard');
-    } catch {
-      return "standard";
-    }
+    return ThemeResolutionService.resolveMotionStyle(SettingsHelper.getString('sheetMotionStyle', 'standard'), { preferActor: false });
   }
 
   static applyTheme(theme) {
-    document.documentElement.dataset.theme = theme;
-    console.log(`[SWSE UI] Theme applied: ${theme}`);
-    // DISABLED: Forcing re-render during ready hook was collapsing Foundry core windows
-    // CSS theme variables are applied via data-theme attribute - no re-render needed
-    // this._rerenderSWSESheets();
+    const themeKey = ThemeResolutionService.resolveThemeKey(theme, { preferActor: false });
+    const motionStyle = this.getMotionStyle();
+    ThemeResolutionService.applyToRoot({ themeKey, motionStyle });
+    console.log(`[SWSE UI] Theme applied: ${themeKey}`);
   }
 
   static applyMotionStyle(motionStyle) {
-    document.documentElement.dataset.motionStyle = motionStyle;
-    console.log(`[SWSE UI] Motion style applied: ${motionStyle}`);
+    const themeKey = this.getTheme();
+    const resolvedMotion = ThemeResolutionService.resolveMotionStyle(motionStyle, { preferActor: false });
+    ThemeResolutionService.applyToRoot({ themeKey, motionStyle: resolvedMotion });
+    console.log(`[SWSE UI] Motion style applied: ${resolvedMotion}`);
+  }
+
+  static applyThemeAndMotion() {
+    const context = ThemeResolutionService.applyToRoot({
+      themeKey: this.getTheme(),
+      motionStyle: this.getMotionStyle()
+    });
+    console.log(`[SWSE UI] Global datapad theme applied: ${context.themeKey} / ${context.motionStyle}`);
+    return context;
   }
 
   static async setTheme(theme) {
-    await game.settings.set('foundryvtt-swse', 'sheetTheme', theme);
-    this.applyTheme(theme);
+    const themeKey = ThemeResolutionService.resolveThemeKey(theme, { preferActor: false });
+    if (this.getTheme() !== themeKey) {
+      await game.settings.set('foundryvtt-swse', 'sheetTheme', themeKey);
+    }
+    this.applyTheme(themeKey);
   }
 
   static async setMotionStyle(motionStyle) {
-    await game.settings.set('foundryvtt-swse', 'sheetMotionStyle', motionStyle);
-    this.applyMotionStyle(motionStyle);
+    const resolvedMotion = ThemeResolutionService.resolveMotionStyle(motionStyle, { preferActor: false });
+    if (this.getMotionStyle() !== resolvedMotion) {
+      await game.settings.set('foundryvtt-swse', 'sheetMotionStyle', resolvedMotion);
+    }
+    this.applyMotionStyle(resolvedMotion);
   }
 
   static _watchThemeSetting() {
@@ -113,7 +119,7 @@ class ThemePickerDialog extends BaseSWSEAppV2 {
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     return foundry.utils.mergeObject(context, {
-      themes: ["holo", "high-contrast", "starship", "sand-people", "jedi", "high-republic"]
+      themes: ThemeResolutionService.getThemeOptions().map(option => option.value)
     });
   }
 

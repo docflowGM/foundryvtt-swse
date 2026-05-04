@@ -16,6 +16,8 @@
 import { TooltipGlossary } from '/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-glossary.js';
 
 const ATTR = 'data-swse-tooltip';
+const KEY_ATTR = 'data-swse-tooltip-key';
+const TEXT_ATTR = 'data-swse-tooltip-text';
 const TOOLTIP_CLASS = 'swse-discovery-tooltip';
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -47,12 +49,25 @@ const TOOLTIP_DEFS = buildTooltipDefsFromGlossary();
  * @param {string} id - tooltip key
  * @returns {{title: string, body: string} | null}
  */
-function resolve(id) {
-  const prefix = TOOLTIP_DEFS[id];
-  if (!prefix) {return null;}
+function localizeWithFallback(key, fallback = '') {
+  const value = game.i18n.localize(key);
+  return value && value !== key ? value : fallback;
+}
+
+function resolve(id, anchor = null) {
+  const inlineText = anchor?.getAttribute?.(TEXT_ATTR);
+  const inlineTitle = anchor?.getAttribute?.('aria-label') || anchor?.getAttribute?.('title') || '';
+  if (inlineText) {
+    return { title: inlineTitle || 'Help', body: inlineText };
+  }
+
+  const entry = TooltipGlossary[id] || null;
+  const prefix = TOOLTIP_DEFS[id] || entry?.i18nPrefix;
+  if (!prefix && !entry) {return null;}
+
   return {
-    title: game.i18n.localize(`${prefix}.Title`),
-    body: game.i18n.localize(`${prefix}.Body`)
+    title: prefix ? localizeWithFallback(`${prefix}.Title`, entry?.label || id) : (entry?.label || id),
+    body: prefix ? localizeWithFallback(`${prefix}.Body`, entry?.long || entry?.short || '') : (entry?.long || entry?.short || '')
   };
 }
 
@@ -75,6 +90,13 @@ function showTooltip(anchor, content) {
   const el = document.createElement('div');
   el.classList.add(TOOLTIP_CLASS);
   el.setAttribute('role', 'tooltip');
+  const key = anchor.getAttribute(KEY_ATTR) || anchor.getAttribute(ATTR) || '';
+  if (key) el.dataset.tooltipKey = key;
+  const abilityKey = getAbilityClassKey(key);
+  if (abilityKey) {
+    el.dataset.ability = abilityKey;
+    el.classList.add(`${TOOLTIP_CLASS}--ability`, `${TOOLTIP_CLASS}--${abilityKey}`);
+  }
 
   const titleEl = document.createElement('div');
   titleEl.classList.add(`${TOOLTIP_CLASS}__title`);
@@ -136,7 +158,7 @@ export const TooltipRegistry = {
    */
   bind(root) {
     if (!(root instanceof HTMLElement)) {return;}
-    const els = root.querySelectorAll(`[${ATTR}]`);
+    const els = root.querySelectorAll(`[${ATTR}], [${KEY_ATTR}], [${TEXT_ATTR}]`);
     for (const el of els) {
       if (el._swseTooltipBound) {continue;}
       el._swseTooltipBound = true;
@@ -201,6 +223,20 @@ export const TooltipRegistry = {
   }
 };
 
+
+function getAbilityClassKey(key) {
+  const normalized = String(key || '').toLowerCase().replace(/\s+/g, '');
+  const map = {
+    str: 'str', strength: 'str',
+    dex: 'dex', dexterity: 'dex',
+    con: 'con', constitution: 'con',
+    int: 'int', intelligence: 'int',
+    wis: 'wis', wisdom: 'wis',
+    cha: 'cha', charisma: 'cha'
+  };
+  return map[normalized] || '';
+}
+
 function _onEnter(ev) {
   // Clear any existing hover timer
   if (_hoverTimer) {
@@ -209,7 +245,7 @@ function _onEnter(ev) {
   }
 
   const el = ev.currentTarget;
-  const id = el.getAttribute(ATTR);
+  const id = el.getAttribute(KEY_ATTR) || el.getAttribute(ATTR);
   if (!id) {return;}
 
   // Get the hover delay from CSS variable or default
@@ -223,7 +259,7 @@ function _onEnter(ev) {
   _hoverTimer = setTimeout(() => {
     // Check that we're still hovering over the same element
     if (_hoveredElement === el) {
-      const content = resolve(id);
+      const content = resolve(id, el);
       if (content) {
         showTooltip(el, content);
       }

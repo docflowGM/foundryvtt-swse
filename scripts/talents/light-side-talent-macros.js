@@ -7,6 +7,7 @@
 import LightSideTalentMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/light-side-talent-mechanics.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export class LightSideTalentMacros {
 
@@ -573,11 +574,18 @@ export class LightSideTalentMacros {
               // Roll the check
               const roll = await LightSideTalentMechanics.rollPersuasionCheck(selectedActor, result.persuasionModifier);
 
-              // Post roll to chat
-              await roll.toMessage({
-                speaker: ChatMessage.getSpeaker({ actor: selectedActor }),
-                flavor: `Adept Negotiator - Persuasion Check vs ${result.targetActor.name}'s Will Defense (${result.targetWillDefense})`
-              } , { create: true });
+              // Post roll to chat through the shared SWSE chat surface.
+              await SWSEChat.postRoll({
+                roll,
+                actor: selectedActor,
+                flavor: `Adept Negotiator - Persuasion Check vs ${result.targetActor.name}'s Will Defense (${result.targetWillDefense})`,
+                context: {
+                  type: 'talent',
+                  talent: 'Adept Negotiator',
+                  targetActorId: result.targetActor.id,
+                  targetWillDefense: result.targetWillDefense
+                }
+              });
 
               // Apply the result
               await LightSideTalentMechanics.completeAdeptNegotiatorSelection(
