@@ -17,11 +17,11 @@ import {
   trackAsyncPhase,
   logContextKey
 } from "/systems/foundryvtt-swse/scripts/debug/appv2-probe.js";
-import { MENTORS } from "/systems/foundryvtt-swse/engine/mentor/mentor-dialogues.js";
-import { MentorResolver } from "/systems/foundryvtt-swse/engine/mentor/mentor-resolver.js";
+import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
+import { MentorResolver } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-resolver.js";
 import { TalentTreeVisualizer } from "/systems/foundryvtt-swse/scripts/apps/talent-tree-visualizer.js";
 import { getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
-import { normalizeTalentData } from "/systems/foundryvtt-swse/engine/progression/utils/item-normalizer.js";
+import { normalizeTalentData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/item-normalizer.js";
 import { TalentDB } from "/systems/foundryvtt-swse/scripts/data/talent-db.js";
 import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
 

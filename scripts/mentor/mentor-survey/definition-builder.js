@@ -1,4 +1,4 @@
-import { MENTORS } from '/systems/foundryvtt-swse/scripts/apps/mentor-dialogues.data.js';
+import { MENTORS } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 
 function resolveMentor(mentorKey, displayName) {
   const mentor = MENTORS?.[mentorKey] || MENTORS?.[displayName] || MENTORS?.default || MENTORS?.Scoundrel || null;
