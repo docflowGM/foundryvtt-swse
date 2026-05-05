@@ -27,6 +27,12 @@
  */
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+// TODO: ARCHITECTURE SEAM - engine/apps layering.
+// This engine file currently imports from the apps/progression UI layer:
+//  - ProgressionSession (session class)
+//  - step-normalizers (data transformation utilities)
+// Deferred intentionally: Extracting data transformation into engine layer requires careful refactoring.
+// Do not expand this dependency; move pure logic into scripts/engine/progression in a later pass.
 import { ProgressionSession } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-session.js';
 import {
   normalizeSpecies,

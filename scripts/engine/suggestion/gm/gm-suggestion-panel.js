@@ -5,6 +5,11 @@
  * GM-only, non-modal, read-only suggestions with optional lever tracking.
  */
 
+// TODO: ARCHITECTURE SEAM - engine/apps layering CRITICAL.
+// This engine class currently extends BaseSWSEAppV2 from the apps UI layer.
+// Deferred intentionally: Moving this UI panel requires rearchitecting where suggestions are displayed.
+// This class should be moved to scripts/apps/suggestion-panel.js and have the insight logic
+// pulled into scripts/engine/suggestion/ with a clean boundary.
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { InsightBus } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-bus.js";
 import { INSIGHT_TYPES } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-types.js";
