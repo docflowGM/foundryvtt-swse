@@ -20,7 +20,7 @@
  */
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
-import { PROGRESSION_NODE_REGISTRY } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/registries/progression-node-registry.js';
+import { PROGRESSION_NODE_REGISTRY } from '/systems/foundryvtt-swse/scripts/engine/progression/registries/progression-node-registry.js';
 
 export class TemplateTraversalPolicy {
   /**

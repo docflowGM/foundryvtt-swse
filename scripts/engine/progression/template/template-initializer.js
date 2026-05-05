@@ -15,6 +15,13 @@
  * until confirmation through ProgressionFinalizer → ActorEngine.
  */
 
+// TODO: ARCHITECTURE SEAM - engine/apps layering.
+// This engine file currently imports from the apps/progression UI layer:
+//  - TemplateSelectionDialog (UI dialog class)
+//  - ProgressionSession (session and shell classes)
+//  - DroidBuilderAdapter (step adapter)
+// Deferred intentionally: Moving chargen orchestration requires a dedicated progression-framework refactor.
+// Do not expand this dependency; move pure logic into scripts/engine/progression in a later pass.
 import { TemplateSelectionDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/template-selection-dialog.js';
 import { TemplateRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-registry.js';
 import { TemplateAdapter } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-adapter.js';

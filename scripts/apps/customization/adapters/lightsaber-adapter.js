@@ -6,6 +6,7 @@
  */
 
 import CustomizationAdapterBase from "/systems/foundryvtt-swse/scripts/apps/customization/adapters/customization-adapter-base.js";
+import { LIGHTSABER_CRYSTALS } from "/systems/foundryvtt-swse/scripts/data/lightsaber-crystals-map.js";
 
 export default class LightsaberCustomizationAdapter extends CustomizationAdapterBase {
   static label = 'Lightsaber Customization';
@@ -13,10 +14,32 @@ export default class LightsaberCustomizationAdapter extends CustomizationAdapter
   static itemTypes = ['weapon'];
 
   async getModCards(item) {
-    // TODO: Implement lightsaber-specific upgrade registry
-    // Should handle: crystals, emitters, focusing hardware, blade modifications,
-    // saber forms, dual-phase logic, pommel upgrades, etc.
-    return [];
+    // Wire to existing LIGHTSABER_CRYSTALS data
+    const cards = [];
+
+    try {
+      for (const [crystalId, crystal] of Object.entries(LIGHTSABER_CRYSTALS)) {
+        // Transform crystal data to mod card format
+        cards.push({
+          id: crystalId,
+          name: crystal.name || '',
+          description: crystal.effect || '',
+          category: crystal.category || 'Crystal',
+          cost: crystal.cost || 0,
+          rarity: crystal.rarity || 'common',
+          color: crystal.color || 'Varies',
+          buildDcMod: crystal.buildDcMod || 0,
+          modifiers: crystal.modifiers || [],
+          tags: [crystal.category?.toLowerCase().replace(/\s+/g, '-') || 'crystal']
+        });
+      }
+    } catch (err) {
+      // Safe fallback: return empty array if data load fails
+      console.error('Error loading lightsaber crystals:', err);
+      return [];
+    }
+
+    return cards;
   }
 
   async getSlotUsage(item, selections = null) {

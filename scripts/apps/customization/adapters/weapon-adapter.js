@@ -15,7 +15,11 @@ export default class WeaponCustomizationAdapter extends CustomizationAdapterBase
 
   /**
    * Get available weapon modifications.
-   * TODO: Wire to actual weapon mod registry from repo.
+   * Currently returns placeholder mods pending full weapon mod registry.
+   *
+   * Note: Blaster and Melee upgrades exist separately in /scripts/data/ but are not yet
+   * unified into a single weapon mod registry. Full implementation deferred to Phase 3.
+   * See blaster-upgrades.js and melee-upgrades.js for existing data definitions.
    */
   async getModCards(item) {
     // For now, placeholder mods. In production, fetch from registry.

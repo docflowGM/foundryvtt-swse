@@ -28,6 +28,10 @@ import { normalizeDocumentTalent, validateTalentTreeAssignment } from "/systems/
 // Mentor System Validation
 import { validateMentorIntegration } from "/systems/foundryvtt-swse/scripts/engine/mentor/validate-mentor-integration.js";
 
+// TODO: ARCHITECTURE SEAM - engine/apps layering.
+// This engine file currently imports RolloutSettings from the apps/progression UI layer.
+// Deferred intentionally: Extracting rollout configuration requires a dedicated progression-framework refactor.
+// Do not expand this dependency; move pure logic into scripts/engine/progression in a later pass.
 // PHASE 4: Rollout Configuration
 import { RolloutSettings } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/rollout/rollout-settings.js";
 import { initializeClassPrerequisitesCache } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-init.js";
