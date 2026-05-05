@@ -385,7 +385,9 @@ export class SynergyEvaluator {
         return null;
       }
 
-      const ownedFeats = actor.items.filter(i => i.type === 'feat');
+      // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+      const { ActorAbilityBridge } = await import("/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js");
+      const ownedFeats = ActorAbilityBridge.getFeats(actor);
       const ownedFeatNames = new Set(ownedFeats.map(f => f.name));
 
       // Find which prerequisites the actor owns

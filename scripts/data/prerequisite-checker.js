@@ -5,6 +5,7 @@
 
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 //
 // THE CANONICAL PREREQUISITE ENGINE
 // This is the ONLY place in the system that answers "is this legal?"
@@ -1833,7 +1834,8 @@ export class PrerequisiteChecker {
     static checkFeatOwnership(actor, slugOrUuid) {
         if (!actor?.items) return false;
 
-        const feats = actor.items.filter(i => i.type === 'feat') || [];
+        // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+        const feats = ActorAbilityBridge.getFeats(actor) || [];
 
         return feats.some(f =>
             f.id === slugOrUuid ||

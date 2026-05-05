@@ -24,6 +24,7 @@
  */
 
 import { SelectionModifierHookRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/selection-modifier-hook-registry.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 export const TELEKINETIC_PRODIGY_HOOK_ID = 'telekinetic-prodigy';
 
@@ -43,9 +44,10 @@ function telekineticProdigyHook(actor, context) {
   );
   if (!hasTalent) return;
 
+  // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
   // One conditional bonus slot per Force Training feat instance
-  const forceTrainingFeats = actor.items.filter(
-    i => i.type === 'feat' && i.name.toLowerCase().includes('force training')
+  const forceTrainingFeats = ActorAbilityBridge.getFeats(actor).filter(
+    f => f.name.toLowerCase().includes('force training')
   );
 
   for (let i = 0; i < forceTrainingFeats.length; i++) {

@@ -137,7 +137,9 @@ export class ConfidenceScoring {
    */
   static _scoreCompleteness(actor) {
     try {
-      const feats = actor.items.filter(i => i.type === 'feat').length;
+      // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+      const { ActorAbilityBridge } = await import("/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js");
+      const feats = ActorAbilityBridge.getFeats(actor).length;
       const talents = actor.items.filter(i => i.type === 'talent').length;
       const skills = Object.values(actor.system?.skills ?? {}).filter(s => s?.trained).length;
       const level = actor.system?.level ?? 1;
