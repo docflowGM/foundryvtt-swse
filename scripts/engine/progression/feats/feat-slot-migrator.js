@@ -119,7 +119,7 @@ export class FeatSlotMigrator {
                                Array.isArray(actor.system.progression.featSlots) &&
                                actor.system.progression.featSlots.length > 0;
 
-    const hasFeats = actor.items && actor.items.some(item => item.type === 'feat');
+    const hasFeats = ActorAbilityBridge.getFeats(actor).length > 0;
 
     // Needs migration if it has feats but no structured slots
     return hasFeats && !hasStructuredSlots;

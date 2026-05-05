@@ -231,7 +231,7 @@ static async applySelected(actor, selectedItems = []) {
 
     // Determine provenance context for this application
     // Get all force grant sources on actor
-    const feats = actor.items.filter(i => i.type === 'feat') || [];
+    const feats = ActorAbilityBridge.getFeats(actor);
     const hasForceSensitivity = feats.some(f => f.name?.toLowerCase().includes('force sensitivity'));
     const ftFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
 

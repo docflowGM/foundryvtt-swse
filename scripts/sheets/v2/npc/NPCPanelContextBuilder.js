@@ -6,6 +6,8 @@
  * Contains NPC-specific game logic
  */
 
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+
 export class NPCPanelContextBuilder {
   constructor(actor) {
     this.actor = actor;
@@ -215,15 +217,20 @@ export class NPCPanelContextBuilder {
    * Shows NPC feats
    */
   buildFeatPanel() {
+    // SSOT ENFORCEMENT: Get feats from registry, preserve actor item data for UI
     const featItems = this.actor.items.filter(item => item.type === 'feat');
+    const featsFromRegistry = ActorAbilityBridge.getFeats(this.actor);
 
-    const entries = featItems.map(item => ({
-      id: item.id,
-      name: item.name,
-      source: item.system?.source || 'Unknown',
-      description: item.system?.description || '',
-      canEdit: this.actor.isOwner
-    }));
+    const entries = featsFromRegistry.map(registryFeat => {
+      const actorItem = featItems.find(a => a.name === registryFeat.name);
+      return {
+        id: actorItem?.id || registryFeat.id,
+        name: registryFeat.name,
+        source: actorItem?.system?.source || registryFeat.system?.source || 'Unknown',
+        description: actorItem?.system?.description || registryFeat.system?.description || '',
+        canEdit: this.actor.isOwner
+      };
+    });
 
     const panel = {
       entries,

@@ -125,7 +125,7 @@ export class CapabilityRegistry {
    * @returns {string[]} Array of feat slugs
    */
   static getOwnedFeats(actor) {
-    const feats = actor.items.filter(i => i.type === 'feat') || [];
+    const feats = ActorAbilityBridge.getFeats(actor);
     return feats.map(f => (f.system?.slug || f.name.toLowerCase().replace(/\s+/g, '-')));
   }
 

@@ -131,8 +131,7 @@ export class RuleEngine {
   }
 
   _hasForceSensitive() {
-    return Boolean(this.actor.items.find(i => i.type === 'feat' &&
-      i.name.toLowerCase().includes('force sensitive')));
+    return ActorAbilityBridge.hasFeat(this.actor, 'Force Sensitive');
   }
 
   _checkClassLevel(req) {

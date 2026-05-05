@@ -227,7 +227,7 @@ export class ForceProgressionEngine {
         }
         const techniques = allFeats.filter(f =>
             f.system?.tags?.includes('force_technique') &&
-            !actor.items.some(i => i.type === 'feat' && i.name === f.name)
+            !ActorAbilityBridge.hasFeat(actor, f.name)
         );
 
         return techniques;
