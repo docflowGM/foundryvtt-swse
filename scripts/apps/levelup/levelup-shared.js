@@ -7,6 +7,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getClassProperty } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { HPGeneratorEngine } from "/systems/foundryvtt-swse/scripts/engine/HP/HPGeneratorEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 /**
  * List of base classes in SWSE (legacy - should use isBaseClass with class docs instead)
@@ -55,8 +56,8 @@ export function isPrestigeClass(classDocOrName) {
  * @returns {number} Current level in that class
  */
 export function getClassLevel(actor, className) {
-  const classItem = actor.items.find(i => i.type === 'class' && i.name === className);
-  return classItem ? (classItem.system.level || 0) : 0;
+  const classItem = ActorAbilityBridge.getClasses(actor).find(c => c.name === className);
+  return classItem ? (classItem.level || 0) : 0;
 }
 
 /**
@@ -65,15 +66,11 @@ export function getClassLevel(actor, className) {
  * @returns {Object} Map of class names to levels
  */
 export function getCharacterClasses(actor) {
-  const classItems = actor.items.filter(i => i.type === 'class');
+  const classItems = ActorAbilityBridge.getClasses(actor);
   const classes = {};
 
   classItems.forEach(classItem => {
-    if (classes[classItem.name]) {
-      classes[classItem.name]++;
-    } else {
-      classes[classItem.name] = 1;
-    }
+    classes[classItem.name] = classItem.level || 1;
   });
 
   return classes;
@@ -122,11 +119,11 @@ function convertBabProgression(progression) {
 }
 
 export function calculateTotalBAB(actor) {
-  const classItems = actor.items.filter(i => i.type === 'class');
+  const classItems = ActorAbilityBridge.getClasses(actor);
   let totalBAB = 0;
 
   for (const classItem of classItems) {
-    const classLevel = classItem.system.level || 1;
+    const classLevel = classItem.level || 1;
     const className = classItem.name;
 
     // Check if class has level_progression data with BAB
@@ -167,7 +164,7 @@ export function calculateTotalBAB(actor) {
  * @returns {Promise<{fortitude: number, reflex: number, will: number}>}
  */
 export async function calculateDefenseBonuses(actor) {
-  const classItems = actor.items.filter(i => i.type === 'class');
+  const classItems = ActorAbilityBridge.getClasses(actor);
   const bonuses = { fortitude: 0, reflex: 0, will: 0 };
 
   for (const classItem of classItems) {
