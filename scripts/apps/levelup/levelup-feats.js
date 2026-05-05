@@ -10,6 +10,7 @@ import { filterQualifiedFeats } from "/systems/foundryvtt-swse/scripts/apps/leve
 import { getClassProperty } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 // Cache for feat metadata
 let _featMetadataCache = null;
@@ -62,8 +63,9 @@ function organizeFeatsIntoCategories(feats, metadata, selectedFeats = [], actor 
     };
   });
 
+  // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
   // Check if actor owns this feat
-  const ownedFeats = actor ? actor.items.filter(i => i.type === 'feat').map(f => f.name) : [];
+  const ownedFeats = actor ? ActorAbilityBridge.getFeats(actor).map(f => f.name) : [];
 
   // List of feats that can be taken multiple times
   const repeatableFeats = [

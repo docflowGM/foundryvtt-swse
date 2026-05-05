@@ -19,6 +19,7 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 export class ForceProgressionEngine {
 
@@ -26,10 +27,9 @@ export class ForceProgressionEngine {
      * Check if actor is Force-sensitive
      */
     static isForceEnlightened(actor) {
+        // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
         // Check for Force Sensitivity feat
-        const hasForceSensitivity = actor.items.some(i =>
-            i.type === 'feat' && i.name.toLowerCase().includes('force sensitivity')
-        );
+        const hasForceSensitivity = ActorAbilityBridge.hasFeat(actor, 'Force Sensitivity');
 
         // Check for Force-using class
         const hasForceSensitiveClass = actor.items.some(i =>

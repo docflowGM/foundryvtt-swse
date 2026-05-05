@@ -2,6 +2,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { ForceTrainingEngine } from "/systems/foundryvtt-swse/scripts/engine/force/ForceTrainingEngine.js";
 import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 /**
  * Force Power Management System
@@ -25,7 +26,8 @@ export class ForcePowerManager {
    * @returns {number} Number of Force Training feats
    */
   static countForceTrainingFeats(actor) {
-    const feats = actor.items.filter(i => i.type === 'feat');
+    // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+    const feats = ActorAbilityBridge.getFeats(actor);
     return feats.filter(f =>
       f.name.toLowerCase().includes('force training')
     ).length;
@@ -37,11 +39,9 @@ export class ForcePowerManager {
    * @returns {boolean} True if has Force Sensitivity
    */
   static hasForceSensitivity(actor) {
-    const feats = actor.items.filter(i => i.type === 'feat');
-    return feats.some(f =>
-      f.name.toLowerCase().includes('force sensitivity') ||
-      f.name.toLowerCase() === 'force sensitive'
-    );
+    // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+    return ActorAbilityBridge.hasFeat(actor, 'Force Sensitivity') ||
+           ActorAbilityBridge.hasFeat(actor, 'Force Sensitive');
   }
 
   /**

@@ -19,6 +19,7 @@
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 export class ForceProvenanceEngine {
   /**
@@ -103,8 +104,9 @@ export class ForceProvenanceEngine {
         }
       };
 
+      // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
       // 1. Find all force grant sources (feats on actor)
-      const feats = actor.items.filter(i => i.type === 'feat') || [];
+      const feats = ActorAbilityBridge.getFeats(actor) || [];
       const fsSensitivity = feats.some(f => f.name?.toLowerCase().includes('force sensitivity'));
       const ftFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
 
@@ -138,8 +140,9 @@ export class ForceProvenanceEngine {
         };
       }
 
+      // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
       // 3. Count owned powers and assign to grant sources
-      const ownedPowers = actor.items.filter(i => i.type === 'forcepower') || [];
+      const ownedPowers = ActorAbilityBridge.getForcePowers(actor) || [];
       for (const power of ownedPowers) {
         const sourceId = power.system?.provenance?.grantSourceId;
 
