@@ -12,6 +12,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getClassLevel, getCharacterClasses } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { TalentCadenceEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-cadence-engine.js";
@@ -94,7 +95,7 @@ export function getTalentProgressionInfo(selectedClass, actor) {
  */
 export async function getAvailableTalentTreesForHeroicTalent(actor) {
   const allTrees = new Set();
-  const classItems = actor.items.filter(item => item.type === 'class');
+  const classItems = ActorAbilityBridge.getClasses(actor);
 
   // Collect all talent trees from all classes the character has levels in
   for (const classItem of classItems) {

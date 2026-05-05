@@ -9,6 +9,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { warnGM } from "/systems/foundryvtt-swse/scripts/utils/warn-gm.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 import { TalentTreeVisualizer } from "/systems/foundryvtt-swse/scripts/apps/talent-tree-visualizer.js";
@@ -121,7 +122,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
   } else {
     // Talent trees from any class the character has levels in
     SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Multiclass mode - collecting trees from all character classes`);
-    const classItems = actor.items.filter(item => item.type === 'class');
+    const classItems = ActorAbilityBridge.getClasses(actor);
     SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Character has classes:`, classItems.map(item => item.name));
 
     for (const classItem of classItems) {

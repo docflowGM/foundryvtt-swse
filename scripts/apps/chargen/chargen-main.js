@@ -341,10 +341,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     // Load classes
-    const classItems = actor.items.filter(item => item.type === 'class');
+    // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+    const classItems = ActorAbilityBridge.getClasses(actor);
     this.characterData.classes = classItems.map(cls => ({
       name: cls.name,
-      level: cls.system.level || 1
+      level: cls.level || 1
     }));
 
     // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
