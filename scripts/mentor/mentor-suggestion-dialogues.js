@@ -1,11 +1,12 @@
 /**
  * Compatibility wrapper retained for legacy imports/macros.
- * Static dialogue text should prefer data/dialogue/mentors JSON where covered.
+ * Static suggestion dialogue text now prefers JSON under data/dialogue/mentor-suggestions/ for async mentorSpeak() calls.
  *
  * This file re-exports all original named exports from the split modules:
  *   - MENTOR_PERSONALITIES        → scripts/mentor/mentor-personalities.js
  *   - MENTOR_SUGGESTION_DIALOGUES → scripts/mentor/mentor-suggestion-data.js
  *   - Runtime functions           → scripts/mentor/mentor-suggestion-engine.js
+ *   - JSON loader/cache           → scripts/mentor/mentor-suggestion-json-loader.js
  *
  * DO NOT add new logic here. Extend the split modules directly.
  */
@@ -16,6 +17,17 @@ export { getDialoguePhase, SUGGESTION_CONTEXTS, DIALOGUE_PHASES } from "/systems
 // Static data
 export { MENTOR_PERSONALITIES } from "/systems/foundryvtt-swse/scripts/mentor/mentor-personalities.js";
 export { MENTOR_SUGGESTION_DIALOGUES } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-data.js";
+
+
+// JSON loader/cache for phase-indexed suggestion data
+export {
+    loadMentorSuggestionJson,
+    getCachedMentorSuggestionJson,
+    clearMentorSuggestionJsonCache,
+    getMentorSuggestionPersonalityFromJson,
+    getMentorSuggestionPhaseDialoguesFromJson,
+    getMentorSuggestionRejectionFromJson
+} from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-json-loader.js";
 
 // Runtime engine
 export {

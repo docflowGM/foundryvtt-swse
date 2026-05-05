@@ -2,18 +2,22 @@
  * SWSE Mentor Suggestion Engine
  *
  * Runtime functions for generating contextual mentor dialogue responses.
- * Consumes static data from mentor-personalities.js and mentor-suggestion-data.js.
+ * Consumes JSON suggestion data first, with JS compatibility data as a fallback.
  *
  * Exports:
  *   getMentorSuggestionDialogue  - Primary lookup: class + context + phase → dialogue object
  *   getMentorRejectionResponse   - Rejection tone lookup
  *   mentorCanScold               - Check if mentor uses scolding system
  *   getScoldingMentorLists       - Partition all mentors by scold flag
- *   mentorSpeak                  - Async integration API (JSON-first, JS fallback)
+ *   mentorSpeak                  - Async integration API (suggestion JSON first, legacy JSON/JS fallback)
  */
 
 import { getDialoguePhase, SUGGESTION_CONTEXTS, DIALOGUE_PHASES } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
 import { getMentorDialogueFromJSON } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-json-loader.js";
+import {
+    getMentorSuggestionPersonalityFromJson,
+    getMentorSuggestionPhaseDialoguesFromJson
+} from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-json-loader.js";
 import { MENTOR_PERSONALITIES } from "/systems/foundryvtt-swse/scripts/mentor/mentor-personalities.js";
 import { MENTOR_SUGGESTION_DIALOGUES } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-data.js";
 
@@ -235,11 +239,35 @@ export async function mentorSpeak({
         specificType = recommendation.name.toLowerCase();
     }
 
-    // Try to get dialogue from JSON files first (source of truth)
-    let dialogue = await getMentorDialogueFromJSON(mentorClass, context, effectivePhase, specificType);
+    // Try the phase-indexed suggestion JSON first. These files mirror the
+    // MENTOR_SUGGESTION_DIALOGUES schema under data/dialogue/mentor-suggestions/.
+    let dialogue = null;
+    const jsonPhaseDialogues = await getMentorSuggestionPhaseDialoguesFromJson({
+        mentorClass,
+        context,
+        phase: effectivePhase
+    });
 
-    // Fall back to hardcoded data if not found in JSON
-    if (!dialogue || (!dialogue.suggestion && !dialogue.combined)) {
+    if (jsonPhaseDialogues) {
+        const jsonPersonality = await getMentorSuggestionPersonalityFromJson(mentorClass);
+        const personality = jsonPersonality || MENTOR_PERSONALITIES[mentorClass];
+        const jsonDialogue = buildDialogueResponse(jsonPhaseDialogues, specificType, personality, rejectionCount, null);
+        if (jsonDialogue && jsonDialogue.phase !== 'unknown') {
+            dialogue = jsonDialogue;
+        }
+    }
+
+    // Existing mentor biography/advisory JSON uses a different shape. Keep it as
+    // a secondary source in case a future JSON file does provide matching data.
+    if (!dialogue) {
+        const legacyJsonDialogue = await getMentorDialogueFromJSON(mentorClass, context, effectivePhase, specificType);
+        if (legacyJsonDialogue?.suggestion || legacyJsonDialogue?.combined) {
+            dialogue = legacyJsonDialogue;
+        }
+    }
+
+    // Fall back to JS compatibility data if no JSON-backed suggestion exists.
+    if (!dialogue) {
         dialogue = getMentorSuggestionDialogue({
             mentorClass,
             context,

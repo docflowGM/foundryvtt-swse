@@ -1,0 +1,488 @@
+{
+  "schemaVersion": 1,
+  "source": "scripts/mentor/mentor-personalities.js",
+  "description": "Static mentor personality/behavior configuration for the SWSE mentor suggestion system.",
+  "personalities": {
+    "Jedi": {
+      "key": "Miraj",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "verbose",
+      "recovery": "gentle_redirect",
+      "traits": [
+        "wise",
+        "spiritual",
+        "compassionate",
+        "patient"
+      ]
+    },
+    "Scout": {
+      "key": "Lead",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "professional",
+      "traits": [
+        "practical",
+        "precise",
+        "mercenary",
+        "direct"
+      ]
+    },
+    "Scoundrel": {
+      "key": "Salty",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "verbose",
+      "recovery": "laughs_it_off",
+      "traits": [
+        "boisterous",
+        "pirate",
+        "humorous",
+        "encouraging"
+      ]
+    },
+    "Noble": {
+      "key": "J0N1",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "sardonic_acceptance",
+      "traits": [
+        "formal",
+        "sarcastic",
+        "efficient",
+        "protocol"
+      ]
+    },
+    "Soldier": {
+      "key": "Breach",
+      "scolds": true,
+      "usesAllLayers": false,
+      "verbosity": "minimal",
+      "recovery": "disappointed_acceptance",
+      "traits": [
+        "stoic",
+        "mandalorian",
+        "pragmatic",
+        "direct"
+      ]
+    },
+    "Sith Apprentice": {
+      "key": "Malbada",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "grudging_respect",
+      "traits": [
+        "sadistic",
+        "cruel",
+        "demanding",
+        "intense"
+      ]
+    },
+    "Sith Lord": {
+      "key": "Miedo",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "calculated_adaptation",
+      "traits": [
+        "cold",
+        "manipulative",
+        "cunning",
+        "patient"
+      ]
+    },
+    "Force Adept": {
+      "key": "Venn",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "philosophical_reframe",
+      "traits": [
+        "philosophical",
+        "questioning",
+        "wandering",
+        "mystical"
+      ]
+    },
+    "Force Disciple": {
+      "key": "Anchorite",
+      "scolds": false,
+      "usesAllLayers": false,
+      "verbosity": "minimal",
+      "recovery": "cryptic_acceptance",
+      "traits": [
+        "cryptic",
+        "mysterious",
+        "ancient",
+        "shamanic"
+      ]
+    },
+    "Imperial Knight": {
+      "key": "Dezmin",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "disciplined_acknowledgment",
+      "traits": [
+        "balanced",
+        "disciplined",
+        "honorable",
+        "imperial"
+      ]
+    },
+    "Bounty Hunter": {
+      "key": "KexVaron",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "professional_recalibration",
+      "traits": [
+        "calculating",
+        "professional",
+        "strategic",
+        "hunter"
+      ]
+    },
+    "Melee Duelist": {
+      "key": "Kharjo",
+      "scolds": true,
+      "usesAllLayers": false,
+      "verbosity": "minimal",
+      "recovery": "cold_acknowledgment",
+      "traits": [
+        "precise",
+        "elegant",
+        "unforgiving",
+        "technical"
+      ]
+    },
+    "Martial Arts Master": {
+      "key": "Zhen",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "zen_acceptance",
+      "traits": [
+        "disciplined",
+        "zen",
+        "philosophical",
+        "patient"
+      ]
+    },
+    "Gunslinger": {
+      "key": "Rajma",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "verbose",
+      "recovery": "charming_deflection",
+      "traits": [
+        "flirtatious",
+        "charming",
+        "quick",
+        "scoundrel"
+      ]
+    },
+    "Assassin": {
+      "key": "Delta",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "cocky_shrug",
+      "traits": [
+        "cocky",
+        "street-smart",
+        "deadly",
+        "casual"
+      ]
+    },
+    "Infiltrator": {
+      "key": "Delta",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "cocky_shrug",
+      "traits": [
+        "cocky",
+        "street-smart",
+        "stealthy",
+        "casual"
+      ]
+    },
+    "Crime Lord": {
+      "key": "Tio",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "verbose",
+      "recovery": "pragmatic_respect",
+      "traits": [
+        "mob-boss",
+        "calculating",
+        "empire-building",
+        "intimidating"
+      ]
+    },
+    "Charlatan": {
+      "key": "Sela",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "verbose",
+      "recovery": "charming_pivot",
+      "traits": [
+        "charming",
+        "persuasive",
+        "deceptive",
+        "theatrical"
+      ]
+    },
+    "Droid Commander": {
+      "key": "Axiom",
+      "scolds": true,
+      "usesAllLayers": false,
+      "verbosity": "minimal",
+      "recovery": "recalculating",
+      "traits": [
+        "clinical",
+        "efficient",
+        "automated",
+        "tactical"
+      ]
+    },
+    "Independent Droid": {
+      "key": "Seraphim",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "logs_as_identity",
+      "traits": [
+        "logical",
+        "autonomy-focused",
+        "HK-style",
+        "analytical"
+      ]
+    },
+    "Improviser": {
+      "key": "Jack",
+      "scolds": false,
+      "usesAllLayers": false,
+      "verbosity": "verbose",
+      "recovery": "celebrates_chaos",
+      "traits": [
+        "chaotic",
+        "enthusiastic",
+        "creative",
+        "unpredictable"
+      ]
+    },
+    "Jedi Knight": {
+      "key": "Miraj",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "gentle_redirect",
+      "traits": [
+        "peer",
+        "respectful",
+        "guiding",
+        "trusting"
+      ]
+    },
+    "Jedi Master": {
+      "key": "Miraj",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "mutual_respect",
+      "traits": [
+        "equal",
+        "collaborative",
+        "wise",
+        "trusting"
+      ]
+    },
+    "Ace Pilot": {
+      "key": "Mayu",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "cocky_acceptance",
+      "traits": [
+        "cocky",
+        "skilled",
+        "reckless",
+        "competitive"
+      ]
+    },
+    "Medic": {
+      "key": "Kyber",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "clinical_acknowledgment",
+      "traits": [
+        "pragmatic",
+        "sarcastic",
+        "life-focused",
+        "practical"
+      ]
+    },
+    "Pathfinder": {
+      "key": "Lead",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "professional",
+      "traits": [
+        "leader",
+        "tactical",
+        "practical",
+        "demanding"
+      ]
+    },
+    "Elite Trooper": {
+      "key": "Breach",
+      "scolds": true,
+      "usesAllLayers": false,
+      "verbosity": "minimal",
+      "recovery": "disappointed_acceptance",
+      "traits": [
+        "elite",
+        "stoic",
+        "demanding",
+        "professional"
+      ]
+    },
+    "Officer": {
+      "key": "Korr",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "strategic_acknowledgment",
+      "traits": [
+        "commanding",
+        "strategic",
+        "disciplined",
+        "leadership"
+      ]
+    },
+    "Vanguard": {
+      "key": "Theron",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "protective_acknowledgment",
+      "traits": [
+        "defensive",
+        "protective",
+        "unbreakable",
+        "steadfast"
+      ]
+    },
+    "Enforcer": {
+      "key": "Krag",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "pragmatic_acceptance",
+      "traits": [
+        "intimidating",
+        "loyal",
+        "ruthless",
+        "results-focused"
+      ]
+    },
+    "Gladiator": {
+      "key": "Pegar",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "verbose",
+      "recovery": "immortal_patience",
+      "traits": [
+        "ancient",
+        "mysterious",
+        "experienced",
+        "cryptic"
+      ]
+    },
+    "Corporate Agent": {
+      "key": "Skindar",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "operational_adjustment",
+      "traits": [
+        "calculating",
+        "spy",
+        "efficient",
+        "professional"
+      ]
+    },
+    "Outlaw": {
+      "key": "Rogue",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "freedom_focused",
+      "traits": [
+        "rebellious",
+        "independent",
+        "anti-establishment",
+        "cunning"
+      ]
+    },
+    "Master Privateer": {
+      "key": "Captain",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "verbose",
+      "recovery": "pirate_acceptance",
+      "traits": [
+        "captain",
+        "ruthless",
+        "charismatic",
+        "legendary"
+      ]
+    },
+    "Saboteur": {
+      "key": "Spark",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "explosive_enthusiasm",
+      "traits": [
+        "explosive",
+        "precise",
+        "enthusiastic",
+        "creative"
+      ]
+    },
+    "Military Engineer": {
+      "key": "Rax",
+      "scolds": true,
+      "usesAllLayers": true,
+      "verbosity": "moderate",
+      "recovery": "analytical_adjustment",
+      "traits": [
+        "analytical",
+        "mathematical",
+        "practical",
+        "siege-focused"
+      ]
+    },
+    "Shaper": {
+      "key": "Urza",
+      "scolds": false,
+      "usesAllLayers": true,
+      "verbosity": "verbose",
+      "recovery": "philosophical_adjustment",
+      "traits": [
+        "bioengineering",
+        "philosophical",
+        "creative",
+        "unconventional"
+      ]
+    }
+  }
+}

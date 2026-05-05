@@ -214,7 +214,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       pageContext: this._buildPageContext({ currentView, currentCategoryLabel, cartRemaining }),
       isGM: game.user?.isGM ?? false,
       rendarrWelcome: getRendarrLine('welcome'),
-      rendarrImage: 'systems/foundryvtt-swse/assets/mentors/rendarr.webp',
+      rendarrImage: 'systems/foundryvtt-swse/assets/assets/mentors/rendarr.png',
       entryOrigin: this.entryOrigin,
       currencySymbol: this.storeCurrencySymbol
     };
