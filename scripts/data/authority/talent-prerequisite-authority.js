@@ -1,4 +1,5 @@
-// Extracted static authority data from scripts/data/prerequisite-authority.js.
+// Extracted static talent prerequisite/content authority.
+import { normalizeAuthorityKey } from "./authority-key-normalizer.js";
 
 export const TALENT_PREREQUISITE_AUTHORITY = {
   "armor_mastery": {
@@ -5960,3 +5961,5 @@ export const TALENT_PREREQUISITE_AUTHORITY = {
     "description": "Your natural determination carries you through tough battles. Once per encounter, as a Reaction, you can ignore one non Force-related effect, Talent, Skill, or ability that exceeds your Will Defense. If you spend a Force Point, you can ignore one Mind-Affecting effect, even if it is the result of a Force Power, Force Technique, or Force Secret."
   }
 };
+
+export { normalizeAuthorityKey };

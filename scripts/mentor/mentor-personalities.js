@@ -1,20 +1,8 @@
 /**
- * SWSE Mentor Personalities
+ * Mentor personality configuration.
  *
- * Static personality configuration for each mentor.
- * Describes behavioral traits used by the suggestion engine to shape dialogue.
- *
- * Fields per entry:
- * - key:          Canonical mentor display-name key (matches mentor_registry display_name)
- * - scolds:       Whether this mentor uses the scolding system
- * - usesAllLayers: Whether this mentor renders all 3 response layers (observation / suggestion / respectClause)
- * - verbosity:    "minimal" | "moderate" | "verbose"
- * - recovery:     How the mentor recovers after scolding
- * - traits:       Array of personality trait labels (informational, used by voice filter)
- *
- * NOTE: JSON coverage (data/dialogue/mentors/{id}/{id}.json) covers display metadata
- * (name, title, voiceStyle, philosophy) but NOT this behavioral schema.
- * This file is the canonical source for mentor personality/behavior configuration.
+ * Extracted from scripts/mentor/mentor-suggestion-dialogues.js so the legacy
+ * public path can remain a small compatibility wrapper.
  */
 
 export const MENTOR_PERSONALITIES = {
@@ -327,4 +315,14 @@ export const MENTOR_PERSONALITIES = {
     }
 };
 
-export default { MENTOR_PERSONALITIES };
+// ============================================================================
+// CORE CLASS MENTOR SUGGESTION DIALOGUES
+//
+// PHASE2_MIGRATE_TO_UI: This entire section contains explanation content that should be
+// migrated to inspectable UI panels:
+// - Attribute selectors: Move suggestion text to attribute picker tooltips
+// - Feat/Talent/Skill selectors: Move to dedicated browser/picker UI
+// - Class guidance: Move to prestige class preview panel
+// - Multiclass warnings: Move to conflict detection UI
+// - Build advice: Move to character sheet "Build Analysis" tab
+// ============================================================================

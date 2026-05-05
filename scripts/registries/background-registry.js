@@ -1,5 +1,6 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { slugify, stableJsonId } from "/systems/foundryvtt-swse/scripts/utils/stable-id.js";
+import { hydrateBackgroundEvent } from "/systems/foundryvtt-swse/scripts/data/background-events.js";
 
 /**
  * BackgroundRegistry
@@ -29,7 +30,7 @@ export class BackgroundRegistry {
           const slug = sys.slug || sys.id || slugify(e.name);
           const id = e._id;
           const uuid = `Compendium.${pack.collection}.${id}`;
-          const record = {
+          let record = {
             _id: id,
             uuid,
             name: e.name,
@@ -39,6 +40,7 @@ export class BackgroundRegistry {
             slug,
             internalId: id
           };
+          record = hydrateBackgroundEvent(record);
           this._bySlug.set(slug, record);
           this._byId.set(id, record);
         }
@@ -76,7 +78,7 @@ export class BackgroundRegistry {
         if (!bg) {continue;}
         const slug = bg.id || slugify(bg.name);
         const internalId = stableJsonId('background', slug);
-        const record = {
+        let record = {
           ...bg,
           id: slug,
           slug,
@@ -84,6 +86,7 @@ export class BackgroundRegistry {
           _id: internalId,
           uuid: null
         };
+        record = hydrateBackgroundEvent(record);
         this._bySlug.set(slug, record);
         this._byId.set(internalId, record);
       }

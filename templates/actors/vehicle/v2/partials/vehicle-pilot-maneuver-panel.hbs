@@ -1,28 +1,29 @@
-<section class="swse-vehicle-panel">
+<section class="swse-vehicle-panel swse-vehicle-enhanced-panel" data-panel="enhanced-pilot">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+    <span class="swse-vehicle-rule-chip">Enhanced Pilot</span>
   </header>
 
   <div class="swse-vehicle-panel-body">
     {{#if panel.currentManeuver}}
-      <div style="margin-bottom: 0.6rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--swse-vehicle-border-soft);">
-        <div style="font-size: 0.65rem; text-transform: uppercase; color: var(--swse-vehicle-text-dim); letter-spacing: 0.08em; margin-bottom: 0.2rem;">Active</div>
-        <div style="font-size: 0.95rem; font-weight: 800;">{{panel.currentManeuver.label}}</div>
+      <div class="swse-vehicle-active-readout">
+        <div class="swse-vehicle-active-label">Active Maneuver</div>
+        <div class="swse-vehicle-active-value">{{panel.currentManeuver.label}}</div>
       </div>
     {{/if}}
 
     {{#if panel.maneuvers}}
       <div class="swse-vehicle-maneuver-list">
         {{#each panel.maneuvers as |maneuver|}}
-          <div class="swse-vehicle-maneuver-card {{#if (eq maneuver.key panel.currentManeuver.key)}}is-active{{/if}}">
+          <button type="button" class="swse-vehicle-maneuver-card {{#if maneuver.active}}is-active{{/if}}" data-action="set-maneuver" data-maneuver="{{maneuver.key}}">
             <div class="swse-vehicle-maneuver-header">
               <span class="swse-vehicle-maneuver-name">{{maneuver.label}}</span>
-              {{#if (eq maneuver.key panel.currentManeuver.key)}}
-                <span style="font-size: 0.66rem; color: var(--swse-vehicle-normal); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Active</span>
+              {{#if maneuver.active}}
+                <span class="swse-vehicle-active-badge">Active</span>
               {{/if}}
             </div>
             <div class="swse-vehicle-maneuver-summary">{{maneuver.summary}}</div>
-          </div>
+          </button>
         {{/each}}
       </div>
     {{/if}}

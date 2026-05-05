@@ -38,6 +38,12 @@
               {{/each}}
             </div>
           {{/if}}
+
+          {{#if subsystem.canRepair}}
+            <div class="swse-vehicle-panel-actions">
+              <button type="button" class="swse-vehicle-mini-action" data-action="repair-subsystem" data-subsystem="{{subsystem.key}}">Repair</button>
+            </div>
+          {{/if}}
         </div>
       {{/each}}
     </div>

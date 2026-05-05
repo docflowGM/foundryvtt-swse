@@ -1,14 +1,14 @@
-<section class="swse-vehicle-panel {{#if panel.overAllocated}}is-overallocated{{/if}}">
+<section class="swse-vehicle-panel swse-vehicle-enhanced-panel {{#if panel.overAllocated}}is-overallocated{{/if}}" data-panel="enhanced-engineer">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+    <span class="swse-vehicle-rule-chip">Enhanced Engineer</span>
   </header>
 
   <div class="swse-vehicle-panel-body">
     <div class="swse-vehicle-power-bar">
-      <div class="swse-vehicle-power-fill" style="--fill-pct: {{#if (gt panel.budget 0)}}{{#multiply panel.allocated panel.budget}}{{/multiply}}{{else}}0{{/if}}%;"></div>
+      <div class="swse-vehicle-power-fill" style="--fill-pct: {{panel.percentAllocated}}%;"></div>
     </div>
 
-    <!-- POWER STATS -->
     <div class="swse-vehicle-power-stats">
       <div class="swse-vehicle-stat-row">
         <span class="swse-vehicle-stat-label">Available:</span>
@@ -22,15 +22,26 @@
         <span class="swse-vehicle-stat-label">Budget:</span>
         <span class="swse-vehicle-stat-value">{{panel.budget}}</span>
       </div>
-      {{#if panel.overAllocated}}
-        <div class="swse-vehicle-stat-row swse-vehicle-power-stat-warning">
-          <span class="swse-vehicle-stat-label">Over-allocated by:</span>
-          <span class="swse-vehicle-stat-value">{{#subtract panel.allocated panel.budget}}{{/subtract}}</span>
-        </div>
-      {{/if}}
     </div>
 
-    <!-- SUBSYSTEM LOADS -->
+    <div class="swse-vehicle-power-controls">
+      <div class="swse-vehicle-power-control-row">
+        <span>Weapons</span>
+        <button type="button" class="swse-vehicle-mini-action" data-action="power-adjust" data-system="weapons" data-direction="down">−</button>
+        <button type="button" class="swse-vehicle-mini-action" data-action="power-adjust" data-system="weapons" data-direction="up">+</button>
+      </div>
+      <div class="swse-vehicle-power-control-row">
+        <span>Shields</span>
+        <button type="button" class="swse-vehicle-mini-action" data-action="power-adjust" data-system="shields" data-direction="down">−</button>
+        <button type="button" class="swse-vehicle-mini-action" data-action="power-adjust" data-system="shields" data-direction="up">+</button>
+      </div>
+      <div class="swse-vehicle-power-control-row">
+        <span>Engines</span>
+        <button type="button" class="swse-vehicle-mini-action" data-action="power-adjust" data-system="engines" data-direction="down">−</button>
+        <button type="button" class="swse-vehicle-mini-action" data-action="power-adjust" data-system="engines" data-direction="up">+</button>
+      </div>
+    </div>
+
     {{#if panel.subsystemLoads}}
       <div class="swse-vehicle-subsystem-loads">
         <h4 class="swse-vehicle-subsystem-loads-title">Subsystem Power Draw</h4>

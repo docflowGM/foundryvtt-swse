@@ -1,4 +1,5 @@
-// Extracted static authority data from scripts/data/prerequisite-authority.js.
+// Extracted static feat prerequisite/content authority.
+import { normalizeAuthorityKey } from "./authority-key-normalizer.js";
 
 export const FEAT_PREREQUISITE_AUTHORITY = {
   "acrobatic_strike": {
@@ -2114,3 +2115,5 @@ export const FEAT_PREREQUISITE_AUTHORITY = {
     "description": "Impose a penalty to Skill Checks for Mind-Affecting effects that target you."
   }
 };
+
+export { normalizeAuthorityKey };

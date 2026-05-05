@@ -1,22 +1,9 @@
 /**
- * SWSE Mentor Suggestion Dialogue Data
+ * Phase-indexed mentor suggestion dialogue templates.
  *
- * Static dialogue templates for the mentor suggestion system.
- * Structured by mentor class key → context → phase → specific type.
- *
- * Structure:
- *   MENTOR_SUGGESTION_DIALOGUES[mentorClass][context][phase][specificType]
- *   - context: "attribute" | "feat" | "talent" | "skill" | "defense" | "multiclass" | "hp" | "rejection"
- *   - phase:   "early" | "mid" | "late"
- *   - layers:  { observation, suggestion, respectClause } or { combined }
- *
- * NOTE: The JSON files under data/dialogue/mentors/{id}/ cover classPaths/guidance/mentorStory
- * but use an incompatible shape. This JS file remains canonical for phase-based
- * attribute/feat/talent suggestion templates.
- * JSON migration of this content is deferred — see Phase 2 follow-up notes.
- *
- * PHASE2_MIGRATE_TO_UI: Many sections contain explanation content intended to be moved
- * to inspectable UI panels (attribute picker tooltips, feat browser, build analysis tab).
+ * Extracted from scripts/mentor/mentor-suggestion-dialogues.js. This JS module
+ * remains as a compatibility fallback while JSON mirrors live under
+ * data/dialogue/mentor-suggestions/.
  */
 
 export const MENTOR_SUGGESTION_DIALOGUES = {
@@ -2374,21 +2361,3 @@ MENTOR_SUGGESTION_DIALOGUES['Corporate Agent'] = {
         pressure: 'In this business, poor choices get assets burned. Consider that carefully.'
     }
 };
-
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
-
-/**
- * Main function to generate mentor dialogue for a suggestion
- * @param {Object} params - The suggestion parameters
- * @param {string} params.mentorClass - The mentor's class key (e.g., "Jedi", "Scout")
- * @param {string} params.context - The suggestion context (attribute, feat, talent, etc.)
- * @param {string} params.specificType - Specific type within context (e.g., "wisdom" for attributes)
- * @param {number} params.level - Character level (1-20)
- * @param {number} params.rejectionCount - How many times similar advice was rejected
- * @param {Object} params.recommendation - The actual recommendation data
- * @returns {Object} Dialogue object with text and metadata
- */
-
-export default { MENTOR_SUGGESTION_DIALOGUES };

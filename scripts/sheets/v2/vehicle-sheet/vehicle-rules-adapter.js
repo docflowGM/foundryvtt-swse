@@ -66,9 +66,9 @@ export class VehicleRulesAdapter {
       return null;
     }
 
-    // Rule is enabled; fetch data from system
+    // Rule is enabled; fetch data from the existing shield engine.
     try {
-      const shieldZones = actor.system?.enhancedShields ?? null;
+      const shieldZones = EnhancedShields.getShieldState(actor);
       if (!shieldZones) {
         return null;
       }
@@ -98,14 +98,21 @@ export class VehicleRulesAdapter {
     }
 
     try {
-      const budget = EnhancedEngineer.getPowerBudget(actor);
       const allocation = EnhancedEngineer.getPowerAllocation(actor);
+      const budget = allocation?.budget ?? EnhancedEngineer.getPowerBudget(actor);
+      const allocated = allocation?.spent ?? ((allocation?.weapons ?? 0) + (allocation?.shields ?? 0) + (allocation?.engines ?? 0));
 
       return {
         powerData: {
           budget,
+          allocated,
+          available: Math.max(0, budget - allocated),
           allocation,
-          available: Math.max(0, budget - allocation)
+          subsystemLoads: [
+            { key: 'weapons', name: 'Weapons', power: allocation?.weapons ?? 0 },
+            { key: 'shields', name: 'Shields', power: allocation?.shields ?? 0 },
+            { key: 'engines', name: 'Engines', power: allocation?.engines ?? 0 }
+          ]
         }
       };
     } catch (err) {

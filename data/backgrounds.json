@@ -15,8 +15,27 @@
       "skillChoiceCount": 1,
       "mechanicalEffect": {
         "type": "special_ability",
-        "description": "As a result of being nearly impoverished, you can use the Survival Skill to sustain yourself in urban or civilized environments."
-      }
+        "description": "Use Survival to sustain yourself in urban or civilized environments.",
+        "specialAbilityIds": [
+          "bankrupt-urban-survival"
+        ]
+      },
+      "type": "BackgroundEvent",
+      "backgroundType": "event",
+      "specialAbilities": [
+        {
+          "id": "bankrupt-urban-survival",
+          "name": "Urban Survival",
+          "type": "substitution",
+          "description": "Use Survival to sustain yourself in urban or civilized environments.",
+          "skill": "Survival",
+          "appliesTo": [
+            "urban_survival",
+            "civilized_survival"
+          ],
+          "requiresRuntime": true
+        }
+      ]
     },
     {
       "id": "conspiracy",
@@ -33,8 +52,28 @@
       "skillChoiceCount": 1,
       "mechanicalEffect": {
         "type": "special_ability",
-        "description": "You can reroll any Perception check made to Sense Deception or Sense Influence, keeping the better result."
-      }
+        "description": "Reroll any Perception check made to Sense Deception or Sense Influence, keeping the better result.",
+        "specialAbilityIds": [
+          "conspiracy-sense-reroll"
+        ]
+      },
+      "type": "BackgroundEvent",
+      "backgroundType": "event",
+      "specialAbilities": [
+        {
+          "id": "conspiracy-sense-reroll",
+          "name": "Sense Deception or Influence Reroll",
+          "type": "reroll",
+          "description": "Reroll any Perception check made to Sense Deception or Sense Influence, keeping the better result.",
+          "skill": "Perception",
+          "appliesTo": [
+            "Sense Deception",
+            "Sense Influence"
+          ],
+          "keep": "better",
+          "requiresRuntime": true
+        }
+      ]
     },
     {
       "id": "crippled",
@@ -51,8 +90,24 @@
       "skillChoiceCount": 1,
       "mechanicalEffect": {
         "type": "special_ability",
-        "description": "When your Fortitude Defense is reduced as a result of moving down the Condition Track, your Damage Threshold remains the same, as if you had no debilitating Conditions."
-      }
+        "description": "When your Fortitude Defense is reduced by moving down the Condition Track, your Damage Threshold remains unchanged as if you had no conditions.",
+        "specialAbilityIds": [
+          "crippled-damage-threshold-stability"
+        ]
+      },
+      "type": "BackgroundEvent",
+      "backgroundType": "event",
+      "specialAbilities": [
+        {
+          "id": "crippled-damage-threshold-stability",
+          "name": "Damage Threshold Stability",
+          "type": "defense_rule",
+          "description": "When your Fortitude Defense is reduced by moving down the Condition Track, your Damage Threshold remains unchanged as if you had no conditions.",
+          "target": "damageThreshold",
+          "condition": "condition_track_fortitude_penalty",
+          "requiresRuntime": true
+        }
+      ]
     },
     {
       "id": "disgraced",
@@ -69,8 +124,27 @@
       "skillChoiceCount": 1,
       "mechanicalEffect": {
         "type": "special_ability",
-        "description": "You treat any attempt to create a Deceptive Appearance for yourself as one step simpler."
-      }
+        "description": "Deceptive Appearances you create for yourself are one step easier to pass.",
+        "specialAbilityIds": [
+          "disgraced-deceptive-appearance-easier"
+        ]
+      },
+      "type": "BackgroundEvent",
+      "backgroundType": "event",
+      "specialAbilities": [
+        {
+          "id": "disgraced-deceptive-appearance-easier",
+          "name": "Easier Deceptive Appearance",
+          "type": "difficulty_step",
+          "description": "Deceptive Appearances you create for yourself are one step easier to pass.",
+          "skill": "Deception",
+          "appliesTo": [
+            "Deceptive Appearance"
+          ],
+          "stepAdjustment": -1,
+          "requiresRuntime": true
+        }
+      ]
     },
     {
       "id": "enslaved",
@@ -90,7 +164,21 @@
         "target": "grapple",
         "value": 2,
         "description": "You gain a +2 competence bonus to Grapple checks."
-      }
+      },
+      "type": "BackgroundEvent",
+      "backgroundType": "event",
+      "specialAbilities": [
+        {
+          "id": "enslaved-grapple-bonus",
+          "name": "Grapple Survivor",
+          "type": "bonus",
+          "description": "Gain a +2 competence bonus on Grapple checks.",
+          "target": "grapple",
+          "bonusType": "competence",
+          "value": 2,
+          "requiresRuntime": false
+        }
+      ]
     },
     {
       "id": "exiled",
@@ -107,9 +195,41 @@
       "skillChoiceCount": 1,
       "mechanicalEffect": {
         "type": "special_ability",
-        "description": "You can plot a safe course for Hyperspace travel in half the time it normally takes (you can plot a course in 30 seconds, or 5 rounds). You gain Skill Focus (Knowledge [Galactic Lore]).",
-        "grantsFeat": "Skill Focus (Knowledge [Galactic Lore])"
-      }
+        "description": "Plot a safe hyperspace course in half the normal time (30 seconds, or 5 rounds). Gain Skill Focus (Knowledge (Galactic Lore)) if trained in Knowledge (Galactic Lore).",
+        "specialAbilityIds": [
+          "exiled-hyperspace-half-time",
+          "exiled-skill-focus-galactic-lore"
+        ]
+      },
+      "type": "BackgroundEvent",
+      "backgroundType": "event",
+      "specialAbilities": [
+        {
+          "id": "exiled-hyperspace-half-time",
+          "name": "Half-Time Hyperspace Plotting",
+          "type": "time_reduction",
+          "description": "Plot a safe hyperspace course in half the normal time (30 seconds, or 5 rounds).",
+          "appliesTo": [
+            "hyperspace_plotting"
+          ],
+          "multiplier": 0.5,
+          "minimumTime": "30 seconds / 5 rounds",
+          "requiresRuntime": true
+        },
+        {
+          "id": "exiled-skill-focus-galactic-lore",
+          "name": "Skill Focus (Knowledge (Galactic Lore))",
+          "type": "conditional_feat",
+          "description": "Gain Skill Focus (Knowledge (Galactic Lore)) if trained in Knowledge (Galactic Lore).",
+          "featName": "Skill Focus (Knowledge (Galactic Lore))",
+          "featSlug": "skill-focus-knowledge-galactic-lore",
+          "condition": {
+            "type": "trained_skill",
+            "skill": "Knowledge (Galactic Lore)"
+          },
+          "requiresRuntime": true
+        }
+      ]
     },
     {
       "id": "imprisoned",
@@ -126,8 +246,27 @@
       "skillChoiceCount": 1,
       "mechanicalEffect": {
         "type": "special_ability",
-        "description": "You can obtain Black Market goods in half the time it usually takes to obtain (minimum 1 day)."
-      }
+        "description": "Obtain Black Market goods in half the usual time, minimum 1 day.",
+        "specialAbilityIds": [
+          "imprisoned-black-market-half-time"
+        ]
+      },
+      "type": "BackgroundEvent",
+      "backgroundType": "event",
+      "specialAbilities": [
+        {
+          "id": "imprisoned-black-market-half-time",
+          "name": "Black Market Contacts",
+          "type": "time_reduction",
+          "description": "Obtain Black Market goods in half the usual time, minimum 1 day.",
+          "appliesTo": [
+            "black_market_acquisition"
+          ],
+          "multiplier": 0.5,
+          "minimumTime": "1 day",
+          "requiresRuntime": true
+        }
+      ]
     },
     {
       "id": "marooned",
@@ -144,8 +283,30 @@
       "skillChoiceCount": 1,
       "mechanicalEffect": {
         "type": "special_ability",
-        "description": "You take no penalty to Treat Injury checks made to administer First Aid to yourself (or to Mechanics checks made to Repair yourself, if you are a Droid)."
-      }
+        "description": "Take no penalty when making Treat Injury checks to administer First Aid to yourself, or Mechanics checks to Repair yourself if you are a Droid.",
+        "specialAbilityIds": [
+          "marooned-self-care-no-penalty"
+        ]
+      },
+      "type": "BackgroundEvent",
+      "backgroundType": "event",
+      "specialAbilities": [
+        {
+          "id": "marooned-self-care-no-penalty",
+          "name": "Self-Reliant First Aid",
+          "type": "penalty_immunity",
+          "description": "Take no penalty when making Treat Injury checks to administer First Aid to yourself, or Mechanics checks to Repair yourself if you are a Droid.",
+          "skills": [
+            "Treat Injury",
+            "Mechanics"
+          ],
+          "appliesTo": [
+            "self_first_aid",
+            "self_repair"
+          ],
+          "requiresRuntime": true
+        }
+      ]
     },
     {
       "id": "orphaned",
@@ -162,8 +323,26 @@
       "skillChoiceCount": 1,
       "mechanicalEffect": {
         "type": "special_ability",
-        "description": "When you spend a Force Point to add to a Skill Check in an Untrained Skill, add an extra +1d6 to the Skill Check."
-      }
+        "description": "When spending a Force Point on an untrained skill check, add an extra +1d6 to the check.",
+        "specialAbilityIds": [
+          "orphaned-untrained-force-point-die"
+        ]
+      },
+      "type": "BackgroundEvent",
+      "backgroundType": "event",
+      "specialAbilities": [
+        {
+          "id": "orphaned-untrained-force-point-die",
+          "name": "Hard-Learned Adaptability",
+          "type": "force_point_bonus_die",
+          "description": "When spending a Force Point on an untrained skill check, add an extra +1d6 to the check.",
+          "appliesTo": [
+            "untrained_skill_check"
+          ],
+          "die": "1d6",
+          "requiresRuntime": true
+        }
+      ]
     },
     {
       "id": "scarred",
@@ -180,8 +359,26 @@
       "skillChoiceCount": 1,
       "mechanicalEffect": {
         "type": "special_ability",
-        "description": "When you make a Persuasion check to Intimidate a creature, you always have Favorable Circumstances."
-      }
+        "description": "When making a Persuasion check to Intimidate, you always have Favorable Circumstances.",
+        "specialAbilityIds": [
+          "scarred-intimidate-favorable-circumstances"
+        ]
+      },
+      "type": "BackgroundEvent",
+      "backgroundType": "event",
+      "specialAbilities": [
+        {
+          "id": "scarred-intimidate-favorable-circumstances",
+          "name": "Intimidating Scars",
+          "type": "favorable_circumstances",
+          "description": "When making a Persuasion check to Intimidate, you always have Favorable Circumstances.",
+          "skill": "Persuasion",
+          "appliesTo": [
+            "Intimidate"
+          ],
+          "requiresRuntime": true
+        }
+      ]
     },
     {
       "id": "widowed",
@@ -198,8 +395,24 @@
       "skillChoiceCount": 1,
       "mechanicalEffect": {
         "type": "special_ability",
-        "description": "You can Take 20 on Gather Information checks, but it takes 20 times as long as normal to gain the information."
-      }
+        "description": "You can Take 20 on Gather Information checks, but it takes 20 times as long as normal.",
+        "specialAbilityIds": [
+          "widowed-gather-information-take-20"
+        ]
+      },
+      "type": "BackgroundEvent",
+      "backgroundType": "event",
+      "specialAbilities": [
+        {
+          "id": "widowed-gather-information-take-20",
+          "name": "Patient Investigation",
+          "type": "take_20_permission",
+          "description": "You can Take 20 on Gather Information checks, but it takes 20 times as long as normal.",
+          "skill": "Gather Information",
+          "timeMultiplier": 20,
+          "requiresRuntime": true
+        }
+      ]
     }
   ],
   "occupations": [

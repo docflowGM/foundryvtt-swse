@@ -1,12 +1,13 @@
-<section class="swse-vehicle-panel">
+<section class="swse-vehicle-panel swse-vehicle-enhanced-panel" data-panel="vehicle-turn-controller">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+    <span class="swse-vehicle-rule-chip">Vehicle Turn Controller</span>
   </header>
 
   <div class="swse-vehicle-panel-body">
-    <div style="margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--swse-vehicle-border-soft);">
-      <div style="font-size: 0.65rem; text-transform: uppercase; color: var(--swse-vehicle-text-dim); letter-spacing: 0.08em; margin-bottom: 0.3rem;">{{panel.roundLabel}}</div>
-      <div style="font-size: 0.95rem; font-weight: 800;">{{panel.currentPhase}}</div>
+    <div class="swse-vehicle-active-readout">
+      <div class="swse-vehicle-active-label">{{panel.roundLabel}}</div>
+      <div class="swse-vehicle-active-value">{{panel.currentPhase}}</div>
     </div>
 
     <div class="swse-vehicle-phase-list">
@@ -16,6 +17,11 @@
           <div class="swse-vehicle-phase-label">{{phase.label}}</div>
         </div>
       {{/each}}
+    </div>
+
+    <div class="swse-vehicle-panel-actions">
+      <button type="button" class="swse-v2-btn" data-action="advance-phase">Advance Phase</button>
+      <button type="button" class="swse-v2-btn" data-action="reset-turn">Start/Reset Turn</button>
     </div>
   </div>
 </section>

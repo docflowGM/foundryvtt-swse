@@ -1,108 +1,210 @@
-<section class="sheet-shell swse-sheet-ui swse-ui-shell swse-vehicle-sheet swse-vehicle-shell v2 flexcol">
+<form class="sheet-shell swse-sheet-ui swse-ui-shell swse-vehicle-sheet swse-vehicle-shell swse-vehicle-command-deck v2 flexcol" autocomplete="off">
 
-    <header class="sheet-header swse-ui-frame">
-      <div class="flexrow" style="align-items:center; gap:12px;">
-        <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" width="52" height="52" style="border-radius:8px;"/>
-        <div class="flexcol" style="gap:4px;">
-          <input name="name" type="text" value="{{actor.name}}" style="font-size:1.25rem; font-weight:800;"/>
-          <div class="muted" style="opacity:0.8;">v2 Vehicle Sheet — Phase 3 Rule Surfaces</div>
-        </div>
+  <header class="sheet-header swse-ui-frame swse-vehicle-command-header">
+    <div class="swse-vehicle-command-portrait">
+      <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="{{actor.name}}"/>
+    </div>
+
+    <div class="swse-vehicle-command-title">
+      <div class="swse-vehicle-kicker">VEHICLE DATAPAD // V2</div>
+      {{#if editable}}
+        <input class="swse-vehicle-name-input" name="name" type="text" value="{{actor.name}}" placeholder="Vehicle Name"/>
+      {{else}}
+        <h1 class="swse-vehicle-name-display">{{actor.name}}</h1>
+      {{/if}}
+      <div class="swse-vehicle-command-subtitle">
+        {{vehiclePanels.headerSummaryPanel.typeLabel}}{{#if vehiclePanels.headerSummaryPanel.sizeLabel}} · {{vehiclePanels.headerSummaryPanel.sizeLabel}}{{/if}}{{#if vehiclePanels.headerSummaryPanel.category}} · {{vehiclePanels.headerSummaryPanel.category}}{{/if}}
       </div>
-    </header>
+    </div>
 
-    <section class="sheet-body flexcol">
+    <div class="swse-vehicle-command-actions">
+      <span class="swse-vehicle-mode-chip">{{#if editable}}GM EDIT{{else}}READ ONLY{{/if}}</span>
+      {{#if editable}}
+        <button type="submit" class="swse-vehicle-save-button" data-action="save-vehicle">Save Changes</button>
+      {{/if}}
+    </div>
+  </header>
 
-      <nav class="sheet-tabs tabs flexrow swse-ui-tabs swse-vehicle-tabs" data-group="primary">
-        <a class="item" data-tab="overview">Overview</a>
-        <a class="item" data-tab="weapons">Weapons</a>
-        <a class="item" data-tab="crew">Crew</a>
-        <a class="item" data-tab="systems">Systems</a>
-        <a class="item" data-tab="cargo">Cargo</a>
-      </nav>
+  <section class="sheet-body flexcol">
 
-      <section class="sheet-content swse-vehicle-content">
+    <nav class="sheet-tabs tabs flexrow swse-ui-tabs swse-vehicle-tabs" data-group="primary">
+      <a class="item active" data-tab="overview">Overview</a>
+      <a class="item" data-tab="weapons">Weapons</a>
+      <a class="item" data-tab="crew">Crew</a>
+      <a class="item" data-tab="systems">Systems</a>
+      <a class="item" data-tab="cargo">Cargo</a>
+      {{#if editable}}<a class="item" data-tab="edit">Edit</a>{{/if}}
+    </nav>
 
-        <!-- OVERVIEW TAB: Identity, defenses, health, crew summary, cargo summary, turn phase -->
-        <section class="tab flexcol" data-group="primary" data-tab="overview">
-          {{#if vehiclePanels.headerSummaryPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-header-summary-panel.hbs" panel=vehiclePanels.headerSummaryPanel}}
-          {{/if}}
+    <section class="sheet-content swse-vehicle-content">
 
-          {{#if vehiclePanels.hpConditionPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-hp-condition-panel.hbs" panel=vehiclePanels.hpConditionPanel}}
-          {{/if}}
+      <section class="tab active flexcol" data-group="primary" data-tab="overview">
+        <div class="swse-vehicle-concept-grid">
+          <div class="swse-vehicle-concept-primary">
+            {{#if vehiclePanels.headerSummaryPanel}}
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-header-summary-panel.hbs" panel=vehiclePanels.headerSummaryPanel}}
+            {{/if}}
+            {{#if vehiclePanels.hpConditionPanel}}
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-hp-condition-panel.hbs" panel=vehiclePanels.hpConditionPanel}}
+            {{/if}}
+          </div>
 
-          {{#if vehiclePanels.defensesPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-defenses-panel-full.hbs" panel=vehiclePanels.defensesPanel}}
-          {{/if}}
+          <div class="swse-vehicle-concept-core">
+            <div class="swse-vehicle-scanner swse-vehicle-panel">
+              <div class="swse-vehicle-scanner-ring"></div>
+              <img src="{{actor.img}}" alt="{{actor.name}}"/>
+              <div class="swse-vehicle-scanner-caption">{{vehiclePanels.headerSummaryPanel.category}}</div>
+            </div>
+          </div>
 
-          {{#if vehiclePanels.crewSummaryPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs" panel=vehiclePanels.crewSummaryPanel}}
-          {{/if}}
+          <div class="swse-vehicle-concept-secondary">
+            {{#if vehiclePanels.defensesPanel}}
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-defenses-panel-full.hbs" panel=vehiclePanels.defensesPanel}}
+            {{/if}}
+            {{#if vehiclePanels.crewSummaryPanel}}
+              {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs" panel=vehiclePanels.crewSummaryPanel}}
+            {{/if}}
+          </div>
+        </div>
 
+        <div class="swse-vehicle-diagnostic-grid">
           {{#if vehiclePanels.cargoSummaryPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs" panel=vehiclePanels.cargoSummaryPanel}}
+            <div class="swse-vehicle-span-6">{{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs" panel=vehiclePanels.cargoSummaryPanel}}</div>
           {{/if}}
-
           {{#if vehiclePanels.turnPhasePanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-turn-phase-panel.hbs" panel=vehiclePanels.turnPhasePanel}}
+            <div class="swse-vehicle-span-6">{{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-turn-phase-panel.hbs" panel=vehiclePanels.turnPhasePanel}}</div>
           {{/if}}
-        </section>
-
-        <!-- WEAPONS TAB: Mounted weapons, pilot maneuvers -->
-        <section class="tab flexcol" data-group="primary" data-tab="weapons">
-          {{#if vehiclePanels.weaponMountPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs" panel=vehiclePanels.weaponMountPanel}}
-          {{/if}}
-
-          {{#if vehiclePanels.pilotManeuverPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-pilot-maneuver-panel.hbs" panel=vehiclePanels.pilotManeuverPanel}}
-          {{/if}}
-        </section>
-
-        <!-- CREW TAB: Crew summary, station assignments, commander orders -->
-        <section class="tab flexcol" data-group="primary" data-tab="crew">
-          {{#if vehiclePanels.crewSummaryPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs" panel=vehiclePanels.crewSummaryPanel}}
-          {{/if}}
-
-          {{#if vehiclePanels.crewAssignmentPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs" panel=vehiclePanels.crewAssignmentPanel}}
-          {{/if}}
-
-          {{#if vehiclePanels.commanderOrderPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-commander-order-panel.hbs" panel=vehiclePanels.commanderOrderPanel}}
-          {{/if}}
-        </section>
-
-        <!-- SYSTEMS TAB: Subsystems, shields, power -->
-        <section class="tab flexcol" data-group="primary" data-tab="systems">
-          {{#if vehiclePanels.subsystemDetailPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-subsystem-detail-panel.hbs" panel=vehiclePanels.subsystemDetailPanel}}
-          {{/if}}
-
-          {{#if vehiclePanels.shieldManagementPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-shield-management-panel.hbs" panel=vehiclePanels.shieldManagementPanel}}
-          {{/if}}
-
-          {{#if vehiclePanels.powerSummaryPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-power-summary-panel.hbs" panel=vehiclePanels.powerSummaryPanel}}
-          {{/if}}
-        </section>
-
-        <!-- CARGO TAB: Cargo manifest -->
-        <section class="tab flexcol" data-group="primary" data-tab="cargo">
-          {{#if vehiclePanels.cargoSummaryPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs" panel=vehiclePanels.cargoSummaryPanel}}
-          {{/if}}
-
-          {{#if vehiclePanels.cargoManifestPanel}}
-            {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-manifest-panel.hbs" panel=vehiclePanels.cargoManifestPanel}}
-          {{/if}}
-        </section>
-
+        </div>
       </section>
 
-    </section>
+      <section class="tab flexcol" data-group="primary" data-tab="weapons">
+        {{#if vehiclePanels.weaponMountPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs" panel=vehiclePanels.weaponMountPanel}}
+        {{/if}}
+        {{#if vehiclePanels.pilotManeuverPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-pilot-maneuver-panel.hbs" panel=vehiclePanels.pilotManeuverPanel}}
+        {{/if}}
+      </section>
 
-</section>
+      <section class="tab flexcol" data-group="primary" data-tab="crew">
+        {{#if vehiclePanels.crewSummaryPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs" panel=vehiclePanels.crewSummaryPanel}}
+        {{/if}}
+        {{#if vehiclePanels.crewAssignmentPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs" panel=vehiclePanels.crewAssignmentPanel}}
+        {{/if}}
+        {{#if vehiclePanels.commanderOrderPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-commander-order-panel.hbs" panel=vehiclePanels.commanderOrderPanel}}
+        {{/if}}
+      </section>
+
+      <section class="tab flexcol" data-group="primary" data-tab="systems">
+        {{#if vehiclePanels.subsystemDetailPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-subsystem-detail-panel.hbs" panel=vehiclePanels.subsystemDetailPanel}}
+        {{/if}}
+        {{#if vehiclePanels.shieldManagementPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-shield-management-panel.hbs" panel=vehiclePanels.shieldManagementPanel}}
+        {{/if}}
+        {{#if vehiclePanels.powerSummaryPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-power-summary-panel.hbs" panel=vehiclePanels.powerSummaryPanel}}
+        {{/if}}
+      </section>
+
+      <section class="tab flexcol" data-group="primary" data-tab="cargo">
+        {{#if vehiclePanels.cargoSummaryPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs" panel=vehiclePanels.cargoSummaryPanel}}
+        {{/if}}
+        {{#if vehiclePanels.cargoManifestPanel}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-manifest-panel.hbs" panel=vehiclePanels.cargoManifestPanel}}
+        {{/if}}
+      </section>
+
+      {{#if editable}}
+        <section class="tab flexcol" data-group="primary" data-tab="edit">
+          <div class="swse-vehicle-edit-grid">
+            <section class="swse-vehicle-panel swse-vehicle-edit-panel">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Identity</h3></header>
+              <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
+                <label>Category<input name="system.category" type="text" value="{{editContext.identity.category}}"/></label>
+                <label>Type<input name="system.type" type="text" value="{{editContext.identity.type}}"/></label>
+                <label>Size<input name="system.size" type="text" value="{{editContext.identity.size}}"/></label>
+                <label>Challenge Level<input name="system.challengeLevel" type="number" value="{{editContext.details.challengeLevel}}" data-dtype="Number"/></label>
+                <label>Cost<input name="system.cost" type="text" value="{{editContext.details.cost}}"/></label>
+                <label>Availability<input name="system.availability" type="text" value="{{editContext.details.availability}}"/></label>
+              </div>
+            </section>
+
+            <section class="swse-vehicle-panel swse-vehicle-edit-panel">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Hull / Shields</h3></header>
+              <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
+                <label>Hull Current<input name="system.hull.value" type="number" value="{{editContext.hull.value}}" data-dtype="Number"/></label>
+                <label>Hull Max<input name="system.hull.max" type="number" value="{{editContext.hull.max}}" data-dtype="Number"/></label>
+                <label>Shield Current<input name="system.shields.value" type="number" value="{{editContext.shields.value}}" data-dtype="Number"/></label>
+                <label>Shield Max<input name="system.shields.max" type="number" value="{{editContext.shields.max}}" data-dtype="Number"/></label>
+                <label>Shield Rating<input name="system.shieldRating" type="text" value="{{editContext.shields.sr}}"/></label>
+                <label>Damage Reduction<input name="system.damageReduction" type="number" value="{{editContext.defenses.damageReduction}}" data-dtype="Number"/></label>
+              </div>
+            </section>
+
+            <section class="swse-vehicle-panel swse-vehicle-edit-panel">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Defenses / Movement</h3></header>
+              <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
+                <label>Reflex Defense<input name="system.reflexDefense" type="number" value="{{editContext.defenses.reflex}}" data-dtype="Number"/></label>
+                <label>Fortitude Defense<input name="system.fortitudeDefense" type="number" value="{{editContext.defenses.fortitude}}" data-dtype="Number"/></label>
+                <label>Damage Threshold<input name="system.damageThreshold" type="number" value="{{editContext.defenses.damageThreshold}}" data-dtype="Number"/></label>
+                <label>Armor Bonus<input name="system.armorBonus" type="number" value="{{editContext.defenses.armorBonus}}" data-dtype="Number"/></label>
+                <label>Speed<input name="system.speed" type="text" value="{{editContext.movement.speed}}"/></label>
+                <label>Max Velocity<input name="system.maxVelocity" type="text" value="{{editContext.movement.maxVelocity}}"/></label>
+                <label>Maneuver<input name="system.maneuver" type="text" value="{{editContext.movement.maneuver}}"/></label>
+                <label>Hyperdrive<input name="system.hyperdrive" type="text" value="{{editContext.movement.hyperdrive}}"/></label>
+              </div>
+            </section>
+
+            <section class="swse-vehicle-panel swse-vehicle-edit-panel">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Crew / Cargo</h3></header>
+              <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
+                <label>Crew<input name="system.crew" type="text" value="{{editContext.crew.crew}}"/></label>
+                <label>Crew Quality<input name="system.crewQuality" type="text" value="{{editContext.crew.crewQuality}}"/></label>
+                <label>Passengers<input name="system.passengers" type="text" value="{{editContext.crew.passengers}}"/></label>
+                <label>Cargo<input name="system.cargo" type="text" value="{{editContext.crew.cargo}}"/></label>
+                <label>Payload<input name="system.payload" type="text" value="{{editContext.crew.payload}}"/></label>
+                <label>Cover<input name="system.cover" type="text" value="{{editContext.details.cover}}"/></label>
+              </div>
+            </section>
+
+            <section class="swse-vehicle-panel swse-vehicle-edit-panel swse-vehicle-edit-panel-wide">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Vehicle Weapons Array</h3></header>
+              <div class="swse-vehicle-panel-body">
+                {{#if editContext.weapons}}
+                  <div class="swse-vehicle-weapon-edit-list">
+                    {{#each editContext.weapons as |weapon|}}
+                      <div class="swse-vehicle-weapon-edit-row">
+                        <label>Name<input name="system.weapons.{{weapon.index}}.name" type="text" value="{{weapon.name}}"/></label>
+                        <label>Arc<input name="system.weapons.{{weapon.index}}.arc" type="text" value="{{weapon.arc}}"/></label>
+                        <label>Attack<input name="system.weapons.{{weapon.index}}.attackBonus" type="text" value="{{weapon.attackBonus}}"/></label>
+                        <label>Damage<input name="system.weapons.{{weapon.index}}.damage" type="text" value="{{weapon.damage}}"/></label>
+                        <label>Range<input name="system.weapons.{{weapon.index}}.range" type="text" value="{{weapon.range}}"/></label>
+                        <label>Fire Control<input name="system.weapons.{{weapon.index}}.fireControl" type="text" value="{{weapon.fireControl}}"/></label>
+                        <label class="swse-vehicle-form-wide">Notes<input name="system.weapons.{{weapon.index}}.notes" type="text" value="{{weapon.notes}}"/></label>
+                      </div>
+                    {{/each}}
+                  </div>
+                {{else}}
+                  <div class="swse-empty">No existing system.weapons rows to edit yet.</div>
+                {{/if}}
+              </div>
+            </section>
+
+            <section class="swse-vehicle-panel swse-vehicle-edit-panel swse-vehicle-edit-panel-wide">
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Notes</h3></header>
+              <div class="swse-vehicle-panel-body">
+                <textarea name="{{editContext.notesPath}}" rows="8">{{editContext.notes}}</textarea>
+              </div>
+            </section>
+          </div>
+        </section>
+      {{/if}}
+
+    </section>
+  </section>
+</form>

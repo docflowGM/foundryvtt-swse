@@ -1,35 +1,37 @@
-<section class="swse-vehicle-panel">
+<section class="swse-vehicle-panel swse-vehicle-enhanced-panel" data-panel="enhanced-shields">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+    <span class="swse-vehicle-rule-chip">Enhanced Shields</span>
   </header>
 
   <div class="swse-vehicle-panel-body">
-    <div style="margin-bottom: 0.75rem;">
-      <div class="swse-vehicle-shield-summary">
-        <div class="swse-vehicle-shield-stat">
-          <span class="swse-vehicle-shield-stat-label">Total</span>
-          <span class="swse-vehicle-shield-stat-value">{{panel.total}}/{{panel.max}}</span>
-        </div>
-        <div class="swse-vehicle-shield-stat">
-          <span class="swse-vehicle-shield-stat-label">Recharge</span>
-          <span class="swse-vehicle-shield-stat-value">{{panel.rechargeRate}}/rd</span>
-        </div>
+    <div class="swse-vehicle-shield-summary">
+      <div class="swse-vehicle-shield-stat">
+        <span class="swse-vehicle-shield-stat-label">Total</span>
+        <span class="swse-vehicle-shield-stat-value">{{panel.total}}/{{panel.max}}</span>
+      </div>
+      <div class="swse-vehicle-shield-stat">
+        <span class="swse-vehicle-shield-stat-label">Recharge</span>
+        <span class="swse-vehicle-shield-stat-value">{{panel.rechargeRate}}/rd</span>
       </div>
     </div>
 
     <div class="swse-vehicle-shield-list">
       {{#each panel.zones as |zone|}}
-        <div class="swse-vehicle-shield-row">
+        <div class="swse-vehicle-shield-row is-{{zone.state}}">
           <div class="swse-vehicle-shield-label">{{zone.label}}</div>
-          <div class="swse-vehicle-shield-value {{#if (eq zone.state "low")}}style="color: var(--swse-vehicle-warning);"{{/if}}">
-            {{zone.value}}
-          </div>
+          <div class="swse-vehicle-shield-value">{{zone.value}}</div>
+          <button type="button" class="swse-vehicle-mini-action" data-action="shield-focus" data-zone="{{zone.key}}">Focus</button>
         </div>
       {{/each}}
     </div>
 
+    <div class="swse-vehicle-panel-actions">
+      <button type="button" class="swse-v2-btn" data-action="shield-equalize">Equalize Shields</button>
+    </div>
+
     {{#if panel.notes}}
-      <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--swse-vehicle-border-soft); font-size: 0.74rem; color: var(--swse-vehicle-text-muted);">
+      <div class="swse-vehicle-panel-notes">
         {{#each panel.notes as |note|}}
           <div>{{note}}</div>
         {{/each}}

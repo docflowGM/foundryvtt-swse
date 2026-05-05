@@ -1,10 +1,22 @@
 # Mentor Suggestion Dialogue JSON
 
-These files are the JSON mirror/canonical-data target for the phase-indexed mentor suggestion system.
+These files mirror the phase-indexed mentor suggestion system used by `scripts/mentor/mentor-suggestion-engine.js`.
 
-- `mentor-personalities.json` contains personality and behavior configuration.
-- `mentor-suggestion-dialogues.json` contains suggestion dialogue templates grouped by class mentor, context, phase, and specific type.
+They are intentionally separate from `data/dialogue/mentors/**`, which stores structured mentor biography/advisory dialogue in a different schema.
 
-The existing files under `data/dialogue/mentors/**` use a different class-path/advisory shape. They are not interchangeable with this suggestion-template schema.
+Files:
 
-The runtime loader in `scripts/mentor/mentor-suggestion-json-loader.js` reads these files first for async mentor suggestion calls and falls back to the JS compatibility data when unavailable.
+- `mentor-personalities.json`: mentor personality metadata used by the suggestion engine.
+- `mentor-suggestion-dialogues.json`: phase-indexed attribute/feat/talent suggestion templates.
+
+Runtime behavior:
+
+- The engine attempts to load this JSON first.
+- If JSON is unavailable or incomplete, it falls back to the JS compatibility modules.
+- The legacy public path `scripts/mentor/mentor-suggestion-dialogues.js` remains a compatibility wrapper.
+
+Validate with:
+
+```bash
+node scripts/maintenance/validate-mentor-suggestions-json.js
+```

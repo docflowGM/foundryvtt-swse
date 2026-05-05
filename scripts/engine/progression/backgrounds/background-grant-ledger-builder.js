@@ -76,6 +76,7 @@ export class BackgroundGrantLedgerBuilder {
       languages: this._mergeLanguages(backgrounds),
       bonuses: this._mergeBonuses(backgrounds),
       passiveEffects: this._collectPassiveEffects(backgrounds),
+      feats: this._collectFeatGrants(backgrounds),
 
       // Metadata
       sources: this._collectSources(backgrounds),
@@ -105,6 +106,8 @@ export class BackgroundGrantLedgerBuilder {
     for (const bg of backgrounds) {
       // Collect mechanical effect for class_skills
       const mechEffect = bg.mechanicalEffect || {};
+      const relevantSkills = Array.isArray(bg.relevantSkills) ? bg.relevantSkills : [];
+      const choiceCount = Number(bg.skillChoiceCount || 0);
 
       if (mechEffect.type === 'class_skills') {
         // Add granted skills to set (union)
@@ -112,8 +115,6 @@ export class BackgroundGrantLedgerBuilder {
 
         // We don't know which skills the player chose yet; track intent
         // relevantSkills are the options the player can choose from
-        const relevantSkills = bg.relevantSkills || [];
-
         // Add to union (player will choose `grantedCount` from relevantSkills)
         choices.push({
           backgroundId: bg.id || bg.slug,
@@ -136,6 +137,21 @@ export class BackgroundGrantLedgerBuilder {
             }
           }
         }
+      } else if (choiceCount > 0 && relevantSkills.length > 0) {
+        // Event/occupation/planet backgrounds grant a class-skill choice from
+        // their relevant skill list even when their main mechanical effect is a
+        // special ability rather than a class_skills object.
+        choices.push({
+          backgroundId: bg.id || bg.slug,
+          backgroundName: bg.name,
+          skillChoiceCount: choiceCount,
+          fromSkills: relevantSkills,
+          mechanics: {
+            type: 'choice_from_list',
+            count: choiceCount,
+            options: relevantSkills
+          }
+        });
       } else if (bg.trainedSkills && Array.isArray(bg.trainedSkills)) {
         // Legacy: trainedSkills field (if it exists)
         for (const skill of bg.trainedSkills) {
@@ -222,6 +238,20 @@ export class BackgroundGrantLedgerBuilder {
           description: mechEffect.description
         });
       }
+
+      for (const ability of bg.specialAbilities || []) {
+        if (ability?.type === 'bonus') {
+          flatBonuses.push({
+            backgroundId: bg.id || bg.slug,
+            backgroundName: bg.name,
+            abilityId: ability.id,
+            value: ability.value || 0,
+            bonusType: ability.bonusType || null,
+            target: ability.target || 'unknown',
+            description: ability.description
+          });
+        }
+      }
     }
 
     return {
@@ -242,9 +272,30 @@ export class BackgroundGrantLedgerBuilder {
     const effects = [];
 
     for (const bg of backgrounds) {
+      const structuredAbilities = Array.isArray(bg.specialAbilities) ? bg.specialAbilities : [];
+
+      for (const ability of structuredAbilities) {
+        if (!ability || ability.type === 'bonus' || ability.type === 'conditional_feat') {
+          continue;
+        }
+
+        effects.push({
+          backgroundId: bg.id || bg.slug,
+          backgroundName: bg.name,
+          abilityId: ability.id,
+          name: ability.name,
+          type: ability.type || 'special_ability',
+          description: ability.description || bg.specialAbility || '',
+          source: 'specialAbilities',
+          requiresRuntime: ability.requiresRuntime ?? true,
+          unresolved: ability.requiresRuntime ?? true,
+          data: ability
+        });
+      }
+
       const mechEffect = bg.mechanicalEffect || {};
 
-      if (mechEffect.type === 'special_ability') {
+      if (!structuredAbilities.length && mechEffect.type === 'special_ability') {
         effects.push({
           backgroundId: bg.id || bg.slug,
           backgroundName: bg.name,
@@ -252,10 +303,9 @@ export class BackgroundGrantLedgerBuilder {
           description: mechEffect.description || bg.specialAbility || '',
           source: 'mechanicalEffect',
           requiresRuntime: true,
-          unresolved: true  // Special abilities need manual handler
+          unresolved: true
         });
-      } else if (bg.specialAbility && mechEffect.type !== 'class_skills' && mechEffect.type !== 'untrained_bonus' && mechEffect.type !== 'bonus') {
-        // Legacy specialAbility field
+      } else if (!structuredAbilities.length && bg.specialAbility && mechEffect.type !== 'class_skills' && mechEffect.type !== 'untrained_bonus' && mechEffect.type !== 'bonus') {
         effects.push({
           backgroundId: bg.id || bg.slug,
           backgroundName: bg.name,
@@ -269,6 +319,40 @@ export class BackgroundGrantLedgerBuilder {
     }
 
     return effects;
+  }
+
+  /**
+   * Collect conditional/background-granted feat entitlements.
+   *
+   * @private
+   */
+  static _collectFeatGrants(backgrounds) {
+    const grants = [];
+
+    for (const bg of backgrounds) {
+      for (const ability of bg.specialAbilities || []) {
+        if (ability?.type !== 'conditional_feat') {
+          continue;
+        }
+
+        grants.push({
+          backgroundId: bg.id || bg.slug,
+          backgroundName: bg.name,
+          abilityId: ability.id,
+          featName: ability.featName || ability.name,
+          featSlug: ability.featSlug || null,
+          condition: ability.condition || null,
+          description: ability.description || '',
+          status: 'pending_condition_check'
+        });
+      }
+    }
+
+    return {
+      conditional: grants,
+      mergeType: 'additive',
+      conflictResolution: 'dedup_by_feat_condition'
+    };
   }
 
   /**
@@ -357,6 +441,7 @@ export class BackgroundGrantLedgerBuilder {
       },
 
       passiveEffects: [],
+      feats: { conditional: [], mergeType: 'additive', conflictResolution: 'dedup_by_feat_condition' },
       sources: [],
       unresolved: [],
       mergeStatus: 'empty',
@@ -381,6 +466,7 @@ export class BackgroundGrantLedgerBuilder {
       languages: ledger.languages,
       bonuses: ledger.bonuses,
       passiveEffects: ledger.passiveEffects,
+      feats: ledger.feats,
 
       sources: ledger.sources,
       unresolved: ledger.unresolved,

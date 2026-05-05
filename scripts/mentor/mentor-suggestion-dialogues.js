@@ -1,60 +1,52 @@
 /**
  * Compatibility wrapper retained for legacy imports/macros.
- * Static suggestion dialogue text now prefers JSON under data/dialogue/mentor-suggestions/ for async mentorSpeak() calls.
+ * Static suggestion dialogue text should prefer JSON under
+ * data/dialogue/mentor-suggestions/ where covered.
  *
- * This file re-exports all original named exports from the split modules:
- *   - MENTOR_PERSONALITIES        → scripts/mentor/mentor-personalities.js
- *   - MENTOR_SUGGESTION_DIALOGUES → scripts/mentor/mentor-suggestion-data.js
- *   - Runtime functions           → scripts/mentor/mentor-suggestion-engine.js
- *   - JSON loader/cache           → scripts/mentor/mentor-suggestion-json-loader.js
- *
- * DO NOT add new logic here. Extend the split modules directly.
+ * Runtime helpers live in scripts/mentor/mentor-suggestion-engine.js.
  */
 
-// Phase/context helpers (re-exported for any legacy consumers that imported them from here)
 export { getDialoguePhase, SUGGESTION_CONTEXTS, DIALOGUE_PHASES } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
-
-// Static data
 export { MENTOR_PERSONALITIES } from "/systems/foundryvtt-swse/scripts/mentor/mentor-personalities.js";
 export { MENTOR_SUGGESTION_DIALOGUES } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-data.js";
-
-
-// JSON loader/cache for phase-indexed suggestion data
 export {
-    loadMentorSuggestionJson,
-    getCachedMentorSuggestionJson,
-    clearMentorSuggestionJsonCache,
-    getMentorSuggestionPersonalityFromJson,
-    getMentorSuggestionPhaseDialoguesFromJson,
-    getMentorSuggestionRejectionFromJson
+  loadMentorSuggestionJson,
+  getCachedMentorSuggestionJson,
+  clearMentorSuggestionJsonCache,
+  getMentorSuggestionPersonalityFromJson,
+  getMentorSuggestionPhaseDialoguesFromJson,
+  getMentorSuggestionRejectionFromJson
 } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-json-loader.js";
-
-// Runtime engine
 export {
-    getMentorSuggestionDialogue,
-    getMentorRejectionResponse,
-    mentorCanScold,
-    getScoldingMentorLists,
-    mentorSpeak
+  getMentorSuggestionDialogue,
+  getMentorSuggestionDialogueFromJson,
+  getMentorRejectionResponse,
+  getMentorRejectionResponseFromJson,
+  mentorCanScold,
+  getScoldingMentorLists,
+  mentorSpeak
 } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-engine.js";
 
-// Default export mirrors original
 import { MENTOR_PERSONALITIES } from "/systems/foundryvtt-swse/scripts/mentor/mentor-personalities.js";
 import { MENTOR_SUGGESTION_DIALOGUES } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-data.js";
 import {
-    getMentorSuggestionDialogue,
-    getMentorRejectionResponse,
-    mentorCanScold,
-    getScoldingMentorLists,
-    mentorSpeak
+  getMentorSuggestionDialogue,
+  getMentorSuggestionDialogueFromJson,
+  getMentorRejectionResponse,
+  getMentorRejectionResponseFromJson,
+  mentorCanScold,
+  getScoldingMentorLists,
+  mentorSpeak
 } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-engine.js";
 
 export default {
-    MENTOR_PERSONALITIES,
-    MENTOR_SUGGESTION_DIALOGUES,
-    getMentorSuggestionDialogue,
-    getMentorRejectionResponse,
-    mentorCanScold,
-    getScoldingMentorLists,
-    mentorSpeak
+  MENTOR_PERSONALITIES,
+  MENTOR_SUGGESTION_DIALOGUES,
+  getMentorSuggestionDialogue,
+  getMentorSuggestionDialogueFromJson,
+  getMentorRejectionResponse,
+  getMentorRejectionResponseFromJson,
+  mentorCanScold,
+  getScoldingMentorLists,
+  mentorSpeak
 };

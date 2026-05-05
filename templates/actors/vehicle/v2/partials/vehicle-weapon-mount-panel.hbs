@@ -51,6 +51,23 @@
             {{/if}}
           </div>
 
+          {{#if mount.actions}}
+            <div class="swse-vehicle-weapon-actions">
+              {{#each mount.actions as |action|}}
+                <button type="button"
+                        class="swse-vehicle-action-btn"
+                        data-action="vehicle-crew-skill"
+                        data-station="{{action.stationKey}}"
+                        data-skill="{{action.key}}"
+                        data-weapon-id="{{mount.weaponId}}"
+                        data-skill-use="{{action.use}}"
+                        data-skill-label="{{mount.name}}">
+                  {{action.use}}
+                </button>
+              {{/each}}
+            </div>
+          {{/if}}
+
           {{#if mount.linkedGroup}}
             <div style="margin-top: 0.45rem; padding-top: 0.45rem; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.72rem; color: var(--swse-vehicle-text-muted);">
               <span style="text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">Linked:</span> {{mount.linkedGroup}}

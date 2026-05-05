@@ -98,7 +98,11 @@ const backgrounds = this._getFilteredBackgrounds();
       : (Array.isArray(bg.trainedSkills) ? bg.trainedSkills : []);
     const skillsText = skills.length ? skills.join(', ') : 'None';
 
-    const special = (bg.specialAbility || '').trim();
+    const structuredSpecials = Array.isArray(bg.specialAbilities) ? bg.specialAbilities : [];
+    const special = (bg.specialAbility || structuredSpecials.map(a => a?.description).filter(Boolean).join(' ') || '').trim();
+    const specialItems = structuredSpecials.length
+      ? structuredSpecials.map(a => `<li><strong>${a.name || 'Special'}:</strong> ${a.description || ''}</li>`).join('')
+      : (special ? `<li><strong>Special:</strong> ${special}</li>` : '');
     const language = (bg.bonusLanguage || '').trim();
 
     div.innerHTML = `
@@ -119,7 +123,7 @@ const backgrounds = this._getFilteredBackgrounds();
             <ul>
               <li><strong>Skills:</strong> ${skillsText}</li>
               ${language ? `<li><strong>Language:</strong> ${language}</li>` : ''}
-              ${special ? `<li><strong>Special:</strong> ${special}</li>` : ''}
+              ${specialItems}
             </ul>
           </div>
         </div>
@@ -193,6 +197,7 @@ const id = typeof eventOrId === 'string'
     category: selected.category,
     narrativeDescription: selected.narrativeDescription || selected.description || '',
     specialAbility: selected.specialAbility || null,
+    specialAbilities: selected.specialAbilities || [],
     bonusLanguage: selected.bonusLanguage || null,
     relevantSkills: selected.relevantSkills || selected.trainedSkills || [],
     icon: selected.icon || ''
@@ -211,8 +216,8 @@ const id = typeof eventOrId === 'string'
 // Used to mark skills as class skills due to background
 export function _getBackgroundClassSkills() {
   if (!this.characterData.background) {return [];}
-  return (this.characterData.background.trainedSkills || [])
-    .map(s => s.replace(/\s+/g, '').toLowerCase());
+  const skills = this.characterData.background.trainedSkills || this.characterData.background.relevantSkills || [];
+  return skills.map(s => s.replace(/\s+/g, '').toLowerCase());
 }
 
 // Flavor text for narrator
@@ -247,6 +252,7 @@ export async function _onRandomBackground(event) {
     icon: selected.icon || '🎲',
     narrativeDescription: selected.narrativeDescription || selected.description || '',
     specialAbility: selected.specialAbility || null,
+    specialAbilities: selected.specialAbilities || [],
     bonusLanguage: selected.bonusLanguage || null,
     trainedSkills: selected.trainedSkills || [],
     category: this.characterData.backgroundCategory || 'events'

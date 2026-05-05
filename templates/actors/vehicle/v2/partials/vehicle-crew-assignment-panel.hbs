@@ -14,6 +14,21 @@
           {{#if station.notes}}
             <div class="swse-vehicle-station-notes">{{station.notes}}</div>
           {{/if}}
+          {{#if station.actions}}
+            <div class="swse-vehicle-station-actions">
+              {{#each station.actions as |action|}}
+                <button type="button"
+                        class="swse-vehicle-action-btn"
+                        data-action="vehicle-crew-skill"
+                        data-station="{{station.key}}"
+                        data-skill="{{action.key}}"
+                        data-skill-use="{{action.use}}"
+                        data-skill-label="{{action.label}}">
+                  {{action.use}}
+                </button>
+              {{/each}}
+            </div>
+          {{/if}}
         </div>
       {{/each}}
     </div>

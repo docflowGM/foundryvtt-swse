@@ -1,7 +1,7 @@
 /**
  * Mentor Suggestion JSON Loader
  *
- * Loads the phase-indexed mentor suggestion/personality data mirrored under
+ * Loads phase-indexed mentor suggestion/personality JSON mirrored under
  * data/dialogue/mentor-suggestions/. This is intentionally separate from the
  * structured mentor biography/advisory JSON under data/dialogue/mentors/**,
  * which uses a different schema.
@@ -49,12 +49,6 @@ function normalizeSuggestionJson(personalityPayload = {}, dialoguePayload = {}) 
   };
 }
 
-/**
- * Load mentor suggestion JSON with a shared cache.
- * @param {Object} [options]
- * @param {boolean} [options.force=false] Reload even when cached.
- * @returns {Promise<Object>} Cached suggestion JSON payload.
- */
 export async function loadMentorSuggestionJson({ force = false } = {}) {
   if (!force && suggestionJsonCache) {
     return suggestionJsonCache;
@@ -85,51 +79,25 @@ export async function loadMentorSuggestionJson({ force = false } = {}) {
   return suggestionJsonLoadPromise;
 }
 
-/**
- * Get the current cache without triggering a fetch.
- * @returns {Object}
- */
 export function getCachedMentorSuggestionJson() {
   return suggestionJsonCache || emptySuggestionJson();
 }
 
-/**
- * Clear cached suggestion JSON. Useful for development reloads.
- */
 export function clearMentorSuggestionJsonCache() {
   suggestionJsonCache = null;
   suggestionJsonLoadPromise = null;
 }
 
-/**
- * Get personality config from JSON.
- * @param {string} mentorClass
- * @returns {Promise<Object|null>}
- */
 export async function getMentorSuggestionPersonalityFromJson(mentorClass) {
   const data = await loadMentorSuggestionJson();
   return data.personalities?.[mentorClass] || null;
 }
 
-/**
- * Get phase dialogue map from JSON.
- * @param {Object} params
- * @param {string} params.mentorClass
- * @param {string} params.context
- * @param {string} params.phase
- * @returns {Promise<Object|null>}
- */
 export async function getMentorSuggestionPhaseDialoguesFromJson({ mentorClass, context, phase }) {
   const data = await loadMentorSuggestionJson();
   return data.dialogues?.[mentorClass]?.[context]?.[phase] || null;
 }
 
-/**
- * Get rejection response text from JSON.
- * @param {string} mentorClass
- * @param {string} [intensity='gentle']
- * @returns {Promise<string|null>}
- */
 export async function getMentorSuggestionRejectionFromJson(mentorClass, intensity = 'gentle') {
   const data = await loadMentorSuggestionJson();
   const rejection = data.dialogues?.[mentorClass]?.rejection;

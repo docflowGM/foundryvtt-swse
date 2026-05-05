@@ -40,6 +40,7 @@ export class BackgroundLedgerCompatibility {
       icon: primaryBg.icon || '',
       narrativeDescription: primaryBg.narrativeDescription || primaryBg.description || '',
       specialAbility: primaryBg.specialAbility || null,
+      specialAbilities: primaryBg.specialAbilities || [],
       bonusLanguage: primaryBg.bonusLanguage || null,
       trainedSkills: primaryBg.trainedSkills || [],
       relevantSkills: primaryBg.relevantSkills || [],
@@ -124,6 +125,14 @@ export class BackgroundLedgerCompatibility {
       updateData['system.backgroundNotes'] = `Multi-background selection: ${bgNames}`;
     }
 
+    // Background special abilities and conditional feat entitlements (metadata only).
+    if (ledger.passiveEffects?.length) {
+      updateData['system.backgroundSpecialAbilities'] = ledger.passiveEffects;
+    }
+    if (ledger.feats?.conditional?.length) {
+      updateData['system.backgroundConditionalFeats'] = ledger.feats.conditional;
+    }
+
     // Languages (primary)
     if (ledger.languages.fixed.length > 0) {
       updateData['system.languages'] = ledger.languages.fixed;
@@ -178,6 +187,20 @@ export class BackgroundLedgerCompatibility {
       fixed: ledger.languages.fixed || [],
       entitlements: ledger.languages.entitlements || []
     };
+  }
+
+  /**
+   * Get conditional feat grants from background event abilities.
+   *
+   * @param {Object} ledger - Background Grant Ledger
+   * @returns {Array<Object>} - Conditional feat grant descriptors
+   */
+  static getConditionalFeatGrantsForRuntime(ledger) {
+    if (!ledger || ledger.mergeStatus === 'empty') {
+      return [];
+    }
+
+    return ledger.feats?.conditional || [];
   }
 
   /**

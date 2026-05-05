@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "scripts/mentor/mentor-suggestion-data.js",
-  "description": "Phase-indexed static suggestion dialogue templates for the SWSE mentor suggestion system.",
+  "description": "JSON mirror of phase-indexed mentor suggestion dialogue templates. This schema is separate from data/dialogue/mentors/** biography/advisory JSON.",
   "dialogues": {
     "Jedi": {
       "attribute": {

@@ -35,6 +35,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { getRendarrLine } from "/systems/foundryvtt-swse/scripts/apps/store/dialogue/rendarr-dialogue.js";
+import { getRendarrPortraitPath } from "/systems/foundryvtt-swse/scripts/mentor/mentor-portrait-registry.js";
 import { resolveStoreDescription, getStoreCurrencySymbol } from "/systems/foundryvtt-swse/scripts/apps/store/store-description-resolver.js";
 import {
   addItemToCart,
@@ -214,7 +215,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       pageContext: this._buildPageContext({ currentView, currentCategoryLabel, cartRemaining }),
       isGM: game.user?.isGM ?? false,
       rendarrWelcome: getRendarrLine('welcome'),
-      rendarrImage: 'systems/foundryvtt-swse/assets/assets/mentors/rendarr.png',
+      rendarrImage: getRendarrPortraitPath(),
       entryOrigin: this.entryOrigin,
       currencySymbol: this.storeCurrencySymbol
     };

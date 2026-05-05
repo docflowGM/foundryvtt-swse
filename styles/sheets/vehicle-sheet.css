@@ -1086,3 +1086,90 @@
     align-items: start;
   }
 }
+
+/* Phase 7: enhanced combat panel affordances. Uses existing vehicle/datapad tokens. */
+.swse-vehicle-enhanced-panel {
+  position: relative;
+}
+
+.swse-vehicle-rule-chip,
+.swse-vehicle-active-badge {
+  border: 1px solid var(--swse-vehicle-border-soft);
+  border-radius: 999px;
+  color: var(--swse-vehicle-text-muted);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.18rem 0.5rem;
+  text-transform: uppercase;
+}
+
+.swse-vehicle-active-readout {
+  border-bottom: 1px solid var(--swse-vehicle-border-soft);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.swse-vehicle-active-label {
+  color: var(--swse-vehicle-text-dim);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.swse-vehicle-active-value {
+  color: var(--swse-vehicle-text-light);
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+button.swse-vehicle-maneuver-card,
+button.swse-vehicle-order-card {
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.swse-vehicle-panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+}
+
+.swse-vehicle-mini-action {
+  border: 1px solid var(--swse-vehicle-border-soft);
+  border-radius: 6px;
+  color: var(--swse-vehicle-text-light);
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  text-transform: uppercase;
+}
+
+.swse-vehicle-power-controls {
+  border-top: 1px solid var(--swse-vehicle-border-soft);
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.swse-vehicle-power-control-row {
+  align-items: center;
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: 1fr auto auto;
+}
+
+.swse-vehicle-panel-notes {
+  border-top: 1px solid var(--swse-vehicle-border-soft);
+  color: var(--swse-vehicle-text-muted);
+  font-size: 0.74rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}

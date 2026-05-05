@@ -62,6 +62,7 @@
     "styles/actors/v2/combat-stats-panel.css",
     "styles/sheets/v2-npc-specific.css",
     "styles/sheets/v2-droid-specific.css",
+    "styles/sheets/vehicle-sheet.css",
     "styles/sheets/item-sheet.css",
     "styles/apps/chargen/chargen.css",
     "scripts/ui/dialogue/dialogue-effects.css",

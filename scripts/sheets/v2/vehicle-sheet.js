@@ -18,6 +18,12 @@ import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foun
 import { buildVehicleSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
 import { VehicleRulesAdapter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-rules-adapter.js";
 import { VehicleCustomizationRouter } from "/systems/foundryvtt-swse/scripts/applications/vehicle/vehicle-customization-router.js";
+import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
+import { EnhancedShields } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js";
+import { EnhancedEngineer } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-engineer.js";
+import { EnhancedPilot } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-pilot.js";
+import { EnhancedCommander } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-commander.js";
+import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -503,9 +509,14 @@ export class SWSEV2VehicleSheet extends
         const system = ev.currentTarget?.dataset?.system;
         const direction = ev.currentTarget?.dataset?.direction;
         if (!system || !direction || !this.actor) return;
-        const current = this.actor.system?.powerAllocation?.[system] ?? 2;
-        const newVal = direction === 'up' ? Math.min(4, current + 1) : Math.max(0, current - 1);
-        await ActorEngine.updateActor(this.actor, { [`system.powerAllocation.${system}`]: newVal });
+
+        const allocation = EnhancedEngineer.getPowerAllocation(this.actor);
+        const current = allocation?.[system] ?? 2;
+        allocation[system] = direction === 'up'
+          ? Math.min(4, current + 1)
+          : Math.max(0, current - 1);
+
+        await EnhancedEngineer.allocatePower(this.actor, allocation);
       }, { signal });
     }
 

@@ -426,6 +426,7 @@ export function buildVehiclePowerSummaryPanel(actor, powerData) {
     available,
     allocated,
     budget,
+    percentAllocated: budget > 0 ? Math.round((allocated / budget) * 100) : 0,
     overAllocated,
     subsystemLoads
   };
@@ -502,14 +503,25 @@ export function buildVehicleCargoManifestPanel(actor) {
 function buildPilotManeuverPanel(pilotData) {
   if (!pilotData) return null;
 
+  const currentKey = typeof pilotData.currentManeuver === 'string'
+    ? pilotData.currentManeuver
+    : pilotData.currentManeuver?.key || 'none';
+
+  const maneuvers = [
+    { key: 'none', label: 'Standard Flying', summary: 'No special vehicle modifiers.' },
+    { key: 'evasive', label: 'Evasive Action', summary: '+2 Reflex Defense; -2 vehicle attacks.' },
+    { key: 'attackRun', label: 'Attack Run', summary: '+2 vehicle attacks; -2 Reflex Defense.' },
+    { key: 'allOut', label: 'All-Out Movement', summary: 'Double speed, no attacks, -2 Reflex Defense.' },
+    { key: 'trick', label: 'Trick Maneuver', summary: 'Opposed Pilot check for tactical advantage.' }
+  ].map((maneuver) => ({
+    ...maneuver,
+    active: maneuver.key === currentKey
+  }));
+
   return {
     title: 'Pilot Maneuvers',
-    currentManeuver: pilotData.currentManeuver || null,
-    maneuvers: [
-      { key: 'dodge', label: 'Dodge', summary: 'Defensive posture' },
-      { key: 'aggressive', label: 'Aggressive', summary: 'Attack-focused' },
-      { key: 'evasive', label: 'Evasive', summary: 'High mobility' }
-    ]
+    currentManeuver: maneuvers.find((m) => m.active) || maneuvers[0],
+    maneuvers
   };
 }
 
@@ -522,14 +534,25 @@ function buildPilotManeuverPanel(pilotData) {
 function buildCommanderOrderPanel(commanderData) {
   if (!commanderData) return null;
 
+  const currentKey = typeof commanderData.currentOrder === 'string'
+    ? commanderData.currentOrder
+    : commanderData.currentOrder?.key || 'none';
+
+  const orders = [
+    { key: 'none', label: 'No Orders', summary: 'Commander is not issuing a special order.' },
+    { key: 'coordinateFire', label: 'Coordinate Fire', summary: 'All gunners gain an attack bonus this round.' },
+    { key: 'inspire', label: 'Inspire Crew', summary: 'Crew gains a morale bonus to skill checks.' },
+    { key: 'tacticalAdvantage', label: 'Tactical Advantage', summary: 'Grant one crew member additional tactical tempo.' },
+    { key: 'battleAnalysis', label: 'Battle Analysis', summary: 'Analyze a target for tactical information.' }
+  ].map((order) => ({
+    ...order,
+    active: order.key === currentKey
+  }));
+
   return {
     title: 'Commander Orders',
-    currentOrder: commanderData.currentOrder || null,
-    orders: [
-      { key: 'rally', label: 'Rally', summary: 'Boost crew effectiveness' },
-      { key: 'hold-fire', label: 'Hold Fire', summary: 'Restrained action' },
-      { key: 'full-attack', label: 'Full Attack', summary: 'Maximum offensive' }
-    ]
+    currentOrder: orders.find((o) => o.active) || orders[0],
+    orders
   };
 }
 
@@ -546,9 +569,11 @@ function buildTurnPhasePanel(turnPhaseData) {
   const currentPhaseKey = String(turnState.currentPhase || 'initiative').toLowerCase();
 
   const phases = [
-    { key: 'initiative', label: 'Initiative' },
-    { key: 'maneuver', label: 'Maneuver' },
-    { key: 'attack', label: 'Attack' },
+    { key: 'commander', label: 'Commander' },
+    { key: 'pilot', label: 'Pilot' },
+    { key: 'engineer', label: 'Engineer' },
+    { key: 'shields', label: 'Shields' },
+    { key: 'gunners', label: 'Gunners' },
     { key: 'end', label: 'End' }
   ].map((phase, index, all) => {
     const active = phase.key === currentPhaseKey;
@@ -562,11 +587,13 @@ function buildTurnPhasePanel(turnPhaseData) {
     };
   });
 
+  const activePhase = phases.find((phase) => phase.active);
+
   return {
     title: 'Turn Status',
-    currentPhase: turnState.currentPhase || 'Initiative',
+    currentPhase: activePhase?.label || turnState.currentPhase || 'Commander',
     phases,
-    roundLabel: turnState.roundLabel || 'Round 1'
+    roundLabel: turnState.roundLabel || 'Vehicle Turn'
   };
 }
 

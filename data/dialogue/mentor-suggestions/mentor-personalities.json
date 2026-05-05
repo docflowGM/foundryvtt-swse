@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "source": "scripts/mentor/mentor-personalities.js",
-  "description": "Static mentor personality/behavior configuration for the SWSE mentor suggestion system.",
+  "description": "JSON mirror of phase-indexed mentor suggestion personality metadata. JS module remains fallback compatibility.",
   "personalities": {
     "Jedi": {
       "key": "Miraj",
