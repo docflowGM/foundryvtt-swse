@@ -16,6 +16,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 // Will be dynamically loaded when needed to avoid circular dependency
 let PrerequisiteChecker = null;
@@ -127,7 +128,7 @@ export function projectBAB(actor, classToAdvance, projectedLevel) {
   if (levelsToAdvance <= 0) return actor.system?.bab || 0;
 
   // For each existing class on actor, compute BAB correctly
-  for (const classItem of actor.items.filter(i => i.type === 'class')) {
+  for (const classItem of ActorAbilityBridge.getClasses(actor)) {
     const classId = classItem.system?.classId || classItem.name;
     const classDef = ClassesDB.get(classId);
     if (!classDef) continue;

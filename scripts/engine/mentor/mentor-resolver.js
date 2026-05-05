@@ -13,6 +13,7 @@
 import { MENTORS, getLevel1Class, getMentorForClass, getActiveMentor } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
 import { MentorInheritance } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-inheritance.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 /**
  * Phase-specific mentor defaults
@@ -80,7 +81,7 @@ export const MentorResolver = {
    * @private
    */
   _resolveChargenMentor(actor, context) {
-    const classes = actor.items.filter(i => i.type === 'class');
+    const classes = ActorAbilityBridge.getClasses(actor);
 
     if (classes.length > 0) {
       const mentor = getMentorForClass(classes[0].name);

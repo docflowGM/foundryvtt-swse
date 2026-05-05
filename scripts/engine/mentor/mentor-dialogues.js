@@ -1,6 +1,7 @@
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.data.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 /**
  * SWSE Mentor Dialogue System
@@ -192,7 +193,7 @@ export function getLevel1Class(actor) {
     SWSELogger.log(`[MENTOR-DIALOGUES] getLevel1Class: Determining starting class for actor "${actor.name}" (Level ${actor.system.level})`);
 
     // Look through the actor's class items
-    const classItems = actor.items.filter(i => i.type === 'class');
+    const classItems = ActorAbilityBridge.getClasses(actor);
     SWSELogger.log(`[MENTOR-DIALOGUES] getLevel1Class: Found ${classItems.length} class items:`, classItems.map(c => c.name));
 
     // If actor is level 1, any class they have is their starting class
