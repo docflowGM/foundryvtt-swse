@@ -3,6 +3,7 @@ import { escapeHTML } from "/systems/foundryvtt-swse/scripts/utils/security-util
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ForceTrainingEngine } from "/systems/foundryvtt-swse/scripts/engine/force/ForceTrainingEngine.js";
 import { ForceEnhancementDetector } from "/systems/foundryvtt-swse/scripts/utils/force-enhancement-detector.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 /**
  * Force Suite Component (RAW SWSE Accurate)
@@ -34,7 +35,7 @@ export class ForceSuiteComponent {
    * -------------------------- */
 
   static _getPowers(actor) {
-    const all = actor.items.filter(i => i.type === 'forcepower');
+    const all = ActorAbilityBridge.getForcePowers(actor);
 
     return {
       ready: all.filter(p => !p.system.spent),
@@ -284,7 +285,7 @@ export class ForceSuiteComponent {
   }
 
   static async _restoreAll(actor) {
-    const all = actor.items.filter(i => i.type === 'forcepower' && i.system.spent);
+    const all = ActorAbilityBridge.getForcePowers(actor).filter(p => p.system.spent);
     if (all.length === 0) {return;}
 
     // Batch update all spent powers to ready
@@ -303,7 +304,8 @@ export class ForceSuiteComponent {
     await ActorEngine.spendForcePoints(actor, 1);
 
     // Find one spent power
-    const spent = actor.items.find(i => i.type === 'forcepower' && i.system.spent);
+    const spentPowers = ActorAbilityBridge.getForcePowers(actor).filter(p => p.system.spent);
+    const spent = spentPowers.length > 0 ? spentPowers[0] : null;
     if (!spent) {return ui.notifications.info('No spent powers to regain.');}
 
     // Regain it
