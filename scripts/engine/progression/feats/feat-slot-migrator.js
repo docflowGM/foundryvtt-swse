@@ -8,6 +8,7 @@
 import { FeatSlotSchema } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-schema.js";
 import { ClassFeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/class-feat-registry.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 export class FeatSlotMigrator {
   /**
@@ -29,8 +30,9 @@ export class FeatSlotMigrator {
     const primaryClass = actor.system?.classes?.[0];
     const classId = primaryClass?._id;
 
+    // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
     // Get feats from actor items
-    const existingFeats = actor.items.filter(item => item.type === 'feat') || [];
+    const existingFeats = ActorAbilityBridge.getFeats(actor) || [];
 
     // Get bonus feats for this class (if applicable)
     let classBonusFeats = [];

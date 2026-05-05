@@ -8,6 +8,8 @@
 // The UI should NOT perform any logic itself.
 // ======================================================================
 
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+
 export class RuleEngine {
   constructor(actor, pending = {}) {
     this.actor = actor;
@@ -103,9 +105,8 @@ export class RuleEngine {
   }
 
   _checkFeat(req) {
-    const feats = this.actor.items.filter(i => i.type === 'feat');
-    const names = feats.map(f => f.name.toLowerCase());
-    return names.includes(req.name.toLowerCase());
+    // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+    return ActorAbilityBridge.hasFeat(this.actor, req.name);
   }
 
   _checkTalent(req) {
@@ -135,10 +136,11 @@ export class RuleEngine {
   }
 
   _checkClassLevel(req) {
-    const levels = this.actor.items.filter(i => i.type === 'class');
-    for (const cls of levels) {
+    // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+    const classes = ActorAbilityBridge.getClasses(this.actor);
+    for (const cls of classes) {
       if (cls.name.toLowerCase() === req.className.toLowerCase()) {
-        return (cls.system?.level ?? 0) >= req.minimum;
+        return (cls.level ?? 0) >= req.minimum;
       }
     }
     return false;
