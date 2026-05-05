@@ -6,6 +6,8 @@
  * No dependencies on apps/ or chargen/ layer.
  */
 
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+
 /**
  * List of base classes in SWSE
  */
@@ -77,7 +79,7 @@ function getNestedProperty(obj, path, defaultValue = null) {
  * @returns {number} Total BAB
  */
 export function calculateTotalBAB(actor) {
-  const classItems = actor.items.filter(i => i.type === 'class');
+  const classItems = ActorAbilityBridge.getClasses(actor);
   let totalBAB = 0;
 
   for (const classItem of classItems) {

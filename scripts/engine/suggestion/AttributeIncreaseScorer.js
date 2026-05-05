@@ -14,6 +14,7 @@ import { AttributeIncreaseHandler } from "/systems/foundryvtt-swse/scripts/engin
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { buildAttributePlanningProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/attribute-planner.js";
 import { getForceAbilityConfig } from "/systems/foundryvtt-swse/scripts/engine/suggestion/force-rule-adapter.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 /**
  * Score attribute increase allocations
@@ -268,7 +269,7 @@ async function _findUnlockedFeats(actor, hypotheticalActor) {
 
     for (const feat of allFeats) {
       // Check if feat is already owned
-      const alreadyOwned = actor.items.some(i => i._id === feat._id || i.name === feat.name);
+      const alreadyOwned = ActorAbilityBridge.hasFeat(actor, feat.name);
       if (alreadyOwned) continue;
 
       // PHASE 2: Check current prerequisite through AbilityEngine authority layer

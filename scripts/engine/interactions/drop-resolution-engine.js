@@ -27,6 +27,8 @@
  *   }
  */
 
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+
 export class DropResolutionEngine {
   /**
    * Main entry point: resolve drop to mutationPlan + UI feedback
@@ -214,7 +216,7 @@ function handleFeat(actor, item) {
   const repeatable = item.system?.repeatable === true;
 
   if (!repeatable) {
-    const exists = actor.items.some(i => i.type === 'feat' && i.name === item.name);
+    const exists = ActorAbilityBridge.hasFeat(actor, item.name);
     if (exists) {
       console.debug(`Drop skipped: feat "${item.name}" already exists (non-repeatable)`);
       return null;

@@ -266,15 +266,15 @@ export class ForceProgressionEngine {
      * Calculate force power known count
      */
     static getForcePowerKnownCount(actor) {
-        return actor.items.filter(i => i.type === 'forcepower').length;
+        return ActorAbilityBridge.getForcePowers(actor).length;
     }
 
     /**
      * Get force technique count
      */
     static getForceTechniqueCount(actor) {
-        return actor.items.filter(i =>
-            i.type === 'feat' && i.system?.tags?.includes('force_technique')
+        return ActorAbilityBridge.getFeats(actor).filter(f =>
+            f.system?.tags?.includes('force_technique')
         ).length;
     }
 
