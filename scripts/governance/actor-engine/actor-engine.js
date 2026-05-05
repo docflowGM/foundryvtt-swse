@@ -14,6 +14,7 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
 import { traceLog, actorSummary, payloadSummary, MutationDepth } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 import { captureHydrationSnapshot, collectHydrationSensitivePaths, emitHydrationError, emitHydrationWarning } from "/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { instrumentActorItems } from "/systems/foundryvtt-swse/scripts/dev/ssot-detection.js";
 
 /**
  * ActorEngine
@@ -465,6 +466,11 @@ export const ActorEngine = {
       });
 
       // ========================================
+      // DEV MODE: Instrument actor.items for SSOT violation detection
+      // ========================================
+      instrumentActorItems(actor);
+
+      // ========================================
       // PHASE 2B: Detect cascading update loops
       // ========================================
       const source = options.meta?.guardKey || 'unguarded';
@@ -650,6 +656,9 @@ export const ActorEngine = {
       if (!embeddedName) {throw new Error('updateEmbeddedDocuments() called without embeddedName');}
       if (!Array.isArray(updates)) {throw new Error('updateEmbeddedDocuments() requires updates array');}
 
+      // DEV MODE: Instrument actor.items for SSOT violation detection
+      instrumentActorItems(actor);
+
       SWSELogger.debug(`ActorEngine.updateEmbeddedDocuments → ${actor.name}`, {
         embeddedName,
         updates,
@@ -696,6 +705,9 @@ export const ActorEngine = {
       if (!actor) {throw new Error('createEmbeddedDocuments() called with no actor');}
       if (!embeddedName) {throw new Error('createEmbeddedDocuments() called without embeddedName');}
       if (!Array.isArray(data)) {throw new Error('createEmbeddedDocuments() requires data array');}
+
+      // DEV MODE: Instrument actor.items for SSOT violation detection
+      instrumentActorItems(actor);
 
       SWSELogger.debug(`ActorEngine.createEmbeddedDocuments → ${actor.name}`, {
         embeddedName,
