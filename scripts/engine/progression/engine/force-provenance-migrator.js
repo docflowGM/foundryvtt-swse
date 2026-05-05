@@ -14,6 +14,7 @@
 import { ForceProvenanceEngine } from './force-provenance-engine.js';
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 export class ForceProvenanceMigrator {
   /**
@@ -59,7 +60,8 @@ export class ForceProvenanceMigrator {
    * @private
    */
   static async _performMigration(actor, powersWithoutProvenance) {
-    const feats = actor.items.filter(i => i.type === 'feat') || [];
+    // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+    const feats = ActorAbilityBridge.getFeats(actor) || [];
     const fsSensitivity = feats.some(f => f.name?.toLowerCase().includes('force sensitivity'));
     const ftFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
 
@@ -259,7 +261,8 @@ export class ForceProvenanceMigrator {
       };
     }
 
-    const feats = actor.items.filter(i => i.type === 'feat') || [];
+    // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+    const feats = ActorAbilityBridge.getFeats(actor) || [];
     const fsSensitivity = feats.some(f => f.name?.toLowerCase().includes('force sensitivity'));
     const ftFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
 

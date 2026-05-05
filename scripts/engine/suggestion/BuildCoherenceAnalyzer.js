@@ -419,7 +419,9 @@ export class BuildCoherenceAnalyzer {
    */
   static checkMAD(actor) {
     try {
-      const feats = actor.items.filter(i => i.type === 'feat').map(f => f.name.toLowerCase());
+      // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+      const { ActorAbilityBridge } = await import("/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js");
+      const feats = ActorAbilityBridge.getFeats(actor).map(f => f.name.toLowerCase());
       const talents = actor.items.filter(i => i.type === 'talent').map(t => t.name.toLowerCase());
 
       // Count attributes referenced in feats/talents (simple heuristic)
@@ -497,9 +499,10 @@ export class BuildCoherenceAnalyzer {
    * @param {Actor} actor
    * @returns {Object} { primaryFocus: string|null, spreadScore: 0-1 }
    */
-  static analyzeWeaponFocus(actor) {
+  static async analyzeWeaponFocus(actor) {
     try {
-      const feats = actor.items.filter(i => i.type === 'feat').map(f => f.name.toLowerCase());
+      const { ActorAbilityBridge } = await import("/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js");
+      const feats = ActorAbilityBridge.getFeats(actor).map(f => f.name.toLowerCase());
 
       const rangedCount = feats.filter(f => ['shot', 'pistol', 'rifle', 'ranged'].some(k => f.includes(k))).length;
       const meleeCount = feats.filter(f => ['melee', 'martial', 'strike', 'flurry'].some(k => f.includes(k))).length;

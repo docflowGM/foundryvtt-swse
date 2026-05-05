@@ -30,6 +30,7 @@ import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/la
 
 // SSOT Data Layer
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 // Phase 1: Talent Slot System
 import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
@@ -340,19 +341,25 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     }
 
     // Load classes
-    const classItems = actor.items.filter(item => item.type === 'class');
+    // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+    const classItems = ActorAbilityBridge.getClasses(actor);
     this.characterData.classes = classItems.map(cls => ({
       name: cls.name,
-      level: cls.system.level || 1
+      level: cls.level || 1
     }));
 
+    // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
     // Load existing items as full objects (not just names) to preserve ._id and other properties
-    this.characterData.feats = actor.items.filter(item => item.type === 'feat').map(f => ({
-      name: f.name,
-      _id: f.id,
-      type: f.type,
-      system: f.system
-    }));
+    const actorFeats = actor.items.filter(item => item.type === 'feat');
+    this.characterData.feats = ActorAbilityBridge.getFeats(actor).map(f => {
+      const actorItem = actorFeats.find(a => a.name === f.name);
+      return {
+        name: f.name,
+        _id: actorItem?.id || f.id,
+        type: f.type || 'feat',
+        system: actorItem?.system || f.system
+      };
+    });
     this.characterData.talents = actor.items.filter(item => item.type === 'talent').map(t => ({
       name: t.name,
       _id: t.id,

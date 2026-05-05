@@ -7,6 +7,7 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 export const ApplyHandlers = {
 
@@ -15,6 +16,8 @@ export const ApplyHandlers = {
     // ────────────────────────────────────────────
     async applyClass(actor, classDoc, level) {
         // Create or update class item
+        // SSOT ENFORCEMENT: Verify class exists via bridge, get actor item for mutation
+        const classFromRegistry = ActorAbilityBridge.getClasses(actor).find(c => c.name === classDoc.name);
         const item = actor.items.find(i => i.type === 'class' && i.name === classDoc.name);
 
         if (item) {
@@ -47,7 +50,8 @@ export const ApplyHandlers = {
     // APPLY FEAT
     // ────────────────────────────────────────────
     async applyFeat(actor, featObj) {
-        const exists = actor.items.some(i => i.type === 'feat' && i.name === featObj.name);
+        // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+        const exists = ActorAbilityBridge.hasFeat(actor, featObj.name);
         if (!exists || featObj.repeatable) {
             // PHASE 3: Route through ActorEngine
             await ActorEngine.createEmbeddedDocuments(actor, 'Item', [featObj]);
@@ -58,6 +62,7 @@ export const ApplyHandlers = {
     // APPLY TALENT
     // ────────────────────────────────────────────
     async applyTalent(actor, talent) {
+        // Talent checking - ActorAbilityBridge doesn't have talent support yet, skip for now
         const exists = actor.items.some(i => i.type === 'talent' && i.name === talent.name);
         if (exists) {return;}
 
@@ -74,7 +79,7 @@ export const ApplyHandlers = {
     // APPLY FORCE POWER
     // ────────────────────────────────────────────
     async applyForcePower(actor, power) {
-        const exists = actor.items.some(i => i.type === 'forcepower' && i.name === power.name);
+        const exists = ActorAbilityBridge.hasForcePower(actor, power.name);
         if (exists) {return;}
 
         // PHASE 3: Route through ActorEngine

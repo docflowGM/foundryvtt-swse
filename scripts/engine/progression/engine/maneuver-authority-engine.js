@@ -17,6 +17,7 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 export class ManeuverAuthorityEngine {
   /**
@@ -34,11 +35,9 @@ export class ManeuverAuthorityEngine {
     }
 
     try {
+      // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
       // Check for Starship Tactics feat
-      const hasFeat = actor.items.some(
-        i => i.type === 'feat' &&
-             (i.name === 'Starship Tactics' || i.name.toLowerCase().includes('starship tactics'))
-      );
+      const hasFeat = ActorAbilityBridge.hasFeat(actor, 'Starship Tactics');
 
       if (!hasFeat) {
         return 0;
@@ -82,11 +81,9 @@ export class ManeuverAuthorityEngine {
     }
 
     try {
+      // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
       // Check 1: Has Starship Tactics feat
-      const hasFeat = actor.items.some(
-        i => i.type === 'feat' &&
-             (i.name === 'Starship Tactics' || i.name.toLowerCase().includes('starship tactics'))
-      );
+      const hasFeat = ActorAbilityBridge.hasFeat(actor, 'Starship Tactics');
 
       if (!hasFeat) {
         return {

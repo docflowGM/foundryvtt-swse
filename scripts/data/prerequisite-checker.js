@@ -5,6 +5,7 @@
 
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 //
 // THE CANONICAL PREREQUISITE ENGINE
 // This is the ONLY place in the system that answers "is this legal?"
@@ -293,14 +294,17 @@ export class PrerequisiteChecker {
     static _findClassItem(actor, classIdOrName) {
         if (!actor?.items) return null;
 
+        // SSOT ENFORCEMENT: Get classes from registry
+        const classes = ActorAbilityBridge.getClasses(actor);
+
         // Try classId lookup first (v2 standard)
         if (classIdOrName && classIdOrName.length === 16) {
-            const byId = actor.items.find(i => i.type === 'class' && i.system?.classId === classIdOrName);
+            const byId = classes.find(i => i.system?.classId === classIdOrName);
             if (byId) return byId;
         }
 
         // Fallback to name lookup (v1 compat + prestige prereq data format)
-        return actor.items.find(i => i.type === 'class' && i.name === classIdOrName);
+        return classes.find(i => i.name === classIdOrName) || null;
     }
 
     /**
@@ -1833,7 +1837,8 @@ export class PrerequisiteChecker {
     static checkFeatOwnership(actor, slugOrUuid) {
         if (!actor?.items) return false;
 
-        const feats = actor.items.filter(i => i.type === 'feat') || [];
+        // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+        const feats = ActorAbilityBridge.getFeats(actor) || [];
 
         return feats.some(f =>
             f.id === slugOrUuid ||

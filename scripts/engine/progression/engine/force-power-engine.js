@@ -35,6 +35,7 @@ import { ForceSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/prog
 import { ForceProvenanceEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-provenance-engine.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 export class ForcePowerEngine {
   /**
@@ -45,8 +46,19 @@ export class ForcePowerEngine {
    * @returns {Promise<number>} Number of powers granted
    */
   static async _countFromFeat(featName, actor) {
-    // Try to find feat document on actor or in compendium
-    let featDoc = actor?.items.find(i => i.type === 'feat' && i.name === featName);
+    // SSOT ENFORCEMENT: Use ActorAbilityBridge to verify feat ownership through registry
+    let featDoc = null;
+
+    // Check if actor has the feat (will verify through registry)
+    const hasFeat = ActorAbilityBridge.hasFeat(actor, featName);
+
+    if (hasFeat) {
+      try {
+        featDoc = await FeatRegistry.getDocumentByName?.(featName);
+      } catch (e) {
+        swseLogger.warn(`ForcePowerEngine: Failed to load feat "${featName}" from registry`, e);
+      }
+    }
 
     if (!featDoc) {
       try {
@@ -219,7 +231,7 @@ static async applySelected(actor, selectedItems = []) {
 
     // Determine provenance context for this application
     // Get all force grant sources on actor
-    const feats = actor.items.filter(i => i.type === 'feat') || [];
+    const feats = ActorAbilityBridge.getFeats(actor);
     const hasForceSensitivity = feats.some(f => f.name?.toLowerCase().includes('force sensitivity'));
     const ftFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
 

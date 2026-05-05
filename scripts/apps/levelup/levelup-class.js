@@ -5,6 +5,7 @@ import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progr
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 import { warnGM } from "/systems/foundryvtt-swse/scripts/utils/warn-gm.js";
@@ -504,6 +505,9 @@ export async function applyClassFeatures(classDoc, classLevel, actor) {
  */
 export async function createOrUpdateClassItem(classDoc, actor) {
   // Check if character already has this class
+  // SSOT ENFORCEMENT: Use bridge to verify class ownership, preserve actor item for update
+  const classesFromRegistry = ActorAbilityBridge.getClasses(actor);
+  const registryClass = classesFromRegistry.find(c => c.name === classDoc.name);
   const existingClass = actor.items.find(i => i.type === 'class' && i.name === classDoc.name);
 
   // Calculate what level in this class the character will be

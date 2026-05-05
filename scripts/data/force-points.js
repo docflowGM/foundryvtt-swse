@@ -40,6 +40,7 @@
 
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 /**
  * Calculate maximum Force Points for an actor.
@@ -85,10 +86,11 @@ function getTotalCharacterLevel(actor) {
     }
 
     // Sum up levels from all class items
-    const classItems = actor.items.filter(i => i.type === 'class');
+    // SSOT ENFORCEMENT: Get classes from registry
+    const classItems = ActorAbilityBridge.getClasses(actor);
     if (classItems.length > 0) {
         return classItems.reduce((sum, classItem) => {
-            const level = classItem.system?.level || 0;
+            const level = classItem.level || 0;
             return sum + level;
         }, 0);
     }
@@ -182,7 +184,8 @@ function hasPrestigeForcePointBonus(actor) {
     }
 
     // Check current classes
-    const classItems = actor.items.filter(i => i.type === 'class');
+    // SSOT ENFORCEMENT: Get classes from registry
+    const classItems = ActorAbilityBridge.getClasses(actor);
 
     for (const classItem of classItems) {
         // Get class definition from ClassesDB
@@ -301,10 +304,11 @@ export function debugForcePointCalculation(actor) {
     console.log(`Max FP: ${actor.system?.forcePoints?.max || 0}`);
     console.log('Classes:');
 
-    const classItems = actor.items.filter(i => i.type === 'class');
+    // SSOT ENFORCEMENT: Get classes from registry
+    const classItems = ActorAbilityBridge.getClasses(actor);
     for (const classItem of classItems) {
         const classDef = ClassesDB.fromItem?.(classItem);
-        console.log(`  - ${classItem.name} (Level ${classItem.system?.level || 0})`);
+        console.log(`  - ${classItem.name} (Level ${classItem.level || 0})`);
         if (classDef) {
             console.log(`    Base Class: ${classDef.baseClass}`);
             console.log(`    Grants FP Bonus: ${classDef.grantsForcePoints}`);

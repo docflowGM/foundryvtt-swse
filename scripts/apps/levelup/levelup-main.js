@@ -14,6 +14,7 @@
 
 import { SWSEProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression.js";
 import { SWSELogger, swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
 import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
@@ -172,7 +173,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     }
 
     // Check if character has a class
-    const hasClass = actor.items.some(item => item.type === 'class');
+    const hasClass = ActorAbilityBridge.getClasses(actor).length > 0;
     if (!hasClass) {
       // Check if they have a species first
       const hasSpecies = system.species && system.species.trim() !== '';
@@ -826,7 +827,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
       // Filter out already-selected powers
       const unselectedPowers = availablePowers.filter(p => p.isQualified &&
-        !this.actor.items.some(i => i.type === 'forcepower' && i.name === p.name)
+        !ActorAbilityBridge.hasForcePower(this.actor, p.name)
       );
 
       if (unselectedPowers.length === 0) {
@@ -969,6 +970,9 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     // Check if this level grants a bonus feat from the selected class
     if (this.selectedClass) {
+      // SSOT ENFORCEMENT: Get class from registry, preserve actor item for system data
+      const classesFromRegistry = ActorAbilityBridge.getClasses(this.actor);
+      const registryClass = classesFromRegistry.find(c => c.name === this.selectedClass.name);
       const classDoc = this.actor.items.find(i => i.type === 'class' && i.name === this.selectedClass.name);
       if (classDoc) {
         const levelProgression = classDoc.system?.levelProgression || [];

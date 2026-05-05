@@ -1,5 +1,6 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 /**
  * Feat Actions Mapper
  * Maps feat-granted combat actions to character abilities
@@ -45,7 +46,10 @@ export class FeatActionsMapper {
   static getAvailableActions(actor) {
     if (!actor || !actor.items) return [];
 
-    const featsAndTalents = actor.items.filter(i => i.type === 'feat' || i.type === 'talent');
+    // SSOT ENFORCEMENT: Get feats from registry via bridge, talents from actor items
+    const feats = ActorAbilityBridge.getFeats(actor);
+    const talents = actor.items.filter(i => i.type === 'talent');
+    const featsAndTalents = [...feats, ...talents];
     const availableActions = [];
 
     // Add actions that don't require a feat/talent (like Total Defense, Defensive Fighting)

@@ -192,7 +192,8 @@ export class OpportunityCostAnalyzer {
       // Item doesn't contribute. How close is the actor to prestige?
       // (Simple heuristic: check missing prerequisites)
       const ownedFeats = new Set(
-        actor.items.filter(i => i.type === 'feat').map(f => f.name)
+        // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+        (await import("/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js")).ActorAbilityBridge.getFeats(actor).map(f => f.name)
       );
       const missingFeatCount = prestigeData.feats?.filter(f => !ownedFeats.has(f)).length || 0;
 

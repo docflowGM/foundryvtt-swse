@@ -9,6 +9,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 /**
  * ProgressionSession - Session-level transaction wrapper for character progression
@@ -687,7 +688,7 @@ export class ProgressionSession {
       if (!FeatRegistry.isBuilt) {await FeatRegistry.build();}
 
       for (const featName of this.stagedChanges.feats) {
-        const existing = this.actor.items.find(i => i.type === 'feat' && i.name === featName);
+        const existing = ActorAbilityBridge.hasFeat(this.actor, featName);
         if (!existing) {
           const featDoc = FeatRegistry.get(featName);
           if (featDoc) {

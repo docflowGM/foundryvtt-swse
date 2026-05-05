@@ -27,6 +27,7 @@ import { ManeuverAuthorityEngine } from "/systems/foundryvtt-swse/scripts/engine
 import { ManeuverSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/maneuvers/maneuver-slot-validator.js";
 import { StarshipManeuverEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/starship-maneuver-engine.js";
 import { canReselectSuite } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/suite-reselection-utils.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 export class SuiteReselectionEngine {
 
@@ -61,7 +62,8 @@ export class SuiteReselectionEngine {
 
     // STEP 2: Check for immutable powers that cannot be cleared
     try {
-      const existingPowers = actor.items.filter(i => i.type === 'forcepower');
+      // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
+      const existingPowers = ActorAbilityBridge.getForcePowers(actor);
       const lockedPowers = existingPowers.filter(p => isForcePowerImmutable(p));
 
       if (lockedPowers.length > 0) {

@@ -8,6 +8,7 @@ import DarkSidePowers from "/systems/foundryvtt-swse/scripts/talents/DarkSidePow
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 /**
  * Initialize Dark Side Powers systems when the world loads
@@ -31,14 +32,19 @@ Hooks.once('ready', () => {
       return;
     }
 
-    const forcePowers = actor.items.filter(item => item.type === 'forcepower');
-    if (forcePowers.length === 0) {
+    // SSOT ENFORCEMENT: Get powers from registry, use actor items for UI rendering
+    const powersFromRegistry = ActorAbilityBridge.getForcePowers(actor);
+    if (powersFromRegistry.length === 0) {
       ui.notifications.warn('No Force Powers available');
       return;
     }
 
-    const powerOptions = forcePowers
-      .map(p => `<option value="${p.id}">${p.name}${p.system?.spent ? ' (Spent)' : ' (Ready)'}</option>`)
+    const actorPowerItems = actor.items.filter(item => item.type === 'forcepower');
+    const powerOptions = powersFromRegistry
+      .map(p => {
+        const actorItem = actorPowerItems.find(a => a.name === p.name);
+        return `<option value="${actorItem?.id || p.id}">${p.name}${p.system?.spent ? ' (Spent)' : ' (Ready)'}</option>`;
+      })
       .join('');
 
     const dialog = new SWSEDialogV2({

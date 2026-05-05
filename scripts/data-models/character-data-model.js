@@ -4,6 +4,7 @@ import { SWSEActorDataModel } from './actor-data-model.js';
 import { SpeciesTraitEngine } from '../engine/systems/species/species-trait-engine.js';
 import { warnIfMixedTracks } from '../utils/hardening.js';
 import { getNpcMode } from '../actors/npc/npc-mode-adapter.js';
+import { ActorAbilityBridge } from '../adapters/ActorAbilityBridge.js';
 
 export class SWSECharacterDataModel extends SWSEActorDataModel {
 
@@ -728,7 +729,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     if (!actor || !actor.items) {return;}
 
     // Get all class items
-    const classItems = actor.items.filter(i => i.type === 'class');
+    // SSOT ENFORCEMENT: Route through ActorAbilityBridge
+    const classItems = ActorAbilityBridge.getClasses(actor);
 
     if (classItems.length === 0) {
       // No classes, use defaults
@@ -756,7 +758,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     let maxWillBonus = 0;
 
     for (const classItem of classItems) {
-      const classLevel = classItem.system.level || 1;
+      const classLevel = classItem.level || 1;
       const classData = classItem.system;
       const isNonheroic = classData.isNonheroic || false;
 

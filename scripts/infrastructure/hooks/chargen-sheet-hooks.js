@@ -8,6 +8,7 @@
 import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 function onClickChargen(app) {
   // TEMP AUDIT: Log handler entry
@@ -55,7 +56,7 @@ function isChargenIncomplete(actor) {
   }
 
   // No class item yet — chargen was not completed
-  const hasClass = actor.items.some(item => item.type === 'class');
+  const hasClass = ActorAbilityBridge.getClasses(actor).length > 0;
   if (!hasClass) {
     return true;
   }

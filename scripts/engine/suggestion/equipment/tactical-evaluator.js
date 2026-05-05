@@ -5,6 +5,8 @@
  * Replaces placeholders in CombatSuggestionEngine.
  */
 
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+
 export class TacticalEvaluator {
   /**
    * Generate tactical suggestions for an actor
@@ -263,7 +265,7 @@ export class TacticalEvaluator {
     const tags = [];
 
     // Check class
-    const classItem = actor.items.find(i => i.type === 'class');
+    const classItem = ActorAbilityBridge.getClasses(actor)[0];
     if (classItem) {
       tags.push(classItem.name.toLowerCase().replace(/\s+/g, '-'));
     }

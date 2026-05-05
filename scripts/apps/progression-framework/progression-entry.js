@@ -18,6 +18,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { ProgressionDocumentTargetPolicy } from "./policies/progression-document-target-policy.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -57,7 +58,7 @@ function _isChargenIncomplete(actor) {
   }
 
   // No class item yet — chargen was not completed
-  const hasClass = actor.items.some(item => item.type === 'class');
+  const hasClass = ActorAbilityBridge.getClasses(actor).length > 0;
   if (!hasClass) {
     return true;
   }

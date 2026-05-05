@@ -5,6 +5,7 @@
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 /**
  * Evaluate prestige class readiness for all prestige classes
@@ -63,7 +64,7 @@ function checkClassPrerequisites(classData, actor, options = {}) {
   }
 
   // FIX: Use actual actor data structures, not progression.classLevels
-  const classItems = actor.items.filter(i => i.type === 'class');
+  const classItems = ActorAbilityBridge.getClasses(actor);
 
   // Check BAB prerequisite
   if (prereqs.bab !== undefined) {
@@ -86,8 +87,7 @@ function checkClassPrerequisites(classData, actor, options = {}) {
 
   // Check required feats prerequisite
   if (prereqs.feats && Array.isArray(prereqs.feats)) {
-    const allFeats = actor.items
-      .filter(i => i.type === 'feat')
+    const allFeats = ActorAbilityBridge.getFeats(actor)
       .map(f => f.name);
     const missingFeats = prereqs.feats.filter(f =>
       !allFeats.some(pf => pf.toLowerCase() === f.toLowerCase())
@@ -134,7 +134,7 @@ function checkClassPrerequisites(classData, actor, options = {}) {
  */
 function calculateActorBAB(actor) {
   // FIX: Use actual class items instead of non-existent classLevels array
-  const classItems = actor.items.filter(i => i.type === 'class');
+  const classItems = ActorAbilityBridge.getClasses(actor);
   let totalBAB = 0;
 
   for (const classItem of classItems) {

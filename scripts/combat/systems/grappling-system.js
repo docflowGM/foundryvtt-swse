@@ -14,6 +14,7 @@ import { createChatMessage } from '../../core/document-api-v13.js';
 import { DamageSystem } from '../damage-system.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { SchemaAdapters } from '../../utils/schema-adapters.js';
+import { ActorAbilityBridge } from '../../adapters/ActorAbilityBridge.js';
 
 export class SWSEGrappling {
 
@@ -215,7 +216,7 @@ export class SWSEGrappling {
   }
 
   static _hasFeat(actor, name) {
-    return actor.items.some(i => i.type === 'feat' && i.name.toLowerCase().includes(name.toLowerCase()));
+    return ActorAbilityBridge.getFeats(actor).some(f => f.name.toLowerCase().includes(name.toLowerCase()));
   }
 
   static _hasGrappledState(actor) {
