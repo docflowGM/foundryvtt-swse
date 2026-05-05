@@ -16,6 +16,8 @@ export const ApplyHandlers = {
     // ────────────────────────────────────────────
     async applyClass(actor, classDoc, level) {
         // Create or update class item
+        // SSOT ENFORCEMENT: Verify class exists via bridge, get actor item for mutation
+        const classFromRegistry = ActorAbilityBridge.getClasses(actor).find(c => c.name === classDoc.name);
         const item = actor.items.find(i => i.type === 'class' && i.name === classDoc.name);
 
         if (item) {

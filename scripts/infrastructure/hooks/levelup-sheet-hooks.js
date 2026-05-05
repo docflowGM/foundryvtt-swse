@@ -14,6 +14,7 @@ import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/h
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
 import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 // NOTE: SWSENpcLevelUpEntry is defined but not used - NPC level-up is disabled (see line 95)
 
 function isEpicBlocked(actor) {

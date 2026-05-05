@@ -11,6 +11,7 @@ import { getStepGuidance } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
+import { ActorAbilityBridge } from '/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js';
 
 export class SummaryStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -319,9 +320,10 @@ export class SummaryStep extends ProgressionStepPlugin {
     const selectedClass = selections.class || null;
     const selectedClassName = selectedClass?.name || selectedClass?.id || '';
 
-    const currentClasses = actor.items.filter(i => i.type === 'class').map(i => ({
+    // SSOT ENFORCEMENT: Get classes from registry
+    const currentClasses = ActorAbilityBridge.getClasses(actor).map(i => ({
       name: i.name,
-      level: Number(i.system?.level || 1),
+      level: Number(i.level || 1),
       system: i.system || {},
       type: 'class'
     }));
@@ -537,7 +539,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       if (mode !== 'levelup') return;
       const actor = shell.actor;
       const selectedClass = shell.progressionSession?.draftSelections?.class || null;
-      const classData = selectedClass || actor.items.find(i => i.type === 'class');
+      const classData = selectedClass || ActorAbilityBridge.getClasses(actor)[0] || null;
       if (!classData) return;
 
       const { calculateHPGain } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
@@ -569,7 +571,7 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   async useMaximumHPGain(actor) {
-    const selectedClass = game?.swse?.currentProgressionShell?.progressionSession?.draftSelections?.class || actor.items.find(i => i.type === 'class');
+    const selectedClass = game?.swse?.currentProgressionShell?.progressionSession?.draftSelections?.class || ActorAbilityBridge.getClasses(actor)[0] || null;
     const hitDie = this._extractHitDie(selectedClass);
     const conMod = Number(actor?.system?.abilities?.con?.mod ?? actor?.system?.attributes?.con?.mod ?? 0);
     const maxHPGain = Math.max(1, hitDie + conMod);

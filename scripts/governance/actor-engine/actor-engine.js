@@ -13,6 +13,7 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { traceLog, actorSummary, payloadSummary, MutationDepth } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 import { captureHydrationSnapshot, collectHydrationSensitivePaths, emitHydrationError, emitHydrationWarning } from "/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js";
+import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 /**
  * ActorEngine
@@ -3585,7 +3586,8 @@ export const ActorEngine = {
         throw new Error('ActorEngine.recomputeHP() requires actor');
       }
 
-      const classItem = actor.items.find(i => i.type === 'class');
+      // SSOT ENFORCEMENT: Get class from registry
+      const classItem = ActorAbilityBridge.getClasses(actor)[0] || null;
       if (!classItem) {
         // No class = minimum 1 HP; but check if it's already 1
         const currentMax = actor.system.hp?.max ?? 1;

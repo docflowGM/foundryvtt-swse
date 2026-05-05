@@ -294,14 +294,17 @@ export class PrerequisiteChecker {
     static _findClassItem(actor, classIdOrName) {
         if (!actor?.items) return null;
 
+        // SSOT ENFORCEMENT: Get classes from registry
+        const classes = ActorAbilityBridge.getClasses(actor);
+
         // Try classId lookup first (v2 standard)
         if (classIdOrName && classIdOrName.length === 16) {
-            const byId = actor.items.find(i => i.type === 'class' && i.system?.classId === classIdOrName);
+            const byId = classes.find(i => i.system?.classId === classIdOrName);
             if (byId) return byId;
         }
 
         // Fallback to name lookup (v1 compat + prestige prereq data format)
-        return actor.items.find(i => i.type === 'class' && i.name === classIdOrName);
+        return classes.find(i => i.name === classIdOrName) || null;
     }
 
     /**
