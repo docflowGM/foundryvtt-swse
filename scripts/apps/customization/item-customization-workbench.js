@@ -9,11 +9,13 @@ import { ARMOR_UPGRADES } from "/systems/foundryvtt-swse/scripts/data/armor-upgr
 import { GEAR_MODS, GEAR_VARIANTS, DEFAULT_GEAR_VARIANT, DEFAULT_GEAR_ACCENT } from "/systems/foundryvtt-swse/scripts/data/gear-mods.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { BLADE_COLOR_MAP, VARIES_COLOR_LIST, DEFAULT_BLADE_COLOR } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
-import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
+import { getActorSheetTheme, buildActorSheetThemeStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
+import { getActorSheetMotionStyle, buildActorSheetMotionStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
 import { ItemProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/customization/item-profile-resolver.js";
 import { CustomizationCostEngine } from "/systems/foundryvtt-swse/scripts/engine/customization/customization-cost-engine.js";
 import { UpgradeSlotEngine } from "/systems/foundryvtt-swse/scripts/engine/customization/upgrade-slot-engine.js";
 import { SafetyEngine } from "/systems/foundryvtt-swse/scripts/engine/customization/safety-engine.js";
+import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 
 const APP_ID = 'swse-item-customization-workbench';
 const CATEGORY_ORDER = [
@@ -296,10 +298,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const templateKeys = this._getCanonicalTemplateKeys(item);
     const structural = item.flags?.swse?.customizationStructural || canonicalState.structural || { sizeIncreaseApplied: false, strippedAreas: [] };
 
-    if (item.type === 'blaster') {
+    if (WeaponVisualProfileResolver.isBlaster(item)) {
+      const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor: this.actor });
       return {
-        boltColor: item.flags?.swse?.boltColor || DEFAULT_BOLT_COLOR,
-        fxType: item.flags?.swse?.fxType || DEFAULT_FX_TYPE,
+        boltColor: visualProfile.boltColor,
+        fxType: visualProfile.fxType,
         selectedUpgrades: this._getCanonicalInstalledUpgradeKeys(item),
         selectedTemplates: [...templateKeys],
         structural: {
@@ -535,9 +538,24 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const category = this._getCategoryForItem(item);
     const subtitle = item.system?.weaponSubtype || item.system?.armorType || item.system?.subtype || item.type;
     const appearance = [];
-    if (item.type === 'blaster') {
-      appearance.push({ key: 'Bolt Color', action: 'set-bolt-color', value: draft.boltColor, options: Object.entries(BLASTER_BOLT_COLORS).map(([key, hex]) => ({ key, label: key, hex, selected: draft.boltColor === key })) });
-      appearance.push({ key: 'FX Profile', action: 'set-fx-type', value: draft.fxType, variantOptions: Object.entries(BLASTER_FX_TYPES).map(([key, fx]) => ({ key, name: fx.name, description: fx.description, selected: draft.fxType === key })) });
+    const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor: this.actor, draft });
+    if (visualProfile.isBlaster) {
+      appearance.push({
+        key: 'Bolt Color',
+        kind: 'bolt-color',
+        action: 'set-bolt-color',
+        value: visualProfile.boltColor,
+        selectedLabel: visualProfile.boltColor,
+        selectedHex: visualProfile.boltHex,
+        visualProfile,
+        options: Object.entries(BLASTER_BOLT_COLORS).map(([key, hex]) => ({
+          key,
+          label: key,
+          hex,
+          selected: visualProfile.boltColor === key
+        }))
+      });
+      appearance.push({ key: 'FX Profile', action: 'set-fx-type', value: visualProfile.fxType, variantOptions: Object.entries(BLASTER_FX_TYPES).map(([key, fx]) => ({ key, name: fx.name, description: fx.description, selected: visualProfile.fxType === key })) });
     } else if (item.type === 'weapon') {
       appearance.push({ key: 'Accent', action: 'set-accent', value: draft.accentColor, options: ACCENT_SWATCHES.map(hex => ({ key: hex, hex, label: hex, selected: draft.accentColor === hex })) });
     } else if (['armor', 'bodysuit'].includes(item.type)) {
@@ -562,7 +580,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   async _prepareContext(options) {
     this._catalogs = await LightsaberConstructionEngine.getCatalogOptions();
     this._hydrateLightsaberDefaults();
-    const shellContext = ThemeResolutionService.buildSurfaceContext({ actor: this.actor });
+    const themeKey = getActorSheetTheme(this.actor?.getFlag?.('foundryvtt-swse', 'sheetTheme'));
+    const motionStyle = getActorSheetMotionStyle(this.actor?.getFlag?.('foundryvtt-swse', 'sheetMotionStyle'));
+    const themeStyleInline = buildActorSheetThemeStyle(themeKey);
+    const motionStyleInline = buildActorSheetMotionStyle(motionStyle);
+    const shellContext = { themeKey, motionStyle, themeStyleInline, motionStyleInline };
     const { categories, item } = this._ensureSelection();
     const visibleCategories = categories.map(category => ({ ...category, active: category.key === this.selectedCategory, count: category.items.length, special: category.special }));
     if (this.selectedCategory === 'lightsaber') {
@@ -951,13 +973,23 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const chassis = this._findLightsaberCatalogOption('chassis', this._lightsaber.selectedChassisId);
     const crystal = this._findLightsaberCatalogOption('crystals', this._lightsaber.selectedCrystalId);
     const slotState = this._getLightsaberAccessorySlotState();
-    const colorOptions = this._resolveBladeColorOptions(crystal).map(key => ({ key, label: key, hex: BLADE_COLOR_MAP[key] || '#00ffff', selected: key === this._lightsaber.selectedBladeColor }));
+    const lightsaberVisualProfile = WeaponVisualProfileResolver.resolve(editItem, {
+      actor: this.actor,
+      lightsaberState: this._lightsaber,
+      draft: { bladeColor: this._lightsaber.selectedBladeColor }
+    });
+    const colorOptions = this._resolveBladeColorOptions(crystal).map(key => ({
+      key,
+      label: key,
+      hex: BLADE_COLOR_MAP[key] || '#00ffff',
+      selected: key === lightsaberVisualProfile.bladeColor
+    }));
     const config = this._getLightsaberConfig();
     const preview = chassis && crystal ? await LightsaberConstructionEngine.getBuildPreview(this.actor, config) : null;
     const credits = Number(this.actor.system?.credits ?? 0) || 0;
     const totalCost = Number(preview?.totalCost ?? 0) || 0;
     const canBuild = !!(chassis && crystal && preview?.success && !slotState.isOverflowing && (this._lightsaber.selectedCheckMode !== 'take10' || preview?.canTake10));
-    const bladeHex = BLADE_COLOR_MAP[this._lightsaber.selectedBladeColor] || '#00ffff';
+    const bladeHex = lightsaberVisualProfile.bladeHex;
     const hiltKind = this._normalizeLightsaberHiltKind(chassis);
     return {
       actor: this.actor,
@@ -998,6 +1030,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       lightsaber: {
         mode: editItem ? 'edit' : 'construct',
         bladeHex,
+        visualProfile: lightsaberVisualProfile,
         hiltKind,
         chassis: this._catalogs.chassis.map(option => ({
           ...option,
@@ -1155,9 +1188,12 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       'flags.foundryvtt-swse.customization': canonicalCustomization
     };
 
-    if (item.type === 'blaster') {
-      itemUpdate['flags.swse.boltColor'] = draft.boltColor;
-      itemUpdate['flags.swse.fxType'] = draft.fxType;
+    if (WeaponVisualProfileResolver.isBlaster(item)) {
+      const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor: this.actor, draft });
+      itemUpdate['flags.foundryvtt-swse.boltColor'] = visualProfile.boltColor;
+      itemUpdate['flags.foundryvtt-swse.fxType'] = visualProfile.fxType;
+      itemUpdate['flags.swse.boltColor'] = visualProfile.boltColor;
+      itemUpdate['flags.swse.fxType'] = visualProfile.fxType;
       itemUpdate['flags.swse.blasterUpgrades'] = [...draft.selectedUpgrades];
     } else if (item.type === 'weapon') {
       itemUpdate['flags.swse.meleeUpgrades'] = [...draft.selectedUpgrades];

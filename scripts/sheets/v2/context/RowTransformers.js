@@ -1,3 +1,5 @@
+import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
+
 /**
  * RowTransformers
  *
@@ -23,12 +25,9 @@ export class RowTransformers {
     // PHASE 5: Natural weapons with autoEquipped flag are always equipped
     const isNaturalWeapon = item.flags?.swse?.autoEquipped === true;
     const equipped = Boolean(item.system?.equipped) || isNaturalWeapon;
-    const subtype = String(item.system?.subtype ?? item.system?.weaponCategory ?? "").toLowerCase();
-    const isLightsaber = item.type === "lightsaber"
-      || (item.type === "weapon" && (subtype === "lightsaber" || item.system?.isLightsaber === true))
-      || item.flags?.["foundryvtt-swse"]?.isLightsaber === true
-      || item.flags?.swse?.isLightsaber === true;
-    const activated = item.system?.activated === true || item.system?.active === true;
+    const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor: item.actor });
+    const isLightsaber = visualProfile.isLightsaber;
+    const activated = visualProfile.active;
 
     return {
       id: item.id,
@@ -49,6 +48,10 @@ export class RowTransformers {
       activationLabel: activated ? "Deactivate" : "Activate",
       activationTitle: activated ? "Deactivate lightsaber blade" : "Activate lightsaber blade",
       activationStateLabel: activated ? "Blade Active" : "Blade Inactive",
+      visualProfile,
+      visualKind: visualProfile.kind,
+      visualColorKey: visualProfile.primaryColor,
+      visualColorHex: visualProfile.primaryHex,
       isNaturalWeapon,
       tags: this._extractTags(item),
       cssClass: [

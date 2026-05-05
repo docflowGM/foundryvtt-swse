@@ -16,8 +16,7 @@
 import { TooltipGlossary } from '/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-glossary.js';
 
 const ATTR = 'data-swse-tooltip';
-const KEY_ATTR = 'data-swse-tooltip-key';
-const TEXT_ATTR = 'data-swse-tooltip-text';
+const ATTR_KEY = 'data-swse-tooltip-key';
 const TOOLTIP_CLASS = 'swse-discovery-tooltip';
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -49,26 +48,21 @@ const TOOLTIP_DEFS = buildTooltipDefsFromGlossary();
  * @param {string} id - tooltip key
  * @returns {{title: string, body: string} | null}
  */
-function localizeWithFallback(key, fallback = '') {
-  const value = game.i18n.localize(key);
-  return value && value !== key ? value : fallback;
-}
-
-function resolve(id, anchor = null) {
-  const inlineText = anchor?.getAttribute?.(TEXT_ATTR);
-  const inlineTitle = anchor?.getAttribute?.('aria-label') || anchor?.getAttribute?.('title') || '';
-  if (inlineText) {
-    return { title: inlineTitle || 'Help', body: inlineText };
-  }
-
+function resolve(id) {
   const entry = TooltipGlossary[id] || null;
   const prefix = TOOLTIP_DEFS[id] || entry?.i18nPrefix;
   if (!prefix && !entry) {return null;}
 
-  return {
-    title: prefix ? localizeWithFallback(`${prefix}.Title`, entry?.label || id) : (entry?.label || id),
-    body: prefix ? localizeWithFallback(`${prefix}.Body`, entry?.long || entry?.short || '') : (entry?.long || entry?.short || '')
-  };
+  const titleKey = prefix ? `${prefix}.Title` : null;
+  const bodyKey = prefix ? `${prefix}.Body` : null;
+  const title = titleKey && game?.i18n?.has?.(titleKey)
+    ? game.i18n.localize(titleKey)
+    : (entry?.label || id);
+  const body = bodyKey && game?.i18n?.has?.(bodyKey)
+    ? game.i18n.localize(bodyKey)
+    : (entry?.long || entry?.short || '');
+
+  return { title, body };
 }
 
 /** Remove any active tooltip from the DOM. */
@@ -90,13 +84,8 @@ function showTooltip(anchor, content) {
   const el = document.createElement('div');
   el.classList.add(TOOLTIP_CLASS);
   el.setAttribute('role', 'tooltip');
-  const key = anchor.getAttribute(KEY_ATTR) || anchor.getAttribute(ATTR) || '';
-  if (key) el.dataset.tooltipKey = key;
-  const abilityKey = getAbilityClassKey(key);
-  if (abilityKey) {
-    el.dataset.ability = abilityKey;
-    el.classList.add(`${TOOLTIP_CLASS}--ability`, `${TOOLTIP_CLASS}--${abilityKey}`);
-  }
+  el.dataset.theme = document.documentElement?.dataset?.theme || '';
+  el.dataset.motionStyle = document.documentElement?.dataset?.motionStyle || '';
 
   const titleEl = document.createElement('div');
   titleEl.classList.add(`${TOOLTIP_CLASS}__title`);
@@ -158,7 +147,10 @@ export const TooltipRegistry = {
    */
   bind(root) {
     if (!(root instanceof HTMLElement)) {return;}
-    const els = root.querySelectorAll(`[${ATTR}], [${KEY_ATTR}], [${TEXT_ATTR}]`);
+    const candidates = root.matches?.(`[${ATTR}], [${ATTR_KEY}]`)
+      ? [root, ...root.querySelectorAll(`[${ATTR}], [${ATTR_KEY}]`)]
+      : [...root.querySelectorAll(`[${ATTR}], [${ATTR_KEY}]`)];
+    const els = [...new Set(candidates)];
     for (const el of els) {
       if (el._swseTooltipBound) {continue;}
       el._swseTooltipBound = true;
@@ -185,6 +177,17 @@ export const TooltipRegistry = {
    */
   register(id, i18nPrefix) {
     TOOLTIP_DEFS[id] = i18nPrefix;
+  },
+
+  /**
+   * Register a direct glossary-style tooltip without adding i18n immediately.
+   * @param {string} id
+   * @param {{label:string, short?:string, long?:string, category?:string, tier?:string}} entry
+   */
+  registerEntry(id, entry) {
+    if (!id || !entry) {return;}
+    TooltipGlossary[id] = { key: id, tier: 'tier2', category: 'runtime', ...entry };
+    if (entry.i18nPrefix) { TOOLTIP_DEFS[id] = entry.i18nPrefix; }
   },
 
   /**
@@ -223,20 +226,6 @@ export const TooltipRegistry = {
   }
 };
 
-
-function getAbilityClassKey(key) {
-  const normalized = String(key || '').toLowerCase().replace(/\s+/g, '');
-  const map = {
-    str: 'str', strength: 'str',
-    dex: 'dex', dexterity: 'dex',
-    con: 'con', constitution: 'con',
-    int: 'int', intelligence: 'int',
-    wis: 'wis', wisdom: 'wis',
-    cha: 'cha', charisma: 'cha'
-  };
-  return map[normalized] || '';
-}
-
 function _onEnter(ev) {
   // Clear any existing hover timer
   if (_hoverTimer) {
@@ -245,7 +234,7 @@ function _onEnter(ev) {
   }
 
   const el = ev.currentTarget;
-  const id = el.getAttribute(KEY_ATTR) || el.getAttribute(ATTR);
+  const id = el.getAttribute(ATTR) || el.getAttribute(ATTR_KEY);
   if (!id) {return;}
 
   // Get the hover delay from CSS variable or default
@@ -259,7 +248,7 @@ function _onEnter(ev) {
   _hoverTimer = setTimeout(() => {
     // Check that we're still hovering over the same element
     if (_hoveredElement === el) {
-      const content = resolve(id, el);
+      const content = resolve(id);
       if (content) {
         showTooltip(el, content);
       }
@@ -275,4 +264,19 @@ function _onLeave(ev) {
   }
   _hoveredElement = null;
   hideTooltip();
+}
+
+
+let _tooltipGlobalListenersBound = false;
+export function bindTooltipGlobalDismissals() {
+  if (_tooltipGlobalListenersBound) {return;}
+  _tooltipGlobalListenersBound = true;
+  document.addEventListener('keydown', ev => {
+    if (ev.key === 'Escape') { hideTooltip(); }
+  });
+  document.addEventListener('pointerdown', ev => {
+    if (_activeTooltip && !ev.target?.closest?.(`[${ATTR}], [${ATTR_KEY}], .${TOOLTIP_CLASS}`)) {
+      hideTooltip();
+    }
+  }, { capture: true });
 }

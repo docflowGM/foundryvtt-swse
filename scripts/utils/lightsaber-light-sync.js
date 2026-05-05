@@ -14,9 +14,8 @@
  * All changes routed through weapon state.
  */
 
-import { BLADE_COLOR_MAP } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
+import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 
 export class LightsaberLightSync {
   /**
@@ -40,12 +39,12 @@ export class LightsaberLightSync {
         return;
       }
 
-      // Find the active, equipped lightsaber with emitLight enabled
-      const activeSaber = this.#getActiveLightsaber(actor);
+      // Resolve active lightsaber visuals through the shared cosmetic profile.
+      const { item: activeSaber, profile } = WeaponVisualProfileResolver.resolveActiveLightsaber(actor);
 
       // Update all tokens for this actor
       for (const token of tokens) {
-        await this.#updateTokenLight(token, activeSaber);
+        await this.#updateTokenLight(token, activeSaber, profile);
       }
     } catch (err) {
       swseLogger.error("[LightsaberLightSync] Sync failed:", err);
@@ -67,27 +66,7 @@ export class LightsaberLightSync {
    * @private
    */
   static #getActiveLightsaber(actor) {
-    const lightsabers = actor.items?.filter(
-      item => {
-        const system = item.system ?? {};
-        return item.type === "lightsaber"
-          || (item.type === "weapon" && (system.subtype === "lightsaber" || system.weaponCategory === "lightsaber" || system.isLightsaber === true))
-          || item.flags?.["foundryvtt-swse"]?.isLightsaber === true
-          || item.flags?.swse?.isLightsaber === true;
-      }
-    ) || [];
-
-    for (const saber of lightsabers) {
-      const isActive = saber.system?.activated === true || saber.system?.active === true;
-      const isEquipped = saber.system?.equipped === true || saber.system?.equippable?.equipped === true;
-      const emitsLight = getSwseFlag(saber, 'emitLight') === true;
-
-      if (isActive && isEquipped && emitsLight) {
-        return saber; // Found active, equipped, light-emitting saber
-      }
-    }
-
-    return null; // No active lightsaber found
+    return WeaponVisualProfileResolver.resolveActiveLightsaber(actor).item;
   }
 
   /**
@@ -102,7 +81,7 @@ export class LightsaberLightSync {
    *
    * @private
    */
-  static async #updateTokenLight(token, activeSaber) {
+  static async #updateTokenLight(token, activeSaber, profile = null) {
     if (!token?.document) return;
 
     if (!activeSaber) {
@@ -116,23 +95,20 @@ export class LightsaberLightSync {
       return;
     }
 
-    // Active saber → apply light with blade color
-    const bladeColor = getSwseFlag(activeSaber, 'bladeColor') || "blue";
-    const hex = BLADE_COLOR_MAP[bladeColor] ?? "#00ffff";
+    const resolvedProfile = profile || WeaponVisualProfileResolver.resolve(activeSaber, { actor: activeSaber?.actor });
+    const light = resolvedProfile?.tokenLight;
 
-    await token.document.update({
-      light: {
-        dim: 20,
-        bright: 10,
-        color: hex,
-        alpha: 0.3,
-        animation: {
-          type: "pulse",
-          speed: 3,
-          intensity: 2
+    if (!light) {
+      await token.document.update({
+        light: {
+          dim: 0,
+          bright: 0
         }
-      }
-    });
+      });
+      return;
+    }
+
+    await token.document.update({ light });
   }
 
   /**
@@ -234,13 +210,7 @@ export class LightsaberLightSync {
         }
       }
 
-      const system = item.system ?? {};
-      const isLightsaber = item.type === "lightsaber"
-        || (item.type === "weapon" && (system.subtype === "lightsaber" || system.weaponCategory === "lightsaber" || system.isLightsaber === true))
-        || item.flags?.["foundryvtt-swse"]?.isLightsaber === true
-        || item.flags?.swse?.isLightsaber === true;
-
-      if (needsSync && isLightsaber) {
+      if (needsSync && WeaponVisualProfileResolver.isLightsaber(item)) {
         // Schedule sync after update completes
         Hooks.once("updateItem", () => {
           this.syncActorTokenLight(actor, item);

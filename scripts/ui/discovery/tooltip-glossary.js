@@ -758,7 +758,212 @@ export const TooltipGlossary = {
     i18nPrefix: 'SWSE.Discovery.Tooltip.ChargenClass',
     tags: ['chargen', 'choice', 'class'],
     notes: 'Deferred. Chargen-only.'
+  },
+
+  // ========================================================================
+  // CUSTOMIZATION BAY / STORE / STREET-LEGAL BUILDER (Tier 2)
+  // ========================================================================
+
+  'bay.context.buildNew': {
+    key: 'bay.context.buildNew',
+    label: 'Build New',
+    category: 'customization-bay',
+    tier: 'tier2',
+    short: 'Start from a legal base frame.',
+    long: 'Build New starts from a chassis or hull frame and walks through the legal, costed choices needed to create a new droid or starship draft.',
+    tags: ['customization', 'store', 'builder']
+  },
+
+  'bay.context.modifyExisting': {
+    key: 'bay.context.modifyExisting',
+    label: 'Modify Existing',
+    category: 'customization-bay',
+    tier: 'tier2',
+    short: 'Edit an owned asset without bypassing validation.',
+    long: 'Modify Existing loads the current droid or ship state, tracks installed systems and upgrade slots, and previews the cost and legality of proposed changes before an engine applies them.',
+    tags: ['customization', 'owned', 'engine']
+  },
+
+  'bay.context.storeQuote': {
+    key: 'bay.context.storeQuote',
+    label: 'Store Quote',
+    category: 'customization-bay',
+    tier: 'tier2',
+    short: 'Preview price, availability, and vendor risk.',
+    long: 'Store Quote mode is for pricing and availability. It should use store and transaction engines for credits, availability, licenses, and black-market risk.',
+    tags: ['store', 'credits', 'availability']
+  },
+
+  'bay.context.chargenDraft': {
+    key: 'bay.context.chargenDraft',
+    label: 'Chargen Draft',
+    category: 'customization-bay',
+    tier: 'tier2',
+    short: 'Prepare a droid build for character creation.',
+    long: 'Chargen Draft mode keeps the build compatible with progression rules, unresolved-choice tracking, and GM approval for droid player characters.',
+    tags: ['chargen', 'droid', 'progression']
+  },
+
+  'garage.chassis': {
+    key: 'garage.chassis',
+    label: 'Droid Chassis',
+    category: 'droid-garage',
+    tier: 'tier2',
+    short: 'The base frame for a droid build.',
+    long: 'The chassis determines the droid’s starting frame, degree, rough role, starting systems, cost, and which options are legal before upgrades are added.',
+    tags: ['droid', 'chassis', 'garage']
+  },
+
+  'garage.role': {
+    key: 'garage.role',
+    label: 'Droid Role',
+    category: 'droid-garage',
+    tier: 'tier2',
+    short: 'The droid’s intended job.',
+    long: 'Role guides suggested systems and validates whether the build is a protocol droid, astromech, slicer, medic, scout, combat unit, or another supported purpose.',
+    tags: ['droid', 'role', 'garage']
+  },
+
+  'garage.locomotion': {
+    key: 'garage.locomotion',
+    label: 'Locomotion Bay',
+    category: 'droid-garage',
+    tier: 'tier2',
+    short: 'How the droid moves.',
+    long: 'Locomotion controls the droid’s movement profile. Wheels, tracks, legs, repulsors, magnetic clamps, and aquatic systems can affect legality, price, and usable environments.',
+    tags: ['droid', 'movement', 'garage']
+  },
+
+  'garage.appendages': {
+    key: 'garage.appendages',
+    label: 'Appendage Bay',
+    category: 'droid-garage',
+    tier: 'tier2',
+    short: 'Manipulators, probes, arms, and mounts.',
+    long: 'Appendages determine what the droid can physically interact with: tool arms, claws, fine manipulators, probes, integrated kits, and restricted weapon mounts.',
+    tags: ['droid', 'appendage', 'garage']
+  },
+
+  'garage.systems': {
+    key: 'garage.systems',
+    label: 'Droid Systems',
+    category: 'droid-garage',
+    tier: 'tier2',
+    short: 'Installed droid equipment and processors.',
+    long: 'Systems include processors, sensors, vocabulator modules, comlinks, tool packages, armor plating, and other installed droid equipment. These should be validated by the droid customization engine.',
+    tags: ['droid', 'systems', 'engine']
+  },
+
+  'chargen.droidReadiness': {
+    key: 'chargen.droidReadiness',
+    label: 'Droid Chargen Readiness',
+    category: 'chargen',
+    tier: 'tier2',
+    short: 'Whether this droid can become a player character draft.',
+    long: 'Chargen readiness checks whether the droid build has a legal chassis, required starting package, unresolved choices, and any GM approval flags needed for character creation.',
+    tags: ['chargen', 'droid', 'readiness']
+  },
+
+  'shipyard.hull': {
+    key: 'shipyard.hull',
+    label: 'Hull Frame',
+    category: 'shipyard',
+    tier: 'tier2',
+    short: 'The base frame for a starship build.',
+    long: 'Hull frame sets the ship’s scale, baseline crew/passengers/cargo, cost, and starting slot structure before systems and upgrades are installed.',
+    tags: ['ship', 'hull', 'shipyard']
+  },
+
+  'shipyard.role': {
+    key: 'shipyard.role',
+    label: 'Ship Role',
+    category: 'shipyard',
+    tier: 'tier2',
+    short: 'The ship’s intended mission profile.',
+    long: 'Ship role guides suggested systems and warnings. A courier, smuggler, gunship, explorer, hauler, or troop transport should have different upgrade priorities and legal risks.',
+    tags: ['ship', 'role', 'shipyard']
+  },
+
+  'shipyard.systemBays': {
+    key: 'shipyard.systemBays',
+    label: 'System Bays',
+    category: 'shipyard',
+    tier: 'tier2',
+    short: 'Engines, shields, weapons, cargo, sensors, and other installed ship systems.',
+    long: 'System bays divide ship upgrades into engine, hyperdrive, shield, armor, weapon, sensor, cargo, crew, droid socket, and luxury categories. Slot/cost legality should come from the vehicle customization engine.',
+    tags: ['ship', 'systems', 'engine']
+  },
+
+  'shipyard.hardpoints': {
+    key: 'shipyard.hardpoints',
+    label: 'Weapon Hardpoints',
+    category: 'shipyard',
+    tier: 'tier2',
+    short: 'Where ship weapons are mounted.',
+    long: 'Hardpoints describe forward, aft, port, starboard, and turret weapon positions. Weapon mounting should respect slots, arcs, legality, and hull restrictions.',
+    tags: ['ship', 'weapon', 'hardpoint']
+  },
+
+  'shipyard.storeQuote': {
+    key: 'shipyard.storeQuote',
+    label: 'Shipyard Store Quote',
+    category: 'shipyard',
+    tier: 'tier2',
+    short: 'Parts availability and purchase quote.',
+    long: 'The store quote previews vendor availability, legal sourcing, black-market risk, deposit, financing, and total price before any transaction engine spends credits.',
+    tags: ['ship', 'store', 'quote']
+  },
+
+  'shipyard.ownedModify': {
+    key: 'shipyard.ownedModify',
+    label: 'Owned Ship Modification',
+    category: 'shipyard',
+    tier: 'tier2',
+    short: 'Modify an existing ship using its current slots and installed systems.',
+    long: 'Owned modification starts from the ship’s current state, previews uninstall/swap/replace options, recalculates upgrade slots, and flags legal changes before applying an engine transaction.',
+    tags: ['ship', 'owned', 'upgrade']
+  },
+
+  'streetLegal.restricted': {
+    key: 'streetLegal.restricted',
+    label: 'Street-Legal Compliance',
+    category: 'legality',
+    tier: 'tier2',
+    short: 'Whether the build can be used without legal trouble.',
+    long: 'Street-legal compliance summarizes civilian legality, licenses, restricted components, military hardware, black-market parts, and whether GM review is required.',
+    tags: ['legal', 'license', 'restricted']
+  },
+
+  'streetLegal.shipRestricted': {
+    key: 'streetLegal.shipRestricted',
+    label: 'Ship Restricted Status',
+    category: 'legality',
+    tier: 'tier2',
+    short: 'A ship build contains systems that may trigger inspection or GM review.',
+    long: 'Restricted ship status can come from transponder issues, concealed compartments, military shields, weapon systems, or black-market sourcing. The app should preview this without mutating the ship.',
+    tags: ['legal', 'ship', 'restricted']
+  },
+
+  ArmorCheckPenalty: {
+    key: 'ArmorCheckPenalty',
+    label: 'Armor Check Penalty',
+    category: 'equipment',
+    tier: 'tier2',
+    short: 'A penalty from bulky or restrictive armor.',
+    long: 'Armor check penalty reduces physical skill checks when armor makes movement harder. Keep it visually separate from ability colors and signed math states.',
+    tags: ['armor', 'skill', 'penalty']
+  },
+
+  UpgradeSlots: {
+    key: 'UpgradeSlots',
+    label: 'Upgrade Slots',
+    category: 'customization',
+    tier: 'tier2',
+    short: 'Capacity used by installed modifications.',
+    long: 'Upgrade slots are the controlled capacity budget for installed systems. Engines should calculate total, used, remaining, and over-slot warnings.',
+    tags: ['customization', 'slots', 'engine']
   }
+
 };
 
 /**

@@ -11,7 +11,7 @@
 --}}
 
 {{!-- Preserve old class names for backward compatibility with JS selectors --}}
-<div class="inventory-item-row v2-gear-row inventory-{{type}}-card {{#if equipped}}is-equipped{{/if}} {{#if activated}}is-activated{{/if}} {{#if isLightsaber}}is-lightsaber{{/if}}" data-item-id="{{id}}">
+<div class="inventory-item-row v2-gear-row inventory-{{type}}-card {{#if equipped}}is-equipped{{/if}} {{#if activated}}is-activated{{/if}} {{#if isLightsaber}}is-lightsaber{{/if}}" data-item-id="{{id}}" {{#if visualColorHex}}style="--swse-weapon-visual-color: {{visualColorHex}}"{{/if}}>
 
 <style>
 /* Inventory Row Layout */
@@ -190,15 +190,15 @@
 }
 
 .quick-action-btn.lightsaber-activation-btn.is-active {
-  border-color: rgba(120, 255, 190, 0.75);
-  color: #b9ffd8;
-  background: rgba(80, 255, 180, 0.16);
-  box-shadow: 0 0 8px rgba(80, 255, 180, 0.22);
+  border-color: color-mix(in srgb, var(--swse-weapon-visual-color, #78ffbe) 82%, white 8%);
+  color: color-mix(in srgb, var(--swse-weapon-visual-color, #b9ffd8) 72%, white 28%);
+  background: color-mix(in srgb, var(--swse-weapon-visual-color, #50ffb4) 18%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--swse-weapon-visual-color, #50ffb4) 30%, transparent);
 }
 
 .inventory-item-row.is-lightsaber.is-activated {
-  border-color: rgba(120, 255, 190, 0.55);
-  box-shadow: 0 0 10px rgba(80, 255, 180, 0.18);
+  border-color: color-mix(in srgb, var(--swse-weapon-visual-color, #78ffbe) 70%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--swse-weapon-visual-color, #50ffb4) 25%, transparent);
 }
 
 .btn-activate {
@@ -207,9 +207,9 @@
 }
 
 .btn-activate.is-active {
-  border-color: rgba(120, 255, 190, 0.75);
-  color: #b9ffd8;
-  background: rgba(80, 255, 180, 0.14);
+  border-color: color-mix(in srgb, var(--swse-weapon-visual-color, #78ffbe) 82%, white 8%);
+  color: color-mix(in srgb, var(--swse-weapon-visual-color, #b9ffd8) 72%, white 28%);
+  background: color-mix(in srgb, var(--swse-weapon-visual-color, #50ffb4) 16%, transparent);
 }
 
 .btn-activate:hover {

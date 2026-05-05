@@ -86,7 +86,7 @@ export class LightsaberConstructionEngine {
   }
 
   static hasSelfBuiltLightsaber(actor) {
-    return this.getOwnedLightsabers(actor).some(item => item.flags?.swse?.builtBy === actor?.id);
+    return this.getOwnedLightsabers(actor).some(item => (item.flags?.["foundryvtt-swse"]?.builtBy ?? item.flags?.swse?.builtBy) === actor?.id);
   }
 
   static getEligibility(actor) {
@@ -94,7 +94,9 @@ export class LightsaberConstructionEngine {
   }
 
   static getEditState(item) {
-    const flags = item?.flags?.swse ?? {};
+    const canonical = item?.flags?.["foundryvtt-swse"] ?? {};
+    const legacy = item?.flags?.swse ?? {};
+    const flags = { ...legacy, ...canonical };
     const cfg = flags.lightsaberConfig ?? {};
     // Extract saber state for edit mode rendering.
     // Existing/granted/found sabers have no builtBy flag and are edit-only (cannot attune).
@@ -169,7 +171,13 @@ export class LightsaberConstructionEngine {
       _id: weapon.id,
       name: `${baseName}${suffix}`,
       'system.modifiers': modifiers,
+      'flags.foundryvtt-swse.bladeColor': config?.bladeColor || 'blue',
       'flags.swse.bladeColor': config?.bladeColor || 'blue',
+      'flags.foundryvtt-swse.lightsaberConfig': {
+        chassisId: weapon.system?.chassisId ?? null,
+        crystalId: crystal.id,
+        accessoryIds: accessories.map(a => a.id)
+      },
       'flags.swse.lightsaberConfig': {
         chassisId: weapon.system?.chassisId ?? null,
         crystalId: crystal.id,
@@ -451,6 +459,18 @@ export class LightsaberConstructionEngine {
       },
       flags: {
         ...baseData.flags,
+        "foundryvtt-swse": {
+          ...(baseData.flags?.["foundryvtt-swse"] || {}),
+          builtBy: builderId,
+          builtAt: builtAt,
+          attunedBy: null,
+          bladeColor: bladeColor || "blue",
+          lightsaberConfig: {
+            chassisId: chassis.system?.chassisId ?? null,
+            crystalId: crystal.id,
+            accessoryIds: accessories.map(a => a.id)
+          }
+        },
         swse: {
           ...(baseData.flags?.swse || {}),
           builtBy: builderId,

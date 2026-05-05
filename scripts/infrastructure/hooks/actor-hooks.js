@@ -202,6 +202,7 @@ async function handleItemCreate(item, options, userId) {
             try {
                 await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
                     _id: item.id,
+                    'flags.foundryvtt-swse.bladeColor': preferredColor,
                     'flags.swse.bladeColor': preferredColor
                 }]);
                 SWSELogger.log(`Applied preferred lightsaber color ${preferredColor} to ${item.name}`);

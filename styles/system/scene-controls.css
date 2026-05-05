@@ -1,0 +1,52 @@
+/* ============================================================================
+   SWSE Scene Controls
+   Safe Foundry scene-control icon styling. No sidebar/canvas DOM mutation.
+   ============================================================================ */
+
+i.swse-scene-control,
+.swse-scene-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+  color: currentColor;
+}
+
+i.swse-scene-control::before,
+.swse-scene-control::before {
+  display: inline-block;
+  text-align: center;
+  text-rendering: optimizeLegibility;
+}
+
+i.swse-scene-control-aurebesh-i::before,
+.swse-scene-control-aurebesh-i::before {
+  content: "I";
+  font-family: "Aurebesh", "Aurebesh Condensed", "SWSE Space Grotesk", monospace;
+  font-size: 1.2em;
+  letter-spacing: 0;
+}
+
+i.swse-scene-control-action-palette::before,
+.swse-scene-control-action-palette::before {
+  content: "✦";
+  font-family: "SWSE Space Grotesk", sans-serif;
+  font-size: 1.05em;
+}
+
+i.swse-scene-control-approval::before,
+.swse-scene-control-approval::before {
+  content: "✓";
+  font-family: "SWSE Space Grotesk", sans-serif;
+  font-size: 1.05em;
+}
+
+#controls .scene-control i.swse-scene-control,
+#controls .control-tool i.swse-scene-control,
+#controls .swse-scene-control {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--swse-theme-accent, #69e6ff) 70%, transparent));
+}

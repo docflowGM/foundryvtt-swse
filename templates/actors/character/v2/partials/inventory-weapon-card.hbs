@@ -1,5 +1,5 @@
 {{!-- Weapon Item Card for Inventory Display --}}
-<div class="inventory-weapon-card {{#if equipped}}is-equipped{{/if}} {{#if activated}}is-activated{{/if}} {{#if isLightsaber}}is-lightsaber{{/if}}" data-item-id="{{id}}">
+<div class="inventory-weapon-card {{#if equipped}}is-equipped{{/if}} {{#if activated}}is-activated{{/if}} {{#if isLightsaber}}is-lightsaber{{/if}}" data-item-id="{{id}}" {{#if visualColorHex}}style="--swse-weapon-visual-color: {{visualColorHex}}"{{/if}}>
 
   {{!-- CARD HEADER: Name + Quick Roll Buttons --}}
   <div class="card-header weapon-header">
@@ -130,8 +130,8 @@
 
 
 .inventory-weapon-card.is-lightsaber.is-activated {
-  border-color: rgba(120, 255, 190, 0.55);
-  box-shadow: 0 0 10px rgba(80, 255, 180, 0.22);
+  border-color: color-mix(in srgb, var(--swse-weapon-visual-color, #78ffbe) 70%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--swse-weapon-visual-color, #50ffb4) 30%, transparent);
 }
 
 .lightsaber-activation-btn {
@@ -141,10 +141,10 @@
 
 .lightsaber-activation-btn.is-active,
 .btn-activate.is-active {
-  border-color: rgba(120, 255, 190, 0.75);
-  color: #b9ffd8;
-  background: rgba(80, 255, 180, 0.16);
-  box-shadow: 0 0 8px rgba(80, 255, 180, 0.22);
+  border-color: color-mix(in srgb, var(--swse-weapon-visual-color, #78ffbe) 82%, white 8%);
+  color: color-mix(in srgb, var(--swse-weapon-visual-color, #b9ffd8) 72%, white 28%);
+  background: color-mix(in srgb, var(--swse-weapon-visual-color, #50ffb4) 18%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--swse-weapon-visual-color, #50ffb4) 30%, transparent);
 }
 
 .btn-activate {

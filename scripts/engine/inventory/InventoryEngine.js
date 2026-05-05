@@ -10,18 +10,10 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { LightsaberLightSync } from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
-import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
+import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 
 const STACKABLE_TYPES = ["consumable", "equipment", "misc", "ammo"];
 const NON_STACKABLE_TYPES = ["weapon", "armor", "shield", "lightsaber"];
-
-function isLightsaberItem(item) {
-  const system = item?.system ?? {};
-  return item?.type === "lightsaber"
-    || (item?.type === "weapon" && (system.subtype === "lightsaber" || system.weaponCategory === "lightsaber" || system.isLightsaber === true))
-    || item?.flags?.["foundryvtt-swse"]?.isLightsaber === true
-    || item?.flags?.swse?.isLightsaber === true;
-}
 
 
 export class InventoryEngine {
@@ -95,20 +87,18 @@ export class InventoryEngine {
       "system.activated": next
     };
 
-    if (isLightsaberItem(item) && next) {
-      const bladeColor = getSwseFlag(item, "bladeColor")
-        || actor.getFlag?.("swse", "preferredLightsaberColor")
-        || "blue";
+    const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor });
 
+    if (visualProfile.isLightsaber && next) {
       update["flags.foundryvtt-swse.emitLight"] = true;
-      update["flags.foundryvtt-swse.bladeColor"] = bladeColor;
+      update["flags.foundryvtt-swse.bladeColor"] = visualProfile.bladeColor;
     }
 
     await ActorEngine.updateOwnedItems(actor, [update], {
       source: "InventoryEngine.toggleActivated"
     });
 
-    if (isLightsaberItem(item)) {
+    if (visualProfile.isLightsaber) {
       await LightsaberLightSync.syncActorTokenLight(actor, item);
     }
   }

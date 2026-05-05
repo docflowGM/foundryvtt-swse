@@ -137,10 +137,10 @@ export function getBeamStyle(styleId) {
  * @returns {string} hex color code
  */
 export function getBoltColor(colorId) {
-  if (typeof colorId === "string" && /^#[0-9a-fA-F]{6}$/.test(colorId.trim())) {
-    return colorId.trim();
-  }
-  return BOLT_COLORS[String(colorId || '').toLowerCase()]?.hex ?? BOLT_COLORS.blue.hex;
+  const value = String(colorId ?? "").trim();
+  if (/^#[0-9a-f]{6}$/i.test(value)) return value;
+  const key = value.toLowerCase();
+  return BOLT_COLORS[key]?.hex ?? BOLT_COLORS.blue.hex;
 }
 
 /**

@@ -14,6 +14,9 @@ import * as SWSEData from "./scripts/swse-data.js";
 import { WorldDataLoader } from "./scripts/world-data-loader.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
 import { UIManager } from "./scripts/ui/ui-manager.js";
+import { registerInitHooks } from "./scripts/infrastructure/hooks/init-hooks.js";
+import { initializeSceneControls } from "./scripts/scene-controls/init.js";
+import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discovery/index.js";
 
 UIManager.init();
 
@@ -79,6 +82,13 @@ Hooks.once("init", async () => {
   await registerSystemSettings();
 
   // -------------------------------
+  // Register Hook Infrastructure
+  // -------------------------------
+  registerInitHooks();
+  initializeSceneControls();
+  initializeDiscoverySystem();
+
+  // -------------------------------
   // Preload Templates
   // -------------------------------
   await preloadHandlebarsTemplates();
@@ -97,6 +107,7 @@ Hooks.once("ready", async () => {
 
   // Load vehicle templates
   await loadVehicleTemplates();
+  onDiscoveryReady();
 
   // Auto-load data on first run
   if (game.user.isGM) {

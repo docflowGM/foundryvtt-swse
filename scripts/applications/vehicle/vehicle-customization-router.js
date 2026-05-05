@@ -57,6 +57,6 @@ export class VehicleCustomizationRouter {
    * Get customization UI label for vehicle (for UI display)
    */
   static getVehicleCustomizationLabel() {
-    return 'Customize Vehicle';
+    return 'Open Shipyard';
   }
 }

@@ -1,0 +1,356 @@
+{"level":"info","message":"Running on Node.js - Version 20.18.3","timestamp":"2026-05-04 16:04:13"}
+{"level":"info","message":"Foundry Virtual Tabletop - Version 13 Build 351","timestamp":"2026-05-04 16:04:13"}
+{"level":"info","message":"User Data Directory - \"C:/Users/Owner/Documents/GitHub/foundryvtt-swse\"","timestamp":"2026-05-04 16:04:13"}
+{"level":"info","message":"Saved application configuration options to C:/Users/Owner/Documents/GitHub/foundryvtt-swse/Config/options.json","timestamp":"2026-05-04 16:04:13"}
+{"level":"info","message":"Application Options:\n{\n  \"compressStatic\": true,\n  \"fullscreen\": false,\n  \"hostname\": null,\n  \"language\": \"en.core\",\n  \"localHostname\": null,\n  \"port\": 30000,\n  \"protocol\": null,\n  \"proxyPort\": null,\n  \"proxySSL\": false,\n  \"routePrefix\": null,\n  \"updateChannel\": \"stable\",\n  \"upnp\": true,\n  \"upnpLeaseDuration\": null,\n  \"awsConfig\": null,\n  \"compressSocket\": true,\n  \"cssTheme\": \"dark\",\n  \"deleteNEDB\": false,\n  \"hotReload\": false,\n  \"passwordSalt\": null,\n  \"sslCert\": null,\n  \"sslKey\": null,\n  \"world\": null,\n  \"serviceConfig\": null,\n  \"adminPassword\": null,\n  \"noBackups\": false\n}","timestamp":"2026-05-04 16:04:13"}
+{"level":"warn","message":"Software license requires signature.","timestamp":"2026-05-04 16:04:13"}
+{"level":"info","message":"Requesting UPnP port forwarding to destination port 30000","timestamp":"2026-05-04 16:04:13"}
+{"level":"info","message":"Running Electron application with version 34.4.0 using Chromium 132.0.6834.210","timestamp":"2026-05-04 16:04:13"}
+{"level":"info","message":"Server started and listening on port 30000","timestamp":"2026-05-04 16:04:14"}
+{"level":"info","message":"Created client session 63dceec02a2625e3437edc16","timestamp":"2026-05-04 16:04:15"}
+{"level":"info","message":"Shutting down Foundry Virtual Tabletop server","timestamp":"2026-05-04 16:05:38"}
+{"level":"info","message":"Shut-down success. Goodbye!","timestamp":"2026-05-04 16:05:38"}
+{"level":"info","message":"Running on Node.js - Version 20.18.3","timestamp":"2026-05-04 16:05:45"}
+{"level":"info","message":"Foundry Virtual Tabletop - Version 13 Build 351","timestamp":"2026-05-04 16:05:45"}
+{"level":"info","message":"User Data Directory - \"C:/Users/Owner/Documents/GitHub/foundryvtt-swse\"","timestamp":"2026-05-04 16:05:45"}
+{"level":"info","message":"Application Options:\n{\n  \"compressStatic\": true,\n  \"fullscreen\": false,\n  \"hostname\": null,\n  \"language\": \"en.core\",\n  \"localHostname\": null,\n  \"port\": 30000,\n  \"protocol\": null,\n  \"proxyPort\": null,\n  \"proxySSL\": false,\n  \"routePrefix\": null,\n  \"updateChannel\": \"stable\",\n  \"upnp\": true,\n  \"upnpLeaseDuration\": null,\n  \"awsConfig\": null,\n  \"compressSocket\": true,\n  \"cssTheme\": \"dark\",\n  \"deleteNEDB\": false,\n  \"hotReload\": false,\n  \"passwordSalt\": null,\n  \"sslCert\": null,\n  \"sslKey\": null,\n  \"world\": null,\n  \"serviceConfig\": null,\n  \"adminPassword\": null,\n  \"noBackups\": false\n}","timestamp":"2026-05-04 16:05:45"}
+{"level":"warn","message":"Software license requires signature.","timestamp":"2026-05-04 16:05:45"}
+{"level":"info","message":"Requesting UPnP port forwarding to destination port 30000","timestamp":"2026-05-04 16:05:45"}
+{"level":"info","message":"Running Electron application with version 34.4.0 using Chromium 132.0.6834.210","timestamp":"2026-05-04 16:05:45"}
+{"level":"info","message":"Server started and listening on port 30000","timestamp":"2026-05-04 16:05:45"}
+{"level":"info","message":"Created client session cb1e0215a56fa8aa42d4e491","timestamp":"2026-05-04 16:05:47"}
+{"level":"info","message":"Shutting down Foundry Virtual Tabletop server","timestamp":"2026-05-04 16:06:13"}
+{"level":"info","message":"Shut-down success. Goodbye!","timestamp":"2026-05-04 16:06:13"}
+{"level":"info","message":"Running on Node.js - Version 20.18.3","timestamp":"2026-05-04 16:11:47"}
+{"level":"info","message":"Foundry Virtual Tabletop - Version 13 Build 350","timestamp":"2026-05-04 16:11:47"}
+{"level":"info","message":"User Data Directory - \"C:/Users/Owner/Documents/GitHub/foundryvtt-swse\"","timestamp":"2026-05-04 16:11:47"}
+{"level":"info","message":"Application Options:\n{\n  \"compressStatic\": true,\n  \"fullscreen\": false,\n  \"hostname\": null,\n  \"language\": \"en.core\",\n  \"localHostname\": null,\n  \"port\": 30000,\n  \"protocol\": null,\n  \"proxyPort\": null,\n  \"proxySSL\": false,\n  \"routePrefix\": null,\n  \"updateChannel\": \"stable\",\n  \"upnp\": true,\n  \"upnpLeaseDuration\": null,\n  \"awsConfig\": null,\n  \"compressSocket\": true,\n  \"cssTheme\": \"dark\",\n  \"deleteNEDB\": false,\n  \"hotReload\": false,\n  \"passwordSalt\": null,\n  \"sslCert\": null,\n  \"sslKey\": null,\n  \"world\": null,\n  \"serviceConfig\": null,\n  \"adminPassword\": null,\n  \"noBackups\": false\n}","timestamp":"2026-05-04 16:11:47"}
+{"level":"warn","message":"Software license requires signature.","timestamp":"2026-05-04 16:11:47"}
+{"level":"info","message":"Requesting UPnP port forwarding to destination port 30000","timestamp":"2026-05-04 16:11:47"}
+{"level":"info","message":"Running Electron application with version 34.4.0 using Chromium 132.0.6834.210","timestamp":"2026-05-04 16:11:47"}
+{"level":"info","message":"Server started and listening on port 30000","timestamp":"2026-05-04 16:11:47"}
+{"level":"info","message":"Created client session a96fac4fdab834e8a63f2d4a","timestamp":"2026-05-04 16:11:49"}
+{"level":"info","message":"License signature successfully created. Thank you and please enjoy Foundry Virtual Tabletop.","timestamp":"2026-05-04 16:12:02"}
+{"level":"info","message":"Software license verification succeeded","timestamp":"2026-05-04 16:12:02"}
+{"level":"info","message":"Core software stable update 13.351 is available!","timestamp":"2026-05-04 16:12:03"}
+{"level":"info","message":"Saved application configuration options to C:/Users/Owner/Documents/GitHub/foundryvtt-swse/Config/options.json","timestamp":"2026-05-04 16:12:08"}
+{"level":"info","message":"Core software stable update 13.351 is available!","timestamp":"2026-05-04 16:18:01"}
+{"level":"info","message":"Core Software Update | Downloading software update - 0%","timestamp":"2026-05-04 16:18:03"}
+{"level":"info","message":"Core Software Update | Downloading software update - 1%","timestamp":"2026-05-04 16:18:03"}
+{"level":"info","message":"Core Software Update | Downloading software update - 2%","timestamp":"2026-05-04 16:18:04"}
+{"level":"info","message":"Core Software Update | Downloading software update - 3%","timestamp":"2026-05-04 16:18:05"}
+{"level":"info","message":"Core Software Update | Downloading software update - 4%","timestamp":"2026-05-04 16:18:06"}
+{"level":"info","message":"Core Software Update | Downloading software update - 5%","timestamp":"2026-05-04 16:18:07"}
+{"level":"info","message":"Core Software Update | Downloading software update - 6%","timestamp":"2026-05-04 16:18:07"}
+{"level":"info","message":"Core Software Update | Downloading software update - 7%","timestamp":"2026-05-04 16:18:08"}
+{"level":"info","message":"Core Software Update | Downloading software update - 8%","timestamp":"2026-05-04 16:18:09"}
+{"level":"info","message":"Core Software Update | Downloading software update - 9%","timestamp":"2026-05-04 16:18:10"}
+{"level":"info","message":"Core Software Update | Downloading software update - 10%","timestamp":"2026-05-04 16:18:11"}
+{"level":"info","message":"Core Software Update | Downloading software update - 11%","timestamp":"2026-05-04 16:18:11"}
+{"level":"info","message":"Core Software Update | Downloading software update - 12%","timestamp":"2026-05-04 16:18:12"}
+{"level":"info","message":"Core Software Update | Downloading software update - 13%","timestamp":"2026-05-04 16:18:13"}
+{"level":"info","message":"Core Software Update | Downloading software update - 14%","timestamp":"2026-05-04 16:18:14"}
+{"level":"info","message":"Core Software Update | Downloading software update - 15%","timestamp":"2026-05-04 16:18:15"}
+{"level":"info","message":"Core Software Update | Downloading software update - 16%","timestamp":"2026-05-04 16:18:15"}
+{"level":"info","message":"Core Software Update | Downloading software update - 17%","timestamp":"2026-05-04 16:18:16"}
+{"level":"info","message":"Core Software Update | Downloading software update - 18%","timestamp":"2026-05-04 16:18:17"}
+{"level":"info","message":"Core Software Update | Downloading software update - 19%","timestamp":"2026-05-04 16:18:18"}
+{"level":"info","message":"Core Software Update | Downloading software update - 20%","timestamp":"2026-05-04 16:18:19"}
+{"level":"info","message":"Core Software Update | Downloading software update - 21%","timestamp":"2026-05-04 16:18:20"}
+{"level":"info","message":"Core Software Update | Downloading software update - 22%","timestamp":"2026-05-04 16:18:21"}
+{"level":"info","message":"Core Software Update | Downloading software update - 23%","timestamp":"2026-05-04 16:18:21"}
+{"level":"info","message":"Core Software Update | Downloading software update - 24%","timestamp":"2026-05-04 16:18:22"}
+{"level":"info","message":"Core Software Update | Downloading software update - 25%","timestamp":"2026-05-04 16:18:23"}
+{"level":"info","message":"Core Software Update | Downloading software update - 26%","timestamp":"2026-05-04 16:18:24"}
+{"level":"info","message":"Core Software Update | Downloading software update - 27%","timestamp":"2026-05-04 16:18:25"}
+{"level":"info","message":"Core Software Update | Downloading software update - 28%","timestamp":"2026-05-04 16:18:25"}
+{"level":"info","message":"Core Software Update | Downloading software update - 29%","timestamp":"2026-05-04 16:18:26"}
+{"level":"info","message":"Core Software Update | Downloading software update - 30%","timestamp":"2026-05-04 16:18:27"}
+{"level":"info","message":"Core Software Update | Downloading software update - 31%","timestamp":"2026-05-04 16:18:28"}
+{"level":"info","message":"Core Software Update | Downloading software update - 32%","timestamp":"2026-05-04 16:18:29"}
+{"level":"info","message":"Core Software Update | Downloading software update - 33%","timestamp":"2026-05-04 16:18:30"}
+{"level":"info","message":"Core Software Update | Downloading software update - 34%","timestamp":"2026-05-04 16:18:30"}
+{"level":"info","message":"Core Software Update | Downloading software update - 35%","timestamp":"2026-05-04 16:18:31"}
+{"level":"info","message":"Core Software Update | Downloading software update - 36%","timestamp":"2026-05-04 16:18:32"}
+{"level":"info","message":"Core Software Update | Downloading software update - 37%","timestamp":"2026-05-04 16:18:33"}
+{"level":"info","message":"Core Software Update | Downloading software update - 38%","timestamp":"2026-05-04 16:18:34"}
+{"level":"info","message":"Core Software Update | Downloading software update - 39%","timestamp":"2026-05-04 16:18:34"}
+{"level":"info","message":"Core Software Update | Downloading software update - 40%","timestamp":"2026-05-04 16:18:35"}
+{"level":"info","message":"Core Software Update | Downloading software update - 41%","timestamp":"2026-05-04 16:18:36"}
+{"level":"info","message":"Core Software Update | Downloading software update - 42%","timestamp":"2026-05-04 16:18:37"}
+{"level":"info","message":"Core Software Update | Downloading software update - 43%","timestamp":"2026-05-04 16:18:38"}
+{"level":"info","message":"Core Software Update | Downloading software update - 44%","timestamp":"2026-05-04 16:18:39"}
+{"level":"info","message":"Core Software Update | Downloading software update - 45%","timestamp":"2026-05-04 16:18:39"}
+{"level":"info","message":"Core Software Update | Downloading software update - 46%","timestamp":"2026-05-04 16:18:40"}
+{"level":"info","message":"Core Software Update | Downloading software update - 47%","timestamp":"2026-05-04 16:18:41"}
+{"level":"info","message":"Core Software Update | Downloading software update - 48%","timestamp":"2026-05-04 16:18:42"}
+{"level":"info","message":"Core Software Update | Downloading software update - 49%","timestamp":"2026-05-04 16:18:43"}
+{"level":"info","message":"Core Software Update | Downloading software update - 50%","timestamp":"2026-05-04 16:18:43"}
+{"level":"info","message":"Core Software Update | Downloading software update - 51%","timestamp":"2026-05-04 16:18:44"}
+{"level":"info","message":"Core Software Update | Downloading software update - 52%","timestamp":"2026-05-04 16:18:45"}
+{"level":"info","message":"Core Software Update | Downloading software update - 53%","timestamp":"2026-05-04 16:18:46"}
+{"level":"info","message":"Core Software Update | Downloading software update - 54%","timestamp":"2026-05-04 16:18:47"}
+{"level":"info","message":"Core Software Update | Downloading software update - 55%","timestamp":"2026-05-04 16:18:48"}
+{"level":"info","message":"Core Software Update | Downloading software update - 56%","timestamp":"2026-05-04 16:18:49"}
+{"level":"info","message":"Core Software Update | Downloading software update - 57%","timestamp":"2026-05-04 16:18:49"}
+{"level":"info","message":"Core Software Update | Downloading software update - 58%","timestamp":"2026-05-04 16:18:50"}
+{"level":"info","message":"Core Software Update | Downloading software update - 59%","timestamp":"2026-05-04 16:18:51"}
+{"level":"info","message":"Core Software Update | Downloading software update - 60%","timestamp":"2026-05-04 16:18:52"}
+{"level":"info","message":"Core Software Update | Downloading software update - 61%","timestamp":"2026-05-04 16:18:53"}
+{"level":"info","message":"Core Software Update | Downloading software update - 62%","timestamp":"2026-05-04 16:18:53"}
+{"level":"info","message":"Core Software Update | Downloading software update - 63%","timestamp":"2026-05-04 16:18:54"}
+{"level":"info","message":"Core Software Update | Downloading software update - 64%","timestamp":"2026-05-04 16:18:55"}
+{"level":"info","message":"Core Software Update | Downloading software update - 65%","timestamp":"2026-05-04 16:18:56"}
+{"level":"info","message":"Core Software Update | Downloading software update - 66%","timestamp":"2026-05-04 16:18:57"}
+{"level":"info","message":"Core Software Update | Downloading software update - 67%","timestamp":"2026-05-04 16:18:57"}
+{"level":"info","message":"Core Software Update | Downloading software update - 68%","timestamp":"2026-05-04 16:18:58"}
+{"level":"info","message":"Core Software Update | Downloading software update - 69%","timestamp":"2026-05-04 16:18:59"}
+{"level":"info","message":"Core Software Update | Downloading software update - 70%","timestamp":"2026-05-04 16:19:00"}
+{"level":"info","message":"Core Software Update | Downloading software update - 71%","timestamp":"2026-05-04 16:19:01"}
+{"level":"info","message":"Core Software Update | Downloading software update - 72%","timestamp":"2026-05-04 16:19:01"}
+{"level":"info","message":"Core Software Update | Downloading software update - 73%","timestamp":"2026-05-04 16:19:02"}
+{"level":"info","message":"Core Software Update | Downloading software update - 74%","timestamp":"2026-05-04 16:19:03"}
+{"level":"info","message":"Core Software Update | Downloading software update - 75%","timestamp":"2026-05-04 16:19:04"}
+{"level":"info","message":"Core Software Update | Downloading software update - 76%","timestamp":"2026-05-04 16:19:05"}
+{"level":"info","message":"Core Software Update | Downloading software update - 77%","timestamp":"2026-05-04 16:19:06"}
+{"level":"info","message":"Core Software Update | Downloading software update - 78%","timestamp":"2026-05-04 16:19:06"}
+{"level":"info","message":"Core Software Update | Downloading software update - 79%","timestamp":"2026-05-04 16:19:07"}
+{"level":"info","message":"Core Software Update | Downloading software update - 80%","timestamp":"2026-05-04 16:19:08"}
+{"level":"info","message":"Core Software Update | Downloading software update - 81%","timestamp":"2026-05-04 16:19:09"}
+{"level":"info","message":"Core Software Update | Downloading software update - 82%","timestamp":"2026-05-04 16:19:09"}
+{"level":"info","message":"Core Software Update | Downloading software update - 83%","timestamp":"2026-05-04 16:19:10"}
+{"level":"info","message":"Core Software Update | Downloading software update - 84%","timestamp":"2026-05-04 16:19:11"}
+{"level":"info","message":"Core Software Update | Downloading software update - 85%","timestamp":"2026-05-04 16:19:12"}
+{"level":"info","message":"Core Software Update | Downloading software update - 86%","timestamp":"2026-05-04 16:19:13"}
+{"level":"info","message":"Core Software Update | Downloading software update - 87%","timestamp":"2026-05-04 16:19:13"}
+{"level":"info","message":"Core Software Update | Downloading software update - 88%","timestamp":"2026-05-04 16:19:14"}
+{"level":"info","message":"Core Software Update | Downloading software update - 89%","timestamp":"2026-05-04 16:19:15"}
+{"level":"info","message":"Core Software Update | Downloading software update - 90%","timestamp":"2026-05-04 16:19:16"}
+{"level":"info","message":"Core Software Update | Downloading software update - 91%","timestamp":"2026-05-04 16:19:17"}
+{"level":"info","message":"Core Software Update | Downloading software update - 92%","timestamp":"2026-05-04 16:19:18"}
+{"level":"info","message":"Core Software Update | Downloading software update - 93%","timestamp":"2026-05-04 16:19:18"}
+{"level":"info","message":"Core Software Update | Downloading software update - 94%","timestamp":"2026-05-04 16:19:19"}
+{"level":"info","message":"Core Software Update | Downloading software update - 95%","timestamp":"2026-05-04 16:19:20"}
+{"level":"info","message":"Core Software Update | Downloading software update - 96%","timestamp":"2026-05-04 16:19:21"}
+{"level":"info","message":"Core Software Update | Downloading software update - 97%","timestamp":"2026-05-04 16:19:22"}
+{"level":"info","message":"Core Software Update | Downloading software update - 98%","timestamp":"2026-05-04 16:19:22"}
+{"level":"info","message":"Core Software Update | Downloading software update - 99%","timestamp":"2026-05-04 16:19:23"}
+{"level":"info","message":"Core Software Update | Downloading software update - 100%","timestamp":"2026-05-04 16:19:24"}
+{"level":"info","message":"Core Software Update | Update download complete","timestamp":"2026-05-04 16:19:24"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 0%","timestamp":"2026-05-04 16:19:25"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 1%","timestamp":"2026-05-04 16:19:26"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 2%","timestamp":"2026-05-04 16:19:26"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 3%","timestamp":"2026-05-04 16:19:26"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 4%","timestamp":"2026-05-04 16:19:26"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 5%","timestamp":"2026-05-04 16:19:27"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 6%","timestamp":"2026-05-04 16:19:27"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 7%","timestamp":"2026-05-04 16:19:27"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 8%","timestamp":"2026-05-04 16:19:28"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 9%","timestamp":"2026-05-04 16:19:28"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 10%","timestamp":"2026-05-04 16:19:28"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 11%","timestamp":"2026-05-04 16:19:28"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 12%","timestamp":"2026-05-04 16:19:29"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 13%","timestamp":"2026-05-04 16:19:29"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 14%","timestamp":"2026-05-04 16:19:30"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 15%","timestamp":"2026-05-04 16:19:30"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 16%","timestamp":"2026-05-04 16:19:31"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 17%","timestamp":"2026-05-04 16:19:31"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 18%","timestamp":"2026-05-04 16:19:31"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 19%","timestamp":"2026-05-04 16:19:32"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 20%","timestamp":"2026-05-04 16:19:32"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 21%","timestamp":"2026-05-04 16:19:32"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 22%","timestamp":"2026-05-04 16:19:33"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 23%","timestamp":"2026-05-04 16:19:33"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 24%","timestamp":"2026-05-04 16:19:33"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 25%","timestamp":"2026-05-04 16:19:34"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 26%","timestamp":"2026-05-04 16:19:34"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 27%","timestamp":"2026-05-04 16:19:34"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 28%","timestamp":"2026-05-04 16:19:34"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 29%","timestamp":"2026-05-04 16:19:35"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 30%","timestamp":"2026-05-04 16:19:35"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 31%","timestamp":"2026-05-04 16:19:36"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 32%","timestamp":"2026-05-04 16:19:36"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 33%","timestamp":"2026-05-04 16:19:36"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 34%","timestamp":"2026-05-04 16:19:37"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 35%","timestamp":"2026-05-04 16:19:37"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 36%","timestamp":"2026-05-04 16:19:38"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 37%","timestamp":"2026-05-04 16:19:38"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 38%","timestamp":"2026-05-04 16:19:39"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 39%","timestamp":"2026-05-04 16:19:39"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 40%","timestamp":"2026-05-04 16:19:39"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 41%","timestamp":"2026-05-04 16:19:40"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 42%","timestamp":"2026-05-04 16:19:40"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 43%","timestamp":"2026-05-04 16:19:41"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 44%","timestamp":"2026-05-04 16:19:42"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 45%","timestamp":"2026-05-04 16:19:42"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 46%","timestamp":"2026-05-04 16:19:43"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 47%","timestamp":"2026-05-04 16:19:43"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 48%","timestamp":"2026-05-04 16:19:43"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 49%","timestamp":"2026-05-04 16:19:44"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 50%","timestamp":"2026-05-04 16:19:44"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 51%","timestamp":"2026-05-04 16:19:45"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 52%","timestamp":"2026-05-04 16:19:46"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 53%","timestamp":"2026-05-04 16:19:46"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 54%","timestamp":"2026-05-04 16:19:47"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 55%","timestamp":"2026-05-04 16:19:47"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 56%","timestamp":"2026-05-04 16:19:47"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 57%","timestamp":"2026-05-04 16:19:48"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 58%","timestamp":"2026-05-04 16:19:49"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 59%","timestamp":"2026-05-04 16:19:49"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 60%","timestamp":"2026-05-04 16:19:52"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 61%","timestamp":"2026-05-04 16:19:52"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 62%","timestamp":"2026-05-04 16:19:52"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 63%","timestamp":"2026-05-04 16:19:53"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 64%","timestamp":"2026-05-04 16:19:54"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 65%","timestamp":"2026-05-04 16:19:54"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 66%","timestamp":"2026-05-04 16:19:55"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 67%","timestamp":"2026-05-04 16:19:57"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 68%","timestamp":"2026-05-04 16:19:57"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 69%","timestamp":"2026-05-04 16:19:58"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 70%","timestamp":"2026-05-04 16:19:58"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 71%","timestamp":"2026-05-04 16:19:59"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 72%","timestamp":"2026-05-04 16:19:59"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 73%","timestamp":"2026-05-04 16:20:00"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 74%","timestamp":"2026-05-04 16:20:00"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 75%","timestamp":"2026-05-04 16:20:01"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 76%","timestamp":"2026-05-04 16:20:01"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 77%","timestamp":"2026-05-04 16:20:01"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 78%","timestamp":"2026-05-04 16:20:02"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 79%","timestamp":"2026-05-04 16:20:02"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 80%","timestamp":"2026-05-04 16:20:03"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 81%","timestamp":"2026-05-04 16:20:03"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 82%","timestamp":"2026-05-04 16:20:03"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 83%","timestamp":"2026-05-04 16:20:04"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 84%","timestamp":"2026-05-04 16:20:04"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 85%","timestamp":"2026-05-04 16:20:05"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 86%","timestamp":"2026-05-04 16:20:05"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 87%","timestamp":"2026-05-04 16:20:05"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 88%","timestamp":"2026-05-04 16:20:06"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 89%","timestamp":"2026-05-04 16:20:06"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 90%","timestamp":"2026-05-04 16:20:07"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 91%","timestamp":"2026-05-04 16:20:07"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 92%","timestamp":"2026-05-04 16:20:08"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 93%","timestamp":"2026-05-04 16:20:08"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 94%","timestamp":"2026-05-04 16:20:09"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 95%","timestamp":"2026-05-04 16:20:09"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 96%","timestamp":"2026-05-04 16:20:10"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 97%","timestamp":"2026-05-04 16:20:11"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 98%","timestamp":"2026-05-04 16:20:11"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 99%","timestamp":"2026-05-04 16:20:13"}
+{"level":"info","message":"Core Software Update | Extracting downloaded update files - 100%","timestamp":"2026-05-04 16:20:13"}
+{"level":"info","message":"Core Software Update | Update extraction complete","timestamp":"2026-05-04 16:20:13"}
+{"level":"info","message":"Core Software Update | Cleaning existing folder content - 25%","timestamp":"2026-05-04 16:20:13"}
+{"level":"info","message":"Core Software Update | Cleaning existing folder content - 50%","timestamp":"2026-05-04 16:20:13"}
+{"level":"info","message":"Core Software Update | Cleaning existing folder content - 75%","timestamp":"2026-05-04 16:20:16"}
+{"level":"info","message":"Core Software Update | Cleaning existing folder content - 100%","timestamp":"2026-05-04 16:20:18"}
+{"level":"info","message":"Core Software Update | Folder cleaning complete","timestamp":"2026-05-04 16:20:18"}
+{"level":"info","message":"Core Software Update | Installing update files - 0%","timestamp":"2026-05-04 16:20:18"}
+{"level":"info","message":"Core Software Update | Installing update files - 1%","timestamp":"2026-05-04 16:20:18"}
+{"level":"info","message":"Core Software Update | Installing update files - 2%","timestamp":"2026-05-04 16:20:18"}
+{"level":"info","message":"Core Software Update | Installing update files - 3%","timestamp":"2026-05-04 16:20:18"}
+{"level":"info","message":"Core Software Update | Installing update files - 4%","timestamp":"2026-05-04 16:20:19"}
+{"level":"info","message":"Core Software Update | Installing update files - 5%","timestamp":"2026-05-04 16:20:19"}
+{"level":"info","message":"Core Software Update | Installing update files - 6%","timestamp":"2026-05-04 16:20:19"}
+{"level":"info","message":"Core Software Update | Installing update files - 7%","timestamp":"2026-05-04 16:20:19"}
+{"level":"info","message":"Core Software Update | Installing update files - 8%","timestamp":"2026-05-04 16:20:20"}
+{"level":"info","message":"Core Software Update | Installing update files - 9%","timestamp":"2026-05-04 16:20:20"}
+{"level":"info","message":"Core Software Update | Installing update files - 10%","timestamp":"2026-05-04 16:20:20"}
+{"level":"info","message":"Core Software Update | Installing update files - 11%","timestamp":"2026-05-04 16:20:21"}
+{"level":"info","message":"Core Software Update | Installing update files - 12%","timestamp":"2026-05-04 16:20:21"}
+{"level":"info","message":"Core Software Update | Installing update files - 13%","timestamp":"2026-05-04 16:20:21"}
+{"level":"info","message":"Core Software Update | Installing update files - 14%","timestamp":"2026-05-04 16:20:21"}
+{"level":"info","message":"Core Software Update | Installing update files - 15%","timestamp":"2026-05-04 16:20:21"}
+{"level":"info","message":"Core Software Update | Installing update files - 16%","timestamp":"2026-05-04 16:20:22"}
+{"level":"info","message":"Core Software Update | Installing update files - 17%","timestamp":"2026-05-04 16:20:22"}
+{"level":"info","message":"Core Software Update | Installing update files - 18%","timestamp":"2026-05-04 16:20:22"}
+{"level":"info","message":"Core Software Update | Installing update files - 19%","timestamp":"2026-05-04 16:20:22"}
+{"level":"info","message":"Core Software Update | Installing update files - 20%","timestamp":"2026-05-04 16:20:23"}
+{"level":"info","message":"Core Software Update | Installing update files - 21%","timestamp":"2026-05-04 16:20:23"}
+{"level":"info","message":"Core Software Update | Installing update files - 22%","timestamp":"2026-05-04 16:20:23"}
+{"level":"info","message":"Core Software Update | Installing update files - 23%","timestamp":"2026-05-04 16:20:25"}
+{"level":"info","message":"Core Software Update | Installing update files - 24%","timestamp":"2026-05-04 16:20:25"}
+{"level":"info","message":"Core Software Update | Installing update files - 25%","timestamp":"2026-05-04 16:20:25"}
+{"level":"info","message":"Core Software Update | Installing update files - 26%","timestamp":"2026-05-04 16:20:25"}
+{"level":"info","message":"Core Software Update | Installing update files - 27%","timestamp":"2026-05-04 16:20:26"}
+{"level":"info","message":"Core Software Update | Installing update files - 28%","timestamp":"2026-05-04 16:20:26"}
+{"level":"info","message":"Core Software Update | Installing update files - 29%","timestamp":"2026-05-04 16:20:26"}
+{"level":"info","message":"Core Software Update | Installing update files - 30%","timestamp":"2026-05-04 16:20:26"}
+{"level":"info","message":"Core Software Update | Installing update files - 31%","timestamp":"2026-05-04 16:20:27"}
+{"level":"info","message":"Core Software Update | Installing update files - 32%","timestamp":"2026-05-04 16:20:27"}
+{"level":"info","message":"Core Software Update | Installing update files - 33%","timestamp":"2026-05-04 16:20:28"}
+{"level":"info","message":"Core Software Update | Installing update files - 34%","timestamp":"2026-05-04 16:20:28"}
+{"level":"info","message":"Core Software Update | Installing update files - 35%","timestamp":"2026-05-04 16:20:28"}
+{"level":"info","message":"Core Software Update | Installing update files - 36%","timestamp":"2026-05-04 16:20:28"}
+{"level":"info","message":"Core Software Update | Installing update files - 37%","timestamp":"2026-05-04 16:20:29"}
+{"level":"info","message":"Core Software Update | Installing update files - 38%","timestamp":"2026-05-04 16:20:29"}
+{"level":"info","message":"Core Software Update | Installing update files - 39%","timestamp":"2026-05-04 16:20:30"}
+{"level":"info","message":"Core Software Update | Installing update files - 40%","timestamp":"2026-05-04 16:20:31"}
+{"level":"info","message":"Core Software Update | Installing update files - 41%","timestamp":"2026-05-04 16:20:31"}
+{"level":"info","message":"Core Software Update | Installing update files - 42%","timestamp":"2026-05-04 16:20:31"}
+{"level":"info","message":"Core Software Update | Installing update files - 43%","timestamp":"2026-05-04 16:20:33"}
+{"level":"info","message":"Core Software Update | Installing update files - 44%","timestamp":"2026-05-04 16:20:34"}
+{"level":"info","message":"Core Software Update | Installing update files - 45%","timestamp":"2026-05-04 16:20:34"}
+{"level":"info","message":"Core Software Update | Installing update files - 46%","timestamp":"2026-05-04 16:20:34"}
+{"level":"info","message":"Core Software Update | Installing update files - 47%","timestamp":"2026-05-04 16:20:34"}
+{"level":"info","message":"Core Software Update | Installing update files - 48%","timestamp":"2026-05-04 16:20:34"}
+{"level":"info","message":"Core Software Update | Installing update files - 49%","timestamp":"2026-05-04 16:20:34"}
+{"level":"info","message":"Core Software Update | Installing update files - 50%","timestamp":"2026-05-04 16:20:35"}
+{"level":"info","message":"Core Software Update | Installing update files - 51%","timestamp":"2026-05-04 16:20:35"}
+{"level":"info","message":"Core Software Update | Installing update files - 52%","timestamp":"2026-05-04 16:20:35"}
+{"level":"info","message":"Core Software Update | Installing update files - 53%","timestamp":"2026-05-04 16:20:35"}
+{"level":"info","message":"Core Software Update | Installing update files - 54%","timestamp":"2026-05-04 16:20:36"}
+{"level":"info","message":"Core Software Update | Installing update files - 55%","timestamp":"2026-05-04 16:20:36"}
+{"level":"info","message":"Core Software Update | Installing update files - 56%","timestamp":"2026-05-04 16:20:36"}
+{"level":"info","message":"Core Software Update | Installing update files - 57%","timestamp":"2026-05-04 16:20:36"}
+{"level":"info","message":"Core Software Update | Installing update files - 58%","timestamp":"2026-05-04 16:20:36"}
+{"level":"info","message":"Core Software Update | Installing update files - 59%","timestamp":"2026-05-04 16:20:37"}
+{"level":"info","message":"Core Software Update | Installing update files - 60%","timestamp":"2026-05-04 16:20:37"}
+{"level":"info","message":"Core Software Update | Installing update files - 61%","timestamp":"2026-05-04 16:20:37"}
+{"level":"info","message":"Core Software Update | Installing update files - 62%","timestamp":"2026-05-04 16:20:37"}
+{"level":"info","message":"Core Software Update | Installing update files - 63%","timestamp":"2026-05-04 16:20:37"}
+{"level":"info","message":"Core Software Update | Installing update files - 64%","timestamp":"2026-05-04 16:20:38"}
+{"level":"info","message":"Core Software Update | Installing update files - 65%","timestamp":"2026-05-04 16:20:38"}
+{"level":"info","message":"Core Software Update | Installing update files - 66%","timestamp":"2026-05-04 16:20:39"}
+{"level":"info","message":"Core Software Update | Installing update files - 67%","timestamp":"2026-05-04 16:20:39"}
+{"level":"info","message":"Core Software Update | Installing update files - 68%","timestamp":"2026-05-04 16:20:39"}
+{"level":"info","message":"Core Software Update | Installing update files - 69%","timestamp":"2026-05-04 16:20:40"}
+{"level":"info","message":"Core Software Update | Installing update files - 70%","timestamp":"2026-05-04 16:20:40"}
+{"level":"info","message":"Core Software Update | Installing update files - 71%","timestamp":"2026-05-04 16:20:41"}
+{"level":"info","message":"Core Software Update | Installing update files - 72%","timestamp":"2026-05-04 16:20:41"}
+{"level":"info","message":"Core Software Update | Installing update files - 73%","timestamp":"2026-05-04 16:20:41"}
+{"level":"info","message":"Core Software Update | Installing update files - 74%","timestamp":"2026-05-04 16:20:41"}
+{"level":"info","message":"Core Software Update | Installing update files - 75%","timestamp":"2026-05-04 16:20:42"}
+{"level":"info","message":"Core Software Update | Installing update files - 76%","timestamp":"2026-05-04 16:20:42"}
+{"level":"info","message":"Core Software Update | Installing update files - 77%","timestamp":"2026-05-04 16:20:43"}
+{"level":"info","message":"Core Software Update | Installing update files - 78%","timestamp":"2026-05-04 16:20:43"}
+{"level":"info","message":"Core Software Update | Installing update files - 79%","timestamp":"2026-05-04 16:20:43"}
+{"level":"info","message":"Core Software Update | Installing update files - 80%","timestamp":"2026-05-04 16:20:43"}
+{"level":"info","message":"Core Software Update | Installing update files - 81%","timestamp":"2026-05-04 16:20:44"}
+{"level":"info","message":"Core Software Update | Installing update files - 82%","timestamp":"2026-05-04 16:20:44"}
+{"level":"info","message":"Core Software Update | Installing update files - 83%","timestamp":"2026-05-04 16:20:44"}
+{"level":"info","message":"Core Software Update | Installing update files - 84%","timestamp":"2026-05-04 16:20:44"}
+{"level":"info","message":"Core Software Update | Installing update files - 85%","timestamp":"2026-05-04 16:20:44"}
+{"level":"info","message":"Core Software Update | Installing update files - 86%","timestamp":"2026-05-04 16:20:45"}
+{"level":"info","message":"Core Software Update | Installing update files - 87%","timestamp":"2026-05-04 16:20:45"}
+{"level":"info","message":"Core Software Update | Installing update files - 88%","timestamp":"2026-05-04 16:20:47"}
+{"level":"info","message":"Core Software Update | Installing update files - 89%","timestamp":"2026-05-04 16:20:48"}
+{"level":"info","message":"Core Software Update | Installing update files - 90%","timestamp":"2026-05-04 16:20:48"}
+{"level":"info","message":"Core Software Update | Update installation complete","timestamp":"2026-05-04 16:20:48"}
+{"level":"info","message":"Core Software Update | Update Complete","timestamp":"2026-05-04 16:20:53"}
+{"level":"info","message":"Shutting down Foundry Virtual Tabletop server","timestamp":"2026-05-04 16:20:53"}
+{"level":"info","message":"Shut-down success. Goodbye!","timestamp":"2026-05-04 16:20:53"}
+{"level":"info","message":"Running on Node.js - Version 20.18.3","timestamp":"2026-05-04 16:21:17"}
+{"level":"info","message":"Foundry Virtual Tabletop - Version 13 Build 351","timestamp":"2026-05-04 16:21:17"}
+{"level":"info","message":"User Data Directory - \"C:/Users/Owner/Documents/GitHub/foundryvtt-swse\"","timestamp":"2026-05-04 16:21:17"}
+{"level":"info","message":"Application Options:\n{\n  \"compressStatic\": true,\n  \"fullscreen\": false,\n  \"hostname\": null,\n  \"language\": \"en.core\",\n  \"localHostname\": null,\n  \"port\": 30000,\n  \"protocol\": null,\n  \"proxyPort\": null,\n  \"proxySSL\": false,\n  \"routePrefix\": null,\n  \"updateChannel\": \"stable\",\n  \"upnp\": true,\n  \"upnpLeaseDuration\": null,\n  \"awsConfig\": null,\n  \"compressSocket\": true,\n  \"cssTheme\": \"dark\",\n  \"deleteNEDB\": false,\n  \"hotReload\": false,\n  \"passwordSalt\": null,\n  \"sslCert\": null,\n  \"sslKey\": null,\n  \"world\": null,\n  \"serviceConfig\": null,\n  \"telemetry\": true,\n  \"adminPassword\": null,\n  \"noBackups\": false\n}","timestamp":"2026-05-04 16:21:17"}
+{"level":"info","message":"Software license verification succeeded","timestamp":"2026-05-04 16:21:17"}
+{"level":"info","message":"Requesting UPnP port forwarding to destination port 30000","timestamp":"2026-05-04 16:21:17"}
+{"level":"info","message":"Running Electron application with version 34.4.0 using Chromium 132.0.6834.210","timestamp":"2026-05-04 16:21:17"}
+{"level":"info","message":"Server started and listening on port 30000","timestamp":"2026-05-04 16:21:17"}
+{"level":"info","message":"Server restarted after update","timestamp":"2026-05-04 16:21:19"}
+{"level":"info","message":"Created client session c06bfdcd5a02127acc67454a","timestamp":"2026-05-04 16:21:19"}
+{"level":"info","message":"Core software stable update 14.360 is available!","timestamp":"2026-05-04 16:21:23"}
+{"level":"info","message":"Saved application configuration options to C:/Users/Owner/AppData/Local/FoundryVTT/Config/options.json","timestamp":"2026-05-04 16:23:20"}
+{"level":"info","message":"Saved application configuration options to C:\\Users\\Owner\\AppData\\Local\\FoundryVTT\\Data\\Config\\options.json","timestamp":"2026-05-04 16:23:20"}
+{"level":"info","message":"Shutting down Foundry Virtual Tabletop server","timestamp":"2026-05-04 16:36:58"}
+{"level":"info","message":"Shut-down success. Goodbye!","timestamp":"2026-05-04 16:36:58"}

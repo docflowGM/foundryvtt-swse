@@ -6,6 +6,14 @@
   </header>
   {{/if}}
 
+  {{#if weaponVisual}}
+  <div class="swse-roll-weapon-visual swse-roll-weapon-visual--{{weaponVisual.kind}}" style="--swse-weapon-visual-color: {{weaponVisual.colorHex}}" data-swse-weapon-visual="{{weaponVisual.kind}}">
+    <span class="swse-roll-weapon-visual__emitter" aria-hidden="true"></span>
+    <span class="swse-roll-weapon-visual__beam" aria-hidden="true"></span>
+    <span class="swse-roll-weapon-visual__label">{{weaponVisual.label}}</span>
+  </div>
+  {{/if}}
+
   {{#if context}}
   <div class="card-content">
     {{#if context.baseBonus}}<div><strong>Base Bonus:</strong> {{numberFormat context.baseBonus decimals=0 sign=true}}</div>{{/if}}

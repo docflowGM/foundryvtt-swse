@@ -56,6 +56,6 @@ export class DroidCustomizationRouter {
    * Get customization UI label for droid (for UI display)
    */
   static getDroidCustomizationLabel() {
-    return 'Customize Droid';
+    return 'Open Droid Garage';
   }
 }

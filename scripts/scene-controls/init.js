@@ -1,18 +1,35 @@
 /**
- * Scene control initialization via getSceneControlButtons hook
- * Foundry v13 native - registers all SWSE scene controls
+ * Scene control initialization via getSceneControlButtons hook.
+ *
+ * Foundry v13 native: this is the single SWSE canvas Scene Controls entrypoint.
  */
 
 import { sceneControlRegistry } from "/systems/foundryvtt-swse/scripts/scene-controls/api.js";
 import { getCurrentPhase, SWSE_PHASES } from "/systems/foundryvtt-swse/scripts/state/phase.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { registerSWSECanvasTools } from "/systems/foundryvtt-swse/scripts/scene-controls/swse-canvas-tools.js";
+
+let initialized = false;
 
 /**
- * Initialize SWSE scene controls
- * Call this once during system init
+ * Initialize SWSE scene controls.
+ * Call once during system init.
  */
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 export function initializeSceneControls() {
-  // Register control groups
+  if (initialized) return;
+  initialized = true;
+
+  registerNarrativeControlPlaceholders();
+  registerSWSECanvasTools();
+  sceneControlRegistry.installFoundryHook();
+
+  SWSELogger.log('SWSE scene controls registered through SceneControlRegistry.');
+}
+
+function registerNarrativeControlPlaceholders() {
+  // These existing groups are intentionally preserved as placeholders for future
+  // engine-backed Force/tech/combat actions, but they are registered through the
+  // central registry so they cannot create duplicate getSceneControlButtons hooks.
   sceneControlRegistry.registerGroup('force', {
     title: 'Force Abilities',
     icon: 'fa-solid fa-burst'
@@ -28,99 +45,67 @@ export function initializeSceneControls() {
     icon: 'fa-solid fa-crosshairs'
   });
 
-  // Register Force tools
   sceneControlRegistry.registerTool('force', 'force-push', {
     title: 'Force Push',
     icon: 'fa-solid fa-hand-paper',
     onClick: () => SWSELogger.debug('Force Push activated'),
-    visible: () => _hasSelectedToken(),
-    enabled: () => _isPhase(SWSE_PHASES.NARRATIVE) && _hasSelectedToken()
+    visible: () => hasSelectedToken(),
+    enabled: () => isPhase(SWSE_PHASES.NARRATIVE) && hasSelectedToken()
   });
 
   sceneControlRegistry.registerTool('force', 'force-move', {
     title: 'Force Move',
     icon: 'fa-solid fa-arrow-up',
     onClick: () => SWSELogger.debug('Force Move activated'),
-    visible: () => _hasSelectedToken(),
-    enabled: () => _isPhase(SWSE_PHASES.NARRATIVE) && _hasSelectedToken()
+    visible: () => hasSelectedToken(),
+    enabled: () => isPhase(SWSE_PHASES.NARRATIVE) && hasSelectedToken()
   });
 
   sceneControlRegistry.registerTool('force', 'force-sense', {
     title: 'Force Sense',
     icon: 'fa-solid fa-eye',
     onClick: () => SWSELogger.debug('Force Sense activated'),
-    visible: () => _hasSelectedToken(),
-    enabled: () => _hasSelectedToken()
+    visible: () => hasSelectedToken(),
+    enabled: () => hasSelectedToken()
   });
 
-  // Register Tech tools
   sceneControlRegistry.registerTool('tech', 'slice', {
     title: 'Slice Terminal',
     icon: 'fa-solid fa-lock-open',
     onClick: () => SWSELogger.debug('Slice activated'),
-    visible: () => _hasSelectedToken(),
-    enabled: () => _isPhase(SWSE_PHASES.NARRATIVE) && _hasSelectedToken()
+    visible: () => hasSelectedToken(),
+    enabled: () => isPhase(SWSE_PHASES.NARRATIVE) && hasSelectedToken()
   });
 
   sceneControlRegistry.registerTool('tech', 'deploy-gadget', {
     title: 'Deploy Gadget',
     icon: 'fa-solid fa-cube',
     onClick: () => SWSELogger.debug('Deploy Gadget activated'),
-    visible: () => _hasSelectedToken(),
-    enabled: () => _hasSelectedToken()
+    visible: () => hasSelectedToken(),
+    enabled: () => hasSelectedToken()
   });
 
-  // Register Combat tools (combat phase only)
   sceneControlRegistry.registerTool('combat', 'aim', {
     title: 'Aim',
     icon: 'fa-solid fa-bullseye',
     onClick: () => SWSELogger.debug('Aim activated'),
-    visible: () => _isPhase(SWSE_PHASES.COMBAT),
-    enabled: () => _isPhase(SWSE_PHASES.COMBAT) && _hasSelectedToken()
+    visible: () => isPhase(SWSE_PHASES.COMBAT),
+    enabled: () => isPhase(SWSE_PHASES.COMBAT) && hasSelectedToken()
   });
 
   sceneControlRegistry.registerTool('combat', 'full-attack', {
     title: 'Full Attack',
     icon: 'fa-solid fa-burst',
     onClick: () => SWSELogger.debug('Full Attack activated'),
-    visible: () => _isPhase(SWSE_PHASES.COMBAT),
-    enabled: () => _isPhase(SWSE_PHASES.COMBAT) && _hasSelectedToken()
-  });
-
-  // Hook into getSceneControlButtons to inject controls
-  Hooks.on('getSceneControlButtons', (controls) => {
-    const swseControls = sceneControlRegistry.getControls();
-
-    if (Array.isArray(controls)) {
-      for (const control of swseControls) {
-        if (!controls.some(existing => existing?.name === control?.name)) {
-          controls.push(control);
-        }
-      }
-      return;
-    }
-
-    if (controls && typeof controls === 'object') {
-      for (const control of swseControls) {
-        controls[control.name] ??= control;
-      }
-      return;
-    }
-
-    SWSELogger.warn('Unsupported getSceneControlButtons payload', controls);
+    visible: () => isPhase(SWSE_PHASES.COMBAT),
+    enabled: () => isPhase(SWSE_PHASES.COMBAT) && hasSelectedToken()
   });
 }
 
-/**
- * Helper: Check if phase matches
- */
-function _isPhase(phase) {
+function isPhase(phase) {
   return getCurrentPhase() === phase;
 }
 
-/**
- * Helper: Check if a token is selected
- */
-function _hasSelectedToken() {
-  return canvas?.tokens?.controlled?.length > 0;
+function hasSelectedToken() {
+  return (globalThis.canvas?.tokens?.controlled?.length ?? 0) > 0;
 }

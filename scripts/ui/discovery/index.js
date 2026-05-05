@@ -8,7 +8,7 @@
  */
 
 import { DiscoveryUserState } from "/systems/foundryvtt-swse/scripts/ui/discovery/user-state.js";
-import { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
+import { TooltipRegistry, bindTooltipGlobalDismissals } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
 import { TooltipGlossary } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-glossary.js";
 import { CalloutManager } from "/systems/foundryvtt-swse/scripts/ui/discovery/callout-manager.js";
 import { FeatureTour } from "/systems/foundryvtt-swse/scripts/ui/discovery/feature-tour.js";
@@ -39,6 +39,8 @@ export function onDiscoveryReady() {
   Hooks.on('renderApplication', _onAppRender);
   Hooks.on('renderActorSheet', _onAppRender);
   Hooks.on('renderItemSheet', _onAppRender);
+
+  bindTooltipGlobalDismissals();
 
   // Global dismiss on scroll / resize
   window.addEventListener('scroll', TooltipRegistry.hide, { passive: true, capture: true });

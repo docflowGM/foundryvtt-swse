@@ -191,3 +191,52 @@
 .chat-message .swse-roll-outcome--failure {
   color: var(--swse-state-negative);
 }
+
+.chat-message .swse-roll-weapon-visual {
+  --swse-weapon-visual-color: var(--swse-chat-accent);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.35rem 0 0.65rem;
+  padding: 0.35rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--swse-weapon-visual-color) 42%, var(--swse-chat-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--swse-weapon-visual-color) 10%, var(--swse-chat-panel));
+  box-shadow: inset 0 0 12px color-mix(in srgb, var(--swse-weapon-visual-color) 16%, transparent);
+}
+
+.chat-message .swse-roll-weapon-visual__emitter {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--swse-weapon-visual-color);
+  box-shadow: 0 0 10px var(--swse-weapon-visual-color), 0 0 18px color-mix(in srgb, var(--swse-weapon-visual-color) 55%, transparent);
+}
+
+.chat-message .swse-roll-weapon-visual__beam {
+  height: 0.16rem;
+  min-width: 3rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--swse-weapon-visual-color), color-mix(in srgb, var(--swse-weapon-visual-color) 18%, transparent));
+  box-shadow: 0 0 10px var(--swse-weapon-visual-color);
+}
+
+.chat-message .swse-roll-weapon-visual__label {
+  color: var(--swse-chat-text);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.chat-message .swse-roll-weapon-visual--lightsaber .swse-roll-weapon-visual__beam {
+  height: 0.22rem;
+}
+
+.chat-message .swse-roll-weapon-visual--blaster .swse-roll-weapon-visual__beam {
+  background: repeating-linear-gradient(90deg,
+    var(--swse-weapon-visual-color) 0 0.55rem,
+    color-mix(in srgb, var(--swse-weapon-visual-color) 30%, transparent) 0.55rem 0.78rem);
+}

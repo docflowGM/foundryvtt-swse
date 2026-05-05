@@ -31,6 +31,8 @@ export class BlasterCustomizationEngine {
 
       // Prepare mutation
       const updates = {
+        "flags.foundryvtt-swse.boltColor": config.boltColor,
+        "flags.foundryvtt-swse.fxType": config.fxType,
         "flags.swse.boltColor": config.boltColor,
         "flags.swse.fxType": config.fxType,
         "flags.swse.modifiedAt": game.time.worldTime,

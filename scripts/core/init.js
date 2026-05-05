@@ -3,7 +3,6 @@ import { HookInvestigator } from "/systems/foundryvtt-swse/scripts/governance/se
  * SWSE Init — placeholder to satisfy Foundry system validation
  */
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
-import { GMDroidApprovalDashboard } from "/systems/foundryvtt-swse/scripts/apps/gm-droid-approval-dashboard.js";
 import { registerVehiclePreCreateHooks } from "/systems/foundryvtt-swse/scripts/actors/vehicle/vehicle-precreate-hooks.js";
 import { initSidebarSentinelTrace } from "/systems/foundryvtt-swse/scripts/core/sidebar-sentinel-trace.js";
 import { initSidebarIconComparison } from "/systems/foundryvtt-swse/scripts/core/sidebar-icon-comparison.js";
@@ -51,28 +50,9 @@ Hooks.once('init', () => {
   SWSELogger.log('SWSE system initialized successfully.');
 });
 
-// Phase 4: Register GM Droid Approval Dashboard
-Hooks.on('getSceneControlButtons', (controls) => {
-  if (!game.user?.isGM) return;
-
-  const tokenControls = Array.isArray(controls)
-    ? controls.find(c => c?.name === 'token')
-    : controls?.token ?? Object.values(controls ?? {}).find(c => c?.name === 'token');
-
-  if (!tokenControls) return;
-  if (!Array.isArray(tokenControls.tools)) tokenControls.tools = [];
-  if (tokenControls.tools.some(tool => tool?.name === 'gm-droid-approvals')) return;
-
-  tokenControls.tools.push({
-    name: 'gm-droid-approvals',
-    title: 'Droid Approvals',
-    icon: 'fa-solid fa-clipboard-check',
-    button: true,
-    visible: true,
-    onClick: () => GMDroidApprovalDashboard.open()
-  });
-});
-
+// DEPRECATED: GM Droid Approval canvas access is now registered through
+// scripts/scene-controls/swse-canvas-tools.js via SceneControlRegistry.
+// Do not add direct getSceneControlButtons hooks here.
 
 // Hook Investigator (runtime hook validation)
 Hooks.once("init", () => {

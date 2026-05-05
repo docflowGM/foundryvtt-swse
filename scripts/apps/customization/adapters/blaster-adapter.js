@@ -8,7 +8,8 @@
  */
 
 import { BlasterCustomizationEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/blaster-customization-engine.js";
-import { BLASTER_BOLT_COLORS } from "/systems/foundryvtt-swse/scripts/data/blaster-config.js";
+import { BLASTER_BOLT_COLORS, BLASTER_FX_TYPES } from "/systems/foundryvtt-swse/scripts/data/blaster-config.js";
+import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 
 export class BlasterAdapter {
   constructor() {
@@ -25,7 +26,7 @@ export class BlasterAdapter {
   getOptions(item, actor) {
     return {
       boltColor: Object.keys(BLASTER_BOLT_COLORS),
-      fxType: ["standard", "heavy", "ion"]
+      fxType: Object.keys(BLASTER_FX_TYPES)
     };
   }
 
@@ -38,9 +39,10 @@ export class BlasterAdapter {
    * @returns {Object} Current selections { boltColor, fxType }
    */
   getInitialSelections(item, actor) {
+    const profile = WeaponVisualProfileResolver.resolve(item, { actor });
     return {
-      boltColor: item.flags?.swse?.boltColor || "red",
-      fxType: item.flags?.swse?.fxType || "standard"
+      boltColor: profile.boltColor,
+      fxType: profile.fxType
     };
   }
 
@@ -62,16 +64,12 @@ export class BlasterAdapter {
     }
 
     if (optionType === "fxType") {
-      const descriptions = {
-        standard: "Normal bolt velocity and dispersal",
-        heavy: "Increased bolt size and impact energy",
-        ion: "Electromagnetic discharge, anti-shield"
-      };
+      const fx = BLASTER_FX_TYPES[optionKey];
 
       return {
         id: optionKey,
-        name: optionKey.charAt(0).toUpperCase() + optionKey.slice(1),
-        description: descriptions[optionKey] || "",
+        name: fx?.name || optionKey.charAt(0).toUpperCase() + optionKey.slice(1),
+        description: fx?.description || "",
         cost: 0
       };
     }
@@ -148,9 +146,10 @@ export class BlasterAdapter {
    * @returns {Object} Default selections { boltColor, fxType }
    */
   getDefaults(item, actor) {
+    const profile = WeaponVisualProfileResolver.resolve(item, { actor });
     return {
-      boltColor: "red",
-      fxType: "standard"
+      boltColor: profile.boltColor,
+      fxType: profile.fxType
     };
   }
 

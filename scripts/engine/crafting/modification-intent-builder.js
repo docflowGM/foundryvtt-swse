@@ -45,6 +45,8 @@ export class ModificationIntentBuilder {
       type: "blaster-customization",
       targetId: item.id,
       changes: [
+        { path: "flags.foundryvtt-swse.boltColor", value: config.boltColor },
+        { path: "flags.foundryvtt-swse.fxType", value: config.fxType },
         { path: "flags.swse.boltColor", value: config.boltColor },
         { path: "flags.swse.fxType", value: config.fxType },
         { path: "flags.swse.modifiedAt", value: game.time.worldTime },
@@ -73,6 +75,7 @@ export class ModificationIntentBuilder {
       type: "lightsaber-construction",
       targetId: weapon.id,
       changes: [
+        { path: "flags.foundryvtt-swse.bladeColor", value: bladeColor },
         { path: "flags.swse.bladeColor", value: bladeColor },
         { path: "flags.swse.builtBy", value: actor.id },
         { path: "flags.swse.builtAt", value: game.time.worldTime }

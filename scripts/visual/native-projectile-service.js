@@ -18,7 +18,7 @@
  */
 
 import { BEAM_STYLES, getBoltColor } from "/systems/foundryvtt-swse/scripts/constants/beam-styles.js";
-import { BLASTER_FX_TYPES, DEFAULT_BOLT_COLOR, DEFAULT_FX_TYPE } from "/systems/foundryvtt-swse/scripts/data/blaster-config.js";
+import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class NativeProjectileService {
@@ -35,11 +35,12 @@ export class NativeProjectileService {
   static async fire(attackerToken, targetToken, weapon, context = {}, enableEffects = true) {
     if (!attackerToken || !targetToken) return;
 
-    // Get beam style and color from weapon flags/workbench selections.
-    // Workbench persists fxType + boltColor; beamStyle remains supported for older items.
-    const visual = this.#resolveWeaponVisuals(weapon);
-    const beamStyle = visual.beamStyle;
-    const boltColor = visual.boltColor;
+    // Resolve projectile visuals through the shared cosmetic profile.
+    // This keeps workbench bolt color / FX selection, chat accents, and token
+    // visuals on the same authority without letting FX influence combat math.
+    const visualProfile = WeaponVisualProfileResolver.resolve(weapon, { actor: weapon?.actor });
+    const beamStyle = context.beamStyle || visualProfile.projectile.beamStyle || "bolt";
+    const boltColor = context.boltColor || visualProfile.projectile.color || "blue";
 
     // Calculate positions
     const attackPos = {
@@ -91,21 +92,6 @@ export class NativeProjectileService {
     } catch (err) {
       swseLogger.error("[NativeProjectileService] Projectile fire failed:", err);
     }
-  }
-
-
-  /**
-   * Resolve weapon projectile visuals from canonical workbench item flags.
-   * Purely cosmetic; no combat math.
-   * @private
-   */
-  static #resolveWeaponVisuals(weapon) {
-    const swseFlags = weapon?.flags?.swse || weapon?.flags?.["foundryvtt-swse"] || {};
-    const fxType = swseFlags.fxType || DEFAULT_FX_TYPE;
-    const beamStyle = swseFlags.beamStyle || BLASTER_FX_TYPES[fxType]?.beamStyle || "bolt";
-    const boltColor = swseFlags.boltColor || DEFAULT_BOLT_COLOR;
-
-    return { beamStyle, boltColor, fxType };
   }
 
   /* ============================================================

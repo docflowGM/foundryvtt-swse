@@ -23,9 +23,7 @@
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.2.0/foundryvtt-swse.zip",
-  "esmodules": [
-    "index.js"
-  ],
+  "esmodules": [],
   "styles": [
     "styles/fonts.css",
     "styles/swse-core.css",
@@ -113,7 +111,6 @@
     "styles/debug/svg-layout-debug.css",
     "styles/ui/swse-holo-phase1.css",
     "styles/ui/chat-holo-flourishes.css",
-    "styles/system/chat-surfaces.css",
     "styles/ui/swse-cursors.css",
     "styles/apps/chargen.css",
     "styles/components/breakdown-card.css",
@@ -124,9 +121,13 @@
     "styles/system/settings-surface.css",
     "styles/system/mentor-surface.css",
     "styles/system/store-surface.css",
-    "styles/apps/gm-datapad.css",
-    "styles/apps/item-customization-workbench.css",
-    "styles/apps/custom-roll-dialog.css"
+    "styles/system/secondary-surfaces.css",
+    "styles/system/chat-surfaces.css",
+    "styles/system/scene-controls.css",
+    "styles/system/gm-datapad-scene-control.css",
+    "styles/apps/custom-roll-dialog.css",
+    "styles/apps/customization-bay.css",
+    "styles/apps/gm-datapad.css"
   ],
   "languages": [
     {

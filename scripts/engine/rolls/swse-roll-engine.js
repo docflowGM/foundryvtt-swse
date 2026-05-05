@@ -1,4 +1,5 @@
 import { buildChatSvgContext, buildChatStateContext } from "/systems/foundryvtt-swse/scripts/chat/chat-svg-assets.js";
+import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 /**
  * SWSERollEngine
  *
@@ -39,6 +40,10 @@ export class SWSERollEngine {
     const actorName = actor?.name ?? 'Unknown';
     const label = context?.label ?? context?.skillLabel ?? context?.rollLabel ?? '';
     const title = flavor || (label ? `${actorName} used ${label}` : `${actorName} rolled`);
+    const weapon = this._resolveContextWeapon(actor, context);
+    const weaponVisual = weapon
+      ? WeaponVisualProfileResolver.toChatView(WeaponVisualProfileResolver.resolve(weapon, { actor }))
+      : null;
 
     return {
       chatSvg: buildChatSvgContext(),
@@ -62,8 +67,24 @@ export class SWSERollEngine {
       actor,
       actorName,
       timestamp: new Date().toISOString(),
-      context
+      context,
+      weaponVisual
     };
+  }
+
+
+  /**
+   * Resolve a weapon-like item from roll context without performing any roll
+   * math or mutation. Chat visuals remain consumers of engine roll context.
+   * @private
+   */
+  static _resolveContextWeapon(actor, context = {}) {
+    const candidate = context?.weapon ?? context?.item ?? context?.sourceItem ?? null;
+    if (candidate?.type) return candidate;
+
+    const itemId = context?.weaponId ?? context?.itemId ?? context?.sourceItemId ?? null;
+    if (!itemId || !actor?.items?.get) return null;
+    return actor.items.get(itemId) ?? null;
   }
 
   /**

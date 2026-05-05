@@ -1,169 +1,122 @@
 /**
  * Action Palette initialization
- * Creates and manages the radial menu application instance
+ * Creates and manages the radial menu application instance.
+ *
+ * Scene control access is registered through SceneControlRegistry, not through
+ * direct DOM mutation or a local getSceneControlButtons hook.
  */
 
 import { ActionPaletteApp } from "/systems/foundryvtt-swse/scripts/ui/action-palette/action-palette.js";
 import { safeRender } from "/systems/foundryvtt-swse/scripts/utils/render-guard.js";
+import { sceneControlRegistry } from "/systems/foundryvtt-swse/scripts/scene-controls/api.js";
 
 let actionPaletteApp = null;
+let cssLoaded = false;
+let preferencesLoaded = false;
 
 /**
- * Initialize the Action Palette
- * - Create the application
- * - Add sidebar button
- * - Register event handlers
+ * Initialize the Action Palette.
  */
 export function initializeActionPalette() {
-  // Load CSS with proper scoping (v13 ApplicationV2 handles containment)
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = 'systems/foundryvtt-swse/scripts/ui/action-palette/action-palette.css';
-  document.head.appendChild(link);
+  ensureActionPaletteApp();
+  registerActionPaletteSceneTool();
 
-  // Create the application
-  actionPaletteApp = new ActionPaletteApp();
+  if (globalThis.game?.ready) {
+    loadUserPreferencesOnce();
+  } else {
+    Hooks.once('ready', () => loadUserPreferencesOnce());
+  }
+}
 
-  // Register ready hook to add scene control button
-  Hooks.once('ready', () => {
-    _registerSceneControl();
-    _loadUserPreferences();
+export function ensureActionPaletteApp() {
+  if (!cssLoaded) {
+    const href = 'systems/foundryvtt-swse/scripts/ui/action-palette/action-palette.css';
+    if (!document.querySelector(`link[href="${href}"]`)) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      document.head.appendChild(link);
+    }
+    cssLoaded = true;
+  }
+
+  if (!actionPaletteApp) actionPaletteApp = new ActionPaletteApp();
+  return actionPaletteApp;
+}
+
+export function registerActionPaletteSceneTool() {
+  sceneControlRegistry.registerHostTool('token', 'actionPalette', {
+    title: 'Action Palette',
+    icon: 'swse-scene-control swse-scene-control-action-palette',
+    visible: true,
+    enabled: () => (globalThis.canvas?.tokens?.controlled?.length ?? 0) > 0,
+    onClick: () => {
+      ensureActionPaletteApp();
+      toggleActionPalette();
+    },
+    button: true,
+    order: 90
   });
 }
 
 /**
- * Register Action Palette as a Foundry v13 scene control button
- * Uses proper Foundry UI API instead of direct DOM mutation
+ * DEPRECATED: Direct scene-control hook registration used to live here.
+ * Scene controls now flow through SceneControlRegistry only.
+ * @deprecated Use registerActionPaletteSceneTool() instead.
  * @private
  */
 function _registerSceneControl() {
-  // Hook into scene controls rendering
-  Hooks.on('getSceneControlButtons', (controls) => {
-    const tokenControls = _getOrCreateControlGroup(controls, 'token', {
-      name: 'token',
-      title: 'Token Controls',
-      icon: 'fas fa-circle-dot',
-      layer: 'TokenLayer',
-      visible: true,
-      tools: []
-    });
-
-    if (!Array.isArray(tokenControls.tools)) tokenControls.tools = [];
-    if (tokenControls.tools.some(t => t?.name === 'actionPalette')) return;
-
-    // Add Action Palette as a tool
-    tokenControls.tools.push({
-      name: 'actionPalette',
-      title: 'Action Palette',
-      icon: 'fas fa-circle-dot',
-      visible: true,
-      onClick: () => toggleActionPalette(),
-      button: true
-    });
-  });
-}
-
-function _getOrCreateControlGroup(controls, name, fallback) {
-  if (Array.isArray(controls)) {
-    let group = controls.find(c => c?.name === name);
-    if (!group) {
-      group = structuredClone(fallback);
-      controls.push(group);
-    }
-    return group;
-  }
-
-  if (controls && typeof controls === 'object') {
-    let group = controls[name] ?? Object.values(controls).find(c => c?.name === name);
-    if (!group) {
-      group = structuredClone(fallback);
-      controls[name] = group;
-    }
-    return group;
-  }
-
-  console.warn('[Action Palette] Unsupported scene controls payload', controls);
-  return structuredClone(fallback);
+  registerActionPaletteSceneTool();
 }
 
 /**
  * DEPRECATED: This function directly manipulated the sidebar DOM using appendChild(),
  * which broke Foundry's tab activation system during boot.
  *
- * @deprecated Use proper Foundry UI registration instead
+ * @deprecated Use SceneControlRegistry registration instead.
  * @private
  */
 function _createSidebarButton() {
-  // DISABLED CODE BELOW - DO NOT USE
-  /*
-  // Find the controls bar or create UI element
-  const sidebarControls = document.getElementById('sidebar-tabs');
-  if (!sidebarControls) {return;}
+  // Intentionally disabled. Do not mutate #sidebar-tabs.
+}
 
-  // Check if button already exists
-  if (document.getElementById('action-palette-toggle')) {return;}
-
-  const button = document.createElement('button');
-  button.id = 'action-palette-toggle';
-  button.className = 'action-palette-toggle';
-  button.title = 'Toggle Action Palette';
-  button.innerHTML = '<i class="fa-solid fa-circle-dot"></i>';
-
-  button.addEventListener('click', () => {
-    if (actionPaletteApp.rendered) {
-      actionPaletteApp.close();
-    } else {
-      safeRender(actionPaletteApp, true);
-    }
-  });
-
-  sidebarControls.appendChild(button);
-  */
+function loadUserPreferencesOnce() {
+  if (preferencesLoaded) return;
+  preferencesLoaded = true;
+  _loadUserPreferences();
 }
 
 /**
- * Load user preferences and restore state
+ * Load user preferences and restore state.
  * @private
  */
 function _loadUserPreferences() {
-  const prefs = game.user.getFlag('foundryvtt-swse', 'actionPaletteState') || {};
+  const app = ensureActionPaletteApp();
+  const prefs = game.user?.getFlag?.('foundryvtt-swse', 'actionPaletteState') || {};
 
-  if (prefs.position) {
-    actionPaletteApp.position = prefs.position;
-  }
+  if (prefs.position) app.position = prefs.position;
+  if (prefs.mode && game.user?.isGM) app.mode = prefs.mode;
 
-  if (prefs.mode && game.user.isGM) {
-    actionPaletteApp.mode = prefs.mode;
-  }
-
-  // Auto-open if user had it open before (optional)
-  const autoOpen = game.user.getFlag('foundryvtt-swse', 'actionPaletteAutoOpen') ?? false;
-  if (autoOpen) {
-    safeRender(actionPaletteApp, true);
-  }
+  const autoOpen = game.user?.getFlag?.('foundryvtt-swse', 'actionPaletteAutoOpen') ?? false;
+  if (autoOpen) safeRender(app, true);
 }
 
 /**
- * Get the action palette app instance
+ * Get the action palette app instance.
  */
 export function getActionPaletteApp() {
   return actionPaletteApp;
 }
 
 /**
- * Toggle the Action Palette visibility
- * Safe public API for opening/closing the palette
- * Used by keybindings and UI controls
+ * Toggle the Action Palette visibility.
  */
 export function toggleActionPalette() {
-  if (!actionPaletteApp) {
-    console.warn('[Action Palette] App not initialized');
-    return;
-  }
+  const app = ensureActionPaletteApp();
 
-  if (actionPaletteApp.rendered) {
-    actionPaletteApp.close();
+  if (app.rendered) {
+    app.close();
   } else {
-    safeRender(actionPaletteApp, true);
+    safeRender(app, true);
   }
 }

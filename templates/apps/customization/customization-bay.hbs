@@ -1,0 +1,301 @@
+{{! Unified Customization Bay — Droid Garage / Starship Shipyard }}
+{{! V2-safe shell: UI emits intents; engines own rules, costs, validation, and mutation. }}
+
+<div class="swse-customization-bay swse-datapad swse-ui-shell swse-sheet-ui"
+     data-theme="{{themeKey}}"
+     data-motion-style="{{motionStyle}}"
+     data-mode="{{mode}}"
+     data-context-mode="{{contextMode}}"
+     style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
+  <header class="bay-header">
+    <div class="bay-header__identity">
+      <span class="bay-header__glyph">{{config.glyph}}</span>
+      <div>
+        <p class="bay-kicker">SWSE Customization Bay</p>
+        <h1>{{modeLabel}}</h1>
+        <p class="bay-subtitle">{{config.subtitle}}</p>
+      </div>
+    </div>
+
+    <nav class="bay-mode-tabs" aria-label="Customization bay mode">
+      {{#each modeOptions}}
+        <button type="button"
+                class="bay-mode-tab {{#if active}}active{{/if}}"
+                data-action="set-mode"
+                data-mode="{{key}}"
+                aria-pressed="{{#if active}}true{{else}}false{{/if}}">
+          <span class="bay-mode-tab__glyph">{{glyph}}</span>
+          <span>{{label}}</span>
+        </button>
+      {{/each}}
+    </nav>
+  </header>
+
+  <section class="bay-context-strip" aria-label="Customization context">
+    {{#each contextOptions}}
+      <button type="button"
+              class="bay-context-pill {{#if active}}active{{/if}}"
+              data-action="set-context"
+              data-context="{{key}}"
+              data-swse-tooltip-key="{{tooltipKey}}">
+        {{label}}
+      </button>
+    {{/each}}
+  </section>
+
+  <section class="bay-mentor bay-mentor--{{config.mentorClass}}">
+    <div class="bay-mentor__portrait" aria-hidden="true">
+      <span>{{config.glyph}}</span>
+    </div>
+    <div class="bay-mentor__body">
+      <div class="bay-mentor__meta">
+        <strong>{{config.mentorName}}</strong>
+        <span>{{config.mentorRole}}</span>
+        <span>Channel · {{config.mentorChannel}}</span>
+      </div>
+      <p>{{mentorText}}</p>
+    </div>
+  </section>
+
+  {{#if error}}
+    <aside class="bay-runtime-note" data-tone="neutral">
+      <strong>Concept / routing note:</strong> {{error}}
+    </aside>
+  {{/if}}
+
+  <main class="bay-workgrid">
+    <aside class="bay-left-rail">
+      <section class="bay-panel">
+        <header class="bay-panel__head">
+          <span>Build Stages</span>
+          <strong>{{config.glyph}}</strong>
+        </header>
+        <ol class="bay-stage-list">
+          {{#each stageItems}}
+            <li class="bay-stage bay-stage--{{status}}">
+              <span class="bay-stage__idx">{{index}}</span>
+              <span class="bay-stage__label">{{label}}</span>
+              <span class="bay-stage__marker">{{marker}}</span>
+            </li>
+          {{/each}}
+        </ol>
+      </section>
+
+      <section class="bay-panel">
+        <header class="bay-panel__head">
+          <span>Street-Legal Status</span>
+          <strong class="bay-status bay-status--{{legality.tone}}">{{legality.label}}</strong>
+        </header>
+        <div class="bay-legal-rows">
+          <div class="bay-legal-row">
+            <span>Compliance</span>
+            <strong class="bay-value--{{legality.tone}}">{{legality.label}}</strong>
+          </div>
+          <div class="bay-legal-row">
+            <span>GM Review</span>
+            <strong>{{legality.gmReview}}</strong>
+          </div>
+          <div class="bay-legal-row">
+            <span>Mutation</span>
+            <strong class="bay-value--positive">Engine Only</strong>
+          </div>
+          <div class="bay-legal-row">
+            <span>Runtime Lane</span>
+            <strong>{{#if runtimeLane}}Live{{else}}Concept{{/if}}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="bay-panel">
+        <header class="bay-panel__head">
+          <span>Budget</span>
+          <strong>{{budget.newCreditsLabel}}</strong>
+        </header>
+        <div class="bay-budget-bar">
+          <span style="width: {{budget.usedPct}}"></span>
+        </div>
+        <div class="bay-budget-meta">
+          <span>Cost {{budget.netCostLabel}}</span>
+          <span>Wallet {{budget.currentCreditsLabel}}</span>
+        </div>
+      </section>
+
+      {{#if slotMeter}}
+        <section class="bay-panel">
+          <header class="bay-panel__head">
+            <span>Upgrade Slots</span>
+            <strong>{{config.primaryMetricLabel}}</strong>
+          </header>
+          <div class="bay-slot-meter">
+            {{#each slotMeter}}
+              <span class="bay-slot bay-slot--{{status}}">{{index}}</span>
+            {{/each}}
+          </div>
+        </section>
+      {{/if}}
+
+      <section class="bay-panel">
+        <header class="bay-panel__head">
+          <span>Warnings</span>
+          <strong>{{legality.notes.length}}</strong>
+        </header>
+        {{#if legality.notes.length}}
+          <ul class="bay-warning-list">
+            {{#each legality.notes}}
+              <li>{{this}}</li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <p class="bay-muted">No blocking warnings from the current engine preview.</p>
+        {{/if}}
+      </section>
+    </aside>
+
+    <section class="bay-main">
+      <section class="bay-section">
+        <header class="bay-section__head">
+          <h2>Core Profile</h2>
+          <span>{{summaryName}}</span>
+        </header>
+        <div class="bay-stat-grid">
+          {{#each profileStats}}
+            <article class="bay-stat bay-stat--{{tone}}">
+              <span>{{label}}</span>
+              <strong>{{value}}</strong>
+            </article>
+          {{/each}}
+        </div>
+      </section>
+
+      <section class="bay-section">
+        <header class="bay-section__head">
+          <h2>Systems / Parts</h2>
+          <span data-swse-tooltip-key="{{#if (eq mode 'shipyard')}}shipyard.systemBays{{else}}garage.systems{{/if}}">Engine-sourced options</span>
+        </header>
+
+        <div class="bay-system-groups">
+          {{#each systemGroups}}
+            <section class="bay-system-group" data-category="{{key}}">
+              <h3>{{label}}</h3>
+              <div class="bay-card-grid">
+                {{#each systems}}
+                  <article class="bay-part-card bay-part-card--{{category}} {{#if installed}}installed{{/if}} {{#if selectedAdd}}selected-add{{/if}} {{#if selectedRemove}}selected-remove{{/if}} {{#unless compatible}}incompatible{{/unless}}">
+                    <div class="bay-part-card__head">
+                      <strong>{{name}}</strong>
+                      <span>{{categoryLabel}}</span>
+                    </div>
+                    <p>{{description}}</p>
+                    <div class="bay-part-card__meta">
+                      <span>{{#if installed}}Installed{{else}}Available{{/if}}</span>
+                      <span>{{costLabel}}</span>
+                    </div>
+                    <button type="button"
+                            class="bay-part-card__action"
+                            data-action="{{action}}"
+                            data-system-id="{{id}}"
+                            {{#if actionDisabled}}disabled{{/if}}>
+                      {{actionLabel}}
+                    </button>
+                  </article>
+                {{/each}}
+              </div>
+            </section>
+          {{/each}}
+        </div>
+      </section>
+
+      <section class="bay-section bay-section--compliance bay-section--{{legality.tone}}">
+        <header class="bay-section__head">
+          <h2>Street-Legal Framework</h2>
+          <span class="bay-legal-stamp bay-legal-stamp--{{legality.tone}}">{{legality.label}}</span>
+        </header>
+        <div class="bay-compliance-grid">
+          <div><span>Legal Status</span><strong class="bay-value--{{legality.tone}}">{{legality.label}}</strong></div>
+          <div><span>GM Approval</span><strong>{{legality.gmReview}}</strong></div>
+          <div><span>Cost Delta</span><strong class="bay-value--{{budget.tone}}">{{budget.netCostLabel}}</strong></div>
+          <div><span>Resulting Balance</span><strong>{{budget.newCreditsLabel}}</strong></div>
+          <div><span>Authority</span><strong>Existing Engine</strong></div>
+          <div><span>UI Contract</span><strong>No Direct Mutation</strong></div>
+        </div>
+      </section>
+
+      <section class="bay-section">
+        <header class="bay-section__head">
+          <h2>Readiness / Integration</h2>
+          <span>{{contextMode}}</span>
+        </header>
+        <div class="bay-readiness-grid">
+          {{#each readinessRows}}
+            <article class="bay-readiness bay-readiness--{{tone}}">
+              <span>{{label}}</span>
+              <strong>{{value}}</strong>
+            </article>
+          {{/each}}
+        </div>
+      </section>
+    </section>
+
+    <aside class="bay-right-rail">
+      <section class="bay-summary">
+        <header>
+          <span>{{summaryTitle}}</span>
+          <strong>{{summaryName}}</strong>
+          <em>{{summarySubtitle}}</em>
+        </header>
+
+        <div class="bay-summary__rows">
+          <div><span>Additions</span><strong>{{previewSummary.additions.length}}</strong></div>
+          <div><span>Removals</span><strong>{{previewSummary.removals.length}}</strong></div>
+          <div><span>Purchase</span><strong>{{previewSummary.addCostLabel}}</strong></div>
+          <div><span>Resale</span><strong>{{previewSummary.resaleLabel}}</strong></div>
+          <div><span>Net Cost</span><strong class="bay-value--{{budget.tone}}">{{budget.netCostLabel}}</strong></div>
+          <div><span>Legal</span><strong class="bay-value--{{legality.tone}}">{{legality.label}}</strong></div>
+        </div>
+
+        {{#if installedRows.length}}
+          <div class="bay-installed-list">
+            <h3>Installed</h3>
+            {{#each installedRows}}
+              <div class="bay-installed bay-installed--{{category}}">
+                <span>{{name}}</span>
+                <strong>{{categoryLabel}}</strong>
+              </div>
+            {{/each}}
+          </div>
+        {{/if}}
+
+        <div class="bay-summary__actions">
+          <button type="button" data-action="save-draft">Save Draft</button>
+          <button type="button" data-action="request-gm-approval">Request GM Approval</button>
+          <button type="button" data-action="store-quote">Send to Store Quote</button>
+          <button type="button" data-action="reset-build" {{#unless hasChanges}}disabled{{/unless}}>Reset</button>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="bay-footer">
+    <div class="bay-breadcrumbs">
+      <span>Customization Bay</span>
+      <span>{{modeLabel}}</span>
+      <span>{{contextMode}}</span>
+    </div>
+    <div class="bay-footer__actions">
+      <button type="button" data-action="close-bay">Back / Close</button>
+      <button type="button" data-action="validate-build">Validate Build</button>
+      <button type="button" data-action="apply-build" class="primary" {{#unless canApply}}disabled{{/unless}}>Apply Changes</button>
+    </div>
+  </footer>
+
+  <details class="bay-implementation-notes">
+    <summary>Implementation Notes for Future V2 Build</summary>
+    <ul>
+      <li>This is a production V2 shell plus concept lanes; engines remain the rule authority.</li>
+      <li>Droid Garage delegates live modification preview/apply to <code>DroidCustomizationEngine</code>.</li>
+      <li>Shipyard delegates live modification preview/apply to <code>VehicleCustomizationEngine</code>.</li>
+      <li>Store Quote and Chargen Draft are surfaced as stateful lanes for future integration, not parallel engines.</li>
+      <li>Tooltips should resolve through the SWSE tooltip registry/glossary as the content library grows.</li>
+      <li>No actor or item data is mutated directly from this template.</li>
+    </ul>
+  </details>
+</div>
