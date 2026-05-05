@@ -647,6 +647,39 @@ export class SentinelEngine {
     }
   }
 
+  /**
+   * Report SSOT (Single Source of Truth) violation: direct actor.items bypass detected.
+   * Used by dev-mode detection layer to flag direct item access circumventing ActorAbilityBridge.
+   */
+  static reportSSOTViolation(actor, methodName) {
+    if (this.#mode === this.MODES.OFF) return;
+
+    try {
+      const stack = new Error().stack;
+
+      // Ignore internal safe callers to avoid noise
+      if (
+        stack.includes('ActorAbilityBridge') ||
+        stack.includes('ActorItemIndex') ||
+        stack.includes('ssot-detection') ||
+        stack.includes('sentinel-engine') ||
+        stack.includes('sentinel-core')
+      ) {
+        return;
+      }
+
+      const payload = {
+        actor: actor?.name,
+        method: methodName,
+        stack: stack.split('\n').slice(2, 8)
+      };
+
+      this.report('ssot', this.SEVERITY.WARN, `Direct actor.items.${methodName}() detected`, payload);
+    } catch (e) {
+      // Fail silently — detection must never break execution
+    }
+  }
+
   // ========== PHASE 7: Crash Snapshot Reporter ==========
 
   /**

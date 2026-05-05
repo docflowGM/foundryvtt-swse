@@ -14,7 +14,7 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
 import { traceLog, actorSummary, payloadSummary, MutationDepth } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 import { captureHydrationSnapshot, collectHydrationSensitivePaths, emitHydrationError, emitHydrationWarning } from "/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
-import { instrumentActorItems } from "/systems/foundryvtt-swse/scripts/dev/ssot-detection.js";
+import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 /**
  * ActorEngine
@@ -25,10 +25,61 @@ import { instrumentActorItems } from "/systems/foundryvtt-swse/scripts/dev/ssot-
  * during an in-flight actor update. Reactive hooks and other systems
  * must check _isActorMutationInFlight before writing back to the same actor.
  */
+// Track instrumented actors to avoid re-patching
+const _instrumentedActors = new WeakMap();
+
 export const ActorEngine = {
   // PHASE 2: In-flight mutation guard per actor (actor id → reference count)
   // Uses reference counting to handle nested updates (preUpdateActor hooks calling updateActor again)
   _inFlightMutations: new Map(),
+
+  /**
+   * Instrument actor.items to route direct access through Sentinel Engine.
+   * Patches filter, some, map, find to report bypasses.
+   * Safe to call multiple times (uses WeakMap to skip already-instrumented actors).
+   * @private
+   */
+  _instrumentActorItemsForSSSTOT(actor) {
+    if (!actor?.items) return;
+    if (_instrumentedActors.has(actor)) return;
+
+    try {
+      const itemsCollection = actor.items;
+
+      // Patch filter
+      const originalFilter = itemsCollection.filter.bind(itemsCollection);
+      itemsCollection.filter = function (...args) {
+        SentinelEngine.reportSSOTViolation(actor, 'filter');
+        return originalFilter(...args);
+      };
+
+      // Patch some
+      const originalSome = itemsCollection.some.bind(itemsCollection);
+      itemsCollection.some = function (...args) {
+        SentinelEngine.reportSSOTViolation(actor, 'some');
+        return originalSome(...args);
+      };
+
+      // Patch map
+      const originalMap = itemsCollection.map.bind(itemsCollection);
+      itemsCollection.map = function (...args) {
+        SentinelEngine.reportSSOTViolation(actor, 'map');
+        return originalMap(...args);
+      };
+
+      // Patch find
+      const originalFind = itemsCollection.find.bind(itemsCollection);
+      itemsCollection.find = function (...args) {
+        SentinelEngine.reportSSOTViolation(actor, 'find');
+        return originalFind(...args);
+      };
+
+      // Mark as instrumented
+      _instrumentedActors.set(actor, true);
+    } catch (e) {
+      // Fail silently — instrumentation must never break execution
+    }
+  },
 
   /**
    * Merge a DerivedCalculator update bundle into the live actor document.
@@ -468,7 +519,7 @@ export const ActorEngine = {
       // ========================================
       // DEV MODE: Instrument actor.items for SSOT violation detection
       // ========================================
-      instrumentActorItems(actor);
+      this._instrumentActorItemsForSSSTOT(actor);
 
       // ========================================
       // PHASE 2B: Detect cascading update loops
@@ -657,7 +708,7 @@ export const ActorEngine = {
       if (!Array.isArray(updates)) {throw new Error('updateEmbeddedDocuments() requires updates array');}
 
       // DEV MODE: Instrument actor.items for SSOT violation detection
-      instrumentActorItems(actor);
+      this._instrumentActorItemsForSSSTOT(actor);
 
       SWSELogger.debug(`ActorEngine.updateEmbeddedDocuments → ${actor.name}`, {
         embeddedName,
@@ -707,7 +758,7 @@ export const ActorEngine = {
       if (!Array.isArray(data)) {throw new Error('createEmbeddedDocuments() requires data array');}
 
       // DEV MODE: Instrument actor.items for SSOT violation detection
-      instrumentActorItems(actor);
+      this._instrumentActorItemsForSSSTOT(actor);
 
       SWSELogger.debug(`ActorEngine.createEmbeddedDocuments → ${actor.name}`, {
         embeddedName,
