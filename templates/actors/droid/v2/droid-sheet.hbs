@@ -175,23 +175,45 @@
       </section>
 
       {{!-- COMBAT TAB --}}
+      {{!-- combatWeapons = { handheld[], integrated[], all[], hasHandheld, hasIntegrated, hasAny }
+           Integrated weapons are weapon items with system.integrated===true — rollable via existing
+           wireWeaponRolling listener. Builder-config weapons (droidSystems.weapons) are config data
+           only and do not appear here since they lack actor item IDs. --}}
       <section class="tab" data-group="primary" data-tab="combat">
         <div class="swse-panel">
           <div class="swse-panel-title">Weapons</div>
           <div class="swse-list">
-            {{!-- weapons is [{id,name,type,img,system}] built by DroidSheetContextBuilder.buildWeaponEntries() --}}
-            {{#each weapons as |weapon|}}
+
+            {{!-- Handheld weapons — full inventory controls --}}
+            {{#each combatWeapons.handheld as |weapon|}}
               <div class="swse-list-row weapon-entry" data-item-id="{{weapon.id}}">
-                <span>{{weapon.name}}</span>
-                <span class="swse-item-type">{{weapon.type}}</span>
+                <span class="weapon-name">{{weapon.name}}</span>
+                {{#if weapon.damage}}<span class="swse-weapon-meta">{{weapon.damage}}</span>{{/if}}
+                {{#if weapon.range}}<span class="swse-weapon-meta">{{weapon.range}}</span>{{/if}}
                 <div class="swse-inline-actions">
                   <button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}">Roll</button>
                   <button type="button" data-action="delete-item" data-item-id="{{weapon.id}}">Delete</button>
                 </div>
               </div>
-            {{else}}
-              <div class="swse-empty">No weapons recorded.</div>
             {{/each}}
+
+            {{!-- Integrated weapons — chassis-mounted, no delete (Garage-managed) --}}
+            {{#each combatWeapons.integrated as |weapon|}}
+              <div class="swse-list-row weapon-entry swse-weapon-integrated-row" data-item-id="{{weapon.id}}">
+                <span class="swse-weapon-integrated-badge">INTEGRATED</span>
+                <span class="weapon-name">{{weapon.name}}</span>
+                {{#if weapon.damage}}<span class="swse-weapon-meta">{{weapon.damage}}</span>{{/if}}
+                {{#if weapon.range}}<span class="swse-weapon-meta">{{weapon.range}}</span>{{/if}}
+                <div class="swse-inline-actions">
+                  <button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}">Roll</button>
+                </div>
+              </div>
+            {{/each}}
+
+            {{#unless combatWeapons.hasAny}}
+              <div class="swse-empty">No weapons recorded.</div>
+            {{/unless}}
+
           </div>
         </div>
       </section>

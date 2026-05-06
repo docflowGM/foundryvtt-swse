@@ -90,6 +90,9 @@ export class DroidSheetContextBuilder {
     // Phase 4: resolver unifies builder data + item collection into per-region view
     const resolvedSystems = this.buildResolvedSystems();
 
+    // Phase 6: split weapons into combat-classified buckets
+    const combatWeapons = this.buildCombatWeaponsContext(weapons);
+
     return {
       // NOTE: the 'actor' Document is intentionally NOT included; consumers use
       // `document` from the base context.
@@ -116,6 +119,7 @@ export class DroidSheetContextBuilder {
       equipment,
       armor,
       weapons,
+      combatWeapons,
       ownedActorMap,
       feats: abilityCards.feats,
       talents: abilityCards.talents,
@@ -198,7 +202,37 @@ export class DroidSheetContextBuilder {
   }
 
   buildWeaponEntries() {
-    return projectItems((this.actor?.items ?? []).filter((item) => item.type === "weapon"));
+    return (this.actor?.items ?? [])
+      .filter(item => item.type === "weapon")
+      .map(item => {
+        const isIntegrated =
+          item.system?.integrated === true || Boolean(item.flags?.swse?.integrated);
+        return {
+          ...projectItem(item),
+          isIntegrated,
+          // Phase 6: surfaced weapon metadata (read-only, no mutation)
+          damage: item.system?.damage ?? "",
+          damageBonus: item.system?.damageBonus ?? "",
+          attackBonus: Number.isFinite(Number(item.system?.attackBonus))
+            ? Number(item.system.attackBonus) : null,
+          range: item.system?.range ?? "",
+          meleeOrRanged: item.system?.meleeOrRanged ?? "melee",
+          equipped: item.system?.equipped === true,
+        };
+      });
+  }
+
+  buildCombatWeaponsContext(weapons) {
+    const handheld = weapons.filter(w => !w.isIntegrated);
+    const integrated = weapons.filter(w => w.isIntegrated);
+    return {
+      handheld,
+      integrated,
+      all: weapons,
+      hasHandheld: handheld.length > 0,
+      hasIntegrated: integrated.length > 0,
+      hasAny: weapons.length > 0,
+    };
   }
 
   buildHeaderViewModel() {
@@ -452,7 +486,15 @@ export class DroidSheetContextBuilder {
         name: i.name ?? "",
         cost: 0,
         type: "built-in",
-        description: i.system?.description ?? ""
+        description: i.system?.description ?? "",
+        // Phase 6: weapon metadata for Systems tab display
+        damage: i.system?.damage ?? "",
+        damageBonus: i.system?.damageBonus ?? "",
+        range: i.system?.range ?? "",
+        meleeOrRanged: i.system?.meleeOrRanged ?? "melee",
+        attackBonus: Number.isFinite(Number(i.system?.attackBonus))
+          ? Number(i.system.attackBonus) : null,
+        canRoll: true,
       }));
 
     const entries = [...builderEntries, ...itemEntries];

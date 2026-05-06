@@ -354,3 +354,44 @@
   gap: 6px;
   min-height: 0;
 }
+
+/* ================================================================
+   PHASE 6: INTEGRATED WEAPON ROWS (Combat tab)
+   ================================================================ */
+
+/* Tinted row for integrated weapons in the Combat tab weapon list */
+.swse-droid-sheet .swse-weapon-integrated-row {
+  background: rgba(0, 217, 255, 0.04);
+  border-color: rgba(0, 217, 255, 0.12);
+}
+
+/* INTEGRATED badge chip */
+.swse-droid-sheet .swse-weapon-integrated-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: rgba(0, 217, 255, 0.12);
+  color: var(--swse-accent, #00d9ff);
+  border: 1px solid rgba(0, 217, 255, 0.25);
+  flex-shrink: 0;
+}
+
+/* Small damage/range/stat chip inside weapon rows and Systems panel */
+.swse-droid-sheet .swse-weapon-meta {
+  font-size: 0.78rem;
+  opacity: 0.65;
+  padding: 1px 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 3px;
+}
+
+/* Inline stat row within the integrated-weapons-panel (Systems tab) */
+.swse-droid-sheet .swse-weapon-stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
