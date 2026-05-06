@@ -169,3 +169,141 @@
   opacity: 0.6;
   font-style: italic;
 }
+
+/* ================================================================
+   PHASE 2: DROID SYSTEMS TAB — MAP LAYOUT
+   Two-column grid of subsystem panels.
+   Reuses the .swse-panel base from above; adds Phase 2 additions
+   for the grid structure and default-region styling.
+   ================================================================ */
+
+/* Systems tab root: flex column so the grid + diagnostics stack */
+.swse-droid-sheet .swse-droid-systems-map {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* Each row holds two equal-width panels side by side */
+.swse-droid-sheet .swse-droid-systems-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+/* ── Section bar (shared by subsystem partials) ─────────────────── */
+/* The partials use <header class="section-bar"> / <div class="section-bar">  */
+.swse-droid-sheet .section-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.swse-droid-sheet .section-header {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+  flex: 1;
+  color: var(--swse-accent, #00d9ff);
+}
+
+.swse-droid-sheet .section-meta {
+  font-size: 0.78rem;
+  opacity: 0.55;
+}
+
+/* ── Subsystem panel content wrappers ───────────────────────────── */
+/* Panels produced by the partials (processor-content, armor-content, etc.) */
+.swse-droid-sheet .processor-content,
+.swse-droid-sheet .armor-content,
+.swse-droid-sheet .locomotion-content {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* List containers inside array panels (appendages, sensors, etc.) */
+.swse-droid-sheet .appendages-list,
+.swse-droid-sheet .sensors-list,
+.swse-droid-sheet .integrated-systems-list,
+.swse-droid-sheet .integrated-weapons-list {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Individual entries within array panels */
+.swse-droid-sheet .appendage-entry,
+.swse-droid-sheet .sensor-entry,
+.swse-droid-sheet .system-entry,
+.swse-droid-sheet .weapon-entry {
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.swse-droid-sheet .entry-header,
+.swse-droid-sheet .system-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.swse-droid-sheet .entry-name,
+.swse-droid-sheet .system-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.swse-droid-sheet .entry-cost,
+.swse-droid-sheet .system-type {
+  font-size: 0.78rem;
+  opacity: 0.55;
+}
+
+/* ── Default / unconfigured panels (required systems not yet built) ── */
+/* Shown when processor / locomotion / appendages have no actor data.
+   Amber accent distinguishes them from fully-configured panels.
+   No data is written to the actor — display labels only. */
+.swse-droid-sheet .swse-droid-default-region {
+  border-color: rgba(255, 180, 40, 0.3);
+}
+
+/* "DEFAULT" badge in the section-bar header */
+.swse-droid-sheet .swse-droid-default-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(255, 160, 30, 0.15);
+  color: var(--swse-warning, #ffd66b);
+  border: 1px solid rgba(255, 160, 30, 0.3);
+  flex-shrink: 0;
+}
+
+/* Content area inside a default panel */
+.swse-droid-sheet .swse-droid-default-content {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Italic hint text below the default value */
+.swse-droid-sheet .swse-droid-default-hint {
+  font-size: 0.75rem;
+  font-style: italic;
+  opacity: 0.5;
+  margin: 4px 0 0;
+}

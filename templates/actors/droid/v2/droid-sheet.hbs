@@ -1,6 +1,6 @@
 {{!--
   templates/actors/droid/v2/droid-sheet.hbs
-  Droid Sheet V2 — Phase 1 (scaffold, read-only Systems tab)
+  Droid Sheet V2 — Phase 2 (read-only systems map, subsystem partials)
 
   Reuse map:
     Sheet class:      scripts/sheets/v2/droid-sheet.js (SWSEV2DroidSheet)
@@ -250,43 +250,110 @@
         </div>
       </section>
 
-      {{!-- SYSTEMS TAB (read-only Phase 1) --}}
+      {{!-- SYSTEMS TAB (Phase 2: structured read-only systems map) --}}
       <section class="tab" data-group="primary" data-tab="systems">
 
-        {{!-- Existing droid-systems-panel partial: shows degree/size/locomotion/appendages/etc.
-             when droidSystems is populated. Garage "Edit" button is inside this partial,
-             wired by wireDroidSystemsEditor() in listeners.js --}}
-        {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs"}}
+        {{!-- ── HEADER: degree / size / budget / Garage edit button ─────── --}}
+        {{!-- droid-systems-summary-strip renders the summary header with the
+             .edit-droid-systems and .convert-to-custom-droid buttons.
+             Both are already wired in listeners.js.  The strip gracefully
+             falls back to Edit (not Convert) when actor.flags is not in
+             the HBS context — correct for Phase 2. --}}
+        {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs"}}
 
-        {{!-- Phase 1: Show read-only defaults when no configuration exists yet.
-             Does NOT write to actor data — display labels only. --}}
-        {{#unless droidPanels.droidSummary.degree}}
-          <div class="swse-panel swse-droid-defaults-notice">
-            <div class="swse-panel-title">DEFAULT CONFIGURATION</div>
-            <div class="swse-panel__content">
-              <p class="swse-hint">No build configuration yet. Defaults shown are informational only.</p>
-              <ul class="swse-defaults-list">
-                <li>
-                  <span class="label">Locomotion:</span>
-                  <span class="value">Walking (standard, default)</span>
-                </li>
-                <li>
-                  <span class="label">Appendages:</span>
-                  <span class="value">2 × Standard Droid Arms (default)</span>
-                </li>
-                <li>
-                  <span class="label">Processor:</span>
-                  <span class="value">Heuristic Processor (default)</span>
-                </li>
-              </ul>
-              {{#if editable}}
-                <button type="button" class="edit-droid-systems header-btn">
-                  Open Droid Builder
-                </button>
-              {{/if}}
-            </div>
+        {{!-- ── SYSTEMS MAP GRID ───────────────────────────────────────── --}}
+        {{!-- All panels are read-only.  Required systems (Processor, Locomotion,
+             Appendages) show safe defaults when the actor has no builder config.
+             Optional systems (Armor, Sensors, Integrated Weapons/Systems) show
+             their "empty" state, which is already handled inside each partial. --}}
+        <div class="swse-droid-systems-map">
+
+          {{!-- ROW 1: Core compute & movement (both required) --}}
+          <div class="swse-droid-systems-row">
+
+            {{!-- Processor: configured or safe default --}}
+            {{#if droidPanels.processor.hasProcessor}}
+              {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs"}}
+            {{else}}
+              <section class="swse-panel swse-droid-default-region">
+                <header class="section-bar">
+                  <h3 class="section-header">Processor</h3>
+                  <span class="swse-droid-default-badge">DEFAULT</span>
+                </header>
+                <div class="swse-droid-default-content">
+                  <div class="config-item">
+                    <span class="label">Type:</span>
+                    <span class="value">Heuristic Processor</span>
+                  </div>
+                  <p class="swse-droid-default-hint">Not configured — baseline default shown.</p>
+                </div>
+              </section>
+            {{/if}}
+
+            {{!-- Locomotion: configured or safe default --}}
+            {{#if droidPanels.locomotion.name}}
+              {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs"}}
+            {{else}}
+              <section class="swse-panel swse-droid-default-region">
+                <header class="section-bar">
+                  <h3 class="section-header">Locomotion</h3>
+                  <span class="swse-droid-default-badge">DEFAULT</span>
+                </header>
+                <div class="swse-droid-default-content">
+                  <div class="config-item">
+                    <span class="label">Type:</span>
+                    <span class="value">Walking</span>
+                  </div>
+                  <p class="swse-droid-default-hint">Not configured — baseline default shown.</p>
+                </div>
+              </section>
+            {{/if}}
+
           </div>
-        {{/unless}}
+
+          {{!-- ROW 2: Manipulation & body protection (Appendages required) --}}
+          <div class="swse-droid-systems-row">
+
+            {{!-- Appendages: configured or safe default --}}
+            {{#if droidPanels.appendages.hasEntries}}
+              {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs"}}
+            {{else}}
+              <section class="swse-panel swse-droid-default-region">
+                <header class="section-bar">
+                  <h3 class="section-header">Appendages</h3>
+                  <span class="swse-droid-default-badge">DEFAULT</span>
+                </header>
+                <div class="swse-droid-default-content">
+                  <div class="config-item">
+                    <span class="label">Manipulators:</span>
+                    <span class="value">2 × Standard Droid Arms</span>
+                  </div>
+                  <p class="swse-droid-default-hint">Not configured — baseline default shown.</p>
+                </div>
+              </section>
+            {{/if}}
+
+            {{!-- Armor / Body: optional, shows empty state when absent --}}
+            {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-armor-panel.hbs"}}
+
+          </div>
+
+          {{!-- ROW 3: Detection & integrated weaponry (both optional) --}}
+          <div class="swse-droid-systems-row">
+            {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-sensors-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-weapons-panel.hbs"}}
+          </div>
+
+          {{!-- ROW 4: Integrated equipment/accessories (full-width) --}}
+          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs"}}
+
+        </div>
+
+        {{!-- ── DIAGNOSTICS: configuration status + issues list ─────────── --}}
+        {{!-- droid-validation-panel renders readiness status and any issues
+             (missing required systems, over-budget, etc.) from DroidValidationEngine.
+             On a fresh unconfigured droid this will list all missing components. --}}
+        {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-validation-panel.hbs"}}
 
       </section>
 
