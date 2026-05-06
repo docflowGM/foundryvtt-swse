@@ -23,8 +23,11 @@
     feats               — array of feat cards [{id,name,type}]
     talents             — array of talent cards [{id,name,type}]
     droidPanels         — droid-specific sub-panels (locomotion, processor, appendages, etc.)
-    droid               — Phase 3 structured context: { degree, layoutMode, systems, requiredSystems, garage, flags }
-                          droid.requiredSystems.{processor,locomotion,appendages}: { isConfigured, isDefault, defaultName, defaultLabel }
+    droid               — structured context: { degree, layoutMode, systems, requiredSystems, resolvedSystems, garage, flags }
+                          droid.requiredSystems.{processor,locomotion,appendages}: Phase 3 (builder-data only)
+                          droid.resolvedSystems.{processor,locomotion,armor,appendages,sensors,integratedEquipment,integratedWeapons}:
+                            Phase 4 unified view — { isConfigured, isDefault, defaultName, defaultLabel, items[], isEmpty, warning }
+                            items from both builder (system.droidSystems) and actor.items collection
                           droid.flags: { isStockDroid, hasConversionReport, isPendingApproval }
                           droid.garage: { canEdit, canCustomize, canConvert, openMode, hasConfiguration }
     editable            — boolean
@@ -254,29 +257,24 @@
         </div>
       </section>
 
-      {{!-- SYSTEMS TAB (Phase 2: structured read-only systems map) --}}
+      {{!-- SYSTEMS TAB (Phase 4: resolver-driven regions) --}}
+      {{!-- droid.resolvedSystems.* is the unified view from DroidSystemsResolver:
+           builder data (system.droidSystems) + item collection, merged and deduped.
+           Required regions show DEFAULT badges when unconfigured; optional regions
+           delegate to existing partials which handle their own empty states. --}}
       <section class="tab" data-group="primary" data-tab="systems">
 
         {{!-- ── HEADER: degree / size / budget / Garage edit button ─────── --}}
-        {{!-- droid-systems-summary-strip renders the summary header with the
-             .edit-droid-systems and .convert-to-custom-droid buttons.
-             Both are already wired in listeners.js.  The strip gracefully
-             falls back to Edit (not Convert) when actor.flags is not in
-             the HBS context — correct for Phase 2. --}}
         {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs"}}
 
         {{!-- ── SYSTEMS MAP GRID ───────────────────────────────────────── --}}
-        {{!-- All panels are read-only.  Required systems (Processor, Locomotion,
-             Appendages) show safe defaults when the actor has no builder config.
-             Optional systems (Armor, Sensors, Integrated Weapons/Systems) show
-             their "empty" state, which is already handled inside each partial. --}}
         <div class="swse-droid-systems-map">
 
           {{!-- ROW 1: Core compute & movement (both required) --}}
           <div class="swse-droid-systems-row">
 
-            {{!-- Processor: configured or safe default (droid.requiredSystems.processor) --}}
-            {{#if droid.requiredSystems.processor.isConfigured}}
+            {{!-- Processor — droid.resolvedSystems.processor --}}
+            {{#if droid.resolvedSystems.processor.isConfigured}}
               {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs"}}
             {{else}}
               <section class="swse-panel swse-droid-default-region">
@@ -286,16 +284,16 @@
                 </header>
                 <div class="swse-droid-default-content">
                   <div class="config-item">
-                    <span class="label">{{droid.requiredSystems.processor.defaultLabel}}:</span>
-                    <span class="value">{{droid.requiredSystems.processor.defaultName}}</span>
+                    <span class="label">{{droid.resolvedSystems.processor.defaultLabel}}:</span>
+                    <span class="value">{{droid.resolvedSystems.processor.defaultName}}</span>
                   </div>
-                  <p class="swse-droid-default-hint">Not configured — baseline default shown.</p>
+                  <p class="swse-droid-default-hint">{{droid.resolvedSystems.processor.warning}}</p>
                 </div>
               </section>
             {{/if}}
 
-            {{!-- Locomotion: configured or safe default (droid.requiredSystems.locomotion) --}}
-            {{#if droid.requiredSystems.locomotion.isConfigured}}
+            {{!-- Locomotion — droid.resolvedSystems.locomotion --}}
+            {{#if droid.resolvedSystems.locomotion.isConfigured}}
               {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs"}}
             {{else}}
               <section class="swse-panel swse-droid-default-region">
@@ -305,10 +303,10 @@
                 </header>
                 <div class="swse-droid-default-content">
                   <div class="config-item">
-                    <span class="label">{{droid.requiredSystems.locomotion.defaultLabel}}:</span>
-                    <span class="value">{{droid.requiredSystems.locomotion.defaultName}}</span>
+                    <span class="label">{{droid.resolvedSystems.locomotion.defaultLabel}}:</span>
+                    <span class="value">{{droid.resolvedSystems.locomotion.defaultName}}</span>
                   </div>
-                  <p class="swse-droid-default-hint">Not configured — baseline default shown.</p>
+                  <p class="swse-droid-default-hint">{{droid.resolvedSystems.locomotion.warning}}</p>
                 </div>
               </section>
             {{/if}}
@@ -318,8 +316,8 @@
           {{!-- ROW 2: Manipulation & body protection (Appendages required) --}}
           <div class="swse-droid-systems-row">
 
-            {{!-- Appendages: configured or safe default (droid.requiredSystems.appendages) --}}
-            {{#if droid.requiredSystems.appendages.isConfigured}}
+            {{!-- Appendages — droid.resolvedSystems.appendages --}}
+            {{#if droid.resolvedSystems.appendages.isConfigured}}
               {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs"}}
             {{else}}
               <section class="swse-panel swse-droid-default-region">
@@ -329,10 +327,10 @@
                 </header>
                 <div class="swse-droid-default-content">
                   <div class="config-item">
-                    <span class="label">{{droid.requiredSystems.appendages.defaultLabel}}:</span>
-                    <span class="value">{{droid.requiredSystems.appendages.defaultName}}</span>
+                    <span class="label">{{droid.resolvedSystems.appendages.defaultLabel}}:</span>
+                    <span class="value">{{droid.resolvedSystems.appendages.defaultName}}</span>
                   </div>
-                  <p class="swse-droid-default-hint">Not configured — baseline default shown.</p>
+                  <p class="swse-droid-default-hint">{{droid.resolvedSystems.appendages.warning}}</p>
                 </div>
               </section>
             {{/if}}

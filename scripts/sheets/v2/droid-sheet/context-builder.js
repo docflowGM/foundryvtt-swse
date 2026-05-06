@@ -35,6 +35,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { buildHeaderHpSegments } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js";
 import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
+import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/droid-systems-resolver.js";
 
 const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
 
@@ -86,6 +87,9 @@ export class DroidSheetContextBuilder {
     const garage = this.buildGarageContext();
     const flags = this.buildFlagsContext();
 
+    // Phase 4: resolver unifies builder data + item collection into per-region view
+    const resolvedSystems = this.buildResolvedSystems();
+
     return {
       // NOTE: the 'actor' Document is intentionally NOT included; consumers use
       // `document` from the base context.
@@ -122,6 +126,7 @@ export class DroidSheetContextBuilder {
         layoutMode: degree.layoutMode,
         systems: droidPanels,
         requiredSystems,
+        resolvedSystems,
         garage,
         flags
       },
@@ -424,7 +429,7 @@ export class DroidSheetContextBuilder {
 
   buildIntegratedWeaponsPanel() {
     const droidSystems = this.system?.droidSystems ?? {};
-    const entries = Array.isArray(droidSystems.weapons)
+    const builderEntries = Array.isArray(droidSystems.weapons)
       ? droidSystems.weapons.map((item, idx) => ({
           id: item.id ?? `weapon-${idx}`,
           name: item.name ?? "",
@@ -433,6 +438,24 @@ export class DroidSheetContextBuilder {
           description: item.description ?? ""
         }))
       : [];
+
+    // Also include weapon items from actor.items that carry the integrated flag
+    const builderIds = new Set(builderEntries.map(e => e.id).filter(Boolean));
+    const itemEntries = (this.actor?.items ?? [])
+      .filter(i =>
+        i.type === "weapon" &&
+        (i.system?.integrated === true || Boolean(i.flags?.swse?.integrated)) &&
+        !builderIds.has(i.id)
+      )
+      .map(i => ({
+        id: i.id,
+        name: i.name ?? "",
+        cost: 0,
+        type: "built-in",
+        description: i.system?.description ?? ""
+      }));
+
+    const entries = [...builderEntries, ...itemEntries];
     return {
       entries,
       hasEntries: entries.length > 0,
@@ -443,8 +466,12 @@ export class DroidSheetContextBuilder {
   }
 
   buildIntegratedSystemsPanel() {
+    // Excludes weapon items — those go in integratedWeapons, not here
     const entries = (this.actor?.items ?? [])
-      .filter((item) => item.type === "integratedSystem" || item.system?.integrated === true)
+      .filter((item) =>
+        item.type !== "weapon" &&
+        (item.type === "integratedSystem" || item.system?.integrated === true || Boolean(item.flags?.swse?.integrated))
+      )
       .map((item) => ({
         id: item.id,
         name: item.name,
@@ -789,6 +816,10 @@ export class DroidSheetContextBuilder {
         defaultLabel: "Manipulators"
       }
     };
+  }
+
+  buildResolvedSystems() {
+    return new DroidSystemsResolver(this.actor).resolve();
   }
 
   buildGarageContext() {
