@@ -26,7 +26,13 @@
               <span class="entry-cost muted" style="font-size: 0.85em;">{{weapon.cost}} cr</span>
             {{/if}}
           </div>
-          {{#if weapon.description}}
+          {{#if weapon.canRoll}}
+            <div class="swse-weapon-stats-row">
+              {{#if weapon.damage}}<span class="swse-weapon-meta">{{weapon.damage}}</span>{{/if}}
+              {{#if weapon.range}}<span class="swse-weapon-meta">{{weapon.range}}</span>{{/if}}
+              {{#if weapon.attackBonus}}<span class="swse-weapon-meta">+{{weapon.attackBonus}} atk</span>{{/if}}
+            </div>
+          {{else if weapon.description}}
             <div class="entry-description muted" style="font-size: 0.85em; margin-top: 4px;">
               {{weapon.description}}
             </div>
