@@ -4,7 +4,6 @@
 
 import { HolonetStorage } from './holonet-storage.js';
 import { HolonetThreadService } from './holonet-thread-service.js';
-import { HolonetEngine } from '../holonet-engine.js';
 import { HolonetAudience } from '../contracts/holonet-audience.js';
 import { HolonetSender } from '../contracts/holonet-sender.js';
 import { HolonetRecipient } from '../contracts/holonet-recipient.js';
@@ -199,7 +198,7 @@ export class HolonetMessengerService {
       thread = await HolonetStorage.getThread(threadId);
     }
     if (!thread) {
-      const recipients = recipientIds.map(id => this._recipientFromId(id)).filter(Boolean);
+      const recipients = recipientIds.map(id => HolonetRecipient.fromStableId(id)).filter(Boolean);
       const participants = [senderRecipient, ...recipients];
       const title = recipients.map(r => r.actorName || r.metadata?.label || r.id).join(', ') || 'Conversation';
       thread = await HolonetThreadService.getOrCreateThread(title, participants, { sourceFamily: SOURCE_FAMILY.MESSENGER });
@@ -219,31 +218,19 @@ export class HolonetMessengerService {
     };
     message.projections = [{ surfaceType: SURFACE_TYPE.MESSENGER_THREAD, recordId: message.id, isPinned: false, metadata: {} }];
 
-    await HolonetEngine.publish(message, { skipSocket: true });
-    if (senderRecipient?.id) {
-      await HolonetEngine.markRead(message.id, senderRecipient.id, { skipSocket: true });
-    }
-    await HolonetThreadService.addMessageToThread(thread.id, message.id);
-    return { threadId: thread.id, messageId: message.id };
-  }
+    const result = await HolonetThreadService.publishMessageToThread({
+      thread,
+      message,
+      senderRecipient,
+      publishOptions: { skipSocket: true },
+      markSenderRead: Boolean(senderRecipient?.id)
+    });
 
-  static _recipientFromId(id) {
-    if (!id) return null;
-    if (id.startsWith('player:')) {
-      const userId = id.split(':')[1];
-      const user = game.users?.get(userId);
-      return HolonetRecipient.player(userId, user?.character?.id, user?.character?.name || user?.name);
+    if (!result.ok) {
+      console.error('[Holonet] publishMessageToThread failed:', result.reason);
+      return null;
     }
-    if (id.startsWith('gm:')) {
-      const userId = id.split(':')[1];
-      return HolonetRecipient.gm(userId);
-    }
-    if (id.startsWith('persona:')) {
-      const [, personaType = PERSONA_TYPE.NPC, actorId = null] = id.split(':');
-      const actor = actorId ? game.actors?.get(actorId) : null;
-      return HolonetRecipient.persona(actorId, actor?.name || 'Persona', personaType);
-    }
-    return null;
+    return { threadId: result.threadId, messageId: result.messageId };
   }
 
   static async markThreadRead(threadId, recipientId = currentRecipientId()) {

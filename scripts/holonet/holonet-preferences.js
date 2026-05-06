@@ -12,10 +12,15 @@ export class HolonetPreferences {
     EVENTS: 'events',
     APPROVALS: 'approvals',
     STORE_TRANSACTIONS: 'store_transactions',
+    STORE: 'store',
     PROGRESSION: 'progression',
     OBJECTIVES: 'objectives',
     MENTOR: 'mentor',
-    REWARDS: 'rewards'
+    REWARDS: 'rewards',
+    HEALING: 'healing',
+    SHIP: 'ship',
+    DROID: 'droid',
+    FOLLOWER: 'follower'
   };
 
   static registerSettings() {

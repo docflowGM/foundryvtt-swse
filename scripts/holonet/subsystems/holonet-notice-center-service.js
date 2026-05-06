@@ -56,9 +56,11 @@ export class HolonetNoticeCenterService {
 
   static async getUnreadRecords(recipientId = this.currentRecipientId(), limit = 24) {
     if (!recipientId) return [];
-    const records = await HolonetStorage.getRecordsForRecipient(recipientId, [DELIVERY_STATE.PUBLISHED]);
+    // Phase 3: Use index-backed getUnreadRecordsForRecipient for better performance
+    const records = await HolonetStorage.getUnreadRecordsForRecipient(recipientId, {
+      deliveryStates: [DELIVERY_STATE.PUBLISHED]
+    });
     return records
-      .filter(record => record?.isUnreadBy?.(recipientId))
       .sort((a, b) => new Date(b.publishedAt || b.createdAt || 0) - new Date(a.publishedAt || a.createdAt || 0))
       .slice(0, limit);
   }
@@ -110,9 +112,19 @@ export class HolonetNoticeCenterService {
   static async markAllRead(recipientId = this.currentRecipientId()) {
     if (!recipientId) return false;
     const unreadRecords = await this.getUnreadRecords(recipientId, 500);
-    for (const record of unreadRecords) {
-      await HolonetEngine.markRead(record.id, recipientId);
-    }
-    return true;
+    if (!unreadRecords.length) return true;
+    // Delegate to batch path — single storage write and single sync event
+    return HolonetEngine.markManyRead(unreadRecords.map(r => r.id), recipientId);
+  }
+
+  /**
+   * Batch-mark all unread records read for a recipient.
+   * More explicit alias that makes the batch nature clear at call sites.
+   *
+   * @param {string} [recipientId]
+   * @returns {Promise<boolean>}
+   */
+  static async markAllReadBatch(recipientId = this.currentRecipientId()) {
+    return this.markAllRead(recipientId);
   }
 }

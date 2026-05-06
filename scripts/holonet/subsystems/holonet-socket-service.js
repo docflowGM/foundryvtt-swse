@@ -18,7 +18,24 @@ export class HolonetSocketService {
     game.socket.on(SOCKET_NAME, async payload => {
       if (!payload || payload.event !== HOLONET_EVENT) return;
       if (payload.kind === 'sync') {
-        Hooks.callAll('swseHolonetUpdated', payload.data ?? {});
+        const syncData = payload.data ?? {};
+        // Legacy compatibility hook — always fired
+        Hooks.callAll('swseHolonetUpdated', syncData);
+        // Typed hook routing based on sync type
+        if (syncData.type) {
+          // Map sync type strings to camelCase hook names
+          const typeHookMap = {
+            'record-published':  'recordPublished',
+            'record-read':       'recordRead',
+            'records-read':      'recordsRead',
+            'message-sent':      'messageSent',
+            'thread-read':       'threadRead',
+            'thread-updated':    'threadUpdated',
+            'state-updated':     'stateUpdated'
+          };
+          const hookSuffix = typeHookMap[syncData.type] ?? syncData.type;
+          Hooks.callAll(`swseHolonet:${hookSuffix}`, syncData);
+        }
         return;
       }
       if (!game.user?.isGM) return;
@@ -75,6 +92,11 @@ export class HolonetSocketService {
       case 'mark-thread-read': {
         await HolonetMessengerService._gmMarkThreadRead(data.threadId, data.recipientId);
         this.emitSync({ type: 'thread-read', threadId: data.threadId, recipientId: data.recipientId });
+        break;
+      }
+      case 'mark-many-read': {
+        await HolonetEngine.markManyRead(data.recordIds, data.recipientId, { skipSocket: true });
+        // markManyRead emits its own sync after saving — no duplicate sync needed
         break;
       }
     }

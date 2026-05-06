@@ -14,7 +14,8 @@ export class HolonetFeedService {
    * Get feed for a recipient
    */
   static async getFeedForRecipient(recipientId, surfaceType = SURFACE_TYPE.HOME_FEED, limit = 50) {
-    const records = await HolonetStorage.getRecordsForRecipient(
+    // Phase 3: Use index-backed method for better performance
+    const records = await HolonetStorage.getRecordsByRecipient(
       recipientId,
       [DELIVERY_STATE.PUBLISHED]
     );
@@ -50,8 +51,9 @@ export class HolonetFeedService {
    * Pinned items are sorted first, but non-pinned featured items are still eligible.
    */
   static async getFeaturedItemsForRecipient(recipientId, surfaceType = SURFACE_TYPE.BULLETIN_FEATURED, limit = 10) {
+    // Phase 3: Use index-backed method for better performance
     const records = recipientId
-      ? await HolonetStorage.getRecordsForRecipient(recipientId, [DELIVERY_STATE.PUBLISHED])
+      ? await HolonetStorage.getRecordsByRecipient(recipientId, [DELIVERY_STATE.PUBLISHED])
       : await HolonetStorage.getAllRecords();
 
     return records

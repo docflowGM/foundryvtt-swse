@@ -4,27 +4,9 @@
  * Determines delivery targets for a record based on audience and recipient models.
  */
 
-import { AUDIENCE_TYPE, RECIPIENT_TYPE, PERSONA_TYPE } from '../contracts/enums.js';
+import { AUDIENCE_TYPE, RECIPIENT_TYPE, PERSONA_TYPE } from '../contracts/enums.js'; // PERSONA_TYPE kept for recipientIdForPersona
 import { HolonetRecipient } from '../contracts/holonet-recipient.js';
 
-function recipientFromStableId(id) {
-  if (!id) return null;
-  if (id.startsWith('player:')) {
-    const userId = id.split(':')[1];
-    const user = game.users?.get(userId);
-    return HolonetRecipient.player(userId, user?.character?.id, user?.character?.name ?? user?.name ?? 'Player');
-  }
-  if (id.startsWith('gm:')) {
-    const userId = id.split(':')[1] ?? null;
-    return HolonetRecipient.gm(userId);
-  }
-  if (id.startsWith('persona:')) {
-    const [, personaType = PERSONA_TYPE.NPC, actorId = null] = id.split(':');
-    const actor = actorId ? game.actors?.get(actorId) : null;
-    return HolonetRecipient.persona(actorId, actor?.name ?? 'Persona', personaType);
-  }
-  return new HolonetRecipient({ id });
-}
 
 export class HolonetDeliveryRouter {
   static resolveRecipients(record) {
@@ -57,7 +39,7 @@ export class HolonetDeliveryRouter {
         break;
       case AUDIENCE_TYPE.THREAD_PARTICIPANTS:
         if (record.audience.threadParticipantIds?.length) {
-          recipients.push(...record.audience.threadParticipantIds.map(recipientFromStableId).filter(Boolean));
+          recipients.push(...record.audience.threadParticipantIds.map(id => HolonetRecipient.fromStableId(id)).filter(Boolean));
         }
         break;
     }

@@ -44,7 +44,42 @@ export const INTENT_TYPE = {
   GM_MESSAGE: 'authored.gm_message',
   NPC_MESSAGE: 'authored.npc_message',
   PARTY_UPDATE: 'authored.party_update',
-  PLAYER_UPDATE: 'authored.player_update'
+  PLAYER_UPDATE: 'authored.player_update',
+
+  // Ship notifications
+  SHIP_REPAIRED: 'ship.repaired',
+  SHIP_DAMAGED: 'ship.damaged',
+  SHIP_ENGINE_DAMAGED: 'ship.engine_damaged',
+  SHIP_SHIELDS_DAMAGED: 'ship.shields_damaged',
+  SHIP_SHIELDS_RESTORED: 'ship.shields_restored',
+  SHIP_HYPERDRIVE_DAMAGED: 'ship.hyperdrive_damaged',
+  SHIP_HYPERDRIVE_REPAIRED: 'ship.hyperdrive_repaired',
+  SHIP_CONDITION_WORSENED: 'ship.condition_worsened',
+  SHIP_CONDITION_IMPROVED: 'ship.condition_improved',
+  SHIP_SYSTEM_DAMAGED: 'ship.system_damaged',
+  SHIP_SYSTEM_REPAIRED: 'ship.system_repaired',
+  SHIP_STATUS_CHANGED: 'ship.status_changed',
+
+  // Healing/Rest notifications
+  HEALING_NATURAL_REST: 'healing.natural_rest',
+  HEALING_REST_RESET: 'healing.rest_reset',
+
+  // Store state notifications
+  STORE_OPENED: 'store.opened',
+  STORE_CLOSED: 'store.closed',
+  STORE_SALE_STARTED: 'store.sale_started',
+  STORE_TAXED: 'store.taxed',
+  STORE_PRICES_CHANGED: 'store.prices_changed',
+
+  // Droid notifications
+  DROID_REPAIRED: 'droid.repaired',
+  DROID_DAMAGED: 'droid.damaged',
+  DROID_DISABLED: 'droid.disabled',
+  DROID_STATUS_CHANGED: 'droid.status_changed',
+
+  // Follower notifications
+  FOLLOWER_CREATED: 'follower.created',
+  FOLLOWER_LEVELED: 'follower.leveled'
 };
 
 export const DELIVERY_STATE = {
@@ -103,7 +138,11 @@ export const SOURCE_FAMILY = {
   BULLETIN: 'bulletin',
   MESSENGER: 'messenger',
   SYSTEM: 'system',
-  GM_AUTHORED: 'gm_authored'
+  GM_AUTHORED: 'gm_authored',
+  SHIP: 'ship',
+  HEALING: 'healing',
+  DROID: 'droid',
+  FOLLOWER: 'follower'
 };
 
 export const AUDIENCE_TYPE = {

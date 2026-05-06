@@ -3,26 +3,23 @@
  *
  * Listens to approval decisions and emits into Holonet.
  * Hooks into GMStoreDashboard approval flow.
+ *
+ * Preference checks, deduplication, and publish are delegated to HolonetEmissionService.
  */
 
-import { HolonetEngine } from '../holonet-engine.js';
+import { HolonetEmissionService } from '../subsystems/holonet-emission-service.js';
 import { HolonetPreferences } from '../holonet-preferences.js';
 import { ApprovalsSource } from '../sources/approvals-source.js';
 import { HolonetAudience } from '../contracts/holonet-audience.js';
+import { SOURCE_FAMILY } from '../contracts/enums.js';
 
 export class ApprovalsEmitter {
   static #initialized = false;
-  static #lastEmittedApprovals = new Set(); // Deduplication
 
-  /**
-   * Initialize approvals emitter
-   * Registers hook for swseApprovalResolved
-   */
   static async initialize() {
     if (this.#initialized) return;
     this.#initialized = true;
 
-    // Hook into approval decision events
     Hooks.on('swseApprovalResolved', (data) => {
       this.onApprovalResolved(data).catch(err => {
         console.error('[Holonet] Approvals emitter failed:', err);
@@ -32,64 +29,44 @@ export class ApprovalsEmitter {
     console.log('[Holonet] Approvals emitter initialized');
   }
 
-  /**
-   * Emit approval decision notification
-   */
   static async onApprovalResolved(data) {
     const { approval, decision, actor, decidedBy } = data;
+    if (!approval || !actor || !decision) return;
 
-    if (!approval || !actor || !decision) {
-      return;
-    }
-
-    // Check preferences
-    if (!HolonetPreferences.shouldNotify(HolonetPreferences.CATEGORIES.APPROVALS)) {
-      return;
-    }
-
-    // Deduplication: skip if we just emitted this
-    const dedupeKey = `${approval.id}-${decision}`;
-    if (this.#lastEmittedApprovals.has(dedupeKey)) {
-      return;
-    }
-    this.#lastEmittedApprovals.add(dedupeKey);
-    // Clean up old entries after 100 to prevent memory leak
-    if (this.#lastEmittedApprovals.size > 100) {
-      const arr = Array.from(this.#lastEmittedApprovals);
-      this.#lastEmittedApprovals = new Set(arr.slice(50));
-    }
-
-    // Get the player who owns this actor
     const ownerUser = game.users?.find(u => u.character?.id === actor.id);
     if (!ownerUser) {
       console.warn('[Holonet] Approvals emitter: actor has no owner user', actor.id);
       return;
     }
 
-    try {
-      // Create approval decision notification
-      const decisionRecord = ApprovalsSource.createApprovalDecision({
-        approvalId: approval.id,
-        playerUserId: ownerUser.id,
-        decision, // 'approved' or 'denied'
-        decidedBy,
-        body: `Your ${approval.type || 'custom item'} purchase has been ${decision}.`,
-        metadata: {
-          itemName: approval.draftData?.name,
-          cost: approval.costCredits,
-          approvalType: approval.type
-        }
-      });
+    const dedupeKey = `${approval.id}-${decision}`;
 
-      // Set audience to single player
-      decisionRecord.audience = HolonetAudience.singlePlayer(ownerUser.id);
+    const result = await HolonetEmissionService.emit({
+      sourceFamily: SOURCE_FAMILY.APPROVALS,
+      categoryId: HolonetPreferences.CATEGORIES.APPROVALS,
+      dedupeKey,
+      createRecord: () => {
+        const record = ApprovalsSource.createApprovalDecision({
+          approvalId: approval.id,
+          playerUserId: ownerUser.id,
+          decision,
+          decidedBy,
+          body: `Your ${approval.type || 'custom item'} purchase has been ${decision}.`,
+          metadata: {
+            itemName: approval.draftData?.name,
+            cost: approval.costCredits,
+            approvalType: approval.type
+          }
+        });
+        record.audience = HolonetAudience.singlePlayer(ownerUser.id);
+        return record;
+      }
+    });
 
-      // Publish
-      await HolonetEngine.publish(decisionRecord);
-
+    if (result.ok) {
       console.log(`[Holonet] Approval emitted: ${actor.name} - ${decision}`);
-    } catch (err) {
-      console.error('[Holonet] Failed to emit approval decision:', err);
+    } else if (!result.skipped) {
+      console.error('[Holonet] Failed to emit approval decision:', result.reason);
     }
   }
 }

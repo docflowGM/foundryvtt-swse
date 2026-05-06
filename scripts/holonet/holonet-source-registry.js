@@ -32,10 +32,48 @@ export class HolonetSourceRegistry {
   }
 
   /**
-   * Get all registered sources
+   * Get all registered sources as [sourceFamily, adapter] pairs.
+   * @returns {[string, Object][]}
    */
   static getAll() {
     return Array.from(this.#sources.entries());
+  }
+
+  /**
+   * Iterate registered sources as [sourceFamily, adapter] pairs.
+   * Mirrors Map.entries() so callers can use for...of.
+   * @returns {IterableIterator<[string, Object]>}
+   */
+  static entries() {
+    return this.#sources.entries();
+  }
+
+  /**
+   * Return normalized metadata for a registered source adapter.
+   * Safe to call on unregistered families — returns null.
+   *
+   * The adapter may optionally expose any of these static fields:
+   *   sourceFamily, categoryId, label, defaultSender, defaultAudience,
+   *   defaultIntent, defaultSurfaces
+   *
+   * @param {string} sourceFamily
+   * @returns {Object|null}
+   */
+  static getMeta(sourceFamily) {
+    const adapter = this.get(sourceFamily);
+    if (!adapter) return null;
+    return {
+      sourceFamily:    adapter.sourceFamily    ?? sourceFamily,
+      categoryId:      adapter.categoryId      ?? null,
+      label:           adapter.label           ?? sourceFamily,
+      defaultSender:   adapter.defaultSender   ?? null,
+      defaultAudience: adapter.defaultAudience ?? null,
+      defaultIntent:   adapter.defaultIntent   ?? null,
+      defaultSurfaces: Array.isArray(adapter.defaultSurfaces) ? adapter.defaultSurfaces : [],
+      hasInitialize:   typeof adapter.initialize   === 'function',
+      hasCreateRecord: typeof adapter.createRecord === 'function',
+      hasShouldEmit:   typeof adapter.shouldEmit   === 'function'
+    };
   }
 
   /**

@@ -6,6 +6,7 @@
  */
 
 export { HolonetEngine } from './holonet-engine.js';
+export { HolonetManager } from './holonet-manager.js';
 export { HolonetPreferences } from './holonet-preferences.js';
 export { HolonetSourceRegistry } from './holonet-source-registry.js';
 export { HolonetStorage } from './subsystems/holonet-storage.js';

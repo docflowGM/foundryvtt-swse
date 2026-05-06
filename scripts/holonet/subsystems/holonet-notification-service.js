@@ -29,6 +29,16 @@ export class HolonetNotificationService {
     }
   }
 
+  /**
+   * Display a toast notification for a record.
+   * Alias for notify() with a clearer intent-signalling name.
+   *
+   * @param {HolonetRecord} record
+   */
+  static toast(record) {
+    this.notify(record);
+  }
+
   static async badge(recipientId, record) {
     console.log(`[Holonet Badge] ${recipientId}:`, record.title);
   }
