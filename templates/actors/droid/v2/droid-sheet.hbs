@@ -1,17 +1,90 @@
-<form class="swse-recovery-sheet swse-character-sheet-form {{cssClass}}" autocomplete="off">
+{{!--
+  templates/actors/droid/v2/droid-sheet.hbs
+  Droid Sheet V2 — Phase 1 (scaffold, read-only Systems tab)
+
+  Reuse map:
+    Sheet class:      scripts/sheets/v2/droid-sheet.js (SWSEV2DroidSheet)
+    Context builder:  scripts/sheets/v2/droid-sheet/context-builder.js (DroidSheetContextBuilder)
+    Listeners:        scripts/sheets/v2/droid-sheet/listeners.js (wireDroidSheetListeners)
+    Datapad shell:    .swse-datapad-frame / .swse-home-console (shared with character v2)
+    Theme/settings:   styles/sheets/v2-droid-specific.css + system-wide CSS variables
+    Garage entry:     .edit-droid-systems → DroidBuilderApp.open() (wired in listeners.js)
+    Abilities filter: context builder filters CON before it reaches this template
+
+  Context variables (from DroidSheetContextBuilder.build()):
+    document            — the actor Document (from super._prepareContext)
+    system              — actor.system
+    derived             — actor.system.derived (includes derived.skills keyed object)
+    abilities           — array of ability VMs (no CON) [{key,label,total,mod,base}]
+    defensePanel        — { defenses: [{key,label,total}] }
+    equipment           — array of equipment items [{id,name,type}]
+    armor               — array of armor items
+    weapons             — array of weapon items [{id,name,type}]
+    feats               — array of feat cards [{id,name,type}]
+    talents             — array of talent cards [{id,name,type}]
+    droidPanels         — droid-specific sub-panels (locomotion, processor, appendages, etc.)
+    editable            — boolean
+    biographyPanel      — { identity, biography }
+--}}
+<form class="swse-droid-sheet-form {{cssClass}}" autocomplete="off">
   <div class="swse-datapad-frame droid-mode">
+
+    {{!-- ── HEADER BAR ─────────────────────────────────────────────────── --}}
     <div class="swse-datapad-header">
-      <div class="swse-datapad-ident">TYPES.ACTOR.DROID: {{actor.name}}</div>
+      <div class="swse-datapad-ident">UNIT: {{document.name}}</div>
       <div class="swse-datapad-controls"><span></span><span></span><span></span></div>
     </div>
+
+    {{!-- ── HOME CONSOLE (portrait + radial shell + quick glance) ─────── --}}
     <div class="swse-home-console compact">
-      <div class="swse-console-topline"><span>DROID CONTROL</span><span>·</span><span>WORKBENCH</span><span class="swse-console-power">{{system.level}} LVL</span></div>
+      <div class="swse-console-topline">
+        <span>DROID CONTROL</span><span>·</span><span>WORKBENCH</span>
+        <span class="swse-console-power">LVL {{system.level}}</span>
+      </div>
       <div class="swse-home-hero compact-hero">
-        <div class="swse-home-left"><div class="swse-panel swse-profile-card"><img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="{{actor.name}}"/><div class="swse-status-line">[CHASSIS] droid systems nominal.</div></div></div>
-        <div class="swse-home-center"><div class="swse-radial-shell droid-shell"><div class="swse-radial-ring swse-radial-ring--outer"></div><div class="swse-radial-ring swse-radial-ring--mid"></div><div class="swse-radial-core"><span>{{system.class}}</span></div><button type="button" class="swse-radial-app app-character">Overview</button><button type="button" class="swse-radial-app app-progress">Training</button><button type="button" class="swse-radial-app app-workbench">Systems</button><button type="button" class="swse-radial-app app-store">Store</button></div></div>
-        <div class="swse-home-right"><div class="swse-panel swse-glance-card"><div class="swse-panel-title">QUICK GLANCE</div><div class="swse-glance-grid"><div><span>HP</span><strong>{{system.hp.value}}/{{system.hp.max}}</strong></div><div><span>SPEED</span><strong>{{system.speed.total}}</strong></div><div><span>REF</span><strong>{{system.defenses.reflex.total}}</strong></div><div><span>FORT</span><strong>{{system.defenses.fortitude.total}}</strong></div></div></div></div>
+
+        {{!-- Portrait --}}
+        <div class="swse-home-left">
+          <div class="swse-panel swse-profile-card">
+            <img class="profile" src="{{document.img}}" data-edit="img"
+                 title="{{document.name}}" alt="{{document.name}}"/>
+            <div class="swse-status-line">[CHASSIS] systems nominal.</div>
+          </div>
+        </div>
+
+        {{!-- Radial shell nav — buttons fire existing listeners (wireProgressionFrameworkButtons,
+             wireDroidSystemsEditor, etc.) via data-action / class selectors --}}
+        <div class="swse-home-center">
+          <div class="swse-radial-shell droid-shell">
+            <div class="swse-radial-ring swse-radial-ring--outer"></div>
+            <div class="swse-radial-ring swse-radial-ring--mid"></div>
+            <div class="swse-radial-core"><span>{{system.class}}</span></div>
+            <button type="button" class="swse-radial-app app-character">Overview</button>
+            <button type="button" class="swse-radial-app app-progress"
+                    data-action="cmd-chargen">Training</button>
+            <button type="button" class="swse-radial-app app-workbench edit-droid-systems">Systems</button>
+            <button type="button" class="swse-radial-app app-store"
+                    data-action="cmd-store">Store</button>
+          </div>
+        </div>
+
+        {{!-- Quick glance card --}}
+        <div class="swse-home-right">
+          <div class="swse-panel swse-glance-card">
+            <div class="swse-panel-title">QUICK GLANCE</div>
+            <div class="swse-glance-grid">
+              <div><span>HP</span><strong>{{system.hp.value}}/{{system.hp.max}}</strong></div>
+              <div><span>SPEED</span><strong>{{system.speed.total}}</strong></div>
+              <div><span>REF</span><strong>{{system.defenses.reflex.total}}</strong></div>
+              <div><span>FORT</span><strong>{{system.defenses.fortitude.total}}</strong></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
+
+    {{!-- ── TAB NAVIGATION ──────────────────────────────────────────────── --}}
     <nav class="sheet-tabs swse-sheet-tabs tabs" data-group="primary">
       <a class="item active" data-tab="overview">Overview</a>
       <a class="item" data-tab="abilities">Abilities</a>
@@ -19,16 +92,219 @@
       <a class="item" data-tab="combat">Combat</a>
       <a class="item" data-tab="talents">Talents</a>
       <a class="item" data-tab="gear">Gear</a>
+      <a class="item" data-tab="systems">Systems</a>
       <a class="item" data-tab="biography">Notes</a>
     </nav>
+
+    {{!-- ── SHEET BODY ───────────────────────────────────────────────────── --}}
     <section class="sheet-body swse-sheet-body">
-      <section class="tab active" data-group="primary" data-tab="overview"><div class="swse-content-grid swse-overview-grid"><div class="swse-panel"><div class="swse-panel-title">Identity</div><div class="swse-form-grid two-col"><label>Name<input name="name" type="text" value="{{actor.name}}"/></label><label>Model<input name="system.class" type="text" value="{{system.class}}"/></label><label>Level<input name="system.level" type="number" value="{{system.level}}" min="1"/></label><label>Credits<input name="system.credits" type="number" value="{{system.credits}}"/></label></div></div><div class="swse-panel"><div class="swse-panel-title">Defenses</div><div class="swse-defense-grid">{{#each defenseList as |def|}}<div class="swse-defense-chip"><span>{{def.label}}</span><strong>{{def.total}}</strong></div>{{/each}}</div></div></div></section>
-      <section class="tab" data-group="primary" data-tab="abilities"><div class="swse-content-grid ability-grid">{{#each abilitiesList as |ability|}}<div class="swse-panel swse-ability-card"><div class="swse-panel-title">{{ability.label}}</div><input name="system.abilities.{{ability.key}}.base" type="number" value="{{ability.base}}"/><div class="swse-ability-total">{{ability.total}}</div><div class="swse-ability-mod">{{ability.mod}}</div></div>{{/each}}</div></section>
-      <section class="tab" data-group="primary" data-tab="skills"><div class="swse-panel"><div class="swse-panel-title">Skills</div><div class="swse-list">{{#each skillsList as |skill|}}<div class="swse-list-row"><span>{{skill.label}}</span><span>{{skill.ability}}</span><strong>{{skill.value}}</strong></div>{{else}}<div class="swse-empty">No skills configured yet.</div>{{/each}}</div></div></section>
-      <section class="tab" data-group="primary" data-tab="combat"><div class="swse-panel"><div class="swse-panel-title">Weapons</div><div class="swse-list">{{#each weaponsList as |weapon index|}}<div class="swse-list-row weapon-entry" data-index="{{index}}"><input type="text" name="system.weapons.{{index}}.name" value="{{weapon.name}}"/><input type="text" name="system.weapons.{{index}}.damage" value="{{weapon.damage}}"/><div class="swse-inline-actions"><button type="button" class="roll-weapon">Roll</button><button type="button" class="remove-weapon">Delete</button></div></div>{{else}}<div class="swse-empty">No weapons recorded.</div>{{/each}}</div><button type="button" class="header-btn add-weapon">Add Weapon</button></div></section>
-      <section class="tab" data-group="primary" data-tab="talents"><div class="swse-content-grid two-up"><div class="swse-panel"><div class="swse-panel-title">Feats</div><div class="swse-list">{{#each system.feats as |feat index|}}<div class="swse-list-row list-entry" data-index="{{index}}"><input type="text" name="system.feats.{{index}}.name" value="{{feat.name}}"/><button type="button" class="remove-feat">Delete</button></div>{{else}}<div class="swse-empty">No feats yet.</div>{{/each}}</div><button type="button" class="header-btn add-feat">Add Feat</button></div><div class="swse-panel"><div class="swse-panel-title">Talents</div><div class="swse-list">{{#each system.talents as |talent index|}}<div class="swse-list-row list-entry" data-index="{{index}}"><input type="text" name="system.talents.{{index}}.name" value="{{talent.name}}"/><button type="button" class="remove-talent">Delete</button></div>{{else}}<div class="swse-empty">No talents yet.</div>{{/each}}</div><button type="button" class="header-btn add-talent">Add Talent</button></div></div></section>
-      <section class="tab" data-group="primary" data-tab="gear"><div class="swse-panel"><div class="swse-panel-title">Inventory &amp; Workbench</div><div class="swse-list">{{#each inventoryItems as |item|}}<div class="swse-list-row"><span>{{item.name}}</span><span>{{item.type}}</span></div>{{else}}<div class="swse-empty">No inventory items found.</div>{{/each}}</div><div class="swse-inline-actions"><button type="button" class="header-btn app-store">Open Store</button><button type="button" class="header-btn app-progress">Open Progression</button></div></div></section>
-      <section class="tab" data-group="primary" data-tab="biography"><div class="swse-content-grid two-up"><div class="swse-panel"><div class="swse-panel-title">Biography</div><textarea name="system.bio" rows="12">{{bio}}</textarea></div><div class="swse-panel"><div class="swse-panel-title">Notes</div><textarea name="system.notes" rows="12">{{notes}}</textarea></div></div></section>
+
+      {{!-- OVERVIEW TAB --}}
+      <section class="tab active" data-group="primary" data-tab="overview">
+        <div class="swse-content-grid swse-overview-grid">
+
+          <div class="swse-panel">
+            <div class="swse-panel-title">Identity</div>
+            <div class="swse-form-grid two-col">
+              <label>Name<input name="name" type="text" value="{{document.name}}"/></label>
+              <label>Model<input name="system.class" type="text" value="{{system.class}}"/></label>
+              <label>Level<input name="system.level" type="number" value="{{system.level}}" min="1"/></label>
+              <label>Credits<input name="system.credits" type="number" value="{{system.credits}}"/></label>
+            </div>
+          </div>
+
+          <div class="swse-panel">
+            <div class="swse-panel-title">Defenses</div>
+            <div class="swse-defense-grid">
+              {{!-- defensePanel.defenses is [{key,label,total}] from PanelContextBuilder.buildDefensePanel() --}}
+              {{#each defensePanel.defenses as |def|}}
+                <div class="swse-defense-chip" data-action="roll-defense" data-defense="{{def.key}}">
+                  <span>{{def.label}}</span><strong>{{def.total}}</strong>
+                </div>
+              {{else}}
+                <div class="swse-empty">No defenses computed.</div>
+              {{/each}}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {{!-- ABILITIES TAB (CON already filtered in DroidSheetContextBuilder.buildAbilitiesPanel) --}}
+      <section class="tab" data-group="primary" data-tab="abilities">
+        <div class="swse-content-grid ability-grid">
+          {{!-- abilities is abilitiesPanel.abilities — [{key,label,total,mod,base}] --}}
+          {{#each abilities as |ability|}}
+            <div class="swse-panel swse-ability-card">
+              <div class="swse-panel-title">{{ability.label}}</div>
+              <input name="system.abilities.{{ability.key}}.base"
+                     type="number" value="{{ability.base}}"/>
+              <div class="swse-ability-total">{{ability.total}}</div>
+              <div class="swse-ability-mod {{ability.modClass}}">{{ability.mod}}</div>
+            </div>
+          {{else}}
+            <div class="swse-empty">No abilities computed.</div>
+          {{/each}}
+        </div>
+      </section>
+
+      {{!-- SKILLS TAB --}}
+      <section class="tab" data-group="primary" data-tab="skills">
+        <div class="swse-panel">
+          <div class="swse-panel-title">Skills</div>
+          <div class="swse-list">
+            {{!-- derived.skills is keyed object from actor.system.derived.skills --}}
+            {{#each derived.skills as |skill key|}}
+              <div class="swse-list-row" data-action="roll-skill" data-skill="{{key}}">
+                <span>{{skill.label}}</span>
+                <span class="swse-trained-indicator">{{#if skill.trained}}T{{/if}}</span>
+                <strong>{{skill.total}}</strong>
+              </div>
+            {{else}}
+              <div class="swse-empty">No skills configured yet.</div>
+            {{/each}}
+          </div>
+        </div>
+      </section>
+
+      {{!-- COMBAT TAB --}}
+      <section class="tab" data-group="primary" data-tab="combat">
+        <div class="swse-panel">
+          <div class="swse-panel-title">Weapons</div>
+          <div class="swse-list">
+            {{!-- weapons is [{id,name,type,img,system}] built by DroidSheetContextBuilder.buildWeaponEntries() --}}
+            {{#each weapons as |weapon|}}
+              <div class="swse-list-row weapon-entry" data-item-id="{{weapon.id}}">
+                <span>{{weapon.name}}</span>
+                <span class="swse-item-type">{{weapon.type}}</span>
+                <div class="swse-inline-actions">
+                  <button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}">Roll</button>
+                  <button type="button" data-action="delete-item" data-item-id="{{weapon.id}}">Delete</button>
+                </div>
+              </div>
+            {{else}}
+              <div class="swse-empty">No weapons recorded.</div>
+            {{/each}}
+          </div>
+        </div>
+      </section>
+
+      {{!-- TALENTS TAB --}}
+      <section class="tab" data-group="primary" data-tab="talents">
+        <div class="swse-content-grid two-up">
+
+          <div class="swse-panel">
+            <div class="swse-panel-title">Feats</div>
+            <div class="swse-list">
+              {{!-- feats from DroidSheetContextBuilder.buildAbilityCardLists() --}}
+              {{#each feats as |feat|}}
+                <div class="swse-list-row list-entry">
+                  <span>{{feat.name}}</span>
+                </div>
+              {{else}}
+                <div class="swse-empty">No feats yet.</div>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="swse-panel">
+            <div class="swse-panel-title">Talents</div>
+            <div class="swse-list">
+              {{!-- talents from DroidSheetContextBuilder.buildAbilityCardLists() --}}
+              {{#each talents as |talent|}}
+                <div class="swse-list-row list-entry">
+                  <span>{{talent.name}}</span>
+                </div>
+              {{else}}
+                <div class="swse-empty">No talents yet.</div>
+              {{/each}}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {{!-- GEAR TAB --}}
+      <section class="tab" data-group="primary" data-tab="gear">
+        <div class="swse-panel">
+          <div class="swse-panel-title">Inventory &amp; Workbench</div>
+          <div class="swse-list">
+            {{!-- equipment is [{id,name,type}] from DroidSheetContextBuilder.buildEquipmentEntries() --}}
+            {{#each equipment as |item|}}
+              <div class="swse-list-row" data-item-id="{{item.id}}">
+                <span>{{item.name}}</span>
+                <span class="swse-item-type">{{item.type}}</span>
+                <div class="swse-inline-actions">
+                  <button type="button" data-action="sell-item" data-item-id="{{item.id}}">Sell</button>
+                  <button type="button" data-action="delete-item" data-item-id="{{item.id}}">Delete</button>
+                </div>
+              </div>
+            {{else}}
+              <div class="swse-empty">No inventory items found.</div>
+            {{/each}}
+          </div>
+          <div class="swse-inline-actions">
+            <button type="button" data-action="cmd-store" class="header-btn">Open Store</button>
+            <button type="button" data-action="cmd-chargen" class="header-btn">Open Progression</button>
+          </div>
+        </div>
+      </section>
+
+      {{!-- SYSTEMS TAB (read-only Phase 1) --}}
+      <section class="tab" data-group="primary" data-tab="systems">
+
+        {{!-- Existing droid-systems-panel partial: shows degree/size/locomotion/appendages/etc.
+             when droidSystems is populated. Garage "Edit" button is inside this partial,
+             wired by wireDroidSystemsEditor() in listeners.js --}}
+        {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs"}}
+
+        {{!-- Phase 1: Show read-only defaults when no configuration exists yet.
+             Does NOT write to actor data — display labels only. --}}
+        {{#unless droidPanels.droidSummary.degree}}
+          <div class="swse-panel swse-droid-defaults-notice">
+            <div class="swse-panel-title">DEFAULT CONFIGURATION</div>
+            <div class="swse-panel__content">
+              <p class="swse-hint">No build configuration yet. Defaults shown are informational only.</p>
+              <ul class="swse-defaults-list">
+                <li>
+                  <span class="label">Locomotion:</span>
+                  <span class="value">Walking (standard, default)</span>
+                </li>
+                <li>
+                  <span class="label">Appendages:</span>
+                  <span class="value">2 × Standard Droid Arms (default)</span>
+                </li>
+                <li>
+                  <span class="label">Processor:</span>
+                  <span class="value">Heuristic Processor (default)</span>
+                </li>
+              </ul>
+              {{#if editable}}
+                <button type="button" class="edit-droid-systems header-btn">
+                  Open Droid Builder
+                </button>
+              {{/if}}
+            </div>
+          </div>
+        {{/unless}}
+
+      </section>
+
+      {{!-- BIOGRAPHY / NOTES TAB --}}
+      <section class="tab" data-group="primary" data-tab="biography">
+        <div class="swse-content-grid two-up">
+          <div class="swse-panel">
+            <div class="swse-panel-title">Biography</div>
+            {{!-- biographyPanel.biography is the notes string from PanelContextBuilder --}}
+            <textarea name="system.notes" rows="12">{{biographyPanel.biography}}</textarea>
+          </div>
+          <div class="swse-panel">
+            <div class="swse-panel-title">Notes</div>
+            <textarea name="system.bio" rows="12">{{system.bio}}</textarea>
+          </div>
+        </div>
+      </section>
+
     </section>
   </div>
 </form>
