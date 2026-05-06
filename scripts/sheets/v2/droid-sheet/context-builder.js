@@ -37,6 +37,7 @@ import { buildHeaderHpSegments } from "/systems/foundryvtt-swse/scripts/sheets/v
 import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/droid-systems-resolver.js";
 import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
+import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/droid-systems-resolver.js";
 
 const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
 
@@ -81,22 +82,6 @@ export class DroidSheetContextBuilder {
     const abilities = abilitiesPanel.abilities;
     const derived = this.buildDerivedViewModel(abilities);
     const header = this.buildHeaderViewModel();
-
-    // Phase 3: structured top-level droid context (pure derivation, no actor writes)
-    const degree = this.buildDegreeNormalization();
-    const requiredSystems = this.buildRequiredSystemsDefaults(droidPanels);
-    const garage = this.buildGarageContext();
-    const flags = this.buildFlagsContext();
-
-    // Phase 4+: resolver unifies builder data + item collection into per-region view
-    const resolvedSystems = this.buildResolvedSystems();
-    this.applyResolvedSystemPanels(droidPanels, resolvedSystems);
-
-    // Phase 7: build provenance + missing-systems status card context
-    const sourceStatus = this.buildSourceStatus(resolvedSystems);
-
-    // Phase 6+: split weapons into combat-classified buckets and always expose unarmed
-    const combatWeapons = this.buildCombatWeaponsContext(weapons, resolvedSystems);
 
     return {
       // NOTE: the 'actor' Document is intentionally NOT included; consumers use
@@ -208,97 +193,7 @@ export class DroidSheetContextBuilder {
   }
 
   buildWeaponEntries() {
-    return (this.actor?.items ?? [])
-      .filter(item => item.type === "weapon")
-      .map(item => {
-        const isIntegrated =
-          item.system?.integrated === true || Boolean(item.flags?.swse?.integrated);
-        return {
-          ...projectItem(item),
-          isIntegrated,
-          // Phase 6: surfaced weapon metadata (read-only, no mutation)
-          damage: item.system?.damage ?? "",
-          damageBonus: item.system?.damageBonus ?? "",
-          attackBonus: Number.isFinite(Number(item.system?.attackBonus))
-            ? Number(item.system.attackBonus) : null,
-          range: item.system?.range ?? "",
-          meleeOrRanged: item.system?.meleeOrRanged ?? "melee",
-          equipped: item.system?.equipped === true,
-        };
-      });
-  }
-
-  applyResolvedSystemPanels(droidPanels, resolvedSystems) {
-    const toPanel = (region, emptyMessage = 'No systems configured') => {
-      const entries = (region?.items ?? []).map(item => ({
-        ...item,
-        cost: Number(item.cost ?? 0),
-        description: item.description ?? '',
-        damage: item.damage ?? item.weaponProfile?.damage ?? '',
-        range: item.range ?? item.weaponProfile?.range ?? '',
-        attackBonus: item.attackBonus ?? item.weaponProfile?.attackBonus ?? null,
-        canRoll: item.canRoll === true || Boolean(item.weaponProfile),
-        isSelfDestruct: item.isSelfDestruct === true || item.weaponProfile?.selfDestruct === true
-      }));
-      return {
-        entries,
-        items: entries,
-        hasEntries: entries.length > 0,
-        totalCount: entries.length,
-        totalCost: entries.reduce((sum, entry) => sum + Number(entry.cost ?? 0), 0),
-        emptyMessage,
-        warning: region?.warning ?? null,
-        slots: region?.slots ?? [],
-        processorSlots: region?.processorSlots ?? [],
-        skillModifiers: region?.skillModifiers ?? []
-      };
-    };
-
-    droidPanels.processor = {
-      ...droidPanels.processor,
-      ...toPanel(resolvedSystems.processor, 'No processor configured'),
-      hasProcessor: resolvedSystems.processor?.isConfigured === true,
-      name: resolvedSystems.processor?.primary?.name ?? droidPanels.processor?.name ?? '',
-      description: resolvedSystems.processor?.primary?.description ?? droidPanels.processor?.description ?? '',
-      hasBackupProcessorSlot: resolvedSystems.processor?.hasBackupProcessorSlot === true,
-      processorSlots: resolvedSystems.processor?.processorSlots ?? []
-    };
-    droidPanels.locomotion = {
-      ...droidPanels.locomotion,
-      ...toPanel(resolvedSystems.locomotion, 'No locomotion configured'),
-      name: resolvedSystems.locomotion?.active?.name ?? resolvedSystems.locomotion?.name ?? droidPanels.locomotion?.name ?? '',
-      speed: resolvedSystems.locomotion?.speed ?? droidPanels.locomotion?.speed ?? 0
-    };
-    droidPanels.appendages = {
-      ...droidPanels.appendages,
-      ...toPanel(resolvedSystems.appendages, 'No appendages configured'),
-      totalCount: resolvedSystems.appendages?.items?.length ?? 0,
-      unarmedAttack: resolvedSystems.appendages?.unarmedAttack ?? buildUnarmedAttackContext(this.actor)
-    };
-    droidPanels.armor = { ...droidPanels.armor, ...toPanel(resolvedSystems.armor, 'No armor configured'), hasArmor: resolvedSystems.armor?.isConfigured === true };
-    droidPanels.sensors = { ...droidPanels.sensors, ...toPanel(resolvedSystems.sensors, 'No sensors configured') };
-    droidPanels.integratedWeapons = { ...droidPanels.integratedWeapons, ...toPanel(resolvedSystems.integratedWeapons, 'No integrated weapons configured') };
-    droidPanels.integratedSystems = { ...droidPanels.integratedSystems, ...toPanel(resolvedSystems.integratedEquipment, 'No integrated systems installed') };
-    droidPanels.skillModifiers = resolvedSystems.skillModifiers ?? [];
-  }
-
-  buildCombatWeaponsContext(weapons, resolvedSystems = null) {
-    const handheld = weapons.filter(w => !w.isIntegrated);
-    const integrated = weapons.filter(w => w.isIntegrated);
-    const integratedParts = resolvedSystems?.integratedWeapons?.items
-      ?.filter(part => part.weaponProfile && !integrated.some(w => w.id === part.id)) ?? [];
-    const unarmed = buildUnarmedAttackContext(this.actor);
-    return {
-      handheld,
-      integrated,
-      integratedParts,
-      unarmed,
-      all: [unarmed, ...weapons, ...integratedParts],
-      hasHandheld: handheld.length > 0,
-      hasIntegrated: integrated.length > 0,
-      hasIntegratedParts: integratedParts.length > 0,
-      hasAny: true,
-    };
+    return projectItems((this.actor?.items ?? []).filter((item) => item.type === "weapon"));
   }
 
   buildHeaderViewModel() {
