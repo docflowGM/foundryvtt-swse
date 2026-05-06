@@ -40,6 +40,57 @@ import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/led
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 
+
+const STACKABLE_DROID_SLOTS = new Set([
+  'locomotion',
+  'locomotionEnhancement',
+  'appendage',
+  'appendageEnhancement',
+  'processorAux',
+  'communications',
+  'hardenedSystems',
+  'sensor',
+  'shield',
+  'translator',
+  'miscellaneous',
+  'weapon',
+  'station',
+  'accessory'
+]);
+
+function normalizeDroidSystemCost(cost) {
+  if (typeof cost === 'number') return Number.isFinite(cost) ? cost : 0;
+  if (typeof cost === 'string') {
+    const numeric = Number(cost.replace(/[^0-9.-]+/g, ''));
+    return Number.isFinite(numeric) ? numeric : 0;
+  }
+  return 0;
+}
+
+function getMaxSystemsForSlot(slot, installedSystems = {}, pendingAdds = []) {
+  if (!slot) return 999;
+  if (slot === 'processor') return getProcessorSlotCapacity(installedSystems, pendingAdds);
+  if (STACKABLE_DROID_SLOTS.has(slot)) return 999;
+  return 1;
+}
+
+function getProcessorSlotCapacity(installedSystems = {}, pendingAdds = []) {
+  const ids = new Set([
+    ...Object.keys(installedSystems ?? {}),
+    ...pendingAdds
+  ]);
+
+  let capacity = 1;
+  for (const id of ids) {
+    const def = getDroidSystemDefinition(id);
+    capacity += Number(def?.grants?.processorSlots ?? 0) || 0;
+    const normalized = String(id || '').toLowerCase().replace(/[_\s]+/g, '-');
+    if (normalized === 'backup-processor' || normalized === 'processor-backup') capacity += 1;
+  }
+
+  return Math.max(1, capacity);
+}
+
 export class DroidModificationFactory {
   /**
    * Build atomic modification plan for droid
@@ -129,7 +180,7 @@ export class DroidModificationFactory {
           removedSystemsData.push({
             id: systemId,
             name: systemDef.name,
-            cost: systemDef.cost
+            cost: normalizeDroidSystemCost(systemDef.cost)
           });
         }
       }
@@ -158,14 +209,13 @@ export class DroidModificationFactory {
         continue;
       }
 
-      // Check slot availability
+      // Check slot availability. Droid part schema now distinguishes required
+      // primary systems from stackable enhancements/accessories. Keep this
+      // factory as a guardrail, but defer detailed slot legality to
+      // DroidSlotGovernanceEngine above.
       const slot = systemDef.slot;
       const currentSlotCount = slotOccupancy.get(slot) ?? 0;
-
-      // Most slots allow only 1 system (processors, shields, power cores)
-      // Multi-slot systems like locomotion/appendages allow multiple
-      const isMultiSlot = ['locomotion', 'appendage'].includes(slot);
-      const maxPerSlot = isMultiSlot ? 999 : 1;
+      const maxPerSlot = getMaxSystemsForSlot(slot, installedSystems, systemsToAdd);
 
       if (currentSlotCount >= maxPerSlot) {
         details.push(`Cannot add system "${systemId}": slot "${slot}" is full (max ${maxPerSlot})`);
@@ -183,7 +233,7 @@ export class DroidModificationFactory {
       addedSystemsData.push({
         id: systemId,
         name: systemDef.name,
-        cost: systemDef.cost
+        cost: normalizeDroidSystemCost(systemDef.cost)
       });
 
       slotOccupancy.set(slot, currentSlotCount + 1);

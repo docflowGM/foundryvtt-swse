@@ -1,0 +1,52 @@
+{{!--
+  Droid Build Status Card — Phase 7
+
+  Compact source-provenance chip + missing-systems warnings for the Systems tab.
+  Visible for all droid types; adapts content based on source classification.
+
+  Data consumed:
+    droid.sourceStatus — {
+      buildSource, sourceLabel,
+      isImported, isConverted, isManualOrLegacy,
+      importedFrom, convertedFrom,
+      garageRecommended, hasConfiguration,
+      validationMessages[], hasValidationMessages
+    }
+    droid.garage.canOpenGarage — owner permission flag
+
+  Rendered unconditionally so the source badge always appears; the warning
+  list and Garage CTA render only when there is content to show.
+--}}
+{{#if droid.sourceStatus}}
+<div class="swse-droid-status-card swse-panel">
+  <div class="swse-droid-status-header">
+    <span class="swse-droid-source-badge swse-droid-source-{{droid.sourceStatus.buildSource}}">
+      {{droid.sourceStatus.sourceLabel}}
+    </span>
+    {{#if droid.sourceStatus.importedFrom}}
+      <span class="swse-droid-status-origin">from: {{droid.sourceStatus.importedFrom}}</span>
+    {{else if droid.sourceStatus.convertedFrom}}
+      <span class="swse-droid-status-origin">converted from: {{droid.sourceStatus.convertedFrom}}</span>
+    {{/if}}
+  </div>
+
+  {{#if droid.sourceStatus.hasValidationMessages}}
+    <ul class="swse-droid-validation-list">
+      {{#each droid.sourceStatus.validationMessages as |msg|}}
+        <li class="swse-droid-validation-item swse-droid-validation-{{msg.severity}}">{{msg.text}}</li>
+      {{/each}}
+    </ul>
+  {{/if}}
+
+  {{#if droid.sourceStatus.garageRecommended}}
+    {{#if droid.garage.canOpenGarage}}
+      <div class="swse-droid-garage-cta">
+        <span class="swse-droid-garage-cta-text">Garage can complete this build.</span>
+        <button type="button" class="edit-droid-systems holo-btn small" aria-label="Open Garage to configure droid systems">
+          <i class="fa-solid fa-screwdriver-wrench"></i> Open Garage
+        </button>
+      </div>
+    {{/if}}
+  {{/if}}
+</div>
+{{/if}}

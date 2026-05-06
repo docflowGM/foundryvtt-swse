@@ -1,3 +1,5 @@
+import { DROID_PART_DEFINITION_MAP } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-part-schema.js";
+
 /**
  * DROID SYSTEM DEFINITIONS — Canonical Registry
  * PHASE 4: Single source of truth for droid modification costs and properties
@@ -9,7 +11,7 @@
  * - No mutation is allowed to this registry (immutable configuration)
  */
 
-export const DROID_SYSTEM_DEFINITIONS = {
+const LEGACY_DROID_SYSTEM_DEFINITIONS = {
   // ========================================
   // PROCESSORS
   // ========================================
@@ -162,13 +164,21 @@ export const DROID_SYSTEM_DEFINITIONS = {
   }
 };
 
+export const DROID_SYSTEM_DEFINITIONS = Object.freeze({
+  ...LEGACY_DROID_SYSTEM_DEFINITIONS,
+  ...DROID_PART_DEFINITION_MAP
+});
+
 /**
  * Get system definition by ID (server-authoritative)
  * @param {string} systemId - System ID
  * @returns {Object|null} System definition or null
  */
 export function getDroidSystemDefinition(systemId) {
-  return DROID_SYSTEM_DEFINITIONS[systemId] || null;
+  if (!systemId) return null;
+  const key = String(systemId).trim();
+  const slug = key.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return DROID_SYSTEM_DEFINITIONS[key] || DROID_SYSTEM_DEFINITIONS[slug] || Object.values(DROID_SYSTEM_DEFINITIONS).find(def => String(def.name ?? '').toLowerCase() === key.toLowerCase()) || null;
 }
 
 /**

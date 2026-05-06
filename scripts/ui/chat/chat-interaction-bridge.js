@@ -7,6 +7,8 @@
  */
 
 import { enhanceSWSEChatMessage } from "/systems/foundryvtt-swse/scripts/ui/chat/chat-surface-enhancer.js";
+import { buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
+import { getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 
 let registered = false;
 
@@ -30,8 +32,49 @@ function actorFromId(id) {
     ?? null;
 }
 
+
+function actorSize(actor) {
+  return String(actor?.system?.size ?? actor?.system?.droidSystems?.size ?? actor?.system?.droidSize ?? 'medium').toLowerCase();
+}
+
+function buildVirtualDroidPartWeapon(actor, itemId) {
+  const ruleId = String(itemId || '').replace(/^swse-droid-part-/, '');
+  const part = hydrateDroidPart({ id: ruleId });
+  const profile = part.weaponProfile ?? {};
+  const damage = profile.damageBySize
+    ? getSelfDestructDamage(actorSize(actor), { miniaturized: profile.miniaturized === true })
+    : (profile.damage ?? '1d6');
+  return {
+    id: itemId,
+    name: profile.name ?? part.name ?? 'Droid Part',
+    type: 'weapon',
+    img: actor?.img ?? 'icons/svg/aura.svg',
+    flags: { swse: { virtual: true, droidPart: true, droidPartId: ruleId, selfDestruct: profile.selfDestruct === true } },
+    system: {
+      damage: damage || '1d6',
+      damageType: profile.damageType ?? 'normal',
+      attackAttribute: profile.mode === 'ranged' || profile.mode === 'area' ? 'dex' : 'str',
+      meleeOrRanged: profile.mode === 'ranged' || profile.mode === 'area' ? 'ranged' : 'melee',
+      weaponType: profile.weaponType ?? 'simple',
+      weaponGroup: profile.weaponType ?? 'simple',
+      proficiency: profile.weaponType ?? 'simple',
+      range: profile.range ?? '',
+      attackBonus: profile.attackBonus ?? 0,
+      equipped: true,
+      integrated: true,
+      description: part.description ?? ''
+    }
+  };
+}
+
 function itemFromActor(actor, itemId) {
   if (!actor || !itemId) return null;
+  if (itemId === 'swse-virtual-unarmed' || String(itemId).startsWith('swse-virtual-unarmed')) {
+    return buildVirtualUnarmedWeapon(actor, { id: itemId });
+  }
+  if (String(itemId).startsWith('swse-droid-part-')) {
+    return buildVirtualDroidPartWeapon(actor, itemId);
+  }
   return actor.items?.get?.(itemId) ?? actor.items?.find?.(item => item.id === itemId || item._id === itemId) ?? null;
 }
 

@@ -18,6 +18,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { getClassData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js"; // STATIC import (no dynamic)
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
+import { getReflexSizeModifier } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
 export class DefenseCalculator {
 
@@ -41,7 +42,7 @@ export class DefenseCalculator {
     const safeClassLevels = Array.isArray(classLevels) ? classLevels : [];
     const defensesState = actor.system?.defenses ?? {};
     const abilitiesState = actor.system?.abilities ?? {};
-    const isDroidActor = !!actor.system?.isDroid;
+    const isDroidActor = actor.type === 'droid' || actor.system?.isDroid === true;
 
     const [computedFortClassBonus, computedRefClassBonus, computedWillClassBonus] = await Promise.all([
       this._getSaveBonus(safeClassLevels, 'fort'),
@@ -93,6 +94,7 @@ export class DefenseCalculator {
     };
 
     const conditionPenalty = getConditionPenalty();
+    const reflexSizeModifier = getReflexSizeModifier(actor);
 
     const reflexState = defensesState?.reflex ?? {};
     const fortitudeState = defensesState?.fortitude ?? {};
@@ -119,11 +121,13 @@ export class DefenseCalculator {
         reflexLevelTerm = reflexArmorBonus;
       }
     }
-    const reflexBase = 10 + reflexLevelTerm + reflexClassBonus;
+    const reflexBase = 10 + reflexLevelTerm + reflexClassBonus + reflexSizeModifier;
     const reflexTotal = Math.max(1, reflexBase + reflexAbilityMod + reflexMiscBonus + refStateBonus + refAdjust + conditionPenalty);
 
     const fortDefaultAbility = isDroidActor ? 'str' : 'con';
-    const fortAbilityKey = String(fortitudeState.ability || fortDefaultAbility).toLowerCase();
+    // SWSE RAW: nonliving targets without Constitution, including Droids, add STR to Fortitude.
+    // Do not allow stale legacy data (system.defenses.fortitude.ability = 'con') to override this.
+    const fortAbilityKey = isDroidActor ? 'str' : String(fortitudeState.ability || fortDefaultAbility).toLowerCase();
     const fortAbilityMod = getAbilityMod(fortAbilityKey, 0);
     const fortClassBonus = Number(fortitudeState.classBonus ?? computedFortClassBonus) || 0;
     const fortMiscBonus = getMiscBonus(fortitudeState);
@@ -139,7 +143,9 @@ export class DefenseCalculator {
     const willTotal = Math.max(1, willBase + willMiscBonus + willStateBonus + willAdjust + conditionPenalty);
 
     const flatFootedBase = reflexBase;
-    const flatFootedTotal = Math.max(1, reflexTotal - reflexAbilityMod);
+    // Flat-footed removes a positive Dexterity bonus, but never removes a
+    // Dexterity penalty. SWSE RAW: lose Dex bonus, not Dex penalty.
+    const flatFootedTotal = Math.max(1, reflexTotal - Math.max(0, reflexAbilityMod));
 
     return {
       fortitude: {
@@ -163,6 +169,7 @@ export class DefenseCalculator {
         miscBonus: reflexMiscBonus,
         armorBonus: reflexArmorBonus,
         armorContribution: reflexLevelTerm,
+        sizeModifier: reflexSizeModifier,
         abilityKey: reflexAbilityKey,
         abilityMod: reflexAbilityMod,
         conditionPenalty
@@ -188,6 +195,7 @@ export class DefenseCalculator {
         miscBonus: reflexMiscBonus,
         armorBonus: reflexArmorBonus,
         armorContribution: reflexLevelTerm,
+        sizeModifier: reflexSizeModifier,
         abilityKey: reflexAbilityKey,
         abilityMod: 0,
         conditionPenalty

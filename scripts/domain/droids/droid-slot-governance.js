@@ -70,13 +70,27 @@ export class DroidSlotGovernanceEngine {
       slotUsage[slot].push(systemId);
     }
 
-    // Validate single-slot rules
+    // Validate single-slot rules. Processor is special: Backup Processor can
+    // unlock one reserve processor slot, but only one processor can be active
+    // at a time. Active-state enforcement lives in the sheet/Garage context;
+    // this validator enforces physical capacity.
     for (const slot of this.SLOT_CATEGORIES.single) {
-      if (slotUsage[slot]?.length > 1) {
-        violations.push(
-          `Slot "${slot}" allows only 1 system, but ${slotUsage[slot].length} are installed`
-        );
+      const used = slotUsage[slot]?.length ?? 0;
+      if (used <= 1) continue;
+
+      if (slot === 'processor') {
+        const processorCapacity = this.#getProcessorSlotCapacity(usedSystems);
+        if (used > processorCapacity) {
+          violations.push(
+            `Processor capacity exceeded: ${used} installed, ${processorCapacity} allowed. Backup Processor unlocks one reserve processor slot.`
+          );
+        }
+        continue;
       }
+
+      violations.push(
+        `Slot "${slot}" allows only 1 system, but ${used} are installed`
+      );
     }
 
     // Validate compatibility for each system

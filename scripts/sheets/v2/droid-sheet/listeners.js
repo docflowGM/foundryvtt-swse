@@ -26,6 +26,8 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
 import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { coerceSingleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
+import { buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
+import { getDroidPartDefinition, getSelfDestructBurstSquares, getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 
 /**
  * Wire every droid-sheet listener block. Order matches the original
@@ -50,6 +52,8 @@ export function wireDroidSheetListeners(sheet, root, signal) {
   wireSkillRolling(sheet, root, signal);
   wireDefenseRolling(sheet, root, signal);
   wireWeaponRolling(sheet, root, signal);
+  wireUnarmedAttack(sheet, root, signal);
+  wireDroidPartUse(sheet, root, signal);
   wireActionUse(sheet, root, signal);
   wireDroidSystemsEditor(sheet, root, signal);
   wireConvertStockDroid(sheet, root, signal);
@@ -180,7 +184,11 @@ function wireDroidCustomization(sheet, root, signal) {
     btn.addEventListener("click", async (ev) => {
       ev.preventDefault();
       if (!sheet.actor) return;
-      DroidCustomizationRouter.openDroidCustomization(sheet.actor);
+      DroidCustomizationRouter.openDroidCustomization(sheet.actor, {
+        focusCategory: ev.currentTarget?.dataset?.garageRegion ?? ev.currentTarget?.dataset?.region ?? null,
+        focusSlot: ev.currentTarget?.dataset?.garageSlot ?? ev.currentTarget?.dataset?.slotId ?? null,
+        focusMode: ev.currentTarget?.dataset?.garageMode ?? null
+      });
     }, { signal });
   }
 }
@@ -298,6 +306,170 @@ function wireDefenseRolling(sheet, root, signal) {
           await game.swse.rolls.defenses.rollDefense(sheet.document, defenseType);
         }
       }
+    }, { signal });
+  }
+}
+
+function getActorSize(actor) {
+  return String(actor?.system?.size ?? actor?.system?.droidSystems?.size ?? actor?.system?.droidSize ?? 'medium').toLowerCase();
+}
+
+async function createSelfDestructTemplate(actor, part) {
+  const token = actor?.getActiveTokens?.()?.[0] ?? actor?.token?.object ?? null;
+  const scene = token?.scene ?? canvas?.scene;
+  if (!scene || !token) return null;
+  const radiusSquares = getSelfDestructBurstSquares(getActorSize(actor), { miniaturized: part?.weaponProfile?.miniaturized === true });
+  if (!radiusSquares) return null;
+  const gridSize = canvas?.grid?.size ?? scene.grid?.size ?? 100;
+  const distance = canvas?.grid?.distance ?? scene.grid?.distance ?? 1;
+  const radiusDistance = radiusSquares * distance;
+  const x = token.center?.x ?? token.x ?? 0;
+  const y = token.center?.y ?? token.y ?? 0;
+  try {
+    const created = await scene.createEmbeddedDocuments('MeasuredTemplate', [{
+      t: 'circle',
+      user: game.user?.id,
+      x,
+      y,
+      direction: 0,
+      distance: radiusDistance,
+      borderColor: game.user?.color ?? '#ff6400',
+      fillColor: game.user?.color ?? '#ff6400',
+      flags: { swse: { droidSelfDestruct: true, actorUuid: actor.uuid, partId: part?.ruleId ?? part?.id } }
+    }]);
+    return created?.[0] ?? null;
+  } catch (err) {
+    console.warn('Failed to create self-destruct template', err);
+    return null;
+  }
+}
+
+function buildDroidPartVirtualWeapon(actor, part) {
+  const profile = part?.weaponProfile ?? {};
+  const damage = profile.damageBySize
+    ? getSelfDestructDamage(getActorSize(actor), { miniaturized: profile.miniaturized === true })
+    : (profile.damage ?? '1d6');
+  return {
+    id: `swse-droid-part-${part?.ruleId ?? part?.id ?? 'weapon'}`,
+    name: profile.name ?? part?.name ?? 'Droid Part',
+    type: 'weapon',
+    img: part?.img ?? actor?.img ?? 'icons/svg/aura.svg',
+    flags: { swse: { virtual: true, droidPart: true, droidPartId: part?.ruleId ?? part?.id, selfDestruct: profile.selfDestruct === true } },
+    system: {
+      damage: damage || '1d6',
+      damageType: profile.damageType ?? 'normal',
+      attackAttribute: profile.mode === 'ranged' || profile.mode === 'area' ? 'dex' : 'str',
+      meleeOrRanged: profile.mode === 'ranged' || profile.mode === 'area' ? 'ranged' : 'melee',
+      weaponType: profile.weaponType ?? 'simple',
+      proficiency: profile.weaponType ?? 'simple',
+      range: profile.range ?? '',
+      attackBonus: profile.attackBonus ?? 0,
+      equipped: true,
+      integrated: true,
+      description: part?.description ?? ''
+    }
+  };
+}
+
+async function postDroidPartChat(actor, part, { roll = null, destroyed = false } = {}) {
+  const modifiers = (part.modifiers ?? []).filter(mod => mod.active !== false);
+  const modifierHtml = modifiers.length
+    ? `<ul>${modifiers.map(mod => `<li><strong>${mod.target}</strong>: ${mod.value !== undefined ? `${Number(mod.value) >= 0 ? '+' : ''}${mod.value}` : 'special'} ${mod.type ?? ''}</li>`).join('')}</ul>`
+    : '<p class="muted">No automatic modifier is active for this use.</p>';
+  const weaponHtml = part.weaponProfile
+    ? `<p><strong>Weapon profile:</strong> ${part.weaponProfile.name ?? part.name}${part.weaponProfile.damage ? `, ${part.weaponProfile.damage} damage` : ''}${part.weaponProfile.range ? `, ${part.weaponProfile.range}` : ''}${part.weaponProfile.defense ? `, targets ${part.weaponProfile.defense}` : ''}</p>`
+    : '';
+  const list = (label, values) => Array.isArray(values) && values.length
+    ? `<h4>${label}</h4><ul>${values.map(value => `<li>${String(value)}</li>`).join('')}</ul>`
+    : '';
+  const prerequisiteHtml = list('Prerequisites', [
+    ...(part.prerequisiteIds ?? []),
+    ...((part.prerequisiteAnyIds ?? []).length ? [`Any: ${(part.prerequisiteAnyIds ?? []).join(', ')}`] : [])
+  ]);
+  const featureHtml = list('Features', part.features);
+  const restrictionHtml = list('Restrictions', part.restrictions);
+  const content = `
+    <div class="swse-chat-card swse-droid-part-chat">
+      <h3><i class="fa-solid fa-robot"></i> ${actor.name} uses ${part.name}</h3>
+      ${part.description ? `<p>${part.description}</p>` : ''}
+      ${weaponHtml}
+      ${featureHtml}
+      ${restrictionHtml}
+      ${prerequisiteHtml}
+      <h4>Rules / Modifiers</h4>
+      ${modifierHtml}
+      ${destroyed ? '<p class="swse-danger"><strong>Result:</strong> Droid destroyed. This Droid cannot be repaired or salvaged.</p>' : ''}
+    </div>`;
+  await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content, rolls: roll ? [roll] : [] });
+}
+
+function wireUnarmedAttack(sheet, root, signal) {
+  for (const btn of root.querySelectorAll('[data-action="roll-unarmed-attack"]')) {
+    btn.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      if (!sheet.actor) return;
+      const weapon = buildVirtualUnarmedWeapon(sheet.actor);
+      await SWSERoll.rollAttack(sheet.actor, weapon, { showDialog: true });
+    }, { signal });
+  }
+}
+
+function wireDroidPartUse(sheet, root, signal) {
+  for (const btn of root.querySelectorAll('[data-action="use-droid-part"]')) {
+    btn.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      if (!sheet.actor) return;
+      const partId = ev.currentTarget?.dataset?.partId;
+      const partName = ev.currentTarget?.dataset?.partName;
+      const item = partId ? sheet.actor.items?.get?.(partId) : null;
+      const lookupId = item?.system?.droidPartId ?? item?.flags?.swse?.droidPartId ?? partName ?? partId;
+      const hydrated = hydrateDroidPart({
+        id: lookupId,
+        name: item?.name ?? partName,
+        description: item?.system?.description,
+        weaponProfile: item?.system?.weaponProfile,
+        img: item?.img
+      });
+      const definition = getDroidPartDefinition(hydrated.ruleId ?? hydrated.name) ?? hydrated;
+      const part = { ...definition, ...hydrated, weaponProfile: hydrated.weaponProfile ?? definition.weaponProfile };
+
+      if (part.weaponProfile?.selfDestruct === true) {
+        const confirmed = await Dialog.confirm({
+          title: 'Confirm Droid Self-Destruct',
+          content: `<p><strong>${sheet.actor.name}</strong> will be marked destroyed. This cannot be repaired or salvaged.</p><p>Continue?</p>`,
+          yes: () => true,
+          no: () => false,
+          defaultYes: false
+        });
+        if (!confirmed) return;
+        const damage = getSelfDestructDamage(getActorSize(sheet.actor), { miniaturized: part.weaponProfile.miniaturized === true });
+        const burst = getSelfDestructBurstSquares(getActorSize(sheet.actor), { miniaturized: part.weaponProfile.miniaturized === true });
+        const template = await createSelfDestructTemplate(sheet.actor, part);
+        const roll = await new Roll(damage).evaluate({ async: true });
+        await roll.toMessage({
+          speaker: ChatMessage.getSpeaker({ actor: sheet.actor }),
+          flavor: `${sheet.actor.name} — ${part.name} Damage${burst ? ` (${burst}-square burst)` : ''}`
+        });
+        if (template) ui.notifications.info(`${part.name}: placed ${burst}-square burst template.`);
+        await ActorEngine.updateActor(sheet.actor, {
+          'system.hp.value': 0,
+          'system.conditionTrack.current': 5,
+          'system.droidState.status': 'destroyed',
+          'system.droidState.destroyed': true,
+          'system.droidState.disabled': false,
+          'system.droidState.destroyedBy': part.name
+        }, { source: 'droid-self-destruct' });
+        await postDroidPartChat(sheet.actor, part, { destroyed: true });
+        return;
+      }
+
+      if (part.weaponProfile?.damage || part.weaponProfile?.damageBySize) {
+        await postDroidPartChat(sheet.actor, part);
+        await SWSERoll.rollAttack(sheet.actor, buildDroidPartVirtualWeapon(sheet.actor, part), { showDialog: true });
+        return;
+      }
+
+      await postDroidPartChat(sheet.actor, part);
     }, { signal });
   }
 }

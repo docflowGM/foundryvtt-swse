@@ -4,6 +4,7 @@ import { RULES } from '../../engine/execution/rules/rule-enum.js';
 import { SchemaAdapters } from '../../utils/schema-adapters.js';
 import { isNpcStatblockMode } from '../../actors/npc/npc-mode-adapter.js';
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { getDamageAbilityContribution, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isMeleeWeapon as isRawMeleeWeapon, isRangedWeapon as isRawRangedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
 /**
  * Modern SWSE Combat Utilities (v13+)
@@ -57,21 +58,20 @@ export function computeAttackBonus(actor, weapon) {
     }
   }
 
-  const level = actor.system.level ?? 1;
-  const halfLvl = getEffectiveHalfLevel(actor);
-
   const bab = SchemaAdapters.getBAB(actor);
 
-  // Ability mod used for attack
-  const attr = weapon.system?.attackAttribute ?? 'str';
+  // RAW attack rolls use BAB + ability modifier. They do not add half level;
+  // level scaling is already represented by BAB.
+  const attr = getWeaponAttackAbility(actor, weapon);
   const abilityMod = SchemaAdapters.getAbilityMod(actor, attr);
 
-  // Weapon-based bonuses
-  const misc = weapon.system?.attackBonus ?? 0;
+  // Weapon-based attack bonuses only. Do not reuse damage bonuses here.
+  const misc = getWeaponFlatAttackBonus(weapon);
+  const rangePenalty = getRangePenalty(weapon);
 
   // Species combat bonuses (from SpeciesTraitEngine)
   const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
-  const speciesAttackBonus = (weapon.system?.ranged ? (speciesCombat.rangedAttack || 0) : (speciesCombat.meleeAttack || 0));
+  const speciesAttackBonus = (isRawRangedWeapon(weapon) && !isRawMeleeWeapon(weapon) ? (speciesCombat.rangedAttack || 0) : (speciesCombat.meleeAttack || 0));
 
   // Condition Track penalties (read from authoritative derived source)
   const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ??
@@ -92,9 +92,6 @@ export function computeAttackBonus(actor, weapon) {
     );
   }
 
-  // Size modifiers, if in your system
-  const sizeMod = actor.system.sizeMod ?? 0;
-
   // Active Effect attack penalties (your refactor uses system.attackPenalty)
   const aePenalty = actor.system.attackPenalty ?? 0;
 
@@ -104,11 +101,10 @@ export function computeAttackBonus(actor, weapon) {
 
   return (
     bab +
-    halfLvl +
     abilityMod +
     misc +
+    rangePenalty +
     speciesAttackBonus +
-    sizeMod +
     aePenalty +
     ctPenalty +
     proficiencyPenalty
@@ -349,7 +345,7 @@ export function hasDexToDamageTalent(actor) {
  */
 export function computeDamageBonus(actor, weapon, options = {}) {
   const halfLvl = getEffectiveHalfLevel(actor);
-  let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
+  let bonus = halfLvl + getWeaponFlatDamageBonus(weapon);
 
   // Species combat bonuses (from SpeciesTraitEngine)
   const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
@@ -357,48 +353,25 @@ export function computeDamageBonus(actor, weapon, options = {}) {
   const speciesDamageBonus = (isRangedWeapon ? (speciesCombat.rangedDamage || 0) : (speciesCombat.meleeDamage || 0));
   bonus += speciesDamageBonus;
 
-  const strMod = actor.system.attributes?.str?.mod ?? 0;
-  const dexMod = actor.system.attributes?.dex?.mod ?? 0;
+  const isLight = isLightWeapon(weapon, actor);
+  const isTwoHanded = options.forceTwoHanded || isTwoHandedWeapon(weapon, actor);
+  let abilityContribution = getDamageAbilityContribution(actor, weapon, {
+    isLight,
+    twoHanded: isTwoHanded,
+    forceTwoHanded: options.forceTwoHanded
+  });
 
-  // Check for explicit attack attribute setting
-  const attackAttr = weapon.system?.attackAttribute;
-
-  if (attackAttr) {
-    // Use explicit attribute setting
-    switch (attackAttr) {
-      case 'str': bonus += strMod; break;
-      case 'dex': bonus += dexMod; break;
-      case '2str': bonus += strMod * 2; break;
-      case '2dex': bonus += dexMod * 2; break;
+  // Preserve the existing opt-in talent behavior without changing RAW defaults:
+  // melee/thrown weapons use STR unless a talent explicitly allows a better DEX damage path.
+  if ((isMeleeWeapon(weapon) || weapon.system?.thrown === true) && hasDexToDamageTalent(actor)) {
+    const dexMod = SchemaAdapters.getAbilityMod(actor, 'dex');
+    const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
+    if (dexMod > strMod) {
+      abilityContribution = (isTwoHanded && !isLight) ? dexMod * 2 : dexMod;
     }
-  } else {
-    // Auto-detect based on weapon type
-    const isMelee = isMeleeWeapon(weapon);
-    const isLight = isLightWeapon(weapon, actor);
-    const isTwoHanded = options.forceTwoHanded || isTwoHandedWeapon(weapon, actor);
-    const hasDexDamage = hasDexToDamageTalent(actor);
-
-    if (isMelee) {
-      // Melee weapons
-      if (hasDexDamage && dexMod > strMod) {
-        // Use DEX if talent allows and DEX is higher
-        if (isTwoHanded && !isLight) {
-          bonus += (dexMod * 2);
-        } else {
-          bonus += dexMod;
-        }
-      } else {
-        // Use STR
-        if (isTwoHanded && !isLight) {
-          // Two-handed melee: 2x STR (not for light weapons)
-          bonus += (strMod * 2);
-        } else {
-          bonus += strMod;
-        }
-      }
-    }
-    // Ranged weapons: no ability mod to damage in RAW SWSE
   }
+
+  bonus += abilityContribution;
 
   return bonus;
 }

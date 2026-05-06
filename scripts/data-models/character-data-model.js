@@ -5,6 +5,7 @@ import { SpeciesTraitEngine } from '../engine/systems/species/species-trait-engi
 import { warnIfMixedTracks } from '../utils/hardening.js';
 import { getNpcMode } from '../actors/npc/npc-mode-adapter.js';
 import { ActorAbilityBridge } from '../adapters/ActorAbilityBridge.js';
+import { getDamageThresholdSizeBonus } from '../engine/combat/combat-stat-rules.js';
 
 export class SWSECharacterDataModel extends SWSEActorDataModel {
 
@@ -100,6 +101,16 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       // Droid Status
       isDroid: new fields.BooleanField({ required: true, initial: false }),
       droidDegree: new fields.StringField({ required: false, initial: '' }),
+      droidStatus: new fields.SchemaField({
+        state: new fields.StringField({
+          required: true,
+          initial: 'active',
+          choices: ['active', 'disabled', 'destroyed']
+        }),
+        source: new fields.StringField({ required: false, initial: '' }),
+        timestamp: new fields.NumberField({ required: false, initial: 0, integer: true }),
+        notes: new fields.StringField({ required: false, initial: '' })
+      }, { required: true, initial: {} }),
 
       // PHASE 5: Custom species naming support (Near-Human primarily)
       speciesCustomName: new fields.StringField({ required: false, initial: '' }),
@@ -244,8 +255,26 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
           id: new fields.StringField({ required: true, initial: '' }),
           name: new fields.StringField({ required: true, initial: '' }),
           cost: new fields.NumberField({ required: true, initial: 0 }),
-          bonus: new fields.NumberField({ required: true, initial: 0 })
+          bonus: new fields.NumberField({ required: true, initial: 0 }),
+          active: new fields.BooleanField({ required: true, initial: true }),
+          slotKey: new fields.StringField({ required: false, initial: 'primaryProcessor' }),
+          description: new fields.StringField({ required: false, initial: '' })
         }),
+
+        // Optional reserve processors. A Backup Processor can unlock a second
+        // processor slot, but only one processor should be active at a time.
+        processors: new fields.ArrayField(
+          new fields.SchemaField({
+            id: new fields.StringField({ required: true, initial: '' }),
+            name: new fields.StringField({ required: true, initial: '' }),
+            cost: new fields.NumberField({ required: true, initial: 0 }),
+            bonus: new fields.NumberField({ required: true, initial: 0 }),
+            active: new fields.BooleanField({ required: true, initial: false }),
+            slotKey: new fields.StringField({ required: false, initial: '' }),
+            description: new fields.StringField({ required: false, initial: '' })
+          }),
+          { required: true, initial: [] }
+        ),
 
         // Array systems
         appendages: new fields.ArrayField(
@@ -253,7 +282,24 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
             id: new fields.StringField({ required: true, initial: '' }),
             name: new fields.StringField({ required: true, initial: '' }),
             type: new fields.StringField({ required: true, initial: '' }),
-            cost: new fields.NumberField({ required: true, initial: 0 })
+            cost: new fields.NumberField({ required: true, initial: 0 }),
+            slotKey: new fields.StringField({ required: false, initial: '' }),
+            location: new fields.StringField({ required: false, initial: '' }),
+            active: new fields.BooleanField({ required: true, initial: true }),
+            description: new fields.StringField({ required: false, initial: '' })
+          }),
+          { required: true, initial: [] }
+        ),
+
+        // Region-aware appendage mounts. This lets the sheet/Garage represent
+        // left arm = claw, right arm = hand, extra tool mount, etc.
+        appendageSlots: new fields.ArrayField(
+          new fields.SchemaField({
+            key: new fields.StringField({ required: true, initial: '' }),
+            label: new fields.StringField({ required: true, initial: '' }),
+            required: new fields.BooleanField({ required: true, initial: false }),
+            installedId: new fields.StringField({ required: false, initial: '' }),
+            active: new fields.BooleanField({ required: true, initial: true })
           }),
           { required: true, initial: [] }
         ),
@@ -262,7 +308,11 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
           new fields.SchemaField({
             id: new fields.StringField({ required: true, initial: '' }),
             name: new fields.StringField({ required: true, initial: '' }),
-            cost: new fields.NumberField({ required: true, initial: 0 })
+            cost: new fields.NumberField({ required: true, initial: 0 }),
+            category: new fields.StringField({ required: false, initial: '' }),
+            slot: new fields.StringField({ required: false, initial: '' }),
+            active: new fields.BooleanField({ required: true, initial: true }),
+            description: new fields.StringField({ required: false, initial: '' })
           }),
           { required: true, initial: [] }
         ),
@@ -415,12 +465,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       const fortTotal = this.defenses?.fort?.total ?? 10;
       const heroicLevel = this.heroicLevel ?? this.level ?? 1;
 
-      // Character size modifier for DT
-      const sizeModifiers = {
-        'fine': -10, 'diminutive': -5, 'tiny': -2, 'small': -1,
-        'medium': 0, 'large': 1, 'huge': 2, 'gargantuan': 5, 'colossal': 10
-      };
-      const sizeMod = sizeModifiers[(this.parent?.system?.size || 'medium').toLowerCase()] ?? 0;
+      // RAW Damage Threshold size bonus: only Large+ creatures gain a bonus.
+      const sizeMod = getDamageThresholdSizeBonus(this.parent);
 
       if (formulaType === 'halfLevel') {
         this.damageThreshold = fortTotal + Math.floor(heroicLevel / 2) + sizeMod;
@@ -895,7 +941,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
       // Use selectedAbility if set, otherwise use default
       const abilityKey = skill.selectedAbility || data.defaultAbility;
-      const abilityMod = this.attributes[abilityKey]?.mod || 0;
+      const abilityMod = (this.isDroid && abilityKey === 'con') ? 0 : (this.attributes[abilityKey]?.mod || 0);
 
       // Calculate total bonus
       let total = abilityMod + (skill.miscMod || 0);

@@ -1,47 +1,20 @@
-{{!--
-  Droid Sensors Panel
-
-  Shows installed sensor systems and their capabilities.
-
-  Data consumed:
-    droidPanels.sensors (entries[], hasEntries, totalCount, totalCost, emptyMessage)
-
-  Phase 3B: Subsystem detail enrichment. Lists all sensors with range and cost info.
---}}
-<section class="swse-panel holo-panel swse-ui-panel">
+<section class="swse-panel holo-panel swse-ui-panel swse-droid-part-region">
   <header class="section-bar">
     <h3 class="section-header">Sensors</h3>
-    {{#if droidPanels.sensors.totalCount}}
-      <span class="section-meta muted" style="font-size: 0.85em;">({{droidPanels.sensors.totalCount}}) {{droidPanels.sensors.totalCost}} credits</span>
-    {{/if}}
   </header>
 
-  {{#if droidPanels.sensors.hasEntries}}
-    <div class="sensors-list">
-      {{#each droidPanels.sensors.entries as |sensor|}}
-        <div class="sensor-entry" data-sensor-id="{{sensor.id}}">
-          <div class="entry-header">
-            <span class="entry-name">{{sensor.name}}</span>
-            {{#if sensor.cost}}
-              <span class="entry-cost muted" style="font-size: 0.85em;">{{sensor.cost}} cr</span>
-            {{/if}}
-          </div>
-          <div class="entry-details muted" style="font-size: 0.85em; margin-top: 4px;">
-            {{#if sensor.range}}
-              <span class="sensor-range">Range: {{sensor.range}}</span>
-            {{/if}}
-          </div>
-          {{#if sensor.description}}
-            <div class="entry-description muted" style="font-size: 0.85em; margin-top: 4px;">
-              {{sensor.description}}
-            </div>
-          {{/if}}
-        </div>
+  {{#if droid.resolvedSystems.sensors.isConfigured}}
+    <div class="swse-droid-part-list">
+      {{#each droid.resolvedSystems.sensors.items as |sensor|}}
+        <button type="button" class="swse-droid-part-card" data-action="use-droid-part" data-part-id="{{sensor.id}}" data-item-id="{{sensor.itemId}}">
+          <span class="swse-droid-part-name">{{sensor.name}}</span>
+          {{#if sensor.description}}<span class="swse-droid-part-desc">{{sensor.description}}</span>{{/if}}
+        </button>
       {{/each}}
     </div>
   {{else}}
     <div class="empty-state">
-      <p><em>{{droidPanels.sensors.emptyMessage}}</em></p>
+      <p><em>No sensor upgrades installed.</em></p>
     </div>
   {{/if}}
 </section>

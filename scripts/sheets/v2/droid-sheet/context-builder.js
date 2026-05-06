@@ -35,6 +35,8 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { buildHeaderHpSegments } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js";
 import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
+import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/droid-systems-resolver.js";
+import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 
 const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
 
@@ -80,6 +82,22 @@ export class DroidSheetContextBuilder {
     const derived = this.buildDerivedViewModel(abilities);
     const header = this.buildHeaderViewModel();
 
+    // Phase 3: structured top-level droid context (pure derivation, no actor writes)
+    const degree = this.buildDegreeNormalization();
+    const requiredSystems = this.buildRequiredSystemsDefaults(droidPanels);
+    const garage = this.buildGarageContext();
+    const flags = this.buildFlagsContext();
+
+    // Phase 4+: resolver unifies builder data + item collection into per-region view
+    const resolvedSystems = this.buildResolvedSystems();
+    this.applyResolvedSystemPanels(droidPanels, resolvedSystems);
+
+    // Phase 7: build provenance + missing-systems status card context
+    const sourceStatus = this.buildSourceStatus(resolvedSystems);
+
+    // Phase 6+: split weapons into combat-classified buckets and always expose unarmed
+    const combatWeapons = this.buildCombatWeaponsContext(weapons, resolvedSystems);
+
     return {
       // NOTE: the 'actor' Document is intentionally NOT included; consumers use
       // `document` from the base context.
@@ -106,11 +124,22 @@ export class DroidSheetContextBuilder {
       equipment,
       armor,
       weapons,
+      combatWeapons,
       ownedActorMap,
       feats: abilityCards.feats,
       talents: abilityCards.talents,
       racialAbilities: abilityCards.racialAbilities,
       droidPanels,
+      droid: {
+        degree,
+        layoutMode: degree.layoutMode,
+        systems: droidPanels,
+        requiredSystems,
+        resolvedSystems,
+        garage,
+        flags,
+        sourceStatus
+      },
       user: {
         id: game.user?.id,
         name: game.user?.name,
@@ -179,7 +208,97 @@ export class DroidSheetContextBuilder {
   }
 
   buildWeaponEntries() {
-    return projectItems((this.actor?.items ?? []).filter((item) => item.type === "weapon"));
+    return (this.actor?.items ?? [])
+      .filter(item => item.type === "weapon")
+      .map(item => {
+        const isIntegrated =
+          item.system?.integrated === true || Boolean(item.flags?.swse?.integrated);
+        return {
+          ...projectItem(item),
+          isIntegrated,
+          // Phase 6: surfaced weapon metadata (read-only, no mutation)
+          damage: item.system?.damage ?? "",
+          damageBonus: item.system?.damageBonus ?? "",
+          attackBonus: Number.isFinite(Number(item.system?.attackBonus))
+            ? Number(item.system.attackBonus) : null,
+          range: item.system?.range ?? "",
+          meleeOrRanged: item.system?.meleeOrRanged ?? "melee",
+          equipped: item.system?.equipped === true,
+        };
+      });
+  }
+
+  applyResolvedSystemPanels(droidPanels, resolvedSystems) {
+    const toPanel = (region, emptyMessage = 'No systems configured') => {
+      const entries = (region?.items ?? []).map(item => ({
+        ...item,
+        cost: Number(item.cost ?? 0),
+        description: item.description ?? '',
+        damage: item.damage ?? item.weaponProfile?.damage ?? '',
+        range: item.range ?? item.weaponProfile?.range ?? '',
+        attackBonus: item.attackBonus ?? item.weaponProfile?.attackBonus ?? null,
+        canRoll: item.canRoll === true || Boolean(item.weaponProfile),
+        isSelfDestruct: item.isSelfDestruct === true || item.weaponProfile?.selfDestruct === true
+      }));
+      return {
+        entries,
+        items: entries,
+        hasEntries: entries.length > 0,
+        totalCount: entries.length,
+        totalCost: entries.reduce((sum, entry) => sum + Number(entry.cost ?? 0), 0),
+        emptyMessage,
+        warning: region?.warning ?? null,
+        slots: region?.slots ?? [],
+        processorSlots: region?.processorSlots ?? [],
+        skillModifiers: region?.skillModifiers ?? []
+      };
+    };
+
+    droidPanels.processor = {
+      ...droidPanels.processor,
+      ...toPanel(resolvedSystems.processor, 'No processor configured'),
+      hasProcessor: resolvedSystems.processor?.isConfigured === true,
+      name: resolvedSystems.processor?.primary?.name ?? droidPanels.processor?.name ?? '',
+      description: resolvedSystems.processor?.primary?.description ?? droidPanels.processor?.description ?? '',
+      hasBackupProcessorSlot: resolvedSystems.processor?.hasBackupProcessorSlot === true,
+      processorSlots: resolvedSystems.processor?.processorSlots ?? []
+    };
+    droidPanels.locomotion = {
+      ...droidPanels.locomotion,
+      ...toPanel(resolvedSystems.locomotion, 'No locomotion configured'),
+      name: resolvedSystems.locomotion?.active?.name ?? resolvedSystems.locomotion?.name ?? droidPanels.locomotion?.name ?? '',
+      speed: resolvedSystems.locomotion?.speed ?? droidPanels.locomotion?.speed ?? 0
+    };
+    droidPanels.appendages = {
+      ...droidPanels.appendages,
+      ...toPanel(resolvedSystems.appendages, 'No appendages configured'),
+      totalCount: resolvedSystems.appendages?.items?.length ?? 0,
+      unarmedAttack: resolvedSystems.appendages?.unarmedAttack ?? buildUnarmedAttackContext(this.actor)
+    };
+    droidPanels.armor = { ...droidPanels.armor, ...toPanel(resolvedSystems.armor, 'No armor configured'), hasArmor: resolvedSystems.armor?.isConfigured === true };
+    droidPanels.sensors = { ...droidPanels.sensors, ...toPanel(resolvedSystems.sensors, 'No sensors configured') };
+    droidPanels.integratedWeapons = { ...droidPanels.integratedWeapons, ...toPanel(resolvedSystems.integratedWeapons, 'No integrated weapons configured') };
+    droidPanels.integratedSystems = { ...droidPanels.integratedSystems, ...toPanel(resolvedSystems.integratedEquipment, 'No integrated systems installed') };
+    droidPanels.skillModifiers = resolvedSystems.skillModifiers ?? [];
+  }
+
+  buildCombatWeaponsContext(weapons, resolvedSystems = null) {
+    const handheld = weapons.filter(w => !w.isIntegrated);
+    const integrated = weapons.filter(w => w.isIntegrated);
+    const integratedParts = resolvedSystems?.integratedWeapons?.items
+      ?.filter(part => part.weaponProfile && !integrated.some(w => w.id === part.id)) ?? [];
+    const unarmed = buildUnarmedAttackContext(this.actor);
+    return {
+      handheld,
+      integrated,
+      integratedParts,
+      unarmed,
+      all: [unarmed, ...weapons, ...integratedParts],
+      hasHandheld: handheld.length > 0,
+      hasIntegrated: integrated.length > 0,
+      hasIntegratedParts: integratedParts.length > 0,
+      hasAny: true,
+    };
   }
 
   buildHeaderViewModel() {
@@ -410,7 +529,7 @@ export class DroidSheetContextBuilder {
 
   buildIntegratedWeaponsPanel() {
     const droidSystems = this.system?.droidSystems ?? {};
-    const entries = Array.isArray(droidSystems.weapons)
+    const builderEntries = Array.isArray(droidSystems.weapons)
       ? droidSystems.weapons.map((item, idx) => ({
           id: item.id ?? `weapon-${idx}`,
           name: item.name ?? "",
@@ -419,6 +538,32 @@ export class DroidSheetContextBuilder {
           description: item.description ?? ""
         }))
       : [];
+
+    // Also include weapon items from actor.items that carry the integrated flag
+    const builderIds = new Set(builderEntries.map(e => e.id).filter(Boolean));
+    const itemEntries = (this.actor?.items ?? [])
+      .filter(i =>
+        i.type === "weapon" &&
+        (i.system?.integrated === true || Boolean(i.flags?.swse?.integrated)) &&
+        !builderIds.has(i.id)
+      )
+      .map(i => ({
+        id: i.id,
+        name: i.name ?? "",
+        cost: 0,
+        type: "built-in",
+        description: i.system?.description ?? "",
+        // Phase 6: weapon metadata for Systems tab display
+        damage: i.system?.damage ?? "",
+        damageBonus: i.system?.damageBonus ?? "",
+        range: i.system?.range ?? "",
+        meleeOrRanged: i.system?.meleeOrRanged ?? "melee",
+        attackBonus: Number.isFinite(Number(i.system?.attackBonus))
+          ? Number(i.system.attackBonus) : null,
+        canRoll: true,
+      }));
+
+    const entries = [...builderEntries, ...itemEntries];
     return {
       entries,
       hasEntries: entries.length > 0,
@@ -429,8 +574,12 @@ export class DroidSheetContextBuilder {
   }
 
   buildIntegratedSystemsPanel() {
+    // Excludes weapon items — those go in integratedWeapons, not here
     const entries = (this.actor?.items ?? [])
-      .filter((item) => item.type === "integratedSystem" || item.system?.integrated === true)
+      .filter((item) =>
+        item.type !== "weapon" &&
+        (item.type === "integratedSystem" || item.system?.integrated === true || Boolean(item.flags?.swse?.integrated))
+      )
       .map((item) => ({
         id: item.id,
         name: item.name,
@@ -721,6 +870,179 @@ export class DroidSheetContextBuilder {
       hasCategories: categories.length > 0,
       largestDriver: largestKey,
       emptyMessage: "No budget allocated yet"
+    };
+  }
+
+  /* ---------------- Phase 3: structured droid context builders ---------------- */
+
+  buildDegreeNormalization() {
+    const DEGREE_MAP = {
+      1: { label: "1st Degree", category: "Medical", ordinal: "1st", layoutMode: "medical" },
+      2: { label: "2nd Degree", category: "Technical", ordinal: "2nd", layoutMode: "technical" },
+      3: { label: "3rd Degree", category: "Social/Protocol", ordinal: "3rd", layoutMode: "social" },
+      4: { label: "4th Degree", category: "Security/Military", ordinal: "4th", layoutMode: "military" },
+      5: { label: "5th Degree", category: "Labor", ordinal: "5th", layoutMode: "labor" }
+    };
+
+    const raw = this.system?.droidSystems?.degree ?? "";
+    // Accept numeric (1) or ordinal string ("1st", "2nd") from actor data
+    const numericValue = Number(String(raw).replace(/\D/g, "")) || 0;
+    const entry = DEGREE_MAP[numericValue] ?? null;
+
+    return {
+      value: numericValue || null,
+      raw,
+      label: entry?.label ?? "",
+      category: entry?.category ?? "",
+      ordinal: entry?.ordinal ?? "",
+      layoutMode: entry?.layoutMode ?? "default",
+      isConfigured: numericValue > 0
+    };
+  }
+
+  buildRequiredSystemsDefaults(droidPanels) {
+    const processorConfigured = droidPanels.processor.hasProcessor;
+    const locomotionConfigured = Boolean(droidPanels.locomotion.name);
+    const appendagesConfigured = droidPanels.appendages.hasEntries;
+    return {
+      processor: {
+        isConfigured: processorConfigured,
+        isDefault: !processorConfigured,
+        defaultName: "Heuristic Processor",
+        defaultLabel: "Type"
+      },
+      locomotion: {
+        isConfigured: locomotionConfigured,
+        isDefault: !locomotionConfigured,
+        defaultName: "Walking",
+        defaultLabel: "Type"
+      },
+      appendages: {
+        isConfigured: appendagesConfigured,
+        isDefault: !appendagesConfigured,
+        defaultName: "2 × Standard Droid Arms",
+        defaultLabel: "Manipulators"
+      }
+    };
+  }
+
+  buildResolvedSystems() {
+    return new DroidSystemsResolver(this.actor).resolve();
+  }
+
+  /**
+   * Phase 7: Classify build provenance and surface missing-system warnings.
+   * Receives already-resolved systems to avoid a second DroidSystemsResolver pass.
+   * Pure read — no actor mutations.
+   */
+  buildSourceStatus(resolvedSystems) {
+    const swseFlags = this.actor?.flags?.swse ?? {};
+    const droidSystems = this.system?.droidSystems ?? {};
+    const level = Number(this.system?.level ?? 0);
+    const isOwner = this.actor?.isOwner === true;
+
+    const isStockDroid = Boolean(swseFlags.stockDroidImport);
+    const hasConversionReport = Boolean(swseFlags.stockDroidConversionReport);
+    const hasConfiguration = Boolean(droidSystems.degree);
+    const stateMode = droidSystems.stateMode ?? 'NEW';
+    const isFinalized = stateMode === 'FINALIZED';
+
+    // Source classification — order matters: conversion > import > configured > legacy > manual
+    let buildSource;
+    if (hasConversionReport) {
+      buildSource = 'converted';
+    } else if (isStockDroid) {
+      buildSource = 'imported';
+    } else if (hasConfiguration) {
+      buildSource = 'garage-built';
+    } else if (level > 0) {
+      buildSource = 'legacy';
+    } else {
+      buildSource = 'manual';
+    }
+
+    const SOURCE_LABELS = {
+      'converted': 'Converted Stock Droid',
+      'imported': 'Stock Droid Import',
+      'garage-built': 'Custom Build',
+      'legacy': 'Legacy / Pre-Builder',
+      'manual': 'Unconfigured',
+    };
+
+    // Missing required-system warnings derived from already-resolved data
+    const validationMessages = [];
+    if (!resolvedSystems.processor.isConfigured) {
+      validationMessages.push({ severity: 'warning', text: 'No processor configured — baseline default applied' });
+    }
+    if (!resolvedSystems.locomotion.isConfigured) {
+      validationMessages.push({ severity: 'warning', text: 'No locomotion system configured — walking assumed' });
+    }
+    if (!resolvedSystems.appendages.isConfigured) {
+      validationMessages.push({ severity: 'warning', text: 'No appendages configured — standard droid arms assumed' });
+    }
+    if (!hasConfiguration) {
+      validationMessages.push({ severity: 'info', text: 'Droid degree not set — affects trained skills and ability bonuses' });
+    }
+
+    const garageRecommended =
+      isOwner &&
+      !isFinalized &&
+      (validationMessages.length > 0 || buildSource === 'legacy' || buildSource === 'manual');
+
+    return {
+      buildSource,
+      sourceLabel: SOURCE_LABELS[buildSource] ?? 'Unknown',
+      isChargenBuilt: buildSource === 'garage-built',
+      isImported: isStockDroid,
+      isConverted: hasConversionReport,
+      isManualOrLegacy: buildSource === 'manual' || buildSource === 'legacy',
+      isFinalized,
+      garageRecommended,
+      hasConfiguration,
+      importedFrom: swseFlags.stockDroidImport?.sourceName ?? null,
+      convertedFrom: swseFlags.stockDroidConversionReport?.sourceName ?? null,
+      validationMessages,
+      hasValidationMessages: validationMessages.length > 0,
+    };
+  }
+
+  buildGarageContext() {
+    const isOwner = this.actor?.isOwner === true;
+    const droidSystems = this.system?.droidSystems ?? {};
+    const hasConfiguration = Boolean(droidSystems.degree);
+    const isStock = Boolean(this.actor?.flags?.swse?.stockDroidImport);
+
+    // Phase 5: lock detection — canonical flag is stateMode === 'FINALIZED'
+    const isFinalized = droidSystems.stateMode === 'FINALIZED';
+    // Safe heroic fallback: droids in play (level > 0) with a builder config
+    // show systems as managed-through-Garage even if not yet finalized.
+    const isInPlay = Number(this.system?.level ?? 0) > 0 && hasConfiguration;
+    const systemsLocked = isFinalized || isInPlay;
+    const lockReason = isFinalized
+      ? 'Configuration finalized — edit via Garage'
+      : isInPlay ? 'Systems managed through Garage' : null;
+
+    return {
+      canEdit: isOwner,
+      canCustomize: isOwner && hasConfiguration,
+      canConvert: isOwner && isStock,
+      openMode: hasConfiguration ? 'EDIT' : 'NEW',
+      hasConfiguration,
+      // Phase 5
+      systemsLocked,
+      isFinalized,
+      lockReason,
+      canOpenGarage: isOwner,
+      canManageSystems: isOwner,
+    };
+  }
+
+  buildFlagsContext() {
+    const swseFlags = this.actor?.flags?.swse ?? {};
+    return {
+      isStockDroid: Boolean(swseFlags.stockDroidImport),
+      hasConversionReport: Boolean(swseFlags.stockDroidConversionReport),
+      isPendingApproval: Boolean(swseFlags.pendingApproval)
     };
   }
 

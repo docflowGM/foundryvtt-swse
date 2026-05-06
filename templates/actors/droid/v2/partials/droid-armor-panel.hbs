@@ -1,45 +1,28 @@
-{{!--
-  Droid Armor Panel
-
-  Shows the droid's protective covering with cost and defense contribution.
-
-  Data consumed:
-    droidPanels.armor (id, name, cost, bonus, description, hasArmor)
-
-  Phase 4: Armor detail enrichment. Shows protective system with defensive bonus.
---}}
-<section class="swse-panel holo-panel swse-ui-panel">
+<section class="swse-panel holo-panel swse-ui-panel swse-droid-part-region swse-droid-armor-region">
   <header class="section-bar">
-    <h3 class="section-header">Armor</h3>
+    <h3 class="section-header">Armor / Body</h3>
+    {{#if droid.resolvedSystems.armor.items.length}}
+      <span class="section-meta muted">{{droid.resolvedSystems.armor.items.length}} installed</span>
+    {{/if}}
   </header>
 
-  {{#if droidPanels.armor.hasArmor}}
-    <div class="armor-content">
-      <div class="config-item swse-metric-chip">
-        <span class="label">Type:</span>
-        <span class="value">{{droidPanels.armor.name}}</span>
-      </div>
-      {{#if droidPanels.armor.cost}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Cost:</span>
-          <span class="value">{{droidPanels.armor.cost}} credits</span>
-        </div>
-      {{/if}}
-      {{#if droidPanels.armor.bonus}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Defense Bonus:</span>
-          <span class="value">+{{droidPanels.armor.bonus}}</span>
-        </div>
-      {{/if}}
-      {{#if droidPanels.armor.description}}
-        <div class="armor-description muted" style="margin-top: 8px; font-size: 0.9em;">
-          {{droidPanels.armor.description}}
-        </div>
-      {{/if}}
+  {{#if droid.resolvedSystems.armor.isConfigured}}
+    <div class="swse-droid-part-list">
+      {{#each droid.resolvedSystems.armor.items as |armor|}}
+        <button type="button" class="swse-droid-part-card" data-action="use-droid-part" data-part-id="{{armor.id}}" data-item-id="{{armor.itemId}}">
+          <span class="swse-droid-part-name">{{armor.name}}</span>
+          {{#if armor.armorBonus}}
+            <span class="swse-droid-slot-badge">Ref +{{armor.armorBonus}}</span>
+          {{/if}}
+          {{#if armor.description}}
+            <span class="swse-droid-part-desc">{{armor.description}}</span>
+          {{/if}}
+        </button>
+      {{/each}}
     </div>
   {{else}}
     <div class="empty-state">
-      <p><em>{{droidPanels.armor.emptyMessage}}</em></p>
+      <p><em>No built-in armor installed.</em></p>
     </div>
   {{/if}}
 </section>

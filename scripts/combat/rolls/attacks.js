@@ -3,6 +3,7 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { getDamageAbilityContribution, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -31,15 +32,14 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
     }
   }
 
-  const lvl = actor.system.level ?? 1;
-  const halfLvl = getEffectiveHalfLevel(actor);
-
   const bab = SchemaAdapters.getBAB(actor);
 
-  // Use new data model: abilities[xxx].mod
-  const abilityMod = SchemaAdapters.getAbilityMod(actor, weapon.system?.attackAttribute ?? 'str');
+  // RAW attack rolls use BAB + ability modifier. They do not add half level;
+  // BAB already carries the level-based attack progression.
+  const abilityMod = SchemaAdapters.getAbilityMod(actor, getWeaponAttackAbility(actor, weapon));
 
-  const miscBonus = weapon.system?.attackBonus ?? 0;
+  const miscBonus = getWeaponFlatAttackBonus(weapon);
+  const rangePenalty = getRangePenalty(weapon, context);
 
   // Condition Track penalty (read from authoritative derived source)
   // CANONICAL: DerivedCalculator computes and stores this in system.derived.damage.conditionPenalty
@@ -54,9 +54,6 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
   // Weapon proficiency
   const proficient = weapon.system?.proficient ?? true;
   const proficiencyPenalty = proficient ? 0 : -5;
-
-  // Size modifier (optional, if your system supports it)
-  const sizeMod = actor.system.sizeMod ?? 0;
 
   // Talent bonuses from linked talents
   let talentBonus = 0;
@@ -106,10 +103,9 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
   // Total attack bonus (RAW)
   return (
     bab +
-    halfLvl +
     abilityMod +
     miscBonus +
-    sizeMod +
+    rangePenalty +
     attackPenalty +
     ctPenalty +
     proficiencyPenalty +
@@ -145,21 +141,10 @@ export async function rollAttack(actor, weapon) {
  * Compute SWSE damage bonus for a weapon
  */
 function computeDamageBonus(actor, weapon) {
-  const lvl = actor.system.level ?? 1;
   const halfLvl = getEffectiveHalfLevel(actor);
 
-  let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
-
-  // STR or DEX based weapon damage
-  const strMod = actor.system.attributes.str?.mod ?? 0;
-  const dexMod = actor.system.attributes.dex?.mod ?? 0;
-
-  switch (weapon.system?.attackAttribute) {
-    case 'str': bonus += strMod; break;
-    case 'dex': bonus += dexMod; break;
-    case '2str': bonus += strMod * 2; break;
-    case '2dex': bonus += dexMod * 2; break;
-  }
+  let bonus = halfLvl + getWeaponFlatDamageBonus(weapon);
+  bonus += getDamageAbilityContribution(actor, weapon);
 
   return bonus;
 }

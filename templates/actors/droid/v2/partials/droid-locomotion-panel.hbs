@@ -1,46 +1,23 @@
-{{!--
-  Droid Locomotion Panel
-
-  Shows the droid's movement system:
-  - type/name
-  - speed
-  - any notes
-
-  Data consumed:
-    droidPanels.locomotion (name, type, speed, notes)
-
-  Current depth: shallow (type, speed, notes only). Pass 3 will add features/restrictions.
---}}
-<section class="swse-panel holo-panel swse-ui-panel">
+<section class="swse-panel holo-panel swse-ui-panel swse-droid-part-panel" data-region="locomotion">
   <header class="section-bar">
     <h3 class="section-header">Locomotion</h3>
   </header>
 
-  {{#if droidPanels.locomotion.name}}
-    <div class="locomotion-content">
-      <div class="locomotion-main">
-        <div class="config-item swse-metric-chip">
-          <span class="label">Type:</span>
-          <span class="value">{{droidPanels.locomotion.name}}</span>
+  {{#if droidPanels.locomotion.hasEntries}}
+    <div class="locomotion-content swse-droid-slot-list">
+      {{#each droidPanels.locomotion.entries as |loco|}}
+        <div class="swse-droid-part-row {{#if loco.active}}is-active{{/if}}" data-part-id="{{loco.id}}">
+          <div class="entry-header">
+            <span class="entry-name">{{loco.name}}</span>
+            {{#if loco.active}}<span class="swse-droid-chip">ACTIVE</span>{{/if}}
+          </div>
+          {{#if loco.speed}}<span class="swse-weapon-meta">Speed {{loco.speed}}</span>{{/if}}
+          {{#if loco.description}}<div class="entry-description muted">{{loco.description}}</div>{{/if}}
+          <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{loco.id}}" data-part-name="{{loco.name}}">Use / Describe</button>
         </div>
-
-        {{#if droidPanels.locomotion.speed}}
-          <div class="config-item swse-metric-chip">
-            <span class="label">Speed:</span>
-            <span class="value">{{droidPanels.locomotion.speed}}</span>
-          </div>
-        {{/if}}
-
-        {{#if droidPanels.locomotion.notes}}
-          <div class="locomotion-notes muted">
-            <small>{{droidPanels.locomotion.notes}}</small>
-          </div>
-        {{/if}}
-      </div>
+      {{/each}}
     </div>
   {{else}}
-    <div class="empty-state">
-      <p><em>No locomotion system configured.</em></p>
-    </div>
+    <div class="empty-state"><p><em>No locomotion system configured.</em></p></div>
   {{/if}}
 </section>

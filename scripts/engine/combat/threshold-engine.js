@@ -35,6 +35,7 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
 export class ThresholdEngine {
 
@@ -54,8 +55,8 @@ export class ThresholdEngine {
    * @private
    */
   static #sizeThresholdMap = {
-    fine: -10,
-    diminutive: -5,
+    fine: 0,
+    diminutive: 0,
     tiny: 0,
     small: 0,
     medium: 0,
@@ -72,8 +73,7 @@ export class ThresholdEngine {
     const fort = system.derived?.defenses?.fortitude?.total ?? 10;
 
     // Map size string to threshold bonus (RAW)
-    const sizeString = (system.size ?? 'medium').toLowerCase();
-    const sizeMod = this.#sizeThresholdMap[sizeString] ?? 0;
+    const sizeMod = getDamageThresholdSizeBonus(actor);
 
     return fort + sizeMod;
   }
@@ -170,7 +170,7 @@ export class ThresholdEngine {
     // Character / Droid / NPC
     const fortTotal = system.derived?.defenses?.fortitude?.total ?? 10;
     const heroicLevel = system.heroicLevel ?? system.level ?? 1;
-    const sizeMod = this._getCharacterSizeModifier(system.size);
+    const sizeMod = getDamageThresholdSizeBonus(actor);
 
     if (formulaType === 'halfLevel') {
       return fortTotal + Math.floor(heroicLevel / 2) + sizeMod;
@@ -201,15 +201,15 @@ export class ThresholdEngine {
    */
   static _getCharacterSizeModifier(size) {
     const modifiers = {
-      'fine': -10,
-      'diminutive': -5,
-      'tiny': -2,
-      'small': -1,
+      'fine': 0,
+      'diminutive': 0,
+      'tiny': 0,
+      'small': 0,
       'medium': 0,
-      'large': 1,
-      'huge': 2,
-      'gargantuan': 5,
-      'colossal': 10
+      'large': 5,
+      'huge': 10,
+      'gargantuan': 20,
+      'colossal': 50
     };
     return modifiers[(size || 'medium').toLowerCase()] ?? 0;
   }

@@ -1,17 +1,97 @@
-<form class="swse-recovery-sheet swse-character-sheet-form {{cssClass}}" autocomplete="off">
+{{!--
+  templates/actors/droid/v2/droid-sheet.hbs
+  Droid Sheet V2 — Phase 2 (read-only systems map, subsystem partials)
+
+  Reuse map:
+    Sheet class:      scripts/sheets/v2/droid-sheet.js (SWSEV2DroidSheet)
+    Context builder:  scripts/sheets/v2/droid-sheet/context-builder.js (DroidSheetContextBuilder)
+    Listeners:        scripts/sheets/v2/droid-sheet/listeners.js (wireDroidSheetListeners)
+    Datapad shell:    .swse-datapad-frame / .swse-home-console (shared with character v2)
+    Theme/settings:   styles/sheets/v2-droid-specific.css + system-wide CSS variables
+    Garage entry:     .edit-droid-systems → DroidBuilderApp.open() (wired in listeners.js)
+    Abilities filter: context builder filters CON before it reaches this template
+
+  Context variables (from DroidSheetContextBuilder.build()):
+    document            — the actor Document (from super._prepareContext)
+    system              — actor.system
+    derived             — actor.system.derived (includes derived.skills keyed object)
+    abilities           — array of ability VMs (no CON) [{key,label,total,mod,base}]
+    defensePanel        — { defenses: [{key,label,total}] }
+    equipment           — array of equipment items [{id,name,type}]
+    armor               — array of armor items
+    weapons             — array of weapon items [{id,name,type}]
+    feats               — array of feat cards [{id,name,type}]
+    talents             — array of talent cards [{id,name,type}]
+    droidPanels         — droid-specific sub-panels (locomotion, processor, appendages, etc.)
+    droid               — structured context: { degree, layoutMode, systems, requiredSystems, resolvedSystems, garage, flags }
+                          droid.requiredSystems.{processor,locomotion,appendages}: Phase 3 (builder-data only)
+                          droid.resolvedSystems.{processor,locomotion,armor,appendages,sensors,integratedEquipment,integratedWeapons}:
+                            Phase 4 unified view — { isConfigured, isDefault, defaultName, defaultLabel, items[], isEmpty, warning }
+                            items from both builder (system.droidSystems) and actor.items collection
+                          droid.flags: { isStockDroid, hasConversionReport, isPendingApproval }
+                          droid.garage: { canEdit, canCustomize, canConvert, openMode, hasConfiguration }
+    editable            — boolean
+    biographyPanel      — { identity, biography }
+--}}
+<form class="swse-droid-sheet-form {{cssClass}}" autocomplete="off">
   <div class="swse-datapad-frame droid-mode">
+
+    {{!-- ── HEADER BAR ─────────────────────────────────────────────────── --}}
     <div class="swse-datapad-header">
-      <div class="swse-datapad-ident">TYPES.ACTOR.DROID: {{actor.name}}</div>
+      <div class="swse-datapad-ident">UNIT: {{document.name}}</div>
       <div class="swse-datapad-controls"><span></span><span></span><span></span></div>
     </div>
+
+    {{!-- ── HOME CONSOLE (portrait + radial shell + quick glance) ─────── --}}
     <div class="swse-home-console compact">
-      <div class="swse-console-topline"><span>DROID CONTROL</span><span>·</span><span>WORKBENCH</span><span class="swse-console-power">{{system.level}} LVL</span></div>
+      <div class="swse-console-topline">
+        <span>DROID CONTROL</span><span>·</span><span>WORKBENCH</span>
+        <span class="swse-console-power">LVL {{system.level}}</span>
+      </div>
       <div class="swse-home-hero compact-hero">
-        <div class="swse-home-left"><div class="swse-panel swse-profile-card"><img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="{{actor.name}}"/><div class="swse-status-line">[CHASSIS] droid systems nominal.</div></div></div>
-        <div class="swse-home-center"><div class="swse-radial-shell droid-shell"><div class="swse-radial-ring swse-radial-ring--outer"></div><div class="swse-radial-ring swse-radial-ring--mid"></div><div class="swse-radial-core"><span>{{system.class}}</span></div><button type="button" class="swse-radial-app app-character">Overview</button><button type="button" class="swse-radial-app app-progress">Training</button><button type="button" class="swse-radial-app app-workbench">Systems</button><button type="button" class="swse-radial-app app-store">Store</button></div></div>
-        <div class="swse-home-right"><div class="swse-panel swse-glance-card"><div class="swse-panel-title">QUICK GLANCE</div><div class="swse-glance-grid"><div><span>HP</span><strong>{{system.hp.value}}/{{system.hp.max}}</strong></div><div><span>SPEED</span><strong>{{system.speed.total}}</strong></div><div><span>REF</span><strong>{{system.defenses.reflex.total}}</strong></div><div><span>FORT</span><strong>{{system.defenses.fortitude.total}}</strong></div></div></div></div>
+
+        {{!-- Portrait --}}
+        <div class="swse-home-left">
+          <div class="swse-panel swse-profile-card">
+            <img class="profile" src="{{document.img}}" data-edit="img"
+                 title="{{document.name}}" alt="{{document.name}}"/>
+            <div class="swse-status-line">[CHASSIS] systems nominal.</div>
+          </div>
+        </div>
+
+        {{!-- Radial shell nav — buttons fire existing listeners (wireProgressionFrameworkButtons,
+             wireDroidSystemsEditor, etc.) via data-action / class selectors --}}
+        <div class="swse-home-center">
+          <div class="swse-radial-shell droid-shell">
+            <div class="swse-radial-ring swse-radial-ring--outer"></div>
+            <div class="swse-radial-ring swse-radial-ring--mid"></div>
+            <div class="swse-radial-core"><span>{{system.class}}</span></div>
+            <button type="button" class="swse-radial-app app-character">Overview</button>
+            <button type="button" class="swse-radial-app app-progress"
+                    data-action="cmd-chargen">Training</button>
+            <button type="button" class="swse-radial-app app-workbench edit-droid-systems">Systems</button>
+            <button type="button" class="swse-radial-app app-store"
+                    data-action="cmd-store">Store</button>
+          </div>
+        </div>
+
+        {{!-- Quick glance card --}}
+        <div class="swse-home-right">
+          <div class="swse-panel swse-glance-card">
+            <div class="swse-panel-title">QUICK GLANCE</div>
+            <div class="swse-glance-grid">
+              <div><span>HP</span><strong>{{system.hp.value}}/{{system.hp.max}}</strong></div>
+              <div><span>SPEED</span><strong>{{system.speed.total}}</strong></div>
+              <div><span>REF</span><strong>{{system.defenses.reflex.total}}</strong></div>
+              <div><span>FORT</span><strong>{{system.defenses.fortitude.total}}</strong></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
+
+    {{!-- ── TAB NAVIGATION ──────────────────────────────────────────────── --}}
     <nav class="sheet-tabs swse-sheet-tabs tabs" data-group="primary">
       <a class="item active" data-tab="overview">Overview</a>
       <a class="item" data-tab="abilities">Abilities</a>
@@ -19,16 +99,412 @@
       <a class="item" data-tab="combat">Combat</a>
       <a class="item" data-tab="talents">Talents</a>
       <a class="item" data-tab="gear">Gear</a>
+      <a class="item" data-tab="systems">Systems</a>
       <a class="item" data-tab="biography">Notes</a>
     </nav>
+
+    {{!-- ── SHEET BODY ───────────────────────────────────────────────────── --}}
     <section class="sheet-body swse-sheet-body">
-      <section class="tab active" data-group="primary" data-tab="overview"><div class="swse-content-grid swse-overview-grid"><div class="swse-panel"><div class="swse-panel-title">Identity</div><div class="swse-form-grid two-col"><label>Name<input name="name" type="text" value="{{actor.name}}"/></label><label>Model<input name="system.class" type="text" value="{{system.class}}"/></label><label>Level<input name="system.level" type="number" value="{{system.level}}" min="1"/></label><label>Credits<input name="system.credits" type="number" value="{{system.credits}}"/></label></div></div><div class="swse-panel"><div class="swse-panel-title">Defenses</div><div class="swse-defense-grid">{{#each defenseList as |def|}}<div class="swse-defense-chip"><span>{{def.label}}</span><strong>{{def.total}}</strong></div>{{/each}}</div></div></div></section>
-      <section class="tab" data-group="primary" data-tab="abilities"><div class="swse-content-grid ability-grid">{{#each abilitiesList as |ability|}}<div class="swse-panel swse-ability-card"><div class="swse-panel-title">{{ability.label}}</div><input name="system.abilities.{{ability.key}}.base" type="number" value="{{ability.base}}"/><div class="swse-ability-total">{{ability.total}}</div><div class="swse-ability-mod">{{ability.mod}}</div></div>{{/each}}</div></section>
-      <section class="tab" data-group="primary" data-tab="skills"><div class="swse-panel"><div class="swse-panel-title">Skills</div><div class="swse-list">{{#each skillsList as |skill|}}<div class="swse-list-row"><span>{{skill.label}}</span><span>{{skill.ability}}</span><strong>{{skill.value}}</strong></div>{{else}}<div class="swse-empty">No skills configured yet.</div>{{/each}}</div></div></section>
-      <section class="tab" data-group="primary" data-tab="combat"><div class="swse-panel"><div class="swse-panel-title">Weapons</div><div class="swse-list">{{#each weaponsList as |weapon index|}}<div class="swse-list-row weapon-entry" data-index="{{index}}"><input type="text" name="system.weapons.{{index}}.name" value="{{weapon.name}}"/><input type="text" name="system.weapons.{{index}}.damage" value="{{weapon.damage}}"/><div class="swse-inline-actions"><button type="button" class="roll-weapon">Roll</button><button type="button" class="remove-weapon">Delete</button></div></div>{{else}}<div class="swse-empty">No weapons recorded.</div>{{/each}}</div><button type="button" class="header-btn add-weapon">Add Weapon</button></div></section>
-      <section class="tab" data-group="primary" data-tab="talents"><div class="swse-content-grid two-up"><div class="swse-panel"><div class="swse-panel-title">Feats</div><div class="swse-list">{{#each system.feats as |feat index|}}<div class="swse-list-row list-entry" data-index="{{index}}"><input type="text" name="system.feats.{{index}}.name" value="{{feat.name}}"/><button type="button" class="remove-feat">Delete</button></div>{{else}}<div class="swse-empty">No feats yet.</div>{{/each}}</div><button type="button" class="header-btn add-feat">Add Feat</button></div><div class="swse-panel"><div class="swse-panel-title">Talents</div><div class="swse-list">{{#each system.talents as |talent index|}}<div class="swse-list-row list-entry" data-index="{{index}}"><input type="text" name="system.talents.{{index}}.name" value="{{talent.name}}"/><button type="button" class="remove-talent">Delete</button></div>{{else}}<div class="swse-empty">No talents yet.</div>{{/each}}</div><button type="button" class="header-btn add-talent">Add Talent</button></div></div></section>
-      <section class="tab" data-group="primary" data-tab="gear"><div class="swse-panel"><div class="swse-panel-title">Inventory &amp; Workbench</div><div class="swse-list">{{#each inventoryItems as |item|}}<div class="swse-list-row"><span>{{item.name}}</span><span>{{item.type}}</span></div>{{else}}<div class="swse-empty">No inventory items found.</div>{{/each}}</div><div class="swse-inline-actions"><button type="button" class="header-btn app-store">Open Store</button><button type="button" class="header-btn app-progress">Open Progression</button></div></div></section>
-      <section class="tab" data-group="primary" data-tab="biography"><div class="swse-content-grid two-up"><div class="swse-panel"><div class="swse-panel-title">Biography</div><textarea name="system.bio" rows="12">{{bio}}</textarea></div><div class="swse-panel"><div class="swse-panel-title">Notes</div><textarea name="system.notes" rows="12">{{notes}}</textarea></div></div></section>
+
+      {{!-- OVERVIEW TAB --}}
+      <section class="tab active" data-group="primary" data-tab="overview">
+        <div class="swse-content-grid swse-overview-grid">
+
+          <div class="swse-panel">
+            <div class="swse-panel-title">Identity</div>
+            <div class="swse-form-grid two-col">
+              <label>Name<input name="name" type="text" value="{{document.name}}"/></label>
+              <label>Model<input name="system.class" type="text" value="{{system.class}}"/></label>
+              <label>Level<input name="system.level" type="number" value="{{system.level}}" min="1"/></label>
+              <label>Credits<input name="system.credits" type="number" value="{{system.credits}}"/></label>
+            </div>
+          </div>
+
+          <div class="swse-panel">
+            <div class="swse-panel-title">Defenses</div>
+            <div class="swse-defense-grid">
+              {{!-- defensePanel.defenses is [{key,label,total}] from PanelContextBuilder.buildDefensePanel() --}}
+              {{#each defensePanel.defenses as |def|}}
+                <div class="swse-defense-chip" data-action="roll-defense" data-defense="{{def.key}}">
+                  <span>{{def.label}}</span><strong>{{def.total}}</strong>
+                </div>
+              {{else}}
+                <div class="swse-empty">No defenses computed.</div>
+              {{/each}}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {{!-- ABILITIES TAB (CON already filtered in DroidSheetContextBuilder.buildAbilitiesPanel) --}}
+      <section class="tab" data-group="primary" data-tab="abilities">
+        <div class="swse-content-grid ability-grid">
+          {{!-- abilities is abilitiesPanel.abilities — [{key,label,total,mod,base}] --}}
+          {{#each abilities as |ability|}}
+            <div class="swse-panel swse-ability-card">
+              <div class="swse-panel-title">{{ability.label}}</div>
+              <input name="system.abilities.{{ability.key}}.base"
+                     type="number" value="{{ability.base}}"/>
+              <div class="swse-ability-total">{{ability.total}}</div>
+              <div class="swse-ability-mod {{ability.modClass}}">{{ability.mod}}</div>
+            </div>
+          {{else}}
+            <div class="swse-empty">No abilities computed.</div>
+          {{/each}}
+        </div>
+      </section>
+
+      {{!-- SKILLS TAB --}}
+      <section class="tab" data-group="primary" data-tab="skills">
+        <div class="swse-panel">
+          <div class="swse-panel-title">Skills</div>
+          <div class="swse-list">
+            {{!-- derived.skills is keyed object from actor.system.derived.skills --}}
+            {{#each derived.skills as |skill key|}}
+              <div class="swse-list-row" data-action="roll-skill" data-skill="{{key}}">
+                <span>{{skill.label}}</span>
+                <span class="swse-trained-indicator">{{#if skill.trained}}T{{/if}}</span>
+                <strong>{{skill.total}}</strong>
+              </div>
+            {{else}}
+              <div class="swse-empty">No skills configured yet.</div>
+            {{/each}}
+          </div>
+        </div>
+      </section>
+
+      {{!-- COMBAT TAB --}}
+      {{!-- combatWeapons = { handheld[], integrated[], all[], hasHandheld, hasIntegrated, hasAny }
+           Integrated weapons are weapon items with system.integrated===true — rollable via existing
+           wireWeaponRolling listener. Builder-config weapons (droidSystems.weapons) are config data
+           only and do not appear here since they lack actor item IDs. --}}
+      <section class="tab" data-group="primary" data-tab="combat">
+        <div class="swse-panel">
+          <div class="swse-panel-title">Weapons</div>
+          <div class="swse-list">
+
+            {{!-- Always-available unarmed / appendage strike --}}
+            <div class="swse-list-row weapon-entry swse-unarmed-attack-row" data-weapon-id="{{combatWeapons.unarmed.id}}">
+              <span class="swse-weapon-integrated-badge">UNARMED</span>
+              <span class="weapon-name">{{combatWeapons.unarmed.name}}</span>
+              <span class="swse-weapon-meta">{{combatWeapons.unarmed.damage}} {{combatWeapons.unarmed.damageType}}</span>
+              {{#if combatWeapons.unarmed.martialArtsStep}}
+                <span class="swse-weapon-meta">Martial Arts {{combatWeapons.unarmed.martialArtsStep}}</span>
+              {{/if}}
+              <div class="swse-inline-actions">
+                <button type="button" data-action="roll-unarmed-attack">Roll</button>
+              </div>
+            </div>
+
+            {{!-- Weaponized droid parts that do not exist as weapon Items yet --}}
+            {{#each combatWeapons.integratedParts as |part|}}
+              <div class="swse-list-row weapon-entry swse-weapon-integrated-row" data-part-id="{{part.id}}">
+                <span class="swse-weapon-integrated-badge">DROID PART</span>
+                <span class="weapon-name">{{part.name}}</span>
+                {{#if part.damage}}<span class="swse-weapon-meta">{{part.damage}}</span>{{/if}}
+                {{#if part.range}}<span class="swse-weapon-meta">{{part.range}}</span>{{/if}}
+                <div class="swse-inline-actions">
+                  <button type="button" data-action="use-droid-part" data-part-id="{{part.id}}" data-part-name="{{part.name}}">Use</button>
+                </div>
+              </div>
+            {{/each}}
+
+            {{!-- Handheld weapons — full inventory controls --}}
+            {{#each combatWeapons.handheld as |weapon|}}
+              <div class="swse-list-row weapon-entry" data-item-id="{{weapon.id}}">
+                <span class="weapon-name">{{weapon.name}}</span>
+                {{#if weapon.damage}}<span class="swse-weapon-meta">{{weapon.damage}}</span>{{/if}}
+                {{#if weapon.range}}<span class="swse-weapon-meta">{{weapon.range}}</span>{{/if}}
+                <div class="swse-inline-actions">
+                  <button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}">Roll</button>
+                  <button type="button" data-action="delete-item" data-item-id="{{weapon.id}}">Delete</button>
+                </div>
+              </div>
+            {{/each}}
+
+            {{!-- Integrated weapons — chassis-mounted, no delete (Garage-managed) --}}
+            {{#each combatWeapons.integrated as |weapon|}}
+              <div class="swse-list-row weapon-entry swse-weapon-integrated-row" data-item-id="{{weapon.id}}">
+                <span class="swse-weapon-integrated-badge">INTEGRATED</span>
+                <span class="weapon-name">{{weapon.name}}</span>
+                {{#if weapon.damage}}<span class="swse-weapon-meta">{{weapon.damage}}</span>{{/if}}
+                {{#if weapon.range}}<span class="swse-weapon-meta">{{weapon.range}}</span>{{/if}}
+                <div class="swse-inline-actions">
+                  <button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}">Roll</button>
+                </div>
+              </div>
+            {{/each}}
+
+            {{#unless combatWeapons.hasAny}}
+              <div class="swse-empty">No weapons recorded.</div>
+            {{/unless}}
+
+          </div>
+        </div>
+      </section>
+
+      {{!-- TALENTS TAB --}}
+      <section class="tab" data-group="primary" data-tab="talents">
+        <div class="swse-content-grid two-up">
+
+          <div class="swse-panel">
+            <div class="swse-panel-title">Feats</div>
+            <div class="swse-list">
+              {{!-- feats from DroidSheetContextBuilder.buildAbilityCardLists() --}}
+              {{#each feats as |feat|}}
+                <div class="swse-list-row list-entry">
+                  <span>{{feat.name}}</span>
+                </div>
+              {{else}}
+                <div class="swse-empty">No feats yet.</div>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="swse-panel">
+            <div class="swse-panel-title">Talents</div>
+            <div class="swse-list">
+              {{!-- talents from DroidSheetContextBuilder.buildAbilityCardLists() --}}
+              {{#each talents as |talent|}}
+                <div class="swse-list-row list-entry">
+                  <span>{{talent.name}}</span>
+                </div>
+              {{else}}
+                <div class="swse-empty">No talents yet.</div>
+              {{/each}}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {{!-- GEAR TAB --}}
+      <section class="tab" data-group="primary" data-tab="gear">
+        <div class="swse-panel">
+          <div class="swse-panel-title">Inventory &amp; Workbench</div>
+          <div class="swse-list">
+            {{!-- equipment is [{id,name,type}] from DroidSheetContextBuilder.buildEquipmentEntries() --}}
+            {{#each equipment as |item|}}
+              <div class="swse-list-row" data-item-id="{{item.id}}">
+                <span>{{item.name}}</span>
+                <span class="swse-item-type">{{item.type}}</span>
+                <div class="swse-inline-actions">
+                  <button type="button" data-action="sell-item" data-item-id="{{item.id}}">Sell</button>
+                  <button type="button" data-action="delete-item" data-item-id="{{item.id}}">Delete</button>
+                </div>
+              </div>
+            {{else}}
+              <div class="swse-empty">No inventory items found.</div>
+            {{/each}}
+          </div>
+          <div class="swse-inline-actions">
+            <button type="button" data-action="cmd-store" class="header-btn">Open Store</button>
+            <button type="button" data-action="cmd-chargen" class="header-btn">Open Progression</button>
+          </div>
+        </div>
+      </section>
+
+      {{!-- SYSTEMS TAB (Phase 5: locked/read-only + Garage handoff) --}}
+      {{!-- droid.resolvedSystems.*  — unified resolver view (Phase 4)
+           droid.garage.*           — lock state + Garage access flags (Phase 5)
+             .systemsLocked         — true when finalized or in-play
+             .lockReason            — human-readable reason string
+             .canOpenGarage         — owner permission to launch Garage
+             .canManageSystems      — same as canOpenGarage (alias for template clarity)
+           All .edit-droid-systems buttons are wired by wireDroidSystemsEditor()
+           in listeners.js — no new JS listeners required. --}}
+      <section class="tab" data-group="primary" data-tab="systems">
+
+        {{!-- ── HEADER: degree / size / budget / Garage edit button ─────── --}}
+        {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs"}}
+
+        {{!-- ── BUILD STATUS CARD (Phase 7) — source badge + warnings + Garage CTA --}}
+        {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-status-card.hbs"}}
+
+        {{!-- ── LOCK BANNER — shown when systems are finalized or in-play ── --}}
+        {{#if droid.garage.systemsLocked}}
+          <div class="swse-droid-lock-banner">
+            <i class="fa-solid fa-lock swse-droid-lock-icon"></i>
+            <span class="swse-droid-lock-text">{{droid.garage.lockReason}}</span>
+            {{#if droid.garage.canOpenGarage}}
+              <button type="button" class="edit-droid-systems holo-btn small" aria-label="Open Garage to modify droid systems">
+                <i class="fa-solid fa-screwdriver-wrench"></i> Open Garage
+              </button>
+            {{/if}}
+          </div>
+        {{/if}}
+
+        {{!-- ── SYSTEMS MAP GRID ───────────────────────────────────────── --}}
+        {{!-- Each region is wrapped in .swse-droid-region-wrapper so the
+             per-region Garage manage button stacks below the panel content.
+             The wrapper is the grid item; the panel inside fills flex: 1. --}}
+        <div class="swse-droid-systems-map">
+
+          {{!-- ROW 1: Core compute & movement (both required) --}}
+          <div class="swse-droid-systems-row">
+
+            {{!-- Processor — droid.resolvedSystems.processor --}}
+            <div class="swse-droid-region-wrapper">
+              {{#if droid.resolvedSystems.processor.isConfigured}}
+                {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs"}}
+              {{else}}
+                <section class="swse-panel swse-droid-default-region">
+                  <header class="section-bar">
+                    <h3 class="section-header">Processor</h3>
+                    <span class="swse-droid-default-badge">DEFAULT</span>
+                  </header>
+                  <div class="swse-droid-default-content">
+                    <div class="config-item">
+                      <span class="label">{{droid.resolvedSystems.processor.defaultLabel}}:</span>
+                      <span class="value">{{droid.resolvedSystems.processor.defaultName}}</span>
+                    </div>
+                    <p class="swse-droid-default-hint">{{droid.resolvedSystems.processor.warning}}</p>
+                  </div>
+                </section>
+              {{/if}}
+              {{#if droid.garage.canOpenGarage}}
+                <div class="swse-droid-region-actions">
+                  <button type="button" class="edit-droid-systems holo-btn small" data-region="processor" aria-label="Manage processor in Garage">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                  </button>
+                </div>
+              {{/if}}
+            </div>
+
+            {{!-- Locomotion — droid.resolvedSystems.locomotion --}}
+            <div class="swse-droid-region-wrapper">
+              {{#if droid.resolvedSystems.locomotion.isConfigured}}
+                {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs"}}
+              {{else}}
+                <section class="swse-panel swse-droid-default-region">
+                  <header class="section-bar">
+                    <h3 class="section-header">Locomotion</h3>
+                    <span class="swse-droid-default-badge">DEFAULT</span>
+                  </header>
+                  <div class="swse-droid-default-content">
+                    <div class="config-item">
+                      <span class="label">{{droid.resolvedSystems.locomotion.defaultLabel}}:</span>
+                      <span class="value">{{droid.resolvedSystems.locomotion.defaultName}}</span>
+                    </div>
+                    <p class="swse-droid-default-hint">{{droid.resolvedSystems.locomotion.warning}}</p>
+                  </div>
+                </section>
+              {{/if}}
+              {{#if droid.garage.canOpenGarage}}
+                <div class="swse-droid-region-actions">
+                  <button type="button" class="edit-droid-systems holo-btn small" data-region="locomotion" aria-label="Manage locomotion in Garage">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                  </button>
+                </div>
+              {{/if}}
+            </div>
+
+          </div>
+
+          {{!-- ROW 2: Manipulation & body protection (Appendages required) --}}
+          <div class="swse-droid-systems-row">
+
+            {{!-- Appendages — droid.resolvedSystems.appendages --}}
+            <div class="swse-droid-region-wrapper">
+              {{#if droid.resolvedSystems.appendages.isConfigured}}
+                {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs"}}
+              {{else}}
+                <section class="swse-panel swse-droid-default-region">
+                  <header class="section-bar">
+                    <h3 class="section-header">Appendages</h3>
+                    <span class="swse-droid-default-badge">DEFAULT</span>
+                  </header>
+                  <div class="swse-droid-default-content">
+                    <div class="config-item">
+                      <span class="label">{{droid.resolvedSystems.appendages.defaultLabel}}:</span>
+                      <span class="value">{{droid.resolvedSystems.appendages.defaultName}}</span>
+                    </div>
+                    <p class="swse-droid-default-hint">{{droid.resolvedSystems.appendages.warning}}</p>
+                  </div>
+                </section>
+              {{/if}}
+              {{#if droid.garage.canOpenGarage}}
+                <div class="swse-droid-region-actions">
+                  <button type="button" class="edit-droid-systems holo-btn small" data-region="appendages" aria-label="Manage appendages in Garage">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                  </button>
+                </div>
+              {{/if}}
+            </div>
+
+            {{!-- Armor / Body: optional --}}
+            <div class="swse-droid-region-wrapper">
+              {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-armor-panel.hbs"}}
+              {{#if droid.garage.canOpenGarage}}
+                <div class="swse-droid-region-actions">
+                  <button type="button" class="edit-droid-systems holo-btn small" data-region="armor" aria-label="Manage armor in Garage">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                  </button>
+                </div>
+              {{/if}}
+            </div>
+
+          </div>
+
+          {{!-- ROW 3: Detection & integrated weaponry (both optional) --}}
+          <div class="swse-droid-systems-row">
+            <div class="swse-droid-region-wrapper">
+              {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-sensors-panel.hbs"}}
+              {{#if droid.garage.canOpenGarage}}
+                <div class="swse-droid-region-actions">
+                  <button type="button" class="edit-droid-systems holo-btn small" data-region="sensors" aria-label="Manage sensors in Garage">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                  </button>
+                </div>
+              {{/if}}
+            </div>
+            <div class="swse-droid-region-wrapper">
+              {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-weapons-panel.hbs"}}
+              {{#if droid.garage.canOpenGarage}}
+                <div class="swse-droid-region-actions">
+                  <button type="button" class="edit-droid-systems holo-btn small" data-region="integrated-weapons" aria-label="Manage integrated weapons in Garage">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                  </button>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+
+          {{!-- ROW 4: Integrated equipment/accessories (full-width) --}}
+          <div class="swse-droid-region-wrapper">
+            {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs"}}
+            {{#if droid.garage.canOpenGarage}}
+              <div class="swse-droid-region-actions">
+                <button type="button" class="edit-droid-systems holo-btn small" data-region="integrated-systems" aria-label="Manage integrated systems in Garage">
+                  <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                </button>
+              </div>
+            {{/if}}
+          </div>
+
+        </div>
+
+        {{!-- ── DIAGNOSTICS ──────────────────────────────────────────────── --}}
+        {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-validation-panel.hbs"}}
+
+      </section>
+
+      {{!-- BIOGRAPHY / NOTES TAB --}}
+      <section class="tab" data-group="primary" data-tab="biography">
+        <div class="swse-content-grid two-up">
+          <div class="swse-panel">
+            <div class="swse-panel-title">Biography</div>
+            {{!-- biographyPanel.biography is the notes string from PanelContextBuilder --}}
+            <textarea name="system.notes" rows="12">{{biographyPanel.biography}}</textarea>
+          </div>
+          <div class="swse-panel">
+            <div class="swse-panel-title">Notes</div>
+            <textarea name="system.bio" rows="12">{{system.bio}}</textarea>
+          </div>
+        </div>
+      </section>
+
     </section>
   </div>
 </form>

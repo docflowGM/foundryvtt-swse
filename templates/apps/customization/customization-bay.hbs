@@ -173,6 +173,12 @@
           <span data-swse-tooltip-key="{{#if (eq mode 'shipyard')}}shipyard.systemBays{{else}}garage.systems{{/if}}">Engine-sourced options</span>
         </header>
 
+        {{#if garageFocus}}
+          <aside class="bay-runtime-note" data-tone="neutral">
+            <strong>Garage focus:</strong> {{garageFocus.label}}
+          </aside>
+        {{/if}}
+
         <div class="bay-system-groups">
           {{#each systemGroups}}
             <section class="bay-system-group" data-category="{{key}}">
@@ -189,6 +195,9 @@
                       <span>{{#if installed}}Installed{{else}}Available{{/if}}</span>
                       <span>{{costLabel}}</span>
                     </div>
+                    {{#if slot}}<p class="bay-muted">Slot: {{slot}}</p>{{/if}}
+                    {{#if note}}<p class="bay-muted">{{note}}</p>{{/if}}
+                    {{#if blockingReason}}<p class="bay-warning-inline">{{blockingReason}}</p>{{/if}}
                     <button type="button"
                             class="bay-part-card__action"
                             data-action="{{action}}"

@@ -1,14 +1,229 @@
+{{#if droid.resolvedSystems}}
 {{!--
-  Droid Systems Panel — Phase 1: Template Integration Pass
+  Droid Systems v2 Panel
 
-  Now consumes droidPanels.* instead of raw system.droidSystems.
-  Preserves current chip-summary layout and all affordances.
+  Read-only systems map for the Droid Character Sheet v2.
+  Reuses the existing Garage/DroidBuilder entry point through .edit-droid-systems
+  buttons wired in scripts/sheets/v2/droid-sheet/listeners.js.
 
-  Data contract:
-    droidPanels.droidSummary (degree, size, credits, state)
-    droidPanels.locomotion.name
-    droidPanels.configurationMetrics (processor, armor, counts)
+  Data consumed:
+    droid.resolvedSystems.* — pure DroidSystemsResolver output
+    droid.garage           — existing Garage/lock context
+    droid.sourceStatus     — source/build/validation context
+    droid.degree           — degree presentation context
+    combatWeapons          — integrated weapon split for combat bridge
 --}}
+<div class="swse-droid-systems-workspace">
+  <main class="swse-droid-frame-panel swse-panel">
+    <header class="swse-droid-frame-header">
+      <div>
+        <div class="swse-kicker">Droid Frame</div>
+        <h2>{{document.name}} Systems</h2>
+        <p>
+          {{#if droid.degree.label}}{{droid.degree.label}}{{else}}Unclassified Droid{{/if}}
+          {{#if droid.degree.category}} · {{droid.degree.category}}{{/if}}
+        </p>
+      </div>
+      {{#if droid.garage.canOpenGarage}}
+        <button type="button" class="edit-droid-systems swse-droid-garage-button" aria-label="Open Droid Garage">
+          <i class="fa-solid fa-screwdriver-wrench"></i>
+          Garage
+        </button>
+      {{/if}}
+    </header>
+
+    {{#if droid.garage.systemsLocked}}
+      <div class="swse-droid-inline-lock">
+        <i class="fa-solid fa-lock"></i>
+        <span>{{droid.garage.lockReason}}</span>
+      </div>
+    {{/if}}
+
+    <div class="swse-droid-silhouette-grid">
+      <section class="swse-droid-system-node node-processor {{#unless droid.resolvedSystems.processor.isConfigured}}is-default{{/unless}}">
+        <header>
+          <span class="node-label">Processor</span>
+          {{#unless droid.resolvedSystems.processor.isConfigured}}<span class="node-badge">Default</span>{{/unless}}
+        </header>
+        <div class="node-body">
+          {{#if droid.resolvedSystems.processor.isConfigured}}
+            {{#each droid.resolvedSystems.processor.items as |item|}}
+              <div class="system-chip swse-v2-open-item" data-item-id="{{item.id}}">
+                {{#if item.img}}<img src="{{item.img}}" alt=""/>{{/if}}
+                <div><strong>{{item.name}}</strong>{{#if item.rating}}<small>Rating {{item.rating}}</small>{{/if}}</div>
+              </div>
+            {{/each}}
+          {{else}}
+            <div class="system-chip ghost"><strong>{{droid.resolvedSystems.processor.defaultName}}</strong><small>{{droid.resolvedSystems.processor.warning}}</small></div>
+          {{/if}}
+        </div>
+      </section>
+
+      <section class="swse-droid-system-node node-core {{#if droid.resolvedSystems.armor.isEmpty}}is-empty{{/if}}">
+        <header><span class="node-label">Core / Armor</span></header>
+        <div class="node-body">
+          {{#if droid.resolvedSystems.armor.isConfigured}}
+            {{#each droid.resolvedSystems.armor.items as |item|}}
+              <div class="system-chip swse-v2-open-item" data-item-id="{{item.id}}">
+                {{#if item.img}}<img src="{{item.img}}" alt=""/>{{/if}}
+                <div><strong>{{item.name}}</strong>{{#if item.bonus}}<small>Defense +{{item.bonus}}</small>{{/if}}</div>
+              </div>
+            {{/each}}
+          {{else}}
+            <div class="system-empty">No armor shell installed</div>
+          {{/if}}
+        </div>
+      </section>
+
+      <section class="swse-droid-system-node node-left-arm {{#unless droid.resolvedSystems.appendages.isConfigured}}is-default{{/unless}}">
+        <header>
+          <span class="node-label">Appendages</span>
+          {{#unless droid.resolvedSystems.appendages.isConfigured}}<span class="node-badge">Default</span>{{/unless}}
+        </header>
+        <div class="node-body">
+          {{#if droid.resolvedSystems.appendages.isConfigured}}
+            {{#each droid.resolvedSystems.appendages.items as |item|}}
+              <div class="system-chip"><strong>{{item.name}}</strong>{{#if item.cost}}<small>{{item.cost}} cr</small>{{/if}}</div>
+            {{/each}}
+          {{else}}
+            <div class="system-chip ghost"><strong>{{droid.resolvedSystems.appendages.defaultName}}</strong><small>{{droid.resolvedSystems.appendages.warning}}</small></div>
+          {{/if}}
+        </div>
+      </section>
+
+      <section class="swse-droid-system-node node-right-arm {{#if droid.resolvedSystems.integratedWeapons.isEmpty}}is-empty{{/if}}">
+        <header><span class="node-label">Integrated Weapons</span></header>
+        <div class="node-body">
+          {{#if droid.resolvedSystems.integratedWeapons.isConfigured}}
+            {{#each droid.resolvedSystems.integratedWeapons.items as |weapon|}}
+              <div class="system-chip weapon" data-item-id="{{weapon.id}}">
+                {{#if weapon.img}}<img src="{{weapon.img}}" alt=""/>{{/if}}
+                <div>
+                  <strong>{{weapon.name}}</strong>
+                  <small>
+                    {{#if weapon.damage}}{{weapon.damage}}{{else}}{{weapon.weaponType}}{{/if}}
+                    {{#if weapon.range}} · {{weapon.range}}{{/if}}
+                  </small>
+                </div>
+                {{#if weapon.canRoll}}
+                  <button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}" aria-label="Roll {{weapon.name}}">Roll</button>
+                {{/if}}
+              </div>
+            {{/each}}
+          {{else}}
+            <div class="system-empty">No chassis-mounted weapons</div>
+          {{/if}}
+        </div>
+      </section>
+
+      <section class="swse-droid-system-node node-equipment {{#if droid.resolvedSystems.integratedEquipment.isEmpty}}is-empty{{/if}}">
+        <header><span class="node-label">Integrated Equipment</span></header>
+        <div class="node-body compact-list">
+          {{#if droid.resolvedSystems.integratedEquipment.isConfigured}}
+            {{#each droid.resolvedSystems.integratedEquipment.items as |item|}}
+              <div class="system-chip swse-v2-open-item" data-item-id="{{item.id}}">
+                {{#if item.img}}<img src="{{item.img}}" alt=""/>{{/if}}
+                <div><strong>{{item.name}}</strong>{{#if item.location}}<small>{{item.location}}</small>{{/if}}</div>
+              </div>
+            {{/each}}
+          {{else}}
+            <div class="system-empty">No integrated equipment</div>
+          {{/if}}
+        </div>
+      </section>
+
+      <section class="swse-droid-system-node node-sensors {{#if droid.resolvedSystems.sensors.isEmpty}}is-empty{{/if}}">
+        <header><span class="node-label">Sensors</span></header>
+        <div class="node-body compact-list">
+          {{#if droid.resolvedSystems.sensors.isConfigured}}
+            {{#each droid.resolvedSystems.sensors.items as |sensor|}}
+              <div class="system-chip"><strong>{{sensor.name}}</strong>{{#if sensor.range}}<small>{{sensor.range}}</small>{{/if}}</div>
+            {{/each}}
+          {{else}}
+            <div class="system-empty">No sensor package recorded</div>
+          {{/if}}
+        </div>
+      </section>
+
+      <section class="swse-droid-system-node node-locomotion {{#unless droid.resolvedSystems.locomotion.isConfigured}}is-default{{/unless}}">
+        <header>
+          <span class="node-label">Locomotion</span>
+          {{#unless droid.resolvedSystems.locomotion.isConfigured}}<span class="node-badge">Default</span>{{/unless}}
+        </header>
+        <div class="node-body">
+          {{#if droid.resolvedSystems.locomotion.isConfigured}}
+            {{#each droid.resolvedSystems.locomotion.items as |item|}}
+              <div class="system-chip"><strong>{{item.name}}</strong>{{#if item.speed}}<small>Speed {{item.speed}}</small>{{/if}}</div>
+            {{/each}}
+          {{else}}
+            <div class="system-chip ghost"><strong>{{droid.resolvedSystems.locomotion.defaultName}}</strong><small>{{droid.resolvedSystems.locomotion.warning}}</small></div>
+          {{/if}}
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <aside class="swse-droid-right-rail">
+    <details class="swse-panel swse-droid-diagnostics" open>
+      <summary>
+        <span>Diagnostics / Build Status</span>
+        <strong>{{droid.sourceStatus.sourceLabel}}</strong>
+      </summary>
+      <div class="swse-droid-rail-body">
+        <div class="swse-droid-status-grid">
+          <div><span>Source</span><strong>{{droid.sourceStatus.sourceLabel}}</strong></div>
+          <div><span>Lock</span><strong>{{#if droid.garage.systemsLocked}}Garage Managed{{else}}Open{{/if}}</strong></div>
+          <div><span>Degree</span><strong>{{#if droid.degree.label}}{{droid.degree.label}}{{else}}Unset{{/if}}</strong></div>
+          <div><span>Credits</span><strong>{{system.credits}}</strong></div>
+        </div>
+
+        {{#if droid.sourceStatus.hasValidationMessages}}
+          <ul class="swse-droid-validation-list">
+            {{#each droid.sourceStatus.validationMessages as |message|}}
+              <li class="swse-droid-validation-item swse-droid-validation-{{message.severity}}">{{message.text}}</li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <div class="swse-droid-all-clear"><i class="fa-solid fa-circle-check"></i> Required systems detected.</div>
+        {{/if}}
+
+        {{#if droid.sourceStatus.garageRecommended}}
+          <div class="swse-droid-garage-cta">
+            <span class="swse-droid-garage-cta-text">Garage can complete or tune this droid frame.</span>
+            <button type="button" class="edit-droid-systems holo-btn small">Open Garage</button>
+          </div>
+        {{/if}}
+      </div>
+    </details>
+
+    <section class="swse-panel swse-droid-combat-bridge">
+      <header class="section-bar"><h3 class="section-header">Combat Bridge</h3></header>
+      <div class="swse-droid-rail-body">
+        {{#if combatWeapons.hasIntegrated}}
+          {{#each combatWeapons.integrated as |weapon|}}
+            <div class="swse-droid-bridge-row">
+              <span class="swse-weapon-integrated-badge">Integrated</span>
+              <strong>{{weapon.name}}</strong>
+              <button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}">Roll</button>
+            </div>
+          {{/each}}
+        {{else}}
+          <div class="system-empty">No integrated attacks detected.</div>
+        {{/if}}
+        {{#if combatWeapons.hasHandheld}}
+          <div class="swse-droid-handheld-note">Handheld weapons remain on the Combat/Gear tabs.</div>
+        {{/if}}
+      </div>
+    </section>
+
+    <section class="swse-panel swse-droid-attribute-note">
+      <header class="section-bar"><h3 class="section-header">Droid Attribute Rules</h3></header>
+      <div class="swse-droid-rail-body">Constitution is intentionally omitted for droid characters.</div>
+    </section>
+  </aside>
+</div>
+
+{{else}}
 <div class="holo-panel swse-ui-panel swse-droid-system-suite">
   <div class="section-bar">
     <h3 class="section-header">Droid Systems</h3>
@@ -22,80 +237,22 @@
   {{#if droidPanels.droidSummary.degree}}
     <div class="droid-config-summary swse-store-section">
       {{#if droidPanels.droidSummary.degree}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Degree:</span>
-          <span class="value">{{droidPanels.droidSummary.degree}}</span>
-        </div>
+        <div class="config-item swse-metric-chip"><span class="label">Degree:</span><span class="value">{{droidPanels.droidSummary.degree}}</span></div>
       {{/if}}
-
       {{#if droidPanels.droidSummary.size}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Size:</span>
-          <span class="value">{{droidPanels.droidSummary.size}}</span>
-        </div>
+        <div class="config-item swse-metric-chip"><span class="label">Size:</span><span class="value">{{droidPanels.droidSummary.size}}</span></div>
       {{/if}}
-
       {{#if droidPanels.locomotion.name}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Locomotion:</span>
-          <span class="value">{{droidPanels.locomotion.name}}</span>
-        </div>
+        <div class="config-item swse-metric-chip"><span class="label">Locomotion:</span><span class="value">{{droidPanels.locomotion.name}}</span></div>
       {{/if}}
-
       {{#if droidPanels.configurationMetrics.appendagesCount}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Appendages:</span>
-          <span class="value">{{droidPanels.configurationMetrics.appendagesCount}}</span>
-        </div>
+        <div class="config-item swse-metric-chip"><span class="label">Appendages:</span><span class="value">{{droidPanels.configurationMetrics.appendagesCount}}</span></div>
       {{/if}}
-
-      {{#if droidPanels.configurationMetrics.sensorsCount}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Sensors:</span>
-          <span class="value">{{droidPanels.configurationMetrics.sensorsCount}}</span>
-        </div>
-      {{/if}}
-
       {{#if droidPanels.configurationMetrics.processorName}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Processor:</span>
-          <span class="value">{{droidPanels.configurationMetrics.processorName}}</span>
-        </div>
+        <div class="config-item swse-metric-chip"><span class="label">Processor:</span><span class="value">{{droidPanels.configurationMetrics.processorName}}</span></div>
       {{/if}}
-
-      {{#if droidPanels.configurationMetrics.armorName}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Armor:</span>
-          <span class="value">{{droidPanels.configurationMetrics.armorName}}</span>
-        </div>
-      {{/if}}
-
       {{#if droidPanels.configurationMetrics.weaponsCount}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Weapons:</span>
-          <span class="value">{{droidPanels.configurationMetrics.weaponsCount}}</span>
-        </div>
-      {{/if}}
-
-      {{#if droidPanels.configurationMetrics.accessoriesCount}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Accessories:</span>
-          <span class="value">{{droidPanels.configurationMetrics.accessoriesCount}}</span>
-        </div>
-      {{/if}}
-
-      {{#if droidPanels.droidSummary.creditsTotal}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Cost:</span>
-          <span class="value">{{droidPanels.droidSummary.creditsSpent}} / {{droidPanels.droidSummary.creditsTotal}} credits</span>
-        </div>
-      {{/if}}
-
-      {{#if droidPanels.droidSummary.stateMode}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">State:</span>
-          <span class="value state-{{droidPanels.droidSummary.stateMode}}">{{droidPanels.droidSummary.stateMode}}</span>
-        </div>
+        <div class="config-item swse-metric-chip"><span class="label">Weapons:</span><span class="value">{{droidPanels.configurationMetrics.weaponsCount}}</span></div>
       {{/if}}
     </div>
   {{else}}
@@ -109,3 +266,4 @@
     </div>
   {{/if}}
 </div>
+{{/if}}

@@ -15,6 +15,7 @@
  */
 
 import { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class CombatStatsTooltip {
 
@@ -41,8 +42,7 @@ export class CombatStatsTooltip {
    */
   static getBaseAttackBonusBreakdown(actor) {
     const system = actor.system;
-    const level = system.level || 1;
-    const halfLevel = Math.floor(level / 2);
+    const bab = SchemaAdapters.getBAB(actor);
     const classBonus = system.baseAttackBonus?.classBonus || 0;
     const miscMod = system.baseAttackBonus?.miscMod || 0;
 
@@ -50,8 +50,8 @@ export class CombatStatsTooltip {
 
     // Base calculation
     rows.push({
-      label: 'Base (½ Level)',
-      value: halfLevel,
+      label: 'Class BAB progression',
+      value: bab,
       semantic: 'neutral'
     });
 
@@ -83,7 +83,7 @@ export class CombatStatsTooltip {
       });
     });
 
-    const total = halfLevel + classBonus + miscMod + modifiers.reduce((sum, m) => sum + m.value, 0);
+    const total = bab + classBonus + miscMod + modifiers.reduce((sum, m) => sum + m.value, 0);
 
     return {
       title: 'Base Attack Bonus',
@@ -104,10 +104,11 @@ export class CombatStatsTooltip {
    */
   static getGrappleBreakdown(actor) {
     const system = actor.system;
-    const level = system.level || 1;
-    const bab = Math.floor(level / 2);
-    const strMod = system.attributes?.str?.mod || 0;
+    const bab = SchemaAdapters.getBAB(actor);
+    const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
     const miscMod = system.grapple?.miscMod || 0;
+    const sizeTable = { fine: -8, diminutive: -4, tiny: -2, small: -1, medium: 0, large: 4, huge: 8, gargantuan: 12, colossal: 16 };
+    const sizeMod = sizeTable[String(system.size || 'medium').toLowerCase()] || 0;
 
     const rows = [];
 
@@ -122,6 +123,13 @@ export class CombatStatsTooltip {
       label: 'Strength modifier',
       value: strMod,
       semantic: strMod > 0 ? 'positive' : (strMod < 0 ? 'negative' : 'neutral')
+    });
+
+
+    rows.push({
+      label: 'Size modifier',
+      value: sizeMod,
+      semantic: sizeMod > 0 ? 'positive' : (sizeMod < 0 ? 'negative' : 'neutral')
     });
 
     // Misc modifier
@@ -143,7 +151,7 @@ export class CombatStatsTooltip {
       });
     });
 
-    const total = bab + strMod + miscMod + modifiers.reduce((sum, m) => sum + m.value, 0);
+    const total = bab + strMod + sizeMod + miscMod + modifiers.reduce((sum, m) => sum + m.value, 0);
 
     return {
       title: 'Grapple',

@@ -7,6 +7,7 @@ import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/tale
 
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { getDamageAbilityContribution, getCriticalMultiplier as getRawCriticalMultiplier, getWeaponFlatDamageBonus, isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 /**
  * Determine if a weapon is a melee weapon
  * @param {Item} weapon - The weapon item
@@ -139,54 +140,15 @@ function computeDamageBonus(actor, weapon, options = {}) {
   const lvl = actor.system.level ?? 1;
   const halfLvl = getEffectiveHalfLevel(actor);
 
-  let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
+  let bonus = halfLvl + getWeaponFlatDamageBonus(weapon);
 
-  // Ability modifiers
-  const strMod = actor.system.attributes?.str?.mod ?? 0;
-  const dexMod = actor.system.attributes?.dex?.mod ?? 0;
-
-  // Check for explicit attack attribute setting
-  const attackAttr = weapon.system?.attackAttribute;
-
-  if (attackAttr) {
-    // Use explicit attribute setting
-    switch (attackAttr) {
-      case 'str': bonus += strMod; break;
-      case 'dex': bonus += dexMod; break;
-      case '2str': bonus += (strMod * 2); break;
-      case '2dex': bonus += (dexMod * 2); break;
-    }
-  } else {
-    // Auto-detect based on weapon type
-    const isMelee = isMeleeWeapon(weapon);
-    const isLight = isLightWeapon(weapon, actor);
-    const isTwoHanded = options.forceTwoHanded || isTwoHandedWeapon(weapon, actor);
-    const hasDexDamage = hasDexToDamageTalent(actor);
-
-    if (isMelee) {
-      // Melee weapons
-      if (hasDexDamage && dexMod > strMod) {
-        // Use DEX if talent allows and DEX is higher
-        if (isTwoHanded && !isLight) {
-          bonus += (dexMod * 2);
-        } else {
-          bonus += dexMod;
-        }
-      } else {
-        // Use STR
-        if (isTwoHanded && !isLight) {
-          // Two-handed melee: 2x STR (not for light weapons)
-          bonus += (strMod * 2);
-        } else {
-          bonus += strMod;
-        }
-      }
-    } else {
-      // Ranged weapons - typically no ability mod to damage
-      // Some systems add DEX, but RAW SWSE doesn't
-      // We'll default to no ability mod unless set explicitly
-    }
-  }
+  const isLight = isLightWeapon(weapon, actor);
+  const isTwoHanded = options.forceTwoHanded || isTwoHandedWeapon(weapon, actor);
+  bonus += getDamageAbilityContribution(actor, weapon, {
+    isLight,
+    twoHanded: isTwoHanded,
+    forceTwoHanded: options.forceTwoHanded
+  });
 
   return bonus;
 }
@@ -272,15 +234,22 @@ export async function rollDamage(actor, weapon, context = {}) {
     formulaParts.push(customModifier.toString());
   }
 
-  // Add CRITICAL_DAMAGE_BONUS if this is a confirmed critical
+  let formula = formulaParts.join(' + ');
+
+  // RAW: confirmed critical hits multiply damage; area attacks do not deal
+  // double damage on a critical. Extra critical-only bonuses are appended after
+  // the multiplier so they do not get accidentally multiplied twice.
+  const critMultiplier = Number(context.critMultiplier ?? getRawCriticalMultiplier(weapon, 2)) || 2;
+  if (context.isCritical && !isAreaAttack(weapon, context) && critMultiplier > 1) {
+    formula = `(${formula}) * ${critMultiplier}`;
+  }
+
   if (context.isCritical) {
     const critBonusFormula = getCriticalDamageBonus(actor, weapon);
     if (critBonusFormula) {
-      formulaParts.push(`(${critBonusFormula})`);
+      formula = `${formula} + (${critBonusFormula})`;
     }
   }
-
-  const formula = formulaParts.join(' + ');
 
   const roll = await globalThis.SWSE.RollEngine.safeRoll(formula);
 

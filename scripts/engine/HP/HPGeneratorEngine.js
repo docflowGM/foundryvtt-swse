@@ -27,8 +27,8 @@ export class HPGeneratorEngine {
     const maxHPLevels = ProgressionRules.getMaxHPLevels();
 
     // Get Constitution modifier (droids get 0)
-    const isDroid = actor.system.isDroid || false;
-    const conMod = isDroid ? 0 : (actor.system.attributes.con?.mod || 0);
+    const isDroid = actor?.type === 'droid' || actor.system.isDroid || false;
+    const conMod = isDroid ? 0 : (actor.system.derived?.attributes?.con?.mod ?? actor.system.attributes?.con?.mod ?? 0);
 
     let hpGain = 0;
 

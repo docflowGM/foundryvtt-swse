@@ -9,6 +9,8 @@
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { getDamageAbilityContribution, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class WeaponsEngine {
 
@@ -391,17 +393,10 @@ export class WeaponsEngine {
       return { total: 0, components: {} };
     }
 
-    const bab = actor.system?.bab ?? 0;
-    const halfLvl = getEffectiveHalfLevel(actor);
-
-    const abilityKey =
-      weapon.system?.combat?.attack?.ability ?? 'str';
-
-    const abilityMod =
-      actor.system?.derived?.abilities?.[abilityKey]?.mod ?? 0;
-
-    const enhancement =
-      weapon.system?.combat?.attack?.bonus ?? 0;
+    const bab = actor.system?.derived?.bab ?? actor.system?.bab ?? 0;
+    const abilityKey = getWeaponAttackAbility(actor, weapon);
+    const abilityMod = SchemaAdapters.getAbilityMod(actor, abilityKey);
+    const enhancement = getWeaponFlatAttackBonus(weapon);
 
     const proficient =
       weapon.system?.proficient ?? true;
@@ -410,7 +405,6 @@ export class WeaponsEngine {
 
     const total =
       bab +
-      halfLvl +
       abilityMod +
       enhancement +
       proficiencyPenalty;
@@ -419,7 +413,6 @@ export class WeaponsEngine {
       total,
       components: {
         'BAB': bab,
-        '½ Level': halfLvl,
         [`Ability (${abilityKey.toUpperCase()})`]: abilityMod,
         'Enhancement': enhancement,
         'Proficiency': proficiencyPenalty
@@ -433,21 +426,12 @@ export class WeaponsEngine {
     }
 
     const halfLvl = getEffectiveHalfLevel(actor);
-
-    const abilityKey =
-      weapon.system?.combat?.damage?.ability ??
-      weapon.system?.combat?.attack?.ability ??
-      'str';
-
-    const abilityMod =
-      actor.system?.derived?.abilities?.[abilityKey]?.mod ?? 0;
-
-    const enhancement =
-      weapon.system?.combat?.damage?.bonus ?? 0;
+    const abilityMod = getDamageAbilityContribution(actor, weapon);
+    const enhancement = getWeaponFlatDamageBonus(weapon);
 
     const components = {
       '½ Level': halfLvl,
-      [`Ability (${abilityKey.toUpperCase()})`]: abilityMod,
+      'Ability': abilityMod,
       'Enhancement': enhancement
     };
 

@@ -28,6 +28,7 @@ import { bindV2SheetBreakdowns, closeBreakdown } from "/systems/foundryvtt-swse/
 import { StoreSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceController.js";
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
+import { buildUnarmedAttackContext, buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
@@ -1447,8 +1448,10 @@ export class SWSEV2CharacterSheet extends
       }
     }
 
+    const unarmedAttack = buildUnarmedAttackContext(actor);
     const combat = {
-      attacks: attacksList
+      attacks: attacksList,
+      unarmedAttack
     };
 
     // PHASE 7.5: Resources Display Unification
@@ -2009,6 +2012,7 @@ const forcePoints = [];
       // PHASE 9: Combat Actions Browser (in-tab)
       // ═════════════════════════════════════════════════════════════════
       combatActions,                // Organized combat actions by economy type
+      unarmedAttack,                // Always-available SWSE unarmed attack option
       // ═════════════════════════════════════════════════════════════════
       // UNIFIED PANEL CONTEXTS (Primary data source)
       // Panels now own all character data through dedicated view models
@@ -2576,6 +2580,32 @@ const forcePoints = [];
         await this._runCanonicalSkillCheck(skillKey, rollOptions);
       } catch (err) {
         ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
+      }
+    }, { signal, capture: false });
+
+    // Always-available unarmed attack button (Simple Weapon, Melee)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest("[data-action='roll-unarmed-attack']");
+      if (!button) return;
+
+      ev.preventDefault();
+      try {
+        const weapon = buildVirtualUnarmedWeapon(this.actor);
+        const modResult = await showRollModifiersDialog({
+          title: `${weapon.name} Attack`,
+          rollType: 'attack',
+          actor: this.actor,
+          weapon
+        });
+        if (modResult === null) return;
+        await this._runCanonicalAttack(weapon, {
+          customModifier: modResult.customModifier || 0,
+          cover: modResult.cover || 'none',
+          concealment: modResult.concealment || 'none',
+          useForcePoint: modResult.useForcePoint || false
+        });
+      } catch (err) {
+        ui?.notifications?.error?.(`Unarmed attack failed: ${err.message}`);
       }
     }, { signal, capture: false });
 

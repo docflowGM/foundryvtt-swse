@@ -49,7 +49,7 @@ export class HPCalculator {
     }
 
     let maxHP = 0;
-    const isDroid = actor.system.isDroid || false;
+    const isDroid = actor?.type === 'droid' || actor.system.isDroid || false;
     // Read from derived attributes (computed in DerivedCalculator) - SOVEREIGNTY: single authority
     const conMod = isDroid ? 0 : (actor.system.derived?.attributes?.con?.mod || 0);
     let isFirstLevel = true;

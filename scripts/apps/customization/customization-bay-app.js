@@ -239,6 +239,9 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     this.contextMode = normalizeContextMode(options.contextMode, actor);
     this.selectedAdditions = new Set(options.selectedAdditions ?? []);
     this.selectedRemovals = new Set(options.selectedRemovals ?? []);
+    this.focusCategory = options.focusCategory ?? options.region ?? null;
+    this.focusSlot = options.focusSlot ?? options.slot ?? null;
+    this.focusMode = options.focusMode ?? null;
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
@@ -376,6 +379,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     }
 
     const systems = availableResult.systems.map((system) => this.#decorateSystem(system, MODE.GARAGE));
+    systems.sort((a, b) => this.#focusSort(a, b));
     const groups = {};
     for (const system of systems) {
       groups[system.category] ??= [];
@@ -405,6 +409,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       installedRows: systems.filter((system) => system.installed),
       previewSummary,
       legality,
+      garageFocus: this.#buildGarageFocus(),
       readinessRows: [
         { label: "Usable as PC", value: "Engine Check", tone: "neutral" },
         { label: "GM Approval", value: legality.gmReview, tone: legality.tone },
@@ -418,6 +423,25 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       canApply: true,
       runtimeLane: true
     };
+  }
+
+  #buildGarageFocus() {
+    if (!this.focusCategory && !this.focusSlot && !this.focusMode) return null;
+    return {
+      category: this.focusCategory,
+      slot: this.focusSlot,
+      mode: this.focusMode,
+      label: [this.focusMode, this.focusCategory, this.focusSlot].filter(Boolean).map(humanize).join(' / ')
+    };
+  }
+
+  #focusSort(a, b) {
+    if (!this.focusCategory) return 0;
+    const focus = String(this.focusCategory).toLowerCase();
+    const aHit = String(a.category ?? '').toLowerCase().includes(focus) || String(a.slot ?? '').toLowerCase().includes(focus);
+    const bHit = String(b.category ?? '').toLowerCase().includes(focus) || String(b.slot ?? '').toLowerCase().includes(focus);
+    if (aHit === bHit) return String(a.name).localeCompare(String(b.name));
+    return aHit ? -1 : 1;
   }
 
   #buildVehicleContext(config) {

@@ -22,14 +22,20 @@ function ensureDroidSystemsDefaults(system) {
   ds.degree ??= '';
   ds.size ??= '';
   ds.stateMode ??= 'NEW';
+  system.droidStatus ??= { state: 'active', source: '', timestamp: 0, notes: '' };
 
   // Component defaults (nested objects)
   ds.locomotion ??= { name: '', speed: 0 };
-  ds.processor ??= { name: '' };
+  ds.processor ??= { name: '', active: true, slotKey: 'primaryProcessor' };
   ds.armor ??= { name: '', rating: 0 };
 
   // Collection defaults (arrays)
+  ds.processors ??= [];
   ds.appendages ??= [];
+  ds.appendageSlots ??= [
+    { key: 'leftArm', label: 'Left Arm', required: true, installedId: '', active: true },
+    { key: 'rightArm', label: 'Right Arm', required: true, installedId: '', active: true }
+  ];
   ds.sensors ??= [];
   ds.weapons ??= [];
   ds.accessories ??= [];

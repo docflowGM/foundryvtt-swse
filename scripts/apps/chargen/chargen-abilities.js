@@ -82,27 +82,26 @@ export function _recalcDefenses() {
     this.characterData.defenses.will.ability = 'wis';
   }
 
-  const halfLevel = Math.floor(this.characterData.level / 2);
+  const heroicLevel = Number(this.characterData.heroicLevel ?? this.characterData.level ?? 1) || 1;
 
-  // Fortitude: 10 + level/2 + CON or STR (whichever is higher) + class bonus + misc
-  const fortAbility = Math.max(
-    this.characterData.abilities.con.mod || 0,
-    this.characterData.abilities.str.mod || 0
-  );
+  // Fortitude: 10 + heroic level + CON for living actors; droids/nonliving use STR.
+  const fortAbility = this.characterData.isDroid
+    ? (this.characterData.abilities.str.mod || 0)
+    : (this.characterData.abilities.con.mod || 0);
   this.characterData.defenses.fortitude.total =
-    10 + halfLevel + fortAbility +
+    10 + heroicLevel + fortAbility +
     (this.characterData.defenses.fortitude.classBonus || 0) +
     (this.characterData.defenses.fortitude.misc || 0);
 
-  // Reflex: 10 + level/2 + DEX + class bonus + misc
+  // Reflex: 10 + heroic level + DEX + class bonus + misc
   this.characterData.defenses.reflex.total =
-    10 + halfLevel + (this.characterData.abilities.dex.mod || 0) +
+    10 + heroicLevel + (this.characterData.abilities.dex.mod || 0) +
     (this.characterData.defenses.reflex.classBonus || 0) +
     (this.characterData.defenses.reflex.misc || 0);
 
-  // Will: 10 + level/2 + WIS + class bonus + misc
+  // Will: 10 + heroic level + WIS + class bonus + misc
   this.characterData.defenses.will.total =
-    10 + halfLevel + (this.characterData.abilities.wis.mod || 0) +
+    10 + heroicLevel + (this.characterData.abilities.wis.mod || 0) +
     (this.characterData.defenses.will.classBonus || 0) +
     (this.characterData.defenses.will.misc || 0);
 }

@@ -1,45 +1,38 @@
-{{!--
-  Droid Processor Panel
-
-  Shows the droid's processing core with cost and bonus details.
-
-  Data consumed:
-    droidPanels.processor (id, name, cost, bonus, description, hasProcessor)
-
-  Phase 3B: Enriched processor detail with cost and capability metrics.
---}}
-<section class="swse-panel holo-panel swse-ui-panel">
+<section class="swse-panel holo-panel swse-ui-panel swse-droid-part-panel" data-region="processor">
   <header class="section-bar">
     <h3 class="section-header">Processor</h3>
+    {{#if droidPanels.processor.hasBackupProcessorSlot}}
+      <span class="swse-droid-chip">Backup Slot Online</span>
+    {{/if}}
   </header>
 
   {{#if droidPanels.processor.hasProcessor}}
-    <div class="processor-content">
-      <div class="config-item swse-metric-chip">
-        <span class="label">Type:</span>
-        <span class="value">{{droidPanels.processor.name}}</span>
-      </div>
-      {{#if droidPanels.processor.cost}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Cost:</span>
-          <span class="value">{{droidPanels.processor.cost}} credits</span>
+    <div class="processor-content swse-droid-slot-list">
+      {{#each droidPanels.processor.processorSlots as |slot|}}
+        <div class="swse-droid-slot {{#if slot.active}}is-active{{/if}} {{#if slot.isEmpty}}is-empty{{/if}}" data-slot-id="{{slot.id}}">
+          <div class="entry-header">
+            <span class="entry-name">{{slot.label}}</span>
+            {{#if slot.active}}<span class="swse-droid-chip">ACTIVE</span>{{else}}<span class="swse-droid-chip muted">INACTIVE</span>{{/if}}
+          </div>
+          {{#if slot.item}}
+            <div class="swse-droid-part-row" data-part-id="{{slot.item.id}}">
+              <strong>{{slot.item.name}}</strong>
+              {{#if slot.item.description}}<p class="entry-description muted">{{slot.item.description}}</p>{{/if}}
+              <div class="swse-droid-slot-actions">
+                <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{slot.item.id}}" data-part-name="{{slot.item.name}}">Use / Describe</button>
+                <button type="button" class="holo-btn tiny" data-action="customize-droid" data-garage-region="processor" data-garage-slot="{{slot.id}}" data-garage-mode="replace">Manage</button>
+              </div>
+            </div>
+          {{else}}
+            <p class="swse-droid-default-hint">{{slot.defaultName}}</p>
+            <button type="button" class="holo-btn tiny" data-action="customize-droid" data-garage-region="processor" data-garage-slot="{{slot.id}}" data-garage-mode="add">Purchase Processor</button>
+          {{/if}}
         </div>
-      {{/if}}
-      {{#if droidPanels.processor.bonus}}
-        <div class="config-item swse-metric-chip">
-          <span class="label">Bonus:</span>
-          <span class="value">+{{droidPanels.processor.bonus}}</span>
-        </div>
-      {{/if}}
-      {{#if droidPanels.processor.description}}
-        <div class="processor-description muted" style="margin-top: 8px; font-size: 0.9em;">
-          {{droidPanels.processor.description}}
-        </div>
-      {{/if}}
+      {{/each}}
     </div>
   {{else}}
     <div class="empty-state">
-      <p><em>{{droidPanels.processor.emptyMessage}}</em></p>
+      <p><em>{{droidPanels.processor.warning}}</em></p>
     </div>
   {{/if}}
 </section>

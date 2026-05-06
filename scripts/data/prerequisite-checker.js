@@ -116,6 +116,27 @@ export class PrerequisiteChecker {
         return null;
     }
 
+
+    static _checkAbilityRequirement(prereq, actor, fallbackMinimum = 10) {
+        const abilityKey = String(prereq?.ability || prereq?.attribute || '').toLowerCase();
+        const required = Number(prereq?.minimum ?? prereq?.min ?? prereq?.value ?? fallbackMinimum);
+        if (actorIsDroidLike(actor) && abilityKey === 'con') {
+            return {
+                met: false,
+                message: `Droids do not have Constitution and cannot meet Constitution ${required} prerequisites`
+            };
+        }
+        const ability = actor.system?.attributes?.[abilityKey]?.total
+            ?? actor.system?.attributes?.[abilityKey]?.value
+            ?? actor.system?.abilities?.[abilityKey]?.value
+            ?? 10;
+        const met = Number(ability) >= required;
+        return {
+            met,
+            message: !met ? `Requires ${abilityKey.toUpperCase()} ${required} (you have ${ability})` : ''
+        };
+    }
+
     static _resolveSkillKeyOrId(rawSkill) {
         if (!rawSkill) return null;
         const byKey = resolveCanonicalSkillKey(rawSkill);
@@ -835,15 +856,8 @@ export class PrerequisiteChecker {
         const type = prereq.type;
 
         switch (type) {
-            case 'ability': {
-                const ability = actor.system?.attributes?.[prereq.ability]?.total ?? 10;
-                const required = prereq.minimum ?? prereq.min ?? 10;
-                const met = ability >= required;
-                return {
-                    met,
-                    message: !met ? `Requires ${prereq.ability.toUpperCase()} ${required} (you have ${ability})` : ''
-                };
-            }
+            case 'ability':
+                return this._checkAbilityRequirement(prereq, actor, 10);
             case 'bab': {
                 const bab = actor.system?.bab?.total ?? actor.system?.bab ?? 0;
                 const required = prereq.minimum ?? prereq.min ?? 0;
@@ -1070,13 +1084,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkAttributeCondition(prereq, actor, pending) {
-        const ability = actor.system?.attributes?.[prereq.ability]?.total ?? 10;
-        const required = prereq.minimum ?? prereq.min ?? 10;
-        const met = ability >= required;
-        return {
-            met,
-            message: !met ? `Requires ${prereq.ability} ${required} (you have ${ability})` : ''
-        };
+        return this._checkAbilityRequirement(prereq, actor, 10);
     }
 
     static _checkSkillTrainedCondition(prereq, actor, pending) {
@@ -1475,12 +1483,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkAbilityLegacy(prereq, actor, pending) {
-        const ability = actor.system?.attributes?.[prereq.ability]?.total ?? 10;
-        const met = ability >= prereq.value;
-        return {
-            met,
-            message: !met ? `Requires ${prereq.ability.toUpperCase()} ${prereq.value} (you have ${ability})` : ''
-        };
+        return this._checkAbilityRequirement(prereq, actor, prereq.value ?? 10);
     }
 
     static _checkBABLegacy(prereq, actor, pending) {

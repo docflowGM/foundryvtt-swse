@@ -27,6 +27,8 @@
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
+import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class DefenseTooltip {
 
@@ -110,10 +112,10 @@ export class DefenseTooltip {
       semantic: 'neutral'
     });
 
-    if (data.halfLevel) {
+    if (data.heroicLevel) {
       rows.push({
-        label: '½ Level',
-        value: data.halfLevel,
+        label: 'Heroic Level',
+        value: data.heroicLevel,
         semantic: 'neutral'
       });
     }
@@ -185,7 +187,7 @@ export class DefenseTooltip {
     // Base calculation
     lines.push('Base Calculation:');
     lines.push('  Base: 10');
-    if (data.halfLevel) lines.push(`  ½ Level: +${data.halfLevel}`);
+    if (data.heroicLevel) lines.push(`  Heroic Level: +${data.heroicLevel}`);
     if (data.abilityMod) lines.push(`  Ability: ${data.abilityMod > 0 ? '+' : ''}${data.abilityMod}`);
     if (data.classBonus) lines.push(`  Class: +${data.classBonus}`);
     if (data.miscMod) lines.push(`  Misc: ${data.miscMod > 0 ? '+' : ''}${data.miscMod}`);
@@ -225,7 +227,7 @@ export class DefenseTooltip {
     const system = actor.system;
     const defenseMap = {
       'reflex': { key: 'ref', label: 'Reflex', abilityKey: 'dex' },
-      'fort': { key: 'fort', label: 'Fortitude', abilityKey: 'str' },
+      'fort': { key: 'fort', label: 'Fortitude', abilityKey: (actor?.type === 'droid' || actor?.system?.isDroid === true) ? 'str' : 'con' },
       'will': { key: 'will', label: 'Will', abilityKey: 'wis' },
       'flatfooted': { key: 'ref', label: 'Flat-Footed', abilityKey: null } // Uses reflex calculation but no dex
     };
@@ -233,29 +235,37 @@ export class DefenseTooltip {
     const defenseInfo = defenseMap[defenseKey];
     if (!defenseInfo) return null;
 
-    const defense = system.defenses?.[defenseInfo.key] || {};
-    const abilityMod = defenseKey === 'flatfooted' ? 0 : (system.attributes?.[defenseInfo.abilityKey]?.mod || 0);
-    const halfLevel = Math.floor((system.level || 1) / 2);
+    const canonicalKey = defenseKey === 'flatfooted' ? 'flatFooted' :
+      (defenseKey === 'fort' ? 'fortitude' : defenseKey);
+    const defense = system.derived?.defenses?.[canonicalKey] || system.derived?.defenses?.[defenseKey] || {};
+    const abilityMod = defenseKey === 'flatfooted'
+      ? 0
+      : (defense.abilityMod ?? SchemaAdapters.getAbilityMod(actor, defenseInfo.abilityKey));
+    const heroicLevel = getHeroicLevel(actor) || Number(system.derived?.heroicLevel ?? system.heroicLevel ?? system.level ?? 0) || 0;
     const classBonus = defense.classBonus || 0;
-    const miscMod = defense.miscMod || 0;
+    const miscMod = defense.miscBonus ?? defense.miscMod ?? 0;
+    const sizeModifier = defense.sizeModifier ?? 0;
+    const armorBonus = defense.armorBonus ?? 0;
 
-    // Calculate subtotal
-    const subtotal = 10 + halfLevel + abilityMod + classBonus + miscMod;
+    // Calculate subtotal from RAW components used by DefenseCalculator.
+    const subtotal = 10 + heroicLevel + abilityMod + classBonus + miscMod + sizeModifier + armorBonus;
 
     // Get modifiers from ModifierEngine
     const modifierTarget = `defense.${defenseInfo.key}`;
     const modifiers = this.getModifiersForTarget(actor, modifierTarget);
 
-    // Get total including modifiers (but not dex for flatfooted)
-    const totalValue = defenseKey === 'flatfooted' ? subtotal : (defense.total || subtotal);
+    // Get total from canonical derived defenses when available.
+    const totalValue = defense.total || subtotal;
 
     return {
       label: defenseInfo.label,
       key: defenseInfo.key,
-      halfLevel,
+      heroicLevel,
       abilityMod,
       classBonus,
       miscMod,
+      sizeModifier,
+      armorBonus,
       subtotal,
       modifiers,
       totalValue,

@@ -1,42 +1,32 @@
-{{!--
-  Droid Integrated Weapons Panel
-
-  Shows built-in weapons that are part of the droid chassis (as opposed to carried weapons).
-
-  Data consumed:
-    droidPanels.integratedWeapons (entries[], hasEntries, totalCount, totalCost, emptyMessage)
-
-  Phase 3B: Subsystem detail enrichment. Lists integrated/built-in weapons with cost breakdown.
---}}
-<section class="swse-panel holo-panel swse-ui-panel">
+<section class="swse-panel holo-panel swse-ui-panel swse-droid-part-panel" data-region="integrated-weapons">
   <header class="section-bar">
     <h3 class="section-header">Integrated Weapons</h3>
-    {{#if droidPanels.integratedWeapons.totalCount}}
-      <span class="section-meta muted" style="font-size: 0.85em;">({{droidPanels.integratedWeapons.totalCount}}) {{droidPanels.integratedWeapons.totalCost}} credits</span>
-    {{/if}}
+    {{#if droidPanels.integratedWeapons.totalCount}}<span class="section-meta muted">({{droidPanels.integratedWeapons.totalCount}})</span>{{/if}}
   </header>
 
   {{#if droidPanels.integratedWeapons.hasEntries}}
     <div class="integrated-weapons-list">
       {{#each droidPanels.integratedWeapons.entries as |weapon|}}
-        <div class="weapon-entry" data-weapon-id="{{weapon.id}}">
+        <div class="weapon-entry swse-droid-part-row {{#if weapon.isSelfDestruct}}is-danger{{/if}}" data-weapon-id="{{weapon.id}}">
           <div class="entry-header">
             <span class="entry-name">{{weapon.name}}</span>
-            {{#if weapon.cost}}
-              <span class="entry-cost muted" style="font-size: 0.85em;">{{weapon.cost}} cr</span>
+            {{#if weapon.isSelfDestruct}}<span class="swse-droid-chip danger">SELF-DESTRUCT</span>{{else}}<span class="swse-droid-chip">INTEGRATED</span>{{/if}}
+          </div>
+          <div class="swse-weapon-stats-row">
+            {{#if weapon.damage}}<span class="swse-weapon-meta">{{weapon.damage}}</span>{{/if}}
+            {{#if weapon.range}}<span class="swse-weapon-meta">{{weapon.range}}</span>{{/if}}
+            {{#if weapon.attackBonus}}<span class="swse-weapon-meta">+{{weapon.attackBonus}} atk</span>{{/if}}
+          </div>
+          {{#if weapon.description}}<div class="entry-description muted">{{weapon.description}}</div>{{/if}}
+          <div class="swse-inline-actions">
+            {{#if weapon.canRoll}}
+              <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}">Use</button>
             {{/if}}
           </div>
-          {{#if weapon.description}}
-            <div class="entry-description muted" style="font-size: 0.85em; margin-top: 4px;">
-              {{weapon.description}}
-            </div>
-          {{/if}}
         </div>
       {{/each}}
     </div>
   {{else}}
-    <div class="empty-state">
-      <p><em>{{droidPanels.integratedWeapons.emptyMessage}}</em></p>
-    </div>
+    <div class="empty-state"><p><em>{{droidPanels.integratedWeapons.emptyMessage}}</em></p></div>
   {{/if}}
 </section>

@@ -1093,11 +1093,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       context.availableSkills = context.availableSkills.map(skill => {
       // Get the ability modifier for this skill's associated ability
       let abilityKey = (skill.ability || '').toLowerCase();
-      // For droids, CON-based skills use STR instead
-      if (this.characterData.isDroid && abilityKey === 'con') {
-        abilityKey = 'str';
-      }
-      const abilityMod = abilities[abilityKey]?.mod || 0;
+      // Droids have no Constitution score and do not gain an ability bonus
+      // on Constitution-based skill checks.
+      const abilityMod = (this.characterData.isDroid && abilityKey === 'con')
+        ? 0
+        : (abilities[abilityKey]?.mod || 0);
 
       // Get species skill bonus (racial bonus)
       const speciesBonus = speciesSkillBonuses[skill.key] || 0;

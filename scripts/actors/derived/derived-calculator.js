@@ -35,6 +35,7 @@ import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/l
 import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 import { isRankedModeEnabled, deriveTrainedFromRanks } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
+import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
 export class DerivedCalculator {
   /**
@@ -165,7 +166,7 @@ export class DerivedCalculator {
       // ========================================
       const strMod = (updates['system.derived.attributes']?.str?.mod) || 0;
       const sizeTable = { 'fine': -8, 'diminutive': -4, 'tiny': -2, 'small': -1, 'medium': 0, 'large': 4, 'huge': 8, 'gargantuan': 12, 'colossal': 16 };
-      const sizeMod = sizeTable[actor.system?.size] || 0;
+      const sizeMod = sizeTable[String(actor.system?.size || 'medium').toLowerCase()] || 0;
       const speciesGrapple = actor.system?.speciesCombatBonuses?.grapple || actor.system?.speciesTraitBonuses?.combat?.grapple || 0;
       const grappleBonus = bab.total + strMod + sizeMod + speciesGrapple;
       updates['system.derived.grappleBonus'] = grappleBonus;
@@ -197,6 +198,7 @@ export class DerivedCalculator {
           miscBonus: defenses.reflex.miscBonus ?? 0,
           armorBonus: defenses.reflex.armorBonus ?? 0,
           armorContribution: defenses.reflex.armorContribution ?? 0,
+          sizeModifier: defenses.reflex.sizeModifier ?? 0,
           abilityKey: defenses.reflex.abilityKey ?? 'dex',
           abilityMod: defenses.reflex.abilityMod ?? 0,
           conditionPenalty: defenses.reflex.conditionPenalty ?? 0
@@ -228,6 +230,7 @@ export class DerivedCalculator {
           miscBonus: defenses.flatFooted.miscBonus ?? 0,
           armorBonus: defenses.flatFooted.armorBonus ?? 0,
           armorContribution: defenses.flatFooted.armorContribution ?? 0,
+          sizeModifier: defenses.flatFooted.sizeModifier ?? 0,
           abilityKey: defenses.flatFooted.abilityKey ?? 'dex',
           abilityMod: defenses.flatFooted.abilityMod ?? 0,
           conditionPenalty: defenses.flatFooted.conditionPenalty ?? 0
@@ -289,7 +292,7 @@ export class DerivedCalculator {
 
       const normalizedSkills = normalizeSkillMap(actor.system.skills);
       const halfLevel = actor.system.halfLevel || 0;
-      const isDroid = actor.system.isDroid || false;
+      const isDroid = actor?.type === 'droid' || actor.system.isDroid || false;
       const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
 
       // Get occupation bonus from actor flags
@@ -343,7 +346,9 @@ export class DerivedCalculator {
         // Derived uses these to compute skill totals. Schema is initialized by progression.
         // Get ability modifier
         const abilityKey = skill.selectedAbility || skillDef.defaultAbility;
-        const abilityMod = (updates['system.derived.attributes']?.[abilityKey]?.mod) || 0;
+        const abilityMod = (isDroid && abilityKey === 'con')
+          ? 0
+          : ((updates['system.derived.attributes']?.[abilityKey]?.mod) || 0);
 
         // Calculate total bonus
         const skillMiscMod = Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0;
@@ -481,12 +486,7 @@ export class DerivedCalculator {
         const modifyFormula = safeGet('modifyDamageThresholdFormula', false);
 
         const fortitudeTotal = (updates['system.derived.defenses']?.fortitude?.total) ?? 10;
-        const rawSizeThresholdBonuses = {
-          fine: -10, diminutive: -5, tiny: 0, small: 0,
-          medium: 0, large: 5, huge: 10, gargantuan: 20, colossal: 50
-        };
-        const actorSizeRaw = (actor.system?.size || actor.size || 'medium').toLowerCase();
-        let damageThreshold = fortitudeTotal + (rawSizeThresholdBonuses[actorSizeRaw] ?? 0);
+        let damageThreshold = fortitudeTotal + getDamageThresholdSizeBonus(actor);
 
         if (enableEnhanced && modifyFormula) {
 
@@ -496,13 +496,7 @@ export class DerivedCalculator {
           const computedHeroicLevel =
             heroicLevel || actor.system.level || 1;
 
-          const sizeModifiers = {
-            fine: -10, diminutive: -5, tiny: -2, small: -1,
-            medium: 0, large: 1, huge: 2, gargantuan: 5, colossal: 10
-          };
-
-          const actorSize = (actor.size || 'medium').toLowerCase();
-          const sizeMod = sizeModifiers[actorSize] ?? 0;
+          const sizeMod = getDamageThresholdSizeBonus(actor);
 
           if (formulaType === 'halfLevel') {
             damageThreshold =

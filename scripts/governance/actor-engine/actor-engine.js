@@ -1239,6 +1239,26 @@ export const ActorEngine = {
         updates['system.conditionTrack.persistent'] = true;
       }
 
+      if (actor.type === 'droid') {
+        if (resolution.destroyed === true) {
+          updates['system.droidState.status'] = 'destroyed';
+          updates['system.droidState.destroyed'] = true;
+          updates['system.droidState.disabled'] = false;
+          updates['system.droidState.canBeRepaired'] = false;
+          updates['system.droidState.destroyedAt'] = Date.now();
+          updates['system.droidState.destroyedBy'] = damagePacket.source ?? damagePacket.type ?? 'damage';
+        } else if (resolution.disabled === true) {
+          updates['system.droidState.status'] = 'disabled';
+          updates['system.droidState.disabled'] = true;
+          updates['system.droidState.destroyed'] = false;
+          updates['system.droidState.canBeRepaired'] = true;
+        } else if ((resolution.hpAfter ?? 0) > 0 && actor.system?.droidState?.status === 'disabled') {
+          updates['system.droidState.status'] = 'operational';
+          updates['system.droidState.disabled'] = false;
+          updates['system.droidState.canBeRepaired'] = true;
+        }
+      }
+
       await this.updateActor(actor, updates);
 
       SWSELogger.log(`Damage applied to ${actor.name}: ${damagePacket.amount} incoming → ${resolution.damageToHP} HP`, {
@@ -1286,6 +1306,10 @@ export const ActorEngine = {
         source
       });
 
+      if (actor.type === 'droid' && actor.system?.droidState?.destroyed === true) {
+        throw new Error(`${actor.name} is destroyed and cannot be repaired or healed.`);
+      }
+
       const currentHP = SchemaAdapters.getHP(actor);
       const maxHP = SchemaAdapters.getMaxHP(actor);
       const currentCT = Number(actor.system?.conditionTrack?.current ?? 0);
@@ -1304,6 +1328,11 @@ export const ActorEngine = {
       // RAW: Any healing while at 0 HP / disabled revives and moves +1 step up the CT.
       if (currentHP <= 0 && currentCT > 0) {
         updates['system.conditionTrack.current'] = Math.max(0, currentCT - 1);
+      }
+      if (actor.type === 'droid' && newHP > 0 && actor.system?.droidState?.status === 'disabled') {
+        updates['system.droidState.status'] = 'operational';
+        updates['system.droidState.disabled'] = false;
+        updates['system.droidState.canBeRepaired'] = true;
       }
 
       await this.updateActor(actor, updates);
@@ -1826,8 +1855,9 @@ export const ActorEngine = {
         }
       }
 
-      const conScore = Number(actor.system?.abilities?.con?.score ?? actor.system?.attributes?.con?.value ?? actor.system?.attributes?.con?.total ?? 10);
-      const conMod = Number(actor.system?.abilities?.con?.mod ?? actor.system?.derived?.attributes?.con?.mod ?? 0);
+      const isDroidActor = actor.type === 'droid' || actor.system?.isDroid === true;
+      const conScore = isDroidActor ? 0 : Number(actor.system?.derived?.attributes?.con?.total ?? actor.system?.attributes?.con?.base ?? 10);
+      const conMod = isDroidActor ? 0 : Number(actor.system?.derived?.attributes?.con?.mod ?? actor.system?.abilities?.con?.mod ?? 0);
       const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
       const baseDailyUses = HouseRuleService.isEnabled('secondWindWebEnhancement')
         ? Math.max(1, 1 + fortClassBonus + conMod)
@@ -1913,7 +1943,8 @@ export const ActorEngine = {
     try {
       if (!actor) {throw new Error('resetSecondWind() called with no actor');}
 
-      const conMod = Number(actor.system?.abilities?.con?.mod ?? actor.system?.derived?.attributes?.con?.mod ?? 0);
+      const isDroidActor = actor.type === 'droid' || actor.system?.isDroid === true;
+      const conMod = isDroidActor ? 0 : Number(actor.system?.derived?.attributes?.con?.mod ?? actor.system?.abilities?.con?.mod ?? 0);
       const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
       const hasExtraSecondWindFeat = actor.items?.some(i => i.type === 'feat' && i.name === 'Extra Second Wind') === true;
       const hasToughAsNails = actor.items?.some(i => i.type === 'talent' && i.name === 'Tough as Nails') === true;
@@ -4267,7 +4298,7 @@ export const ActorEngine = {
 
     const defaults = {
       reflex: { classBonus: 0, armor: 0, ability: 'dex', misc: { auto: {}, user: { extra: 0 } } },
-      fortitude: { classBonus: 0, ability: actor.system?.isDroid ? 'str' : 'con', misc: { auto: {}, user: { extra: 0 } } },
+      fortitude: { classBonus: 0, ability: (actor.type === 'droid' || actor.system?.isDroid === true) ? 'str' : 'con', misc: { auto: {}, user: { extra: 0 } } },
       will: { classBonus: 0, ability: 'wis', misc: { auto: {}, user: { extra: 0 } } }
     };
 

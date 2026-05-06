@@ -1,16 +1,4 @@
-{{!--
-  Droid Integrated Systems Panel
-
-  Shows installed integrated systems (weapons, shields, sensors, etc. that are part of the chassis).
-
-  Data consumed:
-    droidPanels.integratedSystems.entries[] (id, name, type, description)
-    droidPanels.integratedSystems.hasEntries
-    droidPanels.integratedSystems.emptyMessage
-
-  Current depth: list of installed systems with name and type. Pass 4+ will add categorization/detail.
---}}
-<section class="swse-panel holo-panel swse-ui-panel">
+<section class="swse-panel holo-panel swse-ui-panel swse-droid-part-panel" data-region="integrated-systems">
   <header class="section-bar">
     <h3 class="section-header">Integrated Systems</h3>
   </header>
@@ -18,22 +6,24 @@
   {{#if droidPanels.integratedSystems.hasEntries}}
     <div class="integrated-systems-list">
       {{#each droidPanels.integratedSystems.entries as |system|}}
-        <div class="system-entry" data-system-id="{{system.id}}">
+        <div class="system-entry swse-droid-part-row" data-system-id="{{system.id}}">
           <div class="system-header">
             <span class="system-name">{{system.name}}</span>
-            <span class="system-type muted" style="font-size: 0.85em;">[{{system.type}}]</span>
+            {{#if system.category}}<span class="system-type muted">[{{system.category}}]</span>{{else if system.type}}<span class="system-type muted">[{{system.type}}]</span>{{/if}}
           </div>
-          {{#if system.description}}
-            <div class="system-description muted" style="font-size: 0.85em; margin-top: 4px;">
-              {{system.description}}
-            </div>
+          {{#if system.description}}<div class="system-description muted">{{system.description}}</div>{{/if}}
+          {{#if system.modifiers}}
+            <ul class="swse-droid-modifier-list">
+              {{#each system.modifiers as |mod|}}
+                <li class="{{#unless mod.active}}is-inactive{{/unless}}">{{mod.target}} {{#if mod.value}}{{mod.value}}{{/if}}</li>
+              {{/each}}
+            </ul>
           {{/if}}
+          <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{system.id}}" data-part-name="{{system.name}}">Use / Describe</button>
         </div>
       {{/each}}
     </div>
   {{else}}
-    <div class="empty-state">
-      <p><em>{{droidPanels.integratedSystems.emptyMessage}}</em></p>
-    </div>
+    <div class="empty-state"><p><em>{{droidPanels.integratedSystems.emptyMessage}}</em></p></div>
   {{/if}}
 </section>

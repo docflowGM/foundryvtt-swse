@@ -1441,6 +1441,63 @@ export class ModifierEngine {
         }
       }
 
+      // Droid sheet v2/Garage-installed items can be plain actor Items with droid part
+      // metadata rather than entries in system.droidSystems.mods. Hydrate them through the
+      // shared part schema so skill/defense/HP bonuses are applied by the normal modifier
+      // pipeline instead of duplicated in sheet code.
+      try {
+        const { hydrateDroidPart, normalizeDroidPartId } = await import("/systems/foundryvtt-swse/scripts/data/droid-part-schema.js");
+        const itemList = typeof actor.items?.contents !== 'undefined' ? actor.items.contents : Array.from(actor.items ?? []);
+        const installedIds = itemList.map(item => normalizeDroidPartId(item?.system?.droidPartId || item?.flags?.swse?.droidPartId || item?.name));
+        const canonicalTarget = (target) => {
+          const raw = String(target || '').trim();
+          if (!raw) return '';
+          if (raw.startsWith('skill.')) {
+            const [, skill] = raw.split('.');
+            return skill ? `skill.${skill}` : '';
+          }
+          if (raw === 'defense.damageThreshold') return raw;
+          if (raw.startsWith('defense.')) return raw;
+          if (raw === 'hp.max') return raw;
+          if (raw.startsWith('speed.')) return raw;
+          if (raw === 'initiative.total') return raw;
+          if (raw === 'bab.total') return raw;
+          return '';
+        };
+        const canonicalType = (type) => {
+          const key = String(type || '').toLowerCase();
+          if (['competence', 'enhancement', 'morale', 'insight', 'circumstance', 'penalty', 'dodge'].includes(key)) return key;
+          return ModifierType.UNTYPED;
+        };
+
+        for (const item of itemList) {
+          const hydrated = hydrateDroidPart(item, { installedIds });
+          const modArray = Array.isArray(hydrated.modifiers) ? hydrated.modifiers : [];
+          for (const modifierData of modArray) {
+            if (!modifierData || modifierData.active === false) continue;
+            const target = canonicalTarget(modifierData.target);
+            const value = Number(modifierData.value) || 0;
+            if (!target || value === 0) continue;
+            try {
+              modifiers.push(createModifier({
+                source: ModifierSource.DROID_MOD,
+                sourceId: `${item.id ?? hydrated.ruleId}:${target}`,
+                sourceName: hydrated.name || item.name || 'Droid System',
+                target,
+                type: canonicalType(modifierData.type),
+                value,
+                enabled: true,
+                description: `${hydrated.name || item.name}: ${target} ${value > 0 ? '+' : ''}${value}`
+              }));
+            } catch (err) {
+              swseLogger.warn(`Failed to create modifier for droid part ${hydrated.name}:`, err);
+            }
+          }
+        }
+      } catch (err) {
+        swseLogger.warn(`[ModifierEngine] Error hydrating droid item modifiers:`, err);
+      }
+
       swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} modifiers from droid modifications`);
       return modifiers;
     } catch (err) {

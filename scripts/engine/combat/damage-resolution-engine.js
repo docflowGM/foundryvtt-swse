@@ -2,6 +2,7 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js";
 import { DamageMitigationManager } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-mitigation-manager.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
+import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
 /**
  * DamageResolutionEngine — Unified damage orchestration
@@ -35,8 +36,8 @@ export class DamageResolutionEngine {
    * @private
    */
   static #sizeThresholdMap = {
-    fine: -10,
-    diminutive: -5,
+    fine: 0,
+    diminutive: 0,
     tiny: 0,
     small: 0,
     medium: 0,

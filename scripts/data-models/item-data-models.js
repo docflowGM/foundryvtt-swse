@@ -3,6 +3,64 @@
  * Defines schemas for all SWSE item types
  */
 
+
+function createDroidPartSchema(fields) {
+  return new fields.SchemaField({
+    enabled: new fields.BooleanField({ initial: false, label: 'Droid Part' }),
+    id: new fields.StringField({ initial: '', label: 'Droid Part ID' }),
+    category: new fields.StringField({
+      initial: '',
+      choices: ['', 'processor', 'processorEnhancement', 'locomotion', 'locomotionEnhancement', 'appendage', 'appendageEnhancement', 'armor', 'communications', 'hardenedSystems', 'sensor', 'shield', 'translator', 'miscellaneous', 'weapon', 'station', 'accessory'],
+      label: 'Droid Part Category'
+    }),
+    subcategory: new fields.StringField({ initial: '', label: 'Droid Part Subcategory' }),
+    slot: new fields.StringField({
+      initial: '',
+      choices: ['', 'processor', 'processorAux', 'locomotion', 'locomotionEnhancement', 'appendage', 'appendageEnhancement', 'armor', 'communications', 'sensor', 'shield', 'translator', 'miscellaneous', 'weapon', 'station', 'power'],
+      label: 'Droid Slot'
+    }),
+    slotKey: new fields.StringField({ initial: '', label: 'Slot Key' }),
+    location: new fields.StringField({ initial: '', label: 'Install Location' }),
+    active: new fields.BooleanField({ initial: true, label: 'Active Droid Part' }),
+    integrated: new fields.BooleanField({ initial: true, label: 'Integrated Into Droid' }),
+    required: new fields.BooleanField({ initial: false, label: 'Required Droid System' }),
+    garageManaged: new fields.BooleanField({ initial: true, label: 'Garage Managed' }),
+    description: new fields.HTMLField({ label: 'Droid Part Description' }),
+    rulesText: new fields.HTMLField({ label: 'Droid Part Rules' }),
+    prerequisites: new fields.ArrayField(new fields.StringField(), { initial: [], label: 'Required Droid Parts' }),
+    traits: new fields.ArrayField(new fields.StringField(), { initial: [], label: 'Droid Part Traits' }),
+    effects: new fields.ArrayField(new fields.SchemaField({
+      target: new fields.StringField({ initial: '' }),
+      type: new fields.StringField({ initial: 'equipment' }),
+      value: new fields.NumberField({ initial: 0, integer: true }),
+      condition: new fields.StringField({ initial: '' }),
+      label: new fields.StringField({ initial: '' })
+    }), { initial: [], label: 'Droid Part Effects' }),
+    grants: new fields.SchemaField({
+      processorSlots: new fields.NumberField({ initial: 0, min: 0, integer: true }),
+      appendageSlots: new fields.NumberField({ initial: 0, min: 0, integer: true }),
+      extraSwiftAction: new fields.BooleanField({ initial: false }),
+      untrainedSkills: new fields.BooleanField({ initial: false }),
+      lowLightVision: new fields.BooleanField({ initial: false }),
+      darkvision: new fields.BooleanField({ initial: false })
+    }, { initial: {} }),
+    weapon: new fields.SchemaField({
+      countsAsWeapon: new fields.BooleanField({ initial: false }),
+      selfDestruct: new fields.BooleanField({ initial: false }),
+      miniaturized: new fields.BooleanField({ initial: false }),
+      destroyedOnUse: new fields.BooleanField({ initial: false }),
+      attackType: new fields.StringField({ initial: '' }),
+      weaponType: new fields.StringField({ initial: '' }),
+      damage: new fields.StringField({ initial: '' }),
+      damageType: new fields.StringField({ initial: '' }),
+      range: new fields.StringField({ initial: '' }),
+      attackBonus: new fields.NumberField({ initial: 0, integer: true }),
+      area: new fields.StringField({ initial: '' }),
+      special: new fields.StringField({ initial: '' })
+    }, { initial: {} })
+  }, { initial: {} });
+}
+
 // Weapon Data Model
 export class WeaponDataModel extends foundry.abstract.DataModel {
   static defineSchema() {
@@ -27,6 +85,8 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
       cost: new fields.NumberField({ required: true, initial: 0, min: 0 }),
       equipped: new fields.BooleanField({ required: true, initial: false }),
       description: new fields.HTMLField({ label: 'Description' }),
+      integrated: new fields.BooleanField({ initial: false, label: 'Integrated Droid Weapon' }),
+      droidPart: createDroidPartSchema(fields),
 
       // Special properties
       properties: new fields.ArrayField(new fields.StringField()),
@@ -145,7 +205,9 @@ export class ArmorDataModel extends foundry.abstract.DataModel {
       weight: new fields.NumberField({ required: false, initial: 1, min: 0, nullable: true }),
       cost: new fields.NumberField({ required: true, initial: 0, min: 0 }),
       equipped: new fields.BooleanField({ required: true, initial: false }),
+      integrated: new fields.BooleanField({ initial: false, label: 'Built-In Droid Armor' }),
       description: new fields.HTMLField({ label: 'Description' }),
+      droidPart: createDroidPartSchema(fields),
 
       // Armor size (for creatures it's designed to fit)
       // Note: Accepts both capitalized and lowercase for compendium compatibility
@@ -247,7 +309,9 @@ export class EquipmentDataModel extends foundry.abstract.DataModel {
       weight: new fields.NumberField({ required: false, initial: 1, min: 0, nullable: true }),
       cost: new fields.NumberField({ required: true, initial: 0, min: 0 }),
       equipped: new fields.BooleanField({ required: true, initial: false }),
+      integrated: new fields.BooleanField({ initial: false, label: 'Integrated Droid Equipment' }),
       description: new fields.HTMLField({ label: 'Description' }),
+      droidPart: createDroidPartSchema(fields),
 
       // Equipment size (for size-based calculations)
       // Note: Accepts both capitalized and lowercase for compendium compatibility

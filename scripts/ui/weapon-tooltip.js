@@ -13,7 +13,7 @@
  * - Provide detailed math breakdowns for weapon calculations
  * - Show all sources contributing to final calculations:
  *   * Base attack/damage calculation (dice + type)
- *   * Attack bonus components (BAB, half level, ability, enhancement, proficiency)
+ *   * Attack bonus components (BAB, ability, range, enhancement, proficiency)
  *   * Damage bonus components (half level, ability, enhancement, two-handed, talents)
  *   * All registered modifiers
  *   * Weapon property effects

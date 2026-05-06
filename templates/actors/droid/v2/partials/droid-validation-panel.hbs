@@ -1,63 +1,48 @@
-{{!--
-  Droid Validation Panel
+<section class="swse-panel holo-panel swse-ui-panel swse-droid-diagnostics-panel">
+  <details class="swse-droid-diagnostics" open>
+    <summary class="section-bar">
+      <h3 class="section-header">Build Status &amp; Diagnostics</h3>
+      {{#if droid.sourceStatus.sourceLabel}}<span class="section-meta muted">{{droid.sourceStatus.sourceLabel}}</span>{{/if}}
+    </summary>
 
-  Renders real configuration validation and readiness diagnostics.
-
-  Data consumed:
-    droidPanels.validation (state, isReady, isValid, issues[], warnings[], statusLabel, allClearMessage)
-
-  Phase 3A: Real validation driven by DroidValidationEngine.
-  Shows: missing required subsystems, budget overage, readiness status.
---}}
-<section class="swse-panel holo-panel swse-ui-panel">
-  <header class="section-bar">
-    <h3 class="section-header">Configuration Status</h3>
-  </header>
-
-  {{#if droidPanels.validation}}
     <div class="validation-content">
-      <!-- Readiness status -->
-      <div class="config-item swse-metric-chip">
-        <span class="label">Status:</span>
-        <span class="value readiness-{{#if droidPanels.validation.isReady}}ready{{else}}not-ready{{/if}}">
-          {{droidPanels.validation.statusLabel}}
-        </span>
-      </div>
-
-      <!-- Issues/errors -->
-      {{#if droidPanels.validation.hasIssues}}
-        <div class="validation-issues" style="margin-top: 12px; padding: 8px; background: rgba(200, 50, 50, 0.1); border-left: 3px solid #c83232; border-radius: 2px;">
-          <div class="issues-header" style="font-weight: bold; font-size: 0.9em; margin-bottom: 8px;">
-            Issues ({{droidPanels.validation.issueCount}}):
-          </div>
-          <div class="issues-list">
-            {{#each droidPanels.validation.issues as |issue|}}
-              <div class="issue-entry" style="margin-bottom: 6px; padding-left: 12px;">
-                <small>
-                  {{#if (eq issue.type 'missing')}}
-                    ⚠ {{issue.message}}
-                  {{else if (eq issue.type 'over_budget')}}
-                    ✗ {{issue.message}}
-                  {{else}}
-                    • {{issue.message}}
-                  {{/if}}
-                </small>
-              </div>
-            {{/each}}
-          </div>
+      {{#if droid.sourceStatus}}
+        <div class="config-item swse-metric-chip">
+          <span class="label">Source:</span>
+          <span class="value">{{droid.sourceStatus.sourceLabel}}</span>
+        </div>
+        <div class="config-item swse-metric-chip">
+          <span class="label">Finalized:</span>
+          <span class="value">{{#if droid.sourceStatus.isFinalized}}Yes{{else}}No{{/if}}</span>
         </div>
       {{/if}}
 
-      <!-- All-clear message -->
-      {{#if droidPanels.validation.allClearMessage}}
-        <div class="validation-all-clear" style="margin-top: 12px; padding: 8px; background: rgba(100, 180, 100, 0.1); border-left: 3px solid #64b464; border-radius: 2px;">
-          <small style="color: #2d5a2d;">✓ {{droidPanels.validation.allClearMessage}}</small>
+      {{#if droid.partEffects.length}}
+        <div class="swse-droid-modifier-list">
+          <div class="issues-header">Droid Part Roll Modifiers</div>
+          {{#each droid.partEffects as |effect|}}
+            <div class="swse-droid-modifier-row">
+              <span>{{effect.sourceName}}</span>
+              <strong>{{effect.target}} {{#if effect.value}}+{{effect.value}}{{/if}}</strong>
+            </div>
+          {{/each}}
+        </div>
+      {{/if}}
+
+      {{#if droid.sourceStatus.hasValidationMessages}}
+        <div class="validation-issues">
+          <div class="issues-header">Messages</div>
+          {{#each droid.sourceStatus.validationMessages as |message|}}
+            <div class="issue-entry severity-{{message.severity}}">
+              <small>{{message.text}}</small>
+            </div>
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="validation-all-clear">
+          <small>✓ Droid systems are structurally readable.</small>
         </div>
       {{/if}}
     </div>
-  {{else}}
-    <div class="empty-state">
-      <p><em>No configuration validation data.</em></p>
-    </div>
-  {{/if}}
+  </details>
 </section>
