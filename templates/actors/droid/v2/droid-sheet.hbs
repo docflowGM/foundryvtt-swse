@@ -23,6 +23,10 @@
     feats               — array of feat cards [{id,name,type}]
     talents             — array of talent cards [{id,name,type}]
     droidPanels         — droid-specific sub-panels (locomotion, processor, appendages, etc.)
+    droid               — Phase 3 structured context: { degree, layoutMode, systems, requiredSystems, garage, flags }
+                          droid.requiredSystems.{processor,locomotion,appendages}: { isConfigured, isDefault, defaultName, defaultLabel }
+                          droid.flags: { isStockDroid, hasConversionReport, isPendingApproval }
+                          droid.garage: { canEdit, canCustomize, canConvert, openMode, hasConfiguration }
     editable            — boolean
     biographyPanel      — { identity, biography }
 --}}
@@ -271,8 +275,8 @@
           {{!-- ROW 1: Core compute & movement (both required) --}}
           <div class="swse-droid-systems-row">
 
-            {{!-- Processor: configured or safe default --}}
-            {{#if droidPanels.processor.hasProcessor}}
+            {{!-- Processor: configured or safe default (droid.requiredSystems.processor) --}}
+            {{#if droid.requiredSystems.processor.isConfigured}}
               {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs"}}
             {{else}}
               <section class="swse-panel swse-droid-default-region">
@@ -282,16 +286,16 @@
                 </header>
                 <div class="swse-droid-default-content">
                   <div class="config-item">
-                    <span class="label">Type:</span>
-                    <span class="value">Heuristic Processor</span>
+                    <span class="label">{{droid.requiredSystems.processor.defaultLabel}}:</span>
+                    <span class="value">{{droid.requiredSystems.processor.defaultName}}</span>
                   </div>
                   <p class="swse-droid-default-hint">Not configured — baseline default shown.</p>
                 </div>
               </section>
             {{/if}}
 
-            {{!-- Locomotion: configured or safe default --}}
-            {{#if droidPanels.locomotion.name}}
+            {{!-- Locomotion: configured or safe default (droid.requiredSystems.locomotion) --}}
+            {{#if droid.requiredSystems.locomotion.isConfigured}}
               {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs"}}
             {{else}}
               <section class="swse-panel swse-droid-default-region">
@@ -301,8 +305,8 @@
                 </header>
                 <div class="swse-droid-default-content">
                   <div class="config-item">
-                    <span class="label">Type:</span>
-                    <span class="value">Walking</span>
+                    <span class="label">{{droid.requiredSystems.locomotion.defaultLabel}}:</span>
+                    <span class="value">{{droid.requiredSystems.locomotion.defaultName}}</span>
                   </div>
                   <p class="swse-droid-default-hint">Not configured — baseline default shown.</p>
                 </div>
@@ -314,8 +318,8 @@
           {{!-- ROW 2: Manipulation & body protection (Appendages required) --}}
           <div class="swse-droid-systems-row">
 
-            {{!-- Appendages: configured or safe default --}}
-            {{#if droidPanels.appendages.hasEntries}}
+            {{!-- Appendages: configured or safe default (droid.requiredSystems.appendages) --}}
+            {{#if droid.requiredSystems.appendages.isConfigured}}
               {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs"}}
             {{else}}
               <section class="swse-panel swse-droid-default-region">
@@ -325,8 +329,8 @@
                 </header>
                 <div class="swse-droid-default-content">
                   <div class="config-item">
-                    <span class="label">Manipulators:</span>
-                    <span class="value">2 × Standard Droid Arms</span>
+                    <span class="label">{{droid.requiredSystems.appendages.defaultLabel}}:</span>
+                    <span class="value">{{droid.requiredSystems.appendages.defaultName}}</span>
                   </div>
                   <p class="swse-droid-default-hint">Not configured — baseline default shown.</p>
                 </div>

@@ -9,6 +9,8 @@
 
   Data consumed:
     droidPanels.droidSummary (degree, size, stateMode, creditsSpent, creditsTotal)
+    droid.flags (isStockDroid, hasConversionReport, isPendingApproval) — Phase 3
+    droid.garage (canEdit, canCustomize, canConvert, hasConfiguration) — Phase 3
     editable (permission flag)
 
   This is the entry-level summary. Subsystem detail panels follow below.
@@ -17,7 +19,7 @@
   <div class="section-bar">
     <h3 class="section-header">Droid Systems</h3>
     {{#if editable}}
-      {{#if (lookup actor.flags.swse "stockDroidImport")}}
+      {{#if droid.flags.isStockDroid}}
         <button type="button" class="convert-to-custom-droid holo-btn small" aria-label="Convert stock droid to custom system-native droid">
           <i class="fa-solid fa-wand-magic-sparkles"></i> Convert to Custom
         </button>

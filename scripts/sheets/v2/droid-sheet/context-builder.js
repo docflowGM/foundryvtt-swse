@@ -80,6 +80,12 @@ export class DroidSheetContextBuilder {
     const derived = this.buildDerivedViewModel(abilities);
     const header = this.buildHeaderViewModel();
 
+    // Phase 3: structured top-level droid context (pure derivation, no actor writes)
+    const degree = this.buildDegreeNormalization();
+    const requiredSystems = this.buildRequiredSystemsDefaults(droidPanels);
+    const garage = this.buildGarageContext();
+    const flags = this.buildFlagsContext();
+
     return {
       // NOTE: the 'actor' Document is intentionally NOT included; consumers use
       // `document` from the base context.
@@ -111,6 +117,14 @@ export class DroidSheetContextBuilder {
       talents: abilityCards.talents,
       racialAbilities: abilityCards.racialAbilities,
       droidPanels,
+      droid: {
+        degree,
+        layoutMode: degree.layoutMode,
+        systems: droidPanels,
+        requiredSystems,
+        garage,
+        flags
+      },
       user: {
         id: game.user?.id,
         name: game.user?.name,
@@ -721,6 +735,81 @@ export class DroidSheetContextBuilder {
       hasCategories: categories.length > 0,
       largestDriver: largestKey,
       emptyMessage: "No budget allocated yet"
+    };
+  }
+
+  /* ---------------- Phase 3: structured droid context builders ---------------- */
+
+  buildDegreeNormalization() {
+    const DEGREE_MAP = {
+      1: { label: "1st Degree", category: "Medical", ordinal: "1st", layoutMode: "medical" },
+      2: { label: "2nd Degree", category: "Technical", ordinal: "2nd", layoutMode: "technical" },
+      3: { label: "3rd Degree", category: "Social/Protocol", ordinal: "3rd", layoutMode: "social" },
+      4: { label: "4th Degree", category: "Security/Military", ordinal: "4th", layoutMode: "military" },
+      5: { label: "5th Degree", category: "Labor", ordinal: "5th", layoutMode: "labor" }
+    };
+
+    const raw = this.system?.droidSystems?.degree ?? "";
+    // Accept numeric (1) or ordinal string ("1st", "2nd") from actor data
+    const numericValue = Number(String(raw).replace(/\D/g, "")) || 0;
+    const entry = DEGREE_MAP[numericValue] ?? null;
+
+    return {
+      value: numericValue || null,
+      raw,
+      label: entry?.label ?? "",
+      category: entry?.category ?? "",
+      ordinal: entry?.ordinal ?? "",
+      layoutMode: entry?.layoutMode ?? "default",
+      isConfigured: numericValue > 0
+    };
+  }
+
+  buildRequiredSystemsDefaults(droidPanels) {
+    const processorConfigured = droidPanels.processor.hasProcessor;
+    const locomotionConfigured = Boolean(droidPanels.locomotion.name);
+    const appendagesConfigured = droidPanels.appendages.hasEntries;
+    return {
+      processor: {
+        isConfigured: processorConfigured,
+        isDefault: !processorConfigured,
+        defaultName: "Heuristic Processor",
+        defaultLabel: "Type"
+      },
+      locomotion: {
+        isConfigured: locomotionConfigured,
+        isDefault: !locomotionConfigured,
+        defaultName: "Walking",
+        defaultLabel: "Type"
+      },
+      appendages: {
+        isConfigured: appendagesConfigured,
+        isDefault: !appendagesConfigured,
+        defaultName: "2 × Standard Droid Arms",
+        defaultLabel: "Manipulators"
+      }
+    };
+  }
+
+  buildGarageContext() {
+    const isOwner = this.actor?.isOwner === true;
+    const hasConfiguration = Boolean(this.system?.droidSystems?.degree);
+    const isStock = Boolean(this.actor?.flags?.swse?.stockDroidImport);
+    return {
+      canEdit: isOwner,
+      canCustomize: isOwner && hasConfiguration,
+      canConvert: isOwner && isStock,
+      openMode: "edit",
+      hasConfiguration
+    };
+  }
+
+  buildFlagsContext() {
+    const swseFlags = this.actor?.flags?.swse ?? {};
+    return {
+      isStockDroid: Boolean(swseFlags.stockDroidImport),
+      hasConversionReport: Boolean(swseFlags.stockDroidConversionReport),
+      isPendingApproval: Boolean(swseFlags.pendingApproval)
     };
   }
 
