@@ -8,6 +8,7 @@
  * - House Rules (rule configuration)
  * - Store (governance dashboard)
  * - Approvals (droid/custom approvals)
+ * - Healing (party recovery management)
  * - Workspace (GM-owned actors)
  *
  * Architecture: internal page routing, NOT multiple embedded ApplicationV2 windows
@@ -30,6 +31,7 @@ import { HolonetAudience } from "/systems/foundryvtt-swse/scripts/holonet/contra
 import { HolonetMarkupService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js";
 import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE } from "/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js";
 import { HolonetComposerAssist } from "/systems/foundryvtt-swse/scripts/ui/holonet/HolonetComposerAssist.js";
+import { GMHealingTrigger } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js";
 
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -119,6 +121,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
         return this._loadStoreContext();
       case 'approvals':
         return this._loadApprovalsContext();
+      case 'healing':
+        return this._loadHealingContext();
       case 'workspace':
         return this._loadWorkspaceContext();
       default:
@@ -631,6 +635,22 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
+   * Healing page: GM natural healing trigger
+   */
+  async _loadHealingContext() {
+    const summary = await GMHealingTrigger.getHealingSummary();
+    return {
+      pageTitle: 'Natural Healing',
+      pageDescription: 'Trigger natural healing recovery for eligible party members',
+      healingSummary: summary,
+      eligible: summary.eligible,
+      ineligible: summary.ineligible,
+      eligibleActors: summary.eligibleActors || [],
+      ineligibleActors: summary.ineligibleActors || []
+    };
+  }
+
+  /**
    * Workspace page: GM-owned actor access
    * Future: quick-open sheets, pinned actors, active cast
    */
@@ -657,6 +677,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       { id: 'house-rules', label: 'House Rules', icon: 'fa-solid fa-book', description: 'Game rule modifications', badgeCount: counts.houseRules ?? 0 },
       { id: 'store', label: 'Store', icon: 'fa-solid fa-store', description: 'Store governance', badgeCount: counts.store ?? 0 },
       { id: 'approvals', label: 'Approvals', icon: 'fa-solid fa-check-circle', description: 'Pending approvals', badgeCount: counts.approvals ?? 0 },
+      { id: 'healing', label: 'Healing', icon: 'fa-solid fa-heart-pulse', description: 'Party recovery management', badgeCount: counts.healing ?? 0 },
       { id: 'workspace', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access', badgeCount: counts.workspace ?? 0 }
     ];
   }
@@ -703,6 +724,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       await this._wireHouseRulesEvents(root);
     } else if (this.currentPage === 'approvals') {
       await this._wireApprovalsEvents(root);
+    } else if (this.currentPage === 'healing') {
+      await this._wireHealingEvents(root);
     }
   }
 
@@ -1054,6 +1077,23 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
+   * Wire healing page events
+   */
+  async _wireHealingEvents(root) {
+    const pageElement = root.querySelector('.gm-datapad-healing');
+    if (!pageElement) return;
+
+    // Trigger natural healing button
+    const triggerButton = pageElement.querySelector('[data-action="trigger-healing"]');
+    if (triggerButton) {
+      triggerButton.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        await this._triggerNaturalHealing();
+      });
+    }
+  }
+
+  /**
    * Reverse a transaction and adjust credits
    */
   async _reverseTransaction(index) {
@@ -1258,6 +1298,25 @@ export class GMDatapad extends BaseSWSEAppV2 {
     } catch (err) {
       SWSELogger.error('[GMDatapad] Error denying custom purchase:', err);
       ui?.notifications?.error?.(`Failed to deny: ${err.message}`);
+    }
+  }
+
+  /**
+   * Trigger natural healing for eligible party members
+   */
+  async _triggerNaturalHealing() {
+    try {
+      const result = await GMHealingTrigger.triggerNaturalHealing({ isFullRest: true, skipHolonetNotification: false });
+      if (result.success) {
+        ui?.notifications?.info?.(`Natural healing triggered: ${result.totalHealed} actors healed, ${result.totalSkipped} skipped`);
+        SWSELogger.info('[GMDatapad] Natural healing triggered:', result);
+        await this.render(false);
+      } else {
+        ui?.notifications?.error?.(`Failed to trigger healing: ${result.error}`);
+      }
+    } catch (err) {
+      SWSELogger.error('[GMDatapad] Error triggering natural healing:', err);
+      ui?.notifications?.error?.(`Error: ${err.message}`);
     }
   }
 

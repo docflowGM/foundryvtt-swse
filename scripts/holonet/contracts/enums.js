@@ -79,7 +79,10 @@ export const INTENT_TYPE = {
 
   // Follower notifications
   FOLLOWER_CREATED: 'follower.created',
-  FOLLOWER_LEVELED: 'follower.leveled'
+  FOLLOWER_LEVELED: 'follower.leveled',
+  FOLLOWER_KILLED: 'follower.killed',
+  FOLLOWER_HEALED: 'follower.healed',
+  FOLLOWER_WOUNDS_TREATED: 'follower.wounds_treated'
 };
 
 export const DELIVERY_STATE = {

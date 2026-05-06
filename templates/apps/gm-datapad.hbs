@@ -873,6 +873,66 @@
       </div>
     </div>
 
+    {{!-- Healing Page --}}
+    {{else if (eq currentPage "healing")}}
+    <div class="gm-datapad-page gm-datapad-healing">
+      <div class="page-header">
+        <button class="back-button swse-ui-button" data-nav-to="home">← Back</button>
+        <h2>{{pageTitle}}</h2>
+        <p class="page-subtitle">{{pageDescription}}</p>
+      </div>
+
+      <div class="healing-content">
+        <div class="healing-summary swse-ui-panel">
+          <h3>Party Recovery Status</h3>
+          <div class="healing-stats">
+            <div class="stat-box">
+              <span class="stat-label">Eligible for Healing</span>
+              <span class="stat-value eligible">{{eligible}}</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Ineligible / Vehicles / Droids</span>
+              <span class="stat-value ineligible">{{ineligible}}</span>
+            </div>
+          </div>
+
+          <div class="healing-action">
+            <button class="swse-ui-button swse-ui-button-primary" data-action="trigger-healing">
+              <i class="fa-solid fa-heart-pulse"></i> Trigger Natural Healing
+            </button>
+            <p class="action-hint">Triggers recovery for all eligible party members. Fires restCompleted hook for Holonet notifications.</p>
+          </div>
+        </div>
+
+        {{#if eligibleActors.length}}
+        <div class="healing-eligible swse-ui-panel">
+          <h3>Eligible Actors</h3>
+          <ul class="actor-list">
+            {{#each eligibleActors}}
+            <li class="actor-item">
+              <span class="actor-name">{{this.name}}</span>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+        {{/if}}
+
+        {{#if ineligibleActors.length}}
+        <div class="healing-ineligible swse-ui-panel">
+          <h3>Ineligible Actors</h3>
+          <ul class="actor-list">
+            {{#each ineligibleActors}}
+            <li class="actor-item">
+              <span class="actor-name">{{this.name}}</span>
+            </li>
+            {{/each}}
+          </ul>
+          <p class="hint-text">These actors are not eligible: not a character type, is a droid, is a vehicle, or is dead (HP ≤ 0).</p>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+
     {{!-- Workspace Page --}}
     {{else if (eq currentPage "workspace")}}
     <div class="gm-datapad-page gm-datapad-workspace">

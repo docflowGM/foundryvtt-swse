@@ -1,7 +1,7 @@
 /**
  * Follower Source Adapter
  *
- * Export seam for follower creation and level-up events into Holonet
+ * Export seam for follower creation, level-up, death, and healing events into Holonet
  * Does NOT modify follower system logic.
  */
 
@@ -65,6 +65,67 @@ export class FollowerSource {
         previousLevel: data.previousLevel,
         newLevel: data.newLevel,
         reason: 'level-up'
+      }
+    });
+
+    return notification;
+  }
+
+  /**
+   * Create a follower killed/defeated notification
+   *
+   * @param {Object} data
+   * @returns {HolonetNotification}
+   */
+  static createFollowerKilledNotification(data) {
+    const notification = new HolonetNotification({
+      sourceFamily: this.sourceFamily,
+      sourceId: data.followerId,
+      intent: INTENT_TYPE.FOLLOWER_KILLED,
+      sender: HolonetSender.system('Companions'),
+      audience: HolonetAudience.singlePlayer(data.playerUserId),
+      title: `${data.followerName || 'Your Follower'} Has Been Defeated`,
+      body: data.body ?? `${data.followerName || 'Your follower'} has been defeated.`,
+      level: 'error',
+      metadata: {
+        followerId: data.followerId,
+        followerName: data.followerName,
+        ownerActorId: data.ownerActorId,
+        ownerName: data.ownerName,
+        previousHp: data.previousHp,
+        newHp: data.newHp,
+        reason: 'killed'
+      }
+    });
+
+    return notification;
+  }
+
+  /**
+   * Create a follower healed notification
+   *
+   * @param {Object} data
+   * @returns {HolonetNotification}
+   */
+  static createFollowerHealedNotification(data) {
+    const notification = new HolonetNotification({
+      sourceFamily: this.sourceFamily,
+      sourceId: data.followerId,
+      intent: INTENT_TYPE.FOLLOWER_HEALED,
+      sender: HolonetSender.system('Companions'),
+      audience: HolonetAudience.singlePlayer(data.playerUserId),
+      title: `${data.followerName || 'Your Follower'} Has Recovered`,
+      body: data.body ?? `${data.followerName || 'Your follower'} has recovered.`,
+      level: 'success',
+      metadata: {
+        followerId: data.followerId,
+        followerName: data.followerName,
+        ownerActorId: data.ownerActorId,
+        ownerName: data.ownerName,
+        previousHp: data.previousHp,
+        newHp: data.newHp,
+        amountRecovered: data.amountRecovered,
+        reason: 'healed'
       }
     });
 

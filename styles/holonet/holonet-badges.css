@@ -1,0 +1,246 @@
+/**
+ * Holonet Badge Styles
+ *
+ * Visual styling for notification badges across Holonet UI.
+ * Supports multiple badge families with distinct visual identities.
+ */
+
+/* Badge Base Styles */
+.holonet-badge-chip,
+.holonet-badge-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.holonet-badge-label {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+}
+
+.badge-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  font-size: 0.9em;
+}
+
+.badge-label,
+.badge-text {
+  line-height: 1;
+}
+
+.badge-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.2em;
+  height: 1.2em;
+  padding: 0 0.3em;
+  margin-left: 0.2rem;
+  border-radius: 50%;
+  background: currentColor;
+  color: inherit;
+  font-size: 0.7em;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+/* Badge Family Styles */
+
+/* Messages */
+.holonet-badge-messages {
+  background: rgba(100, 150, 255, 0.15);
+  color: #6496ff;
+  border: 1px solid rgba(100, 150, 255, 0.4);
+}
+.holonet-badge-messages:hover {
+  background: rgba(100, 150, 255, 0.25);
+  border-color: rgba(100, 150, 255, 0.6);
+}
+
+/* Store */
+.holonet-badge-store {
+  background: rgba(255, 180, 50, 0.15);
+  color: #ffb432;
+  border: 1px solid rgba(255, 180, 50, 0.4);
+}
+.holonet-badge-store:hover {
+  background: rgba(255, 180, 50, 0.25);
+  border-color: rgba(255, 180, 50, 0.6);
+}
+
+/* Mentor */
+.holonet-badge-mentor {
+  background: rgba(100, 200, 150, 0.15);
+  color: #64c896;
+  border: 1px solid rgba(100, 200, 150, 0.4);
+}
+.holonet-badge-mentor:hover {
+  background: rgba(100, 200, 150, 0.25);
+  border-color: rgba(100, 200, 150, 0.6);
+}
+
+/* Progression */
+.holonet-badge-progression {
+  background: rgba(200, 150, 255, 0.15);
+  color: #c896ff;
+  border: 1px solid rgba(200, 150, 255, 0.4);
+}
+.holonet-badge-progression:hover {
+  background: rgba(200, 150, 255, 0.25);
+  border-color: rgba(200, 150, 255, 0.6);
+}
+
+/* Approvals */
+.holonet-badge-approvals {
+  background: rgba(150, 200, 100, 0.15);
+  color: #96c864;
+  border: 1px solid rgba(150, 200, 100, 0.4);
+}
+.holonet-badge-approvals:hover {
+  background: rgba(150, 200, 100, 0.25);
+  border-color: rgba(150, 200, 100, 0.6);
+}
+
+/* Ship */
+.holonet-badge-ship {
+  background: rgba(100, 200, 255, 0.15);
+  color: #64c8ff;
+  border: 1px solid rgba(100, 200, 255, 0.4);
+}
+.holonet-badge-ship:hover {
+  background: rgba(100, 200, 255, 0.25);
+  border-color: rgba(100, 200, 255, 0.6);
+}
+
+/* Droid */
+.holonet-badge-droid {
+  background: rgba(150, 150, 200, 0.15);
+  color: #9696c8;
+  border: 1px solid rgba(150, 150, 200, 0.4);
+}
+.holonet-badge-droid:hover {
+  background: rgba(150, 150, 200, 0.25);
+  border-color: rgba(150, 150, 200, 0.6);
+}
+
+/* Follower */
+.holonet-badge-follower {
+  background: rgba(255, 150, 100, 0.15);
+  color: #ff9664;
+  border: 1px solid rgba(255, 150, 100, 0.4);
+}
+.holonet-badge-follower:hover {
+  background: rgba(255, 150, 100, 0.25);
+  border-color: rgba(255, 150, 100, 0.6);
+}
+
+/* Healing */
+.holonet-badge-healing {
+  background: rgba(255, 100, 150, 0.15);
+  color: #ff6496;
+  border: 1px solid rgba(255, 100, 150, 0.4);
+}
+.holonet-badge-healing:hover {
+  background: rgba(255, 100, 150, 0.25);
+  border-color: rgba(255, 100, 150, 0.6);
+}
+
+/* System */
+.holonet-badge-system {
+  background: rgba(200, 200, 200, 0.15);
+  color: #c8c8c8;
+  border: 1px solid rgba(200, 200, 200, 0.4);
+}
+.holonet-badge-system:hover {
+  background: rgba(200, 200, 200, 0.25);
+  border-color: rgba(200, 200, 200, 0.6);
+}
+
+/* Bulletin */
+.holonet-badge-bulletin {
+  background: rgba(200, 100, 255, 0.15);
+  color: #c864ff;
+  border: 1px solid rgba(200, 100, 255, 0.4);
+}
+.holonet-badge-bulletin:hover {
+  background: rgba(200, 100, 255, 0.25);
+  border-color: rgba(200, 100, 255, 0.6);
+}
+
+/* Badge Row (Home Grid) */
+.holonet-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+/* Compact Badge Row */
+.holonet-badge-row.compact {
+  gap: 0.3rem;
+}
+.holonet-badge-row.compact .holonet-badge-chip {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Badge Row with No Data */
+.holonet-badge-row.empty {
+  padding: 0.3rem 0;
+  color: rgba(200, 200, 200, 0.5);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+/* Responsive: Stack on Mobile */
+@media (max-width: 600px) {
+  .holonet-badge-chip {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .badge-count {
+    min-width: 1em;
+    height: 1em;
+    font-size: 0.65em;
+  }
+}
+
+/* Active/Focus States */
+.holonet-badge-chip:active {
+  transform: scale(0.95);
+}
+
+.holonet-badge-chip.active {
+  opacity: 1;
+  box-shadow: 0 0 0.5rem currentColor;
+}
+
+/* Disabled State */
+.holonet-badge-chip:disabled,
+.holonet-badge-chip.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Animation: Pulse on New */
+@keyframes badge-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.holonet-badge-chip.new {
+  animation: badge-pulse 1s ease-in-out 3;
+}

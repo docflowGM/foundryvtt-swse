@@ -79,9 +79,55 @@ export function registerHolonetSources() {
   console.log('[Holonet] Sources registered');
 }
 
+/**
+ * Wire store setting changes to Holonet hooks
+ * Bridges HouseRuleService.set() → swseStoreStateChanged/swseStorePriceChanged
+ */
+function wireStoreSettingHooks() {
+  const previousState = {
+    storeOpen: null,
+    globalBuyModifier: null
+  };
+
+  // Listen to any setting change and filter for store-related ones
+  Hooks.on('swse:setting-changed', (key, value) => {
+    // Store open/closed state changed
+    if (key === 'storeOpen' && value !== previousState.storeOpen) {
+      previousState.storeOpen = value;
+      Hooks.callAll('swseStoreStateChanged', {
+        isOpen: value ?? true,
+        reason: value ? 'opened' : 'closed'
+      });
+    }
+
+    // Store buy modifier (price multiplier) changed
+    if (key === 'globalBuyModifier' && value !== previousState.globalBuyModifier) {
+      const previousValue = previousState.globalBuyModifier ?? 0;
+      previousState.globalBuyModifier = value;
+
+      // Classify the change
+      let reason = 'prices-changed';
+      if (value < previousValue) {
+        reason = 'sale'; // Price reduction
+      } else if (value > previousValue) {
+        reason = 'tax'; // Price increase
+      }
+
+      Hooks.callAll('swseStorePriceChanged', {
+        previousModifier: previousValue,
+        newModifier: value ?? 0,
+        reason
+      });
+    }
+  });
+
+  console.log('[Holonet] Store setting hooks wired');
+}
+
 export async function initializeHolonet() {
   await HolonetEngine.initialize();
   await HolonetSourceRegistry.initializeAll();
+  wireStoreSettingHooks(); // Wire store mutations before initializing emitters
   await ProgressionEmitter.initialize();
   await ApprovalsEmitter.initialize();
   await StoreEmitter.initialize();
