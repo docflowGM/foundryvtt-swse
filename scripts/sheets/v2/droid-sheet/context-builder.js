@@ -90,6 +90,9 @@ export class DroidSheetContextBuilder {
     // Phase 4: resolver unifies builder data + item collection into per-region view
     const resolvedSystems = this.buildResolvedSystems();
 
+    // Phase 7: build provenance + missing-systems status card context
+    const sourceStatus = this.buildSourceStatus(resolvedSystems);
+
     // Phase 6: split weapons into combat-classified buckets
     const combatWeapons = this.buildCombatWeaponsContext(weapons);
 
@@ -132,7 +135,8 @@ export class DroidSheetContextBuilder {
         requiredSystems,
         resolvedSystems,
         garage,
-        flags
+        flags,
+        sourceStatus
       },
       user: {
         id: game.user?.id,
@@ -862,6 +866,82 @@ export class DroidSheetContextBuilder {
 
   buildResolvedSystems() {
     return new DroidSystemsResolver(this.actor).resolve();
+  }
+
+  /**
+   * Phase 7: Classify build provenance and surface missing-system warnings.
+   * Receives already-resolved systems to avoid a second DroidSystemsResolver pass.
+   * Pure read — no actor mutations.
+   */
+  buildSourceStatus(resolvedSystems) {
+    const swseFlags = this.actor?.flags?.swse ?? {};
+    const droidSystems = this.system?.droidSystems ?? {};
+    const level = Number(this.system?.level ?? 0);
+    const isOwner = this.actor?.isOwner === true;
+
+    const isStockDroid = Boolean(swseFlags.stockDroidImport);
+    const hasConversionReport = Boolean(swseFlags.stockDroidConversionReport);
+    const hasConfiguration = Boolean(droidSystems.degree);
+    const stateMode = droidSystems.stateMode ?? 'NEW';
+    const isFinalized = stateMode === 'FINALIZED';
+
+    // Source classification — order matters: conversion > import > configured > legacy > manual
+    let buildSource;
+    if (hasConversionReport) {
+      buildSource = 'converted';
+    } else if (isStockDroid) {
+      buildSource = 'imported';
+    } else if (hasConfiguration) {
+      buildSource = 'garage-built';
+    } else if (level > 0) {
+      buildSource = 'legacy';
+    } else {
+      buildSource = 'manual';
+    }
+
+    const SOURCE_LABELS = {
+      'converted': 'Converted Stock Droid',
+      'imported': 'Stock Droid Import',
+      'garage-built': 'Custom Build',
+      'legacy': 'Legacy / Pre-Builder',
+      'manual': 'Unconfigured',
+    };
+
+    // Missing required-system warnings derived from already-resolved data
+    const validationMessages = [];
+    if (!resolvedSystems.processor.isConfigured) {
+      validationMessages.push({ severity: 'warning', text: 'No processor configured — baseline default applied' });
+    }
+    if (!resolvedSystems.locomotion.isConfigured) {
+      validationMessages.push({ severity: 'warning', text: 'No locomotion system configured — walking assumed' });
+    }
+    if (!resolvedSystems.appendages.isConfigured) {
+      validationMessages.push({ severity: 'warning', text: 'No appendages configured — standard droid arms assumed' });
+    }
+    if (!hasConfiguration) {
+      validationMessages.push({ severity: 'info', text: 'Droid degree not set — affects trained skills and ability bonuses' });
+    }
+
+    const garageRecommended =
+      isOwner &&
+      !isFinalized &&
+      (validationMessages.length > 0 || buildSource === 'legacy' || buildSource === 'manual');
+
+    return {
+      buildSource,
+      sourceLabel: SOURCE_LABELS[buildSource] ?? 'Unknown',
+      isChargenBuilt: buildSource === 'garage-built',
+      isImported: isStockDroid,
+      isConverted: hasConversionReport,
+      isManualOrLegacy: buildSource === 'manual' || buildSource === 'legacy',
+      isFinalized,
+      garageRecommended,
+      hasConfiguration,
+      importedFrom: swseFlags.stockDroidImport?.sourceName ?? null,
+      convertedFrom: swseFlags.stockDroidConversionReport?.sourceName ?? null,
+      validationMessages,
+      hasValidationMessages: validationMessages.length > 0,
+    };
   }
 
   buildGarageContext() {

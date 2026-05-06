@@ -395,3 +395,108 @@
   gap: 4px;
   margin-top: 4px;
 }
+
+/* ================================================================
+   PHASE 7: BUILD SOURCE STATUS CARD
+   ================================================================ */
+
+.swse-droid-sheet .swse-droid-status-card {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-droid-sheet .swse-droid-status-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Source badge — base chip (colour variants below) */
+.swse-droid-sheet .swse-droid-source-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+.swse-droid-sheet .swse-droid-source-garage-built {
+  background: rgba(0, 217, 255, 0.1);
+  color: var(--swse-accent, #00d9ff);
+  border-color: rgba(0, 217, 255, 0.3);
+}
+
+.swse-droid-sheet .swse-droid-source-imported {
+  background: rgba(140, 100, 255, 0.1);
+  color: #b09fff;
+  border-color: rgba(140, 100, 255, 0.3);
+}
+
+.swse-droid-sheet .swse-droid-source-converted {
+  background: rgba(80, 200, 140, 0.1);
+  color: #7dd9ae;
+  border-color: rgba(80, 200, 140, 0.3);
+}
+
+.swse-droid-sheet .swse-droid-source-legacy,
+.swse-droid-sheet .swse-droid-source-manual {
+  background: rgba(255, 180, 40, 0.1);
+  color: var(--swse-warning, #ffd66b);
+  border-color: rgba(255, 180, 40, 0.3);
+}
+
+/* Origin hint (e.g. "from: R2-D2 Stock") */
+.swse-droid-sheet .swse-droid-status-origin {
+  font-size: 0.78rem;
+  opacity: 0.55;
+}
+
+/* Missing-systems validation list */
+.swse-droid-sheet .swse-droid-validation-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swse-droid-sheet .swse-droid-validation-item {
+  font-size: 0.78rem;
+  padding: 4px 8px;
+  border-radius: 3px;
+  border-left: 3px solid;
+}
+
+.swse-droid-sheet .swse-droid-validation-warning {
+  background: rgba(255, 180, 40, 0.08);
+  border-color: rgba(255, 180, 40, 0.4);
+  color: var(--swse-warning, #ffd66b);
+  opacity: 0.9;
+}
+
+.swse-droid-sheet .swse-droid-validation-info {
+  background: rgba(0, 217, 255, 0.06);
+  border-color: rgba(0, 217, 255, 0.3);
+  opacity: 0.75;
+}
+
+/* Garage CTA row inside the status card */
+.swse-droid-sheet .swse-droid-garage-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0 2px;
+}
+
+.swse-droid-sheet .swse-droid-garage-cta-text {
+  font-size: 0.82rem;
+  opacity: 0.65;
+}

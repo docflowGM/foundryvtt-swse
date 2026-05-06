@@ -293,6 +293,9 @@
         {{!-- ── HEADER: degree / size / budget / Garage edit button ─────── --}}
         {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs"}}
 
+        {{!-- ── BUILD STATUS CARD (Phase 7) — source badge + warnings + Garage CTA --}}
+        {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-status-card.hbs"}}
+
         {{!-- ── LOCK BANNER — shown when systems are finalized or in-play ── --}}
         {{#if droid.garage.systemsLocked}}
           <div class="swse-droid-lock-banner">
