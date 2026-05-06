@@ -307,3 +307,50 @@
   opacity: 0.5;
   margin: 4px 0 0;
 }
+
+/* ================================================================
+   PHASE 5: LOCK BANNER + REGION WRAPPERS
+   ================================================================ */
+
+/* Locked/finalized status banner shown between summary strip and map */
+.swse-droid-sheet .swse-droid-lock-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 200, 80, 0.2);
+  border-radius: 6px;
+  font-size: 0.82rem;
+}
+
+.swse-droid-sheet .swse-droid-lock-icon {
+  color: var(--swse-warning, #ffd66b);
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+.swse-droid-sheet .swse-droid-lock-text {
+  flex: 1;
+  opacity: 0.65;
+}
+
+/* Per-region wrapper — grid item that stacks panel above action row */
+.swse-droid-sheet .swse-droid-region-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swse-droid-sheet .swse-droid-region-wrapper > .swse-panel,
+.swse-droid-sheet .swse-droid-region-wrapper > section {
+  flex: 1;
+}
+
+/* Action row at the bottom of each region */
+.swse-droid-sheet .swse-droid-region-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  min-height: 0;
+}

@@ -824,14 +824,32 @@ export class DroidSheetContextBuilder {
 
   buildGarageContext() {
     const isOwner = this.actor?.isOwner === true;
-    const hasConfiguration = Boolean(this.system?.droidSystems?.degree);
+    const droidSystems = this.system?.droidSystems ?? {};
+    const hasConfiguration = Boolean(droidSystems.degree);
     const isStock = Boolean(this.actor?.flags?.swse?.stockDroidImport);
+
+    // Phase 5: lock detection — canonical flag is stateMode === 'FINALIZED'
+    const isFinalized = droidSystems.stateMode === 'FINALIZED';
+    // Safe heroic fallback: droids in play (level > 0) with a builder config
+    // show systems as managed-through-Garage even if not yet finalized.
+    const isInPlay = Number(this.system?.level ?? 0) > 0 && hasConfiguration;
+    const systemsLocked = isFinalized || isInPlay;
+    const lockReason = isFinalized
+      ? 'Configuration finalized — edit via Garage'
+      : isInPlay ? 'Systems managed through Garage' : null;
+
     return {
       canEdit: isOwner,
       canCustomize: isOwner && hasConfiguration,
       canConvert: isOwner && isStock,
-      openMode: "edit",
-      hasConfiguration
+      openMode: hasConfiguration ? 'EDIT' : 'NEW',
+      hasConfiguration,
+      // Phase 5
+      systemsLocked,
+      isFinalized,
+      lockReason,
+      canOpenGarage: isOwner,
+      canManageSystems: isOwner,
     };
   }
 

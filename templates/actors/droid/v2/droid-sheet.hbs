@@ -257,59 +257,97 @@
         </div>
       </section>
 
-      {{!-- SYSTEMS TAB (Phase 4: resolver-driven regions) --}}
-      {{!-- droid.resolvedSystems.* is the unified view from DroidSystemsResolver:
-           builder data (system.droidSystems) + item collection, merged and deduped.
-           Required regions show DEFAULT badges when unconfigured; optional regions
-           delegate to existing partials which handle their own empty states. --}}
+      {{!-- SYSTEMS TAB (Phase 5: locked/read-only + Garage handoff) --}}
+      {{!-- droid.resolvedSystems.*  — unified resolver view (Phase 4)
+           droid.garage.*           — lock state + Garage access flags (Phase 5)
+             .systemsLocked         — true when finalized or in-play
+             .lockReason            — human-readable reason string
+             .canOpenGarage         — owner permission to launch Garage
+             .canManageSystems      — same as canOpenGarage (alias for template clarity)
+           All .edit-droid-systems buttons are wired by wireDroidSystemsEditor()
+           in listeners.js — no new JS listeners required. --}}
       <section class="tab" data-group="primary" data-tab="systems">
 
         {{!-- ── HEADER: degree / size / budget / Garage edit button ─────── --}}
         {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs"}}
 
+        {{!-- ── LOCK BANNER — shown when systems are finalized or in-play ── --}}
+        {{#if droid.garage.systemsLocked}}
+          <div class="swse-droid-lock-banner">
+            <i class="fa-solid fa-lock swse-droid-lock-icon"></i>
+            <span class="swse-droid-lock-text">{{droid.garage.lockReason}}</span>
+            {{#if droid.garage.canOpenGarage}}
+              <button type="button" class="edit-droid-systems holo-btn small" aria-label="Open Garage to modify droid systems">
+                <i class="fa-solid fa-screwdriver-wrench"></i> Open Garage
+              </button>
+            {{/if}}
+          </div>
+        {{/if}}
+
         {{!-- ── SYSTEMS MAP GRID ───────────────────────────────────────── --}}
+        {{!-- Each region is wrapped in .swse-droid-region-wrapper so the
+             per-region Garage manage button stacks below the panel content.
+             The wrapper is the grid item; the panel inside fills flex: 1. --}}
         <div class="swse-droid-systems-map">
 
           {{!-- ROW 1: Core compute & movement (both required) --}}
           <div class="swse-droid-systems-row">
 
             {{!-- Processor — droid.resolvedSystems.processor --}}
-            {{#if droid.resolvedSystems.processor.isConfigured}}
-              {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs"}}
-            {{else}}
-              <section class="swse-panel swse-droid-default-region">
-                <header class="section-bar">
-                  <h3 class="section-header">Processor</h3>
-                  <span class="swse-droid-default-badge">DEFAULT</span>
-                </header>
-                <div class="swse-droid-default-content">
-                  <div class="config-item">
-                    <span class="label">{{droid.resolvedSystems.processor.defaultLabel}}:</span>
-                    <span class="value">{{droid.resolvedSystems.processor.defaultName}}</span>
+            <div class="swse-droid-region-wrapper">
+              {{#if droid.resolvedSystems.processor.isConfigured}}
+                {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs"}}
+              {{else}}
+                <section class="swse-panel swse-droid-default-region">
+                  <header class="section-bar">
+                    <h3 class="section-header">Processor</h3>
+                    <span class="swse-droid-default-badge">DEFAULT</span>
+                  </header>
+                  <div class="swse-droid-default-content">
+                    <div class="config-item">
+                      <span class="label">{{droid.resolvedSystems.processor.defaultLabel}}:</span>
+                      <span class="value">{{droid.resolvedSystems.processor.defaultName}}</span>
+                    </div>
+                    <p class="swse-droid-default-hint">{{droid.resolvedSystems.processor.warning}}</p>
                   </div>
-                  <p class="swse-droid-default-hint">{{droid.resolvedSystems.processor.warning}}</p>
+                </section>
+              {{/if}}
+              {{#if droid.garage.canOpenGarage}}
+                <div class="swse-droid-region-actions">
+                  <button type="button" class="edit-droid-systems holo-btn small" data-region="processor" aria-label="Manage processor in Garage">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                  </button>
                 </div>
-              </section>
-            {{/if}}
+              {{/if}}
+            </div>
 
             {{!-- Locomotion — droid.resolvedSystems.locomotion --}}
-            {{#if droid.resolvedSystems.locomotion.isConfigured}}
-              {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs"}}
-            {{else}}
-              <section class="swse-panel swse-droid-default-region">
-                <header class="section-bar">
-                  <h3 class="section-header">Locomotion</h3>
-                  <span class="swse-droid-default-badge">DEFAULT</span>
-                </header>
-                <div class="swse-droid-default-content">
-                  <div class="config-item">
-                    <span class="label">{{droid.resolvedSystems.locomotion.defaultLabel}}:</span>
-                    <span class="value">{{droid.resolvedSystems.locomotion.defaultName}}</span>
+            <div class="swse-droid-region-wrapper">
+              {{#if droid.resolvedSystems.locomotion.isConfigured}}
+                {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs"}}
+              {{else}}
+                <section class="swse-panel swse-droid-default-region">
+                  <header class="section-bar">
+                    <h3 class="section-header">Locomotion</h3>
+                    <span class="swse-droid-default-badge">DEFAULT</span>
+                  </header>
+                  <div class="swse-droid-default-content">
+                    <div class="config-item">
+                      <span class="label">{{droid.resolvedSystems.locomotion.defaultLabel}}:</span>
+                      <span class="value">{{droid.resolvedSystems.locomotion.defaultName}}</span>
+                    </div>
+                    <p class="swse-droid-default-hint">{{droid.resolvedSystems.locomotion.warning}}</p>
                   </div>
-                  <p class="swse-droid-default-hint">{{droid.resolvedSystems.locomotion.warning}}</p>
+                </section>
+              {{/if}}
+              {{#if droid.garage.canOpenGarage}}
+                <div class="swse-droid-region-actions">
+                  <button type="button" class="edit-droid-systems holo-btn small" data-region="locomotion" aria-label="Manage locomotion in Garage">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                  </button>
                 </div>
-              </section>
-            {{/if}}
+              {{/if}}
+            </div>
 
           </div>
 
@@ -317,44 +355,86 @@
           <div class="swse-droid-systems-row">
 
             {{!-- Appendages — droid.resolvedSystems.appendages --}}
-            {{#if droid.resolvedSystems.appendages.isConfigured}}
-              {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs"}}
-            {{else}}
-              <section class="swse-panel swse-droid-default-region">
-                <header class="section-bar">
-                  <h3 class="section-header">Appendages</h3>
-                  <span class="swse-droid-default-badge">DEFAULT</span>
-                </header>
-                <div class="swse-droid-default-content">
-                  <div class="config-item">
-                    <span class="label">{{droid.resolvedSystems.appendages.defaultLabel}}:</span>
-                    <span class="value">{{droid.resolvedSystems.appendages.defaultName}}</span>
+            <div class="swse-droid-region-wrapper">
+              {{#if droid.resolvedSystems.appendages.isConfigured}}
+                {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs"}}
+              {{else}}
+                <section class="swse-panel swse-droid-default-region">
+                  <header class="section-bar">
+                    <h3 class="section-header">Appendages</h3>
+                    <span class="swse-droid-default-badge">DEFAULT</span>
+                  </header>
+                  <div class="swse-droid-default-content">
+                    <div class="config-item">
+                      <span class="label">{{droid.resolvedSystems.appendages.defaultLabel}}:</span>
+                      <span class="value">{{droid.resolvedSystems.appendages.defaultName}}</span>
+                    </div>
+                    <p class="swse-droid-default-hint">{{droid.resolvedSystems.appendages.warning}}</p>
                   </div>
-                  <p class="swse-droid-default-hint">{{droid.resolvedSystems.appendages.warning}}</p>
+                </section>
+              {{/if}}
+              {{#if droid.garage.canOpenGarage}}
+                <div class="swse-droid-region-actions">
+                  <button type="button" class="edit-droid-systems holo-btn small" data-region="appendages" aria-label="Manage appendages in Garage">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                  </button>
                 </div>
-              </section>
-            {{/if}}
+              {{/if}}
+            </div>
 
-            {{!-- Armor / Body: optional, shows empty state when absent --}}
-            {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-armor-panel.hbs"}}
+            {{!-- Armor / Body: optional --}}
+            <div class="swse-droid-region-wrapper">
+              {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-armor-panel.hbs"}}
+              {{#if droid.garage.canOpenGarage}}
+                <div class="swse-droid-region-actions">
+                  <button type="button" class="edit-droid-systems holo-btn small" data-region="armor" aria-label="Manage armor in Garage">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                  </button>
+                </div>
+              {{/if}}
+            </div>
 
           </div>
 
           {{!-- ROW 3: Detection & integrated weaponry (both optional) --}}
           <div class="swse-droid-systems-row">
-            {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-sensors-panel.hbs"}}
-            {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-weapons-panel.hbs"}}
+            <div class="swse-droid-region-wrapper">
+              {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-sensors-panel.hbs"}}
+              {{#if droid.garage.canOpenGarage}}
+                <div class="swse-droid-region-actions">
+                  <button type="button" class="edit-droid-systems holo-btn small" data-region="sensors" aria-label="Manage sensors in Garage">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                  </button>
+                </div>
+              {{/if}}
+            </div>
+            <div class="swse-droid-region-wrapper">
+              {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-weapons-panel.hbs"}}
+              {{#if droid.garage.canOpenGarage}}
+                <div class="swse-droid-region-actions">
+                  <button type="button" class="edit-droid-systems holo-btn small" data-region="integrated-weapons" aria-label="Manage integrated weapons in Garage">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                  </button>
+                </div>
+              {{/if}}
+            </div>
           </div>
 
           {{!-- ROW 4: Integrated equipment/accessories (full-width) --}}
-          {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs"}}
+          <div class="swse-droid-region-wrapper">
+            {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs"}}
+            {{#if droid.garage.canOpenGarage}}
+              <div class="swse-droid-region-actions">
+                <button type="button" class="edit-droid-systems holo-btn small" data-region="integrated-systems" aria-label="Manage integrated systems in Garage">
+                  <i class="fa-solid fa-screwdriver-wrench"></i> Manage
+                </button>
+              </div>
+            {{/if}}
+          </div>
 
         </div>
 
-        {{!-- ── DIAGNOSTICS: configuration status + issues list ─────────── --}}
-        {{!-- droid-validation-panel renders readiness status and any issues
-             (missing required systems, over-budget, etc.) from DroidValidationEngine.
-             On a fresh unconfigured droid this will list all missing components. --}}
+        {{!-- ── DIAGNOSTICS ──────────────────────────────────────────────── --}}
         {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-validation-panel.hbs"}}
 
       </section>
