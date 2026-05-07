@@ -367,35 +367,35 @@
     {
       "name": "vehicles-starships",
       "label": "Vehicles - Starships",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/vehicles-starships.db"
     },
     {
       "name": "vehicles-stations",
       "label": "Vehicles - Stations",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/vehicles-stations.db"
     },
     {
       "name": "vehicles-walkers",
       "label": "Vehicles - Walkers",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/vehicles-walkers.db"
     },
     {
       "name": "vehicles-speeders",
       "label": "Vehicles - Speeders",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/vehicles-speeders.db"
     },
     {
       "name": "vehicles",
       "label": "Vehicles (All)",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/vehicles.db"
     },
@@ -528,14 +528,14 @@
     {
       "name": "heroic",
       "label": "Heroic Classes",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/heroic.db"
     },
     {
       "name": "nonheroic",
       "label": "Nonheroic Classes",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/nonheroic.db"
     },
