@@ -160,10 +160,13 @@ function hasException(line) {
 }
 
 /**
- * Check if a line has metadata-specific exception annotation
+ * Check if a line has valid mutation exception annotation
  */
 function hasMetadataException(line) {
   return line.includes('@mutation-exception: metadata') ||
+         line.includes('@mutation-exception: legacy-disabled-sheet') ||
+         line.includes('@mutation-exception: legacy-disabled-infrastructure') ||
+         line.includes('@mutation-exception: legacy-disabled') ||
          line.includes('MUTATION EXCEPTION: metadata');
 }
 
