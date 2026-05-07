@@ -196,6 +196,6 @@ function buildTalents(actor) {
 
 function buildForcePowers(actor) {
   return (actor?.items || [])
-    .filter((i) => i.type === 'forcepower' || i.type === 'force-power')
+    .filter((i) => i.type === 'force-power' || i.type === 'force-power')
     .map((p) => p.name || '');
 }

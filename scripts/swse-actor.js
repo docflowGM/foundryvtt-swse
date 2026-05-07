@@ -269,8 +269,8 @@ export class SWSEActorSheet extends ActorSheet {
     context.defenseList = defenses;
     context.skillsList = skills;
     context.featureItems = items.filter(item => ['feat', 'talent'].includes(item.type));
-    context.forcePowers = items.filter(item => item.type === 'forcepower');
-    context.inventoryItems = items.filter(item => !['class', 'forcepower', 'feat', 'talent'].includes(item.type));
+    context.forcePowers = items.filter(item => item.type === 'force-power');
+    context.inventoryItems = items.filter(item => !['class', 'force-power', 'feat', 'talent'].includes(item.type));
     context.weaponsList = system.weapons || [];
     context.hpPercent = Math.max(0, Math.min(100, Math.round(((system.hp?.value || 0) / Math.max(system.hp?.max || 1, 1)) * 100)));
     context.xpPercent = Math.max(0, Math.min(100, Math.round(((system.xp?.value || 0) / Math.max(system.xp?.required || 1, 1)) * 100)));
@@ -344,7 +344,7 @@ export class SWSEActorSheet extends ActorSheet {
   async _onRemoveFeat(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".list-entry")?.dataset.index); const feats = foundry.utils.duplicate(this.actor.system.feats || []); feats.splice(idx, 1); await this.actor.update({"system.feats": feats}); }
   async _onAddTalent(event) { event.preventDefault(); const talents = foundry.utils.duplicate(this.actor.system.talents || []); talents.push({ name: "New Talent", description: "" }); await this.actor.update({"system.talents": talents}); }
   async _onRemoveTalent(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".list-entry")?.dataset.index); const talents = foundry.utils.duplicate(this.actor.system.talents || []); talents.splice(idx, 1); await this.actor.update({"system.talents": talents}); }
-  async _onAddForcePower(event) { event.preventDefault(); await this.actor.createEmbeddedDocuments("Item", [{ name: "New Force Power", type: "forcepower", system: { uses: { current: 1, max: 1 } } }]); }
+  async _onAddForcePower(event) { event.preventDefault(); await this.actor.createEmbeddedDocuments("Item", [{ name: "New Force Power", type: "force-power", system: { uses: { current: 1, max: 1 } } }]); }
   async _onRemoveForcePower(event) { event.preventDefault(); const itemId = event.currentTarget.closest(".forcepower-entry")?.dataset.itemId; if (itemId) { const item = this.actor.items.get(itemId); if (item) await item.delete(); } }
   async _onRollForcePower(event) {
     event.preventDefault();
@@ -352,7 +352,7 @@ export class SWSEActorSheet extends ActorSheet {
     if (!itemId) return;
     await rollForcePower(this.actor, itemId);
   }
-  async _onRefreshForcePowers(event) { event.preventDefault(); const forcePowers = ActorAbilityBridge.getForcePowers(this.actor); const actorItems = this.actor.items.filter(i => i.type === "forcepower"); for (const power of forcePowers) { const actorItem = actorItems.find(a => a.name === power.name); if (actorItem) { await actorItem.update({"system.uses.current": power.system.uses.max}); } } ui.notifications.info("All Force Powers refreshed!"); }
+  async _onRefreshForcePowers(event) { event.preventDefault(); const forcePowers = ActorAbilityBridge.getForcePowers(this.actor); const actorItems = this.actor.items.filter(i => i.type === "force-power"); for (const power of forcePowers) { const actorItem = actorItems.find(a => a.name === power.name); if (actorItem) { await actorItem.update({"system.uses.current": power.system.uses.max}); } } ui.notifications.info("All Force Powers refreshed!"); }
   async _onReloadForcePower(event) { event.preventDefault(); if (this.actor.system.forcePoints.value <= 0) { ui.notifications.warn("No Force Points remaining!"); return; } const itemId = event.currentTarget.closest(".forcepower-entry")?.dataset.itemId; const power = this.actor.items.get(itemId); if (!power) return; await this.actor.update({"system.forcePoints.value": this.actor.system.forcePoints.value - 1}); await power.update({"system.uses.current": power.system.uses.max}); ui.notifications.info(`${power.name} reloaded with Force Point!`); }
   async _onAddSkill(event) { event.preventDefault(); const skills = foundry.utils.duplicate(this.actor.system.customSkills || []); skills.push({ name: "New Skill", value: 0, ability: "str" }); await this.actor.update({"system.customSkills": skills}); }
   async _onRemoveSkill(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".list-entry")?.dataset.index); const skills = foundry.utils.duplicate(this.actor.system.customSkills || []); skills.splice(idx, 1); await this.actor.update({"system.customSkills": skills}); }

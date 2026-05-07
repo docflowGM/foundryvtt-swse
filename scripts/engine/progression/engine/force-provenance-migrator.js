@@ -33,7 +33,7 @@ export class ForceProvenanceMigrator {
     try {
       // Check if actor has any force powers without provenance
       const powersWithoutProvenance = actor.items.filter(i =>
-        i.type === 'forcepower' && !i.system?.provenance?.grantSourceId
+        i.type === 'force-power' && !i.system?.provenance?.grantSourceId
       );
 
       if (powersWithoutProvenance.length === 0) {
@@ -225,7 +225,7 @@ export class ForceProvenanceMigrator {
     }
 
     return actor.items.some(i =>
-      i.type === 'forcepower' && !i.system?.provenance?.grantSourceId
+      i.type === 'force-power' && !i.system?.provenance?.grantSourceId
     );
   }
 
@@ -248,7 +248,7 @@ export class ForceProvenanceMigrator {
     }
 
     const powersWithoutProvenance = actor.items.filter(i =>
-      i.type === 'forcepower' && !i.system?.provenance?.grantSourceId
+      i.type === 'force-power' && !i.system?.provenance?.grantSourceId
     );
 
     if (powersWithoutProvenance.length === 0) {

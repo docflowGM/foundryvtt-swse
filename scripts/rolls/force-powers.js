@@ -28,7 +28,7 @@ export async function rollForcePower(actor, itemId, options = {}) {
     return null;
   }
 
-  if (!['forcepower', 'force-power'].includes(item.type)) {
+  if (!['force-power', 'force-power'].includes(item.type)) {
     ui.notifications.warn(`Item ${item.name} is not a force power`);
     return null;
   }

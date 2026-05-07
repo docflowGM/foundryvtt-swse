@@ -1460,8 +1460,8 @@ if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
         return { cancelled: true };
       }
 
-      // Read dex mod from derived (SOVEREIGNTY: single authority)
-      const dexMod = actor.system.derived?.attributes?.dex?.mod ?? actor.system.attributes?.dex?.mod ?? 0;
+      // Read dex mod from abilities (SOVEREIGNTY: single authority)
+      const dexMod = actor.system.abilities?.dex?.mod ?? 0;
       const initBonus = actor.system.derived?.initiative?.adjustment ?? actor.system.initiative?.misc ?? 0;
       const total = dexMod + initBonus;
 

@@ -20,12 +20,11 @@ export class MutationPathValidator {
   static PROGRESSION_SENSITIVE_FIELDS = [
     'system.level',
     'system.progression',
-    'system.attributes',
+    'system.abilities',
     'system.hp',
     'system.skills',
     'system.feats',
-    'system.talents',
-    'system.abilities'
+    'system.talents'
   ];
 
   static AUTHORIZED_MUTATION_CALLERS = [
@@ -89,7 +88,7 @@ export class MutationPathValidator {
       coverage: {
         'system.level': 'Only ActorEngine.updateActor()',
         'system.progression.*': 'Only ActorEngine.updateActor()',
-        'system.attributes': 'Only ActorEngine.updateActor()',
+        'system.abilities': 'Only ActorEngine.updateActor()',
         'system.hp': 'ActorEngine.updateActor() or createEmbeddedDocuments()',
         'Items (feats/talents/powers)': 'ActorEngine.createEmbeddedDocuments()'
       }

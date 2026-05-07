@@ -66,7 +66,7 @@ export function initializeForcePowerHooks() {
     if (!changes.system?.abilities) {return;}
 
     // Store old abilities for comparison
-    options.oldAbilities = foundry.utils.deepClone(actor.system.attributes);
+    options.oldAbilities = foundry.utils.deepClone(actor.system.abilities);
   });
 
   Hooks.on('updateActor', async (actor, changes, options, userId) => {
@@ -90,7 +90,7 @@ export function initializeForcePowerHooks() {
     if (ForcePowerManager.countForceTrainingFeats(actor) === 0) {return;}
 
     const oldAbilities = options.oldAbilities;
-    const newAbilities = actor.system.attributes;
+    const newAbilities = actor.system.abilities;
 
     SWSELogger.log('SWSE | Force Powers | Checking for ability modifier increase');
 
@@ -108,7 +108,7 @@ export function initializeForcePowerHooks() {
       if (!combatant.actor) {continue;}
 
       const spentPowers = combatant.actor.items.filter(i =>
-        (i.type === 'forcepower' || i.type === 'force-power') && i.system.spent
+        i.type === 'force-power' && i.system.spent
       );
 
       if (spentPowers.length > 0) {
@@ -137,7 +137,7 @@ export function initializeForcePowerHooks() {
     if (game.user.id !== userId) {return;}
 
     // Only process force powers
-    if (!['forcepower', 'force-power'].includes(item.type)) {return;}
+    if (item.type !== 'force-power') {return;}
 
     // Only process if item has a parent actor
     if (!item.parent || item.parent.documentName !== 'Actor') {return;}

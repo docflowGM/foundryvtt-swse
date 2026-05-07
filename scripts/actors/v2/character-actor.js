@@ -164,7 +164,7 @@ function mirrorIdentity(actor, system) {
   const ABILITY_LABELS = { 'str': 'Strength', 'dex': 'Dexterity', 'con': 'Constitution', 'int': 'Intelligence', 'wis': 'Wisdom', 'cha': 'Charisma' };
 
   i.abilities = [];
-  const abilities = system.abilities ?? system.attributes ?? {};
+  const abilities = system.abilities ?? {};
   for (const key of ABILITY_KEYS) {
     const a = abilities[key] ?? {};
     const total = safeNumber(a.total ?? a.value ?? a.base, 10);
@@ -595,7 +595,7 @@ function mirrorActions(actor, system) {
     }
 
     // Force powers: show a "Use" action.
-    if (type === "forcepower") {
+    if (type === "force-power") {
       const entry = {
         key: `item:${it.id}:use`,
         name: `Use: ${it.name}`,

@@ -16,7 +16,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 export function registerImmutabilityHooks() {
   // Hook 1: Prevent deletion of locked powers
   Hooks.on('preDeleteItem', (item, options, userId) => {
-    if (!item || item.type !== 'forcepower') {
+    if (!item || item.type !== 'force-power') {
       return true; // Allow deletion of non-force-power items
     }
 
@@ -60,7 +60,7 @@ export function registerImmutabilityHooks() {
 
   // Hook 2: Prevent modification of immutability flags on locked powers
   Hooks.on('preUpdateItem', (item, updates, options, userId) => {
-    if (!item || item.type !== 'forcepower') {
+    if (!item || item.type !== 'force-power') {
       return true; // Allow updates to non-force-power items
     }
 
@@ -99,7 +99,7 @@ export function registerImmutabilityHooks() {
  * @returns {boolean} true if power cannot be deleted
  */
 export function isForcePowerImmutable(powerItem) {
-  if (!powerItem || powerItem.type !== 'forcepower') {
+  if (!powerItem || powerItem.type !== 'force-power') {
     return false;
   }
 

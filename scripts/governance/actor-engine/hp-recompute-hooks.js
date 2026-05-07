@@ -4,7 +4,7 @@
  *
  * Triggers:
  * - actor.system.level change
- * - actor.system.attributes.con.* changes
+ * - actor.system.abilities.con.* changes
  * - actor.system.hp.bonus changes
  * - Class item create/update/delete
  *
@@ -59,15 +59,15 @@ export class HPRecomputeHooks {
         return;
       }
 
-      // Flatten the update to detect nested changes like system.attributes.con.base
+      // Flatten the update to detect nested changes like system.abilities.con.base
       const flat = foundry.utils.flattenObject(data);
 
       const triggerKeys = [
         "system.level",
-        "system.attributes.con.base",
-        "system.attributes.con.racial",
-        "system.attributes.con.enhancement",
-        "system.attributes.con.temp",
+        "system.abilities.con.base",
+        "system.abilities.con.racial",
+        "system.abilities.con.enhancement",
+        "system.abilities.con.temp",
         "system.hp.bonus"
       ];
 

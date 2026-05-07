@@ -161,7 +161,7 @@ export class PrerequisiteIntegrityChecker {
     if (!item.type) return false;
 
     // Only evaluate items that CAN have prerequisites
-    const evaluableTypes = ['feat', 'talent', 'class', 'power', 'forcepower'];
+    const evaluableTypes = ['feat', 'talent', 'class', 'power', 'force-power'];
     if (!evaluableTypes.includes(item.type)) {
       return false;
     }

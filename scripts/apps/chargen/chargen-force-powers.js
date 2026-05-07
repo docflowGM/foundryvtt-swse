@@ -46,7 +46,7 @@ export async function _onSelectForcePower(event) {
   // If leveling up, also check existing actor items
   if (this.actor) {
     const existsOnActor = this.actor.items.some(item =>
-      item.type === 'forcepower' && (item.name === power.name || item.id === power._id)
+      item.type === 'force-power' && (item.name === power.name || item.id === power._id)
     );
     if (existsOnActor) {
       ui.notifications.warn(`"${power.name}" is already on your character sheet!`);

@@ -69,8 +69,8 @@ export class LevelDiffInspector {
         }
 
         // Force power changes
-        const powersBefore = (beforeData.items || []).filter(i => i.type === 'forcepower').map(p => p.name);
-        const powersAfter = (afterData.items || []).filter(i => i.type === 'forcepower').map(p => p.name);
+        const powersBefore = (beforeData.items || []).filter(i => i.type === 'force-power').map(p => p.name);
+        const powersAfter = (afterData.items || []).filter(i => i.type === 'force-power').map(p => p.name);
         const newPowers = powersAfter.filter(p => !powersBefore.includes(p));
 
         if (newPowers.length > 0) {

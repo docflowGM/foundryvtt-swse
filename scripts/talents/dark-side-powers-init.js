@@ -39,7 +39,7 @@ Hooks.once('ready', () => {
       return;
     }
 
-    const actorPowerItems = actor.items.filter(item => item.type === 'forcepower');
+    const actorPowerItems = actor.items.filter(item => item.type === 'force-power');
     const powerOptions = powersFromRegistry
       .map(p => {
         const actorItem = actorPowerItems.find(a => a.name === p.name);

@@ -942,7 +942,7 @@ export class CustomItemDialog {
         return this.createFeat(actor);
       case 'talent':
         return this.createTalent(actor);
-      case 'forcepower':
+      case 'force-power':
       case 'force-power':
         return this.createForcePower(actor);
       default:

@@ -32,7 +32,7 @@ export class ForceExecutor {
   static async activateForce(actor, powerId, recover = false) {
     try {
       const power = actor.items.get(powerId);
-      if (!power || (power.type !== "force-power" && power.type !== "forcepower")) {
+      if (!power || power.type !== "force-power") {
         throw new Error("Force power not found");
       }
 
@@ -221,7 +221,7 @@ export class ForceExecutor {
       } else {
         // Recover all discarded force powers
         powersToRecover = actor.items.filter(item =>
-          (item.type === "force-power" || item.type === "forcepower") && item.system?.discarded
+          (item.type === "force-power" || item.type === "force-power") && item.system?.discarded
         );
       }
 

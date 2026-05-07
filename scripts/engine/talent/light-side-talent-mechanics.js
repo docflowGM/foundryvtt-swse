@@ -469,7 +469,7 @@ export class LightSideTalentMechanics {
 
     // Get available Force Powers (not spent)
     const forcePowers = actor.items.filter(item =>
-      item.type === 'forcepower' && item.system?.spent === false
+      item.type === 'force-power' && item.system?.spent === false
     );
 
     if (forcePowers.length === 0) {
@@ -1369,7 +1369,7 @@ Hooks.on('directTriggered', async (actor) => {
 
             // Get spent Force Powers from ally
             const spentPowers = ally.items.filter(item =>
-              item.type === 'forcepower' && item.system?.spent === true
+              item.type === 'force-power' && item.system?.spent === true
             );
 
             if (spentPowers.length === 0) {

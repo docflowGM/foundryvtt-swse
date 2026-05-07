@@ -90,7 +90,7 @@ export class ForceAuthorityEngine {
   static async getSelectionState(actor, { shell = null } = {}) {
     const access = await this.validateForceAccess(actor);
     const selectionContext = await this.getSelectionContext(actor);
-    const ownedPowers = actor?.items?.filter((item) => item.type === 'forcepower')?.length ?? 0;
+    const ownedPowers = actor?.items?.filter((item) => item.type === 'force-power')?.length ?? 0;
     const powerRemaining = Math.max(0, selectionContext.totalCapacity - ownedPowers);
 
     const secrets = shell ? resolveForceSecretEntitlements(shell, null, actor) : { total: 0, selected: 0, remaining: 0, reasons: [] };

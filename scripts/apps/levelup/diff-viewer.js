@@ -67,12 +67,12 @@ export function computeDiff(before, after) {
   // Force powers added
   const beforeForcePowerIds = new Set(
     (before.items || [])
-      .filter(i => i.type === 'forcepower')
+      .filter(i => i.type === 'force-power')
       .map(i => i._id)
   );
 
   diff.forcePowersAdded = (after.items || [])
-    .filter(i => i.type === 'forcepower' && !beforeForcePowerIds.has(i._id))
+    .filter(i => i.type === 'force-power' && !beforeForcePowerIds.has(i._id))
     .map(i => i.name);
 
   // Skills trained

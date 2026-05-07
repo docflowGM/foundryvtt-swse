@@ -149,7 +149,6 @@ export class DerivedIntegrityLayer {
 
     // Check for writes to derived total fields in base system
     const derivedTotalFields = [
-      'system.attributes',
       'system.defenses',
       'system.derived.hp',
       'system.derived.bab',

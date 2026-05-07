@@ -172,7 +172,7 @@ export class CombatStatsTooltip {
    */
   static getInitiativeBreakdown(actor) {
     const system = actor.system;
-    const dexMod = system.attributes?.dex?.mod || 0;
+    const dexMod = system.abilities?.dex?.mod || 0;
     const miscMod = system.initiative?.miscMod || 0;
 
     const rows = [];
