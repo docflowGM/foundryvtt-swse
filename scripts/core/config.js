@@ -8,7 +8,7 @@ export const SWSE = {};
 SWSE.actorTypes = ['character', 'droid', 'vehicle', 'npc'];
 SWSE.constants = SWSE_CONSTANTS;
 
-SWSE.itemTypes = ['armor', 'attribute', 'class', 'combat-action', 'equipment', 'extra-skill-use', 'feat', 'force-power', 'skill', 'species', 'talent', 'talenttree', 'weapon'];
+SWSE.itemTypes = ['armor', 'attribute', 'class', 'combat-action', 'condition', 'equipment', 'extra-skill-use', 'feat', 'force-power', 'maneuver', 'skill', 'species', 'talent', 'talenttree', 'vehicleWeapon', 'vehicleWeaponRange', 'weapon'];
 
 /**
  * Debug and Development Configuration

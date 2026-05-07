@@ -422,7 +422,9 @@
       "force-power",
       "maneuver",
       "vehicleWeapon",
-      "vehicleWeaponRange"
+      "vehicleWeaponRange",
+      "attribute",
+      "extra-skill-use"
     ],
     "templates": {
       "base": {
