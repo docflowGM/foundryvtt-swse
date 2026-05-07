@@ -3699,14 +3699,14 @@ export const ActorEngine = {
       const isDroid = actor.type === 'droid';
       const bonusHP = actor.system.hp?.bonus ?? 0;
 
-      // Compute CON modifier from PERSISTENT attributes (NOT derived/SchemaAdapters)
-      // Fallback to derived only if attributes missing (migration edge case)
+      // Compute CON modifier from PERSISTENT abilities (NOT derived/SchemaAdapters)
+      // Fallback to derived only if abilities missing (migration edge case)
       let conMod = 0;
       if (!isDroid) {
-        const conBase = actor.system.attributes?.con?.base ?? 10;
-        const conRacial = actor.system.attributes?.con?.racial ?? 0;
-        const conEnhancement = actor.system.attributes?.con?.enhancement ?? 0;
-        const conTemp = actor.system.attributes?.con?.temp ?? 0;
+        const conBase = actor.system.abilities?.con?.base ?? 10;
+        const conRacial = actor.system.abilities?.con?.racial ?? 0;
+        const conEnhancement = actor.system.abilities?.con?.enhancement ?? 0;
+        const conTemp = actor.system.abilities?.con?.temp ?? 0;
         const conTotal = conBase + conRacial + conEnhancement + conTemp;
         conMod = Math.floor((conTotal - 10) / 2);
       }
@@ -3749,7 +3749,7 @@ export const ActorEngine = {
         hitDie: classItem.system.hitDie,
         hpAtFirstLevel,
         hpPerLevel,
-        conTotal: (actor.system.attributes?.con?.base ?? 10) + (actor.system.attributes?.con?.racial ?? 0) + (actor.system.attributes?.con?.enhancement ?? 0) + (actor.system.attributes?.con?.temp ?? 0),
+        conTotal: (actor.system.abilities?.con?.base ?? 10) + (actor.system.abilities?.con?.racial ?? 0) + (actor.system.abilities?.con?.enhancement ?? 0) + (actor.system.abilities?.con?.temp ?? 0),
         conMod,
         bonusHP,
         isDroid,
