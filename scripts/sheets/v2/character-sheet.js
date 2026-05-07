@@ -351,6 +351,10 @@ export class SWSEV2CharacterSheet extends
     this._shellDrawer = null;
     this._shellModal = null;
     this._shellRouterRegistered = false; // Guard to register only once per session
+
+    // ─── Alpha v1: Force Power Execution Disabled ────────────────────────────
+    // Force power execution is deferred to Alpha v1.1. The UI layer prevents clicks.
+    this.forcePowerExecutionEnabled = false;
   }
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
@@ -1493,7 +1497,8 @@ const forcePoints = [];
     const toPlain = p => ({ id: p.id, name: p.name, img: p.img, system: foundry.utils.duplicate(p.system ?? {}) });
     const forceSuite = {
       hand: forcePowers.filter(p => !p.system?.discarded).map(toPlain),
-      discard: forcePowers.filter(p => p.system?.discarded).map(toPlain)
+      discard: forcePowers.filter(p => p.system?.discarded).map(toPlain),
+      forcePowerExecutionEnabled: false // Alpha v1: force power execution deferred to v1.1
     };
 
     const lightsaberConstructionEligibility = LightsaberConstructionEngine.getEligibility(actor);
@@ -3416,6 +3421,13 @@ const forcePoints = [];
     html.querySelectorAll('[data-action="activate-force"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
+
+        // Alpha v1 guard: force power execution deferred to v1.1
+        if (!this.forcePowerExecutionEnabled) {
+          ui?.notifications?.info?.("Force power execution is coming in Alpha v1.1");
+          return;
+        }
+
         const itemId = button.dataset.itemId;
         if (!itemId) return;
 
