@@ -627,6 +627,7 @@ export class UpgradeService {
     if (item.isEmbedded && actor) {
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: item.id, 'system.installedUpgrades': nextInstalled }]);
     } else {
+      // @mutation-exception: world-item - updating unowned item from world compendium
       await item.update({ 'system.installedUpgrades': nextInstalled });
     }
 
@@ -665,6 +666,7 @@ export class UpgradeService {
     if (item.isEmbedded && actor) {
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: item.id, 'system.installedUpgrades': nextInstalled }]);
     } else {
+      // @mutation-exception: world-item - updating unowned item from world compendium
       await item.update({ 'system.installedUpgrades': nextInstalled });
     }
 
@@ -678,6 +680,7 @@ export class UpgradeService {
     if (item.isEmbedded && actor) {
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: item.id, ...update }]);
     } else {
+      // @mutation-exception: world-item - updating unowned item from world compendium
       await item.update(update);
     }
     return { success: true };
