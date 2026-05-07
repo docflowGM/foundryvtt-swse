@@ -36,10 +36,7 @@
     "styles/sheets/v2-shell-tokens.css",
     "styles/sheets/v2-interior-reskin.css",
     "styles/sheets/v2-alive-systems.css",
-    "styles/sheets/v2-phase8-breathing-animations.css",
-    "styles/sheets/v2-phase9-remaining-motion.css",
     "styles/sheets/v2-motion-picker.css",
-    "styles/sheets/v2-concept-sheet.css",
     "styles/system/tokens.css",
     "styles/system/datapad-shell.css",
     "styles/system/components/hud.css",
@@ -111,8 +108,6 @@
     "styles/swse-holo-ui.css",
     "styles/ui/character-sheet-svg-panels.css",
     "styles/ui/character-sheet-overflow-contract.css",
-    "styles/debug/svg-layout-debug.css",
-    "styles/ui/swse-holo-phase1.css",
     "styles/ui/chat-holo-flourishes.css",
     "styles/ui/swse-cursors.css",
     "styles/apps/chargen.css",
@@ -367,35 +362,35 @@
     {
       "name": "vehicles-starships",
       "label": "Vehicles - Starships",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/vehicles-starships.db"
     },
     {
       "name": "vehicles-stations",
       "label": "Vehicles - Stations",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/vehicles-stations.db"
     },
     {
       "name": "vehicles-walkers",
       "label": "Vehicles - Walkers",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/vehicles-walkers.db"
     },
     {
       "name": "vehicles-speeders",
       "label": "Vehicles - Speeders",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/vehicles-speeders.db"
     },
     {
       "name": "vehicles",
       "label": "Vehicles (All)",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/vehicles.db"
     },
@@ -528,14 +523,14 @@
     {
       "name": "heroic",
       "label": "Heroic Classes",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/heroic.db"
     },
     {
       "name": "nonheroic",
       "label": "Nonheroic Classes",
-      "type": "Item",
+      "type": "Actor",
       "system": "foundryvtt-swse",
       "path": "packs/nonheroic.db"
     },

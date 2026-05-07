@@ -116,6 +116,13 @@ export function activateForceUI(sheet, html, { signal } = {}) {
   html.querySelectorAll('[data-action="activate-force"]').forEach(button => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
+
+      // Alpha v1 guard: force power execution deferred to v1.1
+      if (!sheet.forcePowerExecutionEnabled) {
+        ui?.notifications?.info?.("Force power execution is coming in Alpha v1.1");
+        return;
+      }
+
       const itemId = button.dataset.itemId;
       if (!itemId) return;
 

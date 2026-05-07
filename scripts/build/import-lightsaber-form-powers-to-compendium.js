@@ -99,7 +99,7 @@
       // Convert item data
       const itemData = {
         name: powerData.name,
-        type: 'forcepower',
+        type: 'force-power',
         img: 'icons/magic/light/orb-lightbulb-gray.webp',
         system: {
           powerLevel: 1,

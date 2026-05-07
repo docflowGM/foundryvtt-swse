@@ -736,7 +736,7 @@ function populateForcePower(power) {
   return {
     _id: power._id,
     name: power.name,
-    type: "forcepower",
+    type: "force-power",
     img: power.img || "icons/svg/item-bag.svg",
     system: {
       powerLevel: powerData.powerLevel,
