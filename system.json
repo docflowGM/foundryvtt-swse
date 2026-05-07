@@ -572,13 +572,6 @@
         "TRUSTED": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
-    },
-    {
-      "name": "datapads-references",
-      "label": "Datapad References",
-      "type": "JournalEntry",
-      "system": "foundryvtt-swse",
-      "path": "packs/datapads-references"
     }
   ],
   "settings": {

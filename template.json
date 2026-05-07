@@ -408,23 +408,27 @@
   },
   "Item": {
     "types": [
+      "armor",
+      "attribute",
+      "background",
       "class",
+      "combat-action",
+      "condition",
+      "equipment",
+      "extra-skill-use",
       "feat",
+      "force-power",
+      "language",
+      "maneuver",
+      "skill",
+      "species",
+      "specialCondition",
       "talent",
       "talenttree",
-      "skill",
-      "combat-action",
-      "weapon",
-      "armor",
-      "equipment",
-      "species",
-      "condition",
-      "force-power",
-      "maneuver",
       "vehicleWeapon",
       "vehicleWeaponRange",
-      "attribute",
-      "extra-skill-use"
+      "weapon",
+      "weaponUpgrade"
     ],
     "templates": {
       "base": {
@@ -671,6 +675,26 @@
         "long": null
       },
       "notes": null
+    },
+    "background": {
+      "templates": [
+        "base"
+      ]
+    },
+    "language": {
+      "templates": [
+        "base"
+      ]
+    },
+    "weaponUpgrade": {
+      "templates": [
+        "base"
+      ]
+    },
+    "specialCondition": {
+      "templates": [
+        "base"
+      ]
     }
   }
 }
