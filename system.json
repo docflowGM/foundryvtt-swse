@@ -23,7 +23,9 @@
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.2.0/foundryvtt-swse.zip",
-  "esmodules": [],
+  "esmodules": [
+    "index.js"
+  ],
   "styles": [
     "styles/fonts.css",
     "styles/swse-core.css",

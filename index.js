@@ -3,17 +3,19 @@
 // Star Wars Saga Edition (SWSE) - FoundryVTT
 // ============================================
 
-import { SWSE } from "./config.js";
+import { SWSE } from "./scripts/core/config.js";
 import { SWSEActor, SWSEActorSheet } from "./scripts/swse-actor.js";
 import { SWSEDroidSheet } from "./scripts/swse-droid.js";
 import { SWSEVehicleSheet } from "./scripts/swse-vehicle.js";
 import { SWSEV2VehicleSheet } from "./scripts/sheets/v2/vehicle-sheet.js";
 import { SWSEV2DroidSheet } from "./scripts/sheets/v2/droid-sheet.js";
-import { SWSEItemSheet } from "./scripts/swse-item.js";
+import { SWSEV2CharacterSheet } from "./scripts/sheets/v2/character-sheet.js";
+import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
 import { preloadHandlebarsTemplates } from "./scripts/load-templates.js";
 import { SWSEStore } from "./store/store.js";
-import * as SWSEData from "./scripts/swse-data.js";
-import { WorldDataLoader } from "./scripts/world-data-loader.js";
+import * as SWSEData from "./scripts/core/swse-data.js";
+import { WorldDataLoader } from "./scripts/core/world-data-loader.js";
+import { SWSEV2BaseActor } from "./scripts/actors/v2/base-actor.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
 import { UIManager } from "./scripts/ui/ui-manager.js";
 import { registerInitHooks } from "./scripts/infrastructure/hooks/init-hooks.js";
@@ -40,7 +42,7 @@ Hooks.once("init", async () => {
   // -------------------------------
   // Document Classes
   // -------------------------------
-  CONFIG.Actor.documentClass = SWSEActor;
+  CONFIG.Actor.documentClass = SWSEV2BaseActor;
 
   // -------------------------------
   // Sheet Registration
@@ -48,10 +50,16 @@ Hooks.once("init", async () => {
   Actors.unregisterSheet("core", ActorSheet);
   Items.unregisterSheet("core", ItemSheet);
 
+  Actors.registerSheet("swse", SWSEV2CharacterSheet, {
+    types: ["character"],
+    label: "SWSE Character Sheet v2",
+    makeDefault: true
+  });
+
   Actors.registerSheet("swse", SWSEActorSheet, {
     types: ["character"],
-    label: "SWSE Character Sheet",
-    makeDefault: true
+    label: "SWSE Character Sheet (Legacy)",
+    makeDefault: false
   });
 
   Actors.registerSheet("swse", SWSEDroidSheet, {
