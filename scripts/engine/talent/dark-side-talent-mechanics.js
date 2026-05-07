@@ -106,7 +106,7 @@ export class DarkSideTalentMechanics {
 
     // Get all Dark Side Force Powers that are spent
     const darkSidePowers = actor.items.filter(item =>
-      item.type === 'forcepower' &&
+      item.type === 'force-power' &&
       item.system?.spent === true &&
       (item.system?.discipline === 'dark-side' || item.name.toLowerCase().includes('dark'))
     );

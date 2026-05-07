@@ -7,6 +7,7 @@
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { rollCustomSkill } from "/systems/foundryvtt-swse/scripts/rolls/custom-skill-roller.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Activate custom skills panel UI listeners
@@ -73,8 +74,8 @@ async function addCustomSkill(actor) {
 
   const updatedSkills = [...customSkills, newSkill];
 
-  await actor.update({
-    'system.customSkills': updatedSkills
+  await ActorEngine.updateActor(actor, {
+    system: { customSkills: updatedSkills }
   });
 
   swseLogger.log('[CustomSkills] Added new custom skill:', newSkill.id);
@@ -97,8 +98,8 @@ async function deleteCustomSkill(actor, skillId) {
   const customSkills = actor.system.customSkills || [];
   const updatedSkills = customSkills.filter(skill => skill.id !== skillId);
 
-  await actor.update({
-    'system.customSkills': updatedSkills
+  await ActorEngine.updateActor(actor, {
+    system: { customSkills: updatedSkills }
   });
 
   swseLogger.log('[CustomSkills] Deleted custom skill:', skillId);

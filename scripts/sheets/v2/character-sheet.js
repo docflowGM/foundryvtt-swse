@@ -1488,7 +1488,7 @@ const forcePoints = [];
     }
 
     // Force suite context (hand/discard zones + tag filtering)
-    const forcePowers = (actor?.items ?? []).filter(i => i.type === 'force-power');
+    const forcePowers = (actor?.items ?? []).filter(i => i.type === 'force-power' || i.type === 'force-power');
     const forceTags = [...new Set(forcePowers.flatMap(p => p.system?.tags ?? []))].sort();
     const toPlain = p => ({ id: p.id, name: p.name, img: p.img, system: foundry.utils.duplicate(p.system ?? {}) });
     const forceSuite = {
@@ -3420,7 +3420,7 @@ const forcePoints = [];
         if (!itemId) return;
 
         const power = this.actor.items.get(itemId);
-        if (!power || power.type !== "force-power") return;
+        if (!power || (power.type !== "force-power" && power.type !== "force-power")) return;
 
         // Determine if this is a recovery or activation
         const isRecovery = power.system?.discarded ?? false;

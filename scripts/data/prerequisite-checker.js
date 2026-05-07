@@ -1160,7 +1160,7 @@ export class PrerequisiteChecker {
 
     static _checkForcePowerCondition(prereq, actor, pending) {
         const hasPower = actor.items?.some(i =>
-            (i.type === 'forcepower' || i.type === 'force-power') && i.name === prereq.name
+            (i.type === 'force-power' || i.type === 'force-power') && i.name === prereq.name
         );
         return {
             met: hasPower,
@@ -2308,7 +2308,7 @@ function checkForcePowers(actor, requiredPowers) {
 
     // Get finalized force power items
     const actorPowers = actor.items?.filter(i =>
-        i.type === 'forcepower' || i.type === 'force-power'
+        i.type === 'force-power' || i.type === 'force-power'
     ) || [];
 
     // Also include pending force powers from progression

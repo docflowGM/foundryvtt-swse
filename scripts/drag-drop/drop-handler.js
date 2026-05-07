@@ -33,7 +33,7 @@ export class DropHandler {
         return this.handleFeatDrop(actor, item);
       case 'talent':
         return this.handleTalentDrop(actor, item);
-      case 'forcepower':
+      case 'force-power':
         return this.handleForcePowerDrop(actor, item);
       case 'droid-chassis':
         return this.handleDroidChassisDrop(actor, item);
@@ -421,7 +421,7 @@ export class DropHandler {
 
     // Check if already known
     const existingPower = actor.items.find(i =>
-      i.type === 'forcepower' && i.name === power.name
+      i.type === 'force-power' && i.name === power.name
     );
 
     if (existingPower) {

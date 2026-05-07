@@ -209,7 +209,7 @@ export function validateItemForCreation(itemData) {
   }
 
   // Validate item type is known
-  const validTypes = ['weapon', 'armor', 'equipment', 'feat', 'talent', 'forcepower', 'prestige', 'class'];
+  const validTypes = ['weapon', 'armor', 'equipment', 'feat', 'talent', 'force-power', 'prestige', 'class'];
   if (!validTypes.includes(itemData.type)) {
     errors.push(`Invalid item type: ${itemData.type}`);
   }

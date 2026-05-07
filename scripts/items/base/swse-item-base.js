@@ -42,7 +42,7 @@ export class SWSEItemBase extends Item {
       case 'talent':
         this._prepareTalentData();
         break;
-      case 'forcepower':
+      case 'force-power':
         this._prepareForcePowerData();
         break;
     }
@@ -135,7 +135,7 @@ export class SWSEItemBase extends Item {
     }
 
     // Force power labels
-    if (this.type === 'forcepower') {
+    if (this.type === 'force-power') {
       labels.level = data.level || 1;
       labels.darkSide = data.darkSide ? 'Dark Side' : '';
     }

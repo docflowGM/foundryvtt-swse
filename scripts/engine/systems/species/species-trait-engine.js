@@ -9,8 +9,8 @@
  * - Text traits for display, data traits for mechanics
  */
 
-import { SPECIES_TRAIT_TYPES, BONUS_TARGETS, CONDITIONS, SKILL_DISPLAY_NAMES } from './species-trait-types.js';
-import { SWSELogger } from '../../../utils/logger.js';
+import { SPECIES_TRAIT_TYPES, BONUS_TARGETS, CONDITIONS, SKILL_DISPLAY_NAMES } from "/systems/foundryvtt-swse/scripts/species/species-trait-types.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Main Species Trait Engine class

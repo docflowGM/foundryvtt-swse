@@ -442,7 +442,6 @@ async function main() {
       entries: reportEntries,
     });
   }
-  }
 
   if (allViolations.length > 0) {
     console.error(`SWSE | Partial validation failed: ${allViolations.length} issue(s)`);

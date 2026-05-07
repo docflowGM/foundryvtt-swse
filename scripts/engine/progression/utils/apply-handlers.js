@@ -85,7 +85,7 @@ export const ApplyHandlers = {
         // PHASE 3: Route through ActorEngine
         await ActorEngine.createEmbeddedDocuments(actor, 'Item', [{
             name: power.name,
-            type: 'forcepower',
+            type: 'force-power',
             img: power.img,
             system: power.system
         }]);

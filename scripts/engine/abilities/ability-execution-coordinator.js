@@ -56,7 +56,7 @@ export class AbilityExecutionCoordinator {
     const ruleCollector = new RuleCollector();
 
     const abilities = actor.items.filter(i =>
-      ["talent", "feat", "species", "forcepower"].includes(i.type)
+      ["talent", "feat", "species", "force-power"].includes(i.type)
     );
 
     for (const ability of abilities) {

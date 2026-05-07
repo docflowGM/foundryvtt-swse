@@ -221,7 +221,7 @@ export class ForceExecutor {
       } else {
         // Recover all discarded force powers
         powersToRecover = actor.items.filter(item =>
-          item.type === "force-power" && item.system?.discarded
+          (item.type === "force-power" || item.type === "force-power") && item.system?.discarded
         );
       }
 

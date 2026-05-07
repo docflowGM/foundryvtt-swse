@@ -127,6 +127,7 @@ export class GearTemplatesEngine {
     if (actor && item?.isEmbedded) {
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: item.id, ...update }]);
     } else {
+      // @mutation-exception: world-item - updating unowned item from world compendium
       await item.update(update);
     }
     return nextApplied;
@@ -145,6 +146,7 @@ export class GearTemplatesEngine {
     if (actor && item?.isEmbedded) {
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: item.id, ...update }]);
     } else {
+      // @mutation-exception: world-item - updating unowned item from world compendium
       await item.update(update);
     }
     return nextApplied;

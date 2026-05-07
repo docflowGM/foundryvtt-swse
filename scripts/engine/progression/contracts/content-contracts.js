@@ -363,7 +363,7 @@ export class ContentContracts {
           'talent',
           'skill',
           'language',
-          'forcepower',
+          'force-power',
           'forcetechnique',
           'force-secret',
           'archetype',
