@@ -145,28 +145,31 @@ function parseIncludeBody(body) {
   // kind: "full" | "invalid" | "dynamic"
   const trimmed = body.trim();
 
-  // Ban helpers/expressions/args inside partial invocation.
-  if (trimmed.includes("(") || trimmed.includes(")")) {
-    return { kind: "dynamic", token: trimmed, reason: "dynamic expression in partial include" };
-  }
-  if (/[=]/.test(trimmed)) {
-    return { kind: "dynamic", token: trimmed, reason: "hash/args in partial include" };
-  }
-
-  // Literal string include only.
-  const m = trimmed.match(/^"([^"]+)"$/) || trimmed.match(/^'([^']+)'$/);
+  // Try to extract a quoted path (may have hash args or context after it)
+  const m = trimmed.match(/^"([^"]+)"/) || trimmed.match(/^'([^']+)'/);
   if (m) {
     const token = m[1];
+    if (token.startsWith(VALID_PREFIX) && token.endsWith(".hbs")) {
+      // Valid full-path literal. Allow anything after the closing quote:
+      // - hash args: {{> "path" key=value}}
+      // - context: {{> "path" this}}
+      // - multiple args: {{> "path" arg1 arg2}}
+      return { kind: "full", token, reason: null };
+    }
     if (!token.startsWith(VALID_PREFIX)) {
       return { kind: "invalid", token, reason: "non-full-path literal include" };
     }
     if (!token.endsWith(".hbs")) {
       return { kind: "invalid", token, reason: "full-path include must end with .hbs" };
     }
-    return { kind: "full", token, reason: null };
   }
 
-  // Unquoted token.
+  // Ban helper calls like {{> callout label="..." }}
+  if (trimmed.includes("(") && trimmed.includes(")")) {
+    return { kind: "dynamic", token: trimmed, reason: "dynamic expression in partial include" };
+  }
+
+  // Unquoted token (legacy short-name or dynamic)
   if (/\s/.test(trimmed)) {
     return { kind: "dynamic", token: trimmed, reason: "non-literal include (contains whitespace)" };
   }
