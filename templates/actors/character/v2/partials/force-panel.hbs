@@ -67,7 +67,11 @@
 
               <div class="force-back-actions">
                 <button type="button" data-action="activate-force"
-                        data-item-id="{{power.id}}">
+                        data-item-id="{{power.id}}"
+                        {{#unless @root.forceSuite.forcePowerExecutionEnabled}}
+                          disabled
+                          title="Force power execution is coming in Alpha v1.1"
+                        {{/unless}}>
                   Activate
                 </button>
                 <button type="button" class="flip-back">

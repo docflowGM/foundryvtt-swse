@@ -191,7 +191,7 @@ export const ForceNormalizer = {
      * Check if document is a Force power
      */
     isPower(doc) {
-        return doc.type === 'forcepower' || doc.system?.force_type !== undefined;
+        return doc.type === 'force-power' || doc.system?.force_type !== undefined;
     },
 
     /**

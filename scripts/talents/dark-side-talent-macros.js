@@ -29,7 +29,7 @@ export class DarkSideTalentMacros {
     }
 
     // Show dialog to select which Force Power to use as swift action
-    const forcePowers = selectedActor.items.filter(item => item.type === 'forcepower');
+    const forcePowers = selectedActor.items.filter(item => item.type === 'force-power');
 
     if (forcePowers.length === 0) {
       ui.notifications.warn(`${selectedActor.name} has no Force Powers`);

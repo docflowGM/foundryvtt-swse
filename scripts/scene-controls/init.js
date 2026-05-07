@@ -19,7 +19,8 @@ export function initializeSceneControls() {
   if (initialized) return;
   initialized = true;
 
-  registerNarrativeControlPlaceholders();
+  // ALPHA: Placeholder narrative controls disabled until full implementation
+  // registerNarrativeControlPlaceholders();
   registerSWSECanvasTools();
   sceneControlRegistry.installFoundryHook();
 

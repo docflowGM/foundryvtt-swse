@@ -36,7 +36,7 @@ export function getSkills(items) {
  * Get all force powers from items collection
  */
 export function getForcePowers(items) {
-  return (items || []).filter(i => i.type === 'forcepower');
+  return (items || []).filter(i => i.type === 'force-power');
 }
 
 /**

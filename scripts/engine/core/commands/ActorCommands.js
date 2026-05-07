@@ -3,6 +3,10 @@
    Engine implementations for actor mutations
    These are the ONLY place where actor.update() should be called
    UI NEVER calls these directly - goes through CommandBus
+
+   NOTE: This module is not used in the active v2 runtime. It remains for
+   potential future infrastructure use. All direct update() calls in this module
+   are flagged as @mutation-exception legacy-disabled-infrastructure.
    ============================================================================ */
 
 import { UpdatePipeline } from '../UpdatePipeline.js';

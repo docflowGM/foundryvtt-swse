@@ -711,7 +711,7 @@ export class ProgressionFinalizer {
     const domainConfig = [
       { key: 'feats', type: 'feat', docGetter: (entry) => ProgressionContentAuthority.getFeatDocument(entry), allowDuplicates: false },
       { key: 'talents', type: 'talent', docGetter: (entry) => ProgressionContentAuthority.getTalentDocument(entry), allowDuplicates: false },
-      { key: 'forcePowers', type: 'forcepower', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'power'), allowDuplicates: true },
+      { key: 'forcePowers', type: 'force-power', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'power'), allowDuplicates: true },
       { key: 'forceTechniques', type: 'forcetechnique', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'technique'), allowDuplicates: false },
       { key: 'forceSecrets', type: 'forcesecret', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'secret'), allowDuplicates: false },
     ];

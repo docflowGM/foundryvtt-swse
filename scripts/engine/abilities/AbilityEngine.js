@@ -91,7 +91,7 @@ export class AbilityEngine {
           // Base class - use generic class checker
           result = PrerequisiteChecker.checkClassLevelPrerequisites(actor, candidate, pending);
         }
-      } else if (type === 'power' || type === 'forcepower') {
+      } else if (type === 'power' || type === 'force-power') {
         // Force powers use feat prerequisite logic (they have prerequisite.prerequisite fields)
         result = PrerequisiteChecker.checkFeatPrerequisites(actor, candidate, pending);
       } else {

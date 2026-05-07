@@ -104,7 +104,7 @@ export function normalizeItemByType(item) {
             return normalizeFeatData(item);
         case 'talent':
             return normalizeTalentData(item);
-        case 'forcepower':
+        case 'force-power':
         case 'force-power':
             return normalizeForcePowerData(item);
         case 'species':

@@ -149,7 +149,7 @@ async _prepareContext(options) {
 
   _getForcePowerList() {
     return Array.from(game.items.values())
-      .filter(i => i.type === 'forcepower')
+      .filter(i => i.type === 'force-power')
       .map(i => ({ id: i.id, name: i.name }));
   }
 

@@ -13,7 +13,7 @@ export class SWSEDroidSheet extends SWSEActorSheet {
   getData() {
     const data = super.getData();
     data.labels.sheetTitle = game.i18n.localize("SWSE.SheetLabel.droid") || "Droid";
-    data.inventoryItems = data.inventoryItems.filter(i => i.type !== 'forcepower');
+    data.inventoryItems = data.inventoryItems.filter(i => i.type !== 'force-power');
     data.forcePowers = [];
     data.hasForce = false;
     data.system.forcePoints = data.system.forcePoints || { value: 0, max: 0 };
@@ -23,6 +23,6 @@ export class SWSEDroidSheet extends SWSEActorSheet {
 
   activateListeners(html) {
     super.activateListeners(html);
-    html.find(".add-forcepower, .roll-forcepower, .refresh-forcepowers, .reload-forcepower").remove();
+    html.find(".add-force-power, .roll-force-power, .refresh-forcepowers, .reload-forcepower").remove();
   }
 }

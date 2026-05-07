@@ -109,7 +109,7 @@ export const MANEUVER_SKILL_THRESHOLDS = {
 
 // Item types for filtering
 export const ITEM_TYPES = {
-  FORCE_POWER: 'forcepower',
+  FORCE_POWER: 'force-power',
   FEAT: 'feat',
   FEAT_TYPE_FORCE: 'force'
 };

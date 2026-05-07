@@ -40,7 +40,7 @@ export class ActorItemIndex {
           }
         }
 
-        if (item.type === 'forcepower') {
+        if (item.type === 'force-power') {
           if (item.system?.id) {
             index.forcePowers.add(item.system.id);
           }

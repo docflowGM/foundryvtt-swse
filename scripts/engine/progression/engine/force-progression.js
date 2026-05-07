@@ -73,7 +73,7 @@ export class ForceProgressionEngine {
      */
     static async grantForcePower(actor, powerName) {
         const exists = actor.items.some(i =>
-            i.type === 'forcepower' && i.name === powerName
+            i.type === 'force-power' && i.name === powerName
         );
 
         if (exists) {
@@ -125,7 +125,7 @@ export class ForceProgressionEngine {
 
             // Exclude already-known powers
             const hasIt = actor.items.some(i =>
-                i.type === 'forcepower' && i.name === p.name
+                i.type === 'force-power' && i.name === p.name
             );
             if (hasIt) {return false;}
 

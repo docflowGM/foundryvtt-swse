@@ -158,7 +158,7 @@ export async function removeLightSidePowersForSith(actor) {
   if (!actor?.items) {return [];}
 
   const lightSidePowers = actor.items.filter(item => {
-    if (item.type !== 'forcepower') {return false;}
+    if (item.type !== 'force-power') {return false;}
 
     const powerDesc = `${item.name || ''} ${item.system?.description || ''} ${item.system?.descriptor || ''}`.toLowerCase();
     return powerDesc.includes('light side');

@@ -348,7 +348,7 @@ export class ProgressionStepPlugin {
 
   /**
    * Check if this step is running in levelup mode.
-   * @param {import('../shell/progression-framework/shell').ProgressionShell} shell
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
    * @returns {boolean}
    */
   isLevelup(shell) {

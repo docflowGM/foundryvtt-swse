@@ -408,22 +408,27 @@
   },
   "Item": {
     "types": [
+      "armor",
+      "attribute",
+      "background",
       "class",
+      "combat-action",
+      "condition",
+      "equipment",
+      "extra-skill-use",
       "feat",
+      "force-power",
+      "language",
+      "maneuver",
+      "skill",
+      "species",
+      "specialCondition",
       "talent",
       "talenttree",
-      "forcepower",
-      "skill",
-      "combat-action",
-      "weapon",
-      "armor",
-      "equipment",
-      "species",
-      "condition",
-      "force-power",
-      "maneuver",
       "vehicleWeapon",
-      "vehicleWeaponRange"
+      "vehicleWeaponRange",
+      "weapon",
+      "weaponUpgrade"
     ],
     "templates": {
       "base": {
@@ -475,24 +480,6 @@
       "archetype": "",
       "playstyle": "",
       "tier": 0
-    },
-    "forcepower": {
-      "templates": [
-        "base"
-      ],
-      "level": 1,
-      "uses": {
-        "current": 1,
-        "max": 1
-      },
-      "provenance": {
-        "grantSourceType": "force-sensitivity",
-        "grantSourceId": null,
-        "grantSubtype": "baseline",
-        "isLocked": false,
-        "migratedAt": null,
-        "legacyIssues": []
-      }
     },
     "weapon": {
       "templates": [
@@ -633,6 +620,14 @@
       "uses": {
         "current": 1,
         "max": 1
+      },
+      "provenance": {
+        "grantSourceType": "force-sensitivity",
+        "grantSourceId": null,
+        "grantSubtype": "baseline",
+        "isLocked": false,
+        "migratedAt": null,
+        "legacyIssues": []
       }
     },
     "maneuver": {
@@ -680,6 +675,26 @@
         "long": null
       },
       "notes": null
+    },
+    "background": {
+      "templates": [
+        "base"
+      ]
+    },
+    "language": {
+      "templates": [
+        "base"
+      ]
+    },
+    "weaponUpgrade": {
+      "templates": [
+        "base"
+      ]
+    },
+    "specialCondition": {
+      "templates": [
+        "base"
+      ]
     }
   }
 }

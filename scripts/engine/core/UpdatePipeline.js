@@ -2,6 +2,10 @@
    UPDATE PIPELINE
    Central control for all actor data mutations
    Ensures consistency: UI action → validation → actor update → UI reflect
+
+   NOTE: This module is not used in the active v2 runtime. It remains for
+   potential future infrastructure use. All direct update() calls in this module
+   are flagged as @mutation-exception legacy-disabled-infrastructure.
    ============================================================================ */
 
 import { SWSELogger } from '../../utils/logger.js';
@@ -23,6 +27,7 @@ export class UpdatePipeline {
     update[path] = value;
 
     try {
+      // @mutation-exception legacy-disabled-infrastructure - UpdatePipeline is not used in active v2 runtime
       await actor.update(update);
       SWSELogger.debug(`[UpdatePipeline] Updated ${path}`, value);
       return actor;
@@ -44,6 +49,7 @@ export class UpdatePipeline {
     }
 
     try {
+      // @mutation-exception legacy-disabled-infrastructure - UpdatePipeline is not used in active v2 runtime
       await actor.update(updates);
       SWSELogger.debug('[UpdatePipeline] Batch update applied', Object.keys(updates));
       return actor;

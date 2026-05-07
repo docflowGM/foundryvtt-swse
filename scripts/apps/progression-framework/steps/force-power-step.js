@@ -151,7 +151,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   async getStepData(context) {
     // Load actor's existing force powers (previously committed from past progressions)
     const actorForcePowers = context?.actor?.items?.filter(i =>
-      i.type === 'forcepower' || i.type === 'power'
+      i.type === 'force-power' || i.type === 'power'
     ) || [];
     const actorCommittedCounts = new Map();
     for (const item of actorForcePowers) {

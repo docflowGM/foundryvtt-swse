@@ -323,7 +323,7 @@ async function handleItemCreate(item, options, userId) {
                 icon: '<i class="fas fa-check"></i>',
                 label: 'Select',
                 callback: async (html) => {
-                    const selectedSkill = (root?.querySelector?.('#skill-focus-selection')?.value ?? null);
+                    const selectedSkill = (html?.querySelector?.('#skill-focus-selection')?.value ?? null);
 
                     // Update the skill to be focused
                     const updateData = {

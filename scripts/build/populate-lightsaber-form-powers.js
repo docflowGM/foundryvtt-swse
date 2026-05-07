@@ -158,7 +158,7 @@ async function populateLightsaberFormPowers() {
         stmt.run(
           id,
           powerData.name,
-          'forcepower',
+          'force-power',
           'icons/magic/light/orb-lightbulb-gray.webp',
           JSON.stringify(system),
           null,

@@ -287,6 +287,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     } else if (this.item?.isEmbedded && actor) {
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'system.activated': true }]);
     } else {
+      // @mutation-exception world-item
       await this.item.update({ 'system.activated': true });
     }
 
@@ -294,6 +295,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       if (this.item?.isEmbedded && actor) {
         await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'flags.foundryvtt-swse.emitLight': true, 'flags.foundryvtt-swse.bladeColor': bladeColor }]);
       } else {
+        // @mutation-exception world-item
         await this.item.update({ 'flags.foundryvtt-swse.emitLight': true, 'flags.foundryvtt-swse.bladeColor': bladeColor });
       }
     }
@@ -318,6 +320,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     } else if (this.item?.isEmbedded && actor) {
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'system.activated': false }]);
     } else {
+      // @mutation-exception world-item
       await this.item.update({ 'system.activated': false });
     }
 

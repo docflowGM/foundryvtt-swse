@@ -1041,6 +1041,39 @@ export const ActorEngine = {
    *   update?: { ... }  (system updates via dot-path)
    * }
    */
+  /**
+   * Preflight validation for adoption payloads.
+   * Validates all replacement embedded documents before any destructive operations.
+   * This ensures the actor is not left in a broken state if creation fails after deletion.
+   *
+   * @private
+   * @param {Object} mutationPlan - The adoption mutation plan
+   * @returns {Object} { itemsToCreate, effectsToCreate } - Validated payloads ready to create
+   * @throws {Error} If validation fails
+   */
+  _preflightAdoptionPayloads(mutationPlan) {
+    const itemsToCreate = [];
+    const effectsToCreate = [];
+
+    if (mutationPlan.createEmbedded?.length > 0) {
+      for (const embedded of mutationPlan.createEmbedded) {
+        if (!embedded.type || !embedded.data) {
+          throw new Error('Invalid createEmbedded in adoption: missing type or data');
+        }
+
+        if (embedded.type === 'Item') {
+          itemsToCreate.push(embedded.data);
+        } else if (embedded.type === 'ActiveEffect') {
+          effectsToCreate.push(embedded.data);
+        } else {
+          throw new Error(`Invalid embedded type in adoption: ${embedded.type}`);
+        }
+      }
+    }
+
+    return { itemsToCreate, effectsToCreate };
+  }
+
   async apply(actor, mutationPlan, options = {}) {
     try {
       if (!actor) {throw new Error('apply() called with no actor');}
@@ -1060,6 +1093,10 @@ export const ActorEngine = {
       if (isAdoption) {
         SWSELogger.info(`[Adoption] ${actor.name} (ID: ${actor.id}) adopting from ${mutationPlan._adoptionSource}`);
 
+        // ---- ADOPTION PREFLIGHT: Validate all replacement payloads BEFORE destructive operations ----
+        // This ensures the actor is not left in a broken state if creation fails after deletion.
+        const { itemsToCreate, effectsToCreate } = this._preflightAdoptionPayloads(mutationPlan);
+
         // ---- ADOPTION PHASE 1: Delete all existing embedded documents ----
         if (actor.items?.length > 0) {
           const itemIds = actor.items.map(i => i.id);
@@ -1072,30 +1109,12 @@ export const ActorEngine = {
         }
 
         // ---- ADOPTION PHASE 2: Create replacement embedded documents ----
-        if (mutationPlan.createEmbedded?.length > 0) {
-          // Separate items and effects by embedded type
-          const itemsToCreate = [];
-          const effectsToCreate = [];
+        if (itemsToCreate.length > 0) {
+          await this.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
+        }
 
-          for (const embedded of mutationPlan.createEmbedded) {
-            if (!embedded.type || !embedded.data) {
-              throw new Error('Invalid createEmbedded in adoption: missing type or data');
-            }
-
-            if (embedded.type === 'Item') {
-              itemsToCreate.push(embedded.data);
-            } else if (embedded.type === 'ActiveEffect') {
-              effectsToCreate.push(embedded.data);
-            }
-          }
-
-          if (itemsToCreate.length > 0) {
-            await this.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
-          }
-
-          if (effectsToCreate.length > 0) {
-            await this.createEmbeddedDocuments(actor, 'ActiveEffect', effectsToCreate);
-          }
+        if (effectsToCreate.length > 0) {
+          await this.createEmbeddedDocuments(actor, 'ActiveEffect', effectsToCreate);
         }
 
         // ---- ADOPTION PHASE 3: Replace system ----
@@ -3699,14 +3718,14 @@ export const ActorEngine = {
       const isDroid = actor.type === 'droid';
       const bonusHP = actor.system.hp?.bonus ?? 0;
 
-      // Compute CON modifier from PERSISTENT attributes (NOT derived/SchemaAdapters)
-      // Fallback to derived only if attributes missing (migration edge case)
+      // Compute CON modifier from PERSISTENT abilities (NOT derived/SchemaAdapters)
+      // Fallback to derived only if abilities missing (migration edge case)
       let conMod = 0;
       if (!isDroid) {
-        const conBase = actor.system.attributes?.con?.base ?? 10;
-        const conRacial = actor.system.attributes?.con?.racial ?? 0;
-        const conEnhancement = actor.system.attributes?.con?.enhancement ?? 0;
-        const conTemp = actor.system.attributes?.con?.temp ?? 0;
+        const conBase = actor.system.abilities?.con?.base ?? 10;
+        const conRacial = actor.system.abilities?.con?.racial ?? 0;
+        const conEnhancement = actor.system.abilities?.con?.enhancement ?? 0;
+        const conTemp = actor.system.abilities?.con?.temp ?? 0;
         const conTotal = conBase + conRacial + conEnhancement + conTemp;
         conMod = Math.floor((conTotal - 10) / 2);
       }
@@ -3749,7 +3768,7 @@ export const ActorEngine = {
         hitDie: classItem.system.hitDie,
         hpAtFirstLevel,
         hpPerLevel,
-        conTotal: (actor.system.attributes?.con?.base ?? 10) + (actor.system.attributes?.con?.racial ?? 0) + (actor.system.attributes?.con?.enhancement ?? 0) + (actor.system.attributes?.con?.temp ?? 0),
+        conTotal: (actor.system.abilities?.con?.base ?? 10) + (actor.system.abilities?.con?.racial ?? 0) + (actor.system.abilities?.con?.enhancement ?? 0) + (actor.system.abilities?.con?.temp ?? 0),
         conMod,
         bonusHP,
         isDroid,

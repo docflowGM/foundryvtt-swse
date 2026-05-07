@@ -391,7 +391,7 @@ export class SummaryStep extends ProgressionStepPlugin {
 
     const addedFeats = this._getAddedNames(actor, projection?.abilities?.feats, 'feat');
     const addedTalents = this._getAddedNames(actor, projection?.abilities?.talents, 'talent');
-    const addedForcePowers = this._getAddedNames(actor, projection?.abilities?.forcePowers, 'forcepower');
+    const addedForcePowers = this._getAddedNames(actor, projection?.abilities?.forcePowers, 'force-power');
     const addedSkills = this._getAddedSkills(actor, projection?.skills?.trained || []);
 
     this._levelupSummary = {

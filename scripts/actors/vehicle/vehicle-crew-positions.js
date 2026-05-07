@@ -150,7 +150,7 @@ export class VehicleCrewPositions {
     // Get ability modifier
     let abilityBonus = 0;
     if (skill.ability) {
-      const ability = actor.system.attributes?.[skill.ability];
+      const ability = actor.system.abilities?.[skill.ability];
       if (ability) {
         abilityBonus = ability.mod || 0;
       }

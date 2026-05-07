@@ -23,12 +23,12 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 const VALID_ITEM_TYPES = {
   character: [
     "weapon", "armor", "equipment", "feat", "talent", "skill",
-    "forcePower", "forcepower", "force-power", "condition",
+    "forcePower", "force-power", "force-power", "condition",
     "combat-action", "maneuver", "species", "class"
   ],
   npc: [
     "weapon", "armor", "equipment", "feat", "talent", "skill",
-    "forcePower", "forcepower", "force-power", "condition",
+    "forcePower", "force-power", "force-power", "condition",
     "combat-action", "species", "class"
   ],
   droid: [
