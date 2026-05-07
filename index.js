@@ -55,27 +55,27 @@ Hooks.once("init", async () => {
     makeDefault: true
   });
 
+  Actors.registerSheet("swse", SWSEV2DroidSheet, {
+    types: ["droid"],
+    label: "SWSE Droid Sheet v2",
+    makeDefault: true
+  });
+
   Actors.registerSheet("swse", SWSEDroidSheet, {
     types: ["droid"],
-    label: "SWSE Droid Sheet",
+    label: "SWSE Droid Sheet (Legacy)",
+    makeDefault: false
+  });
+
+  Actors.registerSheet("swse", SWSEV2VehicleSheet, {
+    types: ["vehicle"],
+    label: "SWSE Vehicle Sheet v2",
     makeDefault: true
   });
 
   Actors.registerSheet("swse", SWSEVehicleSheet, {
     types: ["vehicle"],
-    label: "SWSE Vehicle Sheet",
-    makeDefault: true
-  });
-
-  Actors.registerSheet("swse", SWSEV2VehicleSheet, {
-    types: ["vehicle"],
-    label: "SWSE Vehicle Sheet v2 (Datapad Scaffold)",
-    makeDefault: false
-  });
-
-  Actors.registerSheet("swse", SWSEV2DroidSheet, {
-    types: ["droid"],
-    label: "SWSE Droid Sheet v2 (Datapad)",
+    label: "SWSE Vehicle Sheet (Legacy)",
     makeDefault: false
   });
 
