@@ -4,7 +4,6 @@
 // ============================================
 
 import { SWSE } from "./scripts/core/config.js";
-import { SWSEActor, SWSEActorSheet } from "./scripts/swse-actor.js";
 import { SWSEDroidSheet } from "./scripts/swse-droid.js";
 import { SWSEVehicleSheet } from "./scripts/swse-vehicle.js";
 import { SWSEV2VehicleSheet } from "./scripts/sheets/v2/vehicle-sheet.js";
@@ -54,12 +53,6 @@ Hooks.once("init", async () => {
     types: ["character"],
     label: "SWSE Character Sheet v2",
     makeDefault: true
-  });
-
-  Actors.registerSheet("swse", SWSEActorSheet, {
-    types: ["character"],
-    label: "SWSE Character Sheet (Legacy)",
-    makeDefault: false
   });
 
   Actors.registerSheet("swse", SWSEDroidSheet, {

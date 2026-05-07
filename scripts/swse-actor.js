@@ -1,5 +1,14 @@
 // ============================================
 // FILE: scripts/swse-actor.js
+// LEGACY CHARACTER SHEET (NOT REGISTERED AS DEFAULT OR FALLBACK)
+//
+// This file contains the legacy character sheet implementation.
+// Since Phase 6, the legacy character sheet is no longer registered
+// and is not the default for any actor type.
+//
+// All actor.update() and createEmbeddedDocuments() calls in this file
+// are marked as @mutation-exception legacy-disabled-character-sheet
+// as they are no longer reachable in the active v2 runtime.
 // ============================================
 import { SWSE_RACES } from "./races.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
@@ -331,8 +340,8 @@ export class SWSEActorSheet extends ActorSheet {
     return this._onLevelUp(event);
   }
 
-  async _onAddWeapon(event) { event.preventDefault(); const weapons = foundry.utils.duplicate(this.actor.system.weapons || []); weapons.push({ name: "New Weapon", description: "", damage: "1d8", attackAttr: "str", damageAttr: "str", focus: false, specialization: false, modifier: 0 }); await this.actor.update({"system.weapons": weapons}); }
-  async _onRemoveWeapon(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".weapon-entry")?.dataset.index); const weapons = foundry.utils.duplicate(this.actor.system.weapons || []); weapons.splice(idx, 1); await this.actor.update({"system.weapons": weapons}); }
+  async _onAddWeapon(event) { event.preventDefault(); const weapons = foundry.utils.duplicate(this.actor.system.weapons || []); weapons.push({ name: "New Weapon", description: "", damage: "1d8", attackAttr: "str", damageAttr: "str", focus: false, specialization: false, modifier: 0 }); /* @mutation-exception legacy-disabled-character-sheet */ await this.actor.update({"system.weapons": weapons}); }
+  async _onRemoveWeapon(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".weapon-entry")?.dataset.index); const weapons = foundry.utils.duplicate(this.actor.system.weapons || []); weapons.splice(idx, 1); /* @mutation-exception legacy-disabled-character-sheet */ await this.actor.update({"system.weapons": weapons}); }
   async _onRollWeapon(event) {
     event.preventDefault();
     const idx = Number(event.currentTarget.closest(".weapon-entry")?.dataset.index);
@@ -340,11 +349,11 @@ export class SWSEActorSheet extends ActorSheet {
     if (!weapon) return;
     await SWSERoll.rollAttack(this.actor, weapon, { showDialog: true });
   }
-  async _onAddFeat(event) { event.preventDefault(); const feats = foundry.utils.duplicate(this.actor.system.feats || []); feats.push({ name: "New Feat", description: "" }); await this.actor.update({"system.feats": feats}); }
-  async _onRemoveFeat(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".list-entry")?.dataset.index); const feats = foundry.utils.duplicate(this.actor.system.feats || []); feats.splice(idx, 1); await this.actor.update({"system.feats": feats}); }
-  async _onAddTalent(event) { event.preventDefault(); const talents = foundry.utils.duplicate(this.actor.system.talents || []); talents.push({ name: "New Talent", description: "" }); await this.actor.update({"system.talents": talents}); }
-  async _onRemoveTalent(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".list-entry")?.dataset.index); const talents = foundry.utils.duplicate(this.actor.system.talents || []); talents.splice(idx, 1); await this.actor.update({"system.talents": talents}); }
-  async _onAddForcePower(event) { event.preventDefault(); await this.actor.createEmbeddedDocuments("Item", [{ name: "New Force Power", type: "force-power", system: { uses: { current: 1, max: 1 } } }]); }
+  async _onAddFeat(event) { event.preventDefault(); const feats = foundry.utils.duplicate(this.actor.system.feats || []); feats.push({ name: "New Feat", description: "" }); /* @mutation-exception legacy-disabled-character-sheet */ await this.actor.update({"system.feats": feats}); }
+  async _onRemoveFeat(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".list-entry")?.dataset.index); const feats = foundry.utils.duplicate(this.actor.system.feats || []); feats.splice(idx, 1); /* @mutation-exception legacy-disabled-character-sheet */ await this.actor.update({"system.feats": feats}); }
+  async _onAddTalent(event) { event.preventDefault(); const talents = foundry.utils.duplicate(this.actor.system.talents || []); talents.push({ name: "New Talent", description: "" }); /* @mutation-exception legacy-disabled-character-sheet */ await this.actor.update({"system.talents": talents}); }
+  async _onRemoveTalent(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".list-entry")?.dataset.index); const talents = foundry.utils.duplicate(this.actor.system.talents || []); talents.splice(idx, 1); /* @mutation-exception legacy-disabled-character-sheet */ await this.actor.update({"system.talents": talents}); }
+  async _onAddForcePower(event) { event.preventDefault(); /* @mutation-exception legacy-disabled-character-sheet */ await this.actor.createEmbeddedDocuments("Item", [{ name: "New Force Power", type: "force-power", system: { uses: { current: 1, max: 1 } } }]); }
   async _onRemoveForcePower(event) { event.preventDefault(); const itemId = event.currentTarget.closest(".forcepower-entry")?.dataset.itemId; if (itemId) { const item = this.actor.items.get(itemId); if (item) await item.delete(); } }
   async _onRollForcePower(event) {
     event.preventDefault();
