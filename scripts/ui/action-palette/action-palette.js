@@ -185,7 +185,7 @@ export class ActionPaletteApp extends BaseSWSEAppV2 {
    * Open GM suggestion panel
    */
   async openGMPanel(event) {
-    const { openGMPanel } = await import("/systems/foundryvtt-swse/scripts/ui/engine/suggestion/gm/init.js");
+    const { openGMPanel } = await import("/systems/foundryvtt-swse/scripts/engine/suggestion/gm/init.js");
     openGMPanel();
   }
 
