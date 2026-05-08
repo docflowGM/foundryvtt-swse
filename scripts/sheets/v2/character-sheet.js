@@ -287,7 +287,7 @@ export class SWSEV2CharacterSheet extends
     window: {
       resizable: true,
       draggable: true,
-      frame: true
+      frame: false
     },
     form: {
       closeOnSubmit: false,
@@ -452,6 +452,31 @@ export class SWSEV2CharacterSheet extends
   // signal is the render-cycle AbortController signal — all listeners are torn down on next render.
   _wireShellEvents(root, signal) {
     if (!root) return;
+
+    // ─── Tablet Hardware Controls ──────────────────────────────────────────
+    root.querySelector('[data-action="tablet-close"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      this.close();
+    }, { signal });
+
+    root.querySelector('[data-action="tablet-home"]')?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      if (this._shellSurface !== 'home') {
+        await this.setSurface('home');
+        this.render(false);
+      }
+    }, { signal });
+
+    root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      if (this._tabletExpanded) {
+        this.setPosition({ width: this.constructor.DEFAULT_OPTIONS.width, height: this.constructor.DEFAULT_OPTIONS.height });
+        this._tabletExpanded = false;
+      } else {
+        this.setPosition({ width: window.innerWidth - 40, height: window.innerHeight - 40 });
+        this._tabletExpanded = true;
+      }
+    }, { signal });
 
     root.querySelectorAll('[data-shell-action="return-to-sheet"]').forEach(el => {
       el.addEventListener('click', async (ev) => {

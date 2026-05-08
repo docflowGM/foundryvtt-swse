@@ -12,6 +12,26 @@
 <div class="window-content">
 <div class="swse-sheet-v2-shell swse-sheet-v2-shell--concept sheet-shell" data-theme="{{sheetTheme}}" data-motion-style="{{sheetMotionStyle}}">
   <div class="swse-v2-tablet swse-v2-tablet--concept">
+
+    {{!-- TABLET HARDWARE — lives on the metallic body, not inside the screen --}}
+    <div class="swse-tablet-hardware swse-tablet-hardware--top" aria-label="Tablet window controls">
+      <button type="button" class="swse-tablet-control swse-tablet-control--close" data-action="tablet-close" title="Close" aria-label="Close">×</button>
+      <button type="button" class="swse-tablet-control swse-tablet-control--expand" data-action="tablet-expand" title="Expand" aria-label="Expand">⛶</button>
+    </div>
+
+    <div class="swse-tablet-led-strip" aria-hidden="true">
+      <span class="swse-tablet-led"></span>
+      <span class="swse-tablet-led"></span>
+      <span class="swse-tablet-led"></span>
+    </div>
+
+    <div class="swse-master-bezel__rivet tl" aria-hidden="true"></div>
+    <div class="swse-master-bezel__rivet tr" aria-hidden="true"></div>
+    <div class="swse-master-bezel__rivet bl" aria-hidden="true"></div>
+    <div class="swse-master-bezel__rivet br" aria-hidden="true"></div>
+    <div class="swse-master-bezel__serial" aria-hidden="true">SWSE-HOLOPAD</div>
+    <div class="swse-master-bezel__manu" aria-hidden="true">DATAPAD</div>
+
     <div class="swse-v2-screen swse-v2-screen--concept">
       <div class="scan-v" aria-hidden="true"></div>
       <div class="corner tl" aria-hidden="true"></div>
@@ -97,9 +117,19 @@
         </div>
       </div>
 
+    </div>{{!-- /swse-v2-screen --}}
+
+    {{!-- Physical Home button — bottom center of tablet body --}}
+    <button type="button" class="swse-tablet-home-button" data-action="tablet-home" title="Home" aria-label="Home">
+      <span class="swse-tablet-home-button__glyph"></span>
+    </button>
+
+    <div class="swse-tablet-vent" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
     </div>
-  </div>
-</div>
+
+  </div>{{!-- /swse-v2-tablet --}}
+</div>{{!-- /swse-sheet-v2-shell --}}
 
 </div><!-- window-content -->
 </form>

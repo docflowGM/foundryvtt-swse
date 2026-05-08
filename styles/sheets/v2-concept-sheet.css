@@ -40,14 +40,20 @@
 .swse-v2-tablet--concept {
   position: relative;
   min-height: calc(100vh - 72px);
-  border-radius: 26px;
-  padding: 28px;
-  background: linear-gradient(145deg, #161d2b 0%, #0a0f17 55%, #121926 100%);
+  border-radius: 34px;
+  padding: 42px 36px 72px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.10), transparent 14%),
+    linear-gradient(315deg, rgba(255, 255, 255, 0.06), transparent 18%),
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.08), transparent 18%),
+    linear-gradient(145deg, #2b303b 0%, #111722 42%, #05080d 72%, #1c2431 100%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 28px 70px rgba(0, 0, 0, 0.55),
-    0 0 80px var(--swse-concept-glow);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 18px 42px rgba(255, 255, 255, 0.045),
+    inset 0 -28px 48px rgba(0, 0, 0, 0.55),
+    0 28px 70px rgba(0, 0, 0, 0.62),
+    0 0 64px color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent);
 }
 
 .swse-v2-tablet--concept::before,
@@ -81,7 +87,7 @@
     radial-gradient(circle at 30% 12%, rgba(54, 104, 157, 0.35), transparent 24%),
     radial-gradient(circle at 75% 90%, rgba(129, 51, 133, 0.22), transparent 25%),
     linear-gradient(180deg, rgba(11, 21, 33, 0.98) 0%, rgba(8, 15, 24, 0.98) 100%);
-  border: 1px solid rgba(140, 223, 255, 0.14);
+  border: 0;
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.03),
     inset 0 0 80px rgba(85, 175, 255, 0.08);
@@ -155,11 +161,24 @@
 }
 
 /**
- * Window Interaction Contract — Restore Foundry drag & pointer events
+ * Tablet-shell window — remove Foundry chrome; metallic tablet is the frame.
+ * frame: false hides the header natively; these rules handle any residual chrome.
  */
 .swse.sheet.actor.character.v2 .window-header {
-  pointer-events: auto;
-  z-index: 100;
+  display: none !important;
+}
+
+.swse.sheet.actor.character.v2 .window-content {
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.swse.sheet.actor.character.v2 {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
 /* Shell container: don't block events, but let all children through */
@@ -2090,5 +2109,160 @@
 
   .scan-v {
     display: none;
+  }
+}
+
+/* ─── Tablet Hardware Controls ────────────────────────────────────── */
+
+.swse-tablet-hardware {
+  position: absolute;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.swse-tablet-hardware--top {
+  top: 16px;
+  right: 22px;
+}
+
+.swse-tablet-control {
+  width: 24px;
+  height: 24px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.20), transparent 38%),
+    linear-gradient(180deg, rgba(38, 44, 56, 0.98), rgba(8, 12, 18, 0.98));
+  color: color-mix(in srgb, var(--swse-concept-text, #f2fbff) 82%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 3px rgba(0, 0, 0, 0.52),
+    0 0 10px color-mix(in srgb, var(--swse-accent, #70e2ff) 10%, transparent);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.swse-tablet-control:hover {
+  border-color: color-mix(in srgb, var(--swse-accent, #70e2ff) 55%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.20),
+    inset 0 -1px 3px rgba(0, 0, 0, 0.52),
+    0 0 16px color-mix(in srgb, var(--swse-accent, #70e2ff) 26%, transparent);
+}
+
+.swse-tablet-control--close:hover {
+  border-color: rgba(255, 112, 112, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.20),
+    0 0 16px rgba(255, 85, 85, 0.34);
+}
+
+.swse-tablet-home-button {
+  position: absolute;
+  z-index: 32;
+  left: 50%;
+  bottom: 18px;
+  width: 42px;
+  height: 42px;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background:
+    radial-gradient(circle at 38% 30%, rgba(255, 255, 255, 0.22), transparent 34%),
+    linear-gradient(145deg, rgba(48, 54, 68, 0.98), rgba(9, 13, 19, 0.98));
+  box-shadow:
+    inset 0 2px 3px rgba(255, 255, 255, 0.13),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.55),
+    0 0 18px color-mix(in srgb, var(--swse-accent, #70e2ff) 16%, transparent);
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  pointer-events: auto;
+}
+
+.swse-tablet-home-button:hover {
+  border-color: color-mix(in srgb, var(--swse-accent, #70e2ff) 55%, transparent);
+  box-shadow:
+    inset 0 2px 3px rgba(255, 255, 255, 0.20),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.55),
+    0 0 28px color-mix(in srgb, var(--swse-accent, #70e2ff) 30%, transparent);
+}
+
+.swse-tablet-home-button__glyph {
+  width: 13px;
+  height: 13px;
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 62%, transparent);
+  box-shadow:
+    inset 0 0 8px color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent),
+    0 0 8px color-mix(in srgb, var(--swse-accent, #70e2ff) 24%, transparent);
+}
+
+.swse-tablet-vent {
+  position: absolute;
+  left: 34px;
+  bottom: 29px;
+  z-index: 25;
+  display: flex;
+  gap: 5px;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.swse-tablet-vent span {
+  width: 18px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.swse-tablet-led-strip {
+  position: absolute;
+  top: 22px;
+  left: 38px;
+  z-index: 25;
+  display: flex;
+  gap: 9px;
+  pointer-events: none;
+}
+
+.swse-tablet-led {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--swse-accent, #70e2ff);
+  box-shadow:
+    0 0 8px color-mix(in srgb, var(--swse-accent, #70e2ff) 70%, transparent),
+    0 0 18px color-mix(in srgb, var(--swse-accent, #70e2ff) 35%, transparent);
+  opacity: 0.6;
+}
+
+.swse-tablet-led:nth-child(2) {
+  background: var(--swse-accent-2, #ff6ef4);
+  box-shadow:
+    0 0 8px color-mix(in srgb, var(--swse-accent-2, #ff6ef4) 70%, transparent),
+    0 0 18px color-mix(in srgb, var(--swse-accent-2, #ff6ef4) 35%, transparent);
+}
+
+.swse-tablet-led:nth-child(3) {
+  background: #ffd166;
+  box-shadow:
+    0 0 8px rgba(255, 209, 102, 0.7),
+    0 0 18px rgba(255, 209, 102, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swse-tablet-led {
+    opacity: 0.65;
+    animation: none !important;
   }
 }
