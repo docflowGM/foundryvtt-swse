@@ -282,8 +282,12 @@ export class SWSEV2CharacterSheet extends
   static DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
     classes: ["swse", "sheet", "actor", "character", "swse-character-sheet", "swse-sheet", "v2"],
-    width: 1220,
-    height: 980,
+    position: {
+      width: 1440,
+      height: 900,
+      minWidth: 1100,
+      minHeight: 760
+    },
     window: {
       resizable: true,
       draggable: true,
@@ -324,6 +328,7 @@ export class SWSEV2CharacterSheet extends
     // Position centering tracking — initialize EARLY so first render knows this is a new open
     this._openedAt = Date.now();
     this._centerTimer = null;
+    this._tabletInitialPositionApplied = false;
 
     // Create debounced form submission to prevent keystroke spam
     // 500ms delay: ensures multiple rapid changes batch into one update
@@ -470,7 +475,8 @@ export class SWSEV2CharacterSheet extends
     root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
       ev.preventDefault();
       if (this._tabletExpanded) {
-        this.setPosition({ width: this.constructor.DEFAULT_OPTIONS.width, height: this.constructor.DEFAULT_OPTIONS.height });
+        const { width, height } = this.constructor.DEFAULT_OPTIONS.position;
+        this.setPosition({ width, height });
         this._tabletExpanded = false;
       } else {
         this.setPosition({ width: window.innerWidth - 40, height: window.innerHeight - 40 });
@@ -987,6 +993,31 @@ export class SWSEV2CharacterSheet extends
   // been moved to _onRender (isFirstRender) below so it actually runs.
   // ---------------------------------------------------------------
 
+  /**
+   * Fit the tablet window to viewport on first open, accounting for small screens.
+   * Called once per open session to ensure the metallic holopad UI is immediately usable.
+   */
+  _fitTabletToViewport() {
+    if (this._tabletInitialPositionApplied) return;
+
+    const margin = 40;
+    const minWidth = 1100;
+    const minHeight = 760;
+    const maxWidth = 1500;
+    const maxHeight = 980;
+
+    // Clamp dimensions to available viewport, respecting minimums
+    const width = Math.max(minWidth, Math.min(maxWidth, window.innerWidth - margin));
+    const height = Math.max(minHeight, Math.min(maxHeight, window.innerHeight - margin));
+
+    // Center the window
+    const left = Math.max(0, Math.round((window.innerWidth - width) / 2));
+    const top = Math.max(0, Math.round((window.innerHeight - height) / 2));
+
+    this.setPosition({ width, height, left, top });
+    this._tabletInitialPositionApplied = true;
+  }
+
   async _onRender(context, options) {
     // ═══ DIAGNOSTICS: Capture state at render start ═══
     characterSheetDiagnostics.snapshot('_onRender START (before positioning)', this);
@@ -1006,6 +1037,11 @@ export class SWSEV2CharacterSheet extends
     // Track whether this is the very first render of this app instance
     const isFirstRenderEver = !this.rendered;
 
+    // On very first render, fit the tablet to viewport with sensible large dimensions
+    if (isFirstRenderEver) {
+      this._fitTabletToViewport();
+    }
+
     // Track whether this is the first render after a close/reopen cycle
     // (allows re-centering if user reopens the sheet)
     if (!this._hasBeenRendered) {
@@ -1015,7 +1051,7 @@ export class SWSEV2CharacterSheet extends
 
     const shouldCenter = this._shouldCenterOnRender;
 
-    if (shouldCenter) {
+    if (shouldCenter && !this._tabletInitialPositionApplied) {
       // Center once per open session, then let AppV2 own future drag/resize state
       // Use dynamic dimensions from DEFAULT_OPTIONS instead of hardcoded 900x950
       const { width: targetWidth, height: targetHeight } = getApplicationTargetSize(this);
