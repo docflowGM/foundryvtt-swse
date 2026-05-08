@@ -568,6 +568,10 @@ export class SWSEV2CharacterSheet extends
     });
 
     // Initialize home surface controller (compass needle, tile aiming)
+    // Destroy previous controller instance to prevent duplicate RAF loops
+    if (this._homeController) {
+      this._homeController.destroy();
+    }
     this._homeController = new HomeSurfaceController({
       root: homeRoot,
       host: this
@@ -1007,6 +1011,15 @@ export class SWSEV2CharacterSheet extends
     // This ensures expanded sections, active tabs, focused fields, and scroll position
     // are preserved across rerenders triggered by actor/item updates
     this.uiStateManager.restoreState();
+
+    // ── Phase 11: Initialize HOME surface on first render ──
+    // If this is the very first render and we're in sheet mode, trigger HOME display
+    // CRITICAL: Schedule render for next microtask to avoid re-entrancy during _onRender
+    if (isFirstRenderEver && this._shellSurface === 'sheet') {
+      await this.setSurface('home');
+      queueMicrotask(() => this.render(false));
+      return;
+    }
 
     // ── DIAGNOSTIC: Log that render completed ──
     // swseLogger.debug(

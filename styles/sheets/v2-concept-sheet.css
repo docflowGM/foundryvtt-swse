@@ -125,6 +125,73 @@
 .corner.bl { bottom: 22px; left: 22px; border-right: 0; border-top: 0; }
 .corner.br { bottom: 22px; right: 22px; border-left: 0; border-top: 0; }
 
+/**
+ * Resize Handle Styling — Make Foundry's window grip visible and easy to grab
+ */
+.swse.sheet.actor.character.v2 .window-resizable-handle {
+  width: 32px;
+  height: 32px;
+  right: 2px;
+  bottom: 2px;
+  background: none;
+  z-index: 10;
+}
+
+.swse.sheet.actor.character.v2 .window-resizable-handle::after {
+  content: "";
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 20px;
+  height: 20px;
+  border-right: 2.5px solid var(--swse-accent, #70e2ff);
+  border-bottom: 2.5px solid var(--swse-accent, #70e2ff);
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.swse.sheet.actor.character.v2 .window-resizable-handle:hover::after {
+  opacity: 1;
+}
+
+/**
+ * Window Interaction Contract — Restore Foundry drag & pointer events
+ */
+.swse.sheet.actor.character.v2 .window-header {
+  pointer-events: auto;
+  z-index: 100;
+}
+
+/* Shell container: don't block events, but let all children through */
+.swse-v2-tablet {
+  pointer-events: none;
+}
+
+.swse-v2-tablet * {
+  pointer-events: auto;
+}
+
+/**
+ * Scroll Contract — Single owner: .sheet-body
+ */
+.swse.sheet.actor.character.v2 .sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/**
+ * Flex Chain Integrity — Ensure all containers are properly flex-enabled
+ */
+.swse-v2-tablet,
+.swse-v2-screen,
+.swse-concept-body,
+.swse-concept-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .swse-concept-hud,
 .swse-concept-title-strip,
 .swse-concept-header,

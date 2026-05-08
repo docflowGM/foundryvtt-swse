@@ -1,6 +1,14 @@
 <div class="swse-character-sheet-wrapper swse-character-sheet-wrapper--concept">
 <form class="swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui swse-sheet swse-sheet--concept" autocomplete="off">
 
+<!-- DEBUG: conceptLayout presence check (DISABLED) -->
+<div style="display: none; position: fixed; top: 0; left: 0; right: 0; background: #333; color: #0ff; padding: 10px; font-family: monospace; font-size: 12px; z-index: 999; border-bottom: 2px solid #0ff;">
+  conceptLayout: {{#if conceptLayout}}<span style="color: #0f0;">PRESENT</span>{{else}}<span style="color: #f00;">MISSING</span>{{/if}} |
+  summary: {{#if conceptLayout.summary}}<span style="color: #0f0;">PRESENT</span>{{else}}<span style="color: #f00;">MISSING</span>{{/if}} |
+  identity: {{#if conceptLayout.identity}}<span style="color: #0f0;">PRESENT</span>{{else}}<span style="color: #f00;">MISSING</span>{{/if}} |
+  tabs: {{#if conceptLayout.tabs}}<span style="color: #0f0;">PRESENT</span>{{else}}<span style="color: #f00;">MISSING</span>{{/if}}
+</div>
+
 <div class="window-content">
 <div class="swse-sheet-v2-shell swse-sheet-v2-shell--concept sheet-shell" data-theme="{{sheetTheme}}" data-motion-style="{{sheetMotionStyle}}">
   <div class="swse-v2-tablet swse-v2-tablet--concept">
