@@ -82,6 +82,16 @@ import { buildConceptSheetViewModel } from "/systems/foundryvtt-swse/scripts/she
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
+ * Tablet shell scaling constants
+ * Design the holopad at full concept size, then scale proportionally to fit viewport
+ */
+const TABLET_BASE_WIDTH = 1440;
+const TABLET_BASE_HEIGHT = 900;
+const TABLET_MARGIN = 24;
+const TABLET_MIN_SCALE = 0.55;
+const TABLET_MAX_SCALE = 1.0;
+
+/**
  * Debounce utility: delays function execution until N ms have passed without new calls
  * Used to prevent keystroke spam in form submissions
  */
@@ -282,12 +292,16 @@ export class SWSEV2CharacterSheet extends
   static DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
     classes: ["swse", "sheet", "actor", "character", "swse-character-sheet", "swse-sheet", "v2"],
-    width: 1220,
-    height: 980,
+    position: {
+      width: TABLET_BASE_WIDTH,
+      height: TABLET_BASE_HEIGHT,
+      minWidth: Math.round(TABLET_BASE_WIDTH * TABLET_MIN_SCALE),
+      minHeight: Math.round(TABLET_BASE_HEIGHT * TABLET_MIN_SCALE)
+    },
     window: {
       resizable: true,
       draggable: true,
-      frame: true
+      frame: false
     },
     form: {
       closeOnSubmit: false,
@@ -324,6 +338,7 @@ export class SWSEV2CharacterSheet extends
     // Position centering tracking — initialize EARLY so first render knows this is a new open
     this._openedAt = Date.now();
     this._centerTimer = null;
+    this._tabletInitialPositionApplied = false;
 
     // Create debounced form submission to prevent keystroke spam
     // 500ms delay: ensures multiple rapid changes batch into one update
@@ -348,7 +363,7 @@ export class SWSEV2CharacterSheet extends
 
     // ─── Phase 11: Shell Host State ────────────────────────────────────────
     // Active surface: 'sheet' | 'home' | 'progression' | 'chargen' | 'upgrade' | 'settings' | 'mentor'
-    this._shellSurface = 'sheet';
+    this._shellSurface = 'home';
     this._shellSurfaceOptions = {};
     this._shellOverlay = null;
     this._shellDrawer = null;
@@ -453,6 +468,50 @@ export class SWSEV2CharacterSheet extends
   _wireShellEvents(root, signal) {
     if (!root) return;
 
+    // ─── Tablet Hardware Controls ──────────────────────────────────────────
+    root.querySelector('[data-action="tablet-close"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      this.close();
+    }, { signal });
+
+    root.querySelector('[data-action="tablet-home"]')?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      if (this._shellSurface !== 'home') {
+        await this.setSurface('home');
+        this.render(false);
+      }
+    }, { signal });
+
+    root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      if (this._tabletExpanded) {
+        // Restore to viewport-fit scale
+        this._tabletInitialPositionApplied = false;
+        this._applyTabletViewportFit();
+        this._tabletExpanded = false;
+      } else {
+        // Maximize: fit to largest size possible in current viewport
+        // Only use 1.0 if viewport can fit it; otherwise use viewport-fit scale
+        const canFitFull = (window.innerWidth >= TABLET_BASE_WIDTH + TABLET_MARGIN) &&
+                           (window.innerHeight >= TABLET_BASE_HEIGHT + TABLET_MARGIN);
+
+        const scale = canFitFull ? TABLET_MAX_SCALE : this._getTabletViewportScale();
+        const width = Math.round(TABLET_BASE_WIDTH * scale);
+        const height = Math.round(TABLET_BASE_HEIGHT * scale);
+        const left = Math.max(0, Math.round((window.innerWidth - width) / 2));
+        const top = Math.max(0, Math.round((window.innerHeight - height) / 2));
+
+        this.setPosition({ width, height, left, top });
+        const root = this.element;
+        if (root) {
+          root.style.setProperty('--swse-tablet-scale', String(scale));
+          root.style.setProperty('--swse-tablet-scaled-width', `${width}px`);
+          root.style.setProperty('--swse-tablet-scaled-height', `${height}px`);
+        }
+        this._tabletExpanded = true;
+      }
+    }, { signal });
+
     root.querySelectorAll('[data-shell-action="return-to-sheet"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
@@ -536,6 +595,12 @@ export class SWSEV2CharacterSheet extends
     if (this._shellSurface === 'mentor') {
       this._wireMentorSurfaceEvents(root, signal);
     }
+    if (this._shellSurface === 'progression' || this._shellSurface === 'chargen') {
+      this._wireProgressionSurfaceEvents(root, signal);
+    }
+    if (this._shellSurface === 'workbench') {
+      this._wireWorkbenchSurfaceEvents(root, signal);
+    }
     if (this._shellOverlay?.overlayId === 'upgrade-single-item') {
       this._wireUpgradeOverlayEvents(root, signal);
     }
@@ -557,9 +622,12 @@ export class SWSEV2CharacterSheet extends
         await new Promise(resolve => setTimeout(resolve, 150));
 
         // Special-case progression/chargen: launch the real flow instead of routing to placeholder surface
-        if (routeId === 'chargen' || routeId === 'progression') {
-          await launchProgression(this.actor);
+        if (routeId === 'chargen') {
+          await launchProgression(this.actor, { currentStep: 'intro', source: 'home' });
           // Do NOT render - ChargenShell/ProgressionFramework opens as a separate window
+        } else if (routeId === 'progression') {
+          await launchProgression(this.actor, { source: 'home' });
+          // Do NOT render - ProgressionFramework opens as a separate window
         } else {
           await this.setSurface(routeId, { source: 'home' });
           this.render(false);
@@ -886,6 +954,90 @@ export class SWSEV2CharacterSheet extends
     });
   }
 
+  /**
+   * Wire delegated events for progression/chargen inline surface.
+   * Forwards data-action clicks to ProgressionSurfaceAdapter.handleAction().
+   */
+  _wireProgressionSurfaceEvents(root, signal) {
+    const regionAttr = this._shellSurface === 'chargen' ? 'surface-chargen' : 'surface-progression';
+    const surfaceRoot = root.querySelector(`[data-shell-region="${regionAttr}"]`);
+    if (!surfaceRoot) return;
+
+    surfaceRoot.addEventListener('click', async (ev) => {
+      const btn = ev.target.closest('[data-action]');
+      if (!btn) return;
+
+      const action = btn.dataset.action;
+      if (!action) return;
+
+      // Change events (input) handled separately — clicks only here
+      ev.preventDefault();
+
+      try {
+        const { ProgressionSurfaceAdapter } = await import(
+          '/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js'
+        );
+        const key = `${this.actor.id}-${this._shellSurface === 'chargen' ? 'chargen' : 'levelup'}`;
+        const adapter = ProgressionSurfaceAdapter._registry.get(key);
+        if (adapter) {
+          await adapter.handleAction(action, ev, btn);
+        }
+      } catch (err) {
+        swseLogger.error(`[CharacterSheet] Progression surface action "${action}" failed:`, err);
+      }
+    }, { signal });
+  }
+
+  /**
+   * Wire delegated events for workbench inline surface.
+   * Forwards data-action clicks/inputs to WorkbenchSurfaceAdapter.handleAction().
+   */
+  _wireWorkbenchSurfaceEvents(root, signal) {
+    const surfaceRoot = root.querySelector('[data-shell-region="surface-workbench"]');
+    if (!surfaceRoot) return;
+
+    // Click delegation for button actions
+    surfaceRoot.addEventListener('click', async (ev) => {
+      const btn = ev.target.closest('[data-action]');
+      if (!btn) return;
+
+      const action = btn.dataset.action;
+      if (!action || action === 'search-items') return; // search handled by input event
+
+      ev.preventDefault();
+
+      try {
+        const { WorkbenchSurfaceAdapter } = await import(
+          '/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js'
+        );
+        const adapter = WorkbenchSurfaceAdapter._registry.get(this.actor.id);
+        if (adapter) {
+          await adapter.handleAction(action, btn);
+        }
+      } catch (err) {
+        swseLogger.error(`[CharacterSheet] Workbench surface action "${action}" failed:`, err);
+      }
+    }, { signal });
+
+    // Input delegation for search field
+    surfaceRoot.addEventListener('input', async (ev) => {
+      const input = ev.target.closest('[data-action="search-items"]');
+      if (!input) return;
+
+      try {
+        const { WorkbenchSurfaceAdapter } = await import(
+          '/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js'
+        );
+        const adapter = WorkbenchSurfaceAdapter._registry.get(this.actor.id);
+        if (adapter) {
+          await adapter.handleAction('search-items', input);
+        }
+      } catch (err) {
+        swseLogger.error('[CharacterSheet] Workbench search failed:', err);
+      }
+    }, { signal });
+  }
+
   setPosition(options = {}) {
     // CRITICAL: ApplicationV2 element resolution
     // this.element is already an HTMLElement in Foundry v13, NOT a jQuery object
@@ -959,6 +1111,52 @@ export class SWSEV2CharacterSheet extends
   // been moved to _onRender (isFirstRender) below so it actually runs.
   // ---------------------------------------------------------------
 
+  /**
+   * Calculate the scale factor for the tablet shell based on available viewport.
+   * Ensures the full holopad remains visible on smaller screens by scaling proportionally.
+   * @returns {number} Scale factor between TABLET_MIN_SCALE and TABLET_MAX_SCALE
+   */
+  _getTabletViewportScale() {
+    const availableWidth = Math.max(320, window.innerWidth - TABLET_MARGIN);
+    const availableHeight = Math.max(320, window.innerHeight - TABLET_MARGIN);
+
+    const scale = Math.min(
+      TABLET_MAX_SCALE,
+      availableWidth / TABLET_BASE_WIDTH,
+      availableHeight / TABLET_BASE_HEIGHT
+    );
+
+    return Math.max(TABLET_MIN_SCALE, scale);
+  }
+
+  /**
+   * Apply viewport-fit scaling to the tablet shell.
+   * Scales the entire holopad proportionally so all UI elements remain visible.
+   * Called once on first render and when user maximizes/expands.
+   */
+  _applyTabletViewportFit() {
+    if (this._tabletInitialPositionApplied) return;
+
+    const scale = this._getTabletViewportScale();
+    const width = Math.round(TABLET_BASE_WIDTH * scale);
+    const height = Math.round(TABLET_BASE_HEIGHT * scale);
+    const left = Math.max(0, Math.round((window.innerWidth - width) / 2));
+    const top = Math.max(0, Math.round((window.innerHeight - height) / 2));
+
+    this.setPosition({ width, height, left, top });
+
+    const root = this.element;
+    if (root) {
+      root.style.setProperty('--swse-tablet-scale', String(scale));
+      root.style.setProperty('--swse-tablet-base-width', TABLET_BASE_WIDTH + 'px');
+      root.style.setProperty('--swse-tablet-base-height', TABLET_BASE_HEIGHT + 'px');
+      root.style.setProperty('--swse-tablet-scaled-width', `${width}px`);
+      root.style.setProperty('--swse-tablet-scaled-height', `${height}px`);
+    }
+
+    this._tabletInitialPositionApplied = true;
+  }
+
   async _onRender(context, options) {
     // ═══ DIAGNOSTICS: Capture state at render start ═══
     characterSheetDiagnostics.snapshot('_onRender START (before positioning)', this);
@@ -978,6 +1176,11 @@ export class SWSEV2CharacterSheet extends
     // Track whether this is the very first render of this app instance
     const isFirstRenderEver = !this.rendered;
 
+    // On very first render, apply scale-to-fit so the full tablet UI is visible on smaller screens
+    if (isFirstRenderEver) {
+      this._applyTabletViewportFit();
+    }
+
     // Track whether this is the first render after a close/reopen cycle
     // (allows re-centering if user reopens the sheet)
     if (!this._hasBeenRendered) {
@@ -987,7 +1190,7 @@ export class SWSEV2CharacterSheet extends
 
     const shouldCenter = this._shouldCenterOnRender;
 
-    if (shouldCenter) {
+    if (shouldCenter && !this._tabletInitialPositionApplied) {
       // Center once per open session, then let AppV2 own future drag/resize state
       // Use dynamic dimensions from DEFAULT_OPTIONS instead of hardcoded 900x950
       const { width: targetWidth, height: targetHeight } = getApplicationTargetSize(this);
@@ -1242,6 +1445,14 @@ export class SWSEV2CharacterSheet extends
     // Phase 11: Unregister from ShellRouter
     if (this.actor?.id) {
       ShellRouter.unregister(this.actor.id);
+
+      // Cleanup inline surface adapters
+      import('/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js')
+        .then(({ ProgressionSurfaceAdapter }) => ProgressionSurfaceAdapter.destroy(this.actor.id))
+        .catch(() => {});
+      import('/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js')
+        .then(({ WorkbenchSurfaceAdapter }) => WorkbenchSurfaceAdapter.destroy(this.actor.id))
+        .catch(() => {});
     }
 
     return super._onClose(options);
@@ -2906,12 +3117,11 @@ const forcePoints = [];
     }, { signal, capture: false });
 
     // Store button (delegated)
-    html.addEventListener("click", ev => {
+    html.addEventListener("click", async ev => {
       const button = ev.target.closest('[data-action="cmd-store"]');
       if (!button) return;
       ev.preventDefault();
-      const store = new SWSEStore(this.actor);
-      store.render(true);
+      await ShellRouter.openSurface(this.actor, 'store');
     }, { signal, capture: false });
 
     // Character identity selection buttons (Class, Species, Background, Homeworld, Profession)

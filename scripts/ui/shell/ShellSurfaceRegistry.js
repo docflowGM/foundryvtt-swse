@@ -31,9 +31,9 @@ export class ShellSurfaceRegistry {
       case 'home':
         return this._buildHomeSurfaceVm(actor, surfaceOptions);
       case 'progression':
-        return this._buildProgressionSurfaceVm(actor, surfaceOptions);
+        return this._buildProgressionSurfaceVm(actor, surfaceOptions, shellHost);
       case 'chargen':
-        return this._buildChargenSurfaceVm(actor, surfaceOptions);
+        return this._buildChargenSurfaceVm(actor, surfaceOptions, shellHost);
       case 'upgrade':
         return this._buildUpgradeSurfaceVm(actor, surfaceOptions, shellHost);
       case 'settings':
@@ -44,6 +44,10 @@ export class ShellSurfaceRegistry {
         return this._buildMessengerSurfaceVm(actor, surfaceOptions);
       case 'store':
         return this._buildStoreSurfaceVm(actor, surfaceOptions);
+      case 'workbench':
+        return this._buildWorkbenchSurfaceVm(actor, surfaceOptions, shellHost);
+      case 'customization':
+        return this._buildCustomizationSurfaceVm(actor, surfaceOptions);
       default:
         SWSELogger.warn(`[ShellSurfaceRegistry] Unknown surface: ${surfaceId}`);
         return { id: surfaceId, title: surfaceId, error: `Unknown surface: ${surfaceId}` };
@@ -169,35 +173,92 @@ export class ShellSurfaceRegistry {
   }
 
   /**
-   * Progression surface VM.
-   * Progression is handled by ProgressionShell (external shell positioned over the sheet).
-   * This VM provides the "handoff" state: title, actor info, source context.
+   * Workbench surface VM — inline via WorkbenchSurfaceAdapter.
+   * Creates/reuses an ItemCustomizationWorkbench instance that renders into the holopad surface.
+   *
+   * @param {Actor} actor
+   * @param {object} options - { itemId, category, mode }
+   * @param {object} shellHost
    */
-  static _buildProgressionSurfaceVm(actor, options) {
+  static async _buildWorkbenchSurfaceVm(actor, options, shellHost) {
+    if (!actor) {
+      return { id: 'workbench', title: 'Armory // Customization', error: 'No actor selected' };
+    }
+
+    try {
+      const { WorkbenchSurfaceAdapter } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js'
+      );
+      const adapter = WorkbenchSurfaceAdapter.getOrCreate(shellHost, actor, options);
+      return adapter.buildViewModel();
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Workbench surface VM failed:', err);
+      return { id: 'workbench', title: 'Armory // Customization', error: err.message };
+    }
+  }
+
+  /**
+   * Customization surface VM — Droid Garage and Starship Shipyard inside the holopad.
+   * Launches the CustomizationBayApp as an inline surface.
+   *
+   * @param {Actor} actor
+   * @param {object} options - { bayMode, contextMode }
+   */
+  static async _buildCustomizationSurfaceVm(actor, options) {
+    if (!actor) {
+      return { id: 'customization', title: 'Customization Bay', error: 'No actor selected' };
+    }
+
     return {
-      id: 'progression',
-      title: 'Progression',
-      actorId: actor?.id,
-      actorName: actor?.name,
-      source: options.source ?? 'sheet',
-      stepId: options.stepId ?? null,
-      isHandoff: true
+      id: 'customization',
+      title: 'Customization Bay',
+      actorId: actor.id,
+      actorName: actor.name,
+      bayMode: options.bayMode ?? 'garage', // garage | shipyard
+      contextMode: options.contextMode ?? 'modifyExisting'
     };
   }
 
   /**
-   * Chargen surface VM.
-   * Same handoff model as progression — ChargenShell handles rendering.
+   * Progression surface VM — inline via ProgressionSurfaceAdapter.
+   * Creates/reuses a ProgressionShell instance that renders content into the holopad surface.
    */
-  static _buildChargenSurfaceVm(actor, options) {
-    return {
-      id: 'chargen',
-      title: 'Character Creation',
-      actorId: actor?.id,
-      actorName: actor?.name,
-      source: options.source ?? 'sheet',
-      isHandoff: true
-    };
+  static async _buildProgressionSurfaceVm(actor, options, shellHost) {
+    if (!actor) {
+      return { id: 'progression', title: 'Level Up', error: 'No actor selected' };
+    }
+
+    try {
+      const { ProgressionSurfaceAdapter } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js'
+      );
+      const adapter = await ProgressionSurfaceAdapter.getOrCreate(shellHost, actor, 'levelup', options);
+      return adapter.buildViewModel();
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Progression surface VM failed:', err);
+      return { id: 'progression', title: 'Level Up', error: err.message };
+    }
+  }
+
+  /**
+   * Chargen surface VM — inline via ProgressionSurfaceAdapter.
+   * Creates/reuses a ChargenShell instance that renders content into the holopad surface.
+   */
+  static async _buildChargenSurfaceVm(actor, options, shellHost) {
+    if (!actor) {
+      return { id: 'chargen', title: 'Character Creation', error: 'No actor selected' };
+    }
+
+    try {
+      const { ProgressionSurfaceAdapter } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js'
+      );
+      const adapter = await ProgressionSurfaceAdapter.getOrCreate(shellHost, actor, 'chargen', options);
+      return adapter.buildViewModel();
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Chargen surface VM failed:', err);
+      return { id: 'chargen', title: 'Character Creation', error: err.message };
+    }
   }
 
   /**

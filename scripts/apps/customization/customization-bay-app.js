@@ -18,6 +18,7 @@ import { VehicleCustomizationEngine } from "/systems/foundryvtt-swse/scripts/eng
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { getActorSheetTheme, buildActorSheetThemeStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
 import { getActorSheetMotionStyle, buildActorSheetMotionStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
+import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 
 const SYSTEM_ID = "foundryvtt-swse";
 
@@ -763,5 +764,19 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
 }
 
 export function openCustomizationBay(actor = null, options = {}) {
-  return new CustomizationBayApp(actor, options).render(true);
+  if (!actor) {
+    return new CustomizationBayApp(actor, options).render(true);
+  }
+
+  const shell = ShellRouter.getShell(actor.id);
+  if (shell) {
+    // Shell host is open — route to customization surface inside the holopad
+    return ShellRouter.openSurface(actor, 'customization', {
+      bayMode: options.bayMode || 'garage',
+      contextMode: options.contextMode || 'modifyExisting'
+    });
+  } else {
+    // No shell host — fall back to standalone customization bay app
+    return new CustomizationBayApp(actor, options).render(true);
+  }
 }

@@ -8,15 +8,15 @@
 import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
+import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 
 function onClickStore(app) {
   const actor = app?.actor ?? app?.document;
 
   if (actor && actor.type === 'character') {
     SWSELogger.log(`[Store Header] Opening Store for: ${actor.name}`);
-    // Launch asynchronously without await
-    // The handler should not block the UI
-    SWSEStore.open(actor).catch(err => {
+    // Route through shell when available, fall back to standalone
+    ShellRouter.openSurface(actor, 'store').catch(err => {
       SWSELogger.error('[Store Header] Error opening store:', err);
       ui?.notifications?.error?.(`Failed to open store: ${err.message}`);
     });
