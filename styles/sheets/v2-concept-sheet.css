@@ -79,6 +79,7 @@
   border-radius: 34px;
   padding: 0;
   overflow: hidden;
+  isolation: isolate;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.10), transparent 14%),
     linear-gradient(315deg, rgba(255, 255, 255, 0.06), transparent 18%),
@@ -93,30 +94,38 @@
     0 0 64px color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent);
 }
 
-.swse-v2-tablet--concept::before,
+.swse-v2-tablet--concept::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.045),
+    inset 0 18px 36px rgba(255, 255, 255, 0.045),
+    inset 0 -28px 48px rgba(0, 0, 0, 0.55),
+    inset 0 0 42px rgba(0, 0, 0, 0.42),
+    0 0 34px color-mix(in srgb, var(--swse-accent, #70e2ff) 14%, transparent);
+}
+
 .swse-v2-tablet--concept::after {
   content: "";
   position: absolute;
-  inset: 12px;
-  border-radius: 18px;
-  pointer-events: none;
-}
-
-.swse-v2-tablet--concept::before {
-  border: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.swse-v2-tablet--concept::after {
   inset: auto 32px 12px auto;
   width: 120px;
   height: 10px;
   border-radius: 999px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  z-index: 21;
+  pointer-events: none;
 }
 
 .swse-v2-screen--concept {
   position: absolute;
   inset: 0;
+  z-index: 1;
   padding: 0;
   margin: 0;
   border: 0;
@@ -125,9 +134,9 @@
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(circle at 30% 12%, rgba(54, 104, 157, 0.35), transparent 24%),
-    radial-gradient(circle at 75% 90%, rgba(129, 51, 133, 0.22), transparent 25%),
-    linear-gradient(180deg, rgba(11, 21, 33, 0.98) 0%, rgba(8, 15, 24, 0.98) 100%);
+    radial-gradient(circle at 30% 12%, color-mix(in srgb, var(--swse-accent, #70e2ff) 13%, transparent), transparent 24%),
+    radial-gradient(circle at 75% 90%, color-mix(in srgb, var(--swse-accent-2, #ff6ef4) 8%, transparent), transparent 25%),
+    linear-gradient(180deg, rgba(9, 16, 25, 0.92) 0%, rgba(5, 9, 15, 0.95) 100%);
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.03),
     inset 0 0 80px rgba(85, 175, 255, 0.08);
@@ -819,6 +828,8 @@
 }
 
 .swse-concept-main {
+  position: relative;
+  z-index: 5;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -2159,7 +2170,7 @@
 
 .swse-tablet-hardware {
   position: absolute;
-  z-index: 30;
+  z-index: 40;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -2209,7 +2220,7 @@
 
 .swse-tablet-home-button {
   position: absolute;
-  z-index: 32;
+  z-index: 40;
   left: 50%;
   bottom: 18px;
   width: 42px;
@@ -2253,7 +2264,7 @@
   position: absolute;
   left: 34px;
   bottom: 29px;
-  z-index: 25;
+  z-index: 40;
   display: flex;
   gap: 5px;
   opacity: 0.55;
@@ -2314,7 +2325,7 @@
 
 .swse-tablet-bezel-detail {
   position: absolute;
-  z-index: 35;
+  z-index: 40;
   display: flex;
   align-items: center;
   gap: 9px;
@@ -2372,7 +2383,7 @@
   position: absolute;
   bottom: 26px;
   left: 26px;
-  z-index: 35;
+  z-index: 40;
   opacity: 0.46;
   pointer-events: none;
 }
