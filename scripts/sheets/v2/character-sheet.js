@@ -82,6 +82,16 @@ import { buildConceptSheetViewModel } from "/systems/foundryvtt-swse/scripts/she
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
+ * Tablet shell scaling constants
+ * Design the holopad at full concept size, then scale proportionally to fit viewport
+ */
+const TABLET_BASE_WIDTH = 1440;
+const TABLET_BASE_HEIGHT = 900;
+const TABLET_MARGIN = 24;
+const TABLET_MIN_SCALE = 0.68;
+const TABLET_MAX_SCALE = 1.0;
+
+/**
  * Debounce utility: delays function execution until N ms have passed without new calls
  * Used to prevent keystroke spam in form submissions
  */
@@ -283,10 +293,10 @@ export class SWSEV2CharacterSheet extends
     ...super.DEFAULT_OPTIONS,
     classes: ["swse", "sheet", "actor", "character", "swse-character-sheet", "swse-sheet", "v2"],
     position: {
-      width: 1440,
-      height: 900,
-      minWidth: 1100,
-      minHeight: 760
+      width: TABLET_BASE_WIDTH,
+      height: TABLET_BASE_HEIGHT,
+      minWidth: Math.round(TABLET_BASE_WIDTH * TABLET_MIN_SCALE),
+      minHeight: Math.round(TABLET_BASE_HEIGHT * TABLET_MIN_SCALE)
     },
     window: {
       resizable: true,
@@ -475,11 +485,22 @@ export class SWSEV2CharacterSheet extends
     root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
       ev.preventDefault();
       if (this._tabletExpanded) {
-        const { width, height } = this.constructor.DEFAULT_OPTIONS.position;
-        this.setPosition({ width, height });
+        // Restore to viewport-fit scale
+        this._tabletInitialPositionApplied = false;
+        this._applyTabletViewportFit();
         this._tabletExpanded = false;
       } else {
-        this.setPosition({ width: window.innerWidth - 40, height: window.innerHeight - 40 });
+        // Maximize to fill viewport
+        const scale = TABLET_MAX_SCALE;
+        const width = TABLET_BASE_WIDTH * scale;
+        const height = TABLET_BASE_HEIGHT * scale;
+        const left = Math.max(0, Math.round((window.innerWidth - width) / 2));
+        const top = Math.max(0, Math.round((window.innerHeight - height) / 2));
+        this.setPosition({ width, height, left, top });
+        const root = this.element;
+        if (root) {
+          root.style.setProperty('--swse-tablet-scale', String(scale));
+        }
         this._tabletExpanded = true;
       }
     }, { signal });
@@ -994,27 +1015,46 @@ export class SWSEV2CharacterSheet extends
   // ---------------------------------------------------------------
 
   /**
-   * Fit the tablet window to viewport on first open, accounting for small screens.
-   * Called once per open session to ensure the metallic holopad UI is immediately usable.
+   * Calculate the scale factor for the tablet shell based on available viewport.
+   * Ensures the full holopad remains visible on smaller screens by scaling proportionally.
+   * @returns {number} Scale factor between TABLET_MIN_SCALE and TABLET_MAX_SCALE
    */
-  _fitTabletToViewport() {
+  _getTabletViewportScale() {
+    const availableWidth = Math.max(320, window.innerWidth - TABLET_MARGIN);
+    const availableHeight = Math.max(320, window.innerHeight - TABLET_MARGIN);
+
+    const scale = Math.min(
+      TABLET_MAX_SCALE,
+      availableWidth / TABLET_BASE_WIDTH,
+      availableHeight / TABLET_BASE_HEIGHT
+    );
+
+    return Math.max(TABLET_MIN_SCALE, scale);
+  }
+
+  /**
+   * Apply viewport-fit scaling to the tablet shell.
+   * Scales the entire holopad proportionally so all UI elements remain visible.
+   * Called once on first render and when user maximizes/expands.
+   */
+  _applyTabletViewportFit() {
     if (this._tabletInitialPositionApplied) return;
 
-    const margin = 40;
-    const minWidth = 1100;
-    const minHeight = 760;
-    const maxWidth = 1500;
-    const maxHeight = 980;
-
-    // Clamp dimensions to available viewport, respecting minimums
-    const width = Math.max(minWidth, Math.min(maxWidth, window.innerWidth - margin));
-    const height = Math.max(minHeight, Math.min(maxHeight, window.innerHeight - margin));
-
-    // Center the window
+    const scale = this._getTabletViewportScale();
+    const width = Math.round(TABLET_BASE_WIDTH * scale);
+    const height = Math.round(TABLET_BASE_HEIGHT * scale);
     const left = Math.max(0, Math.round((window.innerWidth - width) / 2));
     const top = Math.max(0, Math.round((window.innerHeight - height) / 2));
 
     this.setPosition({ width, height, left, top });
+
+    const root = this.element;
+    if (root) {
+      root.style.setProperty('--swse-tablet-scale', String(scale));
+      root.style.setProperty('--swse-tablet-base-width', TABLET_BASE_WIDTH + 'px');
+      root.style.setProperty('--swse-tablet-base-height', TABLET_BASE_HEIGHT + 'px');
+    }
+
     this._tabletInitialPositionApplied = true;
   }
 
@@ -1037,9 +1077,9 @@ export class SWSEV2CharacterSheet extends
     // Track whether this is the very first render of this app instance
     const isFirstRenderEver = !this.rendered;
 
-    // On very first render, fit the tablet to viewport with sensible large dimensions
+    // On very first render, apply scale-to-fit so the full tablet UI is visible on smaller screens
     if (isFirstRenderEver) {
-      this._fitTabletToViewport();
+      this._applyTabletViewportFit();
     }
 
     // Track whether this is the first render after a close/reopen cycle
