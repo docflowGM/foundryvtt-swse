@@ -823,7 +823,7 @@
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  padding: 18px;
+  padding: clamp(10px, 1.25vw, 18px);
   background: transparent;
   flex: 1;
 }
