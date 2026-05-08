@@ -5,9 +5,11 @@
   --swse-tablet-scale: 1;
   --swse-tablet-base-width: 1440px;
   --swse-tablet-base-height: 900px;
+  --swse-tablet-scaled-width: 1440px;
+  --swse-tablet-scaled-height: 900px;
 
-  width: calc(var(--swse-tablet-base-width) * var(--swse-tablet-scale));
-  height: calc(var(--swse-tablet-base-height) * var(--swse-tablet-scale));
+  width: var(--swse-tablet-scaled-width, 1440px);
+  height: var(--swse-tablet-scaled-height, 900px);
   overflow: hidden;
   position: relative;
   margin: 0 auto;

@@ -88,7 +88,7 @@ const { HandlebarsApplicationMixin } = foundry.applications.api;
 const TABLET_BASE_WIDTH = 1440;
 const TABLET_BASE_HEIGHT = 900;
 const TABLET_MARGIN = 24;
-const TABLET_MIN_SCALE = 0.68;
+const TABLET_MIN_SCALE = 0.55;
 const TABLET_MAX_SCALE = 1.0;
 
 /**
@@ -490,16 +490,23 @@ export class SWSEV2CharacterSheet extends
         this._applyTabletViewportFit();
         this._tabletExpanded = false;
       } else {
-        // Maximize to fill viewport
-        const scale = TABLET_MAX_SCALE;
-        const width = TABLET_BASE_WIDTH * scale;
-        const height = TABLET_BASE_HEIGHT * scale;
+        // Maximize: fit to largest size possible in current viewport
+        // Only use 1.0 if viewport can fit it; otherwise use viewport-fit scale
+        const canFitFull = (window.innerWidth >= TABLET_BASE_WIDTH + TABLET_MARGIN) &&
+                           (window.innerHeight >= TABLET_BASE_HEIGHT + TABLET_MARGIN);
+
+        const scale = canFitFull ? TABLET_MAX_SCALE : this._getTabletViewportScale();
+        const width = Math.round(TABLET_BASE_WIDTH * scale);
+        const height = Math.round(TABLET_BASE_HEIGHT * scale);
         const left = Math.max(0, Math.round((window.innerWidth - width) / 2));
         const top = Math.max(0, Math.round((window.innerHeight - height) / 2));
+
         this.setPosition({ width, height, left, top });
         const root = this.element;
         if (root) {
           root.style.setProperty('--swse-tablet-scale', String(scale));
+          root.style.setProperty('--swse-tablet-scaled-width', `${width}px`);
+          root.style.setProperty('--swse-tablet-scaled-height', `${height}px`);
         }
         this._tabletExpanded = true;
       }
@@ -1053,6 +1060,8 @@ export class SWSEV2CharacterSheet extends
       root.style.setProperty('--swse-tablet-scale', String(scale));
       root.style.setProperty('--swse-tablet-base-width', TABLET_BASE_WIDTH + 'px');
       root.style.setProperty('--swse-tablet-base-height', TABLET_BASE_HEIGHT + 'px');
+      root.style.setProperty('--swse-tablet-scaled-width', `${width}px`);
+      root.style.setProperty('--swse-tablet-scaled-height', `${height}px`);
     }
 
     this._tabletInitialPositionApplied = true;
