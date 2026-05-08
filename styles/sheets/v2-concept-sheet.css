@@ -20,7 +20,10 @@
   background: transparent;
 }
 
-.swse-character-sheet-wrapper--concept,
+.swse-character-sheet-wrapper--concept {
+  display: contents;
+}
+
 .swse-character-sheet-wrapper--concept .swse-character-sheet-form {
   min-height: 100%;
 }

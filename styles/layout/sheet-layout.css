@@ -30,10 +30,49 @@
   min-height: 0;
 }
 
-.swse-sheet .sheet-body {
+.swse-sheet .sheet-body,
+.swse-sheet .sheet-content {
   flex: 1;
   overflow: auto;
   min-height: 0;
+}
+
+/* High-specificity overrides for Foundry v2 layout contract */
+.application.sheet.swse .window-content {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0 !important;
+}
+
+.application.sheet.swse .sheet-shell {
+  display: flex !important;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.application.sheet.swse .swse-character-sheet-wrapper {
+  display: contents;
+}
+
+.application.sheet.swse .sheet-body,
+.application.sheet.swse .sheet-content {
+  flex: 1;
+  overflow: hidden !important;
+  min-height: 0;
+}
+
+.application.sheet.swse .tab {
+  display: none;
+}
+
+.application.sheet.swse .tab.active {
+  display: flex !important;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto !important;
 }
 
 .swse-character-sheet,
@@ -303,5 +342,7 @@
 }
 
 .application.sheet.swse .tab.active {
-  display: block;
+  display: flex !important;
+  flex-direction: column;
+  min-height: 0;
 }

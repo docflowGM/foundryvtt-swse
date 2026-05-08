@@ -1,0 +1,23 @@
+<div class="feature-tour">
+  <h2 class="feature-tour__title">{{title}}</h2>
+  <p class="feature-tour__subtitle">{{subtitle}}</p>
+
+  {{#if items.length}}
+  <ul class="feature-tour__list">
+    {{#each items}}
+    <li class="feature-tour__item">{{this}}</li>
+    {{/each}}
+  </ul>
+  {{/if}}
+
+  <div class="feature-tour__actions">
+    {{#if isGM}}
+    <button type="button" class="feature-tour__gm-holopad">
+      <i class="fas fa-pad"></i> {{gmHolopadLabel}}
+    </button>
+    {{/if}}
+    <button type="button" class="feature-tour__skip">
+      {{skipLabel}}
+    </button>
+  </div>
+</div>

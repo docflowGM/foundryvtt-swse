@@ -48,7 +48,7 @@ export function onDiscoveryReady() {
   // Show first-launch tour (non-blocking)
   setTimeout(() => FeatureTour.show(), 1500);
 
-  // Expose for debugging
+  // Expose for debugging & reset
   if (SettingsHelper.getBoolean('devMode', false)) {
     console.log('SWSE | Discovery system initialized');
     globalThis.SWSEDiscovery = {
@@ -56,9 +56,24 @@ export function onDiscoveryReady() {
       tooltips: TooltipRegistry,
       callouts: CalloutManager,
       tour: FeatureTour,
-      state: DiscoveryUserState
+      state: DiscoveryUserState,
+      async resetTour() {
+        await DiscoveryUserState.reset();
+        ui.notifications.info('Discovery state reset. Refresh to see the welcome tour.');
+        return true;
+      }
     };
   }
+
+  // Always expose reset function for convenience
+  if (!globalThis.SWSE) {
+    globalThis.SWSE = {};
+  }
+  globalThis.SWSE.resetDiscoveryTour = async () => {
+    await DiscoveryUserState.reset();
+    ui.notifications.info('Discovery state reset. Refresh to see the welcome tour.');
+    return true;
+  };
 }
 
 /**

@@ -126,6 +126,7 @@
     "styles/apps/custom-roll-dialog.css",
     "styles/apps/customization-bay.css",
     "styles/apps/gm-datapad.css",
+    "styles/layout/sheet-layout.css",
     "styles/components/discovery.css"
   ],
   "languages": [

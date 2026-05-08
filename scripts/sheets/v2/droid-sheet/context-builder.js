@@ -82,6 +82,14 @@ export class DroidSheetContextBuilder {
     const derived = this.buildDerivedViewModel(abilities);
     const header = this.buildHeaderViewModel();
 
+    // Phase 7: Build droid-specific context variants
+    const degree = this.buildDegreeNormalization();
+    const resolvedSystems = this.buildResolvedSystems();
+    const sourceStatus = this.buildSourceStatus(resolvedSystems);
+    const requiredSystems = this.buildRequiredSystemsDefaults(droidPanels);
+    const garage = this.buildGarageContext();
+    const flags = this.buildFlagsContext();
+
     return {
       // NOTE: the 'actor' Document is intentionally NOT included; consumers use
       // `document` from the base context.
@@ -108,7 +116,7 @@ export class DroidSheetContextBuilder {
       equipment,
       armor,
       weapons,
-      combatWeapons,
+      combatWeapons: weapons,
       ownedActorMap,
       feats: abilityCards.feats,
       talents: abilityCards.talents,

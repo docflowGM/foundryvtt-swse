@@ -657,6 +657,7 @@
       },
       "Tour": {
         "Skip": "Skip",
+        "GMHolopad": "Open GM Holopad",
         "Player": {
           "Title": "Welcome to Star Wars Saga Edition",
           "Subtitle": "Here are a few things to help you get started. All features are optional.",

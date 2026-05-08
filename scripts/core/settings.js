@@ -5,6 +5,7 @@ import { registerActionEconomySettings } from "/systems/foundryvtt-swse/scripts/
 import { getActorSheetThemeOptions } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-theme-registry.js";
 import { getActorSheetMotionStyleOptions } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
+import { registerHolonetSettings } from "/systems/foundryvtt-swse/scripts/holonet/integration/holonet-init.js";
 
 /**
  * System settings for SWSE
@@ -544,5 +545,9 @@ game.settings.register('foundryvtt-swse', 'themePromptShown', {
   type: Boolean,
   default: false
 });
+
+  // Register Holonet settings (bulletin system)
+  registerHolonetSettings();
+
   SWSELogger.log('SWSE | Settings registered');
 }

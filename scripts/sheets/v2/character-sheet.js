@@ -26,6 +26,7 @@ import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/govern
 import { bindV2CharacterSheetTooltips } from "/systems/foundryvtt-swse/scripts/sheets/v2/TooltipIntegration.js";
 import { bindV2SheetBreakdowns, closeBreakdown } from "/systems/foundryvtt-swse/scripts/sheets/v2/BreakdownIntegration.js";
 import { StoreSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceController.js";
+import { HomeSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/HomeSurfaceController.js";
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { buildUnarmedAttackContext, buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
@@ -54,6 +55,8 @@ import { registerListeners } from "/systems/foundryvtt-swse/scripts/sheets/v2/ch
 import { handleFormSubmission, isDirectFieldMutationPath } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 // Diagnostics: runtime inspection of resize/scroll behavior
 import { characterSheetDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet-diagnostics.js";
+// Phase 11: Shell system for surface routing (progression, chargen, upgrade)
+import { ShellHostMixin } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellHost.js";
 // Contract Enforcement: validate sheet architecture at runtime
 import { CharacterSheetContractEnforcer } from "/systems/foundryvtt-swse/scripts/sheets/v2/contract-enforcer.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
@@ -274,7 +277,7 @@ function verifyListenerCleanup(element, sheetName, signal) {
 }
 
 export class SWSEV2CharacterSheet extends
-  HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+  ShellHostMixin(HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
 
   static DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,

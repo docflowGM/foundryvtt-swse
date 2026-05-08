@@ -20,6 +20,7 @@ import { UIManager } from "./scripts/ui/ui-manager.js";
 import { registerInitHooks } from "./scripts/infrastructure/hooks/init-hooks.js";
 import { initializeSceneControls } from "./scripts/scene-controls/init.js";
 import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discovery/index.js";
+import { initializeSentinelGovernance } from "./scripts/governance/sentinel/sentinel-init.js";
 
 UIManager.init();
 
@@ -106,6 +107,7 @@ Hooks.once("init", async () => {
   registerInitHooks();
   initializeSceneControls();
   initializeDiscoverySystem();
+  initializeSentinelGovernance();
 
   // -------------------------------
   // Preload Templates
