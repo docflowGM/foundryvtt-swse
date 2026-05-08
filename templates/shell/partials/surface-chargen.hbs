@@ -1,45 +1,137 @@
 {{!--
   surface-chargen.hbs
-  Shell surface for the Character Generation route.
+  Character Creation rendered inline inside the holopad shell.
 
-  Container type: ROUTE
-  Route ID: chargen
-
-  Same handoff model as surface-progression: ChargenShell opens on top
-  of the character sheet while this surface provides the bridge state.
+  Uses ProgressionSurfaceAdapter (ChargenShell mode) to get a pre-rendered VM.
+  Renders the pre-built HTML strings inline inside the holopad cockpit.
 
   vm:
     id           — 'chargen'
     title        — 'Character Creation'
-    actorId      — actor.id
-    actorName    — actor.name
-    source       — launch source
-    isHandoff    — true
+    mode         — 'chargen'
+    isLoading    — true while adapter initializes
+    isReady      — true when content is available
+    vm.*         — full ChargenShell _prepareContext() output
+    error        — error message if initialization failed
 --}}
 
-<div class="swse-shell-surface swse-shell-surface--chargen"
+<div class="swse-shell-surface swse-shell-surface--chargen swse-shell-surface--inline-app"
      data-shell-region="surface-chargen"
-     data-surface-id="{{vm.id}}">
+     data-surface-id="{{vm.id}}"
+     data-step-id="{{vm.vm.currentDescriptor.stepId}}">
 
-  <div class="swse-shell-surface__header">
-    <div class="swse-shell-surface__title">
-      <i class="fas fa-id-card"></i>
-      <span>{{vm.title}}</span>
+  {{!-- Loading state --}}
+  {{#if vm.isLoading}}
+  <div class="swse-shell-surface__body swse-shell-surface__body--loading">
+    <div class="swse-shell-launching">
+      <div class="swse-shell-launching__icon"><i class="fas fa-spinner fa-spin"></i></div>
+      <div class="swse-shell-launching__label">Initializing Character Creation…</div>
     </div>
   </div>
 
-  <div class="swse-shell-surface__body swse-shell-surface__body--handoff">
-    <div class="swse-shell-handoff">
-      <div class="swse-shell-handoff__icon">
-        <i class="fas fa-database"></i>
-      </div>
-      <div class="swse-shell-handoff__label">
-        Character Creation Active
-      </div>
-      <div class="swse-shell-handoff__detail">
-        {{vm.actorName}} — New Character Setup
-      </div>
-    </div>
+  {{!-- Error state --}}
+  {{else if vm.error}}
+  <div class="swse-shell-surface__body swse-shell-surface__error">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{vm.error}}</span>
   </div>
+
+  {{!-- Inline content: ChargenShell rendered inline --}}
+  {{else if vm.vm}}
+  <div class="swse-progression-inline swse-progression-inline--chargen"
+       data-theme="{{vm.vm.themeKey}}"
+       data-motion-style="{{vm.vm.motionStyle}}"
+       data-font-mode="{{vm.vm.fontMode}}"
+       style="{{{vm.vm.themeStyleInline}}}; {{{vm.vm.motionStyleInline}}};">
+
+    {{!-- Intro/boot mode: single work surface, no rails --}}
+    {{#if vm.vm.isIntroMode}}
+    <div class="swse-prog-inline-intro">
+      {{#if vm.vm.workSurfaceHtml}}
+        {{{vm.vm.workSurfaceHtml}}}
+      {{/if}}
+    </div>
+
+    {{!-- Normal mode: full progression shell layout --}}
+    {{else}}
+
+    {{#if vm.vm.parts.progressRail}}
+    <div class="swse-prog-inline-progress-rail" data-region="progress-rail">
+      {{{vm.vm.parts.progressRail}}}
+    </div>
+    {{/if}}
+
+    <div class="swse-prog-inline-body">
+
+      {{#if vm.vm.parts.mentorRail}}
+      <div class="swse-prog-inline-mentor" data-region="mentor-rail">
+        {{{vm.vm.parts.mentorRail}}}
+      </div>
+      {{/if}}
+
+      <div class="swse-prog-inline-work" data-region="work-surface">
+        {{#if vm.vm.workSurfaceHtml}}
+          {{{vm.vm.workSurfaceHtml}}}
+        {{else}}
+          <div class="swse-prog-empty">No step content available.</div>
+        {{/if}}
+      </div>
+
+      {{#if vm.vm.detailsPanelHtml}}
+      <div class="swse-prog-inline-details" data-region="details-panel">
+        {{{vm.vm.detailsPanelHtml}}}
+      </div>
+      {{/if}}
+
+    </div>
+
+    {{#if vm.vm.parts.utilityBar}}
+    <div class="swse-prog-inline-utility" data-region="utility-bar">
+      {{{vm.vm.parts.utilityBar}}}
+    </div>
+    {{/if}}
+
+    {{#if vm.vm.footer}}
+    <div class="swse-prog-inline-footer" data-region="action-footer">
+      {{#unless vm.vm.footer.hideBack}}
+      <button class="swse-prog-footer-btn swse-prog-footer-btn--back"
+              data-action="previous-step"
+              type="button">
+        <i class="fas fa-chevron-left"></i> Back
+      </button>
+      {{/unless}}
+
+      <div class="swse-prog-footer-center">
+        <span class="swse-prog-step-label">{{vm.vm.stepContext.displayText}}</span>
+        {{#if vm.vm.footer.statusText}}
+        <span class="swse-prog-footer-status {{vm.vm.footerStatus}}">{{vm.vm.footer.statusText}}</span>
+        {{/if}}
+      </div>
+
+      {{#if vm.vm.footer.isLast}}
+      <button class="swse-prog-footer-btn swse-prog-footer-btn--confirm"
+              data-action="confirm-step"
+              {{#unless vm.vm.footer.canConfirm}}disabled{{/unless}}
+              type="button">
+        {{vm.vm.footer.confirmLabel}} <i class="fas fa-check"></i>
+      </button>
+      {{else}}
+      <button class="swse-prog-footer-btn swse-prog-footer-btn--next"
+              data-action="next-step"
+              type="button">
+        Next <i class="fas fa-chevron-right"></i>
+      </button>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{/if}}{{!-- /isIntroMode --}}
+  </div>{{!-- /swse-progression-inline --}}
+
+  {{else}}
+  <div class="swse-shell-surface__body swse-shell-surface__body--loading">
+    <div class="swse-shell-launching__label">Loading character creation…</div>
+  </div>
+  {{/if}}
 
 </div>

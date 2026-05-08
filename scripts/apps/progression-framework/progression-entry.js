@@ -196,10 +196,21 @@ export async function launchProgression(actor, options = {}) {
   }
 
   try {
+    // ─── Shell Host Inline Routing ─────────────────────────────────────────
+    // If a shell host is open for this actor, route into the holopad inline surface.
+    // The ProgressionSurfaceAdapter handles initialization — no external window opens.
+    if (shell) {
+      SWSELogger.log(`[Progression Entry] Shell host found — routing to inline ${surfaceId} surface`);
+      await shell.render(false);
+      return shell;
+    }
+
+    // ─── No Shell Host — Fall Back to Standalone Window ───────────────────
+    // Legacy path for when the character sheet is not open (e.g. sidebar new-character flow)
     let progressionShell;
 
     if (isChargenIncomplete) {
-      SWSELogger.log(`[Progression Entry] Actor is incomplete → routing to ChargenShell`);
+      SWSELogger.log(`[Progression Entry] Actor is incomplete → routing to ChargenShell (standalone)`);
       try {
         const { ChargenShell } = await import('./chargen-shell.js');
         progressionShell = await ChargenShell.open(actor, options);
@@ -209,7 +220,7 @@ export async function launchProgression(actor, options = {}) {
         throw importErr;
       }
     } else {
-      SWSELogger.log(`[Progression Entry] Actor is complete → routing to LevelupShell`);
+      SWSELogger.log(`[Progression Entry] Actor is complete → routing to LevelupShell (standalone)`);
       const { LevelupShell } = await import('./levelup-shell.js');
       progressionShell = await LevelupShell.open(actor, options);
     }

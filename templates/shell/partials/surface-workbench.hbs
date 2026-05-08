@@ -1,57 +1,202 @@
 {{!--
   surface-workbench.hbs
-  Item Customization Workbench routed inside the holopad shell.
+  Item Customization Workbench rendered inline inside the holopad shell.
 
-  This surface opens the ItemCustomizationWorkbench for customizing weapons,
-  armor, gear, and lightsabers. Currently routes to the external workbench
-  app but rendered as a holopad surface.
+  Uses WorkbenchSurfaceAdapter to get the full workbench VM from
+  ItemCustomizationWorkbench._prepareContext(). Renders the categories,
+  inventory, upgrades/templates, and footer inline.
 
   vm:
     id           — 'workbench'
     title        — 'Armory // Customization'
-    actorId      — actor.id
-    actorName    — actor.name
-    itemId       — selected item ID (nullable)
-    category     — item category (nullable)
-    mode         — 'owned' | 'store-stage' | etc.
+    isReady      — true when content is available
+    vm.*         — full ItemCustomizationWorkbench _prepareContext() output
+    error        — error message if initialization failed
 --}}
 
-<div class="swse-shell-surface swse-shell-surface--workbench"
+<div class="swse-shell-surface swse-shell-surface--workbench swse-shell-surface--inline-app"
      data-shell-region="surface-workbench"
      data-surface-id="{{vm.id}}">
 
-  <div class="swse-shell-surface__header">
-    <button class="swse-shell-surface__back-btn"
-            data-shell-action="return-to-sheet"
-            type="button"
-            title="Return to Character Sheet">
-      <i class="fas fa-arrow-left"></i>
-      <span>Character Sheet</span>
-    </button>
-
-    <div class="swse-shell-surface__title">
-      <i class="fas fa-screwdriver-wrench"></i>
-      <span>{{vm.title}}</span>
-    </div>
-  </div>
-
+  {{!-- Error state --}}
   {{#if vm.error}}
   <div class="swse-shell-surface__body swse-shell-surface__error">
     <i class="fas fa-exclamation-triangle"></i>
     <span>{{vm.error}}</span>
   </div>
+
+  {{!-- Inline content: ItemCustomizationWorkbench rendered inline --}}
+  {{else if vm.vm}}
+  <div class="swse-workbench-inline"
+       data-theme="{{vm.vm.themeKey}}"
+       data-motion-style="{{vm.vm.motionStyle}}"
+       style="{{{vm.vm.themeStyleInline}}}; {{{vm.vm.motionStyleInline}}};">
+
+    {{!-- HUD strip: mentor flavor text + header info --}}
+    {{#if vm.vm.mentorText}}
+    <div class="swse-wb-inline-hud">
+      <div class="swse-wb-inline-mentor-text">{{vm.vm.mentorText}}</div>
+      {{#if vm.vm.currentItem}}
+      <div class="swse-wb-inline-item-name">{{vm.vm.currentItem.name}}</div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{!-- Category navigation tabs --}}
+    {{#if vm.vm.hasItems}}
+    <nav class="swse-wb-inline-tabs">
+      {{#each vm.vm.categories}}
+      <button class="swse-wb-tab {{#if active}}active{{/if}}"
+              data-action="select-category"
+              data-category="{{key}}"
+              type="button">
+        <span class="swse-wb-tab-icon">{{icon}}</span>
+        <span class="swse-wb-tab-label">{{label}}</span>
+        {{#if count}}<span class="swse-wb-tab-count">{{count}}</span>{{/if}}
+      </button>
+      {{/each}}
+    </nav>
+
+    {{!-- Main workarea --}}
+    <div class="swse-wb-inline-workarea">
+
+      {{!-- Inventory panel: item list --}}
+      <aside class="swse-wb-inline-inventory">
+        <div class="swse-wb-search-row">
+          <input class="swse-wb-search-input"
+                 data-action="search-items"
+                 type="text"
+                 placeholder="Search…"
+                 value="{{vm.vm.search}}">
+        </div>
+        {{#if vm.vm.hasInventoryResults}}
+        <ul class="swse-wb-item-list">
+          {{#each vm.vm.inventoryItems}}
+          <li class="swse-wb-item-row {{#if active}}active{{/if}}"
+              data-action="select-item"
+              data-item-id="{{id}}"
+              data-category="{{category}}">
+            {{#if img}}<img class="swse-wb-item-img" src="{{img}}" alt="">{{/if}}
+            <span class="swse-wb-item-label">{{name}}</span>
+          </li>
+          {{/each}}
+        </ul>
+        {{else}}
+        <div class="swse-wb-empty-list">No items found.</div>
+        {{/if}}
+      </aside>
+
+      {{!-- Detail panel: upgrades / templates for selected item --}}
+      <section class="swse-wb-inline-detail">
+        {{#if vm.vm.currentItem}}
+        <div class="swse-wb-item-hero">
+          {{#if vm.vm.currentItem.img}}
+          <img class="swse-wb-hero-img" src="{{vm.vm.currentItem.img}}" alt="{{vm.vm.currentItem.name}}">
+          {{/if}}
+          <div class="swse-wb-hero-meta">
+            <div class="swse-wb-hero-name">{{vm.vm.currentItem.name}}</div>
+            <div class="swse-wb-hero-subtitle">{{vm.vm.currentItem.subtitle}}</div>
+          </div>
+        </div>
+
+        {{!-- Upgrades grid --}}
+        {{#if vm.vm.upgrades.length}}
+        <div class="swse-wb-section-label">Upgrades</div>
+        <div class="swse-wb-upgrade-grid">
+          {{#each vm.vm.upgrades}}
+          <button class="swse-wb-upgrade-card {{#if selected}}selected{{/if}} {{#if disabled}}disabled{{/if}}"
+                  data-action="toggle-upgrade"
+                  data-upgrade-key="{{key}}"
+                  data-item-id="{{../vm.vm.currentItem.id}}"
+                  data-category="{{../vm.vm.selectedCategory}}"
+                  {{#if disabled}}disabled{{/if}}
+                  type="button"
+                  title="{{name}}">
+            {{name}}
+            {{#if installed}}<span class="swse-wb-badge">INSTALLED</span>{{/if}}
+            {{#if selected}}<span class="swse-wb-badge selected">SELECTED</span>{{/if}}
+          </button>
+          {{/each}}
+        </div>
+        {{/if}}
+
+        {{!-- Templates grid --}}
+        {{#if vm.vm.templates.length}}
+        <div class="swse-wb-section-label">Templates</div>
+        <div class="swse-wb-template-grid">
+          {{#each vm.vm.templates}}
+          <button class="swse-wb-template-card {{#if selected}}selected{{/if}}"
+                  data-action="toggle-template"
+                  data-template-key="{{key}}"
+                  data-item-id="{{../vm.vm.currentItem.id}}"
+                  data-category="{{../vm.vm.selectedCategory}}"
+                  type="button"
+                  title="{{name}}">
+            {{name}}
+          </button>
+          {{/each}}
+        </div>
+        {{/if}}
+
+        {{else}}
+        <div class="swse-wb-no-selection">
+          Select an item from the list to view customization options.
+        </div>
+        {{/if}}
+      </section>
+
+    </div>{{!-- /swse-wb-inline-workarea --}}
+
+    {{!-- Footer: cost summary + apply button --}}
+    <div class="swse-wb-inline-footer">
+      {{#if vm.vm.footer}}
+      <div class="swse-wb-footer-credits">
+        <span class="swse-wb-footer-lbl">COST</span>
+        <span class="swse-wb-footer-val">{{vm.vm.footer.cost}}</span>
+        <span class="swse-wb-footer-sep">|</span>
+        <span class="swse-wb-footer-lbl">ACCOUNT</span>
+        <span class="swse-wb-footer-val">{{vm.vm.footer.credits}}</span>
+        {{#if vm.vm.footer.slots}}
+        <span class="swse-wb-footer-sep">|</span>
+        <span class="swse-wb-footer-lbl">SLOTS</span>
+        <span class="swse-wb-footer-val {{#if vm.vm.footer.slots.isOverflowing}}overflow{{/if}}">
+          {{vm.vm.footer.slots.usedSlots}} / {{vm.vm.footer.slots.totalAvailable}}
+        </span>
+        {{/if}}
+      </div>
+      <button class="swse-wb-apply-btn {{#unless vm.vm.footer.canApply}}disabled{{/unless}}"
+              data-action="apply-item"
+              {{#unless vm.vm.footer.canApply}}disabled{{/unless}}
+              type="button">
+        {{vm.vm.footer.applyLabel}}
+      </button>
+      {{/if}}
+
+      <button class="swse-wb-close-btn"
+              data-action="close-workbench"
+              type="button">
+        <i class="fas fa-arrow-left"></i> Done
+      </button>
+    </div>
+
+    {{else}}
+    {{!-- No items available --}}
+    <div class="swse-wb-inline-empty">
+      <div class="swse-shell-launching">
+        <div class="swse-shell-launching__icon"><i class="fas fa-screwdriver-wrench"></i></div>
+        <div class="swse-shell-launching__label">No customizable items found</div>
+        <div class="swse-shell-launching__detail">Add items to your inventory to customize them.</div>
+      </div>
+    </div>
+    {{/if}}{{!-- /hasItems --}}
+
+  </div>{{!-- /swse-workbench-inline --}}
+
   {{else}}
-  <div class="swse-shell-surface__body">
+  <div class="swse-shell-surface__body swse-shell-surface__body--loading">
     <div class="swse-shell-launching">
-      <div class="swse-shell-launching__icon">
-        <i class="fas fa-gear"></i>
-      </div>
-      <div class="swse-shell-launching__label">
-        Customization Workshop
-      </div>
-      <div class="swse-shell-launching__detail">
-        {{vm.actorName}} — {{vm.category}} {{vm.mode}}
-      </div>
+      <div class="swse-shell-launching__icon"><i class="fas fa-spinner fa-spin"></i></div>
+      <div class="swse-shell-launching__label">Loading customization workshop…</div>
     </div>
   </div>
   {{/if}}

@@ -595,6 +595,12 @@ export class SWSEV2CharacterSheet extends
     if (this._shellSurface === 'mentor') {
       this._wireMentorSurfaceEvents(root, signal);
     }
+    if (this._shellSurface === 'progression' || this._shellSurface === 'chargen') {
+      this._wireProgressionSurfaceEvents(root, signal);
+    }
+    if (this._shellSurface === 'workbench') {
+      this._wireWorkbenchSurfaceEvents(root, signal);
+    }
     if (this._shellOverlay?.overlayId === 'upgrade-single-item') {
       this._wireUpgradeOverlayEvents(root, signal);
     }
@@ -946,6 +952,90 @@ export class SWSEV2CharacterSheet extends
         }
       }, { signal });
     });
+  }
+
+  /**
+   * Wire delegated events for progression/chargen inline surface.
+   * Forwards data-action clicks to ProgressionSurfaceAdapter.handleAction().
+   */
+  _wireProgressionSurfaceEvents(root, signal) {
+    const regionAttr = this._shellSurface === 'chargen' ? 'surface-chargen' : 'surface-progression';
+    const surfaceRoot = root.querySelector(`[data-shell-region="${regionAttr}"]`);
+    if (!surfaceRoot) return;
+
+    surfaceRoot.addEventListener('click', async (ev) => {
+      const btn = ev.target.closest('[data-action]');
+      if (!btn) return;
+
+      const action = btn.dataset.action;
+      if (!action) return;
+
+      // Change events (input) handled separately — clicks only here
+      ev.preventDefault();
+
+      try {
+        const { ProgressionSurfaceAdapter } = await import(
+          '/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js'
+        );
+        const key = `${this.actor.id}-${this._shellSurface === 'chargen' ? 'chargen' : 'levelup'}`;
+        const adapter = ProgressionSurfaceAdapter._registry.get(key);
+        if (adapter) {
+          await adapter.handleAction(action, ev, btn);
+        }
+      } catch (err) {
+        swseLogger.error(`[CharacterSheet] Progression surface action "${action}" failed:`, err);
+      }
+    }, { signal });
+  }
+
+  /**
+   * Wire delegated events for workbench inline surface.
+   * Forwards data-action clicks/inputs to WorkbenchSurfaceAdapter.handleAction().
+   */
+  _wireWorkbenchSurfaceEvents(root, signal) {
+    const surfaceRoot = root.querySelector('[data-shell-region="surface-workbench"]');
+    if (!surfaceRoot) return;
+
+    // Click delegation for button actions
+    surfaceRoot.addEventListener('click', async (ev) => {
+      const btn = ev.target.closest('[data-action]');
+      if (!btn) return;
+
+      const action = btn.dataset.action;
+      if (!action || action === 'search-items') return; // search handled by input event
+
+      ev.preventDefault();
+
+      try {
+        const { WorkbenchSurfaceAdapter } = await import(
+          '/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js'
+        );
+        const adapter = WorkbenchSurfaceAdapter._registry.get(this.actor.id);
+        if (adapter) {
+          await adapter.handleAction(action, btn);
+        }
+      } catch (err) {
+        swseLogger.error(`[CharacterSheet] Workbench surface action "${action}" failed:`, err);
+      }
+    }, { signal });
+
+    // Input delegation for search field
+    surfaceRoot.addEventListener('input', async (ev) => {
+      const input = ev.target.closest('[data-action="search-items"]');
+      if (!input) return;
+
+      try {
+        const { WorkbenchSurfaceAdapter } = await import(
+          '/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js'
+        );
+        const adapter = WorkbenchSurfaceAdapter._registry.get(this.actor.id);
+        if (adapter) {
+          await adapter.handleAction('search-items', input);
+        }
+      } catch (err) {
+        swseLogger.error('[CharacterSheet] Workbench search failed:', err);
+      }
+    }, { signal });
   }
 
   setPosition(options = {}) {
@@ -1355,6 +1445,14 @@ export class SWSEV2CharacterSheet extends
     // Phase 11: Unregister from ShellRouter
     if (this.actor?.id) {
       ShellRouter.unregister(this.actor.id);
+
+      // Cleanup inline surface adapters
+      import('/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js')
+        .then(({ ProgressionSurfaceAdapter }) => ProgressionSurfaceAdapter.destroy(this.actor.id))
+        .catch(() => {});
+      import('/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js')
+        .then(({ WorkbenchSurfaceAdapter }) => WorkbenchSurfaceAdapter.destroy(this.actor.id))
+        .catch(() => {});
     }
 
     return super._onClose(options);
