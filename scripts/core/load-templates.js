@@ -243,9 +243,17 @@ export const SWSE_TEMPLATES = [
   // ==============================
   // Shell Surfaces (Phase 12)
   // ==============================
+  'systems/foundryvtt-swse/templates/shell/shell-surface.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/shell-overlay-layer.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/shell-drawer-layer.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-home.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-settings.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-mentor.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-messenger.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-progression.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-chargen.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-upgrade.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs',
 
 ];
 

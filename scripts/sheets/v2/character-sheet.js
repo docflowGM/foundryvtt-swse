@@ -348,7 +348,7 @@ export class SWSEV2CharacterSheet extends
 
     // ─── Phase 11: Shell Host State ────────────────────────────────────────
     // Active surface: 'sheet' | 'home' | 'progression' | 'chargen' | 'upgrade' | 'settings' | 'mentor'
-    this._shellSurface = 'sheet';
+    this._shellSurface = 'home';
     this._shellSurfaceOptions = {};
     this._shellOverlay = null;
     this._shellDrawer = null;
@@ -557,9 +557,12 @@ export class SWSEV2CharacterSheet extends
         await new Promise(resolve => setTimeout(resolve, 150));
 
         // Special-case progression/chargen: launch the real flow instead of routing to placeholder surface
-        if (routeId === 'chargen' || routeId === 'progression') {
-          await launchProgression(this.actor);
+        if (routeId === 'chargen') {
+          await launchProgression(this.actor, { currentStep: 'intro', source: 'home' });
           // Do NOT render - ChargenShell/ProgressionFramework opens as a separate window
+        } else if (routeId === 'progression') {
+          await launchProgression(this.actor, { source: 'home' });
+          // Do NOT render - ProgressionFramework opens as a separate window
         } else {
           await this.setSurface(routeId, { source: 'home' });
           this.render(false);

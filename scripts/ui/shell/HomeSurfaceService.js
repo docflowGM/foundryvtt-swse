@@ -437,11 +437,41 @@ export class HomeSurfaceService {
         description: 'Companion status and upgrades'
       },
       {
+        id: 'messages',
+        label: 'Messages',
+        icon: '✉',
+        routeId: 'messenger',
+        visible: true,
+        enabled: true,
+        badge: holonetSummary.badges.messages ? holonetSummary.badges.messages : null,
+        badgeType: holonetSummary.badges.messages ? 'info' : null,
+        featured: false,
+        locked: false,
+        status: 'READY',
+        statusTone: holonetSummary.badges.messages ? 'warn' : '',
+        description: 'Messages and communications'
+      },
+      {
+        id: 'settings',
+        label: 'Settings',
+        icon: '⚙',
+        routeId: 'settings',
+        visible: true,
+        enabled: true,
+        badge: null,
+        badgeType: null,
+        featured: false,
+        locked: false,
+        status: 'READY',
+        statusTone: '',
+        description: 'Datapad settings and preferences'
+      },
+      {
         id: 'faction',
         label: 'Faction',
         icon: '✺',
         routeId: 'faction',
-        visible: true,
+        visible: false,
         enabled: true,
         badge: holonetSummary.badges.mentor ? '!' : null,
         badgeType: holonetSummary.badges.mentor ? 'jedi' : null,
@@ -453,7 +483,8 @@ export class HomeSurfaceService {
       }
     ];
 
-    return baseTiles.map((tile, index) => ({
+    const visibleTiles = baseTiles.filter(tile => tile.visible !== false);
+    return visibleTiles.map((tile, index) => ({
       ...tile,
       positionLeft: tilePositions[index]?.left ?? 50,
       positionTop: tilePositions[index]?.top ?? 50
