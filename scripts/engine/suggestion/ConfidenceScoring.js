@@ -29,7 +29,7 @@ export class ConfidenceScoring {
    * @param {Object} options - { includePriors, weight }
    * @returns {number} Confidence score (0-1)
    */
-  static computeConfidence(suggestion, actor, options = {}) {
+  static async computeConfidence(suggestion, actor, options = {}) {
     try {
       const { includePriors = true, weight = {} } = options;
 
@@ -58,7 +58,7 @@ export class ConfidenceScoring {
 
       // Factor 4: Build completeness
       if (includePriors && actor) {
-        const completenessScore = this._scoreCompleteness(actor);
+        const completenessScore = await this._scoreCompleteness(actor);
         score += completenessScore * weights.completeness;
       }
 
@@ -135,7 +135,7 @@ export class ConfidenceScoring {
    * More feats/talents chosen = more complete = higher confidence
    * @private
    */
-  static _scoreCompleteness(actor) {
+  static async _scoreCompleteness(actor) {
     try {
       // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
       const { ActorAbilityBridge } = await import("/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js");

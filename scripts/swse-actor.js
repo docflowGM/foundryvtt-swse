@@ -10,7 +10,8 @@
 // are marked as @mutation-exception legacy-disabled-character-sheet
 // as they are no longer reachable in the active v2 runtime.
 // ============================================
-import { SWSE_RACES } from "./races.js";
+const { ActorSheet } = foundry.appv1.sheets;
+import { SWSE_RACES } from "/systems/foundryvtt-swse/scripts/core/races.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { rollForcePower } from "/systems/foundryvtt-swse/scripts/rolls/force-powers.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";

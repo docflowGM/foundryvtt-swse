@@ -37,7 +37,6 @@ import { buildHeaderHpSegments } from "/systems/foundryvtt-swse/scripts/sheets/v
 import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/droid-systems-resolver.js";
 import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
-import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/droid-systems-resolver.js";
 
 const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
 

@@ -378,7 +378,7 @@ export class SynergyEvaluator {
    * @param {Actor} actor
    * @returns {Object|null} { baseItem, chainScore: 0-1 } or null
    */
-  static findChainBase(item, actor) {
+  static async findChainBase(item, actor) {
     try {
       const prerequisites = item.system?.requirements || item._raw?.prerequisites || [];
       if (!prerequisites || prerequisites.length === 0) {
@@ -454,12 +454,12 @@ export class SynergyEvaluator {
    * @param {Actor} actor
    * @returns {Array} Array of { type, target, score }
    */
-  static getAllSynergies(item, actor) {
+  static async getAllSynergies(item, actor) {
     try {
       const synergies = [];
 
       // Chain synergy
-      const chainBase = this.findChainBase(item, actor);
+      const chainBase = await this.findChainBase(item, actor);
       if (chainBase) {
         synergies.push({
           type: 'chain',

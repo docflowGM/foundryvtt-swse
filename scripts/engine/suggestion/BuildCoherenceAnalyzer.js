@@ -417,7 +417,7 @@ export class BuildCoherenceAnalyzer {
    * @param {Actor} actor
    * @returns {Object} { isMAD: boolean, attributes: [abbrev], count: number }
    */
-  static checkMAD(actor) {
+  static async checkMAD(actor) {
     try {
       // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
       const { ActorAbilityBridge } = await import("/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js");

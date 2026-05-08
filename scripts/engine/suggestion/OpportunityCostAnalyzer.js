@@ -23,7 +23,7 @@ export class OpportunityCostAnalyzer {
    * @param {Actor} actor
    * @returns {Object} { cost: 0-0.3, reasons: [strings] }
    */
-  static computeCost(item, actor) {
+  static async computeCost(item, actor) {
     try {
       // Phase 1: Exclude powers
       if (item.type === 'power') {
@@ -56,7 +56,7 @@ export class OpportunityCostAnalyzer {
       let totalCost = 0;
 
       // Prestige Delay Cost (primary)
-      const prestigeCost = this._checkPrestigeLock(item, actor, prestigeIntent.prestigeClass);
+      const prestigeCost = await this._checkPrestigeLock(item, actor, prestigeIntent.prestigeClass);
       if (prestigeCost.cost > 0) {
         totalCost += prestigeCost.cost;
         reasons.push(...prestigeCost.reasons);
@@ -163,7 +163,7 @@ export class OpportunityCostAnalyzer {
    * @param {string|null} targetPrestige
    * @returns {Object} { cost: 0-0.15, reasons: [] }
    */
-  static _checkPrestigeLock(item, actor, targetPrestige) {
+  static async _checkPrestigeLock(item, actor, targetPrestige) {
     try {
       if (!targetPrestige) {
         return { cost: 0, reasons: [] };
@@ -371,11 +371,11 @@ export class OpportunityCostAnalyzer {
    * @param {Actor} actor
    * @returns {Object} { delaysPrestige: boolean, prestigeName: string|null, delayLevels: number }
    */
-  static checkPrestigeLock(item, actor) {
+  static async checkPrestigeLock(item, actor) {
     try {
       const result = this._detectPrestigeIntent(item, actor);
       if (result.prestigeClass) {
-        const prestigeLock = this._checkPrestigeLock(item, actor, result.prestigeClass);
+        const prestigeLock = await this._checkPrestigeLock(item, actor, result.prestigeClass);
         return {
           delaysPrestige: prestigeLock.cost > 0,
           prestigeName: result.prestigeClass,

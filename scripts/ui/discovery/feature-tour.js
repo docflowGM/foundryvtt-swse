@@ -36,6 +36,17 @@ function _createModal() {
   const overlay = document.createElement('div');
   overlay.classList.add(`${TOUR_CLASS}__overlay`);
 
+  // Failsafe inline styles to ensure overlay never participates in body flex layout
+  overlay.style.cssText = `
+    position: fixed !important;
+    inset: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 1200 !important;
+    pointer-events: all !important;
+  `;
+
   const modal = document.createElement('div');
   modal.classList.add(TOUR_CLASS);
   modal.setAttribute('role', 'dialog');
@@ -92,6 +103,9 @@ export const FeatureTour = {
     } catch { /* setting not registered yet, continue */ }
 
     if (DiscoveryUserState.isTourCompleted()) {return;}
+
+    // Remove any stale overlay before creating a new one
+    document.querySelectorAll(`.${TOUR_CLASS}__overlay`).forEach(el => el.remove());
 
     const { overlay, skipBtn } = _createModal();
     document.body.appendChild(overlay);

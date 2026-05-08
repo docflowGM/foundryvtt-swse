@@ -98,8 +98,9 @@
   }
 }
 
-/* Tab content transitions */
-.tab {
+/* Tab content transitions (SWSE sheets only) */
+.swse-sheet .tab,
+.application.swse .tab {
   animation: swseFadeIn var(--swse-anim-med) var(--swse-ease);
 }
 

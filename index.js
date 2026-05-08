@@ -29,6 +29,10 @@ UIManager.init();
 Hooks.once("init", async () => {
   console.log("SWSE | Initializing Star Wars Saga Edition system...");
 
+  // Foundry v13+ namespaced references
+  const { Actors, Items } = foundry.documents.collections;
+  const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
+
   // -------------------------------
   // Global Config & Namespace
   // -------------------------------
@@ -120,8 +124,6 @@ Hooks.once("ready", async () => {
   // Setup store shortcut
   game.swse.openStore = actor => new SWSEStore(actor ?? null).render(true);
 
-  // Load vehicle templates
-  await loadVehicleTemplates();
   onDiscoveryReady();
 
   // Auto-load data on first run
@@ -259,21 +261,3 @@ function registerSettings() {
   });
 }
 
-// ============================================
-// VEHICLE TEMPLATE LOADER
-// ============================================
-async function loadVehicleTemplates() {
-  try {
-    const response = await fetch("systems/swse/data/vehicles.json");
-
-    if (response.ok) {
-      game.swseVehicles = { templates: await response.json() };
-      console.log(
-        `SWSE | Loaded ${game.swseVehicles.templates.length} vehicle templates.`
-      );
-    }
-  } catch (err) {
-    console.warn("SWSE | Could not load vehicle templates:", err);
-    game.swseVehicles = { templates: [] };
-  }
-}

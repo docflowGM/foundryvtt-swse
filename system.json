@@ -5,7 +5,7 @@
   "version": "1.2.1",
   "compatibility": {
     "minimum": "12",
-    "verified": "13"
+    "verified": "14"
   },
   "schemaVersion": 1,
   "authors": [
@@ -125,7 +125,8 @@
     "styles/system/gm-datapad-scene-control.css",
     "styles/apps/custom-roll-dialog.css",
     "styles/apps/customization-bay.css",
-    "styles/apps/gm-datapad.css"
+    "styles/apps/gm-datapad.css",
+    "styles/components/discovery.css"
   ],
   "languages": [
     {

@@ -35,6 +35,15 @@ export class ModifierEngine {
    * @param {Actor} actor
    * @returns {Modifier[]} Array of all collected modifiers
    */
+  /**
+   * Safely normalize any value to an array for spreading
+   * Protects against null, undefined, or non-iterable sources
+   * @private
+   */
+  static _safeArray(value) {
+    return Array.isArray(value) ? value : [];
+  }
+
   static async getAllModifiers(actor) {
     if (!actor) return [];
 
@@ -42,47 +51,47 @@ export class ModifierEngine {
 
     try {
       // Source 1: Feats
-      modifiers.push(...this._getFeatModifiers(actor));
+      modifiers.push(...this._safeArray(this._getFeatModifiers(actor)));
 
       // Source 2: Talents
-      modifiers.push(...this._getTalentModifiers(actor));
+      modifiers.push(...this._safeArray(this._getTalentModifiers(actor)));
 
       // Source 3: Species
-      modifiers.push(...this._getSpeciesModifiers(actor));
+      modifiers.push(...this._safeArray(this._getSpeciesModifiers(actor)));
 
       // Source 3b: Background bonuses (Phase 4 - occupations, events, planets)
-      modifiers.push(...this._getBackgroundModifiers(actor));
+      modifiers.push(...this._safeArray(this._getBackgroundModifiers(actor)));
 
       // Source 4: Encumbrance
-      modifiers.push(...this._getEncumbranceModifiers(actor));
+      modifiers.push(...this._safeArray(this._getEncumbranceModifiers(actor)));
 
       // Source 5: Conditions
-      modifiers.push(...this._getConditionModifiers(actor));
+      modifiers.push(...this._safeArray(this._getConditionModifiers(actor)));
 
       // Source 6: Items (equipment/armor)
-      modifiers.push(...this._getItemModifiers(actor));
+      modifiers.push(...this._safeArray(this._getItemModifiers(actor)));
 
       // Source 6b: Weapons (centralized through WeaponsEngine)
-      modifiers.push(...this._getWeaponModifiers(actor));
+      modifiers.push(...this._safeArray(this._getWeaponModifiers(actor)));
 
       // Source 7: Droid Modifications (Phase A - droids only)
       if (actor.type === 'droid') {
-        modifiers.push(...await this._getDroidModModifiers(actor));
+        modifiers.push(...this._safeArray(await this._getDroidModModifiers(actor)));
       }
 
       // Source 7b: Vehicle Modifications (Phase 6 - vehicles only)
       if (actor.type === 'vehicle') {
-        modifiers.push(...this._getVehicleModModifiers(actor));
+        modifiers.push(...this._safeArray(this._getVehicleModModifiers(actor)));
       }
 
       // Source 8: Custom modifiers (Phase B - user-defined via UI)
-      modifiers.push(...this._getCustomModifiers(actor));
+      modifiers.push(...this._safeArray(this._getCustomModifiers(actor)));
 
       // Source 8b: PASSIVE modifiers (Phase 1 - execution model infrastructure)
-      modifiers.push(...this._getPassiveModifiers(actor));
+      modifiers.push(...this._safeArray(this._getPassiveModifiers(actor)));
 
       // Source 9: Active Effects (Phase D - temporary/duration-based)
-      modifiers.push(...this._getActiveEffectModifiers(actor));
+      modifiers.push(...this._safeArray(this._getActiveEffectModifiers(actor)));
 
       swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} modifiers for ${actor.name}`);
 

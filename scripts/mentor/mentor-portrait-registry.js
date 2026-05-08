@@ -8,8 +8,8 @@
 const SYSTEM_ID = 'foundryvtt-swse';
 
 export const MENTOR_PORTRAIT_OVERRIDES = Object.freeze({
-  rendarr: 'assets/assets/mentors/rendarr.png',
-  'rendarrs-exchange': 'assets/assets/mentors/rendarr.png'
+  rendarr: 'assets/mentors/rendarr.png',
+  'rendarrs-exchange': 'assets/mentors/rendarr.png'
 });
 
 function getSystemBasePath() {

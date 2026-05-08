@@ -1072,7 +1072,7 @@ export const ActorEngine = {
     }
 
     return { itemsToCreate, effectsToCreate };
-  }
+  },
 
   async apply(actor, mutationPlan, options = {}) {
     try {

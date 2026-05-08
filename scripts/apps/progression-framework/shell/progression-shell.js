@@ -1316,7 +1316,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     return foundry.utils.mergeObject(context, {
       // Shell identity
       mode: this.mode,
-      actor: this.actor,
+      actor: this.actor.toObject(),
 
       // Step state
       steps: this.steps,

@@ -276,7 +276,8 @@
    CRITICAL: sheet-content must be flex: 1 (grow to fill)
    ───────────────────────────────────────────────────────────────────────── */
 
-.application.sheet .sheet-body {
+/* SWSE-only sheet layout (do NOT apply globally to all Foundry sheets) */
+.application.sheet.swse .sheet-body {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -284,34 +285,23 @@
   overflow: hidden;
 }
 
-.application.sheet .sheet-tabs {
+.application.sheet.swse .sheet-tabs {
   flex: 0 0 auto;
   overflow-x: auto;
   overflow-y: hidden;
   border-bottom: 1px solid var(--swse-border-default, #333);
 }
 
-.application.sheet .sheet-content {
+.application.sheet.swse .sheet-content {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
 }
 
-.application.sheet .tab {
+.application.sheet.swse .tab {
   display: none;
 }
 
-.application.sheet .tab.active {
+.application.sheet.swse .tab.active {
   display: block;
-}
-
-/* Standard flexbox utilities for all applications */
-.flexcol {
-  display: flex;
-  flex-direction: column;
-}
-
-.flexrow {
-  display: flex;
-  flex-direction: row;
 }

@@ -879,12 +879,69 @@ export class SWSEV2CharacterSheet extends
     });
   }
 
-  setPosition(position) {
-    // swseLogger.debug("[SWSEV2CharacterSheet] setPosition CALLED with:", position);
-    // swseLogger.debug("[SWSEV2CharacterSheet] current position before:", this.position);
-    const result = super.setPosition(position);
-    // swseLogger.debug("[SWSEV2CharacterSheet] position after setPosition:", this.position);
-    return result;
+  setPosition(options = {}) {
+    // CRITICAL: ApplicationV2 element resolution
+    // this.element is already an HTMLElement in Foundry v13, NOT a jQuery object
+    const el = this.element instanceof HTMLElement ? this.element : this.element?.[0];
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    if (!el) {
+      return super.setPosition(options);
+    }
+
+    const rect = el.getBoundingClientRect();
+
+    // Use actual dimensions if element is rendered, otherwise fall back to position defaults
+    let width = rect.width;
+    let height = rect.height;
+
+    // Guard against unmeasured/mini elements (like 26x24 measurements)
+    if (width < 100 || height < 100) {
+      width = this.position?.width || this.constructor.DEFAULT_OPTIONS?.position?.width || 800;
+      height = this.position?.height || this.constructor.DEFAULT_OPTIONS?.position?.height || 600;
+    }
+
+    // Validate sidebar but do NOT use it for positioning
+    // (DevTools or UI layout issues can corrupt sidebar measurements)
+    const sidebar = document.querySelector("#sidebar");
+    let sidebarAccepted = false;
+    let sidebarReason = "no sidebar";
+
+    if (sidebar && sidebar.id === "sidebar") {
+      const sidebarRect = sidebar.getBoundingClientRect();
+      // Only trust sidebar if it's actually docked at a viewport edge
+      const rightDocked = Math.abs(sidebarRect.right - vw) < 8;
+      const leftDocked = sidebarRect.left <= 8;
+
+      if ((rightDocked || leftDocked) && sidebarRect.width > 100 && sidebarRect.height > 100) {
+        sidebarAccepted = true;
+        sidebarReason = rightDocked ? "right-docked" : "left-docked";
+      } else {
+        sidebarReason = `detected but not docked`;
+      }
+    }
+
+    // Center in viewport (don't adjust for sidebar—let Foundry handle stacking)
+    const newLeft = Math.max((vw - width) / 2, 0);
+    const newTop = Math.max((vh - height) / 2, 0);
+
+    // Log diagnostic once per render cycle (not every setPosition call)
+    if (this._lastPositionDiagnosticRender !== this.rendered) {
+      this._lastPositionDiagnosticRender = this.rendered;
+      console.log(`[SWSE Sheet Position Debug] ${this.actor?.name}`, {
+        viewport: { width: vw, height: vh },
+        elementRect: { width: rect.width, height: rect.height, fallback: width !== rect.width },
+        sidebarAccepted,
+        sidebarReason,
+        computed: { left: newLeft, top: newTop, width, height }
+      });
+    }
+
+    // Merge with options and call parent once
+    const position = Object.assign({}, options, { left: newLeft, top: newTop });
+    return super.setPosition(position);
   }
 
   // ---------------------------------------------------------------
@@ -898,6 +955,13 @@ export class SWSEV2CharacterSheet extends
   async _onRender(context, options) {
     // ═══ DIAGNOSTICS: Capture state at render start ═══
     characterSheetDiagnostics.snapshot('_onRender START (before positioning)', this);
+
+    // Positioning diagnostics
+    const el = this.element?.[0];
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      swseLogger.log(`[SWSE Sheet Position Debug] _onRender START: actor=${this.actor?.name}, position={left:${this.position?.left}, top:${this.position?.top}}, element rect={left:${rect.left}, top:${rect.top}, width:${rect.width}, height:${rect.height}}`);
+    }
 
     // ═══ FIX: Center on initial render (first time ever or after close/reopen) ═══
     // PROBLEM: Previous code called setPosition repeatedly during a 5-second window,
@@ -1022,6 +1086,9 @@ export class SWSEV2CharacterSheet extends
     // ═══ DIAGNOSTICS: Final snapshot after all listeners wired ═══
     characterSheetDiagnostics.snapshot('_onRender COMPLETE (all listeners wired)', this);
 
+    // ═══ COMPREHENSIVE VISIBILITY DUMP ═══
+    // Uncomment to debug visibility issues: this._logVisibilityDump(root);
+
     // ═══ AUTO-DIAGNOSTICS: Run detailed analysis on every open ═══
     setTimeout(() => {
       // swseLogger.debug('[SWSE SheetDiag] ════════════════════════════════════');
@@ -1054,6 +1121,93 @@ export class SWSEV2CharacterSheet extends
       this._shellRouterRegistered = true;
     }
     this._wireShellEvents(root, signal);
+  }
+
+  /**
+   * Comprehensive DOM visibility dump for debugging sheet rendering issues
+   * Logs actual computed styles and layout metrics to understand why content might not be visible
+   */
+  _logVisibilityDump(rootEl) {
+    if (!rootEl || !(rootEl instanceof HTMLElement)) return;
+
+    const getComputedCSS = (el) => {
+      const cs = getComputedStyle(el);
+      return {
+        display: cs.display,
+        visibility: cs.visibility,
+        opacity: cs.opacity,
+        position: cs.position,
+        left: cs.left,
+        top: cs.top,
+        width: cs.width,
+        height: cs.height,
+        zIndex: cs.zIndex,
+        transform: cs.transform,
+        pointerEvents: cs.pointerEvents,
+        overflow: cs.overflow
+      };
+    };
+
+    swseLogger.log(`[SWSE Sheet Visibility Debug] ════════════════════════════════════`);
+    swseLogger.log(`[SWSE Sheet Visibility Debug] Actor: ${this.actor?.name}`);
+    swseLogger.log(`[SWSE Sheet Visibility Debug] Root Element: ${rootEl.tagName}#${rootEl.id}.${rootEl.className}`);
+
+    // Log root element
+    const rootRect = rootEl.getBoundingClientRect();
+    swseLogger.log(`[SWSE Sheet Visibility Debug] Root Rect:`, {
+      left: rootRect.left,
+      top: rootRect.top,
+      width: rootRect.width,
+      height: rootRect.height,
+      inViewport: rootRect.right > 0 && rootRect.left < window.innerWidth && rootRect.bottom > 0 && rootRect.top < window.innerHeight
+    });
+    swseLogger.log(`[SWSE Sheet Visibility Debug] Root Computed CSS:`, getComputedCSS(rootEl));
+    swseLogger.log(`[SWSE Sheet Visibility Debug] Root in DOM:`, document.body.contains(rootEl));
+
+    // Log ancestors up to body
+    swseLogger.log(`[SWSE Sheet Visibility Debug] ──── ANCESTOR CHAIN ────`);
+    let parent = rootEl.parentElement;
+    let depth = 0;
+    while (parent && parent !== document.body && depth < 10) {
+      const rect = parent.getBoundingClientRect();
+      swseLogger.log(`[SWSE Sheet Visibility Debug] Ancestor[${depth}]: ${parent.tagName}#${parent.id}.${parent.className}`, {
+        rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+        css: getComputedCSS(parent)
+      });
+      parent = parent.parentElement;
+      depth++;
+    }
+
+    // Log key child elements
+    swseLogger.log(`[SWSE Sheet Visibility Debug] ──── KEY CHILD ELEMENTS ────`);
+    const selectors = [
+      '.window-content',
+      '.swse-character-sheet-wrapper',
+      '.sheet-shell',
+      '.swse-sheet-body',
+      '.sheet-body',
+      '.tab',
+      '.tab.active',
+      'section.tab',
+      'section.tab.active',
+      'form'
+    ];
+
+    for (const selector of selectors) {
+      const els = rootEl.querySelectorAll(selector);
+      for (const el of els) {
+        const rect = el.getBoundingClientRect();
+        const cs = getComputedCSS(el);
+        swseLogger.log(`[SWSE Sheet Visibility Debug] Found: ${selector}`, {
+          tag: el.tagName,
+          className: el.className,
+          rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+          css: cs
+        });
+      }
+    }
+
+    swseLogger.log(`[SWSE Sheet Visibility Debug] ════════════════════════════════════`);
   }
 
   async _onClose(options) {
@@ -1431,7 +1585,7 @@ export class SWSEV2CharacterSheet extends
     }
 
     // Initiative total (from derived calculation)
-    const initiativeTotal = derived?.initiative?.total ?? 0;
+    const initiativeTotal = Number(derived?.initiative?.total ?? derived?.initiative ?? 0) || 0;
 
     // Combat attacks context
     // PHASE 6: Derived is authoritative for attacks list
@@ -1462,27 +1616,29 @@ export class SWSEV2CharacterSheet extends
     // Canonical sources: system.forcePoints.{value,max}, system.destinyPoints.{value,max}
     // All UI surfaces (header, biography panel, resources panel) read from these same sources
     // Force Points visual array (value as dots, with used state)
-    const fpValue = system.forcePoints?.value ?? 0;
-    const fpMax = system.forcePoints?.max ?? 0;
+    const fpValue = Number(system.forcePoints?.value ?? 0) || 0;
+    const fpMax = Number(system.forcePoints?.max ?? 0) || 0;
 
-    const destinyPointsValue = system.destinyPoints?.value ?? 0;
-    const destinyPointsMax = system.destinyPoints?.max ?? 0;
+    const destinyPointsValue = Number(system.destinyPoints?.value ?? 0) || 0;
+    const destinyPointsMax = Number(system.destinyPoints?.max ?? 0) || 0;
 
     const speed = typeof system.speed === "number" ? system.speed : (system.speed?.value ?? 0);
 
-    const perceptionTotal =
+    const perceptionTotal = Number(
       derived.skills?.perception?.total ??
       derived.skills?.perception ??
-      0;
+      0
+    ) || 0;
 
-    const bab =
+    const bab = Number(
       derived.bab ??
       system.bab?.total ??
       system.bab ??
       system.baseAttackBonus ??
-      0;
+      0
+    ) || 0;
 
-    const grappleBonus = derived.grappleBonus ?? 0;
+    const grappleBonus = Number(derived.grappleBonus ?? 0) || 0;
 const forcePoints = [];
     for (let i = 1; i <= fpMax; i++) {
       forcePoints.push({
@@ -1507,8 +1663,8 @@ const forcePoints = [];
     const lightsaberConstructionAvailable = !lightsaberHasSelfBuilt && !!lightsaberConstructionEligibility?.eligible;
 
     // Dark Side Points context (via DSPEngine for house rule support)
-    const dspValue = DSPEngine.getValue(actor);
-    const dspMax = DSPEngine.getMax(actor);
+    const dspValue = Number(DSPEngine.getValue(actor) ?? 0) || 0;
+    const dspMax = Number(DSPEngine.getMax(actor) ?? 0) || 0;
     const dspSegments = [];
     for (let i = 1; i <= dspMax; i++) {
       dspSegments.push({

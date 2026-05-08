@@ -159,7 +159,7 @@ function buildSpeciesReason(textKey, vars = {}, strength = 0.86) {
     : null;
 }
 
-function getConfiguredSkillAbilityMap() {
+export function getConfiguredSkillAbilityMap() {
   const { executionAbility } = getForceAbilityConfig();
   const map = {
     str: [...DEFAULT_SKILL_ABILITY_MAP.str],

@@ -11,16 +11,6 @@
 import { computeDroidPartCost, hydrateDroidPart, isWeaponizedDroidPart, normalizeDroidPartId } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 
-const REGION_META = {
-  processor: { id: 'processor', label: 'Processor', description: 'Computing core and cognitive matrix', required: true, defaultName: 'Heuristic Processor', defaultLabel: 'Type' },
-  locomotion: { id: 'locomotion', label: 'Locomotion', description: 'Primary movement system', required: true, defaultName: 'Walking', defaultLabel: 'Type' },
-  appendages: { id: 'appendages', label: 'Appendages', description: 'Manipulators and structural limbs', required: true, defaultName: '2 × Standard Droid Arms', defaultLabel: 'Manipulators' },
-  armor: { id: 'armor', label: 'Armor', description: 'Protective chassis covering', required: false, defaultName: null, defaultLabel: 'Type' },
-  sensors: { id: 'sensors', label: 'Sensors', description: 'Perception and detection systems', required: false, defaultName: null, defaultLabel: null },
-  integratedEquipment: { id: 'integratedEquipment', label: 'Integrated Equipment', description: 'Chassis-integrated systems and accessories', required: false, defaultName: null, defaultLabel: null },
-  integratedWeapons: { id: 'integratedWeapons', label: 'Integrated Weapons', description: 'Built-in weapon systems', required: false, defaultName: null, defaultLabel: null },
-};
-
 const DEFAULT_APPENDAGE_SLOTS = [
   { id: 'left-arm', label: 'Left Arm', defaultName: 'Droid Arm / Hand' },
   { id: 'right-arm', label: 'Right Arm', defaultName: 'Droid Arm / Hand' }
@@ -46,6 +36,7 @@ function humanize(value) {
     .join(' ');
 }
 
+/**
  * scripts/sheets/v2/droid-sheet/droid-systems-resolver.js
  *
  * Pure read-only resolver that maps a droid actor's data into structured
@@ -184,30 +175,6 @@ export class DroidSystemsResolver {
     return hydrateDroidPart(data, { installedIds: this.installedIds, actor: this.actor });
   }
 
-  _isIntegratedWeapon(item) {
-    const name = slug(item?.name);
-    const part = this._hydrate({ id: item?.system?.droidPartId ?? item?.flags?.swse?.droidPartId ?? item?.name, name: item?.name });
-    return item?.type === 'weapon' && (
-      item.system?.integrated === true || Boolean(item.flags?.swse?.integrated) || Boolean(part.weaponProfile)
-    this.items = Array.isArray(actor?.items) ? [...actor.items] : [];
-  }
-
-  /**
-   * Resolve all regions in one pass.
-   * @returns {Object} keyed by region id
-   */
-  resolve() {
-    return {
-      processor: this._resolveProcessor(),
-      locomotion: this._resolveLocomotion(),
-      armor: this._resolveArmor(),
-      appendages: this._resolveAppendages(),
-      sensors: this._resolveSensors(),
-      integratedEquipment: this._resolveIntegratedEquipment(),
-      integratedWeapons: this._resolveIntegratedWeapons(),
-    };
-  }
-
   // ── Classification predicates ──────────────────────────────────────
 
   _isIntegratedWeapon(item) {
@@ -222,6 +189,8 @@ export class DroidSystemsResolver {
     const part = this._hydrate({ id: item?.system?.droidPartId ?? item?.flags?.swse?.droidPartId ?? item?.name, name: item?.name });
     return item?.type === 'integratedSystem' || item?.system?.integrated === true || Boolean(item?.flags?.swse?.integrated) || Boolean(part.category || part.slot);
   }
+
+  // ── Item projection helpers ────────────────────────────────────────
 
   _fromBuilder(data, extra = {}) {
     const hydrated = this._hydrate({ ...data, ...extra });
@@ -239,24 +208,7 @@ export class DroidSystemsResolver {
       weaponProfile: hydrated.weaponProfile ?? null,
       features: hydrated.features ?? [],
       restrictions: hydrated.restrictions ?? [],
-      rules: hydrated.rules ?? {},
-    if (item.type === 'weapon') return false;
-    return (
-      item.type === 'integratedSystem' ||
-      item.system?.integrated === true ||
-      Boolean(item.flags?.swse?.integrated)
-    );
-  }
-
-  // ── Item projection helpers ────────────────────────────────────────
-
-  _fromBuilder(data, extra = {}) {
-    return {
-      id: data.id ?? null,
-      name: data.name ?? '',
-      img: null,
-      source: 'builder',
-      ...extra,
+      rules: hydrated.rules ?? {}
     };
   }
 
@@ -291,6 +243,8 @@ export class DroidSystemsResolver {
     };
   }
 
+  // ── Region resolvers ───────────────────────────────────────────────
+
   _resolveProcessor() {
     const meta = REGION_META.processor;
     const builderData = this.droidSystems.processor ?? {};
@@ -323,46 +277,6 @@ export class DroidSystemsResolver {
       isDefault: items.length === 0,
       isEmpty: items.length === 0,
       warning: items.length === 0 ? 'No processor installed — heroic droids require a Heuristic Processor.' : null,
-    return {
-      id: item.id,
-      name: item.name ?? '',
-      img: item.img ?? null,
-      source: 'item',
-      type: item.type,
-      description: item.system?.description ?? '',
-    };
-  }
-
-  // ── Region resolvers ───────────────────────────────────────────────
-
-  _resolveProcessor() {
-    const meta = REGION_META.processor;
-    const builderData = this.droidSystems.processor ?? {};
-    const hasBuilderProcessor = Boolean(builderData.id);
-
-    const itemProcessors = this.items
-      .filter(i => i.type === 'heuristicProcessor')
-      .map(i => ({
-        ...this._fromActorItem(i),
-        rating: i.system?.rating ?? null,
-      }));
-
-    const items = hasBuilderProcessor
-      ? [this._fromBuilder(builderData, {
-          cost: Number(builderData.cost ?? 0),
-          bonus: Number(builderData.bonus ?? 0),
-          description: builderData.description ?? '',
-        })]
-      : itemProcessors;
-
-    const isConfigured = items.length > 0;
-    return {
-      ...meta,
-      items,
-      isConfigured,
-      isDefault: !isConfigured,
-      isEmpty: items.length === 0,
-      warning: !isConfigured ? 'No processor installed — baseline default shown' : null,
     };
   }
 
@@ -379,25 +293,6 @@ export class DroidSystemsResolver {
     }
     const items = primary ? [primary, ...extras] : extras;
     return { ...meta, items, active: primary, isConfigured: items.length > 0, isDefault: items.length === 0, isEmpty: items.length === 0, warning: items.length === 0 ? 'No locomotion system installed — baseline Walking locomotion shown.' : null, name, speed };
-
-    const name = builderLoco.name || sysLoco.type || sysLoco.name || '';
-    const speed = Number(builderLoco.speed ?? sysLoco.speed ?? 0);
-    const isConfigured = Boolean(name);
-
-    const items = isConfigured
-      ? [{ id: 'locomotion-primary', name, img: null, source: 'builder', speed }]
-      : [];
-
-    return {
-      ...meta,
-      items,
-      isConfigured,
-      isDefault: !isConfigured,
-      isEmpty: items.length === 0,
-      warning: !isConfigured ? 'No locomotion system installed — baseline default shown' : null,
-      name,
-      speed,
-    };
   }
 
   _resolveArmor() {
@@ -407,25 +302,6 @@ export class DroidSystemsResolver {
     const armorItems = this.items.filter(i => i.type === 'armor' && (i.system?.integrated === true || Boolean(i.flags?.swse?.integrated))).map(i => this._fromActorItem(i));
     const items = this._mergeDedupe([...(hasBuilderArmor ? [this._fromBuilder(builderArmor, { cost: computeDroidPartCost(this.actor, builderArmor), bonus: Number(builderArmor.bonus ?? 0), rating: builderArmor.rating ?? null })] : []), ...armorItems]);
     return { ...meta, items, isConfigured: items.length > 0, isDefault: false, isEmpty: items.length === 0, warning: null };
-    const hasBuilderArmor = Boolean(builderArmor.id);
-
-    const items = hasBuilderArmor
-      ? [this._fromBuilder(builderArmor, {
-          cost: Number(builderArmor.cost ?? 0),
-          bonus: Number(builderArmor.bonus ?? 0),
-          rating: builderArmor.rating ?? null,
-          description: builderArmor.description ?? '',
-        })]
-      : [];
-
-    return {
-      ...meta,
-      items,
-      isConfigured: hasBuilderArmor,
-      isDefault: false,
-      isEmpty: items.length === 0,
-      warning: null,
-    };
   }
 
   _resolveAppendages() {
@@ -451,26 +327,6 @@ export class DroidSystemsResolver {
     }
     slots.push({ id: 'add-appendage', label: 'Additional Limb Socket', item: null, isEmpty: true, canReplace: false, canAdd: true, defaultName: 'Garage-managed limb slot' });
     return slots;
-    const builderAppendages = Array.isArray(this.droidSystems.appendages)
-      ? this.droidSystems.appendages
-      : [];
-
-    const items = builderAppendages.map(a =>
-      this._fromBuilder(a, {
-        cost: Number(a.cost ?? 0),
-        description: a.description ?? '',
-      })
-    );
-
-    const isConfigured = items.length > 0;
-    return {
-      ...meta,
-      items,
-      isConfigured,
-      isDefault: !isConfigured,
-      isEmpty: items.length === 0,
-      warning: !isConfigured ? 'No appendages installed — baseline default shown' : null,
-    };
   }
 
   _resolveSensors() {
@@ -480,26 +336,6 @@ export class DroidSystemsResolver {
     const itemSensors = this.items.filter(i => slug(i.system?.category ?? i.system?.droidPartType ?? i.name).includes('sensor')).map(i => this._fromActorItem(i));
     const items = this._mergeDedupe([...builder, ...itemSensors]);
     return { ...meta, items, isConfigured: items.length > 0, isDefault: false, isEmpty: items.length === 0, warning: null };
-    const builderSensors = Array.isArray(this.droidSystems.sensors)
-      ? this.droidSystems.sensors
-      : [];
-
-    const items = builderSensors.map(s =>
-      this._fromBuilder(s, {
-        cost: Number(s.cost ?? 0),
-        range: s.range ?? '',
-        description: s.description ?? '',
-      })
-    );
-
-    return {
-      ...meta,
-      items,
-      isConfigured: items.length > 0,
-      isDefault: false,
-      isEmpty: items.length === 0,
-      warning: null,
-    };
   }
 
   _resolveIntegratedEquipment() {
@@ -540,62 +376,6 @@ export class DroidSystemsResolver {
     return modifiers;
   }
 
-    const builderAccessories = Array.isArray(this.droidSystems.accessories)
-      ? this.droidSystems.accessories.map(a =>
-          this._fromBuilder(a, {
-            cost: Number(a.cost ?? 0),
-            description: a.description ?? '',
-          })
-        )
-      : [];
-
-    // Actor items: integratedSystem type or integrated flag, excluding weapons
-    const actorItems = this.items
-      .filter(i => this._isIntegratedEquipment(i))
-      .map(i => this._fromActorItem(i));
-
-    const items = this._mergeDedupe([...builderAccessories, ...actorItems]);
-
-    return {
-      ...meta,
-      items,
-      isConfigured: items.length > 0,
-      isDefault: false,
-      isEmpty: items.length === 0,
-      warning: null,
-    };
-  }
-
-  _resolveIntegratedWeapons() {
-    const meta = REGION_META.integratedWeapons;
-
-    const builderWeapons = Array.isArray(this.droidSystems.weapons)
-      ? this.droidSystems.weapons.map(w =>
-          this._fromBuilder(w, {
-            cost: Number(w.cost ?? 0),
-            weaponType: w.type ?? 'built-in',
-            description: w.description ?? '',
-          })
-        )
-      : [];
-
-    // Actor weapon items with integrated flag
-    const actorWeapons = this.items
-      .filter(i => this._isIntegratedWeapon(i))
-      .map(i => this._fromActorItem(i));
-
-    const items = this._mergeDedupe([...builderWeapons, ...actorWeapons]);
-
-    return {
-      ...meta,
-      items,
-      isConfigured: items.length > 0,
-      isDefault: false,
-      isEmpty: items.length === 0,
-      warning: null,
-    };
-  }
-
   // ── Utilities ──────────────────────────────────────────────────────
 
   _mergeDedupe(entries) {
@@ -605,9 +385,6 @@ export class DroidSystemsResolver {
       const key = entry.id ? `id:${entry.id}` : `name:${slug(entry.name)}`;
       if (seen.has(key)) continue;
       seen.add(key);
-    for (const entry of entries) {
-      if (entry.id && seen.has(entry.id)) continue;
-      if (entry.id) seen.add(entry.id);
       out.push(entry);
     }
     return out;

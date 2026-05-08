@@ -32,9 +32,27 @@
 
   display: flex;
   flex-direction: column;
-  position: relative;
+  /* NOTE: Position is set per-context below (ApplicationV2 roots vs internal elements) */
 
   border: 2px solid var(--swse-border-cyan);
+}
+
+/* =========================
+   FOUNDRY AppV2 POSITIONING FIX
+   The ApplicationV2 root form must be absolutely positioned so Foundry's
+   setPosition() method works correctly. The form itself should NOT be
+   position: relative, but inner content wrappers can be.
+   ========================= */
+
+/* ApplicationV2 root elements (form.application) must be absolutely positioned */
+form.application.swse-sheet,
+form.application.swse-character-sheet {
+  position: absolute;
+}
+
+/* Internal layout elements CAN use relative positioning for nested layouts */
+.swse-sheet > * {
+  position: relative;
 }
 
 /* =========================

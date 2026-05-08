@@ -1,17 +1,12 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 // Optimized data loader for SWSE
+// NOTE: This module provides legacy data access. Most data loading now goes through WorldDataLoader.
+// These exports are retained only for backward compatibility with in-world data access.
 const CACHE = {};
 const DATA_FILES = {
-  vehicles: 'vehicles.json',
-  feats: 'feats.json',
-  talents: 'talents.json',
-  classes: 'classes-db.json',
   skills: 'skills.json',
-  attributes: 'attributes.json',
-  forcePowers: 'forcepowers.json',
   combatActions: 'combat-actions.json',
-  conditions: 'conditions.json',
   extraSkillUses: 'extraskilluses.json'
 };
 
@@ -33,13 +28,6 @@ async function getData(key) {
   return CACHE[key] || [];
 }
 
-export const getVehicles = () => getData('vehicles');
-export const getFeats = () => getData('feats');
-export const getTalents = () => getData('talents');
-export const getClasses = () => getData('classes');
 export const getSkills = () => getData('skills');
-export const getAttributes = () => getData('attributes');
-export const getForcePowers = () => getData('forcePowers');
 export const getCombatActions = () => getData('combatActions');
-export const getConditions = () => getData('conditions');
 export const getExtraSkillUses = () => getData('extraSkillUses');

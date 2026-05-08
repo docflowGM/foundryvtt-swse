@@ -214,12 +214,13 @@ function mirrorSkills(system) {
 
 
 function normalizeAttackEntry(attack = {}, actor = null) {
-  const attackBonus =
+  const attackBonus = Number(
     attack.attackTotal ??
     attack.attackBonus ??
     attack.toHit ??
     attack.total ??
-    0;
+    0
+  ) || 0;
 
   const damageFormula =
     attack.damageFormula ??
