@@ -792,7 +792,7 @@
   flex-direction: column;
   gap: 6px;
   max-height: 180px;
-  overflow-y: auto;
+  overflow: visible;
 }
 
 .swse-home-feed::-webkit-scrollbar {
