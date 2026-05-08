@@ -13,6 +13,7 @@ import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/h
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { launchProgression, launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
+import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 import { NPCTemplateImporter } from "/systems/foundryvtt-swse/scripts/apps/npc-template-importer.js";
 import { GMStoreDashboard } from "/systems/foundryvtt-swse/scripts/apps/gm-store-dashboard.js";
@@ -56,14 +57,15 @@ function onClickStore(app) {
   // If we have a character, open store for that character
   if (actor && actor.type === 'character') {
     SWSELogger.log(`[Actor Sidebar] Opening Store for: ${actor.name}`);
-    SWSEStore.open(actor).catch(err => {
+    // Route through shell when available, fall back to standalone
+    ShellRouter.openSurface(actor, 'store').catch(err => {
       SWSELogger.error('[Actor Sidebar] Error opening store:', err);
       ui?.notifications?.error?.(`Failed to open store: ${err.message}`);
     });
     return;
   }
 
-  // Otherwise open generic store
+  // Otherwise open generic store (no actor context available)
   SWSELogger.log('[Actor Sidebar] Opening Store (no actor selected)');
   SWSEStore.open().catch(err => {
     SWSELogger.error('[Actor Sidebar] Error opening generic store:', err);

@@ -3019,7 +3019,7 @@ const forcePoints = [];
     }, { signal, capture: false });
 
     // Store button (delegated)
-    html.addEventListener("click", ev => {
+    html.addEventListener("click", async ev => {
       const button = ev.target.closest('[data-action="cmd-store"]');
       if (!button) return;
       ev.preventDefault();
