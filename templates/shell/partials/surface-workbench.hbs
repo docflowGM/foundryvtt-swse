@@ -1,0 +1,59 @@
+{{!--
+  surface-workbench.hbs
+  Item Customization Workbench routed inside the holopad shell.
+
+  This surface opens the ItemCustomizationWorkbench for customizing weapons,
+  armor, gear, and lightsabers. Currently routes to the external workbench
+  app but rendered as a holopad surface.
+
+  vm:
+    id           — 'workbench'
+    title        — 'Armory // Customization'
+    actorId      — actor.id
+    actorName    — actor.name
+    itemId       — selected item ID (nullable)
+    category     — item category (nullable)
+    mode         — 'owned' | 'store-stage' | etc.
+--}}
+
+<div class="swse-shell-surface swse-shell-surface--workbench"
+     data-shell-region="surface-workbench"
+     data-surface-id="{{vm.id}}">
+
+  <div class="swse-shell-surface__header">
+    <button class="swse-shell-surface__back-btn"
+            data-shell-action="return-to-sheet"
+            type="button"
+            title="Return to Character Sheet">
+      <i class="fas fa-arrow-left"></i>
+      <span>Character Sheet</span>
+    </button>
+
+    <div class="swse-shell-surface__title">
+      <i class="fas fa-screwdriver-wrench"></i>
+      <span>{{vm.title}}</span>
+    </div>
+  </div>
+
+  {{#if vm.error}}
+  <div class="swse-shell-surface__body swse-shell-surface__error">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{vm.error}}</span>
+  </div>
+  {{else}}
+  <div class="swse-shell-surface__body">
+    <div class="swse-shell-launching">
+      <div class="swse-shell-launching__icon">
+        <i class="fas fa-gear"></i>
+      </div>
+      <div class="swse-shell-launching__label">
+        Customization Workshop
+      </div>
+      <div class="swse-shell-launching__detail">
+        {{vm.actorName}} — {{vm.category}} {{vm.mode}}
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+</div>

@@ -44,6 +44,10 @@ export class ShellSurfaceRegistry {
         return this._buildMessengerSurfaceVm(actor, surfaceOptions);
       case 'store':
         return this._buildStoreSurfaceVm(actor, surfaceOptions);
+      case 'workbench':
+        return this._buildWorkbenchSurfaceVm(actor, surfaceOptions);
+      case 'customization':
+        return this._buildCustomizationSurfaceVm(actor, surfaceOptions);
       default:
         SWSELogger.warn(`[ShellSurfaceRegistry] Unknown surface: ${surfaceId}`);
         return { id: surfaceId, title: surfaceId, error: `Unknown surface: ${surfaceId}` };
@@ -166,6 +170,51 @@ export class ShellSurfaceRegistry {
       SWSELogger.error('[ShellSurfaceRegistry] Store surface VM failed:', err);
       return { id: 'store', title: 'Galactic Trade Exchange', error: err.message };
     }
+  }
+
+  /**
+   * Workbench surface VM — Item customization inside the holopad.
+   * Launches the ItemCustomizationWorkbench as an inline surface.
+   *
+   * @param {Actor} actor
+   * @param {object} options - { itemId, category, mode }
+   */
+  static async _buildWorkbenchSurfaceVm(actor, options) {
+    if (!actor) {
+      return { id: 'workbench', title: 'Armory // Customization', error: 'No actor selected' };
+    }
+
+    return {
+      id: 'workbench',
+      title: 'Armory // Customization',
+      actorId: actor.id,
+      actorName: actor.name,
+      itemId: options.itemId ?? null,
+      category: options.category ?? null,
+      mode: options.mode ?? 'owned'
+    };
+  }
+
+  /**
+   * Customization surface VM — Droid Garage and Starship Shipyard inside the holopad.
+   * Launches the CustomizationBayApp as an inline surface.
+   *
+   * @param {Actor} actor
+   * @param {object} options - { bayMode, contextMode }
+   */
+  static async _buildCustomizationSurfaceVm(actor, options) {
+    if (!actor) {
+      return { id: 'customization', title: 'Customization Bay', error: 'No actor selected' };
+    }
+
+    return {
+      id: 'customization',
+      title: 'Customization Bay',
+      actorId: actor.id,
+      actorName: actor.name,
+      bayMode: options.bayMode ?? 'garage', // garage | shipyard
+      contextMode: options.contextMode ?? 'modifyExisting'
+    };
   }
 
   /**

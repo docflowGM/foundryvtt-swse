@@ -241,7 +241,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-footer.hbs',
 
   // ==============================
-  // Shell Surfaces (Phase 12)
+  // Shell Surfaces (Phase 12+13)
   // ==============================
   'systems/foundryvtt-swse/templates/shell/shell-surface.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/holopad-frame.hbs',
@@ -255,6 +255,8 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/surface-chargen.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-upgrade.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-customization.hbs',
 
 ];
 

@@ -3023,8 +3023,7 @@ const forcePoints = [];
       const button = ev.target.closest('[data-action="cmd-store"]');
       if (!button) return;
       ev.preventDefault();
-      const store = new SWSEStore(this.actor);
-      store.render(true);
+      await ShellRouter.openSurface(this.actor, 'store');
     }, { signal, capture: false });
 
     // Character identity selection buttons (Class, Species, Background, Homeworld, Profession)

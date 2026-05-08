@@ -1,4 +1,5 @@
 import { ItemCustomizationWorkbench } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-workbench.js";
+import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 
 const SYSTEM_ID = "foundryvtt-swse";
 
@@ -84,14 +85,25 @@ function openResolvedItemCustomization(actor, item = null, options = {}) {
       return null;
     }
 
-    return new ItemCustomizationWorkbench(actor, {
-      itemId,
-      category: category || 'weapons',
-      mode: options.mode || options.inventoryMode || (category === 'lightsaber' && !sourceItem ? 'construct' : 'owned'),
-      sourceItem,
-      applyMode: options.applyMode,
-      onStage: options.onStage
-    }).render(true);
+    const shell = ShellRouter.getShell(actor.id);
+    if (shell) {
+      // Shell host is open — route to workbench surface inside the holopad
+      return ShellRouter.openSurface(actor, 'workbench', {
+        itemId,
+        category: category || 'weapons',
+        mode: options.mode || options.inventoryMode || (category === 'lightsaber' && !sourceItem ? 'construct' : 'owned')
+      });
+    } else {
+      // No shell host — fall back to standalone workbench app
+      return new ItemCustomizationWorkbench(actor, {
+        itemId,
+        category: category || 'weapons',
+        mode: options.mode || options.inventoryMode || (category === 'lightsaber' && !sourceItem ? 'construct' : 'owned'),
+        sourceItem,
+        applyMode: options.applyMode,
+        onStage: options.onStage
+      }).render(true);
+    }
   } catch (error) {
     console.error('[CustomizationRouter] Failed to open customization UI', error);
     ui?.notifications?.error?.('Failed to open customization interface');
