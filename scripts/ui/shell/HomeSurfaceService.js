@@ -17,6 +17,7 @@ import { HolonetStateService } from '/systems/foundryvtt-swse/scripts/holonet/su
 import { HolonetMarkupService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js';
 import { HolonetNoticeCenterService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-notice-center-service.js';
 import { SOURCE_FAMILY, SURFACE_TYPE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
+import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
 
 function supportedTypesForMentor(actor) {
   return ['character', 'droid', 'npc'].includes(actor?.type);
@@ -123,6 +124,8 @@ export class HomeSurfaceService {
       lockHp: lockScreenState.hp,
       lockFp: lockScreenState.fp,
       lockCredits: lockScreenState.credits,
+      sheetTheme: ThemeResolutionService.resolveThemeKey(null, { actor }),
+      sheetMotionStyle: ThemeResolutionService.resolveMotionStyle(null, { actor }),
       apps
     };
   }
@@ -411,7 +414,7 @@ export class HomeSurfaceService {
         label: 'Ship',
         icon: '◈',
         routeId: 'ship',
-        visible: true,
+        visible: false,
         enabled: false,
         badge: null,
         badgeType: null,
@@ -426,7 +429,7 @@ export class HomeSurfaceService {
         label: 'Droid\nCompanion',
         icon: '⬡',
         routeId: 'companion',
-        visible: true,
+        visible: false,
         enabled: true,
         badge: null,
         badgeType: null,

@@ -31,6 +31,7 @@
         </aside>
 
         <section class="swse-concept-main sheet-body sheet-content">
+          {{#if shellIsSheet}}
           <section class="tab active flexcol" data-group="primary" data-tab-group="primary" data-tab="overview">
             {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs"}}
           </section>
@@ -64,10 +65,7 @@
           <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="biography">
             {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/biography-tab.hbs"}}
           </section>
-
-          <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="relationships">
-            {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/relationships-tab.hbs"}}
-          </section>
+          {{/if}}
 
           {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
         </section>
