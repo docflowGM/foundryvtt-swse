@@ -85,25 +85,16 @@ function openResolvedItemCustomization(actor, item = null, options = {}) {
       return null;
     }
 
-    const shell = ShellRouter.getShell(actor.id);
-    if (shell) {
-      // Shell host is open — route to workbench surface inside the holopad
-      return ShellRouter.openSurface(actor, 'workbench', {
-        itemId,
-        category: category || 'weapons',
-        mode: options.mode || options.inventoryMode || (category === 'lightsaber' && !sourceItem ? 'construct' : 'owned')
-      });
-    } else {
-      // No shell host — fall back to standalone workbench app
-      return new ItemCustomizationWorkbench(actor, {
-        itemId,
-        category: category || 'weapons',
-        mode: options.mode || options.inventoryMode || (category === 'lightsaber' && !sourceItem ? 'construct' : 'owned'),
-        sourceItem,
-        applyMode: options.applyMode,
-        onStage: options.onStage
-      }).render(true);
-    }
+    // Player-facing item customization belongs inside the owning holopad cockpit.
+    // ShellRouter opens/focuses the actor sheet when needed, then routes inline.
+    return ShellRouter.openSurface(actor, 'workbench', {
+      itemId,
+      category: category || 'weapons',
+      mode: options.mode || options.inventoryMode || (category === 'lightsaber' && !sourceItem ? 'construct' : 'owned'),
+      sourceItem,
+      applyMode: options.applyMode,
+      onStage: options.onStage
+    });
   } catch (error) {
     console.error('[CustomizationRouter] Failed to open customization UI', error);
     ui?.notifications?.error?.('Failed to open customization interface');

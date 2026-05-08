@@ -322,6 +322,7 @@ export class IntroStep extends ProgressionStepPlugin {
     this._sessionToken = null;  // Incremented on each run to invalidate stale timers
     this._continueClicked = false;  // Prevent double-click
     this._transitionInProgress = false;  // Prevent double transition
+    this._failOpenInProgress = false;    // Prevent duplicate fail-open advancement
 
     // Active intro variant
     this._bootLines = BOOT_LINES;
@@ -910,8 +911,8 @@ export class IntroStep extends ProgressionStepPlugin {
 
     // Guard: Validate DOM is still connected and valid
     if (!workSurfaceEl?.isConnected) {
-      swseLogger.error('[IntroStep.afterRender] Work surface not connected, aborting');
-      this._state = INTRO_STATE.DISPOSED;
+      swseLogger.error('[IntroStep.afterRender] Work surface not connected; fail-opening to next step');
+      await this._failOpenPastIntro(shell, 'work-surface-not-connected');
       return;
     }
 
@@ -982,7 +983,7 @@ export class IntroStep extends ProgressionStepPlugin {
       try {
         console.log('[IntroStep.startIntroSequence] About to render with complete=true, state=', this._state);
         swseLogger.debug('[IntroStep.startIntroSequence] About to call shell.render()');
-        shell.render();
+        await shell.render(false);
         console.log('[IntroStep.startIntroSequence] Shell.render() completed successfully');
         swseLogger.debug('[IntroStep.startIntroSequence] Shell rendered after completion', {
           complete: this._complete,
@@ -1226,7 +1227,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
         // Update stage index and render
         this._droidV2StageIndex = stageIndex;
-        shell.render();
+        await shell.render(false);
 
         // Run translation animation at stage 4 (binary-chatter)
         if (stageIndex === 4) {
@@ -1241,6 +1242,7 @@ export class IntroStep extends ProgressionStepPlugin {
       swseLogger.debug('[IntroStep.runDroidV2BootSequence] Boot sequence complete');
     } catch (err) {
       swseLogger.error('[IntroStep.runDroidV2BootSequence] Error:', err);
+      await this._failOpenPastIntro(shell, 'droid-v2-boot-error');
     }
   }
 
@@ -1267,7 +1269,7 @@ export class IntroStep extends ProgressionStepPlugin {
 
         // Update stage index and render
         this._actorV2StageIndex = stageIndex;
-        shell.render();
+        await shell.render(false);
 
         // Run translation animation at stage 6 (the 'translation' stage)
         if (stageIndex === 6) {
@@ -1282,6 +1284,7 @@ export class IntroStep extends ProgressionStepPlugin {
       swseLogger.debug('[IntroStep.runActorV2BootSequence] Boot sequence complete');
     } catch (err) {
       swseLogger.error('[IntroStep.runActorV2BootSequence] Error:', err);
+      await this._failOpenPastIntro(shell, 'actor-v2-boot-error');
     }
   }
 
@@ -1328,14 +1331,90 @@ export class IntroStep extends ProgressionStepPlugin {
 
       if (session) {
         await this._translationEngine.runSession(session);
-        this._localizedMode = true;
-        this._setSurfaceLocalizationDOM(true);
-        if (shell?.render) shell.render();
+      } else {
+        this._setTranslationFallbackText(stepData);
       }
+
+      // The splash must always complete into English/Basic even if the animation
+      // session could not be created. This preserves the concept translation beat
+      // without soft-locking the intro screen.
+      this._setTranslationFallbackText(stepData);
+      this._localizedMode = true;
+      this._setSurfaceLocalizationDOM(true);
+      if (shell?.render) await shell.render(false);
 
       swseLogger.debug('[IntroStep.runSplashTranslation] Translation animation complete');
     } catch (err) {
       swseLogger.error('[IntroStep.runSplashTranslation] Error:', err);
+      try {
+        const stepData = await this.getStepData();
+        this._setTranslationFallbackText(stepData);
+        this._localizedMode = true;
+        this._setSurfaceLocalizationDOM(true);
+        if (shell?.render) await shell.render(false);
+      } catch (fallbackErr) {
+        swseLogger.error('[IntroStep.runSplashTranslation] Fallback translation failed:', fallbackErr);
+      }
+    }
+  }
+
+  /**
+   * Force the translation zone into its final English/Basic state. Used both after
+   * the animation completes and as a fail-safe if the animation cannot bind.
+   *
+   * @param {object} stepData
+   */
+  _setTranslationFallbackText(stepData = {}) {
+    const targetText = stepData.translationTarget || stepData.translatedText || '';
+    const sourceText = stepData.translationSource || '';
+
+    const dst = this._workSurfaceEl?.querySelector?.('[data-role="trans-dst"]');
+    if (dst && targetText) {
+      dst.textContent = targetText;
+      dst.dataset.sourceMode = stepData.sourceMode || (this._isDroidIntro ? 'binary' : 'aurebesh');
+    }
+
+    const src = this._workSurfaceEl?.querySelector?.('[data-role="trans-src"]');
+    if (src && sourceText) {
+      src.textContent = sourceText;
+      src.dataset.sourceMode = stepData.sourceMode || (this._isDroidIntro ? 'binary' : 'aurebesh');
+    }
+  }
+
+  /**
+   * Fail-open recovery for intro splash hydration failures. The intro is
+   * atmospheric only; it must never soft-lock character creation/level-up.
+   *
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @param {string} reason
+   */
+  async _failOpenPastIntro(shell, reason = 'intro-fail-open') {
+    if (this._failOpenInProgress || !shell) return;
+    this._failOpenInProgress = true;
+
+    try {
+      swseLogger.warn('[IntroStep] Fail-opening past intro splash', { reason });
+      this._introRunning = false;
+      this._complete = true;
+      this._state = INTRO_STATE.TRANSITIONING;
+      this._translationEngine.cancel();
+      this._stopClock();
+      this._stopSignalAnimation();
+      if (this._timer) {
+        clearTimeout(this._timer);
+        this._timer = null;
+      }
+
+      const fakeEvent = { preventDefault: () => {}, stopPropagation: () => {} };
+      await shell._onNextStep(fakeEvent, null);
+    } catch (error) {
+      swseLogger.error('[IntroStep] Failed to fail-open past intro splash', {
+        reason,
+        error: error?.message || String(error),
+        stack: error?.stack
+      });
+    } finally {
+      this._failOpenInProgress = false;
     }
   }
 

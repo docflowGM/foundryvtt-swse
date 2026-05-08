@@ -47,7 +47,7 @@ export class ShellSurfaceRegistry {
       case 'workbench':
         return this._buildWorkbenchSurfaceVm(actor, surfaceOptions, shellHost);
       case 'customization':
-        return this._buildCustomizationSurfaceVm(actor, surfaceOptions);
+        return this._buildCustomizationSurfaceVm(actor, surfaceOptions, shellHost);
       default:
         SWSELogger.warn(`[ShellSurfaceRegistry] Unknown surface: ${surfaceId}`);
         return { id: surfaceId, title: surfaceId, error: `Unknown surface: ${surfaceId}` };
@@ -204,19 +204,21 @@ export class ShellSurfaceRegistry {
    * @param {Actor} actor
    * @param {object} options - { bayMode, contextMode }
    */
-  static async _buildCustomizationSurfaceVm(actor, options) {
+  static async _buildCustomizationSurfaceVm(actor, options, shellHost) {
     if (!actor) {
       return { id: 'customization', title: 'Customization Bay', error: 'No actor selected' };
     }
 
-    return {
-      id: 'customization',
-      title: 'Customization Bay',
-      actorId: actor.id,
-      actorName: actor.name,
-      bayMode: options.bayMode ?? 'garage', // garage | shipyard
-      contextMode: options.contextMode ?? 'modifyExisting'
-    };
+    try {
+      const { CustomizationSurfaceAdapter } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/CustomizationSurfaceAdapter.js'
+      );
+      const adapter = CustomizationSurfaceAdapter.getOrCreate(shellHost, actor, options ?? {});
+      return adapter.buildViewModel();
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Customization surface VM failed:', err);
+      return { id: 'customization', title: 'Customization Bay', error: err.message };
+    }
   }
 
   /**

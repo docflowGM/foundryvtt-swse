@@ -1,17 +1,12 @@
 {{!--
   surface-customization.hbs
-  Customization Bay (Droid Garage / Starship Shipyard) routed inside the holopad shell.
-
-  This surface hosts the CustomizationBayApp for building and modifying droids
-  and vehicles. Currently routes to the external app but rendered as a holopad surface.
+  Droid Garage / Starship Shipyard hosted inside the unified holopad shell.
 
   vm:
     id           — 'customization'
-    title        — 'Customization Bay'
-    actorId      — actor.id
-    actorName    — actor.name
-    bayMode      — 'garage' | 'shipyard'
-    contextMode  — 'buildNew' | 'modifyExisting' | 'storeQuote' | 'chargenDraft'
+    title        — Customization Bay title
+    contentHtml  — pre-rendered CustomizationBayApp content
+    error        — optional load error
 --}}
 
 <div class="swse-shell-surface swse-shell-surface--customization"
@@ -19,54 +14,47 @@
      data-surface-id="{{vm.id}}"
      data-bay-mode="{{vm.bayMode}}">
 
+  {{#if vm.error}}
   <div class="swse-shell-surface__header">
     <button class="swse-shell-surface__back-btn"
-            data-shell-action="return-to-sheet"
+            data-shell-action="return-to-home"
             type="button"
-            title="Return to Character Sheet">
+            title="Return to Home">
       <i class="fas fa-arrow-left"></i>
-      <span>Character Sheet</span>
+      <span>Home</span>
     </button>
-
     <div class="swse-shell-surface__title">
-      {{#if (eq vm.bayMode "garage")}}
-      <i class="fas fa-robot"></i>
-      <span>Droid Garage</span>
-      {{else if (eq vm.bayMode "shipyard")}}
-      <i class="fas fa-rocket"></i>
-      <span>Starship Shipyard</span>
-      {{else}}
       <i class="fas fa-tools"></i>
       <span>{{vm.title}}</span>
-      {{/if}}
     </div>
   </div>
-
-  {{#if vm.error}}
   <div class="swse-shell-surface__body swse-shell-surface__error">
     <i class="fas fa-exclamation-triangle"></i>
     <span>{{vm.error}}</span>
   </div>
+  {{else if vm.contentHtml}}
+  <div class="swse-shell-surface__body swse-shell-surface__body--customization">
+    {{{vm.contentHtml}}}
+  </div>
   {{else}}
-  <div class="swse-shell-surface__body">
+  <div class="swse-shell-surface__header">
+    <button class="swse-shell-surface__back-btn"
+            data-shell-action="return-to-home"
+            type="button"
+            title="Return to Home">
+      <i class="fas fa-arrow-left"></i>
+      <span>Home</span>
+    </button>
+    <div class="swse-shell-surface__title">
+      <i class="fas fa-tools"></i>
+      <span>{{vm.title}}</span>
+    </div>
+  </div>
+  <div class="swse-shell-surface__body swse-shell-surface__body--loading">
     <div class="swse-shell-launching">
-      <div class="swse-shell-launching__icon">
-        {{#if (eq vm.bayMode "garage")}}
-        <i class="fas fa-robot"></i>
-        {{else}}
-        <i class="fas fa-rocket"></i>
-        {{/if}}
-      </div>
-      <div class="swse-shell-launching__label">
-        {{#if (eq vm.bayMode "garage")}}
-        Droid Customization Bay
-        {{else}}
-        Starship Shipyard
-        {{/if}}
-      </div>
-      <div class="swse-shell-launching__detail">
-        {{vm.actorName}} — {{vm.contextMode}}
-      </div>
+      <div class="swse-shell-launching__icon"><i class="fas fa-cog fa-spin"></i></div>
+      <div class="swse-shell-launching__label">Loading Customization Bay</div>
+      <div class="swse-shell-launching__detail">Preparing inline garage/shipyard surface…</div>
     </div>
   </div>
   {{/if}}

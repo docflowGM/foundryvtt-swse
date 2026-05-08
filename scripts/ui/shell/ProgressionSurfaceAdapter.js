@@ -86,31 +86,162 @@ export class ProgressionSurfaceAdapter {
    * @returns {Promise<object>}
    */
   async buildViewModel() {
+    const id = this.mode === 'chargen' ? 'chargen' : 'progression';
+    const title = this.mode === 'chargen' ? 'Character Creation' : 'Level Up';
+
     if (!this._app || !this._ready) {
-      return {
-        id: this.mode === 'chargen' ? 'chargen' : 'progression',
-        title: this.mode === 'chargen' ? 'Character Creation' : 'Level Up',
-        isLoading: true
-      };
+      return { id, title, isLoading: true };
     }
 
     try {
-      const context = await this._app._prepareContext({});
+      let context = await this._app._prepareContext({});
+
+      // Fail-open guard: an intro/splash that renders blank must never soft-lock the player.
+      // This can happen if a template/partial fails after the inline shell intercepts rendering.
+      if (this._isBlankOrErroredIntroContext(context)) {
+        SWSELogger.warn('[ProgressionSurfaceAdapter] Intro surface rendered blank/error; advancing to next step', {
+          actorId: this._actorId,
+          mode: this.mode,
+          stepId: context?.currentDescriptor?.stepId
+        });
+        const advanced = await this.advancePastIntro('blank-or-error-intro-render');
+        if (advanced) context = await this._app._prepareContext({});
+      }
+
       return {
-        id: this.mode === 'chargen' ? 'chargen' : 'progression',
-        title: this.mode === 'chargen' ? 'Character Creation' : 'Level Up',
+        id,
+        title,
         mode: this.mode,
         vm: context,
         isReady: true
       };
     } catch (err) {
       SWSELogger.error('[ProgressionSurfaceAdapter] buildViewModel failed:', err);
-      return {
-        id: this.mode === 'chargen' ? 'chargen' : 'progression',
-        title: this.mode === 'chargen' ? 'Character Creation' : 'Level Up',
-        error: err.message
-      };
+
+      // If context building itself failed on intro, try to keep the player moving rather
+      // than leaving a blank holopad.
+      if (this._getCurrentStepId() === 'intro') {
+        const advanced = await this.advancePastIntro('intro-context-build-failed');
+        if (advanced) {
+          try {
+            const context = await this._app._prepareContext({});
+            return { id, title, mode: this.mode, vm: context, isReady: true, recoveredFromIntroError: true };
+          } catch (secondErr) {
+            SWSELogger.error('[ProgressionSurfaceAdapter] Context rebuild after intro recovery failed:', secondErr);
+          }
+        }
+      }
+
+      return { id, title, error: err.message };
     }
+  }
+
+  /**
+   * Run after the holopad shell has rendered this inline progression surface.
+   * Mirrors ProgressionShell._onRender enough to hydrate step plugins, especially
+   * the intro splash animation, without opening a standalone ApplicationV2 window.
+   *
+   * @param {HTMLElement} surfaceRoot
+   * @returns {Promise<void>}
+   */
+  async afterInlineRender(surfaceRoot) {
+    if (!this._app || !this._ready || !surfaceRoot) return;
+
+    try {
+      this._app.mentorRail?.afterRender?.(surfaceRoot.querySelector('[data-region="mentor-rail"]'));
+      this._app.progressRail?.afterRender?.(surfaceRoot.querySelector('[data-region="progress-rail"]'));
+      this._app.utilityBar?.afterRender?.(surfaceRoot.querySelector('[data-region="utility-bar"]'));
+
+      const descriptor = this._app.steps?.[this._app.currentStepIndex] ?? null;
+      const plugin = descriptor ? this._app.stepPlugins?.get?.(descriptor.stepId) : null;
+      if (!descriptor || !plugin) return;
+
+      await plugin.onDataReady?.(this._app).catch(err => {
+        SWSELogger.error('[ProgressionSurfaceAdapter] plugin.onDataReady failed:', err);
+      });
+
+      const workSurfaceEl = surfaceRoot.querySelector('[data-region="work-surface"]');
+      if (!workSurfaceEl && descriptor.stepId === 'intro') {
+        await this.advancePastIntro('intro-work-surface-missing-after-inline-render');
+        return;
+      }
+
+      await plugin.afterRender?.(this._app, workSurfaceEl).catch(async err => {
+        SWSELogger.error('[ProgressionSurfaceAdapter] plugin.afterRender failed:', err);
+        if (descriptor.stepId === 'intro') {
+          await this.advancePastIntro('intro-after-render-failed');
+        }
+      });
+
+      if (descriptor.stepId === 'intro') this._scheduleIntroWatchdog(plugin);
+    } catch (err) {
+      SWSELogger.error('[ProgressionSurfaceAdapter] afterInlineRender failed:', err);
+      if (this._getCurrentStepId() === 'intro') {
+        await this.advancePastIntro('intro-inline-hydration-failed');
+      }
+    }
+  }
+
+  /**
+   * Advance past the intro/splash step if it fails to hydrate.
+   * Intro is atmospheric and has no mechanical selections, so fail-open is safe.
+   *
+   * @param {string} reason
+   * @returns {Promise<boolean>}
+   */
+  async advancePastIntro(reason = 'intro-recovery') {
+    if (!this._app || this._getCurrentStepId() !== 'intro') return false;
+    if (this._introRecoveryInProgress) return false;
+
+    this._introRecoveryInProgress = true;
+    try {
+      SWSELogger.warn('[ProgressionSurfaceAdapter] Advancing past failed intro splash', {
+        actorId: this._actorId,
+        mode: this.mode,
+        reason
+      });
+
+      const event = { preventDefault: () => {}, stopPropagation: () => {} };
+      await this._app._onNextStep(event, null);
+      await this._shellHost?.render?.(false);
+      return true;
+    } catch (err) {
+      SWSELogger.error('[ProgressionSurfaceAdapter] Failed to advance past intro:', err);
+      return false;
+    } finally {
+      this._introRecoveryInProgress = false;
+    }
+  }
+
+  _getCurrentStepId() {
+    return this._app?.steps?.[this._app?.currentStepIndex]?.stepId ?? null;
+  }
+
+  _isBlankOrErroredIntroContext(context) {
+    if (context?.currentDescriptor?.stepId !== 'intro') return false;
+    const html = String(context?.workSurfaceHtml || '').trim();
+    if (!html) return true;
+    if (html.includes('prog-step-error-surface') || html.includes('data-step-error="true"')) return true;
+    return !html.includes('prog-intro-surface');
+  }
+
+  _scheduleIntroWatchdog(plugin) {
+    clearTimeout(this._introWatchdog);
+    this._introWatchdog = setTimeout(async () => {
+      if (this._getCurrentStepId() !== 'intro') return;
+      const state = plugin?._state;
+      const complete = plugin?._complete === true;
+      const started = plugin?._animationSequenceStarted === true;
+      const running = plugin?._introRunning === true;
+
+      // Do not auto-advance a healthy splash that is complete and awaiting user input.
+      if (complete || state === 'complete-awaiting-click') return;
+
+      // If it never started, was disposed, or is still spinning far past expected boot time, fail open.
+      if (!started || state === 'disposed' || running) {
+        await this.advancePastIntro('intro-watchdog-timeout');
+      }
+    }, 18000);
   }
 
   /**
@@ -196,6 +327,14 @@ export class ProgressionSurfaceAdapter {
       app.render = async function(...args) {
         SWSELogger.debug('[ProgressionSurfaceAdapter] Intercepted render() — redirecting to shell');
         await self._shellHost?.render?.(false);
+
+        // After a shell-host render, immediately rebind the inline progression DOM.
+        // Intro splash stages call shell.render() during the animation; without this
+        // rebind, translation can target stale DOM from the previous stage.
+        const region = self.mode === 'chargen' ? 'surface-chargen' : 'surface-progression';
+        const root = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
+        if (root?.isConnected) await self.afterInlineRender(root);
+
         return app;
       };
 
@@ -216,6 +355,7 @@ export class ProgressionSurfaceAdapter {
   }
 
   _destroy() {
+    clearTimeout(this._introWatchdog);
     if (this._app) {
       try {
         this._app.close?.({ force: true }).catch(() => {});

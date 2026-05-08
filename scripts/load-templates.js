@@ -241,6 +241,11 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-footer.hbs',
 
   // ==============================
+  // Store Splash
+  // ==============================
+  'systems/foundryvtt-swse/templates/apps/store/store-splash.hbs',
+
+  // ==============================
   // Shell Surfaces (Phase 12)
   // ==============================
   'systems/foundryvtt-swse/templates/shell/shell-surface.hbs',

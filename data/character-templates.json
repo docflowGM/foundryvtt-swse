@@ -888,7 +888,33 @@
           "pack": "foundryvtt-swse.talents",
           "id": "wealth",
           "name": "Wealth",
-          "type": "talent"
+          "type": "talent",
+          "system": {
+            "benefit": "Each time you gain a level (including the level at which you select this Talent), you receive 5,000 credits for each level you have in a Lineage-eligible class (Noble and Corporate Agent). Each eligible level is granted only once.",
+            "description": {
+              "value": "Each time you gain a level (including the level at which you select this Talent), you receive 5,000 credits for each level you have in a Lineage-eligible class (Noble and Corporate Agent). Each eligible level is granted only once.\n\nThe credits appear in a civilized, accessible location of your choice or in your private bank account."
+            },
+            "executionModel": "PROGRESSION",
+            "subType": "LEVEL_UP",
+            "abilityMeta": {
+              "trigger": "LEVEL_UP",
+              "effect": {
+                "type": "GRANT_CREDITS",
+                "amount": {
+                  "type": "LINEAGE_LEVEL_MULTIPLIER",
+                  "multiplier": 5000
+                },
+                "oncePerLineageLevel": true
+              }
+            }
+          },
+          "effects": [],
+          "flags": {
+            "swse": {
+              "id": "swse.talent.wealth",
+              "wealthAutomation": "progression-grant-credits-v1"
+            }
+          }
         }
       ],
       "talentTreeId": {

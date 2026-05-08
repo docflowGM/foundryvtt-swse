@@ -320,45 +320,59 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       const action = target.dataset.action;
       if (!action) return;
       event.preventDefault();
-
-      switch (action) {
-        case "set-mode":
-          this.#setMode(target.dataset.mode);
-          break;
-        case "set-context":
-          this.#setContextMode(target.dataset.context);
-          break;
-        case "add-system":
-          this.#toggleAddition(target.dataset.systemId);
-          break;
-        case "remove-system":
-          this.#toggleRemoval(target.dataset.systemId);
-          break;
-        case "reset-build":
-          this.#resetSelections();
-          break;
-        case "close-bay":
-          await this.close();
-          break;
-        case "validate-build":
-          this.#notifyValidation();
-          break;
-        case "request-gm-approval":
-          this.#notifyGmReview();
-          break;
-        case "store-quote":
-          this.#notifyStoreQuote();
-          break;
-        case "save-draft":
-          this.#notifyDraft();
-          break;
-        case "apply-build":
-          await this.#applyBuild();
-          break;
-        default:
-          break;
-      }
+      await this.handleInlineAction(action, target);
     });
+  }
+
+  /**
+   * Handle an action when the Customization Bay is hosted inline inside the
+   * character holopad shell instead of its standalone ApplicationV2 window.
+   * This keeps the shell adapter on the same private action path as the
+   * original app and avoids duplicating garage/shipyard behavior.
+   *
+   * @param {string} action
+   * @param {HTMLElement} target
+   */
+  async handleInlineAction(action, target) {
+    if (!action) return;
+
+    switch (action) {
+      case "set-mode":
+        this.#setMode(target?.dataset?.mode);
+        break;
+      case "set-context":
+        this.#setContextMode(target?.dataset?.context);
+        break;
+      case "add-system":
+        this.#toggleAddition(target?.dataset?.systemId);
+        break;
+      case "remove-system":
+        this.#toggleRemoval(target?.dataset?.systemId);
+        break;
+      case "reset-build":
+        this.#resetSelections();
+        break;
+      case "close-bay":
+        await this.close();
+        break;
+      case "validate-build":
+        this.#notifyValidation();
+        break;
+      case "request-gm-approval":
+        this.#notifyGmReview();
+        break;
+      case "store-quote":
+        this.#notifyStoreQuote();
+        break;
+      case "save-draft":
+        this.#notifyDraft();
+        break;
+      case "apply-build":
+        await this.#applyBuild();
+        break;
+      default:
+        break;
+    }
   }
 
   #buildRuntimeContext(config) {

@@ -18,6 +18,7 @@ import {
 } from '/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js';
 
 import { StoreSurfaceService } from '/systems/foundryvtt-swse/scripts/ui/shell/StoreSurfaceService.js';
+import { initRendarrStoreSplash } from '/systems/foundryvtt-swse/scripts/apps/store/store-splash.js';
 
 export class StoreSurfaceController {
   /**
@@ -35,6 +36,8 @@ export class StoreSurfaceController {
     this._abort?.abort();
     this._abort = new AbortController();
     const { signal } = this._abort;
+
+    if (this._attachSplash(root, signal)) return;
 
     this._hydrateControls(root);
 
@@ -215,6 +218,47 @@ export class StoreSurfaceController {
     });
 
     this._clientSort(root);
+    this._focusHotDeal(root);
+  }
+
+  _attachSplash(root, signal) {
+    const splash = root.querySelector?.('.swse-store-splash--rendarrs');
+    if (!splash) return false;
+    initRendarrStoreSplash(root, {
+      signal,
+      onContinue: () => this._enterStore(),
+      onHotDealOpen: (payload) => this._openHotDeal(payload)
+    });
+    return true;
+  }
+
+  _enterStore(patch = {}) {
+    this._setOptions({ splashComplete: true, currentView: 'browse', ...patch });
+  }
+
+  _openHotDeal({ id, name, category } = {}) {
+    if (!id && !name) {
+      this._enterStore();
+      return;
+    }
+    this._enterStore({
+      selectedProductId: id || null,
+      currentCategory: category || '',
+      search: name || '',
+      hotDealFocusId: id || null
+    });
+  }
+
+  _focusHotDeal(root) {
+    const focusId = this._host._shellSurfaceOptions?.hotDealFocusId;
+    if (!focusId) return;
+    const selector = `.store-card[data-item-id="${CSS.escape(focusId)}"]`;
+    const card = root.querySelector(selector);
+    if (!card) return;
+    card.classList.add('is-hot-deal-focus');
+    card.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+    window.setTimeout(() => card.classList.remove('is-hot-deal-focus'), 1800);
+    this._host._shellSurfaceOptions = { ...this._host._shellSurfaceOptions, hotDealFocusId: null };
   }
 
   destroy() {

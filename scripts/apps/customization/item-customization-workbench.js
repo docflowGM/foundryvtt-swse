@@ -884,6 +884,16 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
 
 
+  /**
+   * Public bridge for shell-hosted inline workbench surfaces.
+   * Keeps apply behavior in the canonical workbench class while avoiding
+   * direct access to the private #applyCurrentItem method from adapters.
+   */
+  async applyCurrentItemFromSurface() {
+    if (this._pendingApply) return;
+    await this.#applyCurrentItem();
+  }
+
   _hydrateLightsaberDefaults() {
     const ls = this._lightsaber;
     const editItem = ls.selectedOwnedSaberId ? this.actor.items.get(ls.selectedOwnedSaberId) : null;

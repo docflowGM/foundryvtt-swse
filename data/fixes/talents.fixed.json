@@ -5125,43 +5125,41 @@
     "system": {
       "talent_tree": "Lineage",
       "prerequisites": null,
-      "benefit": "At every level, gain credits equal to class level × 5000.",
-      "description": "Gain credits equal to character level × 5,000 each level.",
+      "benefit": "Each time you gain a level (including the level at which you select this Talent), you receive 5,000 credits for each level you have in a Lineage-eligible class (Noble and Corporate Agent). Each eligible level is granted only once.",
+      "description": {
+        "value": "Each time you gain a level (including the level at which you select this Talent), you receive 5,000 credits for each level you have in a Lineage-eligible class (Noble and Corporate Agent). Each eligible level is granted only once.\n\nThe credits appear in a civilized, accessible location of your choice or in your private bank account."
+      },
       "class": "Noble",
       "costNumeric": null,
       "category": "Noble",
       "tree": "Lineage",
-      "treeId": "lineage"
-    },
-    "effects": [
-      {
-        "_id": "cd6b58ce-5144-4f39-a76a-720505ecdfc8",
-        "name": "Wealth",
-        "type": "talent-effect",
-        "icon": "icons/svg/item-bag.svg",
-        "changes": [
-          {
-            "key": "system.credits",
-            "mode": 2,
-            "value": "level_per_level"
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Wealth"
-          }
+      "treeId": "lineage",
+      "executionModel": "PROGRESSION",
+      "subType": "LEVEL_UP",
+      "abilityMeta": {
+        "trigger": "LEVEL_UP",
+        "effect": {
+          "type": "GRANT_CREDITS",
+          "amount": {
+            "type": "LINEAGE_LEVEL_MULTIPLIER",
+            "multiplier": 5000
+          },
+          "oncePerLineageLevel": true
         }
       }
-    ],
+    },
+    "effects": [],
     "folder": null,
     "sort": 0,
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "id": "swse.talent.wealth",
+        "wealthAutomation": "progression-grant-credits-v1"
+      }
+    }
   },
   {
     "_id": "37c45caffa191816",

@@ -12,7 +12,7 @@
  * - The router enforces this distinction at all entry points
  */
 
-import { DroidCustomizationApp } from '/systems/foundryvtt-swse/scripts/apps/droid-customization-app.js';
+import { ShellRouter } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 
 export class DroidCustomizationRouter {
@@ -37,7 +37,11 @@ export class DroidCustomizationRouter {
     }
 
     try {
-      new DroidCustomizationApp(actor, options).render(true);
+      return ShellRouter.openSurface(actor, 'customization', {
+        ...options,
+        mode: 'garage',
+        contextMode: options.contextMode ?? 'modifyExisting'
+      });
     } catch (err) {
       SWSELogger.error('Failed to open droid customization:', err);
       ui.notifications.error('Failed to open droid customization UI');

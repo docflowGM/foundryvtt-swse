@@ -185,3 +185,114 @@
     display: none;
   }
 }
+
+/* ─── Inline Progression / Chargen Surfaces ──────────────────────────────── */
+/*
+ * Progression and chargen are now hosted inside the character holopad display.
+ * Splash screens must be confined to the screen viewport, not the browser or
+ * Foundry window, and must not force a standalone 1000x750 application frame.
+ */
+.swse-shell-surface--inline-app,
+.swse-progression-inline,
+.swse-progression-inline--chargen {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.swse-progression-inline {
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-prog-inline-intro {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+}
+
+.swse-prog-inline-intro > .prog-intro-surface {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-prog-inline-intro .prog-intro-surface--actor-v2 .stage,
+.swse-prog-inline-intro .prog-intro-surface--droid-v2 .stage {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: clamp(6px, 1.1vw, 16px);
+  box-sizing: border-box;
+}
+
+.swse-prog-inline-intro .prog-intro-surface--actor-v2 .tablet,
+.swse-prog-inline-intro .prog-intro-surface--droid-v2 .datapad {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.swse-prog-inline-intro .prog-intro-surface--actor-v2 .screen,
+.swse-prog-inline-intro .prog-intro-surface--droid-v2 .screen {
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  box-sizing: border-box;
+}
+
+.swse-prog-inline-intro .prog-intro-surface--actor-v2 .boot,
+.swse-prog-inline-intro .prog-intro-surface--droid-v2 .boot {
+  min-height: 0;
+}
+
+.swse-prog-inline-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-prog-inline-work,
+.swse-prog-inline-details,
+.swse-prog-inline-mentor {
+  min-height: 0;
+}
+
+/* Inline Store splash: confined to the holopad screen viewport. */
+.swse-shell-surface--store .swse-store-inline-splash {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+}
+
+.swse-shell-surface--store .swse-store-inline-splash > .swse-store-splash-screen,
+.swse-shell-surface--store .swse-store-inline-splash > .prog-intro-surface {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.swse-shell-surface--store .swse-store-inline-splash .prog-intro-stage,
+.swse-shell-surface--store .swse-store-inline-splash .prog-intro-panel {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-width: none;
+}

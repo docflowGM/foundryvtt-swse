@@ -14,6 +14,10 @@
   </div>
   {{else if vm.storeContext}}
 
+  {{#unless vm.splashComplete}}
+  {{> "systems/foundryvtt-swse/templates/apps/store/store-splash.hbs" vm.storeSplash}}
+  {{else}}
+
   <form class="ss-root" autocomplete="off">
 
     <div class="ss-hud">
@@ -345,6 +349,7 @@
     {{/if}}
 
   </form>
+  {{/unless}}
 
   {{else}}
   <div class="ss-error">

@@ -13,7 +13,7 @@
  * - The router enforces this distinction at all entry points
  */
 
-import { VehicleCustomizationApp } from '/systems/foundryvtt-swse/scripts/apps/vehicle-customization-app.js';
+import { ShellRouter } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 
 export class VehicleCustomizationRouter {
@@ -38,7 +38,11 @@ export class VehicleCustomizationRouter {
     }
 
     try {
-      new VehicleCustomizationApp(actor, options).render(true);
+      return ShellRouter.openSurface(actor, 'customization', {
+        ...options,
+        mode: 'shipyard',
+        contextMode: options.contextMode ?? 'modifyExisting'
+      });
     } catch (err) {
       SWSELogger.error('Failed to open vehicle customization:', err);
       ui.notifications.error('Failed to open vehicle customization UI');

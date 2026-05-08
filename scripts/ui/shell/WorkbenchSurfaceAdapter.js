@@ -165,11 +165,10 @@ export class WorkbenchSurfaceAdapter {
         }
 
         case 'toggle-upgrade': {
-          const upgradeKey = target.dataset.upgradeKey;
-          const category = target.dataset.category || wb.selectedCategory;
-          const itemId = target.dataset.itemId || wb.selectedItemId;
-          if (upgradeKey && itemId && category) {
-            const draft = wb._getDraft(itemId, category);
+          const upgradeKey = target.dataset.upgradeKey ?? target.dataset.key;
+          const item = wb._getCurrentItem?.();
+          const draft = wb._getDraft?.(item);
+          if (upgradeKey && draft) {
             if (draft.selectedUpgrades.includes(upgradeKey)) {
               draft.selectedUpgrades = draft.selectedUpgrades.filter(k => k !== upgradeKey);
             } else {
@@ -180,11 +179,10 @@ export class WorkbenchSurfaceAdapter {
         }
 
         case 'toggle-template': {
-          const templateKey = target.dataset.templateKey;
-          const category = target.dataset.category || wb.selectedCategory;
-          const itemId = target.dataset.itemId || wb.selectedItemId;
-          if (templateKey && itemId && category) {
-            const draft = wb._getDraft(itemId, category);
+          const templateKey = target.dataset.templateKey ?? target.dataset.key;
+          const item = wb._getCurrentItem?.();
+          const draft = wb._getDraft?.(item);
+          if (templateKey && draft) {
             if (draft.selectedTemplates?.includes(templateKey)) {
               draft.selectedTemplates = draft.selectedTemplates.filter(k => k !== templateKey);
             } else {
@@ -195,15 +193,14 @@ export class WorkbenchSurfaceAdapter {
         }
 
         case 'apply-item': {
-          await wb._applyCurrentItem?.();
+          await wb.applyCurrentItemFromSurface?.();
           break;
         }
 
         case 'reset-item': {
-          const itemId = target.dataset.itemId || wb.selectedItemId;
-          const category = target.dataset.category || wb.selectedCategory;
-          if (itemId && category) {
-            wb._drafts.delete(`${category}:${itemId}`);
+          const item = wb._getCurrentItem?.();
+          if (item) {
+            wb._drafts.set(item.id, wb._getInitialDraft(item));
           }
           break;
         }
@@ -238,7 +235,14 @@ export class WorkbenchSurfaceAdapter {
     const modeChanged = existing?.mode !== mode;
 
     if (!existing || actorChanged || modeChanged) {
-      this._workbench = new ItemCustomizationWorkbench(actor, { itemId, category, mode });
+      this._workbench = new ItemCustomizationWorkbench(actor, {
+        itemId,
+        category,
+        mode,
+        sourceItem: options.sourceItem ?? null,
+        applyMode: options.applyMode ?? null,
+        onStage: options.onStage ?? null
+      });
 
       // CRITICAL: Override _renderPreservingUi to redirect to shell re-render
       const self = this;

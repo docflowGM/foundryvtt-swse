@@ -24,6 +24,7 @@ import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/deriv
 import { LevelDiffInspector } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/level-diff-inspector.js";
 import { SuiteReselectionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/suite-reselection-engine.js";
 import { isSuiteReselectionEnabled } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/suite-reselection-utils.js";
+import { ProgressionEventProcessor } from "/systems/foundryvtt-swse/scripts/engine/abilities/progression/progression-event-processor.js";
 
 export class FinalizeIntegration {
 
@@ -72,6 +73,22 @@ export class FinalizeIntegration {
             // Step 4: Finalize specialized progressions (Force, Language, Equipment)
             // These may emit hooks but should NOT mutate during progression transaction
             await this._finalizeSpecializedProgressions(actor, mode, engine);
+
+            // Step 5: Process settled PROGRESSION abilities such as Wealth after
+            // item/class mutations have been applied, so the processor sees the new talent
+            // and the current canonical class levels.
+            if (mode === 'levelup') {
+                try {
+                    await ProgressionEventProcessor.handle(actor, 'LEVEL_UP', {
+                        mode,
+                        engine,
+                        source: 'finalize-integration'
+                    });
+                } catch (err) {
+                    SWSELogger.error('Progression ability processing failed after finalization:', err);
+                    // Do not roll back or soft-lock level-up for an optional progression effect.
+                }
+            }
 
             // Step 6: Generate and display level-up summary
             const afterSnapshot = actor.toObject(false);

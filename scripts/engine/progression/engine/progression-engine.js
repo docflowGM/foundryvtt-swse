@@ -184,7 +184,7 @@ export class ProgressionEngine {
       // PHASE 4: Trigger PROGRESSION abilities on level up
       swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Processing PROGRESSION abilities...`);
       try {
-        ProgressionEventProcessor.handle(actor, "LEVEL_UP", {
+        await ProgressionEventProcessor.handle(actor, "LEVEL_UP", {
           classLevel: level,
           classId: classId
         });

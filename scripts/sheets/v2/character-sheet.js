@@ -601,6 +601,9 @@ export class SWSEV2CharacterSheet extends
     if (this._shellSurface === 'workbench') {
       this._wireWorkbenchSurfaceEvents(root, signal);
     }
+    if (this._shellSurface === 'customization') {
+      this._wireCustomizationSurfaceEvents(root, signal);
+    }
     if (this._shellOverlay?.overlayId === 'upgrade-single-item') {
       this._wireUpgradeOverlayEvents(root, signal);
     }
@@ -963,6 +966,11 @@ export class SWSEV2CharacterSheet extends
     const surfaceRoot = root.querySelector(`[data-shell-region="${regionAttr}"]`);
     if (!surfaceRoot) return;
 
+    // Hydrate inline progression content after the character-sheet render.
+    // This replaces ProgressionShell._onRender for shell-hosted mode and is
+    // required for splash/intro animations to start inside the holopad viewport.
+    void this._hydrateInlineProgressionSurface(surfaceRoot);
+
     surfaceRoot.addEventListener('click', async (ev) => {
       const btn = ev.target.closest('[data-action]');
       if (!btn) return;
@@ -986,6 +994,19 @@ export class SWSEV2CharacterSheet extends
         swseLogger.error(`[CharacterSheet] Progression surface action "${action}" failed:`, err);
       }
     }, { signal });
+  }
+
+  async _hydrateInlineProgressionSurface(surfaceRoot) {
+    try {
+      const { ProgressionSurfaceAdapter } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/ProgressionSurfaceAdapter.js'
+      );
+      const key = `${this.actor.id}-${this._shellSurface === 'chargen' ? 'chargen' : 'levelup'}`;
+      const adapter = ProgressionSurfaceAdapter._registry.get(key);
+      await adapter?.afterInlineRender?.(surfaceRoot);
+    } catch (err) {
+      swseLogger.error('[CharacterSheet] Inline progression hydration failed:', err);
+    }
   }
 
   /**
@@ -1034,6 +1055,39 @@ export class SWSEV2CharacterSheet extends
         }
       } catch (err) {
         swseLogger.error('[CharacterSheet] Workbench search failed:', err);
+      }
+    }, { signal });
+  }
+
+  /**
+   * Wire delegated events for customization inline surface.
+   * Forwards data-action clicks to CustomizationSurfaceAdapter.handleAction().
+   */
+  _wireCustomizationSurfaceEvents(root, signal) {
+    const surfaceRoot = root.querySelector('[data-shell-region="surface-customization"]');
+    if (!surfaceRoot) return;
+
+    surfaceRoot.addEventListener('click', async (ev) => {
+      const target = ev.target.closest('[data-action]');
+      if (!target) return;
+
+      const action = target.dataset.action;
+      if (!action) return;
+      ev.preventDefault();
+
+      try {
+        const { CustomizationSurfaceAdapter } = await import(
+          '/systems/foundryvtt-swse/scripts/ui/shell/CustomizationSurfaceAdapter.js'
+        );
+        const mode = this._shellSurfaceOptions?.bayMode
+          || this._shellSurfaceOptions?.mode
+          || (this.actor?.type === 'vehicle' ? 'shipyard' : 'garage');
+        const adapter = CustomizationSurfaceAdapter._registry.get(`${this.actor.id}-${mode}`);
+        if (adapter) {
+          await adapter.handleAction(action, target);
+        }
+      } catch (err) {
+        swseLogger.error(`[CharacterSheet] Customization surface action "${action}" failed:`, err);
       }
     }, { signal });
   }
@@ -1452,6 +1506,9 @@ export class SWSEV2CharacterSheet extends
         .catch(() => {});
       import('/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js')
         .then(({ WorkbenchSurfaceAdapter }) => WorkbenchSurfaceAdapter.destroy(this.actor.id))
+        .catch(() => {});
+      import('/systems/foundryvtt-swse/scripts/ui/shell/CustomizationSurfaceAdapter.js')
+        .then(({ CustomizationSurfaceAdapter }) => CustomizationSurfaceAdapter.destroy(this.actor.id))
         .catch(() => {});
     }
 

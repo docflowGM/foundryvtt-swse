@@ -1,71 +1,136 @@
-<div class="prog-intro-surface swse-ui-shell swse-splash-screen swse-store-splash-screen" data-boot-stage="init" tabindex="0" aria-label="Galactic Trade Exchange splash screen">
-  <div class="prog-intro-header">
-    <div class="prog-intro-system-name">GALACTIC TRADE EXCHANGE</div>
-    <div class="swse-store-splash-screen__header-meta">
-      <div class="prog-intro-time" id="store-sys-time">14:32:08</div>
-      <div class="prog-intro-signal" id="store-signal-bars" aria-label="signal strength">
-        <div class="prog-intro-signal__bar active" style="height: 6px;"></div>
-        <div class="prog-intro-signal__bar" style="height: 10px;"></div>
-        <div class="prog-intro-signal__bar" style="height: 14px;"></div>
-        <div class="prog-intro-signal__bar" style="height: 18px;"></div>
-      </div>
-      <div class="prog-intro-battery">{{currencySymbol}} {{credits}}</div>
+<section class="swse-store-splash swse-store-splash--rendarrs"
+         data-splash="store"
+         data-store-status="{{#if storeOpen}}open{{else}}closed{{/if}}"
+         data-store-motion="{{sheetMotionStyle}}"
+         data-theme="{{sheetTheme}}"
+         tabindex="0"
+         aria-label="Rendarr's Outfitters market splash screen">
+  <script type="application/json" data-store-hot-deals-json>{{{hotDealsJson}}}</script>
+
+  <div class="swse-rendarrs-bg" aria-hidden="true">
+    <div class="swse-rendarrs-bg__sun"></div>
+    <div class="swse-rendarrs-bg__grid"></div>
+    <div class="swse-rendarrs-bg__scan"></div>
+    <div class="swse-rendarrs-bg__noise"></div>
+    <div class="swse-rendarrs-bg__pulse swse-rendarrs-bg__pulse--a"></div>
+    <div class="swse-rendarrs-bg__pulse swse-rendarrs-bg__pulse--b"></div>
+  </div>
+
+  <div class="swse-rendarrs-ticker" aria-label="Galactic market ticker">
+    <div class="swse-rendarrs-ticker__track" data-store-ticker-track>
+      {{#each tickerPreview}}
+      <span class="swse-rendarrs-ticker__item {{#if up}}is-up{{else}}is-down{{/if}}">
+        <strong>{{ticker}}</strong><span>{{name}}</span><em>{{indicator}} {{changeLabel}}</em>
+      </span>
+      {{/each}}
     </div>
   </div>
 
-  <div class="prog-intro-panel">
-    <div class="prog-intro-scanlines"></div>
-
-    <div class="prog-intro-text-area">
-      <div class="prog-intro-text-container swse-store-splash-screen__stack">
-        <div class="swse-store-splash-screen__identity">
-          <div class="swse-store-splash-screen__kicker">Trade Terminal Sync · <span class="store-open-indicator {{#if storeOpen}}is-open{{else}}is-closed{{/if}}">{{storeStatusLabel}}</span></div>
-          <div class="swse-store-splash-screen__account">{{actorName}}</div>
-          <div class="swse-store-splash-screen__meta-row">
-            <div class="metric-chip"><span class="metric-chip__label">Tier</span><strong>{{accountTier}}</strong></div>
-            <div class="metric-chip"><span class="metric-chip__label">Terminal</span><strong>{{terminalId}}</strong></div>
-            <div class="metric-chip"><span class="metric-chip__label">Vendor Link</span><strong>{{vendorLink}}</strong></div>
-          </div>
-        </div>
-
-        <div id="store-translation-result" class="swse-store-splash-screen__translation" style="display:none;"></div>
-
-        <div id="store-boot-message-area" class="swse-store-splash-screen__message-row">
-          <div class="boot-message-current" id="store-current-message">{{welcomeLine}}</div>
-        </div>
-
-        <div class="boot-loading-container swse-store-splash-screen__loading">
-          <div class="boot-loading-bar">
-            <div class="boot-loading-fill" id="store-loading-fill" style="width:0%;"></div>
-          </div>
-          <div class="boot-loading-label" id="store-loading-percent">0%</div>
-        </div>
-
-        <div id="store-final-state" class="swse-store-splash-screen__final" style="display:none;">
-          <div class="prog-intro-label prog-intro-label--success swse-store-splash-screen__final-title">
-            <span class="prog-intro-status__icon">✓</span> MARKET READY
-          </div>
-          <div class="swse-store-splash-screen__final-grid">
-            <div class="swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
-              <div class="swse-card-schema__eyebrow">Account</div>
-              <div class="swse-card-schema__title">{{actorName}}</div>
-              <div class="swse-card-schema__body">Funds available: {{credits}} credits · Market {{storeStatusLabel}}</div>
-            </div>
-            <div class="swse-card-schema swse-card-schema--choice swse-card-schema--filled">
-              <div class="swse-card-schema__eyebrow">Access</div>
-              <div class="swse-card-schema__title">{{accountTier}}</div>
-              <div class="swse-card-schema__body">{{vendorLink}}</div>
-            </div>
-          </div>
-          <div class="swse-store-splash-screen__hint">Click the panel to skip boot, or press Enter once the exchange is ready.</div>
-        </div>
+  <div class="swse-rendarrs-market">
+    <header class="swse-rendarrs-market__header">
+      <div class="swse-rendarrs-market__identity">
+        <span class="swse-rendarrs-market__eyebrow">SECURE VENDOR CHANNEL</span>
+        <strong>Rendarr's Outfitters</strong>
+        <span>Outer Rim equipment exchange // authenticated catalog node</span>
       </div>
-    </div>
-  </div>
 
-  <div class="prog-intro-footer" id="store-footer-area" style="display:none;">
-    <button class="prog-intro-continue-btn boot-continue-btn" data-action="continue" type="button">
-      <span>► ENTER EXCHANGE</span>
-    </button>
+      <div class="swse-rendarrs-open-sign" data-store-open-sign>
+        <span>STORE</span>
+        <strong data-store-status-label>{{storeStatusLabel}}</strong>
+      </div>
+    </header>
+
+    <main class="swse-rendarrs-market__body">
+      <section class="swse-rendarrs-chart-panel">
+        <div class="swse-rendarrs-panel-head">
+          <span>GALACTIC TRADE INDEX</span>
+          <strong data-market-index>{{marketIndexLabel}}</strong>
+        </div>
+
+        <div class="swse-rendarrs-chart">
+          <svg viewBox="0 0 900 340" preserveAspectRatio="none" aria-hidden="true">
+            <g class="swse-rendarrs-chart__grid">
+              <path d="M0 50 H900 M0 105 H900 M0 160 H900 M0 215 H900 M0 270 H900 M0 325 H900"></path>
+              <path d="M90 0 V340 M180 0 V340 M270 0 V340 M360 0 V340 M450 0 V340 M540 0 V340 M630 0 V340 M720 0 V340 M810 0 V340"></path>
+            </g>
+            <path class="swse-rendarrs-chart__fill" d="M0 282 C40 246 74 260 120 224 C168 184 204 196 250 148 C306 88 348 126 390 140 C442 158 476 82 526 74 C588 64 622 132 676 104 C736 72 780 48 836 64 C864 72 884 44 900 28 L900 340 L0 340 Z"></path>
+            <path class="swse-rendarrs-chart__line swse-rendarrs-chart__line--primary" d="M0 282 C40 246 74 260 120 224 C168 184 204 196 250 148 C306 88 348 126 390 140 C442 158 476 82 526 74 C588 64 622 132 676 104 C736 72 780 48 836 64 C864 72 884 44 900 28"></path>
+            <path class="swse-rendarrs-chart__line swse-rendarrs-chart__line--secondary" d="M0 218 C58 232 92 154 142 174 C198 196 228 116 284 130 C342 146 370 194 426 158 C488 118 516 176 574 140 C640 98 676 128 724 86 C786 32 826 94 900 72"></path>
+          </svg>
+          <div class="swse-rendarrs-alert swse-rendarrs-alert--a">BUY PRESSURE</div>
+          <div class="swse-rendarrs-alert swse-rendarrs-alert--b">TARIFF SHIFT</div>
+          <div class="swse-rendarrs-alert swse-rendarrs-alert--c">VOLUME SPIKE</div>
+        </div>
+      </section>
+
+      <aside class="swse-rendarrs-side">
+        <section class="swse-rendarrs-mini-panel">
+          <div class="swse-rendarrs-panel-head"><span>GM STORE CONTROLS</span><strong>SYNC</strong></div>
+          <div class="swse-rendarrs-conditions">
+            <div><span>Tax Rate</span><strong data-market-tax>{{marketControls.taxLabel}}</strong></div>
+            <div><span>Trade Discount</span><strong data-market-discount>{{marketControls.discountLabel}}</strong></div>
+            <div><span>Vendor Status</span><strong data-market-vendor-status>{{storeStatusLabel}}</strong></div>
+            <div><span>Catalog Sync</span><strong data-market-catalog-sync>{{#if hotDeals.hydrated}}LIVE{{else}}SYNC PENDING{{/if}}</strong></div>
+          </div>
+        </section>
+
+        <section class="swse-rendarrs-mini-panel">
+          <div class="swse-rendarrs-panel-head"><span>ORDER FLOW</span><strong>LIVE</strong></div>
+          <div class="swse-rendarrs-orderflow" aria-hidden="true">
+            <span><b>BUY</b><i style="--w:72%"></i><em>2,400 CR</em></span>
+            <span><b>SELL</b><i style="--w:48%"></i><em>1,125 CR</em></span>
+            <span><b>BUY</b><i style="--w:84%"></i><em>5,880 CR</em></span>
+            <span><b>SELL</b><i style="--w:63%"></i><em>3,020 CR</em></span>
+            <span><b>BUY</b><i style="--w:39%"></i><em>740 CR</em></span>
+          </div>
+        </section>
+
+        <section class="swse-rendarrs-hot-deals" aria-label="Hot deals from the actual store catalog">
+          <div class="swse-rendarrs-panel-head"><span>Rendarr's Hot Deals</span><strong data-hot-deals-state>{{#if hotDeals.hydrated}}LIVE{{else}}PENDING{{/if}}</strong></div>
+          <div class="swse-rendarrs-hot-deals__body">
+            <div class="swse-rendarrs-hot-deals__category">
+              <span data-hot-deals-category>{{hotDeals.currentGroup.category}}</span>
+              <strong data-hot-deals-tagline>{{hotDeals.currentGroup.tagline}}</strong>
+            </div>
+            <div class="swse-rendarrs-hot-deals__list" data-hot-deals-list>
+              {{#if hotDeals.currentGroup.items.length}}
+                {{#each hotDeals.currentGroup.items}}
+                <button type="button"
+                        class="swse-rendarrs-deal"
+                        data-action="store-hot-deal-open"
+                        data-item-id="{{id}}"
+                        data-item-name="{{name}}"
+                        data-category="{{categoryKey}}"
+                        style="animation-delay:{{animationDelay}}ms">
+                  <span class="swse-rendarrs-deal__thumb" aria-hidden="true">
+                    {{#if img}}<img src="{{img}}" alt=""/>{{/if}}
+                  </span>
+                  <span class="swse-rendarrs-deal__meta">
+                    <span class="swse-rendarrs-deal__name">{{name}}</span>
+                    <span class="swse-rendarrs-deal__tag">{{tag}}</span>
+                  </span>
+                  <strong class="swse-rendarrs-deal__price">{{priceLabel}}</strong>
+                </button>
+                {{/each}}
+              {{else}}
+                <div class="swse-rendarrs-hot-deals__empty">Catalog sync pending</div>
+              {{/if}}
+            </div>
+            <div class="swse-rendarrs-hot-deals__status">
+              <span data-hot-deals-status>{{#if hotDeals.hydrated}}Real catalog preview // rotating{{else}}Catalog sync pending // store can still open{{/if}}</span>
+              <span>Preview only</span>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="swse-rendarrs-market__footer">
+      <div class="swse-rendarrs-boot">
+        <span data-store-boot-label>{{#if storeOpen}}Opening Rendarr vendor channel{{else}}Catalog frozen // vendor channel closed{{/if}}</span>
+        <i></i><i></i><i></i>
+      </div>
+      <button type="button" class="swse-rendarrs-enter" data-action="store-splash-continue">ENTER OUTFITTERS</button>
+    </footer>
   </div>
-</div>
+</section>
