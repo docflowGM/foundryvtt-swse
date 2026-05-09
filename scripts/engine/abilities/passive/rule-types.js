@@ -110,7 +110,20 @@ export const RULE_TYPES = {
    * Queried by: Damage resolution (base damage calculation)
    * Params: { proficiency: string, bonus: number }
    */
-  WEAPON_SPECIALIZATION: 'WEAPON_SPECIALIZATION'
+  WEAPON_SPECIALIZATION: 'WEAPON_SPECIALIZATION',
+
+  /**
+   * UNARMED_DOES_NOT_PROVOKE_AOO
+   * Actor's unarmed attacks do not provoke attacks of opportunity.
+   */
+  UNARMED_DOES_NOT_PROVOKE_AOO: 'UNARMED_DOES_NOT_PROVOKE_AOO',
+
+  /**
+   * UNARMED_DAMAGE_STEP
+   * Increases unarmed attack damage by N die steps.
+   * Params: { steps: number }
+   */
+  UNARMED_DAMAGE_STEP: 'UNARMED_DAMAGE_STEP'
 };
 
 /**

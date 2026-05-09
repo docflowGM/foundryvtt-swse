@@ -4,6 +4,7 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { FeatGrantEntitlementResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js";
 
 /**
  * Auto-grant force powers for Force Training feat
@@ -12,40 +13,21 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
  * @param {Object} pending - Pending progression data
  */
 export async function autoGrantForceTrainingPowers(actor, pending) {
-  const wisMod = actor.system.attributes?.wis?.mod ?? 0;
-  const count = Math.max(1, 1 + wisMod);
+  const count = FeatGrantEntitlementResolver.getForceTrainingSlotsPerInstance(actor);
 
-  swseLogger.log(`Force Training: Granting ${count} force powers (1 + WIS mod ${wisMod})`);
+  swseLogger.log(
+    `Force Training: ${count} force power slot(s) unlocked; power selection is deferred to the Force Power progression step.`
+  );
 
-  // Get available force powers from registry
-  const available = game.swse?.forceRegistry?._powers;
-  if (!available || !Array.isArray(available)) {
-    swseLogger.warn('Force Training: Force power registry not available');
-    return;
-  }
-
-  const chosen = [];
-
-  // Select first N available powers
-  for (let i = 0; i < count && i < available.length; i++) {
-    const next = available[i];
-    if (!next) {break;}
-    chosen.push(next.name);
-  }
-
-  // Store in pending data for UI selection
-  if (!pending.forcePowers) {
-    pending.forcePowers = [];
-  }
-
-  // Merge with any existing pending force powers
-  for (const power of chosen) {
-    if (!pending.forcePowers.includes(power)) {
-      pending.forcePowers.push(power);
-    }
-  }
-
-  swseLogger.log(`Force Training: Auto-selected ${chosen.length} powers: ${chosen.join(', ')}`);
+  pending.forcePowerEntitlements ??= [];
+  pending.forcePowerEntitlements.push({
+    grantType: 'forcePowerSlots',
+    sourceType: 'feat',
+    sourceName: 'Force Training',
+    count,
+    countFormula: 'max(1, 1 + configuredForceTrainingAbilityModifier)',
+    dynamic: true
+  });
 }
 
 /**

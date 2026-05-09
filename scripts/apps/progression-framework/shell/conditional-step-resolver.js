@@ -11,6 +11,7 @@ import { StarshipManeuverStep } from '../steps/starship-maneuver-step.js';
 import { ForceAuthorityEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/engine/force-authority-engine.js';
 import { ManeuverAuthorityEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/engine/maneuver-authority-engine.js';
 import { resolveForceSecretEntitlements, resolveForceTechniqueEntitlements } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js';
+import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 
 export const ConditionalStepKey = Object.freeze({
   SKILLS: 'skills',
@@ -119,12 +120,19 @@ export class ConditionalStepResolver {
     return entitlements.remaining > 0 ? { active: true, reason: 'Class force technique grant available' } : { active: false, reason: null };
   }
 
-  async _checkStarshipManeuversUnlocked(actor) {
+  async _checkStarshipManeuversUnlocked(actor, context = {}) {
     try {
-      const access = await ManeuverAuthorityEngine.validateManeuverAccess(actor);
+      const options = { shell: context?.shell, includePending: true };
+      const access = await ManeuverAuthorityEngine.validateManeuverAccess(actor, options);
       if (!access.valid) return { active: false, reason: null };
-      const capacity = await ManeuverAuthorityEngine.getManeuverCapacity(actor);
-      const owned = actor?.items?.filter((i) => i.type === 'maneuver')?.length ?? actor?.system?.starshipManeuverSuite?.maneuvers?.length ?? 0;
+      const capacity = await ManeuverAuthorityEngine.getManeuverCapacity(actor, options);
+      const pendingManeuvers = context?.shell?.buildIntent?.getSelection?.('starshipManeuvers') || [];
+      const pendingCount = Array.isArray(pendingManeuvers)
+        ? pendingManeuvers.reduce((sum, m) => sum + (m.count || 1), 0)
+        : 0;
+      const owned = pendingCount > 0
+        ? pendingCount
+        : actor?.items?.filter((i) => i.type === 'maneuver')?.length ?? actor?.system?.starshipManeuverSuite?.maneuvers?.length ?? 0;
       return capacity > owned ? { active: true, reason: 'Outstanding starship maneuver selections' } : { active: false, reason: null };
     } catch {
       return { active: false, reason: null };

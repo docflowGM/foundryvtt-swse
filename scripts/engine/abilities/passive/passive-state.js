@@ -99,6 +99,23 @@ export const PASSIVE_STATE_PREDICATES = {
     return context?.weapon?.system?.attackAttribute === 'dex' || false;
   },
 
+
+  /**
+   * Applies when the current ranged attack/damage context is inside point-blank range.
+   * The combat UI or caller may provide one of these explicit signals:
+   * - context.pointBlankRange === true
+   * - context.rangeBand === 'point_blank' or 'point-blank'
+   * - context.isPointBlank === true
+   *
+   * If no caller supplies range context, this safely returns false rather than
+   * guessing distances.
+   */
+  "range.within-point-blank": (actor, context) => {
+    if (context?.pointBlankRange === true || context?.isPointBlank === true) return true;
+    const band = String(context?.rangeBand || context?.rangeCategory || '').toLowerCase().replace(/_/g, '-');
+    return band === 'point-blank' || band === 'pointblank';
+  },
+
   // ============================================
   // MOVEMENT PREDICATES
   // ============================================

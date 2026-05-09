@@ -76,6 +76,7 @@ import { ShellSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/
 import { ThemeManager } from "/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { activateCustomSkillsUI } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/custom-skills-ui.js";
+import { FeatChoiceDialog } from "/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js";
 import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
 import { buildConceptSheetViewModel } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
 
@@ -4018,6 +4019,19 @@ const forcePoints = [];
       button.addEventListener("click", async (event) => {
         event.preventDefault();
         this._showItemSelectionModal('feat');
+      }, { signal });
+    });
+
+    // Resolve or change feat choices from the sheet. Missing/invalid choices warn only; they never block play.
+    html.querySelectorAll('[data-action="resolve-feat-choice"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const itemId = button.dataset.itemId;
+        const item = itemId ? this.actor.items.get(itemId) : null;
+        if (!item) return;
+        const changed = await FeatChoiceDialog.promptAndApply(this.actor, item);
+        if (changed) this.render?.(false);
       }, { signal });
     });
 

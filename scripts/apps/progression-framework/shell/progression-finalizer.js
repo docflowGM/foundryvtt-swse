@@ -750,6 +750,17 @@ export class ProgressionFinalizer {
 
           baseItem.name = baseItem.name || resolvedName;
           baseItem.type = baseItem.type || domain.type;
+          baseItem.system = foundry.utils.mergeObject(baseItem.system || {}, rawEntry?.system || {}, {
+            inplace: false,
+            recursive: true,
+            overwrite: true
+          });
+          if (domain.type === 'feat' && String(rawEntry?.source || '').includes('class')) {
+            baseItem.system.sourceType = baseItem.system.sourceType || 'class';
+            baseItem.system.locked = true;
+            baseItem.system.choiceEditable = false;
+            baseItem.system.grantedByClass = true;
+          }
           baseItem.flags = foundry.utils.mergeObject(baseItem.flags || {}, {
             swse: {
               progression: {

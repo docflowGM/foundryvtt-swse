@@ -24,7 +24,6 @@
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { UnlockContractValidator } from "./unlock-contract.js";
-import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 
 export class UnlockAdapter {
 
@@ -103,8 +102,15 @@ export class UnlockAdapter {
    * @param {Object} grant
    */
   static handleSystemAccess(actor, ability, grant) {
-    // Future implementation point.
-    // Currently capability access flows through PrerequisiteChecker.
+    const capability = String(grant?.capability || '').trim();
+    if (!capability) return;
+
+    this._ensureGrantSnapshot(actor);
+    actor._unlockGrants.systemAccess.add(capability);
+
+    swseLogger.debug(
+      `[UnlockAdapter] ${ability.name} grants system access: ${capability}`
+    );
   }
 
   /**
@@ -120,8 +126,25 @@ export class UnlockAdapter {
    * @param {Object} grant
    */
   static handleProficiency(actor, ability, grant) {
-    // Future implementation point.
-    // Currently proficiency access flows through CapabilityRegistry.
+    const proficiencyType = String(grant?.proficiencyType || '').trim();
+    const proficiencies = Array.isArray(grant?.proficiencies)
+      ? grant.proficiencies.map((entry) => String(entry || '').trim()).filter(Boolean)
+      : [];
+
+    if (!proficiencyType || proficiencies.length === 0) return;
+
+    this._ensureGrantSnapshot(actor);
+    if (!actor._unlockGrants.proficiencies[proficiencyType]) {
+      actor._unlockGrants.proficiencies[proficiencyType] = new Set();
+    }
+
+    for (const proficiency of proficiencies) {
+      actor._unlockGrants.proficiencies[proficiencyType].add(proficiency);
+    }
+
+    swseLogger.debug(
+      `[UnlockAdapter] ${ability.name} grants ${proficiencyType} proficiencies: ${proficiencies.join(', ')}`
+    );
   }
 
   /**
@@ -154,6 +177,75 @@ export class UnlockAdapter {
    * @param {Object} grant
    */
   static handleSkillTraining(actor, ability, grant) {
-    // Future implementation point.
+    const skills = Array.isArray(grant?.skills)
+      ? grant.skills.map((entry) => String(entry || '').trim()).filter(Boolean)
+      : [];
+
+    const selected = ability?.system?.selectedChoice || ability?.system?.selectedChoices;
+    const selectedEntry = Array.isArray(selected) ? selected[0] : selected;
+    const selectedSkill = typeof selectedEntry === 'string'
+      ? selectedEntry
+      : (selectedEntry?.skill || selectedEntry?.value || selectedEntry?.id || selectedEntry?.label);
+    if (selectedSkill) skills.push(String(selectedSkill).trim());
+
+    if (skills.length === 0) return;
+
+    this._ensureGrantSnapshot(actor);
+    actor._unlockGrants.skills ??= { training: new Set(), classSkills: new Set() };
+    if (!(actor._unlockGrants.skills.training instanceof Set)) {
+      actor._unlockGrants.skills.training = new Set(actor._unlockGrants.skills.training || []);
+    }
+
+    for (const skill of skills) {
+      actor._unlockGrants.skills.training.add(skill);
+    }
+
+    swseLogger.debug(
+      `[UnlockAdapter] ${ability.name} grants skill training: ${skills.join(', ')}`
+    );
+  }
+
+  /**
+   * Runtime-only grant snapshot used by capability/proficiency queries.
+   * This does not mutate actor.system; it is rebuilt every ability registration cycle.
+   *
+   * @param {Object} actor
+   * @private
+   */
+  static _ensureGrantSnapshot(actor) {
+    if (!actor._unlockGrants) {
+      actor._unlockGrants = {
+        systemAccess: new Set(),
+        proficiencies: {
+          weapon: new Set(),
+          armor: new Set(),
+          exotic: new Set(),
+          shield: new Set(),
+        },
+        skills: {
+          training: new Set(),
+          classSkills: new Set(),
+        },
+      };
+    }
+
+    if (!(actor._unlockGrants.systemAccess instanceof Set)) {
+      actor._unlockGrants.systemAccess = new Set(actor._unlockGrants.systemAccess || []);
+    }
+
+    actor._unlockGrants.proficiencies = actor._unlockGrants.proficiencies || {};
+    for (const key of ['weapon', 'armor', 'exotic', 'shield']) {
+      if (!(actor._unlockGrants.proficiencies[key] instanceof Set)) {
+        actor._unlockGrants.proficiencies[key] = new Set(actor._unlockGrants.proficiencies[key] || []);
+      }
+    }
+
+    actor._unlockGrants.skills ??= { training: new Set(), classSkills: new Set() };
+    for (const key of ['training', 'classSkills']) {
+      if (!(actor._unlockGrants.skills[key] instanceof Set)) {
+        actor._unlockGrants.skills[key] = new Set(actor._unlockGrants.skills[key] || []);
+      }
+    }
   }
 }
+

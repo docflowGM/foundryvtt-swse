@@ -26,6 +26,7 @@ import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engin
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 import { getPendingBackgroundLanguages } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
+import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 
 export class LanguageStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -204,47 +205,12 @@ export class LanguageStep extends ProgressionStepPlugin {
   }
 
   /**
-   * FIX 4: Calculate bonus languages including pending selections
-   * PHASE 7: Dynamic Linguist compatibility (not hardcoded)
-   * Accounts for: INT modifier, Linguist feat, class features, other pending grants
+   * Calculate bonus languages including pending selections.
+   * SWSE Linguist rule: each Linguist feat instance grants 1 + INT modifier
+   * additional languages, minimum 1, and updates dynamically when INT changes.
    */
   async _calculateBonusLanguagesAvailable(actor, shell) {
-    // Start with actor-committed bonus languages (INT modifier + committed features)
-    let count = LanguageEngine.calculateBonusLanguagesAvailable(actor);
-
-    // PHASE 7: Check for pending Linguist feat selection (dynamic, not hardcoded)
-    const pendingFeats = shell?.draftSelections?.get('feats') || [];
-    let linguistCount = 0;
-
-    if (Array.isArray(pendingFeats)) {
-      for (const feat of pendingFeats) {
-        // Check if Linguist feat is selected
-        const featName = typeof feat === 'string' ? feat : feat.name || feat.id;
-        if (featName?.toLowerCase().includes('linguist')) {
-          // PHASE 7: Dynamic bonus per Linguist feat
-          // Standard: 1 bonus language per Linguist feat
-          // Could be customized via LanguageEngine if needed
-          linguistCount += 1;
-        }
-      }
-    }
-
-    // Also check committed Linguist (backward compat)
-    if (linguistCount === 0) {
-      const committedLinguist = actor?.items?.some(item =>
-        item.type === 'feat' && item.name?.toLowerCase().includes('linguist')
-      );
-      if (committedLinguist) {
-        linguistCount = 1;
-      }
-    }
-
-    count += linguistCount;
-
-    // TODO: Check for other pending language-granting feats/features
-    // (placeholder for future generalized entitlement framework)
-
-    return count;
+    return LanguageEngine.calculateBonusLanguagesAvailable(actor, { shell, includePending: true });
   }
 
   /**

@@ -262,6 +262,7 @@ export class ProgressionContentAuthority {
           tags: Array.isArray(resolved.tags) ? [...resolved.tags] : [],
           description: resolved.description || '',
           pack: resolved.pack || null,
+          choiceMeta: resolved.system?.choiceMeta || null,
         });
         continue;
       }
@@ -276,6 +277,7 @@ export class ProgressionContentAuthority {
           category: value.category || value.featType || value.type || null,
           tags: Array.isArray(value.tags) ? [...value.tags] : [],
           description: value.description || value.system?.description?.value || value.system?.description || '',
+          choiceMeta: value.choiceMeta || value.system?.choiceMeta || null,
         });
       }
     }

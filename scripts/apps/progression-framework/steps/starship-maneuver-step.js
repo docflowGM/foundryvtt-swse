@@ -101,7 +101,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       // PHASE 3: Get capacity from authority engine
       let capacity = 0;
       try {
-        capacity = await ManeuverAuthorityEngine.getManeuverCapacity(shell.actor);
+        capacity = await ManeuverAuthorityEngine.getManeuverCapacity(shell.actor, { shell, includePending: true });
         diagnostics.capacityResolution = {
           success: capacity > 0,
           capacity,

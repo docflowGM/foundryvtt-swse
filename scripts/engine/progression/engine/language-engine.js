@@ -16,6 +16,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/language-registry.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
+import { FeatGrantEntitlementResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js";
 
 export class LanguageEngine {
 
@@ -136,38 +137,28 @@ export class LanguageEngine {
     }
 
     /**
-     * Apply languages from Linguist feat
-     * Linguist feat grants +2 languages per feat
+     * Apply languages from Linguist feat.
+     * SWSE rule: each Linguist feat grants 1 + INT modifier languages, minimum 1.
+     * The grant is dynamic; if INT modifier increases later, each Linguist instance
+     * contributes the new value.
      */
     static async applyLinguistLanguages(actor) {
-        const linguistFeats = (actor.items || []).filter(i =>
-            i.type === 'feat' && (
-                i.system?.slug === CAPABILITY_SLUGS.LINGUIST ||
-                i.name === 'Linguist'  // Fallback for items without slug
-            )
-        );
+        const bonusLanguages = FeatGrantEntitlementResolver.totalForGrantType(actor, 'languageSlots');
 
-        const bonusLanguages = linguistFeats.length * 2;
-
-        SWSELogger.log(`${bonusLanguages} bonus languages from Linguist feat(s)`);
+        SWSELogger.log(`${bonusLanguages} bonus languages from Linguist feat entitlement(s)`);
 
         return bonusLanguages;
     }
 
     /**
-     * Calculate total bonus languages available to a character
-     * Includes: INT mod + Linguist feat
+     * Calculate total bonus languages available to a character.
+     * Includes: INT modifier + dynamic Linguist feat entitlements.
      */
-    static calculateBonusLanguagesAvailable(actor) {
-        const intMod = actor.system.attributes?.int?.mod || 0;
-        const linguistBonuses = (actor.items || []).filter(i =>
-            i.type === 'feat' && (
-                i.system?.slug === CAPABILITY_SLUGS.LINGUIST ||
-                i.name === 'Linguist'
-            )
-        ).length * 2;
+    static calculateBonusLanguagesAvailable(actor, options = {}) {
+        const intModLanguages = FeatGrantEntitlementResolver.getIntBonusLanguageCount(actor);
+        const linguistBonuses = FeatGrantEntitlementResolver.totalForGrantType(actor, 'languageSlots', options);
 
-        return Math.max(0, intMod) + linguistBonuses;
+        return intModLanguages + linguistBonuses;
     }
 
     /**

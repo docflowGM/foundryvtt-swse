@@ -65,6 +65,7 @@ import { actorIsDroidLike, actorMeetsMinimumSize, getActorSpeciesNames, namesMat
 import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
 import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
 import { getCanonicalBenefitText, getCanonicalContentAuthority, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
+import { FeatChoiceResolver, normalizeFeatChoiceKey } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
 
 /**
  * MAIN CLASS: PrerequisiteChecker
@@ -1188,12 +1189,39 @@ export class PrerequisiteChecker {
         };
     }
 
+
+    static _getPrereqWeaponTarget(prereq, pending = {}) {
+        return pending?.selectedChoice || pending?.candidateChoice || prereq?.weapon || prereq?.weaponGroup || prereq?.group || prereq?.value || prereq?.name || null;
+    }
+
+    static _choiceKeyFromPrereqTarget(target) {
+        if (!target) return '';
+        if (typeof target === 'object') return FeatChoiceResolver.getSelectedChoiceKey(target);
+        return normalizeFeatChoiceKey(target);
+    }
+
+    static _choiceProviderHasTarget(providers, target) {
+        const key = this._choiceKeyFromPrereqTarget(target);
+        if (!key) return false;
+        return (providers || []).some((entry) => FeatChoiceResolver.getSelectedChoiceKey(entry) === key);
+    }
+
+    static _formatPrereqTarget(target) {
+        if (!target) return 'selected choice';
+        if (typeof target === 'object') return FeatChoiceResolver.getChoiceLabel(target) || FeatChoiceResolver.getSelectedChoiceKey(target);
+        return String(target);
+    }
+
     static _checkWeaponProficiencyCondition(prereq, actor, pending) {
-        const proficiencies = actor.system?.weaponProficiencies || [];
-        const hasProficiency = proficiencies.includes(prereq.weapon);
+        const target = this._getPrereqWeaponTarget(prereq, pending);
+        const providers = FeatChoiceResolver.getWeaponProficiencyChoices(actor, FeatChoiceResolver._registry || {}, pending);
+        const hasProficiency = target
+            ? this._choiceProviderHasTarget(providers, target)
+            : providers.length > 0;
+        const label = this._formatPrereqTarget(target);
         return {
             met: hasProficiency,
-            message: !hasProficiency ? `Requires proficiency with ${prereq.weapon}` : ''
+            message: !hasProficiency ? `Requires proficiency with ${label}` : ''
         };
     }
 
@@ -1235,20 +1263,28 @@ export class PrerequisiteChecker {
     }
 
     static _checkWeaponFocusCondition(prereq, actor, pending) {
-        const focuses = actor.items?.filter(i => i.type === 'feat' && i.name === 'Weapon Focus') || [];
-        const hasFocus = focuses.some(f => f.system?.weaponType === prereq.weapon);
+        const target = this._getPrereqWeaponTarget(prereq, pending);
+        const providers = FeatChoiceResolver.getWeaponFocusChoices(actor, pending);
+        const hasFocus = target
+            ? this._choiceProviderHasTarget(providers, target)
+            : providers.length > 0;
+        const label = this._formatPrereqTarget(target);
         return {
             met: hasFocus,
-            message: !hasFocus ? `Requires Weapon Focus (${prereq.weapon})` : ''
+            message: !hasFocus ? `Requires Weapon Focus (${label})` : ''
         };
     }
 
     static _checkWeaponSpecializationCondition(prereq, actor, pending) {
-        const specs = actor.items?.filter(i => i.type === 'feat' && i.name === 'Weapon Specialization') || [];
-        const hasSpec = specs.some(f => f.system?.weaponType === prereq.weapon);
+        const target = this._getPrereqWeaponTarget(prereq, pending);
+        const providers = FeatChoiceResolver._getChoiceEntriesByKind(actor, 'weapon_specialization', pending);
+        const hasSpec = target
+            ? this._choiceProviderHasTarget(providers, target)
+            : providers.length > 0;
+        const label = this._formatPrereqTarget(target);
         return {
             met: hasSpec,
-            message: !hasSpec ? `Requires Weapon Specialization (${prereq.weapon})` : ''
+            message: !hasSpec ? `Requires Weapon Specialization (${label})` : ''
         };
     }
 

@@ -4,6 +4,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { getCriticalDamageBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
+import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
@@ -150,7 +151,45 @@ function computeDamageBonus(actor, weapon, options = {}) {
     forceTwoHanded: options.forceTwoHanded
   });
 
+  bonus += computePassiveStateDamageBonus(actor, weapon, options);
+
   return bonus;
+}
+
+function computePassiveStateDamageBonus(actor, weapon, context = {}) {
+  let stateBonus = 0;
+
+  try {
+    if (!actor?.items) return 0;
+    const enrichedContext = { ...context, weapon };
+
+    for (const item of actor.items) {
+      if (item.system?.executionModel !== 'PASSIVE' || item.system?.subType !== 'STATE') continue;
+
+      const modifiers = item.system?.abilityMeta?.modifiers;
+      if (!Array.isArray(modifiers)) continue;
+
+      for (const modifier of modifiers) {
+        if (modifier.enabled === false) continue;
+
+        const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target];
+        const appliesToDamage = targets.some((target) => {
+          const normalized = String(target || '').toLowerCase();
+          return normalized === 'damage' || normalized === 'damage.bonus' || normalized === 'damage.ranged' || normalized === 'damage.melee';
+        });
+        if (!appliesToDamage) continue;
+
+        const predicates = Array.isArray(modifier.predicates) ? modifier.predicates : [];
+        if (!evaluateStatePredicates(actor, predicates, enrichedContext)) continue;
+
+        stateBonus += Number(modifier.value || 0);
+      }
+    }
+  } catch (err) {
+    swseLogger.warn('Failed to calculate PASSIVE/STATE damage bonus:', err);
+  }
+
+  return stateBonus;
 }
 
 /**

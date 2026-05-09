@@ -18,6 +18,7 @@
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { FeatGrantEntitlementResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js";
 
 export class ManeuverAuthorityEngine {
   /**
@@ -28,7 +29,7 @@ export class ManeuverAuthorityEngine {
    * @param {Actor} actor - The actor
    * @returns {Promise<number>} Maneuver capacity
    */
-  static async getManeuverCapacity(actor) {
+  static async getManeuverCapacity(actor, options = {}) {
     if (!actor) {
       swseLogger.warn('[MANEUVER CAPACITY] Called with no actor');
       return 0;
@@ -36,19 +37,18 @@ export class ManeuverAuthorityEngine {
 
     try {
       // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
-      // Check for Starship Tactics feat
+      // Check for Starship Tactics feat or pending feat entitlement.
       const hasFeat = ActorAbilityBridge.hasFeat(actor, 'Starship Tactics');
+      const entitlementCapacity = FeatGrantEntitlementResolver.totalForGrantType(actor, 'starshipManeuverSlots', options);
 
-      if (!hasFeat) {
+      if (!hasFeat && entitlementCapacity <= 0) {
         return 0;
       }
 
-      // Get WIS ability score and modifier
-      const wisAbility = actor.system?.abilities?.wis;
+      // Capacity comes from the Starship Tactics grant entitlement.
+      const wisAbility = actor.system?.abilities?.wis || actor.system?.attributes?.wis;
       const wisMod = wisAbility?.mod ?? 0;
-
-      // Capacity = 1 + max(0, WIS modifier)
-      const capacity = 1 + Math.max(0, wisMod);
+      const capacity = entitlementCapacity > 0 ? entitlementCapacity : 1 + Math.max(0, wisMod);
 
       swseLogger.log('[MANEUVER CAPACITY]', {
         actor: actor.name,
@@ -72,7 +72,7 @@ export class ManeuverAuthorityEngine {
    * @param {Actor} actor - The actor
    * @returns {Promise<{valid: bool, reason: string}>}
    */
-  static async validateManeuverAccess(actor) {
+  static async validateManeuverAccess(actor, options = {}) {
     if (!actor) {
       return {
         valid: false,
@@ -82,10 +82,11 @@ export class ManeuverAuthorityEngine {
 
     try {
       // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
-      // Check 1: Has Starship Tactics feat
+      // Check 1: Has Starship Tactics feat or pending feat entitlement.
       const hasFeat = ActorAbilityBridge.hasFeat(actor, 'Starship Tactics');
+      const entitlementCapacity = FeatGrantEntitlementResolver.totalForGrantType(actor, 'starshipManeuverSlots', options);
 
-      if (!hasFeat) {
+      if (!hasFeat && entitlementCapacity <= 0) {
         return {
           valid: false,
           reason: 'Starship Tactics feat required'

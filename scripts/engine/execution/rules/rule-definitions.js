@@ -165,6 +165,17 @@ export const RULE_DEFINITIONS = Object.freeze({
     params: null,
     description: "Actor cannot be subject to attacks of opportunity"
   },
+  [RULES.UNARMED_DOES_NOT_PROVOKE_AOO]: {
+    params: null,
+    description: "Actor's unarmed attacks do not provoke attacks of opportunity"
+  },
+  [RULES.UNARMED_DAMAGE_STEP]: {
+    params: {
+      steps: "number"
+    },
+    description: "Actor increases unarmed attack damage by the given number of die steps",
+    required: ["steps"]
+  },
 
   // === SKILL PERMISSION (PARAM RULES) ===
   [RULES.TREAT_SKILL_AS_TRAINED]: {

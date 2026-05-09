@@ -24,7 +24,8 @@ export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
       concealment: "none",
       aim: false,
       force: false,
-      misc: 0
+      misc: 0,
+      combatOptions: {}
     };
   }
 
@@ -66,7 +67,16 @@ export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
           ? event.currentTarget.checked
           : event.currentTarget.value;
 
-        this.optionsData[field] = value;
+        if (field?.startsWith("combatOptions.")) {
+          const optionId = field.slice("combatOptions.".length);
+          const optionValue = event.currentTarget.type === "checkbox"
+            ? event.currentTarget.checked
+            : Number(value);
+          this.optionsData.combatOptions = this.optionsData.combatOptions || {};
+          this.optionsData.combatOptions[optionId] = optionValue;
+        } else {
+          this.optionsData[field] = value;
+        }
         this.render();
       });
     });

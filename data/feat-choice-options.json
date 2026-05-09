@@ -1,0 +1,333 @@
+{
+  "schemaVersion": 3,
+  "purpose": "Canonical option registry for feat and talent choices that must be resolved immediately at selection time or backfilled later.",
+  "notes": [
+    "Phase 2 establishes backend choice-source models for future dialogs/backfill.",
+    "fixed choices are explicit option lists printed by the feat.",
+    "prerequisiteDerived choices are resolved from actor state created by provider feats.",
+    "grantPool choices are deferred to their dedicated progression registries.",
+    "Weapon Proficiency is one grouped feat. Exotic proficiency is a nested branch, not a separate primary choice surface.",
+    "Phase 6 maps supported selected-choice feats to executable modifier/unlock metadata while leaving attack-option feats as rule hooks until roll context consumes them."
+  ],
+  "choiceKinds": {
+    "weapon_proficiency": {
+      "label": "Weapon Proficiency",
+      "mode": "nested",
+      "repeatable": true,
+      "steps": [
+        "weapon_group",
+        "exotic_category_when_needed",
+        "specific_exotic_weapon_when_needed"
+      ],
+      "choiceSource": "fixed",
+      "provides": "weapon_proficiency",
+      "storagePath": "flags.swse.choices.weaponProficiency",
+      "resultShape": {
+        "group": "<weapon group id>",
+        "category": "<exotic category when group is exotic>",
+        "weapon": "<specific exotic weapon when group is exotic>"
+      }
+    },
+    "weapon_focus": {
+      "label": "Weapon Focus",
+      "mode": "weapon_group_or_exotic_weapon",
+      "repeatable": true,
+      "requiresExistingProficiency": true,
+      "choiceSource": "prerequisiteDerived",
+      "derivesFrom": [
+        "weapon_proficiency"
+      ],
+      "consumes": "weapon_proficiency",
+      "provides": "weapon_focus",
+      "storagePath": "flags.swse.choices.weapon_focus",
+      "allowedFromActor": "weaponProficiencies",
+      "effectTarget": "attack.bonus",
+      "effectValue": 1
+    },
+    "weapon_specialization": {
+      "label": "Weapon Specialization",
+      "mode": "weapon_group_or_exotic_weapon",
+      "repeatable": true,
+      "requiresExistingWeaponFocus": true,
+      "choiceSource": "prerequisiteDerived",
+      "derivesFrom": [
+        "weapon_focus"
+      ],
+      "consumes": "weapon_focus",
+      "provides": "weapon_specialization",
+      "storagePath": "flags.swse.choices.weapon_specialization",
+      "effectTarget": "damage.weapon",
+      "effectValue": 2
+    },
+    "skill_focus": {
+      "label": "Skill Focus",
+      "mode": "trained_skill",
+      "repeatable": true,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.skill_focus",
+      "optionsSource": "actorSkills",
+      "effectTarget": "skill.selected",
+      "effectValue": 5
+    },
+    "force_power_focus": {
+      "label": "Force Focus",
+      "mode": "owned_force_power",
+      "repeatable": true,
+      "choiceSource": "prerequisiteDerived",
+      "derivesFrom": [
+        "owned_force_powers"
+      ],
+      "consumes": "owned_force_powers",
+      "provides": "force_power_focus",
+      "optionsSource": "actorForcePowers",
+      "storagePath": "flags.swse.choices.force_power_focus"
+    },
+    "droid_class_focus": {
+      "label": "Droid Focus",
+      "mode": "droid_class",
+      "repeatable": true,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.droid_class_focus",
+      "options": [
+        {
+          "id": "first-degree",
+          "label": "First-Degree Droid",
+          "value": "first-degree"
+        },
+        {
+          "id": "second-degree",
+          "label": "Second-Degree Droid",
+          "value": "second-degree"
+        },
+        {
+          "id": "third-degree",
+          "label": "Third-Degree Droid",
+          "value": "third-degree"
+        },
+        {
+          "id": "fourth-degree",
+          "label": "Fourth-Degree Droid",
+          "value": "fourth-degree"
+        },
+        {
+          "id": "fifth-degree",
+          "label": "Fifth-Degree Droid",
+          "value": "fifth-degree"
+        }
+      ]
+    },
+    "greater_weapon_focus": {
+      "label": "Greater Weapon Focus",
+      "mode": "weapon_group_or_exotic_weapon",
+      "repeatable": true,
+      "choiceSource": "prerequisiteDerived",
+      "derivesFrom": [
+        "weapon_focus"
+      ],
+      "consumes": "weapon_focus",
+      "provides": "greater_weapon_focus",
+      "storagePath": "flags.swse.choices.greater_weapon_focus",
+      "effectTarget": "attack.bonus",
+      "effectValue": 1
+    },
+    "greater_weapon_specialization": {
+      "label": "Greater Weapon Specialization",
+      "mode": "weapon_group_or_exotic_weapon",
+      "repeatable": true,
+      "choiceSource": "prerequisiteDerived",
+      "derivesFrom": [
+        "weapon_specialization"
+      ],
+      "consumes": "weapon_specialization",
+      "provides": "greater_weapon_specialization",
+      "storagePath": "flags.swse.choices.greater_weapon_specialization",
+      "effectTarget": "damage.weapon",
+      "effectValue": 2
+    },
+    "improved_defenses": {
+      "label": "Improved Defenses",
+      "mode": "fixed",
+      "repeatable": false,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.improved_defenses",
+      "options": [
+        {
+          "id": "fortitude",
+          "label": "Fortitude Defense",
+          "value": "fortitude"
+        },
+        {
+          "id": "reflex",
+          "label": "Reflex Defense",
+          "value": "reflex"
+        },
+        {
+          "id": "will",
+          "label": "Will Defense",
+          "value": "will"
+        }
+      ],
+      "effectTarget": "defense.selected",
+      "effectValue": 1
+    },
+    "skill_training": {
+      "label": "Skill Training",
+      "mode": "skill",
+      "repeatable": true,
+      "choiceSource": "fixed",
+      "storagePath": "flags.swse.choices.skill_training",
+      "optionsSource": "actorLegalUntrainedSkills",
+      "effectTarget": "skillTraining.selected"
+    },
+    "force_power_pick": {
+      "label": "Force Training",
+      "mode": "grant_pool",
+      "repeatable": true,
+      "choiceSource": "grantPool",
+      "grantType": "force_power",
+      "registry": "forcePower",
+      "countFormula": "max(1, 1 + configuredForceTrainingAbilityModifier)",
+      "minimum": 1,
+      "dynamic": true,
+      "storagePath": "flags.swse.pendingEntitlements.force_power_pick"
+    },
+    "starship_maneuver_pick": {
+      "label": "Starship Tactics",
+      "mode": "grant_pool",
+      "repeatable": true,
+      "choiceSource": "grantPool",
+      "grantType": "starship_maneuver",
+      "registry": "starshipManeuver",
+      "countFormula": "max(1, 1 + wisdomModifier)",
+      "ability": "wis",
+      "minimum": 1,
+      "dynamic": true,
+      "storagePath": "flags.swse.pendingEntitlements.starship_maneuver_pick"
+    },
+    "language_pick": {
+      "label": "Linguist",
+      "mode": "grant_pool",
+      "repeatable": true,
+      "choiceSource": "grantPool",
+      "grantType": "language",
+      "registry": "language",
+      "countFormula": "max(1, 1 + intelligenceModifier)",
+      "ability": "int",
+      "minimum": 1,
+      "dynamic": true,
+      "storagePath": "flags.swse.pendingEntitlements.language_pick"
+    }
+  },
+  "weaponGroups": [
+    {
+      "id": "simple",
+      "label": "Simple Weapons",
+      "proficiencyValue": "simple",
+      "includes": [
+        "Simple Weapons (Melee)",
+        "Simple Weapons (Ranged)",
+        "Grenades"
+      ]
+    },
+    {
+      "id": "pistols",
+      "label": "Pistols",
+      "proficiencyValue": "pistols"
+    },
+    {
+      "id": "rifles",
+      "label": "Rifles",
+      "proficiencyValue": "rifles"
+    },
+    {
+      "id": "lightsabers",
+      "label": "Lightsabers",
+      "proficiencyValue": "lightsabers"
+    },
+    {
+      "id": "heavy-weapons",
+      "label": "Heavy Weapons",
+      "proficiencyValue": "heavy-weapons",
+      "includes": [
+        "Heavy Weapons",
+        "Vehicle Weapons"
+      ]
+    },
+    {
+      "id": "advanced-melee",
+      "label": "Advanced Melee Weapons",
+      "proficiencyValue": "advanced-melee"
+    },
+    {
+      "id": "exotic",
+      "label": "Exotic Weapon",
+      "branch": "exoticWeapons",
+      "requiresSecondChoice": true,
+      "requiresSpecificWeapon": true
+    }
+  ],
+  "exoticWeapons": {
+    "melee": [
+      "Amphistaff",
+      "Arg'garok",
+      "Atlatl",
+      "Blastsword",
+      "Cesta",
+      "Darkstick",
+      "Discblade",
+      "Fira",
+      "Felucian Skullblade",
+      "Garrote",
+      "Neuronic Whip",
+      "Ryyk Blade",
+      "Shyarn",
+      "Tehk'la Blade",
+      "Vibro-Saw",
+      "Zhaboka"
+    ],
+    "ranged": [
+      "Aurial Blaster",
+      "Blast Cannon",
+      "Bowcaster",
+      "Concealed Dart Launcher",
+      "CR-1 Blast Cannon",
+      "Deck Sweeper",
+      "Flamethrower",
+      "Magna Caster",
+      "Massassi Lanvarok",
+      "Neural Inhibitor",
+      "Pulse Rifle",
+      "Siang Lance",
+      "Sith Lanvarok",
+      "Squib Tensor Rifle",
+      "Verpine Shattergun",
+      "Wrist Rocket Launcher"
+    ],
+    "lightsaberLikeRepositoryEntries": [
+      "Archaic Lightfoil",
+      "Archaic Lightsaber",
+      "Crossguard Lightsaber",
+      "Double-Bladed Lightsaber",
+      "Dual-Phase Lightsaber",
+      "Dueling Lightsaber",
+      "Great Lightsaber",
+      "Guard Shoto",
+      "Jedi Training Saber",
+      "Lightfoil",
+      "Lightsaber",
+      "Lightsaber (Double-Bladed)",
+      "Lightsaber (Standard)",
+      "Lightsaber Pike",
+      "Lightwhip",
+      "Long-Handle Lightsaber",
+      "Modern Lightfoil",
+      "Retrosaber",
+      "Short Lightsaber"
+    ]
+  },
+  "choiceSources": {
+    "fixed": "Options come directly from feat metadata or this registry.",
+    "prerequisiteDerived": "Options are computed from actor state provided by earlier feats.",
+    "grantPool": "Options are delegated to an existing progression registry/engine."
+  }
+}

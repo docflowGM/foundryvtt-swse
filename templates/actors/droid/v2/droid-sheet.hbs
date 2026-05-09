@@ -192,6 +192,9 @@
               {{#if combatWeapons.unarmed.martialArtsStep}}
                 <span class="swse-weapon-meta">Martial Arts {{combatWeapons.unarmed.martialArtsStep}}</span>
               {{/if}}
+              {{#if combatWeapons.unarmed.noProvokeOpportunity}}
+                <span class="swse-weapon-meta">No AoO</span>
+              {{/if}}
               <div class="swse-inline-actions">
                 <button type="button" data-action="roll-unarmed-attack">Roll</button>
               </div>

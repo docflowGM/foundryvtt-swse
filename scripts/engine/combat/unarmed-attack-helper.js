@@ -59,12 +59,44 @@ function actorHasFeat(actor, featName) {
   );
 }
 
+function getFeatRules(actor) {
+  const rules = [];
+  for (const item of Array.from(actor?.items ?? [])) {
+    if (item?.type !== 'feat') continue;
+    const abilityRules = item?.system?.abilityMeta?.rules;
+    if (!Array.isArray(abilityRules)) continue;
+    for (const rule of abilityRules) {
+      if (!rule?.type) continue;
+      rules.push({ ...rule, sourceItemId: item.id, sourceName: item.name });
+    }
+  }
+  return rules;
+}
+
+function ruleNumber(rule, keys, fallback = 0) {
+  for (const key of keys) {
+    const value = rule?.[key] ?? rule?.params?.[key];
+    const numeric = Number(value);
+    if (Number.isFinite(numeric)) return numeric;
+  }
+  return fallback;
+}
+
 export function getMartialArtsStep(actor) {
-  let steps = 0;
-  if (actorHasFeat(actor, 'Martial Arts I')) steps = Math.max(steps, 1);
-  if (actorHasFeat(actor, 'Martial Arts II')) steps = Math.max(steps, 2);
-  if (actorHasFeat(actor, 'Martial Arts III')) steps = Math.max(steps, 3);
-  return steps;
+  const rules = getFeatRules(actor).filter(rule => String(rule.type) === 'UNARMED_DAMAGE_STEP');
+  const explicitSteps = rules.reduce((total, rule) => total + Math.max(0, ruleNumber(rule, ['value', 'steps'], 1)), 0);
+
+  let fallbackSteps = 0;
+  if (actorHasFeat(actor, 'Martial Arts I')) fallbackSteps = Math.max(fallbackSteps, 1);
+  if (actorHasFeat(actor, 'Martial Arts II')) fallbackSteps = Math.max(fallbackSteps, 2);
+  if (actorHasFeat(actor, 'Martial Arts III')) fallbackSteps = Math.max(fallbackSteps, 3);
+
+  return Math.max(explicitSteps, fallbackSteps);
+}
+
+export function unarmedAttackDoesNotProvoke(actor) {
+  const hasExplicitRule = getFeatRules(actor).some(rule => String(rule.type) === 'UNARMED_DOES_NOT_PROVOKE_AOO');
+  return hasExplicitRule || actorHasFeat(actor, 'Martial Arts I');
 }
 
 export function increaseDamageDie(baseDamage, steps = 0) {
@@ -129,6 +161,7 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
   const damage = getUnarmedDamage(actor, options);
   const martialArtsStep = getMartialArtsStep(actor);
   const appendageLabel = options.appendage?.name ? ` (${options.appendage.name})` : '';
+  const noProvokeOpportunity = unarmedAttackDoesNotProvoke(actor);
   return {
     id: options.id ?? 'swse-virtual-unarmed',
     name: options.name ?? `Unarmed Attack${appendageLabel}`,
@@ -139,7 +172,8 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
         virtual: true,
         unarmed: true,
         droidAppendage: actor?.type === 'droid' || actor?.system?.isDroid === true,
-        martialArtsStep
+        martialArtsStep,
+        noProvokeOpportunity
       }
     },
     system: {
@@ -153,7 +187,12 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
       equipped: true,
       isUnarmed: true,
       properties: ['unarmed', 'simple', 'melee'],
-      description: 'Always-available unarmed strike. Damage includes size, droid appendage type when applicable, Strength modifier via the damage pipeline, and Martial Arts feat die-step increases.'
+      provokesOpportunityAttack: !noProvokeOpportunity,
+      noProvokeOpportunity,
+      attackOptions: {
+        noProvokeOpportunity
+      },
+      description: `Always-available unarmed strike. Damage includes size, droid appendage type when applicable, Strength modifier via the damage pipeline, and Martial Arts feat die-step increases.${noProvokeOpportunity ? ' Martial Arts I prevents this unarmed attack from provoking attacks of opportunity.' : ''}`
     }
   };
 }
@@ -168,6 +207,8 @@ export function buildUnarmedAttackContext(actor, options = {}) {
     isUnarmed: true,
     isDroidAppendage: weapon.flags.swse.droidAppendage,
     martialArtsStep: weapon.flags.swse.martialArtsStep,
+    noProvokeOpportunity: weapon.flags.swse.noProvokeOpportunity === true,
+    provokesOpportunityAttack: weapon.system.provokesOpportunityAttack !== false,
     damage: weapon.system.damage,
     damageType: weapon.system.damageType,
     range: 'Melee',
@@ -181,6 +222,7 @@ export const UnarmedAttackHelper = Object.freeze({
   getBaseUnarmedDamage,
   getMartialArtsStep,
   getUnarmedDamage,
+  unarmedAttackDoesNotProvoke,
   increaseDamageDie
 });
 

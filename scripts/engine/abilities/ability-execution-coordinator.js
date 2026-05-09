@@ -49,6 +49,7 @@ export class AbilityExecutionCoordinator {
     // ========================================
     actor._passiveModifiers = {};
     actor._ruleTokens = [];
+    actor._unlockGrants = { systemAccess: new Set(), proficiencies: { weapon: new Set(), armor: new Set(), exotic: new Set(), shield: new Set() }, skills: { training: new Set(), classSkills: new Set() } };
     // (Other execution models will add their resets here in future phases)
 
     // PHASE 4E: Create RuleCollector for this prepare cycle

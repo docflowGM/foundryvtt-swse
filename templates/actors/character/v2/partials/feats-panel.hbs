@@ -27,6 +27,28 @@
             </div>
           {{/if}}
 
+          {{#if feat.requiresChoice}}
+            <div class="swse-feat-choice-status {{#if feat.choiceMissing}}is-missing{{/if}} {{#if feat.choiceLocked}}is-locked{{/if}}">
+              {{#if feat.choiceLocked}}
+                <span class="swse-choice-badge">Locked class grant</span>
+              {{else if feat.choiceMissing}}
+                <span class="swse-choice-badge warning">Choice needed</span>
+              {{else if feat.choiceInvalid}}
+                <span class="swse-choice-badge warning" title="{{feat.choiceInvalidReason}}">Invalid choice: {{feat.choiceLabel}}</span>
+              {{else}}
+                <span class="swse-choice-badge">Choice: {{feat.choiceLabel}}</span>
+              {{/if}}
+              {{#if feat.choiceEditable}}
+                <button type="button"
+                        class="swse-btn swse-btn--tiny"
+                        data-action="resolve-feat-choice"
+                        data-item-id="{{feat.id}}">
+                  {{#if feat.choiceMissing}}Choose{{else}}Change{{/if}}
+                </button>
+              {{/if}}
+            </div>
+          {{/if}}
+
         </div>
       {{/each}}
     </div>

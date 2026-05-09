@@ -32,6 +32,8 @@ import { resolveClassModel, resolveSelectedClassFromShell, getClassBonusFeatsLoo
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { FEAT_TYPE_LABELS, getFeatTypeLabel, loadFeatBucketsMapping, normalizeFeatRuntime, normalizeFeatTypeKey } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-shape.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
+import { FeatChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js';
 
 function resolveClassLookupKeysForFeatStep(shell) {
   try {
@@ -849,7 +851,71 @@ export class FeatStep extends ProgressionStepPlugin {
     const currentSelections = this._getCommittedFeatSelections(shell);
     const slotSelections = currentSelections.filter(entry => entry?.slotType !== this._slotType);
     const isTogglingOff = this._selectedFeatId === featId;
-    const nextSelection = isTogglingOff ? null : this._buildCanonicalFeatSelection(feat);
+    let nextSelection = isTogglingOff ? null : this._buildCanonicalFeatSelection(feat);
+    if (nextSelection) {
+      const choiceMeta = FeatChoiceResolver.getChoiceMeta(feat);
+      const choiceSource = FeatChoiceResolver.inferChoiceSource(feat);
+      if (choiceMeta?.required && choiceSource !== 'grantPool') {
+        const pendingForChoice = this._buildPendingAbilityData(shell);
+        pendingForChoice.selectedFeats = slotSelections;
+        const selectedChoice = await FeatChoiceDialog.prompt(shell.actor, feat, { title: `Choose: ${feat.name}` });
+        if (!selectedChoice) {
+          emitFeatStepTrace('ITEM_COMMIT_CANCELLED_FOR_CHOICE', {
+            featId,
+            featName: feat?.name || null,
+            choiceKind: choiceMeta?.choiceKind || null,
+          });
+          return;
+        }
+
+        const choiceValidation = await FeatChoiceResolver.validateSelectedChoice(shell.actor, feat, selectedChoice, { pending: pendingForChoice });
+        if (!choiceValidation.valid) {
+          ui.notifications?.warn?.(choiceValidation.errors?.join(' ') || 'That feat choice is not currently legal.');
+          emitFeatStepTrace('ITEM_COMMIT_REJECTED_FOR_CHOICE_LEGALITY', {
+            featId,
+            featName: feat?.name || null,
+            choiceKind: choiceMeta?.choiceKind || null,
+            errors: choiceValidation.errors || [],
+          });
+          return;
+        }
+
+        const candidateWithChoice = {
+          ...feat,
+          system: {
+            ...(feat.system || {}),
+            selectedChoice
+          }
+        };
+        const selectedChoicePending = {
+          ...pendingForChoice,
+          selectedChoice,
+          candidateChoice: selectedChoice
+        };
+        const choiceAwareAssessment = AbilityEngine.evaluateAcquisition(shell.actor, candidateWithChoice, selectedChoicePending);
+        if (!choiceAwareAssessment?.legal) {
+          const reasons = choiceAwareAssessment?.blockingReasons || choiceAwareAssessment?.missingPrereqs || ['Feat prerequisites are not met for that selected choice.'];
+          ui.notifications?.warn?.(reasons.join(' '));
+          emitFeatStepTrace('ITEM_COMMIT_REJECTED_FOR_PREREQ_LEGALITY', {
+            featId,
+            featName: feat?.name || null,
+            choiceKind: choiceMeta?.choiceKind || null,
+            reasons,
+          });
+          return;
+        }
+
+        nextSelection = {
+          ...nextSelection,
+          system: {
+            ...(nextSelection.system || {}),
+            selectedChoice,
+            choiceResolved: true,
+            choiceResolvedAt: new Date().toISOString()
+          }
+        };
+      }
+    }
     const nextSelections = nextSelection ? [...slotSelections, nextSelection] : slotSelections;
 
     this._selectedFeatId = nextSelection?.id || null;

@@ -4,6 +4,7 @@ import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 import { getDamageAbilityContribution, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -40,6 +41,7 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
 
   const miscBonus = getWeaponFlatAttackBonus(weapon);
   const rangePenalty = getRangePenalty(weapon, context);
+  const attackOptionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
 
   // Condition Track penalty (read from authoritative derived source)
   // CANONICAL: DerivedCalculator computes and stores this in system.derived.damage.conditionPenalty
@@ -110,20 +112,21 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
     ctPenalty +
     proficiencyPenalty +
     talentBonus +
-    stateBonus
+    stateBonus +
+    (attackOptionModifiers.attackBonus || 0)
   );
 }
 
 /**
  * Roll an attack with a weapon using SWSE rules.
  */
-export async function rollAttack(actor, weapon) {
+export async function rollAttack(actor, weapon, options = {}) {
   if (!actor || !weapon) {
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
   }
 
-  const atkBonus = computeAttackBonus(actor, weapon);
+  const atkBonus = computeAttackBonus(actor, weapon, null, options);
 
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
@@ -152,13 +155,14 @@ function computeDamageBonus(actor, weapon) {
 /**
  * Roll damage for a weapon.
  */
-export async function rollDamage(actor, weapon) {
+export async function rollDamage(actor, weapon, options = {}) {
   if (!actor || !weapon) {
     ui.notifications.error('Missing actor or weapon for damage roll.');
     return null;
   }
 
-  const dmgBonus = computeDamageBonus(actor, weapon);
+  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
+  const dmgBonus = computeDamageBonus(actor, weapon) + (optionModifiers.damageBonus || 0);
 
   const base = weapon.system?.damage ?? weapon.damage ?? '1d6';
   const formula = `${base} + ${dmgBonus}`;
@@ -177,8 +181,8 @@ export async function rollDamage(actor, weapon) {
 /**
  * Roll full attack (attack roll + optional crit threat handling)
  */
-export async function rollFullAttack(actor, weapon) {
-  const attack = await rollAttack(actor, weapon);
+export async function rollFullAttack(actor, weapon, options = {}) {
+  const attack = await rollAttack(actor, weapon, options);
   if (!attack) {return null;}
 
   const result = { attack, damage: null };
@@ -213,15 +217,16 @@ function _firstTargetName() {
  * Roll attack + damage together with narration
  * Does NOT reference defenses; narration is supplemental only
  */
-export async function rollAttackAndDamageWithNarration(actor, weapon) {
+export async function rollAttackAndDamageWithNarration(actor, weapon, options = {}) {
   if (!actor || !weapon) {
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
   }
 
   const targetName = _firstTargetName();
-  const atkBonus = computeAttackBonus(actor, weapon);
-  const dmgBonus = computeDamageBonus(actor, weapon);
+  const atkBonus = computeAttackBonus(actor, weapon, null, options);
+  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
+  const dmgBonus = computeDamageBonus(actor, weapon) + (optionModifiers.damageBonus || 0);
 
   const rollFormula = `1d20 + ${atkBonus}`;
   const dmgFormula = `${weapon.system?.damage ?? weapon.damage ?? '1d6'} + ${dmgBonus}`;

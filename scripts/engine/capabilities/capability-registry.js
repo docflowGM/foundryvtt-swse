@@ -71,8 +71,23 @@ export class CapabilityRegistry {
    * @returns {boolean}
    */
   static hasWeaponProficiency(actor, weaponCategory) {
-    const proficiencies = actor.system?.weaponProficiencies || [];
-    return proficiencies.includes(weaponCategory);
+    const normalized = String(weaponCategory || '').trim();
+    if (!normalized) return false;
+
+    const systemProficiencies = actor.system?.weaponProficiencies || [];
+    if (systemProficiencies.includes(normalized)) return true;
+
+    const unlockWeapon = actor._unlockGrants?.proficiencies?.weapon;
+    if (unlockWeapon instanceof Set && unlockWeapon.has(normalized)) return true;
+    if (Array.isArray(unlockWeapon) && unlockWeapon.includes(normalized)) return true;
+
+    const unlockExotic = actor._unlockGrants?.proficiencies?.exotic;
+    if (normalized === 'exotic') {
+      if (unlockExotic instanceof Set && unlockExotic.size > 0) return true;
+      if (Array.isArray(unlockExotic) && unlockExotic.length > 0) return true;
+    }
+
+    return false;
   }
 
   /**
@@ -83,8 +98,17 @@ export class CapabilityRegistry {
    * @returns {boolean}
    */
   static hasArmorProficiency(actor, armorCategory) {
-    const proficiencies = actor.system?.armorProficiencies || [];
-    return proficiencies.includes(armorCategory);
+    const normalized = String(armorCategory || '').trim();
+    if (!normalized) return false;
+
+    const systemProficiencies = actor.system?.armorProficiencies || [];
+    if (systemProficiencies.includes(normalized)) return true;
+
+    const unlockArmor = actor._unlockGrants?.proficiencies?.armor;
+    if (unlockArmor instanceof Set && unlockArmor.has(normalized)) return true;
+    if (Array.isArray(unlockArmor) && unlockArmor.includes(normalized)) return true;
+
+    return false;
   }
 
   /**
@@ -99,6 +123,9 @@ export class CapabilityRegistry {
    * @returns {boolean}
    */
   static isForceSensitive(actor) {
+    const unlockAccess = actor?._unlockGrants?.systemAccess;
+    if (unlockAccess instanceof Set && unlockAccess.has('force_sensitivity')) return true;
+    if (Array.isArray(unlockAccess) && unlockAccess.includes('force_sensitivity')) return true;
     return this.hasFeat(actor, 'force-sensitivity');
   }
 

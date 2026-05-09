@@ -11,6 +11,7 @@
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { resolveClassModel } from './class-resolution.js';
+import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 
 /**
  * Resolve Force Power entitlements from shell and engine state
@@ -115,23 +116,35 @@ export async function resolveForcePowerEntitlements(shell, actor) {
       swseLogger.debug(`[ForceSuiteResolution.ForcePower] No class selection in shell for ${actorName}`, { sessionId });
     }
 
-    // Fallback: If no result yet, check actor state for compatibility
+    // Feat grant entitlements: pending or owned Force Training instances unlock
+    // Force Power slots, but the Force Power step owns the actual choices.
+    try {
+      const forceTrainingSlots = FeatGrantEntitlementResolver.totalForGrantType(actor, 'forcePowerSlots', { shell, includePending: true });
+      if (forceTrainingSlots > 0) {
+        totalEntitlements = Math.max(totalEntitlements, forceTrainingSlots);
+        reasons.push(`Force Training entitlement slots: ${forceTrainingSlots}`);
+        diagnostics.forceTrainingEntitlements = { total: forceTrainingSlots };
+      }
+    } catch (entitlementErr) {
+      swseLogger.error(`[ForceSuiteResolution.ForcePower] Force Training entitlement exception for ${actorName}`, {
+        sessionId,
+        error: entitlementErr.message,
+      });
+    }
+
+    // Fallback: If no result yet, check actor state through the entitlement bridge.
     if (totalEntitlements === 0 && actor) {
       try {
-        const feats = actor.items?.filter(i => i.type === 'feat') ?? [];
-        const forceTrainingFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
+        const forceTrainingSlots = FeatGrantEntitlementResolver.totalForGrantType(actor, 'forcePowerSlots', { includePending: false });
 
-        if (forceTrainingFeats.length > 0) {
-          const wisMod = actor.system?.abilities?.wis?.mod ?? 0;
-          totalEntitlements = forceTrainingFeats.length * Math.max(1, 1 + wisMod);
+        if (forceTrainingSlots > 0) {
+          totalEntitlements = forceTrainingSlots;
           reasons.push(`Force Training feats (actor fallback): ${totalEntitlements}`);
           fallbackUsed = true;
           diagnostics.fallbackUsed = true;
 
           swseLogger.log(`[ForceSuiteResolution.ForcePower] Using actor fallback for ${actorName}`, {
             sessionId,
-            forceTrainingCount: forceTrainingFeats.length,
-            wisMod,
             totalEntitlements,
           });
         }

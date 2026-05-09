@@ -18,6 +18,7 @@ import { captureHydrationSnapshot, emitHydrationError, emitHydrationWarning, get
 import { validatePanel } from './PanelValidators.js';
 import { buildHpViewModel, buildDefensesViewModel, buildAttributesViewModel, buildIdentityViewModel } from '/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js';
 import { UpgradeService } from '/systems/foundryvtt-swse/scripts/engine/upgrades/UpgradeService.js';
+import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
 
 export class PanelContextBuilder {
   constructor(actor, sheetInstance) {
@@ -476,7 +477,26 @@ export class PanelContextBuilder {
                             (!item.system?.description || item.system.description.trim() === '');
         return !isPlaceholder;
       })
-      .map(item => RowTransformers.toFeatRow(item, this.sheet.isEditable));
+      .map(item => {
+        const row = RowTransformers.toFeatRow(item, this.sheet.isEditable);
+        const choiceStatus = FeatChoiceResolver.getChoiceStatusSync(this.actor, item);
+        if (choiceStatus) {
+          row.choiceStatus = choiceStatus;
+          row.requiresChoice = choiceStatus.required;
+          row.choiceMissing = choiceStatus.missing;
+          row.choiceLocked = choiceStatus.locked;
+          row.choiceEditable = choiceStatus.editable && this.sheet.isEditable;
+          row.choiceInvalid = choiceStatus.invalid;
+          row.choiceInvalidReasons = choiceStatus.invalidReasons || [];
+          row.choiceInvalidReason = row.choiceInvalidReasons.join(' ');
+          row.choiceLabel = choiceStatus.selectedChoice?.label
+            || choiceStatus.selectedChoice?.weapon
+            || choiceStatus.selectedChoice?.group
+            || choiceStatus.selectedChoice?.value
+            || '';
+        }
+        return row;
+      });
 
     const panel = {
       entries,

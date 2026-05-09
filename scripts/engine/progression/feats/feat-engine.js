@@ -15,6 +15,7 @@ import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progressio
 import { FeatState } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-state.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { FeatNormalizer } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-normalizer.js";
+import { FeatChoiceResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
 
 export const FeatEngine = {
 
@@ -87,15 +88,36 @@ export const FeatEngine = {
             // Track in progression state
             await FeatState.addFeat(actor, featDoc.name);
 
+            const choiceMeta = FeatChoiceResolver.getChoiceMeta(featDoc);
+            const requiresChoice = FeatChoiceResolver.requiresChoice(featDoc);
+            const choiceSource = requiresChoice ? FeatChoiceResolver.inferChoiceSource(featDoc) : null;
+            const choices = requiresChoice
+                ? await FeatChoiceResolver.resolveOptions(actor, featDoc)
+                : [];
+
             SWSELogger.log(`Feat learned: ${featName}`);
 
             if (engine) {
                 engine.pendingSelections ??= {};
+                if (requiresChoice) {
+                    engine.pendingSelections.featChoices ??= [];
+                    engine.pendingSelections.featChoices.push({
+                        feat: featDoc.name,
+                        choiceKind: choiceMeta?.choiceKind || null,
+                        choiceSource,
+                        options: choices,
+                        deferred: choiceSource === 'grantPool'
+                    });
+                }
             }
 
             return {
                 success: true,
-                feat: featDoc.name
+                feat: featDoc.name,
+                requiresChoice,
+                choiceKind: choiceMeta?.choiceKind || null,
+                choiceSource,
+                choices
             };
 
         } catch (err) {
@@ -178,6 +200,32 @@ export const FeatEngine = {
             i.type === 'feat' &&
             i.name.toLowerCase() === featName.toLowerCase()
         );
+    },
+
+    /**
+     * Resolve available choices for a choice-backed feat.
+     * UI/backfill dialogs should use this rather than hardcoding feat names.
+     */
+    async getChoiceOptions(actor, featOrName, context = {}) {
+        const featDoc = typeof featOrName === 'string' ? FeatRegistry.get(featOrName) : featOrName;
+        if (!featDoc) return [];
+        return FeatChoiceResolver.resolveOptions(actor, featDoc, context);
+    },
+
+    /**
+     * Find owned feats whose required choices have not been stored yet.
+     */
+    async getMissingChoices(actor, options = {}) {
+        return FeatChoiceResolver.getMissingChoices(actor, options);
+    },
+
+    /**
+     * Build the actor update patch for a selected feat choice.
+     * Caller remains responsible for validating and applying the patch.
+     */
+    buildChoicePatch(featOrName, selectedChoice) {
+        const featDoc = typeof featOrName === 'string' ? FeatRegistry.get(featOrName) : featOrName;
+        return FeatChoiceResolver.buildChoicePatch(featDoc, selectedChoice);
     },
 
     /**

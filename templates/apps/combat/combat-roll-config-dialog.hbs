@@ -39,6 +39,37 @@
     <input type="number" name="misc" value="0">
   </div>
 
+  {{#if preview.attackOptions.length}}
+  <div class="console-section combat-options">
+    <h4>Attack Options</h4>
+    {{#each preview.attackOptions}}
+      <div class="combat-option-row combat-option-{{this.control}} {{#if this.disabled}}disabled{{/if}}">
+        {{#if (eq this.control "slider")}}
+          <label for="combat-option-{{this.id}}">{{this.label}}</label>
+          <div class="combat-option-slider">
+            <input id="combat-option-{{this.id}}" type="range" name="combatOptions.{{this.id}}" min="{{this.min}}" max="{{this.max}}" step="{{this.step}}" value="{{this.value}}" {{#if this.disabled}}disabled{{/if}}>
+            <span class="combat-option-value">{{this.value}} / {{this.max}}</span>
+          </div>
+          {{#if this.summary}}<p class="hint">{{this.summary}}</p>{{/if}}
+        {{else if (eq this.control "toggle")}}
+          <label>
+            <input type="checkbox" name="combatOptions.{{this.id}}" {{#if this.checked}}checked{{/if}}>
+            {{this.label}}
+          </label>
+          {{#if this.summary}}<p class="hint">{{this.summary}}</p>{{/if}}
+        {{else}}
+          <label>
+            <input type="checkbox" name="combatOptions.{{this.id}}" {{#if this.checked}}checked{{/if}}>
+            {{this.label}}
+          </label>
+          {{#if this.summary}}<p class="hint">{{this.summary}}</p>{{/if}}
+        {{/if}}
+        {{#if this.warning}}<p class="warning">{{this.warning}}</p>{{/if}}
+      </div>
+    {{/each}}
+  </div>
+  {{/if}}
+
   <div class="console-preview">
     <h4>Projected Outcome</h4>
     <div class="preview-total">{{preview.total}}</div>

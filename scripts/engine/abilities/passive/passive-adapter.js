@@ -142,9 +142,10 @@ export class PassiveAdapter {
         const canonical = this._transformToCanonicalModifier(
           rawModifier,
           ability.id,
-          ability.name
+          ability.name,
+          ability
         );
-        canonicalModifiers.push(canonical);
+        if (canonical) canonicalModifiers.push(canonical);
       } catch (err) {
         throw new Error(
           `PASSIVE MODIFIER ${ability.name} transformation failed: ${err.message}`
@@ -182,9 +183,16 @@ export class PassiveAdapter {
    * @returns {Object} Canonical Modifier object
    * @throws {Error} If validation fails
    */
-  static _transformToCanonicalModifier(rawModifier, sourceId, sourceName) {
+  static _transformToCanonicalModifier(rawModifier, sourceId, sourceName, ability = null) {
+    // PHASE 6: Choice-backed feats may derive their modifier target from
+    // item.system.selectedChoice (for example Skill Focus -> skill.<chosen>,
+    // Improved Defenses -> defense.<chosen>). If the item has not been
+    // resolved yet, skip the modifier instead of applying a fake/global bonus.
+    const resolvedTarget = this._resolveModifierTarget(rawModifier, ability);
+
     // PHASE 2: Validate required fields
-    if (!rawModifier.target) {
+    if (!resolvedTarget) {
+      if (rawModifier.targetFromSelectedChoice) return null;
       throw new Error("Modifier missing 'target' field");
     }
     if (typeof rawModifier.value !== 'number') {
@@ -207,7 +215,7 @@ export class PassiveAdapter {
       source: ModifierSource.CUSTOM,  // PHASE 3: PASSIVE modifiers are CUSTOM source
       sourceId: sourceId,
       sourceName: sourceName,
-      target: rawModifier.target,
+      target: resolvedTarget,
       type: stackingType,
       value: rawModifier.value,
       enabled: rawModifier.enabled !== false,  // Default to enabled
@@ -215,6 +223,54 @@ export class PassiveAdapter {
       conditions: rawModifier.conditions || [],
       description: rawModifier.description || `${sourceName} modifier`
     };
+  }
+
+
+  /**
+   * Resolve a modifier target, including selected-choice driven targets.
+   *
+   * Supported schema:
+   * abilityMeta.modifiers[].targetFromSelectedChoice = { prefix: "skill." }
+   * abilityMeta.modifiers[].targetFromSelectedChoice = { prefix: "defense." }
+   *
+   * @private
+   * @param {Object} rawModifier
+   * @param {Object|null} ability
+   * @returns {string|null}
+   */
+  static _resolveModifierTarget(rawModifier, ability = null) {
+    if (!rawModifier?.targetFromSelectedChoice) return rawModifier?.target || null;
+
+    const selected = ability?.system?.selectedChoice || ability?.system?.selectedChoices;
+    const entry = Array.isArray(selected) ? selected[0] : selected;
+    if (!entry) return null;
+
+    const rawValue = typeof entry === 'string'
+      ? entry
+      : (entry.value || entry.id || entry.skill || entry.defense || entry.group || entry.weapon || entry.label || entry.name);
+    const key = this._normalizeChoiceTargetKey(rawValue);
+    if (!key) return null;
+
+    const config = rawModifier.targetFromSelectedChoice;
+    const prefix = typeof config === 'string' ? config : (config.prefix || '');
+    const suffix = typeof config === 'object' ? (config.suffix || '') : '';
+    return `${prefix}${key}${suffix}`;
+  }
+
+  /**
+   * Normalize a selected choice for derived modifier targets.
+   *
+   * @private
+   * @param {string} value
+   * @returns {string}
+   */
+  static _normalizeChoiceTargetKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, ' and ')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
   }
 
   /**

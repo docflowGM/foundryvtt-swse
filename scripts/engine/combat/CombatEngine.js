@@ -14,6 +14,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { CombatUIAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/ui/CombatUIAdapter.js";
 import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
+import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
 export class CombatEngine {
@@ -336,6 +337,14 @@ export class CombatEngine {
     return VehicleCollisions.ram(attacker, target);
   }
 
+  static _resolveAttackWeapon(actor, actionKey) {
+    if (!actor || !actionKey) return null;
+    if (String(actionKey).startsWith('combat:')) {
+      return actor.items?.find?.(item => item.type === 'weapon' && item.system?.equipped === true) ?? null;
+    }
+    return actor.items?.get?.(actionKey) ?? null;
+  }
+
   /* -------------------------------------------- */
   /* COMBAT PREVIEW AND ROLL                     */
   /* -------------------------------------------- */
@@ -363,14 +372,27 @@ export class CombatEngine {
       context: options
     });
 
-    const total = modifiers.reduce((sum, m) => sum + m.value, 0);
+    const weapon = this._resolveAttackWeapon(actor, actionKey);
+    const combatOptionSummary = weapon
+      ? CombatOptionResolver.collectAttackModifiers(actor, weapon, options)
+      : { attackBonus: 0, breakdown: [] };
+
+    const total = modifiers.reduce((sum, m) => sum + m.value, 0) + (combatOptionSummary.attackBonus || 0);
+    const breakdown = modifiers.map(m => ({
+      label: m.label,
+      value: m.value
+    }));
+
+    for (const entry of combatOptionSummary.breakdown ?? []) {
+      if (entry.type === 'attack') {
+        breakdown.push({ label: entry.label, value: entry.value });
+      }
+    }
 
     return {
       total,
-      breakdown: modifiers.map(m => ({
-        label: m.label,
-        value: m.value
-      }))
+      breakdown,
+      attackOptions: weapon ? CombatOptionResolver.getAvailableAttackOptions(actor, weapon, options) : []
     };
   }
 
@@ -434,7 +456,7 @@ export class CombatEngine {
 
       // PHASE 2: Roll the attack
       // This delegates to the proven rollAttack() from attacks.js
-      const atkRoll = await rollAttack(actor, weapon);
+      const atkRoll = await rollAttack(actor, weapon, options);
 
       if (!atkRoll) {
         SWSELogger.warn(`[CombatEngine.rollAttack] Attack roll failed for ${weapon.name}`);
