@@ -66,6 +66,8 @@
       </div>
     {{/if}}
 
+    {{> "systems/foundryvtt-swse/templates/actors/shared/partials/current-conditions-panel.hbs" currentConditions=healthPanel.currentConditions}}
+
     <div class="condition-standard-track" data-swse-tooltip="ConditionTrack">
       <div class="condition-standard-track__header">
         <span class="condition-standard-track__title">Condition Track</span>

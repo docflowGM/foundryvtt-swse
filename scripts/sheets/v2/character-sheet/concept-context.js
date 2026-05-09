@@ -1,3 +1,4 @@
+import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 function toSignedClass(value) {
   const n = Number(value) || 0;
   return n > 0 ? 'mod--positive' : n < 0 ? 'mod--negative' : 'mod--zero';
@@ -320,11 +321,20 @@ function normalizeForceFeature(entry, fallbackLabel) {
 }
 
 function buildForceTab(context) {
+  const actor = context.actor;
   const hand = asArray(context.forcePowersPanel?.hand).map((power) => normalizeForcePower(power, false));
   const discard = asArray(context.forcePowersPanel?.discard).map((power) => normalizeForcePower(power, true));
   const techniques = asArray(context.forcePowersPanel?.techniques).map((entry) => normalizeForceFeature(entry, 'Unnamed Technique'));
   const secrets = asArray(context.forcePowersPanel?.secrets).map((entry) => normalizeForceFeature(entry, 'Unnamed Secret'));
   const tags = Array.from(new Set([...hand, ...discard].flatMap((power) => power.tags))).sort((a, b) => a.localeCompare(b));
+  const forcefulRecoveryPending = MetaResourceFeatResolver.getForcefulRecoveryPending(actor);
+  const forcefulRecovery = forcefulRecoveryPending ? {
+    pending: true,
+    source: forcefulRecoveryPending.source || 'Forceful Recovery',
+    note: forcefulRecoveryPending.note || 'Regain one expended Force power after catching a Second Wind.',
+    recoverableCount: discard.length,
+    hasRecoverable: discard.length > 0
+  } : { pending: false, recoverableCount: discard.length, hasRecoverable: discard.length > 0 };
 
   return {
     metrics: [
@@ -343,6 +353,7 @@ function buildForceTab(context) {
     secrets,
     tags,
     hasAnything: hand.length > 0 || discard.length > 0 || techniques.length > 0 || secrets.length > 0,
+    forcefulRecovery,
     constructionAvailable: !!context.lightsaberConstructionAvailable,
     constructionDeferred: !!context.lightsaberConstructionDeferred
   };

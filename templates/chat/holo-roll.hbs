@@ -19,6 +19,14 @@
     {{#if context.baseBonus}}<div><strong>Base Bonus:</strong> {{numberFormat context.baseBonus decimals=0 sign=true}}</div>{{/if}}
     {{#if context.situationalMods}}<div><strong>Situational Mods:</strong> {{numberFormat context.situationalMods decimals=0 sign=true}}</div>{{/if}}
     {{#if context.customModifier}}<div><strong>Custom Modifier:</strong> {{numberFormat context.customModifier decimals=0 sign=true}}</div>{{/if}}
+    {{#if context.featSkillBonus}}<div><strong>Feat Skill Bonuses:</strong> {{numberFormat context.featSkillBonus decimals=0 sign=true}}</div>{{/if}}
+    {{#if context.featSkillBonuses}}
+      <div class="swse-roll-bonus-list">
+        {{#each context.featSkillBonuses}}
+          <div class="swse-roll-bonus"><span>{{sourceName}}</span> <strong>{{numberFormat value decimals=0 sign=true}}</strong></div>
+        {{/each}}
+      </div>
+    {{/if}}
     {{#if context.hasDc}}
       <div class="swse-roll-dc"><strong>DC:</strong> {{context.dc}}</div>
       <div class="swse-roll-outcome swse-roll-outcome--{{#if context.passed}}success{{else}}failure{{/if}}">
@@ -36,6 +44,47 @@
         <div class="dice-total">{{total}}</div>
       </div>
     </div>
+  </div>
+  {{/if}}
+
+  {{#if context.rerollOptions}}
+  <div class="card-content swse-skill-reroll-options">
+    <strong>Available rerolls:</strong>
+    {{#each context.rerollOptions}}
+      <button type="button"
+              class="swse-skill-reroll-btn"
+              data-actor-id="{{actorId}}"
+              data-skill-key="{{skillKey}}"
+              data-source-id="{{sourceId}}"
+              data-source-name="{{sourceName}}"
+              data-outcome="{{outcome}}"
+              data-original-total="{{originalTotal}}"
+              data-formula="{{formula}}">
+        <i class="fa-solid fa-dice"></i> {{label}}: Reroll ({{outcomeLabel}})
+      </button>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  {{#if context.attackRerollOptions}}
+  <div class="card-content swse-attack-reroll-options">
+    <strong>Available attack rerolls:</strong>
+    {{#each context.attackRerollOptions}}
+      <button type="button"
+              class="swse-attack-reroll-btn"
+              data-actor-id="{{actorId}}"
+              data-weapon-id="{{weaponId}}"
+              data-source-id="{{sourceId}}"
+              data-source-name="{{sourceName}}"
+              data-cost="{{cost}}"
+              data-outcome="{{outcome}}"
+              data-original-total="{{originalTotal}}"
+              data-formula="{{formula}}"
+              {{#unless canUse}}disabled{{/unless}}>
+        <i class="fa-solid fa-dice"></i> {{label}}: Reroll ({{outcomeLabel}})
+      </button>
+      {{#if disabledReason}}<div class="swse-roll-hint">{{disabledReason}}</div>{{/if}}
+    {{/each}}
   </div>
   {{/if}}
 </div>

@@ -7,6 +7,7 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-chat-dialog.js";
+import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
 /**
  * Open mentor conversation dialog
@@ -24,6 +25,21 @@ function openMentorConversation(sheet) {
  * @param {AbortSignal} signal - Abort signal for cleanup
  */
 export function activateMiscUI(sheet, html, { signal } = {}) {
+
+  // Temporary defense resource actions, such as Instinctive Defense.
+  html.querySelectorAll('[data-action="apply-temp-defense"]').forEach(button => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      try {
+        const result = await MetaResourceFeatResolver.applyTemporaryDefenseRule(sheet.actor, button.dataset.ruleId || null);
+        if (result?.success) ui?.notifications?.info?.(`${result.rule?.sourceName ?? 'Temporary defense'} applied.`);
+        else ui?.notifications?.warn?.(result?.reason ?? 'Temporary defense could not be applied.');
+      } catch (err) {
+        ui?.notifications?.error?.(`Temporary defense failed: ${err.message}`);
+      }
+    }, { signal });
+  });
+
   // Add language button
   html.querySelectorAll('[data-action="add-language"]').forEach(button => {
     button.addEventListener("click", async (event) => {

@@ -185,6 +185,49 @@ async function handleSpeciesRerollButton(event, button, message) {
   ui?.notifications?.warn?.('Species reroll resolver is not available.');
 }
 
+
+async function handleAttackRerollButton(event, button, message) {
+  event.preventDefault();
+
+  const { MetaResourceFeatResolver } = await import('/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js');
+  if (typeof MetaResourceFeatResolver.resolveAttackRerollButton === 'function') {
+    await MetaResourceFeatResolver.resolveAttackRerollButton(button, { message });
+    return;
+  }
+
+  ui?.notifications?.warn?.('Attack reroll resolver is not available.');
+}
+
+async function handleTemporaryDefenseButton(event, button) {
+  event.preventDefault();
+  const actor = actorFromId(button.dataset.actorId);
+  if (!actor) {
+    ui?.notifications?.warn?.('Actor could not be resolved.');
+    return;
+  }
+  if (!actor.isOwner) {
+    ui?.notifications?.warn?.('You do not control this actor.');
+    return;
+  }
+
+  const { MetaResourceFeatResolver } = await import('/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js');
+  const result = await MetaResourceFeatResolver.applyTemporaryDefenseRule(actor, button.dataset.ruleId || button.dataset.sourceId || null);
+  if (result?.success) ui?.notifications?.info?.(`${result.rule?.sourceName ?? 'Temporary defense'} applied.`);
+  else ui?.notifications?.warn?.(result?.reason ?? 'Temporary defense could not be applied.');
+}
+
+async function handleSkillRerollButton(event, button, message) {
+  event.preventDefault();
+
+  const { SkillFeatResolver } = await import('/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-resolver.js');
+  if (typeof SkillFeatResolver.resolveChatRerollButton === 'function') {
+    await SkillFeatResolver.resolveChatRerollButton(button, { message });
+    return;
+  }
+
+  ui?.notifications?.warn?.('Skill reroll resolver is not available.');
+}
+
 function bind(root, selector, key, handler, message) {
   root.querySelectorAll(selector).forEach(button => {
     if (!markBound(button, key)) return;
@@ -223,6 +266,9 @@ export class ChatInteractionBridge {
     bind(root, '.swse-apply-damage-btn', 'ApplyDamage', handleApplyDamageButton, message);
     bind(root, '[data-reaction], [data-swse-reaction-key]', 'Reaction', handleReactionButton, message);
     bind(root, '.species-reroll-btn', 'SpeciesReroll', handleSpeciesRerollButton, message);
+    bind(root, '.swse-skill-reroll-btn', 'SkillReroll', handleSkillRerollButton, message);
+    bind(root, '.swse-attack-reroll-btn', 'AttackReroll', handleAttackRerollButton, message);
+    bind(root, '.swse-temp-defense-btn', 'TemporaryDefense', handleTemporaryDefenseButton, message);
 
     return true;
   }

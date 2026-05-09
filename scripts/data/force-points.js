@@ -41,6 +41,7 @@
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
 /**
  * Calculate maximum Force Points for an actor.
@@ -62,7 +63,7 @@ export function calculateMaxForcePoints(actor) {
     const base = getForcePointBase(actor);
 
     // Calculate max FP
-    const maxFP = base + Math.floor(totalLevel / 2);
+    const maxFP = base + Math.floor(totalLevel / 2) + MetaResourceFeatResolver.getForcePointMaxBonus(actor);
 
     return maxFP;
 }

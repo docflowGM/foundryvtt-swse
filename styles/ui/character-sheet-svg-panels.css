@@ -593,3 +593,93 @@
 .dsp-numbered-track.svg-framed {
   background-image: none !important;
 }
+
+/* Rage/current-condition notes surfaced by the health panel. */
+.current-condition-notes {
+  margin: 0.75rem 0;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(124, 232, 255, 0.25);
+  border-radius: 8px;
+  background: rgba(3, 14, 28, 0.72);
+}
+.current-condition-notes__title {
+  margin-bottom: 0.35rem;
+  color: var(--swse-ui-cyan-strong, #9eefff);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.current-condition-note {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.4rem 0;
+  color: rgba(235, 250, 255, 0.92);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+.current-condition-note + .current-condition-note {
+  border-top: 1px solid rgba(124, 232, 255, 0.16);
+}
+.current-condition-note--danger strong {
+  color: #ffb6a6;
+}
+.current-condition-note--warning strong {
+  color: #ffe08a;
+}
+
+/* Shared Current Conditions & Effects cards. */
+.current-conditions-panel__list {
+  display: grid;
+  gap: 0.45rem;
+}
+.current-condition-card {
+  border-top: 1px solid rgba(124, 232, 255, 0.14);
+}
+.current-condition-card:first-child {
+  border-top: 0;
+}
+.current-condition-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.current-condition-card__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 4px;
+  object-fit: cover;
+}
+.current-condition-card__source {
+  margin-left: auto;
+  color: rgba(214, 238, 255, 0.62);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.current-condition-card__text {
+  color: rgba(235, 250, 255, 0.92);
+}
+.current-condition-card__details {
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+  color: rgba(220, 244, 255, 0.76);
+}
+.current-condition-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+.current-condition-card__meta span {
+  border: 1px solid rgba(124, 232, 255, 0.2);
+  border-radius: 999px;
+  padding: 0.05rem 0.45rem;
+  color: rgba(214, 238, 255, 0.68);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.current-condition-note--positive strong {
+  color: #9fffc6;
+}

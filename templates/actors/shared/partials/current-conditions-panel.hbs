@@ -1,0 +1,37 @@
+{{#if currentConditions.hasCards}}
+  <div class="current-condition-notes current-conditions-panel" data-component="current-conditions-panel">
+    <div class="current-condition-notes__title">Current Conditions &amp; Effects</div>
+    <div class="current-conditions-panel__list">
+      {{#each currentConditions.cards as |condition|}}
+        <article class="current-condition-note current-condition-note--{{condition.severity}} current-condition-card current-condition-card--{{condition.type}}" data-condition-note="{{condition.id}}">
+          <header class="current-condition-card__header">
+            {{#if condition.icon}}<img class="current-condition-card__icon" src="{{condition.icon}}" alt="" />{{/if}}
+            <strong>{{condition.label}}</strong>
+            {{#if condition.source}}<span class="current-condition-card__source">{{condition.source}}</span>{{/if}}
+          </header>
+          {{#if condition.text}}<div class="current-condition-card__text">{{condition.text}}</div>{{/if}}
+          {{#if condition.details.length}}
+            <ul class="current-condition-card__details">
+              {{#each condition.details as |detail|}}<li>{{detail}}</li>{{/each}}
+            </ul>
+          {{/if}}
+          {{#if condition.action}}
+            <div class="current-condition-card__actions">
+              <button type="button"
+                      class="swse-temp-defense-btn"
+                      data-action="apply-temp-defense"
+                      data-actor-id="{{condition.action.actorId}}"
+                      data-rule-id="{{condition.action.ruleId}}">
+                {{condition.action.label}}
+              </button>
+            </div>
+          {{/if}}
+          <footer class="current-condition-card__meta">
+            {{#if condition.mechanical}}<span>Mechanical</span>{{/if}}
+            {{#if condition.gmEnforced}}<span>GM-enforced</span>{{/if}}
+          </footer>
+        </article>
+      {{/each}}
+    </div>
+  </div>
+{{/if}}

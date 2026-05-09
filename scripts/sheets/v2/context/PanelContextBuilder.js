@@ -19,6 +19,7 @@ import { validatePanel } from './PanelValidators.js';
 import { buildHpViewModel, buildDefensesViewModel, buildAttributesViewModel, buildIdentityViewModel } from '/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js';
 import { UpgradeService } from '/systems/foundryvtt-swse/scripts/engine/upgrades/UpgradeService.js';
 import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
+import { CurrentConditionResolver } from '/systems/foundryvtt-swse/scripts/engine/effects/current-condition-resolver.js';
 
 export class PanelContextBuilder {
   constructor(actor, sheetInstance) {
@@ -139,6 +140,8 @@ export class PanelContextBuilder {
     });
 
     const currentConditionPenalty = conditionDefinitions.find(def => def.step === ctCurrent) ?? conditionDefinitions[0];
+    const currentConditions = CurrentConditionResolver.build(this.actor);
+    const currentConditionNotes = currentConditions.notes;
 
     const panel = {
       hp: {
@@ -172,6 +175,9 @@ export class PanelContextBuilder {
       },
       conditionSlots,
       currentConditionPenalty,
+      currentConditions,
+      currentConditionNotes,
+      hasCurrentConditionNotes: currentConditions.hasCards,
       stateLabel,
       stateClass,
       showConditionTrack: true,

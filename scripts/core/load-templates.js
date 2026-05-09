@@ -138,6 +138,7 @@ export const SWSE_TEMPLATES = [
   // ==============================
   // Shared Partials
   // ==============================
+  'systems/foundryvtt-swse/templates/actors/shared/partials/current-conditions-panel.hbs',
   'systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs',
   'systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs',
   'systems/foundryvtt-swse/templates/partials/ui/combat/action-enforcement-mode-indicator.hbs',

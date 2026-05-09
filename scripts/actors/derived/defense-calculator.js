@@ -20,6 +20,20 @@ import { getClassData } from "/systems/foundryvtt-swse/scripts/engine/progressio
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { getReflexSizeModifier } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
+
+function getSystemActiveDefenseBonus(actor, defenseType) {
+  const effects = Array.isArray(actor?.system?.activeEffects) ? actor.system.activeEffects : [];
+  let total = 0;
+  for (const effect of effects) {
+    if (effect?.enabled === false) continue;
+    const target = String(effect?.target ?? '');
+    if (target !== 'defense' && target !== `defense.${defenseType}`) continue;
+    const value = Number(effect?.value ?? 0);
+    if (Number.isFinite(value)) total += value;
+  }
+  return total;
+}
+
 export class DefenseCalculator {
 
   /**
@@ -55,9 +69,9 @@ export class DefenseCalculator {
     const refAdjust = Number(adjustments.ref ?? 0) || 0;
     const willAdjust = Number(adjustments.will ?? 0) || 0;
 
-    const fortStateBonus = await this._getStateModifiers(actor, 'fortitude', context);
-    const refStateBonus = await this._getStateModifiers(actor, 'reflex', context);
-    const willStateBonus = await this._getStateModifiers(actor, 'will', context);
+    const fortStateBonus = await this._getStateModifiers(actor, 'fortitude', context) + getSystemActiveDefenseBonus(actor, 'fortitude');
+    const refStateBonus = await this._getStateModifiers(actor, 'reflex', context) + getSystemActiveDefenseBonus(actor, 'reflex');
+    const willStateBonus = await this._getStateModifiers(actor, 'will', context) + getSystemActiveDefenseBonus(actor, 'will');
 
     const equippedArmor = actor.items?.find(item => item.type === 'armor' && item.system?.equipped) ?? null;
     const hasArmoredDefense = actor.items?.some(item => item.name === 'Armored Defense') ?? false;

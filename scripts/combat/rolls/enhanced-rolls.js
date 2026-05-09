@@ -30,6 +30,7 @@ import {
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { rollSkillCheck as canonicalRollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 
 /**
@@ -411,6 +412,31 @@ export class SWSERoll {
       });
 
       // Build chat card
+      const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, roll, {
+        formula,
+        weaponId: weapon.id
+      });
+      const attackRerollHTML = attackRerollOptions.length ? `
+        <div class="swse-attack-reroll-options">
+          <strong>Available attack rerolls:</strong>
+          ${attackRerollOptions.map(option => `
+            <button type="button"
+                    class="swse-attack-reroll-btn"
+                    data-actor-id="${option.actorId}"
+                    data-weapon-id="${option.weaponId}"
+                    data-source-id="${option.sourceId}"
+                    data-source-name="${option.sourceName}"
+                    data-cost="${option.cost}"
+                    data-outcome="${option.outcome}"
+                    data-original-total="${option.originalTotal}"
+                    data-formula="${option.formula}"
+                    ${option.canUse ? '' : 'disabled'}>
+              <i class="fa-solid fa-dice"></i> ${option.label}: Reroll (${option.outcomeLabel})
+            </button>
+            ${option.disabledReason ? `<div class="swse-roll-hint">${option.disabledReason}</div>` : ''}
+          `).join('')}
+        </div>
+      ` : '';
       const bonusString = `${atkBonus >= 0 ? '+' : ''}${atkBonus}`;
       const hitMissHTML = targetReflex !== null ? `
         <div class="attack-vs-defense">
@@ -460,6 +486,8 @@ export class SWSERoll {
 
           ${hitMissHTML}
 
+          ${attackRerollHTML}
+
           <button class="swse-roll-damage" data-weapon-id="${weapon.id}" data-is-crit="${critConfirmed}" data-crit-mult="${critMultiplier}" data-two-handed="${modifiers.twoHanded || false}">
             <i class="fa-solid fa-burst"></i> Roll Damage${critConfirmed ? ` (×${critMultiplier})` : ''}
           </button>
@@ -469,7 +497,8 @@ export class SWSERoll {
       const message = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        rolls: [roll]
+        rolls: [roll],
+        flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } }
       });
 
       result.message = message;
@@ -812,7 +841,8 @@ export class SWSERoll {
       const message = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        rolls: [roll]
+        rolls: [roll],
+        flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } }
       });
 
       const result = {
@@ -1876,7 +1906,8 @@ if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
       const message = await createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: html,
-        rolls: [roll]
+        rolls: [roll],
+        flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } }
       });
 
       result.message = message;

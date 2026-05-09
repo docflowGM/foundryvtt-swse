@@ -1,5 +1,6 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { SkillFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-resolver.js";
 /**
  * Skill Use Application Filtering and Rolling Utility
  * Handles filtering skill use applications based on character capabilities
@@ -145,9 +146,15 @@ export class SkillUseFilter {
    * @returns {string} The skill key to use for rolling (e.g., 'useTheForce', 'mechanics')
    */
   static getSkillKeyForApplication(skillUse) {
-    if (!skillUse || !skillUse.application) {return null;}
+    if (!skillUse) {return null;}
 
-    const applicationName = skillUse.application;
+    const structuredSkill = SkillFeatResolver.resolveSkillUseSkillKey(skillUse);
+    if (structuredSkill) {return structuredSkill;}
+
+    const source = skillUse?._source ?? skillUse;
+    const system = source?.system ?? skillUse?.system ?? {};
+    const applicationName = skillUse.application || skillUse.label || skillUse.name || system.application || source?.name || '';
+    if (!applicationName) {return null;}
 
     // Use the Force applications
     if (this.isUseTheForceApplication(applicationName)) {
@@ -214,76 +221,50 @@ export class SkillUseFilter {
       return null;
     }
 
-    // Check if actor can access this skill use
     if (!this.canAccessSkillUse(actor, skillUse)) {
       ui.notifications.warn(`${actor.name} cannot use this skill application`);
       return null;
     }
 
-    // Get the appropriate skill
-    const skillKey = this.getSkillKeyForApplication(skillUse);
+    let skillKey = this.getSkillKeyForApplication(skillUse);
     if (!skillKey) {
       ui.notifications.warn('Could not determine skill for this application');
       return null;
     }
 
-    const skill = actor.system.skills?.[skillKey];
+    const substitution = SkillFeatResolver.resolveSkillUseSubstitution(actor, skillUse, skillKey, options);
+    if (substitution?.skillKey) {
+      skillKey = substitution.skillKey;
+      ui?.notifications?.info?.(`${substitution.sourceName}: using ${SkillFeatResolver.getSkillLabel(skillKey)} for this skill use.`);
+    }
+
+    const skill = actor.system.skills?.[skillKey] ?? actor.system.derived?.skills?.[skillKey];
     if (!skill) {
       ui.notifications.warn(`Skill ${skillKey} not found on ${actor.name}`);
       return null;
     }
 
-    // Check if skill 
-    if (skillKey === 'useTheForce' && !skill.trained) {
-      ui.notifications.warn('Use the Force  (Force Sensitivity feat)');
+    if (skillKey === 'useTheForce' && !skill.trained && actor.system?.derived?.skills?.useTheForce?.trained !== true) {
+      ui.notifications.warn('Use the Force requires Force Sensitivity or training.');
       return null;
     }
 
-    // Calculate skill modifier
-    const halfLevel = Math.floor((actor.system.level || 1) / 2);
-    const abilityKey = skill.selectedAbility || 'cha';
-    const abilityScore = actor.system.attributes[abilityKey]?.total || 10;
-    const abilityMod = Math.floor((abilityScore - 10) / 2);
-
-    let modifier = halfLevel + abilityMod;
-    if (skill.trained) {modifier += 5;}
-    if (skill.focused) {modifier += 5;}
-    modifier += (skill.miscMod || 0);
-    modifier += (actor.conditionPenalty || 0);
-
-    // Add any situational modifiers from options
-    if (options.situational) {modifier += options.situational;}
-
-    // Create and evaluate the roll
-    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${modifier}`, actor.getRollData?.() ?? {}, { actor, domain: `skill-use.${skillKey}`, context: { useKey: skillUse?.key ?? skillUse?.id ?? null } });
-
-    // Prepare flavor text
-    const dc = skillUse.DC || 'varies';
-    const actionTime = skillUse.time || 'varies';
-    const effect = skillUse.effect || '';
-
-    const flavor = `<div class="skill-use-application">
-      <h3>${skillUse.application}</h3>
-      <p><strong>DC:</strong> ${dc}</p>
-      <p><strong>Time:</strong> ${actionTime}</p>
-      <p><strong>Effect:</strong> ${effect}</p>
-      <p><strong>Skill:</strong> ${this._getSkillLabel(skillKey)} (${modifier >= 0 ? '+' : ''}${modifier})</p>
-    </div>`;
-
-    // Send to chat through the shared SWSE chat surface.
-    await SWSEChat.postRoll({
-      roll,
-      actor,
-      flavor,
-      context: {
-        type: 'skill-use',
-        skillKey,
-        useKey: skillUse?.key ?? skillUse?.id ?? null,
-        modifier
-      }
+    const dc = this._parseDc(skillUse.dc ?? skillUse.DC ?? skillUse.system?.dc ?? skillUse._source?.system?.dc);
+    const { rollSkillCheck } = await import('/systems/foundryvtt-swse/scripts/rolls/skills.js');
+    return await rollSkillCheck(actor, skillKey, {
+      ...options,
+      dc,
+      skillUse,
+      substitution,
+      useKey: skillUse?.useKey ?? skillUse?.key ?? skillUse?._source?._id ?? null,
+      actionType: options?.actionType ?? skillUse?.actionType ?? skillUse?.system?.actionType ?? null
     });
+  }
 
-    return roll;
+  static _parseDc(value) {
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    const match = String(value ?? '').match(/-?\d+/);
+    return match ? Number(match[0]) : null;
   }
 
   /**

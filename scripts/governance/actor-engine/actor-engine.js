@@ -15,6 +15,7 @@ import { traceLog, actorSummary, payloadSummary, MutationDepth } from "/systems/
 import { captureHydrationSnapshot, collectHydrationSensitivePaths, emitHydrationError, emitHydrationWarning } from "/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
+import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
 /**
  * ActorEngine
@@ -1827,7 +1828,8 @@ export const ActorEngine = {
       if (!actor) {throw new Error('applySecondWind() requires actor');}
 
       const heroicLevel = Number(actor.system?.heroicLevel ?? actor.system?.level ?? 0);
-      const hasExtraSecondWindFeat = actor.items?.some(i => i.type === 'feat' && i.name === 'Extra Second Wind') === true;
+      const secondWindFeatRules = MetaResourceFeatResolver.getSecondWindRules(actor);
+      const hasExtraSecondWindFeat = secondWindFeatRules.extraUseMultiplier > 0;
       const hasToughAsNails = actor.items?.some(i => i.type === 'talent' && i.name === 'Tough as Nails') === true;
       const isHeroic = actor.type === 'character' || heroicLevel > 0;
       const canNonHeroicSecondWind = hasExtraSecondWindFeat === true;
@@ -1843,7 +1845,7 @@ export const ActorEngine = {
       // RAW: You may only catch a second wind at half HP or below.
       const currentHP = SchemaAdapters.getHP(actor);
       const maxHP = SchemaAdapters.getMaxHP(actor);
-      if (currentHP > Math.floor(maxHP / 2)) {
+      if (currentHP > Math.floor(maxHP / 2) && !secondWindFeatRules.allowAboveHalfHp) {
         return {
           success: false,
           reason: 'Second Wind may only be used at half Hit Points or lower'
@@ -1853,7 +1855,7 @@ export const ActorEngine = {
       // Once per encounter cap.
       const activeCombatId = game.combat?.started ? game.combat.id : null;
       const encounterFlag = actor.getFlag?.('foundryvtt-swse', 'secondWindEncounterUsed') ?? null;
-      if (activeCombatId && encounterFlag === activeCombatId) {
+      if (activeCombatId && encounterFlag === activeCombatId && !secondWindFeatRules.ignoreEncounterCap) {
         return {
           success: false,
           reason: 'Second Wind can only be used once per encounter'
@@ -1865,7 +1867,7 @@ export const ActorEngine = {
         const inCombat = game.combat?.combatants.some(c => c.actor?.id === actor.id);
         if (inCombat) {
           const combatant = game.combat.combatants.find(c => c.actor?.id === actor.id);
-          if (!combatant?.resources?.swift) {
+          if (!secondWindFeatRules.freeAction && !combatant?.resources?.swift) {
             return {
               success: false,
               reason: 'Cannot use Second Wind: no swift action available'
@@ -1881,7 +1883,7 @@ export const ActorEngine = {
       const baseDailyUses = HouseRuleService.isEnabled('secondWindWebEnhancement')
         ? Math.max(1, 1 + fortClassBonus + conMod)
         : 1;
-      const extraUseMultiplier = (hasExtraSecondWindFeat ? 1 : 0) + (hasToughAsNails ? 1 : 0);
+      const extraUseMultiplier = Number(secondWindFeatRules.extraUseMultiplier || 0) + (hasToughAsNails ? 1 : 0);
       const computedMaxUses = Math.max(1, baseDailyUses + (baseDailyUses * extraUseMultiplier));
       const storedUses = Number(actor.system.secondWind?.uses ?? 0);
       const uses = Math.max(0, Math.min(storedUses, computedMaxUses));
@@ -1904,18 +1906,27 @@ export const ActorEngine = {
       };
 
       const improvedSecondWind = HouseRuleService.isEnabled('secondWindImproved');
-      if (improvedSecondWind) {
+      const featConditionRecoverySteps = Math.max(0, Number(secondWindFeatRules.conditionRecoverySteps || 0));
+      if (improvedSecondWind || featConditionRecoverySteps > 0) {
         // Also move up condition track (+1 improvement = -1 on numeric scale)
         const currentCT = actor.system.conditionTrack?.current ?? 0;
-        improvements['system.conditionTrack.current'] = Math.max(0, currentCT - 1);
+        const recoverySteps = (improvedSecondWind ? 1 : 0) + featConditionRecoverySteps;
+        improvements['system.conditionTrack.current'] = Math.max(0, currentCT - recoverySteps);
 
-        SWSELogger.debug(`Improved Second Wind enabled: moving condition track from ${currentCT} to ${Math.max(0, currentCT - 1)}`);
+        SWSELogger.debug(`Second Wind condition recovery: moving condition track from ${currentCT} to ${Math.max(0, currentCT - recoverySteps)}`);
       }
 
       // Batch update: HP restoration + use consumption + optional condition improvement
       await this.updateActor(actor, improvements);
       if (activeCombatId) {
         await actor.setFlag?.('foundryvtt-swse', 'secondWindEncounterUsed', activeCombatId);
+      }
+      if (secondWindFeatRules.regainForcePowerOnUse) {
+        await actor.setFlag?.('foundryvtt-swse', 'forcefulRecoveryPending', {
+          source: 'Forceful Recovery',
+          note: 'Regain one expended Force power after catching a Second Wind.',
+          timestamp: Date.now()
+        });
       }
 
       const resultLog = {
@@ -1965,12 +1976,13 @@ export const ActorEngine = {
       const isDroidActor = actor.type === 'droid' || actor.system?.isDroid === true;
       const conMod = isDroidActor ? 0 : Number(actor.system?.derived?.attributes?.con?.mod ?? actor.system?.abilities?.con?.mod ?? 0);
       const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
-      const hasExtraSecondWindFeat = actor.items?.some(i => i.type === 'feat' && i.name === 'Extra Second Wind') === true;
+      const secondWindFeatRules = MetaResourceFeatResolver.getSecondWindRules(actor);
+      const hasExtraSecondWindFeat = secondWindFeatRules.extraUseMultiplier > 0;
       const hasToughAsNails = actor.items?.some(i => i.type === 'talent' && i.name === 'Tough as Nails') === true;
       const baseDailyUses = HouseRuleService.isEnabled('secondWindWebEnhancement')
         ? Math.max(1, 1 + fortClassBonus + conMod)
         : 1;
-      const maxUses = Math.max(1, baseDailyUses + (baseDailyUses * ((hasExtraSecondWindFeat ? 1 : 0) + (hasToughAsNails ? 1 : 0))));
+      const maxUses = Math.max(1, baseDailyUses + (baseDailyUses * (Number(secondWindFeatRules.extraUseMultiplier || 0) + (hasToughAsNails ? 1 : 0))));
 
       await this.updateActor(actor, {
         'system.secondWind.max': maxUses,

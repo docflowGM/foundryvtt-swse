@@ -24,6 +24,7 @@ import { getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/l
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
+import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
 export class ForcePointsService {
 
@@ -59,13 +60,14 @@ export class ForcePointsService {
     if (useDailyForcePoints) {
       // Daily FP mode: band-based (1-5: 1 FP, 6-10: 2 FP, 11-15: 3 FP, 16+: 4 FP)
       // Note: Uses total level even in daily mode
-      if (totalLevel >= 16) return 4;
-      if (totalLevel >= 11) return 3;
-      if (totalLevel >= 6) return 2;
-      return 1;
+      const featBonus = MetaResourceFeatResolver.getForcePointMaxBonus(actor);
+      if (totalLevel >= 16) return 4 + featBonus;
+      if (totalLevel >= 11) return 3 + featBonus;
+      if (totalLevel >= 6) return 2 + featBonus;
+      return 1 + featBonus;
     } else {
       // Standard mode: base + floor(totalLevel / 2)
-      return base + Math.floor(totalLevel / 2);
+      return base + Math.floor(totalLevel / 2) + MetaResourceFeatResolver.getForcePointMaxBonus(actor);
     }
   }
 
@@ -213,6 +215,9 @@ export class ForcePointsService {
     } catch (err) {
       // Fall through to default
     }
+
+    const featDieSize = MetaResourceFeatResolver.getForcePointDieSize(actor);
+    if (featDieSize >= 8) return 'd8';
 
     return 'd6';
   }

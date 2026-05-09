@@ -10,6 +10,8 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 // PHASE 5: Import species reroll handler for skill reroll integration
 import { SpeciesRerollHandler } from "/systems/foundryvtt-swse/scripts/species/species-reroll-handler.js";
+import { SkillFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-resolver.js";
+import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 
 /**
  * Roll a skill check using unified RollCore pipeline
@@ -47,6 +49,16 @@ export async function rollSkill(actor, skillKey, options = {}) {
     return null;
   }
 
+  const skillContext = {
+    ...(options || {}),
+    skillKey,
+    skillUse: options?.skillUse ?? null,
+    useKey: options?.useKey ?? options?.skillUse?.key ?? null
+  };
+  skillContext.contextFlags = RageEngine.getSkillContextFlags(actor, skillContext.contextFlags ?? skillContext.flags ?? []);
+  skillContext.flags = skillContext.contextFlags;
+  const featSkillBonuses = SkillFeatResolver.getSkillCheckBonuses(actor, skillKey, skillContext);
+
   // === UNIFIED ROLL EXECUTION via RollCore ===
   // Pass derived.skills[skillKey].total as baseBonus so formula is:
   // 1d20 + baseBonus (all permanent components) + modifierTotal (situational mods)
@@ -54,12 +66,18 @@ export async function rollSkill(actor, skillKey, options = {}) {
   const rollResult = await RollCore.execute({
     actor,
     domain,
-    baseBonus: derivedSkill.total + Number(options?.customModifier || 0),
+    baseBonus: derivedSkill.total + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0),
     rollOptions: {
       baseDice: '1d20',
       useForce: options?.useForcePoint === true
     },
-    context: { skillKey, trained: isTrained }
+    context: {
+      skillKey,
+      trained: isTrained,
+      skillUse: skillContext.skillUse,
+      useKey: skillContext.useKey,
+      featSkillBonuses: featSkillBonuses.bonuses
+    }
   });
 
   if (!rollResult.success) {
@@ -74,17 +92,31 @@ export async function rollSkill(actor, skillKey, options = {}) {
     const total = rollResult.roll?.total ?? 'unknown';
     const flavor = `${actor.name} used ${skillLabel} and got ${total}.`;
 
+    const rerollOptions = SkillFeatResolver.buildRerollChatOptions(actor, skillKey, rollResult.roll, skillContext);
+
     await SWSEChat.postRoll({
       roll: rollResult.roll,
       actor,
       flavor,
+      flags: {
+        swse: {
+          skillRoll: true,
+          skillKey,
+          skillUseKey: skillContext.useKey ?? null,
+          featSkillBonuses: featSkillBonuses.bonuses,
+          rerollOptions
+        }
+      },
       context: {
         type: 'skill',
         label: skillLabel,
         trained: isTrained,
         baseBonus: rollResult.baseBonus,
         situationalMods: rollResult.modifierTotal,
-        customModifier: Number(options?.customModifier || 0)
+        customModifier: Number(options?.customModifier || 0),
+        featSkillBonus: featSkillBonuses.total,
+        featSkillBonuses: featSkillBonuses.bonuses,
+        rerollOptions
       }
     });
 

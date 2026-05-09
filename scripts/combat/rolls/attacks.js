@@ -5,6 +5,8 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 import { getDamageAbilityContribution, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
+import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
+import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -42,6 +44,7 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
   const miscBonus = getWeaponFlatAttackBonus(weapon);
   const rangePenalty = getRangePenalty(weapon, context);
   const attackOptionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
+  const rageModifiers = RageEngine.collectAttackModifiers(actor, weapon, context);
 
   // Condition Track penalty (read from authoritative derived source)
   // CANONICAL: DerivedCalculator computes and stores this in system.derived.damage.conditionPenalty
@@ -113,7 +116,8 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
     proficiencyPenalty +
     talentBonus +
     stateBonus +
-    (attackOptionModifiers.attackBonus || 0)
+    (attackOptionModifiers.attackBonus || 0) +
+    (rageModifiers.attackBonus || 0)
   );
 }
 
@@ -131,10 +135,17 @@ export async function rollAttack(actor, weapon, options = {}) {
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
 
+  const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, roll, {
+    formula: rollFormula,
+    weaponId: weapon.id
+  });
+
   await SWSEChat.postRoll({
     roll,
     actor,
-    flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`
+    flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
+    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } },
+    context: { type: 'attack', weaponId: weapon.id, attackRerollOptions }
   });
 
   return roll;
@@ -143,11 +154,12 @@ export async function rollAttack(actor, weapon, options = {}) {
 /**
  * Compute SWSE damage bonus for a weapon
  */
-function computeDamageBonus(actor, weapon) {
+function computeDamageBonus(actor, weapon, context = {}) {
   const halfLvl = getEffectiveHalfLevel(actor);
 
   let bonus = halfLvl + getWeaponFlatDamageBonus(weapon);
   bonus += getDamageAbilityContribution(actor, weapon);
+  bonus += RageEngine.collectAttackModifiers(actor, weapon, context).damageBonus || 0;
 
   return bonus;
 }
@@ -162,7 +174,7 @@ export async function rollDamage(actor, weapon, options = {}) {
   }
 
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
-  const dmgBonus = computeDamageBonus(actor, weapon) + (optionModifiers.damageBonus || 0);
+  const dmgBonus = computeDamageBonus(actor, weapon, options) + (optionModifiers.damageBonus || 0);
 
   const base = weapon.system?.damage ?? weapon.damage ?? '1d6';
   const formula = `${base} + ${dmgBonus}`;
@@ -226,7 +238,7 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   const targetName = _firstTargetName();
   const atkBonus = computeAttackBonus(actor, weapon, null, options);
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
-  const dmgBonus = computeDamageBonus(actor, weapon) + (optionModifiers.damageBonus || 0);
+  const dmgBonus = computeDamageBonus(actor, weapon, options) + (optionModifiers.damageBonus || 0);
 
   const rollFormula = `1d20 + ${atkBonus}`;
   const dmgFormula = `${weapon.system?.damage ?? weapon.damage ?? '1d6'} + ${dmgBonus}`;
@@ -237,11 +249,18 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   const atkTotal = attackRoll?.total;
   const dmgTotal = damageRoll?.total;
 
+  const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, attackRoll, {
+    formula: rollFormula,
+    weaponId: weapon.id
+  });
+
   // Post attack roll card
   await SWSEChat.postRoll({
     roll: attackRoll,
     actor,
-    flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`
+    flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
+    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions } },
+    context: { type: 'attack', weaponId: weapon.id, attackRerollOptions }
   });
 
   // Post damage roll card

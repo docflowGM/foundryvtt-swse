@@ -30,6 +30,27 @@
       </div>
     </header>
 
+    {{#if conceptLayout.force.forcefulRecovery.pending}}
+      <section class="swse-concept-panel swse-concept-panel--subledger swse-forceful-recovery-panel">
+        <header class="swse-concept-panel__header">
+          <div>
+            <h3 class="swse-concept-panel__title">{{conceptLayout.force.forcefulRecovery.source}}</h3>
+            <p class="swse-concept-panel__hint">{{conceptLayout.force.forcefulRecovery.note}}</p>
+          </div>
+        </header>
+        {{#if conceptLayout.force.forcefulRecovery.hasRecoverable}}
+          <div class="swse-concept-chip-row">
+            <span class="swse-concept-chip swse-concept-chip--force">Choose one discarded power to recover</span>
+          </div>
+        {{else}}
+          <div class="swse-concept-empty-state">
+            <span class="swse-concept-empty-state__eyebrow">No expended powers</span>
+            <strong>Forceful Recovery is pending, but no discarded Force powers are available.</strong>
+          </div>
+        {{/if}}
+      </section>
+    {{/if}}
+
     {{#if conceptLayout.force.tags.length}}
       <div class="swse-concept-chip-row swse-concept-chip-row--force-filters">
         {{#each conceptLayout.force.tags as |tag|}}
@@ -96,7 +117,11 @@
                   {{/each}}
                 </div>
                 <div class="swse-concept-ledger-row__actions">
-                  <button type="button" class="swse-concept-btn" data-action="activate-force" data-item-id="{{power.id}}">Recover</button>
+                  {{#if ../forcefulRecovery.pending}}
+                    <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="forceful-recovery-recover" data-item-id="{{power.id}}">Recover via Forceful Recovery</button>
+                  {{else}}
+                    <button type="button" class="swse-concept-btn" data-action="activate-force" data-item-id="{{power.id}}">Recover</button>
+                  {{/if}}
                 </div>
               </article>
             {{/each}}

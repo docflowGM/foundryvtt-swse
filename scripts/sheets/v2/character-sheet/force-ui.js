@@ -5,6 +5,7 @@
  */
 
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
+import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { ShellOverlayManager } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellOverlayManager.js";
 
@@ -109,6 +110,28 @@ export function activateForceUI(sheet, html, { signal } = {}) {
           card.style.display = matches ? "" : "none";
         }
       });
+    }, { signal });
+  });
+
+  // Forceful Recovery: choose one expended Force power after Second Wind.
+  html.querySelectorAll('[data-action="forceful-recovery-recover"]').forEach(button => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const itemId = button.dataset.itemId;
+      if (!itemId) return;
+
+      try {
+        const result = await MetaResourceFeatResolver.recoverForcefulRecoveryPower(sheet.actor, itemId);
+        if (result?.success) {
+          ui?.notifications?.info?.(`${result.powerName || 'Force power'} recovered through Forceful Recovery.`);
+          handleForceRecoveryAnimation([itemId], false);
+          sheet.render?.(false);
+        } else {
+          ui?.notifications?.warn?.(result?.reason || 'Forceful Recovery could not recover that power.');
+        }
+      } catch (err) {
+        ui?.notifications?.error?.(`Forceful Recovery failed: ${err.message}`);
+      }
     }, { signal });
   });
 

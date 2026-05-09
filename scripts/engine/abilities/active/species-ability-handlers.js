@@ -14,6 +14,7 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 
 /**
  * Handler registry for custom species ability effects
@@ -347,25 +348,31 @@ async function handleLuckyReroll(target, sourceAbility, payload) {
  * Custom handler: Mantellian Savrip Rage
  * Grants bonuses but with restrictions
  */
-async function handleRageMode(target, sourceAbility, payload) {
+async function handleRageMode(target, sourceAbility, payload = {}) {
   try {
-    const rageRounds = (target.system?.attributes?.constitution?.modifier ?? 0) + 5;
+    const mode = payload?.mode ?? payload?.rageMode ?? 'rage';
+    const result = await RageEngine.startRage(target, { mode });
+    if (result?.blocked) {
+      return {
+        applied: false,
+        type: 'custom',
+        details: result.reason || 'Rage is not available.'
+      };
+    }
 
-    await ActorEngine.updateActor(target, {
-      'flags.swse.rageActive': true,
-      'flags.swse.rageRoundsRemaining': rageRounds,
-      'flags.swse.rageStartedAt': Date.now()
-    });
+    const rageRounds = result?.duration ?? RageEngine.getRageDurationRounds(target);
 
     SWSELogger.log(
       `[SpeciesHandlers] Rage activated for ${target.name} (${rageRounds} rounds)`,
-      { abilityId: sourceAbility.id }
+      { abilityId: sourceAbility.id, mode: result?.mode ?? mode, action: result?.action, usesSpent: result?.usesSpent, usesPerDay: result?.usesPerDay }
     );
 
     return {
       applied: true,
       type: 'custom',
-      details: `Entered Rage for ${rageRounds} rounds`
+      details: result?.mode === 'channelRage'
+        ? `Channeled Rage for +5 Will Defense (${result.usesSpent}/${result.usesPerDay} uses spent today)`
+        : `Entered Rage for ${rageRounds} rounds (${result.usesSpent}/${result.usesPerDay} uses spent today)`
     };
   } catch (err) {
     SWSELogger.error(`[SpeciesHandlers] Error applying Rage:`, err);
