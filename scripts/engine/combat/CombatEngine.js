@@ -229,6 +229,17 @@ export class CombatEngine {
       damage = shieldResult.overflow;
     }
 
+    /* PRE-DAMAGE HOOK: Allows feats like Stay Up to modify damage before application */
+    const preDamageContext = {
+      attacker,
+      target,
+      weapon,
+      damage,
+      originalDamage: damage
+    };
+    Hooks.callAll('swse.damage-before', preDamageContext);
+    damage = preDamageContext.damage; // Allow hooks to modify damage
+
     /* HP */
     const damageResult = await DamageEngine.applyDamage(target, damage);
 
@@ -282,13 +293,13 @@ export class CombatEngine {
     /* COUP DE GRACE EVENT EMISSION */
     /* If this was a Coup de Grace attack, emit event for dependent feats (e.g., Sadistic Strike) */
     if (options?.isCoupDeGrace) {
-      const targetDead = damageResult?.hpAfter <= 0;
+      const targetDead = damageResult?.newHP <= 0;
 
       Hooks.callAll('swse.coupDeGrace', {
         attacker,
         target,
         weapon,
-        damage: damageResult?.totalDamage || damage,
+        damage: damageResult?.damageApplied || damage,
         killed: targetDead,
         autoCritical: true,
         doubledDamage: true

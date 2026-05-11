@@ -80,13 +80,13 @@ export class FeatActionListeners {
   /* ---------------------------------------- */
   /**
    * Stay Up: Move 1 step down Condition Track to reduce damage.
-   * During damage resolution, offer the target a dialog to spend a CT step to reduce damage.
+   * Listens for pre-damage hook to allow reducing damage before it's applied.
    */
   static _registerStayUp() {
-    Hooks.on('swse.damage-applied', async (context) => {
-      const { target, damage, damageApplied } = context;
+    Hooks.on('swse.damage-before', async (context) => {
+      const { target, damage } = context;
 
-      if (!target || !damageApplied || !damageApplied.success) {
+      if (!target || damage <= 0) {
         return;
       }
 
@@ -103,16 +103,10 @@ export class FeatActionListeners {
         return;
       }
 
-      // Only allow Stay Up on actual damage application (not temp HP absorption)
-      const actualDamageApplied = damageApplied.damageApplied || 0;
-      if (actualDamageApplied <= 0) {
-        return;
-      }
-
-      // Calculate damage reduction (10 damage per CT step, capped at total damage)
-      const damageReduction = Math.min(10, actualDamageApplied);
-
       try {
+        // Calculate damage reduction (10 damage per CT step, capped at total damage)
+        const damageReduction = Math.min(10, damage);
+
         // Ask target if they want to use Stay Up
         const useStayUp = await this._confirmStayUpUsage(target, damageReduction);
 
@@ -125,18 +119,18 @@ export class FeatActionListeners {
         await target.worsenConditionTrack();
         const newCT = target.system.conditionTrack?.current ?? 0;
 
-        // Reduce the applied damage
-        const newHP = Math.max(0, (target.system.hp?.value ?? 0) + damageReduction);
-        await target.update({ 'system.hp.value': newHP });
+        // Reduce the incoming damage by spending the CT step
+        const newDamage = Math.max(0, damage - damageReduction);
+        context.damage = newDamage;
 
         SWSELogger.log(
           `[FeatActionListeners] Stay Up used by ${target.name}: ` +
-          `CT moved from ${oldCT} to ${newCT}, damage reduced by ${damageReduction}`
+          `CT moved from ${oldCT} to ${newCT}, damage reduced from ${damage} to ${newDamage}`
         );
 
         // Notify players
         ui.notifications.info(
-          `${target.name} uses Stay Up: Moved -1 step on CT and reduced damage by ${damageReduction}.`
+          `${target.name} uses Stay Up: Moved -1 step on CT and reduced damage by ${damageReduction} (${damage} → ${newDamage} damage).`
         );
 
       } catch (err) {
