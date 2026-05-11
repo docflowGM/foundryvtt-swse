@@ -20,6 +20,7 @@ import { isMobileCandidate } from "/systems/foundryvtt-swse/scripts/ui/mobile-mo
 import { registerMobilePrompt } from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-prompt.js";
 import LightsaberLightSync from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
+import { FeatActionListeners } from "/systems/foundryvtt-swse/scripts/engine/feats/feat-action-listeners.js";
 
 /**
  * Register initialization hooks
@@ -62,6 +63,10 @@ export function registerInitHooks() {
         // Initialize species reroll system
         registerRerollListeners();
         SWSELogger.log('Species Trait Engine initialized');
+
+        // Initialize feat action listeners (Sadistic Strike, Stay Up, etc.)
+        FeatActionListeners.initialize();
+        SWSELogger.log('Feat Action Listeners initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
