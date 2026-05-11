@@ -470,6 +470,29 @@ export class MetaResourceFeatResolver {
     return this.hasCustomizationCapability(actor, 'TECH_SPECIALIST_MODIFICATIONS');
   }
 
+  /* ---------------------------------------- */
+  /* GRAPPLE RESISTANCE RULES                */
+  /* ---------------------------------------- */
+
+  static getGrappleResistanceBonus(actor, context = {}) {
+    if (!actor) return 0;
+    const mode = context.mode;
+    if (mode !== 'resistGrab' && mode !== 'resistGrapple') return 0;
+
+    let totalBonus = 0;
+    for (const item of getActorFeatItems(actor)) {
+      const grappleRules = item?.system?.abilityMeta?.grappleRules ?? [];
+      if (Array.isArray(grappleRules)) {
+        for (const rule of grappleRules) {
+          if (rule.type === 'RESIST_GRAB_AND_GRAPPLE') {
+            totalBonus += rule.bonus ?? 0;
+          }
+        }
+      }
+    }
+    return totalBonus;
+  }
+
   static getForcefulRecoveryPending(actor) {
     return actor?.getFlag?.('foundryvtt-swse', 'forcefulRecoveryPending') ?? actor?.flags?.['foundryvtt-swse']?.forcefulRecoveryPending ?? null;
   }

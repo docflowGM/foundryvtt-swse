@@ -15,6 +15,7 @@ import { DamageSystem } from '../damage-system.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { SchemaAdapters } from '../../utils/schema-adapters.js';
 import { ActorAbilityBridge } from '../../adapters/ActorAbilityBridge.js';
+import MetaResourceFeatResolver from '/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js';
 
 export class SWSEGrappling {
 
@@ -37,10 +38,12 @@ export class SWSEGrappling {
     const { roll, total } = await SWSERoll.rollAttack(attacker, weapon);
 
     // Hit resolution pipeline
-    const reflex = target.system.defenses?.reflex?.total ?? 10;
+    const baseReflex = target.system.defenses?.reflex?.total ?? 10;
+    const grappleResistance = MetaResourceFeatResolver.getGrappleResistanceBonus(target, { mode: 'resistGrab' });
+    const reflex = baseReflex + grappleResistance;
     const hit = (total >= reflex) || roll.dice[0].results[0].result === 20;
 
-    const result = { attacker, target, roll, total, reflex, hit };
+    const result = { attacker, target, roll, total, reflex, hit, baseReflex, grappleResistance };
 
     if (hit) {
       await this._applyState(target, 'grabbed', attacker);
@@ -56,8 +59,8 @@ export class SWSEGrappling {
   // ---------------------------------------------------------------------------
 
   static async grappleCheck(attacker, defender, options = {}) {
-    const atk = await this._rollGrappleBonus(attacker);
-    const def = await this._rollGrappleBonus(defender);
+    const atk = await this._rollGrappleBonus(attacker, { mode: 'attackGrapple' });
+    const def = await this._rollGrappleBonus(defender, { mode: 'resistGrapple' });
 
     const atkRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${atk}`, {}, { domain: 'combat.grapple.attack' });
     const defRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${def}`, {}, { domain: 'combat.grapple.defense' });
@@ -133,7 +136,7 @@ export class SWSEGrappling {
   // Helpers
   // ---------------------------------------------------------------------------
 
-  static async _rollGrappleBonus(actor) {
+  static async _rollGrappleBonus(actor, context = {}) {
     const lvl = actor.system.level ?? 1;
     const bab = SchemaAdapters.getBAB(actor);
     const str = SchemaAdapters.getAbilityMod(actor, 'str');
@@ -142,7 +145,13 @@ export class SWSEGrappling {
     const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
     const speciesGrapple = speciesCombat.grapple || 0;
 
-    return bab + str + sizeMod + speciesGrapple;
+    let bonus = bab + str + sizeMod + speciesGrapple;
+
+    if (context.mode === 'resistGrapple') {
+      bonus += MetaResourceFeatResolver.getGrappleResistanceBonus(actor, { mode: 'resistGrapple' });
+    }
+
+    return bonus;
   }
 
   static _sizeMod(size) {
