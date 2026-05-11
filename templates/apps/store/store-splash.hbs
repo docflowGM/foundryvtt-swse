@@ -7,130 +7,138 @@
          aria-label="Rendarr's Outfitters market splash screen">
   <script type="application/json" data-store-hot-deals-json>{{{hotDealsJson}}}</script>
 
-  <div class="swse-rendarrs-bg" aria-hidden="true">
-    <div class="swse-rendarrs-bg__sun"></div>
-    <div class="swse-rendarrs-bg__grid"></div>
-    <div class="swse-rendarrs-bg__scan"></div>
-    <div class="swse-rendarrs-bg__noise"></div>
-    <div class="swse-rendarrs-bg__pulse swse-rendarrs-bg__pulse--a"></div>
-    <div class="swse-rendarrs-bg__pulse swse-rendarrs-bg__pulse--b"></div>
-  </div>
+  <!-- Scanline + corner HUD overlays (screen effects, not a second shell) -->
+  <div class="ren-scan-v" aria-hidden="true"></div>
+  <span class="ren-corner ren-corner--tl" aria-hidden="true"></span>
+  <span class="ren-corner ren-corner--tr" aria-hidden="true"></span>
+  <span class="ren-corner ren-corner--bl" aria-hidden="true"></span>
+  <span class="ren-corner ren-corner--br" aria-hidden="true"></span>
 
-  <div class="swse-rendarrs-ticker" aria-label="Galactic market ticker">
-    <div class="swse-rendarrs-ticker__track" data-store-ticker-track>
-      {{#each tickerPreview}}
-      <span class="swse-rendarrs-ticker__item {{#if up}}is-up{{else}}is-down{{/if}}">
-        <strong>{{ticker}}</strong><span>{{name}}</span><em>{{indicator}} {{changeLabel}}</em>
-      </span>
-      {{/each}}
+  <!-- Top HUD -->
+  <div class="ren-hud">
+    <div class="ren-hud__left">
+      <span class="ren-hud__app">RENDARR // OUTFITTERS <span class="ren-hud__ver">v3.41 · holo</span></span>
+    </div>
+    <div class="ren-hud__right">
+      <span><span class="ren-dot"></span>HOLONET · 4 bars</span>
+      <span><span class="ren-dot ren-dot--warn"></span>encrypted · class 3</span>
+      <span data-ren-clock>00:00:00 · GST</span>
     </div>
   </div>
 
-  <div class="swse-rendarrs-market">
-    <header class="swse-rendarrs-market__header">
-      <div class="swse-rendarrs-market__identity">
-        <span class="swse-rendarrs-market__eyebrow">SECURE VENDOR CHANNEL</span>
-        <strong>Rendarr's Outfitters</strong>
-        <span>Outer Rim equipment exchange // authenticated catalog node</span>
+  <!-- GEX Live Ticker -->
+  <div class="ren-ticker-wrap" aria-label="Galactic Exchange live feed">
+    <div class="ren-ticker-tag">GEX · LIVE</div>
+    <div class="ren-ticker" aria-hidden="true">
+      <div class="ren-ticker__track" data-store-ticker-track></div>
+    </div>
+    <div class="ren-ticker-end">RX // FLOOR FEED</div>
+  </div>
+
+  <!-- Hero: neon sign + open sign + rate card -->
+  <div class="ren-hero">
+    <div class="ren-neon-stack">
+      <div class="ren-eyebrow" aria-hidden="true">
+        <span class="ren-eyebrow__pip"></span>
+        EST. 14 ABY <span class="ren-eyebrow__x">×</span> DOCK 9 · NAR SHADDAA
+        <span class="ren-eyebrow__pip"></span> ALL CREDITS HONORED
+      </div>
+      <div class="ren-neon-sign" aria-label="Rendarr's Outfitters">
+        <span class="ren-neon-line">Rendarr<span class="ren-neon-amp">'s</span></span>
+        <span class="ren-neon-line ren-neon-line--two">Outfitters</span>
+      </div>
+      <div class="ren-tube-rail" aria-hidden="true"></div>
+      <div class="ren-tagline" aria-hidden="true">Guns <span class="ren-tagline__star">★</span> Gear <span class="ren-tagline__star">★</span> Glory <span class="ren-tagline__star">★</span> No&nbsp;Questions</div>
+    </div>
+
+    <div class="ren-hero-right">
+      <!-- OPEN / CLOSED neon sign -->
+      <div class="ren-open-sign {{#if storeOpen}}is-open{{else}}is-closed{{/if}}" aria-live="polite">
+        <span class="ren-open-sign__chain ren-open-sign__chain--l" aria-hidden="true"></span>
+        <span class="ren-open-sign__chain ren-open-sign__chain--r" aria-hidden="true"></span>
+        <div class="ren-open-sign__word">{{#if storeOpen}}<span class="ren-open-sign__o">O</span>PEN{{else}}CLOSED{{/if}}</div>
+        <div class="ren-open-sign__sub" data-store-status-label>{{storeStatusLabel}}</div>
       </div>
 
-      <div class="swse-rendarrs-open-sign" data-store-open-sign>
-        <span>STORE</span>
-        <strong data-store-status-label>{{storeStatusLabel}}</strong>
-      </div>
-    </header>
-
-    <main class="swse-rendarrs-market__body">
-      <section class="swse-rendarrs-chart-panel">
-        <div class="swse-rendarrs-panel-head">
-          <span>GALACTIC TRADE INDEX</span>
-          <strong data-market-index>{{marketIndexLabel}}</strong>
+      <!-- GM tax / discount rate card -->
+      <div class="ren-rate-card" data-ren-rate-card data-buy-modifier="{{marketControls.buyModifier}}">
+        <div class="ren-rate-card__head">
+          <span class="ren-rate-card__label" data-ren-rate-label>GM MARKET</span>
+          <span class="ren-rate-card__pulse" aria-hidden="true"></span>
         </div>
-
-        <div class="swse-rendarrs-chart">
-          <svg viewBox="0 0 900 340" preserveAspectRatio="none" aria-hidden="true">
-            <g class="swse-rendarrs-chart__grid">
-              <path d="M0 50 H900 M0 105 H900 M0 160 H900 M0 215 H900 M0 270 H900 M0 325 H900"></path>
-              <path d="M90 0 V340 M180 0 V340 M270 0 V340 M360 0 V340 M450 0 V340 M540 0 V340 M630 0 V340 M720 0 V340 M810 0 V340"></path>
-            </g>
-            <path class="swse-rendarrs-chart__fill" d="M0 282 C40 246 74 260 120 224 C168 184 204 196 250 148 C306 88 348 126 390 140 C442 158 476 82 526 74 C588 64 622 132 676 104 C736 72 780 48 836 64 C864 72 884 44 900 28 L900 340 L0 340 Z"></path>
-            <path class="swse-rendarrs-chart__line swse-rendarrs-chart__line--primary" d="M0 282 C40 246 74 260 120 224 C168 184 204 196 250 148 C306 88 348 126 390 140 C442 158 476 82 526 74 C588 64 622 132 676 104 C736 72 780 48 836 64 C864 72 884 44 900 28"></path>
-            <path class="swse-rendarrs-chart__line swse-rendarrs-chart__line--secondary" d="M0 218 C58 232 92 154 142 174 C198 196 228 116 284 130 C342 146 370 194 426 158 C488 118 516 176 574 140 C640 98 676 128 724 86 C786 32 826 94 900 72"></path>
-          </svg>
-          <div class="swse-rendarrs-alert swse-rendarrs-alert--a">BUY PRESSURE</div>
-          <div class="swse-rendarrs-alert swse-rendarrs-alert--b">TARIFF SHIFT</div>
-          <div class="swse-rendarrs-alert swse-rendarrs-alert--c">VOLUME SPIKE</div>
+        <div class="ren-rate-card__val" data-ren-rate-val>
+          {{#if marketControls.taxLabel}}{{marketControls.taxLabel}}{{else}}±0%{{/if}}
         </div>
-      </section>
-
-      <aside class="swse-rendarrs-side">
-        <section class="swse-rendarrs-mini-panel">
-          <div class="swse-rendarrs-panel-head"><span>GM STORE CONTROLS</span><strong>SYNC</strong></div>
-          <div class="swse-rendarrs-conditions">
-            <div><span>Tax Rate</span><strong data-market-tax>{{marketControls.taxLabel}}</strong></div>
-            <div><span>Trade Discount</span><strong data-market-discount>{{marketControls.discountLabel}}</strong></div>
-            <div><span>Vendor Status</span><strong data-market-vendor-status>{{storeStatusLabel}}</strong></div>
-            <div><span>Catalog Sync</span><strong data-market-catalog-sync>{{#if hotDeals.hydrated}}LIVE{{else}}SYNC PENDING{{/if}}</strong></div>
-          </div>
-        </section>
-
-        <section class="swse-rendarrs-mini-panel">
-          <div class="swse-rendarrs-panel-head"><span>ORDER FLOW</span><strong>LIVE</strong></div>
-          <div class="swse-rendarrs-orderflow" aria-hidden="true">
-            <span><b>BUY</b><i style="--w:72%"></i><em>2,400 CR</em></span>
-            <span><b>SELL</b><i style="--w:48%"></i><em>1,125 CR</em></span>
-            <span><b>BUY</b><i style="--w:84%"></i><em>5,880 CR</em></span>
-            <span><b>SELL</b><i style="--w:63%"></i><em>3,020 CR</em></span>
-            <span><b>BUY</b><i style="--w:39%"></i><em>740 CR</em></span>
-          </div>
-        </section>
-
-        <section class="swse-rendarrs-hot-deals" aria-label="Hot deals from the actual store catalog">
-          <div class="swse-rendarrs-panel-head"><span>Rendarr's Hot Deals</span><strong data-hot-deals-state>{{#if hotDeals.hydrated}}LIVE{{else}}PENDING{{/if}}</strong></div>
-          <div class="swse-rendarrs-hot-deals__body">
-            <div class="swse-rendarrs-hot-deals__category">
-              <span data-hot-deals-category>{{hotDeals.currentGroup.category}}</span>
-              <strong data-hot-deals-tagline>{{hotDeals.currentGroup.tagline}}</strong>
-            </div>
-            <div class="swse-rendarrs-hot-deals__list" data-hot-deals-list>
-              {{#if hotDeals.currentGroup.items.length}}
-                {{#each hotDeals.currentGroup.items}}
-                <button type="button"
-                        class="swse-rendarrs-deal"
-                        data-action="store-hot-deal-open"
-                        data-item-id="{{id}}"
-                        data-item-name="{{name}}"
-                        data-category="{{categoryKey}}"
-                        style="animation-delay:{{animationDelay}}ms">
-                  <span class="swse-rendarrs-deal__thumb" aria-hidden="true">
-                    {{#if img}}<img src="{{img}}" alt=""/>{{/if}}
-                  </span>
-                  <span class="swse-rendarrs-deal__meta">
-                    <span class="swse-rendarrs-deal__name">{{name}}</span>
-                    <span class="swse-rendarrs-deal__tag">{{tag}}</span>
-                  </span>
-                  <strong class="swse-rendarrs-deal__price">{{priceLabel}}</strong>
-                </button>
-                {{/each}}
-              {{else}}
-                <div class="swse-rendarrs-hot-deals__empty">Catalog sync pending</div>
-              {{/if}}
-            </div>
-            <div class="swse-rendarrs-hot-deals__status">
-              <span data-hot-deals-status>{{#if hotDeals.hydrated}}Real catalog preview // rotating{{else}}Catalog sync pending // store can still open{{/if}}</span>
-              <span>Preview only</span>
-            </div>
-          </div>
-        </section>
-      </aside>
-    </main>
-
-    <footer class="swse-rendarrs-market__footer">
-      <div class="swse-rendarrs-boot">
-        <span data-store-boot-label>{{#if storeOpen}}Opening Rendarr vendor channel{{else}}Catalog frozen // vendor channel closed{{/if}}</span>
-        <i></i><i></i><i></i>
+        <div class="ren-rate-card__reason" data-ren-rate-reason>
+          <span class="ren-em">MARKET</span> stable · no active modifiers
+        </div>
       </div>
-      <button type="button" class="swse-rendarrs-enter" data-action="store-splash-continue">ENTER OUTFITTERS</button>
-    </footer>
+    </div>
+  </div>
+
+  <!-- Rendarr hologram greeting strip -->
+  <div class="ren-rendarr-strip">
+    <div class="ren-holo-portrait" aria-hidden="true">
+      <img class="ren-holo-portrait__img"
+           src="systems/foundryvtt-swse/assets/mentors/Rendarr.png"
+           alt="" />
+      <div class="ren-holo-portrait__pedestal"></div>
+    </div>
+    <div class="ren-rendarr-greet">
+      <div class="ren-rendarr-greet__name">
+        <span class="ren-rendarr-greet__mark">⚐</span>RENDARR
+        <span class="ren-rendarr-greet__sub">— PROPRIETOR · EX-CLONE · INDEX 4,712</span>
+      </div>
+      <div class="ren-rendarr-greet__line" data-ren-greeting>
+        Boot the terminal, friend. I don't care why you're here — I care what you're spending.<span class="ren-cursor" aria-hidden="true"></span>
+      </div>
+    </div>
+    <div class="ren-strip-meta">
+      <div class="ren-strip-meta__label">WALLET</div>
+      <div class="ren-strip-meta__val" data-ren-wallet>{{#if credits}}{{credits}}{{else}}—{{/if}}</div>
+      <div class="ren-strip-meta__label">{{actorName}}</div>
+    </div>
+  </div>
+
+  <!-- Hot Items Tonight -->
+  <div class="ren-hot-section">
+    <div class="ren-hot-head">
+      <div class="ren-hot-head__title"><span class="ren-hot-head__flame">▲</span>HOT ITEMS · TONIGHT</div>
+      <div class="ren-hot-head__sub">moves fast · <span class="ren-em">tap to jump</span> · rotates</div>
+    </div>
+    <div class="ren-hot-grid-wrap">
+      <div class="ren-hot-grid" data-hot-grid></div>
+    </div>
+  </div>
+
+  <!-- CTA bar -->
+  <div class="ren-cta-bar">
+    <div class="ren-cta-side">
+      <div class="ren-cta-side__label">FLOOR FOOTFALL</div>
+      <div class="ren-cta-side__big">23 / hr</div>
+      <div class="ren-cta-side__label">3 BROWSING NOW</div>
+    </div>
+    <button type="button"
+            class="ren-enter-btn{{#unless storeOpen}} is-closed{{/unless}}"
+            data-action="store-splash-continue">
+      {{#if storeOpen}}ENTER OUTFITTERS →{{else}}STORE CLOSED{{/if}}
+    </button>
+    <div class="ren-cta-side ren-cta-side--right">
+      <div class="ren-cta-side__label">HAGGLE WINDOW</div>
+      <div class="ren-cta-side__big ren-cta-side__big--alt">2H 14M</div>
+      <div class="ren-cta-side__label">BEFORE STOCK ROTATES</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="ren-footer">
+    <div class="ren-footer__left">
+      <span><span class="ren-footer__pulse" aria-hidden="true"></span>UPLINK · STABLE</span>
+      <span data-store-boot-label>{{#if storeOpen}}Opening Rendarr vendor channel{{else}}Catalog frozen // vendor channel closed{{/if}}</span>
+    </div>
+    <div class="ren-footer__right">
+      <span>© RENDARR INDUSTRIES</span>
+      <span>NO REFUNDS · NO QUESTIONS</span>
+    </div>
   </div>
 </section>

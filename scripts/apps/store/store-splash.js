@@ -63,19 +63,6 @@ function randomChange() {
   return sign * magnitude;
 }
 
-function formatChange(value) {
-  const up = value >= 0;
-  return { up, text: `${up ? '▲ +' : '▼ '}${value.toFixed(1)}%` };
-}
-
-function buildTicker() {
-  const shuffled = [...STORE_TICKER_COMPANIES].sort(() => Math.random() - 0.5).slice(0, 42);
-  return shuffled.map(([name, ticker]) => {
-    const change = formatChange(randomChange());
-    return `<span class="swse-rendarrs-ticker__item ${change.up ? 'is-up' : 'is-down'}"><strong>${escapeHtml(ticker)}</strong><span>${escapeHtml(name)}</span><em>${change.text}</em></span>`;
-  }).join('');
-}
-
 function parseHotDeals(splash) {
   const node = splash?.querySelector?.('[data-store-hot-deals-json]');
   if (!node?.textContent?.trim()) return { groups: [], hydrated: false };
@@ -88,80 +75,227 @@ function parseHotDeals(splash) {
   }
 }
 
-function renderHotDeals(splash, state) {
-  const category = splash.querySelector('[data-hot-deals-category]');
-  const tagline = splash.querySelector('[data-hot-deals-tagline]');
-  const list = splash.querySelector('[data-hot-deals-list]');
-  const status = splash.querySelector('[data-hot-deals-status]');
-  const stateLabel = splash.querySelector('[data-hot-deals-state]');
-  if (!category || !tagline || !list) return;
-
-  const groups = state.hotDeals.groups ?? [];
-  const hydrated = state.hotDeals.hydrated && groups.length > 0;
-  if (!hydrated) {
-    category.textContent = 'Catalog Sync';
-    tagline.textContent = 'Pending';
-    list.innerHTML = '<div class="swse-rendarrs-hot-deals__empty">Catalog sync pending</div>';
-    if (status) status.textContent = 'Catalog sync pending // store can still open';
-    if (stateLabel) stateLabel.textContent = 'PENDING';
-    return;
-  }
-
-  const currentIndex = isOpen(splash) ? state.hotDealIndex : state.hotDealFrozenIndex;
-  const group = groups[currentIndex % groups.length];
-  category.textContent = group.category || 'Hot Deals';
-  tagline.textContent = group.tagline || 'Catalog rotation';
-  if (status) status.textContent = isOpen(splash) ? 'Real catalog preview // rotating' : 'Catalog frozen // store closed';
-  if (stateLabel) stateLabel.textContent = isOpen(splash) ? 'LIVE' : 'FROZEN';
-
-  list.innerHTML = (group.items || []).slice(0, 5).map((item, index) => `
-    <button type="button"
-            class="swse-rendarrs-deal"
-            data-action="store-hot-deal-open"
-            data-item-id="${escapeHtml(item.id)}"
-            data-item-name="${escapeHtml(item.name)}"
-            data-category="${escapeHtml(item.categoryKey || group.categoryKey || '')}"
-            style="animation-delay:${index * 55}ms">
-      <span class="swse-rendarrs-deal__thumb" aria-hidden="true">${item.img ? `<img src="${escapeHtml(item.img)}" alt=""/>` : ''}</span>
-      <span class="swse-rendarrs-deal__meta"><span class="swse-rendarrs-deal__name">${escapeHtml(item.name)}</span><span class="swse-rendarrs-deal__tag">${escapeHtml(item.tag || 'CATALOG')}</span></span>
-      <strong class="swse-rendarrs-deal__price">${escapeHtml(item.priceLabel || '')}</strong>
-    </button>
-  `).join('') || '<div class="swse-rendarrs-hot-deals__empty">No highlighted catalog items</div>';
-
-  if (isOpen(splash)) state.hotDealIndex = (state.hotDealIndex + 1) % groups.length;
+/* ── Ticker helpers ── */
+function buildTickerHTML() {
+  const shuffled = [...STORE_TICKER_COMPANIES].sort(() => Math.random() - 0.5).slice(0, 40);
+  return shuffled.map(([name, code]) => {
+    const change = randomChange();
+    const up = change >= 0;
+    const pct = Math.abs(change).toFixed(1);
+    const price = Math.round(Math.random() * 5000 + 100).toLocaleString();
+    return `<span class="ren-tk-item">`
+      + `<span class="ren-tk-code">${escapeHtml(code)}</span>`
+      + `<span class="${up ? 'ren-tk-up' : 'ren-tk-dn'}">${up ? '▲ +' : '▼ '}${pct}%</span>`
+      + `<span class="ren-tk-cr">${price} cr</span>`
+      + `</span>`;
+  }).join('');
 }
 
-function renderTicker(splash, state) {
+function setupTicker(splash, state) {
   const track = splash.querySelector('[data-store-ticker-track]');
   if (!track) return;
-  if (!isOpen(splash) && state.frozenTicker) {
-    track.innerHTML = state.frozenTicker + state.frozenTicker;
-    return;
+
+  if (!state.tickerHTML) {
+    state.tickerHTML = buildTickerHTML();
+    // Freeze ticker content when store is closed
+    if (!isOpen(splash)) state.tickerFrozen = true;
   }
-  const html = buildTicker();
-  if (!isOpen(splash)) state.frozenTicker = state.frozenTicker || html;
-  track.innerHTML = html + html;
+  track.innerHTML = state.tickerHTML + state.tickerHTML; // doubled for seamless loop
 }
 
-function updateDecorativeIndex(splash) {
-  if (!isOpen(splash)) return;
-  const index = splash.querySelector('[data-market-index]');
-  if (!index) return;
-  const value = randomChange();
-  index.textContent = `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
-  index.classList.toggle('is-up', value >= 0);
-  index.classList.toggle('is-down', value < 0);
+/* RAF-driven ticker scroll — cleans up on abort */
+function startTickerRAF(splash, state, signal) {
+  const track = splash.querySelector('[data-store-ticker-track]');
+  if (!track) return;
+
+  const motionOff = motionStyleFor(splash) === 'off'
+    || window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  if (motionOff) return;
+
+  const SPEED_PX = 72; // pixels/sec
+  let pos = 0;
+  let last = null;
+  let rafId = null;
+
+  function frame(now) {
+    if (signal?.aborted) return;
+    if (last === null) last = now;
+    const dt = Math.min(now - last, 100);
+    last = now;
+    pos += SPEED_PX * dt / 1000;
+    const halfW = track.scrollWidth / 2;
+    if (halfW > 0 && pos >= halfW) pos -= halfW;
+    track.style.transform = `translateX(${-pos}px)`;
+    rafId = requestAnimationFrame(frame);
+  }
+  rafId = requestAnimationFrame(frame);
+  signal?.addEventListener?.('abort', () => { if (rafId) cancelAnimationFrame(rafId); }, { once: true });
 }
 
-function syncOpenClosedState(splash) {
-  const label = splash.querySelector('[data-store-status-label]');
-  const boot = splash.querySelector('[data-store-boot-label]');
-  const vendorStatus = splash.querySelector('[data-market-vendor-status]');
-  const catalogSync = splash.querySelector('[data-market-catalog-sync]');
-  if (label) label.textContent = isOpen(splash) ? 'OPEN' : 'CLOSED';
-  if (boot) boot.textContent = isOpen(splash) ? 'Opening Rendarr vendor channel' : 'Catalog frozen // vendor channel closed';
-  if (vendorStatus) vendorStatus.textContent = isOpen(splash) ? 'OPEN' : 'CLOSED';
-  if (catalogSync) catalogSync.textContent = isOpen(splash) ? (catalogSync.textContent === 'SYNC PENDING' ? 'SYNC PENDING' : 'LIVE') : 'FROZEN';
+/* ── Clock ── */
+function startClock(splash, signal) {
+  const el = splash.querySelector('[data-ren-clock]');
+  if (!el) return;
+  function tick() {
+    if (signal?.aborted) return;
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const ss = String(d.getSeconds()).padStart(2, '0');
+    el.textContent = `${hh}:${mm}:${ss} · GST`;
+  }
+  tick();
+  const id = window.setInterval(tick, 1000);
+  signal?.addEventListener?.('abort', () => window.clearInterval(id), { once: true });
+}
+
+/* ── Rate card ── */
+const RATE_REASONS_TAX = [
+  `<span class="ren-em">HUTT CARTEL</span> wartime levy · all energy weapons`,
+  `<span class="ren-em">IMPERIAL</span> luxury tariff · imports`,
+  `<span class="ren-em">BLACK SUN</span> protection assessment`,
+];
+const RATE_REASONS_DISC = [
+  `<span class="ren-em">REBEL</span> sympathizer discount · cash only`,
+  `<span class="ren-em">CARAVAN</span> overstock · everything must move`,
+  `<span class="ren-em">RENDARR</span> in a generous mood · do not ask`,
+];
+const RATE_NEUTRAL = `<span class="ren-em">MARKET</span> stable · no active modifiers`;
+
+function updateRateCard(splash) {
+  const card   = splash.querySelector('[data-ren-rate-card]');
+  const label  = splash.querySelector('[data-ren-rate-label]');
+  const val    = splash.querySelector('[data-ren-rate-val]');
+  const reason = splash.querySelector('[data-ren-rate-reason]');
+  if (!card) return;
+
+  // Pull buyModifier from a data attribute written by template context, or default 0
+  const modifier = Number(card.dataset.buyModifier ?? 0) || 0;
+  const isDiscount = modifier < 0;
+  card.classList.toggle('is-discount', isDiscount);
+  if (label) label.textContent = isDiscount ? 'GM DISCOUNT' : (modifier === 0 ? 'GM MARKET · NEUTRAL' : 'GM TAX RATE');
+  if (val) {
+    const sign = modifier > 0 ? '+' : (modifier < 0 ? '−' : '±');
+    val.textContent = `${sign}${Math.abs(modifier).toFixed(1)}%`;
+  }
+  if (reason) {
+    if (modifier === 0) reason.innerHTML = RATE_NEUTRAL;
+    else if (isDiscount) reason.innerHTML = RATE_REASONS_DISC[Math.floor(Math.abs(modifier) / 8) % RATE_REASONS_DISC.length];
+    else reason.innerHTML = RATE_REASONS_TAX[Math.floor(modifier / 8) % RATE_REASONS_TAX.length];
+  }
+}
+
+/* ── Hot Items Grid ── */
+const HOT_SLOTS = [
+  { label: 'Weapons',   icon: '⚡', keys: ['melee-weapons', 'ranged-weapons', 'weapon'] },
+  { label: 'Armor',     icon: '🛡', keys: ['armor'] },
+  { label: 'Gear',      icon: '⚙', keys: ['gear', 'equipment', 'medical'] },
+  { label: 'Droids',    icon: '◈', keys: ['droid-parts', 'droid'] },
+  { label: 'Ships',     icon: '◭', keys: ['starship-mods', 'vehicle', 'ship'] },
+];
+
+function buildHotCardHTML(item, slot, index) {
+  const img = item.img
+    ? `<img src="${escapeHtml(item.img)}" alt="" loading="lazy"/>`
+    : `<span class="ren-hot-card__glyph">${slot.icon}</span>`;
+  return `<button type="button"
+    class="ren-hot-card"
+    data-action="store-hot-deal-open"
+    data-item-id="${escapeHtml(item.id || '')}"
+    data-item-name="${escapeHtml(item.name || '')}"
+    data-category="${escapeHtml(item.categoryKey || '')}"
+    style="animation-delay:${index * 60}ms">
+    <span class="ren-hot-card__rank">№${String(index + 1).padStart(2, '0')}</span>
+    <span class="ren-hot-card__tag">${escapeHtml(item.tag || item.rarity || 'CATALOG')}</span>
+    <div class="ren-hot-card__glyph-panel">${img}</div>
+    <div class="ren-hot-card__name">${escapeHtml(item.name || 'Unknown')}</div>
+    <div class="ren-hot-card__meta"><span class="ren-hot-card__cat">${escapeHtml(slot.label.toUpperCase())}</span></div>
+    <div class="ren-hot-card__row">
+      <span class="ren-hot-card__price">${escapeHtml(item.priceLabel || '—')}</span>
+    </div>
+  </button>`;
+}
+
+function buildComingSoonCardHTML(slot, index) {
+  return `<div class="ren-hot-card ren-hot-card--empty" style="animation-delay:${index * 60}ms">
+    <div class="ren-hot-card__glyph-panel"><span class="ren-hot-card__glyph">${slot.icon}</span></div>
+    <div class="ren-hot-card__name">${slot.label.toUpperCase()}</div>
+    <div class="ren-hot-card__coming">COMING SOON</div>
+  </div>`;
+}
+
+function renderHotGrid(splash, state) {
+  const grid = splash.querySelector('[data-hot-grid]');
+  if (!grid) return;
+
+  const groups = state.hotDeals.groups ?? [];
+  const cards = HOT_SLOTS.map((slot, i) => {
+    const group = groups.find(g =>
+      slot.keys.some(k => (g.categoryKey || '').toLowerCase() === k
+        || (g.categoryKey || '').toLowerCase().includes(k))
+    );
+    if (!group || !group.items?.length) return buildComingSoonCardHTML(slot, i);
+    const cursor = (state.hotCursors[i] ?? 0) % group.items.length;
+    return buildHotCardHTML(group.items[cursor], slot, i);
+  });
+
+  grid.style.transition = 'none';
+  grid.innerHTML = cards.join('');
+}
+
+function startHotGridRotation(splash, state, signal) {
+  const grid = splash.querySelector('[data-hot-grid]');
+  if (!grid) return;
+  const INTERVAL = 12000;
+  const id = window.setInterval(() => {
+    if (signal?.aborted) return;
+    if (!isOpen(splash)) return;
+    // Slide out
+    grid.style.transition = 'transform 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.24s ease';
+    grid.style.transform = 'translateX(-110%)';
+    grid.style.opacity = '0';
+    window.setTimeout(() => {
+      if (signal?.aborted) return;
+      // Advance cursors
+      const groups = state.hotDeals.groups ?? [];
+      HOT_SLOTS.forEach((slot, i) => {
+        const group = groups.find(g => slot.keys.some(k => (g.categoryKey || '').toLowerCase().includes(k)));
+        if (group && group.items?.length > 1) {
+          state.hotCursors[i] = ((state.hotCursors[i] ?? 0) + 1) % group.items.length;
+        }
+      });
+      grid.style.transition = 'none';
+      grid.style.transform = 'translateX(110%)';
+      grid.style.opacity = '0';
+      renderHotGrid(splash, state);
+      grid.offsetWidth; // reflow
+      grid.style.transition = 'transform 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.28s ease';
+      grid.style.transform = 'translateX(0)';
+      grid.style.opacity = '1';
+    }, 350);
+  }, INTERVAL);
+  signal?.addEventListener?.('abort', () => window.clearInterval(id), { once: true });
+}
+
+/* ── Greeting rotation ── */
+const GREETINGS = [
+  `Boot the terminal, friend. I don't care why you're here — I care what you're spending.`,
+  `Everything's legal somewhere. That somewhere is here.`,
+  `Credits good, questions bad. That's the only policy on this floor.`,
+  `New stock just cleared customs. You didn't hear it from me.`,
+  `Don't ask what the "R" stands for. Just browse.`,
+];
+
+function startGreetingRotation(splash, signal) {
+  const el = splash.querySelector('[data-ren-greeting]');
+  if (!el) return;
+  let i = 0;
+  const id = window.setInterval(() => {
+    if (signal?.aborted) return;
+    i = (i + 1) % GREETINGS.length;
+    el.innerHTML = escapeHtml(GREETINGS[i]) + '<span class="ren-cursor" aria-hidden="true"></span>';
+  }, 9000);
+  signal?.addEventListener?.('abort', () => window.clearInterval(id), { once: true });
 }
 
 export function initRendarrStoreSplash(root, options = {}) {
@@ -169,33 +303,29 @@ export function initRendarrStoreSplash(root, options = {}) {
   if (!splash) return () => {};
 
   const signal = options.signal;
+  const motionOff = motionStyleFor(splash) === 'off'
+    || window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   const state = {
-    frozenTicker: null,
-    hotDealIndex: 0,
-    hotDealFrozenIndex: 0,
-    hotDeals: parseHotDeals(splash)
+    tickerHTML: null,
+    tickerFrozen: false,
+    hotCursors: [0, 0, 0, 0, 0],
+    hotDeals: parseHotDeals(splash),
   };
-  const timers = [];
-  const reduced = motionStyleFor(splash) === 'reduced';
-  const motionOff = motionStyleFor(splash) === 'off' || window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-  const tickInterval = reduced ? 9000 : 5200;
-  const dealsInterval = reduced ? 7500 : 4200;
 
-  const cleanup = () => {
-    while (timers.length) window.clearInterval(timers.pop());
-  };
+  const cleanup = () => {};
   signal?.addEventListener?.('abort', cleanup, { once: true });
 
+  /* Continue handler */
   const continueHandler = async (event) => {
     event?.preventDefault?.();
     event?.stopPropagation?.();
     await options.onContinue?.(event);
   };
-
-  splash.querySelectorAll('[data-action="store-splash-continue"]').forEach(button => {
-    button.addEventListener('click', continueHandler, { signal });
+  splash.querySelectorAll('[data-action="store-splash-continue"]').forEach(btn => {
+    btn.addEventListener('click', continueHandler, { signal });
   });
 
+  /* Hot deal click handler */
   splash.addEventListener('click', async (event) => {
     const target = event.target instanceof Element ? event.target.closest('[data-action="store-hot-deal-open"]') : null;
     if (!target) return;
@@ -215,18 +345,15 @@ export function initRendarrStoreSplash(root, options = {}) {
     }
   }, { signal });
 
-  renderTicker(splash, state);
-  renderHotDeals(splash, state);
-  updateDecorativeIndex(splash);
-  syncOpenClosedState(splash);
-
+  /* Init */
+  setupTicker(splash, state);
+  startTickerRAF(splash, state, signal);
+  startClock(splash, signal);
+  updateRateCard(splash);
+  renderHotGrid(splash, state);
   if (!motionOff) {
-    timers.push(window.setInterval(() => {
-      renderTicker(splash, state);
-      updateDecorativeIndex(splash);
-      syncOpenClosedState(splash);
-    }, tickInterval));
-    timers.push(window.setInterval(() => renderHotDeals(splash, state), dealsInterval));
+    startHotGridRotation(splash, state, signal);
+    startGreetingRotation(splash, signal);
   }
 
   return cleanup;
@@ -247,8 +374,8 @@ export class SWSEStoreSplashV2 extends HandlebarsApplicationMixin(ApplicationV2)
       draggable: true,
     },
     position: {
-      width: 1000,
-      height: 680,
+      width: 1100,
+      height: 820,
       top: null,
       left: null,
     },
