@@ -8,9 +8,11 @@
 
 ## Executive Summary
 
-This cleanup analysis examined potential dead or obsolete template files based on the comprehensive audit report. Using the **"use all the buffalo"** principle, we focused on identifying opportunities to merge useful content into canonical templates, rather than simply deleting files.
+This cleanup analysis examined 6 potential dead or obsolete template files based on the comprehensive audit report. Using the **"use all the buffalo"** principle, we focused on identifying opportunities to merge useful content into canonical templates, rather than simply deleting files.
 
 **Key Finding:** No templates were deleted in this pass. All deletion candidates require runtime verification in Foundry before removal, as per the audit's explicit requirements.
+
+**Important Nuance:** The `starship-maneuvers-panel.hbs` partial is connected through the legacy `starship-maneuvers-tab.hbs` file (which is itself unused). The panel cannot stand alone and should be deleted as a package with the legacy tab if/when that tab is approved for removal.
 
 **High-Confidence Status:**
 - ✓ Validator passes with 0 strict issues
@@ -21,7 +23,7 @@ This cleanup analysis examined potential dead or obsolete template files based o
 
 ---
 
-## Deletion Candidates Analyzed
+## Deletion Candidates Analyzed (6 Total)
 
 ### 1. `templates/actors/character/tabs/starship-maneuvers-tab.hbs`
 
@@ -59,7 +61,35 @@ The old tab contains useful UI patterns:
 
 ---
 
-### 2. `templates/items/base/item-sheet-old.hbs`
+### 2. `templates/partials/starship-maneuvers-panel.hbs`
+
+**Classification:** INDIRECTLY UNUSED / DELETE TOGETHER WITH LEGACY TAB
+
+**What It Is:**
+- Partial template for rendering starship maneuver ability cards
+- Included only from legacy `starship-maneuvers-tab.hbs`
+- Appears reachable through registry/preload, but not through active v2 character sheet
+
+**Evidence of Status:**
+- **Direct includes:** 0 (only included from starship-maneuvers-tab.hbs, which is itself unused)
+- **In registry:** YES - scripts/load-templates.js (preloaded)
+- **In active templates:** NO - no active v2 sheet includes this partial
+- **JS references:** No renderTemplate() calls found
+
+**Connection Analysis:**
+`partials/starship-maneuvers-panel.hbs` ← appears only in legacy `starship-maneuvers-tab.hbs` ← (unused in v2)
+
+**Recommendation:** DELETE IF starship-maneuvers-tab.hbs is deleted
+- Cannot stand alone (only useful when legacy tab is used)
+- Safe to delete as package with legacy tab
+- Verify no other legacy code paths include it
+- Preload registration can be removed from scripts/load-templates.js
+
+**Risk Level:** Low (tightly coupled to unused legacy tab)
+
+---
+
+### 3. `templates/items/base/item-sheet-old.hbs`
 
 **Classification:** OBSOLETE / VERIFY NO FALLBACK USAGE
 
@@ -88,7 +118,7 @@ The old tab contains useful UI patterns:
 
 ---
 
-### 3. `templates/icons/attack-svg.hbs`, `customize-svg.hbs`, `damage-svg.hbs`, `menu-svg.hbs`
+### 4. `templates/icons/attack-svg.hbs`, `customize-svg.hbs`, `damage-svg.hbs`, `menu-svg.hbs`
 
 **Classification:** LIKELY OBSOLETE / VERIFY STATIC ASSETS REPLACED
 
@@ -140,7 +170,7 @@ The old tab contains useful UI patterns:
 - Reason: Pre-loaded explicitly for design reference; indicates intentional retention for planned work
 
 ### C. Registered Partials (KEEP - Still in Registry)
-- `templates/partials/starship-maneuvers-panel.hbs` ✓ Registered in load-templates.js
+- `templates/partials/starship-maneuvers-panel.hbs` ✓ Registered in load-templates.js (reachable only through legacy starship-maneuvers-tab.hbs)
 - All `v2/partials/*.hbs` ✓ Registered in partials-auto.js
 - All v2-concept panels ✓ Registered in load-templates.js
 - Reason: Active registry entries suggest ongoing use or planned feature support
@@ -252,11 +282,18 @@ SWSE | OK (strict): 413 .hbs files scanned; 129 file-backed partial(s) reference
 - 21 inline references (all valid same-file definitions)
 ```
 
-### Post-Cleanup Expected State (If All Deletions Approved)
-- **413 - 4 = 409 files** (remove: starship-maneuvers-tab.hbs, item-sheet-old.hbs, attack-svg.hbs, customize-svg.hbs, damage-svg.hbs, menu-svg.hbs = 6 files)
-- **Expected: ~407 files after cleanup**
-- **Validator expected:** PASS (0 issues)
-- **Partials referenced:** 128-129 (depends on whether starship-maneuvers-panel is actually used)
+### Post-Cleanup Expected State If All Six Deletions Are Approved
+
+- **413 - 6 = 407 `.hbs` files**
+- Removed files:
+  - `templates/actors/character/tabs/starship-maneuvers-tab.hbs`
+  - `templates/items/base/item-sheet-old.hbs`
+  - `templates/icons/attack-svg.hbs`
+  - `templates/icons/customize-svg.hbs`
+  - `templates/icons/damage-svg.hbs`
+  - `templates/icons/menu-svg.hbs`
+- **Validator expected:** PASS, because none of these files are currently referenced by strict partial validation
+- **Runtime verification still required:** YES
 
 ---
 
@@ -298,6 +335,15 @@ This cleanup analysis was performed conservatively per the audit's explicit requ
 - **Inbound References:** 0 (confirmed via grep)
 - **Outbound Includes:** 1 (starship-maneuvers-panel.hbs)
 
+### File: templates/partials/starship-maneuvers-panel.hbs
+- **Size:** ~15 lines (assumed, similar card rendering)
+- **Content:** Partial for starship maneuver ability card display
+- **Dependencies:** None (self-contained)
+- **Last Modified:** (check git history)
+- **Inbound References:** 1 (starship-maneuvers-tab.hbs only)
+- **Outbound Includes:** 0
+- **Registry Status:** Preloaded in scripts/load-templates.js
+
 ### File: templates/items/base/item-sheet-old.hbs
 - **Size:** ~580 lines
 - **Content:** Pre-v2 comprehensive item sheet form
@@ -319,9 +365,9 @@ This cleanup analysis was performed conservatively per the audit's explicit requ
 **Report Generated:** 2026-05-11 by conservative cleanup analysis  
 **Validator Status:** ✓ PASS  
 **Cleanup Status:** PENDING RUNTIME VERIFICATION  
-**Deleted Files:** 0 (no high-confidence candidates without runtime testing)  
+**Deleted Files:** 0 because static analysis alone is insufficient for final deletion approval  
 **Files Reviewed:** 6  
-**Potential Deletions:** 5 (pending runtime verification)
+**Potential Deletions:** 6 (pending runtime verification)
 
 ---
 
