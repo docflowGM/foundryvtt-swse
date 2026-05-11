@@ -37,6 +37,21 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
+/* -------------------------------------------------------------------------- */
+/*  COMBAT END HOOKS (Per-encounter feat flags)                              */
+/* -------------------------------------------------------------------------- */
+
+// Clear per-encounter feat flags when combat ends
+Hooks.on('deleteCombat', async (combat) => {
+  // Clear threshold exceeded flags for Galactic Alliance Military Training feat
+  for (const combatant of combat?.combatants || []) {
+    const actor = combatant.actor;
+    if (actor) {
+      await actor.unsetFlag?.('foundryvtt-swse', 'damageThresholdExceededThisEncounter');
+    }
+  }
+});
+
 export class ThresholdEngine {
 
   /* -------------------------------------------------------------------------- */

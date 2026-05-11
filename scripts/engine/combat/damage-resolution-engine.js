@@ -250,7 +250,32 @@ export class DamageResolutionEngine {
 
     // Threshold exceeded with HP remaining: use ThresholdEngine rule result (supports house rules)
     if (result.thresholdExceeded && result.hpAfter > 0) {
-      const thresholdShift = Math.max(0, Number(result.thresholdRuleResult?.totalCTShift ?? 1));
+      let thresholdShift = Math.max(0, Number(result.thresholdRuleResult?.totalCTShift ?? 1));
+
+      // FEAT: Galactic Alliance Military Training - prevent first CT worsening per encounter
+      const galacticAllianceTraining = actor.items?.find(i =>
+        i.type === 'feat' && i.name === 'Galactic Alliance Military Training'
+      );
+      if (galacticAllianceTraining) {
+        const activeCombatId = game.combat?.started ? game.combat.id : null;
+        const firstExceededFlag = actor.getFlag?.('foundryvtt-swse', 'damageThresholdExceededThisEncounter');
+        if (activeCombatId && firstExceededFlag !== activeCombatId) {
+          // First time this encounter - prevent CT shift
+          thresholdShift = 0;
+          // Mark encounter as having exceeded threshold
+          await actor.setFlag?.('foundryvtt-swse', 'damageThresholdExceededThisEncounter', activeCombatId);
+        }
+      }
+
+      // FEAT: Ion Shielding - cap Ion damage CT shift to 1 step
+      const ionShielding = actor.items?.find(i =>
+        i.type === 'feat' && i.name === 'Ion Shielding'
+      );
+      if (ionShielding && damageType === 'ion') {
+        // Cap to 1 step maximum for ion damage
+        thresholdShift = Math.min(1, thresholdShift);
+      }
+
       result.conditionDelta = thresholdShift;
       result.conditionAfter = Math.min(5, result.conditionBefore + thresholdShift);
       result.conditionPersistent = (result.thresholdRuleResult?.ctShifts || []).some(shift => shift?.persistent === true);
