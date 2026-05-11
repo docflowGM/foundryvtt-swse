@@ -1,4 +1,5 @@
 import { ThemeManager } from "/systems/foundryvtt-swse/scripts/ui/theme/ThemeManager.js";
+import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 
 const LABELS = {
   vapor: 'Vaporwave',
@@ -10,7 +11,11 @@ const LABELS = {
   droid: 'Droid Amber',
   merc: 'Merc Green',
   cryo: 'Cryo Ice',
-  blood: 'Blood Moon'
+  blood: 'Blood Moon',
+  'high-republic': 'High Republic',
+  'high-contrast': 'High Contrast',
+  starship: 'Starship',
+  'sand-people': 'Sand People'
 };
 
 export class SettingsSurfaceService {
@@ -31,27 +36,36 @@ export class SettingsSurfaceService {
       { id: 'green', label: 'Green', color: ThemeManager.shellColorMap.green },
       { id: 'amber', label: 'Amber', color: ThemeManager.shellColorMap.amber },
       { id: 'red', label: 'Red', color: ThemeManager.shellColorMap.red }
-    ];
+    ].map(c => ({
+      ...c,
+      start: c.color,
+      mid: c.color,
+      end: c.color
+    }));
   }
 
   static async buildViewModel(actor, options = {}) {
     const current = ThemeManager.getTheme() || ThemeManager.defaults;
+    const actorTheme = ThemeResolutionService.resolveThemeKey(null, { actor });
+    const actorMotionStyle = ThemeResolutionService.resolveMotionStyle(null, { actor });
     return {
       id: 'settings',
       title: 'Holopad Settings',
       subtitle: 'Device Interface Tuning',
       warning: 'Warning, changing native language to Aurabesh may result in a more difficult play.',
-      presets: this.getThemePresets().map(p => ({ ...p, selected: p.id === current.theme })),
+      presets: this.getThemePresets().map(p => ({ ...p, selected: p.id === actorTheme })),
       shellColors: this.getShellColors().map(c => ({ ...c, selected: c.id === current.shellColor })),
       controls: {
-        theme: current.theme,
+        theme: actorTheme,
+        motionStyle: actorMotionStyle,
         shellColor: current.shellColor,
         scanStrength: current.scanStrength,
         animSpeed: current.animSpeed,
         glow: current.glow,
         breathing: !!current.breathing,
         reducedMotion: !!current.reducedMotion,
-        language: current.language || 'basic'
+        language: current.language || 'basic',
+        languageMode: current.language || 'basic'
       }
     };
   }

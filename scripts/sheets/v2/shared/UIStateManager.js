@@ -71,6 +71,16 @@ export class UIStateManager {
   }
 
   /**
+   * Get a tab identifier from either native Foundry-style data-tab or the
+   * custom data-sheet-tab used by the frameless concept sheet.
+   * @param {HTMLElement} tabButton
+   * @returns {string|undefined}
+   */
+  _getTabName(tabButton) {
+    return tabButton?.dataset?.sheetTab || tabButton?.dataset?.tab;
+  }
+
+  /**
    * Find all tab buttons for a group.
    * Supports both explicit per-button grouping and older ungrouped markup.
    * @param {HTMLElement} root
@@ -82,12 +92,12 @@ export class UIStateManager {
 
     const explicitButtons = Array.from(
       root.querySelectorAll(
-        `[data-action="tab"][data-tab-group="${tabGroup}"], [data-action="tab"][data-group="${tabGroup}"]`
+        `[data-action="tab"][data-tab-group="${tabGroup}"], [data-action="sheet-tab"][data-tab-group="${tabGroup}"], [data-action="tab"][data-group="${tabGroup}"], [data-action="sheet-tab"][data-group="${tabGroup}"]`
       )
     );
     if (explicitButtons.length > 0) return explicitButtons;
 
-    return Array.from(root.querySelectorAll('[data-action="tab"]'));
+    return Array.from(root.querySelectorAll('[data-action="tab"], [data-action="sheet-tab"]'));
   }
 
   /**
@@ -138,8 +148,14 @@ export class UIStateManager {
 
     return (
       root.querySelector(`[data-action="tab"][data-tab="${tabName}"][data-tab-group="${tabGroup}"]`) ||
+      root.querySelector(`[data-action="sheet-tab"][data-sheet-tab="${tabName}"][data-tab-group="${tabGroup}"]`) ||
+      root.querySelector(`[data-action="sheet-tab"][data-tab="${tabName}"][data-tab-group="${tabGroup}"]`) ||
       root.querySelector(`[data-action="tab"][data-tab="${tabName}"][data-group="${tabGroup}"]`) ||
-      root.querySelector(`[data-action="tab"][data-tab="${tabName}"]`)
+      root.querySelector(`[data-action="sheet-tab"][data-sheet-tab="${tabName}"][data-group="${tabGroup}"]`) ||
+      root.querySelector(`[data-action="sheet-tab"][data-tab="${tabName}"][data-group="${tabGroup}"]`) ||
+      root.querySelector(`[data-action="tab"][data-tab="${tabName}"]`) ||
+      root.querySelector(`[data-action="sheet-tab"][data-sheet-tab="${tabName}"]`) ||
+      root.querySelector(`[data-action="sheet-tab"][data-tab="${tabName}"]`)
     );
   }
 
@@ -190,9 +206,9 @@ export class UIStateManager {
     if (!root) return;
 
     // Capture active tabs
-    const tabButtons = root.querySelectorAll('[data-action="tab"]');
+    const tabButtons = root.querySelectorAll('[data-action="tab"], [data-action="sheet-tab"]');
     for (const button of tabButtons) {
-      const tabName = button.dataset.tab;
+      const tabName = this._getTabName(button);
       if (!tabName) continue;
 
       const tabGroup = this._getTabGroup(button);
@@ -305,7 +321,7 @@ export class UIStateManager {
     const root = this._getRoot();
     if (!root || !tabButton) return;
 
-    const tabName = tabButton.dataset.tab;
+    const tabName = this._getTabName(tabButton);
     if (!tabName) return;
 
     const tabGroup = this._getTabGroup(tabButton);
@@ -356,16 +372,16 @@ export class UIStateManager {
     if (activeTabs.length === 0) {
       // No active tabs: default to overview
       console.warn(`[TAB INVARIANT] ⚠ No active tab found; defaulting to overview`);
-      const overviewButton = root.querySelector('[data-action="tab"][data-tab="overview"]');
+      const overviewButton = root.querySelector('[data-action="tab"][data-tab="overview"], [data-action="sheet-tab"][data-sheet-tab="overview"], [data-action="sheet-tab"][data-tab="overview"]');
       if (overviewButton) {
         this._activateTab(overviewButton);
         return 'overview';
       }
       // If overview doesn't exist, try to activate any available tab as fallback
-      const anyTabButton = root.querySelector('[data-action="tab"]');
+      const anyTabButton = root.querySelector('[data-action="tab"], [data-action="sheet-tab"]');
       if (anyTabButton) {
         this._activateTab(anyTabButton);
-        return anyTabButton.dataset.tab;
+        return this._getTabName(anyTabButton);
       }
       return null;
     }
@@ -373,12 +389,12 @@ export class UIStateManager {
     if (activeTabs.length > 1) {
       // Multiple active tabs: this should never happen, but fix it
       console.warn(`[TAB INVARIANT] ⚠ Multiple active tabs found (${activeTabs.length}); resetting to overview`);
-      const buttons = root.querySelectorAll('[data-action="tab"][data-group="primary"], [data-action="tab"][data-tab-group="primary"]');
+      const buttons = root.querySelectorAll('[data-action="tab"][data-group="primary"], [data-action="sheet-tab"][data-group="primary"], [data-action="tab"][data-tab-group="primary"], [data-action="sheet-tab"][data-tab-group="primary"]');
       buttons.forEach(btn => this._deactivateButton(btn));
       const panels = root.querySelectorAll('.tab[data-group="primary"], .tab[data-tab-group="primary"]');
       panels.forEach(pnl => this._hidePanel(pnl));
 
-      const overviewButton = root.querySelector('[data-action="tab"][data-tab="overview"]');
+      const overviewButton = root.querySelector('[data-action="tab"][data-tab="overview"], [data-action="sheet-tab"][data-sheet-tab="overview"], [data-action="sheet-tab"][data-tab="overview"]');
       if (overviewButton) {
         this._activateTab(overviewButton);
         return 'overview';

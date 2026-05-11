@@ -1,95 +1,141 @@
-{{#> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame.hbs"
-      theme=sheetTheme
-      motionStyle=sheetMotionStyle
-      showHome=true
-      homeRoute="tablet-home"}}
+<div class="swse-character-sheet-wrapper swse-character-sheet-wrapper--concept swse-character-sheet-form swse-character-sheet-form-root swse-sheet-ui swse-sheet swse-sheet--concept" data-sheet-form="character" data-concept-source="assets/Concept/Character Sheet v2.html">
+  <div class="swse-sheet-v2-shell swse-sheet-v2-shell--concept sheet-shell swse-sheet-v2-shell--surface-{{shellSurface}}" data-shell-surface="{{shellSurface}}" data-theme="{{sheetTheme}}" data-motion-style="{{sheetMotionStyle}}" style='{{{sheetSurfaceStyleInline}}}'>
+    <div class="swse-v2-tablet swse-v2-tablet--concept">
+      <div class="swse-tablet-rivet swse-tablet-rivet--tl" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--tr" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--bl" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--br" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--ml" aria-hidden="true"></div>
+      <div class="swse-tablet-rivet swse-tablet-rivet--mr" aria-hidden="true"></div>
+      <div class="swse-tablet-phys swse-tablet-phys--top-a" aria-hidden="true"></div>
+      <div class="swse-tablet-phys swse-tablet-phys--top-b" aria-hidden="true"></div>
+      <div class="swse-tablet-phys swse-tablet-phys--right-a" aria-hidden="true"></div>
+      <div class="swse-tablet-phys swse-tablet-phys--right-b" aria-hidden="true"></div>
+      <div class="swse-tablet-camera" aria-hidden="true"></div>
+      <div class="swse-tablet-led swse-tablet-led--a" aria-hidden="true"></div>
+      <div class="swse-tablet-led swse-tablet-led--b" aria-hidden="true"></div>
+      <div class="swse-tablet-led swse-tablet-led--c" aria-hidden="true"></div>
+      <div class="swse-tablet-led swse-tablet-led--d" aria-hidden="true"></div>
 
-  {{!-- Screen display decorations (scan lines and corner brackets) --}}
-  <div class="scan-v" aria-hidden="true"></div>
-  <div class="corner tl" aria-hidden="true"></div>
-  <div class="corner tr" aria-hidden="true"></div>
-  <div class="corner bl" aria-hidden="true"></div>
-  <div class="corner br" aria-hidden="true"></div>
-
-  {{!-- Character sheet frame partials (HUD, title, header, resources, tabs) --}}
-  {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/hud-bar.hbs"}}
-  {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/title-strip.hbs"}}
-  {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/header-block.hbs"}}
-  {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/resource-strip.hbs"}}
-  {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/tabs-bar.hbs"}}
-
-  {{!-- Character sheet content layout (sidebar + main with tabs) --}}
-  <div class="swse-concept-body">
-    <aside class="swse-concept-sidebar">
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/sidebar.hbs"}}
-    </aside>
-
-    <section class="swse-concept-main sheet-body sheet-content">
-      {{#if shellIsSheet}}
-      <section class="tab active flexcol" data-group="primary" data-tab-group="primary" data-tab="overview">
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs"}}
-      </section>
-
-      <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="abilities">
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/abilities-tab.hbs"}}
-      </section>
-
-      <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="skills">
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/skills-tab.hbs"}}
-      </section>
-
-      <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="combat">
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/combat-tab.hbs"}}
-      </section>
-
-      <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="talents">
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs"}}
-      </section>
-
-      {{#if actor.system.forceSensitive}}
-      <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="force">
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-tab.hbs"}}
-      </section>
-      {{/if}}
-
-      <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="gear">
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs"}}
-      </section>
-
-      <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="biography">
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/biography-tab.hbs"}}
-      </section>
-      {{/if}}
-
-      {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
-    </section>
-  </div>
-
-  {{!-- Item selection modal for inventory interactions --}}
-  <div id="item-selection-modal" class="item-selection-modal" style="display: none;">
-    <div class="modal-overlay"></div>
-    <div class="modal-dialog">
-      <svg class="modal-frame" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet">
-        <rect x="10" y="10" width="580" height="280" fill="rgba(10, 25, 50, 0.95)" stroke="rgba(0, 255, 136, 0.3)" stroke-width="2" rx="8"/>
-        <line x1="10" y1="70" x2="590" y2="70" stroke="rgba(0, 255, 136, 0.2)" stroke-width="1"/>
-        <rect x="200" y="220" width="140" height="45" fill="none" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1" rx="4"/>
-        <rect x="360" y="220" width="140" height="45" fill="none" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1" rx="4"/>
-      </svg>
-
-      <div class="modal-content">
-        <h2 id="modal-title" class="modal-title"></h2>
-        <p id="modal-message" class="modal-message"></p>
-
-        <div class="modal-buttons">
-          <button id="modal-btn-yes" class="modal-button modal-button-yes" data-action="modal-yes">
-            Yes, Browse Compendium
-          </button>
-          <button id="modal-btn-no" class="modal-button modal-button-no" data-action="modal-no">
-            No, Create Blank
-          </button>
-        </div>
+      <div class="swse-tablet-top-bezel" data-action="tablet-drag" title="Drag datapad" data-shell-chrome="top" aria-label="Datapad drag rail">
+        <div class="swse-tablet-drag-handle" data-action="tablet-drag" aria-hidden="true"></div>
       </div>
+
+      <div class="swse-tablet-hardware-rail swse-tablet-top-right-rail" aria-label="Tablet identity and window controls">
+        <span class="swse-tablet-serial swse-tablet-serial--aurebesh" aria-label="SN 4471-0EA-00827">SN4471-0EA-00827</span>
+        <span class="swse-tablet-status-lights" aria-hidden="true"><span></span><span></span><span></span></span>
+        <button type="button" class="swse-tablet-control swse-tablet-control--home" data-action="tablet-home" title="Home" aria-label="Home"><span class="swse-tablet-control__home-glyph" aria-hidden="true"></span></button>
+        <button type="button" class="swse-tablet-control swse-tablet-control--expand" data-action="tablet-expand" title="Expand" aria-label="Expand">⛶</button>
+        <button type="button" class="swse-tablet-control swse-tablet-control--close" data-action="tablet-close" title="Close" aria-label="Close">×</button>
+      </div>
+
+      <div class="swse-tablet-vent swse-tablet-vent--top" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+      <div class="swse-v2-screen swse-v2-screen--concept">
+        <div class="scan-v" aria-hidden="true"></div>
+        <div class="corner tl" aria-hidden="true"></div>
+        <div class="corner tr" aria-hidden="true"></div>
+        <div class="corner bl" aria-hidden="true"></div>
+        <div class="corner br" aria-hidden="true"></div>
+
+        {{#if shellIsSheet}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/hud-bar.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/title-strip.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/header-block.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/resource-strip.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/tabs-bar.hbs"}}
+
+          <div class="swse-concept-body">
+            <aside class="swse-concept-sidebar">
+              {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/sidebar.hbs"}}
+            </aside>
+
+            <section class="swse-concept-main sheet-body sheet-content">
+              <section class="tab active flexcol" data-group="primary" data-tab-group="primary" data-tab="overview">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs"}}
+              </section>
+
+              <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="abilities">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/abilities-tab.hbs"}}
+              </section>
+
+              <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="skills">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/skills-tab.hbs"}}
+              </section>
+
+              <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="combat">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/combat-tab.hbs"}}
+              </section>
+
+              <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="talents">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs"}}
+              </section>
+
+              {{#if actor.system.forceSensitive}}
+              <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="force">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-tab.hbs"}}
+              </section>
+              {{/if}}
+
+              <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="gear">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs"}}
+              </section>
+
+              <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="biography">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/biography-tab.hbs"}}
+              </section>
+            </section>
+          </div>
+
+          <div id="item-selection-modal" class="item-selection-modal" style="display: none;">
+            <div class="modal-overlay"></div>
+            <div class="modal-dialog">
+              <svg class="modal-frame" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet">
+                <rect x="10" y="10" width="580" height="280" fill="rgba(10, 25, 50, 0.95)" stroke="rgba(0, 255, 136, 0.3)" stroke-width="2" rx="8"/>
+                <line x1="10" y1="70" x2="590" y2="70" stroke="rgba(0, 255, 136, 0.2)" stroke-width="1"/>
+                <rect x="200" y="220" width="140" height="45" fill="none" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1" rx="4"/>
+                <rect x="360" y="220" width="140" height="45" fill="none" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1" rx="4"/>
+              </svg>
+
+              <div class="modal-content">
+                <h2 id="modal-title" class="modal-title"></h2>
+                <p id="modal-message" class="modal-message"></p>
+
+                <div class="modal-buttons">
+                  <button id="modal-btn-yes" class="modal-button modal-button-yes" data-action="modal-yes" type="button">
+                    Yes, Browse Compendium
+                  </button>
+                  <button id="modal-btn-no" class="modal-button modal-button-no" data-action="modal-no" type="button">
+                    No, Create Blank
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
+        {{else}}
+          <div class="swse-shell-screen-surface swse-shell-screen-surface--{{shellSurface}}">
+            {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
+          </div>
+        {{/if}}
+      </div>
+
+      <div class="swse-tablet-vent swse-tablet-vent--bottom" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+
+      <div class="swse-tablet-bottom-engraving" aria-hidden="true">CEC ID 31 · CLASS A · NO HOT OPEN</div>
+
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--n" data-action="tablet-resize" data-resize-dir="n" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--s" data-action="tablet-resize" data-resize-dir="s" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--e" data-action="tablet-resize" data-resize-dir="e" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--w" data-action="tablet-resize" data-resize-dir="w" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--ne" data-action="tablet-resize" data-resize-dir="ne" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--nw" data-action="tablet-resize" data-resize-dir="nw" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--se" data-action="tablet-resize" data-resize-dir="se" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-zone swse-tablet-resize-zone--sw" data-action="tablet-resize" data-resize-dir="sw" aria-hidden="true"></div>
+      <div class="swse-tablet-resize-grip" data-action="tablet-resize" data-resize-dir="se" title="Resize datapad" aria-label="Resize datapad"></div>
     </div>
   </div>
-
-{{/> }}
+</div>

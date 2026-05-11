@@ -12,7 +12,7 @@ import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or
 import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
-import { launchProgression, launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
@@ -91,6 +91,8 @@ const TABLET_BASE_HEIGHT = 900;
 const TABLET_MARGIN = 24;
 const TABLET_MIN_SCALE = 0.55;
 const TABLET_MAX_SCALE = 1.0;
+const TABLET_MIN_WIDTH = Math.round(TABLET_BASE_WIDTH * TABLET_MIN_SCALE);
+const TABLET_MIN_HEIGHT = Math.round(TABLET_BASE_HEIGHT * TABLET_MIN_SCALE);
 
 /**
  * Debounce utility: delays function execution until N ms have passed without new calls
@@ -292,12 +294,14 @@ export class SWSEV2CharacterSheet extends
 
   static DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
-    classes: ["swse", "sheet", "actor", "character", "swse-character-sheet", "swse-sheet", "v2"],
+    classes: ["application", "swse", "sheet", "actor", "character", "swse-character-sheet", "swse-character-sheet-form-root", "swse-sheet", "swse-sheet-ui", "swse-sheet--concept", "v2"],
+    // Foundry V13 ApplicationV2 seals its internal position object and only
+    // accepts core position keys here.  Legacy minWidth/minHeight keys crash
+    // during ApplicationV2 construction, so minimum sizing is applied in
+    // _applyTabletMinimumSize() after the element exists.
     position: {
       width: TABLET_BASE_WIDTH,
-      height: TABLET_BASE_HEIGHT,
-      minWidth: Math.round(TABLET_BASE_WIDTH * TABLET_MIN_SCALE),
-      minHeight: Math.round(TABLET_BASE_HEIGHT * TABLET_MIN_SCALE)
+      height: TABLET_BASE_HEIGHT
     },
     window: {
       resizable: true,
@@ -308,13 +312,12 @@ export class SWSEV2CharacterSheet extends
       closeOnSubmit: false,
       submitOnChange: false
     },
-    tabs: [
-      {
-        navSelector: ".sheet-tabs",
-        contentSelector: ".sheet-content",
-        initial: "overview"
-      }
-    ]
+    // The concept sheet owns tab switching through UIStateManager. Foundry's
+    // native ApplicationV2 tab binder expects a classic .window-content frame,
+    // which this frameless datapad deliberately does not render. Leaving this
+    // empty prevents native _onClickTab from throwing "No matching tab" while
+    // preserving the custom data-action="sheet-tab" behavior.
+    tabs: []
   };
 
   static PARTS = {
@@ -324,8 +327,21 @@ export class SWSEV2CharacterSheet extends
     }
   };
 
+  static _sanitizeApplicationV2Options(options = {}) {
+    const position = options?.position;
+    if (!position || !("minWidth" in position || "minHeight" in position)) {
+      return options;
+    }
+
+    const { minWidth, minHeight, ...safePosition } = position;
+    return {
+      ...options,
+      position: safePosition
+    };
+  }
+
   constructor(document, options = {}) {
-    super(document, options);
+    super(document, SWSEV2CharacterSheet._sanitizeApplicationV2Options(options));
     // Track sheet instance for Sentinel monitoring
     SentinelSheetGuardrails.trackSheetInstance("SWSEV2CharacterSheet");
 
@@ -483,6 +499,11 @@ export class SWSEV2CharacterSheet extends
       }
     }, { signal });
 
+    this._wireTabletWindowDrag(root, signal);
+    this._wireTabletWindowResize(root, signal);
+    this._wireTabletScrollFallback(root, signal);
+
+
     root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
       ev.preventDefault();
       if (this._tabletExpanded) {
@@ -610,6 +631,207 @@ export class SWSEV2CharacterSheet extends
     }
   }
 
+  /**
+   * Frameless tablet drag support.
+   *
+   * Foundry can only drag by its native header; this sheet hides that chrome.
+   * Drag must therefore be owned by the metal bezel itself, not by the screen
+   * content.  The listener is delegated from the shell so it still works if the
+   * visual drag rail is covered or the tablet skin changes.
+   */
+  _wireTabletWindowDrag(root, signal) {
+    const shell = root.querySelector('.swse-sheet-v2-shell--concept');
+    if (!shell) return;
+
+    const isInteractiveTarget = (target) => !!target?.closest?.(
+      'button, input, select, textarea, a, [contenteditable="true"], [data-route-id], [data-shell-action], [data-upgrade-action], [data-action]:not([data-action="tablet-drag"])'
+    );
+
+    const isBezelDragTarget = (target) => {
+      if (!target?.closest) return false;
+      if (target.closest('[data-action="tablet-drag"]')) return true;
+      if (!target.closest('.swse-sheet-v2-shell--concept')) return false;
+      // The screen owns clicks and scroll. Only the exposed metal shell/bezel moves the window.
+      return !target.closest('.swse-v2-screen--concept');
+    };
+
+    shell.addEventListener('pointerdown', (ev) => {
+      if (ev.button !== 0) return;
+      if (isInteractiveTarget(ev.target)) return;
+      if (!isBezelDragTarget(ev.target)) return;
+
+      ev.preventDefault();
+      shell.setPointerCapture?.(ev.pointerId);
+      shell.classList.add('is-window-dragging');
+
+      const startX = ev.clientX;
+      const startY = ev.clientY;
+      const rect = root.getBoundingClientRect();
+      const startLeft = Number.isFinite(Number(this.position?.left)) ? Number(this.position.left) : rect.left;
+      const startTop = Number.isFinite(Number(this.position?.top)) ? Number(this.position.top) : rect.top;
+
+      const onMove = (moveEv) => {
+        moveEv.preventDefault();
+        this.setPosition({
+          left: startLeft + moveEv.clientX - startX,
+          top: startTop + moveEv.clientY - startY
+        });
+      };
+
+      const onEnd = (upEv) => {
+        shell.releasePointerCapture?.(upEv.pointerId);
+        shell.classList.remove('is-window-dragging');
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onEnd);
+        window.removeEventListener('pointercancel', onEnd);
+      };
+
+      window.addEventListener('pointermove', onMove, { signal });
+      window.addEventListener('pointerup', onEnd, { once: true, signal });
+      window.addEventListener('pointercancel', onEnd, { once: true, signal });
+    }, { signal });
+  }
+
+
+  /**
+   * Frameless tablet resize support.
+   *
+   * Foundry's native resize grip is not rendered when this ActorSheetV2 runs
+   * frame:false.  The metallic shell therefore exposes its own lower-right grip
+   * and forwards pointer movement to ApplicationV2#setPosition().
+   */
+  _wireTabletWindowResize(root, signal) {
+    const handles = root.querySelectorAll('[data-action="tablet-resize"]');
+    if (!handles.length) return;
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), Math.max(min, max));
+
+    const beginResize = (ev, handle) => {
+      if (ev.button !== 0) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      const dir = String(handle.dataset.resizeDir || 'se').toLowerCase();
+      const resizeWest = dir.includes('w');
+      const resizeEast = dir.includes('e') || (!resizeWest && !dir.includes('n') && !dir.includes('s'));
+      const resizeNorth = dir.includes('n');
+      const resizeSouth = dir.includes('s') || (!resizeNorth && !dir.includes('e') && !dir.includes('w'));
+
+      handle.setPointerCapture?.(ev.pointerId);
+      root.classList.add('is-window-resizing', `is-window-resizing--${dir}`);
+
+      const startX = ev.clientX;
+      const startY = ev.clientY;
+      const rect = root.getBoundingClientRect();
+      const startWidth = rect.width || Number(this.position?.width) || TABLET_BASE_WIDTH;
+      const startHeight = rect.height || Number(this.position?.height) || TABLET_BASE_HEIGHT;
+      const startLeft = Number.isFinite(Number(this.position?.left)) ? Number(this.position.left) : rect.left;
+      const startTop = Number.isFinite(Number(this.position?.top)) ? Number(this.position.top) : rect.top;
+      const startRight = startLeft + startWidth;
+      const startBottom = startTop + startHeight;
+
+      const minWidth = TABLET_MIN_WIDTH;
+      const minHeight = TABLET_MIN_HEIGHT;
+      const viewportInset = 8;
+
+      const onMove = (moveEv) => {
+        moveEv.preventDefault();
+
+        const dx = moveEv.clientX - startX;
+        const dy = moveEv.clientY - startY;
+        let left = startLeft;
+        let top = startTop;
+        let width = startWidth;
+        let height = startHeight;
+
+        if (resizeEast) {
+          const maxWidth = Math.max(minWidth, window.innerWidth - startLeft - viewportInset);
+          width = clamp(startWidth + dx, minWidth, maxWidth);
+        }
+
+        if (resizeSouth) {
+          const maxHeight = Math.max(minHeight, window.innerHeight - startTop - viewportInset);
+          height = clamp(startHeight + dy, minHeight, maxHeight);
+        }
+
+        if (resizeWest) {
+          const proposedLeft = clamp(startLeft + dx, viewportInset, startRight - minWidth);
+          left = proposedLeft;
+          width = clamp(startRight - proposedLeft, minWidth, Math.max(minWidth, startRight - viewportInset));
+        }
+
+        if (resizeNorth) {
+          const proposedTop = clamp(startTop + dy, viewportInset, startBottom - minHeight);
+          top = proposedTop;
+          height = clamp(startBottom - proposedTop, minHeight, Math.max(minHeight, startBottom - viewportInset));
+        }
+
+        this._tabletExpanded = false;
+        this.setPosition({ left, top, width, height });
+        root.style.setProperty('--swse-tablet-scaled-width', `${Math.round(width)}px`);
+        root.style.setProperty('--swse-tablet-scaled-height', `${Math.round(height)}px`);
+      };
+
+      const onEnd = (upEv) => {
+        handle.releasePointerCapture?.(upEv.pointerId);
+        root.classList.remove('is-window-resizing', `is-window-resizing--${dir}`);
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onEnd);
+        window.removeEventListener('pointercancel', onEnd);
+      };
+
+      window.addEventListener('pointermove', onMove, { signal });
+      window.addEventListener('pointerup', onEnd, { once: true, signal });
+      window.addEventListener('pointercancel', onEnd, { once: true, signal });
+    };
+
+    handles.forEach(handle => {
+      handle.addEventListener('pointerdown', (ev) => beginResize(ev, handle), { signal });
+    });
+  }
+
+
+  /**
+   * Wheel fallback for the frameless tablet display.
+   *
+   * Foundry's game body is fixed/overflow-hidden, and this sheet has no native
+   * .window-content scroller. The actual scroll owner is the datapad screen.
+   * Some nested panes mark themselves overflow-hidden, so wheel events can feel
+   * dead even when the screen should scroll. Route wheel deltas to the nearest
+   * scrollable shell surface, then to the screen itself.
+   */
+  _wireTabletScrollFallback(root, signal) {
+    const screen = root.querySelector('.swse-v2-screen--concept');
+    if (!screen) return;
+
+    const scrollSelectors = [
+      '.swse-v2-screen--concept',
+      '.swse-shell-surface__body',
+      '.swse-settings-body',
+      '.swse-home-surface',
+      '.swse-progression-surface',
+      '.swse-customization-surface',
+      '.swse-concept-main.sheet-body > .tab.active'
+    ];
+
+    const findScrollOwner = (target) => {
+      for (const selector of scrollSelectors) {
+        const candidate = target?.closest?.(selector);
+        if (candidate && candidate.scrollHeight > candidate.clientHeight + 2) return candidate;
+      }
+      return screen.scrollHeight > screen.clientHeight + 2 ? screen : null;
+    };
+
+    screen.addEventListener('wheel', (ev) => {
+      const owner = findScrollOwner(ev.target);
+      if (!owner) return;
+
+      const before = owner.scrollTop;
+      owner.scrollTop += ev.deltaY;
+      if (owner.scrollTop !== before) ev.preventDefault();
+    }, { signal, passive: false });
+  }
+
   /** Wire home surface tile click → setSurface(routeId). */
   _wireHomeSurfaceEvents(root, signal) {
     const homeRoot = root.querySelector('[data-shell-region="surface-home"]');
@@ -621,21 +843,21 @@ export class SWSEV2CharacterSheet extends
         if (el.disabled) return;
         const routeId = el.dataset.routeId;
         if (!routeId) return;
+        const surfaceOptions = { source: 'home' };
+        if (routeId === 'chargen' || routeId === 'progression') surfaceOptions.skipIntro = true;
+        if (el.dataset.bayMode) surfaceOptions.bayMode = el.dataset.bayMode;
+        if (el.dataset.contextMode) surfaceOptions.contextMode = el.dataset.contextMode;
         homeRoot.querySelectorAll('.swse-app-tile--launching').forEach(tile => tile.classList.remove('swse-app-tile--launching'));
         el.classList.add('swse-app-tile--launching');
         await new Promise(resolve => setTimeout(resolve, 150));
 
-        // Special-case progression/chargen: launch the real flow instead of routing to placeholder surface
-        if (routeId === 'chargen') {
-          await launchProgression(this.actor, { currentStep: 'intro', source: 'home' });
-          // Do NOT render - ChargenShell/ProgressionFramework opens as a separate window
-        } else if (routeId === 'progression') {
-          await launchProgression(this.actor, { source: 'home' });
-          // Do NOT render - ProgressionFramework opens as a separate window
-        } else {
-          await this.setSurface(routeId, { source: 'home' });
-          this.render(false);
-        }
+        // Progression and chargen are first-class shell surfaces on the character
+        // holopad. Do not call launchProgression() from the Home tile here: if the
+        // ShellRouter registration is not yet visible for this render tick, that path
+        // can fall back to a standalone empty ApplicationV2 popup. Routing directly
+        // lets ShellSurfaceRegistry/ProgressionSurfaceAdapter build the inline VM.
+        await this.setSurface(routeId, surfaceOptions);
+        this.render(false);
       }, { signal });
     });
 
@@ -867,7 +1089,30 @@ export class SWSEV2CharacterSheet extends
     settingsRoot.querySelectorAll('[data-theme-preset]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        await ThemeManager.setTheme({ theme: el.dataset.themePreset });
+        const themeKey = ThemeResolutionService.resolveThemeKey(el.dataset.themePreset, { preferActor: false });
+        await ThemeManager.setTheme({ theme: themeKey });
+
+        // Settings surface is inside an actor sheet. Persist the choice on the
+        // actor too; otherwise an existing actor sheetTheme flag can continue
+        // to override the client setting and make the preset button appear to
+        // do nothing after the rerender.
+        if (this.document?.setFlag) {
+          await this.document.setFlag('foundryvtt-swse', 'sheetTheme', themeKey);
+        }
+
+        const sheetShell = root.querySelector('.sheet-shell, .swse-sheet-v2-shell');
+        if (sheetShell) {
+          ThemeResolutionService.applyToElement(sheetShell, {
+            actor: this.document,
+            themeKey,
+            motionStyle: ThemeResolutionService.resolveMotionStyle(null, { actor: this.document })
+          });
+        }
+
+        settingsRoot.querySelectorAll('[data-theme-preset]').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.themePreset === themeKey);
+        });
+
         this.render(false);
       }, { signal });
     });
@@ -899,10 +1144,11 @@ export class SWSEV2CharacterSheet extends
       }, { signal });
     });
 
-    settingsRoot.querySelectorAll('[data-language-setting]').forEach(el => {
+    settingsRoot.querySelectorAll('[data-language-setting], [data-language-mode]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
-        await ThemeManager.setTheme({ language: el.dataset.languageSetting });
+        const language = el.dataset.languageSetting || el.dataset.languageMode;
+        await ThemeManager.setTheme({ language });
         this.render(false);
       }, { signal });
     });
@@ -1095,67 +1341,78 @@ export class SWSEV2CharacterSheet extends
 
   setPosition(options = {}) {
     // CRITICAL: ApplicationV2 element resolution
-    // this.element is already an HTMLElement in Foundry v13, NOT a jQuery object
+    // this.element is already an HTMLElement in Foundry v13, NOT a jQuery object.
     const el = this.element instanceof HTMLElement ? this.element : this.element?.[0];
-
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
 
     if (!el) {
       return super.setPosition(options);
     }
 
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
     const rect = el.getBoundingClientRect();
 
-    // Use actual dimensions if element is rendered, otherwise fall back to position defaults
-    let width = rect.width;
-    let height = rect.height;
+    // Use actual dimensions if element is rendered, otherwise fall back to position defaults.
+    let width = Number(options.width) || rect.width;
+    let height = Number(options.height) || rect.height;
 
-    // Guard against unmeasured/mini elements (like 26x24 measurements)
+    // Guard against unmeasured/mini elements (like 26x24 measurements).
     if (width < 100 || height < 100) {
       width = this.position?.width || this.constructor.DEFAULT_OPTIONS?.position?.width || 800;
       height = this.position?.height || this.constructor.DEFAULT_OPTIONS?.position?.height || 600;
     }
 
-    // Validate sidebar but do NOT use it for positioning
-    // (DevTools or UI layout issues can corrupt sidebar measurements)
-    const sidebar = document.querySelector("#sidebar");
-    let sidebarAccepted = false;
-    let sidebarReason = "no sidebar";
+    const hasExplicitLeft = Number.isFinite(Number(options.left));
+    const hasExplicitTop = Number.isFinite(Number(options.top));
+    const fallbackLeft = Math.max((vw - width) / 2, 0);
+    const fallbackTop = Math.max((vh - height) / 2, 0);
+    const currentLeft = Number.isFinite(Number(this.position?.left))
+      ? Number(this.position.left)
+      : (Number.isFinite(rect.left) && rect.width > 0 ? rect.left : fallbackLeft);
+    const currentTop = Number.isFinite(Number(this.position?.top))
+      ? Number(this.position.top)
+      : (Number.isFinite(rect.top) && rect.height > 0 ? rect.top : fallbackTop);
+    const keepVisiblePadding = 32;
+    const maxLeft = Math.max(vw - keepVisiblePadding, keepVisiblePadding - width);
+    const maxTop = Math.max(vh - keepVisiblePadding, keepVisiblePadding - height);
 
-    if (sidebar && sidebar.id === "sidebar") {
-      const sidebarRect = sidebar.getBoundingClientRect();
-      // Only trust sidebar if it's actually docked at a viewport edge
-      const rightDocked = Math.abs(sidebarRect.right - vw) < 8;
-      const leftDocked = sidebarRect.left <= 8;
+    // Respect explicit left/top from Foundry drag, custom tablet drag, restore, and setPosition calls.
+    // If AppV2 calls setPosition with only size changes, preserve the current position instead
+    // of re-centering. Re-centering here made the frameless tablet feel locked in place.
+    const newLeft = hasExplicitLeft
+      ? Math.min(Math.max(Number(options.left), keepVisiblePadding - width), maxLeft)
+      : Math.min(Math.max(currentLeft, keepVisiblePadding - width), maxLeft);
+    const newTop = hasExplicitTop
+      ? Math.min(Math.max(Number(options.top), 0), maxTop)
+      : Math.min(Math.max(currentTop, 0), maxTop);
 
-      if ((rightDocked || leftDocked) && sidebarRect.width > 100 && sidebarRect.height > 100) {
-        sidebarAccepted = true;
-        sidebarReason = rightDocked ? "right-docked" : "left-docked";
-      } else {
-        sidebarReason = `detected but not docked`;
-      }
-    }
-
-    // Center in viewport (don't adjust for sidebar—let Foundry handle stacking)
-    const newLeft = Math.max((vw - width) / 2, 0);
-    const newTop = Math.max((vh - height) / 2, 0);
-
-    // Log diagnostic once per render cycle (not every setPosition call)
+    // Log diagnostic once per render cycle (not every drag frame).
     if (this._lastPositionDiagnosticRender !== this.rendered) {
       this._lastPositionDiagnosticRender = this.rendered;
       console.log(`[SWSE Sheet Position Debug] ${this.actor?.name}`, {
         viewport: { width: vw, height: vh },
         elementRect: { width: rect.width, height: rect.height, fallback: width !== rect.width },
-        sidebarAccepted,
-        sidebarReason,
+        explicitPosition: { left: hasExplicitLeft, top: hasExplicitTop },
         computed: { left: newLeft, top: newTop, width, height }
       });
     }
 
-    // Merge with options and call parent once
-    const position = Object.assign({}, options, { left: newLeft, top: newTop });
-    return super.setPosition(position);
+    const position = Object.assign({}, options, { left: newLeft, top: newTop, width, height });
+    const result = super.setPosition(position);
+
+    // In frameless ActorSheetV2, the application element is the sheet form itself.
+    // Foundry may set top/left on it without giving it an ApplicationV2 frame or
+    // .window-content wrapper, so force the root to be a positioned viewport.
+    el.style.position = 'absolute';
+    el.style.left = `${Math.round(newLeft)}px`;
+    el.style.top = `${Math.round(newTop)}px`;
+    el.style.width = `${Math.round(width)}px`;
+    el.style.height = `${Math.round(height)}px`;
+    el.style.maxWidth = 'none';
+    el.style.maxHeight = 'none';
+    el.style.overflow = 'hidden';
+
+    return result;
   }
 
   // ---------------------------------------------------------------
@@ -1185,6 +1442,22 @@ export class SWSEV2CharacterSheet extends
   }
 
   /**
+   * Apply the sheet minimum size through the rendered HTMLElement instead of
+   * DEFAULT_OPTIONS.position. Foundry V13 ApplicationV2 rejects non-core
+   * position keys such as minWidth/minHeight during construction.
+   * @param {HTMLElement} [root]
+   */
+  _applyTabletMinimumSize(root = this.element) {
+    const el = root instanceof HTMLElement ? root : root?.[0];
+    if (!el) return;
+
+    el.style.setProperty('--swse-tablet-min-width', `${TABLET_MIN_WIDTH}px`);
+    el.style.setProperty('--swse-tablet-min-height', `${TABLET_MIN_HEIGHT}px`);
+    el.style.setProperty('min-width', `${TABLET_MIN_WIDTH}px`);
+    el.style.setProperty('min-height', `${TABLET_MIN_HEIGHT}px`);
+  }
+
+  /**
    * Apply viewport-fit scaling to the tablet shell.
    * Scales the entire holopad proportionally so all UI elements remain visible.
    * Called once on first render and when user maximizes/expands.
@@ -1202,6 +1475,7 @@ export class SWSEV2CharacterSheet extends
 
     const root = this.element;
     if (root) {
+      this._applyTabletMinimumSize(root);
       root.style.setProperty('--swse-tablet-scale', String(scale));
       root.style.setProperty('--swse-tablet-base-width', TABLET_BASE_WIDTH + 'px');
       root.style.setProperty('--swse-tablet-base-height', TABLET_BASE_HEIGHT + 'px');
@@ -1268,7 +1542,9 @@ export class SWSEV2CharacterSheet extends
     // ── Phase 6: Restore UI state after rerender ──
     // This ensures expanded sections, active tabs, focused fields, and scroll position
     // are preserved across rerenders triggered by actor/item updates
-    this.uiStateManager.restoreState();
+    if (this._shellSurface === 'sheet') {
+      this.uiStateManager.restoreState();
+    }
 
     // ── Phase 11: Initialize HOME surface on first render ──
     // If this is the very first render and we're in sheet mode, trigger HOME display
@@ -1298,18 +1574,29 @@ export class SWSEV2CharacterSheet extends
       return;
     }
 
+    this._applyTabletMinimumSize(root);
+
     // Phase 9: Apply help level CSS class to root for tier-aware affordance visibility
     HelpModeManager.getLevels().forEach(level => {
       root.classList.remove(`help-level--${level.toLowerCase()}`);
     });
     root.classList.add(`help-level--${this._helpLevel.toLowerCase()}`);
 
-    // Phase 11: Apply theme and motion data attributes to sheet-shell element
-    // Use data-theme for theme switching (CSS uses [data-theme] selectors)
-    // Apply fonts and motion styles via inline CSS variables
+    // Phase 11: Apply theme and motion data attributes to the frameless root and shell.
+    // This sheet has no Foundry .window-content wrapper, so the root FORM and the
+    // tablet shell both need the concept variables emitted inline for exact palette fidelity.
+    root.classList.add('swse-character-sheet-form-root', 'swse-sheet--concept', 'swse-sheet-ui');
+    const sheetThemeContext = ThemeResolutionService.applyToElement(root, { actor: this.document });
     const sheetShell = root.querySelector('.sheet-shell');
     if (sheetShell) {
-      ThemeResolutionService.applyToElement(sheetShell, { actor: this.document });
+      ThemeResolutionService.applyToElement(sheetShell, {
+        actor: this.document,
+        themeKey: sheetThemeContext.themeKey,
+        motionStyle: sheetThemeContext.motionStyle,
+        surfaceStyleInline: sheetThemeContext.surfaceStyleInline,
+        themeStyleInline: sheetThemeContext.themeStyleInline,
+        motionStyleInline: sheetThemeContext.motionStyleInline
+      });
     }
 
     // Wire listeners to the sheet root
@@ -1373,19 +1660,21 @@ export class SWSEV2CharacterSheet extends
       characterSheetDiagnostics.inspectAppState(this);
       // swseLogger.debug('[SWSE SheetDiag] ════════════════════════════════════');
 
-      // ═══ CONTRACT ENFORCEMENT: Validate architecture compliance ═══
-      // swseLogger.debug('[CHARACTER SHEET CONTRACT] RUNNING ENFORCEMENT VALIDATION');
-      CharacterSheetContractEnforcer.validateAndReport(this.element);
+      if (this._shellSurface === 'sheet') {
+        // ═══ CONTRACT ENFORCEMENT: Validate architecture compliance ═══
+        // swseLogger.debug('[CHARACTER SHEET CONTRACT] RUNNING ENFORCEMENT VALIDATION');
+        CharacterSheetContractEnforcer.validateAndReport(this.element);
 
-      // ═══ DEBUG: Print exact violation details for fixing ═══
-      // swseLogger.debug('\n');
-      // swseLogger.debug('╔════════════════════════════════════════════════════════════════╗');
-      // swseLogger.debug('║          EXACT VIOLATIONS FOR DEBUGGING AND FIXING             ║');
-      // swseLogger.debug('╚════════════════════════════════════════════════════════════════╝');
-      CharacterSheetContractEnforcer.debugScrollOwners(this.element);
-      CharacterSheetContractEnforcer.debugIllegalPanelScrollers(this.element);
-      CharacterSheetContractEnforcer.debugWindowContentMinHeight(this.element);
-      CharacterSheetContractEnforcer.debugHeightChain(this.element);
+        // ═══ DEBUG: Print exact violation details for fixing ═══
+        // swseLogger.debug('\n');
+        // swseLogger.debug('╔════════════════════════════════════════════════════════════════╗');
+        // swseLogger.debug('║          EXACT VIOLATIONS FOR DEBUGGING AND FIXING             ║');
+        // swseLogger.debug('╚════════════════════════════════════════════════════════════════╝');
+        CharacterSheetContractEnforcer.debugScrollOwners(this.element);
+        CharacterSheetContractEnforcer.debugIllegalPanelScrollers(this.element);
+        CharacterSheetContractEnforcer.debugWindowContentMinHeight(this.element);
+        CharacterSheetContractEnforcer.debugHeightChain(this.element);
+      }
     }, 100);
 
     // ─── Phase 11: Shell Host Registration + Event Wiring ─────────────────
@@ -2241,10 +2530,11 @@ const forcePoints = [];
     const panelsToBuild = this.visibilityManager.getPanelsToBuild(this.document);
     const panelsToSkip = this.visibilityManager.getPanelsSkipped(this.document);
 
-    // CRITICAL: Always build 'healthPanel' for header HP bar display
-    // Note: Panel name is 'healthPanel' (registered in PANEL_REGISTRY), not 'health'
-    if (!panelsToBuild.includes('healthPanel')) {
-      panelsToBuild.push('healthPanel');
+    // CRITICAL: Always build header-bound panels. The concept chrome renders
+    // outside individual tabs and shell surfaces, so these view models must be
+    // available even when Home/Settings/Progression is active.
+    for (const requiredPanel of ['portraitPanel', 'biographyPanel', 'healthPanel', 'defensePanel']) {
+      if (!panelsToBuild.includes(requiredPanel)) panelsToBuild.push(requiredPanel);
     }
 
     // Build visible panels + cached hidden panels
@@ -2280,6 +2570,21 @@ const forcePoints = [];
       }
     }
 
+    // Header fallback safety: never let the chrome render an unbound/broken
+    // portrait if a lazy panel selection missed the portrait builder.
+    panelContexts.portraitPanel ??= {
+      img: actor?.img || 'icons/svg/mystery-man.svg',
+      name: actor?.name || 'Unnamed',
+      canEdit: this.isEditable
+    };
+    panelContexts.biographyPanel ??= {
+      identity: {
+        name: actor?.name || 'Unnamed',
+        player: actor?.system?.details?.player || '',
+        canEdit: this.isEditable
+      }
+    };
+
     // Log skipped panels for diagnostics
     if (panelsToSkip.length > 0) {
       for (const panelName of panelsToSkip) {
@@ -2293,7 +2598,81 @@ const forcePoints = [];
 
     const _safeCloneVm = (vm) => {
       if (!vm) return null;
-      try { return structuredClone(vm); } catch { return { error: 'VM contains non-serializable data' }; }
+
+      const seen = new WeakSet();
+      const sanitize = (value, key = '') => {
+        if (value == null) return value;
+
+        const type = typeof value;
+        if (type === 'string' || type === 'number' || type === 'boolean') return value;
+        if (type === 'bigint') return String(value);
+        if (type === 'function' || type === 'symbol') return undefined;
+
+        // Shell/progression VMs are template payloads. They must never carry
+        // live Foundry Documents, Application instances, DOM nodes, AbortSignals,
+        // or callback objects into the character sheet render context. Those
+        // objects are useful to the adapter internally, but they are not needed by
+        // the inline surface partials and they fail structuredClone().
+        if (value instanceof Date) return value.toISOString();
+        if (typeof HTMLElement !== 'undefined' && value instanceof HTMLElement) return undefined;
+        if (typeof Node !== 'undefined' && value instanceof Node) return undefined;
+        if (typeof AbortController !== 'undefined' && value instanceof AbortController) return undefined;
+        if (typeof AbortSignal !== 'undefined' && value instanceof AbortSignal) return undefined;
+        if (value?.documentName || value?.constructor?.documentName) {
+          return {
+            id: value.id ?? value._id ?? null,
+            uuid: value.uuid ?? null,
+            name: value.name ?? '',
+            type: value.type ?? value.documentName ?? value.constructor?.documentName ?? key
+          };
+        }
+
+        if (seen.has(value)) return undefined;
+        seen.add(value);
+
+        if (Array.isArray(value)) {
+          return value.map((entry) => sanitize(entry)).filter((entry) => entry !== undefined);
+        }
+
+        if (value instanceof Map) {
+          return Object.fromEntries(
+            Array.from(value.entries())
+              .map(([mapKey, mapValue]) => [String(mapKey), sanitize(mapValue, String(mapKey))])
+              .filter(([, mapValue]) => mapValue !== undefined)
+          );
+        }
+
+        if (value instanceof Set) {
+          return Array.from(value.values()).map((entry) => sanitize(entry)).filter((entry) => entry !== undefined);
+        }
+
+        const out = {};
+        for (const [entryKey, entryValue] of Object.entries(value)) {
+          if (entryKey === 'app' || entryKey === 'actor' || entryKey === 'document' || entryKey === 'shellHost') continue;
+          if (entryKey.startsWith('_') && entryKey !== '_id') continue;
+          const clean = sanitize(entryValue, entryKey);
+          if (clean !== undefined) out[entryKey] = clean;
+        }
+        return out;
+      };
+
+      const sanitized = sanitize(vm);
+      try {
+        structuredClone(sanitized);
+        return sanitized;
+      } catch (err) {
+        swseLogger.warn('[SWSEV2CharacterSheet] Shell surface VM sanitizer dropped non-serializable payload', {
+          error: err?.message,
+          surface: vm?.id,
+          mode: vm?.mode
+        });
+        return {
+          id: vm?.id ?? 'unknown',
+          title: vm?.title ?? 'Holopad Surface',
+          mode: vm?.mode ?? null,
+          error: 'Surface data could not be prepared for inline rendering.'
+        };
+      }
     };
 
     let shellSurfaceVm = null;
@@ -2375,6 +2754,8 @@ const forcePoints = [];
       actor
     });
 
+    const sheetThemeContext = ThemeResolutionService.buildSurfaceContext({ actor });
+
     const finalContext = {
       ...context,
       _sheetContractVersion,
@@ -2405,10 +2786,13 @@ const forcePoints = [];
       // ═════════════════════════════════════════════════════════════════
       // PHASE 11: THEME & MOTION CONTROL CONTEXT
       // ═════════════════════════════════════════════════════════════════
-      sheetTheme: ThemeResolutionService.resolveThemeKey(null, { actor }),
-      sheetThemeGroups: getActorSheetThemeGroups(ThemeResolutionService.resolveThemeKey(null, { actor })),
-      sheetMotionStyle: ThemeResolutionService.resolveMotionStyle(null, { actor }),
+      sheetTheme: sheetThemeContext.themeKey,
+      sheetThemeGroups: getActorSheetThemeGroups(sheetThemeContext.themeKey),
+      sheetMotionStyle: sheetThemeContext.motionStyle,
       sheetMotionOptions: ThemeResolutionService.getMotionOptions(),
+      sheetThemeStyleInline: sheetThemeContext.themeStyleInline,
+      sheetMotionStyleInline: sheetThemeContext.motionStyleInline,
+      sheetSurfaceStyleInline: sheetThemeContext.surfaceStyleInline,
       // ═════════════════════════════════════════════════════════════════
       // PHASE 2: MISSING CONTEXT KEYS (REMEDIATION)
       // ═════════════════════════════════════════════════════════════════
@@ -2759,10 +3143,10 @@ const forcePoints = [];
     // DELEGATED: Tab Switching - Route through shared UI state manager
     // This prevents "blank body" states where DOM classes and remembered state diverge.
     html.addEventListener("click", ev => {
-      const tabLink = ev.target.closest("[data-action='tab']");
+      const tabLink = ev.target.closest("[data-action='sheet-tab'], [data-action='tab']");
       if (!tabLink) return;
 
-      const tabName = tabLink.dataset.tab;
+      const tabName = tabLink.dataset.sheetTab || tabLink.dataset.tab;
       if (!tabName) return;
 
       ev.preventDefault();
@@ -3148,28 +3532,29 @@ const forcePoints = [];
       this._openMentorConversation();
     }, { signal, capture: false });
 
-    // Progression buttons (Chargen/LevelUp) — Route through unified entry point (delegated)
+    // Progression buttons (Chargen/LevelUp) — route inline inside this holopad.
     html.addEventListener("click", async ev => {
       const button = ev.target.closest('[data-action="cmd-chargen"], [data-action="cmd-levelup"]');
       if (!button) return;
       ev.preventDefault();
       try {
-        await launchProgression(this.actor);
+        const surfaceId = button.dataset.action === 'cmd-chargen' ? 'chargen' : 'progression';
+        await this.setSurface(surfaceId, { source: 'sheet', skipIntro: true });
+        this.render(false);
       } catch (err) {
-        // console.error('[SHEET] ✗ launchProgression failed:', err);
         swseLogger.error('[CharacterSheet] Progression launch failed:', err);
       }
     }, { signal, capture: false });
 
-    // Abilities panel: jump directly to the progression attribute step
+    // Abilities panel: jump directly to the progression attribute step inline.
     html.addEventListener("click", async ev => {
       const button = ev.target.closest('[data-action="roll-attributes"]');
       if (!button) return;
       ev.preventDefault();
       try {
-        await launchProgression(this.actor, { currentStep: 'attribute' });
+        await this.setSurface('progression', { source: 'sheet', stepId: 'attribute', currentStep: 'attribute' });
+        this.render(false);
       } catch (err) {
-        // console.error('[SHEET] â roll-attributes failed:', err);
         swseLogger.error('[CharacterSheet] roll-attributes failed:', err);
       }
     }, { signal, capture: false });
@@ -3201,9 +3586,9 @@ const forcePoints = [];
       if (!targetStep) return;
 
       try {
-        await launchProgression(this.actor, { currentStep: targetStep });
+        await this.setSurface('progression', { source: 'sheet', stepId: targetStep, currentStep: targetStep });
+        this.render(false);
       } catch (err) {
-        // console.error(`[SHEET] ✗ ${action} failed:`, err);
         swseLogger.error(`[CharacterSheet] ${action} failed:`, err);
       }
     }, { signal, capture: false });
@@ -5093,7 +5478,7 @@ const forcePoints = [];
   _pulseTab(tabName) {
     if (!tabName) return;
 
-    const tabButton = this.element?.querySelector(`[data-tab="${tabName}"]`);
+    const tabButton = this.element?.querySelector(`[data-sheet-tab="${tabName}"], [data-tab="${tabName}"]`);
     if (!tabButton) return;
 
     tabButton.classList.add('tab-pulse');

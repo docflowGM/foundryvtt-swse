@@ -36,97 +36,17 @@
     <span>{{vm.error}}</span>
   </div>
 
-  {{!-- Inline content: ChargenShell rendered inline --}}
+  {{!-- Inline content: canonical ProgressionShell rendered by ProgressionSurfaceAdapter --}}
+  {{else if vm.shellHtml}}
+  <div class="swse-progression-inline-host swse-progression-inline-host--chargen" data-inline-progression-host="chargen">
+    {{{vm.shellHtml}}}
+  </div>
+
   {{else if vm.vm}}
-  <div class="swse-progression-inline swse-progression-inline--chargen"
-       data-theme="{{vm.vm.themeKey}}"
-       data-motion-style="{{vm.vm.motionStyle}}"
-       data-font-mode="{{vm.vm.fontMode}}"
-       style="{{{vm.vm.themeStyleInline}}}; {{{vm.vm.motionStyleInline}}};">
-
-    {{!-- Intro/boot mode: single work surface, no rails --}}
-    {{#if vm.vm.isIntroMode}}
-    <div class="swse-prog-inline-intro" data-region="work-surface">
-      {{#if vm.vm.workSurfaceHtml}}
-        {{{vm.vm.workSurfaceHtml}}}
-      {{/if}}
-    </div>
-
-    {{!-- Normal mode: full progression shell layout --}}
-    {{else}}
-
-    {{#if vm.vm.parts.progressRail}}
-    <div class="swse-prog-inline-progress-rail" data-region="progress-rail">
-      {{{vm.vm.parts.progressRail}}}
-    </div>
-    {{/if}}
-
-    <div class="swse-prog-inline-body">
-
-      {{#if vm.vm.parts.mentorRail}}
-      <div class="swse-prog-inline-mentor" data-region="mentor-rail">
-        {{{vm.vm.parts.mentorRail}}}
-      </div>
-      {{/if}}
-
-      <div class="swse-prog-inline-work" data-region="work-surface">
-        {{#if vm.vm.workSurfaceHtml}}
-          {{{vm.vm.workSurfaceHtml}}}
-        {{else}}
-          <div class="swse-prog-empty">No step content available.</div>
-        {{/if}}
-      </div>
-
-      {{#if vm.vm.detailsPanelHtml}}
-      <div class="swse-prog-inline-details" data-region="details-panel">
-        {{{vm.vm.detailsPanelHtml}}}
-      </div>
-      {{/if}}
-
-    </div>
-
-    {{#if vm.vm.parts.utilityBar}}
-    <div class="swse-prog-inline-utility" data-region="utility-bar">
-      {{{vm.vm.parts.utilityBar}}}
-    </div>
-    {{/if}}
-
-    {{#if vm.vm.footer}}
-    <div class="swse-prog-inline-footer" data-region="action-footer">
-      {{#unless vm.vm.footer.hideBack}}
-      <button class="swse-prog-footer-btn swse-prog-footer-btn--back"
-              data-action="previous-step"
-              type="button">
-        <i class="fas fa-chevron-left"></i> Back
-      </button>
-      {{/unless}}
-
-      <div class="swse-prog-footer-center">
-        <span class="swse-prog-step-label">{{vm.vm.stepContext.displayText}}</span>
-        {{#if vm.vm.footer.statusText}}
-        <span class="swse-prog-footer-status {{vm.vm.footerStatus}}">{{vm.vm.footer.statusText}}</span>
-        {{/if}}
-      </div>
-
-      {{#if vm.vm.footer.isLast}}
-      <button class="swse-prog-footer-btn swse-prog-footer-btn--confirm"
-              data-action="confirm-step"
-              {{#unless vm.vm.footer.canConfirm}}disabled{{/unless}}
-              type="button">
-        {{vm.vm.footer.confirmLabel}} <i class="fas fa-check"></i>
-      </button>
-      {{else}}
-      <button class="swse-prog-footer-btn swse-prog-footer-btn--next"
-              data-action="next-step"
-              type="button">
-        Next <i class="fas fa-chevron-right"></i>
-      </button>
-      {{/if}}
-    </div>
-    {{/if}}
-
-    {{/if}}{{!-- /isIntroMode --}}
-  </div>{{!-- /swse-progression-inline --}}
+  <div class="swse-shell-surface__body swse-shell-surface__error">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>Progression shell rendered no HTML. Check ProgressionSurfaceAdapter canonical render.</span>
+  </div>
 
   {{else}}
   <div class="swse-shell-surface__body swse-shell-surface__body--loading">

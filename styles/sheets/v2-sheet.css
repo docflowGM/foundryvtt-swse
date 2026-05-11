@@ -148,3 +148,75 @@
   .swse-form-grid.two-col, .swse-content-grid.two-up, .swse-defense-grid { grid-template-columns: 1fr; }
   .swse-radial-shell { max-width: 320px; }
 }
+
+/* ==========================================================================
+   Character Sheet V2 Concept Shell — AppV2 frameless drag + flex contract
+   ========================================================================== */
+
+.swse-character-sheet-form > .window-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-character-sheet-wrapper,
+.swse-character-sheet-wrapper--concept {
+  display: contents;
+}
+
+.swse-character-sheet-form .swse-tablet-scale-host,
+.swse-character-sheet-form .swse-tablet-scale-stage,
+.swse-character-sheet-form .sheet-shell,
+.swse-character-sheet-form .swse-v2-tablet,
+.swse-character-sheet-form .swse-v2-screen,
+.swse-character-sheet-form .swse-concept-body,
+.swse-character-sheet-form .swse-concept-main {
+  min-height: 0;
+}
+
+.swse-character-sheet-form .sheet-shell,
+.swse-character-sheet-form .swse-v2-screen,
+.swse-character-sheet-form .swse-concept-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-character-sheet-form .sheet-shell {
+  position: relative;
+}
+
+.swse-character-sheet-form .swse-concept-main.sheet-body {
+  overflow: hidden;
+}
+
+.swse-character-sheet-form .swse-concept-main.sheet-body > .tab {
+  display: none;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.swse-character-sheet-form .swse-concept-main.sheet-body > .tab.active {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.swse-tablet-drag-handle {
+  position: absolute;
+  z-index: 39;
+  top: 8px;
+  left: 96px;
+  right: 96px;
+  height: 44px;
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.swse-tablet-drag-handle.is-dragging {
+  cursor: grabbing;
+}
+

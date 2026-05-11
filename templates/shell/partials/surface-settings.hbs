@@ -33,7 +33,7 @@
         <div class="swse-panel-head">◇ Shell Color</div>
         <div class="swse-shell-colors">
           {{#each vm.shellColors}}
-          <button class="swse-shell-color {{#if this.selected}}active{{/if}}" data-shell-color="{{this.id}}" type="button" title="{{this.label}}" style="--swse-shell-chip-start: {{this.start}}; --swse-shell-chip-mid: {{this.mid}}; --swse-shell-chip-end: {{this.end}};"></button>
+          <button class="swse-shell-color {{#if this.selected}}active{{/if}}" data-shell-color="{{this.id}}" type="button" title="{{this.label}}" style="--swse-shell-chip-start: {{this.start}}; --swse-shell-chip-mid: {{this.mid}}; --swse-shell-chip-end: {{this.end}}; background: linear-gradient(180deg, {{this.color}}, color-mix(in oklch, {{this.color}} 42%, black)); border-color: {{this.color}};"></button>
           {{/each}}
         </div>
       </section>
@@ -63,8 +63,8 @@
       <section class="swse-panel">
         <div class="swse-panel-head">✦ Language</div>
         <div class="swse-language-options">
-          <button class="swse-language-option {{#if (eq vm.controls.languageMode 'basic')}}active{{/if}}" data-language-mode="basic" type="button">Basic</button>
-          <button class="swse-language-option {{#if (eq vm.controls.languageMode 'aurabesh')}}active{{/if}}" data-language-mode="aurabesh" type="button">Aurabesh</button>
+          <button class="swse-language-option {{#if (eq vm.controls.language 'basic')}}active{{/if}}" data-language-setting="basic" type="button">Basic</button>
+          <button class="swse-language-option {{#if (eq vm.controls.language 'aurabesh')}}active{{/if}}" data-language-setting="aurabesh" type="button">Aurabesh</button>
         </div>
         <p class="swse-settings-warning">{{vm.aurabeshWarning}}</p>
       </section>

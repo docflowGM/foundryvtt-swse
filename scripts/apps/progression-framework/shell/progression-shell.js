@@ -1313,7 +1313,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
       partsHtml.utilityBar = null;
     }
 
-    return foundry.utils.mergeObject(context, {
+    // Foundry V13 can provide Document instances on the base context (including
+    // context.actor). mergeObject mutates nested targets, which can recurse into
+    // a live Actor document and attempt to assign read-only document fields such
+    // as _id. Build the progression view model as a plain object overlay instead.
+    return {
+      ...context,
       // Shell identity
       mode: this.mode,
       actor: this.actor.toObject(),
@@ -1403,7 +1408,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
       // Rendered parts (mentor, progress, utility)
       parts: partsHtml,
-    });
+    };
   }
 
   /**

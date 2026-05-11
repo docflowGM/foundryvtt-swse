@@ -61,6 +61,7 @@
 }
 
 .swse-sheet-v2-shell--concept {
+  position: relative;
   width: 100%;
   height: 100%;
   padding: 18px;
@@ -243,12 +244,25 @@
 }
 
 /**
- * Scroll Contract — Single owner: .sheet-body
+ * Scroll Contract — Single owner: .tab.active
+ * The sheet body is the flex host; the active tab owns vertical scrolling.
  */
 .swse.sheet.actor.character.v2 .sheet-body {
   flex: 1;
-  overflow-y: auto;
+  overflow: hidden;
   min-height: 0;
+}
+
+.swse.sheet.actor.character.v2 .sheet-body > .tab {
+  display: none;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.swse.sheet.actor.character.v2 .sheet-body > .tab.active {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
 }
 
 /**
@@ -2386,4 +2400,3115 @@
   z-index: 40;
   opacity: 0.46;
   pointer-events: none;
+}
+
+/* AppV2 frameless tablet drag rail */
+.swse-tablet-drag-handle {
+  position: absolute;
+  z-index: 39;
+  top: 8px;
+  left: 96px;
+  right: 96px;
+  height: 44px;
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.swse-tablet-drag-handle.is-dragging {
+  cursor: grabbing;
+}
+
+
+/* ─── Immersive AppV2 datapad chrome pass ──────────────────────────────
+   The metallic tablet is the window frame. Foundry's content area must not
+   add extra top/bottom gutter, and the screen must sit inside the metal bezel
+   so the bottom shell remains visible. */
+.swse.sheet.actor.character.v2,
+.swse.sheet.actor.character.v2 .window-content,
+.swse.sheet.actor.character.v2 form.swse-character-sheet-form-root,
+.swse.sheet.actor.character.v2 .swse-character-sheet-wrapper,
+.swse.sheet.actor.character.v2 .swse-tablet-scale-host,
+.swse.sheet.actor.character.v2 .swse-tablet-scale-stage,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.swse.sheet.actor.character.v2 .window-content {
+  display: flex !important;
+  flex-direction: column;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.swse.sheet.actor.character.v2 form.swse-character-sheet-form-root {
+  display: flex;
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.swse.sheet.actor.character.v2 .swse-character-sheet-wrapper,
+.swse.sheet.actor.character.v2 .swse-tablet-scale-host,
+.swse.sheet.actor.character.v2 .swse-tablet-scale-stage,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept {
+  display: flex;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-scale-host {
+  margin: 0;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept {
+  padding: 0;
+  border-radius: 34px;
+  background: transparent;
+}
+
+.swse.sheet.actor.character.v2 .swse-v2-tablet--concept {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 34px 24px 58px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.swse.sheet.actor.character.v2 .swse-v2-screen--concept {
+  position: relative;
+  inset: auto;
+  flex: 1 1 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 0 80px rgba(85, 175, 255, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.82),
+    0 16px 34px rgba(0, 0, 0, 0.38);
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body > .tab.active {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.swse.sheet.actor.character.v2 .swse-shell-surface-host {
+  min-height: 0;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-home-button {
+  bottom: 16px;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-vent {
+  bottom: 20px;
+}
+
+.swse-tablet-serial--aurebesh {
+  font-family: "Aurebesh Condensed", "Aurebesh", var(--swse-font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: color-mix(in srgb, var(--swse-concept-text-muted, #8aa3b8) 42%, transparent);
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.08),
+    0 -1px 0 rgba(0,0,0,0.72);
+  opacity: 0.56;
+  mix-blend-mode: screen;
+}
+
+/* A frameless AppV2 sheet needs a reliable grab zone that is not covered by
+   child controls. Keep it inside the metal top bezel only. */
+.swse.sheet.actor.character.v2 .swse-tablet-drag-handle {
+  top: 0;
+  left: 90px;
+  right: 90px;
+  height: 32px;
+  z-index: 100;
+}
+
+/* Fixed chrome rows should not consume equal flex space. Only the body scroll
+   region expands; header/tabs/resources stay at their intrinsic height. */
+.swse.sheet.actor.character.v2 .swse-concept-hud,
+.swse.sheet.actor.character.v2 .swse-concept-title-strip,
+.swse.sheet.actor.character.v2 .swse-concept-header,
+.swse.sheet.actor.character.v2 .swse-concept-resource-strip,
+.swse.sheet.actor.character.v2 .swse-concept-tabs {
+  flex: 0 0 auto;
+  min-height: auto;
+}
+
+/* ─── AppV2 frameless shell viewport repair ───────────────────────────────
+   The ApplicationV2 window-content is already the viewport.  Do not render a
+   second inner window-content or a transformed layout stage inside it: CSS
+   transforms do not contribute to layout height, which was creating the top
+   gutter, bottom clipping, dead drag zones, and blocked scroll containers. */
+.swse.sheet.actor.character.v2 > .window-content,
+.swse.sheet.actor.character.v2 .window-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+.swse.sheet.actor.character.v2 form.swse-character-sheet-form-root,
+.swse.sheet.actor.character.v2 .swse-character-sheet-wrapper--concept,
+.swse.sheet.actor.character.v2 .swse-tablet-scale-host,
+.swse.sheet.actor.character.v2 .swse-tablet-scale-stage,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-scale-host,
+.swse.sheet.actor.character.v2 .swse-tablet-scale-stage {
+  position: relative !important;
+  transform: none !important;
+  transform-origin: initial !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept {
+  position: relative !important;
+  border-radius: 34px !important;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.10), transparent 14%),
+    linear-gradient(315deg, rgba(255, 255, 255, 0.06), transparent 18%),
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.08), transparent 18%),
+    linear-gradient(145deg, #2b303b 0%, #111722 42%, #05080d 72%, #1c2431 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 18px 42px rgba(255, 255, 255, 0.045),
+    inset 0 -28px 48px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(0, 0, 0, 0.82),
+    0 0 64px color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-v2-tablet--concept {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 28px 24px 58px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  pointer-events: auto !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-v2-tablet--concept::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.045),
+    inset 0 18px 36px rgba(255, 255, 255, 0.045),
+    inset 0 -28px 48px rgba(0, 0, 0, 0.55),
+    inset 0 0 42px rgba(0, 0, 0, 0.42);
+}
+
+.swse.sheet.actor.character.v2 .swse-v2-screen--concept {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  border-radius: 24px !important;
+  pointer-events: auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-drag-handle {
+  top: 0 !important;
+  left: 74px !important;
+  right: 74px !important;
+  height: 58px !important;
+  z-index: 38 !important;
+  pointer-events: auto !important;
+  cursor: grab;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging * {
+  cursor: grabbing !important;
+  user-select: none !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-hardware,
+.swse.sheet.actor.character.v2 .swse-tablet-home-button {
+  z-index: 45 !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-bezel-detail,
+.swse.sheet.actor.character.v2 .swse-tablet-vent {
+  z-index: 42 !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-hud,
+.swse.sheet.actor.character.v2 .swse-concept-title-strip,
+.swse.sheet.actor.character.v2 .swse-concept-header,
+.swse.sheet.actor.character.v2 .swse-concept-resource-strip,
+.swse.sheet.actor.character.v2 .swse-concept-tabs {
+  flex: 0 0 auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-body {
+  display: grid !important;
+  grid-template-columns: 286px minmax(0, 1fr);
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body > .tab.active,
+.swse.sheet.actor.character.v2 .swse-shell-surface__body,
+.swse.sheet.actor.character.v2 .swse-settings-body {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  min-height: 0 !important;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+}
+
+.swse.sheet.actor.character.v2 .swse-shell-surface-host,
+.swse.sheet.actor.character.v2 .swse-shell-surface {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+@media (max-width: 1080px) {
+  .swse.sheet.actor.character.v2 .swse-concept-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ─── Frameless AppV2 root repair — shell is the window ────────────────
+   Runtime diagnostics showed Foundry V13 frame:false ActorSheetV2 renders the
+   sheet FORM itself as the application root. There is no .window-content and
+   no .window-header, so the root must be positioned/scrolled directly and the
+   tablet chrome must live inside the metal shell rather than flowing above it. */
+form.swse.sheet.actor.character.v2,
+.swse.sheet.actor.character.v2.swse-character-sheet {
+  position: absolute !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+  min-width: var(--swse-tablet-min-width, 792px) !important;
+  min-height: var(--swse-tablet-min-height, 495px) !important;
+  user-select: none;
+}
+
+form.swse.sheet.actor.character.v2 > .swse-character-sheet-wrapper--concept,
+.swse.sheet.actor.character.v2 .swse-character-sheet-wrapper--concept,
+.swse.sheet.actor.character.v2 .swse-tablet-scale-host,
+.swse.sheet.actor.character.v2 .swse-tablet-scale-stage,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept {
+  position: relative !important;
+  display: flex !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept {
+  border-radius: 30px !important;
+  cursor: grab;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.10), transparent 14%),
+    linear-gradient(315deg, rgba(255, 255, 255, 0.06), transparent 18%),
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.08), transparent 18%),
+    linear-gradient(145deg, #2b303b 0%, #111722 42%, #05080d 72%, #1c2431 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 18px 42px rgba(255, 255, 255, 0.045),
+    inset 0 -28px 48px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(0, 0, 0, 0.82),
+    0 0 64px color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-v2-tablet--concept {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  cursor: grab;
+  pointer-events: auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-v2-tablet--concept::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.045),
+    inset 0 18px 36px rgba(255, 255, 255, 0.045),
+    inset 0 -28px 48px rgba(0, 0, 0, 0.55),
+    inset 0 0 42px rgba(0, 0, 0, 0.42);
+}
+
+.swse.sheet.actor.character.v2 .swse-v2-screen--concept {
+  position: absolute !important;
+  inset: 48px 28px 58px 28px !important;
+  z-index: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 18px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  border-radius: 22px !important;
+  cursor: var(--cursor-default, auto);
+  pointer-events: auto !important;
+  background:
+    radial-gradient(circle at 30% 12%, color-mix(in srgb, var(--swse-accent, #70e2ff) 13%, transparent), transparent 24%),
+    radial-gradient(circle at 75% 90%, color-mix(in srgb, var(--swse-accent-2, #ff6ef4) 8%, transparent), transparent 25%),
+    linear-gradient(180deg, rgba(9, 16, 25, 0.92) 0%, rgba(5, 9, 15, 0.95) 100%) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 0 80px rgba(85, 175, 255, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.82),
+    0 16px 34px rgba(0, 0, 0, 0.38) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-drag-handle {
+  position: absolute !important;
+  z-index: 80 !important;
+  top: 0 !important;
+  left: 92px !important;
+  right: 92px !important;
+  height: 46px !important;
+  cursor: grab !important;
+  pointer-events: auto !important;
+  touch-action: none !important;
+  background: transparent !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging .swse-v2-tablet--concept,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-drag-handle {
+  cursor: grabbing !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-hardware {
+  position: absolute !important;
+  z-index: 75 !important;
+  pointer-events: auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-hardware--top {
+  top: 13px !important;
+  right: 20px !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-control {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-bezel-detail {
+  position: absolute !important;
+  z-index: 74 !important;
+  pointer-events: none !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-bezel-detail--top-left {
+  top: 15px !important;
+  left: 22px !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-bezel-detail--top-right {
+  top: 15px !important;
+  right: 90px !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-serial--aurebesh {
+  display: inline-block;
+  font-family: "Aurebesh Condensed", "Aurebesh", var(--swse-font-mono, monospace) !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.18em !important;
+  color: color-mix(in srgb, var(--swse-concept-text-muted, #8aa3b8) 48%, transparent) !important;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.08),
+    0 -1px 0 rgba(0,0,0,0.72) !important;
+  opacity: 0.62 !important;
+  mix-blend-mode: screen;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-vent {
+  position: absolute !important;
+  z-index: 72 !important;
+  display: flex !important;
+  gap: 5px !important;
+  pointer-events: none !important;
+  opacity: 0.52 !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-vent--top {
+  top: 22px !important;
+  left: 50% !important;
+  bottom: auto !important;
+  transform: translateX(-50%);
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-vent--bottom,
+.swse.sheet.actor.character.v2 .swse-tablet-vent:not(.swse-tablet-vent--top) {
+  left: 34px !important;
+  bottom: 24px !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-home-button {
+  z-index: 76 !important;
+  bottom: 15px !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-hud,
+.swse.sheet.actor.character.v2 .swse-concept-title-strip,
+.swse.sheet.actor.character.v2 .swse-concept-header,
+.swse.sheet.actor.character.v2 .swse-concept-resource-strip,
+.swse.sheet.actor.character.v2 .swse-concept-tabs {
+  flex: 0 0 auto !important;
+  min-height: auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-body {
+  display: grid !important;
+  grid-template-columns: 286px minmax(0, 1fr);
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-sidebar,
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body > .tab {
+  display: none !important;
+  min-height: 0 !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body > .tab.active {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+}
+
+.swse.sheet.actor.character.v2 .swse-shell-surface-host,
+.swse.sheet.actor.character.v2 .swse-shell-surface {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-shell-surface__body,
+.swse.sheet.actor.character.v2 .swse-settings-body,
+.swse.sheet.actor.character.v2 .swse-home-surface,
+.swse.sheet.actor.character.v2 .swse-progression-surface,
+.swse.sheet.actor.character.v2 .swse-customization-surface {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 1080px) {
+  .swse.sheet.actor.character.v2 .swse-concept-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+
+/* ─── Canonical frameless datapad layout repair ────────────────────────────
+   This sheet is a frameless ActorSheetV2: the root FORM is the app viewport.
+   Do not rely on Foundry's .window-content or a stacked fake header. The metal
+   tablet shell fills the entire window; controls/serial are engraved into an
+   absolutely-positioned top bezel and never consume layout height. The inner
+   screen is the scroll owner so no tab/surface can trap the user. */
+.swse.sheet.actor.character.v2,
+.swse.sheet.actor.character.v2.swse-character-sheet-form-root,
+.swse-character-sheet-form-root.swse-sheet--concept {
+  position: absolute !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: var(--swse-tablet-scaled-width, 100%) !important;
+  height: var(--swse-tablet-scaled-height, 100%) !important;
+  min-width: 792px !important;
+  min-height: 495px !important;
+  max-width: none !important;
+  max-height: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.swse.sheet.actor.character.v2 > .swse-character-sheet-form,
+.swse.sheet.actor.character.v2 .swse-character-sheet-form,
+.swse-character-sheet-form-root > .swse-sheet-v2-shell--concept,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept {
+  position: relative !important;
+  display: block !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept {
+  border-radius: 30px !important;
+  cursor: grab !important;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.10), transparent 14%),
+    linear-gradient(315deg, rgba(255, 255, 255, 0.06), transparent 18%),
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.08), transparent 18%),
+    linear-gradient(145deg, #2b303b 0%, #111722 42%, #05080d 72%, #1c2431 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 18px 42px rgba(255, 255, 255, 0.045),
+    inset 0 -28px 48px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(0, 0, 0, 0.82),
+    0 0 64px color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-v2-tablet--concept {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: inherit !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  cursor: grab !important;
+  pointer-events: auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-v2-tablet--concept::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.045),
+    inset 0 18px 36px rgba(255, 255, 255, 0.045),
+    inset 0 -28px 48px rgba(0, 0, 0, 0.55),
+    inset 0 0 42px rgba(0, 0, 0, 0.42);
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-top-bezel {
+  position: absolute !important;
+  z-index: 90 !important;
+  top: 8px !important;
+  left: 18px !important;
+  right: 18px !important;
+  height: 34px !important;
+  display: grid !important;
+  grid-template-columns: minmax(180px, auto) minmax(80px, 1fr) auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 0 8px !important;
+  border-radius: 18px !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+  user-select: none !important;
+  touch-action: none !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 62%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.42), rgba(255, 255, 255, 0.035), rgba(0, 0, 0, 0.35));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.62);
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-identity-engraving {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  opacity: 0.78 !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-serial--aurebesh {
+  display: inline-block !important;
+  max-width: 240px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-family: "Aurebesh Condensed", "Aurebesh", var(--swse-font-mono, monospace) !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.18em !important;
+  color: color-mix(in srgb, var(--swse-concept-text-muted, #8aa3b8) 44%, transparent) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 -1px 0 rgba(0,0,0,0.78) !important;
+  opacity: 0.68 !important;
+  mix-blend-mode: screen !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-drag-handle {
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 80px !important;
+  cursor: grab !important;
+  pointer-events: auto !important;
+  touch-action: none !important;
+  background:
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--swse-accent, #70e2ff) 10%, transparent), transparent) !important;
+  opacity: 0.42 !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-hardware--top {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 7px !important;
+  height: 100% !important;
+  pointer-events: auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-control {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-control__home-glyph {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 62%, transparent);
+  box-shadow: inset 0 0 6px color-mix(in srgb, var(--swse-accent, #70e2ff) 18%, transparent);
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-vent--top {
+  position: absolute !important;
+  top: 47px !important;
+  left: 50% !important;
+  bottom: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 50 !important;
+  pointer-events: none !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-v2-screen--concept {
+  position: absolute !important;
+  inset: 58px 28px 58px 28px !important;
+  z-index: 1 !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 18px !important;
+  margin: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-gutter: stable !important;
+  overscroll-behavior: contain !important;
+  border-radius: 22px !important;
+  cursor: var(--cursor-default, auto) !important;
+  pointer-events: auto !important;
+  background:
+    radial-gradient(circle at 30% 12%, color-mix(in srgb, var(--swse-accent, #70e2ff) 13%, transparent), transparent 24%),
+    radial-gradient(circle at 75% 90%, color-mix(in srgb, var(--swse-accent-2, #ff6ef4) 8%, transparent), transparent 25%),
+    linear-gradient(180deg, rgba(9, 16, 25, 0.92) 0%, rgba(5, 9, 15, 0.95) 100%) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 0 80px rgba(85, 175, 255, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.82),
+    0 16px 34px rgba(0, 0, 0, 0.38) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-v2-screen--concept > * {
+  max-width: 100%;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-hud,
+.swse.sheet.actor.character.v2 .swse-concept-title-strip,
+.swse.sheet.actor.character.v2 .swse-concept-header,
+.swse.sheet.actor.character.v2 .swse-concept-resource-strip,
+.swse.sheet.actor.character.v2 .swse-concept-tabs,
+.swse.sheet.actor.character.v2 .swse-concept-body {
+  position: relative !important;
+  z-index: 3 !important;
+  flex: none !important;
+  min-height: 0 !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-body {
+  display: grid !important;
+  grid-template-columns: 286px minmax(0, 1fr) !important;
+  gap: 16px !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-sidebar,
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body {
+  display: block !important;
+  position: relative !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body > .tab {
+  display: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body > .tab.active {
+  display: block !important;
+  overflow: visible !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-shell-surface-host,
+.swse.sheet.actor.character.v2 .swse-shell-surface,
+.swse.sheet.actor.character.v2 .swse-shell-surface__body,
+.swse.sheet.actor.character.v2 .swse-settings-body,
+.swse.sheet.actor.character.v2 .swse-home-surface,
+.swse.sheet.actor.character.v2 .swse-progression-surface,
+.swse.sheet.actor.character.v2 .swse-customization-surface {
+  display: block !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-home-button {
+  position: absolute !important;
+  z-index: 88 !important;
+  left: 50% !important;
+  bottom: 12px !important;
+  transform: translateX(-50%) !important;
+  display: grid !important;
+  pointer-events: auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-tablet-vent--bottom,
+.swse.sheet.actor.character.v2 .swse-tablet-vent:not(.swse-tablet-vent--top) {
+  position: absolute !important;
+  z-index: 55 !important;
+  left: 34px !important;
+  bottom: 22px !important;
+  pointer-events: none !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-top-bezel,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-drag-handle {
+  cursor: grabbing !important;
+  user-select: none !important;
+}
+
+@media (max-width: 1080px) {
+  .swse.sheet.actor.character.v2 .swse-concept-body {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* ─── Final frameless tablet chrome normalization ───────────────────────────
+   The SWSE character AppV2 is a frameless FORM, not a standard window-content
+   application.  This final block intentionally targets both the normal class
+   chain and the runtime id so stale frame assumptions cannot push the tablet
+   chrome down, hide the bottom bezel, or leave no scroll owner. */
+form[id^="SWSEV2CharacterSheet"],
+.swse.sheet.actor.character.v2,
+.swse-character-sheet-form-root.swse-sheet--concept {
+  position: absolute !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 28px !important;
+  cursor: grab !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept,
+.swse.sheet.actor.character.v2 .swse-v2-tablet--concept {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: inherit !important;
+  cursor: grab !important;
+}
+
+/* Compact engraved top rail: no layout height, no stacked buttons, no serial
+   line above the shell.  The rail is an overlay engraved into the metal. */
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel,
+.swse.sheet.actor.character.v2 .swse-tablet-top-bezel {
+  position: absolute !important;
+  top: 10px !important;
+  left: 16px !important;
+  right: 16px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  max-height: 28px !important;
+  z-index: 120 !important;
+  display: grid !important;
+  grid-template-columns: minmax(150px, max-content) minmax(160px, 1fr) max-content !important;
+  align-items: center !important;
+  column-gap: 12px !important;
+  padding: 0 8px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  border-radius: 15px !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+  user-select: none !important;
+  touch-action: none !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 56%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.52), rgba(255, 255, 255, 0.035) 45%, rgba(0, 0, 0, 0.42));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.68),
+    0 1px 0 rgba(255, 255, 255, 0.025) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::before,
+.swse.sheet.actor.character.v2 .swse-tablet-top-bezel::before {
+  content: "";
+  justify-self: center;
+  grid-column: 2;
+  width: 86px;
+  height: 7px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 8px 50%, var(--swse-accent, #70e2ff) 0 2px, transparent 3px),
+    radial-gradient(circle at 28px 50%, color-mix(in srgb, var(--swse-accent, #70e2ff) 70%, #7cff9d) 0 2px, transparent 3px),
+    radial-gradient(circle at 48px 50%, color-mix(in srgb, var(--swse-accent-2, #ff6ef4) 70%, #ffd45f) 0 2px, transparent 3px),
+    radial-gradient(circle at 68px 50%, color-mix(in srgb, var(--swse-accent, #70e2ff) 78%, white) 0 2px, transparent 3px);
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--swse-accent, #70e2ff) 56%, transparent));
+  opacity: 0.78;
+  pointer-events: none;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-identity-engraving,
+.swse.sheet.actor.character.v2 .swse-tablet-identity-engraving {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  opacity: 0.78 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle,
+.swse.sheet.actor.character.v2 .swse-tablet-drag-handle {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 120px !important;
+  inset: auto !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+  touch-action: none !important;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--swse-accent, #70e2ff) 8%, transparent), transparent) !important;
+  opacity: 0.4 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-hardware--top,
+.swse.sheet.actor.character.v2 .swse-tablet-hardware--top {
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  position: relative !important;
+  inset: auto !important;
+  top: auto !important;
+  right: auto !important;
+  left: auto !important;
+  bottom: auto !important;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 6px !important;
+  width: auto !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control,
+.swse.sheet.actor.character.v2 .swse-tablet-control {
+  position: relative !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 22px !important;
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  max-width: 22px !important;
+  max-height: 22px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh,
+.swse.sheet.actor.character.v2 .swse-tablet-serial--aurebesh {
+  max-width: 190px !important;
+  font-family: "Aurebesh Condensed", "Aurebesh", var(--swse-font-mono, monospace) !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.16em !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  color: color-mix(in srgb, var(--swse-concept-text-muted, #8aa3b8) 42%, transparent) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 -1px 0 rgba(0,0,0,0.82) !important;
+  opacity: 0.62 !important;
+}
+
+/* Screen and bottom bezel: keep all metal visible while giving the content a
+   real scroll owner.  The bottom home button and vent live in the metal, not
+   under the scrollable display. */
+form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept,
+.swse.sheet.actor.character.v2 .swse-v2-screen--concept {
+  position: absolute !important;
+  top: 46px !important;
+  right: 28px !important;
+  bottom: 70px !important;
+  left: 28px !important;
+  inset: 46px 28px 70px 28px !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-gutter: stable both-edges !important;
+  overscroll-behavior: contain !important;
+  padding: 16px !important;
+  margin: 0 !important;
+  cursor: var(--cursor-default, auto) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-home-button,
+.swse.sheet.actor.character.v2 .swse-tablet-home-button {
+  position: absolute !important;
+  z-index: 110 !important;
+  left: 50% !important;
+  bottom: 18px !important;
+  transform: translateX(-50%) !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  display: grid !important;
+  place-items: center !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom,
+.swse.sheet.actor.character.v2 .swse-tablet-vent--bottom,
+.swse.sheet.actor.character.v2 .swse-tablet-vent:not(.swse-tablet-vent--top) {
+  position: absolute !important;
+  z-index: 80 !important;
+  left: 32px !important;
+  bottom: 30px !important;
+  pointer-events: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--top,
+.swse.sheet.actor.character.v2 .swse-tablet-vent--top {
+  display: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-body,
+.swse.sheet.actor.character.v2 .swse-concept-body {
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-main.sheet-body,
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-main.sheet-body > .tab.active,
+.swse.sheet.actor.character.v2 .swse-concept-main.sheet-body > .tab.active {
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-shell-surface-host,
+.swse.sheet.actor.character.v2 .swse-shell-surface-host,
+form[id^="SWSEV2CharacterSheet"] .swse-shell-surface,
+.swse.sheet.actor.character.v2 .swse-shell-surface,
+form[id^="SWSEV2CharacterSheet"] .swse-shell-surface__body,
+.swse.sheet.actor.character.v2 .swse-shell-surface__body {
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept.is-window-dragging,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-top-bezel,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-drag-handle,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-top-bezel,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-drag-handle {
+  cursor: grabbing !important;
+}
+
+@media (max-width: 1120px) {
+  form[id^="SWSEV2CharacterSheet"] .swse-concept-header,
+  .swse.sheet.actor.character.v2 .swse-concept-header {
+    grid-template-columns: 150px minmax(0, 1fr) !important;
+  }
+  form[id^="SWSEV2CharacterSheet"] .swse-concept-readouts-card,
+  .swse.sheet.actor.character.v2 .swse-concept-readouts-card {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+
+/* ========================================================================== */
+/* Concept fidelity repair — Character Sheet v2.html is the visual authority.  */
+/* This block intentionally wins over the earlier migration stopgaps.          */
+/* ========================================================================== */
+
+form[id^="SWSEV2CharacterSheet"] {
+  --screen-c-base: 0.055;
+  --screen-c-alt: 0.070;
+  --accent-h: var(--ink-h, 190);
+  --accent-c: 0.17;
+  --accent-l: 0.82;
+  --accent: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
+  --vapor-magenta: oklch(0.65 0.28 330);
+  --holo-blue: oklch(0.82 0.15 220);
+  --bg: oklch(0.10 0.03 285);
+  --screen: oklch(0.13 var(--screen-c-base) var(--screen-h, 278));
+  --screen-2: oklch(0.18 var(--screen-c-alt) var(--screen-h, 278));
+  --ink: oklch(0.94 0.04 var(--accent-h));
+  --ink-dim: oklch(0.72 0.06 var(--accent-h));
+  --ink-faint: oklch(0.50 0.05 var(--accent-h));
+  --pos: oklch(0.82 0.19 145);
+  --neg: oklch(0.70 0.22 25);
+  --zero: oklch(0.88 0.17 95);
+  --font-body: var(--swse-font-body, "SWSE Space Grotesk", system-ui, sans-serif);
+  --font-mono: var(--swse-font-mono, "SWSE JetBrains Mono", ui-monospace, monospace);
+  --font-display: var(--swse-font-display, "SWSE VT323", monospace);
+  --font-orbit: var(--swse-font-orbit, "SWSE Orbitron", sans-serif);
+  color: var(--ink) !important;
+  font-family: var(--font-body) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"],
+form[id^="SWSEV2CharacterSheet"].swse.sheet.actor.character.v2 {
+  position: absolute !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-character-sheet-wrapper--concept,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept,
+form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-character-sheet-wrapper--concept,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept {
+  position: relative !important;
+  display: block !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 22px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept {
+  background: transparent !important;
+  cursor: grab !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+  position: relative !important;
+  inset: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 36px 32px 44px !important;
+  border-radius: 22px !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  background: linear-gradient(140deg, #1a1a26 0%, #0b0b14 55%, #12121c 100%) !important;
+  border: 0 !important;
+  box-shadow:
+    inset 0 0 0 1px oklch(0.35 0.04 270 / 0.5),
+    inset 0 2px 0 0 oklch(0.55 0.03 270 / 0.4),
+    inset 0 -2px 0 0 oklch(0.05 0.02 270 / 0.9),
+    0 40px 80px oklch(0 0 0 / 0.7),
+    0 0 140px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.12) !important;
+  animation: breathe calc(5.4s / var(--anim-speed, 1)) ease-in-out infinite !important;
+  pointer-events: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"][data-motion-style="off"] .swse-v2-tablet--concept,
+form[id^="SWSEV2CharacterSheet"][data-motion-style="reduced"] .swse-v2-tablet--concept,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell[data-motion-style="off"] .swse-v2-tablet--concept,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell[data-motion-style="reduced"] .swse-v2-tablet--concept {
+  animation-play-state: paused !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel {
+  position: absolute !important;
+  top: 8px !important;
+  left: 38px !important;
+  right: 38px !important;
+  height: 22px !important;
+  z-index: 80 !important;
+  display: grid !important;
+  grid-template-columns: auto minmax(120px, 1fr) auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+  user-select: none !important;
+  touch-action: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-identity-engraving {
+  grid-column: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  height: 22px !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 35% 35%, #5a5a6e 0%, #1a1a22 70%) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-micro-led,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::before,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::after {
+  content: "" !important;
+  display: inline-block !important;
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 50% !important;
+  background: var(--vapor-cyan) !important;
+  box-shadow: 0 0 8px var(--vapor-cyan), 0 0 18px var(--vapor-cyan) !important;
+  animation: ledPulse calc(1.6s / var(--anim-speed, 1)) ease-in-out infinite !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::before {
+  grid-column: 2 !important;
+  justify-self: start !important;
+  margin-left: 16px !important;
+  background: var(--pos) !important;
+  box-shadow: 0 0 8px var(--pos), 0 0 18px var(--pos) !important;
+  animation-delay: 0.25s !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::after {
+  grid-column: 2 !important;
+  justify-self: start !important;
+  margin-left: 34px !important;
+  background: var(--vapor-pink) !important;
+  box-shadow: 0 0 8px var(--vapor-pink), 0 0 18px var(--vapor-pink) !important;
+  animation-delay: 0.55s !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh {
+  font-family: "Aurebesh Condensed", "Aurebesh", var(--font-mono) !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.22em !important;
+  color: oklch(0.55 0.05 260) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 -1px 0 rgba(0,0,0,0.9) !important;
+  opacity: 0.85 !important;
+  white-space: nowrap !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle {
+  grid-column: 2 !important;
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  width: 100% !important;
+  height: 22px !important;
+  min-width: 80px !important;
+  background: transparent !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+  touch-action: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-hardware--top {
+  grid-column: 3 !important;
+  position: relative !important;
+  inset: auto !important;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 7px !important;
+  width: auto !important;
+  height: 22px !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
+  position: relative !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 22px !important;
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  max-width: 22px !important;
+  max-height: 22px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 5px !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 1 !important;
+  flex: 1 1 auto !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  padding: 18px !important;
+  margin: 0 !important;
+  border: 1px solid oklch(0.3 0.04 260 / 0.6) !important;
+  border-radius: 10px !important;
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+  overscroll-behavior: contain !important;
+  scrollbar-gutter: stable !important;
+  background: radial-gradient(ellipse at 30% 10%, var(--screen-2) 0%, var(--screen) 50%, oklch(0.08 0.04 278) 100%) !important;
+  box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.6), inset 0 2px 14px oklch(0 0 0 / 0.5), inset 0 0 80px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.08) !important;
+  cursor: var(--cursor-default, auto) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  z-index: 5 !important;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(1 0 0 / var(--scan-strength, 0.03)) 3px 4px) !important;
+  opacity: 1 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .scan-v {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  width: auto !important;
+  height: 140px !important;
+  pointer-events: none !important;
+  z-index: 7 !important;
+  background: linear-gradient(180deg, transparent 0%, oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.06) 50%, oklch(1 0 0 / 0.1) 62%, transparent 100%) !important;
+  animation: scanV calc(7s / var(--anim-speed, 1)) linear infinite !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--top,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-home-button {
+  display: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
+  position: absolute !important;
+  left: 48px !important;
+  bottom: 24px !important;
+  z-index: 70 !important;
+  display: inline-flex !important;
+  gap: 5px !important;
+  opacity: 0.52 !important;
+  pointer-events: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom span {
+  width: 28px !important;
+  height: 2px !important;
+  border-radius: 2px !important;
+  background: oklch(0.50 0.04 260 / 0.55) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving {
+  position: absolute !important;
+  right: 38px !important;
+  bottom: 14px !important;
+  z-index: 70 !important;
+  font-family: var(--font-display) !important;
+  font-size: 12px !important;
+  letter-spacing: 0.4em !important;
+  color: oklch(0.50 0.04 260) !important;
+  opacity: 0.78 !important;
+  pointer-events: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip {
+  position: absolute !important;
+  right: 10px !important;
+  bottom: 10px !important;
+  z-index: 120 !important;
+  width: 28px !important;
+  height: 28px !important;
+  cursor: nwse-resize !important;
+  pointer-events: auto !important;
+  touch-action: none !important;
+  border-radius: 6px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip::before {
+  content: "" !important;
+  position: absolute !important;
+  right: 5px !important;
+  bottom: 5px !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-right: 2px solid var(--vapor-cyan) !important;
+  border-bottom: 2px solid var(--vapor-cyan) !important;
+  opacity: 0.72 !important;
+  filter: drop-shadow(0 0 6px var(--vapor-cyan)) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"].is-window-resizing,
+form[id^="SWSEV2CharacterSheet"].is-window-resizing * {
+  cursor: nwse-resize !important;
+  user-select: none !important;
+}
+
+/* AppV2 sheet content now mirrors the Concept HTML structure. */
+form[id^="SWSEV2CharacterSheet"] .swse-concept-hud,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-title-strip,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-header,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-resource-strip,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-tabs {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-hud {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  padding: 4px 10px 10px !important;
+  margin: 0 0 12px !important;
+  border-bottom: 1px solid oklch(var(--vapor-cyan) / 0.25) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  color: var(--ink-dim) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-hud__center {
+  font-family: var(--font-display) !important;
+  font-size: 18px !important;
+  letter-spacing: 0.3em !important;
+  color: var(--vapor-cyan) !important;
+  text-shadow: 0 0 calc(10px * var(--glow-mult, 1)) oklch(var(--vapor-cyan) / 0.5) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-title-strip {
+  display: block !important;
+  text-align: center !important;
+  font-family: var(--font-display) !important;
+  font-size: 16px !important;
+  letter-spacing: 0.5em !important;
+  color: var(--vapor-pink) !important;
+  padding: 6px 0 8px !important;
+  border-bottom: 1px solid oklch(var(--vapor-cyan) / 0.2) !important;
+  margin: 0 0 14px !important;
+  text-shadow: 0 0 calc(10px * var(--glow-mult, 1)) oklch(var(--vapor-pink) / 0.5), 2px 0 0 oklch(var(--vapor-cyan) / 0.4), -2px 0 0 oklch(var(--vapor-pink) / 0.4) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-header {
+  display: grid !important;
+  grid-template-columns: 128px minmax(0, 1fr) 300px !important;
+  gap: 18px !important;
+  align-items: stretch !important;
+  margin: 0 0 16px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-resource-strip {
+  display: grid !important;
+  grid-template-columns: 2fr 1fr 1fr !important;
+  gap: 14px !important;
+  margin: 0 0 16px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-tabs {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 0 !important;
+  align-items: flex-end !important;
+  border-bottom: 1px solid oklch(var(--vapor-cyan) / 0.3) !important;
+  margin: 0 0 16px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.28em !important;
+  text-transform: uppercase !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-tab {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 10px 22px !important;
+  border: 1px solid transparent !important;
+  border-bottom: none !important;
+  border-radius: 0 !important;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%) !important;
+  background: transparent !important;
+  color: var(--ink-faint) !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-tab:hover {
+  color: var(--vapor-cyan) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-tab.active {
+  color: var(--vapor-cyan) !important;
+  background: linear-gradient(180deg, oklch(var(--vapor-cyan) / 0.18) 0%, oklch(var(--vapor-cyan) / 0.05) 100%) !important;
+  border-color: oklch(var(--vapor-cyan) / 0.4) !important;
+  text-shadow: 0 0 8px oklch(var(--vapor-cyan) / 0.6) !important;
+  box-shadow: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-body {
+  display: grid !important;
+  grid-template-columns: 330px minmax(0, 1fr) !important;
+  gap: 16px !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-sidebar {
+  display: block !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-main.sheet-body {
+  display: block !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-main.sheet-body > .tab {
+  display: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-main.sheet-body > .tab.active {
+  display: block !important;
+  overflow: visible !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-sidecard,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-panel,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-portrait-card,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-identity-card,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-readouts-card,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-resource-card {
+  border-radius: 0 !important;
+  border: 1px solid oklch(var(--vapor-cyan) / 0.2) !important;
+  background: oklch(0 0 0 / 0.3) !important;
+  box-shadow: none !important;
+  position: relative !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-panel,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-sidecard {
+  padding: 14px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-panel::before,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-sidecard::before,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-resource-card::before {
+  content: "" !important;
+  position: absolute !important;
+  top: -1px !important;
+  left: 8px !important;
+  width: 20px !important;
+  height: 2px !important;
+  background: var(--vapor-cyan) !important;
+  box-shadow: 0 0 6px var(--vapor-cyan) !important;
+  pointer-events: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-panel__header,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-sidecard header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding-bottom: 8px !important;
+  margin-bottom: 12px !important;
+  border-bottom: 1px dashed oklch(var(--vapor-cyan) / 0.3) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-panel__title,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-sidecard h3 {
+  margin: 0 !important;
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.32em !important;
+  text-transform: uppercase !important;
+  color: var(--vapor-cyan) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability {
+  position: relative !important;
+  padding: 10px !important;
+  border: 1px solid oklch(var(--vapor-cyan) / 0.3) !important;
+  background: linear-gradient(180deg, oklch(var(--vapor-purple) / 0.1) 0%, oklch(0 0 0 / 0.4) 100%) !important;
+  text-align: center !important;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability strong,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-defense-block strong,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-defense-pill strong,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-stat-card strong {
+  font-family: var(--font-display) !important;
+  color: var(--vapor-cyan) !important;
+  text-shadow: 0 0 calc(12px * var(--glow-mult, 1)) oklch(var(--vapor-cyan) / 0.6), 2px 0 0 oklch(var(--vapor-pink) / 0.35), -2px 0 0 oklch(var(--vapor-cyan) / 0.35) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skills-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row {
+  display: grid !important;
+  grid-template-columns: minmax(210px, 1fr) minmax(520px, 1.8fr) !important;
+  gap: 8px !important;
+  align-items: center !important;
+  padding: 6px 8px !important;
+  border-radius: 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid oklch(var(--vapor-cyan) / 0.12) !important;
+  border-left: 2px solid transparent !important;
+  background: transparent !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row:nth-of-type(even) {
+  background: oklch(var(--vapor-cyan) / 0.025) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row:hover {
+  border-left-color: var(--vapor-pink) !important;
+  background: oklch(var(--vapor-cyan) / 0.06) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__identity,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__titleline {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-name {
+  color: var(--ink) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math {
+  display: grid !important;
+  grid-template-columns: minmax(96px, 1.1fr) 68px 58px 72px 72px 58px 70px 58px !important;
+  gap: 6px !important;
+  align-items: end !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-toolfield--compact,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill {
+  min-width: 0 !important;
+  padding: 3px 5px !important;
+  border-radius: 0 !important;
+  border: 1px solid oklch(var(--vapor-cyan) / 0.12) !important;
+  background: oklch(0 0 0 / 0.22) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat span,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-toolfield span,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill span {
+  display: block !important;
+  color: var(--ink-faint) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 8px !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat strong,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat--total strong {
+  color: var(--vapor-cyan) !important;
+  font-family: var(--font-display) !important;
+  font-size: 18px !important;
+  text-shadow: 0 0 calc(8px * var(--glow-mult, 1)) oklch(var(--vapor-cyan) / 0.45) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .skill-extra-uses:not(.skill-extra-uses--collapsed) {
+  margin: 0 0 8px 28px !important;
+  border-left: 1px solid var(--vapor-pink) !important;
+}
+
+@media (max-width: 1180px) {
+  form[id^="SWSEV2CharacterSheet"] .swse-concept-header {
+    grid-template-columns: 128px minmax(0, 1fr) !important;
+  }
+  form[id^="SWSEV2CharacterSheet"] .swse-concept-readouts-card {
+    grid-column: 1 / -1 !important;
+  }
+  form[id^="SWSEV2CharacterSheet"] .swse-concept-body {
+    grid-template-columns: 286px minmax(0, 1fr) !important;
+  }
+  form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row {
+    grid-template-columns: 1fr !important;
+  }
+  form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math {
+    grid-template-columns: repeat(4, minmax(70px, 1fr)) !important;
+  }
+}
+
+/* ========================================================================== */
+/* Compact top-right tablet chrome rail                                       */
+/* User-requested: serial + home + expand + close in one top-right row.        */
+/* This final block intentionally overrides earlier migration/chrome attempts.  */
+/* ========================================================================== */
+form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept,
+.swse.sheet.actor.character.v2 .swse-v2-tablet--concept {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  border-radius: 22px !important;
+  cursor: grab !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel,
+.swse.sheet.actor.character.v2 .swse-tablet-top-bezel {
+  position: absolute !important;
+  z-index: 160 !important;
+  top: 6px !important;
+  left: 12px !important;
+  right: 12px !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+  user-select: none !important;
+  touch-action: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::before,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::after,
+.swse.sheet.actor.character.v2 .swse-tablet-top-bezel::before,
+.swse.sheet.actor.character.v2 .swse-tablet-top-bezel::after {
+  content: none !important;
+  display: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle,
+.swse.sheet.actor.character.v2 .swse-tablet-drag-handle {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  display: block !important;
+  width: auto !important;
+  height: 24px !important;
+  min-width: 0 !important;
+  background: transparent !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+  touch-action: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail,
+.swse.sheet.actor.character.v2 .swse-tablet-top-right-rail {
+  position: absolute !important;
+  z-index: 3 !important;
+  top: 0 !important;
+  right: 0 !important;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  width: auto !important;
+  max-width: calc(100% - 24px) !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  padding: 0 2px 0 10px !important;
+  margin: 0 !important;
+  border-radius: 6px !important;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.24) 24%, rgba(255, 255, 255, 0.035)) !important;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+  pointer-events: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights,
+.swse.sheet.actor.character.v2 .swse-tablet-status-lights {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  gap: 5px !important;
+  height: 100% !important;
+  pointer-events: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span,
+.swse.sheet.actor.character.v2 .swse-tablet-status-lights span {
+  display: block !important;
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 50% !important;
+  background: var(--vapor-cyan, #00f0ff) !important;
+  box-shadow: 0 0 7px var(--vapor-cyan, #00f0ff), 0 0 14px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 55%, transparent) !important;
+  opacity: 0.78 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span:nth-child(2),
+.swse.sheet.actor.character.v2 .swse-tablet-status-lights span:nth-child(2) {
+  background: var(--pos, #61ff9a) !important;
+  box-shadow: 0 0 7px var(--pos, #61ff9a), 0 0 14px color-mix(in srgb, var(--pos, #61ff9a) 50%, transparent) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span:nth-child(3),
+.swse.sheet.actor.character.v2 .swse-tablet-status-lights span:nth-child(3) {
+  background: var(--vapor-pink, #ff2bd6) !important;
+  box-shadow: 0 0 7px var(--vapor-pink, #ff2bd6), 0 0 14px color-mix(in srgb, var(--vapor-pink, #ff2bd6) 50%, transparent) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh,
+.swse.sheet.actor.character.v2 .swse-tablet-serial--aurebesh {
+  display: inline-block !important;
+  flex: 0 1 auto !important;
+  max-width: 220px !important;
+  min-width: 0 !important;
+  padding: 0 8px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-family: "Aurebesh Condensed", "Aurebesh", var(--font-mono, monospace) !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.16em !important;
+  color: color-mix(in srgb, var(--ink-faint, #7b8da8) 78%, transparent) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 -1px 0 rgba(0,0,0,0.9) !important;
+  opacity: 0.86 !important;
+  pointer-events: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control,
+.swse.sheet.actor.character.v2 .swse-tablet-control {
+  position: relative !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 22px !important;
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  max-width: 22px !important;
+  max-height: 22px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 5px !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept,
+.swse.sheet.actor.character.v2 .swse-v2-screen--concept {
+  position: absolute !important;
+  z-index: 1 !important;
+  inset: 32px 24px 38px 24px !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  scrollbar-gutter: stable both-edges !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving,
+.swse.sheet.actor.character.v2 .swse-tablet-bottom-engraving {
+  right: 42px !important;
+  bottom: 9px !important;
+  z-index: 70 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom,
+.swse.sheet.actor.character.v2 .swse-tablet-vent--bottom,
+.swse.sheet.actor.character.v2 .swse-tablet-vent:not(.swse-tablet-vent--top) {
+  left: 34px !important;
+  bottom: 16px !important;
+  z-index: 70 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip,
+.swse.sheet.actor.character.v2 .swse-tablet-resize-grip {
+  right: 8px !important;
+  bottom: 8px !important;
+  z-index: 180 !important;
+}
+
+
+/* ========================================================================== */
+/* 2026-05-10: Progression-grade tablet shell as the shared character shell.   */
+/* Authority: assets/Concept/Character Sheet v2.html + actor-v2 progression    */
+/* splash tablet. This block overrides earlier migration attempts.             */
+/* ========================================================================== */
+form[id^="SWSEV2CharacterSheet"],
+.swse.sheet.actor.character.v2 {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-character-sheet-wrapper--concept,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+  --tablet-pad-x: clamp(22px, 3.2vw, 44px);
+  --tablet-pad-top: clamp(34px, 4.4vw, 48px);
+  --tablet-pad-bottom: clamp(40px, 5vw, 56px);
+  position: absolute !important;
+  inset: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: var(--tablet-pad-top) var(--tablet-pad-x) var(--tablet-pad-bottom) !important;
+  border-radius: 22px !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  cursor: grab !important;
+  background: linear-gradient(140deg, #1a1a26 0%, #0b0b14 55%, #12121c 100%) !important;
+  border: 1px solid oklch(0.35 0.04 270 / 0.5) !important;
+  box-shadow:
+    inset 0 0 0 1px oklch(0.35 0.04 270 / 0.5),
+    inset 0 2px 0 0 oklch(0.55 0.03 270 / 0.4),
+    inset 0 -2px 0 0 oklch(0.05 0.02 270 / 0.9),
+    0 40px 80px oklch(0 0 0 / 0.7),
+    0 0 140px oklch(var(--accent-l, 0.82) var(--accent-c, 0.17) var(--accent-h, 190) / 0.12) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 85 !important;
+  pointer-events: none !important;
+  border-radius: inherit !important;
+  box-shadow:
+    inset 0 0 0 1px oklch(0.35 0.04 270 / 0.32),
+    inset 0 18px 38px rgba(255,255,255,0.035),
+    inset 0 -28px 46px rgba(0,0,0,0.55),
+    inset 0 0 58px rgba(0,0,0,0.38) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept {
+  position: absolute !important;
+  z-index: 1 !important;
+  inset: var(--tablet-pad-top) var(--tablet-pad-x) var(--tablet-pad-bottom) var(--tablet-pad-x) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  padding: 18px !important;
+  border-radius: 10px !important;
+  border: 1px solid oklch(0.3 0.04 260 / 0.6) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  scrollbar-gutter: stable both-edges !important;
+  background: radial-gradient(ellipse at 30% 10%, var(--screen-2, oklch(0.18 0.07 272)) 0%, var(--screen, oklch(0.13 0.055 278)) 50%, oklch(0.08 0.04 278) 100%) !important;
+  box-shadow:
+    inset 0 0 0 1px oklch(0 0 0 / 0.6),
+    inset 0 2px 14px oklch(0 0 0 / 0.5),
+    inset 0 0 80px oklch(var(--accent-l, 0.82) var(--accent-c, 0.17) var(--accent-h, 190) / 0.08) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel {
+  position: absolute !important;
+  z-index: 180 !important;
+  top: 10px !important;
+  left: 18px !important;
+  right: 18px !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+  touch-action: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle {
+  position: absolute !important;
+  z-index: 1 !important;
+  inset: -8px 0 -4px 0 !important;
+  display: block !important;
+  background: transparent !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail {
+  position: absolute !important;
+  z-index: 4 !important;
+  top: 0 !important;
+  right: 18px !important;
+  left: auto !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  width: auto !important;
+  max-width: calc(100% - 40px) !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  padding: 0 8px !important;
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.26) 30%, rgba(255,255,255,0.035)) !important;
+  border-radius: 6px !important;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+  pointer-events: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh {
+  position: static !important;
+  display: inline-block !important;
+  flex: 0 1 auto !important;
+  max-width: 220px !important;
+  padding: 0 4px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-family: "Aurebesh Condensed", "Aurebesh", var(--font-mono, monospace) !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.18em !important;
+  color: oklch(0.55 0.05 260) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 -1px 0 rgba(0,0,0,0.9) !important;
+  opacity: 0.88 !important;
+  pointer-events: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  flex: 0 0 auto !important;
+  pointer-events: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-led {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: var(--vapor-cyan, oklch(0.85 0.18 200)) !important;
+  box-shadow: 0 0 10px var(--vapor-cyan, oklch(0.85 0.18 200)), 0 0 22px var(--vapor-cyan, oklch(0.85 0.18 200)) !important;
+  opacity: 0.78 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span:nth-child(2),
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-led--b {
+  background: var(--pos, oklch(0.82 0.19 145)) !important;
+  box-shadow: 0 0 10px var(--pos, oklch(0.82 0.19 145)), 0 0 22px var(--pos, oklch(0.82 0.19 145)) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span:nth-child(3),
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-led--c {
+  background: var(--vapor-pink, oklch(0.72 0.26 350)) !important;
+  box-shadow: 0 0 10px var(--vapor-pink, oklch(0.72 0.26 350)), 0 0 22px var(--vapor-pink, oklch(0.72 0.26 350)) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
+  position: static !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 5px !important;
+  border: 1px solid color-mix(in srgb, var(--vapor-cyan, #00f0ff) 46%, transparent) !important;
+  background: rgba(3, 8, 14, 0.7) !important;
+  color: var(--ink, #dff8ff) !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control:hover {
+  border-color: var(--vapor-cyan, #00f0ff) !important;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 40%, transparent) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet {
+  position: absolute !important;
+  z-index: 95 !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 35% 35%, #5a5a6e 0%, #1a1a22 70%) !important;
+  box-shadow: inset 0 0 0 1px #090912, 0 0 0 1px oklch(0.18 0.02 260) !important;
+  pointer-events: none !important;
+}
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet--tl { top: 14px !important; left: 18px !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet--tr { top: 14px !important; right: 18px !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet--bl { bottom: 14px !important; left: 18px !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet--br { bottom: 14px !important; right: 18px !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet--ml { top: 50% !important; left: 14px !important; transform: translateY(-50%) !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet--mr { top: 50% !important; right: 14px !important; transform: translateY(-50%) !important; }
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-phys {
+  position: absolute !important;
+  z-index: 94 !important;
+  background: linear-gradient(90deg, #0a0a12 0%, #2a2a38 50%, #0a0a12 100%) !important;
+  box-shadow: 0 0 0 1px oklch(0.08 0.02 260) !important;
+  pointer-events: none !important;
+}
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-phys--top-a { top: -3px !important; left: 240px !important; width: 70px !important; height: 5px !important; border-radius: 2px !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-phys--top-b { top: -3px !important; left: 330px !important; width: 40px !important; height: 5px !important; border-radius: 2px !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-phys--right-a { right: -3px !important; top: 180px !important; width: 6px !important; height: 38px !important; border-radius: 3px !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-phys--right-b { right: -3px !important; top: 230px !important; width: 6px !important; height: 38px !important; border-radius: 3px !important; }
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-camera {
+  position: absolute !important;
+  z-index: 95 !important;
+  top: 24px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 40% 40%, oklch(0.30 0.05 260) 0%, #000 70%) !important;
+  box-shadow: inset 0 0 0 1px oklch(0.18 0.02 260) !important;
+  pointer-events: none !important;
+}
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-camera::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 3px !important;
+  left: 3px !important;
+  width: 3px !important;
+  height: 3px !important;
+  border-radius: 50% !important;
+  background: var(--vapor-cyan, #00f0ff) !important;
+  box-shadow: 0 0 6px var(--vapor-cyan, #00f0ff) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-led {
+  position: absolute !important;
+  z-index: 95 !important;
+  pointer-events: none !important;
+  animation: swse-tablet-led-pulse 1.8s ease-in-out infinite !important;
+}
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-led--a { top: 28px !important; left: 62px !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-led--b { top: 28px !important; right: 62px !important; animation-delay: 0.3s !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-led--c { bottom: 30px !important; left: 62px !important; animation-delay: 0.6s !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-led--d { bottom: 30px !important; right: 62px !important; background: oklch(0.80 0.16 60) !important; box-shadow: 0 0 10px oklch(0.80 0.16 60), 0 0 22px oklch(0.80 0.16 60) !important; animation-delay: 0.9s !important; }
+@keyframes swse-tablet-led-pulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--top {
+  position: absolute !important;
+  top: 22px !important;
+  left: 50% !important;
+  bottom: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 94 !important;
+  display: flex !important;
+  gap: 3px !important;
+  pointer-events: none !important;
+  opacity: 0.56 !important;
+}
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--top span {
+  width: 2px !important;
+  height: 10px !important;
+  border-radius: 1px !important;
+  background: oklch(0.2 0.02 260) !important;
+  box-shadow: inset 0 0 1px oklch(0.05 0.02 260) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
+  z-index: 96 !important;
+  pointer-events: none !important;
+}
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving { right: 44px !important; bottom: 18px !important; color: oklch(0.50 0.04 260) !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom { left: 44px !important; bottom: 20px !important; }
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip {
+  position: absolute !important;
+  z-index: 220 !important;
+  right: 7px !important;
+  bottom: 7px !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 8px !important;
+  cursor: nwse-resize !important;
+  pointer-events: auto !important;
+  touch-action: none !important;
+}
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip::before {
+  content: "" !important;
+  position: absolute !important;
+  right: 8px !important;
+  bottom: 8px !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-right: 2px solid var(--vapor-cyan, #00f0ff) !important;
+  border-bottom: 2px solid var(--vapor-cyan, #00f0ff) !important;
+  opacity: 0.82 !important;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 52%, transparent)) !important;
+}
+
+/* When chargen/progression intro is hosted inside the character holopad, the
+   character tablet is already the metal shell. Remove the nested intro tablet
+   chrome and keep only the animated boot screen content. */
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only,
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only > .prog-intro-surface,
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2::before { display: none !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .stage {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+}
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .tablet {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .rivet,
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .btn-phys,
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-led,
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-label,
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-serial,
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-fcc,
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-manu,
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .vent,
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .cam {
+  display: none !important;
+}
+form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .screen {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  padding: 22px !important;
+  border-radius: 8px !important;
+}
+
+@media (max-width: 1100px) {
+  form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+    --tablet-pad-x: 22px;
+    --tablet-pad-top: 34px;
+    --tablet-pad-bottom: 42px;
+  }
+  form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail { right: 10px !important; }
+}
+
+/* ========================================================================== */
+/* 2026-05-10: Frameless shell + inline surface separation correction          */
+/* - Character sheet chrome is only rendered in sheet mode.                    */
+/* - Home/progression/settings surfaces own the whole screen.                  */
+/* - Top hardware rail is one compact row at upper-right.                      */
+/* ========================================================================== */
+form[id^="SWSEV2CharacterSheet"] .swse-character-sheet-wrapper--concept,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept,
+form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+  position: absolute !important;
+  inset: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 22px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel {
+  position: absolute !important;
+  z-index: 260 !important;
+  top: 8px !important;
+  left: 16px !important;
+  right: 16px !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle {
+  position: absolute !important;
+  z-index: 1 !important;
+  inset: -4px 0 -4px 0 !important;
+  display: block !important;
+  background: transparent !important;
+  pointer-events: auto !important;
+  cursor: grab !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail {
+  position: absolute !important;
+  z-index: 3 !important;
+  top: 0 !important;
+  right: 0 !important;
+  left: auto !important;
+  bottom: auto !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  width: auto !important;
+  max-width: calc(100% - 32px) !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  padding: 0 8px !important;
+  margin: 0 !important;
+  background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,0.34) 32%, rgba(255,255,255,0.035)) !important;
+  border-radius: 6px !important;
+  pointer-events: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
+  position: static !important;
+  transform: none !important;
+  flex-shrink: 0 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 21px !important;
+  min-width: 21px !important;
+  height: 21px !important;
+  min-height: 21px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh {
+  max-width: 230px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept {
+  position: absolute !important;
+  z-index: 5 !important;
+  top: 40px !important;
+  right: 28px !important;
+  bottom: 62px !important;
+  left: 28px !important;
+  inset: 40px 28px 62px 28px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: hidden !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-sheet .swse-v2-screen--concept {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
+  display: flex !important;
+  opacity: 0.78 !important;
+  z-index: 170 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving {
+  right: 62px !important;
+  bottom: 18px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
+  left: 48px !important;
+  bottom: 22px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip {
+  display: block !important;
+  position: absolute !important;
+  z-index: 300 !important;
+  right: 8px !important;
+  bottom: 8px !important;
+  width: 42px !important;
+  height: 42px !important;
+  pointer-events: auto !important;
+  cursor: nwse-resize !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip::before {
+  content: "" !important;
+  position: absolute !important;
+  right: 10px !important;
+  bottom: 10px !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-right: 2px solid var(--vapor-cyan, #00f0ff) !important;
+  border-bottom: 2px solid var(--vapor-cyan, #00f0ff) !important;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 60%, transparent)) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-shell-screen-surface,
+form[id^="SWSEV2CharacterSheet"] .swse-shell-screen-surface > .swse-shell-surface-host,
+form[id^="SWSEV2CharacterSheet"] .swse-shell-surface-host,
+form[id^="SWSEV2CharacterSheet"] .swse-shell-surface {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-shell-screen-surface .swse-shell-home-nav {
+  top: 8px !important;
+  right: 8px !important;
+}
+
+/* Restore concept sheet flex/grid ownership after separating routed surfaces. */
+form[id^="SWSEV2CharacterSheet"] .swse-concept-body {
+  display: grid !important;
+  grid-template-columns: minmax(210px, 280px) minmax(0, 1fr) !important;
+  gap: 18px !important;
+  flex: 1 0 auto !important;
+  min-height: 0 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-main {
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-main > .tab:not(.active) {
+  display: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-main > .tab.active {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+
+/* Inline progression must use the existing progression CSS authority. */
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell .swse-prog-inline-body {
+  display: grid !important;
+  grid-template-columns: minmax(172px, 0.55fr) minmax(0, 1.7fr) minmax(230px, 0.82fr) !important;
+  gap: 12px !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 10px !important;
+  overflow: hidden !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell .swse-prog-inline-mentor,
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell .swse-prog-inline-work,
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell .swse-prog-inline-details {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+}
+
+/* ========================================================================== */
+/* 2026-05-10 P0: holopad chrome + canonical inline progression restoration    */
+/* ========================================================================== */
+form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+  --tablet-top-rail-h: 26px;
+  --tablet-bottom-rail-h: 34px;
+  position: absolute !important;
+  inset: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 18px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel {
+  position: absolute !important;
+  z-index: 240 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: var(--tablet-top-rail-h) !important;
+  min-height: var(--tablet-top-rail-h) !important;
+  max-height: var(--tablet-top-rail-h) !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.035), rgba(0,0,0,0.10)),
+    linear-gradient(90deg, rgba(0,240,255,0.08), rgba(255,46,205,0.035), rgba(0,240,255,0.04)) !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--vapor-cyan, #00f0ff) 26%, transparent) !important;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.72), 0 0 14px rgba(0,240,255,0.10) !important;
+  cursor: grab !important;
+  pointer-events: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  cursor: grab !important;
+  pointer-events: auto !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-hardware-rail,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail {
+  position: absolute !important;
+  z-index: 320 !important;
+  top: 3px !important;
+  right: 10px !important;
+  left: auto !important;
+  bottom: auto !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 7px !important;
+  width: auto !important;
+  height: 20px !important;
+  min-height: 20px !important;
+  max-height: 20px !important;
+  padding: 0 6px !important;
+  margin: 0 !important;
+  border-radius: 5px !important;
+  background: rgba(0, 0, 0, 0.28) !important;
+  border: 1px solid rgba(0, 240, 255, 0.14) !important;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.45) !important;
+  pointer-events: auto !important;
+  transform: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-hardware-rail > *,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail > * {
+  position: static !important;
+  transform: none !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh {
+  display: inline-block !important;
+  max-width: 190px !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  letter-spacing: 0.08em !important;
+  opacity: 0.76 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span {
+  display: block !important;
+  width: 4px !important;
+  height: 4px !important;
+  border-radius: 50% !important;
+  background: var(--vapor-cyan, #00f0ff) !important;
+  box-shadow: 0 0 8px var(--vapor-cyan, #00f0ff) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 18px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  min-height: 18px !important;
+  max-height: 18px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+  font-size: 10px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept {
+  position: absolute !important;
+  z-index: 5 !important;
+  inset: calc(var(--tablet-top-rail-h) + 8px) 24px calc(var(--tablet-bottom-rail-h) + 8px) 24px !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: hidden !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
+  position: absolute !important;
+  z-index: 300 !important;
+  display: flex !important;
+  bottom: 9px !important;
+  pointer-events: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving {
+  right: 62px !important;
+  font-size: 7px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
+  left: 42px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip {
+  z-index: 420 !important;
+  right: 1px !important;
+  bottom: 1px !important;
+  width: 32px !important;
+  height: 32px !important;
+  cursor: nwse-resize !important;
+  pointer-events: auto !important;
+}
+
+/* Frameless AppV2 edge/corner resize hit zones.
+   These emulate normal OS window borders without adding visible boxes. */
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone {
+  position: absolute !important;
+  z-index: 410 !important;
+  display: block !important;
+  pointer-events: auto !important;
+  background: transparent !important;
+  border: 0 !important;
+  opacity: 0 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--n {
+  top: -2px !important;
+  left: 18px !important;
+  right: 18px !important;
+  height: 8px !important;
+  cursor: ns-resize !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--s {
+  bottom: -2px !important;
+  left: 18px !important;
+  right: 18px !important;
+  height: 10px !important;
+  cursor: ns-resize !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--e {
+  top: 18px !important;
+  right: -2px !important;
+  bottom: 18px !important;
+  width: 10px !important;
+  cursor: ew-resize !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--w {
+  top: 18px !important;
+  left: -2px !important;
+  bottom: 18px !important;
+  width: 10px !important;
+  cursor: ew-resize !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--ne,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--nw,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--se,
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--sw {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--ne {
+  top: -3px !important;
+  right: -3px !important;
+  cursor: nesw-resize !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--nw {
+  top: -3px !important;
+  left: -3px !important;
+  cursor: nwse-resize !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--se {
+  right: -3px !important;
+  bottom: -3px !important;
+  cursor: nwse-resize !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--sw {
+  left: -3px !important;
+  bottom: -3px !important;
+  cursor: nesw-resize !important;
+}
+
+form[id^="SWSEV2CharacterSheet"].is-window-resizing,
+form[id^="SWSEV2CharacterSheet"].is-window-resizing * {
+  user-select: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"].is-window-resizing--n,
+form[id^="SWSEV2CharacterSheet"].is-window-resizing--s {
+  cursor: ns-resize !important;
+}
+
+form[id^="SWSEV2CharacterSheet"].is-window-resizing--e,
+form[id^="SWSEV2CharacterSheet"].is-window-resizing--w {
+  cursor: ew-resize !important;
+}
+
+form[id^="SWSEV2CharacterSheet"].is-window-resizing--ne,
+form[id^="SWSEV2CharacterSheet"].is-window-resizing--sw {
+  cursor: nesw-resize !important;
+}
+
+form[id^="SWSEV2CharacterSheet"].is-window-resizing--nw,
+form[id^="SWSEV2CharacterSheet"].is-window-resizing--se {
+  cursor: nwse-resize !important;
+}
+
+/* Canonical progression shell embedded in the holopad screen. */
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host,
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.progression-shell,
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.progression-shell > .swse-screen {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host {
+  position: relative !important;
+  display: flex !important;
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.progression-shell {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.progression-shell::before,
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.progression-shell::after {
+  display: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.progression-shell > .swse-screen {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host .progression-shell [data-region="mentor-rail"] {
+  flex: 0 0 118px !important;
+  height: 118px !important;
+  min-height: 118px !important;
+  max-height: 118px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host .progression-shell .prog-content-row {
+  min-height: 0 !important;
+}
+
+/* Species list: keep body rows text/code only; details rail owns portraits. */
+form[id^="SWSEV2CharacterSheet"] .prog-species-row__thumb-img,
+form[id^="SWSEV2CharacterSheet"] .prog-species-row__thumb .prog-holo-scan {
+  display: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .prog-species-row__thumb--badge-only {
+  width: 34px !important;
+  min-width: 34px !important;
 }

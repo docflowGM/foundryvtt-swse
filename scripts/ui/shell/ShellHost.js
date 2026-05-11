@@ -332,7 +332,10 @@ export function ShellHostMixin(BaseClass) {
           if (el.disabled) return;
           const routeId = el.dataset.routeId;
           if (!routeId) return;
-          await this.setSurface(routeId, { source: 'home' });
+          const surfaceOptions = { source: 'home' };
+          if (el.dataset.bayMode) surfaceOptions.bayMode = el.dataset.bayMode;
+          if (el.dataset.contextMode) surfaceOptions.contextMode = el.dataset.contextMode;
+          await this.setSurface(routeId, surfaceOptions);
           this.render(false);
         });
       });

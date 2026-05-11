@@ -180,6 +180,8 @@
           <div class="swse-home-tile-cell" style="left: {{this.positionLeft}}%; top: {{this.positionTop}}%;">
             <button class="swse-home-tile {{#if this.featured}}featured{{/if}}{{#if this.locked}}locked{{/if}}{{#unless this.enabled}}disabled{{/unless}}"
                     data-route-id="{{this.routeId}}"
+                    {{#if this.bayMode}}data-bay-mode="{{this.bayMode}}"{{/if}}
+                    {{#if this.contextMode}}data-context-mode="{{this.contextMode}}"{{/if}}
                     type="button"
                     {{#unless this.enabled}}disabled{{/unless}}>
               <span class="swse-home-tile-id">{{this.id}}</span>

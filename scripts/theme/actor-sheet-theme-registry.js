@@ -20,7 +20,7 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
 
   vapor: {
     key: 'vapor',
-    label: 'Vapor',
+    label: 'Vaporwave',
     source: 'sheet',
     description: 'Bright cyan-heavy cyberpunk aesthetic',
     tokens: {
@@ -40,7 +40,7 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
 
   cryo: {
     key: 'cryo',
-    label: 'Cryo',
+    label: 'Cryo Ice',
     source: 'sheet',
     description: 'Pale cyan, cool and desaturated',
     tokens: {
@@ -60,7 +60,7 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
 
   droid: {
     key: 'droid',
-    label: 'Droid',
+    label: 'Droid Amber',
     source: 'sheet',
     description: 'Golden yellow, mechanical and warm',
     tokens: {
@@ -80,14 +80,14 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
 
   blood: {
     key: 'blood',
-    label: 'Blood',
+    label: 'Blood Moon',
     source: 'sheet',
     description: 'Deep crimson, dark and intense',
     tokens: {
-      '--vapor-cyan': 'oklch(0.82 0.22 10)',
-      '--vapor-pink': 'oklch(0.75 0.26 350)',
-      '--vapor-purple': 'oklch(0.50 0.22 330)',
-      '--screen-h': '15',
+      '--vapor-cyan': 'oklch(0.72 0.24 20)',
+      '--vapor-pink': 'oklch(0.65 0.26 10)',
+      '--vapor-purple': 'oklch(0.38 0.20 10)',
+      '--screen-h': '12',
       '--ink-h': '20'
     },
     fonts: {
@@ -100,15 +100,15 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
 
   merc: {
     key: 'merc',
-    label: 'Merc',
+    label: 'Merc Green',
     source: 'sheet',
     description: 'Gunmetal green, tactical and muted',
     tokens: {
       '--vapor-cyan': 'oklch(0.82 0.19 145)',
       '--vapor-pink': 'oklch(0.78 0.20 120)',
       '--vapor-purple': 'oklch(0.45 0.18 155)',
-      '--screen-h': '140',
-      '--ink-h': '150'
+      '--screen-h': '150',
+      '--ink-h': '145'
     },
     fonts: {
       '--swse-font-display': '"SWSE VT323", monospace',
@@ -124,10 +124,10 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
     source: 'sheet',
     description: 'Dark red and black, authoritarian',
     tokens: {
-      '--vapor-cyan': 'oklch(0.85 0.18 30)',
-      '--vapor-pink': 'oklch(0.78 0.20 20)',
-      '--vapor-purple': 'oklch(0.50 0.18 25)',
-      '--screen-h': '20',
+      '--vapor-cyan': 'oklch(0.80 0.18 25)',
+      '--vapor-pink': 'oklch(0.72 0.22 15)',
+      '--vapor-purple': 'oklch(0.45 0.20 20)',
+      '--screen-h': '18',
       '--ink-h': '25'
     },
     fonts: {
@@ -140,7 +140,7 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
 
   rebel: {
     key: 'rebel',
-    label: 'Rebel',
+    label: 'Rebel Alert',
     source: 'sheet',
     description: 'Warm earth tones, rustic alliance',
     tokens: {
@@ -148,7 +148,7 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
       '--vapor-pink': 'oklch(0.78 0.22 35)',
       '--vapor-purple': 'oklch(0.55 0.22 40)',
       '--screen-h': '40',
-      '--ink-h': '50'
+      '--ink-h': '60'
     },
     fonts: {
       '--swse-font-display': '"SWSE VT323", monospace',
@@ -160,15 +160,15 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
 
   sith: {
     key: 'sith',
-    label: 'Sith',
+    label: 'Sith Holocron',
     source: 'sheet',
     description: 'Dark red and purple, malevolent power',
     tokens: {
       '--vapor-cyan': 'oklch(0.75 0.22 15)',
       '--vapor-pink': 'oklch(0.65 0.26 340)',
       '--vapor-purple': 'oklch(0.40 0.22 350)',
-      '--screen-h': '10',
-      '--ink-h': '345'
+      '--screen-h': '350',
+      '--ink-h': '15'
     },
     fonts: {
       '--swse-font-display': '"SWSE VT323", monospace',
@@ -184,14 +184,14 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
 
   holo: {
     key: 'holo',
-    label: 'Holo',
+    label: 'Holo Blue',
     source: 'global',
     description: 'Bright cyan hologram aesthetic',
     tokens: {
       '--vapor-cyan': 'oklch(0.85 0.14 220)',
       '--vapor-pink': 'oklch(0.78 0.15 240)',
       '--vapor-purple': 'oklch(0.55 0.18 260)',
-      '--screen-h': '220',
+      '--screen-h': '235',
       '--ink-h': '220'
     },
     fonts: {
@@ -204,7 +204,7 @@ export const ACTOR_SHEET_THEME_REGISTRY = {
 
   jedi: {
     key: 'jedi',
-    label: 'Jedi',
+    label: 'Jedi Archive',
     source: 'global',
     description: 'Cool blue, wisdom and clarity',
     tokens: {
@@ -365,6 +365,14 @@ export function buildActorSheetThemeStyle(themeKey) {
     Object.entries(entry.fonts).forEach(([k, v]) => {
       styles.push(`${k}: ${v}`);
     });
+
+    // Direct aliases consumed by the original concept CSS. The v2 token sheet
+    // defines these too, but emitting them inline lets a chosen preset override
+    // the shell defaults immediately and on every render.
+    if (entry.fonts['--swse-font-body']) styles.push(`--font-body: ${entry.fonts['--swse-font-body']}`);
+    if (entry.fonts['--swse-font-mono']) styles.push(`--font-mono: ${entry.fonts['--swse-font-mono']}`);
+    if (entry.fonts['--swse-font-display']) styles.push(`--font-display: ${entry.fonts['--swse-font-display']}`);
+    if (entry.fonts['--swse-font-orbit']) styles.push(`--font-orbit: ${entry.fonts['--swse-font-orbit']}`);
   }
 
   // Add canonical derived shell tokens so the same theme can be applied to

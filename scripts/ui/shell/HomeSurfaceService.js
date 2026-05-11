@@ -33,6 +33,39 @@ function asNumber(value, fallback = 0) {
   return Number.isFinite(numeric) ? numeric : fallback;
 }
 
+
+function asArray(value) {
+  if (Array.isArray(value)) return value;
+  if (!value) return [];
+  if (value instanceof Map) return Array.from(value.values());
+  if (Array.isArray(value.contents)) return value.contents;
+  if (typeof value !== 'string' && typeof value[Symbol.iterator] === 'function') {
+    return Array.from(value);
+  }
+  if (typeof value === 'object') return Object.values(value);
+  return [];
+}
+
+function hasEntries(value) {
+  return asArray(value).filter(Boolean).length > 0;
+}
+
+function relationshipMatchesType(relationship, acceptedTypes = []) {
+  const type = String(
+    relationship?.type
+    ?? relationship?.actorType
+    ?? relationship?.documentType
+    ?? relationship?.kind
+    ?? ''
+  ).toLowerCase();
+  return acceptedTypes.includes(type);
+}
+
+function ownedItemMatchesType(item, acceptedTypes = []) {
+  const type = String(item?.type ?? '').toLowerCase();
+  return acceptedTypes.includes(type);
+}
+
 function formatTimestamp(value) {
   if (!value) return null;
   try {
@@ -337,17 +370,7 @@ export class HomeSurfaceService {
    * Build app tiles with radial positioning, badge types, and state flags
    */
   static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary) {
-    // Radial layout: 7 tiles positioned at 360°/7 ≈ 51.43° intervals
-    const tilePositions = [
-      { left: 50.00, top: 8.00 },   // 0° - top
-      { left: 82.84, top: 23.81 },  // 51.43° - upper right
-      { left: 90.95, top: 59.35 },  // 102.86° - right
-      { left: 68.22, top: 87.84 },  // 154.29° - lower right
-      { left: 31.78, top: 87.84 },  // 205.71° - lower left
-      { left: 9.05, top: 59.35 },   // 257.14° - left
-      { left: 17.16, top: 23.81 }   // 308.57° - upper left
-    ];
-
+    const assetSummary = this._getOwnedAssetSummary(actor);
     const baseTiles = [
       {
         id: 'sheet',
@@ -413,29 +436,33 @@ export class HomeSurfaceService {
         id: 'ship',
         label: 'Ship',
         icon: '◈',
-        routeId: 'ship',
-        visible: false,
-        enabled: false,
-        badge: null,
-        badgeType: null,
+        routeId: 'customization',
+        bayMode: 'shipyard',
+        contextMode: 'modifyExisting',
+        visible: assetSummary.vehicleCount > 0,
+        enabled: assetSummary.vehicleCount > 0,
+        badge: assetSummary.vehicleCount > 1 ? String(assetSummary.vehicleCount) : null,
+        badgeType: assetSummary.vehicleCount > 1 ? 'info' : null,
         featured: false,
-        locked: true,
-        status: 'LOCKED',
-        statusTone: 'crit',
+        locked: false,
+        status: assetSummary.vehicleCount > 1 ? `${assetSummary.vehicleCount} SHIPS` : 'READY',
+        statusTone: '',
         description: 'Ship systems and status'
       },
       {
         id: 'companion',
         label: 'Droid\nCompanion',
         icon: '⬡',
-        routeId: 'companion',
-        visible: false,
-        enabled: true,
-        badge: null,
-        badgeType: null,
+        routeId: 'customization',
+        bayMode: 'garage',
+        contextMode: 'modifyExisting',
+        visible: assetSummary.droidCount > 0,
+        enabled: assetSummary.droidCount > 0,
+        badge: assetSummary.droidCount > 1 ? String(assetSummary.droidCount) : null,
+        badgeType: assetSummary.droidCount > 1 ? 'info' : null,
         featured: false,
         locked: false,
-        status: 'ACTIVE',
+        status: assetSummary.droidCount > 1 ? `${assetSummary.droidCount} UNITS` : 'READY',
         statusTone: '',
         description: 'Companion status and upgrades'
       },
@@ -487,11 +514,73 @@ export class HomeSurfaceService {
     ];
 
     const visibleTiles = baseTiles.filter(tile => tile.visible !== false);
+    const tilePositions = this._buildRadialTilePositions(visibleTiles.length);
+
     return visibleTiles.map((tile, index) => ({
       ...tile,
       positionLeft: tilePositions[index]?.left ?? 50,
       positionTop: tilePositions[index]?.top ?? 50
     }));
+  }
+
+
+  /**
+   * Resolve whether the actor actually owns or has linked droid/vehicle assets.
+   * These launchers should not be accessible by default on a fresh character;
+   * they appear only when the actor has an attached asset from purchase hooks,
+   * embedded inventory, or relationship links.
+   */
+  static _getOwnedAssetSummary(actor) {
+    if (!actor) return { droidCount: 0, vehicleCount: 0 };
+
+    const system = actor.system ?? {};
+    const relationships = asArray(system.relationships);
+    const items = asArray(actor.items);
+
+    const droidRefs = [
+      ...asArray(system.droids),
+      ...asArray(system.assets?.droids),
+      ...asArray(system.inventory?.droids),
+      ...relationships.filter(rel => relationshipMatchesType(rel, ['droid'])),
+      ...items.filter(item => ownedItemMatchesType(item, ['droid']))
+    ];
+
+    const vehicleRefs = [
+      ...asArray(system.vehicles),
+      ...asArray(system.ships),
+      ...asArray(system.assets?.vehicles),
+      ...asArray(system.assets?.ships),
+      ...asArray(system.inventory?.vehicles),
+      ...asArray(system.inventory?.ships),
+      ...relationships.filter(rel => relationshipMatchesType(rel, ['vehicle', 'ship', 'starship'])),
+      ...items.filter(item => ownedItemMatchesType(item, ['vehicle', 'ship', 'starship']))
+    ];
+
+    return {
+      droidCount: droidRefs.filter(Boolean).length,
+      vehicleCount: vehicleRefs.filter(Boolean).length,
+      hasDroids: hasEntries(droidRefs),
+      hasVehicles: hasEntries(vehicleRefs)
+    };
+  }
+
+  /**
+   * Build evenly spaced positions for only the visible home-orbit tiles.
+   * Hidden ship/droid/faction tiles should not leave gaps around the disc.
+   */
+  static _buildRadialTilePositions(count) {
+    if (count <= 0) return [];
+
+    const radius = count <= 4 ? 39 : 42;
+    const startDeg = -90;
+
+    return Array.from({ length: count }, (_unused, index) => {
+      const angle = (startDeg + (360 / count) * index) * (Math.PI / 180);
+      return {
+        left: Number((50 + Math.cos(angle) * radius).toFixed(2)),
+        top: Number((50 + Math.sin(angle) * radius).toFixed(2))
+      };
+    });
   }
 
   /**

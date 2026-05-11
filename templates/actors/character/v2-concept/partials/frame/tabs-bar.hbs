@@ -1,8 +1,8 @@
 <nav class="swse-concept-tabs sheet-tabs" data-group="primary" data-tab-group="primary">
   {{#each conceptLayout.tabs as |tab|}}
     <a class="swse-concept-tab item {{#if tab.active}}active{{/if}}"
-       data-action="tab"
-       data-tab="{{tab.id}}"
+       data-action="sheet-tab"
+       data-sheet-tab="{{tab.id}}"
        data-group="primary"
        data-tab-group="primary">
       <i class="{{tab.icon}} swse-concept-tab__icon" aria-hidden="true"></i>

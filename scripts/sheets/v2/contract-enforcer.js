@@ -42,6 +42,36 @@ export class CharacterSheetContractEnforcer {
   }
 
   /**
+   * Frameless v2-concept sheets deliberately do not render Foundry's native
+   * .window-content or .window-header. The metallic tablet shell is the frame
+   * and .swse-v2-screen--concept is the single viewport scroller.
+   */
+  static isFramelessConceptSheet(element) {
+    return !!element?.matches?.('form[id^="SWSEV2CharacterSheet"]')
+      || !!element?.querySelector?.('.swse-v2-tablet--concept .swse-v2-screen--concept');
+  }
+
+  static validateFramelessConceptSheet(element) {
+    const violations = [];
+    const warnings = [];
+    const shell = element.querySelector?.('.swse-sheet-v2-shell--concept');
+    const tablet = element.querySelector?.('.swse-v2-tablet--concept');
+    const screen = element.querySelector?.('.swse-v2-screen--concept');
+    const activeTabs = element.querySelectorAll?.('.swse-concept-main.sheet-body > .tab.active[data-tab]') ?? [];
+
+    if (!shell) warnings.push({ rule: 'FRAME', severity: 'MEDIUM', message: 'Frameless concept shell not found', selector: '.swse-sheet-v2-shell--concept' });
+    if (!tablet) warnings.push({ rule: 'FRAME', severity: 'MEDIUM', message: 'Frameless tablet body not found', selector: '.swse-v2-tablet--concept' });
+    if (!screen) {
+      violations.push({ rule: 'SCROLL', severity: 'HIGH', message: 'Frameless screen scroll viewport not found', selector: '.swse-v2-screen--concept' });
+    }
+    if (activeTabs.length > 1) {
+      violations.push({ rule: 'TABS', severity: 'HIGH', message: `Expected at most one active sheet tab, found ${activeTabs.length}`, selectors: Array.from(activeTabs).map(el => this.getElementPath(el)) });
+    }
+
+    return { passed: violations.length === 0, violations, warnings };
+  }
+
+  /**
    * Report a contract violation to Sentinel
    * @param {string} rule - Contract rule name (FRAME, LAYOUT, SCROLL, PANELS, FLEX)
    * @param {number} severity - SentinelEngine.SEVERITY level
@@ -115,6 +145,10 @@ export class CharacterSheetContractEnforcer {
         { element: element ? element.tagName : 'null' }
       );
       return { passed: false, violations, warnings };
+    }
+
+    if (this.isFramelessConceptSheet(element)) {
+      return this.validateFramelessConceptSheet(element);
     }
 
     // RULE 3: SCROLL CONTRACT - Exactly ONE scroll owner

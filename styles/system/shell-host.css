@@ -296,3 +296,98 @@
   min-height: 0;
   max-width: none;
 }
+
+/* ─── Inline progression surface hardening ─────────────────────────────
+   Home -> Training/Chargen should never become a blank handoff screen.
+   These surfaces share the character holopad viewport and must own a full
+   flex chain down to the rendered step HTML. */
+.swse-shell-surface--progression,
+.swse-shell-surface--chargen,
+.swse-shell-surface--progression .swse-progression-inline,
+.swse-shell-surface--chargen .swse-progression-inline {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.swse-shell-surface--progression .swse-prog-inline-body,
+.swse-shell-surface--chargen .swse-prog-inline-body {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.72fr) minmax(0, 2fr) minmax(220px, 0.9fr);
+  gap: 12px;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.swse-shell-surface--progression .swse-prog-inline-progress-rail,
+.swse-shell-surface--chargen .swse-prog-inline-progress-rail,
+.swse-shell-surface--progression .swse-prog-inline-utility,
+.swse-shell-surface--chargen .swse-prog-inline-utility,
+.swse-shell-surface--progression .swse-prog-inline-footer,
+.swse-shell-surface--chargen .swse-prog-inline-footer {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+.swse-shell-surface--progression .swse-prog-inline-mentor,
+.swse-shell-surface--chargen .swse-prog-inline-mentor,
+.swse-shell-surface--progression .swse-prog-inline-work,
+.swse-shell-surface--chargen .swse-prog-inline-work,
+.swse-shell-surface--progression .swse-prog-inline-details,
+.swse-shell-surface--chargen .swse-prog-inline-details {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+.swse-shell-surface--progression .swse-prog-inline-work,
+.swse-shell-surface--chargen .swse-prog-inline-work {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 1100px) {
+  .swse-shell-surface--progression .swse-prog-inline-body,
+  .swse-shell-surface--chargen .swse-prog-inline-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Character holopad inline-host scroll repair.  The character sheet now owns
+   the metallic window chrome, so each shell surface must fit the holopad screen
+   and let its body own scrolling instead of growing past the bottom bezel. */
+.swse.sheet.actor.character.v2 .swse-shell-surface-host,
+.swse.sheet.actor.character.v2 .swse-shell-surface {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-shell-surface {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-shell-surface__header {
+  flex: 0 0 auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-shell-surface__body {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}

@@ -108,11 +108,14 @@ export class ProgressionSurfaceAdapter {
         if (advanced) context = await this._app._prepareContext({});
       }
 
+      const shellHtml = await this._renderCanonicalShellHtml(context);
+
       return {
         id,
         title,
         mode: this.mode,
         vm: context,
+        shellHtml,
         isReady: true
       };
     } catch (err) {
@@ -125,7 +128,8 @@ export class ProgressionSurfaceAdapter {
         if (advanced) {
           try {
             const context = await this._app._prepareContext({});
-            return { id, title, mode: this.mode, vm: context, isReady: true, recoveredFromIntroError: true };
+            const shellHtml = await this._renderCanonicalShellHtml(context);
+            return { id, title, mode: this.mode, vm: context, shellHtml, isReady: true, recoveredFromIntroError: true };
           } catch (secondErr) {
             SWSELogger.error('[ProgressionSurfaceAdapter] Context rebuild after intro recovery failed:', secondErr);
           }
@@ -225,6 +229,35 @@ export class ProgressionSurfaceAdapter {
     return !html.includes('prog-intro-surface');
   }
 
+
+  /**
+   * Render the canonical ProgressionShell template for inline hosting.
+   *
+   * The surface template deliberately injects this HTML instead of rebuilding the
+   * rail layout by hand.  That keeps Home/Training launches on the same mentor
+   * rail, progress rail, utility bar, summary/work/details rails, modal host, and
+   * footer that the progression engine owns.
+   *
+   * @param {object} context
+   * @returns {Promise<string>}
+   */
+  async _renderCanonicalShellHtml(context) {
+    if (!context) return '';
+    try {
+      return await foundry.applications.handlebars.renderTemplate(
+        'systems/foundryvtt-swse/templates/apps/progression-framework/progression-shell.hbs',
+        {
+          ...context,
+          inlineHost: true,
+          embeddedInHolopad: true
+        }
+      );
+    } catch (err) {
+      SWSELogger.error('[ProgressionSurfaceAdapter] canonical shell render failed:', err);
+      return '';
+    }
+  }
+
   _scheduleIntroWatchdog(plugin) {
     clearTimeout(this._introWatchdog);
     this._introWatchdog = setTimeout(async () => {
@@ -321,6 +354,21 @@ export class ProgressionSurfaceAdapter {
       const ShellClass = mode === 'chargen' ? ChargenShell : LevelupShell;
       const app = new ShellClass(actor, mode, options);
 
+      // Inline holopad launches must never spawn a standalone recovery dialog.
+      // The old RecoverySessionDialog is an ApplicationV2 window and currently
+      // renders blank under the frameless sheet stack.  For inline mode, resume
+      // the saved session/checkpoint automatically so the player lands back in
+      // the progression shell instead of being blocked by an empty popup.
+      app._promptSessionRecovery = async (summary) => {
+        SWSELogger.warn('[ProgressionSurfaceAdapter] Inline recovery prompt suppressed; auto-resuming in holopad', {
+          actorId: actor?.id,
+          mode,
+          lastStep: summary?.lastStepId,
+          currentStep: summary?.currentStepId
+        });
+        return true;
+      };
+
       // CRITICAL: Override render() to prevent standalone window
       // Re-render the character sheet instead
       const self = this;
@@ -347,6 +395,14 @@ export class ProgressionSurfaceAdapter {
 
       this._app = app;
       this._ready = true;
+
+      // Inline launches from the Home/character shell should land on the first
+      // actionable progression step, not on a nested boot-splash. The intro
+      // remains available to standalone/direct launches by omitting skipIntro.
+      if (options?.skipIntro === true && this._getCurrentStepId() === 'intro') {
+        await this.advancePastIntro('inline-launch-skip-intro');
+      }
+
       SWSELogger.log(`[ProgressionSurfaceAdapter] Initialized ${mode} for actor ${actor.name}`);
     } catch (err) {
       SWSELogger.error('[ProgressionSurfaceAdapter] Initialization failed:', err);
