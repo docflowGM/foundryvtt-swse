@@ -347,11 +347,11 @@ export class MetaResourceFeatResolver {
         target: 'defense.reflex',
         type: 'untyped',
         value: penaltyValue,
-        roundsRemaining: 1,
+        roundsRemaining: 2,
         enabled: true,
         sourceId: button.dataset.sourceId,
         sourceName: sourceName,
-        description: `${sourceName}: ${penaltyValue} to Reflex Defense for 1 round.${isNat1 ? ' (Natural 1 penalty)' : ''}`
+        description: `${sourceName}: ${penaltyValue} to Reflex Defense until end of next turn.${isNat1 ? ' (Natural 1 penalty)' : ''}`
       };
       const filtered = existing.filter(effect => !String(effect?.id ?? '').startsWith(effectId));
       await ActorEngine.updateActor(actor, { 'system.activeEffects': [...filtered, newEffect] });
