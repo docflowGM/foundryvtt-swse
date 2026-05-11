@@ -142,7 +142,7 @@ function isValidFullPathLiteral(token) {
 
 function parseIncludeBody(body) {
   // Returns { kind, token, reason }.
-  // kind: "full" | "invalid" | "dynamic"
+  // kind: "full" | "inline" | "invalid" | "dynamic"
   const trimmed = body.trim();
 
   // Try to extract a quoted path (may have hash args or context after it)
@@ -164,15 +164,22 @@ function parseIncludeBody(body) {
     }
   }
 
-  // Ban helper calls like {{> callout label="..." }}
-  if (trimmed.includes("(") && trimmed.includes(")")) {
-    return { kind: "dynamic", token: trimmed, reason: "dynamic expression in partial include" };
+  // Unquoted token: extract first token before whitespace
+  const firstToken = trimmed.split(/\s+/)[0];
+
+  // Check if this has any dynamic structure (whitespace or expressions with parentheses)
+  const hasWhitespace = /\s/.test(trimmed);
+  const hasParens = trimmed.includes("(") && trimmed.includes(")");
+
+  if (hasWhitespace || hasParens) {
+    // Could be:
+    // 1. Inline partial with hash args: {{> callout label="..." value=...}}
+    // 2. Inline partial with expressions: {{> callout label="..." value=(or x "y")}}
+    // 3. Invalid dynamic helper call: {{> (someHelper)}}
+    // Return "inline" kind to let caller check if firstToken is in inlineNames
+    return { kind: "inline", token: firstToken, reason: hasParens ? "dynamic expression in partial include" : "non-literal include (contains whitespace)" };
   }
 
-  // Unquoted token (legacy short-name or dynamic)
-  if (/\s/.test(trimmed)) {
-    return { kind: "dynamic", token: trimmed, reason: "non-literal include (contains whitespace)" };
-  }
   return { kind: "invalid", token: trimmed, reason: "non-literal include (unquoted)" };
 }
 
@@ -254,7 +261,7 @@ async function validateAndMaybeFixFile(filePath, { strict, fix, manifestSet, fix
     const parsed = parseIncludeBody(blk.body);
 
     // Inline invocation allowed only if defined inline in the same file.
-    if (parsed.kind === "invalid" && inlineNames.has(parsed.token)) {
+    if ((parsed.kind === "invalid" || parsed.kind === "inline") && inlineNames.has(parsed.token)) {
       addReport("inline", parsed.token, null, blk);
       continue;
     }
@@ -308,7 +315,7 @@ async function validateAndMaybeFixFile(filePath, { strict, fix, manifestSet, fix
     const parsed = parseIncludeBody(body);
 
     if (parsed.kind === "full") return fullMatch;
-    if (parsed.kind === "dynamic") return fullMatch;
+    if (parsed.kind === "dynamic" || parsed.kind === "inline") return fullMatch;
 
     if (inlineNames.has(parsed.token)) return fullMatch;
 

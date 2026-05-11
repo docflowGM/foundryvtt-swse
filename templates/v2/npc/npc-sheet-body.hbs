@@ -7,29 +7,29 @@
       {{#each panelNames as |panelName|}}
         {{!-- Dynamically include panels based on panel name --}}
         {{#if (eq panelName "portraitPanel")}}
-          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/portrait-panel"}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/portrait-panel.hbs"}}
         {{else if (eq panelName "npcBiographyPanel")}}
-          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/biography-panel"}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/biography-panel.hbs"}}
         {{else if (eq panelName "healthPanel")}}
-          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/health-panel"}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/health-panel.hbs"}}
         {{else if (eq panelName "defensePanel")}}
-          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/defense-panel"}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/defense-panel.hbs"}}
         {{else if (eq panelName "abilitiesPanel")}}
-          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/abilities-panel"}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/abilities-panel.hbs"}}
         {{else if (eq panelName "skillsPanel")}}
-          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/skills-panel"}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/skills-panel.hbs"}}
         {{else if (eq panelName "inventoryPanel")}}
-          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/inventory-panel"}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/inventory-panel.hbs"}}
         {{else if (eq panelName "talentPanel")}}
-          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/talents-panel"}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/talents-panel.hbs"}}
         {{else if (eq panelName "featPanel")}}
-          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/feats-panel"}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/feats-panel.hbs"}}
         {{else if (eq panelName "languagesPanel")}}
-          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/languages-panel"}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/languages-panel.hbs"}}
         {{else if (eq panelName "combatPanel")}}
-          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/combat-panel"}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/combat-panel.hbs"}}
         {{else if (eq panelName "npcCombatNotesPanel")}}
-          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/combat-notes-panel"}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/combat-notes-panel.hbs"}}
         {{/if}}
       {{/each}}
     </div>

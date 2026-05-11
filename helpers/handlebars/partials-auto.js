@@ -91,7 +91,104 @@ const PARTIALS = [
   "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-progression-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-related-actor-card.hbs",
   "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-relationships-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-statblock-authority-panel.hbs"
+  "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-statblock-authority-panel.hbs",
+
+  // NPC V2 Sheet Partials
+  "systems/foundryvtt-swse/templates/v2/npc/npc-sheet-header.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/npc-sheet-tabs.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/npc-sheet-body.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/panels/portrait-panel.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/panels/biography-panel.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/panels/health-panel.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/panels/defense-panel.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/panels/abilities-panel.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/panels/skills-panel.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/panels/inventory-panel.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/panels/talents-panel.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/panels/feats-panel.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/panels/languages-panel.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/panels/combat-panel.hbs",
+  "systems/foundryvtt-swse/templates/v2/npc/panels/combat-notes-panel.hbs",
+
+  // NPC Legacy Partials
+  "systems/foundryvtt-swse/templates/actors/npc/npc-summary-hud.hbs",
+  "systems/foundryvtt-swse/templates/actors/npc/npc-image.hbs",
+  "systems/foundryvtt-swse/templates/actors/npc/npc-core-stats.hbs",
+  "systems/foundryvtt-swse/templates/actors/npc/npc-weapon-block.hbs",
+  "systems/foundryvtt-swse/templates/actors/npc/npc-talent-block.hbs",
+  "systems/foundryvtt-swse/templates/actors/npc/npc-specials-block.hbs",
+  "systems/foundryvtt-swse/templates/actors/npc/npc-diagnostics-block.hbs",
+
+  // Droid Legacy Partials
+  "systems/foundryvtt-swse/templates/actors/droid/droid-image-operational.hbs",
+  "systems/foundryvtt-swse/templates/actors/droid/droid-image-blueprint.hbs",
+  "systems/foundryvtt-swse/templates/actors/droid/droid-callouts-operational.hbs",
+  "systems/foundryvtt-swse/templates/actors/droid/droid-callouts-blueprint.hbs",
+
+  // Vehicle Legacy Partials
+  "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-image.hbs",
+  "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs",
+
+  // Shared Actor Partials
+  "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs",
+  "systems/foundryvtt-swse/templates/actors/shared/partials/current-conditions-panel.hbs",
+
+  // V2-Concept Character Panels
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/defense-breakdown-tooltip.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-item-row.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-powers-known-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-weapon-card.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-armor-card.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-item-card.hbs",
+
+  // Shell / Datapad Surface Partials
+  "systems/foundryvtt-swse/templates/shell/shell-surface.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/shell-drawer-layer.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/shell-overlay-layer.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/surface-home.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/surface-progression.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/surface-chargen.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/surface-upgrade.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/surface-settings.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/surface-mentor.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/surface-messenger.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs",
+  "systems/foundryvtt-swse/templates/shell/partials/surface-customization.hbs",
+
+  // Store and Upgrade Partials
+  "systems/foundryvtt-swse/templates/apps/store/store-splash.hbs",
+  "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs",
+  "systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-detail-pane.hbs",
+  "systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-footer.hbs",
+  "systems/foundryvtt-swse/templates/apps/upgrade/partials/lightsaber-detail.hbs",
+
+  // Progression Framework Partials
+  "systems/foundryvtt-swse/templates/apps/progression-framework/diagnostic-banner.hbs",
+  "systems/foundryvtt-swse/templates/apps/progression-framework/progress-rail.hbs",
+  "systems/foundryvtt-swse/templates/apps/progression-framework/progression-shell.hbs",
+  "systems/foundryvtt-swse/templates/apps/progression-framework/splash.hbs",
+
+  // Shared Content Partials
+  "systems/foundryvtt-swse/templates/partials/starship-maneuvers-panel.hbs",
+  "systems/foundryvtt-swse/templates/partials/ability-card.hbs",
+  "systems/foundryvtt-swse/templates/partials/skill-actions-panel.hbs",
+  "systems/foundryvtt-swse/templates/partials/skill-action-card.hbs",
+  "systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs",
+  "systems/foundryvtt-swse/templates/partials/droid-builder-budget.hbs",
+  "systems/foundryvtt-swse/templates/partials/assets-panel.hbs",
+  "systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs",
+
+  // Component Partials
+  "systems/foundryvtt-swse/templates/components/stepper.hbs",
+  "systems/foundryvtt-swse/templates/components/narrator.hbs",
+  "systems/foundryvtt-swse/templates/components/hud.hbs",
+
+  // Sheet Layout and Component Partials
+  "systems/foundryvtt-swse/templates/sheets/components/attribute-block.hbs",
+  "systems/foundryvtt-swse/templates/sheets/partials/sheet-header.hbs",
+  "systems/foundryvtt-swse/templates/sheets/partials/sheet-tabs.hbs",
+  "systems/foundryvtt-swse/templates/sheets/_sheet-skeleton.hbs"
 ];
 
 export async function registerSWSEPartials() {

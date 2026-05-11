@@ -1,0 +1,1956 @@
+{
+  "systemId": "foundryvtt-swse",
+  "generatedAt": "2026-05-11T13:57:15.832Z",
+  "strict": true,
+  "fix": false,
+  "scannedHbsFiles": 413,
+  "referencedFileBackedPartials": 129,
+  "counts": {
+    "total": 190,
+    "full": 169,
+    "inline": 21
+  },
+  "perFile": [
+    {
+      "file": "templates/actors/character/tabs/starship-maneuvers-tab.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/partials/starship-maneuvers-panel.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "total": 16,
+      "counts": {
+        "total": 16,
+        "full": 16
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/header-block.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/hud-bar.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/resource-strip.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/sidebar.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/tabs-bar.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/title-strip.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/abilities-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/biography-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/combat-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/skills-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs",
+        "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "total": 15,
+      "counts": {
+        "total": 15,
+        "full": 15
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/header-block.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/hud-bar.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/resource-strip.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/sidebar.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/tabs-bar.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/title-strip.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/abilities-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/biography-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/combat-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/relationships-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/skills-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/panels/defenses-panel.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/defense-breakdown-tooltip.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/panels/equipment-ledger-panel.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-item-row.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/panels/force-panel.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-powers-known-panel.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/panels/inventory-panel.hbs",
+      "total": 3,
+      "counts": {
+        "total": 3,
+        "full": 3
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-armor-card.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-item-card.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-weapon-card.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/character/v2/character-sheet.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/character/v2/partials/hp-condition-panel.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/shared/partials/current-conditions-panel.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/character/v2/partials/inventory-panel.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-row.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-blueprint.hbs",
+      "total": 5,
+      "counts": {
+        "total": 5,
+        "inline": 5
+      },
+      "uniqueTokens": [
+        "callout"
+      ]
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-operational.hbs",
+      "total": 6,
+      "counts": {
+        "total": 6,
+        "inline": 6
+      },
+      "uniqueTokens": [
+        "callout"
+      ]
+    },
+    {
+      "file": "templates/actors/droid/droid-diagnostic.hbs",
+      "total": 4,
+      "counts": {
+        "total": 4,
+        "full": 4
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/droid/droid-callouts-blueprint.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/droid-callouts-operational.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/droid-image-blueprint.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/droid-image-operational.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/droid/v2/droid-sheet.hbs",
+      "total": 11,
+      "counts": {
+        "total": 11,
+        "full": 11
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-armor-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-status-card.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-weapons-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-sensors-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-validation-panel.hbs",
+        "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/npc/npc-sheet.hbs",
+      "total": 2,
+      "counts": {
+        "total": 2,
+        "full": 2
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/npc/npc-summary-hud.hbs",
+        "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/npc/npc-summary-hud.hbs",
+      "total": 6,
+      "counts": {
+        "total": 6,
+        "full": 6
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/npc/npc-core-stats.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/npc-diagnostics-block.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/npc-image.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/npc-specials-block.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/npc-talent-block.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/npc-weapon-block.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-combat-sheet.hbs",
+      "total": 5,
+      "counts": {
+        "total": 5,
+        "full": 5
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/character/v2/partials/action-economy-indicator.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "total": 17,
+      "counts": {
+        "total": 17,
+        "full": 17
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs",
+        "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-beast-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-mode-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-mount-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-owner-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-profile-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-progression-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-relationships-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-statblock-authority-panel.hbs",
+        "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/npc/v2/partials/npc-mount-panel.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-related-actor-card.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/npc/v2/partials/npc-owner-panel.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-related-actor-card.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/npc/v2/partials/npc-relationships-panel.hbs",
+      "total": 2,
+      "counts": {
+        "total": 2,
+        "full": 2
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-mount-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-owner-panel.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "total": 17,
+      "counts": {
+        "total": 17,
+        "full": 17
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-manifest-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-commander-order-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-defenses-panel-full.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-header-summary-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-hp-condition-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-pilot-maneuver-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-power-summary-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-shield-management-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-subsystem-detail-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-turn-phase-panel.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs",
+        "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"
+      ]
+    },
+    {
+      "file": "templates/actors/vehicle/vehicle-callouts.hbs",
+      "total": 6,
+      "counts": {
+        "total": 6,
+        "inline": 6
+      },
+      "uniqueTokens": [
+        "callout"
+      ]
+    },
+    {
+      "file": "templates/actors/vehicle/vehicle-sheet.hbs",
+      "total": 4,
+      "counts": {
+        "total": 4,
+        "full": 4
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs",
+        "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-image.hbs",
+        "systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs",
+        "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"
+      ]
+    },
+    {
+      "file": "templates/apps/combat-action-browser.hbs",
+      "total": 4,
+      "counts": {
+        "total": 4,
+        "inline": 4
+      },
+      "uniqueTokens": [
+        "actionEntry"
+      ]
+    },
+    {
+      "file": "templates/apps/droid-builder.hbs",
+      "total": 3,
+      "counts": {
+        "total": 3,
+        "full": 3
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/partials/droid-builder-budget.hbs"
+      ]
+    },
+    {
+      "file": "templates/apps/homebrew-manager.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/partials/assets-panel.hbs"
+      ]
+    },
+    {
+      "file": "templates/apps/progression-framework/progress-rail.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/components/stepper.hbs"
+      ]
+    },
+    {
+      "file": "templates/apps/progression-framework/progression-shell.hbs",
+      "total": 3,
+      "counts": {
+        "total": 3,
+        "full": 3
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/apps/progression-framework/diagnostic-banner.hbs",
+        "systems/foundryvtt-swse/templates/components/hud.hbs",
+        "systems/foundryvtt-swse/templates/components/narrator.hbs"
+      ]
+    },
+    {
+      "file": "templates/apps/progression-framework/splash.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/components/hud.hbs"
+      ]
+    },
+    {
+      "file": "templates/apps/upgrade/partials/upgrade-detail-pane.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/apps/upgrade/partials/lightsaber-detail.hbs"
+      ]
+    },
+    {
+      "file": "templates/apps/upgrade/upgrade-app.hbs",
+      "total": 2,
+      "counts": {
+        "total": 2,
+        "full": 2
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-detail-pane.hbs",
+        "systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-footer.hbs"
+      ]
+    },
+    {
+      "file": "templates/partials/actor/persistent-header.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs"
+      ]
+    },
+    {
+      "file": "templates/partials/skill-actions-panel.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/partials/skill-action-card.hbs"
+      ]
+    },
+    {
+      "file": "templates/partials/starship-maneuvers-panel.hbs",
+      "total": 6,
+      "counts": {
+        "total": 6,
+        "full": 6
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/partials/ability-card.hbs"
+      ]
+    },
+    {
+      "file": "templates/partials/suggestion-card.hbs",
+      "total": 2,
+      "counts": {
+        "total": 2,
+        "full": 2
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs"
+      ]
+    },
+    {
+      "file": "templates/sheets/_sheet-skeleton.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/sheets/_sheet-skeleton.hbs"
+      ]
+    },
+    {
+      "file": "templates/sheets/components/attribute-block.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/sheets/components/attribute-block.hbs"
+      ]
+    },
+    {
+      "file": "templates/sheets/layouts/actor-sheet.hbs",
+      "total": 2,
+      "counts": {
+        "total": 2,
+        "full": 2
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/sheets/partials/sheet-header.hbs",
+        "systems/foundryvtt-swse/templates/sheets/partials/sheet-tabs.hbs"
+      ]
+    },
+    {
+      "file": "templates/shell/partials/shell-overlay-layer.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs"
+      ]
+    },
+    {
+      "file": "templates/shell/partials/surface-store.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/apps/store/store-splash.hbs"
+      ]
+    },
+    {
+      "file": "templates/shell/partials/surface-upgrade.hbs",
+      "total": 1,
+      "counts": {
+        "total": 1,
+        "full": 1
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs"
+      ]
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "total": 14,
+      "counts": {
+        "total": 14,
+        "full": 14
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/shell/partials/shell-drawer-layer.hbs",
+        "systems/foundryvtt-swse/templates/shell/partials/shell-overlay-layer.hbs",
+        "systems/foundryvtt-swse/templates/shell/partials/surface-chargen.hbs",
+        "systems/foundryvtt-swse/templates/shell/partials/surface-customization.hbs",
+        "systems/foundryvtt-swse/templates/shell/partials/surface-home.hbs",
+        "systems/foundryvtt-swse/templates/shell/partials/surface-mentor.hbs",
+        "systems/foundryvtt-swse/templates/shell/partials/surface-messenger.hbs",
+        "systems/foundryvtt-swse/templates/shell/partials/surface-progression.hbs",
+        "systems/foundryvtt-swse/templates/shell/partials/surface-settings.hbs",
+        "systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs",
+        "systems/foundryvtt-swse/templates/shell/partials/surface-upgrade.hbs",
+        "systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs"
+      ]
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "total": 12,
+      "counts": {
+        "total": 12,
+        "full": 12
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/v2/npc/panels/abilities-panel.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/panels/biography-panel.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/panels/combat-notes-panel.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/panels/combat-panel.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/panels/defense-panel.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/panels/feats-panel.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/panels/health-panel.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/panels/inventory-panel.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/panels/languages-panel.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/panels/portrait-panel.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/panels/skills-panel.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/panels/talents-panel.hbs"
+      ]
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet.hbs",
+      "total": 3,
+      "counts": {
+        "total": 3,
+        "full": 3
+      },
+      "uniqueTokens": [
+        "systems/foundryvtt-swse/templates/v2/npc/npc-sheet-body.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/npc-sheet-header.hbs",
+        "systems/foundryvtt-swse/templates/v2/npc/npc-sheet-tabs.hbs"
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "file": "templates/actors/character/tabs/starship-maneuvers-tab.hbs",
+      "line": 80,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/starship-maneuvers-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2/character-sheet.hbs",
+      "line": 152,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/shell-surface.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2/partials/hp-condition-panel.hbs",
+      "line": 69,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/shared/partials/current-conditions-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2/partials/inventory-panel.hbs",
+      "line": 57,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-row.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 42,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/hud-bar.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 43,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/title-strip.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 44,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/header-block.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 45,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/resource-strip.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 46,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/tabs-bar.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 50,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/sidebar.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 55,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 59,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/abilities-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 63,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/skills-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 67,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/combat-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 71,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 76,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 81,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 85,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/biography-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 116,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/shell-surface.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/character-sheet.hbs",
+      "line": 119,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/shell-surface.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 7,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/hud-bar.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 8,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/title-strip.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 9,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/header-block.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 10,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/resource-strip.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 11,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/tabs-bar.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 15,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/frame/sidebar.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 20,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/summary-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 24,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/abilities-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 28,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/skills-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 32,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/combat-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 36,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/talents-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 41,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 46,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 50,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/biography-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs",
+      "line": 54,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/relationships-tab.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/panels/defenses-panel.hbs",
+      "line": 23,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/defense-breakdown-tooltip.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/panels/equipment-ledger-panel.hbs",
+      "line": 12,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-item-row.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/panels/force-panel.hbs",
+      "line": 40,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-powers-known-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/panels/inventory-panel.hbs",
+      "line": 32,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-weapon-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/panels/inventory-panel.hbs",
+      "line": 35,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-armor-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/character/v2-concept/partials/panels/inventory-panel.hbs",
+      "line": 37,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/inventory-item-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-blueprint.hbs",
+      "line": 16,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-blueprint.hbs",
+      "line": 17,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-blueprint.hbs",
+      "line": 18,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-blueprint.hbs",
+      "line": 19,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-blueprint.hbs",
+      "line": 20,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-operational.hbs",
+      "line": 12,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-operational.hbs",
+      "line": 13,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-operational.hbs",
+      "line": 14,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-operational.hbs",
+      "line": 15,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-operational.hbs",
+      "line": 16,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-callouts-operational.hbs",
+      "line": 17,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-diagnostic.hbs",
+      "line": 18,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/droid-image-operational.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-diagnostic.hbs",
+      "line": 19,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/droid-callouts-operational.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-diagnostic.hbs",
+      "line": 26,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/droid-image-blueprint.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/droid-diagnostic.hbs",
+      "line": 27,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/droid-callouts-blueprint.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/v2/droid-sheet.hbs",
+      "line": 323,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-summary-strip.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/v2/droid-sheet.hbs",
+      "line": 326,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-status-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/v2/droid-sheet.hbs",
+      "line": 353,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-processor-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/v2/droid-sheet.hbs",
+      "line": 381,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-locomotion-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/v2/droid-sheet.hbs",
+      "line": 414,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-appendages-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/v2/droid-sheet.hbs",
+      "line": 441,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-armor-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/v2/droid-sheet.hbs",
+      "line": 456,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-sensors-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/v2/droid-sheet.hbs",
+      "line": 466,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-weapons-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/v2/droid-sheet.hbs",
+      "line": 479,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-integrated-systems-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/v2/droid-sheet.hbs",
+      "line": 492,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-validation-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/droid/v2/droid-sheet.hbs",
+      "line": 514,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/shell-surface.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/npc-sheet.hbs",
+      "line": 5,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/npc-sheet.hbs",
+      "line": 9,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/npc-summary-hud.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/npc-summary-hud.hbs",
+      "line": 5,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/npc-image.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/npc-summary-hud.hbs",
+      "line": 6,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/npc-core-stats.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/npc-summary-hud.hbs",
+      "line": 13,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/npc-weapon-block.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/npc-summary-hud.hbs",
+      "line": 16,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/npc-talent-block.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/npc-summary-hud.hbs",
+      "line": 19,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/npc-specials-block.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/npc-summary-hud.hbs",
+      "line": 22,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/npc-diagnostics-block.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-combat-sheet.hbs",
+      "line": 25,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-combat-sheet.hbs",
+      "line": 26,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-combat-sheet.hbs",
+      "line": 34,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2/partials/action-economy-indicator.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-combat-sheet.hbs",
+      "line": 58,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-combat-sheet.hbs",
+      "line": 59,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 36,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-mode-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 37,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-profile-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 38,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-statblock-authority-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 41,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-progression-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 47,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-owner-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 51,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-beast-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 55,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-mount-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 64,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 68,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 110,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 114,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 122,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 256,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 260,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 270,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 279,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-relationships-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/npc-sheet.hbs",
+      "line": 287,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/partials/npc-mount-panel.hbs",
+      "line": 69,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-related-actor-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/partials/npc-owner-panel.hbs",
+      "line": 72,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-related-actor-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/partials/npc-relationships-panel.hbs",
+      "line": 13,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-owner-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/npc/v2/partials/npc-relationships-panel.hbs",
+      "line": 17,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-mount-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 45,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-header-summary-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 48,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-hp-condition-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 62,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-defenses-panel-full.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 65,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 72,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 75,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-turn-phase-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 82,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 85,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-pilot-maneuver-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 91,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-summary-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 94,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 97,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-commander-order-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 103,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-subsystem-detail-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 106,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-shield-management-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 109,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-power-summary-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 115,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 118,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-manifest-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/v2/vehicle-sheet.hbs",
+      "line": 211,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/shell-surface.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/vehicle-callouts.hbs",
+      "line": 25,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/vehicle-callouts.hbs",
+      "line": 35,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/vehicle-callouts.hbs",
+      "line": 45,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/vehicle-callouts.hbs",
+      "line": 55,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/vehicle-callouts.hbs",
+      "line": 65,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/vehicle-callouts.hbs",
+      "line": 75,
+      "kind": "inline",
+      "token": "callout",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/vehicle-sheet.hbs",
+      "line": 167,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-image.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/vehicle-sheet.hbs",
+      "line": 170,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/vehicle-sheet.hbs",
+      "line": 343,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/actors/vehicle/vehicle-sheet.hbs",
+      "line": 390,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/shell-surface.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/combat-action-browser.hbs",
+      "line": 35,
+      "kind": "inline",
+      "token": "actionEntry",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/combat-action-browser.hbs",
+      "line": 47,
+      "kind": "inline",
+      "token": "actionEntry",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/combat-action-browser.hbs",
+      "line": 68,
+      "kind": "inline",
+      "token": "actionEntry",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/combat-action-browser.hbs",
+      "line": 80,
+      "kind": "inline",
+      "token": "actionEntry",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/droid-builder.hbs",
+      "line": 106,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/droid-builder-budget.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/droid-builder.hbs",
+      "line": 170,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/droid-builder-budget.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/droid-builder.hbs",
+      "line": 225,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/droid-builder-budget.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/homebrew-manager.hbs",
+      "line": 164,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/assets-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/progression-framework/progress-rail.hbs",
+      "line": 2,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/components/stepper.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/progression-framework/progression-shell.hbs",
+      "line": 57,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/components/narrator.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/progression-framework/progression-shell.hbs",
+      "line": 68,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/components/hud.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/progression-framework/progression-shell.hbs",
+      "line": 104,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/apps/progression-framework/diagnostic-banner.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/progression-framework/splash.hbs",
+      "line": 5,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/components/hud.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/upgrade/partials/upgrade-detail-pane.hbs",
+      "line": 36,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/apps/upgrade/partials/lightsaber-detail.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/upgrade/upgrade-app.hbs",
+      "line": 91,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-detail-pane.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/apps/upgrade/upgrade-app.hbs",
+      "line": 106,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/apps/upgrade/partials/upgrade-footer.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/partials/actor/persistent-header.hbs",
+      "line": 238,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/partials/skill-actions-panel.hbs",
+      "line": 19,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/skill-action-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/partials/starship-maneuvers-panel.hbs",
+      "line": 16,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/ability-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/partials/starship-maneuvers-panel.hbs",
+      "line": 32,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/ability-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/partials/starship-maneuvers-panel.hbs",
+      "line": 48,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/ability-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/partials/starship-maneuvers-panel.hbs",
+      "line": 64,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/ability-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/partials/starship-maneuvers-panel.hbs",
+      "line": 80,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/ability-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/partials/starship-maneuvers-panel.hbs",
+      "line": 89,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/ability-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/partials/suggestion-card.hbs",
+      "line": 24,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/partials/suggestion-card.hbs",
+      "line": 28,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/sheets/_sheet-skeleton.hbs",
+      "line": 8,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/sheets/_sheet-skeleton.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/sheets/components/attribute-block.hbs",
+      "line": 15,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/sheets/components/attribute-block.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/sheets/layouts/actor-sheet.hbs",
+      "line": 17,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/sheets/partials/sheet-header.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/sheets/layouts/actor-sheet.hbs",
+      "line": 23,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/sheets/partials/sheet-tabs.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/partials/shell-overlay-layer.hbs",
+      "line": 48,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/partials/surface-store.hbs",
+      "line": 18,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/apps/store/store-splash.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/partials/surface-upgrade.hbs",
+      "line": 54,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/apps/upgrade/upgrade-app.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 27,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/surface-home.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 32,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/surface-progression.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 37,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/surface-chargen.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 42,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/surface-upgrade.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 47,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/surface-settings.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 52,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/surface-mentor.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 57,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/surface-messenger.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 62,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/surface-store.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 67,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 72,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/surface-customization.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 97,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/shell-drawer-layer.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 109,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/shell-overlay-layer.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 144,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/shell-overlay-layer.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/shell/shell-surface.hbs",
+      "line": 154,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/shell/partials/shell-drawer-layer.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "line": 10,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/panels/portrait-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "line": 12,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/panels/biography-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "line": 14,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/panels/health-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "line": 16,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/panels/defense-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "line": 18,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/panels/abilities-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "line": 20,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/panels/skills-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "line": 22,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/panels/inventory-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "line": 24,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/panels/talents-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "line": 26,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/panels/feats-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "line": 28,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/panels/languages-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "line": 30,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/panels/combat-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet-body.hbs",
+      "line": 32,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/panels/combat-notes-panel.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet.hbs",
+      "line": 6,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/npc-sheet-header.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet.hbs",
+      "line": 9,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/npc-sheet-tabs.hbs",
+      "reason": null
+    },
+    {
+      "file": "templates/v2/npc/npc-sheet.hbs",
+      "line": 12,
+      "kind": "full",
+      "token": "systems/foundryvtt-swse/templates/v2/npc/npc-sheet-body.hbs",
+      "reason": null
+    }
+  ]
+}
