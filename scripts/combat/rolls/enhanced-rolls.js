@@ -414,7 +414,8 @@ export class SWSERoll {
       // Build chat card
       const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, roll, {
         formula,
-        weaponId: weapon.id
+        weaponId: weapon.id,
+        isHit
       });
       const attackRerollHTML = attackRerollOptions.length ? `
         <div class="swse-attack-reroll-options">
@@ -430,6 +431,8 @@ export class SWSERoll {
                     data-outcome="${option.outcome}"
                     data-original-total="${option.originalTotal}"
                     data-formula="${option.formula}"
+                    data-d20="${result.d20}"
+                    data-rule="${option.rule ? JSON.stringify(option.rule) : ''}"
                     ${option.canUse ? '' : 'disabled'}>
               <i class="fa-solid fa-dice"></i> ${option.label}: Reroll (${option.outcomeLabel})
             </button>

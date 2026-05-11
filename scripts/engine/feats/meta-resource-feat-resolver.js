@@ -255,16 +255,28 @@ export class MetaResourceFeatResolver {
     const rules = this.getAttackRerollRules(actor);
     if (!rules.length || !roll) return [];
     const formula = roll.formula ?? context.formula ?? '1d20';
-    return rules.map(rule => ({
-      ...rule,
-      actorId: actor?.id ?? '',
-      weaponId: weapon?.id ?? context.weaponId ?? '',
-      originalTotal: roll.total,
-      formula,
-      outcomeLabel: rule.outcome === 'keepBetter' ? 'Keep better result' : 'Must accept reroll',
-      canUse: rule.cost !== 'forcePoint' || actorForcePoints(actor) > 0,
-      disabledReason: rule.cost === 'forcePoint' && actorForcePoints(actor) <= 0 ? 'No Force Points remaining' : null
-    }));
+    const isHit = context.isHit;
+
+    return rules
+      .filter(rule => {
+        // Filter based on trigger requirement
+        const trigger = rule.rule?.trigger;
+        if (trigger === 'missedAttack' && isHit !== false) {
+          // Only show missed attack rerolls when attack actually missed
+          return false;
+        }
+        return true;
+      })
+      .map(rule => ({
+        ...rule,
+        actorId: actor?.id ?? '',
+        weaponId: weapon?.id ?? context.weaponId ?? '',
+        originalTotal: roll.total,
+        formula,
+        outcomeLabel: rule.outcome === 'keepBetter' ? 'Keep better result' : 'Must accept reroll',
+        canUse: rule.cost !== 'forcePoint' || actorForcePoints(actor) > 0,
+        disabledReason: rule.cost === 'forcePoint' && actorForcePoints(actor) <= 0 ? 'No Force Points remaining' : null
+      }));
   }
 
   static normalizeRerollOutcome(value) {
@@ -318,6 +330,32 @@ export class MetaResourceFeatResolver {
     const rerollTotal = Number(newRoll.total ?? 0);
     const finalTotal = outcome === 'keepBetter' ? Math.max(originalTotal, rerollTotal) : rerollTotal;
     const usedNew = finalTotal === rerollTotal;
+
+    // Apply reflex defense penalty if applicable (Desperate Gambit)
+    if (cost === 'reflexDefensePenalty' && button.dataset.rule) {
+      const ruleData = JSON.parse(button.dataset.rule);
+      const d20 = Number(button.dataset.d20 ?? 0);
+      const isNat1 = d20 === 1;
+      const penaltyValue = isNat1 ? -5 : -2;
+
+      const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+      const existing = Array.isArray(actor.system?.activeEffects) ? actor.system.activeEffects : [];
+      const effectId = `reflex-penalty-${normalizeName(sourceName)}`;
+      const newEffect = {
+        id: effectId,
+        name: sourceName,
+        target: 'defense.reflex',
+        type: 'untyped',
+        value: penaltyValue,
+        roundsRemaining: 1,
+        enabled: true,
+        sourceId: button.dataset.sourceId,
+        sourceName: sourceName,
+        description: `${sourceName}: ${penaltyValue} to Reflex Defense for 1 round.${isNat1 ? ' (Natural 1 penalty)' : ''}`
+      };
+      const filtered = existing.filter(effect => !String(effect?.id ?? '').startsWith(effectId));
+      await ActorEngine.updateActor(actor, { 'system.activeEffects': [...filtered, newEffect] });
+    }
 
     button.disabled = true;
     button.innerHTML = '<i class="fa-solid fa-check"></i> Reroll used';
