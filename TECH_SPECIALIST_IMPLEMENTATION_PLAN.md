@@ -14,9 +14,9 @@ Tech Specialist unlocks custom modifications to armor, weapons, vehicles, droids
 
 ### A. Feature Metadata (feats.db)
 - **packs/feats.db** — Tech Specialist entry
-  - Add prerequisite metadata: `{ "prerequisite": "trained_mechanics" }`
+  - Normalize prerequisite metadata: `{ "prerequisite": "trained_mechanics" }`
   - Add capability: `{ "customizationCapabilities": [{ "type": "TECH_SPECIALIST_MODIFICATIONS" }] }`
-  - Remove [REQUIRES MANUAL MAPPING]
+  - **Keep [REQUIRES MANUAL MAPPING]** until TS-2/TS-3 prove workbench traits are available and safely applied
 
 ### B. Centralized Capability Resolution
 - **scripts/engine/feats/meta-resource-feat-resolver.js** (extend)
@@ -307,24 +307,21 @@ static #resolveTechSpecialistArmorEffects(trait, item, preview, mutations, warni
 ## 8. Implementation Phases
 
 ### Phase TS-1: Capability & Eligibility (2-3 hours)
-- Add metadata to Tech Specialist in feats.db
-- Add resolver methods to MetaResourceFeatResolver
-- Modify UpgradeEligibilityEngine constructor and canInstallUpgrade()
-- Modify CustomizationWorkflow.getFullCustomizationState()
-- Add actor parameter forwarding in UpgradeService
-- **Validation:** Tech Specialist mods hidden for actors without feat, visible for actors with feat
+**SCOPE:** Capability metadata + actor-aware eligibility seam only. NO catalog, NO effects, NO enforcement logic yet.
+
+- Add prerequisite + capability metadata to Tech Specialist in feats.db (keep [REQUIRES MANUAL MAPPING])
+- Add resolver methods to MetaResourceFeatResolver (getCustomizationCapabilities, hasCustomizationCapability, canActorPerformTechSpecialistModifications)
+- Modify UpgradeEligibilityEngine constructor and canInstallUpgrade() to accept optional actor
+- Modify CustomizationWorkflow.getFullCustomizationState() to accept optional actor
+- Add actor parameter forwarding in UpgradeService (where it already exists)
+- Add Mechanics training check if clean helper exists; otherwise defer and document as prerequisite-only until TS-2
+- **Validation:** Item-only callers still work, actor-aware callers can check capability, Tech Specialist remains marked manual/partial
 
 ### Phase TS-2: Catalog & Preview (1-2 hours)
-- Add 13 Tech Specialist entries to UPGRADE_CATALOG (9 automatable + 4 rule-notes)
-- Add cost/DC/time preview in UI (no downtime calendar)
-- Add one-benefit enforcement logic in eligibility
-- **Validation:** Correct mods appear, cost/time/DC display, enforcement blocks duplicates
+**NOT IN TS-1.** TS-2 adds catalog entries, cost/DC/time preview, one-benefit enforcement logic.
 
 ### Phase TS-3: Safe Effect Mapping (2-3 hours)
-- Implement EffectResolver handlers for armor/weapon/vehicle/droid/device categories
-- Map 9 automatable traits to mutations
-- Mark 4 unsupported traits as rule-notes (disabled, GM note visible)
-- **Validation:** Mutations apply correctly, rule-notes display with explanation
+**NOT IN TS-1.** TS-3 implements EffectResolver handlers ONLY after schema paths are verified. 9 automatable traits → mutations. 4 unsupported traits → rule-notes (disabled, GM note visible).
 
 ### Phase TS-4: Hardening (1 hour)
 - Test actor-less callers don't break
