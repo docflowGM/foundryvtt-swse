@@ -34,7 +34,7 @@ export class CustomizationWorkflow {
     this.templateEngine = new TemplateEngine(this.profileResolver, this.slotEngine, this.eligibilityEngine);
   }
 
-  getFullCustomizationState(item) {
+  getFullCustomizationState(item, { actor = null } = {}) {
     // Validate category support early to prevent unsupported categories from leaking in
     const categoryValidation = SafetyEngine.validateCategory(item);
     if (!categoryValidation.allowed) {
@@ -48,7 +48,8 @@ export class CustomizationWorkflow {
     const profile = this.profileResolver.getNormalizedProfile(item);
     const slotState = this.slotEngine.getFullSlotState(item);
     const customization = this.slotEngine.getCustomizationState(item);
-    const availableUpgrades = this.eligibilityEngine.getEligibleUpgrades(item);
+    const eligibilityEngine = new UpgradeEligibilityEngine(this.profileResolver, this.slotEngine, actor);
+    const availableUpgrades = eligibilityEngine.getEligibleUpgrades(item);
     const availableTemplates = this.templateEngine.getEligibleTemplates(item);
     const restriction = {
       effectiveRestriction: this.getEffectiveRestriction(item),

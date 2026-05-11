@@ -443,6 +443,33 @@ export class MetaResourceFeatResolver {
     return { success: true, rule, effects: newEffects };
   }
 
+  /* ---------------------------------------- */
+  /* CUSTOMIZATION CAPABILITIES              */
+  /* ---------------------------------------- */
+
+  static getCustomizationCapabilities(actor) {
+    const capabilities = [];
+    if (!actor) return capabilities;
+
+    for (const item of getActorFeatItems(actor)) {
+      const caps = item?.system?.abilityMeta?.customizationCapabilities ?? [];
+      if (Array.isArray(caps)) {
+        capabilities.push(...caps);
+      }
+    }
+    return capabilities;
+  }
+
+  static hasCustomizationCapability(actor, capabilityType) {
+    const capabilities = this.getCustomizationCapabilities(actor);
+    return capabilities.some(c => c?.type === capabilityType);
+  }
+
+  static canActorPerformTechSpecialistModifications(actor) {
+    if (!actor) return false;
+    return this.hasCustomizationCapability(actor, 'TECH_SPECIALIST_MODIFICATIONS');
+  }
+
   static getForcefulRecoveryPending(actor) {
     return actor?.getFlag?.('foundryvtt-swse', 'forcefulRecoveryPending') ?? actor?.flags?.['foundryvtt-swse']?.forcefulRecoveryPending ?? null;
   }
