@@ -410,6 +410,10 @@
   white-space: nowrap;
 }
 
+.swse-npc-equipment-panel {
+  margin-top: 12px;
+}
+
 /* Tab navigation */
 .npc-sheet .sheet-tabs {
   display: flex;
