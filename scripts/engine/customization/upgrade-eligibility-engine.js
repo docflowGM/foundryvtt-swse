@@ -27,6 +27,8 @@ export class UpgradeEligibilityEngine {
     const upgrade = UPGRADE_CATALOG[upgradeKey];
     if (!upgrade) return { allowed: false, reason: 'unknown_upgrade', visible: false };
 
+    if (upgrade.enabled === false) return { allowed: false, reason: 'upgrade_disabled', visible: true };
+
     if (upgrade.source === 'tech-specialist') {
       if (!this.actor) return { allowed: false, reason: 'actor_required' };
       if (!MetaResourceFeatResolver.canActorPerformTechSpecialistModifications(this.actor)) {
