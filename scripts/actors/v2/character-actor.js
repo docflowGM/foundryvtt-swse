@@ -511,6 +511,10 @@ function mirrorActions(actor, system) {
     const a = combatActions[i] ?? {};
     const action = a.action ?? {};
     const actionType = String(action.type ?? "standard").toLowerCase();
+
+    // Coup de Grace (index 9) is executable; others are not
+    const isExecutable = (i === 9) ? true : false;
+
     const entry = {
       key: `combat:${i}`,
       name: a.name ?? "(Unnamed Action)",
@@ -522,7 +526,7 @@ function mirrorActions(actor, system) {
       sourceLabel: "Combat",
       sourceName: "Combat Actions",
       itemId: null,
-      executable: false,
+      executable: isExecutable,
       resources: []
     };
     list.push(entry);

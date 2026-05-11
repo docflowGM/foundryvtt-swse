@@ -72,7 +72,29 @@ export const UPGRADE_CATALOG = Object.fromEntries([
   def('weapon_mount_standard', { name: 'Weapon Mount, Standard', category: 'armor', cost: 1000, slotCost: 1, restriction: 'restricted', appliesTo: ['armor'], affectedAreas: ['mount'], description: 'Mounts a weapon to armor.' }),
   def('armor_reinforcement', { name: 'Armor Reinforcement', category: 'armor', cost: 3000, slotCost: 1, restriction: 'common', appliesTo: ['armor'], affectedAreas: ['defense'], description: 'Reinforced armor shell.' }),
   def('mesh_underlay', { name: 'Mesh Underlay', category: 'armor', cost: 2500, slotCost: 2, restriction: 'common', appliesTo: ['armor'], affectedAreas: ['defense'], description: 'Protective internal mesh.' }),
-  def('night_vision_device', { name: 'Night Vision Device', category: 'armor', cost: 3000, slotCost: 0, restriction: 'common', appliesTo: ['armor'], affectedAreas: ['sensors'], description: 'Night-vision optics.' })
+  def('night_vision_device', { name: 'Night Vision Device', category: 'armor', cost: 3000, slotCost: 0, restriction: 'common', appliesTo: ['armor'], affectedAreas: ['sensors'], description: 'Night-vision optics.' }),
+
+  // Tech Specialist modifications (3 automatable armor/weapon + 4 rule-notes)
+  // TS-2 includes only standard customization system categories (armor, weapon/blaster, gear)
+  // Vehicle/droid traits deferred to TS-5 (requires separate system integration)
+
+  // Armor traits (3 automatable)
+  def('tech_agile_armor', { name: 'Agile Armor', category: 'tech-specialist', cost: 0, costFormula: 'max(10% of item cost, 1000 credits)', slotCost: 0, restriction: 'common', source: 'tech-specialist', appliesTo: ['armor'], affectedAreas: [], mechanicsDC: 20, timeHours: null, description: 'The armor\'s Maximum Dexterity Bonus increases by 1.', metadata: { trait: 'agile_armor', systemPath: 'system.maxDex', value: 1 } }),
+  def('tech_fortifying_armor', { name: 'Fortifying Armor', category: 'tech-specialist', cost: 0, costFormula: 'max(10% of item cost, 1000 credits)', slotCost: 0, restriction: 'common', source: 'tech-specialist', appliesTo: ['armor'], affectedAreas: [], mechanicsDC: 20, timeHours: null, description: 'The armor grants a +1 equipment bonus to Fortitude Defense.', metadata: { trait: 'fortifying_armor', systemPath: 'system.fortitudeBonus', value: 1 } }),
+  def('tech_protective_armor', { name: 'Protective Armor', category: 'tech-specialist', cost: 0, costFormula: 'max(10% of item cost, 1000 credits)', slotCost: 0, restriction: 'common', source: 'tech-specialist', appliesTo: ['armor'], affectedAreas: [], mechanicsDC: 20, timeHours: null, description: 'The armor grants a +1 armor bonus to Reflex Defense.', metadata: { trait: 'protective_armor', systemPath: 'system.reflexBonus', value: 1 } }),
+
+  // Weapon traits (1 automatable + 1 rule-note)
+  def('tech_improved_accuracy', { name: 'Improved Accuracy', category: 'tech-specialist', cost: 0, costFormula: 'max(10% of item cost, 1000 credits)', slotCost: 0, restriction: 'common', source: 'tech-specialist', appliesTo: ['weapon', 'blaster'], affectedAreas: [], mechanicsDC: 20, timeHours: null, description: 'The weapon grants a +1 equipment bonus to attack rolls.', metadata: { trait: 'improved_accuracy', systemPath: 'system.attackBonus', value: 1 } }),
+  def('tech_improved_damage', { name: 'Improved Damage', category: 'tech-specialist', cost: 0, costFormula: 'max(10% of item cost, 1000 credits)', slotCost: 0, restriction: 'common', source: 'tech-specialist', appliesTo: ['weapon', 'blaster'], affectedAreas: [], mechanicsDC: 20, timeHours: null, description: '[RULE-NOTE] Damage scaling is complex and context-dependent. Apply damage increases manually per game balance.', enabled: false }),
+  def('tech_selective_fire', { name: 'Selective Fire', category: 'tech-specialist', cost: 0, costFormula: 'max(10% of item cost, 1000 credits)', slotCost: 0, restriction: 'common', source: 'tech-specialist', appliesTo: ['weapon', 'blaster'], affectedAreas: [], mechanicsDC: 20, timeHours: null, description: '[RULE-NOTE] Selective Fire mode requires weapon UI support not yet implemented. Configure fire modes manually in weapon sheet.', enabled: false }),
+
+  // Note: Vehicle and Droid traits deferred to TS-5 (requires separate customization system integration)
+  // Currently these systems use DroidCustomizationEngine and VehicleCustomizationEngine (hardcoded systems)
+  // Tech Specialist modifications for vehicles/droids will be added when those systems are refactored
+
+  // Device traits (1 rule-note, kept for gear category only)
+  def('tech_improved_durability', { name: 'Improved Durability', category: 'tech-specialist', cost: 0, costFormula: 'max(10% of item cost, 1000 credits)', slotCost: 0, restriction: 'common', source: 'tech-specialist', appliesTo: ['gear'], affectedAreas: [], mechanicsDC: 20, timeHours: null, description: '[RULE-NOTE] Device durability is tracked via HP and Damage Reduction. Verify device schema before automating.', enabled: false }),
+  def('tech_mastercraft_device', { name: 'Mastercraft Device', category: 'tech-specialist', cost: 0, costFormula: 'max(10% of item cost, 1000 credits)', slotCost: 0, restriction: 'common', source: 'tech-specialist', appliesTo: ['gear'], affectedAreas: [], mechanicsDC: 20, timeHours: null, description: '[RULE-NOTE] Mastercraft bonus context unclear (check bonus, initiative, other?). Configure manually per GM discretion.', enabled: false })
 ]);
 
 export const TEMPLATE_CATALOG = {

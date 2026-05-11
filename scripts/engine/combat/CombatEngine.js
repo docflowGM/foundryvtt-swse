@@ -229,6 +229,17 @@ export class CombatEngine {
       damage = shieldResult.overflow;
     }
 
+    /* PRE-DAMAGE HOOK: Allows feats like Stay Up to modify damage before application */
+    const preDamageContext = {
+      attacker,
+      target,
+      weapon,
+      damage,
+      originalDamage: damage
+    };
+    Hooks.callAll('swse.damage-before', preDamageContext);
+    damage = preDamageContext.damage; // Allow hooks to modify damage
+
     /* HP */
     const damageResult = await DamageEngine.applyDamage(target, damage);
 
@@ -278,6 +289,34 @@ export class CombatEngine {
       damageApplied: damageResult,
       threshold: thresholdResult
     });
+
+    /* COUP DE GRACE EVENT EMISSION */
+    /* If this was a Coup de Grace attack, emit event for dependent feats (e.g., Sadistic Strike) */
+    if (options?.isCoupDeGrace) {
+      const targetDead = damageResult?.newHP <= 0;
+
+      Hooks.callAll('swse.coupDeGrace', {
+        attacker,
+        target,
+        weapon,
+        damage: damageResult?.damageApplied || damage,
+        killed: targetDead,
+        autoCritical: true,
+        doubledDamage: true
+      });
+
+      // Chat message for Coup de Grace
+      const messageContent = `<b>${attacker.name}</b> delivers a <strong>Coup de Grace</strong> to <b>${target.name}</b>!`;
+      const finalContent = targetDead
+        ? messageContent + ` <em style="color: red;">Target is dead!</em>`
+        : messageContent;
+
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: attacker }),
+        content: finalContent,
+        type: 'other'
+      });
+    }
 
     /* DELEGATE UI HANDLING TO ADAPTER (Phase 1.5 consolidation) */
     await CombatUIAdapter.handleAttackResult(result);
@@ -485,14 +524,93 @@ export class CombatEngine {
 
   /**
    * Execute a combat action (cards and UI integration).
+   * Routes to appropriate handler based on action key format.
    *
    * @param {Actor} actor - Acting actor
    * @param {string} actionKey - Combat action key
    * @returns {Promise<void>}
    */
   static async executeAction(actor, actionKey) {
-    // Delegate to appropriate action handler
+    if (!actionKey || !actor) return;
+
+    // Universal combat actions: format "combat:N" (N = index in combat-actions.json)
+    if (actionKey.startsWith('combat:')) {
+      const actionIndex = parseInt(actionKey.split(':')[1], 10);
+
+      // Coup de Grace is at index 9 in combat-actions.json
+      if (actionIndex === 9) {
+        return this.executeCoupDeGrace(actor);
+      }
+
+      // Future: Add other universal actions here
+      console.warn(`Combat action ${actionKey} not yet implemented`);
+      return;
+    }
+
+    // Item-based actions (weapons, abilities)
+    if (actionKey.startsWith('item:')) {
+      console.log(`Item action: ${actionKey}`);
+      return;
+    }
+
     console.log(`Executing action: ${actionKey} for ${actor.name}`);
+  }
+
+  /**
+   * Execute Coup de Grace action.
+   * Validates target is helpless, then executes automatic critical hit.
+   *
+   * @param {Actor} actor - Attacking actor
+   * @returns {Promise<void>}
+   * @private
+   */
+  static async executeCoupDeGrace(actor) {
+    if (!actor) return;
+
+    // Validate combat is active
+    if (!game.combat?.started) {
+      ui.notifications.warn('Coup de Grace can only be used in combat');
+      return;
+    }
+
+    // Validate target selection
+    const targets = game.user?.targets || [];
+    if (targets.size === 0) {
+      ui.notifications.warn('Select a target for Coup de Grace');
+      return;
+    }
+
+    const targetToken = Array.from(targets)[0];
+    const target = targetToken?.actor;
+    if (!target) return;
+
+    // Validate target is helpless (condition track step 5+)
+    const targetCondition = target.system?.conditionTrack?.current ?? 0;
+    const isHelpless = targetCondition >= 5; // Helpless is step 5+
+
+    if (!isHelpless) {
+      ui.notifications.warn('Coup de Grace can only be used against helpless targets');
+      return;
+    }
+
+    // Validate equipped weapon
+    const weapon = actor.items.find(i => i.type === 'weapon' && i.system?.equipped === true);
+    if (!weapon) {
+      ui.notifications.warn('Equip a weapon to perform Coup de Grace');
+      return;
+    }
+
+    // Execute attack with Coup de Grace flag
+    await this.resolveAttack({
+      attacker: actor,
+      target,
+      weapon,
+      attackRoll: { total: 99999, dice: [] }, // Auto-hit
+      options: {
+        isCoupDeGrace: true,
+        autoCritical: true
+      }
+    });
   }
 
   /* -------------------------------------------- */

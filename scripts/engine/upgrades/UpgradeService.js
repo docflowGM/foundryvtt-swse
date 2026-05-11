@@ -283,7 +283,7 @@ export class UpgradeService {
       // Standard item — use CustomizationWorkflow
       const item = record.document;
       if (!item) return [];
-      const state = this.workflow.getFullCustomizationState(item);
+      const state = this.workflow.getFullCustomizationState(item, { actor });
       if (state.error) return [];
       const upgrades = state.availableUpgrades ?? [];
       return upgrades.filter(u => u.visible !== false);

@@ -262,6 +262,12 @@ export class EffectResolver {
       'rapid_recycler': () => {
         mutations['system.rateOfFire'] = (mutations['system.rateOfFire'] ?? 1) + 1;
         preview.stats.rof = '+1 RoF';
+      },
+
+      // Tech Specialist modifications (weapon)
+      'tech_improved_accuracy': () => {
+        mutations['system.attackBonus'] = (mutations['system.attackBonus'] ?? item.system?.attackBonus ?? 0) + 1;
+        preview.stats.accuracy = '+1 attack bonus';
       }
     };
 
@@ -408,6 +414,18 @@ export class EffectResolver {
       'weapon_mount_standard': () => {
         mutations['system.weaponMount'] = true;
         preview.stats.mount = 'Standard weapon mount';
+      },
+
+      // Tech Specialist modifications (armor)
+      'tech_agile_armor': () => {
+        mutations['system.maxDex'] = (mutations['system.maxDex'] ?? item.system?.maxDex ?? 0) + 1;
+        preview.stats.maxDex = '+1 max dex bonus';
+      },
+      'tech_fortifying_armor': () => {
+        this.#addBonusModifier(mutations, 'fortitude', 1, 'Fortifying armor');
+      },
+      'tech_protective_armor': () => {
+        this.#addBonusModifier(mutations, 'reflex', 1, 'Protective armor');
       }
     };
 

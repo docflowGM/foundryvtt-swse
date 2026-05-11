@@ -50,6 +50,10 @@ export class ConditionTrackComponent {
             <i class="fa-solid fa-arrow-up"></i> Recover (3 Swift)
           </button>
 
+          <button class="ct-btn improve shake-it-off" data-ct="shake-it-off" title="Spend 2 Swift Actions to move +1 step (Shake It Off)">
+            <i class="fa-solid fa-arrow-up"></i> Shake It Off (2 Swift)
+          </button>
+
           <button class="ct-btn worsen" data-ct="worsen">
             <i class="fa-solid fa-arrow-down"></i> Worsen
           </button>
@@ -132,7 +136,7 @@ export class ConditionTrackComponent {
     }));
 
     // Improve CT (respect persistent)
-    root.querySelectorAll('[data-ct="improve"]').forEach(el => el.addEventListener('click', async () => {
+    root.querySelectorAll('[data-ct="improve"]:not(.shake-it-off)').forEach(el => el.addEventListener('click', async () => {
       const result = await ActorEngine.recoverConditionStep(actor, 'recover-action');
       if (result?.reason === 'persistent') {
         return ui.notifications.warn('Condition is Persistent and cannot be removed by the Recover Action.');
@@ -142,6 +146,11 @@ export class ConditionTrackComponent {
       } else if (typeof result?.remaining === 'number') {
         ui.notifications.info(`Recover Action progress: ${3 - result.remaining}/3 swift actions spent.`);
       }
+    }));
+
+    // Shake It Off (2 Swift Actions to improve CT)
+    root.querySelectorAll('[data-ct="shake-it-off"]').forEach(el => el.addEventListener('click', async () => {
+      await this._handleShakeItOff(actor);
     }));
 
     // Worsen CT
@@ -161,5 +170,49 @@ export class ConditionTrackComponent {
 
   static async _setCondition(actor, step) {
     return ActorEngine.setConditionStep(actor, Math.clamp(step, 0, 5));
+  }
+
+  /* ---------------------------------------- */
+  /* SHAKE IT OFF HANDLER                     */
+  /* ---------------------------------------- */
+
+  /**
+   * Handle Shake It Off feat activation.
+   * Requires: 2 Swift Actions available, Shake It Off feat, trained in Endurance.
+   * Effect: Spend 2 Swift Actions to move +1 step on CT (improve condition).
+   */
+  static async _handleShakeItOff(actor) {
+    // Check if actor has Shake It Off feat via metadata
+    const { MetaResourceFeatResolver } = await import("/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js");
+    const ctRules = MetaResourceFeatResolver.getConditionTrackRules(actor);
+
+    if (!ctRules.swiftActionConditionRecovery) {
+      return ui.notifications.warn(`${actor.name} does not have the Shake It Off feat.`);
+    }
+
+    // Check if actor has enough Swift Actions available
+    const swiftActions = actor.system.actions?.swift?.available ?? 0;
+    const requiredSwiftActions = ctRules.swiftActionCost;
+    if (swiftActions < requiredSwiftActions) {
+      return ui.notifications.warn(`${actor.name} does not have ${requiredSwiftActions} Swift Actions available (has ${swiftActions}).`);
+    }
+
+    try {
+      // Spend Swift Actions based on feat rule
+      const newSwiftActions = swiftActions - requiredSwiftActions;
+      await ActorEngine.updateActor(actor, { 'system.actions.swift.available': newSwiftActions });
+
+      // Move +1 step on CT (improve condition)
+      const oldCT = actor.system.conditionTrack?.current ?? 0;
+      await actor.improveConditionTrack();
+      const newCT = actor.system.conditionTrack?.current ?? 0;
+
+      ui.notifications.info(
+        `Shake It Off: ${actor.name} spent ${requiredSwiftActions} Swift Actions and moved from CT ${oldCT} to CT ${newCT}.`
+      );
+    } catch (err) {
+      console.error('[ConditionTrackComponent] Shake It Off error:', err);
+      ui.notifications.error(`Error applying Shake It Off: ${err.message}`);
+    }
   }
 }

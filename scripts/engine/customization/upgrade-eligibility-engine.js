@@ -1,9 +1,11 @@
 import { UPGRADE_CATALOG, TEMPLATE_CATALOG } from '/systems/foundryvtt-swse/scripts/engine/customization/upgrade-catalog.js';
+import { MetaResourceFeatResolver } from '/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js';
 
 export class UpgradeEligibilityEngine {
-  constructor(profileResolver, slotEngine) {
+  constructor(profileResolver, slotEngine, actor = null) {
     this.profileResolver = profileResolver;
     this.slotEngine = slotEngine;
+    this.actor = actor;
   }
 
   getEligibleUpgrades(item) {
@@ -24,6 +26,23 @@ export class UpgradeEligibilityEngine {
   canInstallUpgrade(item, upgradeKey) {
     const upgrade = UPGRADE_CATALOG[upgradeKey];
     if (!upgrade) return { allowed: false, reason: 'unknown_upgrade', visible: false };
+
+    if (upgrade.enabled === false) return { allowed: false, reason: 'upgrade_disabled', visible: true };
+
+    if (upgrade.source === 'tech-specialist') {
+      if (!this.actor) return { allowed: false, reason: 'actor_required' };
+      if (!MetaResourceFeatResolver.canActorPerformTechSpecialistModifications(this.actor)) {
+        return { allowed: false, reason: 'missing_tech_specialist_feat' };
+      }
+
+      const customState = this.slotEngine.getCustomizationState(item);
+      const installedTechSpecs = (customState.installedUpgrades ?? [])
+        .filter(u => UPGRADE_CATALOG[u.upgradeKey]?.source === 'tech-specialist');
+      if (installedTechSpecs.length > 0) {
+        return { allowed: false, reason: 'tech_specialist_benefit_already_applied' };
+      }
+    }
+
     const profile = this.profileResolver.getNormalizedProfile(item);
     if (!profile.customizable) return { allowed: false, reason: `unsupported_category:${profile.category}` };
     const categorySet = new Set(upgrade.appliesTo ?? []);

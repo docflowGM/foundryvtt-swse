@@ -100,6 +100,8 @@ export class MetaResourceFeatResolver {
       freeAction: false,
       conditionRecoverySteps: 0,
       regainForcePowerOnUse: false,
+      grantMoveActionOnUse: false,
+      grantMovementOnUse: false,
       displayNotes: []
     };
 
@@ -125,6 +127,12 @@ export class MetaResourceFeatResolver {
           case 'REGAIN_FORCE_POWER_ON_USE':
             rules.regainForcePowerOnUse = true;
             break;
+          case 'GRANT_MOVE_ACTION_ON_USE':
+            rules.grantMoveActionOnUse = true;
+            break;
+          case 'GRANT_MOVEMENT_ON_USE':
+            rules.grantMovementOnUse = true;
+            break;
           case 'DISPLAY_NOTE':
             if (rule.note) rules.displayNotes.push({ sourceName: item.name, note: rule.note });
             break;
@@ -134,17 +142,80 @@ export class MetaResourceFeatResolver {
       }
     }
 
-    // Compatibility fallbacks for unnormalized actors/packs.
-    if (this.hasFeat(actor, 'Extra Second Wind')) rules.extraUseMultiplier = Math.max(rules.extraUseMultiplier, 1);
+    // Compatibility fallbacks for unnormalized actors/packs (only for feats not yet normalized with resourceRules)
     if (this.hasFeat(actor, 'Vitality Surge')) rules.allowAboveHalfHp = true;
-    if (this.hasFeat(actor, 'Unstoppable Combatant')) rules.ignoreEncounterCap = true;
     if (this.hasFeat(actor, 'Fast Surge')) rules.freeAction = true;
-    if (this.hasFeat(actor, 'Recovering Surge')) rules.conditionRecoverySteps = Math.max(rules.conditionRecoverySteps, 1);
-    if (this.hasFeat(actor, 'Forceful Recovery')) rules.regainForcePowerOnUse = true;
 
     return rules;
   }
 
+  /**
+   * Read damage-based feat rules (e.g., condition track modifications on damage threshold)
+   * @param {Actor} actor - Target actor
+   * @returns {Object} Rules object with damage-based feat behaviors
+   */
+  static getDamageRules(actor) {
+    const rules = {
+      preventFirstThresholdExceedance: false,
+      capIonDamageCtToOneStep: false
+    };
+
+    for (const item of getActorFeatItems(actor)) {
+      const itemRules = getResourceRules(item, 'damage');
+      for (const rule of itemRules) {
+        switch (rule?.type) {
+          case 'PREVENT_FIRST_THRESHOLD_EXCEEDANCE_PER_ENCOUNTER':
+            rules.preventFirstThresholdExceedance = true;
+            break;
+          case 'CAP_ION_DAMAGE_CT_TO_1_STEP':
+            rules.capIonDamageCtToOneStep = true;
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    return rules;
+  }
+
+  /**
+   * Read condition track interaction feat rules
+   * @param {Actor} actor - Target actor
+   * @returns {Object} Rules object with condition track interaction behaviors
+   */
+  static getConditionTrackRules(actor) {
+    const rules = {
+      moveTargetCtOnCoupDeGrace: false,
+      spendCtToReduceDamage: false,
+      damageReductionAmount: 10,
+      swiftActionConditionRecovery: false,
+      swiftActionCost: 2
+    };
+
+    for (const item of getActorFeatItems(actor)) {
+      const itemRules = getResourceRules(item, 'conditionTrack');
+      for (const rule of itemRules) {
+        switch (rule?.type) {
+          case 'MOVE_TARGET_CT_ON_COUP_DE_GRACE':
+            rules.moveTargetCtOnCoupDeGrace = true;
+            break;
+          case 'SPEND_CT_TO_REDUCE_DAMAGE':
+            rules.spendCtToReduceDamage = true;
+            rules.damageReductionAmount = Number(rule.damageReduction ?? 10);
+            break;
+          case 'SWIFT_ACTION_CONDITION_RECOVERY':
+            rules.swiftActionConditionRecovery = true;
+            rules.swiftActionCost = Number(rule.swiftActionCost ?? 2);
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    return rules;
+  }
 
   static getAttackRerollRules(actor) {
     const rules = [];
@@ -184,16 +255,28 @@ export class MetaResourceFeatResolver {
     const rules = this.getAttackRerollRules(actor);
     if (!rules.length || !roll) return [];
     const formula = roll.formula ?? context.formula ?? '1d20';
-    return rules.map(rule => ({
-      ...rule,
-      actorId: actor?.id ?? '',
-      weaponId: weapon?.id ?? context.weaponId ?? '',
-      originalTotal: roll.total,
-      formula,
-      outcomeLabel: rule.outcome === 'keepBetter' ? 'Keep better result' : 'Must accept reroll',
-      canUse: rule.cost !== 'forcePoint' || actorForcePoints(actor) > 0,
-      disabledReason: rule.cost === 'forcePoint' && actorForcePoints(actor) <= 0 ? 'No Force Points remaining' : null
-    }));
+    const isHit = context.isHit;
+
+    return rules
+      .filter(rule => {
+        // Filter based on trigger requirement
+        const trigger = rule.rule?.trigger;
+        if (trigger === 'missedAttack' && isHit !== false) {
+          // Only show missed attack rerolls when attack actually missed
+          return false;
+        }
+        return true;
+      })
+      .map(rule => ({
+        ...rule,
+        actorId: actor?.id ?? '',
+        weaponId: weapon?.id ?? context.weaponId ?? '',
+        originalTotal: roll.total,
+        formula,
+        outcomeLabel: rule.outcome === 'keepBetter' ? 'Keep better result' : 'Must accept reroll',
+        canUse: rule.cost !== 'forcePoint' || actorForcePoints(actor) > 0,
+        disabledReason: rule.cost === 'forcePoint' && actorForcePoints(actor) <= 0 ? 'No Force Points remaining' : null
+      }));
   }
 
   static normalizeRerollOutcome(value) {
@@ -247,6 +330,32 @@ export class MetaResourceFeatResolver {
     const rerollTotal = Number(newRoll.total ?? 0);
     const finalTotal = outcome === 'keepBetter' ? Math.max(originalTotal, rerollTotal) : rerollTotal;
     const usedNew = finalTotal === rerollTotal;
+
+    // Apply reflex defense penalty if applicable (Desperate Gambit)
+    if (cost === 'reflexDefensePenalty' && button.dataset.rule) {
+      const ruleData = JSON.parse(button.dataset.rule);
+      const d20 = Number(button.dataset.d20 ?? 0);
+      const isNat1 = d20 === 1;
+      const penaltyValue = isNat1 ? -5 : -2;
+
+      const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+      const existing = Array.isArray(actor.system?.activeEffects) ? actor.system.activeEffects : [];
+      const effectId = `reflex-penalty-${normalizeName(sourceName)}`;
+      const newEffect = {
+        id: effectId,
+        name: sourceName,
+        target: 'defense.reflex',
+        type: 'untyped',
+        value: penaltyValue,
+        roundsRemaining: 2,
+        enabled: true,
+        sourceId: button.dataset.sourceId,
+        sourceName: sourceName,
+        description: `${sourceName}: ${penaltyValue} to Reflex Defense until end of next turn.${isNat1 ? ' (Natural 1 penalty)' : ''}`
+      };
+      const filtered = existing.filter(effect => !String(effect?.id ?? '').startsWith(effectId));
+      await ActorEngine.updateActor(actor, { 'system.activeEffects': [...filtered, newEffect] });
+    }
 
     button.disabled = true;
     button.innerHTML = '<i class="fa-solid fa-check"></i> Reroll used';
@@ -332,6 +441,56 @@ export class MetaResourceFeatResolver {
     await ActorEngine.updateActor(actor, { 'system.activeEffects': [...filtered, ...newEffects] });
 
     return { success: true, rule, effects: newEffects };
+  }
+
+  /* ---------------------------------------- */
+  /* CUSTOMIZATION CAPABILITIES              */
+  /* ---------------------------------------- */
+
+  static getCustomizationCapabilities(actor) {
+    const capabilities = [];
+    if (!actor) return capabilities;
+
+    for (const item of getActorFeatItems(actor)) {
+      const caps = item?.system?.abilityMeta?.customizationCapabilities ?? [];
+      if (Array.isArray(caps)) {
+        capabilities.push(...caps);
+      }
+    }
+    return capabilities;
+  }
+
+  static hasCustomizationCapability(actor, capabilityType) {
+    const capabilities = this.getCustomizationCapabilities(actor);
+    return capabilities.some(c => c?.type === capabilityType);
+  }
+
+  static canActorPerformTechSpecialistModifications(actor) {
+    if (!actor) return false;
+    return this.hasCustomizationCapability(actor, 'TECH_SPECIALIST_MODIFICATIONS');
+  }
+
+  /* ---------------------------------------- */
+  /* GRAPPLE RESISTANCE RULES                */
+  /* ---------------------------------------- */
+
+  static getGrappleResistanceBonus(actor, context = {}) {
+    if (!actor) return 0;
+    const mode = context.mode;
+    if (mode !== 'resistGrab' && mode !== 'resistGrapple') return 0;
+
+    let totalBonus = 0;
+    for (const item of getActorFeatItems(actor)) {
+      const grappleRules = item?.system?.abilityMeta?.grappleRules ?? [];
+      if (Array.isArray(grappleRules)) {
+        for (const rule of grappleRules) {
+          if (rule.type === 'RESIST_GRAB_AND_GRAPPLE') {
+            totalBonus += rule.bonus ?? 0;
+          }
+        }
+      }
+    }
+    return totalBonus;
   }
 
   static getForcefulRecoveryPending(actor) {
