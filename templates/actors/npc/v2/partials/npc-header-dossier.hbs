@@ -1,0 +1,66 @@
+<header class="swse-npc-dossier-header">
+  <div class="swse-npc-dossier-portrait">
+    <img class="swse-npc-dossier-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="{{actor.name}}"/>
+  </div>
+
+  <div class="swse-npc-dossier-identity">
+    <h1 class="swse-npc-dossier-name">
+      <input name="name" type="text" value="{{actor.name}}" placeholder="Name" {{#unless editable}}disabled{{/unless}}/>
+    </h1>
+
+    <div class="swse-npc-dossier-type">
+      <span class="swse-npc-badge swse-npc-badge--kind">{{npcKind}}</span>
+      {{#if npcMode}}<span class="swse-npc-badge swse-npc-badge--mode">{{npcMode}}</span>{{/if}}
+      {{#if isFollowerNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">Follower</span>{{/if}}
+      {{#if isBeastNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">Beast</span>{{/if}}
+      {{#if isMountNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">Mount</span>{{/if}}
+    </div>
+
+    <div class="swse-npc-dossier-summary-line">
+      {{#if actor.system.attributes.level}}<span>L{{actor.system.attributes.level}}</span>{{/if}}
+      {{#if derived.identity.species}}<span>{{derived.identity.species}}</span>{{/if}}
+      {{#if derived.identity.classDisplay}}<span>{{derived.identity.classDisplay}}</span>{{/if}}
+    </div>
+  </div>
+
+  <div class="swse-npc-dossier-defenses">
+    <div class="swse-npc-defense-chip">
+      <span class="swse-npc-defense-chip__label">REF</span>
+      <strong class="swse-npc-defense-chip__value">{{derived.defenses.ref}}</strong>
+    </div>
+    <div class="swse-npc-defense-chip">
+      <span class="swse-npc-defense-chip__label">FORT</span>
+      <strong class="swse-npc-defense-chip__value">{{derived.defenses.fort}}</strong>
+    </div>
+    <div class="swse-npc-defense-chip">
+      <span class="swse-npc-defense-chip__label">WILL</span>
+      <strong class="swse-npc-defense-chip__value">{{derived.defenses.will}}</strong>
+    </div>
+    <div class="swse-npc-defense-chip">
+      <span class="swse-npc-defense-chip__label">DT</span>
+      <strong class="swse-npc-defense-chip__value">{{derived.damage.threshold}}</strong>
+    </div>
+  </div>
+
+  <div class="swse-npc-dossier-vitals">
+    <div class="swse-npc-vital-block">
+      <span class="swse-npc-vital-label">HP</span>
+      <div class="swse-npc-vital-bar">
+        <div class="swse-npc-vital-fill" style="width: {{hpPercent}}%;"></div>
+      </div>
+      <span class="swse-npc-vital-text">{{hpCurrent}}/{{hpMax}}</span>
+    </div>
+
+    <div class="swse-npc-vital-stat">
+      <span class="swse-npc-vital-label">CT</span>
+      <strong class="swse-npc-vital-stat-value">{{derived.damage.conditionStep}}</strong>
+    </div>
+
+    {{#if derived.initiative.total}}
+    <div class="swse-npc-vital-stat">
+      <span class="swse-npc-vital-label">Init</span>
+      <strong class="swse-npc-vital-stat-value">{{derived.initiative.total}}</strong>
+    </div>
+    {{/if}}
+  </div>
+</header>
