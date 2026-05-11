@@ -1,0 +1,1278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Rendarr's Outfitters — Splash</title>
+<meta name="viewport" content="width=1280" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@400;600;700;900&family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Monoton&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --vapor-pink:   oklch(0.72 0.26 350);
+    --vapor-purple: oklch(0.55 0.26 300);
+    --vapor-cyan:   oklch(0.85 0.18 200);
+    --vapor-amber:  oklch(0.82 0.18 70);
+    --screen-h: 278;
+    --ink-h: 190;
+    --accent-h: var(--ink-h); --accent-c: 0.17; --accent-l: 0.82;
+    --accent: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
+    --bg: oklch(0.10 0.03 285);
+    --screen:   oklch(0.13 0.055 var(--screen-h));
+    --screen-2: oklch(0.18 0.07  var(--screen-h));
+    --ink:       oklch(0.94 0.04 var(--accent-h));
+    --ink-dim:   oklch(0.72 0.06 var(--accent-h));
+    --ink-faint: oklch(0.50 0.05 var(--accent-h));
+    --pos: oklch(0.82 0.19 145);
+    --neg: oklch(0.70 0.22 25);
+    --zero: oklch(0.88 0.17 95);
+    --rar-common:  oklch(0.78 0.04 220);
+    --rar-uncommon:oklch(0.82 0.18 145);
+    --rar-rare:    oklch(0.80 0.20 240);
+    --rar-restricted:oklch(0.80 0.20 60);
+    --rar-illegal: oklch(0.70 0.26 20);
+    --font-body: 'Space Grotesk', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --font-display: 'VT323', monospace;
+    --font-orbit: 'Orbitron', sans-serif;
+    --font-neon: 'Monoton', 'VT323', monospace;
+    --scan-strength: 0.03;
+    --anim-speed: 1;
+    --glow-mult: 1;
+    --sign-hue: 320;   /* pink/magenta for "RENDARR'S OUTFITTERS" */
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #05050a; color: var(--ink); font-family: var(--font-body); min-height: 100vh; overflow-x: auto; }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: -2;
+    background:
+      radial-gradient(ellipse at 30% 20%, oklch(0.18 0.10 320 / 0.55), transparent 55%),
+      radial-gradient(ellipse at 80% 88%, oklch(0.18 0.10 200 / 0.5), transparent 55%),
+      linear-gradient(180deg, #060612 0%, #020205 100%);
+  }
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 100; mix-blend-mode: screen;
+    background: repeating-linear-gradient(0deg, transparent 0 2px, oklch(1 0 0 / 0.018) 2px 3px);
+  }
+  .stage { min-height: 100vh; display:flex; justify-content:center; padding: 28px; }
+
+  /* ================= Tablet bezel (matches Store) ================= */
+  .tablet {
+    position:relative; width: 1240px; padding: 32px 30px 38px; border-radius: 22px;
+    background: linear-gradient(140deg, #1a1a26 0%, #0b0b14 55%, #12121c 100%);
+    box-shadow:
+      inset 0 0 0 1px oklch(0.35 0.04 270 / 0.5),
+      inset 0 2px 0 0 oklch(0.55 0.03 270 / 0.4),
+      inset 0 -2px 0 0 oklch(0.05 0.02 270 / 0.9),
+      0 40px 80px oklch(0 0 0 / 0.7),
+      0 0 140px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.12);
+    animation: breathe calc(5.4s / var(--anim-speed)) ease-in-out infinite;
+  }
+  @keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.002); } }
+  .rivet { position:absolute; width:6px; height:6px; border-radius:50%;
+    background: radial-gradient(circle at 35% 35%, #5a5a6e 0%, #1a1a22 70%);}
+  .rivet.tl{top:12px;left:16px;} .rivet.tr{top:12px;right:16px;}
+  .rivet.bl{bottom:12px;left:16px;} .rivet.br{bottom:12px;right:16px;}
+  .bezel-led { position:absolute; width:5px; height:5px; border-radius:50%; background:var(--vapor-cyan); box-shadow:0 0 8px var(--vapor-cyan), 0 0 18px var(--vapor-cyan); }
+  .bezel-led.a{top:22px;left:48px; animation: ledPulse calc(1.6s / var(--anim-speed)) ease-in-out infinite;}
+  .bezel-led.b{top:22px;right:48px; animation: ledPulse calc(1.9s / var(--anim-speed)) ease-in-out infinite 0.3s; background:var(--pos); box-shadow:0 0 8px var(--pos),0 0 18px var(--pos);}
+  .bezel-led.c{bottom:24px;left:48px; animation: ledPulse calc(2.4s / var(--anim-speed)) ease-in-out infinite 0.6s; background:var(--vapor-pink); box-shadow:0 0 8px var(--vapor-pink),0 0 18px var(--vapor-pink);}
+  .bezel-led.d{bottom:24px;right:48px; animation: ledPulse calc(2.1s / var(--anim-speed)) ease-in-out infinite 0.9s; background:var(--vapor-amber); box-shadow:0 0 8px var(--vapor-amber),0 0 18px var(--vapor-amber);}
+  @keyframes ledPulse { 0%,100% { opacity:0.35; } 50% { opacity:1; } }
+  .bezel-serial { position:absolute; top:12px; right:38px; font-family:var(--font-mono); font-size:9px; letter-spacing:0.22em; color: oklch(0.55 0.05 260); }
+  .bezel-manu { position:absolute; bottom:14px; right:38px; font-family:var(--font-display); font-size:12px; letter-spacing:0.4em; color: oklch(0.50 0.04 260); }
+  .bezel-app  { position:absolute; bottom:14px; left:38px; font-family:var(--font-mono); font-size:9px; letter-spacing:0.32em; color: oklch(0.55 0.05 260); text-transform:uppercase;}
+
+  /* ================= Screen ================= */
+  .screen {
+    position:relative;
+    background:
+      radial-gradient(ellipse at 50% -10%, color-mix(in oklab, var(--vapor-pink) 20%, transparent) 0%, transparent 55%),
+      radial-gradient(ellipse at 30% 10%, var(--screen-2) 0%, var(--screen) 50%, oklch(0.06 0.04 var(--screen-h)) 100%);
+    border: 1px solid oklch(0.3 0.04 260 / 0.6);
+    border-radius: 10px;
+    padding: 16px;
+    min-height: 1080px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.6), inset 0 2px 14px oklch(0 0 0 / 0.5), inset 0 0 80px oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.08);
+    display: grid;
+    grid-template-rows: auto auto auto 1fr auto auto;
+    gap: 14px;
+  }
+  .screen::before {
+    content:''; position:absolute; inset:0; pointer-events:none; z-index:5;
+    background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(1 0 0 / var(--scan-strength)) 3px 4px);
+  }
+  .scan-v {
+    position:absolute; left:0; right:0; top:0; height:140px; pointer-events:none; z-index:7;
+    background: linear-gradient(180deg, transparent 0%, oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.06) 50%, oklch(1 0 0 / 0.1) 62%, transparent 100%);
+    animation: scanV calc(9s / var(--anim-speed)) linear infinite;
+  }
+  @keyframes scanV { 0%{transform:translateY(-160px);opacity:0.6;} 100%{transform:translateY(1180px);opacity:0.3;} }
+  .corner { position:absolute; width:18px; height:18px; border:1px solid var(--vapor-cyan); pointer-events:none; opacity:0.6; z-index:8; }
+  .corner.tl{top:24px;left:24px;border-right:none;border-bottom:none;}
+  .corner.tr{top:24px;right:24px;border-left:none;border-bottom:none;}
+  .corner.bl{bottom:24px;left:24px;border-right:none;border-top:none;}
+  .corner.br{bottom:24px;right:24px;border-left:none;border-top:none;}
+
+  /* ================= Top HUD ================= */
+  .hud {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 6px 10px 10px;
+    border-bottom: 1px solid color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+    font-family: var(--font-mono); font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--ink-dim);
+    position: relative; z-index: 10;
+  }
+  .hud-left,.hud-right{display:flex; gap:14px; align-items:center;}
+  .hud .dot { width:6px;height:6px;border-radius:50%; background:var(--pos); box-shadow:0 0 6px var(--pos); display:inline-block; margin-right:6px;}
+  .hud .dot.warn { background: var(--vapor-amber); box-shadow:0 0 6px var(--vapor-amber);}
+  .hud .dot.bad { background: var(--neg); box-shadow:0 0 6px var(--neg);}
+  .hud-app {
+    font-family: var(--font-orbit); font-weight:700; letter-spacing:0.32em; color: var(--vapor-cyan);
+    text-shadow: 0 0 8px color-mix(in oklab, var(--vapor-cyan) 60%, transparent);
+  }
+  .hud-app .ver { color: var(--ink-faint); font-weight:400; margin-left:8px;}
+
+  /* ================= Stock ticker ================= */
+  .ticker-wrap {
+    position: relative; z-index: 10;
+    border-top: 1px solid color-mix(in oklab, var(--vapor-cyan) 20%, transparent);
+    border-bottom: 1px solid color-mix(in oklab, var(--vapor-cyan) 20%, transparent);
+    background: linear-gradient(180deg, oklch(0 0 0 / 0.5), oklch(0 0 0 / 0.25));
+    padding: 8px 0;
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px;
+  }
+  .ticker-tag, .ticker-end {
+    font-family: var(--font-mono); font-size:10px; letter-spacing:0.26em; color: var(--vapor-cyan);
+    padding: 0 12px;
+    text-shadow: 0 0 8px color-mix(in oklab, var(--vapor-cyan) 50%, transparent);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ticker-tag::before {
+    content:''; display:inline-block; width:7px; height:7px; border-radius:50%; background: var(--neg);
+    box-shadow: 0 0 8px var(--neg);
+    animation: liveBlink calc(1.2s / var(--anim-speed)) ease-in-out infinite;
+  }
+  @keyframes liveBlink { 0%,100% { opacity:0.4;} 50% { opacity:1;} }
+  .ticker { overflow:hidden; height:26px; position:relative; }
+  .ticker::before, .ticker::after {
+    content:''; position:absolute; top:0; bottom:0; width: 70px; z-index:2; pointer-events:none;
+  }
+  .ticker::before { left:0;  background: linear-gradient(90deg, oklch(0 0 0 / 0.9), transparent);}
+  .ticker::after  { right:0; background: linear-gradient(-90deg, oklch(0 0 0 / 0.9), transparent);}
+  .ticker-track { position:absolute; top:0; left:0; white-space:nowrap; will-change:transform; }
+  .ticker-track span { font-family: var(--font-mono); font-size:11px; letter-spacing:0.15em; color: var(--ink-dim); margin-right: 52px; line-height:26px; display:inline-block; }
+  .ticker-track span em { color: var(--vapor-cyan); font-style: normal; font-weight: 600; letter-spacing: 0.22em; margin-right: 6px;}
+  .ticker-track span .hot { color: var(--neg); font-weight:700;}
+  .ticker-track span .pos { color: var(--pos);}
+  .ticker-track span .neg { color: var(--neg);}
+  .ticker-track span .cr  { color: var(--ink-faint); margin-left: 5px; font-size: 10px; letter-spacing: 0.12em; }
+
+  /* ================= Hero (Neon sign + Open + Rate + Rendarr) ================= */
+  .hero {
+    position: relative; z-index: 6;
+    padding: 28px 24px 24px;
+    background:
+      radial-gradient(ellipse at 50% 0%, color-mix(in oklab, var(--vapor-pink) 22%, transparent) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 100%, color-mix(in oklab, var(--vapor-cyan) 14%, transparent) 0%, transparent 65%),
+      linear-gradient(180deg, oklch(0 0 0 / 0.35) 0%, oklch(0 0 0 / 0.55) 100%);
+    border: 1px solid color-mix(in oklab, var(--vapor-cyan) 22%, transparent);
+    border-left: 3px solid var(--vapor-pink);
+    border-radius: 6px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 22px;
+    align-items: center;
+  }
+  .hero::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in oklab, var(--vapor-pink) 4%, transparent) 3px 4px),
+      radial-gradient(ellipse at 50% 50%, transparent 40%, oklch(0 0 0 / 0.4) 100%);
+  }
+  /* faint brick / station-wall background lines */
+  .hero::after {
+    content:''; position:absolute; inset:0; pointer-events:none; opacity: 0.18;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 78px, oklch(1 0 0 / 0.05) 78px 79px),
+      repeating-linear-gradient(0deg, transparent 0 36px, oklch(1 0 0 / 0.05) 36px 37px);
+  }
+  .neon-stack { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; position: relative; z-index: 2; }
+  .neon-eyebrow {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.4em; color: var(--ink-faint); text-transform: uppercase;
+  }
+  .neon-eyebrow .pip { display:inline-block; width:10px; height:1px; background: var(--vapor-cyan);}
+  .neon-eyebrow .x { color: var(--vapor-cyan); }
+
+  /* Big main neon sign */
+  .neon-sign {
+    font-family: var(--font-neon);
+    font-size: 84px;
+    line-height: 0.95;
+    letter-spacing: 0.04em;
+    color: oklch(0.96 0.04 var(--sign-hue));
+    text-transform: uppercase;
+    position: relative;
+    text-shadow:
+      0 0 4px  oklch(0.98 0.05 var(--sign-hue)),
+      0 0 12px oklch(0.85 0.22 var(--sign-hue)),
+      0 0 28px oklch(0.75 0.28 var(--sign-hue) / 0.9),
+      0 0 56px oklch(0.65 0.30 var(--sign-hue) / 0.7),
+      0 0 90px oklch(0.55 0.28 var(--sign-hue) / 0.6);
+    animation: neonFlicker calc(7s / var(--anim-speed)) steps(1, end) infinite;
+  }
+  .neon-sign .amp {
+    color: oklch(0.92 0.08 var(--sign-hue));
+    margin: 0 0.04em;
+    opacity: 0.75;
+  }
+  .neon-sign .br { display:block; }
+  .neon-sign .br.two {
+    font-size: 92px; letter-spacing: 0.02em;
+  }
+  /* Tube wire — thin dark line under the sign to sell "tubing on a wall" */
+  .neon-tube-rail {
+    width: 100%; max-width: 760px;
+    height: 6px;
+    border-top: 1px solid oklch(0.32 0.04 var(--sign-hue) / 0.4);
+    border-bottom: 1px solid oklch(0.18 0.04 var(--sign-hue) / 0.6);
+    margin-top: -4px;
+    position: relative;
+  }
+  .neon-tube-rail::before {
+    content:''; position:absolute; left:-8px; top:-3px; width:8px; height:10px;
+    background: oklch(0.22 0.03 var(--sign-hue));
+    border: 1px solid oklch(0.40 0.05 var(--sign-hue));
+    border-radius: 1px;
+  }
+  .neon-tube-rail::after {
+    content:''; position:absolute; right:-8px; top:-3px; width:8px; height:10px;
+    background: oklch(0.22 0.03 var(--sign-hue));
+    border: 1px solid oklch(0.40 0.05 var(--sign-hue));
+    border-radius: 1px;
+  }
+  @keyframes neonFlicker {
+    0%, 22%, 24%, 26%, 80%, 82%, 100% { opacity: 1; filter: brightness(1);}
+    23%   { opacity: 0.4; filter: brightness(0.4);}
+    25%   { opacity: 0.85;}
+    81%   { opacity: 0.5; filter: brightness(0.6);}
+    93%   { opacity: 1; filter: brightness(1.15);}
+  }
+
+  .neon-tagline {
+    font-family: var(--font-display); font-size: 26px; letter-spacing: 0.06em;
+    color: var(--vapor-cyan);
+    text-shadow: 0 0 8px color-mix(in oklab, var(--vapor-cyan) 60%, transparent);
+  }
+  .neon-tagline .star { margin: 0 8px; color: var(--vapor-pink);}
+
+  /* ================= Right column of hero: OPEN sign + tile of stats ================= */
+  .hero-right {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; gap: 14px; align-items: stretch;
+  }
+
+  /* OPEN sign — proper neon with frame */
+  .open-sign {
+    position: relative;
+    padding: 14px 18px 12px;
+    border: 1px solid oklch(0.30 0.03 30 / 0.7);
+    background:
+      linear-gradient(180deg, oklch(0.08 0.02 30) 0%, oklch(0.04 0.01 30) 100%);
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 2px oklch(0 0 0 / 0.6), inset 0 0 24px oklch(0 0 0 / 0.9);
+    text-align: center;
+  }
+  .open-sign::before {
+    content:''; position:absolute; inset: 4px;
+    border: 1px solid oklch(0.20 0.02 30 / 0.6);
+    border-radius: 2px;
+    pointer-events:none;
+  }
+  .open-sign .chain {
+    position:absolute; top: -10px; height: 10px; width: 1px;
+    background: oklch(0.35 0.02 270);
+  }
+  .open-sign .chain.l { left: 24px;}
+  .open-sign .chain.r { right: 24px;}
+  .open-sign .word {
+    font-family: var(--font-neon);
+    font-size: 64px;
+    letter-spacing: 0.04em;
+    color: oklch(0.20 0.04 145);
+    line-height: 1;
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+  .open-sign .word .o { font-size: 70px;}
+  .open-sign .sub {
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.4em;
+    color: oklch(0.42 0.02 270); text-transform: uppercase; margin-top: 6px;
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+
+  .open-sign[data-state="open"] .word {
+    color: oklch(0.94 0.18 145);
+    text-shadow:
+      0 0 4px  oklch(0.95 0.12 145),
+      0 0 12px oklch(0.85 0.22 145),
+      0 0 28px oklch(0.72 0.28 145 / 0.85),
+      0 0 56px oklch(0.62 0.28 145 / 0.6);
+    animation: openFlicker calc(9s / var(--anim-speed)) steps(1,end) infinite;
+  }
+  .open-sign[data-state="open"] .sub {
+    color: var(--vapor-cyan);
+    text-shadow: 0 0 6px color-mix(in oklab, var(--vapor-cyan) 60%, transparent);
+  }
+  .open-sign[data-state="closed"] .word { color: oklch(0.16 0.02 145);}
+  .open-sign[data-state="closed"] .sub { color: oklch(0.34 0.02 270);}
+  .open-sign[data-state="closed"]::after {
+    content: 'CLOSED'; position:absolute; right: 12px; bottom: 8px;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.34em;
+    color: var(--neg); text-transform: uppercase;
+    text-shadow: 0 0 6px var(--neg);
+  }
+  @keyframes openFlicker {
+    0%, 40%, 100% { opacity: 1;}
+    41% { opacity: 0.5;}
+    42% { opacity: 1;}
+    78% { opacity: 0.7;}
+    79% { opacity: 1;}
+  }
+
+  /* Tax/Discount rate block */
+  .rate-card {
+    position: relative;
+    padding: 12px 14px;
+    border: 1px solid color-mix(in oklab, var(--vapor-amber) 35%, transparent);
+    border-left: 2px solid var(--vapor-amber);
+    background:
+      linear-gradient(135deg, oklch(0.05 0.04 60 / 0.6) 0%, oklch(0.02 0.02 270 / 0.4) 100%);
+    border-radius: 3px;
+  }
+  .rate-card.discount {
+    border-color: color-mix(in oklab, var(--pos) 35%, transparent);
+    border-left-color: var(--pos);
+    background: linear-gradient(135deg, oklch(0.05 0.04 145 / 0.5) 0%, oklch(0.02 0.02 270 / 0.4) 100%);
+  }
+  .rate-card .head {
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.3em;
+    color: var(--ink-faint); text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .rate-card .head .pulse {
+    width:6px; height:6px; border-radius:50%; background: var(--vapor-amber);
+    box-shadow: 0 0 8px var(--vapor-amber);
+    animation: liveBlink calc(1.4s / var(--anim-speed)) ease-in-out infinite;
+  }
+  .rate-card.discount .head .pulse { background: var(--pos); box-shadow: 0 0 8px var(--pos);}
+  .rate-card .val {
+    font-family: var(--font-orbit); font-weight: 900; font-size: 38px; line-height: 1;
+    color: var(--vapor-amber);
+    text-shadow: 0 0 14px color-mix(in oklab, var(--vapor-amber) 50%, transparent);
+    letter-spacing: 0.02em;
+  }
+  .rate-card.discount .val {
+    color: var(--pos);
+    text-shadow: 0 0 14px color-mix(in oklab, var(--pos) 50%, transparent);
+  }
+  .rate-card .val .sign { font-size: 28px; vertical-align: 2px; margin-right: 2px;}
+  .rate-card .val .pct  { font-size: 22px; color: var(--ink-dim); margin-left: 4px;}
+  .rate-card .reason {
+    font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.16em;
+    color: var(--ink-dim); margin-top: 6px; text-transform: uppercase;
+    line-height: 1.4;
+  }
+  .rate-card .reason .em { color: var(--vapor-cyan);}
+
+  /* ================= Rendarr hologram greeting strip ================= */
+  .rendarr-strip {
+    position: relative; z-index: 6;
+    display: grid; grid-template-columns: 110px 1fr auto; gap: 16px; align-items: center;
+    padding: 14px 16px;
+    border: 1px solid color-mix(in oklab, var(--vapor-cyan) 22%, transparent);
+    border-left: 3px solid var(--vapor-cyan);
+    background: linear-gradient(90deg, oklch(0 0 0 / 0.5) 0%, oklch(0 0 0 / 0.25) 100%);
+    border-radius: 6px;
+  }
+  .rendarr-strip::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in oklab, var(--vapor-cyan) 3%, transparent) 3px 4px);
+  }
+  .holo-portrait {
+    position: relative; width: 110px; height: 130px;
+    border: 1px solid color-mix(in oklab, var(--vapor-cyan) 60%, transparent);
+    background:
+      radial-gradient(ellipse at 50% 30%, color-mix(in oklab, var(--vapor-cyan) 32%, transparent) 0%, transparent 65%),
+      linear-gradient(180deg, oklch(0.08 0.04 230) 0%, oklch(0.04 0.02 240) 100%);
+    box-shadow:
+      0 0 calc(22px * var(--glow-mult)) color-mix(in oklab, var(--vapor-cyan) 40%, transparent),
+      inset 0 0 18px oklch(0 0 0 / 0.7);
+    overflow: hidden;
+  }
+  .holo-portrait .silhouette {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  /* If a real png exists, replace .silhouette content with <img class="ren-img">. We treat the <img> with filter. */
+  .holo-portrait .ren-img {
+    position: absolute; left: 50%; top: 6%;
+    transform: translateX(-50%);
+    width: 150%; height: 140%;
+    object-fit: cover; object-position: 50% 10%;
+    /* B&W → holo blue */
+    filter:
+      grayscale(1)
+      brightness(1.05)
+      contrast(1.25)
+      sepia(1)
+      hue-rotate(170deg)
+      saturate(4);
+    opacity: 0.92;
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+  .holo-portrait .silhouette svg {
+    width: 90%; height: 90%; color: var(--vapor-cyan);
+    filter: drop-shadow(0 0 8px color-mix(in oklab, var(--vapor-cyan) 70%, transparent));
+  }
+  .holo-portrait::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 2px, color-mix(in oklab, var(--vapor-cyan) 14%, transparent) 2px 3px);
+    mix-blend-mode: screen;
+  }
+  .holo-portrait::after {
+    content:''; position:absolute; left:-100%; top:0; width:100%; height:100%;
+    background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--vapor-cyan) 35%, transparent), transparent);
+    animation: scanH calc(5s / var(--anim-speed)) ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes scanH { 0% { left: -100%;} 100% { left: 200%;} }
+  .holo-portrait .holo-pedestal {
+    position:absolute; left: 50%; bottom: -1px; transform: translateX(-50%);
+    width: 70%; height: 4px;
+    background: linear-gradient(180deg, color-mix(in oklab, var(--vapor-cyan) 60%, transparent), transparent);
+    filter: blur(2px);
+  }
+
+  .rendarr-greet {
+    display: flex; flex-direction: column; gap: 4px; min-width: 0;
+  }
+  .rendarr-greet .name {
+    font-family: var(--font-orbit); font-weight: 900; font-size: 18px; letter-spacing: 0.18em;
+    color: var(--vapor-cyan); text-transform: uppercase;
+    text-shadow: 0 0 10px color-mix(in oklab, var(--vapor-cyan) 55%, transparent);
+  }
+  .rendarr-greet .name .mark { color: var(--vapor-pink); margin-right: 8px; font-family: var(--font-display); font-size: 18px;}
+  .rendarr-greet .sub {
+    font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.3em;
+    color: var(--ink-faint); text-transform: uppercase;
+  }
+  .rendarr-greet .line {
+    font-family: var(--font-mono); font-size: 13px; line-height: 1.4; color: var(--ink-dim);
+    padding: 6px 0 0 0; max-width: 720px;
+  }
+  .rendarr-greet .line .typing {
+    display: inline-block; width: 7px; height: 14px; background: var(--vapor-cyan);
+    vertical-align: -2px; margin-left: 2px; animation: blink 0.7s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0;} }
+
+  .strip-meta {
+    text-align: right; display: flex; flex-direction: column; gap: 2px;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.24em; color: var(--ink-faint); text-transform: uppercase;
+  }
+  .strip-meta .credits-val {
+    font-family: var(--font-display); font-size: 28px; line-height: 1; color: var(--vapor-pink); letter-spacing: 0.04em;
+    text-shadow: 0 0 12px color-mix(in oklab, var(--vapor-pink) 55%, transparent);
+  }
+  .strip-meta .credits-val::after { content:' cr'; font-size: 12px; color: var(--ink-dim);}
+
+  /* ================= Hot items ================= */
+  .hot-section { position: relative; z-index: 6; display: flex; flex-direction: column; gap: 10px;}
+  .hot-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 4px;
+  }
+  .hot-head .title {
+    font-family: var(--font-orbit); font-weight: 900; font-size: 22px; letter-spacing: 0.16em;
+    color: var(--ink); text-transform: uppercase;
+  }
+  .hot-head .title .flame {
+    color: var(--vapor-pink);
+    text-shadow: 0 0 10px var(--vapor-pink);
+    margin-right: 8px; font-family: var(--font-display); font-size: 22px;
+  }
+  .hot-head .sub {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.26em;
+    color: var(--ink-faint); text-transform: uppercase;
+  }
+  .hot-head .sub .em { color: var(--vapor-cyan);}
+
+  /* Hot items slide container */
+  .hot-grid-wrap { overflow: hidden; position: relative; }
+  .hot-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+    transition: transform 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.28s ease;
+  }
+  .hot-card {
+    --rar: var(--rar-common);
+    position: relative;
+    padding: 12px 12px 14px;
+    background:
+      linear-gradient(180deg, oklch(0 0 0 / 0.35) 0%, oklch(0 0 0 / 0.6) 100%);
+    border: 1px solid color-mix(in oklab, var(--rar) 35%, transparent);
+    border-top: 2px solid var(--rar);
+    border-radius: 4px;
+    cursor: pointer;
+    overflow: hidden;
+    display: flex; flex-direction: column; gap: 8px;
+    text-decoration: none;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  }
+  .hot-card::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 9px, color-mix(in oklab, var(--rar) 5%, transparent) 9px 10px);
+    opacity: 0.5;
+  }
+  .hot-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--rar);
+    box-shadow:
+      0 0 calc(20px * var(--glow-mult)) color-mix(in oklab, var(--rar) 35%, transparent),
+      0 6px 22px oklch(0 0 0 / 0.6);
+    background: linear-gradient(180deg, oklch(0 0 0 / 0.25) 0%, color-mix(in oklab, var(--rar) 8%, transparent) 100%);
+  }
+  .hot-card .rar-tag {
+    position: absolute; top: 8px; right: 8px;
+    font-family: var(--font-mono); font-size: 7.5px; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--rar); border: 1px solid var(--rar);
+    padding: 2px 6px;
+    background: oklch(0 0 0 / 0.65);
+  }
+  .hot-card .rank {
+    position: absolute; top: 8px; left: 8px;
+    font-family: var(--font-display); font-size: 16px; letter-spacing: 0.06em;
+    color: var(--vapor-pink); text-shadow: 0 0 8px var(--vapor-pink);
+  }
+  .hot-card .glyph-panel {
+    margin-top: 22px;
+    aspect-ratio: 1.2 / 1;
+    background:
+      radial-gradient(ellipse at 30% 20%, color-mix(in oklab, var(--rar) 22%, transparent), transparent 60%),
+      repeating-linear-gradient(90deg, transparent 0 9px, color-mix(in oklab, var(--rar) 6%, transparent) 9px 10px),
+      oklch(0 0 0 / 0.55);
+    border: 1px solid color-mix(in oklab, var(--rar) 30%, transparent);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .hot-card .glyph {
+    font-family: var(--font-display); font-size: 64px; line-height: 1;
+    color: var(--ink);
+    text-shadow:
+      0 0 10px color-mix(in oklab, var(--rar) 60%, transparent),
+      0 0 22px color-mix(in oklab, var(--rar) 40%, transparent);
+  }
+  .hot-card .glyph-panel::after {
+    content: ''; position: absolute; left: 6px; right: 6px; bottom: 6px; height: 1px;
+    background: color-mix(in oklab, var(--rar) 60%, transparent);
+    opacity: 0.6;
+  }
+  .hot-card .name {
+    font-family: var(--font-orbit); font-weight: 700; font-size: 12px; line-height: 1.2;
+    color: var(--ink); text-transform: uppercase; letter-spacing: 0.04em;
+    min-height: 2.4em;
+    text-wrap: pretty;
+  }
+  .hot-card .meta {
+    font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.18em;
+    color: var(--ink-faint); text-transform: uppercase;
+  }
+  .hot-card .meta .slot { color: var(--vapor-cyan);}
+  .hot-card .row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 6px;
+    border-top: 1px dashed color-mix(in oklab, var(--rar) 30%, transparent);
+  }
+  .hot-card .price {
+    font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em; line-height: 1;
+    color: var(--vapor-pink);
+    text-shadow: 0 0 10px color-mix(in oklab, var(--vapor-pink) 50%, transparent);
+  }
+  .hot-card .price::after { content:' cr'; font-size: 11px; color: var(--ink-dim); letter-spacing: 0.2em;}
+  .hot-card .price.adjusted {
+    color: var(--vapor-amber);
+    text-shadow: 0 0 10px color-mix(in oklab, var(--vapor-amber) 50%, transparent);
+  }
+  .hot-card .price.adjusted.discount {
+    color: var(--pos);
+    text-shadow: 0 0 10px color-mix(in oklab, var(--pos) 50%, transparent);
+  }
+  .hot-card .strike {
+    font-family: var(--font-mono); font-size: 9px; color: var(--ink-faint); text-decoration: line-through;
+    letter-spacing: 0.12em;
+  }
+  .hot-card .stars {
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.16em; color: var(--zero);
+  }
+
+  /* ================= CTA bar ================= */
+  .cta-bar {
+    position: relative; z-index: 6;
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: stretch;
+    padding-top: 4px;
+  }
+  .cta-side {
+    display: flex; flex-direction: column; gap: 4px; justify-content: center;
+    padding: 0 6px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.24em; color: var(--ink-faint); text-transform: uppercase;
+  }
+  .cta-side.right { text-align: right; }
+  .cta-side .big {
+    font-family: var(--font-display); font-size: 22px; letter-spacing: 0.08em;
+    color: var(--vapor-cyan);
+    text-shadow: 0 0 10px color-mix(in oklab, var(--vapor-cyan) 50%, transparent);
+  }
+  .cta-side .big.pink { color: var(--vapor-pink); text-shadow: 0 0 10px color-mix(in oklab, var(--vapor-pink) 50%, transparent);}
+  .enter-btn {
+    position: relative;
+    padding: 18px 56px;
+    font-family: var(--font-orbit); font-weight: 900; font-size: 26px; letter-spacing: 0.32em;
+    color: var(--ink); text-transform: uppercase;
+    background: linear-gradient(135deg, color-mix(in oklab, var(--vapor-pink) 35%, oklch(0 0 0 / 0.4)),
+                                          color-mix(in oklab, var(--vapor-cyan) 35%, oklch(0 0 0 / 0.4)));
+    border: 1px solid var(--vapor-cyan);
+    border-radius: 4px;
+    cursor: pointer;
+    text-shadow:
+      0 0 8px color-mix(in oklab, var(--vapor-cyan) 60%, transparent),
+      2px 0 0 color-mix(in oklab, var(--vapor-pink) 30%, transparent),
+     -2px 0 0 color-mix(in oklab, var(--vapor-cyan) 30%, transparent);
+    box-shadow:
+      0 0 calc(22px * var(--glow-mult)) color-mix(in oklab, var(--vapor-cyan) 40%, transparent),
+      0 0 calc(40px * var(--glow-mult)) color-mix(in oklab, var(--vapor-pink) 20%, transparent),
+      inset 0 0 18px oklch(0 0 0 / 0.5);
+    text-decoration: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .enter-btn[data-state="closed"] {
+    background: linear-gradient(135deg, oklch(0.10 0.02 270) 0%, oklch(0.06 0.02 270) 100%);
+    border-color: oklch(0.30 0.04 270);
+    color: oklch(0.45 0.04 270);
+    text-shadow: none;
+    box-shadow: inset 0 0 18px oklch(0 0 0 / 0.6);
+    cursor: not-allowed;
+  }
+  .enter-btn:hover:not([data-state="closed"]) {
+    transform: translateY(-2px);
+    box-shadow:
+      0 0 calc(36px * var(--glow-mult)) color-mix(in oklab, var(--vapor-cyan) 60%, transparent),
+      0 0 calc(60px * var(--glow-mult)) color-mix(in oklab, var(--vapor-pink) 30%, transparent),
+      inset 0 0 18px oklch(0 0 0 / 0.4);
+  }
+  .enter-btn::before {
+    content:''; position:absolute; left:-2px; top:-2px; right:-2px; bottom:-2px;
+    border: 1px dashed color-mix(in oklab, var(--vapor-cyan) 40%, transparent);
+    border-radius: 6px;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  /* ================= Footer ================= */
+  .footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 10px 4px;
+    border-top: 1px solid color-mix(in oklab, var(--vapor-cyan) 25%, transparent);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform:uppercase; color:var(--ink-dim);
+    position: relative; z-index: 10;
+  }
+  .footer .left, .footer .right { display: flex; gap: 18px; align-items: center;}
+  .footer .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--pos); box-shadow: 0 0 6px var(--pos);
+    animation: liveBlink calc(2s / var(--anim-speed)) ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tablet, .scan-v, .ticker-track, .neon-sign, .open-sign[data-state="open"] .word,
+    .bezel-led, .holo-portrait::after, .footer .pulse-dot { animation: none !important;}
+  }
+
+  /* ================= Tweaks panel ================= */
+  .twk-fab { position: fixed; right: 14px; bottom: 14px; z-index: 9999;
+    width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+    background: linear-gradient(135deg, var(--vapor-pink), var(--vapor-cyan));
+    border: 1px solid var(--vapor-cyan); color: #0a0a12;
+    font-family: var(--font-display); font-size: 22px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 18px color-mix(in oklab, var(--vapor-cyan) 50%, transparent), 0 6px 20px rgba(0,0,0,0.5);
+  }
+  .twk-panel { position: fixed; right: 14px; bottom: 70px; z-index: 9999;
+    width: 320px; max-height: 80vh; overflow: auto;
+    background: linear-gradient(180deg, #16162a 0%, #0b0b18 100%);
+    border: 1px solid var(--vapor-cyan); border-radius: 8px;
+    box-shadow: 0 0 30px color-mix(in oklab, var(--vapor-cyan) 35%, transparent), 0 18px 40px rgba(0,0,0,0.7);
+    font-family: var(--font-body); color: var(--ink);
+    display: none; padding: 12px 14px 14px;
+  }
+  .twk-panel.open { display: block; }
+  .twk-panel h3 {
+    margin: 0 0 8px; font-family: var(--font-orbit); font-weight: 700; font-size: 13px;
+    letter-spacing: 0.28em; color: var(--vapor-cyan); text-transform: uppercase;
+    border-bottom: 1px solid color-mix(in oklab, var(--vapor-cyan) 30%, transparent);
+    padding-bottom: 6px;
+  }
+  .twk-row { display: flex; flex-direction: column; gap: 4px; margin: 8px 0;}
+  .twk-row label {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+    color: var(--ink-dim); text-transform: uppercase;
+    display: flex; justify-content: space-between;
+  }
+  .twk-row label .v { color: var(--vapor-cyan);}
+  .twk-row select, .twk-row input[type="text"] {
+    background: oklch(0 0 0 / 0.4); border: 1px solid color-mix(in oklab, var(--vapor-cyan) 30%, transparent);
+    color: var(--ink); padding: 6px 8px; font-family: var(--font-mono); font-size: 11px;
+    border-radius: 3px;
+  }
+  .twk-row input[type="range"] { width: 100%; }
+  .twk-row.toggle {
+    display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+  }
+  .twk-toggle {
+    width: 44px; height: 22px; border-radius: 11px; background: oklch(0.25 0.03 270);
+    border: 1px solid color-mix(in oklab, var(--vapor-cyan) 30%, transparent);
+    position: relative; cursor: pointer;
+  }
+  .twk-toggle::after {
+    content:''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--ink-dim); transition: left 0.2s, background 0.2s;
+  }
+  .twk-toggle.on { background: color-mix(in oklab, var(--pos) 30%, oklch(0 0 0 / 0.4));
+    border-color: var(--pos);
+  }
+  .twk-toggle.on::after { left: 24px; background: var(--pos);}
+  .twk-close {
+    background: transparent; border: 1px solid color-mix(in oklab, var(--vapor-pink) 40%, transparent);
+    color: var(--vapor-pink); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em;
+    padding: 6px 10px; cursor: pointer; text-transform: uppercase; border-radius: 3px;
+    margin-top: 10px; width: 100%;
+  }
+</style>
+</head>
+<body>
+<script src="store-data.js"></script>
+<div class="stage">
+  <div class="tablet" data-screen-label="Outfitters Splash">
+    <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
+    <span class="bezel-led a"></span><span class="bezel-led b"></span><span class="bezel-led c"></span><span class="bezel-led d"></span>
+    <div class="bezel-serial">DP-7700 · SN 4471·022·R</div>
+    <div class="bezel-manu">CZERKA · MK-VII</div>
+    <div class="bezel-app">APP // OUTFITTERS_v3.41 · cached 02:14</div>
+
+    <div class="screen">
+      <div class="scan-v"></div>
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+
+      <!-- ============ Top HUD ============ -->
+      <div class="hud">
+        <div class="hud-left">
+          <span class="hud-app">RENDARR // OUTFITTERS <span class="ver">v3.41 · holo</span></span>
+        </div>
+        <div class="hud-right">
+          <span><span class="dot"></span>HOLONET · 4 bars</span>
+          <span><span class="dot warn"></span>encrypted · class&nbsp;3</span>
+          <span id="clock">02:14:08 · GST</span>
+        </div>
+      </div>
+
+      <!-- ============ Stock ticker ============ -->
+      <div class="ticker-wrap">
+        <div class="ticker-tag">GEX · LIVE</div>
+        <div class="ticker"><div class="ticker-track" id="ticker"></div></div>
+        <div class="ticker-end">RX&nbsp;//&nbsp;FLOOR&nbsp;FEED</div>
+      </div>
+
+      <!-- ============ Hero (neon + open + rate) ============ -->
+      <div class="hero">
+        <div class="neon-stack">
+          <div class="neon-eyebrow"><span class="pip"></span> EST. 14 ABY <span class="x">×</span> DOCK 9 · NAR&nbsp;SHADDAA <span class="pip"></span> ALL CREDITS HONORED</div>
+          <div class="neon-sign">
+            <span class="br">Rendarr<span class="amp">'s</span></span>
+            <span class="br two" id="neon-second">Outfitters</span>
+          </div>
+          <div class="neon-tube-rail"></div>
+          <div class="neon-tagline" style="white-space:nowrap;">Guns <span class="star">★</span> Gear <span class="star">★</span> Glory <span class="star">★</span> No&nbsp;Questions</div>
+        </div>
+        <div class="hero-right">
+          <div class="open-sign" id="openSign" data-state="open">
+            <span class="chain l"></span><span class="chain r"></span>
+            <div class="word"><span class="o">O</span>PEN</div>
+            <div class="sub">come on in</div>
+          </div>
+          <div class="rate-card" id="rateCard">
+            <div class="head">
+              <span id="rateLabel">GM TAX RATE</span>
+              <span class="pulse"></span>
+            </div>
+            <div class="val" id="rateVal"><span class="sign">+</span>8<span class="pct">%</span></div>
+            <div class="reason" id="rateReason">
+              <span class="em">HUTT CARTEL</span> wartime levy · all energy weapons
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ Rendarr hologram strip ============ -->
+      <div class="rendarr-strip">
+        <div class="holo-portrait">
+          <img class="ren-img" src="assets/mentors/Rendarr.png" alt="Rendarr" />
+          <div class="holo-pedestal"></div>
+        </div>
+        <div class="rendarr-greet">
+          <div class="name"><span class="mark">⚐</span>RENDARR <span class="sub" style="margin-left:8px;">— PROPRIETOR · EX-CLONE · INDEX 4,712</span></div>
+          <div class="line" id="greeting">Boot the terminal, friend. I don't care why you're here, I care what you're spending.<span class="typing"></span></div>
+        </div>
+        <div class="strip-meta">
+          <div>WALLET</div>
+          <div class="credits-val" id="walletVal">2,400</div>
+          <div>SIGNED IN</div>
+        </div>
+      </div>
+
+      <!-- ============ Hot Items ============ -->
+      <div class="hot-section">
+        <div class="hot-head">
+          <div class="title"><span class="flame">▲</span>HOT ITEMS · TONIGHT</div>
+          <div class="sub">moves fast · <span class="em">tap to jump</span> · rotates every <span class="em" id="rotateLbl">12s</span></div>
+        </div>
+        <div class="hot-grid-wrap"><div class="hot-grid" id="hotGrid"></div></div>
+      </div>
+
+      <!-- ============ CTA bar ============ -->
+      <div class="cta-bar">
+        <div class="cta-side">
+          <div>FLOOR FOOTFALL</div>
+          <div class="big">23 / hr</div>
+          <div>3 BROWSING NOW</div>
+        </div>
+        <a class="enter-btn" id="enterBtn" href="Store.html" data-state="open">
+          ENTER OUTFITTERS &rarr;
+        </a>
+        <div class="cta-side right">
+          <div>HAGGLE WINDOW</div>
+          <div class="big pink">2H 14M</div>
+          <div>BEFORE STOCK ROTATES</div>
+        </div>
+      </div>
+
+      <!-- ============ Footer ============ -->
+      <div class="footer">
+        <div class="left">
+          <span><span class="pulse-dot"></span>UPLINK · STABLE</span>
+          <span>TLS · BLACK SUN GATEWAY</span>
+        </div>
+        <div class="right">
+          <span>© RENDARR INDUSTRIES</span>
+          <span>NO REFUNDS · NO QUESTIONS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tweaks fab + panel -->
+<button class="twk-fab" id="twkFab" title="Tweaks">✦</button>
+<div class="twk-panel" id="twkPanel">
+  <h3>Tweaks · Splash</h3>
+  <div class="twk-row toggle">
+    <label>Store open <span class="v" id="openLbl">OPEN</span></label>
+    <div class="twk-toggle on" id="tglOpen"></div>
+  </div>
+  <div class="twk-row">
+    <label>Sign text <span class="v">/neon/</span></label>
+    <input type="text" id="signText" value="Outfitters" maxlength="14" />
+  </div>
+  <div class="twk-row">
+    <label>Hue <span class="v" id="hueLbl">magenta</span></label>
+    <select id="hueSel">
+      <option value="magenta">Magenta (default)</option>
+      <option value="cyan">Cyan</option>
+      <option value="amber">Amber</option>
+      <option value="jedi">Jedi green</option>
+      <option value="imperial">Imperial red</option>
+    </select>
+  </div>
+  <div class="twk-row">
+    <label>Market modifier <span class="v" id="rateLblTwk">+8% TAX</span></label>
+    <input type="range" id="rateSlider" min="-25" max="25" step="1" value="8" />
+  </div>
+  <div class="twk-row">
+    <label>Ticker speed <span class="v" id="tickLbl">1.0×</span></label>
+    <input type="range" id="tickSlider" min="0.3" max="3" step="0.1" value="1" />
+  </div>
+  <div class="twk-row">
+    <label>Hot-item rotation <span class="v" id="rotLbl">12s</span></label>
+    <input type="range" id="rotSlider" min="3" max="30" step="1" value="12" />
+  </div>
+  <div class="twk-row">
+    <label>Scanline intensity <span class="v" id="scanLbl">0.03</span></label>
+    <input type="range" id="scanSlider" min="0" max="0.15" step="0.005" value="0.03" />
+  </div>
+  <button class="twk-close" id="twkClose">close</button>
+</div>
+
+<script>
+(function(){
+  /* ===== Defaults — survive direct edits via EDITMODE markers ===== */
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "open": true,
+    "signText": "Outfitters",
+    "hue": "magenta",
+    "rate": 1,
+    "tickerSpeed": 2.3,
+    "rotateSec": 5,
+    "scanStrength": 0.03
+  }/*EDITMODE-END*/;
+
+  const HUE_MAP = {
+    magenta: { sign: 320, label: 'magenta' },
+    cyan:    { sign: 200, label: 'cyan' },
+    amber:   { sign: 70,  label: 'amber' },
+    jedi:    { sign: 145, label: 'jedi green' },
+    imperial:{ sign: 25,  label: 'imperial' }
+  };
+
+  /* ===== Ticker — CNBC-style stock feed from STORE_STOCKS ===== */
+  function buildTickerHTML() {
+    const stocks = window.STORE_STOCKS || [];
+    if (!stocks.length) return '<span>GEX · NO DATA</span>';
+    return stocks.map(s => {
+      const up = s.change >= 0;
+      const tri = up ? '▲' : '▼';
+      const cls = up ? 'pos' : 'neg';
+      const pct = Math.abs(s.change).toFixed(2);
+      const price = s.price.toLocaleString();
+      return `<span><em>${s.code}</em> <span class="${cls}">${tri} ${pct}%</span> <span class="cr">${price} cr</span></span>`;
+    }).join('');
+  }
+
+  /* RAF-driven marquee — immune to iframe animation suppression */
+  let tickerRaf = null;
+  let tickerPos = 0;
+  let tickerLastTime = null;
+  const TICKER_BASE_PX = 80; // px/sec at 1×
+
+  function setupTicker(){
+    const track = document.getElementById('ticker');
+    const html = buildTickerHTML();
+    track.innerHTML = html + html; // double for seamless loop
+    track.style.transform = 'translateX(0px)';
+    if (tickerRaf) cancelAnimationFrame(tickerRaf);
+    tickerPos = 0;
+    tickerLastTime = null;
+
+    function frame(now) {
+      if (tickerLastTime === null) tickerLastTime = now;
+      const dt = Math.min(now - tickerLastTime, 100);
+      tickerLastTime = now;
+      const speed = TICKER_BASE_PX * (STATE ? STATE.tickerSpeed : 1);
+      tickerPos += speed * dt / 1000;
+      const halfW = track.scrollWidth / 2;
+      if (halfW > 0 && tickerPos >= halfW) tickerPos -= halfW;
+      track.style.transform = `translateX(${-tickerPos}px)`;
+      tickerRaf = requestAnimationFrame(frame);
+    }
+    tickerRaf = requestAnimationFrame(frame);
+  }
+
+  /* ===== Clock ===== */
+  function tick(){
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    const ss = String(d.getSeconds()).padStart(2,'0');
+    const el = document.getElementById('clock');
+    if (el) el.textContent = `${hh}:${mm}:${ss} · GST`;
+  }
+  setInterval(tick, 1000); tick();
+
+  /* ===== Hot items — one per category, slide on rotate ===== */
+  const CATEGORIES = [
+    { key: 'weapons',   label: 'Weapons',   icon: '⚡' },
+    { key: 'armor',     label: 'Armor',     icon: '🛡' },
+    { key: 'equipment', label: 'Gear',      icon: '⚙' },
+    { key: 'droids',    label: 'Droids',    icon: '◈' },
+    { key: 'vehicles',  label: 'Ships',     icon: '◭' },
+  ];
+
+  const ITEMS = window.STORE_ITEMS || [];
+
+  // Per-category cursors so each rotation advances independently
+  const catCursors = {};
+  CATEGORIES.forEach(c => { catCursors[c.key] = 0; });
+
+  function getItemsForCategory(catKey) {
+    return ITEMS.filter(i => i.category === catKey);
+  }
+
+  function pickHotItems() {
+    return CATEGORIES.map(cat => {
+      const pool = getItemsForCategory(cat.key);
+      if (!pool.length) return {
+        id: 'empty-' + cat.key, glyph: cat.icon,
+        name: 'Coming Soon', slot: cat.label, rarity: 'common', price: 0, reviews: [],
+        category: cat.key, _catLabel: cat.label
+      };
+      const idx = catCursors[cat.key] % pool.length;
+      return { ...pool[idx], _catLabel: cat.label };
+    });
+  }
+
+  function advanceCursors() {
+    CATEGORIES.forEach(cat => {
+      const pool = getItemsForCategory(cat.key);
+      if (pool.length > 1) catCursors[cat.key] = (catCursors[cat.key] + 1) % pool.length;
+    });
+  }
+
+  function avgStars(reviews){
+    if (!reviews || !reviews.length) return null;
+    return reviews.reduce((s,r) => s + r.stars, 0) / reviews.length;
+  }
+
+  let CURRENT_RATE = TWEAK_DEFAULTS.rate;
+  function adjustedPrice(base){
+    return Math.round(base * (1 + CURRENT_RATE / 100));
+  }
+
+  function buildCardHTML(it, i) {
+    const rar = it.rarity || 'common';
+    const stars = avgStars(it.reviews);
+    const adj = adjustedPrice(it.price);
+    const isDiscount = CURRENT_RATE < 0;
+    const isChanged = CURRENT_RATE !== 0 && it.price > 0;
+    const priceCls = `price${isChanged ? ' adjusted' : ''}${isDiscount ? ' discount' : ''}`;
+    const priceStr = it.price > 0 ? adj.toLocaleString() : '—';
+    return `
+      <a class="hot-card" style="--rar:var(--rar-${rar});" href="Store.html#item=${encodeURIComponent(it.id)}">
+        <span class="rank">№${String(i+1).padStart(2,'0')}</span>
+        <span class="rar-tag">${rar}</span>
+        <div class="glyph-panel"><span class="glyph">${it.glyph || '?'}</span></div>
+        <div class="name">${it.name}</div>
+        <div class="meta"><span class="slot">${(it._catLabel || it.slot || '').toUpperCase()}</span></div>
+        <div class="row">
+          <span class="${priceCls}">${priceStr}</span>
+          ${stars ? `<span class="stars">${'★'.repeat(Math.round(stars))}${'☆'.repeat(5-Math.round(stars))}</span>` : ''}
+        </div>
+      </a>`;
+  }
+
+  function renderHotItems() {
+    const grid = document.getElementById('hotGrid');
+    const items = pickHotItems();
+    grid.innerHTML = items.map((it, i) => buildCardHTML(it, i)).join('');
+  }
+
+  /* Slide right-to-left when rotating */
+  let rotateTimer = null;
+  function startRotation(seconds) {
+    if (rotateTimer) clearInterval(rotateTimer);
+    if (!seconds || seconds <= 0) return;
+    rotateTimer = setInterval(() => {
+      const grid = document.getElementById('hotGrid');
+      if (!grid) return;
+      // Slide out to the left
+      grid.style.transform = 'translateX(-110%)';
+      grid.style.opacity = '0';
+      setTimeout(() => {
+        advanceCursors();
+        grid.style.transition = 'none';
+        grid.style.transform = 'translateX(110%)';
+        grid.style.opacity = '0';
+        grid.offsetWidth; // force reflow
+        grid.innerHTML = pickHotItems().map((it, i) => buildCardHTML(it, i)).join('');
+        // Slide in from right
+        grid.style.transition = 'transform 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.28s ease';
+        grid.style.transform = 'translateX(0)';
+        grid.style.opacity = '1';
+      }, 320);
+    }, seconds * 1000);
+  }
+
+  /* ===== Open state ===== */
+  function applyOpenState(open){
+    const sign = document.getElementById('openSign');
+    const enter = document.getElementById('enterBtn');
+    sign.setAttribute('data-state', open ? 'open' : 'closed');
+    enter.setAttribute('data-state', open ? 'open' : 'closed');
+    enter.innerHTML = open ? 'ENTER OUTFITTERS &rarr;' : 'STORE CLOSED';
+    enter.style.pointerEvents = open ? 'auto' : 'none';
+    document.getElementById('openLbl').textContent = open ? 'OPEN' : 'CLOSED';
+    const tgl = document.getElementById('tglOpen');
+    tgl.classList.toggle('on', open);
+  }
+
+  /* ===== Rate (tax / discount) ===== */
+  function applyRate(rate){
+    CURRENT_RATE = rate;
+    const card = document.getElementById('rateCard');
+    const label = document.getElementById('rateLabel');
+    const val = document.getElementById('rateVal');
+    const reason = document.getElementById('rateReason');
+    const isDiscount = rate < 0;
+    card.classList.toggle('discount', isDiscount);
+    const sign = rate > 0 ? '+' : (rate < 0 ? '−' : '±');
+    const abs = Math.abs(rate);
+    label.textContent = isDiscount ? 'GM DISCOUNT' : (rate === 0 ? 'GM MARKET · NEUTRAL' : 'GM TAX RATE');
+    val.innerHTML = `<span class="sign">${sign}</span>${abs}<span class="pct">%</span>`;
+    /* themed reason copy */
+    const reasonsTax = [
+      `<span class="em">HUTT CARTEL</span> wartime levy · all energy weapons`,
+      `<span class="em">IMPERIAL</span> luxury tariff · imports`,
+      `<span class="em">BLACK SUN</span> protection assessment`,
+      `<span class="em">CSA</span> regional surcharge`
+    ];
+    const reasonsDisc = [
+      `<span class="em">REBEL</span> sympathizer discount · cash only`,
+      `<span class="em">CARAVAN</span> overstock · everything must move`,
+      `<span class="em">RENDARR</span> in a generous mood · do not ask`,
+      `<span class="em">FENCE</span> friday · all goods marked down`
+    ];
+    const neutral = `<span class="em">MARKET</span> stable · no active modifiers`;
+    if (rate === 0) reason.innerHTML = neutral;
+    else if (isDiscount) reason.innerHTML = reasonsDisc[Math.floor(Math.abs(rate)/8) % reasonsDisc.length];
+    else reason.innerHTML = reasonsTax[Math.floor(rate/8) % reasonsTax.length];
+
+    document.getElementById('rateLblTwk').textContent =
+      rate === 0 ? 'NEUTRAL' : (isDiscount ? `−${abs}% DISC` : `+${abs}% TAX`);
+
+    renderHotItems();
+  }
+
+  /* ===== Hue ===== */
+  function applyHue(hue){
+    const cfg = HUE_MAP[hue] || HUE_MAP.magenta;
+    document.documentElement.style.setProperty('--sign-hue', cfg.sign);
+    document.getElementById('hueLbl').textContent = cfg.label;
+  }
+
+  /* ===== Sign text ===== */
+  function applySignText(text){
+    const el = document.getElementById('neon-second');
+    el.textContent = text || 'Outfitters';
+  }
+
+  /* ===== Ticker speed — RAF reads STATE.tickerSpeed directly ===== */
+  function applyTickerSpeed(v){
+    // RAF loop reads STATE.tickerSpeed live — just update the label
+    document.getElementById('tickLbl').textContent = `${parseFloat(v).toFixed(1)}×`;
+  }
+
+  /* ===== Scan ===== */
+  function applyScan(v){
+    document.documentElement.style.setProperty('--scan-strength', v);
+    document.getElementById('scanLbl').textContent = v.toFixed(3);
+  }
+
+  /* ===== Persist state to host ===== */
+  let STATE = Object.assign({}, TWEAK_DEFAULTS);
+  function persist(patch){
+    Object.assign(STATE, patch);
+    try {
+      window.parent.postMessage({ type: '__edit_mode_set_keys', edits: patch }, '*');
+    } catch (e){}
+  }
+
+  function applyAll(){
+    applyOpenState(STATE.open);
+    applySignText(STATE.signText);
+    applyHue(STATE.hue);
+    applyRate(STATE.rate);
+    applyTickerSpeed(STATE.tickerSpeed);
+    applyScan(STATE.scanStrength);
+    document.getElementById('rotateLbl').textContent = STATE.rotateSec + 's';
+    document.getElementById('rotLbl').textContent = STATE.rotateSec + 's';
+    document.getElementById('hueSel').value = STATE.hue;
+    document.getElementById('signText').value = STATE.signText;
+    document.getElementById('rateSlider').value = STATE.rate;
+    document.getElementById('tickSlider').value = STATE.tickerSpeed;
+    document.getElementById('rotSlider').value = STATE.rotateSec;
+    document.getElementById('scanSlider').value = STATE.scanStrength;
+    startRotation(STATE.rotateSec);
+  }
+
+  /* ===== Wire up panel ===== */
+  document.getElementById('tglOpen').addEventListener('click', () => {
+    const nowOpen = !STATE.open;
+    persist({ open: nowOpen });
+    applyOpenState(nowOpen);
+  });
+  document.getElementById('signText').addEventListener('input', e => {
+    persist({ signText: e.target.value });
+    applySignText(e.target.value);
+  });
+  document.getElementById('hueSel').addEventListener('change', e => {
+    persist({ hue: e.target.value });
+    applyHue(e.target.value);
+  });
+  document.getElementById('rateSlider').addEventListener('input', e => {
+    const v = parseInt(e.target.value, 10);
+    persist({ rate: v });
+    applyRate(v);
+  });
+  document.getElementById('tickSlider').addEventListener('input', e => {
+    const v = parseFloat(e.target.value);
+    persist({ tickerSpeed: v });
+    applyTickerSpeed(v);
+  });
+  document.getElementById('rotSlider').addEventListener('input', e => {
+    const v = parseInt(e.target.value, 10);
+    persist({ rotateSec: v });
+    document.getElementById('rotateLbl').textContent = v + 's';
+    document.getElementById('rotLbl').textContent = v + 's';
+    startRotation(v);
+  });
+  document.getElementById('scanSlider').addEventListener('input', e => {
+    const v = parseFloat(e.target.value);
+    persist({ scanStrength: v });
+    applyScan(v);
+  });
+
+  /* ===== Host edit-mode protocol ===== */
+  const fab = document.getElementById('twkFab');
+  const panel = document.getElementById('twkPanel');
+  function showPanel(open){ panel.classList.toggle('open', open); }
+  window.addEventListener('message', (ev) => {
+    const d = ev.data || {};
+    if (d.type === '__activate_edit_mode') showPanel(true);
+    if (d.type === '__deactivate_edit_mode') showPanel(false);
+  });
+  fab.addEventListener('click', () => showPanel(!panel.classList.contains('open')));
+  document.getElementById('twkClose').addEventListener('click', () => {
+    showPanel(false);
+    try { window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*'); } catch(e){}
+  });
+  try { window.parent.postMessage({ type: '__edit_mode_available' }, '*'); } catch(e){}
+
+  /* ===== Init ===== */
+  setupTicker();
+  renderHotItems();
+  applyAll();
+
+  /* ===== Greeting line — rotate through STORE_GREETINGS if available ===== */
+  const greets = window.STORE_GREETINGS || [];
+  if (greets.length) {
+    let gi = 0;
+    const el = document.getElementById('greeting');
+    function nextGreet(){
+      gi = (gi + 1) % greets.length;
+      el.innerHTML = greets[gi] + '<span class="typing"></span>';
+    }
+    setInterval(nextGreet, 9000);
+  }
+})();
+</script>
+</body>
+</html>
