@@ -32,6 +32,13 @@ export class UpgradeEligibilityEngine {
       if (!MetaResourceFeatResolver.canActorPerformTechSpecialistModifications(this.actor)) {
         return { allowed: false, reason: 'missing_tech_specialist_feat' };
       }
+
+      const customState = this.slotEngine.getCustomizationState(item);
+      const installedTechSpecs = (customState.installedUpgrades ?? [])
+        .filter(u => UPGRADE_CATALOG[u.upgradeKey]?.source === 'tech-specialist');
+      if (installedTechSpecs.length > 0) {
+        return { allowed: false, reason: 'tech_specialist_benefit_already_applied' };
+      }
     }
 
     const profile = this.profileResolver.getNormalizedProfile(item);
