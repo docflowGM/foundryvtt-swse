@@ -43,7 +43,39 @@ The recent PR (#837) fixed strict partial validation:
 - Referenced in legacy code paths not yet removed
 - Concept/design-only material in v2-concept folder
 
-### 3. Major Template Categories
+### 3. Addendum — Scope and Interpretation
+
+**Important:** This audit is a usage/classification report, not a deletion directive. It does not prove that every template should be kept forever, nor does it authorize deletion of anything.
+
+**What a passing validator proves:**
+- ✓ Referenced file-backed partials resolve to files on disk
+- ✓ Registered partial references are known to the registry
+- ✓ Full-path includes use the expected `.hbs` suffix
+- ✓ Valid same-file inline partials are not false positives
+
+**What it does NOT prove:**
+- ✗ Every `.hbs` file is actively used at runtime
+- ✗ Every preloaded template is still necessary
+- ✗ Every concept or legacy template should be archived or deleted
+- ✗ Every lazy-loaded app template belongs in `partials-auto.js`
+
+**Registry note:** Some active templates are loaded directly by app/sheet classes through render calls or template paths. Those files may be active without needing partial registry entries. Therefore:
+- If a template is included via `{{> ... }}`, it likely belongs in the partial registry.
+- If a template is rendered directly by an app/sheet class or lazy-loaded by Foundry, it may be active without registration.
+
+**Runtime confirmation still required** before deleting or archiving templates, especially for:
+- Legacy NPC sheet paths
+- v2 NPC sheet paths  
+- v2-concept templates
+- Icon/SVG templates
+- Fallback item-sheet templates
+- Any template referenced indirectly by application config
+
+**PR status note:** Phrases like "committed and pushed to branch" reflect the actual state. PR #837 has been created as a draft but not yet merged into `main`.
+
+---
+
+### 4. Major Template Categories
 
 #### **ACTIVE / CORE SHEETS (DEFINITELY USED)**
 - `templates/actors/character/v2/character-sheet.hbs` → Used by CharacterSheet class
@@ -269,17 +301,28 @@ SWSE | OK (strict): 413 .hbs files scanned; 129 file-backed partial(s) reference
 
 ---
 
-## Safe Future Deletion Candidates
+## Future Deletion Candidates Requiring Verification
 
-**These files have HIGH confidence that they can be safely deleted:**
+**These files are candidates for future deletion, but only after runtime verification:**
 
-| File | Reason | Confidence |
-|------|--------|-----------|
-| `templates/actors/character/tabs/starship-maneuvers-tab.hbs` | Old tab system; replaced by panels; no references found | HIGH |
-| `templates/icons/*.hbs` (if unused) | SVG generation; likely replaced by static assets (verify first) | MEDIUM |
-| `templates/items/base/item-sheet-old.hbs` | Marked "old"; verify not in fallback path | MEDIUM |
+**DO NOT delete these files without:**
+1. Running Foundry with the latest code
+2. Confirming no 404 or missing template errors in console
+3. Explicit owner approval
+4. Documenting evidence in the commit message
 
-**None recommended for immediate deletion without runtime verification first.**
+**Candidate files:**
+
+| File | Reason | Verification Priority |
+|------|--------|----------------------|
+| `templates/actors/character/tabs/starship-maneuvers-tab.hbs` | Old tab system; replaced by panels; no static references found | HIGH |
+| `templates/icons/*.hbs` | SVG generation; likely replaced by static assets; verify no `renderTemplate()` calls exist | MEDIUM |
+| `templates/items/base/item-sheet-old.hbs` | Marked "old"; verify not in fallback render path | MEDIUM |
+
+**Important:** None of these should be deleted without:
+- Runtime testing in Foundry (confirm no 404 errors)
+- Searching for any remaining references in JS code
+- Explicit owner approval
 
 ---
 
@@ -385,16 +428,34 @@ Most app templates are **not** pre-loaded in load-templates.js but are still act
 
 ## Conclusion
 
-The validator is now truthful and strict validation passes. However, the codebase contains many templates of unclear status:
-- 272 definitely pre-loaded and active (core sheets, apps, v2-concept)  
-- 100+ partials actively included but not pre-loaded (components, panels, shared)  
-- 30+ app templates used dynamically but not pre-loaded  
-- 60+ v2-concept design references (status pending)  
-- 5-10 likely obsolete candidates (need runtime verification)
+The validator is now truthful and strict validation passes. This means the template reference graph is internally consistent and correct. However, **consistency is not the same as activeness.**
 
-**Recommendation:** Proceed with PR 1 (runtime verification) before attempting any deletions. The validator now ensures the graph is consistent, but consistency ≠ activeness.
+The codebase contains many templates of genuinely unclear runtime status:
+- **272 definitely pre-loaded** (core sheets, apps, v2-concept)  
+- **100+ partials actively included** but not pre-loaded (components, panels, shared)  
+- **30+ app templates used dynamically** but not pre-loaded (lazy-loaded by app classes)  
+- **60+ v2-concept design references** (status pending – active prototypes or frozen archives?)  
+- **5-10 likely obsolete candidates** (need runtime verification before deletion)
+
+### Critical Reminders
+
+1. **Preloaded ≠ Active at runtime.** A template can be preloaded but never actually rendered.
+2. **Valid reference graph ≠ Safe deletion.** Every registered partial can be syntactically correct but still unused.
+3. **No inbound references ≠ Safe deletion.** Legacy compatibility paths, fallback renders, and dynamic loads may exist outside the static reference map.
+4. **Registry-missing ≠ Broken.** App templates are lazy-loaded and may not need partial registration.
+
+### Recommended Path Forward
+
+**Proceed with PR 1 (runtime verification) before attempting any deletions:**
+1. Spin up Foundry with the latest code
+2. Open each major template/app type
+3. Check browser console for 404 or missing template errors
+4. Document any failures or unexpected behaviors
+5. Only then proceed to PR 2 (legacy audit) and PR 3 (optional cleanup)
+
+**No template should be deleted based solely on this audit's static reference analysis.**
 
 ---
 
-*Report generated for audit purposes. No files were modified or deleted during this analysis.*
+*Report generated for audit purposes. No files were modified or deleted during this analysis. Use this as a starting point for future cleanup, not as a deletion mandate.*
 
