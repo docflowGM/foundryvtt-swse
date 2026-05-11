@@ -1916,7 +1916,16 @@ export const ActorEngine = {
         SWSELogger.debug(`Second Wind condition recovery: moving condition track from ${currentCT} to ${Math.max(0, currentCT - recoverySteps)}`);
       }
 
-      // Batch update: HP restoration + use consumption + optional condition improvement
+      // Add action grants to improvements BEFORE actor update
+      if (secondWindFeatRules.grantMoveActionOnUse) {
+        improvements['system.actions.moveAction'] = (actor.system.actions?.moveAction ?? 0) + 1;
+      }
+
+      if (secondWindFeatRules.grantMovementOnUse) {
+        improvements['system.actions.movement'] = (actor.system.actions?.movement ?? 0) + 1;
+      }
+
+      // Batch update: HP restoration + use consumption + optional condition improvement + action grants
       await this.updateActor(actor, improvements);
       if (activeCombatId) {
         await actor.setFlag?.('foundryvtt-swse', 'secondWindEncounterUsed', activeCombatId);
@@ -1927,14 +1936,6 @@ export const ActorEngine = {
           note: 'Regain one expended Force power after catching a Second Wind.',
           timestamp: Date.now()
         });
-      }
-
-      if (secondWindFeatRules.grantMoveActionOnUse) {
-        improvements['system.actions.moveAction'] = (actor.system.actions?.moveAction ?? 0) + 1;
-      }
-
-      if (secondWindFeatRules.grantMovementOnUse) {
-        improvements['system.actions.movement'] = (actor.system.actions?.movement ?? 0) + 1;
       }
 
       const resultLog = {

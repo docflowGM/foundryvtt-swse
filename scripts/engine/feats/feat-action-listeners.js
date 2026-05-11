@@ -41,10 +41,7 @@ export class FeatActionListeners {
    */
   static _registerSadisticStrike() {
     Hooks.on('swse.coupDeGrace', async (context) => {
-      const { attacker, target, killed } = context;
-
-      // Only apply if target was killed
-      if (!killed) return;
+      const { attacker, target } = context;
 
       // Check if attacker has Sadistic Strike
       if (!MetaResourceFeatResolver.hasFeat(attacker, 'Sadistic Strike')) {
