@@ -1,0 +1,70 @@
+<div class="swse-v2-sheet-grid">
+  <div class="swse-v2-full">
+    <div class="holo-panel">
+      <div class="section-bar">
+        <h3 class="section-header">Credits</h3>
+      </div>
+      <div class="swse-npc-credits-display">
+        <span class="swse-npc-credits-value">{{floor actor.system.credits}}</span>
+        <span class="swse-npc-credits-symbol">$</span>
+      </div>
+    </div>
+
+    {{#if equipment}}
+    <div class="holo-panel" style="margin-top: 12px;">
+      <div class="section-bar">
+        <h3 class="section-header">Equipment</h3>
+      </div>
+      <div class="swse-npc-gear-list">
+        {{#each equipment as |item|}}
+          <div class="swse-npc-gear-row">
+            <button type="button"
+                    class="swse-npc-gear-name swse-v2-open-item"
+                    data-item-id="{{item.id}}"
+                    title="Click to edit {{item.name}}">
+              {{item.name}}
+            </button>
+            <div class="swse-npc-gear-meta">
+              <span class="swse-npc-gear-qty">{{item.system.quantity}}</span>
+              <span class="swse-npc-gear-weight">{{item.system.weight}} lbs</span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+  </div>
+
+  <div class="swse-v2-full">
+    {{#if armor}}
+    <div class="holo-panel">
+      <div class="section-bar">
+        <h3 class="section-header">Armor</h3>
+      </div>
+      <div class="swse-npc-gear-list">
+        {{#each armor as |item|}}
+          <div class="swse-npc-gear-row swse-npc-armor-row">
+            <div class="swse-npc-armor-equipped">
+              <input type="checkbox"
+                     class="swse-npc-armor-equip"
+                     data-action="toggle-equip-armor"
+                     data-item-id="{{item.id}}"
+                     {{#if item.system.equipped}}checked{{/if}}>
+            </div>
+            <button type="button"
+                    class="swse-npc-gear-name swse-v2-open-item"
+                    data-item-id="{{item.id}}"
+                    title="Click to edit {{item.name}}">
+              {{item.name}}
+            </button>
+            <div class="swse-npc-armor-stats">
+              <span>Def {{item.system.defenseBonus}}</span>
+              <span>Dex {{item.system.maxDex}}</span>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+  </div>
+</div>

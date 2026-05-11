@@ -93,6 +93,11 @@ const PARTIALS = [
   "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-relationships-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-statblock-authority-panel.hbs",
 
+  // NPC V2 Phase 2 Upgrade Partials
+  "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-header-dossier.hbs",
+  "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-abilities-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-gear-panel.hbs",
+
   // NPC V2 Sheet Partials
   "systems/foundryvtt-swse/templates/v2/npc/npc-sheet-header.hbs",
   "systems/foundryvtt-swse/templates/v2/npc/npc-sheet-tabs.hbs",

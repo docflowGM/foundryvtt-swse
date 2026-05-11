@@ -127,6 +127,21 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       console.error('Error building NPC profile context:', err);
     }
 
+    // HP/Vitals Context for header (Phase 2 upgrade)
+    try {
+      const hpMax = actor.system?.derived?.health?.max ?? actor.system?.health?.max ?? 0;
+      const hpCurrent = actor.system?.health?.value ?? 0;
+      const hpPercent = hpMax > 0 ? Math.round((hpCurrent / hpMax) * 100) : 0;
+      context.hpCurrent = hpCurrent;
+      context.hpMax = hpMax;
+      context.hpPercent = hpPercent;
+    } catch (err) {
+      console.warn('Error preparing HP context for NPC header:', err);
+      context.hpCurrent = 0;
+      context.hpMax = 0;
+      context.hpPercent = 0;
+    }
+
     // Action Economy Context (for combat tab)
     if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {
       // Only show action economy if actor is in active combat

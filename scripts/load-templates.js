@@ -181,7 +181,14 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs',
 
   // ==============================
-  // NPC Partials
+  // NPC V2 Partials
+  // ==============================
+  'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-header-dossier.hbs',
+  'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-abilities-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-gear-panel.hbs',
+
+  // ==============================
+  // Legacy NPC Partials
   // ==============================
   'systems/foundryvtt-swse/templates/actors/npc/npc-image.hbs',
 

@@ -1,0 +1,43 @@
+<div class="holo-panel">
+  <div class="section-bar">
+    <h3 class="section-header">Ability Scores</h3>
+  </div>
+
+  <div class="swse-npc-abilities-grid">
+    <div class="swse-npc-ability-card">
+      <label class="swse-npc-ability-label">STR</label>
+      <input type="number" name="system.attributes.str.base" value="{{system.attributes.str.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} class="swse-npc-ability-input"/>
+      <span class="swse-npc-ability-mod">{{#if system.attributes.str.mod}}{{#if (gt system.attributes.str.mod 0)}}+{{/if}}{{system.attributes.str.mod}}{{else}}—{{/if}}</span>
+    </div>
+
+    <div class="swse-npc-ability-card">
+      <label class="swse-npc-ability-label">DEX</label>
+      <input type="number" name="system.attributes.dex.base" value="{{system.attributes.dex.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} class="swse-npc-ability-input"/>
+      <span class="swse-npc-ability-mod">{{#if system.attributes.dex.mod}}{{#if (gt system.attributes.dex.mod 0)}}+{{/if}}{{system.attributes.dex.mod}}{{else}}—{{/if}}</span>
+    </div>
+
+    <div class="swse-npc-ability-card">
+      <label class="swse-npc-ability-label">CON</label>
+      <input type="number" name="system.attributes.con.base" value="{{system.attributes.con.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} class="swse-npc-ability-input"/>
+      <span class="swse-npc-ability-mod">{{#if system.attributes.con.mod}}{{#if (gt system.attributes.con.mod 0)}}+{{/if}}{{system.attributes.con.mod}}{{else}}—{{/if}}</span>
+    </div>
+
+    <div class="swse-npc-ability-card">
+      <label class="swse-npc-ability-label">INT</label>
+      <input type="number" name="system.attributes.int.base" value="{{system.attributes.int.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} class="swse-npc-ability-input"/>
+      <span class="swse-npc-ability-mod">{{#if system.attributes.int.mod}}{{#if (gt system.attributes.int.mod 0)}}+{{/if}}{{system.attributes.int.mod}}{{else}}—{{/if}}</span>
+    </div>
+
+    <div class="swse-npc-ability-card">
+      <label class="swse-npc-ability-label">WIS</label>
+      <input type="number" name="system.attributes.wis.base" value="{{system.attributes.wis.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} class="swse-npc-ability-input"/>
+      <span class="swse-npc-ability-mod">{{#if system.attributes.wis.mod}}{{#if (gt system.attributes.wis.mod 0)}}+{{/if}}{{system.attributes.wis.mod}}{{else}}—{{/if}}</span>
+    </div>
+
+    <div class="swse-npc-ability-card">
+      <label class="swse-npc-ability-label">CHA</label>
+      <input type="number" name="system.attributes.cha.base" value="{{system.attributes.cha.base}}" min="1" max="20" {{#unless editable}}disabled{{/unless}} class="swse-npc-ability-input"/>
+      <span class="swse-npc-ability-mod">{{#if system.attributes.cha.mod}}{{#if (gt system.attributes.cha.mod 0)}}+{{/if}}{{system.attributes.cha.mod}}{{else}}—{{/if}}</span>
+    </div>
+  </div>
+</div>
