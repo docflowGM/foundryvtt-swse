@@ -100,6 +100,8 @@ export class MetaResourceFeatResolver {
       freeAction: false,
       conditionRecoverySteps: 0,
       regainForcePowerOnUse: false,
+      grantMoveActionOnUse: false,
+      grantMovementOnUse: false,
       displayNotes: []
     };
 
@@ -124,6 +126,12 @@ export class MetaResourceFeatResolver {
             break;
           case 'REGAIN_FORCE_POWER_ON_USE':
             rules.regainForcePowerOnUse = true;
+            break;
+          case 'GRANT_MOVE_ACTION_ON_USE':
+            rules.grantMoveActionOnUse = true;
+            break;
+          case 'GRANT_MOVEMENT_ON_USE':
+            rules.grantMovementOnUse = true;
             break;
           case 'DISPLAY_NOTE':
             if (rule.note) rules.displayNotes.push({ sourceName: item.name, note: rule.note });

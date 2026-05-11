@@ -1929,6 +1929,14 @@ export const ActorEngine = {
         });
       }
 
+      if (secondWindFeatRules.grantMoveActionOnUse) {
+        improvements['system.actions.moveAction'] = (actor.system.actions?.moveAction ?? 0) + 1;
+      }
+
+      if (secondWindFeatRules.grantMovementOnUse) {
+        improvements['system.actions.movement'] = (actor.system.actions?.movement ?? 0) + 1;
+      }
+
       const resultLog = {
         healed: actualHealing,
         newHP,
@@ -1949,7 +1957,9 @@ export const ActorEngine = {
         newHP,
         usesRemaining: Math.max(0, uses - 1),
         conditionImproved: improvedSecondWind ? true : false,
-        newCondition: improvedSecondWind ? Math.max(0, (actor.system.conditionTrack?.current ?? 0) - 1) : undefined
+        newCondition: improvedSecondWind ? Math.max(0, (actor.system.conditionTrack?.current ?? 0) - 1) : undefined,
+        grantedMoveAction: secondWindFeatRules.grantMoveActionOnUse ? true : undefined,
+        grantedMovement: secondWindFeatRules.grantMovementOnUse ? true : undefined
       };
 
     } catch (err) {
