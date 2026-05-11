@@ -142,17 +142,80 @@ export class MetaResourceFeatResolver {
       }
     }
 
-    // Compatibility fallbacks for unnormalized actors/packs.
-    if (this.hasFeat(actor, 'Extra Second Wind')) rules.extraUseMultiplier = Math.max(rules.extraUseMultiplier, 1);
+    // Compatibility fallbacks for unnormalized actors/packs (only for feats not yet normalized with resourceRules)
     if (this.hasFeat(actor, 'Vitality Surge')) rules.allowAboveHalfHp = true;
-    if (this.hasFeat(actor, 'Unstoppable Combatant')) rules.ignoreEncounterCap = true;
     if (this.hasFeat(actor, 'Fast Surge')) rules.freeAction = true;
-    if (this.hasFeat(actor, 'Recovering Surge')) rules.conditionRecoverySteps = Math.max(rules.conditionRecoverySteps, 1);
-    if (this.hasFeat(actor, 'Forceful Recovery')) rules.regainForcePowerOnUse = true;
 
     return rules;
   }
 
+  /**
+   * Read damage-based feat rules (e.g., condition track modifications on damage threshold)
+   * @param {Actor} actor - Target actor
+   * @returns {Object} Rules object with damage-based feat behaviors
+   */
+  static getDamageRules(actor) {
+    const rules = {
+      preventFirstThresholdExceedance: false,
+      capIonDamageCtToOneStep: false
+    };
+
+    for (const item of getActorFeatItems(actor)) {
+      const itemRules = getResourceRules(item, 'damage');
+      for (const rule of itemRules) {
+        switch (rule?.type) {
+          case 'PREVENT_FIRST_THRESHOLD_EXCEEDANCE_PER_ENCOUNTER':
+            rules.preventFirstThresholdExceedance = true;
+            break;
+          case 'CAP_ION_DAMAGE_CT_TO_1_STEP':
+            rules.capIonDamageCtToOneStep = true;
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    return rules;
+  }
+
+  /**
+   * Read condition track interaction feat rules
+   * @param {Actor} actor - Target actor
+   * @returns {Object} Rules object with condition track interaction behaviors
+   */
+  static getConditionTrackRules(actor) {
+    const rules = {
+      moveTargetCtOnCoupDeGrace: false,
+      spendCtToReduceDamage: false,
+      damageReductionAmount: 10,
+      swiftActionConditionRecovery: false,
+      swiftActionCost: 2
+    };
+
+    for (const item of getActorFeatItems(actor)) {
+      const itemRules = getResourceRules(item, 'conditionTrack');
+      for (const rule of itemRules) {
+        switch (rule?.type) {
+          case 'MOVE_TARGET_CT_ON_COUP_DE_GRACE':
+            rules.moveTargetCtOnCoupDeGrace = true;
+            break;
+          case 'SPEND_CT_TO_REDUCE_DAMAGE':
+            rules.spendCtToReduceDamage = true;
+            rules.damageReductionAmount = Number(rule.damageReduction ?? 10);
+            break;
+          case 'SWIFT_ACTION_CONDITION_RECOVERY':
+            rules.swiftActionConditionRecovery = true;
+            rules.swiftActionCost = Number(rule.swiftActionCost ?? 2);
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    return rules;
+  }
 
   static getAttackRerollRules(actor) {
     const rules = [];

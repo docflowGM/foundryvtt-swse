@@ -252,11 +252,12 @@ export class DamageResolutionEngine {
     if (result.thresholdExceeded && result.hpAfter > 0) {
       let thresholdShift = Math.max(0, Number(result.thresholdRuleResult?.totalCTShift ?? 1));
 
+      // Apply feat-based damage rules (metadata-driven, not hardcoded)
+      const { MetaResourceFeatResolver } = await import("/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js");
+      const damageRules = MetaResourceFeatResolver.getDamageRules(actor);
+
       // FEAT: Galactic Alliance Military Training - prevent first CT worsening per encounter
-      const galacticAllianceTraining = actor.items?.find(i =>
-        i.type === 'feat' && i.name === 'Galactic Alliance Military Training'
-      );
-      if (galacticAllianceTraining) {
+      if (damageRules.preventFirstThresholdExceedance) {
         const activeCombatId = game.combat?.started ? game.combat.id : null;
         const firstExceededFlag = actor.getFlag?.('foundryvtt-swse', 'damageThresholdExceededThisEncounter');
         if (activeCombatId && firstExceededFlag !== activeCombatId) {
@@ -268,10 +269,7 @@ export class DamageResolutionEngine {
       }
 
       // FEAT: Ion Shielding - cap Ion damage CT shift to 1 step
-      const ionShielding = actor.items?.find(i =>
-        i.type === 'feat' && i.name === 'Ion Shielding'
-      );
-      if (ionShielding && damageType === 'ion') {
+      if (damageRules.capIonDamageCtToOneStep && damageType === 'ion') {
         // Cap to 1 step maximum for ion damage
         thresholdShift = Math.min(1, thresholdShift);
       }

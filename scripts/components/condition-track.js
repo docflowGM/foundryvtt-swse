@@ -182,22 +182,24 @@ export class ConditionTrackComponent {
    * Effect: Spend 2 Swift Actions to move +1 step on CT (improve condition).
    */
   static async _handleShakeItOff(actor) {
-    // Check if actor has Shake It Off feat
+    // Check if actor has Shake It Off feat via metadata
     const { MetaResourceFeatResolver } = await import("/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js");
+    const ctRules = MetaResourceFeatResolver.getConditionTrackRules(actor);
 
-    if (!MetaResourceFeatResolver.hasFeat(actor, 'Shake It Off')) {
+    if (!ctRules.swiftActionConditionRecovery) {
       return ui.notifications.warn(`${actor.name} does not have the Shake It Off feat.`);
     }
 
-    // Check if actor has 2+ Swift Actions available
+    // Check if actor has enough Swift Actions available
     const swiftActions = actor.system.actions?.swift?.available ?? 0;
-    if (swiftActions < 2) {
-      return ui.notifications.warn(`${actor.name} does not have 2 Swift Actions available (has ${swiftActions}).`);
+    const requiredSwiftActions = ctRules.swiftActionCost;
+    if (swiftActions < requiredSwiftActions) {
+      return ui.notifications.warn(`${actor.name} does not have ${requiredSwiftActions} Swift Actions available (has ${swiftActions}).`);
     }
 
     try {
-      // Spend 2 Swift Actions
-      const newSwiftActions = swiftActions - 2;
+      // Spend Swift Actions based on feat rule
+      const newSwiftActions = swiftActions - requiredSwiftActions;
       await ActorEngine.updateActor(actor, { 'system.actions.swift.available': newSwiftActions });
 
       // Move +1 step on CT (improve condition)
@@ -206,7 +208,7 @@ export class ConditionTrackComponent {
       const newCT = actor.system.conditionTrack?.current ?? 0;
 
       ui.notifications.info(
-        `Shake It Off: ${actor.name} spent 2 Swift Actions and moved from CT ${oldCT} to CT ${newCT}.`
+        `Shake It Off: ${actor.name} spent ${requiredSwiftActions} Swift Actions and moved from CT ${oldCT} to CT ${newCT}.`
       );
     } catch (err) {
       console.error('[ConditionTrackComponent] Shake It Off error:', err);

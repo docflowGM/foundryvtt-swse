@@ -43,8 +43,9 @@ export class FeatActionListeners {
     Hooks.on('swse.coupDeGrace', async (context) => {
       const { attacker, target } = context;
 
-      // Check if attacker has Sadistic Strike
-      if (!MetaResourceFeatResolver.hasFeat(attacker, 'Sadistic Strike')) {
+      // Check if attacker has Sadistic Strike via metadata
+      const ctRules = MetaResourceFeatResolver.getConditionTrackRules(attacker);
+      if (!ctRules.moveTargetCtOnCoupDeGrace) {
         return;
       }
 
@@ -87,8 +88,9 @@ export class FeatActionListeners {
         return;
       }
 
-      // Check if target has Stay Up feat
-      if (!MetaResourceFeatResolver.hasFeat(target, 'Stay Up')) {
+      // Check if target has Stay Up feat via metadata
+      const ctRules = MetaResourceFeatResolver.getConditionTrackRules(target);
+      if (!ctRules.spendCtToReduceDamage) {
         return;
       }
 
@@ -101,8 +103,8 @@ export class FeatActionListeners {
       }
 
       try {
-        // Calculate damage reduction (10 damage per CT step, capped at total damage)
-        const damageReduction = Math.min(10, damage);
+        // Calculate damage reduction using rule-defined amount
+        const damageReduction = Math.min(ctRules.damageReductionAmount, damage);
 
         // Ask target if they want to use Stay Up
         const useStayUp = await this._confirmStayUpUsage(target, damageReduction);
