@@ -5502,6 +5502,17 @@ form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host .progression-shel
   min-height: 0 !important;
 }
 
+/* Cancel the standalone-window min-heights for progression content regions
+   when the progression shell is embedded inside the holopad screen.
+   The parent .swse-progression-inline-host and .prog-content-row already own
+   the bounded viewport; individual rails must be allowed to shrink freely. */
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host .progression-shell [data-region="work-surface"],
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host .progression-shell [data-region="summary-panel"],
+form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host .progression-shell [data-region="details-panel"] {
+  min-height: 0 !important;
+  overflow: auto !important;
+}
+
 /* Species list: keep body rows text/code only; details rail owns portraits. */
 form[id^="SWSEV2CharacterSheet"] .prog-species-row__thumb-img,
 form[id^="SWSEV2CharacterSheet"] .prog-species-row__thumb .prog-holo-scan {

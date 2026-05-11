@@ -507,11 +507,33 @@ export class SWSEV2CharacterSheet extends
     root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
       ev.preventDefault();
       if (this._tabletExpanded) {
-        // Restore to viewport-fit scale
-        this._tabletInitialPositionApplied = false;
-        this._applyTabletViewportFit();
+        // Restore the rect the user had before expanding
+        const saved = this._preExpandRect;
+        if (saved) {
+          this.setPosition({ left: saved.left, top: saved.top, width: saved.width, height: saved.height });
+          const r = this.element;
+          if (r) {
+            const scale = saved.width / TABLET_BASE_WIDTH;
+            r.style.setProperty('--swse-tablet-scale', String(scale));
+            r.style.setProperty('--swse-tablet-scaled-width', `${saved.width}px`);
+            r.style.setProperty('--swse-tablet-scaled-height', `${saved.height}px`);
+          }
+          this._preExpandRect = null;
+        } else {
+          // Fallback: recalculate viewport-fit
+          this._tabletInitialPositionApplied = false;
+          this._applyTabletViewportFit();
+        }
         this._tabletExpanded = false;
       } else {
+        // Save current rect before expanding so retract can restore it
+        this._preExpandRect = {
+          left: Number(this.position?.left) || 0,
+          top: Number(this.position?.top) || 0,
+          width: Number(this.position?.width) || TABLET_BASE_WIDTH,
+          height: Number(this.position?.height) || TABLET_BASE_HEIGHT
+        };
+
         // Maximize: fit to largest size possible in current viewport
         // Only use 1.0 if viewport can fit it; otherwise use viewport-fit scale
         const canFitFull = (window.innerWidth >= TABLET_BASE_WIDTH + TABLET_MARGIN) &&
@@ -524,11 +546,11 @@ export class SWSEV2CharacterSheet extends
         const top = Math.max(0, Math.round((window.innerHeight - height) / 2));
 
         this.setPosition({ width, height, left, top });
-        const root = this.element;
-        if (root) {
-          root.style.setProperty('--swse-tablet-scale', String(scale));
-          root.style.setProperty('--swse-tablet-scaled-width', `${width}px`);
-          root.style.setProperty('--swse-tablet-scaled-height', `${height}px`);
+        const r = this.element;
+        if (r) {
+          r.style.setProperty('--swse-tablet-scale', String(scale));
+          r.style.setProperty('--swse-tablet-scaled-width', `${width}px`);
+          r.style.setProperty('--swse-tablet-scaled-height', `${height}px`);
         }
         this._tabletExpanded = true;
       }
