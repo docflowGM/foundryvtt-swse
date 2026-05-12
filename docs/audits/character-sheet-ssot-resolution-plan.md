@@ -727,6 +727,46 @@ Per Phase 1 scope, the following were **intentionally left unchanged**:
 
 ---
 
+## Base Attack Bonus (BAB) Contract: RESOLVED
+
+**Decision**: BAB has a dual-mode contract for progression actors and manual actors.
+
+**Canonical BAB Paths**:
+- `system.derived.bab` = **Effective BAB** used by sheet, attacks, and rolls (source of truth for mechanical use)
+- `system.baseAttackBonus` = **Manual total BAB** input/override (for non-progression actors)
+
+**Progression Mode** (Class/Level automation active):
+- BAB is derived from summing contributions of all class levels
+- Example: Jedi 3 (+3 BAB) + Soldier 2 (+2 BAB) = Total +5 BAB
+- `system.derived.bab` = sum of all class level BAB contributions
+- Manual `system.baseAttackBonus` is ignored in this mode
+
+**Manual Mode** (Non-progression/custom actors):
+- User manually enters total BAB (across all classes, not per-class)
+- `system.baseAttackBonus` = total manual BAB input
+- `system.derived.bab` = uses manual value when progression is unavailable
+- Examples: NPC with fixed BAB, non-chargen character import, custom level builds
+
+**Logic**:
+```
+If progression with class levels exists:
+  system.derived.bab = sum(BAB from each class level)
+Else if manual baseAttackBonus is set:
+  system.derived.bab = system.baseAttackBonus
+Else:
+  system.derived.bab = 0
+```
+
+**Critical Rule**: 
+- BAB is not per-class; it is total across all classes
+- Manual entry represents total BAB, not BAB per class
+- Do not sum progression BAB + manual BAB (avoid double counting)
+- Effective BAB is always `system.derived.bab`
+
+**Resolution applied**: Documented dual-mode contract in this audit.
+
+---
+
 ## Background / Event / Profession / Homeworld: RESOLVED
 
 **Decision**: These are four separate origin concepts, not aliases.
@@ -751,13 +791,24 @@ Per Phase 1 scope, the following were **intentionally left unchanged**:
 
 ---
 
-## Phase 2 Result: Compatibility Centralization
+## Phase 2 Result: Compatibility Centralization + Architecture Decisions
 
-**Commit**: `765759a` "feat: Phase 2 - Centralize compatibility and remove template-level aliases"
+**Commits**: 
+- `765759a`: Phase 2 compatibility centralization
+- `e617cad`: Added missing origin field definitions
+- `36a2d16`: Documented resolved decisions
 
 ### Objective
 
-Move remaining fallback/compatibility logic from character sheet partials into prepared context/view-model layer. Partials should consume one stable vocabulary, not duplicate fallback chains.
+1. Move remaining fallback/compatibility logic from partials into prepared context/view-model layer
+2. Document and resolve remaining blocked architecture conflicts
+
+### Outcomes
+
+✅ **Compatibility Centralized**: 3 template locations moved to prepared view-models  
+✅ **Decisions Resolved**: 2 of 4 original blocked conflicts now resolved (Background/Event, BAB)  
+✅ **Schema Coverage**: Added missing origin field definitions and form support  
+✅ **Only 2 Blocked Conflicts Remain**: Ability paths and Class identity
 
 ### Files Changed
 
@@ -810,12 +861,26 @@ These are data contract boundaries and should not change outside of full data mi
 - No merge needed; keep them separate
 - RESOLVED in commit `e617cad`
 
-### Remaining Blocked Conflicts Confirmed Untouched
+✓ **Base Attack Bonus (BAB) Contract**:
+- Dual-mode contract: progression-derived or manual total BAB
+- `system.derived.bab` = effective BAB (used by sheet and rolls)
+- `system.baseAttackBonus` = manual total BAB override
+- No per-class BAB; always total across all classes
+- RESOLVED (documented in this audit)
 
-Verified remaining architectural conflicts stay untouched:
-- `name="system.class"` in character-record-header.hbs (line 23) ✓
-- No changes to ability input paths ✓
-- No changes to BAB logic ✓
+### Remaining Truly Blocked Conflicts
+
+Only 2 architectural conflicts remain unresolved:
+
+1. **Ability Score Paths** (`system.abilities.*` vs `system.attributes.*`)
+   - Pending decision on canonical persistent ability path
+   - Both paths defined in schema; code uses `system.abilities.*`
+   - Future migration target uncertain
+
+2. **Class Identity Contract** (scalar `system.class` vs `progression.classLevels`)
+   - `system.class` is legacy scalar; class display canonical is `progression.classLevels`
+   - Decision pending on whether to remove scalar write or redesign class editing
+   - Affects character-record-header.hbs line 23
 
 ### Validation Results
 
