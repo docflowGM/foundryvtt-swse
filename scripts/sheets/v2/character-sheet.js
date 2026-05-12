@@ -246,7 +246,12 @@ const FORM_FIELD_SCHEMA = {
 
   // Identity Fields
   'system.species': 'string',
-  'system.background': 'string'
+
+  // Origin Fields (Background Step)
+  'system.background': 'string',
+  'system.event': 'string',
+  'system.profession': 'string',
+  'system.planetOfOrigin': 'string'
 };
 
 /**

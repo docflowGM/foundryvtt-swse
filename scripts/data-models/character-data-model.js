@@ -203,7 +203,13 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       // Biography
       biography: new fields.StringField({ required: false, initial: '' }),
 
-      // Background information for Biography tab
+      // Origin Fields (Background step can select multiple origin types)
+      // These are separate concepts and may all be selected by a character:
+      // - background: primary background choice
+      // - event: campaign event or personal event bonus
+      // - profession: occupation/profession bonus
+      // - planetOfOrigin: homeworld bonus
+      background: new fields.StringField({ required: false, initial: '' }),
       event: new fields.StringField({ required: false, initial: '' }),
       profession: new fields.StringField({ required: false, initial: '' }),
       planetOfOrigin: new fields.StringField({ required: false, initial: '' }),
