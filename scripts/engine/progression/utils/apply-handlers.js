@@ -146,7 +146,7 @@ export const ApplyHandlers = {
 
         for (const [ability, mod] of Object.entries(abilityMods || {})) {
             if (mod > 0) {
-                updates[`system.attributes.${ability}.mod`] = (actor.system.attributes[ability]?.mod || 0) + mod;
+                updates[`system.attributes.${ability}.base`] = (actor.system.attributes[ability]?.base || 10) + mod;
             }
         }
 
