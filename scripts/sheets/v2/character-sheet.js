@@ -237,7 +237,16 @@ const FORM_FIELD_SCHEMA = {
   'system.destinyPoints.value': 'number',
   'system.destinyPoints.max': 'number',
   'system.forcePoints.value': 'number',
-  'system.forcePoints.max': 'number'
+  'system.forcePoints.max': 'number',
+  'system.forcePointDie': 'string',
+
+  // Biography and Notes
+  'system.notes': 'string',
+  'system.biography': 'string',
+
+  // Identity Fields
+  'system.species': 'string',
+  'system.background': 'string'
 };
 
 /**

@@ -989,6 +989,9 @@ export class PanelContextBuilder {
     // Force Point Die configuration (if system has it)
     const forcePointDie = system.forcePointDie || 'd6';
 
+    // Credits
+    const credits = Number(system.credits) || 0;
+
     const panel = {
       combatMetrics: {
         speed,
@@ -1005,6 +1008,7 @@ export class PanelContextBuilder {
         destinyPointsValue,
         destinyPointsMax,
         forcePointDie,
+        credits,
         canEdit: this.sheet.isEditable
       }
     };
