@@ -2205,9 +2205,221 @@ Remaining migration scope:
 - Recalculate derived stats (halfLevel, BAB) for all characters
 - Test multiclass level-up workflow end-to-end
 
+### Phase 7C Result — Migration / Backfill Planning and Targeted Validation
+
+**Migration Infrastructure Findings**:
+- MigrationIntegrityAdapter: Advisory audit on version change (read-only)
+- WorldIntegritySweep: Full-world integrity validator (read-only)
+- Migration pattern: Individual classes with executeMigration() methods
+- Execution: Manual/admin-initiated (no auto-trigger found)
+- Actor update pipeline: ActorEngine → prepareDerivedData() → DerivedCalculator
+- Derived recalculation: Automatic on any actor update via ActorEngine
+
+**Data Corruption Identified**:
+
+**CORRUPTION #1: system.level = classLevels.length (not sum)**
+- Likelihood: HIGH if progression was used
+- Impact: Multiclass characters have wrong total level
+- Example: Jedi 3 / Soldier 2 → system.level = 2 (should be 5)
+- Fix: Already implemented in Phase 7B
+- Residual risk: Actors created with old code may have corrupted system.level
+
+**CORRUPTION #2: system.attributes.*.mod writes (apply-handlers bug)**
+- Likelihood: LOW (function currently unused)
+- Impact: Computed fields overwritten
+- Current state: No active callers found
+- Fix: Already implemented in Phase 7A
+- Residual risk: Low, function appears never activated
+
+**CORRUPTION #3: Stale derived fields**
+- Likelihood: MODERATE
+- Impact: system.derived.bab, system.derived.attributes.* may not match current persistence
+- Cause: Any old bugs in derived calculation
+- Mitigation: Full recalculation post-migration
+
+**CORRUPTION #4: Manual actors overwritten**
+- Likelihood: CRITICAL IF MIGRATION IS WRONG
+- Impact: Manual actors lose custom system.level values
+- Mitigation: NEVER update system.level when classLevels is empty
+- Rule: Only migrate when classLevels exists AND has meaningful levels
+
+**Protected Cases**:
+
+**Case A: Manual Actor (PROTECTION REQUIRED)**
+```javascript
+// NO classLevels, manual system.level
+actor.system.progression.classLevels = []
+actor.system.level = 5 (user-set)
+// ACTION: DO NOT MODIFY
+// REASON: User controls this value
+```
+
+**Case B: Progression Actor (NEEDS FIX IF CORRUPTED)**
+```javascript
+// Valid classLevels but wrong system.level
+actor.system.progression.classLevels = [
+  { class: 'jedi', level: 3 },
+  { class: 'soldier', level: 2 }
+]
+actor.system.level = 2 (WRONG, from old bug)
+// CALCULATED: 3 + 2 = 5
+// ACTION: Update system.level to 5
+// REASON: Progression automation should own this
+```
+
+**Case C: Progression Actor (ALREADY CORRECT)**
+```javascript
+// Valid classLevels and correct system.level
+actor.system.progression.classLevels = [
+  { class: 'jedi', level: 3 },
+  { class: 'soldier', level: 2 }
+]
+actor.system.level = 5 (CORRECT)
+// ACTION: NO UPDATE NEEDED
+// REASON: Already correct
+```
+
+**Proposed Migration Algorithm**:
+
+```
+For each actor in world:
+  1. classLevels = actor.system.progression.classLevels
+  2. If classLevels is empty or undefined:
+     → SKIP (manual actor protection)
+  3. Else:
+     → totalLevel = classLevels.reduce((sum, cl) => sum + (cl.level || 0), 0)
+     → If totalLevel > 0 AND system.level != totalLevel:
+        • Update system.level to totalLevel
+        • Log fix
+        • Mark actor for derived recalculation
+     → Else:
+        • Skip (already correct)
+  4. For all modified actors:
+     → Call ActorEngine.updateActor() to trigger prepareDerivedData()
+     → This recalculates all derived fields automatically
+     → No manual derived-field writes needed
+```
+
+**Constraints (CRITICAL)**:
+- ✅ DO NOT modify system.level when classLevels.length === 0
+- ✅ DO NOT write to system.abilities.*
+- ✅ DO NOT write to system.attributes.*.mod
+- ✅ DO NOT write to system.derived.* (recalculated automatically)
+- ✅ DO recalculate derived fields for affected actors
+
+**Targeted Validation Cases**:
+
+**Validation #1: Multiclass Progression**
+```javascript
+// Setup: Jedi 3 / Soldier 2
+classLevels = [{ class: 'jedi', level: 3 }, { class: 'soldier', level: 2 }]
+
+// Expected post-migration:
+system.level = 5 ✓
+system.derived.halfLevel = 2 ✓
+system.derived.bab = Jedi BAB@3 + Soldier BAB@2 ✓
+system.attributes.*.mod = recalculated ✓
+```
+
+**Validation #2: Manual Actor**
+```javascript
+// Setup: No classLevels, system.level = 5 (user-set)
+classLevels = [] (empty)
+system.level = 5
+
+// Expected post-migration:
+system.level = 5 (unchanged) ✓
+system.baseAttackBonus = manual value (unchanged) ✓
+No system.derived.bab double-count ✓
+```
+
+**Validation #3: Ability Increase**
+```javascript
+// Setup: +1 Strength applied
+classLevels = [{ class: 'jedi', level: 3 }]
+
+// Expected post-migration:
+system.attributes.str.base = increased ✓
+system.derived.attributes.str.mod = recalculated ✓
+NO system.attributes.str.mod written ✓
+```
+
+**Validation #4: Background/Event**
+```javascript
+// Setup: Background category fields
+system.background = 'Soldier'
+system.event = 'Outbreak'
+system.profession = 'Explorer'
+system.planetOfOrigin = 'Tatooine'
+
+// Expected post-migration:
+All fields remain separate (no migration needed) ✓
+No field consolidation ✓
+```
+
+**Recommended Derived Field Refresh Strategy**:
+
+**STRATEGY: Explicit refresh via ActorEngine**
+- After updating system.level, call ActorEngine.updateActor() with empty mutation
+- This triggers prepareDerivedData() without writing anything
+- DerivedCalculator recalculates all derived fields automatically
+- Safe, clean, leverages existing infrastructure
+- No manual derived-field writes needed
+
+**Migration Implementation Plan**:
+
+Files to create:
+1. `scripts/migration/class-level-sync-migration-v1.js`
+   - Migration class with executeMigration() method
+   - Identifies corrupted system.level values
+   - Updates progression actors only
+   - Protects manual actors
+   - Triggers derived recalculation
+
+2. Update migration registry (if exists)
+   - Document this as ClassLevelSyncMigrationV1
+   - Track execution status
+   - Log results for audit
+
+**Safety Verification Pre-Migration**:
+- ✅ Phase 7A fixed apply-handlers.js computed-field bug
+- ✅ Phase 7B fixed system.level sync bugs
+- ✅ Manual actor protection rules defined
+- ✅ Derived recalculation strategy chosen
+- ✅ Protected cases documented
+- ✅ Validation cases identified
+
+**Whether Migration Implementation Can Proceed**:
+
+🟢 **YES, SAFE TO PROCEED WITH IMPLEMENTATION**
+
+All blockers cleared:
+- ✅ Code bugs fixed (Phase 7A + 7B)
+- ✅ Migration infrastructure understood
+- ✅ Protection rules locked (manual actors untouched)
+- ✅ Algorithm designed (simple, transactional)
+- ✅ Derived refresh strategy chosen (ActorEngine passive)
+- ✅ Validation cases prepared
+
+Risk mitigation in place:
+- ✅ classLevels.length === 0 check prevents manual actor corruption
+- ✅ totalLevel > 0 check prevents zero-level actors
+- ✅ Equality check prevents redundant updates
+- ✅ ActorEngine ensures derived fields always fresh
+- ✅ No writes to computed fields anywhere
+
+**Next Step: Phase 7C Implementation**:
+
+Implement `ClassLevelSyncMigrationV1` following the algorithm above, then:
+1. Test on a sample of manual + progression actors
+2. Verify system.level corrections
+3. Verify derived fields recalculated
+4. Execute on full world
+5. Document results in audit
+
 ### Remaining Work
 
-**Phase 7C** (Migration & Backfill):
+**Phase 7C** (Migration Implementation):
 - Verify system.level ↔ system.progression.classLevels sync contract
 - Check all class/level writers for dual-write correctness
 - Validate multiclass level tracking works correctly
@@ -2231,6 +2443,7 @@ Remaining migration scope:
 | 6 | Complete | 0 | 0 | Progression/store/writer audit (40+ files reviewed) |
 | 7A | Complete | 1 code | 1 | Bug fix: apply-handlers.js computed-field write |
 | 7B | Complete | 3 code | 1 | Bug fixes: system.level sync (3 locations) |
-| **Total** | **✅ VERIFIED** | **20 changed** | **9** | All bugs fixed, contracts verified, safe for Phase 7C migration |
+| 7C | Complete | 0 doc | 0 | Migration planning & targeted validation design |
+| **Total** | **✅ PLANNED** | **20 changed** | **9** | Ready for Phase 7C implementation (create migration class) |
 
-**Status**: ✅ **CHARACTER SHEET CLEAN**. ✅ **PROGRESSION BUGS FIXED**. ✅ **CONTRACTS VERIFIED**. Ready for Phase 7C (migration & backfill).
+**Status**: ✅ **ALL BUGS FIXED**. ✅ **CONTRACTS VERIFIED**. ✅ **MIGRATION PLANNED**. Ready for Phase 7C implementation.
