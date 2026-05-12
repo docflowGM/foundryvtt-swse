@@ -261,8 +261,8 @@ export class ProgressionSession {
       }));
     }
 
-    // Calculate new character level
-    const newLevel = (progression.classLevels || []).length;
+    // Calculate new character level (sum of all class levels, not class count)
+    const newLevel = (progression.classLevels || []).reduce((sum, cl) => sum + (cl.level || 0), 0);
     simulatedActor.system.level = newLevel;
 
     // Skills
@@ -397,7 +397,7 @@ export class ProgressionSession {
           choices: cl.choices
         }));
         updates['system.progression.classLevels'] = classLevels;
-        updates['system.level'] = classLevels.length;
+        updates['system.level'] = classLevels.reduce((sum, cl) => sum + (cl.level || 0), 0);
       }
 
       // Skills

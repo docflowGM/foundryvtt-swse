@@ -29,10 +29,10 @@ export class ActorProgressionUpdater {
     try {
       // ---- Progression-owned fields only (no math) ----
 
-      // Set total level
+      // Set total level (sum of all class levels, not class count)
       const classLevels = prog.classLevels || [];
       if (classLevels.length > 0) {
-        updates['system.level'] = classLevels.length;
+        updates['system.level'] = classLevels.reduce((sum, cl) => sum + (cl.level || 0), 0);
       }
 
       // Apply species data
