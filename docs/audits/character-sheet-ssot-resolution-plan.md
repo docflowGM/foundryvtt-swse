@@ -642,3 +642,83 @@ Per Phase 1 scope, the following were **intentionally left unchanged**:
   2. Optional: Patch remaining `system.notes` and `actor.system.credits` raw reads in templates
   3. Optional: Patch legacy v2 partials if still in use
   4. Proceed to Phase 2: Centralize compatibility fallbacks, remove scattered aliases
+
+---
+
+## Phase 1 Verification
+
+**Verification Date**: 2026-05-12  
+**Verification Result**: ✅ **PASSED** — Phase 1 patches stay within safe scope
+
+### Grep Verification Results
+
+| Check | Command | Expected | Found | Status |
+|---|---|---|---|---|
+| Raw forceSensitive reads | `grep -r "actor\.system\.forceSensitive" templates/v2-concept/` | 0 | 0 | ✅ |
+| Legacy system.race writes | `grep -r 'name="system\.race"' templates/v2-concept/` | 0 | 0 | ✅ |
+| Canonical species writes | `grep -r 'name="system\.species"' templates/v2-concept/` | 1 | 1 | ✅ |
+| Species fallback preference | `grep "system\.race" context.js:104` | Fallback only | Last in chain | ✅ |
+| system.abilities untouched | `grep "abilities" character-sheet.js` | No template changes | Schema entries unchanged | ✅ |
+| system.attributes untouched | `grep 'name="system\.attributes' templates/v2-concept/` | 0 | 0 | ✅ |
+| Class scalar untouched | `grep 'name="system\.class"' character-record-header.hbs` | Line 23 present | Line 23 present | ✅ |
+| Event field untouched | `grep 'name="system\.event"' character-record-header.hbs` | Line 85 present | Line 85 present | ✅ |
+| BAB field untouched | `grep "baseAttackBonus" PanelContextBuilder.js` | Lines 976-978 unchanged | Lines 976-978 unchanged | ✅ |
+
+### Files Verified
+
+✅ **templates/actors/character/v2-concept/character-sheet.hbs**
+- Line 74: `actor.system.forceSensitive` → `forceSensitive` ✓
+- No other changes to template
+- No unrelated formatting
+
+✅ **templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs**
+- Line 39: `actor.system.forceSensitive` → `forceSensitive` ✓
+- No other changes to template
+
+✅ **templates/actors/character/v2-concept/partials/panels/character-record-header.hbs**
+- Line 31: `system.race` → `system.species` ✓
+- Line 23: `system.class` unchanged (blocked)
+- Line 85: `system.event` unchanged (blocked)
+- No other changes
+
+✅ **scripts/sheets/v2/character-sheet/context.js**
+- Line 104: Species fallback reordered: prefers `system.species` before `system.race` ✓
+- No changes to class fallback chain
+- No other changes
+
+✅ **scripts/sheets/v2/context/PanelContextBuilder.js**
+- Lines 993, 1011: Added `credits` field to resourcesPanel.resources ✓
+- Lines 976-978: BAB field logic unchanged (blocked)
+- No other changes
+
+✅ **scripts/sheets/v2/character-sheet.js (FORM_FIELD_SCHEMA)**
+- Added entries verified as real actor data paths:
+  - `system.forcePointDie: 'string'` — used in resources-panel.hbs:55 ✓
+  - `system.notes: 'string'` — legacy field, needs coercion ✓
+  - `system.biography: 'string'` — defined in character-data-model.js ✓
+  - `system.species: 'string'` — canonical identity field ✓
+  - `system.background: 'string'` — defined in character-data-model.js ✓
+- No wildcard patterns added (custom skills deferred)
+- No entries for blocked conflicts
+
+### Blocked Conflicts Confirmed Untouched
+
+| Conflict | Status | Evidence |
+|---|---|---|
+| Ability paths (abilities vs attributes) | ✅ Untouched | No template changes; schema entries unchanged |
+| Class identity (scalar vs progression) | ✅ Untouched | `system.class` input still at character-record-header.hbs:23 |
+| Background/event (overall vs category) | ✅ Untouched | `system.event` input still at character-record-header.hbs:85 |
+| BAB contract (editable vs derived) | ✅ Untouched | PanelContextBuilder.js lines 976-978 unchanged |
+
+### Summary
+
+✅ **Phase 1 Verification PASSED**
+
+- All 5 safe patches executed correctly
+- No scope creep into blocked conflicts
+- Form schema entries added only for real actor data paths
+- No accidental template reformatting
+- Fallback logic properly centralized in context builder
+- Ready for Phase 2
+
+**Next Phase**: Phase 2 — Centralize remaining compatibility and remove scattered template-level aliases (non-blocked items only)
