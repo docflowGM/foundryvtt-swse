@@ -18,6 +18,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SpeciesRerollHandler } from "/systems/foundryvtt-swse/scripts/species/species-reroll-handler.js";
 import { NativeProjectileService } from "/systems/foundryvtt-swse/scripts/visual/native-projectile-service.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
 
 /**
  * Register all combat-related hooks
@@ -154,14 +155,14 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
 
 /**
  * Handle combat end (deletion)
- * Resets once-per-encounter species traits for all combatants
+ * Resets once-per-encounter species traits and reroll uses for all combatants
  *
  * @param {Combat} combat - The combat being deleted
  * @param {Object} options - Deletion options
  * @param {string} userId - The user ID deleting the combat
  */
 async function handleCombatEnd(combat, options, userId) {
-    SWSELogger.log('Combat ended - resetting species encounter traits');
+    SWSELogger.log('Combat ended - resetting encounter-limited features');
 
     // Get all combatants from the combat
     for (const combatant of combat.combatants) {
@@ -172,8 +173,12 @@ async function handleCombatEnd(combat, options, userId) {
             // Reset species encounter traits
             await SpeciesRerollHandler.resetEncounterTraits(actor);
             SWSELogger.log(`Reset species traits for ${actor.name}`);
+
+            // Reset encounter-limited reroll uses
+            await EncounterUseTracker.resetAllUses(actor);
+            SWSELogger.log(`Reset encounter-limited features for ${actor.name}`);
         } catch (err) {
-            SWSELogger.error(`Error resetting species traits for ${actor.name}:`, err);
+            SWSELogger.error(`Error resetting encounter features for ${actor.name}:`, err);
         }
     }
 

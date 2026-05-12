@@ -16,6 +16,7 @@ import { wireDroidSheetListeners } from "/systems/foundryvtt-swse/scripts/sheets
 import { diagnoseLivePanelContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/panel-registry.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -112,6 +113,28 @@ export class SWSEV2DroidSheet extends
     );
 
     const merged = { ...baseContext, ...overrides };
+
+    // Action Economy Context (for combat tab)
+    let actionEconomy = null;
+    if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {
+      // Only show action economy if actor is in active combat
+      const combatId = game.combat.id;
+      const { ActionEconomyPersistence } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js");
+      const { ActionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js");
+
+      const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
+      const state = ActionEngine.getVisualState(turnState);
+      const breakdown = ActionEngine.getTooltipBreakdown(turnState);
+      const enforcementMode = HouseRuleService.getString('actionEconomyMode', 'loose');
+
+      actionEconomy = {
+        state,
+        breakdown,
+        enforcementMode
+      };
+    }
+
+    merged.actionEconomy = actionEconomy;
 
     // Phase 2: minimal live-path panel registry — flag drift (does not throw)
     // so contract regressions surface in the console without breaking render.

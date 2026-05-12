@@ -78,6 +78,12 @@
       </section>
 
       <section class="tab flexcol" data-group="primary" data-tab="weapons">
+        {{#if actionEconomy}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/action-economy-indicator.hbs"
+              actionState=actionEconomy.state
+              actionBreakdown=actionEconomy.breakdown
+              swiftMax=actionEconomy.state.swiftMax}}
+        {{/if}}
         {{#if vehiclePanels.weaponMountPanel}}
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs" panel=vehiclePanels.weaponMountPanel}}
         {{/if}}

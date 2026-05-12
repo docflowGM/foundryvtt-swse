@@ -10,7 +10,8 @@
 .progression-shell .prog-species-browse {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;        /* CRITICAL: enables flex child height to collapse for scrolling */
   width: 100%;
   overflow: hidden;
   padding: 12px;

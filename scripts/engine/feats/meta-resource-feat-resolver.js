@@ -8,6 +8,7 @@
  * rows that have not been normalized yet.
  */
 
+import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
 function normalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
@@ -265,6 +266,16 @@ export class MetaResourceFeatResolver {
           // Only show missed attack rerolls when attack actually missed
           return false;
         }
+
+        // Filter based on encounter-limited availability (read-only check)
+        if (rule.rule?.oncePer) {
+          const featureKey = `reroll-attack-${rule.id}`;
+          if (!EncounterUseTracker.canUse(actor, featureKey, { oncePer: rule.rule.oncePer })) {
+            // Already used this encounter, hide from options
+            return false;
+          }
+        }
+
         return true;
       })
       .map(rule => ({
@@ -275,7 +286,9 @@ export class MetaResourceFeatResolver {
         formula,
         outcomeLabel: rule.outcome === 'keepBetter' ? 'Keep better result' : 'Must accept reroll',
         canUse: rule.cost !== 'forcePoint' || actorForcePoints(actor) > 0,
-        disabledReason: rule.cost === 'forcePoint' && actorForcePoints(actor) <= 0 ? 'No Force Points remaining' : null
+        disabledReason: rule.cost === 'forcePoint' && actorForcePoints(actor) <= 0 ? 'No Force Points remaining' : null,
+        ruleId: rule.id,
+        oncePer: rule.rule?.oncePer ?? null
       }));
   }
 

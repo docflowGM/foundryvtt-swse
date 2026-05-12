@@ -60,6 +60,22 @@
     </div>
   {{/if}}
 
+  {{! Source Dropdown }}
+  {{#if utilityBarConfig.sourceDropdown}}
+    <div class="prog-utility-bar__dropdown-group">
+      <label class="prog-utility-bar__dropdown-label">{{utilityBarConfig.sourceDropdown.label}}</label>
+      <div class="prog-field swse-filter-field swse-filter-field--select">
+        <select class="prog-input"
+                data-utility-select="{{utilityBarConfig.sourceDropdown.id}}"
+                data-dropdown-type="source">
+          {{#each utilityBarConfig.sourceDropdown.options}}
+            <option value="{{this.value}}">{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+  {{/if}}
+
   {{! Sort dropdown }}
   {{#if utilityBarConfig.sorts}}
     <div class="prog-field swse-filter-field swse-filter-field--select">

@@ -24,6 +24,7 @@ import { EnhancedEngineer } from "/systems/foundryvtt-swse/scripts/engine/combat
 import { EnhancedPilot } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-pilot.js";
 import { EnhancedCommander } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-commander.js";
 import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -170,10 +171,31 @@ export class SWSEV2VehicleSheet extends
       cargoState
     });
 
+    // Action Economy Context (for combat tab)
+    let actionEconomy = null;
+    if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {
+      // Only show action economy if actor is in active combat
+      const combatId = game.combat.id;
+      const { ActionEconomyPersistence } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js");
+      const { ActionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js");
+
+      const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
+      const state = ActionEngine.getVisualState(turnState);
+      const breakdown = ActionEngine.getTooltipBreakdown(turnState);
+      const enforcementMode = HouseRuleService.getString('actionEconomyMode', 'loose');
+
+      actionEconomy = {
+        state,
+        breakdown,
+        enforcementMode
+      };
+    }
+
     // Starship Maneuvers (for pilot/crew positions)
     const starshipManeuvers = StarshipManeuversEngine.getManeuversForActor(actor);
 
     const overrides = {
+    actionEconomy,
       // Core document and system data
       system: actor.system,
       derived: derived,  // Now properly normalized by buildVehicleDerived

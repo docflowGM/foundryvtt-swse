@@ -180,6 +180,12 @@
            wireWeaponRolling listener. Builder-config weapons (droidSystems.weapons) are config data
            only and do not appear here since they lack actor item IDs. --}}
       <section class="tab" data-group="primary" data-tab="combat">
+        {{#if actionEconomy}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/action-economy-indicator.hbs"
+              actionState=actionEconomy.state
+              actionBreakdown=actionEconomy.breakdown
+              swiftMax=actionEconomy.state.swiftMax}}
+        {{/if}}
         <div class="swse-panel">
           <div class="swse-panel-title">Weapons</div>
           <div class="swse-list">

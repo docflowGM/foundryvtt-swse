@@ -44,6 +44,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       large: false,
       'bonus-stat': '',                 // selected stat ('str', 'dex', 'con', 'int', 'wis', 'cha', or '')
       'penalty-stat': '',               // selected stat ('str', 'dex', 'con', 'int', 'wis', 'cha', or '')
+      'source': '',                     // selected source book/package name
     };
     this._sortBy = 'source';          // 'source' | 'alpha' — source groups Humans/Near-Humans first
 

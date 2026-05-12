@@ -10,6 +10,7 @@
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
 
 const SKILL_ALIASES = Object.freeze({
   acrobatics: 'acrobatics',
@@ -301,12 +302,27 @@ export class SkillFeatResolver {
     const options = this.getSkillRerollOptions(actor, skillKey, context);
     if (!options.length || !roll) return [];
 
-    return options.map(option => ({
+    // Filter: exclude encounter-limited rerolls that have already been used
+    const availableOptions = options.filter(option => {
+      if (!option.oncePer) return true; // No limit, always available
+
+      // Sync check: is it used this encounter?
+      const activeCombatId = game.combat?.started ? game.combat.id : null;
+      const usageFlag = actor?.getFlag?.('foundryvtt-swse', 'featureUsesThisEncounter') || {};
+      const lastUsedId = usageFlag[`reroll-skill-${option.id}`];
+
+      if (lastUsedId === activeCombatId) return false; // Already used this encounter
+      return true; // Available
+    });
+
+    return availableOptions.map(option => ({
       ...option,
       actorId: actor?.id ?? '',
       originalTotal: roll.total,
       formula: roll.formula ?? '1d20',
-      outcomeLabel: option.outcome === 'keepBetter' ? 'Keep better result' : 'Must accept reroll'
+      outcomeLabel: option.outcome === 'keepBetter' ? 'Keep better result' : 'Must accept reroll',
+      ruleId: option.id,
+      oncePer: option.oncePer ?? null
     }));
   }
 
@@ -328,6 +344,22 @@ export class SkillFeatResolver {
     const outcome = this._normalizeOutcome(button.dataset.outcome);
     const skillKey = button.dataset.skillKey || '';
     const sourceName = button.dataset.sourceName || 'Reroll';
+    const ruleId = button.dataset.ruleId;
+    const oncePer = button.dataset.oncePer;
+
+    // Check encounter-use limit before executing reroll
+    if (oncePer === 'encounter') {
+      const allowed = await EncounterUseTracker.checkAndMarkUsed(
+        actor,
+        `reroll-skill-${ruleId}`,
+        { oncePer }
+      );
+      if (!allowed.allowed) {
+        ui?.notifications?.warn?.(`${sourceName}: ${allowed.reason}`);
+        return null;
+      }
+    }
+
 
     const newRoll = await RollEngine.safeRoll(formula, actor.getRollData?.() ?? {}, {
       actor,
