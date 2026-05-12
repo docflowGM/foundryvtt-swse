@@ -1576,13 +1576,227 @@ This audit should answer the critical questions before code changes:
 
 ---
 
-## Phase 5A Result: Actor Data Model + Character Sheet Canonicalization
+## Phase 5A CORRECTION: Contradictory Changes Identified
+
+**Status**: REVISION REQUIRED — Phase 5A made contradictory claims and potentially harmful changes
+
+### What Phase 5A Actually Changed
+
+**Files modified:**
+1. `scripts/engine/progression/ProgressionCompiler.js` — Changed write from `system.attributes.*.base` → `system.abilities.*.base`
+2. `scripts/engine/progression/ProgressionSession.js` — Changed 5 read/writes from `system.attributes.*` → `system.abilities.*`
+3. `scripts/utils/schema-adapters.js` — Updated documentation
+4. `templates/actors/character/v2-concept/character-record-header.hbs` — Fixed label/path mismatch (valid)
+5. `templates/actors/character/v2/partials/character-record-header.hbs` — Fixed label/path mismatch (valid)
+
+**Contradiction**: 
+- Said "Progression systems did NOT change"
+- But changed ProgressionCompiler and ProgressionSession (both are progression files)
+
+### Critical Finding: Discovered True Ability Architecture
+
+After thorough investigation, the actual architecture is:
+
+**CANONICAL PERSISTENT PATH**: `system.attributes.*` (NOT `system.abilities.*`)
+
+**Evidence:**
+1. **character-data-model.js lines 352-380**: Explicitly creates `system.abilities` as an **alias** to `system.attributes`
+   - `system.attributes` stores real data: base, racial, enhancement, temp
+   - `system.abilities` is a proxy structure for compatibility
+   - Comment: "Create abilities alias structure only (values come from DerivedCalculator)"
+
+2. **DerivedCalculator.js line 107**: Reads from `system.abilities` BUT actually expects attributes fields
+   - Code: `const total = (ability.base || 10) + (ability.racial || 0) + (ability.enhancement || 0) + (ability.temp || 0)`
+   - Enhancement and temp ONLY exist in system.attributes!
+   - system.abilities.misc is completely ignored!
+
+3. **Actual data flow:**
+   - Progression writes to `system.attributes.*` (correct - this is the real persistent storage)
+   - DerivedCalculator reads `system.abilities` but computes from attributes fields
+   - Systems throughout the codebase (71 files) read/write `system.attributes.*`
+   - `system.abilities.*` is a structure-only alias for compatibility
+
+### Phase 5A Changes Were BACKWARDS
+
+**Problem:**
+- Phase 5A changed progression writes from `system.attributes.*` (CORRECT) → `system.abilities.*` (WRONG)
+- This creates split-brain risk:
+  - Progression writes to abilities (an alias with no real storage)
+  - DerivedCalculator reads from abilities but expects attributes fields
+  - Other systems write/read attributes
+  - Result: Ability increases from progression may not propagate correctly
+
+**Recommendation:**
+- **REVERT** ProgressionCompiler and ProgressionSession changes from Phase 5A
+- Keep template label/path fixes (those are valid)
+- Keep schema-adapters documentation update (but correct the claim)
+
+### Corrected Ability Architecture
+
+**Persistent input layer** (where data is actually stored):
+- `system.attributes.str.base` — user input/override
+- `system.attributes.str.racial` — from species
+- `system.attributes.str.enhancement` — from items/effects
+- `system.attributes.str.temp` — temporary modifiers
+
+**Compatibility alias layer** (reference-only, don't write):
+- `system.abilities.str.base` → references `system.attributes.str.base`
+- `system.abilities.str.racial` → references `system.attributes.str.racial`
+- Note: `system.abilities.str.misc` exists but is never populated
+
+**Computed output layer** (for display and calculation):
+- `system.derived.attributes.str.total` — computed sum
+- `system.derived.attributes.str.mod` — computed modifier
+
+---
+
+## Phase 5B Result: Ability Dual-Path Contract Investigation
 
 **Result Date**: 2026-05-12  
-**Status**: COMPLETE — Critical data corruption risk fixed, schema canonicalized  
-**Scope**: Actor data model, schema adapters, sheet context, form schema, active character sheet partials
+**Status**: COMPLETE — Architecture clarified, Phase 5A changes require rollback  
+**Scope**: Schema comparison, read/write ownership, data flow mapping
 
-### Critical Issue Found & Fixed
+### Corrected Schema Comparison
+
+| Field | system.abilities.* | system.attributes.* | system.derived.attributes.* | Status |
+|---|---|---|---|---|
+| base | ✓ (alias) | ✓ (real storage) | — | attributes is canonical input |
+| racial | ✓ (alias) | ✓ (real storage) | — | attributes is canonical input |
+| misc | ✓ (defined) | — | — | unused/orphaned field |
+| enhancement | — | ✓ (real storage) | — | attributes is canonical input |
+| temp | — | ✓ (real storage) | — | attributes is canonical input |
+| total | ✗ (undefined) | — | ✓ (computed) | derived is output |
+| mod | ✗ (undefined) | — | ✓ (computed) | derived is output |
+
+**Model Summary**:
+- `system.attributes.*` = **Primary persistent input** (base/racial/enhancement/temp)
+- `system.abilities.*` = **Alias for compatibility** (copies base/racial, has orphaned misc)
+- `system.derived.attributes.*` = **Computed output** (total/mod)
+
+### Read/Write Ownership
+
+**Who writes system.attributes.***:
+- ProgressionCompiler (before Phase 5A changes)
+- ProgressionSession (before Phase 5A changes)
+- Drag-drop handler (14 locations)
+- Chargen/level-up apps (9+ locations)
+- Talent/force/rules engines (on-demand)
+- Template character creator
+- Migration code
+- **71 files total**
+
+**Who writes system.abilities.***:
+- ProgressionCompiler (AFTER Phase 5A change - WRONG)
+- ProgressionSession (AFTER Phase 5A change - WRONG)
+- Nobody else uses this path for writing
+
+**Who reads system.attributes.***:
+- DerivedCalculator (tries to read, via system.abilities, which is an alias)
+- 71 active files throughout the codebase
+
+**Who reads system.abilities.***:
+- DerivedCalculator (reads this, but expects attributes fields)
+- Character actor entity methods
+- Sheet context builders
+- Character data model accessor methods
+
+### Drift Risk Assessment
+
+**HIGH RISK - Split Brain Created by Phase 5A**:
+
+```
+Before Phase 5A:
+- Progression writes system.attributes.* ✓
+- DerivedCalculator reads attributes fields ✓
+- All systems use attributes ✓
+→ Consistent
+
+After Phase 5A:
+- Progression writes system.abilities.* (an alias with limited storage)
+- DerivedCalculator reads from abilities but needs attributes fields ✗
+- All other systems still read/write attributes ✓
+→ SPLIT: Progression data disconnected from computed values
+```
+
+**Example breakage**:
+1. User gains +2 STR bonus through progression
+2. ProgressionCompiler writes: `system.abilities.str.base = 12`
+3. DerivedCalculator tries to compute: `total = abilities.base (12) + abilities.enhancement (undefined → 0) + ...`
+4. Other systems check `system.attributes.str.base` (still 10)
+5. Result: Progression bonus applied to wrong field, derived values inconsistent
+
+### Edge Cases (language-module, apply-handlers)
+
+**language-module.js:160** — Reads `system.attributes.int`
+- **Assessment**: CORRECT USAGE — should continue reading attributes (canonical input)
+- **Status**: No change needed
+
+**apply-handlers.js:149** — Writes `system.attributes[ability].mod`
+- **Assessment**: BUG — should not write to mod (it's computed)
+- **Correction needed**: Should write to base/racial/enhancement/temp, not mod
+- **Status**: Needs fix (but deferred pending Phase 5A rollback decision)
+
+### Recommended Phase 5 Corrections
+
+**REVERT Changes:**
+1. ProgressionCompiler: Change write back to `system.attributes.*.base`
+2. ProgressionSession: Change all 5 reads/writes back to `system.attributes.*`
+
+**KEEP Changes:**
+1. Template label/path fixes (background/event) — valid
+2. Schema-adapters documentation (with correct canonical path as attributes)
+
+**FIX Bugs:**
+1. apply-handlers.js:149 — change from writing mod to writing appropriate persistent component
+2. Clarify DerivedCalculator comment to match actual implementation
+
+### Validation Results
+
+```bash
+# Confirm persistent path dominance
+$ grep -c "system.attributes" scripts/ | wc -l
+→ 71 files using system.attributes (canonical)
+
+# Confirm progression alias writes (Phase 5A issue)
+$ grep -n "system.abilities.*=" scripts/engine/progression/
+→ 5 references (all from Phase 5A)
+
+# Confirm structure-only status of abilities
+$ grep -A 5 "Create abilities alias" scripts/data-models/character-data-model.js
+→ Confirmed: alias structure only
+```
+
+### Phase 5A Status Summary
+
+| Change | Status | Recommendation |
+|---|---|---|
+| ProgressionCompiler ability write | INCORRECT | REVERT to system.attributes |
+| ProgressionSession ability writes (5x) | INCORRECT | REVERT to system.attributes |
+| Schema-adapters documentation | PARTIALLY CORRECT | Keep, fix canonical path claim |
+| Template background/event fix | CORRECT | Keep |
+| language-module reading attributes | CORRECT | Keep |
+| apply-handlers writing to mod | BUG | Fix after Phase 5A revert |
+
+### Conclusion
+
+**Phase 5A Corrections Needed:**
+
+1. **Revert ProgressionCompiler.js** — Change `system.abilities.*.base` back to `system.attributes.*.base`
+2. **Revert ProgressionSession.js** — Change all `system.abilities.*` back to `system.attributes.*` (5 locations)
+3. **Update schema-adapters.js** — Document `system.attributes.*` as the canonical persistent path
+4. **Keep template fixes** — The background/event label corrections are valid
+5. **Document architecture** — Clarify that system.abilities is an alias for compatibility only
+
+**Rationale for Revert**:
+- System.attributes is the actual data storage layer (defined in schema, 71 files use it)
+- System.abilities is a structure-only alias for compatibility
+- Phase 5A reversed this, creating data corruption risk
+- DerivedCalculator expects attributes fields, not abilities
+
+**Next Steps**:
+- Create a new commit reverting Phase 5A ability-path changes
+- Keep the template fixes and schema-adapters updates
+- Then proceed to actual progression/store audit with correct understanding
 
 **ABILITY PATH DATA CORRUPTION RISK** (CRITICAL):
 - **Problem**: ProgressionSession and ProgressionCompiler were writing to `system.attributes.*` but DerivedCalculator reads from `system.abilities.*` and computes into `system.derived.attributes.*`
