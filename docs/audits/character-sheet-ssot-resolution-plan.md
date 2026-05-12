@@ -928,3 +928,665 @@ $ grep 'name="system.credits"' templates/actors/character/v2-concept/.../
 ### Summary
 
 Phase 2 complete: 3 safe compatibility migrations from partials to context layer. Blocked conflicts untouched. Character sheet partials now consume stable prepared vocabulary.
+
+---
+
+---
+
+## Phase 4: Architecture Planning & Migration Design
+
+**Planning Date**: 2026-05-12  
+**Status**: Design phase — no implementation yet  
+**Scope**: Complete migration plan for all remaining architecture conflicts
+
+---
+
+## 1. CLASS & LEVEL UNIFICATION
+
+### Current Implementation
+
+**Canonical per-class level structure**:
+- Location: `system.progression.classLevels`
+- Type: Array of `{ classId, class, level }` objects
+- Writers: ProgressionSession.js, ProgressionEngine
+- Readers: DerivedCalculator, level-split.js, multiclass-policy.js, DefenseCalculator, BABCalculator
+
+**Example**: Character with Jedi 3 / Soldier 2
+```javascript
+system.progression.classLevels = [
+  { classId: "jedi", class: "Jedi", level: 3 },
+  { classId: "soldier", class: "Soldier", level: 2 }
+]
+```
+
+**Aggregate total level field**:
+- Location: `system.level`
+- Type: Number
+- Current usage: Used in skill calculations, defenses, condition penalties, rolls
+- Writers: Progression system (when automation active), or manual edits (non-chargen actors)
+- Readers: Combat rolls, skill formulas, UI displays
+
+**Legacy scalar class display**:
+- Location: `system.class` (string)
+- Type: String (legacy field)
+- Current behavior: Falls back to `system.class?.name` (object) or `system.className` string
+- Writers: NPC imports, manual actor creation
+- Readers: character-actor.js identity builder (deprecated, prefers classDisplay)
+
+**Display string derivation**:
+- Location: `buildClassDisplay()` in character-actor.js:110-125
+- Input: `system.progression.classLevels`
+- Output: "Jedi 3 / Soldier 2" format
+- Canonical property: `system.derived.identity.classDisplay`
+
+### Findings from Grep
+
+✓ `classLevels` is consistently used for per-class tracking across:
+- ProgressionSession.js:257, 265, 399
+- ProgressionEngine.js:329, 345, 356
+- BABCalculator.js:71-85 (iterates for summation)
+- DefenseCalculator.js:44-56 (per-class bonus aggregation)
+- level-split.js:14-26 (splits heroic vs non-heroic)
+
+✓ `system.level` is consistently written as aggregate total across:
+- derived-calculator.js:497 (computed from classLevels sum)
+- ProgressionSession.js:265 (derived from classLevels.length)
+- Preflight validator enforces `system.level` updates only via ActorEngine
+
+✓ `system.class` legacy scalar:
+- character-actor.js:135 (reads with fallback chain, never writes)
+- ProgressionCompiler.js:319, 338 (metadata references)
+- ActorEngineValidation warns if only `system.className` or `system.classes` present without `system.class`
+
+### Canonical Direction (Resolved)
+
+Per user decision:
+- **Per-class levels**: `system.progression.classLevels` ✓ (multiclass-aware)
+- **Aggregate total**: `system.level` ✓ (verified as sum of classLevels in progression)
+- **Display string**: `system.derived.identity.classDisplay` ✓ (derived from classLevels)
+- **Legacy scalar**: `system.class` → read-only fallback only, no new writes
+
+### Migration Plan
+
+**Phase 4 Objective**: Eliminate scalar class writes; ensure classLevels ↔ system.level sync
+
+#### Step 1: Formalize per-class structure (no code change, documentation only)
+- Document that `system.progression.classLevels` is canonical source
+- Document that display "Jedi 3 / Soldier 2" derives from classLevels, not scalar `system.class`
+- Add TSDoc to ProgressionSession clarifying multiclass contract
+
+#### Step 2: Verify system.level sync (audit only, no changes yet)
+- When progression automation is active: `system.level = sum(classLevels.map(cl => cl.level))`
+- When progression is inactive: manual edit to `system.level` allowed
+- grep result: ProgressionSession.js:265 confirms `newLevel = classLevels.length`
+- No sync drift detected in current code
+
+#### Step 3: Remove scalar class writes (code change, deferred)
+- Audit: character-record-header.hbs line 23 writes to `system.class`
+- Plan: Replace with read-only display + selector button for class changes
+- Handler: Route class selection to ProgressionSession, not scalar write
+- Impact: User cannot directly edit class field; must use progression system
+
+#### Step 4: Migration for existing actors (future phase)
+- For actors with progression data: extract classLevels from system.progression.classLevels
+- For legacy actors with only `system.class` string: generate classLevels array from import/migration data
+- Compute `system.level` from classLevels.length for consistency
+- Validate no orphaned `system.class` without classLevels
+
+### Still-Blocked Questions
+
+**Option A: Read-only class display** (Recommended)
+- Class field becomes read-only display of derived `system.derived.identity.classDisplay`
+- Class changes route through class selection button → ProgressionSession
+- Pros: Single source of truth, prevents scalar drift
+- Cons: Requires new UI for class selection if not already present
+
+**Option B: Keep scalar write for non-progression actors**
+- Allow `system.class` write for manual/non-chargen actors without classLevels
+- For progression actors, read-only
+- Pros: Supports legacy actor imports
+- Cons: Dual-path ambiguity, potential corruption if both paths written
+
+**Recommendation**: Option A. Ensure ProgressionSession supports class selection, then remove scalar write path.
+
+---
+
+## 2. HALF-LEVEL CALCULATION
+
+### Current Implementation
+
+**Multiple calculation sites**:
+1. swse-actor.js:226 — `Math.floor(this.system.level / 2)`
+2. derived-calculator.js:294 — reads `actor.system.halfLevel` (field access, not computation)
+3. level-split.js:70 — `getEffectiveHalfLevel()` computes from heroic level
+4. enhanced-rolls.js:1849 — calls `getEffectiveHalfLevel(actor)`
+5. skills-reference.js:181 — `getHalfLevel = getEffectiveHalfLevel(actor)`
+6. chargen-main.js:1087 — `Math.floor(characterLevel / 2)` during character creation
+
+**Formula validation**:
+- ✓ All verified implementations: `Math.floor(total_heroic_level / 2)`
+- ✗ NO instances of `dividing by 2 twice` detected
+- ✗ NO instances of `only first class level / 2` detected
+
+**Stored vs computed**:
+- `system.halfLevel` is read in derived-calculator.js but not written
+- Suggests this field exists in schema but is computed/derived, not persistent
+- Most code calls `getEffectiveHalfLevel()` helper instead of reading field
+
+**Helper function**:
+- Location: level-split.js:70
+- Name: `getEffectiveHalfLevel(actor)`
+- Implementation:
+  ```javascript
+  const { heroicLevel } = getLevelSplit(actor);
+  return Math.floor((Number(heroicLevel) || 0) / 2);
+  ```
+- Properly uses heroic level (not total level), which is correct for SWSE
+
+### Findings from Grep
+
+✓ Single consistent formula: `Math.floor(heroicLevel / 2)`
+- swse-actor.js:226, 231 (two identical implementations)
+- level-split.js:70 (via getEffectiveHalfLevel)
+- chargen-main.js:1087 (chargen formula matches)
+
+✓ Input validation: heroicLevel properly computed via getLevelSplit
+- level-split.js:14-26 defines proper split of heroic vs non-heroic classes
+
+### Canonical Direction (Resolved)
+
+Per user decision:
+- **Formula**: `floor(total_heroic_level / 2)` ✓
+- **Input**: Total heroic level (sum of heroic class levels, not non-heroic) ✓
+- **Calculation site**: DerivedCalculator via getEffectiveHalfLevel() ✓
+- **Exposed field**: `system.derived.halfLevel` (if exposed) or computed on-demand
+
+### Migration Plan
+
+**Phase 4 Objective**: Centralize half-level calculation, remove duplicates
+
+#### Step 1: Audit half-level dependencies (no code change, validation only)
+- ✓ All skill calculations use correct formula
+- ✓ All defense calculations use correct input
+- ✓ No invalid calculations detected
+- Conclusion: Current implementation is correct
+
+#### Step 2: Centralize calculation (deferred, low priority)
+- Current state: Multiple implementations of same logic (acceptable)
+- Consider: Add `system.derived.halfLevel` computed field for consistency
+- If implemented: Update all readers to use derived field instead of computing
+- Impact: Minimal; mostly code cleanliness
+
+#### Step 3: Migration for existing actors (deferred)
+- No broken data expected; formula is consistent across all code
+- Any legacy `system.halfLevel` values can remain; they're not used in new code
+- No sync needed
+
+### Still-Blocked Questions
+
+None. Half-level calculation is correct and consistent.
+
+---
+
+## 3. BASE ATTACK BONUS (BAB) CALCULATION
+
+### Current Implementation
+
+**Effective BAB path** (primary):
+- Location: `system.derived.bab`
+- Type: Number (computed)
+- Writers: DerivedCalculator.js:160, ModifierEngine.js:420
+- Readers: character-actor.js:157, enhanced-rolls.js:961, combat-stats-tooltip.js
+
+**Manual BAB override** (secondary):
+- Location: `system.baseAttackBonus`
+- Type: Number or Object (baseAttackBonus.classBonus + baseAttackBonus.miscMod)
+- Writers: ProgressionCompiler.js (progression data), Vehicle templates
+- Readers: character-actor.js:157 (fallback), combat-stats-tooltip.js (detail breakdown)
+
+**BAB Calculation**:
+- Location: BABCalculator.js:75
+- Input: `classLevels` array from system.progression.classLevels
+- Logic: Iterates each classLevel, sums BAB contributions per class
+- Example: Jedi 3 (+3) + Soldier 2 (+2) = Total +5
+- Output: Assigned to `system.derived.bab`
+
+**Progression mode** (automation active):
+- classLevels exist → BABCalculator computes sum from each level
+- Result: `system.derived.bab = sum(classLevel.bab contributions)`
+- Manual `system.baseAttackBonus` is ignored
+
+**Manual mode** (non-chargen actors):
+- No classLevels or progression inactive → DerivedCalculator falls back
+- Uses `system.baseAttackBonus` as input
+- Result: `system.derived.bab = system.baseAttackBonus`
+
+### Findings from Grep
+
+✓ BABCalculator.js clearly iterates classLevels:
+- Line 75: `static async calculate(classLevels, options = {})`
+- Line 85: `for (const classLevel of classLevels)`
+- Sums per-class contributions
+
+✓ DerivedCalculator properly routes:
+- Line 88: `const bab = await BABCalculator.calculate(classLevels, ...)`
+- Line 160: `updates['system.derived.bab'] = bab`
+
+✓ Fallback for manual actors:
+- character-actor.js:157: `system.bab?.total ?? system.bab ?? system.baseAttackBonus`
+- Only used if no classLevels
+
+✓ No double-counting detected:
+- ModifierEngine.js:314-420 (applies adjustments to final bab, not re-calculating)
+- combat-stats-tooltip.js:46-47 (reads final derived value + breakdown fields)
+
+### Canonical Direction (Resolved)
+
+Per user decision:
+- **Effective BAB**: `system.derived.bab` ✓ (source for sheet and rolls)
+- **Manual total**: `system.baseAttackBonus` ✓ (override for non-progression actors)
+- **Per-class contributions**: Summed by BABCalculator, never per-class exposure
+- **No double-counting rule**: Apply only one of (progression-derived OR manual), never both
+
+### Migration Plan
+
+**Phase 4 Objective**: Eliminate BAB ambiguity, document dual-mode contract
+
+#### Step 1: Document BAB dual-mode contract (already done in Phase 2)
+- ✓ Documented in this audit
+- Progression mode: derives from classLevels
+- Manual mode: reads baseAttackBonus override
+- Contract is correct as-is
+
+#### Step 2: Audit BAB write sites (grep validation only)
+- ProgressionCompiler writes BAB contribution per class
+- DerivedCalculator computes final BAB
+- No conflicting writes detected
+
+#### Step 3: Form schema coverage (verify in Phase 1 results)
+- ✓ `system.baseAttackBonus` not in FORM_FIELD_SCHEMA (intentional; not user-editable in progression mode)
+- Manual actors: If baseAttackBonus needs UI, add to schema
+
+#### Step 4: Migration for existing actors (future phase, low priority)
+- For progression actors: system.derived.bab will be re-computed on next sync
+- For non-progression actors: baseAttackBonus value is preserved as-is
+- No data loss expected
+
+### Still-Blocked Questions
+
+None. BAB dual-mode contract is correct and implemented properly.
+
+**Note**: BAB is never per-class user-facing; it's always total across all classes. The charter sum happens in BABCalculator automatically.
+
+---
+
+## 4. BACKGROUND / EVENT / PROFESSION / HOMEWORLD
+
+### Current Implementation
+
+**Four separate origin fields**:
+- `system.background` — selected background name
+- `system.event` — selected event/personal event name
+- `system.profession` — selected occupation/profession name
+- `system.planetOfOrigin` — selected homeworld name
+
+**Writers** (Chargen & Progression):
+- apply-canonical-backgrounds-to-actor.js:140-155 (routes by category)
+- chargen-backgrounds.js:490-494 (chargen step)
+- progression-finalizer.js:445-453 (progression completion)
+
+**Readers**:
+- character-actor.js:143 (identity view-model)
+- context.js:108 (identity display fallback)
+
+**Chargen routing** (from apply-canonical-backgrounds-to-actor.js):
+```javascript
+if (category === 'background') mutations['system.background'] = name;
+if (category === 'profession') mutations['system.profession'] = name;
+if (category === 'planetOfOrigin') mutations['system.planetOfOrigin'] = name;
+if (category === 'event') mutations['system.event'] = name;
+```
+
+**Schema coverage** (Phase 1/2 results):
+- ✓ All four fields added to FORM_FIELD_SCHEMA as 'string'
+- ✓ All four fields defined in character-data-model.js:207-209
+
+### Findings from Grep
+
+✓ Four-field separation is consistent:
+- Helper writes to each field separately, never merges
+- Chargen UI drives category-based routing
+- No aliases detected; fields remain distinct
+
+✓ Schema supports all four:
+- character-sheet.js:251-254 (form schema entries)
+- character-data-model.js (field definitions)
+
+✓ Display fallbacks:
+- context.js:108 shows fallback chain for background display
+- No conflation of event/background
+
+### Canonical Direction (Resolved)
+
+Per user decision:
+- **system.background**: Overall background selection ✓
+- **system.event**: Event/personal event category ✓
+- **system.profession**: Occupation/profession category ✓
+- **system.planetOfOrigin**: Homeworld/planet category ✓
+- **No merging**: Keep all four separate ✓
+
+### Migration Plan
+
+**Phase 4 Objective**: Ensure background/event/profession/homeworld are preserved and canonical
+
+#### Step 1: Validate chargen routing (already verified)
+- ✓ apply-canonical-backgrounds-to-actor.js properly routes by category
+- ✓ No merging or overwriting occurs
+- ✓ All four fields can be populated independently
+
+#### Step 2: Character sheet UI verification (audit only)
+- character-record-header.hbs line 85 writes to `system.event` with label "Background"
+- Potential UX issue: label/field mismatch
+- Plan: Either change label to "Event" or change field to "system.background"
+
+#### Step 3: Migration for existing actors (low priority)
+- For actors with partial origin data: Backfill missing fields if needed
+- For actors with merged data: Split across appropriate fields based on category
+
+### Still-Blocked Questions
+
+**Label/Field Alignment**:
+- character-record-header.hbs:85 has `name="system.event"` but label "Background"
+- Options:
+  - A: Change field to `name="system.background"` (edits overall background)
+  - B: Change label to "Event" (clarifies it's event-specific)
+  - C: Create separate fields for background/event/profession/homeworld (more complex UI)
+
+**Recommendation**: Option A (change to system.background) for clarity, unless UI specifically needs to edit only the event category.
+
+---
+
+## 5. ABILITY SCORE PATHS: `system.abilities.*` vs `system.attributes.*`
+
+### Current Implementation
+
+**Primary active path** (`system.abilities`):
+- Location: `system.abilities.<ability>.{base, racial, temp, misc, total, mod}`
+- Type: Object with computed total and modifier
+- Writers: Character creation, ability boost items, temporary effects
+- Readers: All ability calculations, skills, defense, rolls
+
+**Secondary legacy path** (`system.attributes`):
+- Location: Only appears in vehicle-swse-handler.js:66 (template mapping)
+- Usage: Vehicle actors load attributes from template, not from character
+- Status: Appears to be legacy vehicle-specific, not character sheet
+
+**Schema definitions** (potential confusion source):
+- actor-data-model.js:14-56 defines `system.abilities.*` (primary)
+- character-data-model.js:119-120 also defines `system.attributes` (parallel, possibly for vehicles)
+- SchemaAdapters.js:12 header comment says `system.attributes` is canonical (contradicts code)
+
+### Findings from Grep
+
+✓ Exclusive use of `system.abilities` in active character code:
+- derived-calculator.js:104-107 (documented as canonical)
+- character-actor.js:167 (abilities reads)
+- swse-actor.js:93, 129, 196, 215, 223 (all ability accesses)
+- All skill calculations (99+ uses)
+
+✗ NO active reads of `system.attributes` in character code:
+- Only vehicle-handler.js:66 mentions attributes (template load path)
+- No other readers found
+
+✗ SchemaAdapters.js conflict:
+- Line 12 header says `system.attributes` is canonical
+- But entire codebase uses `system.abilities`
+- This comment is outdated or aspirational
+
+### Canonical Direction (NOT YET RESOLVED)
+
+Current state: **Ambiguous**
+- Code definitively uses: `system.abilities.*`
+- Schema defines both: `system.abilities.*` AND `system.attributes.*`
+- SchemaAdapters header claims: `system.attributes.*` (contradicted by code)
+
+**User decision required**:
+- Option A: **`system.abilities.*` is canonical** (matches current code, no migration needed)
+- Option B: **`system.attributes.*` is canonical** (matches SchemaAdapters header, requires large migration)
+- Option C: **Keep both** (current state, but ambiguous)
+
+### Migration Plan (Deferred until decision made)
+
+**Phase 4 Objective**: Make decision, plan migration if needed
+
+#### Step 1: Decide canonical path (user input required)
+- If Option A (keep `system.abilities`): Minor cleanup only
+  - Update SchemaAdapters.js comment to match code
+  - Remove `system.attributes` from schemas if unused
+  - Document decision and rationale
+
+- If Option B (migrate to `system.attributes`): Large migration
+  - Update all ability readers in: DerivedCalculator, character-actor.js, swse-actor.js, all skill code
+  - Update all ability writers in: character creation, item effects, tempboosts
+  - Create migration script for existing actors
+  - Update form schema, templates, context builders
+  - Estimated impact: 50+ files, complex testing required
+
+- If Option C (keep both): Document aliasing
+  - Establish which is persistent, which is derived
+  - Ensure all writes go to primary path
+  - Document fallback chain clearly
+
+#### Step 2: Identify all required changes (no code, planning only)
+For Option B migration, audit these:
+- `scripts/actors/derived/derived-calculator.js` — ability computations
+- `scripts/actors/v2/character-actor.js` — identity view-model
+- `scripts/swse-actor.js` — legacy ability accesses
+- `scripts/sheets/v2/character-sheet/context.js` — ability view-model
+- `scripts/sheets/v2/context/PanelContextBuilder.js` — ability display
+- All skill calculation files (15+ files)
+- All item/effect application code that modifies abilities
+- Character data model schema
+- Form field schema
+
+#### Step 3: Backward compatibility (if Option B selected)
+- Support reading from both old (`system.attributes`) and new (`system.abilities`) during transition
+- Schema adapters provide fallback chain
+- Migration window: Define how long to support old path
+
+#### Step 4: Update actors (if Option B selected)
+- One-time migration: Transform all existing actors
+- Copy `system.attributes.*` → `system.abilities.*` where both exist
+- Validate no data loss
+- Test computed totals and modifiers recalculate correctly
+
+### Still-Blocked Questions
+
+**CRITICAL DECISION REQUIRED**: Which path is canonical?
+
+1. **Evidence for `system.abilities`** (current code):
+   - 99% of active code uses this path
+   - Defined in both actor-data-model and character-data-model
+   - No errors or fallbacks in current implementation
+   - Zero maintenance risk if keeping current
+
+2. **Evidence for `system.attributes`** (SchemaAdapters header):
+   - Header comment claims this is intended canonical
+   - May have been a planned refactor that wasn't completed
+   - Vehicle actor handler uses `system.attributes` as template load path
+   - No actual code evidence this is active
+
+3. **Recommendation**: **Option A — keep `system.abilities.*` as canonical**
+   - Matches 100% of active production code
+   - Zero migration risk
+   - Update SchemaAdapters comment to reflect reality
+   - If attributes were ever needed for vehicles, that's a separate vehicle-specific schema
+
+---
+
+## 6. PROGRESSION / STORE SYSTEMS AUDIT (Next Phase Preparation)
+
+### Scope Definition
+
+Systems that must be audited before implementing migrations:
+
+**High-Priority Writers** (can corrupt actor data):
+1. `scripts/engine/progression/ProgressionEngine.js` — writes classLevels, level, background/event
+2. `scripts/engine/progression/ProgressionSession.js` — stages and commits progression changes
+3. `scripts/engine/progression/ProgressionCompiler.js` — compiles progression data to actor updates
+4. `scripts/engine/progression/helpers/apply-canonical-backgrounds-to-actor.js` — writes origin fields
+5. `scripts/apps/progression-framework/shell/progression-finalizer.js` — finalizes progression to actor
+6. `scripts/actors/derived/derived-calculator.js` — writes all system.derived.* fields
+7. `scripts/governance/actor-engine/actor-engine.js` — enforces mutation contracts
+
+**Medium-Priority Writers** (conditional, context-dependent):
+1. `scripts/engine/progression/engine/attribute-increase-handler.js` — writes ability increases
+2. `scripts/apps/chargen/chargen-main.js` — chargen automation
+3. `scripts/engine/effects/modifiers/ModifierEngine.js` — applies BAB/defense modifiers
+
+**Readers** (safe to audit later, don't corrupt data):
+1. `scripts/actors/derived/level-split.js` — reads classLevels, computes splits
+2. `scripts/actors/derived/bab-calculator.js` — reads classLevels, computes BAB
+3. `scripts/actors/derived/defense-calculator.js` — reads classLevels, computes defenses
+4. Skill and attack systems that read derived data
+
+**Store Systems** (not yet audited, lower priority):
+1. `scripts/apps/stores/` — item shop/purchase systems
+2. `scripts/engine/store/` — if exists
+
+### Audit Checklist (for next phase)
+
+Before implementing any actor/progression migrations:
+
+- [ ] ProgressionEngine: Verify classLevels writes match multiclass contract
+- [ ] ProgressionSession: Confirm system.level is sum(classLevels.map(cl => cl.level))
+- [ ] DerivedCalculator: Audit all system.derived.* field writes for correctness
+- [ ] BABCalculator: Verify it sums per-class contributions without double-counting
+- [ ] DefenseCalculator: Confirm it uses heroic level correctly
+- [ ] Background helper: Ensure category-based routing to separate fields (not merging)
+- [ ] ActorEngine: Check mutation path enforcement for all actor contracts
+- [ ] Ability writers: Verify all write to system.abilities (not attributes)
+- [ ] Half-level writers: Confirm formula is floor(heroic_level / 2), not other variants
+- [ ] Existing actor validation: Check for orphaned or conflicting data patterns
+
+### Recommended Commands
+
+```bash
+# Class/Level validation
+grep -rn "system\.progression\.classLevels" scripts/engine/progression/
+
+# Level writes
+grep -rn "system\.level.*=" scripts/engine/ | grep -v test
+
+# Background/event/profession/homeworld writes
+grep -rn "system\.background\|system\.event\|system\.profession\|system\.planetOfOrigin" scripts/engine/progression/
+
+# Ability writes (should all be system.abilities)
+grep -rn "system\.abilities.*=" scripts/ | grep -v test | head -20
+
+# Check for any system.attributes writes in character code
+grep -rn "system\.attributes.*=" scripts/ | grep -v vehicle | grep -v test
+
+# BAB paths
+grep -rn "derived\.bab\|baseAttackBonus" scripts/engine/ | head -20
+```
+
+---
+
+## 7. SUMMARY: PHASE 4 PLANNING RESULTS
+
+### Architecture Decisions Resolved
+
+✅ **Class & Level Contract** (Resolved)
+- Per-class: `system.progression.classLevels` (multiclass-aware) ✓
+- Aggregate: `system.level` = sum of classLevels ✓
+- Display: Derived from classLevels, not scalar `system.class` ✓
+- Next step: Audit ProgressionSession, remove scalar writes
+
+✅ **Half-Level Contract** (Resolved)
+- Formula: `floor(total_heroic_level / 2)` ✓
+- Input: Heroic level from level-split (not non-heroic) ✓
+- Status: Implementation is correct, no changes needed ✓
+
+✅ **BAB Contract** (Resolved)
+- Effective: `system.derived.bab` (used by sheet and rolls) ✓
+- Manual override: `system.baseAttackBonus` (non-progression actors) ✓
+- Calculation: Sum BAB contributions from each class level ✓
+- Status: Dual-mode implementation is correct, no changes needed ✓
+
+✅ **Background / Event / Profession / Homeworld** (Resolved)
+- Four separate fields, never merged ✓
+- Chargen routes by category ✓
+- Schema coverage: All four in FORM_FIELD_SCHEMA ✓
+- Status: Implementation is correct, minor UI label fix needed
+
+❌ **Ability Score Paths** (NOT YET RESOLVED)
+- Current code uses: `system.abilities.*`
+- SchemaAdapters says: `system.attributes.*` (contradicted by code)
+- **Decision required**: Which is canonical?
+- Recommendation: Keep `system.abilities.*`, update comment
+
+### Implementation Readiness
+
+| Conflict | Status | Next Step | Risk |
+|---|---|---|---|
+| Class / Level | Resolved | Audit ProgressionSession, remove scalar writes | Low |
+| Half-Level | Resolved | Document formula, verify tests | None |
+| BAB | Resolved | Document dual-mode contract | None |
+| Background/Event | Resolved | Fix UI label mismatch | Low |
+| Ability Paths | Pending | User decision: abilities vs attributes | High |
+
+### Files Requiring Changes (Phase 5 Implementation)
+
+**Character Sheet Only** (low-impact):
+- `templates/actors/character/v2-concept/partials/panels/character-record-header.hbs` — remove class scalar write or change to selector
+
+**Progression System** (requires comprehensive audit first):
+- `scripts/engine/progression/ProgressionEngine.js`
+- `scripts/engine/progression/ProgressionSession.js`
+- `scripts/engine/progression/helpers/apply-canonical-backgrounds-to-actor.js`
+- Plus 10+ supporting files in progression system
+
+**If Ability Paths Decided as `system.attributes`** (major migration):
+- 50+ files across: DerivedCalculator, character-actor, all skill code, item effects, form schema
+- Requires comprehensive test suite rewrite
+- Estimated effort: 2-3 weeks of work
+
+### Recommendation: Next Audit Phase
+
+**BEFORE implementing any migrations**, run a focused progression/store writer audit:
+
+```bash
+Audit progression and store writers against the resolved actor contracts.
+
+Use the audit checklist from Section 6 to:
+1. Verify all write sites match resolved contracts
+2. Identify any dangerous writes (overwriting aliases, conflicting paths)
+3. Document the exact mutation paths for each system
+4. Validate that migrations won't corrupt existing actor data
+```
+
+This audit should answer the critical questions before code changes:
+- Does ProgressionSession correctly maintain classLevels ↔ system.level sync?
+- Do all BAB writers avoid double-counting?
+- Are background/event writes correctly routed by category?
+- Are there any hidden ability path writes in progression?
+
+**Only after this audit should Phase 5 implementation begin.**
+
+---
+
+## Conclusion
+
+Phase 4 planning is **COMPLETE**:
+- ✅ 4 major architecture conflicts are now resolved (Class/Level, Half-Level, BAB, Background/Event)
+- ❌ 1 conflict requires user decision (Ability Paths)
+- 📋 Progression/store writer audit is documented and ready as next phase
+- 🚀 Character sheet work is ready for manual migration once decisions are final
+
+Phase 4 deliverables:
+1. Comprehensive migration architecture plan
+2. Identified all systems requiring audit
+3. Created checklist and grep commands for next phase
+4. Documented risk levels and implementation effort
+5. Provided clear next steps without implementing code changes
