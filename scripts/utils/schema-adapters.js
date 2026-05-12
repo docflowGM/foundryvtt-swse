@@ -9,8 +9,9 @@
  * - HP:                      system.hp.value (max: system.hp.max) — ONLY ActorEngine.recomputeHP() writes .max
  * - Damage Threshold:        system.derived.damageThreshold
  * - Force Points:            system.forcePoints.value
- * - Ability Score:           system.attributes[ABILITY].base (persistent) or system.derived.attributes[ABILITY].total (computed)
- * - Ability Modifier:        system.derived.attributes[ABILITY].mod
+ * - Ability Score (Persistent): system.abilities[ABILITY].base (writable by progression/actor engine)
+ * - Ability Score (Computed): system.derived.attributes[ABILITY].total (read-only, computed by DerivedCalculator)
+ * - Ability Modifier:        system.derived.attributes[ABILITY].mod (read-only, computed by DerivedCalculator)
  * - Defense Total:           system.derived.defenses[DEFENSE].total
  * - BAB:                     system.derived.bab
  * - Skill Total:             system.derived.skills[SKILL].total

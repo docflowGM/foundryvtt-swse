@@ -82,7 +82,7 @@
     <div class="swse-concept-action-row">
       <label class="swse-concept-field swse-concept-field--action">
         <span>Background</span>
-        <input type="text" name="system.event" value="{{biographyPanel.identity.background}}" placeholder="Background" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+        <input type="text" name="system.background" value="{{biographyPanel.identity.background}}" placeholder="Background" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
       </label>
       {{#if biographyPanel.identity.canEdit}}<button type="button" class="swse-concept-btn" data-action="cmd-select-background">Select</button>{{/if}}
     </div>
