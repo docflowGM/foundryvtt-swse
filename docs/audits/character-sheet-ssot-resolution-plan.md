@@ -725,6 +725,32 @@ Per Phase 1 scope, the following were **intentionally left unchanged**:
 
 ---
 
+---
+
+## Background / Event / Profession / Homeworld: RESOLVED
+
+**Decision**: These are four separate origin concepts, not aliases.
+
+**Context**:
+- Chargen has a "background" UI step that may select multiple origin bonuses
+- A character could have: one background, one event, one profession, one homeworld (if GM allows)
+- These represent distinct SWSE mechanical concepts and should remain separate actor fields
+
+**Canonical paths**:
+- `system.background` = selected background
+- `system.event` = selected campaign/personal event
+- `system.profession` = selected occupation/profession
+- `system.planetOfOrigin` = selected homeworld
+
+**Resolution applied**:
+1. Added missing `system.background` field definition to character-data-model.js
+2. Added all four origin fields to FORM_FIELD_SCHEMA for proper form coercion
+3. Updated schema comments to clarify they are separate concepts
+
+**Impact**: Background/Event conflict is NO LONGER BLOCKED. These fields are now properly defined and schema-covered.
+
+---
+
 ## Phase 2 Result: Compatibility Centralization
 
 **Commit**: `765759a` "feat: Phase 2 - Centralize compatibility and remove template-level aliases"
@@ -776,11 +802,18 @@ All canonical persistent form input paths remain unchanged (intentional):
 
 These are data contract boundaries and should not change outside of full data migration.
 
-### Blocked Conflicts Confirmed Untouched
+### Resolved Conflicts
+
+✓ **Background / Event / Profession / Homeworld**:
+- User clarified these are separate origin concepts, not aliases
+- Added missing schema definitions and form coverage
+- No merge needed; keep them separate
+- RESOLVED in commit `e617cad`
+
+### Remaining Blocked Conflicts Confirmed Untouched
 
 Verified remaining architectural conflicts stay untouched:
 - `name="system.class"` in character-record-header.hbs (line 23) ✓
-- `name="system.event"` in character-record-header.hbs (line 85) ✓
 - No changes to ability input paths ✓
 - No changes to BAB logic ✓
 
