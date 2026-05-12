@@ -16,6 +16,12 @@
       </div>
     </header>
 
+    <div class="swse-concept-segmented swse-concept-segmented--skills" role="group" aria-label="Skill quick filters">
+      <button type="button" class="swse-concept-segmented__button is-active" data-action="set-skills-filter" data-filter="all">All</button>
+      <button type="button" class="swse-concept-segmented__button" data-action="set-skills-filter" data-filter="trained">Trained</button>
+      <button type="button" class="swse-concept-segmented__button" data-action="set-skills-filter" data-filter="custom">Custom</button>
+    </div>
+
     <div class="skills-tools-row swse-concept-skills-tools">
       <div class="swse-concept-toolfield">
         <label for="concept-skills-filter-select">Filter</label>
@@ -24,6 +30,7 @@
           <option value="trained">Trained</option>
           <option value="favorited">Favorited</option>
           <option value="focused">Focused</option>
+          <option value="custom">Custom</option>
         </select>
       </div>
       <div class="swse-concept-toolfield">
@@ -46,7 +53,7 @@
 
     <div class="skills-list swse-concept-skills-list">
       {{#each conceptLayout.skills.entries as |skill|}}
-        <article class="skill-row-container swse-concept-skill-row"
+        <article class="skill-row-container swse-concept-skill-row {{skill.abilityAccentClass}} swse-concept-skill-row--{{skill.selectedAbility}}"
                  data-skill="{{skill.key}}"
                  data-label="{{skill.label}}"
                  data-name="{{skill.key}}"
@@ -54,7 +61,8 @@
                  data-trained="{{#if skill.trained}}true{{else}}false{{/if}}"
                  data-favorite="{{#if skill.favorite}}true{{else}}false{{/if}}"
                  data-focused="{{#if skill.focused}}true{{else}}false{{/if}}"
-                 data-ability="{{skill.selectedAbility}}">
+                 data-ability="{{skill.selectedAbility}}"
+                 data-swse-tooltip="{{skill.tooltipKey}}">
           <div class="swse-concept-skill-row__identity">
             <button type="button"
                     class="favorite-btn swse-concept-favorite {{#if skill.favorite}}favorited{{/if}}"
@@ -91,7 +99,7 @@
               </div>
 
               <div class="swse-concept-ledger-row__meta">
-                <span>{{skill.selectedAbilityLabel}}</span>
+                <span class="swse-concept-skill-ability-chip {{skill.abilityAccentClass}}">{{skill.selectedAbilityLabel}}</span>
                 {{#if skill.trained}}<span>Trained</span>{{/if}}
                 {{#if skill.focused}}<span>Focused</span>{{/if}}
                 {{#if skill.favorite}}<span>Favorite</span>{{/if}}
@@ -100,10 +108,10 @@
             </div>
           </div>
 
-          <div class="swse-concept-skill-row__math">
+          <div class="swse-concept-skill-row__math swse-edit-reveal">
             <label class="swse-concept-toolfield swse-concept-toolfield--compact">
               <span>Ability</span>
-              <select name="system.skills.{{skill.key}}.selectedAbility" class="ability-select">
+              <select name="system.skills.{{skill.key}}.selectedAbility" class="ability-select ability-select--{{skill.selectedAbility}} {{skill.abilityAccentClass}}">
                 {{#each skill.abilityChoices as |ab|}}
                   <option value="{{ab.key}}" {{#if (eq ab.key skill.selectedAbility)}}selected{{/if}}>{{ab.label}}</option>
                 {{/each}}
@@ -112,12 +120,12 @@
 
             <div class="swse-concept-skill-stat">
               <span>Ability Mod</span>
-              <strong class="{{skill.abilityModClass}}">{{numberFormat skill.abilityMod decimals=0 sign=true}}</strong>
+              <strong class="{{skill.abilityModClass}}" title="{{skill.selectedAbilityLabel}} modifier">{{numberFormat skill.abilityMod decimals=0 sign=true}}</strong>
             </div>
 
             <div class="swse-concept-skill-stat">
               <span>½ Lvl</span>
-              <strong class="{{skill.halfLevelClass}}">{{numberFormat skill.halfLevel decimals=0 sign=true}}</strong>
+              <strong class="{{skill.halfLevelClass}}" title="Half level contribution">{{numberFormat skill.halfLevel decimals=0 sign=true}}</strong>
             </div>
 
             <label class="swse-concept-checkpill">
@@ -138,12 +146,21 @@
                      value="{{skill.miscMod}}">
             </label>
 
-            <div class="swse-concept-skill-stat swse-concept-skill-stat--total">
+            <div class="swse-concept-skill-stat swse-concept-skill-stat--total" title="{{skill.selectedAbilityLabel}} {{numberFormat skill.breakdown.abilityMod decimals=0 sign=true}} + ½ level {{numberFormat skill.breakdown.halfLevel decimals=0 sign=true}} + trained {{numberFormat skill.breakdown.trained decimals=0 sign=true}} + focus {{numberFormat skill.breakdown.focus decimals=0 sign=true}} + misc {{numberFormat skill.breakdown.misc decimals=0 sign=true}} + armor {{numberFormat skill.breakdown.armor decimals=0 sign=true}}">
               <span>Total</span>
               <strong class="{{skill.totalClass}}">{{numberFormat skill.total decimals=0 sign=true}}</strong>
             </div>
 
             <button type="button" class="swse-concept-btn skill-roll-btn" data-action="roll-skill" data-skill="{{skill.key}}">Roll</button>
+
+            <div class="swse-concept-skill-breakdown" aria-label="{{skill.label}} breakdown">
+              <span>{{skill.selectedAbilityLabel}} {{numberFormat skill.breakdown.abilityMod decimals=0 sign=true}}</span>
+              <span>½ Lvl {{numberFormat skill.breakdown.halfLevel decimals=0 sign=true}}</span>
+              {{#if skill.trained}}<span>Trained +5</span>{{/if}}
+              {{#if skill.focused}}<span>Focus +5</span>{{/if}}
+              <span>Misc {{numberFormat skill.breakdown.misc decimals=0 sign=true}}</span>
+              {{#if skill.armorPenalty}}<span>Armor {{numberFormat skill.breakdown.armor decimals=0 sign=true}}</span>{{/if}}
+            </div>
           </div>
         </article>
 
@@ -188,6 +205,7 @@
                               data-action="execute-extra-skill-use"
                               data-skill="{{../../key}}"
                               data-use="{{use.key}}"
+                              data-key="{{use.key}}"
                               data-use-key="{{use.useKey}}"
                               data-blocked="{{#if use.isBlocked}}true{{else}}false{{/if}}"
                               data-action-type="{{use.actionType}}"
@@ -207,26 +225,55 @@
     </div>
   </section>
 
-  {{#if conceptLayout.skills.customEntries.length}}
-    <section class="swse-concept-panel swse-concept-panel--ledger">
-      <header class="swse-concept-panel__header">
-        <div>
-          <h3 class="swse-concept-panel__title">Custom Skills</h3>
-          <p class="swse-concept-panel__hint">User-authored skills currently stored on the actor profile.</p>
-        </div>
-      </header>
+  <section class="swse-concept-panel swse-concept-panel--ledger swse-concept-custom-skills">
+    <header class="swse-concept-panel__header">
+      <div>
+        <h3 class="swse-concept-panel__title">Custom Skills</h3>
+        <p class="swse-concept-panel__hint">Actor-local skills for house rules, backgrounds, professions, and narrative specialties.</p>
+      </div>
+      <button type="button" class="swse-concept-btn swse-concept-btn--primary swse-edit-only" data-action="add-custom-skill" title="Add a custom skill">Add Custom Skill</button>
+    </header>
 
-      <div class="swse-concept-ledger">
+    {{#if conceptLayout.skills.customEntries.length}}
+      <div class="swse-concept-ledger swse-concept-custom-skills__list">
         {{#each conceptLayout.skills.customEntries as |skill|}}
-          <article class="swse-concept-ledger-row">
+          <article class="swse-concept-ledger-row swse-concept-custom-skill-row {{skill.abilityAccentClass}}" data-custom-skill-id="{{skill.id}}">
             <div class="swse-concept-ledger-row__main">
-              <div class="swse-concept-ledger-row__title">{{skill.label}}</div>
+              <label class="swse-concept-toolfield swse-concept-custom-skill-row__name">
+                <span>Name</span>
+                <input type="text" name="system.customSkills.{{skill.index}}.label" value="{{skill.label}}" placeholder="Custom skill name">
+              </label>
               <div class="swse-concept-ledger-row__meta">
-                <span>{{skill.abilityLabel}}</span>
+                <span class="swse-concept-skill-ability-chip {{skill.abilityAccentClass}}">{{skill.abilityLabel}}</span>
                 {{#if skill.trained}}<span>Trained</span>{{/if}}
                 {{#if skill.focused}}<span>Focused</span>{{/if}}
-                {{#if skill.notes}}<span>{{skill.notes}}</span>{{/if}}
               </div>
+            </div>
+
+            <div class="swse-concept-custom-skill-row__controls swse-edit-reveal">
+              <label class="swse-concept-toolfield swse-concept-toolfield--compact">
+                <span>Ability</span>
+                <select name="system.customSkills.{{skill.index}}.ability" class="ability-select ability-select--{{skill.ability}} {{skill.abilityAccentClass}}">
+                  {{#each skill.abilityChoices as |ab|}}
+                    <option value="{{ab.key}}" {{#if (eq ab.key skill.ability)}}selected{{/if}}>{{ab.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+
+              <label class="swse-concept-checkpill">
+                <input type="checkbox" name="system.customSkills.{{skill.index}}.trained" {{checked skill.trained}}>
+                <span>Trained</span>
+              </label>
+
+              <label class="swse-concept-checkpill">
+                <input type="checkbox" name="system.customSkills.{{skill.index}}.focused" {{checked skill.focused}}>
+                <span>Focus</span>
+              </label>
+
+              <label class="swse-concept-toolfield swse-concept-toolfield--compact swse-concept-toolfield--number">
+                <span>Misc</span>
+                <input type="number" name="system.customSkills.{{skill.index}}.miscMod" value="{{skill.miscMod}}">
+              </label>
             </div>
 
             <div class="swse-concept-ledger-row__stats">
@@ -243,9 +290,27 @@
                 <strong class="{{skill.totalClass}}">{{numberFormat skill.total decimals=0 sign=true}}</strong>
               </div>
             </div>
+
+            <div class="swse-concept-custom-skill-row__notes swse-edit-reveal">
+              <label class="swse-concept-toolfield">
+                <span>Notes</span>
+                <textarea name="system.customSkills.{{skill.index}}.notes" placeholder="Optional notes">{{skill.notes}}</textarea>
+              </label>
+            </div>
+
+            <div class="swse-concept-ledger-row__actions">
+              <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="roll-custom-skill" data-custom-skill-id="{{skill.id}}">Roll</button>
+              <button type="button" class="swse-concept-btn swse-concept-btn--danger swse-edit-only" data-action="delete-custom-skill" data-custom-skill-id="{{skill.id}}">Delete</button>
+            </div>
           </article>
         {{/each}}
       </div>
-    </section>
-  {{/if}}
+    {{else}}
+      <div class="swse-concept-empty-state swse-concept-empty-state--guided">
+        <span class="swse-concept-empty-state__eyebrow">No custom skills yet</span>
+        <strong>Custom skills are useful for campaign-specific checks, professions, and house rules.</strong>
+        <button type="button" class="swse-concept-btn swse-concept-btn--primary swse-edit-only" data-action="add-custom-skill">Add Custom Skill</button>
+      </div>
+    {{/if}}
+  </section>
 </div>

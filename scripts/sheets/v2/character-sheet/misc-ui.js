@@ -219,7 +219,7 @@ export function activateMiscUI(sheet, html, { signal } = {}) {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
       const skillKey = button.dataset.skill;
-      const useKey = button.dataset.useKey || button.dataset.key;
+      const useKey = button.dataset.useKey || button.dataset.key || button.dataset.use;
       const blocked = button.dataset.blocked === "true";
       const actionType = button.dataset.actionType || null;
       const sourceType = button.dataset.sourceType || null;

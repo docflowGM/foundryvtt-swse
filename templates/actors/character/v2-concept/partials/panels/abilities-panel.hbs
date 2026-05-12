@@ -1,4 +1,4 @@
-<section class="swse-concept-panel">
+<section class="swse-concept-panel abilities-panel">
   <header class="swse-concept-panel__header">
     <div>
       <h3 class="swse-concept-panel__title">Ability Matrix</h3>
@@ -6,15 +6,21 @@
     </div>
     <div class="swse-concept-ledger-row__actions">
       {{#if (eq actor.type "character")}}
-        <button type="button" class="swse-concept-btn" data-action="roll-attributes">Roll for Attributes</button>
+        <button type="button" class="swse-concept-btn swse-edit-only" data-action="roll-attributes">Roll for Attributes</button>
       {{/if}}
+      <button type="button"
+              class="swse-concept-btn swse-edit-only"
+              data-action="toggle-abilities"
+              aria-expanded="false">
+        Edit Stats
+      </button>
     </div>
   </header>
 
   <div class="swse-concept-ability-card-grid">
     {{#each conceptLayout.abilitiesTab.entries as |ability|}}
-      <article class="swse-concept-ability-card ability-row {{#if ability.isPrimary}}is-primary{{/if}} {{#if ability.isSecondary}}is-secondary{{/if}} {{#if ability.isLowest}}is-lowest{{/if}}">
-        <div class="swse-concept-ability-card__topline">
+      <article data-swse-tooltip="{{ability.label}}" class="swse-concept-ability-card ability-row {{#if ability.isPrimary}}is-primary{{/if}} {{#if ability.isSecondary}}is-secondary{{/if}} {{#if ability.isLowest}}is-lowest{{/if}}">
+        <div class="swse-concept-ability-card__topline ability-collapsed">
           <div>
             <span class="swse-concept-ability-card__label">{{ability.label}}</span>
             <strong class="swse-concept-ability-card__score">{{ability.total}}</strong>
@@ -31,7 +37,7 @@
           </div>
         </div>
 
-        <div class="ability-expanded swse-concept-ability-card__math">
+        <div class="ability-expanded swse-concept-ability-card__math" data-expanded-display="grid">
           <label class="swse-concept-ability-field">
             <span>Base</span>
             <input type="number"

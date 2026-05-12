@@ -12,6 +12,7 @@
  */
 export function activateSkillsUI(sheet, html, { signal } = {}) {
   const skillsList = html.querySelector('.skills-list');
+  const customSkillsPanel = html.querySelector('.swse-concept-custom-skills');
   const getRows = () => Array.from(html.querySelectorAll('.skill-row-container'));
   const filterControls = Array.from(html.querySelectorAll('[data-action="filter-skills"]'));
   const sortControls = Array.from(html.querySelectorAll('[data-action="sort-skills"]'));
@@ -42,6 +43,7 @@ export function activateSkillsUI(sheet, html, { signal } = {}) {
       if (activeFilter === 'trained') matches = trained;
       else if (activeFilter === 'favorited') matches = favorite;
       else if (activeFilter === 'focused') matches = focused;
+      else if (activeFilter === 'custom') matches = false;
 
       row.style.display = matches ? '' : 'none';
       if (extraUsesSection) {
@@ -49,6 +51,15 @@ export function activateSkillsUI(sheet, html, { signal } = {}) {
       }
       if (matches) visiblePairs.push(pair);
     }
+
+    if (customSkillsPanel) {
+      customSkillsPanel.style.display = activeFilter === 'custom' || activeFilter === 'all' ? '' : 'none';
+      customSkillsPanel.classList.toggle('swse-concept-custom-skills--spotlight', activeFilter === 'custom');
+    }
+
+    html.querySelectorAll('.swse-concept-segmented--skills [data-action="set-skills-filter"]').forEach((btn) => {
+      btn.classList.toggle('is-active', btn.dataset.filter === activeFilter);
+    });
 
     if (!skillsList) return;
     visiblePairs.sort((a, b) => {
@@ -81,6 +92,15 @@ export function activateSkillsUI(sheet, html, { signal } = {}) {
 
   sortControls.forEach(select => {
     select.addEventListener('change', applyFiltersAndSort, { signal });
+  });
+
+  html.querySelectorAll('[data-action="set-skills-filter"]').forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const filterValue = button.dataset.filter || 'all';
+      filterControls.forEach(select => { select.value = filterValue; });
+      applyFiltersAndSort();
+    }, { signal });
   });
 
   html.querySelectorAll('[data-action="reset-skills-tools"]').forEach(button => {

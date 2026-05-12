@@ -129,6 +129,18 @@ function getFieldType(fieldName) {
     return 'string';
   }
 
+  if (/^system\.customSkills\.\d+\.(trained|focused)$/.test(fieldName)) {
+    return 'boolean';
+  }
+
+  if (/^system\.customSkills\.\d+\.miscMod$/.test(fieldName)) {
+    return 'number';
+  }
+
+  if (/^system\.customSkills\.\d+\.(label|ability|notes)$/.test(fieldName)) {
+    return 'string';
+  }
+
   if (fieldName.includes('notes') || fieldName.includes('description') || fieldName.includes('text')) {
     return 'string';
   }
@@ -189,7 +201,9 @@ export function isDirectFieldMutationPath(fieldName) {
   if (!fieldName || typeof fieldName !== 'string') return false;
 
   return (
+    /^system\.abilities\.(str|dex|con|int|wis|cha)\.(base|racial|temp)$/.test(fieldName) ||
     /^system\.skills\.[^.]+\.(trained|focused|miscMod|selectedAbility|favorite)$/.test(fieldName) ||
+    /^system\.customSkills\.\d+\.(label|ability|trained|focused|miscMod|notes)$/.test(fieldName) ||
     /^system\.defenses\.(fortitude|reflex|will)\.(ability|classBonus)$/.test(fieldName) ||
     /^system\.defenses\.reflex\.armor$/.test(fieldName) ||
     /^system\.defenses\.(fortitude|reflex|will)\.misc\.user\.extra$/.test(fieldName) ||

@@ -1,15 +1,23 @@
-<section class="swse-concept-panel">
+<section class="swse-concept-panel defenses-panel">
   <header class="swse-concept-panel__header">
     <div>
       <h3 class="swse-concept-panel__title">Defense Matrix</h3>
       <p class="swse-concept-panel__hint">Fortitude, Reflex, and Will totals with canonical breakdown lanes.</p>
     </div>
+    <div class="swse-concept-ledger-row__actions">
+      <button type="button"
+              class="swse-concept-btn swse-edit-only"
+              data-action="toggle-defenses"
+              aria-expanded="false">
+        Edit Defenses
+      </button>
+    </div>
   </header>
 
   <div class="swse-concept-defense-matrix">
     {{#each conceptLayout.defenses as |def|}}
-      <article class="swse-concept-panel swse-concept-panel--subledger swse-concept-defense-card">
-        <div class="swse-concept-panel__header">
+      <article data-swse-tooltip="{{def.systemKey}}Defense" class="swse-concept-panel swse-concept-panel--subledger swse-concept-defense-card defense-row defense-{{def.systemKey}}">
+        <div class="swse-concept-panel__header defense-collapsed">
           <div>
             <h3 class="swse-concept-panel__title">{{def.label}}</h3>
             <p class="swse-concept-panel__hint">10 + ability + class + armor + misc + condition.</p>
@@ -21,6 +29,61 @@
         </div>
 
         {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/defense-breakdown-tooltip.hbs" defense=def}}
+
+        <div class="defense-expanded swse-concept-defense-editor" data-expanded-display="grid">
+          <label class="swse-concept-defense-field">
+            <span>Ability</span>
+            <select name="{{def.abilityPath}}" {{#unless def.canEdit}}disabled{{/unless}}>
+              <option value="str" {{#if (eq def.abilityKey "str")}}selected{{/if}}>Strength</option>
+              <option value="dex" {{#if (eq def.abilityKey "dex")}}selected{{/if}}>Dexterity</option>
+              <option value="con" {{#if (eq def.abilityKey "con")}}selected{{/if}}>Constitution</option>
+              <option value="int" {{#if (eq def.abilityKey "int")}}selected{{/if}}>Intelligence</option>
+              <option value="wis" {{#if (eq def.abilityKey "wis")}}selected{{/if}}>Wisdom</option>
+              <option value="cha" {{#if (eq def.abilityKey "cha")}}selected{{/if}}>Charisma</option>
+            </select>
+          </label>
+
+          <label class="swse-concept-defense-field">
+            <span>Class</span>
+            <input type="number"
+                   name="{{def.classBonusPath}}"
+                   value="{{def.classDef}}"
+                   {{#unless def.canEdit}}disabled{{/unless}}>
+          </label>
+
+          {{#if def.armorEditable}}
+            <label class="swse-concept-defense-field">
+              <span>Armor</span>
+              <input type="number"
+                     name="{{def.armorPath}}"
+                     value="{{def.armorBonus}}"
+                     {{#unless def.canEdit}}disabled{{/unless}}>
+            </label>
+          {{else}}
+            <div class="swse-concept-defense-field swse-concept-defense-field--readonly">
+              <span>Armor</span>
+              <strong>{{numberFormat def.armorBonus decimals=0 sign=true}}</strong>
+            </div>
+          {{/if}}
+
+          <label class="swse-concept-defense-field">
+            <span>Misc</span>
+            <input type="number"
+                   name="{{def.miscPath}}"
+                   value="{{def.miscMod}}"
+                   {{#unless def.canEdit}}disabled{{/unless}}>
+          </label>
+
+          <div class="swse-concept-defense-field swse-concept-defense-field--readonly">
+            <span>Condition</span>
+            <strong>{{numberFormat def.conditionPenalty decimals=0 sign=true}}</strong>
+          </div>
+
+          <div class="swse-concept-defense-field swse-concept-defense-field--total">
+            <span>Total</span>
+            <strong class="{{def.totalClass}}">{{def.total}}</strong>
+          </div>
+        </div>
       </article>
     {{/each}}
   </div>

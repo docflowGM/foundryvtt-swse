@@ -5523,3 +5523,934 @@ form[id^="SWSEV2CharacterSheet"] .prog-species-row__thumb--badge-only {
   width: 34px !important;
   min-width: 34px !important;
 }
+
+/* Phase 4: display-first stat panels with explicit edit affordances. */
+.swse-character-sheet .abilities-panel:not(.abilities-expanded) .ability-expanded,
+.swse-character-sheet .defenses-panel:not(.defenses-expanded) .defense-expanded {
+  display: none;
+}
+
+.swse-character-sheet .abilities-panel.abilities-expanded .swse-concept-ability-card,
+.swse-character-sheet .defenses-panel.defenses-expanded .swse-concept-defense-card {
+  border-color: rgba(111, 215, 255, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(111, 215, 255, 0.08), 0 0 18px rgba(111, 215, 255, 0.08);
+}
+
+.swse-character-sheet .swse-concept-defense-matrix {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.swse-character-sheet .swse-concept-defense-card {
+  gap: 12px;
+}
+
+.swse-character-sheet .swse-concept-defense-card__total {
+  color: var(--swse-concept-text);
+  font-size: 30px;
+  line-height: 1;
+}
+
+.swse-character-sheet .swse-concept-defense-editor {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(111, 215, 255, 0.12);
+}
+
+.swse-character-sheet .swse-concept-defense-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.swse-character-sheet .swse-concept-defense-field span {
+  color: var(--swse-concept-text-faint);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-character-sheet .swse-concept-defense-field input,
+.swse-character-sheet .swse-concept-defense-field select {
+  min-height: 38px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(111, 215, 255, 0.16);
+  background: rgba(6, 12, 20, 0.76);
+  color: var(--swse-concept-text);
+}
+
+.swse-character-sheet .swse-concept-defense-field--readonly,
+.swse-character-sheet .swse-concept-defense-field--total {
+  justify-content: center;
+  min-height: 58px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(111, 215, 255, 0.10);
+  background: rgba(6, 12, 20, 0.46);
+}
+
+.swse-character-sheet .swse-concept-defense-field--readonly strong,
+.swse-character-sheet .swse-concept-defense-field--total strong {
+  color: var(--swse-concept-text);
+  font-size: 18px;
+}
+
+.swse-character-sheet .swse-concept-defense-field--total {
+  border-color: rgba(111, 215, 255, 0.22);
+  background: rgba(111, 215, 255, 0.08);
+}
+
+@media (max-width: 1280px) {
+  .swse-character-sheet .swse-concept-defense-matrix {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1080px) {
+  .swse-character-sheet .swse-concept-defense-editor {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Phase 5: Concept tab bar hardening
+   AppV2 concept sheets are not always rooted at the legacy form id selector,
+   so keep the primary sheet tab rail horizontal using the actual concept root. */
+.swse-sheet--concept .swse-concept-tabs,
+.swse-character-sheet-wrapper--concept .swse-concept-tabs,
+.swse.sheet.actor.character.v2 .swse-sheet--concept .swse-concept-tabs,
+.swse.sheet.actor.character.v2 .swse-concept-tabs.sheet-tabs {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-end !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: auto !important;
+  margin: 0 0 16px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 32%, transparent) !important;
+  scrollbar-width: thin;
+}
+
+.swse-sheet--concept .swse-concept-tab,
+.swse-character-sheet-wrapper--concept .swse-concept-tab,
+.swse.sheet.actor.character.v2 .swse-concept-tabs.sheet-tabs > .swse-concept-tab {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: auto !important;
+  min-width: max-content !important;
+  white-space: nowrap !important;
+}
+
+.swse-sheet--concept .swse-concept-tab__icon,
+.swse-character-sheet-wrapper--concept .swse-concept-tab__icon,
+.swse.sheet.actor.character.v2 .swse-concept-tabs.sheet-tabs .swse-concept-tab__icon {
+  flex: 0 0 auto !important;
+}
+
+/* ========================================================================== */
+/* Phase 6: concept skills accordion + ability accent language                 */
+/* ========================================================================== */
+form[id^="SWSEV2CharacterSheet"] .skill-extra-uses.skill-extra-uses--collapsed,
+.swse.sheet.actor.character.v2 .skill-extra-uses.skill-extra-uses--collapsed,
+.swse-character-sheet .skill-extra-uses.skill-extra-uses--collapsed {
+  display: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .skill-extra-uses.skill-extra-uses--expanded,
+.swse.sheet.actor.character.v2 .skill-extra-uses.skill-extra-uses--expanded,
+.swse-character-sheet .skill-extra-uses.skill-extra-uses--expanded {
+  display: block !important;
+  margin: -4px 0 10px 34px !important;
+  padding: 10px 12px !important;
+  border-left: 2px solid var(--swse-skill-accent, var(--vapor-cyan)) !important;
+  background:
+    linear-gradient(90deg, oklch(var(--swse-skill-accent-oklch, var(--vapor-cyan)) / 0.10), transparent 38%),
+    oklch(0 0 0 / 0.24) !important;
+  box-shadow:
+    inset 0 0 0 1px oklch(var(--swse-skill-accent-oklch, var(--vapor-cyan)) / 0.16),
+    0 0 calc(14px * var(--glow-mult, 1)) oklch(var(--swse-skill-accent-oklch, var(--vapor-cyan)) / 0.10) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-hidden,
+.swse.sheet.actor.character.v2 .skill-extra-uses-hidden,
+.swse-character-sheet .skill-extra-uses-hidden {
+  display: none !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row,
+.swse.sheet.actor.character.v2 .swse-concept-skill-row,
+.swse-character-sheet .swse-concept-skill-row {
+  --swse-skill-accent: var(--vapor-cyan);
+  --swse-skill-accent-oklch: var(--vapor-cyan);
+  position: relative !important;
+  border-left: 3px solid var(--swse-skill-accent) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row::before,
+.swse.sheet.actor.character.v2 .swse-concept-skill-row::before,
+.swse-character-sheet .swse-concept-skill-row::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 42px;
+  pointer-events: none;
+  background: linear-gradient(90deg, oklch(var(--swse-skill-accent-oklch) / 0.16), transparent);
+  opacity: 0.9;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-ability-chip,
+.swse.sheet.actor.character.v2 .swse-concept-skill-ability-chip,
+.swse-character-sheet .swse-concept-skill-ability-chip {
+  color: var(--swse-skill-accent, var(--vapor-cyan)) !important;
+  text-shadow: 0 0 calc(7px * var(--glow-mult, 1)) oklch(var(--swse-skill-accent-oklch, var(--vapor-cyan)) / 0.45) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .ability-select,
+.swse.sheet.actor.character.v2 .ability-select,
+.swse-character-sheet .ability-select {
+  border-color: oklch(var(--swse-skill-accent-oklch, var(--vapor-cyan)) / 0.28) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--str,
+.swse.sheet.actor.character.v2 .swse-ability-accent--str,
+.swse-character-sheet .swse-ability-accent--str {
+  --swse-skill-accent: #ff8a3d;
+  --swse-skill-accent-oklch: 0.72 0.16 48;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--dex,
+.swse.sheet.actor.character.v2 .swse-ability-accent--dex,
+.swse-character-sheet .swse-ability-accent--dex {
+  --swse-skill-accent: #61d66f;
+  --swse-skill-accent-oklch: 0.76 0.16 145;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--con,
+.swse.sheet.actor.character.v2 .swse-ability-accent--con,
+.swse-character-sheet .swse-ability-accent--con {
+  --swse-skill-accent: #ffd166;
+  --swse-skill-accent-oklch: 0.84 0.14 84;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--int,
+.swse.sheet.actor.character.v2 .swse-ability-accent--int,
+.swse-character-sheet .swse-ability-accent--int {
+  --swse-skill-accent: #4cc9f0;
+  --swse-skill-accent-oklch: 0.77 0.13 222;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--wis,
+.swse.sheet.actor.character.v2 .swse-ability-accent--wis,
+.swse-character-sheet .swse-ability-accent--wis {
+  --swse-skill-accent: #c77dff;
+  --swse-skill-accent-oklch: 0.71 0.18 305;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--cha,
+.swse.sheet.actor.character.v2 .swse-ability-accent--cha,
+.swse-character-sheet .swse-ability-accent--cha {
+  --swse-skill-accent: #ff5cbe;
+  --swse-skill-accent-oklch: 0.71 0.22 350;
+}
+
+/* Phase 7: concept sheet creation affordances */
+.swse-concept-action-rail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.swse-concept-action-rail--gear {
+  justify-content: flex-start;
+}
+
+.swse-concept-btn--danger {
+  border-color: rgba(255, 112, 112, 0.35);
+  color: #ffd0d0;
+}
+
+.swse-concept-btn--danger:hover {
+  border-color: rgba(255, 112, 112, 0.72);
+  box-shadow: 0 0 18px rgba(255, 112, 112, 0.14);
+}
+
+.swse-concept-custom-skills__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swse-concept-custom-skill-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.2fr) minmax(260px, 1fr) minmax(220px, 0.9fr) auto;
+  gap: 12px;
+  align-items: center;
+  border-left: 3px solid var(--swse-ability-accent, rgba(111, 215, 255, 0.36));
+}
+
+.swse-concept-custom-skill-row__name input,
+.swse-concept-custom-skill-row__notes textarea {
+  width: 100%;
+}
+
+.swse-concept-custom-skill-row__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.swse-concept-custom-skill-row__notes {
+  grid-column: 1 / -1;
+}
+
+.swse-concept-custom-skill-row__notes textarea {
+  min-height: 54px;
+  resize: vertical;
+}
+
+.swse-concept-custom-skill-row .swse-concept-ledger-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media (max-width: 980px) {
+  .swse-concept-custom-skill-row {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-concept-custom-skill-row .swse-concept-ledger-row__actions {
+    justify-content: flex-start;
+  }
+}
+
+/* ========================================================================== */
+/* Phase 8: bring restored/new partials into the concept datapad theme          */
+/* ========================================================================== */
+.swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills),
+.swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills),
+form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) {
+  position: relative !important;
+  border-radius: 0 !important;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 28%, transparent) !important;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--swse-concept-panel, #111d30) 46%, transparent), rgba(4, 10, 18, 0.86)),
+    rgba(4, 10, 18, 0.74) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+    0 0 22px color-mix(in srgb, var(--swse-accent, #70e2ff) 8%, transparent) !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before,
+.swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before,
+form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before {
+  content: "" !important;
+  position: absolute !important;
+  top: -1px !important;
+  left: 10px !important;
+  width: 24px !important;
+  height: 2px !important;
+  background: var(--swse-accent, #70e2ff) !important;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--swse-accent, #70e2ff) 70%, transparent) !important;
+  pointer-events: none !important;
+}
+
+.swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header,
+.swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header,
+form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header {
+  align-items: center !important;
+  border-bottom: 1px dashed color-mix(in srgb, var(--swse-accent, #70e2ff) 32%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title,
+.swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title,
+form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title {
+  font-family: var(--swse-font-mono, var(--font-mono, monospace)) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.24em !important;
+  color: var(--swse-accent, #70e2ff) !important;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--swse-accent, #70e2ff) 34%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-action-rail--gear,
+.swse-sheet--concept .swse-concept-action-rail--gear,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-action-rail--gear {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-action-rail--gear .swse-concept-btn,
+.swse-sheet--concept .swse-concept-action-rail--gear .swse-concept-btn,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-action-rail--gear .swse-concept-btn,
+.swse.sheet.actor.character.v2 .swse-concept-custom-skills .swse-concept-btn,
+.swse-sheet--concept .swse-concept-custom-skills .swse-concept-btn,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skills .swse-concept-btn {
+  border-radius: 0 !important;
+  min-height: 34px !important;
+  font-family: var(--swse-font-mono, var(--font-mono, monospace)) !important;
+  letter-spacing: 0.18em !important;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--swse-accent, #70e2ff) 16%, transparent), rgba(4, 10, 18, 0.86)) !important;
+  clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-card-grid--summary .swse-concept-toolfield,
+.swse-sheet--concept .swse-concept-card-grid--summary .swse-concept-toolfield,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-card-grid--summary .swse-concept-toolfield,
+.swse.sheet.actor.character.v2 .swse-concept-card-grid--summary .swse-concept-info-card,
+.swse-sheet--concept .swse-concept-card-grid--summary .swse-concept-info-card,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-card-grid--summary .swse-concept-info-card {
+  border-radius: 0 !important;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 16%, transparent) !important;
+  background: rgba(4, 10, 18, 0.58) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-track,
+.swse-sheet--concept .swse-concept-condition-track,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-track {
+  padding: 12px !important;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 16%, transparent) !important;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--swse-accent, #70e2ff) 6%, transparent), transparent 42%),
+    rgba(4, 10, 18, 0.46) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-chip,
+.swse-sheet--concept .swse-concept-condition-chip,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip {
+  border-radius: 0 !important;
+  min-width: 70px !important;
+  justify-content: center !important;
+  font-family: var(--swse-font-mono, var(--font-mono, monospace)) !important;
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-chip.is-current,
+.swse-sheet--concept .swse-concept-condition-chip.is-current,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.is-current {
+  border-color: color-mix(in srgb, var(--swse-accent-2, #ff6ef4) 62%, transparent) !important;
+  color: var(--swse-concept-text, #f2fbff) !important;
+  box-shadow:
+    inset 0 0 14px color-mix(in srgb, var(--swse-accent-2, #ff6ef4) 14%, transparent),
+    0 0 16px color-mix(in srgb, var(--swse-accent-2, #ff6ef4) 16%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 .current-conditions-panel,
+.swse-sheet--concept .current-conditions-panel,
+form[id^="SWSEV2CharacterSheet"] .current-conditions-panel {
+  margin-top: 12px !important;
+  padding: 12px !important;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 16%, transparent) !important;
+  background: rgba(4, 10, 18, 0.46) !important;
+}
+
+.swse.sheet.actor.character.v2 .current-condition-notes__title,
+.swse-sheet--concept .current-condition-notes__title,
+form[id^="SWSEV2CharacterSheet"] .current-condition-notes__title {
+  margin-bottom: 10px !important;
+  font-family: var(--swse-font-mono, var(--font-mono, monospace)) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  color: var(--swse-accent, #70e2ff) !important;
+}
+
+.swse.sheet.actor.character.v2 .current-conditions-panel__list,
+.swse-sheet--concept .current-conditions-panel__list,
+form[id^="SWSEV2CharacterSheet"] .current-conditions-panel__list {
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.swse.sheet.actor.character.v2 .current-condition-card,
+.swse-sheet--concept .current-condition-card,
+form[id^="SWSEV2CharacterSheet"] .current-condition-card {
+  border-radius: 0 !important;
+  border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 14%, transparent) !important;
+  background: rgba(6, 12, 20, 0.58) !important;
+  color: var(--swse-concept-text-dim, #8fd7ef) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-custom-skill-row,
+.swse-sheet--concept .swse-concept-custom-skill-row,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skill-row {
+  border-radius: 0 !important;
+  border: 1px solid color-mix(in srgb, var(--swse-skill-accent, var(--swse-accent, #70e2ff)) 18%, transparent) !important;
+  border-left: 3px solid var(--swse-skill-accent, var(--swse-accent, #70e2ff)) !important;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--swse-skill-accent, var(--swse-accent, #70e2ff)) 8%, transparent), transparent 34%),
+    rgba(4, 10, 18, 0.48) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-custom-skill-row :is(input, select, textarea),
+.swse-sheet--concept .swse-concept-custom-skill-row :is(input, select, textarea),
+form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skill-row :is(input, select, textarea) {
+  border-radius: 0 !important;
+  border-color: color-mix(in srgb, var(--swse-skill-accent, var(--swse-accent, #70e2ff)) 24%, transparent) !important;
+  background: rgba(0, 0, 0, 0.26) !important;
+  color: var(--swse-concept-text, #f2fbff) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-empty-state,
+.swse-sheet--concept .swse-concept-empty-state,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
+  border-radius: 0 !important;
+  border: 1px dashed color-mix(in srgb, var(--swse-accent, #70e2ff) 28%, transparent) !important;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--swse-accent, #70e2ff) 6%, transparent), transparent 42%),
+    rgba(4, 10, 18, 0.42) !important;
+}
+
+@media (max-width: 980px) {
+  .swse.sheet.actor.character.v2 .swse-concept-action-rail--gear,
+  .swse-sheet--concept .swse-concept-action-rail--gear,
+  form[id^="SWSEV2CharacterSheet"] .swse-concept-action-rail--gear {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ========================================================================== */
+/* Phase 9: theme-token alignment and condition-track severity ramp            */
+/* ========================================================================== */
+.swse.sheet.actor.character.v2,
+.swse-sheet--concept,
+form[id^="SWSEV2CharacterSheet"] {
+  --swse-concept-theme-accent: var(--swse-theme-accent, var(--vapor-cyan, var(--swse-accent, #70e2ff)));
+  --swse-concept-theme-accent-2: var(--swse-theme-accent-secondary, var(--vapor-pink, var(--swse-accent-soft, #ff6ef4)));
+  --swse-concept-theme-panel: var(--swse-theme-panel-bg, var(--swse-concept-panel, var(--swse-bg-panel, rgba(6, 18, 32, 0.72))));
+  --swse-concept-theme-surface: var(--swse-theme-surface-bg, var(--swse-concept-bg, var(--swse-bg-deep, #071522)));
+  --swse-concept-theme-border: var(--swse-theme-border, color-mix(in oklch, var(--swse-concept-theme-accent) 32%, transparent));
+  --swse-concept-theme-text: var(--swse-theme-text-primary, var(--swse-concept-text, var(--swse-text-primary, #dff8ff)));
+  --swse-concept-theme-muted: var(--swse-theme-text-muted, var(--swse-concept-text-faint, var(--swse-text-muted, rgba(181, 218, 255, 0.5))));
+
+  --swse-condition-normal: var(--swse-condition-normal-color, #31e981);
+  --swse-condition-low: var(--swse-condition-low-color, #a7f05a);
+  --swse-condition-mid: var(--swse-condition-mid-color, #ffd45c);
+  --swse-condition-high: var(--swse-condition-high-color, #ff9a3d);
+  --swse-condition-critical: var(--swse-condition-critical-color, #ff5f57);
+  --swse-condition-helpless: var(--swse-condition-helpless-color, #d82f45);
+}
+
+.swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills),
+.swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills),
+form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) {
+  border-color: color-mix(in oklch, var(--swse-concept-theme-accent) 28%, transparent) !important;
+  background:
+    linear-gradient(180deg, color-mix(in oklch, var(--swse-concept-theme-panel) 82%, transparent), color-mix(in oklch, var(--swse-concept-theme-surface) 78%, black 22%)),
+    color-mix(in oklch, var(--swse-concept-theme-panel) 72%, transparent) !important;
+  color: var(--swse-concept-theme-text) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklch, var(--swse-concept-theme-text) 4%, transparent),
+    0 0 22px color-mix(in oklch, var(--swse-concept-theme-accent) 8%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before,
+.swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before,
+form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before {
+  background: var(--swse-concept-theme-accent) !important;
+  box-shadow: 0 0 8px color-mix(in oklch, var(--swse-concept-theme-accent) 70%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header,
+.swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header,
+form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header {
+  border-bottom-color: color-mix(in oklch, var(--swse-concept-theme-accent) 32%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title,
+.swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title,
+form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title,
+.swse.sheet.actor.character.v2 .current-condition-notes__title,
+.swse-sheet--concept .current-condition-notes__title,
+form[id^="SWSEV2CharacterSheet"] .current-condition-notes__title {
+  color: var(--swse-concept-theme-accent) !important;
+  text-shadow: 0 0 10px color-mix(in oklch, var(--swse-concept-theme-accent) 34%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-action-rail--gear .swse-concept-btn,
+.swse-sheet--concept .swse-concept-action-rail--gear .swse-concept-btn,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-action-rail--gear .swse-concept-btn,
+.swse.sheet.actor.character.v2 .swse-concept-custom-skills .swse-concept-btn,
+.swse-sheet--concept .swse-concept-custom-skills .swse-concept-btn,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skills .swse-concept-btn {
+  background:
+    linear-gradient(180deg, color-mix(in oklch, var(--swse-concept-theme-accent) 16%, transparent), color-mix(in oklch, var(--swse-concept-theme-surface) 86%, black 14%)) !important;
+  border-color: color-mix(in oklch, var(--swse-concept-theme-accent) 34%, transparent) !important;
+  color: var(--swse-concept-theme-text) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-card-grid--summary :is(.swse-concept-toolfield, .swse-concept-info-card),
+.swse-sheet--concept .swse-concept-card-grid--summary :is(.swse-concept-toolfield, .swse-concept-info-card),
+form[id^="SWSEV2CharacterSheet"] .swse-concept-card-grid--summary :is(.swse-concept-toolfield, .swse-concept-info-card),
+.swse.sheet.actor.character.v2 :is(.swse-concept-condition-track, .current-conditions-panel),
+.swse-sheet--concept :is(.swse-concept-condition-track, .current-conditions-panel),
+form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-condition-track, .current-conditions-panel) {
+  border-color: color-mix(in oklch, var(--swse-concept-theme-accent) 16%, transparent) !important;
+  background:
+    linear-gradient(90deg, color-mix(in oklch, var(--swse-concept-theme-accent) 6%, transparent), transparent 42%),
+    color-mix(in oklch, var(--swse-concept-theme-surface) 58%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 .current-condition-card,
+.swse-sheet--concept .current-condition-card,
+form[id^="SWSEV2CharacterSheet"] .current-condition-card {
+  border-color: color-mix(in oklch, var(--swse-concept-theme-accent) 14%, transparent) !important;
+  background: color-mix(in oklch, var(--swse-concept-theme-panel) 58%, transparent) !important;
+  color: var(--swse-concept-theme-muted) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-chip,
+.swse-sheet--concept .swse-concept-condition-chip,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip {
+  --swse-condition-step-color: var(--swse-condition-normal);
+  border-color: color-mix(in oklch, var(--swse-condition-step-color) 58%, transparent) !important;
+  background:
+    linear-gradient(180deg, color-mix(in oklch, var(--swse-condition-step-color) 16%, transparent), color-mix(in oklch, var(--swse-concept-theme-surface) 82%, transparent)) !important;
+  color: color-mix(in oklch, var(--swse-condition-step-color) 88%, white 12%) !important;
+  text-shadow: 0 0 8px color-mix(in oklch, var(--swse-condition-step-color) 35%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-chip.severity-normal,
+.swse-sheet--concept .swse-concept-condition-chip.severity-normal,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.severity-normal {
+  --swse-condition-step-color: var(--swse-condition-normal);
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-chip.severity-low,
+.swse-sheet--concept .swse-concept-condition-chip.severity-low,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.severity-low {
+  --swse-condition-step-color: var(--swse-condition-low);
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-chip.severity-mid,
+.swse-sheet--concept .swse-concept-condition-chip.severity-mid,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.severity-mid {
+  --swse-condition-step-color: var(--swse-condition-mid);
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-chip.severity-high,
+.swse-sheet--concept .swse-concept-condition-chip.severity-high,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.severity-high {
+  --swse-condition-step-color: var(--swse-condition-high);
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-chip.severity-critical,
+.swse-sheet--concept .swse-concept-condition-chip.severity-critical,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.severity-critical {
+  --swse-condition-step-color: var(--swse-condition-critical);
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-chip.severity-helpless,
+.swse-sheet--concept .swse-concept-condition-chip.severity-helpless,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.severity-helpless {
+  --swse-condition-step-color: var(--swse-condition-helpless);
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-chip.is-current,
+.swse-sheet--concept .swse-concept-condition-chip.is-current,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.is-current {
+  border-color: color-mix(in oklch, var(--swse-condition-step-color) 84%, white 16%) !important;
+  background:
+    linear-gradient(180deg, color-mix(in oklch, var(--swse-condition-step-color) 30%, transparent), color-mix(in oklch, var(--swse-concept-theme-surface) 68%, black 8%)) !important;
+  color: white !important;
+  box-shadow:
+    inset 0 0 16px color-mix(in oklch, var(--swse-condition-step-color) 20%, transparent),
+    0 0 18px color-mix(in oklch, var(--swse-condition-step-color) 30%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-custom-skill-row,
+.swse-sheet--concept .swse-concept-custom-skill-row,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skill-row {
+  border-color: color-mix(in oklch, var(--swse-skill-accent, var(--swse-concept-theme-accent)) 18%, transparent) !important;
+  border-left-color: var(--swse-skill-accent, var(--swse-concept-theme-accent)) !important;
+  background:
+    linear-gradient(90deg, color-mix(in oklch, var(--swse-skill-accent, var(--swse-concept-theme-accent)) 8%, transparent), transparent 34%),
+    color-mix(in oklch, var(--swse-concept-theme-surface) 58%, transparent) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-custom-skill-row :is(input, select, textarea),
+.swse-sheet--concept .swse-concept-custom-skill-row :is(input, select, textarea),
+form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skill-row :is(input, select, textarea) {
+  border-color: color-mix(in oklch, var(--swse-skill-accent, var(--swse-concept-theme-accent)) 24%, transparent) !important;
+  background: color-mix(in oklch, var(--swse-concept-theme-surface) 74%, black 12%) !important;
+  color: var(--swse-concept-theme-text) !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-empty-state,
+.swse-sheet--concept .swse-concept-empty-state,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
+  border-color: color-mix(in oklch, var(--swse-concept-theme-accent) 28%, transparent) !important;
+  background:
+    linear-gradient(90deg, color-mix(in oklch, var(--swse-concept-theme-accent) 6%, transparent), transparent 42%),
+    color-mix(in oklch, var(--swse-concept-theme-surface) 50%, transparent) !important;
+}
+
+/* Datapad registration onboarding prompt
+   Uses actor/player-selected sheet theme tokens when the prompt is launched from a sheet. */
+.swse-datapad-registration-dialog .swse-window-content,
+.swse-datapad-registration-dialog .window-content,
+.swse-datapad-registration-dialog .swse-dialog-body {
+  background: var(--swse-theme-panel-bg, rgba(5, 12, 20, 0.96));
+  color: var(--swse-theme-text-primary, #dff7ff);
+}
+
+.swse-datapad-registration-prompt {
+  position: relative;
+  overflow: hidden;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--swse-theme-accent, #3fdcff) 52%, transparent);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--swse-theme-surface-bg, #07121f) 92%, transparent), color-mix(in srgb, var(--swse-theme-panel-bg, #030912) 96%, transparent)),
+    repeating-linear-gradient(0deg, transparent 0 9px, color-mix(in srgb, var(--swse-theme-accent, #3fdcff) 7%, transparent) 10px);
+  box-shadow: inset 0 0 28px color-mix(in srgb, var(--swse-theme-accent, #3fdcff) 10%, transparent);
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+}
+
+.swse-datapad-registration-prompt::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--swse-theme-accent, #3fdcff), var(--swse-theme-accent-secondary, #ff4fd8));
+  box-shadow: 0 0 18px var(--swse-theme-accent, #3fdcff);
+}
+
+.swse-datapad-registration-prompt__kicker {
+  margin-bottom: 0.5rem;
+  color: var(--swse-theme-accent, #3fdcff);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.swse-datapad-registration-prompt h2 {
+  margin: 0 0 0.75rem;
+  color: var(--swse-theme-text-primary, #dff7ff);
+  font-size: 1.35rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 16px color-mix(in srgb, var(--swse-theme-accent, #3fdcff) 35%, transparent);
+}
+
+.swse-datapad-registration-prompt p {
+  margin: 0.65rem 0;
+  color: var(--swse-theme-text-muted, #9fb9c7);
+  line-height: 1.5;
+}
+
+.swse-datapad-registration-prompt__lead,
+.swse-datapad-registration-prompt__question {
+  color: var(--swse-theme-text-primary, #dff7ff) !important;
+}
+
+.swse-datapad-registration-dialog .swse-dialog-buttons {
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+}
+
+.swse-datapad-registration-dialog .swse-dialog-buttons .btn {
+  border: 1px solid color-mix(in srgb, var(--swse-theme-border, #2f6b7a) 85%, transparent);
+  background: color-mix(in srgb, var(--swse-theme-surface-bg, #07121f) 88%, black);
+  color: var(--swse-theme-text-primary, #dff7ff);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.swse-datapad-registration-dialog .swse-dialog-buttons .swse-dialog-button--primary {
+  border-color: color-mix(in srgb, var(--swse-theme-accent, #3fdcff) 72%, white);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--swse-theme-accent, #3fdcff) 28%, transparent);
+}
+
+.swse-datapad-registration-dialog .swse-dialog-buttons .swse-dialog-button--danger {
+  border-color: color-mix(in srgb, #ff4b4b 65%, var(--swse-theme-border, #2f6b7a));
+  color: color-mix(in srgb, #ffb3b3 75%, var(--swse-theme-text-primary, #dff7ff));
+}
+
+/* Phase 11 UX pass: Play/Edit mode, guided empty states, breakdown hints, skill filters, combat state */
+.swse-character-sheet-form-root.swse-sheet-mode--play .swse-edit-reveal,
+.swse-character-sheet-form-root.swse-sheet-mode--play .swse-edit-only {
+  display: none !important;
+}
+
+.swse-character-sheet-form-root.swse-sheet-mode--edit .swse-edit-reveal {
+  display: initial;
+}
+
+.swse-sheet-mode-toggle {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 8.5rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--swse-theme-accent, #00d8ff) 60%, transparent);
+  background: color-mix(in srgb, var(--swse-theme-panel-bg, rgba(4, 11, 20, 0.92)) 82%, transparent);
+  color: var(--swse-theme-text-primary, #dff8ff);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  clip-path: polygon(0.6rem 0, 100% 0, 100% calc(100% - 0.6rem), calc(100% - 0.6rem) 100%, 0 100%, 0 0.6rem);
+  cursor: pointer;
+}
+
+.swse-sheet-mode-toggle:hover,
+.swse-sheet-mode-toggle[aria-pressed="true"] {
+  border-color: var(--swse-theme-accent, #00d8ff);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--swse-theme-accent, #00d8ff) 35%, transparent), 0 0 16px color-mix(in srgb, var(--swse-theme-accent, #00d8ff) 20%, transparent);
+}
+
+.swse-sheet-mode--edit .swse-sheet-mode-toggle {
+  background: color-mix(in srgb, var(--swse-theme-accent, #00d8ff) 16%, var(--swse-theme-panel-bg, rgba(4, 11, 20, 0.92)) 84%);
+}
+
+.swse-concept-empty-state--guided {
+  gap: 0.55rem;
+  text-align: left;
+}
+
+.swse-concept-empty-state--guided strong {
+  max-width: 48rem;
+  line-height: 1.35;
+}
+
+.swse-concept-empty-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.45rem;
+}
+
+.swse-concept-segmented {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  margin: 0.5rem 0 0.35rem;
+  border: 1px solid color-mix(in srgb, var(--swse-theme-border, rgba(0, 216, 255, 0.28)) 80%, transparent);
+  background: color-mix(in srgb, var(--swse-theme-surface-bg, rgba(3, 12, 22, 0.86)) 90%, transparent);
+  clip-path: polygon(0.45rem 0, 100% 0, 100% calc(100% - 0.45rem), calc(100% - 0.45rem) 100%, 0 100%, 0 0.45rem);
+}
+
+.swse-concept-segmented__button {
+  border: 0;
+  background: transparent;
+  color: var(--swse-theme-text-muted, #8fb9c9);
+  padding: 0.32rem 0.75rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.swse-concept-segmented__button:hover,
+.swse-concept-segmented__button.is-active {
+  color: var(--swse-theme-text-primary, #dff8ff);
+  background: color-mix(in srgb, var(--swse-theme-accent, #00d8ff) 18%, transparent);
+  box-shadow: inset 0 -2px 0 var(--swse-theme-accent, #00d8ff);
+}
+
+.swse-concept-custom-skills--spotlight {
+  border-color: color-mix(in srgb, var(--swse-theme-accent-secondary, #ff4fd8) 70%, transparent) !important;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--swse-theme-accent-secondary, #ff4fd8) 12%, transparent);
+}
+
+.swse-concept-skill-breakdown {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+  color: var(--swse-theme-text-muted, #8fb9c9);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.swse-concept-skill-breakdown span {
+  border: 1px solid color-mix(in srgb, var(--swse-theme-border, rgba(0, 216, 255, 0.28)) 70%, transparent);
+  background: color-mix(in srgb, var(--swse-theme-surface-bg, rgba(3, 12, 22, 0.86)) 80%, transparent);
+  padding: 0.15rem 0.4rem;
+}
+
+.swse-concept-combat-status-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+  margin: 0.55rem 0 0.85rem;
+}
+
+.swse-concept-status-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.7rem;
+  padding: 0.18rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--swse-theme-border, rgba(0, 216, 255, 0.28)) 75%, transparent);
+  background: color-mix(in srgb, var(--swse-theme-surface-bg, rgba(3, 12, 22, 0.86)) 86%, transparent);
+  color: var(--swse-theme-text-primary, #dff8ff);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  clip-path: polygon(0.35rem 0, 100% 0, 100% calc(100% - 0.35rem), calc(100% - 0.35rem) 100%, 0 100%, 0 0.35rem);
+}
+
+.swse-concept-status-chip--ok {
+  border-color: rgba(77, 255, 142, 0.65);
+  box-shadow: 0 0 12px rgba(77, 255, 142, 0.12);
+}
+
+.swse-concept-status-chip--warn {
+  border-color: rgba(255, 205, 77, 0.72);
+  box-shadow: 0 0 12px rgba(255, 205, 77, 0.13);
+}
+
+.swse-concept-status-chip--danger {
+  border-color: rgba(255, 77, 77, 0.78);
+  box-shadow: 0 0 14px rgba(255, 77, 77, 0.18);
+}
+
+.swse-concept-status-chip--accent {
+  border-color: color-mix(in srgb, var(--swse-theme-accent, #00d8ff) 70%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--swse-theme-accent, #00d8ff) 14%, transparent);
+}
+
+.swse-concept-status-chip--neutral {
+  opacity: 0.88;
+}
+
+.swse-sheet-mode--play .swse-concept-panel--gear-actions,
+.swse-sheet-mode--play .swse-concept-custom-skill-row__controls,
+.swse-sheet-mode--play .swse-concept-custom-skill-row__notes,
+.swse-sheet-mode--play .swse-concept-skill-row__math {
+  display: none !important;
+}
+
+.swse-sheet-mode--edit .swse-concept-skill-row__math,
+.swse-sheet-mode--edit .swse-concept-custom-skill-row__controls,
+.swse-sheet-mode--edit .swse-concept-custom-skill-row__notes {
+  display: grid;
+}

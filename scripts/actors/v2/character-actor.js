@@ -274,13 +274,21 @@ function normalizeAttackEntry(attack = {}, actor = null) {
     attack.damageBreakdown ??
     "";
 
+  const sourceId = attack.sourceId ?? attack.itemId ?? attack.weaponId ?? attack.id ?? null;
+  const weaponId = attack.weaponId ?? attack.itemId ?? (sourceType === "weapon" ? sourceId : null);
+  const weaponName = attack.weaponName ?? (sourceType === "weapon" ? attack.name : null);
+  const weaponType = attack.weaponType ?? attack.category ?? attack.type ?? sourceType;
+
   return {
     id: attack.id ?? attack._id ?? attack.itemId ?? attack.name ?? crypto.randomUUID?.() ?? Math.random().toString(36).slice(2),
     name: attack.name ?? "Attack",
     img: attack.img ?? attack.image ?? "",
     type: attack.type ?? sourceType,
     sourceType,
-    sourceId: attack.sourceId ?? attack.itemId ?? attack.id ?? null,
+    sourceId,
+    weaponId,
+    weaponName,
+    weaponType,
     attackTotal: attackBonus,
     attackBonus,
     damageFormula,

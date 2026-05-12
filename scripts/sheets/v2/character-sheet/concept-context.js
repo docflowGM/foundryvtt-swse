@@ -1,4 +1,5 @@
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 function toSignedClass(value) {
   const n = Number(value) || 0;
   return n > 0 ? 'mod--positive' : n < 0 ? 'mod--negative' : 'mod--zero';
@@ -39,6 +40,46 @@ function titleCase(value) {
     .join(' ') || 'Unknown';
 }
 
+function humanizeSkillLabel(key, fallback = '') {
+  const value = fallback || key;
+  const spaced = String(value || '')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/[\-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return titleCase(spaced || key);
+}
+
+function isCanonicalSkillKey(key) {
+  return !!key && Object.prototype.hasOwnProperty.call(CANONICAL_SKILL_DEFS, key);
+}
+
+function getDerivedSkillMap(context) {
+  const raw = context?.derived?.skills;
+
+  if (Array.isArray(raw)) {
+    return Object.fromEntries(
+      raw
+        .map((value) => [canonicalizeSkillKey(value?.key ?? value?.id ?? value?.label), value])
+        .filter(([key, value]) => isCanonicalSkillKey(key) && value && typeof value === 'object' && !Array.isArray(value))
+    );
+  }
+
+  if (!raw || typeof raw !== 'object') return {};
+
+  const listRows = Array.isArray(raw.list) ? raw.list : [];
+  const objectRows = Object.entries(raw)
+    .filter(([key, value]) => {
+      if (!isCanonicalSkillKey(key)) return false;
+      return value && typeof value === 'object' && !Array.isArray(value);
+    });
+  const listEntries = listRows
+    .map((value) => [canonicalizeSkillKey(value?.key ?? value?.id ?? value?.label), value])
+    .filter(([key, value]) => isCanonicalSkillKey(key) && value && typeof value === 'object' && !Array.isArray(value));
+
+  return Object.fromEntries([...objectRows, ...listEntries]);
+}
+
 function buildStatusChips({ healthPanel, forceSensitive, inventoryPanel, armorSummaryPanel }) {
   const chips = [];
   const condition = healthPanel?.currentConditionPenalty;
@@ -74,6 +115,46 @@ function buildStatusChips({ healthPanel, forceSensitive, inventoryPanel, armorSu
   if (armorSummaryPanel?.equippedArmor?.name) {
     chips.push({ label: armorSummaryPanel.equippedArmor.name, tone: 'accent-soft' });
   }
+
+  return chips;
+}
+
+
+function buildCombatStatusStrip(context, combat) {
+  const chips = [];
+  const hp = context.healthPanel?.hp ?? {};
+  const hpValue = Number(hp.value) || 0;
+  const hpMax = Number(hp.max) || 0;
+  const hpTemp = Number(hp.temp) || 0;
+  const hpPct = hpMax > 0 ? hpValue / hpMax : 1;
+  const conditionStep = Number(context.healthPanel?.currentConditionPenalty?.step) || 0;
+  const conditionLabel = context.healthPanel?.currentConditionPenalty?.label || 'Normal';
+  const hasAttacks = !!combat?.hasAnyAttacks;
+  const hasWeapons = asArray(combat?.attacks).length > 0;
+  const hasArmor = !!context.armorSummaryPanel?.equippedArmor?.name;
+  const secondWind = context.secondWindPanel ?? context.healthPanel?.secondWind ?? {};
+  const secondWindUsed = !!(secondWind.used || secondWind.isUsed || secondWind.spent);
+
+  chips.push(conditionStep > 0
+    ? { label: `CT ${conditionLabel}`, tone: conditionStep >= 3 ? 'danger' : 'warn', tooltip: 'ConditionTrack' }
+    : { label: 'CT Normal', tone: 'ok', tooltip: 'ConditionTrack' });
+
+  if (hpMax > 0 && hpPct <= 0.25) chips.push({ label: 'Critical HP', tone: 'danger', tooltip: 'HitPoints' });
+  else if (hpMax > 0 && hpPct <= 0.5) chips.push({ label: 'Wounded', tone: 'warn', tooltip: 'HitPoints' });
+  else chips.push({ label: 'Vitals Stable', tone: 'ok', tooltip: 'HitPoints' });
+
+  if (hpTemp > 0) chips.push({ label: `Temp HP +${hpTemp}`, tone: 'accent', tooltip: 'HitPoints' });
+  chips.push(secondWindUsed
+    ? { label: 'Second Wind Used', tone: 'neutral', tooltip: 'SecondWind' }
+    : { label: 'Second Wind Ready', tone: 'ok', tooltip: 'SecondWind' });
+  chips.push(hasArmor
+    ? { label: 'Armor Equipped', tone: 'accent', tooltip: 'ReflexDefense' }
+    : { label: 'No Armor', tone: 'neutral', tooltip: 'ReflexDefense' });
+  chips.push(hasWeapons
+    ? { label: `${asArray(combat?.attacks).length} Weapon Attacks`, tone: 'accent', tooltip: 'BaseAttackBonus' }
+    : hasAttacks
+      ? { label: 'Unarmed Ready', tone: 'neutral', tooltip: 'BaseAttackBonus' }
+      : { label: 'No Attacks', tone: 'danger', tooltip: 'BaseAttackBonus' });
 
   return chips;
 }
@@ -186,34 +267,61 @@ function buildSkillUseGroups(grouped) {
 }
 
 function buildSkillsTab(context, abilities, identity) {
-  const abilityChoices = asArray(context.derived?.identity?.abilities)
-    .map((ab) => ({ key: ab?.key || '', label: ab?.label || titleCase(ab?.key) }));
+  const rawAbilityChoices = asArray(context.derived?.identity?.abilities).length
+    ? asArray(context.derived?.identity?.abilities)
+    : asArray(abilities);
+  const abilityChoices = rawAbilityChoices
+    .map((ab) => ({ key: ab?.key || '', label: ab?.label || titleCase(ab?.key) }))
+    .filter((ab) => ab.key);
   const abilityMap = new Map(abilityChoices.map((ab) => [ab.key, ab.label]));
-  const derivedSkills = context.derived?.skills ?? {};
+  const derivedSkills = getDerivedSkillMap(context);
+  const systemSkills = normalizeSkillMap(context.system?.skills ?? context.actor?.system?.skills, { includeDefaults: true });
 
-  const entries = Object.entries(derivedSkills)
-    .map(([key, skill]) => {
-      const extraUsesGrouped = buildSkillUseGroups(skill?.extraUsesGrouped);
+  const entries = Object.keys(CANONICAL_SKILL_DEFS)
+    .map((key) => {
+      const skill = derivedSkills[key] ?? {};
+      const systemSkill = systemSkills[key] ?? {};
+      const defaultAbility = CANONICAL_SKILL_DEFS[key]?.defaultAbility || skill?.defaultAbility || systemSkill?.selectedAbility || '';
+      const candidateAbility = skill?.selectedAbility || skill?.ability || skill?.abilityKey || systemSkill?.selectedAbility || defaultAbility;
+      const selectedAbility = abilityMap.has(candidateAbility) ? candidateAbility : defaultAbility;
+      const skillTooltipKey = humanizeSkillLabel(key, skill?.label).replace(/\s+/g, '');
+      const abilityAccentClass = selectedAbility ? `swse-ability-accent--${selectedAbility}` : 'swse-ability-accent--none';
+      const extraUsesGrouped = buildSkillUseGroups(skill?.extraUsesGrouped ?? systemSkill?.extraUsesGrouped);
       const extraUsesCount = extraUsesGrouped.reduce((sum, group) => sum + group.entries.length, 0);
-      const selectedAbility = skill?.selectedAbility || skill?.ability || skill?.abilityKey || '';
+      const total = Number.isFinite(Number(skill?.total)) ? Number(skill.total) : Number(systemSkill?.total) || 0;
+      const abilityMod = Number(skill?.abilityMod) || 0;
+      const miscMod = Number.isFinite(Number(systemSkill?.miscMod)) ? Number(systemSkill.miscMod) : Number(skill?.miscMod) || 0;
 
       return {
         key,
-        label: skill?.label || titleCase(key),
-        total: Number(skill?.total) || 0,
-        totalClass: toSignedClass(skill?.total),
+        label: humanizeSkillLabel(key, skill?.label),
+        total,
+        totalClass: toSignedClass(total),
         selectedAbility,
+        defaultAbility,
+        abilityAccentClass,
         selectedAbilityLabel: abilityMap.get(selectedAbility) || titleCase(selectedAbility),
-        abilityMod: Number(skill?.abilityMod) || 0,
-        abilityModClass: toSignedClass(skill?.abilityMod),
+        abilityMod,
+        abilityModClass: toSignedClass(abilityMod),
         halfLevel: Number(skill?.halfLevel) || 0,
         halfLevelClass: toSignedClass(skill?.halfLevel),
-        miscMod: Number(skill?.miscMod) || 0,
-        miscModClass: toSignedClass(skill?.miscMod),
+        miscMod,
+        miscModClass: toSignedClass(miscMod),
+        tooltipKey: skillTooltipKey,
+        breakdown: {
+          ability: abilityMap.get(selectedAbility) || titleCase(selectedAbility),
+          abilityMod,
+          halfLevel: Number(skill?.halfLevel) || 0,
+          trained: systemSkill?.trained === true || skill?.trained === true ? 5 : 0,
+          focus: systemSkill?.focused === true || skill?.focused === true ? 5 : 0,
+          misc: miscMod,
+          armor: Number(skill?.armorPenalty) || 0,
+          total
+        },
         armorPenalty: Number(skill?.armorPenalty) || 0,
-        trained: !!skill?.trained,
-        focused: !!skill?.focused,
-        favorite: !!skill?.favorite,
+        trained: systemSkill?.trained === true || skill?.trained === true,
+        focused: systemSkill?.focused === true || skill?.focused === true,
+        favorite: systemSkill?.favorite === true || skill?.favorite === true,
         extraUsesGrouped,
         extraUsesCount,
         hasExtraUses: extraUsesCount > 0,
@@ -236,10 +344,14 @@ function buildSkillsTab(context, abilities, identity) {
     const miscMod = Number(skill?.miscMod) || 0;
     const total = abilityMod + halfLevel + (skill?.trained ? 5 : 0) + (skill?.focused ? 5 : 0) + miscMod;
 
+    const abilityAccentClass = abilityKey ? `swse-ability-accent--${abilityKey}` : 'swse-ability-accent--none';
+
     return {
       id: skill?.id || `custom-${index}`,
+      index,
       label: skill?.label || `Custom Skill ${index + 1}`,
       ability: abilityKey,
+      abilityAccentClass,
       abilityLabel: abilityMap.get(abilityKey) || titleCase(abilityKey),
       abilityMod,
       halfLevel,
@@ -248,7 +360,8 @@ function buildSkillsTab(context, abilities, identity) {
       miscMod,
       total,
       totalClass: toSignedClass(total),
-      notes: normalizeText(skill?.notes)
+      notes: normalizeText(skill?.notes),
+      abilityChoices
     };
   });
 
@@ -256,6 +369,8 @@ function buildSkillsTab(context, abilities, identity) {
     entries,
     highlights,
     customEntries,
+    hasCustomEntries: customEntries.length > 0,
+    hasEntries: entries.length > 0,
     summaryCards: [
       { label: 'Tracked Skills', value: String(entries.length) },
       { label: 'Trained', value: String(entries.filter((skill) => skill.trained).length) },
@@ -403,6 +518,28 @@ export function buildConceptSheetViewModel(context = {}) {
   const featEntries = asArray(context.featPanel?.entries);
   const relationshipEntries = asArray(context.relationshipsPanel?.relationships);
   const attackEntries = asArray(context.combat?.attacks);
+  const unarmedAttack = context.combat?.unarmedAttack ?? null;
+  const unarmedAttackEntry = unarmedAttack ? {
+    id: 'virtual-unarmed-attack',
+    name: unarmedAttack.name || 'Unarmed Attack',
+    sourceType: 'unarmed',
+    virtual: true,
+    attackTotal: Number(unarmedAttack.attackTotal ?? unarmedAttack.attackBonus ?? context.bab ?? 0) || 0,
+    attackBonus: Number(unarmedAttack.attackTotal ?? unarmedAttack.attackBonus ?? context.bab ?? 0) || 0,
+    damageFormula: unarmedAttack.damageFormula || [unarmedAttack.damage, unarmedAttack.damageType].filter(Boolean).join(' ') || '1d4',
+    damage: unarmedAttack.damageFormula || unarmedAttack.damage || '1d4',
+    critRange: unarmedAttack.critRange || '20',
+    critMult: unarmedAttack.critMult || 'x2',
+    range: unarmedAttack.range || 'Melee',
+    weaponName: unarmedAttack.name || 'Unarmed Attack',
+    weaponType: unarmedAttack.weaponType || 'Simple · Melee',
+    tags: [
+      ...(unarmedAttack.martialArtsStep ? [`Martial Arts ${unarmedAttack.martialArtsStep}`] : []),
+      ...(unarmedAttack.noProvokeOpportunity ? ['No AoO'] : [])
+    ],
+    actionType: 'standard',
+    notes: unarmedAttack.notes || ''
+  } : null;
   const fpValue = Number(context.forcePointsValue) || 0;
   const fpMax = Number(context.forcePointsMax) || 0;
   const dpValue = Number(context.destinyPointsValue) || 0;
@@ -461,7 +598,7 @@ export function buildConceptSheetViewModel(context = {}) {
     { id: 'overview', label: 'Summary', icon: 'fa-solid fa-file-lines', active: true },
     { id: 'abilities', label: 'Abilities', icon: 'fa-solid fa-dna', count: toCountBadge(abilities.length) },
     { id: 'skills', label: 'Skills', icon: 'fa-solid fa-crosshairs', count: toCountBadge(skillCount) },
-    { id: 'combat', label: 'Combat', icon: 'fa-solid fa-burst', count: toCountBadge(attackEntries.length || actionGroups.length) },
+    { id: 'combat', label: 'Combat', icon: 'fa-solid fa-burst', count: toCountBadge(attackEntries.length + (unarmedAttackEntry ? 1 : 0) || actionGroups.length) },
     { id: 'talents', label: 'Talents', icon: 'fa-solid fa-diagram-project', count: toCountBadge(talentEntries.length + featEntries.length) },
     { id: 'gear', label: 'Gear', icon: 'fa-solid fa-toolbox', count: toCountBadge(inventoryEntries.length) },
     { id: 'biography', label: 'Biography', icon: 'fa-solid fa-book-open' },
@@ -504,11 +641,11 @@ export function buildConceptSheetViewModel(context = {}) {
     })),
     quickStats: [
       { label: 'Initiative', value: Number(context.initiativeTotal) || 0, valueClass: toSignedClass(context.initiativeTotal), dataAction: 'roll-initiative' },
-      { label: 'Base Attack', value: Number(context.bab) || 0, valueClass: toSignedClass(context.bab) },
+      { label: 'Base Attack', value: Number(context.bab) || 0, valueClass: toSignedClass(context.bab), tooltip: 'BaseAttackBonus' },
       { label: 'Perception', value: Number(context.perceptionTotal) || 0, valueClass: toSignedClass(context.perceptionTotal), dataAction: 'roll-skill', dataSkill: 'perception' },
       { label: 'Grapple', value: Number(context.grappleBonus) || 0, valueClass: toSignedClass(context.grappleBonus) },
-      { label: 'Speed', value: Number(context.speed) || 0, suffix: 'sq', valueClass: toSignedClass(0) },
-      { label: 'Damage Threshold', value: Number(context.derived?.damageThreshold) || 0, valueClass: toSignedClass((Number(context.derived?.damageThreshold) || 0) - 10) }
+      { label: 'Speed', value: Number(context.speed) || 0, suffix: 'sq', valueClass: toSignedClass(0), tooltip: 'Speed' },
+      { label: 'Damage Threshold', value: Number(context.derived?.damageThreshold) || 0, valueClass: toSignedClass((Number(context.derived?.damageThreshold) || 0) - 10), tooltip: 'DamageThreshold' }
     ],
     vitals: {
       hpValue,
@@ -536,7 +673,7 @@ export function buildConceptSheetViewModel(context = {}) {
       heroMetrics: [
         { label: 'Health', value: `${hpValue}/${hpMax || 0}`, valueClass: readinessClass },
         { label: 'Skills', value: String(skillCount || 0), valueClass: 'mod--zero' },
-        { label: 'Attacks', value: String(attackEntries.length || 0), valueClass: 'mod--zero' },
+        { label: 'Attacks', value: String(attackEntries.length + (unarmedAttackEntry ? 1 : 0)), valueClass: 'mod--zero' },
         { label: 'Assets', value: String(relationshipEntries.length || 0), valueClass: 'mod--zero' }
       ],
       dossierTags,
@@ -561,18 +698,31 @@ export function buildConceptSheetViewModel(context = {}) {
     relationships,
     combat: {
       telemetry: [
-        { label: 'Initiative', value: Number(context.initiativeTotal) || 0, valueClass: toSignedClass(context.initiativeTotal) },
-        { label: 'Base Attack', value: Number(context.bab) || 0, valueClass: toSignedClass(context.bab) },
-        { label: 'Speed', value: Number(context.speed) || 0, suffix: 'sq', valueClass: toSignedClass(0) },
-        { label: 'Damage Threshold', value: Number(context.derived?.damageThreshold) || 0, valueClass: toSignedClass((Number(context.derived?.damageThreshold) || 0) - 10) }
+        { label: 'Initiative', value: Number(context.initiativeTotal) || 0, valueClass: toSignedClass(context.initiativeTotal), tooltip: 'Initiative' },
+        { label: 'Base Attack', value: Number(context.bab) || 0, valueClass: toSignedClass(context.bab), tooltip: 'BaseAttackBonus' },
+        { label: 'Speed', value: Number(context.speed) || 0, suffix: 'sq', valueClass: toSignedClass(0), tooltip: 'Speed' },
+        { label: 'Damage Threshold', value: Number(context.derived?.damageThreshold) || 0, valueClass: toSignedClass((Number(context.derived?.damageThreshold) || 0) - 10), tooltip: 'DamageThreshold' }
       ],
       attacks: attackEntries.map((attack) => ({
         ...attack,
+        weaponId: attack?.weaponId ?? attack?.itemId ?? attack?.sourceId ?? null,
+        weaponName: attack?.weaponName ?? attack?.name ?? '',
+        weaponType: attack?.weaponType ?? attack?.type ?? attack?.sourceType ?? '',
         attackTotalClass: toSignedClass(attack?.attackTotal),
         tags: asArray(attack?.tags)
       })),
+      unarmedAttack: unarmedAttackEntry ? {
+        ...unarmedAttackEntry,
+        attackTotalClass: toSignedClass(unarmedAttackEntry.attackTotal),
+        tags: asArray(unarmedAttackEntry.tags)
+      } : null,
+      hasAnyAttacks: attackEntries.length > 0 || !!unarmedAttackEntry,
       actionGroups,
-      notes: context.combatNotesPanel?.combatNotes || ''
+      notes: context.combatNotesPanel?.combatNotes || '',
+      statusStrip: buildCombatStatusStrip(context, {
+        attacks: attackEntries,
+        hasAnyAttacks: attackEntries.length > 0 || !!unarmedAttackEntry
+      })
     },
     gear: {
       credits,

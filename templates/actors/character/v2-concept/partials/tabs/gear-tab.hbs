@@ -1,4 +1,18 @@
 <div class="swse-concept-dashboard">
+  <section class="swse-concept-panel swse-concept-panel--gear-actions swse-edit-reveal">
+    <header class="swse-concept-panel__header">
+      <div>
+        <h3 class="swse-concept-panel__title">Inventory Controls</h3>
+        <p class="swse-concept-panel__hint">Create blank actor-local items, then inspect them to fill in details.</p>
+      </div>
+    </header>
+    <div class="swse-concept-action-rail swse-concept-action-rail--gear">
+      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="weapon">Add Weapon</button>
+      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="armor">Add Armor</button>
+      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="equipment">Add Gear</button>
+    </div>
+  </section>
+
   <div class="swse-concept-card-grid swse-concept-card-grid--gear-top">
     <article class="swse-concept-info-card swse-concept-info-card--stat">
       <span>Credits</span>
@@ -40,9 +54,13 @@
           {{/each}}
         </div>
       {{else}}
-        <div class="swse-concept-empty-state">
+        <div class="swse-concept-empty-state swse-concept-empty-state--guided">
           <span class="swse-concept-empty-state__eyebrow">Nothing equipped</span>
-          <strong>Equip items from the ledger below to populate the active loadout.</strong>
+          <strong>Equip weapons, armor, or field gear from the ledger below to populate the active loadout.</strong>
+          <div class="swse-concept-empty-state__actions swse-edit-only">
+            <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="weapon">Add Weapon</button>
+            <button type="button" class="swse-concept-btn" data-action="add-item" data-item-type="equipment">Add Gear</button>
+          </div>
         </div>
       {{/if}}
     </section>
@@ -83,13 +101,30 @@
           </article>
         </div>
       {{else}}
-        <div class="swse-concept-empty-state">
+        <div class="swse-concept-empty-state swse-concept-empty-state--guided">
           <span class="swse-concept-empty-state__eyebrow">No armor equipped</span>
-          <strong>Armor telemetry will appear here once a suit is equipped.</strong>
+          <strong>Armor can modify Reflex Defense, Fortitude Defense, Max Dex, and armor check penalties.</strong>
+          <div class="swse-concept-empty-state__actions swse-edit-only">
+            <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="armor">Add Armor</button>
+          </div>
         </div>
       {{/if}}
     </section>
   </div>
+
+  {{#unless conceptLayout.gear.groups.length}}
+    <section class="swse-concept-panel swse-concept-panel--ledger swse-concept-gear-ledger-empty">
+      <div class="swse-concept-empty-state swse-concept-empty-state--guided">
+        <span class="swse-concept-empty-state__eyebrow">No gear logged</span>
+        <strong>Create actor-local weapons, armor, or equipment to begin the inventory ledger.</strong>
+        <div class="swse-concept-empty-state__actions swse-edit-only">
+          <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="weapon">Add Weapon</button>
+          <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="armor">Add Armor</button>
+          <button type="button" class="swse-concept-btn" data-action="add-item" data-item-type="equipment">Add Gear</button>
+        </div>
+      </div>
+    </section>
+  {{/unless}}
 
   {{#each conceptLayout.gear.groups as |group|}}
     <section class="swse-concept-panel swse-concept-panel--ledger">

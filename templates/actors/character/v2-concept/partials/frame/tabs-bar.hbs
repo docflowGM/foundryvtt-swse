@@ -10,4 +10,13 @@
       {{#if tab.count}}<span class="swse-concept-tab__count">{{tab.count}}</span>{{/if}}
     </a>
   {{/each}}
+
+  <button type="button"
+          class="swse-sheet-mode-toggle"
+          data-action="toggle-sheet-mode"
+          data-mode="play"
+          aria-pressed="false"
+          title="Switch between play controls and edit controls">
+    <span class="swse-sheet-mode-toggle__label">Play Mode</span>
+  </button>
 </nav>

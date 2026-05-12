@@ -1,10 +1,16 @@
 <div class="swse-concept-dashboard">
   <div class="swse-concept-metric-row swse-concept-metric-row--combat">
     {{#each conceptLayout.combat.telemetry as |metric|}}
-      <div class="swse-concept-metric-card swse-concept-metric-card--combat">
+      <div class="swse-concept-metric-card swse-concept-metric-card--combat" data-swse-tooltip="{{metric.tooltip}}">
         <span>{{metric.label}}</span>
         <strong class="{{metric.valueClass}}">{{numberFormat metric.value decimals=0 sign=true}}{{metric.suffix}}</strong>
       </div>
+    {{/each}}
+  </div>
+
+  <div class="swse-concept-combat-status-strip" aria-label="Combat status">
+    {{#each conceptLayout.combat.statusStrip as |chip|}}
+      <span class="swse-concept-status-chip swse-concept-status-chip--{{chip.tone}}" data-swse-tooltip="{{chip.tooltip}}">{{chip.label}}</span>
     {{/each}}
   </div>
 
@@ -17,8 +23,41 @@
         </div>
       </header>
 
-      {{#if conceptLayout.combat.attacks.length}}
+      {{#if conceptLayout.combat.hasAnyAttacks}}
         <div class="swse-concept-ledger">
+          {{#if conceptLayout.combat.unarmedAttack}}
+            {{#with conceptLayout.combat.unarmedAttack as |attack|}}
+              <article class="swse-concept-ledger-row swse-concept-ledger-row--attack swse-concept-ledger-row--unarmed" data-attack-id="{{attack.id}}">
+                <div class="swse-concept-ledger-row__main">
+                  <div class="swse-concept-ledger-row__title">{{attack.name}}</div>
+                  <div class="swse-concept-ledger-row__meta">
+                    <span>Default</span>
+                    {{#if attack.weaponType}}<span>{{attack.weaponType}}</span>{{/if}}
+                    {{#each attack.tags as |tag|}}<span>{{tag}}</span>{{/each}}
+                  </div>
+                </div>
+
+                <div class="swse-concept-ledger-row__stats">
+                  <div>
+                    <span>To Hit</span>
+                    <strong class="{{attack.attackTotalClass}}">{{numberFormat attack.attackTotal decimals=0 sign=true}}</strong>
+                  </div>
+                  <div>
+                    <span>Damage</span>
+                    <strong>{{attack.damageFormula}}</strong>
+                  </div>
+                  <div>
+                    <span>Crit</span>
+                    <strong>{{attack.critRange}}x{{attack.critMult}}</strong>
+                  </div>
+                </div>
+
+                <div class="swse-concept-ledger-row__actions">
+                  <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="roll-unarmed-attack">Roll</button>
+                </div>
+              </article>
+            {{/with}}
+          {{/if}}
           {{#each conceptLayout.combat.attacks as |attack|}}
             <article class="swse-concept-ledger-row swse-concept-ledger-row--attack" data-attack-id="{{attack.id}}">
               <div class="swse-concept-ledger-row__main">
@@ -55,14 +94,20 @@
           {{/each}}
         </div>
       {{else}}
-        <div class="swse-concept-empty-state">
+        <div class="swse-concept-empty-state swse-concept-empty-state--guided">
           <span class="swse-concept-empty-state__eyebrow">No attacks available</span>
-          <strong>Equip a weapon in Gear to populate attack telemetry here.</strong>
+          <strong>No equipped weapons detected. Unarmed Attack should be available by default; add or equip a weapon in Gear for a full attack ledger.</strong>
+          <div class="swse-concept-empty-state__actions swse-edit-only">
+            <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-item" data-item-type="weapon">Add Weapon</button>
+            <button type="button" class="swse-concept-btn" data-action="sheet-tab" data-sheet-tab="gear" data-tab="gear">Open Gear</button>
+          </div>
         </div>
       {{/if}}
     </section>
 
     <div class="swse-concept-tab-stack">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/hp-condition-panel.hbs"}}
+
       <section class="swse-concept-panel">
         <header class="swse-concept-panel__header">
           <div>

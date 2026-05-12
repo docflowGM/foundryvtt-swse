@@ -36,7 +36,7 @@
 
   <div class="skills-list swse-concept-skills-list">
     {{#each conceptLayout.skills.entries as |skill|}}
-      <article class="skill-row-container swse-concept-skill-row"
+      <article class="skill-row-container swse-concept-skill-row {{skill.abilityAccentClass}} swse-concept-skill-row--{{skill.selectedAbility}}"
                data-skill="{{skill.key}}"
                data-label="{{skill.label}}"
                data-name="{{skill.key}}"
@@ -81,7 +81,7 @@
             </div>
 
             <div class="swse-concept-ledger-row__meta">
-              <span>{{skill.selectedAbilityLabel}}</span>
+              <span class="swse-concept-skill-ability-chip {{skill.abilityAccentClass}}">{{skill.selectedAbilityLabel}}</span>
               {{#if skill.trained}}<span>Trained</span>{{/if}}
               {{#if skill.focused}}<span>Focused</span>{{/if}}
               {{#if skill.favorite}}<span>Favorite</span>{{/if}}
@@ -93,7 +93,7 @@
         <div class="swse-concept-skill-row__math">
           <label class="swse-concept-toolfield swse-concept-toolfield--compact">
             <span>Ability</span>
-            <select name="system.skills.{{skill.key}}.selectedAbility" class="ability-select">
+            <select name="system.skills.{{skill.key}}.selectedAbility" class="ability-select ability-select--{{skill.selectedAbility}} {{skill.abilityAccentClass}}">
               {{#each skill.abilityChoices as |ab|}}
                 <option value="{{ab.key}}" {{#if (eq ab.key skill.selectedAbility)}}selected{{/if}}>{{ab.label}}</option>
               {{/each}}
@@ -178,6 +178,7 @@
                             data-action="execute-extra-skill-use"
                             data-skill="{{../../key}}"
                             data-use="{{use.key}}"
+                            data-key="{{use.key}}"
                             data-use-key="{{use.useKey}}"
                             data-blocked="{{#if use.isBlocked}}true{{else}}false{{/if}}"
                             data-action-type="{{use.actionType}}"

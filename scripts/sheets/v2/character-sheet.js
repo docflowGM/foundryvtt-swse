@@ -78,7 +78,50 @@ import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/them
 import { activateCustomSkillsUI } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/custom-skills-ui.js";
 import { FeatChoiceDialog } from "/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js";
 import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
+
+const SHEET_MODE_STORAGE_PREFIX = 'swse.sheetMode';
+
+function getSheetModeStorageKey(actor) {
+  return `${SHEET_MODE_STORAGE_PREFIX}.${actor?.id || actor?.uuid || 'unknown'}`;
+}
+
+function getStoredSheetMode(actor) {
+  try {
+    const stored = globalThis.localStorage?.getItem?.(getSheetModeStorageKey(actor));
+    return stored === 'edit' ? 'edit' : 'play';
+  } catch (_err) {
+    return 'play';
+  }
+}
+
+function setStoredSheetMode(actor, mode) {
+  try {
+    globalThis.localStorage?.setItem?.(getSheetModeStorageKey(actor), mode === 'edit' ? 'edit' : 'play');
+  } catch (_err) {
+    // localStorage may be unavailable in some embedded contexts; mode still works for this render.
+  }
+}
+
+function applySheetInteractionMode(root, mode = 'play') {
+  if (!root) return;
+  const normalizedMode = mode === 'edit' ? 'edit' : 'play';
+  root.classList.toggle('swse-sheet-mode--edit', normalizedMode === 'edit');
+  root.classList.toggle('swse-sheet-mode--play', normalizedMode !== 'edit');
+  root.dataset.sheetInteractionMode = normalizedMode;
+
+  root.querySelectorAll('[data-action="toggle-sheet-mode"]').forEach((button) => {
+    button.dataset.mode = normalizedMode;
+    button.setAttribute('aria-pressed', normalizedMode === 'edit' ? 'true' : 'false');
+    const label = button.querySelector('.swse-sheet-mode-toggle__label') || button;
+    label.textContent = normalizedMode === 'edit' ? 'Edit Mode' : 'Play Mode';
+    button.title = normalizedMode === 'edit'
+      ? 'Edit Mode is active. Click to return to Play Mode.'
+      : 'Play Mode is active. Click to expose editable datapad controls.';
+  });
+}
+
 import { buildConceptSheetViewModel } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
+import { maybePromptForDatapadRegistration } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/chargen-onboarding.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -1621,11 +1664,19 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
+    applySheetInteractionMode(root, getStoredSheetMode(this.document));
+
     // Wire listeners to the sheet root
     this.activateListeners(root, { signal });
     activateCustomSkillsUI(this, root, { signal });
     applyResourceNumberAnimations(this, root);
     applyResourceBarAnimations(this, root);
+
+    if (!['chargen', 'progression'].includes(this._shellSurface)) {
+      maybePromptForDatapadRegistration(this).catch((err) => {
+        swseLogger.warn('[Datapad Registration] Onboarding prompt failed', err);
+      });
+    }
 
     const recentHydrationMutation = getRecentHydrationMutation(this);
     if (recentHydrationMutation) {
@@ -3185,6 +3236,19 @@ const forcePoints = [];
     }, { signal });
 
 
+    // DELEGATED: Play/Edit Mode - keep the pretty play surface default while exposing maintenance controls on demand.
+    html.addEventListener("click", ev => {
+      const button = ev.target.closest("[data-action='toggle-sheet-mode']");
+      if (!button) return;
+
+      ev.preventDefault();
+      const currentMode = button.dataset.mode === 'edit' ? 'edit' : 'play';
+      const nextMode = currentMode === 'edit' ? 'play' : 'edit';
+      setStoredSheetMode(this.document, nextMode);
+      applySheetInteractionMode(html, nextMode);
+    }, { signal });
+
+
     // DELEGATED: Toggle Abilities Panel - Show/Hide Expanded Views
     // Using delegated listeners from html root for stability across rerenders
     html.addEventListener("click", ev => {
@@ -3216,13 +3280,15 @@ const forcePoints = [];
           // swseLogger.debug(`[DEBUG] Row ${idx} collapsed display:`, collapsed.style.display);
         }
         if (expanded) {
-          expanded.style.display = isExpanded ? "flex" : "none";
+          const expandedDisplay = expanded.dataset?.expandedDisplay || "flex";
+          expanded.style.display = isExpanded ? expandedDisplay : "none";
           // swseLogger.debug(`[DEBUG] Row ${idx} expanded display:`, expanded.style.display);
         }
       });
 
-      // Update button text
-      button.textContent = isExpanded ? "Collapse" : "Expand";
+      // Update button state/text
+      button.setAttribute("aria-expanded", String(isExpanded));
+      button.textContent = isExpanded ? "Collapse" : (button.dataset?.collapsedLabel || "Edit Stats");
       // swseLogger.debug("[DEBUG] Button text updated to:", button.textContent);
     }, { signal });
 
@@ -3256,13 +3322,15 @@ const forcePoints = [];
           // swseLogger.debug(`[DEBUG] Row ${idx} collapsed display:`, collapsed.style.display);
         }
         if (expanded) {
-          expanded.style.display = isExpanded ? "flex" : "none";
+          const expandedDisplay = expanded.dataset?.expandedDisplay || "flex";
+          expanded.style.display = isExpanded ? expandedDisplay : "none";
           // swseLogger.debug(`[DEBUG] Row ${idx} expanded display:`, expanded.style.display);
         }
       });
 
-      // Update button text
-      button.textContent = isExpanded ? "Collapse" : "Expand";
+      // Update button state/text
+      button.setAttribute("aria-expanded", String(isExpanded));
+      button.textContent = isExpanded ? "Collapse" : (button.dataset?.collapsedLabel || "Edit Defenses");
       // swseLogger.debug("[DEBUG] Button text updated to:", button.textContent);
     }, { signal });
 
