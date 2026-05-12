@@ -513,3 +513,132 @@ After Phase 1 patch, Phase 4 should address:
 - Issue: Design class identity contract (read-only vs override)
 - Issue: Clarify background/event field ownership
 - Issue: Clarify BAB contract (editable vs derived)
+
+---
+
+## Phase 1 Results
+
+**Commit**: `4b604c4` "feat: Phase 1 - Safe character sheet partial cleanup (no architecture changes)"
+
+### Files Changed
+
+| File | Changes | Lines |
+|---|---|---|
+| `templates/actors/character/v2-concept/character-sheet.hbs` | `actor.system.forceSensitive` → `forceSensitive` (line 74) | 1 ✓ |
+| `templates/actors/character/v2-concept/partials/frame/sheet-surface.hbs` | `actor.system.forceSensitive` → `forceSensitive` (line 39) | 1 ✓ |
+| `templates/actors/character/v2-concept/partials/panels/character-record-header.hbs` | `system.race` → `system.species` (line 31) | 1 ✓ |
+| `scripts/sheets/v2/character-sheet/context.js` | Species fallback preference reordered (line 104) | 1 ✓ |
+| `scripts/sheets/v2/context/PanelContextBuilder.js` | Added `credits` to resourcesPanel.resources | 4 ✓ |
+| `scripts/sheets/v2/character-sheet.js` | Added 5 entries to FORM_FIELD_SCHEMA | 7 ✓ |
+
+**Total changes**: 6 files, 18 additions, 5 deletions
+
+### Aliases Removed (Sheet Template Cleanup)
+
+✓ **Removed 2 raw system reads**:
+  - `actor.system.forceSensitive` → `forceSensitive` (prepared flag from sheet context)
+  - Occurs in: character-sheet.hbs:74, sheet-surface.hbs:39
+
+✓ **Removed 1 legacy system write**:
+  - `system.race` → `system.species` (canonical path per helper)
+  - Occurs in: character-record-header.hbs:31
+
+### Aliases Intentionally Retained
+
+The following were NOT changed (per Phase 1 scope):
+
+| Alias | Reason | Status |
+|---|---|---|
+| `system.class` (scalar write in character-record-header.hbs:23) | Blocked: class identity contract needs architecture decision | TODO Phase 4 |
+| `system.event` (write in character-record-header.hbs:85) | Blocked: background/event field ownership needs decision | TODO Phase 4 |
+| `system.abilities.*` (all ability inputs) | Blocked: abilities vs attributes path conflict unresolved | TODO Phase 4 |
+| `system.baseAttackBonus` (BAB field) | Blocked: BAB contract (editable vs derived) needs decision | TODO Phase 4 |
+| `system.notes` (raw reads in templates) | Not patched yet: partials still read raw, but form schema now supports it | Partial Phase 1 |
+| `actor.system.credits` (raw reads in resources-panel) | Partially addressed: exposed in resourcesPanel, templates not yet patched | Partial Phase 1 |
+
+### Compatibility Fallbacks Added (Context/Model Layer)
+
+✓ **Identity view-model reordered species fallback** (context.js:104):
+  - Now prefers: `identity.species` → `system.species?.name` → `system.species` → `system.race` → '—'
+  - Ensures canonical `system.species` is checked before legacy `system.race`
+
+✓ **Resources panel now exposes credits** (PanelContextBuilder.js:993):
+  - `resourcesPanel.resources.credits` now available for template consumption
+  - Calculated as: `Number(system.credits) || 0`
+  - Allows templates to use view-model instead of raw reads
+
+✓ **Form schema entries added** (character-sheet.js:241-249):
+  - `system.forcePointDie: 'string'` — supports Force Point die configuration input
+  - `system.notes: 'string'` — biography/notes field support
+  - `system.biography: 'string'` — canonical biography field support
+  - `system.species: 'string'` — now form-coerced properly
+  - `system.background: 'string'` — now form-coerced properly
+
+### Validation: Grep Results
+
+```bash
+# Remaining raw forceSensitive reads in v2-concept templates
+$ grep -r "actor\.system\.forceSensitive" templates/actors/character/v2-concept/
+→ 0 results ✓
+
+# Remaining system.race writes in v2-concept templates
+$ grep -r 'name="system\.race"' templates/actors/character/v2-concept/
+→ 0 results ✓
+
+# Verified system.species write is in place
+$ grep -r 'name="system\.species"' templates/actors/character/v2-concept/
+→ character-record-header.hbs:31 (line excerpt verified) ✓
+
+# Verified form schema entries added
+$ grep "forcePointDie\|'system\.notes'\|'system\.species'\|'system\.background'" scripts/sheets/v2/character-sheet.js
+→ 4 entries found and verified ✓
+
+# Verified credits added to resourcesPanel
+$ grep -n "credits" scripts/sheets/v2/context/PanelContextBuilder.js
+→ 2 occurrences (const declaration + resource field) ✓
+```
+
+### Issues Not Addressed (Blocked Conflicts)
+
+Per Phase 1 scope, the following were **intentionally left unchanged**:
+
+1. **Ability Score Path Conflict** (system.abilities vs system.attributes)
+   - No changes made to ability inputs/outputs
+   - Conflict remains documented for Phase 4 migration
+   - Current code continues to use `system.abilities.*`
+
+2. **Class Identity Scalar** (system.class string write)
+   - Character-record-header.hbs still writes to `name="system.class"`
+   - No changes to class editing flow
+   - Read-only vs override design decision deferred to Phase 4
+
+3. **Background/Event Ambiguity**
+   - Character-record-header.hbs still writes to `name="system.event"` with label "Background"
+   - Field ownership (overall vs category) remains unresolved
+   - Decision deferred to Phase 4
+
+4. **BAB Contract Ambiguity** (editable vs derived)
+   - PanelContextBuilder still uses `system.baseAttackBonus` as authoritative editable field
+   - Display fallback to `derived.bab` remains unchanged
+   - BAB contract design deferred to Phase 4
+
+### Summary
+
+✅ **Phase 1 Complete**: 5 safe patches executed
+  - 2 raw system reads eliminated (forceSensitive)
+  - 1 legacy system write path replaced (race → species)
+  - 1 identity view-model fallback reordered
+  - 1 context builder field added (credits)
+  - 5 form schema entries added
+
+✋ **Blocked Conflicts Documented**: 4 items remain for Phase 4
+  - Ability paths (abilities vs attributes)
+  - Class identity (scalar vs progression)
+  - Background/event (overall vs category)
+  - BAB contract (editable vs derived)
+
+⏭️ **Next Steps**:
+  1. Decide on 4 blocked architecture conflicts (Phase 4 planning)
+  2. Optional: Patch remaining `system.notes` and `actor.system.credits` raw reads in templates
+  3. Optional: Patch legacy v2 partials if still in use
+  4. Proceed to Phase 2: Centralize compatibility fallbacks, remove scattered aliases
