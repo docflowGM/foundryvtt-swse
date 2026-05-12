@@ -152,7 +152,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
   }
 
   async onDataReady(shell) {
-    if (!shell.element) return;
+    const root = shell.getRootElement?.() ?? shell.element;
+    if (!root) return;
 
     // Clean up old listeners before attaching new ones
     this._renderAbort?.abort();
@@ -176,14 +177,14 @@ export class SpeciesStep extends ProgressionStepPlugin {
       shell.render();
     };
 
-    shell.element.addEventListener('prog:utility:search', onSearch, { signal });
-    shell.element.addEventListener('prog:utility:filter', onFilter, { signal });
-    shell.element.addEventListener('prog:utility:sort', onSort, { signal });
+    root.addEventListener('prog:utility:search', onSearch, { signal });
+    root.addEventListener('prog:utility:filter', onFilter, { signal });
+    root.addEventListener('prog:utility:sort', onSort, { signal });
 
     this._utilityUnlisteners = [
-      () => shell.element.removeEventListener('prog:utility:search', onSearch),
-      () => shell.element.removeEventListener('prog:utility:filter', onFilter),
-      () => shell.element.removeEventListener('prog:utility:sort', onSort),
+      () => root.removeEventListener('prog:utility:search', onSearch),
+      () => root.removeEventListener('prog:utility:filter', onFilter),
+      () => root.removeEventListener('prog:utility:sort', onSort),
     ];
   }
 

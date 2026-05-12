@@ -17,8 +17,19 @@
   inset: 0;
   z-index: 50;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   background: var(--swse-bg-primary, #0a0e1a);
+  overflow: hidden;
+}
+
+/**
+ * For chargen/progression embedded surfaces: force flex layout to constrain
+ * child surface height to the visible host bounds instead of content-sizing past it.
+ */
+.swse-shell-surface-host > .swse-shell-surface--chargen,
+.swse-shell-surface-host > .swse-shell-surface--progression {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -95,6 +106,13 @@
   flex: 1 1 auto;
   overflow: auto;
   position: relative;
+}
+
+/* Progression/chargen surfaces manage their own scrolling — don't scroll the body wrapper */
+.swse-shell-surface--progression .swse-shell-surface__body,
+.swse-shell-surface--chargen .swse-shell-surface__body {
+  overflow: hidden;
+  min-height: 0;
 }
 
 /* Upgrade surface body inherits the upgrade app layout */
@@ -191,6 +209,11 @@
  * Progression and chargen are now hosted inside the character holopad display.
  * Splash screens must be confined to the screen viewport, not the browser or
  * Foundry window, and must not force a standalone 1000x750 application frame.
+ *
+ * CRITICAL: The embedded surface host must have a bounded height so that the
+ * progression shell and all its children fit within the visible clip area.
+ * Without this, child content (especially the footer) gets pushed below the
+ * visible area and clipped by overflow: hidden.
  */
 .swse-shell-surface--inline-app,
 .swse-progression-inline,
@@ -201,6 +224,54 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+
+/**
+ * Force embedded progression shell and screen to fit bounded host height
+ */
+.swse-shell-surface--chargen .swse-progression-inline-host,
+.swse-shell-surface--progression .swse-progression-inline-host,
+.swse-shell-surface--chargen .progression-shell,
+.swse-shell-surface--progression .progression-shell,
+.swse-shell-surface--chargen .swse-progression-inline-host > .swse-datapad,
+.swse-shell-surface--progression .swse-progression-inline-host > .swse-datapad,
+.swse-shell-surface--chargen .swse-progression-inline-host > .swse-datapad > .swse-screen,
+.swse-shell-surface--progression .swse-progression-inline-host > .swse-datapad > .swse-screen {
+  flex: 1 1 auto;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/**
+ * Embedded progression main column must respect bounded height
+ */
+.swse-shell-surface--chargen .prog-main-column,
+.swse-shell-surface--progression .prog-main-column {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/**
+ * Embedded content row must scroll within bounds, not expand past them
+ */
+.swse-shell-surface--chargen .prog-content-row,
+.swse-shell-surface--progression .prog-content-row {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/**
+ * Embedded footer must stay visible and not get clipped
+ */
+.swse-shell-surface--chargen [data-region="action-footer"],
+.swse-shell-surface--progression [data-region="action-footer"] {
+  flex: 0 0 var(--prog-footer-height);
 }
 
 .swse-progression-inline {

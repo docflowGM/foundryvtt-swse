@@ -362,6 +362,23 @@
 }
 
 /* =============================================================================
+ * SWSE SCREEN (primary flex container for mentor-rail + prog-main-column)
+ * CRITICAL: Must participate in flex height chain to distribute space properly
+ * ============================================================================= */
+
+.application.progression-shell [data-part="shell"],
+.application.progression-shell .progression-shell,
+.application.progression-shell .swse-screen {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;        /* CRITICAL: enables flex child to shrink below content size */
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* =============================================================================
  * MAIN COLUMN (all content below mentor-rail — takes remaining height)
  * Cancels: shell/layout.css which set height: 100% (wrong for flex-column child).
  * ============================================================================= */

@@ -152,6 +152,9 @@ export class ProgressionSurfaceAdapter {
     if (!this._app || !this._ready || !surfaceRoot) return;
 
     try {
+      // Set the embedded root so mentorRail, utilityBar, and step plugins can find the DOM
+      this._app._inlineElement = surfaceRoot;
+
       this._app.mentorRail?.afterRender?.(surfaceRoot.querySelector('[data-region="mentor-rail"]'));
       this._app.progressRail?.afterRender?.(surfaceRoot.querySelector('[data-region="progress-rail"]'));
       this._app.utilityBar?.afterRender?.(surfaceRoot.querySelector('[data-region="utility-bar"]'));

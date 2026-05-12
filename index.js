@@ -21,6 +21,7 @@ import { registerInitHooks } from "./scripts/infrastructure/hooks/init-hooks.js"
 import { initializeSceneControls } from "./scripts/scene-controls/init.js";
 import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discovery/index.js";
 import { initializeSentinelGovernance } from "./scripts/governance/sentinel/sentinel-init.js";
+import { MutationInterceptor } from "./scripts/governance/mutation/MutationInterceptor.js";
 
 UIManager.init();
 
@@ -122,6 +123,12 @@ Hooks.once("init", async () => {
 // ============================================
 Hooks.once("ready", async () => {
   console.log("SWSE | System ready. May the Force be with you.");
+
+  // -------
+  // Initialize Mutation Interceptor (PHASE 1: Enforcement setup)
+  // Initialized in ready hook after all settings and systems are loaded
+  // -------
+  MutationInterceptor.initialize();
 
   // Setup store shortcut
   game.swse.openStore = actor => new SWSEStore(actor ?? null).render(true);

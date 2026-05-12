@@ -72,8 +72,9 @@ export class MentorRail {
       signal_aborted: signal.aborted,
     });
 
-    // Find dialogue container in live DOM
-    const container = shell.element?.querySelector('[data-mentor-dialogue]');
+    // Find dialogue container in live DOM (supports both standalone and embedded modes)
+    const root = shell.getRootElement?.() ?? shell.element;
+    const container = root?.querySelector('[data-mentor-dialogue]');
 
     // [DEBUG] DOM search logging
     console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] DOM container search`, {

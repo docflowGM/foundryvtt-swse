@@ -4493,6 +4493,11 @@ const forcePoints = [];
             };
 
         await ActorEngine.createEmbeddedDocuments(this.actor, "Item", [createData]);
+        // Explicitly re-render to ensure mirrorAttacks is called with the newly created weapon
+        // This ensures derived.attacks.list is properly populated for the UI
+        if (this.render) {
+          await this.render(false);
+        }
         ui.notifications.info(`Created new ${itemType}`);
       } catch (err) {
         ui.notifications.error(`Failed to create item: ${err.message}`);

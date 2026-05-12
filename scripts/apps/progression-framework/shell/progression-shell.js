@@ -300,8 +300,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this._openedAt = Date.now();
     this._centerTimer = null;
 
+    // Embedded mode support (when hosted inside character sheet holopad)
+    this._inlineElement = null;
+
     // Phase 1: Session persistence
     this._registerPersistenceHook();
+  }
+
+  /**
+   * Get the root DOM element for this shell.
+   * In standalone mode: returns this.element (the ApplicationV2 root)
+   * In embedded mode: returns this._inlineElement (the holopad surface container)
+   * @returns {HTMLElement|null}
+   */
+  getRootElement() {
+    return this.element ?? this._inlineElement ?? null;
   }
 
   /**
@@ -1455,10 +1468,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
     await super._onRender(context, options);
 
     // Phase 4: Mobile touch safety handlers
-    this._activateTouchSafety(this.element);
+    const html = this.getRootElement();
+    if (!html) {
+      swseLogger.warn('[ProgressionShell._onRender] No root element available (not yet rendered?)');
+      return;
+    }
+
+    this._activateTouchSafety(html);
 
     // Wire subsystem after-render hooks
-    const html = this.element;
     this.mentorRail.afterRender(html.querySelector('[data-region="mentor-rail"]'));
     this.progressRail.afterRender(html.querySelector('[data-region="progress-rail"]'));
     this.utilityBar.afterRender(html.querySelector('[data-region="utility-bar"]'));
