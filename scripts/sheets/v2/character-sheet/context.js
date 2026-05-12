@@ -101,7 +101,7 @@ export function buildIdentityViewModel(actor) {
     name: actor.name || 'Unnamed',
     className: identity.className ?? system.class?.name ?? system.className ?? system.class ?? '—',
     classDisplay: identity.classDisplay ?? identity.className ?? system.class?.name ?? system.className ?? system.class ?? '—',
-    species: identity.species ?? system.race ?? system.species?.name ?? system.species ?? '—',
+    species: identity.species ?? system.species?.name ?? system.species ?? system.race ?? '—',
     level: Number(system.level) || 1,
     size: identity.size ?? system.size ?? '—',
     gender: identity.gender ?? flags.gender ?? system.gender ?? '—',
