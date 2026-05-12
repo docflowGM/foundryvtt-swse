@@ -722,3 +722,111 @@ Per Phase 1 scope, the following were **intentionally left unchanged**:
 - Ready for Phase 2
 
 **Next Phase**: Phase 2 — Centralize remaining compatibility and remove scattered template-level aliases (non-blocked items only)
+
+---
+
+## Phase 2 Result: Compatibility Centralization
+
+**Commit**: `765759a` "feat: Phase 2 - Centralize compatibility and remove template-level aliases"
+
+### Objective
+
+Move remaining fallback/compatibility logic from character sheet partials into prepared context/view-model layer. Partials should consume one stable vocabulary, not duplicate fallback chains.
+
+### Files Changed
+
+| File | Change | Impact |
+|---|---|---|
+| `notes-panel.hbs:11` | `{{system.notes}}` → `{{biographyPanel.biography}}` | Display now uses prepared view-model |
+| `summary-tab.hbs:88` | `{{system.notes}}` → `{{biographyPanel.biography}}` | Display now uses prepared view-model |
+| `resources-panel.hbs:85` | `{{actor.system.credits}}` → `{{resourcesPanel.resources.credits}}` | Display now uses prepared view-model |
+
+**Total changes**: 3 files, 3 insertions, 3 deletions (surgical one-line changes)
+
+### Key Finding: Notes vs Biography Drift
+
+**Discovered during Phase 2 audit**:
+
+Two separate fields exist in character-data-model:
+- **`system.notes`** — actively used, currently mapped to biography display in biographyPanel
+- **`system.biography`** — defined in schema but not actively used by character sheet
+
+**Resolution**:
+- Character sheet uses `system.notes` as the canonical biography text (via `biographyPanel.biography` view-model)
+- `system.biography` is a separate field (possibly for vehicles/other actor types)
+- No migration between them needed; the mapping is intentional
+
+**Result**: Form writes to `name="system.notes"` (canonical persistent path), but displays now consume prepared `biographyPanel.biography` from context builder. Clean separation of concerns.
+
+### Aliases Moved to Context Layer
+
+✓ **Moved 2 occurrences of raw `system.notes` reads**:
+- Consolidated in PanelContextBuilder.js at line 322: `const biography = String(this.system.notes || '')`
+- Partials now consume prepared `biographyPanel.biography` instead of duplicating the fallback
+
+✓ **Moved 1 occurrence of raw `actor.system.credits` reads**:
+- Consolidated in PanelContextBuilder.js at line 993: `const credits = Number(system.credits) || 0`
+- Partials now consume prepared `resourcesPanel.resources.credits` instead of raw reads
+
+### Form Write Paths Preserved
+
+All canonical persistent form input paths remain unchanged (intentional):
+- `name="system.notes"` in notes-panel.hbs and summary-tab.hbs (2 occurrences)
+- `name="system.credits"` in resources-panel.hbs (1 occurrence)
+
+These are data contract boundaries and should not change outside of full data migration.
+
+### Blocked Conflicts Confirmed Untouched
+
+Verified remaining architectural conflicts stay untouched:
+- `name="system.class"` in character-record-header.hbs (line 23) ✓
+- `name="system.event"` in character-record-header.hbs (line 85) ✓
+- No changes to ability input paths ✓
+- No changes to BAB logic ✓
+
+### Validation Results
+
+```bash
+# Raw system.notes reads in v2-concept templates
+$ grep -r "{{system\.notes}}" templates/actors/character/v2-concept/
+→ 0 results ✅
+
+# Raw actor.system.credits reads in v2-concept
+$ grep -r "actor\.system\.credits" templates/actors/character/v2-concept/
+→ 0 results ✅
+
+# BiographyPanel.biography is now used (should be 2)
+$ grep -r "biographyPanel\.biography" templates/actors/character/v2-concept/
+→ 2 results ✅
+
+# ResourcesPanel.resources.credits is now used (should be 1)
+$ grep -r "resourcesPanel\.resources\.credits" templates/actors/character/v2-concept/
+→ 1 result ✅
+
+# Canonical form write paths unchanged
+$ grep 'name="system.notes"' templates/actors/character/v2-concept/.../
+→ 2 results ✅
+$ grep 'name="system.credits"' templates/actors/character/v2-concept/.../
+→ 1 result ✅
+```
+
+### End State
+
+✅ **Character sheet partials now clean**:
+- No scattered fallback logic (`oldPath ?? newPath`)
+- No raw system reads for compatibility (all moved to context)
+- All display logic consumes prepared context/view-models
+- Canonical form write paths unchanged (data contract preserved)
+
+✅ **Compatibility centralized**:
+- Fallback handling in PanelContextBuilder (single location)
+- Schema-adapters ready for defensive coding
+- Actor model owns data normalization
+
+✅ **Ready for Phase 3 & 4**:
+- Phase 3: Smoke validation (npm/test/type checks)
+- Phase 4: Plan full migration for blocked architecture conflicts
+
+### Summary
+
+Phase 2 complete: 3 safe compatibility migrations from partials to context layer. Blocked conflicts untouched. Character sheet partials now consume stable prepared vocabulary.
