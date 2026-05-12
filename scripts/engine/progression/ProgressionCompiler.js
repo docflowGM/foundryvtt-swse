@@ -300,7 +300,7 @@ export class ProgressionCompiler {
           `Ability ${ability.toUpperCase()} must be number 1-20, got ${score}`
         );
       }
-      updates[`system.abilities.${ability}.base`] = score;
+      updates[`system.attributes.${ability}.base`] = score;
     }
 
     return { set: updates };
