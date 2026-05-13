@@ -44,20 +44,50 @@ import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
  */
 export class ClassesRegistry {
   /**
-   * Initialize ClassesRegistry
-   * ClassesDB is initialized externally during system ready hook.
-   * This method exists for API consistency with other registries.
+   * Initialize ClassesRegistry (ensure method)
+   * If ClassesDB is not yet built, builds it with dependencies.
+   * Safe to call multiple times - subsequent calls are no-ops.
+   * @returns {Promise<boolean>} true if ready, false if build failed
    */
   static async initialize() {
-    if (!ClassesDB.isBuilt) {
-      SWSELogger.warn('[ClassesRegistry] ClassesDB not initialized yet');
-      return false;
+    // Already initialized
+    if (ClassesDB.isBuilt) {
+      return true;
     }
 
-    SWSELogger.log(
-      `[ClassesRegistry] Using ClassesDB: ${ClassesDB.count()} classes loaded`
-    );
-    return true;
+    // Build ClassesDB if not yet initialized
+    try {
+      SWSELogger.log('[ClassesRegistry] ClassesDB not built yet; building now...');
+
+      // Import dependencies
+      const { TalentTreeDB } = await import('/systems/foundryvtt-swse/scripts/data/talent-tree-db.js');
+
+      // Build TalentTreeDB first if needed
+      if (!TalentTreeDB.isBuilt) {
+        SWSELogger.log('[ClassesRegistry] Building TalentTreeDB dependency...');
+        const treeOk = await TalentTreeDB.build();
+        if (!treeOk) {
+          SWSELogger.warn('[ClassesRegistry] TalentTreeDB build failed; cannot build ClassesDB');
+          return false;
+        }
+      }
+
+      // Build ClassesDB with TalentTreeDB
+      SWSELogger.log('[ClassesRegistry] Building ClassesDB...');
+      const classOk = await ClassesDB.build(TalentTreeDB);
+      if (!classOk) {
+        SWSELogger.warn('[ClassesRegistry] ClassesDB build failed');
+        return false;
+      }
+
+      SWSELogger.log(
+        `[ClassesRegistry] Ready: ${ClassesDB.count()} classes loaded`
+      );
+      return true;
+    } catch (err) {
+      SWSELogger.error('[ClassesRegistry] Initialize failed:', err);
+      return false;
+    }
   }
 
   /**

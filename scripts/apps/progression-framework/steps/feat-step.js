@@ -66,6 +66,10 @@ const TOP_SUGGESTIONS = 4;              // Top N suggested feats to show
 
 
 function emitFeatStepTrace(label, payload = {}) {
+  // Only emit trace logs when debug mode is enabled
+  if (!game?.settings?.get?.('foundryvtt-swse', 'debugMode')) {
+    return;
+  }
   try {
     console.warn(`SWSE [FEAT STEP TRACE] ${label}`, payload);
   } catch (_err) {
@@ -290,6 +294,32 @@ export class FeatStep extends ProgressionStepPlugin {
     const pendingAbilityData = this._buildPendingAbilityData(shell);
     const classLookupKeys = resolveClassLookupKeysForFeatStep(shell);
 
+    // Build class grant ledger to identify class-granted feats that are pending
+    const classGrantedFeats = new Set();
+    try {
+      const selectedClass = resolveSelectedClassFromShell(shell) || resolveClassModel(
+        shell?.progressionSession?.getSelection?.('class')
+        || shell?.committedSelections?.get?.('class')
+        || null
+      );
+
+      if (selectedClass) {
+        const ledger = buildClassGrantLedger(actor, selectedClass, pendingAbilityData);
+        const merged = mergeLedgerIntoPending(pendingAbilityData, ledger);
+        // Collect feat names from class grants
+        if (merged.selectedFeats) {
+          merged.selectedFeats.forEach(feat => {
+            const featName = typeof feat === 'string' ? feat : feat?.name;
+            if (featName) classGrantedFeats.add(String(featName).toLowerCase());
+          });
+        }
+      }
+    } catch (err) {
+      swseLogger.debug('[FeatStep] Class grant resolution failed (non-critical)', {
+        error: err?.message,
+      });
+    }
+
     for (const feat of this._allFeats) {
       try {
         // Check if feat meets prerequisites using pending chargen selections
@@ -310,13 +340,17 @@ export class FeatStep extends ProgressionStepPlugin {
           continue;  // Skip slot-incompatible feats
         }
 
-        // Check if already owned (unless repeatable)
+        // Check if already owned or granted by class (unless repeatable)
+        const featNameLower = String(feat.name || '').toLowerCase();
+        const isClassGranted = classGrantedFeats.has(featNameLower);
         const alreadyOwned = actor.items.some(i =>
-          i.type === 'feat' && i.name?.toLowerCase?.() === feat.name?.toLowerCase?.()
+          i.type === 'feat' && i.name?.toLowerCase?.() === featNameLower
         );
 
-        if (alreadyOwned && !FeatEngine.repeatables.includes(String(feat.name || '').toLowerCase())) {
-          continue;  // Skip non-repeatable feats already owned
+        const isRepeatable = FeatEngine.repeatables.includes(featNameLower);
+
+        if ((alreadyOwned || isClassGranted) && !isRepeatable) {
+          continue;  // Skip non-repeatable feats already owned or class-granted
         }
 
         legal.push(feat);

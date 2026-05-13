@@ -474,6 +474,71 @@ export class AttributeStep extends ProgressionStepPlugin {
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Action Handling
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Handle delegated attribute actions (lock)
+   * @param {string} action - The action name ('attribute-lock')
+   * @param {Event} event - The triggering event
+   * @param {Element} target - The element that triggered the action
+   * @param {Object} shell - The progression shell context
+   * @returns {boolean} - True if action was handled
+   */
+  handleAction(action, event, target, shell) {
+    if (action !== 'attribute-lock') {
+      return false;
+    }
+
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+
+    // Handle lock/unlock toggle
+    if (this._committed) {
+      // Unlock
+      this._committed = false;
+      shell?.render?.();
+    } else {
+      // Lock
+      this._performLock(shell);
+    }
+
+    return true;
+  }
+
+  /**
+   * Execute the lock operation with validation
+   * @private
+   */
+  async _performLock(shell) {
+    if (!this._attributes) {
+      ui?.notifications?.warn?.('Assign your attributes first.');
+      return;
+    }
+
+    if (this._method === 'point-buy') {
+      const spent = this._getPointBuySpent(this._attributes);
+      const pool = this.getPointBuyPool(shell);
+      if (spent > pool) {
+        ui?.notifications?.warn?.(`Point buy exceeds pool (${spent}/${pool}).`);
+        return;
+      }
+    } else if (!this._areAllPooledAbilitiesAssigned(shell)) {
+      ui?.notifications?.warn?.('Assign every generated score before locking attributes.');
+      return;
+    }
+
+    const normalized = {};
+    for (const key of this._getAbilityKeys(shell)) {
+      const value = this._attributes[key];
+      normalized[key] = Number.isFinite(Number(value)) ? Number(value) : 0;
+    }
+
+    await this.onItemCommitted(normalized, shell);
+    shell?.render?.();
+  }
+
   async afterRender(shell, workSurfaceEl) {
     if (!workSurfaceEl) return;
 
@@ -559,41 +624,6 @@ export class AttributeStep extends ProgressionStepPlugin {
       shell.render();
     });
 
-    workSurfaceEl.querySelector('[data-attr-lock]')?.addEventListener('click', async () => {
-      if (this._committed) {
-        this._committed = false;
-        console.debug('[AttributeStep] unlocked attributes for editing');
-        shell.render();
-        return;
-      }
-
-      if (!this._attributes) {
-        ui?.notifications?.warn?.('Assign your attributes first.');
-        return;
-      }
-
-      if (this._method === 'point-buy') {
-        const spent = this._getPointBuySpent(this._attributes);
-        const pool = this.getPointBuyPool(shell);
-        if (spent > pool) {
-          ui?.notifications?.warn?.(`Point buy exceeds pool (${spent}/${pool}).`);
-          return;
-        }
-      } else if (!this._areAllPooledAbilitiesAssigned(shell)) {
-        ui?.notifications?.warn?.('Assign every generated score before locking attributes.');
-        return;
-      }
-
-      const normalized = {};
-      for (const key of this._getAbilityKeys(shell)) {
-        const value = this._attributes[key];
-        normalized[key] = Number.isFinite(Number(value)) ? Number(value) : 0;
-      }
-
-      await this.onItemCommitted(normalized, shell);
-      console.debug('[AttributeStep] attributes locked', normalized);
-      shell.render();
-    });
   }
 
   _handleMethodChange(method, shell) {

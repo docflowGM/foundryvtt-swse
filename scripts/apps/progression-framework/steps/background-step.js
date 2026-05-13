@@ -22,6 +22,7 @@ import { buildPendingBackgroundContext } from '/systems/foundryvtt-swse/scripts/
 import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
 import { CustomPlanetBackgroundDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-planet-background-dialog.js';
+import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
 
 const CATEGORY_LABELS = {
   event: 'Event',
@@ -69,8 +70,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
       : (await BackgroundRegistry.all?.()) || [];
 
     // Load house rule: max background selections
-    const houseSetting = game?.settings?.get('foundryvtt-swse', 'backgroundSelectionCount');
-    this._maxBackgrounds = houseSetting ?? 1;
+    this._maxBackgrounds = Math.max(1, HouseRuleService.getNumber('backgroundSelectionCount', 1));
 
     await this._restoreCustomBackgrounds(shell);
 

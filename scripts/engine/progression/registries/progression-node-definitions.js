@@ -153,6 +153,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     dependsOn: ['species'],
 
     /** Class changes invalidate:
+     * - L1 Survey (survey is class-specific and must rebind to new mentor)
      * - Skills (class determines class skills)
      * - Class Feats (owed picks may change)
      * - Class Talents (owed picks may change)
@@ -161,6 +162,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
      * - Summary
      */
     invalidates: [
+      'l1-survey',
       'skills',
       'class-feat',
       'class-talent',
@@ -171,6 +173,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       'summary',
     ],
     invalidationBehavior: {
+      'l1-survey': InvalidationBehavior.PURGE,
       skills: InvalidationBehavior.RECOMPUTE,
       'class-feat': InvalidationBehavior.PURGE,
       'class-talent': InvalidationBehavior.PURGE,

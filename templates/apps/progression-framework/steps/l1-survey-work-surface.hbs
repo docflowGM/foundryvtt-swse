@@ -33,7 +33,7 @@
       </div>
 
       {{#if (eq surveyPhase "intro")}}
-      <div class="prog-l1-survey-stage__dialogue-text is-intro">{{introText}}</div>
+      <div class="prog-l1-survey-stage__dialogue-text is-intro" data-l1-survey-dialogue-text>{{introText}}</div>
       <div class="prog-l1-survey-stage__command-row">
         <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-start">
           Begin Survey
@@ -44,7 +44,7 @@
       {{#if (eq surveyPhase "question")}}
       <div class="prog-l1-survey-stage__question-block">
         <div class="prog-l1-survey-stage__question-kicker">Question {{activeQuestionNumber}} of {{totalQuestions}}</div>
-        <div class="prog-l1-survey-stage__dialogue-text">{{promptText}}</div>
+        <div class="prog-l1-survey-stage__dialogue-text" data-l1-survey-dialogue-text>{{promptText}}</div>
       </div>
       <div class="prog-l1-survey-stage__choices">
         {{#each activeQuestion.options}}
@@ -53,7 +53,7 @@
                 data-action="survey-choose"
                 data-question-id="{{../activeQuestion.id}}"
                 data-option-id="{{this.id}}">
-          <span class="prog-l1-survey-stage__choice-index">{{add @index 1}}</span>
+          <span class="prog-l1-survey-stage__choice-index">{{this.displayIndex}}</span>
           <span class="prog-l1-survey-stage__choice-copy">
             <span class="prog-l1-survey-stage__choice-label">{{this.label}}</span>
             {{#if this.detailTags.length}}
@@ -72,7 +72,7 @@
       {{#if (eq surveyPhase "response")}}
       <div class="prog-l1-survey-stage__question-block">
         <div class="prog-l1-survey-stage__question-kicker">Question {{activeQuestionNumber}} of {{totalQuestions}}</div>
-        <div class="prog-l1-survey-stage__dialogue-text">{{responseText}}</div>
+        <div class="prog-l1-survey-stage__dialogue-text" data-l1-survey-dialogue-text>{{responseText}}</div>
       </div>
 
       {{#if selectedOption}}
@@ -90,6 +90,9 @@
       {{/if}}
 
       <div class="prog-l1-survey-stage__command-row">
+        <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-change-answer">
+          Change Answer
+        </button>
         <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-continue">
           {{#if remainingCount}}Next Question{{else}}Complete Survey{{/if}}
         </button>
@@ -97,7 +100,7 @@
       {{/if}}
 
       {{#if (eq surveyPhase "complete")}}
-      <div class="prog-l1-survey-stage__dialogue-text is-complete">{{completionText}}</div>
+      <div class="prog-l1-survey-stage__dialogue-text is-complete" data-l1-survey-dialogue-text>{{completionText}}</div>
 
       {{#if topMatches.length}}
       <div class="prog-l1-survey-stage__reads">
@@ -122,6 +125,12 @@
       {{/if}}
 
       <div class="prog-l1-survey-stage__command-row">
+        <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-previous-question">
+          Review Previous Answer
+        </button>
+        <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-retake">
+          Retake Survey
+        </button>
         <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-finish">
           Continue to Background
         </button>

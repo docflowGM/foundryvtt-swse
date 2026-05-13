@@ -5,7 +5,7 @@
 
     <div class="prog-skills-counter">
       <div class="prog-counter-bar">
-        <div class="prog-counter-fill" style="width: {{div trainedCount allowedCount 100}}%"></div>
+        <div class="prog-counter-fill" style="width: {{skillProgressPercent}}%"></div>
       </div>
       <div class="prog-counter-text">
         <span class="prog-counter-value">{{trainedCount}}</span>
@@ -32,7 +32,7 @@
       </div>
     {{else}}
       <div class="prog-skills-remaining">
-        {{sub allowedCount trainedCount}} slot(s) remaining
+        {{remainingSkillSlots}} slot(s) remaining
       </div>
     {{/if}}
   </div>
@@ -96,14 +96,16 @@
               <div class="prog-skill-controls">
                 {{#if this.isTrained}}
                   <button type="button"
-                          class="prog-btn prog-btn--small prog-btn--selected skills-step-untrain-btn"
+                          class="prog-btn prog-btn--small prog-btn--selected"
+                          data-action="skill-untrain"
                           data-skill="{{this.key}}"
                           title="Skill trained — click to untrain">
                     <i class="fas fa-check"></i> Untrain
                   </button>
                 {{else if this.canTrain}}
                   <button type="button"
-                          class="prog-btn prog-btn--small prog-btn--secondary skills-step-train-btn"
+                          class="prog-btn prog-btn--small prog-btn--secondary"
+                          data-action="skill-train"
                           data-skill="{{this.key}}"
                           {{#if (eq ../trainedCount ../allowedCount)}}disabled{{/if}}
                           title="Train this skill">
@@ -122,7 +124,8 @@
 
       <div class="prog-skills-actions">
         <button type="button"
-                class="prog-btn prog-btn--secondary prog-btn--small skills-step-reset-btn"
+                class="prog-btn prog-btn--secondary prog-btn--small"
+                data-action="skill-reset"
                 title="Reset all skill selections">
           <i class="fas fa-redo"></i> Reset All
         </button>

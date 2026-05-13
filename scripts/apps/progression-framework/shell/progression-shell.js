@@ -880,8 +880,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         const targetIndex = this.steps.findIndex(d => d.stepId === this._targetStepId);
         if (targetIndex >= 0) {
           this.currentStepIndex = targetIndex;
-          this._minStepIndex = targetIndex;  // Prevent back-navigation past this step
-          swseLogger.log(`[ProgressionShell] Navigating to target step: ${this._targetStepId} (index ${targetIndex}). Back-navigation disabled until past this step.`);
+          swseLogger.log(`[ProgressionShell] Restored target step: ${this._targetStepId} (index ${targetIndex}). Back-navigation remains available to earlier active steps.`);
         } else {
           swseLogger.warn(`[ProgressionShell] Target step not found: ${this._targetStepId}. Using index 0.`);
           // Phase 1: Repair current step if target was restored but no longer active
@@ -1183,7 +1182,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     let detailsPanelSpec = { template: null, data: {} };
     try {
-      detailsPanelSpec = currentPlugin?.renderDetailsPanel(this.focusedItem)
+      detailsPanelSpec = await currentPlugin?.renderDetailsPanel(this.focusedItem, this)
         ?? { template: null, data: {} };
     } catch (error) {
       console.error('[ProgressionShell] Details rail render failed, falling back to empty state:', error);
@@ -1497,6 +1496,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
         await plugin.afterRender?.(this, workSurfaceEl).catch(err =>
           swseLogger.error('ProgressionShell: plugin.afterRender failed', { err })
         );
+
+        // Wire delegated action handling for step-specific actions
+        // This allows plugins to define step-specific actions via handleAction() method
+        this._wirePluginActions(html, plugin);
       }
     }
 
@@ -1504,31 +1507,54 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // IMPORTANT: do not await this animation path. Blocking here prevents
     // the player from clicking items or seeing hydrated details until the
     // mentor finishes talking.
-    console.log('[SWSE Translation Debug] [_onRender] speakForStep check', {
-      descriptor_exists: !!descriptor,
-      descriptor_stepId: descriptor?.stepId ?? '(null)',
-      lastSpokenStepId: this._lastSpokenStepId ?? '(null)',
-      condition_result: descriptor && descriptor.stepId !== this._lastSpokenStepId,
-      will_call_speak: descriptor && descriptor.stepId !== this._lastSpokenStepId,
-    });
-
     if (descriptor && descriptor.stepId !== this._lastSpokenStepId) {
-      console.log('[SWSE Translation Debug] [_onRender] CALLING speakForStep()', {
-        stepId: descriptor.stepId,
-      });
       this._lastSpokenStepId = descriptor.stepId;
       void this.mentorRail.speakForStep(descriptor)
-        .then(() => {
-          console.log('[SWSE Translation Debug] [_onRender] speakForStep() COMPLETED');
-        })
         .catch(err => {
           swseLogger.error('ProgressionShell: mentorRail.speakForStep failed', { err });
         });
-    } else {
-      console.log('[SWSE Translation Debug] [_onRender] SKIPPING speakForStep() — condition false or already spoken', {
-        reason: !descriptor ? 'no descriptor' : 'already spoken',
-      });
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Delegated Action Handling
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Wire up delegated action handling for the current step plugin.
+   * Allows plugins to define step-specific actions via handleAction() method.
+   * This supports skill-train, skill-untrain, skill-reset and other step-specific actions.
+   *
+   * @param {HTMLElement} html - The rendered shell root
+   * @param {Object} plugin - The current step plugin
+   * @private
+   */
+  _wirePluginActions(html, plugin) {
+    if (!html || typeof plugin?.handleAction !== 'function') return;
+
+    // Clean up old listeners if they exist
+    if (this._pluginActionAbort) {
+      this._pluginActionAbort.abort();
+    }
+    this._pluginActionAbort = new AbortController();
+
+    // Delegate click events on [data-action] elements to the plugin's handleAction
+    html.addEventListener('click', async (event) => {
+      const target = event.target.closest('[data-action]');
+      if (!target) return;
+
+      const action = target.dataset.action;
+      if (!action) return;
+
+      try {
+        const handled = await plugin.handleAction(action, event, target, this);
+        if (handled === true) {
+          // Plugin handled the action
+        }
+      } catch (err) {
+        swseLogger.error(`[ProgressionShell] Plugin action "${action}" failed:`, err);
+      }
+    }, { signal: this._pluginActionAbort.signal });
   }
 
   // ---------------------------------------------------------------------------
@@ -1607,16 +1633,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async navigateToStep(stepIndex, { source = 'unknown' } = {}) {
     if (stepIndex < 0 || stepIndex >= this.steps.length) return;
     if (stepIndex >= this.currentStepIndex) return; // forward nav blocked
-
-    const currentDescriptor = this.steps[this.currentStepIndex];
-    const currentPlugin = this.stepPlugins.get(currentDescriptor?.stepId);
-    if (currentPlugin?.onStepExit) {
-      try {
-        await currentPlugin.onStepExit(this);
-      } catch (err) {
-        swseLogger.warn(`[ProgressionShell] Step exit failed during backward navigation from ${currentDescriptor?.stepId}:`, err);
-      }
-    }
 
     const entered = await this._activateStep(stepIndex, { source, restoreIndex: this.currentStepIndex });
     if (!entered) return;
@@ -1918,7 +1934,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         ui.notifications.warn(blockingIssues[0]);
         return;
       }
-      await currentPlugin.onStepExit(this);
+      await currentPlugin.onStepExit(this, { direction: 'forward' });
 
       // Phase 3: Auto-save checkpoint after step exit (chargen only)
       if (this.persistenceEnabled && currentDescriptor?.stepId) {
@@ -1950,25 +1966,25 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   async _onPreviousStep(event, target) {
-    // Prevent back-navigation past minimum step (used when starting from splash at species, etc.)
-    const minIndex = this._minStepIndex ?? 0;
-    if (this.currentStepIndex <= minIndex) {
-      swseLogger.log(`[ProgressionShell] Back-navigation blocked at minimum step index ${minIndex}`);
+    // Prevent back-navigation past first step
+    if (this.currentStepIndex <= 0) {
+      swseLogger.log('[ProgressionShell] Back-navigation blocked at first active step');
       return;
     }
 
+    // Call onStepExit with backward direction before navigating
     const currentDescriptor = this.steps[this.currentStepIndex];
     const currentPlugin = this.stepPlugins.get(currentDescriptor?.stepId);
-    if (currentPlugin?.onStepExit) {
+    if (currentPlugin) {
       try {
-        await currentPlugin.onStepExit(this);
+        await currentPlugin.onStepExit(this, { direction: 'backward' });
       } catch (err) {
-        swseLogger.warn(`[ProgressionShell] Step exit failed during previous-step navigation from ${currentDescriptor?.stepId}:`, err);
+        swseLogger.warn('[ProgressionShell] Error in backward step exit:', err);
       }
     }
 
-    // Auto-skip to previous applicable step
-    const prevApplicableIndex = this._findPreviousApplicableStep(this.currentStepIndex - 1, minIndex);
+    // Auto-skip to previous applicable step (no floor; always allow back to step 0)
+    const prevApplicableIndex = this._findPreviousApplicableStep(this.currentStepIndex - 1, 0);
     if (prevApplicableIndex < 0) {
       swseLogger.log(`[ProgressionShell] No applicable previous step found; staying at current step`);
       return;
@@ -2205,6 +2221,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
       try {
         await plugin.onItemFocused(itemId, this);
+
+        // Re-render to update the detail panel with the newly focused item
+        // The plugin has updated its internal state; shell needs to render to show it
+        await this.render();
+
         ProgressionDebugCapture.log('Progression Debug', `[Click #${clickNum}] plugin.onItemFocused() completed`, {
           focusedItem_id: this.focusedItem?.id ?? '(null)',
           focusedItem_name: this.focusedItem?.name ?? '(null)',

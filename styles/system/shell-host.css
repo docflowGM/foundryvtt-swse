@@ -25,12 +25,28 @@
 /**
  * For chargen/progression embedded surfaces: force flex layout to constrain
  * child surface height to the visible host bounds instead of content-sizing past it.
+ * Uses high specificity to override later rules that may set display: block.
  */
-.swse-shell-surface-host > .swse-shell-surface--chargen,
-.swse-shell-surface-host > .swse-shell-surface--progression {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: hidden;
+.swse-sheet-v2-shell--surface-chargen .swse-shell-screen-surface--chargen > .swse-shell-surface-host,
+.swse-sheet-v2-shell--surface-progression .swse-shell-screen-surface--progression > .swse-shell-surface-host {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+.swse-sheet-v2-shell--surface-chargen .swse-shell-surface-host > .swse-shell-surface--chargen,
+.swse-sheet-v2-shell--surface-progression .swse-shell-surface-host > .swse-shell-surface--progression {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
 }
 
 /**

@@ -212,7 +212,6 @@ export class ClassStep extends ProgressionStepPlugin {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/class-details.hbs',
       data: {
         class: classData,
-        img: this._resolveClassImg(classData.name),
         type: classData.prestigeClass ? 'Prestige' : 'Base',
         bab: `+${babValue}`,
         hitDie: `d${classData.hitDie ?? 10}`,
@@ -508,7 +507,6 @@ export class ClassStep extends ProgressionStepPlugin {
       defenseBonus: `${classData.defenses?.fortitude ?? 0}/${classData.defenses?.reflex ?? 0}/${classData.defenses?.will ?? 0}`,
       description: classData.fantasy ?? classData.description ?? '',
       mentorName: getMentorForClass(classData.name)?.name ?? classData.mentorName ?? 'Unknown Mentor',
-      img: this._resolveClassImg(classData.name),
       isSuggested,
       confidenceLevel: confidenceData?.confidenceLevel || null,
       metaChips: [
@@ -522,17 +520,6 @@ export class ClassStep extends ProgressionStepPlugin {
         { label: 'Def Bonus', value: classData.defenseBonus ?? '+0' },
       ],
     };
-  }
-
-  /**
-   * Resolve the class image path using the system-relative URL format
-   * Maps class name to the corresponding file in assets/class/
-   * @private
-   */
-  _resolveClassImg(className) {
-    if (!className) return null;
-    // Use system-relative path: systems/{system-id}/assets/class/{ClassName}.webp
-    return `systems/${game.system.id}/assets/class/${className}.webp`;
   }
 
   // ---------------------------------------------------------------------------

@@ -60,17 +60,38 @@ function getTalentPrerequisiteString(talent) {
 function parsePrerequisites(prereqString) {
   if (!prereqString) {return [];}
 
+  let normalized = prereqString.trim();
+
+  // Strip leading "Prerequisite:" or "Prerequisites:" labels
+  normalized = normalized.replace(/^prerequisites?:\s*/i, '').trim();
+
   const talentPrereqs = [];
 
   // Split by common delimiters
-  const parts = prereqString.split(/[,;]/);
+  const parts = normalized.split(/[,;]/);
 
   for (const part of parts) {
     const trimmed = part.trim();
+
+    // Skip empty parts and non-talent prerequisites (BAB, ability scores, etc.)
+    if (!trimmed) continue;
+
+    // Skip common non-talent patterns
+    if (/base\s+attack\s+bonus|ability\s+score|feat|skill|weapon|proficien|trained/i.test(trimmed)) {
+      continue;
+    }
+
     // Look for "X talent" pattern
     const talentMatch = trimmed.match(/^(.+?)\s+talent$/i);
     if (talentMatch) {
       talentPrereqs.push(talentMatch[1].trim());
+      continue;
+    }
+
+    // If no keyword modifier, assume it's a talent name if it doesn't look like a stat requirement
+    if (!/^\d+|^[a-z]+ [\d+]/i.test(trimmed)) {
+      // It's likely a talent name - add it
+      talentPrereqs.push(trimmed);
     }
   }
 

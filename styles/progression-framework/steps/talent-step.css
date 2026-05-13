@@ -610,36 +610,40 @@
    ==================================================================== */
 
 .talent-graph-canvas {
-  min-width: 960px;
-  min-height: 520px;
+  position: relative;
+  /* SVG will set its own width/height, don't constrain */
 }
 
 .prog-talent-tree-svg {
-  width: 100%;
-  height: auto;
   display: block;
+  /* Let the SVG use its explicit width/height attributes */
+  /* Do NOT set to 100% — that causes shrinking */
 }
 
 .prog-talent-tree-link {
   stroke-width: 6px;
   stroke-linecap: round;
-  opacity: 0.95;
+  opacity: 0.85;
 }
 
 .prog-talent-tree-link--owned {
   stroke: var(--prog-positive);
+  opacity: 0.9;
 }
 
 .prog-talent-tree-link--default {
-  stroke: #111111;
+  stroke: #606070;
+  opacity: 0.6;
 }
 
 .prog-talent-tree-link--available {
   stroke: var(--sheet-accent-primary);
+  opacity: 0.85;
 }
 
 .prog-talent-tree-link--blocked {
   stroke: var(--prog-negative);
+  opacity: 0.8;
 }
 
 .prog-talent-oval {
@@ -655,9 +659,11 @@
 
 .prog-talent-oval__label {
   fill: #f5f5f5;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
   pointer-events: none;
+  text-anchor: middle;
+  dominant-baseline: middle;
 }
 
 .prog-talent-oval:hover .prog-talent-oval__shape,

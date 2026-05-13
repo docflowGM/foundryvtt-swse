@@ -250,10 +250,21 @@ try {
 
   async getStepData(context) {
     const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedSkills);
+
+    // Precompute values for templates to avoid runtime helper dependency
+    const trainedCount = Number(this._trainedCount || 0);
+    const allowedCount = Number(this._allowedCount || 0);
+    const skillProgressPercent = allowedCount > 0
+      ? Math.max(0, Math.min(100, (trainedCount / allowedCount) * 100))
+      : 0;
+    const remainingSkillSlots = Math.max(0, allowedCount - trainedCount);
+
     return {
       trainedSkills: Object.fromEntries(this._trainedSkills),
-      trainedCount: this._trainedCount,
-      allowedCount: this._allowedCount,
+      trainedCount,
+      allowedCount,
+      skillProgressPercent,
+      remainingSkillSlots,
       allSkills: this._availableSkills.map(s => this._formatSkillCard(s, suggestedIds)),
       hasSuggestions,
       suggestedSkillIds: Array.from(suggestedIds),
@@ -264,6 +275,22 @@ try {
       skillSourceMode: this._skillDerivation?.mode || 'fallback-full-chart',
       fallbackReason: this._skillDerivation?.fallbackReason || null,
       isFallbackFullChart: (this._skillDerivation?.mode || 'fallback-full-chart') === 'fallback-full-chart',
+    };
+  }
+
+  /**
+   * Format a skill for template display
+   * Adds training state and suggestion badge
+   * @private
+   */
+  _formatSkillCard(skill, suggestedIds = new Set()) {
+    const selectionState = this._getSkillSelectionState(skill);
+    const isSuggested = suggestedIds.has(skill.id) || suggestedIds.has(skill.key);
+
+    return {
+      ...skill,
+      isTrained: selectionState?.trained === true,
+      badgeLabel: isSuggested ? 'Suggested' : null,
     };
   }
 
@@ -425,6 +452,57 @@ try {
     this._trainedCount = 0;
     swseLogger.log(`[SkillsStep] All skills reset`);
     ui.notifications.info('All skill selections have been reset.');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Action Handling
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Handle delegated skill actions (train, untrain, reset)
+   * Called by ProgressionSurfaceAdapter or ProgressionShell when action originates from skill step
+   * @param {string} action - The action name ('skill-train', 'skill-untrain', 'skill-reset')
+   * @param {Event} event - The triggering event
+   * @param {Element} target - The element that triggered the action
+   * @param {Object} shell - The progression shell context
+   * @returns {boolean} - True if action was handled
+   */
+  handleAction(action, event, target, shell) {
+    if (!action || !action.startsWith('skill-')) {
+      return false;
+    }
+
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+
+    const skillKey = target?.dataset?.skill || event?.target?.dataset?.skill;
+
+    switch (action) {
+      case 'skill-train': {
+        if (skillKey) {
+          this._trainSkill(skillKey);
+          shell?.render?.();
+        }
+        return true;
+      }
+
+      case 'skill-untrain': {
+        if (skillKey) {
+          this._untrainSkill(skillKey);
+          shell?.render?.();
+        }
+        return true;
+      }
+
+      case 'skill-reset': {
+        this._resetAllSkills();
+        shell?.render?.();
+        return true;
+      }
+
+      default:
+        return false;
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -759,34 +837,85 @@ renderDetailsPanel(focusedItem) {
    * Note: This does NOT automatically grant skills. Those with resolved[] populated
    * are already chosen. Empty resolved[] means player must still choose.
    */
+  /**
+   * Get background-derived skill references from multiple persisted sources.
+   * Resolves background context from:
+   * 1. progressionSession.currentPendingBackgroundContext
+   * 2. progressionSession.pendingState.background
+   * 3. buildIntent data
+   *
+   * This hardened version ensures background skills survive across step transitions
+   * and multiple context shapes.
+   */
   _getBackgroundSkillRefs(shell) {
-    // Get pending background context from background-step
-    const pendingContext = shell?.progressionSession?.currentPendingBackgroundContext;
+    const skillRefs = new Set();
+
+    // PRIMARY: Try currentPendingBackgroundContext (set by background-step)
+    let pendingContext = shell?.progressionSession?.currentPendingBackgroundContext;
+
+    // FALLBACK 1: Try pendingState.background from session
+    if (!pendingContext && shell?.progressionSession?.pendingState?.background) {
+      pendingContext = shell.progressionSession.pendingState.background;
+    }
+
+    // FALLBACK 2: Try buildIntent if available
+    if (!pendingContext && shell?.buildIntent?.background) {
+      pendingContext = shell.buildIntent.background;
+    }
+
+    // If still no context, return empty
     if (!pendingContext) {
       return [];
     }
 
-    // Get pending skill-choice entitlements from backgrounds
+    // Try to collect from multiple possible fields in the context
     const pendingChoices = pendingContext.pendingChoices || [];
+    const backgroundSkillOptions = pendingContext.backgroundSkillOptions || [];
 
-    // Collect all skills that are either:
-    // 1. Auto-resolved by house rule (in choice.resolved array)
-    // 2. Allowed choices the player can pick from (in choice.allowedSkills array)
-    const skillRefs = new Set();
+    swseLogger.debug('[SkillsStep] Background skill resolution:', {
+      foundContext: !!pendingContext,
+      pendingChoiceCount: pendingChoices.length,
+      backgroundSkillOptionCount: backgroundSkillOptions.length,
+      contextKeys: Object.keys(pendingContext || {}).slice(0, 10),
+    });
 
+    // Collect from backgroundSkillOptions if available (preferred source)
+    if (backgroundSkillOptions.length > 0) {
+      backgroundSkillOptions.forEach(skill => {
+        if (skill) skillRefs.add(skill);
+      });
+    }
+
+    // Also collect from pending choices for completeness
+    // (in case backgroundSkillOptions wasn't populated for some reason)
     for (const choice of pendingChoices) {
-      if (!choice || !choice.allowedSkills) continue;
+      if (!choice) continue;
 
       // If auto-resolved by house rule, all skills are granted
-      if (choice.isAutoResolved && choice.resolved && choice.resolved.length > 0) {
-        choice.resolved.forEach(skill => skillRefs.add(skill));
+      if (choice.isAutoResolved && choice.resolved && Array.isArray(choice.resolved)) {
+        choice.resolved.forEach(skill => {
+          if (skill) skillRefs.add(skill);
+        });
       }
 
       // Also include all allowed skills so they can be presented as options
-      choice.allowedSkills.forEach(skill => skillRefs.add(skill));
+      if (choice.allowedSkills && Array.isArray(choice.allowedSkills)) {
+        choice.allowedSkills.forEach(skill => {
+          if (skill) skillRefs.add(skill);
+        });
+      }
     }
 
-    return Array.from(skillRefs).filter(Boolean);
+    const result = Array.from(skillRefs).filter(Boolean);
+
+    if (result.length > 0) {
+      swseLogger.debug('[SkillsStep] Collected background skill refs:', {
+        count: result.length,
+        sample: result.slice(0, 3)
+      });
+    }
+
+    return result;
   }
 
   _matchSkillsFromRefs(refs = []) {

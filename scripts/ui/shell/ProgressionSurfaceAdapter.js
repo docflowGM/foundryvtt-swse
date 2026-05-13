@@ -330,6 +330,15 @@ export class ProgressionSurfaceAdapter {
           await this._app._onDecrementQuantity?.(event, target);
           break;
         default:
+          // Try delegating to active step plugin first
+          const descriptor = this._app.steps?.[this._app.currentStepIndex] ?? null;
+          const plugin = descriptor ? this._app.stepPlugins?.get?.(descriptor.stepId) : null;
+
+          if (typeof plugin?.handleAction === 'function') {
+            await plugin.handleAction(action, event, target, this._app);
+            break;
+          }
+
           // Try calling method dynamically for step-specific actions
           const methodName = '_on' + action.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('');
           if (typeof this._app[methodName] === 'function') {
@@ -340,6 +349,59 @@ export class ProgressionSurfaceAdapter {
       }
     } catch (err) {
       SWSELogger.error(`[ProgressionSurfaceAdapter] Action "${action}" failed:`, err);
+    }
+  }
+
+  // ─── Scroll Preservation ────────────────────────────────────────────────────
+
+  /**
+   * Capture scroll positions from key scroll containers before a re-render.
+   * @param {HTMLElement} root - The progression surface root
+   * @returns {Object|null} - Map of selector → scrollTop/scrollLeft, or null if root missing
+   * @private
+   */
+  _captureScrollState(root) {
+    if (!root) return null;
+
+    const selectors = [
+      '[data-region="work-surface"]',
+      '[data-region="details-panel"]',
+      '[data-region="summary-panel"]',
+      '.prog-work-surface',
+      '.prog-content-row',
+      '.prog-main-column',
+      '.swse-screen'
+    ];
+
+    const state = {};
+    for (const selector of selectors) {
+      const el = root.querySelector(selector);
+      if (el && (el.scrollTop > 0 || el.scrollLeft > 0)) {
+        state[selector] = {
+          scrollTop: el.scrollTop,
+          scrollLeft: el.scrollLeft
+        };
+      }
+    }
+
+    return Object.keys(state).length > 0 ? state : null;
+  }
+
+  /**
+   * Restore scroll positions to their captured values.
+   * @param {HTMLElement} root - The new progression surface root after re-render
+   * @param {Object} scrollState - Captured scroll state from _captureScrollState
+   * @private
+   */
+  _restoreScrollState(root, scrollState) {
+    if (!root || !scrollState) return;
+
+    for (const [selector, positions] of Object.entries(scrollState)) {
+      const el = root.querySelector(selector);
+      if (el) {
+        el.scrollTop = positions.scrollTop;
+        el.scrollLeft = positions.scrollLeft;
+      }
     }
   }
 
@@ -377,14 +439,39 @@ export class ProgressionSurfaceAdapter {
       const self = this;
       app.render = async function(...args) {
         SWSELogger.debug('[ProgressionSurfaceAdapter] Intercepted render() — redirecting to shell');
+
+        // Capture scroll positions and active element before host render
+        const region = self.mode === 'chargen' ? 'surface-chargen' : 'surface-progression';
+        const currentRoot = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
+        const scrollState = self._captureScrollState(currentRoot);
+        const focusedElement = document.activeElement;
+        const focusedId = focusedElement?.id;
+
+        // Re-render the character sheet
         await self._shellHost?.render?.(false);
 
         // After a shell-host render, immediately rebind the inline progression DOM.
         // Intro splash stages call shell.render() during the animation; without this
         // rebind, translation can target stale DOM from the previous stage.
-        const region = self.mode === 'chargen' ? 'surface-chargen' : 'surface-progression';
         const root = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
         if (root?.isConnected) await self.afterInlineRender(root);
+
+        // Restore scroll positions and focus after animation frame
+        // Use two frames: first to let DOM settle, second to restore
+        if (scrollState && root?.isConnected) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              self._restoreScrollState(root, scrollState);
+              // Restore focus if the element still exists
+              if (focusedId) {
+                const restored = document.getElementById(focusedId);
+                if (restored && restored instanceof HTMLInputElement) {
+                  restored.focus();
+                }
+              }
+            });
+          });
+        }
 
         return app;
       };

@@ -1,6 +1,11 @@
 <div class="prog-class-details">
   <div class="prog-class-details__header">
-    {{#if class.img}}
+    {{#if img}}
+    <div class="prog-class-details__portrait-frame">
+      <img class="prog-class-details__portrait" src="{{img}}" alt="{{class.name}}">
+      <div class="prog-holo-scan"></div>
+    </div>
+    {{else if class.img}}
     <div class="prog-class-details__portrait-frame">
       <img class="prog-class-details__portrait" src="{{class.img}}" alt="{{class.name}}">
       <div class="prog-holo-scan"></div>

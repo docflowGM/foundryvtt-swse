@@ -29,6 +29,7 @@ export const SETTINGS_DEFAULTS = {
     // Backgrounds
     enableBackgrounds: true,
     backgroundSelectionCount: 1,
+    backgroundSkillGrantMode: 'raw_choice',
 
     // Droids
     droidPointBuyPool: 20,

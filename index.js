@@ -22,6 +22,8 @@ import { initializeSceneControls } from "./scripts/scene-controls/init.js";
 import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discovery/index.js";
 import { initializeSentinelGovernance } from "./scripts/governance/sentinel/sentinel-init.js";
 import { MutationInterceptor } from "./scripts/governance/mutation/MutationInterceptor.js";
+import { SystemInitHooks } from "./scripts/engine/progression/hooks/system-init-hooks.js";
+import { registerHandlebarsHelpers as registerSystemHandlebarsHelpers } from "./helpers/handlebars/index.js";
 
 UIManager.init();
 
@@ -94,7 +96,8 @@ Hooks.once("init", async () => {
   // -------------------------------
   // Register Handlebars Helpers
   // -------------------------------
-  registerHandlebarsHelpers();
+  registerLegacyHandlebarsHelpers();
+  registerSystemHandlebarsHelpers();
 
   // -------------------------------
   // Register Game Settings
@@ -106,6 +109,7 @@ Hooks.once("init", async () => {
   // Register Hook Infrastructure
   // -------------------------------
   registerInitHooks();
+  SystemInitHooks.registerHooks();
   initializeSceneControls();
   initializeDiscoverySystem();
   initializeSentinelGovernance();
@@ -114,6 +118,15 @@ Hooks.once("init", async () => {
   // Preload Templates
   // -------------------------------
   await preloadHandlebarsTemplates();
+
+  // Boot-time diagnostic: verify required Handlebars helpers are registered
+  const requiredHelpers = ["add", "div", "subtract", "multiply", "and", "or", "not", "arrayIncludes", "truncate"];
+  const missingHelpers = requiredHelpers.filter(h => !Handlebars.helpers[h]);
+  if (missingHelpers.length) {
+    console.error("SWSE | Missing required Handlebars helpers:", missingHelpers);
+  } else {
+    console.log("SWSE | All required Handlebars helpers registered:", requiredHelpers);
+  }
 
   console.log("SWSE | System initialization complete.");
 });
@@ -142,9 +155,9 @@ Hooks.once("ready", async () => {
 });
 
 // ============================================
-// HANDLEBARS HELPERS
+// HANDLEBARS HELPERS (LEGACY)
 // ============================================
-function registerHandlebarsHelpers() {
+function registerLegacyHandlebarsHelpers() {
   Handlebars.registerHelper("toUpperCase", str =>
     typeof str === "string" ? str.toUpperCase() : ""
   );
@@ -164,6 +177,8 @@ function registerHandlebarsHelpers() {
   );
 
   Handlebars.registerHelper("json", context => JSON.stringify(context));
+
+  Handlebars.registerHelper("add", (a, b) => Number(a) + Number(b));
 
   // -------------------------------
   // Custom Helpers

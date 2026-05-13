@@ -6454,3 +6454,73 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
 .swse-sheet-mode--edit .swse-concept-custom-skill-row__notes {
   display: grid;
 }
+
+/* ========================================================================== */
+/* 2026-05-12: Embedded chargen/progression layout override                   */
+/* Override blanket display:block !important rule from line 3322-3334         */
+/* This rule targets ONLY active chargen/progression surfaces within holopad   */
+/* and restores the flex layout chain needed for proper footer visibility      */
+/* ========================================================================== */
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-chargen .swse-shell-screen-surface--chargen > .swse-shell-surface-host,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-progression .swse-shell-screen-surface--progression > .swse-shell-surface-host,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-chargen .swse-shell-surface-host,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-progression .swse-shell-surface-host {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-chargen .swse-shell-surface-host > .swse-shell-surface--chargen,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-progression .swse-shell-surface-host > .swse-shell-surface--progression,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-chargen .swse-progression-inline-host--chargen,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-progression .swse-progression-inline-host--progression,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-chargen .swse-progression-inline-host--chargen > .progression-shell,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-progression .swse-progression-inline-host--progression > .progression-shell,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-chargen .progression-shell > .swse-screen,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-progression .progression-shell > .swse-screen {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-chargen .progression-shell .prog-main-column,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-progression .progression-shell .prog-main-column,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-chargen .progression-shell .prog-content-row,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-progression .progression-shell .prog-content-row {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-chargen .progression-shell [data-region="work-surface"],
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-progression .progression-shell [data-region="work-surface"],
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-chargen .progression-shell [data-region="details-panel"],
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-progression .progression-shell [data-region="details-panel"],
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-chargen .progression-shell .prog-species-list,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-progression .progression-shell .prog-species-list {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-chargen .progression-shell [data-region="action-footer"],
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-progression .progression-shell [data-region="action-footer"] {
+  flex: 0 0 56px !important;
+  height: 56px !important;
+  min-height: 56px !important;
+  max-height: 56px !important;
+  overflow: hidden !important;
+}

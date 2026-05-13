@@ -13,6 +13,7 @@ import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { BackgroundGrantLedgerBuilder } from './background-grant-ledger-builder.js';
 import { BackgroundLedgerCompatibility } from './background-ledger-compatibility.js';
 import { BackgroundRegistry } from '/systems/foundryvtt-swse/scripts/registries/background-registry.js';
+import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
 
 /**
  * Build pending background context from selected background IDs
@@ -66,6 +67,17 @@ export async function buildPendingBackgroundContext(selectedBackgroundIds, optio
       multiMode
     });
 
+    // Build pending skill choices from backgrounds
+    const pendingChoices = _buildPendingBackgroundChoices(ledger);
+
+    // Extract all background skill options (union of all allowed skills from pending choices)
+    const backgroundSkillOptions = new Set();
+    for (const choice of pendingChoices) {
+      if (choice?.allowedSkills && Array.isArray(choice.allowedSkills)) {
+        choice.allowedSkills.forEach(skill => backgroundSkillOptions.add(skill));
+      }
+    }
+
     // Extract structured context for downstream consumption
     const context = {
       // Selection metadata
@@ -83,7 +95,11 @@ export async function buildPendingBackgroundContext(selectedBackgroundIds, optio
       languages: BackgroundLedgerCompatibility.getLanguageGrantsForLanguageStep(ledger),
 
       // Pending entitlements for progression (these become actual choices for Skills step)
-      pendingChoices: _buildPendingBackgroundChoices(ledger),
+      pendingChoices,
+
+      // Background skill opportunities (all skills that can be chosen from backgrounds)
+      backgroundSkillOptions: Array.from(backgroundSkillOptions),
+
       bonuses: ledger.bonuses || {},
       passiveEffects: BackgroundLedgerCompatibility.getPassiveEffectsForRuntime(ledger),
 
@@ -98,9 +114,11 @@ export async function buildPendingBackgroundContext(selectedBackgroundIds, optio
     SWSELogger.log('[BackgroundPendingContext] Built context:', {
       selectedCount: context.selectedIds.length,
       multiMode: context.multiMode,
-      classSkillCount: context.classSkills.length,
-      languageCount: context.languages.fixed.length,
-      unresolvedCount: context.unresolved.length
+      backgroundSkillOptionCount: context.backgroundSkillOptions.length,
+      classSkillChoiceCount: context.classSkillChoices.length,
+      languageCount: context.languages?.fixed?.length || 0,
+      pendingChoiceCount: context.pendingChoices?.length || 0,
+      unresolvedCount: context.unresolved?.length || 0
     });
 
     return context;
@@ -134,7 +152,7 @@ function _buildPendingBackgroundChoices(ledger) {
   if (!ledger || !ledger.selectedBackgrounds) return choices;
 
   // Check house rule setting
-  const skillGrantMode = game?.settings?.get?.('foundryvtt-swse', 'backgroundSkillGrantMode') || 'raw_choice';
+  const skillGrantMode = HouseRuleService.getString('backgroundSkillGrantMode', 'raw_choice');
   const grantAll = skillGrantMode === 'grant_all_listed_skills';
 
   for (const bg of ledger.selectedBackgrounds) {
@@ -210,7 +228,9 @@ export function createEmptyPendingContext() {
 
     classSkills: [],
     classSkillChoices: [],
+    backgroundSkillOptions: [],
     languages: { fixed: [], entitlements: [] },
+    pendingChoices: [],
     bonuses: { untrained: [], flat: [], conditional: [] },
     passiveEffects: [],
 
@@ -244,6 +264,8 @@ export function mergeBackgroundContextIntoPendingState(pendingState, backgroundC
       multiMode: backgroundContext.multiMode,
       classSkills: backgroundContext.classSkills,
       classSkillChoices: backgroundContext.classSkillChoices,
+      backgroundSkillOptions: backgroundContext.backgroundSkillOptions,
+      pendingChoices: backgroundContext.pendingChoices,
       languages: backgroundContext.languages,
       bonuses: backgroundContext.bonuses,
       passiveEffects: backgroundContext.passiveEffects,

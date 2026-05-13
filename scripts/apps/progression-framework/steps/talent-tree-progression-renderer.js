@@ -20,26 +20,40 @@ function computePositions(graphData) {
   const levelNumbers = Array.from(levels.keys()).sort((a, b) => a - b);
   const maxPerLevel = Math.max(1, ...Array.from(levels.values()).map((entries) => entries.length));
 
-  const nodeWidth = 172;
-  const nodeHeight = 78;
-  const horizontalGap = 74;
-  const verticalGap = 112;
-  const paddingX = 70;
-  const paddingY = 50;
+  // Larger nodes for readability
+  const nodeWidth = 220;
+  const nodeHeight = 100;
+  const horizontalGap = 120;    // Gap between levels (left-to-right)
+  const verticalGap = 140;      // Gap between nodes in same level (top-to-bottom)
+  const paddingX = 80;
+  const paddingY = 60;
 
-  const width = Math.max(920, paddingX * 2 + maxPerLevel * nodeWidth + Math.max(0, maxPerLevel - 1) * horizontalGap);
-  const height = Math.max(420, paddingY * 2 + levelNumbers.length * nodeHeight + Math.max(0, levelNumbers.length - 1) * verticalGap);
+  // Layout is now left-to-right: x based on level, y based on position within level
+  const width = Math.max(1000, paddingX * 2 + levelNumbers.length * nodeWidth + Math.max(0, levelNumbers.length - 1) * horizontalGap);
+  const height = Math.max(500, paddingY * 2 + maxPerLevel * nodeHeight + Math.max(0, maxPerLevel - 1) * verticalGap);
   const positions = new Map();
 
   for (const level of levelNumbers) {
     const entries = levels.get(level) || [];
-    const rowWidth = entries.length * nodeWidth + Math.max(0, entries.length - 1) * horizontalGap;
-    const startX = Math.max(paddingX, (width - rowWidth) / 2);
-    const y = paddingY + level * (nodeHeight + verticalGap);
+    const numInLevel = entries.length;
+
+    // X position: levels flow left-to-right
+    const x = paddingX + level * (nodeWidth + horizontalGap);
+
+    // Y position: nodes stack top-to-bottom within level, centered vertically
+    const totalHeight = numInLevel * nodeHeight + Math.max(0, numInLevel - 1) * verticalGap;
+    const startY = Math.max(paddingY, (height - totalHeight) / 2);
 
     entries.forEach(({ nodeId }, index) => {
-      const x = startX + index * (nodeWidth + horizontalGap);
-      positions.set(nodeId, { x, y, cx: x + nodeWidth / 2, cy: y + nodeHeight / 2, width: nodeWidth, height: nodeHeight });
+      const y = startY + index * (nodeHeight + verticalGap);
+      positions.set(nodeId, {
+        x,
+        y,
+        cx: x + nodeWidth / 2,
+        cy: y + nodeHeight / 2,
+        width: nodeWidth,
+        height: nodeHeight
+      });
     });
   }
 
@@ -152,8 +166,11 @@ export function renderProgressionTalentTree(container, options = {}) {
   const documentRef = container.ownerDocument;
   const svg = documentRef.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('class', 'prog-talent-tree-svg');
+  svg.setAttribute('width', width);
+  svg.setAttribute('height', height);
   svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  svg.style.width = `${width}px`;
+  svg.style.height = `${height}px`;
 
   const edgesGroup = documentRef.createElementNS('http://www.w3.org/2000/svg', 'g');
   edgesGroup.setAttribute('class', 'prog-talent-tree-svg__edges');

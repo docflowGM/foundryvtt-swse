@@ -15,6 +15,10 @@ export function registerHouseruleSettings() {
   /* -------------------------------------------------------------------------- */
 
   function register(key, data) {
+    const fullKey = `${NS}.${key}`;
+    if (game.settings.settings?.has?.(fullKey)) {
+      return; // Already registered, skip silently
+    }
     try {
       game.settings.register(NS, key, data);
     } catch (err) {
@@ -126,6 +130,19 @@ export function registerHouseruleSettings() {
     config: true,
     type: Boolean,
     default: false
+  });
+
+  register('backgroundSkillGrantMode', {
+    name: 'Background Skill Grant Mode',
+    hint: 'How background skills are handled during character creation.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      'raw_choice': 'RAW: choose listed background skills',
+      'grant_all_listed_skills': 'House Rule: grant all listed background skills'
+    },
+    default: 'raw_choice'
   });
 
   /* -------------------------------------------------------------------------- */

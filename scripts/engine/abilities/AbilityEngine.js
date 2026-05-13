@@ -20,8 +20,12 @@ import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/pr
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 function emitAbilityTrace(label, payload = {}) {
+  // Only emit trace logs when debug mode is enabled
+  if (!game?.settings?.get?.('foundryvtt-swse', 'debugMode')) {
+    return;
+  }
   try {
-    console.warn(`SWSE [PREREQ TRACE] ${label}`, payload);
+    SWSELogger.debug(`[PREREQ TRACE] ${label}`, payload);
   } catch (_err) {
     // no-op
   }

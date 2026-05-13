@@ -6,6 +6,7 @@ import { getActorSheetThemeOptions } from "/systems/foundryvtt-swse/scripts/them
 import { getActorSheetMotionStyleOptions } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { registerHolonetSettings } from "/systems/foundryvtt-swse/scripts/holonet/integration/holonet-init.js";
+import { registerHouseruleSettings } from "/systems/foundryvtt-swse/scripts/houserules/houserule-settings.js";
 
 /**
  * System settings for SWSE
@@ -545,6 +546,9 @@ game.settings.register('foundryvtt-swse', 'themePromptShown', {
   type: Boolean,
   default: false
 });
+
+  // Register houserule settings (with idempotency check to avoid duplicate registrations)
+  registerHouseruleSettings();
 
   // Register Holonet settings (bulletin system)
   registerHolonetSettings();

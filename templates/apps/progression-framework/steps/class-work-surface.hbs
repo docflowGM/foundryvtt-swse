@@ -22,6 +22,13 @@
               role="option"
               {{#if (eq id ../committedClassId)}}aria-selected="true"{{/if}}>
 
+        {{#if this.img}}
+          <div class="prog-class-card__media">
+            <img class="prog-class-card__image" src="{{this.img}}" alt="{{this.name}}">
+            <div class="prog-class-card__scanline"></div>
+          </div>
+        {{/if}}
+
         <div class="swse-option-card__header">
           <h3 class="swse-option-card__title prog-class-card__name">{{this.name}}</h3>
           <span class="swse-option-card__subtitle">{{this.type}}</span>
