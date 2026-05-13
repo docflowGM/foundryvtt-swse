@@ -19,6 +19,10 @@ export class ForceRules {
     return HouseRuleService.getString('forceTrainingAttribute', 'wisdom');
   }
 
+  static getExecutionAttribute() {
+    return HouseRuleService.getString('forceExecutionAttribute', 'charisma');
+  }
+
   static isForceSensitiveJediOnly() {
     return HouseRuleService.getBoolean('forceSensitiveJediOnly', false);
   }

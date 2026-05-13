@@ -1041,9 +1041,6 @@ export class TalentStep extends ProgressionStepPlugin {
       if (shell?.committedSelections && this.descriptor?.stepId) {
         shell.committedSelections.set(this.descriptor.stepId, nextSelection);
       }
-      if (shell?.buildIntent && this.descriptor?.stepId) {
-        shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, nextSelection);
-      }
     }
   }
 

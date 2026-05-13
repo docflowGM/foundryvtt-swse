@@ -35,11 +35,40 @@
  * Provides Ask Mentor functionality and guidance context.
  */
 
-import { getMentorGuidance, getMentorForClass, MENTORS } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { getMentorGuidance, getMentorForClass, MENTORS, getMentorKey } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { MentorAdvisoryCoordinator } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-advisory-coordinator.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { MentorSuggestionPickerDialog } from '/systems/foundryvtt-swse/scripts/apps/mentor/mentor-suggestion-picker-dialog.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+
+/**
+ * Extract mentor ID from mentor object.
+ * Uses multiple fallbacks to ensure we always have a valid ID.
+ * @param {Object} mentor - The mentor object
+ * @returns {string} The mentor ID (e.g., "ol_salty", "miraj")
+ */
+function getMentorIdFromObject(mentor) {
+  if (!mentor) return 'scoundrel'; // Safe default
+
+  // First try: direct id fields from loaded mentor data
+  if (mentor.id) return mentor.id;
+  if (mentor.mentorId) return mentor.mentorId;
+  if (mentor.mentor_id) return mentor.mentor_id;
+
+  // Second try: look up by name in MENTORS
+  if (mentor.name) {
+    const key = getMentorKey(mentor.name);
+    if (key) return key.toLowerCase().replace(/\s+/g, '_');
+  }
+
+  // Third try: normalize the name directly
+  if (mentor.name) {
+    return mentor.name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+  }
+
+  // Fallback to safe default
+  return 'scoundrel';
+}
 
 /**
  * Maps step choice types to mentor guidance keys.
@@ -154,8 +183,8 @@ export async function handleAskMentorWithSuggestions(actor, stepId, suggestions,
     const mentor = getStepMentorObject(actor, shell);
     if (!mentor) return;
 
-    // Get mentor ID from the mentor object (handle both name and id)
-    let mentorId = mentor.id || (mentor.name || '').toLowerCase().replace(/\s+/g, '_');
+    // Get mentor ID from the mentor object with robust fallback chain
+    let mentorId = getMentorIdFromObject(mentor);
 
     // Generate suggestion advisory
     const advisory = await MentorAdvisoryCoordinator.generateSuggestionAdvisory(
@@ -223,7 +252,7 @@ export async function handleAskMentorWithPicker(actor, stepId, suggestions, shel
       return null;
     }
 
-    let mentorId = mentor.id || (mentor.name || '').toLowerCase().replace(/\s+/g, '_');
+    let mentorId = getMentorIdFromObject(mentor);
     const advisory = await MentorAdvisoryCoordinator.generateSuggestionAdvisory(
       actor,
       mentorId,

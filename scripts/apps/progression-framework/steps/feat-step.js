@@ -71,7 +71,7 @@ function emitFeatStepTrace(label, payload = {}) {
     return;
   }
   try {
-    console.warn(`SWSE [FEAT STEP TRACE] ${label}`, payload);
+    swseLogger.debug(`[FEAT STEP TRACE] ${label}`, payload);
   } catch (_err) {
     // no-op
   }
@@ -270,8 +270,7 @@ export class FeatStep extends ProgressionStepPlugin {
       row.addEventListener('click', (e) => {
         e.preventDefault();
         const featId = row.dataset.itemId || row.dataset.featId;
-        this._focusedFeatId = featId;
-        shell.render();
+        this.onItemFocused(featId, shell);
       }, { signal });
     });
   }
@@ -291,11 +290,12 @@ export class FeatStep extends ProgressionStepPlugin {
     if (!actor) return [];
 
     const legal = [];
-    const pendingAbilityData = this._buildPendingAbilityData(shell);
+    let pendingAbilityData = this._buildPendingAbilityData(shell);
     const classLookupKeys = resolveClassLookupKeysForFeatStep(shell);
 
     // Build class grant ledger to identify class-granted feats that are pending
     const classGrantedFeats = new Set();
+    let forceSensitiveFromGrants = false;
     try {
       const selectedClass = resolveSelectedClassFromShell(shell) || resolveClassModel(
         shell?.progressionSession?.getSelection?.('class')
@@ -306,13 +306,20 @@ export class FeatStep extends ProgressionStepPlugin {
       if (selectedClass) {
         const ledger = buildClassGrantLedger(actor, selectedClass, pendingAbilityData);
         const merged = mergeLedgerIntoPending(pendingAbilityData, ledger);
-        // Collect feat names from class grants
-        if (merged.selectedFeats) {
-          merged.selectedFeats.forEach(feat => {
+
+        // CRITICAL: Update pendingAbilityData with merged grants so legality checks see them
+        pendingAbilityData = merged;
+
+        // Collect feat names from class-granted feats (not selectedFeats)
+        if (merged.grantedFeats && Array.isArray(merged.grantedFeats)) {
+          merged.grantedFeats.forEach(feat => {
             const featName = typeof feat === 'string' ? feat : feat?.name;
             if (featName) classGrantedFeats.add(String(featName).toLowerCase());
           });
         }
+
+        // Also capture force sensitivity grant
+        forceSensitiveFromGrants = merged.forceSensitive === true;
       }
     } catch (err) {
       swseLogger.debug('[FeatStep] Class grant resolution failed (non-critical)', {
@@ -322,7 +329,7 @@ export class FeatStep extends ProgressionStepPlugin {
 
     for (const feat of this._allFeats) {
       try {
-        // Check if feat meets prerequisites using pending chargen selections
+        // Check if feat meets prerequisites using pending chargen selections (including class grants)
         const assessment = AbilityEngine.evaluateAcquisition(actor, feat, pendingAbilityData);
 
         if (!assessment?.legal) {
@@ -343,14 +350,25 @@ export class FeatStep extends ProgressionStepPlugin {
         // Check if already owned or granted by class (unless repeatable)
         const featNameLower = String(feat.name || '').toLowerCase();
         const isClassGranted = classGrantedFeats.has(featNameLower);
-        const alreadyOwned = actor.items.some(i =>
+        const isForceSensitivityGrant = forceSensitiveFromGrants && featNameLower === 'force sensitivity';
+
+        // Check actor items
+        const alreadyOwnedOnActor = actor.items.some(i =>
           i.type === 'feat' && i.name?.toLowerCase?.() === featNameLower
         );
 
-        const isRepeatable = FeatEngine.repeatables.includes(featNameLower);
+        // Check pending selected feats (from chargen progress)
+        const alreadySelectedInChargen = pendingAbilityData.selectedFeats &&
+          pendingAbilityData.selectedFeats.some(f => {
+            const selectedName = typeof f === 'string' ? f : f?.name;
+            return selectedName && String(selectedName).toLowerCase() === featNameLower;
+          });
 
-        if ((alreadyOwned || isClassGranted) && !isRepeatable) {
-          continue;  // Skip non-repeatable feats already owned or class-granted
+        const isRepeatable = FeatEngine.repeatables.includes(featNameLower);
+        const alreadyOwned = alreadyOwnedOnActor || alreadySelectedInChargen;
+
+        if ((alreadyOwned || isClassGranted || isForceSensitivityGrant) && !isRepeatable) {
+          continue;  // Skip non-repeatable feats already owned, selected, or class-granted
         }
 
         legal.push(feat);
@@ -805,20 +823,15 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   renderDetailsPanel(focusedItem) {
-    if (!this._focusedFeatId) {
+    // Prefer passed focusedItem, fall back to _focusedFeatId
+    const feat = focusedItem || (this._focusedFeatId ? this._getFeat(this._focusedFeatId) : null);
+
+    if (!feat || !this._focusedFeatId) {
+      const reason = !feat ? 'focused-feat-not-found' : 'no-focused-feat-id';
       emitFeatStepTrace('DETAILS_EMPTY', {
-        reason: 'no-focused-feat-id',
+        reason,
         stepId: this.descriptor?.stepId || null,
         selectedFeatId: this._selectedFeatId,
-      });
-      return this.renderDetailsPanelEmptyState();
-    }
-
-    const feat = this._getFeat(this._focusedFeatId);
-    if (!feat) {
-      emitFeatStepTrace('DETAILS_EMPTY', {
-        reason: 'focused-feat-not-found',
-        stepId: this.descriptor?.stepId || null,
         focusedFeatId: this._focusedFeatId,
       });
       return this.renderDetailsPanelEmptyState();
@@ -861,12 +874,27 @@ export class FeatStep extends ProgressionStepPlugin {
   // Focus/Commit
   // ---------------------------------------------------------------------------
 
-  async onItemFocused(item) {
-    this._focusedFeatId = item?._id || item?.id || item;
+  async onItemFocused(item, shell) {
+    const featId = item?._id || item?.id || item;
+    const feat = this._getFeat(featId);
+
+    this._focusedFeatId = feat?._id || feat?.id || featId || null;
+
     emitFeatStepTrace('ITEM_FOCUSED', {
       focusedFeatId: this._focusedFeatId,
-      itemName: item?.name || null,
+      itemName: feat?.name || null,
     });
+
+    // Hydrate detail rail immediately by calling shell API
+    if (feat && shell?.setFocusedItem) {
+      shell.setFocusedItem(feat);
+      return;
+    }
+
+    // Fall back to shell render if setFocusedItem not available
+    if (shell?.render) {
+      shell.render();
+    }
   }
 
   async onItemCommitted(item, shell) {
@@ -967,9 +995,6 @@ export class FeatStep extends ProgressionStepPlugin {
 
     if (shell?.committedSelections && this.descriptor?.stepId) {
       shell.committedSelections.set(this.descriptor.stepId, nextSelection);
-    }
-    if (shell?.buildIntent && this.descriptor?.stepId) {
-      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, nextSelection);
     }
   }
 

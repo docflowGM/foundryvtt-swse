@@ -24,16 +24,66 @@ export const SkillRegistry = {
       this._byId.clear();
       this._byKey.clear();
 
+      // Track if we have split Knowledge skills
+      let hasSplitKnowledgeSkills = false;
+
       for (const skillDoc of docs) {
         if (!skillDoc?.name) continue;
+
+        // Skip the generic "Knowledge" skill if it exists in the compendium
+        // We'll use the split Knowledge skills from data/skills.json instead
+        if (skillDoc.name?.toLowerCase() === 'knowledge') {
+          SWSELogger.debug('[SkillRegistry] Skipping generic "Knowledge" skill (will use split Knowledge skills)');
+          continue;
+        }
+
         const normalized = this._normalize(skillDoc);
         this.skills.set(normalized.name.toLowerCase(), normalized);
         this._byId.set(normalized.id, normalized);
         this._byKey.set(normalized.key, normalized);
       }
 
+      // PHASE 2: Load split Knowledge skills from data/skills.json
+      // This ensures individual Knowledge skills like Knowledge (Bureaucracy) are available
+      try {
+        const response = await fetch('/systems/foundryvtt-swse/data/skills.json');
+        if (response.ok) {
+          const splitSkills = await response.json();
+          const knowledgeSkills = (splitSkills || []).filter(s =>
+            s.key?.startsWith('knowledge') && s.key !== 'knowledge'
+          );
+
+          if (knowledgeSkills.length > 0) {
+            for (const skillData of knowledgeSkills) {
+              const normalized = {
+                id: skillData.key,
+                _id: skillData.key,
+                name: skillData.name,
+                key: skillData.key.toLowerCase().replace(/\s+/g, ''),
+                ability: skillData.ability || 'int',
+                system: { ability: skillData.ability || 'int', key: skillData.key },
+                classes: {},
+                pack: 'data/skills.json',
+                document: null
+              };
+              this.skills.set(normalized.name.toLowerCase(), normalized);
+              this._byId.set(normalized.id, normalized);
+              this._byKey.set(normalized.key, normalized);
+            }
+
+            hasSplitKnowledgeSkills = true;
+            SWSELogger.debug(`[SkillRegistry] Loaded ${knowledgeSkills.length} split Knowledge skills from data/skills.json`);
+          }
+        }
+      } catch (err) {
+        SWSELogger.warn('[SkillRegistry] Failed to load split Knowledge skills from data/skills.json:', err);
+      }
+
       this.isBuilt = true;
-      SWSELogger.log(`SkillRegistry built: ${this.skills.size} skills loaded`);
+      const logMsg = hasSplitKnowledgeSkills
+        ? `SkillRegistry built: ${this.skills.size} skills loaded (including split Knowledge skills)`
+        : `SkillRegistry built: ${this.skills.size} skills loaded`;
+      SWSELogger.log(logMsg);
       return true;
     } catch (err) {
       SWSELogger.error('Failed to build SkillRegistry:', err);

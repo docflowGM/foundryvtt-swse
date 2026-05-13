@@ -80,6 +80,23 @@ export class BackgroundStep extends ProgressionStepPlugin {
     // Phase 5: Get suggested backgrounds from SuggestionService
     await this._getSuggestedBackgrounds(shell.actor, shell);
 
+    // HYDRATION: Restore draft selection if navigating backward
+    const draftBackground = shell?.progressionSession?.draftSelections?.background;
+    if (draftBackground) {
+      // Background can be a single object or array of objects depending on house rule
+      if (Array.isArray(draftBackground)) {
+        this._committedBackgroundIds = draftBackground.map(bg => bg.backgroundId).filter(Boolean);
+      } else if (draftBackground.backgroundId) {
+        this._committedBackgroundIds = [draftBackground.backgroundId];
+      }
+      if (this._committedBackgroundIds.length > 0) {
+        console.log('[BackgroundStep] Hydrated draft background selection:', {
+          count: this._committedBackgroundIds.length,
+          ids: this._committedBackgroundIds,
+        });
+      }
+    }
+
     // Enable Ask Mentor
     shell.mentor.askMentorEnabled = true;
   }

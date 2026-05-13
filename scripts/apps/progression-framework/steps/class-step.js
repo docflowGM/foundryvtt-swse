@@ -97,6 +97,20 @@ export class ClassStep extends ProgressionStepPlugin {
     // Initial filter
     this._applyFilters(shell);
 
+    // HYDRATION: Restore draft selection if navigating backward
+    const draftClass = shell?.progressionSession?.draftSelections?.class;
+    if (draftClass) {
+      const classId = draftClass.classId;
+      if (classId) {
+        this._committedClassId = classId;
+        this._committedClassName = draftClass.className || draftClass.name;
+        console.log('[ClassStep] Hydrated draft class selection:', {
+          classId,
+          className: this._committedClassName,
+        });
+      }
+    }
+
     // Enable Ask Mentor for this step
     shell.mentor.askMentorEnabled = true;
   }

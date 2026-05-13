@@ -3,157 +3,188 @@
     "miraj": {
       "mentor_id": "m01",
       "display_name": "Miraj",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/miraj/Miraj_dialogues.json"
     },
     "breach": {
       "mentor_id": "m02",
       "display_name": "Breach",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/breach/breach_dialogues.json"
     },
     "lead": {
       "mentor_id": "m03",
       "display_name": "Lead",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/lead/Lead_dialogues.json"
     },
     "ol_salty": {
       "mentor_id": "m04",
       "display_name": "Ol' Salty",
-      "aliases": ["salty"]
+      "aliases": ["salty"],
+      "dialogue_path": "data/dialogue/mentors/ol_salty/ol_salty_dialogues.json"
     },
     "j0_n1": {
       "mentor_id": "m05",
       "display_name": "J0-N1",
-      "aliases": ["j0n1"]
+      "aliases": ["j0n1"],
+      "dialogue_path": "data/dialogue/mentors/j0_n1/j0_n1_dialogues.json"
     },
     "darth_miedo": {
       "mentor_id": "m06",
       "display_name": "Darth Miedo",
-      "aliases": ["miedo"]
+      "aliases": ["miedo"],
+      "dialogue_path": "data/dialogue/mentors/darth_miedo/darth_miedo_dialogue.json"
     },
     "darth_malbada": {
       "mentor_id": "m07",
       "display_name": "Darth Malbada",
-      "aliases": ["malbada"]
+      "aliases": ["malbada"],
+      "dialogue_path": "data/dialogue/mentors/darth_malbada/darth_malbada_dialogue.json"
     },
     "tio_the_hutt": {
       "mentor_id": "m08",
       "display_name": "Tío the Hutt",
-      "aliases": ["tio"]
+      "aliases": ["tio"],
+      "dialogue_path": "data/dialogue/mentors/tio_the_hutt/tio_the_hutt_dialogue.json"
     },
     "anchorite": {
       "mentor_id": "m09",
       "display_name": "Riquis",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/riquis/riquis_dialogue.json"
     },
     "axiom": {
       "mentor_id": "m10",
       "display_name": "General Axiom",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/axiom/axiom_dialogue.json"
     },
     "captain": {
       "mentor_id": "m11",
       "display_name": "The Captain",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/captain/captain_dialogue.json"
     },
     "delta": {
       "mentor_id": "m12",
       "display_name": "Delta",
-      "aliases": ["delta_assassin", "whisper"]
+      "aliases": ["delta_assassin", "whisper"],
+      "dialogue_path": "data/dialogue/mentors/delta/delta_dialogue.json"
     },
     "dezmin": {
       "mentor_id": "m13",
       "display_name": "Dezmin",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/dezmin/dezmin_dialogue.json"
     },
     "jack": {
       "mentor_id": "m14",
       "display_name": "Lucky Jack",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/jack/jack_dialogue.json"
     },
     "kex_varon": {
       "mentor_id": "m15",
       "display_name": "Kex Varon",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/kex_varon/kex_varon_dialogue.json"
     },
     "korr": {
       "mentor_id": "m16",
       "display_name": "Admiral Korr",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/korr/korr_dialogue.json"
     },
     "krag": {
       "mentor_id": "m17",
       "display_name": "Krag the Immovable",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/krag/krag_dialogue.json"
     },
     "kyber": {
       "mentor_id": "m18",
       "display_name": "Kyber",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/kyber/kyber_dialogue.json"
     },
     "mayu": {
       "mentor_id": "m19",
       "display_name": "Mayu",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/mayu/mayu_dialogue.json"
     },
     "pegar": {
       "mentor_id": "m20",
       "display_name": "Pegar",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/pegar/pegar_dialogues.json"
     },
     "rajma": {
       "mentor_id": "m21",
       "display_name": "Rajma",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/rajma/rajma_dialogue.json"
     },
     "rax": {
       "mentor_id": "m22",
       "display_name": "Chief Engineer Rax",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/rax/rax_dialogue.json"
     },
     "rogue": {
       "mentor_id": "m23",
       "display_name": "Rogue",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/rogue/rogue_dialogue.json"
     },
     "sela": {
       "mentor_id": "m24",
       "display_name": "Silvertongue Sela",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/sela/sela_dialogue.json"
     },
     "seraphim": {
       "mentor_id": "m25",
       "display_name": "Seraphim",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/seraphim/seraphim_dialogue.json"
     },
     "skindar": {
       "mentor_id": "m26",
       "display_name": "Marl Skindar",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/marl_skindar/skindar_dialogue.json"
     },
     "spark": {
       "mentor_id": "m27",
       "display_name": "Spark",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/spark/spark_dialogue.json"
     },
     "theron": {
       "mentor_id": "m28",
       "display_name": "Shield Captain Theron",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/theron/theron_dialogue.json"
     },
     "urza": {
       "mentor_id": "m29",
       "display_name": "Shaper Urza",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/urza/urza_dialogue.json"
     },
     "venn": {
       "mentor_id": "m30",
       "display_name": "Seeker Vera",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/vera/vera_dialogue.json"
     },
     "zhen": {
       "mentor_id": "m32",
       "display_name": "Master Zhen",
-      "aliases": []
+      "aliases": [],
+      "dialogue_path": "data/dialogue/mentors/zhen/zhen_dialogue.json"
     }
   }
 }

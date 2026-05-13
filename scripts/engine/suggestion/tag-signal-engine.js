@@ -225,8 +225,8 @@ export function scoreTagAlignment(candidate, buildIntent = {}, identityBias = {}
 export function scoreAttributeRealization(candidate, actor) {
   const tags = getCandidateTags(candidate);
   if (!tags.length || !actor) return { score: 0, axes: [] };
-  const trainingAttr = normalize(ForceRules.getForceTrainingAttribute());
-  const utfAttr = normalize(ForceRules.getUseTheForceAttribute());
+  const trainingAttr = normalize(ForceRules.getTrainingAttribute?.() || 'wisdom');
+  const utfAttr = normalize(ForceRules.getExecutionAttribute?.() || 'charisma');
   const axes = [];
   const addAxis = (key, tagsFor, w=1) => {
     if (tags.some(t => tagsFor.includes(t))) axes.push({ ability: key, weight: w });

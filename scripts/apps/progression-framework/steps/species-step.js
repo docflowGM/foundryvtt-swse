@@ -140,6 +140,20 @@ export class SpeciesStep extends ProgressionStepPlugin {
     // Initial filter
     this._applyFilters();
 
+    // HYDRATION: Restore draft selection if navigating backward
+    const draftSpecies = shell?.progressionSession?.draftSelections?.species;
+    if (draftSpecies) {
+      const speciesId = draftSpecies.speciesId;
+      if (speciesId) {
+        this._committedSpeciesId = speciesId;
+        this._committedSpeciesName = draftSpecies.speciesName || draftSpecies.name;
+        console.log('[SpeciesStep] Hydrated draft species selection:', {
+          speciesId,
+          speciesName: this._committedSpeciesName,
+        });
+      }
+    }
+
     // Enable Ask Mentor for this step
     shell.mentor.askMentorEnabled = true;
 

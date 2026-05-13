@@ -39,6 +39,7 @@ export class SkillsStep extends ProgressionStepPlugin {
     this._isDroid = false;                // Droid constraint flag
     this._beastSkillList = null;          // Beast skill list if applicable
     this._focusedSkillId = null;          // focused skill for details rail
+    this._extraSkillUses = [];            // Extra uses from data/extraskilluses.json
 
     this._skillDerivation = {
       mode: 'fallback-full-chart',
@@ -96,8 +97,7 @@ export class SkillsStep extends ProgressionStepPlugin {
       .filter(s => s.trained)
       .length;
 
-
-// Load full skill list from registry
+    // Load full skill list from registry
 try {
   if (!SkillRegistry.isBuilt && typeof SkillRegistry.build === 'function') {
     await SkillRegistry.build();
@@ -168,6 +168,18 @@ try {
         });
       }
     }
+
+    // P0: RECONCILE CLASS-DEPENDENT SKILLS
+    // After class changes, remove any trained skills that are no longer legal under the new class context
+    // This prevents "Use the Force" from staying trained when changing from Jedi to Soldier
+    // Always run reconciliation when re-entering the skills step to catch any stale selections
+    await this._reconcileTrainedSkillsAfterClassChange(shell);
+    if (shell.progressionSession?.dirtyNodes) {
+      shell.progressionSession.dirtyNodes.delete('skills');
+    }
+
+    // Load extra skill uses from data/extraskilluses.json
+    await this._loadExtraSkillUses();
 
     // Get suggested skills from SuggestionService
     await this._getSuggestedSkills(shell.actor, shell);
@@ -281,6 +293,7 @@ try {
   /**
    * Format a skill for template display
    * Adds training state and suggestion badge
+   * Ensures skill name is safe for rendering (no [Object object])
    * @private
    */
   _formatSkillCard(skill, suggestedIds = new Set()) {
@@ -289,6 +302,8 @@ try {
 
     return {
       ...skill,
+      // Ensure name is safe for rendering in templates
+      name: this._getSkillDisplayName(skill),
       isTrained: selectionState?.trained === true,
       badgeLabel: isSuggested ? 'Suggested' : null,
     };
@@ -521,16 +536,44 @@ renderDetailsPanel(focusedItem) {
   const skill = this._resolveFocusedSkill(focusedItem);
   if (!skill) return this.renderDetailsPanelEmptyState();
 
+  const extraUses = this._getExtraUsesForSkill(skill);
+
   return {
     template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/skill-details.hbs',
     data: {
       skill,
-      skillName: skill.name,
+      skillName: this._getSkillDisplayName(skill),
       abilityLabel: skill.abilityLabel || 'Unknown',
       category: skill.category || null,
       isClassSkill: !!skill.isClassSkill,
       isBackgroundSkill: !!skill.isBackgroundSkill,
       trained: !!this._getSkillSelectionState(skill)?.trained,
+      description: skill.description || null,
+      extraUses: extraUses,
+      hasExtraUses: extraUses.length > 0,
+      extraUsesCount: extraUses.length,
+      hasMoreUses: this._extraSkillUses.filter(use => {
+        const skillName = this._getSkillDisplayName(skill);
+        const normalizedSkillName = String(skillName).toLowerCase();
+        const application = String(use.application || '').toLowerCase();
+        const isKnowledgeSkill = /^knowledge\s*\(/i.test(skillName);
+
+        if (isKnowledgeSkill) {
+          return application.includes(normalizedSkillName);
+        }
+        return application.includes(normalizedSkillName);
+      }).length > 6,
+      moreUsesCount: Math.max(0, this._extraSkillUses.filter(use => {
+        const skillName = this._getSkillDisplayName(skill);
+        const normalizedSkillName = String(skillName).toLowerCase();
+        const application = String(use.application || '').toLowerCase();
+        const isKnowledgeSkill = /^knowledge\s*\(/i.test(skillName);
+
+        if (isKnowledgeSkill) {
+          return application.includes(normalizedSkillName);
+        }
+        return application.includes(normalizedSkillName);
+      }).length - 6),
     },
   };
 }
@@ -1026,6 +1069,66 @@ _skillLookupKey(value) {
       .replace(/[^a-z0-9]/g, '');
   }
 
+/**
+ * Get a safe display name for a skill that won't render as [Object object]
+ * Handles various name formats and converts split Knowledge keys to proper labels
+ * @param {Object|string|null} skill - The skill object or string
+ * @returns {string} Safe display name for the skill
+ * @private
+ */
+_getSkillDisplayName(skill) {
+  if (!skill) return 'Unknown Skill';
+
+  // If skill is a string, return it directly
+  if (typeof skill === 'string') {
+    return skill;
+  }
+
+  // Try direct name field
+  if (typeof skill.name === 'string' && skill.name) {
+    return skill.name;
+  }
+
+  // Try nested name objects (some systems use { value, en, etc. })
+  if (skill.name?.value) return skill.name.value;
+  if (skill.name?.en) return skill.name.en;
+
+  // Try label field
+  if (typeof skill.label === 'string' && skill.label) {
+    return skill.label;
+  }
+
+  // Map Knowledge keys to display names
+  const knowledgeMap = {
+    knowledgebureaucracy: 'Knowledge (Bureaucracy)',
+    knowledgegalacticlore: 'Knowledge (Galactic Lore)',
+    knowledgelifesciences: 'Knowledge (Life Sciences)',
+    knowledgephysicalsciences: 'Knowledge (Physical Sciences)',
+    knowledgesocialsciences: 'Knowledge (Social Sciences)',
+    knowledgetactics: 'Knowledge (Tactics)',
+    knowledgetechnology: 'Knowledge (Technology)',
+    knowledge_bureaucracy: 'Knowledge (Bureaucracy)',
+    knowledge_galactic_lore: 'Knowledge (Galactic Lore)',
+    knowledge_life_sciences: 'Knowledge (Life Sciences)',
+    knowledge_physical_sciences: 'Knowledge (Physical Sciences)',
+    knowledge_social_sciences: 'Knowledge (Social Sciences)',
+    knowledge_tactics: 'Knowledge (Tactics)',
+    knowledge_technology: 'Knowledge (Technology)',
+  };
+
+  const normalizedKey = String(skill.key || skill.slug || '').toLowerCase().replace(/[^\w]/g, '');
+  if (knowledgeMap[normalizedKey]) {
+    return knowledgeMap[normalizedKey];
+  }
+
+  // Fallback to slug or key
+  if (skill.slug) return skill.slug.replace(/-/g, ' ');
+  if (skill.key) return skill.key.replace(/([A-Z])/g, ' $1').trim();
+
+  // Last resort: use ID
+  return skill.id || skill._id || 'Unknown Skill';
+}
+
 _normalizeSkillRecord(skill) {
   if (!skill) return null;
   const name = skill.name || skill.label || skill.id || skill._id || 'Unknown Skill';
@@ -1054,6 +1157,179 @@ _normalizeSkillRecord(skill) {
     classSkill,
     description: skill.system?.description || skill.description || '',
   };
+}
+
+/**
+ * P0 RECONCILIATION: After class changes, remove trained skills that are no longer legal
+ *
+ * When a player changes class from (e.g.) Jedi to Soldier:
+ * 1. Recompute legal skills under the new class context (class skills + background skills)
+ * 2. Find any trained skills that are no longer legal
+ * 3. Remove them from trained set and refund the slots
+ * 4. Log diagnostic info for player feedback
+ *
+ * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+ * @returns {Promise<void>}
+ * @private
+ */
+async _reconcileTrainedSkillsAfterClassChange(shell) {
+  if (!shell) return;
+
+  // Get the previous class and new class to detect actual class changes
+  const currentClass = this._resolveSelectedClassData(
+    shell?.progressionSession?.getSelection?.('class')
+    || shell?.committedSelections?.get?.('class')
+    || null
+  );
+
+  if (!currentClass) {
+    swseLogger.debug('[SkillsStep] No class context for reconciliation - skipping');
+    return;
+  }
+
+  // Compute legal skills ONLY from class + background (exclude already-trained)
+  // This tells us which skills are legal under the new class context
+  const classSkillRefs = getClassSkills(currentClass) || [];
+  const classSkillMatches = this._matchSkillsFromRefs(classSkillRefs);
+  const backgroundSkillRefs = this._getBackgroundSkillRefs(shell);
+  const backgroundSkillMatches = this._matchSkillsFromRefs(backgroundSkillRefs);
+
+  const legalIds = new Set(
+    classSkillMatches.concat(backgroundSkillMatches)
+      .map(skill => skill.id)
+  );
+
+  // Find trained skills that are NO LONGER legal
+  const trainedSkillKeys = Array.from(this._trainedSkills.entries())
+    .filter(([_, data]) => data.trained)
+    .map(([key, _]) => key);
+
+  const removedSkills = [];
+
+  for (const skillKey of trainedSkillKeys) {
+    // Resolve the skill to get its ID
+    const resolvedSkills = this._resolveSkillsFromRef(skillKey);
+    if (resolvedSkills.length === 0) {
+      swseLogger.warn('[SkillsStep] Could not resolve trained skill key:', skillKey);
+      continue;
+    }
+
+    const skill = resolvedSkills[0];
+    const skillId = skill.id || skill._id || skillKey;
+
+    // Check if this trained skill is legal under the new class context
+    if (!legalIds.has(skillId)) {
+      // This skill is no longer legal - remove it
+      this._trainedSkills.get(skillKey).trained = false;
+      removedSkills.push({
+        skillKey,
+        skillName: skill.name || skillKey,
+        skillId
+      });
+    }
+  }
+
+  // Recompute trained count after removal
+  const oldTrainedCount = this._trainedCount;
+  this._trainedCount = Array.from(this._trainedSkills.values())
+    .filter(s => s.trained)
+    .length;
+
+  const actualRefundedCount = oldTrainedCount - this._trainedCount;
+
+  // Log reconciliation result
+  if (removedSkills.length > 0) {
+    swseLogger.log('[SkillsStep] CLASS-CHANGE SKILL RECONCILIATION:', {
+      class: currentClass.name,
+      previousTrainedCount: oldTrainedCount,
+      newTrainedCount: this._trainedCount,
+      refundedCount: actualRefundedCount,
+      removedSkills: removedSkills.map(s => s.skillName),
+      diagnostics: {
+        classSkillMatches: classSkillMatches.length,
+        backgroundSkillMatches: backgroundSkillMatches.length,
+        legalSkillIds: legalIds.size,
+        trainedSkillsTotal: trainedSkillKeys.length,
+        illegalRemoved: removedSkills.length
+      }
+    });
+
+    if (removedSkills.length > 0) {
+      ui?.notifications?.warn?.(
+        `Class change removed ${removedSkills.length} illegal skill selection(s). ` +
+        `${actualRefundedCount} skill slot(s) refunded: ${removedSkills.map(s => s.skillName).join(', ')}`
+      );
+    }
+  }
+}
+
+/**
+ * Load extra skill uses from data/extraskilluses.json
+ * Cached in memory for use by detail rail
+ * @private
+ */
+async _loadExtraSkillUses() {
+  try {
+    const response = await fetch('/systems/foundryvtt-swse/data/extraskilluses.json');
+    if (response.ok) {
+      this._extraSkillUses = await response.json();
+      swseLogger.debug(`[SkillsStep] Loaded ${this._extraSkillUses.length} extra skill uses`);
+    }
+  } catch (err) {
+    swseLogger.warn('[SkillsStep] Failed to load extra skill uses:', err);
+    this._extraSkillUses = [];
+  }
+}
+
+/**
+ * Get extra uses for a specific skill
+ * Matches by normalizing the skill display name against the application field
+ * @param {Object} skill - The skill object
+ * @returns {Array<Object>} Array of matched uses (capped at 6 entries)
+ * @private
+ */
+_getExtraUsesForSkill(skill) {
+  if (!skill || !Array.isArray(this._extraSkillUses) || this._extraSkillUses.length === 0) {
+    return [];
+  }
+
+  const skillName = this._getSkillDisplayName(skill);
+  const normalizedSkillName = String(skillName).toLowerCase();
+
+  // Special handling for Knowledge skills - only match this specific Knowledge type
+  const isKnowledgeSkill = /^knowledge\s*\(/i.test(skillName);
+
+  const matches = this._extraSkillUses.filter(use => {
+    const application = String(use.application || '').toLowerCase();
+
+    // For Knowledge skills, ensure exact match of the specific type
+    if (isKnowledgeSkill) {
+      // Check if the application mentions this specific Knowledge type
+      return application.includes(normalizedSkillName);
+    }
+
+    // For other skills, check if application mentions the skill name
+    // Handle variations like "Use the Force" vs variations
+    if (application.includes(normalizedSkillName)) {
+      return true;
+    }
+
+    // For "Use Computer", also match "Astrogate" if it mentions Use Computer
+    if (normalizedSkillName === 'usecomputer' && application.includes('astrogate')) {
+      return application.includes('use computer') || application.toLowerCase().includes('computer');
+    }
+
+    return false;
+  });
+
+  // Cap at 6 entries and format for display
+  const capped = matches.slice(0, 6);
+  return capped.map(use => ({
+    application: use.application,
+    dc: use.DC || null,
+    time: use.time || null,
+    effect: use.effect || null,
+  }));
 }
 
 _abilityLabel(ability) {

@@ -107,6 +107,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'skip-store'(e, t)          { return this._onSkipStore(e, t); },
       // Footer step chip: navigate backward to a completed step
       'jump-step'(e, t)           { return this._onJumpStep(e, t); },
+      // Progress rail: jump to a specific step (backward or next unlocked)
+      'jump-step-rail'(e, t)      { return this._onJumpStepRail(e, t); },
       // Step-specific actions delegated to current step plugin via event bubbling
       'toggle-category'(e, t)     { return this._onStepAction(e, t); },
       'add-language'(e, t)        { return this._onStepAction(e, t); },
@@ -1910,6 +1912,33 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const stepIndex = this.steps.findIndex(d => d.stepId === stepId);
     if (stepIndex < 0 || stepIndex >= this.currentStepIndex) return; // can only go back
     await this.navigateToStep(stepIndex, { source: 'footer-chip' });
+  }
+
+  async _onJumpStepRail(event, target) {
+    if (this.isProcessing) return;
+
+    const stepId = target?.dataset?.stepId;
+    const canNavigate = target?.dataset?.canNavigate === 'true';
+
+    if (!stepId) return;
+
+    const stepIndex = this.steps.findIndex(d => d.stepId === stepId);
+    if (stepIndex < 0) return;
+
+    // Current step: no-op
+    if (stepIndex === this.currentStepIndex) return;
+
+    // Blocked step: show explanation
+    if (!canNavigate) {
+      ui.notifications.warn(
+        `You must complete earlier steps before accessing "${this.steps[stepIndex]?.label}". ` +
+        'Complete your current step to unlock the next step.'
+      );
+      return;
+    }
+
+    // Call navigateToStep which handles backward and safe-forward navigation
+    await this.navigateToStep(stepIndex, { source: 'progress-rail' });
   }
 
   async _onNextStep(event, target) {

@@ -506,7 +506,7 @@ export function renderTalentTreeGraph(container, talents, characterData, onSelec
 
     const state = getNodeState(node.talent, characterData, talents);
     const isRoot = node.prerequisites.length === 0 && node.level === 0;
-    const size = isRoot ? 38 : 32;
+    const size = isRoot ? 44 : 38;  // Increased from 38/32 for better readability
 
     // Create node group
     const nodeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -569,7 +569,7 @@ export function renderTalentTreeGraph(container, talents, characterData, onSelec
     icon.setAttribute('y', pos.y);
     icon.setAttribute('text-anchor', 'middle');
     icon.setAttribute('dominant-baseline', 'central');
-    icon.setAttribute('font-size', isRoot ? '20' : '16');
+    icon.setAttribute('font-size', isRoot ? '24' : '20');  // Increased from 20/16 for better visibility
     icon.setAttribute('font-family', 'Font Awesome 6 Free, Font Awesome 5 Free, FontAwesome');
     icon.setAttribute('font-weight', '900');
     icon.setAttribute('class', 'hex-icon');
@@ -594,10 +594,11 @@ export function renderTalentTreeGraph(container, talents, characterData, onSelec
     // Label
     const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     label.setAttribute('x', pos.x);
-    label.setAttribute('y', pos.y + size + 18);
+    label.setAttribute('y', pos.y + size + 20);
     label.setAttribute('text-anchor', 'middle');
-    label.setAttribute('font-size', '11');
+    label.setAttribute('font-size', '13');  // Increased from 11 for readability
     label.setAttribute('font-family', 'Orbitron, sans-serif');
+    label.setAttribute('font-weight', '600');  // Added weight for better contrast
     label.setAttribute('class', 'hex-label');
 
     const displayName = node.name.length > 16 ? node.name.substring(0, 14) + '...' : node.name;

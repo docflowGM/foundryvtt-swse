@@ -2,7 +2,10 @@
  * Talent Tree Membership Authority
  *
  * Deterministic source of truth for talent tree membership.
- * Loads from generated/fixes registry instead of relying on stale packs/talent_trees.db.
+ * Implements robust fallback chain:
+ * 1. Registry lookup by normalized ID/key
+ * 2. TalentRegistry category scanning (if registry returns 0)
+ * 3. Direct talentIds resolution (if scanning returns 0)
  */
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
@@ -10,14 +13,18 @@ import { TalentRegistry } from '/systems/foundryvtt-swse/scripts/registries/tale
 
 let cachedRegistry = null;
 let registryLoadPromise = null;
+let diagnosticCache = new Set(); // Prevent duplicate diagnostics
 
 /**
- * Normalize a talent name for matching
+ * Normalize a tree ID to stable key format
  */
-function normalizeTalentName(name) {
+function normalizeTreeKey(name) {
   return String(name ?? '')
     .toLowerCase()
-    .trim();
+    .trim()
+    .replace(/[^a-z0-9]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 
 /**
@@ -59,16 +66,21 @@ async function loadRegistry() {
         }
       }
 
-      // Convert array to map keyed by tree id
+      // Convert array to map keyed by tree id and normalized key
       if (Array.isArray(data)) {
         cachedRegistry = new Map();
         for (const tree of data) {
           if (tree.id && Array.isArray(tree.talents)) {
             cachedRegistry.set(tree.id, tree);
+            // Also index by normalized key if available
+            const key = tree.key || normalizeTreeKey(tree.displayName || tree.name || tree.id);
+            if (key && key !== tree.id) {
+              cachedRegistry.set(key, tree);
+            }
           }
         }
         SWSELogger.debug(
-          `[TalentTreeMembershipAuthority] Registry loaded: ${cachedRegistry.size} trees`
+          `[TalentTreeMembershipAuthority] Registry loaded: ${cachedRegistry.size} entries`
         );
       } else {
         cachedRegistry = new Map();
@@ -89,10 +101,122 @@ async function loadRegistry() {
 }
 
 /**
- * Get corrected talent membership for a tree
+ * FALLBACK 1: Try registry lookup by ID and normalized key
+ */
+function tryRegistryLookup(registry, tree) {
+  if (!tree || !registry) return null;
+
+  // Try by ID first
+  if (tree.id && registry.has(tree.id)) {
+    return registry.get(tree.id);
+  }
+
+  // Try by normalized key from name
+  if (tree.name) {
+    const normalizedKey = normalizeTreeKey(tree.name);
+    if (registry.has(normalizedKey)) {
+      return registry.get(normalizedKey);
+    }
+  }
+
+  // Try by sourceId if present
+  if (tree.sourceId && registry.has(tree.sourceId)) {
+    return registry.get(tree.sourceId);
+  }
+
+  return null;
+}
+
+/**
+ * FALLBACK 2: Scan TalentRegistry by category/tree name
+ */
+function tryRegistryScan(tree) {
+  if (!tree || !tree.name) return [];
+
+  // Try exact tree name as category
+  let talents = TalentRegistry.getByCategory?.(tree.name) || [];
+  if (talents.length > 0) {
+    return talents;
+  }
+
+  // Try normalized name as category
+  const normalized = normalizeTreeKey(tree.name);
+  talents = TalentRegistry.getByCategory?.(normalized) || [];
+  if (talents.length > 0) {
+    return talents;
+  }
+
+  // Scan all talents for talentTree field matching
+  talents = TalentRegistry.search?.(talent => {
+    const treeField = talent.talentTree || talent.category || '';
+    const treeName = String(treeField).toLowerCase();
+    const targetName = String(tree.name).toLowerCase();
+    return treeName === targetName || treeName.includes(targetName);
+  }) || [];
+
+  return talents;
+}
+
+/**
+ * FALLBACK 3: Resolve talentIds array directly
+ */
+function tryTalentIdResolution(tree) {
+  if (!tree || !Array.isArray(tree.talentIds)) return [];
+
+  const resolved = [];
+  const seenIds = new Set();
+
+  for (const talentId of tree.talentIds) {
+    if (!talentId) continue;
+
+    // Try by ID
+    const talent = TalentRegistry.getById?.(talentId);
+    if (talent) {
+      const id = talent.id || talent._id;
+      if (id && !seenIds.has(id)) {
+        resolved.push(talent);
+        seenIds.add(id);
+      }
+      continue;
+    }
+
+    // Try by name (if talentId looks like a name)
+    const talentByName = TalentRegistry.getByName?.(talentId);
+    if (talentByName) {
+      const id = talentByName.id || talentByName._id;
+      if (id && !seenIds.has(id)) {
+        resolved.push(talentByName);
+        seenIds.add(id);
+      }
+    }
+  }
+
+  return resolved;
+}
+
+/**
+ * Emit diagnostic for zero-talent trees (once per tree)
+ */
+function emitDiagnostic(tree, methods) {
+  const key = `${tree.id || tree.name}`;
+  if (diagnosticCache.has(key)) {
+    return; // Already logged
+  }
+  diagnosticCache.add(key);
+
+  SWSELogger.warn(
+    `[TalentTreeMembershipAuthority] DIAGNOSTIC: Tree "${tree.name}" (id: ${tree.id}, sourceId: ${tree.sourceId || 'none'}) ` +
+    `resolved 0 talents. talentIds count: ${(tree.talentIds || []).length}. ` +
+    `Methods tried: ${methods.join(', ')}. ` +
+    `TalentRegistry total: ${TalentRegistry.count?.() || 0} talents.`
+  );
+}
+
+/**
+ * Get talent membership for a tree with robust fallback chain
  *
- * @param {Object} tree - Talent tree object with id and name
- * @returns {Promise<Array>} Array of talent objects in the correct order
+ * @param {Object} tree - Talent tree object with id, name, sourceId, talentIds
+ * @returns {Promise<Array>} Array of resolved talent entries
  */
 export async function getTalentMembership(tree) {
   if (!tree) {
@@ -106,45 +230,64 @@ export async function getTalentMembership(tree) {
 
   // Load the registry
   const registry = await loadRegistry();
-  const treeEntry = registry.get(tree.id);
+  const methodsTried = [];
 
-  if (!treeEntry || !Array.isArray(treeEntry.talents)) {
-    SWSELogger.debug(
-      `[TalentTreeMembershipAuthority] No registry entry for tree "${tree.name}" (${tree.id})`
-    );
-    return [];
-  }
+  // FALLBACK 1: Try registry lookup
+  const registryEntry = tryRegistryLookup(registry, tree);
+  if (registryEntry && Array.isArray(registryEntry.talents)) {
+    methodsTried.push('registry-lookup');
+    const resolved = [];
+    const seenIds = new Set();
+    const missingNames = [];
 
-  const resolvedTalents = [];
-  const missingNames = [];
-  const seenIds = new Set();
-
-  // Resolve each talent name through TalentRegistry
-  for (const talentName of treeEntry.talents) {
-    const talent = TalentRegistry.getByName?.(talentName);
-
-    if (talent) {
-      const talentId = talent.id || talent._id;
-      // De-dupe by talent id
-      if (talentId && !seenIds.has(talentId)) {
-        resolvedTalents.push(talent);
-        seenIds.add(talentId);
+    for (const talentName of registryEntry.talents) {
+      const talent = TalentRegistry.getByName?.(talentName);
+      if (talent) {
+        const talentId = talent.id || talent._id;
+        if (talentId && !seenIds.has(talentId)) {
+          resolved.push(talent);
+          seenIds.add(talentId);
+        }
+      } else {
+        missingNames.push(talentName);
       }
-    } else {
-      missingNames.push(talentName);
+    }
+
+    if (resolved.length > 0) {
+      SWSELogger.debug(
+        `[TalentTreeMembershipAuthority] Tree "${tree.name}" (${tree.id}): ` +
+        `${registryEntry.talents.length} registry talents → ${resolved.length} resolved` +
+        (missingNames.length > 0 ? ` (${missingNames.length} missing)` : '')
+      );
+      return resolved;
     }
   }
 
-  // Emit diagnostic once per tree
-  if (missingNames.length > 0) {
+  // FALLBACK 2: Scan TalentRegistry by category
+  methodsTried.push('registry-scan');
+  let resolved = tryRegistryScan(tree);
+  if (resolved.length > 0) {
     SWSELogger.debug(
       `[TalentTreeMembershipAuthority] Tree "${tree.name}" (${tree.id}): ` +
-      `${treeEntry.talents.length} registry talents → ${resolvedTalents.length} resolved ` +
-      `(${missingNames.length} missing: ${missingNames.join(', ')})`
+      `${resolved.length} talents found via registry category scan`
     );
+    return resolved;
   }
 
-  return resolvedTalents;
+  // FALLBACK 3: Resolve talentIds directly
+  methodsTried.push('talentIds-resolution');
+  resolved = tryTalentIdResolution(tree);
+  if (resolved.length > 0) {
+    SWSELogger.debug(
+      `[TalentTreeMembershipAuthority] Tree "${tree.name}" (${tree.id}): ` +
+      `${resolved.length} talents resolved from talentIds array`
+    );
+    return resolved;
+  }
+
+  // ZERO TALENT RESOLUTION - emit diagnostic
+  emitDiagnostic(tree, methodsTried);
+  return [];
 }
 
 /**

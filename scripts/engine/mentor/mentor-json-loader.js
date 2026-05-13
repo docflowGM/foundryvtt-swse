@@ -10,97 +10,111 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
  */
 let mentorCache = null;
 let mentorRegistry = null;
+let loadingPromise = null; // Promise to prevent duplicate loads
 
 /**
  * Load all mentor data from JSON files
+ * Uses manifest paths from mentor_registry.json to avoid 404 probing
  * @returns {Promise<Object>} Loaded mentor data
  */
 export async function loadMentorsFromJSON() {
+    // Return cached data if available
     if (mentorCache) {
         return mentorCache;
     }
 
-    try {
-        // Load mentor registry
-        const registryPath = 'systems/foundryvtt-swse/data/dialogue/mentor_registry.json';
-        mentorRegistry = await fetch(registryPath).then(r => r.json());
-
-        // Load reasons
-        const reasonsPath = 'systems/foundryvtt-swse/data/dialogue/reasons.json';
-        const reasonsData = await fetch(reasonsPath).then(r => r.json());
-
-        const mentors = {};
-
-        // For each mentor in registry, load their data
-        for (const [mentorKey, registryEntry] of Object.entries(mentorRegistry.mentors)) {
-            try {
-                const mentorId = registryEntry.mentor_id;
-                const displayName = registryEntry.display_name;
-
-                // Determine actual folder name (handle naming variations)
-                const folderMap = {
-                    'anchorite': 'riquis',
-                    'skindar': 'marl_skindar',
-                    'venn': 'vera'
-                };
-                const folderName = folderMap[mentorKey] || mentorKey;
-
-                // Load metadata file
-                const metadataPath = `systems/foundryvtt-swse/data/dialogue/mentors/${folderName}/${folderName}.json`;
-                const metadata = await fetch(metadataPath).then(r => r.json()).catch(() => ({}));
-
-                // Load dialogue file (handle naming variations)
-                let dialogueData = null;
-                const possibleDialoguePaths = [
-                    `systems/foundryvtt-swse/data/dialogue/mentors/${folderName}/${folderName}_dialogue.json`,
-                    `systems/foundryvtt-swse/data/dialogue/mentors/${folderName}/${folderName}_dialogues.json`,
-                    `systems/foundryvtt-swse/data/dialogue/mentors/${folderName}/${folderName.charAt(0).toUpperCase() + folderName.slice(1)}_dialogues.json`
-                ];
-
-                for (const path of possibleDialoguePaths) {
-                    try {
-                        dialogueData = await fetch(path).then(r => r.json());
-                        break;
-                    } catch (e) {
-                        // Try next path
-                    }
-                }
-
-                if (!dialogueData) {
-                    SWSELogger.warn(`[MENTOR-JSON-LOADER] No dialogue file found for mentor: ${mentorKey}`);
-                    dialogueData = {};
-                }
-
-                // Merge metadata and dialogue data
-                const mentorData = {
-                    mentor_id: mentorId,
-                    mentorId: mentorKey,
-                    displayName,
-                    ...metadata,
-                    ...dialogueData
-                };
-
-                mentors[mentorKey] = mentorData;
-                mentors[displayName] = mentorData; // Index by display name too
-
-                SWSELogger.log(`[MENTOR-JSON-LOADER] Loaded mentor: ${displayName} (${mentorId})`);
-            } catch (err) {
-                SWSELogger.error(`[MENTOR-JSON-LOADER] Error loading mentor ${mentorKey}:`, err);
-            }
-        }
-
-        mentorCache = {
-            mentors,
-            registry: mentorRegistry,
-            reasons: reasonsData
-        };
-
-        SWSELogger.log(`[MENTOR-JSON-LOADER] Successfully loaded ${Object.keys(mentors).length} mentor entries`);
-        return mentorCache;
-    } catch (err) {
-        SWSELogger.error(`[MENTOR-JSON-LOADER] Error loading mentors from JSON:`, err);
-        return { mentors: {}, registry: {}, reasons: {} };
+    // Return existing loading promise if load is in progress
+    if (loadingPromise) {
+        return loadingPromise;
     }
+
+    // Create and cache the loading promise to prevent concurrent loads
+    loadingPromise = (async () => {
+        try {
+            // Load mentor registry
+            const registryPath = 'systems/foundryvtt-swse/data/dialogue/mentor_registry.json';
+            mentorRegistry = await fetch(registryPath).then(r => r.json());
+
+            // Load reasons
+            const reasonsPath = 'systems/foundryvtt-swse/data/dialogue/reasons.json';
+            const reasonsData = await fetch(reasonsPath).then(r => r.json());
+
+            const mentors = {};
+            let loadedCount = 0;
+
+            // For each mentor in registry, load their data using manifest paths
+            for (const [mentorKey, registryEntry] of Object.entries(mentorRegistry.mentors)) {
+                try {
+                    const mentorId = registryEntry.mentor_id;
+                    const displayName = registryEntry.display_name;
+                    const dialoguePath = registryEntry.dialogue_path;
+
+                    // Determine metadata folder name (handle naming variations)
+                    const folderMap = {
+                        'anchorite': 'riquis',
+                        'skindar': 'marl_skindar',
+                        'venn': 'vera'
+                    };
+                    const folderName = folderMap[mentorKey] || mentorKey;
+
+                    // Load metadata file
+                    const metadataPath = `systems/foundryvtt-swse/data/dialogue/mentors/${folderName}/${folderName}.json`;
+                    const metadata = await fetch(metadataPath).then(r => r.json()).catch(() => ({}));
+
+                    // Load dialogue file using manifest path (NO probing - single fetch)
+                    let dialogueData = {};
+                    let hasDialogue = false;
+
+                    if (dialoguePath) {
+                        try {
+                            dialogueData = await fetch(`systems/foundryvtt-swse/${dialoguePath}`).then(r => r.json());
+                            hasDialogue = true;
+                            loadedCount++;
+                        } catch (e) {
+                            // Dialogue file not found - log warning but don't fail
+                            SWSELogger.warn(`[MENTOR-JSON-LOADER] Dialogue file not found for mentor: ${displayName} at ${dialoguePath}`);
+                        }
+                    }
+
+                    // Merge metadata and dialogue data
+                    const mentorData = {
+                        mentor_id: mentorId,
+                        mentorId: mentorKey,
+                        displayName,
+                        hasDialogue,
+                        ...metadata,
+                        ...dialogueData
+                    };
+
+                    mentors[mentorKey] = mentorData;
+                    mentors[displayName] = mentorData; // Index by display name too
+
+                    if (hasDialogue) {
+                        SWSELogger.debug(`[MENTOR-JSON-LOADER] Loaded mentor: ${displayName} (${mentorId})`);
+                    }
+                } catch (err) {
+                    SWSELogger.warn(`[MENTOR-JSON-LOADER] Error loading mentor ${mentorKey}:`, err?.message || String(err));
+                }
+            }
+
+            mentorCache = {
+                mentors,
+                registry: mentorRegistry,
+                reasons: reasonsData
+            };
+
+            SWSELogger.log(`[MENTOR-JSON-LOADER] Successfully loaded ${loadedCount} mentor dialogue files from manifest`);
+            return mentorCache;
+        } catch (err) {
+            SWSELogger.error(`[MENTOR-JSON-LOADER] Error loading mentors from JSON:`, err?.message || String(err));
+            return { mentors: {}, registry: {}, reasons: {} };
+        } finally {
+            // Clear loading promise after completion
+            loadingPromise = null;
+        }
+    })();
+
+    return loadingPromise;
 }
 
 /**

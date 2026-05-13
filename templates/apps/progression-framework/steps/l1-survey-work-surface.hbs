@@ -90,6 +90,11 @@
       {{/if}}
 
       <div class="prog-l1-survey-stage__command-row">
+        {{#if (gt activeQuestionNumber 1)}}
+        <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-previous-question">
+          Go Back
+        </button>
+        {{/if}}
         <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-change-answer">
           Change Answer
         </button>
@@ -126,10 +131,10 @@
 
       <div class="prog-l1-survey-stage__command-row">
         <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-previous-question">
-          Review Previous Answer
+          Go Back
         </button>
         <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-retake">
-          Retake Survey
+          Start Over
         </button>
         <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-finish">
           Continue to Background
