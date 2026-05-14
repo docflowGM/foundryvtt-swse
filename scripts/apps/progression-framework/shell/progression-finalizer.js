@@ -291,7 +291,7 @@ export class ProgressionFinalizer {
     }
 
     if (sessionState.mode === 'chargen') {
-      const hasName = !!(summarySelection.characterName || sessionState.actor?.name);
+      const hasName = !!(summarySelection.characterName || this._getUsableActorName(sessionState.actor));
       const hasClass = !!selections.class;
       const hasAttributes = !!selections.attributes;
       if (!hasName || !hasClass || !hasAttributes) {
@@ -357,10 +357,12 @@ export class ProgressionFinalizer {
     }
 
     const selections = sessionState.progressionSession.draftSelections || {};
+    await ProgressionContentAuthority.initialize?.();
 
     // Read all data from canonical session ONLY. No fallback chains.
     const summary = selections.survey || {};
     const attr = selections.attributes || {};
+    const attrValues = this._normalizeAttributeValues(attr, actor);
     const species = selections.species || null;
     const pendingSpeciesContext = selections.pendingSpeciesContext || species?.pendingContext || null;
     const clazz = selections.class || null;
@@ -374,7 +376,7 @@ export class ProgressionFinalizer {
     const itemsToCreate = [];
     const itemsToDelete = [];
 
-    const name = summary.characterName || actor.name;
+    const name = summary.characterName || this._getUsableActorName(actor) || actor.name;
     if (name) {
       set.name = name;
     }
@@ -477,11 +479,29 @@ export class ProgressionFinalizer {
     // Canonical stored ability path is system.abilities.<key>.base
     // Progression writes base values here; derived computes modifiers and totals
     const attrMap = { strength: 'str', dexterity: 'dex', constitution: 'con', intelligence: 'int', wisdom: 'wis', charisma: 'cha', str: 'str', dex:'dex', con:'con', int:'int', wis:'wis', cha:'cha' };
-    for (const [k,v] of Object.entries(attr || {})) {
+    for (const [k, v] of Object.entries(attrValues || {})) {
       const key = attrMap[k];
-      const val = typeof v === 'object' ? v?.value : v;
+      const val = typeof v === 'object' ? (v?.score ?? v?.base ?? v?.value ?? v?.total) : v;
       // Write to canonical .base path (not deprecated .value)
       if (key && Number.isFinite(Number(val))) set[`system.abilities.${key}.base`] = Number(val);
+    }
+
+    if (sessionState.mode === 'chargen') {
+      const startingHp = Number(summary.startingHp || 0) || this._computeStartingHP(clazz, attrValues, actor, selections.droid).total;
+      if (Number.isFinite(startingHp) && startingHp > 0) {
+        set['system.hp.value'] = startingHp;
+        set['system.hp.max'] = startingHp;
+      }
+
+      const startingCredits = Number(summary.startingCredits || 0) || this._computeStartingCredits(clazz, background);
+      if (Number.isFinite(startingCredits) && startingCredits > 0) {
+        set['system.credits'] = startingCredits;
+      }
+
+      const speciesPortrait = this._resolveSpeciesPortrait(species, pendingSpeciesContext);
+      if (this._actorNeedsPortrait(actor) && speciesPortrait) {
+        set.img = speciesPortrait;
+      }
     }
     // FIX 6: Extract language IDs from normalized format for canonical storage
     // normalizeLanguages() returns [{id, source}, ...] but system.languages expects [id, id, ...]
@@ -541,6 +561,94 @@ export class ProgressionFinalizer {
         postApply: compiledAbilityItems.postApply || {}
       }
     };
+  }
+
+
+  static _normalizeAttributeValues(attr = {}, actor = null) {
+    const raw = attr?.values && typeof attr.values === 'object' ? attr.values : attr;
+    const out = {};
+    for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+      const value = raw?.[key] ?? raw?.[{ str: 'strength', dex: 'dexterity', con: 'constitution', int: 'intelligence', wis: 'wisdom', cha: 'charisma' }[key]];
+      const fallback = actor?.system?.abilities?.[key]?.base ?? actor?.system?.abilities?.[key]?.value ?? 10;
+      const score = Number(value?.score ?? value?.base ?? value?.value ?? value?.total ?? value ?? fallback);
+      if (Number.isFinite(score)) out[key] = score;
+    }
+    return out;
+  }
+
+  static _abilityMod(score) {
+    return Math.floor(((Number(score) || 10) - 10) / 2);
+  }
+
+  static _classKey(classSelection = null) {
+    return String(classSelection?.name || classSelection?.label || classSelection?.id || classSelection || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_|_$/g, '');
+  }
+
+  static _computeStartingHP(classSelection, attrValues = {}, actor = null, droidBuild = null) {
+    const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
+    const key = this._classKey(classModel);
+    const baseMap = { jedi: 30, soldier: 30, scout: 24, noble: 18, scoundrel: 18, force_adept: 24 };
+    const base = Number(classModel?.system?.base_hp ?? classModel?.system?.baseHp ?? classModel?.baseHp ?? baseMap[key] ?? 18) || 18;
+    const isDroid = !!droidBuild || actor?.type === 'droid' || actor?.system?.isDroid;
+    const conMod = isDroid ? 0 : this._abilityMod(attrValues?.con ?? actor?.system?.abilities?.con?.base ?? actor?.system?.abilities?.con?.value ?? 10);
+    return { base, modifiers: conMod, total: Math.max(1, base + conMod) };
+  }
+
+  static _parseMaxCredits(value) {
+    if (Number.isFinite(Number(value))) return Number(value);
+    const match = String(value || '').match(/(\d+)d(\d+)\s*(?:x|×|\*)\s*(\d+)/i);
+    if (!match) return 0;
+    return Number(match[1]) * Number(match[2]) * Number(match[3]);
+  }
+
+  static _computeStartingCredits(classSelection = null, backgroundSelection = null) {
+    const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
+    const authority = Number(ProgressionContentAuthority.getStartingCredits({ classSelection, backgroundSelection }) || 0) || 0;
+    if (authority > 0) return authority;
+
+    const classCredits = this._parseMaxCredits(
+      classModel?.startingCredits
+        ?? classModel?.system?.startingCredits
+        ?? classModel?.system?.starting_credits
+        ?? classSelection?.startingCredits
+        ?? classSelection?.system?.starting_credits
+    );
+    const backgroundCredits = Number(backgroundSelection?.credits ?? backgroundSelection?.system?.credits ?? 0) || 0;
+    if (classCredits + backgroundCredits > 0) return classCredits + backgroundCredits;
+
+    const fallback = { soldier: 1200, scout: 1200, scoundrel: 3000, jedi: 1200, noble: 4800, force_adept: 1200 };
+    return fallback[this._classKey(classModel)] || 0;
+  }
+
+  static _getUsableActorName(actor) {
+    const name = String(actor?.name || '').trim();
+    return this._isDefaultActorName(name) ? '' : name;
+  }
+
+  static _isDefaultActorName(name) {
+    const normalized = String(name || '').trim().toLowerCase();
+    return !normalized || normalized === 'actor' || normalized === 'new actor' || normalized === 'new character' || normalized === 'unnamed';
+  }
+
+  static _resolveSpeciesPortrait(speciesSelection, pendingSpeciesContext = null) {
+    const species = ProgressionContentAuthority.resolveSpecies(speciesSelection)
+      || pendingSpeciesContext?.identity
+      || speciesSelection
+      || {};
+    return species.img
+      || species.image
+      || species.portrait
+      || species.system?.img
+      || species.system?.image
+      || null;
+  }
+
+  static _actorNeedsPortrait(actor) {
+    const img = String(actor?.img || '').toLowerCase();
+    return !img || img.includes('mystery-man') || img.includes('icons/svg') || img.endsWith('/token.svg');
   }
 
   /**

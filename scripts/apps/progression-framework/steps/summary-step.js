@@ -12,6 +12,7 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { ActorAbilityBridge } from '/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js';
+import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 
 export class SummaryStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -29,7 +30,14 @@ export class SummaryStep extends ProgressionStepPlugin {
       talentSelections: [],
       languages: [],
       money: { total: 0, sources: [] },
-      hpCalculation: { base: 0, modifiers: 0, total: 0 },
+      background: '',
+      attributeSummary: [],
+      skillRows: [],
+      combatStats: [],
+      forcePowers: [],
+      startingCredits: 0,
+      portrait: null,
+      hpCalculation: { base: 0, modifiers: 0, total: 0, formula: '' },
     };
     this._characterName = '';
     this._startingLevel = 1;
@@ -63,11 +71,11 @@ export class SummaryStep extends ProgressionStepPlugin {
       await this._buildLevelupSummary(shell);
     } else {
       await this._aggregateSummary(shell);
-      const progressionSnapshot = shell.progressionSession?.actorSnapshot?.system || {};
-      const liveCharacter = shell.actor?.system || {};
-      const character = progressionSnapshot.identity?.name ? progressionSnapshot : liveCharacter;
-      if (character.identity?.name) this._characterName = character.identity.name;
+      this._characterName = this._characterName || this._getExistingCharacterName(shell.actor) || this._summary.name || '';
+      this._summary.name = this._characterName;
       if (shell.targetLevel) this._startingLevel = shell.targetLevel;
+      this._summary.level = this._startingLevel;
+      this._commitBusinessItems(shell);
     }
 
     shell.mentor.askMentorEnabled = true;
@@ -84,12 +92,16 @@ export class SummaryStep extends ProgressionStepPlugin {
     if (mode !== 'levelup') {
       const nameInput = shell.element.querySelector('.summary-step-name-input');
       if (nameInput) {
-        nameInput.value = this._characterName;
+        nameInput.value = this._characterName || '';
         nameInput.addEventListener('input', (e) => {
-          this._characterName = e.target.value;
-          this._summary.name = e.target.value;
+          this._characterName = String(e.target.value || '').trim();
+          this._summary.name = this._characterName;
+          this._commitBusinessItems(shell);
         }, { signal });
-        nameInput.addEventListener('change', () => shell.render(), { signal });
+        nameInput.addEventListener('change', () => {
+          this._commitBusinessItems(shell);
+          shell.render();
+        }, { signal });
       }
 
       const levelInput = shell.element.querySelector('.summary-step-level-input');
@@ -100,9 +112,13 @@ export class SummaryStep extends ProgressionStepPlugin {
           if (!Number.isNaN(val) && val >= 1 && val <= 20) {
             this._startingLevel = val;
             this._summary.level = val;
+            this._commitBusinessItems(shell);
           }
         }, { signal });
-        levelInput.addEventListener('change', () => shell.render(), { signal });
+        levelInput.addEventListener('change', () => {
+          this._commitBusinessItems(shell);
+          shell.render();
+        }, { signal });
       }
 
       const randomNameBtn = shell.element.querySelector('.summary-step-random-name-btn');
@@ -113,6 +129,7 @@ export class SummaryStep extends ProgressionStepPlugin {
           if (randomName) {
             this._characterName = randomName;
             this._summary.name = randomName;
+            this._commitBusinessItems(shell);
             shell.render();
           }
         }, { signal });
@@ -126,6 +143,7 @@ export class SummaryStep extends ProgressionStepPlugin {
           if (randomName) {
             this._characterName = randomName;
             this._summary.name = randomName;
+            this._commitBusinessItems(shell);
             shell.render();
           }
         }, { signal });
@@ -219,7 +237,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     if (this._startingLevel < 1 || this._startingLevel > 20) {
       errors.push('Starting level must be between 1 and 20');
     }
-    const hasDroidBuild = !!this.descriptor?._shell?.progressionSession?.draftSelections?.droid;
+    const hasDroidBuild = this._summary.species === 'Droid' || !!this._summary.droid;
     if (!this._summary.class) errors.push('Class selection is required');
     if (!this._summary.species && !hasDroidBuild) errors.push('Species selection is required');
     if (!this._summary.attributes || Object.keys(this._summary.attributes).length === 0) {
@@ -242,6 +260,12 @@ export class SummaryStep extends ProgressionStepPlugin {
       cautionCount: warnings.caution.length,
       infoCount: warnings.info.length,
     };
+  }
+
+  async onStepExit(shell) {
+    if (this._activeMode !== 'levelup') {
+      this._commitBusinessItems(shell);
+    }
   }
 
   getSelection() {
@@ -268,40 +292,70 @@ export class SummaryStep extends ProgressionStepPlugin {
     };
   }
 
+  renderSummaryPanel(context = {}) {
+    if ((this._activeMode || 'chargen') === 'levelup') return null;
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/summary-metadata-rail.hbs',
+      data: {
+        actorIdentity: {
+          name: this._characterName || this._getExistingCharacterName(context?.shell?.actor) || 'Unnamed',
+          portrait: this._summary.portrait || null,
+        },
+        summary: this._summary,
+      },
+    };
+  }
+
+  renderDetailsPanel(focusedItem, shell = null) {
+    if ((this._activeMode || 'chargen') === 'levelup') return this.renderDetailsPanelEmptyState();
+    const validation = this.validate();
+    const issuesSummary = {
+      hasErrors: validation.errors.length > 0,
+      errorCount: validation.errors.length,
+      errors: validation.errors,
+      isReadyToFinalize: validation.isValid && this._isReviewComplete && !!this._characterName,
+    };
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/summary-business-details.hbs',
+      data: {
+        summary: this._summary,
+        characterName: this._characterName,
+        startingLevel: this._startingLevel,
+        hasSpeciesPortrait: !!(this._summary.portrait),
+        issuesSummary,
+      },
+    };
+  }
+
   async _aggregateSummary(shell) {
     const character = shell.actor?.system || {};
     if (!shell.progressionSession) throw new Error('SummaryStep requires progressionSession');
 
+    await ProgressionContentAuthority.initialize?.();
+
     const projection = shell.progressionSession.currentProjection || await ProjectionEngine.buildProjection(shell.progressionSession, shell.actor);
     shell.progressionSession.currentProjection = projection;
-
-    if (projection) {
-      this._summary.name = this._characterName || character.identity?.name || '';
-      this._summary.level = this._startingLevel || shell.targetLevel || 1;
-      this._summary.species = projection.identity?.species || (shell.progressionSession?.draftSelections?.droid ? 'Droid' : '');
-      this._summary.class = projection.identity?.class || '';
-      this._summary.attributes = projection.attributes || {};
-      this._summary.skills = projection.skills?.trained || [];
-      this._summary.languages = (projection.languages || []).map(lang => lang.id || lang.name || lang);
-      this._summary.featSelections = projection.abilities?.feats || [];
-      this._summary.feats = (projection.abilities?.feats || []).map(feat => feat.name || feat.id || feat);
-      this._summary.talentSelections = projection.abilities?.talents || [];
-      this._summary.talents = (projection.abilities?.talents || []).map(talent => talent.name || talent.id || talent);
-      return;
-    }
-
     const selections = shell.progressionSession.draftSelections || {};
-    this._summary.name = this._characterName || character.identity?.name || '';
+
+    this._summary.name = this._characterName || this._getExistingCharacterName(shell.actor) || '';
     this._summary.level = this._startingLevel || shell.targetLevel || 1;
-    this._summary.species = selections.species?.name || selections.species?.id || (selections.droid ? 'Droid' : '');
-    this._summary.class = selections.class?.name || selections.class?.id || '';
-    this._summary.attributes = selections.attributes?.values ? { ...selections.attributes.values } : {};
-    this._summary.skills = Array.isArray(selections.skills?.trained) ? selections.skills.trained : [];
-    this._summary.languages = Array.isArray(selections.languages) ? selections.languages.map(lang => lang.id || lang) : [];
-    this._summary.featSelections = Array.isArray(selections.feats) ? [...selections.feats] : [];
-    this._summary.feats = Array.isArray(selections.feats) ? selections.feats.map(feat => feat.name || feat.id || feat) : [];
-    this._summary.talentSelections = Array.isArray(selections.talents) ? [...selections.talents] : [];
-    this._summary.talents = Array.isArray(selections.talents) ? selections.talents.map(talent => talent.name || talent.id || talent) : [];
+    this._summary.species = projection?.identity?.species || selections.species?.name || selections.species?.id || (selections.droid ? 'Droid' : '');
+    this._summary.class = projection?.identity?.class || selections.class?.name || selections.class?.id || '';
+    this._summary.background = projection?.identity?.background || selections.background?.name || selections.background?.id || '';
+    this._summary.attributes = projection?.attributes || this._normalizeAttributeObject(selections.attributes?.values || selections.attributes || character.abilities || character.attributes || {});
+    this._summary.attributeSummary = this._buildAttributeSummary(this._summary.attributes, !!selections.droid);
+    this._summary.skills = projection?.skills?.trained || ProgressionContentAuthority.normalizeSkillSelection(selections.skills);
+    this._summary.skillRows = this._buildSkillRows(projection?.skills?.total || this._summary.skills, this._summary.attributes, this._summary.level);
+    this._summary.languages = (projection?.languages || []).map(lang => this._displayName(lang)).filter(Boolean);
+    this._summary.featSelections = projection?.abilities?.feats || ProgressionContentAuthority.normalizeSelectionList('feat', selections.feats);
+    this._summary.feats = this._summary.featSelections.map(feat => this._displayName(feat)).filter(Boolean);
+    this._summary.talentSelections = projection?.abilities?.talents || ProgressionContentAuthority.normalizeSelectionList('talent', selections.talents);
+    this._summary.talents = this._summary.talentSelections.map(talent => this._displayName(talent)).filter(Boolean);
+    this._summary.forcePowers = (projection?.abilities?.forcePowers || []).map(power => this._displayName(power)).filter(Boolean);
+    this._summary.startingCredits = this._computeStartingCredits(selections.class, selections.background, projection);
+    this._summary.hpCalculation = this._computeStartingHP(selections.class, this._summary.attributes, shell.actor, selections.droid);
+    this._summary.combatStats = this._buildCombatStats(selections.class, this._summary.attributes, this._summary.level, this._summary.hpCalculation.total);
+    this._summary.portrait = this._resolveSpeciesPortraitFromSummary(shell);
   }
 
   async _buildLevelupSummary(shell) {
@@ -604,24 +658,214 @@ export class SummaryStep extends ProgressionStepPlugin {
 
   _calculateRequiredFeats() { return 1; }
 
+  _displayName(value) {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    return String(value.name || value.label || value.id || value.key || value.slug || '').trim();
+  }
+
+  _normalizeAttributeObject(raw = {}) {
+    const out = {};
+    for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+      const value = raw?.[key];
+      const score = Number(value?.score ?? value?.base ?? value?.value ?? value?.total ?? value ?? 10) || 10;
+      out[key] = { score, modifier: Math.floor((score - 10) / 2) };
+    }
+    return out;
+  }
+
+  _buildAttributeSummary(attributes = {}, isDroid = false) {
+    const labels = { str: 'STR', dex: 'DEX', con: 'CON', int: 'INT', wis: 'WIS', cha: 'CHA' };
+    return Object.entries(labels)
+      .filter(([key]) => !(isDroid && key === 'con'))
+      .map(([key, label]) => {
+        const raw = attributes?.[key];
+        const score = Number(raw?.score ?? raw?.base ?? raw?.value ?? raw ?? 10) || 10;
+        const modifier = Number.isFinite(Number(raw?.modifier)) ? Number(raw.modifier) : Math.floor((score - 10) / 2);
+        return {
+          key,
+          label,
+          score,
+          modifier,
+          modifierDisplay: `${modifier >= 0 ? '+' : ''}${modifier}`,
+          toneClass: modifier > 0 ? 'positive' : modifier < 0 ? 'negative' : 'zero',
+        };
+      });
+  }
+
+  _buildSkillRows(skillSource, attributes = {}, level = 1) {
+    const values = Array.isArray(skillSource)
+      ? skillSource
+      : Object.values(skillSource || {});
+    const halfLevel = Math.floor((Number(level) || 1) / 2);
+    return values.map((skill) => {
+      const name = this._displayName(skill);
+      const ability = String(skill?.ability || skill?.system?.ability || skill?.selectedAbility || '').toLowerCase();
+      const abilityKey = ['str','dex','con','int','wis','cha'].includes(ability) ? ability : null;
+      const abilityMod = abilityKey ? Number(attributes?.[abilityKey]?.modifier || 0) : 0;
+      const trained = skill?.trained !== false;
+      const focused = !!skill?.focused;
+      const misc = Number(skill?.miscMod || skill?.misc || 0) || 0;
+      const total = halfLevel + abilityMod + (trained ? 5 : 0) + (focused ? 5 : 0) + misc;
+      return {
+        key: skill?.key || skill?.id || name,
+        label: name,
+        ability: abilityKey ? abilityKey.toUpperCase() : '',
+        trained,
+        focused,
+        total,
+        totalDisplay: `${total >= 0 ? '+' : ''}${total}`,
+        toneClass: total > 0 ? 'positive' : total < 0 ? 'negative' : 'zero',
+      };
+    }).filter(row => row.label);
+  }
+
+  _buildCombatStats(classSelection, attributes = {}, level = 1, hp = 0) {
+    const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
+    const defenses = classModel.defenses || classModel.system?.defenses || {};
+    const bab = this._computeStartingBAB(classModel);
+    const strMod = Number(attributes?.str?.modifier || 0);
+    const dexMod = Number(attributes?.dex?.modifier || 0);
+    const conMod = Number(attributes?.con?.modifier || 0);
+    const wisMod = Number(attributes?.wis?.modifier || 0);
+    const lvl = Number(level) || 1;
+    const reflex = 10 + lvl + dexMod + Number(defenses.reflex || 0);
+    const fortitude = 10 + lvl + conMod + Number(defenses.fortitude || 0);
+    const will = 10 + lvl + wisMod + Number(defenses.will || 0);
+    const grapple = bab + strMod;
+    return [
+      { label: 'HP', value: hp, toneClass: hp > 0 ? 'prog-number-positive' : 'prog-number-zero' },
+      { label: 'BaB', value: `+${bab}`, toneClass: bab > 0 ? 'prog-number-positive' : 'prog-number-zero' },
+      { label: 'Reflex', value: reflex, toneClass: 'prog-number-positive' },
+      { label: 'Fortitude', value: fortitude, toneClass: 'prog-number-positive' },
+      { label: 'Will', value: will, toneClass: 'prog-number-positive' },
+      { label: 'Grapple', value: `${grapple >= 0 ? '+' : ''}${grapple}`, toneClass: grapple > 0 ? 'prog-number-positive' : grapple < 0 ? 'prog-number-negative' : 'prog-number-zero' },
+      { label: 'Damage Threshold', value: fortitude, toneClass: 'prog-number-positive' },
+    ];
+  }
+
+  _computeStartingBAB(classModel = {}) {
+    const name = String(classModel?.name || classModel?.id || '').toLowerCase();
+    const progression = String(classModel?.babProgression || classModel?.system?.babProgression || '').toLowerCase();
+    if (progression === 'fast' || ['jedi', 'soldier'].includes(name)) return 1;
+    return 0;
+  }
+
+  _computeStartingCredits(classSelection, backgroundSelection, projection = null) {
+    const projected = Number(projection?.derived?.credits || 0) || 0;
+    if (projected > 0) return projected;
+    const authority = Number(ProgressionContentAuthority.getStartingCredits({ classSelection, backgroundSelection }) || 0) || 0;
+    if (authority > 0) return authority;
+
+    const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
+    const classCredits = this._parseMaxCredits(
+      classModel?.startingCredits
+        ?? classModel?.system?.startingCredits
+        ?? classModel?.system?.starting_credits
+        ?? classSelection?.startingCredits
+        ?? classSelection?.system?.starting_credits
+    );
+    const backgroundCredits = Number(backgroundSelection?.credits ?? backgroundSelection?.system?.credits ?? 0) || 0;
+    if (classCredits + backgroundCredits > 0) return classCredits + backgroundCredits;
+
+    const name = String(classModel?.name || classModel?.id || classSelection?.name || classSelection?.id || '').toLowerCase().replace(/[^a-z]+/g, '_').replace(/^_|_$/g, '');
+    const fallback = { soldier: 1200, scout: 1200, scoundrel: 3000, jedi: 1200, noble: 4800, force_adept: 1200 };
+    return fallback[name] || 0;
+  }
+
+  _parseMaxCredits(value) {
+    if (Number.isFinite(Number(value))) return Number(value);
+    const match = String(value || '').match(/(\d+)d(\d+)\s*(?:x|×|\*)\s*(\d+)/i);
+    if (!match) return 0;
+    return Number(match[1]) * Number(match[2]) * Number(match[3]);
+  }
+
+  _computeStartingHP(classSelection, attributes = {}, actor = null, droidBuild = null) {
+    const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
+    const name = String(classModel?.name || classModel?.id || '').toLowerCase().replace(/[^a-z]+/g, '_').replace(/^_|_$/g, '');
+    const baseMap = { jedi: 30, soldier: 30, scout: 24, noble: 18, scoundrel: 18, force_adept: 24 };
+    const base = Number(classModel?.baseHp || classModel?.system?.baseHp || classModel?.system?.base_hp || baseMap[name] || 18) || 18;
+    const isDroid = !!droidBuild || actor?.type === 'droid' || actor?.system?.isDroid;
+    const conMod = isDroid ? 0 : Number(attributes?.con?.modifier ?? actor?.system?.abilities?.con?.mod ?? actor?.system?.attributes?.con?.mod ?? 0) || 0;
+    const total = Math.max(1, base + conMod);
+    return {
+      base,
+      modifiers: conMod,
+      total,
+      formula: `${base} ${conMod >= 0 ? '+' : '-'} ${Math.abs(conMod)} CON`,
+    };
+  }
+
+  _getExistingCharacterName(actor) {
+    const candidates = [
+      actor?.system?.identity?.name,
+      actor?.system?.details?.name,
+      actor?.name,
+    ];
+    for (const candidate of candidates) {
+      const name = String(candidate || '').trim();
+      if (name && !this._isDefaultActorName(name)) return name;
+    }
+    return '';
+  }
+
+  _isDefaultActorName(name) {
+    const normalized = String(name || '').trim().toLowerCase();
+    return !normalized || normalized === 'actor' || normalized === 'new actor' || normalized === 'new character' || normalized === 'unnamed';
+  }
+
+  _resolveSpeciesPortraitFromSummary(shell) {
+    const actorImg = String(shell?.actor?.img || '').trim();
+    const hasCustomActorImg = actorImg && !actorImg.includes('mystery-man') && !actorImg.includes('icons/svg');
+    if (hasCustomActorImg) return actorImg;
+
+    const speciesSelection = shell?.progressionSession?.draftSelections?.species;
+    const species = ProgressionContentAuthority.resolveSpecies(speciesSelection) || speciesSelection || {};
+    return species.img || species.image || species.portrait || species.system?.img || species.system?.image || null;
+  }
+
+  _commitBusinessItems(shell) {
+    if (!shell?.progressionSession?.commitSelection) return false;
+    const currentSurvey = shell.progressionSession.getSelection?.('survey') || shell.progressionSession.draftSelections?.survey || {};
+    return shell.progressionSession.commitSelection('summary', 'survey', {
+      ...(currentSurvey && typeof currentSurvey === 'object' ? currentSurvey : {}),
+      characterName: this._characterName || '',
+      startingLevel: this._startingLevel || 1,
+      startingCredits: this._summary.startingCredits || 0,
+      startingHp: this._summary.hpCalculation?.total || 0,
+    });
+  }
+
   async _generateRandomName(actor) {
     try {
-      const { getRandomName } = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js');
-      if (typeof getRandomName === 'function') return await getRandomName(actor);
+      const { CharacterGenerator } = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js');
+      const names = CharacterGenerator?.RANDOM_NAMES || [];
+      if (names.length > 0) return names[Math.floor(Math.random() * names.length)];
     } catch (err) {
-      swseLogger.warn('[SummaryStep] Failed to generate random name:', err);
+      swseLogger.warn('[SummaryStep] Failed to load legacy random names; using local fallback:', err);
     }
-    return null;
+    const fallback = ['Tessa', 'Kai Vorn', 'Lira Voss', 'Jax Rendar', 'Mira Sol', 'Dain Korr', 'Vexa Tal'];
+    return fallback[Math.floor(Math.random() * fallback.length)];
   }
 
   async _generateRandomDroidName(actor) {
     try {
-      const { getRandomDroidName } = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js');
-      if (typeof getRandomDroidName === 'function') return await getRandomDroidName(actor);
+      const { CharacterGenerator } = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js');
+      const names = CharacterGenerator?.RANDOM_DROID_NAMES || [];
+      if (names.length > 0) return names[Math.floor(Math.random() * names.length)];
     } catch (err) {
-      swseLogger.warn('[SummaryStep] Failed to generate random droid name:', err);
+      swseLogger.warn('[SummaryStep] Failed to load legacy droid names; using local fallback:', err);
     }
-    return null;
+    const prefix = ['R', 'T', 'K', 'J0', 'D', 'C'];
+    const suffix = Math.floor(10 + Math.random() * 90);
+    return `${prefix[Math.floor(Math.random() * prefix.length)]}-${suffix}`;
+  }
+
+  async enterStore(actor, shell = null) {
+    const { SWSEStore } = await import('../../../apps/store/store-main.js');
+    return SWSEStore.open(actor, { closeAfterCheckout: true }).catch(err => {
+      swseLogger.error('[SummaryStep.enterStore] Failed to open store', err);
+    });
   }
 
   getMentorContext(shell) {

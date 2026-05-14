@@ -22,6 +22,7 @@
 
 import { ProjectionEngine } from './projection-engine.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 
 export class SelectedRailContext {
   /**
@@ -55,10 +56,11 @@ export class SelectedRailContext {
         return this._buildEmptySnapshot();
       }
 
-      // Actor immutables (never change during progression)
+      // Actor identity with chargen-friendly portrait fallback. If the player has not
+      // chosen a custom image yet, show the selected species image in the rail.
       const actorIdentity = {
         name: actor.name ?? 'Unnamed',
-        portrait: actor.img ?? null,
+        portrait: this._resolveActorPortrait(actor, session, projection),
       };
 
       // Path/mode awareness
@@ -133,6 +135,29 @@ export class SelectedRailContext {
     }
 
     return 'actor'; // Standard character
+  }
+
+  static _resolveActorPortrait(actor, session, projection) {
+    const actorImg = String(actor?.img || '').trim();
+    if (actorImg && !this._isDefaultPortrait(actorImg)) return actorImg;
+
+    const speciesSelection = session?.draftSelections?.species || projection?.identity?.species;
+    const species = ProgressionContentAuthority.resolveSpecies(speciesSelection) || speciesSelection || {};
+    return species.img
+      || species.image
+      || species.portrait
+      || species.system?.img
+      || species.system?.image
+      || actorImg
+      || null;
+  }
+
+  static _isDefaultPortrait(imgPath) {
+    const normalized = String(imgPath || '').toLowerCase();
+    return !normalized
+      || normalized.includes('mystery-man')
+      || normalized.includes('icons/svg')
+      || normalized.endsWith('/token.svg');
   }
 
   /**

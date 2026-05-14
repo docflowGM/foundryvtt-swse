@@ -968,3 +968,111 @@
   color: var(--sheet-text-faint);
   font-style: italic;
 }
+
+/* Summary step v2 rail split: metadata left, preview center, business right */
+.prog-panel--summary-preview {
+  min-width: 0;
+}
+
+.prog-selected-rail--summary-metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+}
+
+.prog-selected-rail--summary-metadata .prog-summary-card {
+  margin-bottom: 0;
+}
+
+.prog-summary-mini-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.45rem 0.75rem;
+  align-items: baseline;
+  font-size: 0.78rem;
+}
+
+.prog-summary-mini-grid span {
+  color: var(--sheet-text-faint, var(--prog-text-dim));
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.prog-summary-mini-grid strong {
+  color: var(--sheet-text-strong, var(--prog-text));
+  font-weight: 800;
+}
+
+.summary-business-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-height: 0;
+}
+
+.summary-business-details .prog-summary-card {
+  margin-bottom: 0;
+}
+
+.prog-business-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.65rem;
+}
+
+.prog-business-stat strong {
+  font-size: 1.45rem;
+  line-height: 1;
+  color: var(--sheet-text-strong, var(--prog-text));
+}
+
+.prog-business-stat span,
+.prog-muted-copy {
+  color: var(--sheet-text-faint, var(--prog-text-dim));
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.prog-summary-portrait-preview {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border: 1px solid rgba(0, 200, 255, 0.25);
+  border-radius: 8px;
+  filter: grayscale(1) sepia(1) hue-rotate(150deg) saturate(1.8) brightness(0.95) contrast(1.15);
+  box-shadow: inset 0 0 18px rgba(0, 220, 255, 0.08), 0 0 14px rgba(0, 220, 255, 0.10);
+}
+
+.prog-summary-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.prog-summary-delta-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.prog-summary-delta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px dotted rgba(0, 200, 255, 0.16);
+  padding-bottom: 0.35rem;
+}
+
+.prog-summary-delta-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.prog-btn--danger {
+  border-color: rgba(255, 70, 110, 0.65);
+  color: rgb(255, 95, 130);
+}

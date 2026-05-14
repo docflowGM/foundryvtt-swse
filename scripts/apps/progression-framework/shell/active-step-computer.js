@@ -33,6 +33,7 @@ import {
 import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
 import { resolveClassModel } from '../../../engine/progression/utils/class-resolution.js';
 import { ClassFeatRegistry } from '../../../engine/progression/feats/class-feat-registry.js';
+import { LanguageEngine } from '../../../engine/progression/engine/language-engine.js';
 
 export class ActiveStepComputer {
   /**
@@ -192,58 +193,42 @@ export class ActiveStepComputer {
    * @private
    */
   _hasUnallocatedLanguageSlots(actor, progressionSession) {
-    const attribs = progressionSession?.draftSelections?.attributes;
-    if (!attribs) return false;
+    // Languages step should only appear when there are player-selectable bonus
+    // language slots. Granted species/background languages are materialized
+    // automatically and must not force an empty step.
+    const engineSlots = Math.max(0, Number(
+      LanguageEngine.calculateBonusLanguagesAvailable(actor, {
+        shell: { progressionSession },
+        progressionSession,
+        includePending: true,
+      }) || 0
+    ));
 
-    // INT modifier from pending attributes (if exists, else fall back to actor)
-    let intValue = attribs.values?.int;
-    if (intValue === undefined) {
-      intValue = actor?.system?.attributes?.int?.base || 10;
-    }
-    const intMod = Math.floor(intValue / 2) - 5;
-    let bonus = Math.max(0, intMod);
+    const pending = progressionSession?.draftSelections || {};
+    const attrSelection = pending.attributes?.values || pending.attributes || {};
+    const pendingInt = Number(
+      attrSelection?.int?.score
+        ?? attrSelection?.int?.base
+        ?? attrSelection?.int?.value
+        ?? attrSelection?.int
+        ?? actor?.system?.abilities?.int?.base
+        ?? actor?.system?.abilities?.int?.value
+        ?? 10
+    );
+    const intBonusSlots = Math.max(0, Math.floor(((Number.isFinite(pendingInt) ? pendingInt : 10) - 10) / 2));
+    const pendingFeats = Array.isArray(pending.feats) ? pending.feats : [];
+    const pendingLinguistCount = pendingFeats.filter((feat) => {
+      const name = String(feat?.name || feat?.label || feat?.id || feat || '').toLowerCase();
+      return name === 'linguist' || name.includes('linguist');
+    }).reduce((total, feat) => total + Math.max(1, Number(feat?.count || 1)), 0);
+    const pendingSlots = intBonusSlots + (pendingLinguistCount * Math.max(1, 1 + intBonusSlots));
+    const bonusSlots = Math.max(engineSlots, pendingSlots);
 
-    // PHASE 7: Check for Linguist feat in PENDING selections
-    // First check pending feats, fall back to committed actor
-    const pendingFeats = progressionSession?.draftSelections?.feats || [];
-    let hasLinguist = false;
+    const selectedLanguages = Array.isArray(progressionSession?.draftSelections?.languages)
+      ? progressionSession.draftSelections.languages.length
+      : 0;
 
-    if (Array.isArray(pendingFeats)) {
-      hasLinguist = pendingFeats.some(feat => {
-        const featName = typeof feat === 'string' ? feat : feat?.name || feat?.id || '';
-        return featName.toLowerCase().includes('linguist');
-      });
-    }
-
-    // Fall back to committed actor if not found in pending
-    if (!hasLinguist) {
-      hasLinguist = actor.items.some(item =>
-        item.type === 'feat' && item.name?.toLowerCase().includes('linguist')
-      );
-    }
-
-    // PHASE 7: Dynamic Linguist bonus (not hardcoded +2)
-    // Could be +1, +2, or custom based on Linguist feat definition
-    // For now use standard +1 bonus language per Linguist feat
-    if (hasLinguist) {
-      bonus += 1; // Dynamic instead of hardcoded +2
-    }
-
-    // PHASE 6: Background bonuses (from pending selection first)
-    const pendingBackground = progressionSession?.draftSelections?.background;
-    if (pendingBackground?.grants?.languages) {
-      bonus += pendingBackground.grants.languages;
-    }
-
-    // PHASE 6: Species grants (from pending selection first)
-    const pendingSpecies = progressionSession?.draftSelections?.species;
-    if (pendingSpecies?.grants?.languages) {
-      bonus += pendingSpecies.grants.languages;
-    }
-
-    const maxLanguages = 1 + bonus; // Base 1 + modifiers
-    const selectedLanguages = progressionSession?.draftSelections?.languages?.length || 0;
-    return selectedLanguages < maxLanguages;
+    return selectedLanguages < bonusSlots;
   }
 
   /**

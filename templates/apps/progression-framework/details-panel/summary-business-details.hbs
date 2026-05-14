@@ -1,0 +1,70 @@
+<div class="summary-business-details prog-details-panel">
+  <div class="details-header">
+    <h2 class="details-title">Business Items</h2>
+    <div class="details-subtitle">Finalize the character record.</div>
+  </div>
+
+  <div class="prog-summary-section prog-summary-card">
+    <div class="prog-section-header"><span><i class="fas fa-id-card"></i> Name</span></div>
+    <div class="prog-name-input-section">
+      <label for="summary-name-input" class="prog-input-label">Character Name</label>
+      <input id="summary-name-input" class="summary-step-name-input prog-text-input" type="text" placeholder="Enter or generate a name..." value="{{characterName}}" />
+      <div class="prog-random-name-buttons">
+        <button class="summary-step-random-name-btn prog-btn prog-btn--small" type="button"><i class="fas fa-dice"></i> Generate Name</button>
+        <button class="summary-step-random-droid-name-btn prog-btn prog-btn--small" type="button"><i class="fas fa-robot"></i> Droid Name</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="prog-summary-section prog-summary-card">
+    <div class="prog-section-header"><span><i class="fas fa-heartbeat"></i> Starting HP</span></div>
+    <div class="prog-business-stat">
+      <strong>{{summary.hpCalculation.total}}</strong>
+      <span>{{summary.hpCalculation.formula}}</span>
+    </div>
+  </div>
+
+  <div class="prog-summary-section prog-summary-card">
+    <div class="prog-section-header"><span><i class="fas fa-credit-card"></i> Starting Currency</span></div>
+    <div class="prog-business-stat">
+      <strong>{{summary.startingCredits}}</strong>
+      <span>Credits ready for equipment purchase.</span>
+    </div>
+    <button class="prog-btn prog-btn--small" data-action="enter-store" type="button"><i class="fas fa-store"></i> Open Shop</button>
+  </div>
+
+  <div class="prog-summary-section prog-summary-card">
+    <div class="prog-section-header"><span><i class="fas fa-image"></i> Portrait</span></div>
+    {{#if summary.portrait}}
+      <img class="prog-summary-portrait-preview" src="{{summary.portrait}}" alt="Character portrait" />
+      <p class="prog-muted-copy">Using the actor portrait, or the selected species portrait as a fallback.</p>
+    {{else}}
+      <p class="prog-placeholder">No portrait available.</p>
+    {{/if}}
+  </div>
+
+  {{#if issuesSummary}}
+  <div class="prog-finalization-status {{#if issuesSummary.isReadyToFinalize}}ready{{else}}incomplete{{/if}}">
+    <div class="prog-finalization-header">
+      {{#if issuesSummary.isReadyToFinalize}}
+        <i class="fas fa-check-circle"></i><span class="prog-status-text">Ready to Create Character</span>
+      {{else if issuesSummary.hasErrors}}
+        <i class="fas fa-exclamation-circle"></i><span class="prog-status-text">{{issuesSummary.errorCount}} Issue{{#unless (eq issuesSummary.errorCount 1)}}s{{/unless}} to Fix</span>
+      {{else}}
+        <i class="fas fa-circle-notch"></i><span class="prog-status-text">Incomplete</span>
+      {{/if}}
+    </div>
+    {{#if issuesSummary.hasErrors}}
+      <ul class="prog-issue-list">
+        {{#each issuesSummary.errors}}<li class="prog-issue-item prog-issue-error"><i class="fas fa-times-circle"></i> {{this}}</li>{{/each}}
+      </ul>
+    {{/if}}
+  </div>
+  {{/if}}
+
+  <div class="prog-summary-section prog-summary-card prog-start-over-card">
+    <div class="prog-section-header"><span><i class="fas fa-undo"></i> Start Over</span></div>
+    <p class="prog-muted-copy">Clear this draft and return to the first chargen step.</p>
+    <button class="prog-btn prog-btn--small prog-btn--danger" data-action="start-over" type="button"><i class="fas fa-undo"></i> Start Over</button>
+  </div>
+</div>

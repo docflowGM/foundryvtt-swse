@@ -1,0 +1,42 @@
+<div class="prog-selected-rail prog-selected-rail--summary-metadata">
+  <div class="prog-selected-rail__identity">
+    {{#if actorIdentity.portrait}}
+      <img class="prog-selected-rail__portrait" src="{{actorIdentity.portrait}}" alt="{{actorIdentity.name}}" />
+    {{/if}}
+    <div class="prog-selected-rail__name">{{actorIdentity.name}}</div>
+    <div class="prog-selected-rail__subtitle">Final Review Metadata</div>
+  </div>
+
+  <div class="prog-summary-section prog-summary-card">
+    <div class="prog-section-header">
+      <span><i class="fas fa-dna"></i> Species</span>
+      <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="species" type="button" aria-label="Edit species"><i class="fas fa-pencil-alt"></i></button>
+    </div>
+    <div class="prog-summary-line-value">{{#if summary.species}}{{summary.species}}{{else}}<span class="prog-placeholder">Not selected</span>{{/if}}</div>
+  </div>
+
+  <div class="prog-summary-section prog-summary-card">
+    <div class="prog-section-header">
+      <span><i class="fas fa-shield-alt"></i> Class</span>
+      <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="class" type="button" aria-label="Edit class"><i class="fas fa-pencil-alt"></i></button>
+    </div>
+    <div class="prog-summary-line-value">{{#if summary.class}}{{summary.class}}{{else}}<span class="prog-placeholder">Not selected</span>{{/if}}</div>
+  </div>
+
+  <div class="prog-summary-section prog-summary-card">
+    <div class="prog-section-header">
+      <span><i class="fas fa-book"></i> Background</span>
+      <button class="summary-step-edit-btn prog-inline-edit-btn" data-step="background" type="button" aria-label="Edit background"><i class="fas fa-pencil-alt"></i></button>
+    </div>
+    <div class="prog-summary-line-value">{{#if summary.background}}{{summary.background}}{{else}}<span class="prog-placeholder">Not selected</span>{{/if}}</div>
+  </div>
+
+  <div class="prog-summary-section prog-summary-card">
+    <div class="prog-section-header"><span><i class="fas fa-id-badge"></i> Registration</span></div>
+    <div class="prog-summary-mini-grid">
+      <span>Level</span><strong>{{summary.level}}</strong>
+      <span>HP</span><strong>{{summary.hpCalculation.total}}</strong>
+      <span>Credits</span><strong>{{summary.startingCredits}}</strong>
+    </div>
+  </div>
+</div>
