@@ -180,6 +180,97 @@ function getEmptyNormalization() {
   };
 }
 
+
+/**
+ * Convert the many Foundry v13 description shapes into safe display text.
+ * This intentionally never stringifies arbitrary objects, because that is how
+ * `[object Object]` leaked into the chargen detail rail.
+ */
+export function extractDescriptionText(itemOrData) {
+  const candidates = [
+    itemOrData?.system?.description?.value,
+    itemOrData?.system?.description?.long,
+    itemOrData?.system?.description?.short,
+    itemOrData?.system?.description?.text,
+    itemOrData?.system?.description?.html,
+    itemOrData?.system?.description?.plain,
+    itemOrData?.system?.description,
+    itemOrData?.system?.benefit?.value,
+    itemOrData?.system?.benefit,
+    itemOrData?.system?.details?.description?.value,
+    itemOrData?.system?.details?.description,
+    itemOrData?.description?.value,
+    itemOrData?.description?.long,
+    itemOrData?.description?.short,
+    itemOrData?.description?.text,
+    itemOrData?.description?.html,
+    itemOrData?.description?.plain,
+    itemOrData?.description,
+    itemOrData?.narrativeDescription,
+    itemOrData?.fantasy,
+    itemOrData?.text?.description,
+  ];
+
+  for (const candidate of candidates) {
+    const normalized = normalizeDescriptionCandidate(candidate);
+    if (normalized) return normalized;
+  }
+
+  return '';
+}
+
+function normalizeDescriptionCandidate(candidate) {
+  if (candidate == null) return '';
+
+  if (typeof candidate === 'string') {
+    return cleanDescriptionString(candidate);
+  }
+
+  if (typeof candidate === 'number' || typeof candidate === 'boolean') {
+    return cleanDescriptionString(String(candidate));
+  }
+
+  if (Array.isArray(candidate)) {
+    for (const entry of candidate) {
+      const normalized = normalizeDescriptionCandidate(entry);
+      if (normalized) return normalized;
+    }
+    return '';
+  }
+
+  if (typeof candidate === 'object') {
+    for (const key of ['value', 'long', 'short', 'text', 'html', 'plain', 'summary', 'description']) {
+      const normalized = normalizeDescriptionCandidate(candidate[key]);
+      if (normalized) return normalized;
+    }
+  }
+
+  return '';
+}
+
+function cleanDescriptionString(value) {
+  const cleaned = String(value)
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>\s*<p[^>]*>/gi, '\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\r\n/g, '\n')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+
+  if (!cleaned || cleaned === '[object Object]' || cleaned === 'undefined' || cleaned === 'null') {
+    return '';
+  }
+
+  return cleaned;
+}
+
 // ============================================================================
 // NORMALIZER HANDLERS (Per Item Type)
 // ============================================================================
@@ -190,7 +281,7 @@ const NORMALIZER_HANDLERS = {
    * SPECIES — All data available, Ol' Salty prose exists
    */
   species: (itemData, context) => {
-    const desc = itemData.description || itemData.system?.description || null;
+    const desc = extractDescriptionText(itemData) || null;
     const mentorProse = context.mentorProseSource?.[itemData.name] || null;
     const derivedTags = buildSpeciesTags(itemData).slice(0, 6).map(tag =>
       String(tag)
@@ -225,7 +316,7 @@ const NORMALIZER_HANDLERS = {
    * CLASS — Description + stats ready, no mentor prose yet
    */
   class: (itemData, context) => {
-    const desc = itemData.fantasy || itemData.description || itemData.system?.description || null;
+    const desc = extractDescriptionText(itemData) || null;
 
     return {
       description: desc,
@@ -254,7 +345,7 @@ const NORMALIZER_HANDLERS = {
    * BACKGROUND — All data available from backgrounds.json
    */
   background: (itemData, context) => {
-    const desc = itemData.narrativeDescription || itemData.description || null;
+    const desc = extractDescriptionText(itemData) || null;
 
     return {
       description: desc,
@@ -312,7 +403,7 @@ const NORMALIZER_HANDLERS = {
    * LANGUAGE — Mostly ready, ~50% description coverage acceptable
    */
   language: (itemData, context) => {
-    const desc = itemData.description || itemData.system?.description || null;
+    const desc = extractDescriptionText(itemData) || null;
     const category = itemData.category || 'Unknown';
 
     return {
@@ -338,7 +429,7 @@ const NORMALIZER_HANDLERS = {
    * FEAT — Text-only prerequisites, no mentor prose
    */
   feat: (itemData, context) => {
-    const desc = itemData.system?.description || itemData.system?.benefit || itemData.description || null;
+    const desc = extractDescriptionText(itemData) || null;
     const prereqs = extractPrerequisites(itemData.prerequisiteText || itemData.prerequisiteLine || itemData.system?.prerequisites || itemData.system?.prerequisite);
     const category = itemData.system?.category || itemData.system?.featType || 'General';
 
@@ -369,7 +460,7 @@ const NORMALIZER_HANDLERS = {
    */
   talent: (itemData, context) => {
     // Description source precedence: compendium item first, fallback to none
-    const desc = itemData.system?.description || itemData.description || null;
+    const desc = extractDescriptionText(itemData) || null;
     const prereqs = itemData.system?.prerequisites || null;
 
     return {
@@ -398,7 +489,7 @@ const NORMALIZER_HANDLERS = {
    * FORCE_POWER — Text-only prerequisites, no mentor prose
    */
   force_power: (itemData, context) => {
-    const desc = itemData.system?.description || itemData.description || null;
+    const desc = extractDescriptionText(itemData) || null;
     const prereqs = itemData.system?.prerequisites ? [itemData.system.prerequisites] : null;
 
     return {
@@ -427,7 +518,7 @@ const NORMALIZER_HANDLERS = {
    * FORCE_TECHNIQUE — Minimal data, ~40% description coverage
    */
   force_technique: (itemData, context) => {
-    const desc = itemData.system?.description || itemData.description || null;
+    const desc = extractDescriptionText(itemData) || null;
     const prereqs = itemData.system?.prerequisites ? [itemData.system.prerequisites] : null;
 
     return {
@@ -455,7 +546,7 @@ const NORMALIZER_HANDLERS = {
    * FORCE_SECRET — Minimal data, ~30% description coverage
    */
   force_secret: (itemData, context) => {
-    const desc = itemData.system?.description || itemData.description || null;
+    const desc = extractDescriptionText(itemData) || null;
     const prereqs = itemData.system?.prerequisites ? [itemData.system.prerequisites] : null;
 
     return {
@@ -483,7 +574,7 @@ const NORMALIZER_HANDLERS = {
    * STARSHIP_MANEUVER — Text-only prerequisites, ~80% description coverage
    */
   starship_maneuver: (itemData, context) => {
-    const desc = itemData.system?.description || itemData.description || null;
+    const desc = extractDescriptionText(itemData) || null;
     const prereqs = itemData.system?.prerequisites ? [itemData.system.prerequisites] : null;
 
     return {
@@ -515,10 +606,10 @@ const NORMALIZER_HANDLERS = {
    */
   skill: (itemData, context) => {
     const skillKey = itemData.key || itemData.id || null;
-    const skillName = itemData.name || null;
+    const skillName = normalizeSkillDisplayName(itemData.name || itemData.label || skillKey);
 
-    // Load curated short description (canonical source)
-    const curatedDesc = getSkillShortDescription(skillKey);
+    // Load curated short description (canonical source), then fall back to safe source text
+    const curatedDesc = getSkillShortDescription(skillKey) || extractDescriptionText(itemData) || null;
 
     // Get mechanical fields from resolver (single source of truth)
     const trainingLabel = SkillsMechanicsResolver.getTrainingRequirementLabel(itemData);
@@ -534,7 +625,7 @@ const NORMALIZER_HANDLERS = {
     ].filter(Boolean);
 
     return {
-      description: curatedDesc,  // Curated only; no fallback to long descriptions
+      description: curatedDesc,
       prerequisites: null,  // Skills have no prerequisites (not gated items)
       metadataTags,
       mentorProse: null,  // No mentor prose for skills (informational only)
@@ -544,7 +635,7 @@ const NORMALIZER_HANDLERS = {
         hasMentorProse: false,
       },
       sourceNotes: {
-        descriptionSource: curatedDesc ? 'skill-short-descriptions.json' : 'missing (curated)',
+        descriptionSource: curatedDesc ? 'skill-short-descriptions.json OR skill source description' : 'missing (curated)',
         prerequisiteSource: 'n/a (skills not gated)',
         metadataSource: 'skill.ability + skills-mechanics-resolver (ACP, trained-only)',
         mentorThoughtSource: 'n/a (informational reference)',
@@ -563,6 +654,15 @@ const NORMALIZER_HANDLERS = {
   },
 
 };
+
+
+function normalizeSkillDisplayName(value) {
+  if (value && typeof value === 'object') {
+    return value.label || value.name || value.value || value.key || 'Skill';
+  }
+  const text = String(value || '').trim();
+  return text && text !== '[object Object]' ? text : 'Skill';
+}
 
 /**
  * Get human-readable ability label

@@ -47,6 +47,19 @@ import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
 import { resolveMentorData, resolveMentorPortraitPath } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 
+
+function isProgressionShellDebugEnabled() {
+  try {
+    return game?.settings?.get?.('foundryvtt-swse', 'debugMode') === true;
+  } catch (_err) {
+    return false;
+  }
+}
+
+function progressionShellDebug(...args) {
+  if (isProgressionShellDebugEnabled()) console.debug(...args);
+}
+
 /**
  * Shell state model (reference — actual state lives on `this`)
  *
@@ -107,10 +120,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'skip-store'(e, t)          { return this._onSkipStore(e, t); },
       // Footer step chip: navigate backward to a completed step
       'jump-step'(e, t)           { return this._onJumpStep(e, t); },
-      // Progress rail: jump to a specific step (backward or next unlocked)
-      'jump-step-rail'(e, t)      { return this._onJumpStepRail(e, t); },
+      'start-over'(e, t)          { return this._onStartOver(e, t); },
       // Step-specific actions delegated to current step plugin via event bubbling
       'toggle-category'(e, t)     { return this._onStepAction(e, t); },
+      'open-filter-panel'(e, t)  { return this._onStepAction(e, t); },
       'add-language'(e, t)        { return this._onStepAction(e, t); },
       'remove-language'(e, t)     { return this._onStepAction(e, t); },
       'purchase-system'(e, t)     { return this._onStepAction(e, t); },
@@ -118,6 +131,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'focus-talent'(e, t)        { return this._onStepAction(e, t); },
       'focus-tree'(e, t)          { return this._onStepAction(e, t); },
       'enter-tree'(e, t)          { return this._onStepAction(e, t); },
+      'survey-start'(e, t)        { return this._onStepAction(e, t); },
+      'survey-choose'(e, t)       { return this._onStepAction(e, t); },
+      'survey-continue'(e, t)     { return this._onStepAction(e, t); },
+      'survey-finish'(e, t)       { return this._onStepAction(e, t); },
+      'survey-change-answer'(e, t){ return this._onStepAction(e, t); },
+      'survey-previous-question'(e, t){ return this._onStepAction(e, t); },
+      'survey-retake'(e, t)       { return this._onStepAction(e, t); },
       // Phase 8: Force Power quantity controls
       'increment-quantity'(e, t)  { return this._onIncrementQuantity(e, t); },
       'decrement-quantity'(e, t)  { return this._onDecrementQuantity(e, t); },
@@ -149,7 +169,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   static async open(actor, mode = 'chargen', options = {}) {
     // TEMP AUDIT: Log open entry
-    console.log('[TEMP AUDIT] ProgressionShell.open called:', {
+    progressionShellDebug('[TEMP AUDIT] ProgressionShell.open called:', {
       actor: actor?.name,
       mode,
       this: this.name
@@ -164,30 +184,30 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // ChargenShell.open() → new ChargenShell()  → _getCanonicalDescriptors() on ChargenShell
     // LevelupShell.open() → new LevelupShell()  → _getCanonicalDescriptors() on LevelupShell
     // ProgressionShell.open() → new ProgressionShell() → base returns []
-    console.log('[TEMP AUDIT] Creating app instance of class:', this.name);
+    progressionShellDebug('[TEMP AUDIT] Creating app instance of class:', this.name);
     const app = new this(actor, mode, options);
-    console.log('[TEMP AUDIT] App instance created:', app?.constructor?.name);
+    progressionShellDebug('[TEMP AUDIT] App instance created:', app?.constructor?.name);
 
     // Phase 1: Attempt session recovery before initializing steps
-    console.log('[TEMP AUDIT] Attempting session recovery...');
+    progressionShellDebug('[TEMP AUDIT] Attempting session recovery...');
     await app._attemptSessionRecovery();
-    console.log('[TEMP AUDIT] Session recovery complete');
+    progressionShellDebug('[TEMP AUDIT] Session recovery complete');
 
-    console.log('[TEMP AUDIT] Calling _initializeSteps...');
+    progressionShellDebug('[TEMP AUDIT] Calling _initializeSteps...');
     await app._initializeSteps();
-    console.log('[TEMP AUDIT] Steps initialized, count:', app.steps?.length || 0);
+    progressionShellDebug('[TEMP AUDIT] Steps initialized, count:', app.steps?.length || 0);
 
     // Initialize the first step (critical for post-splash Species entry)
-    console.log('[TEMP AUDIT] Calling _initializeFirstStep...');
+    progressionShellDebug('[TEMP AUDIT] Calling _initializeFirstStep...');
     await app._initializeFirstStep().catch(err => {
       swseLogger.error('[ProgressionShell] Error initializing first step:', err);
       ui?.notifications?.error?.('Failed to initialize progression. Please try again.');
     });
-    console.log('[TEMP AUDIT] First step initialized');
+    progressionShellDebug('[TEMP AUDIT] First step initialized');
 
-    console.log('[TEMP AUDIT] Calling app.render()...');
+    progressionShellDebug('[TEMP AUDIT] Calling app.render()...');
     app.render({ force: true });
-    console.log('[TEMP AUDIT] Render called on app');
+    progressionShellDebug('[TEMP AUDIT] Render called on app');
 
     // CRITICAL: Bring the shell to front immediately after render.
     // Ensures the chargen window is visible and cannot be hidden behind other windows.
@@ -316,7 +336,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @returns {HTMLElement|null}
    */
   getRootElement() {
-    return this.element ?? this._inlineElement ?? null;
+    return this._inlineElement ?? this.element ?? null;
   }
 
   /**
@@ -589,7 +609,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async render(...args) {
     // Render loop prevention: block recursive render calls during active render
     if (this._isRendering) {
-      console.warn("[ProgressionShell] ⚠️ Render called while already rendering — BLOCKED (loop prevention)");
+      progressionShellDebug("[ProgressionShell] Render called while already rendering — BLOCKED (loop prevention)");
       return this;
     }
 
@@ -644,16 +664,19 @@ export class ProgressionShell extends SWSEApplicationV2 {
       }
     };
 
-    const scrollSnapshots = captureScrollPositions(this.element);
+    const renderRoot = this.getRootElement?.() || this._inlineElement || this.element;
+
+    const scrollSnapshots = captureScrollPositions(renderRoot);
 
     this._isRendering = true;
     this._renderCount++;
 
-    console.log(`[ProgressionShell] RENDER START (#${this._renderCount}) position:`, this.position);
+    progressionShellDebug(`[ProgressionShell] RENDER START (#${this._renderCount}) position:`, this.position);
     const result = await super.render(...args);
     await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-    restoreScrollPositions(this.element, scrollSnapshots);
-    console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
+    const restoredRoot = this.getRootElement?.() || renderRoot;
+    restoreScrollPositions(restoredRoot, scrollSnapshots);
+    progressionShellDebug(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
 
     this._isRendering = false;
     return result;
@@ -1245,11 +1268,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     // ── DEBUG: shell region ownership verification ──
     const isIntroMode = currentDescriptor?.stepId === 'intro';
-    console.log('[ProgressionShell] active step =', currentDescriptor?.stepId);
-    console.log('[ProgressionShell] isIntroMode =', isIntroMode);
-    console.log('[ProgressionShell] workSurfaceHtml payload =', workSurfaceHtml?.slice?.(0, 120) ?? '(null)');
-    console.log('[ProgressionShell] detailsPanelHtml payload =', detailsPanelHtml?.slice?.(0, 120) ?? '(null)');
-    console.log('[ProgressionShell] summaryPanelHtml payload =', summaryPanelHtml?.slice?.(0, 120) ?? '(null)');
+    progressionShellDebug('[ProgressionShell] active step =', currentDescriptor?.stepId);
+    progressionShellDebug('[ProgressionShell] isIntroMode =', isIntroMode);
+    progressionShellDebug('[ProgressionShell] workSurfaceHtml payload =', workSurfaceHtml?.slice?.(0, 120) ?? '(null)');
+    progressionShellDebug('[ProgressionShell] detailsPanelHtml payload =', detailsPanelHtml?.slice?.(0, 120) ?? '(null)');
+    progressionShellDebug('[ProgressionShell] summaryPanelHtml payload =', summaryPanelHtml?.slice?.(0, 120) ?? '(null)');
     // ── END DEBUG ──
 
     // Phase 8: Log hydration diagnostics
@@ -1262,7 +1285,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (this.mentorRail) {
       try {
         // [DEBUG] Translation bootstrap tracking
-        console.log('[SWSE Translation Debug] [_prepareContext] Rendering mentor-rail template with mentor state:', {
+        progressionShellDebug('[SWSE Translation Debug] [_prepareContext] Rendering mentor-rail template with mentor state:', {
           currentDialogue: this.mentor.currentDialogue ?? '(empty)',
           currentDialogue_length: this.mentor.currentDialogue?.length ?? 0,
           isAnimating: this.mentor.isAnimating,
@@ -1279,7 +1302,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         );
 
         // [DEBUG] Log template result
-        console.log('[SWSE Translation Debug] [_prepareContext] mentor-rail template rendered:', {
+        progressionShellDebug('[SWSE Translation Debug] [_prepareContext] mentor-rail template rendered:', {
           html_includes_fallback: partsHtml.mentorRail?.includes?.('Awaiting your decision') ?? false,
           html_includes_currentDialogue: partsHtml.mentorRail?.includes?.(this.mentor.currentDialogue) ?? false,
           html_length: partsHtml.mentorRail?.length ?? 0,
@@ -1548,6 +1571,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
       const action = target.dataset.action;
       if (!action) return;
 
+      // Actions declared in the ApplicationV2 action map are routed through the shell first.
+      // Do not also dispatch them here, or plugin handlers such as accordions/survey buttons
+      // can fire twice on a single click.
+      if (this.constructor?.DEFAULT_OPTIONS?.actions?.[action]) return;
+
       try {
         const handled = await plugin.handleAction(action, event, target, this);
         if (handled === true) {
@@ -1635,6 +1663,17 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async navigateToStep(stepIndex, { source = 'unknown' } = {}) {
     if (stepIndex < 0 || stepIndex >= this.steps.length) return;
     if (stepIndex >= this.currentStepIndex) return; // forward nav blocked
+
+    const currentDescriptor = this.steps[this.currentStepIndex];
+    const currentPlugin = currentDescriptor ? this.stepPlugins.get(currentDescriptor.stepId) : null;
+    if (currentPlugin?.onStepExit) {
+      await currentPlugin.onStepExit(this, { direction: 'backward', source }).catch(err => {
+        swseLogger.warn('[ProgressionShell] Step exit failed before backward jump; preserving navigation', {
+          stepId: currentDescriptor?.stepId || null,
+          error: err?.message || String(err),
+        });
+      });
+    }
 
     const entered = await this._activateStep(stepIndex, { source, restoreIndex: this.currentStepIndex });
     if (!entered) return;
@@ -1895,6 +1934,54 @@ export class ProgressionShell extends SWSEApplicationV2 {
     };
   }
 
+  async _onStartOver(event, target) {
+    event?.preventDefault?.();
+    if (this.isProcessing) return;
+
+    let confirmed = true;
+    try {
+      if (typeof globalThis.Dialog?.confirm === 'function') {
+        confirmed = await globalThis.Dialog.confirm({
+          title: 'Start Character Creation Over?',
+          content: '<p>This clears the current draft choices and returns to the first chargen step. The actor is not finalized until you confirm at the end.</p>',
+          yes: () => true,
+          no: () => false,
+          defaultYes: false,
+        });
+      } else if (globalThis.window?.confirm) {
+        confirmed = window.confirm('Start character creation over and clear current draft choices?');
+      }
+    } catch (_err) {
+      confirmed = true;
+    }
+
+    if (!confirmed) return;
+
+    const subtype = this._getProgressionSubtype(this.mode, {});
+    this.progressionSession = new ProgressionSession({
+      actor: this.actor,
+      mode: this.mode,
+      subtype,
+    });
+    this._registerPersistenceHook();
+    this.stepData = new Map();
+    this.focusedItem = null;
+    this.committedSelections = new Map();
+    this.buildIntent = new BuildIntent(this);
+    this.currentStepIndex = 0;
+
+    try {
+      await SessionStorage.clearSession(this.actor, this.mode);
+    } catch (err) {
+      swseLogger.debug('[ProgressionShell] Could not clear saved session during start-over', { error: err?.message || String(err) });
+    }
+
+    await this._initializeSteps();
+    await this._initializeFirstStep();
+    void this._persistSessionSnapshot(this.progressionSession.currentStepId);
+    this.render();
+  }
+
   // ---------------------------------------------------------------------------
   // Navigation Actions
   // ---------------------------------------------------------------------------
@@ -1912,33 +1999,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const stepIndex = this.steps.findIndex(d => d.stepId === stepId);
     if (stepIndex < 0 || stepIndex >= this.currentStepIndex) return; // can only go back
     await this.navigateToStep(stepIndex, { source: 'footer-chip' });
-  }
-
-  async _onJumpStepRail(event, target) {
-    if (this.isProcessing) return;
-
-    const stepId = target?.dataset?.stepId;
-    const canNavigate = target?.dataset?.canNavigate === 'true';
-
-    if (!stepId) return;
-
-    const stepIndex = this.steps.findIndex(d => d.stepId === stepId);
-    if (stepIndex < 0) return;
-
-    // Current step: no-op
-    if (stepIndex === this.currentStepIndex) return;
-
-    // Blocked step: show explanation
-    if (!canNavigate) {
-      ui.notifications.warn(
-        `You must complete earlier steps before accessing "${this.steps[stepIndex]?.label}". ` +
-        'Complete your current step to unlock the next step.'
-      );
-      return;
-    }
-
-    // Call navigateToStep which handles backward and safe-forward navigation
-    await this.navigateToStep(stepIndex, { source: 'progress-rail' });
   }
 
   async _onNextStep(event, target) {
@@ -2426,18 +2486,22 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @param {Event} event — the click event from the button
    * @param {HTMLElement} target — the clicked button element
    */
-  _onStepAction(event, target) {
+  async _onStepAction(event, target) {
     event?.preventDefault();
     const actionName = target?.dataset?.action;
     const stepId = this.steps[this.currentStepIndex]?.stepId;
+    const plugin = stepId ? this.stepPlugins.get(stepId) : null;
 
     swseLogger.debug(`[ProgressionShell] Step action: ${actionName} on step ${stepId}`);
 
-    // Allow the event to bubble to the work-surface element where step plugins
-    // have attached their own event listeners in onDataReady()
-    const workSurface = this.element?.querySelector('[data-region="work-surface"]');
+    if (plugin?.handleAction) {
+      const handled = await plugin.handleAction(actionName, event, target, this);
+      if (handled) return;
+    }
+
+    const root = this.getRootElement?.() || this.element;
+    const workSurface = root?.querySelector?.('[data-region="work-surface"]');
     if (workSurface && target) {
-      // Create and dispatch a custom event that step plugins can listen for
       const customEvent = new CustomEvent('step-action', {
         detail: { actionName, originalEvent: event, target },
         bubbles: true,

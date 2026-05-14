@@ -67,6 +67,15 @@ import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progressi
 import { getCanonicalBenefitText, getCanonicalContentAuthority, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
 import { FeatChoiceResolver, normalizeFeatChoiceKey } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
 
+function isForceSensitivityName(value) {
+    const key = normalizeLooseLookupKey(value);
+    return key === 'force sensitivity' || key === 'force sensitive';
+}
+
+function matchesForceSensitivity(value) {
+    return isForceSensitivityName(value) || namesMatchLoosely(value, 'Force Sensitivity');
+}
+
 /**
  * MAIN CLASS: PrerequisiteChecker
  * The unified, canonical prerequisite validator for ALL types of prerequisites.
@@ -905,10 +914,11 @@ export class PrerequisiteChecker {
                 };
             }
             case 'force_sensitive': {
-                const hasFS = actor.items?.some(i => i.type === 'feat' && i.name === 'Force Sensitivity') ||
-                    (pending.selectedFeats || []).some(f => f.name === 'Force Sensitivity') ||
-                    (pending.grantedFeats || []).includes('Force Sensitivity') ||
-                    this.getHouseruleGrantedFeats().includes('Force Sensitivity');
+                const hasFS = actor.items?.some(i => i.type === 'feat' && matchesForceSensitivity(i.name)) ||
+                    (pending.selectedFeats || []).some(f => matchesForceSensitivity(typeof f === 'string' ? f : f?.name)) ||
+                    (pending.grantedFeats || []).some(f => matchesForceSensitivity(typeof f === 'string' ? f : f?.name)) ||
+                    pending.forceSensitive === true ||
+                    this.getHouseruleGrantedFeats().some(name => matchesForceSensitivity(name));
                 return {
                     met: hasFS,
                     message: !hasFS ? `Requires Force Sensitivity` : ''
@@ -995,12 +1005,6 @@ export class PrerequisiteChecker {
                 return this._checkFeatLegacy(prereq, actor, pending);
             case 'talent':
                 return this._checkTalentLegacy(prereq, actor, pending);
-            case 'forcePower':
-                return this._checkForcePowerLegacy(prereq, actor, pending);
-            case 'forceTechnique':
-                return this._checkForceTechniqueLegacy(prereq, actor, pending);
-            case 'forceSecret':
-                return this._checkForceSecretLegacy(prereq, actor, pending);
             default:
                 return { met: true, message: '' };
         }
@@ -1489,38 +1493,6 @@ export class PrerequisiteChecker {
             }
         }
 
-        // FIX: Force Power/Technique/Secret detection
-        // Pattern: "know Force Drain" or "Force Drain" or "knows Force Secret: X"
-        const forcePowerPattern = /(?:know(?:s)?\s+)?force\s+(drain|throw|jump|push|blind|choke|secret)/i;
-        const forcePowerMatch = part.match(forcePowerPattern);
-        if (forcePowerMatch) {
-            const powerType = forcePowerMatch[1].toLowerCase();
-            if (powerType === 'secret') {
-                // "Force Secret: name" pattern
-                const secretMatch = part.match(/force\s+secret\s*[:\-]?\s*(.+)/i);
-                if (secretMatch) {
-                    const secretName = secretMatch[1].trim();
-                    return { type: 'forceSecret', name: secretName };
-                }
-                return { type: 'forceSecret', name: part };
-            } else {
-                // Regular Force Power (Drain, Throw, Jump, etc.)
-                const powerName = part
-                    .replace(/^(?:know(?:s)?\s+)?/, '') // Remove "know" prefix
-                    .replace(/^force\s+/i, '') // Remove "Force " prefix
-                    .trim();
-                return { type: 'forcePower', name: powerName || part };
-            }
-        }
-
-        // Pattern: "Force Technique: name"
-        const forceTechPattern = /force\s+technique\s*[:\-]?\s*(.+)/i;
-        const forceTechMatch = part.match(forceTechPattern);
-        if (forceTechMatch) {
-            const techName = forceTechMatch[1].trim();
-            return { type: 'forceTechnique', name: techName };
-        }
-
         const canonicalFeatName = resolveCanonicalFeatName(part);
         if (canonicalFeatName && canonicalFeatName !== part) {
             return { type: 'feat', featName: canonicalFeatName, name: canonicalFeatName };
@@ -1618,7 +1590,7 @@ export class PrerequisiteChecker {
 
     static _checkForceSensitiveLegacy(prereq, actor, pending) {
         const hasForceSensitivityFeat = actor.items?.some(i =>
-            i.type === 'feat' && i.name.toLowerCase().includes('force sensitivity')
+            i.type === 'feat' && matchesForceSensitivity(i.name)
         );
         const hasForceSensitiveClass = actor.items?.some(i =>
             i.type === 'class' && i.system?.forceSensitive === true
@@ -1627,13 +1599,13 @@ export class PrerequisiteChecker {
         const pendingForceSensitive = pendingClass?.system?.forceSensitive === true;
         const pendingFeats = pending.selectedFeats || [];
         const pendingForceSensitivityFeat = pendingFeats.some(f =>
-            f.name?.toLowerCase().includes('force sensitivity')
+            matchesForceSensitivity(typeof f === 'string' ? f : f?.name)
         );
-        const pendingGrantedForceSensitivity = (pending.grantedFeats || []).some(name =>
-            namesMatchLoosely(name, 'Force Sensitivity')
+        const pendingGrantedForceSensitivity = (pending.grantedFeats || []).some(grant =>
+            matchesForceSensitivity(typeof grant === 'string' ? grant : grant?.name)
         );
         const hasHouseruleGrant = this.getHouseruleGrantedFeats().some(name =>
-            namesMatchLoosely(name, 'Force Sensitivity')
+            matchesForceSensitivity(name)
         );
         const met = hasForceSensitivityFeat || hasForceSensitiveClass || pendingForceSensitive || pendingForceSensitivityFeat || pendingGrantedForceSensitivity || hasHouseruleGrant;
         return {
@@ -1676,39 +1648,6 @@ export class PrerequisiteChecker {
         return {
             met,
             message: !met ? `Requires talent: ${requiredTalentName}` : ''
-        };
-    }
-
-    static _checkForcePowerLegacy(prereq, actor, pending) {
-        const powerName = prereq.name || '';
-        const hasPower = actor.items?.some(i =>
-            (i.type === 'force-power' || i.type === 'forcepower') && namesMatchLoosely(i.name || '', powerName)
-        );
-        return {
-            met: hasPower,
-            message: !hasPower ? `Requires Force Power: ${powerName}` : ''
-        };
-    }
-
-    static _checkForceTechniqueLegacy(prereq, actor, pending) {
-        const techName = prereq.name || '';
-        const hasTechnique = actor.items?.some(i =>
-            (i.type === 'force-technique' || i.type === 'forcetechnique') && namesMatchLoosely(i.name || '', techName)
-        );
-        return {
-            met: hasTechnique,
-            message: !hasTechnique ? `Requires Force Technique: ${techName}` : ''
-        };
-    }
-
-    static _checkForceSecretLegacy(prereq, actor, pending) {
-        const secretName = prereq.name || '';
-        const hasSecret = actor.items?.some(i =>
-            i.type === 'feat' && i.system?.tags?.includes('force_secret') && namesMatchLoosely(i.name || '', secretName)
-        );
-        return {
-            met: hasSecret,
-            message: !hasSecret ? `Requires Force Secret: ${secretName}` : ''
         };
     }
 

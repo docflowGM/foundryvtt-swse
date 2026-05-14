@@ -1,40 +1,143 @@
-{{!-- Talent Tree Graph (Stage 2) --}}
-<div class="talent-work-surface talent-stage-graph">
-  <div class="talent-graph-header">
+{{!-- Talent Planner (Stage 2) --}}
+<div class="talent-work-surface talent-stage-graph talent-planner-stage talent-planner-stage--{{viewMode}}">
+  <div class="talent-graph-header talent-planner-header">
     <div class="talent-graph-header__title-wrap">
       <h3 class="talent-graph-header__title">
         <i class="fa-solid fa-diagram-project"></i>
         {{selectedTreeName}}
       </h3>
-      <p class="talent-graph-header__subtitle">Select a node to inspect it. Double-click a legal node or use the detail rail to choose it.</p>
+      <p class="talent-graph-header__subtitle">
+        Pick from the available list first; use the map to plan prerequisite paths.
+      </p>
     </div>
-    <button class="talent-graph-header__exit-btn" data-action="exit-tree" type="button" title="Return to tree browser">
-      <i class="fa-solid fa-arrow-left"></i> Back to Trees
-    </button>
+
+    <div class="talent-planner-controls" role="toolbar" aria-label="Talent planner controls">
+      <button class="talent-planner-control {{#if (eq viewMode "both")}}is-active{{/if}}" data-action="set-talent-view" data-view-mode="both" type="button">
+        <i class="fa-solid fa-table-columns"></i> Both
+      </button>
+      <button class="talent-planner-control {{#if (eq viewMode "list")}}is-active{{/if}}" data-action="set-talent-view" data-view-mode="list" type="button">
+        <i class="fa-solid fa-list"></i> List
+      </button>
+      <button class="talent-planner-control {{#if (eq viewMode "map")}}is-active{{/if}}" data-action="set-talent-view" data-view-mode="map" type="button">
+        <i class="fa-solid fa-sitemap"></i> Map
+      </button>
+      <button class="talent-planner-control" data-action="fit-talent-tree" type="button" title="Fit the whole tree in the map panel">
+        <i class="fa-solid fa-up-right-and-down-left-from-center"></i> Fit
+      </button>
+      <button class="talent-graph-header__exit-btn" data-action="exit-tree" type="button" title="Return to tree browser">
+        <i class="fa-solid fa-arrow-left"></i> Back to Trees
+      </button>
+    </div>
   </div>
 
-  <div class="talent-graph-container">
-    <div class="talent-graph-viewport">
-      <div class="talent-tree-graph-container talent-graph-canvas" data-graph-id="{{selectedTreeId}}"></div>
-    </div>
-  </div>
+  <div class="talent-planner-grid">
+    <section class="talent-choice-panel" aria-label="Talent choices">
+      <div class="talent-choice-panel__header">
+        <div>
+          <h4>Available Choices</h4>
+          <p>{{slotProgress.progressLabel}} · {{slotProgress.remainingLabel}}</p>
+        </div>
+        {{#if selectedTalent}}
+        <span class="talent-choice-panel__selected-pill"><i class="fa-solid fa-check"></i> {{selectedTalent.name}}</span>
+        {{/if}}
+      </div>
 
-  <div class="talent-graph-legend">
-    <div class="talent-legend-item">
-      <span class="talent-legend-swatch talent-legend-swatch--owned"></span>
-      <span class="talent-legend-label">Purchased</span>
-    </div>
-    <div class="talent-legend-item">
-      <span class="talent-legend-swatch talent-legend-swatch--default"></span>
-      <span class="talent-legend-label">Default</span>
-    </div>
-    <div class="talent-legend-item">
-      <span class="talent-legend-swatch talent-legend-swatch--available"></span>
-      <span class="talent-legend-label">Meets Prereq</span>
-    </div>
-    <div class="talent-legend-item">
-      <span class="talent-legend-swatch talent-legend-swatch--blocked"></span>
-      <span class="talent-legend-label">Does Not Meet Prereq</span>
-    </div>
+      {{#if availableTalents}}
+      <div class="talent-choice-section talent-choice-section--available">
+        <h5><i class="fa-solid fa-circle-check"></i> Available Now</h5>
+        <div class="talent-choice-list">
+          {{#each availableTalents}}
+          <article class="talent-choice-card {{#if isFocused}}is-focused{{/if}} {{#if isSelected}}is-selected{{/if}}"
+                   data-action="focus-talent"
+                   data-talent-id="{{id}}"
+                   tabindex="0"
+                   role="button"
+                   aria-label="Inspect {{name}}">
+            <div class="talent-choice-card__main">
+              <h6>{{name}}</h6>
+              <p>{{summary}}</p>
+              <div class="talent-choice-card__meta">
+                <span class="talent-choice-badge talent-choice-badge--available">Available</span>
+                {{#if isSelected}}<span class="talent-choice-badge talent-choice-badge--selected">Selected</span>{{/if}}
+              </div>
+            </div>
+            <button class="talent-choice-card__choose" data-action="commit-item" data-item-id="{{id}}" type="button">
+              {{#if isSelected}}Deselect{{else}}Choose{{/if}}
+            </button>
+          </article>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{#if lockedTalents}}
+      <div class="talent-choice-section talent-choice-section--locked">
+        <h5><i class="fa-solid fa-lock"></i> Locked / Future</h5>
+        <div class="talent-choice-list">
+          {{#each lockedTalents}}
+          <article class="talent-choice-card talent-choice-card--locked {{#if isFocused}}is-focused{{/if}}"
+                   data-action="focus-talent"
+                   data-talent-id="{{id}}"
+                   tabindex="0"
+                   role="button"
+                   aria-label="Inspect locked talent {{name}}">
+            <div class="talent-choice-card__main">
+              <h6>{{name}}</h6>
+              <p>{{lockReason}}</p>
+              <div class="talent-choice-card__meta">
+                <span class="talent-choice-badge talent-choice-badge--locked">Locked</span>
+              </div>
+            </div>
+            <button class="talent-choice-card__choose" data-action="commit-item" data-item-id="{{id}}" type="button" disabled>
+              Locked
+            </button>
+          </article>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{#unless availableTalents}}
+        {{#unless lockedTalents}}
+        <div class="talent-empty-state talent-empty-state--compact">
+          <i class="fa-solid fa-hexagon-exclamation"></i>
+          <p>No talents matched your current filters in this tree.</p>
+        </div>
+        {{/unless}}
+      {{/unless}}
+    </section>
+
+    <section class="talent-map-panel" aria-label="Talent tree map">
+      <div class="talent-map-panel__header">
+        <div>
+          <h4>Tree Map</h4>
+          <p>The whole tree is fit to the panel by default.</p>
+        </div>
+        <button class="talent-planner-control" data-action="center-talent-node" type="button" title="Refocus the selected or inspected node">
+          <i class="fa-solid fa-crosshairs"></i> Center
+        </button>
+      </div>
+
+      <div class="talent-graph-container">
+        <div class="talent-graph-viewport" data-talent-graph-viewport>
+          <div class="talent-tree-graph-container talent-graph-canvas" data-graph-id="{{selectedTreeId}}"></div>
+        </div>
+      </div>
+
+      <div class="talent-graph-legend">
+        <div class="talent-legend-item">
+          <span class="talent-legend-swatch talent-legend-swatch--owned"></span>
+          <span class="talent-legend-label">Chosen</span>
+        </div>
+        <div class="talent-legend-item">
+          <span class="talent-legend-swatch talent-legend-swatch--available"></span>
+          <span class="talent-legend-label">Available</span>
+        </div>
+        <div class="talent-legend-item">
+          <span class="talent-legend-swatch talent-legend-swatch--blocked"></span>
+          <span class="talent-legend-label">Locked</span>
+        </div>
+      </div>
+    </section>
   </div>
 </div>

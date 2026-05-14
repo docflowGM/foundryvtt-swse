@@ -27,7 +27,7 @@ import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
-import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import { extractDescriptionText, normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveClassModel, resolveSelectedClassFromShell, getClassBonusFeatsLookupKeys } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { FEAT_TYPE_LABELS, getFeatTypeLabel, loadFeatBucketsMapping, normalizeFeatRuntime, normalizeFeatTypeKey } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-shape.js';
@@ -71,7 +71,7 @@ function emitFeatStepTrace(label, payload = {}) {
     return;
   }
   try {
-    swseLogger.debug(`[FEAT STEP TRACE] ${label}`, payload);
+    console.warn(`SWSE [FEAT STEP TRACE] ${label}`, payload);
   } catch (_err) {
     // no-op
   }
@@ -84,6 +84,39 @@ const FEAT_TYPE_ICONS = {
   team:        'fa-users',
   martial_arts: 'fa-hand-fist',
 };
+
+
+function normalizeFeatNameKey(name) {
+  const key = String(name || '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[\u2018\u2019]/g, "'")
+    .trim();
+  if (!key) return '';
+  return key;
+}
+
+function getFeatOwnershipKeys(name) {
+  const base = normalizeFeatNameKey(name);
+  const keys = new Set([base]);
+  if (base === 'force sensitivity') keys.add('force sensitive');
+  if (base === 'force sensitive') keys.add('force sensitivity');
+  return Array.from(keys).filter(Boolean);
+}
+
+function addFeatOwnershipName(set, name) {
+  for (const key of getFeatOwnershipKeys(name)) set.add(key);
+}
+
+function hasFeatOwnershipName(set, name) {
+  return getFeatOwnershipKeys(name).some(key => set.has(key));
+}
+
+function getGrantedFeatName(grant) {
+  if (!grant) return '';
+  if (typeof grant === 'string') return grant;
+  return grant.name || grant.featName || grant.label || grant.id || grant.key || '';
+}
 
 
 export class FeatStep extends ProgressionStepPlugin {
@@ -223,16 +256,6 @@ export class FeatStep extends ProgressionStepPlugin {
     shell.element.addEventListener('prog:utility:filter', onFilter, { signal });
     shell.element.addEventListener('prog:utility:sort', onSort, { signal });
 
-    // Wire filter-panel toggle buttons (Type / Tags dropdowns)
-    const filterPanelBtns = shell.element.querySelectorAll('[data-action="open-filter-panel"]');
-    filterPanelBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const panelId = btn.dataset.panel;
-        this._openFilterPanel = this._openFilterPanel === panelId ? null : panelId;
-        shell.render();
-      }, { signal });
-    });
-
     // Wire filter checkboxes (type & tag)
     const filterCheckboxes = shell.element.querySelectorAll('[data-filter-group]');
     filterCheckboxes.forEach(cb => {
@@ -249,30 +272,31 @@ export class FeatStep extends ProgressionStepPlugin {
       }, { signal });
     });
 
-    // Wire category expand/collapse
-    const categoryToggles = shell.element.querySelectorAll('[data-action="toggle-category"]');
-    categoryToggles.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const category = btn.dataset.category;
-        if (this._expandedCategories.has(category)) {
-          this._expandedCategories.delete(category);
-        } else {
-          this._expandedCategories.add(category);
-        }
-        shell.render();
-      }, { signal });
-    });
+  }
 
-    // Wire feat focus
-    const featRows = shell.element.querySelectorAll('[data-action="focus-item"]');
-    featRows.forEach(row => {
-      row.addEventListener('click', (e) => {
-        e.preventDefault();
-        const featId = row.dataset.itemId || row.dataset.featId;
-        this.onItemFocused(featId, shell);
-      }, { signal });
-    });
+  async handleAction(action, event, target, shell) {
+    if (action === 'toggle-category') {
+      event?.preventDefault?.();
+      const category = target?.dataset?.category || target?.closest?.('[data-category]')?.dataset?.category;
+      if (!category) return true;
+      if (this._expandedCategories.has(category)) {
+        this._expandedCategories.delete(category);
+      } else {
+        this._expandedCategories.add(category);
+      }
+      shell?.render?.();
+      return true;
+    }
+
+    if (action === 'open-filter-panel') {
+      event?.preventDefault?.();
+      const panelId = target?.dataset?.panel;
+      this._openFilterPanel = this._openFilterPanel === panelId ? null : panelId;
+      shell?.render?.();
+      return true;
+    }
+
+    return false;
   }
 
   async onStepExit(shell) {
@@ -290,12 +314,11 @@ export class FeatStep extends ProgressionStepPlugin {
     if (!actor) return [];
 
     const legal = [];
-    let pendingAbilityData = this._buildPendingAbilityData(shell);
+    const pendingAbilityData = this._buildPendingAbilityData(shell);
     const classLookupKeys = resolveClassLookupKeysForFeatStep(shell);
 
     // Build class grant ledger to identify class-granted feats that are pending
     const classGrantedFeats = new Set();
-    let forceSensitiveFromGrants = false;
     try {
       const selectedClass = resolveSelectedClassFromShell(shell) || resolveClassModel(
         shell?.progressionSession?.getSelection?.('class')
@@ -307,19 +330,18 @@ export class FeatStep extends ProgressionStepPlugin {
         const ledger = buildClassGrantLedger(actor, selectedClass, pendingAbilityData);
         const merged = mergeLedgerIntoPending(pendingAbilityData, ledger);
 
-        // CRITICAL: Update pendingAbilityData with merged grants so legality checks see them
-        pendingAbilityData = merged;
-
-        // Collect feat names from class-granted feats (not selectedFeats)
-        if (merged.grantedFeats && Array.isArray(merged.grantedFeats)) {
-          merged.grantedFeats.forEach(feat => {
-            const featName = typeof feat === 'string' ? feat : feat?.name;
-            if (featName) classGrantedFeats.add(String(featName).toLowerCase());
-          });
+        for (const grant of [
+          ...(Array.isArray(ledger?.grantedFeats) ? ledger.grantedFeats : []),
+          ...(Array.isArray(merged?.grantedFeats) ? merged.grantedFeats : []),
+          ...(Array.isArray(merged?.selectedFeats) ? merged.selectedFeats : []),
+        ]) {
+          addFeatOwnershipName(classGrantedFeats, getGrantedFeatName(grant));
         }
 
-        // Also capture force sensitivity grant
-        forceSensitiveFromGrants = merged.forceSensitive === true;
+        if (ledger?.forceSensitive || merged?.forceSensitive) {
+          addFeatOwnershipName(classGrantedFeats, 'Force Sensitivity');
+          addFeatOwnershipName(classGrantedFeats, 'Force Sensitive');
+        }
       }
     } catch (err) {
       swseLogger.debug('[FeatStep] Class grant resolution failed (non-critical)', {
@@ -329,7 +351,7 @@ export class FeatStep extends ProgressionStepPlugin {
 
     for (const feat of this._allFeats) {
       try {
-        // Check if feat meets prerequisites using pending chargen selections (including class grants)
+        // Check if feat meets prerequisites using pending chargen selections
         const assessment = AbilityEngine.evaluateAcquisition(actor, feat, pendingAbilityData);
 
         if (!assessment?.legal) {
@@ -348,27 +370,15 @@ export class FeatStep extends ProgressionStepPlugin {
         }
 
         // Check if already owned or granted by class (unless repeatable)
-        const featNameLower = String(feat.name || '').toLowerCase();
-        const isClassGranted = classGrantedFeats.has(featNameLower);
-        const isForceSensitivityGrant = forceSensitiveFromGrants && featNameLower === 'force sensitivity';
-
-        // Check actor items
-        const alreadyOwnedOnActor = actor.items.some(i =>
-          i.type === 'feat' && i.name?.toLowerCase?.() === featNameLower
+        const isClassGranted = hasFeatOwnershipName(classGrantedFeats, feat.name);
+        const alreadyOwned = actor.items.some(i =>
+          i.type === 'feat' && hasFeatOwnershipName(new Set(getFeatOwnershipKeys(i.name)), feat.name)
         );
 
-        // Check pending selected feats (from chargen progress)
-        const alreadySelectedInChargen = pendingAbilityData.selectedFeats &&
-          pendingAbilityData.selectedFeats.some(f => {
-            const selectedName = typeof f === 'string' ? f : f?.name;
-            return selectedName && String(selectedName).toLowerCase() === featNameLower;
-          });
+        const isRepeatable = this._isRepeatable(feat.name);
 
-        const isRepeatable = FeatEngine.repeatables.includes(featNameLower);
-        const alreadyOwned = alreadyOwnedOnActor || alreadySelectedInChargen;
-
-        if ((alreadyOwned || isClassGranted || isForceSensitivityGrant) && !isRepeatable) {
-          continue;  // Skip non-repeatable feats already owned, selected, or class-granted
+        if ((alreadyOwned || isClassGranted) && !isRepeatable) {
+          continue;  // Skip non-repeatable feats already owned or class-granted
         }
 
         legal.push(feat);
@@ -612,7 +622,7 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _getFeatDescription(feat) {
-    return String(feat?.description || '').trim();
+    return extractDescriptionText(feat);
   }
 
   _getFeatPrerequisites(feat) {
@@ -689,7 +699,10 @@ export class FeatStep extends ProgressionStepPlugin {
    * Check if feat is repeatable
    */
   _isRepeatable(featName) {
-    return FeatEngine.repeatables.includes(featName.toLowerCase());
+    const repeatables = Array.isArray(FeatEngine.repeatables) ? FeatEngine.repeatables : [];
+    return getFeatOwnershipKeys(featName).some(key =>
+      repeatables.some(entry => normalizeFeatNameKey(entry) === key)
+    );
   }
 
   /**
@@ -697,7 +710,7 @@ export class FeatStep extends ProgressionStepPlugin {
    */
   _isAlreadyOwned(actor, feat) {
     return actor.items.some(i =>
-      i.type === 'feat' && i.name.toLowerCase() === feat.name.toLowerCase()
+      i.type === 'feat' && hasFeatOwnershipName(new Set(getFeatOwnershipKeys(i.name)), feat?.name)
     );
   }
 
@@ -823,15 +836,20 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   renderDetailsPanel(focusedItem) {
-    // Prefer passed focusedItem, fall back to _focusedFeatId
-    const feat = focusedItem || (this._focusedFeatId ? this._getFeat(this._focusedFeatId) : null);
-
-    if (!feat || !this._focusedFeatId) {
-      const reason = !feat ? 'focused-feat-not-found' : 'no-focused-feat-id';
+    if (!this._focusedFeatId) {
       emitFeatStepTrace('DETAILS_EMPTY', {
-        reason,
+        reason: 'no-focused-feat-id',
         stepId: this.descriptor?.stepId || null,
         selectedFeatId: this._selectedFeatId,
+      });
+      return this.renderDetailsPanelEmptyState();
+    }
+
+    const feat = this._getFeat(this._focusedFeatId);
+    if (!feat) {
+      emitFeatStepTrace('DETAILS_EMPTY', {
+        reason: 'focused-feat-not-found',
+        stepId: this.descriptor?.stepId || null,
         focusedFeatId: this._focusedFeatId,
       });
       return this.renderDetailsPanelEmptyState();
@@ -842,7 +860,7 @@ export class FeatStep extends ProgressionStepPlugin {
     const isSelected = featId === this._selectedFeatId;
 
     // Normalize detail panel data for canonical display (no fabrication)
-    normalizeDetailPanelData(feat, 'feat', {
+    const normalizedDetails = normalizeDetailPanelData(feat, 'feat', {
       metadata: { tags: feat.uiBroadTags || [] },
     });
 
@@ -861,7 +879,7 @@ export class FeatStep extends ProgressionStepPlugin {
         isSuggested,
         isSelected,
         category: feat.featTypeLabel || getFeatTypeLabel(this._getFeatCategory(feat)),
-        description: feat.description || '',
+        description: normalizedDetails.description || this._getFeatDescription(feat) || '',
         prerequisites: this._getFeatPrerequisites(feat),
         prerequisiteLine: feat.prerequisiteText || feat.prerequisiteLine || this._getPrerequisiteLine(feat),
         isRepeatable: this._isRepeatable(feat.name),
@@ -874,27 +892,12 @@ export class FeatStep extends ProgressionStepPlugin {
   // Focus/Commit
   // ---------------------------------------------------------------------------
 
-  async onItemFocused(item, shell) {
-    const featId = item?._id || item?.id || item;
-    const feat = this._getFeat(featId);
-
-    this._focusedFeatId = feat?._id || feat?.id || featId || null;
-
+  async onItemFocused(item) {
+    this._focusedFeatId = item?._id || item?.id || item;
     emitFeatStepTrace('ITEM_FOCUSED', {
       focusedFeatId: this._focusedFeatId,
-      itemName: feat?.name || null,
+      itemName: item?.name || null,
     });
-
-    // Hydrate detail rail immediately by calling shell API
-    if (feat && shell?.setFocusedItem) {
-      shell.setFocusedItem(feat);
-      return;
-    }
-
-    // Fall back to shell render if setFocusedItem not available
-    if (shell?.render) {
-      shell.render();
-    }
   }
 
   async onItemCommitted(item, shell) {
@@ -995,6 +998,9 @@ export class FeatStep extends ProgressionStepPlugin {
 
     if (shell?.committedSelections && this.descriptor?.stepId) {
       shell.committedSelections.set(this.descriptor.stepId, nextSelection);
+    }
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, nextSelection);
     }
   }
 

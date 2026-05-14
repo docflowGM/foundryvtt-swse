@@ -64,7 +64,7 @@ function buildProgressDots(totalQuestions, activeIndex, answeredCount, phase) {
 function buildMentorPortraitMarkup(portrait, mentorName) {
   const safeName = escapeHtml(mentorName || 'Mentor');
   const safePortrait = escapeHtml(portrait || 'systems/foundryvtt-swse/assets/mentors/salty.png');
-  return `<img class="prog-l1-survey__mentor-image" src="${safePortrait}" alt="${safeName}" title="${safeName}" onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.png';"/>`;
+  return `<img class="prog-l1-survey-stage__mentor-image prog-holo-media__image" src="${safePortrait}" alt="${safeName}" title="${safeName}" onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.png';"/>`;
 }
 
 function buildCompletionTags(surveySummary, topMatches = []) {
@@ -245,16 +245,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     } else {
       this._activeQuestionIndex = Math.max(questions.length - 1, 0);
       this._surveyPhase = 'complete';
-      // Recompute analysis when reaching completion to reflect any changed answers
-      try {
-        this._analysisResult = await BuildAnalysisIntegration.analyzeAndProvideFeedback(shell);
-        this._emergentArchetype = this._analysisResult?.emergentArchetype || null;
-      } catch (err) {
-        console.warn('[L1SurveyStep] Build analysis failed on completion:', err);
-      }
     }
-    // Clear translation key to force re-render animation
-    this._lastInlineTranslationKey = null;
     await this._speakCurrentPhase(shell, true);
     shell.render();
   }
@@ -278,8 +269,6 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
     // Return to question phase for this question
     this._surveyPhase = 'question';
-    // Clear translation key to force re-render animation for the question
-    this._lastInlineTranslationKey = null;
     await this._speakCurrentPhase(shell, true);
     shell.render();
 
@@ -288,47 +277,24 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
   /**
    * NEW: Go to previous question for review/editing
-   * From completion phase: go to last answered question
-   * From response/question phase: go to previous answered question
    * Requires at least one previously answered question
    */
   async _goToPreviousQuestion(shell) {
     const questions = this._getRenderableQuestions();
     const currentIndex = this._activeQuestionIndex;
-    let targetIndex = -1;
 
-    // From completion phase: find the last answered question
-    if (this._surveyPhase === 'complete') {
-      for (let i = questions.length - 1; i >= 0; i--) {
-        const question = questions[i];
-        if (question && this._surveyAnswers?.[question.id]) {
-          targetIndex = i;
-          break;
-        }
-      }
-    } else {
-      // From response/question phase: find previous answered question
-      for (let i = currentIndex - 1; i >= 0; i--) {
-        const question = questions[i];
-        if (question && this._surveyAnswers?.[question.id]) {
-          targetIndex = i;
-          break;
-        }
+    // Find the previous answered question
+    for (let i = currentIndex - 1; i >= 0; i--) {
+      const question = questions[i];
+      if (question && this._surveyAnswers?.[question.id]) {
+        this._activeQuestionIndex = i;
+        this._surveyPhase = 'response';
+        await this._speakCurrentPhase(shell, true);
+        shell.render();
+        console.log('[L1SurveyStep] Moved to previous question at index', i);
+        return;
       }
     }
-
-    if (targetIndex >= 0) {
-      this._activeQuestionIndex = targetIndex;
-      this._surveyPhase = 'response';
-      // Clear translation key to force re-render animation
-      this._lastInlineTranslationKey = null;
-      await this._speakCurrentPhase(shell, true);
-      shell.render();
-      console.log('[L1SurveyStep] Moved to previous question at index', targetIndex);
-      return;
-    }
-
-    console.log('[L1SurveyStep] No previous answered question found');
   }
 
   /**

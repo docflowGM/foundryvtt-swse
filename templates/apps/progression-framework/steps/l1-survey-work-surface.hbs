@@ -2,7 +2,7 @@
   <section class="prog-l1-survey-stage">
     <div class="prog-l1-survey-stage__mentor-frame">
       <div class="prog-l1-survey-stage__mentor-lines"></div>
-      <div class="prog-l1-survey-stage__mentor-portrait">
+      <div class="prog-l1-survey-stage__mentor-portrait prog-holo-media prog-holo-media--portrait">
         {{{mentorPortraitMarkup}}}
         <div class="prog-l1-survey-stage__mentor-scan"></div>
         <div class="prog-l1-survey-stage__mentor-nameplate">
@@ -90,11 +90,6 @@
       {{/if}}
 
       <div class="prog-l1-survey-stage__command-row">
-        {{#if (gt activeQuestionNumber 1)}}
-        <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-previous-question">
-          Go Back
-        </button>
-        {{/if}}
         <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-change-answer">
           Change Answer
         </button>
@@ -131,10 +126,10 @@
 
       <div class="prog-l1-survey-stage__command-row">
         <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-previous-question">
-          Go Back
+          Review Previous Answer
         </button>
         <button type="button" class="swse-btn swse-ui-button swse-btn--secondary prog-l1-survey-stage__command" data-action="survey-retake">
-          Start Over
+          Retake Survey
         </button>
         <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-finish">
           Continue to Background

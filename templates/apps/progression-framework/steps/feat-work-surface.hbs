@@ -90,8 +90,8 @@
            data-item-id="{{this.id}}"
            data-action="focus-item">
         {{#if this.iconPath}}
-        <div class="feat-item__icon">
-          <img class="feat-item__icon-image" src="{{this.iconPath}}" alt="{{this.name}}" title="{{this.name}}">
+        <div class="feat-item__icon prog-holo-media prog-holo-media--icon">
+          <img class="feat-item__icon-image prog-holo-media__image" src="{{this.iconPath}}" alt="{{this.name}}" title="{{this.name}}">
           <div class="feat-item__icon-scan"></div>
         </div>
         {{/if}}
@@ -134,8 +134,8 @@
            data-action="focus-item"
            {{#unless feat.isAvailable}}title="{{feat.unavailabilityReason}}"{{/unless}}>
         {{#if feat.iconPath}}
-        <div class="feat-item__icon">
-          <img class="feat-item__icon-image" src="{{feat.iconPath}}" alt="{{feat.name}}" title="{{feat.name}}">
+        <div class="feat-item__icon prog-holo-media prog-holo-media--icon">
+          <img class="feat-item__icon-image prog-holo-media__image" src="{{feat.iconPath}}" alt="{{feat.name}}" title="{{feat.name}}">
           <div class="feat-item__icon-scan"></div>
         </div>
         {{/if}}

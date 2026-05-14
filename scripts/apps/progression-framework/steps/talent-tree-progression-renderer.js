@@ -2,9 +2,7 @@ function groupNodesByLevel(graphData) {
   const levels = new Map();
   for (const [nodeId, node] of graphData?.nodes || []) {
     const level = Number(node?.level || 0);
-    if (!levels.has(level)) {
-      levels.set(level, []);
-    }
+    if (!levels.has(level)) levels.set(level, []);
     levels.get(level).push({ nodeId, node });
   }
 
@@ -20,29 +18,24 @@ function computePositions(graphData) {
   const levelNumbers = Array.from(levels.keys()).sort((a, b) => a - b);
   const maxPerLevel = Math.max(1, ...Array.from(levels.values()).map((entries) => entries.length));
 
-  // Larger nodes for readability
-  const nodeWidth = 220;
-  const nodeHeight = 100;
-  const horizontalGap = 120;    // Gap between levels (left-to-right)
-  const verticalGap = 140;      // Gap between nodes in same level (top-to-bottom)
-  const paddingX = 80;
-  const paddingY = 60;
+  // Compact card layout. The SVG is fit-to-viewport by default, so the full tree
+  // is visible first and graph navigation becomes optional planning context.
+  const nodeWidth = 172;
+  const nodeHeight = 64;
+  const horizontalGap = 88;
+  const verticalGap = 40;
+  const paddingX = 56;
+  const paddingY = 42;
 
-  // Layout is now left-to-right: x based on level, y based on position within level
-  const width = Math.max(1000, paddingX * 2 + levelNumbers.length * nodeWidth + Math.max(0, levelNumbers.length - 1) * horizontalGap);
-  const height = Math.max(500, paddingY * 2 + maxPerLevel * nodeHeight + Math.max(0, maxPerLevel - 1) * verticalGap);
+  const width = Math.max(720, paddingX * 2 + levelNumbers.length * nodeWidth + Math.max(0, levelNumbers.length - 1) * horizontalGap);
+  const height = Math.max(320, paddingY * 2 + maxPerLevel * nodeHeight + Math.max(0, maxPerLevel - 1) * verticalGap);
   const positions = new Map();
 
-  for (const level of levelNumbers) {
+  levelNumbers.forEach((level, levelIndex) => {
     const entries = levels.get(level) || [];
-    const numInLevel = entries.length;
-
-    // X position: levels flow left-to-right
-    const x = paddingX + level * (nodeWidth + horizontalGap);
-
-    // Y position: nodes stack top-to-bottom within level, centered vertically
-    const totalHeight = numInLevel * nodeHeight + Math.max(0, numInLevel - 1) * verticalGap;
+    const totalHeight = entries.length * nodeHeight + Math.max(0, entries.length - 1) * verticalGap;
     const startY = Math.max(paddingY, (height - totalHeight) / 2);
+    const x = paddingX + levelIndex * (nodeWidth + horizontalGap);
 
     entries.forEach(({ nodeId }, index) => {
       const y = startY + index * (nodeHeight + verticalGap);
@@ -55,21 +48,15 @@ function computePositions(graphData) {
         height: nodeHeight
       });
     });
-  }
+  });
 
   return { width, height, positions };
 }
 
 function classifyNodeState(node, nodeState = {}) {
-  if (nodeState.selected || nodeState.owned) {
-    return 'owned';
-  }
-  if (nodeState.legal === false) {
-    return 'blocked';
-  }
-  if ((node?.prerequisites || []).length > 0 && nodeState.legal === true) {
-    return 'available';
-  }
+  if (nodeState.selected || nodeState.owned) return 'owned';
+  if (nodeState.legal === false) return 'blocked';
+  if (nodeState.legal === true) return 'available';
   return 'default';
 }
 
@@ -80,50 +67,70 @@ function edgeStateForChild(childState) {
   return 'default';
 }
 
-function nodeLabel(node) {
-  const raw = String(node?.name || '');
-  if (!raw) return '';
-  const parts = raw.split(/\s+/);
-  if (parts.length <= 2) return raw;
-  const midpoint = Math.ceil(parts.length / 2);
-  return `${parts.slice(0, midpoint).join(' ')}\n${parts.slice(midpoint).join(' ')}`;
+function trimLabel(value, limit = 28) {
+  const raw = String(value || '').replace(/\s+/g, ' ').trim();
+  if (raw.length <= limit) return raw;
+  return `${raw.slice(0, Math.max(0, limit - 1)).trim()}…`;
+}
+
+function nodeStatusText(state) {
+  switch (state) {
+    case 'owned': return 'Chosen';
+    case 'available': return 'Available';
+    case 'blocked': return 'Locked';
+    default: return 'Open';
+  }
+}
+
+function createSvgText(documentRef, x, y, textContent, className, options = {}) {
+  const text = documentRef.createElementNS('http://www.w3.org/2000/svg', 'text');
+  text.setAttribute('x', x);
+  text.setAttribute('y', y);
+  text.setAttribute('class', className);
+  text.setAttribute('text-anchor', options.anchor || 'start');
+  text.textContent = textContent;
+  return text;
 }
 
 function createSvgNode(documentRef, { nodeId, node, position, state, isFocused, onFocus, onCommit, title }) {
   const group = documentRef.createElementNS('http://www.w3.org/2000/svg', 'g');
-  group.setAttribute('class', `prog-talent-oval prog-talent-oval--${state}${isFocused ? ' prog-talent-oval--focused' : ''}`);
+  group.setAttribute('class', `prog-talent-card-node prog-talent-card-node--${state}${isFocused ? ' prog-talent-card-node--focused' : ''}`);
   group.setAttribute('tabindex', '0');
   group.setAttribute('role', 'button');
+  group.setAttribute('data-node-id', nodeId);
   group.setAttribute('aria-label', title || node?.name || nodeId);
 
   const titleEl = documentRef.createElementNS('http://www.w3.org/2000/svg', 'title');
   titleEl.textContent = title || node?.name || nodeId;
   group.appendChild(titleEl);
 
-  const ellipse = documentRef.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
-  ellipse.setAttribute('cx', position.cx);
-  ellipse.setAttribute('cy', position.cy);
-  ellipse.setAttribute('rx', position.width / 2 - 4);
-  ellipse.setAttribute('ry', position.height / 2 - 4);
-  ellipse.setAttribute('class', 'prog-talent-oval__shape');
-  group.appendChild(ellipse);
+  const rect = documentRef.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', position.x);
+  rect.setAttribute('y', position.y);
+  rect.setAttribute('width', position.width);
+  rect.setAttribute('height', position.height);
+  rect.setAttribute('rx', '10');
+  rect.setAttribute('ry', '10');
+  rect.setAttribute('class', 'prog-talent-card-node__shape');
+  group.appendChild(rect);
 
-  const text = documentRef.createElementNS('http://www.w3.org/2000/svg', 'text');
-  text.setAttribute('x', position.cx);
-  text.setAttribute('y', position.cy);
-  text.setAttribute('text-anchor', 'middle');
-  text.setAttribute('dominant-baseline', 'middle');
-  text.setAttribute('class', 'prog-talent-oval__label');
+  const titleText = createSvgText(
+    documentRef,
+    position.x + 14,
+    position.y + 26,
+    trimLabel(node?.name || nodeId, 26),
+    'prog-talent-card-node__label'
+  );
+  group.appendChild(titleText);
 
-  const lines = nodeLabel(node).split('\n');
-  lines.forEach((line, index) => {
-    const tspan = documentRef.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-    tspan.setAttribute('x', position.cx);
-    tspan.setAttribute('dy', index === 0 ? (lines.length === 1 ? '0' : '-0.6em') : '1.2em');
-    tspan.textContent = line;
-    text.appendChild(tspan);
-  });
-  group.appendChild(text);
+  const statusText = createSvgText(
+    documentRef,
+    position.x + 14,
+    position.y + 48,
+    nodeStatusText(state),
+    'prog-talent-card-node__status'
+  );
+  group.appendChild(statusText);
 
   const handleFocus = (event) => {
     event.preventDefault();
@@ -133,14 +140,12 @@ function createSvgNode(documentRef, { nodeId, node, position, state, isFocused, 
 
   group.addEventListener('click', handleFocus);
   group.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      handleFocus(event);
-    }
+    if (event.key === 'Enter' || event.key === ' ') handleFocus(event);
   });
   group.addEventListener('dblclick', (event) => {
     event.preventDefault();
     event.stopPropagation();
-    onCommit?.(nodeId);
+    if (state !== 'blocked') onCommit?.(nodeId);
   });
 
   return group;
@@ -165,12 +170,11 @@ export function renderProgressionTalentTree(container, options = {}) {
   const { width, height, positions } = computePositions(graphData);
   const documentRef = container.ownerDocument;
   const svg = documentRef.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('class', 'prog-talent-tree-svg');
-  svg.setAttribute('width', width);
-  svg.setAttribute('height', height);
+  svg.setAttribute('class', 'prog-talent-tree-svg prog-talent-tree-svg--fit');
   svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-  svg.style.width = `${width}px`;
-  svg.style.height = `${height}px`;
+  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'Talent tree map');
 
   const edgesGroup = documentRef.createElementNS('http://www.w3.org/2000/svg', 'g');
   edgesGroup.setAttribute('class', 'prog-talent-tree-svg__edges');
@@ -182,10 +186,10 @@ export function renderProgressionTalentTree(container, options = {}) {
 
     const childState = classifyNodeState(graphData.nodes.get(edge.to), nodeStates[edge.to] || {});
     const line = documentRef.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', fromPos.cx);
-    line.setAttribute('y1', fromPos.y + fromPos.height - 6);
-    line.setAttribute('x2', toPos.cx);
-    line.setAttribute('y2', toPos.y + 6);
+    line.setAttribute('x1', fromPos.x + fromPos.width);
+    line.setAttribute('y1', fromPos.cy);
+    line.setAttribute('x2', toPos.x);
+    line.setAttribute('y2', toPos.cy);
     line.setAttribute('class', `prog-talent-tree-link prog-talent-tree-link--${edgeStateForChild(childState)}`);
     edgesGroup.appendChild(line);
   }
@@ -198,14 +202,7 @@ export function renderProgressionTalentTree(container, options = {}) {
     const position = positions.get(nodeId);
     if (!position) continue;
     const state = classifyNodeState(node, nodeStates[nodeId] || {});
-    const statusLabel = state === 'owned'
-      ? 'Purchased'
-      : state === 'available'
-        ? 'Meets prerequisite'
-        : state === 'blocked'
-          ? 'Does not meet prerequisite'
-          : 'Default';
-    const title = `${node?.name || nodeId} — ${statusLabel}`;
+    const title = `${node?.name || nodeId} — ${nodeStatusText(state)}`;
     nodesGroup.appendChild(createSvgNode(documentRef, {
       nodeId,
       node,

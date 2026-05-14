@@ -4,12 +4,12 @@
     <div class="talent-details__meta">
       <span class="talent-meta-badge tree-badge">{{treeName}}</span>
       {{#if isOwned}}
-      <span class="talent-meta-badge owned-badge"><i class="fa-solid fa-check"></i> Purchased</span>
+      <span class="talent-meta-badge owned-badge"><i class="fa-solid fa-check"></i> Chosen</span>
       {{else}}
         {{#if meetsPrereqs}}
-        <span class="talent-meta-badge available-badge"><i class="fa-solid fa-circle-check"></i> Meets Prereq</span>
+        <span class="talent-meta-badge available-badge"><i class="fa-solid fa-circle-check"></i> Available</span>
         {{else}}
-        <span class="talent-meta-badge blocked-badge"><i class="fa-solid fa-circle-xmark"></i> Does Not Meet Prereq</span>
+        <span class="talent-meta-badge blocked-badge"><i class="fa-solid fa-circle-xmark"></i> Locked</span>
         {{/if}}
       {{/if}}
       {{#if isSelected}}
@@ -18,14 +18,22 @@
     </div>
   </div>
 
+  <div class="talent-details__section talent-details__section--status">
+    <h3 class="talent-details__section-title">Status</h3>
+    <p class="talent-details__description">{{statusText}}</p>
+  </div>
+
   <div class="talent-details__section">
     <h3 class="talent-details__section-title">Description</h3>
-    {{#if canonicalDescription}}
-      <p class="talent-details__description">{{canonicalDescription}}</p>
-    {{else}}
-      <p class="talent-details__description talent-details__description--unavailable">No description available.</p>
-    {{/if}}
+    <p class="talent-details__description">{{canonicalDescription}}</p>
   </div>
+
+  {{#if mechanicalBenefit}}
+  <div class="talent-details__section">
+    <h3 class="talent-details__section-title">Benefit</h3>
+    <p class="talent-details__description">{{mechanicalBenefit}}</p>
+  </div>
+  {{/if}}
 
   <div class="talent-details__section">
     <h3 class="talent-details__section-title">Prerequisites</h3>
@@ -42,6 +50,24 @@
     </ul>
     {{/if}}
   </div>
+
+  {{#if prerequisitePath}}
+  <div class="talent-details__section talent-details__section--path">
+    <h3 class="talent-details__section-title">Path</h3>
+    <ol class="talent-path-list">
+      {{#each prerequisitePath}}
+      <li class="{{#if isMissing}}is-missing{{/if}}">{{name}}</li>
+      {{/each}}
+    </ol>
+  </div>
+  {{/if}}
+
+  {{#if recommendationText}}
+  <div class="talent-details__section talent-details__section--recommendation">
+    <h3 class="talent-details__section-title">Why this might fit</h3>
+    <p class="talent-details__description">{{recommendationText}}</p>
+  </div>
+  {{/if}}
 
   <div class="talent-details__actions">
     {{#if isSelected}}

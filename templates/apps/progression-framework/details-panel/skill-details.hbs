@@ -1,13 +1,16 @@
 <div class="prog-skill-details">
   <div class="prog-skill-details__header">
     <h2 class="prog-skill-details__name">{{skillName}}</h2>
-    <span class="prog-chip">{{abilityLabel}}</span>
+    <div class="prog-skill-details__chips">
+      <span class="prog-chip">{{abilityLabel}}</span>
+      {{#if skillSlug}}<span class="prog-chip prog-chip--muted">{{skillSlug}}</span>{{/if}}
+    </div>
   </div>
 
   {{#if description}}
     <p class="prog-skill-details__description">{{description}}</p>
   {{else}}
-    <p class="prog-skill-details__description">This skill uses {{abilityLabel}} and can be trained during character creation.</p>
+    <p class="prog-skill-details__description">No description available.</p>
   {{/if}}
 
   <div class="prog-skill-details__section">
@@ -19,22 +22,21 @@
     <p><strong>Trained:</strong> {{#if trained}}Yes{{else}}No{{/if}}</p>
   </div>
 
-  {{#if hasExtraUses}}
-    <div class="prog-skill-details__section">
-      <h4 class="prog-skill-details__section-title">Common Uses</h4>
-      <ul class="prog-skill-details__uses-list">
-        {{#each extraUses}}
-          <li class="prog-skill-details__use-item">{{this.application}}</li>
+  <div class="prog-skill-details__section">
+    <h4 class="prog-skill-details__section-title">Extra Skill Uses</h4>
+    {{#if hasSkillUses}}
+      <ul class="prog-skill-details__uses">
+        {{#each skillUses}}
+          <li class="prog-skill-details__use">
+            <strong>{{this.label}}</strong>
+            {{#if this.dc}}<span class="prog-chip">DC {{this.dc}}</span>{{/if}}
+            {{#if this.time}}<span class="prog-chip prog-chip--muted">{{this.time}}</span>{{/if}}
+            {{#if this.effect}}<p>{{this.effect}}</p>{{else}}{{#if this.description}}<p>{{this.description}}</p>{{/if}}{{/if}}
+          </li>
         {{/each}}
       </ul>
-      {{#if hasMoreUses}}
-        <p class="prog-skill-details__more-uses">+{{moreUsesCount}} more uses available</p>
-      {{/if}}
-    </div>
-  {{else}}
-    <div class="prog-skill-details__section">
-      <h4 class="prog-skill-details__section-title">Common Uses</h4>
-      <p class="prog-skill-details__empty-state">No special uses found for this skill yet.</p>
-    </div>
-  {{/if}}
+    {{else}}
+      <p class="prog-skill-details__description">No extra skill uses are listed for this skill.</p>
+    {{/if}}
+  </div>
 </div>

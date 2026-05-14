@@ -2,15 +2,15 @@
 
   {{!-- Portrait zone: portrait display with CSS-based styling --}}
   <div class="prog-mentor__portrait-zone swse-ui-frame">
-    <div class="prog-mentor__portrait" data-mentor-portrait="{{mentor.id}}">
+    <div class="prog-mentor__portrait prog-holo-mentor-media" data-mentor-portrait="{{mentor.id}}">
       {{#if mentor.portrait}}
-        <img class="prog-mentor__portrait-image"
+        <img class="prog-mentor__portrait-image prog-holo-mentor-media__image"
              src="{{mentor.portrait}}"
              alt="{{mentor.name}}"
              title="{{mentor.name}}"
              onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.png';"/>
       {{else}}
-        <img class="prog-mentor__portrait-image"
+        <img class="prog-mentor__portrait-image prog-holo-mentor-media__image"
              src="systems/foundryvtt-swse/assets/mentors/salty.png"
              alt="Ol' Salty"
              title="Ol' Salty"/>

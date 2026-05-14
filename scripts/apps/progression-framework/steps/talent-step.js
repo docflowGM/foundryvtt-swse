@@ -45,6 +45,47 @@ function emitTalentStepTrace(label, payload = {}) {
     // no-op
   }
 }
+
+
+function cssEscapeSelector(value) {
+  const raw = String(value ?? '');
+  if (globalThis.CSS?.escape) return globalThis.CSS.escape(raw);
+  return raw.replace(/[\\\"']/g, '\\$&');
+}
+
+function toDisplayText(value) {
+  if (value == null) return '';
+  if (typeof value === 'string') return value.trim();
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (Array.isArray(value)) {
+    return value.map(toDisplayText).filter(Boolean).join(', ');
+  }
+  if (typeof value === 'object') {
+    const candidates = [
+      value.value,
+      value.text,
+      value.raw,
+      value.label,
+      value.name,
+      value.description,
+      value.benefit,
+      value.summary,
+    ];
+    for (const candidate of candidates) {
+      const text = toDisplayText(candidate);
+      if (text) return text;
+    }
+  }
+  return '';
+}
+
+function firstDisplayText(...values) {
+  for (const value of values) {
+    const text = toDisplayText(value);
+    if (text && text !== '[object Object]') return text;
+  }
+  return '';
+}
 export class TalentStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
@@ -68,6 +109,9 @@ export class TalentStep extends ProgressionStepPlugin {
     this._graphData = null;          // Dependency graph for selected tree
     this._focusedTalentId = null;    // Focused node in graph
     this._selectedTalentId = null;   // Committed talent for this slot
+    this._viewMode = 'both';         // 'both', 'list', or 'map'
+    this._lastGraphNodeStates = {};  // Async legality cache for the SVG renderer
+    this._centerGraphAfterRender = false;
 
     // Event listener cleanup
     this._renderAbort = null;
@@ -97,7 +141,7 @@ export class TalentStep extends ProgressionStepPlugin {
       this._allTrees = Array.from(TalentTreeDB.trees.values());
       this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
       const existingTalent = this._getCommittedTalentForSlot(shell);
-      this._selectedTalentId = existingTalent?.id || null;
+      this._selectedTalentId = this._getTalentId(existingTalent) || null;
       SWSELogger.debug(`[TalentStep] Loaded ${this._allTrees.length} talent trees from database`);
       emitTalentStepTrace('TREE_DB_LOADED', {
         dbCount: this._allTrees.length,
@@ -174,6 +218,9 @@ export class TalentStep extends ProgressionStepPlugin {
       action.startsWith('focus-') ||
       action.startsWith('enter-') ||
       action === 'exit-tree' ||
+      action === 'set-talent-view' ||
+      action === 'fit-talent-tree' ||
+      action === 'center-talent-node' ||
       action === 'commit-item'
     );
 
@@ -205,6 +252,28 @@ export class TalentStep extends ProgressionStepPlugin {
 
         case 'exit-tree': {
           this._exitTree(shell);
+          return true;
+        }
+
+        case 'set-talent-view': {
+          const mode = target?.dataset?.viewMode || target?.closest('[data-view-mode]')?.dataset?.viewMode;
+          if (['both', 'list', 'map'].includes(mode)) {
+            this._viewMode = mode;
+            shell?.render?.();
+          }
+          return true;
+        }
+
+        case 'fit-talent-tree': {
+          this._viewMode = this._viewMode === 'list' ? 'both' : this._viewMode;
+          shell?.render?.();
+          return true;
+        }
+
+        case 'center-talent-node': {
+          this._centerGraphAfterRender = true;
+          if (this._viewMode === 'list') this._viewMode = 'both';
+          shell?.render?.();
           return true;
         }
 
@@ -279,14 +348,48 @@ export class TalentStep extends ProgressionStepPlugin {
       }, { signal });
     }
 
-    // Wire talent node focus (Stage 2)
+    // Wire planner view controls (Stage 2)
+    shell.element.querySelectorAll('[data-action="set-talent-view"]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const mode = btn.dataset.viewMode;
+        if (['both', 'list', 'map'].includes(mode)) {
+          this._viewMode = mode;
+          shell.render();
+        }
+      }, { signal });
+    });
+
+    shell.element.querySelectorAll('[data-action="fit-talent-tree"]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (this._viewMode === 'list') this._viewMode = 'both';
+        shell.render();
+      }, { signal });
+    });
+
+    shell.element.querySelectorAll('[data-action="center-talent-node"]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this._centerGraphAfterRender = true;
+        if (this._viewMode === 'list') this._viewMode = 'both';
+        shell.render();
+      }, { signal });
+    });
+
+    // Wire talent row focus (Stage 2)
     const talentNodes = shell.element.querySelectorAll('[data-action="focus-talent"]');
     talentNodes.forEach(node => {
-      node.addEventListener('click', (e) => {
+      const focusTalent = (e) => {
+        if (e?.target?.closest?.('button')) return;
         e.preventDefault();
         const talentId = node.dataset.talentId;
         this._focusedTalentId = talentId;
         shell.render();
+      };
+      node.addEventListener('click', focusTalent, { signal });
+      node.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') focusTalent(e);
       }, { signal });
     });
   }
@@ -301,7 +404,7 @@ export class TalentStep extends ProgressionStepPlugin {
         try {
           await renderProgressionTalentTree(canvas, {
             graphData: this._graphData,
-            nodeStates: this._buildNodeStates(),
+            nodeStates: this._lastGraphNodeStates || this._buildNodeStates(),
             focusedTalentId: this._focusedTalentId,
             onFocus: async (talentId) => {
               this._focusedTalentId = talentId;
@@ -311,6 +414,14 @@ export class TalentStep extends ProgressionStepPlugin {
               await this.onItemCommitted(talentId, shell);
             }
           });
+
+          if (this._centerGraphAfterRender) {
+            const targetId = this._focusedTalentId || this._selectedTalentId;
+            const node = targetId ? canvas.querySelector(`[data-node-id="${cssEscapeSelector(targetId)}"]`) : null;
+            node?.focus?.();
+            node?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+            this._centerGraphAfterRender = false;
+          }
         } catch (err) {
           SWSELogger.warn('[TalentStep] Graph rendering failed:', err);
         }
@@ -370,9 +481,11 @@ export class TalentStep extends ProgressionStepPlugin {
       emptyGraph: !this._graphData || (this._graphData?.nodes?.size || 0) === 0,
     });
 
-    // Enter graph stage
+    // Enter planner stage. Default to the hybrid list + map view.
     this._stage = 'graph';
+    this._viewMode = 'both';
     this._focusedTalentId = null;
+    this._lastGraphNodeStates = {};
 
     shell.render();
   }
@@ -384,6 +497,8 @@ export class TalentStep extends ProgressionStepPlugin {
     this._selectedTreeTalents = [];
     this._graphData = null;
     this._focusedTalentId = null;
+    this._lastGraphNodeStates = {};
+    this._centerGraphAfterRender = false;
 
     shell.render();
   }
@@ -765,8 +880,118 @@ export class TalentStep extends ProgressionStepPlugin {
     };
   }
 
+  _getTalentId(talent) {
+    return talent?.id || talent?._id || talent?.uuid || talent?.name || null;
+  }
+
+  _getTalentDescription(talent) {
+    return firstDisplayText(
+      talent?.system?.description,
+      talent?.description,
+      talent?.system?.details?.description,
+      talent?.system?.flavor,
+    );
+  }
+
+  _getTalentBenefit(talent) {
+    return firstDisplayText(
+      talent?.system?.benefit,
+      talent?.benefit,
+      talent?.system?.effect,
+      talent?.system?.rules,
+    );
+  }
+
+  _getTalentPrerequisiteText(talent) {
+    return firstDisplayText(
+      talent?.system?.prerequisites,
+      talent?.system?.prerequisite,
+      talent?.prerequisites,
+      talent?.prerequisite,
+    );
+  }
+
+  _getTalentSummary(talent) {
+    const description = this._getTalentDescription(talent);
+    const benefit = this._getTalentBenefit(talent);
+    const text = firstDisplayText(description, benefit, this._getTalentPrerequisiteText(talent));
+    if (text) return text.length > 132 ? `${text.slice(0, 129).trim()}…` : text;
+    return 'No rules text has been defined for this talent yet.';
+  }
+
+  _buildPrerequisitePathForTalent(talent, nodeStates = {}) {
+    const talentId = this._getTalentId(talent);
+    const node = talentId && this._graphData?.nodes?.get?.(talentId);
+    if (!node?.prerequisites?.length) return [];
+
+    const rows = [];
+    const seen = new Set();
+    const visit = (nodeId) => {
+      if (!nodeId || seen.has(nodeId)) return;
+      seen.add(nodeId);
+      const prereqNode = this._graphData?.nodes?.get?.(nodeId);
+      if (!prereqNode) return;
+      for (const nestedId of prereqNode.prerequisites || []) visit(nestedId);
+      const state = nodeStates?.[nodeId] || {};
+      rows.push({
+        id: nodeId,
+        name: prereqNode.name || nodeId,
+        isMissing: state.legal === false && !state.selected && !state.owned,
+      });
+    };
+
+    for (const prereqId of node.prerequisites) visit(prereqId);
+    rows.push({ id: talentId, name: talent?.name || talentId, isMissing: false });
+    return rows;
+  }
+
+  _filterTalentRowsBySearch(rows) {
+    if (!this._searchQuery) return rows;
+    const q = String(this._searchQuery || '').toLowerCase();
+    return rows.filter(row => [row.name, row.summary, row.prerequisites, row.lockReason]
+      .some(value => String(value || '').toLowerCase().includes(q)));
+  }
+
+  _buildTalentRows(nodeStates = {}) {
+    const rows = (this._selectedTreeTalents || []).map(talent => {
+      const id = this._getTalentId(talent);
+      const state = nodeStates?.[id] || {};
+      const isSelected = id === this._selectedTalentId || !!state.selected;
+      const isOwned = !!state.owned || isSelected;
+      const meetsPrereqs = state.legal !== false;
+      const missing = Array.isArray(state.missing) ? state.missing.map(toDisplayText).filter(Boolean) : [];
+      const prerequisites = this._getTalentPrerequisiteText(talent);
+      const summary = this._getTalentSummary(talent);
+      const lockReason = meetsPrereqs
+        ? ''
+        : (missing[0] || prerequisites || 'Prerequisite path incomplete.');
+
+      return {
+        id,
+        name: talent?.name || id || 'Unknown Talent',
+        summary,
+        prerequisites,
+        lockReason,
+        isSelected,
+        isOwned,
+        meetsPrereqs,
+        isSelectable: meetsPrereqs || isSelected,
+        isFocused: id === this._focusedTalentId,
+        prerequisitePath: this._buildPrerequisitePathForTalent(talent, nodeStates),
+      };
+    }).filter(row => row.id);
+
+    rows.sort((left, right) => {
+      if (left.isSelected !== right.isSelected) return left.isSelected ? -1 : 1;
+      if (left.meetsPrereqs !== right.meetsPrereqs) return left.meetsPrereqs ? -1 : 1;
+      return String(left.name || '').localeCompare(String(right.name || ''));
+    });
+
+    return this._filterTalentRowsBySearch(rows);
+  }
+
   /**
-   * Data for Stage 2: Tree Graph
+   * Data for Stage 2: Talent Planner
    * HARDENED: Validate talents resolved, use canonical tree fields
    */
   async _getTreeGraphData(context) {
@@ -793,28 +1018,36 @@ export class TalentStep extends ProgressionStepPlugin {
         `[TalentStep] Tree "${selectedTree.name}" has no resolved talents. ` +
         `talentIds count: ${(selectedTree.talentIds || []).length}, resolved: ${this._selectedTreeTalents?.length || 0}`
       );
-      // Still render, but with empty graph (better than crashing)
+      // Still render, but with empty graph/list (better than crashing)
     }
 
-    // Prepare node states
+    // Prepare node states once for both the list and the graph renderer.
     const nodeStates = {};
     const pendingAbilityData = this._buildPendingAbilityData(context?.shell);
     if (this._graphData?.nodes) {
       for (const [nodeId, node] of this._graphData.nodes) {
         const talent = node.talent;
-        const isLegal = await this._isLegal(context?.shell?.actor, talent, pendingAbilityData);
-        const isOwned = false;  // planned: check if already owned
+        let prereqDetails = { legal: true, missing: [], blocking: [] };
+        try {
+          prereqDetails = await this._getPrerequisiteDetails(context?.shell?.actor, talent, pendingAbilityData);
+        } catch (_err) {
+          prereqDetails = { legal: true, missing: [], blocking: [] };
+        }
         const isSelected = nodeId === this._selectedTalentId;
+        const isOwned = isSelected;
         const isSuggested = this._suggestedTrees.some(t => t.id === this._selectedTreeId);
 
         nodeStates[nodeId] = {
-          legal: isLegal,
+          legal: prereqDetails.legal !== false,
           owned: isOwned,
           selected: isSelected,
           suggested: isSuggested,
+          missing: prereqDetails.missing || [],
+          blocking: prereqDetails.blocking || [],
         };
       }
     }
+    this._lastGraphNodeStates = nodeStates;
 
     // Get committed talents from session and order them canonically
     const committedTalents = context?.shell?.progressionSession?.draftSelections?.talents || [];
@@ -838,6 +1071,11 @@ export class TalentStep extends ProgressionStepPlugin {
         : 'Complete',
     };
 
+    const talentRows = this._buildTalentRows(nodeStates);
+    const availableTalents = talentRows.filter(row => row.isSelectable);
+    const lockedTalents = talentRows.filter(row => !row.isSelectable);
+    const selectedTalent = talentRows.find(row => row.isSelected) || null;
+
     emitTalentStepTrace('GRAPH_DATA_READY', {
       selectedTreeId: this._selectedTreeId,
       selectedTreeName: selectedTree?.name || null,
@@ -845,6 +1083,9 @@ export class TalentStep extends ProgressionStepPlugin {
       edgeCount: this._graphData?.edges?.length || 0,
       focusedTalentId: this._focusedTalentId,
       selectedTalentId: this._selectedTalentId,
+      availableCount: availableTalents.length,
+      lockedCount: lockedTalents.length,
+      viewMode: this._viewMode,
     });
 
     return {
@@ -854,6 +1095,10 @@ export class TalentStep extends ProgressionStepPlugin {
       nodeStates,
       graphData: this._graphData,
       orderedSelections,
+      viewMode: this._viewMode,
+      availableTalents,
+      lockedTalents,
+      selectedTalent,
       // PHASE 2 UX: Slot progress
       slotProgress,
     };
@@ -906,7 +1151,6 @@ export class TalentStep extends ProgressionStepPlugin {
         focusedTreeId: this._focusedTreeId,
         selectedTreeId: this._selectedTreeId,
       });
-      // Tree browser doesn't use details panel
       return this.renderDetailsPanelEmptyState();
     }
 
@@ -930,24 +1174,46 @@ export class TalentStep extends ProgressionStepPlugin {
       return this.renderDetailsPanelEmptyState();
     }
 
-    // Use canonical talent.id field (from TalentRegistry normalized entry)
-    const talentId = talent.id;
+    const talentId = this._getTalentId(talent);
     const isSelected = talentId === this._selectedTalentId;
-    const isOwned = talentId === this._selectedTalentId;
+    const isOwned = isSelected;
     const selectedTree = this._getTree(this._selectedTreeId);
 
-    // Evaluate talent legality and prerequisites
+    // Evaluate talent legality using the same pending state as the planner list.
     const actor = shell?.actor || null;
-    const legal = actor ? await this._isLegal(actor, talent) : true;
-    const prereqDetails = actor ? await this._getPrerequisiteDetails(actor, talent) : { legal: true, missing: [], blocking: [] };
-    const meetsPrereqs = legal && prereqDetails.legal;
-    const missingPrereqs = prereqDetails.missing || [];
+    const pendingAbilityData = this._buildPendingAbilityData(shell);
+    const prereqDetails = actor ? await this._getPrerequisiteDetails(actor, talent, pendingAbilityData) : { legal: true, missing: [], blocking: [] };
+    const meetsPrereqs = prereqDetails.legal !== false;
+    const missingPrereqs = (prereqDetails.missing || prereqDetails.blocking || [])
+      .map(toDisplayText)
+      .filter(Boolean);
     const hasMissingPrereqs = missingPrereqs.length > 0;
 
-    // Normalize detail panel data for canonical display (no fabrication)
+    // Normalize detail panel data for canonical display, then sanitize any object-shaped values.
     const normalized = normalizeDetailPanelData(talent, 'talent', {
       treeName: selectedTree?.name || '',
     });
+
+    const mechanicalBenefit = this._getTalentBenefit(talent);
+    const canonicalDescription = firstDisplayText(
+      normalized.description,
+      this._getTalentDescription(talent),
+      mechanicalBenefit,
+      `${talent?.name || 'This talent'} is part of the ${selectedTree?.name || 'selected'} talent tree.`
+    );
+    const prerequisites = firstDisplayText(
+      normalized.prerequisites ? normalized.prerequisites[0] : null,
+      this._getTalentPrerequisiteText(talent)
+    );
+    const prerequisitePath = this._buildPrerequisitePathForTalent(talent, this._lastGraphNodeStates);
+    const recommendationText = this._suggestedTrees.some(t => t.id === this._selectedTreeId)
+      ? 'This tree is currently suggested for the build you have been shaping. Use the available list to choose the legal talent that best supports your concept.'
+      : '';
+    const statusText = isSelected
+      ? 'This talent is selected for the current slot.'
+      : meetsPrereqs
+        ? 'This talent is available now and can be chosen for the current slot.'
+        : 'This talent is locked until its prerequisite path is complete.';
 
     emitTalentStepTrace('DETAILS_READY', {
       focusedTalentId: this._focusedTalentId,
@@ -959,28 +1225,28 @@ export class TalentStep extends ProgressionStepPlugin {
       isOwned,
       meetsPrereqs,
       hasMissingPrereqs,
-      prerequisiteText: normalized.prerequisites ? normalized.prerequisites[0] : null,
+      prerequisiteText: prerequisites || null,
     });
 
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/talent-details.hbs',
       data: {
-        // Pass talent with canonical id field only (no artificial _id injection)
         talent,
-        talentId,  // Expose canonical ID explicitly for template
+        talentId,
         treeName: selectedTree?.name || '',
         isSelected,
         isOwned,
         meetsPrereqs,
         hasMissingPrereqs,
         missingPrereqs,
-        description: talent.description || talent.system?.description || '',
-        // Use normalized prerequisites from normalizer (avoids fabrication)
-        prerequisites: normalized.prerequisites ? normalized.prerequisites[0] : null,
-        // Add normalized fields for enhanced detail rail
-        canonicalDescription: normalized.description,
-        metadataTags: normalized.metadataTags,
-        hasMentorProse: normalized.fallbacks.hasMentorProse,
+        prerequisites,
+        canonicalDescription,
+        mechanicalBenefit,
+        prerequisitePath,
+        recommendationText,
+        statusText,
+        metadataTags: normalized.metadataTags || [],
+        hasMentorProse: !!normalized.fallbacks?.hasMentorProse,
       },
     };
   }
@@ -1040,6 +1306,9 @@ export class TalentStep extends ProgressionStepPlugin {
 
       if (shell?.committedSelections && this.descriptor?.stepId) {
         shell.committedSelections.set(this.descriptor.stepId, nextSelection);
+      }
+      if (shell?.buildIntent && this.descriptor?.stepId) {
+        shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, nextSelection);
       }
     }
   }

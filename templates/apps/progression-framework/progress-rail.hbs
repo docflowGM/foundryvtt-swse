@@ -1,69 +1,34 @@
-{{!--
-  Progress Rail — Step Navigation
-  Compact horizontal step indicators with jump-to-step navigation.
-
-  States:
-  - Current (active): bright, glowing, non-clickable
-  - Completed: positive color, clickable (can jump back)
-  - Blocked (future, unvisited): dimmed, non-clickable, shows tooltip
-  - Visited (past): positive color, clickable
-
-  Expected data: stepProgress array with:
-  - descriptor: { stepId, label, icon, ... }
-  - isCurrent: boolean
-  - isComplete: boolean
-  - isConditional: boolean
-  - canNavigate: boolean (can click to jump)
-  - status: string
---}}
-
-<div class="prog-progress-rail">
-  <div class="prog-progress-rail__label">Progression Path</div>
-
-  <ul class="prog-progress-rail__list">
+{{!-- Chargen / progression step rail. Shows below the mentor rail and above utility controls. --}}
+<div class="prog-progress-rail" role="navigation" aria-label="Character creation steps">
+  <div class="prog-progress-rail__label">Progression Pipeline</div>
+  <div class="prog-progress-rail__list" role="list">
     {{#each stepProgress}}
-    <li class="prog-step
-           {{#if isCurrent}}prog-step--active{{/if}}
-           {{#if isComplete}}prog-step--complete{{/if}}
-           {{#if isConditional}}prog-step--conditional{{/if}}"
-        data-step-id="{{descriptor.stepId}}"
-        data-step-index="{{index}}"
-        data-can-navigate="{{canNavigate}}"
-        data-status="{{status}}"
-        {{#if canNavigate}}tabindex="0" role="button" data-action="jump-step-rail"{{else}}aria-disabled="true"{{/if}}>
-
-      {{!-- Step icon indicating state --}}
-      <span class="prog-step__icon">
-        {{#if isCurrent}}
-          <i class="fas fa-circle-dot"></i>
-        {{else if isComplete}}
-          <i class="fas fa-check-circle"></i>
-        {{else if isConditional}}
-          <i class="fas fa-star"></i>
-        {{else if canNavigate}}
-          <i class="fas fa-circle"></i>
-        {{else}}
-          <i class="fas fa-lock"></i>
-        {{/if}}
-      </span>
-
-      {{!-- Step name/label --}}
-      <span class="prog-step__name">{{descriptor.label}}</span>
-
-      {{!-- Completion checkmark --}}
-      {{#if isComplete}}
-        <span class="prog-step__check">✓</span>
-      {{/if}}
-
-      {{!-- Lock icon for blocked steps --}}
-      {{#unless canNavigate}}
-        {{#unless isCurrent}}
-          <span class="prog-step__blocker-icon" title="Step locked">
-            <i class="fas fa-lock-alt"></i>
-          </span>
-        {{/unless}}
-      {{/unless}}
-    </li>
+      <div role="button"
+              class="prog-step prog-step--{{status}}{{#if isCurrent}} prog-step--active{{/if}}{{#if isComplete}} prog-step--complete{{/if}}{{#if isCaution}} prog-step--caution{{/if}}{{#if isError}} prog-step--error{{/if}}{{#if isConditional}} prog-step--conditional{{/if}}"
+              data-action="jump-step"
+              data-step-id="{{descriptor.stepId}}"
+              data-step-index="{{index}}"
+              data-can-navigate="{{#if canNavigate}}true{{else}}false{{/if}}"
+              tabindex="{{#if canNavigate}}0{{else}}-1{{/if}}"
+              {{#unless canNavigate}}aria-disabled="true"{{/unless}}
+              title="{{descriptor.label}}">
+        <span class="prog-step__icon">
+          {{#if isComplete}}
+            <i class="fas fa-check"></i>
+          {{else}}{{#if isCurrent}}
+            <i class="fas fa-circle"></i>
+          {{else}}{{#if isError}}
+            <i class="fas fa-triangle-exclamation"></i>
+          {{else}}{{#if isCaution}}
+            <i class="fas fa-circle-exclamation"></i>
+          {{else}}
+            <i class="fas {{descriptor.icon}}"></i>
+          {{/if}}{{/if}}{{/if}}{{/if}}
+        </span>
+        <span class="prog-step__name">{{descriptor.label}}</span>
+        {{#if isComplete}}<span class="prog-step__check"><i class="fas fa-check"></i></span>{{/if}}
+        {{#if isConditional}}<span class="prog-step__check"><i class="fas fa-lock"></i></span>{{/if}}
+      </div>
     {{/each}}
-  </ul>
+  </div>
 </div>

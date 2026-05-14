@@ -1,13 +1,13 @@
 <div class="prog-class-details">
   <div class="prog-class-details__header">
     {{#if img}}
-    <div class="prog-class-details__portrait-frame">
-      <img class="prog-class-details__portrait" src="{{img}}" alt="{{class.name}}">
+    <div class="prog-class-details__portrait-frame prog-holo-media prog-holo-media--wide">
+      <img class="prog-class-details__portrait prog-holo-media__image" src="{{img}}" alt="{{class.name}}">
       <div class="prog-holo-scan"></div>
     </div>
     {{else if class.img}}
-    <div class="prog-class-details__portrait-frame">
-      <img class="prog-class-details__portrait" src="{{class.img}}" alt="{{class.name}}">
+    <div class="prog-class-details__portrait-frame prog-holo-media prog-holo-media--wide">
+      <img class="prog-class-details__portrait prog-holo-media__image" src="{{class.img}}" alt="{{class.name}}">
       <div class="prog-holo-scan"></div>
     </div>
     {{/if}}

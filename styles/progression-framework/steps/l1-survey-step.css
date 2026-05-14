@@ -73,7 +73,18 @@
     0 0 24px oklch(var(--sheet-accent-primary) / 0.25),
     0 0 60px oklch(var(--sheet-accent-primary) / 0.15),
     inset 0 0 40px oklch(var(--sheet-accent-primary) / 0.08);
-  filter: grayscale(0.85) saturate(0.65) contrast(1.15) brightness(0.94) hue-rotate(200deg);
+  position: relative;
+  z-index: 1;
+  filter:
+    grayscale(1)
+    sepia(0.08)
+    hue-rotate(165deg)
+    saturate(0.68)
+    contrast(1.15)
+    brightness(1.03)
+    drop-shadow(0 0 8px oklch(var(--sheet-accent-primary) / 0.24));
+  mix-blend-mode: screen;
+  opacity: 0.94;
   backdrop-filter: blur(0.5px);
 }
 
