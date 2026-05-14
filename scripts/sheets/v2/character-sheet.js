@@ -2399,6 +2399,24 @@ const forcePoints = [];
           });
         }
 
+        // Include actor-ingestible species abilities as action rows.
+        for (const item of this.actor?.items || []) {
+          if (item?.type !== 'combat-action') continue;
+          const isActorAbility = item.flags?.swse?.isSpeciesAbility === true || item.flags?.swse?.isActorAbility === true || item.system?.executionModel === 'actor-special-ability' || item.system?.executionModel === 'species-activated-ability';
+          if (!isActorAbility) continue;
+          const economy = String(item.system?.actionType ?? item.system?.speciesAbility?.actionType ?? 'standard').toLowerCase().replace(/_/g, '-');
+          if (!grouped[economy]) grouped[economy] = [];
+          grouped[economy].push({
+            id: `item:${item.id}:use`,
+            name: item.name,
+            type: economy,
+            cost: 1,
+            notes: item.system?.description ?? item.system?.speciesAbility?.description ?? '',
+            hasRelatedSkills: true,
+            source: item.flags?.swse?.sourceSpecies ?? item.flags?.swse?.sourceName ?? item.system?.specialAbility?.sourceName ?? 'Special Ability'
+          });
+        }
+
         // Build groups in action economy order
         // Match template structure: groups[].label, groups[].count, groups[].subgroups[].label, groups[].subgroups[].items[]
         for (const eco of economyOrder) {
@@ -5316,11 +5334,22 @@ const forcePoints = [];
     }
 
     if (actionData && Object.keys(actionData).length > 0) {
+      // Item-backed derived actions, including species abilities, should route through the actor.
+      if (String(actionId || '').startsWith('item:') && typeof this.actor?.useAction === 'function') {
+        const result = await this.actor.useAction(actionId, { ...options, actionData });
+        if (result) return result;
+      }
+
       return new CombatRollConfigDialog(this.actor, {
         id: actionId,
         ...actionData,
         ...options
       }).render(true);
+    }
+
+    if (typeof this.actor?.useAction === 'function') {
+      const result = await this.actor.useAction(actionId, options);
+      if (result) return result;
     }
 
     ui?.notifications?.warn?.("Combat action could not be executed.");

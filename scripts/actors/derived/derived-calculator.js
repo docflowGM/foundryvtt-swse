@@ -318,6 +318,20 @@ export class DerivedCalculator {
         }
       }
 
+      // GM/compendium-granted special ability items can carry the same passive skill
+      // bonus shape as species flags. This lets a GM drag a reusable ability such as
+      // "Empathy" or "Soothing Pheromones" onto any actor without changing species.
+      for (const item of actor.items || []) {
+        const itemBonuses = item?.flags?.swse?.passiveSkillBonuses || item?.system?.specialAbility?.passiveSkillBonuses || [];
+        if (!Array.isArray(itemBonuses)) continue;
+        for (const bonus of itemBonuses) {
+          const target = bonus?.target;
+          if (!target) continue;
+          if (!speciesSkillBonuses[target]) speciesSkillBonuses[target] = 0;
+          speciesSkillBonuses[target] += Number(bonus.value || 0);
+        }
+      }
+
       for (const [skillKey, skillDef] of Object.entries(skillData)) {
         const skill = normalizedSkills[skillKey];
 

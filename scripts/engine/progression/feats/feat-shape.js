@@ -1,17 +1,31 @@
 const FEAT_TYPE_KEYS = new Set([
-  'general',
+  'recommended',
+  'combat',
+  'weapon_armor',
   'force',
+  'skill',
   'species',
+  'droid_cybernetic',
+  'faction',
+  'destiny_story',
   'team',
-  'martial_arts'
+  'general',
+  'uncategorized',
 ]);
 
 export const FEAT_TYPE_LABELS = {
-  general: 'General',
+  recommended: 'Recommended',
+  combat: 'Combat',
+  weapon_armor: 'Weapon & Armor Proficiency',
   force: 'Force',
-  species: 'Species',
+  skill: 'Skill',
+  species: 'Racial / Heritage',
+  droid_cybernetic: 'Droid / Cybernetics',
+  faction: 'Faction / Military / Organization',
+  destiny_story: 'Destiny / Story / GM Approval',
   team: 'Team',
-  martial_arts: 'Martial Arts',
+  general: 'General',
+  uncategorized: 'Uncategorized / Needs Data Cleanup',
 };
 
 let _mappingCache = null;
@@ -36,8 +50,29 @@ function stripHtmlToText(value) {
 }
 
 export function normalizeFeatTypeKey(rawValue) {
-  const raw = String(rawValue ?? '').trim().toLowerCase();
-  if (FEAT_TYPE_KEYS.has(raw)) return raw;
+  const raw = String(rawValue ?? '').trim().toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+  const aliases = {
+    martial_arts: 'combat',
+    martialarts: 'combat',
+    weapon: 'weapon_armor',
+    armor: 'weapon_armor',
+    weapon_armor_proficiency: 'weapon_armor',
+    weapon_and_armor_proficiency: 'weapon_armor',
+    racial: 'species',
+    heritage: 'species',
+    race: 'species',
+    droid: 'droid_cybernetic',
+    cybernetic: 'droid_cybernetic',
+    cybernetics: 'droid_cybernetic',
+    organization: 'faction',
+    organisation: 'faction',
+    military: 'faction',
+    destiny: 'destiny_story',
+    story: 'destiny_story',
+    gm: 'destiny_story',
+  };
+  const normalized = aliases[raw] || raw;
+  if (FEAT_TYPE_KEYS.has(normalized)) return normalized;
   return 'general';
 }
 
@@ -76,6 +111,28 @@ function coercePrerequisiteText(...values) {
   return '';
 }
 
+
+function resolveFeatShortSummary(rawFeat, description = '') {
+  const candidates = [
+    rawFeat?.shortSummary,
+    rawFeat?.summary,
+    rawFeat?.system?.shortSummary,
+    rawFeat?.system?.summary,
+    rawFeat?.system?.benefit,
+    description,
+    rawFeat?.system?.description?.value,
+  ];
+
+  for (const candidate of candidates) {
+    const cleaned = stripHtmlToText(candidate).replace(/\s+/g, ' ').trim();
+    if (!cleaned) continue;
+    const firstSentence = cleaned.match(/^.+?(?:[.!?](?=\s|$)|$)/)?.[0]?.trim() || cleaned;
+    if (firstSentence) return firstSentence.length > 170 ? `${firstSentence.slice(0, 167).trim()}...` : firstSentence;
+  }
+
+  return '';
+}
+
 export function resolveFeatPrerequisites(rawFeat) {
   const prerequisiteText = coercePrerequisiteText(
     rawFeat?.prerequisiteText,
@@ -96,6 +153,59 @@ function normalizeFeatNameKey(name) {
     .replace(/['’]/g, '')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
+}
+
+
+function lowerList(values) {
+  return (Array.isArray(values) ? values : [])
+    .map(value => String(value || '').toLowerCase().trim())
+    .filter(Boolean);
+}
+
+function resolvePrimaryBrowseCategory(rawFeat, mappingEntry) {
+  const explicitType = normalizeFeatTypeKey(rawFeat?.system?.featType ?? rawFeat?.category ?? rawFeat?.system?.category);
+  const metadataCategory = String(mappingEntry?.metadataCategory || '').toLowerCase();
+  const metadataTags = lowerList(mappingEntry?.metadataTags);
+  const packTags = lowerList(mappingEntry?.packTags);
+  const broadTags = lowerList(mappingEntry?.uiBroadTags);
+  const text = [
+    rawFeat?.name,
+    rawFeat?.system?.prerequisite,
+    rawFeat?.system?.prerequisites,
+    rawFeat?.prerequisiteText,
+    mappingEntry?.prerequisite,
+    metadataCategory,
+    ...metadataTags,
+    ...packTags,
+    ...broadTags,
+  ].flat().map(value => String(value || '').toLowerCase()).join(' ');
+
+  if (explicitType === 'force' || broadTags.includes('force') || /\bforce\b|use the force|force sensitivity|force training/.test(text)) return 'force';
+  if (explicitType === 'species' || broadTags.includes('species') || broadTags.includes('racial') || /species|racial|heritage|gamorrean|nelvaanian|near-human|near human/.test(text)) return 'species';
+  if (broadTags.includes('skill') || metadataCategory.startsWith('skill') || /\bskill\b|trained in|skill focus|skill training|acrobatics|deception|endurance|gather information|initiative|jump|knowledge|mechanics|perception|persuasion|pilot|ride|stealth|survival|swim|treat injury|use computer|use the force/.test(text)) return 'skill';
+  if (/weapon proficiency|armor proficiency|armour proficiency|proficient with|heavy weapons|exotic weapon|weapon focus|weapon specialization|martial arts/.test(text)) return 'weapon_armor';
+  if (broadTags.includes('combat') || metadataCategory.startsWith('combat') || /attack|defense|defence|dodge|mobility|cleave|charge|grapple|melee|ranged|autofire|martial|aim|damage|critical|fighting|shot|strike/.test(text)) return 'combat';
+  if (/droid|cyborg|cybernetic|appendage|locomotion|processor|implant/.test(text)) return 'droid_cybernetic';
+  if (/military|republic|imperial|sith|separatist|galactic alliance|officer|organization|organisation|faction|mandalorian/.test(text)) return 'faction';
+  if (/destiny|gamemaster|game master|gm approval|story/.test(text)) return 'destiny_story';
+  if (explicitType === 'team') return 'team';
+  return explicitType === 'general' ? 'general' : explicitType;
+}
+
+function resolveFeatSubcategory(rawFeat, mappingEntry, primaryCategory) {
+  const skillTags = Array.isArray(mappingEntry?.uiSkillTags) ? mappingEntry.uiSkillTags.filter(Boolean) : [];
+  if (primaryCategory === 'skill' && skillTags.length) return skillTags[0];
+  const metadataCategory = String(mappingEntry?.metadataCategory || '').trim();
+  if (metadataCategory) {
+    return metadataCategory
+      .replace(/^combat[-_\s]*/i, '')
+      .replace(/^skill[-_\s]*/i, '')
+      .replace(/[-_]+/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+  const broadTags = Array.isArray(mappingEntry?.uiBroadTags) ? mappingEntry.uiBroadTags.filter(Boolean) : [];
+  const fallback = broadTags.find(tag => normalizeFeatTypeKey(tag) !== primaryCategory);
+  return fallback || '';
 }
 
 function resolveMappingEntry(rawFeat, mapping) {
@@ -135,10 +245,13 @@ export function normalizeFeatRuntime(rawFeat, { mapping = null } = {}) {
   if (!rawFeat) return rawFeat;
 
   const id = rawFeat.id || rawFeat._id || rawFeat.uuid || rawFeat.name;
-  const featType = normalizeFeatTypeKey(rawFeat?.system?.featType ?? rawFeat?.category ?? rawFeat?.system?.category);
+  const mappingEntry = resolveMappingEntry(rawFeat, mapping);
+  const featType = resolvePrimaryBrowseCategory(rawFeat, mappingEntry);
+  const subcategory = resolveFeatSubcategory(rawFeat, mappingEntry, featType);
   const description = resolveFeatDescription(rawFeat);
+  const shortSummary = resolveFeatShortSummary(rawFeat, description);
   const { prerequisiteText, prerequisitesStructured } = resolveFeatPrerequisites(rawFeat);
-  const uiBroadTags = resolveFeatUiBroadTags(rawFeat, mapping);
+  const uiBroadTags = Array.isArray(mappingEntry?.uiBroadTags) ? mappingEntry.uiBroadTags.slice() : resolveFeatUiBroadTags(rawFeat, mapping);
   const tags = Array.isArray(rawFeat?.system?.tags) ? rawFeat.system.tags.slice() : [];
 
   return {
@@ -150,7 +263,9 @@ export function normalizeFeatRuntime(rawFeat, { mapping = null } = {}) {
     img: rawFeat?.img ?? 'icons/svg/upgrade.svg',
     featType,
     featTypeLabel: getFeatTypeLabel(featType),
+    subcategory,
     description,
+    shortSummary,
     benefit: typeof rawFeat?.system?.benefit === 'string' ? rawFeat.system.benefit : '',
     prerequisiteText,
     prerequisitesStructured,

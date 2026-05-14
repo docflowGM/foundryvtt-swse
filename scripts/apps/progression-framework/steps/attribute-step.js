@@ -4,6 +4,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
+import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 import { AttributeMentorDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/attribute-mentor-dialog.js';
 import {
   buildAttributePlanningProfile,
@@ -76,6 +77,7 @@ export class AttributeStep extends ProgressionStepPlugin {
     this._scorePool = [];
     this._selectedPoolId = null;
     this._dragPoolId = null;
+    this._speciesFixedOverrideRequested = false;
   }
 
   getGenerationConfig(shell) {
@@ -100,6 +102,132 @@ export class AttributeStep extends ProgressionStepPlugin {
   _getAssignableAbilityKeys(shell) {
     const excluded = this._getExcludedSet(shell);
     return this._getAbilityKeys(shell).filter(key => !excluded.has(key));
+  }
+
+  _getSpeciesAttributeOverride(shell) {
+    const pending = shell?.progressionSession?.draftSelections?.pendingSpeciesContext
+      ?? shell?.committedSelections?.get?.('pendingSpeciesContext')
+      ?? null;
+    return pending?.metadata?.attributeGenerationOverride || null;
+  }
+
+  _isSpeciesFixedMode() {
+    return this._method === 'species-fixed';
+  }
+
+  _getSpeciesFixedScores(shell) {
+    const override = this._getSpeciesAttributeOverride(shell);
+    return override?.fixedScores && typeof override.fixedScores === 'object' ? override.fixedScores : null;
+  }
+
+  _getSpeciesFixedAllocationStatus(shell) {
+    const override = this._getSpeciesAttributeOverride(shell);
+    const fixedScores = this._getSpeciesFixedScores(shell);
+    if (!override || !fixedScores || !this._attributes) {
+      return { total: 0, spent: 0, remaining: 0, maxPerAbility: 0, allocations: {}, complete: true };
+    }
+
+    const allowed = Array.isArray(override.bonusChoices) && override.bonusChoices.length
+      ? override.bonusChoices.map(key => String(key).toLowerCase())
+      : this._getAssignableAbilityKeys(shell);
+    const total = Number(override.allocationPoints ?? override.bonusValue ?? 2) || 2;
+    const maxPerAbility = Number(override.maxPerAbility ?? 1) || 1;
+    const allocations = {};
+    let spent = 0;
+    for (const key of allowed) {
+      const base = Number(fixedScores[key] ?? 0);
+      const current = Number(this._attributes[key] ?? base);
+      const amount = Math.max(0, current - base);
+      if (amount > 0) allocations[key] = amount;
+      spent += amount;
+    }
+    return { total, spent, remaining: Math.max(0, total - spent), maxPerAbility, allocations, complete: spent === total };
+  }
+
+  _canAdjustSpeciesFixed(shell, key, delta) {
+    if (this._committed || !this._isSpeciesFixedMode()) return false;
+    const override = this._getSpeciesAttributeOverride(shell);
+    const fixedScores = this._getSpeciesFixedScores(shell);
+    if (!override || !fixedScores) return false;
+    const allowed = Array.isArray(override.bonusChoices) && override.bonusChoices.length
+      ? override.bonusChoices.map(value => String(value).toLowerCase())
+      : this._getAssignableAbilityKeys(shell);
+    const ability = String(key || '').toLowerCase();
+    if (!allowed.includes(ability)) return false;
+
+    const status = this._getSpeciesFixedAllocationStatus(shell);
+    const base = Number(fixedScores[ability] ?? 0);
+    const current = Number(this._attributes?.[ability] ?? base);
+    const currentAllocation = Math.max(0, current - base);
+    const nextAllocation = currentAllocation + Number(delta || 0);
+    if (nextAllocation < 0 || nextAllocation > status.maxPerAbility) return false;
+    const nextSpent = status.spent - currentAllocation + nextAllocation;
+    return nextSpent <= status.total;
+  }
+
+  _handleSpeciesFixedDelta(key, delta, shell) {
+    const ability = String(key || '').toLowerCase();
+    if (!this._canAdjustSpeciesFixed(shell, ability, delta)) return;
+    this._attributes = {
+      ...this._attributes,
+      [ability]: Number(this._attributes[ability] ?? this._getSpeciesFixedScores(shell)?.[ability] ?? 0) + Number(delta || 0),
+    };
+    this._focusedAbility = ability;
+    shell.render();
+  }
+
+  async _requestSpeciesFixedOverride(shell) {
+    if (this._speciesFixedOverrideRequested) return;
+    this._speciesFixedOverrideRequested = true;
+
+    const actor = shell?.actor ?? null;
+    const override = this._getSpeciesAttributeOverride(shell) || {};
+    const requestId = `attribute-override-${actor?.id || game?.user?.id || 'unknown'}`;
+    const request = {
+      id: requestId,
+      type: 'attribute-generation-override',
+      ownerActorId: actor?.id || null,
+      ownerActorName: actor?.name || 'New Character',
+      requestedBy: game?.user?.id || null,
+      requestedByName: game?.user?.name || 'Player',
+      requestedAt: Date.now(),
+      costCredits: 0,
+      draftData: {
+        name: `Attribute method override: ${actor?.name || 'New Character'}`,
+        details: `${override.label || 'Species fixed array'} was overridden so the player can use a normal attribute generation method.`,
+      },
+      metadata: {
+        source: 'progression-attribute-step',
+        speciesAttributeOverride: override,
+      },
+    };
+
+    try {
+      const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
+      const existingIndex = approvals.findIndex(item => item?.id === requestId || (item?.type === request.type && item?.ownerActorId === request.ownerActorId));
+      if (existingIndex >= 0) approvals[existingIndex] = { ...approvals[existingIndex], ...request };
+      else approvals.push(request);
+      await SettingsHelper.set('pendingCustomPurchases', approvals);
+    } catch (err) {
+      console.warn('[AttributeStep] Failed to record GM approval request for attribute override:', err);
+    }
+
+    try {
+      const gmIds = (game?.users?.contents || game?.users || [])
+        .filter(user => user?.isGM)
+        .map(user => user.id);
+      if (gmIds.length && globalThis.ChatMessage?.create) {
+        await ChatMessage.create({
+          speaker: ChatMessage.getSpeaker?.({ actor }) || {},
+          whisper: gmIds,
+          content: `<strong>GM approval requested:</strong> ${game?.user?.name || 'A player'} overrode the ${override.label || 'species fixed attribute array'} for ${actor?.name || 'a new character'}. Review it in the GM Datapad approvals page.`,
+        });
+      }
+    } catch (err) {
+      console.warn('[AttributeStep] Failed to whisper GMs about attribute override:', err);
+    }
+
+    ui?.notifications?.info?.('GM approval requested for the attribute-generation override.');
   }
 
   _getSpeciesMods(shell) {
@@ -232,6 +360,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       .filter(Boolean);
     this._selectedPoolId = null;
     this._dragPoolId = null;
+    this._speciesFixedOverrideRequested = false;
   }
 
   _getAssignmentsPerAbility(shell) {
@@ -466,6 +595,16 @@ export class AttributeStep extends ProgressionStepPlugin {
       return;
     }
 
+    const override = this._getSpeciesAttributeOverride(shell);
+    if (override?.mode === 'fixed-array-plus-choice' && override.fixedScores) {
+      this._method = 'species-fixed';
+      this._attributes = { ...override.fixedScores, ...(override.finalScores || {}) };
+      this._scorePool = [];
+      this._selectedPoolId = null;
+      this._committed = false;
+      return;
+    }
+
     if (!this._attributes) {
       this._attributes = this._buildInitialPointBuy(shell);
       this._scorePool = [];
@@ -486,7 +625,20 @@ export class AttributeStep extends ProgressionStepPlugin {
    * @param {Object} shell - The progression shell context
    * @returns {boolean} - True if action was handled
    */
-  handleAction(action, event, target, shell) {
+  async handleAction(action, event, target, shell) {
+    if (action === 'attribute-override-species-fixed') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      await this._requestSpeciesFixedOverride(shell);
+      this._method = 'point-buy';
+      this._attributes = this._buildInitialPointBuy(shell);
+      this._scorePool = [];
+      this._selectedPoolId = null;
+      this._committed = false;
+      shell?.render?.();
+      return true;
+    }
+
     if (action !== 'attribute-lock') {
       return false;
     }
@@ -501,7 +653,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       shell?.render?.();
     } else {
       // Lock
-      this._performLock(shell);
+      await this._performLock(shell);
     }
 
     return true;
@@ -517,7 +669,13 @@ export class AttributeStep extends ProgressionStepPlugin {
       return;
     }
 
-    if (this._method === 'point-buy') {
+    if (this._isSpeciesFixedMode()) {
+      const status = this._getSpeciesFixedAllocationStatus(shell);
+      if (!status.complete) {
+        ui?.notifications?.warn?.(`Distribute all ${status.total} clone attribute increase points before locking.`);
+        return;
+      }
+    } else if (this._method === 'point-buy') {
       const spent = this._getPointBuySpent(this._attributes);
       const pool = this.getPointBuyPool(shell);
       if (spent > pool) {
@@ -662,6 +820,10 @@ export class AttributeStep extends ProgressionStepPlugin {
 
   _handlePointBuyDelta(key, delta, shell) {
     if (this._committed) return;
+    if (this._isSpeciesFixedMode()) {
+      this._handleSpeciesFixedDelta(key, delta, shell);
+      return;
+    }
     if (this._method !== 'point-buy') return;
 
     const pool = this.getPointBuyPool(shell);
@@ -674,6 +836,8 @@ export class AttributeStep extends ProgressionStepPlugin {
 
   _rerollCurrent(shell) {
     this._committed = false;
+
+    if (this._isSpeciesFixedMode()) return;
 
     if (this._method === 'point-buy') {
       this._attributes = this._randomPointBuy(shell);
@@ -742,7 +906,12 @@ export class AttributeStep extends ProgressionStepPlugin {
       return { isValid: false, errors: ['Attributes not yet assigned'], warnings: [] };
     }
 
-    if (this._method === 'point-buy') {
+    if (this._isSpeciesFixedMode()) {
+      const status = this._getSpeciesFixedAllocationStatus(shell);
+      if (!status.complete) {
+        return { isValid: false, errors: [`Distribute ${status.remaining} more clone attribute increase point${status.remaining === 1 ? '' : 's'}`], warnings: [] };
+      }
+    } else if (this._method === 'point-buy') {
       const spent = this._getPointBuySpent(this._attributes);
       const pool = this.getPointBuyPool(shell);
       if (spent > pool) {
@@ -760,7 +929,10 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   getBlockingIssues(shell = null) {
-    if (this._method !== 'point-buy' && !this._areAllPooledAbilitiesAssigned(shell)) {
+    if (this._isSpeciesFixedMode()) {
+      const status = this._getSpeciesFixedAllocationStatus(shell);
+      if (!status.complete) return [`Distribute ${status.remaining} more clone attribute increase point${status.remaining === 1 ? '' : 's'}`];
+    } else if (this._method !== 'point-buy' && !this._areAllPooledAbilitiesAssigned(shell)) {
       return ['Assign every generated score before locking attributes'];
     }
     if (!this._committed) return ['Click Lock Attributes to continue'];
@@ -768,7 +940,14 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   getRemainingPicks(shell = null) {
-    if (this._method !== 'point-buy') {
+    if (this._isSpeciesFixedMode()) {
+      const status = this._getSpeciesFixedAllocationStatus(shell);
+      if (!status.complete) {
+        return [{ label: 'Clone attribute increases remaining', count: status.remaining, isWarning: true }];
+      }
+    }
+
+    if (!this._isSpeciesFixedMode() && this._method !== 'point-buy') {
       const remaining = this._getAssignableAbilityKeys(shell).filter(key => !Number.isFinite(Number(this._attributes?.[key]))).length;
       if (remaining > 0) {
         return [{ label: 'Generated scores remaining', count: remaining, isWarning: true }];
@@ -784,8 +963,11 @@ export class AttributeStep extends ProgressionStepPlugin {
   async getStepData(context) {
     const shell = context?.shell;
     const pointBuyPool = this.getPointBuyPool(shell);
-    const speciesMods = this._getSpeciesMods(shell);
+    const speciesMods = this._isSpeciesFixedMode() ? { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 } : this._getSpeciesMods(shell);
+    const attributeOverride = this._getSpeciesAttributeOverride(shell);
     const excluded = this._getExcludedSet(shell);
+    const speciesFixedAllocation = this._isSpeciesFixedMode() ? this._getSpeciesFixedAllocationStatus(shell) : null;
+    const speciesFixedScores = this._isSpeciesFixedMode() ? this._getSpeciesFixedScores(shell) : null;
 
     const spent = this._getPointBuySpent(this._attributes ?? {});
     const percent = pointBuyPool > 0
@@ -827,11 +1009,21 @@ export class AttributeStep extends ProgressionStepPlugin {
         speciesModClass: speciesMod > 0 ? 'prog-num--pos' : speciesMod < 0 ? 'prog-num--neg' : 'prog-num--zero',
         modifierFormatted: Number.isFinite(Number(modifier)) ? (modifier > 0 ? `+${modifier}` : `${modifier}`) : '—',
         modClass: modifier > 0 ? 'prog-num--pos' : modifier < 0 ? 'prog-num--neg' : 'prog-num--zero',
-        canAdjust: !this._committed && this._method === 'point-buy' && !excluded.has(key),
+        canAdjust: !this._committed && !excluded.has(key) && (
+          (this._method === 'point-buy' && !this._isSpeciesFixedMode())
+          || (this._isSpeciesFixedMode() && this._canAdjustSpeciesFixed(shell, key, +1))
+          || (this._isSpeciesFixedMode() && this._canAdjustSpeciesFixed(shell, key, -1))
+        ),
+        canIncrease: this._isSpeciesFixedMode() ? this._canAdjustSpeciesFixed(shell, key, +1) : true,
+        canDecrease: this._isSpeciesFixedMode() ? this._canAdjustSpeciesFixed(shell, key, -1) : true,
+        fixedBaseDisplay: speciesFixedScores?.[key] ?? null,
+        allocationAmount: speciesFixedAllocation?.allocations?.[key] ?? 0,
         showClear: !this._committed && this._method !== 'point-buy' && assignedPoolItems.length > 0,
-        assignmentHint: this._method !== 'point-buy' && !excluded.has(key)
+        assignmentHint: this._method !== 'point-buy' && !this._isSpeciesFixedMode() && !excluded.has(key)
           ? assignmentDisplay
-          : null,
+          : (this._isSpeciesFixedMode() && (speciesFixedAllocation?.allocations?.[key] ?? 0) > 0
+            ? `Clone increase +${speciesFixedAllocation.allocations[key]}`
+            : null),
         assignedValues: assignedPoolItems.map(item => item.value),
         assignmentCapacity,
       };
@@ -848,9 +1040,14 @@ export class AttributeStep extends ProgressionStepPlugin {
       abilities,
       scorePool,
       pointBuyPool,
-      showPointBuy: this._method === 'point-buy',
-      showGeneratedPool: this._method !== 'point-buy',
-      showAutoAssign: true,
+      showMethodSelector: !this._isSpeciesFixedMode(),
+      showPointBuy: this._method === 'point-buy' && !this._isSpeciesFixedMode(),
+      showGeneratedPool: this._method !== 'point-buy' && !this._isSpeciesFixedMode(),
+      isSpeciesFixed: this._isSpeciesFixedMode(),
+      attributeOverride,
+      speciesFixedAllocation,
+      showSpeciesFixedOverride: this._isSpeciesFixedMode() && attributeOverride?.requiresGmApprovalOnOverride !== false,
+      showAutoAssign: !this._isSpeciesFixedMode(),
       showArrayTypeSelector: this._method === 'array',
       pointBuyStatus: {
         spent,
@@ -860,7 +1057,9 @@ export class AttributeStep extends ProgressionStepPlugin {
       },
       remainingPoolAssignments,
       currentMethodDescription:
-        this._method === 'point-buy'
+        this._isSpeciesFixedMode()
+          ? (attributeOverride?.helpText || `${attributeOverride?.label || 'Species fixed array'} is pre-filled. Distribute the remaining attribute increase points, then lock attributes to continue.`)
+          : this._method === 'point-buy'
           ? 'Adjust scores with +/- as needed. Auto Assign uses the suggestion engine, and Ask Mentor can apply a full build while still leaving everything editable.'
           : this._method === 'array'
             ? `Using the ${this._arrayType === 'highPower' ? 'high power' : 'standard'} array. Drag scores onto attributes, use Auto Assign, or ask your mentor for build placements.`
@@ -868,7 +1067,9 @@ export class AttributeStep extends ProgressionStepPlugin {
               ? 'Reroll generates six fresh 4d6 drop-lowest scores. Drag a score onto an attribute row, or let Ask Mentor suggest placements from the rolls you have now.'
               : 'Reroll generates 18 organic dice. Drag three dice into each attribute row, or ask your mentor for a suggested allocation from the live dice pool.',
       poolInstruction:
-        this._method === 'point-buy'
+        this._isSpeciesFixedMode()
+          ? `Remaining: ${speciesFixedAllocation?.remaining ?? 0}/${speciesFixedAllocation?.total ?? 0}. Use the override button only when the GM is allowing a non-canonical clone attribute method.`
+          : this._method === 'point-buy'
           ? 'Use Ask Mentor if you want three live build plans based on the point budget currently available.'
           : this._selectedPoolId
             ? (this._method === 'organic'

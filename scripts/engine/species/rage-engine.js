@@ -39,7 +39,7 @@ function actorItems(actor) {
 }
 
 function getRuleItems(actor) {
-  return actorItems(actor).filter(item => item?.type === "feat" || item?.type === "talent" || item?.type === "speciesability");
+  return actorItems(actor).filter(item => item?.type === "feat" || item?.type === "talent" || item?.type === "speciesability" || item?.flags?.swse?.speciesAbilityId === "rage");
 }
 
 function getRules(item) {
@@ -123,7 +123,7 @@ export class RageEngine {
     if (!actor) return false;
     if (actorFlag(actor, "hasRage") === true || actorFlag(actor, "rageUnlocked") === true) return true;
     const species = normalizeName(actor?.system?.details?.species ?? actor?.system?.species ?? actor?.system?.traits?.species ?? "");
-    if (["wookiee", "mantellian savrip", "nelvaanian"].some(s => species.includes(s))) return true;
+    if (["wookiee", "chistori", "mantellian savrip", "rakata"].some(s => species.includes(s))) return true;
     return getRuleItems(actor).some(item => {
       const name = itemName(item);
       const text = normalizeName(`${item?.system?.traitType ?? ""} ${item?.system?.abilityKey ?? ""} ${item?.system?.description?.value ?? ""} ${item?.system?.benefit ?? ""}`);

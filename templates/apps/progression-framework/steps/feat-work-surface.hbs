@@ -24,6 +24,13 @@
 
   {{!-- Type & Tag Filter Bar --}}
   <div class="feat-filter-bar">
+    <button class="feat-filter-btn feat-show-all-toggle{{#if showAll}} is-open{{/if}}"
+            data-action="toggle-show-all-feats" type="button"
+            title="Toggle between legal selectable feats and the full hydrated feat browser">
+      <i class="fa-solid {{#if showAll}}fa-eye{{else}}fa-eye-slash{{/if}}"></i>
+      <span>{{#if showAll}}Showing All{{else}}Legal Only{{/if}}</span>
+      <span class="feat-filter-active-count">{{#if showAll}}{{allFeatCount}}{{else}}{{legalFeatCount}}{{/if}}</span>
+    </button>
     {{!-- Type dropdown --}}
     {{#if typeOptions}}
     <div class="feat-filter-group">
@@ -85,7 +92,8 @@
     {{#if groupedFeats.suggested.isExpanded}}
     <div class="feat-list suggested-list">
       {{#each groupedFeats.suggested.feats}}
-      <div class="feat-item suggested-feat {{#if this.isFocused}}focused{{/if}} {{#if this.isSelected}}selected{{/if}}"
+      <div class="feat-item suggested-feat {{#if this.isFocused}}focused{{/if}} {{#if this.isSelected}}selected{{/if}} {{#unless this.isAvailable}}unavailable{{/unless}}"
+           style="--feat-tree-indent: {{this.treeIndent}};"
            data-feat-id="{{this.id}}"
            data-item-id="{{this.id}}"
            data-action="focus-item">
@@ -97,6 +105,7 @@
         {{/if}}
         <div class="feat-item-content">
           <span class="feat-name">{{this.name}}</span>
+          {{#if this.subcategory}}<span class="feat-subcategory-pill">{{this.subcategory}}</span>{{/if}}
           <span class="feat-prereq-line">{{this.prerequisiteLine}}</span>
         </div>
         <div class="feat-item-meta">
@@ -129,6 +138,7 @@
       {{#each group.feats as |feat idx|}}
       {{#if (or (lt idx group.visibleCount) group.isExpanded)}}
       <div class="feat-item category-feat {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}} {{#unless feat.isAvailable}}unavailable{{/unless}}"
+           style="--feat-tree-indent: {{feat.treeIndent}};"
            data-feat-id="{{feat.id}}"
            data-item-id="{{feat.id}}"
            data-action="focus-item"
@@ -141,6 +151,8 @@
         {{/if}}
         <div class="feat-item-content">
           <span class="feat-name">{{feat.name}}</span>
+          {{#if feat.subcategory}}<span class="feat-subcategory-pill">{{feat.subcategory}}</span>{{/if}}
+          {{#if feat.isGranted}}<span class="feat-owned-pill">Granted</span>{{else}}{{#if feat.isOwned}}<span class="feat-owned-pill">Owned</span>{{/if}}{{/if}}
           {{!-- PHASE 6 UX: Show prerequisite line more prominently --}}
           {{#if feat.prerequisiteLine}}
             <span class="feat-prereq-line" title="{{feat.prerequisiteLine}}">

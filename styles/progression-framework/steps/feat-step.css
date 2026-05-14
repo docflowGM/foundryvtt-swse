@@ -1254,3 +1254,102 @@
   opacity: 0.58;
   filter: grayscale(0.20);
 }
+
+/* Tree/grouped feat browser additions */
+.feat-show-all-toggle {
+  min-width: 9rem;
+  justify-content: center;
+}
+
+.feat-item.category-feat,
+.feat-item.suggested-feat {
+  margin-left: var(--feat-tree-indent, 0);
+}
+
+.feat-item.category-feat[style*="1.25rem"],
+.feat-item.suggested-feat[style*="1.25rem"] {
+  position: relative;
+}
+
+.feat-item.category-feat[style*="1.25rem"]::before,
+.feat-item.suggested-feat[style*="1.25rem"]::before {
+  content: "";
+  position: absolute;
+  left: -0.75rem;
+  top: 50%;
+  width: 0.55rem;
+  border-top: 1px solid oklch(0.85 0.18 200 / 0.35);
+}
+
+.feat-subcategory-pill,
+.feat-owned-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 0.15rem;
+  padding: 0.1rem 0.35rem;
+  border: 1px solid oklch(0.85 0.18 200 / 0.25);
+  border-radius: 999px;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: oklch(0.88 0.12 200);
+  background: oklch(0.85 0.18 200 / 0.08);
+}
+
+.feat-owned-pill {
+  color: var(--prog-positive, oklch(0.8 0.15 145));
+  border-color: color-mix(in oklch, var(--prog-positive, oklch(0.8 0.15 145)) 35%, transparent);
+}
+
+.feat-item.unavailable {
+  opacity: 0.68;
+}
+
+/* Show All unavailable feats remain focusable, but visually read as locked. */
+.feat-item.unavailable {
+  opacity: 0.52;
+  cursor: pointer;
+  pointer-events: auto;
+  filter: grayscale(0.35) saturate(0.65);
+}
+
+.feat-item.unavailable:hover,
+.feat-item.unavailable.focused {
+  opacity: 0.78;
+  filter: grayscale(0.15) saturate(0.85);
+}
+
+.feat-item.unavailable .feat-name {
+  color: rgba(200, 100, 100, 0.9);
+  text-decoration: none;
+}
+
+.feat-quick-summary {
+  display: flex;
+  gap: 0.4rem;
+  align-items: baseline;
+  padding: 0.45rem 0.55rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid oklch(0.85 0.18 200 / 0.18);
+  border-radius: 8px;
+  background: oklch(0.12 0.03 245 / 0.35);
+  color: var(--sheet-text-strong);
+  font-size: 0.85rem;
+}
+
+.feat-missing-prereqs {
+  border-color: color-mix(in oklch, var(--prog-negative, #ff5f5f) 55%, transparent);
+  background: color-mix(in oklch, var(--prog-negative, #ff5f5f) 12%, transparent);
+}
+
+.feat-missing-prereqs p,
+.feat-missing-prereqs li {
+  color: var(--prog-negative, #ff5f5f);
+}
+
+.feat-missing-prereqs ul,
+.feat-blocking-reasons ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.2rem;
+}

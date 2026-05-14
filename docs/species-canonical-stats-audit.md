@@ -1,0 +1,133 @@
+# Species Canonical Stats Audit - Phase 2
+
+Compared `Canonical Species Information.txt` against the species compendium DB, trait JSON files, and the Item species schema.
+
+## Applied changes
+
+- Parsed **131 canonical species trait blocks** from the uploaded canonical text.
+- `packs/species.db` now contains **163 species rows** after sanitation:
+  - the canonical species from the text, plus existing noncanonical/special pack entries that were not contradicted by the text.
+- Added **60 species rows** that were present in the canonical text but missing from the current pack:
+  - Aleena
+  - Altiri
+  - Amani
+  - Anarrian
+  - Anzati
+  - Bith
+  - Blood Carver
+  - Caamasi
+  - Celegian
+  - Chistori
+  - Draethos
+  - Dug
+  - Ebruchi
+  - Felucian
+  - Gamorrean
+  - Gand
+  - Gen'Dai
+  - Geonosian
+  - Hutt
+  - Kerkoiden
+  - Khil
+  - Killik
+  - Kissai
+  - Klatooinian
+  - Krevaaki
+  - Lugubraa
+  - Mantellian Savrip
+  - Massassi
+  - Mrlssi
+  - Nazren
+  - Neimoidian
+  - Nelvaanian
+  - Nosaurian
+  - Nyriaanan
+  - O'reenian
+  - Pa'lowick
+  - Phindian
+  - Polis Massan
+  - Replica Droid
+  - Republic Clone
+  - Shard
+  - Skakoan
+  - Sluissi
+  - Sorcerer of Rhand
+  - Squib
+  - Ssi-Ruuk
+  - Stereb
+  - Taung
+  - Tof
+  - Togruta
+  - Trianii
+  - Tusken Raider
+  - Utai
+  - Vagaari
+  - Vahla
+  - Vultan
+  - Wroonian
+  - Yevetha
+  - Yuuzhan Vong
+  - Zygerrian
+- Updated existing canonical species rows with corrected:
+  - size
+  - base speed
+  - structured movement modes where present
+  - ability score modifiers
+  - languages
+  - canonical special trait names
+  - canonical trait descriptions
+- Renamed `Toguta` to canonical `Togruta`.
+- Collapsed `Gand (Force-Sensitive)` and `Gand (Non-Force-Sensitive)` under new base `Gand` as variant profiles.
+- Converted `Killik (Joiner)` to canonical `Killik`.
+- Added canonical alternate/variant profiles for:
+  - Bith
+  - Chadra-Fan
+  - Jawa
+  - Kaminoan
+  - Krevaaki
+  - Neimoidian
+  - Noghri
+  - Umbaran
+  - Yuuzhan Vong
+- Added `data/species-canonical-stats.json` as a machine-readable audit/source-of-truth layer for this pass.
+- Enriched `data/species-traits.json` and `data/species-traits-migrated.json` with `canonicalStats` and `canonicalTraits` without deleting existing migrated rule objects.
+- Expanded `template.json` Item species schema to include the fields already used by pack/progression data:
+  - `size`
+  - `speed`
+  - `movement`
+  - `abilities`
+  - `abilityMods`
+  - `abilityChoice`
+  - `skillBonuses`
+  - `special`
+  - `canonicalTraits`
+  - `languages`
+  - `variants`
+  - `canonicalStats`
+  - `noConstitution`
+  - `retainsConstitution`
+  - `tags`
+  - `source`
+- Updated runtime normalization/materialization seams so structured movement from species data survives into progression/actor application instead of being guessed from trait names.
+
+## Validation summary
+
+- Every parsed canonical species has a matching `packs/species.db` row after this pass.
+- Canonical size and ability modifiers now match `data/species-canonical-stats.json` for every parsed canonical species row, except intentional `abilityChoice` species where a player sub-choice is needed.
+- JSON validation passed for:
+  - `packs/species.db`
+  - `data/species-traits.json`
+  - `data/species-traits-migrated.json`
+  - `data/species-canonical-stats.json`
+  - `template.json`
+- Syntax validation passed for touched JS files.
+
+## Remaining doubts / phased follow-up
+
+- `Primitive` is now tagged from canonical species traits, but the actual class-granted proficiency suppression still needs a progression grant-rule pass.
+- `Replica Droid` is marked `noConstitution` and has Variable size with Small/Medium speed options, but it still needs the droid-builder constrained-flow pass.
+- `Shard` is marked as retaining Constitution and has Droid Shell/cybernetic traits, but it still needs the droid-builder constrained-flow pass.
+- `Republic Clone` uses a fixed ability array plus one +2 choice. This is captured in `abilityChoice`, but the attribute step needs a future chooser if clones become selectable as a normal species.
+- `Arkanian Offshoot` has a +2 Dexterity or Strength choice. This is captured in `abilityChoice`, but the UI currently displays the string rather than forcing a sub-choice.
+- `Celegian` has no normal walk speed in the canonical text, only fly/swim movement. The pack keeps `speed: 6` as a compatibility fallback while canonical movement stores fly 6 and swim 10.
+- Existing noncanonical/special pack entries were preserved unless they were obvious parenthetical variants or a typo/alias handled above. Preserved entries include Aing-Tii, Anomid, Anx, Bardottan, Besalisk, Chevin, Drall, Gree, Gundark, Hapan, Hiss'sssi, Jenet, Kal-Dexar, Kessurian, Kiffar, Koorivar, Kubaz, Mandalorian (Human Variant), Mirialan, Mustafarian, Muun, Near-Human, Nerf (Uplifted), Ortolan, Quermian, Shistavanen, Sith (Pureblood), Theelin, Vaathkree, and Verpine.

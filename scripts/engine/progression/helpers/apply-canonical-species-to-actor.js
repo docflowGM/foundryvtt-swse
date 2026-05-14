@@ -115,10 +115,18 @@ export async function applyCanonicalSpeciesToActor(actor, pendingContext) {
     const rerollMutations = _materializeRerolls(actor, pendingContext);
     Object.assign(mutations, rerollMutations);
 
-    // PHASE 10: Items (natural weapons) - async
-    const itemMutations = await _materializeNaturalWeapons(actor, pendingContext);
-    if (itemMutations.items) {
-      mutations.itemsToCreate = itemMutations.items;
+    // PHASE 10: Items (natural weapons + activated species abilities) - async
+    const naturalWeaponMutations = await _materializeNaturalWeapons(actor, pendingContext);
+    const abilityItemMutations = await _materializeActivatedSpeciesAbilities(actor, pendingContext);
+    const itemsToCreate = [
+      ...(naturalWeaponMutations.items || []),
+      ...(abilityItemMutations.items || [])
+    ];
+    if (itemsToCreate.length) {
+      mutations.itemsToCreate = itemsToCreate;
+    }
+    if (abilityItemMutations.flags) {
+      Object.assign(mutations, abilityItemMutations.flags);
     }
 
     // PHASE 11: Idempotence check
@@ -155,6 +163,7 @@ function _materializeSpeciesIdentity(actor, pendingContext) {
 
   const speciesName = pendingContext.identity.name;
   const speciesSource = pendingContext.identity.source || 'Unknown';
+  const selectedVariant = pendingContext.identity.variant || pendingContext.metadata?.selectedVariant || null;
 
   // Set system.species to canonical name
   mutations['system.species'] = speciesName;
@@ -168,6 +177,12 @@ function _materializeSpeciesIdentity(actor, pendingContext) {
     mutations['system.speciesCustomName'] = pendingContext.metadata.nearHumanCustomization.customName;
   }
 
+  // Store variant profile, if selected.
+  if (selectedVariant?.id) {
+    mutations['flags.swse.speciesVariant'] = selectedVariant;
+    mutations['system.speciesVariant'] = selectedVariant;
+  }
+
   // Store UUID if available (for later re-resolution)
   if (pendingContext.identity.doc?.uuid) {
     mutations['flags.swse.speciesUuid'] = pendingContext.identity.doc.uuid;
@@ -176,9 +191,31 @@ function _materializeSpeciesIdentity(actor, pendingContext) {
   // Store full species source for audit/tracing
   mutations['flags.swse.speciesSource'] = speciesSource;
 
-  // Mark droid status if applicable
-  if (speciesName.toLowerCase() === 'droid' || speciesName.toLowerCase().includes('droid')) {
-    mutations['system.isDroid'] = true;
+  const speciesRules = pendingContext.metadata?.speciesRules || pendingContext.ledger?.rules || {};
+  const droidBuilder = speciesRules.droidBuilder || pendingContext.metadata?.droidBuilder || null;
+  mutations['system.speciesRules'] = {
+    primitive: !!speciesRules.primitive,
+    suppressedClassProficiencies: speciesRules.suppressedClassProficiencies || [],
+    noConstitution: !!speciesRules.noConstitution,
+    retainsConstitution: !!speciesRules.retainsConstitution,
+    speciesActsAsDroid: !!droidBuilder?.speciesActsAsDroid,
+    droidBuilder: droidBuilder || null,
+  };
+
+  // Mark droid/cybernetic status if applicable. Shards are droid-shell/cybernetic
+  // instead of normal no-CON droids, so keep CON unless the species explicitly says noConstitution.
+  if (speciesName.toLowerCase() === 'droid' || speciesName.toLowerCase().includes('droid') || droidBuilder?.speciesActsAsDroid) {
+    mutations['system.isDroid'] = !!speciesRules.noConstitution || droidBuilder?.mode === 'replica-droid' || speciesName.toLowerCase() === 'droid';
+    mutations['flags.swse.speciesActsAsDroid'] = true;
+  }
+  if (speciesRules.noConstitution) {
+    mutations['system.abilities.con.base'] = 0;
+    mutations['system.abilities.con.racial'] = 0;
+    mutations['system.abilities.con.total'] = 0;
+    mutations['flags.swse.noConstitutionFromSpecies'] = true;
+  }
+  if (speciesRules.retainsConstitution) {
+    mutations['flags.swse.retainsConstitutionInDroidShell'] = true;
   }
 
   return mutations;
@@ -317,6 +354,22 @@ function _materializeTraitFlags(actor, pendingContext) {
     }
   }
 
+  const speciesRules = pendingContext.metadata?.speciesRules || pendingContext.ledger?.rules || {};
+  if (speciesRules.primitive) {
+    traitIds.add('primitive');
+    traitFlags.Primitive = {
+      classification: 'restriction',
+      id: 'primitive',
+      type: 'special',
+    };
+    mutations['flags.swse.primitiveSpecies'] = true;
+    mutations['flags.swse.suppressedClassProficiencies'] = speciesRules.suppressedClassProficiencies || [];
+  }
+  if (speciesRules.droidBuilder) {
+    traitIds.add('droid-builder-required');
+    mutations['flags.swse.droidBuilderSpecies'] = speciesRules.droidBuilder;
+  }
+
   // Store all trait IDs for prerequisite visibility
   if (traitIds.size > 0) {
     mutations['flags.swse.speciesTraitIds'] = Array.from(traitIds);
@@ -445,6 +498,111 @@ async function _materializeNaturalWeapons(actor, pendingContext) {
   return { items: itemsToCreate };
 }
 
+
+/**
+ * Create activated species abilities as actor-owned combat-action items.
+ * These items are the sheet/runtime bridge for Bellow, Confusion, Shapeshift,
+ * Energy Surge, Force Blast, Pacifism, Pheromones, Startle, and future
+ * case-by-case species abilities.
+ * @private
+ */
+async function _materializeActivatedSpeciesAbilities(actor, pendingContext) {
+  const ledger = pendingContext.ledger || {};
+  const abilities = Array.isArray(ledger.activeSpeciesAbilities) ? ledger.activeSpeciesAbilities : [];
+  const itemsToCreate = [];
+  const reactionKeys = [];
+  const flags = {};
+
+  for (const ability of abilities) {
+    if (!ability?.id) continue;
+    const abilityId = _slugifySpeciesAbility(ability.id);
+    if (abilityId === 'rage') {
+      flags['flags.swse.hasRage'] = true;
+      flags['flags.swse.rageUnlocked'] = true;
+    }
+    const actionType = String(ability.actionType || 'standard').toLowerCase().replace(/_/g, '-');
+    const itemData = {
+      name: ability.name || abilityId,
+      type: 'combat-action',
+      system: {
+        description: ability.description || '',
+        source: `Species: ${pendingContext.identity?.name || ability.sourceSpecies || 'Unknown'}`,
+        actionType,
+        actionCost: _actionCostForSpeciesAbility(actionType),
+        executionModel: 'species-activated-ability',
+        uses: ability.uses || null,
+        speciesAbility: {
+          ...ability,
+          id: abilityId,
+          actionType,
+          sourceSpecies: ability.sourceSpecies || pendingContext.identity?.name || ''
+        },
+        specialAbility: {
+          id: abilityId,
+          name: ability.name || abilityId,
+          sourceType: 'species',
+          sourceName: ability.sourceSpecies || pendingContext.identity?.name || '',
+          grantType: 'species',
+          category: ability.category || 'species-utility',
+          automation: 'species-activated-ability',
+          description: ability.description || ''
+        }
+      },
+      flags: {
+        swse: {
+          isSpeciesAbility: true,
+          speciesGranted: true,
+          sourceSpecies: ability.sourceSpecies || pendingContext.identity?.name || '',
+          sourceTrait: ability.sourceTrait || ability.name || ability.id,
+          speciesAbilityId: abilityId,
+          speciesAbilityCategory: ability.category || 'species-utility',
+          speciesAbilityTrigger: ability.trigger || null,
+          autoEquipped: true
+        }
+      }
+    };
+
+    if (actionType === 'reaction') {
+      reactionKeys.push(`species:${abilityId}`);
+    }
+
+    itemsToCreate.push(itemData);
+  }
+
+  if (abilities.length) flags['flags.swse.activeSpeciesAbilities'] = abilities;
+  if (reactionKeys.length) flags['flags.swse.speciesReactionKeys'] = reactionKeys;
+  return { items: itemsToCreate, flags };
+}
+
+function _actionCostForSpeciesAbility(actionType) {
+  const cost = { standard: 0, move: 0, swift: 0 };
+  switch (actionType) {
+    case 'full-round':
+      cost.standard = 1;
+      cost.move = 1;
+      cost.swift = 1;
+      break;
+    case 'standard':
+      cost.standard = 1;
+      break;
+    case 'move':
+      cost.move = 1;
+      break;
+    case 'swift':
+      cost.swift = 1;
+      break;
+    case 'reaction':
+    case 'free':
+    default:
+      break;
+  }
+  return cost;
+}
+
+function _slugifySpeciesAbility(value) {
+  return String(value || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 /**
  * Reconcile old species items when species changes during chargen.
  * Identifies and marks items from previous species for cleanup.
@@ -492,15 +650,24 @@ function _ensureIdempotence(actor, pendingContext, proposedMutations) {
     results.mutations.itemsToDelete = reconciliation.itemsToDelete;
   }
 
-  // If we have existing weapons from THIS species, we're re-applying
-  // Don't create duplicates - but still update if needed
-  if (existingNaturalWeapons.length > 0 && proposedMutations.itemsToCreate?.length > 0) {
-    // Skip creation to avoid duplicates
-    SWSELogger.log('[CanonicalSpecies] Skipping natural weapon creation (already exist)', {
-      species: pendingContext.identity.name,
-      existing: existingNaturalWeapons.length,
+  // If we have existing species-granted items from THIS species, do not recreate duplicates.
+  if (proposedMutations.itemsToCreate?.length > 0) {
+    const existingSpeciesItems = new Set((actor.items || [])
+      .filter(item => item.flags?.swse?.speciesGranted && item.flags?.swse?.sourceSpecies === pendingContext.identity.name)
+      .map(item => `${item.type}:${item.flags?.swse?.speciesAbilityId || item.flags?.swse?.sourceTrait || item.name}`));
+
+    proposedMutations.itemsToCreate = proposedMutations.itemsToCreate.filter(item => {
+      const key = `${item.type}:${item.flags?.swse?.speciesAbilityId || item.flags?.swse?.sourceTrait || item.name}`;
+      return !existingSpeciesItems.has(key);
     });
-    delete proposedMutations.itemsToCreate;
+
+    if (proposedMutations.itemsToCreate.length === 0) {
+      SWSELogger.log('[CanonicalSpecies] Skipping species item creation (already exists)', {
+        species: pendingContext.identity.name,
+        existingNaturalWeapons: existingNaturalWeapons.length,
+      });
+      delete proposedMutations.itemsToCreate;
+    }
   }
 
   return results;

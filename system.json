@@ -503,6 +503,13 @@
       "path": "packs/combat-actions.db"
     },
     {
+      "name": "special-abilities",
+      "label": "Special Abilities",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/special-abilities.db"
+    },
+    {
       "name": "ship-combat-actions",
       "label": "Ship Combat Actions",
       "type": "Item",

@@ -75,7 +75,7 @@ export class DropHandler {
     // Update abilities (base only)
     if (template.abilities) {
       for (const [key, value] of Object.entries(template.abilities)) {
-        updates[`system.attributes.${key}.base`] = value.base;
+        updates[`system.abilities.${key}.base`] = value.base;
         // PHASE 2: Derived totals go to system.derived.*, not system.*
         updates[`system.derived.attributes.${key}.total`] = value.total;
       }
@@ -248,15 +248,15 @@ export class DropHandler {
     await ActorEngine.createEmbeddedDocuments(actor, 'Item', [species.toObject()]);
 
     // Parse racial ability bonuses from string format (e.g., "+2 Dex, -2 Con")
-    const abilityMods = this._parseAbilityString(species.system.attributes || 'None');
+    const abilityMods = species.system.abilityMods || this._parseAbilityString(species.system.abilities || species.system.attributes || 'None');
 
     const updates = {
-      'system.attributes.str.racial': abilityMods.str || 0,
-      'system.attributes.dex.racial': abilityMods.dex || 0,
-      'system.attributes.con.racial': abilityMods.con || 0,
-      'system.attributes.int.racial': abilityMods.int || 0,
-      'system.attributes.wis.racial': abilityMods.wis || 0,
-      'system.attributes.cha.racial': abilityMods.cha || 0,
+      'system.abilities.str.racial': abilityMods.str || 0,
+      'system.abilities.dex.racial': abilityMods.dex || 0,
+      'system.abilities.con.racial': abilityMods.con || 0,
+      'system.abilities.int.racial': abilityMods.int || 0,
+      'system.abilities.wis.racial': abilityMods.wis || 0,
+      'system.abilities.cha.racial': abilityMods.cha || 0,
       'system.size': species.system.size || 'Medium',
       'system.speed': parseInt(species.system.speed, 10) || 6,
       'system.race': species.name  // Store species name for display
@@ -364,12 +364,12 @@ export class DropHandler {
     if (!confirm) {return false;}
 
     const updates = {
-      'system.attributes.str.base': chassis.system.attributes?.str || 10,
-      'system.attributes.dex.base': chassis.system.attributes?.dex || 10,
-      'system.attributes.con.base': chassis.system.attributes?.con || 10,
-      'system.attributes.int.base': chassis.system.attributes?.int || 10,
-      'system.attributes.wis.base': chassis.system.attributes?.wis || 10,
-      'system.attributes.cha.base': chassis.system.attributes?.cha || 10,
+      'system.abilities.str.base': chassis.system.abilities?.str?.base || chassis.system.attributes?.str || 10,
+      'system.abilities.dex.base': chassis.system.abilities?.dex?.base || chassis.system.attributes?.dex || 10,
+      'system.abilities.con.base': chassis.system.abilities?.con?.base || chassis.system.attributes?.con || 10,
+      'system.abilities.int.base': chassis.system.abilities?.int?.base || chassis.system.attributes?.int || 10,
+      'system.abilities.wis.base': chassis.system.abilities?.wis?.base || chassis.system.attributes?.wis || 10,
+      'system.abilities.cha.base': chassis.system.abilities?.cha?.base || chassis.system.attributes?.cha || 10,
       'system.hp.max': chassis.system.hp || 30,
       'system.hp.value': chassis.system.hp || 30,
       'system.speed': parseInt(chassis.system.speed, 10) || 6

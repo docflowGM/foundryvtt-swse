@@ -345,7 +345,34 @@
             "issues": []
           }
         },
-        "relationships": []
+        "relationships": [],
+        "speciesVariant": {
+          "id": "",
+          "label": "",
+          "source": ""
+        },
+        "speciesRules": {
+          "primitive": false,
+          "suppressedClassProficiencies": [],
+          "noConstitution": false,
+          "retainsConstitution": false,
+          "speciesActsAsDroid": false,
+          "droidBuilder": null
+        },
+        "immunities": {
+          "force": false,
+          "poison": false,
+          "drowning": false,
+          "radiation": false,
+          "vacuum": false,
+          "atmosphericHazardsNoncorrosive": false,
+          "species": {
+            "immune": [],
+            "resistant": []
+          }
+        },
+        "specialAbilities": [],
+        "abilityGrants": []
       }
     },
     "character": {
@@ -575,6 +602,95 @@
         "int": 0,
         "wis": 0,
         "cha": 0
+      },
+      "size": "Medium",
+      "speed": 6,
+      "movement": {
+        "walk": 6,
+        "swim": null,
+        "fly": null,
+        "climb": null,
+        "hover": null,
+        "glide": null,
+        "burrow": null,
+        "bySize": {}
+      },
+      "abilities": "None",
+      "abilityMods": {
+        "str": 0,
+        "dex": 0,
+        "con": 0,
+        "int": 0,
+        "wis": 0,
+        "cha": 0
+      },
+      "abilityChoice": null,
+      "skillBonuses": [],
+      "special": [],
+      "canonicalTraits": [],
+      "languages": [],
+      "variants": [],
+      "canonicalStats": {},
+      "noConstitution": false,
+      "retainsConstitution": false,
+      "tags": [],
+      "source": "",
+      "primitive": false,
+      "suppressedClassProficiencies": [],
+      "droidBuilder": null,
+      "naturalWeapons": [],
+      "speciesActsAsDroid": false,
+      "description": "",
+      "canonicalName": "",
+      "costNumeric": null,
+      "visionTraits": [],
+      "movementTraits": [],
+      "environmentalTraits": [],
+      "techTraits": [],
+      "forceTraits": [],
+      "socialTraits": [],
+      "combatTraits": {
+        "naturalArmor": 0,
+        "weaponProficiencies": [],
+        "otherTraits": []
+      },
+      "bonusFeats": 0,
+      "bonusTrainedSkills": 0,
+      "variantProfile": {
+        "id": "",
+        "label": "",
+        "source": "",
+        "description": "",
+        "size": "Medium",
+        "speed": 6,
+        "movement": {
+          "walk": 6,
+          "swim": null,
+          "fly": null,
+          "climb": null,
+          "hover": null,
+          "glide": null,
+          "burrow": null,
+          "bySize": {}
+        },
+        "abilityMods": {
+          "str": 0,
+          "dex": 0,
+          "con": 0,
+          "int": 0,
+          "wis": 0,
+          "cha": 0
+        },
+        "abilityChoice": null,
+        "languages": [],
+        "special": [],
+        "traits": []
+      },
+      "activeSpeciesAbilities": [],
+      "speciesActivatedAbilities": [],
+      "immunities": {
+        "immune": [],
+        "resistant": []
       }
     },
     "talenttree": {
@@ -586,12 +702,48 @@
       "description": ""
     },
     "combat-action": {
-      "templates": ["base"],
+      "templates": [
+        "base"
+      ],
       "actionType": "standard",
       "actionCost": {
         "standard": 0,
         "move": 0,
         "swift": 0
+      },
+      "description": "",
+      "source": "",
+      "executionModel": "",
+      "uses": null,
+      "speciesAbility": {
+        "id": "",
+        "name": "",
+        "sourceSpecies": "",
+        "actionType": "standard",
+        "frequency": "atWill",
+        "category": "species-utility",
+        "attack": {},
+        "damage": {},
+        "effect": {},
+        "duration": {},
+        "variable": {},
+        "conditionCost": {},
+        "featModifiers": [],
+        "description": ""
+      },
+      "specialAbility": {
+        "id": "",
+        "name": "",
+        "sourceType": "",
+        "sourceName": "",
+        "grantType": "",
+        "category": "",
+        "automation": "",
+        "description": "",
+        "passiveSkillBonuses": [],
+        "rerolls": [],
+        "naturalWeaponRiders": [],
+        "immunities": []
       }
     },
     "attribute": {

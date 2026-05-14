@@ -58,6 +58,7 @@ export function buildClassGrantLedger(actor, classSelection, pendingState = {}) 
     grantedFeats: [],
     grantedProficiencies: [],
     forceSensitive: false,
+    suppressedGrants: [],
     errors: [],
   };
 
@@ -94,11 +95,26 @@ export function buildClassGrantLedger(actor, classSelection, pendingState = {}) 
       return ledger;
     }
 
+    const primitiveProfile = getPrimitiveSuppressionProfile(pendingState, actor);
+    const grantsAfterSpeciesSuppression = [];
+    for (const grantName of rawGrants) {
+      const cleanName = String(grantName || '').replace(/\*$/, '');
+      if (primitiveProfile.suppressedNames.has(normalizeGrantName(cleanName))) {
+        ledger.suppressedGrants.push({
+          name: cleanName,
+          reason: 'Primitive species do not receive this starting class proficiency.',
+          source: primitiveProfile.source,
+        });
+        continue;
+      }
+      grantsAfterSpeciesSuppression.push(grantName);
+    }
+
     // Separate conditional (*) from unconditional grants
     const unconditionalGrants = [];
     const conditionalGrants = [];
 
-    for (const grantName of rawGrants) {
+    for (const grantName of grantsAfterSpeciesSuppression) {
       const isConditional = grantName.endsWith('*');
       const cleanName = isConditional ? grantName.slice(0, -1) : grantName;
 
@@ -180,6 +196,7 @@ export function buildClassGrantLedger(actor, classSelection, pendingState = {}) 
       grantedFeatsCount: ledger.grantedFeats.length,
       grantedProficienciesCount: ledger.grantedProficiencies.length,
       forceSensitive: ledger.forceSensitive,
+      suppressedGrants: ledger.suppressedGrants,
     });
 
     return ledger;
@@ -208,6 +225,47 @@ export function mergeLedgerIntoPending(pending = {}, ledger = {}) {
     ...pending,
     grantedFeats: ledger.grantedFeats || [],
     grantedProficiencies: ledger.grantedProficiencies || [],
+    suppressedClassGrants: ledger.suppressedGrants || [],
     forceSensitive: pending.forceSensitive || ledger.forceSensitive || false,
+  };
+}
+
+function normalizeGrantName(name) {
+  return String(name || '')
+    .toLowerCase()
+    .replace(/weapons\)/g, 'weapon)')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getPrimitiveSuppressionProfile(pendingState = {}, actor = null) {
+  const context = pendingState.pendingSpeciesContext || pendingState.speciesContext || null;
+  const rules = context?.metadata?.speciesRules || context?.ledger?.rules || pendingState.speciesRules || {};
+  const suppressed = new Set();
+  const explicit = [
+    ...(Array.isArray(rules.suppressedClassProficiencies) ? rules.suppressedClassProficiencies : []),
+    ...(Array.isArray(pendingState.suppressedClassProficiencies) ? pendingState.suppressedClassProficiencies : []),
+    ...(Array.isArray(actor?.flags?.swse?.suppressedClassProficiencies) ? actor.flags.swse.suppressedClassProficiencies : []),
+  ];
+
+  const traitIds = [
+    ...(Array.isArray(context?.traits) ? context.traits.map(t => t?.id || t?.name) : []),
+    ...(Array.isArray(actor?.flags?.swse?.speciesTraitIds) ? actor.flags.swse.speciesTraitIds : []),
+  ].map(value => String(value || '').toLowerCase());
+
+  const isPrimitive = !!(rules.primitive || pendingState.primitiveSpecies || actor?.flags?.swse?.primitiveSpecies || traitIds.includes('primitive'));
+  if (isPrimitive && explicit.length === 0) {
+    explicit.push(
+      'Weapon Proficiency (Heavy Weapons)',
+      'Weapon Proficiency (Pistols)',
+      'Weapon Proficiency (Rifles)'
+    );
+  }
+
+  for (const name of explicit) suppressed.add(normalizeGrantName(name));
+  return {
+    isPrimitive,
+    suppressedNames: suppressed,
+    source: context?.identity?.name || actor?.system?.species || 'species',
   };
 }

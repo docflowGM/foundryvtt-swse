@@ -86,8 +86,22 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
       return null;
     }
 
-    // Step 2: Build full Species Grant Ledger via canonical builder
-    const ledger = await SpeciesGrantLedgerBuilder.build(speciesEntry);
+    // Step 2: Apply selected variant profile, if any, then build full Species Grant Ledger.
+    const selectedVariantId = typeof speciesIdentity === 'object'
+      ? (speciesIdentity.variantId || speciesIdentity.selectedVariantId || speciesIdentity.selectedVariant?.id || null)
+      : null;
+    const selectedVariant = selectedVariantId
+      ? (speciesEntry.variants || []).find(variant => String(variant?.id) === String(selectedVariantId))
+      : null;
+    const variantAppliedSpeciesEntry = selectedVariant
+      ? _applyVariantProfile(speciesEntry, selectedVariant)
+      : speciesEntry;
+    const selectedAbilityChoice = typeof speciesIdentity === 'object'
+      ? (speciesIdentity.selectedAbilityChoice || speciesIdentity.abilityChoiceSelection || null)
+      : null;
+    const effectiveSpeciesEntry = _applyAbilityChoiceProfile(variantAppliedSpeciesEntry, selectedAbilityChoice);
+
+    const ledger = await SpeciesGrantLedgerBuilder.build(effectiveSpeciesEntry);
     if (!ledger) {
       SWSELogger.warn('[PendingSpeciesContext] Failed to build ledger for:', speciesEntry.name);
       return null;
@@ -103,8 +117,15 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
       identity: {
         id: speciesEntry.id,
         name: speciesEntry.name,
-        source: speciesEntry.source || 'Unknown',
-        doc: speciesEntry, // Keep original for reference
+        source: effectiveSpeciesEntry.source || speciesEntry.source || 'Unknown',
+        doc: effectiveSpeciesEntry, // Keep effective profile for reference
+        baseDoc: speciesEntry,
+        variant: selectedVariant ? {
+          id: selectedVariant.id,
+          label: selectedVariant.label || 'Variant',
+          source: selectedVariant.source || null,
+        } : null,
+        abilityChoice: selectedAbilityChoice ? { ...selectedAbilityChoice } : null,
       },
 
       physical: {
@@ -131,11 +152,21 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
         createdAt: Date.now(),
         source,
         actorType,
+        selectedVariant: selectedVariant ? {
+          id: selectedVariant.id,
+          label: selectedVariant.label || 'Variant',
+          source: selectedVariant.source || null,
+        } : null,
+        abilityChoice: selectedAbilityChoice ? { ...selectedAbilityChoice } : null,
+        attributeGenerationOverride: _buildAttributeGenerationOverride(effectiveSpeciesEntry, selectedAbilityChoice),
+        droidBuilder: ledger.rules?.droidBuilder || null,
+        speciesRules: ledger.rules || {},
       },
     };
 
     SWSELogger.log('[PendingSpeciesContext] Built context for:', {
       species: speciesEntry.name,
+      variant: selectedVariant?.label || null,
       source,
       actorType,
       featsRequired: entitlements.featsRequired,
@@ -147,6 +178,138 @@ export async function buildPendingSpeciesContext(actor, speciesIdentity, options
     SWSELogger.error('[PendingSpeciesContext] Error building context:', err);
     return null;
   }
+}
+
+
+/**
+ * Overlay an alternate species profile onto the base registry entry. This keeps
+ * one visible species row while allowing the selected variant to drive ability
+ * modifiers, movement, languages, and trait grants during materialization.
+ * @private
+ */
+function _applyVariantProfile(speciesEntry, variant) {
+  if (!speciesEntry || !variant) return speciesEntry;
+  const abilityScores = variant.abilityMods && typeof variant.abilityMods === 'object'
+    ? { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0, ...variant.abilityMods }
+    : speciesEntry.abilityScores;
+  return {
+    ...speciesEntry,
+    id: speciesEntry.id,
+    name: speciesEntry.name,
+    source: variant.source || speciesEntry.source,
+    size: variant.size || speciesEntry.size,
+    speed: Number.isFinite(Number(variant.speed)) ? Number(variant.speed) : speciesEntry.speed,
+    movement: variant.movement && typeof variant.movement === 'object' ? variant.movement : speciesEntry.movement,
+    rawAbilities: variant.abilities || speciesEntry.rawAbilities,
+    abilityScores,
+    abilityChoice: variant.abilityChoice || speciesEntry.abilityChoice || null,
+    skillBonuses: Array.isArray(variant.skillBonuses) && variant.skillBonuses.length ? variant.skillBonuses : speciesEntry.skillBonuses,
+    abilities: Array.isArray(variant.special) && variant.special.length ? [...variant.special] : speciesEntry.abilities,
+    canonicalTraits: Array.isArray(variant.traits) && variant.traits.length ? variant.traits : speciesEntry.canonicalTraits,
+    languages: Array.isArray(variant.languages) && variant.languages.length ? variant.languages : speciesEntry.languages,
+    selectedVariantId: variant.id,
+    selectedVariant: {
+      id: variant.id,
+      label: variant.label || 'Variant',
+      source: variant.source || null,
+    },
+  };
+}
+
+
+/**
+ * Apply a selected species ability-choice package to the effective species
+ * profile. This is used for species such as Arkanian Offshoot (+2 Str or Dex,
+ * -2 Con) while keeping one visible species row in the browser.
+ * @private
+ */
+function _applyAbilityChoiceProfile(speciesEntry, selectedChoice) {
+  if (!speciesEntry || !selectedChoice) return speciesEntry;
+  const abilityChoice = speciesEntry.abilityChoice || speciesEntry.system?.abilityChoice || null;
+  if (!abilityChoice || typeof abilityChoice !== 'object') return speciesEntry;
+
+  const choiceMods = selectedChoice.mods && typeof selectedChoice.mods === 'object'
+    ? selectedChoice.mods
+    : null;
+  if (!choiceMods) return speciesEntry;
+
+  const fixed = _normalizeAbilityMap(abilityChoice.fixed || {});
+  const chosen = _normalizeAbilityMap(choiceMods || {});
+  const abilityScores = { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0, ...fixed, ...chosen };
+  return {
+    ...speciesEntry,
+    abilityScores,
+    selectedAbilityChoice: {
+      id: selectedChoice.id || selectedChoice.ability || 'choice',
+      label: selectedChoice.label || selectedChoice.ability || 'Choice',
+      mods: chosen,
+    },
+  };
+}
+
+function _normalizeAbilityMap(raw = {}) {
+  const keyMap = {
+    str: 'str', strength: 'str', Str: 'str', Strength: 'str', STR: 'str',
+    dex: 'dex', dexterity: 'dex', Dex: 'dex', Dexterity: 'dex', DEX: 'dex',
+    con: 'con', constitution: 'con', Con: 'con', Constitution: 'con', CON: 'con',
+    int: 'int', intelligence: 'int', Int: 'int', Intelligence: 'int', INT: 'int',
+    wis: 'wis', wisdom: 'wis', Wis: 'wis', Wisdom: 'wis', WIS: 'wis',
+    cha: 'cha', charisma: 'cha', Cha: 'cha', Charisma: 'cha', CHA: 'cha',
+  };
+  const out = {};
+  for (const [key, value] of Object.entries(raw || {})) {
+    const normalized = keyMap[key] || String(key || '').toLowerCase();
+    if (!['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(normalized)) continue;
+    const numeric = Number(value);
+    if (Number.isFinite(numeric) && numeric !== 0) out[normalized] = numeric;
+  }
+  return out;
+}
+
+function _buildAttributeGenerationOverride(speciesEntry, selectedChoice) {
+  const abilityChoice = speciesEntry?.abilityChoice || speciesEntry?.system?.abilityChoice || null;
+  if (!abilityChoice || abilityChoice.type !== 'fixedArray') return null;
+
+  const fixedScores = {
+    str: 15,
+    dex: 13,
+    con: 10,
+    int: 12,
+    wis: 10,
+    cha: 8,
+    ..._normalizeAbilityMap(abilityChoice.fixedScores || speciesEntry?.fixedAbilityScores || {}),
+  };
+
+  const bonusChoices = Array.isArray(abilityChoice.bonusChoices) && abilityChoice.bonusChoices.length
+    ? abilityChoice.bonusChoices.map(key => String(key).toLowerCase()).filter(key => ['str','dex','con','int','wis','cha'].includes(key))
+    : ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+  const allocationPoints = Number(abilityChoice.allocationPoints ?? abilityChoice.bonusPoints ?? abilityChoice.bonusValue ?? 2) || 2;
+  const maxPerAbility = Number(abilityChoice.maxPerAbility ?? 1) || 1;
+  const selectedAbility = selectedChoice?.ability || selectedChoice?.id || null;
+  const allocations = {};
+  if (selectedAbility && bonusChoices.includes(selectedAbility)) {
+    allocations[selectedAbility] = Math.min(allocationPoints, Number(abilityChoice.bonusValue ?? allocationPoints) || allocationPoints);
+  }
+
+  const finalScores = { ...fixedScores };
+  for (const [ability, amount] of Object.entries(allocations)) {
+    finalScores[ability] = Number(finalScores[ability] || 0) + Number(amount || 0);
+  }
+
+  return {
+    mode: 'fixed-array-plus-choice',
+    label: abilityChoice.label || 'Republic Clone fixed array',
+    helpText: abilityChoice.helpText || 'Republic Clones start from their canonical array, then distribute two +1 attribute increases like the level 4 attribute increase step.',
+    fixedScores,
+    bonusChoices,
+    allocationPoints,
+    maxPerAbility,
+    allocationMode: abilityChoice.allocationMode || 'level-4-two-abilities',
+    requiresGmApprovalOnOverride: abilityChoice.requiresGmApprovalOnOverride !== false,
+    selectedBonusAbility: selectedAbility,
+    allocations,
+    finalScores,
+  };
 }
 
 /**
@@ -210,6 +373,10 @@ function _extractEntitlements(speciesName, actorType, isDroid, ledger) {
   if (ledger.skills && Array.isArray(ledger.skills)) {
     entitlements.skills = [...ledger.skills];
   }
+
+  // Structured species rules for downstream grant filters and builder steps
+  entitlements.speciesRules = ledger.rules || {};
+  entitlements.suppressedClassProficiencies = ledger.rules?.suppressedClassProficiencies || [];
 
   // Movement bonus (if any)
   if (ledger.physical?.movements?.walk) {

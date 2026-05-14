@@ -36,6 +36,9 @@
               {{#if this.badgeLabel}}
                 <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
               {{/if}}
+              {{#if this.hasVariants}}
+                <span class="swse-option-card__badge prog-species-row__variant-badge">{{this.variantCount}} options</span>
+              {{/if}}
             </div>
             {{#if this.size}}
               <div class="prog-species-row__stats">

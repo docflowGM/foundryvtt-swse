@@ -181,6 +181,12 @@ export class SpeciesGrantLedgerBuilder {
       // Extract natural weapons
       this._populateNaturalWeapons(ledger, doc);
 
+      // Extract activated species abilities as actor-ingestible actions
+      this._populateActivatedSpeciesAbilities(ledger, doc);
+
+      // Extract advisory immunity/resistance metadata for actor/system fields
+      this._populateImmunities(ledger, doc);
+
       // Validate and finalize
       this._validateLedger(ledger);
 
@@ -252,12 +258,20 @@ export class SpeciesGrantLedgerBuilder {
         str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0
       },
       naturalWeapons: [],
+      activeSpeciesAbilities: [],
       traits: [],
       languages: {
         automatic: [],
         bonus: [],
         canSpeakAll: false,
         understands: []
+      },
+      rules: {
+        primitive: false,
+        suppressedClassProficiencies: [],
+        noConstitution: false,
+        retainsConstitution: false,
+        droidBuilder: null
       },
       proficiencies: {
         weapons: [],
@@ -284,7 +298,7 @@ export class SpeciesGrantLedgerBuilder {
     ledger.identity.id = doc._id || doc.id || null;
     ledger.identity.name = doc.name || null;
     ledger.identity.slug = this._slugify(doc.name);
-    ledger.identity.source = doc.system?.source || null;
+    ledger.identity.source = doc.system?.source || doc.source || null;
     ledger.identity.uuid = doc.uuid || null;
   }
 
@@ -295,20 +309,45 @@ export class SpeciesGrantLedgerBuilder {
   static _populatePhysical(ledger, doc) {
     const system = doc.system || {};
 
-    // Size
-    if (system.size) {
-      ledger.physical.size = String(system.size).trim();
+    // Size. Support both compendium Item.system and normalized SpeciesRegistryEntry shapes.
+    const rawSize = system.size ?? doc.size ?? null;
+    if (rawSize) {
+      ledger.physical.size = String(rawSize).trim();
     }
 
-    // Speed - base walk speed
-    if (system.speed) {
-      ledger.physical.movements.walk = Number(system.speed);
+    // Speed and structured movement modes. Prefer explicit canonical movement data over text heuristics.
+    const explicitMovement = (system.movement && typeof system.movement === 'object')
+      ? system.movement
+      : (doc.movement && typeof doc.movement === 'object' ? doc.movement : {});
+    const maybeNumber = value => {
+      if (value === null || value === undefined || value === '') return null;
+      const number = Number(value);
+      return Number.isFinite(number) ? number : null;
+    };
+
+    const walk = maybeNumber(explicitMovement.walk ?? system.walkSpeed ?? system.speed ?? doc.speed);
+    const swim = maybeNumber(explicitMovement.swim ?? system.swimSpeed ?? doc.swimSpeed);
+    const fly = maybeNumber(explicitMovement.fly ?? system.flySpeed ?? doc.flySpeed);
+    const climb = maybeNumber(explicitMovement.climb ?? system.climbSpeed ?? doc.climbSpeed);
+    const hover = maybeNumber(explicitMovement.hover ?? system.hoverSpeed ?? doc.hoverSpeed);
+
+    if (walk !== null) ledger.physical.movements.walk = walk;
+    if (swim !== null) ledger.physical.movements.swim = swim;
+    if (fly !== null) ledger.physical.movements.fly = fly;
+    if (climb !== null) ledger.physical.movements.climb = climb;
+    if (hover !== null) ledger.physical.movements.hover = hover;
+
+    if (explicitMovement.bySize && typeof explicitMovement.bySize === 'object') {
+      ledger.physical.movements.bySize = explicitMovement.bySize;
     }
 
     // Try to extract other movement modes from special traits
     // This is parsed from descriptions for now
-    if (system.special && Array.isArray(system.special)) {
-      for (const special of system.special) {
+    const specialList = Array.isArray(system.special)
+      ? system.special
+      : (Array.isArray(doc.abilities) ? doc.abilities : []);
+    if (specialList.length) {
+      for (const special of specialList) {
         const text = String(special).toLowerCase();
         // Heuristic: if mentions fly/flight, assume has fly speed
         if (text.includes('fly') || text.includes('flight')) {
@@ -376,10 +415,13 @@ export class SpeciesGrantLedgerBuilder {
   static _populateAbilities(ledger, doc) {
     const system = doc.system || {};
 
-    // Parse ability string "+2 Wis, -2 Cha" format
-    if (system.abilities) {
-      const mods = this._parseAbilityString(system.abilities);
+    // Parse ability string/object formats. Support normalized registry entries as well.
+    const raw = system.abilities ?? system.abilityMods ?? doc.abilityScores ?? doc.abilityMods ?? null;
+    if (typeof raw === 'string') {
+      const mods = this._parseAbilityString(raw);
       ledger.abilities = { ...ledger.abilities, ...mods };
+    } else if (raw && typeof raw === 'object') {
+      ledger.abilities = { ...ledger.abilities, ...raw };
     }
   }
 
@@ -448,8 +490,11 @@ export class SpeciesGrantLedgerBuilder {
   static _populateLanguages(ledger, doc) {
     const system = doc.system || {};
 
-    if (system.languages && Array.isArray(system.languages)) {
-      ledger.languages.automatic = [...system.languages];
+    const rawLanguages = Array.isArray(system.languages)
+      ? system.languages
+      : (Array.isArray(doc.languages) ? doc.languages : []);
+    if (rawLanguages.length) {
+      ledger.languages.automatic = [...rawLanguages];
     }
 
     // Check for Bonus Languages flag
@@ -489,20 +534,76 @@ export class SpeciesGrantLedgerBuilder {
     const system = doc.system || {};
 
     // From skillBonuses
-    if (system.skillBonuses && Array.isArray(system.skillBonuses)) {
-      for (const skillBonus of system.skillBonuses) {
+    const skillBonuses = Array.isArray(system.skillBonuses)
+      ? system.skillBonuses
+      : (Array.isArray(doc.skillBonuses) ? doc.skillBonuses : []);
+    if (skillBonuses.length) {
+      for (const skillBonus of skillBonuses) {
         const trait = this._classifySkillBonus(skillBonus);
         if (trait) ledger.traits.push(trait);
       }
     }
 
     // From special abilities
-    if (system.special && Array.isArray(system.special)) {
-      for (const special of system.special) {
+    const specialAbilities = Array.isArray(system.special)
+      ? system.special
+      : (Array.isArray(doc.abilities) ? doc.abilities : []);
+    if (specialAbilities.length) {
+      for (const special of specialAbilities) {
         const trait = this._classifySpecial(special);
         if (trait) ledger.traits.push(trait);
       }
     }
+
+    // From canonical trait blocks, when available from the sanitized species pack/registry.
+    const canonicalTraits = Array.isArray(system.canonicalTraits)
+      ? system.canonicalTraits
+      : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
+    for (const canonicalTrait of canonicalTraits) {
+      if (!canonicalTrait?.name) continue;
+      const trait = this._classifySpecial(`${canonicalTrait.name}: ${canonicalTrait.description || ''}`);
+      if (trait) {
+        trait.id = canonicalTrait.id || trait.id;
+        trait.name = canonicalTrait.name;
+        trait.description = canonicalTrait.description || trait.description;
+        ledger.traits.push(trait);
+      }
+    }
+
+    this._populateRuleFlags(ledger, doc);
+  }
+
+  /**
+   * Populate structured species rule flags from sanitized species data and trait text.
+   * @private
+   */
+  static _populateRuleFlags(ledger, doc) {
+    const system = doc.system || {};
+    const specials = [
+      ...(Array.isArray(system.special) ? system.special : []),
+      ...(Array.isArray(doc.abilities) ? doc.abilities : []),
+      ...(Array.isArray(system.canonicalTraits) ? system.canonicalTraits.map(t => t?.name) : []),
+      ...(Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits.map(t => t?.name) : []),
+    ].filter(Boolean).map(value => String(value).toLowerCase());
+
+    const primitive = !!(system.primitive || doc.primitive || specials.some(text => text === 'primitive' || text.startsWith('primitive:')));
+    ledger.rules.primitive = primitive;
+    ledger.rules.suppressedClassProficiencies = Array.isArray(system.suppressedClassProficiencies)
+      ? [...system.suppressedClassProficiencies]
+      : (Array.isArray(doc.suppressedClassProficiencies) ? [...doc.suppressedClassProficiencies] : []);
+    if (primitive && ledger.rules.suppressedClassProficiencies.length === 0) {
+      ledger.rules.suppressedClassProficiencies = [
+        'Weapon Proficiency (Heavy Weapons)',
+        'Weapon Proficiency (Pistols)',
+        'Weapon Proficiency (Rifles)'
+      ];
+    }
+
+    ledger.rules.noConstitution = !!(system.noConstitution || doc.noConstitution);
+    ledger.rules.retainsConstitution = !!(system.retainsConstitution || doc.retainsConstitution);
+    ledger.rules.droidBuilder = (system.droidBuilder && typeof system.droidBuilder === 'object')
+      ? { ...system.droidBuilder }
+      : (doc.droidBuilder && typeof doc.droidBuilder === 'object' ? { ...doc.droidBuilder } : null);
   }
 
   /**
@@ -640,6 +741,36 @@ export class SpeciesGrantLedgerBuilder {
     let classification = 'identity';
 
     // Heuristics for classification
+    if (text === 'primitive' || text.startsWith('primitive:')) {
+      return {
+        id: 'primitive',
+        name: 'Primitive',
+        description: special,
+        type: 'special',
+        classification: 'restriction',
+        passive: [],
+        rerolls: [],
+        grants: [],
+        activated: [],
+        prerequisites: ['primitive'],
+      };
+    }
+
+    if (text.includes('droid shell') || text.includes('droid traits')) {
+      return {
+        id: text.includes('droid shell') ? 'droid-shell' : 'droid-traits',
+        name: text.includes('droid shell') ? 'Droid Shell' : 'Droid Traits',
+        description: special,
+        type: 'special',
+        classification: 'identity',
+        passive: [],
+        rerolls: [],
+        grants: [],
+        activated: [],
+        prerequisites: ['droid'],
+      };
+    }
+
     if (text.includes('force-sensitive')) {
       return {
         id: 'force-sensitive',
@@ -673,11 +804,417 @@ export class SpeciesGrantLedgerBuilder {
     };
   }
 
+
+  /**
+   * Populate advisory immunity/resistance metadata.
+   * The current runtime deliberately records these for GM/system visibility rather
+   * than blocking every edge case automatically.
+   * @private
+   */
+  static _populateImmunities(ledger, doc) {
+    const system = doc.system || {};
+    const canonicalTraits = Array.isArray(system.canonicalTraits)
+      ? system.canonicalTraits
+      : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
+    const addImmune = (key, label, sourceTrait, notes = '') => {
+      if (!key) return;
+      if (ledger.immunities.immune.some(entry => entry.key === key)) return;
+      ledger.immunities.immune.push({ key, label: label || key, sourceTrait, notes });
+    };
+    const addResistant = (key, label, sourceTrait, value = null, notes = '') => {
+      if (!key) return;
+      if (ledger.immunities.resistant.some(entry => entry.key === key && entry.sourceTrait === sourceTrait)) return;
+      ledger.immunities.resistant.push({ key, label: label || key, sourceTrait, value, notes });
+    };
+
+    const species = this._slugify(ledger.identity?.name || system.canonicalName || doc.name || '');
+    const text = canonicalTraits.map(t => `${t?.name || ''} ${t?.description || ''}`).join('\n').toLowerCase();
+
+    if (text.includes('immune to poison') || text.includes('immune to poison,')) addImmune('poison', 'Poison', 'Droid Traits');
+    if (text.includes('vacuum')) addImmune('vacuum', 'Vacuum', 'Droid Shell / Droid Traits');
+    if (text.includes('radiation') && text.includes('immune')) addImmune('radiation', 'Radiation', 'Droid Shell / Droid Traits');
+    if (text.includes('noncorrosive atmospheric hazards')) addImmune('atmosphericHazardsNoncorrosive', 'Noncorrosive Atmospheric Hazards', 'Droid Shell');
+    if (text.includes("can't drown") || text.includes('cannot drown')) addImmune('drowning', 'Drowning', 'Breathe Underwater');
+    if (text.includes('force immunity')) addImmune('force', 'Force Effects', 'Force Immunity', 'GM-facing flag: force targeting/availability remains adjudicated by the GM and Force systems.');
+    if (text.includes('force blind') || species === 'ssi-ruuk' || species === 'rakata') addImmune('forceSensitivity', 'Force Sensitivity Availability', 'Force Blind', 'Cannot take Force Sensitivity or make normal Use the Force checks unless another rule explicitly permits it.');
+
+    for (const trait of canonicalTraits) {
+      const name = String(trait?.name || '');
+      const desc = String(trait?.description || '');
+      const combined = `${name} ${desc}`.toLowerCase();
+      if (combined.includes('resistance') || combined.includes('bonus to') || combined.includes('bonus against')) {
+        if (combined.includes('radiation')) addResistant('radiation', 'Radiation', name, this._extractFirstNumber(combined), desc);
+        if (combined.includes('poison')) addResistant('poison', 'Poison', name, this._extractFirstNumber(combined), desc);
+        if (combined.includes('toxic')) addResistant('toxicAtmosphere', 'Toxic Atmosphere', name, this._extractFirstNumber(combined), desc);
+        if (combined.includes('extreme cold')) addResistant('extremeCold', 'Extreme Cold', name, this._extractFirstNumber(combined), desc);
+        if (combined.includes('extreme heat') || combined.includes('extreme temperatures')) addResistant('extremeTemperature', 'Extreme Temperature', name, this._extractFirstNumber(combined), desc);
+        if (combined.includes('stun')) addResistant('stun', 'Stun', name, this._extractFirstNumber(combined), desc);
+      }
+    }
+  }
+
+  static _extractFirstNumber(text) {
+    const match = String(text || '').match(/[+-]?\d+/);
+    return match ? Number(match[0]) : null;
+  }
+
+  /**
+   * Populate activated species abilities that should become actor actions.
+   * These entries are intentionally structured and feat-aware so runtime engines
+   * can modify behavior without re-parsing prose.
+   * @private
+   */
+  static _populateActivatedSpeciesAbilities(ledger, doc) {
+    const system = doc.system || {};
+    const canonicalTraits = Array.isArray(system.canonicalTraits)
+      ? system.canonicalTraits
+      : (Array.isArray(doc.canonicalTraits) ? doc.canonicalTraits : []);
+    const traitMap = new Map(canonicalTraits
+      .filter(trait => trait?.name)
+      .map(trait => [this._slugify(trait.name), trait]));
+
+    const addAbility = ability => {
+      if (!ability?.id) return;
+      if (ledger.activeSpeciesAbilities.some(existing => existing.id === ability.id)) return;
+      ledger.activeSpeciesAbilities.push({
+        sourceSpecies: ledger.identity.name,
+        sourceSpeciesSlug: ledger.identity.slug,
+        ...ability
+      });
+    };
+
+    if (traitMap.has('rage')) {
+      const trait = traitMap.get('rage');
+      addAbility({
+        id: 'rage',
+        name: 'Rage',
+        actionType: 'swift',
+        frequency: 'day',
+        uses: { max: 'rageEngine', recharge: 'day' },
+        category: 'species-utility',
+        engine: 'RageEngine',
+        duration: { formula: '5 + constitutionModifier', unit: 'round' },
+        description: trait.description || 'Enter a species Rage using the shared RageEngine and apply feat upgrades such as Extra Rage, Dreadful Rage, Controlled Rage, Focused Rage, and Powerful Rage.'
+      });
+    }
+
+    if (traitMap.has('roller')) {
+      const trait = traitMap.get('roller');
+      addAbility({
+        id: 'roller',
+        name: 'Roller',
+        actionType: 'swift',
+        frequency: 'atWill',
+        category: 'species-movement',
+        duration: { formula: 'toggle', unit: 'state' },
+        effect: { speedBonus: 4, restrictedActions: ['move', 'withdraw', 'secondWind', 'dropItem', 'recover', 'run'] },
+        description: trait.description || 'Curl into a rolling movement form, increasing base speed by 4 squares while limiting available actions.'
+      });
+    }
+
+    if (traitMap.has('poison')) {
+      const trait = traitMap.get('poison');
+      addAbility({
+        id: 'natural-weapon-poison',
+        name: 'Natural Weapon Poison',
+        actionType: 'free',
+        frequency: 'onHit',
+        category: 'species-rider',
+        trigger: 'after-natural-weapon-damage',
+        attack: { type: 'special', formula: '1d20 + characterLevel', targetDefense: 'fortitude', descriptor: ['poison'] },
+        effect: { conditionSteps: 1, endTrackOverride: 'immobilized' },
+        description: trait.description || 'After a qualifying natural weapon hit, roll character level vs Fortitude; on success the target moves -1 step on the Condition Track.'
+      });
+    }
+
+    if (traitMap.has('natural-telepath')) {
+      const trait = traitMap.get('natural-telepath');
+      addAbility({
+        id: 'natural-telepath',
+        name: 'Natural Telepath',
+        actionType: 'standard',
+        frequency: 'atWill',
+        category: 'species-utility',
+        checkBonus: 5,
+        forceLikeCheck: true,
+        description: trait.description || 'Use a species-granted telepathy check. Uses Use the Force if trained; otherwise uses Charisma modifier + half level.'
+      });
+    }
+
+    if (traitMap.has('broadcast-telepath')) {
+      const trait = traitMap.get('broadcast-telepath');
+      addAbility({
+        id: 'broadcast-telepath',
+        name: 'Broadcast Telepath',
+        actionType: 'standard',
+        frequency: 'atWill',
+        category: 'species-utility',
+        forceLikeCheck: true,
+        description: trait.description || 'Use a species-granted telepathy check. Uses Use the Force if trained; otherwise uses Charisma modifier + half level.'
+      });
+    }
+
+    if (traitMap.has('bellow')) {
+      const trait = traitMap.get('bellow');
+      addAbility({
+        id: 'bellow',
+        name: 'Bellow',
+        actionType: 'standard',
+        frequency: 'atWill',
+        category: 'species-attack',
+        attack: {
+          type: 'special',
+          formula: '1d20 + characterLevel',
+          targetDefense: 'fortitude',
+          area: '6-square cone',
+          affectsObjects: true
+        },
+        damage: {
+          baseDice: 3,
+          die: 'd6',
+          type: 'sonic',
+          halfOnMiss: true
+        },
+        conditionCost: {
+          baseSteps: 1,
+          perExtraDie: 1,
+          persistent: true
+        },
+        variable: {
+          label: 'Additional sonic damage dice',
+          min: 0,
+          max: 4,
+          step: 1,
+          costPerStep: 1
+        },
+        featModifiers: [
+          {
+            feat: 'Devastating Bellow',
+            changes: { 'damage.baseDice': 4 },
+            description: 'Base Bellow damage becomes 4d6.'
+          },
+          {
+            feat: 'Strong Bellow',
+            changes: {
+              'conditionCost.baseSteps': 0,
+              'variable.max': 6
+            },
+            description: 'The default condition-track cost is negated and the extra-power ceiling increases to +6d6.'
+          }
+        ],
+        description: trait.description || 'Emit a subsonic cone attack against Fortitude Defense.'
+      });
+    }
+
+    if (traitMap.has('confusion')) {
+      const trait = traitMap.get('confusion');
+      addAbility({
+        id: 'confusion',
+        name: 'Confusion',
+        actionType: 'standard',
+        frequency: 'encounter',
+        uses: { max: 1, recharge: 'encounter' },
+        category: 'species-attack',
+        attack: {
+          type: 'skill',
+          skill: 'deception',
+          targetDefense: 'will',
+          area: '6-square burst',
+          descriptor: ['mind-affecting']
+        },
+        effect: {
+          name: 'Confused',
+          duration: 'until-start-of-next-turn',
+          activeEffect: {
+            target: 'threatenedSquares.suppressed',
+            value: 1
+          }
+        },
+        description: trait.description || 'Roll Deception against Will Defense; affected targets do not threaten squares until your next turn.'
+      });
+    }
+
+    if (traitMap.has('shapeshift')) {
+      const trait = traitMap.get('shapeshift');
+      addAbility({
+        id: 'shapeshift',
+        name: 'Shapeshift',
+        actionType: 'full-round',
+        frequency: 'atWill',
+        category: 'species-utility',
+        duration: { formula: 'constitutionScore', unit: 'round' },
+        effect: {
+          modifiers: [{ target: 'skill.deception', value: 10, type: 'species', predicate: 'disguise-appearance' }]
+        },
+        featModifiers: [
+          {
+            feat: 'Metamorph',
+            unlocks: 'sizeChange',
+            description: 'Allows increasing or decreasing size by one step while shapeshifted.'
+          }
+        ],
+        description: trait.description || 'Alter appearance and gain a +10 Species bonus to Deception checks made to disguise appearance.'
+      });
+    }
+
+    if (traitMap.has('energy-surge')) {
+      const trait = traitMap.get('energy-surge');
+      addAbility({
+        id: 'energy-surge',
+        name: 'Energy Surge',
+        actionType: 'swift',
+        frequency: 'encounter',
+        uses: { max: 1, recharge: 'encounter' },
+        category: 'species-utility',
+        duration: { formula: 'constitutionModifierMinimumOne', unit: 'round' },
+        effect: {
+          modifiers: [
+            { target: 'dexterity-based-checks', value: 2, type: 'species' },
+            { target: 'speed.base', value: 'raise-to-8', type: 'species' }
+          ],
+          expirationCost: { conditionSteps: 1, persistent: true }
+        },
+        description: trait.description || 'Gain +2 to Dexterity-based checks and increase base speed to 8 squares briefly, then suffer persistent condition-track strain.'
+      });
+    }
+
+
+    if (traitMap.has('force-blast')) {
+      const trait = traitMap.get('force-blast');
+      addAbility({
+        id: 'force-blast',
+        name: 'Force Blast',
+        actionType: 'standard',
+        frequency: 'encounter',
+        uses: { max: 1, recharge: 'encounter' },
+        category: 'species-attack',
+        attack: {
+          type: 'ability-check',
+          ability: 'cha',
+          formula: '1d20 + charismaModifier',
+          targetDefense: 'reflex',
+          range: '12 squares',
+          lineOfSight: true,
+          doesNotRequireForceSensitivity: true,
+          doesNotRequireTrainedUseTheForce: true
+        },
+        damage: {
+          type: 'force',
+          table: [
+            { dc: 15, dice: '2d6' },
+            { dc: 20, dice: '3d6' },
+            { dc: 25, dice: '4d6' },
+            { dc: 30, dice: '5d6' }
+          ],
+          forcePointBonus: 'halfHeroicLevel'
+        },
+        description: trait.description || 'Use a racial Force Blast as a Charisma-based Force Blast check against Reflex Defense.'
+      });
+    }
+
+    if (traitMap.has('pacifism')) {
+      const trait = traitMap.get('pacifism');
+      addAbility({
+        id: 'pacifism',
+        name: 'Pacifism',
+        actionType: 'standard',
+        frequency: 'atWill',
+        category: 'species-attack',
+        attack: {
+          type: 'skill',
+          skill: 'persuasion',
+          targetDefense: 'will',
+          range: 'line of sight',
+          descriptor: ['mind-affecting', 'language-dependent']
+        },
+        effect: {
+          conditionSteps: 1,
+          nonPhysical: true,
+          duration: 'instant'
+        },
+        description: trait.description || 'Roll Persuasion against Will Defense; on success the target moves -1 step on the Condition Track.'
+      });
+    }
+
+    if (traitMap.has('pheromones')) {
+      const trait = traitMap.get('pheromones');
+      addAbility({
+        id: 'pheromones',
+        name: 'Pheromones',
+        actionType: 'standard',
+        frequency: 'atWill',
+        category: 'species-attack',
+        attack: {
+          type: 'special',
+          formula: '1d20 + characterLevel + charismaModifier',
+          targetDefense: 'fortitude',
+          range: 'adjacent',
+          descriptor: ['inhaled-poison']
+        },
+        effect: {
+          conditionSteps: 1,
+          nonPhysical: true,
+          failureImmunity: '24 hours'
+        },
+        description: trait.description || 'Make a special attack against Fortitude; on success the target moves -1 step on the Condition Track.'
+      });
+    }
+
+    if (traitMap.has('startle')) {
+      const trait = traitMap.get('startle');
+      addAbility({
+        id: 'startle',
+        name: 'Startle',
+        actionType: 'reaction',
+        frequency: 'encounter',
+        uses: { max: 1, recharge: 'encounter' },
+        category: 'species-reaction',
+        trigger: 'when-attacked',
+        attack: {
+          type: 'skill',
+          skill: 'deception',
+          targetDefense: 'will',
+          descriptor: ['mind-affecting']
+        },
+        effect: {
+          attackPenalty: -5,
+          appliesTo: 'triggering attack'
+        },
+        description: trait.description || 'As a reaction when attacked, roll Deception against the attacker\'s Will Defense; on success the triggering attack takes -5.'
+      });
+    }
+  }
+
   /**
    * Populate natural weapons
    * @private
    */
   static _populateNaturalWeapons(ledger, doc) {
+    const system = doc.system || {};
+    const directNaturalWeapons = Array.isArray(system.naturalWeapons)
+      ? system.naturalWeapons
+      : (Array.isArray(doc.naturalWeapons) ? doc.naturalWeapons : []);
+    for (const nw of directNaturalWeapons) {
+      const name = nw.name || 'Natural Weapon';
+      const damageText = String(nw.damage || nw.formula || '1d4');
+      ledger.naturalWeapons.push({
+        id: nw.id || this._slugify(name),
+        name,
+        type: 'weapon',
+        damage: {
+          formula: damageText,
+          type: nw.type || nw.damageType || 'slashing'
+        },
+        attackAbility: nw.attackAbility || 'str',
+        category: nw.category || 'melee',
+        properties: {
+          alwaysArmed: nw.alwaysArmed ?? true,
+          countsAsWeapon: nw.countsAsWeapon ?? true,
+          finesse: nw.finesse ?? false
+        }
+      });
+    }
+
     // Natural weapons come from trait rules of type naturalWeapon
     for (const trait of ledger.traits) {
       for (const rule of trait.rules || []) {

@@ -113,6 +113,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'add-language'(e, t)        { return this._onStepAction(e, t); },
       'remove-language'(e, t)     { return this._onStepAction(e, t); },
       'purchase-system'(e, t)     { return this._onStepAction(e, t); },
+      'select-species-variant'(e, t) { return this._onStepAction(e, t); },
       'remove-system'(e, t)       { return this._onStepAction(e, t); },
       'focus-talent'(e, t)        { return this._onStepAction(e, t); },
       'focus-tree'(e, t)          { return this._onStepAction(e, t); },
@@ -2438,12 +2439,18 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @param {Event} event — the click event from the button
    * @param {HTMLElement} target — the clicked button element
    */
-  _onStepAction(event, target) {
+  async _onStepAction(event, target) {
     event?.preventDefault();
     const actionName = target?.dataset?.action;
     const stepId = this.steps[this.currentStepIndex]?.stepId;
 
     swseLogger.debug(`[ProgressionShell] Step action: ${actionName} on step ${stepId}`);
+
+    const plugin = this.stepPlugins.get(stepId);
+    if (plugin?.handleAction) {
+      const handled = await plugin.handleAction(actionName, event, target, this);
+      if (handled === true) return;
+    }
 
     // Allow the event to bubble to the work-surface element where step plugins
     // have attached their own event listeners in onDataReady()

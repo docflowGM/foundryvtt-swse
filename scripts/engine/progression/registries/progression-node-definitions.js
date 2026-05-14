@@ -69,7 +69,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-robot',
     category: 'canonical',
     modes: ['chargen'],
-    subtypes: ['droid'],
+    subtypes: ['actor', 'droid'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
     dependsOn: [],

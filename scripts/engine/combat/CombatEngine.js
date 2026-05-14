@@ -16,6 +16,7 @@ import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/r
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
+import { SpeciesActivatedAbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/species/species-activated-ability-engine.js";
 
 export class CombatEngine {
 
@@ -530,12 +531,17 @@ export class CombatEngine {
    * @param {string} actionKey - Combat action key
    * @returns {Promise<void>}
    */
-  static async executeAction(actor, actionKey) {
-    if (!actionKey || !actor) return;
+  static async executeAction(actorOrPayload, actionKey = null, options = {}) {
+    const payloadMode = actorOrPayload && typeof actorOrPayload === 'object' && actorOrPayload.actor && !actionKey;
+    const actor = payloadMode ? actorOrPayload.actor : actorOrPayload;
+    const key = payloadMode ? (actorOrPayload.actionId || actorOrPayload.actionKey || actorOrPayload.id) : actionKey;
+    const executionOptions = payloadMode ? actorOrPayload : options;
+
+    if (!key || !actor) return;
 
     // Universal combat actions: format "combat:N" (N = index in combat-actions.json)
-    if (actionKey.startsWith('combat:')) {
-      const actionIndex = parseInt(actionKey.split(':')[1], 10);
+    if (String(key).startsWith('combat:')) {
+      const actionIndex = parseInt(String(key).split(':')[1], 10);
 
       // Coup de Grace is at index 9 in combat-actions.json
       if (actionIndex === 9) {
@@ -543,17 +549,27 @@ export class CombatEngine {
       }
 
       // Future: Add other universal actions here
-      console.warn(`Combat action ${actionKey} not yet implemented`);
+      console.warn(`Combat action ${key} not yet implemented`);
       return;
     }
 
-    // Item-based actions (weapons, abilities)
-    if (actionKey.startsWith('item:')) {
-      console.log(`Item action: ${actionKey}`);
-      return;
+    // Item-based actions. Species activated abilities are materialized as
+    // actor-owned combat-action items and route through SpeciesActivatedAbilityEngine.
+    if (String(key).startsWith('item:')) {
+      const itemId = String(key).split(':')[1];
+      const item = actor.items?.get?.(itemId) || Array.from(actor.items || []).find(candidate => candidate.id === itemId || candidate._id === itemId);
+      if (!item) {
+        ui?.notifications?.warn?.('Action item not found on actor.');
+        return { success: false, reason: 'Item not found', actionKey: key };
+      }
+      if (item.flags?.swse?.isSpeciesAbility || item.flags?.swse?.isActorAbility || item.system?.executionModel === 'species-activated-ability' || item.system?.executionModel === 'actor-special-ability') {
+        return SpeciesActivatedAbilityEngine.use(actor, item, executionOptions);
+      }
+      console.log(`Item action: ${key}`);
+      return { success: false, reason: 'No item action handler', item };
     }
 
-    console.log(`Executing action: ${actionKey} for ${actor.name}`);
+    console.log(`Executing action: ${key} for ${actor.name}`);
   }
 
   /**

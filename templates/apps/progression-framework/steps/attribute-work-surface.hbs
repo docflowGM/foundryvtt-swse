@@ -6,6 +6,7 @@
     </p>
   </div>
 
+  {{#if showMethodSelector}}
   <div class="prog-attribute-method-selector">
     <label class="prog-attribute-method-label">Method:</label>
     <div class="prog-attribute-method-buttons">
@@ -23,6 +24,20 @@
       </button>
     </div>
   </div>
+  {{/if}}
+
+  {{#if isSpeciesFixed}}
+    <div class="prog-attribute-fixed-species">
+      <strong>{{attributeOverride.label}}</strong>
+      <span>{{attributeOverride.helpText}}</span>
+      {{#if speciesFixedAllocation}}
+        <div class="prog-attribute-fixed-species__meter">
+          Clone increases: {{speciesFixedAllocation.spent}} / {{speciesFixedAllocation.total}} allocated
+          {{#if speciesFixedAllocation.remaining}}({{speciesFixedAllocation.remaining}} remaining){{/if}}
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
 
   {{#if showArrayTypeSelector}}
     <div class="prog-attribute-submethod-selector">
@@ -43,12 +58,19 @@
       {{/if}}
     </div>
     <div class="prog-attribute-toolbar__actions">
-      <button class="prog-btn prog-btn--secondary" data-attr-reroll type="button">
-        <i class="fas fa-rotate-right"></i> {{rerollButtonLabel}}
-      </button>
-      <button class="prog-btn prog-btn--secondary" data-attr-auto-assign type="button">
-        <i class="fas fa-wand-magic-sparkles"></i> Auto Assign
-      </button>
+      {{#unless isSpeciesFixed}}
+        <button class="prog-btn prog-btn--secondary" data-attr-reroll type="button">
+          <i class="fas fa-rotate-right"></i> {{rerollButtonLabel}}
+        </button>
+        <button class="prog-btn prog-btn--secondary" data-attr-auto-assign type="button">
+          <i class="fas fa-wand-magic-sparkles"></i> Auto Assign
+        </button>
+      {{/unless}}
+      {{#if showSpeciesFixedOverride}}
+        <button class="prog-btn prog-btn--secondary" data-action="attribute-override-species-fixed" type="button">
+          <i class="fas fa-user-shield"></i> Override Method / Notify GM
+        </button>
+      {{/if}}
       <button class="prog-btn prog-btn--primary" data-action="attribute-lock" type="button">
         <i class="fas fa-lock"></i> {{lockButtonLabel}}
       </button>
@@ -149,8 +171,8 @@
 
         {{#if canAdjust}}
           <div class="prog-attribute-row__pointbuy">
-            <button class="prog-attribute-btn prog-attribute-btn--minus" data-ability="{{id}}" data-delta="-1" type="button">−</button>
-            <button class="prog-attribute-btn prog-attribute-btn--plus" data-ability="{{id}}" data-delta="1" type="button">+</button>
+            <button class="prog-attribute-btn prog-attribute-btn--minus" data-ability="{{id}}" data-delta="-1" type="button" {{#unless canDecrease}}disabled aria-disabled="true"{{/unless}}>−</button>
+            <button class="prog-attribute-btn prog-attribute-btn--plus" data-ability="{{id}}" data-delta="1" type="button" {{#unless canIncrease}}disabled aria-disabled="true"{{/unless}}>+</button>
           </div>
         {{/if}}
       </div>

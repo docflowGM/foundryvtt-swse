@@ -27,7 +27,10 @@ export class SpeciesRerollHandler {
    * @returns {Array} Array of applicable reroll traits
    */
   static getApplicableRerolls(actor, skillKey) {
-    const speciesRerolls = actor.flags?.swse?.speciesRerolls || [];
+    const speciesRerolls = [
+      ...(actor.flags?.swse?.speciesRerolls || []),
+      ...this._getItemGrantedRerolls(actor)
+    ];
     return speciesRerolls.filter(reroll => {
       // Check if this reroll applies to the skill or 'any' roll
       if (reroll.scope !== 'skill' && reroll.scope !== 'any') {
@@ -49,7 +52,10 @@ export class SpeciesRerollHandler {
    * @returns {Array} Array of applicable reroll traits
    */
   static getAvailableRerolls(actor, rollType = 'any') {
-    const speciesRerolls = actor.flags?.swse?.speciesRerolls || [];
+    const speciesRerolls = [
+      ...(actor.flags?.swse?.speciesRerolls || []),
+      ...this._getItemGrantedRerolls(actor)
+    ];
 
     return speciesRerolls.filter(reroll => {
       // Check scope matches

@@ -54,14 +54,17 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       return null;
     }
 
-    // Check if actor is a droid character
-    const isDroid = actor?.system?.isDroid || false;
+    const speciesContext = shell?.progressionSession?.draftSelections?.pendingSpeciesContext || null;
+    const speciesDroidBuilder = speciesContext?.metadata?.droidBuilder || speciesContext?.ledger?.rules?.droidBuilder || null;
+
+    // Check if actor is a droid character or an organic species that requires a droid-shell builder.
+    const isDroid = actor?.system?.isDroid || !!speciesDroidBuilder?.required;
     if (!isDroid) {
       return null;
     }
 
     // Get creation mode from session
-    const creationMode = shell?.progressionSession?.droidContext?.creationMode || 'custom';
+    const creationMode = speciesDroidBuilder?.mode || shell?.progressionSession?.droidContext?.creationMode || 'custom';
     const isStandardModel = creationMode === 'standard-model';
 
     // Get house rule settings
@@ -75,7 +78,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     }
 
     // Get size for RAW defaults
-    const size = actor?.system?.droidSize || 'medium';
+    const size = (speciesDroidBuilder?.defaultSize || actor?.system?.droidSize || 'medium').toLowerCase();
     const defaultLocomotionId = getDroidSizeDefaultLocomotion(size);
     const defaultSpeed = getDroidSizeBaseSpeed(size);
     const costFactor = getDroidSizeCostFactor(size);
@@ -111,8 +114,10 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       isDroid: true,
       creationMode: creationMode,  // 'custom' or 'standard-model'
       isStandardModel: isStandardModel,
-      droidDegree: actor?.system?.droidDegree || '1st-degree',
+      droidDegree: speciesDroidBuilder?.fixedDegree || speciesDroidBuilder?.defaultDegree || actor?.system?.droidDegree || '1st-degree',
       droidSize: size,
+      speciesDroidBuilder: speciesDroidBuilder ? JSON.parse(JSON.stringify(speciesDroidBuilder)) : null,
+      sourceSpecies: speciesContext?.identity?.name || null,
 
       // Core systems (unchanged structure)
       droidSystems: systemsCopy,
@@ -353,17 +358,66 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
         creditsRemaining: credits.remaining,
       },
 
-      availableSystems: {
+      availableSystems: this._applySpeciesDroidConstraintsToPresentation({
         locomotion: enhanceSystemsWithSuggestions(DROID_SYSTEMS.locomotion),
         processors: enhanceSystemsWithSuggestions(DROID_SYSTEMS.processors),
         appendages: enhanceSystemsWithSuggestions(DROID_SYSTEMS.appendages),
-        accessories: enhanceSystemsWithSuggestions(DROID_SYSTEMS.accessories),
+        accessories: DROID_SYSTEMS.accessories,
         locomotionEnhancements: enhanceSystemsWithSuggestions(DROID_SYSTEMS.locomotionEnhancements || []),
         appendageEnhancements: enhanceSystemsWithSuggestions(DROID_SYSTEMS.appendageEnhancements || []),
-      },
+      }, enhanceSystemsWithSuggestions),
 
       costFactor: this._getCostFactor(),
     };
+  }
+
+
+  _applySpeciesDroidConstraintsToPresentation(available, enhanceSystemsWithSuggestions = systems => systems) {
+    const constraints = this._droidState?.speciesDroidBuilder || null;
+    if (!constraints) {
+      return {
+        ...available,
+        accessories: Object.fromEntries(Object.entries(available.accessories || {}).map(([key, systems]) => [key, enhanceSystemsWithSuggestions(systems)])),
+      };
+    }
+
+    const allowedCategories = new Set(constraints.allowedCategories || []);
+    const allowedAccessorySubcategories = new Set(constraints.allowedAccessorySubcategories || []);
+    const allowedAccessoryIds = new Set(constraints.allowedAccessoryIds || []);
+
+    const shouldShowCategory = (category) => allowedCategories.size === 0 || allowedCategories.has(category);
+    const constrainedAccessories = {};
+    for (const [subcategory, systems] of Object.entries(available.accessories || {})) {
+      if (allowedAccessorySubcategories.size && !allowedAccessorySubcategories.has(subcategory)) continue;
+      const filtered = (systems || []).filter(system => allowedAccessoryIds.size === 0 || allowedAccessoryIds.has(system.id));
+      if (filtered.length) constrainedAccessories[subcategory] = enhanceSystemsWithSuggestions(filtered);
+    }
+
+    return {
+      locomotion: shouldShowCategory('locomotion') ? available.locomotion : [],
+      processors: shouldShowCategory('processor') ? available.processors : [],
+      appendages: shouldShowCategory('appendage') ? available.appendages : [],
+      accessories: constrainedAccessories,
+      locomotionEnhancements: shouldShowCategory('locomotionEnhancements') ? available.locomotionEnhancements : [],
+      appendageEnhancements: shouldShowCategory('appendageEnhancements') ? available.appendageEnhancements : [],
+      constraintNote: constraints.notes || null,
+    };
+  }
+
+  _systemAllowedBySpeciesConstraints(category, id, subcategory = null) {
+    const constraints = this._droidState?.speciesDroidBuilder || null;
+    if (!constraints) return true;
+    const allowedCategories = new Set(constraints.allowedCategories || []);
+    if (allowedCategories.size && !allowedCategories.has(category) && !allowedCategories.has(subcategory)) {
+      return false;
+    }
+    if (category === 'accessory') {
+      const allowedAccessorySubcategories = new Set(constraints.allowedAccessorySubcategories || []);
+      const allowedAccessoryIds = new Set(constraints.allowedAccessoryIds || []);
+      if (allowedAccessorySubcategories.size && !allowedAccessorySubcategories.has(subcategory)) return false;
+      if (allowedAccessoryIds.size && !allowedAccessoryIds.has(id)) return false;
+    }
+    return true;
   }
 
   /**
@@ -387,6 +441,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       };
     }
 
+    const constraints = this._droidState?.speciesDroidBuilder || null;
+
     // Normal validation for provisional mode
     // Check required systems
     if (!sys.locomotion) {
@@ -407,9 +463,17 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       issues.push('Over budget - remove systems to proceed');
     }
 
-    // Check for free Heuristic processor requirement
-    if (sys.processor && sys.processor.id !== 'heuristic') {
+    // Check for free Heuristic processor requirement, except constrained replica droid profiles that use species rules.
+    if (!constraints?.fixedDegree && sys.processor && sys.processor.id !== 'heuristic') {
       issues.push('Heuristic processor required for playable droids');
+    }
+
+    if (constraints?.bonusEquipmentChoices) {
+      const allowedIds = new Set(constraints.allowedAccessoryIds || []);
+      const chosen = (sys.accessories || []).filter(acc => !allowedIds.size || allowedIds.has(acc.id)).length;
+      if (chosen > constraints.bonusEquipmentChoices) {
+        issues.push(`${constraints.label || 'Species chassis'} allows only ${constraints.bonusEquipmentChoices} bonus equipment choices`);
+      }
     }
 
     return {
@@ -468,6 +532,13 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     let cost = 0;
 
     try {
+      if (!this._systemAllowedBySpeciesConstraints(category, id, subcategory)) {
+        swseLogger.warn('[DroidBuilderStep] System blocked by species droid-builder constraints', {
+          category, id, subcategory, sourceSpecies: this._droidState?.sourceSpecies,
+        });
+        return false;
+      }
+
       if (category === 'locomotion') {
         system = DROID_SYSTEMS.locomotion.find(s => s.id === id);
         if (system) {
@@ -534,14 +605,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
             cost,
             weight
           });
-
-          credits.spent += cost;
         }
       } else if (category === 'accessory') {
         const accessoryCategory = DROID_SYSTEMS.accessories[subcategory];
         system = accessoryCategory?.find(s => s.id === id);
         if (system) {
-          cost = this._calculateAccessoryCost(system);
+          cost = this._isSpeciesBonusEquipmentChoice(category, id, subcategory) ? 0 : this._calculateAccessoryCost(system);
           const weight = this._calculateWeight(system);
 
           if (cost > credits.remaining) {
@@ -557,8 +626,6 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
             weight,
             data: system
           });
-
-          credits.spent += cost;
         }
       } else if (category === 'enhancement') {
         const enhancement = DROID_SYSTEMS.locomotionEnhancements?.find(e => e.id === id);
@@ -577,13 +644,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
             cost,
             weight: 0
           });
-
-          credits.spent += cost;
         }
       }
 
-      // Update remaining and recalculate totals
-      if (cost > 0 || category !== 'appendage') {
+      // Update remaining and recalculate totals. Cost is applied once here;
+      // species bonus equipment can set cost to 0 before this point.
+      if (cost > 0) {
         credits.spent += cost;
       }
       credits.remaining = credits.base - credits.spent;
@@ -594,6 +660,17 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       swseLogger.error('[DroidBuilderStep.purchaseSystem]', e);
       return false;
     }
+  }
+
+  _isSpeciesBonusEquipmentChoice(category, id, subcategory = null) {
+    const constraints = this._droidState?.speciesDroidBuilder || null;
+    const maxChoices = Number(constraints?.bonusEquipmentChoices || 0);
+    if (!maxChoices || category !== 'accessory') return false;
+    if (!this._systemAllowedBySpeciesConstraints(category, id, subcategory)) return false;
+    const currentChoices = (this._droidState?.droidSystems?.accessories || [])
+      .filter(accessory => this._systemAllowedBySpeciesConstraints('accessory', accessory.id, accessory.category))
+      .length;
+    return currentChoices < maxChoices;
   }
 
   /**
@@ -607,6 +684,13 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     const credits = this._droidState.droidCredits;
 
     try {
+      if (!this._systemAllowedBySpeciesConstraints(category, id, subcategory)) {
+        swseLogger.warn('[DroidBuilderStep] System blocked by species droid-builder constraints', {
+          category, id, subcategory, sourceSpecies: this._droidState?.sourceSpecies,
+        });
+        return false;
+      }
+
       if (category === 'locomotion') {
         if (sys.locomotion) {
           credits.spent -= sys.locomotion.cost;
@@ -1043,6 +1127,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       droidSystems: JSON.parse(JSON.stringify(this._droidState.droidSystems)),
       droidCredits: JSON.parse(JSON.stringify(this._droidState.droidCredits)),
       buildState: JSON.parse(JSON.stringify(this._droidState.buildState)),
+      speciesDroidBuilder: this._droidState.speciesDroidBuilder ? JSON.parse(JSON.stringify(this._droidState.speciesDroidBuilder)) : null,
+      sourceSpecies: this._droidState.sourceSpecies || null,
     };
 
     await this._commitNormalized(shell, 'droid', deferredSelection);
@@ -1164,6 +1250,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       droidCredits: JSON.parse(JSON.stringify(this._droidState.droidCredits)),
       // PHASE A + B: Include build state for deferred detection in finalizer
       buildState: JSON.parse(JSON.stringify(this._droidState.buildState)),
+      speciesDroidBuilder: this._droidState.speciesDroidBuilder ? JSON.parse(JSON.stringify(this._droidState.speciesDroidBuilder)) : null,
+      sourceSpecies: this._droidState.sourceSpecies || null,
     };
 
     await this._commitNormalized(shell, 'droid', selection);

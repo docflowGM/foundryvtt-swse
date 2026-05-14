@@ -29,6 +29,138 @@ function _assertPackLoaded(packName, packData) {
   }
 }
 
+
+function _speciesNameKey(name, { collapseVariant = false } = {}) {
+  let value = String(name ?? '').toLowerCase().trim();
+  if (collapseVariant) {
+    value = value.replace(/\s*\((?:variant)\)\s*$/i, '');
+  }
+  return value
+    .replace(/[’]/g, "'")
+    .replace(/\s+/g, ' ')
+    .replace(/[^a-z0-9']+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function _speciesSourcePriority(source) {
+  const order = [
+    'Core', 'Core Rulebook',
+    'Clone Wars', 'KOTOR', 'Knights of the Old Republic',
+    'Rebellion', 'Rebellion Era', 'Legacy', 'Legacy Era',
+    'Galaxy at War', 'Scum & Villainy', 'Scum and Villainy',
+    'Unknown Regions', 'Threats', 'Threats of the Galaxy',
+    'FU', 'The Force Unleashed', 'Multiple'
+  ];
+  const idx = order.findIndex(item => String(item).toLowerCase() === String(source ?? '').toLowerCase());
+  return idx === -1 ? 999 : idx;
+}
+
+function _speciesQualityScore(species) {
+  const system = species?.system ?? {};
+  const sourceScore = 1000 - _speciesSourcePriority(system.source);
+  const nonVariantScore = /\(variant\)/i.test(species?.name ?? '') ? 0 : 50;
+  const specialScore = (Array.isArray(system.special) ? system.special.length : 0) * 2;
+  const languageScore = Array.isArray(system.languages) ? system.languages.length : 0;
+  const textScore = String(system.description?.value ?? system.description ?? '').trim().length > 0 ? 10 : 0;
+  return sourceScore + nonVariantScore + specialScore + languageScore + textScore;
+}
+
+function _speciesMechanicsSignature(species) {
+  const system = species?.system ?? {};
+  const normalizedList = values => [...(Array.isArray(values) ? values : (values ? [values] : []))]
+    .map(value => String(value).toLowerCase().trim())
+    .filter(Boolean)
+    .sort();
+
+  return JSON.stringify({
+    size: String(system.size ?? '').toLowerCase().trim(),
+    speed: Number(system.speed ?? 0),
+    abilities: String(system.abilities ?? system.abilityMods ?? '').toLowerCase().replace(/\s+/g, ' ').trim(),
+    special: normalizedList(system.special),
+    languages: normalizedList(system.languages),
+  });
+}
+
+function _chooseSpeciesCanonical(a, b) {
+  if (!a) return b;
+  if (!b) return a;
+  return _speciesQualityScore(b) > _speciesQualityScore(a) ? b : a;
+}
+
+function _dedupeSpeciesGroup(species, keyFn, reason) {
+  const groups = new Map();
+  for (const entry of species) {
+    const key = keyFn(entry);
+    if (!key) continue;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(entry);
+  }
+
+  const droppedIds = new Set();
+  const removed = [];
+  for (const entries of groups.values()) {
+    if (entries.length < 2) continue;
+    let kept = entries[0];
+    for (const entry of entries.slice(1)) {
+      kept = _chooseSpeciesCanonical(kept, entry);
+    }
+    for (const entry of entries) {
+      if (entry === kept) continue;
+      droppedIds.add(entry._id ?? entry.id ?? entry.name);
+      removed.push({ kept, dropped: entry, reason });
+    }
+  }
+
+  return {
+    species: species.filter(entry => !droppedIds.has(entry._id ?? entry.id ?? entry.name)),
+    removed,
+  };
+}
+
+function _dedupeSpeciesForChargen(species) {
+  if (!Array.isArray(species) || species.length < 2) {
+    return species;
+  }
+
+  const exact = _dedupeSpeciesGroup(
+    species,
+    entry => _speciesNameKey(entry?.name),
+    'duplicate-name'
+  );
+
+  const variant = _dedupeSpeciesGroup(
+    exact.species,
+    entry => {
+      const name = String(entry?.name ?? '');
+      if (!/\(variant\)/i.test(name)) {
+        const variantPeerName = `${name} (Variant)`;
+        const hasVariantPeer = exact.species.some(peer => (
+          _speciesNameKey(peer?.name) === _speciesNameKey(variantPeerName)
+        ));
+        if (!hasVariantPeer) return null;
+      }
+      return `${_speciesNameKey(name, { collapseVariant: true })}|${_speciesMechanicsSignature(entry)}`;
+    },
+    'mechanically-identical-variant'
+  );
+
+  const removed = [...exact.removed, ...variant.removed];
+  if (removed.length > 0) {
+    SWSELogger.warn('ChargenDataCache | Deduplicated species entries before chargen browse render', {
+      removedCount: removed.length,
+      removed: removed.map(item => ({
+        dropped: item.dropped?.name,
+        droppedId: item.dropped?._id ?? item.dropped?.id,
+        kept: item.kept?.name,
+        keptId: item.kept?._id ?? item.kept?.id,
+        reason: item.reason,
+      })),
+    });
+  }
+
+  return variant.species;
+}
+
 /**
  * Singleton cache for compendium data
  * Prevents reloading compendia for each new chargen instance
@@ -182,6 +314,11 @@ export class ChargenDataCache {
           }
         });
         SWSELogger.log(`[CACHE-LOAD] Successfully converted ${packs[key].length} items from ${packName}`);
+
+        if (key === 'species') {
+          packs[key] = _dedupeSpeciesForChargen(packs[key]);
+          SWSELogger.log(`[CACHE-LOAD] Species count after dedupe: ${packs[key].length}`);
+        }
 
         // Normalize talents to ensure tree property is properly set
         if (key === 'talents') {

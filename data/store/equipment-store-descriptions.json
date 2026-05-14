@@ -766,5 +766,41 @@
     "id": "computer-xcalq-3ga-slicer-special",
     "name": "Xcalq-3GA \"Slicer Special\" Portable Computer",
     "description": "Xcalq-3GA \"Slicer Special\" Portable Computer, Computer, 2 kg weight, 7500 credits. a heavily modified portable computer optimized for slicing and hacking operations. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
+  },
+  {
+    "slug": "antiox-breath-mask",
+    "id": "life-antiox-breath-mask",
+    "name": "Antiox Breath Mask",
+    "description": "Antiox Breath Mask, Life Support, Species Support, 2 kg weight, 2000 credits. A Kel Dor antiox breath mask and goggles assembly for use outside Dorin's atmosphere. Special: Required for Kel Dor to breathe and see normally in common nitrogen/oxygen atmospheres. Replacement filters are a separate GM-tracked expense."
+  },
+  {
+    "slug": "breathing-apparatus",
+    "id": "life-breathing-apparatus",
+    "name": "Breathing Apparatus",
+    "description": "Breathing Apparatus, Life Support, Species Support, 2 kg weight, 2000 credits. A sealed breathing apparatus for species that cannot tolerate standard atmospheres. Special: Commonly required by Gand and similar species when away from their native atmosphere."
+  },
+  {
+    "slug": "transliterator",
+    "id": "life-transliterator",
+    "name": "Transliterator",
+    "description": "Transliterator, Communication, Species Support, 0.1 kg weight, 100 credits. A small translator/vocoder unit that allows species with limited vocal ranges to communicate in other languages. Special: Gand commonly require a transliterator to speak languages other than Gand."
+  },
+  {
+    "slug": "ultraviolet-visor",
+    "id": "life-ultraviolet-visor",
+    "name": "Ultraviolet Visor",
+    "description": "Ultraviolet Visor, Life Support, Species Support, 0.5 kg weight, 2000 credits. A specialized visor that lets Defel see in normal light. Special: Defel outside Af'El generally need this visor to avoid blindness in ordinary light."
+  },
+  {
+    "slug": "celegian-support-chamber",
+    "id": "life-celegian-support-chamber",
+    "name": "Celegian Life-Support Chamber",
+    "description": "Celegian Life-Support Chamber, Life Support, Species Support, 15 kg weight, 2000 credits. A sealed life-support chamber that maintains the cyanogen-rich atmosphere required by Celegians. Special: Celegians suffocate without an appropriate life-support chamber when exposed to oxygen atmospheres."
+  },
+  {
+    "slug": "ubese-environmental-suit",
+    "id": "life-ubese-environmental-suit",
+    "name": "Ubese Environmental Suit",
+    "description": "Ubese Environmental Suit, Life Support, Species Support, Armor, 6 kg weight, 2000 credits. An environmental suit with breath mask and voice modulator used by Ubese away from their homeworld. Special: Functions like a protective environmental suit and includes a voice modulator; the GM adjudicates atmosphere and hazard protection."
   }
 ]

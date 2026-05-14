@@ -1,0 +1,1310 @@
+[
+  {
+    "name": "Human",
+    "slug": "human",
+    "description": "Humans dominate the Core Worlds and can be found in virtually every corner of the galaxy. They are the ancestors of early spacefaring pioneers, conquerors, traders, travelers, and refugees. Humans have always been people on the move. As a result, they can be found on almost every inhabited planet. As a Species, Humans are physically, culturally, and politically diverse.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Aqualish",
+    "slug": "aqualish",
+    "description": "he Aqualish are amphibious humanoids native to The Mid Rim world of Ando. Three breeds of Aqualish exist- the Aquala (widely considered the \"Baseline\" Aqualish), the Quara, and the Ualaq. The three strains are generally similar in appearance and in all their traits, but the Quara and Ualaq have claw-like hands with five digits whereas the Aquala have fins. The Ualaq are set apart by the fact that they have four eyes instead of two. The Aqualish hold no beings in greater contempt than those who belong to a different subspecies than themselves- Aquala hate the Quara and the Ualaq, the Quara hate the Aquala and Ualaq, and the Ualaq hate the Aquala and the Quara.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Bothan",
+    "slug": "bothan",
+    "description": "Native to Bothawui, these short, fur-covered humanoids have had hyperspace travel for thousands of years. Bothans use information as a measure of wealth and power, even wielding it as a weapon when necessary. The Bothan SpyNet, one of the largest intelligence agencies during most eras, plays an important role in the Galactic Civil War. Culturally, Bothans don't believe in direct conflict because it destroys people, material, and even information. They prefer behind-the-scenes manipulation, watching and waiting for information that they can use to gain status and influence.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Cerean",
+    "slug": "cerean",
+    "description": "ereans are a sophisticated and cultured humanoid Species native to Cerea, a world on the fringes of known space. Their elongated heads distinguish them from most other humanoid Species. Cereans established contact with the rest of the galaxy shortly before the Galactic Republic was transformed into the Empire, swiftly gaining fame as expert astrogators, cryptographers, and economists. Few patterns or trends escape the notice of a Cerean. Cerean society is matriarchal, and the Cerean culture's traditional values emphasize living in harmony with nature and minimizing any impact on the environment from technology.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Duros",
+    "slug": "duros",
+    "description": "Tall, hairless humanoids from the Duro System, Duros were one of the first Species to become a major influence in the Galactic Republic, and many respected scholars credited the Duros with creating the first hyperdrive. The Duros have a natural affinity for space travel, possessing an innate grasp of the mathematical underpinnings of astrogational computations. Many tales are swapped in cantinas about Duros astrogators calculating the coordinates for supposedly impossible jumps in their heads. Although not as numerous as Humans, the Duros are almost as omnipresent; all but the smallest settlements in known space feature Duros populations. The Duros Species has existed on other worlds in isolation from the rest of their kind, evolving in slight different directions from the baseline Species.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Ewok",
+    "slug": "ewok",
+    "description": "Intelligent omnivores native to one of the moons orbiting Endor, Ewoks are almost unknown prior to the battle of Endor. Ewoks live in tree-dwelling tribes with gender-based division of labor; males hunt, forage, and make weapons, while females raise young and handle other domestic tasks. Ewok culture revolves around complex animistic beliefs involving the giant trees of the forest moon. Although technologically primitive, Ewoks are clever, inquisitive, and inventive. Skittish and wary when first introduced to machines, their curiosity soon overcomes fear.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Gamorrean",
+    "slug": "gamorrean",
+    "description": "Gamorreans are green-skinned, porcine creatures native to Gamorr. Their tendency toward violence makes them valued as criminal enforcers; though viewed as mindless brutes, they don't care so long as they are paid to fight. Gamorrean civilization revolves around the never-ending wars between their clans. Preferring large melee weapon in combat, many see ranged weapons as cowardly. Males live to fight; females farm, hunt, and manufacture weapons.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Gungan",
+    "slug": "gungan",
+    "description": "The Gungans are omnivorous humanoids native to the swamps of Naboo. Technologically advanced, they rely mostly on biotech, growing instead of building their homes and production facilities. While their culture is peaceful, it evolved from a series of long, bloody clan wars, and Gungans still admire strength and cunning. Most communities are devoted to farming or manufacturing goods that are then traded to other Gungan settlements, but they will reluctantly trade with the Humans of Naboo.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Hutt",
+    "slug": "hutt",
+    "description": "Hutts are long-lived gastropods who occupy a region known as Hutt Space. They are powerful, ruthless beings who continually seek to expand the boundaries of their dominion and the holdings of their individual clans, or Kajidics. Their appetite for power is as insatiable as their appetite for food. Hutts are often found at the center of business and criminal enterprises. Legality (or lack thereof) does not affect whether a Hutt will pursue a venture.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Ithorian",
+    "slug": "ithorian",
+    "description": "Ithorians are tall humanoids whose appearance leads many to refer to them colloquially as \"Hammerheads.\" Peaceful and gentle, Ithorians are widely recognized as talented artists, brilliant agricultural engineers, and skilled diplomats. Ithorians are perhaps the greatest ecologists in the galaxy, devoting their technology to preserving the natural beauty of their homeworld's jungles. They live in \"Herds,\" dwelling in cities that hover above the surface of their planet and striving to maintain the ecological balance in the \"Mother Jungle.\" Ithorians also travel the galaxy in massive \"Herd Ships,\" masterpieces of environmental engineering that carry a perfect replica of their native jungle. Many look forward to trading for the exotic wares the Ithorians bring from distant planets.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Kel Dor",
+    "slug": "kel-dor",
+    "description": "The Kel Dor evolved on Dorin, a world with an atmosphere consisting mostly of helium and a gas that is unique to that world. As such, Kel Dor cannot breathe on planets with common nitrogen/oxygen atmospheres. Conversely, Dorin's atmosphere is toxic to most nonnative life. On other planets, Kel Dor dwellings provide their native atmosphere (stored in large tanks). When outside, Kel Dor must wear breath masks and goggles.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Mon Calamari",
+    "slug": "mon-calamari",
+    "description": "Amphibious land-dwellers, the Mon Calamari share their Outer Rim homeworld with the aquatic Quarren. They tend to be soft-spoken but vigorously defend causes that inspire them. Mon Calamari suffered under great oppression under The Galactic Empire; thus, it was one of the first worlds to declare support for The Rebel Alliance. Mon Calamari are widely recognized for their keen analytical and organizational abilities, and they have developed a reputation as being among the foremost ship designers in the galaxy. They see everything they create as a work of art, not just a tool or weapon.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Quarren",
+    "slug": "quarren",
+    "description": "The Quarren hail from the distant Outer Rim planet of Mon Calamari, sharing the world with the sentient humanoid Species of the same name. The Mon Calamari live on the surface of the world, while the more isolationist Quarren dwell in oxygen-filled cities in the deep recesses of the oceans. Offworld, Quarren generally stay clear of galactic politics. Instead, they often become involved with shadowy occupations such as pirates, smugglers, and spy networks. Many Quarren blame both the Empire and the Rebels (even more than the Mon Calamari) for their homeworld's devastation during the Galactic Civil War.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Rodian",
+    "slug": "rodian",
+    "description": "Rodians hail from the Tyrius System of The Mid Rim, their homeworld humid and choked with heavy rain forests teeming with dangerous life forms. In this hostile environment, the Rodians evolved into brutal hunters and killers to survive. As a result, Rodian culture centers around the concept of \"The Hunt.\" Their art glorifies violence and the art of stalking prey. The more intelligent and dangerous a hunter's prey, the more honorable the hunt. Rodians have numerous annual festivals that exists solely to honor such activities.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Sullustan",
+    "slug": "sullustan",
+    "description": "To survive the natural perils of their harsh, volcanic homeworld, the Sullustans evolved in the planet's numerous caves. They prefer to dwell underground, constructing highly advanced cities of such great beauty that wealthy sightseers come from all over the galaxy to visit them. Living underground helped the Sullustans to develop acute senses, and they are renowned for their navigational and piloting skills. This friendly, gregarious species enjoys interacting with unique, unusual, and interesting beings. When Old Republic scouts first visited their homeworld, the Sullustans quickly embraced galactic civilization.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Trandoshan",
+    "slug": "trandoshan",
+    "description": "The reptilian Trandoshans are known for their great strength, and warlike natures. Many of these beings dedicate themselves to martial training, and some follow the path of the hunter on their native world. A few have even become renowned (or infamous) bounty hunters in galactic society. Trandoshans have a long-standing enmity with Wookiees, and the two Species have fought often over the centuries. Trandoshans (who refer to themselves as \"T'doshok\") have supersensitive eyes that can see into the infrared range.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Twi'lek",
+    "slug": "twi-lek",
+    "description": "From the dry, rocky world of Ryloth, Twi'leks have made a place for themselves along the Galaxy. These tall, thin humanoids include a variety of distinct subraces, but all are instantly recognizable by the tentacular \"Head-Tails\" (called Lekku) that protrude from the backs of their heads. Sly, calculating beings, Twi'leks prefer to avoid trouble and stick to the shadows until an opportunity to act without undue danger to themselves presents itself. Their entrepreneurial spirit frequently leads them to positions of influence, and Twi'lek corporate executives and ambassadors are no less common than unscrupulous Twi'lek freighter captains and crime lords.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Wookiee",
+    "slug": "wookiee",
+    "description": "Wookiees are widely recognized as one of the strongest and fiercest intelligent Species in the galaxy. Wookiees have many customs and traditions that revolve around honor and loyalty, including the special bond called the honor family and the sacred pledge called the Life Debt. A Wookiee never uses his or her climbing claws in combat; doing this is considered dishonorable and a sign of madness.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Zabrak",
+    "slug": "zabrak",
+    "description": "The Zabrak are an early spacefaring race distinguished by patterns of vestigial horns on their heads. Zabrak hail from many worlds and have been spacefarers for so long that they define themselves and each other according to their colony of origin. The harshness of Iridonia, their homeworld, forged in the Zabrak an iron will to survive. Driven to escape their world, they sought to obtain the knowledge of space flight. When Duros scouts began exploring The Mid Rim, they encountered Zabrak in eight sovereign colonies in five different systems.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Chistori",
+    "slug": "chistori",
+    "description": "The Chistori are a race of obscure saurian humanoids. So scarce is the information of these people that even the Jedi Archives have no information on the Chistori homeworld. What little is known about this Species comes from their interactions with others. Fierce and warlike, they are quick to anger and tend to use excessive force to deal with even the smallest slights. As a result, few spacefaring Species have any reason to seek them out.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Mantellian Savrip",
+    "slug": "mantellian-savrip",
+    "description": "A reptilian Species of semi-sentient brutes native to the planet Ord Mantell, Mantellian Savrips' sentience was a contentious subject to xenobiologist from the Core Worlds. Often believed to be simply a very cunning non-sentient beast by many Mantellians, the Mantellian Savrips are technologically primitive, and have their own informal language. Preferring to wear clothing and wielding simple tools and Weapons, some Mantellian Savrips had learned to speak accented Basic. Mantellian Savrips are naturally inclined to combat, and this, coupled with their unusual language, only fostered the notion that they were unintelligent. Mantellian During the colonization of Ord Mantell, sanctioned killings of the Mantellian Savrip Species nearly drove the race to extinction.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Replica Droid",
+    "slug": "replica-droid",
+    "description": "These Replica Droids were originally designed by the Alliance to Restore the Republic to infiltrate and replace Imperial personnel, but their funding ultimately ran out, causing them to abandon the project. Ironically enough, The Empire completed and perfected the Replica Droid's design, through they were never put into any major use.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Utai",
+    "slug": "utai",
+    "description": "An ancient race of diminutive humanoids evolving on the Outer Rim planet of Utapau, the Utai make their homes in tunnels and caves amid the sinkholes that pockmarked their homeworld, colonizing them long before the surface dwelling Pau'ans were forced to take refuge in the sinkholes after hyperwinds made life on the surface unbearable. Working together, the Utai allowed the Pau'ans to take the lead in all societal matters, although the Utai make up more than seventy percent of the population on Utapau. Introducing the Utai to wind power, the Pau'ans took over governmental work in the sinkholes and relegated the Utai to a labor class. Despite their role as laborers in Utapaun society, the Utai are not mistreated and prefer their worker status. Many Utai work as Varactyl wranglers and Dactillion tamers, as they possess an innate ability to commune with animals.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Arkanian",
+    "slug": "arkanian",
+    "description": "Arkanian society and history are among the most complex in the Old Republic. At different times in its history, Arkanian has belonged to both the Republic and the Sith Empire, and played important roles in each. Knowledge and research are extremely important to the Arkanians, and they are highly skilled academicians and scientists. It is therefore not surprising that Arkania would become a main repository of the history of the Sith Empire, as well as home to vast libraries of information from across the galaxy. Arkanians are not afraid to profit from their research and high intelligence.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Arkanian Offshoot",
+    "slug": "arkanian-offshoot",
+    "description": "Developed in the era surrounding The Great Sith War, the Arkanian Offshoots were bred as an answer to the need for laborers to mine the vast diamond stores of Arkania. This subspecies was especially vulnerable to minor Arkanian illnesses. The Arkanian Offshoots were treated as second-class or non-citizens by the Pureblooded Arkanians, and the question over what to do with them was termed the \"Offshoot Question.\" Arkoh Adasca planned to use Adascorp's genetic engineering expertise to solve the problem in a generation. Indeed his grandfather, Argaloh Adasca, attempted to exterminate the Arkanian Offshoots with a plague that ravaged those of advanced age. Nearing the end of the Mandalorian Wars, Arkanian Offshoots died out and became mostly extinct due to their rather weak immune systems, along with the Arkanians halting the experiments that created more of the genetically altered subspecies.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Cathar",
+    "slug": "cathar",
+    "description": "The Cathar are a proud, passionate, and loyal Species of bipedal feline humanoids, well known for their long-standing friendships and ferocity in battle. They dwell in large city-trees, each meticulously carved with friezes depicting the city's heroes and history. The planet Cathar is a wild place, with many ecological niches and huge insect predators. The Cathar easily hold their own, aided by their natural claws and passionate combat ability. Physically, the Cathar vary greatly in size and features.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Draethos",
+    "slug": "draethos",
+    "description": "Draethos residing offworld are usually exiles who chose not to become warriors, each for his own reason. Thus, they are highly intelligent and pacifistic. Exiled Draethos become enthralled with learning as much as they can, though they might never practically apply their detailed knowledge of a given subject. They dislike debate- even on subject they know extremely well- because Draethos fear overlooking details or being unable to adequately explain what they have learned. Older Draethos eventually overcome this barrier.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Feeorin",
+    "slug": "feeorin",
+    "description": "In The Old Republic Era, the Feeorin are known to come from the planet Odryn, a planet of severe climatic extremes. Little else is known about the world, given the closed nature of Feeorin society. Few Feeorin venture from their homeworld, and those few outsiders who have survived a visit there tell of a world well suited for the Feeorin, but nobody else. Feeorin are massive humanoids whose aging process allows them to grow stronger and more powerful until they die, dropping dead suddenly of old age. Because they are long-lived, they have ample time to gather and use their strength.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Khil",
+    "slug": "khil",
+    "description": "Even in The Old Republic Era, the Khil are considered to be one of the oldest Species of the Republic. They are avid travelers and settlers, spreading colonies and settlements throughout the galaxy. During this era, the Khil are particularly active colonizers. They respect planets already inhabited by native sapient Species or other colonists, preferring to use worlds without significant major threats, be they intelligent or highly predatory. However, once a colony is established, the Khil become fully dedicated to its success.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Kissai",
+    "slug": "kissai",
+    "description": "The Kissai are just as ruthless as the Massassi, but they are more intelligent and observant. Their strict cultural standards demand that they serve their masters well, a trait instilled in them by the Dark Jedi who first enslaved their Species. When the Massassi and Kissai flee Korriban (well before the arrival of the eventual Sith Lords) to resettle on Ziost, the Kissai oversee the rebuilding efforts. The Kissai serve The Sith directly, but the Sith Lord Naga Sadow has other ideas for the Massassi caste. The Kissai are largely left on Ziost as the servants of other Sith Lords, but Sadow uses Sith Alchemy to transform the Massassi into his hulking, brutish soldiers.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Massassi",
+    "slug": "massassi",
+    "description": "A thousand years after Sadow and the Massassi arrive on Yavin 4, Exar Kun discovers the ancient Sith secrets in the temples. He uses the Massassi to fight the Jedi across the galaxy. Eventually, Kun consumes the life force of every Massassi on Yavin 4 in his transformation into a Dark Side Spirit. A few Massassi are taken offworld prior to Kun's final decimation of their society. Some remain loyal and find their way back to the new Sith Empire, but a few resentful individuals drift into the darker fringes of society, looking to live their own lives or seeking revenge against the Sith.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Miraluka",
+    "slug": "miraluka",
+    "description": "Miraluka are remarkably similar to Humans, except for two important and distinctive differences. Miraluka have no eyes, but they have a natural ability to \"see\" by using The Force. Since they appear Human- including their speech and mannerisms- Miraluka attempt to blend with Humans when traveling throughout the galaxy. Thus, estimating how often they travel or how many live off their home planet of Alpheridies is difficult, but the number is relativity low. To make matters worse, the Sith Lord Darth Nihilus consumed the colony of Katarr after The Jedi Civil War.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Rakata",
+    "slug": "rakata",
+    "description": "The Rakata and their planet became lost to history, perhaps purposefully erased by the newly freed societies. Their former subjects eliminated their former masters, or forced them to leave. Rakata civilization on their homeworld of Lehon deteriorated until all that remained were small, primitive tribes. Eventually, the Rakata are rediscovered by Darth Revan, who learns the secret of The Star Forge and uses it to build a massive military force to attack the Republic. Darth Revan and the Republic are also responsible for the destruction of The Star Forge.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Selkath",
+    "slug": "selkath",
+    "description": "Few Selkath travel offworld, preferring the habitat of their homeworld. They have never joined the Republic, or any galactic organization, so most have little reason to leave. They enjoy the technology and wealth produced by the sale of Kolto. All contact with offworlders occurs in Ahto; the Selkath live in underwater cities and settlements scattered around the planet. As amphibious creatures, they are equally at home in either locale.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Snivvian",
+    "slug": "snivvian",
+    "description": "Historically, Snivvians have withstood numerous hardships that they channel into their impressive artistic works. After gaining the ability to travel between the stars, the Snivvians attracted the brutal attention of The Thalassian Slavers. Snivvian culture was nearly destroyed before the Republic discovered the practice and stepped in to protect the Snivvians. This protection has been reduced during eras of warfare, but combined Republic and Snivvian forces remain sufficient to hold off lesser threats. During The Old Republic Era, the Snivvians were still rebuilding the damage done to their society by the slavers and other threats.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Aleena",
+    "slug": "aleena",
+    "description": "Aleena are quick and agile. Their metabolism allows them to burn a lot of energy in a short amount of time, giving them a significant boost to their speed and reflexes. Some Aleena use these natural skills as Podracers and pilots.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Caamasi",
+    "slug": "caamasi",
+    "description": "All Caamasi can create vivid telepathic memories called Memnii (singular Memnis), which can be shared with others of their Species and with Force-users who possess at least a rudimentary command of telepathy. A Memnis is as vivid to the one who receives it as it is to the one who participated in the event remembered. Caamasi are driven to share Memnii as a form of collected history and ancestral wisdom. After the destruction of Caamas, Memnii take on even greater importance as the only way for young Caamasi to know their lost homeworld.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Felucian",
+    "slug": "felucian",
+    "description": "The Felucians are an unusual, amphibious Species. They are highly adapted to surviving the wilds of their home planet, and fade easily into its confusing mass of plant life. They are equally at home on land or in water, and they traverse the swamps with ease. All Felucians are part of a single, planetwide tribe that is broken down into smaller villages and communities, each one led by Felucian Shamans and chieftains. These Felucian Shamans are very strong in The Force, using it to their own ends with incredible skill.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Gran",
+    "slug": "gran",
+    "description": "Gran place society over self, and they receive training that complements both their personal talents and society's needs. The desire to maintain balance within society caused the Gran to establish alien-only areas of Kinyen. This was intended to restrict alien influence and avoid trouble between Species, such as what happened on Malastare. During The Dark Times, the Empire has pushed the Gran leadership to grant access to all areas. When the Gran refused, Kinyen was subjected to orbital bombardment.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Noghri",
+    "slug": "noghri",
+    "description": "The Noghri culture is built around clans (among them Kihm'bar, Bakh'tor, Eikh'mir, and Hakh'khar) with a long history of bloody rivalry. By the time of the Clone Wars, the clans had put aside their differences and learned to coexist, unaware of other intelligent Species in the galaxy. A space battle in orbit over their world led to a starship crash that contaminated the planet with toxic chemicals. The Noghri faced famine and extinction when a black-garbed visitor from the stars arrived: Darth Vader. He promised to save their dying homeworld; in return, the Noghri pledged to serve him and the Empire.",
+    "hasAlternateTraits": true,
+    "alternateTraits": [
+      {
+        "id": "noghri-alternate",
+        "label": "Alternate",
+        "source": "Canonical alternate species traits",
+        "traits": [
+          {
+            "id": "ability-modifiers",
+            "name": "Ability Modifiers",
+            "description": "Noghri receive a +2 bonus to their Dexterity, but suffer a -4 penalty to their Charisma."
+          },
+          {
+            "id": "small-size",
+            "name": "Small Size",
+            "description": "As Small creatures, Noghri gain a +1 size bonus to their Reflex Defense and a +5 size bonus on Stealth checks. However, their lifting and carrying limits are three-quarters of those of Medium characters."
+          },
+          {
+            "id": "speed",
+            "name": "Speed",
+            "description": "Noghri have a base speed of 6 squares."
+          },
+          {
+            "id": "scent",
+            "name": "Scent",
+            "description": "Noghri have an extremely strong sense of smell. At close range (within 10 squares), Noghri ignore Concealment and Cover for purposes of Perception checks, and take no penalty from poor visibility while Tracking."
+          },
+          {
+            "id": "primitive",
+            "name": "Primitive",
+            "description": "Noghri do not gain Weapon Proficiency (Heavy Weapons), Weapon Proficiency (Pistols), or Weapon Proficiency (Rifles) as starting Feats at first level, even if their Class normally grants them."
+          },
+          {
+            "id": "bonus-feat",
+            "name": "Bonus Feat",
+            "description": "All Noghri gain the Martial Arts I feat at 1st level as a bonus Feat."
+          },
+          {
+            "id": "quick-reflexes",
+            "name": "Quick Reflexes",
+            "description": "A Noghri may choose to reroll any Initiative check, but the result of the reroll must be accepted even if it is worse."
+          },
+          {
+            "id": "automatic-languages",
+            "name": "Automatic Languages",
+            "description": "All Noghri can speak, read, and write both Honoghran. Nosaurian The Nosaurians are bipedal reptilian creatures native to New Plympto. They are a proud but embattled Species. A crumbling economy unaided by Republic restrictions forced the Nosaurians to join The Confederacy of Independent Systems. After the defeat of the CIS, the Nosaurians tried to carry on the fight, only to be crushed by Darth Vader's Stormtrooper contingent, the 501st. The Dark Times brought the Nosaurians defeat, enslavement, and the systematic exploitation of their world by their new Imperial masters. The Nosaurians have several unusual abilities and customs. They have black-and-white vision, which is rarely a hinderance. They can produce a brief flash of bright light from the interior of their mouths at will. Some Nosaurians use this trait to signal each other at great distances in the dark forests of their homeworld. At sunset (Or at mysterious and inopportune moments when offworld), they \"Sing Down the Sun\" at the top of their lungs, even when they are unable to see the sun."
+          }
+        ],
+        "description": "The following Species Traits can be utilized instead when making certain Noghri NPCs: Ability Modifiers: Noghri receive a +2 bonus to their Dexterity, but suffer a -4 penalty to their Charisma. Small Size: As Small creatures, Noghri gain a +1 size bonus to their Reflex Defense and a +5 size bonus on Stealth checks."
+      }
+    ]
+  },
+  {
+    "name": "Nosaurian",
+    "slug": "nosaurian",
+    "description": "The Nosaurians are bipedal reptilian creatures native to New Plympto. They are a proud but embattled Species. A crumbling economy unaided by Republic restrictions forced the Nosaurians to join The Confederacy of Independent Systems. After the defeat of the CIS, the Nosaurians tried to carry on the fight, only to be crushed by Darth Vader's Stormtrooper contingent, the 501st. The Dark Times brought the Nosaurians defeat, enslavement, and the systematic exploitation of their world by their new Imperial masters.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Talz",
+    "slug": "talz",
+    "description": "The Empire subjugates the Talz very early in The Dark Times. The New Order wasted no time in secretly enslaving the race and forcing them to mine the mineral wealth of Alzoc III. The Talz do not understand the motives of their new masters, but they can do little but comply. Those few Talz who escape must hide themselves along the fringes of the galaxy, lest the Imperials send them back to their homeworld. During this time, almost no one in the galaxy knows that the Talz even exist.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Togorian",
+    "slug": "togorian",
+    "description": "Togorians in a group are led by the largest, most aggressive, and most ruthless individual among them. They have little honor, but prefer fights against other Togorians to be face-to-face combat. Males and females have little contact with each other. The males are nomadic, often using domesticated Mosgoth as mounts. The females live in the cities, tending animals and seeing to the Togorians' limited technological pursuits.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Togruta",
+    "slug": "togruta",
+    "description": "Togrutas are natives of the planet Shili, a world of dense forests, wild scublands, and ever-growing urban areas. The most striking features of Togruta are their brightly colored horns, head, head-tails, and skin. These patterns serve as a sort of camouflage that helps them stalk prey through the red and white, meter-tall turu-grass of the scrublands. Togrutas are natural pack hunters and work effectively in large groups. Individualism is generally discouraged, but despite this fact, most Togruta leaders gain power and prestige through expressions of individuality.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Whiphid",
+    "slug": "whiphid",
+    "description": "Whiphids are nomadic hunters, living on and making seasonal migrations across the vast tundra of their homeworld. Whiphid society is primitive and tribal, with each tribe led by a Spearmaster. They live for the hunt and the thrill of the kill. When they were discovered by traders during The Old Republic Era, the Whiphids were quite taken with the traders' technology. Since that time, numerous Whiphids have left their tribes behind in search of a lucrative and more comfortable life elsewhere in the galaxy.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Yarkora",
+    "slug": "yarkora",
+    "description": "Yarkora are adept at gathering information, aided by their acute senses of sight and hearing. Most Yarkora try to keep a low profile by acting alone. However, those who find a ship or gang useful have no trouble gathering the needed henchmen, thanks to their natural charisma.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Balosar",
+    "slug": "balosar",
+    "description": "Balosars are humanoids with a shady reputation throughout the Core Worlds. They can easily pass for Human (when their antennapalps are retracted) and tend to live among the lowest echelons of society, preying on the vices of the weak-willed or impoverished. Relief agencies have been trying to end the vicious circle of poverty, pollution, and corruption on Balosar for years, but the planet's government offers little assistance. Offworld corporations regularly line Balosar bureaucrats' pockets with credits in exchange for state-owned real estate on which they build sweatshop factories. Balosar offers no shortage of manual labor.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Blood Carver",
+    "slug": "blood-carver",
+    "description": "Blood Carvers are a mysterious Species rarely seen outside their homeworld of Batorine. Those that leave, however, do so because they have been exiled. They gravitate toward the fringes of society, finding it more appealing to operate outside the law. Additionally, Blood Carvers feel shunned by galactic society because of the Blood Carvers' reputation for being fearsome assassins. Except for exiles, Blood Carvers rarely act alone, and exiles find new tribes (often like-minded members of other Species) to associate with.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Clawdite",
+    "slug": "clawdite",
+    "description": "Only after the fall of the Empire did the Clawdites finally rise up against the Zolanders, fighting a brutal civil war that consumed the world in violence. The Clawdites eventually gained control of the planet, and in victory, they assert themselves as the dominant Species. Free, the Clawdites courted the New Republic, and threw their support behind Alliance Intelligence organizations, using their unique talents to infiltrate the Yuuzhan Vong, and sabotaged equipment, gathered intelligence, and assassinated critical targets. The Clawdites took on this dangerous work because they are driven to support the cause of liberty, and for them, the end always justifies the means.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Falleen",
+    "slug": "falleen",
+    "description": "Of all the Species to populate the galaxy, none are better known for their intoxicating appearance than the Falleen. An exotic reptilian people, they are favored for their chiseled physiques and entrancing features. These qualities alone would solidify their place among the more handsome Species, but their pheromones make them irresistible to other Species. Their gifts and allure enable the Falleen to move through other cultures with ease, but despite their advantages, Falleen prefer to remain mysterious, withdrawing to their own world in their own system. They do not lack the technology or wherewithal to venture out into the stars, but their cultural predilections make such ventures undesirable.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Gand",
+    "slug": "gand",
+    "description": "A strange Species of insect creatures, the Gand have evolved in response to the toxic atmosphere of their homeworld. In fact, two distinct types of Gand exist. The more common has features typical of other Species- lungs and the usual assortment of internal organs. The other type- rarely found outside Gand- has no lungs, and takes in the nutrients it needs through the materials it consumes. Since the Gand cannot tolerate other atmospheres, and outsiders cannot breathe Gand's atmosphere, the Species of this far-flung world developed without outside interference, resulting in a rich culture with particularities.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Houk",
+    "slug": "houk",
+    "description": "The Houk have well-earned reputations as bullies, cheaters, and backstabbers. They are often compared to Wookiees because of their great strength and violent disposition, although Wookiees are usually more agreeable and trustworthy. The Houk acquired hyperspace technology several thousand years before the Battle of Yavin and spread across the galaxy, seeding many planets with small colonies. During the Rebellion era, Imperial agents captured and experimented on hundreds of Houk colonists, hoping to create strong yet obedient slaves. The Houk did not submit easily, and most of them were never seen again.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Jawa",
+    "slug": "jawa",
+    "description": "Jawas are intelligent and have a complex society. Gathering in extended tribes, Jawa life revolves around trade- not for wealth, but for survival. Jawas look for guidance from their shamans, usually a female Jawa with the ability to portent the future and cast vicious hexes. Once a year, the Jawa tribes gather in the Dune Sea to exchange sons and daughters, to swap stories and news, and to mingle among their own kind.",
+    "hasAlternateTraits": true,
+    "alternateTraits": [
+      {
+        "id": "jawa-alternate",
+        "label": "Alternate",
+        "source": "Canonical alternate species traits",
+        "traits": [
+          {
+            "id": "ability-modifiers",
+            "name": "Ability Modifiers",
+            "description": "Jawas receive a +2 bonus to their Dexterity, but suffer a -2 penalty to their Strength and Charisma."
+          },
+          {
+            "id": "small-size",
+            "name": "Small Size",
+            "description": "As Small creatures, Jawas gain a +1 size bonus to their Reflex Defense and a +5 size bonus on Stealth checks. However, their lifting and carrying limits are three-quarters of those of Medium characters."
+          },
+          {
+            "id": "speed",
+            "name": "Speed",
+            "description": "Jawas have a base speed of 4 squares."
+          },
+          {
+            "id": "desert-dweller",
+            "name": "Desert Dweller",
+            "description": "Jawas may Take 10 on Survival checks in desert terrain."
+          },
+          {
+            "id": "tinkerer",
+            "name": "Tinkerer",
+            "description": "A Jawa can choose to reroll any Mechanics check made to Repair an object, vehicle, or droid, but must keep the second result, even if it is worse."
+          },
+          {
+            "id": "darkvision",
+            "name": "Darkvision",
+            "description": "Jawas ignore Concealment (including Total Concealment) from darkness. However, they cannot perceive colors in total darkness."
+          },
+          {
+            "id": "automatic-languages",
+            "name": "Automatic Languages",
+            "description": "All Jawas can speak, read, and write both Jawaese and the Jawa Trade Language. Ryn Ubiquitous in spaceports throughout the galaxy, Ryn are a Species of nomads and adventurers, scoundrels, strels, and rogues. No one is certain where the Ryn come from; no record of a homeworld exists, and Ryn culture, such as it is, requires them to never sleep in the same place twice. Some speculate that the Ryn were a race of warriors, dispatched to Core Worlds ages ago to contend with some threat, while others suggest that the Ryn were a tribe of ten thousand musicians gifted to a world that had no artists of their own. Either could be true, for the Ryn are as fearless in battle as they are skilled in music. For all their talents, Ryn find the galaxy largely inhospitable. They have a reputation for being untrustworthy and treacherous, dangerous to befriend and fickle in their loyalties. Although that is true of many Ryn, most are just free spirits looking to survive. They are among the hardest working people known. The Ryn are natural entertainers. Between jobs, they supplement their incomes through fortune-telling using Sabacc cards (a game they are believed to have invented), singing, dancing, and any other musical arts (see Sabacc Fortune-Telling)."
+          }
+        ],
+        "description": "The following Species Traits can be utilized instead when making certain Jawa NPCs: Ability Modifiers: Jawas receive a +2 bonus to their Dexterity, but suffer a -2 penalty to their Strength and Charisma. Small Size: As Small creatures, Jawas gain a +1 size bonus to their Reflex Defense and a +5 size bonus on Stealth checks."
+      }
+    ]
+  },
+  {
+    "name": "Ryn",
+    "slug": "ryn",
+    "description": "Ubiquitous in spaceports throughout the galaxy, Ryn are a Species of nomads and adventurers, scoundrels, strels, and rogues. No one is certain where the Ryn come from; no record of a homeworld exists, and Ryn culture, such as it is, requires them to never sleep in the same place twice. Some speculate that the Ryn were a race of warriors, dispatched to Core Worlds ages ago to contend with some threat, while others suggest that the Ryn were a tribe of ten thousand musicians gifted to a world that had no artists of their own. Either could be true, for the Ryn are as fearless in battle as they are skilled in music. For all their talents, Ryn find the galaxy largely inhospitable.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Toydarian",
+    "slug": "toydarian",
+    "description": "Toydarians are small, winged aliens from the planet Toydaria. They are known as shrewd merchants and able con artists, even though many lead reputable lives. Because their homeworld is located within Hutt Space, many Toydarians who leave Toydaria find themselves either unemployed or indentured to Hutt criminal interests. Toydarians easily resist Mind-Affecting Force Powers and are even more resilient to such abilities than their Hutt overlords. Toydarian1 Toydarians have an unsavory reputation, but not all Toydarians are criminals.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Ubese",
+    "slug": "ubese",
+    "description": "Long ago, the Ubese were a peaceful Species, content in the paradise of their garden planets. This changes when they encounter Old Republic scouts who seduce them with the power and might of advanced technology. Obsessed by these wonders, the Ubese devote their resources to the development of these technologies. As they succeed, they became worried about aggression from rival systems, so they develop weapon technology, dipping into dangerous devices banned throughout the galaxy. Fearing these weapons in the hands of a decidedly unstable population, The Old Republic makes a preemptive strike against the Ubese to destroy weapons facilities and halt their aggression.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Wroonian",
+    "slug": "wroonian",
+    "description": "Wroonians are a blue-skinned Species of Near-Humans from the planet Wroona in The Inner Rim, a world in the same sector as the Bestine System. Wroonian society is wealthy, fun-loving, and deeply spiritual; as a result, Wroonians often wear ornate clothing and tattoos. Wroonians love travel both at sea and in space, often fancying themselves as skilled navigators and explorers. A well-traveled Species, they were represented in The Galactic Republic by the blue-skinned Pantoran Senator Chi Eekway Papanoida and later became part of The Galactic Empire. There are numerous Wroonian colonies spread throughout the Mid and Outer Rim, such as on Saleucami.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Dug",
+    "slug": "dug",
+    "description": "Dugs are an arboreal Species from the Republic world of Malastare. They are strong and agile for their size, and climb and jump exceptionally well. Dugs unwillingly share their homeworld with the Gran, who establish trade colonies on Malastare in 8,000 BBY. The Dugs fight a long, intense war against the Gran. Eventually the Republic interferes and sides with the Gran, negotiating a truce that essentially demilitarizes the Dugs.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Gen'Dai",
+    "slug": "gen-dai",
+    "description": "The Gen'Dai benefit from extremely long life spans. Accounts of Gen'Dai living to be over four thousand standard years old are common. They are a hardy Species, thanks in part to their unique physiology. The Gen'Dai have no centralized vital organs, and their elaborate nervous and vascular systems allow them to act quickly and withstand wounds that would kill nearly any other creature. The Gen'Dai are intergalactic nomads, constantly traversing the galaxy.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Geonosian",
+    "slug": "geonosian",
+    "description": "The Geonosians are a caste-dominated Species from the world of Geonosis, in the system of the same name. They dwell in a spectacular architectural realm carved from the soaring, rocky spires that dot the planet's landscape. They are somewhat resistant to the Radiation that occasionally showers their world, though Geonosians actually live underground to escape that phenomenon. Geonosians are born into specific castes divided along the lines of their physical attributes, and though most Geonosians are content to remain within their caste until they die, some develop ambition. The life of a low-ranking Geonosian Worker is ordinarily one of ongoing toil, laboring to fulfill the whims of a Geonosian Aristocracy that sometimes makes spectacular demands.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Iktotchi",
+    "slug": "iktotchi",
+    "description": "Hailing from The Expansion Region world of Iktotchon and its moon, Iktotch, the Iktotchi are a race of precognitive humanoids. All Iktotchi possess this precognitive ability, which manifests as vivid dreams, visions, or waking dreams. Few Iktotchi have control of how or when their precognition manifests or of what it reveals to them. As a Species, they know of the Republic's coming long before their world is visited, and they are prepared to welcome the guests that would usher them into a vast galactic society. Iktotchi are famed for their prowess as pilots, and attribute their success at the helm to nearly imperceptible precognitive inclinations.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Kaleesh",
+    "slug": "kaleesh",
+    "description": "The Kaleesh are a nomadic Species with a tribal culture. They are spiritual beings who worship their ancestors as deities, and they consider their ancestral burial grounds to be sacred lands. The Kaleesh believe that anyone who dies in honorable service to their people becomes a god upon death. The Kaleesh come to a momentary prominence in the galaxy when they fight off an invasion by an alien Species known as the Huk. Having already subjugated and exploited the natural resources of several worlds, the Huk capture millions of Kaleesh and sell them into slavery.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Kaminoan",
+    "slug": "kaminoan",
+    "description": "The watery planet of Kamino is home to a Species of cloners known as Kaminoans. These tall aliens are the result of generations of selective breeding and genetic modification that began when their world suffered a drastic change in climate. These restrictive breeding programs have made Kaminoans an extremely adaptable Species. Apart from gender, Kaminoans have little variation, and to the untrained eye they all look the same. Subtle variations have been introduced into their genetic codes, however, allowing for diversity within a strict set of parameters.",
+    "hasAlternateTraits": true,
+    "alternateTraits": [
+      {
+        "id": "kaminoan-alternate",
+        "label": "Alternate",
+        "source": "Canonical alternate species traits",
+        "traits": [
+          {
+            "id": "ability-modifiers",
+            "name": "Ability Modifiers",
+            "description": "Kaminoans receive a +2 bonus to their Constitution, but suffer a -2 penalty to their Wisdom."
+          },
+          {
+            "id": "medium-size",
+            "name": "Medium Size",
+            "description": "As Medium creatures, Kaminoans have no special bonuses or penalties due to their size."
+          },
+          {
+            "id": "speed",
+            "name": "Speed",
+            "description": "Kaminoans have a base speed of 6 squares."
+          },
+          {
+            "id": "ocean-dweller",
+            "name": "Ocean Dweller",
+            "description": "Kaminoans may Take 10 on Survival checks in aquatic terrain."
+          },
+          {
+            "id": "reroll",
+            "name": "Reroll",
+            "description": "Kaminoans can choose to reroll any Treat Injury or Knowledge (Life Sciences) check, but must keep the second result, even if it is worse."
+          },
+          {
+            "id": "automatic-languages",
+            "name": "Automatic Languages",
+            "description": "All Kaminoans can speak, read, and write both Basic and Kaminoan. Kerkoiden A smaller Species from The Expansion Region, the Kerkoiden are aggressive and cunning beings who often have something to prove. Excellent traders, skilled politicians, and creative military commanders, Kerkoiden are known as formidable opponents, a reputation they prove is well-earned during the Clone Wars. Xenobiologists from the University of Sanbra believe that the Kerkoiden Species descended from quadruped predators that hunt on the savannahs and in the jungles of Kerkoidia. Much of Kerkoiden physiology seems to support this claim, including their hunched posture, long snout, and jutting teeth. Additionally, Kerkoiden aggression seems to be consistent with the predatory instinct of their ancestors, lending credence to this theory of Kerkoiden evolution. The Kerkoiden Species as a whole has fought to evolve beyond their predatory ancestry and prove to the galaxy that they are sophisticated and civilized. Many Kerkoiden nobles pride themselves on superior breeding and also on being refined and sophisticated enough to rub elbows with the galaxy's elite on Coruscant. Of course, this also leads to elitism among the Kerkoidens, which does the Species no favors on the galactic scene."
+          }
+        ],
+        "description": "The following Species Traits can be utilized instead when making certain Kaminoan NPCs: Ability Modifiers: Kaminoans receive a +2 bonus to their Constitution, but suffer a -2 penalty to their Wisdom. Medium Size: As Medium creatures, Kaminoans have no special bonuses or penalties due to their size."
+      }
+    ]
+  },
+  {
+    "name": "Kerkoiden",
+    "slug": "kerkoiden",
+    "description": "A smaller Species from The Expansion Region, the Kerkoiden are aggressive and cunning beings who often have something to prove. Excellent traders, skilled politicians, and creative military commanders, Kerkoiden are known as formidable opponents, a reputation they prove is well-earned during the Clone Wars. Xenobiologists from the University of Sanbra believe that the Kerkoiden Species descended from quadruped predators that hunt on the savannahs and in the jungles of Kerkoidia. Much of Kerkoiden physiology seems to support this claim, including their hunched posture, long snout, and jutting teeth. Additionally, Kerkoiden aggression seems to be consistent with the predatory instinct of their ancestors, lending credence to this theory of Kerkoiden evolution.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Nautolan",
+    "slug": "nautolan",
+    "description": "Nautolans are one of the sentient Species native to the planet Glee Anselm. Their language, Nautila, evolved underwater and is heavily tied to pheromones. Out of water, Nautila loses much of its meaning. As a result, Nautolans learn another language, typically either Basic or Anselmian, the language of the Anselmi people, who are native to Glee Anselm's land masses. Even though they are aquatic, Nautolans have little difficulty living in climates that would be uncomfortable for other amphibians.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Nelvaanian",
+    "slug": "nelvaanian",
+    "description": "Nelvaanians, also referred to as Nelvaans, are a Species of tribal humanoids from the planet Nelvaan. They are a primitive Species, using only crude technology. Male Nelvaanians are responsible for hunting game and protecting the tribe, while females are responsible for the day-to-day affairs of their tribe, which includes raising cubs. At the top of the Nelvaanian tribe is the chief, who rules with the help of his mate and a shaman. A tribal chief is not chosen by trial, nor is he elected to his position.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Republic Clone",
+    "slug": "republic-clone",
+    "description": "Given the prominence of Clones in the story of the Clone Wars, Gamemasters should not be surprised if players wish to play Clone characters. Clone Trooper heroes can be interesting and present exciting story opportunities, especially for a Gamemaster who plans to use Order 66 in the campaign finale. Gamemasters should allow players to play Clone Trooper heroes who stand out from the rank-and-file Clone Troopers. The basic Republic Clone is bred for obedience and military discipline. This can stifle players who want more free will.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Vurk",
+    "slug": "vurk",
+    "description": "Originally considered a primitive Species by galactic survey teams, Vurks are intelligent and philosophically advanced. From birth, they are taught to honor personal integrity, individual freedom, and honesty. Because of these tenants, Vurks make excellent diplomats and negotiators.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Advozse",
+    "slug": "advozse",
+    "description": "The Advozsec come from the tectonically tortured world of Riflor. Three suns exert tremendous gravitational stress on the planet, which has baffled planetologists as to why the planet hasn't been destroyed yet. The Advozsec evolved on Riflor to become both survivors and tremendous pessimists. Although much of their fame comes from their reputation as bureaucrats, Advozse engineers have also been responsible for many advances in building materials and construction techniques. Advozsec are strict vegetarians and become violently ill if they consume animal protein.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Chagrian",
+    "slug": "chagrian",
+    "description": "Although juvenile Chagrians possess a weak sense of taste, this sense fades as they mature into adults. The end result is that Chagrians rarely, if ever, enjoy consuming food and drink, and do so solely to fuel their bodies. Dining activities are traditionally viewed as a nuisance, and a waste of time, so most Chagrians choose to consume nutrient capsules in order to maintain bodily health and energy levels. When traveling, most Chagrians carry portable scanners that allow them to determine the relative nutrient value of the food they eat. Although they are unable to taste the food they eat, Chagrians view dining as an opportunity to socialize with members of other Species that do not share their sensory deficiencies.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Codru-Ji",
+    "slug": "codru-ji",
+    "description": "The Codru-Ji have long been isolated from the rest of the galaxy. Highly xenophobic, they are reluctant to grant members of other Species access to their society. Though they do not fear other cultures, they are concerned that outsiders will somehow \"rub off\" on them and corrupt their own traditions and values. Chdru-Ji Certain aspects of Codru-Ji culture is barbaric by galactic standards. Ritual kidnapping, especially the children of political rivals, is common.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Klatooinian",
+    "slug": "klatooinian",
+    "description": "The ancient Klatooinians perceived the Hutts as demigods. The Hutts, never a kind to refuse the upper hand in any situation, used this false perception to their own advantage, convincing the Klatooinians to cast aside their ancient traditions, abandon their native language in favor of Huttese, and accept their place as indentured servants. Over the millennia, the Hutts have sheltered the Klatooinians and cultivated a society that is largely docile, obedient, illiterate, and isolated from the greater galactic community. Exposure to technology has not diminished the Klatooinian predilection for simplicity. However, youthful Klatooinians often chafe at the conventional \"Wisdom\" of their elders, and despite the Hutts' efforts to shield their Klatooinian subjects from progressive ideas, many Klatooinians strive to break away from their Hutt overlords.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Nagai",
+    "slug": "nagai",
+    "description": "Honorable, mysterious, violent, and sinister. All these words and more describe the Nagai people. They first appeared to be galactic invaders, until it was revealed that the Nagai were escaping their long-time enemies, the Tofs. Initially hostile to The New Republic, the Nagai eventually formed an alliance of convenience with The New Republic in an attempt to achieve victory in their war against the Tofs. The Nagai are charismatic- a quality that is, by and large, a product of their enhanced vocal range, which allows them to tailor their speech to be more soothing.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Sakiyan",
+    "slug": "sakiyan",
+    "description": "Sakiyans rarely venture far from their home system, showing little interest in traveling or trading with the galaxy at large. During the days of the Old Republic, there was some dispute among xenobiologists as to whether the Sakiyans should be classified as a Near-Human Species. The unusual structure of their brain led Imperial xenobiologists to conclude that they were a distinctly alien Species. The highly evolved Sakiyan brain is nearly twice the size of the average Human brain. While the Bith brain remains one of the most advanced among common alien Species, the parts of the Sakiyan brain that process sensory input are superior even to the Bith.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Vahla",
+    "slug": "vahla",
+    "description": "The Vahla are a nomadic, Near-Human Species who roamed the galaxy in search of their homeworld, and are generally regarded as a naturally bright and shrewd people. Their small economy is fueled by petty theft and limited-scale piracy, and, following the Great Jedi Purge, by bounty hunting. All Vahla are Force-sensitive, and whether aware or not, have ties to The Dark Side of The Force. Most Vahla become members of The Ember of Vahl, a Dark Side cult that worships Vahl, a goddess of fire and destruction. Though not all Vahla are members, they are all expected to follow the orders of a six-priest central coven believed to have been \"Chosen\" by the goddess.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Weequay",
+    "slug": "weequay",
+    "description": "The Weequay are well-known throughout the galaxy for their violent tendencies and lack of individuality. Deeply spiritual, they worship a broad pantheon of deities, the most senior of which is known as Quay. Zealous Weequay perform ritual sacrifices in Quay's honor, at times resorting to murder. Such incidents have done little to dispel their violent reputation. Each Weequay carries a spherical totem through which Quay allegedly speaks.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Yuuzhan Vong",
+    "slug": "yuuzhan-vong",
+    "description": "The Yuuzhan Vong come from the unknown reaches of space, entering the galaxy as invaders fueled by religious conviction. They have no connection to The Force, and regard mechanical technology as blasphemous. Their Starships, weapons, armor, and tools are genetically engineered lifeforms or created from the byproducts of such creatures. After laying waste to many New Republic worlds, the invading Yuuzhan Vong are eventually overcome by The Galactic Alliance. Peace is restored, even though some Yuuzhan Vong remain behind in isolated corners of the galaxy.",
+    "hasAlternateTraits": true,
+    "alternateTraits": [
+      {
+        "id": "yuuzhan-vong-alternate",
+        "label": "Alternate",
+        "source": "Canonical alternate species traits",
+        "traits": [
+          {
+            "id": "ability-modifiers",
+            "name": "Ability Modifiers",
+            "description": "All Yuuzhan Vong receive a +2 bonus to their Strength but suffer a -2 penalty to their Wisdom."
+          },
+          {
+            "id": "medium-size",
+            "name": "Medium Size",
+            "description": "As Medium creatures, Yuuzhan Vong have no special bonuses or penalties due to their size."
+          },
+          {
+            "id": "speed",
+            "name": "Speed",
+            "description": "Yuuzhan Vong have a base speed of 6 squares."
+          },
+          {
+            "id": "force-immunity",
+            "name": "Force Immunity",
+            "description": "Yuuzhan Vong can't take the Force Sensitivity feat, can't make Use the Force checks, and never gain Force Points. In addition, they are immune to any Force effect that targets their Will Defense (including Force Powers and aspects of the Use the Force skill)."
+          },
+          {
+            "id": "technophobic",
+            "name": "Technophobic",
+            "description": "Yuuzhan Vong take a -5 penalty on attack rolls and skill checks made when using mechanical weapons or tools."
+          },
+          {
+            "id": "weapon-familiarity",
+            "name": "Weapon Familiarity",
+            "description": "Yuuzhan Vong with the Weapon Proficiency (Simple Weapons) feat are considered proficient with the Amphistaff."
+          },
+          {
+            "id": "automatic-languages",
+            "name": "Automatic Languages",
+            "description": "All Yuuzhan Vong can speak, read, and write Yuuzhan Vong. Zeltron Zeltrons are known throughout the galaxy for their hedonistic nature. Experiencing pleasure in its myriad forms is the lifetime pursuit of all Zeltrons. They are a fun-loving species, placing recreation before other, less worldly interests. Members of the Species are found throughout the galaxy, for they enjoy traveling, meeting new people, indulging in their passions, and experiencing new things. Zeltrons are born with a latent empathy that allows them to sense the emotions of others. Though not ruled by emotions of others, they can, over time, become inundated with negative feelings if they are surrounded by such sentiments for a prolonged period of time. For this reason, many Zeltrons are pacifistic, preferring peaceful negotiation to the destructive actions of combat. This is not to say that Zeltrons are incapable of defending themselves; their passion gives them a great capacity for violence when the situation warrants. Additionally, their physiology includes an ultra efficient metabolism which allows them to maintain peak body weight and muscle mass regardless of their culinary indulgences."
+          }
+        ],
+        "description": "The following Species Traits can be utilized instead when making certain Yuuzhan Vong NPCs: Ability Modifiers: All Yuuzhan Vong receive a +2 bonus to their Strength but suffer a -2 penalty to their Wisdom. Medium Size: As Medium creatures, Yuuzhan Vong have no special bonuses or penalties due to their size."
+      }
+    ]
+  },
+  {
+    "name": "Zeltron",
+    "slug": "zeltron",
+    "description": "Zeltrons are known throughout the galaxy for their hedonistic nature. Experiencing pleasure in its myriad forms is the lifetime pursuit of all Zeltrons. They are a fun-loving species, placing recreation before other, less worldly interests. Members of the Species are found throughout the galaxy, for they enjoy traveling, meeting new people, indulging in their passions, and experiencing new things. Zeltrons are born with a latent empathy that allows them to sense the emotions of others.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Celegian",
+    "slug": "celegian",
+    "description": "Celegians are an ancient Species known for their great intellect and wisdom. Evolved from ocean-dwelling invertebrates, the Celegians' ancestors eventually adapted to living on land. The atmosphere of their homeworld is rich in cyanogen gas, which is poisonous to most sentient beings. Conversely, oxygen is lethal to Celegians. To move their massive jellyfishlike bodies, Celegians evolved a natural form of locomotion similar to a repulsorlift generator.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Shard",
+    "slug": "shard",
+    "description": "Shards are crystalline beings native to the planet Orax. Although immobile and silicone-based, Shards are sentient and can communicate with others through computers and other electronic receivers. Some Shards, like The Iron Knights, have themselves placed inside Droid Bodies that they can manipulate telepathically. Many, if not all, Shards are Force-sensitive. Shards in Droid Bodies, disconnected from their group-mind, became insatiably curious, and almost intoxicated by the new sensory experiences.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Vultan",
+    "slug": "vultan",
+    "description": "Vultans are a technologically advanced Near-Human Species native to the planet Vulta, located at the spinward edge of The Mid Rim. The Vultan culture was already five millennia old at the time of the Great Hyperspace War. As citizens of an old and curious culture, Vultans tend to go through waves of fads and technological growth. Many Old Republic corporations have a few Vultans on their board of directors. Even during the time of the Empire, Vultans commonly worked as programmers for holovid entertainment companies.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Barabel",
+    "slug": "barabel",
+    "description": "A towering reptilian Species, the Barabel are relative newcomers to the galactic community. Having evolved from nocturnal predators, Barabels are well-suited to cope with prolonged period of darkness, and they retain much of their ancestor's ferocity. Several centuries prior to the formation of the Empire- at least according to Barabel legend- an Ithorian Jedi explorer named Noga-ta came to their world and peacefully settled a millennium-long civil war stemming from a dispute over prime hunting grounds. This instills a high regard for the Jedi in all Barabel for centuries to follow, even in the wake of the Galactic Empire's anti-Jedi propaganda. For a short time, the Barabels are hunted by illegal safaris set up by Imperial-backed Planetary Safaris, but a massed uprising by the Barabels compels the Empire to intervene and put a stop to the hunts.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Dashade",
+    "slug": "dashade",
+    "description": "The Dashade work as mercenaries and bodyguards for many groups. Most notably though, Dashade work for the various Sith uprisings; even though the Sith are directly responsible for the Cron Cluster supernova that destroys the Dashade homeworld thousands of years before the Galactic Civil War. Even with the loss of their homeworld, the Dashade avoid extinction. Their exact numbers remain unknown, but reports suggest that the Dashade were able to establish one or more colonies far outside their home system prior to the Cron Cluster disaster.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Lurmen",
+    "slug": "lurmen",
+    "description": "Lurmen are small, furry humanoids with the ability to roll up in a ball faster overland travel. Their love of peace leads the Lurmen to avoid entanglements in galactic events. As a society, Lurmen eschew conflict of any kind, refusing to fight even in their own defense. During the Clone Wars, a colony of Lurmen on Maridun is nearly wiped out by a Separatist weapon, and only when several Lurmen break away from the wishes of their elders and join the fight are their people saved. Although the Lurmen seem stubborn in holding onto their ways, in truth they lead a lifestyle largely free of conflict, and have for eons.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Taung",
+    "slug": "taung",
+    "description": "The Taung are warriors first and foremost, having battled the native Human nations for control of Coruscant before being driven off and forced to flee to the Outer Rim world of Roon, where they remain for millennia until the legendary Mandalore the First leads them to conquer another world. Taung rename both the world and themselves in his honor, becoming The Mandalorians. With a clan-based nomadic culture, Taung view battle and war as both a source of personal honor and a way to show pride in their community. Veterans of successful battles are held in high regard, to such an extent that they are the de facto leaders of their communities. Only the leader of all The Mandalorians, known simply as Mandalore, holds greater sway with the clans.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Thakwaash",
+    "slug": "thakwaash",
+    "description": "Possessed of great strength, these large bipeds are best known for their uniquely non-Human mindset. A Thakwaash has multiple separate personalities, each specializing in a certain function or area of expertise. Interacting with Thakwaash can be difficult for other Species, particularly for Humans, who view such behavior among their own kind as a mental disorder. The maximum number of personalities that a single Thakwaash can develop is unknown, as is the means by which such personalities form in the first place. No reliable reports of Thakwaash exist prior to the Empire's defeat at The Forest Moon of Endor.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Trianii",
+    "slug": "trianii",
+    "description": "The Trianii are a feline race of intrepid explorers, but unlike other technologically advanced Species of the galaxy, they express no interest in becoming a part of the greater galactic community. The Trianii use impressive displays of force to drive away interlopers so that they are left alone to explore their region of the galaxy. Their homeworld is located on the edge of the region of space controlled by The Corporate Sector Authority. An attempt by the CSA to expand its area of control into Trianii territories is met with a display of Trianii determination as the Species expel the invaders, proving that the ships and weapons of The Trianii Rangers are as formidable as those of other galactic forces. Trianii society is a matriarchy- partly because females of the Species are taller and slightly stronger than the males- ruled by tribunals of females known as yu'nar.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Yevetha",
+    "slug": "yevetha",
+    "description": "A tall, skeletal Species with lithe builds, the Yevetha have little impact on the galaxy until after the fall of the Empire, but even that slight influence makes them known for their intense xenophobia and a culture heavily centered upon death. During Emperor Palpatine's reign, the Yevetha's homeworld, N'zoth, is seized and made the site of an Imperial shipyard. When the Yevetha revolt against their Imperial masters shortly after the Battle of Yavin, they seize control of the shipyards and over the following decade proceed to refine their technological capabilities, devising new Starships and Weapons that enable them to seize and forcibly colonize over a dozen worlds in the Koornacht Cluster. They then embark on an ambitious campaign against the New Republic military, suffering a crushing defeat because of the influence of members of The Fallanassi sect of Force-users- a defeat that leaves many Yevetha dead because of their inborn refusal to accept surrender. The New Republic keeps the Species under watch until active patrols are removed close to a decade after the bloody battle, during which time the Yevetha build an even larger force than their original fleet.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Yuzzem",
+    "slug": "yuzzem",
+    "description": "In spite of a well-deserved reputation as temperamental brutes, Yuzzem are cunning and intelligent, and their resourcefulness gives them as much of an advantage as their physically powerful frames. The Empire has learned this the hard way after they declared the Yuzzem a slave Species, rounding up large numbers of them, and putting them to work in heavy-labor operations. The Yuzzem have frequently revolted against their Imperial masters, showing that they can be as ferocious as Wookiees, with no reservations about using their claws and tusks in a fight.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Zygerrian",
+    "slug": "zygerrian",
+    "description": "A violent Species from the distant corners of The Outer Rim, Zygerrians are known for their history of piracy and war. As a Species that earns its fame through slavery, piracy, and violence, Zygerrians are feared in spaceports throughout the galaxy. Raised in a culture where weakness can mean death or enslavement, Zygerrians cultivate a dangerous, unpredictable image to deter others from challenging their dominance. Those who do must contend with the Zygerrians' natural combat prowess, since Zygerrians are excellent fighters with or without weapons. Zygerrian society is built on the principle that strength leads to authority, and for Zygerrians, strength can mean many things- physical strength, and also strength of will, or conviction, and of bravery.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Bith",
+    "slug": "bith",
+    "description": "Bith have been part of The Galactic Republic for thousands of years. Intellectually advanced humanoids, Bith have over-sized brains evolved to handle abstract skills such as language, mathematics, music, and scientific analysis. This fundamental shift to the intellect has caused brain functions related to instinct and biological drives to diminish. Their greater brainpower also means that Bith need to spend only four hours in a meditative trance to regain the energy that most Species require eight hours to recover. As a culture, Bith find the concept of warfare abhorrent, and most are pacifists.",
+    "hasAlternateTraits": true,
+    "alternateTraits": [
+      {
+        "id": "bith-alternate",
+        "label": "Alternate",
+        "source": "Canonical alternate species traits",
+        "traits": [
+          {
+            "id": "ability-modifiers",
+            "name": "Ability Modifiers",
+            "description": "All Bith receive a +2 bonus to their Intelligence but suffer a -2 penalty to their Constitution. Bith have highly evolved minds but are physically frail."
+          },
+          {
+            "id": "medium-size",
+            "name": "Medium Size",
+            "description": "As Medium creatures, Bith have no special bonuses or penalties due to their size."
+          },
+          {
+            "id": "speed",
+            "name": "Speed",
+            "description": "Bith have a base speed of 6 squares."
+          },
+          {
+            "id": "evolved-intellect",
+            "name": "Evolved Intellect",
+            "description": "Once per encounter, a Bith can treat any single Intelligence-based skill check as though it were a natural 20 on the die."
+          },
+          {
+            "id": "heightened-awareness",
+            "name": "Heightened Awareness",
+            "description": "A Bith can choose to reroll any Perception check, but the result of the reroll must be accepted even if it is worse."
+          },
+          {
+            "id": "meditative-trance",
+            "name": "Meditative Trance",
+            "description": "Bith gain all of the benefits of resting for 8 hours after 4 hours of meditation, including natural healing and removing persistent conditions."
+          },
+          {
+            "id": "automatic-languages",
+            "name": "Automatic Languages",
+            "description": "All Bith can speak, read, and write both Basic and Bith. Defel Defel come from the High Gravity world of Af'El, which orbits the supergiant Ka'Dedus. The planet is unusual in that the atmosphere absorbs all light except that in the ultraviolet spectrum. The Defel, along with every other animal on the planet, have evolved to see perfectly well in ultraviolet, but they are completely Blind when exposed to other wavelengths of light. Defel that leave their homeworld must wear special visors that allow them to see. This evolution also had an interesting effect on Defel fur, making the creatures effectively invisible in the normal light in which most other Species operate. This near-invisibility has earned the Defel the nickname \"Wraiths\" because in visible light, they appear as nothing more than vague shadows. Due to the crushing gravity and harsh seasons of their homeworld, Defel bind together into close-knit communities to survive. However, they also possess a strong streak of independence in personal matters. They are tough, resilient creatures with a deep and complex sense of honor, especially toward their families and patrons. Their cities are built underground, and Defel are accomplished miners and metallurgists- one of the reasons that outsiders contacted them in the first place. Af'El is one of the few planets blessed with large quantities of meleenium, a primary component in the manufacturing of durasteel. Most Defel are content to remain in the safety of their underground cities, and the planet's tortuous gravity and harsh conditions mean that it has few visitors. Defel that leave Af'El are drawn toward professions that take advantage of their natural stealth and invisibility, such as thief, assassin, scout, and bodyguard. Most of the galaxy's inhabitants believe that the Defel are only characters from stories- invisible demons that lurk in the shadows."
+          }
+        ],
+        "description": "The following Species Traits can be utilized instead when making certain Bith NPCs: Ability Modifiers: All Bith receive a +2 bonus to their Intelligence but suffer a -2 penalty to their Constitution. Bith have highly evolved minds but are physically frail."
+      }
+    ]
+  },
+  {
+    "name": "Defel",
+    "slug": "defel",
+    "description": "Defel come from the High Gravity world of Af'El, which orbits the supergiant Ka'Dedus. The planet is unusual in that the atmosphere absorbs all light except that in the ultraviolet spectrum. The Defel, along with every other animal on the planet, have evolved to see perfectly well in ultraviolet, but they are completely Blind when exposed to other wavelengths of light. Defel that leave their homeworld must wear special visors that allow them to see. This evolution also had an interesting effect on Defel fur, making the creatures effectively invisible in the normal light in which most other Species operate.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Elomin",
+    "slug": "elomin",
+    "description": "Culturally, the Elomin try to discover or create order in all things. They view the universe as a logical, organized puzzle, and endeavor to find the pieces and bring them to their logical places. When confronted with something that doesn't fit into the pattern they have defined, they may try to redefine the pattern, but are just as likely to attempt to ignore the discordant details. Such was the case when the Elomin first discovered the existence of the underground-dwelling Eloms, another sentient Species native to their world. The Elomin first denied the existence of the Eloms, and then later denied they were sentient.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Fosh",
+    "slug": "fosh",
+    "description": "Almost completely unknown by the rest of the galaxy, Fosh are an avianlike Species that hail from an unknown planet. Outwardly quiet, reserved, and thoughtful, in truth Fosh are contemptuous of other Species and consider all non-Fosh to be inferior. Fosh keep this condescension and bigotry to themselves, however. They are remarkably manipulative and are masters of intrigue, deal making, and deception. Only Bothans are more skilled at pulling the strings of others.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Givin",
+    "slug": "givin",
+    "description": "The shipyards that circle Yag'Duhl, the Givin homeworld, produce sturdy and elegant starships and compete on a level matched only by the Duros and Verpine, the only Species that receive grudging respect from the Givin. However, Givin designers do not equip their ships with Navicomputers, since most Givin can calculate hyperspace jumps in their heads, and they often overlook life-support systems. Members of other Species that purchase Givin built ships must add these components.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Gotal",
+    "slug": "gotal",
+    "description": "Emotions are an important part of Gotal culture. Young Gotals live in a constant state of confusion as they are bombarded by the emotions of others. Learning to handle this input is what pushes a Gotal toward adulthood and maturity. Adult Gotals are calm, almost serene beings, but despite their outward appearance, they feel the full breadth of emotions. Because they are so sensitive to emotions, Gotals quickly form meaningful relationships with one another.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Herglic",
+    "slug": "herglic",
+    "description": "Herglics are hulking bipeds that evolved from water-dwelling mammals on the planet Giju. Their ancestors' fins and flukes have been replaced by arms and legs, although Herglics still breathe through blowholes on the tops of their heads. As a whole, Herglics are great believers in fairness and honesty. They are renowned for always being upright traders and for honoring any deal or bargain they make. They assume that others behave in a similar fashion, and few things anger a Herglic more than deceit and cheating.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Mrlssi",
+    "slug": "mrlssi",
+    "description": "The diminutive Mrlssi hail from The Colonies region world of Mrlsst, and they are the only sentient Species native to their star system. They evolved from flightless avians, and their faces are dominated by large black eyes and hooked beaks. Mrlssi are typically peaceful and scholarly. Their homeworld has long been home to some of the galaxy's most prestigious universities and research centers, including one of the leading institutions for applied sciences- the Mrlsst Trade and Science Academy. Out of Mrlssi schools grow a host of findings that ease the shipping of food and livestock between worlds, along with innovations that later become standard construction techniques for structures and vessels on planets and in space.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Neimoidian",
+    "slug": "neimoidian",
+    "description": "The Neimoidians quickly find a place in galactic civilization, excited by the prospect of markets beyond their own worlds. For several centuries, they are among the leading forces behind the construction of new starports and the upgrade of existing ones. They trade with everyone- Republic or Sith, Hutt or Herglic- because to the Neimoidians, all that matters is a market for their goods. They help found the Trade Federation, a cartel of mercantile interests that, driven by Neimoidian greed, becomes so powerful that it threatens the very interstellar commerce it exists to protect. When the organization attempts to become the sole conduit for trade in certain parts of space, the Senate and the Jedi intervene.",
+    "hasAlternateTraits": true,
+    "alternateTraits": [
+      {
+        "id": "neimoidian-alternate",
+        "label": "Alternate",
+        "source": "Canonical alternate species traits",
+        "traits": [
+          {
+            "id": "ability-modifier",
+            "name": "Ability Modifier",
+            "description": "Neimoidians receive a +2 bonus to their Intelligence and Charisma, but suffer a -2 penalty to their Strength."
+          },
+          {
+            "id": "medium-size",
+            "name": "Medium Size",
+            "description": "As Medium creatures, Neimoidians have no special bonuses or penalties due to their size."
+          },
+          {
+            "id": "speed",
+            "name": "Speed",
+            "description": "Neimoidians have a base speed of 6 squares."
+          },
+          {
+            "id": "conditional-bonus-feats",
+            "name": "Conditional Bonus Feats",
+            "description": "A Neimoidian with Deception as a Trained Skill gains Skill Focus (Deception) as a bonus Feat."
+          },
+          {
+            "id": "deceptive",
+            "name": "Deceptive",
+            "description": "A Neimoidians may choose to reroll any Deception check, but the result of the reroll must be accepted, even if it is worse."
+          },
+          {
+            "id": "automatic-languages",
+            "name": "Automatic Languages",
+            "description": "All Neimoidians can speak, read and write Basic, Neimoidian, and Pak Pak. Nyriaanan Nyriaanans are a group of Near-Humans native to the rich mineral world of Nyriaan. Nyriaanans divide themselves along family lines into hundreds of different clans. Some are nomadic, wandering the waterlogged plains of their homeworld, while others inhabit the same groves of Meadlin's Trees that their ancestors settled centuries, or even millennia, before. They are a peaceful people, but the natives are easily angered by offworlders that care more for turning a profit than for honor or integrity. Although they are not technological in nature, Nyriaan's natives foster the technology of their ancestors as well as adopt newer technology as they acquire it. In fact, Republic anthropologists that have come to Nyriaan to study the native clans are surprised by how the Nyriaanans manage to maintain and continue to utilize Old Republic technology. For natives, everything has a use, and keeping the artifacts of yesteryear in good working condition honors one's ancestors."
+          }
+        ],
+        "description": "The following Species Traits can be utilized instead when making certain Neimoidian NPCs: Ability Modifier: Neimoidians receive a +2 bonus to their Intelligence and Charisma, but suffer a -2 penalty to their Strength. Medium Size: As Medium creatures, Neimoidians have no special bonuses or penalties due to their size."
+      }
+    ]
+  },
+  {
+    "name": "Nyriaanan",
+    "slug": "nyriaanan",
+    "description": "Nyriaanans are a group of Near-Humans native to the rich mineral world of Nyriaan. Nyriaanans divide themselves along family lines into hundreds of different clans. Some are nomadic, wandering the waterlogged plains of their homeworld, while others inhabit the same groves of Meadlin's Trees that their ancestors settled centuries, or even millennia, before. They are a peaceful people, but the natives are easily angered by offworlders that care more for turning a profit than for honor or integrity. Although they are not technological in nature, Nyriaan's natives foster the technology of their ancestors as well as adopt newer technology as they acquire it.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Pa'lowick",
+    "slug": "pa-lowick",
+    "description": "A mining expedition discovered the Pa'lowick homeworld about ten years before the Battle of Endor, making Pa'lowicks one of the newer Species to join galactic society. Though technologically primitive, Pa'lowicks have a sophisticated and highly adaptive feudal society (ruled by noble families). They welcome contact with other Species and enjoy trading foodstuffs and primitive wares for useful technological devices they cannot build themselves. Regular trade with other Species has done little to change the way Pa'lowicks live. Although they like to collect high-tech items, most are content to \"Nest\" on their homeworld, enjoying the simple life of farming, fishing, hunting, and storytelling.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Umbaran",
+    "slug": "umbaran",
+    "description": "As Palpatine's New Order becomes increasingly biased toward Humans, Moore vanishes from the Emperor's side and moves into more shadowy roles within his government. From deep within the intelligence apparatus, she and other Umbarans lead efforts to root out anyone who is not unquestionably loyal to Emperor Palpatine, and they answer only to the Emperor. They are so effective that even Emperor Palpatine's most dedicated followers grow to fear them, something that strengthens the antialien sentiment among many of the Emperor's closest advisers. The Umbarans are particularly disliked by officers of Imperial Intelligence, who resent the fact that they are subject to Umbaran scrutiny- a resentment that grows every time the Umbarans unmask a Rebel double agent in their ranks. After the death of Emperor Palpatine and the collapse of his government, the Umbarans find themselves under threat from the Rebels they had hunted and the New Order supporters they had intimidated.",
+    "hasAlternateTraits": true,
+    "alternateTraits": [
+      {
+        "id": "umbaran-alternate",
+        "label": "Alternate",
+        "source": "Canonical alternate species traits",
+        "traits": [
+          {
+            "id": "ability-modifiers",
+            "name": "Ability Modifiers",
+            "description": "All Umbarans receive a +2 bonus to both their Wisdom and Charisma, but suffer a -2 penalty to their Constitution."
+          },
+          {
+            "id": "medium-size",
+            "name": "Medium Size",
+            "description": "As medium creatures, Umbarans have no special bonuses or penalties due to their size."
+          },
+          {
+            "id": "speed",
+            "name": "Speed",
+            "description": "Umbarans have a base speed of 6 squares."
+          },
+          {
+            "id": "low-light-vision",
+            "name": "Low-Light Vision",
+            "description": "Umbarans ignore Concealment (but not Total Concealment) from darkness."
+          },
+          {
+            "id": "conditional-bonus-feat",
+            "name": "Conditional Bonus Feat",
+            "description": "An Umbaran with Persuasion as a Trained Skill gains Skill Focus (Persuasion) as a bonus Feat."
+          },
+          {
+            "id": "soothing-voice",
+            "name": "Soothing Voice",
+            "description": "An Umbaran may choose to reroll any Persuasion check, but the result of the reroll must be accepted, even if it is worse."
+          },
+          {
+            "id": "light-sensitivity",
+            "name": "Light Sensitivity",
+            "description": "An Umbaran exposed to bright light (such as sunlight) is Blinded for 1 round."
+          },
+          {
+            "id": "automatic-languages",
+            "name": "Automatic Languages",
+            "description": "All Umbarans can speak, read, and write both Basic and Umbarese. Altiri Altiri are a Near-Human Species that evolved on the eastern continent of the planet they call Altiria. Originally wandering nomads, Altiri developed a society that places great importance on individual development of one's intellect and spirituality. Through artistic expression and cultural awareness, Altiri focus on expanding their knowledge of the universe by peaceful, scientific means. Their perpetual war with the Anarrians is a glaring exception to this lofty goal. Most Altiri unite under the banner of The Altirian Republic, a representative democracy that rules most of the eastern continent and several island chains around it. The republic's driving goal is the promotion of the Altiri, their development into the world's most advanced society, and their elevation to rulers of the planet. Republic members fervently state that they seek a peaceful existence in which knowledge and the arts are prized over all else, and many facets of their society support this ideal. At the same time, the republic maintains a sizable military force, the purpose of which is to combat the Anarrians. Prior to their discovery of the Anarrians, the Altiri primarily worshipped the goddess Shalla, bringer of peace and good fortune. While less prominent in the present day, she is still worshipped to a large degree, and the Altiri go so far as to name their colony on Priva after her."
+          }
+        ],
+        "description": "Umbarans are humanoid aliens from the Ghost Nebula. They are masters of persuasion, leading others to believe that they are all Force-users."
+      }
+    ]
+  },
+  {
+    "name": "Altiri",
+    "slug": "altiri",
+    "description": "Altiri are a Near-Human Species that evolved on the eastern continent of the planet they call Altiria. Originally wandering nomads, Altiri developed a society that places great importance on individual development of one's intellect and spirituality. Through artistic expression and cultural awareness, Altiri focus on expanding their knowledge of the universe by peaceful, scientific means. Their perpetual war with the Anarrians is a glaring exception to this lofty goal. Most Altiri unite under the banner of The Altirian Republic, a representative democracy that rules most of the eastern continent and several island chains around it.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Anzati",
+    "slug": "anzati",
+    "description": "",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Anarrian",
+    "slug": "anarrian",
+    "description": "Most Anarrians are citizens of The Anarrian Empire, the government that reigns over the planet's western continent and many of the islands nearby. Since its inception around the time of The Mandalorian Wars, the Empire has fought to gain dominance over the Altiri and establish its rule over the world. Thanks to their perpetual state of military readiness and training, the Anarrians are prepared to launch an assault on any who stand in their way, including rogue cells of Anarrians who choose other philosophies and goals.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Chadra-Fan",
+    "slug": "chadra-fan",
+    "description": "Known for being among the most cheerful and friendliest beings of the galaxy, Chadra-Fans are found in many places. On their native world, hurricanes and tsunamis frequently wipe out their homes, so the Chadra-Fans have developed an intense fear of water and choose new homes on arid planets. This experience with frequent destruction also leads them to regard few things as being truly permanent. Chadra-Fans embrace the moment and enjoy themselves as much as they can, living with a contagious zest for life. Chadra-Fans are notorious for their love of tinkering, frequently disassembling and reassembling unattended devices into something different.",
+    "hasAlternateTraits": true,
+    "alternateTraits": [
+      {
+        "id": "chadra-fan-alternate",
+        "label": "Alternate",
+        "source": "Canonical alternate species traits",
+        "traits": [
+          {
+            "id": "ability-modifiers",
+            "name": "Ability Modifiers",
+            "description": "+2 Charisma, -2 Wisdom"
+          },
+          {
+            "id": "small-size",
+            "name": "Small Size",
+            "description": "As Small creatures, Chadra-Fans gain a +1 size bonus to their Reflex Defense and a +5 size bonus on Stealth checks. However, their lifting and carrying limits are three-quarters of those of Medium characters."
+          },
+          {
+            "id": "speed",
+            "name": "Speed",
+            "description": "Chadra-Fans have a base speed of 4 squares."
+          },
+          {
+            "id": "darkvision",
+            "name": "Darkvision",
+            "description": "Chadra-Fans ignore Concealment (including Total Concealment) from darkness. However, they cannot perceive colors in total darkness."
+          },
+          {
+            "id": "tinkerer",
+            "name": "Tinkerer",
+            "description": "A Chadra-Fan may reroll any Mechanics check, but the result of the reroll must be accepted even if it is worse. Whenever a Chadra-Fan Repairs or Jury-Rigs a droid or a device with a Mechanics check, the droid or device regains an additional 1d8 hit points. Additionally, Mechanics is always a class skill for a Chadra-Fan."
+          },
+          {
+            "id": "automatic-languages",
+            "name": "Automatic Languages",
+            "description": "All Chadra-Fans can speak, read, and write both Basic and Chadra-Fan. Ebruchi The Ebruchi are cruel, ill-mannered pirates who plague the hyperlanes between Republic-settled space and the Chiss Ascendancy. To some, the Ebruchi are a terror. To militarily superior forces, such as the Chiss and the Vagaari, the Ebruchi are a perpetual annoyance. The Ebruchi are omnivorous. They can survive on rotting garbage if necessary, but their appetites lean toward the sadistic. They love nothing more than swallowing the wet flesh of freshly killed prisoners. Their compact bulk makes them appear formidable despite their shorter than-average height, and the muscles are not just for show. An Ebruchi can take a terrific pounding, then return the favor. Ebruchi The Ebruchi style of dress matches their stereotype as uncivilized, opportunistic pirates. A typical outfit consists of layers of animal skins topped with shiny medallions, rings, or crowns. But those who think that an Ebruchi's appearance is lazily haphazard are mistaken. The Ebruchi put great thought into the placement of each item and layer, and all clothing is tended with exquisite care. Patches, scarves, necklaces, and intentional holes and tears are all signs of rank and achievement, although the nuances of the arrangements are lost on non-Ebruchi."
+          }
+        ],
+        "description": "The following Species Traits can be utilized instead when making certain Chadra-Fan NPCs: Ability Modifiers: +2 Charisma, -2 Wisdom Small Size: As Small creatures, Chadra-Fans gain a +1 size bonus to their Reflex Defense and a +5 size bonus on Stealth checks. However, their lifting and carrying limits are three-quarters of those of Medium characters."
+      }
+    ]
+  },
+  {
+    "name": "Ebruchi",
+    "slug": "ebruchi",
+    "description": "The Ebruchi style of dress matches their stereotype as uncivilized, opportunistic pirates. A typical outfit consists of layers of animal skins topped with shiny medallions, rings, or crowns. But those who think that an Ebruchi's appearance is lazily haphazard are mistaken. The Ebruchi put great thought into the placement of each item and layer, and all clothing is tended with exquisite care. Patches, scarves, necklaces, and intentional holes and tears are all signs of rank and achievement, although the nuances of the arrangements are lost on non-Ebruchi.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Ishi Tib",
+    "slug": "ishi-tib",
+    "description": "Ishi Tib live in schools- communal groups of thousands of individuals, governed by elected representatives who hold office for one-year terms. An Ishi Tib does not know the identity of his or her birth parents, because each Ishi Tib school assumes responsibility for the welfare of its hatchlings, creating a strong sense of community and promoting the needs of the group over those of an individual. Unlike Species that have wrecked environmental havoc upon their homeworlds, Ishi Tib protect their planet, Tibrin, with extensive laws legislating ecological preservation. During the Clone Wars, the Ishi Tib side with The Confederacy of Independent Systems after Count Dooku liberates their world from the Ishi Tib premier Suribran Tu, although Tibrin is still represented in the Galactic Senate. During the Galactic Civil War, Ishi Tib who join The Rebel Alliance plan raids against the Empire, and several Ishi Tib tactical experts are present at the briefing prior to the Battle of Endor.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Killik",
+    "slug": "killik",
+    "description": "Killiks are a genetically diverse population of intelligent insects. Their society is composed of hives, also called nests. Members of each hive share the same physical characteristics and possess the ability to communicate with others through pheromones, electromagnetic transmissions, and long-distance telepathy. Multiple nests united under a hive-mind link can be considered a single organism. Its members always refer to themselves in the third person, and each is aware of anything that has been experienced by any other member.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Krevaaki",
+    "slug": "krevaaki",
+    "description": "In response to other Species' xenophobia, the Krevaaki cloak their tentacled bodies with heavy robes or similar garments, leaving only their two dominant tentacles exposed like humanoid arms. More than a few beings have been caught unaware by the sudden appearance of additional tentacles from beneath the folds of a Krevaaki's garments.",
+    "hasAlternateTraits": true,
+    "alternateTraits": [
+      {
+        "id": "krevaaki-alternate",
+        "label": "Alternate",
+        "source": "Canonical alternate species traits",
+        "traits": [
+          {
+            "id": "ability-modifiers",
+            "name": "Ability Modifiers",
+            "description": "All Krevaaki receive a +2 bonus to their Wisdom, but suffer a -2 penalty to their Charisma. Krevaaki are kind-hearted and spiritual, but their unusual physiques tends to unnerve other Species."
+          },
+          {
+            "id": "medium-size",
+            "name": "Medium Size",
+            "description": "As Medium creatures, Krevaaki have no special bonuses or penalties due to their size."
+          },
+          {
+            "id": "speed",
+            "name": "Speed",
+            "description": "Krevaaki have a base speed of 6 squares."
+          },
+          {
+            "id": "carapace",
+            "name": "Carapace",
+            "description": "Krevaaki gain a +1 Natural Armor bonus to their Reflex Defense and a +1 Natural Armor bonus to their Fortitude Defense. A Natural Armor bonus stacks with an Armor bonus."
+          },
+          {
+            "id": "stoic",
+            "name": "Stoic",
+            "description": "Krevaaki physiology and their limited ability to use facial expressions make them difficult for other Species to read accurately. Any creature attempting to use the Sense Deception or Sense Influence applications of the Perception skill on a Krevaaki takes a -5 penalty to the skill check."
+          },
+          {
+            "id": "grasping-tentacles",
+            "name": "Grasping Tentacles",
+            "description": "Krevaaki use their two dominant tentacles like the arms and hands of a humanoid. Krevaaki gain a +2 Species bonus to Climb checks and a +2 Species bonus to Grab and Grapple checks."
+          },
+          {
+            "id": "automatic-languages",
+            "name": "Automatic Languages",
+            "description": "All Krevaaki can speak, read, and write both Basic and Kreva. Lugubraa The Lugubraa are found throughout The Unknown Regions as laborers and hired muscle. Their reproductive rates can get out of hand rapidly, ruining entire ecosystems beyond hope of restoration. A Lugubraa lacks eyes and is blind to visual light, but surrounding its mouth are numerous heat spots that detect thermal signatures as well as echolocation pingers that can paint a radar map of the surroundings. A Lugubraa has no ears, instead detecting sounds through vibrations sensed along the length of its skin, which is smooth and thick like that of an oceanic cetacean. Skin coloration varies between white and dark gray, but most Lugubraa are so pale that they trigger unpleasant mental associations with grubs and maggots. Lugubraa From birth to six months, Lugubraa have the self-awareness of domesticated beasts, able to follow simple commands and steadfastly devoted to their horde or the owner that has purchased their services. After six months, their intelligence reaches that of simple-minded sentients, allowing them to communicate in short sentences but still rendering them hopeless when it comes to advanced calculations. It is rare for Lugubraa to survive more than a few decades, but those that do undergo a second cognitive kick-start at approximately age 50. These unusual geniuses become leaders and strategists for the Lugubraa hordes, plotting ways to acquire more resources and brokering the services of their species as mercenaries to interested galactic parties."
+          }
+        ],
+        "description": "The following Species Traits can be utilized instead when making certain Krevaaki NPCs: Ability Modifiers: All Krevaaki receive a +2 bonus to their Wisdom, but suffer a -2 penalty to their Charisma. Krevaaki are kind-hearted and spiritual, but their unusual physiques tends to unnerve other Species."
+      }
+    ]
+  },
+  {
+    "name": "Lugubraa",
+    "slug": "lugubraa",
+    "description": "From birth to six months, Lugubraa have the self-awareness of domesticated beasts, able to follow simple commands and steadfastly devoted to their horde or the owner that has purchased their services. After six months, their intelligence reaches that of simple-minded sentients, allowing them to communicate in short sentences but still rendering them hopeless when it comes to advanced calculations. It is rare for Lugubraa to survive more than a few decades, but those that do undergo a second cognitive kick-start at approximately age 50. These unusual geniuses become leaders and strategists for the Lugubraa hordes, plotting ways to acquire more resources and brokering the services of their species as mercenaries to interested galactic parties.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Nikto",
+    "slug": "nikto",
+    "description": "Widely recognized as a slave species of the Hutts, the Nikto have served their masters since before the founding of The Old Republic, proving to be cunning warriors in the Hutts' battle with the legendary conqueror Xim the Despot. Wherever the Hutts are, the Nikto are never far behind. Because of their homeworld's radioactive atmosphere, the Nikto have five distinct subspecies, each adapted to a specific type of terrain (see Nikto Survival feat).",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "O'reenian",
+    "slug": "o-reenian",
+    "description": "The people of O'reen take the defense of their world very seriously. Despite this fact, there are many strange and powerful races throughout The Unknown Regions that have technology that is unfamiliar to the O'reenians, making it difficult for them to sense threats from the outside until it is too late. As a result, the O'reenians have created a network of Orbital Defense Mines that detect, move toward, and attack any Starship approaching O'reen without proper transponder identifiers.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Shistavanen",
+    "slug": "shistavanen",
+    "description": "More commonly known to the galactic populace by the nickname Wolfmen, the Shistavanen are an isolationist Species that originates in the Uvena System. Having evolved from predators, Shistavanen excel at hunting and can track prey through crowded urban streets and across desolate plains with equal ease. Although the vast majority of Shistavanen prefer to remain within their home system, a growing minority choose to travel the galaxy's Hyperlanes. Even during the height of the First Galactic Empire's discrimination against non-Humans, Imperial Intelligence made frequent use of those Shistavanen it could recruit; other Shistavanen joined The Rebel Alliance.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Sluissi",
+    "slug": "sluissi",
+    "description": "Sluissi Technicians are renowned for Starship construction and modification. Although Sluissi methods are slower than others, customers are willing to wait to own the best Starship technology available. The Sluissi consider Starship construction to be an art form. So respected are Sluissi shipyards that the slow pace of construction is tolerated by even the Empire, albeit impatiently.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Sorcerer of Rhand",
+    "slug": "sorcerer-of-rhand",
+    "description": "The Sorcerers of Rhand live deep in The Unknown Regions, hidden by the red flow of the Perann Nebula from any disciples of The Dark who wish to tap their knowledge. Their reclusiveness is a blessing, for if the Sorcerers of Rhand were to unleash the full entropic power of what they call The Dark, the entire galaxy might come to ruin. The Sorcerers or Rhand are realists. They understand that the power of destruction, coupled with time, has more ability to change the universe than any effort of creation. They devote their efforts to understanding its purpose and ultimately divining a way to become agents of The Dark.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Squib",
+    "slug": "squib",
+    "description": "Squibs are known throughout the galaxy for their talents at collecting, trading, and haggling. The uneven distribution of natural resources on their homeworld led early Squibs to compulsively collect and stockpile goods, and to develop a maddeningly complex system of barter. But in spite of their penchant for needless complexities when negotiating, Squibs are surprisingly honest in their dealings, following a specific set of rules whenever they bargain with someone. For Squibs, the process of haggling is more important than the end result.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Ssi-Ruuk",
+    "slug": "ssi-ruuk",
+    "description": "The Ssi-Ruuk are warm-blooded reptilian humanoids who command a stellar empire in The Unknown Regions, well beyond the edges of explored space. Before The Rebellion Era, the existence of the Ssi-Ruuk was unknown to the general galactic population. An escalating war with the competing empire of the Chiss forced the Ssi-Ruuk to look toward the galactic Core for \"Recruits\" for their space fleet. The Ssi-Ruuvi forces consisted mostly of self-propelled Battle Droids powered by the life energies and enslaved consciousness of captured humanoids subjected to a process \"Entechment.\" The Ssi-Ruuk attacked and subjected the citizens of a number of isolated Outer Rim settlements before clashing directly with the Empire's fleet. Rather than bringing the full might of the Imperial Navy to bear on the Ssi-Ruuk invaders, the Emperor negotiated to a secret treaty with them.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Tof",
+    "slug": "tof",
+    "description": "The Tofs come from the darkest and most obscure portion of The Unknown Regions: the peripheral halo. Far removed from The Chiss Ascendancy, The Vagaari Empire, and The Ssi-Ruuvi Imperium in the galactic disk, the Tofs and others in the satellite galaxy they call Firefist (and named \"Companion Besh\" by Republic cartographers) have little understanding of, or sympathy for, traditional galactic power plays- with the exception of their aborted invasion shortly after the Battle of Endor. Tof-0 Their culture is intentionally anachronistic. Violently opposed to streamlined functionality, the Tofs have instead embraced elaborate dress and foppish ritual. Their interstellar vessels resemble traditional sailing ships and sport curved hulls and energy- radiating sails.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Vagaari",
+    "slug": "vagaari",
+    "description": "The Vagaari Empire thrives on cruelty and terror. It is so effective at spreading fear that even other Unknown Regions Threats, such as the Ebruchi and the Rakata, flee from its forces. Arrogant speciesists, the Vagaari believe that all non-Vagaari are idiotic cowards who exist only as resources to be farmed. The Vagaari have separate digestive and respiratory tracts. The upper mouth is used for breathing and speaking, and the lower mouth is used for eating.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Verpine",
+    "slug": "verpine",
+    "description": "The Verpine have been spacefarers for all their recorded history, long before they had contact with other Species. Verpine have traveled for so long that the name and location of their homeworld have been lost to antiquity. They are fascinated with technology in all its forms, and consider themselves to be experts in all technological fields. Any device that falls into Verpine hands is prone to being taken apart, reassembled, and improved with astounding speed and skill. The asteroid field that the Verpine have transformed into a thriving colony is a testament to their mastery of technology.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Amani",
+    "slug": "amani",
+    "description": "These arboreal humanoids live in small tribes that each lay claim to one of the many sparse forests of Maridun, their homeworld. When a tribe grows too large, the younger adults set out to claim a new forest. The arrival of the Empire on Maridun went largely unnoticed, until one Amanin lorekeeper agreed to turn over prisoners from rival tribes as slaves. Not long after the Battle of Endor, operations on Maridun were taken over by The Hutt Kajidics and various criminal syndicates, which constructed spaceports to support the growth of several small cities populated by crime lords, scoundrels, consortiums, mining companies, and Amanin slaves. As their society becomes more and more integrated with the rest of the galaxy, Amanin become more comfortable with space travel and technology, though they lack the scientific knowledge to build technology of their own.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Arcona",
+    "slug": "arcona",
+    "description": "When it was discovered the Arcona can easily and hopelessly become addicted to sodium chloride (salt) by ingesting even a gram or two of the substance, unscrupulous merchants almost destroyed Arcona society by creating several generations of salt addicts. Salt induces vivid, colorful hallucinations in Arcona, but repeated use damages their body's ability to absorb life-giving ammonia. Only the intervention of the Republic saved the Arcona. The Senate passed draconian laws that punished the importation of salt to the Teke Ro System or to Arcona communities elsewhere in the galaxy, and the Arcona themselves zealously police their communities. Arcona addicted to salt are easily identifiable; their multifaceted eyes turn from green to gold.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Devaronian",
+    "slug": "devaronian",
+    "description": "Devaronians are among the first Species in the galaxy to develop interstellar travel, and the males of the species have been common sights in spaceports throughout the galaxy for thousands of years. After reaching middle age, Devaronian males are driven by an urge to wander. As such, they are often found traveling the galaxy as tramp freighter captains and scouts. Female Devaronians, on the other hand, are content to remain in a single location, and as such, raise the young and run the government of Devaron. The males send as much money as they can back to their families on Devaron, but they seldom return to the homeworld.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Nazren",
+    "slug": "nazren",
+    "description": "",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Pau'an",
+    "slug": "pau-an",
+    "description": "Xenobiologists from the University of Sanbra have uncovered connections between the Pau'ans and the Utai, the smaller Species with whom they share the planet of Utapau. Genetic sampling has confirmed a few tenuous biological links, though the exact evolutionary process by which the Pau'an Species developed separately from the Utai is still a mystery. Xenoanthropologists date the first Pau'an civilizations back almost 57,000 years before the Battle of Yavin, making theirs one of the youngest known civilizations. Though no written history of this time exists, scientists currently theorize that the long-lived Pau'ans are genetically closer to their progenitor Species, and that as a result of their longevity the Pau'ans have likely only evolved a little since the planet was settled. Some time in the last ten thousand years, Utapau underwent a climate change that caused winds on the surface of the world to reach and maintain constant bursts at destructive speeds.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Phindian",
+    "slug": "phindian",
+    "description": "Phindians are technologically advanced sentients known for creating a variety of technical wonders, including devices capable of erasing one's memory. Before the rise of the Empire, a criminal organization called The Syndicat ruled the Phindian homeworld. The Phindian leaders of The Syndicat used their control over the distribution of food and other provisions to keep the general population in line. Any who resisted The Syndicat had their memories erased and were exiled to other worlds. The Jedi helped the Phindian population overthrow The Syndicat and install a democratic government, which remained in place until the formation of the Emperor's New Order.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Polis Massan",
+    "slug": "polis-massan",
+    "description": "The small asteroid mining colony of Polis Massa in The Outer Rim is the current homeworld of the Polis Massans. Though the Polis Massans evolved on another world in the Subterrel sector, they have been away from their homeworld for so long that they have no living memory of their origins. Instead, they have dedicated themselves to researching a lost civilization, once native to Polis Massa, known as the Eellayin. The planet once inhabited by the Eellayin was subject to a great and mysterious cataclysm which caused it to break apart into several million fragments. The Polis Massa asteroid is one of the largest fragments to survive, and many artifacts and traces of the fallen civilization are hidden within its depths.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Skakoan",
+    "slug": "skakoan",
+    "description": "Skakoans are a technologically advanced Species that specializes in microelectronics, Starship engineering, and cutting-edge manufacturing techniques. During the time of the Republic, Skakoans were among the most influential Species in the Techno Union, a galaxy-spanning consortium of megacorporations with representation in the Galactic Senate. Despite the misgivings of other high-ranking members of the Techno Union, Skakoan foreman Wat Tambor pledged to support the Separatists under Count Dooku. The Senate responded by expelling their Techno Union representatives. This contributed to the Skakoan homeworld breaking away from the Republic and joining the Separatist Movement.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Stereb",
+    "slug": "stereb",
+    "description": "Jokingly called \"Hairless Wookiees\" by the few who have seen them, Stereb have been found on a number of worlds with rocky crusts. Not technologically adept, the Stereb live in harmony with the surfaces of a planet, working elaborate stone passages underground in the belief that they're part of the world's circulatory system.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  },
+  {
+    "name": "Tusken Raider",
+    "slug": "tusken-raider",
+    "description": "Although technologically primitive by galactic standards, Tusken Raiders make good use of whatever technological items they can salvage from slain offworlders or Jawa. Tusken Raiders use Banthas, large herd animals native to Tatooine, as mounts during scouting missions and hunting expeditions. Some Tusken villages also use domesticated Massiffs as watchdogs. Tusken Hunters typically arm themselves with Gaffi Sticks and Slugthrower Rifles.",
+    "hasAlternateTraits": false,
+    "alternateTraits": []
+  }
+]

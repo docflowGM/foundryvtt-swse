@@ -46,6 +46,7 @@ import { buildSpeciesMetadataProfile } from "/systems/foundryvtt-swse/scripts/en
  * @property {number} speed - Base speed (in squares)
  * @property {string|null} size - Size category (Small, Medium, Large, etc.)
  * @property {string[]} abilities - Special ability names/descriptions
+ * @property {Object[]} variants - Alternate build/trait profiles collapsed under this species
  * @property {string[]} languages - Known languages
  * @property {string} [description] - Short description
  * @property {string} [source] - Content source (book, UA, etc.)
@@ -112,18 +113,23 @@ export class SpeciesRegistry {
 
       let normalized = 0;
       let nullIdCount = 0;
+      const normalizedEntries = [];
       for (const doc of docs) {
         if (!doc || !doc.name) {
           continue;
         }
 
         const entry = this._normalizeEntry(doc);
-        this._entries.push(entry);
+        normalizedEntries.push(entry);
         normalized++;
         if (!entry.id) {
           nullIdCount++;
         }
+      }
 
+      this._entries = this._dedupeAndCollapseVariants(normalizedEntries);
+
+      for (const entry of this._entries) {
         // Index by id - only if we have a valid id
         if (entry.id) {
           this._byId.set(entry.id, entry);
@@ -145,7 +151,7 @@ export class SpeciesRegistry {
           this._byCategory.get(entry.category).push(entry);
         }
       }
-      SWSELogger.log(`[SpeciesRegistry] ✓ Normalized ${normalized} species entries (${nullIdCount} have NULL id)`);
+      SWSELogger.log(`[SpeciesRegistry] ✓ Normalized ${normalized} raw species entries; ${this._entries.length} visible species after variant collapse (${nullIdCount} have NULL id)`);
     } catch (err) {
       SWSELogger.error(`[SpeciesRegistry] Failed to load from pack "${packKey}":`, err);
       throw err;
@@ -160,6 +166,34 @@ export class SpeciesRegistry {
    * @param {string} abilityString - Ability modifier string
    * @returns {Object} { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 }
    */
+
+  static _normalizeMovement(system = {}) {
+    const raw = system.movement && typeof system.movement === 'object' ? system.movement : {};
+    const movement = { ...raw };
+
+    const maybeNumber = (value) => {
+      if (value === null || value === undefined || value === '') return null;
+      const number = Number(value);
+      return Number.isFinite(number) ? number : null;
+    };
+
+    const walk = maybeNumber(movement.walk ?? system.walkSpeed ?? system.speed);
+    const swim = maybeNumber(movement.swim ?? system.swimSpeed);
+    const fly = maybeNumber(movement.fly ?? system.flySpeed);
+    const climb = maybeNumber(movement.climb ?? system.climbSpeed);
+    const hover = maybeNumber(movement.hover ?? system.hoverSpeed);
+
+    const normalized = {};
+    if (walk !== null) normalized.walk = walk;
+    if (swim !== null) normalized.swim = swim;
+    if (fly !== null) normalized.fly = fly;
+    if (climb !== null) normalized.climb = climb;
+    if (hover !== null) normalized.hover = hover;
+    if (movement.bySize && typeof movement.bySize === 'object') normalized.bySize = movement.bySize;
+
+    return normalized;
+  }
+
   static _parseAbilityString(abilityString) {
     const defaults = { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 };
 
@@ -229,6 +263,136 @@ export class SpeciesRegistry {
       .replace(/^-+|-+$/g, '');
   }
 
+
+  static _normalizeVariants(rawVariants) {
+    if (!Array.isArray(rawVariants)) {
+      return [];
+    }
+
+    return rawVariants
+      .filter(variant => variant && typeof variant === 'object')
+      .map((variant, index) => {
+        const label = String(variant.label ?? variant.name ?? `Variant ${index + 1}`).trim();
+        const id = String(variant.id ?? label)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '') || `variant-${index + 1}`;
+
+        const traits = Array.isArray(variant.traits)
+          ? variant.traits
+              .filter(trait => trait && typeof trait === 'object')
+              .map(trait => ({
+                id: String(trait.id ?? trait.name ?? '').trim(),
+                name: String(trait.name ?? trait.id ?? 'Trait').trim(),
+                description: String(trait.description ?? '').trim(),
+              }))
+          : [];
+
+        return {
+          id,
+          label,
+          source: String(variant.source ?? '').trim(),
+          size: variant.size ?? null,
+          speed: variant.speed ?? null,
+          movement: variant.movement && typeof variant.movement === 'object' ? variant.movement : null,
+          abilities: variant.abilities ?? null,
+          abilityMods: variant.abilityMods && typeof variant.abilityMods === 'object' ? variant.abilityMods : null,
+          abilityChoice: variant.abilityChoice ?? null,
+          skillBonuses: Array.isArray(variant.skillBonuses) ? variant.skillBonuses : [],
+          special: Array.isArray(variant.special) ? variant.special : [],
+          languages: Array.isArray(variant.languages) ? variant.languages : [],
+          description: String(variant.description ?? '').trim(),
+          traits,
+        };
+      });
+  }
+
+  static _variantFromEntry(entry, label = 'Variant') {
+    return {
+      id: `${this._buildNameFallbackId(entry?.name ?? label) || 'variant'}-profile`,
+      label,
+      source: entry?.source ?? '',
+      size: entry?.size ?? null,
+      speed: entry?.speed ?? null,
+      movement: entry?.movement ?? null,
+      abilities: entry?.rawAbilities ?? null,
+      abilityMods: entry?.abilityScores ?? null,
+      skillBonuses: entry?.skillBonuses ?? [],
+      special: entry?.abilities ?? [],
+      languages: entry?.languages ?? [],
+      description: entry?.description ?? '',
+      traits: [],
+    };
+  }
+
+  static _mergeVariant(baseEntry, variant) {
+    if (!baseEntry || !variant) return baseEntry;
+    const next = Array.isArray(baseEntry.variants) ? [...baseEntry.variants] : [];
+    const variantId = variant.id || this._buildNameFallbackId(variant.label ?? variant.name ?? 'variant');
+    if (!next.some(existing => existing?.id === variantId)) {
+      next.push({ ...variant, id: variantId });
+    }
+    return { ...baseEntry, variants: next };
+  }
+
+  static _baseNameForVariant(name) {
+    const match = String(name ?? '').match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+    if (!match) return null;
+    const baseName = match[1].trim();
+    const label = match[2].trim();
+    if (!baseName || !label) return null;
+    return { baseName, label };
+  }
+
+  static _dedupeAndCollapseVariants(entries) {
+    const byName = new Map();
+    const ordered = [];
+    const pendingVariants = [];
+
+    for (const entry of entries) {
+      const key = String(entry?.name ?? '').toLowerCase();
+      const variantInfo = this._baseNameForVariant(entry?.name);
+      if (variantInfo) {
+        const baseKey = variantInfo.baseName.toLowerCase();
+        if (byName.has(baseKey)) {
+          const base = byName.get(baseKey);
+          const merged = this._mergeVariant(base, this._variantFromEntry(entry, variantInfo.label));
+          byName.set(baseKey, merged);
+          const index = ordered.indexOf(base);
+          if (index >= 0) ordered[index] = merged;
+          continue;
+        }
+        pendingVariants.push({ entry, variantInfo });
+      }
+
+      if (byName.has(key)) {
+        const base = byName.get(key);
+        const merged = this._mergeVariant(base, this._variantFromEntry(entry, 'Duplicate profile'));
+        byName.set(key, merged);
+        const index = ordered.indexOf(base);
+        if (index >= 0) ordered[index] = merged;
+        continue;
+      }
+
+      byName.set(key, entry);
+      ordered.push(entry);
+    }
+
+    for (const { entry, variantInfo } of pendingVariants) {
+      const baseKey = variantInfo.baseName.toLowerCase();
+      if (!byName.has(baseKey)) continue;
+      const base = byName.get(baseKey);
+      const merged = this._mergeVariant(base, this._variantFromEntry(entry, variantInfo.label));
+      byName.set(baseKey, merged);
+      const index = ordered.indexOf(base);
+      if (index >= 0) ordered[index] = merged;
+      const orphanIndex = ordered.indexOf(entry);
+      if (orphanIndex >= 0) ordered.splice(orphanIndex, 1);
+    }
+
+    return ordered;
+  }
+
   /**
    * Normalize a compendium species document into registry entry
    * @private
@@ -274,7 +438,7 @@ export class SpeciesRegistry {
     // Pack data stored in system.abilities (string format like "+2 Wis, -2 Cha")
     // Fall back to system.abilityMods for alternative data sources
     const defaults = { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 };
-    const rawAbilityData = system.abilities ?? system.abilityMods ?? null;
+    const rawAbilityData = system.abilityMods ?? system.abilities ?? null;
 
     let abilityScores = defaults;
     if (typeof rawAbilityData === 'string') {
@@ -285,8 +449,13 @@ export class SpeciesRegistry {
       abilityScores = { ...defaults, ...rawAbilityData };
     }
 
-    // Extract speed (default to 6 if not specified)
-    const speed = system.speed ? Number(system.speed) : 6;
+    // Extract speed and structured movement (default walk speed remains 6 for legacy consumers).
+    const movement = this._normalizeMovement(system);
+    const speed = Number.isFinite(Number(system.speed))
+      ? Number(system.speed)
+      : Number.isFinite(Number(movement?.walk))
+        ? Number(movement.walk)
+        : 6;
 
     // Extract size
     const size = system.size ? String(system.size).trim() : null;
@@ -356,9 +525,21 @@ export class SpeciesRegistry {
       tags: tags,
       abilityScores: abilityScores,
       speed: speed,
+      movement: movement,
       size: size,
       abilities: abilities,
+      rawAbilities: typeof rawAbilityData === 'string' ? rawAbilityData : null,
+      skillBonuses: Array.isArray(system.skillBonuses) ? system.skillBonuses : [],
+      canonicalTraits: Array.isArray(system.canonicalTraits) ? system.canonicalTraits : [],
+      naturalWeapons: Array.isArray(system.naturalWeapons) ? system.naturalWeapons : [],
+      primitive: !!system.primitive,
+      suppressedClassProficiencies: Array.isArray(system.suppressedClassProficiencies) ? system.suppressedClassProficiencies : [],
+      droidBuilder: system.droidBuilder && typeof system.droidBuilder === 'object' ? { ...system.droidBuilder } : null,
+      speciesActsAsDroid: !!system.speciesActsAsDroid || !!(system.droidBuilder && typeof system.droidBuilder === 'object' && system.droidBuilder.speciesActsAsDroid),
+      noConstitution: !!system.noConstitution,
+      retainsConstitution: !!system.retainsConstitution,
       languages: languages,
+      variants: this._normalizeVariants(system.variants),
       description: system.description?.value || system.description || '',
       source: system.source || null,
       pack: doc.pack || 'unknown'
@@ -426,6 +607,11 @@ export class SpeciesRegistry {
       sourceTags: [...(entry?.sourceTags || [])],
       derivedTags: [...(entry?.derivedTags || [])],
       abilities: [...(entry?.abilities || [])],
+      canonicalTraits: [...(entry?.canonicalTraits || [])],
+      naturalWeapons: [...(entry?.naturalWeapons || [])],
+      suppressedClassProficiencies: [...(entry?.suppressedClassProficiencies || [])],
+      droidBuilder: entry?.droidBuilder ? { ...entry.droidBuilder } : null,
+      variants: Array.isArray(entry?.variants) ? entry.variants.map(variant => ({ ...variant })) : [],
       languages: [...(entry?.languages || [])],
       attributeForecast: {
         boosts: [...(entry?.attributeForecast?.boosts || [])],

@@ -524,6 +524,7 @@ export class FeatStep extends ProgressionStepPlugin {
       selectedSkills,
       skillRanks: {},
       grantedFeats: [],
+      pendingSpeciesContext: shell?.progressionSession?.draftSelections?.pendingSpeciesContext || null,
     };
 
     // Derive class-granted features (feats, proficiencies, force sensitivity)

@@ -46,7 +46,7 @@
           <span class="{{this.cssClass}}">
             {{#if (gt this.value 0)}}+{{/if}}{{this.value}}
           </span>
-        </div>
+        </button>
       {{/each}}
     </div>
   {{/if}}
@@ -75,6 +75,58 @@
     <div class="prog-species-details__special">
       <h4>Special Abilities</h4>
       {{#each abilities}}<div class="prog-species-details__ability">• {{this.name}}</div>{{/each}}
+    </div>
+  {{/if}}
+
+  {{!-- Variant profiles collapsed under this species --}}
+  {{#if speciesVariants.length}}
+    <div class="prog-species-details__variants">
+      <h4>Species Options</h4>
+      <button class="prog-species-variant prog-species-variant--default {{#if defaultVariantSelected}}prog-species-variant--selected{{/if}}"
+              data-action="select-species-variant"
+              data-species-id="{{species.id}}"
+              data-variant-id="default"
+              type="button">
+        <div class="prog-species-variant__header">
+          <strong>Default</strong>
+          {{#if defaultVariantSelected}}<span class="prog-chip">Selected</span>{{else}}<span class="prog-chip">Base profile</span>{{/if}}
+        </div>
+        <div class="prog-species-variant__meta">
+          {{#if size}}<span>Size: {{size}}</span>{{/if}}
+          {{#if speed}}<span>Speed: {{speed}}</span>{{/if}}
+        </div>
+      </button>
+      {{#each speciesVariants}}
+        <button class="prog-species-variant {{#if this.isSelected}}prog-species-variant--selected{{/if}}"
+                data-action="select-species-variant"
+                data-species-id="{{this.speciesId}}"
+                data-variant-id="{{this.id}}"
+                type="button">
+          <div class="prog-species-variant__header">
+            <strong>{{this.label}}</strong>
+            {{#if this.isSelected}}<span class="prog-chip">Selected</span>{{else}}{{#if this.source}}<span class="prog-chip">{{this.source}}</span>{{/if}}{{/if}}
+          </div>
+          {{#if this.description}}<p>{{this.description}}</p>{{/if}}
+          <div class="prog-species-variant__meta">
+            {{#if this.abilities}}<span>Abilities: {{this.abilities}}</span>{{/if}}
+            {{#if this.size}}<span>Size: {{this.size}}</span>{{/if}}
+            {{#if this.speed}}<span>Speed: {{this.speed}}</span>{{/if}}
+            {{#if this.languages.length}}<span>Languages: {{#each this.languages}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}
+          </div>
+          {{#if this.special.length}}
+            <div class="prog-species-variant__list">
+              {{#each this.special}}<span>• {{this.name}}</span>{{/each}}
+            </div>
+          {{/if}}
+          {{#if this.traits.length}}
+            <div class="prog-species-variant__traits">
+              {{#each this.traits}}
+                <div><strong>{{this.name}}:</strong> {{this.description}}</div>
+              {{/each}}
+            </div>
+          {{/if}}
+        </div>
+      {{/each}}
     </div>
   {{/if}}
 

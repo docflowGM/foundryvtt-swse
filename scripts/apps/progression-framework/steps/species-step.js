@@ -70,6 +70,12 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
     // Suggestions
     this._suggestedSpecies = [];
+
+    // Variant option state: speciesId -> variantId. Missing/null means Default.
+    this._selectedVariantBySpeciesId = new Map();
+
+    // Species ability choice state: speciesId -> selected choice descriptor.
+    this._selectedAbilityChoiceBySpeciesId = new Map();
   }
 
   // ---------------------------------------------------------------------------
@@ -223,6 +229,42 @@ export class SpeciesStep extends ProgressionStepPlugin {
     }
   }
 
+  async handleAction(action, event, target, shell) {
+    if (action === 'select-species-ability-choice') {
+      event?.preventDefault?.();
+      const speciesId = target?.dataset?.speciesId || shell?.focusedItem?.id || null;
+      const ability = String(target?.dataset?.ability || '').toLowerCase();
+      const choiceIndex = Number(target?.dataset?.choiceIndex ?? -1);
+      const species = speciesId ? this._resolveSpeciesEntry(speciesId) : null;
+      const choice = species ? this._formatSpeciesAbilityChoices(species).find(option => option.index === choiceIndex || option.ability === ability) : null;
+      if (speciesId && choice) {
+        this._selectedAbilityChoiceBySpeciesId.set(speciesId, {
+          id: choice.id,
+          ability: choice.ability,
+          label: choice.label,
+          mods: choice.mods,
+        });
+      }
+      shell?.render?.();
+      return true;
+    }
+
+    if (action === 'select-species-variant') {
+      event?.preventDefault?.();
+      const speciesId = target?.dataset?.speciesId || shell?.focusedItem?.id || null;
+      const variantId = target?.dataset?.variantId || 'default';
+      if (!speciesId) return true;
+      if (variantId === 'default') {
+        this._selectedVariantBySpeciesId.delete(speciesId);
+      } else {
+        this._selectedVariantBySpeciesId.set(speciesId, variantId);
+      }
+      shell?.render?.();
+      return true;
+    }
+    return false;
+  }
+
   async onStepExit(shell) {
     this._cleanupUtilityListeners();
     this._nearHumanBuilder.exitBuilderMode(true);  // true = full cleanup on exit
@@ -315,6 +357,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
         talentCount,
         credits,
         languages,
+        suppressedProficiencies: this._getSuppressedProficiencySummary(context),
       },
     };
   }
@@ -439,9 +482,16 @@ export class SpeciesStep extends ProgressionStepPlugin {
         isNearHuman: species.name === 'Near-Human',
         abilityRows: abilityRows,
         abilities: (species.abilities ?? []).map(a => ({ name: a })),
+        speciesVariants: this._formatSpeciesVariants(species),
+        abilityChoices: this._formatSpeciesAbilityChoices(species),
+        requiresAbilityChoice: this._requiresAbilityChoice(species),
+        abilityChoiceSelected: !!this._selectedAbilityChoiceBySpeciesId.get(species.id),
+        selectedAbilityChoiceId: this._selectedAbilityChoiceBySpeciesId.get(species.id)?.id || null,
+        selectedVariantId: this._selectedVariantBySpeciesId.get(species.id) || 'default',
+        defaultVariantSelected: !(this._selectedVariantBySpeciesId.get(species.id)),
         languages: species.languages ?? [],
         size: species.size ?? 'Medium',
-        speed: species.speed ?? '30 ft.',
+        speed: this._formatMovementLine(species) ?? '6',
         source: species.source ?? 'Unknown',
         img: this._resolveSpeciesImg(species),
         mentorProse: normalized.mentorProse ?? this._getOlSaltyDialogue(species.name) ?? null,
@@ -627,8 +677,20 @@ export class SpeciesStep extends ProgressionStepPlugin {
       return;
     }
 
+    const selectedVariantId = this._selectedVariantBySpeciesId.get(entry.id) || null;
+    const selectedAbilityChoice = this._selectedAbilityChoiceBySpeciesId.get(entry.id) || null;
+    if (this._requiresAbilityChoice(entry) && !selectedAbilityChoice) {
+      ui?.notifications?.warn?.(`Choose a ${entry.name} species option before confirming.`);
+      return;
+    }
+    const effectiveEntry = {
+      ...entry,
+      ...(selectedVariantId ? { selectedVariantId, variantId: selectedVariantId } : {}),
+      ...(selectedAbilityChoice ? { selectedAbilityChoice } : {}),
+    };
+
     // PHASE 2: Build pending species context from canonical ledger
-    const pendingContext = await buildPendingSpeciesContext(shell.actor, entry, {
+    const pendingContext = await buildPendingSpeciesContext(shell.actor, effectiveEntry, {
       source: 'progression',
     });
 
@@ -641,6 +703,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     console.log('[SpeciesStep] Pending species context built:', {
       speciesId:        id,
       speciesName:      entry.name,
+      selectedVariant:  pendingContext.identity?.variant?.label || 'Default',
       featsRequired:    pendingContext.entitlements.featsRequired,
       abilities:        pendingContext.abilities,
       hasTraits:        pendingContext.traits?.length ?? 0,
@@ -669,7 +732,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const normalizedSpecies = normalizeSpecies({
       speciesId: id,
       speciesName: entry.name,
-      speciesData: entry,
+      speciesData: effectiveEntry,
+      selectedVariant: pendingContext.identity?.variant || null,
+      selectedAbilityChoice: pendingContext.identity?.abilityChoice || selectedAbilityChoice || null,
       patch,
       pendingContext, // NEW: Full pending context from ledger
     });
@@ -1239,6 +1304,36 @@ export class SpeciesStep extends ProgressionStepPlugin {
     return null;
   }
 
+
+  _formatMovementLine(species) {
+    const movement = species?.movement || species?.system?.movement || {};
+    const parts = [];
+    const pushMode = (label, value) => {
+      if (value === null || value === undefined || value === '') return;
+      parts.push(`${label} ${value}`);
+    };
+
+    pushMode('Walk', movement.walk ?? species?.speed);
+    pushMode('Swim', movement.swim);
+    pushMode('Fly', movement.fly);
+    pushMode('Climb', movement.climb);
+    pushMode('Hover', movement.hover);
+
+    if (movement.bySize && typeof movement.bySize === 'object') {
+      const sizeParts = Object.entries(movement.bySize)
+        .map(([size, modes]) => {
+          const walk = modes?.walk ?? modes?.speed ?? null;
+          return walk ? `${size} ${walk}` : null;
+        })
+        .filter(Boolean);
+      if (sizeParts.length) {
+        parts.push(sizeParts.join(' / '));
+      }
+    }
+
+    return parts.length ? parts.join(', ') : (species?.speed ?? null);
+  }
+
   _formatSpeciesCard(species, suggestedIds = new Set(), confidenceMap = new Map()) {
     species = this._ensureSpeciesIdentity(species);
 
@@ -1265,18 +1360,113 @@ export class SpeciesStep extends ProgressionStepPlugin {
       thumbLabel: (species.name ?? '??').substring(0, 2).toUpperCase(), // fallback badge
       source: species.source ?? 'Unknown',
       size: species.size ?? 'Medium',
-      speed: species.speed ?? '30 ft.',
+      speed: this._formatMovementLine(species) ?? '6',
       description: species.description ?? '',
       abilityModLine,
       abilityRows,
       tags: this._getDisplaySpeciesTags(species).slice(0, 3),
       abilities: species.abilities ?? [],
+      variantCount: Array.isArray(species.variants) ? species.variants.length : 0,
+      hasVariants: Array.isArray(species.variants) && species.variants.length > 0,
       languages: species.languages ?? [],
       isSuggested,
       badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
       confidenceLevel: confidenceData?.confidenceLevel || null,
     };
+  }
+
+
+
+  _getSuppressedProficiencySummary(context) {
+    const pending = context?.committedSelections?.get?.('pendingSpeciesContext')
+      ?? context?.shell?.progressionSession?.draftSelections?.pendingSpeciesContext
+      ?? null;
+    const suppressed = pending?.entitlements?.suppressedClassProficiencies
+      ?? pending?.metadata?.speciesRules?.suppressedClassProficiencies
+      ?? [];
+    return Array.isArray(suppressed) ? suppressed : [];
+  }
+
+  _requiresAbilityChoice(species) {
+    const choice = species?.abilityChoice || species?.system?.abilityChoice || null;
+    return !!choice && choice.type === 'choice';
+  }
+
+  _formatSpeciesAbilityChoices(species) {
+    const choice = species?.abilityChoice || species?.system?.abilityChoice || null;
+    if (!choice || typeof choice !== 'object') return [];
+    const selected = this._selectedAbilityChoiceBySpeciesId.get(species.id) || null;
+    const labelMap = { str: 'Strength', dex: 'Dexterity', con: 'Constitution', int: 'Intelligence', wis: 'Wisdom', cha: 'Charisma' };
+    const normalize = (raw = {}) => Object.entries(raw || {}).reduce((acc, [key, value]) => {
+      const lower = String(key || '').toLowerCase();
+      const normalized = ({ strength: 'str', dexterity: 'dex', constitution: 'con', intelligence: 'int', wisdom: 'wis', charisma: 'cha' })[lower] || lower;
+      const numeric = Number(value);
+      if (['str','dex','con','int','wis','cha'].includes(normalized) && Number.isFinite(numeric)) acc[normalized] = numeric;
+      return acc;
+    }, {});
+
+    if (choice.type === 'fixedArray') {
+      // Republic Clone-style fixed arrays are resolved in the Attribute step so the player
+      // can distribute the two +1 increases there and request a GM-reviewed override if needed.
+      return [];
+    }
+
+    const fixed = normalize(choice.fixed || {});
+    const options = Array.isArray(choice.chooseOne) ? choice.chooseOne : [];
+    return options.map((rawOption, index) => {
+      const mods = normalize(rawOption);
+      const [ability, value] = Object.entries(mods)[0] || [null, null];
+      const signed = Number(value) > 0 ? `+${Number(value)}` : `${Number(value)}`;
+      const fixedText = Object.entries(fixed).map(([key, val]) => `${val > 0 ? '+' : ''}${val} ${labelMap[key] || key.toUpperCase()}`).join(', ');
+      return {
+        id: `${ability || 'choice'}-${index}`,
+        index,
+        ability,
+        label: `${signed} ${labelMap[ability] || String(ability || '').toUpperCase()}`,
+        detail: fixedText ? `${signed} ${labelMap[ability] || ability}; ${fixedText}` : `${signed} ${labelMap[ability] || ability}`,
+        mods,
+        isSelected: selected?.id === `${ability || 'choice'}-${index}` || selected?.ability === ability,
+      };
+    });
+  }
+
+  _formatSpeciesVariants(species) {
+    const variants = Array.isArray(species?.variants) ? species.variants : [];
+    if (!variants.length) {
+      return [];
+    }
+
+    return variants.map((variant, index) => {
+      const traits = Array.isArray(variant?.traits)
+        ? variant.traits.map(trait => ({
+            name: trait?.name ?? 'Trait',
+            description: trait?.description ?? '',
+          }))
+        : [];
+
+      const special = Array.isArray(variant?.special)
+        ? variant.special.filter(Boolean).map(name => ({ name }))
+        : [];
+
+      const id = variant?.id ?? `variant-${index + 1}`;
+      const selectedVariantId = this._selectedVariantBySpeciesId.get(species.id) || 'default';
+      return {
+        id,
+        isSelected: selectedVariantId === id,
+        speciesId: species.id,
+        label: variant?.label ?? `Variant ${index + 1}`,
+        source: variant?.source ?? null,
+        size: variant?.size ?? null,
+        speed: this._formatMovementLine(variant) ?? variant?.speed ?? null,
+        abilities: variant?.abilities ?? null,
+        description: variant?.description ?? '',
+        skillBonuses: Array.isArray(variant?.skillBonuses) ? variant.skillBonuses : [],
+        special,
+        traits,
+        languages: Array.isArray(variant?.languages) ? variant.languages : [],
+      };
+    });
   }
 
 

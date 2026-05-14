@@ -387,7 +387,7 @@ async _prepareContext(options) {
       // Apply ability scores
       const abilityUpdates = {};
       for (const [ability, value] of Object.entries(template.abilityScores)) {
-        abilityUpdates[`system.attributes.${ability}.base`] = parseInt(value, 10) || 10;
+        abilityUpdates[`system.abilities.${ability}.base`] = parseInt(value, 10) || 10;
       }
 
       // Apply species bonuses
@@ -445,7 +445,8 @@ async _prepareContext(options) {
     const classSkills = await this._getClassSkills(template.class);
 
     // Calculate available skill points (Int mod + class bonus)
-    const intMod = Math.floor((actor.system.attributes.int.total - 10) / 2);
+    const intTotal = actor.system.abilities?.int?.total ?? actor.system.attributes?.int?.total ?? 10;
+    const intMod = Math.floor((intTotal - 10) / 2);
     const classSkillPoints = this._getClassSkillPoints(template.class);
     const totalSkillPoints = Math.max(1, intMod + classSkillPoints);
 
@@ -758,10 +759,10 @@ async _prepareContext(options) {
 
   _applySpeciesDataToAbilities(speciesData, abilityUpdates) {
     // Updates abilityUpdates in-place; no side effects.
-    if (speciesData?.abilityModifiers) {
-      for (const [ability, value] of Object.entries(speciesData.abilityModifiers)) {
+    if (speciesData?.abilityModifiers || speciesData?.abilityMods) {
+      for (const [ability, value] of Object.entries(speciesData.abilityModifiers || speciesData.abilityMods || {})) {
         if (value !== 0) {
-          abilityUpdates[`system.attributes.${ability}.racial`] = value;
+          abilityUpdates[`system.abilities.${ability}.racial`] = value;
         }
       }
     }

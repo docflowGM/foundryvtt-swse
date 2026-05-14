@@ -168,6 +168,11 @@ export class ActiveStepComputer {
         case 'starship-maneuvers':
           return this._hasStarshipChoices(actor, progressionSession);
 
+        // Droid builder: normal droid subtype always needs it; organic actors only
+        // need it when their selected species requires a constrained droid shell.
+        case 'droid-builder':
+          return this._hasDroidBuilderWork(actor, progressionSession);
+
         // Droid-only configuration: applicable if deferred droid build exists
         case 'final-droid-configuration':
           return this._hasDroidBuildPending(progressionSession);
@@ -184,6 +189,16 @@ export class ActiveStepComputer {
       // Default to applicable on error (fail-safe: don't hide steps)
       return true;
     }
+  }
+
+
+  _hasDroidBuilderWork(actor, progressionSession) {
+    if (progressionSession?.subtype === 'droid' || actor?.type === 'droid' || actor?.system?.isDroid) {
+      return true;
+    }
+    const context = progressionSession?.draftSelections?.pendingSpeciesContext || null;
+    const droidBuilder = context?.metadata?.droidBuilder || context?.ledger?.rules?.droidBuilder || null;
+    return !!droidBuilder?.required;
   }
 
   /**

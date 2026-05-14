@@ -50,7 +50,8 @@
         "weapon-mastery",
         "accuracy",
         "combat"
-      ]
+      ],
+      "summary": "+1 bonus on attack rolls with chosen weapon."
     },
     "Greater Weapon Focus": {
       "category": "combat-offense",
@@ -61,7 +62,8 @@
       ],
       "chain": "Weapon Focus Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Weapon Focus"
+      "prerequisiteFeat": "Weapon Focus",
+      "summary": "You gain a +1 bonus on attack rolls with the selected weapon group."
     },
     "Weapon Specialization": {
       "category": "combat-offense",
@@ -72,7 +74,8 @@
       ],
       "chain": "Weapon Focus Chain",
       "chainOrder": 3,
-      "prerequisiteFeat": "Weapon Focus"
+      "prerequisiteFeat": "Weapon Focus",
+      "summary": "You gain a +2 bonus on damage rolls with the selected weapon group."
     },
     "Greater Weapon Specialization": {
       "category": "combat-offense",
@@ -83,7 +86,8 @@
       ],
       "chain": "Weapon Focus Chain",
       "chainOrder": 4,
-      "prerequisiteFeat": "Weapon Specialization"
+      "prerequisiteFeat": "Weapon Specialization",
+      "summary": "You gain a +2 bonus on damage rolls with the selected weapon group."
     },
     "Triple Crit": {
       "category": "combat-offense",
@@ -91,7 +95,8 @@
         "critical",
         "damage",
         "combat"
-      ]
+      ],
+      "summary": "Deal triple damage on a Critical Hit."
     },
     "Triple Crit Specialist": {
       "category": "combat-offense",
@@ -102,7 +107,8 @@
       ],
       "chain": "Critical Hit Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Triple Crit"
+      "prerequisiteFeat": "Triple Crit",
+      "summary": "When you score a critical hit with the selected weapon group, you deal triple damage and move the target -1 step down the condition track."
     },
     "Power Attack": {
       "category": "combat-offense",
@@ -110,7 +116,8 @@
         "melee",
         "damage",
         "tradeoff"
-      ]
+      ],
+      "summary": "Trade attack bonus for damage on melee attacks (up to your Base Attack Bonus)."
     },
     "Hew": {
       "category": "combat-offense",
@@ -121,7 +128,8 @@
       ],
       "chain": "Power Attack Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Power Attack"
+      "prerequisiteFeat": "Power Attack",
+      "summary": "When you use Power Attack, you ignore an amount of damage reduction equal to your base attack bonus."
     },
     "Cleave": {
       "category": "combat-offense",
@@ -129,7 +137,8 @@
         "melee",
         "multiattack",
         "combat"
-      ]
+      ],
+      "summary": "Extra melee attack after dropping target."
     },
     "Bantha Rush": {
       "category": "combat-offense",
@@ -137,7 +146,8 @@
         "melee",
         "maneuver",
         "combat"
-      ]
+      ],
+      "summary": "Push opponent 1 square after making a successful melee attack."
     },
     "Two-Weapon Fighting": {
       "category": "combat-offense",
@@ -147,7 +157,8 @@
         "dexterity"
       ],
       "chain": "Two-Weapon Chain",
-      "chainOrder": 1
+      "chainOrder": 1,
+      "summary": "You reduce the penalty for fighting with two weapons by 2."
     },
     "Dual Weapon Mastery I": {
       "category": "combat-offense",
@@ -155,7 +166,8 @@
         "dual-wield",
         "mastery",
         "combat"
-      ]
+      ],
+      "summary": "Take a -5 penalty on attacks when attacking with two weapons, or both ends of a double weapon."
     },
     "Dual Weapon Mastery II": {
       "category": "combat-offense",
@@ -163,7 +175,8 @@
         "dual-wield",
         "mastery",
         "advanced"
-      ]
+      ],
+      "summary": "Take a -2 penalty on attacks when attacking with two weapons, or both ends of a double weapon."
     },
     "Dual Weapon Mastery III": {
       "category": "combat-offense",
@@ -171,7 +184,8 @@
         "dual-wield",
         "mastery",
         "expert"
-      ]
+      ],
+      "summary": "Take no penalty on attacks when attacking with two weapons, or both ends of a double weapon."
     },
     "Point Blank Shot": {
       "category": "combat-offense",
@@ -181,7 +195,8 @@
         "combat"
       ],
       "chain": "Ranged Attack Chain",
-      "chainOrder": 1
+      "chainOrder": 1,
+      "summary": "+1 bonus on ranged attacks and damage against foes within Point-Blank Range."
     },
     "Precise Shot": {
       "category": "combat-offense",
@@ -189,7 +204,8 @@
         "ranged",
         "accuracy",
         "tactical"
-      ]
+      ],
+      "summary": "No -5 penalty for shooting into melee."
     },
     "Far Shot": {
       "category": "combat-offense",
@@ -197,7 +213,8 @@
         "ranged",
         "range",
         "combat"
-      ]
+      ],
+      "summary": "Range penalties for Short-, Medium-, and Long-ranged attacks are reduced."
     },
     "Deadeye": {
       "category": "combat-offense",
@@ -205,7 +222,8 @@
         "ranged",
         "accuracy",
         "bonus"
-      ]
+      ],
+      "summary": "If you Aim, deal extra damage."
     },
     "Charging Fire": {
       "category": "combat-offense",
@@ -213,7 +231,8 @@
         "ranged",
         "mobility",
         "combat"
-      ]
+      ],
+      "summary": "Make ranged attack at end of a Charge; take a -2 penalty to Reflex Defense."
     },
     "Sniper": {
       "category": "combat-offense",
@@ -221,7 +240,8 @@
         "ranged",
         "precision",
         "tactical"
-      ]
+      ],
+      "summary": "You ignore Soft Cover when making a ranged attack."
     },
     "Autofire Assault": {
       "category": "combat-offense",
@@ -232,7 +252,8 @@
       ],
       "chain": "Ranged Attack Chain",
       "chainOrder": 7,
-      "prerequisiteFeat": "Point Blank Shot"
+      "prerequisiteFeat": "Point Blank Shot",
+      "summary": "Decrease penalty on Autofire attack and inflict extra damage when sustaining fire in the same squares in consecutive rounds."
     },
     "Friendly Fire Avoidance": {
       "category": "combat-offense",
@@ -243,7 +264,8 @@
       ],
       "chain": "Ranged Attack Chain",
       "chainOrder": 8,
-      "prerequisiteFeat": "Point Blank Shot"
+      "prerequisiteFeat": "Point Blank Shot",
+      "summary": "You may choose to exclude a number of squares equal to your Dexterity modifier from the area of effect of your autofire attacks."
     },
     "Double Attack": {
       "category": "combat-offense",
@@ -251,7 +273,8 @@
         "multiattack",
         "combat",
         "full-round"
-      ]
+      ],
+      "summary": "Make an extra attack with chosen weapon during Full Attack, -5 penalty to all attacks."
     },
     "Rapid Shot": {
       "category": "combat-offense",
@@ -259,7 +282,8 @@
         "ranged",
         "multiattack",
         "combat"
-      ]
+      ],
+      "summary": "Take a -2 penalty on a ranged attack roll to deal +1 die of damage."
     },
     "Rapid Strike": {
       "category": "combat-offense",
@@ -267,7 +291,8 @@
         "melee",
         "multiattack",
         "combat"
-      ]
+      ],
+      "summary": "Take a -2 penalty on a melee attack roll to deal +1 die of damage."
     },
     "Disarm": {
       "category": "combat-offense",
@@ -285,7 +310,8 @@
         "maneuver",
         "mastery",
         "tactical"
-      ]
+      ],
+      "summary": "Gain +5 bonus on melee attacks to Disarm an opponent."
     },
     "Grapple": {
       "category": "combat-offense",
@@ -306,7 +332,8 @@
       ],
       "chain": "Grapple Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Grapple"
+      "prerequisiteFeat": "Grapple",
+      "summary": "You gain a +5 bonus on grapple checks and do not provoke attacks of opportunity when initiating a grapple."
     },
     "Pin": {
       "category": "combat-offense",
@@ -314,7 +341,8 @@
         "maneuver",
         "control",
         "immobilize"
-      ]
+      ],
+      "summary": "Grappled opponent is Pinned for one round, can't move, and and loses its Dexterity bonus to Reflex Defense."
     },
     "Knock Prone": {
       "category": "combat-offense",
@@ -324,7 +352,8 @@
         "tactical"
       ],
       "chain": "Knock Prone Chain",
-      "chainOrder": 1
+      "chainOrder": 1,
+      "summary": "You may attempt to knock an opponent prone with a melee attack."
     },
     "Improved Knock Prone": {
       "category": "combat-offense",
@@ -335,7 +364,8 @@
       ],
       "chain": "Knock Prone Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Knock Prone"
+      "prerequisiteFeat": "Knock Prone",
+      "summary": "You gain a +5 bonus on attack rolls made to knock an opponent prone."
     },
     "Stun": {
       "category": "combat-offense",
@@ -356,7 +386,8 @@
       ],
       "chain": "Stun Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Stun"
+      "prerequisiteFeat": "Stun",
+      "summary": "You gain a +5 bonus on attack rolls made to stun an opponent."
     },
     "Acrobatic Strike": {
       "category": "combat-offense",
@@ -364,7 +395,8 @@
         "mobility",
         "melee",
         "tactical"
-      ]
+      ],
+      "summary": "Gain +2 competence bonus on next attack against opponent you Tumble past."
     },
     "Grappling Strike": {
       "category": "combat-offense",
@@ -372,7 +404,8 @@
         "melee",
         "maneuver",
         "control"
-      ]
+      ],
+      "summary": "When you hit with a melee attack, you may initiate a grapple as a free action without provoking an attack of opportunity."
     },
     "Staggering Attack": {
       "category": "combat-offense",
@@ -380,7 +413,8 @@
         "melee",
         "condition",
         "stagger"
-      ]
+      ],
+      "summary": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack."
     },
     "Stunning Strike": {
       "category": "combat-offense",
@@ -388,7 +422,8 @@
         "melee",
         "condition",
         "combat"
-      ]
+      ],
+      "summary": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack."
     },
     "Wounding Strike": {
       "category": "combat-offense",
@@ -396,7 +431,8 @@
         "melee",
         "condition",
         "damage"
-      ]
+      ],
+      "summary": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack."
     },
     "Assured Attack": {
       "category": "combat-offense",
@@ -404,7 +440,8 @@
         "combat",
         "reroll",
         "accuracy"
-      ]
+      ],
+      "summary": "Reroll the lowest damage die when making a successful attack."
     },
     "Mighty Swing": {
       "category": "combat-offense",
@@ -412,7 +449,8 @@
         "melee",
         "reroll",
         "combat"
-      ]
+      ],
+      "summary": "Spend two Swift Actions to deal extra damage in melee."
     },
     "Lucky Shot": {
       "category": "combat-offense",
@@ -420,7 +458,8 @@
         "ranged",
         "reroll",
         "combat"
-      ]
+      ],
+      "summary": "Once per encounter, you may reroll a ranged attack roll and take the better result."
     },
     "Savage Attack": {
       "category": "combat-offense",
@@ -428,7 +467,8 @@
         "melee",
         "reroll",
         "damage"
-      ]
+      ],
+      "summary": "Add +1 die of damage when successful on a Full Attack."
     },
     "Reckless Charge": {
       "category": "combat-offense",
@@ -436,7 +476,8 @@
         "charge",
         "melee",
         "tradeoff"
-      ]
+      ],
+      "summary": "When you charge, you gain a +2 bonus on melee attack rolls but take a -2 penalty to Reflex Defense until the start of your next turn."
     },
     "Dodge": {
       "category": "combat-defense",
@@ -444,7 +485,8 @@
         "defense",
         "reflex",
         "mobility"
-      ]
+      ],
+      "summary": "Gain a +1 dodge bonus to Reflex Defense against a selected target."
     },
     "Mobility": {
       "category": "combat-defense",
@@ -452,7 +494,8 @@
         "defense",
         "mobility",
         "tactical"
-      ]
+      ],
+      "summary": "Gain +5 dodge bonus to Reflex Defense against some Attacks of Opportunity."
     },
     "Spring Attack": {
       "category": "combat-defense",
@@ -463,7 +506,8 @@
       ],
       "chain": "Dodge Chain",
       "chainOrder": 3,
-      "prerequisiteFeat": "Mobility"
+      "prerequisiteFeat": "Mobility",
+      "summary": "When making a melee attack, you may move both before and after the attack, up to your speed, without provoking attacks of opportunity from the target."
     },
     "Whirlwind Attack": {
       "category": "combat-defense",
@@ -471,7 +515,8 @@
         "mobility",
         "multiattack",
         "area"
-      ]
+      ],
+      "summary": "Make one melee attack against each opponent within reach."
     },
     "Elusive Target": {
       "category": "combat-defense",
@@ -482,7 +527,8 @@
       ],
       "chain": "Dodge Chain",
       "chainOrder": 5,
-      "prerequisiteFeat": "Dodge"
+      "prerequisiteFeat": "Dodge",
+      "summary": "When fighting defensively or using the total defense action, you may redirect missed melee attacks to another target adjacent to you."
     },
     "Burst of Speed": {
       "category": "combat-defense",
@@ -490,7 +536,8 @@
         "mobility",
         "swift-action",
         "movement"
-      ]
+      ],
+      "summary": "Move Speed twice as Move Action."
     },
     "Mobile Fighting": {
       "category": "combat-defense",
@@ -498,7 +545,8 @@
         "mobility",
         "defense",
         "tactical"
-      ]
+      ],
+      "summary": "You may move up to your speed when using the withdraw action, and you gain a +2 bonus to Reflex Defense against attacks of opportunity provoked by movement."
     },
     "Hard Target": {
       "category": "combat-defense",
@@ -506,7 +554,8 @@
         "mobility",
         "defense",
         "ranged"
-      ]
+      ],
+      "summary": "You gain a +2 bonus to Reflex Defense against ranged attacks while moving at least 2 squares on your turn."
     },
     "Running Attack": {
       "category": "combat-defense",
@@ -514,7 +563,8 @@
         "mobility",
         "attack",
         "tactical"
-      ]
+      ],
+      "summary": "Move before and after making an attack."
     },
     "Melee Defense": {
       "category": "combat-defense",
@@ -522,7 +572,8 @@
         "defense",
         "melee",
         "tradeoff"
-      ]
+      ],
+      "summary": "Trade attack bonus on melee attacks for a dodge bonus to Reflex Defense."
     },
     "Combat Reflexes": {
       "category": "combat-defense",
@@ -530,7 +581,8 @@
         "defense",
         "reaction",
         "opportunity"
-      ]
+      ],
+      "summary": "Gain additional Attacks of Opportunity."
     },
     "Harm's Way": {
       "category": "combat-defense",
@@ -546,7 +598,8 @@
         "proficiency",
         "basic",
         "combat"
-      ]
+      ],
+      "summary": "You are proficient with simple weapons and do not take the -5 penalty when using them."
     },
     "Weapon Proficiency (Pistols)": {
       "category": "combat-defense",
@@ -554,7 +607,8 @@
         "proficiency",
         "ranged",
         "combat"
-      ]
+      ],
+      "summary": "You are proficient with pistols and do not take the -5 penalty when using them."
     },
     "Weapon Proficiency (Rifles)": {
       "category": "combat-defense",
@@ -562,7 +616,8 @@
         "proficiency",
         "ranged",
         "combat"
-      ]
+      ],
+      "summary": "You are proficient with rifles and do not take the -5 penalty when using them."
     },
     "Weapon Proficiency (Heavy Weapons)": {
       "category": "combat-defense",
@@ -570,7 +625,8 @@
         "proficiency",
         "heavy",
         "combat"
-      ]
+      ],
+      "summary": "You are proficient with heavy weapons and do not take the -5 penalty when using them."
     },
     "Weapon Proficiency (Lightsabers)": {
       "category": "combat-defense",
@@ -586,7 +642,8 @@
         "proficiency",
         "melee",
         "advanced"
-      ]
+      ],
+      "summary": "You are proficient with advanced melee weapons and do not take the -5 penalty when using them."
     },
     "Heavy Weapon Proficiency": {
       "category": "combat-defense",
@@ -594,7 +651,8 @@
         "proficiency",
         "heavy",
         "combat"
-      ]
+      ],
+      "summary": "You are proficient with heavy weapons and do not take the -5 penalty when using them."
     },
     "Armor Proficiency (Light)": {
       "category": "combat-defense",
@@ -636,7 +694,8 @@
         "core"
       ],
       "chain": "Core Force",
-      "chainOrder": 1
+      "chainOrder": 1,
+      "summary": "You can make Use the Force checks and gain access to Force Talents."
     },
     "Force Training": {
       "category": "force",
@@ -647,7 +706,8 @@
       ],
       "chain": "Core Force",
       "chainOrder": 2,
-      "prerequisiteFeat": "Force Sensitivity"
+      "prerequisiteFeat": "Force Sensitivity",
+      "summary": "Learn a number of Force Powers equal to 1 + your Wisdom modifier (minimum 1)."
     },
     "Force Boon": {
       "category": "force",
@@ -655,7 +715,8 @@
         "force",
         "resource",
         "core"
-      ]
+      ],
+      "summary": "Gain three additional Force Points at each level."
     },
     "Force Focus": {
       "category": "force",
@@ -663,7 +724,8 @@
         "force",
         "power-boost",
         "specialization"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on Use the Force checks made to activate a specific Force power you select when taking this feat."
     },
     "Block": {
       "category": "force",
@@ -671,7 +733,8 @@
         "force",
         "defense",
         "melee"
-      ]
+      ],
+      "summary": "Use the Force to negate a melee attack while wielding a lightsaber."
     },
     "Deflect": {
       "category": "force",
@@ -681,7 +744,8 @@
         "ranged"
       ],
       "chain": "Deflect Chain",
-      "chainOrder": 1
+      "chainOrder": 1,
+      "summary": "Use the Force to negate a ranged attack while wielding a lightsaber."
     },
     "Redirect Shot": {
       "category": "force",
@@ -692,7 +756,8 @@
       ],
       "chain": "Deflect Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Deflect"
+      "prerequisiteFeat": "Deflect",
+      "summary": "When you successfully negate a ranged attack with Deflect, you may redirect the shot to another target within line of sight."
     },
     "Saber Throw": {
       "category": "force",
@@ -702,7 +767,8 @@
         "ranged"
       ],
       "chain": "Saber Throw Chain",
-      "chainOrder": 1
+      "chainOrder": 1,
+      "summary": "You may throw your lightsaber as a ranged attack using Use the Force instead of a ranged attack roll."
     },
     "Battle Strike": {
       "category": "force",
@@ -728,7 +794,8 @@
         "force",
         "damage",
         "advanced"
-      ]
+      ],
+      "summary": "Deal Unarmed or Claw damage to a Pinned opponent."
     },
     "Forceful Grip": {
       "category": "force",
@@ -739,7 +806,8 @@
       ],
       "chain": "Force Grip Chain",
       "chainOrder": 3,
-      "prerequisiteFeat": "Force Grip"
+      "prerequisiteFeat": "Force Grip",
+      "summary": "You gain a +2 bonus on Use the Force checks made to activate Force Grip."
     },
     "Force Slam": {
       "category": "force",
@@ -760,7 +828,8 @@
       ],
       "chain": "Force Slam Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Force Slam"
+      "prerequisiteFeat": "Force Slam",
+      "summary": "Move a target damaged by your Grenade attack."
     },
     "Forceful Slam": {
       "category": "force",
@@ -771,7 +840,8 @@
       ],
       "chain": "Force Slam Chain",
       "chainOrder": 3,
-      "prerequisiteFeat": "Force Slam"
+      "prerequisiteFeat": "Force Slam",
+      "summary": "You gain a +2 bonus on Use the Force checks made to activate Force Slam."
     },
     "Force Stun": {
       "category": "force",
@@ -792,7 +862,8 @@
       ],
       "chain": "Force Stun Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Force Stun"
+      "prerequisiteFeat": "Force Stun",
+      "summary": "You may spend a Force Point to move a target -1 step down the condition track when using Force Stun."
     },
     "Forceful Stun": {
       "category": "force",
@@ -803,7 +874,8 @@
       ],
       "chain": "Force Stun Chain",
       "chainOrder": 3,
-      "prerequisiteFeat": "Force Stun"
+      "prerequisiteFeat": "Force Stun",
+      "summary": "You gain a +2 bonus on Use the Force checks made to activate Force Stun."
     },
     "Move Object": {
       "category": "force",
@@ -824,7 +896,8 @@
       ],
       "chain": "Move Object Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Move Object"
+      "prerequisiteFeat": "Move Object",
+      "summary": "You may spend a Force Point to move a target -1 step down the condition track when using Move Object."
     },
     "Forceful Throw": {
       "category": "force",
@@ -835,7 +908,8 @@
       ],
       "chain": "Move Object Chain",
       "chainOrder": 3,
-      "prerequisiteFeat": "Move Object"
+      "prerequisiteFeat": "Move Object",
+      "summary": "You gain a +2 bonus on Use the Force checks made to activate Move Object."
     },
     "Battle Meditation": {
       "category": "force",
@@ -843,7 +917,8 @@
         "force",
         "support",
         "tactical"
-      ]
+      ],
+      "summary": "Bolster allies through the Force and coordinate them in battle."
     },
     "Forceful Vitality": {
       "category": "force",
@@ -851,7 +926,8 @@
         "force",
         "endurance",
         "resilience"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on Endurance checks and may reroll a failed Endurance check once per encounter."
     },
     "Forceful Will": {
       "category": "force",
@@ -859,7 +935,8 @@
         "force",
         "mental",
         "defense"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter."
     },
     "Forceful Recovery": {
       "category": "recovery",
@@ -867,7 +944,8 @@
         "force",
         "recovery",
         "power"
-      ]
+      ],
+      "summary": "Regain one Force Power when you catch a Second Wind."
     },
     "Forceful Warrior": {
       "category": "force",
@@ -875,7 +953,8 @@
         "force",
         "melee",
         "combat"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on melee attack rolls made while using a Force power."
     },
     "Forceful Weapon": {
       "category": "force",
@@ -884,7 +963,8 @@
         "power-boost",
         "combat"
       ],
-      "prerequisiteFeat": "Battle Strike"
+      "prerequisiteFeat": "Battle Strike",
+      "summary": "You gain a +2 bonus on Use the Force checks made to activate Battle Strike."
     },
     "Forceful Saber Throw": {
       "category": "force",
@@ -895,7 +975,8 @@
       ],
       "chain": "Saber Throw Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Saber Throw"
+      "prerequisiteFeat": "Saber Throw",
+      "summary": "You gain a +2 bonus on Use the Force checks made to activate Saber Throw."
     },
     "Fast Surge": {
       "category": "force",
@@ -903,7 +984,8 @@
         "force",
         "mobility",
         "swift-action"
-      ]
+      ],
+      "summary": "Catch a Second Wind as a Free Action on your turn."
     },
     "Force Regimen Mastery": {
       "category": "force",
@@ -911,7 +993,8 @@
         "force",
         "resource",
         "mastery"
-      ]
+      ],
+      "summary": "Learn a number of Force Regimens equal to 1 + your Wisdom modifier (minimum of 1)."
     },
     "Unstoppable Force": {
       "category": "force",
@@ -919,7 +1002,8 @@
         "force",
         "penetration",
         "power"
-      ]
+      ],
+      "summary": "Gain a +5 bonus to Fortitude Defense and Will Defense against any effect requiring a Use the Force check."
     },
     "Intuitive Initiative": {
       "category": "force",
@@ -927,7 +1011,8 @@
         "force",
         "initiative",
         "tactical"
-      ]
+      ],
+      "summary": "You may reroll your Initiative check and take the better result."
     },
     "Keen Force Mind": {
       "category": "force",
@@ -935,7 +1020,8 @@
         "force",
         "mental",
         "power-boost"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on Use the Force checks made to activate mind-affecting Force powers."
     },
     "Skill Focus": {
       "category": "utility",
@@ -943,7 +1029,8 @@
         "skill",
         "expertise",
         "specialization"
-      ]
+      ],
+      "summary": "Gain +5 competence bonus on Skill Checks with one Trained Skill."
     },
     "Skill Training": {
       "category": "utility",
@@ -951,7 +1038,8 @@
         "skill",
         "training",
         "versatility"
-      ]
+      ],
+      "summary": "You become Trained in one Class Skill."
     },
     "Educated": {
       "category": "utility",
@@ -959,7 +1047,8 @@
         "skill",
         "knowledge",
         "bonus"
-      ]
+      ],
+      "summary": "Choose two Knowledge skills."
     },
     "Linguist": {
       "category": "utility",
@@ -967,7 +1056,8 @@
         "skill",
         "social",
         "languages"
-      ]
+      ],
+      "summary": "Gain bonus Languages equal to 1 + your Intelligence modifier (minimum 1)."
     },
     "Sharp-Eyed": {
       "category": "utility",
@@ -983,7 +1073,8 @@
         "social",
         "deception",
         "swift-action"
-      ]
+      ],
+      "summary": "You may make a Persuasion check to feint in combat as a swift action instead of a standard action."
     },
     "Intimidating Presence": {
       "category": "utility",
@@ -991,7 +1082,8 @@
         "social",
         "intimidate",
         "swift-action"
-      ]
+      ],
+      "summary": "You may use Persuasion to intimidate as a swift action instead of a standard action."
     },
     "Trustworthy": {
       "category": "utility",
@@ -999,7 +1091,8 @@
         "social",
         "persuasion",
         "bonus"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on Persuasion checks and may reroll a failed Persuasion check once per encounter."
     },
     "Natural Leader": {
       "category": "utility",
@@ -1007,7 +1100,8 @@
         "social",
         "leadership",
         "support"
-      ]
+      ],
+      "summary": "You become the leader of an Organization."
     },
     "Coordinated Attack": {
       "category": "utility",
@@ -1015,7 +1109,8 @@
         "social",
         "teamwork",
         "combat"
-      ]
+      ],
+      "summary": "Automatic success with Aid Another action at Point-Blank Range."
     },
     "Frightful Presence": {
       "category": "utility",
@@ -1025,7 +1120,8 @@
         "area"
       ],
       "chain": "Intimidation Chain",
-      "chainOrder": 1
+      "chainOrder": 1,
+      "summary": "As a standard action, you may make a Persuasion check to intimidate all enemies within 6 squares."
     },
     "Frightening Presence": {
       "category": "utility",
@@ -1036,7 +1132,8 @@
       ],
       "chain": "Intimidation Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Frightful Presence"
+      "prerequisiteFeat": "Frightful Presence",
+      "summary": "When you use Frightful Presence, targets that fail their Will Defense check move -2 steps down the condition track instead of -1."
     },
     "Tech Specialist": {
       "category": "utility",
@@ -1044,7 +1141,8 @@
         "technical",
         "mechanics",
         "modification"
-      ]
+      ],
+      "summary": "You can make custom modifications to Armor, Weapons, Vehicles, Droids, and Devices."
     },
     "Scavenger": {
       "category": "utility",
@@ -1052,7 +1150,8 @@
         "technical",
         "mechanics",
         "utility"
-      ]
+      ],
+      "summary": "Gather materials for building objects."
     },
     "Jack of All Trades": {
       "category": "utility",
@@ -1060,7 +1159,8 @@
         "versatility",
         "skill",
         "utility"
-      ]
+      ],
+      "summary": "Make untrained skill checks more reliably across a wide range of tasks."
     },
     "Adaptable Talent": {
       "category": "utility",
@@ -1068,7 +1168,8 @@
         "versatility",
         "talent",
         "temporary"
-      ]
+      ],
+      "summary": "Temporarily gain access to an additional Talent."
     },
     "Resilient Talent": {
       "category": "utility",
@@ -1076,7 +1177,8 @@
         "versatility",
         "talent",
         "temporary"
-      ]
+      ],
+      "summary": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute."
     },
     "Toughness": {
       "category": "recovery",
@@ -1084,7 +1186,8 @@
         "survival",
         "hit-points",
         "resilience"
-      ]
+      ],
+      "summary": "Gain +1 Hit Point per Character Level."
     },
     "Improved Damage Threshold": {
       "category": "recovery",
@@ -1092,7 +1195,8 @@
         "survival",
         "threshold",
         "resilience"
-      ]
+      ],
+      "summary": "Damage Threshold increases by 5 points."
     },
     "Great Fortitude": {
       "category": "recovery",
@@ -1100,7 +1204,8 @@
         "resilience",
         "fortitude",
         "defense"
-      ]
+      ],
+      "summary": "You gain a +2 bonus to your Fortitude Defense."
     },
     "Iron Will": {
       "category": "recovery",
@@ -1116,7 +1221,8 @@
         "resilience",
         "reflex",
         "defense"
-      ]
+      ],
+      "summary": "You gain a +2 bonus to your Reflex Defense."
     },
     "Improved Defenses": {
       "category": "recovery",
@@ -1124,7 +1230,8 @@
         "resilience",
         "defense",
         "all"
-      ]
+      ],
+      "summary": "Gain +1 bonus to all Defenses."
     },
     "Conditioned": {
       "category": "recovery",
@@ -1132,7 +1239,8 @@
         "resilience",
         "endurance",
         "reroll"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on Endurance checks and may reroll a failed Endurance check once per encounter."
     },
     "Headstrong": {
       "category": "recovery",
@@ -1140,7 +1248,8 @@
         "resilience",
         "will",
         "fear"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on Will Defense against fear effects and may reroll a failed Will Defense check once per encounter."
     },
     "Delay Damage": {
       "category": "recovery",
@@ -1148,7 +1257,8 @@
         "survival",
         "tactical",
         "damage"
-      ]
+      ],
+      "summary": "Once per encounter, you may delay the effects of damage taken until the end of your next turn."
     },
     "Indomitable Will": {
       "category": "recovery",
@@ -1156,7 +1266,8 @@
         "resilience",
         "will",
         "mental"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter."
     },
     "Resilient Strength": {
       "category": "recovery",
@@ -1164,7 +1275,8 @@
         "resilience",
         "fortitude",
         "strength"
-      ]
+      ],
+      "summary": "Use Strength or Constitution to determine Fortitude Defense."
     },
     "Resilient Reflexes": {
       "category": "recovery",
@@ -1172,7 +1284,8 @@
         "resilience",
         "reflex",
         "dexterity"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on Reflex Defense against effects that target Dexterity and may reroll a failed check once per encounter."
     },
     "Resilient Will": {
       "category": "recovery",
@@ -1180,7 +1293,8 @@
         "resilience",
         "will",
         "wisdom"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on Will Defense against effects that target Wisdom and may reroll a failed check once per encounter."
     },
     "Quick Draw": {
       "category": "misc",
@@ -1188,7 +1302,8 @@
         "utility",
         "weapon",
         "swift-action"
-      ]
+      ],
+      "summary": "Draw weapon as a Swift Action."
     },
     "Weapon Finesse": {
       "category": "misc",
@@ -1196,7 +1311,8 @@
         "combat",
         "dexterity",
         "finesse"
-      ]
+      ],
+      "summary": "Use Dexterity modifier instead of Strength modifier on attack rolls with Light Melee Weapons and Lightsabers."
     },
     "Noble Fencing Style": {
       "category": "misc",
@@ -1207,7 +1323,8 @@
       ],
       "chain": "Finesse Chain",
       "chainOrder": 2,
-      "prerequisiteFeat": "Weapon Finesse"
+      "prerequisiteFeat": "Weapon Finesse",
+      "summary": "When wielding a weapon with Weapon Finesse, you may use your Charisma modifier instead of Strength for attack rolls."
     },
     "Reactive Stealth": {
       "category": "misc",
@@ -1215,7 +1332,8 @@
         "utility",
         "stealth",
         "reroll"
-      ]
+      ],
+      "summary": "Once per encounter, you may reroll a Stealth check and take the better result."
     },
     "Reactive Awareness": {
       "category": "misc",
@@ -1223,7 +1341,8 @@
         "utility",
         "perception",
         "reroll"
-      ]
+      ],
+      "summary": "Once per encounter, you may reroll a Perception check and take the better result."
     },
     "Surgical Precision": {
       "category": "misc",
@@ -1231,7 +1350,8 @@
         "utility",
         "medical",
         "healing"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on Treat Injury checks and may reroll a failed check once per encounter."
     },
     "Mounted Combat": {
       "category": "misc",
@@ -1239,7 +1359,8 @@
         "special",
         "mount",
         "defense"
-      ]
+      ],
+      "summary": "Increase Speed and avoid attacks when riding a Mount."
     },
     "Vehicular Combat": {
       "category": "misc",
@@ -1247,7 +1368,8 @@
         "special",
         "vehicle",
         "defense"
-      ]
+      ],
+      "summary": "Negate one attack per round against the Vehicle you're piloting."
     },
     "Stealthy": {
       "category": "misc",
@@ -1255,7 +1377,8 @@
         "utility",
         "stealth",
         "bonus"
-      ]
+      ],
+      "summary": "You gain a +2 bonus on Stealth checks and may reroll a failed Stealth check once per encounter."
     },
     "Low Profile": {
       "category": "misc",
@@ -1263,7 +1386,8 @@
         "utility",
         "stealth",
         "cover"
-      ]
+      ],
+      "summary": "You gain cover from enemies at long range and may reroll Stealth checks made to avoid detection."
     },
     "Desperate Gambit": {
       "category": "misc",
@@ -1271,7 +1395,8 @@
         "special",
         "gamble",
         "attack"
-      ]
+      ],
+      "summary": "Reroll missed attack by taking a -2 penalty (or -5 for Natural 1) to Reflex Defense."
     },
     "Starship Tactics": {
       "category": "misc",
@@ -1279,7 +1404,8 @@
         "vehicle",
         "pilot",
         "tactics"
-      ]
+      ],
+      "summary": "You are trained to make use of Starship Maneuvers and are skilled at space combat."
     },
     "Burst Fire": {
       "category": "combat-offense",
@@ -1287,7 +1413,8 @@
         "ranged",
         "autofire",
         "damage"
-      ]
+      ],
+      "summary": "Take a -5 penalty on an Autofire attack to gain +2 dice of damage."
     },
     "Careful Shot": {
       "category": "combat-offense",
@@ -1295,7 +1422,8 @@
         "ranged",
         "accuracy",
         "bonus"
-      ]
+      ],
+      "summary": "If you Aim, gain +1 bonus on the attack roll."
     },
     "Cybernetic Surgery": {
       "category": "utility",
@@ -1303,7 +1431,8 @@
         "technical",
         "medical",
         "cybernetics"
-      ]
+      ],
+      "summary": "Install a Cybernetic Prosthesis onto a living being."
     },
     "Dreadful Rage": {
       "category": "combat-offense",
@@ -1311,7 +1440,8 @@
         "rage",
         "attack",
         "damage"
-      ]
+      ],
+      "summary": "Rage bonus to attacks and damage increases to +5."
     },
     "Exotic Weapon Proficiency": {
       "category": "combat-defense",
@@ -1319,7 +1449,8 @@
         "proficiency",
         "weapon",
         "exotic"
-      ]
+      ],
+      "summary": "Wield an Exotic Weapon without penalty."
     },
     "Extra Rage": {
       "category": "recovery",
@@ -1327,7 +1458,8 @@
         "rage",
         "ability",
         "resource"
-      ]
+      ],
+      "summary": "Rage one additional time per day."
     },
     "Extra Second Wind": {
       "category": "recovery",
@@ -1335,7 +1467,8 @@
         "recovery",
         "second wind",
         "endurance"
-      ]
+      ],
+      "summary": "Gain an additional Second Wind per day."
     },
     "Great Cleave": {
       "category": "combat-offense",
@@ -1343,7 +1476,8 @@
         "melee",
         "multiattack",
         "combat"
-      ]
+      ],
+      "summary": "No limit to Cleave attacks each round."
     },
     "Improved Charge": {
       "category": "combat-defense",
@@ -1351,7 +1485,8 @@
         "movement",
         "charge",
         "mobility"
-      ]
+      ],
+      "summary": "You can Charge without moving in a straight line."
     },
     "Martial Arts I": {
       "category": "combat-offense",
@@ -1359,7 +1494,8 @@
         "unarmed",
         "combat",
         "damage"
-      ]
+      ],
+      "summary": "Increases damage from Unarmed attacks by one die step; gain +1 bonus to Reflex Defense."
     },
     "Martial Arts II": {
       "category": "combat-offense",
@@ -1367,7 +1503,8 @@
         "unarmed",
         "combat",
         "damage"
-      ]
+      ],
+      "summary": "Increases damage from Unarmed attacks by one die step; gain +1 bonus to Reflex Defense."
     },
     "Martial Arts III": {
       "category": "combat-offense",
@@ -1375,7 +1512,8 @@
         "unarmed",
         "combat",
         "damage"
-      ]
+      ],
+      "summary": "Increases damage from Unarmed attacks by one die step; gain +1 bonus to Reflex Defense."
     },
     "Point-Blank Shot": {
       "category": "combat-offense",
@@ -1383,7 +1521,8 @@
         "ranged",
         "accuracy",
         "combat"
-      ]
+      ],
+      "summary": "+1 bonus on ranged attacks and damage against foes within Point-Blank Range."
     },
     "Powerful Charge": {
       "category": "combat-offense",
@@ -1391,7 +1530,8 @@
         "charge",
         "attack",
         "bonus"
-      ]
+      ],
+      "summary": "Gain +2 bonus on your attack roll while Charging, and deal extra damage."
     },
     "Shake It Off": {
       "category": "recovery",
@@ -1399,7 +1539,8 @@
         "recovery",
         "condition",
         "endurance"
-      ]
+      ],
+      "summary": "Spend two Swift Actions to move +1 step along the Condition Track."
     },
     "Strong in the Force": {
       "category": "force",
@@ -1407,7 +1548,8 @@
         "force",
         "power",
         "bonus"
-      ]
+      ],
+      "summary": "Roll d8s instead of d6s when you spend a Force Point."
     },
     "Surgical Expertise": {
       "category": "utility",
@@ -1415,7 +1557,8 @@
         "medical",
         "surgery",
         "treat injury"
-      ]
+      ],
+      "summary": "You can perform Surgery in 10 minutes instead of 1 hour."
     },
     "Throw": {
       "category": "combat-offense",
@@ -1423,7 +1566,8 @@
         "grapple",
         "attack",
         "melee"
-      ]
+      ],
+      "summary": "Throw a Grappled opponent up to 1 square beyond your reach and deal damage."
     },
     "Trip": {
       "category": "combat-offense",
@@ -1431,7 +1575,8 @@
         "grapple",
         "attack",
         "melee"
-      ]
+      ],
+      "summary": "Trip an opponent that you've Grappled, knocking it Prone."
     },
     "Triple Attack": {
       "category": "combat-offense",
@@ -1439,14 +1584,16 @@
         "multiattack",
         "combat",
         "full-round"
-      ]
+      ],
+      "summary": "Make second extra attack with chosen weapon during Full Attack, additional -5 penalty to all attacks."
     },
     "Weapon Proficiency": {
       "category": "combat-defense",
       "tags": [
         "proficiency",
         "weapon"
-      ]
+      ],
+      "summary": "Ignore -5 penalty on attack rolls with weapons of a particular type."
     },
     "Starship Designer": {
       "category": "misc",
@@ -1454,7 +1601,8 @@
         "vehicle",
         "starship",
         "design"
-      ]
+      ],
+      "summary": "You are trained to design (and redesign) Starships."
     },
     "Tactical Genius": {
       "category": "misc",
@@ -1462,7 +1610,8 @@
         "vehicle",
         "tactics",
         "starship"
-      ]
+      ],
+      "summary": "You are a master at using multiple starship tactics over the course of long space combats."
     },
     "A Few Maneuvers": {
       "category": "combat-defense",
@@ -1470,7 +1619,8 @@
         "vehicle",
         "defense",
         "dodge"
-      ]
+      ],
+      "summary": "You can weave, juke, and roll to avoid enemy fire in the thick of combat."
     },
     "Momentum Strike": {
       "category": "combat-offense",
@@ -1478,7 +1628,8 @@
         "mounted",
         "attack",
         "bonus"
-      ]
+      ],
+      "summary": "You know how to put the weight of your momentum into attacks while riding a Mount or Speeder Bike."
     },
     "Mounted Defense": {
       "category": "combat-defense",
@@ -1486,7 +1637,8 @@
         "mounted",
         "defense",
         "ride"
-      ]
+      ],
+      "summary": "You are able to react to incoming attacks, using you Mount or Speeder Bike to absorb attacks against you."
     },
     "Suppression Fire": {
       "category": "combat-offense",
@@ -1494,7 +1646,8 @@
         "ranged",
         "attack",
         "autofire"
-      ]
+      ],
+      "summary": "You can lay down a hail of blaster fire to pin your opponents."
     },
     "Accelerated Strike": {
       "category": "combat-offense",
@@ -1502,7 +1655,8 @@
         "melee",
         "full-attack",
         "swift-action"
-      ]
+      ],
+      "summary": "Once per encounter, make a Full Attack as a Standard Action."
     },
     "Conditioning": {
       "category": "recovery",
@@ -1510,7 +1664,8 @@
         "resilience",
         "endurance",
         "reroll"
-      ]
+      ],
+      "summary": "Reroll Strength and Constitution based Skill Checks."
     },
     "Critical Strike": {
       "category": "combat-offense",
@@ -1518,7 +1673,8 @@
         "critical",
         "threat-range",
         "melee"
-      ]
+      ],
+      "summary": "Increase critical threat range of an attack."
     },
     "Echani Training": {
       "category": "combat-offense",
@@ -1526,7 +1682,8 @@
         "unarmed",
         "mastery",
         "combat"
-      ]
+      ],
+      "summary": "You can double the damage bonus provided by your Strength modifier to Unarmed Attacks (minimum +1) provided you make only one Unarmed attack this turn."
     },
     "Flurry": {
       "category": "combat-offense",
@@ -1534,7 +1691,8 @@
         "attack",
         "bonus",
         "tradeoff"
-      ]
+      ],
+      "summary": "Increases attack bonus, with penalties to Reflex Defense."
     },
     "Force Readiness": {
       "category": "force",
@@ -1542,7 +1700,8 @@
         "force",
         "resource",
         "utility"
-      ]
+      ],
+      "summary": "Spend Force Points even if it is not your turn."
     },
     "Gearhead": {
       "category": "utility",
@@ -1550,7 +1709,8 @@
         "technical",
         "swift-action",
         "utility"
-      ]
+      ],
+      "summary": "Make Mechanics and Use Computer checks quickly."
     },
     "Implant Training": {
       "category": "utility",
@@ -1558,7 +1718,8 @@
         "cybernetics",
         "medical",
         "resilience"
-      ]
+      ],
+      "summary": "You don't move additional steps down the Condition Track due to your Implants."
     },
     "Improved Rapid Strike": {
       "category": "combat-offense",
@@ -1566,7 +1727,8 @@
         "melee",
         "damage",
         "advanced"
-      ]
+      ],
+      "summary": "Trade -5 penalty on attack roll for +2 dice of damage when using a Light Melee Weapon."
     },
     "Increased Agility": {
       "category": "combat-defense",
@@ -1574,7 +1736,8 @@
         "mobility",
         "movement",
         "advanced"
-      ]
+      ],
+      "summary": "Increase Climb Speed, Swim Speed, and Jump distance by 2 squares."
     },
     "Logic Upgrade: Self-Defense": {
       "category": "combat-defense",
@@ -1582,7 +1745,8 @@
         "droid",
         "defense",
         "bonus"
-      ]
+      ],
+      "summary": "Grant yourself +2 to the Defense of your choice for 1 round."
     },
     "Logic Upgrade: Tactician": {
       "category": "utility",
@@ -1590,7 +1754,8 @@
         "droid",
         "teamwork",
         "aid another"
-      ]
+      ],
+      "summary": "Grant a +5 bonus to attack with a successful Aid Another attempt."
     },
     "Mandalorian Training": {
       "category": "combat-offense",
@@ -1598,7 +1763,8 @@
         "charge",
         "ranged",
         "bonus"
-      ]
+      ],
+      "summary": "Gain a +2 bonus on attack rolls when using the Charging Fire feat."
     },
     "Poison Resistance": {
       "category": "recovery",
@@ -1606,7 +1772,8 @@
         "resilience",
         "poison",
         "defense"
-      ]
+      ],
+      "summary": "You are inherently more resistant to Poison."
     },
     "Power Blast": {
       "category": "combat-offense",
@@ -1614,7 +1781,8 @@
         "ranged",
         "damage",
         "tradeoff"
-      ]
+      ],
+      "summary": "Trade attack bonus for damage on ranged attacks (up to your Base Attack Bonus)."
     },
     "Quick Skill": {
       "category": "utility",
@@ -1622,7 +1790,8 @@
         "skill",
         "swift-action",
         "utility"
-      ]
+      ],
+      "summary": "Take 10 on Skill Checks when rushed, Take 20 in half of the normal time."
     },
     "Republic Military Training": {
       "category": "combat-defense",
@@ -1630,7 +1799,8 @@
         "military",
         "defense",
         "cover"
-      ]
+      ],
+      "summary": "When behind Cover, you can reduce the damage of an incoming attack."
     },
     "Sith Military Training": {
       "category": "combat-offense",
@@ -1638,7 +1808,8 @@
         "military",
         "attack",
         "psychology"
-      ]
+      ],
+      "summary": "Upon debilitating an opponent, you can cause other opponents to lose heart."
     },
     "Sniper Shot": {
       "category": "combat-offense",
@@ -1646,7 +1817,8 @@
         "ranged",
         "accuracy",
         "penalty"
-      ]
+      ],
+      "summary": "Increase accuracy at a -5 Reflex Defense penalty."
     },
     "Tumble Defense": {
       "category": "combat-defense",
@@ -1654,7 +1826,8 @@
         "mobility",
         "defense",
         "acrobatics"
-      ]
+      ],
+      "summary": "Your martial ability makes it harder for opponents to Tumble past."
     },
     "Withdrawal Strike": {
       "category": "combat-defense",
@@ -1662,7 +1835,8 @@
         "mobility",
         "attack",
         "tactical"
-      ]
+      ],
+      "summary": "Adjacent opponents can not use the Withdraw Action."
     },
     "Advantageous Attack": {
       "category": "combat-offense",
@@ -1670,7 +1844,8 @@
         "bonus",
         "attack",
         "heroic"
-      ]
+      ],
+      "summary": "Add full Heroic Level to attacks against slower enemies."
     },
     "Advantageous Cover": {
       "category": "combat-defense",
@@ -1678,7 +1853,8 @@
         "cover",
         "defense",
         "stealth"
-      ]
+      ],
+      "summary": "Gain additional benefits from Cover."
     },
     "Angled Throw": {
       "category": "combat-offense",
@@ -1686,7 +1862,8 @@
         "grenade",
         "ranged",
         "accuracy"
-      ]
+      ],
+      "summary": "Ignore Cover with Grenades and grenadelike weapons."
     },
     "Bad Feeling": {
       "category": "misc",
@@ -1694,7 +1871,8 @@
         "utility",
         "initiative",
         "surprise"
-      ]
+      ],
+      "summary": "Always have a Move Action during the Surprise Round."
     },
     "Blaster Barrage": {
       "category": "combat-offense",
@@ -1702,7 +1880,8 @@
         "ranged",
         "autofire",
         "teamwork"
-      ]
+      ],
+      "summary": "Automatically Aid Another when using Autofire attacks."
     },
     "Controlled Rage": {
       "category": "combat-offense",
@@ -1710,7 +1889,8 @@
         "rage",
         "control",
         "free-action"
-      ]
+      ],
+      "summary": "Enter Rage as a Free Action, and end Rage at will."
     },
     "Crossfire": {
       "category": "combat-offense",
@@ -1718,7 +1898,8 @@
         "ranged",
         "tactical",
         "accuracy"
-      ]
+      ],
+      "summary": "Redirect missed attacks against Soft Cover."
     },
     "Cunning Attack": {
       "category": "combat-offense",
@@ -1726,7 +1907,8 @@
         "attack",
         "flat-footed",
         "bonus"
-      ]
+      ],
+      "summary": "Gain +2 bonus on attack rolls against Flat-Footed enemies."
     },
     "Focused Rage": {
       "category": "combat-offense",
@@ -1734,7 +1916,8 @@
         "rage",
         "control",
         "advanced"
-      ]
+      ],
+      "summary": "When Raging, use Skills that require patience at a -5 penalty."
     },
     "Improved Bantha Rush": {
       "category": "combat-offense",
@@ -1742,7 +1925,8 @@
         "melee",
         "maneuver",
         "advanced"
-      ]
+      ],
+      "summary": "Push foes away a number of squares equal to Strength modifier."
     },
     "Informer": {
       "category": "utility",
@@ -1750,7 +1934,8 @@
         "social",
         "perception",
         "gather-info"
-      ]
+      ],
+      "summary": "Gather Information with Perception skill, and do it faster."
     },
     "Mighty Throw": {
       "category": "combat-offense",
@@ -1758,7 +1943,8 @@
         "ranged",
         "strength",
         "bonus"
-      ]
+      ],
+      "summary": "Add Strength bonus to ranged attack rolls."
     },
     "Powerful Rage": {
       "category": "combat-offense",
@@ -1766,7 +1952,8 @@
         "rage",
         "strength",
         "bonus"
-      ]
+      ],
+      "summary": "Gain a +4 bonus on Strength checks and Strength-based Skill Checks."
     },
     "Rapport": {
       "category": "utility",
@@ -1774,7 +1961,8 @@
         "social",
         "teamwork",
         "aid another"
-      ]
+      ],
+      "summary": "Grant an additional +2 bonus when using the Aid Another action."
     },
     "Recall": {
       "category": "utility",
@@ -1782,7 +1970,8 @@
         "skill",
         "knowledge",
         "reroll"
-      ]
+      ],
+      "summary": "Reroll Knowledge skill check, keeping the better result."
     },
     "Strafe": {
       "category": "combat-offense",
@@ -1790,7 +1979,8 @@
         "ranged",
         "mobility",
         "multiattack"
-      ]
+      ],
+      "summary": "Attack multiple targets as you move past them."
     },
     "Swarm": {
       "category": "combat-offense",
@@ -1798,7 +1988,8 @@
         "melee",
         "teamwork",
         "bonus"
-      ]
+      ],
+      "summary": "Gain +1 bonus on melee attack rolls when allies are adjacent."
     },
     "Unleashed": {
       "category": "misc",
@@ -1806,7 +1997,8 @@
         "special",
         "destiny",
         "advanced"
-      ]
+      ],
+      "summary": "Unlocks Unleashed Abilities."
     },
     "Close Combat Escape": {
       "category": "combat-defense",
@@ -1814,7 +2006,8 @@
         "grapple",
         "escape",
         "acrobatics"
-      ]
+      ],
+      "summary": "Escape Grapple and attack."
     },
     "Collateral Damage": {
       "category": "combat-offense",
@@ -1822,7 +2015,8 @@
         "ranged",
         "accuracy",
         "multiattack"
-      ]
+      ],
+      "summary": "Gain extra attack upon hitting the first target."
     },
     "Cornered": {
       "category": "combat-offense",
@@ -1830,7 +2024,8 @@
         "attack",
         "bonus",
         "tactical"
-      ]
+      ],
+      "summary": "When unable to Withdraw, +2 on attacks."
     },
     "Deadly Sniper": {
       "category": "combat-offense",
@@ -1838,7 +2033,8 @@
         "ranged",
         "accuracy",
         "damage"
-      ]
+      ],
+      "summary": "Gain +2 bonus on your ranged attack roll and deal +1 die of damage."
     },
     "Deceptive Drop": {
       "category": "combat-defense",
@@ -1846,7 +2042,8 @@
         "stealth",
         "initiative",
         "surprise"
-      ]
+      ],
+      "summary": "Flat-Footed targets knocked Prone on Surprise Round."
     },
     "Duck and Cover": {
       "category": "combat-defense",
@@ -1854,7 +2051,8 @@
         "stealth",
         "cover",
         "defense"
-      ]
+      ],
+      "summary": "You dive for Cover when you avoid Area Attacks."
     },
     "Fleet-Footed": {
       "category": "combat-defense",
@@ -1862,7 +2060,8 @@
         "mobility",
         "movement",
         "speed"
-      ]
+      ],
+      "summary": "+2 Speed when making a Running Attack."
     },
     "Friends in Low Places": {
       "category": "utility",
@@ -1870,7 +2069,8 @@
         "social",
         "gather-info",
         "economy"
-      ]
+      ],
+      "summary": "Reduce Black Market cost multiplier for Restricted Items by 1."
     },
     "Hasty Modification": {
       "category": "utility",
@@ -1878,7 +2078,8 @@
         "technical",
         "trait-swap",
         "quick"
-      ]
+      ],
+      "summary": "Swap one Trait for another Trait."
     },
     "Hideous Visage": {
       "category": "utility",
@@ -1886,7 +2087,8 @@
         "social",
         "deception",
         "maneuver"
-      ]
+      ],
+      "summary": "Deception check to push opponent away."
     },
     "Impersonate": {
       "category": "utility",
@@ -1894,7 +2096,8 @@
         "social",
         "deception",
         "masquerade"
-      ]
+      ],
+      "summary": "Shapeshift to impersonate a specific person."
     },
     "Impetuous Move": {
       "category": "combat-defense",
@@ -1902,7 +2105,8 @@
         "mobility",
         "movement",
         "constitution"
-      ]
+      ],
+      "summary": "Move when you catch a Second Wind."
     },
     "Impulsive Flight": {
       "category": "combat-defense",
@@ -1910,7 +2114,8 @@
         "mobility",
         "withdraw",
         "speed"
-      ]
+      ],
+      "summary": "Withdraw faster."
     },
     "Knife Trick": {
       "category": "combat-offense",
@@ -1918,7 +2123,8 @@
         "melee",
         "reaction",
         "stealth"
-      ]
+      ],
+      "summary": "Attack of Opportunity with concealed weapon to greater effect."
     },
     "Lightning Draw": {
       "category": "combat-offense",
@@ -1926,7 +2132,8 @@
         "ranged",
         "swift-action",
         "draw"
-      ]
+      ],
+      "summary": "Draw and fire as a Standard Action."
     },
     "Metamorph": {
       "category": "utility",
@@ -1934,7 +2141,8 @@
         "shapeshifting",
         "size",
         "transformation"
-      ]
+      ],
+      "summary": "Change your size."
     },
     "Opportunistic Retreat": {
       "category": "combat-defense",
@@ -1942,7 +2150,8 @@
         "mobility",
         "reaction",
         "movement"
-      ]
+      ],
+      "summary": "Sacrifice Attack of Opportunity to move at half speed."
     },
     "Resurgence": {
       "category": "recovery",
@@ -1950,7 +2159,8 @@
         "recovery",
         "movement",
         "action"
-      ]
+      ],
+      "summary": "Gain bonus Move Action when you catch your Second Wind."
     },
     "Signature Device": {
       "category": "utility",
@@ -1958,7 +2168,8 @@
         "technical",
         "trait",
         "modification"
-      ]
+      ],
+      "summary": "Install two Traits."
     },
     "Slippery Maneuver": {
       "category": "combat-defense",
@@ -1966,7 +2177,8 @@
         "grapple",
         "escape",
         "mobility"
-      ]
+      ],
+      "summary": "Dodge two targets, Withdraw at full Speed."
     },
     "Stay Up": {
       "category": "recovery",
@@ -1974,7 +2186,8 @@
         "recovery",
         "condition",
         "endurance"
-      ]
+      ],
+      "summary": "Move 1 step down Condition Track to reduce damage."
     },
     "Superior Tech": {
       "category": "utility",
@@ -1982,7 +2195,8 @@
         "technical",
         "modification",
         "advanced"
-      ]
+      ],
+      "summary": "Install superior equipment upgrades."
     },
     "Tactical Advantage": {
       "category": "combat-offense",
@@ -1990,7 +2204,8 @@
         "mobility",
         "reaction",
         "movement"
-      ]
+      ],
+      "summary": "Make Attack of Opportunity and move 1 square."
     },
     "Wicked Strike": {
       "category": "combat-offense",
@@ -1998,7 +2213,8 @@
         "melee",
         "multiattack",
         "tactical"
-      ]
+      ],
+      "summary": "Gain extra attack on a second target upon damaging the first target."
     },
     "Anointed Hunter": {
       "category": "combat-offense",
@@ -2006,7 +2222,8 @@
         "ranged",
         "mobility",
         "tactical"
-      ]
+      ],
+      "summary": "Move 2 or more squares and gain a +1 bonus on attacks with Thrown Weapons until the end of your turn."
     },
     "Artillery Shot": {
       "category": "combat-offense",
@@ -2014,7 +2231,8 @@
         "ranged",
         "autofire",
         "efficiency"
-      ]
+      ],
+      "summary": "You increase the efficiency of your Burst and Splash weapon attacks."
     },
     "Coordinated Barrage": {
       "category": "utility",
@@ -2022,7 +2240,8 @@
         "teamwork",
         "ranged",
         "aid another"
-      ]
+      ],
+      "summary": "Allow an ally to deal more damage when you aid their attack."
     },
     "Droidcraft": {
       "category": "utility",
@@ -2030,7 +2249,8 @@
         "droid",
         "repair",
         "mechanics"
-      ]
+      ],
+      "summary": "Repair a Droid in 10 minutes instead of 1 hour."
     },
     "Droid Hunter": {
       "category": "combat-offense",
@@ -2038,7 +2258,8 @@
         "combat",
         "bonus",
         "droid"
-      ]
+      ],
+      "summary": "Deal +2 damage to Droid enemies, or +4 when using an Ion Weapon."
     },
     "Experienced Medic": {
       "category": "utility",
@@ -2046,7 +2267,8 @@
         "medical",
         "surgery",
         "advanced"
-      ]
+      ],
+      "summary": "Perform Surgery on multiple creatures simultaneously."
     },
     "Expert Droid Repair": {
       "category": "utility",
@@ -2054,7 +2276,8 @@
         "droid",
         "repair",
         "mechanics"
-      ]
+      ],
+      "summary": "Repair multiple Droids simultaneously."
     },
     "Flash and Clear": {
       "category": "combat-defense",
@@ -2062,7 +2285,8 @@
         "ranged",
         "concealment",
         "tactical"
-      ]
+      ],
+      "summary": "Gain Concealment against a target you damage with a Burst or Splash weapon."
     },
     "Flood of Fire": {
       "category": "combat-offense",
@@ -2070,7 +2294,8 @@
         "ranged",
         "autofire",
         "area"
-      ]
+      ],
+      "summary": "Ignore enemies' dodge and deflection bonus to Reflex Defense when making Area Attacks with a weapon set on Autofire."
     },
     "Grand Army of the Republic Training": {
       "category": "combat-defense",
@@ -2078,7 +2303,8 @@
         "military",
         "defense",
         "armor"
-      ]
+      ],
+      "summary": "Apply your armor's Equipment bonus to your Will Defense."
     },
     "Gunnery Specialist": {
       "category": "combat-offense",
@@ -2086,7 +2312,8 @@
         "vehicle",
         "weapon",
         "reroll"
-      ]
+      ],
+      "summary": "Reroll an attack made with a Vehicle Weapon."
     },
     "Jedi Familiarity": {
       "category": "force",
@@ -2094,7 +2321,8 @@
         "force",
         "resource",
         "bonus"
-      ]
+      ],
+      "summary": "Gain one temporary Force Point when targeted by an ally's Force Power or Force Talent."
     },
     "Leader of Droids": {
       "category": "utility",
@@ -2102,7 +2330,8 @@
         "droid",
         "support",
         "teamwork"
-      ]
+      ],
+      "summary": "Allied Droids benefit from your beneficial Mind-Affecting effects."
     },
     "Overwhelming Attack": {
       "category": "combat-offense",
@@ -2110,7 +2339,8 @@
         "attack",
         "negate",
         "defensive"
-      ]
+      ],
+      "summary": "Any attempt to negate your attack takes a -5 penalty on the attack roll or Skill Check."
     },
     "Pall of the Dark Side": {
       "category": "force",
@@ -2118,7 +2348,8 @@
         "force",
         "dark-side",
         "stealth"
-      ]
+      ],
+      "summary": "Add half your Dark Side Score to Use the Force checks to resist detection."
     },
     "Separatist Military Training": {
       "category": "combat-offense",
@@ -2126,7 +2357,8 @@
         "military",
         "attack",
         "teamwork"
-      ]
+      ],
+      "summary": "Gain a +1 bonus on an attack roll while adjacent to an ally."
     },
     "Spray Shot": {
       "category": "combat-offense",
@@ -2134,7 +2366,8 @@
         "ranged",
         "autofire",
         "area"
-      ]
+      ],
+      "summary": "When using a weapon set on Autofire, you can reduce the area to 1 square."
     },
     "Trench Warrior": {
       "category": "combat-defense",
@@ -2142,7 +2375,8 @@
         "cover",
         "defense",
         "bonus"
-      ]
+      ],
+      "summary": "When you have Cover against an enemy's ranged attacks, gain a +1 bonus on attack rolls against that enemy."
     },
     "Unwavering Resolve": {
       "category": "recovery",
@@ -2150,7 +2384,8 @@
         "mental",
         "will",
         "perception"
-      ]
+      ],
+      "summary": "Gain a +5 bonus to Will Defense against Deception and Persuasion checks."
     },
     "Wary Defender": {
       "category": "combat-defense",
@@ -2158,7 +2393,8 @@
         "defense",
         "defensive-fighting",
         "bonus"
-      ]
+      ],
+      "summary": "Gain a +2 bonus to Fortitude Defense and Will Defense while Fighting Defensively."
     },
     "Attack Combo (Fire and Strike)": {
       "category": "combat-offense",
@@ -2166,7 +2402,8 @@
         "multiattack",
         "ranged-melee",
         "combo"
-      ]
+      ],
+      "summary": "Deal +1 die of damage on Unarmed, melee, or ranged attacks until the end of your next turn after hitting an enemy with two Unarmed, melee, or ranged attacks."
     },
     "Attack Combo (Melee)": {
       "category": "combat-offense",
@@ -2174,7 +2411,8 @@
         "multiattack",
         "melee",
         "combo"
-      ]
+      ],
+      "summary": "Deal +1 die of damage on Unarmed or melee attacks until the end of your next turn after hitting an enemy with two Unarmed or melee attacks."
     },
     "Attack Combo (Ranged)": {
       "category": "combat-offense",
@@ -2182,7 +2420,8 @@
         "multiattack",
         "ranged",
         "combo"
-      ]
+      ],
+      "summary": "Deal +1 die of damage on ranged attacks until the end of your next turn after hitting an enemy with two ranged attacks."
     },
     "Autofire Sweep": {
       "category": "combat-offense",
@@ -2190,7 +2429,8 @@
         "ranged",
         "autofire",
         "area"
-      ]
+      ],
+      "summary": "Sweep a wide area while using Autofire mode."
     },
     "Biotech Specialist": {
       "category": "utility",
@@ -2198,7 +2438,8 @@
         "technical",
         "biotech",
         "modification"
-      ]
+      ],
+      "summary": "Make custom modifications to Yuuzhan Vong Biotech."
     },
     "Biotech Surgery": {
       "category": "utility",
@@ -2206,7 +2447,8 @@
         "medical",
         "biotech",
         "implant"
-      ]
+      ],
+      "summary": "Install a Bio-Implant on a living being."
     },
     "Brink of Death": {
       "category": "recovery",
@@ -2214,7 +2456,8 @@
         "survival",
         "hit-points",
         "resilience"
-      ]
+      ],
+      "summary": "Attacks that would kill your enemy reduces them to 0 Hit Points instead."
     },
     "Fatal Hit": {
       "category": "combat-offense",
@@ -2222,7 +2465,8 @@
         "melee",
         "lethal",
         "execution"
-      ]
+      ],
+      "summary": "You automatically kill an enemy that you reduce to 0 Hit Points, and you can perform a Coup de Grace as a Standard Action."
     },
     "Feat of Strength": {
       "category": "misc",
@@ -2230,7 +2474,8 @@
         "strength",
         "skill-check",
         "bonus"
-      ]
+      ],
+      "summary": "Take 10 or Take 20 on one Strength check or related Skill Check per encounter."
     },
     "Galactic Alliance Military Training": {
       "category": "combat-defense",
@@ -2238,7 +2483,8 @@
         "military",
         "damage-threshold",
         "resilience"
-      ]
+      ],
+      "summary": "You do not move down the Condition Track the first time an attack exceeds your Damage Threshold."
     },
     "Grapple Resistance": {
       "category": "combat-defense",
@@ -2246,7 +2492,8 @@
         "grapple",
         "defense",
         "bonus"
-      ]
+      ],
+      "summary": "Gain a +5 bonus to resist Grab and Grapple attacks."
     },
     "Knock Heads": {
       "category": "combat-offense",
@@ -2254,7 +2501,8 @@
         "grapple",
         "melee",
         "tactical"
-      ]
+      ],
+      "summary": "You may knock two opponents' heads together after a successful Multi-Grab."
     },
     "Multi-Grab": {
       "category": "combat-offense",
@@ -2262,7 +2510,8 @@
         "grapple",
         "multiattack",
         "control"
-      ]
+      ],
+      "summary": "You may Grab two opponents as a Standard Action."
     },
     "Rancor Crush": {
       "category": "combat-offense",
@@ -2270,7 +2519,8 @@
         "grapple",
         "damage",
         "condition"
-      ]
+      ],
+      "summary": "Move an enemy -1 step down the Condition Track when using the Crush feat."
     },
     "Return Fire": {
       "category": "combat-offense",
@@ -2278,7 +2528,8 @@
         "ranged",
         "reaction",
         "retaliation"
-      ]
+      ],
+      "summary": "You may make a single ranged attack as a Reaction to a ranged attack against you that misses."
     },
     "Returning Bug": {
       "category": "combat-offense",
@@ -2286,7 +2537,8 @@
         "ranged",
         "thrown",
         "utility"
-      ]
+      ],
+      "summary": "Thrown Razor Bugs and Thud Bugs return to your hand immediately."
     },
     "Vehicle Systems Expertise": {
       "category": "utility",
@@ -2294,7 +2546,8 @@
         "vehicle",
         "shield",
         "power"
-      ]
+      ],
+      "summary": "Recharge Shields or Reroute Power on a Vehicle faster than normal."
     },
     "Zero Range": {
       "category": "combat-offense",
@@ -2302,7 +2555,8 @@
         "ranged",
         "adjacent",
         "bonus"
-      ]
+      ],
+      "summary": "Gain a +1 bonus on your attack roll and deal +1 die of damage when making a ranged attack against an adjacent target or a target in your Fighting Space."
     },
     "Follow Through": {
       "category": "combat-offense",
@@ -2310,7 +2564,8 @@
         "mobility",
         "movement",
         "tactical"
-      ]
+      ],
+      "summary": "Move when you reduce an enemy to 0 Hit Points."
     },
     "Long Haft Strike": {
       "category": "combat-offense",
@@ -2318,7 +2573,8 @@
         "melee",
         "weapon",
         "double-weapon"
-      ]
+      ],
+      "summary": "You can wield a long-handled weapon as a Double Weapon."
     },
     "Relentless Attack": {
       "category": "combat-offense",
@@ -2326,7 +2582,8 @@
         "attack",
         "miss",
         "bonus"
-      ]
+      ],
+      "summary": "Gain a bonus on attack rolls after missing a target."
     },
     "Unswerving Resolve": {
       "category": "recovery",
@@ -2334,7 +2591,8 @@
         "fear",
         "force",
         "resource"
-      ]
+      ],
+      "summary": "Whenever you resist a Fear or Mind-Affecting effect, you gain a temporary Force Point."
     },
     "Deft Charge": {
       "category": "combat-defense",
@@ -2342,7 +2600,8 @@
         "charge",
         "swift-action",
         "tactical"
-      ]
+      ],
+      "summary": "Take Swift Actions, Reactions, and Free Actions after you Charge before your turn ends."
     },
     "Imperial Military Training": {
       "category": "recovery",
@@ -2350,7 +2609,8 @@
         "mental",
         "fear",
         "resilience"
-      ]
+      ],
+      "summary": "Negate one Mind-Affecting effect per encounter."
     },
     "Moving Target": {
       "category": "combat-defense",
@@ -2358,7 +2618,8 @@
         "mobility",
         "defense",
         "dodge"
-      ]
+      ],
+      "summary": "Gain a bonus to Reflex Defense when you remain mobile."
     },
     "Prime Shot": {
       "category": "combat-offense",
@@ -2366,7 +2627,8 @@
         "ranged",
         "accuracy",
         "positioning"
-      ]
+      ],
+      "summary": "Gain a bonus to attack rolls when closer to your target than your allies."
     },
     "Rapid Reaction": {
       "category": "misc",
@@ -2374,7 +2636,8 @@
         "reaction",
         "reflex",
         "tactical"
-      ]
+      ],
+      "summary": "React twice to the same trigger once per encounter."
     },
     "Rebel Military Training": {
       "category": "combat-defense",
@@ -2382,7 +2645,8 @@
         "defense",
         "dodge",
         "tactical"
-      ]
+      ],
+      "summary": "Gain a dodge bonus to Reflex Defense when using Running Attack."
     },
     "Recovering Surge": {
       "category": "recovery",
@@ -2390,7 +2654,8 @@
         "recovery",
         "condition",
         "bonus"
-      ]
+      ],
+      "summary": "Move up the Condition Track when you catch a Second Wind."
     },
     "Unstoppable Combatant": {
       "category": "recovery",
@@ -2398,7 +2663,8 @@
         "recovery",
         "second wind",
         "advanced"
-      ]
+      ],
+      "summary": "Catch more than one Second Wind in an encounter."
     },
     "Vehicular Surge": {
       "category": "misc",
@@ -2406,7 +2672,8 @@
         "vehicle",
         "recovery",
         "pilot"
-      ]
+      ],
+      "summary": "Once per day, gain Bonus Hit Points for a Vehicle you Pilot."
     },
     "Vitality Surge": {
       "category": "recovery",
@@ -2414,7 +2681,8 @@
         "recovery",
         "second wind",
         "advanced"
-      ]
+      ],
+      "summary": "Catch a Second Wind even when not at or below half Hit Points."
     },
     "Bantha Herder": {
       "category": "combat-offense",
@@ -2422,7 +2690,8 @@
         "mounted",
         "maneuver",
         "tactical"
-      ]
+      ],
+      "summary": "Move a target damaged by your attack."
     },
     "Battering Attack": {
       "category": "combat-offense",
@@ -2430,7 +2699,8 @@
         "melee",
         "maneuver",
         "prone"
-      ]
+      ],
+      "summary": "Knock an opponent Prone when you use Bantha Rush."
     },
     "Destructive Force": {
       "category": "combat-offense",
@@ -2438,7 +2708,8 @@
         "melee",
         "area",
         "damage"
-      ]
+      ],
+      "summary": "Deal damage to adjacent targets when you damage objects and Vehicles."
     },
     "Disabler": {
       "category": "combat-offense",
@@ -2446,7 +2717,8 @@
         "ion",
         "weapon",
         "utility"
-      ]
+      ],
+      "summary": "Gain benefits when using certain Ion weapons."
     },
     "Dive for Cover": {
       "category": "combat-defense",
@@ -2454,7 +2726,8 @@
         "cover",
         "reaction",
         "jump"
-      ]
+      ],
+      "summary": "Jump for Cover as a Reaction."
     },
     "Fight Through Pain": {
       "category": "recovery",
@@ -2462,7 +2735,8 @@
         "resilience",
         "defense",
         "damage-threshold"
-      ]
+      ],
+      "summary": "Use your Will Defense to determine your Damage Threshold."
     },
     "Force of Personality": {
       "category": "utility",
@@ -2470,7 +2744,8 @@
         "social",
         "charisma",
         "defense"
-      ]
+      ],
+      "summary": "Use Wisdom or Charisma to determine Will Defense."
     },
     "Fortifying Recovery": {
       "category": "recovery",
@@ -2478,7 +2753,8 @@
         "recovery",
         "hit-points",
         "bonus"
-      ]
+      ],
+      "summary": "Gain Bonus Hit Points when you Recover."
     },
     "Mission Specialist": {
       "category": "utility",
@@ -2486,7 +2762,8 @@
         "skill",
         "teamwork",
         "bonus"
-      ]
+      ],
+      "summary": "Grant bonus to allies' Untrained Skill Checks with a particular Skill."
     },
     "Never Surrender": {
       "category": "recovery",
@@ -2494,7 +2771,8 @@
         "survival",
         "endurance",
         "resilience"
-      ]
+      ],
+      "summary": "Make an Endurance check to prevent falling to 0 Hit Points."
     },
     "Officer Candidacy Training": {
       "category": "utility",
@@ -2502,7 +2780,8 @@
         "social",
         "rank",
         "privilege"
-      ]
+      ],
+      "summary": "Gain a bonus to your Rank and Privilege Score."
     },
     "Opportunistic Shooter": {
       "category": "combat-offense",
@@ -2510,7 +2789,8 @@
         "ranged",
         "reaction",
         "opportunity"
-      ]
+      ],
+      "summary": "Gain a bonus to Attacks of Opportunity with ranged weapons."
     },
     "Pistoleer": {
       "category": "combat-offense",
@@ -2518,7 +2798,8 @@
         "ranged",
         "pistol",
         "bonus"
-      ]
+      ],
+      "summary": "Gain benefits when using certain Pistols."
     },
     "Predictive Defense": {
       "category": "combat-defense",
@@ -2526,7 +2807,8 @@
         "intelligence",
         "reflex",
         "defense"
-      ]
+      ],
+      "summary": "Use Dexterity or Intelligence to determine Reflex Defense."
     },
     "Riflemaster": {
       "category": "combat-offense",
@@ -2534,7 +2816,8 @@
         "ranged",
         "rifle",
         "bonus"
-      ]
+      ],
+      "summary": "Gain benefits when using certain Rifles."
     },
     "Risk Taker": {
       "category": "misc",
@@ -2542,7 +2825,8 @@
         "skill",
         "climb",
         "jump"
-      ]
+      ],
+      "summary": "Improve your chances of success with Climb or Jump checks."
     },
     "Sport Hunter": {
       "category": "combat-offense",
@@ -2550,7 +2834,8 @@
         "ranged",
         "hunting",
         "bonus"
-      ]
+      ],
+      "summary": "Gain benefits with certain slugthrowers and sporting weapons."
     },
     "Steadying Position": {
       "category": "combat-offense",
@@ -2558,7 +2843,8 @@
         "ranged",
         "prone",
         "aim"
-      ]
+      ],
+      "summary": "Deny target's Dexterity bonus to Reflex Defense when you are Prone and Aiming."
     },
     "Aiming Accuracy": {
       "category": "combat-offense",
@@ -2566,7 +2852,8 @@
         "droid",
         "ranged",
         "aim"
-      ]
+      ],
+      "summary": "After aiming as a Full-Round Action, gain a +5 on next weapon attack."
     },
     "Damage Conversion": {
       "category": "recovery",
@@ -2574,7 +2861,8 @@
         "droid",
         "hit-points",
         "condition-track"
-      ]
+      ],
+      "summary": "Take additional Hit Point damage instead of moving down the Condition Track."
     },
     "Distracting Droid": {
       "category": "combat-defense",
@@ -2582,7 +2870,8 @@
         "droid",
         "area",
         "distraction"
-      ]
+      ],
+      "summary": "Attempt to deny enemies within 6 squares their next Move Action, with a chance to make enemies Flat-Footed."
     },
     "Droid Focus": {
       "category": "utility",
@@ -2590,7 +2879,8 @@
         "droid",
         "skill",
         "bonus"
-      ]
+      ],
+      "summary": "+1 bonus to certain Skills and Defenses when dealing with a selected class of Droid."
     },
     "Droid Shield Mastery": {
       "category": "combat-defense",
@@ -2598,7 +2888,8 @@
         "droid",
         "shield",
         "defense"
-      ]
+      ],
+      "summary": "Automatically Recharge Shields in two Swift Actions."
     },
     "Erratic Target": {
       "category": "combat-defense",
@@ -2606,7 +2897,8 @@
         "droid",
         "hovering",
         "dodge"
-      ]
+      ],
+      "summary": "Reduce Speed by up to 2 squares to increase dodge bonus to Reflex Defense."
     },
     "Ion Shielding": {
       "category": "recovery",
@@ -2614,7 +2906,8 @@
         "droid",
         "ion",
         "resilience"
-      ]
+      ],
+      "summary": "Move only -1 step on Condition Track when Ion damage exceeds Damage Threshold."
     },
     "Logic Upgrade: Skill Swap": {
       "category": "utility",
@@ -2622,7 +2915,8 @@
         "droid",
         "skill",
         "flexibility"
-      ]
+      ],
+      "summary": "Swap a Trained Skill for an Untrained Skill on the fly."
     },
     "Mechanical Martial Arts": {
       "category": "combat-offense",
@@ -2630,7 +2924,8 @@
         "droid",
         "unarmed",
         "penalty"
-      ]
+      ],
+      "summary": "Give an enemy a -5 penalty on attack and damage rolls for one round after striking it in Unarmed combat."
     },
     "Multi-Targeting": {
       "category": "combat-offense",
@@ -2638,7 +2933,8 @@
         "droid",
         "ranged",
         "aim"
-      ]
+      ],
+      "summary": "You can spread your Aim action across multiple consecutive rounds."
     },
     "Pincer": {
       "category": "combat-offense",
@@ -2646,7 +2942,8 @@
         "droid",
         "grapple",
         "melee"
-      ]
+      ],
+      "summary": "Maintain Pin feat and make subsequent Grapple checks as a Swift Action."
     },
     "Pinpoint Accuracy": {
       "category": "combat-offense",
@@ -2654,7 +2951,8 @@
         "droid",
         "ranged",
         "accuracy"
-      ]
+      ],
+      "summary": "Move target -1 step on the Condition Track when you hit with Aiming Accuracy."
     },
     "Sensor Link": {
       "category": "utility",
@@ -2662,7 +2960,8 @@
         "droid",
         "teamwork",
         "sensor"
-      ]
+      ],
+      "summary": "Share sensor data instantly with an ally."
     },
     "Shield Surge": {
       "category": "recovery",
@@ -2670,7 +2969,8 @@
         "droid",
         "shield",
         "recovery"
-      ]
+      ],
+      "summary": "Trade Vehicle's Shield Rating for damage taken."
     },
     "Slammer": {
       "category": "combat-offense",
@@ -2678,7 +2978,8 @@
         "droid",
         "melee",
         "damage"
-      ]
+      ],
+      "summary": "Double Strength bonus to damage rolls on this special melee attack."
     },
     "Tool Frenzy": {
       "category": "combat-offense",
@@ -2686,7 +2987,8 @@
         "droid",
         "appendage",
         "bonus"
-      ]
+      ],
+      "summary": "Gain +2 to attack rolls and damage rolls with nonweapon Appendages in exchange for a -2 penalty to Reflex Defense."
     },
     "Turn and Burn": {
       "category": "combat-defense",
@@ -2694,7 +2996,8 @@
         "droid",
         "movement",
         "withdraw"
-      ]
+      ],
+      "summary": "Withdraw by clearing threatened squares in up to 2 squares of movement, move your Speed when using the Withdraw Action."
     },
     "Bone Crusher": {
       "category": "combat-offense",
@@ -2702,7 +3005,8 @@
         "grapple",
         "damage",
         "condition"
-      ]
+      ],
+      "summary": "Move damaged Grappled opponent -1 step on the Condition Track."
     },
     "Brilliant Defense": {
       "category": "combat-defense",
@@ -2710,7 +3014,8 @@
         "intelligence",
         "reflex",
         "reaction"
-      ]
+      ],
+      "summary": "Add your Intelligence bonus to your Reflex Defense as a Reaction."
     },
     "Channel Rage": {
       "category": "recovery",
@@ -2718,7 +3023,8 @@
         "rage",
         "alternative",
         "will"
-      ]
+      ],
+      "summary": "Instead of Raging, gain +5 to Will Defense."
     },
     "Cut the Red Tape": {
       "category": "utility",
@@ -2726,7 +3032,8 @@
         "social",
         "bureaucracy",
         "gather-info"
-      ]
+      ],
+      "summary": "Use Knowledge (Bureaucracy) in place of Gather Information."
     },
     "Demoralizing Strike": {
       "category": "combat-offense",
@@ -2734,7 +3041,8 @@
         "melee",
         "intimidation",
         "social"
-      ]
+      ],
+      "summary": "Make an Intimidation check when you deal damage with an Attack of Opportunity."
     },
     "Disturbing Presence": {
       "category": "combat-defense",
@@ -2742,7 +3050,8 @@
         "stealth",
         "movement",
         "deception"
-      ]
+      ],
+      "summary": "Make a Deception check to move through a Threatened Area without provoking Attacks of Opportunity."
     },
     "Expert Briber": {
       "category": "utility",
@@ -2750,7 +3059,8 @@
         "social",
         "bribery",
         "economy"
-      ]
+      ],
+      "summary": "Reduce the time and cost of Bribery attempts."
     },
     "Flèche": {
       "category": "combat-offense",
@@ -2758,7 +3068,8 @@
         "charge",
         "critical",
         "melee"
-      ]
+      ],
+      "summary": "When Charging, turn any natural attack roll of 17+ into a Critical Hit."
     },
     "Grazing Shot": {
       "category": "combat-offense",
@@ -2766,7 +3077,8 @@
         "ranged",
         "multiattack",
         "accuracy"
-      ]
+      ],
+      "summary": "Strike two targets in direct line of sight, dealing half damage to each."
     },
     "Hobbling Strike": {
       "category": "combat-offense",
@@ -2774,7 +3086,8 @@
         "attack",
         "movement",
         "penalty"
-      ]
+      ],
+      "summary": "Reduce the target's Speed instead of dealing damage."
     },
     "Improved Opportunistic Trickery": {
       "category": "combat-defense",
@@ -2782,7 +3095,8 @@
         "reaction",
         "reflex",
         "defense"
-      ]
+      ],
+      "summary": "Sacrifice Attack of Opportunity to reduce target's Reflex Defense by 5."
     },
     "Indomitable Personality": {
       "category": "recovery",
@@ -2790,7 +3104,8 @@
         "charisma",
         "will",
         "reaction"
-      ]
+      ],
+      "summary": "Add your Charisma bonus to your Will Defense as a Reaction."
     },
     "Master of Disguise": {
       "category": "utility",
@@ -2798,7 +3113,8 @@
         "deception",
         "disguise",
         "bonus"
-      ]
+      ],
+      "summary": "Gain +5 to creating a Deceptive Appearance or a Forged Document, and reduce the penalty for rushing."
     },
     "Meat Shield": {
       "category": "combat-defense",
@@ -2806,7 +3122,8 @@
         "ranged",
         "cover",
         "defense"
-      ]
+      ],
+      "summary": "Gain Cover bonus equal to opponent's Cover bonus."
     },
     "Opportunistic Trickery": {
       "category": "combat-defense",
@@ -2814,7 +3131,8 @@
         "reaction",
         "reflex",
         "defense"
-      ]
+      ],
+      "summary": "Sacrifice Attack of Opportunity to reduce target's Reflex Defense by 2."
     },
     "Recurring Success": {
       "category": "utility",
@@ -2822,7 +3140,8 @@
         "talent",
         "feat",
         "reuse"
-      ]
+      ],
+      "summary": "Gain extra use of a 1/encounter Talent or Feat."
     },
     "Resolute Stance": {
       "category": "recovery",
@@ -2830,7 +3149,8 @@
         "defense",
         "defensive-fighting",
         "bonus"
-      ]
+      ],
+      "summary": "Gain +2 or +5 to Will Defense when you Fight Defensively."
     },
     "Sadistic Strike": {
       "category": "combat-offense",
@@ -2838,7 +3158,8 @@
         "coup-de-grace",
         "condition",
         "cruelty"
-      ]
+      ],
+      "summary": "Move opponents -1 step on the Condition Track when you deliver a Coup de Grace."
     },
     "Silver Tongue": {
       "category": "utility",
@@ -2846,7 +3167,8 @@
         "social",
         "persuasion",
         "swift-action"
-      ]
+      ],
+      "summary": "Intimidate a creature or change its Attitude as a Standard Action."
     },
     "Skill Challenge: Catastrophic Avoidance": {
       "category": "misc",
@@ -2854,7 +3176,8 @@
         "skill-challenge",
         "utility",
         "failure"
-      ]
+      ],
+      "summary": "Catastrophic Failures in a Skill Challenge occur less frequently, and with milder results."
     },
     "Skill Challenge: Last Resort": {
       "category": "misc",
@@ -2862,7 +3185,8 @@
         "skill-challenge",
         "utility",
         "reroll"
-      ]
+      ],
+      "summary": "Reroll a third failed Skill Check during a Skill Challenge, keeping the better result."
     },
     "Skill Challenge: Recovery": {
       "category": "misc",
@@ -2870,7 +3194,8 @@
         "skill-challenge",
         "utility",
         "recovery"
-      ]
+      ],
+      "summary": "Treat a Skill Challenge as if it had the Recovery effect."
     },
     "Stand Tall": {
       "category": "recovery",
@@ -2878,7 +3203,8 @@
         "resilience",
         "teamwork",
         "support"
-      ]
+      ],
+      "summary": "When you take damage, nearby allies attack your attacker."
     },
     "Wookiee Grip": {
       "category": "misc",
@@ -2886,7 +3212,8 @@
         "strength",
         "weapon",
         "special"
-      ]
+      ],
+      "summary": "Wield two-handed weapons in a single hand."
     },
     "Acrobatic Ally": {
       "category": "combat-defense",
@@ -2894,7 +3221,8 @@
         "acrobatics",
         "teamwork",
         "movement"
-      ]
+      ],
+      "summary": "Hoist or toss an ally of your size or smaller up to 2 squares."
     },
     "Acrobatic Dodge": {
       "category": "combat-defense",
@@ -2902,7 +3230,8 @@
         "mobility",
         "dodge",
         "reaction"
-      ]
+      ],
+      "summary": "When a melee attack misses you, move into an adjacent square without provoking an Attack of Opportunity."
     },
     "Combat Trickery": {
       "category": "combat-offense",
@@ -2910,7 +3239,8 @@
         "deception",
         "combat",
         "swift-action"
-      ]
+      ],
+      "summary": "Spend two Swift Actions to make Deception check to make enemy Flat-Footed."
     },
     "Elder's Knowledge": {
       "category": "utility",
@@ -2918,7 +3248,8 @@
         "knowledge",
         "skill",
         "specialization"
-      ]
+      ],
+      "summary": "Substitute a Knowledge (Social Sciences) or Knowledge (Galactic Lore) skill check for a Wisdom-related Skill Check."
     },
     "Frightening Cleave": {
       "category": "combat-offense",
@@ -2926,7 +3257,8 @@
         "melee",
         "cleave",
         "intimidation"
-      ]
+      ],
+      "summary": "When you use the Cleave feat, each enemy within 6 squares and line of sight takes a penalty to Reflex Defense, Skill Checks, and attack rolls against you."
     },
     "Grab Back": {
       "category": "combat-defense",
@@ -2934,7 +3266,8 @@
         "grapple",
         "reaction",
         "defense"
-      ]
+      ],
+      "summary": "As a Reaction, make a Grab or Grapple attack following a failed Grab or Grapple attack made against you."
     },
     "Halt": {
       "category": "combat-offense",
@@ -2942,7 +3275,8 @@
         "melee",
         "prone",
         "opportunity"
-      ]
+      ],
+      "summary": "Knock an enemy Prone after a successful Attack of Opportunity, immediately end the target's remaining Actions when also exceeding its Damage Threshold."
     },
     "Heavy Hitter": {
       "category": "combat-offense",
@@ -2950,7 +3284,8 @@
         "melee",
         "heavy-weapon",
         "damage"
-      ]
+      ],
+      "summary": "Add +1 point of damage for every 5 points rolled above the target's Reflex Defense, plus additional benefits when you exceed the target's Damage Threshold."
     },
     "Hold Together": {
       "category": "utility",
@@ -2958,7 +3293,8 @@
         "vehicle",
         "damage",
         "delay"
-      ]
+      ],
+      "summary": "Delay the damage caused to a Vehicle until the end of the round."
     },
     "Hyperblazer": {
       "category": "utility",
@@ -2966,7 +3302,8 @@
         "astrogation",
         "use-computer",
         "utility"
-      ]
+      ],
+      "summary": "Cut all calculation time and Use Computer penalties by half when making Use Computer checks for Astrogation in the Hyperspace tangle."
     },
     "Improved Sleight of Hand": {
       "category": "utility",
@@ -2974,7 +3311,8 @@
         "deception",
         "stealth",
         "sleight-of-hand"
-      ]
+      ],
+      "summary": "Use Deception to aid your Stealth check to use Sleight of Hand; use Stealth to draw and palm a weapon simultaneously."
     },
     "Improvised Weapon Mastery": {
       "category": "combat-offense",
@@ -2982,7 +3320,8 @@
         "improvised",
         "weapon",
         "damage"
-      ]
+      ],
+      "summary": "Treat Improvised Weapons as Simple Weapons, deal +1d6 points of damage."
     },
     "Instinctive Attack": {
       "category": "combat-offense",
@@ -2990,7 +3329,8 @@
         "force",
         "attack",
         "reroll"
-      ]
+      ],
+      "summary": "Spend a Force Point to reroll an attack and take the better result."
     },
     "Instinctive Defense": {
       "category": "combat-defense",
@@ -2998,7 +3338,8 @@
         "force",
         "defense",
         "reaction"
-      ]
+      ],
+      "summary": "Spend a Force Point to increase all Defenses by +2 for 1 round."
     },
     "Intimidator": {
       "category": "utility",
@@ -3006,7 +3347,8 @@
         "social",
         "intimidation",
         "penalty"
-      ]
+      ],
+      "summary": "When you successfully Intimidate, enemy takes -5 to Skill Checks and -2 to attack for one round."
     },
     "Maniacal Charge": {
       "category": "combat-offense",
@@ -3014,7 +3356,8 @@
         "charge",
         "intimidation",
         "melee"
-      ]
+      ],
+      "summary": "Intimidate your enemies when Charging, preventing adjacent characters from making Attacks of Opportunity and denying your target its Dexterity bonus."
     },
     "Nikto Survival": {
       "category": "utility",
@@ -3022,7 +3365,8 @@
         "survival",
         "native",
         "reroll"
-      ]
+      ],
+      "summary": "Reroll Survival checks in native environment."
     },
     "Targeted Area": {
       "category": "combat-offense",
@@ -3030,7 +3374,8 @@
         "ranged",
         "area",
         "accuracy"
-      ]
+      ],
+      "summary": "Deal an additional 5 points of damage against one target within a successful Area Attack."
     },
     "Trample": {
       "category": "combat-offense",
@@ -3038,7 +3383,8 @@
         "mounted",
         "melee",
         "area"
-      ]
+      ],
+      "summary": "When using the Mounted Charge Action, attack enemies between you and your target."
     },
     "Wilderness First Aid": {
       "category": "utility",
@@ -3046,7 +3392,8 @@
         "survival",
         "medical",
         "utility"
-      ]
+      ],
+      "summary": "Use basic Survival skills as if you have a Medpac for Treat Injury checks."
     },
     "Dreadful Countenance": {
       "category": "utility",
@@ -3054,7 +3401,8 @@
         "sith",
         "charisma",
         "intimidation"
-      ]
+      ],
+      "summary": "Marked as Sith, your appearance inspires awe, dread, and fear in all who view it."
     },
     "Rapid Assault": {
       "category": "combat-offense",
@@ -3062,7 +3410,8 @@
         "multiattack",
         "movement",
         "advanced"
-      ]
+      ],
+      "summary": "Through focus and raw determination, you can make multiple attacks even after moving."
     }
   }
 }

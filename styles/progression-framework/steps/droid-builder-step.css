@@ -815,3 +815,14 @@
   background: linear-gradient(180deg, rgba(42, 30, 10, 0.78), rgba(10, 8, 4, 0.88));
   box-shadow: 0 0 12px rgba(255, 191, 73, 0.1);
 }
+
+.progression-shell .prog-droid-builder__constraint-note {
+  margin: 0 0 0.85rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid rgba(89, 190, 255, 0.28);
+  border-radius: 10px;
+  background: rgba(24, 77, 115, 0.18);
+  color: rgba(223, 244, 255, 0.88);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}

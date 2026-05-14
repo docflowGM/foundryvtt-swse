@@ -21,6 +21,7 @@ import { applyCanonicalSpeciesToActor } from '/systems/foundryvtt-swse/scripts/e
 // PHASE 3: Background materialization
 import { applyCanonicalBackgroundsToActor } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-backgrounds-to-actor.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
+import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 
 export class ProgressionFinalizer {
   /**
@@ -537,6 +538,12 @@ export class ProgressionFinalizer {
 
     await ProgressionContentAuthority.initialize?.();
 
+    const classAutoGrantItems = await this._compileClassAutoGrantItems(actor, selections, sessionState);
+    add.items.push(...classAutoGrantItems.items);
+    if (classAutoGrantItems.suppressed?.length) {
+      set['flags.swse.suppressedClassAutoGrants'] = classAutoGrantItems.suppressed;
+    }
+
     const compiledAbilityItems = await this._compileProgressionAbilityItems(actor, selections, sessionState);
     add.items.push(...compiledAbilityItems.items);
 
@@ -810,6 +817,68 @@ export class ProgressionFinalizer {
     }
 
     return result;
+  }
+
+
+  static async _compileClassAutoGrantItems(actor, selections, sessionState) {
+    const sessionId = sessionState.sessionId || 'unknown';
+    const clazz = selections.class || null;
+    if (!clazz || !actor) return { items: [], suppressed: [] };
+
+    const pendingState = {
+      selectedClass: clazz,
+      selectedFeats: selections.feats || [],
+      selectedTalents: selections.talents || [],
+      selectedSkills: selections.skills || [],
+      pendingSpeciesContext: selections.pendingSpeciesContext || selections.species?.pendingContext || null,
+    };
+    const ledger = buildClassGrantLedger(actor, clazz, pendingState);
+    const grantEntries = [
+      ...(Array.isArray(ledger.grantedFeats) ? ledger.grantedFeats.map(grant => ({ ...grant, grantKind: 'feat' })) : []),
+      ...(Array.isArray(ledger.grantedProficiencies) ? ledger.grantedProficiencies.map(grant => ({ ...grant, grantKind: 'proficiency' })) : []),
+    ];
+
+    const existingByTypeAndName = new Set(
+      actor.items.map((item) => `${String(item.type || '').toLowerCase()}::${String(item.name || '').toLowerCase()}`)
+    );
+    const seen = new Set();
+    const items = [];
+
+    for (const grant of grantEntries) {
+      const name = grant.name || grant.target || null;
+      if (!name) continue;
+      const dedupeKey = `feat::${String(name).toLowerCase()}`;
+      if (existingByTypeAndName.has(dedupeKey) || seen.has(dedupeKey)) continue;
+      seen.add(dedupeKey);
+
+      const resolvedDoc = await ProgressionContentAuthority.getFeatDocument({ name, id: grant.id || name });
+      const resolvedData = resolvedDoc?.toObject ? resolvedDoc.toObject() : null;
+      const baseItem = resolvedData || { name, type: 'feat', system: {} };
+      baseItem.name = baseItem.name || name;
+      baseItem.type = baseItem.type || 'feat';
+      baseItem.system = foundry.utils.mergeObject(baseItem.system || {}, {
+        sourceType: 'class',
+        locked: true,
+        choiceEditable: false,
+        grantedByClass: true,
+        autoGranted: true,
+      }, { inplace: false, recursive: true, overwrite: false });
+      baseItem.flags = foundry.utils.mergeObject(baseItem.flags || {}, {
+        swse: {
+          progression: {
+            sourceSession: sessionId,
+            selectionKey: 'class-auto-grants',
+            selectionId: name,
+            countIndex: 0,
+          },
+          classGranted: true,
+          sourceClass: ledger.className || clazz.name || null,
+        },
+      }, { inplace: false, recursive: true });
+      items.push(baseItem);
+    }
+
+    return { items, suppressed: ledger.suppressedGrants || [] };
   }
 
   static async _compileProgressionAbilityItems(actor, selections, sessionState) {

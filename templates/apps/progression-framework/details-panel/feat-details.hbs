@@ -12,6 +12,15 @@
         <i class="fa-solid fa-lightbulb"></i> Suggested
       </div>
       {{/if}}
+      {{#if isGranted}}
+      <div class="meta-badge repeatable-badge">
+        <i class="fa-solid fa-certificate"></i> Granted
+      </div>
+      {{else}}{{#if isOwned}}
+      <div class="meta-badge repeatable-badge">
+        <i class="fa-solid fa-check"></i> Owned
+      </div>
+      {{/if}}{{/if}}
       {{#if isRepeatable}}
       <div class="meta-badge repeatable-badge">
         <i class="fa-solid fa-repeat"></i> Repeatable
@@ -40,6 +49,12 @@
 
   {{!-- Feat Description --}}
   <div class="feat-description-section">
+    {{#if shortSummary}}
+    <div class="feat-quick-summary">
+      <span class="row-label">Quick summary:</span>
+      <span>{{shortSummary}}</span>
+    </div>
+    {{/if}}
     <h3>Description</h3>
     {{#if description}}
       <p class="feat-description">{{description}}</p>
@@ -58,6 +73,34 @@
     {{/if}}
   </div>
 
+  {{#if missingPrerequisites.length}}
+  <div class="feat-note unavailable-note feat-missing-prereqs">
+    <p><strong>Not met prerequisites:</strong></p>
+    <ul>
+      {{#each missingPrerequisites}}
+      <li>{{this}}</li>
+      {{/each}}
+    </ul>
+  </div>
+  {{/if}}
+
+  {{#if blockingReasons.length}}
+  <div class="feat-note unavailable-note feat-blocking-reasons">
+    <p><strong>Other blockers:</strong></p>
+    <ul>
+      {{#each blockingReasons}}
+      <li>{{this}}</li>
+      {{/each}}
+    </ul>
+  </div>
+  {{/if}}
+
+  {{#if unavailabilityReason}}
+  <div class="feat-note unavailable-note">
+    <p><strong>Status:</strong> {{unavailabilityReason}}</p>
+  </div>
+  {{/if}}
+
   {{!-- Selection Controls --}}
   <div class="details-actions">
     {{#if isSelected}}
@@ -66,9 +109,9 @@
       Deselect
     </button>
     {{else}}
-    <button class="action-btn select-btn" data-action="commit-item" data-item-id="{{feat.id}}">
+    <button class="action-btn select-btn" data-action="commit-item" data-item-id="{{feat.id}}" {{#unless isAvailable}}disabled title="{{unavailabilityReason}}"{{/unless}}>
       <i class="fa-solid fa-check-circle"></i>
-      Choose This Feat
+      {{#if isAvailable}}Choose This Feat{{else}}Unavailable{{/if}}
     </button>
     {{/if}}
 

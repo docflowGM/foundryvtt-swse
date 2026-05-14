@@ -15,6 +15,9 @@
 
   {{!-- BUILD METRICS BANNER --}}
   <div class="prog-droid-builder__datapad-note">Configure locomotion, processor, appendages, and accessories before final unit registration.</div>
+  {{#if presentation.availableSystems.constraintNote}}
+    <div class="prog-droid-builder__constraint-note">{{presentation.availableSystems.constraintNote}}</div>
+  {{/if}}
   <div class="prog-droid-builder__metrics">
     <div class="metric-chip">
       <span class="metric-label">Systems</span>
