@@ -11,6 +11,7 @@ import { computeVehicleDerived } from "/systems/foundryvtt-swse/scripts/actors/v
 import { shouldSkipDerivedData } from "/systems/foundryvtt-swse/scripts/utils/hardening.js";
 import { computeXpDerived } from "/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js";
 import { SWSEInitiative } from "/systems/foundryvtt-swse/scripts/engine/combat/SWSEInitiative.js";
+import { PoisonEngine } from "/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js";
 
 /**
  * SWSE V2 Base Actor
@@ -181,6 +182,18 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     }
 
     return null;
+  }
+
+  /**
+   * Use an owned item through v2 actor routing. Keep this deliberately thin:
+   * engines own the mechanics, actor owns intent routing.
+   */
+  async useItem(item, options = {}) {
+    if (!item) {return null;}
+    if (item.type === 'poison') {
+      return PoisonEngine.usePoisonItem(this, item, options);
+    }
+    return super.useItem(item, options);
   }
 
   /* ------------------------------------------------------------------------ */

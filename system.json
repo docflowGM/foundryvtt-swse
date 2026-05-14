@@ -577,6 +577,13 @@
         "TRUSTED": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
+    },
+    {
+      "name": "poisons",
+      "label": "Poisons",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/poisons.db"
     }
   ],
   "settings": {

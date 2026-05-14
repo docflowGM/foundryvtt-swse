@@ -17,6 +17,7 @@ import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attack
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { SpeciesActivatedAbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/species/species-activated-ability-engine.js";
+import { PoisonEngine } from "/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js";
 
 export class CombatEngine {
 
@@ -291,6 +292,13 @@ export class CombatEngine {
       threshold: thresholdResult
     });
 
+    // Poison rider hook: species natural weapons and poisoned weapons share PoisonEngine.
+    // This intentionally runs after damage is applied so contact poison only triggers
+    // when the attack actually damages the target.
+    await PoisonEngine.applyNaturalWeaponPoisonFromAttack({ attacker, target, weapon, damage });
+    await PoisonEngine.applyWeaponPoisonFromAttack({ attacker, target, weapon, damage, attackTotal: context.totalAttack });
+    await PoisonEngine.queueJaggedWeaponDamageFromAttack({ attacker, target, weapon, damage });
+
     /* COUP DE GRACE EVENT EMISSION */
     /* If this was a Coup de Grace attack, emit event for dependent feats (e.g., Sadistic Strike) */
     if (options?.isCoupDeGrace) {
@@ -561,6 +569,9 @@ export class CombatEngine {
       if (!item) {
         ui?.notifications?.warn?.('Action item not found on actor.');
         return { success: false, reason: 'Item not found', actionKey: key };
+      }
+      if (item.flags?.swse?.abilityKey === 'malkite-techniques' || item.system?.executionModel === 'poison-ability') {
+        return PoisonEngine.useMalkiteTechniques(actor, item, executionOptions);
       }
       if (item.flags?.swse?.isSpeciesAbility || item.flags?.swse?.isActorAbility || item.system?.executionModel === 'species-activated-ability' || item.system?.executionModel === 'actor-special-ability') {
         return SpeciesActivatedAbilityEngine.use(actor, item, executionOptions);

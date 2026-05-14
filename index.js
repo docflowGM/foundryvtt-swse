@@ -24,6 +24,7 @@ import { initializeSentinelGovernance } from "./scripts/governance/sentinel/sent
 import { MutationInterceptor } from "./scripts/governance/mutation/MutationInterceptor.js";
 import { SystemInitHooks } from "./scripts/engine/progression/hooks/system-init-hooks.js";
 import { registerHandlebarsHelpers as registerSystemHandlebarsHelpers } from "./helpers/handlebars/index.js";
+import { PoisonEngine } from "./scripts/engine/poison/poison-engine.js";
 
 UIManager.init();
 
@@ -142,6 +143,7 @@ Hooks.once("ready", async () => {
   // Initialized in ready hook after all settings and systems are loaded
   // -------
   MutationInterceptor.initialize();
+  PoisonEngine.initializeHooks();
 
   // Setup store shortcut
   game.swse.openStore = actor => new SWSEStore(actor ?? null).render(true);

@@ -372,7 +372,13 @@
           }
         },
         "specialAbilities": [],
-        "abilityGrants": []
+        "abilityGrants": [],
+        "activePoisons": [],
+        "poison": {
+          "active": [],
+          "immunities": [],
+          "resistances": []
+        }
       }
     },
     "character": {
@@ -455,7 +461,8 @@
       "vehicleWeapon",
       "vehicleWeaponRange",
       "weapon",
-      "weaponUpgrade"
+      "weaponUpgrade",
+      "poison"
     ],
     "templates": {
       "base": {
@@ -847,6 +854,48 @@
       "templates": [
         "base"
       ]
+    },
+    "poison": {
+      "templates": [
+        "base"
+      ],
+      "description": "",
+      "source": "",
+      "challengeLevel": 0,
+      "keywords": [],
+      "delivery": [],
+      "trigger": "",
+      "attack": {
+        "bonus": 0,
+        "formula": "",
+        "defense": "fortitude",
+        "recurrenceDefense": "",
+        "ignores": []
+      },
+      "damage": {
+        "formula": "",
+        "halfOnMiss": false,
+        "conditionTrack": {
+          "steps": 0,
+          "persistent": false,
+          "onMissSteps": 0
+        },
+        "skillPenalty": 0,
+        "darkSideScore": 0
+      },
+      "recurrence": {
+        "type": "none",
+        "until": []
+      },
+      "treatment": {
+        "skill": "treatInjury",
+        "dc": 0,
+        "dcFormula": "",
+        "requiresMedicalKit": false,
+        "dcAdjustment": 0
+      },
+      "special": {},
+      "talentHooks": []
     }
   }
 }

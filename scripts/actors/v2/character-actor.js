@@ -607,6 +607,28 @@ function mirrorActions(actor, system) {
       map[entry.key] = entry;
     }
 
+    // Poisons: show a use action for applying to a target or coating a weapon.
+    if (type === "poison") {
+      const entry = {
+        key: `item:${it.id}:poison`,
+        name: `Use Poison: ${it.name}`,
+        actionType: "standard",
+        actionTypeLabel: "Standard",
+        cost: 1,
+        description: summarizeText(sys.description ?? sys.trigger ?? "", 140),
+        sourceType: "item",
+        sourceLabel: "Item",
+        sourceName: it.name,
+        itemId: it.id,
+        executable: true,
+        useLabel: "Use Poison",
+        execute: { kind: "item", itemId: it.id },
+        resources: []
+      };
+      list.push(entry);
+      map[entry.key] = entry;
+    }
+
     // Force powers: show a "Use" action.
     if (type === "force-power") {
       const entry = {

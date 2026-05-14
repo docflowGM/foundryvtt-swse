@@ -2,6 +2,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { ConditionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionEngine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
+import { PoisonEngine } from "/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js";
 
 const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 const SIZE_ORDER = ['Fine', 'Diminutive', 'Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan', 'Colossal'];
@@ -373,6 +374,55 @@ export class SpeciesActivatedAbilityEngine {
     });
 
     return { success: true, abilityId: 'energy-surge', rounds, speedBonus };
+  }
+
+
+  static async useNaturalWeaponPoison(actor, item, options = {}) {
+    const targetActor = getSingleTarget();
+    if (!targetActor) {
+      ui?.notifications?.warn?.('Select one living target for Natural Weapon Poison.');
+      return { success: false, reason: 'No target selected' };
+    }
+    const poisonKey = item?.system?.specialAbility?.poisonKey || item?.system?.speciesAbility?.poisonKey || item?.flags?.swse?.poisonKey || 'mantellian-savrip-natural-poison';
+    return PoisonEngine.applyPoison({
+      sourceActor: actor,
+      targetActor,
+      poisonKey,
+      delivery: 'contact',
+      sourceItem: item,
+      immediate: true
+    });
+  }
+
+  static async useRoller(actor, item, options = {}) {
+    const active = !!actor.flags?.swse?.roller?.active;
+    if (active) {
+      await ActorEngine.updateActor(actor, {
+        'flags.swse.roller.active': false
+      });
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `<h2>${escapeHtml(actor.name)} stops rolling</h2><p>Roller movement mode ends. Remove the Roller ActiveEffect if it remains on the actor.</p>`
+      });
+      return { success: true, abilityId: 'roller', active: false };
+    }
+    await createStatusEffect(actor, {
+      name: 'Roller',
+      icon: 'icons/svg/wingfoot.svg',
+      description: '+4 base speed while curled into a ball. Actions are limited to Move, Withdraw, Catch a Second Wind, Drop an Item, Recover, and Run.',
+      changes: [
+        { key: 'system.movement.walk', mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2, value: 4, priority: 20 },
+        { key: 'system.speed', mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2, value: 4, priority: 20 },
+        { key: 'flags.swse.roller.actionRestrictions', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: 'movement-only', priority: 20 }
+      ],
+      flags: { swse: { speciesAbility: 'roller', toggle: true } }
+    });
+    await ActorEngine.updateActor(actor, { 'flags.swse.roller.active': true });
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content: `<h2>${escapeHtml(actor.name)} uses Roller</h2><p>Base speed increases by 4 squares while rolled up; actions are restricted by the trait text.</p>`
+    });
+    return { success: true, abilityId: 'roller', active: true };
   }
 
   static async useForceBlast(actor, item, options = {}) {
