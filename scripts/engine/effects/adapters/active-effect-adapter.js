@@ -18,6 +18,7 @@ import { EffectStateFlags } from "../effect-state-flags.js";
 export class ActiveEffectAdapter {
   /**
    * Collect Foundry ActiveEffect entries.
+   * Phase 6: Reads metadata through EffectStateFlags when available.
    * @param {Actor} actor - The actor
    * @param {Object} context - Aggregator context (contains options)
    * @returns {Array} Array of ActiveEffect cards
@@ -29,20 +30,69 @@ export class ActiveEffectAdapter {
     return actorEffects(actor)
       .filter(effect => includeInactiveEffects || effect?.disabled !== true)
       .map(effect => {
-        const details = summarizeEffectChanges(effect);
+        // Try to read metadata (Phase 6)
+        let metadata = null;
+        try {
+          metadata = EffectStateFlags.read(effect);
+        } catch (err) {
+          console.warn("SWSE | ActiveEffectAdapter: metadata read failed", effect?.name, err);
+        }
+
+        // Fallback: compute existing data
+        const effectChanges = summarizeEffectChanges(effect);
         const duration = effectDurationText(effect);
-        return {
+
+        // Build card with metadata preference, fallback to existing behavior
+        const card = {
           id: `effect-${effect.id ?? normalizeName(effect.name)}`,
-          label: effect.name ?? effect.label ?? "Active Effect",
-          type: "activeEffect",
-          severity: effect?.flags?.swse?.severity ?? "info",
-          source: effect?.origin ?? effect?.flags?.swse?.sourceName ?? "Active Effect",
-          text: details.length ? details.join("; ") : duration,
-          details: duration ? [`Duration: ${duration}`, ...details] : details,
+          label: metadata?.sourceName ?? effect.name ?? effect.label ?? "Active Effect",
+          type: "activeEffect", // MUST remain "activeEffect" for activeEffectCount stability
+          severity: metadata?.severity ?? effect?.flags?.swse?.severity ?? "info",
+          source: metadata?.sourceType ? `${metadata.sourceType}: ${metadata.sourceName}` : (effect?.origin ?? effect?.flags?.swse?.sourceName ?? "Active Effect"),
+          text: metadata?.summary ?? (effectChanges.length ? effectChanges.join("; ") : duration),
           gmEnforced: false,
           mechanical: true,
-          icon: effect.icon ?? effect.img ?? null
+          icon: metadata?.icon ?? effect.icon ?? effect.img ?? null
         };
+
+        // Build details array, avoiding duplication
+        const detailsSet = new Set();
+
+        // Add metadata details if available
+        if (metadata?.details && Array.isArray(metadata.details)) {
+          metadata.details.forEach(d => detailsSet.add(d));
+        }
+
+        // Add duration unless already in metadata details
+        if (duration && !detailsSet.has(`Duration: ${duration}`)) {
+          detailsSet.add(`Duration: ${duration}`);
+        }
+
+        // Add effect changes unless already in metadata details
+        if (effectChanges && Array.isArray(effectChanges)) {
+          effectChanges.forEach(d => {
+            if (!detailsSet.has(d)) {
+              detailsSet.add(d);
+            }
+          });
+        }
+
+        card.details = Array.from(detailsSet);
+
+        // Merge tags if metadata present
+        if (metadata?.tags && Array.isArray(metadata.tags)) {
+          const baseTags = ["activeEffect"];
+          const allTags = new Set([...baseTags, ...metadata.tags]);
+          card.tags = Array.from(allTags);
+        } else {
+          card.tags = ["activeEffect"];
+        }
+
+        // Add metadata fields if present (additive, not replacing)
+        if (metadata?.family) card.family = metadata.family;
+        if (metadata?.effectType) card.effectType = metadata.effectType;
+
+        return card;
       });
   }
 }
