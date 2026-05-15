@@ -136,6 +136,16 @@ export class ProgressionSession {
    * @returns {boolean} true if successful
    */
   commitSelection(stepId, selectionKey, value) {
+    const selectionAliases = {
+      'general-feat': 'feats',
+      'class-feat': 'feats',
+      'general-talent': 'talents',
+      'class-talent': 'talents',
+      'force-powers': 'forcePowers',
+      'starship-maneuver': 'starshipManeuvers',
+      'starship-maneuvers': 'starshipManeuvers',
+    };
+    selectionKey = selectionAliases[selectionKey] || selectionKey;
     if (!this._schema[selectionKey]) {
       swseLogger.warn(
         `[ProgressionSession] Unknown selection key: ${selectionKey}. Ignoring commit.`

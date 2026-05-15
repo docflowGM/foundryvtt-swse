@@ -863,8 +863,8 @@ export class TalentStep extends ProgressionStepPlugin {
         id: tree.id,
         name: tree.name,
         summary: tree.description || tree.system?.description || '',
-        // Use canonical talentIds field (top-level, not system.talentIds)
-        nodeCount: (tree.talentIds || []).length,
+        // Prefer audited membership count when available; compendium talentIds may be stale.
+        nodeCount: tree.talentCount || (tree.talentNames || []).length || (tree.talentIds || []).length,
         isSuggested: this._suggestedTrees.some(s => s.id === tree.id),
         isFocused: tree.id === this._focusedTreeId,
         // Determine slot type from context or fallback (normalized trees don't have classRestricted)

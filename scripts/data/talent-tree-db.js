@@ -63,6 +63,7 @@ export const TalentTreeDB = {
 
             // Use getIndex with expanded fields - NOT getDocuments (see note above)
             const index = await pack.getIndex({ fields: ['system', 'name', 'img'] });
+            const membershipRegistry = await this._loadTalentTreeMembershipRegistry();
             let count = 0;
             let warnings = 0;
 
@@ -70,6 +71,7 @@ export const TalentTreeDB = {
                 try {
                     // Normalize the tree from index entry (has _id, name, system, img)
                     const normalizedTree = normalizeTalentTree(entry);
+                    this._applyMembershipRegistryHints(normalizedTree, membershipRegistry);
 
                     // Validate
                     validateTalentTree(normalizedTree);
@@ -106,6 +108,72 @@ export const TalentTreeDB = {
             SWSELogger.error('[TalentTreeDB] Failed to build:', err);
             return false;
         }
+    },
+
+    /**
+     * Load generated/fixed talent-tree membership hints without instantiating documents.
+     * The compendium tree index may contain stale or partial talentIds, while the
+     * generated registry is the audited membership source used by the graph resolver.
+     *
+     * @returns {Promise<Map<string,Object>>}
+     * @private
+     */
+    async _loadTalentTreeMembershipRegistry() {
+        const registry = new Map();
+        const paths = [
+            '/systems/foundryvtt-swse/data/generated/talent-trees.registry.json',
+            '/systems/foundryvtt-swse/data/fixes/talent-trees.registry.json',
+        ];
+
+        for (const path of paths) {
+            try {
+                const response = await fetch(path);
+                if (!response?.ok) {continue;}
+                const data = await response.json();
+                if (!Array.isArray(data)) {continue;}
+
+                for (const entry of data) {
+                    const displayName = entry.displayName || entry.name || entry.id;
+                    const keys = [entry.id, displayName, toStableKey(displayName), normalizeTalentTreeId(displayName)]
+                        .map(key => String(key || '').trim())
+                        .filter(Boolean);
+                    for (const key of keys) {
+                        registry.set(key, entry);
+                    }
+                }
+
+                if (registry.size) {
+                    SWSELogger.debug(`[TalentTreeDB] Loaded ${registry.size} talent-tree membership hints from ${path}`);
+                    break;
+                }
+            } catch (err) {
+                SWSELogger.warn(`[TalentTreeDB] Failed to load talent-tree membership hints from ${path}:`, err);
+            }
+        }
+
+        return registry;
+    },
+
+    /**
+     * Add audited membership hints to normalized trees. Keep legacy talentIds intact
+     * for ID-based consumers, but expose talentNames/talentCount for UI and graph
+     * membership resolution when compendium IDs are stale or incomplete.
+     *
+     * @private
+     */
+    _applyMembershipRegistryHints(tree, registry) {
+        if (!tree || !registry?.size) {return tree;}
+
+        const keys = [tree.id, tree.name, toStableKey(tree.name), normalizeTalentTreeId(tree.name), tree.sourceId]
+            .map(key => String(key || '').trim())
+            .filter(Boolean);
+        const entry = keys.map(key => registry.get(key)).find(Boolean);
+        if (!entry || !Array.isArray(entry.talents)) {return tree;}
+
+        tree.talentNames = entry.talents.map(name => String(name || '').trim()).filter(Boolean);
+        tree.talentCount = Number(entry.talentCount || tree.talentNames.length || tree.talentIds?.length || 0);
+
+        return tree;
     },
 
     /**
@@ -314,9 +382,9 @@ byName(name) {
         this.talentToTree.clear();
 
         for (const tree of this.trees.values()) {
-            const talentIds = tree.talentIds || [];
+            const talentRefs = [...(tree.talentIds || []), ...(tree.talentNames || [])];
 
-            for (const talentId of talentIds) {
+            for (const talentId of talentRefs) {
                 this.talentToTree.set(talentId, tree.id);
             }
         }
@@ -356,7 +424,8 @@ byName(name) {
         if (!treeId) {return [];}
 
         const tree = this.get(treeId);
-        return tree?.talentIds ?? [];
+        if (!tree) {return [];}
+        return tree.talentNames?.length ? tree.talentNames : (tree.talentIds ?? []);
     },
 
     /**

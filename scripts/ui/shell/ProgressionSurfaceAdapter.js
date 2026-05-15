@@ -364,25 +364,35 @@ export class ProgressionSurfaceAdapter {
     if (!root) return null;
 
     const selectors = [
+      ':scope',
+      '[data-shell-region]',
       '[data-region="work-surface"]',
       '[data-region="details-panel"]',
       '[data-region="summary-panel"]',
       '.prog-work-surface',
       '.prog-content-row',
       '.prog-main-column',
+      '.prog-selection-list',
+      '.species-browser',
+      '.species-list',
+      '.species-grid',
       '.swse-screen'
     ];
 
     const state = {};
-    for (const selector of selectors) {
-      const el = root.querySelector(selector);
+    const capture = (key, el) => {
       if (el && (el.scrollTop > 0 || el.scrollLeft > 0)) {
-        state[selector] = {
-          scrollTop: el.scrollTop,
-          scrollLeft: el.scrollLeft
-        };
+        state[key] = { scrollTop: el.scrollTop, scrollLeft: el.scrollLeft };
       }
+    };
+
+    for (const selector of selectors) {
+      const el = selector === ':scope' ? root : root.querySelector(selector);
+      capture(selector, el);
     }
+
+    capture('@window-content', root.closest('.window-content'));
+    capture('@scrolling-element', document.scrollingElement);
 
     return Object.keys(state).length > 0 ? state : null;
   }
@@ -397,7 +407,13 @@ export class ProgressionSurfaceAdapter {
     if (!root || !scrollState) return;
 
     for (const [selector, positions] of Object.entries(scrollState)) {
-      const el = root.querySelector(selector);
+      const el = selector === ':scope'
+        ? root
+        : selector === '@window-content'
+          ? root.closest('.window-content')
+          : selector === '@scrolling-element'
+            ? document.scrollingElement
+            : root.querySelector(selector);
       if (el) {
         el.scrollTop = positions.scrollTop;
         el.scrollLeft = positions.scrollLeft;
@@ -462,6 +478,8 @@ export class ProgressionSurfaceAdapter {
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
               self._restoreScrollState(root, scrollState);
+              setTimeout(() => self._restoreScrollState(root, scrollState), 0);
+              setTimeout(() => self._restoreScrollState(root, scrollState), 75);
               // Restore focus if the element still exists
               if (focusedId) {
                 const restored = document.getElementById(focusedId);

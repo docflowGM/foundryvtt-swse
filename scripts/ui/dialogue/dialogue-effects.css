@@ -5,7 +5,7 @@
 
 @font-face {
   font-family: "Aurebesh";
-  src: url("/systems/foundryvtt-swse/assets/fonts/Starjedi.ttf") format("truetype");
+  src: url("/systems/foundryvtt-swse/assets/fonts/Aurabesh/Aurebesh.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
 }
@@ -99,7 +99,7 @@
 
 /* DROID: Mechanical, clinical, precise */
 .aurebesh-droid {
-  font-family: 'Courier New', monospace;
+  font-family: Aurebesh, 'Courier New', monospace;
   color: #00c6ff;
   opacity: 0.5;
   letter-spacing: 0.1em;

@@ -35,7 +35,7 @@
  * Provides Ask Mentor functionality and guidance context.
  */
 
-import { getMentorGuidance, getMentorForClass, MENTORS, getMentorKey } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { getMentorGuidance, getMentorForClass, MENTORS, getMentorKey, resolveMentorData } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { MentorAdvisoryCoordinator } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-advisory-coordinator.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { MentorSuggestionPickerDialog } from '/systems/foundryvtt-swse/scripts/apps/mentor/mentor-suggestion-picker-dialog.js';
@@ -78,15 +78,21 @@ export const STEP_TO_CHOICE_TYPE = {
   'species': 'species',
   'class': 'class',
   'attribute': 'ability',
-  'l1-survey': 'skill',          // Survey focuses on build implications
+  'ability': 'ability',
+  'ability-scores': 'ability',
+  'l1-survey': 'survey',
   'background': 'background',
-  'languages': 'languageGuidance',
+  'skills': 'skill',
+  'languages': 'language',
   'general-feat': 'feat',
   'class-feat': 'feat',
-  'general-talent': 'talentGuidance',
-  'class-talent': 'talentGuidance',
+  'general-talent': 'talent',
+  'class-talent': 'talent',
   'force-powers': 'force_power',
-  'confirm': 'summaryGuidance',
+  'starship-maneuver': 'starship_maneuver',
+  'starship-maneuvers': 'starship_maneuver',
+  'summary': 'summary',
+  'confirm': 'summary',
 };
 
 /**
@@ -102,11 +108,11 @@ export function getStepMentorObject(actor, shell = null) {
   const className = committedClass?.name || committedClass?.className || focusedClass?.name || actor?.system?.class?.primary?.name || actor?.system?.class?.primary || null;
 
   if (className) {
-    const mentor = getMentorForClass(className);
+    const mentor = resolveMentorData(className) || getMentorForClass(className);
     if (mentor) return mentor;
   }
 
-  return MENTORS.Scoundrel || Object.values(MENTORS)[0];
+  return resolveMentorData('Scoundrel') || MENTORS.Scoundrel || Object.values(MENTORS)[0];
 }
 
 /**

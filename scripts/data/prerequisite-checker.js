@@ -136,7 +136,19 @@ export class PrerequisiteChecker {
                 message: `Droids do not have Constitution and cannot meet Constitution ${required} prerequisites`
             };
         }
-        const ability = actor.system?.attributes?.[abilityKey]?.total
+
+        const activeShell = globalThis.game?.__swseActiveProgressionShell;
+        const draftAttributes = activeShell?.actor?.id === actor?.id
+            ? activeShell?.progressionSession?.draftSelections?.attributes
+            : null;
+        const draftFinal = draftAttributes?.finalValues?.[abilityKey];
+        const draftComputed = Number.isFinite(Number(draftAttributes?.values?.[abilityKey]))
+            ? Number(draftAttributes.values[abilityKey]) + (Number(draftAttributes?.speciesMods?.[abilityKey]) || 0)
+            : null;
+
+        const ability = draftFinal
+            ?? draftComputed
+            ?? actor.system?.attributes?.[abilityKey]?.total
             ?? actor.system?.attributes?.[abilityKey]?.value
             ?? actor.system?.abilities?.[abilityKey]?.value
             ?? 10;

@@ -27,35 +27,35 @@ function _normalizeMentorLookup(value) {
  * @returns {string} The resolved portrait path
  */
 export function resolveMentorPortraitPath(portraitPath) {
-    // Empty path → default
     if (!portraitPath) {
         return 'systems/foundryvtt-swse/assets/mentors/salty.png';
     }
 
-    // If path ends in .png, try .webp fallback
-    if (portraitPath.endsWith('.png')) {
-        const webpPath = portraitPath.slice(0, -4) + '.webp';
-        // Since we can't check filesystem at runtime, we normalize the name.
-        // The template's onerror handler will catch actual missing files.
-        // Return webp path if it's a likely candidate (filename matches known webp mentors)
+    let resolved = String(portraitPath).trim();
+    if (!resolved) return 'systems/foundryvtt-swse/assets/mentors/salty.png';
+
+    // Dialogue data and some older apps use repository-relative asset paths.
+    // Foundry templates need system-relative URLs, so normalize once here.
+    if (resolved.startsWith('/systems/')) resolved = resolved.slice(1);
+    if (!/^https?:/i.test(resolved) && !resolved.startsWith('data:') && !resolved.startsWith('systems/')) {
+        if (resolved.startsWith('assets/')) resolved = `systems/foundryvtt-swse/${resolved}`;
+        else resolved = `systems/foundryvtt-swse/${resolved.replace(/^\/+/, '')}`;
+    }
+
+    if (resolved.endsWith('.png')) {
+        const webpPath = resolved.slice(0, -4) + '.webp';
         const filename = webpPath.split('/').pop();
         const mentorName = filename.split('.')[0];
-
-        // Check if this mentor likely has a webp (based on known data)
         const knownWebpMentors = new Set([
             'kharjo', 'tio', 'axiom', 'j0n1', 'kael', 'kex', 'kex_varon', 'korr', 'krag',
             'kyber', 'lead', 'malbada', 'miraj', 'ol_salty', 'pegar', 'rajma', 'rax',
             'riquis', 'rogue', 'salty', 'sela', 'seraphim', 'skindar', 'spark', 'theron',
             'tideborn', 'vel', 'venn', 'zhen'
         ]);
-
-        if (knownWebpMentors.has(mentorName.toLowerCase())) {
-            return webpPath;
-        }
+        if (knownWebpMentors.has(mentorName.toLowerCase())) return webpPath;
     }
 
-    // Otherwise return the path as-is; template onerror will handle missing files
-    return portraitPath;
+    return resolved;
 }
 
 export function resolveMentorData(ref) {
@@ -88,19 +88,25 @@ export function resolveMentorData(ref) {
         }
     }
 
-    // Resolve portrait path with webp fallback
-    if (mentor && mentor.portrait) {
-        mentor.portrait = resolveMentorPortraitPath(mentor.portrait);
-    }
+    if (!mentor) return null;
 
-    return mentor;
+    // Return a shallow copy so consumers do not mutate generated mentor data.
+    return {
+        ...mentor,
+        portrait: resolveMentorPortraitPath(mentor.portrait),
+    };
 }
 
 export function getMentorKey(ref) {
     if (!ref) return 'Scoundrel';
     if (MENTORS[ref]) return ref;
     const mentor = resolveMentorData(ref);
-    return Object.entries(MENTORS).find(([, value]) => value === mentor)?.[0] || 'Scoundrel';
+    const normalizedRef = _normalizeMentorLookup(ref?.name || ref);
+    return Object.entries(MENTORS).find(([key, value]) => {
+        if (mentor && value?.name === mentor.name && value?.title === mentor.title) return true;
+        return [key, value?.id, value?.mentorId, value?.mentor_id, value?.name, value?.displayName]
+            .some(candidate => _normalizeMentorLookup(candidate) === normalizedRef);
+    })?.[0] || 'Scoundrel';
 }
 
 export function getMentorIntroText(ref, fallbackClassName = '') {
@@ -161,25 +167,62 @@ export function getMentorGreeting(mentor, level, actor = null) {
  * @returns {string} The guidance message
  */
 export function getMentorGuidance(mentor, choiceType) {
-    // Guard: if mentor is not available, return empty string
-    if (!mentor || !mentor.name) {
-      return '';
-    }
+    if (!mentor || !mentor.name) return '';
 
-    SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGuidance: Getting guidance from "${mentor.name}" for choice type "${choiceType}"`);
+    const normalizedType = String(choiceType || '')
+        .trim()
+        .toLowerCase()
+        .replace(/([a-z])([A-Z])/g, '$1_$2')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+
+    const aliasMap = {
+        attributes: 'ability',
+        attribute: 'ability',
+        ability_scores: 'ability',
+        ability_score: 'ability',
+        skills: 'skill',
+        languages: 'language',
+        language_guidance: 'language',
+        feats: 'feat',
+        feat_guidance: 'feat',
+        talents: 'talent',
+        talent_guidance: 'talent',
+        force: 'force_power',
+        force_powers: 'force_power',
+        force_power_guidance: 'force_power',
+        starship: 'starship_maneuver',
+        starship_maneuvers: 'starship_maneuver',
+        starship_maneuver_guidance: 'starship_maneuver',
+        background_guidance: 'background',
+        summary_guidance: 'summary',
+        confirm: 'summary',
+        confirmation: 'summary',
+        l1_survey: 'survey',
+        survey_guidance: 'survey',
+    };
+    const key = aliasMap[normalizedType] || normalizedType;
+
+    SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGuidance: Getting guidance from "${mentor.name}" for choice type "${key}"`);
 
     const guidanceMap = {
-        'species': mentor.speciesGuidance,
-        'class': mentor.classGuidance,
-        'talent': mentor.talentGuidance,
-        'ability': mentor.abilityGuidance,
-        'skill': mentor.skillGuidance,
-        'multiclass': mentor.multiclassGuidance,
-        'force_power': mentor.forcePowerGuidance,
-        'hp': mentor.hpGuidance
+        species: mentor.speciesGuidance,
+        class: mentor.classGuidance,
+        background: mentor.backgroundGuidance,
+        feat: mentor.featGuidance,
+        talent: mentor.talentGuidance,
+        ability: mentor.abilityGuidance,
+        skill: mentor.skillGuidance,
+        language: mentor.languageGuidance,
+        multiclass: mentor.multiclassGuidance,
+        force_power: mentor.forcePowerGuidance,
+        starship_maneuver: mentor.starshipManeuverGuidance,
+        hp: mentor.hpGuidance,
+        summary: mentor.summaryGuidance,
+        survey: mentor.surveyGuidance || mentor.classGuidance,
     };
 
-    const guidance = guidanceMap[choiceType] || 'Make your choice wisely.';
+    const guidance = guidanceMap[key] || mentor.summaryGuidance || mentor.classGuidance || 'Make your choice wisely.';
     SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGuidance: Found guidance:`, guidance.substring(0, 50) + (guidance.length > 50 ? '...' : ''));
     return guidance;
 }

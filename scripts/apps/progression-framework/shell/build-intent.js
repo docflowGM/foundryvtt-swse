@@ -66,17 +66,28 @@ export class BuildIntent {
     }
 
     try {
+      const selectionAliases = {
+        'general-feat': 'feats',
+        'class-feat': 'feats',
+        'general-talent': 'talents',
+        'class-talent': 'talents',
+        'force-powers': 'forcePowers',
+        'starship-maneuver': 'starshipManeuvers',
+        'starship-maneuvers': 'starshipManeuvers',
+      };
+      const canonicalKey = selectionAliases[selectionKey] || selectionKey;
+
       // Delegate to canonical progressionSession
       const success = this.shell?.progressionSession?.commitSelection(
         stepId,
-        selectionKey,
+        canonicalKey,
         value
       );
 
       // Also update shell.committedSelections for backward compatibility during migration
       // Store the raw normalized selection so existing step readers keep working.
       if (this.shell?.committedSelections && success) {
-        this.shell.committedSelections.set(selectionKey, value);
+        this.shell.committedSelections.set(canonicalKey, value);
       }
 
       // Re-render shell to reflect changes

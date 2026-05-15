@@ -242,25 +242,35 @@ export class AttributeStep extends ProgressionStepPlugin {
       shell?.committedSelections?.get?.('species') ??
       null;
 
-    // The pending species context is the canonical handoff from the species step.
-    // It already has selected variants and species ability-choice packages applied.
-    const raw =
-      pending?.abilities ??
-      species?.pendingContext?.abilities ??
-      species?.abilityScores ??
-      species?.speciesData?.abilityScores ??
-      species?.speciesData?.abilityMods ??
-      species?.values ??
-      {};
+    const candidates = [
+      pending?.abilities,
+      pending?.abilityScores,
+      pending?.abilityMods,
+      pending?.mods?.abilities,
+      pending?.modifiers?.abilities,
+      pending?.ledger?.abilities,
+      pending?.ledger?.abilityScores,
+      pending?.resolved?.abilities,
+      pending?.grants?.abilities,
+      species?.pendingContext?.abilities,
+      species?.pendingContext?.abilityScores,
+      species?.abilityScores,
+      species?.abilityMods,
+      species?.speciesData?.abilityScores,
+      species?.speciesData?.abilityMods,
+      species?.values,
+    ];
 
-    return {
-      str: Number(raw.str ?? raw.STR ?? 0) || 0,
-      dex: Number(raw.dex ?? raw.DEX ?? 0) || 0,
-      con: Number(raw.con ?? raw.CON ?? 0) || 0,
-      int: Number(raw.int ?? raw.INT ?? 0) || 0,
-      wis: Number(raw.wis ?? raw.WIS ?? 0) || 0,
-      cha: Number(raw.cha ?? raw.CHA ?? 0) || 0
-    };
+    const out = { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 };
+    for (const raw of candidates) {
+      if (!raw || typeof raw !== 'object') continue;
+      for (const key of Object.keys(out)) {
+        const value = raw[key] ?? raw[key.toUpperCase()] ?? raw[key === 'cha' ? 'charisma' : key];
+        const number = Number(value);
+        if (Number.isFinite(number) && number !== 0) out[key] = number;
+      }
+    }
+    return out;
   }
 
   _normalizeIncomingAttributes(raw, shell) {
@@ -909,7 +919,24 @@ export class AttributeStep extends ProgressionStepPlugin {
   async onItemCommitted(attributes, shell) {
     this._attributes = { ...attributes };
     this._committed = true;
-    await this._commitNormalized(shell, 'attributes', attributes);
+    const speciesMods = this._isSpeciesFixedMode()
+      ? { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 }
+      : this._getSpeciesMods(shell);
+    const finalValues = {};
+    const modifiers = {};
+    for (const key of this._getAbilityKeys(shell)) {
+      const base = Number(attributes?.[key] ?? 0) || 0;
+      const finalScore = base + (Number(speciesMods?.[key] ?? 0) || 0);
+      finalValues[key] = finalScore;
+      modifiers[key] = Math.floor((finalScore - 10) / 2);
+    }
+    await this._commitNormalized(shell, 'attributes', {
+      values: attributes,
+      baseValues: attributes,
+      speciesMods,
+      finalValues,
+      modifiers,
+    });
   }
 
   validate(shell = null) {

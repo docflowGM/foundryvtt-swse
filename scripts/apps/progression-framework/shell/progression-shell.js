@@ -45,7 +45,8 @@ import { SelectedRailContext } from './selected-rail-context.js';
 import { ProjectionEngine } from './projection-engine.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
-import { resolveMentorData, resolveMentorPortraitPath } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { resolveMentorData, resolveMentorPortraitPath, getMentorKey } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { getStepMentorObject } from '../steps/mentor-step-integration.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -118,6 +119,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'focus-talent'(e, t)        { return this._onStepAction(e, t); },
       'focus-tree'(e, t)          { return this._onStepAction(e, t); },
       'enter-tree'(e, t)          { return this._onStepAction(e, t); },
+      'create-custom-planet'(e, t) { return this._onStepAction(e, t); },
+      'set-talent-view'(e, t)     { return this._onStepAction(e, t); },
+      'fit-talent-tree'(e, t)     { return this._onStepAction(e, t); },
+      'center-talent-node'(e, t)  { return this._onStepAction(e, t); },
       // Phase 8: Force Power quantity controls
       'increment-quantity'(e, t)  { return this._onIncrementQuantity(e, t); },
       'decrement-quantity'(e, t)  { return this._onDecrementQuantity(e, t); },
@@ -778,6 +783,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         this.progressionSession.visitedStepIds.push(descriptor.stepId);
       }
 
+      this._syncMentorForStep(descriptor);
       this.mentor.currentDialogue = plugin.getMentorContext(this);
       this.mentor.askMentorEnabled = plugin.getMentorMode() !== null;
       this.mentor.mentorMode = plugin.getMentorMode();
@@ -796,6 +802,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         const fallbackPlugin = this.stepPlugins.get(this.steps[fallbackIndex]?.stepId);
         if (fallbackPlugin) {
           try {
+            this._syncMentorForStep(this.steps[fallbackIndex]);
             this.mentor.currentDialogue = fallbackPlugin.getMentorContext(this);
             this.mentor.askMentorEnabled = fallbackPlugin.getMentorMode() !== null;
             this.mentor.mentorMode = fallbackPlugin.getMentorMode();
@@ -849,6 +856,31 @@ export class ProgressionShell extends SWSEApplicationV2 {
       lastAdvice: null,
       mentorHistory: [],
     };
+  }
+
+  /**
+   * Keep the top mentor rail on the same fully-resolved mentor object used by
+   * the L1 survey and step guidance helpers. This prevents the rail from
+   * rendering a skinny fallback state with no portrait/title.
+   * @private
+   */
+  _syncMentorForStep(descriptor = null) {
+    try {
+      const mentorData = getStepMentorObject(this.actor, this) || resolveMentorData('Scoundrel') || {};
+      const mentorKey = getMentorKey(mentorData);
+      Object.assign(this.mentor, {
+        id: mentorKey,
+        mentorId: mentorKey,
+        name: mentorData.name || this.mentor?.name || "Ol' Salty",
+        title: mentorData.title || this.mentor?.title || 'Seasoned Spacer',
+        portrait: mentorData.portrait || resolveMentorPortraitPath(this.mentor?.portrait),
+      });
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] Failed to sync mentor rail identity', {
+        stepId: descriptor?.stepId || null,
+        error: err?.message || String(err),
+      });
+    }
   }
 
   // ---------------------------------------------------------------------------

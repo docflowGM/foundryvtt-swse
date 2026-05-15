@@ -511,12 +511,21 @@ export class ActiveStepComputer {
    * @private
    */
   async _checkPrerequisiteActivation(node, actor, progressionSession) {
-    // Force powers: requires Force Sensitivity feat
+    // Force powers: requires Force Sensitivity or a pending Force Training/Force Sensitivity grant.
     if (node.nodeId === 'force-powers') {
+      const pendingFeats = progressionSession?.draftSelections?.feats || [];
+      const pendingGrantedFeats = progressionSession?.pendingState?.grantedFeats || [];
+      const pendingNames = [
+        ...pendingFeats,
+        ...pendingGrantedFeats,
+      ].map(entry => String(entry?.name || entry?.label || entry || '').toLowerCase());
+      const hasPendingForceAccess = pendingNames.some(name =>
+        name.includes('force sensitivity') || name.includes('force sensitive') || name.includes('force training')
+      );
       const hasForceSensitivity = actor.items.some(item =>
         item.type === 'feat' && item.name?.toLowerCase().includes('force sensitivity')
       );
-      return hasForceSensitivity;
+      return hasForceSensitivity || hasPendingForceAccess;
     }
 
     // Force secrets: PHASE 3 - check real class grant budget (not proxy signals)

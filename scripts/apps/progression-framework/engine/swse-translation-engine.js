@@ -422,11 +422,12 @@ export class TranslationSession {
       const decodedPrefix = translatedText.slice(0, decodeCount);
       const undecodedSuffix = typedSource.slice(decodeCount);
 
-      // Update source: show typed portion and any decoded suffix
+      // Swipe behavior: source shrinks as Basic grows, instead of rendering
+      // a full Aurebesh line alongside the final translation.
       const sourceMode = this._sourceMode;
       const sourceFrameClass = `prog-intro-boot-fragment prog-intro-boot-fragment--${sourceMode}`;
-      const sourceFrameHTML = typedSource
-        ? `<span class="${sourceFrameClass}">${escapeHTML(typedSource)}</span>`
+      const sourceFrameHTML = undecodedSuffix
+        ? `<span class="${sourceFrameClass}">${escapeHTML(undecodedSuffix)}</span>`
         : '';
       binding.setHTML('sourceText', sourceFrameHTML);
 
@@ -471,6 +472,7 @@ export class TranslationSession {
       const finalCursor = keepFinalCursor
         ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
         : '';
+      binding.setHTML('sourceText', '');
       binding.setHTML(
         'translationText',
         `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(translatedText)}</span>${finalCursor}`
@@ -493,6 +495,7 @@ export class TranslationSession {
     const finalCursor = keepFinalCursor
       ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
       : '';
+    binding.setHTML('sourceText', '');
     binding.setHTML(
       'translationText',
       `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(translatedText)}</span>${finalCursor}`

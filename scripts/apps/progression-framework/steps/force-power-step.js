@@ -610,10 +610,11 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    * @private
    */
   _buildPendingStateWithClassGrants(actor, shell = null) {
+    const characterData = shell?.buildIntent?.toCharacterData?.() || shell?.progressionSession?.toCharacterData?.() || {};
     const basePending = {
-      selectedClass: shell?.committedSelections?.get?.('class') || null,
-      selectedFeats: [],
-      selectedTalents: [],
+      selectedClass: shell?.committedSelections?.get?.('class') || shell?.progressionSession?.draftSelections?.class || characterData.classes?.[0] || null,
+      selectedFeats: characterData.feats || shell?.progressionSession?.draftSelections?.feats || [],
+      selectedTalents: characterData.talents || shell?.progressionSession?.draftSelections?.talents || [],
       selectedSkills: [],
       skillRanks: {},
       grantedFeats: [],

@@ -18,11 +18,12 @@
     </div>
   </div>{{!-- /portrait-zone --}}
 
-  {{! Name and title (hidden when mentor collapsed) — Phase 4: tighter identity framing }}
-  <div class="prog-mentor__name"><span class="prog-mentor__name-prefix">▸</span>{{mentor.name}}</div>
-  <div class="prog-mentor__title">{{mentor.title}}</div>
+  <div class="prog-mentor__identity">
+    <div class="prog-mentor__name"><span class="prog-mentor__name-prefix">▸</span>{{mentor.name}}</div>
+    <div class="prog-mentor__title">{{mentor.title}}</div>
+  </div>
 
-  {{! Dialogue box (hidden when collapsed) — AurebeshTranslator targets [data-mentor-dialogue] }}
+  {{! Dialogue box — AurebeshTranslator targets [data-mentor-dialogue] }}
   <div class="prog-mentor__dialogue swse-ui-frame" data-mentor-dialogue>
     <div class="prog-mentor__dialogue-content">
       <p class="prog-mentor__text{{#unless mentor.currentDialogue}} prog-mentor__text--idle{{/unless}}"

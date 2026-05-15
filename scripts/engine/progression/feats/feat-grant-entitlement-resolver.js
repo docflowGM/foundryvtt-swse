@@ -25,7 +25,15 @@ function getAbilityModifier(actor, abilityKey) {
   const key = String(abilityKey || '').toLowerCase();
   if (!actor || !key) return 0;
   const system = actor.system || {};
+  const draftAttributes = globalThis.game?.__swseActiveProgressionShell?.actor?.id === actor.id
+    ? globalThis.game.__swseActiveProgressionShell.progressionSession?.draftSelections?.attributes
+    : null;
+  const draftValue = draftAttributes?.finalValues?.[key]
+    ?? (Number.isFinite(Number(draftAttributes?.values?.[key])) && Number.isFinite(Number(draftAttributes?.speciesMods?.[key]))
+      ? Number(draftAttributes.values[key]) + Number(draftAttributes.speciesMods[key])
+      : null);
   const candidates = [
+    draftAttributes?.modifiers?.[key],
     system.abilities?.[key]?.mod,
     system.abilities?.[key]?.modifier,
     system.attributes?.[key]?.mod,
@@ -37,11 +45,19 @@ function getAbilityModifier(actor, abilityKey) {
     const number = Number(value);
     if (Number.isFinite(number)) return number;
   }
-  return 0;
+  const score = Number(draftValue ?? system.attributes?.[key]?.total ?? system.attributes?.[key]?.value ?? system.abilities?.[key]?.value);
+  return Number.isFinite(score) ? Math.floor((score - 10) / 2) : 0;
+}
+
+function getRegisteredSetting(moduleId, key, fallback = null) {
+  try { return globalThis.game?.settings?.get?.(moduleId, key) ?? fallback; } catch (_err) { return fallback; }
 }
 
 function getForceTrainingAbilityModifier(actor) {
-  const configured = globalThis.game?.settings?.get?.('swse', 'forceTrainingAttribute');
+  const configured = getRegisteredSetting(globalThis.game?.system?.id || 'foundryvtt-swse', 'forceTrainingAttribute')
+    ?? getRegisteredSetting('foundryvtt-swse', 'forceTrainingAttribute')
+    ?? getRegisteredSetting('swse', 'forceTrainingAttribute')
+    ?? 'wisdom';
   const key = String(configured || '').toLowerCase();
   if (key === 'cha' || key === 'charisma') return getAbilityModifier(actor, 'cha');
   if (key === 'wis' || key === 'wisdom') return getAbilityModifier(actor, 'wis');

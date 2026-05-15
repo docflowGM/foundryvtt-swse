@@ -59,14 +59,14 @@ export class AurebeshTranslator {
     }
 
     try {
-      // Run animation (returns promise)
+      // Run animation (returns promise). The animation starts as full Aurebesh,
+      // then sweeps into Basic. After completion, replace the source entirely
+      // so stale Aurebesh never remains beside the translated text.
       animationPromise = this._animateReveal(wrapper, text, config, isSkippedRef);
       await animationPromise;
 
-      // If skipped, reveal all remaining text instantly
-      if (isSkippedRef.value) {
-        wrapper.innerHTML = this._buildFinalMarkup(text, config);
-      }
+      wrapper.innerHTML = this._buildFinalMarkup(text, config);
+      wrapper.classList.add('aurebesh-dialogue-wrapper--complete');
 
       onComplete();
       return wrapper;
@@ -86,6 +86,11 @@ export class AurebeshTranslator {
     const speed = config.speed || 25; // ms per character
     const chars = text.split('');
 
+    // First frame: pure Aurebesh/source text. This avoids the old behavior where
+    // the first rendered frame already contained English.
+    container.innerHTML = this._buildMarkup('', text, config);
+    await this._delay(Math.max(140, speed * 6));
+
     for (let i = 0; i < chars.length; i++) {
       // If skipped, stop animating and let parent handle reveal
       if (skipRef?.value) {break;}
@@ -97,12 +102,16 @@ export class AurebeshTranslator {
       container.innerHTML = this._buildMarkup(revealed, chars.slice(i + 1).join(''), config);
 
       // Wait for animation frame + speed interval
-      await new Promise(resolve => {
-        setTimeout(() => {
-          requestAnimationFrame(resolve);
-        }, speed);
-      });
+      await this._delay(speed);
     }
+  }
+
+  static _delay(ms) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        requestAnimationFrame(resolve);
+      }, ms);
+    });
   }
 
   /**

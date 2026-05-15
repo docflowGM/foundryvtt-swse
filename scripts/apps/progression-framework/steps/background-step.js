@@ -50,6 +50,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
     this._activeCategory = 'all';  // which category tab is active
     this._sortBy = 'alpha';
     this._customBackgrounds = [];
+    this._backgroundSkillChoices = {};
 
     // House rule state
     this._maxBackgrounds = 1;        // from backgroundSelectionCount setting
@@ -90,6 +91,11 @@ export class BackgroundStep extends ProgressionStepPlugin {
         this._committedBackgroundIds = [draftBackground.backgroundId];
       }
       if (this._committedBackgroundIds.length > 0) {
+        const pendingChoices = shell?.progressionSession?.currentPendingBackgroundContext?.pendingChoices || draftBackground?.pendingContext?.pendingChoices || [];
+        for (const choice of pendingChoices) {
+          const bgId = choice?.sourceBackgroundId || choice?.backgroundId;
+          if (bgId && Array.isArray(choice?.resolved)) this._backgroundSkillChoices[bgId] = [...choice.resolved];
+        }
         console.log('[BackgroundStep] Hydrated draft background selection:', {
           count: this._committedBackgroundIds.length,
           ids: this._committedBackgroundIds,
@@ -258,8 +264,21 @@ async onStepExit(shell) {
     const background = this._allBackgrounds.find(b => b.id === id);
     if (!background) return;
 
+    const requiredSkillChoices = Number(background.skillChoiceCount || background.mechanicalEffect?.count || 0) || 0;
+    const skillOptions = Array.isArray(background.relevantSkills) ? background.relevantSkills.filter(Boolean) : [];
+    if (requiredSkillChoices > 0 && skillOptions.length > requiredSkillChoices) {
+      const chosenSkills = await this._promptForBackgroundSkillChoices(background, requiredSkillChoices, skillOptions);
+      if (!chosenSkills) return;
+      this._backgroundSkillChoices[id] = chosenSkills;
+    } else if (requiredSkillChoices > 0) {
+      this._backgroundSkillChoices[id] = skillOptions.slice(0, requiredSkillChoices);
+    }
+
     // Single mode: replace selection
     if (this._maxBackgrounds === 1) {
+      for (const previousId of this._committedBackgroundIds) {
+        if (previousId !== id) delete this._backgroundSkillChoices[previousId];
+      }
       this._committedBackgroundIds = [id];
     } else {
       // Multi mode: toggle or add
@@ -267,6 +286,7 @@ async onStepExit(shell) {
       if (idx >= 0) {
         // Remove
         this._committedBackgroundIds.splice(idx, 1);
+        delete this._backgroundSkillChoices[id];
       } else if (this._committedBackgroundIds.length < this._maxBackgrounds) {
         // Add
         this._committedBackgroundIds.push(id);
@@ -283,6 +303,8 @@ async onStepExit(shell) {
       pendingBackgroundRefs,
       { multiMode: this._maxBackgrounds > 1 }
     );
+
+    this._applyBackgroundSkillChoiceResolution(pendingBackgroundContext);
 
     const normalizedBackground = normalizeBackground({
       id: background.id,
@@ -635,7 +657,7 @@ _getCategoryChips() {
             isFocused,
             isCommitted,
             isSuggested,
-            badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+            badgeLabel: isSuggested ? 'Recommended' : null,
             badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
             confidenceLevel: confidenceData?.confidenceLevel || null,
           };
@@ -651,6 +673,86 @@ _getCategoryChips() {
     }
 
     return result;
+  }
+
+  _applyBackgroundSkillChoiceResolution(pendingContext) {
+    if (!pendingContext) return pendingContext;
+    const resolvedClassSkills = new Set([
+      ...(Array.isArray(pendingContext.classSkills) ? pendingContext.classSkills : []),
+      ...(Array.isArray(pendingContext.ledger?.classSkills?.granted) ? pendingContext.ledger.classSkills.granted : []),
+    ]);
+    const resolvedOptions = [];
+
+    for (const choice of pendingContext.pendingChoices || []) {
+      const bgId = choice?.sourceBackgroundId || choice?.backgroundId;
+      const chosen = Array.isArray(this._backgroundSkillChoices[bgId]) ? this._backgroundSkillChoices[bgId] : [];
+      if (chosen.length) {
+        choice.resolved = [...chosen];
+        choice.isResolved = true;
+      }
+      const granted = Array.isArray(choice.resolved) ? choice.resolved : [];
+      granted.forEach(skill => {
+        if (skill) {
+          resolvedClassSkills.add(skill);
+          resolvedOptions.push(skill);
+        }
+      });
+    }
+
+    pendingContext.classSkills = Array.from(resolvedClassSkills);
+    pendingContext.backgroundSkillOptions = Array.from(new Set(resolvedOptions));
+    pendingContext.backgroundSkillOptionsResolved = true;
+    if (pendingContext.ledger?.classSkills) {
+      pendingContext.ledger.classSkills.granted = pendingContext.classSkills;
+      pendingContext.ledger.classSkills.resolvedChoices = { ...this._backgroundSkillChoices };
+    }
+    return pendingContext;
+  }
+
+  async _promptForBackgroundSkillChoices(background, count, options) {
+    const safeName = String(background?.name || 'Background').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+    const rows = options.map((skill, index) => {
+      const safeSkill = String(skill).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+      return `<label class="swse-background-skill-choice__row"><input type="checkbox" name="backgroundSkill" value="${safeSkill}" ${index < count ? 'checked' : ''}/> <span>${safeSkill}</span></label>`;
+    }).join('');
+    const content = `<form class="swse-background-skill-choice"><p><strong>${safeName}</strong> grants class-skill training access. Pick exactly ${count} skill${count === 1 ? '' : 's'}.</p><div class="swse-background-skill-choice__list">${rows}</div></form>`;
+
+    return new Promise((resolve) => {
+      let settled = false;
+      const finish = (value) => {
+        if (settled) return;
+        settled = true;
+        resolve(value);
+      };
+      const dialog = new Dialog({
+        title: `Pick ${count} Background Skill${count === 1 ? '' : 's'}`,
+        content,
+        buttons: {
+          confirm: {
+            icon: '<i class="fas fa-check"></i>',
+            label: 'Confirm Skills',
+            callback: (html) => {
+              const root = html?.[0] || html;
+              const checked = Array.from(root.querySelectorAll('input[name="backgroundSkill"]:checked')).map(input => input.value);
+              if (checked.length !== count) {
+                ui.notifications?.warn?.(`Pick exactly ${count} skill${count === 1 ? '' : 's'}.`);
+                finish(null);
+                return;
+              }
+              finish(checked);
+            }
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: 'Cancel',
+            callback: () => finish(null)
+          }
+        },
+        close: () => finish(null),
+        default: 'confirm'
+      });
+      dialog.render(true);
+    });
   }
 
   _getMentorFlavorForBackground(background) {

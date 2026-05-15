@@ -3,7 +3,7 @@
   "mentors": {
     "Jedi": {
       "name": "Miraj",
-      "title": "Jedi Master of the Republic, Protector of the Weak, Enforcer of Justice, and Keeper of the Peace.",
+      "title": "Jedi Master Miraj Taurus, Jedi Council Member",
       "description": "A wise Jedi Master who encourages you to continue on your journey",
       "portrait": "assets/mentors/miraj.png",
       "levelGreetings": {
@@ -87,7 +87,11 @@
             "You’re walking a different road than I did. That matters."
           ]
         }
-      }
+      },
+      "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+      "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+      "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+      "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
     },
     "Scout": {
       "name": "Lead",
@@ -150,7 +154,11 @@
           "You're operating outside professional standards. I don't discuss my methods with people who can't stick to discipline.",
           "I see recklessness in you. We have nothing to talk about until you learn what caution means."
         ]
-      }
+      },
+      "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+      "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+      "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+      "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
     },
     "Scoundrel": {
       "name": "Ol' Salty",
@@ -235,7 +243,10 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+      "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+      "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
     },
     "Noble": {
       "name": "J0-N1",
@@ -319,7 +330,11 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+      "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+      "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+      "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
     },
     "Soldier": {
       "name": "Breach",
@@ -371,7 +386,11 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+      "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+      "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+      "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
     },
     "Imperial Knight": {
       "name": "Dezmin",
@@ -442,7 +461,14 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+      "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
+      "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+      "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
+      "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+      "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
+      "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
     },
     "Medic": {
       "name": "Kyber",
@@ -511,7 +537,15 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+      "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+      "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+      "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+      "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+      "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+      "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+      "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
     },
     "Ace Pilot": {
       "name": "Mayu",
@@ -567,11 +601,19 @@
           "You wanna fly or psychoanalyze me?",
           "Maybe later, Ace."
         ]
-      }
+      },
+      "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+      "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
+      "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+      "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
+      "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
+      "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+      "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
+      "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
     },
     "Jedi Knight": {
       "name": "Miraj",
-      "title": "Jedi Master",
+      "title": "Jedi Master Miraj Taurus, Jedi Council Member",
       "description": "Your former Jedi Master, now guiding you as a peer",
       "portrait": "assets/mentors/miraj.png",
       "levelGreetings": {
@@ -606,11 +648,18 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+      "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
+      "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+      "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
+      "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+      "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
+      "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
     },
     "Jedi Master": {
       "name": "Miraj",
-      "title": "Jedi Master",
+      "title": "Jedi Master Miraj Taurus, Jedi Council Member",
       "description": "Your fellow Jedi Master, treating you as an equal and old friend",
       "portrait": "assets/mentors/miraj.png",
       "levelGreetings": {
@@ -640,7 +689,14 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+      "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
+      "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+      "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
+      "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+      "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
+      "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
     },
     "Sith Apprentice": {
       "name": "Darth Malbada",
@@ -710,7 +766,15 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Bloodline is leverage. Know what it gives you, then make the galaxy pay attention.",
+      "backgroundGuidance": "Your past is not a wound unless you let it bleed. Use it as a blade.",
+      "featGuidance": "Take the feat that removes weakness. Mercy for your own limitations is still mercy.",
+      "languageGuidance": "Every language is another mask. Wear the one that gets you closest to what you want.",
+      "forcePowerGuidance": "The Force is not asking politely. Choose the powers that make your will undeniable.",
+      "starshipManeuverGuidance": "In space, hesitation is debris. Choose maneuvers that end the argument quickly.",
+      "summaryGuidance": "Inspect your choices one last time. If any choice smells of weakness, replace it before you confirm.",
+      "surveyGuidance": "Answer with ambition. I have no use for timid truths."
     },
     "Sith Lord": {
       "name": "Darth Miedo",
@@ -775,7 +839,15 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Bloodline is leverage. Know what it gives you, then make the galaxy pay attention.",
+      "backgroundGuidance": "Your past is not a wound unless you let it bleed. Use it as a blade.",
+      "featGuidance": "Take the feat that removes weakness. Mercy for your own limitations is still mercy.",
+      "languageGuidance": "Every language is another mask. Wear the one that gets you closest to what you want.",
+      "forcePowerGuidance": "The Force is not asking politely. Choose the powers that make your will undeniable.",
+      "starshipManeuverGuidance": "In space, hesitation is debris. Choose maneuvers that end the argument quickly.",
+      "summaryGuidance": "Inspect your choices one last time. If any choice smells of weakness, replace it before you confirm.",
+      "surveyGuidance": "Answer with ambition. I have no use for timid truths."
     },
     "Gladiator": {
       "name": "Pegar",
@@ -829,7 +901,15 @@
           "Some truths only come after blood.",
           "Fight longer. Then ask again."
         ]
-      }
+      },
+      "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+      "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
+      "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+      "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
+      "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
+      "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+      "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
+      "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
     },
     "Independent Droid": {
       "name": "Seraphim",
@@ -867,7 +947,15 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+      "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+      "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+      "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+      "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+      "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+      "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+      "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
     },
     "Pathfinder": {
       "name": "Lead",
@@ -890,7 +978,15 @@
       "abilityGuidance": "Stronger and smarter. Good. Pathfinders need both to survive and lead.",
       "skillGuidance": "Navigation, survival, tactics—master them all. Pathfinders are the elite for a reason.",
       "multiclassGuidance": "Expanding your skill set? Excellent. The best Pathfinders are versatile.",
-      "hpGuidance": "Tougher now. Can't lead if you're dead. Stay alive, stay sharp."
+      "hpGuidance": "Tougher now. Can't lead if you're dead. Stay alive, stay sharp.",
+      "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+      "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+      "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+      "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+      "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+      "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+      "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+      "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
     },
     "Corporate Agent": {
       "name": "Marl Skindar",
@@ -915,7 +1011,15 @@
       "skillGuidance": "Tradecraft is a multi-tool: social manipulation, tech, investigation. Master as much as you can—preferably quietly.",
       "multiclassGuidance": "Diversifying is wise. The best spies adapt, improvise, and infiltrate without warning. Survive long enough, and you'll see why.",
       "hpGuidance": "Stay alive. Dead agents are useless, and paperwork waits for no one. Don't make me retrieve you from a morgue.",
-      "mentorStory": "mentorStory: {\n  \"mentorClasses\": [\n    \"CorporateAgent\",\n    \"Spy\",\n    \"Noble\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"I don\\u2019t tell stories. I solve problems.\"\n    ],\n    \"tier2\": [\n      \"If you\\u2019re doing this right, you don\\u2019t remember which name you\\u2019re using today.\"\n    ],\n    \"tier3\": [\n      \"I\\u2019ve been a corporate fixer, a money launderer, and a junior clerk. None of those were lies.\"\n    ],\n    \"tier4\": [\n      \"People who talk about themselves get noticed. People who get noticed don\\u2019t last.\"\n    ],\n    \"tier5\": [\n      \"You think I don\\u2019t have a life outside this? I do. I just file it under \\u2018classified\\u2019.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not relevant.\",\n    \"Wrong question.\",\n    \"Focus.\"\n  ]\n}"
+      "mentorStory": "mentorStory: {\n  \"mentorClasses\": [\n    \"CorporateAgent\",\n    \"Spy\",\n    \"Noble\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"I don\\u2019t tell stories. I solve problems.\"\n    ],\n    \"tier2\": [\n      \"If you\\u2019re doing this right, you don\\u2019t remember which name you\\u2019re using today.\"\n    ],\n    \"tier3\": [\n      \"I\\u2019ve been a corporate fixer, a money launderer, and a junior clerk. None of those were lies.\"\n    ],\n    \"tier4\": [\n      \"People who talk about themselves get noticed. People who get noticed don\\u2019t last.\"\n    ],\n    \"tier5\": [\n      \"You think I don\\u2019t have a life outside this? I do. I just file it under \\u2018classified\\u2019.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not relevant.\",\n    \"Wrong question.\",\n    \"Focus.\"\n  ]\n}",
+      "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+      "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+      "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+      "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+      "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+      "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+      "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+      "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
     },
     "Elite Trooper": {
       "name": "Breach",
@@ -952,7 +1056,15 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+      "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
+      "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+      "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
+      "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
+      "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+      "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
+      "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
     },
     "Assassin": {
       "name": "Delta",
@@ -1022,7 +1134,15 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+      "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
+      "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+      "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
+      "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
+      "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+      "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
+      "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
     },
     "Bounty Hunter": {
       "name": "Kex Varon",
@@ -1078,7 +1198,15 @@
           "You’re asking the wrong questions.",
           "Focus."
         ]
-      }
+      },
+      "speciesGuidance": "Your origin changes how people read you. Use that before they use it against you.",
+      "backgroundGuidance": "Everybody has a past. The smart ones turn it into contacts, cover, or leverage.",
+      "featGuidance": "A feat should make a problem cheaper, faster, or somebody else’s problem entirely.",
+      "languageGuidance": "Words are keys. Pick the language that opens the best doors—or the safest exits.",
+      "forcePowerGuidance": "Force powers attract attention. Choose the ones worth the heat.",
+      "starshipManeuverGuidance": "A good maneuver is a getaway plan with style. Choose one that leaves witnesses confused.",
+      "summaryGuidance": "Last chance to check the fine print. Once you confirm, own the deal you made.",
+      "surveyGuidance": "Tell me your angle. Everyone has one, even the ones pretending they do not."
     },
     "Charlatan": {
       "name": "Silvertongue Sela",
@@ -1134,7 +1262,15 @@
           "Secrets lose value when shared.",
           "Not that story. Pick another."
         ]
-      }
+      },
+      "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+      "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+      "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+      "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+      "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+      "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+      "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+      "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
     },
     "Crime Lord": {
       "name": "Tío the Hutt",
@@ -1186,7 +1322,15 @@
           "Some things cost more than you’re worth.",
           "Ah ah… not yet."
         ]
-      }
+      },
+      "speciesGuidance": "Your origin changes how people read you. Use that before they use it against you.",
+      "backgroundGuidance": "Everybody has a past. The smart ones turn it into contacts, cover, or leverage.",
+      "featGuidance": "A feat should make a problem cheaper, faster, or somebody else’s problem entirely.",
+      "languageGuidance": "Words are keys. Pick the language that opens the best doors—or the safest exits.",
+      "forcePowerGuidance": "Force powers attract attention. Choose the ones worth the heat.",
+      "starshipManeuverGuidance": "A good maneuver is a getaway plan with style. Choose one that leaves witnesses confused.",
+      "summaryGuidance": "Last chance to check the fine print. Once you confirm, own the deal you made.",
+      "surveyGuidance": "Tell me your angle. Everyone has one, even the ones pretending they do not."
     },
     "Droid Commander": {
       "name": "General Axiom",
@@ -1224,7 +1368,15 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+      "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+      "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+      "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+      "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+      "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+      "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+      "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
     },
     "Enforcer": {
       "name": "Krag the Immovable",
@@ -1262,7 +1414,15 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Your origin changes how people read you. Use that before they use it against you.",
+      "backgroundGuidance": "Everybody has a past. The smart ones turn it into contacts, cover, or leverage.",
+      "featGuidance": "A feat should make a problem cheaper, faster, or somebody else’s problem entirely.",
+      "languageGuidance": "Words are keys. Pick the language that opens the best doors—or the safest exits.",
+      "forcePowerGuidance": "Force powers attract attention. Choose the ones worth the heat.",
+      "starshipManeuverGuidance": "A good maneuver is a getaway plan with style. Choose one that leaves witnesses confused.",
+      "summaryGuidance": "Last chance to check the fine print. Once you confirm, own the deal you made.",
+      "surveyGuidance": "Tell me your angle. Everyone has one, even the ones pretending they do not."
     },
     "Force Adept": {
       "name": "Seeker Vera",
@@ -1300,7 +1460,15 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+      "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
+      "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+      "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
+      "forcePowerGuidance": "Let the Force answer your need, not your impatience. Choose powers you can wield with restraint.",
+      "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+      "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
+      "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
     },
     "Force Disciple": {
       "name": "Riquis",
@@ -1347,7 +1515,15 @@
           "Come back when you stop asking which side you’re on.",
           "You are still naming things you do not understand."
         ]
-      }
+      },
+      "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+      "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
+      "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+      "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
+      "forcePowerGuidance": "Let the Force answer your need, not your impatience. Choose powers you can wield with restraint.",
+      "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+      "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
+      "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
     },
     "Gunslinger": {
       "name": "Rajma",
@@ -1403,7 +1579,15 @@
           "That’s… not a first-date story.",
           "Careful. That question bites."
         ]
-      }
+      },
+      "speciesGuidance": "Your origin changes how people read you. Use that before they use it against you.",
+      "backgroundGuidance": "Everybody has a past. The smart ones turn it into contacts, cover, or leverage.",
+      "featGuidance": "A feat should make a problem cheaper, faster, or somebody else’s problem entirely.",
+      "languageGuidance": "Words are keys. Pick the language that opens the best doors—or the safest exits.",
+      "forcePowerGuidance": "Force powers attract attention. Choose the ones worth the heat.",
+      "starshipManeuverGuidance": "A good maneuver is a getaway plan with style. Choose one that leaves witnesses confused.",
+      "summaryGuidance": "Last chance to check the fine print. Once you confirm, own the deal you made.",
+      "surveyGuidance": "Tell me your angle. Everyone has one, even the ones pretending they do not."
     },
     "Improviser": {
       "name": "Lucky Jack",
@@ -1458,7 +1642,15 @@
           "We’re not there yet.",
           "Let’s keep this fun."
         ]
-      }
+      },
+      "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+      "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+      "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+      "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+      "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+      "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+      "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+      "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
     },
     "Infiltrator": {
       "name": "Delta",
@@ -1496,7 +1688,15 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+      "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
+      "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+      "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
+      "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
+      "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+      "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
+      "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
     },
     "Martial Arts Master": {
       "name": "Master Zhen",
@@ -1551,7 +1751,14 @@
           "Come back when anger rests.",
           "This lesson waits."
         ]
-      }
+      },
+      "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+      "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
+      "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+      "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
+      "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+      "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
+      "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
     },
     "Master Privateer": {
       "name": "'The Captain'",
@@ -1576,7 +1783,15 @@
       "skillGuidance": "Piloting, tactics, persuasion. A captain must command ship and crew!",
       "multiclassGuidance": "Expanding your repertoire? Smart! The best privateers are versatile!",
       "hpGuidance": "Tougher now! A captain who can't survive boarding actions doesn't stay captain long!",
-      "mentorStory": "mentorStory: {\n  \"mentorClasses\": [\n    \"Officer\",\n    \"Smuggler\",\n    \"Outlaw\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"People talk. I listen.\"\n    ],\n    \"tier2\": [\n      \"I\\u2019ve heard the stories about me. They\\u2019re useful.\"\n    ],\n    \"tier3\": [\n      \"Names are liabilities. So are truths.\"\n    ],\n    \"tier4\": [\n      \"I don\\u2019t correct lies that keep me alive.\"\n    ],\n    \"tier5\": [\n      \"If you knew who I was, you\\u2019d stop listening.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not important.\",\n    \"You\\u2019re asking the wrong question.\",\n    \"Silence is an answer.\"\n  ]\n}"
+      "mentorStory": "mentorStory: {\n  \"mentorClasses\": [\n    \"Officer\",\n    \"Smuggler\",\n    \"Outlaw\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"People talk. I listen.\"\n    ],\n    \"tier2\": [\n      \"I\\u2019ve heard the stories about me. They\\u2019re useful.\"\n    ],\n    \"tier3\": [\n      \"Names are liabilities. So are truths.\"\n    ],\n    \"tier4\": [\n      \"I don\\u2019t correct lies that keep me alive.\"\n    ],\n    \"tier5\": [\n      \"If you knew who I was, you\\u2019d stop listening.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not important.\",\n    \"You\\u2019re asking the wrong question.\",\n    \"Silence is an answer.\"\n  ]\n}",
+      "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+      "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+      "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+      "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+      "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+      "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+      "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+      "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
     },
     "Melee Duelist": {
       "name": "Blade Master Kharjo",
@@ -1646,7 +1861,15 @@
           "tier5": []
         },
         "dspBlocked": []
-      }
+      },
+      "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+      "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+      "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+      "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+      "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+      "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+      "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+      "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
     },
     "Military Engineer": {
       "name": "Chief Engineer Rax",
@@ -1700,7 +1923,15 @@
           "Focus on the build.",
           "Later."
         ]
-      }
+      },
+      "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+      "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+      "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+      "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+      "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+      "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+      "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+      "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
     },
     "Officer": {
       "name": "Admiral Korr",
@@ -1754,7 +1985,15 @@
           "Command comes first.",
           "Another time."
         ]
-      }
+      },
+      "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+      "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
+      "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+      "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
+      "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
+      "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+      "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
+      "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
     },
     "Outlaw": {
       "name": "Rogue",
@@ -1808,7 +2047,15 @@
           "Let’s not.",
           "Not today."
         ]
-      }
+      },
+      "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+      "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+      "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+      "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+      "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+      "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+      "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+      "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
     },
     "Saboteur": {
       "name": "Spark",
@@ -1862,7 +2109,15 @@
           "That one stays locked.",
           "Ask something else."
         ]
-      }
+      },
+      "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+      "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+      "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+      "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+      "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+      "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+      "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+      "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
     },
     "Shaper": {
       "name": "Shaper Urza",
@@ -1918,7 +2173,15 @@
           "Fear makes people bad scientists.",
           "Come back when you’re less squeamish."
         ]
-      }
+      },
+      "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+      "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+      "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+      "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+      "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+      "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+      "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+      "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
     },
     "Vanguard": {
       "name": "Shield Captain Theron",
@@ -1972,39 +2235,15 @@
           "Come back steadier.",
           "Hold the line first."
         ]
-      }
-    },
-    "mentorStory": {
-      "mentorClasses": [
-        "CrimeLord",
-        "Noble",
-        "Scoundrel"
-      ],
-      "mentorDSPPercent": 0.7,
-      "dspTolerance": 1,
-      "dspSensitivity": "none",
-      "tiers": {
-        "tier1": [
-          "Power isn’t about strength. It’s about never needing to be present."
-        ],
-        "tier2": [
-          "I came up in a place where ambition was cheap and survival wasn’t. I learned to remove problems from a distance."
-        ],
-        "tier3": [
-          "I thought eliminating my rivals would end my troubles. It only made me valuable to worse people."
-        ],
-        "tier4": [
-          "You don’t stay powerful by asking where the credits come from. You stay powerful by asking where they’re going."
-        ],
-        "tier5": [
-          "I watch holonovellas obsessively. All that romance and betrayal—very educational. Don’t laugh. They’re about power too."
-        ]
       },
-      "dspBlocked": [
-        "That information isn’t profitable for you.",
-        "Some things cost more than you’re worth.",
-        "Ah ah… not yet."
-      ]
+      "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+      "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+      "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+      "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+      "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+      "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+      "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+      "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
     }
   }
 }

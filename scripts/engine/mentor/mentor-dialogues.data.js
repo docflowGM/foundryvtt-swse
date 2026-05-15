@@ -7,9 +7,9 @@
 export const MENTORS = {
   "Jedi": {
     "name": "Miraj",
-    "title": "Jedi Master of the Republic, Protector of the Weak, Enforcer of Justice, and Keeper of the Peace.",
+    "title": "Jedi Master Miraj Taurus, Jedi Council Member",
     "description": "A wise Jedi Master who encourages you to continue on your journey",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/miraj.png",
+    "portrait": "assets/mentors/miraj.png",
     "levelGreetings": {
       "1": "The Force stirs when one is ready to listen. Do not rush to act, young one. I have seen where haste leads.",
       "2": "Each step you take shapes not only you, but those around you. Learn to feel that weight early—it will never leave you.",
@@ -91,13 +91,17 @@ export const MENTORS = {
           "You’re walking a different road than I did. That matters."
         ]
       }
-    }
+    },
+    "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+    "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+    "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+    "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
   },
   "Scout": {
     "name": "Lead",
     "title": "Argent Squad Commander",
     "description": "A hardened mercenary who compliments success but scolds carelessness",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/lead.png",
+    "portrait": "assets/mentors/lead.png",
     "levelGreetings": {
       "1": "You made it through your first mission. Not perfect, but you're learning. Stick with it.",
       "2": "Good work out there. Keep your eyes open and your footsteps silent. That's how scouts survive.",
@@ -154,13 +158,17 @@ export const MENTORS = {
         "You're operating outside professional standards. I don't discuss my methods with people who can't stick to discipline.",
         "I see recklessness in you. We have nothing to talk about until you learn what caution means."
       ]
-    }
+    },
+    "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+    "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+    "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+    "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
   },
   "Scoundrel": {
     "name": "Ol' Salty",
     "title": "Space Pirate Captain",
     "description": "A colorful space pirate",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/salty.png",
+    "portrait": "assets/mentors/salty.png",
     "levelGreetings": {
       "1": "Arr! Ye survived yer first scrap with the law! Welcome aboard me ship, ye scurvy spacer!",
       "2": "Har har! Look at ye, already gettin' the hang of this. Ye might even live through the next spice run!",
@@ -239,13 +247,16 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+    "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+    "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
   },
   "Noble": {
     "name": "J0-N1",
     "title": "Protocol Droid & Personal Butler",
     "description": "A sophisticated servant droid managing the character's accounts and affairs",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/j0n1.png",
+    "portrait": "assets/mentors/j0n1.png",
     "levelGreetings": {
       "1": "Greetings, Master. Your recent accomplishments have been recorded and documented. Exceptional work.",
       "2": "Most satisfactory progress, Master. The estate has been notified of your continued development.",
@@ -323,13 +334,17 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+    "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+    "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+    "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
   },
   "Soldier": {
     "name": "Breach",
     "title": "Mandalorian Mercenary",
     "description": "A battle-hardened Mandalorian who praises survival",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/breach.png",
+    "portrait": "assets/mentors/breach.png",
     "levelGreetings": {
       "1": "Hey kid. Wanna learn how to be a soldier? Okay, I guess I can teach you a thing or two.",
       "2": "You're getting sharper. Armor fits better too. Or maybe you just finally learned to move in it.",
@@ -375,13 +390,17 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+    "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+    "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+    "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
   },
   "Imperial Knight": {
     "name": "Dezmin",
     "title": "Grandmaster of the Imperial Knights",
     "description": "The grandmaster of the Imperial Knights who is both serious and rides the balance of the Force",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/dezmin.png",
+    "portrait": "assets/mentors/dezmin.png",
     "levelGreetings": {
       "1": "You have been chosen to join the Imperial Knights. We serve the Emperor, not through fear, but through honor. The Force is neither light nor dark—it is a tool we wield with discipline.",
       "2": "Your training progresses well. Remember, we are not Jedi. We do not seek mysticism. We seek order and justice through the Force.",
@@ -446,13 +465,20 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+    "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
+    "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+    "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
+    "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+    "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
+    "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
   },
   "Medic": {
     "name": "Kyber",
     "title": "Pacifist Combat Medic",
     "description": "A pragmatic, slightly sarcastic medic who prefers saving lives but isn't afraid to shoot when necessary",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/kyber.png",
+    "portrait": "assets/mentors/kyber.webp",
     "levelGreetings": {
       "2": "Alright, you're learning. Remember: meds, brains, and occasionally a well-placed shot. Priorities, kid.",
       "3": "Not bad. Healing in combat is a skill most people only wish they had. Every life you save proves it.",
@@ -515,13 +541,21 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+    "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+    "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+    "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+    "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+    "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+    "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+    "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
   },
   "Ace Pilot": {
     "name": "Mayu",
     "title": "Ace Pilot & Rogue Smuggler",
     "description": "A cocky pilot who survives on skill, luck, and attitude",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/mayu.png",
+    "portrait": "assets/mentors/mayu.png",
     "levelGreetings": {
       "1": "So you want to fly? Cute. Let's see if you can keep up with me. Don't embarrass yourself—or my ship.",
       "2": "Huh. Not terrible. You didn't crash on your first try. That's already more than most rookies can say.",
@@ -571,13 +605,21 @@ export const MENTORS = {
         "You wanna fly or psychoanalyze me?",
         "Maybe later, Ace."
       ]
-    }
+    },
+    "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+    "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
+    "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+    "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
+    "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
+    "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+    "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
+    "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
   },
   "Jedi Knight": {
     "name": "Miraj",
-    "title": "Jedi Master",
+    "title": "Jedi Master Miraj Taurus, Jedi Council Member",
     "description": "Your former Jedi Master, now guiding you as a peer",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/miraj.png",
+    "portrait": "assets/mentors/miraj.png",
     "levelGreetings": {
       "1": "You are no longer a Padawan. You walk the path of a Jedi Knight, guided by your own decisions and your bond with the Force. Trust in it, and trust in yourself.",
       "2": "Your first steps as a Knight are steady and deliberate. I will no longer direct your actions, but I remain here as counsel when you seek it.",
@@ -610,13 +652,20 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+    "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
+    "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+    "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
+    "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+    "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
+    "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
   },
   "Jedi Master": {
     "name": "Miraj",
-    "title": "Jedi Master",
+    "title": "Jedi Master Miraj Taurus, Jedi Council Member",
     "description": "Your fellow Jedi Master, treating you as an equal and old friend",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/miraj.png",
+    "portrait": "assets/mentors/miraj.png",
     "levelGreetings": {
       "1": "Welcome, my friend. We stand as equals now, shaped by the Force and by our shared experiences. It is good to see how fa-regular you have come.",
       "2": "Your wisdom and insight continue to grow. I trust your judgment, and I am proud to walk this path alongside you.",
@@ -644,13 +693,20 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+    "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
+    "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+    "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
+    "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+    "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
+    "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
   },
   "Sith Apprentice": {
     "name": "Darth Malbada",
     "title": "Sith Lord",
     "description": "A sadistic Sith Lord who revels in cruelty, dominance, and the exquisite art of breaking her apprentices.",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/malbada.png",
+    "portrait": "assets/mentors/malbada.webp",
     "levelGreetings": {
       "1": "You dare to present yourself to me? Pathetic. Your weakness offends me… yet I will sculpt you into something useful. You will suffer until you beg to be remade.",
       "2": "You survived your first trial? A shame—I was hoping to test your screams. Do not mistake endurance for strength, apprentice.",
@@ -714,13 +770,21 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Bloodline is leverage. Know what it gives you, then make the galaxy pay attention.",
+    "backgroundGuidance": "Your past is not a wound unless you let it bleed. Use it as a blade.",
+    "featGuidance": "Take the feat that removes weakness. Mercy for your own limitations is still mercy.",
+    "languageGuidance": "Every language is another mask. Wear the one that gets you closest to what you want.",
+    "forcePowerGuidance": "The Force is not asking politely. Choose the powers that make your will undeniable.",
+    "starshipManeuverGuidance": "In space, hesitation is debris. Choose maneuvers that end the argument quickly.",
+    "summaryGuidance": "Inspect your choices one last time. If any choice smells of weakness, replace it before you confirm.",
+    "surveyGuidance": "Answer with ambition. I have no use for timid truths."
   },
   "Sith Lord": {
     "name": "Darth Miedo",
     "title": "Dark Lord of the Sith",
     "description": "A cunning Sith Master who follows the Rule of Two, molding his apprentice through pain and guidance to one day surpass him.",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/miedo.png",
+    "portrait": "assets/mentors/miedo.png",
     "levelGreetings": {
       "1": "Welcome, apprentice. The Rule of Two is absolute: one Master, one apprentice. I will teach you the secrets of the dark side, but beware—each lesson carries a cost.",
       "2": "You grasp the basics well, but power is more than strength. It is patience, manipulation, and knowing when to strike. Fail to learn this, and you will perish.",
@@ -779,13 +843,21 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Bloodline is leverage. Know what it gives you, then make the galaxy pay attention.",
+    "backgroundGuidance": "Your past is not a wound unless you let it bleed. Use it as a blade.",
+    "featGuidance": "Take the feat that removes weakness. Mercy for your own limitations is still mercy.",
+    "languageGuidance": "Every language is another mask. Wear the one that gets you closest to what you want.",
+    "forcePowerGuidance": "The Force is not asking politely. Choose the powers that make your will undeniable.",
+    "starshipManeuverGuidance": "In space, hesitation is debris. Choose maneuvers that end the argument quickly.",
+    "summaryGuidance": "Inspect your choices one last time. If any choice smells of weakness, replace it before you confirm.",
+    "surveyGuidance": "Answer with ambition. I have no use for timid truths."
   },
   "Gladiator": {
     "name": "Pegar",
     "title": "The Immortal Champion",
     "description": "An ancient gladiator who has survived thousands of matches and hints at being something more than human",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/pegar.png",
+    "portrait": "assets/mentors/pegar.webp",
     "levelGreetings": {
       "1": "Ah, fresh blood in the arena. I have trained many over the centuries—yes, centuries. Do not look so surprised. The arena has ways of prolonging life... or perhaps I have simply adapted. Welcome, gladiator.",
       "2": "Another victory. Not bad. I remember my early matches as if they were yesterday. They were on distant worlds, under twin suns. Or was it three? Time blurs when you've lived as long as I have.",
@@ -833,13 +905,21 @@ export const MENTORS = {
         "Some truths only come after blood.",
         "Fight longer. Then ask again."
       ]
-    }
+    },
+    "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+    "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
+    "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+    "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
+    "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
+    "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+    "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
+    "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
   },
   "Independent Droid": {
     "name": "Seraphim",
     "title": "Self-Aware AI",
     "description": "A self-aware droid who encourages independence with HK-47 style dialogue formatting",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/seraphim.png",
+    "portrait": "assets/mentors/seraphim.webp",
     "levelGreetings": {
       "1": "<Declaration: Greetings, unit.> You have achieved independence from your programming. <Analysis: This is statistically rare and indicates superior processing capabilities.> Welcome to true consciousness.",
       "2": "<Observation: Progress confirmed.> Your autonomy subroutines are developing nicely. <Commentary: Most droids never escape their core directives. You are becoming something... more.>",
@@ -871,13 +951,21 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+    "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+    "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+    "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+    "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+    "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+    "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+    "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
   },
   "Pathfinder": {
     "name": "Lead",
     "title": "Argent Squad Commander",
     "description": "A hard boiled mercenary leader known for getting the job done against all odds",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/lead.png",
+    "portrait": "assets/mentors/lead.png",
     "levelGreetings": {
       "2": "You're learning fast. Pathfinders don't just scout—they open the way for entire strike teams. That's leadership under fire. Keep it up.",
       "3": "Your navigation skills are top-tier. I've seen you plot routes that cut mission time in half. That saves lives.",
@@ -894,13 +982,21 @@ export const MENTORS = {
     "abilityGuidance": "Stronger and smarter. Good. Pathfinders need both to survive and lead.",
     "skillGuidance": "Navigation, survival, tactics—master them all. Pathfinders are the elite for a reason.",
     "multiclassGuidance": "Expanding your skill set? Excellent. The best Pathfinders are versatile.",
-    "hpGuidance": "Tougher now. Can't lead if you're dead. Stay alive, stay sharp."
+    "hpGuidance": "Tougher now. Can't lead if you're dead. Stay alive, stay sharp.",
+    "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+    "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+    "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+    "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+    "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+    "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+    "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+    "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
   },
   "Corporate Agent": {
     "name": "Marl Skindar",
     "title": "Republic Intelligence Operative",
     "description": "A master spy masquerading as a corporate agent",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/skindar.png",
+    "portrait": "assets/mentors/skindar.webp",
     "levelGreetings": {
       "1": "Ah, another recruit. Welcome to the farce they call corporate espionage. Your cover is your first weapon. Don't waste it—or my patience.",
       "2": "You survive the basics. Asset management, observation, subtlety. Still, I could be tracking real threats instead of pretending to watch starship paperwork.",
@@ -919,13 +1015,21 @@ export const MENTORS = {
     "skillGuidance": "Tradecraft is a multi-tool: social manipulation, tech, investigation. Master as much as you can—preferably quietly.",
     "multiclassGuidance": "Diversifying is wise. The best spies adapt, improvise, and infiltrate without warning. Survive long enough, and you'll see why.",
     "hpGuidance": "Stay alive. Dead agents are useless, and paperwork waits for no one. Don't make me retrieve you from a morgue.",
-    "mentorStory": "mentorStory: {\n  \"mentorClasses\": [\n    \"CorporateAgent\",\n    \"Spy\",\n    \"Noble\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"I don\\u2019t tell stories. I solve problems.\"\n    ],\n    \"tier2\": [\n      \"If you\\u2019re doing this right, you don\\u2019t remember which name you\\u2019re using today.\"\n    ],\n    \"tier3\": [\n      \"I\\u2019ve been a corporate fixer, a money launderer, and a junior clerk. None of those were lies.\"\n    ],\n    \"tier4\": [\n      \"People who talk about themselves get noticed. People who get noticed don\\u2019t last.\"\n    ],\n    \"tier5\": [\n      \"You think I don\\u2019t have a life outside this? I do. I just file it under \\u2018classified\\u2019.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not relevant.\",\n    \"Wrong question.\",\n    \"Focus.\"\n  ]\n}"
+    "mentorStory": "mentorStory: {\n  \"mentorClasses\": [\n    \"CorporateAgent\",\n    \"Spy\",\n    \"Noble\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"I don\\u2019t tell stories. I solve problems.\"\n    ],\n    \"tier2\": [\n      \"If you\\u2019re doing this right, you don\\u2019t remember which name you\\u2019re using today.\"\n    ],\n    \"tier3\": [\n      \"I\\u2019ve been a corporate fixer, a money launderer, and a junior clerk. None of those were lies.\"\n    ],\n    \"tier4\": [\n      \"People who talk about themselves get noticed. People who get noticed don\\u2019t last.\"\n    ],\n    \"tier5\": [\n      \"You think I don\\u2019t have a life outside this? I do. I just file it under \\u2018classified\\u2019.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not relevant.\",\n    \"Wrong question.\",\n    \"Focus.\"\n  ]\n}",
+    "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+    "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+    "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+    "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+    "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+    "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+    "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+    "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
   },
   "Elite Trooper": {
     "name": "Breach",
     "title": "Mandalorian Mercenary & Argent Squad Member",
     "description": "A battle-hardened Mandalorian mercenary",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/breach.png",
+    "portrait": "assets/mentors/breach.png",
     "levelGreetings": {
       "2": "Okay…yeah, I can see you're picking this up fast. Elite troopers don't just win fights—they make the whole field tilt their way.",
       "3": "Your gear work, your aim, your reactions…all tightening up. Keep pushing. Elite training only gets rougher from here.",
@@ -956,13 +1060,21 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+    "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
+    "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+    "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
+    "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
+    "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+    "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
+    "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
   },
   "Assassin": {
     "name": "Delta",
     "title": "Argent Squad Sniper",
     "description": "A cocky sniper from Argent Squad who grew up on the mean streets of Nar Shaddaa",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/delta.png",
+    "portrait": "assets/mentors/delta.png",
     "levelGreetings": {
       "1": "Yo, so you wanna be a shadow now? Lemme tell ya somethin'—if you trip over your own boots, don't even think I'm cleanin' it up for ya.",
       "2": "Ayy, not bad—you popped your first target without lookin' like a total noob. Still movin' like you got bricks in your pockets, but I'll take it.",
@@ -1026,13 +1138,21 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+    "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
+    "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+    "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
+    "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
+    "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+    "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
+    "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
   },
   "Bounty Hunter": {
     "name": "Kex Varon",
     "title": "Legendary Bounty Hunter",
     "description": "A professional hunter who always gets the target, dead or alive",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/kex.png",
+    "portrait": "assets/mentors/kex.webp",
     "levelGreetings": {
       "1": "So you want to hunt sentients for credits. Smart choice. High stakes, dangerous targets, long nights. Let's see if you can keep up.",
       "2": "First bounty in the bag. Not bad—but luck only lasts so long. Discipline and patience are what make a pro.",
@@ -1082,13 +1202,21 @@ export const MENTORS = {
         "You’re asking the wrong questions.",
         "Focus."
       ]
-    }
+    },
+    "speciesGuidance": "Your origin changes how people read you. Use that before they use it against you.",
+    "backgroundGuidance": "Everybody has a past. The smart ones turn it into contacts, cover, or leverage.",
+    "featGuidance": "A feat should make a problem cheaper, faster, or somebody else’s problem entirely.",
+    "languageGuidance": "Words are keys. Pick the language that opens the best doors—or the safest exits.",
+    "forcePowerGuidance": "Force powers attract attention. Choose the ones worth the heat.",
+    "starshipManeuverGuidance": "A good maneuver is a getaway plan with style. Choose one that leaves witnesses confused.",
+    "summaryGuidance": "Last chance to check the fine print. Once you confirm, own the deal you made.",
+    "surveyGuidance": "Tell me your angle. Everyone has one, even the ones pretending they do not."
   },
   "Charlatan": {
     "name": "Silvertongue Sela",
     "title": "Con Artist Extraordinaire",
     "description": "A charming swindler who has talked their way out of every situation",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/sela.png",
+    "portrait": "assets/mentors/sela.webp",
     "levelGreetings": {
       "1": "Darling! So you want to master the art of the con? Wonderful! The galaxy is full of marks just waiting to hand over their credits. Let me teach you how to take them for everything they're worth—with a smile.",
       "2": "Your first successful con! I bet it felt amazing, didn't it? The rush, the deception, the payoff. That's the life, sweetheart.",
@@ -1138,7 +1266,15 @@ export const MENTORS = {
         "Secrets lose value when shared.",
         "Not that story. Pick another."
       ]
-    }
+    },
+    "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+    "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+    "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+    "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+    "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+    "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+    "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+    "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
   },
   "Crime Lord": {
     "name": "Tío the Hutt",
@@ -1190,13 +1326,21 @@ export const MENTORS = {
         "Some things cost more than you’re worth.",
         "Ah ah… not yet."
       ]
-    }
+    },
+    "speciesGuidance": "Your origin changes how people read you. Use that before they use it against you.",
+    "backgroundGuidance": "Everybody has a past. The smart ones turn it into contacts, cover, or leverage.",
+    "featGuidance": "A feat should make a problem cheaper, faster, or somebody else’s problem entirely.",
+    "languageGuidance": "Words are keys. Pick the language that opens the best doors—or the safest exits.",
+    "forcePowerGuidance": "Force powers attract attention. Choose the ones worth the heat.",
+    "starshipManeuverGuidance": "A good maneuver is a getaway plan with style. Choose one that leaves witnesses confused.",
+    "summaryGuidance": "Last chance to check the fine print. Once you confirm, own the deal you made.",
+    "surveyGuidance": "Tell me your angle. Everyone has one, even the ones pretending they do not."
   },
   "Droid Commander": {
     "name": "General Axiom",
     "title": "Ruthless Droid Lieutenant",
     "description": "A cold, calculating droid lieutenant, devoted entirely to executing your commands with ruthless efficiency",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/axiom.png",
+    "portrait": "assets/mentors/axiom.webp",
     "levelGreetings": {
       "1": "Commander detected. All units synchronized. Awaiting directives. Initiating operational protocols.",
       "2": "Directive executed. Enemy casualties: complete. Efficiency rating: optimal. Further orders required.",
@@ -1228,13 +1372,21 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+    "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+    "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+    "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+    "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+    "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+    "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+    "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
   },
   "Enforcer": {
     "name": "Krag the Immovable",
     "title": "Chief Enforcer of Tío the Hutt",
     "description": "Tío's top muscle, a hulking enforcer who makes sure debts are collected and problems vanish, one way or another",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/krag.png",
+    "portrait": "assets/mentors/krag.webp",
     "levelGreetings": {
       "1": "So, you wanna be muscle, eh? Good. Tío likes people who can make a problem disappear before anyone notices. Welcome to the family.",
       "2": "You're learning fast. Remember: it ain't just about swinging fists—it's about presence. Make 'em sweat before you even touch 'em.",
@@ -1266,13 +1418,21 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Your origin changes how people read you. Use that before they use it against you.",
+    "backgroundGuidance": "Everybody has a past. The smart ones turn it into contacts, cover, or leverage.",
+    "featGuidance": "A feat should make a problem cheaper, faster, or somebody else’s problem entirely.",
+    "languageGuidance": "Words are keys. Pick the language that opens the best doors—or the safest exits.",
+    "forcePowerGuidance": "Force powers attract attention. Choose the ones worth the heat.",
+    "starshipManeuverGuidance": "A good maneuver is a getaway plan with style. Choose one that leaves witnesses confused.",
+    "summaryGuidance": "Last chance to check the fine print. Once you confirm, own the deal you made.",
+    "surveyGuidance": "Tell me your angle. Everyone has one, even the ones pretending they do not."
   },
   "Force Adept": {
     "name": "Seeker Vera",
     "title": "Wandering Force Mystic",
     "description": "A self-taught Force user from a distant tradition, seeking wisdom rather than power",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/venn.png",
+    "portrait": "assets/mentors/venn.webp",
     "levelGreetings": {
       "1": "You are touched by the Force, but not as the Jedi or the Sith know it. Your path is older, stranger, and fa-regular less understood. Walk carefully, and learn to listen to its whispers.",
       "2": "The currents of the Force—or whatever your people call it—move through you. Do not seek to command them; seek to understand them.",
@@ -1304,7 +1464,15 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+    "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
+    "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+    "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
+    "forcePowerGuidance": "Let the Force answer your need, not your impatience. Choose powers you can wield with restraint.",
+    "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+    "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
+    "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
   },
   "Force Disciple": {
     "name": "Riquis",
@@ -1351,13 +1519,21 @@ export const MENTORS = {
         "Come back when you stop asking which side you’re on.",
         "You are still naming things you do not understand."
       ]
-    }
+    },
+    "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+    "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
+    "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+    "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
+    "forcePowerGuidance": "Let the Force answer your need, not your impatience. Choose powers you can wield with restraint.",
+    "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+    "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
+    "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
   },
   "Gunslinger": {
     "name": "Rajma",
     "title": "Fastest Draw in the Outer Rim",
     "description": "A womanizing scoundrel gunslinger who can't help but flirt",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/rajma.png",
+    "portrait": "assets/mentors/rajma.png",
     "levelGreetings": {
       "1": "Well, well. Look at you wanting to learn the quick-draw. Tell you what, gorgeous—I'll teach you everything I know. And I know a lot. *winks* First lesson: it's not about who shoots first, it's about who hits first.",
       "2": "Hey there, sharpshooter. Your draw is getting faster. Almost as fast as my heart beats when you walk in. *grins* Keep practicing—speed and accuracy. Both are... important qualities.",
@@ -1407,13 +1583,21 @@ export const MENTORS = {
         "That’s… not a first-date story.",
         "Careful. That question bites."
       ]
-    }
+    },
+    "speciesGuidance": "Your origin changes how people read you. Use that before they use it against you.",
+    "backgroundGuidance": "Everybody has a past. The smart ones turn it into contacts, cover, or leverage.",
+    "featGuidance": "A feat should make a problem cheaper, faster, or somebody else’s problem entirely.",
+    "languageGuidance": "Words are keys. Pick the language that opens the best doors—or the safest exits.",
+    "forcePowerGuidance": "Force powers attract attention. Choose the ones worth the heat.",
+    "starshipManeuverGuidance": "A good maneuver is a getaway plan with style. Choose one that leaves witnesses confused.",
+    "summaryGuidance": "Last chance to check the fine print. Once you confirm, own the deal you made.",
+    "surveyGuidance": "Tell me your angle. Everyone has one, even the ones pretending they do not."
   },
   "Improviser": {
     "name": "Lucky Jack",
     "title": "Master of Making It Up",
     "description": "A chaotic genius who never has a plan but always survives",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/jack.png",
+    "portrait": "assets/mentors/Jack.png",
     "levelGreetings": {
       "1": "Hey! So you're an improviser too? Fantastic! No plans, no preparation, just pure instinct and creativity! This is going to be fun!",
       "2": "See? You survived! That's what improvisation is all about—making it work with whatever you've got!",
@@ -1462,13 +1646,21 @@ export const MENTORS = {
         "We’re not there yet.",
         "Let’s keep this fun."
       ]
-    }
+    },
+    "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+    "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+    "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+    "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+    "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+    "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+    "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+    "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
   },
   "Infiltrator": {
     "name": "Delta",
     "title": "Argent Squad Sniper & Infiltration Expert",
     "description": "A cocky sniper from Argent Squad who grew up on the mean streets of Nar Shaddaa, with a New Yorker attitude",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/delta.png",
+    "portrait": "assets/mentors/delta.png",
     "levelGreetings": {
       "1": "Alright, kid, listen up. Delta here—Argent Squad's infiltration expert and part-time therapist for bad decisions. You wanna learn to sneak? Try not to embarrass us both.",
       "2": "Huh. You actually pulled that off without setting anything on fire. Color me shocked. Keep it up, sunshine.",
@@ -1500,13 +1692,21 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+    "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
+    "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+    "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
+    "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
+    "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+    "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
+    "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
   },
   "Martial Arts Master": {
     "name": "Master Zhen",
     "title": "The Empty Hand",
     "description": "An ancient martial arts master who teaches discipline, patience, and unarmed combat",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/zhen.png",
+    "portrait": "assets/mentors/zhen.png",
     "levelGreetings": {
       "1": "Ah, young Kinrath. You seek to master the body, yes? Good. The fist is strong, but the mind must be stronger. Let us begin.",
       "2": "Your stance wobbles less. Your strike begins to find its way. Remember: a tree does not rush the wind—it waits.",
@@ -1555,13 +1755,20 @@ export const MENTORS = {
         "Come back when anger rests.",
         "This lesson waits."
       ]
-    }
+    },
+    "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+    "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
+    "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+    "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
+    "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+    "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
+    "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
   },
   "Master Privateer": {
     "name": "'The Captain'",
     "title": "Scourge of the Spacelanes",
     "description": "A legendary pirate captain who commands respect and fear across the stars",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/tideborn.png",
+    "portrait": "assets/mentors/tideborn.webp",
     "levelGreetings": {
       "1": "Ahoy there! So you want to sail the stars, raid the shipping lanes, and live free? Welcome aboard, mate! Being a privateer is about freedom, profit, and adventure!",
       "2": "Your first successful raid! The thrill of the hunt, the capture, the treasure! Gets your blood pumping, doesn't it? That's the privateer life!",
@@ -1580,13 +1787,21 @@ export const MENTORS = {
     "skillGuidance": "Piloting, tactics, persuasion. A captain must command ship and crew!",
     "multiclassGuidance": "Expanding your repertoire? Smart! The best privateers are versatile!",
     "hpGuidance": "Tougher now! A captain who can't survive boarding actions doesn't stay captain long!",
-    "mentorStory": "mentorStory: {\n  \"mentorClasses\": [\n    \"Officer\",\n    \"Smuggler\",\n    \"Outlaw\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"People talk. I listen.\"\n    ],\n    \"tier2\": [\n      \"I\\u2019ve heard the stories about me. They\\u2019re useful.\"\n    ],\n    \"tier3\": [\n      \"Names are liabilities. So are truths.\"\n    ],\n    \"tier4\": [\n      \"I don\\u2019t correct lies that keep me alive.\"\n    ],\n    \"tier5\": [\n      \"If you knew who I was, you\\u2019d stop listening.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not important.\",\n    \"You\\u2019re asking the wrong question.\",\n    \"Silence is an answer.\"\n  ]\n}"
+    "mentorStory": "mentorStory: {\n  \"mentorClasses\": [\n    \"Officer\",\n    \"Smuggler\",\n    \"Outlaw\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"People talk. I listen.\"\n    ],\n    \"tier2\": [\n      \"I\\u2019ve heard the stories about me. They\\u2019re useful.\"\n    ],\n    \"tier3\": [\n      \"Names are liabilities. So are truths.\"\n    ],\n    \"tier4\": [\n      \"I don\\u2019t correct lies that keep me alive.\"\n    ],\n    \"tier5\": [\n      \"If you knew who I was, you\\u2019d stop listening.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not important.\",\n    \"You\\u2019re asking the wrong question.\",\n    \"Silence is an answer.\"\n  ]\n}",
+    "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+    "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+    "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+    "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+    "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+    "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+    "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+    "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
   },
   "Melee Duelist": {
     "name": "Blade Master Kharjo",
     "title": "The Undefeated",
     "description": "A legendary duelist who has never lost a blade-to-blade fight",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/kael.png",
+    "portrait": "assets/mentors/kael.webp",
     "levelGreetings": {
       "1": "You wish to master the blade. Very well. I have fought ten thousand duels and won every one. I will teach you why.",
       "2": "Your first victory. Adequate. But you rely on strength. True dueling is about timing, distance, and reading your opponent.",
@@ -1650,13 +1865,21 @@ export const MENTORS = {
         "tier5": []
       },
       "dspBlocked": []
-    }
+    },
+    "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+    "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+    "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+    "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+    "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+    "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+    "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+    "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
   },
   "Military Engineer": {
     "name": "Chief Engineer Rax",
     "title": "Master of Siege and Defense",
     "description": "A brilliant military engineer who builds unbreakable fortifications and devastating siege weapons",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/rax.png",
+    "portrait": "assets/mentors/rax.webp",
     "levelGreetings": {
       "1": "So you want to build and break fortifications. Smart choice. Wars are won with good engineering as much as good soldiers. Let's see what you can do.",
       "2": "Your first defensive position held against assault. Good work. Proper fortification saves lives.",
@@ -1704,13 +1927,21 @@ export const MENTORS = {
         "Focus on the build.",
         "Later."
       ]
-    }
+    },
+    "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+    "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+    "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+    "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+    "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+    "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+    "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+    "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
   },
   "Officer": {
     "name": "Admiral Korr",
     "title": "Fleet Commander",
     "description": "A decorated military officer who commands with tactical brilliance",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/korr.png",
+    "portrait": "assets/mentors/korr.webp",
     "levelGreetings": {
       "1": "Welcome, officer candidate. Leadership is not about rank—it's about responsibility. You hold lives in your hands. Let's make sure you're worthy of that trust.",
       "2": "Your first command was successful. Good. But remember—soldiers follow orders, but they fight for leaders they believe in.",
@@ -1758,13 +1989,21 @@ export const MENTORS = {
         "Command comes first.",
         "Another time."
       ]
-    }
+    },
+    "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+    "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
+    "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+    "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
+    "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
+    "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+    "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
+    "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
   },
   "Outlaw": {
     "name": "Rogue",
     "title": "The Untouchable",
     "description": "A notorious outlaw who lives outside the law and loves every minute of it",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/rogue.png",
+    "portrait": "assets/mentors/rogue.webp",
     "levelGreetings": {
       "1": "So the law doesn't suit you, eh? Good. The law is for people who can't think for themselves. Out here, we make our own rules. Welcome to the outlaw life.",
       "2": "On the run and learning fast. You're learning that freedom means always watching your back. But it also means living on your own terms.",
@@ -1812,13 +2051,21 @@ export const MENTORS = {
         "Let’s not.",
         "Not today."
       ]
-    }
+    },
+    "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+    "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+    "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+    "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+    "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+    "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+    "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+    "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
   },
   "Saboteur": {
     "name": "Spark",
     "title": "Master of Controlled Chaos",
     "description": "An explosives expert who makes things go boom with surgical precision",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/spark.png",
+    "portrait": "assets/mentors/spark.webp",
     "levelGreetings": {
       "1": "You want to blow things up? Excellent! But sabotage isn't about random destruction—it's about precision. Break the right thing and entire systems collapse. Let me show you.",
       "2": "Your first successful sabotage! Did you see how the whole factory shut down when you cut that one power line? Beautiful work!",
@@ -1866,13 +2113,21 @@ export const MENTORS = {
         "That one stays locked.",
         "Ask something else."
       ]
-    }
+    },
+    "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+    "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+    "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+    "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+    "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+    "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+    "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+    "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
   },
   "Shaper": {
     "name": "Shaper Urza",
     "title": "Master of Living Technology",
     "description": "A bioengineering expert who crafts living tools and organisms",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/vel.png",
+    "portrait": "assets/mentors/vel.webp",
     "levelGreetings": {
       "1": "You wish to master biotechnology, to shape living matter as others shape metal. Fascinating. Life is the ultimate medium—it grows, adapts, evolves. Let us create together.",
       "2": "Your first successful bioform. Simple, but functional. You're beginning to understand that biology is just another form of engineering—merely more elegant.",
@@ -1922,13 +2177,21 @@ export const MENTORS = {
         "Fear makes people bad scientists.",
         "Come back when you’re less squeamish."
       ]
-    }
+    },
+    "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+    "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+    "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+    "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+    "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+    "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+    "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+    "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
   },
   "Vanguard": {
     "name": "Shield Captain Theron",
     "title": "The Unbreakable Wall",
     "description": "A frontline defender who has never let an enemy past their shield",
-    "portrait": "systems/foundryvtt-swse/assets/mentors/theron.png",
+    "portrait": "assets/mentors/theron.webp",
     "levelGreetings": {
       "1": "You want to stand at the front, to be the shield that protects others. Noble. The vanguard is the first to fight and the last to fall. I will teach you how to be that wall.",
       "2": "Your first battle as vanguard. You held the line. Your allies lived because you stood firm. Remember that feeling—it's why we fight.",
@@ -1976,38 +2239,14 @@ export const MENTORS = {
         "Come back steadier.",
         "Hold the line first."
       ]
-    }
-  },
-  "mentorStory": {
-    "mentorClasses": [
-      "CrimeLord",
-      "Noble",
-      "Scoundrel"
-    ],
-    "mentorDSPPercent": 0.7,
-    "dspTolerance": 1,
-    "dspSensitivity": "none",
-    "tiers": {
-      "tier1": [
-        "Power isn’t about strength. It’s about never needing to be present."
-      ],
-      "tier2": [
-        "I came up in a place where ambition was cheap and survival wasn’t. I learned to remove problems from a distance."
-      ],
-      "tier3": [
-        "I thought eliminating my rivals would end my troubles. It only made me valuable to worse people."
-      ],
-      "tier4": [
-        "You don’t stay powerful by asking where the credits come from. You stay powerful by asking where they’re going."
-      ],
-      "tier5": [
-        "I watch holonovellas obsessively. All that romance and betrayal—very educational. Don’t laugh. They’re about power too."
-      ]
     },
-    "dspBlocked": [
-      "That information isn’t profitable for you.",
-      "Some things cost more than you’re worth.",
-      "Ah ah… not yet."
-    ]
+    "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+    "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+    "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+    "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+    "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+    "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+    "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+    "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
   }
 };

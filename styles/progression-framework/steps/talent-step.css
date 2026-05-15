@@ -888,3 +888,59 @@
   overflow: hidden;
   border-radius: 6px;
 }
+
+
+/* Phase: progression talent-tree SVG renderer visibility. The renderer emits
+   prog-talent-card-node*, while older CSS only styled prog-talent-oval*. */
+.talent-graph-canvas .prog-talent-tree-svg {
+  width: 100%;
+  height: 100%;
+  min-width: 720px;
+  min-height: 420px;
+}
+
+.prog-talent-card-node {
+  cursor: pointer;
+  outline: none;
+}
+
+.prog-talent-card-node__shape {
+  fill: rgba(4, 18, 32, 0.94);
+  stroke: rgba(130, 230, 255, 0.72);
+  stroke-width: 2.5px;
+  filter: drop-shadow(0 0 8px rgba(0, 190, 255, 0.18));
+}
+
+.prog-talent-card-node__label {
+  fill: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  paint-order: stroke fill;
+  stroke: rgba(0, 0, 0, 0.85);
+  stroke-width: 3px;
+}
+
+.prog-talent-card-node__status {
+  fill: rgba(210, 245, 255, 0.9);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.prog-talent-card-node--owned .prog-talent-card-node__shape {
+  stroke: var(--prog-positive);
+}
+
+.prog-talent-card-node--available .prog-talent-card-node__shape {
+  stroke: var(--sheet-accent-primary);
+}
+
+.prog-talent-card-node--blocked .prog-talent-card-node__shape {
+  stroke: var(--prog-negative);
+  opacity: 0.72;
+}
+
+.prog-talent-card-node--focused .prog-talent-card-node__shape,
+.prog-talent-card-node:hover .prog-talent-card-node__shape,
+.prog-talent-card-node:focus-visible .prog-talent-card-node__shape {
+  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.28));
+}

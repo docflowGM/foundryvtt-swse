@@ -961,28 +961,26 @@ renderDetailsPanel(focusedItem) {
       contextKeys: Object.keys(pendingContext || {}).slice(0, 10),
     });
 
-    // Collect from backgroundSkillOptions if available (preferred source)
-    if (backgroundSkillOptions.length > 0) {
+    const classSkills = [
+      ...(Array.isArray(pendingContext.classSkills) ? pendingContext.classSkills : []),
+      ...(Array.isArray(pendingContext.ledger?.classSkills?.granted) ? pendingContext.ledger.classSkills.granted : []),
+    ];
+    classSkills.forEach(skill => {
+      if (skill) skillRefs.add(skill);
+    });
+
+    // Only resolved background choices become class skills. The old fallback added
+    // every allowed option, which made three-option backgrounds grant all three.
+    if (pendingContext.backgroundSkillOptionsResolved && backgroundSkillOptions.length > 0) {
       backgroundSkillOptions.forEach(skill => {
         if (skill) skillRefs.add(skill);
       });
     }
 
-    // Also collect from pending choices for completeness
-    // (in case backgroundSkillOptions wasn't populated for some reason)
     for (const choice of pendingChoices) {
       if (!choice) continue;
-
-      // If auto-resolved by house rule, all skills are granted
-      if (choice.isAutoResolved && choice.resolved && Array.isArray(choice.resolved)) {
+      if (Array.isArray(choice.resolved) && choice.resolved.length) {
         choice.resolved.forEach(skill => {
-          if (skill) skillRefs.add(skill);
-        });
-      }
-
-      // Also include all allowed skills so they can be presented as options
-      if (choice.allowedSkills && Array.isArray(choice.allowedSkills)) {
-        choice.allowedSkills.forEach(skill => {
           if (skill) skillRefs.add(skill);
         });
       }

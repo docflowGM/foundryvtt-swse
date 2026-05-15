@@ -816,6 +816,19 @@ export class ProgressionFinalizer {
       }
     }
 
+    const legacyAliases = {
+      feats: ['general-feat'],
+      talents: ['general-talent'],
+      forcePowers: ['force-powers'],
+      starshipManeuvers: ['starship-maneuvers', 'starship-maneuver'],
+    };
+    for (const [canonical, aliases] of Object.entries(legacyAliases)) {
+      if (!result.has(canonical)) continue;
+      for (const alias of aliases) {
+        if (!result.has(alias)) result.set(alias, result.get(canonical));
+      }
+    }
+
     return result;
   }
 

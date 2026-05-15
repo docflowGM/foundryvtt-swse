@@ -971,3 +971,8 @@
   }
 
   .p
+/* Phase: translation swipe cleanup. Once localized, only Basic remains. */
+.prog-intro-surface--localized [data-role="trans-src"],
+.prog-intro-surface--localized [data-role="translate-zone"] .arrow {
+  display: none !important;
+}

@@ -10,13 +10,21 @@ const STEP_CHOICE_TYPE = {
   'species': 'species',
   'class': 'class',
   'attribute': 'ability',
+  'ability': 'ability',
+  'ability-scores': 'ability',
+  'l1-survey': 'survey',
+  'background': 'background',
   'skills': 'skill',
+  'languages': 'language',
   'general-feat': 'feat',
   'class-feat': 'feat',
   'general-talent': 'talent',
   'class-talent': 'talent',
-  'force-powers': 'force',
-  'background': 'background',
+  'force-powers': 'force_power',
+  'starship-maneuver': 'starship_maneuver',
+  'starship-maneuvers': 'starship_maneuver',
+  'summary': 'summary',
+  'confirm': 'summary',
 };
 
 /**
@@ -102,7 +110,7 @@ export class MentorRail {
       await MentorTranslationIntegration.render({
         text,
         container: container.querySelector('[data-mentor-text]') ?? container,
-        mentor: shell.mentor.mentorId,
+        mentor: shell.mentor.name || shell.mentor.mentorId,
         onComplete: () => {
           // [DEBUG] Callback execution logging
           console.log(`[SWSE Mentor Debug] [Speak #${speakNum}] onComplete callback fired`, {
@@ -156,6 +164,15 @@ export class MentorRail {
       console.log('[SWSE Translation Debug] speakForStep() early return — no mentor object');
       return;
     }
+
+    const mentorKey = getMentorKey(mentorObj);
+    Object.assign(this.shell.mentor, {
+      id: mentorKey,
+      mentorId: mentorKey,
+      name: mentorObj.name || this.shell.mentor.name,
+      title: mentorObj.title || this.shell.mentor.title,
+      portrait: mentorObj.portrait || this.shell.mentor.portrait,
+    });
 
     const choiceType = STEP_CHOICE_TYPE[descriptor.stepId];
     const text = choiceType

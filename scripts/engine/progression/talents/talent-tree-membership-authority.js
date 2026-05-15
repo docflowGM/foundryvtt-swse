@@ -161,12 +161,21 @@ function tryRegistryScan(tree) {
  * FALLBACK 3: Resolve talentIds array directly
  */
 function tryTalentIdResolution(tree) {
-  if (!tree || !Array.isArray(tree.talentIds)) return [];
+  if (!tree) return [];
+
+  const talentRefs = [
+    ...(Array.isArray(tree.talentNames) ? tree.talentNames : []),
+    ...(Array.isArray(tree.talentIds) ? tree.talentIds : []),
+    ...(Array.isArray(tree.system?.talentNames) ? tree.system.talentNames : []),
+    ...(Array.isArray(tree.system?.talentIds) ? tree.system.talentIds : []),
+  ].filter(Boolean);
+
+  if (!talentRefs.length) return [];
 
   const resolved = [];
   const seenIds = new Set();
 
-  for (const talentId of tree.talentIds) {
+  for (const talentId of talentRefs) {
     if (!talentId) continue;
 
     // Try by ID
@@ -206,7 +215,7 @@ function emitDiagnostic(tree, methods) {
 
   SWSELogger.warn(
     `[TalentTreeMembershipAuthority] DIAGNOSTIC: Tree "${tree.name}" (id: ${tree.id}, sourceId: ${tree.sourceId || 'none'}) ` +
-    `resolved 0 talents. talentIds count: ${(tree.talentIds || []).length}. ` +
+    `resolved 0 talents. talent refs count: ${((tree.talentNames || []).length + (tree.talentIds || []).length)}. ` +
     `Methods tried: ${methods.join(', ')}. ` +
     `TalentRegistry total: ${TalentRegistry.count?.() || 0} talents.`
   );

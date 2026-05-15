@@ -1375,10 +1375,13 @@ export class IntroStep extends ProgressionStepPlugin {
     }
 
     const src = this._workSurfaceEl?.querySelector?.('[data-role="trans-src"]');
-    if (src && sourceText) {
-      src.textContent = sourceText;
+    if (src) {
+      src.textContent = '';
       src.dataset.sourceMode = stepData.sourceMode || (this._isDroidIntro ? 'binary' : 'aurebesh');
+      src.setAttribute('aria-hidden', 'true');
     }
+    const arrow = this._workSurfaceEl?.querySelector?.('[data-role="translate-zone"] .arrow');
+    if (arrow) arrow.setAttribute('aria-hidden', 'true');
   }
 
   /**

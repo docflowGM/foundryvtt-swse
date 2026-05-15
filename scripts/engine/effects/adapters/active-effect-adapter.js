@@ -2,7 +2,9 @@
  * Active Effect Adapter
  *
  * Collects Foundry ActiveEffect entries for the effects display.
+ * Phase 6: Supports normalized effect metadata when available.
  * Preserves exact behavior: filtering disabled effects, duration parsing, change summarization.
+ * Graceful fallback when metadata is missing or malformed.
  */
 
 import {
@@ -11,6 +13,7 @@ import {
   effectDurationText,
   summarizeEffectChanges
 } from "./effect-card-utils.js";
+import { EffectStateFlags } from "../effect-state-flags.js";
 
 export class ActiveEffectAdapter {
   /**
