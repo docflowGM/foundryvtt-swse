@@ -2,16 +2,18 @@
  * ActorEffectsAggregator
  *
  * Orchestrates adapter collection and normalization of actor effect state into display cards.
- * Phase 3: Includes poison visibility. Behavior preserved from Phase 1/2.
+ * Phase 4: Includes poison, recurring damage, and weapon state visibility. Behavior preserved from Phase 1/2/3.
  *
  * Each adapter collects a specific class of effects:
- * - Condition track, Poison, Rage, Foundry ActiveEffects, system effects, item notes, resource notes, actions
+ * - Condition track, Poison, Recurring damage, Weapon state, Rage, Foundry ActiveEffects, system effects, item notes, resource notes, actions
  *
  * The aggregator combines, deduplicates, sorts, and returns results in the expected format.
  */
 
 import { ConditionTrackAdapter } from "./adapters/condition-track-adapter.js";
 import { PoisonEffectAdapter } from "./adapters/poison-effect-adapter.js";
+import { RecurringDamageAdapter } from "./adapters/recurring-damage-adapter.js";
+import { WeaponStateAdapter } from "./adapters/weapon-state-adapter.js";
 import { RageEffectAdapter } from "./adapters/rage-effect-adapter.js";
 import { ActiveEffectAdapter } from "./adapters/active-effect-adapter.js";
 import { SystemActiveEffectAdapter } from "./adapters/system-active-effect-adapter.js";
@@ -24,6 +26,8 @@ import { normalizeName } from "./adapters/effect-card-utils.js";
 const ADAPTERS = [
   ConditionTrackAdapter,
   PoisonEffectAdapter,
+  RecurringDamageAdapter,
+  WeaponStateAdapter,
   RageEffectAdapter,
   ActiveEffectAdapter,
   SystemActiveEffectAdapter,
