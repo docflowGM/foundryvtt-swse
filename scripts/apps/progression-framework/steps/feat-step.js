@@ -78,10 +78,18 @@ function emitFeatStepTrace(label, payload = {}) {
 }
 
 const FEAT_TYPE_ICONS = {
+  recommended: 'fa-star',
   general:     'fa-star',
+  combat:      'fa-khanda',
+  weapon_armor:'fa-shield-halved',
   force:       'fa-fan',
+  skill:       'fa-screwdriver-wrench',
   species:     'fa-dna',
+  droid_cybernetic: 'fa-robot',
+  faction:     'fa-flag',
+  destiny_story: 'fa-scroll',
   team:        'fa-users',
+  uncategorized: 'fa-circle-question',
   martial_arts: 'fa-hand-fist',
 };
 
@@ -129,6 +137,8 @@ export class FeatStep extends ProgressionStepPlugin {
 
     // Data
     this._allFeats = [];                 // All feats from registry
+    this._legalFeats = [];               // Legal/selectable feats for the current slot
+    this._availabilityByFeatId = new Map();// Feat id -> legality/status snapshot
     this._groupedFeats = {};             // Feats grouped by category
     this._suggestedFeats = [];           // Top suggested feats (from SuggestionService)
     this._focusedFeatId = null;          // Currently focused feat
@@ -200,11 +210,13 @@ export class FeatStep extends ProgressionStepPlugin {
       });
       legalFeats = [];
     }
+    this._legalFeats = legalFeats;
     this._noChoicesAvailable = legalFeats.length === 0;
     emitFeatStepTrace('LEGAL_FEATS_RESULT', {
       stepId: this.descriptor?.stepId || null,
       slotType: this._slotType,
       legalCount: legalFeats.length,
+      allCount: this._allFeats.length,
       noChoicesAvailable: this._noChoicesAvailable,
       sampleLegalFeats: legalFeats.slice(0, 10).map(f => f?.name || f?.id || '(unknown)'),
     });
@@ -212,8 +224,8 @@ export class FeatStep extends ProgressionStepPlugin {
     // Get suggested feats (pass shell so suggestion engine sees chargen choices)
     this._suggestedFeats = await this._getSuggestedFeats(shell.actor, legalFeats, shell);
 
-    // Group feats by category
-    this._groupFeats(legalFeats);
+    // Group feats by category. Legal-only is the default; Show All uses hydrated feats with status flags.
+    this._refreshGroupedFeats();
     emitFeatStepTrace('GROUPING_COMPLETE', {
       groups: Object.fromEntries(Object.entries(this._groupedFeats || {}).map(([key, group]) => [key, group?.feats?.length || 0])),
       suggestedCount: this._suggestedFeats.length,
@@ -288,6 +300,14 @@ export class FeatStep extends ProgressionStepPlugin {
       return true;
     }
 
+    if (action === 'toggle-show-all-feats') {
+      event?.preventDefault?.();
+      this._showAll = !this._showAll;
+      this._refreshGroupedFeats();
+      shell?.render?.();
+      return true;
+    }
+
     if (action === 'open-filter-panel') {
       event?.preventDefault?.();
       const panelId = target?.dataset?.panel;
@@ -314,6 +334,7 @@ export class FeatStep extends ProgressionStepPlugin {
     if (!actor) return [];
 
     const legal = [];
+    this._availabilityByFeatId = new Map();
     const pendingAbilityData = this._buildPendingAbilityData(shell);
     const classLookupKeys = resolveClassLookupKeysForFeatStep(shell);
 
@@ -350,39 +371,48 @@ export class FeatStep extends ProgressionStepPlugin {
     }
 
     for (const feat of this._allFeats) {
+      const featId = feat?._id || feat?.id || feat?.name;
+      const status = {
+        isAvailable: false,
+        isOwned: false,
+        isGranted: false,
+        isRepeatable: this._isRepeatable(feat?.name),
+        missingPrerequisites: [],
+        blockingReasons: [],
+        unavailabilityReason: '',
+        slotCompatible: false,
+      };
+
       try {
-        // Check if feat meets prerequisites using pending chargen selections
-        const assessment = AbilityEngine.evaluateAcquisition(actor, feat, pendingAbilityData);
+        const assessment = AbilityEngine.evaluateAcquisition(actor, feat, pendingAbilityData) || {};
+        status.missingPrerequisites = this._dedupeReasonList(Array.isArray(assessment.missingPrereqs) ? assessment.missingPrereqs : []);
+        status.blockingReasons = this._dedupeReasonList(Array.isArray(assessment.blockingReasons) ? assessment.blockingReasons : []);
 
-        if (!assessment?.legal) {
-          continue;  // Skip illegal feats for now (unless showAll is on)
-        }
-
-        // Check if feat is slot-compatible
         const slotValidation = await FeatSlotValidator.validateFeatForSlot(
           feat,
           { slotType: this._slotType, classId: this._classId, classLookupKeys },
           actor
         );
+        status.slotCompatible = !!slotValidation?.valid;
 
-        if (!slotValidation?.valid) {
-          continue;  // Skip slot-incompatible feats
-        }
-
-        // Check if already owned or granted by class (unless repeatable)
-        const isClassGranted = hasFeatOwnershipName(classGrantedFeats, feat.name);
-        const alreadyOwned = actor.items.some(i =>
+        status.isGranted = hasFeatOwnershipName(classGrantedFeats, feat.name);
+        status.isOwned = actor.items.some(i =>
           i.type === 'feat' && hasFeatOwnershipName(new Set(getFeatOwnershipKeys(i.name)), feat.name)
         );
 
-        const isRepeatable = this._isRepeatable(feat.name);
-
-        if ((alreadyOwned || isClassGranted) && !isRepeatable) {
-          continue;  // Skip non-repeatable feats already owned or class-granted
+        if (!assessment?.legal) {
+          status.unavailabilityReason = this._formatUnavailableReason(status.missingPrerequisites, status.blockingReasons, 'Prerequisites not met');
+        } else if (!status.slotCompatible) {
+          status.blockingReasons = status.blockingReasons.length ? status.blockingReasons : this._dedupeReasonList([slotValidation?.reason || 'Not valid for this feat slot']);
+          status.unavailabilityReason = this._formatUnavailableReason([], status.blockingReasons, 'Not valid for this feat slot');
+        } else if ((status.isOwned || status.isGranted) && !status.isRepeatable) {
+          status.unavailabilityReason = status.isGranted ? 'Already granted by class/species/background.' : 'Already owned.';
+        } else {
+          status.isAvailable = true;
         }
-
-        legal.push(feat);
       } catch (error) {
+        status.blockingReasons = this._dedupeReasonList([error?.message || String(error)]);
+        status.unavailabilityReason = 'Could not evaluate this feat.';
         swseLogger.warn('[FeatStep] Skipping feat after legality evaluation failure', {
           featId: feat?._id || feat?.id || null,
           featName: feat?.name || null,
@@ -390,9 +420,53 @@ export class FeatStep extends ProgressionStepPlugin {
           stepId: this.descriptor?.stepId || null,
         });
       }
+
+      Object.assign(feat, status);
+      this._availabilityByFeatId.set(String(featId), status);
+      if (status.isAvailable) legal.push(feat);
     }
 
     return legal;
+  }
+
+  _dedupeReasonList(values = []) {
+    const seen = new Set();
+    const out = [];
+    for (const value of Array.isArray(values) ? values : []) {
+      const text = String(value || '').replace(/\s+/g, ' ').trim();
+      if (!text) continue;
+      const key = text.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(text);
+    }
+    return out;
+  }
+
+  _normalizeReasonComparison(value = '') {
+    return String(value || '')
+      .replace(/^missing:\s*/i, '')
+      .replace(/^requires\s+/i, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+  }
+
+  _formatUnavailableReason(missing = [], blocking = [], fallback = 'Unavailable') {
+    const missingList = this._dedupeReasonList(missing);
+    const missingKeys = new Set(missingList.map(entry => this._normalizeReasonComparison(entry)).filter(Boolean));
+    const blockingList = this._dedupeReasonList(blocking)
+      .filter(entry => !missingKeys.has(this._normalizeReasonComparison(entry)));
+
+    const parts = [];
+    if (missingList.length) parts.push(`Missing: ${missingList.join(', ')}`);
+    if (blockingList.length) parts.push(blockingList.join(', '));
+    return parts.join(' • ') || fallback;
+  }
+
+  _refreshGroupedFeats() {
+    const source = this._showAll ? this._allFeats : this._legalFeats;
+    this._groupFeats(source || []);
   }
 
   /**
@@ -539,41 +613,133 @@ export class FeatStep extends ProgressionStepPlugin {
   /**
    * Group feats by category
    */
-  _groupFeats(legalFeats) {
+  _groupFeats(featsForDisplay) {
     this._groupedFeats = {};
 
-    // Add suggested group first
+    // Add suggested group first. Suggestions are always legal/selectable feats.
     if (this._suggestedFeats.length > 0) {
       this._groupedFeats['suggested'] = {
         label: 'Suggested for Your Build',
         icon: 'fa-star',
-        feats: this._suggestedFeats,
+        feats: this._orderFeatsForTree(this._suggestedFeats),
         isSuggested: true,
       };
     }
 
-    // Group by category
+    const suggestedIds = new Set(this._suggestedFeats.map(s => String(s?._id || s?.id || s?.name)));
     const categoryMap = {};
-    for (const feat of legalFeats) {
+    for (const feat of featsForDisplay || []) {
+      const featId = String(feat?._id || feat?.id || feat?.name);
+      if (!this._showAll && suggestedIds.has(featId)) continue;
       const category = this._getFeatCategory(feat);
-      if (!categoryMap[category]) {
-        categoryMap[category] = [];
-      }
-      // Don't re-add suggestions
-      if (!this._suggestedFeats.some(s => (s._id || s.id) === (feat._id || feat.id))) {
-        categoryMap[category].push(feat);
-      }
+      if (!categoryMap[category]) categoryMap[category] = [];
+      categoryMap[category].push(feat);
     }
 
-    // Convert to grouped object with friendly labels
-    for (const [category, feats] of Object.entries(categoryMap)) {
+    const order = ['combat', 'weapon_armor', 'force', 'skill', 'species', 'droid_cybernetic', 'faction', 'destiny_story', 'team', 'general', 'uncategorized'];
+    const orderedCategories = Object.keys(categoryMap).sort((a, b) => {
+      const ai = order.indexOf(a);
+      const bi = order.indexOf(b);
+      if (ai !== -1 || bi !== -1) return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+      return a.localeCompare(b);
+    });
+
+    for (const category of orderedCategories) {
       this._groupedFeats[category] = {
         label: FEAT_TYPE_LABELS[category] || this._toTitleCase(category),
         icon: this._getCategoryIcon(category),
-        feats,
+        feats: this._orderFeatsForTree(categoryMap[category]),
         isSuggested: false,
       };
     }
+  }
+
+  _orderFeatsForTree(feats, options = {}) {
+    const list = [...(feats || [])];
+    const descending = options?.descending === true;
+    const compareNames = (a, b) => {
+      const result = String(a?.name || '').localeCompare(String(b?.name || ''));
+      return descending ? -result : result;
+    };
+
+    const getFeatId = feat => String(feat?._id || feat?.id || feat?.name || '');
+    const byName = new Map(list.map(feat => [normalizeFeatNameKey(feat?.name), feat]).filter(([key]) => key));
+
+    const prerequisiteKeysById = new Map();
+    for (const feat of list) {
+      const id = getFeatId(feat);
+      const prereqLine = String(
+        feat?.prerequisiteText
+        || feat?.prerequisiteLine
+        || feat?.system?.prerequisite
+        || feat?.system?.prerequisites
+        || ''
+      ).toLowerCase();
+      const matches = [...byName.entries()]
+        .filter(([key, parentFeat]) => parentFeat !== feat && key && prereqLine.includes(key))
+        .map(([key]) => key);
+      prerequisiteKeysById.set(id, matches);
+    }
+
+    const depthCache = new Map();
+    const getPrereqDepth = (feat, seen = new Set()) => {
+      const id = getFeatId(feat);
+      if (!id || seen.has(id)) return 0;
+      if (depthCache.has(id)) return depthCache.get(id);
+      seen.add(id);
+      const prereqKeys = prerequisiteKeysById.get(id) || [];
+      let depth = 0;
+      for (const key of prereqKeys) {
+        const parentFeat = byName.get(key);
+        if (!parentFeat) continue;
+        depth = Math.max(depth, 1 + getPrereqDepth(parentFeat, new Set(seen)));
+      }
+      depthCache.set(id, depth);
+      return depth;
+    };
+
+    const children = new Map();
+    const hasParent = new Set();
+
+    for (const feat of list) {
+      const id = getFeatId(feat);
+      const parentCandidates = (prerequisiteKeysById.get(id) || [])
+        .map(key => [key, byName.get(key)])
+        .filter(([, parentFeat]) => parentFeat && parentFeat !== feat)
+        .sort((a, b) => {
+          // Prefer the deepest prerequisite in the chain, so a feat that requires
+          // both Force Sensitivity and Force Training nests under Force Training.
+          const depthDelta = getPrereqDepth(b[1]) - getPrereqDepth(a[1]);
+          if (depthDelta) return depthDelta;
+          const lengthDelta = b[0].length - a[0].length;
+          if (lengthDelta) return lengthDelta;
+          return String(a[1]?.name || '').localeCompare(String(b[1]?.name || ''));
+        });
+
+      const parent = parentCandidates[0];
+      if (parent) {
+        const parentId = getFeatId(parent[1]);
+        if (!children.has(parentId)) children.set(parentId, []);
+        children.get(parentId).push(feat);
+        hasParent.add(id);
+      }
+    }
+
+    const sorted = [];
+    const visit = (feat, depth = 0, seen = new Set()) => {
+      const id = getFeatId(feat);
+      if (!id || seen.has(id)) return;
+      seen.add(id);
+      sorted.push({ ...feat, treeIndent: Math.min(depth, 6) });
+      const kids = (children.get(id) || []).sort(compareNames);
+      for (const child of kids) visit(child, depth + 1, new Set(seen));
+    };
+
+    const roots = list
+      .filter(feat => !hasParent.has(getFeatId(feat)))
+      .sort(compareNames);
+    for (const root of roots) visit(root, 0);
+    return sorted;
   }
 
   _toTitleCase(str) {
@@ -619,7 +785,7 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _getFeatCategory(feat) {
-    return normalizeFeatTypeKey(feat?.featType || feat?.category || feat?.system?.featType);
+    return normalizeFeatTypeKey(feat?.featType || feat?.category || feat?.system?.featType || 'general');
   }
 
   _getFeatDescription(feat) {
@@ -741,12 +907,19 @@ export class FeatStep extends ProgressionStepPlugin {
           id: feat.id || feat._id,
           name: feat.name,
           category: feat.featTypeLabel || getFeatTypeLabel(this._getFeatCategory(feat)),
+          subcategory: feat.subcategory || '',
           prerequisiteLine: feat.prerequisiteLine || this._getPrerequisiteLine(feat),
           isSuggested: this._suggestedFeats.some(s => (s._id || s.id) === (feat._id || feat.id)),
           isFocused: (feat._id || feat.id) === this._focusedFeatId,
           isSelected: (feat._id || feat.id) === this._selectedFeatId,
-          isAvailable: true,
-          unavailabilityReason: null,
+          isAvailable: feat.isAvailable !== false,
+          isOwned: !!feat.isOwned,
+          isGranted: !!feat.isGranted,
+          unavailabilityReason: feat.unavailabilityReason || null,
+          missingPrerequisites: this._dedupeReasonList(feat.missingPrerequisites || []),
+          blockingReasons: this._dedupeReasonList(feat.blockingReasons || []),
+          treeIndent: feat.treeIndent || 0,
+          shortSummary: feat.shortSummary || '',
           uiBroadTags: feat.uiBroadTags || [],
         })),
         visibleCount: Math.min(featsToShow.length, FEATS_PER_CATEGORY_INITIAL),
@@ -803,6 +976,8 @@ export class FeatStep extends ProgressionStepPlugin {
       selectedFeatId: this._selectedFeatId,
       searchQuery: this._searchQuery,
       showAll: this._showAll,
+      legalFeatCount: this._legalFeats.length,
+      allFeatCount: this._allFeats.length,
       slotType: this._slotType,
       orderedSelections,
       // PHASE 2 UX: Slot progress
@@ -883,7 +1058,14 @@ export class FeatStep extends ProgressionStepPlugin {
         description: normalizedDetails.description || this._getFeatDescription(feat) || '',
         prerequisites: this._getFeatPrerequisites(feat),
         prerequisiteLine: feat.prerequisiteText || feat.prerequisiteLine || this._getPrerequisiteLine(feat),
+        shortSummary: feat.shortSummary || '',
         isRepeatable: this._isRepeatable(feat.name),
+        isAvailable: feat.isAvailable !== false,
+        isOwned: !!feat.isOwned,
+        isGranted: !!feat.isGranted,
+        missingPrerequisites: this._dedupeReasonList(feat.missingPrerequisites || []),
+        blockingReasons: this._dedupeReasonList(feat.blockingReasons || []),
+        unavailabilityReason: feat.unavailabilityReason || '',
         uiBroadTags: feat.uiBroadTags || [],
       },
     };
@@ -909,6 +1091,16 @@ export class FeatStep extends ProgressionStepPlugin {
       emitFeatStepTrace('ITEM_COMMIT_FAILED', {
         reason: 'feat-not-found',
         incomingItem: item?.id || item?._id || item || null,
+      });
+      return;
+    }
+
+    if (feat.isAvailable === false) {
+      ui.notifications?.warn?.(feat.unavailabilityReason || 'That feat is not currently available.');
+      emitFeatStepTrace('ITEM_COMMIT_REJECTED_UNAVAILABLE', {
+        featId: feat?._id || feat?.id || null,
+        featName: feat?.name || null,
+        reason: feat?.unavailabilityReason || null,
       });
       return;
     }
@@ -1010,7 +1202,7 @@ export class FeatStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   _filterFeatsBySearch(feats) {
-    let filtered = feats;
+    let filtered = [...(feats || [])];
 
     // Search filter
     if (this._searchQuery) {
@@ -1030,15 +1222,10 @@ export class FeatStep extends ProgressionStepPlugin {
       });
     }
 
-    // Sort
-    if (this._sortBy === 'alpha-desc') {
-      filtered = [...filtered].sort((a, b) => String(b.name).localeCompare(String(a.name)));
-    } else {
-      // 'alpha-asc' is the default (also covers legacy 'alpha')
-      filtered = [...filtered].sort((a, b) => String(a.name).localeCompare(String(b.name)));
-    }
-
-    return filtered;
+    // Preserve prerequisite-tree ordering for display. The default sort is
+    // "core feat A-Z": root feats are alphabetized, then prerequisite-locked
+    // descendants are shown indented beneath their nearest prerequisite parent.
+    return this._orderFeatsForTree(filtered, { descending: this._sortBy === 'alpha-desc' });
   }
 
   // ---------------------------------------------------------------------------

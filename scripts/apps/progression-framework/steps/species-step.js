@@ -76,6 +76,10 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
     // Species ability choice state: speciesId -> selected choice descriptor.
     this._selectedAbilityChoiceBySpeciesId = new Map();
+
+    // Canonical 3-5 sentence descriptions loaded from data/species-canonical-descriptions.json.
+    // This is a fallback for stale sidecars or registry entries that lack description text.
+    this._canonicalDescriptionBySlug = new Map();
   }
 
   // ---------------------------------------------------------------------------
@@ -123,6 +127,10 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
     // Build image map from assets/species/ directory
     await this._buildSpeciesImgMap();
+
+    // Load canonical species prose so the details rail remains informative even when
+    // a stale sidecar/registry path does not expose system.description.
+    await this._loadCanonicalSpeciesDescriptions();
 
     // Load Ol' Salty species dialogues from the authoritative JSON file.
     // Each key is a species name; each value is an array of one or more lines.
@@ -442,10 +450,13 @@ export class SpeciesStep extends ProgressionStepPlugin {
       abilityScores: species.abilityScores,
     });
 
-    const abilityRows = this._formatAbilityRows(species.abilityScores);
+    const effectiveSpecies = this._getEffectiveSpeciesProfileForDetails(species);
+    const abilityRows = this._formatAbilityRows(effectiveSpecies.abilityScores);
     swseLogger.log('[SpeciesStep] STEP 3: ✓ Ability rows formatted', {
       rowCount: abilityRows?.length ?? 0,
       rows: abilityRows,
+      selectedVariant: effectiveSpecies.selectedVariant?.label || null,
+      selectedAbilityChoice: effectiveSpecies.selectedAbilityChoice?.label || null,
     });
 
     // Step 4: Get mentor data
@@ -461,7 +472,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     swseLogger.log('[SpeciesStep] STEP 5: Normalizing detail panel data');
     let normalized;
     try {
-      normalized = normalizeDetailPanelData(species, 'species', {
+      normalized = normalizeDetailPanelData(effectiveSpecies, 'species', {
         mentorProseSource: this._olSaltyDialogues,
       });
       swseLogger.log('[SpeciesStep] STEP 5: ✓ Data normalized', {
@@ -477,29 +488,33 @@ export class SpeciesStep extends ProgressionStepPlugin {
     // Step 6: Build details data object
     swseLogger.log('[SpeciesStep] STEP 6: Building details data object');
     try {
+      const selectedVariantId = this._selectedVariantBySpeciesId.get(species.id) || 'default';
       const detailsData = {
         species,
+        effectiveSpecies,
         isNearHuman: species.name === 'Near-Human',
-        abilityRows: abilityRows,
-        abilities: (species.abilities ?? []).map(a => ({ name: a })),
+        abilityRows,
+        abilityLine: this._formatAbilityLine(effectiveSpecies.abilityScores),
+        abilities: this._formatSpeciesAbilityRows(effectiveSpecies),
         speciesVariants: this._formatSpeciesVariants(species),
         abilityChoices: this._formatSpeciesAbilityChoices(species),
         requiresAbilityChoice: this._requiresAbilityChoice(species),
         abilityChoiceSelected: !!this._selectedAbilityChoiceBySpeciesId.get(species.id),
         selectedAbilityChoiceId: this._selectedAbilityChoiceBySpeciesId.get(species.id)?.id || null,
-        selectedVariantId: this._selectedVariantBySpeciesId.get(species.id) || 'default',
-        defaultVariantSelected: !(this._selectedVariantBySpeciesId.get(species.id)),
-        languages: species.languages ?? [],
-        size: species.size ?? 'Medium',
-        speed: this._formatMovementLine(species) ?? '6',
-        source: species.source ?? 'Unknown',
-        img: this._resolveSpeciesImg(species),
+        selectedVariantId,
+        selectedVariantLabel: effectiveSpecies.selectedVariant?.label || (selectedVariantId === 'default' ? 'Default' : null),
+        defaultVariantSelected: selectedVariantId === 'default',
+        languages: effectiveSpecies.languages ?? [],
+        size: effectiveSpecies.size ?? 'Medium',
+        speed: this._formatMovementLine(effectiveSpecies) ?? 'Walk 6',
+        source: effectiveSpecies.source ?? species.source ?? 'Unknown',
+        img: this._resolveSpeciesImg(effectiveSpecies) || this._resolveSpeciesImg(species),
         mentorProse: normalized.mentorProse ?? this._getOlSaltyDialogue(species.name) ?? null,
         defaultSpeciesGuidance,
-        canonicalDescription: normalized.description,
+        canonicalDescription: this._getCanonicalDescription(effectiveSpecies, normalized.description),
         hasMentorProse: normalized.fallbacks.hasMentorProse,
-        speciesTags: this._getDisplaySpeciesTags(species),
-        attributeForecast: species.attributeForecast ?? { boosts: [], mitigations: [] },
+        speciesTags: this._getDisplaySpeciesTags(effectiveSpecies),
+        attributeForecast: effectiveSpecies.attributeForecast ?? species.attributeForecast ?? { boosts: [], mitigations: [] },
       };
 
       swseLogger.log('[SpeciesStep] STEP 6: ✓ Details data object built', {
@@ -714,7 +729,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     // full Foundry document needed, and no second registry lookup required.
     const patch = buildSpeciesAtomicPatch(
       shell.actor?.system ?? {},
-      entry,                 // SpeciesRegistryEntry — .source is top-level, not .system.source
+      pendingContext.identity?.doc || effectiveEntry, // Effective SpeciesRegistryEntry, including selected variant/ability choice
       shell.actor?.type ?? 'character'
     );
 
@@ -732,7 +747,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const normalizedSpecies = normalizeSpecies({
       speciesId: id,
       speciesName: entry.name,
-      speciesData: effectiveEntry,
+      speciesData: pendingContext.identity?.doc || effectiveEntry,
+      abilityScores: pendingContext.abilities || effectiveEntry.abilityScores || {},
       selectedVariant: pendingContext.identity?.variant || null,
       selectedAbilityChoice: pendingContext.identity?.abilityChoice || selectedAbilityChoice || null,
       patch,
@@ -1181,6 +1197,130 @@ export class SpeciesStep extends ProgressionStepPlugin {
       return entry[idx];
     }
     return null;
+  }
+
+  _slugifySpeciesName(value) {
+    return String(value || '')
+      .toLowerCase()
+      .replace(/[’']/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  async _loadCanonicalSpeciesDescriptions() {
+    this._canonicalDescriptionBySlug = new Map();
+    try {
+      const response = await fetch('systems/foundryvtt-swse/data/species-canonical-descriptions.json');
+      if (!response.ok) return;
+      const rows = await response.json();
+      const list = Array.isArray(rows) ? rows : Object.values(rows || {});
+      for (const row of list) {
+        const name = row?.name || row?.species || null;
+        const description = row?.description || row?.summary || null;
+        if (!name || !description) continue;
+        this._canonicalDescriptionBySlug.set(this._slugifySpeciesName(name), String(description).trim());
+      }
+    } catch (err) {
+      console.warn('[SpeciesStep] Could not load canonical species descriptions:', err);
+    }
+  }
+
+  _normalizeAbilityMap(raw = {}) {
+    const aliases = {
+      strength: 'str', str: 'str', STR: 'str', Strength: 'str',
+      dexterity: 'dex', dex: 'dex', DEX: 'dex', Dexterity: 'dex',
+      constitution: 'con', con: 'con', CON: 'con', Constitution: 'con',
+      intelligence: 'int', int: 'int', INT: 'int', Intelligence: 'int',
+      wisdom: 'wis', wis: 'wis', WIS: 'wis', Wisdom: 'wis',
+      charisma: 'cha', cha: 'cha', CHA: 'cha', Charisma: 'cha',
+    };
+    const out = { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 };
+    for (const [key, value] of Object.entries(raw || {})) {
+      const normalized = aliases[key] || String(key || '').toLowerCase();
+      if (!Object.prototype.hasOwnProperty.call(out, normalized)) continue;
+      const numeric = Number(value);
+      out[normalized] = Number.isFinite(numeric) ? numeric : 0;
+    }
+    return out;
+  }
+
+  _applyAbilityChoiceToProfile(species) {
+    const selected = this._selectedAbilityChoiceBySpeciesId.get(species?.id) || null;
+    if (!species || !selected) return species;
+    const choice = species.abilityChoice || species.system?.abilityChoice || null;
+    if (!choice || typeof choice !== 'object' || choice.type === 'fixedArray') return species;
+    const fixed = this._normalizeAbilityMap(choice.fixed || {});
+    const chosen = this._normalizeAbilityMap(selected.mods || {});
+    return {
+      ...species,
+      abilityScores: { ...fixed, ...chosen },
+      selectedAbilityChoice: { ...selected },
+    };
+  }
+
+  _getEffectiveSpeciesProfileForDetails(species) {
+    if (!species) return species;
+    const variantId = this._selectedVariantBySpeciesId.get(species.id) || null;
+    let effective = { ...species };
+    if (variantId) {
+      const variant = (species.variants || []).find(option => String(option?.id) === String(variantId));
+      if (variant) {
+        effective = {
+          ...effective,
+          source: variant.source || effective.source,
+          size: variant.size || effective.size,
+          speed: Number.isFinite(Number(variant.speed)) ? Number(variant.speed) : effective.speed,
+          movement: variant.movement && typeof variant.movement === 'object' ? variant.movement : effective.movement,
+          abilityScores: variant.abilityMods && typeof variant.abilityMods === 'object'
+            ? this._normalizeAbilityMap(variant.abilityMods)
+            : effective.abilityScores,
+          abilityChoice: variant.abilityChoice || effective.abilityChoice || null,
+          abilities: Array.isArray(variant.special) && variant.special.length ? [...variant.special] : effective.abilities,
+          canonicalTraits: Array.isArray(variant.traits) && variant.traits.length ? variant.traits : effective.canonicalTraits,
+          languages: Array.isArray(variant.languages) && variant.languages.length ? [...variant.languages] : effective.languages,
+          description: variant.description || effective.description,
+          selectedVariant: {
+            id: variant.id,
+            label: variant.label || 'Variant',
+            source: variant.source || null,
+          },
+        };
+      }
+    }
+    return this._applyAbilityChoiceToProfile(effective);
+  }
+
+  _getCanonicalDescription(species, normalizedDescription = null) {
+    const direct = normalizedDescription || species?.description || species?.system?.description?.value || species?.system?.description || null;
+    if (direct && String(direct).trim() && String(direct).trim() !== '[object Object]') {
+      return String(direct).trim();
+    }
+    const slug = this._slugifySpeciesName(species?.name);
+    return this._canonicalDescriptionBySlug.get(slug) || null;
+  }
+
+  _formatAbilityLine(scores) {
+    const rows = this._formatAbilityRows(scores);
+    return rows.length ? rows.map(row => `${row.signedValue} ${row.label}`).join(', ') : 'None';
+  }
+
+  _formatSpeciesAbilityRows(species) {
+    const byName = new Map();
+    const add = (name, description = '') => {
+      const cleanName = String(name || '').trim();
+      if (!cleanName || cleanName.toLowerCase() === 'none') return;
+      const key = cleanName.toLowerCase();
+      if (!byName.has(key)) byName.set(key, { name: cleanName, description: String(description || '').trim() });
+      else if (description && !byName.get(key).description) byName.get(key).description = String(description).trim();
+    };
+    for (const trait of (species?.canonicalTraits || [])) {
+      if (trait && typeof trait === 'object') add(trait.name || trait.id, trait.description || '');
+    }
+    for (const ability of (species?.abilities || [])) {
+      if (ability && typeof ability === 'object') add(ability.name || ability.id, ability.description || '');
+      else add(ability);
+    }
+    return Array.from(byName.values());
   }
 
   _formatAbilityRows(scores) {

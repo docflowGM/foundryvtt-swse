@@ -41,7 +41,7 @@ export function normalizeSpecies(raw) {
     return {
       id,
       name,
-      abilityScores: data.abilityScores || {},
+      abilityScores: raw.abilityScores || data.abilityScores || data.abilityMods || {},
       speciesData: data,
       grants: data.grants || {},
       nearHumanData: raw.nearHumanData || null,

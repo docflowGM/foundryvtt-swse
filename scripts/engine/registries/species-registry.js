@@ -524,6 +524,7 @@ export class SpeciesRegistry {
       category: category,
       tags: tags,
       abilityScores: abilityScores,
+      abilityMods: { ...abilityScores },
       speed: speed,
       movement: movement,
       size: size,
@@ -540,7 +541,8 @@ export class SpeciesRegistry {
       retainsConstitution: !!system.retainsConstitution,
       languages: languages,
       variants: this._normalizeVariants(system.variants),
-      description: system.description?.value || system.description || '',
+      canonicalName: system.canonicalName || doc.name,
+      description: system.description?.value || system.description || system.shortDescription || '',
       source: system.source || null,
       pack: doc.pack || 'unknown'
     };
@@ -606,6 +608,8 @@ export class SpeciesRegistry {
       tags: [...(entry?.tags || [])],
       sourceTags: [...(entry?.sourceTags || [])],
       derivedTags: [...(entry?.derivedTags || [])],
+      abilityScores: { ...(entry?.abilityScores || {}) },
+      abilityMods: { ...(entry?.abilityMods || entry?.abilityScores || {}) },
       abilities: [...(entry?.abilities || [])],
       canonicalTraits: [...(entry?.canonicalTraits || [])],
       naturalWeapons: [...(entry?.naturalWeapons || [])],

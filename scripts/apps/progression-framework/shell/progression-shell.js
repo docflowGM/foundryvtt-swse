@@ -615,36 +615,85 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return node;
     };
 
+    const scrollKeyFor = (root, el) => {
+      if (!(el instanceof HTMLElement)) return null;
+      const region = el.dataset?.region;
+      if (region) return `region:${region}`;
+      const itemList = el.closest?.('[data-prog-scroll-key]');
+      if (itemList === el && itemList?.dataset?.progScrollKey) return `scroll-key:${itemList.dataset.progScrollKey}`;
+      const stableRegion = el.closest?.('[data-region]');
+      const className = Array.from(el.classList || [])
+        .filter(name => /^(prog|swse)-/.test(name))
+        .slice(0, 3)
+        .join('.');
+      if (stableRegion?.dataset?.region && className) return `region:${stableRegion.dataset.region}:class:${className}`;
+      if (className) return `class:${className}`;
+      return null;
+    };
+
     const captureScrollPositions = (root) => {
       if (!(root instanceof HTMLElement)) return [];
+      const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       const nodes = [root, ...root.querySelectorAll('*')];
-      return nodes
+      const snapshots = nodes
         .filter(el => el instanceof HTMLElement)
+        .filter(el => el.scrollTop > 0 || el.scrollLeft > 0)
         .map(el => ({
-          el,
+          key: scrollKeyFor(root, el),
+          path: buildNodePath(root, el),
           top: el.scrollTop,
           left: el.scrollLeft
         }))
-        .filter(snap => snap.top > 0 || snap.left > 0)
-        .map(snap => ({
-          path: buildNodePath(root, snap.el),
-          top: snap.top,
-          left: snap.left
-        }))
-        .filter(snap => Array.isArray(snap.path));
+        .filter(snap => snap.key || Array.isArray(snap.path));
+
+      if (active && root.contains(active)) {
+        snapshots.push({
+          key: 'active-element',
+          path: buildNodePath(root, active),
+          top: active.scrollTop || 0,
+          left: active.scrollLeft || 0,
+          selectionStart: typeof active.selectionStart === 'number' ? active.selectionStart : null,
+          selectionEnd: typeof active.selectionEnd === 'number' ? active.selectionEnd : null,
+          activeSelector: active.dataset?.action ? `[data-action="${active.dataset.action}"]` : null,
+        });
+      }
+
+      return snapshots;
     };
 
     const restoreScrollPositions = (root, snapshots) => {
       if (!(root instanceof HTMLElement) || !Array.isArray(snapshots) || !snapshots.length) return;
       for (const snap of snapshots) {
-        const el = resolveNodePath(root, snap.path);
+        let el = null;
+        if (snap.key?.startsWith?.('region:')) {
+          const region = snap.key.split(':')[1];
+          const regionEl = root.querySelector(`[data-region="${region}"]`);
+          if (snap.key === `region:${region}`) el = regionEl;
+          else if (regionEl && snap.key.includes(':class:')) {
+            const classes = snap.key.split(':class:')[1]?.split('.')?.filter(Boolean) || [];
+            if (classes.length) el = regionEl.querySelector(classes.map(cls => `.${CSS.escape(cls)}`).join(''));
+          }
+        } else if (snap.key?.startsWith?.('class:')) {
+          const classes = snap.key.slice('class:'.length).split('.').filter(Boolean);
+          if (classes.length) el = root.querySelector(classes.map(cls => `.${CSS.escape(cls)}`).join(''));
+        } else if (snap.key?.startsWith?.('scroll-key:')) {
+          el = root.querySelector(`[data-prog-scroll-key="${CSS.escape(snap.key.slice('scroll-key:'.length))}"]`);
+        }
+
+        if (!(el instanceof HTMLElement)) {
+          el = resolveNodePath(root, snap.path);
+        }
         if (!(el instanceof HTMLElement)) continue;
         el.scrollTop = snap.top;
         el.scrollLeft = snap.left;
       }
     };
 
-    const scrollSnapshots = captureScrollPositions(this.element);
+    const scrollSnapshots = [
+      ...(Array.isArray(this._pendingScrollSnapshots) ? this._pendingScrollSnapshots : []),
+      ...captureScrollPositions(this.element),
+    ];
+    this._pendingScrollSnapshots = null;
 
     this._isRendering = true;
     this._renderCount++;
@@ -653,6 +702,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const result = await super.render(...args);
     await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     restoreScrollPositions(this.element, scrollSnapshots);
+    // Some step surfaces rehydrate their own virtualized/overflow regions after the
+    // first paint. Restore again on the next tick so focus/selection renders do not
+    // snap the current step back to the top.
+    setTimeout(() => restoreScrollPositions(this.element, scrollSnapshots), 0);
     console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
 
     this._isRendering = false;
@@ -2178,6 +2231,35 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   async _onFocusItem(event, target) {
+    event?.preventDefault?.();
+    const captureInteractionScroll = () => {
+      if (!(this.element instanceof HTMLElement)) return [];
+      const nodes = [this.element, ...this.element.querySelectorAll('*')];
+      return nodes
+        .filter(el => el instanceof HTMLElement && (el.scrollTop > 0 || el.scrollLeft > 0))
+        .map(el => {
+          const region = el.dataset?.region || el.closest?.('[data-region]')?.dataset?.region || '';
+          const classes = Array.from(el.classList || []).filter(name => /^(prog|swse)-/.test(name)).slice(0, 3).join('.');
+          return {
+            key: el.dataset?.region ? `region:${el.dataset.region}` : (region && classes ? `region:${region}:class:${classes}` : null),
+            path: (() => {
+              const path = [];
+              let node = el;
+              while (node && node !== this.element) {
+                const parent = node.parentElement;
+                if (!parent) return null;
+                path.unshift(Array.prototype.indexOf.call(parent.children, node));
+                node = parent;
+              }
+              return node === this.element ? path : null;
+            })(),
+            top: el.scrollTop,
+            left: el.scrollLeft,
+          };
+        })
+        .filter(snap => snap.key || Array.isArray(snap.path));
+    };
+    this._pendingScrollSnapshots = captureInteractionScroll();
     // [DEBUG] Click sequence tracking
     const clickNum = ProgressionDebugCapture.nextClickSequence();
     const stepId = this.steps[this.currentStepIndex]?.stepId;
@@ -2246,8 +2328,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
       try {
         await plugin.onItemFocused(itemId, this);
 
-        // Re-render to update the detail panel with the newly focused item
-        // The plugin has updated its internal state; shell needs to render to show it
+        // Re-render to update the detail panel with the newly focused item.
+        // Preserve scroll even when a plugin already requested a render internally.
+        this._pendingScrollSnapshots = this._pendingScrollSnapshots?.length ? this._pendingScrollSnapshots : captureInteractionScroll();
         await this.render();
 
         ProgressionDebugCapture.log('Progression Debug', `[Click #${clickNum}] plugin.onItemFocused() completed`, {
@@ -2265,6 +2348,35 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   async _onCommitItem(event, target) {
+    event?.preventDefault?.();
+    const captureInteractionScroll = () => {
+      if (!(this.element instanceof HTMLElement)) return [];
+      const nodes = [this.element, ...this.element.querySelectorAll('*')];
+      return nodes
+        .filter(el => el instanceof HTMLElement && (el.scrollTop > 0 || el.scrollLeft > 0))
+        .map(el => {
+          const region = el.dataset?.region || el.closest?.('[data-region]')?.dataset?.region || '';
+          const classes = Array.from(el.classList || []).filter(name => /^(prog|swse)-/.test(name)).slice(0, 3).join('.');
+          return {
+            key: el.dataset?.region ? `region:${el.dataset.region}` : (region && classes ? `region:${region}:class:${classes}` : null),
+            path: (() => {
+              const path = [];
+              let node = el;
+              while (node && node !== this.element) {
+                const parent = node.parentElement;
+                if (!parent) return null;
+                path.unshift(Array.prototype.indexOf.call(parent.children, node));
+                node = parent;
+              }
+              return node === this.element ? path : null;
+            })(),
+            top: el.scrollTop,
+            left: el.scrollLeft,
+          };
+        })
+        .filter(snap => snap.key || Array.isArray(snap.path));
+    };
+    this._pendingScrollSnapshots = captureInteractionScroll();
     const { element, row, itemId, matchedAttribute } = this._resolveInteractionItemId(target, event);
     if (!element || typeof element.closest !== 'function') {
       swseLogger.warn('[ProgressionShell] _onCommitItem: target is not a DOM element');

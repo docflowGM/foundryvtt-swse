@@ -159,9 +159,8 @@
               <i class="fa-solid fa-link-slash"></i> {{feat.prerequisiteLine}}
             </span>
           {{/if}}
-          {{#if feat.unavailabilityReason}}
-            <span class="feat-unavail-reason">{{feat.unavailabilityReason}}</span>
-          {{/if}}
+          {{!-- Unavailability details are shown in the tooltip and details rail.
+               Keep the row compact so prerequisites are not repeated twice. --}}
         </div>
         <div class="feat-item-meta">
           {{#if feat.isSuggested}}

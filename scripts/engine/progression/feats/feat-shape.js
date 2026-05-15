@@ -162,34 +162,80 @@ function lowerList(values) {
     .filter(Boolean);
 }
 
+function hasAny(values, ...needles) {
+  const set = new Set(lowerList(values));
+  return needles.some(needle => set.has(String(needle).toLowerCase()));
+}
+
+function textContains(text, pattern) {
+  return pattern.test(String(text || '').toLowerCase());
+}
+
 function resolvePrimaryBrowseCategory(rawFeat, mappingEntry) {
-  const explicitType = normalizeFeatTypeKey(rawFeat?.system?.featType ?? rawFeat?.category ?? rawFeat?.system?.category);
-  const metadataCategory = String(mappingEntry?.metadataCategory || '').toLowerCase();
+  const rawExplicit = normalizeFeatTypeKey(rawFeat?.system?.featType ?? rawFeat?.category ?? rawFeat?.system?.category);
+  const mappedExplicit = normalizeFeatTypeKey(mappingEntry?.featType);
+  const metadataCategory = String(mappingEntry?.metadataCategory || '').toLowerCase().trim();
   const metadataTags = lowerList(mappingEntry?.metadataTags);
   const packTags = lowerList(mappingEntry?.packTags);
   const broadTags = lowerList(mappingEntry?.uiBroadTags);
-  const text = [
-    rawFeat?.name,
-    rawFeat?.system?.prerequisite,
-    rawFeat?.system?.prerequisites,
-    rawFeat?.prerequisiteText,
-    mappingEntry?.prerequisite,
-    metadataCategory,
-    ...metadataTags,
-    ...packTags,
-    ...broadTags,
-  ].flat().map(value => String(value || '').toLowerCase()).join(' ');
 
-  if (explicitType === 'force' || broadTags.includes('force') || /\bforce\b|use the force|force sensitivity|force training/.test(text)) return 'force';
-  if (explicitType === 'species' || broadTags.includes('species') || broadTags.includes('racial') || /species|racial|heritage|gamorrean|nelvaanian|near-human|near human/.test(text)) return 'species';
-  if (broadTags.includes('skill') || metadataCategory.startsWith('skill') || /\bskill\b|trained in|skill focus|skill training|acrobatics|deception|endurance|gather information|initiative|jump|knowledge|mechanics|perception|persuasion|pilot|ride|stealth|survival|swim|treat injury|use computer|use the force/.test(text)) return 'skill';
-  if (/weapon proficiency|armor proficiency|armour proficiency|proficient with|heavy weapons|exotic weapon|weapon focus|weapon specialization|martial arts/.test(text)) return 'weapon_armor';
-  if (broadTags.includes('combat') || metadataCategory.startsWith('combat') || /attack|defense|defence|dodge|mobility|cleave|charge|grapple|melee|ranged|autofire|martial|aim|damage|critical|fighting|shot|strike/.test(text)) return 'combat';
-  if (/droid|cyborg|cybernetic|appendage|locomotion|processor|implant/.test(text)) return 'droid_cybernetic';
-  if (/military|republic|imperial|sith|separatist|galactic alliance|officer|organization|organisation|faction|mandalorian/.test(text)) return 'faction';
-  if (/destiny|gamemaster|game master|gm approval|story/.test(text)) return 'destiny_story';
-  if (explicitType === 'team') return 'team';
-  return explicitType === 'general' ? 'general' : explicitType;
+  const nameText = String(rawFeat?.name || '').toLowerCase();
+  const prereqText = [rawFeat?.system?.prerequisite, rawFeat?.system?.prerequisites, rawFeat?.prerequisiteText, mappingEntry?.prerequisite]
+    .flat()
+    .map(value => String(value || '').toLowerCase())
+    .join(' ');
+  const metadataText = [metadataCategory, ...metadataTags, ...packTags.filter(tag => tag !== 'non-force'), ...broadTags]
+    .join(' ')
+    .toLowerCase();
+  const allText = `${nameText} ${prereqText} ${metadataText}`;
+
+  // Strong explicit categories win first. Most legacy feat pack rows say "general",
+  // so only non-general explicit values should short-circuit the metadata rules.
+  if (rawExplicit !== 'general' && rawExplicit !== 'uncategorized') return rawExplicit;
+  if (mappedExplicit !== 'general' && mappedExplicit !== 'uncategorized') return mappedExplicit;
+
+  // Important: pack tags often include "non-force". Do NOT let that match Force.
+  const positiveForceTag = hasAny(metadataTags, 'force') || hasAny(packTags, 'force') || metadataCategory === 'force';
+  const forceNameOrPrereq = /(^|\b)force\s+(sensitivity|training|boon|point|power|regimen|readiness|secret|technique|stun|slam|grip|blast|thrust|whirlwind|lightning|haze|shield|pilot|perception|recovery|tradition|adept|disciple|flow|fortification|harmony|intuition|meld|mind|treatment|weapon|warrior)\b/.test(`${nameText} ${prereqText}`)
+    || /\bstrong in the force\b|\buse the force\b.*\bforce sensitivity\b|\bforce sensitivity\b/.test(`${nameText} ${prereqText}`);
+  if (positiveForceTag || forceNameOrPrereq) return 'force';
+
+  if (hasAny(broadTags, 'species', 'racial', 'heritage')
+    || /\b(species|racial|heritage|gamorrean|nelvaanian|near[-\s]?human|wookiee|ithorian|gungan|ewok|trandoshan|zabrak|bothan|quarren|mon calamari|jawa|noghri|yuuzhan vong)\b/.test(allText)) {
+    return 'species';
+  }
+
+  if (/\b(droid|cyborg|cybernetic|appendage|locomotion|processor|implant|claw appendage|hand appendage)\b/.test(allText)) {
+    return 'droid_cybernetic';
+  }
+
+  if (/\b(destiny|gamemaster|game master|gm approval|story)\b/.test(allText)) {
+    return 'destiny_story';
+  }
+
+  if (/\b(military|republic|imperial|separatist|galactic alliance|officer|organization|organisation|faction|mandalorian|sith military|jedi academy|order)\b/.test(allText)) {
+    return 'faction';
+  }
+
+  // Weapon/armor proficiency is a first-class browse group. Do this before broad combat.
+  if (/\b(weapon proficiency|armor proficiency|armour proficiency|advanced melee weapon proficiency|heavy weapon proficiency|exotic weapon proficiency|rifle proficiency|pistol proficiency|simple weapon proficiency|proficient with)\b/.test(allText)) {
+    return 'weapon_armor';
+  }
+
+  if (hasAny(broadTags, 'skill')
+    || metadataCategory.startsWith('skill')
+    || /\b(skill focus|skill training|trained in|acrobatics|deception|endurance|gather information|initiative|jump|knowledge|mechanics|perception|persuasion|pilot|ride|stealth|survival|swim|treat injury|use computer|use the force)\b/.test(allText)) {
+    return 'skill';
+  }
+
+  if (hasAny(broadTags, 'combat')
+    || metadataCategory.startsWith('combat')
+    || /\b(attack|defense|defence|dodge|mobility|cleave|charge|grapple|melee|ranged|autofire|martial|aim|damage|critical|fighting|shot|strike|draw|weapon focus|weapon specialization|devastating|rapid|point blank|power attack|running attack)\b/.test(allText)) {
+    return 'combat';
+  }
+
+  if (rawExplicit === 'team' || mappedExplicit === 'team') return 'team';
+  return rawExplicit === 'uncategorized' || mappedExplicit === 'uncategorized' ? 'uncategorized' : 'general';
 }
 
 function resolveFeatSubcategory(rawFeat, mappingEntry, primaryCategory) {

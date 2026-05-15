@@ -231,14 +231,25 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   _getSpeciesMods(shell) {
+    const pending =
+      shell?.progressionSession?.draftSelections?.pendingSpeciesContext ??
+      shell?.committedSelections?.get?.('pendingSpeciesContext') ??
+      null;
+
     const species =
       shell?.progressionSession?.draftSelections?.species ??
       shell?.progressionSession?.committedSelections?.get?.('species') ??
+      shell?.committedSelections?.get?.('species') ??
       null;
 
+    // The pending species context is the canonical handoff from the species step.
+    // It already has selected variants and species ability-choice packages applied.
     const raw =
+      pending?.abilities ??
+      species?.pendingContext?.abilities ??
       species?.abilityScores ??
       species?.speciesData?.abilityScores ??
+      species?.speciesData?.abilityMods ??
       species?.values ??
       {};
 

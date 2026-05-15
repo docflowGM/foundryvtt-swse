@@ -1,6 +1,54 @@
 <div class="prog-species-details">
 
-  {{!-- 2. Species portrait - only if art exists --}}
+  {{!-- 1. Variant/default selector first, when this species has options --}}
+  {{#if speciesVariants.length}}
+    <section class="prog-species-details__section prog-species-details__variants">
+      <h4>Species Options</h4>
+      <div class="prog-species-variant-grid">
+        <button class="prog-species-variant prog-species-variant--default {{#if defaultVariantSelected}}prog-species-variant--selected{{/if}}"
+                data-action="select-species-variant"
+                data-species-id="{{species.id}}"
+                data-variant-id="default"
+                type="button">
+          <div class="prog-species-variant__header">
+            <strong>Default</strong>
+            {{#if defaultVariantSelected}}<span class="prog-chip">Selected</span>{{else}}<span class="prog-chip">Base profile</span>{{/if}}
+          </div>
+          <div class="prog-species-variant__meta">
+            {{#if abilityLine}}<span>{{abilityLine}}</span>{{/if}}
+            {{#if size}}<span>Size: {{size}}</span>{{/if}}
+            {{#if speed}}<span>{{speed}}</span>{{/if}}
+          </div>
+        </button>
+
+        {{#each speciesVariants}}
+          <button class="prog-species-variant {{#if this.isSelected}}prog-species-variant--selected{{/if}}"
+                  data-action="select-species-variant"
+                  data-species-id="{{this.speciesId}}"
+                  data-variant-id="{{this.id}}"
+                  type="button">
+            <div class="prog-species-variant__header">
+              <strong>{{this.label}}</strong>
+              {{#if this.isSelected}}<span class="prog-chip">Selected</span>{{else}}{{#if this.source}}<span class="prog-chip">{{this.source}}</span>{{/if}}{{/if}}
+            </div>
+            <div class="prog-species-variant__meta">
+              {{#if this.abilities}}<span>{{this.abilities}}</span>{{/if}}
+              {{#if this.size}}<span>Size: {{this.size}}</span>{{/if}}
+              {{#if this.speed}}<span>{{this.speed}}</span>{{/if}}
+              {{#if this.languages.length}}<span>Languages: {{#each this.languages}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}
+            </div>
+            {{#if this.special.length}}
+              <div class="prog-species-variant__list">
+                {{#each this.special}}<span>• {{this.name}}</span>{{/each}}
+              </div>
+            {{/if}}
+          </button>
+        {{/each}}
+      </div>
+    </section>
+  {{/if}}
+
+  {{!-- 2. Photo --}}
   {{#if img}}
     <div class="prog-species-details__portrait prog-holo-media prog-holo-media--wide">
       <img class="prog-species-details__portrait-img prog-holo-media__image" src="{{img}}" alt="{{species.name}}">
@@ -8,137 +56,122 @@
     </div>
   {{/if}}
 
-  {{!-- 3. Name + source header --}}
+  {{!-- Header --}}
   <div class="prog-species-details__header">
-    <h2 class="prog-species-details__name">{{species.name}}</h2>
+    <div>
+      <h2 class="prog-species-details__name">{{species.name}}</h2>
+      {{#if selectedVariantLabel}}<span class="prog-species-details__variant-label">{{selectedVariantLabel}} profile</span>{{/if}}
+    </div>
     {{#if source}}<span class="prog-chip">{{source}}</span>{{/if}}
   </div>
 
-  {{!-- 4. Description text (lore/background) --}}
-  {{#if canonicalDescription}}
-    <p class="prog-species-details__desc">{{canonicalDescription}}</p>
-  {{else}}
-    <p class="prog-species-details__desc prog-species-details__desc--unavailable">No description available.</p>
+  {{!-- 3. Description --}}
+  <section class="prog-species-details__section">
+    <h4>Description</h4>
+    {{#if canonicalDescription}}
+      <p class="prog-species-details__desc">{{canonicalDescription}}</p>
+    {{else}}
+      <p class="prog-species-details__desc prog-species-details__desc--unavailable">No description available.</p>
+    {{/if}}
+  </section>
+
+  {{!-- 4. Attribute Adjustment --}}
+  <section class="prog-species-details__section prog-species-details__attrs">
+    <h4>Attribute Adjustment</h4>
+    {{#if abilityRows.length}}
+      {{#each abilityRows}}
+        <div class="prog-species-details__attr-row">
+          <span>{{this.label}}</span>
+          <span class="{{this.cssClass}}">{{this.signedValue}}</span>
+        </div>
+      {{/each}}
+    {{else}}
+      <div class="prog-species-details__muted">None</div>
+    {{/if}}
+  </section>
+
+  {{!-- 5. Size --}}
+  <section class="prog-species-details__section prog-species-details__stats">
+    <h4>Size</h4>
+    <div>{{#if size}}{{size}}{{else}}Medium{{/if}}</div>
+  </section>
+
+  {{!-- 6. Speed --}}
+  <section class="prog-species-details__section prog-species-details__stats">
+    <h4>Speed</h4>
+    <div>{{#if speed}}{{speed}}{{else}}Walk 6{{/if}}</div>
+  </section>
+
+  {{!-- 7. Species Abilities --}}
+  <section class="prog-species-details__section prog-species-details__special">
+    <h4>Species Abilities</h4>
+    {{#if abilities.length}}
+      {{#each abilities}}
+        <div class="prog-species-details__ability">
+          <strong>{{this.name}}</strong>{{#if this.description}} — {{this.description}}{{/if}}
+        </div>
+      {{/each}}
+    {{else}}
+      <div class="prog-species-details__muted">None listed.</div>
+    {{/if}}
+  </section>
+
+  {{!-- Ability choices such as Arkanian Offshoot --}}
+  {{#if abilityChoices.length}}
+    <section class="prog-species-details__section prog-species-details__ability-choice">
+      <h4>Required Species Choice</h4>
+      {{#each abilityChoices}}
+        <button class="prog-species-ability-choice {{#if this.isSelected}}prog-species-ability-choice--selected{{/if}}"
+                data-action="select-species-ability-choice"
+                data-species-id="{{this.speciesId}}"
+                data-choice-index="{{this.index}}"
+                data-ability="{{this.ability}}"
+                type="button">
+          <strong>{{this.label}}</strong>
+          {{#if this.summary}}<span>{{this.summary}}</span>{{/if}}
+        </button>
+      {{/each}}
+    </section>
   {{/if}}
 
-  {{!-- 5. Key stats: size, speed --}}
+  {{!-- 8. Languages --}}
+  <section class="prog-species-details__section prog-species-details__languages">
+    <h4>Languages</h4>
+    {{#if languages.length}}
+      <div>{{#each languages}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</div>
+    {{else}}
+      <div class="prog-species-details__muted">None listed.</div>
+    {{/if}}
+  </section>
 
+  {{!-- 9. Build Signals --}}
   {{#if speciesTags.length}}
-    <div class="prog-species-details__tags">
+    <section class="prog-species-details__section prog-species-details__tags">
       <h4>Build Signals</h4>
       <div class="prog-tags">
         {{#each speciesTags}}<span class="prog-chip">{{this.label}}</span>{{/each}}
       </div>
-    </div>
+    </section>
   {{/if}}
-
-  <div class="prog-species-details__stats">
-    {{#if size}}<div><strong>Size:</strong> {{size}}</div>{{/if}}
-    {{#if speed}}<div><strong>Speed:</strong> {{speed}}</div>{{/if}}
-  </div>
-
-  {{!-- 6. Ability modifiers: +2 DEX, -2 CON, etc. --}}
-  {{#if abilityRows.length}}
-    <div class="prog-species-details__attrs">
-      {{#each abilityRows}}
-        <div class="prog-species-details__attr-row">
-          <span>{{this.label}}:</span>
-          <span class="{{this.cssClass}}">
-            {{#if (gt this.value 0)}}+{{/if}}{{this.value}}
-          </span>
-        </button>
-      {{/each}}
-    </div>
-  {{/if}}
-
 
   {{#if attributeForecast.boosts.length}}
-    <div class="prog-species-details__forecast">
+    <section class="prog-species-details__section prog-species-details__forecast">
       <h4>Attribute Outlook</h4>
       {{#each attributeForecast.boosts}}
         <div class="prog-species-details__ability"><strong>{{this.signedValue}} {{this.ability}}</strong> — {{this.summary}}</div>
       {{/each}}
-    </div>
+    </section>
   {{/if}}
 
   {{#if attributeForecast.mitigations.length}}
-    <div class="prog-species-details__forecast prog-species-details__forecast--mitigation">
+    <section class="prog-species-details__section prog-species-details__forecast prog-species-details__forecast--mitigation">
       <h4>Potential Weak Spots</h4>
       {{#each attributeForecast.mitigations}}
         <div class="prog-species-details__ability"><strong>{{this.signedValue}} {{this.ability}}</strong> — {{this.summary}}</div>
       {{/each}}
-    </div>
+    </section>
   {{/if}}
 
-  {{!-- 7. Special abilities --}}
-  {{#if abilities.length}}
-    <div class="prog-species-details__special">
-      <h4>Special Abilities</h4>
-      {{#each abilities}}<div class="prog-species-details__ability">• {{this.name}}</div>{{/each}}
-    </div>
-  {{/if}}
-
-  {{!-- Variant profiles collapsed under this species --}}
-  {{#if speciesVariants.length}}
-    <div class="prog-species-details__variants">
-      <h4>Species Options</h4>
-      <button class="prog-species-variant prog-species-variant--default {{#if defaultVariantSelected}}prog-species-variant--selected{{/if}}"
-              data-action="select-species-variant"
-              data-species-id="{{species.id}}"
-              data-variant-id="default"
-              type="button">
-        <div class="prog-species-variant__header">
-          <strong>Default</strong>
-          {{#if defaultVariantSelected}}<span class="prog-chip">Selected</span>{{else}}<span class="prog-chip">Base profile</span>{{/if}}
-        </div>
-        <div class="prog-species-variant__meta">
-          {{#if size}}<span>Size: {{size}}</span>{{/if}}
-          {{#if speed}}<span>Speed: {{speed}}</span>{{/if}}
-        </div>
-      </button>
-      {{#each speciesVariants}}
-        <button class="prog-species-variant {{#if this.isSelected}}prog-species-variant--selected{{/if}}"
-                data-action="select-species-variant"
-                data-species-id="{{this.speciesId}}"
-                data-variant-id="{{this.id}}"
-                type="button">
-          <div class="prog-species-variant__header">
-            <strong>{{this.label}}</strong>
-            {{#if this.isSelected}}<span class="prog-chip">Selected</span>{{else}}{{#if this.source}}<span class="prog-chip">{{this.source}}</span>{{/if}}{{/if}}
-          </div>
-          {{#if this.description}}<p>{{this.description}}</p>{{/if}}
-          <div class="prog-species-variant__meta">
-            {{#if this.abilities}}<span>Abilities: {{this.abilities}}</span>{{/if}}
-            {{#if this.size}}<span>Size: {{this.size}}</span>{{/if}}
-            {{#if this.speed}}<span>Speed: {{this.speed}}</span>{{/if}}
-            {{#if this.languages.length}}<span>Languages: {{#each this.languages}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}
-          </div>
-          {{#if this.special.length}}
-            <div class="prog-species-variant__list">
-              {{#each this.special}}<span>• {{this.name}}</span>{{/each}}
-            </div>
-          {{/if}}
-          {{#if this.traits.length}}
-            <div class="prog-species-variant__traits">
-              {{#each this.traits}}
-                <div><strong>{{this.name}}:</strong> {{this.description}}</div>
-              {{/each}}
-            </div>
-          {{/if}}
-        </div>
-      {{/each}}
-    </div>
-  {{/if}}
-
-  {{!-- 8. Languages --}}
-  {{#if languages.length}}
-    <div class="prog-species-details__languages">
-      <h4>Languages</h4>
-      <div>{{#each languages}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</div>
-    </div>
-  {{/if}}
-
-  {{!-- 9. CONFIRMATION ACTION - Confirm Species button or Near-Human builder entry --}}
   <div class="prog-species-details__actions">
     {{#if isNearHuman}}
       <button class="prog-btn prog-btn--primary" data-action="enter-near-human" type="button">

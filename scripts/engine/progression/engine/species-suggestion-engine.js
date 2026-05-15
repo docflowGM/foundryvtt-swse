@@ -91,13 +91,29 @@ function normalizeName(value) {
     .trim();
 }
 
+function normalizeAbilityScores(item) {
+  const raw = item?.abilityScores
+    || item?.abilityMods
+    || item?.system?.abilityMods
+    || item?.system?.abilityScores
+    || {};
+  return {
+    str: Number(raw.str ?? raw.STR ?? 0) || 0,
+    dex: Number(raw.dex ?? raw.DEX ?? 0) || 0,
+    con: Number(raw.con ?? raw.CON ?? 0) || 0,
+    int: Number(raw.int ?? raw.INT ?? 0) || 0,
+    wis: Number(raw.wis ?? raw.WIS ?? 0) || 0,
+    cha: Number(raw.cha ?? raw.CHA ?? 0) || 0,
+  };
+}
+
 function normalizeSpeciesEntry(item) {
   return {
     id: item?._id || item?.id,
     name: item?.name,
     category: item?.system?.category || item?.category,
-    abilityScores: item?.system?.abilityScores || item?.abilityScores || {},
-    abilities: item?.system?.abilities || item?.abilities || [],
+    abilityScores: normalizeAbilityScores(item),
+    abilities: item?.system?.special || item?.system?.abilities || item?.abilities || [],
     languages: item?.system?.languages || item?.languages || [],
     tags: item?.system?.tags || item?.tags || [],
     attributeForecast: item?.system?.attributeForecast || item?.attributeForecast || { boosts: [], mitigations: [] },

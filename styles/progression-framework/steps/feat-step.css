@@ -1263,22 +1263,26 @@
 
 .feat-item.category-feat,
 .feat-item.suggested-feat {
-  margin-left: var(--feat-tree-indent, 0);
-}
-
-.feat-item.category-feat[style*="1.25rem"],
-.feat-item.suggested-feat[style*="1.25rem"] {
   position: relative;
 }
 
-.feat-item.category-feat[style*="1.25rem"]::before,
-.feat-item.suggested-feat[style*="1.25rem"]::before {
+/* Only the feat name is tree-indented. The card, badges, prereq text, and
+   unavailable state stay aligned so rows remain scannable. */
+.feat-item.category-feat .feat-name,
+.feat-item.suggested-feat .feat-name {
+  display: inline-block;
+  margin-left: calc(var(--feat-tree-indent, 0) * 1.25rem);
+}
+
+.feat-item.category-feat .feat-name::before,
+.feat-item.suggested-feat .feat-name::before {
   content: "";
-  position: absolute;
-  left: -0.75rem;
-  top: 50%;
-  width: 0.55rem;
-  border-top: 1px solid oklch(0.85 0.18 200 / 0.35);
+  display: inline-block;
+  width: calc(min(var(--feat-tree-indent, 0), 1) * 0.65rem);
+  margin-left: calc(min(var(--feat-tree-indent, 0), 1) * -0.85rem);
+  margin-right: calc(min(var(--feat-tree-indent, 0), 1) * 0.20rem);
+  border-top: calc(min(var(--feat-tree-indent, 0), 1) * 1px) solid oklch(0.85 0.18 200 / 0.35);
+  transform: translateY(-0.25em);
 }
 
 .feat-subcategory-pill,

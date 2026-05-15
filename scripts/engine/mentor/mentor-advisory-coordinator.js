@@ -34,6 +34,33 @@ import { BuildAnalysisEngine } from "/systems/foundryvtt-swse/scripts/engine/ana
 import { MentorJudgmentEngine } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-judgment-engine.js";
 import { MentorAdvisoryBridge } from "/systems/foundryvtt-swse/scripts/engine/analysis/mentor-advisory-bridge.js";
 
+
+const ADVISORY_STUB_MENTORS = new Set([
+  'axiom', 'breach', 'captain', 'darth_malbada', 'darth_miedo', 'delta',
+  'dezmin', 'j0_n1', 'jack', 'kex_varon', 'kharjo', 'korr', 'krag', 'kyber',
+  'lead', 'marl_skindar', 'mayu', 'miraj', 'ol_salty', 'pegar', 'rajma',
+  'rax', 'riquis', 'rogue', 'sela', 'seraphim', 'spark', 'theron',
+  'tio_the_hutt', 'urza', 'vera', 'whisper', 'zhen'
+]);
+
+const ADVISORY_STUB_ALIASES = new Map([
+  ['olsalty', 'ol_salty'],
+  ['ol-salty', 'ol_salty'],
+  ['salty', 'ol_salty'],
+  ['skindar', 'marl_skindar'],
+  ['marl', 'marl_skindar'],
+]);
+
+function normalizeMentorIdForAdvisory(mentorId) {
+  const key = String(mentorId || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '_')
+    .replace(/-+/g, '_')
+    .replace(/^_+|_+$/g, '');
+  return ADVISORY_STUB_ALIASES.get(key) || key;
+}
+
 export class MentorAdvisoryCoordinator {
   /**
    * Load mentor advisory stub (hidden but complete infrastructure)
@@ -43,21 +70,30 @@ export class MentorAdvisoryCoordinator {
    */
   static async loadAdvisoryStub(mentorId) {
     try {
-      if (!mentorId) return null;
+      const normalizedMentorId = normalizeMentorIdForAdvisory(mentorId);
+      if (!normalizedMentorId) return null;
+
+      // Do not fetch paths that do not exist. Browser 404s are noisy and make
+      // Ask Mentor look broken for class mentors that intentionally fall back to
+      // normal dialogue guidance rather than advisory stubs, such as Noble.
+      if (!ADVISORY_STUB_MENTORS.has(normalizedMentorId)) {
+        SWSELogger.debug(`[MentorAdvisoryCoordinator] Mentor has no advisory stub; using dialogue fallback: ${normalizedMentorId}`);
+        return null;
+      }
 
       // Advisory stubs are stored in data/dialogue/mentors/{mentorId}/{mentorId}_advisory_stub.json
       const response = await fetch(
-        `/systems/foundryvtt-swse/data/dialogue/mentors/${mentorId}/${mentorId}_advisory_stub.json`
+        `/systems/foundryvtt-swse/data/dialogue/mentors/${normalizedMentorId}/${normalizedMentorId}_advisory_stub.json`
       );
 
       if (!response.ok) {
-        SWSELogger.debug(`[MentorAdvisoryCoordinator] No advisory stub for mentor: ${mentorId}`);
+        SWSELogger.debug(`[MentorAdvisoryCoordinator] Advisory stub unavailable for mentor: ${normalizedMentorId}`);
         return null;
       }
 
       const stub = await response.json();
       SWSELogger.log(
-        `[MentorAdvisoryCoordinator] Loaded advisory stub for ${mentorId}:`,
+        `[MentorAdvisoryCoordinator] Loaded advisory stub for ${normalizedMentorId}:`,
         { profile: stub.voice_profile, types: Object.keys(stub.advisory_types || {}) }
       );
 
@@ -236,13 +272,7 @@ export class MentorAdvisoryCoordinator {
     try {
       // This requires iterating over known mentor list
       // For now, return array of mentors we know have stubs (from data structure)
-      const knownMentors = [
-        'miraj', 'lead', 'breach', 'kex_varon', 'jack', 'kyber', 'delta', 'mayu',
-        'riquis', 'theron', 'rax', 'rogue', 'dezmin', 'olsalty', 'kharjo', 'korr',
-        'pegar', 'krag', 'rajma', 'captain', 'seraphim', 'marl_skindar', 'sela',
-        'j0_n1', 'axiom', 'whisper', 'zhen', 'vera', 'urza', 'darth_miedo',
-        'darth_malbada', 'breach'
-      ];
+      const knownMentors = Array.from(ADVISORY_STUB_MENTORS);
 
       const withAdvisory = [];
       for (const mentorId of knownMentors) {
@@ -280,7 +310,7 @@ export class MentorAdvisoryCoordinator {
       // Load advisory stub
       const stub = await this.loadAdvisoryStub(mentorId);
       if (!stub) {
-        SWSELogger.warn(`[MentorAdvisoryCoordinator] No advisory stub for mentor: ${mentorId}`);
+        SWSELogger.debug(`[MentorAdvisoryCoordinator] No advisory stub for mentor: ${mentorId}; using picker without voiced advisory.`);
         return null;
       }
 
