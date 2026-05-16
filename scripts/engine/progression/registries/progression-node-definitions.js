@@ -50,11 +50,12 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
      * - Background (context-dependent)
      * - Summary (needs recompute)
      */
-    invalidates: ['languages', 'background', 'summary'],
+    invalidates: ['languages', 'background', 'summary', 'levelup-review'],
     invalidationBehavior: {
       languages: InvalidationBehavior.RECOMPUTE,
       background: InvalidationBehavior.DIRTY,
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'species',
@@ -73,10 +74,11 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
 
     activationPolicy: ActivationPolicy.CANONICAL,
     dependsOn: [],
-    invalidates: ['languages', 'summary'],
+    invalidates: ['languages', 'summary', 'levelup-review'],
     invalidationBehavior: {
       languages: InvalidationBehavior.RECOMPUTE,
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'droid',
@@ -116,8 +118,10 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       'force-powers',
       'force-secrets',
       'force-techniques',
+      'medical-secrets',
       'starship-maneuvers',
       'summary',
+      'levelup-review',
     ],
     invalidationBehavior: {
       skills: InvalidationBehavior.RECOMPUTE,
@@ -127,10 +131,12 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       'class-talent': InvalidationBehavior.DIRTY,
       languages: InvalidationBehavior.DIRTY,
       'force-powers': InvalidationBehavior.DIRTY,
-      'force-secrets': InvalidationBehavior.DIRTY,
-      'force-techniques': InvalidationBehavior.DIRTY,
-      'starship-maneuvers': InvalidationBehavior.DIRTY,
+      'force-secrets': InvalidationBehavior.PURGE,
+      'force-techniques': InvalidationBehavior.PURGE,
+      'medical-secrets': InvalidationBehavior.PURGE,
+      'starship-maneuvers': InvalidationBehavior.PURGE,
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'attributes',
@@ -163,30 +169,122 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
      */
     invalidates: [
       'l1-survey',
+      'base-class-survey',
+      'prestige-survey',
       'skills',
+      'general-feat',
       'class-feat',
       'class-talent',
       'force-powers',
       'force-secrets',
       'force-techniques',
+      'medical-secrets',
       'starship-maneuvers',
       'summary',
+      'levelup-review',
     ],
     invalidationBehavior: {
       'l1-survey': InvalidationBehavior.PURGE,
+      'base-class-survey': InvalidationBehavior.PURGE,
+      'prestige-survey': InvalidationBehavior.PURGE,
       skills: InvalidationBehavior.RECOMPUTE,
+      'general-feat': InvalidationBehavior.DIRTY,
       'class-feat': InvalidationBehavior.PURGE,
       'class-talent': InvalidationBehavior.PURGE,
       'force-powers': InvalidationBehavior.DIRTY,
       'force-secrets': InvalidationBehavior.DIRTY,
       'force-techniques': InvalidationBehavior.DIRTY,
+      'medical-secrets': InvalidationBehavior.DIRTY,
       'starship-maneuvers': InvalidationBehavior.DIRTY,
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'class',
     optional: false,
     isSkippable: false,
+    isFinal: false,
+  },
+
+
+  'base-class-survey': {
+    nodeId: 'base-class-survey',
+    label: 'New Class Survey',
+    icon: 'fa-comments',
+    category: 'conditional',
+    modes: ['levelup'],
+    subtypes: ['actor', 'npc', 'follower', 'droid'],
+
+    /** Appears after class selection when a NEW base class is selected after level 1. */
+    activationPolicy: ActivationPolicy.CONDITIONAL,
+    dependsOn: ['class'],
+    invalidates: [
+      'general-feat',
+      'class-feat',
+      'general-talent',
+      'class-talent',
+      'force-powers',
+      'force-secrets',
+      'force-techniques',
+      'medical-secrets',
+      'starship-maneuvers',
+    ],
+    invalidationBehavior: {
+      'general-feat': InvalidationBehavior.DIRTY,
+      'class-feat': InvalidationBehavior.DIRTY,
+      'general-talent': InvalidationBehavior.DIRTY,
+      'class-talent': InvalidationBehavior.DIRTY,
+      'force-powers': InvalidationBehavior.DIRTY,
+      'force-secrets': InvalidationBehavior.DIRTY,
+      'force-techniques': InvalidationBehavior.DIRTY,
+      'medical-secrets': InvalidationBehavior.DIRTY,
+      'starship-maneuvers': InvalidationBehavior.DIRTY,
+    },
+
+    selectionKey: 'classSurveys',
+    optional: true,
+    isSkippable: true,
+    isFinal: false,
+  },
+
+
+  'prestige-survey': {
+    nodeId: 'prestige-survey',
+    label: 'Prestige Survey',
+    icon: 'fa-user-graduate',
+    category: 'conditional',
+    modes: ['levelup'],
+    subtypes: ['actor', 'npc', 'follower', 'droid'],
+
+    /** Appears after class selection when a NEW prestige class is selected. */
+    activationPolicy: ActivationPolicy.CONDITIONAL,
+    dependsOn: ['class'],
+    invalidates: [
+      'general-feat',
+      'class-feat',
+      'general-talent',
+      'class-talent',
+      'force-powers',
+      'force-secrets',
+      'force-techniques',
+      'medical-secrets',
+      'starship-maneuvers',
+    ],
+    invalidationBehavior: {
+      'general-feat': InvalidationBehavior.DIRTY,
+      'class-feat': InvalidationBehavior.DIRTY,
+      'general-talent': InvalidationBehavior.DIRTY,
+      'class-talent': InvalidationBehavior.DIRTY,
+      'force-powers': InvalidationBehavior.DIRTY,
+      'force-secrets': InvalidationBehavior.DIRTY,
+      'force-techniques': InvalidationBehavior.DIRTY,
+      'medical-secrets': InvalidationBehavior.DIRTY,
+      'starship-maneuvers': InvalidationBehavior.DIRTY,
+    },
+
+    selectionKey: 'prestigeSurvey',
+    optional: true,
+    isSkippable: true,
     isFinal: false,
   },
 
@@ -200,9 +298,10 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
 
     activationPolicy: ActivationPolicy.CANONICAL,
     dependsOn: ['class'],
-    invalidates: ['summary'],
+    invalidates: ['summary', 'levelup-review'],
     invalidationBehavior: {
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'survey',
@@ -230,12 +329,13 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
      * - Feats (may grant feats)
      * - Summary
      */
-    invalidates: ['skills', 'languages', 'general-feat', 'summary'],
+    invalidates: ['skills', 'languages', 'general-feat', 'summary', 'levelup-review'],
     invalidationBehavior: {
       skills: InvalidationBehavior.RECOMPUTE,
       languages: InvalidationBehavior.RECOMPUTE,
       'general-feat': InvalidationBehavior.DIRTY,
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'background',
@@ -271,6 +371,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       'force-secrets',
       'force-techniques',
       'summary',
+      'levelup-review',
     ],
     invalidationBehavior: {
       'general-feat': InvalidationBehavior.DIRTY,
@@ -281,6 +382,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       'force-secrets': InvalidationBehavior.DIRTY,
       'force-techniques': InvalidationBehavior.DIRTY,
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'skills',
@@ -317,6 +419,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       'languages',
       'starship-maneuvers',
       'summary',
+      'levelup-review',
     ],
     invalidationBehavior: {
       'class-feat': InvalidationBehavior.DIRTY,
@@ -328,6 +431,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       languages: InvalidationBehavior.DIRTY,
       'starship-maneuvers': InvalidationBehavior.DIRTY,
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'feats',
@@ -355,6 +459,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       'languages',
       'starship-maneuvers',
       'summary',
+      'levelup-review',
     ],
     invalidationBehavior: {
       'general-talent': InvalidationBehavior.DIRTY,
@@ -365,6 +470,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       languages: InvalidationBehavior.DIRTY,
       'starship-maneuvers': InvalidationBehavior.DIRTY,
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'feats',
@@ -388,16 +494,20 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       'force-powers',
       'force-secrets',
       'force-techniques',
+      'medical-secrets',
       'starship-maneuvers',
       'summary',
+      'levelup-review',
     ],
     invalidationBehavior: {
       'class-talent': InvalidationBehavior.DIRTY,
       'force-powers': InvalidationBehavior.DIRTY,
       'force-secrets': InvalidationBehavior.DIRTY,
       'force-techniques': InvalidationBehavior.DIRTY,
+      'medical-secrets': InvalidationBehavior.DIRTY,
       'starship-maneuvers': InvalidationBehavior.DIRTY,
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'talents',
@@ -420,15 +530,19 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       'force-powers',
       'force-secrets',
       'force-techniques',
+      'medical-secrets',
       'starship-maneuvers',
       'summary',
+      'levelup-review',
     ],
     invalidationBehavior: {
       'force-powers': InvalidationBehavior.DIRTY,
       'force-secrets': InvalidationBehavior.DIRTY,
       'force-techniques': InvalidationBehavior.DIRTY,
+      'medical-secrets': InvalidationBehavior.DIRTY,
       'starship-maneuvers': InvalidationBehavior.DIRTY,
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'talents',
@@ -442,14 +556,15 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     label: 'Languages',
     icon: 'fa-language',
     category: 'canonical',
-    modes: ['chargen'],
+    modes: ['chargen', 'levelup'],
     subtypes: ['actor', 'npc', 'follower', 'nonheroic', 'beast'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
     dependsOn: ['species', 'background', 'attribute', 'general-feat', 'class-feat'],
-    invalidates: ['summary'],
+    invalidates: ['summary', 'levelup-review'],
     invalidationBehavior: {
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'languages',
@@ -485,6 +600,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
       'force-powers',
       'force-secrets',
       'force-techniques',
+      'medical-secrets',
       'starship-maneuvers',
     ],
 
@@ -513,10 +629,11 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     activationPolicy: ActivationPolicy.PREREQUISITE,
 
     dependsOn: ['general-feat', 'class-feat', 'class'],
-    invalidates: ['force-secrets', 'summary'],
+    invalidates: ['force-secrets', 'summary', 'levelup-review'],
     invalidationBehavior: {
       'force-secrets': InvalidationBehavior.DIRTY,
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'forcePowers',
@@ -535,10 +652,11 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
 
     activationPolicy: ActivationPolicy.PREREQUISITE,
     dependsOn: ['force-powers'],
-    invalidates: ['force-techniques', 'summary'],
+    invalidates: ['force-techniques', 'summary', 'levelup-review'],
     invalidationBehavior: {
       'force-techniques': InvalidationBehavior.DIRTY,
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'forceSecrets',
@@ -557,9 +675,10 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
 
     activationPolicy: ActivationPolicy.PREREQUISITE,
     dependsOn: ['force-powers', 'force-secrets'],
-    invalidates: ['summary'],
+    invalidates: ['summary', 'levelup-review'],
     invalidationBehavior: {
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'forceTechniques',
@@ -567,6 +686,29 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     isSkippable: true,
     isFinal: false,
   },
+
+  'medical-secrets': {
+    nodeId: 'medical-secrets',
+    label: 'Medical Secrets',
+    icon: 'fa-kit-medical',
+    category: 'conditional',
+    modes: ['levelup'],
+    subtypes: ['actor', 'npc', 'follower'],
+
+    activationPolicy: ActivationPolicy.PREREQUISITE,
+    dependsOn: ['class', 'skills'],
+    invalidates: ['summary', 'levelup-review'],
+    invalidationBehavior: {
+      summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
+    },
+
+    selectionKey: 'medicalSecrets',
+    optional: true,
+    isSkippable: true,
+    isFinal: false,
+  },
+
 
   'starship-maneuvers': {
     nodeId: 'starship-maneuvers',
@@ -578,9 +720,10 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
 
     activationPolicy: ActivationPolicy.PREREQUISITE,
     dependsOn: ['general-feat', 'class-feat'],
-    invalidates: ['summary'],
+    invalidates: ['summary', 'levelup-review'],
     invalidationBehavior: {
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: 'starshipManeuvers',
@@ -601,14 +744,51 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     activationPolicy: ActivationPolicy.CONDITIONAL,
 
     dependsOn: ['droid-builder'],
-    invalidates: ['summary'],
+    invalidates: ['summary', 'levelup-review'],
     invalidationBehavior: {
       summary: InvalidationBehavior.RECOMPUTE,
+      'levelup-review': InvalidationBehavior.RECOMPUTE,
     },
 
     selectionKey: null,
     optional: false,
     isSkippable: false,
     isFinal: false,
+  },
+  'levelup-review': {
+    nodeId: 'levelup-review',
+    label: 'Level-Up Review',
+    icon: 'fa-list-check',
+    category: 'canonical',
+    modes: ['levelup'],
+    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic', 'beast'],
+
+    activationPolicy: ActivationPolicy.CANONICAL,
+
+    /** Level-up review is the final dry-run surface before mutation. */
+    dependsOn: [
+      'class',
+      'base-class-survey',
+      'prestige-survey',
+      'attribute',
+      'skills',
+      'general-feat',
+      'class-feat',
+      'general-talent',
+      'class-talent',
+      'languages',
+      'force-powers',
+      'force-secrets',
+      'force-techniques',
+      'medical-secrets',
+      'starship-maneuvers',
+    ],
+
+    invalidates: [],
+
+    selectionKey: 'levelupReview',
+    optional: false,
+    isSkippable: false,
+    isFinal: true,
   },
 });

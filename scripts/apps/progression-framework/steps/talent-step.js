@@ -118,6 +118,43 @@ export class TalentStep extends ProgressionStepPlugin {
     this._isDroidProgression = false;
   }
 
+  _captureStepScroll(shell) {
+    const root = shell?.element;
+    if (!(root instanceof HTMLElement)) return [];
+    const nodes = [root, ...root.querySelectorAll('*')];
+    return nodes
+      .filter(el => el instanceof HTMLElement && (el.scrollTop > 0 || el.scrollLeft > 0))
+      .map(el => {
+        const scrollKey = el.dataset?.progScrollKey ? `scroll-key:${el.dataset.progScrollKey}` : null;
+        const region = el.dataset?.region || el.closest?.('[data-region]')?.dataset?.region || '';
+        const classes = Array.from(el.classList || []).filter(name => /^(prog|swse|talent)-/.test(name)).slice(0, 3).join('.');
+        return {
+          key: scrollKey || (el.dataset?.region ? `region:${el.dataset.region}` : (region && classes ? `region:${region}:class:${classes}` : null)),
+          path: (() => {
+            const path = [];
+            let node = el;
+            while (node && node !== root) {
+              const parent = node.parentElement;
+              if (!parent) return null;
+              path.unshift(Array.prototype.indexOf.call(parent.children, node));
+              node = parent;
+            }
+            return node === root ? path : null;
+          })(),
+          top: el.scrollTop,
+          left: el.scrollLeft,
+        };
+      })
+      .filter(snap => snap.key || Array.isArray(snap.path));
+  }
+
+  _renderPreservingScroll(shell) {
+    if (shell) {
+      shell._pendingScrollSnapshots = this._captureStepScroll(shell);
+      shell.render?.();
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Lifecycle
   // ---------------------------------------------------------------------------
@@ -237,7 +274,7 @@ export class TalentStep extends ProgressionStepPlugin {
           const treeId = target?.dataset?.treeId || target?.closest('[data-tree-id]')?.dataset?.treeId;
           if (treeId) {
             this._focusedTreeId = treeId;
-            shell?.render?.();
+            this._renderPreservingScroll(shell);
           }
           return true;
         }
@@ -259,21 +296,21 @@ export class TalentStep extends ProgressionStepPlugin {
           const mode = target?.dataset?.viewMode || target?.closest('[data-view-mode]')?.dataset?.viewMode;
           if (['both', 'list', 'map'].includes(mode)) {
             this._viewMode = mode;
-            shell?.render?.();
+            this._renderPreservingScroll(shell);
           }
           return true;
         }
 
         case 'fit-talent-tree': {
           this._viewMode = this._viewMode === 'list' ? 'both' : this._viewMode;
-          shell?.render?.();
+          this._renderPreservingScroll(shell);
           return true;
         }
 
         case 'center-talent-node': {
           this._centerGraphAfterRender = true;
           if (this._viewMode === 'list') this._viewMode = 'both';
-          shell?.render?.();
+          this._renderPreservingScroll(shell);
           return true;
         }
 
@@ -281,7 +318,7 @@ export class TalentStep extends ProgressionStepPlugin {
           const talentId = target?.dataset?.talentId || target?.closest('[data-talent-id]')?.dataset?.talentId;
           if (talentId) {
             this._focusedTalentId = talentId;
-            shell?.render?.();
+            this._renderPreservingScroll(shell);
           }
           return true;
         }
@@ -313,7 +350,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
     const onSearch = e => {
       this._searchQuery = e.detail?.query || '';
-      shell.render();
+      this._renderPreservingScroll(shell);
     };
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
 
@@ -325,7 +362,7 @@ export class TalentStep extends ProgressionStepPlugin {
         e.preventDefault();
         const treeId = card.dataset.treeId;
         this._focusedTreeId = treeId;
-        shell.render();
+        this._renderPreservingScroll(shell);
       }, { signal });
     });
 
@@ -355,7 +392,7 @@ export class TalentStep extends ProgressionStepPlugin {
         const mode = btn.dataset.viewMode;
         if (['both', 'list', 'map'].includes(mode)) {
           this._viewMode = mode;
-          shell.render();
+          this._renderPreservingScroll(shell);
         }
       }, { signal });
     });
@@ -364,7 +401,7 @@ export class TalentStep extends ProgressionStepPlugin {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         if (this._viewMode === 'list') this._viewMode = 'both';
-        shell.render();
+        this._renderPreservingScroll(shell);
       }, { signal });
     });
 
@@ -373,7 +410,7 @@ export class TalentStep extends ProgressionStepPlugin {
         e.preventDefault();
         this._centerGraphAfterRender = true;
         if (this._viewMode === 'list') this._viewMode = 'both';
-        shell.render();
+        this._renderPreservingScroll(shell);
       }, { signal });
     });
 
@@ -385,7 +422,7 @@ export class TalentStep extends ProgressionStepPlugin {
         e.preventDefault();
         const talentId = node.dataset.talentId;
         this._focusedTalentId = talentId;
-        shell.render();
+        this._renderPreservingScroll(shell);
       };
       node.addEventListener('click', focusTalent, { signal });
       node.addEventListener('keydown', (e) => {
@@ -398,7 +435,15 @@ export class TalentStep extends ProgressionStepPlugin {
     if (!workSurfaceEl) return;
 
     // Render graph visualization when in graph stage
-    if (this._stage === 'graph' && this._graphData) {
+    if (this._stage === 'graph') {
+      if (!this._graphData) {
+        SWSELogger.warn('[TalentStep] Graph stage reached with no graph data', {
+          selectedTreeId: this._selectedTreeId,
+          selectedTalentCount: this._selectedTreeTalents?.length || 0,
+        });
+        return;
+      }
+
       const canvas = workSurfaceEl.querySelector('.talent-graph-canvas[data-graph-id]');
       if (canvas) {
         try {
@@ -408,7 +453,7 @@ export class TalentStep extends ProgressionStepPlugin {
             focusedTalentId: this._focusedTalentId,
             onFocus: async (talentId) => {
               this._focusedTalentId = talentId;
-              shell?.render?.();
+              this._renderPreservingScroll(shell);
             },
             onCommit: async (talentId) => {
               await this.onItemCommitted(talentId, shell);
@@ -425,6 +470,11 @@ export class TalentStep extends ProgressionStepPlugin {
         } catch (err) {
           SWSELogger.warn('[TalentStep] Graph rendering failed:', err);
         }
+      } else {
+        SWSELogger.warn('[TalentStep] Graph canvas missing from talent planner template', {
+          selectedTreeId: this._selectedTreeId,
+          workSurfaceClasses: workSurfaceEl?.className || null,
+        });
       }
     }
   }
@@ -487,7 +537,7 @@ export class TalentStep extends ProgressionStepPlugin {
     this._focusedTalentId = null;
     this._lastGraphNodeStates = {};
 
-    shell.render();
+    this._renderPreservingScroll(shell);
   }
 
   _exitTree(shell) {
@@ -500,7 +550,7 @@ export class TalentStep extends ProgressionStepPlugin {
     this._lastGraphNodeStates = {};
     this._centerGraphAfterRender = false;
 
-    shell.render();
+    this._renderPreservingScroll(shell);
   }
 
   // ---------------------------------------------------------------------------
@@ -703,6 +753,47 @@ export class TalentStep extends ProgressionStepPlugin {
 
   _getCommittedTalentForSlot(shell) {
     return this._getCommittedTalentSelections(shell).find(talent => talent?.slotType === this._slotType) || null;
+  }
+
+  _normalizeTalentKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[’']/g, '')
+      .replace(/[^a-z0-9]+/g, '-');
+  }
+
+  _getTalentIdentityKeys(talent) {
+    return [talent?.id, talent?._id, talent?.uuid, talent?.name, talent?.label]
+      .filter(Boolean)
+      .map(value => this._normalizeTalentKey(value))
+      .filter(Boolean);
+  }
+
+  _getOwnedTalentKeys(actor) {
+    const keys = new Set();
+    for (const item of actor?.items || []) {
+      if (item?.type !== 'talent') continue;
+      for (const key of this._getTalentIdentityKeys(item)) keys.add(key);
+    }
+    return keys;
+  }
+
+  _getSelectedTalentKeys(shell, { excludeSlotType = null } = {}) {
+    const keys = new Set();
+    for (const selection of this._getCommittedTalentSelections(shell)) {
+      if (excludeSlotType && selection?.slotType === excludeSlotType) continue;
+      for (const key of this._getTalentIdentityKeys(selection)) keys.add(key);
+    }
+    return keys;
+  }
+
+  _isTalentAlreadyTakenElsewhere(talent, shell) {
+    const keys = this._getTalentIdentityKeys(talent);
+    if (!keys.length) return false;
+    const otherSelected = this._getSelectedTalentKeys(shell, { excludeSlotType: this._slotType });
+    const owned = this._getOwnedTalentKeys(shell?.actor);
+    return keys.some(key => otherSelected.has(key) || owned.has(key));
   }
 
   _buildCanonicalTalentSelection(talent) {
@@ -958,8 +1049,10 @@ export class TalentStep extends ProgressionStepPlugin {
       const id = this._getTalentId(talent);
       const state = nodeStates?.[id] || {};
       const isSelected = id === this._selectedTalentId || !!state.selected;
-      const isOwned = !!state.owned || isSelected;
-      const meetsPrereqs = state.legal !== false;
+      const chosenElsewhere = !!state.chosenElsewhere;
+      const isActorOwned = !!state.actorOwned;
+      const isOwned = !!state.owned || isSelected || chosenElsewhere || isActorOwned;
+      const meetsPrereqs = state.legal !== false && !chosenElsewhere && !isActorOwned;
       const missing = Array.isArray(state.missing) ? state.missing.map(toDisplayText).filter(Boolean) : [];
       const prerequisites = this._getTalentPrerequisiteText(talent);
       const summary = this._getTalentSummary(talent);
@@ -975,8 +1068,10 @@ export class TalentStep extends ProgressionStepPlugin {
         lockReason,
         isSelected,
         isOwned,
+        chosenElsewhere,
+        isActorOwned,
         meetsPrereqs,
-        isSelectable: meetsPrereqs || isSelected,
+        isSelectable: (meetsPrereqs || isSelected) && !chosenElsewhere && !isActorOwned,
         isFocused: id === this._focusedTalentId,
         prerequisitePath: this._buildPrerequisitePathForTalent(talent, nodeStates),
       };
@@ -1024,27 +1119,35 @@ export class TalentStep extends ProgressionStepPlugin {
 
     // Prepare node states once for both the list and the graph renderer.
     const nodeStates = {};
-    const pendingAbilityData = this._buildPendingAbilityData(context?.shell);
+    const shell = context?.shell || null;
+    const pendingAbilityData = this._buildPendingAbilityData(shell);
+    const otherSelectedKeys = this._getSelectedTalentKeys(shell, { excludeSlotType: this._slotType });
+    const ownedTalentKeys = this._getOwnedTalentKeys(shell?.actor);
     if (this._graphData?.nodes) {
       for (const [nodeId, node] of this._graphData.nodes) {
         const talent = node.talent;
         let prereqDetails = { legal: true, missing: [], blocking: [] };
         try {
-          prereqDetails = await this._getPrerequisiteDetails(context?.shell?.actor, talent, pendingAbilityData);
+          prereqDetails = await this._getPrerequisiteDetails(shell?.actor, talent, pendingAbilityData);
         } catch (_err) {
           prereqDetails = { legal: true, missing: [], blocking: [] };
         }
+        const identityKeys = this._getTalentIdentityKeys(talent);
         const isSelected = nodeId === this._selectedTalentId;
-        const isOwned = isSelected;
+        const chosenElsewhere = identityKeys.some(key => otherSelectedKeys.has(key));
+        const isActorOwned = identityKeys.some(key => ownedTalentKeys.has(key));
+        const isOwned = isSelected || chosenElsewhere || isActorOwned;
         const isSuggested = this._suggestedTrees.some(t => t.id === this._selectedTreeId);
 
         nodeStates[nodeId] = {
-          legal: prereqDetails.legal !== false,
+          legal: prereqDetails.legal !== false && !chosenElsewhere && !isActorOwned,
           owned: isOwned,
           selected: isSelected,
+          chosenElsewhere,
+          actorOwned: isActorOwned,
           suggested: isSuggested,
-          missing: prereqDetails.missing || [],
-          blocking: prereqDetails.blocking || [],
+          missing: chosenElsewhere ? ['Already selected in another talent slot.'] : (isActorOwned ? ['Already known.'] : (prereqDetails.missing || [])),
+          blocking: chosenElsewhere ? ['Already selected in another talent slot.'] : (isActorOwned ? ['Already known.'] : (prereqDetails.blocking || [])),
         };
       }
     }
@@ -1292,6 +1395,19 @@ export class TalentStep extends ProgressionStepPlugin {
       const currentSelections = this._getCommittedTalentSelections(shell);
       const slotSelections = currentSelections.filter(entry => entry?.slotType !== this._slotType);
       const isTogglingOff = this._selectedTalentId === talentId;
+
+      if (!isTogglingOff && this._isTalentAlreadyTakenElsewhere(talent, shell)) {
+        SWSELogger.warn('[TalentStep] Duplicate talent selection blocked', {
+          talentId,
+          talentName: talent?.name || null,
+          slotType: this._slotType,
+        });
+        ui?.notifications?.warn?.(`${talent?.name || 'That talent'} is already selected or known.`);
+        this._focusedTalentId = talentId;
+        this._renderPreservingScroll(shell);
+        return;
+      }
+
       const nextSelection = (!isTogglingOff && talent) ? this._buildCanonicalTalentSelection(talent) : null;
       const nextSelections = nextSelection ? [...slotSelections, nextSelection] : slotSelections;
 
@@ -1330,7 +1446,7 @@ export class TalentStep extends ProgressionStepPlugin {
         this._stage = 'browser';
         await this.onItemFocused(id);
         await this.onItemCommitted(id, shell);
-        shell.render();
+        this._renderPreservingScroll(shell);
       });
       return;
     }

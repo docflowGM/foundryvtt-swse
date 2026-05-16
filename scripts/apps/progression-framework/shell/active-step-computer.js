@@ -34,6 +34,7 @@ import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
 import { resolveClassModel } from '../../../engine/progression/utils/class-resolution.js';
 import { ClassFeatRegistry } from '../../../engine/progression/feats/class-feat-registry.js';
 import { LanguageEngine } from '../../../engine/progression/engine/language-engine.js';
+import { buildLevelUpEventContext, countClassFeatureChoicesAtLevel } from '../../../engine/progression/utils/levelup-event-context.js';
 
 export class ActiveStepComputer {
   /**
@@ -102,12 +103,17 @@ export class ActiveStepComputer {
       // Step 5: Route through adapter seam for subtype-specific contribution
       // Phase 1: Adapter can suppress/modify active steps based on subtype rules
       const adapter = progressionSession.subtypeAdapter;
-      let finalActive = applicableActive;
+      let finalActive = this._dedupeNodeIds(applicableActive);
       if (adapter) {
         // Phase 2.8: Ensure session has mode for adapter logic (e.g., Beast level-up feat filtering)
         const sessionWithMode = { ...progressionSession, mode };
-        finalActive = await adapter.contributeActiveSteps(applicableActive, sessionWithMode, actor);
+        finalActive = this._dedupeNodeIds(await adapter.contributeActiveSteps(finalActive, sessionWithMode, actor));
       }
+
+      // Confirm/review nodes must always be terminal. Conditional follow-up steps
+      // such as Force Powers unlocked by Force Training are still work surfaces and
+      // must never be appended after Summary/Level-Up Review.
+      finalActive = this._orderFinalNodesLast(finalActive);
 
       swseLogger.debug('[ActiveStepComputer] Computed active steps', {
         mode,
@@ -122,6 +128,30 @@ export class ActiveStepComputer {
       swseLogger.error('[ActiveStepComputer] Error computing active steps:', err);
       return [];
     }
+  }
+
+
+
+  _dedupeNodeIds(nodeIds = []) {
+    const seen = new Set();
+    const result = [];
+    for (const nodeId of nodeIds || []) {
+      if (!nodeId || seen.has(nodeId)) continue;
+      seen.add(nodeId);
+      result.push(nodeId);
+    }
+    return result;
+  }
+
+  _orderFinalNodesLast(nodeIds = []) {
+    const nonFinal = [];
+    const finalNodes = [];
+    for (const nodeId of nodeIds || []) {
+      const node = PROGRESSION_NODE_REGISTRY[nodeId];
+      if (node?.isFinal === true) finalNodes.push(nodeId);
+      else nonFinal.push(nodeId);
+    }
+    return [...nonFinal, ...finalNodes];
   }
 
   /**
@@ -139,23 +169,39 @@ export class ActiveStepComputer {
   async _evaluateStepApplicability(node, actor, mode, progressionSession) {
     try {
       switch (node.nodeId) {
+        // Ability increases are level-event work in level-up, not an every-level chargen carryover.
+        case 'attribute':
+          return this._hasAttributeIncreaseWork(actor, progressionSession, mode);
+
+        // Skills are chargen work unless a level-up entitlement explicitly grants skill choices.
+        case 'skills':
+          return this._hasSkillChoices(actor, progressionSession, mode);
+
         // Languages: applicable only if unallocated language slots exist
         case 'languages':
           return this._hasUnallocatedLanguageSlots(actor, progressionSession);
 
+        // New base-class survey: only after selecting a new base class after level 1
+        case 'base-class-survey':
+          return this._hasBaseClassSurveyWork(actor, progressionSession);
+
+        // Prestige survey: only after selecting a new prestige class
+        case 'prestige-survey':
+          return this._hasPrestigeSurveyWork(actor, progressionSession);
+
         // Feat steps: applicable if legal choices exist
         case 'general-feat':
         case 'class-feat':
-          return this._hasFeatChoices(node.nodeId, actor, progressionSession);
+          return this._hasFeatChoices(node.nodeId, actor, progressionSession, mode);
 
         // Talent steps: applicable if legal choices exist
         case 'general-talent':
         case 'class-talent':
-          return this._hasTalentChoices(node.nodeId, actor, progressionSession);
+          return this._hasTalentChoices(node.nodeId, actor, progressionSession, mode);
 
         // Force powers: applicable if entitlements > used count
         case 'force-powers':
-          return this._hasForcePowerChoices(actor, progressionSession);
+          return await this._hasForcePowerChoices(actor, progressionSession);
 
         // Force secrets/techniques: applicable if entitlements exist
         case 'force-secrets':
@@ -163,6 +209,9 @@ export class ActiveStepComputer {
 
         case 'force-techniques':
           return this._hasForceTechniqueChoices(actor, progressionSession);
+
+        case 'medical-secrets':
+          return this._hasMedicalSecretChoices(actor, progressionSession);
 
         // Starship maneuvers: applicable if entitlements exist
         case 'starship-maneuvers':
@@ -189,6 +238,118 @@ export class ActiveStepComputer {
       // Default to applicable on error (fail-safe: don't hide steps)
       return true;
     }
+  }
+
+
+
+  _hasAttributeIncreaseWork(actor, progressionSession, mode = 'chargen') {
+    if (mode !== 'levelup') return true;
+    const context = buildLevelUpEventContext(actor, progressionSession);
+    const enteringLevel = Number(context?.enteringLevel || 0);
+    const hasPendingSelection = !!progressionSession?.draftSelections?.attributes;
+    return hasPendingSelection || (enteringLevel > 1 && enteringLevel % 4 === 0);
+  }
+
+  _hasSkillChoices(actor, progressionSession, mode = 'chargen') {
+    if (mode !== 'levelup') return true;
+
+    const slots = this._countPendingSkillTrainingSlots(progressionSession);
+    if (slots <= 0) return false;
+
+    const selectedNewSkills = this._countNewlySelectedTrainedSkills(actor, progressionSession);
+    return selectedNewSkills < slots || !!progressionSession?.draftSelections?.skills;
+  }
+
+  _countPendingSkillTrainingSlots(progressionSession) {
+    const draft = progressionSession?.draftSelections || {};
+    const entitlements = Array.isArray(draft.pendingEntitlements) ? draft.pendingEntitlements : [];
+    const entitlementSlots = entitlements
+      .filter(entry => String(entry?.type || '') === 'skill_training_slot')
+      .reduce((sum, entry) => sum + Math.max(0, Number(entry?.quantity || 0) - Number(entry?.spent || 0)), 0);
+
+    const pendingFeats = Array.isArray(draft.feats) ? draft.feats : [];
+    const featSlots = pendingFeats.reduce((sum, feat) => {
+      const name = String(feat?.name || feat?.label || feat?.id || feat || '').toLowerCase();
+      if (name !== 'skill training' && !name.includes('skill training')) return sum;
+      return sum + Math.max(1, Number(feat?.count || 1));
+    }, 0);
+
+    return Math.max(entitlementSlots, featSlots);
+  }
+
+  _countNewlySelectedTrainedSkills(actor, progressionSession) {
+    const selected = this._extractTrainedSkillKeys(progressionSession?.draftSelections?.skills);
+    if (!selected.length) return 0;
+
+    const actorTrained = new Set(
+      Object.entries(actor?.system?.skills || {})
+        .filter(([, data]) => data?.trained === true)
+        .map(([key]) => this._normalizeSkillKey(key))
+    );
+
+    return selected
+      .map(key => this._normalizeSkillKey(key))
+      .filter(Boolean)
+      .filter(key => !actorTrained.has(key))
+      .length;
+  }
+
+  _extractTrainedSkillKeys(rawSelection) {
+    if (!rawSelection) return [];
+    const raw = rawSelection?.trained ?? rawSelection;
+    const entries = Array.isArray(raw) ? raw : Object.entries(raw || {}).map(([key, value]) => {
+      if (value === true) return key;
+      if (value?.trained === true) return value?.key || value?.id || key;
+      return null;
+    });
+
+    const keys = [];
+    for (const entry of entries || []) {
+      const key = typeof entry === 'string'
+        ? entry
+        : entry?.key || entry?.id || entry?.skill || entry?.name || null;
+      if (key) keys.push(key);
+    }
+    return Array.from(new Set(keys));
+  }
+
+  _normalizeSkillKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_|_$/g, '');
+  }
+
+  _hasBaseClassSurveyWork(actor, progressionSession) {
+    const context = buildLevelUpEventContext(actor, progressionSession);
+    if (!context?.isNewBaseClass) return false;
+
+    const classKey = context.selectedClassId;
+    if (!classKey) return false;
+
+    const completed = actor?.system?.swse?.classSurveyResponses?.[classKey]?.completed === true
+      || progressionSession?.draftSelections?.classSurveys?.[classKey]?.completed === true;
+    return !completed;
+  }
+
+  _hasPrestigeSurveyWork(actor, progressionSession) {
+    const context = buildLevelUpEventContext(actor, progressionSession);
+    if (!context?.isNewPrestigeClass) return false;
+
+    const classKey = context.selectedClassId;
+    if (!classKey) return false;
+
+    const completed = actor?.system?.swse?.prestigeSurveyResponses?.[classKey]?.completed === true;
+    if (completed) return false;
+
+    const sessionSurvey = progressionSession?.draftSelections?.prestigeSurvey;
+    if (sessionSurvey?.completed === true && (sessionSurvey?.classId === classKey || sessionSurvey?.classId === context.selectedClassName)) {
+      return false;
+    }
+
+    return true;
   }
 
 
@@ -250,9 +411,12 @@ export class ActiveStepComputer {
    * Check if legal feat choices exist for this feat type.
    * @private
    */
-  async _hasFeatChoices(stepNodeId, actor, progressionSession) {
+  async _hasFeatChoices(stepNodeId, actor, progressionSession, mode = 'chargen') {
     if (stepNodeId !== 'class-feat') {
-      return true;
+      if (mode !== 'levelup') return true;
+      const levelContext = buildLevelUpEventContext(actor, progressionSession);
+      const enteringLevel = Number(levelContext?.enteringLevel || 0);
+      return enteringLevel > 1 && enteringLevel % 3 === 0;
     }
 
     try {
@@ -262,9 +426,10 @@ export class ActiveStepComputer {
         return false;
       }
 
-      const currentLevel = Number(actor?.system?.level || actor?.system?.details?.level || 1) || 1;
+      const levelContext = buildLevelUpEventContext(actor, progressionSession);
+      const classLevel = levelContext?.selectedClassNextLevel || 1;
       const levelEntry = Array.isArray(classModel.levelProgression)
-        ? classModel.levelProgression.find(entry => Number(entry.level) === currentLevel)
+        ? classModel.levelProgression.find(entry => Number(entry.level) === classLevel)
         : null;
       const features = levelEntry?.features || [];
       const hasClassFeatGrant = features.some(feature => {
@@ -290,20 +455,41 @@ export class ActiveStepComputer {
    * Check if legal talent choices exist for this talent type.
    * @private
    */
-  _hasTalentChoices(stepNodeId, actor, progressionSession) {
-    // Placeholder: would call AbilityEngine.evaluateAcquisition() for each talent
-    // For now, assume applicable (step plugin filters legal choices)
-    return true;
+  _hasTalentChoices(stepNodeId, actor, progressionSession, mode = 'chargen') {
+    // Level-up has one talent entitlement budget. Keep the class-talent surface
+    // and suppress the duplicate general-talent surface so a single owed talent
+    // cannot be selected twice.
+    if (mode === 'levelup' && stepNodeId === 'general-talent') return false;
+
+    const classSelection = progressionSession?.getSelection?.('class') || progressionSession?.draftSelections?.class || null;
+    const classModel = resolveClassModel(classSelection);
+    if (!classModel) return false;
+
+    const levelContext = buildLevelUpEventContext(actor, progressionSession);
+    const classLevel = levelContext?.selectedClassNextLevel || 1;
+    const owedTalents = countClassFeatureChoicesAtLevel(classModel, classLevel, 'talent_choice');
+
+    // The current progression spine has both general/class talent surfaces; both are
+    // selection UIs for the same class-granted talent budget. Show them only when a
+    // class level actually grants a talent to avoid zero-choice soft-locks.
+    return owedTalents > 0;
   }
 
   /**
    * Check if force power entitlements exist and have unfilled slots.
    * @private
    */
-  _hasForcePowerChoices(actor, progressionSession) {
-    // For now, assume applicable if force powers step is active
-    // (prerequisite already checked by activation policy)
-    return true;
+  async _hasForcePowerChoices(actor, progressionSession) {
+    try {
+      const { resolveForcePowerEntitlements } = await import(
+        '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js'
+      );
+      const entitlements = await resolveForcePowerEntitlements(progressionSession, actor);
+      return entitlements.remaining > 0;
+    } catch (err) {
+      swseLogger.warn('[ActiveStepComputer] Error checking force power grants:', err);
+      return false;
+    }
   }
 
   /**
@@ -320,7 +506,7 @@ export class ActiveStepComputer {
 
       // Check the real class progression grant budget
       const entitlements = resolveForceSecretEntitlements(progressionSession, null, actor);
-      const hasGrants = entitlements.total > 0;
+      const hasGrants = entitlements.remaining > 0;
 
       if (!hasGrants) {
         swseLogger.debug('[ActiveStepComputer] Force Secrets: no class grants resolved');
@@ -347,7 +533,7 @@ export class ActiveStepComputer {
 
       // Check the real class progression grant budget
       const entitlements = resolveForceTechniqueEntitlements(progressionSession, null, actor);
-      const hasGrants = entitlements.total > 0;
+      const hasGrants = entitlements.remaining > 0;
 
       if (!hasGrants) {
         swseLogger.debug('[ActiveStepComputer] Force Techniques: no class grants resolved');
@@ -357,6 +543,31 @@ export class ActiveStepComputer {
     } catch (err) {
       swseLogger.warn('[ActiveStepComputer] Error checking force technique grants:', err);
       return false; // Fail closed
+    }
+  }
+
+  /**
+   * Check if Medic Medical Secret entitlements exist.
+   * Uses real class grant budget instead of proxy signals.
+   * @private
+   */
+  async _hasMedicalSecretChoices(actor, progressionSession) {
+    try {
+      const { resolveMedicalSecretEntitlements } = await import(
+        '/systems/foundryvtt-swse/scripts/engine/progression/utils/medical-secret-resolution.js'
+      );
+
+      const entitlements = resolveMedicalSecretEntitlements(progressionSession, null, actor);
+      const hasGrants = entitlements.total > 0 && entitlements.remaining > 0;
+
+      if (!hasGrants) {
+        swseLogger.debug('[ActiveStepComputer] Medical Secrets: no unfilled class grants resolved');
+      }
+
+      return hasGrants;
+    } catch (err) {
+      swseLogger.warn('[ActiveStepComputer] Error checking medical secret grants:', err);
+      return false;
     }
   }
 
@@ -419,7 +630,15 @@ export class ActiveStepComputer {
           swseLogger.debug('[ActiveStepComputer] Starship Maneuvers: access granted for ' + actorName, { diagnostics });
         }
 
-        return hasAccess;
+        if (!hasAccess) return false;
+
+        const capacity = await ManeuverAuthorityEngine.getManeuverCapacity(actor, { shell: { progressionSession }, includePending: true });
+        const pendingManeuvers = progressionSession?.draftSelections?.starshipManeuvers || [];
+        const pendingCount = Array.isArray(pendingManeuvers)
+          ? pendingManeuvers.reduce((sum, entry) => sum + Math.max(1, Number(entry?.count || 1)), 0)
+          : 0;
+        const ownedCount = Number(actor?.items?.filter?.((item) => item.type === 'maneuver')?.length || 0);
+        return Number(capacity || 0) > ownedCount + pendingCount;
       } catch (validationErr) {
         diagnostics.accessValidation = {
           success: false,
@@ -538,6 +757,11 @@ export class ActiveStepComputer {
       return await this._hasForceTechniqueChoices(actor, progressionSession);
     }
 
+    // Medical secrets: check real class grant budget
+    if (node.nodeId === 'medical-secrets') {
+      return await this._hasMedicalSecretChoices(actor, progressionSession);
+    }
+
     // Starship maneuvers: PHASE 3 - check real access validation (not proxy signals)
     if (node.nodeId === 'starship-maneuvers') {
       return await this._hasStarshipChoices(actor, progressionSession);
@@ -558,6 +782,14 @@ export class ActiveStepComputer {
    * @private
    */
   _checkConditionalActivation(node, actor, progressionSession) {
+    if (node.nodeId === 'base-class-survey') {
+      return this._hasBaseClassSurveyWork(actor, progressionSession);
+    }
+
+    if (node.nodeId === 'prestige-survey') {
+      return this._hasPrestigeSurveyWork(actor, progressionSession);
+    }
+
     // Final droid configuration: appears only if droid build is deferred
     if (node.nodeId === 'final-droid-configuration') {
       const droidBuild = progressionSession?.draftSelections?.droid;

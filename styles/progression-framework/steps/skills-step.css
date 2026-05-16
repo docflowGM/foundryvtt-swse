@@ -460,3 +460,8 @@
 .prog-skill-controls__placeholder {
   min-width: 5.75rem;
 }
+
+.prog-skill-tag--species {
+  border-color: var(--prog-warning, #facc15);
+  color: var(--prog-warning, #facc15);
+}

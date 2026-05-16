@@ -31,7 +31,7 @@
   </div>
 
   <div class="talent-planner-grid">
-    <section class="talent-choice-panel" aria-label="Talent choices">
+    <section class="talent-choice-panel" data-prog-scroll-key="talent-choice-panel" aria-label="Talent choices">
       <div class="talent-choice-panel__header">
         <div>
           <h4>Available Choices</h4>
@@ -45,7 +45,7 @@
       {{#if availableTalents}}
       <div class="talent-choice-section talent-choice-section--available">
         <h5><i class="fa-solid fa-circle-check"></i> Available Now</h5>
-        <div class="talent-choice-list">
+        <div class="talent-choice-list" data-prog-scroll-key="talent-choice-list">
           {{#each availableTalents}}
           <article class="talent-choice-card {{#if isFocused}}is-focused{{/if}} {{#if isSelected}}is-selected{{/if}}"
                    data-action="focus-talent"
@@ -59,6 +59,8 @@
               <div class="talent-choice-card__meta">
                 <span class="talent-choice-badge talent-choice-badge--available">Available</span>
                 {{#if isSelected}}<span class="talent-choice-badge talent-choice-badge--selected">Selected</span>{{/if}}
+                {{#if chosenElsewhere}}<span class="talent-choice-badge talent-choice-badge--locked">Already Picked</span>{{/if}}
+                {{#if isActorOwned}}<span class="talent-choice-badge talent-choice-badge--locked">Known</span>{{/if}}
               </div>
             </div>
             <button class="talent-choice-card__choose" data-action="commit-item" data-item-id="{{id}}" type="button">
@@ -73,7 +75,7 @@
       {{#if lockedTalents}}
       <div class="talent-choice-section talent-choice-section--locked">
         <h5><i class="fa-solid fa-lock"></i> Locked / Future</h5>
-        <div class="talent-choice-list">
+        <div class="talent-choice-list" data-prog-scroll-key="talent-locked-list">
           {{#each lockedTalents}}
           <article class="talent-choice-card talent-choice-card--locked {{#if isFocused}}is-focused{{/if}}"
                    data-action="focus-talent"
@@ -107,7 +109,7 @@
       {{/unless}}
     </section>
 
-    <section class="talent-map-panel" aria-label="Talent tree map">
+    <section class="talent-map-panel" data-prog-scroll-key="talent-map-panel" aria-label="Talent tree map">
       <div class="talent-map-panel__header">
         <div>
           <h4>Tree Map</h4>
@@ -119,7 +121,7 @@
       </div>
 
       <div class="talent-graph-container">
-        <div class="talent-graph-viewport" data-talent-graph-viewport>
+        <div class="talent-graph-viewport" data-prog-scroll-key="talent-graph-viewport" data-talent-graph-viewport>
           <div class="talent-tree-graph-container talent-graph-canvas" data-graph-id="{{selectedTreeId}}"></div>
         </div>
       </div>

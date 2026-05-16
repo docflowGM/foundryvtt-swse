@@ -85,10 +85,13 @@ function normalizePendingFeat(entry) {
 
 function getPendingFeatEntries(shell) {
   const sessionFeats = shell?.progressionSession?.draftSelections?.feats;
+  const directDraftFeats = shell?.draftSelections?.feats;
   const draftMapFeats = shell?.draftSelections?.get?.('feats');
   const buildIntentFeats = shell?.buildIntent?.getSelection?.('feats');
+
   return [
     ...asArray(sessionFeats),
+    ...asArray(directDraftFeats),
     ...asArray(draftMapFeats),
     ...asArray(buildIntentFeats)
   ].map(normalizePendingFeat).filter(Boolean);

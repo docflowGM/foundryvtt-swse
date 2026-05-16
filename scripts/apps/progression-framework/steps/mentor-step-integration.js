@@ -81,6 +81,7 @@ export const STEP_TO_CHOICE_TYPE = {
   'ability': 'ability',
   'ability-scores': 'ability',
   'l1-survey': 'survey',
+  'base-class-survey': 'survey',
   'background': 'background',
   'skills': 'skill',
   'languages': 'language',
@@ -89,6 +90,9 @@ export const STEP_TO_CHOICE_TYPE = {
   'general-talent': 'talent',
   'class-talent': 'talent',
   'force-powers': 'force_power',
+  'force-secrets': 'force_secret',
+  'force-techniques': 'force_technique',
+  'medical-secrets': 'skill',
   'starship-maneuver': 'starship_maneuver',
   'starship-maneuvers': 'starship_maneuver',
   'summary': 'summary',
@@ -103,9 +107,31 @@ export const STEP_TO_CHOICE_TYPE = {
  * @returns {Object|null} The mentor data object
  */
 export function getStepMentorObject(actor, shell = null) {
+  const sessionClass = shell?.progressionSession?.getSelection?.('class');
+  const draftClass = shell?.progressionSession?.draftSelections?.class;
   const committedClass = shell?.committedSelections?.get?.('class');
-  const focusedClass = shell?.focusedItem;
-  const className = committedClass?.name || committedClass?.className || focusedClass?.name || actor?.system?.class?.primary?.name || actor?.system?.class?.primary || null;
+
+  // focusedItem is used by many non-class steps for details rail hydration. Do
+  // not treat a focused Force power/talent/skill as the actor's mentor class.
+  // Only class-step focus is a safe mentor-class hint before the class is
+  // committed.
+  const currentStepId = shell?.currentDescriptor?.stepId || shell?.steps?.[shell?.currentStepIndex]?.stepId || null;
+  const focusedClass = currentStepId === 'class' ? shell?.focusedItem : null;
+
+  const className = sessionClass?.name
+    || sessionClass?.className
+    || sessionClass?.id
+    || draftClass?.name
+    || draftClass?.className
+    || draftClass?.id
+    || committedClass?.name
+    || committedClass?.className
+    || committedClass?.id
+    || focusedClass?.name
+    || focusedClass?.className
+    || actor?.system?.class?.primary?.name
+    || actor?.system?.class?.primary
+    || null;
 
   if (className) {
     const mentor = resolveMentorData(className) || getMentorForClass(className);

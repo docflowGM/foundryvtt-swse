@@ -1,5 +1,5 @@
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
-import { getSurveyDefinition, getSurveyDefinitionForActor } from './registry.js';
+import { getSurveyDefinition, getSurveyDefinitionForActor, getPrestigeSurveyDefinition } from './registry.js';
 
 
 function canonicalizeSkillKey(value) {
@@ -252,4 +252,4 @@ export class MentorSurvey {
   }
 }
 
-export { getSurveyDefinition, getSurveyDefinitionForActor, buildArchetypeScores };
+export { getSurveyDefinition, getSurveyDefinitionForActor, getPrestigeSurveyDefinition, buildArchetypeScores };

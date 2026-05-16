@@ -34,6 +34,8 @@ import { FEAT_TYPE_LABELS, getFeatTypeLabel, loadFeatBucketsMapping, normalizeFe
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
 import { FeatChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js';
+import { attachFeatIconPath, resolveFeatIconPath } from './feat-icon-resolver.js';
+import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
 
 function resolveClassLookupKeysForFeatStep(shell) {
   try {
@@ -185,7 +187,9 @@ export class FeatStep extends ProgressionStepPlugin {
     }
 
     // Load canonical normalized feats from registry and reattach mapping tags for current page state
-    this._allFeats = (FeatRegistry.list?.() || []).map(f => normalizeFeatRuntime(f, { mapping: this._mapping }));
+    this._allFeats = (FeatRegistry.list?.() || [])
+      .map(f => normalizeFeatRuntime(f, { mapping: this._mapping }))
+      .map(feat => attachFeatIconPath(feat));
     this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
     const existingFeat = this._getCommittedFeatForSlot(shell);
     this._selectedFeatId = existingFeat?.id || existingFeat?._id || null;
@@ -505,7 +509,9 @@ export class FeatStep extends ProgressionStepPlugin {
         persist: true
       });
 
-      const normalizedSuggestions = (suggested || []).map(f => normalizeFeatRuntime(f, { mapping: this._mapping }));
+      const normalizedSuggestions = (suggested || [])
+        .map(f => normalizeFeatRuntime(f, { mapping: this._mapping }))
+        .map(feat => attachFeatIconPath(feat));
       const rankedSuggestions = SuggestionService.sortBySuggestion(normalizedSuggestions)
         .filter(feat => (feat?.suggestion?.tier ?? feat?.tier ?? 0) > 0);
 
@@ -570,7 +576,8 @@ export class FeatStep extends ProgressionStepPlugin {
       name: feat.name || '',
       type: feat.type || 'feat',
       system: feat.system || {},
-      img: feat.img || undefined,
+      img: feat.iconPath || feat.img || undefined,
+      iconPath: resolveFeatIconPath(feat) || feat.iconPath || feat.img || undefined,
       slotType: this._slotType,
       source: this._slotType,
     };
@@ -759,9 +766,10 @@ export class FeatStep extends ProgressionStepPlugin {
    */
   _normalizeFeat(feat) {
     if (!feat) return feat;
-    const normalized = normalizeFeatRuntime(feat, { mapping: this._mapping });
+    const normalized = attachFeatIconPath(normalizeFeatRuntime(feat, { mapping: this._mapping }));
     return {
       ...normalized,
+      iconPath: resolveFeatIconPath(normalized) || normalized.iconPath || normalized.img || '',
       prerequisiteLine: normalized.prerequisiteText || this._formatPrerequisiteLine(normalized.prerequisitesStructured),
       isAvailable: true,
     };
@@ -1031,6 +1039,7 @@ export class FeatStep extends ProgressionStepPlugin {
       return this.renderDetailsPanelEmptyState();
     }
 
+    attachFeatIconPath(feat);
     const featId = feat._id || feat.id;
     const isSuggested = this._suggestedFeats.some(s => (s._id || s.id) === featId);
     const isSelected = featId === this._selectedFeatId;
@@ -1051,7 +1060,8 @@ export class FeatStep extends ProgressionStepPlugin {
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/feat-details.hbs',
       data: {
-        feat,
+        feat: { ...feat, iconPath: resolveFeatIconPath(feat) || feat.iconPath || feat.img || '' },
+        categoryIcon: this._getCategoryIcon(this._getFeatCategory(feat)),
         isSuggested,
         isSelected,
         category: feat.featTypeLabel || getFeatTypeLabel(this._getFeatCategory(feat)),
@@ -1188,6 +1198,7 @@ export class FeatStep extends ProgressionStepPlugin {
     });
 
     await this._commitNormalized(shell, 'feats', nextSelections);
+    await this._syncFeatPendingEntitlements(shell, nextSelections);
 
     if (shell?.committedSelections && this.descriptor?.stepId) {
       shell.committedSelections.set(this.descriptor.stepId, nextSelection);
@@ -1195,6 +1206,101 @@ export class FeatStep extends ProgressionStepPlugin {
     if (shell?.buildIntent && this.descriptor?.stepId) {
       shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, nextSelection);
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Pending Entitlement Integration
+  // ---------------------------------------------------------------------------
+
+  _getPendingEntitlementTypeForFeat(feat) {
+    const name = String(feat?.name || feat?.label || feat?.id || feat?._id || '').trim().toLowerCase();
+    const slug = name.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+    if (name === 'skill training' || slug === 'skill-training') return 'skill_training_slot';
+    if (name === 'linguist' || slug === 'linguist') return 'language_pick';
+    if (name === 'force training' || slug === 'force-training') return 'force_power_pick';
+    if (name === 'starship tactics' || slug === 'starship-tactics') return 'maneuver_pick';
+
+    const grants = feat?.system?.grants || feat?.system?.progression?.grants || [];
+    const grantTypes = Array.isArray(grants) ? grants : Object.values(grants || {});
+    for (const grant of grantTypes) {
+      const type = String(grant?.type || grant?.kind || grant?.grantType || '').toLowerCase();
+      if (type === 'skill_training_slot' || type === 'skill_training') return 'skill_training_slot';
+      if (type === 'language_pick' || type === 'language_slot') return 'language_pick';
+      if (type === 'force_power_pick' || type === 'force_power_choice') return 'force_power_pick';
+      if (type === 'maneuver_pick' || type === 'starship_maneuver_pick') return 'maneuver_pick';
+    }
+
+    return null;
+  }
+
+  _getPendingFeatEntitlementQuantity(shell, feat, entitlementType) {
+    const explicit = Number(
+      feat?.system?.entitlementQuantity
+      ?? feat?.system?.progression?.quantity
+      ?? feat?.system?.quantity
+      ?? 0
+    );
+    if (Number.isFinite(explicit) && explicit > 0) return Math.max(1, Math.floor(explicit));
+
+    const mod = (abilityKey) => this._getPendingAbilityModifier(shell, abilityKey);
+
+    if (entitlementType === 'language_pick') return Math.max(1, 1 + mod('int'));
+    if (entitlementType === 'force_power_pick') return Math.max(1, 1 + mod('wis'));
+    if (entitlementType === 'maneuver_pick') return Math.max(1, 1 + mod('wis'));
+    return 1;
+  }
+
+  _getPendingAbilityModifier(shell, abilityKey) {
+    const pending = shell?.progressionSession?.draftSelections?.attributes;
+    const values = pending?.values && typeof pending.values === 'object' ? pending.values : pending || {};
+    const raw = values?.[abilityKey]?.score
+      ?? values?.[abilityKey]?.base
+      ?? values?.[abilityKey]?.value
+      ?? values?.[abilityKey]
+      ?? shell?.actor?.system?.abilities?.[abilityKey]?.mod
+      ?? shell?.actor?.system?.abilities?.[abilityKey]?.modifier
+      ?? shell?.actor?.system?.abilities?.[abilityKey]?.base
+      ?? shell?.actor?.system?.abilities?.[abilityKey]?.value
+      ?? 10;
+
+    const numeric = Number(raw);
+    if (!Number.isFinite(numeric)) return 0;
+
+    // If the stored value already looks like a modifier, use it as-is.
+    if (numeric >= -5 && numeric <= 10 && (raw === shell?.actor?.system?.abilities?.[abilityKey]?.mod || raw === shell?.actor?.system?.abilities?.[abilityKey]?.modifier)) {
+      return Math.floor(numeric);
+    }
+
+    return Math.floor((numeric - 10) / 2);
+  }
+
+  async _syncFeatPendingEntitlements(shell, featSelections = []) {
+    const existing = shell?.progressionSession?.draftSelections?.pendingEntitlements || [];
+    const stepId = this.descriptor?.stepId || 'feat-step';
+    const retained = existing.filter((entry) => entry?.source?.stepId !== stepId);
+    const next = [...retained];
+
+    for (const feat of featSelections || []) {
+      const entitlementType = this._getPendingEntitlementTypeForFeat(feat);
+      if (!entitlementType) continue;
+
+      const featId = feat?._id || feat?.id || feat?.uuid || feat?.name || null;
+      const source = {
+        stepId,
+        selectionKey: 'feats',
+        featId,
+        featName: feat?.name || feat?.label || String(featId || 'Feat'),
+      };
+      const quantity = this._getPendingFeatEntitlementQuantity(shell, feat, entitlementType);
+      try {
+        next.push(PendingEntitlementService.createEntitlement(entitlementType, source, quantity));
+      } catch (err) {
+        swseLogger.warn('[FeatStep] Failed to create pending entitlement for feat:', { feat: source.featName, entitlementType, err });
+      }
+    }
+
+    await this._commitNormalized(shell, 'pendingEntitlements', next);
   }
 
   // ---------------------------------------------------------------------------

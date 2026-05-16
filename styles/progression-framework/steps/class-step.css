@@ -586,3 +586,284 @@
   border-color: rgba(255, 196, 64, 0.42);
   box-shadow: 0 0 10px rgba(255, 191, 73, 0.12);
 }
+
+/* ==========================================================================
+   Class visual cards and ordered class detail rail
+   ========================================================================== */
+
+.progression-shell .prog-class-card--visual {
+  padding: 0;
+  min-height: 280px;
+  overflow: hidden;
+  background: rgba(1, 13, 22, 0.84);
+  border-color: rgba(67, 214, 255, 0.24);
+  text-align: left;
+}
+
+.progression-shell .prog-class-card--visual:hover,
+.progression-shell .prog-class-card--visual:focus-visible,
+.progression-shell .prog-class-card--visual.prog-class-card--focused {
+  transform: translateY(-3px);
+  border-color: rgba(74, 255, 194, 0.48);
+  box-shadow: 0 0 22px rgba(0, 210, 255, 0.22), inset 0 0 18px rgba(0, 128, 255, 0.10);
+}
+
+.progression-shell .prog-class-card__visual-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 245px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px 8px 0 0;
+  background:
+    radial-gradient(circle at center, rgba(0, 180, 255, 0.16), transparent 58%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.88));
+}
+
+.progression-shell .prog-class-card__visual-wrap .prog-class-card__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  margin: 0;
+  transition: opacity 0.25s ease, filter 0.25s ease, transform 0.25s ease;
+}
+
+.progression-shell .prog-class-card__holo-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0, 34, 64, 0.44), rgba(0, 12, 24, 0.90)),
+    radial-gradient(circle at 50% 42%, rgba(0, 183, 255, 0.30), rgba(0, 61, 112, 0.72));
+  transition: opacity 0.25s ease;
+}
+
+.progression-shell .prog-class-card__quote {
+  position: absolute;
+  z-index: 5;
+  inset: 16px 16px 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+  color: rgba(112, 255, 176, 0.96);
+  font-size: var(--prog-font-size-sm);
+  line-height: 1.45;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  opacity: 0;
+  transform: translateY(6px);
+  text-shadow: 0 0 8px rgba(77, 255, 172, 0.38);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.progression-shell .prog-class-card--visual:hover .prog-class-card__image,
+.progression-shell .prog-class-card--visual:focus-visible .prog-class-card__image,
+.progression-shell .prog-class-card--visual.prog-class-card--focused .prog-class-card__image {
+  opacity: 0.32;
+  filter: grayscale(1) brightness(0.74) contrast(1.08) saturate(1.1);
+  transform: scale(1.025);
+}
+
+.progression-shell .prog-class-card--visual:hover .prog-class-card__holo-overlay,
+.progression-shell .prog-class-card--visual:focus-visible .prog-class-card__holo-overlay,
+.progression-shell .prog-class-card--visual.prog-class-card--focused .prog-class-card__holo-overlay,
+.progression-shell .prog-class-card--visual:hover .prog-class-card__quote,
+.progression-shell .prog-class-card--visual:focus-visible .prog-class-card__quote,
+.progression-shell .prog-class-card--visual.prog-class-card--focused .prog-class-card__quote {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.progression-shell .prog-class-card__nameplate {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 34px 14px 12px;
+  background: linear-gradient(180deg, transparent, rgba(0, 8, 16, 0.92));
+}
+
+.progression-shell .prog-class-card__nameplate .prog-class-card__name {
+  color: rgba(235, 252, 255, 0.96);
+  font-size: var(--prog-font-size-base);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(0, 194, 255, 0.36);
+}
+
+.progression-shell .prog-class-card__nameplate .prog-class-card__type {
+  flex: 0 0 auto;
+  color: rgba(96, 255, 176, 0.86);
+  font-size: var(--prog-font-size-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.progression-shell .prog-class-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 10px 10px;
+  min-height: 34px;
+  background: rgba(0, 8, 16, 0.72);
+}
+
+.progression-shell .prog-class-details {
+  gap: 14px;
+}
+
+.progression-shell .prog-class-details__portrait-frame {
+  min-height: 220px;
+  max-height: 300px;
+}
+
+.progression-shell .prog-class-details__portrait {
+  min-height: 220px;
+  max-height: 300px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.progression-shell .prog-class-details__name {
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 170, 255, 0.20);
+  font-size: calc(var(--prog-font-size-lg) + 2px);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.progression-shell .prog-class-details__description {
+  margin: 0;
+  color: var(--prog-text);
+  font-size: var(--prog-font-size-sm);
+  line-height: 1.58;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-class-details__section {
+  padding: 12px;
+  border: 1px solid rgba(0, 170, 255, 0.16);
+  border-radius: var(--prog-radius-sm);
+  background: rgba(0, 44, 72, 0.14);
+}
+
+.progression-shell .prog-class-details__skill-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.progression-shell .prog-class-details__skill-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: rgba(0, 0, 0, 0.20);
+  font-size: var(--prog-font-size-xs);
+  line-height: 1;
+}
+
+.progression-shell .prog-class-details__skill-name {
+  color: rgba(235, 252, 255, 0.95);
+}
+
+.progression-shell .prog-class-details__skill-ability {
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  opacity: 0.95;
+}
+
+.progression-shell .prog-skill-ability--str { color: rgba(255, 118, 118, 0.95); }
+.progression-shell .prog-skill-ability--dex { color: rgba(94, 246, 190, 0.95); }
+.progression-shell .prog-skill-ability--con { color: rgba(255, 188, 96, 0.95); }
+.progression-shell .prog-skill-ability--int { color: rgba(105, 214, 255, 0.95); }
+.progression-shell .prog-skill-ability--wis { color: rgba(198, 158, 255, 0.95); }
+.progression-shell .prog-skill-ability--cha { color: rgba(255, 133, 223, 0.95); }
+
+.progression-shell .prog-class-details__defense-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.progression-shell .prog-class-details__defense,
+.progression-shell .prog-class-details__bab-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border-radius: var(--prog-radius-sm);
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--prog-accent);
+  font-weight: 800;
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-class-details__defense {
+  flex-direction: column;
+  gap: 3px;
+}
+
+.progression-shell .prog-class-details__bab-value {
+  font-size: var(--prog-font-size-lg);
+}
+
+.progression-shell .prog-class-details__tree-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 6px 12px;
+}
+
+.progression-shell .prog-class-details__mentor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-left: 0;
+}
+
+.progression-shell .prog-class-details__mentor-portrait {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 14px;
+  border: 1px solid rgba(83, 220, 255, 0.36);
+  box-shadow: 0 0 14px rgba(0, 190, 255, 0.18);
+  margin: 2px 0 8px;
+}
+
+.progression-shell .prog-class-details__mentor-name {
+  justify-content: center;
+  color: rgba(117, 255, 183, 0.96);
+  font-size: var(--prog-font-size-base);
+}
+
+.progression-shell .prog-class-details__mentor-title {
+  margin-top: 2px;
+  color: var(--prog-text-dim);
+  font-size: var(--prog-font-size-xs);
+  line-height: 1.35;
+}
+
+.progression-shell .prog-class-details__metadata-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}

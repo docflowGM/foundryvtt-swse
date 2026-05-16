@@ -155,10 +155,28 @@ export class LanguageEngine {
      * Includes: INT modifier + dynamic Linguist feat entitlements.
      */
     static calculateBonusLanguagesAvailable(actor, options = {}) {
+        // SWSE language picks: native language(s) and Basic are automatic known
+        // languages. Player-selectable picks are +1 per positive INT modifier plus
+        // Linguist, where each Linguist instance grants max(1, 1 + INT modifier).
         const intModLanguages = FeatGrantEntitlementResolver.getIntBonusLanguageCount(actor);
         const linguistBonuses = FeatGrantEntitlementResolver.totalForGrantType(actor, 'languageSlots', options);
+        const pendingEntitlements = options?.progressionSession?.draftSelections?.pendingEntitlements
+            || options?.shell?.progressionSession?.draftSelections?.pendingEntitlements
+            || [];
+        const extraPendingLanguagePicks = pendingEntitlements.reduce((total, entry) => {
+            const type = String(entry?.type || entry?.kind || '').toLowerCase();
+            if (type !== 'language_pick' && type !== 'language_slot') return total;
+            const featName = String(entry?.source?.featName || entry?.sourceName || '').toLowerCase();
+            // Linguist pending entitlements are already represented by
+            // FeatGrantEntitlementResolver when pending feats are included; do not
+            // count them twice. Keep this branch for non-feat/class language picks.
+            if (featName === 'linguist' || featName.includes('linguist')) return total;
+            const quantity = Math.max(1, Number(entry?.quantity ?? entry?.count ?? 1));
+            const spent = Math.max(0, Number(entry?.spent ?? entry?.spentSelections?.length ?? 0));
+            return total + Math.max(0, quantity - spent);
+        }, 0);
 
-        return intModLanguages + linguistBonuses;
+        return Math.max(0, intModLanguages) + Math.max(0, linguistBonuses) + Math.max(0, extraPendingLanguagePicks);
     }
 
     /**

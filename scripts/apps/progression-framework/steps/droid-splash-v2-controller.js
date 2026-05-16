@@ -240,24 +240,30 @@ export function buildDroidSplashV2Context(options = {}) {
   const stage = DROID_SPLASH_V2_STAGES[safeStageIndex];
   const progressPercent = Math.max(0, Math.min(100, Number(stage?.pct) || 0));
   const complete = isComplete || progressPercent >= 100;
+  const effectiveLocalizedMode = localizedMode === true || isComplete === true || progressPercent >= 100;
   const translation = stage?.translation || null;
+  const translationComplete = Boolean(translation) && effectiveLocalizedMode;
+  const translationTarget = translation?.targetText || 'Unit online. Droid assembly complete.';
+  const translationSource = translationComplete
+    ? translationTarget
+    : (translation?.sourceText || '01010101 01001110 01001001 01010100');
 
   return {
     introVariant: 'droid-v2',
     isComplete: complete,
-    localizedMode,
+    localizedMode: effectiveLocalizedMode,
 
-    bezelLabel: asDisplayText('CHASSIS-PANEL // MAINT · POST-IN-PROGRESS', localizedMode),
-    bezelSerial: asDisplayText('CHASSIS SN 882-CX-44179', localizedMode),
-    hudTitle: asDisplayText('DROID ASSEMBLY // COLD BOOT', localizedMode),
+    bezelLabel: asDisplayText('CHASSIS-PANEL // MAINT · POST-IN-PROGRESS', effectiveLocalizedMode),
+    bezelSerial: asDisplayText('CHASSIS SN 882-CX-44179', effectiveLocalizedMode),
+    hudTitle: asDisplayText('DROID ASSEMBLY // COLD BOOT', effectiveLocalizedMode),
 
     currentTime,
-    bootStageTag: asDisplayText(safeStageIndex < DROID_SPLASH_V2_STAGES.length - 1 ? 'POST' : 'READY', localizedMode),
+    bootStageTag: asDisplayText(safeStageIndex < DROID_SPLASH_V2_STAGES.length - 1 ? 'POST' : 'READY', effectiveLocalizedMode),
 
-    stageLabel: asDisplayText(stage?.label || 'READY', localizedMode),
-    statusLabel: asDisplayText(stage?.label || 'SYSTEM INITIALIZE', localizedMode),
-    statusMessage: localizedMode ? (stage?.msg || '▸ CHASSIS ONLINE') : toBinaryText((stage?.msg || 'CHASSIS ONLINE').replace('▸ ', '')),
-    statusSource: localizedMode ? (stage?.src || '<all subsystems · nominal>') : toBinaryText((stage?.src || 'all subsystems nominal').replace(/[<>]/g, '')),
+    stageLabel: asDisplayText(stage?.label || 'READY', effectiveLocalizedMode),
+    statusLabel: asDisplayText(stage?.label || 'SYSTEM INITIALIZE', effectiveLocalizedMode),
+    statusMessage: effectiveLocalizedMode ? (stage?.msg || '▸ CHASSIS ONLINE') : toBinaryText((stage?.msg || 'CHASSIS ONLINE').replace('▸ ', '')),
+    statusSource: effectiveLocalizedMode ? (stage?.src || '<all subsystems · nominal>') : toBinaryText((stage?.src || 'all subsystems nominal').replace(/[<>]/g, '')),
     coreGlyph: stage?.glyph || '◉',
 
     progressPercent,
@@ -267,45 +273,49 @@ export function buildDroidSplashV2Context(options = {}) {
 
     channels: buildChannels(stage).map((channel) => ({
       ...channel,
-      label: localizedMode ? channel.label : toBinaryText(channel.label)
+      label: effectiveLocalizedMode ? channel.label : toBinaryText(channel.label)
     })),
-    logLines: buildLogLines(safeStageIndex, localizedMode),
+    logLines: buildLogLines(safeStageIndex, effectiveLocalizedMode),
 
     isTranslating: Boolean(translation),
-    translationLabel: localizedMode ? (translation?.label || 'Binary translation') : toBinaryText(translation?.label || 'Binary translation'),
-    translationSource: translation?.sourceText || '01010101 01001110 01001001 01010100',
-    translationTarget: translation?.targetText || 'Unit online. Droid assembly complete.',
-    sourceMode: 'binary',
+    translationComplete,
+    translationLabel: translationComplete ? 'Basic translation' : (effectiveLocalizedMode ? (translation?.label || 'Binary translation') : toBinaryText(translation?.label || 'Binary translation')),
+    translationSource,
+    translationTarget,
+    translationDisplayTarget: '',
+    sourceMode: translationComplete ? 'basic' : 'binary',
 
-    diagTitle: localizedMode ? 'Channel Diagnostics' : toBinaryText('Channel Diagnostics'),
-    registryTitle: localizedMode ? 'Chassis Registry' : toBinaryText('Chassis Registry'),
+    diagTitle: effectiveLocalizedMode ? 'Channel Diagnostics' : toBinaryText('Channel Diagnostics'),
+    registryTitle: effectiveLocalizedMode ? 'Chassis Registry' : toBinaryText('Chassis Registry'),
     registryMeta: [
-      { key: localizedMode ? 'FIRM' : 'FRM', value: localizedMode ? 'DROID-OS 9.3.1' : toBinaryText('DROID-OS 9.3.1') },
-      { key: localizedMode ? 'FRAME' : 'CHS', value: localizedMode ? 'CX-7 BIPED' : toBinaryText('CX-7 BIPED') },
-      { key: localizedMode ? 'DEG' : 'DEG', value: localizedMode ? '1ST · AUTONOMOUS' : toBinaryText('1ST AUTONOMOUS') },
-      { key: localizedMode ? 'OWNER' : 'OWN', value: localizedMode ? 'UNASSIGNED' : toBinaryText('UNASSIGNED') }
+      { key: effectiveLocalizedMode ? 'FIRM' : 'FRM', value: effectiveLocalizedMode ? 'DROID-OS 9.3.1' : toBinaryText('DROID-OS 9.3.1') },
+      { key: effectiveLocalizedMode ? 'FRAME' : 'CHS', value: effectiveLocalizedMode ? 'CX-7 BIPED' : toBinaryText('CX-7 BIPED') },
+      { key: effectiveLocalizedMode ? 'DEG' : 'DEG', value: effectiveLocalizedMode ? '1ST · AUTONOMOUS' : toBinaryText('1ST AUTONOMOUS') },
+      { key: effectiveLocalizedMode ? 'OWNER' : 'OWN', value: effectiveLocalizedMode ? 'UNASSIGNED' : toBinaryText('UNASSIGNED') }
     ],
-    loaderLabel: localizedMode ? 'Progress' : toBinaryText('Progress'),
-    postLogTitle: localizedMode ? 'POST Log // Stream' : toBinaryText('POST Log // Stream'),
-    processTitle: localizedMode ? 'Active Process' : toBinaryText('Active Process'),
+    loaderLabel: effectiveLocalizedMode ? 'Progress' : toBinaryText('Progress'),
+    postLogTitle: effectiveLocalizedMode ? 'POST Log // Stream' : toBinaryText('POST Log // Stream'),
+    processTitle: effectiveLocalizedMode ? 'Active Process' : toBinaryText('Active Process'),
     processMeta: [
-      { key: 'pid:', value: localizedMode ? '0x0C0D · droid.assemble' : toBinaryText('0x0C0D droid assemble') },
-      { key: 'cpu:', value: localizedMode ? '12%' : toBinaryText('12 PERCENT'), valueClass: 'pos' },
-      { key: 'mem:', value: localizedMode ? '48M / 512M' : toBinaryText('48M 512M') },
-      { key: 'pkts:', value: localizedMode ? '0' : toBinaryText('0') },
-      { key: 'warn:', value: localizedMode ? '0' : toBinaryText('0'), valueClass: 'zero' },
-      { key: 'err:', value: localizedMode ? '0' : toBinaryText('0'), valueClass: 'neg' }
+      { key: 'pid:', value: effectiveLocalizedMode ? '0x0C0D · droid.assemble' : toBinaryText('0x0C0D droid assemble') },
+      { key: 'cpu:', value: effectiveLocalizedMode ? '12%' : toBinaryText('12 PERCENT'), valueClass: 'pos' },
+      { key: 'mem:', value: effectiveLocalizedMode ? '48M / 512M' : toBinaryText('48M 512M') },
+      { key: 'pkts:', value: effectiveLocalizedMode ? '0' : toBinaryText('0') },
+      { key: 'warn:', value: effectiveLocalizedMode ? '0' : toBinaryText('0'), valueClass: 'zero' },
+      { key: 'err:', value: effectiveLocalizedMode ? '0' : toBinaryText('0'), valueClass: 'neg' }
     ],
-    hintLabel: localizedMode ? 'SPACE skip · ENTER continue · R replay' : toBinaryText('SPACE SKIP ENTER CONTINUE R REPLAY'),
-    skipLabel: localizedMode ? 'Skip Boot' : toBinaryText('Skip Boot'),
-    buildCustomLabel: localizedMode ? 'Build Custom' : toBinaryText('Build Custom'),
-    selectModelLabel: localizedMode ? 'Select Model' : toBinaryText('Select Model'),
-    continueLabel: localizedMode ? 'Register New Unit' : toBinaryText('Register New Unit'),
+    hintLabel: effectiveLocalizedMode ? 'SPACE skip · ENTER continue · R replay' : toBinaryText('SPACE SKIP ENTER CONTINUE R REPLAY'),
+    skipLabel: 'Skip Boot',
+    buildCustomLabel: effectiveLocalizedMode ? 'Build Custom' : toBinaryText('Build Custom'),
+    selectModelLabel: effectiveLocalizedMode ? 'Galactic Profile' : toBinaryText('Galactic Profile'),
+    continueLabel: effectiveLocalizedMode ? 'Register New Unit' : toBinaryText('Register New Unit'),
 
     // When complete, show creation mode choice instead of single continue button
     showDroidCreationModeChoice: complete,
     continueDisabled: !complete,
 
-    ...buildIdentityState(complete, sessionId, localizedMode)
+    selectModelTitle: 'Pick a packaged droid profile instead of building from scratch.',
+
+    ...buildIdentityState(complete, sessionId, effectiveLocalizedMode)
   };
 }

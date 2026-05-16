@@ -1,7 +1,19 @@
 {{#if (eq mode "levelup")}}
 <div class="prog-summary-surface prog-summary-surface--levelup">
   <div class="prog-panel prog-panel--center prog-panel--summary-preview">
-    <h3 class="prog-panel-title">Level-Up Delta</h3>
+    <h3 class="prog-panel-title">Level-Up Review</h3>
+    <p class="prog-panel-subtitle">Final dry-run checkpoint before this advancement is written to the actor.</p>
+
+    {{#if levelupSummary.levelInfo}}
+    <div class="prog-summary-section swse-card-schema swse-card-schema--identity swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header"><span><i class="fas fa-id-card"></i> Advancement Packet</span></div>
+      <div class="prog-summary-delta-grid">
+        <div class="prog-summary-delta-row"><span>Character Level</span><strong>{{levelupSummary.levelInfo.currentLevel}} → {{levelupSummary.levelInfo.newLevel}}</strong></div>
+        <div class="prog-summary-delta-row"><span>Training Class</span><strong>{{levelupSummary.levelInfo.className}}{{#if levelupSummary.levelInfo.classLevel}} {{levelupSummary.levelInfo.classLevel}}{{/if}}</strong></div>
+        <div class="prog-summary-delta-row"><span>Transition</span><strong>{{levelupSummary.levelInfo.transitionKind}}</strong></div>
+      </div>
+    </div>
+    {{/if}}
 
     {{#if levelupSummary.metadataChanges.length}}
     <div class="prog-summary-section swse-card-schema swse-card-schema--identity swse-card-schema--filled prog-summary-card">
@@ -40,7 +52,7 @@
     {{/if}}
 
     <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
-      <div class="prog-section-header"><span><i class="fas fa-plus-circle"></i> New Picks</span></div>
+      <div class="prog-section-header"><span><i class="fas fa-plus-circle"></i> New Choices</span></div>
       <div class="prog-summary-columns">
         <div>
           <h4>Feats</h4>
@@ -60,8 +72,70 @@
             {{#each levelupSummary.addedSkills}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}
           {{else}}<div class="prog-placeholder">None</div>{{/if}}
         </div>
+        <div>
+          <h4>Force</h4>
+          {{#if levelupSummary.addedForcePowers.length}}
+            {{#each levelupSummary.addedForcePowers}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}
+          {{/if}}
+          {{#if levelupSummary.addedForceTechniques.length}}
+            {{#each levelupSummary.addedForceTechniques}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}
+          {{/if}}
+          {{#if levelupSummary.addedForceSecrets.length}}
+            {{#each levelupSummary.addedForceSecrets}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}
+          {{/if}}
+          {{#unless levelupSummary.addedForcePowers.length}}{{#unless levelupSummary.addedForceTechniques.length}}{{#unless levelupSummary.addedForceSecrets.length}}<div class="prog-placeholder">None</div>{{/unless}}{{/unless}}{{/unless}}
+        </div>
+        <div>
+          <h4>Other Training</h4>
+          {{#if levelupSummary.addedMedicalSecrets.length}}
+            {{#each levelupSummary.addedMedicalSecrets}}<div class="prog-item-entry"><i class="fas fa-kit-medical"></i> {{this}}</div>{{/each}}
+          {{/if}}
+          {{#if levelupSummary.addedStarshipManeuvers.length}}
+            {{#each levelupSummary.addedStarshipManeuvers}}<div class="prog-item-entry"><i class="fas fa-rocket"></i> {{this}}</div>{{/each}}
+          {{/if}}
+          {{#if levelupSummary.addedLanguages.length}}
+            {{#each levelupSummary.addedLanguages}}<div class="prog-item-entry"><i class="fas fa-language"></i> {{this}}</div>{{/each}}
+          {{/if}}
+          {{#unless levelupSummary.addedMedicalSecrets.length}}{{#unless levelupSummary.addedStarshipManeuvers.length}}{{#unless levelupSummary.addedLanguages.length}}<div class="prog-placeholder">None</div>{{/unless}}{{/unless}}{{/unless}}
+        </div>
       </div>
     </div>
+
+    {{#if levelupSummary.mutationPreview}}
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
+      <div class="prog-section-header"><span><i class="fas fa-clipboard-check"></i> Mutation Dry Run</span></div>
+      {{#unless levelupSummary.mutationPreview.success}}
+        <div class="prog-placeholder prog-placeholder--warning">{{levelupSummary.mutationPreview.error}}</div>
+      {{else}}
+        {{#if levelupSummary.mutationPreview.validationErrors.length}}
+          {{#each levelupSummary.mutationPreview.validationErrors}}<div class="prog-placeholder prog-placeholder--warning"><i class="fas fa-triangle-exclamation"></i> {{this}}</div>{{/each}}
+        {{/if}}
+        {{#if levelupSummary.mutationPreview.validationWarnings.length}}
+          {{#each levelupSummary.mutationPreview.validationWarnings}}<div class="prog-placeholder"><i class="fas fa-circle-info"></i> {{this}}</div>{{/each}}
+        {{/if}}
+        <div class="prog-summary-columns">
+          <div>
+            <h4>Actor Fields</h4>
+            {{#if levelupSummary.mutationPreview.setFields.length}}
+              {{#each levelupSummary.mutationPreview.setFields}}<div class="prog-item-entry"><i class="fas fa-pen"></i> {{this.label}}: {{this.value}}</div>{{/each}}
+            {{else}}<div class="prog-placeholder">None</div>{{/if}}
+          </div>
+          <div>
+            <h4>New Items</h4>
+            {{#if levelupSummary.mutationPreview.addedItems.length}}
+              {{#each levelupSummary.mutationPreview.addedItems}}<div class="prog-item-entry"><i class="fas fa-plus"></i> {{this.name}} <small>({{this.type}})</small></div>{{/each}}
+            {{else}}<div class="prog-placeholder">None</div>{{/if}}
+          </div>
+          <div>
+            <h4>Updated Items</h4>
+            {{#if levelupSummary.mutationPreview.updatedItems.length}}
+              {{#each levelupSummary.mutationPreview.updatedItems}}<div class="prog-item-entry"><i class="fas fa-arrow-up"></i> {{this.label}}</div>{{/each}}
+            {{else}}<div class="prog-placeholder">None</div>{{/if}}
+          </div>
+        </div>
+      {{/unless}}
+    </div>
+    {{/if}}
   </div>
 </div>
 {{else}}

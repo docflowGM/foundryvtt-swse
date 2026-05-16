@@ -77,8 +77,12 @@ export class ProgressionSession {
       forcePowers: [],
       forceTechniques: [],
       forceSecrets: [],
+      medicalSecrets: [],
       starshipManeuvers: [],
       survey: null,
+      prestigeSurvey: null,
+      classSurveyDrafts: {},
+      classSurveys: {},
       droid: null,
       pendingSpeciesContext: null,
       pendingBackgroundContext: null,
@@ -142,8 +146,12 @@ export class ProgressionSession {
       'general-talent': 'talents',
       'class-talent': 'talents',
       'force-powers': 'forcePowers',
+      'force-secrets': 'forceSecrets',
+      'force-techniques': 'forceTechniques',
+      'medical-secrets': 'medicalSecrets',
       'starship-maneuver': 'starshipManeuvers',
       'starship-maneuvers': 'starshipManeuvers',
+      'prestige-survey': 'prestigeSurvey',
     };
     selectionKey = selectionAliases[selectionKey] || selectionKey;
     if (!this._schema[selectionKey]) {
@@ -189,6 +197,35 @@ export class ProgressionSession {
    */
   getSelection(selectionKey) {
     return this.draftSelections[selectionKey] ?? null;
+  }
+
+
+
+  clearSelection(selectionKey) {
+    if (!this._schema[selectionKey] && !(selectionKey in this.draftSelections)) return false;
+    const defaults = {
+      feats: [],
+      talents: [],
+      languages: [],
+      forcePowers: [],
+      forceTechniques: [],
+      forceSecrets: [],
+      medicalSecrets: [],
+      starshipManeuvers: [],
+      pendingEntitlements: [],
+      immediateChoices: [],
+      classSurveys: {},
+      classSurveyDrafts: {},
+      survey: null,
+      prestigeSurvey: null,
+      skills: null,
+      attributes: null,
+    };
+    this.draftSelections[selectionKey] = Object.prototype.hasOwnProperty.call(defaults, selectionKey) ? defaults[selectionKey] : null;
+    this.lastModifiedAt = Date.now();
+    this._triggerWatchers(selectionKey, this.draftSelections[selectionKey]);
+    this._triggerPersistenceHooks('clear-selection', selectionKey);
+    return true;
   }
 
   /**
@@ -244,8 +281,14 @@ export class ProgressionSession {
       forcePowers: [],
       forceTechniques: [],
       forceSecrets: [],
+      medicalSecrets: [],
       starshipManeuvers: [],
+      pendingEntitlements: [],
+      immediateChoices: [],
       survey: null,
+      prestigeSurvey: null,
+      classSurveyDrafts: {},
+      classSurveys: {},
       droid: null,
     };
     this.visitedStepIds = [];
@@ -274,7 +317,12 @@ export class ProgressionSession {
       forcePowers: this.draftSelections.forcePowers || [],
       forceTechniques: this.draftSelections.forceTechniques || [],
       forceSecrets: this.draftSelections.forceSecrets || [],
-      survey: this.draftSelections.survey || null,
+      medicalSecrets: this.draftSelections.medicalSecrets || [],
+      survey: this.draftSelections.survey?.completed === true ? this.draftSelections.survey : null,
+      prestigeSurvey: this.draftSelections.prestigeSurvey?.completed === true ? this.draftSelections.prestigeSurvey : null,
+      classSurveys: Object.fromEntries(
+        Object.entries(this.draftSelections.classSurveys || {}).filter(([, survey]) => survey?.completed === true)
+      ),
     };
   }
 
@@ -353,6 +401,18 @@ export class ProgressionSession {
         type: 'array',
         description: '[{id, source}, ...]',
       },
+      medicalSecrets: {
+        type: 'array',
+        description: '[{id, source}, ...]',
+      },
+      classSurveyDrafts: {
+        type: 'object',
+        description: 'Draft-only base-class survey answers keyed by class id; never consumed by suggestion bias',
+      },
+      classSurveys: {
+        type: 'object',
+        description: 'Completed-only base-class survey responses keyed by class id',
+      },
       starshipManeuvers: {
         type: 'array',
         description: '[{id, source}, ...]',
@@ -360,6 +420,10 @@ export class ProgressionSession {
       survey: {
         type: 'object',
         description: '{archetypeSignals, mentorSignals, preferences}',
+      },
+      prestigeSurvey: {
+        type: 'object',
+        description: '{classId, commitment, specialization, profileReading, metadata}',
       },
       droid: {
         type: 'object',
@@ -377,6 +441,14 @@ export class ProgressionSession {
       backgroundLedger: {
         type: 'object',
         description: 'Canonical background grant ledger for selected background set',
+      },
+      pendingEntitlements: {
+        type: 'array',
+        description: 'Pending level-up subsystem picks granted by feat/class/talent selections',
+      },
+      immediateChoices: {
+        type: 'array',
+        description: 'Choice-bearing feat/talent selections resolved at their owning step',
       },
     };
   }

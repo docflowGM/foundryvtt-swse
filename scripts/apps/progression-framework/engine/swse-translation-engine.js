@@ -422,12 +422,11 @@ export class TranslationSession {
       const decodedPrefix = translatedText.slice(0, decodeCount);
       const undecodedSuffix = typedSource.slice(decodeCount);
 
-      // Swipe behavior: source shrinks as Basic grows, instead of rendering
-      // a full Aurebesh line alongside the final translation.
+      // Update source: show typed portion and any decoded suffix
       const sourceMode = this._sourceMode;
       const sourceFrameClass = `prog-intro-boot-fragment prog-intro-boot-fragment--${sourceMode}`;
-      const sourceFrameHTML = undecodedSuffix
-        ? `<span class="${sourceFrameClass}">${escapeHTML(undecodedSuffix)}</span>`
+      const sourceFrameHTML = typedSource
+        ? `<span class="${sourceFrameClass}">${escapeHTML(typedSource)}</span>`
         : '';
       binding.setHTML('sourceText', sourceFrameHTML);
 
@@ -472,11 +471,61 @@ export class TranslationSession {
       const finalCursor = keepFinalCursor
         ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
         : '';
-      binding.setHTML('sourceText', '');
       binding.setHTML(
         'translationText',
         `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(translatedText)}</span>${finalCursor}`
       );
+      return;
+    }
+
+    if (displayMode === 'replace' || displayMode === 'swipe-replace') {
+      if (sourceContainer) {
+        sourceContainer.dataset.sourceMode = this._sourceMode;
+        sourceContainer.classList.remove('basic');
+        sourceContainer.classList.add(this._sourceMode);
+      }
+      container.dataset.sourceMode = 'basic';
+      binding.setText('translationText', '');
+
+      for (let typedCount = 0; typedCount <= sourceText.length; typedCount += 1) {
+        if (this._sessionToken !== sessionToken || this._state === 'cancelled') return;
+        renderSourceFrame(typedCount, true);
+        await wait(typingSpeed);
+      }
+
+      const totalFrames = Math.max(translatedText.length, sourceText.length, 1);
+      for (let frame = 0; frame <= totalFrames; frame += 1) {
+        if (this._sessionToken !== sessionToken || this._state === 'cancelled') return;
+
+        const ratio = frame / totalFrames;
+        const translatedCount = Math.min(translatedText.length, Math.ceil(ratio * translatedText.length));
+        const sourceStart = Math.min(sourceText.length, Math.floor(ratio * sourceText.length));
+        const basicPrefix = translatedText.slice(0, translatedCount);
+        const sourceSuffix = sourceText.slice(sourceStart);
+        const cursorHTML = frame < totalFrames
+          ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
+          : '';
+        const basicHTML = basicPrefix
+          ? `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(basicPrefix)}</span>`
+          : '';
+        const sourceHTML = sourceSuffix && frame < totalFrames
+          ? `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--${this._sourceMode}">${escapeHTML(sourceSuffix)}</span>`
+          : '';
+
+        binding.setHTML('sourceText', `${basicHTML}${cursorHTML}${sourceHTML}`);
+        await wait(decodeSpeed);
+      }
+
+      if (sourceContainer) {
+        sourceContainer.dataset.sourceMode = 'basic';
+        sourceContainer.classList.remove('aurebesh', 'binary');
+        sourceContainer.classList.add('basic');
+      }
+      binding.setHTML(
+        'sourceText',
+        `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(translatedText)}</span>`
+      );
+      binding.setText('translationText', '');
       return;
     }
 
@@ -495,7 +544,6 @@ export class TranslationSession {
     const finalCursor = keepFinalCursor
       ? `<span class="prog-intro-cursor ${cursorClass}">${cursor}</span>`
       : '';
-    binding.setHTML('sourceText', '');
     binding.setHTML(
       'translationText',
       `<span class="prog-intro-boot-fragment prog-intro-boot-fragment--basic">${escapeHTML(translatedText)}</span>${finalCursor}`

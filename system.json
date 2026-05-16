@@ -237,6 +237,13 @@
       "path": "packs/forcetechniques.db"
     },
     {
+      "name": "medicalsecrets",
+      "label": "Medical Secrets",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/medicalsecrets.db"
+    },
+    {
       "name": "lightsaberformpowers",
       "label": "Lightsaber Form Powers",
       "type": "Item",

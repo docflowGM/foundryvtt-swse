@@ -22,9 +22,14 @@ function _normalizeMentorLookup(value) {
 }
 
 /**
- * Resolve mentor portrait path with fallback to .webp alternative if .png is missing.
+ * Resolve mentor portrait path for Foundry templates.
+ *
+ * Mentor portraits are standardized on PNG assets. Older data and some cached
+ * UI state can still point at `.webp`; normalize those references back to the
+ * PNG path instead of preferring the deprecated webp variant.
+ *
  * @param {string} portraitPath - The portrait path to resolve
- * @returns {string} The resolved portrait path
+ * @returns {string} The resolved system-relative PNG portrait path
  */
 export function resolveMentorPortraitPath(portraitPath) {
     if (!portraitPath) {
@@ -37,22 +42,25 @@ export function resolveMentorPortraitPath(portraitPath) {
     // Dialogue data and some older apps use repository-relative asset paths.
     // Foundry templates need system-relative URLs, so normalize once here.
     if (resolved.startsWith('/systems/')) resolved = resolved.slice(1);
+    if (resolved.startsWith('/foundryvtt-swse/')) resolved = resolved.slice(1);
+    if (resolved.startsWith('foundryvtt-swse/')) {
+        resolved = `systems/${resolved}`;
+    }
     if (!/^https?:/i.test(resolved) && !resolved.startsWith('data:') && !resolved.startsWith('systems/')) {
+        if (resolved.startsWith('/assets/')) resolved = resolved.slice(1);
         if (resolved.startsWith('assets/')) resolved = `systems/foundryvtt-swse/${resolved}`;
         else resolved = `systems/foundryvtt-swse/${resolved.replace(/^\/+/, '')}`;
     }
 
-    if (resolved.endsWith('.png')) {
-        const webpPath = resolved.slice(0, -4) + '.webp';
-        const filename = webpPath.split('/').pop();
-        const mentorName = filename.split('.')[0];
-        const knownWebpMentors = new Set([
-            'kharjo', 'tio', 'axiom', 'j0n1', 'kael', 'kex', 'kex_varon', 'korr', 'krag',
-            'kyber', 'lead', 'malbada', 'miraj', 'ol_salty', 'pegar', 'rajma', 'rax',
-            'riquis', 'rogue', 'salty', 'sela', 'seraphim', 'skindar', 'spark', 'theron',
-            'tideborn', 'vel', 'venn', 'zhen'
-        ]);
-        if (knownWebpMentors.has(mentorName.toLowerCase())) return webpPath;
+    // Guard against old cached paths like systems/foundryvtt-swse/foundryvtt-swse/assets/mentors/miraj.png.
+    resolved = resolved.replace(
+        /^systems\/foundryvtt-swse\/foundryvtt-swse\/assets\/mentors\//i,
+        'systems/foundryvtt-swse/assets/mentors/'
+    );
+
+    // Webp mentor portraits are deprecated. Prefer the same asset basename as PNG.
+    if (/assets\/mentors\//i.test(resolved) && resolved.toLowerCase().endsWith('.webp')) {
+        resolved = `${resolved.slice(0, -5)}.png`;
     }
 
     return resolved;

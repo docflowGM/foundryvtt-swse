@@ -11,7 +11,7 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
 import { normalizeClass } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
-import { getMentorGuidance, getMentorForClass, getMentorKey, getMentorIntroText } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { getMentorGuidance, getMentorForClass, getMentorKey, getMentorIntroText, resolveMentorData, resolveMentorPortraitPath } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -20,6 +20,8 @@ import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/s
 import { evaluateClassEligibility } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-cache.js';
 import { getPCDroidAllowedHeroicClasses } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-trait-rules.js';
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
+import { getClassProfileDescription, getClassProfileQuote } from './class-profile-copy.js';
+import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
 
 export class ClassStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -211,16 +213,22 @@ export class ClassStep extends ProgressionStepPlugin {
     if (!classData) return this.renderDetailsPanelEmptyState();
 
     const normalized = normalizeDetailPanelData(classData, 'class');
-    const mentor = getMentorForClass(classData.name);
+    const mentor = resolveMentorData(getMentorForClass(classData.name));
     const levelOne = Array.isArray(classData.levelProgression) ? (classData.levelProgression.find(l => Number(l.level) === 1) || classData.levelProgression[0]) : null;
     const babValue = levelOne?.bab ?? (classData.babProgression === 'fast' ? 1 : 0);
     const defenses = classData.defenses || {};
-    const classSkills = this._formatSkillNames(classData.classSkills || []);
     const trainedSkillCount = Number(classData.trainedSkills ?? classData.system?.trainedSkills ?? 0) || 0;
-    const levelOneFeatures = (classData.startingFeatures || levelOne?.features || []).map(f => ({
-      name: typeof f === 'string' ? f : (f?.name || f?.label || ''),
-      type: typeof f === 'string' ? null : (f?.type || null),
-    })).filter(f => f.name);
+    const startingAbilities = this._formatStartingAbilities(classData, levelOne);
+    const classTrees = this._formatTalentTreeNames(classData);
+    const buildMetadata = [
+      classData.prestigeClass ? 'Prestige Class' : 'Base Class',
+      classData.role,
+      classData.source,
+      classData.forceSensitive ? 'Force-Sensitive' : null,
+      `${trainedSkillCount} trained skills + INT`,
+      `Hit Die d${classData.hitDie ?? 10}`
+    ].filter(Boolean);
+    const description = getClassProfileDescription(classData.name) || normalized.description || classData.description || '';
 
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/class-details.hbs',
@@ -232,27 +240,135 @@ export class ClassStep extends ProgressionStepPlugin {
         hitDie: `d${classData.hitDie ?? 10}`,
         defenses: { fortitude: defenses.fortitude ?? 0, reflex: defenses.reflex ?? 0, will: defenses.will ?? 0 },
         trainedSkillCount,
-        classSkills: classSkills.map(name => ({ name })),
+        classSkills: this._formatSkillChips(classData.classSkills || []),
         mentorName: mentor?.name || classData.mentorName || 'Unknown Mentor',
+        mentorTitle: mentor?.title || '',
+        mentorPortrait: mentor?.portrait || null,
         fantasy: classData.fantasy ?? classData.description ?? '',
-        levelOneFeatures,
+        levelOneFeatures: startingAbilities,
+        startingAbilities,
+        classTrees,
         classTags: [classData.role, classData.source, classData.forceSensitive ? 'Force-Sensitive' : null].filter(Boolean),
-        canonicalDescription: normalized.description,
+        canonicalDescription: description,
         metadataTags: normalized.metadataTags,
+        buildMetadata,
         hasMentorProse: normalized.fallbacks.hasMentorProse,
       },
     };
   }
 
-  _formatSkillNames(skillRefs = []) {
+  _formatStartingAbilities(classData, levelOne) {
+    const features = classData.startingFeatures || levelOne?.features || [];
+    return (features || []).map(f => ({
+      name: typeof f === 'string' ? f : (f?.name || f?.label || ''),
+      type: typeof f === 'string' ? null : (f?.type || f?.grantType || null),
+    })).filter(f => f.name);
+  }
+
+  _formatTalentTreeNames(classData) {
+    const candidates = [
+      ...(classData.talentTreeIds || []),
+      ...(classData.system?.talentTreeIds || []),
+      ...(classData.talentTreeNames || []),
+      ...(classData.talentTrees || []),
+      ...(classData.system?.talent_trees || []),
+      ...(classData.system?.talentTrees || []),
+      ...(classData.system?.talentTreeSourceIds || []),
+    ];
+
+    const seen = new Set();
+    const labels = [];
+    for (const ref of candidates) {
+      const label = this._resolveTalentTreeLabel(ref);
+      if (!label) continue;
+      const key = label.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      labels.push(label);
+    }
+
+    return labels;
+  }
+
+  _resolveTalentTreeLabel(ref) {
+    if (!ref) return null;
+
+    if (typeof ref === 'object') {
+      const resolved = this._resolveTalentTreeLabel(ref.id || ref.treeId || ref.sourceId || ref._id || ref.name || ref.label || ref.title);
+      return resolved || ref.name || ref.label || ref.title || null;
+    }
+
+    const raw = String(ref || '').trim();
+    if (!raw) return null;
+
+    const tree = TalentTreeDB?.get?.(raw)
+      || TalentTreeDB?.bySourceId?.(raw)
+      || TalentTreeDB?.byKey?.(raw)
+      || TalentTreeDB?.byName?.(raw)
+      || null;
+
+    if (tree?.name) return tree.name;
+    if (tree?.label) return tree.label;
+    if (tree?.title) return tree.title;
+
+    // Do not render opaque compendium source ids if the registry is unavailable.
+    if (/^[a-f0-9]{16}$/i.test(raw) || /^Compendium\./i.test(raw)) return null;
+
+    return this._humanizeTalentTreeId(raw);
+  }
+
+  _humanizeTalentTreeId(value) {
+    return String(value || '')
+      .replace(/[_-]+/g, ' ')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(/(^|\s)\w/g, (m) => m.toUpperCase());
+  }
+
+  _formatSkillChips(skillRefs = []) {
     return (skillRefs || []).map(ref => {
       if (!ref) return null;
-      const direct = this._skillDocs.find(s => s._id === ref || s.id === ref || s.name === ref);
-      if (direct?.name) return direct.name;
-      const text = String(ref);
-      if (/^[a-f0-9]{16}$/i.test(text)) return `Unknown Skill (${text.slice(0, 6)})`;
-      return text.replace(/[_-]+/g, ' ').replace(/(^|\s)\w/g, m => m.toUpperCase());
+      const direct = this._resolveSkillDoc(ref);
+      const text = direct?.name || this._formatSkillNameFallback(ref);
+      const ability = String(direct?.ability || direct?.system?.ability || this._inferSkillAbility(text) || 'int').toLowerCase();
+      return {
+        name: text,
+        ability,
+        abilityLabel: this._formatAbilityLabel(ability),
+        abilityClass: `prog-skill-ability--${ability}`
+      };
     }).filter(Boolean);
+  }
+
+  _resolveSkillDoc(ref) {
+    const text = String(ref || '').toLowerCase();
+    return this._skillDocs.find(s => {
+      const candidates = [s._id, s.id, s.key, s.name];
+      return candidates.some(candidate => String(candidate || '').toLowerCase() === text);
+    }) || null;
+  }
+
+  _formatSkillNameFallback(ref) {
+    const text = String(ref || '');
+    if (/^[a-f0-9]{16}$/i.test(text)) return `Unknown Skill (${text.slice(0, 6)})`;
+    return text.replace(/[_-]+/g, ' ').replace(/(^|\s)\w/g, m => m.toUpperCase());
+  }
+
+  _inferSkillAbility(name) {
+    const key = String(name || '').toLowerCase();
+    if (/climb|jump|swim/.test(key)) return 'str';
+    if (/acrobatics|initiative|pilot|ride|stealth/.test(key)) return 'dex';
+    if (/endurance/.test(key)) return 'con';
+    if (/knowledge|mechanics|use computer/.test(key)) return 'int';
+    if (/perception|survival|treat injury/.test(key)) return 'wis';
+    if (/deception|gather information|persuasion|use the force/.test(key)) return 'cha';
+    return 'int';
+  }
+
+  _formatAbilityLabel(ability) {
+    const labels = { str: 'STR', dex: 'DEX', con: 'CON', int: 'INT', wis: 'WIS', cha: 'CHA' };
+    return labels[String(ability || '').toLowerCase()] || String(ability || '').toUpperCase();
   }
 
   // ---------------------------------------------------------------------------
@@ -330,13 +446,14 @@ export class ClassStep extends ProgressionStepPlugin {
     const mentor = getMentorForClass(entry.name);
     if (mentor) {
       const mentorKey = getMentorKey(entry.name);
+      const resolvedMentor = resolveMentorData(mentorKey) || resolveMentorData(mentor) || mentor;
       shell.mentorRail?.setMentor?.(mentorKey);
-      shell.mentor.currentDialogue = getMentorIntroText(mentor, entry.name);
+      shell.mentor.currentDialogue = getMentorIntroText(resolvedMentor, entry.name);
       shell.mentor.mood = 'encouraging';
       shell.mentor.mentorId = mentorKey;
-      shell.mentor.name = mentor.name;
-      shell.mentor.title = mentor.title;
-      shell.mentor.portrait = mentor.portrait ?? shell.mentor.portrait;
+      shell.mentor.name = resolvedMentor.name || mentor.name;
+      shell.mentor.title = resolvedMentor.title || mentor.title;
+      shell.mentor.portrait = resolveMentorPortraitPath(resolvedMentor.portrait || mentor.portrait || shell.mentor.portrait);
     }
 
     this._focusedClassId = id;
@@ -520,13 +637,15 @@ export class ClassStep extends ProgressionStepPlugin {
       bab: `+${(Array.isArray(classData.levelProgression) ? ((classData.levelProgression.find(l => Number(l.level) === 1) || classData.levelProgression[0])?.bab ?? 0) : 0)}`,
       hitDie: classData.hitDie ?? 'd10',
       defenseBonus: `${classData.defenses?.fortitude ?? 0}/${classData.defenses?.reflex ?? 0}/${classData.defenses?.will ?? 0}`,
-      description: classData.fantasy ?? classData.description ?? '',
+      description: getClassProfileDescription(classData.name) || classData.fantasy || classData.description || '',
+      profileQuote: getClassProfileQuote(classData.name),
       mentorName: getMentorForClass(classData.name)?.name ?? classData.mentorName ?? 'Unknown Mentor',
       img: this._resolveClassImg(classData.name),
       isSuggested,
+      badgeLabel: recommendedLabel,
       confidenceLevel: confidenceData?.confidenceLevel || null,
       metaChips: [
-        { label: classData.prestige ? 'Prestige' : 'Base' },
+        { label: classData.prestigeClass ? 'Prestige' : 'Base' },
         isSuggested && { label: recommendedLabel, cssClass: 'prog-meta-chip--suggested' },
         classData.source && { label: classData.source },
       ].filter(Boolean),
@@ -545,8 +664,12 @@ export class ClassStep extends ProgressionStepPlugin {
    */
   _resolveClassImg(className) {
     if (!className) return null;
+    const aliases = {
+      Saboteur: 'Infiltrator'
+    };
+    const assetName = aliases[className] || className;
     // Use system-relative path: systems/{system-id}/assets/class/{ClassName}.webp
-    return `systems/${game.system.id}/assets/class/${className}.webp`;
+    return `systems/${game.system.id}/assets/class/${assetName}.webp`;
   }
 
   // ---------------------------------------------------------------------------
@@ -578,7 +701,7 @@ export class ClassStep extends ProgressionStepPlugin {
     } catch (err) {
       swseLogger.warn('[ClassStep] Suggestion service error:', err);
       this._suggestedClasses = [];
-    this._skillDocs = [];
+      this._skillDocs = [];
     }
   }
 

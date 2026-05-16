@@ -17,6 +17,8 @@ import { SpeciesStep } from '../steps/species-step.js';
 import { DroidBuilderStep } from '../steps/droid-builder-step.js';
 import { ClassStep } from '../steps/class-step.js';
 import { L1SurveyStep } from '../steps/l1-survey-step.js';
+import { PrestigeSurveyStep } from '../steps/prestige-survey-step.js';
+import { BaseClassSurveyStep } from '../steps/base-class-survey-step.js';
 import { AttributeStep } from '../steps/attribute-step.js';
 import { BackgroundStep } from '../steps/background-step.js';
 import { SkillsStep } from '../steps/skills-step.js';
@@ -24,9 +26,11 @@ import { GeneralFeatStep, ClassFeatStep } from '../steps/feat-step.js';
 import { GeneralTalentStep, ClassTalentStep } from '../steps/talent-step.js';
 import { LanguageStep } from '../steps/language-step.js';
 import { SummaryStep } from '../steps/summary-step.js';
+import { LevelupReviewStep } from '../steps/levelup-review-step.js';
 import { ForcePowerStep } from '../steps/force-power-step.js';
 import { ForceSecretStep } from '../steps/force-secret-step.js';
 import { ForceTechniqueStep } from '../steps/force-technique-step.js';
+import { MedicalSecretStep } from '../steps/medical-secret-step.js';
 import { StarshipManeuverStep } from '../steps/starship-maneuver-step.js';
 import { FinalDroidConfigurationStep } from '../steps/final-droid-configuration-step.js';
 
@@ -40,6 +44,8 @@ const NODE_PLUGIN_MAP = Object.freeze({
   'droid-builder': DroidBuilderStep,
   class: ClassStep,
   'l1-survey': L1SurveyStep,
+  'base-class-survey': BaseClassSurveyStep,
+  'prestige-survey': PrestigeSurveyStep,
   attribute: AttributeStep,
   background: BackgroundStep,
   skills: SkillsStep,
@@ -51,7 +57,9 @@ const NODE_PLUGIN_MAP = Object.freeze({
   'force-powers': ForcePowerStep,
   'force-secrets': ForceSecretStep,
   'force-techniques': ForceTechniqueStep,
+  'medical-secrets': MedicalSecretStep,
   'starship-maneuvers': StarshipManeuverStep,
+  'levelup-review': LevelupReviewStep,
   'final-droid-configuration': FinalDroidConfigurationStep,
   summary: SummaryStep,
 });

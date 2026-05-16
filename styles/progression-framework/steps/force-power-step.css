@@ -479,3 +479,134 @@
   border-top: 1px solid var(--prog-border);
   border-bottom: 1px solid var(--prog-border);
 }
+
+
+/* P0 hardening: Force power details use compendium PNGs as a bounded hologram. */
+.prog-force-power-details__media {
+  position: relative;
+  width: min(100%, 16rem);
+  aspect-ratio: 16 / 9;
+  margin: 0.65rem 0 0.85rem;
+  border: 1px solid rgba(83, 225, 255, 0.32);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 30%, rgba(83, 225, 255, 0.18), rgba(7, 18, 32, 0.88));
+  box-shadow: inset 0 0 18px rgba(83, 225, 255, 0.16), 0 0 14px rgba(83, 225, 255, 0.08);
+}
+
+.prog-force-power-details__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.88;
+  filter: saturate(1.08) contrast(1.08) drop-shadow(0 0 8px rgba(83, 225, 255, 0.24));
+}
+
+.prog-force-power-details__media .prog-holo-scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08) 0,
+    rgba(255, 255, 255, 0.08) 1px,
+    transparent 1px,
+    transparent 6px
+  );
+  mix-blend-mode: screen;
+}
+
+/* P0 runtime pass: explicit Force Power training budget and metadata chips. */
+.progression-shell .prog-force-power-browse {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.progression-shell .prog-force-power-training-summary {
+  margin: var(--prog-space-sm) var(--prog-space-md) 0;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  border-radius: 0.65rem;
+  background: linear-gradient(90deg, rgba(0, 229, 255, 0.08), rgba(0, 0, 0, 0.18));
+  box-shadow: inset 0 0 16px rgba(0, 229, 255, 0.08);
+  flex: 0 0 auto;
+}
+
+.progression-shell .prog-force-power-training-summary__main {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  color: var(--prog-text);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.progression-shell .prog-force-power-training-summary__label {
+  color: var(--prog-accent);
+  font-weight: 700;
+}
+
+.progression-shell .prog-force-power-training-summary__count {
+  color: var(--prog-text-heading);
+  font-size: 1rem;
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+}
+
+.progression-shell .prog-force-power-training-summary__remaining {
+  color: var(--prog-text-dim);
+  font-size: 0.75rem;
+}
+
+.progression-shell .prog-force-power-training-summary__reasons {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.7rem;
+  color: var(--prog-text-muted, var(--prog-text-dim));
+}
+
+.progression-shell .prog-force-power-training-summary__reasons li {
+  padding: 0.16rem 0.45rem;
+  border: 1px solid rgba(0, 229, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(0, 229, 255, 0.05);
+}
+
+.progression-shell .prog-force-power-browse .prog-force-power-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.progression-shell .prog-force-power-details__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.progression-shell .prog-force-power-details__chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.45rem;
+  padding: 0.16rem 0.48rem;
+  border: 1px solid rgba(0, 229, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(0, 229, 255, 0.06);
+  color: var(--prog-text);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.progression-shell .prog-force-power-details__chip--descriptor {
+  color: var(--prog-accent);
+}
+
+.progression-shell .prog-force-power-details__chip--role {
+  color: var(--prog-text-heading);
+}

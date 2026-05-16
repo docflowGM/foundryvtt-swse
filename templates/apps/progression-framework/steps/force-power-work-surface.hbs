@@ -2,23 +2,40 @@
 {{!-- Shows browsable force power cards with counts for duplicate selections --}}
 
 <div class="prog-force-power-browse swse-force-selector swse-store-stage">
+  {{#if hasTrainingSummary}}
+    <section class="prog-force-power-training-summary" aria-label="Force Power training allowance">
+      <div class="prog-force-power-training-summary__main">
+        <span class="prog-force-power-training-summary__label">Force Power Training</span>
+        <strong class="prog-force-power-training-summary__count">{{selectedPowerTraining}} / {{totalPowerTraining}}</strong>
+        <span class="prog-force-power-training-summary__remaining">{{remainingPicks}} remaining</span>
+      </div>
+      {{#if entitlementReasons.length}}
+        <ul class="prog-force-power-training-summary__reasons">
+          {{#each entitlementReasons}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
+      {{/if}}
+    </section>
+  {{/if}}
+
   {{#if powers.length}}
     <div class="prog-force-power-grid" role="list">
       {{#each powers}}
         <div class="prog-force-power-card
-                    {{#if (arrayIncludes ../committedCounts @key)}}prog-force-power-card--selected{{/if}}
+                    {{#if (lookup ../pendingCounts this.id)}}prog-force-power-card--selected{{/if}}
                     {{#if this.isSuggested}}prog-power-card--suggested prog-power-card--suggested-{{this.confidenceLevel}}{{/if}}"
              data-action="focus-item"
-             data-item-id="{{this.id}}"
+             data-item-id="{{this.lookupId}}" data-power-id="{{this.id}}"
              data-recommended="{{#if this.isSuggested}}true{{/if}}"
              data-confidence-level="{{this.confidenceLevel}}"
              tabindex="0" role="option"
-             aria-selected="{{#if (arrayIncludes ../committedCounts @key)}}true{{else}}false{{/if}}">
+             aria-selected="{{#if (lookup ../pendingCounts this.id)}}true{{else}}false{{/if}}">
 
           {{!-- Force power holographic image slot (Phase 7) --}}
           {{#if this.img}}
-            <div class="prog-forcepower-card__media prog-holo-media prog-holo-media--wide">
-              <img class="prog-forcepower-card__image prog-holo-media__image" src="{{this.img}}" alt="{{this.name}}">
+            <div class="prog-forcepower-card__media prog-holo-media prog-holo-media--wide" data-item-id="{{this.lookupId}}">
+              <img class="prog-forcepower-card__image prog-holo-media__image" src="{{this.img}}" alt="{{this.name}}" data-item-id="{{this.lookupId}}">
               <div class="prog-holo-scan"></div>
             </div>
           {{/if}}

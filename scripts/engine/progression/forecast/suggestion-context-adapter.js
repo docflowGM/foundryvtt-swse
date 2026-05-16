@@ -158,11 +158,10 @@ export class SuggestionContextAdapter {
       },
     };
 
-    // planned: Phase 4 Work Package D - normalize build signals
-    // For now, extract from session if available
-    if (shell.progressionSession?.draftSelections?.survey) {
-      signals.explicit.surveyAnswers = { ...shell.progressionSession.draftSelections.survey };
-    }
+    const completedSignals = this._extractCompletedSurveySignals(shell);
+    signals.explicit.surveyAnswers = completedSignals.surveyAnswers;
+    signals.explicit.declaredArchetypes = completedSignals.declaredArchetypes;
+    signals.explicit.declaredTargets = completedSignals.declaredTargets;
 
     // Infer archetypes from projected character
     if (shell.progressionSession?.currentProjection?.identity?.class) {
@@ -172,6 +171,44 @@ export class SuggestionContextAdapter {
     }
 
     return signals;
+  }
+
+
+
+  static _extractCompletedSurveySignals(shell) {
+    const surveyAnswers = {};
+    const declaredArchetypes = [];
+    const declaredTargets = [];
+    const addCompletedSurvey = (key, survey) => {
+      if (!survey || survey.completed !== true) return;
+      surveyAnswers[key] = survey.answers || survey;
+      const tags = survey.intentTags || survey.mergedBias || {};
+      for (const value of tags.archetypeTags || tags.roleBias || []) {
+        if (value && !declaredArchetypes.includes(value)) declaredArchetypes.push(value);
+      }
+      for (const value of tags.prestigeClassTargets || tags.targetTags || []) {
+        if (value && !declaredTargets.includes(value)) declaredTargets.push(value);
+      }
+    };
+
+    const l1Session = shell.progressionSession?.draftSelections?.survey;
+    addCompletedSurvey('l1-current', l1Session);
+    for (const [key, survey] of Object.entries(shell.actor?.system?.swse?.surveyResponses || {})) {
+      addCompletedSurvey(`l1-${key}`, survey);
+    }
+    for (const [key, survey] of Object.entries(shell.progressionSession?.draftSelections?.classSurveys || {})) {
+      addCompletedSurvey(`class-${key}`, survey);
+    }
+    for (const [key, survey] of Object.entries(shell.actor?.system?.swse?.classSurveyResponses || {})) {
+      addCompletedSurvey(`class-${key}`, survey);
+    }
+    const prestigeSession = shell.progressionSession?.draftSelections?.prestigeSurvey;
+    addCompletedSurvey(`prestige-${prestigeSession?.classId || 'current'}`, prestigeSession);
+    for (const [key, survey] of Object.entries(shell.actor?.system?.swse?.prestigeSurveyResponses || {})) {
+      addCompletedSurvey(`prestige-${key}`, survey);
+    }
+
+    return { surveyAnswers, declaredArchetypes, declaredTargets };
   }
 
   /**

@@ -42,6 +42,7 @@ export class SkillsStep extends ProgressionStepPlugin {
     this._beastSkillList = null;          // Beast skill list if applicable
     this._focusedSkillId = null;          // focused skill for details rail
     this._extraSkillUsesBySkill = {};     // skillKey -> extra skill use list
+    this._actorTrainedSkillKeys = new Set(); // Existing actor-trained skills during level-up
 
     this._skillDerivation = {
       mode: 'fallback-full-chart',
@@ -50,6 +51,8 @@ export class SkillsStep extends ProgressionStepPlugin {
       classSkillMatches: 0,
       backgroundSkillRefs: 0,
       backgroundSkillMatches: 0,
+      speciesSkillRefs: 0,
+      speciesSkillMatches: 0,
       trainedSelectionMatches: 0,
       skills: [],
     };
@@ -74,7 +77,14 @@ export class SkillsStep extends ProgressionStepPlugin {
     // Phase 2.5: Check if this is nonheroic progression
     const isNonheroic = shell.progressionSession?.nonheroicContext?.hasNonheroic === true;
 
-    if (isNonheroic) {
+    if (this.isLevelup(shell)) {
+      this._allowedCount = this._resolveLevelupAllowedSkillCount(shell, character);
+      swseLogger.log('[SkillsStep] Level-up skill entitlement count resolved:', {
+        allowedCount: this._allowedCount,
+        existingTrained: this._countActorTrainedSkills(character),
+        pendingSkillSlots: this._resolvePendingSkillTrainingSlots(shell),
+      });
+    } else if (isNonheroic) {
       // Nonheroic characters get 1 + INT mod (minimum 1) skill slots
       const intMod = character.abilities?.int?.mod || 0;
       this._allowedCount = Math.max(1, 1 + intMod);
@@ -144,6 +154,8 @@ try {
         classSkillMatches: derivation.classSkillMatches,
         backgroundSkillRefs: derivation.backgroundSkillRefs,
         backgroundSkillMatches: derivation.backgroundSkillMatches,
+        speciesSkillRefs: derivation.speciesSkillRefs,
+        speciesSkillMatches: derivation.speciesSkillMatches,
         trainedSelectionMatches: derivation.trainedSelectionMatches,
         availableSkills: derivation.skills.length,
         fallbackReason: derivation.fallbackReason || null,
@@ -355,7 +367,12 @@ try {
   _toggleSkill(skillKey, trained) {
     const targetSkill = this._availableSkills.find(skill => skill.key === skillKey || skill.id === skillKey || skill._id === skillKey);
     if (trained && targetSkill && targetSkill.canTrain === false) {
-      ui.notifications.warn('Only class or background skills can be trained at this time.');
+      ui.notifications.warn('Only class, background, or species class skills can be trained at this time.');
+      return;
+    }
+
+    if (trained && this._actorTrainedSkillKeys?.has?.(this._skillLookupKey(skillKey))) {
+      ui.notifications.warn('That skill is already trained. Choose a new skill for this level-up slot.');
       return;
     }
 
@@ -403,7 +420,12 @@ try {
   _trainSkill(skillKey) {
     const targetSkill = this._availableSkills.find(skill => skill.key === skillKey || skill.id === skillKey || skill._id === skillKey);
     if (targetSkill && targetSkill.canTrain === false) {
-      ui.notifications.warn('Only class or background skills can be trained at this time.');
+      ui.notifications.warn('Only class, background, or species class skills can be trained at this time.');
+      return;
+    }
+
+    if (this._actorTrainedSkillKeys?.has?.(this._skillLookupKey(skillKey))) {
+      ui.notifications.warn('That skill is already trained. Choose a new skill for this level-up slot.');
       return;
     }
 
@@ -549,6 +571,7 @@ renderDetailsPanel(focusedItem) {
       category: skill.category || null,
       isClassSkill: !!skill.isClassSkill,
       isBackgroundSkill: !!skill.isBackgroundSkill,
+      isSpeciesClassSkill: !!skill.isSpeciesClassSkill,
       trained: !!this._getSkillSelectionState(skill)?.trained,
       skillUses,
       hasSkillUses: Array.isArray(skillUses) && skillUses.length > 0,
@@ -656,6 +679,7 @@ renderDetailsPanel(focusedItem) {
 
   _seedExistingSkills(shell, character) {
     this._trainedSkills = new Map();
+    this._actorTrainedSkillKeys = new Set();
 
     const rawSelection =
       shell?.progressionSession?.draftSelections?.skills
@@ -664,18 +688,23 @@ renderDetailsPanel(focusedItem) {
       ?? shell?.buildIntent?.getSelection?.('skills')
       ?? null;
 
-    const seededKeys = new Set(this._extractTrainedSkillKeys(rawSelection));
+    const selectedKeys = new Set(this._extractTrainedSkillKeys(rawSelection));
 
     if (!this.isChargen(shell)) {
       const actorSkills = character?.skills || {};
       for (const [key, skillData] of Object.entries(actorSkills)) {
         if (skillData?.trained === true) {
-          seededKeys.add(key);
+          this._actorTrainedSkillKeys.add(this._skillLookupKey(key));
         }
       }
     }
 
-    for (const key of seededKeys) {
+    // Level-up skill selections represent only newly trained skills owed by a
+    // pending entitlement. Existing actor-trained skills must not consume the
+    // current level-up slot budget or be re-emitted as new selections.
+    for (const key of selectedKeys) {
+      const normalizedKey = this._skillLookupKey(key);
+      if (!this.isChargen(shell) && this._actorTrainedSkillKeys.has(normalizedKey)) continue;
       this._trainedSkills.set(key, { trained: true });
     }
   }
@@ -763,6 +792,28 @@ renderDetailsPanel(focusedItem) {
     return Math.max(1, classTrainedSkills + intMod + humanBonus);
   }
 
+  _countActorTrainedSkills(character) {
+    return Object.values(character?.skills || {}).filter((skill) => skill?.trained === true).length;
+  }
+
+  _resolvePendingSkillTrainingSlots(shell) {
+    const pendingEntitlements = shell?.progressionSession?.draftSelections?.pendingEntitlements || [];
+    return pendingEntitlements.reduce((total, entry) => {
+      const type = String(entry?.type || entry?.kind || '').toLowerCase();
+      if (type !== 'skill_training_slot' && type !== 'skill_training' && type !== 'bonus_skill_training') return total;
+      const quantity = Math.max(1, Number(entry?.quantity ?? entry?.count ?? 1));
+      const spent = Math.max(0, Number(entry?.spent ?? entry?.spentSelections?.length ?? 0));
+      return total + Math.max(0, quantity - spent);
+    }, 0);
+  }
+
+  _resolveLevelupAllowedSkillCount(shell, character) {
+    // In level-up, the step resolves only the new training slots owed now.
+    // Existing actor-trained skills are tracked separately so they do not
+    // consume this event's budget or let the player train extra skills.
+    return this._resolvePendingSkillTrainingSlots(shell);
+  }
+
   _deriveAvailableSkills(shell) {
     const classSelection =
       shell?.progressionSession?.getSelection?.('class')
@@ -775,6 +826,8 @@ renderDetailsPanel(focusedItem) {
     const classSkillMatches = this._matchSkillsFromRefs(classSkillRefs);
     const backgroundSkillRefs = this._getBackgroundSkillRefs(shell);
     const backgroundSkillMatches = this._matchSkillsFromRefs(backgroundSkillRefs);
+    const speciesSkillRefs = this._getSpeciesClassSkillRefs(shell);
+    const speciesSkillMatches = this._matchSkillsFromRefs(speciesSkillRefs);
     const trainedSelectionMatches = this._matchSkillsFromRefs(
       Array.from(this._trainedSkills.entries())
         .filter(([_, state]) => state?.trained)
@@ -783,17 +836,19 @@ renderDetailsPanel(focusedItem) {
 
     const classIds = new Set(classSkillMatches.map(skill => skill.id));
     const backgroundIds = new Set(backgroundSkillMatches.map(skill => skill.id));
-    const allowedIds = new Set([...classIds, ...backgroundIds]);
+    const speciesIds = new Set(speciesSkillMatches.map(skill => skill.id));
+    const allowedIds = new Set([...classIds, ...backgroundIds, ...speciesIds]);
 
     const allowedSkillMap = new Map();
     for (const skill of this._allSkills) {
       if (!allowedIds.has(skill.id)) continue;
       allowedSkillMap.set(skill.id, {
         ...skill,
-        isClassSkill: classIds.has(skill.id),
+        isClassSkill: classIds.has(skill.id) || speciesIds.has(skill.id),
         isBackgroundSkill: backgroundIds.has(skill.id),
+        isSpeciesClassSkill: speciesIds.has(skill.id),
         available: true,
-        canTrain: classIds.has(skill.id) || backgroundIds.has(skill.id),
+        canTrain: classIds.has(skill.id) || backgroundIds.has(skill.id) || speciesIds.has(skill.id),
         alwaysVisible: true,
       });
     }
@@ -813,18 +868,22 @@ renderDetailsPanel(focusedItem) {
         classSkillMatches: classSkillMatches.length,
         backgroundSkillRefs: backgroundSkillRefs.length,
         backgroundSkillMatches: backgroundSkillMatches.length,
+        speciesSkillRefs: speciesSkillRefs.length,
+        speciesSkillMatches: speciesSkillMatches.length,
         trainedSelectionMatches: trainedSelectionMatches.length,
         skills,
       };
     }
 
     return {
-      mode: 'legal-class-background',
+      mode: speciesSkillMatches.length > 0 ? 'legal-class-background-species' : 'legal-class-background',
       fallbackReason: null,
       classSkillRefs: classSkillRefs.length,
       classSkillMatches: classSkillMatches.length,
       backgroundSkillRefs: backgroundSkillRefs.length,
       backgroundSkillMatches: backgroundSkillMatches.length,
+      speciesSkillRefs: speciesSkillRefs.length,
+      speciesSkillMatches: speciesSkillMatches.length,
       trainedSelectionMatches: trainedSelectionMatches.length,
       skills,
     };
@@ -929,6 +988,101 @@ renderDetailsPanel(focusedItem) {
    * This hardened version ensures background skills survive across step transitions
    * and multiple context shapes.
    */
+  _getSpeciesClassSkillRefs(shell) {
+    const refs = new Set();
+
+    const speciesCandidates = [
+      shell?.progressionSession?.getSelection?.('species'),
+      shell?.committedSelections?.get?.('species'),
+      shell?.buildIntent?.toCharacterData?.()?.species,
+      ...(Array.isArray(shell?.actor?.items) ? shell.actor.items.filter(item => item?.type === 'species') : []),
+    ].filter(Boolean);
+
+    for (const species of speciesCandidates) {
+      this._collectSpeciesClassSkillRefsFromValue(species?.classSkills, refs);
+      this._collectSpeciesClassSkillRefsFromValue(species?.classSkill, refs);
+      this._collectSpeciesClassSkillRefsFromValue(species?.bonusClassSkills, refs);
+      this._collectSpeciesClassSkillRefsFromValue(species?.bonusClassSkill, refs);
+      this._collectSpeciesClassSkillRefsFromValue(species?.speciesClassSkills, refs);
+
+      const system = species?.system || {};
+      this._collectSpeciesClassSkillRefsFromValue(system.classSkills, refs);
+      this._collectSpeciesClassSkillRefsFromValue(system.classSkill, refs);
+      this._collectSpeciesClassSkillRefsFromValue(system.bonusClassSkills, refs);
+      this._collectSpeciesClassSkillRefsFromValue(system.bonusClassSkill, refs);
+      this._collectSpeciesClassSkillRefsFromValue(system.speciesClassSkills, refs);
+
+      const traitCollections = [
+        species?.traits,
+        species?.canonicalTraits,
+        system.traits,
+        system.canonicalTraits,
+        species?.special,
+        system.special,
+        system.canonicalStats?.traits,
+      ];
+
+      for (const collection of traitCollections) {
+        this._collectSpeciesClassSkillRefsFromValue(collection, refs);
+      }
+    }
+
+    const result = Array.from(refs).filter(Boolean);
+    if (result.length > 0) {
+      swseLogger.debug('[SkillsStep] Collected species class skill refs:', {
+        count: result.length,
+        refs: result,
+      });
+    }
+    return result;
+  }
+
+  _collectSpeciesClassSkillRefsFromValue(value, refs) {
+    if (!value) return;
+
+    if (Array.isArray(value)) {
+      value.forEach(entry => this._collectSpeciesClassSkillRefsFromValue(entry, refs));
+      return;
+    }
+
+    if (typeof value === 'object') {
+      const direct = value.skill || value.skillName || value.name || value.label || value.id || value.key;
+      const description = value.description || value.text || value.value || value.benefit || '';
+      if (direct && this._looksLikeSkillName(direct)) refs.add(String(direct).trim());
+      this._collectSpeciesClassSkillRefsFromText(description, refs);
+      return;
+    }
+
+    this._collectSpeciesClassSkillRefsFromText(String(value), refs);
+  }
+
+  _collectSpeciesClassSkillRefsFromText(text, refs) {
+    const source = String(text || '').trim();
+    if (!source) return;
+
+    const patterns = [
+      /([A-Za-z][A-Za-z\s()'-]+?)\s+is\s+always\s+considered\s+a?\s*Class\s+Skill/i,
+      /([A-Za-z][A-Za-z\s()'-]+?)\s+is\s+always\s+a?\s*Class\s+Skill/i,
+      /Bonus\s+Class\s+Skill\s*\(\s*([^\)]+?)\s*\)/i,
+      /(?:treat|consider)\s+([A-Za-z][A-Za-z\s()'-]+?)\s+as\s+a?\s*Class\s+Skill/i,
+      /([A-Za-z][A-Za-z\s()'-]+?)\s+counts\s+as\s+a?\s*Class\s+Skill/i,
+    ];
+
+    for (const pattern of patterns) {
+      const match = source.match(pattern);
+      if (match?.[1]) refs.add(match[1].trim());
+    }
+  }
+
+  _looksLikeSkillName(value) {
+    const text = String(value || '').trim();
+    if (!text || text.length > 48) return false;
+    return this._allSkills?.some?.((skill) => {
+      const candidates = [skill.name, skill.label, skill.id, skill._id, skill.key];
+      return candidates.some(candidate => this._skillLookupKey(candidate) === this._skillLookupKey(text));
+    });
+  }
+
   _getBackgroundSkillRefs(shell) {
     const skillRefs = new Set();
 

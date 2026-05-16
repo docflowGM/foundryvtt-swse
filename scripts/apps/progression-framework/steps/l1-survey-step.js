@@ -7,6 +7,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { getStepGuidance, getStepMentorObject } from './mentor-step-integration.js';
+import { resolveMentorPortraitPath } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { BuildAnalysisIntegration } from '../shell/build-analysis-integration.js';
 import {
   getSurveyDefinition,
@@ -63,7 +64,7 @@ function buildProgressDots(totalQuestions, activeIndex, answeredCount, phase) {
 
 function buildMentorPortraitMarkup(portrait, mentorName) {
   const safeName = escapeHtml(mentorName || 'Mentor');
-  const safePortrait = escapeHtml(portrait || 'systems/foundryvtt-swse/assets/mentors/salty.png');
+  const safePortrait = escapeHtml(resolveMentorPortraitPath(portrait));
   return `<img class="prog-l1-survey-stage__mentor-image prog-holo-media__image" src="${safePortrait}" alt="${safeName}" title="${safeName}" onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.png';"/>`;
 }
 
@@ -83,6 +84,69 @@ function buildCompletionTags(surveySummary, topMatches = []) {
   return tags.slice(0, 6);
 }
 
+
+function compactList(values = [], limit = 4) {
+  const filtered = (values || []).filter(Boolean).slice(0, limit);
+  if (!filtered.length) return '';
+  if (filtered.length === 1) return filtered[0];
+  if (filtered.length === 2) return `${filtered[0]} or ${filtered[1]}`;
+  return `${filtered.slice(0, -1).join(', ')}, or ${filtered[filtered.length - 1]}`;
+}
+
+function extractOptionFocusWords(options = []) {
+  return (options || [])
+    .map((option) => {
+      const tags = Array.isArray(option?.detailTags) ? option.detailTags.filter(Boolean) : [];
+      return tags[0] || option?.label || null;
+    })
+    .filter(Boolean);
+}
+
+function resolveMentorVoiceKey(mentor = null) {
+  const raw = String(mentor?.name || mentor?.id || mentor?.mentorId || '').toLowerCase();
+  if (raw.includes('miraj')) return 'miraj';
+  if (raw.includes('j0') || raw.includes('jon') || raw.includes('j0-n1')) return 'j0n1';
+  if (raw.includes('salty')) return 'salty';
+  if (raw.includes('lead')) return 'lead';
+  if (raw.includes('breach')) return 'breach';
+  return 'default';
+}
+
+function voiceSurveyClarification(mentor, phase, coreText) {
+  const voice = resolveMentorVoiceKey(mentor);
+  const prefixByVoice = {
+    miraj: phase === 'complete'
+      ? 'Pause and review what your answers reveal.'
+      : 'Be still a moment. This question is not a test of worth.',
+    j0n1: phase === 'complete'
+      ? 'Review protocol engaged.'
+      : 'Clarification: this prompt is a preference diagnostic, not an examination.',
+    salty: phase === 'complete'
+      ? 'Check the chart before we cast off, matey.'
+      : 'Here be the chart, matey. This one is askin\' what kind of trouble ye mean to survive.',
+    lead: phase === 'complete'
+      ? 'Final check. Read the profile like a mission brief.'
+      : 'Read the prompt like a mission brief. It is asking what you prioritize when the plan changes.',
+    breach: phase === 'complete'
+      ? 'Final weapons check. Make sure the profile matches the fighter you mean to build.'
+      : 'Strip it down. This question is asking what you do when the fighting starts.',
+    default: phase === 'complete'
+      ? 'Review your answers before you commit the profile.'
+      : 'Put simply, this question is asking what kind of character you want the build to support.',
+  };
+
+  const suffixByVoice = {
+    miraj: 'Choose the answer that feels true after reflection; the Force favors honesty over cleverness.',
+    j0n1: 'Please select the response that best reflects expected operating behavior. Optimization follows completion, not speculation.',
+    salty: 'Pick the answer that sounds like yer instincts, not the one with the shiniest brass on it.',
+    lead: 'Choose the answer you would trust under pressure, not the one that merely sounds impressive.',
+    breach: 'Pick the instinct you will actually use when things get ugly.',
+    default: 'Choose the answer that best matches how you want the character to act in play.',
+  };
+
+  return `${prefixByVoice[voice] || prefixByVoice.default} ${coreText} ${suffixByVoice[voice] || suffixByVoice.default}`.replace(/\s+/g, ' ').trim();
+}
+
 export class L1SurveyStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
@@ -96,6 +160,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     this._surveyPhase = 'intro';
     this._activeSurveyClassKey = null;  // Track which class this survey is scoped to
     this._lastInlineTranslationKey = null;  // Track last applied translation to avoid re-running
+    this._surveyFinalized = false;
   }
 
   async onStepEnter(shell) {
@@ -114,7 +179,8 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     // Track the current class for next time
     this._activeSurveyClassKey = currentClassKey;
 
-    this._activeQuestionIndex = this._findNextQuestionIndex();
+    const restoredDraft = this._restoreSurveyDraft(shell);
+    if (!restoredDraft) this._activeQuestionIndex = this._findNextQuestionIndex();
 
     try {
       this._analysisResult = await BuildAnalysisIntegration.analyzeAndProvideFeedback(shell);
@@ -123,7 +189,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       console.warn('[L1SurveyStep] Build analysis failed:', err);
     }
 
-    this._surveyPhase = this._resolveInitialPhase();
+    if (!restoredDraft) this._surveyPhase = this._resolveInitialPhase();
     await this._speakCurrentPhase(shell, true);
   }
 
@@ -131,38 +197,10 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     if (!shell.element) return;
     this._renderAbort?.abort();
     this._renderAbort = new AbortController();
-    const { signal } = this._renderAbort;
 
-    shell.element.querySelectorAll('[data-action="survey-start"]').forEach((button) => {
-      button.addEventListener('click', () => this._startSurvey(shell), { signal });
-    });
-
-    shell.element.querySelectorAll('[data-action="survey-choose"]').forEach((button) => {
-      button.addEventListener('click', (event) => this._chooseSurveyAnswer(shell, event.currentTarget), { signal });
-    });
-
-    shell.element.querySelectorAll('[data-action="survey-continue"]').forEach((button) => {
-      button.addEventListener('click', () => this._continueSurvey(shell), { signal });
-    });
-
-    shell.element.querySelectorAll('[data-action="survey-finish"]').forEach((button) => {
-      button.addEventListener('click', () => this._finishSurvey(shell), { signal });
-    });
-
-    // NEW: Survey answer control actions
-    shell.element.querySelectorAll('[data-action="survey-change-answer"]').forEach((button) => {
-      button.addEventListener('click', () => this._changeCurrentAnswer(shell), { signal });
-    });
-
-    shell.element.querySelectorAll('[data-action="survey-previous-question"]').forEach((button) => {
-      button.addEventListener('click', () => this._goToPreviousQuestion(shell), { signal });
-    });
-
-    shell.element.querySelectorAll('[data-action="survey-retake"]').forEach((button) => {
-      button.addEventListener('click', () => this._retakeSurvey(shell), { signal });
-    });
-
-    // NEW: Wire up inline translation animation for survey text
+    // Step actions are handled through handleAction() via the shell delegated
+    // action bridge. Keeping only translation setup here avoids duplicate
+    // survey commits from both direct listeners and delegated listeners.
     await this._renderInlineSurveyTranslation(shell);
   }
 
@@ -216,8 +254,10 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
   // Survey action handlers
   async _startSurvey(shell) {
+    this._surveyFinalized = false;
     this._surveyPhase = 'question';
     this._activeQuestionIndex = this._findNextQuestionIndex();
+    await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
     shell.render();
   }
@@ -229,9 +269,11 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     const option = question?.options?.find?.((entry) => entry.id === optionId);
     if (!question || !option) return;
 
+    this._surveyFinalized = false;
     this._surveyAnswers[questionId] = option;
     this._activeQuestionIndex = this._findQuestionIndex(questionId);
     this._surveyPhase = 'response';
+    await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
     shell.render();
   }
@@ -246,12 +288,15 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       this._activeQuestionIndex = Math.max(questions.length - 1, 0);
       this._surveyPhase = 'complete';
     }
+    await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
     shell.render();
   }
 
   async _finishSurvey(shell) {
     this._surveyPhase = 'complete';
+    this._surveyFinalized = true;
+    await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
     await shell?._onNextStep?.();
   }
@@ -266,9 +311,11 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
     // Delete the current answer for this question
     delete this._surveyAnswers[question.id];
+    this._surveyFinalized = false;
 
     // Return to question phase for this question
     this._surveyPhase = 'question';
+    await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
     shell.render();
 
@@ -289,6 +336,8 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       if (question && this._surveyAnswers?.[question.id]) {
         this._activeQuestionIndex = i;
         this._surveyPhase = 'response';
+        this._surveyFinalized = false;
+        await this._saveSurveyDraft(shell);
         await this._speakCurrentPhase(shell, true);
         shell.render();
         console.log('[L1SurveyStep] Moved to previous question at index', i);
@@ -309,6 +358,8 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     this._activeQuestionIndex = 0;
     this._surveyPhase = 'intro';
     this._lastPromptSpoken = null;
+    this._surveyFinalized = false;
+    this._lastInlineTranslationKey = null;
 
     // Clear session survey selection
     if (shell?.progressionSession?.draftSelections) {
@@ -336,10 +387,107 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       delete shell.actor.system.swse.mentorBuildIntentBiases;
     }
 
+    await this._clearSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
     shell.render();
 
     console.log('[L1SurveyStep] Survey retaken - all answers cleared');
+  }
+
+  async _goBackWithinSurvey(shell) {
+    const questions = this._getRenderableQuestions();
+
+    if (this._surveyPhase === 'intro') {
+      await this._saveSurveyDraft(shell);
+      await shell?._onPreviousStep?.();
+      return;
+    }
+
+    if (this._surveyPhase === 'question') {
+      if (this._activeQuestionIndex <= 0) {
+        this._surveyPhase = 'intro';
+      } else {
+        this._activeQuestionIndex = Math.max(this._activeQuestionIndex - 1, 0);
+        const previousQuestion = questions[this._activeQuestionIndex];
+        this._surveyPhase = previousQuestion && this._surveyAnswers?.[previousQuestion.id] ? 'response' : 'question';
+      }
+    } else if (this._surveyPhase === 'response') {
+      this._surveyPhase = 'question';
+    } else if (this._surveyPhase === 'complete') {
+      this._surveyFinalized = false;
+      this._activeQuestionIndex = Math.max(questions.length - 1, 0);
+      this._surveyPhase = 'response';
+    } else {
+      this._surveyPhase = 'intro';
+    }
+
+    await this._saveSurveyDraft(shell);
+    await this._speakCurrentPhase(shell, true);
+    shell?.render?.();
+  }
+
+  _canSurveyBack() {
+    return true;
+  }
+
+  _getSurveyDraftKey() {
+    return this._surveyDefinition?.classId || this._activeSurveyClassKey || 'unknown';
+  }
+
+  _buildSurveyDraftRecord() {
+    return {
+      completed: false,
+      surveyId: this._surveyDefinition?.surveyId || null,
+      classId: this._surveyDefinition?.classId || null,
+      answers: { ...(this._surveyAnswers || {}) },
+      activeQuestionIndex: this._activeQuestionIndex || 0,
+      surveyPhase: this._surveyPhase || 'intro',
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  _restoreSurveyDraft(shell) {
+    if (!this._surveyDefinition || Object.keys(this._surveyAnswers || {}).length) return false;
+    const classKey = this._getSurveyDraftKey();
+    const drafts = shell?.actor?.getFlag?.('foundryvtt-swse', 'l1SurveyDrafts') || {};
+    const draft = drafts?.[classKey];
+    if (!draft || draft.completed) return false;
+    if (draft.surveyId && draft.surveyId !== this._surveyDefinition.surveyId) return false;
+
+    this._surveyAnswers = { ...(draft.answers || {}) };
+    this._activeQuestionIndex = Number.isFinite(Number(draft.activeQuestionIndex))
+      ? Number(draft.activeQuestionIndex)
+      : this._findNextQuestionIndex();
+    this._surveyPhase = draft.surveyPhase || this._resolveInitialPhase();
+    this._surveyFinalized = false;
+    return true;
+  }
+
+  async _saveSurveyDraft(shell) {
+    if (!this._surveyDefinition || !shell?.actor?.setFlag) return;
+    const classKey = this._getSurveyDraftKey();
+    const existing = shell.actor.getFlag?.('foundryvtt-swse', 'l1SurveyDrafts') || {};
+    const next = {
+      ...(existing || {}),
+      [classKey]: this._buildSurveyDraftRecord(),
+    };
+    try {
+      await shell.actor.setFlag('foundryvtt-swse', 'l1SurveyDrafts', next);
+    } catch (err) {
+      console.warn('[L1SurveyStep] Failed to save survey draft:', err);
+    }
+  }
+
+  async _clearSurveyDraft(shell) {
+    if (!this._surveyDefinition || !shell?.actor?.setFlag) return;
+    const classKey = this._getSurveyDraftKey();
+    const existing = { ...(shell.actor.getFlag?.('foundryvtt-swse', 'l1SurveyDrafts') || {}) };
+    delete existing[classKey];
+    try {
+      await shell.actor.setFlag('foundryvtt-swse', 'l1SurveyDrafts', existing);
+    } catch (err) {
+      console.warn('[L1SurveyStep] Failed to clear survey draft:', err);
+    }
   }
 
   /**
@@ -354,8 +502,10 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     this._activeQuestionIndex = 0;
     this._surveyPhase = 'intro';
     this._lastPromptSpoken = null;
+    this._surveyFinalized = false;
     this._analysisResult = null;
     this._emergentArchetype = null;
+    this._lastInlineTranslationKey = null;
 
     // Clear session survey selection
     if (shell?.progressionSession?.draftSelections) {
@@ -393,26 +543,43 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   async handleAction(action, event, target, shell) {
     switch (action) {
       case 'survey-start':
+        event?.preventDefault?.();
         await this._startSurvey(shell);
-        break;
+        return true;
       case 'survey-choose':
+        event?.preventDefault?.();
         await this._chooseSurveyAnswer(shell, target);
-        break;
+        return true;
       case 'survey-continue':
+        event?.preventDefault?.();
         await this._continueSurvey(shell);
-        break;
+        return true;
       case 'survey-finish':
+        event?.preventDefault?.();
         await this._finishSurvey(shell);
-        break;
+        return true;
       case 'survey-change-answer':
+        event?.preventDefault?.();
         await this._changeCurrentAnswer(shell);
-        break;
+        return true;
       case 'survey-previous-question':
+        event?.preventDefault?.();
         await this._goToPreviousQuestion(shell);
-        break;
+        return true;
       case 'survey-retake':
+        event?.preventDefault?.();
         await this._retakeSurvey(shell);
-        break;
+        return true;
+      case 'survey-back':
+        event?.preventDefault?.();
+        await this._goBackWithinSurvey(shell);
+        return true;
+      case 'ask-mentor':
+        event?.preventDefault?.();
+        await this.onAskMentor(shell);
+        return true;
+      default:
+        return false;
     }
   }
 
@@ -427,13 +594,29 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     const direction = context?.direction || 'forward';
     const isMovingBackward = direction === 'backward';
 
+    await this._saveSurveyDraft(shell);
+
     if (isMovingBackward) {
       // Preserve draft state but do NOT finalize bias/commitment
       console.log('[L1SurveyStep] Moving backward - preserving survey answers without finalizing');
       return;
     }
 
-    // Only on forward exit: inject bias and commit results
+    const questions = this._getRenderableQuestions();
+    const answeredCount = Object.keys(this._surveyAnswers || {}).length;
+    const isComplete = questions.length > 0 && answeredCount >= questions.length;
+    const isExplicitlyFinalized = this._surveyFinalized || this._surveyPhase === 'complete';
+
+    if (!isComplete || !isExplicitlyFinalized) {
+      console.log('[L1SurveyStep] Survey incomplete - draft saved without injecting mentor bias', {
+        answeredCount,
+        totalQuestions: questions.length,
+        phase: this._surveyPhase,
+      });
+      return;
+    }
+
+    // Only a completed, explicitly finalized survey may inject bias and commit results
     const surveyBias = convertSurveyAnswersToBias(this._surveyAnswers);
     const surveyIntentTags = extractSurveyIntentTags(this._surveyAnswers);
     IdentityEngine.injectSurveyBias(shell.actor, surveyBias);
@@ -468,6 +651,8 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       intentTags: surveyIntentTags,
     });
 
+    await this._clearSurveyDraft(shell);
+
     console.log('[L1SurveyStep] Survey finalized for', this._activeSurveyClassKey, 'with', Object.keys(this._surveyAnswers).length, 'answers');
   }
 
@@ -494,16 +679,18 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     const surveySummary = processSurveyAnswers(this._surveyAnswers, this._surveyDefinition);
     const completionTags = buildCompletionTags(surveySummary, surveyData.topMatches);
 
+    const activeMentor = mentor || surveyData.mentor || null;
+    const mentorName = activeMentor?.name || surveyData.mentor?.name || null;
+    const mentorTitle = activeMentor?.title || surveyData.mentor?.title || activeMentor?.class || null;
+    const mentorPortrait = resolveMentorPortraitPath(activeMentor?.portrait || surveyData.mentor?.portrait || null);
+
     return {
       surveyAnswers: { ...this._surveyAnswers },
-      mentorName: surveyData.mentor?.name || mentor?.name || null,
-      mentorTitle: surveyData.mentor?.title || mentor?.title || mentor?.class || null,
-      mentorPortrait: surveyData.mentor?.portrait || mentor?.portrait || null,
-      mentorPortraitMarkup: buildMentorPortraitMarkup(
-        surveyData.mentor?.portrait || mentor?.portrait || null,
-        surveyData.mentor?.name || mentor?.name || 'Mentor'
-      ),
-      mentorGuidance: surveyData.mentor?.classGuidance || mentorGuidance,
+      mentorName,
+      mentorTitle,
+      mentorPortrait,
+      mentorPortraitMarkup: buildMentorPortraitMarkup(mentorPortrait, mentorName || 'Mentor'),
+      mentorGuidance: activeMentor?.classGuidance || surveyData.mentor?.classGuidance || mentorGuidance,
       surveyDefinition: this._surveyDefinition,
       surveyQuestions: questions,
       activeQuestion,
@@ -515,6 +702,8 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       isComplete,
       surveyPhase: this._surveyPhase,
       progressDots: buildProgressDots(totalQuestions, this._activeQuestionIndex, answeredCount, this._surveyPhase),
+      canSurveyBack: this._canSurveyBack(),
+      surveyDraftNotice: !isComplete ? 'Draft saved. Mentor recommendations update only after you complete the survey.' : null,
       promptText: this._getPromptText(activeQuestion),
       responseText: this._getResponseText(selectedOption),
       completionText: this._getCompletionText(),
@@ -589,6 +778,51 @@ export class L1SurveyStep extends ProgressionStepPlugin {
         tags,
       },
     };
+  }
+
+  async onAskMentor(shell) {
+    const mentor = getStepMentorObject(shell?.actor ?? null, shell);
+    const clarification = this._buildQuestionClarification(mentor);
+    if (clarification && shell?.mentorRail) {
+      await shell.mentorRail.speak(clarification, 'encouraging');
+    }
+  }
+
+  _buildQuestionClarification(mentor = null) {
+    const questions = this._getRenderableQuestions();
+    const question = questions?.[this._activeQuestionIndex] || null;
+    const answeredCount = Object.keys(this._surveyAnswers || {}).length;
+    const totalQuestions = questions.length || 0;
+
+    if (this._surveyPhase === 'intro') {
+      const core = `It sets up the kind of recommendations I will give later. You may leave early; any answers remain a draft and will not steer the build until you complete all ${totalQuestions || 'the'} questions.`;
+      return voiceSurveyClarification(mentor, 'intro', core);
+    }
+
+    if (this._surveyPhase === 'complete') {
+      const core = 'Nothing is committed until you continue from here. If any answer feels wrong, go back and adjust it before the profile becomes a recommendation signal.';
+      return voiceSurveyClarification(mentor, 'complete', core);
+    }
+
+    if (!question) {
+      const core = 'There is no active question to clarify right now. Move forward or return to the previous prompt to review your intent.';
+      return voiceSurveyClarification(mentor, this._surveyPhase, core);
+    }
+
+    const focusWords = compactList(extractOptionFocusWords(question.options), 4);
+    const selectedOption = this._surveyAnswers?.[question.id] || null;
+
+    if (this._surveyPhase === 'response' && selectedOption) {
+      const tags = compactList(selectedOption.detailTags || [], 3);
+      const tagText = tags ? `That answer points toward ${tags}.` : 'That answer records one part of your preferred play style.';
+      const core = `${tagText} It is still draft information, so change it if it does not match the character you mean to build.`;
+      return voiceSurveyClarification(mentor, 'response', core);
+    }
+
+    const core = focusWords
+      ? `It is comparing instincts such as ${focusWords}. It helps separate what sounds interesting from what you actually want the character to do at the table.`
+      : 'It is measuring the role, tactics, and feel you want this character to lean toward. There is no wrong answer; there is only a clearer signal.';
+    return voiceSurveyClarification(mentor, 'question', core);
   }
 
   async onItemFocused() {}

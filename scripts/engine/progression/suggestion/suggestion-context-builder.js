@@ -56,6 +56,12 @@ export class SuggestionContextBuilder {
       ? characterData.forceSecrets
       : actor.items?.filter(i => i.type === 'force-secret').map(i => ({ id: i._id, name: i.name })) || [];
 
+    const mentorBiases = this._mergeMentorBiases(
+      actor?.system?.swse?.mentorBuildIntentBiases || {},
+      actor?.system?.swse?.classSurveyIntentBiases || {},
+      characterData?.mentorBiases || {}
+    );
+
     const selectedSpecies = this._resolveSelectedSpecies(actor, characterData);
     const selectedSpeciesName = selectedSpecies?.name || this._resolveFallbackSpeciesName(actor, characterData) || null;
     const selectedSpeciesTags = Array.from(new Set([
@@ -77,8 +83,39 @@ export class SuggestionContextBuilder {
       selectedForceSecrets,
       background: characterData.background ?? actor.system?.background ?? null,
       survey: characterData.survey ?? actor.system?.survey ?? null,
+      mentorBiases,
+      classSurveyResponses: actor?.system?.swse?.classSurveyResponses || {},
       species: selectedSpecies ?? characterData.species ?? null
     };
+  }
+
+
+  static _mergeMentorBiases(...sources) {
+    const out = {};
+    const mergeArray = (key, values = []) => {
+      if (!Array.isArray(out[key])) out[key] = [];
+      for (const value of values || []) {
+        if (value && !out[key].includes(value)) out[key].push(value);
+      }
+    };
+    const mergeWeights = (key, values = {}) => {
+      if (!out[key] || typeof out[key] !== 'object' || Array.isArray(out[key])) out[key] = {};
+      for (const [name, value] of Object.entries(values || {})) {
+        out[key][name] = (out[key][name] || 0) + Number(value || 0);
+      }
+    };
+
+    for (const source of sources || []) {
+      for (const [key, value] of Object.entries(source || {})) {
+        if (Array.isArray(value)) mergeArray(key, value);
+        else if (value && typeof value === 'object') mergeWeights(key, value);
+        else if (value !== undefined && value !== null && out[key] === undefined) out[key] = value;
+      }
+    }
+    if (Array.isArray(out.prestigeClassTargets) && out.prestigeClassTargets.length) {
+      out.prestigeClassTarget = out.prestigeClassTargets[0];
+    }
+    return out;
   }
 
   static _resolveSelectedSpecies(actor, characterData = {}) {

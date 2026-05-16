@@ -25,7 +25,9 @@ export const ConditionalStepKey = Object.freeze({
 export class ConditionalStepResolver {
   async resolveForContext(actor, mode, context = {}) {
     if (mode === 'chargen') return this._resolveChargenConditionals(actor, context);
-    if (mode === 'levelup') return this._resolveLevelupConditionals(actor, context);
+    // Level-up conditionals are now owned by ActiveStepComputer/node registry.
+    // Returning an empty list here prevents duplicate Force/Medical/Talent nodes.
+    if (mode === 'levelup') return [];
     return [];
   }
 

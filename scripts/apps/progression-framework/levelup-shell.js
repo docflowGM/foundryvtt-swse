@@ -4,13 +4,12 @@
  * Level-up entry point.
  * Sole authority for level-up progression (legacy levelup-main decommissioned)
  *
- * Canonical level-up step sequence:
- *   class → [attribute] → [skills]* → general-feat → class-feat →
- *   general-talent → class-talent → [force-powers]* → [force-secrets]* →
- *   [force-techniques]* → [starship-maneuvers]* → FINAL (no separate confirm)
+ * Canonical level-up step sequence is resolved by ActiveStepComputer from the
+ * progression node registry. Level-up conditional/entitlement nodes are not
+ * merged from ConditionalStepResolver, which is chargen-only.
  *
- * Steps marked * are CONDITIONAL — discovered from engine via ConditionalStepResolver.
- * The shell NEVER hardcodes conditional step logic directly.
+ * Emergency fallback keeps one talent surface only to avoid double-spending a
+ * single class-granted talent entitlement.
  */
 
 import { ProgressionShell } from './shell/progression-shell.js';
@@ -18,10 +17,11 @@ import { createStepDescriptor, StepCategory, StepType } from './steps/step-descr
 import { ActiveStepComputer } from './shell/active-step-computer.js';
 import { mapNodesToDescriptors } from './registries/node-descriptor-mapper.js';
 import { ClassStep } from './steps/class-step.js';
+import { PrestigeSurveyStep } from './steps/prestige-survey-step.js';
 import { RolloutSettings } from './rollout/rollout-settings.js';
 import { AttributeStep } from './steps/attribute-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
-import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
+import { ClassTalentStep } from './steps/talent-step.js';
 
 export class LevelupShell extends ProgressionShell {
   static async open(actor, options = {}) {
@@ -192,6 +192,14 @@ const LEVELUP_CANONICAL_STEPS = [
     type: StepType.BUILD,
     pluginClass: ClassStep,
   },
+
+  {
+    stepId: 'prestige-survey',
+    label: 'Prestige Survey',
+    icon: 'fa-user-graduate',
+    type: StepType.BUILD,
+    pluginClass: PrestigeSurveyStep,
+  },
   {
     stepId: 'attribute',
     label: 'Attributes',
@@ -217,14 +225,6 @@ const LEVELUP_CANONICAL_STEPS = [
     type: StepType.SELECTION,
     category: StepCategory.CATEGORY_SPECIFIC,
     pluginClass: ClassFeatStep,
-  },
-  {
-    stepId: 'general-talent',
-    label: 'Heroic Talent',
-    icon: 'fa-gem',
-    type: StepType.SELECTION,
-    category: StepCategory.CATEGORY_SPECIFIC,
-    pluginClass: GeneralTalentStep,
   },
   {
     stepId: 'class-talent',

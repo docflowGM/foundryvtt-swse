@@ -54,6 +54,63 @@ export class LanguageStep extends ProgressionStepPlugin {
     this._renderAbort = null;
   }
 
+
+  _captureStepScroll(shell) {
+    const root = shell?.element;
+    if (!(root instanceof HTMLElement)) return [];
+    const nodes = [root, ...root.querySelectorAll('*')];
+    return nodes
+      .filter(el => el instanceof HTMLElement && (el.scrollTop > 0 || el.scrollLeft > 0))
+      .map(el => {
+        const scrollKey = el.dataset?.progScrollKey ? `scroll-key:${el.dataset.progScrollKey}` : null;
+        const region = el.dataset?.region || el.closest?.('[data-region]')?.dataset?.region || '';
+        const classes = Array.from(el.classList || []).filter(name => /^(prog|swse|language)-/.test(name)).slice(0, 3).join('.');
+        return {
+          key: scrollKey || (el.dataset?.region ? `region:${el.dataset.region}` : (region && classes ? `region:${region}:class:${classes}` : null)),
+          path: (() => {
+            const path = [];
+            let node = el;
+            while (node && node !== root) {
+              const parent = node.parentElement;
+              if (!parent) return null;
+              path.unshift(Array.prototype.indexOf.call(parent.children, node));
+              node = parent;
+            }
+            return node === root ? path : null;
+          })(),
+          top: el.scrollTop,
+          left: el.scrollLeft,
+        };
+      })
+      .filter(snap => snap.key || Array.isArray(snap.path));
+  }
+
+  _renderPreservingScroll(shell) {
+    if (shell) {
+      shell._pendingScrollSnapshots = this._captureStepScroll(shell);
+      shell.render?.();
+    }
+  }
+
+  async _commitLanguageSelection(shell) {
+    const normalizedLanguages = normalizeLanguages(
+      this._selectedBonusLanguages.map(name => ({ id: name, source: 'selected' }))
+    );
+    if (normalizedLanguages && shell) {
+      await this._commitNormalized(shell, 'languages', normalizedLanguages);
+    }
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(
+        this.descriptor.stepId,
+        'languages',
+        {
+          knownLanguages: [...this._knownLanguages],
+          bonusLanguages: [...this._selectedBonusLanguages],
+        }
+      );
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Lifecycle
   // ---------------------------------------------------------------------------
@@ -89,7 +146,7 @@ export class LanguageStep extends ProgressionStepPlugin {
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         this._searchQuery = e.target.value;
-        shell.render();
+        this._renderPreservingScroll(shell);
       }, { signal });
     }
 
@@ -100,26 +157,26 @@ export class LanguageStep extends ProgressionStepPlugin {
         e.preventDefault();
         this._searchQuery = '';
         if (searchInput) searchInput.value = '';
-        shell.render();
+        this._renderPreservingScroll(shell);
       }, { signal });
     }
 
     // Wire add/remove buttons in work surface
     const addBtns = shell.element.querySelectorAll('[data-action="add-language"]');
     addBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.preventDefault();
         const langId = btn.dataset.languageId;
-        this._selectLanguage(langId, shell);
+        await this._selectLanguage(langId, shell);
       }, { signal });
     });
 
     const removeBtns = shell.element.querySelectorAll('[data-action="remove-language"]');
     removeBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.preventDefault();
         const langId = btn.dataset.languageId;
-        this._deselectLanguage(langId, shell);
+        await this._deselectLanguage(langId, shell);
       }, { signal });
     });
   }
@@ -169,7 +226,7 @@ export class LanguageStep extends ProgressionStepPlugin {
   async _getKnownLanguages(actor, shell) {
     if (!actor) return [];
 
-    const known = new Set();
+    const known = new Set(['Basic']);
 
     // Species languages: Read from pending selection first, fall back to committed actor
     let speciesName = shell?.draftSelections?.get('species')?.[0];
@@ -179,7 +236,7 @@ export class LanguageStep extends ProgressionStepPlugin {
     if (speciesName) {
       const speciesDoc = await ProgressionContentAuthority.getSpeciesDocument(speciesName);
       if (speciesDoc?.system?.languages) {
-        speciesDoc.system.languages.forEach(lang => known.add(lang));
+        speciesDoc.system.languages.forEach(lang => { if (lang) known.add(lang); });
       }
     }
 
@@ -201,7 +258,7 @@ export class LanguageStep extends ProgressionStepPlugin {
       }
     }
 
-    return Array.from(known);
+    return Array.from(known).filter(Boolean);
   }
 
   /**
@@ -251,7 +308,7 @@ export class LanguageStep extends ProgressionStepPlugin {
   /**
    * Select a bonus language
    */
-  _selectLanguage(langId, shell) {
+  async _selectLanguage(langId, shell) {
     if (this._selectedBonusLanguages.length >= this._bonusLanguagesAvailable) {
       return; // Already at max
     }
@@ -262,20 +319,35 @@ export class LanguageStep extends ProgressionStepPlugin {
     }
 
     this._selectedBonusLanguages.push(lang.name);
-    shell.render();
+    this._focusedLanguageId = lang.id;
+    await this._commitLanguageSelection(shell);
+    this._renderPreservingScroll(shell);
   }
 
   /**
    * Deselect a bonus language
    */
-  _deselectLanguage(langId, shell) {
+  async _deselectLanguage(langId, shell) {
     const lang = this._getLanguage(langId);
     if (!lang) return;
 
     this._selectedBonusLanguages = this._selectedBonusLanguages.filter(
       name => name !== lang.name
     );
-    shell.render();
+    this._focusedLanguageId = lang.id;
+    await this._commitLanguageSelection(shell);
+    this._renderPreservingScroll(shell);
+  }
+
+  _buildLanguageRuleBreakdown(shell) {
+    const intMod = FeatGrantEntitlementResolver.getIntBonusLanguageCount(shell?.actor || null);
+    const linguist = FeatGrantEntitlementResolver.totalForGrantType(shell?.actor || null, 'languageSlots', { shell, includePending: true });
+    return {
+      nativeAndBasic: true,
+      intModPicks: Math.max(0, intMod),
+      linguistPicks: Math.max(0, linguist),
+      totalSelectable: this._bonusLanguagesAvailable,
+    };
   }
 
   // ---------------------------------------------------------------------------
@@ -314,6 +386,7 @@ export class LanguageStep extends ProgressionStepPlugin {
       }),
 
       bonusLanguagesAvailable: this._bonusLanguagesAvailable,
+      languageRuleBreakdown: this._buildLanguageRuleBreakdown(context?.shell),
       remainingPicks,
       searchQuery: this._searchQuery,
       hasAvailableLanguages: available.length > 0,
@@ -416,28 +489,7 @@ export class LanguageStep extends ProgressionStepPlugin {
       this._selectedBonusLanguages.push(lang.name);
     }
 
-    // PHASE 1: Normalize and commit to canonical session
-    // Normalize selected bonus languages for canonical storage
-    const normalizedLanguages = normalizeLanguages(
-      this._selectedBonusLanguages.map(name => ({ id: name, source: 'selected' }))
-    );
-
-    if (normalizedLanguages && shell) {
-      // Commit to canonical session (also updates buildIntent for backward compat)
-      await this._commitNormalized(shell, 'languages', normalizedLanguages);
-    }
-
-    // Also maintain legacy buildIntent for backward compat
-    if (shell?.buildIntent && this.descriptor?.stepId) {
-      shell.buildIntent.commitSelection(
-        this.descriptor.stepId,
-        'languages',
-        {
-          knownLanguages: [...this._knownLanguages],
-          bonusLanguages: [...this._selectedBonusLanguages],
-        }
-      );
-    }
+    await this._commitLanguageSelection(shell);
   }
 
   // ---------------------------------------------------------------------------
@@ -471,7 +523,7 @@ export class LanguageStep extends ProgressionStepPlugin {
   }
 
   getMentorMode() {
-    return null;
+    return 'interactive';
   }
 
   // ---------------------------------------------------------------------------

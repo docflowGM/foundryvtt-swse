@@ -43,12 +43,21 @@ export class ActiveEffectAdapter {
         const duration = effectDurationText(effect);
 
         // Build card with metadata preference, fallback to existing behavior
+        // Helper: humanize sourceType for display (e.g., "forcePower" → "Force Power")
+        const humanizeSourceType = (type) => {
+          if (!type) return null;
+          return String(type)
+            .replace(/([A-Z])/g, ' $1')  // Add space before capitals
+            .replace(/^./, c => c.toUpperCase()) // Capitalize first letter
+            .trim();
+        };
+
         const card = {
           id: `effect-${effect.id ?? normalizeName(effect.name)}`,
           label: metadata?.sourceName ?? effect.name ?? effect.label ?? "Active Effect",
           type: "activeEffect", // MUST remain "activeEffect" for activeEffectCount stability
           severity: metadata?.severity ?? effect?.flags?.swse?.severity ?? "info",
-          source: metadata?.sourceType ? `${metadata.sourceType}: ${metadata.sourceName}` : (effect?.origin ?? effect?.flags?.swse?.sourceName ?? "Active Effect"),
+          source: metadata?.sourceName ?? (metadata?.sourceType ? humanizeSourceType(metadata.sourceType) : (effect?.origin ?? effect?.flags?.swse?.sourceName ?? "Active Effect")),
           text: metadata?.summary ?? (effectChanges.length ? effectChanges.join("; ") : duration),
           gmEnforced: false,
           mechanical: true,
@@ -91,6 +100,21 @@ export class ActiveEffectAdapter {
         // Add metadata fields if present (additive, not replacing)
         if (metadata?.family) card.family = metadata.family;
         if (metadata?.effectType) card.effectType = metadata.effectType;
+
+        // Phase 7: Add remove-active-effect action if appropriate
+        // Only emit for removable effects with valid effect id
+        if (effect?.id && metadata?.removable !== false) {
+          card.actions = [
+            {
+              id: "remove-active-effect",
+              label: "Remove",
+              dataAction: "remove-active-effect",
+              actorId: actor?.id ?? "",
+              effectId: effect.id,
+              gmOnly: false
+            }
+          ];
+        }
 
         return card;
       });

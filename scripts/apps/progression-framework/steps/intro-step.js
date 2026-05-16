@@ -26,7 +26,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SWSETranslationEngine } from '../engine/swse-translation-engine.js';
-import { TemplateSelectionDialog } from '../dialogs/template-selection-dialog.js';
+import { TemplateInitializer } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-initializer.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { buildActorSplashV2Context } from './actor-splash-v2-controller.js';
 import { buildDroidSplashV2Context } from './droid-splash-v2-controller.js';
@@ -774,10 +774,56 @@ export class IntroStep extends ProgressionStepPlugin {
       }
     });
 
-    // Phase 2 (REMOVED): Pick Profile button was a duplicate template selection path.
-    // Template selection now happens ONLY at boot time via TemplateInitializer.initializeForChargen().
-    // Session state is the single source of truth; no re-selection during intro step.
-    // This ensures v2 compliance: template selection is session-only and non-mutating.
+    // Galactic Profile: optional packaged-profile path from the final splash screen.
+    // This is session-only. It does not mutate the actor until summary/finalization.
+    $surface.on('click', '[data-role="intro-galactic-profile"]', async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!this._complete || this._transitionInProgress) return;
+      this._transitionInProgress = true;
+
+      try {
+        const actor = this._shell?.actor;
+        if (!actor) {
+          ui?.notifications?.error?.('No actor is available for Galactic Profile selection.');
+          this._transitionInProgress = false;
+          return;
+        }
+
+        const subtype = this._shell?.progressionSession?.subtype || (actor.type === 'droid' ? 'droid' : 'actor');
+        const templateSession = await TemplateInitializer.initializeForChargen(actor, { subtype });
+
+        if (!templateSession) {
+          this._transitionInProgress = false;
+          return;
+        }
+
+        this._shell.progressionSession = templateSession;
+        this._shell._registerPersistenceHook?.();
+        this._shell.currentStepIndex = 0;
+        this._shell._targetStepId = null;
+        await this._shell._initializeSteps?.();
+        this._shell._syncLegacyCommittedSelectionsFromSession?.();
+        await this._shell._persistSessionSnapshot?.('intro');
+
+        this._localizedMode = true;
+        this._complete = true;
+        this._introRunning = false;
+        this._state = INTRO_STATE.TRANSITIONING;
+        this._continueClicked = true;
+        ui?.notifications?.info?.('Galactic profile loaded. Continuing registration.');
+        await this._transitionToNextStep();
+      } catch (error) {
+        swseLogger.error('[IntroStep] Failed to load Galactic Profile from splash', {
+          error: error?.message || String(error),
+          stack: error?.stack,
+        });
+        ui?.notifications?.error?.('Could not load Galactic Profile. You can still begin registration normally.');
+        this._transitionInProgress = false;
+        this._continueClicked = false;
+      }
+    });
 
     // Droid creation mode choice (Build Custom vs Select Standard Model)
     $surface.on('click', '[data-role="droid-build-custom"]', async (event) => {
@@ -813,26 +859,50 @@ export class IntroStep extends ProgressionStepPlugin {
       event.preventDefault();
       event.stopPropagation();
 
-      if (this._transitionInProgress) return;
+      if (!this._complete || this._transitionInProgress) return;
       this._transitionInProgress = true;
 
       try {
-        swseLogger.debug('[IntroStep.activateListeners] Select Standard Model chosen');
+        swseLogger.debug('[IntroStep.activateListeners] Droid Galactic Profile chosen');
 
-        // Set creation mode to 'standard-model'
-        if (this._shell?.progressionSession?.droidContext) {
-          this._shell.progressionSession.droidContext.creationMode = 'standard-model';
-          swseLogger.debug('[IntroStep.activateListeners] Set droidContext.creationMode to standard-model');
+        const actor = this._shell?.actor;
+        if (!actor) {
+          ui?.notifications?.error?.('No droid actor is available for Galactic Profile selection.');
+          this._transitionInProgress = false;
+          return;
         }
 
+        const templateSession = await TemplateInitializer.initializeForChargen(actor, { subtype: 'droid' });
+
+        if (!templateSession) {
+          this._transitionInProgress = false;
+          return;
+        }
+
+        this._shell.progressionSession = templateSession;
+        if (this._shell.progressionSession?.droidContext) {
+          this._shell.progressionSession.droidContext.creationMode = 'standard-model';
+        }
+        this._shell._registerPersistenceHook?.();
+        this._shell.currentStepIndex = 0;
+        this._shell._targetStepId = null;
+        await this._shell._initializeSteps?.();
+        this._shell._syncLegacyCommittedSelectionsFromSession?.();
+        await this._shell._persistSessionSnapshot?.('intro-droid-profile');
+
+        this._localizedMode = true;
+        this._complete = true;
+        this._introRunning = false;
         this._continueClicked = true;
         this._state = INTRO_STATE.TRANSITIONING;
+        ui?.notifications?.info?.('Droid Galactic Profile loaded. Continuing registration.');
         await this._transitionToNextStep();
       } catch (error) {
-        swseLogger.error('[IntroStep.activateListeners] ERROR handling Select Standard Model button', {
-          error: error.message,
-          stack: error.stack,
+        swseLogger.error('[IntroStep.activateListeners] ERROR handling Droid Galactic Profile button', {
+          error: error?.message || String(error),
+          stack: error?.stack,
         });
+        ui?.notifications?.error?.('Could not load Droid Galactic Profile. You can still build a custom unit.');
         this._transitionInProgress = false;
         this._continueClicked = false;
       }
@@ -1318,7 +1388,7 @@ export class IntroStep extends ProgressionStepPlugin {
         target: this._workSurfaceEl,
         sourceText: stepData.translationSource,
         translatedText: stepData.translationTarget,
-        displayMode: 'reveal',
+        displayMode: 'swipe-replace',
         sourceMode: sourceMode,
         selectors: {
           'translationText': '[data-role="trans-dst"]',  // Destination slot for target text
@@ -1367,21 +1437,32 @@ export class IntroStep extends ProgressionStepPlugin {
   _setTranslationFallbackText(stepData = {}) {
     const targetText = stepData.translationTarget || stepData.translatedText || '';
     const sourceText = stepData.translationSource || '';
+    const mode = stepData.sourceMode || (this._isDroidIntro ? 'binary' : 'aurebesh');
 
+    const zone = this._workSurfaceEl?.querySelector?.('[data-role="translate-zone"]');
     const dst = this._workSurfaceEl?.querySelector?.('[data-role="trans-dst"]');
-    if (dst && targetText) {
-      dst.textContent = targetText;
-      dst.dataset.sourceMode = stepData.sourceMode || (this._isDroidIntro ? 'binary' : 'aurebesh');
+    const src = this._workSurfaceEl?.querySelector?.('[data-role="trans-src"]');
+    const arrow = zone?.querySelector?.('.arrow');
+
+    if (src) {
+      src.textContent = sourceText;
+      src.dataset.sourceMode = mode;
+      src.classList.remove('basic', 'aurebesh', 'binary');
+      src.classList.add(mode);
     }
 
-    const src = this._workSurfaceEl?.querySelector?.('[data-role="trans-src"]');
-    if (src) {
-      src.textContent = '';
-      src.dataset.sourceMode = stepData.sourceMode || (this._isDroidIntro ? 'binary' : 'aurebesh');
-      src.setAttribute('aria-hidden', 'true');
+    if (dst) {
+      dst.textContent = targetText;
+      dst.dataset.sourceMode = 'basic';
     }
-    const arrow = this._workSurfaceEl?.querySelector?.('[data-role="translate-zone"] .arrow');
-    if (arrow) arrow.setAttribute('aria-hidden', 'true');
+
+    if (zone && targetText) {
+      zone.classList.add('on', 'is-translated');
+      zone.dataset.translationState = 'basic';
+    }
+    if (arrow && targetText) {
+      arrow.setAttribute('aria-hidden', 'true');
+    }
   }
 
   /**
@@ -1638,6 +1719,7 @@ export class IntroStep extends ProgressionStepPlugin {
     this._currentMicrolabel = finalLine.microlabel;
     this._translatedText = finalLine.basic;
     this._progress = 100;
+    this._localizedMode = true;
     this._complete = true;
     this._state = INTRO_STATE.COMPLETE_AWAITING_CLICK;
   }

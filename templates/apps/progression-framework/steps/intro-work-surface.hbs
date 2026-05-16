@@ -134,11 +134,11 @@
               </div>
             </div>
 
-            <div class="translate {{#if isTranslating}}on{{/if}}" data-role="translate-zone">
+            <div class="translate {{#if isTranslating}}on{{/if}} {{#if translationComplete}}is-translated{{/if}}" data-role="translate-zone">
               <span class="lbl">{{translationLabel}}</span>
-              <span class="src aurebesh" data-role="trans-src">{{translationSource}}</span>
+              <span class="src {{sourceMode}}" data-role="trans-src">{{translationSource}}</span>
               <span class="arrow">▸</span>
-              <span class="dst" data-role="trans-dst"></span>
+              <span class="dst" data-role="trans-dst">{{translationDisplayTarget}}</span>
             </div>
           </div>
 
@@ -186,6 +186,9 @@
           <div class="hint"><kbd>SPACE</kbd> skip · <kbd>ENTER</kbd> continue · <kbd>R</kbd> replay</div>
           <div class="intro-action-row">
             <button class="btn ghost" type="button" data-action="skip-intro">{{skipLabel}}</button>
+            {{#if showGalacticProfile}}
+            <button class="btn secondary" type="button" data-role="intro-galactic-profile" title="{{galacticProfileTitle}}" {{#unless isComplete}}disabled{{/unless}}>{{galacticProfileLabel}}</button>
+            {{/if}}
             <button class="btn primary" type="button" data-action="next-step" {{#unless isComplete}}disabled{{/unless}}>{{continueLabel}}</button>
           </div>
         </div>
@@ -290,11 +293,11 @@
                 </div>
               </div>
 
-              <div class="translate {{#if isTranslating}}on{{/if}}" data-role="translate-zone">
+              <div class="translate {{#if isTranslating}}on{{/if}} {{#if translationComplete}}is-translated{{/if}}" data-role="translate-zone">
                 <span class="lbl">{{translationLabel}}</span>
-                <span class="src binary" data-role="trans-src">{{translationSource}}</span>
+                <span class="src {{sourceMode}}" data-role="trans-src">{{translationSource}}</span>
                 <span class="arrow">▸</span>
-                <span class="dst" data-role="trans-dst"></span>
+                <span class="dst" data-role="trans-dst">{{translationDisplayTarget}}</span>
               </div>
             </div>
 
@@ -360,7 +363,7 @@
                 <i class="fas fa-wrench"></i>
                 {{buildCustomLabel}}
               </button>
-              <button class="btn primary" type="button" data-role="droid-select-standard" title="Import a published standard droid model" aria-label="Import a published standard droid model" {{#if continueDisabled}}disabled{{/if}}>
+              <button class="btn secondary" type="button" data-role="droid-select-standard" title="{{selectModelTitle}}" aria-label="{{selectModelTitle}}" {{#if continueDisabled}}disabled{{/if}}>
                 <i class="fas fa-database"></i>
                 {{selectModelLabel}}
               </button>

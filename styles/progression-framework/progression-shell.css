@@ -1668,11 +1668,18 @@
 
 /* Ensure aspect ratio safety on image elements */
 .progression-shell .prog-species-card__media img,
-.progression-shell .prog-species-details__portrait img,
 .progression-shell .prog-class-details__portrait {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+}
+
+.progression-shell .prog-species-details__portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
   display: block;
 }
 
@@ -1793,4 +1800,76 @@
 .progression-shell[data-step-id="l1-survey"] .prog-step-context-banner {
   margin: 0 0 12px;
   padding: 0 4px;
+}
+
+/* =============================================================================
+ * MENTOR RAIL FIT / PNG HYDRATION PASS
+ * The mentor rail should use the full top band, keep the portrait bounded, keep
+ * Ask Mentor visible, and let the dialogue frame stretch instead of stopping at
+ * the old 65ch readability clamp.
+ * ============================================================================= */
+.progression-shell [data-region="mentor-rail"] .prog-mentor-rail.swse-prog-mentor-rail,
+.progression-shell [data-region="mentor-rail"] .prog-mentor-rail {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__portrait-zone {
+  flex: 0 0 86px;
+  width: 86px;
+  max-width: 86px;
+  min-width: 72px;
+}
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__portrait {
+  overflow: hidden;
+}
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__portrait-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__dialogue {
+  flex: 1 1 auto;
+  width: auto;
+  max-width: none;
+  min-width: 0;
+}
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__dialogue-content,
+.progression-shell [data-region="mentor-rail"] .prog-mentor__text,
+.progression-shell [data-region="mentor-rail"] .aurebesh-dialogue-wrapper {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__ask {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-width: max-content;
+  white-space: nowrap;
+}
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__collapse {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 1180px) {
+  .progression-shell [data-region="mentor-rail"] .prog-mentor__portrait-zone {
+    flex-basis: 72px;
+    width: 72px;
+    max-width: 72px;
+  }
+
+  .progression-shell [data-region="mentor-rail"] .prog-mentor__ask {
+    padding-inline: 7px;
+  }
 }

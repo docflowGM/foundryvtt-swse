@@ -15,8 +15,8 @@
     <div class="prog-l1-survey-stage__dialogue-panel" data-phase="{{surveyPhase}}">
       <div class="prog-l1-survey-stage__header">
         <div>
-          <div class="prog-l1-survey-stage__eyebrow">Level 1 Survey</div>
-          <h2 class="prog-l1-survey-stage__title">{{#if surveyDefinition}}{{surveyDefinition.classDisplayName}} Intent Read{{else}}Intent Read{{/if}}</h2>
+          <div class="prog-l1-survey-stage__eyebrow">{{#if surveyEyebrow}}{{surveyEyebrow}}{{else}}Level 1 Survey{{/if}}</div>
+          <h2 class="prog-l1-survey-stage__title">{{#if surveyTitle}}{{surveyTitle}}{{else}}{{#if surveyDefinition}}{{surveyDefinition.classDisplayName}} Intent Read{{else}}Intent Read{{/if}}{{/if}}</h2>
           <div class="prog-l1-survey-stage__subtitle">
             {{answeredCount}} / {{totalQuestions}} answered
             {{#if remainingCount}} · {{remainingCount}} remaining{{else}} · survey complete{{/if}}
@@ -36,7 +36,7 @@
       <div class="prog-l1-survey-stage__dialogue-text is-intro" data-l1-survey-dialogue-text>{{introText}}</div>
       <div class="prog-l1-survey-stage__command-row">
         <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-start">
-          Begin Survey
+          {{#if beginLabel}}{{beginLabel}}{{else}}Begin Survey{{/if}}
         </button>
       </div>
       {{/if}}
@@ -132,7 +132,7 @@
           Retake Survey
         </button>
         <button type="button" class="swse-btn swse-ui-button swse-btn--advance-ready prog-l1-survey-stage__command" data-action="survey-finish">
-          Continue to Background
+          {{#if finishLabel}}{{finishLabel}}{{else}}Continue to Background{{/if}}
         </button>
       </div>
       {{/if}}

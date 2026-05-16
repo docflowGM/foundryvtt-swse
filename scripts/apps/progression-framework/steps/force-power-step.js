@@ -47,6 +47,10 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     this._committedPowerCounts = new Map();  // id -> count (for stacking)
 
     this._remainingPicks = 0;
+    this._totalPowerTraining = 0;
+    this._selectedPowerTraining = 0;
+    this._entitlementReasons = [];
+    this._entitlementSummary = null;
     this._suggestedPowers = [];  // Suggested force powers
     this._renderAbort = null;
     this._utilityUnlisteners = [];
@@ -164,6 +168,13 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     // Pending counts are current session selections (in _committedPowerCounts)
     const pendingCounts = new Map(this._committedPowerCounts);
 
+    const pendingSelectedTotal = Array.from(pendingCounts.values()).reduce((sum, count) => sum + (Number(count) || 0), 0);
+    const selectedTrainingDisplay = Math.min(
+      this._totalPowerTraining,
+      Math.max(this._selectedPowerTraining, pendingSelectedTotal)
+    );
+    const remainingTrainingDisplay = Math.max(0, this._remainingPicks - pendingSelectedTotal);
+
     // Build card state map: powerId → {isPending, isCommitted, count, status}
     const cardStates = new Map();
     const allPowerIds = new Set([
@@ -211,7 +222,12 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       committedCounts: Object.fromEntries(actorCommittedCounts),
       cardStates: Object.fromEntries(cardStates),
       committedSummary,  // for footer display
-      remainingPicks: this._remainingPicks,
+      totalPowerTraining: this._totalPowerTraining,
+      selectedPowerTraining: selectedTrainingDisplay,
+      remainingPicks: remainingTrainingDisplay,
+      selectionBudget: this._remainingPicks,
+      entitlementReasons: [...this._entitlementReasons],
+      hasTrainingSummary: this._totalPowerTraining > 0 || this._entitlementReasons.length > 0,
       hasSuggestions,
       suggestedPowerIds: Array.from(suggestedIds),
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
@@ -238,19 +254,18 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    * Single click = focus. Display in details panel, mentor reacts.
    */
   async onItemFocused(powerId, shell) {
-    const power = this._allPowers.find(p => p.id === powerId);
-    if (!power) return;
-
-    this._focusedPowerId = powerId;
-    shell.focusedItem = power;
-
-    // Mentor reacts to focused power
-    const mentorContext = this.getMentorContext(shell);
-    if (mentorContext) {
-      await handleAskMentor(shell.actor, 'force-powers', shell);
+    const power = this._resolvePower(powerId);
+    if (!power) {
+      swseLogger.warn('[ForcePowerStep] Focus requested for unknown force power', { powerId });
+      return;
     }
 
-    shell.render();
+    this._focusedPowerId = power.id;
+    shell.focusedItem = this._formatPowerCard(power);
+
+    // Do not fire mentor dialogue or render from focus. The shell owns the
+    // detail-panel render after focus and preserves scroll around it. Triggering
+    // an extra render here caused intermittent blank/stale details rails.
   }
 
   async onItemHovered(powerId, shell) {
@@ -264,15 +279,16 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    * Removes power only if explicitly deselected (count → 0).
    */
   async onItemCommitted(powerId, shell) {
-    const power = this._allPowers.find(p => p.id === powerId);
+    const power = this._resolvePower(powerId);
     if (!power) return;
 
-    const currentCount = this._committedPowerCounts.get(powerId) ?? 0;
+    const resolvedPowerId = power.id || powerId;
+    const currentCount = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
     const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, c) => sum + c, 0);
 
     // Can add another use if picks remain
     if (totalSelected < this._remainingPicks) {
-      this._committedPowerCounts.set(powerId, currentCount + 1);
+      this._committedPowerCounts.set(resolvedPowerId, currentCount + 1);
     }
     // If all picks are used and this power is selected, allow deselection (count → 0)
     // This is handled via a separate deselect action in the details panel, if needed
@@ -289,24 +305,26 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     }
 
     // Keep focus on the power for context
-    this._focusedPowerId = powerId;
-    shell.focusedItem = power;
-    shell.render();
+    this._focusedPowerId = resolvedPowerId;
+    shell.focusedItem = this._formatPowerCard(power);
+    // The shell owns the post-commit render for normal card/details clicks. Rendering
+    // here caused double-renders and intermittent stale/blank detail rails.
   }
 
   /**
    * PHASE 8: Increment quantity of a selected power (via [+] button on card).
    */
   async onIncrementQuantity(powerId, shell) {
-    const power = this._allPowers.find(p => p.id === powerId);
+    const power = this._resolvePower(powerId);
     if (!power) return;
 
-    const currentCount = this._committedPowerCounts.get(powerId) ?? 0;
+    const resolvedPowerId = power.id || powerId;
+    const currentCount = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
     const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, c) => sum + c, 0);
 
     // Allow increment if picks remain
     if (totalSelected < this._remainingPicks) {
-      this._committedPowerCounts.set(powerId, currentCount + 1);
+      this._committedPowerCounts.set(resolvedPowerId, currentCount + 1);
 
       const powersList = Array.from(this._committedPowerCounts.entries())
         .filter(([_, count]) => count > 0)
@@ -327,18 +345,19 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    * Cannot decrement below 0 or decrement committed (already on actor) quantities.
    */
   async onDecrementQuantity(powerId, shell) {
-    const power = this._allPowers.find(p => p.id === powerId);
+    const power = this._resolvePower(powerId);
     if (!power) return;
 
-    const currentCount = this._committedPowerCounts.get(powerId) ?? 0;
+    const resolvedPowerId = power.id || powerId;
+    const currentCount = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
 
     // Only decrement if there are pending selections to remove
     if (currentCount > 0) {
-      this._committedPowerCounts.set(powerId, currentCount - 1);
+      this._committedPowerCounts.set(resolvedPowerId, currentCount - 1);
 
       // If count reaches 0, remove from map
-      if (this._committedPowerCounts.get(powerId) === 0) {
-        this._committedPowerCounts.delete(powerId);
+      if (this._committedPowerCounts.get(resolvedPowerId) === 0) {
+        this._committedPowerCounts.delete(resolvedPowerId);
       }
 
       const powersList = Array.from(this._committedPowerCounts.entries())
@@ -374,20 +393,31 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       return this.renderDetailsPanelEmptyState();
     }
 
-    const currentCount = this._committedPowerCounts.get(focusedItem.id) ?? 0;
+    const resolvedPower = this._resolvePower(focusedItem.id || focusedItem._id || focusedItem.name) || focusedItem;
+    const formattedPower = this._formatPowerCard(resolvedPower);
+    const currentCount = this._committedPowerCounts.get(formattedPower.id) ?? this._committedPowerCounts.get(focusedItem.id) ?? 0;
     const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, c) => sum + c, 0);
     const canAddMore = totalSelected < this._remainingPicks;
 
     // Normalize detail panel data for canonical display (no fabrication)
-    const normalized = normalizeDetailPanelData(focusedItem, 'force_power');
+    const normalized = normalizeDetailPanelData(formattedPower, 'force_power');
+    const prerequisites = this._formatPrerequisites(formattedPower);
+    const descriptors = this._formatDescriptorList(formattedPower);
+    const roleMetadataTags = this._formatRoleMetadataTags(formattedPower);
 
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/force-power-details.hbs',
       data: {
-        power: focusedItem,
-        description: focusedItem.description || focusedItem.system?.description || '',
-        prerequisites: focusedItem.system?.prerequisites || null,
+        power: formattedPower,
+        description: formattedPower.description || formattedPower.system?.description || '',
+        prerequisites,
+        descriptors,
+        roleMetadataTags,
+        hasDescriptors: descriptors.length > 0,
+        hasRoleMetadataTags: roleMetadataTags.length > 0,
         selectedCount: currentCount,
+        selectedCountLabel: currentCount === 1 ? 'time' : 'times',
+        selectedUseLabel: currentCount === 1 ? 'use' : 'uses',
         canAddMore,
         buttonLabel: currentCount > 0 ? 'Add Another Use' : 'Add Power',
         // Add normalized fields for enhanced detail rail
@@ -548,6 +578,11 @@ export class ForcePowerStep extends ProgressionStepPlugin {
         '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js'
       );
       const result = await resolveForcePowerEntitlements(shell, actor);
+      this._entitlementSummary = result;
+      this._totalPowerTraining = Number(result.total) || 0;
+      this._selectedPowerTraining = Number(result.selected) || 0;
+      this._remainingPicks = Number(result.remaining) || 0;
+      this._entitlementReasons = Array.isArray(result.reasons) ? result.reasons : [];
       swseLogger.debug(
         `[ForcePowerStep._computeTotalEntitlements] Shell-aware: ${result.total} total, ${result.selected} selected, ${result.remaining} remaining`,
         { reasons: result.reasons, source: result.source }
@@ -575,6 +610,12 @@ export class ForcePowerStep extends ProgressionStepPlugin {
 
     const alreadySelected = actor.system?.progression?.forcePowers?.length ?? 0;
     const remaining = Math.max(0, totalEntitlements - alreadySelected);
+
+    this._entitlementSummary = { total: totalEntitlements, selected: alreadySelected, remaining, reasons, source: 'actor-fallback' };
+    this._totalPowerTraining = totalEntitlements;
+    this._selectedPowerTraining = alreadySelected;
+    this._remainingPicks = remaining;
+    this._entitlementReasons = reasons;
 
     swseLogger.debug(
       `[ForcePowerStep._computeTotalEntitlements] Actor fallback: ${totalEntitlements} total, ${alreadySelected} selected, ${remaining} remaining`
@@ -693,15 +734,143 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     return shell.buildIntent.toCharacterData();
   }
 
+  _normalizePowerLookupKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[’']/g, '')
+      .replace(/[^a-z0-9]+/g, '-');
+  }
+
+  _resolvePower(powerId) {
+    if (!powerId) return null;
+    const key = String(powerId);
+    const normalized = this._normalizePowerLookupKey(key);
+    return this._allPowers.find(power => {
+      const ids = [power?.id, power?._id, power?.uuid, power?.name]
+        .filter(Boolean)
+        .map(value => String(value));
+      return ids.includes(key) || ids.some(value => this._normalizePowerLookupKey(value) === normalized);
+    }) || null;
+  }
+
+  _toSystemAssetPath(value) {
+    const path = String(value || '').trim();
+    if (!path) return '';
+    if (/^(?:https?:|data:|blob:)/i.test(path)) return path;
+    if (path.startsWith('/systems/foundryvtt-swse/')) return path.slice(1);
+    if (path.startsWith('systems/foundryvtt-swse/')) return path;
+    if (path.startsWith('assets/')) return `systems/foundryvtt-swse/${path}`;
+    if (path.startsWith('icons/svg/')) return 'systems/foundryvtt-swse/assets/icons/force-powers/force-power-31.png';
+    return path;
+  }
+
+  _fallbackPowerIconBySlug(slug) {
+    const exact = {
+      'art-of-the-small': 'art-of-the-small.png',
+      'battle-meditation': 'Battle Meditation.png',
+      'battle-strike': 'Battle-Strike.png',
+      'battlemind': 'Battlemind.png',
+      'beam-of-light': 'beam-of-light.png',
+      'cleanse-mind': 'cleanse-mind.png',
+      'drain-energy': 'Drain-energy.png',
+      'drain-life': 'Drain-life.png',
+      'farseeing': 'Farseeing.png',
+      'flashburn': 'flashburn.png',
+      'force-blinding': 'force-blinding.png',
+      'force-body': 'Force-Body.png',
+      'force-cloak': 'Force-Cloak.png',
+      'force-defense': 'Force-defense.png',
+      'force-disarm': 'Force Disarm.png',
+      'force-enlightenment': 'force-enlightenment.png',
+      'force-grip': 'Force-grip.png',
+      'force-harmony': 'force-harmony.png',
+      'force-light': 'force-light.png',
+      'force-meld': 'force-meld.png',
+      'force-scream': 'Force Scream.png',
+      'force-sense': 'Force Sense.png',
+      'force-stasis': 'force-stasis.png',
+      'force-storm': 'Force-Storm.png',
+      'force-strike': 'Force Strike.png',
+      'force-thrust': 'Force-Thrust.png',
+      'force-track': 'Force Track.png',
+      'force-valor': 'force-valor.png',
+      'force-weapon': 'Force Weapon.png',
+      'inspire': 'inspire.png',
+      'mind-trick': 'mind-trick.png',
+      'move-object': 'Move-object.png',
+      'negate-energy': 'Negate-Energy.png',
+      'plant-surge': 'plant-surge.png',
+      'rebuke': 'Rebuke.png',
+      'sever-force': 'sever-force.png',
+      'surge': 'Surge.png',
+      'vital-transfer': 'Vital-Transfer.png'
+    };
+    if (exact[slug]) return `assets/icons/force-powers/${exact[slug]}`;
+    const generic = ['force-power-31.png', 'force-power-32.png', 'force-power-33.png', 'force-power-34.png', 'force-power-35.png', 'force-power-36.png', 'force-power-38.png', 'force-power-40.png', 'force-power-42.png', 'force-power-46.png', 'force-power-50.png', 'force-power-52.png', 'force-power-54.png', 'force-power-55.png', 'force-power-56.png', 'force-power-58.png'];
+    const hash = Array.from(String(slug || 'force-power')).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    return `assets/icons/force-powers/${generic[hash % generic.length]}`;
+  }
+
+  _resolvePowerImage(power) {
+    const current = String(power?.img || '').trim();
+    const slug = this._normalizePowerLookupKey(power?.name);
+    const fallback = this._fallbackPowerIconBySlug(slug);
+    if (!current || current === 'icons/svg/item-bag.svg' || current.includes('/svg/')) {
+      return this._toSystemAssetPath(fallback);
+    }
+    return this._toSystemAssetPath(current);
+  }
+
+  _formatDescriptorList(power) {
+    const raw = power?.system?.descriptor ?? power?.descriptor ?? power?.system?.descriptors ?? [];
+    const values = Array.isArray(raw) ? raw : String(raw || '').split(/[,;]/);
+    return values.map((value) => String(value || '').trim()).filter(Boolean);
+  }
+
+  _formatRoleMetadataTags(power) {
+    const descriptors = new Set(this._formatDescriptorList(power).map((value) => this._normalizePowerLookupKey(value)));
+    const rawTags = power?.system?.tags ?? power?.tags ?? [];
+    const tags = Array.isArray(rawTags) ? rawTags : String(rawTags || '').split(/[,;]/);
+    return tags
+      .map((tag) => String(tag || '').trim())
+      .filter(Boolean)
+      .filter((tag) => {
+        const normalized = this._normalizePowerLookupKey(tag);
+        return normalized && normalized !== 'force-power' && !descriptors.has(normalized);
+      })
+      .map((tag) => tag.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()));
+  }
+
+  _formatPrerequisites(power) {
+    const raw = power?.system?.prerequisites
+      ?? power?.system?.prerequisite
+      ?? power?.prerequisites?.raw
+      ?? power?.prerequisites
+      ?? '';
+    if (Array.isArray(raw)) return raw.filter(Boolean).join(', ');
+    if (raw && typeof raw === 'object') return Object.values(raw).filter(Boolean).join(', ');
+    return String(raw || '').trim();
+  }
+
   _formatPowerCard(power, suggestedIds = new Set(), confidenceMap = new Map()) {
-    const isSuggested = this.isSuggestedItem(power.id, suggestedIds);
-    const confidenceData = confidenceMap.get ? confidenceMap.get(power.id) : confidenceMap[power.id];
-    return {
+    const canonicalId = String(power?.id || power?._id || power?.uuid || this._normalizePowerLookupKey(power?.name));
+    const isSuggested = this.isSuggestedItem(canonicalId, suggestedIds) || this.isSuggestedItem(power?.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? (confidenceMap.get(canonicalId) || confidenceMap.get(power?.id)) : (confidenceMap[canonicalId] || confidenceMap[power?.id]);
+    const formatted = {
       ...power,
+      id: canonicalId,
+      _id: power?._id || canonicalId,
+      lookupId: canonicalId,
+      img: this._resolvePowerImage(power),
+      descriptorList: this._formatDescriptorList(power),
+      roleMetadataTags: this._formatRoleMetadataTags(power),
+      prerequisiteText: this._formatPrerequisites(power),
       isSuggested,
       badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
       confidenceLevel: confidenceData?.confidenceLevel || null,
     };
+    return formatted;
   }
 }

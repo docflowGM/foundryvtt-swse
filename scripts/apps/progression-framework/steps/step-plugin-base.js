@@ -284,7 +284,10 @@ export class ProgressionStepPlugin {
    * @returns {Promise<void>}
    */
   async onAskMentor(shell) {
-    // Default: no-op. Subclasses open suggestion modal or speak guidance.
+    const guidance = this.getMentorContext(shell);
+    if (guidance && shell?.mentorRail) {
+      await shell.mentorRail.speak(guidance, 'encouraging');
+    }
   }
 
   /**
@@ -487,6 +490,14 @@ export class ProgressionStepPlugin {
 
         if (reconciliationReport.actionsTaken.length > 0) {
           swseLogger.log('[ProgressionStepPlugin] Post-commit reconciliation:', reconciliationReport);
+        }
+
+        // The reconciler computes the new active node list, but the shell owns
+        // the renderable StepDescriptor/plugin list. Rebuild it immediately so
+        // level-up class choices can reveal newly owed downstream work (surveys,
+        // feats, talents, Medical Secrets, etc.) before the user advances.
+        if (typeof shell._recomputeActiveStepsIfNeeded === 'function') {
+          await shell._recomputeActiveStepsIfNeeded();
         }
       } catch (reconcileErr) {
         swseLogger.error(

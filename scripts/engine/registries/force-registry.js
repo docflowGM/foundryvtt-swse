@@ -30,6 +30,117 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+function normalizeForcePowerAssetSlug(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function toSystemAssetPath(value) {
+  const path = String(value || '').trim();
+  if (!path) return '';
+  if (/^(?:https?:|data:|blob:)/i.test(path)) return path;
+  if (path.startsWith('/systems/foundryvtt-swse/')) return path.slice(1);
+  if (path.startsWith('systems/foundryvtt-swse/')) return path;
+  if (path.startsWith('assets/')) return `systems/foundryvtt-swse/${path}`;
+  if (path.startsWith('icons/svg/')) return `systems/foundryvtt-swse/assets/icons/force-powers/force-power-31.png`;
+  return path;
+}
+
+const FORCE_POWER_ASSET_BY_SLUG = Object.freeze({
+  'art-of-the-small': 'assets/icons/force-powers/art-of-the-small.png',
+  'battle-meditation': 'assets/icons/force-powers/Battle Meditation.png',
+  'battle-strike': 'assets/icons/force-powers/Battle-Strike.png',
+  'battlemind': 'assets/icons/force-powers/Battlemind.png',
+  'beam-of-light': 'assets/icons/force-powers/beam-of-light.png',
+  'cleanse-mind': 'assets/icons/force-powers/cleanse-mind.png',
+  'drain-energy': 'assets/icons/force-powers/Drain-energy.png',
+  'drain-life': 'assets/icons/force-powers/Drain-life.png',
+  'farseeing': 'assets/icons/force-powers/Farseeing.png',
+  'flashburn': 'assets/icons/force-powers/flashburn.png',
+  'force-blinding': 'assets/icons/force-powers/force-blinding.png',
+  'force-body': 'assets/icons/force-powers/Force-Body.png',
+  'force-cloak': 'assets/icons/force-powers/Force-Cloak.png',
+  'force-defense': 'assets/icons/force-powers/Force-defense.png',
+  'force-disarm': 'assets/icons/force-powers/Force Disarm.png',
+  'force-enlightenment': 'assets/icons/force-powers/force-enlightenment.png',
+  'force-grip': 'assets/icons/force-powers/Force-grip.png',
+  'force-harmony': 'assets/icons/force-powers/force-harmony.png',
+  'force-light': 'assets/icons/force-powers/force-light.png',
+  'force-meld': 'assets/icons/force-powers/force-meld.png',
+  'force-scream': 'assets/icons/force-powers/Force Scream.png',
+  'force-sense': 'assets/icons/force-powers/Force Sense.png',
+  'force-stasis': 'assets/icons/force-powers/force-stasis.png',
+  'force-storm': 'assets/icons/force-powers/Force-Storm.png',
+  'force-strike': 'assets/icons/force-powers/Force Strike.png',
+  'force-thrust': 'assets/icons/force-powers/Force-Thrust.png',
+  'force-track': 'assets/icons/force-powers/Force Track.png',
+  'force-valor': 'assets/icons/force-powers/force-valor.png',
+  'force-weapon': 'assets/icons/force-powers/Force Weapon.png',
+  'move-object': 'assets/icons/force-powers/Move-object.png',
+  'negate-energy': 'assets/icons/force-powers/Negate-Energy.png',
+  'plant-surge': 'assets/icons/force-powers/plant-surge.png',
+  'rebuke': 'assets/icons/force-powers/Rebuke.png',
+  'sever-force': 'assets/icons/force-powers/sever-force.png',
+  'surge': 'assets/icons/force-powers/Surge.png',
+  'vital-transfer': 'assets/icons/force-powers/Vital-Transfer.png',
+  'force-lightning': 'assets/icons/force-powers/force-power-31.png',
+  'force-slam': 'assets/icons/force-powers/force-power-32.png',
+  'malacia': 'assets/icons/force-powers/force-power-33.png',
+  'force-stun': 'assets/icons/force-powers/force-power-34.png',
+  'sever-force-lesser': 'assets/icons/force-powers/force-power-35.png',
+  'ballistakinesis': 'assets/icons/force-powers/force-power-36.png',
+  'blind': 'assets/icons/force-powers/force-power-38.png',
+  'combustion': 'assets/icons/force-powers/force-power-40.png',
+  'convection': 'assets/icons/force-powers/force-power-42.png',
+  'corruption': 'assets/icons/force-powers/force-power-46.png',
+  'crucitorn': 'assets/icons/force-powers/force-power-50.png',
+  'dark-rage': 'assets/icons/force-powers/force-power-52.png',
+  'dark-transfer': 'assets/icons/force-powers/force-power-54.png',
+  'detonate': 'assets/icons/force-powers/force-power-55.png',
+  'energy-resistance': 'assets/icons/force-powers/force-power-56.png',
+  'enlighten': 'assets/icons/force-powers/force-power-58.png',
+  'fear': 'assets/icons/force-powers/force-power-31.png',
+  'fold-space': 'assets/icons/force-powers/force-power-32.png',
+  'force-blast': 'assets/icons/force-powers/force-power-33.png',
+  'force-shield': 'assets/icons/force-powers/force-power-34.png',
+  'force-whirlwind': 'assets/icons/force-powers/force-power-35.png',
+  'hatred': 'assets/icons/force-powers/force-power-36.png',
+  'inertia': 'assets/icons/force-powers/force-power-38.png',
+  'intercept': 'assets/icons/force-powers/force-power-40.png',
+  'kinetic-combat': 'assets/icons/force-powers/force-power-42.png',
+  'levitate': 'assets/icons/force-powers/force-power-46.png',
+  'lightning-burst': 'assets/icons/force-powers/force-power-50.png',
+  'memory-walk': 'assets/icons/force-powers/force-power-52.png',
+  'mind-shard': 'assets/icons/force-powers/force-power-54.png',
+  'obscure': 'assets/icons/force-powers/force-power-55.png',
+  'phase': 'assets/icons/force-powers/force-power-56.png',
+  'prescience': 'assets/icons/force-powers/force-power-58.png',
+  'rend': 'assets/icons/force-powers/force-power-31.png',
+  'repulse': 'assets/icons/force-powers/force-power-32.png',
+  'resist-force': 'assets/icons/force-powers/force-power-33.png',
+  'shatterpoint': 'assets/icons/force-powers/force-power-34.png',
+  'slow': 'assets/icons/force-powers/force-power-35.png',
+  'stagger': 'assets/icons/force-powers/force-power-36.png',
+  'technometry': 'assets/icons/force-powers/force-power-38.png',
+  'thought-bomb': 'assets/icons/force-powers/force-power-40.png',
+  'valor': 'assets/icons/force-powers/force-power-42.png',
+  'wound': 'assets/icons/force-powers/force-power-46.png'
+});
+
+function resolveForcePowerImage(doc, type) {
+  const current = String(doc?.img || '').trim();
+  if (type !== 'power') return toSystemAssetPath(current || 'assets/icons/force-powers/force-power-31.png');
+  const slug = normalizeForcePowerAssetSlug(doc?.name);
+  const mapped = FORCE_POWER_ASSET_BY_SLUG[slug];
+  if (mapped) return toSystemAssetPath(mapped);
+  if (current && current !== 'icons/svg/item-bag.svg' && !current.includes('/svg/')) return toSystemAssetPath(current);
+  return toSystemAssetPath('assets/icons/force-powers/force-power-31.png');
+}
+
 /**
  * Internal normalized force entry
  * @typedef {Object} ForceRegistryEntry
@@ -217,6 +328,7 @@ export class ForceRegistry {
       prerequisites: prerequisites,
       description,
       source,
+      img: resolveForcePowerImage(doc, type),
       pack: doc.pack || 'unknown',
       system
     };

@@ -11,7 +11,9 @@
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { resolveClassModel } from './class-resolution.js';
+import { buildLevelUpEventContext, countClassFeatureChoicesAtLevel, getClassLevelProgressionEntry } from './levelup-event-context.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
+import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 
 /**
  * Resolve Force Power entitlements from shell and engine state
@@ -38,10 +40,40 @@ export async function resolveForcePowerEntitlements(shell, actor) {
   let totalEntitlements = 0;
   let alreadySelected = 0;
   let fallbackUsed = false;
+  const isLevelUpLike = shell?.mode === 'levelup';
+
+  const normalizeGrantName = (value) => String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+  const actorHasForceSensitivity = () => {
+    const items = Array.from(actor?.items || []);
+    return items.some((item) => item?.type === 'feat' && /force sensitiv(?:e|ity)/i.test(String(item?.name || '')));
+  };
+
+  const selectedClassGrantsForceSensitivity = (classSelection) => {
+    if (!classSelection || !actor) return false;
+    try {
+      const pendingState = shell?.buildIntent?.toCharacterData?.() || shell?.progressionSession?.toCharacterData?.() || {};
+      const ledger = buildClassGrantLedger(actor, classSelection, pendingState);
+      return ledger?.forceSensitive === true
+        || Array.from(ledger?.grantedFeats || []).some((grant) => normalizeGrantName(grant?.name) === 'force sensitivity');
+    } catch (err) {
+      swseLogger.warn(`[ForceSuiteResolution.ForcePower] Force Sensitivity class grant detection failed for ${actorName}`, {
+        sessionId,
+        error: err.message,
+      });
+      return false;
+    }
+  };
 
   try {
     // Primary: Check pending shell/buildIntent for force power selections
-    const committedClass = shell?.committedSelections?.get?.('class') ||
+    const committedClass = shell?.getSelection?.('class') ||
+                          shell?.draftSelections?.class ||
+                          shell?.committedSelections?.get?.('class') ||
                           shell?.buildIntent?.getSelection?.('class');
 
     diagnostics.classSelection = {
@@ -61,38 +93,51 @@ export async function resolveForcePowerEntitlements(shell, actor) {
         };
 
         if (classModel) {
-          // Use ForcePowerEngine to calculate from class + feats
-          try {
-            const { ForcePowerEngine } = await import('/systems/foundryvtt-swse/scripts/engine/progression/engine/force-power-engine.js');
+          if (isLevelUpLike) {
+            const levelContext = buildLevelUpEventContext(actor, shell);
+            const classLevel = levelContext?.selectedClassNextLevel || 1;
+            const levelEntry = getClassLevelProgressionEntry(classModel, classLevel);
+            const classGrants = Number(levelEntry?.force_power_grants || levelEntry?.forcePowerGrants || 0) || 0;
+            if (classGrants > 0) {
+              totalEntitlements += classGrants;
+              reasons.push(`Class level ${classLevel}: force_power_grants (+${classGrants})`);
+            }
+            diagnostics.classResolution.classLevel = classLevel;
+            diagnostics.classResolution.forcePowerGrants = classGrants;
+          } else {
+            // Use ForcePowerEngine to calculate from class + feats for legacy/chargen flows.
+            try {
+              const { ForcePowerEngine } = await import('/systems/foundryvtt-swse/scripts/engine/progression/engine/force-power-engine.js');
 
-            const entitlements = await ForcePowerEngine.detectForcePowerTriggers(actor, {});
-            diagnostics.engineDetection = {
-              success: !!entitlements,
-              total: entitlements?.total || 0,
-              message: entitlements ? 'engine detection succeeded' : 'engine detection returned no data',
-            };
+              const entitlements = await ForcePowerEngine.detectForcePowerTriggers(actor, {});
+              diagnostics.engineDetection = {
+                success: !!entitlements,
+                total: entitlements?.total || 0,
+                message: entitlements ? 'engine detection succeeded' : 'engine detection returned no data',
+              };
 
-            if (entitlements && entitlements.total) {
-              totalEntitlements = entitlements.total;
-              reasons.push(`Force Power triggers detected: ${totalEntitlements}`);
-            } else {
-              swseLogger.warn(`[ForceSuiteResolution.ForcePower] Engine detection failed for ${actorName}`, {
+              if (entitlements && entitlements.total) {
+                totalEntitlements = entitlements.total;
+                reasons.push(`Force Power triggers detected: ${totalEntitlements}`);
+              } else {
+                swseLogger.warn(`[ForceSuiteResolution.ForcePower] Engine detection failed for ${actorName}`, {
+                  sessionId,
+                  classModel: classModel.name,
+                  entitlements,
+                });
+              }
+            } catch (engineErr) {
+              diagnostics.engineDetection = {
+                success: false,
+                error: engineErr.message,
+                message: 'engine threw exception',
+              };
+              swseLogger.error(`[ForceSuiteResolution.ForcePower] ForcePowerEngine exception for ${actorName}`, {
                 sessionId,
                 classModel: classModel.name,
-                entitlements,
+                error: engineErr.message,
               });
             }
-          } catch (engineErr) {
-            diagnostics.engineDetection = {
-              success: false,
-              error: engineErr.message,
-              message: 'engine threw exception',
-            };
-            swseLogger.error(`[ForceSuiteResolution.ForcePower] ForcePowerEngine exception for ${actorName}`, {
-              sessionId,
-              classModel: classModel.name,
-              error: engineErr.message,
-            });
           }
         } else {
           swseLogger.warn(`[ForceSuiteResolution.ForcePower] Class model resolution failed for ${actorName}`, {
@@ -116,12 +161,44 @@ export async function resolveForcePowerEntitlements(shell, actor) {
       swseLogger.debug(`[ForceSuiteResolution.ForcePower] No class selection in shell for ${actorName}`, { sessionId });
     }
 
+    // Force Sensitivity grants the first Force Power training slot. During chargen
+    // this is often a pending class auto-grant (Jedi) rather than an actor item,
+    // so it must be counted from the provisional class grant ledger. Count it
+    // once only; it is not repeatable.
+    try {
+      const classGrantsForceSensitivity = selectedClassGrantsForceSensitivity(committedClass);
+      const ownedForceSensitivity = actorHasForceSensitivity();
+      const pendingForceSensitivityFeat = FeatGrantEntitlementResolver.getFeatEntries(actor, { shell, includePending: true })
+        .some((entry) => normalizeGrantName(entry?.name) === 'force sensitivity');
+      const forceSensitivityApplies = isLevelUpLike
+        ? ((classGrantsForceSensitivity || pendingForceSensitivityFeat) && !ownedForceSensitivity)
+        : (classGrantsForceSensitivity || ownedForceSensitivity || pendingForceSensitivityFeat);
+      if (forceSensitivityApplies) {
+        totalEntitlements += 1;
+        reasons.push('Force Sensitive grants +1 Force Power training');
+        diagnostics.forceSensitivityEntitlement = {
+          total: 1,
+          classGrant: classGrantsForceSensitivity,
+          actorOwned: ownedForceSensitivity,
+          pendingFeat: pendingForceSensitivityFeat,
+        };
+      }
+    } catch (forceSensitivityErr) {
+      swseLogger.error(`[ForceSuiteResolution.ForcePower] Force Sensitive entitlement exception for ${actorName}`, {
+        sessionId,
+        error: forceSensitivityErr.message,
+      });
+    }
+
     // Feat grant entitlements: pending or owned Force Training instances unlock
     // Force Power slots, but the Force Power step owns the actual choices.
     try {
-      const forceTrainingSlots = FeatGrantEntitlementResolver.totalForGrantType(actor, 'forcePowerSlots', { shell, includePending: true });
+      const forceTrainingEntitlements = FeatGrantEntitlementResolver.resolve(actor, { shell, includePending: true })
+        .filter((entry) => entry.grantType === 'forcePowerSlots')
+        .filter((entry) => !isLevelUpLike || entry.sourceType === 'pendingFeat');
+      const forceTrainingSlots = forceTrainingEntitlements.reduce((sum, entry) => sum + (Number(entry.count) || 0), 0);
       if (forceTrainingSlots > 0) {
-        totalEntitlements = Math.max(totalEntitlements, forceTrainingSlots);
+        totalEntitlements += forceTrainingSlots;
         reasons.push(`Force Training entitlement slots: ${forceTrainingSlots}`);
         diagnostics.forceTrainingEntitlements = { total: forceTrainingSlots };
       }
@@ -133,7 +210,7 @@ export async function resolveForcePowerEntitlements(shell, actor) {
     }
 
     // Fallback: If no result yet, check actor state through the entitlement bridge.
-    if (totalEntitlements === 0 && actor) {
+    if (!isLevelUpLike && totalEntitlements === 0 && actor) {
       try {
         const forceTrainingSlots = FeatGrantEntitlementResolver.totalForGrantType(actor, 'forcePowerSlots', { includePending: false });
 
@@ -163,10 +240,11 @@ export async function resolveForcePowerEntitlements(shell, actor) {
         ? pendingForcePowers.reduce((sum, p) => sum + (p.count || 1), 0)
         : 0;
 
-      alreadySelected = pendingCount > 0 ? pendingCount : (actor?.system?.progression?.forcePowers?.length ?? 0);
+      const actorCount = actor?.system?.progression?.forcePowers?.length ?? 0;
+      alreadySelected = isLevelUpLike ? pendingCount : (pendingCount > 0 ? pendingCount : actorCount);
       diagnostics.alreadySelected = {
         pendingCount,
-        actorCount: actor?.system?.progression?.forcePowers?.length ?? 0,
+        actorCount,
         total: alreadySelected,
       };
     } catch (selectedErr) {
@@ -244,7 +322,9 @@ export function resolveForceSecretEntitlements(shell, engine, actor) {
 
   try {
     // Primary: Check class progression features for force_secret_choice
-    const committedClass = shell?.committedSelections?.get?.('class') ||
+    const committedClass = shell?.getSelection?.('class') ||
+                          shell?.draftSelections?.class ||
+                          shell?.committedSelections?.get?.('class') ||
                           shell?.buildIntent?.getSelection?.('class');
 
     diagnostics.classSelection = {
@@ -262,20 +342,15 @@ export function resolveForceSecretEntitlements(shell, engine, actor) {
         };
 
         if (classModel && Array.isArray(classModel.levelProgression)) {
-          // Count force_secret_choice features
-          let featureCount = 0;
-          for (const level of classModel.levelProgression) {
-            if (Array.isArray(level.features)) {
-              const secretChoices = level.features.filter(f => f.type === 'force_secret_choice');
-              for (const choice of secretChoices) {
-                totalEntitlements += (choice.value || 1);
-                featureCount++;
-                reasons.push(`Level ${level.level}: force_secret_choice (+${choice.value || 1})`);
-              }
-            }
+          const levelContext = buildLevelUpEventContext(actor, shell);
+          const classLevel = levelContext?.selectedClassNextLevel || 1;
+          totalEntitlements += countClassFeatureChoicesAtLevel(classModel, classLevel, 'force_secret_choice');
+          if (totalEntitlements > 0) {
+            reasons.push(`Class level ${classLevel}: force_secret_choice (+${totalEntitlements})`);
           }
-          diagnostics.classResolution.featuresFound = featureCount;
+          diagnostics.classResolution.featuresFound = totalEntitlements;
           diagnostics.classResolution.totalFromFeatures = totalEntitlements;
+          diagnostics.classResolution.classLevel = classLevel;
         } else {
           swseLogger.warn(`[ForceSuiteResolution.ForceSecret] Class model invalid for ${actorName}`, {
             sessionId,
@@ -319,15 +394,18 @@ export function resolveForceSecretEntitlements(shell, engine, actor) {
 
     // Already selected (pending > actor fallback)
     try {
-      const pendingForceSecrets = shell?.buildIntent?.getSelection?.('forceSecrets') || [];
+      const pendingForceSecrets = shell?.getSelection?.('forceSecrets') || shell?.draftSelections?.forceSecrets || shell?.buildIntent?.getSelection?.('forceSecrets') || [];
       const pendingCount = Array.isArray(pendingForceSecrets)
         ? pendingForceSecrets.reduce((sum, s) => sum + (s.count || 1), 0)
         : 0;
 
-      alreadySelected = pendingCount > 0 ? pendingCount : (actor?.system?.progression?.forceSecrets?.length ?? 0);
+      const actorCount = actor?.system?.progression?.forceSecrets?.length ?? 0;
+      // For level-up class-level grants, actor historical choices should block duplicates
+      // in the UI, not consume the current level's entitlement.
+      alreadySelected = pendingCount;
       diagnostics.alreadySelected = {
         pendingCount,
-        actorCount: actor?.system?.progression?.forceSecrets?.length ?? 0,
+        actorCount,
         total: alreadySelected,
       };
     } catch (selectedErr) {
@@ -407,7 +485,9 @@ export function resolveForceTechniqueEntitlements(shell, engine, actor) {
 
   try {
     // Primary: Check class progression features for force_technique_choice
-    const committedClass = shell?.committedSelections?.get?.('class') ||
+    const committedClass = shell?.getSelection?.('class') ||
+                          shell?.draftSelections?.class ||
+                          shell?.committedSelections?.get?.('class') ||
                           shell?.buildIntent?.getSelection?.('class');
 
     diagnostics.classSelection = {
@@ -425,20 +505,15 @@ export function resolveForceTechniqueEntitlements(shell, engine, actor) {
         };
 
         if (classModel && Array.isArray(classModel.levelProgression)) {
-          // Count force_technique_choice features
-          let featureCount = 0;
-          for (const level of classModel.levelProgression) {
-            if (Array.isArray(level.features)) {
-              const techniqueChoices = level.features.filter(f => f.type === 'force_technique_choice');
-              for (const choice of techniqueChoices) {
-                totalEntitlements += (choice.value || 1);
-                featureCount++;
-                reasons.push(`Level ${level.level}: force_technique_choice (+${choice.value || 1})`);
-              }
-            }
+          const levelContext = buildLevelUpEventContext(actor, shell);
+          const classLevel = levelContext?.selectedClassNextLevel || 1;
+          totalEntitlements += countClassFeatureChoicesAtLevel(classModel, classLevel, 'force_technique_choice');
+          if (totalEntitlements > 0) {
+            reasons.push(`Class level ${classLevel}: force_technique_choice (+${totalEntitlements})`);
           }
-          diagnostics.classResolution.featuresFound = featureCount;
+          diagnostics.classResolution.featuresFound = totalEntitlements;
           diagnostics.classResolution.totalFromFeatures = totalEntitlements;
+          diagnostics.classResolution.classLevel = classLevel;
         } else {
           swseLogger.warn(`[ForceSuiteResolution.ForceTechnique] Class model invalid for ${actorName}`, {
             sessionId,
@@ -482,15 +557,18 @@ export function resolveForceTechniqueEntitlements(shell, engine, actor) {
 
     // Already selected (pending > actor fallback)
     try {
-      const pendingForceTechniques = shell?.buildIntent?.getSelection?.('forceTechniques') || [];
+      const pendingForceTechniques = shell?.getSelection?.('forceTechniques') || shell?.draftSelections?.forceTechniques || shell?.buildIntent?.getSelection?.('forceTechniques') || [];
       const pendingCount = Array.isArray(pendingForceTechniques)
         ? pendingForceTechniques.reduce((sum, t) => sum + (t.count || 1), 0)
         : 0;
 
-      alreadySelected = pendingCount > 0 ? pendingCount : (actor?.system?.progression?.forceTechniques?.length ?? 0);
+      const actorCount = actor?.system?.progression?.forceTechniques?.length ?? 0;
+      // For level-up class-level grants, actor historical choices should block duplicates
+      // in the UI, not consume the current level's entitlement.
+      alreadySelected = pendingCount;
       diagnostics.alreadySelected = {
         pendingCount,
-        actorCount: actor?.system?.progression?.forceTechniques?.length ?? 0,
+        actorCount,
         total: alreadySelected,
       };
     } catch (selectedErr) {

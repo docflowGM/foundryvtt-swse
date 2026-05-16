@@ -74,12 +74,20 @@ export class BuildSignalsNormalizer {
     };
 
     try {
-      // Extract explicit signals from survey/session
-      if (context.progressionSession?.draftSelections?.survey) {
-        this._extractExplicitFromSurvey(
-          context.progressionSession.draftSelections.survey,
-          signals.explicit
-        );
+      // Extract explicit signals from completed surveys only. Draft answers are
+      // recoverable UX state, not recommendation bias.
+      const sessionSurvey = context.progressionSession?.draftSelections?.survey;
+      if (sessionSurvey?.completed === true) {
+        this._extractExplicitFromSurvey(sessionSurvey, signals.explicit);
+      }
+      for (const survey of Object.values(context.actor?.system?.swse?.surveyResponses || {})) {
+        if (survey?.completed === true) this._extractExplicitFromSurvey(survey, signals.explicit);
+      }
+      for (const survey of Object.values(context.actor?.system?.swse?.classSurveyResponses || {})) {
+        if (survey?.completed === true) this._extractExplicitFromSurvey(survey, signals.explicit);
+      }
+      for (const survey of Object.values(context.actor?.system?.swse?.prestigeSurveyResponses || {})) {
+        if (survey?.completed === true) this._extractExplicitFromSurvey(survey, signals.explicit);
       }
 
       // Extract inferred signals from projection

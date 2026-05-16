@@ -9,10 +9,17 @@
     {{#if selectedCount}}
       <span class="prog-force-power-details__selected-badge">
         <i class="fas fa-star" aria-hidden="true"></i>
-        Selected {{selectedCount}} {{plural selectedCount "time" "times"}}
+        Selected {{selectedCount}} {{selectedCountLabel}}
       </span>
     {{/if}}
   </div>
+
+  {{#if power.img}}
+    <div class="prog-force-power-details__media prog-holo-media prog-holo-media--wide">
+      <img class="prog-force-power-details__image prog-holo-media__image" src="{{power.img}}" alt="{{power.name}}">
+      <div class="prog-holo-scan"></div>
+    </div>
+  {{/if}}
 
   {{!-- Description --}}
   <div class="prog-force-power-details__section">
@@ -25,24 +32,49 @@
   </div>
 
   {{!-- Prerequisites --}}
-  {{#if prerequisites}}
-    <div class="prog-force-power-details__section">
-      <h3 class="prog-force-power-details__section-title">Prerequisites</h3>
+  <div class="prog-force-power-details__section">
+    <h3 class="prog-force-power-details__section-title">Prerequisites</h3>
+    {{#if prerequisites}}
       <p class="prog-force-power-details__prerequisites">{{prerequisites}}</p>
-    </div>
-  {{else}}
-    <div class="prog-force-power-details__section">
-      <h3 class="prog-force-power-details__section-title">Prerequisites</h3>
+    {{else}}
       <p class="prog-force-power-details__prerequisites prog-force-power-details__prerequisites--none">None</p>
-    </div>
-  {{/if}}
+    {{/if}}
+  </div>
+
+  {{!-- Descriptor tags --}}
+  <div class="prog-force-power-details__section">
+    <h3 class="prog-force-power-details__section-title">Descriptor</h3>
+    {{#if hasDescriptors}}
+      <div class="prog-force-power-details__chips">
+        {{#each descriptors}}
+          <span class="prog-force-power-details__chip prog-force-power-details__chip--descriptor">{{this}}</span>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="prog-force-power-details__prerequisites prog-force-power-details__prerequisites--none">None listed</p>
+    {{/if}}
+  </div>
+
+  {{!-- Role metadata --}}
+  <div class="prog-force-power-details__section">
+    <h3 class="prog-force-power-details__section-title">Role Metadata</h3>
+    {{#if hasRoleMetadataTags}}
+      <div class="prog-force-power-details__chips">
+        {{#each roleMetadataTags}}
+          <span class="prog-force-power-details__chip prog-force-power-details__chip--role">{{this}}</span>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="prog-force-power-details__prerequisites prog-force-power-details__prerequisites--none">None listed</p>
+    {{/if}}
+  </div>
 
   {{!-- PHASE 8: Selection controls with quantity display --}}
   <div class="prog-force-power-details__actions">
     {{#if selectedCount}}
       <p class="prog-force-power-details__hint">
         <i class="fas fa-hourglass-end" aria-hidden="true"></i>
-        Current selection: <strong>{{selectedCount}}</strong> {{plural selectedCount "use" "uses"}} pending
+        Current selection: <strong>{{selectedCount}}</strong> {{selectedUseLabel}} pending
       </p>
 
       {{!-- Inline quantity control --}}

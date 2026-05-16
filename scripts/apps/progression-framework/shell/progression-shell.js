@@ -628,7 +628,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       if (itemList === el && itemList?.dataset?.progScrollKey) return `scroll-key:${itemList.dataset.progScrollKey}`;
       const stableRegion = el.closest?.('[data-region]');
       const className = Array.from(el.classList || [])
-        .filter(name => /^(prog|swse)-/.test(name))
+        .filter(name => /^(prog|swse|talent|language)-/.test(name))
         .slice(0, 3)
         .join('.');
       if (stableRegion?.dataset?.region && className) return `region:${stableRegion.dataset.region}:class:${className}`;
@@ -785,8 +785,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
       this._syncMentorForStep(descriptor);
       this.mentor.currentDialogue = plugin.getMentorContext(this);
-      this.mentor.askMentorEnabled = plugin.getMentorMode() !== null;
-      this.mentor.mentorMode = plugin.getMentorMode();
+      this._syncAskMentorState(plugin, descriptor);
       this.utilityBar.setConfig(plugin.getUtilityBarConfig());
       return true;
     } catch (err) {
@@ -804,8 +803,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
           try {
             this._syncMentorForStep(this.steps[fallbackIndex]);
             this.mentor.currentDialogue = fallbackPlugin.getMentorContext(this);
-            this.mentor.askMentorEnabled = fallbackPlugin.getMentorMode() !== null;
-            this.mentor.mentorMode = fallbackPlugin.getMentorMode();
+            this._syncAskMentorState(fallbackPlugin, this.steps[fallbackIndex]);
             this.utilityBar.setConfig(fallbackPlugin.getUtilityBarConfig());
           } catch (fallbackErr) {
             swseLogger.warn('[ProgressionShell] Failed to restore fallback step state after activation error', {
@@ -852,10 +850,27 @@ export class ProgressionShell extends SWSEApplicationV2 {
       mood: 'neutral',
       collapsed: false,
       askMentorEnabled: false,
+      askMentorHidden: true,
       mentorMode: 'context-only',
       lastAdvice: null,
       mentorHistory: [],
     };
+  }
+
+  _syncAskMentorState(plugin, descriptor = null) {
+    const stepId = descriptor?.stepId || null;
+    const isIntro = stepId === 'intro';
+    const mode = plugin?.getMentorMode?.() ?? 'context-only';
+
+    // Every non-intro progression step should expose Ask Mentor. The base
+    // plugin supplies a no-op/generic hook, while richer steps override it with
+    // suggestions or question-specific clarification. This prevents the rail
+    // from losing the button when a plugin relies on inherited behavior.
+    const enabled = !!plugin && !isIntro;
+
+    this.mentor.askMentorEnabled = enabled;
+    this.mentor.askMentorHidden = !enabled;
+    this.mentor.mentorMode = mode || 'context-only';
   }
 
   /**
@@ -873,7 +888,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         mentorId: mentorKey,
         name: mentorData.name || this.mentor?.name || "Ol' Salty",
         title: mentorData.title || this.mentor?.title || 'Seasoned Spacer',
-        portrait: mentorData.portrait || resolveMentorPortraitPath(this.mentor?.portrait),
+        portrait: resolveMentorPortraitPath(mentorData.portrait || this.mentor?.portrait),
       });
     } catch (err) {
       swseLogger.warn('[ProgressionShell] Failed to sync mentor rail identity', {
@@ -1377,10 +1392,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
           renderNum,
         });
 
+        const mentorRailModel = {
+          ...this.mentor,
+          portrait: resolveMentorPortraitPath(this.mentor?.portrait),
+        };
+
         partsHtml.mentorRail = await foundry.applications.handlebars.renderTemplate(
           'systems/foundryvtt-swse/templates/apps/progression-framework/mentor-rail.hbs',
           {
-            mentor: this.mentor,
+            mentor: mentorRailModel,
             mentorCollapsed: this.mentorCollapsed,
           }
         );
@@ -2219,11 +2239,16 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   async _onAskMentor(event, target) {
+    event?.preventDefault?.();
     const currentDescriptor = this.steps[this.currentStepIndex];
     const plugin = this.stepPlugins.get(currentDescriptor?.stepId);
-    if (plugin) {
+    if (plugin && typeof plugin.onAskMentor === 'function') {
       await plugin.onAskMentor(this);
+      return;
     }
+
+    const fallback = plugin?.getMentorContext?.(this) || this.mentor?.currentDialogue || 'Ask what this choice means for your training.';
+    await this.mentorRail?.speak?.(fallback, 'encouraging');
   }
 
   _onExitTree(event, target) {
@@ -2270,10 +2295,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return nodes
         .filter(el => el instanceof HTMLElement && (el.scrollTop > 0 || el.scrollLeft > 0))
         .map(el => {
+          const scrollKey = el.dataset?.progScrollKey ? `scroll-key:${el.dataset.progScrollKey}` : null;
           const region = el.dataset?.region || el.closest?.('[data-region]')?.dataset?.region || '';
-          const classes = Array.from(el.classList || []).filter(name => /^(prog|swse)-/.test(name)).slice(0, 3).join('.');
+          const classes = Array.from(el.classList || []).filter(name => /^(prog|swse|talent|language)-/.test(name)).slice(0, 3).join('.');
           return {
-            key: el.dataset?.region ? `region:${el.dataset.region}` : (region && classes ? `region:${region}:class:${classes}` : null),
+            key: scrollKey || (el.dataset?.region ? `region:${el.dataset.region}` : (region && classes ? `region:${region}:class:${classes}` : null)),
             path: (() => {
               const path = [];
               let node = el;
@@ -2387,10 +2413,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return nodes
         .filter(el => el instanceof HTMLElement && (el.scrollTop > 0 || el.scrollLeft > 0))
         .map(el => {
+          const scrollKey = el.dataset?.progScrollKey ? `scroll-key:${el.dataset.progScrollKey}` : null;
           const region = el.dataset?.region || el.closest?.('[data-region]')?.dataset?.region || '';
-          const classes = Array.from(el.classList || []).filter(name => /^(prog|swse)-/.test(name)).slice(0, 3).join('.');
+          const classes = Array.from(el.classList || []).filter(name => /^(prog|swse|talent|language)-/.test(name)).slice(0, 3).join('.');
           return {
-            key: el.dataset?.region ? `region:${el.dataset.region}` : (region && classes ? `region:${region}:class:${classes}` : null),
+            key: scrollKey || (el.dataset?.region ? `region:${el.dataset.region}` : (region && classes ? `region:${region}:class:${classes}` : null)),
             path: (() => {
               const path = [];
               let node = el;
@@ -2808,7 +2835,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       );
 
       // Rebuild step list from new active nodes
-      const mapNodesToDescriptors = (await import('../registries/node-descriptor-mapper.js')).default;
+      const { mapNodesToDescriptors } = await import('../registries/node-descriptor-mapper.js');
       const newDescriptors = mapNodesToDescriptors(newActiveNodeIds);
 
       // Filter hidden steps

@@ -121,3 +121,12 @@ if (!Handlebars.helpers.count) {
   });
 }
 
+// Pluralization helper used by progression quantity templates.
+// Usage: {{plural count "use" "uses"}}
+if (!Handlebars.helpers.plural) {
+  Handlebars.registerHelper("plural", function(count, singular, plural) {
+    const numeric = Number(count);
+    return Math.abs(Number.isFinite(numeric) ? numeric : 0) === 1 ? singular : plural;
+  });
+}
+

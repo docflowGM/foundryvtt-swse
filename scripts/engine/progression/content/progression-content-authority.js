@@ -22,6 +22,7 @@ import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/
 import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/language-registry.js";
 import SkillRegistry from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
 import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
+import { MedicalSecretRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/medical/medical-secret-registry.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 const toLower = (v) => String(v ?? '').trim().toLowerCase();
@@ -54,6 +55,7 @@ export class ProgressionContentAuthority {
       LanguageRegistry.ensureLoaded?.(),
       SkillRegistry.build?.(),
       ForceRegistry.initialize?.(),
+      MedicalSecretRegistry.initialize?.(),
     ]);
 
     this._initialized = true;
@@ -139,6 +141,11 @@ export class ProgressionContentAuthority {
     return entry;
   }
 
+  static resolveMedicalSecret(ref) {
+    if (!ref) return null;
+    return MedicalSecretRegistry.resolveEntry?.(ref) || null;
+  }
+
   static getAllSpecies() {
     return SpeciesRegistry.getAll?.() || [];
   }
@@ -163,6 +170,10 @@ export class ProgressionContentAuthority {
   static getAllForceEntries(expectedType = null) {
     const all = ForceRegistry.getAll?.() || [];
     return expectedType ? all.filter((entry) => entry.type === expectedType) : all;
+  }
+
+  static getAllMedicalSecretEntries() {
+    return MedicalSecretRegistry.getAll?.() || [];
   }
 
   static async getSpeciesDocument(ref) {
@@ -194,6 +205,10 @@ export class ProgressionContentAuthority {
 
   static async getForceDocument(ref, expectedType = null) {
     return ForceRegistry.getDocumentByRef?.(ref, expectedType) || null;
+  }
+
+  static async getMedicalSecretDocument(ref) {
+    return MedicalSecretRegistry.getDocumentByRef?.(ref) || null;
   }
 
   static getClassSkillNames(classSelection) {
@@ -248,6 +263,7 @@ export class ProgressionContentAuthority {
       forcePower: (value) => this.resolveForce(value, 'power'),
       forceTechnique: (value) => this.resolveForce(value, 'technique'),
       forceSecret: (value) => this.resolveForce(value, 'secret'),
+      medicalSecret: (value) => this.resolveMedicalSecret(value),
     }[kind];
 
     const out = [];

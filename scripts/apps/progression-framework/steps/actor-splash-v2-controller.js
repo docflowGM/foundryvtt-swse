@@ -247,7 +247,7 @@ export const ACTOR_SPLASH_V2_STAGES = [
       mentor: 100,
       session: 100,
     },
-    hotBanks: [],
+    hotBanks: ['CORE-0', 'CORE-1', 'NPU', 'GPU', 'ISP', 'RAM-A', 'RAM-B', 'CACHE', 'IO'],
     logs: [
       { tag: 'OK', text: 'All subsystems nominal.' },
       { tag: 'OK', text: 'Session channel open · ckpt_0001 written.' },
@@ -387,12 +387,19 @@ export function buildActorSplashV2Context(options = {}) {
   const safeStageIndex = Math.max(0, Math.min(ACTOR_SPLASH_V2_STAGES.length - 1, stageIndex));
   const stage = ACTOR_SPLASH_V2_STAGES[safeStageIndex];
   const progressPercent = Math.max(0, Math.min(100, Number(stage?.pct) || 0));
+  const effectiveLocalizedMode = localizedMode === true || isComplete === true || progressPercent >= 100;
   const identityState = buildIdentityState(isComplete || progressPercent >= 100, sessionId);
-  const translation = stage?.translation || null;
+  const lastTranslation = ACTOR_SPLASH_V2_STAGES.find((entry) => entry?.translation)?.translation || null;
+  const translation = stage?.translation || ((effectiveLocalizedMode || safeStageIndex >= 6) ? lastTranslation : null);
+  const translationComplete = Boolean(translation) && effectiveLocalizedMode;
+  const translationTarget = translation?.englishTargetText || 'Welcome, new user. Registration protocols ready.';
+  const translationSource = translationComplete
+    ? ''
+    : (translation?.aurebeshSourceText || 'WELCOME NEW USER. REGISTRATION PROTOCOLS READY.');
 
   return {
     introVariant: 'actor-v2',
-    localizedMode,
+    localizedMode: effectiveLocalizedMode,
     isComplete: isComplete || progressPercent >= 100,
     erroring: stage?.erroring === true,
     succeeding: stage?.greenWashOn === true,
@@ -441,10 +448,12 @@ export function buildActorSplashV2Context(options = {}) {
     statusSource: stage?.statusSource || '&lt;ign_0x3F · factory-default&gt;',
 
     isTranslating: Boolean(translation),
-    translationLabel: 'Aurebesh translation',
-    translationSource: translation?.aurebeshSourceText || 'WELCOME NEW USER. REGISTRATION PROTOCOLS READY.',
-    translationTarget: translation?.englishTargetText || 'Welcome, new user. Registration protocols ready.',
-    sourceMode: 'aurebesh',
+    translationComplete,
+    translationLabel: translationComplete ? 'Basic translation' : 'Aurebesh translation',
+    translationSource,
+    translationTarget,
+    translationDisplayTarget: translationComplete ? translationTarget : '',
+    sourceMode: translationComplete ? 'basic' : 'aurebesh',
 
     logLines: buildLogLines(safeStageIndex),
     promptText: progressPercent >= 100 ? 'register --new-user' : 'tail -f /var/log/boot',
@@ -461,7 +470,10 @@ export function buildActorSplashV2Context(options = {}) {
     ...identityState,
     bannerText: stage?.bannerText || '',
     bannerClass: stage?.bannerClass || '',
-    skipLabel: localizedMode ? 'Skip Boot' : 'Skip Boot',
+    skipLabel: 'Skip Boot',
+    showGalacticProfile: true,
+    galacticProfileLabel: 'Galactic Profile',
+    galacticProfileTitle: 'Pick a packaged galactic profile instead of building from scratch.',
     continueLabel: isComplete || progressPercent >= 100 ? 'Begin Registration' : 'Begin Registration',
   };
 }

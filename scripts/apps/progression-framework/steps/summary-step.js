@@ -13,6 +13,8 @@ import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progre
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { ActorAbilityBridge } from '/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
+import { ProgressionFinalizer } from '../shell/progression-finalizer.js';
+import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
 
 export class SummaryStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -53,13 +55,20 @@ export class SummaryStep extends ProgressionStepPlugin {
       hitDie: 0,
     };
     this._levelupSummary = {
+      levelInfo: null,
       metadataChanges: [],
       statChanges: [],
       attributeChanges: [],
       addedFeats: [],
       addedTalents: [],
       addedForcePowers: [],
+      addedForceTechniques: [],
+      addedForceSecrets: [],
+      addedMedicalSecrets: [],
+      addedStarshipManeuvers: [],
+      addedLanguages: [],
       addedSkills: [],
+      mutationPreview: null,
     };
   }
 
@@ -220,6 +229,13 @@ export class SummaryStep extends ProgressionStepPlugin {
     if (mode === 'levelup') {
       if (this._hpGainState.needsResolution && !this._hpGainState.resolved) {
         errors.push('Resolve hit point gain before finalizing level-up');
+      }
+      const mutationPreview = this._levelupSummary?.mutationPreview;
+      if (mutationPreview?.success === false) {
+        errors.push(mutationPreview.error || 'Level-up mutation plan could not be compiled');
+      }
+      for (const err of mutationPreview?.validationErrors || []) {
+        errors.push(err);
       }
       return {
         isValid: errors.length === 0,
@@ -446,16 +462,45 @@ export class SummaryStep extends ProgressionStepPlugin {
     const addedFeats = this._getAddedNames(actor, projection?.abilities?.feats, 'feat');
     const addedTalents = this._getAddedNames(actor, projection?.abilities?.talents, 'talent');
     const addedForcePowers = this._getAddedNames(actor, projection?.abilities?.forcePowers, 'force-power');
-    const addedSkills = this._getAddedSkills(actor, projection?.skills?.trained || []);
+    const addedForceTechniques = this._getSelectionNames(selections.forceTechniques);
+    const addedForceSecrets = this._getSelectionNames(selections.forceSecrets);
+    const addedMedicalSecrets = this._getSelectionNames(selections.medicalSecrets);
+    const addedStarshipManeuvers = this._getSelectionNames(selections.starshipManeuvers);
+    const addedLanguages = this._getSelectionNames(selections.languages);
+    const addedSkills = this._getAddedSkills(actor, projection?.skills?.trained || this._extractSkillSelectionKeys(selections.skills));
+    const levelContext = buildLevelUpEventContext(actor, session, { selectedClass });
+    const dryRun = await ProgressionFinalizer.dryRun({
+      mode: 'levelup',
+      actor,
+      progressionSession: session,
+      steps: shell.steps || [],
+      stepData: shell.stepData || {},
+      mentor: shell.mentor || {},
+      sessionId: shell.element?.dataset?.sessionId || 'levelup-review',
+    }, actor);
 
     this._levelupSummary = {
+      levelInfo: {
+        currentLevel,
+        newLevel,
+        className: levelContext?.selectedClassName || selectedClassName || 'Unselected class',
+        classLevel: levelContext?.selectedClassNextLevel || null,
+        transitionKind: levelContext?.prestigeTransition?.transitionKind
+          || (levelContext?.isNewBaseClass ? 'newBaseClass' : levelContext?.isNewPrestigeClass ? 'newPrestigeClass' : levelContext?.isReturningClass ? 'returningClass' : 'levelup'),
+      },
       metadataChanges,
       statChanges,
       attributeChanges,
       addedFeats,
       addedTalents,
       addedForcePowers,
+      addedForceTechniques,
+      addedForceSecrets,
+      addedMedicalSecrets,
+      addedStarshipManeuvers,
+      addedLanguages,
       addedSkills,
+      mutationPreview: this._buildLevelupMutationPreview(dryRun),
     };
   }
 

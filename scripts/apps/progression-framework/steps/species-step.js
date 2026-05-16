@@ -9,7 +9,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { normalizeSpecies } from './step-normalizers.js';
-import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
+import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithPicker, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
 // Patch builder lives in the shared progression-framework module — NOT the legacy chargen path.
 import { buildSpeciesAtomicPatch } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
 import { NearHumanBuilder } from './near-human-builder.js';
@@ -956,16 +956,27 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
-    // If we have suggestions, use the advisory system instead of standard guidance
-    if (this._suggestedSpecies && this._suggestedSpecies.length > 0) {
-      await handleAskMentorWithSuggestions(shell.actor, 'species', this._suggestedSpecies, shell, {
+    if (this._suggestedSpecies?.length) {
+      await handleAskMentorWithPicker(shell.actor, 'species', this._suggestedSpecies, shell, {
         domain: 'species',
-        archetype: 'your species choice'
+        archetype: 'your species choice',
+        stepLabel: 'species selection',
+        limit: 6,
+      }, async (selected) => {
+        const entry = this._resolveSuggestedSpeciesEntry(selected);
+        if (!entry) {
+          ui?.notifications?.warn?.('Your mentor suggested a species, but it could not be found in the species registry.');
+          return;
+        }
+
+        await this.onItemFocused(entry.id, shell);
+        await this.onItemCommitted(entry.id, shell);
+        shell.render();
       });
-    } else {
-      // Fallback to standard guidance if no suggestions
-      await handleAskMentor(shell.actor, 'species', shell);
+      return;
     }
+
+    await handleAskMentor(shell.actor, 'species', shell);
   }
 
   getMentorContext(shell) {
@@ -982,12 +993,37 @@ export class SpeciesStep extends ProgressionStepPlugin {
   }
 
   getMentorMode() {
-    return 'context-only';
+    return 'interactive';
   }
 
   // ---------------------------------------------------------------------------
   // Private Helpers
   // ---------------------------------------------------------------------------
+
+  _resolveSuggestedSpeciesEntry(suggestion) {
+    const candidates = [
+      suggestion?.id,
+      suggestion?._id,
+      suggestion?.speciesId,
+      suggestion?.key,
+      suggestion?.slug,
+      suggestion?.name,
+      suggestion?.label,
+      suggestion?.item?.id,
+      suggestion?.item?._id,
+      suggestion?.item?.name,
+      suggestion?.entry?.id,
+      suggestion?.entry?._id,
+      suggestion?.entry?.name,
+    ].filter(Boolean);
+
+    for (const candidate of candidates) {
+      const entry = this._resolveSpeciesEntry(candidate);
+      if (entry) return entry;
+    }
+
+    return null;
+  }
 
   _cleanupUtilityListeners() {
     this._utilityUnlisteners?.forEach(fn => fn());

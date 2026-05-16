@@ -1,7 +1,12 @@
 {{!-- Language Work Surface --}}
 {{!-- Shows known/granted languages, selected bonus languages, and available selectable languages --}}
 
-<div class="language-work-surface prog-quickref-stage">
+<div class="language-work-surface prog-quickref-stage" data-prog-scroll-key="language-work-surface">
+
+  <section class="language-section language-rules-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
+    <h3 class="section-title"><i class="fa-solid fa-calculator"></i> Language Formula</h3>
+    <p class="section-description">Native language + Basic are automatic. Bonus picks: INT modifier ({{languageRuleBreakdown.intModPicks}}) + Linguist ({{languageRuleBreakdown.linguistPicks}}).</p>
+  </section>
 
   {{!-- Known/Granted Languages Section --}}
   {{#if knownLanguages}}
@@ -34,7 +39,7 @@
     </h3>
     <p class="section-description">These are your bonus language choices this step.</p>
 
-    <div class="language-list selected-list">
+    <div class="language-list selected-list" data-prog-scroll-key="language-selected-list">
       {{#each selectedBonusLanguages}}
       <div class="language-item selected-language swse-card-schema swse-card-schema--enumerated swse-card-schema--filled" data-language-id="{{this.language.id}}" data-action="focus-item">
         <div class="language-item-content">
@@ -60,7 +65,7 @@
     </h3>
     <p class="section-description">Choose additional languages up to your bonus limit.</p>
 
-    <div class="language-list available-list">
+    <div class="language-list available-list" data-prog-scroll-key="language-available-list">
       {{#each availableLanguages}}
       <div class="language-item available-language swse-card-schema swse-card-schema--choice swse-card-schema--pending
                   {{#if this.isSuggested}}prog-language-item--suggested prog-language-item--suggested-{{this.confidenceLevel}}{{/if}}"

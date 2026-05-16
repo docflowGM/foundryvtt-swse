@@ -22,6 +22,8 @@ import { applyCanonicalSpeciesToActor } from '/systems/foundryvtt-swse/scripts/e
 import { applyCanonicalBackgroundsToActor } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-backgrounds-to-actor.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
+import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
+import { MedicalSecretRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/medical/medical-secret-registry.js';
 
 export class ProgressionFinalizer {
   /**
@@ -363,7 +365,8 @@ export class ProgressionFinalizer {
     // Read all data from canonical session ONLY. No fallback chains.
     const summary = selections.survey || {};
     const attr = selections.attributes || {};
-    const attrValues = this._normalizeAttributeValues(attr, actor);
+    const hasAttributeSelection = !!(selections.attributes && Object.keys(selections.attributes || {}).length);
+    const attrValues = hasAttributeSelection || sessionState.mode === 'chargen' ? this._normalizeAttributeValues(attr, actor) : {};
     const species = selections.species || null;
     const pendingSpeciesContext = selections.pendingSpeciesContext || species?.pendingContext || null;
     const clazz = selections.class || null;
@@ -374,18 +377,21 @@ export class ProgressionFinalizer {
 
     const set = {};
     const add = { items: [] };
+    const update = { items: [] };
     const itemsToCreate = [];
     const itemsToDelete = [];
 
-    const name = summary.characterName || this._getUsableActorName(actor) || actor.name;
-    if (name) {
-      set.name = name;
+    if (sessionState.mode === 'chargen') {
+      const name = summary.characterName || this._getUsableActorName(actor) || actor.name;
+      if (name) {
+        set.name = name;
+      }
+      if (summary.startingLevel) set['system.level'] = Number(summary.startingLevel);
     }
-    if (summary.startingLevel) set['system.level'] = Number(summary.startingLevel);
 
     // PHASE 3: Canonical species materialization
     // Use pending context from Phase 2 to materialize species durably
-    if (pendingSpeciesContext) {
+    if (sessionState.mode === 'chargen' && pendingSpeciesContext) {
       const materialization = await applyCanonicalSpeciesToActor(actor, pendingSpeciesContext);
       if (materialization.success) {
         const mutations = materialization.mutations;
@@ -415,7 +421,7 @@ export class ProgressionFinalizer {
       } else {
         swseLogger.warn('[ProgressionFinalizer] Species materialization failed:', materialization.error);
       }
-    } else if (species) {
+    } else if (sessionState.mode === 'chargen' && species) {
       // Fallback: if no pending context, apply species as string (legacy compat)
       set['system.species'] = species;
       set['system.race'] = species;
@@ -423,7 +429,7 @@ export class ProgressionFinalizer {
 
     // PHASE 3: Canonical background materialization
     // Use pending context from Phase 2 to materialize backgrounds durably
-    if (pendingBackgroundContext) {
+    if (sessionState.mode === 'chargen' && pendingBackgroundContext) {
       const materialization = await applyCanonicalBackgroundsToActor(actor, pendingBackgroundContext);
       if (materialization.success) {
         const mutations = materialization.mutations;
@@ -443,7 +449,7 @@ export class ProgressionFinalizer {
       } else {
         swseLogger.warn('[ProgressionFinalizer] Background materialization failed:', materialization.error);
       }
-    } else if (background) {
+    } else if (sessionState.mode === 'chargen' && background) {
       // Fallback: if no pending context, apply background as string (legacy compat)
       set['system.background'] = background;
       // Write back background selections to sheet-facing identity fields
@@ -457,26 +463,141 @@ export class ProgressionFinalizer {
       }
     }
     if (clazz) {
-      // Phase 3B: Canonical class storage is system.class (object)
-      // Derived computes display string (system.derived.identity.className)
-      // Legacy scalar paths (system.className, system.classes) remain for compatibility only
-      set['system.class'] = clazz;
-      // DO NOT write system.className or system.classes - these are derived/legacy
-      add.items.push({
-        name: clazz.name || clazz.label || String(clazz),
-        type: 'class',
-        system: clazz.system || {},
-        flags: {
-          swse: {
-            progression: {
-              sourceSession: sessionState.sessionId || 'unknown',
-              selectionKey: 'class',
-              selectionId: clazz.id || clazz.sourceId || clazz.name || null,
+      // Phase 3B: Canonical class storage is system.class (object). During
+      // level-up, preserve existing identity fields and update class item/history
+      // instead of replacing the actor's primary class field.
+      if (sessionState.mode === 'chargen') {
+        set['system.class'] = clazz;
+      }
+
+      if (sessionState.mode === 'levelup') {
+        const levelContext = buildLevelUpEventContext(actor, sessionState.progressionSession, { selectedClass: clazz });
+        set['system.level'] = levelContext.enteringLevel;
+        set['system.progression.classLevels'] = this._buildClassLevelsAfterLevelUp(actor, clazz, levelContext);
+        set['system.progression.lastLeveledClass'] = {
+          characterLevel: levelContext.enteringLevel,
+          classId: levelContext.selectedClassId,
+          className: levelContext.selectedClassName,
+          classLevel: levelContext.selectedClassNextLevel,
+          timestamp: new Date().toISOString(),
+        };
+        set['system.progression.classLevelHistory'] = this._buildClassLevelHistoryAfterLevelUp(actor, clazz, levelContext);
+
+        if (levelContext.existingClassItemId) {
+          update.items.push({
+            _id: levelContext.existingClassItemId,
+            'system.level': levelContext.selectedClassNextLevel,
+            'system.classId': clazz.id || clazz.classId || clazz.sourceId || levelContext.selectedClassId,
+            'flags.swse.progression.lastLeveledAt': new Date().toISOString(),
+            'flags.swse.progression.lastSourceSession': sessionState.sessionId || 'unknown',
+          });
+        } else {
+          add.items.push({
+            name: clazz.name || clazz.label || String(clazz),
+            type: 'class',
+            system: {
+              ...(clazz.system || {}),
+              level: 1,
+              classId: clazz.id || clazz.classId || clazz.sourceId || levelContext.selectedClassId,
+            },
+            flags: {
+              swse: {
+                progression: {
+                  sourceSession: sessionState.sessionId || 'unknown',
+                  selectionKey: 'class',
+                  selectionId: clazz.id || clazz.sourceId || clazz.name || null,
+                },
+              },
+            },
+          });
+        }
+      } else {
+        add.items.push({
+          name: clazz.name || clazz.label || String(clazz),
+          type: 'class',
+          system: clazz.system || {},
+          flags: {
+            swse: {
+              progression: {
+                sourceSession: sessionState.sessionId || 'unknown',
+                selectionKey: 'class',
+                selectionId: clazz.id || clazz.sourceId || clazz.name || null,
+              },
             },
           },
-        },
-      });
+        });
+      }
     }
+
+
+    // Base-class surveys are completed-only recommendation signals. Draft answers
+    // are intentionally not materialized so incomplete surveys cannot steer builds.
+    if (selections.classSurveys && Object.keys(selections.classSurveys).length) {
+      const existingSurveys = actor?.system?.swse?.classSurveyResponses || {};
+      const completedSurveys = Object.fromEntries(
+        Object.entries(selections.classSurveys || {}).filter(([, survey]) => survey?.completed === true)
+      );
+      const mergedSurveys = { ...existingSurveys, ...completedSurveys };
+      const aggregateClassSurveyBias = { mechanicalBias: {}, roleBias: {}, attributeBias: {} };
+      const aggregateClassSurveyIntent = {
+        skillBias: [], featBias: [], talentBias: [], backgroundBias: [], prestigeClassTargets: [], detailTags: [],
+        skillBiasWeights: {}, featBiasWeights: {}, talentBiasWeights: {}, backgroundBiasWeights: {}, prestigeClassWeights: {}, attributeBiasWeights: {},
+      };
+      const addIntentArray = (key, values = []) => {
+        for (const value of values || []) if (value && !aggregateClassSurveyIntent[key].includes(value)) aggregateClassSurveyIntent[key].push(value);
+      };
+      const addIntentWeights = (key, values = {}) => {
+        for (const [name, value] of Object.entries(values || {})) aggregateClassSurveyIntent[key][name] = (aggregateClassSurveyIntent[key][name] || 0) + Number(value || 0);
+      };
+      for (const survey of Object.values(mergedSurveys)) {
+        if (survey?.completed !== true) continue;
+        for (const layer of ['mechanicalBias', 'roleBias', 'attributeBias']) {
+          for (const [key, value] of Object.entries(survey?.biasLayers?.[layer] || {})) {
+            aggregateClassSurveyBias[layer][key] = (aggregateClassSurveyBias[layer][key] || 0) + Number(value || 0);
+          }
+        }
+        const tags = survey.intentTags || {};
+        addIntentArray('skillBias', tags.skillBias);
+        addIntentArray('featBias', tags.featBias);
+        addIntentArray('talentBias', tags.talentBias);
+        addIntentArray('backgroundBias', tags.backgroundBias);
+        addIntentArray('prestigeClassTargets', tags.prestigeClassTargets);
+        addIntentArray('detailTags', tags.detailTags);
+        addIntentWeights('skillBiasWeights', tags.skillBiasWeights);
+        addIntentWeights('featBiasWeights', tags.featBiasWeights);
+        addIntentWeights('talentBiasWeights', tags.talentBiasWeights);
+        addIntentWeights('backgroundBiasWeights', tags.backgroundBiasWeights);
+        addIntentWeights('prestigeClassWeights', tags.prestigeClassWeights);
+        addIntentWeights('attributeBiasWeights', tags.attributeBiasWeights);
+      }
+      aggregateClassSurveyIntent.prestigeClassTarget = aggregateClassSurveyIntent.prestigeClassTargets[0] || null;
+      set['system.swse.classSurveyResponses'] = mergedSurveys;
+      set['system.swse.classSurveyBias'] = aggregateClassSurveyBias;
+      set['system.swse.classSurveyIntentBiases'] = aggregateClassSurveyIntent;
+      set['flags.foundryvtt-swse.progression.classSurveys'] = mergedSurveys;
+    }
+
+    // Prestige surveys are completed-only recommendation signals. Drafts may be
+    // checkpointed in the session, but only completed payloads are materialized.
+    if (selections.prestigeSurvey?.completed === true && selections.prestigeSurvey?.classId) {
+      const existingPrestigeSurveys = actor?.system?.swse?.prestigeSurveyResponses || {};
+      const classId = selections.prestigeSurvey.classId;
+      const completedPrestigeSurvey = {
+        ...selections.prestigeSurvey,
+        completed: true,
+        completedAt: selections.prestigeSurvey.completedAt || new Date().toISOString(),
+      };
+      const mergedPrestigeSurveys = {
+        ...existingPrestigeSurveys,
+        [classId]: completedPrestigeSurvey,
+      };
+      set['system.swse.prestigeSurveyResponses'] = mergedPrestigeSurveys;
+      set['flags.foundryvtt-swse.progression.prestigeSurveys'] = mergedPrestigeSurveys;
+      if (selections.prestigeSurvey.mergedBias) {
+        set['system.swse.mentorBuildIntentBiases'] = selections.prestigeSurvey.mergedBias;
+      }
+    }
+
     // Canonical stored ability path is system.abilities.<key>.base
     // Progression writes base values here; derived computes modifiers and totals
     const attrMap = { strength: 'str', dexterity: 'dex', constitution: 'con', intelligence: 'int', wisdom: 'wis', charisma: 'cha', str: 'str', dex:'dex', con:'con', int:'int', wis:'wis', cha:'cha' };
@@ -504,29 +625,35 @@ export class ProgressionFinalizer {
         set.img = speciesPortrait;
       }
     }
-    // FIX 6: Extract language IDs from normalized format for canonical storage
-    // normalizeLanguages() returns [{id, source}, ...] but system.languages expects [id, id, ...]
-    if (Array.isArray(languages)) {
+    // FIX 6: Extract language IDs from normalized format for canonical storage.
+    // Level-up must not clear existing languages when no language entitlement was owed.
+    if (Array.isArray(languages) && (sessionState.mode === 'chargen' || languages.length > 0)) {
       const languageIds = languages.map(l =>
         typeof l === 'string' ? l : l?.id || l?.name
       ).filter(Boolean);
-      set['system.languages'] = languageIds;
+      const existingLanguageIds = sessionState.mode === 'levelup'
+        ? this._extractActorLanguageIds(actor)
+        : [];
+      set['system.languages'] = Array.from(new Set([...existingLanguageIds, ...languageIds]));
     }
-    if (Array.isArray(skills)) {
-      for (const s of skills) {
+
+    const skillEntries = this._normalizeSkillSelectionEntries(skills);
+    if (skillEntries.length) {
+      for (const s of skillEntries) {
         const key = s?.key || s?.id || s?.skill;
         if (!key) continue;
-        // Phase 3C: Initialize complete skill object with canonical schema
-        // Ensures fresh characters have stable, predictable skill structure
-        set[`system.skills.${key}.trained`] = s.trained !== undefined ? !!s.trained : false;
-        set[`system.skills.${key}.miscMod`] = s.miscMod || 0;
-        set[`system.skills.${key}.focused`] = s.focused !== undefined ? !!s.focused : false;
-        set[`system.skills.${key}.selectedAbility`] = s.selectedAbility || '';
+        // Phase 3C: Initialize complete skill object with canonical schema.
+        // Level-up Skill Training commits normalized { trained: [...] }; preserve
+        // existing actor skill data unless the selection explicitly overrides it.
+        set[`system.skills.${key}.trained`] = s.trained !== undefined ? !!s.trained : true;
+        if (s.miscMod !== undefined || sessionState.mode === 'chargen') set[`system.skills.${key}.miscMod`] = s.miscMod || 0;
+        if (s.focused !== undefined || sessionState.mode === 'chargen') set[`system.skills.${key}.focused`] = s.focused !== undefined ? !!s.focused : false;
+        if (s.selectedAbility !== undefined || sessionState.mode === 'chargen') set[`system.skills.${key}.selectedAbility`] = s.selectedAbility || '';
       }
     }
 
     // PHASE 3: Add natural weapons from species materialization
-    for (const nw of itemsToCreate) {
+    for (const nw of (sessionState.mode === 'chargen' ? itemsToCreate : [])) {
       add.items.push({
         name: nw.name,
         type: nw.type,
@@ -558,6 +685,7 @@ export class ProgressionFinalizer {
     return {
       create: {},
       set,
+      update,
       add,
       delete: itemsToDelete.length > 0 ? { items: itemsToDelete } : {},
       metadata: {
@@ -570,6 +698,113 @@ export class ProgressionFinalizer {
     };
   }
 
+
+
+
+  static _extractActorLanguageIds(actor) {
+    const languages = actor?.system?.languages || [];
+    if (Array.isArray(languages)) {
+      return languages.map(lang => typeof lang === 'string' ? lang : lang?.id || lang?.name).filter(Boolean);
+    }
+    if (typeof languages === 'object') {
+      return Object.entries(languages)
+        .filter(([, value]) => value === true || value?.known === true || value?.selected === true)
+        .map(([key, value]) => value?.id || value?.name || key)
+        .filter(Boolean);
+    }
+    return [];
+  }
+
+  static _normalizeSkillSelectionEntries(skills) {
+    if (!skills) return [];
+
+    if (Array.isArray(skills)) {
+      return skills
+        .map((entry) => {
+          if (typeof entry === 'string') return { key: entry, trained: true };
+          const key = entry?.key || entry?.id || entry?.skill || entry?.name || null;
+          return key ? { ...entry, key, trained: entry?.trained !== undefined ? !!entry.trained : true } : null;
+        })
+        .filter(Boolean);
+    }
+
+    if (Array.isArray(skills?.trained)) {
+      return skills.trained
+        .map((entry) => {
+          if (typeof entry === 'string') return { key: entry, trained: true };
+          const key = entry?.key || entry?.id || entry?.skill || entry?.name || null;
+          return key ? { ...entry, key, trained: true } : null;
+        })
+        .filter(Boolean);
+    }
+
+    if (typeof skills === 'object') {
+      return Object.entries(skills)
+        .map(([key, entry]) => {
+          if (entry === true) return { key, trained: true };
+          if (entry?.trained === true) return { ...entry, key: entry?.key || entry?.id || key, trained: true };
+          return null;
+        })
+        .filter(Boolean);
+    }
+
+    return [];
+  }
+
+  static _normalizeClassKey(value) {
+    return String(value?.id || value?.classId || value?.sourceId || value?.name || value?.className || value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_|_$/g, '');
+  }
+
+  static _readClassItemLevel(item) {
+    return Number(item?.system?.level ?? item?.system?.levels ?? item?.system?.rank ?? 0) || 0;
+  }
+
+  static _buildClassLevelsAfterLevelUp(actor, clazz, levelContext) {
+    const selectedKey = levelContext.selectedClassId || this._normalizeClassKey(clazz);
+    const byKey = new Map();
+    for (const item of actor?.items?.filter?.((entry) => entry?.type === 'class') || []) {
+      const key = this._normalizeClassKey(item?.system?.classId || item?.system?.sourceId || item?.name || item?.id);
+      if (!key) continue;
+      byKey.set(key, {
+        class: item.name || key,
+        classId: item.system?.classId || key,
+        level: this._readClassItemLevel(item),
+      });
+    }
+
+    const existing = byKey.get(selectedKey);
+    byKey.set(selectedKey, {
+      class: levelContext.selectedClassName || clazz?.name || clazz?.className || selectedKey,
+      classId: clazz?.id || clazz?.classId || clazz?.sourceId || selectedKey,
+      level: levelContext.selectedClassNextLevel || (existing?.level || 0) + 1,
+    });
+
+    return Array.from(byKey.values()).filter((entry) => entry.level > 0);
+  }
+
+  static _buildClassLevelHistoryAfterLevelUp(actor, clazz, levelContext) {
+    const existing = Array.isArray(actor?.system?.progression?.classLevelHistory)
+      ? actor.system.progression.classLevelHistory
+      : [];
+    const entry = {
+      characterLevel: levelContext.enteringLevel,
+      classId: levelContext.selectedClassId || this._normalizeClassKey(clazz),
+      className: levelContext.selectedClassName || clazz?.name || clazz?.className || null,
+      classLevel: levelContext.selectedClassNextLevel || 1,
+      classType: levelContext.selectedClassType || null,
+      transitionKind: levelContext.prestigeTransition?.transitionKind
+        || (levelContext.isNewBaseClass ? 'newBaseClass' : levelContext.isReturningClass ? 'returningClass' : 'newClass'),
+      timestamp: new Date().toISOString(),
+    };
+
+    const withoutDuplicateLevel = existing.filter((item) => Number(item?.characterLevel) !== Number(entry.characterLevel));
+    return [...withoutDuplicateLevel, entry].sort((a, b) => Number(a.characterLevel || 0) - Number(b.characterLevel || 0));
+  }
 
   static _normalizeAttributeValues(attr = {}, actor = null) {
     const raw = attr?.values && typeof attr.values === 'object' ? attr.values : attr;
@@ -837,6 +1072,12 @@ export class ProgressionFinalizer {
     const sessionId = sessionState.sessionId || 'unknown';
     const clazz = selections.class || null;
     if (!clazz || !actor) return { items: [], suppressed: [] };
+    if (sessionState.mode === 'levelup') {
+      const levelContext = buildLevelUpEventContext(actor, sessionState.progressionSession, { selectedClass: clazz });
+      if (!levelContext.isNewClass) {
+        return { items: [], suppressed: [] };
+      }
+    }
 
     const pendingState = {
       selectedClass: clazz,
@@ -904,6 +1145,7 @@ export class ProgressionFinalizer {
       { key: 'forcePowers', type: 'force-power', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'power'), allowDuplicates: true },
       { key: 'forceTechniques', type: 'forcetechnique', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'technique'), allowDuplicates: false },
       { key: 'forceSecrets', type: 'forcesecret', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'secret'), allowDuplicates: false },
+      { key: 'medicalSecrets', type: 'feat', docGetter: async (entry) => { await MedicalSecretRegistry.ensureInitialized(); return MedicalSecretRegistry.getDocumentByRef(entry); }, allowDuplicates: false },
     ];
 
     const existingByTypeAndName = new Set(
@@ -950,6 +1192,19 @@ export class ProgressionFinalizer {
             baseItem.system.locked = true;
             baseItem.system.choiceEditable = false;
             baseItem.system.grantedByClass = true;
+          }
+          if (domain.key === 'medicalSecrets') {
+            baseItem.system.medicalSecret = true;
+            baseItem.system.sourceType = baseItem.system.sourceType || 'class';
+            baseItem.system.locked = true;
+            baseItem.system.choiceEditable = false;
+            baseItem.system.grantedByClass = true;
+            baseItem.flags = foundry.utils.mergeObject(baseItem.flags || {}, {
+              swse: {
+                medicalSecret: true,
+                treatInjuryHook: baseItem.system.treatInjuryHook || rawEntry?.system?.treatInjuryHook || null,
+              },
+            }, { inplace: false, recursive: true });
           }
           baseItem.flags = foundry.utils.mergeObject(baseItem.flags || {}, {
             swse: {

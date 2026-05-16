@@ -143,6 +143,7 @@ export class ProjectionEngine {
       forcePowers: ProgressionContentAuthority.normalizeSelectionList('forcePower', draftSelections.forcePowers),
       forceTechniques: ProgressionContentAuthority.normalizeSelectionList('forceTechnique', draftSelections.forceTechniques),
       forceSecrets: ProgressionContentAuthority.normalizeSelectionList('forceSecret', draftSelections.forceSecrets),
+      medicalSecrets: ProgressionContentAuthority.normalizeSelectionList('medicalSecret', draftSelections.medicalSecrets),
       starshipManeuvers: Array.isArray(draftSelections.starshipManeuvers) ? draftSelections.starshipManeuvers.map((m) => typeof m === 'string' ? { id: m, name: m, source: 'selection' } : { id: m.id || m.name, name: m.name || m.id, source: m.source || 'selection' }) : [],
     };
   }

@@ -1,4 +1,4 @@
-import { getMentorGuidance, MENTORS, resolveMentorData, getMentorKey } from '../../../engine/mentor/mentor-dialogues.js';
+import { getMentorGuidance, MENTORS, resolveMentorData, resolveMentorPortraitPath, getMentorKey } from '../../../engine/mentor/mentor-dialogues.js';
 import { MentorTranslationIntegration } from '../../../mentor/mentor-translation-integration.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 
@@ -13,6 +13,7 @@ const STEP_CHOICE_TYPE = {
   'ability': 'ability',
   'ability-scores': 'ability',
   'l1-survey': 'survey',
+  'base-class-survey': 'survey',
   'background': 'background',
   'skills': 'skill',
   'languages': 'language',
@@ -171,7 +172,7 @@ export class MentorRail {
       mentorId: mentorKey,
       name: mentorObj.name || this.shell.mentor.name,
       title: mentorObj.title || this.shell.mentor.title,
-      portrait: mentorObj.portrait || this.shell.mentor.portrait,
+      portrait: resolveMentorPortraitPath(mentorObj.portrait || this.shell.mentor.portrait),
     });
 
     const choiceType = STEP_CHOICE_TYPE[descriptor.stepId];
@@ -221,7 +222,7 @@ export class MentorRail {
       mentorId: getMentorKey(mentorRef),
       name: data.name,
       title: data.title,
-      portrait: data.portrait ?? null,
+      portrait: resolveMentorPortraitPath(data.portrait),
     });
 
     this.shell.render({ parts: ['mentorRail'] });

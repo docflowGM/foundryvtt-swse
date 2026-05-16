@@ -42,7 +42,7 @@
 
     <p class="prog-help-text">
       Train {{allowedCount}} skill{{#unless (eq allowedCount 1)}}s{{/unless}} to specialize your character's expertise.
-      Only legal class and background skills are trainable here.
+      Only legal class, background, and species class skills are trainable here.
     </p>
 
     {{#if isFallbackFullChart}}
@@ -51,7 +51,7 @@
       </div>
     {{else}}
       <div class="prog-skills-status prog-skills-status--info">
-        Showing {{availableSkillCount}} legal trainable skill{{#unless (eq availableSkillCount 1)}}s{{/unless}} from class and background.
+        Showing {{availableSkillCount}} legal trainable skill{{#unless (eq availableSkillCount 1)}}s{{/unless}} from class, background, and species traits.
       </div>
     {{/if}}
 
@@ -83,6 +83,10 @@
                     <span class="prog-skill-tag prog-skill-tag--background">Background</span>
                   {{/if}}
 
+                  {{#if this.isSpeciesClassSkill}}
+                    <span class="prog-skill-tag prog-skill-tag--species">Species</span>
+                  {{/if}}
+
                   {{#if this.badgeLabel}}
                     <span class="prog-skill-tag prog-skill-tag--suggested">{{this.badgeLabel}}</span>
                   {{/if}}
@@ -112,7 +116,7 @@
                     <i class="fas fa-plus"></i> Train
                   </button>
                 {{else}}
-                  <div class="prog-skill-controls__placeholder" title="Only class or background skills can be trained">
+                  <div class="prog-skill-controls__placeholder" title="Only class, background, or species class skills can be trained">
                     <i class="fas fa-lock"></i> Locked
                   </div>
                 {{/if}}
@@ -152,6 +156,10 @@
 
       <p>
         <strong>Background Skills:</strong> Some backgrounds expand what you can legally train during chargen.
+      </p>
+
+      <p>
+        <strong>Species Class Skills:</strong> Some species make a specific skill count as a class skill. Those skills are also legal training choices here.
       </p>
 
       <p class="prog-guidance-tip">

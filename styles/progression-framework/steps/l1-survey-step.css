@@ -437,3 +437,28 @@
     padding: 20px 16px 24px;
   }
 }
+
+.progression-shell .prog-l1-survey-stage__draft-notice {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 840px;
+  padding: 8px 12px;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--prog-accent);
+  background: oklch(var(--sheet-accent-primary) / 0.07);
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.24);
+  border-radius: 8px;
+}
+
+.progression-shell .prog-l1-survey-stage__command-row {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.progression-shell .prog-l1-survey-stage__command-row .prog-l1-survey-stage__command {
+  flex: 0 1 auto;
+}

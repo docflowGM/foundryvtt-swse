@@ -1,77 +1,84 @@
 <div class="prog-class-details">
-  <div class="prog-class-details__header">
-    {{#if img}}
+  {{#if img}}
     <div class="prog-class-details__portrait-frame prog-holo-media prog-holo-media--wide">
       <img class="prog-class-details__portrait prog-holo-media__image" src="{{img}}" alt="{{class.name}}">
       <div class="prog-holo-scan"></div>
     </div>
-    {{else if class.img}}
+  {{else if class.img}}
     <div class="prog-class-details__portrait-frame prog-holo-media prog-holo-media--wide">
       <img class="prog-class-details__portrait prog-holo-media__image" src="{{class.img}}" alt="{{class.name}}">
       <div class="prog-holo-scan"></div>
     </div>
-    {{/if}}
-    <div class="prog-class-details__heading-copy">
-      <h2 class="prog-class-details__name">{{class.name}}</h2>
-      <div class="prog-class-details__meta-row">
-        <span class="prog-chip">{{type}}</span>
-        {{#each classTags}}<span class="prog-chip">{{this}}</span>{{/each}}
-      </div>
-    </div>
-  </div>
+  {{/if}}
+
+  <h2 class="prog-class-details__name">{{class.name}}</h2>
 
   {{#if canonicalDescription}}
     <p class="prog-class-details__description">{{canonicalDescription}}</p>
   {{else if fantasy}}
-    <p class="prog-class-details__fantasy">{{fantasy}}</p>
+    <p class="prog-class-details__description">{{fantasy}}</p>
   {{/if}}
-
-  <div class="prog-class-details__stats-grid">
-    <div class="prog-class-details__stat"><span class="prog-class-details__stat-label">BAB</span><span class="prog-class-details__stat-value">{{bab}}</span></div>
-    <div class="prog-class-details__stat"><span class="prog-class-details__stat-label">Fort</span><span class="prog-class-details__stat-value">+{{defenses.fortitude}}</span></div>
-    <div class="prog-class-details__stat"><span class="prog-class-details__stat-label">Ref</span><span class="prog-class-details__stat-value">+{{defenses.reflex}}</span></div>
-    <div class="prog-class-details__stat"><span class="prog-class-details__stat-label">Will</span><span class="prog-class-details__stat-value">+{{defenses.will}}</span></div>
-    <div class="prog-class-details__stat"><span class="prog-class-details__stat-label">Hit Die</span><span class="prog-class-details__stat-value">{{hitDie}}</span></div>
-    <div class="prog-class-details__stat"><span class="prog-class-details__stat-label">Trained Skills</span><span class="prog-class-details__stat-value">{{trainedSkillCount}} + INT</span></div>
-  </div>
-
-  <div class="prog-class-details__mentor">
-    <h4 class="prog-class-details__section-title">Mentor</h4>
-    <div class="prog-class-details__mentor-name"><i class="fas fa-user-circle"></i>{{mentorName}}</div>
-  </div>
 
   {{#if classSkills.length}}
-  <div class="prog-class-details__class-skills">
+  <section class="prog-class-details__section prog-class-details__class-skills">
     <h4 class="prog-class-details__section-title">Class Skills</h4>
-    <ul class="prog-class-details__list">{{#each classSkills}}<li>{{this.name}}</li>{{/each}}</ul>
-  </div>
+    <div class="prog-class-details__skill-chip-list">
+      {{#each classSkills}}
+        <span class="prog-class-details__skill-chip {{this.abilityClass}}">
+          <span class="prog-class-details__skill-name">{{this.name}}</span>
+          <span class="prog-class-details__skill-ability">{{this.abilityLabel}}</span>
+        </span>
+      {{/each}}
+    </div>
+  </section>
   {{/if}}
 
-  {{#if levelOneFeatures.length}}
-  <div class="prog-class-details__abilities">
-    <h4 class="prog-class-details__section-title">Level 1 Features</h4>
-    <ul class="prog-class-details__list">{{#each levelOneFeatures}}<li>{{this.name}}</li>{{/each}}</ul>
-  </div>
+  {{#if startingAbilities.length}}
+  <section class="prog-class-details__section prog-class-details__abilities">
+    <h4 class="prog-class-details__section-title">Starting Abilities</h4>
+    <ul class="prog-class-details__list">{{#each startingAbilities}}<li>{{this.name}}</li>{{/each}}</ul>
+  </section>
   {{/if}}
 
+  <section class="prog-class-details__section prog-class-details__defenses">
+    <h4 class="prog-class-details__section-title">Defense Bonuses</h4>
+    <div class="prog-class-details__defense-row">
+      <span class="prog-class-details__defense"><strong>Fort</strong> +{{defenses.fortitude}}</span>
+      <span class="prog-class-details__defense"><strong>Ref</strong> +{{defenses.reflex}}</span>
+      <span class="prog-class-details__defense"><strong>Will</strong> +{{defenses.will}}</span>
+    </div>
+  </section>
 
-  {{#if recommendation}}
-  <div class="prog-class-details__mentor-read">
-    <h4 class="prog-class-details__section-title">Mentor Read</h4>
-    {{#if recommendation.reasonSummary}}<p class="prog-class-details__description">{{recommendation.reasonSummary}}</p>{{/if}}
-    {{#if recommendation.bullets.length}}
-    <ul class="prog-class-details__list">{{#each recommendation.bullets}}<li>{{this}}</li>{{/each}}</ul>
-    {{/if}}
-    {{#if recommendation.cautions.length}}
-    <h4 class="prog-class-details__section-title">Cautions</h4>
-    <ul class="prog-class-details__list">{{#each recommendation.cautions}}<li>{{this}}</li>{{/each}}</ul>
-    {{/if}}
-    {{#if recommendation.forecast.length}}
-    <h4 class="prog-class-details__section-title">Forecast</h4>
-    <ul class="prog-class-details__list">{{#each recommendation.forecast}}<li>{{this}}</li>{{/each}}</ul>
-    {{/if}}
-  </div>
+  <section class="prog-class-details__section prog-class-details__bab">
+    <h4 class="prog-class-details__section-title">BaB</h4>
+    <div class="prog-class-details__bab-value">{{bab}}</div>
+  </section>
+
+  {{#if classTrees.length}}
+  <section class="prog-class-details__section prog-class-details__trees">
+    <h4 class="prog-class-details__section-title">Class Trees</h4>
+    <ul class="prog-class-details__list prog-class-details__tree-list">{{#each classTrees}}<li>{{this}}</li>{{/each}}</ul>
+  </section>
   {{/if}}
+
+  <section class="prog-class-details__section prog-class-details__mentor">
+    <h4 class="prog-class-details__section-title">Mentor</h4>
+    {{#if mentorPortrait}}
+      <img class="prog-class-details__mentor-portrait" src="{{mentorPortrait}}" alt="{{mentorName}}">
+    {{/if}}
+    <div class="prog-class-details__mentor-name">{{mentorName}}</div>
+    {{#if mentorTitle}}<div class="prog-class-details__mentor-title">{{mentorTitle}}</div>{{/if}}
+  </section>
+
+  {{#if buildMetadata.length}}
+  <section class="prog-class-details__section prog-class-details__metadata">
+    <h4 class="prog-class-details__section-title">Build Metadata</h4>
+    <div class="prog-class-details__metadata-chips">
+      {{#each buildMetadata}}<span class="prog-chip">{{this}}</span>{{/each}}
+    </div>
+  </section>
+  {{/if}}
+
 
   <div class="prog-class-details__actions">
     <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{class.id}}" type="button"><i class="fas fa-check"></i> Choose {{class.name}}</button>

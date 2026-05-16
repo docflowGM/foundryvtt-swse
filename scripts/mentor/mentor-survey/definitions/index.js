@@ -29,6 +29,12 @@ import PrC_Droid_Commander_Survey from './PrC_Droid_Commander_Survey.js';
 import PrC_Military_Engineer_Survey from './PrC_Military_Engineer_Survey.js';
 import PrC_Vanguard_Survey from './PrC_Vanguard_Survey.js';
 import PrC_Master_Privateer_Survey from './PrC_Master_Privateer_Survey.js';
+import PrC_Corporate_Agent_Survey from './PrC_Corporate_Agent_Survey.js';
+import PrC_Gladiator_Survey from './PrC_Gladiator_Survey.js';
+import PrC_Melee_Duelist_Survey from './PrC_Melee_Duelist_Survey.js';
+import PrC_Enforcer_Survey from './PrC_Enforcer_Survey.js';
+import PrC_Independent_Droid_Survey from './PrC_Independent_Droid_Survey.js';
+import PrC_Shaper_Survey from './PrC_Shaper_Survey.js';
 
 export const SURVEY_DEFINITIONS = {
   'jedi': L1_Jedi_Survey,
@@ -62,6 +68,12 @@ export const SURVEY_DEFINITIONS = {
   'military_engineer': PrC_Military_Engineer_Survey,
   'vanguard': PrC_Vanguard_Survey,
   'master_privateer': PrC_Master_Privateer_Survey,
+  'corporate_agent': PrC_Corporate_Agent_Survey,
+  'gladiator': PrC_Gladiator_Survey,
+  'melee_duelist': PrC_Melee_Duelist_Survey,
+  'enforcer': PrC_Enforcer_Survey,
+  'independent_droid': PrC_Independent_Droid_Survey,
+  'shaper': PrC_Shaper_Survey,
 };
 
 export default SURVEY_DEFINITIONS;

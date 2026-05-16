@@ -1,5 +1,6 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js";
+import { TreatInjuryMedicalSecretResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/medical/treat-injury-medical-secret-resolver.js";
 
 /**
  * ExtraSkillUseRegistry
@@ -52,14 +53,19 @@ export class ExtraSkillUseRegistry {
     await this.initialize();
 
     const items = this._bySkill.get(skillKey) ?? [];
-    const hydrated = items.map((item) => {
+    let hydrated = items.map((item) => {
       const accessible = actor ? SkillUseFilter.canAccessSkillUse(actor, item._source) : true;
-      return {
+      const withAccess = {
         ...item,
         accessible,
         hidden: !accessible,
       };
+      return this._applyMedicalSecretEnhancements(withAccess, actor);
     });
+
+    if (skillKey === 'treatInjury') {
+      hydrated = this._appendMedicalSecretVirtualUses(hydrated, actor);
+    }
 
     return includeInaccessible ? hydrated : hydrated.filter((item) => item.accessible !== false);
   }
@@ -72,6 +78,92 @@ export class ExtraSkillUseRegistry {
       result[skillKey] = await this.getForSkill(skillKey, { actor, includeInaccessible });
     }
     return result;
+  }
+
+  static _getActorMedicalSecretHooks(actor) {
+    return TreatInjuryMedicalSecretResolver.resolve(actor);
+  }
+
+  static _getMedicClassLevel(actor) {
+    return TreatInjuryMedicalSecretResolver.getMedicClassLevel(actor);
+  }
+
+  static _applicationMatchesMedicalHook(application, hook) {
+    return TreatInjuryMedicalSecretResolver.applicationMatches(application, hook);
+  }
+
+  static _medicalSecretNote(secret) {
+    return TreatInjuryMedicalSecretResolver.noteFor(secret);
+  }
+
+  static _applyMedicalSecretEnhancements(item, actor) {
+    if (!actor || item?.skillKey !== 'treatInjury') return item;
+    const hooks = this._getActorMedicalSecretHooks(actor);
+    if (!hooks.size) return item;
+
+    const enhancements = [];
+    for (const secret of hooks.values()) {
+      if (secret.hook === 'selfTreatment' || this._applicationMatchesMedicalHook(item.label || item.name, secret.hook)) {
+        enhancements.push({
+          hook: secret.hook,
+          name: secret.name,
+          note: this._medicalSecretNote(secret),
+          modifiers: secret.modifiers || {},
+        });
+      }
+    }
+
+    if (!enhancements.length) return item;
+    const notes = enhancements.map((entry) => entry.note);
+    const appended = `${item.description || item.effect || ''}${item.description || item.effect ? ' ' : ''}Medical Secret: ${notes.join(' ')}`;
+    return {
+      ...item,
+      description: appended,
+      effect: appended,
+      medicalSecretEnhanced: true,
+      medicalSecretEnhancements: enhancements,
+      sourceType: 'medical-secret',
+      sourceLabel: enhancements.map((entry) => entry.name).join(', '),
+    };
+  }
+
+  static _appendMedicalSecretVirtualUses(items, actor) {
+    const hooks = this._getActorMedicalSecretHooks(actor);
+    if (!hooks.has('treatment')) return items;
+    const secret = hooks.get('treatment');
+    const hasTreatmentUse = items.some((item) => this._applicationMatchesMedicalHook(item.label || item.name, 'treatment'));
+    if (hasTreatmentUse) return items;
+
+    return [
+      ...items,
+      {
+        key: 'medical-secret-improved-treatment',
+        label: 'Treat Disease or Radiation',
+        name: 'Treat Disease or Radiation',
+        skillKey: 'treatInjury',
+        dc: null,
+        time: '1 hour',
+        description: this._medicalSecretNote(secret),
+        effect: this._medicalSecretNote(secret),
+        trainedOnly: true,
+        accessible: true,
+        hidden: false,
+        medicalSecretEnhanced: true,
+        medicalSecretEnhancements: [{ hook: secret.hook, name: secret.name, note: this._medicalSecretNote(secret), modifiers: secret.modifiers || {} }],
+        sourceType: 'medical-secret',
+        sourceLabel: secret.name,
+        _source: {
+          name: 'Treat Disease or Radiation',
+          system: {
+            application: 'Treat Disease or Radiation',
+            skill: 'treatInjury',
+            trainedOnly: true,
+            description: this._medicalSecretNote(secret),
+            effect: this._medicalSecretNote(secret),
+          },
+        },
+      },
+    ];
   }
 
   static _groupBySkill(items) {

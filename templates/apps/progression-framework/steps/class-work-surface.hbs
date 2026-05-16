@@ -8,9 +8,9 @@
   {{/if}}
   <div class="prog-class-grid" role="listbox" aria-label="Class">
     {{#each classes}}
-      <button class="swse-option-card prog-class-card
-                     {{#if (eq id ../focusedClassId)}}swse-option-card--focused{{/if}}
-                     {{#if (eq id ../committedClassId)}}swse-option-card--selected{{/if}}
+      <button class="swse-option-card prog-class-card prog-class-card--visual
+                     {{#if (eq id ../focusedClassId)}}swse-option-card--focused prog-class-card--focused{{/if}}
+                     {{#if (eq id ../committedClassId)}}swse-option-card--selected prog-class-card--selected{{/if}}
                      {{#if this.isSuggested}}prog-class-card--suggested prog-class-card--suggested-{{this.confidenceLevel}}{{/if}}"
               data-action="focus-item"
               data-item-id="{{this.id}}"
@@ -20,29 +20,23 @@
               data-confidence-level="{{this.confidenceLevel}}"
               type="button"
               role="option"
+              aria-label="{{this.name}} class"
               {{#if (eq id ../committedClassId)}}aria-selected="true"{{/if}}>
 
-        {{#if this.img}}
-          <div class="prog-class-card__media prog-holo-media prog-holo-media--wide">
+        <div class="prog-class-card__visual-wrap prog-holo-media prog-holo-media--wide">
+          {{#if this.img}}
             <img class="prog-class-card__image prog-holo-media__image" src="{{this.img}}" alt="{{this.name}}">
-            <div class="prog-class-card__scanline"></div>
+          {{/if}}
+          <div class="prog-class-card__scanline"></div>
+          <div class="prog-class-card__holo-overlay" aria-hidden="true"></div>
+          <div class="prog-class-card__quote" aria-hidden="true">{{this.profileQuote}}</div>
+          <div class="prog-class-card__nameplate">
+            <span class="prog-class-card__name">{{this.name}}</span>
+            <span class="prog-class-card__type">{{this.type}}</span>
           </div>
-        {{/if}}
-
-        <div class="swse-option-card__header">
-          <h3 class="swse-option-card__title prog-class-card__name">{{this.name}}</h3>
-          <span class="swse-option-card__subtitle">{{this.type}}</span>
         </div>
 
-        {{#if this.stats}}
-          <div class="swse-option-card__body">
-            {{#each this.stats}}
-              <span class="prog-class-stat">{{this.label}}: {{this.value}}</span>
-            {{/each}}
-          </div>
-        {{/if}}
-
-        <div class="swse-option-card__meta">
+        <div class="prog-class-card__chips" aria-hidden="true">
           {{#if this.badgeLabel}}
             <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
           {{/if}}

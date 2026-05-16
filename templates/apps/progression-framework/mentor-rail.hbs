@@ -6,13 +6,13 @@
       {{#if mentor.portrait}}
         <img class="prog-mentor__portrait-image prog-holo-mentor-media__image"
              src="{{mentor.portrait}}"
-             alt="{{mentor.name}}"
+             alt=""
              title="{{mentor.name}}"
              onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.png';"/>
       {{else}}
         <img class="prog-mentor__portrait-image prog-holo-mentor-media__image"
              src="systems/foundryvtt-swse/assets/mentors/salty.png"
-             alt="Ol' Salty"
+             alt=""
              title="Ol' Salty"/>
       {{/if}}
     </div>
@@ -34,11 +34,11 @@
   </div>
 
   {{! Ask Mentor button (only when enabled) }}
-  {{#if mentor.askMentorEnabled}}
+  {{#unless mentor.askMentorHidden}}
     <button class="prog-btn swse-ui-button prog-mentor__ask" data-action="ask-mentor" type="button">
       Ask Mentor
     </button>
-  {{/if}}
+  {{/unless}}
 
   {{! Collapse button — always visible }}
   <button class="prog-mentor__collapse" data-action="toggle-mentor" type="button"

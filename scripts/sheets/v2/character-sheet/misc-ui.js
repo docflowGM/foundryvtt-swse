@@ -40,6 +40,35 @@ export function activateMiscUI(sheet, html, { signal } = {}) {
     }, { signal });
   });
 
+  // Phase 7: Remove ActiveEffect action
+  html.querySelectorAll('[data-action="remove-active-effect"]').forEach(button => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      const effectId = button.dataset.effectId;
+      if (!effectId) {
+        ui?.notifications?.warn?.('Effect ID not found.');
+        return;
+      }
+      try {
+        const actor = sheet.actor;
+        if (!actor) {
+          ui?.notifications?.warn?.('Actor not found.');
+          return;
+        }
+        // Check permission
+        if (!actor.isOwner) {
+          ui?.notifications?.warn?.('You do not control this actor.');
+          return;
+        }
+        // Delete the ActiveEffect through ActorEngine
+        await ActorEngine.deleteActiveEffects(actor, [effectId], { source: 'condition-panel-remove-action' });
+        ui?.notifications?.info?.('Effect removed.');
+      } catch (err) {
+        ui?.notifications?.warn?.(`Failed to remove effect: ${err.message}`);
+      }
+    }, { signal });
+  });
+
   // Add language button
   html.querySelectorAll('[data-action="add-language"]').forEach(button => {
     button.addEventListener("click", async (event) => {

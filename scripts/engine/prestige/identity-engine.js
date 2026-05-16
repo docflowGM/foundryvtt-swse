@@ -597,12 +597,19 @@ export class IdentityEngine {
             attributeBias: {}
         };
 
-        // Get survey bias from actor (if stored)
-        // Survey bias is stored in system.swse.surveyBias via injectSurveyBias()
+        // Get survey bias from actor (if stored).
+        // L1 survey bias lives in system.swse.surveyBias.
+        // Completed base-class survey bias lives separately so it layers on top
+        // of, rather than replaces, the original L1 identity signal.
         const rawSurveyBias = actor.system?.swse?.surveyBias || {};
-        if (!rawSurveyBias || Object.keys(rawSurveyBias).length === 0) {
+        const classSurveyBias = actor.system?.swse?.classSurveyBias || {};
+        if ((!rawSurveyBias || Object.keys(rawSurveyBias).length === 0)
+            && (!classSurveyBias || Object.keys(classSurveyBias).length === 0)) {
             return surveyBias;
         }
+
+        this.#addBias(surveyBias, rawSurveyBias);
+        this.#addBias(surveyBias, classSurveyBias);
 
         // Calculate totalLevel from BASE CLASSES ONLY (exclude prestige)
         const classes = actor.system?.classes || {};
@@ -616,7 +623,7 @@ export class IdentityEngine {
 
         const surveyWeight = Math.max(0.175, 1 - (totalLevel / 20));
 
-        return this.#scaleAllBias(rawSurveyBias, surveyWeight);
+        return this.#scaleAllBias(surveyBias, surveyWeight);
     }
 
     /**

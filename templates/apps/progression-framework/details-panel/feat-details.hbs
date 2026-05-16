@@ -4,28 +4,39 @@
 <div class="feat-details-panel">
 
   {{!-- Feat Header --}}
-  <div class="details-header">
-    <h2 class="feat-name">{{feat.name}}</h2>
-    <div class="feat-meta-badges">
-      {{#if isSuggested}}
-      <div class="meta-badge suggested-badge">
-        <i class="fa-solid fa-lightbulb"></i> Suggested
-      </div>
+  <div class="details-header feat-details-hero">
+    <div class="feat-details-icon prog-holo-media prog-holo-media--icon" aria-hidden="true">
+      {{#if feat.iconPath}}
+      <img class="feat-details-icon__image prog-holo-media__image" src="{{feat.iconPath}}" alt="{{feat.name}}">
+      {{else}}
+      <i class="fa-solid {{categoryIcon}} feat-details-icon__fallback"></i>
       {{/if}}
-      {{#if isGranted}}
-      <div class="meta-badge repeatable-badge">
-        <i class="fa-solid fa-certificate"></i> Granted
+      <div class="feat-details-icon__scan"></div>
+    </div>
+
+    <div class="feat-details-header-content">
+      <h2 class="feat-name">{{feat.name}}</h2>
+      <div class="feat-meta-badges">
+        {{#if isSuggested}}
+        <div class="meta-badge suggested-badge">
+          <i class="fa-solid fa-lightbulb"></i> Suggested
+        </div>
+        {{/if}}
+        {{#if isGranted}}
+        <div class="meta-badge repeatable-badge">
+          <i class="fa-solid fa-certificate"></i> Granted
+        </div>
+        {{else}}{{#if isOwned}}
+        <div class="meta-badge repeatable-badge">
+          <i class="fa-solid fa-check"></i> Owned
+        </div>
+        {{/if}}{{/if}}
+        {{#if isRepeatable}}
+        <div class="meta-badge repeatable-badge">
+          <i class="fa-solid fa-repeat"></i> Repeatable
+        </div>
+        {{/if}}
       </div>
-      {{else}}{{#if isOwned}}
-      <div class="meta-badge repeatable-badge">
-        <i class="fa-solid fa-check"></i> Owned
-      </div>
-      {{/if}}{{/if}}
-      {{#if isRepeatable}}
-      <div class="meta-badge repeatable-badge">
-        <i class="fa-solid fa-repeat"></i> Repeatable
-      </div>
-      {{/if}}
     </div>
   </div>
 
