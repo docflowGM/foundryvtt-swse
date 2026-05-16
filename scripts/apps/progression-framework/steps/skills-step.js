@@ -17,6 +17,7 @@ import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handl
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SkillRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
+import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { BeastSubtypeAdapter } from '../adapters/beast-subtype-adapter.js';
@@ -114,6 +115,17 @@ export class SkillsStep extends ProgressionStepPlugin {
 try {
   if (!SkillRegistry.isBuilt && typeof SkillRegistry.build === 'function') {
     await SkillRegistry.build();
+  }
+  try {
+    if (typeof SpeciesRegistry?.isInitialized === 'function'
+      && !SpeciesRegistry.isInitialized()
+      && typeof SpeciesRegistry.initialize === 'function') {
+      await SpeciesRegistry.initialize();
+    }
+  } catch (speciesErr) {
+    swseLogger.warn('[SkillsStep] Species registry unavailable while resolving species class skills; falling back to pending species context only', {
+      error: speciesErr?.message || String(speciesErr),
+    });
   }
   let rawSkills = [];
   if (typeof SkillRegistry.list === 'function') {
@@ -516,7 +528,7 @@ try {
       case 'skill-train': {
         if (skillKey) {
           this._trainSkill(skillKey);
-          shell?.render?.();
+          shell?.requestRender?.({ preserveScroll: true, reason: 'skill-train' }) ?? shell?.render?.();
         }
         return true;
       }
@@ -524,20 +536,32 @@ try {
       case 'skill-untrain': {
         if (skillKey) {
           this._untrainSkill(skillKey);
-          shell?.render?.();
+          shell?.requestRender?.({ preserveScroll: true, reason: 'skill-untrain' }) ?? shell?.render?.();
         }
         return true;
       }
 
       case 'skill-reset': {
         this._resetAllSkills();
-        shell?.render?.();
+        shell?.requestRender?.({ preserveScroll: true, reason: 'skill-reset' }) ?? shell?.render?.();
         return true;
       }
 
       default:
         return false;
     }
+  }
+
+  getRemainingPicks() {
+    const remaining = Math.max(0, Number(this._allowedCount || 0) - Number(this._trainedCount || 0));
+    const total = Math.max(0, Number(this._allowedCount || 0));
+    return [{
+      label: total === 1 ? 'Skill Training' : 'Skill Trainings',
+      count: remaining,
+      total,
+      selected: Math.max(0, Number(this._trainedCount || 0)),
+      isWarning: remaining > 0,
+    }];
   }
 
   // ---------------------------------------------------------------------------
@@ -991,50 +1015,115 @@ renderDetailsPanel(focusedItem) {
   _getSpeciesClassSkillRefs(shell) {
     const refs = new Set();
 
+    const selectedSpecies = shell?.progressionSession?.getSelection?.('species')
+      || shell?.committedSelections?.get?.('species')
+      || shell?.buildIntent?.toCharacterData?.()?.species
+      || null;
+    const pendingSpeciesContext = shell?.progressionSession?.getSelection?.('pendingSpeciesContext')
+      || selectedSpecies?.pendingContext
+      || shell?.progressionSession?.pendingState?.species
+      || null;
+
     const speciesCandidates = [
-      shell?.progressionSession?.getSelection?.('species'),
-      shell?.committedSelections?.get?.('species'),
+      selectedSpecies,
+      pendingSpeciesContext,
+      pendingSpeciesContext?.identity?.doc,
+      pendingSpeciesContext?.identity?.baseDoc,
+      pendingSpeciesContext?.ledger,
       shell?.buildIntent?.toCharacterData?.()?.species,
       ...(Array.isArray(shell?.actor?.items) ? shell.actor.items.filter(item => item?.type === 'species') : []),
     ].filter(Boolean);
 
+    // Resolve through the canonical species registry whenever the current
+    // selection is a normalized projection. This is the important generic path:
+    // any species whose canonical trait/ability schema marks a skill as a class
+    // skill is included here, not only hard-coded edge cases such as Nyriaanan.
+    const speciesIdsAndNames = new Set();
     for (const species of speciesCandidates) {
-      this._collectSpeciesClassSkillRefsFromValue(species?.classSkills, refs);
-      this._collectSpeciesClassSkillRefsFromValue(species?.classSkill, refs);
-      this._collectSpeciesClassSkillRefsFromValue(species?.bonusClassSkills, refs);
-      this._collectSpeciesClassSkillRefsFromValue(species?.bonusClassSkill, refs);
-      this._collectSpeciesClassSkillRefsFromValue(species?.speciesClassSkills, refs);
+      [
+        species?.id,
+        species?.speciesId,
+        species?.name,
+        species?.speciesName,
+        species?.identity?.id,
+        species?.identity?.name,
+        species?.ledger?.identity?.id,
+        species?.ledger?.identity?.name,
+      ].forEach(value => {
+        if (value) speciesIdsAndNames.add(String(value));
+      });
+    }
 
-      const system = species?.system || {};
-      this._collectSpeciesClassSkillRefsFromValue(system.classSkills, refs);
-      this._collectSpeciesClassSkillRefsFromValue(system.classSkill, refs);
-      this._collectSpeciesClassSkillRefsFromValue(system.bonusClassSkills, refs);
-      this._collectSpeciesClassSkillRefsFromValue(system.bonusClassSkill, refs);
-      this._collectSpeciesClassSkillRefsFromValue(system.speciesClassSkills, refs);
+    for (const key of speciesIdsAndNames) {
+      const registryEntry = SpeciesRegistry.getById?.(key) || SpeciesRegistry.getByName?.(key) || null;
+      if (registryEntry) speciesCandidates.push(registryEntry);
+    }
 
-      const traitCollections = [
-        species?.traits,
-        species?.canonicalTraits,
-        system.traits,
-        system.canonicalTraits,
-        species?.special,
-        system.special,
-        system.canonicalStats?.traits,
-      ];
-
-      for (const collection of traitCollections) {
-        this._collectSpeciesClassSkillRefsFromValue(collection, refs);
-      }
+    for (const species of speciesCandidates) {
+      this._collectSpeciesClassSkillRefsFromSpeciesLike(species, refs);
     }
 
     const result = Array.from(refs).filter(Boolean);
     if (result.length > 0) {
-      swseLogger.debug('[SkillsStep] Collected species class skill refs:', {
+      swseLogger.debug('[SkillsStep] Collected species class skill refs from species schema/registry:', {
         count: result.length,
         refs: result,
+        speciesKeys: Array.from(speciesIdsAndNames),
+      });
+    } else {
+      swseLogger.debug('[SkillsStep] No species class skill refs resolved', {
+        speciesKeys: Array.from(speciesIdsAndNames),
+        candidateCount: speciesCandidates.length,
       });
     }
     return result;
+  }
+
+  _collectSpeciesClassSkillRefsFromSpeciesLike(species, refs) {
+    if (!species) return;
+
+    this._collectSpeciesClassSkillRefsFromValue(species?.classSkills, refs);
+    this._collectSpeciesClassSkillRefsFromValue(species?.classSkill, refs);
+    this._collectSpeciesClassSkillRefsFromValue(species?.bonusClassSkills, refs);
+    this._collectSpeciesClassSkillRefsFromValue(species?.bonusClassSkill, refs);
+    this._collectSpeciesClassSkillRefsFromValue(species?.speciesClassSkills, refs);
+
+    const system = species?.system || {};
+    this._collectSpeciesClassSkillRefsFromValue(system.classSkills, refs);
+    this._collectSpeciesClassSkillRefsFromValue(system.classSkill, refs);
+    this._collectSpeciesClassSkillRefsFromValue(system.bonusClassSkills, refs);
+    this._collectSpeciesClassSkillRefsFromValue(system.bonusClassSkill, refs);
+    this._collectSpeciesClassSkillRefsFromValue(system.speciesClassSkills, refs);
+
+    const ledger = species?.ledger || species;
+    this._collectSpeciesClassSkillRefsFromValue(ledger?.skills?.classSkills, refs);
+    this._collectSpeciesClassSkillRefsFromValue(ledger?.skills?.class, refs);
+    this._collectSpeciesClassSkillRefsFromValue(ledger?.skills?.bonusClassSkills, refs);
+    this._collectSpeciesClassSkillRefsFromValue(ledger?.entitlements?.classSkills, refs);
+    this._collectSpeciesClassSkillRefsFromValue(ledger?.entitlements?.skills?.classSkills, refs);
+
+    const traitCollections = [
+      species?.traits,
+      species?.canonicalTraits,
+      species?.abilities,
+      species?.rawAbilities,
+      species?.special,
+      species?.supplementaryTraits,
+      system.traits,
+      system.canonicalTraits,
+      system.abilities,
+      system.rawAbilities,
+      system.special,
+      system.canonicalStats?.traits,
+      species?.canonicalStats?.traits,
+      species?.canonicalStats?.special,
+      ledger?.traits,
+      ledger?.rules,
+    ];
+
+    for (const collection of traitCollections) {
+      this._collectSpeciesClassSkillRefsFromValue(collection, refs);
+    }
   }
 
   _collectSpeciesClassSkillRefsFromValue(value, refs) {
@@ -1046,10 +1135,16 @@ renderDetailsPanel(focusedItem) {
     }
 
     if (typeof value === 'object') {
-      const direct = value.skill || value.skillName || value.name || value.label || value.id || value.key;
-      const description = value.description || value.text || value.value || value.benefit || '';
-      if (direct && this._looksLikeSkillName(direct)) refs.add(String(direct).trim());
+      const direct = value.skill || value.skillName || value.skillId || value.targetSkill || value.target || value.name || value.label || value.id || value.key;
+      const description = value.description || value.text || value.value || value.benefit || value.summary || '';
+      const typeText = `${value.type || ''} ${value.grantType || ''} ${value.classification || ''} ${value.name || ''}`.toLowerCase();
+      const looksLikeClassSkillGrant = /class\s*skill|bonus\s*class\s*skill/.test(typeText) || /class\s*skill/i.test(String(description || ''));
+      if (direct && (looksLikeClassSkillGrant || this._looksLikeSkillName(direct))) refs.add(String(direct).trim());
       this._collectSpeciesClassSkillRefsFromText(description, refs);
+      this._collectSpeciesClassSkillRefsFromValue(value.rules, refs);
+      this._collectSpeciesClassSkillRefsFromValue(value.grants, refs);
+      this._collectSpeciesClassSkillRefsFromValue(value.passive, refs);
+      this._collectSpeciesClassSkillRefsFromValue(value.effects, refs);
       return;
     }
 
@@ -1061,11 +1156,13 @@ renderDetailsPanel(focusedItem) {
     if (!source) return;
 
     const patterns = [
-      /([A-Za-z][A-Za-z\s()'-]+?)\s+is\s+always\s+considered\s+a?\s*Class\s+Skill/i,
-      /([A-Za-z][A-Za-z\s()'-]+?)\s+is\s+always\s+a?\s*Class\s+Skill/i,
+      /([A-Za-z][A-Za-z\s()'-]+?)\s+is\s+always\s+considered\s+(?:a|an)?\s*Class\s+Skill/i,
+      /([A-Za-z][A-Za-z\s()'-]+?)\s+is\s+always\s+(?:a|an)?\s*Class\s+Skill/i,
       /Bonus\s+Class\s+Skill\s*\(\s*([^\)]+?)\s*\)/i,
-      /(?:treat|consider)\s+([A-Za-z][A-Za-z\s()'-]+?)\s+as\s+a?\s*Class\s+Skill/i,
-      /([A-Za-z][A-Za-z\s()'-]+?)\s+counts\s+as\s+a?\s*Class\s+Skill/i,
+      /Bonus\s+Class\s+Skill\s*[:\-]\s*([A-Za-z][A-Za-z\s()'-]+)/i,
+      /(?:treat|consider)\s+([A-Za-z][A-Za-z\s()'-]+?)\s+as\s+(?:a|an)?\s*Class\s+Skill/i,
+      /([A-Za-z][A-Za-z\s()'-]+?)\s+counts\s+as\s+(?:a|an)?\s*Class\s+Skill/i,
+      /([A-Za-z][A-Za-z\s()'-]+?)\s+becomes\s+(?:a|an)?\s*Class\s+Skill/i,
     ];
 
     for (const pattern of patterns) {
@@ -1321,7 +1418,6 @@ async onItemFocused(id, shell) {
   if (!skill) return;
   this._focusedSkillId = skill.id;
   shell.focusedItem = { id: skill.id };
-  shell.render();
 }
 
 _formatSkillCard(skill, suggestedIds = new Set()) {

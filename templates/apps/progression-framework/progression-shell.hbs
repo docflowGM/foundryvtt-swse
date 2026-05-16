@@ -233,7 +233,9 @@
 
           {{!-- PHASE 4 UX: Footer status readout line --}}
           {{#if footerStatus}}
-          <div class="prog-footer-status-line">
+          <div class="prog-footer-status-line {{#if footerStatusState.isComplete}}prog-footer-status-line--complete{{else}}prog-footer-status-line--pending{{/if}}"
+               data-remaining="{{footerStatusState.remaining}}"
+               data-total="{{footerStatusState.total}}">
             <span class="prog-footer-status-label">STATUS:</span>
             <span class="prog-footer-status-value">{{footerStatus}}</span>
           </div>
@@ -268,7 +270,7 @@
         <div class="action-footer__confirm">
           <button type="button"
                   class="swse-btn swse-btn--confirm
-                         {{#if footer.next.isLastStep}}swse-btn--last-step{{/if}} {{#if footer.next.enabled}}swse-btn--advance-ready{{/if}}"
+                         {{#if footer.next.isLastStep}}swse-btn--last-step{{/if}} {{#if footer.next.enabled}}swse-btn--advance-ready{{/if}} {{#if footerStatusState.isComplete}}swse-btn--complete-pulse{{/if}}"
                   data-action="{{#if footer.next.isLastStep}}confirm-step{{else}}next-step{{/if}}"
                   {{#unless footer.next.enabled}}disabled{{/unless}}>
             <span class="swse-btn__label">{{footer.next.label}}</span>

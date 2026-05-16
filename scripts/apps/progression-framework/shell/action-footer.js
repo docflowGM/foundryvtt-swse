@@ -55,14 +55,22 @@ export class ActionFooter {
 
     const canAdvance = blockingIssues.length === 0 && !shell.isProcessing;
 
-    // Center items: remaining picks + any blocking issues as chips
+    // Center items: remaining picks + any blocking issues as chips.
+    // Keep the richer numeric fields so the shell footer can show a live
+    // "Status: remaining/total X Remaining" readout instead of a generic READY.
     const centerItems = [
       ...remainingPicks.map(pick => ({
         label: pick.label,
+        count: Number.isFinite(Number(pick.count)) ? Number(pick.count) : null,
+        total: Number.isFinite(Number(pick.total)) ? Number(pick.total) : null,
+        selected: Number.isFinite(Number(pick.selected)) ? Number(pick.selected) : null,
         isWarning: pick.isWarning,
-        isBlocking: pick.count > 0 && !pick.isWarning, // Still required
+        isBlocking: Number(pick.count || 0) > 0 && !pick.isWarning, // Still required
       })),
     ];
+
+    const primaryRemaining = centerItems.find(item => Number.isFinite(Number(item.count))) || null;
+    const status = this._buildStatusReadout(primaryRemaining, blockingIssues);
 
     // Determine Next/Confirm label
     let nextLabel;
@@ -87,8 +95,38 @@ export class ActionFooter {
       },
       blockingIssues,
       warnings,
+      status,
       // PHASE 3 UX: Specific explanation when blocked
       blockerExplanation,
+    };
+  }
+
+  static _buildStatusReadout(primaryRemaining, blockingIssues = []) {
+    if (!primaryRemaining) {
+      return {
+        text: blockingIssues.length > 0 ? 'Blocked' : 'Ready',
+        isComplete: blockingIssues.length === 0,
+        remaining: 0,
+        total: 0,
+      };
+    }
+
+    const remaining = Math.max(0, Number(primaryRemaining.count || 0));
+    const total = Number.isFinite(Number(primaryRemaining.total))
+      ? Math.max(0, Number(primaryRemaining.total))
+      : null;
+    const rawLabel = String(primaryRemaining.label || 'Selections').trim() || 'Selections';
+    const cleanLabel = rawLabel.replace(/^✓\s*/, '').replace(/\s+remaining$/i, '').trim() || 'Selections';
+    const text = total !== null && total > 0
+      ? `${remaining}/${total} ${cleanLabel} Remaining`
+      : (remaining > 0 ? `${remaining} ${cleanLabel} Remaining` : `0 ${cleanLabel} Remaining`);
+
+    return {
+      text,
+      isComplete: remaining <= 0 && blockingIssues.length === 0,
+      remaining,
+      total: total ?? 0,
+      label: cleanLabel,
     };
   }
 }
