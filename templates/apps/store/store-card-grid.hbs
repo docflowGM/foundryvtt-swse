@@ -51,6 +51,62 @@
         </button>
       {{/each}}
     </div>
+
+    {{!-- Phase 2: Secondary navigation for subcategories (standalone) --}}
+    {{#if navigationModel.topCategories}}
+    {{#each navigationModel.topCategories}}
+    {{#if (eq key ../currentCategory)}}
+    {{#if children}}
+    <div class="store-subcat-nav">
+      {{!-- "All [Category]" reset chip --}}
+      <button type="button" class="store-chip store-subcat-chip {{#unless ../../../currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="">
+        All {{label}}<span class="store-chip-count">{{count}}</span>
+      </button>
+
+      {{#if (eq key 'weapons')}}
+      {{!-- WEAPONS: Group by family (Melee/Ranged) --}}
+      {{#if familyGroups.melee}}
+      <div class="store-family-group">
+        <div class="store-family-label">Melee</div>
+        <div class="store-family-chips">
+          {{#each familyGroups.melee}}
+          <button type="button" class="store-chip store-subcat-chip {{#if (eq label ../../../../currentSubcategory)}}active{{/if}}"
+                  data-action="subcategory-nav" data-subcategory="{{label}}">
+            {{label}}<span class="store-chip-count">{{count}}</span>
+          </button>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{#if familyGroups.ranged}}
+      <div class="store-family-group">
+        <div class="store-family-label">Ranged</div>
+        <div class="store-family-chips">
+          {{#each familyGroups.ranged}}
+          <button type="button" class="store-chip store-subcat-chip {{#if (eq label ../../../../currentSubcategory)}}active{{/if}}"
+                  data-action="subcategory-nav" data-subcategory="{{label}}">
+            {{label}}<span class="store-chip-count">{{count}}</span>
+          </button>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{else}}
+      {{!-- OTHER CATEGORIES: List all subcategories --}}
+      {{#each children}}
+      <button type="button" class="store-chip store-subcat-chip {{#if (eq label ../../../currentSubcategory)}}active{{/if}}"
+              data-action="subcategory-nav" data-subcategory="{{label}}">
+        {{label}}<span class="store-chip-count">{{count}}</span>
+      </button>
+      {{/each}}
+      {{/if}}
+    </div>
+    {{/if}}
+    {{/if}}
+    {{/each}}
+    {{/if}}
     <div class="store-filter-controls">
       <select id="store-availability-filter" class="store-filter-select" aria-label="Filter by availability">
         <option value="">All Availability</option>

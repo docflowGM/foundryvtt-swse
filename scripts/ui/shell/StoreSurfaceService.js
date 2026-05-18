@@ -9,6 +9,7 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SettingsHelper } from '/systems/foundryvtt-swse/scripts/utils/settings-helper.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
+import { buildStoreNavigationModel } from '/systems/foundryvtt-swse/scripts/apps/store/store-shared.js';
 
 // Module-level cache: actorId → SWSEStore instance
 const _instanceCache = new Map();
@@ -289,6 +290,14 @@ export class StoreSurfaceService {
 
       // Sync navigation state from shell options
       if (options.currentCategory !== undefined) storeInstance.currentCategory = options.currentCategory ?? '';
+      // Phase 2: Sync subcategory/family state
+      if (options.currentSubcategory !== undefined) storeInstance.currentSubcategory = options.currentSubcategory ?? null;
+      if (options.currentFamily !== undefined) storeInstance.currentFamily = options.currentFamily ?? null;
+      // When category changes, clear stale subcategory/family state
+      if (options.currentCategory !== undefined && options.currentCategory !== storeInstance.currentCategory) {
+        storeInstance.currentSubcategory = null;
+        storeInstance.currentFamily = null;
+      }
       if (options.currentView) storeInstance.currentView = options.currentView;
       if (options.selectedProductId !== undefined) storeInstance.selectedProductId = options.selectedProductId ?? null;
 
@@ -306,6 +315,34 @@ export class StoreSurfaceService {
         ? allItems.filter(item => (item.category ?? '').toLowerCase() === currentCategory)
         : allItems;
       const splashContext = StoreSurfaceService.buildSplashContext(actor, storeContext, options);
+
+      // Phase 2: Include navigation model
+      const navigationModel = storeContext.navigationModel ?? buildStoreNavigationModel(
+        storeInstance.storeInventory,
+        {
+          activeCategory: storeContext.currentCategory ?? '',
+          activeSubcategory: storeContext.currentSubcategory ?? null,
+          activeFamily: storeContext.currentFamily ?? null
+        }
+      );
+
+      // Phase 2: Pre-group weapon subcategories by family for template simplicity
+      if (navigationModel.topCategories) {
+        for (const category of navigationModel.topCategories) {
+          if (category.key === 'weapons' && category.children) {
+            const byFamily = new Map();
+            for (const child of category.children) {
+              const family = child.family || 'other';
+              if (!byFamily.has(family)) {
+                byFamily.set(family, []);
+              }
+              byFamily.get(family).push(child);
+            }
+            category.familyGroups = Object.fromEntries(byFamily);
+          }
+        }
+      }
+
       const safeContext = {
         allItems: visibleItems,
         totalItems: allItems.length,
@@ -319,6 +356,7 @@ export class StoreSurfaceService {
         currentCategory: storeContext.currentCategory ?? '',
         currentCategoryLabel: storeContext.currentCategoryLabel ?? 'All Listings',
         categorySummary: storeContext.categorySummary ?? [],
+        navigationModel,  // Phase 2: Include navigation model
         pageContext: storeContext.pageContext ?? {},
         cartRemainingNeg: cartRemaining < 0,
         purchaseHistoryEntries: storeContext.purchaseHistoryEntries ?? [],

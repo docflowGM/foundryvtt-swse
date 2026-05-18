@@ -30,7 +30,8 @@ import {
   tryRender,
   getRarityClass,
   getRarityLabel,
-  getCostValue
+  getCostValue,
+  buildStoreNavigationModel
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
@@ -139,6 +140,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
     this.currentView = 'browse';
     this.currentCategory = '';
+    this.currentSubcategory = null;  // Phase 2: Secondary nav support
+    this.currentFamily = null;        // Phase 2: Weapon family grouping
     this.selectedProductId = null;
     this.entryOrigin = options.entryOrigin || options.origin || 'unknown';
     this.storeCurrencySymbol = getStoreCurrencySymbol();
@@ -199,6 +202,30 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const currentCategoryLabel = this._getCurrentCategoryLabel(categorySummary);
     const selectedProduct = await this._buildSelectedProductView();
 
+    // Phase 2: Build hierarchical navigation model
+    const navigationModel = buildStoreNavigationModel(this.storeInventory, {
+      activeCategory: this.currentCategory,
+      activeSubcategory: this.currentSubcategory,
+      activeFamily: this.currentFamily
+    });
+
+    // Phase 2: Pre-group weapon subcategories by family for template simplicity
+    if (navigationModel.topCategories) {
+      for (const category of navigationModel.topCategories) {
+        if (category.key === 'weapons' && category.children) {
+          const byFamily = new Map();
+          for (const child of category.children) {
+            const family = child.family || 'other';
+            if (!byFamily.has(family)) {
+              byFamily.set(family, []);
+            }
+            byFamily.get(family).push(child);
+          }
+          category.familyGroups = Object.fromEntries(byFamily);
+        }
+      }
+    }
+
     return {
       allItems,
       credits,
@@ -214,6 +241,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       purchaseHistoryEntries,
       purchaseHistoryCount: purchaseHistoryEntries.length,
       pageContext: this._buildPageContext({ currentView, currentCategoryLabel, cartRemaining }),
+      navigationModel,  // Phase 2: Include navigation model
       isGM: game.user?.isGM ?? false,
       rendarrWelcome: getRendarrLine('welcome'),
       rendarrImage: getRendarrPortraitPath(),
@@ -651,6 +679,35 @@ export class SWSEStore extends BaseSWSEAppV2 {
       view.category = item.category || item.type || '';
       view.availability = (item.system?.availability || '').toString();
       view.price = view.finalCost;
+
+      // Phase 2: Apply category/subcategory/family filtering
+      // Skip items that don't match the active filter
+      if (this.currentCategory) {
+        const itemCategory = (item.category || item.type || '').toLowerCase();
+        const filterCategory = String(this.currentCategory).toLowerCase();
+        if (itemCategory !== filterCategory) {
+          continue;
+        }
+      }
+
+      // Phase 2: Filter by subcategory if active
+      if (this.currentSubcategory) {
+        const itemSubcategory = String(item.subcategory || '');
+        if (itemSubcategory !== this.currentSubcategory) {
+          continue;
+        }
+      }
+
+      // Phase 2: Filter by weapon family if active (secondary filter within weapons)
+      if (this.currentFamily && this.currentCategory === 'weapons') {
+        const itemSubcategory = String(item.subcategory || '').toLowerCase();
+        const familyMatch = this.currentFamily === 'melee'
+          ? (itemSubcategory.includes('melee') || itemSubcategory.includes('lightsaber') || itemSubcategory.includes('exotic'))
+          : (itemSubcategory.includes('ranged') || itemSubcategory.includes('pistol') || itemSubcategory.includes('rifle') || itemSubcategory.includes('heavy'));
+        if (!familyMatch) {
+          continue;
+        }
+      }
 
       // RESOLVE GLYPH: Central authority (store-glyph-map.js)
       const glyphData = resolveStoreGlyph(view.category, item.type, useAurebesh);

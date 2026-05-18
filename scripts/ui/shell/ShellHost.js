@@ -295,6 +295,11 @@ export function ShellHostMixin(BaseClass) {
         this._wireUpgradeSurfaceEvents(root);
       }
 
+      // Workbench surface events
+      if (this._shellSurface === 'workbench') {
+        this._wireWorkbenchSurfaceEvents(root);
+      }
+
       if (this._shellSurface === 'messenger') {
         this._wireMessengerSurfaceEvents(root);
       }
@@ -517,6 +522,47 @@ export function ShellHostMixin(BaseClass) {
         } catch (err) {
           ui.notifications?.error?.(`Failed to finalize: ${err.message}`);
         }
+      });
+    }
+
+    /**
+     * Wire workbench surface events when the shell is in 'workbench' mode.
+     * Delegates data-action events to the WorkbenchSurfaceAdapter.
+     */
+    async _wireWorkbenchSurfaceEvents(root) {
+      const workbenchRoot = root.querySelector('[data-shell-region="surface-workbench"]');
+      if (!workbenchRoot) return;
+
+      const { WorkbenchSurfaceAdapter } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js'
+      );
+      const actor = this.actor || this.document;
+      const adapter = WorkbenchSurfaceAdapter.getOrCreate(this, actor, this._shellSurfaceOptions);
+
+      // Wire all [data-action] events to the adapter
+      workbenchRoot.querySelectorAll('[data-action]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          const action = el.dataset.action;
+          if (!action) return;
+          try {
+            await adapter.handleAction(action, el);
+          } catch (err) {
+            console.error(`[ShellHost] Workbench action "${action}" failed:`, err);
+          }
+        });
+      });
+
+      // Wire search input events
+      workbenchRoot.querySelectorAll('[data-action="search-items"]').forEach(input => {
+        input.addEventListener('input', async (ev) => {
+          ev.preventDefault();
+          try {
+            await adapter.handleAction('search-items', input);
+          } catch (err) {
+            console.error('[ShellHost] Workbench search failed:', err);
+          }
+        });
       });
     }
 
