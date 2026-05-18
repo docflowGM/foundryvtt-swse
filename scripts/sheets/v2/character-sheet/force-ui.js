@@ -8,6 +8,7 @@ import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/for
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { ShellOverlayManager } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellOverlayManager.js";
+import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
 
 /**
  * Handle force card discard animation
@@ -159,6 +160,14 @@ export function activateForceUI(sheet, html, { signal } = {}) {
         const result = await ForceExecutor.activateForce(sheet.actor, itemId, isRecovery);
         if (result.success) {
           ui?.notifications?.info?.(`${power.name} ${isRecovery ? "recovered" : "used"}`);
+          // Show holopad roll companion — ForceExecutor.activateForce does not roll dice;
+          // this is a use/discard action, so we display the action outcome only.
+          showHolopadRollCompanion(button, result, {
+            kind: 'force',
+            title: isRecovery ? 'Force Recovered' : 'Force Used',
+            itemName: power.name,
+            actorName: sheet.actor?.name,
+          });
         }
       } catch (err) {
         // console.error("Force activation failed:", err);

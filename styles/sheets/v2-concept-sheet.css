@@ -7098,3 +7098,161 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
 .swse-force-suite-tab .roll-toast.hidden {
   display: none;
 }
+
+/* ─── Holopad Roll Companion ─────────────────────────────────────────────── */
+/*
+ * Companion overlay that appears inside the holopad screen on every roll
+ * initiated from the SWSE shell. Chat cards remain authoritative.
+ * Hosted inside .swse-v2-screen--concept (position:absolute + overflow:hidden)
+ * so it clips naturally to the screen bezel.
+ */
+
+.swse-holopad-roll-companion {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 900;
+  min-width: 200px;
+  max-width: 300px;
+  pointer-events: none;
+}
+
+.swse-holopad-roll-companion.is-visible {
+  display: block;
+  pointer-events: auto;
+}
+
+.swse-holopad-roll-companion .hrc-inner {
+  position: relative;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  text-align: center;
+  background: color-mix(in srgb, var(--swse-concept-bg, #060a12) 94%, transparent);
+  border: 1px solid var(--swse-concept-line, rgba(112, 226, 255, 0.34));
+  box-shadow:
+    0 0 40px rgba(0, 0, 0, 0.75),
+    0 0 16px color-mix(in srgb, var(--swse-accent, #70e2ff) 14%, transparent);
+  color: var(--swse-concept-text, #f2fbff);
+}
+
+/* Animate in */
+@media (prefers-reduced-motion: no-preference) {
+  .swse-holopad-roll-companion.is-visible .hrc-inner {
+    animation: hrc-appear 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes hrc-appear {
+    from { transform: translateY(-10px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+}
+
+.swse-holopad-roll-companion .hrc-close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.45rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.65rem;
+  opacity: 0.4;
+  color: inherit;
+  line-height: 1;
+  padding: 0;
+}
+.swse-holopad-roll-companion .hrc-close:hover { opacity: 0.9; }
+
+.swse-holopad-roll-companion .hrc-title {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 0.3rem;
+  font-family: var(--swse-font-mono, "JetBrains Mono", monospace);
+}
+
+.swse-holopad-roll-companion .hrc-actor,
+.swse-holopad-roll-companion .hrc-item {
+  font-size: 0.6rem;
+  opacity: 0.5;
+  margin-bottom: 0.15rem;
+}
+
+.swse-holopad-roll-companion .hrc-die-zone {
+  margin: 0.45rem 0;
+}
+
+.swse-holopad-roll-companion .hrc-die {
+  font-size: 3.2rem;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--swse-accent, #70e2ff);
+}
+
+/* Kind-specific accent colors */
+.swse-holopad-roll-companion[data-kind="force"]      .hrc-die { color: oklch(0.78 0.20 220); }
+.swse-holopad-roll-companion[data-kind="attack"]     .hrc-die { color: oklch(0.72 0.22 290); }
+.swse-holopad-roll-companion[data-kind="damage"]     .hrc-die { color: oklch(0.70 0.22 25);  }
+.swse-holopad-roll-companion[data-kind="skill"]      .hrc-die { color: oklch(0.85 0.18 200); }
+.swse-holopad-roll-companion[data-kind="ability"]    .hrc-die { color: oklch(0.82 0.18 65);  }
+.swse-holopad-roll-companion[data-kind="initiative"] .hrc-die { color: oklch(0.82 0.19 145); }
+
+.swse-holopad-roll-companion.is-critical .hrc-die { color: oklch(0.88 0.17 95); }
+.swse-holopad-roll-companion.is-fumble   .hrc-die { color: oklch(0.70 0.22 25); }
+
+.swse-holopad-roll-companion .hrc-formula {
+  font-size: 0.6rem;
+  opacity: 0.5;
+  margin-bottom: 0.25rem;
+  font-family: var(--swse-font-mono, "JetBrains Mono", monospace);
+}
+
+.swse-holopad-roll-companion .hrc-total {
+  font-size: 0.82rem;
+  margin-bottom: 0.2rem;
+}
+
+.swse-holopad-roll-companion .hrc-dc,
+.swse-holopad-roll-companion .hrc-tier {
+  font-size: 0.68rem;
+  opacity: 0.7;
+  margin-bottom: 0.15rem;
+}
+
+.swse-holopad-roll-companion .hrc-outcome {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
+.swse-holopad-roll-companion .hrc-outcome.hit,
+.swse-holopad-roll-companion .hrc-outcome.success { color: oklch(0.82 0.19 145); }
+.swse-holopad-roll-companion .hrc-outcome.miss,
+.swse-holopad-roll-companion .hrc-outcome.failure { color: oklch(0.70 0.22 25); }
+
+.swse-holopad-roll-companion .hrc-effect {
+  font-size: 0.6rem;
+  opacity: 0.6;
+  line-height: 1.4;
+  margin-bottom: 0.15rem;
+}
+
+.swse-holopad-roll-companion .hrc-callout {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: oklch(0.88 0.17 95);
+  margin-top: 0.25rem;
+}
+
+.swse-holopad-roll-companion .hrc-chat-cue {
+  font-size: 0.58rem;
+  opacity: 0.35;
+  margin-top: 0.4rem;
+}
+
+.swse-holopad-roll-companion.is-success .hrc-tier { color: oklch(0.82 0.19 145); }
+.swse-holopad-roll-companion.is-failure .hrc-tier { color: oklch(0.70 0.22 25);  }
