@@ -15,7 +15,7 @@ import { ActorAbilityBridge } from '/systems/foundryvtt-swse/scripts/adapters/Ac
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 import { ProgressionFinalizer } from '../shell/progression-finalizer.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
-import { buildSkillDisplay } from '../utils/skill-display.js';
+import { buildClassSkillKeySet, buildSkillDisplay, normalizeSkillKey } from '../utils/skill-display.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 
 export class SummaryStep extends ProgressionStepPlugin {
@@ -373,7 +373,102 @@ export class SummaryStep extends ProgressionStepPlugin {
     this._summary.startingCredits = this._computeStartingCredits(selections.class, selections.background, projection, selections);
     this._summary.hpCalculation = this._computeStartingHP(selections.class, this._summary.attributes, shell.actor, selections.droid);
     this._summary.combatStats = this._buildCombatStats(selections.class, this._summary.attributes, this._summary.level, this._summary.hpCalculation.total);
+    this._summary.classSkillLedger = this._buildClassSkillLedger(selections, projection);
     this._summary.portrait = this._resolveSpeciesPortraitFromSummary(shell);
+  }
+
+
+  _buildClassSkillLedger(selections = {}, projection = null) {
+    const classSkillValues = [];
+    const addAll = (values) => {
+      if (!Array.isArray(values)) return;
+      values.forEach(value => value && classSkillValues.push(value));
+    };
+
+    addAll(ProgressionContentAuthority.getClassSkillNames(selections.class));
+    addAll(selections.pendingBackgroundContext?.classSkills);
+    addAll(selections.pendingBackgroundContext?.ledger?.classSkills?.granted);
+    addAll(selections.pendingSpeciesContext?.classSkills);
+    addAll(selections.pendingSpeciesContext?.ledger?.classSkills?.granted);
+    addAll(selections.species?.classSkills);
+    addAll(selections.species?.system?.classSkills);
+    if (this._hasForceSensitivityForLedger(selections, projection)) classSkillValues.push('Use the Force');
+
+    const classSkillKeys = buildClassSkillKeySet(classSkillValues);
+    const trainedKeys = this._collectTrainedSkillKeysForLedger(selections, projection);
+    const focusedKeys = this._collectFocusedSkillKeysForLedger(selections, projection);
+
+    return Array.from(classSkillKeys)
+      .map((key) => {
+        const display = buildSkillDisplay(key);
+        if (!display.label) return null;
+        const isFocused = focusedKeys.has(display.key);
+        const isTrained = trainedKeys.has(display.key) || isFocused;
+        return {
+          label: display.label,
+          ability: display.ability,
+          abilityClass: display.abilityClass,
+          marker: isFocused ? 'F' : isTrained ? 'T' : '',
+          title: isFocused ? `${display.label}: focused` : isTrained ? `${display.label}: trained` : `${display.label}: class skill`,
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => String(a.label).localeCompare(String(b.label)));
+  }
+
+  _collectTrainedSkillKeysForLedger(selections = {}, projection = null) {
+    const keys = new Set();
+    const add = (entry) => {
+      const key = normalizeSkillKey(entry);
+      if (key) keys.add(key);
+    };
+    (projection?.skills?.trained || []).forEach(add);
+    const skills = selections.skills;
+    if (Array.isArray(skills)) skills.forEach(add);
+    if (Array.isArray(skills?.trained)) skills.trained.forEach(add);
+    if (skills && typeof skills === 'object' && !Array.isArray(skills)) {
+      for (const [key, value] of Object.entries(skills)) {
+        if (value?.trained === true) add(value.key || value.name || key);
+      }
+    }
+    return keys;
+  }
+
+  _collectFocusedSkillKeysForLedger(selections = {}, projection = null) {
+    const focused = new Set();
+    const inspect = (entry) => {
+      if (!entry || typeof entry !== 'object') return;
+      const name = String(entry.name || entry.label || entry.featName || '').toLowerCase();
+      const isSkillFocus = name.includes('skill focus');
+      if (isSkillFocus) {
+        [entry.skill, entry.skillKey, entry.targetSkill, entry.selectedSkill, entry.choice, entry.selectedChoice, entry.choiceValue, entry.selection, entry.system?.selectedSkill, entry.system?.choice, entry.system?.selectedChoice]
+          .map(candidate => normalizeSkillKey(candidate))
+          .filter(Boolean)
+          .forEach(key => focused.add(key));
+      }
+      for (const value of Object.values(entry)) {
+        if (value && typeof value === 'object') inspect(value);
+      }
+    };
+    [selections.feats, selections.generalFeat, selections.classFeat, projection?.abilities?.feats].forEach((value) => {
+      if (Array.isArray(value)) value.forEach(inspect);
+      else inspect(value);
+    });
+    return focused;
+  }
+
+  _hasForceSensitivityForLedger(selections = {}, projection = null) {
+    const text = [];
+    const collect = (value) => {
+      if (!value) return;
+      if (typeof value === 'string') text.push(value);
+      else if (typeof value === 'object') {
+        text.push(value.name, value.label, value.id, value.featName);
+        Object.values(value).forEach(collect);
+      }
+    };
+    [selections.feats, selections.class, selections.generalFeat, projection?.abilities?.feats].forEach(collect);
+    return text.some(value => String(value || '').toLowerCase().includes('force sensitivity'));
   }
 
   async _buildLevelupSummary(shell) {

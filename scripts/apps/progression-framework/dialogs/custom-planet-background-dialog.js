@@ -121,10 +121,10 @@ export class CustomPlanetBackgroundDialog extends SWSEApplicationV2 {
       isCustomLanguage: this._customLanguageMode
     };
 
+    await this.close();
+
     if (this.onSubmit) {
       await this.onSubmit(payload);
     }
-
-    await this.close();
   }
 }

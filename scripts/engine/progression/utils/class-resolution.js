@@ -15,6 +15,7 @@
 
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
 
 /**
  * Resolve a class selection to full ClassModel from canonical authority
@@ -69,6 +70,26 @@ export function resolveClassModel(classSelection) {
           error: registryErr.message,
           diagnostics,
         });
+      }
+    }
+
+    // Some chargen payloads carry the original compendium document id in the id/classId slot.
+    if (classId) {
+      try {
+        const model = ClassesRegistry.getBySourceId?.(classId);
+        if (model) {
+          diagnostics.resolution = {
+            method: 'getBySourceId(classId)',
+            classId,
+            success: true,
+            modelName: model.name || 'unknown',
+          };
+          swseLogger.debug(`[ClassResolution] Resolved class by sourceId from classId: ${classId}`, { diagnostics });
+          return model;
+        }
+        diagnostics.getBySourceIdFromClassIdResult = 'no model found';
+      } catch (registryErr) {
+        diagnostics.getBySourceIdFromClassIdError = registryErr.message;
       }
     }
 
@@ -301,11 +322,47 @@ export function resolveClassFromActor(actor) {
  * @param {Object} classModel - Full ClassModel from resolution
  * @returns {string[]} Array of class skill IDs/keys
  */
+function normalizeSkillRefKey(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+export function resolveClassSkillReference(ref) {
+  if (!ref) return null;
+
+  if (typeof ref === 'object') {
+    const id = ref.id || ref._id || ref.internalId || ref.documentId || ref.sourceId;
+    const key = ref.key || ref.slug || ref.system?.key;
+    const name = ref.name || ref.label || ref.displayName;
+    return SkillRegistry?.getById?.(id)
+      || SkillRegistry?.byKey?.(normalizeSkillRefKey(key))
+      || SkillRegistry?.get?.(name)
+      || SkillRegistry?.byKey?.(normalizeSkillRefKey(name))
+      || null;
+  }
+
+  const raw = String(ref || '').trim();
+  const key = normalizeSkillRefKey(raw);
+  return SkillRegistry?.getById?.(raw)
+    || SkillRegistry?.byKey?.(key)
+    || SkillRegistry?.get?.(raw)
+    || null;
+}
+
+export function getClassSkillEntries(classModel) {
+  if (!classModel) return [];
+  const refs = Array.isArray(classModel.classSkills) ? classModel.classSkills : [];
+  return refs.map((ref) => resolveClassSkillReference(ref)).filter(Boolean);
+}
+
 export function getClassSkills(classModel) {
   if (!classModel) {
     return [];
   }
-  return Array.isArray(classModel.classSkills) ? classModel.classSkills : [];
+  const refs = Array.isArray(classModel.classSkills) ? classModel.classSkills : [];
+  return refs.map((ref) => {
+    const resolved = resolveClassSkillReference(ref);
+    return resolved?.name || resolved?.key || resolved?.id || ref;
+  }).filter(Boolean);
 }
 
 /**
@@ -418,6 +475,8 @@ export default {
   resolveSelectedClassFromShell,
   resolveClassFromActor,
   getClassSkills,
+  getClassSkillEntries,
+  resolveClassSkillReference,
   getClassBonusFeatsLookupKeys,
   getClassTalentTreeLookupKeys,
   getClassHitDie,

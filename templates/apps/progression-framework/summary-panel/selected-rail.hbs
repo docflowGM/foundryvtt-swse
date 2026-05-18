@@ -96,7 +96,10 @@
                 <span class="prog-selected-rail__item-label">{{label}}</span>
                 {{#if value}}
                   {{#if skillLabel}}
-                    <span class="prog-selected-rail__item-value prog-skill-token {{skillAbilityClass}}" data-ability="{{skillAbility}}" title="{{skillAbilityLabel}}">{{skillLabel}}</span>
+                    <span class="prog-selected-rail__item-value prog-skill-token {{skillAbilityClass}} {{#if skillLedger}}prog-skill-token--ledger{{/if}}" data-ability="{{skillAbility}}" title="{{#if skillStatusTitle}}{{skillStatusTitle}}{{else}}{{skillAbilityLabel}}{{/if}}">
+                      {{skillLabel}}
+                      {{#if skillMarker}}<span class="prog-skill-status-marker">{{skillMarker}}</span>{{/if}}
+                    </span>
                   {{else}}
                     <span class="prog-selected-rail__item-value">{{value}}</span>
                   {{/if}}

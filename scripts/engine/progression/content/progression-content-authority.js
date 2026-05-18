@@ -213,8 +213,11 @@ export class ProgressionContentAuthority {
 
   static getClassSkillNames(classSelection) {
     const classModel = this.resolveClass(classSelection);
-    const names = Array.isArray(classModel?.classSkills) ? classModel.classSkills : [];
-    return names.map((skill) => String(skill || '').trim()).filter(Boolean);
+    const refs = Array.isArray(classModel?.classSkills) ? classModel.classSkills : [];
+    return refs.map((skill) => {
+      const entry = this.resolveSkill(skill);
+      return String(entry?.name || entry?.key || entry?.id || skill || '').trim();
+    }).filter(Boolean);
   }
 
   static getClassSkillAllowance(classSelection, attributes = null, actor = null) {

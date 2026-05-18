@@ -11,6 +11,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
 import { resolveClassModel, getClassSkills } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
+import { buildClassSkillKeySet } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/utils/skill-display.js";
 import { getSkillAbility, buildAttributePlanningProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/attribute-planner.js";
 import { getPrestigeTargets, getSkillPrestigeTags } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-path-signals.js";
 
@@ -87,7 +88,7 @@ export class BackgroundSuggestionEngine {
     const classSelection = pendingData?.selectedClass || pendingData?.classes?.[0] || null;
     const classModel = resolveClassModel(classSelection);
     const classSkillRefs = getClassSkills(classModel);
-    const classSkillKeys = new Set(classSkillRefs.map((ref) => norm(ref?.name || ref?.label || ref?.id || ref)));
+    const classSkillKeys = buildClassSkillKeySet(classSkillRefs);
     const trainedSkills = new Set(
       (pendingData?.selectedSkills || pendingData?.trainedSkills || []).map((entry) => norm(entry?.name || entry?.label || entry?.key || entry))
     );

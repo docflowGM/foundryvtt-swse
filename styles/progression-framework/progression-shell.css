@@ -2192,3 +2192,63 @@
   border-radius: 999px;
   background: color-mix(in srgb, currentColor 10%, transparent);
 }
+
+
+/* Unified progression skill/ability visual language.
+   These intentionally outrank generic chip state colors so a CHA skill is blue
+   everywhere, a WIS skill is purple everywhere, etc. */
+.progression-shell .prog-chip.prog-skill-token--str,
+.progression-shell .prog-skill-token.prog-skill-token--str,
+.prog-holo .prog-chip.prog-skill-token--str { color: var(--swse-ability-str, #d7dce5) !important; border-color: color-mix(in srgb, var(--swse-ability-str, #d7dce5) 48%, transparent) !important; }
+.progression-shell .prog-chip.prog-skill-token--dex,
+.progression-shell .prog-skill-token.prog-skill-token--dex,
+.prog-holo .prog-chip.prog-skill-token--dex { color: var(--swse-ability-dex, #38d9c8) !important; border-color: color-mix(in srgb, var(--swse-ability-dex, #38d9c8) 48%, transparent) !important; }
+.progression-shell .prog-chip.prog-skill-token--con,
+.progression-shell .prog-skill-token.prog-skill-token--con,
+.prog-holo .prog-chip.prog-skill-token--con { color: var(--swse-ability-con, #ff9f43) !important; border-color: color-mix(in srgb, var(--swse-ability-con, #ff9f43) 48%, transparent) !important; }
+.progression-shell .prog-chip.prog-skill-token--int,
+.progression-shell .prog-skill-token.prog-skill-token--int,
+.prog-holo .prog-chip.prog-skill-token--int { color: var(--swse-ability-int, #ff5fd7) !important; border-color: color-mix(in srgb, var(--swse-ability-int, #ff5fd7) 48%, transparent) !important; }
+.progression-shell .prog-chip.prog-skill-token--wis,
+.progression-shell .prog-skill-token.prog-skill-token--wis,
+.prog-holo .prog-chip.prog-skill-token--wis { color: var(--swse-ability-wis, #b78cff) !important; border-color: color-mix(in srgb, var(--swse-ability-wis, #b78cff) 48%, transparent) !important; }
+.progression-shell .prog-chip.prog-skill-token--cha,
+.progression-shell .prog-skill-token.prog-skill-token--cha,
+.prog-holo .prog-chip.prog-skill-token--cha { color: var(--swse-ability-cha, #5aa7ff) !important; border-color: color-mix(in srgb, var(--swse-ability-cha, #5aa7ff) 48%, transparent) !important; }
+
+.progression-shell .prog-skill-token--novel,
+.prog-holo .prog-background-details__skill--new {
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.progression-shell .prog-skill-token--covered {
+  opacity: 0.48;
+}
+
+.progression-shell .prog-skill-token--ledger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.progression-shell .prog-skill-status-marker {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.15em;
+  height: 1.15em;
+  padding: 0 0.2em;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 0.72em;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0.95;
+}
+
+.progression-shell .prog-summary-skill-ledger {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}

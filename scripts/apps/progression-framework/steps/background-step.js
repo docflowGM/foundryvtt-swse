@@ -799,6 +799,13 @@ _getCategoryChips() {
         default: 'confirm'
       });
       dialog.render(true);
+      window.setTimeout(() => {
+        const appEl = dialog.element?.[0] || dialog.element || document.querySelector(`.app[data-appid="${dialog.appId}"]`);
+        if (appEl?.style) {
+          appEl.style.zIndex = '120000';
+          appEl.style.position = appEl.style.position || 'fixed';
+        }
+      }, 0);
     });
   }
 
@@ -855,6 +862,13 @@ _getCategoryChips() {
         default: 'confirm'
       });
       dialog.render(true);
+      window.setTimeout(() => {
+        const appEl = dialog.element?.[0] || dialog.element || document.querySelector(`.app[data-appid="${dialog.appId}"]`);
+        if (appEl?.style) {
+          appEl.style.zIndex = '120000';
+          appEl.style.position = appEl.style.position || 'fixed';
+        }
+      }, 0);
     });
   }
 

@@ -599,14 +599,26 @@ export class ProgressionFinalizer {
       }
     }
 
-    // Canonical stored ability path is system.abilities.<key>.base
-    // Progression writes base values here; derived computes modifiers and totals
+    // Canonical stored ability path is system.abilities.<key>.base.
+    // Also initialize the sheet-facing mirror paths during chargen finalization so
+    // the completed sheet is immediately coherent before the next derived pass.
     const attrMap = { strength: 'str', dexterity: 'dex', constitution: 'con', intelligence: 'int', wisdom: 'wis', charisma: 'cha', str: 'str', dex:'dex', con:'con', int:'int', wis:'wis', cha:'cha' };
+    const finalAttrValues = this._normalizeFinalAttributeValues(attr, attrValues, pendingSpeciesContext, actor);
     for (const [k, v] of Object.entries(attrValues || {})) {
       const key = attrMap[k];
       const val = typeof v === 'object' ? (v?.score ?? v?.base ?? v?.value ?? v?.total) : v;
-      // Write to canonical .base path (not deprecated .value)
-      if (key && Number.isFinite(Number(val))) set[`system.abilities.${key}.base`] = Number(val);
+      if (!key || !Number.isFinite(Number(val))) continue;
+      const baseScore = Number(val);
+      const finalScore = Number(finalAttrValues?.[key] ?? baseScore);
+      const mod = this._abilityMod(finalScore);
+      set[`system.abilities.${key}.base`] = baseScore;
+      set[`system.abilities.${key}.value`] = finalScore;
+      set[`system.abilities.${key}.total`] = finalScore;
+      set[`system.abilities.${key}.mod`] = mod;
+      set[`system.attributes.${key}.base`] = baseScore;
+      set[`system.attributes.${key}.value`] = finalScore;
+      set[`system.attributes.${key}.total`] = finalScore;
+      set[`system.attributes.${key}.mod`] = mod;
     }
 
     if (sessionState.mode === 'chargen') {
@@ -1003,6 +1015,28 @@ export class ProgressionFinalizer {
       const fallback = actor?.system?.abilities?.[key]?.base ?? actor?.system?.abilities?.[key]?.value ?? 10;
       const score = Number(value?.score ?? value?.base ?? value?.value ?? value?.total ?? value ?? fallback);
       if (Number.isFinite(score)) out[key] = score;
+    }
+    return out;
+  }
+
+  static _normalizeFinalAttributeValues(attr = {}, attrValues = {}, pendingSpeciesContext = null, actor = null) {
+    const explicit = attr?.finalValues || attr?.totals || attr?.totalValues || null;
+    const speciesMods = attr?.speciesMods
+      || attr?.speciesModifiers
+      || pendingSpeciesContext?.attributeModifiers
+      || pendingSpeciesContext?.abilityScores
+      || pendingSpeciesContext?.canonicalStats?.abilityScores
+      || {};
+    const out = {};
+    for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+      const explicitValue = explicit?.[key]?.score ?? explicit?.[key]?.total ?? explicit?.[key]?.value ?? explicit?.[key];
+      if (Number.isFinite(Number(explicitValue))) {
+        out[key] = Number(explicitValue);
+        continue;
+      }
+      const base = Number(attrValues?.[key] ?? actor?.system?.abilities?.[key]?.base ?? 10) || 10;
+      const mod = Number(speciesMods?.[key] ?? speciesMods?.[key?.toUpperCase?.()] ?? 0) || 0;
+      out[key] = base + mod;
     }
     return out;
   }

@@ -23,7 +23,7 @@
 import { ProjectionEngine } from './projection-engine.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
-import { buildSkillDisplay } from '../utils/skill-display.js';
+import { buildClassSkillKeySet, buildSkillDisplay, getSkillLabel, normalizeSkillKey } from '../utils/skill-display.js';
 
 export class SelectedRailContext {
   /**
@@ -176,6 +176,9 @@ export class SelectedRailContext {
       sections.push(this._buildAttributesSection(projection, currentStepId));
     }
 
+    const classSkillSection = this._buildClassSkillsSection(projection, session, currentStepId);
+    if (classSkillSection) sections.push(classSkillSection);
+
     // Always include skills
     sections.push(this._buildSkillsSection(projection, currentStepId));
 
@@ -295,6 +298,132 @@ export class SelectedRailContext {
           isCompact: true, // render in compact grid, not rows
         }
       : null;
+  }
+
+
+  static _buildClassSkillsSection(projection, session, currentStepId) {
+    const draft = session?.draftSelections || {};
+    const classSkillValues = [];
+
+    const addAll = (values) => {
+      if (!Array.isArray(values)) return;
+      for (const value of values) {
+        if (value) classSkillValues.push(value);
+      }
+    };
+
+    addAll(ProgressionContentAuthority.getClassSkillNames(draft.class));
+    addAll(draft.pendingBackgroundContext?.classSkills);
+    addAll(draft.pendingBackgroundContext?.ledger?.classSkills?.granted);
+    addAll(draft.pendingSpeciesContext?.classSkills);
+    addAll(draft.pendingSpeciesContext?.ledger?.classSkills?.granted);
+    addAll(draft.species?.classSkills);
+    addAll(draft.species?.system?.classSkills);
+
+    if (this._hasForceSensitivity(draft, projection)) classSkillValues.push('Use the Force');
+
+    const classSkillKeys = buildClassSkillKeySet(classSkillValues);
+    if (!classSkillKeys.size) return null;
+
+    const trainedKeys = this._collectTrainedSkillKeys(projection, draft);
+    const focusedKeys = this._collectFocusedSkillKeys(draft, projection);
+    const items = Array.from(classSkillKeys)
+      .map((key) => {
+        const display = buildSkillDisplay(key);
+        const label = display.label || getSkillLabel(key) || key;
+        if (!label) return null;
+        const isFocused = focusedKeys.has(display.key);
+        const isTrained = trainedKeys.has(display.key) || isFocused;
+        return {
+          label: 'Class Skill',
+          value: isFocused ? 'F' : isTrained ? 'T' : 'CS',
+          skillLabel: label,
+          skillAbility: display.ability,
+          skillAbilityLabel: display.abilityLabel,
+          skillAbilityClass: display.abilityClass,
+          skillLedger: true,
+          skillMarker: isFocused ? 'F' : isTrained ? 'T' : '',
+          skillStatusTitle: isFocused ? `${label}: focused` : isTrained ? `${label}: trained` : `${label}: class skill`,
+          isCurrent: currentStepId === 'skills' || currentStepId === 'background' || currentStepId === 'species' || currentStepId === 'general-feat',
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => String(a.skillLabel || a.label).localeCompare(String(b.skillLabel || b.label)));
+
+    return items.length ? {
+      id: 'class-skills-ledger',
+      label: `Class Skills (${items.length})`,
+      items,
+      isCurrent: currentStepId === 'skills',
+    } : null;
+  }
+
+  static _collectTrainedSkillKeys(projection, draft) {
+    const values = [];
+    const add = (entry) => {
+      const key = normalizeSkillKey(entry);
+      if (key) values.push(key);
+    };
+    (projection?.skills?.trained || []).forEach(add);
+    const skills = draft?.skills;
+    if (Array.isArray(skills)) skills.forEach(add);
+    if (Array.isArray(skills?.trained)) skills.trained.forEach(add);
+    if (skills && typeof skills === 'object' && !Array.isArray(skills)) {
+      for (const [key, value] of Object.entries(skills)) {
+        if (value?.trained === true) add(value.key || value.name || key);
+      }
+    }
+    return new Set(values);
+  }
+
+  static _collectFocusedSkillKeys(draft, projection) {
+    const focused = new Set();
+    const inspect = (entry) => {
+      if (!entry || typeof entry !== 'object') return;
+      const name = String(entry.name || entry.label || entry.id || '').toLowerCase();
+      const isSkillFocus = name.includes('skill focus') || String(entry.featName || '').toLowerCase().includes('skill focus');
+      const candidates = [
+        entry.skill,
+        entry.skillKey,
+        entry.targetSkill,
+        entry.selectedSkill,
+        entry.choice,
+        entry.selectedChoice,
+        entry.choiceValue,
+        entry.selection,
+        entry.system?.selectedSkill,
+        entry.system?.choice,
+        entry.system?.selectedChoice,
+      ];
+      if (isSkillFocus) {
+        for (const candidate of candidates) {
+          const key = normalizeSkillKey(candidate);
+          if (key) focused.add(key);
+        }
+      }
+      for (const value of Object.values(entry)) {
+        if (value && typeof value === 'object') inspect(value);
+      }
+    };
+    [draft?.feats, draft?.generalFeat, draft?.classFeat, projection?.abilities?.feats].forEach((list) => {
+      if (Array.isArray(list)) list.forEach(inspect);
+      else inspect(list);
+    });
+    return focused;
+  }
+
+  static _hasForceSensitivity(draft, projection) {
+    const haystack = [];
+    const collect = (value) => {
+      if (!value) return;
+      if (typeof value === 'string') haystack.push(value);
+      else if (typeof value === 'object') {
+        haystack.push(value.name, value.label, value.id, value.featName);
+        Object.values(value).forEach(collect);
+      }
+    };
+    [draft?.feats, draft?.class, draft?.generalFeat, projection?.abilities?.feats].forEach(collect);
+    return haystack.some((value) => String(value || '').toLowerCase().includes('force sensitivity'));
   }
 
   /**

@@ -404,8 +404,13 @@ export class DerivedCalculator {
           hasOccupationBonus = true;
         }
 
-        // Add feat/equipment/other modifiers from ModifierEngine (SSOT integration)
-        const featBonus = modifierMap[`skill.${skillKey}`] || 0;
+        // Add feat/equipment/other modifiers from ModifierEngine (SSOT integration).
+        // Skill Focus can be represented both by system.skills.<key>.focused and by
+        // a passive modifier item. If both are present, suppress the duplicate +5.
+        const rawFeatBonus = modifierMap[`skill.${skillKey}`] || 0;
+        const featBonus = (skill.focused && rawFeatBonus >= 5 && this._hasSkillFocusModifierForSkill(actor, skillKey))
+          ? rawFeatBonus - 5
+          : rawFeatBonus;
         total += featBonus;
 
         // PHASE 4: Get state-dependent modifiers for this skill
@@ -574,4 +579,36 @@ export class DerivedCalculator {
       throw err;
     }
   }
+
+  static _hasSkillFocusModifierForSkill(actor, skillKey) {
+    const target = String(skillKey || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!target || !actor?.items) return false;
+    const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    for (const item of actor.items) {
+      const name = String(item?.name || '').toLowerCase();
+      if (!name.includes('skill focus')) continue;
+      const candidates = [
+        item.system?.skill,
+        item.system?.skillKey,
+        item.system?.selectedSkill,
+        item.system?.choice,
+        item.system?.selectedChoice,
+        item.flags?.swse?.skill,
+        item.flags?.swse?.selectedSkill,
+        item.flags?.foundryvttSwse?.skill,
+      ];
+      const meta = item.system?.abilityMeta || {};
+      if (Array.isArray(meta.modifiers)) {
+        for (const mod of meta.modifiers) {
+          const targets = Array.isArray(mod.target) ? mod.target : [mod.target];
+          candidates.push(...targets.map(t => String(t || '').replace(/^skill\./i, '')));
+        }
+      }
+      if (candidates.some(candidate => normalize(candidate) === target)) return true;
+      const paren = name.match(/skill focus\s*\(([^)]+)\)/i);
+      if (paren && normalize(paren[1]) === target) return true;
+    }
+    return false;
+  }
+
 }

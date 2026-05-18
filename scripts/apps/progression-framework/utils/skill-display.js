@@ -44,12 +44,40 @@ const SKILL_ABILITY_FALLBACK = Object.freeze({
   usetheforce: 'cha',
 });
 
-export function normalizeSkillKey(value) {
+function rawSkillKey(value) {
   if (value === null || value === undefined) return '';
   const raw = typeof value === 'object'
-    ? value.key || value.id || value.slug || value.name || value.label || ''
+    ? value.key || value.slug || value.name || value.label || value.id || value._id || value.internalId || ''
     : value;
   return String(raw).toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+export function resolveSkillEntry(value) {
+  if (value === null || value === undefined) return null;
+
+  if (typeof value === 'object') {
+    const id = value.id || value._id || value.internalId || value.documentId || value.sourceId;
+    const key = value.key || value.slug || value.system?.key;
+    const name = value.name || value.label || value.displayName;
+    return SkillRegistry?.getById?.(id)
+      || SkillRegistry?.byKey?.(rawSkillKey(key))
+      || SkillRegistry?.get?.(name)
+      || SkillRegistry?.byKey?.(rawSkillKey(name))
+      || null;
+  }
+
+  const raw = String(value || '').trim();
+  const key = rawSkillKey(raw);
+  return SkillRegistry?.getById?.(raw)
+    || SkillRegistry?.byKey?.(key)
+    || SkillRegistry?.get?.(raw)
+    || null;
+}
+
+export function normalizeSkillKey(value) {
+  const entry = resolveSkillEntry(value);
+  if (entry) return rawSkillKey(entry.key || entry.name || entry.id);
+  return rawSkillKey(value);
 }
 
 export function normalizeAbilityKey(value) {
@@ -63,30 +91,31 @@ export function getSkillAbility(value) {
     if (direct) return direct;
   }
 
-  const key = normalizeSkillKey(value);
-  const registryMatch = SkillRegistry?.get?.(key)
-    || SkillRegistry?.byKey?.(key)
-    || SkillRegistry?.get?.(typeof value === 'object' ? value.name || value.label : value);
+  const registryMatch = resolveSkillEntry(value);
   const registryAbility = normalizeAbilityKey(registryMatch?.ability || registryMatch?.system?.ability);
   if (registryAbility) return registryAbility;
 
-  return SKILL_ABILITY_FALLBACK[key] || '';
+  return SKILL_ABILITY_FALLBACK[normalizeSkillKey(value)] || '';
 }
 
 export function getSkillLabel(value) {
   if (value === null || value === undefined) return '';
+  const registryMatch = resolveSkillEntry(value);
+  if (registryMatch?.name) return String(registryMatch.name).trim();
   if (typeof value === 'object') {
-    const registryMatch = SkillRegistry?.get?.(value.name || value.label || value.id || value.key)
-      || SkillRegistry?.byKey?.(value.key || value.id);
-    return String(value.name || value.label || registryMatch?.name || value.id || value.key || '').trim();
+    return String(value.name || value.label || value.displayName || value.key || value.id || value._id || '').trim();
   }
-  const registryMatch = SkillRegistry?.get?.(value) || SkillRegistry?.byKey?.(normalizeSkillKey(value));
-  return String(registryMatch?.name || value).trim();
+  return String(value).trim();
 }
 
 export function buildClassSkillKeySet(classSkills = []) {
   return new Set((Array.isArray(classSkills) ? classSkills : [])
-    .map((skill) => normalizeSkillKey(skill))
+    .flatMap((skill) => {
+      const entry = resolveSkillEntry(skill);
+      const keys = [normalizeSkillKey(skill)];
+      if (entry) keys.push(normalizeSkillKey(entry), normalizeSkillKey(entry.name), normalizeSkillKey(entry.id), normalizeSkillKey(entry.key));
+      return keys;
+    })
     .filter(Boolean));
 }
 

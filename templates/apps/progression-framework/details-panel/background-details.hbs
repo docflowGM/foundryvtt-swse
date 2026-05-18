@@ -39,7 +39,7 @@
         <h5 class="prog-background-details__subsection-title">Relevant Skills</h5>
         <div class="prog-background-details__skills">
           {{#each relevantSkills}}
-            <span class="prog-chip prog-skill-token {{this.abilityClass}} {{this.statusClass}} {{#if this.isClassSkill}}prog-chip--dim{{else}}prog-chip--positive prog-background-details__skill--new{{/if}}" data-ability="{{this.ability}}" title="{{this.abilityLabel}} • {{this.statusLabel}}">{{this.label}}</span>
+            <span class="prog-chip prog-skill-token {{this.abilityClass}} {{this.statusClass}} {{#unless this.isClassSkill}}prog-background-details__skill--new{{/unless}}" data-ability="{{this.ability}}" title="{{this.abilityLabel}} • {{this.statusLabel}}">{{this.label}}</span>
           {{/each}}
         </div>
         <p class="prog-background-details__skill-legend"><span class="prog-chip prog-chip--positive prog-background-details__skill--new prog-skill-token--novel">New pick</span> <span class="prog-chip prog-chip--dim prog-skill-token--covered">Already a class skill</span></p>
