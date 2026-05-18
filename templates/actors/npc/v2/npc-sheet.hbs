@@ -7,10 +7,10 @@
     <a class="item swse-ui-tab" data-action="tab" data-tab="stats">Stats</a>
     <a class="item swse-ui-tab" data-action="tab" data-tab="abilities">Abilities</a>
     <a class="item swse-ui-tab" data-action="tab" data-tab="talents">Talents</a>
-    {{#if actor.system.forceSensitive}}<a class="item swse-ui-tab" data-action="tab" data-tab="force">Force</a>{{/if}}
-    {{#if actor.items}}<a class="item swse-ui-tab" data-action="tab" data-tab="gear">Gear</a>{{/if}}
-    {{#if actor.system.isDroid}}<a class="item swse-ui-tab" data-action="tab" data-tab="systems">Systems</a>{{/if}}
-    {{#if (eq actor.system.creatureType "beast")}}<a class="item swse-ui-tab" data-action="tab" data-tab="beast">Beast</a>{{/if}}
+    {{#if system.forceSensitive}}<a class="item swse-ui-tab" data-action="tab" data-tab="force">Force</a>{{/if}}
+    {{#if items}}<a class="item swse-ui-tab" data-action="tab" data-tab="gear">Gear</a>{{/if}}
+    {{#if system.isDroid}}<a class="item swse-ui-tab" data-action="tab" data-tab="systems">Systems</a>{{/if}}
+    {{#if (eq system.creatureType "beast")}}<a class="item swse-ui-tab" data-action="tab" data-tab="beast">Beast</a>{{/if}}
     <a class="item swse-ui-tab" data-action="tab" data-tab="relationships">Relationships</a>
     <a class="item swse-ui-tab" data-action="tab" data-tab="notes">Notes</a>
   </nav>
@@ -87,20 +87,19 @@
       </div>
     </section>
 
-    {{#if actor.system.forceSensitive}}
+    {{#if system.forceSensitive}}
     <section class="tab flexcol" data-tab-group="primary" data-tab="force">
-      <div class="swse-v2-sheet-grid">
-      </div>
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-suite-tab.hbs"}}
     </section>
     {{/if}}
 
-    {{#if actor.items}}
+    {{#if items}}
     <section class="tab flexcol" data-tab-group="primary" data-tab="gear">
       {{> "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-gear-panel.hbs"}}
     </section>
     {{/if}}
 
-    {{#if actor.system.isDroid}}
+    {{#if system.isDroid}}
     <section class="tab flexcol" data-tab-group="primary" data-tab="systems">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
@@ -114,7 +113,7 @@
     </section>
     {{/if}}
 
-    {{#if (eq actor.system.creatureType "beast")}}
+    {{#if (eq system.creatureType "beast")}}
     <section class="tab flexcol" data-tab-group="primary" data-tab="beast">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">

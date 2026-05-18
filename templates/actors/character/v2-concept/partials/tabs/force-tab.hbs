@@ -1,5 +1,8 @@
 {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-suite-tab.hbs"}}
 
+{{!-- Legacy force layout: kept for reference only; never rendered to avoid duplicate --}}
+{{!-- data-action listeners being wired by force-ui.js querySelectorAll. --}}
+{{#if false}}
 <div class="swse-concept-dashboard swse-concept-dashboard--force-legacy" style="display:none" aria-hidden="true">
   <div class="swse-concept-card-grid swse-concept-card-grid--force-top">
     {{#each conceptLayout.force.metrics as |metric|}}
@@ -221,3 +224,4 @@
     </div>
   </section>
 </div>
+{{/if}}

@@ -527,7 +527,7 @@ function normalizeForceFeature(entry, fallbackLabel) {
   };
 }
 
-function buildForceTab(context) {
+export function buildForceTab(context) {
   const actor = context.actor;
   const hand = asArray(context.forcePowersPanel?.hand).map((power) => normalizeForcePower(power, false));
   const discard = asArray(context.forcePowersPanel?.discard).map((power) => normalizeForcePower(power, true));

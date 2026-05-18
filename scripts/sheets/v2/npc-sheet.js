@@ -12,6 +12,8 @@ import { NpcProfileBuilder } from "/systems/foundryvtt-swse/scripts/actors/npc/n
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { launchProgression, launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
+import { buildForceTab } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/concept-context.js";
+import { activateForceUI } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-ui.js";
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -127,6 +129,36 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       console.error('Error building NPC profile context:', err);
     }
 
+    // Force Suite Context — only built for force-sensitive NPCs
+    if (actor.system?.forceSensitive) {
+      try {
+        const forcePowers = (actor.items ?? []).filter(i => i.type === 'force-power');
+        const derived = actor.system?.derived ?? {};
+        const forcePowersPanel = {
+          hand: forcePowers.filter(p => !p.system?.discarded),
+          discard: forcePowers.filter(p => !!p.system?.discarded),
+          secrets: derived.forceSecrets?.list ?? [],
+          techniques: derived.forceTechniques?.list ?? []
+        };
+        const forceCtx = buildForceTab({
+          actor: { name: actor.name, flags: actor.flags },
+          forcePowersPanel,
+          forcePointsValue: actor.system?.forcePoints?.value ?? 0,
+          forcePointsMax: actor.system?.forcePoints?.max ?? 0,
+          destinyPointsValue: actor.system?.destinyPoints?.value ?? 0,
+          destinyPointsMax: actor.system?.destinyPoints?.max ?? 0,
+          darkSidePanel: {
+            value: actor.system?.darkSideScore?.value ?? 0,
+            max: actor.system?.darkSideScore?.max ?? 0
+          }
+        });
+        context.conceptLayout = { force: forceCtx };
+      } catch (err) {
+        console.error('Error building NPC force suite context:', err);
+        context.conceptLayout = { force: {} };
+      }
+    }
+
     // HP/Vitals Context for header (Phase 2 upgrade)
     try {
       const hpMax = actor.system?.derived?.health?.max ?? actor.system?.health?.max ?? 0;
@@ -220,6 +252,11 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
     // Portrait upload + auto-apply (click via data-edit="img", drag/drop here)
     PortraitUploadController.bind(root, { actor: this.actor, signal });
+
+    // Force Suite UI — only active for force-sensitive NPCs
+    if (this.actor.system?.forceSensitive) {
+      activateForceUI(this, root, { signal });
+    }
 
     // Condition step clicking
     for (const el of root.querySelectorAll('.swse-v2-condition-step')) {
