@@ -330,6 +330,42 @@
   border: 1px solid rgba(79, 209, 197, 0.18);
   padding: 0 4px; font-size: 8px; border-radius: 2px;
 }
+
+/* Phase 2: Secondary navigation (subcategories) */
+.store-subcat-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-left: 4px;
+  padding: 4px 0;
+}
+
+.store-subcat-chip {
+  padding: 3px 7px;
+  font-size: 8px;
+}
+
+.store-family-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 8px;
+}
+
+.store-family-label {
+  font-size: 7px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(79, 209, 197, 0.35);
+  margin-top: 2px;
+}
+
+.store-family-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
 .store-filter-select {
   background: rgba(0,0,0,0.5);
   border: 1px solid rgba(79, 209, 197, 0.22);

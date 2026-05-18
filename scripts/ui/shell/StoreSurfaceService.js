@@ -326,6 +326,23 @@ export class StoreSurfaceService {
         }
       );
 
+      // Phase 2: Pre-group weapon subcategories by family for template simplicity
+      if (navigationModel.topCategories) {
+        for (const category of navigationModel.topCategories) {
+          if (category.key === 'weapons' && category.children) {
+            const byFamily = new Map();
+            for (const child of category.children) {
+              const family = child.family || 'other';
+              if (!byFamily.has(family)) {
+                byFamily.set(family, []);
+              }
+              byFamily.get(family).push(child);
+            }
+            category.familyGroups = Object.fromEntries(byFamily);
+          }
+        }
+      }
+
       const safeContext = {
         allItems: visibleItems,
         totalItems: allItems.length,

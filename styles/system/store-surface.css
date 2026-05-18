@@ -356,6 +356,41 @@
   color: oklch(0.62 0.06 200);
 }
 
+/* ═══ Phase 2: Secondary navigation (subcategories) ═══ */
+.ss-subcat-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 0;
+  margin-bottom: 4px;
+}
+
+.ss-subcat-chip {
+  padding: 3px 7px;
+  font-size: 7px;
+}
+
+.ss-family-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-left: 4px;
+}
+
+.ss-family-label {
+  font-size: 6px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: oklch(0.50 0.05 200);
+  margin-top: 2px;
+}
+
+.ss-family-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
 /* ═══ Product cards — glyph contract ═══ */
 .ss-browse-grid {
   display: grid;

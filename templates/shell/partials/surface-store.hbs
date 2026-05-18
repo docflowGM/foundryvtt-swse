@@ -119,6 +119,62 @@
         {{/each}}
       </div>
 
+      {{!-- Phase 2: Secondary navigation for subcategories --}}
+      {{#if vm.storeContext.navigationModel.topCategories}}
+      {{#each vm.storeContext.navigationModel.topCategories}}
+      {{#if (eq key ../vm.storeContext.currentCategory)}}
+      {{#if children}}
+      <div class="ss-subcat-nav">
+        {{!-- "All [Category]" reset chip --}}
+        <button type="button" class="ss-chip ss-subcat-chip {{#unless ../../../vm.storeContext.currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="">
+          All {{label}}<span class="ss-chip-count">{{count}}</span>
+        </button>
+
+        {{#if (eq key 'weapons')}}
+        {{!-- WEAPONS: Group by family (Melee/Ranged) --}}
+        {{#if familyGroups.melee}}
+        <div class="ss-family-group">
+          <div class="ss-family-label">Melee</div>
+          <div class="ss-family-chips">
+            {{#each familyGroups.melee}}
+            <button type="button" class="ss-chip ss-subcat-chip {{#if (eq label ../../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
+                    data-action="subcategory-nav" data-subcategory="{{label}}">
+              {{label}}<span class="ss-chip-count">{{count}}</span>
+            </button>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if familyGroups.ranged}}
+        <div class="ss-family-group">
+          <div class="ss-family-label">Ranged</div>
+          <div class="ss-family-chips">
+            {{#each familyGroups.ranged}}
+            <button type="button" class="ss-chip ss-subcat-chip {{#if (eq label ../../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
+                    data-action="subcategory-nav" data-subcategory="{{label}}">
+              {{label}}<span class="ss-chip-count">{{count}}</span>
+            </button>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{else}}
+        {{!-- OTHER CATEGORIES: List all subcategories --}}
+        {{#each children}}
+        <button type="button" class="ss-chip ss-subcat-chip {{#if (eq label ../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
+                data-action="subcategory-nav" data-subcategory="{{label}}">
+          {{label}}<span class="ss-chip-count">{{count}}</span>
+        </button>
+        {{/each}}
+        {{/if}}
+      </div>
+      {{/if}}
+      {{/if}}
+      {{/each}}
+      {{/if}}
+
       {{#if vm.storeContext.selectedProduct}}
       <div class="ss-detail-panel">
         <div class="ss-detail-header">
