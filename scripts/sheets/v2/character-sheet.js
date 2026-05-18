@@ -79,6 +79,7 @@ import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/them
 import { activateCustomSkillsUI } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/custom-skills-ui.js";
 import { FeatChoiceDialog } from "/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js";
 import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
+import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
 
 const SHEET_MODE_STORAGE_PREFIX = 'swse.sheetMode';
 
@@ -3377,7 +3378,16 @@ const forcePoints = [];
       if (!abilityKey) return;
 
       try {
-        await SWSERoll.rollAbility(this.actor, abilityKey);
+        const result = await SWSERoll.rollAbility(this.actor, abilityKey);
+        if (result?.roll) {
+          const abilityLabels = { str: 'Strength', dex: 'Dexterity', con: 'Constitution', int: 'Intelligence', wis: 'Wisdom', cha: 'Charisma' };
+          showHolopadRollCompanion(button, result, {
+            kind: 'ability',
+            title: `${abilityLabels[abilityKey] ?? abilityKey.toUpperCase()} Check`,
+            actorName: this.actor?.name,
+            dc: result.dc ?? null,
+          });
+        }
       } catch (err) {
         // console.error("Ability roll failed:", err);
         ui?.notifications?.error?.(`Ability roll failed: ${err.message}`);
@@ -3393,7 +3403,18 @@ const forcePoints = [];
       const mode = button.dataset.action === "roll-initiative-take10" ? "take10" : "roll";
 
       try {
-        await this._runCanonicalInitiative(mode);
+        const result = await this._runCanonicalInitiative(mode);
+        if (result) {
+          // _runCanonicalInitiative may return a Roll or an engine result object
+          const roll = result?.roll ?? (result?.total != null ? result : null);
+          if (roll) {
+            showHolopadRollCompanion(button, result, {
+              kind: 'initiative',
+              title: mode === 'take10' ? 'Initiative (Take 10)' : 'Initiative',
+              actorName: this.actor?.name,
+            });
+          }
+        }
       } catch (err) {
         // console.error("Initiative roll failed:", err);
         ui?.notifications?.error?.(`Initiative roll failed: ${err.message}`);
@@ -3530,7 +3551,20 @@ const forcePoints = [];
           };
         }
 
-        await this._runCanonicalSkillCheck(skillKey, rollOptions);
+        const skillResult = await this._runCanonicalSkillCheck(skillKey, rollOptions);
+        if (skillResult) {
+          const skill = this.actor.system.skills?.[skillKey];
+          // _runCanonicalSkillCheck returns a Roll object directly (from rollSkillCheck)
+          const rollObj = skillResult?.roll ?? skillResult;
+          if (rollObj?.total != null) {
+            showHolopadRollCompanion(button, rollObj, {
+              kind: 'skill',
+              title: `${skill?.label ?? skillKey} Check`,
+              actorName: this.actor?.name,
+              dc: skillResult?.dc ?? rollOptions?.dc ?? null,
+            });
+          }
+        }
       } catch (err) {
         ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
       }
@@ -3551,12 +3585,20 @@ const forcePoints = [];
           weapon
         });
         if (modResult === null) return;
-        await this._runCanonicalAttack(weapon, {
+        const unarmedResult = await this._runCanonicalAttack(weapon, {
           customModifier: modResult.customModifier || 0,
           cover: modResult.cover || 'none',
           concealment: modResult.concealment || 'none',
           useForcePoint: modResult.useForcePoint || false
         });
+        if (unarmedResult?.roll) {
+          showHolopadRollCompanion(button, unarmedResult, {
+            kind: 'attack',
+            title: `${weapon.name} — Attack`,
+            actorName: this.actor?.name,
+            itemName: weapon.name,
+          });
+        }
       } catch (err) {
         ui?.notifications?.error?.(`Unarmed attack failed: ${err.message}`);
       }
@@ -3584,12 +3626,20 @@ const forcePoints = [];
 
         if (modResult === null) return; // Cancelled
 
-        await this._runCanonicalAttack(weapon, {
+        const attackResult = await this._runCanonicalAttack(weapon, {
           customModifier: modResult.customModifier || 0,
           cover: modResult.cover || 'none',
           concealment: modResult.concealment || 'none',
           useForcePoint: modResult.useForcePoint || false
         });
+        if (attackResult?.roll) {
+          showHolopadRollCompanion(button, attackResult, {
+            kind: 'attack',
+            title: `${weapon.name} — Attack`,
+            actorName: this.actor?.name,
+            itemName: weapon.name,
+          });
+        }
       } catch (err) {
         // console.error("Attack roll failed:", err);
         ui?.notifications?.error?.(`Attack roll failed: ${err.message}`);
@@ -3618,10 +3668,19 @@ const forcePoints = [];
 
         if (modResult === null) return; // Cancelled
 
-        await SWSERoll.rollDamage(this.actor, weapon, {
+        const damageResult = await SWSERoll.rollDamage(this.actor, weapon, {
           customModifier: modResult.customModifier || 0,
           useForcePoint: modResult.useForcePoint || false
         });
+        if (damageResult) {
+          // rollDamage returns a Roll object directly
+          showHolopadRollCompanion(button, damageResult, {
+            kind: 'damage',
+            title: `${weapon.name} — Damage`,
+            actorName: this.actor?.name,
+            itemName: weapon.name,
+          });
+        }
       } catch (err) {
         // console.error("Damage roll failed:", err);
         ui?.notifications?.error?.(`Damage roll failed: ${err.message}`);
@@ -4137,9 +4196,17 @@ const forcePoints = [];
         const weapon = this.actor.items.get(weaponId);
         if (!weapon || weapon.type !== "weapon") return;
 
-        await this._runCanonicalAttack(weapon, {
+        const attackResult = await this._runCanonicalAttack(weapon, {
           source: "combat-tab"
         });
+        if (attackResult?.roll) {
+          showHolopadRollCompanion(button, attackResult, {
+            kind: 'attack',
+            title: `${weapon.name} — Attack`,
+            actorName: this.actor?.name,
+            itemName: weapon.name,
+          });
+        }
       }, { signal });
     });
 

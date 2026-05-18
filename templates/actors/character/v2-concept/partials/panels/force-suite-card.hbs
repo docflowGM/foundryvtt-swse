@@ -1,0 +1,82 @@
+<div class="fcard force-card {{#if power.discarded}}spent discarded{{/if}}"
+     data-item-id="{{power.id}}"
+     data-tags="{{power.tagString}}"
+     data-p="{{power.p}}"
+     data-type="{{power.type}}">
+  <div class="fcard-inner">
+    <div class="fc-face front">
+      <div class="fc-strip"></div>
+
+      <div class="fc-icon">
+        {{#if power.img}}
+          <img class="fc-img" src="{{power.img}}" alt="{{power.name}}">
+        {{else}}
+          <span class="fc-sym">{{power.sym}}</span>
+        {{/if}}
+      </div>
+
+      <div class="fc-body">
+        <div class="fc-name force-name">{{power.name}}</div>
+        <div class="fc-tags">
+          {{#each power.descriptorLabels as |tag|}}
+            <span class="dtag">{{tag}}</span>
+          {{/each}}
+          {{#if power.form}}
+            <span class="dtag form2">{{power.form}}</span>
+          {{/if}}
+        </div>
+        <div class="fc-blurb">{{power.blurb}}</div>
+      </div>
+
+      <div class="fc-foot">
+        <button type="button" class="fc-use" data-action="activate-force" data-item-id="{{power.id}}">▶ USE POWER</button>
+        <button type="button" class="fc-flip" data-action="force-suite-flip-card" data-item-id="{{power.id}}" title="Full details">▿</button>
+      </div>
+    </div>
+
+    <div class="fc-face back">
+      <div class="fc-strip"></div>
+
+      <div class="fc-bback">
+        <div class="fc-bname">{{power.name}}</div>
+        <div class="fc-bdesc">{{power.desc}}</div>
+
+        {{#if power.hasDcRows}}
+          <table class="dct">
+            <thead>
+              <tr>
+                <th>UTF DC</th>
+                <th>Effect</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each power.dcRows as |row|}}
+                <tr>
+                  <td class="dn">{{row.dc}}</td>
+                  <td>{{row.effect}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{/if}}
+
+        <div class="fpb {{#unless power.fpOk}}na{{/unless}}">
+          <button type="button"
+                  class="fp-tog"
+                  data-action="force-suite-toggle-fp-boost"
+                  data-item-id="{{power.id}}"
+                  {{#unless power.fpOk}}disabled{{/unless}}></button>
+          <div class="fpb-lbl">Force Point +1d6</div>
+          <div class="fpb-note">{{#if power.fpOk}}Spend 1 FP · +1d6{{else}}N/A{{/if}}</div>
+        </div>
+      </div>
+
+      <div class="fc-bfoot">
+        <button type="button" class="fc-use" data-action="activate-force" data-item-id="{{power.id}}">▶ USE POWER</button>
+        <button type="button" class="fc-flip" data-action="force-suite-flip-card" data-item-id="{{power.id}}" title="Flip back">▵</button>
+      </div>
+    </div>
+
+    <div class="fc-spent">SPENT</div>
+  </div>
+</div>

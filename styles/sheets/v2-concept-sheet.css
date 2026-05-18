@@ -6524,3 +6524,735 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
   max-height: 56px !important;
   overflow: hidden !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* Force Suite Tab                                                            */
+/* All selectors scoped under .swse-force-suite-tab                          */
+/* Chrome/shell uses sheet theme tokens (--swse-concept-*); card accents     */
+/* use semantic descriptor colors that persist across themes.                */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+.swse-force-suite-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  height: 100%;
+  overflow-y: auto;
+  color: var(--swse-concept-text, #f2fbff);
+}
+
+/* ── Mini character strip ──────────────────────────────────────────────── */
+.swse-force-suite-tab .fs-mchar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  flex-wrap: wrap;
+  background: var(--swse-concept-panel, rgba(0,0,0,0.2));
+  border: 1px solid var(--swse-concept-line, rgba(255,255,255,0.1));
+}
+
+.swse-force-suite-tab .mc-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--swse-concept-text, #f2fbff);
+}
+
+.swse-force-suite-tab .mc-sub {
+  font-size: 0.75rem;
+  color: var(--swse-concept-text-dim, #8fd7ef);
+  opacity: 0.7;
+}
+
+.swse-force-suite-tab .mc-gap { flex: 1; }
+
+.swse-force-suite-tab .mstat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 0.5rem;
+}
+
+.swse-force-suite-tab .ml {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--swse-concept-text-faint, rgba(143,215,239,0.6));
+}
+
+.swse-force-suite-tab .mv {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--swse-concept-text, #f2fbff);
+}
+
+.swse-force-suite-tab .suite-badge {
+  font-size: 0.7rem;
+  color: var(--swse-concept-text-faint, rgba(143,215,239,0.5));
+  margin-left: auto;
+}
+
+/* ── Force Suite sections ──────────────────────────────────────────────── */
+.swse-force-suite-tab .fsuite {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+
+.swse-force-suite-tab .fs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.swse-force-suite-tab .fs-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.swse-force-suite-tab .fs-head-lbl {
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.swse-force-suite-tab .fs-head-cnt {
+  font-weight: 700;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+.swse-force-suite-tab .fs-line {
+  flex: 1;
+  height: 1px;
+  opacity: 0.3;
+  background: currentColor;
+}
+
+.swse-force-suite-tab .fs-head-rule {
+  font-size: 0.65rem;
+  color: var(--swse-concept-text-faint, rgba(143,215,239,0.5));
+  white-space: nowrap;
+}
+
+/* Descriptor accent colors for section headers */
+.swse-force-suite-tab .cy { color: oklch(0.85 0.18 200); }
+.swse-force-suite-tab .pk { color: oklch(0.72 0.26 350); }
+
+/* ── Force card grid ───────────────────────────────────────────────────── */
+.swse-force-suite-tab .force-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.5rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* Force Cards                                                                */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Semantic descriptor colors — persist across themes */
+.swse-force-suite-tab .fcard[data-p="dark"]    { --force-card-accent: oklch(0.68 0.28 22); }
+.swse-force-suite-tab .fcard[data-p="light"]   { --force-card-accent: oklch(0.78 0.20 220); }
+.swse-force-suite-tab .fcard[data-p="tk"]      { --force-card-accent: oklch(0.72 0.22 290); }
+.swse-force-suite-tab .fcard[data-p="mind"]    { --force-card-accent: oklch(0.82 0.18 65); }
+.swse-force-suite-tab .fcard[data-p="form"]    { --force-card-accent: oklch(0.72 0.26 350); }
+.swse-force-suite-tab .fcard[data-p="neutral"] { --force-card-accent: var(--swse-accent, oklch(0.72 0.18 250)); }
+
+.swse-force-suite-tab .fcard {
+  --force-card-accent: var(--swse-accent, oklch(0.72 0.18 250));
+  position: relative;
+  border-radius: 8px;
+  min-height: 200px;
+  perspective: 600px;
+  cursor: default;
+}
+
+.swse-force-suite-tab .fcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swse-force-suite-tab .fcard-inner {
+    transition: none;
+  }
+}
+
+.swse-force-suite-tab .fcard.flipped .fcard-inner {
+  transform: rotateY(180deg);
+}
+
+.swse-force-suite-tab .fc-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--swse-concept-panel-2, var(--swse-concept-panel, rgba(0,0,0,0.3)));
+  border: 1px solid var(--force-card-accent);
+  box-shadow: 0 0 6px color-mix(in oklch, var(--force-card-accent) 30%, transparent);
+}
+
+.swse-force-suite-tab .fc-face.back {
+  transform: rotateY(180deg);
+}
+
+.swse-force-suite-tab .fc-strip {
+  height: 3px;
+  background: var(--force-card-accent);
+  flex-shrink: 0;
+}
+
+.swse-force-suite-tab .fc-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  min-height: 48px;
+  flex-shrink: 0;
+}
+
+.swse-force-suite-tab .fc-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px color-mix(in oklch, var(--force-card-accent) 60%, transparent));
+}
+
+.swse-force-suite-tab .fc-sym {
+  font-size: 1.8rem;
+  color: var(--force-card-accent);
+}
+
+.swse-force-suite-tab .fc-body {
+  flex: 1;
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow: hidden;
+}
+
+.swse-force-suite-tab .fc-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--force-card-accent);
+  line-height: 1.2;
+}
+
+.swse-force-suite-tab .fc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+}
+
+.swse-force-suite-tab .dtag {
+  font-size: 0.6rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  background: color-mix(in oklch, var(--force-card-accent) 20%, transparent);
+  border: 1px solid color-mix(in oklch, var(--force-card-accent) 40%, transparent);
+  color: var(--force-card-accent);
+}
+
+.swse-force-suite-tab .fc-blurb {
+  font-size: 0.65rem;
+  color: var(--swse-concept-text-dim, #8fd7ef);
+  opacity: 0.8;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.swse-force-suite-tab .fc-foot,
+.swse-force-suite-tab .fc-bfoot {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.4rem;
+  border-top: 1px solid color-mix(in oklch, var(--force-card-accent) 20%, transparent);
+  flex-shrink: 0;
+}
+
+.swse-force-suite-tab .fc-use {
+  flex: 1;
+  font-size: 0.65rem;
+  padding: 0.25rem 0.4rem;
+  background: color-mix(in oklch, var(--force-card-accent) 15%, transparent);
+  border: 1px solid var(--force-card-accent);
+  border-radius: 4px;
+  color: var(--force-card-accent);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.swse-force-suite-tab .fc-use:hover {
+  background: color-mix(in oklch, var(--force-card-accent) 25%, transparent);
+}
+
+.swse-force-suite-tab .fc-flip {
+  font-size: 0.65rem;
+  padding: 0.25rem 0.4rem;
+  background: transparent;
+  border: 1px solid var(--swse-concept-line, rgba(255,255,255,0.2));
+  border-radius: 4px;
+  color: var(--swse-concept-text-dim, #8fd7ef);
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.swse-force-suite-tab .fc-flip:hover { opacity: 1; }
+
+/* ── Card back face ────────────────────────────────────────────────────── */
+.swse-force-suite-tab .fc-bback {
+  flex: 1;
+  padding: 0.4rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.swse-force-suite-tab .fc-bname {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--force-card-accent);
+}
+
+.swse-force-suite-tab .fc-bdesc {
+  font-size: 0.65rem;
+  color: var(--swse-concept-text-dim, #8fd7ef);
+  opacity: 0.85;
+  line-height: 1.4;
+}
+
+/* DC table */
+.swse-force-suite-tab .dct {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.6rem;
+}
+
+.swse-force-suite-tab .dct th {
+  padding: 0.2rem 0.3rem;
+  text-align: left;
+  border-bottom: 1px solid var(--force-card-accent);
+  color: var(--swse-concept-text-dim, #8fd7ef);
+  opacity: 0.7;
+  font-size: 0.6rem;
+}
+
+.swse-force-suite-tab .dct td {
+  padding: 0.2rem 0.3rem;
+  vertical-align: top;
+  border-bottom: 1px solid color-mix(in oklch, var(--force-card-accent) 15%, transparent);
+  color: var(--swse-concept-text-dim, #8fd7ef);
+}
+
+.swse-force-suite-tab .dct .dn {
+  font-weight: 600;
+  color: var(--force-card-accent);
+  white-space: nowrap;
+}
+
+/* Force Point boost row */
+.swse-force-suite-tab .fpb {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem;
+  border-radius: 4px;
+  background: color-mix(in oklch, var(--force-card-accent) 10%, transparent);
+  border: 1px solid color-mix(in oklch, var(--force-card-accent) 30%, transparent);
+}
+
+.swse-force-suite-tab .fpb.na {
+  opacity: 0.4;
+}
+
+.swse-force-suite-tab .fp-tog {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--force-card-accent);
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.swse-force-suite-tab .fp-tog.on {
+  background: var(--force-card-accent);
+}
+
+.swse-force-suite-tab .fpb-lbl {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--swse-concept-text, #f2fbff);
+}
+
+.swse-force-suite-tab .fpb-note {
+  font-size: 0.6rem;
+  color: var(--swse-concept-text-faint, rgba(143,215,239,0.6));
+  margin-left: auto;
+}
+
+/* ── Spent overlay ─────────────────────────────────────────────────────── */
+.swse-force-suite-tab .fc-spent {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: oklch(0.70 0.22 25);
+  background: rgba(0,0,0,0.55);
+  border-radius: 8px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.swse-force-suite-tab .fcard.spent .fc-spent {
+  display: flex;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* Discard section                                                            */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+.swse-force-suite-tab .disc-wrap {
+  border-radius: 8px;
+  padding: 0.5rem;
+  background: var(--swse-concept-panel, rgba(0,0,0,0.2));
+  border: 1px solid var(--swse-concept-line, rgba(255,255,255,0.1));
+}
+
+.swse-force-suite-tab .disc-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+.swse-force-suite-tab .disc-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--swse-concept-text, #f2fbff);
+}
+
+.swse-force-suite-tab .disc-num {
+  font-weight: 700;
+  color: oklch(0.70 0.22 25);
+}
+
+.swse-force-suite-tab .disc-nlbl {
+  font-size: 0.65rem;
+  color: var(--swse-concept-text-faint, rgba(143,215,239,0.5));
+}
+
+.swse-force-suite-tab .disc-gap { flex: 1; }
+
+.swse-force-suite-tab .rrow {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.swse-force-suite-tab .rbtn {
+  font-size: 0.65rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  background: var(--swse-concept-panel-2, rgba(255,255,255,0.05));
+  border: 1px solid var(--swse-concept-line, rgba(255,255,255,0.2));
+  color: var(--swse-concept-text-dim, #8fd7ef);
+  transition: background 0.15s;
+}
+
+.swse-force-suite-tab .rbtn:hover {
+  background: color-mix(in srgb, var(--swse-concept-panel-2, rgba(255,255,255,0.05)) 80%, white 20%);
+}
+
+.swse-force-suite-tab .rbtn.sel {
+  border-color: oklch(0.82 0.19 145);
+  color: oklch(0.82 0.19 145);
+}
+
+.swse-force-suite-tab .rbtn-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.4rem;
+}
+
+.swse-force-suite-tab .rbtn-rule {
+  font-size: 0.6rem;
+  color: var(--swse-concept-text-faint, rgba(143,215,239,0.45));
+}
+
+.swse-force-suite-tab .disc-body {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.swse-force-suite-tab .dstack {
+  position: relative;
+  width: 40px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.swse-force-suite-tab .dstack-c {
+  position: absolute;
+  width: 36px;
+  height: 48px;
+  border-radius: 4px;
+  border: 1px solid var(--swse-concept-line, rgba(255,255,255,0.2));
+  background: var(--swse-concept-panel, rgba(0,0,0,0.3));
+}
+
+.swse-force-suite-tab .dstack-c:nth-child(1) { top: 0; left: 0; }
+.swse-force-suite-tab .dstack-c:nth-child(2) { top: 2px; left: 2px; }
+.swse-force-suite-tab .dstack-c:nth-child(3) { top: 4px; left: 4px; }
+
+.swse-force-suite-tab .dstack-n {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: oklch(0.70 0.22 25);
+}
+
+.swse-force-suite-tab .disc-pile {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.swse-force-suite-tab .disc-chip {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  border: 1px solid oklch(0.70 0.22 25);
+  color: oklch(0.70 0.22 25);
+  background: color-mix(in oklch, oklch(0.70 0.22 25) 10%, transparent);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.swse-force-suite-tab .disc-chip:hover,
+.swse-force-suite-tab.is-picking-recovery .disc-chip {
+  background: color-mix(in oklch, oklch(0.70 0.22 25) 25%, transparent);
+}
+
+.swse-force-suite-tab .disc-empty {
+  font-size: 0.7rem;
+  color: var(--swse-concept-text-faint, rgba(143,215,239,0.4));
+  font-style: italic;
+}
+
+/* Recovery pick mode — outline the discard pile as a target zone */
+.swse-force-suite-tab.is-picking-recovery .disc-pile {
+  outline: 1px dashed oklch(0.82 0.19 145);
+  border-radius: 4px;
+  padding: 0.25rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/* Roll toast                                                                 */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+.swse-force-suite-tab .roll-toast {
+  position: sticky;
+  bottom: 0.5rem;
+  margin: 0 auto;
+  max-width: 320px;
+  background: var(--swse-concept-panel, rgba(0,0,0,0.85));
+  border: 1px solid var(--swse-concept-line, rgba(255,255,255,0.2));
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.75rem;
+  color: var(--swse-concept-text, #f2fbff);
+}
+
+.swse-force-suite-tab .roll-toast.hidden {
+  display: none;
+}
+
+/* ─── Holopad Roll Companion ─────────────────────────────────────────────── */
+/*
+ * Companion overlay that appears inside the holopad screen on every roll
+ * initiated from the SWSE shell. Chat cards remain authoritative.
+ * Hosted inside .swse-v2-screen--concept (position:absolute + overflow:hidden)
+ * so it clips naturally to the screen bezel.
+ */
+
+.swse-holopad-roll-companion {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 900;
+  min-width: 200px;
+  max-width: 300px;
+  pointer-events: none;
+}
+
+.swse-holopad-roll-companion.is-visible {
+  display: block;
+  pointer-events: auto;
+}
+
+.swse-holopad-roll-companion .hrc-inner {
+  position: relative;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  text-align: center;
+  background: color-mix(in srgb, var(--swse-concept-bg, #060a12) 94%, transparent);
+  border: 1px solid var(--swse-concept-line, rgba(112, 226, 255, 0.34));
+  box-shadow:
+    0 0 40px rgba(0, 0, 0, 0.75),
+    0 0 16px color-mix(in srgb, var(--swse-accent, #70e2ff) 14%, transparent);
+  color: var(--swse-concept-text, #f2fbff);
+}
+
+/* Animate in */
+@media (prefers-reduced-motion: no-preference) {
+  .swse-holopad-roll-companion.is-visible .hrc-inner {
+    animation: hrc-appear 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes hrc-appear {
+    from { transform: translateY(-10px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+}
+
+.swse-holopad-roll-companion .hrc-close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.45rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.65rem;
+  opacity: 0.4;
+  color: inherit;
+  line-height: 1;
+  padding: 0;
+}
+.swse-holopad-roll-companion .hrc-close:hover { opacity: 0.9; }
+
+.swse-holopad-roll-companion .hrc-title {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 0.3rem;
+  font-family: var(--swse-font-mono, "JetBrains Mono", monospace);
+}
+
+.swse-holopad-roll-companion .hrc-actor,
+.swse-holopad-roll-companion .hrc-item {
+  font-size: 0.6rem;
+  opacity: 0.5;
+  margin-bottom: 0.15rem;
+}
+
+.swse-holopad-roll-companion .hrc-die-zone {
+  margin: 0.45rem 0;
+}
+
+.swse-holopad-roll-companion .hrc-die {
+  font-size: 3.2rem;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--swse-accent, #70e2ff);
+}
+
+/* Kind-specific accent colors */
+.swse-holopad-roll-companion[data-kind="force"]      .hrc-die { color: oklch(0.78 0.20 220); }
+.swse-holopad-roll-companion[data-kind="attack"]     .hrc-die { color: oklch(0.72 0.22 290); }
+.swse-holopad-roll-companion[data-kind="damage"]     .hrc-die { color: oklch(0.70 0.22 25);  }
+.swse-holopad-roll-companion[data-kind="skill"]      .hrc-die { color: oklch(0.85 0.18 200); }
+.swse-holopad-roll-companion[data-kind="ability"]    .hrc-die { color: oklch(0.82 0.18 65);  }
+.swse-holopad-roll-companion[data-kind="initiative"] .hrc-die { color: oklch(0.82 0.19 145); }
+
+.swse-holopad-roll-companion.is-critical .hrc-die { color: oklch(0.88 0.17 95); }
+.swse-holopad-roll-companion.is-fumble   .hrc-die { color: oklch(0.70 0.22 25); }
+
+.swse-holopad-roll-companion .hrc-formula {
+  font-size: 0.6rem;
+  opacity: 0.5;
+  margin-bottom: 0.25rem;
+  font-family: var(--swse-font-mono, "JetBrains Mono", monospace);
+}
+
+.swse-holopad-roll-companion .hrc-total {
+  font-size: 0.82rem;
+  margin-bottom: 0.2rem;
+}
+
+.swse-holopad-roll-companion .hrc-dc,
+.swse-holopad-roll-companion .hrc-tier {
+  font-size: 0.68rem;
+  opacity: 0.7;
+  margin-bottom: 0.15rem;
+}
+
+.swse-holopad-roll-companion .hrc-outcome {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
+.swse-holopad-roll-companion .hrc-outcome.hit,
+.swse-holopad-roll-companion .hrc-outcome.success { color: oklch(0.82 0.19 145); }
+.swse-holopad-roll-companion .hrc-outcome.miss,
+.swse-holopad-roll-companion .hrc-outcome.failure { color: oklch(0.70 0.22 25); }
+
+.swse-holopad-roll-companion .hrc-effect {
+  font-size: 0.6rem;
+  opacity: 0.6;
+  line-height: 1.4;
+  margin-bottom: 0.15rem;
+}
+
+.swse-holopad-roll-companion .hrc-callout {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: oklch(0.88 0.17 95);
+  margin-top: 0.25rem;
+}
+
+.swse-holopad-roll-companion .hrc-chat-cue {
+  font-size: 0.58rem;
+  opacity: 0.35;
+  margin-top: 0.4rem;
+}
+
+.swse-holopad-roll-companion.is-success .hrc-tier { color: oklch(0.82 0.19 145); }
+.swse-holopad-roll-companion.is-failure .hrc-tier { color: oklch(0.70 0.22 25);  }

@@ -8,6 +8,7 @@ import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/for
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { ShellOverlayManager } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellOverlayManager.js";
+import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
 
 /**
  * Handle force card discard animation
@@ -159,6 +160,14 @@ export function activateForceUI(sheet, html, { signal } = {}) {
         const result = await ForceExecutor.activateForce(sheet.actor, itemId, isRecovery);
         if (result.success) {
           ui?.notifications?.info?.(`${power.name} ${isRecovery ? "recovered" : "used"}`);
+          // Show holopad roll companion — ForceExecutor.activateForce does not roll dice;
+          // this is a use/discard action, so we display the action outcome only.
+          showHolopadRollCompanion(button, result, {
+            kind: 'force',
+            title: isRecovery ? 'Force Recovered' : 'Force Used',
+            itemName: power.name,
+            actorName: sheet.actor?.name,
+          });
         }
       } catch (err) {
         // console.error("Force activation failed:", err);
@@ -190,6 +199,85 @@ export function activateForceUI(sheet, html, { signal } = {}) {
     button.addEventListener('click', async (event) => {
       event.preventDefault();
       openItemCustomization(sheet.actor, null, { initialCategory: 'lightsaber', mode: 'construct' });
+    }, { signal });
+  });
+
+  // ── Force Suite handlers ───────────────────────────────────────────────────
+
+  // Force Suite: flip card front/back
+  html.querySelectorAll('[data-action="force-suite-flip-card"]').forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const card = button.closest('.fcard');
+      card?.classList.toggle('flipped');
+    }, { signal });
+  });
+
+  // Force Suite: Force Point boost toggle (visual only, no actor mutation)
+  html.querySelectorAll('[data-action="force-suite-toggle-fp-boost"]').forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (button.disabled) return;
+      button.classList.toggle('on');
+    }, { signal });
+  });
+
+  // Force Suite: recover all (rest or natural 20)
+  html.querySelectorAll('[data-action="force-suite-recover-all"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      try {
+        const result = await ForceExecutor.recoverForcePowers(sheet.actor);
+        if (result?.success) {
+          ui?.notifications?.info?.('All spent Force powers recovered.');
+          sheet.render?.(false);
+        } else {
+          ui?.notifications?.warn?.(result?.error || 'No spent Force powers to recover.');
+        }
+      } catch (err) {
+        ui?.notifications?.error?.(`Force recovery failed: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+  // Force Suite: enter pick-recovery mode (Spend Force Point)
+  html.querySelectorAll('[data-action="force-suite-pick-recovery"]').forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const root = button.closest('[data-force-suite-tab]');
+      const hasDiscard = !!root?.querySelector('[data-force-discard-pile] [data-action="force-suite-recover-one"]');
+      if (!hasDiscard) {
+        ui?.notifications?.info?.('Discard pile is empty.');
+        return;
+      }
+      root?.classList.toggle('is-picking-recovery');
+      button.classList.toggle('sel');
+    }, { signal });
+  });
+
+  // Force Suite: recover one power from discard pile
+  html.querySelectorAll('[data-action="force-suite-recover-one"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const itemId = button.dataset.itemId;
+      if (!itemId) return;
+
+      const root = button.closest('[data-force-suite-tab]');
+      const spendingForcePoint = root?.classList.contains('is-picking-recovery');
+
+      try {
+        const result = await ForceExecutor.recoverForcePowers(sheet.actor, [itemId]);
+        if (result?.success) {
+          const spentMsg = spendingForcePoint ? ' (Force Point spent)' : '';
+          ui?.notifications?.info?.(`Force power recovered${spentMsg}.`);
+          root?.classList.remove('is-picking-recovery');
+          sheet.render?.(false);
+        } else {
+          ui?.notifications?.warn?.(result?.error || 'Could not recover that Force power.');
+        }
+      } catch (err) {
+        ui?.notifications?.error?.(`Force recovery failed: ${err.message}`);
+      }
     }, { signal });
   });
 

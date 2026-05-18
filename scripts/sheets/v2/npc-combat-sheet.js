@@ -16,6 +16,7 @@ import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/comba
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 import { computeCenteredPosition, getApplicationTargetSize } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -218,8 +219,19 @@ export class SWSEV2CombatNpcSheet extends
         ev.preventDefault();
         const skillKey = ev.currentTarget?.dataset?.skill;
         if (skillKey && this.actor) {
-          await SWSERoll.rollSkill(this.actor, skillKey);
-}
+          const skillResult = await SWSERoll.rollSkill(this.actor, skillKey);
+          if (skillResult) {
+            const rollObj = skillResult?.roll ?? skillResult;
+            if (rollObj?.total != null) {
+              const skill = this.actor.system.skills?.[skillKey];
+              showHolopadRollCompanion(ev.currentTarget, rollObj, {
+                kind: 'skill',
+                title: `${skill?.label ?? skillKey} Check`,
+                actorName: this.actor?.name,
+              });
+            }
+          }
+        }
       }, { signal });
     }
 
@@ -246,11 +258,20 @@ export class SWSEV2CombatNpcSheet extends
         if (!itemId || !this.actor) return;
         const item = this.actor.items?.get(itemId);
         if (!item) return;
+        let attackResult = null;
         if (typeof item.roll === "function") {
-          await item.roll();
+          attackResult = await item.roll();
         } else {
-          await SWSERoll.rollAttack(this.actor, item, { showDialog: true });
-}
+          attackResult = await SWSERoll.rollAttack(this.actor, item, { showDialog: true });
+        }
+        if (attackResult?.roll) {
+          showHolopadRollCompanion(ev.currentTarget, attackResult, {
+            kind: 'attack',
+            title: `${item.name} — Attack`,
+            actorName: this.actor?.name,
+            itemName: item.name,
+          });
+        }
       }, { signal });
     }
 
