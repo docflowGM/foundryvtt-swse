@@ -1,0 +1,100 @@
+<div class="screen">
+    <div class="scanv"></div>
+    <div class="cnr tl"></div><div class="cnr tr"></div><div class="cnr bl"></div><div class="cnr br"></div>
+
+    <!-- HUD -->
+    <div class="hud">
+      <div class="hud-l">
+        <span style="display:flex;gap:6px;align-items:center;"><span class="bdot"></span>LINK</span>
+        <span style="display:flex;gap:6px;align-items:center;"><span class="bdot w"></span>CHAR-REC</span>
+        <span>ENC · AES-2048</span>
+      </div>
+      <div class="hud-title">FORCE SUITE // MK-VII</div>
+      <div class="hud-r"><span id="clock" style="font-family:var(--font-mono);font-size:10px;">00:00·UTC</span></div>
+    </div>
+
+    <!-- Mini char strip -->
+    <div class="mchar">
+      <div>
+        <div class="mc-name">KAEL VORREN</div>
+        <div class="mc-sub">Jedi Guardian 8 &nbsp;·&nbsp; Human &nbsp;·&nbsp; Force Adept</div>
+      </div>
+      <div class="mc-gap"></div>
+      <div class="mstat utf">
+        <div><div class="ml">Use the Force</div><div class="mv">+14</div></div>
+      </div>
+      <div class="mstat fp">
+        <div><div class="ml">Force Points</div><div class="mv" id="fp-val">5</div></div>
+        <div class="fp-dots" id="fp-dots"></div>
+      </div>
+      <div class="mstat dsp">
+        <div><div class="ml">Dark Side Score</div><div class="mv" id="dsp-val">0</div></div>
+      </div>
+      <div class="suite-badge">◈ Force Suite</div>
+    </div>
+
+    <!-- FORCE SUITE -->
+    <div class="fsuite" data-screen-label="Force Suite">
+
+      <!-- Force Powers -->
+      <div>
+        <div class="fs-head">
+          <span class="fs-head-lbl cy">⬡ Force Powers</span>
+          <span class="fs-head-cnt cy" id="cnt-force">8</span>
+          <div class="fs-line cy"></div>
+          <span class="fs-head-rule">Standard Action · Use the Force check</span>
+        </div>
+        <div class="fs-hand" id="hand-force"></div>
+      </div>
+
+      <!-- Form Powers -->
+      <div>
+        <div class="fs-head">
+          <span class="fs-head-lbl pk">◇ Lightsaber Form Powers</span>
+          <span class="fs-head-cnt pk" id="cnt-form">4</span>
+          <div class="fs-line pk"></div>
+          <span class="fs-head-rule">Requires Form Training · Reaction / Standard</span>
+        </div>
+        <div class="fs-hand" id="hand-form"></div>
+      </div>
+
+      <!-- Discard pile -->
+      <div class="disc-wrap">
+        <div class="disc-head">
+          <span class="disc-title">◇ Discard Pile</span>
+          <span class="disc-num" id="disc-num">0</span>
+          <span class="disc-nlbl">spent</span>
+          <div class="disc-gap"></div>
+          <div class="rrow">
+            <button class="rbtn rest" id="btn-rest">⟲ Rest (1 min)</button>
+            <button class="rbtn n20" id="btn-n20">★ Natural 20</button>
+            <button class="rbtn fpr" id="btn-fp">◆ Spend Force Point</button>
+          </div>
+        </div>
+        <div class="rbtn-rules">
+          <div class="rbtn-rule">After 1 min rest, regain all spent Force Powers.</div>
+          <div class="rbtn-rule">Nat 20 on UTF check: regain all at end of turn.</div>
+          <div class="rbtn-rule">Spend Force Point as Reaction: recover one spent power.</div>
+        </div>
+        <div class="disc-body" style="margin-top:10px;">
+          <div class="dstack">
+            <div class="dstack-c"></div><div class="dstack-c"></div><div class="dstack-c"></div>
+            <div class="dstack-n" id="dstack-n">0</div>
+          </div>
+          <div class="disc-pile" id="disc-pile"><span class="disc-empty">No spent powers</span></div>
+        </div>
+      </div>
+
+    </div><!-- /fsuite -->
+  </div><!-- /screen -->
+</div></div><!-- /tablet /stage -->
+
+<!-- Roll Toast -->
+<div id="roll-toast" class="roll-toast hidden">
+  <div class="rt-pn" id="rt-pn">BATTLE STRIKE</div>
+  <div class="rt-die" id="rt-die">—</div>
+  <div class="rt-total" id="rt-total"></div>
+  <div class="rt-tier" id="rt-tier"></div>
+  <div class="rt-fx" id="rt-fx"></div>
+  <div class="rt-nat" id="rt-nat"></div>
+</div>
