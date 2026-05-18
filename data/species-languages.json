@@ -1,336 +1,1814 @@
 {
-  "Human": {
-    "languages": ["Basic"],
-    "canSpeakAll": true
-  },
-  "Aqualish": {
-    "languages": ["Aqualish", "Basic"],
-    "canSpeakAll": true
-  },
-  "Bothan": {
-    "languages": ["Bothese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Cerean": {
-    "languages": ["Cerean", "Basic"],
-    "canSpeakAll": true
-  },
-  "Duros": {
-    "languages": ["Durese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Ewok": {
-    "languages": ["Ewokese"],
-    "canSpeakAll": false,
-    "note": "Does not get Basic for free"
-  },
-  "Gamorrean": {
-    "languages": ["Gamorrean"],
-    "understands": ["Basic"],
-    "canSpeakAll": false,
-    "note": "Understands but cannot speak Basic"
-  },
-  "Gungan": {
-    "languages": ["Gunganese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Hutt": {
-    "languages": ["Huttese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Ithorian": {
-    "languages": ["Ithorese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Kel Dor": {
-    "languages": ["Kel Dor", "Basic"],
-    "canSpeakAll": true
-  },
-  "Mon Calamari": {
-    "languages": ["Mon Calamarian", "Basic"],
-    "canSpeakAll": true
-  },
-  "Quarren": {
-    "languages": ["Quarrenese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Rodian": {
-    "languages": ["Rodese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Sullustan": {
-    "languages": ["Sullustese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Trandoshan": {
-    "languages": ["Dosh", "Basic"],
-    "canSpeakAll": true
-  },
-  "Twi'lek": {
-    "languages": ["Ryl", "Basic"],
-    "canSpeakAll": true
-  },
-  "Wookiee": {
-    "languages": ["Shyriiwook", "Basic"],
-    "canSpeakAll": true
-  },
-  "Zabrak": {
-    "languages": ["Zabrak", "Basic"],
-    "canSpeakAll": true
-  },
-  "Chistori": {
-    "languages": ["Chistorian", "Basic"],
-    "canSpeakAll": true
-  },
-  "Mantellian Savrip": {
-    "languages": ["Savrip"],
-    "canSpeakAll": false,
-    "note": "Does not get Basic for free"
-  },
-  "Utai": {
-    "languages": ["Utapese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Arkanian": {
-    "languages": ["Arkanian", "Basic"],
-    "canSpeakAll": true
-  },
-  "Arkanian Offshoot": {
-    "languages": ["Arkanian", "Basic"],
-    "canSpeakAll": true
-  },
-  "Cathar": {
-    "languages": ["Catharese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Draethos": {
-    "languages": ["Draethos", "Basic"],
-    "canSpeakAll": true
-  },
-  "Feeorin": {
-    "languages": ["Feeorin", "Basic"],
-    "canSpeakAll": true
-  },
-  "Khil": {
-    "languages": ["Khilese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Kissai": {
-    "languages": ["Sith", "Basic"],
-    "canSpeakAll": true
-  },
-  "Massassi": {
-    "languages": ["Sith"],
-    "canSpeakAll": false,
-    "note": "Does not get Basic for free"
-  },
-  "Miraluka": {
-    "languages": ["Miralukese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Rakata": {
-    "languages": ["Rakata", "Basic"],
-    "canSpeakAll": true
-  },
-  "Selkath": {
-    "languages": ["Selkath", "Basic"],
-    "canSpeakAll": true
-  },
-  "Snivvian": {
-    "languages": ["Snivvian", "Basic"],
-    "canSpeakAll": true
-  },
-  "Felucian": {
-    "languages": ["Felucianese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Gran": {
-    "languages": ["Gran", "Basic"],
-    "canSpeakAll": true
-  },
-  "Noghri": {
-    "languages": ["Honoghran", "Basic"],
-    "canSpeakAll": true
-  },
-  "Nosaurian": {
-    "languages": ["Nosaurian", "Basic"],
-    "canSpeakAll": true
-  },
-  "Talz": {
-    "languages": ["Talz", "Basic"],
-    "canSpeakAll": true
-  },
-  "Togorian": {
-    "languages": ["Togorian", "Basic"],
-    "canSpeakAll": true
-  },
-  "Togruta": {
-    "languages": ["Togruti", "Basic"],
-    "canSpeakAll": true
-  },
-  "Whiphid": {
-    "languages": ["Whiphid", "Basic"],
-    "canSpeakAll": true
-  },
-  "Yarkora": {
-    "languages": ["Yarkora", "Basic"],
-    "canSpeakAll": true
-  },
-  "Balosar": {
-    "languages": ["Balosar", "Basic"],
-    "canSpeakAll": true
-  },
-  "Blood Carver": {
-    "languages": ["Batorese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Clawdite": {
-    "languages": ["Clawdite", "Zolanese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Falleen": {
-    "languages": ["Falleen", "Basic"],
-    "canSpeakAll": true
-  },
-  "Gand": {
-    "languages": ["Gand"],
-    "canSpeakAll": false,
-    "note": "Does not get Basic for free"
-  },
-  "Houk": {
-    "languages": ["Houkese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Jawa": {
-    "languages": ["Jawa Trade Language", "Basic"],
-    "canSpeakAll": true
-  },
-  "Ryn": {
-    "languages": ["Ryn", "Basic"],
-    "canSpeakAll": true
-  },
-  "Toydarian": {
-    "languages": ["Toydarian", "Basic"],
-    "canSpeakAll": true
-  },
-  "Ubese": {
-    "languages": ["Ubeninal", "Basic"],
-    "canSpeakAll": true
-  },
-  "Wroonian": {
-    "languages": ["Wroonian", "Basic"],
-    "canSpeakAll": true
-  },
-  "Aleena": {
-    "languages": ["Aleena", "Basic"],
-    "canSpeakAll": true
-  },
-  "Anomid": {
-    "languages": ["Anomid", "Basic"],
-    "canSpeakAll": true
-  },
-  "Barabel": {
-    "languages": ["Barabel", "Basic"],
-    "canSpeakAll": true
-  },
-  "Besalisk": {
-    "languages": ["Besalisk", "Basic"],
-    "canSpeakAll": true
-  },
-  "Chiss": {
-    "languages": ["Cheunh", "Basic"],
-    "canSpeakAll": true
-  },
-  "Codru-Ji": {
-    "languages": ["Codruese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Devaronian": {
-    "languages": ["Devaronese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Iktotchi": {
-    "languages": ["Iktotchese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Klatooinian": {
-    "languages": ["Klatooinian", "Basic"],
-    "canSpeakAll": true
-  },
-  "Kubaz": {
-    "languages": ["Kubaz", "Basic"],
-    "canSpeakAll": true
-  },
-  "Muun": {
-    "languages": ["Muun", "Basic"],
-    "canSpeakAll": true
-  },
-  "Nikto": {
-    "languages": ["Nikto", "Basic"],
-    "canSpeakAll": true
-  },
-  "Ortolan": {
-    "languages": ["Ortolan", "Basic"],
-    "canSpeakAll": true
-  },
-  "Pau'an": {
-    "languages": ["Utapese", "Basic"],
-    "canSpeakAll": true
-  },
-  "Quermian": {
-    "languages": ["Quermian", "Basic"],
-    "canSpeakAll": true
-  },
-  "Vurk": {
-    "languages": ["Vurk", "Basic"],
-    "canSpeakAll": true
-  },
-  "Weequay": {
-    "languages": ["Weequay", "Basic"],
-    "canSpeakAll": true
-  },
-  "Zeltron": {
-    "languages": ["Zeltron", "Basic"],
-    "canSpeakAll": true
-  },
-  "Anzati": {
-    "languages": ["Anzati", "Basic"],
-    "canSpeakAll": true
-  },
-  "Chevin": {
-    "languages": ["Chevin", "Basic"],
-    "canSpeakAll": true
-  },
-  "Defel": {
-    "languages": ["Defel", "Basic"],
-    "canSpeakAll": true
-  },
-  "Firrerreo": {
-    "languages": ["Firrerreo", "Basic"],
-    "canSpeakAll": true
-  },
-  "Givin": {
-    "languages": ["Givin", "Basic"],
-    "canSpeakAll": true
-  },
-  "Kiffar": {
-    "languages": ["Kiffar", "Basic"],
-    "canSpeakAll": true
-  },
-  "Omwati": {
-    "languages": ["Omwati", "Basic"],
-    "canSpeakAll": true
-  },
-  "Shi'ido": {
-    "languages": ["Shi'ido", "Basic"],
-    "canSpeakAll": true
-  },
-  "Vratix": {
-    "languages": ["Vratix", "Basic"],
-    "canSpeakAll": true
-  },
-  "Yevetha": {
-    "languages": ["Yevethan", "Basic"],
-    "canSpeakAll": true
+  "note": "Canonical species automatic-language helper used by the language progression step. Full languages block duplicate selection; partial/understand-only Basic remains visible but can still be upgraded with a bonus language pick.",
+  "species": {
+    "Human": {
+      "species": "Human",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Language: All Humans can speak, read, and write Basic."
+    },
+    "Aqualish": {
+      "species": "Aqualish",
+      "languages": [
+        {
+          "name": "Aqualish",
+          "mode": "full"
+        },
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Aqualish can speak, read, and write both Aqualish and Basic."
+    },
+    "Bothan": {
+      "species": "Bothan",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Bothese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Bothans can speak, read, and write both Basic and Bothese."
+    },
+    "Cerean": {
+      "species": "Cerean",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Cerean",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Cereans can speak, read, and write both Basic and Cerean."
+    },
+    "Duro": {
+      "species": "Duro",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Durese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Duros can speak, read, and write both Basic and Durese."
+    },
+    "Ewok": {
+      "species": "Ewok",
+      "languages": [
+        {
+          "name": "Ewokese",
+          "mode": "speakOnly",
+          "note": "No written form in the species rules."
+        },
+        {
+          "name": "Basic",
+          "mode": "understandOnly",
+          "note": "Understands Basic but does not speak it by default."
+        }
+      ],
+      "sourceLine": "All Ewoks can speak Ewokese. They have no written form of their language."
+    },
+    "Gamorrean": {
+      "species": "Gamorrean",
+      "languages": [
+        {
+          "name": "Gamorrean",
+          "mode": "speakOnly",
+          "note": "No written form in the species rules."
+        },
+        {
+          "name": "Basic",
+          "mode": "readWriteUnderstand",
+          "note": "Understands, reads, and writes Basic, but cannot speak it."
+        }
+      ],
+      "sourceLine": "All Gamorreans can speak Gamorrean. They have no written version of the language. In addition, all Gamorreans understand, read, and write (but not speak) Basic."
+    },
+    "Gungan": {
+      "species": "Gungan",
+      "languages": [
+        {
+          "name": "Gunganese",
+          "mode": "full"
+        },
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Gungans can speak, read, and write both Gunganese and Basic."
+    },
+    "Hutt": {
+      "species": "Hutt",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Huttese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Hutts can speak, read, and write both Basic and Huttese."
+    },
+    "Ithorian": {
+      "species": "Ithorian",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Ithorese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Ithorians can speak, read, and write Basic and Ithorese."
+    },
+    "Kel Dor": {
+      "species": "Kel Dor",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Kel Dor",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Kel Dor can speak, read, and write both Basic and Kel Dor."
+    },
+    "Mon Calamari": {
+      "species": "Mon Calamari",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Mon Calamarian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Mon Calamari can speak, read, and write both Basic and Mon Calamarian."
+    },
+    "Quarren": {
+      "species": "Quarren",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Quarrenese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Quarren can speak, read, and write both Basic and Quarrenese."
+    },
+    "Rodian": {
+      "species": "Rodian",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Rodese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Rodians can speak, read, and write both Basic and Rodese."
+    },
+    "Sullustan": {
+      "species": "Sullustan",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Sullustese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Sullustans can speak, read, and write both Basic and Sullustese."
+    },
+    "Trandoshan": {
+      "species": "Trandoshan",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Dosh",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Trandoshans can speak, read, and write both Basic and Dosh."
+    },
+    "Twi'lek": {
+      "species": "Twi'lek",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Ryl",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Twi'leks can speak, read, and write both Basic and Ryl."
+    },
+    "Wookiee": {
+      "species": "Wookiee",
+      "languages": [
+        {
+          "name": "Shyriiwook",
+          "mode": "speakOnly",
+          "note": "Native Wookiee speech."
+        },
+        {
+          "name": "Basic",
+          "mode": "understandOnly",
+          "note": "Understands Basic but cannot speak it by default."
+        }
+      ],
+      "sourceLine": "All Wookiees can speak Shyriiwook and understand Basic."
+    },
+    "Zabrak": {
+      "species": "Zabrak",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Zabrak",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Zabrak can speak, read, and write both Basic and Zabrak."
+    },
+    "Chistori": {
+      "species": "Chistori",
+      "languages": [
+        {
+          "name": "Chistori",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Chistori can speak, read, and write Chistori."
+    },
+    "Replica Droid": {
+      "species": "Replica Droid",
+      "languages": [
+        {
+          "name": "Binary",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Replica Droids can speak, read, and write Binary. All Replica Droids also learn the native language of the Species they are replicating (typically Basic for Humans)."
+    },
+    "Utai": {
+      "species": "Utai",
+      "languages": [
+        {
+          "name": "Utapese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Utai can speak, read, and write Utapese."
+    },
+    "Arkanian": {
+      "species": "Arkanian",
+      "languages": [
+        {
+          "name": "Arkanian",
+          "mode": "full"
+        },
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Arkanians can speak, read, and write both Arkanian and Basic."
+    },
+    "Arkanian Offshoot": {
+      "species": "Arkanian Offshoot",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Arkanian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Arkanian Offshoots can speak, read, and write both Basic and Arkanian (albeit with a distinct accent)."
+    },
+    "Cathar": {
+      "species": "Cathar",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Catharese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Cathar can speak, read, and write both Basic and Catharese."
+    },
+    "Draethos": {
+      "species": "Draethos",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Draethos",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Draethos can speak, read, and write both Basic and Draethos."
+    },
+    "Feeorin": {
+      "species": "Feeorin",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Feeorin",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Feeorin can speak, read, and write both Basic and Feeorin"
+    },
+    "Khil": {
+      "species": "Khil",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Khilese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Khil can speak, read, and write both Basic and Khilese."
+    },
+    "Kissai": {
+      "species": "Kissai",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Sith",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Kissai can speak, read, and write both Basic and Sith."
+    },
+    "Massassi": {
+      "species": "Massassi",
+      "languages": [
+        {
+          "name": "Sith",
+          "mode": "conditionalLiteracy",
+          "note": "Speaks Sith; read/write is automatic only with Intelligence 12 or higher."
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Massassi can speak Sith, Massassi with an Intelligence score of 12 or higher can automatically read and write Sith as well."
+    },
+    "Rakata": {
+      "species": "Rakata",
+      "languages": [
+        {
+          "name": "Rakata",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Rakata can speak, read, and write Rakata."
+    },
+    "Selkath": {
+      "species": "Selkath",
+      "languages": [
+        {
+          "name": "Selkath",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Selkath can speak, read, and write Selkath."
+    },
+    "Snivvian": {
+      "species": "Snivvian",
+      "languages": [
+        {
+          "name": "Snivvian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Snivvians can speak, read, and write Snivvian."
+    },
+    "Aleena": {
+      "species": "Aleena",
+      "languages": [
+        {
+          "name": "Aleena",
+          "mode": "full"
+        },
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Aleena can speak, read, and write both Aleena and Basic"
+    },
+    "Caamasi": {
+      "species": "Caamasi",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Caamasi",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Caamasi can speak, read, and write both Basic and Caamasi."
+    },
+    "Felucian": {
+      "species": "Felucian",
+      "languages": [
+        {
+          "name": "Felucianese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Felucians can speak, read, and write Felucianese."
+    },
+    "Gran": {
+      "species": "Gran",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Gran",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Gran can speak, read, and write both Basic and Gran."
+    },
+    "Noghri": {
+      "species": "Noghri",
+      "languages": [
+        {
+          "name": "Honoghran",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Noghri can speak, read, and write Honoghran."
+    },
+    "Alternate Noghri": {
+      "species": "Alternate Noghri",
+      "languages": [
+        {
+          "name": "Honoghran",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Noghri can speak, read, and write both Honoghran."
+    },
+    "Nosaurian": {
+      "species": "Nosaurian",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Nosaurian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Nosaurians can speak, read, and write both Basic and Nosaurian."
+    },
+    "Talz": {
+      "species": "Talz",
+      "languages": [
+        {
+          "name": "Talz",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Talz can speak, read, and write Talz."
+    },
+    "Togorian": {
+      "species": "Togorian",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Togorian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Togorians can speak, read, and write both Basic and Togorian."
+    },
+    "Togruta": {
+      "species": "Togruta",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Togruti",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Togrutas can speak, read, and write both Basic and Togruti."
+    },
+    "Whiphid": {
+      "species": "Whiphid",
+      "languages": [
+        {
+          "name": "Whiphid",
+          "mode": "speakOnly",
+          "note": "No written form in the species rules."
+        },
+        {
+          "name": "Basic",
+          "mode": "understandOnly",
+          "note": "Understands Basic but does not speak it by default."
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Whiphids can speak Whiphid. There is no written language for Whiphid."
+    },
+    "Yarkora": {
+      "species": "Yarkora",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Yarkora",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Yarkora can speak, read, and write both Basic and Yarkora."
+    },
+    "Balosar": {
+      "species": "Balosar",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Balosar",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Balosars can speak, read, and write both Basic and Balosar."
+    },
+    "Blood Carver": {
+      "species": "Blood Carver",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Batorese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Blood Carvers can speak, read, and write both Basic and Batorese."
+    },
+    "Clawdite": {
+      "species": "Clawdite",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Clawdite",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Clawdites can speak, read, and write both Basic and Clawdite."
+    },
+    "Falleen": {
+      "species": "Falleen",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Falleen",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Falleen can speak, read, and write both Basic and Falleen."
+    },
+    "Gand": {
+      "species": "Gand",
+      "languages": [
+        {
+          "name": "Gand",
+          "mode": "full",
+          "note": "Gand can learn to read, write, and understand other languages, but need a Transliterator to speak them."
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Gand can speak, read, and write Gand. A Gand can learn to read, write, and understand other languages, but cannot speak them without the aid of a Transliterator."
+    },
+    "Houk": {
+      "species": "Houk",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Houkese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Houk can speak, read, and write both Basic and Houkese."
+    },
+    "Jawa": {
+      "species": "Jawa",
+      "languages": [
+        {
+          "name": "Jawaese",
+          "mode": "full"
+        },
+        {
+          "name": "Jawa Trade Language",
+          "mode": "full"
+        },
+        {
+          "name": "Basic",
+          "mode": "understandOnly",
+          "note": "Understands Basic but does not speak it by default."
+        }
+      ],
+      "sourceLine": "All Jawas can speak, read, and write both Jawaese and the Jawa Trade Language."
+    },
+    "Alternate Jawa": {
+      "species": "Alternate Jawa",
+      "languages": [
+        {
+          "name": "Jawaese",
+          "mode": "full"
+        },
+        {
+          "name": "Jawa Trade Language",
+          "mode": "full"
+        },
+        {
+          "name": "Basic",
+          "mode": "understandOnly",
+          "note": "Understands Basic but does not speak it by default."
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Jawas can speak, read, and write both Jawaese and the Jawa Trade Language."
+    },
+    "Ryn": {
+      "species": "Ryn",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Ryn",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Ryn can speak, read, and write both Basic and Ryn."
+    },
+    "Toydarian": {
+      "species": "Toydarian",
+      "languages": [
+        {
+          "name": "Huttese",
+          "mode": "full"
+        },
+        {
+          "name": "Toydarian",
+          "mode": "full"
+        },
+        {
+          "name": "Basic",
+          "mode": "understandOnly",
+          "note": "Understands Basic but does not speak it by default."
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Toydarians can speak, read, and write both Huttese and Toydarian."
+    },
+    "Ubese": {
+      "species": "Ubese",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Ubese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Ubese can speak, read, and write both Basic and Ubese. Additionally, they can communicate through Ubeninal, a sign language that serves as the primary medium for communication among Ubese."
+    },
+    "Wroonian": {
+      "species": "Wroonian",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Wroonian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Wroonians can speak, read, and write both Basic and Wroonian."
+    },
+    "Dug": {
+      "species": "Dug",
+      "languages": [
+        {
+          "name": "Dug",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Dugs can speak, read, and write Dug."
+    },
+    "Gen'Dai": {
+      "species": "Gen'Dai",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Gen'Dai",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Gen'Dai can speak, read, and write both Basic and Gen'Dai."
+    },
+    "Geonosian": {
+      "species": "Geonosian",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Geonosian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Geonosians can speak, read, and write both Basic and Geonosian."
+    },
+    "Iktotchi": {
+      "species": "Iktotchi",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Iktotchese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Iktotchi can speak, read, and write both Basic and Iktotchese."
+    },
+    "Kaleesh": {
+      "species": "Kaleesh",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Kaleesh",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Kaleesh can speak, read, and write both Basic and Kaleesh."
+    },
+    "Kaminoan": {
+      "species": "Kaminoan",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Kaminoan",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Kaminoans can speak, read, and write both Basic and Kaminoan."
+    },
+    "Alternate Kaminoan": {
+      "species": "Alternate Kaminoan",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Kaminoan",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Kaminoans can speak, read, and write both Basic and Kaminoan."
+    },
+    "Kerkoiden": {
+      "species": "Kerkoiden",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Kerkoidese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Kerkoiden can speak, read, and write both Basic and Kerkoidese."
+    },
+    "Nautolan": {
+      "species": "Nautolan",
+      "languages": [
+        {
+          "name": "Nautila",
+          "mode": "communicate",
+          "note": "Communicates in Nautila; out of water much of its meaning is lost."
+        },
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Nautolans can communicate in Nautila, and can speak, read, and write Basic."
+    },
+    "Nelvaanian": {
+      "species": "Nelvaanian",
+      "languages": [
+        {
+          "name": "Nelvaanese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Nelvaanians can speak, read, and write Nelvaanese."
+    },
+    "The Human Clones produced by the Kaminoans for the Republic": {
+      "species": "The Human Clones produced by the Kaminoans for the Republic",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Language: All Republic Clones can speak, read, and write Basic."
+    },
+    "Vurk": {
+      "species": "Vurk",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Semblan",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Vurks can speak, read, and write both Basic and Semblan."
+    },
+    "Advozse": {
+      "species": "Advozse",
+      "languages": [
+        {
+          "name": "Advb",
+          "mode": "full"
+        },
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Advozsec can speak, read, and write both Advb and Basic."
+    },
+    "Chagrian": {
+      "species": "Chagrian",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Chagri",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Chagrians can speak, read, and write both Basic and Chagri."
+    },
+    "Codru-Ji": {
+      "species": "Codru-Ji",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Codruese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Codru-Ji can speak, read, and write both Basic and Codruese."
+    },
+    "Klatooinian": {
+      "species": "Klatooinian",
+      "languages": [
+        {
+          "name": "Huttese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Klatooinians can speak, read, and write Huttese."
+    },
+    "Nagai": {
+      "species": "Nagai",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Nagaian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Nagai can speak, read, and write both Basic and Nagaian."
+    },
+    "Sakiyan": {
+      "species": "Sakiyan",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Sakiyan",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Sakiyans can speak, read, and write both Basic and Sakiyan."
+    },
+    "Vahla": {
+      "species": "Vahla",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Vahla",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Vahla can speak, read, and write both Basic and Vahla."
+    },
+    "Weequay": {
+      "species": "Weequay",
+      "languages": [
+        {
+          "name": "Sriluurian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Weequay can speak, read, and write Sriluurian."
+    },
+    "Yuuzhan Vong": {
+      "species": "Yuuzhan Vong",
+      "languages": [
+        {
+          "name": "Yuuzhan Vong",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Yuuzhan Vong can speak, read, and write Yuuzhan Vong."
+    },
+    "Alternate Yuuzhan Vong": {
+      "species": "Alternate Yuuzhan Vong",
+      "languages": [
+        {
+          "name": "Yuuzhan Vong",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Yuuzhan Vong can speak, read, and write Yuuzhan Vong."
+    },
+    "Zeltron": {
+      "species": "Zeltron",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Zeltrons can speak, read, and write Basic."
+    },
+    "Celegian": {
+      "species": "Celegian",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "understandOnly",
+          "note": "Understands Basic but does not speak it by default."
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Celegians can understand Basic."
+    },
+    "Shard": {
+      "species": "Shard",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full",
+          "note": "Requires a computer connection or vocabulator to communicate with most creatures."
+        },
+        {
+          "name": "Binary",
+          "mode": "full",
+          "note": "Requires a computer connection or vocabulator to communicate with most creatures."
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Shards can speak, read, and write both Basic and Binary. Shards can communicate with other creatures only when connected to a computer or a Vocabulator."
+    },
+    "Vultan": {
+      "species": "Vultan",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Dromnyr",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Vultans can speak, read, and write both Basic and Dromnyr."
+    },
+    "Barabel": {
+      "species": "Barabel",
+      "languages": [
+        {
+          "name": "Barabel",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Barabels can speak, read, and write Barabel."
+    },
+    "Dashade": {
+      "species": "Dashade",
+      "languages": [
+        {
+          "name": "Dashadi",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Dashade can speak, read, and write Dashadi."
+    },
+    "Lurmen": {
+      "species": "Lurmen",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Lurmese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Lurmen can speak, read, and write both Basic and Lurmese."
+    },
+    "Taung": {
+      "species": "Taung",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Mando'a",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Taung can speak, read, and write both Basic and Mando'a."
+    },
+    "Thakwaash": {
+      "species": "Thakwaash",
+      "languages": [
+        {
+          "name": "Thakwaashi",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Thakwaash can speak, read, and write Thakwaashi."
+    },
+    "Trianii": {
+      "species": "Trianii",
+      "languages": [
+        {
+          "name": "Trianii",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Trianii can speak, read, and write Trianii."
+    },
+    "Yevetha": {
+      "species": "Yevetha",
+      "languages": [
+        {
+          "name": "Yevethan",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Yevetha can speak, read, and write Yevethan."
+    },
+    "Yuzzem": {
+      "species": "Yuzzem",
+      "languages": [
+        {
+          "name": "Yuzz",
+          "mode": "speakOnly",
+          "note": "No written form in the species rules."
+        },
+        {
+          "name": "Basic",
+          "mode": "understandOnly",
+          "note": "Understands Basic but does not speak it by default."
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Yuzzem can speak Yuzz. They have no written form of their language."
+    },
+    "Zygerrian": {
+      "species": "Zygerrian",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Zygerrians can speak, read, and write Basic."
+    },
+    "Bith": {
+      "species": "Bith",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Bith",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Bith can speak, read, and write both Basic and Bith."
+    },
+    "Alternate Bith": {
+      "species": "Alternate Bith",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Bith",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Bith can speak, read, and write both Basic and Bith."
+    },
+    "Defel": {
+      "species": "Defel",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Defel",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Defel can speak, read, and write both Basic and Defel."
+    },
+    "Elomin": {
+      "species": "Elomin",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Elomin",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Elomin can speak, read, and write both Basic and Elomin."
+    },
+    "Fosh": {
+      "species": "Fosh",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Fosh",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Fosh can speak, read, and write both Basic and Fosh."
+    },
+    "Givin": {
+      "species": "Givin",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Givin",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Givin can speak, read, and write both Basic and Givin."
+    },
+    "Gotal": {
+      "species": "Gotal",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Gotal",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Gotals can speak, read, and write both Basic and Gotal."
+    },
+    "Herglic": {
+      "species": "Herglic",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Herglic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Herglics can speak, read, and write both Basic and Herglic."
+    },
+    "Mrlssi": {
+      "species": "Mrlssi",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Mrlsstese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Mrlssi can speak, read, and write both Basic and Mrlsstese."
+    },
+    "Neimoidian": {
+      "species": "Neimoidian",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Neimoidian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Neimoidians can speak, read and write both Basic and Neimoidian."
+    },
+    "Nyriaanan": {
+      "species": "Nyriaanan",
+      "languages": [
+        {
+          "name": "Nyriaanan",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Nyriaanans can speak, read, and write Nyriaanan."
+    },
+    "Pa'lowick": {
+      "species": "Pa'lowick",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Lowickese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Pa'lowicks can speak, read, and write both Basic and Lowickese."
+    },
+    "Umbaran": {
+      "species": "Umbaran",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Umbarese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Umbarans can speak, read, and write both Basic and Umbarese."
+    },
+    "Alternate Umbaran": {
+      "species": "Alternate Umbaran",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Umbarese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Umbarans can speak, read, and write both Basic and Umbarese."
+    },
+    "Altiri": {
+      "species": "Altiri",
+      "languages": [
+        {
+          "name": "Altirish",
+          "mode": "full"
+        },
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Altiri can speak, read, and write both Altirish and Basic."
+    },
+    "Anzati": {
+      "species": "Anzati",
+      "languages": [
+        {
+          "name": "Anzat",
+          "mode": "full"
+        },
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Anzati can speak, read, and write both Anzat and Basic."
+    },
+    "Anarrian": {
+      "species": "Anarrian",
+      "languages": [
+        {
+          "name": "Anarrese",
+          "mode": "full"
+        },
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Anarrians can speak, read, and write both Anarrese and Basic."
+    },
+    "Chadra-Fan": {
+      "species": "Chadra-Fan",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Chadra-Fan",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Chadra-Fans can speak, read, and write both Basic and Chadra-Fan."
+    },
+    "Alternate Chadra-Fan": {
+      "species": "Alternate Chadra-Fan",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Chadra-Fan",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Chadra-Fans can speak, read, and write both Basic and Chadra-Fan."
+    },
+    "Ebruchi": {
+      "species": "Ebruchi",
+      "languages": [
+        {
+          "name": "Ebruchese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Ebruchi can speak, read, and write Ebruchese."
+    },
+    "Ishi Tib": {
+      "species": "Ishi Tib",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Tibranese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Ishi Tib can speak, read, and write both Basic and Tibranese."
+    },
+    "Killik": {
+      "species": "Killik",
+      "languages": [
+        {
+          "name": "Killik",
+          "mode": "full"
+        },
+        {
+          "name": "Sy Bisti",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Killiks can speak, read, and write both Killik and Sy Bisti."
+    },
+    "Krevaaki": {
+      "species": "Krevaaki",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Kreva",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Krevaaki can speak, read, and write both Basic and Kreva."
+    },
+    "Alternate Krevaaki": {
+      "species": "Alternate Krevaaki",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Kreva",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Krevaaki can speak, read, and write both Basic and Kreva."
+    },
+    "Lugubraa": {
+      "species": "Lugubraa",
+      "languages": [
+        {
+          "name": "Lugubraal",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Lugubraa can speak, read, and write Lugubraal."
+    },
+    "Nikto": {
+      "species": "Nikto",
+      "languages": [
+        {
+          "name": "Nikto",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Nikto can speak, read, and write Nikto, as well as either Basic or Huttese (chosen at Character Creation)."
+    },
+    "O'reenian": {
+      "species": "O'reenian",
+      "languages": [
+        {
+          "name": "O'reenian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Language: All O'reenians can speak, read, and write O'reenian."
+    },
+    "Shistavanen": {
+      "species": "Shistavanen",
+      "languages": [
+        {
+          "name": "Shistavanen",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Shistavanen can speak, read, and write Shistavanen."
+    },
+    "Sluissi": {
+      "species": "Sluissi",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Sluissese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Sluissi can speak, read, and write both Basic and Sluiussese."
+    },
+    "Sorcerer of Rhand": {
+      "species": "Sorcerer of Rhand",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Sorcerers of Rhand can speak, read, and write Basic. They can also select three additional bonus languages at 1st level."
+    },
+    "Squib": {
+      "species": "Squib",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Squibbian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Squibs can speak, read, and write both Basic and Squibbian."
+    },
+    "Ssi-Ruuk": {
+      "species": "Ssi-Ruuk",
+      "languages": [
+        {
+          "name": "Ssi-Ruuvi",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Ssi-Ruuk can speak, read, and write Ssi-Ruuvi."
+    },
+    "Tof": {
+      "species": "Tof",
+      "languages": [
+        {
+          "name": "Tof",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Tofs can speak, read, and write Tof."
+    },
+    "Vagaari": {
+      "species": "Vagaari",
+      "languages": [
+        {
+          "name": "Sy Bisti",
+          "mode": "full"
+        },
+        {
+          "name": "Vagaari",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Vagaari can speak, read, and write both Sy Bisti and Vagaari."
+    },
+    "Verpine": {
+      "species": "Verpine",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Verpine",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Verpine can speak, read, and write both Basic and Verpine."
+    },
+    "Amani": {
+      "species": "Amani",
+      "languages": [
+        {
+          "name": "Amanese",
+          "mode": "speakOnly",
+          "note": "No written form in the species rules."
+        },
+        {
+          "name": "Basic",
+          "mode": "understandOnly",
+          "note": "Understands Basic but does not speak it by default."
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Amanin can speak Amanese. They have no written form of their language."
+    },
+    "Arcona": {
+      "species": "Arcona",
+      "languages": [
+        {
+          "name": "Arconese",
+          "mode": "full"
+        },
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Arcona can speak, read, and write both Arconese and Basic."
+    },
+    "Devaronian": {
+      "species": "Devaronian",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Devaronese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Devaronians can speak, read, and write both Basic and Devaronese."
+    },
+    "Nazren": {
+      "species": "Nazren",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Nazren",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Nazren can speak, read, and write both Basic and Nazren."
+    },
+    "Pau'an": {
+      "species": "Pau'an",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Utapese",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Pau'ans can speak, read, and write both Basic and Utapese."
+    },
+    "Phindian": {
+      "species": "Phindian",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "full"
+        },
+        {
+          "name": "Phindian",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Phindians can speak, read, and write both Basic and Phindian."
+    },
+    "Polis Massan": {
+      "species": "Polis Massan",
+      "languages": [
+        {
+          "name": "Basic",
+          "mode": "readWriteUnderstand",
+          "note": "Understands, reads, and writes Basic, but does not speak it by default."
+        },
+        {
+          "name": "Massan",
+          "mode": "readWriteUnderstand",
+          "note": "Understands, reads, and writes Massan, but does not speak it by default."
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Polis Massans can understand, read, and write both Basic and Massan."
+    },
+    "Skakoan": {
+      "species": "Skakoan",
+      "languages": [
+        {
+          "name": "Skakoverbal",
+          "mode": "speakOnly",
+          "note": "Spoken Skakoan language."
+        },
+        {
+          "name": "Skakoform",
+          "mode": "writtenOnly",
+          "note": "Written Skakoan language."
+        },
+        {
+          "name": "Basic",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Skakoans can speak Skakoverbal, read and write Skakoform, and speak, read, and write Basic."
+    },
+    "Stereb": {
+      "species": "Stereb",
+      "languages": [
+        {
+          "name": "Stereb",
+          "mode": "full"
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Stereb can speak, read, and write Stereb."
+    },
+    "Tusken Raider": {
+      "species": "Tusken Raider",
+      "languages": [
+        {
+          "name": "Tusken",
+          "mode": "speakOnly",
+          "note": "No written form is granted by the species rules."
+        },
+        {
+          "name": "Basic",
+          "mode": "understandOnly",
+          "note": "Understands Basic but does not speak it by default."
+        }
+      ],
+      "sourceLine": "Automatic Languages: All Tusken Raiders can speak Tusken."
+    }
   }
 }

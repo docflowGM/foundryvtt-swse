@@ -15,6 +15,48 @@
     </div>
     {{/if}}
 
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card prog-finalization-card">
+      <div class="prog-section-header"><span><i class="fas fa-heart-pulse"></i> Hit Point Finalization</span></div>
+      <div class="prog-finalization-status {{#if hpGainState.resolved}}is-resolved{{else}}is-required{{/if}}">
+        <span>{{#if hpGainState.resolved}}Resolved{{else}}Required{{/if}}</span>
+        <strong>{{#if hpGainState.resolved}}+{{hpGainState.gain}} HP{{else}}Roll or choose maximum HP{{/if}}</strong>
+      </div>
+      <div class="prog-summary-delta-grid">
+        <div class="prog-summary-delta-row"><span>Formula</span><strong>{{hpGainState.formula}}</strong></div>
+        <div class="prog-summary-delta-row"><span>Rule</span><strong>{{hpGainState.ruleLabel}}</strong></div>
+        {{#if hpGainState.maximumGain}}<div class="prog-summary-delta-row"><span>Maximum Option</span><strong>+{{hpGainState.maximumGain}}</strong></div>{{/if}}
+      </div>
+      {{#if hpGainState.needsResolution}}
+        {{#unless hpGainState.resolved}}
+          <div class="prog-finalization-actions">
+            <button type="button" class="prog-finalization-btn prog-finalization-btn--primary" data-action="roll-hp"><i class="fas fa-dice-d20"></i> Roll HP</button>
+            <button type="button" class="prog-finalization-btn" data-action="use-max-hp"><i class="fas fa-arrow-up-short-wide"></i> Take Max</button>
+          </div>
+        {{/unless}}
+      {{/if}}
+    </div>
+
+    {{#if levelupSummary.creditPreview}}
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card prog-finalization-card">
+      <div class="prog-section-header"><span><i class="fas fa-coins"></i> Credits Preview</span></div>
+      <div class="prog-summary-delta-grid">
+        <div class="prog-summary-delta-row"><span>Current Credits</span><strong>{{levelupSummary.creditPreview.currentCredits}}</strong></div>
+        <div class="prog-summary-delta-row"><span>Pending Credits</span><strong class="{{#if levelupSummary.creditPreview.hasChanges}}prog-number-positive{{else}}prog-number-zero{{/if}}">+{{levelupSummary.creditPreview.pendingDelta}}</strong></div>
+        <div class="prog-summary-delta-row"><span>After Confirmation</span><strong>{{levelupSummary.creditPreview.finalCredits}}</strong></div>
+      </div>
+      {{#if levelupSummary.creditPreview.sources.length}}
+        <div class="prog-credit-source-list">
+          {{#each levelupSummary.creditPreview.sources}}
+            <div class="prog-credit-source prog-credit-source--{{this.tone}}"><span>{{this.label}}</span><strong>+{{this.amount}}</strong></div>
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="prog-placeholder">No credit changes from this level-up.</div>
+      {{/if}}
+    </div>
+    {{/if}}
+
     {{#if levelupSummary.metadataChanges.length}}
     <div class="prog-summary-section swse-card-schema swse-card-schema--identity swse-card-schema--filled prog-summary-card">
       <div class="prog-section-header"><span><i class="fas fa-layer-group"></i> Class Progression</span></div>
@@ -142,6 +184,42 @@
 <div class="prog-summary-surface prog-summary-surface--chargen">
   <div class="prog-panel prog-panel--center prog-panel--summary-preview">
     <h3 class="prog-panel-title">Character Preview</h3>
+
+
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card prog-finalization-card">
+      <div class="prog-section-header"><span><i class="fas fa-clipboard-check"></i> Finalization Required</span></div>
+      <div class="prog-finalization-grid">
+        <div class="prog-finalization-mini-card is-resolved">
+          <span class="prog-finalization-mini-card__label"><i class="fas fa-heart-pulse"></i> Starting HP</span>
+          <strong>{{summary.hpCalculation.total}}</strong>
+          <small>{{summary.hpCalculation.formula}}</small>
+        </div>
+        {{#if summary.creditsState}}
+        <div class="prog-finalization-mini-card {{#if summary.creditsState.resolved}}is-resolved{{else}}is-required{{/if}}">
+          <span class="prog-finalization-mini-card__label"><i class="fas fa-coins"></i> Starting Credits</span>
+          <strong>{{#if summary.creditsState.resolved}}{{summary.creditsState.amount}}{{else}}Roll Required{{/if}}</strong>
+          <small>{{summary.creditsState.ruleLabel}}{{#if summary.creditsState.formula}} · {{summary.creditsState.formula}}{{/if}}</small>
+        </div>
+        {{/if}}
+      </div>
+      {{#if summary.creditsState}}
+        {{#if summary.creditsState.needsResolution}}
+          {{#unless summary.creditsState.resolved}}
+            <div class="prog-finalization-actions">
+              <button type="button" class="prog-finalization-btn prog-finalization-btn--primary" data-action="roll-credits"><i class="fas fa-dice-d20"></i> Roll Starting Credits</button>
+              <button type="button" class="prog-finalization-btn" data-action="use-max-credits"><i class="fas fa-arrow-up-short-wide"></i> Take Max</button>
+            </div>
+          {{/unless}}
+        {{/if}}
+        {{#if summary.creditsState.sources.length}}
+          <div class="prog-credit-source-list">
+            {{#each summary.creditsState.sources}}
+              <div class="prog-credit-source prog-credit-source--{{this.tone}}"><span>{{this.label}}</span><strong>+{{this.amount}}</strong></div>
+            {{/each}}
+          </div>
+        {{/if}}
+      {{/if}}
+    </div>
 
     <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled prog-summary-card">
       <div class="prog-section-header"><span><i class="fas fa-fist-raised"></i> Derived Combat Stats</span></div>

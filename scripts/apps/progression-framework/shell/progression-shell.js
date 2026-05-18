@@ -2700,7 +2700,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     event?.preventDefault();
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.rollCredits) {
-      await plugin.rollCredits(this.actor);
+      await plugin.rollCredits(this.actor, this);
       this.render();
     }
   }
@@ -2709,7 +2709,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     event?.preventDefault();
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.useMaximumCredits) {
-      await plugin.useMaximumCredits(this.actor);
+      await plugin.useMaximumCredits(this.actor, this);
       this.render();
     }
   }
@@ -2719,7 +2719,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     event?.preventDefault();
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.useAverageCredits) {
-      await plugin.useAverageCredits(this.actor);
+      await plugin.useAverageCredits(this.actor, this);
       this.render();
     }
   }
@@ -2727,7 +2727,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     event?.preventDefault();
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.rollHPGain) {
-      await plugin.rollHPGain(this.actor);
+      await plugin.rollHPGain(this.actor, this);
       this.render();
     }
   }
@@ -2736,7 +2736,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     event?.preventDefault();
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.useMaximumHPGain) {
-      await plugin.useMaximumHPGain(this.actor);
+      await plugin.useMaximumHPGain(this.actor, this);
       this.render();
     }
   }

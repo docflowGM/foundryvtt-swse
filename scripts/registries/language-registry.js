@@ -61,6 +61,7 @@ export class LanguageRegistry {
       const data = await resp.json();
       const categories = data?.categories || {};
       const localSet = new Set((data?.localLanguages || []).map((n) => String(n || '').trim()).filter(Boolean));
+      const descriptions = data?.descriptions || {};
 
       const seen = new Set();
       const addLanguage = (name, categoryKey) => {
@@ -76,6 +77,7 @@ export class LanguageRegistry {
           slug,
           id: slug,
           category: categoryKey || null,
+          description: descriptions[cleanName] || '',
           isLocal: localSet.has(cleanName),
           internalId,
           _id: internalId,

@@ -237,11 +237,27 @@
 
           {{!-- PHASE 4 UX: Footer status readout line --}}
           {{#if footerStatus}}
-          <div class="prog-footer-status-line {{#if footerStatusState.isComplete}}prog-footer-status-line--complete{{else}}prog-footer-status-line--pending{{/if}}"
+          <div class="prog-footer-status-line {{#if footerStatusState.isComplete}}prog-footer-status-line--complete{{else}}prog-footer-status-line--pending{{/if}} {{#if footer.explanation}}prog-footer-status-line--explainable{{/if}}"
                data-remaining="{{footerStatusState.remaining}}"
                data-total="{{footerStatusState.total}}">
-            <span class="prog-footer-status-label">STATUS:</span>
-            <span class="prog-footer-status-value">{{footerStatus}}</span>
+            <button type="button"
+                    class="prog-footer-status-trigger"
+                    aria-label="Explain {{footerStatus}}"
+                    {{#unless footer.explanation}}disabled{{/unless}}>
+              <span class="prog-footer-status-label">STATUS:</span>
+              <span class="prog-footer-status-value">{{footerStatus}}</span>
+              {{#if footer.explanation}}
+                <i class="fas fa-circle-info prog-footer-status-info" aria-hidden="true"></i>
+              {{/if}}
+            </button>
+            {{#if footer.explanation}}
+              <div class="prog-footer-explain-popover" role="tooltip">
+                <div class="prog-footer-explain__eyebrow">COUNTER EXPLAINER</div>
+                <div class="prog-footer-explain__title">{{footer.explanation.title}}</div>
+                <div class="prog-footer-explain__summary">{{{footer.explanation.summaryHtml}}}</div>
+                {{{footer.explanation.bodyHtml}}}
+              </div>
+            {{/if}}
           </div>
           {{/if}}
 

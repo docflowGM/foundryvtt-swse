@@ -482,10 +482,10 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       const label = summaryParts.length > 0
         ? `✓ ${summaryParts.join(', ')}`
         : `✓ ${totalSelected} Selected`;
-      return [{ label, isWarning: false }];
+      return [{ label, count: 0, total: Math.max(0, Number(this._remainingPicks || 0)), selected: Math.max(0, totalSelected), isWarning: false }];
     }
 
-    return [{ label: `${remaining} Force Power use(s) remaining`, isWarning: true }];
+    return [{ label: 'Force Power use(s)', count: Math.max(0, remaining), total: Math.max(0, Number(this._remainingPicks || 0)), selected: Math.max(0, totalSelected), isWarning: true }];
   }
 
   /**

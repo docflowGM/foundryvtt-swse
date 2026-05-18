@@ -244,11 +244,11 @@
             </div>
             <div class="swse-home-feed">
               {{#each vm.commFeed}}
-              <div class="swse-home-feed-row">
+              <button class="swse-home-feed-row {{#if this.isUnread}}is-unread{{/if}}" type="button" data-holonet-record-id="{{this.id}}" {{#if this.threadId}}data-holonet-thread-id="{{this.threadId}}"{{/if}}>
                 <span class="swse-home-feed-ico {{this.category}}">{{this.icon}}</span>
                 <span><span class="em">{{this.sender}}</span> — {{{this.preview}}}</span>
                 <span class="swse-home-feed-time">{{this.timestamp}}</span>
-              </div>
+              </button>
               {{else}}
               <p class="swse-home-feed-empty">No Holonet traffic yet.</p>
               {{/each}}

@@ -295,11 +295,6 @@ export function ShellHostMixin(BaseClass) {
         this._wireUpgradeSurfaceEvents(root);
       }
 
-      // Workbench surface events
-      if (this._shellSurface === 'workbench') {
-        this._wireWorkbenchSurfaceEvents(root);
-      }
-
       if (this._shellSurface === 'messenger') {
         this._wireMessengerSurfaceEvents(root);
       }
@@ -392,6 +387,89 @@ export function ShellHostMixin(BaseClass) {
       });
     }
 
+
+    _collectHolonetAttachments(form) {
+      return Array.from(form?.querySelectorAll?.('input[name="attachmentUuids"]') ?? [])
+        .map(input => ({
+          uuid: String(input.value || '').trim(),
+          name: input.dataset.name || '',
+          type: input.dataset.type || '',
+          img: input.dataset.img || '',
+          documentName: input.dataset.documentName || ''
+        }))
+        .filter(att => att.uuid);
+    }
+
+    async _resolveHolonetDroppedItem(ev) {
+      const raw = ev?.dataTransfer?.getData?.('text/plain') || ev?.dataTransfer?.getData?.('application/json') || '';
+      if (!raw) return null;
+      let data = null;
+      try { data = JSON.parse(raw); } catch (_err) { return null; }
+      const isItem = data?.type === 'Item' || data?.documentName === 'Item' || data?.uuid?.includes('.Item.');
+      if (!isItem) return null;
+      let doc = null;
+      try {
+        if (data.uuid) doc = await fromUuid(data.uuid);
+        else if (globalThis.Item?.fromDropData) doc = await Item.fromDropData(data);
+      } catch (err) {
+        console.warn('[Holonet] Unable to resolve dropped item', data, err);
+      }
+      if (!doc) return null;
+      const uuid = data.uuid || doc.uuid;
+      if (!uuid) return null;
+      return {
+        uuid,
+        name: doc.name || 'Item',
+        type: doc.type || 'item',
+        img: doc.img || '',
+        documentName: doc.documentName || 'Item'
+      };
+    }
+
+    _appendHolonetAttachment(form, attachment, { inputName = 'attachmentUuids' } = {}) {
+      if (!form || !attachment?.uuid) return;
+      let bin = form.querySelector('[data-holonet-attachment-bin]');
+      if (!bin) {
+        bin = document.createElement('div');
+        bin.dataset.holonetAttachmentBin = 'true';
+        bin.className = 'hl-attach-preview-list';
+        form.appendChild(bin);
+      }
+      if (Array.from(form.querySelectorAll(`input[name="${inputName}"]`)).some(input => input.value === attachment.uuid)) return;
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = inputName;
+      input.value = attachment.uuid;
+      input.dataset.name = attachment.name || '';
+      input.dataset.type = attachment.type || '';
+      input.dataset.img = attachment.img || '';
+      input.dataset.documentName = attachment.documentName || '';
+      bin.appendChild(input);
+      const chip = document.createElement('span');
+      chip.className = 'hl-attach-preview-chip';
+      chip.textContent = `${attachment.name || 'Item'} attached`;
+      bin.appendChild(chip);
+    }
+
+    _wireHolonetAttachmentDrops(messengerRoot) {
+      messengerRoot.querySelectorAll('[data-holonet-drop-zone]').forEach(zone => {
+        zone.addEventListener('dragover', ev => {
+          ev.preventDefault();
+          zone.classList.add('hl-drop-active');
+        });
+        zone.addEventListener('dragleave', () => zone.classList.remove('hl-drop-active'));
+        zone.addEventListener('drop', async ev => {
+          ev.preventDefault();
+          zone.classList.remove('hl-drop-active');
+          const attachment = await this._resolveHolonetDroppedItem(ev);
+          if (!attachment) return;
+          const form = zone.closest('form');
+          const inputName = zone.dataset.holonetDropInput || 'attachmentUuids';
+          this._appendHolonetAttachment(form, attachment, { inputName });
+        });
+      });
+    }
+
     async _wireMessengerSurfaceEvents(root) {
       const messengerRoot = root.querySelector('[data-shell-region="surface-messenger"]');
       if (!messengerRoot) return;
@@ -400,20 +478,41 @@ export function ShellHostMixin(BaseClass) {
       const { HolonetMessengerService } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js');
 
       await HolonetComposerAssist.attach(messengerRoot);
+      this._wireHolonetAttachmentDrops(messengerRoot);
 
       const conversation = messengerRoot.querySelector('.swse-messenger-conversation[data-thread-id]');
-      if (conversation?.querySelector('.swse-msg--unread')) {
+      if (conversation?.querySelector('.swse-msg-row--unread')) {
         await HolonetMessengerService.markThreadRead(conversation.dataset.threadId);
         this.render(false);
         return;
       }
+
+      messengerRoot.querySelectorAll('[data-holonet-action="open-compose"]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          await this.setSurface('messenger', { compose: true, source: 'messenger' });
+          this.render(false);
+        });
+      });
+
+      messengerRoot.querySelectorAll('[data-holonet-action="quick-thread"][data-recipient-id]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const recipientId = el.dataset.recipientId;
+          if (!recipientId) return;
+          await HolonetMessengerService.quickStartThread({ actor, recipientId });
+          await this.setSurface('messenger', { source: 'messenger' });
+          this.render(false);
+        });
+      });
 
       messengerRoot.querySelectorAll('.swse-messenger-thread[data-thread-id]').forEach(el => {
         el.addEventListener('click', async (ev) => {
           ev.preventDefault();
           const threadId = ev.currentTarget.dataset.threadId;
           if (!threadId) return;
-          await this.setSurface('messenger', { threadId, source: 'home' });
+          await this.setSurface('messenger', { threadId, source: 'messenger' });
           this.render(false);
         });
       });
@@ -423,11 +522,183 @@ export function ShellHostMixin(BaseClass) {
           ev.preventDefault();
           const data = new FormData(form);
           const body = String(data.get('body') || '').trim();
-          if (!body) return;
+          const imageUrl = String(data.get('imageUrl') || '').trim();
+          const attachments = this._collectHolonetAttachments(form);
+          if (!body && !imageUrl && !attachments.length) return;
           const threadId = form.dataset.threadId || null;
           const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
-          await HolonetMessengerService.sendMessage({ actor, body, threadId, recipientIds });
+          await HolonetMessengerService.sendMessage({ actor, body, imageUrl, threadId, recipientIds, attachments, senderRecipientId: String(data.get('senderRecipientId') || '').trim() || null });
           form.reset();
+          this.render(false);
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="create-thread"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const data = new FormData(form);
+          const body = String(data.get('body') || '').trim();
+          const imageUrl = String(data.get('imageUrl') || '').trim();
+          const attachments = this._collectHolonetAttachments(form);
+          const title = String(data.get('title') || '').trim();
+          const threadType = String(data.get('threadType') || 'private');
+          const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+          await HolonetMessengerService.createThread({ actor, body, title, threadType, recipientIds, imageUrl, attachments, senderRecipientId: String(data.get('senderRecipientId') || '').trim() || null });
+          form.reset();
+          await this.setSurface('messenger', { source: 'messenger' });
+          this.render(false);
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="create-job"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const data = new FormData(form);
+          const title = String(data.get('title') || '').trim();
+          const body = String(data.get('body') || '').trim();
+          const contactRecipientId = String(data.get('contactRecipientId') || '').trim();
+          const rewardCredits = Number(data.get('rewardCredits') || 0);
+          const rewardItems = String(data.get('rewardItems') || '').trim();
+          const rewardItemUuids = data.getAll('rewardItemUuids').map(String).filter(Boolean);
+          const attachments = this._collectHolonetAttachments(form);
+          const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+          await HolonetMessengerService.createJobPosting({ actor, title, body, contactRecipientId, recipientIds, rewardCredits, rewardItems, rewardItemUuids, attachments });
+          form.reset();
+          await this.setSurface('messenger', { source: 'messenger' });
+          this.render(false);
+        });
+      });
+
+      messengerRoot.querySelectorAll('[data-holonet-action="thread-action"]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const threadId = el.dataset.threadId;
+          const action = el.dataset.threadAction;
+          const recipientId = el.dataset.recipientId || null;
+          const recordId = el.dataset.recordId || null;
+          const amount = Number(el.dataset.amount || 0) || null;
+          const status = el.dataset.status || null;
+          if (!threadId || !action) return;
+          await HolonetMessengerService.threadAction({ actor, threadId, action, recipientId, recordId, amount, status });
+          this.render(false);
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="manage-members"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const data = new FormData(form);
+          const action = String(data.get('memberAction') || 'invite-members');
+          const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
+          const threadId = form.dataset.threadId;
+          if (!threadId || !recipientIds.length) return;
+          await HolonetMessengerService.threadAction({ actor, threadId, action, recipientIds });
+          form.reset();
+          this.render(false);
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="transfer-credits"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const data = new FormData(form);
+          const threadId = form.dataset.threadId;
+          const recipientId = String(data.get('recipientId') || '');
+          const amount = Number(data.get('amount') || 0);
+          const partyFundCutPercent = Number(data.get('partyFundCutPercent') || 0);
+          if (!threadId || !recipientId || !Number.isFinite(amount) || amount <= 0) return;
+          const action = ev.submitter?.name === 'transferMode' && ev.submitter?.value ? ev.submitter.value : 'offer-credit-transfer';
+          if (action === 'job-payout') {
+            await HolonetMessengerService.threadAction({ actor, threadId, action, recipientId, amount, partyFundCutPercent });
+          } else {
+            await HolonetMessengerService.offerCreditTransfer({ actor, threadId, recipientId, amount });
+          }
+          form.reset();
+          this.render(false);
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="party-fund"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const data = new FormData(form);
+          const threadId = form.dataset.threadId;
+          const amount = Number(data.get('amount') || 0);
+          const recipientId = String(data.get('recipientId') || '');
+          const action = ev.submitter?.name === 'partyFundAction' && ev.submitter?.value ? ev.submitter.value : 'contribute-party-fund';
+          if (!threadId || !Number.isFinite(amount) || amount <= 0) return;
+          await HolonetMessengerService.threadAction({ actor, threadId, action, amount, recipientId });
+          form.reset();
+          this.render(false);
+        });
+      });
+
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="set-presence"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const data = new FormData(form);
+          await HolonetMessengerService.setPresence({
+            actor,
+            preset: String(data.get('preset') || 'available'),
+            status: String(data.get('status') || '').trim(),
+            visibility: String(data.get('visibility') || 'party')
+          });
+          this.render(false);
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="create-persona"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const data = new FormData(form);
+          await HolonetMessengerService.createCustomPersona({
+            label: String(data.get('label') || '').trim(),
+            avatar: String(data.get('avatar') || '').trim(),
+            notes: String(data.get('notes') || '').trim()
+          });
+          form.reset();
+          this.render(false);
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="item-transfer"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const data = new FormData(form);
+          const threadId = form.dataset.threadId;
+          const recipientId = String(data.get('recipientId') || '');
+          const itemUuids = data.getAll('attachmentUuids').map(String).filter(Boolean);
+          const action = ev.submitter?.name === 'itemTransferMode' && ev.submitter?.value ? ev.submitter.value : 'offer-item-transfer';
+          if (!threadId || !recipientId || !itemUuids.length) return;
+          await HolonetMessengerService.threadAction({ actor, threadId, action, recipientId, itemUuids });
+          form.reset();
+          this.render(false);
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="job-status"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const data = new FormData(form);
+          const threadId = form.dataset.threadId;
+          const status = String(data.get('status') || '').trim();
+          if (!threadId || !status) return;
+          await HolonetMessengerService.threadAction({ actor, threadId, action: 'set-job-status', status });
+          this.render(false);
+        });
+      });
+
+      messengerRoot.querySelectorAll('form[data-holonet-action="award-job-items"]').forEach(form => {
+        form.addEventListener('submit', async (ev) => {
+          ev.preventDefault();
+          const data = new FormData(form);
+          const threadId = form.dataset.threadId;
+          const recipientId = String(data.get('recipientId') || '');
+          const itemUuids = data.getAll('itemUuids').map(String).filter(Boolean);
+          if (!threadId || !recipientId) return;
+          await HolonetMessengerService.threadAction({ actor, threadId, action: 'award-job-items', recipientId, itemUuids });
           this.render(false);
         });
       });
@@ -522,47 +793,6 @@ export function ShellHostMixin(BaseClass) {
         } catch (err) {
           ui.notifications?.error?.(`Failed to finalize: ${err.message}`);
         }
-      });
-    }
-
-    /**
-     * Wire workbench surface events when the shell is in 'workbench' mode.
-     * Delegates data-action events to the WorkbenchSurfaceAdapter.
-     */
-    async _wireWorkbenchSurfaceEvents(root) {
-      const workbenchRoot = root.querySelector('[data-shell-region="surface-workbench"]');
-      if (!workbenchRoot) return;
-
-      const { WorkbenchSurfaceAdapter } = await import(
-        '/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js'
-      );
-      const actor = this.actor || this.document;
-      const adapter = WorkbenchSurfaceAdapter.getOrCreate(this, actor, this._shellSurfaceOptions);
-
-      // Wire all [data-action] events to the adapter
-      workbenchRoot.querySelectorAll('[data-action]').forEach(el => {
-        el.addEventListener('click', async (ev) => {
-          ev.preventDefault();
-          const action = el.dataset.action;
-          if (!action) return;
-          try {
-            await adapter.handleAction(action, el);
-          } catch (err) {
-            console.error(`[ShellHost] Workbench action "${action}" failed:`, err);
-          }
-        });
-      });
-
-      // Wire search input events
-      workbenchRoot.querySelectorAll('[data-action="search-items"]').forEach(input => {
-        input.addEventListener('input', async (ev) => {
-          ev.preventDefault();
-          try {
-            await adapter.handleAction('search-items', input);
-          } catch (err) {
-            console.error('[ShellHost] Workbench search failed:', err);
-          }
-        });
       });
     }
 

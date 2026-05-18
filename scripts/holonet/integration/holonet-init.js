@@ -60,6 +60,60 @@ export function registerHolonetSettings() {
     default: {}
   });
 
+
+  game.settings.register('foundryvtt-swse', 'holonetCustomPersonas', {
+    name: 'Holonet Message Personas (internal)',
+    scope: 'world',
+    config: false,
+    type: Array,
+    default: []
+  });
+
+
+  game.settings.register('foundryvtt-swse', 'holonetRequireCreditTransferApproval', {
+    name: 'Holonet: GM Approves Player Credit Transfers',
+    hint: 'When enabled, player-to-player credit transfers require GM approval after the recipient accepts. Defaults off.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register('foundryvtt-swse', 'holonetPartyFundEnabled', {
+    name: 'Holonet: Enable Party Fund',
+    hint: 'Adds a GM-managed party fund account that players can contribute to, and GMs can charge or pay from.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register('foundryvtt-swse', 'holonetPartyFundBalance', {
+    name: 'Holonet Party Fund Balance (internal)',
+    scope: 'world',
+    config: false,
+    type: Number,
+    default: 0
+  });
+
+  game.settings.register('foundryvtt-swse', 'holonetPartyFundDefaultCutPercent', {
+    name: 'Holonet: Default Party Fund Job Cut %',
+    hint: 'Optional default percentage of GM job payouts routed to the party fund when it is enabled.',
+    scope: 'world',
+    config: true,
+    type: Number,
+    range: { min: 0, max: 100, step: 1 },
+    default: 0
+  });
+
+  game.settings.register('foundryvtt-swse', 'holonetPartyFundLedger', {
+    name: 'Holonet Party Fund Ledger (internal)',
+    scope: 'world',
+    config: false,
+    type: Array,
+    default: []
+  });
+
   HolonetPreferences.registerSettings();
   console.log('[Holonet] Settings registered');
 }

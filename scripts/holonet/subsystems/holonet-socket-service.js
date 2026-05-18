@@ -66,7 +66,8 @@ export class HolonetSocketService {
   }
 
   static async #handleGmRequest(payload) {
-    const { action, data } = payload;
+    const { action } = payload;
+    const data = { ...(payload.data ?? {}), requesterId: payload.requesterId };
     const { HolonetEngine } = await import('../holonet-engine.js');
     const { HolonetMessengerService } = await import('./holonet-messenger-service.js');
 
@@ -87,6 +88,31 @@ export class HolonetSocketService {
       case 'send-message': {
         const result = await HolonetMessengerService._gmSendMessage(data);
         this.emitSync({ type: 'message-sent', threadId: result?.threadId ?? null });
+        break;
+      }
+      case 'create-thread': {
+        const result = await HolonetMessengerService._gmCreateThread(data);
+        this.emitSync({ type: 'thread-updated', threadId: result?.threadId ?? null });
+        break;
+      }
+      case 'create-job': {
+        const result = await HolonetMessengerService._gmCreateJobPosting(data);
+        this.emitSync({ type: 'thread-updated', threadId: result?.threadId ?? null });
+        break;
+      }
+      case 'offer-credit-transfer': {
+        const result = await HolonetMessengerService._gmOfferCreditTransfer(data);
+        this.emitSync({ type: 'thread-updated', threadId: result?.threadId ?? data?.threadId ?? null });
+        break;
+      }
+      case 'offer-item-transfer': {
+        const result = await HolonetMessengerService._gmOfferItemTransfer(data);
+        this.emitSync({ type: 'thread-updated', threadId: result?.threadId ?? data?.threadId ?? null });
+        break;
+      }
+      case 'thread-action': {
+        await HolonetMessengerService._gmThreadAction(data);
+        this.emitSync({ type: 'thread-updated', threadId: data?.threadId ?? null });
         break;
       }
       case 'mark-thread-read': {

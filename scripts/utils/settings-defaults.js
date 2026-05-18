@@ -24,6 +24,12 @@ export const SETTINGS_DEFAULTS = {
     allowAbilityReroll: true,
     allowPlayersNonheroic: false,
     maxStartingCredits: false,
+    holonetRequireCreditTransferApproval: false,
+    holonetPartyFundEnabled: false,
+    holonetPartyFundBalance: 0,
+    holonetPartyFundDefaultCutPercent: 0,
+    holonetPartyFundLedger: [],
+    holonetCustomPersonas: [],
     characterCreation: {},
 
     // Backgrounds

@@ -1,60 +1,102 @@
 {{!-- Talent Tree Browser (Stage 1) --}}
-<div class="talent-work-surface talent-stage-browser">
-  <div class="talent-browser-header">
+<div class="talent-work-surface talent-stage-browser talent-holomap-browser">
+  <div class="talent-browser-header talent-browser-header--holomap">
+    <div class="talent-browser-header__eyebrow">// TALENT MATRIX</div>
     <h3 class="talent-browser-title">
       <i class="fa-solid fa-sitemap"></i>
       Choose a Talent Tree
     </h3>
     <p class="talent-browser-hint">
       {{#if (eq slotType "class")}}
-      Select a class-specific talent tree to explore and develop your expertise.
+      Select a class-specific discipline. Each card opens a tactical holomap of legal, known, and locked talents.
       {{else}}
-      Select a heroic talent tree to develop and master a new discipline.
+      Select a heroic discipline. Each card opens a tactical holomap of legal, known, and locked talents.
       {{/if}}
     </p>
+    <div class="talent-browser-signal-row" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
+    </div>
   </div>
 
-  <section class="talent-browser-all-trees">
+  <section class="talent-browser-all-trees talent-browser-all-trees--holomap">
     {{#if allTrees}}
-    <div class="talent-tree-cards all-trees">
+    <div class="talent-tree-cards talent-tree-cards--holomap all-trees">
       {{#each allTrees}}
-      <article class="talent-tree-card {{#if isFocused}}talent-tree-card--focused{{/if}} {{#if isSuggested}}talent-tree-card--suggested{{/if}}"
+      <article class="talent-tree-card talent-tree-card--holomap talent-tree-card--{{visualKey}} {{visualThemeClass}} {{#if isFocused}}talent-tree-card--focused{{/if}} {{#if isSuggested}}talent-tree-card--suggested{{/if}} {{#if hasInvestment}}talent-tree-card--invested{{/if}}"
                data-action="focus-tree"
                data-tree-id="{{id}}"
                tabindex="0"
                role="button"
                aria-label="Focus talent tree {{name}}">
-        <div class="talent-tree-card__content">
-          <h5 class="talent-tree-card__name">{{name}}</h5>
-          <p class="talent-tree-card__summary">{{summary}}</p>
-          <div class="talent-tree-card__meta">
-            <span class="talent-tree-badge">
-              <i class="fa-solid fa-layer-group"></i> {{nodeCount}} talents
-            </span>
-            {{#if isSuggested}}
-            <span class="talent-tree-badge suggested-badge">
-              <i class="fa-solid fa-star"></i> Suggested
-            </span>
-            {{/if}}
-            {{#if (eq slotType "class")}}
-            <span class="talent-tree-badge class-badge">
-              <i class="fa-solid fa-lock"></i> Class
-            </span>
-            {{else}}
-            <span class="talent-tree-badge heroic-badge">
-              <i class="fa-solid fa-sparkles"></i> Heroic
-            </span>
-            {{/if}}
+        <div class="talent-tree-card__backplate" aria-hidden="true"></div>
+        <div class="talent-tree-card__scan" aria-hidden="true"></div>
+        <div class="talent-tree-card__topline">
+          <span class="talent-tree-card__kicker">{{visualKicker}}</span>
+          {{#if isSuggested}}
+          <span class="talent-tree-card__recommendation"><i class="fa-solid fa-star"></i> Suggested</span>
+          {{/if}}
+        </div>
+
+        <div class="talent-tree-card__hero">
+          <div class="talent-tree-card__sigil" aria-hidden="true">{{visualIcon}}</div>
+          <div class="talent-tree-card__identity">
+            <h5 class="talent-tree-card__name">{{name}}</h5>
+            <p class="talent-tree-card__summary">{{summary}}</p>
           </div>
         </div>
+
+        <div class="talent-tree-card__telemetry" aria-label="Talent tree telemetry">
+          <span class="talent-tree-card__readout">
+            <strong>{{nodeCount}}</strong>
+            <em>nodes</em>
+          </span>
+          <span class="talent-tree-card__readout">
+            <strong>{{investmentCount}}</strong>
+            <em>owned</em>
+          </span>
+          <span class="talent-tree-card__readout">
+            <strong>{{slotTypeLabel}}</strong>
+            <em>access</em>
+          </span>
+          <span class="talent-tree-card__readout talent-tree-card__readout--legal">
+            <strong>{{#if legalChoiceCount}}{{legalChoiceCount}}{{else}}0{{/if}}</strong>
+            <em>legal</em>
+          </span>
+        </div>
+
+        {{#if recommendationReason}}
+        <div class="talent-tree-card__recommendation-readout">
+          <span class="talent-tree-card__recommendation-label">
+            {{#if recommendationRank}}#{{recommendationRank}} · {{/if}}{{recommendationLabel}}
+          </span>
+          <p>{{recommendationReason}}</p>
+          {{#if recommendationTalentName}}
+          <small>Leading pick: {{recommendationTalentName}}</small>
+          {{/if}}
+        </div>
+        {{/if}}
+
+        <div class="talent-tree-card__meta">
+          <span class="talent-tree-badge talent-tree-badge--role">
+            <i class="fa-solid fa-fingerprint"></i> {{visualRole}}
+          </span>
+          <span class="talent-tree-badge talent-tree-badge--readiness">
+            <i class="fa-solid fa-circle-nodes"></i> {{readinessLabel}}
+          </span>
+          <span class="talent-tree-badge talent-tree-badge--theme">
+            <i class="fa-solid fa-wave-square"></i> {{visualSignal}}
+          </span>
+        </div>
+
         <button type="button" class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{id}}">
-          <i class="fa-solid fa-arrow-right"></i> Explore
+          <span>Explore Holomap</span>
+          <i class="fa-solid fa-arrow-right"></i>
         </button>
       </article>
       {{/each}}
     </div>
     {{else}}
-    <div class="talent-empty-state">
+    <div class="talent-empty-state talent-empty-state--holomap">
       <i class="fa-solid fa-hexagon-exclamation"></i>
       <p>No talent trees available in your current context.</p>
     </div>

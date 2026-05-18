@@ -68,39 +68,30 @@ export class HolonetManager {
     }
 
     try {
-      // Use current recipient if no sender specified
-      if (!from) {
-        const currentId = HolonetEngine.delivery.getCurrentRecipientId();
-        from = currentId || 'system:command';
+      const { HolonetMessengerService } = await import('./subsystems/holonet-messenger-service.js');
+      let actor = game.user?.character ?? null;
+      if (typeof from === 'string') {
+        const actorId = from.startsWith('actor:') ? from.slice(6) : from;
+        actor = game.actors?.get(actorId) ?? actor;
+      } else if (from?.actorId) {
+        actor = game.actors?.get(from.actorId) ?? actor;
       }
-
-      // Parse sender and recipient
-      // Note: HolonetSender does not have fromStableId/fromString, so create explicit sender objects
-      const sender = typeof from === 'string' ? HolonetSender.fromActor(from, from) : from;
-      const recipient = HolonetRecipient.fromStableId?.(to) || (typeof to === 'string' ? { id: to, label: to } : to);
-
-      // Extract recipient ID for audience (if recipient is an object, use .id property)
-      const recipientId = typeof recipient === 'string' ? recipient : recipient.id;
-
-      // Create record as proper HolonetMessage instance
-      const record = new HolonetMessage({
-        intent: INTENT_TYPE.PLAYER_MESSAGE,  // Use appropriate authored intent for direct messages
-        sender,
-        audience: HolonetAudience.selectedPlayers([recipientId]),
-        recipients: [recipient],
-        title: title || 'Message',
+      const recipientIds = Array.isArray(to) ? to : [to];
+      await HolonetMessengerService.createThread({
+        actor,
         body,
-        sourceFamily: SOURCE_FAMILY.MESSENGER,
-        metadata
+        title,
+        threadType: metadata?.threadType || 'private',
+        recipientIds: recipientIds.map(r => typeof r === 'string' ? r : r?.id).filter(Boolean),
+        imageUrl: metadata?.imageUrl || ''
       });
-
-      // Use HolonetEngine to publish
-      return HolonetEngine.publish(record, { skipSocket: false });
+      return true;
     } catch (err) {
       console.error('[HolonetManager.sendMessage] Failed:', err);
       return false;
     }
   }
+
 
   // ─── Notification API ──────────────────────────────────────────────────
   /**

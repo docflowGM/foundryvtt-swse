@@ -25,6 +25,7 @@ import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/p
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
 import { MedicalSecretRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/medical/medical-secret-registry.js';
 import { ActorEngine as CanonicalActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 
 export class ProgressionFinalizer {
   /**
@@ -300,6 +301,19 @@ export class ProgressionFinalizer {
       const hasAttributes = !!selections.attributes;
       if (!hasName || !hasClass || !hasAttributes) {
         throw new Error('Chargen incomplete: missing required name, class, or attributes in canonical session');
+      }
+      const creditMode = ProgressionRules.getStartingCreditMode?.() || 'roll';
+      const autoCredits = ProgressionRules.getMaxStartingCreditsEnabled?.() === true || creditMode === 'max' || creditMode === 'maximum' || creditMode === 'average';
+      const hasResolvedCredits = summarySelection.startingCreditsResolved === true || Number(summarySelection.startingCredits || 0) > 0;
+      if (!autoCredits && !hasResolvedCredits) {
+        throw new Error('Chargen incomplete: starting credits must be rolled or otherwise resolved before finalization');
+      }
+    }
+
+    if (sessionState.mode === 'levelup') {
+      const hpNeedsResolution = summarySelection.hpGainResolved === false || (summarySelection.hpGainRequired === true && !summarySelection.hpGainResolved);
+      if (hpNeedsResolution) {
+        throw new Error('Level-up incomplete: HP gain must be resolved before finalization');
       }
     }
   }
@@ -631,10 +645,11 @@ export class ProgressionFinalizer {
       const baseStartingCredits = this._computeStartingCredits(clazz, background);
       const explicitStartingCredits = Number(summary.startingCredits || 0) || 0;
       const wealthBonus = this._computeWealthCreditGrant(selections, actor, sessionState);
-      const explicitAlreadyIncludesWealth = wealthBonus > 0 && explicitStartingCredits >= (baseStartingCredits + wealthBonus);
-      const startingCredits = explicitAlreadyIncludesWealth
-        ? explicitStartingCredits
-        : Math.max(explicitStartingCredits, baseStartingCredits) + wealthBonus;
+      const explicitSources = Array.isArray(summary.startingCreditsBreakdown) ? summary.startingCreditsBreakdown : [];
+      const explicitIncludesWealth = explicitSources.some(source => this._normalizeNameKey(source?.label || source?.source || '') === 'wealthtalent');
+      const startingCredits = explicitStartingCredits > 0
+        ? explicitStartingCredits + (wealthBonus > 0 && !explicitIncludesWealth ? wealthBonus : 0)
+        : baseStartingCredits + wealthBonus;
       if (Number.isFinite(startingCredits) && startingCredits > 0) {
         set['system.credits'] = this._resolveFinalStartingCredits(actor, startingCredits);
       }
@@ -645,6 +660,39 @@ export class ProgressionFinalizer {
       const speciesPortrait = this._resolveSpeciesPortrait(species, pendingSpeciesContext);
       if (this._actorNeedsPortrait(actor) && speciesPortrait) {
         set.img = speciesPortrait;
+      }
+    }
+
+    if (sessionState.mode === 'levelup') {
+      const hpGain = Number(summary.hpGain || 0) || 0;
+      if (hpGain > 0) {
+        const currentHpMax = Number(actor?.system?.hp?.max ?? actor?.system?.derived?.hp?.max ?? 0) || 0;
+        const currentHpValue = Number(actor?.system?.hp?.value ?? currentHpMax) || 0;
+        set['system.hp.max'] = Math.max(1, currentHpMax + hpGain);
+        set['system.hp.value'] = Math.max(1, currentHpValue + hpGain);
+        set['system.progression.lastHpGain'] = {
+          amount: hpGain,
+          method: summary.hpGainMethod || null,
+          formula: summary.hpGainFormula || null,
+          timestamp: new Date().toISOString(),
+        };
+      }
+
+      const explicitCreditDelta = Number(summary.creditDelta || 0) || 0;
+      const inferredCreditDelta = explicitCreditDelta || this._computeLevelupWealthCreditGrant(actor, selections, sessionState);
+      if (inferredCreditDelta !== 0) {
+        const currentCredits = Math.max(0, Number(actor?.system?.credits ?? 0) || 0);
+        set['system.credits'] = Math.max(0, currentCredits + inferredCreditDelta);
+        set['system.progression.lastCreditDelta'] = {
+          amount: inferredCreditDelta,
+          sources: Array.isArray(summary.creditDeltaSources) && summary.creditDeltaSources.length
+            ? summary.creditDeltaSources
+            : [{ label: 'Wealth Talent', amount: inferredCreditDelta, tone: 'wealth' }],
+          timestamp: new Date().toISOString(),
+        };
+        if (this._levelupCreditDeltaIncludesWealth(summary, selections, actor)) {
+          set['flags.swse.progressionHistory'] = this._withLevelupWealthProgressionHistory(actor, selections, sessionState, inferredCreditDelta);
+        }
       }
     }
     // Extract language IDs from normalized format for canonical storage.
@@ -882,6 +930,54 @@ export class ProgressionFinalizer {
     return history;
   }
 
+
+  static _actorHasWealthTalent(actor) {
+    return actor?.items?.some?.(item => item?.type === 'talent' && this._selectionListHasName([item], ['Wealth'])) === true;
+  }
+
+  static _levelupCreditDeltaIncludesWealth(summary = {}, selections = {}, actor = null) {
+    if (this._hasWealthTalentSelection(selections) || this._actorHasWealthTalent(actor)) return true;
+    return (summary.creditDeltaSources || []).some(source => this._normalizeNameKey(source?.label || source?.source || '') === 'wealthtalent');
+  }
+
+  static _computeLevelupWealthCreditGrant(actor, selections = {}, sessionState = {}) {
+    if (!this._hasWealthTalentSelection(selections) && !this._actorHasWealthTalent(actor)) return 0;
+    if (!this._isLineageEligibleClass(selections.class)) return 0;
+    let classLevel = 1;
+    try {
+      const levelContext = buildLevelUpEventContext(actor, sessionState.progressionSession, { selectedClass: selections.class });
+      classLevel = Number(levelContext?.selectedClassNextLevel || 1) || 1;
+      const history = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
+      const granted = history?.['swse.talent.wealth']?.levelsGranted || [];
+      if (granted.map(Number).includes(classLevel)) return 0;
+    } catch (_err) {
+      classLevel = Number(sessionState?.targetLevel || actor?.system?.level || 1) || 1;
+    }
+    return Math.max(0, classLevel * 5000);
+  }
+
+  static _withLevelupWealthProgressionHistory(actor, selections = {}, sessionState = {}, creditDelta = 0) {
+    const raw = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
+    const history = foundry?.utils?.deepClone ? foundry.utils.deepClone(raw) : JSON.parse(JSON.stringify(raw || {}));
+    const key = 'swse.talent.wealth';
+    let classLevel = Number(sessionState?.targetLevel || actor?.system?.level || 1) || 1;
+    try {
+      const levelContext = buildLevelUpEventContext(actor, sessionState.progressionSession, { selectedClass: selections.class });
+      classLevel = Number(levelContext?.selectedClassNextLevel || classLevel) || classLevel;
+    } catch (_err) {}
+    const existing = history[key] || { levelsGranted: [] };
+    const levels = new Set((Array.isArray(existing.levelsGranted) ? existing.levelsGranted : []).map(Number).filter(Number.isFinite));
+    levels.add(classLevel);
+    history[key] = {
+      ...existing,
+      levelsGranted: Array.from(levels).sort((a, b) => a - b),
+      lastGrantedAt: new Date().toISOString(),
+      lastGrantedCredits: creditDelta,
+      source: 'levelup-finalizer',
+    };
+    return history;
+  }
+
   static _canonicalSkillKey(value) {
     const raw = String(value || '').trim();
     if (!raw) return '';
@@ -1084,7 +1180,7 @@ export class ProgressionFinalizer {
     const backgroundCredits = Number(backgroundSelection?.credits ?? backgroundSelection?.system?.credits ?? 0) || 0;
     if (classCredits + backgroundCredits > 0) return classCredits + backgroundCredits;
 
-    const fallback = { soldier: 1200, scout: 1200, scoundrel: 3000, jedi: 1200, noble: 4800, force_adept: 1200 };
+    const fallback = { soldier: 3000, scout: 3000, scoundrel: 3000, jedi: 1200, noble: 4800, force_adept: 1200 };
     return fallback[this._classKey(classModel)] || 0;
   }
 

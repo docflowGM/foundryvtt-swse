@@ -1,98 +1,514 @@
-<div class="swse-shell-surface swse-shell-surface--messenger" data-shell-region="surface-messenger" data-surface-id="{{vm.id}}">
-  <div class="swse-shell-surface__header swse-messenger-header">
-    <button class="swse-shell-surface__back-btn" data-shell-action="return-to-home" type="button" title="Return to Home">
+<div class="swse-shell-surface swse-shell-surface--messenger swse-holonet-comm" data-shell-region="surface-messenger" data-surface-id="{{vm.id}}">
+  <div class="swse-shell-surface__header swse-messenger-header hl-hud">
+    <button class="swse-shell-surface__back-btn hl-icon-btn" data-shell-action="return-to-home" type="button" title="Return to Home">
       <i class="fas fa-arrow-left"></i>
       <span>Home</span>
     </button>
 
-    <div class="swse-shell-surface__title">
+    <div class="swse-shell-surface__title hl-hud-title">
       <span class="swse-home-header__icon">✉</span>
-      <span>MESSENGER</span>
+      <span>HOLOCHAT</span>
+      {{#if vm.unreadCount}}<span class="swse-messenger-title-badge hl-badge">{{vm.unreadCount}}</span>{{/if}}
     </div>
 
-    <div class="swse-home-header__actions">
-      <button class="swse-home-header__notice-btn" data-shell-action="open-notifications" type="button" title="Holonet alerts">
+    <div class="swse-home-header__actions hl-hud-r">
+      {{#if vm.partyFund.enabled}}
+      <span class="hl-hud-pill hl-partyfund-pill">PARTY FUND // {{vm.partyFund.balance}} CR</span>
+      {{/if}}
+      {{#if vm.transferApprovalRequired}}<span class="hl-hud-pill">TRANSFER APPROVAL // ON</span>{{/if}}
+      <button class="swse-home-header__notice-btn hl-icon-btn" data-shell-action="open-notifications" type="button" title="Holonet alerts">
         <span class="swse-home-header__notice-icon">◌</span>
         <span>Alerts</span>
-        {{#if vm.notificationCenter.totalUnread}}<span class="swse-home-header__notice-badge">{{vm.notificationCenter.totalUnread}}</span>{{/if}}
+        {{#if vm.notificationCenter.totalUnread}}<span class="swse-home-header__notice-badge hl-badge">{{vm.notificationCenter.totalUnread}}</span>{{/if}}
       </button>
-      <div class="swse-home-header__actor">{{vm.actorName}}</div>
+      <div class="swse-home-header__actor hl-hud-pill"><span class="hl-dot"></span>{{vm.actorName}}</div>
+      <form class="hl-presence-form" data-holonet-action="set-presence">
+        <select name="preset" title="Holonet status">
+          <option value="available" {{#if (eq vm.presence.preset "available")}}selected{{/if}}>Available</option>
+          <option value="ready" {{#if (eq vm.presence.preset "ready")}}selected{{/if}}>Ready</option>
+          <option value="training" {{#if (eq vm.presence.preset "training")}}selected{{/if}}>Training</option>
+          <option value="shopping" {{#if (eq vm.presence.preset "shopping")}}selected{{/if}}>Shopping</option>
+          <option value="need-gm" {{#if (eq vm.presence.preset "need-gm")}}selected{{/if}}>Need GM</option>
+          <option value="away" {{#if (eq vm.presence.preset "away")}}selected{{/if}}>Away</option>
+        </select>
+        <input type="text" name="status" value="{{vm.presence.status}}" placeholder="Set status...">
+        <input type="hidden" name="visibility" value="party">
+        <button type="submit" class="hl-icon-btn">Set</button>
+      </form>
     </div>
   </div>
 
-  <div class="swse-shell-surface__body swse-messenger-body">
-    <aside class="swse-messenger-threads swse-panel">
-      <div class="swse-panel__title">Threads</div>
-      <div class="swse-messenger-thread-list">
+  <div class="swse-shell-surface__body swse-messenger-body hl-ms-root">
+    <aside class="swse-messenger-threads swse-panel hl-tlist">
+      <div class="hl-tlist-top">
+        <div class="hl-tlist-hd">
+          <div>
+            <div class="swse-panel__title hl-label hl-label--accent">Inbox</div>
+            <div class="swse-messenger-rail-subtitle hl-subtle">Private, party, side, NPC, and job traffic</div>
+          </div>
+          <button class="swse-messenger-icon-btn hl-new-btn" data-holonet-action="open-compose" type="button" title="New Transmission">＋</button>
+        </div>
+      </div>
+
+      <div class="swse-messenger-thread-list hl-tlist-scroll">
         {{#if vm.threads.length}}
-          {{#each vm.threads}}
-          <button class="swse-messenger-thread {{#if (eq ../vm.selectedThreadId this.id)}}active{{/if}}" data-thread-id="{{this.id}}" type="button">
-            <div class="swse-messenger-thread__topline">
-              <span class="swse-messenger-thread__title">{{this.title}}</span>
-              {{#if this.unreadCount}}
-              <span class="swse-messenger-thread__badge">{{this.unreadCount}}</span>
-              {{/if}}
-            </div>
-            <div class="swse-messenger-thread__preview">{{this.preview}}</div>
-          </button>
-          {{/each}}
+          <div class="hl-cat">
+            <div class="hl-cat-label">Active Threads</div>
+            {{#each vm.threads}}
+            <button class="swse-messenger-thread hl-titem {{#if (eq ../vm.selectedThreadId this.id)}}active on{{/if}} {{#if this.isPendingInvite}}swse-messenger-thread--invite hl-titem--invite{{/if}} {{#if this.isMuted}}swse-messenger-thread--muted hl-titem--muted{{/if}}" data-thread-id="{{this.id}}" type="button">
+              <span class="hl-titem-icon">{{#if this.isJob}}◆{{else}}{{#if this.isParty}}☷{{else}}{{#if this.isSide}}◇{{else}}✉{{/if}}{{/if}}{{/if}}</span>
+              <span class="hl-titem-body">
+                <span class="hl-titem-top">
+                  <span class="swse-messenger-thread__title hl-titem-title">{{this.title}}</span>
+                  <span class="hl-titem-right">
+                    {{#if this.unreadCount}}<span class="swse-messenger-thread__badge hl-badge">{{this.unreadCount}}</span>{{/if}}
+                  </span>
+                </span>
+                <span class="swse-messenger-thread__preview hl-titem-preview">{{this.preview}}</span>
+                <span class="swse-messenger-thread__chips hl-titem-chips">
+                  {{#if this.isParty}}<span class="swse-messenger-chip swse-messenger-chip--party hl-chip party">Party</span>{{/if}}
+                  {{#if this.isSide}}<span class="swse-messenger-chip swse-messenger-chip--side hl-chip">Side</span>{{/if}}
+                  {{#if this.isJob}}<span class="swse-messenger-chip swse-messenger-chip--job hl-chip job">Job</span>{{/if}}
+                  {{#if this.isPrivate}}<span class="swse-messenger-chip swse-messenger-chip--private hl-chip private">Private</span>{{/if}}
+                  {{#if this.isPendingInvite}}<span class="swse-messenger-chip swse-messenger-chip--invite hl-chip warn">Invite</span>{{/if}}
+                  {{#if this.isMuted}}<span class="swse-messenger-chip swse-messenger-chip--muted hl-chip muted">Muted</span>{{/if}}
+                  {{#if this.canManage}}<span class="swse-messenger-chip swse-messenger-chip--owner hl-chip owner">Owner</span>{{/if}}
+                </span>
+              </span>
+            </button>
+            {{/each}}
+          </div>
         {{else}}
-          <div class="swse-messenger-empty">No threads yet. Start one below.</div>
+          <div class="swse-messenger-empty hl-empty">No transmissions yet. Start a thread or wait for a contact to hail you.</div>
         {{/if}}
       </div>
     </aside>
 
-    <section class="swse-messenger-main swse-panel">
-      <div class="swse-panel__title">{{#if vm.selectedThread}}{{vm.selectedThread.title}}{{else}}New Message{{/if}}</div>
+    <section class="swse-messenger-main swse-panel hl-conv">
+      {{#if vm.composeMode}}
+      <div class="swse-messenger-compose-shell hl-compose-shell">
+        <div class="swse-messenger-main-head hl-conv-header">
+          <div>
+            <div class="swse-panel__title hl-title">New Transmission</div>
+            <div class="swse-messenger-rail-subtitle hl-subtle">Create a private holochat, side thread, party channel, or GM job posting.</div>
+          </div>
+        </div>
 
-      {{#if vm.selectedThread}}
-      <div class="swse-messenger-conversation" data-thread-id="{{vm.selectedThread.id}}">
-        {{#if vm.messages.length}}
-          {{#each vm.messages}}
-          <article class="swse-msg {{#if this.isOwn}}swse-msg--own{{/if}} {{#if this.isUnread}}swse-msg--unread{{/if}}">
-            <div class="swse-msg__meta">
-              <span class="swse-msg__sender">{{this.senderLabel}}</span>
-              <span class="swse-msg__time">{{this.createdAt}}</span>
+        <div class="hl-compose-scroll">
+          <form class="swse-messenger-compose-new hl-compose-card" data-holonet-action="create-thread">
+            <div class="swse-messenger-mode-grid hl-mode-grid">
+              <label class="swse-messenger-mode-card hl-mode-card">
+                <input type="radio" name="threadType" value="private" checked>
+                <span>Private Holochat</span>
+                <small>Invite selected contacts. Recipients can accept or decline.</small>
+              </label>
+              <label class="swse-messenger-mode-card hl-mode-card">
+                <input type="radio" name="threadType" value="side">
+                <span>Side Thread</span>
+                <small>Create a flexible planning channel with invited members.</small>
+              </label>
+              <label class="swse-messenger-mode-card hl-mode-card">
+                <input type="radio" name="threadType" value="party">
+                <span>Party Channel</span>
+                <small>Open a shared crew channel for the current party.</small>
+              </label>
             </div>
-            <div class="swse-msg__body">{{{this.bodyHtml}}}</div>
-          </article>
-          {{/each}}
-        {{else}}
-          <div class="swse-messenger-empty">Thread is empty.</div>
-        {{/if}}
+
+            <label class="swse-messenger-field hl-field">
+              <span>Thread Title</span>
+              <input type="text" name="title" placeholder="Optional transmission title">
+            </label>
+            {{#if vm.isGm}}
+            <label class="swse-messenger-field hl-field">
+              <span>Send As</span>
+              <select name="senderRecipientId">
+                <option value="{{vm.participantId}}">GM / Current Identity</option>
+                {{#each vm.recipientOptions}}{{#if this.isPersona}}<option value="{{this.id}}">{{this.label}} // {{this.typeLabel}}</option>{{/if}}{{/each}}
+              </select>
+            </label>
+            {{/if}}
+
+            <div class="swse-messenger-recipient-picker hl-recipient-picker">
+              <div class="swse-messenger-recipient-picker__title hl-label hl-label--accent">Recipients</div>
+              <div class="swse-messenger-recipient-grid hl-recipient-grid">
+                {{#each vm.recipientOptions}}
+                <label class="swse-messenger-recipient-option hl-recipient-row {{#if this.isPersona}}swse-messenger-recipient-option--persona{{/if}}">
+                  <input type="checkbox" name="recipientIds" value="{{this.id}}">
+                  {{#if this.avatar}}<img class="swse-messenger-recipient-option__avatar hl-avatar" src="{{this.avatar}}" alt="">{{else}}<span class="swse-messenger-recipient-option__avatar swse-messenger-recipient-option__avatar--blank hl-avatar hl-avatar--blank">◇</span>{{/if}}
+                  <span class="swse-messenger-recipient-option__label">{{this.label}}</span>
+                  <span class="swse-messenger-recipient-option__type hl-subtle">{{this.typeLabel}}</span>
+                  {{#if this.canQuickStart}}<button class="swse-messenger-mini-btn hl-ghost-btn" data-holonet-action="quick-thread" data-recipient-id="{{this.id}}" type="button">Hail</button>{{/if}}
+                </label>
+                {{/each}}
+              </div>
+            </div>
+
+            <textarea name="body" rows="5" placeholder="Transmit message..." data-holonet-editor="message"></textarea>
+            <label class="swse-messenger-field swse-messenger-field--inline hl-field">
+              <span>Holostill / Image Path</span>
+              <input type="text" name="imageUrl" placeholder="Optional image path or URL">
+            </label>
+            <div class="hl-drop-zone" data-holonet-drop-zone data-holonet-drop-input="attachmentUuids">
+              <b>Drop Item Cards Here</b>
+              <span>Compendium or actor items attach to this transmission.</span>
+            </div>
+            <div class="swse-messenger-composer__meta hl-composer-meta">
+              <div class="swse-messenger-help hl-help">
+                {{#each vm.composerHelp}}<span>{{this}}</span>{{/each}}
+              </div>
+              <button type="submit" class="swse-btn swse-btn--primary hl-btn-accent">Send Hail</button>
+            </div>
+          </form>
+
+          {{#if vm.canCreateJobs}}
+          <form class="swse-messenger-compose-new swse-messenger-job-form hl-job-compose" data-holonet-action="create-job">
+            <div class="swse-messenger-detail-card__title hl-title">GM Job Board Posting</div>
+            <label class="swse-messenger-field hl-field">
+              <span>Job Title</span>
+              <input type="text" name="title" placeholder="Kessel Run Escort, Bounty Pickup, Supply Contract...">
+            </label>
+            <label class="swse-messenger-field hl-field">
+              <span>Job Brief</span>
+              <textarea name="body" rows="4" placeholder="Describe the job, risks, contact expectations, and payment terms."></textarea>
+            </label>
+            <div class="swse-messenger-job-grid hl-form-grid">
+              <label class="swse-messenger-field hl-field">
+                <span>Credit Reward</span>
+                <input type="number" name="rewardCredits" min="0" step="1" placeholder="0">
+              </label>
+              <label class="swse-messenger-field hl-field">
+                <span>Item / Gear Rewards</span>
+                <input type="text" name="rewardItems" placeholder="Optional item notes or promised gear">
+              </label>
+              <div class="hl-drop-zone hl-drop-zone--compact" data-holonet-drop-zone data-holonet-drop-input="rewardItemUuids">
+                <b>Drop Reward Items</b>
+                <span>Drag compendium item cards here for job payment.</span>
+              </div>
+            </div>
+            <label class="swse-messenger-field hl-field">
+              <span>Contact Persona</span>
+              <select name="contactRecipientId">
+                <option value="">GM / Job Board</option>
+                {{#each vm.recipientOptions}}{{#if this.isPersona}}<option value="{{this.id}}">{{this.label}} // {{this.typeLabel}}</option>{{/if}}{{/each}}
+              </select>
+            </label>
+            <div class="swse-messenger-recipient-picker hl-recipient-picker">
+              <div class="swse-messenger-recipient-picker__title hl-label hl-label--accent">Recipients</div>
+              <div class="swse-messenger-recipient-grid hl-recipient-grid">
+                {{#each vm.recipientOptions}}
+                <label class="swse-messenger-recipient-option hl-recipient-row {{#if this.isPersona}}swse-messenger-recipient-option--persona{{/if}}">
+                  <input type="checkbox" name="recipientIds" value="{{this.id}}">
+                  {{#if this.avatar}}<img class="swse-messenger-recipient-option__avatar hl-avatar" src="{{this.avatar}}" alt="">{{else}}<span class="swse-messenger-recipient-option__avatar swse-messenger-recipient-option__avatar--blank hl-avatar hl-avatar--blank">◇</span>{{/if}}
+                  <span class="swse-messenger-recipient-option__label">{{this.label}}</span>
+                  <span class="swse-messenger-recipient-option__type hl-subtle">{{this.typeLabel}}</span>
+                </label>
+                {{/each}}
+              </div>
+            </div>
+            <button type="submit" class="swse-btn swse-btn--primary hl-btn-accent">Post Job</button>
+          </form>
+
+          <form class="swse-messenger-compose-new hl-persona-compose" data-holonet-action="create-persona">
+            <div class="swse-messenger-detail-card__title hl-title">GM Message Persona</div>
+            <div class="hl-help">Create a non-actor sender such as Rebel Alliance, Black Sun, Docking Authority, or Anonymous Signal.</div>
+            <label class="swse-messenger-field hl-field"><span>Name</span><input type="text" name="label" placeholder="Rebel Alliance"></label>
+            <label class="swse-messenger-field hl-field"><span>Avatar / Sigil Path</span><input type="text" name="avatar" placeholder="Optional image path"></label>
+            <label class="swse-messenger-field hl-field"><span>Notes</span><input type="text" name="notes" placeholder="Internal GM note"></label>
+            <button type="submit" class="swse-btn hl-icon-btn gm">Create Persona</button>
+          </form>
+          {{/if}}
+        </div>
+      </div>
+      {{else}}
+      {{#if vm.selectedThread}}
+      <div class="swse-messenger-main-head hl-conv-header">
+        <div class="hl-conv-header-left">
+          <div class="swse-panel__title hl-title">{{vm.selectedThread.title}}</div>
+          <div class="swse-messenger-rail-subtitle hl-subtle">{{vm.selectedThread.subtitle}}</div>
+          <div class="hl-titem-chips">
+            {{#if vm.selectedThread.isParty}}<span class="hl-chip party">Party</span>{{/if}}
+            {{#if vm.selectedThread.isSide}}<span class="hl-chip">Side</span>{{/if}}
+            {{#if vm.selectedThread.isJob}}<span class="hl-chip job">Job</span>{{/if}}
+            {{#if vm.selectedThread.isPrivate}}<span class="hl-chip private">Private</span>{{/if}}
+            <span class="hl-chip gm-vis">GM Visible</span>
+          </div>
+        </div>
+        <div class="swse-messenger-thread-actions hl-thread-actions">
+          {{#if vm.selectedThread.isPendingInvite}}
+          <button class="swse-btn swse-btn--primary hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-invite" data-thread-id="{{vm.selectedThread.id}}" type="button">Accept</button>
+          <button class="swse-btn hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-invite" data-thread-id="{{vm.selectedThread.id}}" type="button">Decline</button>
+          {{/if}}
+          {{#if vm.selectedThread.canEnter}}
+          <button class="swse-btn hl-icon-btn" data-holonet-action="thread-action" data-thread-action="enter-thread" data-thread-id="{{vm.selectedThread.id}}" type="button">Enter Chat</button>
+          {{/if}}
+          <button class="swse-btn hl-icon-btn" data-holonet-action="thread-action" data-thread-action="{{vm.selectedThread.muteAction}}" data-thread-id="{{vm.selectedThread.id}}" type="button">{{vm.selectedThread.muteActionLabel}}</button>
+          {{#if vm.selectedThread.canLeave}}
+          <button class="swse-btn hl-icon-btn" data-holonet-action="thread-action" data-thread-action="leave-thread" data-thread-id="{{vm.selectedThread.id}}" type="button">Leave</button>
+          {{/if}}
+          <button class="swse-btn hl-icon-btn" data-holonet-action="thread-action" data-thread-action="archive-thread" data-thread-id="{{vm.selectedThread.id}}" type="button">Archive</button>
+        </div>
       </div>
 
-      <form class="swse-messenger-composer" data-holonet-action="send-message" data-thread-id="{{vm.selectedThread.id}}">
-        <textarea name="body" rows="3" placeholder="Transmit message..." data-holonet-editor="message"></textarea>
-        <div class="swse-messenger-composer__meta">
-          <div class="swse-messenger-help">
-            {{#each vm.composerHelp}}<span>{{this}}</span>{{/each}}
+      <div class="swse-messenger-layout hl-chat-layout">
+        <div class="swse-messenger-chat-column hl-chat-column">
+          {{#if vm.selectedThread.isPendingInvite}}
+          <div class="swse-messenger-invite-card hl-invite">
+            <div class="hl-invite-badge"><span class="hl-pulse-dot"></span><strong>{{vm.selectedThread.ownerLabel}}</strong> wants to have a holochat.</div>
+            <span>You can accept, decline, ignore, archive, or leave later.</span>
           </div>
-          <button type="submit" class="swse-btn swse-btn--primary">Send</button>
-        </div>
-      </form>
-      {{else}}
-      <form class="swse-messenger-compose-new" data-holonet-action="send-message">
-        <div class="swse-messenger-recipient-picker">
-          <div class="swse-messenger-recipient-picker__title">Recipients</div>
-          <div class="swse-messenger-recipient-grid">
-            {{#each vm.recipientOptions}}
-            <label class="swse-messenger-recipient-option">
-              <input type="checkbox" name="recipientIds" value="{{this.id}}">
-              <span class="swse-messenger-recipient-option__label">{{this.label}}</span>
-              <span class="swse-messenger-recipient-option__type">{{this.typeLabel}}</span>
-            </label>
+          {{/if}}
+
+          {{#if vm.pinnedMessages.length}}
+          <div class="hl-pinned-strip">
+            <div class="hl-info-label">Pinned Transmissions</div>
+            {{#each vm.pinnedMessages}}
+            <button type="button" class="hl-pin-msg" data-holonet-action="thread-action" data-thread-action="unpin-message" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}">
+              <span>📌</span><span>{{this.senderLabel}}: {{{this.bodyHtml}}}</span>
+            </button>
             {{/each}}
           </div>
-        </div>
-        <textarea name="body" rows="5" placeholder="Transmit message..." data-holonet-editor="message"></textarea>
-        <div class="swse-messenger-composer__meta">
-          <div class="swse-messenger-help">
-            {{#each vm.composerHelp}}<span>{{this}}</span>{{/each}}
+          {{/if}}
+
+          <div class="swse-messenger-conversation hl-messages" data-thread-id="{{vm.selectedThread.id}}">
+            {{#if vm.messages.length}}
+              {{#each vm.messages}}
+                {{#if this.hasCreditTransfer}}
+                <article class="swse-msg-system hl-credit-card-wrap">
+                  <div class="hl-credit-card">
+                    <div class="hl-credit-card-shimmer"></div>
+                    <div class="hl-credit-title">Credit Transfer</div>
+                    <div class="hl-credit-line"><strong>{{this.transfer.fromLabel}}</strong> → <strong>{{this.transfer.toLabel}}</strong></div>
+                    <div class="hl-credit-amount">{{this.transfer.amountLabel}}</div>
+                    <div class="hl-credit-status">{{this.transfer.statusLabel}}</div>
+                    <div class="hl-credit-actions">
+                      {{#if this.transfer.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept</button>{{/if}}
+                      {{#if this.transfer.canDecline}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline</button>{{/if}}
+                      {{#if this.transfer.canApprove}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="approve-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">GM Approve</button>{{/if}}
+                      {{#if this.transfer.canCancel}}<button class="hl-icon-btn red" data-holonet-action="thread-action" data-thread-action="cancel-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Cancel</button>{{/if}}
+                    </div>
+                  </div>
+                </article>
+                {{else}}
+                {{#if this.hasItemTransfer}}
+                <article class="swse-msg-system hl-item-card-wrap">
+                  <div class="hl-attach-card hl-item-transfer-card">
+                    <div class="hl-credit-title">Item Transfer</div>
+                    <div class="hl-credit-line"><strong>{{this.itemTransfer.fromLabel}}</strong> → <strong>{{this.itemTransfer.toLabel}}</strong></div>
+                    <div class="hl-attachments">
+                      {{#each this.itemTransfer.attachments}}
+                      <div class="hl-attachment-card">{{#if this.img}}<img src="{{this.img}}" alt="">{{else}}<span>▣</span>{{/if}}<b>{{this.name}}</b><small>{{this.type}}</small></div>
+                      {{/each}}
+                    </div>
+                    <div class="hl-credit-status">{{this.itemTransfer.statusLabel}}</div>
+                    <div class="hl-credit-actions">
+                      {{#if this.itemTransfer.canAccept}}<button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Accept Items</button>{{/if}}
+                      {{#if this.itemTransfer.canDecline}}<button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Decline</button>{{/if}}
+                      {{#if this.itemTransfer.canCancel}}<button class="hl-icon-btn red" data-holonet-action="thread-action" data-thread-action="cancel-item-transfer" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}" type="button">Cancel</button>{{/if}}
+                    </div>
+                  </div>
+                </article>
+                {{else}}
+                {{#if this.hasReceipt}}
+                <article class="swse-msg-system hl-receipt-card-wrap">
+                  <div class="hl-receipt-card">
+                    <div class="hl-credit-title">{{this.receipt.title}}</div>
+                    {{#if this.receipt.amountLabel}}<div class="hl-credit-amount">{{this.receipt.amountLabel}}</div>{{/if}}
+                    {{#each this.receipt.lines}}<div class="hl-credit-line">{{this}}</div>{{/each}}
+                  </div>
+                </article>
+                {{else}}
+                {{#if this.isSystem}}
+                <article class="swse-msg-system hl-sys-msg">
+                  <span class="hl-sys-line"></span><span>{{{this.bodyHtml}}}</span><span class="hl-sys-line"></span>
+                </article>
+                {{else}}
+                <article class="swse-msg-row hl-msg {{#if this.isOwn}}swse-msg-row--own own{{else}}swse-msg-row--other other{{/if}} {{#if this.isUnread}}swse-msg-row--unread{{/if}}">
+                  {{#if this.isOther}}
+                    {{#if this.senderAvatar}}<img class="swse-msg-avatar hl-avatar" src="{{this.senderAvatar}}" alt="">{{else}}<span class="swse-msg-avatar swse-msg-avatar--blank hl-avatar hl-avatar--blank">◇</span>{{/if}}
+                  {{/if}}
+                  <div class="swse-msg-bubble hl-msg-bubble {{#if this.isOwn}}swse-msg-bubble--own{{else}}swse-msg-bubble--other{{/if}}">
+                    {{#unless this.sameSenderAsPrevious}}<div class="swse-msg__sender hl-msg-meta">{{this.senderLabel}}</div>{{/unless}}
+                    <div class="swse-msg__body hl-msg-text">{{{this.bodyHtml}}}</div>
+                    {{#if this.imageUrl}}<img class="swse-msg__image hl-msg-image" src="{{this.imageUrl}}" alt="Holonet attachment">{{/if}}
+                    {{#if this.hasAttachments}}
+                    <div class="hl-attachments">
+                      {{#each this.attachments}}
+                      <div class="hl-attachment-card">{{#if this.img}}<img src="{{this.img}}" alt="">{{else}}<span>▣</span>{{/if}}<b>{{this.name}}</b><small>{{this.type}}</small></div>
+                      {{/each}}
+                    </div>
+                    {{/if}}
+                    <div class="swse-msg__time hl-msg-time">
+                      <span>{{this.createdAt}}</span>
+                      {{#if this.canPin}}{{#if this.isPinned}}<button type="button" class="hl-pin-btn" data-holonet-action="thread-action" data-thread-action="unpin-message" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}">Unpin</button>{{else}}<button type="button" class="hl-pin-btn" data-holonet-action="thread-action" data-thread-action="pin-message" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}">Pin</button>{{/if}}{{/if}}
+                    </div>
+                  </div>
+                </article>
+                {{/if}}
+                {{/if}}
+                {{/if}}
+                {{/if}}
+              {{/each}}
+            {{else}}
+              <div class="swse-messenger-empty hl-empty">Thread is empty.</div>
+            {{/if}}
           </div>
-          <button type="submit" class="swse-btn swse-btn--primary">Start Thread</button>
+
+          {{#if vm.selectedThread.canSend}}
+          <form class="swse-messenger-composer hl-composer" data-holonet-action="send-message" data-thread-id="{{vm.selectedThread.id}}">
+            {{#if vm.isGm}}
+            <label class="swse-messenger-field swse-messenger-field--inline hl-attach-inline">
+              <span>Send As</span>
+              <select name="senderRecipientId">
+                <option value="{{vm.participantId}}">GM / Current Identity</option>
+                {{#each vm.recipientOptions}}{{#if this.isPersona}}<option value="{{this.id}}">{{this.label}} // {{this.typeLabel}}</option>{{/if}}{{/each}}
+              </select>
+            </label>
+            {{/if}}
+            <label class="swse-messenger-field swse-messenger-field--inline hl-attach-inline">
+              <span>Holostill</span>
+              <input type="text" name="imageUrl" placeholder="Optional image path or URL">
+            </label>
+            <div class="hl-drop-zone hl-drop-zone--compact" data-holonet-drop-zone data-holonet-drop-input="attachmentUuids">
+              <b>Drop Item to Attach</b><span>Compendium items become Holonet cards.</span>
+            </div>
+            <div class="hl-composer-input-row">
+              <textarea class="hl-composer-ta" name="body" rows="3" placeholder="Transmit message..." data-holonet-editor="message"></textarea>
+              <button type="submit" class="swse-btn swse-btn--primary hl-send-btn"><span>Send</span></button>
+            </div>
+          </form>
+          {{/if}}
         </div>
-      </form>
+
+        <aside class="swse-messenger-detail-column hl-info-panel">
+          {{#if vm.selectedThread.job}}
+          <div class="swse-messenger-detail-card hl-info-section hl-job-detail-card">
+            <div class="swse-messenger-detail-card__title hl-info-label">Job Board</div>
+            <div class="hl-title">{{vm.selectedThread.job.title}}</div>
+            <div class="hl-chip job">{{vm.selectedThread.job.statusLabel}}</div>
+            {{#if vm.selectedThread.job.rewardCredits}}<div class="hl-credit-line">Credits: {{vm.selectedThread.job.rewardCredits}} cr</div>{{/if}}
+            {{#if vm.selectedThread.job.rewardItems}}<div class="hl-credit-line">Items: {{vm.selectedThread.job.rewardItems}}</div>{{/if}}
+            {{#if vm.selectedThread.job.canManage}}
+            <form class="hl-job-status-form" data-holonet-action="job-status" data-thread-id="{{vm.selectedThread.id}}">
+              <select name="status">
+                <option value="posted">Posted</option>
+                <option value="accepted">Accepted</option>
+                <option value="inProgress">In Progress</option>
+                <option value="complete">Complete</option>
+                <option value="paid">Paid</option>
+                <option value="archived">Archived</option>
+              </select>
+              <button class="hl-icon-btn gm" type="submit">Set Status</button>
+            </form>
+            {{#if vm.selectedThread.job.hasItemRewards}}
+            <form class="hl-award-items-form" data-holonet-action="award-job-items" data-thread-id="{{vm.selectedThread.id}}">
+              <select name="recipientId">
+                {{#each vm.selectedThread.transferTargets}}{{#unless this.isPersona}}<option value="{{this.id}}">{{this.label}}</option>{{/unless}}{{/each}}
+              </select>
+              {{#each vm.selectedThread.job.rewardItemUuids}}<input type="hidden" name="itemUuids" value="{{this}}">{{/each}}
+              <button class="hl-btn-accent" type="submit">Award Items</button>
+            </form>
+            {{/if}}
+            {{/if}}
+          </div>
+          {{/if}}
+
+          <div class="swse-messenger-detail-card hl-info-section">
+            <div class="swse-messenger-detail-card__title hl-info-label">Participants</div>
+            <div class="swse-messenger-participants">
+              {{#each vm.selectedThread.participants}}
+              <div class="swse-messenger-participant hl-info-person">
+                {{#if this.avatar}}<img class="hl-avatar" src="{{this.avatar}}" alt="">{{else}}<span class="hl-avatar hl-avatar--blank">◇</span>{{/if}}
+                <b>{{this.label}}</b>
+                <small>{{this.typeLabel}}</small>{{#if this.presenceStatus}}<em class="hl-presence-text">{{this.presenceStatus}}</em>{{/if}}
+                {{#if ../vm.selectedThread.canManage}}
+                  {{#unless this.isSelf}}<button class="hl-ghost-btn" data-holonet-action="thread-action" data-thread-action="remove-member" data-thread-id="{{../vm.selectedThread.id}}" data-recipient-id="{{this.id}}" type="button">Remove</button>{{/unless}}
+                {{/if}}
+              </div>
+              {{/each}}
+            </div>
+            {{#if vm.selectedThread.pendingInvites.length}}
+            <div class="swse-messenger-detail-card__subtitle hl-info-label">Pending Invites</div>
+            <div class="swse-messenger-participants swse-messenger-participants--pending">
+              {{#each vm.selectedThread.pendingInvites}}
+              <div class="swse-messenger-participant hl-info-person">
+                {{#if this.avatar}}<img class="hl-avatar" src="{{this.avatar}}" alt="">{{else}}<span class="hl-avatar hl-avatar--blank">◇</span>{{/if}}
+                <b>{{this.label}}</b>
+                <small>Invited</small>
+                {{#if ../vm.selectedThread.canManage}}<button class="hl-ghost-btn" data-holonet-action="thread-action" data-thread-action="remove-member" data-thread-id="{{../vm.selectedThread.id}}" data-recipient-id="{{this.id}}" type="button">Cancel</button>{{/if}}
+              </div>
+              {{/each}}
+            </div>
+            {{/if}}
+          </div>
+
+          {{#if vm.selectedThread.canManage}}
+          <form class="swse-messenger-detail-card hl-info-section" data-holonet-action="manage-members" data-thread-id="{{vm.selectedThread.id}}">
+            <div class="swse-messenger-detail-card__title hl-info-label">Add Members</div>
+            <select name="recipientIds" multiple size="5">
+              {{#each vm.selectedThread.addableRecipients}}<option value="{{this.id}}">{{this.label}} // {{this.typeLabel}}</option>{{/each}}
+            </select>
+            <div class="swse-messenger-member-actions hl-action-row">
+              <button class="swse-btn hl-icon-btn" name="memberAction" value="invite-members" type="submit">Invite</button>
+              {{#if vm.isGm}}<button class="swse-btn hl-icon-btn" name="memberAction" value="insert-members" type="submit">GM Insert</button>{{/if}}
+            </div>
+          </form>
+          {{/if}}
+
+          {{#if vm.selectedThread.transferTargets.length}}
+          <form class="swse-messenger-detail-card hl-info-section" data-holonet-action="transfer-credits" data-thread-id="{{vm.selectedThread.id}}">
+            <div class="swse-messenger-detail-card__title hl-info-label">Credits</div>
+            <div class="swse-messenger-credit-balance hl-subtle">Available: {{vm.actorCredits}} cr</div>
+            <select name="recipientId">
+              {{#each vm.selectedThread.transferTargets}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}
+            </select>
+            <input type="number" name="amount" min="1" step="1" placeholder="Amount">
+            {{#if vm.selectedThread.canUseJobPayout}}
+            {{#if vm.partyFund.enabled}}
+            <label class="hl-field hl-field--compact"><span>Party Fund Cut %</span><input type="number" name="partyFundCutPercent" min="0" max="100" step="1" value="{{vm.partyFund.defaultCutPercent}}"></label>
+            {{/if}}
+            {{/if}}
+            <button class="swse-btn swse-btn--primary hl-btn-accent" name="transferMode" value="offer-credit-transfer" type="submit">Offer Transfer</button>
+            {{#if vm.selectedThread.canUseJobPayout}}<button class="swse-btn hl-icon-btn" name="transferMode" value="job-payout" type="submit">Pay Job Reward</button>{{/if}}
+          </form>
+          {{/if}}
+
+          {{#if vm.isGm}}
+          {{#if vm.selectedThread.transferTargets.length}}
+          <form class="swse-messenger-detail-card hl-info-section hl-item-transfer-form" data-holonet-action="item-transfer" data-thread-id="{{vm.selectedThread.id}}">
+            <div class="swse-messenger-detail-card__title hl-info-label">Item Delivery</div>
+            <select name="recipientId">
+              {{#each vm.selectedThread.transferTargets}}{{#unless this.isPersona}}<option value="{{this.id}}">{{this.label}}</option>{{/unless}}{{/each}}
+            </select>
+            <div class="hl-drop-zone" data-holonet-drop-zone data-holonet-drop-input="attachmentUuids">
+              <b>Drop Item to Send</b><span>Recipient must accept before the item is granted.</span>
+            </div>
+            <button class="swse-btn hl-icon-btn" name="itemTransferMode" value="offer-item-transfer" type="submit">Offer Item</button>
+          </form>
+          {{/if}}
+          {{/if}}
+
+          {{#if vm.partyFund.enabled}}
+          <form class="swse-messenger-detail-card hl-info-section hl-partyfund-card" data-holonet-action="party-fund" data-thread-id="{{vm.selectedThread.id}}">
+            <div class="swse-messenger-detail-card__title hl-info-label">Party Fund</div>
+            <div class="hl-credit-amount">{{vm.partyFund.balance}} cr</div>
+            <input type="number" name="amount" min="1" step="1" placeholder="Amount">
+            {{#if vm.isGm}}
+            <select name="recipientId">
+              {{#each vm.selectedThread.transferTargets}}{{#unless this.isPersona}}<option value="{{this.id}}">{{this.label}}</option>{{/unless}}{{/each}}
+            </select>
+            {{/if}}
+            <button class="swse-btn swse-btn--primary hl-btn-accent" name="partyFundAction" value="contribute-party-fund" type="submit">Contribute</button>
+            {{#if vm.isGm}}
+            <button class="swse-btn hl-icon-btn" name="partyFundAction" value="pay-from-party-fund" type="submit">Pay Out</button>
+            <button class="swse-btn hl-icon-btn red" name="partyFundAction" value="charge-party-fund" type="submit">Charge</button>
+            {{/if}}
+          </form>
+          {{/if}}
+        </aside>
+      </div>
+      {{else}}
+      <div class="swse-messenger-empty hl-empty">Select a thread or start a new transmission.</div>
+      {{/if}}
       {{/if}}
     </section>
   </div>

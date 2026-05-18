@@ -1,46 +1,51 @@
-<div class="talent-details-panel">
+<div class="talent-details-panel talent-details-panel--terminal {{visualThemeClass}}">
   <div class="talent-details__header">
+    <div class="talent-details__eyebrow">// BUILD ANALYSIS TERMINAL</div>
     <h2 class="talent-details__name">{{talent.name}}</h2>
     <div class="talent-details__meta">
       <span class="talent-meta-badge tree-badge">{{treeName}}</span>
+      <span class="talent-meta-badge tree-theme-badge"><i class="fa-solid fa-wave-square"></i> {{visualSignal}}</span>
       {{#if isOwned}}
-      <span class="talent-meta-badge owned-badge"><i class="fa-solid fa-check"></i> Chosen</span>
+      <span class="talent-meta-badge owned-badge"><i class="fa-solid fa-check"></i> Known</span>
       {{else}}
         {{#if meetsPrereqs}}
-        <span class="talent-meta-badge available-badge"><i class="fa-solid fa-circle-check"></i> Available</span>
+        <span class="talent-meta-badge available-badge"><i class="fa-solid fa-circle-check"></i> Legal</span>
         {{else}}
         <span class="talent-meta-badge blocked-badge"><i class="fa-solid fa-circle-xmark"></i> Locked</span>
         {{/if}}
       {{/if}}
       {{#if isSelected}}
-      <span class="talent-meta-badge selected-badge"><i class="fa-solid fa-bullseye"></i> Selected</span>
+      <span class="talent-meta-badge selected-badge"><i class="fa-solid fa-diamond"></i> Pending</span>
+      {{/if}}
+      {{#if isSuggestedTalent}}
+      <span class="talent-meta-badge suggested-badge"><i class="fa-solid fa-star"></i> {{recommendationLabel}}</span>
       {{/if}}
     </div>
   </div>
 
-  <div class="talent-details__section talent-details__section--status">
-    <h3 class="talent-details__section-title">Status</h3>
+  <div class="talent-details__section talent-details__section--status talent-details__section--terminal">
+    <h3 class="talent-details__section-title">Signal</h3>
     <p class="talent-details__description">{{statusText}}</p>
   </div>
 
-  <div class="talent-details__section">
-    <h3 class="talent-details__section-title">Description</h3>
+  <div class="talent-details__section talent-details__section--terminal">
+    <h3 class="talent-details__section-title">Fantasy</h3>
     <p class="talent-details__description">{{canonicalDescription}}</p>
   </div>
 
   {{#if mechanicalBenefit}}
-  <div class="talent-details__section">
+  <div class="talent-details__section talent-details__section--terminal talent-details__section--benefit">
     <h3 class="talent-details__section-title">Benefit</h3>
-    <p class="talent-details__description">{{mechanicalBenefit}}</p>
+    <p class="talent-details__description talent-details__description--benefit">{{mechanicalBenefit}}</p>
   </div>
   {{/if}}
 
-  <div class="talent-details__section">
+  <div class="talent-details__section talent-details__section--terminal">
     <h3 class="talent-details__section-title">Prerequisites</h3>
     {{#if prerequisites}}
       <p class="talent-prerequisites__text">{{prerequisites}}</p>
     {{else}}
-      <p class="talent-prerequisites__text talent-prerequisites__text--none">No prerequisites</p>
+      <p class="talent-prerequisites__text talent-prerequisites__text--none"><i class="fa-regular fa-circle"></i> Root node — no prerequisite talent chain.</p>
     {{/if}}
     {{#if hasMissingPrereqs}}
     <ul class="talent-prerequisites__missing-list">
@@ -52,20 +57,38 @@
   </div>
 
   {{#if prerequisitePath}}
-  <div class="talent-details__section talent-details__section--path">
+  <div class="talent-details__section talent-details__section--terminal talent-details__section--path">
     <h3 class="talent-details__section-title">Path</h3>
     <ol class="talent-path-list">
       {{#each prerequisitePath}}
-      <li class="{{#if isMissing}}is-missing{{/if}}">{{name}}</li>
+      <li class="{{#if isMissing}}is-missing{{/if}}"><span>{{name}}</span></li>
       {{/each}}
     </ol>
   </div>
   {{/if}}
 
+  {{#if downstreamUnlocks}}
+  <div class="talent-details__section talent-details__section--terminal talent-details__section--unlocks">
+    <h3 class="talent-details__section-title">Unlocks</h3>
+    <div class="talent-unlocks-list">
+      {{#each downstreamUnlocks}}
+      <div class="talent-unlock-row"><span class="talent-unlock-row__arrow">→</span><span>{{name}}</span></div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
   {{#if recommendationText}}
-  <div class="talent-details__section talent-details__section--recommendation">
-    <h3 class="talent-details__section-title">Why this might fit</h3>
+  <div class="talent-details__section talent-details__section--terminal talent-details__section--recommendation">
+    <h3 class="talent-details__section-title">Mentor Read</h3>
     <p class="talent-details__description">{{recommendationText}}</p>
+    {{#if recommendationReasons}}
+    <ul class="talent-recommendation-reasons">
+      {{#each recommendationReasons}}
+      <li>{{this}}</li>
+      {{/each}}
+    </ul>
+    {{/if}}
   </div>
   {{/if}}
 
@@ -73,12 +96,12 @@
     {{#if isSelected}}
     <button class="action-btn deselect-btn" data-action="commit-item" data-item-id="{{talentId}}">
       <i class="fa-solid fa-times-circle"></i>
-      Deselect Talent
+      Deselect Pending Talent
     </button>
     {{else}}
     <button class="action-btn select-btn" data-action="commit-item" data-item-id="{{talentId}}" {{#unless meetsPrereqs}}disabled{{/unless}}>
       <i class="fa-solid fa-check-circle"></i>
-      Choose This Talent
+      Activate This Talent
     </button>
     {{/if}}
 

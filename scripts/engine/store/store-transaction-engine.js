@@ -437,6 +437,99 @@ export class StoreTransactionEngine {
     }
   }
 
+
+  /**
+   * ============================================================
+   * TRANSFER CREDITS BETWEEN ACTORS
+   * ============================================================
+   *
+   * Domain-level credit transfer used by Holonet and store-adjacent flows.
+   * Each actor update still routes through ActorEngine/Sentinel governance.
+   */
+  static async transferCredits({ fromActor, toActor, amount, metadata = {} } = {}) {
+    if (!fromActor || !toActor) throw new Error('transferCredits: fromActor and toActor are required');
+    const value = Math.floor(Number(amount));
+    if (!Number.isFinite(value) || value <= 0) throw new Error('transferCredits: amount must be a positive number');
+
+    const fromCredits = Number(fromActor.system?.credits ?? 0) || 0;
+    const toCredits = Number(toActor.system?.credits ?? 0) || 0;
+    if (fromCredits < value) throw new Error(`transferCredits: ${fromActor.name} has insufficient credits (${fromCredits} < ${value})`);
+
+    const snapshot = this._createSnapshot(fromActor, toActor);
+    try {
+      await ActorEngine.updateActor(fromActor, { 'system.credits': fromCredits - value });
+      await ActorEngine.updateActor(toActor, { 'system.credits': toCredits + value });
+      const result = {
+        success: true,
+        fromId: fromActor.id,
+        fromName: fromActor.name,
+        toId: toActor.id,
+        toName: toActor.name,
+        amount: value,
+        timestamp: Date.now(),
+        metadata
+      };
+      swseLogger.log('[StoreTransactionEngine] transferCredits completed successfully', result);
+      Hooks.callAll('swseCreditTransferComplete', { transaction: result, fromActor, toActor, success: true });
+      return result;
+    } catch (err) {
+      swseLogger.error('[StoreTransactionEngine] transferCredits failed, attempting rollback', {
+        error: err.message,
+        from: fromActor.name,
+        to: toActor.name,
+        amount: value
+      });
+      try {
+        await this._rollback(snapshot);
+      } catch (rollbackErr) {
+        throw new Error(`transferCredits failed: ${err.message} | Rollback error: ${rollbackErr.message}`);
+      }
+      throw err;
+    }
+  }
+
+  /**
+   * ============================================================
+   * GRANT CREDITS TO ACTOR
+   * ============================================================
+   *
+   * GM/job-board rewards mint credits without requiring a source actor.
+   */
+  static async grantCredits({ toActor, amount, metadata = {} } = {}) {
+    if (!toActor) throw new Error('grantCredits: toActor is required');
+    const value = Math.floor(Number(amount));
+    if (!Number.isFinite(value) || value <= 0) throw new Error('grantCredits: amount must be a positive number');
+
+    const current = Number(toActor.system?.credits ?? 0) || 0;
+    const snapshot = this._createSnapshot(toActor);
+    try {
+      await ActorEngine.updateActor(toActor, { 'system.credits': current + value });
+      const result = {
+        success: true,
+        toId: toActor.id,
+        toName: toActor.name,
+        amount: value,
+        timestamp: Date.now(),
+        metadata
+      };
+      swseLogger.log('[StoreTransactionEngine] grantCredits completed successfully', result);
+      Hooks.callAll('swseCreditGrantComplete', { transaction: result, toActor, success: true });
+      return result;
+    } catch (err) {
+      swseLogger.error('[StoreTransactionEngine] grantCredits failed, attempting rollback', {
+        error: err.message,
+        to: toActor.name,
+        amount: value
+      });
+      try {
+        await this._rollback(snapshot);
+      } catch (rollbackErr) {
+        throw new Error(`grantCredits failed: ${err.message} | Rollback error: ${rollbackErr.message}`);
+      }
+      throw err;
+    }
+  }
+
   /**
    * ============================================================
    * INTERNAL: CREATE SNAPSHOT

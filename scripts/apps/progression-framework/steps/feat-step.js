@@ -1440,6 +1440,22 @@ export class FeatStep extends ProgressionStepPlugin {
   // Footer
   // ---------------------------------------------------------------------------
 
+  getRemainingPicks() {
+    if (this._noChoicesAvailable) {
+      const slotTypeLabel = this._slotType === 'class' ? 'Class Feat' : 'General Feat';
+      return [{ label: `${slotTypeLabel}: no legal options`, count: 0, total: 0, selected: 0, isWarning: false }];
+    }
+
+    const selected = this._selectedFeatId ? 1 : 0;
+    return [{
+      label: this._slotType === 'class' ? 'Class Feat' : 'General Feat',
+      count: Math.max(0, 1 - selected),
+      total: 1,
+      selected,
+      isWarning: selected === 0,
+    }];
+  }
+
   getFooterConfig() {
     const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'General';
 

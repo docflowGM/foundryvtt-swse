@@ -11,15 +11,15 @@
 
   {{!-- Language Status --}}
   <div class="language-status">
-    {{#if isKnown}}
-    <div class="status-badge known-badge">
-      <i class="fa-solid fa-check-circle"></i>
-      <span>You automatically know this language</span>
-    </div>
-    {{else if isSelected}}
+    {{#if isSelected}}
     <div class="status-badge selected-badge">
       <i class="fa-solid fa-star"></i>
       <span>Selected as a bonus language</span>
+    </div>
+    {{else if isKnown}}
+    <div class="status-badge known-badge {{#if isPartialKnown}}known-badge--partial{{/if}}">
+      <i class="fa-solid {{#if isPartialKnown}}fa-ear-listen{{else}}fa-check-circle{{/if}}"></i>
+      <span>{{#if isPartialKnown}}You have partial access to this language{{else}}You automatically know this language{{/if}}</span>
     </div>
     {{else}}
     <div class="status-badge available-badge">
@@ -28,6 +28,16 @@
     </div>
     {{/if}}
   </div>
+
+  {{#if knownGrant}}
+  <div class="language-grant-readout">
+    <span class="language-source-badge language-source-badge--{{knownGrant.sourceClass}}">{{knownGrant.sourceLabel}}</span>
+    <span class="language-mode-badge language-mode-badge--{{knownGrant.mode}}">{{knownGrant.modeLabel}}</span>
+    {{#if knownGrant.note}}
+    <p class="language-grant-note">{{knownGrant.note}}</p>
+    {{/if}}
+  </div>
+  {{/if}}
 
   {{!-- Language Description --}}
   {{#if canonicalDescription}}
@@ -39,8 +49,12 @@
 
   {{!-- Why This Language is Unavailable --}}
   {{#if isKnown}}
-  <div class="language-note known-note">
-    <p><strong>Why it's automatic:</strong> This language comes from your species or background selection. You already know it!</p>
+  <div class="language-note known-note {{#if isPartialKnown}}known-note--partial{{/if}}">
+    {{#if isPartialKnown}}
+    <p><strong>Why this is partial:</strong> Your current grant gives limited access. You may still select this language as a bonus language if you want full speak/read/write access.</p>
+    {{else}}
+    <p><strong>Why it's automatic:</strong> This language comes from your default, species, background, or feature grants. You already know it!</p>
+    {{/if}}
   </div>
   {{else if isSelected}}
   <div class="language-note selected-note">

@@ -402,19 +402,23 @@ async onStepExit(shell) {
     const count = this._committedBackgroundIds.length;
     if (count === 0) {
       return [{
-        label: 'No background selected',
+        label: 'Background',
         count: this._maxBackgrounds,
+        total: this._maxBackgrounds,
+        selected: 0,
         isWarning: true,
       }];
     }
 
     if (this._maxBackgrounds === 1) {
-      return [{ label: `✓ ${this._getCommittedNames()}`, count: 0, isWarning: false }];
+      return [{ label: `✓ ${this._getCommittedNames()}`, count: 0, total: 1, selected: 1, isWarning: false }];
     }
 
     return [{
-      label: `${count} of ${this._maxBackgrounds} backgrounds selected`,
+      label: 'Backgrounds',
       count: this._maxBackgrounds - count,
+      total: this._maxBackgrounds,
+      selected: count,
       isWarning: count < this._maxBackgrounds,
     }];
   }

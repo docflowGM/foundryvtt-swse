@@ -27,6 +27,7 @@ import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 import { getPendingBackgroundLanguages } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
+import { CustomLanguageDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-language-dialog.js';
 
 export class LanguageStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -34,7 +35,9 @@ export class LanguageStep extends ProgressionStepPlugin {
 
     // Data
     this._allLanguages = [];              // All languages from registry
-    this._knownLanguages = [];            // Granted languages (species, background, class)
+    this._knownLanguages = [];            // Full granted languages (species, background, class)
+    this._knownLanguageGrants = [];       // Rich display grants, including understand-only/partial languages
+    this._speciesLanguageRules = null;    // Canonical species-language helper data
     this._bonusLanguagesAvailable = 0;    // Total bonus picks (INT + Linguist + class)
     this._selectedBonusLanguages = [];    // Bonus languages chosen this step
     this._focusedLanguageId = null;       // Currently focused language
@@ -42,6 +45,7 @@ export class LanguageStep extends ProgressionStepPlugin {
     this._categoryFilters = {              // Utility rail category filters
       widelyUsed: false,
       localTrade: false,
+      speciesNative: false,
     };
     this._sortMode = 'alpha';              // Languages default to A-Z
 
@@ -50,6 +54,8 @@ export class LanguageStep extends ProgressionStepPlugin {
     this._categoryLabels = {
       'widelyUsed': 'Widely Used',
       'localTrade': 'Local & Trade',
+      'speciesNative': 'Species Native',
+      'custom': 'Custom',
     };
 
     // Suggestions
@@ -115,6 +121,7 @@ export class LanguageStep extends ProgressionStepPlugin {
     const filterState = utility.getFilterState?.() || {};
     this._categoryFilters.widelyUsed = Boolean(filterState.widelyUsed);
     this._categoryFilters.localTrade = Boolean(filterState.localTrade);
+    this._categoryFilters.speciesNative = Boolean(filterState.speciesNative);
 
     const sortValue = utility.getSortValue?.();
     if (sortValue === 'alpha' || sortValue === 'category') this._sortMode = sortValue;
@@ -150,7 +157,7 @@ export class LanguageStep extends ProgressionStepPlugin {
       if (e?.detail?.handledByStepHook) return;
       if (!this._isActiveLanguageStep(shell) || !claimUtilityEvent(e, `filter_${e?.detail?.filterId || ''}`)) return;
       const filterId = String(e?.detail?.filterId || '');
-      if (filterId === 'widelyUsed' || filterId === 'localTrade') {
+      if (filterId === 'widelyUsed' || filterId === 'localTrade' || filterId === 'speciesNative') {
         this._categoryFilters[filterId] = Boolean(e?.detail?.value);
         rerenderFromUtility();
       }
@@ -181,7 +188,7 @@ export class LanguageStep extends ProgressionStepPlugin {
 
     if (type === 'filter') {
       const filterId = String(detail.filterId || '');
-      if (filterId !== 'widelyUsed' && filterId !== 'localTrade') return false;
+      if (filterId !== 'widelyUsed' && filterId !== 'localTrade' && filterId !== 'speciesNative') return false;
       this._categoryFilters[filterId] = Boolean(detail.value);
       return true;
     }
@@ -218,6 +225,7 @@ export class LanguageStep extends ProgressionStepPlugin {
     if (shell?.committedSelections && this.descriptor?.stepId) {
       shell.committedSelections.set('languageContext', {
         knownLanguages: [...this._knownLanguages],
+        knownLanguageGrants: [...this._knownLanguageGrants],
         bonusLanguages: [...this._selectedBonusLanguages],
       });
     }
@@ -231,6 +239,7 @@ export class LanguageStep extends ProgressionStepPlugin {
     // Ensure registry loaded
     await LanguageRegistry.ensureLoaded();
     this._allLanguages = await this._getAllLanguages();
+    await this._loadSpeciesLanguageRules();
 
     // Compute known/granted languages from all sources
     this._knownLanguages = await this._getKnownLanguages(shell.actor, shell);
@@ -301,6 +310,16 @@ export class LanguageStep extends ProgressionStepPlugin {
         await this._deselectLanguage(langId, shell);
       }, { signal });
     });
+
+    const customBtns = shell.element.querySelectorAll('[data-action="add-custom-language"]');
+    customBtns.forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation?.();
+        await this._addCustomLanguage(shell);
+      }, { signal });
+    });
   }
 
   async onStepExit(shell) {
@@ -315,6 +334,7 @@ export class LanguageStep extends ProgressionStepPlugin {
         'languages',
         {
           knownLanguages: [...this._knownLanguages],
+          knownLanguageGrants: [...this._knownLanguageGrants],
           selectedBonusLanguages: [...this._selectedBonusLanguages],
           bonusLanguagesAvailable: this._bonusLanguagesAvailable,
         }
@@ -355,6 +375,184 @@ export class LanguageStep extends ProgressionStepPlugin {
     return value.name || value.label || value.language || value.id || null;
   }
 
+  _normalizeLanguageToken(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  _languageMatchesName(value, name) {
+    return this._normalizeLanguageToken(value) === this._normalizeLanguageToken(name);
+  }
+
+  _grantModeLabel(mode) {
+    const normalized = String(mode || 'full');
+    const labels = {
+      full: 'Speak / Read / Write',
+      speakOnly: 'Speak Only',
+      understandOnly: 'Understand Only',
+      readWriteUnderstand: 'Read / Write / Understand',
+      communicate: 'Communicate',
+      conditionalLiteracy: 'Conditional Literacy',
+      writtenOnly: 'Written Only',
+      variable: 'Variable',
+      choice: 'Choice',
+    };
+    return labels[normalized] || 'Special';
+  }
+
+  _grantSourceLabel(origin) {
+    const normalized = String(origin || 'default').toLowerCase();
+    const labels = {
+      default: 'Default',
+      species: 'Species',
+      background: 'Background',
+      linguist: 'Linguist',
+      learned: 'Learned',
+      feature: 'Feature',
+      custom: 'Custom',
+    };
+    return labels[normalized] || 'Granted';
+  }
+
+  _grantSourceClass(origin) {
+    const normalized = String(origin || 'default').toLowerCase();
+    if (['default', 'species', 'background', 'linguist', 'learned', 'feature', 'custom'].includes(normalized)) {
+      return normalized;
+    }
+    return 'default';
+  }
+
+  _isFullGrantMode(mode) {
+    return String(mode || 'full') === 'full';
+  }
+
+  _makeLanguageGrant(name, origin = 'default', options = {}) {
+    const cleanName = this._normalizeLanguageName(name);
+    if (!cleanName) return null;
+    const mode = options.mode || 'full';
+    const originClass = this._grantSourceClass(origin);
+    return {
+      name: cleanName,
+      origin: originClass,
+      sourceLabel: this._grantSourceLabel(originClass),
+      sourceClass: originClass,
+      mode,
+      modeLabel: this._grantModeLabel(mode),
+      isFull: this._isFullGrantMode(mode),
+      isPartial: !this._isFullGrantMode(mode),
+      note: options.note || '',
+    };
+  }
+
+  _dedupeLanguageGrants(grants = []) {
+    const byName = new Map();
+    for (const grant of grants.filter(Boolean)) {
+      const token = this._normalizeLanguageToken(grant.name);
+      const prior = byName.get(token);
+      if (!prior) {
+        byName.set(token, { ...grant, origins: [grant.sourceLabel] });
+        continue;
+      }
+      // A full grant supersedes an understand-only/partial grant. Otherwise keep the
+      // first display mode and merge source labels so the rail can explain overlap.
+      if (!prior.isFull && grant.isFull) {
+        byName.set(token, { ...grant, origins: Array.from(new Set([...(prior.origins || []), grant.sourceLabel])) });
+      } else {
+        prior.origins = Array.from(new Set([...(prior.origins || []), grant.sourceLabel]));
+        if (!prior.note && grant.note) prior.note = grant.note;
+      }
+    }
+    return Array.from(byName.values()).sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+  }
+
+  _getKnownLanguageGrant(name) {
+    const token = this._normalizeLanguageToken(name);
+    return this._knownLanguageGrants.find(grant => this._normalizeLanguageToken(grant.name) === token) || null;
+  }
+
+  _isKnownLanguageName(name) {
+    return Boolean(this._getKnownLanguageGrant(name));
+  }
+
+  _isFullKnownLanguageName(name) {
+    return Boolean(this._getKnownLanguageGrant(name)?.isFull);
+  }
+
+  _isSelectedLanguageName(name) {
+    const token = this._normalizeLanguageToken(name);
+    return this._selectedBonusLanguages.some(selected => this._normalizeLanguageToken(selected) === token);
+  }
+
+  _customLanguageId(name) {
+    return `custom:${String(name || '').trim()}`;
+  }
+
+  _extractCustomLanguageName(id) {
+    const value = String(id || '').trim();
+    return value.startsWith('custom:') ? value.slice('custom:'.length).trim() : value;
+  }
+
+  _buildCustomLanguageRecord(name) {
+    const cleanName = String(name || '').trim();
+    if (!cleanName) return null;
+    return {
+      id: this._customLanguageId(cleanName),
+      name: cleanName,
+      slug: this._customLanguageId(cleanName),
+      category: 'custom',
+      description: `${cleanName} is a custom campaign language approved for this character. Work with the GM to decide who speaks it, where it is used, and what it sounds like at the table. It may represent a clan cant, lost dialect, local code, trade argot, or any other language that fits the campaign.` ,
+      isCustom: true,
+    };
+  }
+
+  async _loadSpeciesLanguageRules() {
+    if (this._speciesLanguageRules) return this._speciesLanguageRules;
+    try {
+      const resp = await fetch('systems/foundryvtt-swse/data/species-languages.json');
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+      this._speciesLanguageRules = data?.species || data || {};
+    } catch (err) {
+      swseLogger.warn('[LanguageStep] Could not load species-language rules; falling back to species data.', err);
+      this._speciesLanguageRules = {};
+    }
+    return this._speciesLanguageRules;
+  }
+
+  _normalizeSpeciesKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[’]/g, "'")
+      .replace(/[^a-z0-9' ]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  _resolveSpeciesLanguageRule(speciesRef) {
+    const rules = this._speciesLanguageRules || {};
+    const target = this._normalizeSpeciesKey(speciesRef);
+    if (!target) return null;
+    for (const [name, rule] of Object.entries(rules)) {
+      const normalized = this._normalizeSpeciesKey(name);
+      if (normalized === target) return rule;
+      if (normalized.endsWith('s') && normalized.slice(0, -1) === target) return rule;
+      if (target.endsWith('s') && target.slice(0, -1) === normalized) return rule;
+    }
+    return null;
+  }
+
+  _languageModeHint(mode, note) {
+    if (note) return note;
+    const normalized = String(mode || 'full');
+    if (normalized === 'understandOnly') return 'This language is understood but not spoken by default.';
+    if (normalized === 'speakOnly') return 'This language is spoken by default, but no literacy is granted.';
+    if (normalized === 'readWriteUnderstand') return 'This language is understood, read, and written, but not spoken by default.';
+    if (normalized === 'communicate') return 'This is a special communication mode rather than a full spoken/read/write language.';
+    if (normalized === 'writtenOnly') return 'This grant covers the written language, not ordinary speech.';
+    if (normalized === 'choice') return 'This species grant requires a character-creation choice or GM adjudication.';
+    return '';
+  }
+
   _extractSpeciesLanguageNames(species) {
     const raw = [
       ...(Array.isArray(species?.languages) ? species.languages : []),
@@ -371,7 +569,7 @@ export class LanguageStep extends ProgressionStepPlugin {
   async _getKnownLanguages(actor, shell) {
     if (!actor) return [];
 
-    const known = new Set(['Basic']);
+    const grants = [];
 
     // Species languages: read live chargen draft first, then committed actor.
     const speciesSelection = this._readDraftSelection(shell, 'species');
@@ -380,11 +578,44 @@ export class LanguageStep extends ProgressionStepPlugin {
     if (!speciesRef) {
       speciesRef = actor.system?.species?.primary?.name || actor.system?.species?.name || actor.system?.species;
     }
+
+    let usedSpeciesRule = false;
     if (speciesRef) {
-      const speciesEntry = ProgressionContentAuthority.resolveSpecies?.(speciesRef) || null;
-      const speciesDoc = await ProgressionContentAuthority.getSpeciesDocument(speciesRef);
-      const speciesLanguages = this._extractSpeciesLanguageNames(speciesEntry).concat(this._extractSpeciesLanguageNames(speciesDoc));
-      speciesLanguages.forEach(lang => { if (lang) known.add(lang); });
+      const speciesRule = this._resolveSpeciesLanguageRule(speciesRef);
+      if (speciesRule?.languages?.length) {
+        usedSpeciesRule = true;
+        speciesRule.languages.forEach(entry => {
+          const grant = this._makeLanguageGrant(entry.name, entry.origin || 'species', {
+            mode: entry.mode || 'full',
+            note: this._languageModeHint(entry.mode, entry.note),
+          });
+          if (grant) grants.push(grant);
+        });
+      }
+
+      if (!usedSpeciesRule) {
+        const speciesEntry = ProgressionContentAuthority.resolveSpecies?.(speciesRef) || null;
+        const speciesDoc = await ProgressionContentAuthority.getSpeciesDocument(speciesRef);
+        const speciesLanguages = this._extractSpeciesLanguageNames(speciesEntry).concat(this._extractSpeciesLanguageNames(speciesDoc));
+        speciesLanguages.forEach(lang => {
+          const grant = this._makeLanguageGrant(lang, 'species');
+          if (grant) grants.push(grant);
+        });
+      }
+    }
+
+    // If no selected/committed species language source has spoken/read/write Basic,
+    // show Basic as a default understand-only baseline rather than silently treating
+    // every species as a Basic speaker. This is important for Wookiees, Ewoks,
+    // Jawas, Gamorreans, and similar edge cases.
+    const hasBasicGrant = grants.some(grant => this._languageMatchesName(grant.name, 'Basic'));
+    if (!hasBasicGrant) {
+      grants.push(this._makeLanguageGrant('Basic', 'default', {
+        mode: speciesRef ? 'understandOnly' : 'full',
+        note: speciesRef
+          ? 'Most characters understand Basic, but this species does not speak/read/write it automatically.'
+          : 'Default galactic language when no species language grant is available yet.',
+      }));
     }
 
     // Background languages from the Background Grant Ledger / pending context.
@@ -394,10 +625,14 @@ export class LanguageStep extends ProgressionStepPlugin {
       || {};
     const bgLanguages = getPendingBackgroundLanguages(pendingBackground);
     if (Array.isArray(bgLanguages) && bgLanguages.length > 0) {
-      bgLanguages.forEach(lang => { if (lang) known.add(lang); });
+      bgLanguages.forEach(lang => {
+        const grant = this._makeLanguageGrant(lang, 'background');
+        if (grant) grants.push(grant);
+      });
     }
 
-    return Array.from(known).filter(Boolean);
+    this._knownLanguageGrants = this._dedupeLanguageGrants(grants);
+    return this._knownLanguageGrants.filter(grant => grant.isFull).map(grant => grant.name);
   }
 
   /**
@@ -414,11 +649,13 @@ export class LanguageStep extends ProgressionStepPlugin {
    * (all languages minus known/granted minus already selected)
    */
   _getAvailableLanguages() {
-    const knownSet = new Set(this._knownLanguages);
-    const selectedSet = new Set(this._selectedBonusLanguages);
+    const knownSet = new Set(this._knownLanguageGrants
+      .filter(grant => grant.isFull)
+      .map(grant => this._normalizeLanguageToken(grant.name)));
+    const selectedSet = new Set(this._selectedBonusLanguages.map(name => this._normalizeLanguageToken(name)));
 
     return this._allLanguages.filter(lang =>
-      !knownSet.has(lang.name) && !selectedSet.has(lang.name)
+      !knownSet.has(this._normalizeLanguageToken(lang.name)) && !selectedSet.has(this._normalizeLanguageToken(lang.name))
     );
   }
 
@@ -457,7 +694,14 @@ export class LanguageStep extends ProgressionStepPlugin {
    * Get language by ID/name
    */
   _getLanguage(id) {
-    return this._allLanguages.find(l => l.id === id || l.name === id);
+    const ref = String(id || '').trim();
+    const customName = this._extractCustomLanguageName(ref);
+    const match = this._allLanguages.find(l => l.id === ref || l.name === ref || this._languageMatchesName(l.name, customName));
+    if (match) return match;
+    if (this._isSelectedLanguageName(customName) || this._isKnownLanguageName(customName)) {
+      return this._buildCustomLanguageRecord(customName);
+    }
+    return null;
   }
 
   /**
@@ -469,12 +713,33 @@ export class LanguageStep extends ProgressionStepPlugin {
     }
 
     const lang = this._getLanguage(langId);
-    if (!lang || this._knownLanguages.includes(lang.name) || this._selectedBonusLanguages.includes(lang.name)) {
+    if (!lang || this._isFullKnownLanguageName(lang.name) || this._isSelectedLanguageName(lang.name)) {
       return; // Already selected or known
     }
 
     this._selectedBonusLanguages.push(lang.name);
     this._focusedLanguageId = lang.id;
+    await this._commitLanguageSelection(shell);
+    this._renderPreservingScroll(shell);
+  }
+
+  async _addCustomLanguage(shell) {
+    if (this._selectedBonusLanguages.length >= this._bonusLanguagesAvailable) {
+      ui?.notifications?.warn?.('You do not have any bonus language picks remaining.');
+      return;
+    }
+
+    const customName = await CustomLanguageDialog.prompt();
+    const name = String(customName || '').trim();
+    if (!name) return;
+
+    if (this._isFullKnownLanguageName(name) || this._isSelectedLanguageName(name)) {
+      ui?.notifications?.warn?.(`${name} is already in your language list.`);
+      return;
+    }
+
+    this._selectedBonusLanguages.push(name);
+    this._focusedLanguageId = this._customLanguageId(name);
     await this._commitLanguageSelection(shell);
     this._renderPreservingScroll(shell);
   }
@@ -487,11 +752,32 @@ export class LanguageStep extends ProgressionStepPlugin {
     if (!lang) return;
 
     this._selectedBonusLanguages = this._selectedBonusLanguages.filter(
-      name => name !== lang.name
+      name => !this._languageMatchesName(name, lang.name)
     );
     this._focusedLanguageId = lang.id;
     await this._commitLanguageSelection(shell);
     this._renderPreservingScroll(shell);
+  }
+
+  _getSelectedLanguageSource(shell, index = 0) {
+    const rules = this._buildLanguageRuleBreakdown(shell);
+    const intPicks = Math.max(0, Number(rules.intModPicks) || 0);
+    const linguistPicks = Math.max(0, Number(rules.linguistPicks) || 0);
+    if (index < intPicks) return 'learned';
+    if (index < intPicks + linguistPicks) return 'linguist';
+    return 'learned';
+  }
+
+  _getSelectedLanguageDisplay(name, index = 0, shell = null) {
+    const language = this._getLanguage(name) || this._buildCustomLanguageRecord(name);
+    const origin = language?.isCustom ? 'custom' : this._getSelectedLanguageSource(shell, index);
+    return {
+      name,
+      language,
+      sourceLabel: this._grantSourceLabel(origin),
+      sourceClass: this._grantSourceClass(origin),
+      modeLabel: 'Speak / Read / Write',
+    };
   }
 
   _buildLanguageRuleBreakdown(shell) {
@@ -523,15 +809,12 @@ export class LanguageStep extends ProgressionStepPlugin {
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedLanguages);
 
     return {
-      knownLanguages: this._knownLanguages.map(name => ({
-        name,
-        language: this._getLanguage(name),
+      knownLanguages: this._knownLanguageGrants.map(grant => ({
+        ...grant,
+        language: this._getLanguage(grant.name) || this._buildCustomLanguageRecord(grant.name),
       })).filter(item => item.language),
 
-      selectedBonusLanguages: this._selectedBonusLanguages.map(name => ({
-        name,
-        language: this._getLanguage(name),
-      })).filter(item => item.language),
+      selectedBonusLanguages: this._selectedBonusLanguages.map((name, index) => this._getSelectedLanguageDisplay(name, index, context?.shell)).filter(item => item.language),
 
       availableLanguages: available.map(lang => {
         const isSuggested = this.isSuggestedItem(lang.id, suggestedIds);
@@ -552,6 +835,7 @@ export class LanguageStep extends ProgressionStepPlugin {
       bonusLanguagesAvailable: this._bonusLanguagesAvailable,
       languageRuleBreakdown: this._buildLanguageRuleBreakdown(context?.shell),
       remainingPicks,
+      canAddCustomLanguage: remainingPicks > 0,
       searchQuery: this._searchQuery,
       hasAvailableLanguages: available.length > 0,
       hasSuggestions,
@@ -598,9 +882,11 @@ export class LanguageStep extends ProgressionStepPlugin {
       return this.renderDetailsPanelEmptyState();
     }
 
-    const isKnown = this._knownLanguages.includes(language.name);
-    const isSelected = this._selectedBonusLanguages.includes(language.name);
-    const canSelect = !isKnown && !isSelected && this._getAvailableLanguages().some(l => l.name === language.name);
+    const knownGrant = this._getKnownLanguageGrant(language.name);
+    const isKnown = Boolean(knownGrant);
+    const isFullKnown = Boolean(knownGrant?.isFull);
+    const isSelected = this._isSelectedLanguageName(language.name);
+    const canSelect = !isFullKnown && !isSelected && !language.isCustom && this._getAvailableLanguages().some(l => this._languageMatchesName(l.name, language.name));
     const remainingPicks = this._bonusLanguagesAvailable - this._selectedBonusLanguages.length;
 
     // Normalize detail panel data for canonical display (no fabrication)
@@ -611,10 +897,14 @@ export class LanguageStep extends ProgressionStepPlugin {
       data: {
         language,
         isKnown,
+        isFullKnown,
+        isPartialKnown: Boolean(knownGrant && !knownGrant.isFull),
+        knownGrant,
         isSelected,
         canSelect,
         remainingPicks,
-        categoryLabel: this._categoryLabels[language.category] || language.category,
+        categoryLabel: language.isCustom ? 'Custom' : (this._categoryLabels[language.category] || language.category),
+        isCustom: Boolean(language.isCustom),
         // Add normalized fields for enhanced detail rail
         canonicalDescription: normalized.description,
         metadataTags: normalized.metadataTags,
@@ -638,15 +928,15 @@ export class LanguageStep extends ProgressionStepPlugin {
     if (!lang) return;
 
     // If known, just focus it
-    if (this._knownLanguages.includes(lang.name)) {
+    if (this._isFullKnownLanguageName(lang.name)) {
       this._focusedLanguageId = lang.id;
       return;
     }
 
     // If already selected, deselect
-    if (this._selectedBonusLanguages.includes(lang.name)) {
+    if (this._isSelectedLanguageName(lang.name)) {
       this._selectedBonusLanguages = this._selectedBonusLanguages.filter(
-        name => name !== lang.name
+        name => !this._languageMatchesName(name, lang.name)
       );
     } else if (this._selectedBonusLanguages.length < this._bonusLanguagesAvailable) {
       // Otherwise, select if room available
@@ -658,6 +948,14 @@ export class LanguageStep extends ProgressionStepPlugin {
 
 
   async handleAction(action, event, target, shell) {
+    if (action === 'add-custom-language') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      event?.stopImmediatePropagation?.();
+      await this._addCustomLanguage(shell);
+      return true;
+    }
+
     if (action === 'select-language') {
       event?.preventDefault?.();
       event?.stopPropagation?.();
@@ -762,6 +1060,8 @@ export class LanguageStep extends ProgressionStepPlugin {
     return [{
       label: 'Bonus languages',
       count: remainingPicks,
+      total: Math.max(0, Number(this._bonusLanguagesAvailable || 0)),
+      selected: Math.max(0, Number(this._selectedBonusLanguages.length || 0)),
       isWarning: remainingPicks > 0,
     }];
   }
@@ -785,6 +1085,7 @@ export class LanguageStep extends ProgressionStepPlugin {
       filters: [
         { id: 'widelyUsed', label: 'Widely Used', type: 'toggle', defaultOn: false },
         { id: 'localTrade', label: 'Local & Trade', type: 'toggle', defaultOn: false },
+        { id: 'speciesNative', label: 'Species Native', type: 'toggle', defaultOn: false },
       ],
       sorts: [
         { id: 'alpha', label: 'A-Z', isDefault: true },

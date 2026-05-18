@@ -148,6 +148,19 @@ export class ShellSurfaceRegistry {
   }
 
 
+
+  static async _buildMessengerSurfaceVm(actor, options) {
+    try {
+      const { MessengerSurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/MessengerSurfaceService.js'
+      );
+      return await MessengerSurfaceService.buildViewModel(actor, options);
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Messenger surface VM failed:', err);
+      return { id: 'messenger', title: 'Messenger', error: err.message };
+    }
+  }
+
   static async _buildMentorSurfaceVm(actor, options) {
     try {
       const { MentorSurfaceService } = await import(

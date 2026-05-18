@@ -346,6 +346,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
       allowAbilityReroll: 'Allow Ability Reroll',
       allowPlayersNonheroic: 'Allow Non-Heroic Players',
       maxStartingCredits: 'Maximum Starting Credits',
+      holonetRequireCreditTransferApproval: 'GM Approves Holonet Credit Transfers',
+      holonetPartyFundEnabled: 'Enable Holonet Party Fund',
+      holonetPartyFundDefaultCutPercent: 'Party Fund Job Cut Percent',
       enableBackgrounds: 'Enable Backgrounds',
       backgroundSelectionCount: 'Background Selection Count',
       droidPointBuyPool: 'Droid Point Buy Pool',
@@ -440,6 +443,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
       allowAbilityReroll: 'Allow players to reroll low stat sets',
       allowPlayersNonheroic: 'Players can use the NPC generator',
       maxStartingCredits: 'Receive maximum starting credits',
+      holonetRequireCreditTransferApproval: 'Require GM approval before accepted player-to-player Holonet credit transfers complete',
+      holonetPartyFundEnabled: 'Enable a GM-managed party fund account in Holonet',
+      holonetPartyFundDefaultCutPercent: 'Default percent of job payouts routed to the Party Fund',
       enableBackgrounds: 'Allow selecting backgrounds during creation',
       allowDroidDestiny: 'Droid characters can have Destiny Points',
       conditionTrackCap: 'Maximum CT steps moved by one hit',
@@ -1340,7 +1346,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
 const HOUSE_RULES_CATEGORIES = {
   characterCreation: [
     'abilityScoreMethod', 'pointBuyPool', 'allowAbilityReroll', 'allowPlayersNonheroic',
-    'maxStartingCredits', 'enableBackgrounds', 'backgroundSelectionCount',
+    'maxStartingCredits', 'holonetRequireCreditTransferApproval', 'holonetPartyFundEnabled', 'holonetPartyFundDefaultCutPercent', 'enableBackgrounds', 'backgroundSelectionCount',
     'droidPointBuyPool', 'livingPointBuyPool', 'droidConstructionCredits', 'allowDroidDestiny'
   ],
   combat: [

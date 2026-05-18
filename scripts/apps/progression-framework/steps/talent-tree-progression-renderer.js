@@ -18,34 +18,32 @@ function computePositions(graphData) {
   const levelNumbers = Array.from(levels.keys()).sort((a, b) => a - b);
   const maxPerLevel = Math.max(1, ...Array.from(levels.values()).map((entries) => entries.length));
 
-  // Compact card layout. The SVG is fit-to-viewport by default, so the full tree
-  // is visible first and graph navigation becomes optional planning context.
-  const nodeWidth = 172;
-  const nodeHeight = 64;
-  const horizontalGap = 88;
-  const verticalGap = 40;
-  const paddingX = 56;
-  const paddingY = 42;
-
-  const width = Math.max(720, paddingX * 2 + levelNumbers.length * nodeWidth + Math.max(0, levelNumbers.length - 1) * horizontalGap);
-  const height = Math.max(320, paddingY * 2 + maxPerLevel * nodeHeight + Math.max(0, maxPerLevel - 1) * verticalGap);
+  // Concept-inspired holomap layout: circular nodes, broad spacing, curved conduits.
+  // The outer viewport fits this SVG, so the whole constellation is visible first.
+  const nodeRadius = 42;
+  const horizontalGap = 190;
+  const verticalGap = 118;
+  const paddingX = 96;
+  const paddingY = 82;
+  const width = Math.max(820, paddingX * 2 + levelNumbers.length * nodeRadius * 2 + Math.max(0, levelNumbers.length - 1) * horizontalGap);
+  const height = Math.max(460, paddingY * 2 + maxPerLevel * nodeRadius * 2 + Math.max(0, maxPerLevel - 1) * verticalGap);
   const positions = new Map();
 
   levelNumbers.forEach((level, levelIndex) => {
     const entries = levels.get(level) || [];
-    const totalHeight = entries.length * nodeHeight + Math.max(0, entries.length - 1) * verticalGap;
-    const startY = Math.max(paddingY, (height - totalHeight) / 2);
-    const x = paddingX + levelIndex * (nodeWidth + horizontalGap);
+    const totalHeight = entries.length * nodeRadius * 2 + Math.max(0, entries.length - 1) * verticalGap;
+    const startY = Math.max(paddingY + nodeRadius, (height - totalHeight) / 2 + nodeRadius);
+    const x = paddingX + nodeRadius + levelIndex * (nodeRadius * 2 + horizontalGap);
 
     entries.forEach(({ nodeId }, index) => {
-      const y = startY + index * (nodeHeight + verticalGap);
+      const y = startY + index * (nodeRadius * 2 + verticalGap);
       positions.set(nodeId, {
         x,
         y,
-        cx: x + nodeWidth / 2,
-        cy: y + nodeHeight / 2,
-        width: nodeWidth,
-        height: nodeHeight
+        cx: x,
+        cy: y,
+        r: nodeRadius,
+        level,
       });
     });
   });
@@ -53,21 +51,23 @@ function computePositions(graphData) {
   return { width, height, positions };
 }
 
-function classifyNodeState(node, nodeState = {}) {
-  if (nodeState.selected || nodeState.owned) return 'owned';
-  if (nodeState.legal === false) return 'blocked';
-  if (nodeState.legal === true) return 'available';
+function classifyNodeState(_node, nodeState = {}) {
+  if (nodeState.selected) return 'pending';
+  if (nodeState.owned || nodeState.chosenElsewhere || nodeState.actorOwned) return 'owned';
+  if (nodeState.legal === false) return 'locked';
+  if (nodeState.legal === true) return 'legal';
   return 'default';
 }
 
 function edgeStateForChild(childState) {
+  if (childState === 'pending') return 'pending';
   if (childState === 'owned') return 'owned';
-  if (childState === 'available') return 'available';
-  if (childState === 'blocked') return 'blocked';
+  if (childState === 'legal') return 'legal';
+  if (childState === 'locked') return 'locked';
   return 'default';
 }
 
-function trimLabel(value, limit = 28) {
+function trimLabel(value, limit = 22) {
   const raw = String(value || '').replace(/\s+/g, ' ').trim();
   if (raw.length <= limit) return raw;
   return `${raw.slice(0, Math.max(0, limit - 1)).trim()}…`;
@@ -75,62 +75,132 @@ function trimLabel(value, limit = 28) {
 
 function nodeStatusText(state) {
   switch (state) {
-    case 'owned': return 'Chosen';
-    case 'available': return 'Available';
-    case 'blocked': return 'Locked';
+    case 'pending': return 'Pending';
+    case 'owned': return 'Known';
+    case 'legal': return 'Legal';
+    case 'locked': return 'Locked';
     default: return 'Open';
   }
 }
 
+function nodeIcon(state) {
+  switch (state) {
+    case 'pending': return '◆';
+    case 'owned': return '✦';
+    case 'legal': return '◈';
+    case 'locked': return '⊗';
+    default: return '◇';
+  }
+}
+
+function makeSvgEl(documentRef, tag, attrs = {}) {
+  const element = documentRef.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [key, value] of Object.entries(attrs)) {
+    if (value == null) continue;
+    element.setAttribute(key, String(value));
+  }
+  return element;
+}
+
 function createSvgText(documentRef, x, y, textContent, className, options = {}) {
-  const text = documentRef.createElementNS('http://www.w3.org/2000/svg', 'text');
-  text.setAttribute('x', x);
-  text.setAttribute('y', y);
-  text.setAttribute('class', className);
-  text.setAttribute('text-anchor', options.anchor || 'start');
+  const text = makeSvgEl(documentRef, 'text', {
+    x,
+    y,
+    class: className,
+    'text-anchor': options.anchor || 'middle',
+  });
   text.textContent = textContent;
   return text;
 }
 
-function createSvgNode(documentRef, { nodeId, node, position, state, isFocused, onFocus, onCommit, title }) {
-  const group = documentRef.createElementNS('http://www.w3.org/2000/svg', 'g');
-  group.setAttribute('class', `prog-talent-card-node prog-talent-card-node--${state}${isFocused ? ' prog-talent-card-node--focused' : ''}`);
-  group.setAttribute('tabindex', '0');
-  group.setAttribute('role', 'button');
-  group.setAttribute('data-node-id', nodeId);
-  group.setAttribute('aria-label', title || node?.name || nodeId);
+function collectRelations(graphData) {
+  const upstreamByNode = new Map();
+  const downstreamByNode = new Map();
 
-  const titleEl = documentRef.createElementNS('http://www.w3.org/2000/svg', 'title');
+  const visitUpstream = (nodeId, out = new Set()) => {
+    const node = graphData?.nodes?.get?.(nodeId);
+    for (const prereqId of node?.prerequisites || []) {
+      if (out.has(prereqId)) continue;
+      out.add(prereqId);
+      visitUpstream(prereqId, out);
+    }
+    return out;
+  };
+
+  const visitDownstream = (nodeId, out = new Set()) => {
+    const node = graphData?.nodes?.get?.(nodeId);
+    for (const dependentId of node?.dependents || []) {
+      if (out.has(dependentId)) continue;
+      out.add(dependentId);
+      visitDownstream(dependentId, out);
+    }
+    return out;
+  };
+
+  for (const [nodeId] of graphData?.nodes || []) {
+    upstreamByNode.set(nodeId, visitUpstream(nodeId));
+    downstreamByNode.set(nodeId, visitDownstream(nodeId));
+  }
+
+  return { upstreamByNode, downstreamByNode };
+}
+
+function applyHoverState(svg, nodeId, relations) {
+  const upstream = relations.upstreamByNode.get(nodeId) || new Set();
+  const downstream = relations.downstreamByNode.get(nodeId) || new Set();
+
+  svg.querySelectorAll('.prog-talent-orb-node').forEach(nodeEl => {
+    const id = nodeEl.dataset.nodeId;
+    nodeEl.classList.toggle('is-hovered', id === nodeId);
+    nodeEl.classList.toggle('is-upstream', upstream.has(id));
+    nodeEl.classList.toggle('is-downstream', downstream.has(id));
+    nodeEl.classList.toggle('is-dimmed', id !== nodeId && !upstream.has(id) && !downstream.has(id));
+  });
+
+  svg.querySelectorAll('.prog-talent-tree-link').forEach(pathEl => {
+    const from = pathEl.dataset.from;
+    const to = pathEl.dataset.to;
+    const isDirect = from === nodeId || to === nodeId;
+    const isPath = upstream.has(from) && (upstream.has(to) || to === nodeId)
+      || downstream.has(to) && (downstream.has(from) || from === nodeId);
+    pathEl.classList.toggle('is-highlighted', isDirect || isPath);
+    pathEl.classList.toggle('is-dimmed', !(isDirect || isPath));
+  });
+}
+
+function clearHoverState(svg) {
+  svg.querySelectorAll('.is-hovered, .is-upstream, .is-downstream, .is-dimmed, .is-highlighted').forEach(el => {
+    el.classList.remove('is-hovered', 'is-upstream', 'is-downstream', 'is-dimmed', 'is-highlighted');
+  });
+}
+
+function createSvgNode(documentRef, { nodeId, node, position, state, nodeState = {}, isFocused, onFocus, onCommit, title, svg, relations }) {
+  const group = makeSvgEl(documentRef, 'g', {
+    class: `prog-talent-orb-node prog-talent-orb-node--${state}${isFocused ? ' prog-talent-orb-node--focused' : ''}${nodeState?.suggested ? ' prog-talent-orb-node--suggested' : ''}`,
+    tabindex: '0',
+    role: 'button',
+    'data-node-id': nodeId,
+    'data-node-state': state,
+    'data-suggested': nodeState?.suggested ? 'true' : 'false',
+    'aria-label': title || node?.name || nodeId,
+    transform: `translate(${position.cx} ${position.cy})`,
+  });
+
+  const titleEl = makeSvgEl(documentRef, 'title');
   titleEl.textContent = title || node?.name || nodeId;
   group.appendChild(titleEl);
 
-  const rect = documentRef.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  rect.setAttribute('x', position.x);
-  rect.setAttribute('y', position.y);
-  rect.setAttribute('width', position.width);
-  rect.setAttribute('height', position.height);
-  rect.setAttribute('rx', '10');
-  rect.setAttribute('ry', '10');
-  rect.setAttribute('class', 'prog-talent-card-node__shape');
-  group.appendChild(rect);
-
-  const titleText = createSvgText(
-    documentRef,
-    position.x + 14,
-    position.y + 26,
-    trimLabel(node?.name || nodeId, 26),
-    'prog-talent-card-node__label'
-  );
-  group.appendChild(titleText);
-
-  const statusText = createSvgText(
-    documentRef,
-    position.x + 14,
-    position.y + 48,
-    nodeStatusText(state),
-    'prog-talent-card-node__status'
-  );
-  group.appendChild(statusText);
+  group.appendChild(makeSvgEl(documentRef, 'circle', { class: 'prog-talent-orb-node__halo', r: 45 }));
+  group.appendChild(makeSvgEl(documentRef, 'circle', { class: 'prog-talent-orb-node__orbit', r: 39 }));
+  group.appendChild(makeSvgEl(documentRef, 'circle', { class: 'prog-talent-orb-node__ring', r: 33 }));
+  group.appendChild(makeSvgEl(documentRef, 'circle', { class: 'prog-talent-orb-node__core', r: 23 }));
+  group.appendChild(createSvgText(documentRef, 0, 9, nodeIcon(state), 'prog-talent-orb-node__icon'));
+  group.appendChild(createSvgText(documentRef, 30, -27, `T${Number(node?.level || 0)}`, 'prog-talent-orb-node__tier'));
+  if (nodeState?.suggested) {
+    group.appendChild(createSvgText(documentRef, -31, -27, nodeState?.recommendationRank ? `#${nodeState.recommendationRank}` : '★', 'prog-talent-orb-node__suggestion'));
+  }
+  group.appendChild(createSvgText(documentRef, 0, 65, trimLabel(node?.name || nodeId), 'prog-talent-orb-node__label'));
+  group.appendChild(createSvgText(documentRef, 0, 84, nodeState?.suggested && state === 'legal' ? (nodeState?.recommendationLabel || 'Suggested') : nodeStatusText(state), 'prog-talent-orb-node__status'));
 
   const handleFocus = (event) => {
     event.preventDefault();
@@ -138,6 +208,10 @@ function createSvgNode(documentRef, { nodeId, node, position, state, isFocused, 
     onFocus?.(nodeId);
   };
 
+  group.addEventListener('mouseenter', () => applyHoverState(svg, nodeId, relations));
+  group.addEventListener('mouseleave', () => clearHoverState(svg));
+  group.addEventListener('focus', () => applyHoverState(svg, nodeId, relations));
+  group.addEventListener('blur', () => clearHoverState(svg));
   group.addEventListener('click', handleFocus);
   group.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' || event.key === ' ') handleFocus(event);
@@ -145,10 +219,46 @@ function createSvgNode(documentRef, { nodeId, node, position, state, isFocused, 
   group.addEventListener('dblclick', (event) => {
     event.preventDefault();
     event.stopPropagation();
-    if (state !== 'blocked') onCommit?.(nodeId);
+    if (state === 'legal' || state === 'pending') onCommit?.(nodeId);
   });
 
   return group;
+}
+
+function createDefs(documentRef) {
+  const defs = makeSvgEl(documentRef, 'defs');
+  defs.innerHTML = `
+    <filter id="progTalentHolomapGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"></feGaussianBlur>
+      <feMerge>
+        <feMergeNode in="coloredBlur"></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <pattern id="progTalentHolomapGrid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" class="prog-talent-tree-svg__grid-line" fill="none" stroke="currentColor" stroke-width="1"></path>
+    </pattern>
+    <radialGradient id="progTalentHolomapVignette" cx="50%" cy="45%" r="68%">
+      <stop class="prog-talent-tree-svg__vignette-stop prog-talent-tree-svg__vignette-stop--inner" offset="0%" stop-color="currentColor"></stop>
+      <stop class="prog-talent-tree-svg__vignette-stop prog-talent-tree-svg__vignette-stop--outer" offset="100%" stop-color="rgba(5, 5, 10, 0)"></stop>
+    </radialGradient>`;
+  return defs;
+}
+
+function createEdgePath(documentRef, edge, fromPos, toPos, childState) {
+  const sx = fromPos.cx + fromPos.r * 0.72;
+  const sy = fromPos.cy;
+  const tx = toPos.cx - toPos.r * 0.72;
+  const ty = toPos.cy;
+  const dx = Math.max(80, Math.abs(tx - sx) * 0.45);
+  const d = `M ${sx} ${sy} C ${sx + dx} ${sy}, ${tx - dx} ${ty}, ${tx} ${ty}`;
+
+  return makeSvgEl(documentRef, 'path', {
+    d,
+    class: `prog-talent-tree-link prog-talent-tree-link--${edgeStateForChild(childState)}`,
+    'data-from': edge.from,
+    'data-to': edge.to,
+  });
 }
 
 export function renderProgressionTalentTree(container, options = {}) {
@@ -169,52 +279,53 @@ export function renderProgressionTalentTree(container, options = {}) {
 
   const { width, height, positions } = computePositions(graphData);
   const documentRef = container.ownerDocument;
-  const svg = documentRef.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('class', 'prog-talent-tree-svg prog-talent-tree-svg--fit');
-  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-  svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-label', 'Talent tree map');
+  const relations = collectRelations(graphData);
+  const svg = makeSvgEl(documentRef, 'svg', {
+    class: 'prog-talent-tree-svg prog-talent-tree-svg--holomap',
+    viewBox: `0 0 ${width} ${height}`,
+    preserveAspectRatio: 'xMidYMid meet',
+    role: 'img',
+    'aria-label': 'Talent tree holomap',
+  });
 
-  const edgesGroup = documentRef.createElementNS('http://www.w3.org/2000/svg', 'g');
-  edgesGroup.setAttribute('class', 'prog-talent-tree-svg__edges');
+  svg.appendChild(createDefs(documentRef));
+  svg.appendChild(makeSvgEl(documentRef, 'rect', { class: 'prog-talent-tree-svg__backdrop', x: 0, y: 0, width, height }));
+  svg.appendChild(makeSvgEl(documentRef, 'rect', { class: 'prog-talent-tree-svg__grid', x: 0, y: 0, width, height }));
+  svg.appendChild(makeSvgEl(documentRef, 'rect', { class: 'prog-talent-tree-svg__vignette', x: 0, y: 0, width, height }));
 
+  const edgesGroup = makeSvgEl(documentRef, 'g', { class: 'prog-talent-tree-svg__edges' });
   for (const edge of graphData.edges || []) {
     const fromPos = positions.get(edge.from);
     const toPos = positions.get(edge.to);
     if (!fromPos || !toPos) continue;
-
     const childState = classifyNodeState(graphData.nodes.get(edge.to), nodeStates[edge.to] || {});
-    const line = documentRef.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', fromPos.x + fromPos.width);
-    line.setAttribute('y1', fromPos.cy);
-    line.setAttribute('x2', toPos.x);
-    line.setAttribute('y2', toPos.cy);
-    line.setAttribute('class', `prog-talent-tree-link prog-talent-tree-link--${edgeStateForChild(childState)}`);
-    edgesGroup.appendChild(line);
+    edgesGroup.appendChild(createEdgePath(documentRef, edge, fromPos, toPos, childState));
   }
   svg.appendChild(edgesGroup);
 
-  const nodesGroup = documentRef.createElementNS('http://www.w3.org/2000/svg', 'g');
-  nodesGroup.setAttribute('class', 'prog-talent-tree-svg__nodes');
-
+  const nodesGroup = makeSvgEl(documentRef, 'g', { class: 'prog-talent-tree-svg__nodes' });
   for (const [nodeId, node] of graphData.nodes) {
     const position = positions.get(nodeId);
     if (!position) continue;
     const state = classifyNodeState(node, nodeStates[nodeId] || {});
-    const title = `${node?.name || nodeId} — ${nodeStatusText(state)}`;
+    const nodeState = nodeStates[nodeId] || {};
+    const title = `${node?.name || nodeId} — ${nodeState?.suggested ? (nodeState?.recommendationLabel || 'Suggested') : nodeStatusText(state)}`;
     nodesGroup.appendChild(createSvgNode(documentRef, {
       nodeId,
       node,
       position,
       state,
+      nodeState,
       isFocused: nodeId === focusedTalentId,
       onFocus,
       onCommit,
       title,
+      svg,
+      relations,
     }));
   }
 
   svg.appendChild(nodesGroup);
+  svg.addEventListener('mouseleave', () => clearHoverState(svg));
   container.replaceChildren(svg);
 }

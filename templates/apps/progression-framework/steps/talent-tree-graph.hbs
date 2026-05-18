@@ -1,13 +1,14 @@
 {{!-- Talent Planner (Stage 2) --}}
-<div class="talent-work-surface talent-stage-graph talent-planner-stage talent-planner-stage--{{viewMode}}">
-  <div class="talent-graph-header talent-planner-header">
+<div class="talent-work-surface talent-stage-graph talent-planner-stage talent-planner-stage--{{viewMode}} talent-holomap-stage {{visualThemeClass}}">
+  <div class="talent-graph-header talent-planner-header talent-planner-header--holomap">
     <div class="talent-graph-header__title-wrap">
+      <div class="talent-browser-header__eyebrow">// ACTIVE TREE</div>
       <h3 class="talent-graph-header__title">
-        <i class="fa-solid fa-diagram-project"></i>
-        {{selectedTreeName}}
+        <span class="talent-graph-header__sigil" aria-hidden="true">{{visualIcon}}</span>
+        <span>{{selectedTreeName}}</span>
       </h3>
       <p class="talent-graph-header__subtitle">
-        Pick from the available list first; use the map to plan prerequisite paths.
+{{visualSignal}} · {{visualMotion}} · Legal nodes glow with this tree's local spectrum.
       </p>
     </div>
 
@@ -30,21 +31,21 @@
     </div>
   </div>
 
-  <div class="talent-planner-grid">
-    <section class="talent-choice-panel" data-prog-scroll-key="talent-choice-panel" aria-label="Talent choices">
+  <div class="talent-planner-grid talent-planner-grid--holomap">
+    <section class="talent-choice-panel talent-choice-panel--holomap" data-prog-scroll-key="talent-choice-panel" aria-label="Talent choices">
       <div class="talent-choice-panel__header">
         <div>
           <h4>Available Choices</h4>
-          <p>{{slotProgress.progressLabel}} · {{slotProgress.remainingLabel}}</p>
+          <p>{{slotProgress.progressLabel}} · {{slotProgress.remainingLabel}}{{#if recommendedTalentCount}} · {{recommendedTalentCount}} mentor suggestion{{#unless (eq recommendedTalentCount 1)}}s{{/unless}}{{/if}}</p>
         </div>
         {{#if selectedTalent}}
-        <span class="talent-choice-panel__selected-pill"><i class="fa-solid fa-check"></i> {{selectedTalent.name}}</span>
+        <span class="talent-choice-panel__selected-pill"><i class="fa-solid fa-diamond"></i> {{selectedTalent.name}}</span>
         {{/if}}
       </div>
 
       {{#if availableTalents}}
       <div class="talent-choice-section talent-choice-section--available">
-        <h5><i class="fa-solid fa-circle-check"></i> Available Now</h5>
+        <h5><i class="fa-solid fa-circle-check"></i> Legal Activations</h5>
         <div class="talent-choice-list" data-prog-scroll-key="talent-choice-list">
           {{#each availableTalents}}
           <article class="talent-choice-card {{#if isFocused}}is-focused{{/if}} {{#if isSelected}}is-selected{{/if}}"
@@ -57,14 +58,18 @@
               <h6>{{name}}</h6>
               <p>{{summary}}</p>
               <div class="talent-choice-card__meta">
-                <span class="talent-choice-badge talent-choice-badge--available">Available</span>
-                {{#if isSelected}}<span class="talent-choice-badge talent-choice-badge--selected">Selected</span>{{/if}}
+                {{#if isSuggestedTalent}}<span class="talent-choice-badge talent-choice-badge--suggested"><i class="fa-solid fa-star"></i> {{recommendationLabel}}</span>{{/if}}
+                <span class="talent-choice-badge talent-choice-badge--available">Legal</span>
+                {{#if isSelected}}<span class="talent-choice-badge talent-choice-badge--selected">Pending</span>{{/if}}
                 {{#if chosenElsewhere}}<span class="talent-choice-badge talent-choice-badge--locked">Already Picked</span>{{/if}}
                 {{#if isActorOwned}}<span class="talent-choice-badge talent-choice-badge--locked">Known</span>{{/if}}
               </div>
+              {{#if recommendationReason}}
+              <p class="talent-choice-card__recommendation">{{recommendationReason}}</p>
+              {{/if}}
             </div>
             <button class="talent-choice-card__choose" data-action="commit-item" data-item-id="{{id}}" type="button">
-              {{#if isSelected}}Deselect{{else}}Choose{{/if}}
+              {{#if isSelected}}Deselect{{else}}Activate{{/if}}
             </button>
           </article>
           {{/each}}
@@ -101,7 +106,7 @@
 
       {{#unless availableTalents}}
         {{#unless lockedTalents}}
-        <div class="talent-empty-state talent-empty-state--compact">
+        <div class="talent-empty-state talent-empty-state--compact talent-empty-state--holomap">
           <i class="fa-solid fa-hexagon-exclamation"></i>
           <p>No talents matched your current filters in this tree.</p>
         </div>
@@ -109,31 +114,35 @@
       {{/unless}}
     </section>
 
-    <section class="talent-map-panel" data-prog-scroll-key="talent-map-panel" aria-label="Talent tree map">
+    <section class="talent-map-panel talent-map-panel--holomap" data-prog-scroll-key="talent-map-panel" aria-label="Talent tree map">
       <div class="talent-map-panel__header">
         <div>
-          <h4>Tree Map</h4>
-          <p>The whole tree is fit to the panel by default.</p>
+          <h4>Tree Holomap</h4>
+          <p>{{visualKicker}} · {{visualRole}} · Hover to reveal prerequisite flow. Double-click a legal node to activate.</p>
         </div>
         <button class="talent-planner-control" data-action="center-talent-node" type="button" title="Refocus the selected or inspected node">
           <i class="fa-solid fa-crosshairs"></i> Center
         </button>
       </div>
 
-      <div class="talent-graph-container">
-        <div class="talent-graph-viewport" data-prog-scroll-key="talent-graph-viewport" data-talent-graph-viewport>
-          <div class="talent-tree-graph-container talent-graph-canvas" data-graph-id="{{selectedTreeId}}"></div>
+      <div class="talent-graph-container talent-graph-container--holomap">
+        <div class="talent-graph-viewport talent-graph-viewport--holomap" data-prog-scroll-key="talent-graph-viewport" data-talent-graph-viewport>
+          <div class="talent-tree-graph-container talent-graph-canvas talent-graph-canvas--holomap" data-graph-id="{{selectedTreeId}}"></div>
         </div>
       </div>
 
-      <div class="talent-graph-legend">
+      <div class="talent-graph-legend talent-graph-legend--holomap">
         <div class="talent-legend-item">
           <span class="talent-legend-swatch talent-legend-swatch--owned"></span>
-          <span class="talent-legend-label">Chosen</span>
+          <span class="talent-legend-label">Known</span>
         </div>
         <div class="talent-legend-item">
           <span class="talent-legend-swatch talent-legend-swatch--available"></span>
-          <span class="talent-legend-label">Available</span>
+          <span class="talent-legend-label">Legal</span>
+        </div>
+        <div class="talent-legend-item">
+          <span class="talent-legend-swatch talent-legend-swatch--pending"></span>
+          <span class="talent-legend-label">Pending</span>
         </div>
         <div class="talent-legend-item">
           <span class="talent-legend-swatch talent-legend-swatch--blocked"></span>

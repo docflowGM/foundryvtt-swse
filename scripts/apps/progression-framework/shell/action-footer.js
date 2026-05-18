@@ -15,6 +15,8 @@
  * - On last step: Next label becomes "Confirm" (chargen) or "Apply" (levelup)
  */
 
+import { FooterExplanation } from './footer-explanation.js';
+
 /**
  * @typedef {Object} FooterCenterItem
  * @property {string} label        - Display text (e.g. "2 trainings remaining")
@@ -42,11 +44,11 @@ export class ActionFooter {
    * @param {'chargen'|'levelup'} params.mode
    * @returns {FooterData}
    */
-  static build({ shell, currentPlugin, isLastStep, mode }) {
-    const blockingIssues = currentPlugin?.getBlockingIssues() ?? [];
-    const warnings = currentPlugin?.getWarnings() ?? [];
-    const remainingPicks = currentPlugin?.getRemainingPicks() ?? [];
-    const footerOverride = currentPlugin?.getFooterConfig() ?? {};
+  static build({ shell, currentPlugin, currentDescriptor = null, isLastStep, mode }) {
+    const blockingIssues = currentPlugin?.getBlockingIssues?.(shell) ?? [];
+    const warnings = currentPlugin?.getWarnings?.(shell) ?? [];
+    const remainingPicks = currentPlugin?.getRemainingPicks?.(shell) ?? [];
+    const footerOverride = currentPlugin?.getFooterConfig?.(shell) ?? {};
 
     // PHASE 3 UX: Get specific blocker explanation from plugin
     const blockerExplanation = blockingIssues.length > 0
@@ -71,6 +73,15 @@ export class ActionFooter {
 
     const primaryRemaining = centerItems.find(item => Number.isFinite(Number(item.count))) || null;
     const status = this._buildStatusReadout(primaryRemaining, blockingIssues);
+    const explanation = FooterExplanation.build({
+      shell,
+      currentPlugin,
+      descriptor: currentDescriptor || shell?.steps?.[shell?.currentStepIndex] || null,
+      remainingPicks,
+      footerOverride,
+      blockingIssues,
+      mode,
+    });
 
     // Determine Next/Confirm label
     let nextLabel;
@@ -96,6 +107,7 @@ export class ActionFooter {
       blockingIssues,
       warnings,
       status,
+      explanation,
       // PHASE 3 UX: Specific explanation when blocked
       blockerExplanation,
     };

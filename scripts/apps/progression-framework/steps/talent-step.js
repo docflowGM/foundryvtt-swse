@@ -25,6 +25,7 @@ import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { buildDependencyGraph } from '/systems/foundryvtt-swse/scripts/apps/chargen/chargen-talent-tree-graph.js';
 import { renderProgressionTalentTree } from './talent-tree-progression-renderer.js';
+import { buildTalentTreeMentorRead } from './talent-tree-mentor-commentary.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
@@ -100,6 +101,9 @@ export class TalentStep extends ProgressionStepPlugin {
     // Tree browser state
     this._allTrees = [];
     this._suggestedTrees = [];
+    this._treeRecommendationById = new Map();
+    this._talentRecommendationById = new Map();
+    this._treeTalentCache = new Map();
     this._focusedTreeId = null;
     this._selectedTreeId = null;
     this._searchQuery = '';
@@ -116,6 +120,7 @@ export class TalentStep extends ProgressionStepPlugin {
     // Event listener cleanup
     this._renderAbort = null;
     this._isDroidProgression = false;
+    this._lastMentorTreeSpeechId = null;
   }
 
   _captureStepScroll(shell) {
@@ -176,6 +181,9 @@ export class TalentStep extends ProgressionStepPlugin {
 
       // Load all talent trees
       this._allTrees = Array.from(TalentTreeDB.trees.values());
+      this._treeTalentCache = new Map();
+      this._talentRecommendationById = new Map();
+      this._treeRecommendationById = new Map();
       this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
       const existingTalent = this._getCommittedTalentForSlot(shell);
       this._selectedTalentId = this._getTalentId(existingTalent) || null;
@@ -273,8 +281,7 @@ export class TalentStep extends ProgressionStepPlugin {
         case 'focus-tree': {
           const treeId = target?.dataset?.treeId || target?.closest('[data-tree-id]')?.dataset?.treeId;
           if (treeId) {
-            this._focusedTreeId = treeId;
-            this._renderPreservingScroll(shell);
+            this._focusTree(treeId, shell);
           }
           return true;
         }
@@ -361,8 +368,7 @@ export class TalentStep extends ProgressionStepPlugin {
       card.addEventListener('click', (e) => {
         e.preventDefault();
         const treeId = card.dataset.treeId;
-        this._focusedTreeId = treeId;
-        this._renderPreservingScroll(shell);
+        this._focusTree(treeId, shell);
       }, { signal });
     });
 
@@ -494,6 +500,31 @@ export class TalentStep extends ProgressionStepPlugin {
   // Stage Navigation
   // ---------------------------------------------------------------------------
 
+  _focusTree(treeId, shell, { speak = true } = {}) {
+    this._focusedTreeId = treeId;
+    if (speak) this._speakTreeMentorCommentary(treeId, shell);
+    this._renderPreservingScroll(shell);
+  }
+
+  _speakTreeMentorCommentary(treeId, shell) {
+    const tree = this._getTree(treeId);
+    if (!tree || !shell?.mentor) return;
+    const treeKey = tree?.id || tree?.name || treeId;
+    if (this._lastMentorTreeSpeechId === treeKey) return;
+    this._lastMentorTreeSpeechId = treeKey;
+
+    const recommendation = this._treeRecommendationById.get(tree?.id) || this._treeRecommendationById.get(tree?.name) || null;
+    const mentorRead = this._buildMentorTreeCommentary(tree, shell, recommendation);
+    if (!mentorRead?.text) return;
+
+    shell.mentor.currentDialogue = mentorRead.text;
+    try {
+      shell.mentorRail?.speak?.(mentorRead.text, mentorRead.tone || 'thoughtful');
+    } catch (_err) {
+      // Mentor speech is presentation-only. The detail rail still displays the read.
+    }
+  }
+
   async _enterTree(treeId, shell) {
     emitTalentStepTrace('ENTER_TREE_START', {
       treeId,
@@ -513,7 +544,7 @@ export class TalentStep extends ProgressionStepPlugin {
     }
 
     // Get talents in this tree
-    this._selectedTreeTalents = await this._getTalentsForTree(tree, shell.actor);
+    this._selectedTreeTalents = await this._getTalentsForTreeCached(tree, shell.actor);
     emitTalentStepTrace('TREE_TALENT_RESOLUTION', {
       treeId: tree?.id || treeId,
       treeName: tree?.name || null,
@@ -639,60 +670,264 @@ export class TalentStep extends ProgressionStepPlugin {
    * CRITICAL: Pass characterData (chargen choices so far) for coherent suggestions
    */
   async _getSuggestedTrees(actor, availableTrees, shell) {
+    this._treeRecommendationById = new Map();
     try {
-      // ✓ Build characterData from shell's committedSelections
-      // This ensures suggestion engine understands the build-in-progress
-      const characterData = this._buildCharacterDataFromShell(shell);
-
       const mode = shell?.mode || this.descriptor?.mode || 'chargen';
-      const pendingData = SuggestionContextBuilder.buildPendingData(actor, characterData);
-      pendingData.activeSlotContext = {
-        slotKind: 'talent',
-        slotType: this._slotType,
-        classId: this._classId || null,
-        activeSlotIndex: 0,
-        domains: Array.isArray(this._allowedTreeIds) ? [...this._allowedTreeIds] : null
-      };
-      pendingData.allowedTalentTrees = (availableTrees || []).map((tree) => tree?.id || tree?._id || tree?.sourceId || tree?.name).filter(Boolean);
-      const pendingAbilityData = this._buildPendingAbilityData(shell);
-      Object.assign(pendingData, pendingAbilityData || {});
+      const pendingData = this._buildTalentSuggestionPendingData(shell, availableTrees);
+      const recommendations = [];
 
-      const suggested = await SuggestionService.getSuggestions(actor, mode, {
-        domain: 'talents',
-        available: availableTrees,
-        pendingData,
-        engineOptions: { includeFutureAvailability: true },
-        persist: true
+      for (const tree of availableTrees || []) {
+        const legalTalents = await this._getSelectableTalentsForTreeSuggestion(tree, shell, pendingData);
+        if (!legalTalents.length) {
+          this._treeRecommendationById.set(tree?.id || tree?.name, {
+            treeId: tree?.id || tree?.name,
+            legalChoiceCount: 0,
+            label: 'No Legal Picks',
+            reason: 'This tree has no selectable talents for the current slot, so it is not considered by the suggestion engine.',
+            reasons: ['No selectable talents are legal right now.'],
+            score: -1,
+            isTopSuggestion: false,
+          });
+          continue;
+        }
+
+        const candidateTalents = legalTalents.map(talent => this._toSuggestionTalentCandidate(talent, tree));
+        const treePendingData = {
+          ...pendingData,
+          selectedTree: { id: tree?.id || null, name: tree?.name || null },
+          allowedTalentTrees: [tree?.id, tree?.sourceId, tree?.name].filter(Boolean),
+        };
+
+        const suggestedTalents = await SuggestionService.getSuggestions(actor, mode, {
+          domain: 'talents',
+          available: candidateTalents,
+          pendingData: treePendingData,
+          focus: `talent-tree:${tree?.id || tree?.name}:tree-mode`,
+          engineOptions: { includeFutureAvailability: false },
+          persist: false
+        });
+
+        const legalKeys = new Set(candidateTalents.flatMap(talent => this._getTalentIdentityKeys(talent)));
+        const rankedTalents = this._sortSuggestionResults((suggestedTalents || [])
+          .filter(talent => this._getTalentIdentityKeys(talent).some(key => legalKeys.has(key))));
+        const topTalent = rankedTalents[0] || candidateTalents[0];
+        const recommendation = this._buildTreeRecommendation(tree, topTalent, rankedTalents, legalTalents, pendingData);
+        this._treeRecommendationById.set(tree?.id || tree?.name, recommendation);
+        recommendations.push(recommendation);
+      }
+
+      recommendations.sort((left, right) => {
+        if (right.score !== left.score) return right.score - left.score;
+        if (right.legalChoiceCount !== left.legalChoiceCount) return right.legalChoiceCount - left.legalChoiceCount;
+        return String(left.treeName || '').localeCompare(String(right.treeName || ''));
       });
 
-      return (suggested || []).slice(0, 4).map(tree => this._withTalentSuggestionReasons(tree, pendingData));  // Top ranked trees
+      recommendations.forEach((recommendation, index) => {
+        recommendation.rank = index + 1;
+        recommendation.isTopSuggestion = index < 4;
+      });
+
+      return recommendations.slice(0, 4).map(recommendation => recommendation.tree);
     } catch (err) {
       console.warn('[TalentStep] Suggestion service error:', err);
       return [];
     }
   }
 
-  _withTalentSuggestionReasons(tree, pendingData = {}) {
-    const existing = [
-      ...(Array.isArray(tree?.suggestion?.reasons) ? tree.suggestion.reasons : []),
-      ...(Array.isArray(tree?.reasonBullets) ? tree.reasonBullets : []),
-    ].filter(Boolean);
-    if (existing.length) return tree;
-    const className = pendingData?.selectedClass?.name || pendingData?.selectedClass?.label || pendingData?.selectedClass || null;
-    const reasons = [];
-    if (className) reasons.push(`${tree.name} is available from the ${className} talent paths you can currently access.`);
-    else reasons.push(`${tree.name} is available to this talent slot right now.`);
-    const summary = tree.description || tree.system?.description;
-    if (summary) reasons.push(`Its theme is: ${String(summary).replace(/<[^>]+>/g, '').slice(0, 140)}.`);
+  _buildTalentSuggestionPendingData(shell, availableTrees = []) {
+    const actor = shell?.actor || null;
+    const characterData = this._buildCharacterDataFromShell(shell);
+    const pendingData = SuggestionContextBuilder.buildPendingData(actor, characterData) || {};
+    pendingData.activeSlotContext = {
+      slotKind: 'talent',
+      slotType: this._slotType,
+      classId: this._classId || null,
+      activeSlotIndex: 0,
+      domains: Array.isArray(this._allowedTreeIds) ? [...this._allowedTreeIds] : null,
+    };
+    pendingData.allowedTalentTrees = (availableTrees || [])
+      .map((tree) => tree?.id || tree?._id || tree?.sourceId || tree?.name)
+      .filter(Boolean);
+    Object.assign(pendingData, this._buildPendingAbilityData(shell) || {});
+    return pendingData;
+  }
+
+  _toSuggestionTalentCandidate(talent, tree = null) {
+    const base = talent?.toObject ? talent.toObject() : { ...(talent || {}) };
+    const system = { ...(base.system || talent?.system || {}) };
+
+    // The step already uses tree-authority and per-node legality. Remove broad
+    // tree authority fields from the suggestion copy so the older talent scorer
+    // cannot re-filter legal class-tree candidates using heroic-slot authority.
+    delete system.talent_tree;
+    delete system.talentTree;
+    system.tree = system.tree || tree?.name || tree?.id || '';
+
     return {
+      ...base,
+      id: base.id || base._id || talent?.id || talent?._id || talent?.name,
+      _id: base._id || base.id || talent?._id || talent?.id || talent?.name,
+      name: base.name || talent?.name || 'Unknown Talent',
+      type: base.type || talent?.type || 'talent',
+      system,
+      isQualified: true,
+      sourceTreeId: tree?.id || null,
+      sourceTreeName: tree?.name || null,
+    };
+  }
+
+  async _getSelectableTalentsForTreeSuggestion(tree, shell, pendingData = {}) {
+    const talents = await this._getTalentsForTreeCached(tree, shell?.actor);
+    const otherSelectedKeys = this._getSelectedTalentKeys(shell, { excludeSlotType: this._slotType });
+    const ownedTalentKeys = this._getOwnedTalentKeys(shell?.actor);
+    const legal = [];
+
+    for (const talent of talents || []) {
+      const identityKeys = this._getTalentIdentityKeys(talent);
+      if (identityKeys.some(key => otherSelectedKeys.has(key) || ownedTalentKeys.has(key))) continue;
+
+      let prereqDetails = { legal: true };
+      try {
+        prereqDetails = shell?.actor
+          ? await this._getPrerequisiteDetails(shell.actor, talent, pendingData)
+          : { legal: true };
+      } catch (_err) {
+        prereqDetails = { legal: false };
+      }
+
+      if (prereqDetails.legal !== false) legal.push(talent);
+    }
+
+    return legal;
+  }
+
+  async _getTalentsForTreeCached(tree, actor) {
+    const key = tree?.id || tree?.sourceId || tree?.name;
+    if (!key) return [];
+    if (this._treeTalentCache.has(key)) return this._treeTalentCache.get(key) || [];
+    const talents = await this._getTalentsForTree(tree, actor);
+    this._treeTalentCache.set(key, talents || []);
+    return talents || [];
+  }
+
+  _getSuggestionScalar(item) {
+    const candidates = [
+      item?.suggestion?.score,
+      item?.suggestion?.finalScore,
+      item?.suggestion?.scoring?.final,
+      item?.suggestion?.scoring?.finalScore,
+      item?.suggestion?.confidence,
+      item?.scoring?.finalScore,
+      0,
+    ];
+    for (const value of candidates) {
+      const numeric = Number(value);
+      if (Number.isFinite(numeric)) return numeric;
+    }
+    return 0;
+  }
+
+  _getSuggestionTier(item) {
+    const tier = Number(item?.suggestion?.tier ?? item?.recommendation?.tier ?? 0);
+    return Number.isFinite(tier) ? tier : 0;
+  }
+
+  _sortSuggestionResults(items = []) {
+    return [...items].sort((left, right) => {
+      const tierDelta = this._getSuggestionTier(right) - this._getSuggestionTier(left);
+      if (Math.abs(tierDelta) > 0.0001) return tierDelta;
+      const scoreDelta = this._getSuggestionScalar(right) - this._getSuggestionScalar(left);
+      if (Math.abs(scoreDelta) > 0.0001) return scoreDelta;
+      return String(left?.name || '').localeCompare(String(right?.name || ''));
+    });
+  }
+
+  _getRecommendationLabel(item, { rank = null } = {}) {
+    const tier = this._getSuggestionTier(item);
+    if (rank === 1 && tier >= 1) return 'Top Pick';
+    if (tier >= 5) return 'Priority Path';
+    if (tier >= 4) return 'Recommended';
+    if (tier >= 2) return 'Strong Fit';
+    if (tier >= 1) return 'Good Fit';
+    return 'Legal Option';
+  }
+
+  _extractSuggestionReasons(item, fallback = []) {
+    const suggestion = item?.suggestion || {};
+    const reasonCode = suggestion.reasonCode || suggestion.reason?.tierAssignedBy || null;
+    const reasons = [
+      ...(Array.isArray(suggestion.reasons) ? suggestion.reasons : []),
+      ...(Array.isArray(suggestion.reasonBullets) ? suggestion.reasonBullets : []),
+      ...(Array.isArray(item?.reasonBullets) ? item.reasonBullets : []),
+      suggestion.reasonText,
+      suggestion.reason,
+      reasonCode ? this._humanizeSuggestionReasonCode(reasonCode, item) : null,
+      ...fallback,
+    ].map(toDisplayText).filter(Boolean);
+
+    return [...new Set(reasons)].slice(0, 4);
+  }
+
+  _humanizeSuggestionReasonCode(reasonCode, item = {}) {
+    const code = String(reasonCode || '').toUpperCase();
+    const name = item?.name || 'this choice';
+    if (code.includes('PRESTIGE')) return `${name} supports a longer prestige or advanced path.`;
+    if (code.includes('WISHLIST')) return `${name} moves you toward something already marked as desirable for this build.`;
+    if (code.includes('META')) return `${name} has a known synergy with your current build signals.`;
+    if (code.includes('CHAIN')) return `${name} continues a prerequisite chain you have already started.`;
+    if (code.includes('SPECIES')) return `${name} lines up with your species or heritage signals.`;
+    if (code.includes('SKILL')) return `${name} uses skills your character is already developing.`;
+    if (code.includes('ABILITY')) return `${name} leans into one of your stronger ability scores.`;
+    if (code.includes('CLASS')) return `${name} fits the class path you are currently pursuing.`;
+    return `${name} is legal now and fits the current talent slot.`;
+  }
+
+  _buildTreeRecommendation(tree, topTalent, rankedTalents = [], legalTalents = [], pendingData = {}) {
+    const topTier = this._getSuggestionTier(topTalent);
+    const topScore = this._getSuggestionScalar(topTalent);
+    const investmentBonus = 0;
+    const legalChoiceCount = legalTalents.length;
+    const score = (topTier * 1000) + (topScore * 100) + Math.min(legalChoiceCount, 6) * 8 + investmentBonus;
+    const label = this._getRecommendationLabel(topTalent);
+    const fallback = [
+      `${legalChoiceCount} legal talent${legalChoiceCount === 1 ? '' : 's'} can be selected from this tree right now.`,
+      topTalent?.name ? `${topTalent.name} is the strongest legal pick currently visible in this tree.` : null,
+    ].filter(Boolean);
+    const reasons = this._extractSuggestionReasons(topTalent, fallback);
+    const treeWithRecommendation = {
       ...tree,
-      reasonBullets: reasons,
       suggestion: {
-        ...(tree.suggestion || {}),
+        ...(tree?.suggestion || {}),
+        mode: 'tree',
+        tier: topTier,
+        score,
         reason: reasons[0],
         reasons,
         reasonBullets: reasons,
-      }
+        topTalentId: topTalent?.id || topTalent?._id || topTalent?.name || null,
+        topTalentName: topTalent?.name || null,
+        legalChoiceCount,
+      },
+      reasonBullets: reasons,
+      isSuggested: topTier > 0,
+    };
+
+    return {
+      mode: 'tree',
+      tree: treeWithRecommendation,
+      treeId: tree?.id || tree?.name,
+      treeName: tree?.name || tree?.id || 'Talent Tree',
+      topTalentId: topTalent?.id || topTalent?._id || topTalent?.name || null,
+      topTalentName: topTalent?.name || null,
+      rankedTalentNames: rankedTalents.slice(0, 3).map(talent => talent?.name).filter(Boolean),
+      legalChoiceCount,
+      tier: topTier,
+      score,
+      label,
+      reason: reasons[0] || `${tree?.name || 'This tree'} has legal options available now.`,
+      reasons,
+      isTopSuggestion: false,
+      rank: null,
     };
   }
 
@@ -973,18 +1208,43 @@ export class TalentStep extends ProgressionStepPlugin {
     return {
       stage: 'browser',
       slotType: this._slotType,
-      allTrees: filteredTrees.map(tree => ({
-        // Use canonical tree.id field (normalized trees always have this)
-        id: tree.id,
-        name: tree.name,
-        summary: tree.description || tree.system?.description || '',
-        // Prefer audited membership count when available; compendium talentIds may be stale.
-        nodeCount: tree.talentCount || (tree.talentNames || []).length || (tree.talentIds || []).length,
-        isSuggested: this._suggestedTrees.some(s => s.id === tree.id),
-        isFocused: tree.id === this._focusedTreeId,
-        // Determine slot type from context or fallback (normalized trees don't have classRestricted)
-        slotType: tree.category === 'droid' || tree.tags?.includes('class-only') ? 'class' : 'heroic',
-      })),
+      allTrees: filteredTrees.map(tree => {
+        const visual = this._getTreeVisualIdentity(tree);
+        const nodeCount = tree.talentCount || (tree.talentNames || []).length || (tree.talentIds || []).length;
+        const investmentCount = this._getTreeInvestmentCount(tree, committedTalents, context?.shell?.actor);
+        const treeRecommendation = this._treeRecommendationById.get(tree.id) || this._treeRecommendationById.get(tree.name) || null;
+        const isSuggested = !!treeRecommendation?.isTopSuggestion || this._suggestedTrees.some(s => s.id === tree.id);
+        const cardSlotType = tree.category === 'droid' || tree.tags?.includes('class-only') ? 'class' : 'heroic';
+        return {
+          // Use canonical tree.id field (normalized trees always have this)
+          id: tree.id,
+          name: tree.name,
+          summary: this._truncateDisplayText(tree.description || tree.system?.description || 'No archive summary is available for this discipline yet.', 160),
+          // Prefer audited membership count when available; compendium talentIds may be stale.
+          nodeCount,
+          investmentCount,
+          hasInvestment: investmentCount > 0,
+          isSuggested,
+          isFocused: tree.id === this._focusedTreeId,
+          // Determine slot type from context or fallback (normalized trees don't have classRestricted)
+          slotType: cardSlotType,
+          slotTypeLabel: cardSlotType === 'class' ? 'Class' : 'Heroic',
+          readinessLabel: treeRecommendation?.label || (isSuggested ? 'Mentor Fit' : (investmentCount > 0 ? 'Invested Path' : 'Available')),
+          legalChoiceCount: treeRecommendation?.legalChoiceCount ?? null,
+          recommendationRank: treeRecommendation?.rank || null,
+          recommendationLabel: treeRecommendation?.label || '',
+          recommendationReason: treeRecommendation?.reason || '',
+          recommendationTalentName: treeRecommendation?.topTalentName || '',
+          recommendationReasons: treeRecommendation?.reasons || [],
+          visualKey: visual.key,
+          visualIcon: visual.icon,
+          visualKicker: visual.kicker,
+          visualRole: visual.role,
+          visualMotion: visual.motion,
+          visualSignal: visual.signal,
+          visualThemeClass: visual.themeClass,
+        };
+      }),
       suggestedTrees: this._suggestedTrees.map(t => ({
         id: t.id,
         name: t.name,
@@ -1025,6 +1285,89 @@ export class TalentStep extends ProgressionStepPlugin {
       talent?.prerequisites,
       talent?.prerequisite,
     );
+  }
+
+  _truncateDisplayText(value, limit = 150) {
+    const text = String(value || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    if (!text) return '';
+    return text.length > limit ? `${text.slice(0, Math.max(0, limit - 1)).trim()}…` : text;
+  }
+
+  _getTreeVisualIdentity(tree = {}) {
+    const name = String(tree?.name || '').toLowerCase();
+    const category = String(tree?.category || '').toLowerCase();
+    const tags = Array.isArray(tree?.tags) ? tree.tags.map(t => String(t).toLowerCase()) : [];
+    const source = `${name} ${category} ${tags.join(' ')}`;
+
+    const makeTheme = (key, icon, kicker, role, motion, signal) => ({
+      key,
+      icon,
+      kicker,
+      role,
+      motion,
+      signal,
+      themeClass: `talent-holomap-theme--${key}`,
+      cardClass: `talent-tree-card--${key}`,
+    });
+
+    if (/sith|dark side|darkside|dark|rage|hatred|corruption|fear/.test(source)) {
+      return makeTheme('sith', '◆', 'Holocron Channel', 'Aggression', 'Unstable pulse', 'CRIMSON / FRACTURE');
+    }
+    if (/jedi|lightsaber|force|adept|disciple|master|knight|light side|lightside|guardian|consular/.test(source)) {
+      return makeTheme('jedi', '✦', 'Archive Channel', 'Force', 'Breathing aura', 'AZURE / HARMONIC');
+    }
+    if (/soldier|commando|weapon|armor|trooper|battle|combat|tactical|military|squad|elite/.test(source)) {
+      return makeTheme('military', '⌖', 'Tactical Channel', 'Combat', 'Target sweep', 'AMBER / VECTOR');
+    }
+    if (/noble|leader|leadership|inspire|presence|influence|lineage|wealth|command/.test(source)) {
+      return makeTheme('noble', '◇', 'Command Channel', 'Leadership', 'Regal shimmer', 'VIOLET / COURT');
+    }
+    if (/scoundrel|criminal|smuggler|fortune|gambler|sneak|trick|misfortune|outlaw/.test(source)) {
+      return makeTheme('scoundrel', '◈', 'Shadow Channel', 'Cunning', 'Shadow drift', 'MAGENTA / CIPHER');
+    }
+    if (/scout|survival|exploration|fringer|pathfinder|outcast|awareness|evasion/.test(source)) {
+      return makeTheme('scout', '△', 'Recon Channel', 'Exploration', 'Sensor ping', 'GREEN / RECON');
+    }
+    if (/droid|automaton|protocol|astromech|degree|mechanical|processor/.test(source)) {
+      return makeTheme('droid', '⬡', 'Logic Channel', 'Systems', 'Diagnostic flicker', 'CYAN / LOGIC');
+    }
+    return makeTheme('default', '◇', 'Datapad Channel', 'Discipline', 'Datapad scan', 'CYAN / GENERAL');
+  }
+
+  _getMentorIdentity(shell) {
+    const name = shell?.mentor?.name || shell?.mentor?.mentorId || 'Mentor';
+    const id = shell?.mentor?.mentorId || shell?.mentor?.id || name;
+    const key = String(`${id} ${name}`).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    return { id, name, key };
+  }
+
+  _buildMentorTreeCommentary(tree = {}, shell = null, recommendation = null) {
+    return buildTalentTreeMentorRead({
+      tree,
+      shell,
+      visual: this._getTreeVisualIdentity(tree),
+      recommendation,
+    });
+  }
+
+  _getTreeInvestmentCount(tree, committedTalents = [], actor = null) {
+    const treeKeys = new Set([tree?.id, tree?.name, tree?.sourceId].filter(Boolean).map(value => this._normalizeTalentKey(value)));
+    let count = 0;
+
+    for (const talent of committedTalents || []) {
+      const talentTreeKey = this._normalizeTalentKey(talent?.treeId || talent?.system?.talent_tree || talent?.talent_tree || '');
+      if (talentTreeKey && treeKeys.has(talentTreeKey)) count += 1;
+    }
+
+    // Actor-owned talents cannot always be mapped to a tree cheaply here, but when
+    // canonical tree fields exist, include them to make the card readout useful.
+    for (const item of actor?.items || []) {
+      if (item?.type !== 'talent') continue;
+      const itemTreeKey = this._normalizeTalentKey(item?.system?.talent_tree || item?.system?.treeId || item?.treeId || '');
+      if (itemTreeKey && treeKeys.has(itemTreeKey)) count += 1;
+    }
+
+    return count;
   }
 
   _getTalentSummary(talent) {
@@ -1110,6 +1453,75 @@ export class TalentStep extends ProgressionStepPlugin {
     return this._filterTalentRowsBySearch(rows);
   }
 
+  async _buildTalentRecommendationsForTree(shell, selectedTree, availableTalentRows = [], pendingAbilityData = {}) {
+    const recommendationById = new Map();
+    if (!selectedTree || !availableTalentRows.length) return recommendationById;
+
+    try {
+      const mode = shell?.mode || this.descriptor?.mode || 'chargen';
+      const availableIds = new Set(availableTalentRows.map(row => row.id).filter(Boolean));
+      const candidates = availableTalentRows
+        .map(row => this._getTalent(row.id))
+        .filter(Boolean)
+        .map(talent => this._toSuggestionTalentCandidate(talent, selectedTree));
+
+      if (!candidates.length) return recommendationById;
+
+      const pendingData = this._buildTalentSuggestionPendingData(shell, [selectedTree]);
+      Object.assign(pendingData, pendingAbilityData || {});
+      pendingData.selectedTree = { id: selectedTree?.id || null, name: selectedTree?.name || null };
+      pendingData.allowedTalentTrees = [selectedTree?.id, selectedTree?.sourceId, selectedTree?.name].filter(Boolean);
+
+      const suggested = await SuggestionService.getSuggestions(shell?.actor, mode, {
+        domain: 'talents',
+        available: candidates,
+        pendingData,
+        focus: `talent-tree:${selectedTree?.id || selectedTree?.name}:talent-mode`,
+        engineOptions: { includeFutureAvailability: false },
+        persist: false,
+      });
+
+      const ranked = this._sortSuggestionResults((suggested || [])
+        .filter(talent => this._getTalentIdentityKeys(talent).some(key => {
+          for (const id of availableIds) {
+            const source = this._getTalent(id);
+            if (source && this._getTalentIdentityKeys(source).includes(key)) return true;
+          }
+          return availableIds.has(talent?.id) || availableIds.has(talent?._id) || availableIds.has(talent?.name);
+        })));
+
+      ranked.slice(0, Math.min(3, ranked.length)).forEach((talent, index) => {
+        const originalRow = availableTalentRows.find(row => {
+          if (row.id === talent?.id || row.id === talent?._id || row.id === talent?.name) return true;
+          const source = this._getTalent(row.id);
+          const rowKeys = source ? this._getTalentIdentityKeys(source) : [this._normalizeTalentKey(row.id), this._normalizeTalentKey(row.name)];
+          return this._getTalentIdentityKeys(talent).some(key => rowKeys.includes(key));
+        });
+        if (!originalRow) return;
+
+        const rank = index + 1;
+        const reasons = this._extractSuggestionReasons(talent, [
+          `${originalRow.name} is legal in ${selectedTree.name} right now.`,
+          rank === 1 ? 'This is the strongest legal talent suggestion in the selected tree.' : 'This is a strong legal alternative in the selected tree.',
+        ]);
+        recommendationById.set(originalRow.id, {
+          mode: 'talent',
+          rank,
+          tier: this._getSuggestionTier(talent),
+          score: this._getSuggestionScalar(talent),
+          label: this._getRecommendationLabel(talent, { rank }),
+          reason: reasons[0] || `${originalRow.name} is a legal fit for this build.`,
+          reasons,
+          source: talent,
+        });
+      });
+    } catch (err) {
+      console.warn('[TalentStep] Talent recommendation mode failed:', err);
+    }
+
+    return recommendationById;
+  }
+
   /**
    * Data for Stage 2: Talent Planner
    * HARDENED: Validate talents resolved, use canonical tree fields
@@ -1161,22 +1573,18 @@ export class TalentStep extends ProgressionStepPlugin {
         const chosenElsewhere = identityKeys.some(key => otherSelectedKeys.has(key));
         const isActorOwned = identityKeys.some(key => ownedTalentKeys.has(key));
         const isOwned = isSelected || chosenElsewhere || isActorOwned;
-        const isSuggested = this._suggestedTrees.some(t => t.id === this._selectedTreeId);
-
         nodeStates[nodeId] = {
           legal: prereqDetails.legal !== false && !chosenElsewhere && !isActorOwned,
           owned: isOwned,
           selected: isSelected,
           chosenElsewhere,
           actorOwned: isActorOwned,
-          suggested: isSuggested,
+          suggested: false,
           missing: chosenElsewhere ? ['Already selected in another talent slot.'] : (isActorOwned ? ['Already known.'] : (prereqDetails.missing || [])),
           blocking: chosenElsewhere ? ['Already selected in another talent slot.'] : (isActorOwned ? ['Already known.'] : (prereqDetails.blocking || [])),
         };
       }
     }
-    this._lastGraphNodeStates = nodeStates;
-
     // Get committed talents from session and order them canonically
     const committedTalents = context?.shell?.progressionSession?.draftSelections?.talents || [];
     const orderedSelections = canonicallyOrderSelections(committedTalents);
@@ -1203,6 +1611,37 @@ export class TalentStep extends ProgressionStepPlugin {
     const availableTalents = talentRows.filter(row => row.isSelectable);
     const lockedTalents = talentRows.filter(row => !row.isSelectable);
     const selectedTalent = talentRows.find(row => row.isSelected) || null;
+    const visual = this._getTreeVisualIdentity(selectedTree);
+    const talentRecommendations = await this._buildTalentRecommendationsForTree(shell, selectedTree, availableTalents, pendingAbilityData);
+    this._talentRecommendationById = talentRecommendations;
+
+    for (const row of availableTalents) {
+      const recommendation = talentRecommendations.get(row.id);
+      if (!recommendation) continue;
+      row.isSuggestedTalent = true;
+      row.recommendation = recommendation;
+      row.recommendationRank = recommendation.rank;
+      row.recommendationLabel = recommendation.label;
+      row.recommendationReason = recommendation.reason;
+      row.recommendationReasons = recommendation.reasons || [];
+      if (nodeStates[row.id]) {
+        nodeStates[row.id].suggested = true;
+        nodeStates[row.id].recommendationRank = recommendation.rank;
+        nodeStates[row.id].recommendationLabel = recommendation.label;
+        nodeStates[row.id].recommendationReason = recommendation.reason;
+      }
+    }
+
+    availableTalents.sort((left, right) => {
+      const leftRank = left.recommendationRank || 999;
+      const rightRank = right.recommendationRank || 999;
+      if (leftRank !== rightRank) return leftRank - rightRank;
+      if (left.isSelected !== right.isSelected) return left.isSelected ? -1 : 1;
+      return String(left.name || '').localeCompare(String(right.name || ''));
+    });
+
+    this._lastGraphNodeStates = nodeStates;
+    const recommendedTalentCount = talentRecommendations.size;
 
     emitTalentStepTrace('GRAPH_DATA_READY', {
       selectedTreeId: this._selectedTreeId,
@@ -1213,6 +1652,7 @@ export class TalentStep extends ProgressionStepPlugin {
       selectedTalentId: this._selectedTalentId,
       availableCount: availableTalents.length,
       lockedCount: lockedTalents.length,
+      recommendedTalentCount,
       viewMode: this._viewMode,
     });
 
@@ -1220,6 +1660,13 @@ export class TalentStep extends ProgressionStepPlugin {
       stage: 'graph',
       selectedTreeId: this._selectedTreeId,
       selectedTreeName: selectedTree.name,
+      visualKey: visual.key,
+      visualIcon: visual.icon,
+      visualKicker: visual.kicker,
+      visualRole: visual.role,
+      visualMotion: visual.motion,
+      visualSignal: visual.signal,
+      visualThemeClass: visual.themeClass,
       nodeStates,
       graphData: this._graphData,
       orderedSelections,
@@ -1227,6 +1674,7 @@ export class TalentStep extends ProgressionStepPlugin {
       availableTalents,
       lockedTalents,
       selectedTalent,
+      recommendedTalentCount,
       // PHASE 2 UX: Slot progress
       slotProgress,
     };
@@ -1274,12 +1722,54 @@ export class TalentStep extends ProgressionStepPlugin {
 
   async renderDetailsPanel(focusedItem, shell) {
     if (this._stage === 'browser') {
-      emitTalentStepTrace('DETAILS_EMPTY', {
-        reason: 'browser-stage-no-details',
-        focusedTreeId: this._focusedTreeId,
-        selectedTreeId: this._selectedTreeId,
-      });
-      return this.renderDetailsPanelEmptyState();
+      const tree = this._focusedTreeId ? this._getTree(this._focusedTreeId) : null;
+      if (!tree) {
+        emitTalentStepTrace('DETAILS_EMPTY', {
+          reason: 'browser-stage-no-focused-tree',
+          focusedTreeId: this._focusedTreeId,
+          selectedTreeId: this._selectedTreeId,
+        });
+        return this.renderDetailsPanelEmptyState();
+      }
+
+      const visual = this._getTreeVisualIdentity(tree);
+      const committedTalents = shell?.progressionSession?.draftSelections?.talents || [];
+      const investmentCount = this._getTreeInvestmentCount(tree, committedTalents, shell?.actor);
+      const nodeCount = tree.talentCount || (tree.talentNames || []).length || (tree.talentIds || []).length;
+      const treeRecommendation = this._treeRecommendationById.get(tree.id) || this._treeRecommendationById.get(tree.name) || null;
+      const isSuggested = !!treeRecommendation?.isTopSuggestion || this._suggestedTrees.some(s => s.id === tree.id);
+      const cardSlotType = tree.category === 'droid' || tree.tags?.includes('class-only') ? 'class' : 'heroic';
+      const mentorRead = this._buildMentorTreeCommentary(tree, shell, treeRecommendation);
+      return {
+        template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/talent-tree-details.hbs',
+        data: {
+          tree,
+          treeId: tree.id,
+          treeName: tree.name,
+          summary: this._truncateDisplayText(tree.description || tree.system?.description || 'No archive summary is available for this discipline yet.', 320),
+          nodeCount,
+          investmentCount,
+          isSuggested,
+          legalChoiceCount: treeRecommendation?.legalChoiceCount ?? null,
+          recommendationLabel: treeRecommendation?.label || '',
+          recommendationReason: treeRecommendation?.reason || '',
+          recommendationTalentName: treeRecommendation?.topTalentName || '',
+          recommendationReasons: treeRecommendation?.reasons || [],
+          mentorRead,
+          slotTypeLabel: cardSlotType === 'class' ? 'Class' : 'Heroic',
+          visualKey: visual.key,
+          visualIcon: visual.icon,
+          visualRole: visual.role,
+          visualMotion: visual.motion,
+          visualSignal: visual.signal,
+          visualThemeClass: visual.themeClass,
+          statusText: isSuggested
+            ? `Your mentor currently sees this tree as a strong fit. ${treeRecommendation?.topTalentName ? `${treeRecommendation.topTalentName} is the current leading legal pick.` : ''}`
+            : (investmentCount > 0
+              ? 'You already have momentum in this discipline. Opening the holomap will show the next legal branches.'
+              : 'This discipline is available. Opening the holomap will reveal legal activations and locked future branches.'),
+        },
+      };
     }
 
     if (!this._focusedTalentId) {
@@ -1306,6 +1796,7 @@ export class TalentStep extends ProgressionStepPlugin {
     const isSelected = talentId === this._selectedTalentId;
     const isOwned = isSelected;
     const selectedTree = this._getTree(this._selectedTreeId);
+    const visual = this._getTreeVisualIdentity(selectedTree || {});
 
     // Evaluate talent legality using the same pending state as the planner list.
     const actor = shell?.actor || null;
@@ -1334,14 +1825,23 @@ export class TalentStep extends ProgressionStepPlugin {
       this._getTalentPrerequisiteText(talent)
     );
     const prerequisitePath = this._buildPrerequisitePathForTalent(talent, this._lastGraphNodeStates);
-    const recommendationText = this._suggestedTrees.some(t => t.id === this._selectedTreeId)
-      ? 'This tree is currently suggested for the build you have been shaping. Use the available list to choose the legal talent that best supports your concept.'
-      : '';
+    const talentRecommendation = this._talentRecommendationById.get(talentId) || null;
+    const treeRecommendation = this._treeRecommendationById.get(this._selectedTreeId) || this._treeRecommendationById.get(selectedTree?.name) || null;
+    const recommendationText = talentRecommendation?.reason
+      || (treeRecommendation?.reason
+        ? `This tree is suggested because ${treeRecommendation.reason}`
+        : '');
     const statusText = isSelected
       ? 'This talent is selected for the current slot.'
       : meetsPrereqs
         ? 'This talent is available now and can be chosen for the current slot.'
         : 'This talent is locked until its prerequisite path is complete.';
+    const graphNode = talentId ? this._graphData?.nodes?.get?.(talentId) : null;
+    const downstreamUnlocks = (graphNode?.dependents || [])
+      .map(id => this._graphData?.nodes?.get?.(id))
+      .filter(Boolean)
+      .map(node => ({ id: node.id, name: node.name || node.id }))
+      .slice(0, 6);
 
     emitTalentStepTrace('DETAILS_READY', {
       focusedTalentId: this._focusedTalentId,
@@ -1362,6 +1862,12 @@ export class TalentStep extends ProgressionStepPlugin {
         talent,
         talentId,
         treeName: selectedTree?.name || '',
+        visualKey: visual.key,
+        visualIcon: visual.icon,
+        visualRole: visual.role,
+        visualMotion: visual.motion,
+        visualSignal: visual.signal,
+        visualThemeClass: visual.themeClass,
         isSelected,
         isOwned,
         meetsPrereqs,
@@ -1372,7 +1878,13 @@ export class TalentStep extends ProgressionStepPlugin {
         mechanicalBenefit,
         prerequisitePath,
         recommendationText,
+        recommendation: talentRecommendation,
+        isSuggestedTalent: !!talentRecommendation,
+        recommendationLabel: talentRecommendation?.label || '',
+        recommendationRank: talentRecommendation?.rank || null,
+        recommendationReasons: talentRecommendation?.reasons || [],
         statusText,
+        downstreamUnlocks,
         metadataTags: normalized.metadataTags || [],
         hasMentorProse: !!normalized.fallbacks?.hasMentorProse,
       },
@@ -1459,6 +1971,38 @@ export class TalentStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
+    if (this._stage === 'graph' && this._talentRecommendationById?.size) {
+      const talentSuggestions = Array.from(this._talentRecommendationById.values())
+        .sort((left, right) => (left.rank || 999) - (right.rank || 999))
+        .map(recommendation => ({
+          ...(recommendation.source || {}),
+          id: recommendation.source?.id || recommendation.source?._id || recommendation.source?.name,
+          name: recommendation.source?.name || 'Suggested Talent',
+          suggestion: {
+            ...(recommendation.source?.suggestion || {}),
+            mode: 'talent',
+            tier: recommendation.tier,
+            reason: recommendation.reason,
+            reasons: recommendation.reasons,
+            reasonBullets: recommendation.reasons,
+          },
+          reasonBullets: recommendation.reasons,
+        }));
+
+      await handleAskMentorWithPicker(shell.actor, 'general-talent', talentSuggestions, shell, {
+        domain: 'talents',
+        archetype: this._getTree(this._selectedTreeId)?.name || 'this talent tree',
+        stepLabel: 'legal talents in this tree'
+      }, async (selected) => {
+        const id = selected?.id || selected?._id || selected?.name;
+        if (!id) return;
+        this._focusedTalentId = id;
+        await this.onItemCommitted(id, shell);
+        this._renderPreservingScroll(shell);
+      });
+      return;
+    }
+
     if (this._suggestedTrees?.length) {
       await handleAskMentorWithPicker(shell.actor, 'general-talent', this._suggestedTrees, shell, {
         domain: 'talents',
@@ -1553,6 +2097,17 @@ export class TalentStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
   // Footer
   // ---------------------------------------------------------------------------
+
+  getRemainingPicks() {
+    const selected = this._selectedTalentId ? 1 : 0;
+    return [{
+      label: this._slotType === 'class' ? 'Class Talent' : 'Heroic Talent',
+      count: Math.max(0, 1 - selected),
+      total: 1,
+      selected,
+      isWarning: selected === 0,
+    }];
+  }
 
   getFooterConfig() {
     const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'Heroic';

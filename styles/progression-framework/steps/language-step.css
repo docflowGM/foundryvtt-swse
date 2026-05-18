@@ -745,3 +745,203 @@
 .language-work-surface .language-item {
   min-height: 2.25rem;
 }
+
+/* Custom language action */
+.language-custom-action {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px dashed oklch(0.85 0.18 200 / 0.35);
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(0, 170, 255, 0.10), rgba(0, 80, 150, 0.04));
+}
+
+.language-custom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid oklch(0.85 0.18 200 / 0.35);
+  border-radius: 4px;
+  background: oklch(0.85 0.18 200 / 0.18);
+  color: var(--sheet-accent-primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.language-custom-btn:hover {
+  transform: translateY(-1px);
+  border-color: oklch(0.85 0.18 200 / 0.55);
+  background: oklch(0.85 0.18 200 / 0.28);
+  box-shadow: 0 0 12px oklch(0.85 0.18 200 / 0.22);
+}
+
+.language-custom-hint {
+  color: var(--sheet-text-muted, #8fb1c1);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.language-category-chip.custom,
+.language-category-badge.custom {
+  background: rgba(190, 120, 255, 0.15);
+  color: #d8a8ff;
+  border-color: rgba(190, 120, 255, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .language-custom-btn {
+    transition: none;
+  }
+
+  .language-custom-btn:hover {
+    transform: none;
+  }
+}
+
+/* ====================================================================
+   Language grant/source badges
+   ==================================================================== */
+
+.language-source-badge,
+.language-selected-badge,
+.language-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 0.18rem 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.language-source-badge--default {
+  color: #f4f7fb;
+  background: rgba(235, 240, 248, 0.12);
+  border-color: rgba(235, 240, 248, 0.36);
+  box-shadow: 0 0 10px rgba(235, 240, 248, 0.08);
+}
+
+.language-source-badge--species {
+  color: #7ec8ff;
+  background: rgba(30, 144, 255, 0.16);
+  border-color: rgba(80, 180, 255, 0.42);
+  box-shadow: 0 0 12px rgba(80, 180, 255, 0.14);
+}
+
+.language-source-badge--background {
+  color: #ff7dff;
+  background: rgba(220, 60, 220, 0.16);
+  border-color: rgba(255, 125, 255, 0.42);
+  box-shadow: 0 0 12px rgba(255, 125, 255, 0.14);
+}
+
+.language-source-badge--linguist {
+  color: #ffd76a;
+  background: rgba(255, 200, 60, 0.16);
+  border-color: rgba(255, 215, 106, 0.46);
+  box-shadow: 0 0 12px rgba(255, 215, 106, 0.14);
+}
+
+.language-source-badge--learned {
+  color: #7fffd4;
+  background: rgba(40, 220, 180, 0.15);
+  border-color: rgba(127, 255, 212, 0.38);
+  box-shadow: 0 0 12px rgba(127, 255, 212, 0.12);
+}
+
+.language-source-badge--feature {
+  color: #c8a7ff;
+  background: rgba(150, 110, 255, 0.16);
+  border-color: rgba(200, 167, 255, 0.4);
+  box-shadow: 0 0 12px rgba(200, 167, 255, 0.12);
+}
+
+.language-source-badge--custom {
+  color: #ffb36b;
+  background: rgba(255, 140, 40, 0.16);
+  border-color: rgba(255, 179, 107, 0.42);
+  box-shadow: 0 0 12px rgba(255, 179, 107, 0.12);
+}
+
+.language-mode-badge {
+  color: #dce8ff;
+  background: rgba(120, 170, 255, 0.11);
+  border-color: rgba(160, 200, 255, 0.24);
+}
+
+.language-mode-badge--understandOnly,
+.language-mode-badge--readWriteUnderstand,
+.language-mode-badge--speakOnly,
+.language-mode-badge--conditionalLiteracy,
+.language-mode-badge--communicate,
+.language-mode-badge--writtenOnly,
+.language-mode-badge--choice,
+.language-mode-badge--variable {
+  color: #ffe08a;
+  background: rgba(255, 190, 60, 0.13);
+  border-color: rgba(255, 224, 138, 0.36);
+}
+
+.language-category-badge.speciesNative,
+.language-category-chip.speciesNative {
+  color: #7ec8ff;
+  background: rgba(30, 144, 255, 0.14);
+  border-color: rgba(80, 180, 255, 0.34);
+}
+
+.language-grant-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.65rem 0 0.85rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(125, 210, 255, 0.18);
+  border-radius: 0.55rem;
+  background: rgba(5, 14, 28, 0.42);
+}
+
+.language-grant-note {
+  flex-basis: 100%;
+  margin: 0.35rem 0 0;
+  color: var(--sheet-text-body, #d7e3f6);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.known-badge--partial,
+.known-note--partial {
+  border-color: rgba(255, 224, 138, 0.34);
+  background: rgba(255, 190, 60, 0.1);
+}
+
+.known-language .language-mode-badge--understandOnly,
+.known-language .language-mode-badge--readWriteUnderstand,
+.known-language .language-mode-badge--speakOnly {
+  animation: swse-language-partial-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes swse-language-partial-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 224, 138, 0.08); }
+  50% { box-shadow: 0 0 14px rgba(255, 224, 138, 0.22); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .known-language .language-mode-badge--understandOnly,
+  .known-language .language-mode-badge--readWriteUnderstand,
+  .known-language .language-mode-badge--speakOnly {
+    animation: none;
+  }
+}

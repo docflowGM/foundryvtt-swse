@@ -17,6 +17,7 @@ import { ProgressionFinalizer } from '../shell/progression-finalizer.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
 import { buildClassSkillKeySet, buildSkillDisplay, normalizeSkillKey } from '../utils/skill-display.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { RollEngine } from '/systems/foundryvtt-swse/scripts/engine/roll-engine.js';
 
 export class SummaryStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -40,6 +41,8 @@ export class SummaryStep extends ProgressionStepPlugin {
       combatStats: [],
       forcePowers: [],
       startingCredits: 0,
+      creditsState: null,
+      creditLedger: { current: 0, pending: 0, final: 0, sources: [] },
       portrait: null,
       hpCalculation: { base: 0, modifiers: 0, total: 0, formula: '' },
     };
@@ -55,6 +58,27 @@ export class SummaryStep extends ProgressionStepPlugin {
       formula: '',
       needsResolution: false,
       hitDie: 0,
+      dieFormula: '',
+      conMod: 0,
+      ruleLabel: '',
+    };
+    this._creditsState = {
+      resolved: false,
+      amount: 0,
+      method: null,
+      formula: '',
+      diceFormula: '',
+      multiplier: 1,
+      rollTotal: null,
+      needsResolution: false,
+      base: 0,
+      maximum: 0,
+      average: 0,
+      backgroundCredits: 0,
+      wealthBonus: 0,
+      final: 0,
+      ruleLabel: '',
+      sources: [],
     };
     this._levelupSummary = {
       levelInfo: null,
@@ -70,6 +94,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       addedStarshipManeuvers: [],
       addedLanguages: [],
       addedSkills: [],
+      creditPreview: null,
       mutationPreview: null,
     };
   }
@@ -184,6 +209,7 @@ export class SummaryStep extends ProgressionStepPlugin {
         mode,
         levelupSummary: this._levelupSummary,
         hpGainState: { ...this._hpGainState },
+        creditsState: { ...this._creditsState },
         issuesSummary: {
           hasErrors: validation.errors.length > 0,
           errorCount: validation.errors.length,
@@ -255,6 +281,9 @@ export class SummaryStep extends ProgressionStepPlugin {
     if (this._startingLevel < 1 || this._startingLevel > 20) {
       errors.push('Starting level must be between 1 and 20');
     }
+    if (this._creditsState.needsResolution && !this._creditsState.resolved) {
+      errors.push('Roll starting credits before finalizing character creation');
+    }
     const hasDroidBuild = this._summary.species === 'Droid' || !!this._summary.droid;
     if (!this._summary.class) errors.push('Class selection is required');
     if (!this._summary.species && !hasDroidBuild) errors.push('Species selection is required');
@@ -281,9 +310,7 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   async onStepExit(shell) {
-    if (this._activeMode !== 'levelup') {
-      this._commitBusinessItems(shell);
-    }
+    this._commitBusinessItems(shell);
   }
 
   getSelection() {
@@ -295,7 +322,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     return {
       selected: this._characterName ? [this._characterName] : [],
       count: this._characterName ? 1 : 0,
-      isComplete: this._isReviewComplete && !!this._characterName && this._startingLevel >= 1 && this._startingLevel <= 20,
+      isComplete: this._isReviewComplete && !!this._characterName && this._startingLevel >= 1 && this._startingLevel <= 20 && !(this._creditsState.needsResolution && !this._creditsState.resolved),
     };
   }
 
@@ -370,7 +397,10 @@ export class SummaryStep extends ProgressionStepPlugin {
     this._summary.talentSelections = projection?.abilities?.talents || ProgressionContentAuthority.normalizeSelectionList('talent', selections.talents);
     this._summary.talents = this._summary.talentSelections.map(talent => this._displayName(talent)).filter(Boolean);
     this._summary.forcePowers = (projection?.abilities?.forcePowers || []).map(power => this._displayName(power)).filter(Boolean);
-    this._summary.startingCredits = this._computeStartingCredits(selections.class, selections.background, projection, selections);
+    this._refreshChargenCreditsState(shell, projection, selections);
+    this._summary.startingCredits = Number(this._creditsState.amount || 0);
+    this._summary.creditsState = { ...this._creditsState };
+    this._summary.creditLedger = this._buildChargenCreditLedger(shell.actor);
     this._summary.hpCalculation = this._computeStartingHP(selections.class, this._summary.attributes, shell.actor, selections.droid);
     this._summary.combatStats = this._buildCombatStats(selections.class, this._summary.attributes, this._summary.level, this._summary.hpCalculation.total);
     this._summary.classSkillLedger = this._buildClassSkillLedger(selections, projection);
@@ -565,6 +595,18 @@ export class SummaryStep extends ProgressionStepPlugin {
     const addedStarshipManeuvers = this._getSelectionNames(selections.starshipManeuvers);
     const addedLanguages = this._getSelectionNames(selections.languages);
     const addedSkills = this._getAddedSkills(actor, projection?.skills?.trained || this._extractSkillSelectionKeys(selections.skills));
+    const creditPreview = this._buildLevelupCreditPreview(actor, selections, selectedClass, session);
+    this._creditsState = {
+      ...this._creditsState,
+      resolved: true,
+      amount: creditPreview.pendingDelta,
+      method: creditPreview.pendingDelta > 0 ? 'progression-grant' : 'none',
+      needsResolution: false,
+      final: creditPreview.finalCredits,
+      sources: creditPreview.sources,
+      ruleLabel: creditPreview.pendingDelta > 0 ? 'Progression credit grant' : 'No credit change',
+    };
+    this._commitBusinessItems(shell);
     const levelContext = buildLevelUpEventContext(actor, session, { selectedClass });
     const dryRun = await ProgressionFinalizer.dryRun({
       mode: 'levelup',
@@ -597,6 +639,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       addedStarshipManeuvers,
       addedLanguages,
       addedSkills,
+      creditPreview,
       mutationPreview: this._buildLevelupMutationPreview(dryRun),
     };
   }
@@ -738,20 +781,66 @@ export class SummaryStep extends ProgressionStepPlugin {
       const classData = selectedClass || ActorAbilityBridge.getClasses(actor)[0] || null;
       if (!classData) return;
 
-      const { calculateHPGain } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js');
       const hpGeneration = ProgressionRules.getHPGeneration();
       const maxHPLevels = ProgressionRules.getMaxHPLevels();
       const newLevel = this._getCurrentLevel(actor) + 1;
       const hitDie = this._extractHitDie(classData);
-      const hpGain = Number(calculateHPGain(classData, actor, newLevel) || 0);
-      const needsResolution = newLevel > maxHPLevels && hpGeneration === 'roll';
+      const conMod = this._getConModifier(actor);
+      const maximumGain = Math.max(1, hitDie + conMod);
+      const averageDie = Math.floor(hitDie / 2) + 1;
+      const averageGain = Math.max(1, averageDie + conMod);
+      const needsResolution = newLevel > maxHPLevels && (hpGeneration === 'roll' || hpGeneration === 'average_minimum');
+
+      if (needsResolution && this._hpGainState.resolved && Number(this._hpGainState.gain) > 0) {
+        this._hpGainState = {
+          ...this._hpGainState,
+          needsResolution: true,
+          hitDie,
+          dieFormula: `1d${hitDie}`,
+          conMod,
+          formula: `1d${hitDie} ${conMod >= 0 ? '+' : ''}${conMod}`,
+          ruleLabel: hpGeneration === 'average_minimum' ? 'Roll HP; minimum average applies' : 'Roll HP or take maximum',
+          maximumGain,
+          averageGain,
+        };
+        return;
+      }
+
+      let resolved = true;
+      let gain = maximumGain;
+      let method = 'maximum';
+      let ruleLabel = newLevel <= maxHPLevels ? `GM rule: levels 1-${maxHPLevels} receive maximum HP` : 'GM rule: maximum HP';
+
+      if (needsResolution) {
+        resolved = false;
+        gain = 0;
+        method = null;
+        ruleLabel = hpGeneration === 'average_minimum' ? 'Roll HP; minimum average applies' : 'Roll HP or take maximum';
+      } else if (hpGeneration === 'average') {
+        gain = averageGain;
+        method = 'average';
+        ruleLabel = 'GM rule: average HP';
+      } else if (hpGeneration === 'maximum' || newLevel <= maxHPLevels) {
+        gain = maximumGain;
+        method = 'maximum';
+      } else {
+        gain = averageGain;
+        method = 'average';
+        ruleLabel = `GM rule: ${hpGeneration || 'average'} HP`; 
+      }
+
       this._hpGainState = {
-        resolved: !needsResolution,
-        gain: hpGain,
-        method: needsResolution ? null : hpGeneration,
-        formula: `d${hitDie} ${Number(actor?.system?.abilities?.con?.mod ?? actor?.system?.attributes?.con?.mod ?? 0) >= 0 ? '+' : ''}${Number(actor?.system?.abilities?.con?.mod ?? actor?.system?.attributes?.con?.mod ?? 0)}`,
+        resolved,
+        gain,
+        method,
+        formula: `1d${hitDie} ${conMod >= 0 ? '+' : ''}${conMod}`,
         needsResolution,
         hitDie,
+        dieFormula: `1d${hitDie}`,
+        conMod,
+        ruleLabel,
+        maximumGain,
+        averageGain,
       };
     } catch (e) {
       swseLogger.error('[SummaryStep._checkHPGainResolution]', e);
@@ -759,22 +848,70 @@ export class SummaryStep extends ProgressionStepPlugin {
     }
   }
 
-  async rollHPGain(actor) {
-    await this._checkHPGainResolution({ actor, mode: 'levelup', progressionSession: game?.swse?.currentProgressionShell?.progressionSession });
-    this._hpGainState.resolved = true;
-    this._hpGainState.method = 'rolled';
-    return { success: true, gain: this._hpGainState.gain };
+  async rollHPGain(actor, shell = null) {
+    const activeShell = shell || globalThis.game?.swse?.currentProgressionShell || null;
+    await this._checkHPGainResolution({ actor, mode: 'levelup', progressionSession: activeShell?.progressionSession });
+    const hitDie = Number(this._hpGainState.hitDie || 6);
+    const conMod = Number(this._hpGainState.conMod || 0);
+    try {
+      const roll = await RollEngine.safeRoll(`1d${hitDie}`, actor?.getRollData?.() ?? {}, {
+        actor,
+        domain: 'levelup.hit-points',
+        context: { source: 'summary-step', hitDie },
+      });
+      const hpGeneration = ProgressionRules.getHPGeneration();
+      const averageDie = Number(this._hpGainState.averageGain || 0) - conMod;
+      const dieResult = hpGeneration === 'average_minimum'
+        ? Math.max(Number(roll?.total || 0), Math.max(1, averageDie))
+        : Number(roll?.total || 0);
+      const hpGain = Math.max(1, dieResult + conMod);
+      this._hpGainState = {
+        ...this._hpGainState,
+        resolved: true,
+        gain: hpGain,
+        method: hpGeneration === 'average_minimum' ? 'rolled-average-minimum' : 'rolled',
+        rollTotal: Number(roll?.total || 0),
+        ruleLabel: hpGeneration === 'average_minimum'
+          ? `Rolled ${roll?.total}; minimum average die result is ${Math.max(1, averageDie)}`
+          : `Rolled ${roll?.total} on d${hitDie}`,
+      };
+      this._commitBusinessItems(activeShell);
+      if (activeShell) await this._buildLevelupSummary(activeShell);
+      return { success: true, gain: hpGain };
+    } catch (e) {
+      swseLogger.error('[SummaryStep.rollHPGain]', e);
+      globalThis.ui?.notifications?.error?.('HP roll failed.');
+      return { success: false, error: e.message };
+    }
   }
 
-  async useMaximumHPGain(actor) {
-    const selectedClass = game?.swse?.currentProgressionShell?.progressionSession?.draftSelections?.class || ActorAbilityBridge.getClasses(actor)[0] || null;
-    const hitDie = this._extractHitDie(selectedClass);
-    const conMod = Number(actor?.system?.abilities?.con?.mod ?? actor?.system?.attributes?.con?.mod ?? 0);
+  async useMaximumHPGain(actor, shell = null) {
+    const activeShell = shell || globalThis.game?.swse?.currentProgressionShell || null;
+    await this._checkHPGainResolution({ actor, mode: 'levelup', progressionSession: activeShell?.progressionSession });
+    const hitDie = Number(this._hpGainState.hitDie || 6);
+    const conMod = Number(this._hpGainState.conMod || 0);
     const maxHPGain = Math.max(1, hitDie + conMod);
-    this._hpGainState.resolved = true;
-    this._hpGainState.gain = maxHPGain;
-    this._hpGainState.method = 'maximum';
+    this._hpGainState = {
+      ...this._hpGainState,
+      resolved: true,
+      gain: maxHPGain,
+      method: 'maximum',
+      ruleLabel: 'Player chose maximum HP',
+    };
+    this._commitBusinessItems(activeShell);
+    if (activeShell) await this._buildLevelupSummary(activeShell);
     return { success: true, gain: maxHPGain };
+  }
+
+  _getConModifier(actor) {
+    const isDroid = actor?.type === 'droid' || actor?.system?.isDroid;
+    if (isDroid) return 0;
+    return Number(
+      actor?.system?.derived?.attributes?.con?.mod
+      ?? actor?.system?.abilities?.con?.mod
+      ?? actor?.system?.attributes?.con?.mod
+      ?? 0
+    ) || 0;
   }
 
   _extractHitDie(classData) {
@@ -894,33 +1031,359 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   _computeStartingCredits(classSelection, backgroundSelection, projection = null, selections = {}) {
-    const projected = Number(projection?.derived?.credits || 0) || 0;
-    let base = projected > 0 ? projected : 0;
-    if (base <= 0) {
-      const authority = Number(ProgressionContentAuthority.getStartingCredits({ classSelection, backgroundSelection }) || 0) || 0;
-      if (authority > 0) base = authority;
-    }
+    const state = this._buildCreditsResolutionState({ classSelection, backgroundSelection, projection, selections });
+    return Number(state.amount || 0);
+  }
 
+  _refreshChargenCreditsState(shell, projection = null, selections = {}) {
+    const previous = this._creditsState || {};
+    const next = this._buildCreditsResolutionState({
+      classSelection: selections.class,
+      backgroundSelection: selections.background,
+      projection,
+      selections,
+      actor: shell?.actor,
+      previousState: previous,
+    });
+    this._creditsState = next;
+  }
+
+  _buildCreditsResolutionState({ classSelection = null, backgroundSelection = null, projection = null, selections = {}, actor = null, previousState = null } = {}) {
     const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
-    if (base <= 0) {
-      const classCredits = this._parseMaxCredits(
-        classModel?.startingCredits
-          ?? classModel?.system?.startingCredits
-          ?? classModel?.system?.starting_credits
-          ?? classSelection?.startingCredits
-          ?? classSelection?.system?.starting_credits
-      );
-      const backgroundCredits = Number(backgroundSelection?.credits ?? backgroundSelection?.system?.credits ?? 0) || 0;
-      if (classCredits + backgroundCredits > 0) base = classCredits + backgroundCredits;
+    const formulaInfo = this._resolveStartingCreditFormula(classModel, classSelection, projection);
+    const backgroundCredits = Number(backgroundSelection?.credits ?? backgroundSelection?.system?.credits ?? 0) || 0;
+    const wealthBonus = this._computeWealthCreditGrant(classModel, selections);
+    const creditMode = ProgressionRules.getStartingCreditMode?.() || 'roll';
+    const maxCreditsEnabled = ProgressionRules.getMaxStartingCreditsEnabled?.() === true;
+    const forceMaximum = maxCreditsEnabled || creditMode === 'max' || creditMode === 'maximum';
+    const baseMaximum = Number(formulaInfo.maximum || formulaInfo.fixed || 0) || 0;
+    const baseAverage = Number(formulaInfo.average || formulaInfo.fixed || baseMaximum || 0) || 0;
+    const baseFixed = formulaInfo.fixed !== null && formulaInfo.fixed !== undefined ? Number(formulaInfo.fixed || 0) : null;
+
+    const buildSources = (baseAmount, methodLabel) => {
+      const sources = [];
+      if (baseAmount > 0) sources.push({ label: methodLabel || 'Starting Credits', amount: baseAmount, tone: 'base' });
+      if (backgroundCredits > 0) sources.push({ label: 'Background Credits', amount: backgroundCredits, tone: 'background' });
+      if (wealthBonus > 0) sources.push({ label: 'Wealth Talent', amount: wealthBonus, tone: 'wealth' });
+      return sources;
+    };
+
+    const preserveRoll = previousState?.resolved
+      && ['rolled', 'maximum', 'average', 'fixed'].includes(previousState?.method)
+      && String(previousState?.formula || '') === String(formulaInfo.formula || '')
+      && Number(previousState?.wealthBonus || 0) === wealthBonus
+      && Number(previousState?.backgroundCredits || 0) === backgroundCredits;
+
+    if (preserveRoll && !forceMaximum) {
+      return {
+        ...previousState,
+        final: Number(previousState.amount || 0),
+        sources: buildSources(Math.max(0, Number(previousState.amount || 0) - backgroundCredits - wealthBonus), previousState.method === 'rolled' ? 'Rolled Starting Credits' : previousState.ruleLabel),
+      };
     }
 
-    if (base <= 0) {
-      const name = String(classModel?.name || classModel?.id || classSelection?.name || classSelection?.id || '').toLowerCase().replace(/[^a-z]+/g, '_').replace(/^_|_$/g, '');
-      const fallback = { soldier: 1200, scout: 1200, scoundrel: 3000, jedi: 1200, noble: 4800, force_adept: 1200 };
-      base = fallback[name] || 0;
+    if (forceMaximum) {
+      const amount = baseMaximum + backgroundCredits + wealthBonus;
+      return {
+        resolved: true,
+        amount,
+        method: 'maximum',
+        formula: formulaInfo.formula,
+        diceFormula: formulaInfo.diceFormula,
+        multiplier: formulaInfo.multiplier || 1,
+        rollTotal: null,
+        needsResolution: false,
+        base: baseMaximum,
+        maximum: baseMaximum,
+        average: baseAverage,
+        backgroundCredits,
+        wealthBonus,
+        final: amount,
+        ruleLabel: maxCreditsEnabled ? 'GM rule: maximum starting credits' : 'Starting credit mode: maximum',
+        sources: buildSources(baseMaximum, 'Maximum Starting Credits'),
+      };
     }
 
-    return base + this._computeWealthCreditGrant(classModel, selections);
+    if (baseFixed !== null && !formulaInfo.diceFormula) {
+      const amount = baseFixed + backgroundCredits + wealthBonus;
+      return {
+        resolved: true,
+        amount,
+        method: 'fixed',
+        formula: formulaInfo.formula || String(baseFixed),
+        diceFormula: '',
+        multiplier: 1,
+        rollTotal: null,
+        needsResolution: false,
+        base: baseFixed,
+        maximum: baseFixed,
+        average: baseFixed,
+        backgroundCredits,
+        wealthBonus,
+        final: amount,
+        ruleLabel: 'Fixed starting credits',
+        sources: buildSources(baseFixed, 'Fixed Starting Credits'),
+      };
+    }
+
+    if (creditMode === 'average') {
+      const amount = baseAverage + backgroundCredits + wealthBonus;
+      return {
+        resolved: true,
+        amount,
+        method: 'average',
+        formula: formulaInfo.formula,
+        diceFormula: formulaInfo.diceFormula,
+        multiplier: formulaInfo.multiplier || 1,
+        rollTotal: null,
+        needsResolution: false,
+        base: baseAverage,
+        maximum: baseMaximum,
+        average: baseAverage,
+        backgroundCredits,
+        wealthBonus,
+        final: amount,
+        ruleLabel: 'Starting credit mode: average',
+        sources: buildSources(baseAverage, 'Average Starting Credits'),
+      };
+    }
+
+    return {
+      resolved: false,
+      amount: 0,
+      method: null,
+      formula: formulaInfo.formula,
+      diceFormula: formulaInfo.diceFormula,
+      multiplier: formulaInfo.multiplier || 1,
+      rollTotal: null,
+      needsResolution: true,
+      base: 0,
+      maximum: baseMaximum,
+      average: baseAverage,
+      backgroundCredits,
+      wealthBonus,
+      final: backgroundCredits + wealthBonus,
+      ruleLabel: creditMode === 'playerChoice' ? 'Choose roll or maximum starting credits' : 'Roll starting credits',
+      sources: buildSources(0, ''),
+    };
+  }
+
+  _resolveStartingCreditFormula(classModel = {}, classSelection = {}, projection = null) {
+    const raw = classModel?.startingCredits
+      ?? classModel?.system?.startingCredits
+      ?? classModel?.system?.starting_credits
+      ?? classSelection?.startingCredits
+      ?? classSelection?.system?.startingCredits
+      ?? classSelection?.system?.starting_credits
+      ?? null;
+    const parsedRaw = this._parseCreditFormula(raw);
+    if (parsedRaw) return parsedRaw;
+
+    const projected = Number(projection?.derived?.credits || 0) || 0;
+    if (projected > 0) {
+      return { formula: String(projected), diceFormula: '', multiplier: 1, fixed: projected, maximum: projected, average: projected };
+    }
+
+    const name = String(classModel?.name || classModel?.id || classSelection?.name || classSelection?.id || '').toLowerCase().replace(/[^a-z]+/g, '_').replace(/^_|_$/g, '');
+    const fallback = {
+      soldier: '3d4 x 250',
+      scout: '3d4 x 250',
+      scoundrel: '3d4 x 250',
+      jedi: '3d4 x 100',
+      noble: '3d4 x 400',
+      force_adept: '3d4 x 100',
+    };
+    return this._parseCreditFormula(fallback[name]) || { formula: '', diceFormula: '', multiplier: 1, fixed: 0, maximum: 0, average: 0 };
+  }
+
+  _parseCreditFormula(value) {
+    if (value === undefined || value === null || value === '') return null;
+    if (Number.isFinite(Number(value))) {
+      const fixed = Number(value);
+      return { formula: String(fixed), diceFormula: '', multiplier: 1, fixed, maximum: fixed, average: fixed };
+    }
+    const text = String(value || '').trim();
+    const match = text.match(/(\d+)\s*d\s*(\d+)\s*(?:x|×|\*)\s*(\d+)/i);
+    if (!match) return null;
+    const numDice = Number(match[1]);
+    const dieSize = Number(match[2]);
+    const multiplier = Number(match[3]);
+    const maximum = numDice * dieSize * multiplier;
+    const averageDieTotal = numDice * ((dieSize + 1) / 2);
+    const average = Math.floor(averageDieTotal * multiplier);
+    return {
+      formula: `${numDice}d${dieSize} x ${multiplier}`,
+      diceFormula: `${numDice}d${dieSize}`,
+      multiplier,
+      numDice,
+      dieSize,
+      fixed: null,
+      maximum,
+      average,
+    };
+  }
+
+  _buildChargenCreditLedger(actor = null) {
+    const current = Math.max(0, Number(actor?.system?.credits ?? 0) || 0);
+    const pending = Number(this._creditsState?.amount || 0) || 0;
+    return {
+      current,
+      pending,
+      final: pending || current,
+      sources: this._creditsState?.sources || [],
+    };
+  }
+
+  async rollCredits(actor, shell = null) {
+    const activeShell = shell || globalThis.game?.swse?.currentProgressionShell || null;
+    const selections = activeShell?.progressionSession?.draftSelections || {};
+    const projection = activeShell?.progressionSession?.currentProjection || null;
+    this._refreshChargenCreditsState(activeShell, projection, selections);
+    if (!this._creditsState?.diceFormula) {
+      await this.useMaximumCredits(actor, activeShell);
+      return { success: true, amount: this._creditsState.amount };
+    }
+    try {
+      const roll = await RollEngine.safeRoll(this._creditsState.diceFormula, actor?.getRollData?.() ?? {}, {
+        actor,
+        domain: 'chargen.starting-credits',
+        context: { source: 'summary-step', multiplier: this._creditsState.multiplier },
+      });
+      const base = Number(roll?.total || 0) * Number(this._creditsState.multiplier || 1);
+      const amount = base + Number(this._creditsState.backgroundCredits || 0) + Number(this._creditsState.wealthBonus || 0);
+      this._creditsState = {
+        ...this._creditsState,
+        resolved: true,
+        amount,
+        method: 'rolled',
+        rollTotal: Number(roll?.total || 0),
+        base,
+        final: amount,
+        needsResolution: false,
+        ruleLabel: `Rolled ${roll?.total} × ${Number(this._creditsState.multiplier || 1).toLocaleString()} credits`,
+        sources: [
+          { label: 'Rolled Starting Credits', amount: base, tone: 'base' },
+          ...(Number(this._creditsState.backgroundCredits || 0) > 0 ? [{ label: 'Background Credits', amount: Number(this._creditsState.backgroundCredits), tone: 'background' }] : []),
+          ...(Number(this._creditsState.wealthBonus || 0) > 0 ? [{ label: 'Wealth Talent', amount: Number(this._creditsState.wealthBonus), tone: 'wealth' }] : []),
+        ],
+      };
+      this._summary.startingCredits = amount;
+      this._summary.creditsState = { ...this._creditsState };
+      this._summary.creditLedger = this._buildChargenCreditLedger(actor);
+      this._commitBusinessItems(activeShell);
+      if (activeShell) await this._aggregateSummary(activeShell);
+      return { success: true, amount };
+    } catch (e) {
+      swseLogger.error('[SummaryStep.rollCredits]', e);
+      globalThis.ui?.notifications?.error?.('Starting credits roll failed.');
+      return { success: false, error: e.message };
+    }
+  }
+
+  async useMaximumCredits(actor, shell = null) {
+    const activeShell = shell || globalThis.game?.swse?.currentProgressionShell || null;
+    const selections = activeShell?.progressionSession?.draftSelections || {};
+    const projection = activeShell?.progressionSession?.currentProjection || null;
+    const baseState = this._buildCreditsResolutionState({ classSelection: selections.class, backgroundSelection: selections.background, projection, selections, actor });
+    const base = Number(baseState.maximum || 0);
+    const amount = base + Number(baseState.backgroundCredits || 0) + Number(baseState.wealthBonus || 0);
+    this._creditsState = {
+      ...baseState,
+      resolved: true,
+      amount,
+      method: 'maximum',
+      base,
+      final: amount,
+      needsResolution: false,
+      ruleLabel: 'Player chose maximum starting credits',
+      sources: [
+        ...(base > 0 ? [{ label: 'Maximum Starting Credits', amount: base, tone: 'base' }] : []),
+        ...(Number(baseState.backgroundCredits || 0) > 0 ? [{ label: 'Background Credits', amount: Number(baseState.backgroundCredits), tone: 'background' }] : []),
+        ...(Number(baseState.wealthBonus || 0) > 0 ? [{ label: 'Wealth Talent', amount: Number(baseState.wealthBonus), tone: 'wealth' }] : []),
+      ],
+    };
+    this._summary.startingCredits = amount;
+    this._summary.creditsState = { ...this._creditsState };
+    this._summary.creditLedger = this._buildChargenCreditLedger(actor);
+    this._commitBusinessItems(activeShell);
+    if (activeShell) await this._aggregateSummary(activeShell);
+    return { success: true, amount };
+  }
+
+  async useAverageCredits(actor, shell = null) {
+    const activeShell = shell || globalThis.game?.swse?.currentProgressionShell || null;
+    const selections = activeShell?.progressionSession?.draftSelections || {};
+    const projection = activeShell?.progressionSession?.currentProjection || null;
+    const baseState = this._buildCreditsResolutionState({ classSelection: selections.class, backgroundSelection: selections.background, projection, selections, actor });
+    const base = Number(baseState.average || 0);
+    const amount = base + Number(baseState.backgroundCredits || 0) + Number(baseState.wealthBonus || 0);
+    this._creditsState = {
+      ...baseState,
+      resolved: true,
+      amount,
+      method: 'average',
+      base,
+      final: amount,
+      needsResolution: false,
+      ruleLabel: 'Player chose average starting credits',
+      sources: [
+        ...(base > 0 ? [{ label: 'Average Starting Credits', amount: base, tone: 'base' }] : []),
+        ...(Number(baseState.backgroundCredits || 0) > 0 ? [{ label: 'Background Credits', amount: Number(baseState.backgroundCredits), tone: 'background' }] : []),
+        ...(Number(baseState.wealthBonus || 0) > 0 ? [{ label: 'Wealth Talent', amount: Number(baseState.wealthBonus), tone: 'wealth' }] : []),
+      ],
+    };
+    this._summary.startingCredits = amount;
+    this._summary.creditsState = { ...this._creditsState };
+    this._summary.creditLedger = this._buildChargenCreditLedger(actor);
+    this._commitBusinessItems(activeShell);
+    if (activeShell) await this._aggregateSummary(activeShell);
+    return { success: true, amount };
+  }
+
+  _buildLevelupCreditPreview(actor, selections = {}, selectedClass = null, session = null) {
+    const currentCredits = Math.max(0, Number(actor?.system?.credits ?? 0) || 0);
+    const wealthGrant = this._computeLevelupWealthCreditGrant(actor, selections, selectedClass, session);
+    const sources = [];
+    if (wealthGrant > 0) sources.push({ label: 'Wealth Talent', amount: wealthGrant, tone: 'wealth' });
+    const pendingDelta = sources.reduce((sum, source) => sum + Number(source.amount || 0), 0);
+    return {
+      currentCredits,
+      pendingDelta,
+      finalCredits: currentCredits + pendingDelta,
+      sources,
+      hasChanges: pendingDelta !== 0,
+    };
+  }
+
+  _computeLevelupWealthCreditGrant(actor, selections = {}, selectedClass = null, session = null) {
+    const hasWealth = this._hasWealthTalent(actor, selections);
+    if (!hasWealth) return 0;
+    const classModel = ProgressionContentAuthority.resolveClass(selectedClass || selections.class) || selectedClass || selections.class || {};
+    const classKey = String(classModel?.name || classModel?.label || classModel?.id || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '');
+    if (classKey !== 'noble' && classKey !== 'corporateagent') return 0;
+    let classLevel = 1;
+    try {
+      const levelContext = buildLevelUpEventContext(actor, session || globalThis.game?.swse?.currentProgressionShell?.progressionSession, { selectedClass: selectedClass || selections.class });
+      classLevel = Number(levelContext?.selectedClassNextLevel || 1) || 1;
+      const history = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
+      const granted = history?.['swse.talent.wealth']?.levelsGranted || [];
+      if (granted.map(Number).includes(classLevel)) return 0;
+    } catch (_err) {
+      const existing = ActorAbilityBridge.getClasses(actor).find(c => String(c.name || '').toLowerCase() === String(classModel?.name || '').toLowerCase());
+      classLevel = Number(existing?.level || 0) + 1;
+    }
+    return Math.max(0, classLevel * 5000);
+  }
+
+  _hasWealthTalent(actor, selections = {}) {
+    const talents = [
+      ...(Array.isArray(selections?.talents) ? selections.talents : []),
+      ...this._collectSelectionEntries(selections, ['talent']),
+      ...(actor?.items?.filter?.(item => item?.type === 'talent') || []),
+    ];
+    return talents.some(talent => String(talent?.name || talent?.label || talent?.id || talent || '').toLowerCase().replace(/[^a-z0-9]+/g, '') === 'wealth');
   }
 
   _collectSelectionEntries(selections = {}, domainHints = []) {
@@ -1014,13 +1477,25 @@ export class SummaryStep extends ProgressionStepPlugin {
   _commitBusinessItems(shell) {
     if (!shell?.progressionSession?.commitSelection) return false;
     const currentSurvey = shell.progressionSession.getSelection?.('survey') || shell.progressionSession.draftSelections?.survey || {};
-    return shell.progressionSession.commitSelection('summary', 'survey', {
+    const payload = {
       ...(currentSurvey && typeof currentSurvey === 'object' ? currentSurvey : {}),
       characterName: this._characterName || '',
       startingLevel: this._startingLevel || 1,
-      startingCredits: this._summary.startingCredits || 0,
+      startingCredits: this._creditsState?.resolved ? Number(this._creditsState.amount || 0) : 0,
+      startingCreditsResolved: !!this._creditsState?.resolved,
+      startingCreditsMethod: this._creditsState?.method || null,
+      startingCreditsFormula: this._creditsState?.formula || '',
+      startingCreditsBreakdown: this._creditsState?.sources || [],
       startingHp: this._summary.hpCalculation?.total || 0,
-    });
+      hpGain: this._hpGainState?.resolved ? Number(this._hpGainState.gain || 0) : 0,
+      hpGainResolved: !!this._hpGainState?.resolved,
+      hpGainMethod: this._hpGainState?.method || null,
+      hpGainFormula: this._hpGainState?.formula || '',
+      creditDelta: this._activeMode === 'levelup' ? Number(this._creditsState?.amount || 0) : 0,
+      creditDeltaSources: this._activeMode === 'levelup' ? (this._creditsState?.sources || []) : [],
+      finalCredits: this._activeMode === 'levelup' ? Number(this._creditsState?.final || 0) : Number(this._creditsState?.amount || 0),
+    };
+    return shell.progressionSession.commitSelection('summary', 'survey', payload);
   }
 
   async _generateRandomName(actor) {

@@ -31,6 +31,14 @@ export class ProgressionRules {
     return HouseRuleService.getString('hpGeneration', 'average');
   }
 
+  static getStartingCreditMode() {
+    return HouseRuleService.getString('startingCreditMode', 'roll');
+  }
+
+  static getMaxStartingCreditsEnabled() {
+    return HouseRuleService.getBoolean('maxStartingCredits', false);
+  }
+
   static getMaxHPLevels() {
     return HouseRuleService.getNumber('maxHPLevels', 1);
   }

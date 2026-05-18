@@ -479,10 +479,10 @@ export class ClassStep extends ProgressionStepPlugin {
 
   getRemainingPicks() {
     if (!this._committedClassId) {
-      return [{ label: 'No class selected', count: 0, isWarning: true }];
+      return [{ label: 'Class', count: 1, total: 1, selected: 0, isWarning: true }];
     }
 
-    return [{ label: `✓ ${this._committedClassName}`, count: 0, isWarning: false }];
+    return [{ label: `✓ ${this._committedClassName}`, count: 0, total: 1, selected: 1, isWarning: false }];
   }
 
   // ---------------------------------------------------------------------------
