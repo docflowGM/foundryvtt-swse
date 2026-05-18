@@ -64,7 +64,43 @@ export class StoreSurfaceController {
       el.addEventListener('click', ev => {
         ev.preventDefault();
         const category = el.dataset.category ?? '';
-        this._setOptions({ currentCategory: category, currentView: 'browse', selectedProductId: null });
+        // Phase 2: Clear subcategory/family when switching categories
+        this._setOptions({
+          currentCategory: category,
+          currentSubcategory: null,
+          currentFamily: null,
+          currentView: 'browse',
+          selectedProductId: null
+        });
+      }, { signal });
+    });
+
+    // Phase 2: Subcategory navigation
+    root.querySelectorAll('[data-action="subcategory-nav"]').forEach(el => {
+      el.addEventListener('click', ev => {
+        ev.preventDefault();
+        const subcategory = el.dataset.subcategory ?? null;
+        // Keep current category, clear family when selecting a specific subcategory
+        this._setOptions({
+          currentSubcategory: subcategory,
+          currentFamily: null,
+          currentView: 'browse',
+          selectedProductId: null
+        });
+      }, { signal });
+    });
+
+    // Phase 2: Weapon family navigation (melee/ranged grouping)
+    root.querySelectorAll('[data-action="family-nav"]').forEach(el => {
+      el.addEventListener('click', ev => {
+        ev.preventDefault();
+        const family = el.dataset.family ?? null;
+        // Keep current category and subcategory, change family filter
+        this._setOptions({
+          currentFamily: family,
+          currentView: 'browse',
+          selectedProductId: null
+        });
       }, { signal });
     });
 
@@ -73,6 +109,8 @@ export class StoreSurfaceController {
         ev.preventDefault();
         this._setOptions({
           currentCategory: '',
+          currentSubcategory: null,  // Phase 2: Clear secondary nav
+          currentFamily: null,        // Phase 2: Clear family filter
           currentView: 'browse',
           selectedProductId: null,
           search: '',

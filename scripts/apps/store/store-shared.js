@@ -218,3 +218,240 @@ export function getRarityLabel(rarityClass) {
     const labels = { 'rare': 'Rare', 'illegal': 'Illegal', 'military': 'Military', 'restricted': 'Restricted' };
     return labels[rarityClass] || '';
 }
+
+/* ────────────────────────────────────────────────────────────────
+   PHASE 2: HIERARCHICAL NAVIGATION MODEL
+
+   Builds a canonical navigation structure from StoreEngine inventory.
+   Exposes subcategories and optional family groupings without mutating
+   source data. View-model only; does not persist.
+   ──────────────────────────────────────────────────────────────── */
+
+/**
+ * Normalize weapon subcategory names into weapon families.
+ * Returns 'melee' or 'ranged' based on subcategory content.
+ *
+ * @param {string} subcategory - e.g., "Pistols", "Simple Melee", "Lightsabers"
+ * @returns {string} 'melee' | 'ranged'
+ */
+function getWeaponFamily(subcategory = '') {
+  const sub = String(subcategory || '').toLowerCase();
+  if (sub.includes('melee') || sub.includes('lightsaber') || sub.includes('exotic')) {
+    return 'melee';
+  }
+  if (sub.includes('ranged') || sub.includes('pistol') || sub.includes('rifle') || sub.includes('heavy')) {
+    return 'ranged';
+  }
+  return 'ranged'; // Default fallback
+}
+
+/**
+ * Normalize armor subcategories to player-facing labels.
+ * Returns normalized armor type based on item metadata.
+ *
+ * @param {Object} item - Store item with system.armorType or name
+ * @returns {string} 'Light Armor' | 'Medium Armor' | 'Heavy Armor' | 'Energy Shields'
+ */
+function normalizeArmorSubcategory(item = {}) {
+  const sys = safeSystem(item) || {};
+  const name = String(item.name || '').toLowerCase();
+  const armorType = String(sys.armorType || sys.category || '').toLowerCase();
+
+  // Check explicit armor type field first
+  if (armorType.includes('light')) return 'Light Armor';
+  if (armorType.includes('medium')) return 'Medium Armor';
+  if (armorType.includes('heavy')) return 'Heavy Armor';
+
+  // Check name for patterns
+  if (name.includes('light') || name.includes('cloth') || name.includes('padded')) return 'Light Armor';
+  if (name.includes('medium') || name.includes('composite')) return 'Medium Armor';
+  if (name.includes('heavy') || name.includes('reinforced') || name.includes('military')) return 'Heavy Armor';
+  if (name.includes('shield') || name.includes('energy') || name.includes('deflection')) return 'Energy Shields';
+
+  // Check for energy shield patterns
+  if (armorType.includes('shield') || armorType.includes('energy') || armorType.includes('deflect')) {
+    return 'Energy Shields';
+  }
+
+  // Default to Medium Armor if no match
+  return 'Medium Armor';
+}
+
+/**
+ * Build a canonical navigation model from StoreEngine inventory index.
+ *
+ * Returns a navigation structure that exposes category/subcategory hierarchy
+ * without flattening or mutating source data.
+ *
+ * @param {Object} inventory - StoreEngine.getInventory().inventory
+ * @param {Object} options - { activeCategory, activeSubcategory }
+ * @returns {Object} navigationModel
+ *
+ * Navigation model structure:
+ * {
+ *   topCategories: [
+ *     { key: 'all', label: 'All', count, active },
+ *     { key: 'weapons', label: 'Weapons', count, active, children: [...] },
+ *     ...
+ *   ],
+ *   activeCategory: string,
+ *   activeSubcategory: string | null,
+ *   activeFamily: string | null (weapons only)
+ * }
+ */
+export function buildStoreNavigationModel(inventory = {}, options = {}) {
+  const { activeCategory = '', activeSubcategory = null, activeFamily = null } = options;
+
+  const byCategory = inventory.byCategory || new Map();
+  const allItems = inventory.allItems || [];
+
+  // Count items per category (flat count of all items in category)
+  const categoryItemCounts = new Map();
+  for (const item of allItems) {
+    const cat = item.category || 'Other';
+    categoryItemCounts.set(cat, (categoryItemCounts.get(cat) || 0) + 1);
+  }
+
+  const normalizeCategoryKey = (cat) => {
+    const lower = String(cat || '').toLowerCase();
+    if (lower === 'weapons') return 'weapons';
+    if (lower === 'armor') return 'armor';
+    if (lower === 'gear' || lower === 'equipment') return 'gear';
+    if (lower === 'droids') return 'droids';
+    if (lower === 'vehicles') return 'vehicles';
+    return lower.replace(/\s+/g, '-');
+  };
+
+  // Build top-level categories
+  const topCategories = [
+    {
+      key: 'all',
+      label: 'All',
+      count: allItems.length,
+      active: activeCategory === ''
+    }
+  ];
+
+  // Add each category with its children
+  for (const [category, subMap] of byCategory.entries()) {
+    const categoryKey = normalizeCategoryKey(category);
+    const categoryCount = categoryItemCounts.get(category) || 0;
+
+    // Build children (subcategories) for this category
+    const children = [];
+    const subcategoryItemCounts = new Map();
+
+    // Count items per subcategory
+    for (const [subcategory, items] of subMap.entries()) {
+      subcategoryItemCounts.set(subcategory, items.length);
+    }
+
+    if (categoryKey === 'weapons') {
+      // WEAPONS: Group by melee/ranged families
+      const byFamily = new Map();
+
+      for (const [subcategory, items] of subMap.entries()) {
+        const family = getWeaponFamily(subcategory);
+        if (!byFamily.has(family)) {
+          byFamily.set(family, []);
+        }
+        byFamily.get(family).push({
+          key: subcategory.toLowerCase().replace(/\s+/g, '-'),
+          label: subcategory,
+          count: items.length,
+          category: categoryKey,
+          subcategory,
+          family: null,
+          active: activeSubcategory === subcategory
+        });
+      }
+
+      // Flatten families into children (with visual grouping later in template)
+      for (const [family, subs] of byFamily.entries()) {
+        children.push(...subs.map(sub => ({
+          ...sub,
+          family
+        })));
+      }
+    } else if (categoryKey === 'armor') {
+      // ARMOR: Normalize to Light/Medium/Heavy/Energy Shields
+      const normalizedBySubcategory = new Map();
+
+      for (const [_, items] of subMap.entries()) {
+        for (const item of items) {
+          const normalized = normalizeArmorSubcategory(item);
+          if (!normalizedBySubcategory.has(normalized)) {
+            normalizedBySubcategory.set(normalized, []);
+          }
+          normalizedBySubcategory.get(normalized).push(item);
+        }
+      }
+
+      // Build children from normalized armor types
+      for (const [normalized, items] of normalizedBySubcategory.entries()) {
+        children.push({
+          key: normalized.toLowerCase().replace(/\s+/g, '-'),
+          label: normalized,
+          count: items.length,
+          category: categoryKey,
+          subcategory: normalized,
+          family: null,
+          active: activeSubcategory === normalized
+        });
+      }
+
+      // Sort armor children by canonical order
+      const order = ['Light Armor', 'Medium Armor', 'Heavy Armor', 'Energy Shields'];
+      children.sort((a, b) => {
+        const aIdx = order.indexOf(a.label);
+        const bIdx = order.indexOf(b.label);
+        if (aIdx === -1 && bIdx === -1) return a.label.localeCompare(b.label);
+        if (aIdx === -1) return 1;
+        if (bIdx === -1) return -1;
+        return aIdx - bIdx;
+      });
+    } else {
+      // OTHER CATEGORIES: Use raw subcategories
+      for (const [subcategory, items] of subMap.entries()) {
+        children.push({
+          key: subcategory.toLowerCase().replace(/\s+/g, '-'),
+          label: subcategory,
+          count: items.length,
+          category: categoryKey,
+          subcategory,
+          family: null,
+          active: activeSubcategory === subcategory
+        });
+      }
+
+      // Sort by name
+      children.sort((a, b) => a.label.localeCompare(b.label));
+    }
+
+    topCategories.push({
+      key: categoryKey,
+      label: category,
+      count: categoryCount,
+      active: activeCategory === categoryKey,
+      children: children.length > 0 ? children : undefined
+    });
+  }
+
+  // Normalize top-level order: All, Weapons, Armor, Gear, Droids, Vehicles, Others
+  const priorityOrder = ['all', 'weapons', 'armor', 'gear', 'droids', 'vehicles'];
+  topCategories.sort((a, b) => {
+    const aIdx = priorityOrder.indexOf(a.key);
+    const bIdx = priorityOrder.indexOf(b.key);
+    if (aIdx === -1 && bIdx === -1) return a.label.localeCompare(b.label);
+    if (aIdx === -1) return 1;
+    if (bIdx === -1) return -1;
+    return aIdx - bIdx;
+  });
+
+  return {
+    topCategories,
+    activeCategory,
+    activeSubcategory,
+    activeFamily
+  };
+}
