@@ -1,9 +1,20 @@
 <div class="swse-narrator">
   <div class="swse-narrator-avatar">
-    {{{avatar}}}
+    {{#if avatar}}
+      <img class="swse-narrator-avatar__image"
+           src="{{avatar}}"
+           alt=""
+           title="{{label}}"
+           onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.png';"/>
+    {{else}}
+      <img class="swse-narrator-avatar__image"
+           src="systems/foundryvtt-swse/assets/mentors/salty.png"
+           alt=""
+           title="Ol' Salty"/>
+    {{/if}}
   </div>
-  <div class="swse-narrator-body">
+  <div class="swse-narrator-body" data-mentor-dialogue>
     <div class="swse-narrator-label">{{label}}</div>
-    {{{text}}}
+    <p class="swse-narrator-text" data-mentor-text>{{{text}}}</p>
   </div>
 </div>

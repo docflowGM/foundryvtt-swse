@@ -51,13 +51,13 @@
   {{!-- Selection Controls --}}
   <div class="details-actions">
     {{#if isSelected}}
-    <button class="action-btn remove-btn" data-action="remove-language" data-language-id="{{language.id}}">
+    <button class="action-btn remove-btn" data-action="remove-bonus-language" data-language-id="{{language.id}}">
       <i class="fa-solid fa-minus-circle"></i>
       Remove Selection
     </button>
     {{else if canSelect}}
     {{#if (gt remainingPicks 0)}}
-    <button class="action-btn select-btn" data-action="add-language" data-language-id="{{language.id}}">
+    <button class="action-btn select-btn" data-action="select-language" data-language-id="{{language.id}}">
       <i class="fa-solid fa-plus-circle"></i>
       Select This Language
     </button>

@@ -515,7 +515,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   getUtilityBarMode() { return 'rich'; }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'starship-maneuver')
+    return getStepGuidance(shell.actor, 'starship-maneuver', shell)
       || 'Make your choice wisely.';
   }
 

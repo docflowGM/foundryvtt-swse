@@ -360,7 +360,7 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
    * Return mentor guidance text for this step.
    */
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'final-droid-configuration')
+    return getStepGuidance(shell.actor, 'final-droid-configuration', shell)
       || 'Review your droid configuration and confirm when ready.';
   }
 

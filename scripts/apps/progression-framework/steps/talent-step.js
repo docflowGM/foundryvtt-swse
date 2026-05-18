@@ -665,11 +665,35 @@ export class TalentStep extends ProgressionStepPlugin {
         persist: true
       });
 
-      return (suggested || []).slice(0, 4);  // Top ranked trees
+      return (suggested || []).slice(0, 4).map(tree => this._withTalentSuggestionReasons(tree, pendingData));  // Top ranked trees
     } catch (err) {
       console.warn('[TalentStep] Suggestion service error:', err);
       return [];
     }
+  }
+
+  _withTalentSuggestionReasons(tree, pendingData = {}) {
+    const existing = [
+      ...(Array.isArray(tree?.suggestion?.reasons) ? tree.suggestion.reasons : []),
+      ...(Array.isArray(tree?.reasonBullets) ? tree.reasonBullets : []),
+    ].filter(Boolean);
+    if (existing.length) return tree;
+    const className = pendingData?.selectedClass?.name || pendingData?.selectedClass?.label || pendingData?.selectedClass || null;
+    const reasons = [];
+    if (className) reasons.push(`${tree.name} is available from the ${className} talent paths you can currently access.`);
+    else reasons.push(`${tree.name} is available to this talent slot right now.`);
+    const summary = tree.description || tree.system?.description;
+    if (summary) reasons.push(`Its theme is: ${String(summary).replace(/<[^>]+>/g, '').slice(0, 140)}.`);
+    return {
+      ...tree,
+      reasonBullets: reasons,
+      suggestion: {
+        ...(tree.suggestion || {}),
+        reason: reasons[0],
+        reasons,
+        reasonBullets: reasons,
+      }
+    };
   }
 
   /**

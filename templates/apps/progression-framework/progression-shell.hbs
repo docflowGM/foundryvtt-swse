@@ -49,16 +49,20 @@
   ======================================================================= --}}
 
   {{!-- ======================================================================
-    MENTOR NARRATOR — Mentor guidance (using foundation component)
+    MENTOR NARRATOR — dedicated mentor rail with portrait + translated dialogue
   ======================================================================= --}}
   <div data-region="mentor-rail"
        data-collapsed="{{mentorCollapsed}}"
        data-mood="{{mentor.mood}}">
-    {{> "systems/foundryvtt-swse/templates/components/narrator.hbs"
-        label=mentor.name
-        avatar=mentor.portrait
-        text=mentor.currentDialogue
-    }}
+    {{#if parts.mentorRail}}
+      {{{parts.mentorRail}}}
+    {{else}}
+      {{> "systems/foundryvtt-swse/templates/components/narrator.hbs"
+          label=mentor.name
+          avatar=mentor.portrait
+          text=mentor.currentDialogue
+      }}
+    {{/if}}
   </div>{{!-- /mentor-rail --}}
 
   {{!-- ======================================================================

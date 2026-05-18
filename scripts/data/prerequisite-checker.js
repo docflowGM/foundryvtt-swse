@@ -127,7 +127,7 @@ export class PrerequisiteChecker {
     }
 
 
-    static _checkAbilityRequirement(prereq, actor, fallbackMinimum = 10) {
+    static _checkAbilityRequirement(prereq, actor, fallbackMinimum = 10, pending = {}) {
         const abilityKey = String(prereq?.ability || prereq?.attribute || '').toLowerCase();
         const required = Number(prereq?.minimum ?? prereq?.min ?? prereq?.value ?? fallbackMinimum);
         if (actorIsDroidLike(actor) && abilityKey === 'con') {
@@ -138,9 +138,11 @@ export class PrerequisiteChecker {
         }
 
         const activeShell = globalThis.game?.__swseActiveProgressionShell;
-        const draftAttributes = activeShell?.actor?.id === actor?.id
-            ? activeShell?.progressionSession?.draftSelections?.attributes
-            : null;
+        const draftAttributes = pending?.attributes
+            || pending?.abilityIncreases
+            || (activeShell?.actor?.id === actor?.id
+                ? activeShell?.progressionSession?.draftSelections?.attributes
+                : null);
         const draftFinal = draftAttributes?.finalValues?.[abilityKey];
         const draftComputed = Number.isFinite(Number(draftAttributes?.values?.[abilityKey]))
             ? Number(draftAttributes.values[abilityKey]) + (Number(draftAttributes?.speciesMods?.[abilityKey]) || 0)
@@ -879,7 +881,7 @@ export class PrerequisiteChecker {
 
         switch (type) {
             case 'ability':
-                return this._checkAbilityRequirement(prereq, actor, 10);
+                return this._checkAbilityRequirement(prereq, actor, 10, pending);
             case 'bab': {
                 const bab = actor.system?.bab?.total ?? actor.system?.bab ?? 0;
                 const required = prereq.minimum ?? prereq.min ?? 0;
@@ -1107,7 +1109,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkAttributeCondition(prereq, actor, pending) {
-        return this._checkAbilityRequirement(prereq, actor, 10);
+        return this._checkAbilityRequirement(prereq, actor, 10, pending);
     }
 
     static _checkSkillTrainedCondition(prereq, actor, pending) {
@@ -1541,7 +1543,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkAbilityLegacy(prereq, actor, pending) {
-        return this._checkAbilityRequirement(prereq, actor, prereq.value ?? 10);
+        return this._checkAbilityRequirement(prereq, actor, prereq.value ?? 10, pending);
     }
 
     static _checkBABLegacy(prereq, actor, pending) {

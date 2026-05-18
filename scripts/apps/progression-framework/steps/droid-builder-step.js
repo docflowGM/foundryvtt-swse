@@ -1030,7 +1030,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * Return mentor guidance text for this step.
    */
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'droid-builder')
+    return getStepGuidance(shell.actor, 'droid-builder', shell)
       || 'Make your choice wisely.';
   }
 

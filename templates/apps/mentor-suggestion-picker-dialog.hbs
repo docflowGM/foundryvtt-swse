@@ -51,7 +51,7 @@
           <div class="mentor-suggestion-picker__section-label">Why your mentor likes it</div>
           <ul>
             {{#each bullets}}
-            <li>{{this}}</li>
+            <li>{{#each this.segments}}{{#if this.ability}}<span class="mentor-suggestion-picker__ability mentor-suggestion-picker__ability--{{this.ability}}">{{this.text}}</span>{{else}}{{this.text}}{{/if}}{{/each}}</li>
             {{/each}}
           </ul>
         </div>
@@ -62,7 +62,7 @@
           <div class="mentor-suggestion-picker__section-label">Cautions</div>
           <ul>
             {{#each cautions}}
-            <li>{{this}}</li>
+            <li>{{#each this.segments}}{{#if this.ability}}<span class="mentor-suggestion-picker__ability mentor-suggestion-picker__ability--{{this.ability}}">{{this.text}}</span>{{else}}{{this.text}}{{/if}}{{/each}}</li>
             {{/each}}
           </ul>
         </div>
@@ -73,7 +73,7 @@
           <div class="mentor-suggestion-picker__section-label">Forecast</div>
           <ul>
             {{#each forecast}}
-            <li>{{this}}</li>
+            <li>{{#each this.segments}}{{#if this.ability}}<span class="mentor-suggestion-picker__ability mentor-suggestion-picker__ability--{{this.ability}}">{{this.text}}</span>{{else}}{{this.text}}{{/if}}{{/each}}</li>
             {{/each}}
           </ul>
         </div>

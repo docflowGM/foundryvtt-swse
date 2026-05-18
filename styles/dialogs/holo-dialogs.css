@@ -772,3 +772,21 @@ body.system-foundryvtt-swse[data-theme=holo] button.ui-control.plain.icon::befor
   margin: 0;
   padding-left: 18px;
 }
+
+
+/* Mentor picker reason highlighting */
+.mentor-suggestion-picker__ability {
+  display: inline-block;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.mentor-suggestion-picker__ability--str { color: #ff8b7a; }
+.mentor-suggestion-picker__ability--dex { color: #7be6a8; }
+.mentor-suggestion-picker__ability--con { color: #f5c36a; }
+.mentor-suggestion-picker__ability--int { color: #79d7ff; }
+.mentor-suggestion-picker__ability--wis { color: #c39bff; }
+.mentor-suggestion-picker__ability--cha { color: #ff8fd4; }

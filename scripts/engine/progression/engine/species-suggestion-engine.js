@@ -24,61 +24,67 @@ const CURATED_OPENING_GUIDE = [
   {
     name: 'Human',
     confidence: 0.92,
-    reason: 'Human is a strong all-around choice if you want flexibility.',
+    roleLabel: 'General / Beginner',
+    reason: 'General / Beginner pick: Human is the safest flexible starter species.',
     reasons: [
-      'Human is a strong all-around choice if you want flexibility.',
-      'The bonus feat and bonus trained skill make it easier to keep your options open while you learn the system.',
-      'This is one of the safest starting species for new players because it stays useful no matter where the build goes.'
+      'General / Beginner pick: Human is the safest flexible starter species.',
+      'The bonus feat and bonus trained skill make it easier to recover from odd choices and explore the system.',
+      'Choose this when the player is unsure what class or playstyle they want yet.'
     ]
   },
   {
     name: 'Miraluka',
     confidence: 0.89,
-    reason: 'Miraluka is worth a look for a Force-attuned path.',
+    roleLabel: 'Jedi path',
+    reason: 'Jedi pick: Miraluka is the Force-forward species recommendation.',
     reasons: [
-      'Miraluka is worth a look for a Force-attuned path.',
-      'Its profile naturally leans toward awareness, intuition, and Force-oriented play.',
-      'This is a strong species if you think you may want a Jedi or other Force-sensitive direction later.'
+      'Jedi pick: Miraluka is the Force-forward species recommendation.',
+      'Its profile naturally points toward awareness, intuition, and Force-sensitive play.',
+      'Choose this when the player is leaning toward Jedi or another Force-centered identity.'
     ]
   },
   {
     name: 'Wookiee',
     confidence: 0.88,
-    reason: 'Wookiee fits a durable front-line fighter.',
+    roleLabel: 'Soldier path',
+    reason: 'Soldier pick: Wookiee is the durable front-line bruiser recommendation.',
     reasons: [
-      'Wookiee fits a durable front-line fighter.',
-      'Its stat line and species profile reward direct, physical play and survivability.',
-      'This is a strong onboarding pick if you want a character who solves problems up close.'
+      'Soldier pick: Wookiee is the durable front-line bruiser recommendation.',
+      'Its stat line and species profile reward direct, physical, survivable play.',
+      'Choose this when the player wants to hit hard, take hits, and solve problems up close.'
     ]
   },
   {
     name: "Twi'lek",
     confidence: 0.86,
-    reason: "Twi'lek suits a social or leadership-focused character.",
+    roleLabel: 'Noble path',
+    reason: "Noble pick: Twi'lek is the social, diplomatic, leadership-facing recommendation.",
     reasons: [
-      "Twi'lek suits a social or leadership-focused character.",
-      'Its profile points toward diplomacy, presence, and talking your way through problems.',
-      'This is a strong fit if you want a face, negotiator, or leader-style character.'
+      "Noble pick: Twi'lek is the social, diplomatic, leadership-facing recommendation.",
+      'Its profile points toward presence, negotiation, and talking your way through problems.',
+      'Choose this when the player wants to be the face, envoy, commander, or political operator.'
     ]
   },
   {
     name: 'Rodian',
     confidence: 0.85,
-    reason: 'Rodian fits scouting, hunting, and ranged pressure.',
+    roleLabel: 'Scout path',
+    reason: 'Scout pick: Rodian is the alert hunter and ranged-pressure recommendation.',
     reasons: [
-      'Rodian fits scouting, hunting, and ranged pressure.',
-      'Its profile naturally supports mobility, pursuit, perception, and precision play.',
-      'This is a strong species if you want an alert, opportunistic, or ranged-forward character.'
+      'Scout pick: Rodian is the alert hunter and ranged-pressure recommendation.',
+      'Its profile naturally supports pursuit, awareness, mobility, and opportunistic play.',
+      'Choose this when the player wants to track, scout, shoot, and stay one step ahead.'
     ]
   },
   {
     name: 'Yarkora',
     confidence: 0.84,
-    reason: 'Yarkora fits cunning, skillful, trickier play.',
+    roleLabel: 'Scoundrel path',
+    reason: 'Scoundrel pick: Yarkora is the cunning, slippery, trickster recommendation.',
     reasons: [
-      'Yarkora fits cunning, skillful, trickier play.',
+      'Scoundrel pick: Yarkora is the cunning, slippery, trickster recommendation.',
       'Its profile leans toward clever positioning, skills, and indirect problem-solving.',
-      'This is a strong species if you want a more technical, slippery, or deceptive direction.'
+      'Choose this when the player wants a technical, deceptive, or underworld-friendly character.'
     ]
   }
 ];
@@ -183,9 +189,16 @@ export class SpeciesSuggestionEngine {
       suggestions.push({
         id: match.id,
         name: match.name,
+        tierLabel: profile.roleLabel,
+        reasonSummary: profile.reason,
+        reasonText: profile.reasons.join(' '),
+        reasonBullets: profile.reasons,
         suggestion: {
           confidence: profile.confidence,
+          label: profile.roleLabel,
           reason: profile.reason,
+          reasonSummary: profile.reason,
+          reasonText: profile.reasons.join(' '),
           reasons: profile.reasons,
           curatedOpening: true,
           forecast: match.attributeForecast || { boosts: [], mitigations: [] }

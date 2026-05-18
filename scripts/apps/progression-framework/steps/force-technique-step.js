@@ -262,7 +262,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   getMentorContext(shell) {
     // PHASE 3: Guard against undefined mentor helpers
     // Use standard guidance helper instead of custom mentor resolution
-    return getStepGuidance(shell.actor, 'force-techniques')
+    return getStepGuidance(shell.actor, 'force-techniques', shell)
       || 'Master these techniques with patience and practice.';
   }
 

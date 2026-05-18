@@ -7,19 +7,150 @@
 
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
-function normalizeReasons(entry = {}) {
-  const bullets = Array.isArray(entry.reasonBullets) ? entry.reasonBullets.filter(Boolean) : [];
-  const cautions = Array.isArray(entry.cautionReasons) ? entry.cautionReasons.filter(Boolean) : [];
-  const forecast = Array.isArray(entry.forecastReasons) ? entry.forecastReasons.filter(Boolean) : [];
-  const fallbackReasons = Array.isArray(entry.reasons)
-    ? entry.reasons.map(r => (typeof r === 'string' ? r : r?.label || r?.text || r?.reason || null)).filter(Boolean)
-    : [];
+const GENERIC_REASON_PATTERNS = [
+  /fits your current (build|direction)/i,
+  /strong fit for your build/i,
+  /legal option/i,
+  /valid option/i,
+  /reasonable option/i,
+  /available option/i,
+];
 
-  return {
-    bullets: bullets.length ? bullets : fallbackReasons.slice(0, 3),
-    cautions,
-    forecast,
-  };
+const ABILITY_LABELS = {
+  str: 'Strength', dex: 'Dexterity', con: 'Constitution',
+  int: 'Intelligence', wis: 'Wisdom', cha: 'Charisma'
+};
+
+const ABILITY_LOOKUP = Object.entries(ABILITY_LABELS).flatMap(([key, label]) => [
+  [key, key],
+  [label.toLowerCase(), key],
+  [label.slice(0, 3).toLowerCase(), key],
+]);
+
+function cleanText(value) {
+  if (value === null || value === undefined) return null;
+  const text = String(value).replace(/\s+/g, ' ').trim();
+  if (!text || text === '[object Object]') return null;
+  return text;
+}
+
+function isGenericReason(value) {
+  const text = cleanText(value);
+  if (!text) return true;
+  return GENERIC_REASON_PATTERNS.some(pattern => pattern.test(text));
+}
+
+function flattenReasonValues(value, out = []) {
+  if (value === null || value === undefined) return out;
+  if (typeof value === 'string' || typeof value === 'number') {
+    const text = cleanText(value);
+    if (text) out.push(text);
+    return out;
+  }
+  if (Array.isArray(value)) {
+    value.forEach(item => flattenReasonValues(item, out));
+    return out;
+  }
+  if (typeof value === 'object') {
+    const preferred = [
+      value.text, value.label, value.reason, value.reasonText,
+      value.reasonSummary, value.summary, value.message,
+      value.description, value.display, value.name
+    ];
+    for (const candidate of preferred) {
+      if (candidate !== undefined && candidate !== null) flattenReasonValues(candidate, out);
+    }
+    if (out.length === 0) {
+      for (const candidate of Object.values(value)) {
+        if (typeof candidate === 'string' || Array.isArray(candidate)) flattenReasonValues(candidate, out);
+      }
+    }
+  }
+  return out;
+}
+
+function uniqTexts(values = []) {
+  const seen = new Set();
+  const result = [];
+  for (const value of values) {
+    const text = cleanText(value);
+    if (!text) continue;
+    const key = text.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(text);
+  }
+  return result;
+}
+
+function decorateText(text) {
+  const raw = cleanText(text) || '';
+  if (!raw) return { text: '', segments: [] };
+
+  const pattern = /\b(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma|STR|DEX|CON|INT|WIS|CHA)\b/gi;
+  const segments = [];
+  let last = 0;
+  raw.replace(pattern, (match, _word, offset) => {
+    if (offset > last) segments.push({ text: raw.slice(last, offset) });
+    const ability = ABILITY_LOOKUP.find(([token]) => token === match.toLowerCase())?.[1] || null;
+    segments.push({ text: match, ability });
+    last = offset + match.length;
+    return match;
+  });
+  if (last < raw.length) segments.push({ text: raw.slice(last) });
+  return { text: raw, segments };
+}
+
+function collectReasons(entry = {}, keys = []) {
+  const values = [];
+  for (const key of keys) {
+    const path = key.split('.');
+    let cursor = entry;
+    for (const part of path) cursor = cursor?.[part];
+    flattenReasonValues(cursor, values);
+  }
+  return uniqTexts(values).filter(text => !isGenericReason(text));
+}
+
+function normalizeReasons(entry = {}) {
+  const preferredBullets = collectReasons(entry, [
+    'suggestion.reasons',
+    'suggestion.reasonBullets',
+    'suggestion.reasonText',
+    'suggestion.reason',
+    'explanation.bullets',
+    'reasonBullets',
+    'reasons',
+  ]);
+  const fallbackBullets = uniqTexts(flattenReasonValues(entry.reasonBullets || entry.reasons || entry.reasonText || entry.reason || []))
+    .filter(text => !isGenericReason(text));
+  const bullets = (preferredBullets.length ? preferredBullets : fallbackBullets).slice(0, 5).map(decorateText);
+
+  const cautions = collectReasons(entry, ['suggestion.cautions', 'cautionReasons', 'cautions'])
+    .slice(0, 3).map(decorateText);
+  const forecast = collectReasons(entry, ['suggestion.forecast', 'forecastReasons', 'forecast'])
+    .slice(0, 3).map(decorateText);
+
+  return { bullets, cautions, forecast };
+}
+
+function pickReasonSummary(entry = {}) {
+  const candidates = [
+    entry?.suggestion?.reasonSummary,
+    entry?.suggestion?.reason,
+    entry?.suggestion?.reasonText,
+    entry?.reasonSummary,
+    entry?.reason,
+    entry?.reasonText,
+    entry?.explanation?.short,
+    entry?.explanation?.full,
+  ];
+  for (const candidate of candidates) {
+    const text = uniqTexts(flattenReasonValues(candidate || [])).find(Boolean);
+    if (text && !isGenericReason(text)) return text;
+  }
+  const reasons = normalizeReasons(entry);
+  return reasons.bullets[0]?.text || null;
 }
 
 export class MentorSuggestionPickerDialog extends BaseSWSEAppV2 {
@@ -83,7 +214,7 @@ export class MentorSuggestionPickerDialog extends BaseSWSEAppV2 {
         tier: suggestionMeta?.tier ?? entry?.tier ?? 0,
         tierLabel: suggestionMeta?.label || entry?.tierLabel || null,
         confidence: suggestionMeta?.confidence ?? entry?.confidence ?? null,
-        reasonSummary: entry?.reasonSummary || suggestionMeta?.reasonSummary || suggestionMeta?.reason || entry?.reason || null,
+        reasonSummary: pickReasonSummary(entry),
         reasonText: entry?.reasonText || suggestionMeta?.reasonText || null,
         bullets: reasons.bullets,
         cautions: reasons.cautions,

@@ -117,6 +117,13 @@ export class ProgressionSession {
       lastAdviceGiven: null,
     };
 
+    // Commit diagnostics are non-blocking breadcrumbs. A bad step commit must
+    // never destroy the last known-good draft selections.
+    this.commitDiagnostics = {
+      coercedCommits: [],
+      failedCommits: [],
+    };
+
     // Session lifecycle
     this.createdAt = Date.now();
     this.lastModifiedAt = Date.now();
@@ -162,30 +169,46 @@ export class ProgressionSession {
     }
 
     try {
-      // Validate schema (basic check — more can be added per type)
-      this._validateSelection(selectionKey, value);
+      // Coerce known legacy/step-local payloads into the canonical schema before
+      // validating. This keeps one bad step payload from throwing away or hiding
+      // the rest of the recovered chargen state.
+      const normalizedValue = this._coerceSelectionToSchema(selectionKey, value, { stepId });
 
-      // Write to canonical draftSelections
-      this.draftSelections[selectionKey] = value;
+      // Validate schema (basic check — more can be added per type)
+      this._validateSelection(selectionKey, normalizedValue);
+
+      // Write to canonical draftSelections only after validation succeeds. The
+      // previous value remains intact if validation fails.
+      this.draftSelections[selectionKey] = normalizedValue;
       this.lastModifiedAt = Date.now();
 
       // Trigger watchers for backward compat
-      this._triggerWatchers(selectionKey, value);
+      this._triggerWatchers(selectionKey, normalizedValue);
 
       // Trigger persistence hooks (Phase 1: auto-save after commit)
       this._triggerPersistenceHooks(stepId, selectionKey);
 
       swseLogger.debug(
         `[ProgressionSession] Committed ${selectionKey} from ${stepId}`,
-        { value }
+        { value: normalizedValue }
       );
 
       return true;
     } catch (err) {
+      this._recordCommitDiagnostic('failed', {
+        stepId,
+        selectionKey,
+        expectedType: this._schema?.[selectionKey]?.type || 'unknown',
+        actualType: Array.isArray(value) ? 'array' : typeof value,
+        message: err?.message || String(err),
+      });
       swseLogger.error(
-        `[ProgressionSession] Error committing ${selectionKey}:`,
+        `[ProgressionSession] Error committing ${selectionKey}; preserving previous valid selection:`,
         err
       );
+      // Force a persistence pass for the last known-good state. Failed commits
+      // should be recoverable breadcrumbs, not data loss events.
+      this._triggerPersistenceHooks(stepId || 'failed-commit', `${selectionKey}:failed`);
       return false;
     }
   }
@@ -451,6 +474,99 @@ export class ProgressionSession {
         description: 'Choice-bearing feat/talent selections resolved at their owning step',
       },
     };
+  }
+
+  /**
+   * Coerce legacy step-local payloads into canonical selection shapes.
+   * This is intentionally conservative: it only reshapes recognizable wrapper
+   * objects for array-typed selections. Unrecognized data still fails validation
+   * without replacing the prior valid selection.
+   * @private
+   */
+  _coerceSelectionToSchema(selectionKey, value, context = {}) {
+    const schemaDef = this._schema?.[selectionKey];
+    if (!schemaDef || value === null || value === undefined) return value;
+
+    if (schemaDef.type === 'array') {
+      if (Array.isArray(value)) return this._normalizeArraySelection(selectionKey, value);
+
+      if (typeof value === 'object') {
+        const candidate = this._extractArrayCandidate(selectionKey, value);
+        if (Array.isArray(candidate)) {
+          const coerced = this._normalizeArraySelection(selectionKey, candidate);
+          this._recordCommitDiagnostic('coerced', {
+            stepId: context.stepId || null,
+            selectionKey,
+            fromType: 'object',
+            toType: 'array',
+            count: coerced.length,
+          });
+          swseLogger.warn(`[ProgressionSession] Coerced ${selectionKey} commit into canonical array`, {
+            stepId: context.stepId,
+            count: coerced.length,
+          });
+          return coerced;
+        }
+      }
+    }
+
+    return value;
+  }
+
+  /** @private */
+  _extractArrayCandidate(selectionKey, value) {
+    if (!value || typeof value !== 'object') return null;
+
+    if (selectionKey === 'languages') {
+      return value.selectedBonusLanguages
+        || value.bonusLanguages
+        || value.selectedLanguages
+        || value.selected
+        || value.languages
+        || value.items
+        || value.values
+        || null;
+    }
+
+    return value.selected
+      || value.selections
+      || value.items
+      || value.values
+      || value[selectionKey]
+      || null;
+  }
+
+  /** @private */
+  _normalizeArraySelection(selectionKey, entries) {
+    if (!Array.isArray(entries)) return entries;
+
+    if (selectionKey !== 'languages') return entries;
+
+    return entries
+      .map(entry => {
+        if (typeof entry === 'string') return { id: entry, name: entry, source: 'selected' };
+        if (!entry || typeof entry !== 'object') return null;
+        const id = entry.id || entry.key || entry.slug || entry.name || entry.label;
+        if (!id) return null;
+        return {
+          ...entry,
+          id,
+          name: entry.name || entry.label || id,
+          source: entry.source || 'selected',
+        };
+      })
+      .filter(Boolean);
+  }
+
+  /** @private */
+  _recordCommitDiagnostic(kind, detail = {}) {
+    if (!this.commitDiagnostics) {
+      this.commitDiagnostics = { coercedCommits: [], failedCommits: [] };
+    }
+    const key = kind === 'coerced' ? 'coercedCommits' : 'failedCommits';
+    const list = this.commitDiagnostics[key] || [];
+    list.push({ ...detail, timestamp: new Date().toISOString() });
+    this.commitDiagnostics[key] = list.slice(-20);
   }
 
   /**

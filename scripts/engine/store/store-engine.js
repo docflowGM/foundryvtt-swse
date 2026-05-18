@@ -303,7 +303,7 @@ export class StoreEngine {
       const freshActor = game.actors.get(actor.id);
       if (!freshActor) return { success: false, error: 'Actor no longer exists.', transactionId: null };
 
-      const currentCredits = Number(freshActor.system?.credits) ?? 0;
+      const currentCredits = LedgerService.getCurrentCredits(freshActor);
       if (!Number.isFinite(currentCredits) || currentCredits < 0) {
         return { success: false, error: 'Invalid credit state.', transactionId: null };
       }

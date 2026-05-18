@@ -26,6 +26,36 @@ function toSkillList(background) {
   ].filter(Boolean);
 }
 
+function displaySkill(skill) {
+  return String(skill || '').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/\b\w/g, m => m.toUpperCase());
+}
+
+function extractSpeciesSkillBonuses(species) {
+  const raw = [
+    ...(Array.isArray(species?.skillBonuses) ? species.skillBonuses : []),
+    ...(Array.isArray(species?.system?.skillBonuses) ? species.system.skillBonuses : []),
+    ...(Array.isArray(species?.canonicalStats?.skillBonuses) ? species.canonicalStats.skillBonuses : []),
+  ];
+  const result = [];
+  for (const entry of raw) {
+    const text = String(entry?.name || entry?.label || entry?.skill || entry || '').trim();
+    if (!text) continue;
+    const match = text.match(/(?:\+\d+\s*)?(.+)$/);
+    const skill = match?.[1]?.trim();
+    if (skill) result.push(skill.replace(/^to\s+/i, '').trim());
+  }
+  return Array.from(new Set(result));
+}
+
+function hasUsefulMechanicalText(background) {
+  const text = [
+    background?.specialAbility,
+    background?.mechanicalEffect?.description,
+    ...(Array.isArray(background?.specialAbilities) ? background.specialAbilities.map(a => a?.description || a?.name) : [])
+  ].filter(Boolean).join(' ').toLowerCase();
+  return /bonus|reroll|choose|language|class skill|trained|untrained|competence|may/i.test(text);
+}
+
 export class BackgroundSuggestionEngine {
   static async suggestBackgrounds(backgrounds, actor, pendingData = {}) {
     if (!Array.isArray(backgrounds) || backgrounds.length === 0) return [];
@@ -73,7 +103,8 @@ export class BackgroundSuggestionEngine {
       intendedAttributes: mentorBiases?.attributeBiasWeights || {},
       featBiasWeights: mentorBiases?.featBiasWeights || {},
       talentBiasWeights: mentorBiases?.talentBiasWeights || {},
-      species: pendingData?.species || actor?.system?.species || null
+      species: pendingData?.selectedSpecies || pendingData?.species || actor?.system?.species || null,
+      speciesSkillBonuses: extractSpeciesSkillBonuses(pendingData?.selectedSpecies || pendingData?.species || actor?.system?.species || null)
     };
   }
 
@@ -84,54 +115,73 @@ export class BackgroundSuggestionEngine {
     let score = 0;
 
     // 1) Last-class-skill window: reward backgrounds that open important skills the class lacks.
-    const expansionSkills = normalizedSkills.filter((skill) => !profile.classSkillKeys.has(skill));
-    if (expansionSkills.length > 0) {
-      score += expansionSkills.length * 1.35;
-      reasons.push('Expands your class-skill access');
+    const expansionPairs = skillList
+      .map((skill, index) => ({ raw: skill, key: normalizedSkills[index] }))
+      .filter((entry) => entry.key && !profile.classSkillKeys.has(entry.key));
+    if (expansionPairs.length > 0) {
+      score += expansionPairs.length * 1.35;
+      reasons.push(`Adds novel class-skill access your class does not already provide: ${expansionPairs.slice(0, 3).map(e => displaySkill(e.raw)).join(', ')}.`);
     }
 
     // 2) Survey-intended skills: the heaviest direct bias.
+    const surveySkillNames = [];
     const surveySkillHits = skillList.reduce((sum, skill) => {
       const weight = Number(profile.intendedSkills[norm(skill)] || 0);
+      if (weight > 0) surveySkillNames.push(displaySkill(skill));
       return sum + Math.max(0, weight);
     }, 0);
     if (surveySkillHits > 0) {
       score += surveySkillHits * 1.8;
-      reasons.push('Supports the skills you said you want to build around');
+      reasons.push(`Matches the skill interests from your L1 survey: ${Array.from(new Set(surveySkillNames)).slice(0, 3).join(', ')}.`);
     }
 
     // 3) Prestige path readiness via required skills.
+    const prestigeSkillNames = [];
     const prestigeHits = skillList.reduce((sum, skill) => {
       const tags = getSkillPrestigeTags(skill);
-      return sum + tags.filter((tag) => profile.prestigeTargets.has(String(tag).replace(/^Prereq_/, ''))).length;
+      const hits = tags.filter((tag) => profile.prestigeTargets.has(String(tag).replace(/^Prereq_/, '')));
+      if (hits.length) prestigeSkillNames.push(displaySkill(skill));
+      return sum + hits.length;
     }, 0);
     if (prestigeHits > 0) {
       score += prestigeHits * 1.6;
-      reasons.push('Builds toward a declared prestige path');
+      reasons.push(`Helps preserve future prestige path options through ${Array.from(new Set(prestigeSkillNames)).slice(0, 3).join(', ')}.`);
     }
 
     // 4) Attribute synergy through the actual skills the background supports.
+    const abilityHits = [];
     const abilitySynergy = skillList.reduce((sum, skill) => {
       const ability = getSkillAbility(skill);
-      return sum + Number(profile.planningProfile.abilityWeights?.[ability] || 0);
+      const weight = Number(profile.planningProfile.abilityWeights?.[ability] || 0);
+      if (weight > 0) abilityHits.push(`${displaySkill(skill)} (${String(ability).toUpperCase()})`);
+      return sum + weight;
     }, 0);
     if (abilitySynergy > 0) {
       score += Math.min(2.5, abilitySynergy / 4);
-      reasons.push('Matches your strongest or planned attributes');
+      reasons.push(`Its skills lean on your stronger attribute plan: ${Array.from(new Set(abilityHits)).slice(0, 3).join(', ')}.`);
     }
 
-    // 5) Species/narrative fit remains soft, never dominant.
+    // 5) Species skill synergy only matters when the class does not already cover that skill.
+    const speciesSkillHits = (profile.speciesSkillBonuses || [])
+      .filter(skill => normalizedSkills.includes(norm(skill)) && !profile.classSkillKeys.has(norm(skill)));
+    if (speciesSkillHits.length > 0) {
+      score += speciesSkillHits.length * 1.2;
+      reasons.push(`Your species boosts ${speciesSkillHits.slice(0, 3).map(displaySkill).join(', ')}, and this background can make that skill lane legal.`);
+    }
+
+    // 6) Species/narrative fit remains soft, never dominant.
     if (profile.species && this._isSpeciesBackground(background, profile.species?.name || profile.species)) {
       score += 0.35;
-      reasons.push('Narratively coherent with your species');
+      reasons.push('The background is narratively coherent with your species.');
     }
 
-    // 6) Bonus language / utility remains mild.
-    if (background?.bonusLanguage) {
-      score += 0.1;
+    // 7) Bonus language / utility remains mild but visible.
+    if (background?.bonusLanguage || background?.languages?.length) {
+      score += 0.25;
+      reasons.push('It also contributes a background language or language option.');
     }
 
-    // 7) Mechanical bonus text can reinforce forecast lanes.
+    // 8) Mechanical bonus text can reinforce forecast lanes.
     const bonusText = [
       background?.specialAbility,
       background?.mechanicalEffect?.description,
@@ -142,7 +192,11 @@ export class BackgroundSuggestionEngine {
     if ((bonusText.includes('stealth') && profile.intendedSkills.stealth) ||
         (bonusText.includes('knowledge') && Object.keys(profile.intendedSkills).some((k) => k.includes('knowledge')))) {
       score += 1.0;
-      reasons.push('Its bonus text lines up with your stated build lane');
+      reasons.push('Its bonus text lines up with a stated build lane.');
+    }
+    if (hasUsefulMechanicalText(background)) {
+      score += 0.45;
+      reasons.push('It has an extra mechanical hook such as a bonus, reroll, language, or class-skill benefit.');
     }
 
     // Tier derivation.
@@ -154,13 +208,16 @@ export class BackgroundSuggestionEngine {
     else if (score > 0) tier = UNIFIED_TIERS.THEMATIC_FIT;
 
     const tierMetadata = getTierMetadata(tier);
+    const uniqueReasons = Array.from(new Set(reasons)).slice(0, 5);
     return {
       tier,
       score,
       icon: tierMetadata.icon,
       color: tierMetadata.color,
       label: tierMetadata.label,
-      reason: reasons.length ? Array.from(new Set(reasons)).join('; ') : tierMetadata.description
+      reason: uniqueReasons[0] || tierMetadata.description,
+      reasons: uniqueReasons,
+      reasonBullets: uniqueReasons,
     };
   }
 

@@ -3,11 +3,6 @@
 
 <div class="language-work-surface prog-quickref-stage" data-prog-scroll-key="language-work-surface">
 
-  <section class="language-section language-rules-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
-    <h3 class="section-title"><i class="fa-solid fa-calculator"></i> Language Formula</h3>
-    <p class="section-description">Native language + Basic are automatic. Bonus picks: INT modifier ({{languageRuleBreakdown.intModPicks}}) + Linguist ({{languageRuleBreakdown.linguistPicks}}).</p>
-  </section>
-
   {{!-- Known/Granted Languages Section --}}
   {{#if knownLanguages}}
   <section class="language-section known-languages-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
@@ -15,9 +10,9 @@
       <i class="fa-solid fa-check-circle"></i>
       Known Languages ({{knownLanguages.length}})
     </h3>
-    <p class="section-description">You automatically know these from your species and background.</p>
+    <p class="section-description">You automatically know these from your species, background, and other grants.</p>
 
-    <div class="language-list known-list">
+    <div class="language-list known-list" data-prog-scroll-key="language-known-list">
       {{#each knownLanguages}}
       <div class="language-item known-language swse-card-schema swse-card-schema--enumerated swse-card-schema--filled" data-language-id="{{this.language.id}}" data-item-id="{{this.language.id}}" data-action="focus-item">
         <div class="language-item-content">
@@ -46,7 +41,7 @@
           <span class="language-name">{{this.name}}</span>
           <span class="language-selected-badge">selected</span>
         </div>
-        <button class="language-remove-btn" data-action="remove-language" data-language-id="{{this.language.id}}" title="Remove this selection">
+        <button class="language-remove-btn" data-action="remove-bonus-language" data-language-id="{{this.language.id}}" title="Remove this selection">
           <i class="fa-solid fa-times"></i>
         </button>
       </div>
@@ -81,10 +76,10 @@
               <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
             {{/if}}
           </span>
-          <span class="language-category-badge {{this.category}}">{{this.category}}</span>
+          <span class="language-category-badge {{this.category}}">{{this.categoryLabel}}</span>
         </div>
         {{#if this.canSelect}}
-        <button class="language-add-btn" data-action="add-language" data-language-id="{{this.id}}" title="Select this language">
+        <button class="language-add-btn" data-action="select-language" data-language-id="{{this.id}}" title="Select this language">
           <i class="fa-solid fa-plus"></i>
         </button>
         {{/if}}

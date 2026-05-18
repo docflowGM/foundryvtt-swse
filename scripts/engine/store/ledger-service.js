@@ -19,6 +19,27 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 
 export class LedgerService {
+  static getCurrentCredits(actor) {
+    const rawCredits = actor?.system?.credits;
+    const actorCredits = Number(rawCredits);
+    if (rawCredits !== undefined && rawCredits !== null && Number.isFinite(actorCredits)) {
+      return actorCredits;
+    }
+
+    let chargenStore = null;
+    try {
+      chargenStore = actor?.getFlag?.('swse', 'chargenStore') || actor?.flags?.swse?.chargenStore || null;
+    } catch (_err) {
+      chargenStore = actor?.flags?.swse?.chargenStore || null;
+    }
+
+    if (chargenStore?.initialized) {
+      const staged = Number(chargenStore.lastStagedCredits ?? chargenStore.currentCredits ?? chargenStore.startingCredits ?? 0);
+      if (Number.isFinite(staged) && staged >= 0) return staged;
+    }
+
+    return 0;
+  }
   /**
    * Calculate total cost of cart items
    * @param {Array} cartItems - Items with cost property
@@ -59,12 +80,12 @@ export class LedgerService {
       return {
         ok: false,
         reason: 'Invalid total cost',
-        current: Number(actor.system?.credits ?? 0) || 0,
+        current: this.getCurrentCredits(actor),
         required: totalCost
       };
     }
 
-    const currentCredits = Number(actor.system?.credits ?? 0) || 0;
+    const currentCredits = this.getCurrentCredits(actor);
 
     if (!Number.isFinite(currentCredits)) {
       return {
@@ -108,7 +129,7 @@ export class LedgerService {
       throw new Error('buildCreditDelta: Invalid total cost');
     }
 
-    const currentCredits = Number(actor.system?.credits ?? 0) || 0;
+    const currentCredits = this.getCurrentCredits(actor);
     const newCredits = normalizeCredits(currentCredits - totalCost);
 
     if (newCredits < 0) {
@@ -137,7 +158,7 @@ export class LedgerService {
    * @returns {Object} Metadata for logging
    */
   static buildMetadata(actor, totalCost) {
-    const current = Number(actor.system?.credits ?? 0) || 0;
+    const current = this.getCurrentCredits(actor);
     const newBalance = normalizeCredits(current - totalCost);
 
     return {
@@ -174,7 +195,7 @@ export class LedgerService {
     }
 
     const resaleValue = this.calculateResale(baseCost);
-    const currentCredits = Number(actor.system?.credits ?? 0) || 0;
+    const currentCredits = this.getCurrentCredits(actor);
     const newCredits = normalizeCredits(currentCredits + resaleValue);
 
     swseLogger.debug('LedgerService.buildResaleDelta', {

@@ -359,7 +359,7 @@ export class ConfirmStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'confirm')
+    return getStepGuidance(shell.actor, 'confirm', shell)
       || 'Your path is clear. Stand ready for deployment.';
   }
 

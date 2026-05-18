@@ -259,11 +259,28 @@ export async function handleAskMentorWithSuggestions(actor, stepId, suggestions,
 }
 
 
+function hasPickerSuggestionSignal(entry = {}) {
+  const tier = Number(entry?.suggestion?.tier ?? entry?.tier ?? 0) || 0;
+  if (tier > 0) return true;
+
+  // Some early chargen domains, especially Species, intentionally produce
+  // curated opening recommendations before the build has enough signal for a
+  // formal tier. Those entries carry confidence/reasons instead of tier. The
+  // Ask Mentor picker should still open for them instead of silently falling
+  // back to plain rail dialogue.
+  const confidence = Number(entry?.suggestion?.confidence ?? entry?.confidence ?? 0) || 0;
+  if (confidence > 0) return true;
+
+  if (entry?.suggestion?.curatedOpening === true || entry?.curatedOpening === true) return true;
+  if (Array.isArray(entry?.suggestion?.reasons) && entry.suggestion.reasons.length > 0) return true;
+  if (Array.isArray(entry?.reasons) && entry.reasons.length > 0) return true;
+  if (entry?.suggestion?.reason || entry?.reason || entry?.reasonSummary || entry?.reasonText) return true;
+
+  return false;
+}
+
 function sortSuggestionsForPicker(suggestions = []) {
-  return SuggestionService.sortBySuggestion(suggestions || []).filter(entry => {
-    const tier = entry?.suggestion?.tier ?? entry?.tier ?? 0;
-    return tier > 0;
-  });
+  return SuggestionService.sortBySuggestion(suggestions || []).filter(hasPickerSuggestionSignal);
 }
 
 function humanizeStepLabel(stepId) {

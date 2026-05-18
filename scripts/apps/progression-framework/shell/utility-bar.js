@@ -103,6 +103,44 @@ export class UtilityBar {
     }
   }
 
+
+
+  /**
+   * Notify the active step plugin directly when utility controls change.
+   *
+   * The utility bar lives in a shell region that can be replaced during inline
+   * chargen renders. Bubbling CustomEvents are still emitted for legacy step
+   * plugins, but direct notification gives embedded steps a reliable path even
+   * when the region/root relationship is unusual.
+   *
+   * @param {string} type
+   * @param {object} detail
+   * @returns {boolean}
+   * @private
+   */
+  _notifyActiveStepUtilityChange(type, detail = {}) {
+    const shell = this.shell;
+    const descriptor = shell?.steps?.[shell?.currentStepIndex] ?? null;
+    const plugin = descriptor ? shell?.stepPlugins?.get?.(descriptor.stepId) : null;
+    if (!plugin || typeof plugin.onUtilityChange !== 'function') return false;
+
+    try {
+      const result = plugin.onUtilityChange({
+        type,
+        detail: { ...detail },
+        utilityBar: this,
+        shell,
+      });
+      if (result && typeof result.catch === 'function') {
+        result.catch(err => console.warn('[SWSE UtilityBar] Active step utility change failed', err));
+      }
+      return true;
+    } catch (err) {
+      console.warn('[SWSE UtilityBar] Active step utility change failed', err);
+      return false;
+    }
+  }
+
   /**
    * Wire all event handlers (search, filter chips, sort dropdown).
    * Handlers are tracked in _handlers for cleanup before re-render.
@@ -129,8 +167,10 @@ export class UtilityBar {
       track(searchEl, 'input', e => {
         this._searchQuery = e.target.value;
         rememberSearchFocus(e.target);
+        const detail = { query: this._searchQuery };
+        const handledByStepHook = this._notifyActiveStepUtilityChange('search', detail);
         regionEl.dispatchEvent(new CustomEvent('prog:utility:search',
-          { bubbles: true, detail: { query: this._searchQuery } }));
+          { bubbles: true, detail: { ...detail, handledByStepHook } }));
       });
       track(searchEl, 'focus', e => rememberSearchFocus(e.target));
     }
@@ -142,8 +182,10 @@ export class UtilityBar {
         this._filterState[id] = !(this._filterState[id] ?? false);
         chip.dataset.active = String(this._filterState[id]);
         chip.classList.toggle('prog-utility-bar__filter-chip--active', this._filterState[id]);
+        const detail = { filterId: id, value: this._filterState[id] };
+        const handledByStepHook = this._notifyActiveStepUtilityChange('filter', detail);
         regionEl.dispatchEvent(new CustomEvent('prog:utility:filter',
-          { bubbles: true, detail: { filterId: id, value: this._filterState[id] } }));
+          { bubbles: true, detail: { ...detail, handledByStepHook } }));
       });
     });
 
@@ -152,8 +194,10 @@ export class UtilityBar {
     if (sortEl) {
       track(sortEl, 'change', e => {
         this._sortValue = e.target.value;
+        const detail = { sortId: this._sortValue };
+        const handledByStepHook = this._notifyActiveStepUtilityChange('sort', detail);
         regionEl.dispatchEvent(new CustomEvent('prog:utility:sort',
-          { bubbles: true, detail: { sortId: this._sortValue } }));
+          { bubbles: true, detail: { ...detail, handledByStepHook } }));
       });
     }
 
@@ -163,8 +207,10 @@ export class UtilityBar {
         const id = dropdown.dataset.utilitySelect;
         const value = e.target.value;
         this._filterState[id] = value;
+        const detail = { filterId: id, value: value };
+        const handledByStepHook = this._notifyActiveStepUtilityChange('filter', detail);
         regionEl.dispatchEvent(new CustomEvent('prog:utility:filter',
-          { bubbles: true, detail: { filterId: id, value: value } }));
+          { bubbles: true, detail: { ...detail, handledByStepHook } }));
       });
     });
 
@@ -198,11 +244,21 @@ export class UtilityBar {
           this._filterState[id] = dropdown.value;
         });
 
-        regionEl.dispatchEvent(new CustomEvent('prog:utility:search', { bubbles: true, detail: { query: '' } }));
-        for (const [id, value] of Object.entries(this._filterState)) {
-          regionEl.dispatchEvent(new CustomEvent('prog:utility:filter', { bubbles: true, detail: { filterId: id, value } }));
+        {
+          const detail = { query: '' };
+          const handledByStepHook = this._notifyActiveStepUtilityChange('search', detail);
+          regionEl.dispatchEvent(new CustomEvent('prog:utility:search', { bubbles: true, detail: { ...detail, handledByStepHook } }));
         }
-        regionEl.dispatchEvent(new CustomEvent('prog:utility:sort', { bubbles: true, detail: { sortId: this._sortValue } }));
+        for (const [id, value] of Object.entries(this._filterState)) {
+          const detail = { filterId: id, value };
+          const handledByStepHook = this._notifyActiveStepUtilityChange('filter', detail);
+          regionEl.dispatchEvent(new CustomEvent('prog:utility:filter', { bubbles: true, detail: { ...detail, handledByStepHook } }));
+        }
+        {
+          const detail = { sortId: this._sortValue };
+          const handledByStepHook = this._notifyActiveStepUtilityChange('sort', detail);
+          regionEl.dispatchEvent(new CustomEvent('prog:utility:sort', { bubbles: true, detail: { ...detail, handledByStepHook } }));
+        }
       });
     });
   }

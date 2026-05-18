@@ -686,18 +686,26 @@ export class ClassStep extends ProgressionStepPlugin {
       // Build characterData from shell's buildIntent/committedSelections
       const characterData = this._buildCharacterDataFromShell(shell);
 
-      // Get suggestions from SuggestionService
+      // Get suggestions from SuggestionService. At character creation, mentors
+      // must only recommend classes the player can actually choose now.
       const mode = shell?.mode || shell?.progressionSession?.mode || 'chargen';
+      const pendingData = SuggestionContextBuilder.buildPendingData(actor, characterData);
+      const isLevelOneChargen = mode === 'chargen';
+      const legalAvailable = this._allClasses.filter(cls => {
+        if (isLevelOneChargen && (cls.prestigeClass === true || cls.baseClass === false || cls.isPrestige === true)) return false;
+        const eligibility = evaluateClassEligibility({ className: cls.name, actor, pendingData });
+        return eligibility?.eligible !== false;
+      });
       const suggested = await SuggestionService.getSuggestions(actor, mode, {
         domain: 'classes',
-        available: this._allClasses,
-        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
-        engineOptions: { includeFutureAvailability: true, mode },
+        available: legalAvailable,
+        pendingData,
+        engineOptions: { includeFutureAvailability: false, mode },
         persist: true
       });
 
-      // Store top suggestions
-      this._suggestedClasses = (suggested || []).slice(0, mode === 'chargen' ? 2 : 3);
+      // Store top legal suggestions. Keep enough options to compare base roles.
+      this._suggestedClasses = (suggested || []).slice(0, mode === 'chargen' ? 3 : 4);
     } catch (err) {
       swseLogger.warn('[ClassStep] Suggestion service error:', err);
       this._suggestedClasses = [];

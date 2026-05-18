@@ -155,6 +155,29 @@ function scoreToTier(score) {
   return LEVEL1_SKILL_TIERS.AVAILABLE;
 }
 
+function mergePendingAbilityScores(baseScores = {}, pendingData = {}) {
+  const source = pendingData?.abilityIncreases || pendingData?.attributes || {};
+  const out = { ...baseScores };
+  for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+    const candidates = [
+      source?.finalValues?.[key],
+      source?.values?.[key]?.score,
+      source?.values?.[key]?.value,
+      source?.values?.[key],
+      source?.baseValues?.[key],
+      pendingData?.abilityScores?.[key],
+    ];
+    for (const candidate of candidates) {
+      const score = Number(candidate);
+      if (Number.isFinite(score) && score > 0) {
+        out[key] = score;
+        break;
+      }
+    }
+  }
+  return out;
+}
+
 export class Level1SkillSuggestionEngine {
   static async suggestLevel1Skills(availableSkills, actor, pendingData = {}) {
     try {
@@ -164,7 +187,7 @@ export class Level1SkillSuggestionEngine {
         return availableSkills.map(skill => ({ ...skill, suggestion: { tier: UNIFIED_TIERS.AVAILABLE, reason: 'Level 1 suggestions only', icon: tierMetadata.icon, color: tierMetadata.color, label: tierMetadata.label }, isSuggested: false }));
       }
 
-      const abilityScores = extractAbilityScores(actor);
+      const abilityScores = mergePendingAbilityScores(extractAbilityScores(actor), pendingData);
       const classSkills = canonicalSkillList(pendingData?.classSkills || []);
       const mentorBiases = getMentorBiases(actor, pendingData);
       const skillBiasWeights = mentorBiases?.skillBiasWeights || {};
@@ -204,9 +227,9 @@ export class Level1SkillSuggestionEngine {
           const abilityWeight = computeAbilityWeight(abilityScore);
           score += abilityWeight;
           if (abilityWeight >= 2.0) {
-            reasons.push(`Strong ${matchingAttr.toUpperCase()} support`);
+            reasons.push(`Your ${matchingAttr.toUpperCase()} score supports this skill.`);
           } else if (abilityWeight <= -2.5) {
-            reasons.push(`Weak ${matchingAttr.toUpperCase()} makes this harder to leverage`);
+            reasons.push(`Your lower ${matchingAttr.toUpperCase()} makes this skill harder to leverage.`);
           }
         }
 
@@ -236,19 +259,23 @@ export class Level1SkillSuggestionEngine {
 
         const tier = scoreToTier(score);
         const tierMetadata = getTierMetadata(tier);
-        const reason = reasons.length > 0 ? Array.from(new Set(reasons)).slice(0, 3).join('; ') : tierMetadata.description;
+        const uniqueReasons = Array.from(new Set(reasons)).slice(0, 5);
+        const reason = uniqueReasons.length > 0 ? uniqueReasons[0] : tierMetadata.description;
         return {
           ...skill,
           suggestion: {
             tier,
             score,
             reason,
+            reasons: uniqueReasons,
+            reasonBullets: uniqueReasons,
             icon: tierMetadata.icon,
             color: tierMetadata.color,
             label: tierMetadata.label,
             surveyWeight,
             prestigeMatchCount
           },
+          reasonBullets: uniqueReasons,
           isSuggested: tier >= UNIFIED_TIERS.THEMATIC_FIT
         };
       });

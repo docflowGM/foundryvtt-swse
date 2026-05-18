@@ -140,7 +140,7 @@ export class ClassSuggestionEngine {
             const suggestion = await this._evaluateClass(cls, actorState, prestigePrereqs, { ...options, prestigeClassTarget, actor });
 
             // Calculate bias for sorting
-            const classType = cls.isPrestige ? 'prestige' : 'base';
+            const classType = (cls.isPrestige === true || cls.prestigeClass === true || cls.baseClass === false) ? 'prestige' : 'base';
             let bias = PRESTIGE_BIAS[classType] || 0;
             const prereqData = cls.isPrestige ? prestigePrereqs[cls.name] : null;
 
@@ -185,8 +185,10 @@ export class ClassSuggestionEngine {
             }
 
             // Prestige classes before base classes
-            if (a.isPrestige !== b.isPrestige) {
-                return a.isPrestige ? -1 : 1;
+            const aPrestige = a.isPrestige === true || a.prestigeClass === true || a.baseClass === false;
+            const bPrestige = b.isPrestige === true || b.prestigeClass === true || b.baseClass === false;
+            if (aPrestige !== bPrestige) {
+                return aPrestige ? -1 : 1;
             }
 
             // Then alphabetically by name
@@ -268,18 +270,18 @@ export class ClassSuggestionEngine {
         });
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending skills (${trainedSkills.size}):`, Array.from(trainedSkills));
 
-        // Get ability scores and find highest
-        const abilities = actor.system?.attributes || {};
+        // Get ability scores and find highest. Chargen uses pending attribute state
+        // before the actor is finalized, so do not rely only on actor.system here.
         let highestAbility = null;
         let highestScore = 0;
         const abilityScores = {};
 
-        for (const [abilityKey, abilityData] of Object.entries(abilities)) {
-            const score = abilityData?.total ?? 10;
-            abilityScores[abilityKey.toLowerCase()] = score;
+        for (const abilityKey of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+            const score = this._getPendingOrActorAbilityScore(actor, pendingData, abilityKey);
+            abilityScores[abilityKey] = score;
             if (score > highestScore) {
                 highestScore = score;
-                highestAbility = abilityKey.toLowerCase();
+                highestAbility = abilityKey;
             }
         }
         SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Ability scores:`, abilityScores, `- highest: ${highestAbility} (${highestScore})`);
@@ -612,7 +614,7 @@ export class ClassSuggestionEngine {
      * @returns {Promise<Object>} Suggestion metadata
      */
     static async _evaluateClass(cls, actorState, prestigePrereqs, options = {}) {
-        const isPrestige = cls.isPrestige;
+        const isPrestige = cls.isPrestige === true || cls.prestigeClass === true || cls.baseClass === false;
         const prereqData = isPrestige ? prestigePrereqs[cls.name] : null;
         const prestigeClassTarget = options.prestigeClassTarget || null;
 
@@ -745,24 +747,28 @@ export class ClassSuggestionEngine {
         }
 
         // TIER 2: Ability/mechanical synergy check
-        const synergyScore = this._calculateSynergyScore(cls, actorState);
+        const fit = this._getClassFitReasons(cls, actorState);
+        const synergyScore = this._calculateSynergyScore(cls, actorState) + fit.bonus;
         if (synergyScore >= 3) {
-            const synergyReason = this._getSynergyReason(cls, actorState);
+            const synergyReason = fit.reasons[0] || this._getSynergyReason(cls, actorState);
             return this._buildSuggestion(
                 UNIFIED_TIERS.ABILITY_SYNERGY,
                 cls.name,
                 prereqCheck.missing,
-                synergyReason
+                synergyReason,
+                { reasons: fit.reasons, cautions: fit.cautions }
             );
         }
 
         // TIER 1: Thematic fit (lower synergy but still relevant)
         if (synergyScore >= 1) {
+            const reason = fit.reasons[0] || `${cls.name} gives this build a workable starting lane.`;
             return this._buildSuggestion(
                 UNIFIED_TIERS.THEMATIC_FIT,
                 cls.name,
                 prereqCheck.missing,
-                "Fits your character's theme"
+                reason,
+                { reasons: fit.reasons.length ? fit.reasons : [reason], cautions: fit.cautions }
             );
         }
 
@@ -772,6 +778,75 @@ export class ClassSuggestionEngine {
             cls.name,
             prereqCheck.missing
         );
+    }
+
+    static _getPendingOrActorAbilityScore(actor, pendingData = {}, abilityKey) {
+        const key = String(abilityKey || '').toLowerCase();
+        const abilityState = pendingData?.abilityIncreases || pendingData?.attributes || {};
+        const candidates = [
+            abilityState?.finalValues?.[key],
+            abilityState?.values?.[key]?.score,
+            abilityState?.values?.[key]?.value,
+            abilityState?.values?.[key],
+            abilityState?.baseValues?.[key],
+            pendingData?.abilityScores?.[key],
+            actor?.system?.attributes?.[key]?.total,
+            actor?.system?.attributes?.[key]?.value,
+            actor?.system?.abilities?.[key]?.value,
+            actor?.system?.abilities?.[key]?.base,
+        ];
+        for (const candidate of candidates) {
+            const score = Number(candidate);
+            if (Number.isFinite(score) && score > 0) return score;
+        }
+        return 10;
+    }
+
+    static _abilityName(key) {
+        return ({ str: 'Strength', dex: 'Dexterity', con: 'Constitution', int: 'Intelligence', wis: 'Wisdom', cha: 'Charisma' })[String(key || '').toLowerCase()] || String(key || '').toUpperCase();
+    }
+
+    static _getClassFitReasons(cls, actorState) {
+        const synergy = CLASS_SYNERGY_DATA[cls.name] || {};
+        const reasons = [];
+        const cautions = [];
+        let bonus = 0;
+
+        for (const ability of synergy.abilities || []) {
+            const key = String(ability || '').toLowerCase();
+            const score = Number(actorState.abilityScores?.[key] || 10);
+            const name = this._abilityName(key);
+            if (score >= 16) {
+                reasons.push(`Your character has high ${name} (${score}), which is excellent for ${cls.name}.`);
+                bonus += 2;
+            } else if (score >= 14) {
+                reasons.push(`Your character has above average ${name} (${score}), which benefits ${cls.name}.`);
+                bonus += 1.25;
+            } else if (score >= 12) {
+                reasons.push(`Your ${name} (${score}) is solid enough to support ${cls.name}.`);
+                bonus += 0.5;
+            } else if (score <= 8) {
+                cautions.push(`Your low ${name} (${score}) may make some ${cls.name} options harder to use well.`);
+                bonus -= 0.75;
+            }
+        }
+
+        const speciesBonus = this._getSpeciesAffinityBias(actorState, cls.name);
+        if (speciesBonus > 0) {
+            const speciesName = actorState.speciesNames?.[0] || 'species';
+            reasons.push(`${speciesName} characters often pair cleanly with ${cls.name}.`);
+            bonus += speciesBonus;
+        }
+
+        if ((synergy.skills || []).length) {
+            reasons.push(`${cls.name} opens useful class-skill lanes like ${(synergy.skills || []).slice(0, 3).join(', ')}.`);
+        }
+
+        return {
+            reasons: Array.from(new Set(reasons)).slice(0, 4),
+            cautions: Array.from(new Set(cautions)).slice(0, 2),
+            bonus,
+        };
     }
 
     /**
@@ -901,14 +976,20 @@ export class ClassSuggestionEngine {
      * @param {string} customReason - Optional custom reason
      * @returns {Object} Suggestion metadata
      */
-    static _buildSuggestion(tier, className, missingPrereqs = [], customReason = null) {
+    static _buildSuggestion(tier, className, missingPrereqs = [], customReason = null, extras = {}) {
         const tierMetadata = getTierMetadata(tier);
+        const reasons = Array.isArray(extras.reasons) && extras.reasons.length
+            ? extras.reasons
+            : (customReason ? [customReason] : []);
         return {
             tier,
             icon: tierMetadata.icon,
             color: tierMetadata.color,
             label: tierMetadata.label,
             reason: customReason || tierMetadata.description,
+            reasons,
+            cautions: extras.cautions || extras.cautionReasons || [],
+            cautionReasons: extras.cautions || extras.cautionReasons || [],
             missingPrereqs,
             hasMissingPrereqs: missingPrereqs.length > 0,
             isSuggested: tier >= UNIFIED_TIERS.ABILITY_SYNERGY  // TIER 2+

@@ -521,7 +521,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    * Uses canonical mentor dialogue authority (forcePowers guidance field).
    */
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'force-powers')
+    return getStepGuidance(shell.actor, 'force-powers', shell)
       || 'The Force awaits your choice, young apprentice.';
   }
 

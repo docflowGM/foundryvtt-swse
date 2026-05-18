@@ -69,7 +69,7 @@
         <div>
           <h4>Skills</h4>
           {{#if levelupSummary.addedSkills.length}}
-            {{#each levelupSummary.addedSkills}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> {{this}}</div>{{/each}}
+            {{#each levelupSummary.addedSkills}}<div class="prog-item-entry"><i class="fas fa-check-circle"></i> <span class="prog-skill-token">{{this}}</span></div>{{/each}}
           {{else}}<div class="prog-placeholder">None</div>{{/if}}
         </div>
         <div>
@@ -163,7 +163,7 @@
       <div class="prog-attributes-grid prog-attributes-grid--summary">
         {{#each summary.attributeSummary}}
           <div class="prog-attr-display prog-attr-display--summary">
-            <span class="prog-attr-name">{{this.label}}</span>
+            <span class="prog-attr-name swse-ability-label swse-ability-label--{{this.key}}" data-ability="{{this.key}}">{{this.label}}</span>
             <span class="prog-attr-score">{{this.score}}</span>
             <span class="prog-attr-modifier {{this.toneClass}}">{{this.modifierDisplay}}</span>
           </div>
@@ -180,8 +180,8 @@
         {{#if summary.skillRows.length}}
           {{#each summary.skillRows}}
             <div class="prog-skill-row {{#if this.trained}}is-trained{{/if}}">
-              <span class="prog-skill-row__name">{{this.label}}</span>
-              <span class="prog-skill-row__meta">{{this.ability}}{{#if this.trained}} • Trained{{/if}}{{#if this.focused}} • Focus{{/if}}</span>
+              <span class="prog-skill-row__name prog-skill-token {{this.abilityClass}}" data-ability="{{this.abilityKey}}">{{this.label}}</span>
+              <span class="prog-skill-row__meta {{this.abilityClass}}" data-ability="{{this.abilityKey}}">{{this.ability}}{{#if this.trained}} • Trained{{/if}}{{#if this.focused}} • Focus{{/if}}</span>
               <span class="prog-skill-row__total {{this.toneClass}}">{{this.totalDisplay}}</span>
             </div>
           {{/each}}

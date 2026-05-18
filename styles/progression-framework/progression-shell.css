@@ -617,6 +617,228 @@
 }
 
 /* =============================================================================
+ * ASK MENTOR PICKER (AppV2 popup surfaced above shell-hosted sheets)
+ * ============================================================================= */
+
+.application.swse.mentor-suggestion-picker-dialog,
+.mentor-suggestion-picker-dialog.mentor-suggestion-picker-dialog--visible,
+.mentor-suggestion-picker-dialog {
+  position: fixed !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 100000 !important;
+  width: min(760px, calc(100vw - 48px)) !important;
+  max-width: calc(100vw - 48px) !important;
+  max-height: calc(100vh - 72px) !important;
+  overflow: auto !important;
+  pointer-events: auto !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.5);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg,
+      rgba(8, 18, 30, 0.98),
+      rgba(3, 8, 16, 0.98));
+  box-shadow:
+    0 0 0 9999px rgba(0, 0, 0, 0.55),
+    0 22px 80px rgba(0, 0, 0, 0.6),
+    0 0 32px oklch(var(--sheet-accent-primary) / 0.24),
+    inset 0 0 28px oklch(var(--sheet-accent-primary) / 0.07);
+  color: var(--text-primary, #e9f8ff);
+}
+
+.mentor-suggestion-picker-dialog .window-header {
+  display: none !important;
+}
+
+.mentor-suggestion-picker-dialog .window-content,
+.mentor-suggestion-picker-dialog .application-shell,
+.mentor-suggestion-picker-dialog [data-application-content] {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  overflow: visible !important;
+}
+
+.mentor-suggestion-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.mentor-suggestion-picker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid oklch(var(--sheet-accent-primary) / 0.22);
+}
+
+.mentor-suggestion-picker__mentor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mentor-suggestion-picker__portrait-wrap {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.42);
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.mentor-suggestion-picker__portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mentor-suggestion-picker__identity {
+  min-width: 0;
+}
+
+.mentor-suggestion-picker__name {
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.mentor-suggestion-picker__title,
+.mentor-suggestion-picker__step,
+.mentor-suggestion-picker__summary {
+  opacity: 0.86;
+}
+
+.mentor-suggestion-picker__close,
+.mentor-suggestion-picker__choose {
+  white-space: nowrap;
+}
+
+.mentor-suggestion-picker__advisory {
+  padding: 10px 12px;
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.24);
+  border-radius: 12px;
+  background: rgba(14, 22, 34, 0.54);
+}
+
+.mentor-suggestion-picker__advisory p {
+  margin: 0;
+}
+
+.mentor-suggestion-picker__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mentor-suggestion-picker__item {
+  position: relative;
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.18);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(8, 16, 24, 0.78);
+}
+
+.mentor-suggestion-picker__item:hover,
+.mentor-suggestion-picker__item:focus-within {
+  border-color: oklch(var(--sheet-accent-primary) / 0.48);
+  box-shadow: 0 0 16px oklch(var(--sheet-accent-primary) / 0.13);
+}
+
+.mentor-suggestion-picker__item-main {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.mentor-suggestion-picker__rank {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.32);
+  background: oklch(var(--sheet-accent-primary) / 0.08);
+}
+
+.mentor-suggestion-picker__item-title-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.mentor-suggestion-picker__item-title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.mentor-suggestion-picker__tier {
+  font-size: 0.78rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid oklch(var(--sheet-accent-primary) / 0.28);
+}
+
+.mentor-suggestion-picker__summary {
+  margin: 4px 0 0;
+}
+
+.mentor-suggestion-picker__rollover {
+  display: none;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid oklch(var(--sheet-accent-primary) / 0.16);
+}
+
+.mentor-suggestion-picker__item:hover .mentor-suggestion-picker__rollover,
+.mentor-suggestion-picker__item:focus-within .mentor-suggestion-picker__rollover {
+  display: block;
+}
+
+.mentor-suggestion-picker__section {
+  margin-top: 8px;
+}
+
+.mentor-suggestion-picker__section-label {
+  font-weight: 800;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.76rem;
+}
+
+.mentor-suggestion-picker__section ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+@media (max-width: 720px) {
+  .mentor-suggestion-picker__header,
+  .mentor-suggestion-picker__item-main {
+    grid-template-columns: 1fr;
+  }
+
+  .mentor-suggestion-picker__item-main {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* =============================================================================
  * SCROLL DISCIPLINE — prevent double scrollbars
  * ============================================================================= */
 
@@ -1912,4 +2134,61 @@
 .progression-shell[data-motion-style="none"] .swse-btn--complete-pulse,
 .progression-shell[data-motion-style="reduced"] .swse-btn--complete-pulse {
   animation: none;
+}
+
+/* Progression-wide skill and ability color semantics. Keep these shared so
+   skills render consistently in work surfaces, details rails, summary rails,
+   and modal/picker contexts. */
+.progression-shell .prog-skill-token,
+.swse-background-skill-choice .prog-skill-token {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--swse-ui-text, #d8f7ff);
+  text-shadow: 0 0 8px color-mix(in srgb, currentColor 35%, transparent);
+}
+
+.progression-shell .prog-skill-token--str,
+.swse-background-skill-choice .prog-skill-token--str,
+.progression-shell .prog-skill-token[data-ability="str"] { color: var(--swse-ability-str, #d8dde6); }
+.progression-shell .prog-skill-token--dex,
+.swse-background-skill-choice .prog-skill-token--dex,
+.progression-shell .prog-skill-token[data-ability="dex"] { color: var(--swse-ability-dex, #42d9d2); }
+.progression-shell .prog-skill-token--con,
+.swse-background-skill-choice .prog-skill-token--con,
+.progression-shell .prog-skill-token[data-ability="con"] { color: var(--swse-ability-con, #d2764a); }
+.progression-shell .prog-skill-token--int,
+.swse-background-skill-choice .prog-skill-token--int,
+.progression-shell .prog-skill-token[data-ability="int"] { color: var(--swse-ability-int, #ff62d4); }
+.progression-shell .prog-skill-token--wis,
+.swse-background-skill-choice .prog-skill-token--wis,
+.progression-shell .prog-skill-token[data-ability="wis"] { color: var(--swse-ability-wis, #a987ff); }
+.progression-shell .prog-skill-token--cha,
+.swse-background-skill-choice .prog-skill-token--cha,
+.progression-shell .prog-skill-token[data-ability="cha"] { color: var(--swse-ability-cha, #5aa7ff); }
+
+.progression-shell .prog-skill-token--novel {
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  opacity: 1;
+}
+
+.progression-shell .prog-skill-token--covered {
+  opacity: 0.42;
+  filter: saturate(0.7);
+}
+
+.progression-shell .prog-background-details__inline-skill-list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-left: 0.35rem;
+}
+
+.progression-shell .prog-background-details__inline-skill-list .prog-skill-token {
+  padding: 0.08rem 0.35rem;
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 10%, transparent);
 }

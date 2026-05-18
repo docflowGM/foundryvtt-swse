@@ -1936,7 +1936,7 @@ export class IntroStep extends ProgressionStepPlugin {
    * The translation moment is handled via the existing mentor translation system.
    */
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'intro')
+    return getStepGuidance(shell.actor, 'intro', shell)
       || 'Make your choice wisely.';
   }
 

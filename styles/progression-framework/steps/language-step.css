@@ -676,3 +676,72 @@
 .zero-picks-message p.small {
   color: var(--sheet-text-faint);
 }
+
+/* Chargen polish: make granted languages readable and keep selection local to the step. */
+.language-work-surface .known-languages-section .known-list {
+  min-height: 6.25rem;
+  max-height: 14rem;
+  overflow-y: auto;
+}
+
+.language-work-surface .available-languages-section .available-list {
+  max-height: 28rem;
+}
+
+.language-work-surface .language-add-btn,
+.language-work-surface .language-remove-btn {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.language-category-badge.widelyUsed {
+  border-color: rgba(90, 255, 170, 0.35);
+  color: rgba(150, 255, 210, 0.95);
+  background: rgba(0, 150, 90, 0.16);
+}
+
+.language-category-badge.localTrade {
+  border-color: rgba(255, 210, 80, 0.35);
+  color: rgba(255, 225, 135, 0.95);
+  background: rgba(180, 130, 0, 0.14);
+}
+
+
+/* Chargen hardening: compact the language step after removing the formula card. */
+.language-work-surface {
+  gap: 1rem;
+}
+
+.language-work-surface .language-section {
+  padding: 1rem;
+}
+
+.language-work-surface .known-languages-section {
+  flex: 0 0 auto;
+}
+
+.language-work-surface .known-languages-section .known-list {
+  min-height: 9rem;
+  max-height: 18rem;
+}
+
+.language-work-surface .known-languages-section .section-description,
+.language-work-surface .available-languages-section .section-description,
+.language-work-surface .selected-languages-section .section-description {
+  margin-bottom: 0.1rem;
+}
+
+.language-work-surface .available-languages-section {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.language-work-surface .available-languages-section .available-list {
+  max-height: none;
+  min-height: 13rem;
+}
+
+.language-work-surface .language-item {
+  min-height: 2.25rem;
+}

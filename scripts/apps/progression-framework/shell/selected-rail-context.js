@@ -23,6 +23,7 @@
 import { ProjectionEngine } from './projection-engine.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
+import { buildSkillDisplay } from '../utils/skill-display.js';
 
 export class SelectedRailContext {
   /**
@@ -277,6 +278,8 @@ export class SelectedRailContext {
       if (attrs[key]?.score !== undefined) {
         items.push({
           label: abilityLabels[key],
+          ability: key,
+          abilityClass: `swse-ability-label swse-ability-label--${key}`,
           value: attrs[key].score,
           modifier: attrs[key].modifier,
           isCurrentFocus: currentStepId === 'attribute',
@@ -306,11 +309,18 @@ export class SelectedRailContext {
     return {
       id: 'skills',
       label: `Skills (${projection.skills.trained.length})`,
-      items: projection.skills.trained.map(skill => ({
-        label: 'Trained',
-        value: this._formatSkillSummaryValue(skill),
-        isCurrent: currentStepId === 'skills',
-      })),
+      items: projection.skills.trained.map(skill => {
+        const display = buildSkillDisplay(skill);
+        return {
+          label: 'Trained',
+          value: display.label || this._formatSkillSummaryValue(skill),
+          skillLabel: display.label || this._formatSkillSummaryValue(skill),
+          skillAbility: display.ability,
+          skillAbilityLabel: display.abilityLabel,
+          skillAbilityClass: display.abilityClass,
+          isCurrent: currentStepId === 'skills',
+        };
+      }),
       isCurrent: currentStepId === 'skills',
     };
   }

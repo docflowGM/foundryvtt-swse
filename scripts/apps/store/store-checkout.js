@@ -10,6 +10,7 @@
 
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
+import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
@@ -199,7 +200,7 @@ async function revalidateCart(store, actor, originalTotal) {
             };
         }
 
-        const currentCredits = Number(freshActor.system?.credits) ?? 0;
+        const currentCredits = LedgerService.getCurrentCredits(freshActor);
 
         // Re-check sufficient credits
         if (currentCredits < originalTotal) {
@@ -513,7 +514,7 @@ export async function buyVehicle(store, actorId, condition) {
  */
 export async function createCustomDroid(actor, closeCallback) {
     const baseCredits = ProgressionRules.getDroidConstructionCredits();
-    const credits = Number(actor.system.credits) || 0;
+    const credits = LedgerService.getCurrentCredits(actor);
 
     if (credits < baseCredits) {
         ui.notifications.warn(`You need at least ${baseCredits.toLocaleString()} credits to build a custom droid.`);
@@ -555,7 +556,7 @@ export async function createCustomDroid(actor, closeCallback) {
  * @param {Function} closeCallback - Callback to close the store
  */
 export async function createCustomStarship(actor, closeCallback) {
-    const credits = Number(actor.system.credits) || 0;
+    const credits = LedgerService.getCurrentCredits(actor);
 
     if (credits < 5000) {
         ui.notifications.warn('You need at least 5,000 credits to build a custom starship.');
@@ -873,7 +874,7 @@ function flattenCartForPurchase(cart) {
  */
 export async function checkout(store, animateNumberCallback) {
     const actor = store.actor;
-    const credits = Number(actor.system.credits) || 0;
+    const credits = LedgerService.getCurrentCredits(actor);
 
     // Revalidate cart before checkout (re-price all items)
     const revalidationReport = revalidateCartItems(store);
@@ -942,7 +943,7 @@ export async function checkout(store, animateNumberCallback) {
         }
 
         // Animate credit reconciliation
-        const newCredits = Number(actor.system?.credits ?? 0) || 0;
+        const newCredits = LedgerService.getCurrentCredits(actor);
         await store.animateCreditReconciliation(credits, newCredits, 600);
 
         ui.notifications.info(`Purchase complete! Spent ${total.toLocaleString()} credits.`);
@@ -1194,7 +1195,7 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
     }
 
     const baseCredits = ProgressionRules.getDroidConstructionCredits();
-    const playerCredits = Number(actor.system.credits) || 0;
+    const playerCredits = LedgerService.getCurrentCredits(actor);
 
     // Check if player has minimum credits
     if (playerCredits < baseCredits) {
@@ -1278,7 +1279,7 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
  * @param {number} cost - The cost to deduct
  */
 async function deductDroidCredits(actor, cost) {
-    const currentCredits = Number(actor.system.credits) || 0;
+    const currentCredits = LedgerService.getCurrentCredits(actor);
     const newCredits = Math.max(0, currentCredits - cost);
 
     await ActorEngine.updateActor(actor, {

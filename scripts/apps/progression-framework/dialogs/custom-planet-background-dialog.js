@@ -1,4 +1,5 @@
 import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
+import { buildSkillDisplay } from '../utils/skill-display.js';
 
 export class CustomPlanetBackgroundDialog extends SWSEApplicationV2 {
   static DEFAULT_OPTIONS = {
@@ -39,11 +40,17 @@ export class CustomPlanetBackgroundDialog extends SWSEApplicationV2 {
   async _prepareContext() {
     return {
       allowUTF: this.allowUTF,
-      skills: this.skills.map((skill) => ({
-        id: skill.id || skill._id || skill.key || skill.name,
-        name: skill.name,
-        key: skill.key || ''
-      })),
+      skills: this.skills.map((skill) => {
+        const display = buildSkillDisplay(skill);
+        return {
+          id: skill.id || skill._id || skill.key || skill.name,
+          name: skill.name,
+          key: skill.key || '',
+          ability: display.ability,
+          abilityLabel: display.abilityLabel,
+          abilityClass: display.abilityClass
+        };
+      }),
       languages: this.languages.map((language) => ({
         id: language.id || language.slug || language.name,
         name: language.name
@@ -56,6 +63,7 @@ export class CustomPlanetBackgroundDialog extends SWSEApplicationV2 {
     super._onRender(context, options);
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
+    root.style.zIndex = String(Math.max(Number(root.style.zIndex || 0), 12000));
 
     const toggleCustomLanguage = () => {
       this._customLanguageMode = !this._customLanguageMode;

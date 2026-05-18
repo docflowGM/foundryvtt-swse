@@ -8,6 +8,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-chat-dialog.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { CustomLanguageDialog } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-language-dialog.js";
 
 /**
  * Open mentor conversation dialog
@@ -73,21 +74,16 @@ export function activateMiscUI(sheet, html, { signal } = {}) {
   html.querySelectorAll('[data-action="add-language"]').forEach(button => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
-      // Open a dialog for language selection
       const languages = sheet.actor.system?.languages ?? [];
-      const newLang = prompt("Enter language name:");
-      if (newLang) {
-        const plan = {
-          update: {
-            "system.languages": [...languages, newLang]
-          }
-        };
-        try {
+      try {
+        const newLang = await CustomLanguageDialog.prompt({ suggestedName: '' });
+        if (newLang) {
+          const merged = Array.from(new Set([...languages, newLang]));
+          const plan = { update: { "system.languages": merged } };
           await ActorEngine.apply(sheet.actor, plan);
-        } catch (err) {
-          // console.error("Failed to add language:", err);
-          ui?.notifications?.error?.(`Failed to add language: ${err.message}`);
         }
+      } catch (err) {
+        ui?.notifications?.error?.(`Failed to add language: ${err.message}`);
       }
     }, { signal });
   });

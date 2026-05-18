@@ -76,7 +76,7 @@
           <div class="prog-selected-rail__section-compact">
             {{#each items}}
               <div class="prog-selected-rail__compact-item">
-                <span class="prog-selected-rail__compact-label">{{label}}</span>
+                <span class="prog-selected-rail__compact-label {{abilityClass}}" data-ability="{{ability}}">{{label}}</span>
                 <span class="prog-selected-rail__compact-value">{{value}}</span>
                 {{#if modifier}}
                   <span class="prog-selected-rail__compact-modifier {{#if (gt modifier 0)}}prog-num--pos{{else if (lt modifier 0)}}prog-num--neg{{else}}prog-num--zero{{/if}}">
@@ -95,7 +95,11 @@
               <div class="prog-selected-rail__item {{#if isCurrent}}prog-selected-rail__item--current{{/if}}">
                 <span class="prog-selected-rail__item-label">{{label}}</span>
                 {{#if value}}
-                  <span class="prog-selected-rail__item-value">{{value}}</span>
+                  {{#if skillLabel}}
+                    <span class="prog-selected-rail__item-value prog-skill-token {{skillAbilityClass}}" data-ability="{{skillAbility}}" title="{{skillAbilityLabel}}">{{skillLabel}}</span>
+                  {{else}}
+                    <span class="prog-selected-rail__item-value">{{value}}</span>
+                  {{/if}}
                 {{/if}}
               </div>
             {{/each}}

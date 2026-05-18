@@ -14,6 +14,7 @@
 
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
+import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { ArmorSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-suggestions.js";
 import { WeaponSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-suggestions.js";
 import { GearSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/gear-suggestions.js";
@@ -191,7 +192,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const cartEntries = this._buildCartEntries();
     const purchaseHistoryEntries = this._buildPurchaseHistoryEntries();
     const cartTotal = calculateCartTotal(this.cart);
-    const credits = Number(this.actor?.system?.credits ?? 0) || 0;
+    const credits = LedgerService.getCurrentCredits(this.actor);
     const cartRemaining = Math.max(0, credits - cartTotal);
     const currentView = this.currentView || 'browse';
     const categorySummary = this._buildCategorySummary(allItems);
@@ -1389,7 +1390,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     if (!rootEl) {return;}
 
     const subtotal = calculateCartTotal(this.cart);
-    const credits = Number(this.actor?.system?.credits ?? 0) || 0;
+    const credits = LedgerService.getCurrentCredits(this.actor);
     const remaining = credits - subtotal;
     const count = (this.cart.items.length + this.cart.droids.length + this.cart.vehicles.length) || 0;
 

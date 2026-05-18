@@ -1357,7 +1357,7 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    const customGuidance = getStepGuidance(shell.actor, 'general-feat');
+    const customGuidance = getStepGuidance(shell.actor, 'general-feat', shell);
     if (customGuidance) return customGuidance;
 
     // Mode-aware default guidance

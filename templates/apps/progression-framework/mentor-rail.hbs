@@ -28,7 +28,7 @@
     <div class="prog-mentor__dialogue-content">
       <p class="prog-mentor__text{{#unless mentor.currentDialogue}} prog-mentor__text--idle{{/unless}}"
          data-mentor-text>
-        {{#unless mentor.currentDialogue}}Awaiting your decision…{{/unless}}
+        {{#if mentor.currentDialogue}}{{mentor.currentDialogue}}{{else}}Awaiting your decision…{{/if}}
       </p>
     </div>
   </div>

@@ -989,7 +989,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       }
     }
     // Fall back to generic species guidance from mentor authority
-    return getStepGuidance(shell.actor, 'species') || 'Choose your species carefully — it shapes your abilities and destiny.';
+    return getStepGuidance(shell.actor, 'species', shell) || 'Choose your species carefully — it shapes your abilities and destiny.';
   }
 
   getMentorMode() {

@@ -24,6 +24,7 @@ import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/en
 import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
 import { MedicalSecretRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/medical/medical-secret-registry.js';
+import { ActorEngine as CanonicalActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 
 export class ProgressionFinalizer {
   /**
@@ -615,9 +616,18 @@ export class ProgressionFinalizer {
         set['system.hp.max'] = startingHp;
       }
 
-      const startingCredits = Number(summary.startingCredits || 0) || this._computeStartingCredits(clazz, background);
+      const baseStartingCredits = this._computeStartingCredits(clazz, background);
+      const explicitStartingCredits = Number(summary.startingCredits || 0) || 0;
+      const wealthBonus = this._computeWealthCreditGrant(selections, actor, sessionState);
+      const explicitAlreadyIncludesWealth = wealthBonus > 0 && explicitStartingCredits >= (baseStartingCredits + wealthBonus);
+      const startingCredits = explicitAlreadyIncludesWealth
+        ? explicitStartingCredits
+        : Math.max(explicitStartingCredits, baseStartingCredits) + wealthBonus;
       if (Number.isFinite(startingCredits) && startingCredits > 0) {
-        set['system.credits'] = startingCredits;
+        set['system.credits'] = this._resolveFinalStartingCredits(actor, startingCredits);
+      }
+      if (wealthBonus > 0) {
+        set['flags.swse.progressionHistory'] = this._withWealthProgressionHistory(actor, selections, sessionState);
       }
 
       const speciesPortrait = this._resolveSpeciesPortrait(species, pendingSpeciesContext);
@@ -625,11 +635,26 @@ export class ProgressionFinalizer {
         set.img = speciesPortrait;
       }
     }
-    // FIX 6: Extract language IDs from normalized format for canonical storage.
-    // Level-up must not clear existing languages when no language entitlement was owed.
-    if (Array.isArray(languages) && (sessionState.mode === 'chargen' || languages.length > 0)) {
-      const languageIds = languages.map(l =>
-        typeof l === 'string' ? l : l?.id || l?.name
+    // Extract language IDs from normalized format for canonical storage.
+    // Chargen must materialize automatic species/background languages as well
+    // as player-selected bonus languages. The language step only stores bonus
+    // picks so it can count remaining selectable slots correctly.
+    const selectedLanguageEntries = Array.isArray(languages) ? languages : [];
+    let grantedLanguageEntries = [];
+    if (sessionState.mode === 'chargen') {
+      try {
+        grantedLanguageEntries = await ProgressionContentAuthority.getGrantedLanguageEntries({
+          speciesSelection: species,
+          backgroundSelection: background,
+        }) || [];
+      } catch (err) {
+        swseLogger.warn('[ProgressionFinalizer] Failed to resolve granted languages; continuing with selected languages only', err);
+      }
+    }
+    const allLanguageEntries = [...grantedLanguageEntries, ...selectedLanguageEntries];
+    if (sessionState.mode === 'chargen' || selectedLanguageEntries.length > 0) {
+      const languageIds = allLanguageEntries.map(l =>
+        typeof l === 'string' ? l : l?.id || l?._id || l?.internalId || l?.slug || l?.name
       ).filter(Boolean);
       const existingLanguageIds = sessionState.mode === 'levelup'
         ? this._extractActorLanguageIds(actor)
@@ -637,10 +662,19 @@ export class ProgressionFinalizer {
       set['system.languages'] = Array.from(new Set([...existingLanguageIds, ...languageIds]));
     }
 
+    if (this._hasForceSensitivityGrant(actor, selections)) {
+      const existingDomains = actor?.system?.progression?.unlockedDomains || [];
+      const nextDomains = Array.from(new Set([...(Array.isArray(existingDomains) ? existingDomains : []), 'force']));
+      set['system.progression.unlockedDomains'] = nextDomains;
+      set['system.progression.forceSensitive'] = true;
+      set['system.skills.useTheForce.classSkill'] = true;
+      set['system.skills.useTheForce.selectedAbility'] = set['system.skills.useTheForce.selectedAbility'] || 'cha';
+    }
+
     const skillEntries = this._normalizeSkillSelectionEntries(skills);
     if (skillEntries.length) {
       for (const s of skillEntries) {
-        const key = s?.key || s?.id || s?.skill;
+        const key = this._canonicalSkillKey(s?.key || s?.id || s?.skill);
         if (!key) continue;
         // Phase 3C: Initialize complete skill object with canonical schema.
         // Level-up Skill Training commits normalized { trained: [...] }; preserve
@@ -701,6 +735,161 @@ export class ProgressionFinalizer {
 
 
 
+  static _normalizeNameKey(value) {
+    return String(value ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/[’']/g, '')
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9]+/g, '');
+  }
+
+  static _selectionListHasName(values = [], acceptedNames = []) {
+    const accepted = new Set(acceptedNames.map(name => this._normalizeNameKey(name)).filter(Boolean));
+    for (const value of Array.isArray(values) ? values : []) {
+      const candidates = [
+        value?.name,
+        value?.label,
+        value?.id,
+        value?._id,
+        value?.slug,
+        value?.system?.name,
+        value?.system?.canonicalName,
+        typeof value === 'string' ? value : null,
+      ];
+      if (candidates.some(candidate => accepted.has(this._normalizeNameKey(candidate)))) return true;
+    }
+    return false;
+  }
+
+  static _collectSelectionEntries(selections = {}, domainHints = []) {
+    const hints = domainHints.map(hint => String(hint || '').toLowerCase());
+    const out = [];
+    const visit = (value) => {
+      if (!value) return;
+      if (Array.isArray(value)) {
+        value.forEach(visit);
+        return;
+      }
+      if (typeof value === 'object') {
+        out.push(value);
+        for (const key of ['selected', 'selection', 'value', 'item', 'entry', 'choice', 'candidate', 'talent', 'feat']) {
+          if (value[key] && value[key] !== value) visit(value[key]);
+        }
+        return;
+      }
+      out.push(value);
+    };
+
+    for (const [key, value] of Object.entries(selections || {})) {
+      const normalizedKey = String(key || '').toLowerCase();
+      if (!hints.length || hints.some(hint => normalizedKey.includes(hint))) visit(value);
+    }
+    return out;
+  }
+
+  static _hasForceSensitivityGrant(actor, selections = {}) {
+    const featSelections = [
+      ...(Array.isArray(selections.feats) ? selections.feats : []),
+      ...this._collectSelectionEntries(selections, ['feat']),
+    ];
+    if (this._selectionListHasName(featSelections, ['Force Sensitivity', 'Force Sensitive'])) return true;
+    if (actor?.items?.some?.(item => item?.type === 'feat' && this._selectionListHasName([item], ['Force Sensitivity', 'Force Sensitive']))) return true;
+
+    const selectedClass = selections.class || null;
+    if (!selectedClass || !actor) return false;
+    try {
+      const pendingState = {
+        selectedClass,
+        selectedFeats: selections.feats || [],
+        selectedTalents: selections.talents || [],
+        selectedSkills: selections.skills || [],
+        pendingSpeciesContext: selections.pendingSpeciesContext || selections.species?.pendingContext || null,
+      };
+      const ledger = buildClassGrantLedger(actor, selectedClass, pendingState);
+      if (ledger?.forceSensitive) return true;
+      const granted = [
+        ...(Array.isArray(ledger?.grantedFeats) ? ledger.grantedFeats : []),
+        ...(Array.isArray(ledger?.grantedProficiencies) ? ledger.grantedProficiencies : []),
+      ];
+      return this._selectionListHasName(granted, ['Force Sensitivity', 'Force Sensitive']);
+    } catch (err) {
+      swseLogger.debug('[ProgressionFinalizer] Force Sensitivity grant probe failed; continuing without class grant inference', {
+        error: err?.message || String(err),
+      });
+      return false;
+    }
+  }
+
+  static _hasWealthTalentSelection(selections = {}) {
+    const talentSelections = [
+      ...(Array.isArray(selections.talents) ? selections.talents : []),
+      ...this._collectSelectionEntries(selections, ['talent']),
+    ];
+    return this._selectionListHasName(talentSelections, ['Wealth']);
+  }
+
+  static _isLineageEligibleClass(classSelection = null) {
+    const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
+    const key = this._normalizeNameKey(classModel?.name || classModel?.label || classModel?.id || classSelection?.name || classSelection);
+    return key === 'noble' || key === 'corporateagent';
+  }
+
+  static _computePendingLineageEligibleLevel(selections = {}, sessionState = {}) {
+    if (!this._isLineageEligibleClass(selections.class)) return 0;
+    const rawLevel = Number(
+      selections?.survey?.startingLevel
+      ?? sessionState?.targetLevel
+      ?? sessionState?.progressionSession?.targetLevel
+      ?? 1
+    ) || 1;
+    return Math.max(1, Math.floor(rawLevel));
+  }
+
+  static _computeWealthCreditGrant(selections = {}, actor = null, sessionState = {}) {
+    if (!this._hasWealthTalentSelection(selections)) return 0;
+    const lineageLevel = this._computePendingLineageEligibleLevel(selections, sessionState);
+    return Math.max(0, lineageLevel * 5000);
+  }
+
+  static _withWealthProgressionHistory(actor, selections = {}, sessionState = {}) {
+    const raw = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
+    const history = foundry?.utils?.deepClone ? foundry.utils.deepClone(raw) : JSON.parse(JSON.stringify(raw || {}));
+    const key = 'swse.talent.wealth';
+    const lineageLevel = this._computePendingLineageEligibleLevel(selections, sessionState);
+    const existing = history[key] || { levelsGranted: [] };
+    const levels = new Set((Array.isArray(existing.levelsGranted) ? existing.levelsGranted : []).map(Number).filter(Number.isFinite));
+    for (let level = 1; level <= lineageLevel; level += 1) levels.add(level);
+    history[key] = {
+      ...existing,
+      levelsGranted: Array.from(levels).sort((a, b) => a - b),
+      lastGrantedAt: existing.lastGrantedAt || new Date().toISOString(),
+      lastGrantedCredits: existing.lastGrantedCredits || lineageLevel * 5000,
+      source: existing.source || 'chargen-finalizer',
+    };
+    return history;
+  }
+
+  static _canonicalSkillKey(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return '';
+    const normalized = raw.toLowerCase().replace(/[^a-z0-9]+/g, '');
+    const map = {
+      gatherinformation: 'gatherInformation',
+      knowledgebureaucracy: 'knowledgeBureaucracy',
+      knowledgegalacticlore: 'knowledgeGalacticLore',
+      knowledgelifesciences: 'knowledgeLifeSciences',
+      knowledgephysicalsciences: 'knowledgePhysicalSciences',
+      knowledgesocialsciences: 'knowledgeSocialSciences',
+      knowledgetactics: 'knowledgeTactics',
+      knowledgetechnology: 'knowledgeTechnology',
+      treatinjury: 'treatInjury',
+      usecomputer: 'useComputer',
+      usetheforce: 'useTheForce',
+    };
+    return map[normalized] || raw;
+  }
+
   static _extractActorLanguageIds(actor) {
     const languages = actor?.system?.languages || [];
     if (Array.isArray(languages)) {
@@ -721,8 +910,8 @@ export class ProgressionFinalizer {
     if (Array.isArray(skills)) {
       return skills
         .map((entry) => {
-          if (typeof entry === 'string') return { key: entry, trained: true };
-          const key = entry?.key || entry?.id || entry?.skill || entry?.name || null;
+          if (typeof entry === 'string') return { key: this._canonicalSkillKey(entry), trained: true };
+          const key = this._canonicalSkillKey(entry?.key || entry?.id || entry?.skill || entry?.name || null);
           return key ? { ...entry, key, trained: entry?.trained !== undefined ? !!entry.trained : true } : null;
         })
         .filter(Boolean);
@@ -731,8 +920,8 @@ export class ProgressionFinalizer {
     if (Array.isArray(skills?.trained)) {
       return skills.trained
         .map((entry) => {
-          if (typeof entry === 'string') return { key: entry, trained: true };
-          const key = entry?.key || entry?.id || entry?.skill || entry?.name || null;
+          if (typeof entry === 'string') return { key: this._canonicalSkillKey(entry), trained: true };
+          const key = this._canonicalSkillKey(entry?.key || entry?.id || entry?.skill || entry?.name || null);
           return key ? { ...entry, key, trained: true } : null;
         })
         .filter(Boolean);
@@ -741,8 +930,8 @@ export class ProgressionFinalizer {
     if (typeof skills === 'object') {
       return Object.entries(skills)
         .map(([key, entry]) => {
-          if (entry === true) return { key, trained: true };
-          if (entry?.trained === true) return { ...entry, key: entry?.key || entry?.id || key, trained: true };
+          if (entry === true) return { key: this._canonicalSkillKey(key), trained: true };
+          if (entry?.trained === true) return { ...entry, key: this._canonicalSkillKey(entry?.key || entry?.id || key), trained: true };
           return null;
         })
         .filter(Boolean);
@@ -892,6 +1081,33 @@ export class ProgressionFinalizer {
     const img = String(actor?.img || '').toLowerCase();
     return !img || img.includes('mystery-man') || img.includes('icons/svg') || img.endsWith('/token.svg');
   }
+
+  static _getChargenStoreState(actor) {
+    try {
+      return actor?.getFlag?.('swse', 'chargenStore') || actor?.flags?.swse?.chargenStore || null;
+    } catch (_err) {
+      return actor?.flags?.swse?.chargenStore || null;
+    }
+  }
+
+  static _resolveFinalStartingCredits(actor, computedStartingCredits) {
+    const computed = Math.max(0, Number(computedStartingCredits || 0));
+    const storeState = this._getChargenStoreState(actor);
+    if (!storeState?.initialized) return computed;
+
+    const previousBudget = Math.max(0, Number(storeState.startingCredits || 0));
+    const actorCredits = Math.max(0, Number(actor?.system?.credits ?? 0) || 0);
+
+    // The chargen store is allowed to spend from the draft starting-credit pool
+    // before finalization. Do not overwrite those purchases at confirm time.
+    // If late build choices raise the budget (for example Wealth), only add the
+    // budget delta instead of resetting the cart-spent balance.
+    if (previousBudget > 0 && computed > previousBudget) {
+      return actorCredits + (computed - previousBudget);
+    }
+    return actorCredits;
+  }
+
 
   /**
    * Compile core identity data (name, gender, etc.)
@@ -1268,7 +1484,7 @@ export class ProgressionFinalizer {
   }
 
   static async _syncPostApplyState(actor, mutationPlan) {
-    const engine = globalThis.SWSE?.ActorEngine || globalThis.game?.swse?.ActorEngine;
+    const engine = this._resolveActorEngine();
     const starshipManeuverNames = mutationPlan?.metadata?.postApply?.starshipManeuverNames || [];
     if (!engine?.updateActor || !starshipManeuverNames.length) return;
 
@@ -1304,13 +1520,34 @@ export class ProgressionFinalizer {
    * @param {Object} mutationPlan
    * @returns {Promise<{success: boolean, result?: Object, error?: string}>}
    */
+  static _resolveActorEngine() {
+    const candidates = [
+      globalThis.SWSE?.ActorEngine,
+      globalThis.game?.swse?.ActorEngine,
+      globalThis.ActorEngine,
+      CanonicalActorEngine,
+    ].filter(Boolean);
+
+    // Some boot paths expose an older global ActorEngine facade before the
+    // canonical module is loaded. Prefer an engine that can actually apply the
+    // mutation plan; otherwise fall back to the richest mutation surface.
+    return candidates.find(engine => typeof engine?.applyMutationPlan === 'function')
+      || candidates.find(engine => typeof engine?.applyProgression === 'function')
+      || candidates.find(engine => typeof engine?.updateActor === 'function')
+      || CanonicalActorEngine;
+  }
+
   static async _applyMutationPlan(actor, mutationPlan) {
     try {
-      const engine = globalThis.SWSE?.ActorEngine || globalThis.game?.swse?.ActorEngine;
+      const engine = this._resolveActorEngine();
       if (!engine?.applyMutationPlan) {
         throw new Error('ActorEngine.applyMutationPlan unavailable');
       }
-      await engine.applyMutationPlan(actor, mutationPlan);
+      await engine.applyMutationPlan(actor, mutationPlan, {
+        source: 'ProgressionFinalizer.finalize',
+        validate: true,
+        rederive: true,
+      });
       await this._syncPostApplyState(actor, mutationPlan);
       return { success: true, result: { actorId: actor.id } };
     } catch (error) {

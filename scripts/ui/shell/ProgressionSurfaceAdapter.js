@@ -450,45 +450,103 @@ export class ProgressionSurfaceAdapter {
         return true;
       };
 
-      // CRITICAL: Override render() to prevent standalone window
-      // Re-render the character sheet instead
+      // CRITICAL: Override render() to prevent standalone window.
+      // Re-render the character sheet instead, while preserving the exact inline
+      // progression scroll position.  requestRender() queues deep snapshots on the
+      // app; direct shell.render() calls are also captured here so old step plugins
+      // cannot snap the player back to the top.
       const self = this;
       app.render = async function(...args) {
         SWSELogger.debug('[ProgressionSurfaceAdapter] Intercepted render() — redirecting to shell');
 
-        // Capture scroll positions and active element before host render
         const region = self.mode === 'chargen' ? 'surface-chargen' : 'surface-progression';
-        const currentRoot = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
-        const scrollState = self._captureScrollState(currentRoot);
-        const focusedElement = document.activeElement;
-        const focusedId = focusedElement?.id;
+        const captureNow = () => {
+          const currentRoot = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
+          return typeof app._captureProgressionScrollSnapshots === 'function'
+            ? app._captureProgressionScrollSnapshots(currentRoot)
+            : [];
+        };
 
-        // Re-render the character sheet
-        await self._shellHost?.render?.(false);
+        // Several step plugins still call shell.render() directly and do not await it.
+        // Without serialization, a second focus/commit render can capture the transient
+        // top-of-list DOM from the first render and permanently overwrite the real scroll.
+        if (app._inlineRenderPromise) {
+          app._pendingScrollSnapshots = [
+            ...(Array.isArray(app._pendingScrollSnapshots) ? app._pendingScrollSnapshots : []),
+            ...captureNow(),
+          ];
+          app._inlineRenderQueued = true;
+          return app;
+        }
 
-        // After a shell-host render, immediately rebind the inline progression DOM.
-        // Intro splash stages call shell.render() during the animation; without this
-        // rebind, translation can target stale DOM from the previous stage.
-        const root = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
-        if (root?.isConnected) await self.afterInlineRender(root);
+        const runInlineRenderPass = async () => {
+          const currentRoot = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
+          const queuedSnapshots = Array.isArray(app._pendingScrollSnapshots) ? app._pendingScrollSnapshots : [];
+          const liveSnapshots = typeof app._captureProgressionScrollSnapshots === 'function'
+            ? app._captureProgressionScrollSnapshots(currentRoot)
+            : [];
+          const progressionScrollSnapshots = [...queuedSnapshots, ...liveSnapshots];
+          app._pendingScrollSnapshots = null;
 
-        // Restore scroll positions and focus after animation frame
-        // Use two frames: first to let DOM settle, second to restore
-        if (scrollState && root?.isConnected) {
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              self._restoreScrollState(root, scrollState);
-              setTimeout(() => self._restoreScrollState(root, scrollState), 0);
-              setTimeout(() => self._restoreScrollState(root, scrollState), 75);
-              // Restore focus if the element still exists
-              if (focusedId) {
-                const restored = document.getElementById(focusedId);
-                if (restored && restored instanceof HTMLInputElement) {
-                  restored.focus();
-                }
-              }
-            });
-          });
+          // Keep host-level scroll as a fallback for sheet/chrome scroll containers
+          // outside the canonical progression root.
+          const scrollState = self._captureScrollState(currentRoot);
+          const focusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+          const focusedId = focusedElement?.id || null;
+          const focusedName = focusedElement?.getAttribute?.('name') || null;
+          const focusedAction = focusedElement?.dataset?.action || null;
+
+          await self._shellHost?.render?.(false);
+
+          // After a shell-host render, immediately rebind the inline progression DOM.
+          // Intro splash stages call shell.render() during the animation; without this
+          // rebind, translation can target stale DOM from the previous stage.
+          const root = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
+          if (root?.isConnected) await self.afterInlineRender(root);
+
+          const restoreAll = () => {
+            if (!root?.isConnected) return;
+            app._restoreProgressionScrollSnapshots?.(progressionScrollSnapshots, root);
+            self._restoreScrollState(root, scrollState);
+
+            let restored = null;
+            if (focusedId) restored = document.getElementById(focusedId);
+            if (!restored && focusedName) restored = root.querySelector(`[name="${CSS.escape(focusedName)}"]`);
+            if (!restored && focusedAction) restored = root.querySelector(`[data-action="${CSS.escape(focusedAction)}"]`);
+            if (restored instanceof HTMLElement && typeof restored.focus === 'function') {
+              restored.focus({ preventScroll: true });
+            }
+          };
+
+          // Restore once synchronously before this render promise resolves. This is
+          // important because several commit paths call render twice; the second render
+          // must capture the user's restored position, not a transient top-of-list DOM.
+          restoreAll();
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          restoreAll();
+          setTimeout(restoreAll, 0);
+          setTimeout(restoreAll, 75);
+          setTimeout(restoreAll, 175);
+        };
+
+        app._inlineRenderPromise = (async () => {
+          let passes = 0;
+          do {
+            app._inlineRenderQueued = false;
+            await runInlineRenderPass();
+            passes += 1;
+            if (passes >= 4 && app._inlineRenderQueued) {
+              SWSELogger.warn('[ProgressionSurfaceAdapter] Inline render queue exceeded safety pass limit; dropping extra rerender');
+              app._inlineRenderQueued = false;
+            }
+          } while (app._inlineRenderQueued);
+        })();
+
+        try {
+          await app._inlineRenderPromise;
+        } finally {
+          app._inlineRenderPromise = null;
+          app._inlineRenderQueued = false;
         }
 
         return app;

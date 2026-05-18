@@ -15,6 +15,8 @@ import { ActorAbilityBridge } from '/systems/foundryvtt-swse/scripts/adapters/Ac
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 import { ProgressionFinalizer } from '../shell/progression-finalizer.js';
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';
+import { buildSkillDisplay } from '../utils/skill-display.js';
+import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 
 export class SummaryStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -368,7 +370,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     this._summary.talentSelections = projection?.abilities?.talents || ProgressionContentAuthority.normalizeSelectionList('talent', selections.talents);
     this._summary.talents = this._summary.talentSelections.map(talent => this._displayName(talent)).filter(Boolean);
     this._summary.forcePowers = (projection?.abilities?.forcePowers || []).map(power => this._displayName(power)).filter(Boolean);
-    this._summary.startingCredits = this._computeStartingCredits(selections.class, selections.background, projection);
+    this._summary.startingCredits = this._computeStartingCredits(selections.class, selections.background, projection, selections);
     this._summary.hpCalculation = this._computeStartingHP(selections.class, this._summary.attributes, shell.actor, selections.droid);
     this._summary.combatStats = this._buildCombatStats(selections.class, this._summary.attributes, this._summary.level, this._summary.hpCalculation.total);
     this._summary.portrait = this._resolveSpeciesPortraitFromSummary(shell);
@@ -796,26 +798,71 @@ export class SummaryStep extends ProgressionStepPlugin {
     return 0;
   }
 
-  _computeStartingCredits(classSelection, backgroundSelection, projection = null) {
+  _computeStartingCredits(classSelection, backgroundSelection, projection = null, selections = {}) {
     const projected = Number(projection?.derived?.credits || 0) || 0;
-    if (projected > 0) return projected;
-    const authority = Number(ProgressionContentAuthority.getStartingCredits({ classSelection, backgroundSelection }) || 0) || 0;
-    if (authority > 0) return authority;
+    let base = projected > 0 ? projected : 0;
+    if (base <= 0) {
+      const authority = Number(ProgressionContentAuthority.getStartingCredits({ classSelection, backgroundSelection }) || 0) || 0;
+      if (authority > 0) base = authority;
+    }
 
     const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
-    const classCredits = this._parseMaxCredits(
-      classModel?.startingCredits
-        ?? classModel?.system?.startingCredits
-        ?? classModel?.system?.starting_credits
-        ?? classSelection?.startingCredits
-        ?? classSelection?.system?.starting_credits
-    );
-    const backgroundCredits = Number(backgroundSelection?.credits ?? backgroundSelection?.system?.credits ?? 0) || 0;
-    if (classCredits + backgroundCredits > 0) return classCredits + backgroundCredits;
+    if (base <= 0) {
+      const classCredits = this._parseMaxCredits(
+        classModel?.startingCredits
+          ?? classModel?.system?.startingCredits
+          ?? classModel?.system?.starting_credits
+          ?? classSelection?.startingCredits
+          ?? classSelection?.system?.starting_credits
+      );
+      const backgroundCredits = Number(backgroundSelection?.credits ?? backgroundSelection?.system?.credits ?? 0) || 0;
+      if (classCredits + backgroundCredits > 0) base = classCredits + backgroundCredits;
+    }
 
-    const name = String(classModel?.name || classModel?.id || classSelection?.name || classSelection?.id || '').toLowerCase().replace(/[^a-z]+/g, '_').replace(/^_|_$/g, '');
-    const fallback = { soldier: 1200, scout: 1200, scoundrel: 3000, jedi: 1200, noble: 4800, force_adept: 1200 };
-    return fallback[name] || 0;
+    if (base <= 0) {
+      const name = String(classModel?.name || classModel?.id || classSelection?.name || classSelection?.id || '').toLowerCase().replace(/[^a-z]+/g, '_').replace(/^_|_$/g, '');
+      const fallback = { soldier: 1200, scout: 1200, scoundrel: 3000, jedi: 1200, noble: 4800, force_adept: 1200 };
+      base = fallback[name] || 0;
+    }
+
+    return base + this._computeWealthCreditGrant(classModel, selections);
+  }
+
+  _collectSelectionEntries(selections = {}, domainHints = []) {
+    const hints = domainHints.map(hint => String(hint || '').toLowerCase());
+    const out = [];
+    const visit = (value) => {
+      if (!value) return;
+      if (Array.isArray(value)) return value.forEach(visit);
+      if (typeof value === 'object') {
+        out.push(value);
+        for (const key of ['selected', 'selection', 'value', 'item', 'entry', 'choice', 'candidate', 'talent']) {
+          if (value[key] && value[key] !== value) visit(value[key]);
+        }
+        return;
+      }
+      out.push(value);
+    };
+    for (const [key, value] of Object.entries(selections || {})) {
+      const normalizedKey = String(key || '').toLowerCase();
+      if (!hints.length || hints.some(hint => normalizedKey.includes(hint))) visit(value);
+    }
+    return out;
+  }
+
+  _computeWealthCreditGrant(classModel, selections = {}) {
+    const talents = [
+      ...(Array.isArray(selections?.talents) ? selections.talents : []),
+      ...this._collectSelectionEntries(selections, ['talent']),
+    ];
+    const hasWealth = talents.some(talent => String(talent?.name || talent?.label || talent?.id || talent || '').toLowerCase().replace(/[^a-z0-9]+/g, '') === 'wealth');
+    if (!hasWealth) return 0;
+    const classKey = String(classModel?.name || classModel?.label || classModel?.id || selections?.class?.name || selections?.class || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '');
+    if (classKey !== 'noble' && classKey !== 'corporateagent') return 0;
+    const level = Math.max(1, Number(selections?.survey?.startingLevel ?? this._startingLevel ?? 1) || 1);
+    return level * 5000;
   }
 
   _parseMaxCredits(value) {
@@ -883,7 +930,8 @@ export class SummaryStep extends ProgressionStepPlugin {
 
   async _generateRandomName(actor) {
     try {
-      const { CharacterGenerator } = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js');
+      const module = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js');
+      const CharacterGenerator = module?.CharacterGenerator || module?.default;
       const names = CharacterGenerator?.RANDOM_NAMES || [];
       if (names.length > 0) return names[Math.floor(Math.random() * names.length)];
     } catch (err) {
@@ -895,7 +943,8 @@ export class SummaryStep extends ProgressionStepPlugin {
 
   async _generateRandomDroidName(actor) {
     try {
-      const { CharacterGenerator } = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js');
+      const module = await import('/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js');
+      const CharacterGenerator = module?.CharacterGenerator || module?.default;
       const names = CharacterGenerator?.RANDOM_DROID_NAMES || [];
       if (names.length > 0) return names[Math.floor(Math.random() * names.length)];
     } catch (err) {
@@ -906,15 +955,74 @@ export class SummaryStep extends ProgressionStepPlugin {
     return `${prefix[Math.floor(Math.random() * prefix.length)]}-${suffix}`;
   }
 
+  async _stageStartingCreditsForStore(actor, shell = null) {
+    const expectedBudget = Math.max(0, Number(this._summary?.startingCredits || 0));
+    if (!actor || expectedBudget <= 0) return;
+
+    const existingState = actor.getFlag?.('swse', 'chargenStore') || actor.flags?.swse?.chargenStore || {};
+    const previousBudget = Math.max(0, Number(existingState.startingCredits || 0));
+    const currentCredits = Math.max(0, Number(actor.system?.credits ?? 0) || 0);
+
+    let nextCredits = currentCredits;
+    if (!existingState.initialized) {
+      nextCredits = Math.max(currentCredits, expectedBudget);
+    } else if (expectedBudget > previousBudget) {
+      nextCredits = currentCredits + (expectedBudget - previousBudget);
+    }
+
+    if (nextCredits === currentCredits && existingState.initialized && previousBudget === expectedBudget) return;
+
+    await ActorEngine.updateActor(actor, {
+      'system.credits': nextCredits,
+      'flags.swse.chargenStore': {
+        initialized: true,
+        startingCredits: expectedBudget,
+        lastStagedCredits: nextCredits,
+        sessionId: shell?.sessionId || shell?.progressionSession?.sessionId || null,
+        updatedAt: new Date().toISOString(),
+      },
+    }, {
+      source: 'SummaryStep.enterStore.stageStartingCredits',
+      meta: { guardKey: 'chargen-store-starting-credits' },
+    });
+  }
+
   async enterStore(actor, shell = null) {
     const { SWSEStore } = await import('../../../apps/store/store-main.js');
-    return SWSEStore.open(actor, { closeAfterCheckout: true }).catch(err => {
+    await this._stageStartingCreditsForStore(actor, shell);
+    return SWSEStore.open(actor, {
+      closeAfterCheckout: true,
+      entryOrigin: 'chargen-summary',
+      onCheckoutComplete: async () => {
+        await this._aggregateSummary(shell);
+        shell?.requestRender?.({ preserveScroll: true, reason: 'chargen-store-checkout' }) ?? shell?.render?.();
+      },
+      onClose: async () => {
+        await this._aggregateSummary(shell);
+        shell?.requestRender?.({ preserveScroll: true, reason: 'chargen-store-close' }) ?? shell?.render?.();
+      },
+    }).catch(err => {
       swseLogger.error('[SummaryStep.enterStore] Failed to open store', err);
     });
   }
 
+  async handleAction(action, event, target, shell) {
+    if (action !== 'generate-name' && action !== 'generate-droid-name') return false;
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    const randomName = action === 'generate-droid-name'
+      ? await this._generateRandomDroidName(shell?.actor)
+      : await this._generateRandomName(shell?.actor);
+    if (!randomName) return true;
+    this._characterName = randomName;
+    this._summary.name = randomName;
+    this._commitBusinessItems(shell);
+    shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+    return true;
+  }
+
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'confirm') || 'Make your choice wisely.';
+    return getStepGuidance(shell.actor, 'confirm', shell) || 'Make your choice wisely.';
   }
 
   getMentorMode() {

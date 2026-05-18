@@ -3333,8 +3333,13 @@ export const ActorEngine = {
         paths: Object.keys(setOps)
       });
 
-      // Batch all set operations into a single actor.update() call
-      await this.updateActor(actor, setOps, { source });
+      // Batch all set operations into a single actor.update() call.
+      // Progression/chargen finalization is the authoritative source for level-1
+      // HP initialization, so allow system.hp.max when it appears in a validated
+      // mutation plan instead of tripping the recompute-only guard.
+      const flatSetOps = foundry.utils.flattenObject(setOps || {});
+      const writesHpMax = Object.prototype.hasOwnProperty.call(flatSetOps, 'system.hp.max');
+      await this.updateActor(actor, setOps, { source, isRecomputeHPCall: writesHpMax });
 
     } catch (error) {
       const { MutationApplicationError } = await import("/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js");

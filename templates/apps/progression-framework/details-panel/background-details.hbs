@@ -18,7 +18,18 @@
         <h5 class="prog-background-details__subsection-title">Mechanical Benefits</h5>
         <ul class="prog-background-details__bonus-list">
           {{#each mechanicalBonuses}}
-            <li>{{this}}</li>
+            <li>
+              {{#if this.skillDisplays.length}}
+                <span>{{this.text}}</span>
+                <span class="prog-background-details__inline-skill-list">
+                  {{#each this.skillDisplays}}
+                    <span class="prog-skill-token {{this.abilityClass}} {{this.statusClass}}" data-ability="{{this.ability}}" title="{{this.abilityLabel}} • {{this.statusLabel}}">{{this.label}}</span>
+                  {{/each}}
+                </span>
+              {{else}}
+                {{this.text}}
+              {{/if}}
+            </li>
           {{/each}}
         </ul>
       </div>
@@ -28,10 +39,10 @@
         <h5 class="prog-background-details__subsection-title">Relevant Skills</h5>
         <div class="prog-background-details__skills">
           {{#each relevantSkills}}
-            <span class="prog-chip {{#if this.isClassSkill}}prog-chip--dim{{else}}prog-chip--positive prog-background-details__skill--new{{/if}}">{{this.label}}</span>
+            <span class="prog-chip prog-skill-token {{this.abilityClass}} {{this.statusClass}} {{#if this.isClassSkill}}prog-chip--dim{{else}}prog-chip--positive prog-background-details__skill--new{{/if}}" data-ability="{{this.ability}}" title="{{this.abilityLabel}} • {{this.statusLabel}}">{{this.label}}</span>
           {{/each}}
         </div>
-        <p class="prog-background-details__skill-legend"><span class="prog-chip prog-chip--positive prog-background-details__skill--new">New pick</span> <span class="prog-chip prog-chip--dim">Already a class skill</span></p>
+        <p class="prog-background-details__skill-legend"><span class="prog-chip prog-chip--positive prog-background-details__skill--new prog-skill-token--novel">New pick</span> <span class="prog-chip prog-chip--dim prog-skill-token--covered">Already a class skill</span></p>
       </div>
     {{/if}}
     {{#if bonusLanguage}}

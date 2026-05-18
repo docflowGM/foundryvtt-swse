@@ -374,7 +374,7 @@ export class ActiveStepComputer {
     // automatically and must not force an empty step.
     const engineSlots = Math.max(0, Number(
       LanguageEngine.calculateBonusLanguagesAvailable(actor, {
-        shell: { progressionSession },
+        shell: { actor, progressionSession },
         progressionSession,
         includePending: true,
       }) || 0

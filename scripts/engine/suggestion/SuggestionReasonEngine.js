@@ -176,8 +176,19 @@ export class SuggestionReasonEngine {
   static buildPacket(suggestion, actor, options = {}) {
     try {
       const packet = mergeBuckets(buildScoreDrivenReasons(suggestion), buildTagDrivenReasons(suggestion, actor));
-      const existingReasons = Array.isArray(suggestion?.reasons) ? suggestion.reasons.filter(r => r?.text) : [];
-      packet.secondary.push(...existingReasons.map(r => ReasonFactory.create({ domain: r.domain || 'build', code: r.code || 'EXISTING_REASON', text: r.text, safe: r.safe !== false, strength: r.strength ?? 0.6, atoms: r.atoms || [] })));
+      const rawExistingReasons = [
+        ...(Array.isArray(suggestion?.reasons) ? suggestion.reasons : []),
+        ...(Array.isArray(suggestion?.suggestion?.reasons) ? suggestion.suggestion.reasons : []),
+        suggestion?.suggestion?.reason,
+        suggestion?.suggestion?.reasonText,
+        suggestion?.reason,
+        suggestion?.reasonText,
+      ].filter(Boolean);
+      const existingReasons = rawExistingReasons.map((reason) => {
+        if (typeof reason === 'string') return { text: reason, domain: detectDomain(suggestion) || 'build' };
+        return reason?.text ? reason : null;
+      }).filter(r => r?.text);
+      packet.secondary.push(...existingReasons.map(r => ReasonFactory.create({ domain: r.domain || detectDomain(suggestion) || 'build', code: r.code || 'EXISTING_REASON', text: r.text, safe: r.safe !== false, strength: r.strength ?? 0.72, atoms: r.atoms || [] })));
       packet.primary = pickTop(packet.primary, 3);
       packet.secondary = pickTop(packet.secondary, 3);
       packet.forecast = pickTop(packet.forecast, 2);

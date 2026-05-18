@@ -188,9 +188,29 @@ export class SessionStorage {
     }
 
     try {
-      // Restore selections
+      // Restore selections. Keep session defaults for missing keys and ignore
+      // malformed stored values instead of letting one bad step payload erase the
+      // rest of the chargen run.
       if (sessionData.draftSelections) {
-        session.draftSelections = { ...sessionData.draftSelections };
+        const restoredSelections = { ...session.draftSelections };
+        for (const [key, rawValue] of Object.entries(sessionData.draftSelections)) {
+          if (!Object.prototype.hasOwnProperty.call(restoredSelections, key)) continue;
+          try {
+            const value = typeof session._coerceSelectionToSchema === 'function'
+              ? session._coerceSelectionToSchema(key, rawValue, { stepId: 'session-restore' })
+              : rawValue;
+            if (typeof session._validateSelection === 'function') {
+              session._validateSelection(key, value);
+            }
+            restoredSelections[key] = value;
+          } catch (err) {
+            swseLogger.warn('[SessionStorage] Ignored invalid stored selection during restore', {
+              key,
+              message: err?.message || String(err),
+            });
+          }
+        }
+        session.draftSelections = restoredSelections;
       }
 
       // Restore tracking (visited, invalidated, completed)

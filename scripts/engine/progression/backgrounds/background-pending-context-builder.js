@@ -294,7 +294,17 @@ export function getPendingBackgroundClassSkills(pendingState) {
  * @returns {Array<string>} - Language names
  */
 export function getPendingBackgroundLanguages(pendingState) {
-  return pendingState?.background?.languages?.fixed || [];
+  const sources = [
+    pendingState?.background?.languages?.fixed,
+    pendingState?.languages?.fixed,
+    pendingState?.ledger?.languages?.fixed,
+    pendingState?.background?.ledger?.languages?.fixed,
+  ];
+  const out = [];
+  for (const source of sources) {
+    if (Array.isArray(source)) out.push(...source);
+  }
+  return Array.from(new Set(out.filter(Boolean)));
 }
 
 /**

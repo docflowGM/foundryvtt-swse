@@ -21,7 +21,7 @@
       {{#each skills}}
         <label class="swse-custom-planet-dialog__skill-option">
           <input type="checkbox" name="skills" value="{{id}}" />
-          <span>{{name}}</span>
+          <span class="prog-skill-token {{abilityClass}}" data-ability="{{ability}}" title="{{abilityLabel}}">{{name}}</span>
         </label>
       {{/each}}
     </div>

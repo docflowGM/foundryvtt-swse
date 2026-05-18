@@ -15,6 +15,37 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
+
+function splitLanguageList(raw) {
+  return String(raw || '')
+    .replace(/\blanguages\b/gi, '')
+    .replace(/\blanguage\b/gi, '')
+    .split(/\s+or\s+|,|;/i)
+    .map(v => v.replace(/^and\s+/i, '').trim())
+    .filter(Boolean);
+}
+
+function extractLanguageGrant(bg = {}) {
+  const fixed = new Set();
+  const choices = [];
+  const addRaw = (raw, source = 'background') => {
+    if (!raw) return;
+    const langs = splitLanguageList(raw);
+    if (langs.length <= 1) langs.forEach(lang => fixed.add(lang));
+    else choices.push({ source, options: langs });
+  };
+
+  addRaw(bg.bonusLanguage, 'bonusLanguage');
+  if (Array.isArray(bg.languages)) bg.languages.forEach(lang => fixed.add(lang));
+  if (Array.isArray(bg.mechanicalEffect?.languages)) bg.mechanicalEffect.languages.forEach(lang => fixed.add(lang));
+
+  const text = [bg.mechanicalEffect?.description, bg.specialAbility, bg.description].filter(Boolean).join(' ');
+  const match = text.match(/\bgain\s+(.+?)\s+language\b/i) || text.match(/\bbonus language:\s*(.+?)(?:\.|$)/i);
+  if (match?.[1]) addRaw(match[1], 'mechanicalText');
+
+  return { fixed: Array.from(fixed), choices };
+}
+
 export class BackgroundGrantLedgerBuilder {
   /**
    * Build a Background Grant Ledger from one or more background selections
@@ -179,28 +210,33 @@ export class BackgroundGrantLedgerBuilder {
     const entitlements = [];
 
     for (const bg of backgrounds) {
-      // bonusLanguage field (typical for planets)
-      if (bg.bonusLanguage) {
-        const langs = bg.bonusLanguage.split(/\s+or\s+/i).map(l => l.trim());
-        for (const lang of langs) {
-          if (lang) {
-            fixedLanguages.add(lang);
-          }
-        }
+      const grant = extractLanguageGrant(bg);
+      for (const lang of grant.fixed || []) {
+        if (lang) fixedLanguages.add(lang);
       }
-
-      // mechanicalEffect may also specify languages
-      const mechEffect = bg.mechanicalEffect || {};
-      if (mechEffect.languages && Array.isArray(mechEffect.languages)) {
-        for (const lang of mechEffect.languages) {
-          fixedLanguages.add(lang);
+      for (const choice of grant.choices || []) {
+        const options = Array.from(new Set(choice.options || [])).filter(Boolean);
+        if (options.length <= 1) {
+          options.forEach(lang => fixedLanguages.add(lang));
+          continue;
         }
+        entitlements.push({
+          id: `background_language_choice_${bg.id || bg.slug || entitlements.length}`,
+          type: 'background_language_choice',
+          sourceBackgroundId: bg.id || bg.slug,
+          sourceBackgroundName: bg.name,
+          quantity: 1,
+          options,
+          resolved: [],
+          isRequired: true,
+          description: `${bg.name || 'Background'}: choose one background language (${options.join(', ')})`
+        });
       }
     }
 
     return {
       fixed: Array.from(fixedLanguages).sort(),
-      entitlements,                              // Future: language picks/bonuses
+      entitlements,
       mergeType: 'additive',
       conflictResolution: 'dedup'
     };

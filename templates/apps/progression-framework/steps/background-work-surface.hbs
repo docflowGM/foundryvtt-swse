@@ -46,7 +46,7 @@
               {{#if trainedSkills.length}}
                 <div class="swse-option-card__meta">
                   {{#each trainedSkills}}
-                    <span class="swse-option-card__badge">{{this}}</span>
+                    <span class="swse-option-card__badge prog-skill-token {{this.abilityClass}} {{this.statusClass}}" data-ability="{{this.ability}}" title="{{this.abilityLabel}} • {{this.statusLabel}}">{{this.label}}</span>
                   {{/each}}
                 </div>
               {{/if}}

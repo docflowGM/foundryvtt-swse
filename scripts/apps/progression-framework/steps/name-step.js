@@ -196,7 +196,7 @@ export class NameStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'name')
+    return getStepGuidance(shell.actor, 'name', shell)
       || 'Make your choice wisely.';
   }
 

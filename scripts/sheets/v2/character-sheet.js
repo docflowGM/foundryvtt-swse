@@ -39,6 +39,7 @@ import { PostRenderAssertions } from "/systems/foundryvtt-swse/scripts/sheets/v2
 import { buildHpViewModel, buildDefensesViewModel, buildHeaderHpSegments } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js";
+import { CustomLanguageDialog } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-language-dialog.js";
 // Phase 7: Shared platform layer imports (reusable across all V2 sheets)
 import { UIStateManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/UIStateManager.js";
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
@@ -4685,21 +4686,16 @@ const forcePoints = [];
     html.querySelectorAll('[data-action="add-language"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
-        // Open a dialog for language selection
         const languages = this.actor.system?.languages ?? [];
-        const newLang = prompt("Enter language name:");
-        if (newLang) {
-          const plan = {
-            update: {
-              "system.languages": [...languages, newLang]
-            }
-          };
-          try {
+        try {
+          const newLang = await CustomLanguageDialog.prompt({ suggestedName: '' });
+          if (newLang) {
+            const merged = Array.from(new Set([...languages, newLang]));
+            const plan = { update: { "system.languages": merged } };
             await ActorEngine.apply(this.actor, plan);
-          } catch (err) {
-            // console.error("Failed to add language:", err);
-            ui?.notifications?.error?.(`Failed to add language: ${err.message}`);
           }
+        } catch (err) {
+          ui?.notifications?.error?.(`Failed to add language: ${err.message}`);
         }
       }, { signal });
     });

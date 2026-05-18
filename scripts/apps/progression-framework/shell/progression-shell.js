@@ -112,7 +112,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // Step-specific actions delegated to current step plugin via event bubbling
       'toggle-category'(e, t)     { return this._onStepAction(e, t); },
       'add-language'(e, t)        { return this._onStepAction(e, t); },
+      'select-language'(e, t)     { return this._onStepAction(e, t); },
       'remove-language'(e, t)     { return this._onStepAction(e, t); },
+      'remove-bonus-language'(e, t) { return this._onStepAction(e, t); },
       'purchase-system'(e, t)     { return this._onStepAction(e, t); },
       'select-species-variant'(e, t) { return this._onStepAction(e, t); },
       'remove-system'(e, t)       { return this._onStepAction(e, t); },
@@ -345,8 +347,18 @@ export class ProgressionShell extends SWSEApplicationV2 {
     return node === root ? path : null;
   }
 
-  _captureProgressionScrollSnapshots() {
-    const root = this._getRenderableRoot();
+  _resolveScrollPath(root, path) {
+    if (!(root instanceof HTMLElement) || !Array.isArray(path)) return null;
+    let node = root;
+    for (const index of path) {
+      node = node?.children?.[index] ?? null;
+      if (!node) return null;
+    }
+    return node instanceof HTMLElement ? node : null;
+  }
+
+  _captureProgressionScrollSnapshots(rootOverride = null) {
+    const root = rootOverride instanceof HTMLElement ? rootOverride : this._getRenderableRoot();
     if (!(root instanceof HTMLElement)) return [];
     const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const nodes = [root, ...root.querySelectorAll('*')];
@@ -355,13 +367,20 @@ export class ProgressionShell extends SWSEApplicationV2 {
       .filter(el => el.scrollTop > 0 || el.scrollLeft > 0)
       .map(el => {
         const region = el.dataset?.region || el.closest?.('[data-region]')?.dataset?.region || '';
+        const shellRegion = el.dataset?.shellRegion || el.closest?.('[data-shell-region]')?.dataset?.shellRegion || '';
         const scrollKey = el.dataset?.progScrollKey ? `scroll-key:${el.dataset.progScrollKey}` : null;
         const classes = Array.from(el.classList || [])
           .filter(name => /^(prog|swse|talent|language|skills|force|class|feat)-/.test(name))
           .slice(0, 4)
           .join('.');
+        const key = scrollKey
+          || (el.dataset?.region ? `region:${el.dataset.region}` : null)
+          || (el.dataset?.shellRegion ? `shell-region:${el.dataset.shellRegion}` : null)
+          || (region && classes ? `region:${region}:class:${classes}` : null)
+          || (shellRegion && classes ? `shell-region:${shellRegion}:class:${classes}` : null)
+          || (classes ? `class:${classes}` : null);
         return {
-          key: scrollKey || (el.dataset?.region ? `region:${el.dataset.region}` : (region && classes ? `region:${region}:class:${classes}` : null)),
+          key,
           path: this._buildScrollPath(root, el),
           top: el.scrollTop,
           left: el.scrollLeft,
@@ -381,6 +400,55 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }
 
     return snapshots;
+  }
+
+
+  _restoreProgressionScrollSnapshots(snapshots, rootOverride = null) {
+    const root = rootOverride instanceof HTMLElement ? rootOverride : this._getRenderableRoot();
+    if (!(root instanceof HTMLElement) || !Array.isArray(snapshots) || !snapshots.length) return;
+
+    const byKey = new Map();
+    for (const snap of snapshots) {
+      if (snap?.key) byKey.set(snap.key, snap);
+    }
+
+    // Restore older snapshots first and latest snapshots last, so a later click
+    // capture wins over stale values from a prior queued render.
+    for (const snap of snapshots) {
+      if (!snap || (snap.key && byKey.get(snap.key) !== snap)) continue;
+
+      let el = null;
+      const key = snap.key || '';
+      if (key.startsWith('region:')) {
+        const [region, classPart] = key.slice('region:'.length).split(':class:');
+        const regionEl = root.querySelector(`[data-region="${CSS.escape(region)}"]`);
+        if (!classPart) el = regionEl;
+        else if (regionEl) {
+          const classes = classPart.split('.').filter(Boolean);
+          if (classes.length) el = regionEl.querySelector(classes.map(cls => `.${CSS.escape(cls)}`).join(''));
+        }
+      } else if (key.startsWith('shell-region:')) {
+        const [region, classPart] = key.slice('shell-region:'.length).split(':class:');
+        const regionEl = root.matches?.(`[data-shell-region="${CSS.escape(region)}"]`)
+          ? root
+          : root.querySelector(`[data-shell-region="${CSS.escape(region)}"]`);
+        if (!classPart) el = regionEl;
+        else if (regionEl) {
+          const classes = classPart.split('.').filter(Boolean);
+          if (classes.length) el = regionEl.querySelector(classes.map(cls => `.${CSS.escape(cls)}`).join(''));
+        }
+      } else if (key.startsWith('scroll-key:')) {
+        el = root.querySelector(`[data-prog-scroll-key="${CSS.escape(key.slice('scroll-key:'.length))}"]`);
+      } else if (key.startsWith('class:')) {
+        const classes = key.slice('class:'.length).split('.').filter(Boolean);
+        if (classes.length) el = root.querySelector(classes.map(cls => `.${CSS.escape(cls)}`).join(''));
+      }
+
+      if (!(el instanceof HTMLElement)) el = this._resolveScrollPath(root, snap.path);
+      if (!(el instanceof HTMLElement)) continue;
+      el.scrollTop = Number(snap.top) || 0;
+      el.scrollLeft = Number(snap.left) || 0;
+    }
   }
 
   requestRender({ preserveScroll = true, reason = 'unspecified', force = false } = {}) {
@@ -443,6 +511,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
         if (shouldRecover) {
           const restored = SessionStorage.restoreIntoSession(this.progressionSession, sessionData);
           if (restored) {
+            // Merge any newer/older checkpoint data only into missing slots. This
+            // protects the player when one persistence lane was interrupted by a
+            // bad step commit while the other still has valid selections.
+            this._mergeCheckpointIntoRecoveredSession(checkpoint);
             this._syncLegacyCommittedSelectionsFromSession();
             this._targetStepId = sessionData.currentStepId || sessionData.lastStepId || null;
             swseLogger.log('[ProgressionShell] Session recovered successfully', {
@@ -519,6 +591,78 @@ export class ProgressionShell extends SWSEApplicationV2 {
         this.committedSelections.set(key, value);
       }
     }
+  }
+
+  _mergeCheckpointIntoRecoveredSession(checkpoint) {
+    if (!checkpoint || !this.progressionSession?.draftSelections) return false;
+
+    const draft = this.progressionSession.draftSelections;
+    const sources = [
+      checkpoint.draftSelections,
+      checkpoint.buildIntent,
+      checkpoint.committedSelections,
+    ].filter(source => source && typeof source === 'object');
+
+    if (!sources.length) return false;
+
+    const aliases = {
+      attribute: 'attributes',
+      attributes: 'attributes',
+      'l1-survey': 'survey',
+      'base-class-survey': 'classSurveys',
+      'general-feat': 'feats',
+      'class-feat': 'feats',
+      'heroic-feat': 'feats',
+      'general-talent': 'talents',
+      'class-talent': 'talents',
+      'heroic-talent': 'talents',
+      'force-powers': 'forcePowers',
+      'force-techniques': 'forceTechniques',
+      'force-secrets': 'forceSecrets',
+      'medical-secrets': 'medicalSecrets',
+      'starship-maneuver': 'starshipManeuvers',
+      'starship-maneuvers': 'starshipManeuvers',
+      'prestige-survey': 'prestigeSurvey',
+    };
+
+    const isEmpty = (value) => {
+      if (value === null || value === undefined) return true;
+      if (Array.isArray(value)) return value.length === 0;
+      if (typeof value === 'object') return Object.keys(value).length === 0;
+      return false;
+    };
+
+    let merged = 0;
+    for (const source of sources) {
+      for (const [rawKey, rawValue] of Object.entries(source)) {
+        const key = aliases[rawKey] || rawKey;
+        if (!Object.prototype.hasOwnProperty.call(draft, key)) continue;
+        if (isEmpty(rawValue) || !isEmpty(draft[key])) continue;
+
+        try {
+          const value = typeof this.progressionSession._coerceSelectionToSchema === 'function'
+            ? this.progressionSession._coerceSelectionToSchema(key, rawValue, { stepId: 'checkpoint-merge' })
+            : rawValue;
+          if (typeof this.progressionSession._validateSelection === 'function') {
+            this.progressionSession._validateSelection(key, value);
+          }
+          draft[key] = value;
+          merged += 1;
+        } catch (err) {
+          swseLogger.warn('[ProgressionShell] Ignored invalid recovered checkpoint selection', {
+            key,
+            rawKey,
+            message: err?.message || String(err),
+          });
+        }
+      }
+    }
+
+    if (merged > 0) {
+      this.progressionSession.lastModifiedAt = Date.now();
+      swseLogger.warn('[ProgressionShell] Merged missing recovered selections from checkpoint', { merged });
+    }
+    return merged > 0;
   }
 
   async _persistSessionSnapshot(currentStepId = null) {
@@ -783,12 +927,16 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     console.log(`[ProgressionShell] RENDER START (#${this._renderCount}) position:`, this.position);
     const result = await super.render(...args);
+    const restoreAfterRender = () => this._restoreProgressionScrollSnapshots(scrollSnapshots, this.getRootElement?.() ?? this.element);
+    restoreAfterRender();
     await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-    restoreScrollPositions(this.getRootElement?.() ?? this.element, scrollSnapshots);
+    restoreAfterRender();
     // Some step surfaces rehydrate their own virtualized/overflow regions after the
-    // first paint. Restore again on the next tick so focus/selection renders do not
+    // first paint. Restore again on delayed ticks so focus/selection renders do not
     // snap the current step back to the top.
-    setTimeout(() => restoreScrollPositions(this.getRootElement?.() ?? this.element, scrollSnapshots), 0);
+    setTimeout(restoreAfterRender, 0);
+    setTimeout(restoreAfterRender, 75);
+    setTimeout(restoreAfterRender, 175);
     console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
 
     this._isRendering = false;
@@ -2637,6 +2785,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   async _onStepAction(event, target) {
     event?.preventDefault();
+    event?.stopPropagation?.();
+    event?.stopImmediatePropagation?.();
     const actionName = target?.dataset?.action;
     const stepId = this.steps[this.currentStepIndex]?.stepId;
 
@@ -2873,22 +3023,43 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
       // Only rebuild if there's an actual change
       if (JSON.stringify(oldStepIds) !== JSON.stringify(newStepIds)) {
-        // Rebuild plugins for new steps
+        const currentStepIdBeforeRebuild = this.steps[this.currentStepIndex]?.stepId ?? null;
+        const previousPlugins = new Map(this.stepPlugins);
+
+        // Rebuild the descriptor list, but preserve live plugin instances for
+        // steps that remain active. A commit can unlock/reorder downstream
+        // nodes while the current step is still handling the click. Replacing
+        // that plugin mid-handler erases transient state such as
+        // _committedClassId/_filteredClasses and can render the current view as
+        // empty until the user backs out and re-enters the step.
         this.steps = newSteps;
         this.stepPlugins.clear();
 
         for (const descriptor of this.steps) {
-          if (descriptor.pluginClass) {
-            try {
-              this.stepPlugins.set(descriptor.stepId, new descriptor.pluginClass(descriptor));
-            } catch (err) {
-              swseLogger.error(`[ProgressionShell] Failed to rebuild plugin for ${descriptor.stepId}:`, err);
-            }
+          if (!descriptor.pluginClass) continue;
+
+          const existing = previousPlugins.get(descriptor.stepId);
+          if (existing && existing.constructor === descriptor.pluginClass) {
+            existing._descriptor = descriptor;
+            this.stepPlugins.set(descriptor.stepId, existing);
+            continue;
+          }
+
+          try {
+            this.stepPlugins.set(descriptor.stepId, new descriptor.pluginClass(descriptor));
+          } catch (err) {
+            swseLogger.error(`[ProgressionShell] Failed to rebuild plugin for ${descriptor.stepId}:`, err);
           }
         }
 
-        // Repair current step if it's no longer valid
-        this._repairCurrentStep();
+        // Preserve the user's current step by ID when the step still exists.
+        // Index-only repair is not enough when conditional nodes are inserted or
+        // removed before the current step.
+        const preservedIndex = currentStepIdBeforeRebuild
+          ? this.steps.findIndex(d => d.stepId === currentStepIdBeforeRebuild)
+          : -1;
+        if (preservedIndex >= 0) this.currentStepIndex = preservedIndex;
+        else this._repairCurrentStep();
 
         swseLogger.log('[ProgressionShell] Rebuilt step list after recomputation', {
           oldCount: oldStepIds.length,
@@ -2896,6 +3067,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
           added: newStepIds.filter(id => !oldStepIds.includes(id)),
           removed: oldStepIds.filter(id => !newStepIds.includes(id)),
           currentStepId: this.getCurrentStepId(),
+          preservedStepId: currentStepIdBeforeRebuild,
         });
       }
     } catch (err) {

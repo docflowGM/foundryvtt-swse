@@ -285,7 +285,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'force-secrets')
+    return getStepGuidance(shell.actor, 'force-secrets', shell)
       || 'The path to deeper understanding awaits.';
   }
 

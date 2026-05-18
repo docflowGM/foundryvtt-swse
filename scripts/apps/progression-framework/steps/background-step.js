@@ -20,6 +20,7 @@ import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveSelectedClassFromShell, getClassSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 import { buildPendingBackgroundContext } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
 import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
+import { buildClassSkillKeySet, buildSkillDisplay, buildSkillDisplays } from '../utils/skill-display.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
 import { CustomPlanetBackgroundDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-planet-background-dialog.js';
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
@@ -51,6 +52,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
     this._sortBy = 'alpha';
     this._customBackgrounds = [];
     this._backgroundSkillChoices = {};
+    this._backgroundLanguageChoices = {};
 
     // House rule state
     this._maxBackgrounds = 1;        // from backgroundSelectionCount setting
@@ -157,7 +159,7 @@ async onStepExit(shell) {
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedBackgrounds);
     return {
       categories: this._getCategoryChips(),
-      backgroundsByCategory: this._formatCategoryGroups(filtered, suggestedIds, confidenceMap),
+      backgroundsByCategory: this._formatCategoryGroups(filtered, suggestedIds, confidenceMap, context?.shell),
       activeCategory: this._activeCategory,
       focusedBackgroundId: this._focusedBackgroundId,
       committedBackgroundIds: this._committedBackgroundIds,
@@ -195,7 +197,7 @@ async onStepExit(shell) {
     };
   }
 
-  renderDetailsPanel(focusedItem) {
+  renderDetailsPanel(focusedItem, shell = null) {
     if (!this._focusedBackgroundId) {
       return this.renderDetailsPanelEmptyState();
     }
@@ -217,10 +219,10 @@ async onStepExit(shell) {
         category: CATEGORY_LABELS[background.category] || background.category,
         description: background.narrativeDescription || background.description || '',
         trainedSkills: background.trainedSkills || background.relevantSkills || [],
-        relevantSkills: this._buildRelevantSkillDisplay(background),
+        relevantSkills: this._buildRelevantSkillDisplay(background, shell),
         bonusLanguage: background.bonusLanguage || '',
         source: background.source || 'Unknown',
-        mechanicalBonuses: this._extractMechanicalBonuses(background),
+        mechanicalBonuses: this._extractMechanicalBonuses(background, shell),
         skillChoiceCount: Number(background.skillChoiceCount || 0),
         specialAbility: background.specialAbility || '',
         isCommitted,
@@ -274,10 +276,22 @@ async onStepExit(shell) {
       this._backgroundSkillChoices[id] = skillOptions.slice(0, requiredSkillChoices);
     }
 
+    const languageOptions = this._extractBackgroundLanguageChoiceOptions(background);
+    if (languageOptions.length > 1) {
+      const chosenLanguage = await this._promptForBackgroundLanguageChoice(background, languageOptions);
+      if (!chosenLanguage) return;
+      this._backgroundLanguageChoices[id] = [chosenLanguage];
+    } else if (languageOptions.length === 1) {
+      this._backgroundLanguageChoices[id] = [languageOptions[0]];
+    }
+
     // Single mode: replace selection
     if (this._maxBackgrounds === 1) {
       for (const previousId of this._committedBackgroundIds) {
-        if (previousId !== id) delete this._backgroundSkillChoices[previousId];
+        if (previousId !== id) {
+          delete this._backgroundSkillChoices[previousId];
+          delete this._backgroundLanguageChoices[previousId];
+        }
       }
       this._committedBackgroundIds = [id];
     } else {
@@ -287,6 +301,7 @@ async onStepExit(shell) {
         // Remove
         this._committedBackgroundIds.splice(idx, 1);
         delete this._backgroundSkillChoices[id];
+        delete this._backgroundLanguageChoices[id];
       } else if (this._committedBackgroundIds.length < this._maxBackgrounds) {
         // Add
         this._committedBackgroundIds.push(id);
@@ -443,8 +458,11 @@ getUtilityBarConfig() {
 
 
 
-  async onAction(action, event, shell) {
+  async handleAction(action, event, target, shell) {
     if (action === 'create-custom-planet') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      event?.stopImmediatePropagation?.();
       await this._openCustomPlanetDialog(shell);
       return true;
     }
@@ -597,32 +615,36 @@ _getFilteredBackgrounds() {
 }
 
 
-  _buildRelevantSkillDisplay(background, shell) {
-    const rawSkills = [
-      ...(background?.relevantSkills || []),
-      ...(background?.trainedSkills || []),
-    ].filter(Boolean);
-
+  _getClassSkillKeys(shell) {
     const selectedClass = resolveSelectedClassFromShell(shell);
     const classSkillRefs = selectedClass ? getClassSkills(selectedClass) : [];
-    const classSkillKeys = new Set(classSkillRefs.map(ref => String(ref).toLowerCase().replace(/[^a-z0-9]/g, '')));
-
-    return rawSkills.map(skill => {
-      const label = String(skill);
-      const key = label.toLowerCase().replace(/[^a-z0-9]/g, '');
-      return { label, isClassSkill: classSkillKeys.has(key) };
-    });
+    return buildClassSkillKeySet(classSkillRefs);
   }
 
-_extractMechanicalBonuses(background) {
+  _buildRelevantSkillDisplay(background, shell) {
+    const rawSkills = Array.from(new Set([
+      ...(background?.relevantSkills || []),
+      ...(background?.trainedSkills || []),
+    ].filter(Boolean).map(skill => String(skill).trim()).filter(Boolean)));
+
+    return buildSkillDisplays(rawSkills, { classSkillKeys: this._getClassSkillKeys(shell) });
+  }
+
+_extractMechanicalBonuses(background, shell = null) {
   const bonuses = [];
   if (!background) return bonuses;
-  if (background.mechanicalEffect?.description) bonuses.push(background.mechanicalEffect.description);
-  if (background.specialAbility) bonuses.push(background.specialAbility);
+  const classSkillKeys = this._getClassSkillKeys(shell);
+  const rawMechanicalDescription = String(background.mechanicalEffect?.description || '').trim();
+  const describesSkillChoice = rawMechanicalDescription && /choose\s+\d+\s+skill/i.test(rawMechanicalDescription);
+  if (rawMechanicalDescription && !describesSkillChoice) bonuses.push({ text: rawMechanicalDescription });
+  if (background.specialAbility) bonuses.push({ text: background.specialAbility });
   if (background.skillChoiceCount && (background.relevantSkills || []).length) {
-    bonuses.push(`Choose ${background.skillChoiceCount} skill${background.skillChoiceCount === 1 ? '' : 's'} from: ${(background.relevantSkills || []).join(', ')}`);
+    bonuses.push({
+      text: `Choose ${background.skillChoiceCount} skill${background.skillChoiceCount === 1 ? '' : 's'} from:`,
+      skillDisplays: buildSkillDisplays(background.relevantSkills || [], { classSkillKeys })
+    });
   }
-  if (background.bonusLanguage) bonuses.push(`Bonus language: ${background.bonusLanguage}`);
+  if (background.bonusLanguage) bonuses.push({ text: `Bonus language: ${background.bonusLanguage}` });
   return bonuses;
 }
 
@@ -635,8 +657,9 @@ _getCategoryChips() {
     }));
   }
 
-  _formatCategoryGroups(filtered, suggestedIds = new Set(), confidenceMap = new Map()) {
+  _formatCategoryGroups(filtered, suggestedIds = new Set(), confidenceMap = new Map(), shell = null) {
     const result = {};
+    const classSkillKeys = this._getClassSkillKeys(shell);
     for (const category of ['event', 'occupation', 'planet']) {
       if (this._activeCategory !== 'all' && category !== this._activeCategory) continue;
       const backgrounds = (this._groupedBackgrounds[category] || [])
@@ -652,7 +675,7 @@ _getCategoryChips() {
             category,
             categoryLabel: CATEGORY_LABELS[category],
             shortDesc: (bg.narrativeDescription || bg.description || '').slice(0, 120),
-            trainedSkills: (bg.trainedSkills || []).slice(0, 3),
+            trainedSkills: buildSkillDisplays((bg.trainedSkills || []).slice(0, 3), { classSkillKeys }),
             hasMore: (bg.trainedSkills || []).length > 3,
             isFocused,
             isCommitted,
@@ -699,21 +722,45 @@ _getCategoryChips() {
       });
     }
 
+    const fixedLanguages = new Set([
+      ...(Array.isArray(pendingContext.languages?.fixed) ? pendingContext.languages.fixed : []),
+      ...(Array.isArray(pendingContext.ledger?.languages?.fixed) ? pendingContext.ledger.languages.fixed : []),
+    ]);
+    for (const entitlement of pendingContext.languages?.entitlements || []) {
+      const bgId = entitlement?.sourceBackgroundId || entitlement?.backgroundId;
+      const chosen = Array.isArray(this._backgroundLanguageChoices[bgId]) ? this._backgroundLanguageChoices[bgId] : [];
+      if (chosen.length) {
+        entitlement.resolved = [...chosen];
+        entitlement.isResolved = true;
+        chosen.forEach(lang => lang && fixedLanguages.add(lang));
+      }
+    }
+
     pendingContext.classSkills = Array.from(resolvedClassSkills);
     pendingContext.backgroundSkillOptions = Array.from(new Set(resolvedOptions));
     pendingContext.backgroundSkillOptionsResolved = true;
+    pendingContext.languages = pendingContext.languages || { fixed: [], entitlements: [] };
+    pendingContext.languages.fixed = Array.from(fixedLanguages).sort();
     if (pendingContext.ledger?.classSkills) {
       pendingContext.ledger.classSkills.granted = pendingContext.classSkills;
       pendingContext.ledger.classSkills.resolvedChoices = { ...this._backgroundSkillChoices };
     }
+    if (pendingContext.ledger?.languages) {
+      pendingContext.ledger.languages.fixed = pendingContext.languages.fixed;
+      pendingContext.ledger.languages.resolvedChoices = { ...this._backgroundLanguageChoices };
+    }
     return pendingContext;
   }
+
 
   async _promptForBackgroundSkillChoices(background, count, options) {
     const safeName = String(background?.name || 'Background').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
     const rows = options.map((skill, index) => {
-      const safeSkill = String(skill).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
-      return `<label class="swse-background-skill-choice__row"><input type="checkbox" name="backgroundSkill" value="${safeSkill}" ${index < count ? 'checked' : ''}/> <span>${safeSkill}</span></label>`;
+      const display = buildSkillDisplay(skill);
+      const safeSkill = String(display.label || skill).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+      const ability = display.ability ? ` data-ability="${display.ability}"` : '';
+      const abilityClass = display.ability ? ` prog-skill-token--${display.ability} swse-ability-label swse-ability-label--${display.ability}` : '';
+      return `<label class="swse-background-skill-choice__row"><input type="checkbox" name="backgroundSkill" value="${safeSkill}" ${index < count ? 'checked' : ''}/> <span class="prog-skill-token ${abilityClass}"${ability}>${safeSkill}</span></label>`;
     }).join('');
     const content = `<form class="swse-background-skill-choice"><p><strong>${safeName}</strong> grants class-skill training access. Pick exactly ${count} skill${count === 1 ? '' : 's'}.</p><div class="swse-background-skill-choice__list">${rows}</div></form>`;
 
@@ -740,6 +787,62 @@ _getCategoryChips() {
                 return;
               }
               finish(checked);
+            }
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: 'Cancel',
+            callback: () => finish(null)
+          }
+        },
+        close: () => finish(null),
+        default: 'confirm'
+      });
+      dialog.render(true);
+    });
+  }
+
+  _extractBackgroundLanguageChoiceOptions(background) {
+    const raw = [background?.bonusLanguage, background?.mechanicalEffect?.description, background?.specialAbility]
+      .filter(Boolean)
+      .join(' ');
+    const explicit = raw.match(/\bgain\s+(.+?)\s+language\b/i) || raw.match(/\bbonus language:\s*(.+?)(?:\.|$)/i);
+    const source = explicit?.[1] || background?.bonusLanguage || '';
+    const options = String(source || '')
+      .replace(/\blanguage\b/gi, '')
+      .replace(/\blanguages\b/gi, '')
+      .split(/\s+or\s+|,|;/i)
+      .map(value => value.replace(/^and\s+/i, '').trim())
+      .filter(Boolean);
+    return Array.from(new Set(options));
+  }
+
+  async _promptForBackgroundLanguageChoice(background, options) {
+    const safeName = String(background?.name || 'Background').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+    const rows = options.map((language, index) => {
+      const safeLanguage = String(language).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+      return `<label class="swse-background-skill-choice__row"><input type="radio" name="backgroundLanguage" value="${safeLanguage}" ${index === 0 ? 'checked' : ''}/> <span>${safeLanguage}</span></label>`;
+    }).join('');
+    const content = `<form class="swse-background-skill-choice"><p><strong>${safeName}</strong> grants a background language. Pick one.</p><div class="swse-background-skill-choice__list">${rows}</div></form>`;
+
+    return new Promise((resolve) => {
+      let settled = false;
+      const finish = (value) => {
+        if (settled) return;
+        settled = true;
+        resolve(value);
+      };
+      const dialog = new Dialog({
+        title: 'Pick Background Language',
+        content,
+        buttons: {
+          confirm: {
+            icon: '<i class="fas fa-check"></i>',
+            label: 'Confirm Language',
+            callback: (html) => {
+              const root = html?.[0] || html;
+              const checked = root.querySelector('input[name="backgroundLanguage"]:checked');
+              finish(checked?.value || null);
             }
           },
           cancel: {

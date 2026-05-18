@@ -604,7 +604,7 @@ renderDetailsPanel(focusedItem) {
 }
 
   getMentorContext(shell) {
-    const customGuidance = getStepGuidance(shell.actor, 'skills');
+    const customGuidance = getStepGuidance(shell.actor, 'skills', shell);
     if (customGuidance) return customGuidance;
 
     // Phase 2.7: Beast-specific guidance

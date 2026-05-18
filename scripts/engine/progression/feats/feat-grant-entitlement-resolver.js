@@ -1,3 +1,5 @@
+import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
+
 /**
  * FeatGrantEntitlementResolver
  *
@@ -83,18 +85,53 @@ function normalizePendingFeat(entry) {
   };
 }
 
+function getClassSelection(shell) {
+  return shell?.progressionSession?.draftSelections?.class
+    || shell?.draftSelections?.class
+    || shell?.draftSelections?.get?.('class')
+    || shell?.committedSelections?.get?.('class')
+    || shell?.buildIntent?.getSelection?.('class')
+    || null;
+}
+
 function getPendingFeatEntries(shell) {
   const sessionFeats = shell?.progressionSession?.draftSelections?.feats;
   const directDraftFeats = shell?.draftSelections?.feats;
   const draftMapFeats = shell?.draftSelections?.get?.('feats');
   const buildIntentFeats = shell?.buildIntent?.getSelection?.('feats');
-
-  return [
+  const rawEntries = [
     ...asArray(sessionFeats),
     ...asArray(directDraftFeats),
     ...asArray(draftMapFeats),
     ...asArray(buildIntentFeats)
-  ].map(normalizePendingFeat).filter(Boolean);
+  ];
+
+  const actor = shell?.actor || null;
+  const classSelection = getClassSelection(shell);
+  if (actor && classSelection) {
+    const pendingState = {
+      ...(shell?.progressionSession?.draftSelections || {}),
+      attributes: shell?.progressionSession?.draftSelections?.attributes,
+    };
+    try {
+      const ledger = buildClassGrantLedger(actor, classSelection, pendingState);
+      for (const grant of ledger?.grantedFeats || []) {
+        if (!grant?.name) continue;
+        rawEntries.push({
+          name: grant.name,
+          system: {},
+          sourceType: 'pendingClassGrant',
+          source: 'pending',
+          validated: grant.validated !== false,
+          wasConditional: !!grant.wasConditional,
+        });
+      }
+    } catch (_err) {
+      // Entitlements are advisory for step activation; fail closed to explicit feats.
+    }
+  }
+
+  return rawEntries.map(normalizePendingFeat).filter(Boolean);
 }
 
 export class FeatGrantEntitlementResolver {
