@@ -1,6 +1,7 @@
 {{!--
   surface-store.hbs
   Shell-native store surface. Concept-aligned layout, live store data.
+  Phase 3: Datapad chrome and hierarchical layout with browse grid + side rail.
 --}}
 
 <div class="swse-shell-surface swse-shell-surface--store"
@@ -8,7 +9,7 @@
      data-surface-id="{{vm.id}}">
 
   {{#if vm.error}}
-  <div class="ss-error">
+  <div class="swse-store-surface__error">
     <i class="fas fa-exclamation-triangle"></i>
     <span>{{vm.error}}</span>
   </div>
@@ -18,400 +19,434 @@
   {{> "systems/foundryvtt-swse/templates/apps/store/store-splash.hbs" vm.storeSplash}}
   {{else}}
 
-  <form class="ss-root" autocomplete="off">
+  <section class="swse-store-surface">
+    <form class="swse-store-surface__tablet" autocomplete="off">
 
-    <div class="ss-hud">
-      <button class="ss-hud__back" data-shell-action="return-to-home" type="button" title="Return to Home">
-        <i class="fas fa-arrow-left"></i> HOME
-      </button>
-      <div class="ss-hud__center">
-        <span class="ss-hud__signal"><span></span><span></span><span></span><span></span></span>
-        <span class="ss-hud__title">RENDARR'S EXCHANGE</span>
-        <span class="ss-hud__dot {{#if vm.storeContext.cartCount}}warn{{/if}}"></span>
-      </div>
-      <div class="ss-hud__right">
-        <span class="ss-hud__lbl">RESERVE</span>
-        <span class="ss-hud__credits">$ {{vm.actorCredits}}</span>
-      </div>
-    </div>
-
-    <div class="ss-page-header">
-      <div class="ss-rendarr-portrait">
-        {{#if vm.storeContext.rendarrImage}}
-        <img src="{{vm.storeContext.rendarrImage}}" alt="Rendarr" class="ss-rendarr-img"/>
-        {{else}}
-        <svg viewBox="0 0 64 64" class="ss-rendarr-svg"><circle cx="32" cy="24" r="14" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 60 Q32 38 56 60" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-        {{/if}}
-      </div>
-      <div class="ss-rendarr-meta">
-        <div class="ss-rendarr-name"><span class="ss-rendarr-mark">⚡</span>RENDARR'S EXCHANGE</div>
-        <div class="ss-rendarr-sub">Quartermaster · Galactic Trade Network</div>
-        <div class="ss-rendarr-quote">
-          {{#if vm.storeContext.rendarrWelcome}}"{{vm.storeContext.rendarrWelcome}}"{{else}}"What can I do for you today?"{{/if}}
-        </div>
-      </div>
-      <div class="ss-credits-block">
-        <span class="ss-credits-lbl">ACCOUNT</span>
-        <span class="ss-credits-val">$ {{vm.actorCredits}}</span>
-        {{#if vm.storeContext.cartCount}}
-        <span class="ss-credits-delta neg">−$ {{vm.storeContext.cartTotal}} staged</span>
-        <span class="ss-credits-reserve">$ {{vm.storeContext.pageContext.cartRemaining}} after</span>
-        {{/if}}
-      </div>
-    </div>
-
-    <div class="ss-tabs">
-      <button type="button" class="ss-tab {{#if (eq vm.storeContext.currentView 'browse')}}active{{/if}} {{#if vm.storeContext.selectedProduct}}active{{/if}}" data-ss-tab="browse">
-        <span class="ss-tab-glyph">⊞</span> BROWSE
-      </button>
-      <button type="button" class="ss-tab {{#if (eq vm.storeContext.currentView 'cart')}}active{{/if}}" data-ss-tab="cart">
-        <span class="ss-tab-glyph">◳</span> CART
-        {{#if vm.storeContext.cartCount}}<span class="ss-tab-count">{{vm.storeContext.cartCount}}</span>{{/if}}
-      </button>
-      <button type="button" class="ss-tab {{#if (eq vm.storeContext.currentView 'checkout')}}active{{/if}}" data-ss-tab="checkout">
-        <span class="ss-tab-glyph">◈</span> CHECKOUT
-      </button>
-      <button type="button" class="ss-tab {{#if (eq vm.storeContext.currentView 'history')}}active{{/if}}" data-ss-tab="history">
-        <span class="ss-tab-glyph">◎</span> HISTORY
-      </button>
-    </div>
-
-    {{#if vm.storeContext.isBrowseOrDetail}}
-    <div class="ss-pane ss-pane-browse">
-      <div class="ss-filters">
-        <div class="ss-filter-search">
-          <i class="fas fa-search ss-filter-ico"></i>
-          <input type="text" id="ss-search" class="ss-search-input" placeholder="SEARCH LISTINGS…" aria-label="Search store" value="{{vm.storeContext.filters.search}}"/>
-        </div>
-        <div class="ss-filter-group">
-          <span class="ss-filter-lbl">AVAIL</span>
-          <select id="ss-avail" class="ss-select">
-            <option value="all">All</option>
-            <option value="standard">Standard</option>
-            <option value="licensed">Licensed</option>
-            <option value="restricted">Restricted</option>
-            <option value="military">Military</option>
-            <option value="illegal">Illegal</option>
-            <option value="rare">Rare</option>
-          </select>
-        </div>
-        <div class="ss-filter-group">
-          <span class="ss-filter-lbl">SORT</span>
-          <select id="ss-sort" class="ss-select">
-            <option value="default">Best Match</option>
-            <option value="price-asc">Price ↑</option>
-            <option value="price-desc">Price ↓</option>
-            <option value="name-asc">Name A–Z</option>
-          </select>
-        </div>
-        <div class="ss-filter-count">
-          <span data-results-count>{{vm.storeContext.visibleItemCount}}</span> listings
-        </div>
-        <button type="button" class="ss-chip ss-chip--clear" data-action="clear-filters">✕ CLEAR</button>
-      </div>
-
-      <div class="ss-cats">
-        <button type="button" class="ss-chip {{#unless vm.storeContext.currentCategory}}active{{/unless}}" data-action="category-nav" data-category="">ALL</button>
-        {{#each vm.storeContext.categorySummary}}
-        <button type="button" class="ss-chip {{#if (eq ../vm.storeContext.currentCategory key)}}active{{/if}}" data-action="category-nav" data-category="{{key}}">
-          {{label}}<span class="ss-chip-count">{{count}}</span>
+      <header class="swse-store-surface__hud">
+        <button class="swse-store-surface__hud-back" data-shell-action="return-to-home" type="button" title="Return to Home">
+          <i class="fas fa-arrow-left"></i> HOME
         </button>
-        {{/each}}
-      </div>
-
-      {{!-- Phase 2: Secondary navigation for subcategories --}}
-      {{#if vm.storeContext.navigationModel.topCategories}}
-      {{#each vm.storeContext.navigationModel.topCategories}}
-      {{#if (eq key ../vm.storeContext.currentCategory)}}
-      {{#if children}}
-      <div class="ss-subcat-nav">
-        {{!-- "All [Category]" reset chip --}}
-        <button type="button" class="ss-chip ss-subcat-chip {{#unless ../../../vm.storeContext.currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="">
-          All {{label}}<span class="ss-chip-count">{{count}}</span>
-        </button>
-
-        {{#if (eq key 'weapons')}}
-        {{!-- WEAPONS: Group by family (Melee/Ranged) --}}
-        {{#if familyGroups.melee}}
-        <div class="ss-family-group">
-          <div class="ss-family-label">Melee</div>
-          <div class="ss-family-chips">
-            {{#each familyGroups.melee}}
-            <button type="button" class="ss-chip ss-subcat-chip {{#if (eq label ../../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
-                    data-action="subcategory-nav" data-subcategory="{{label}}">
-              {{label}}<span class="ss-chip-count">{{count}}</span>
-            </button>
-            {{/each}}
-          </div>
+        <div class="swse-store-surface__hud-center">
+          <span class="swse-store-surface__signal"><span></span><span></span><span></span><span></span></span>
+          <span class="swse-store-surface__hud-title">RENDARR'S EXCHANGE</span>
+          <span class="swse-store-surface__hud-dot {{#if vm.storeContext.cartCount}}warn{{/if}}"></span>
         </div>
-        {{/if}}
-
-        {{#if familyGroups.ranged}}
-        <div class="ss-family-group">
-          <div class="ss-family-label">Ranged</div>
-          <div class="ss-family-chips">
-            {{#each familyGroups.ranged}}
-            <button type="button" class="ss-chip ss-subcat-chip {{#if (eq label ../../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
-                    data-action="subcategory-nav" data-subcategory="{{label}}">
-              {{label}}<span class="ss-chip-count">{{count}}</span>
-            </button>
-            {{/each}}
-          </div>
+        <div class="swse-store-surface__hud-right">
+          <span class="swse-store-surface__hud-lbl">RESERVE</span>
+          <span class="swse-store-surface__hud-credits">$ {{vm.actorCredits}}</span>
         </div>
-        {{/if}}
+      </header>
 
-        {{else}}
-        {{!-- OTHER CATEGORIES: List all subcategories --}}
-        {{#each children}}
-        <button type="button" class="ss-chip ss-subcat-chip {{#if (eq label ../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
-                data-action="subcategory-nav" data-subcategory="{{label}}">
-          {{label}}<span class="ss-chip-count">{{count}}</span>
-        </button>
-        {{/each}}
-        {{/if}}
-      </div>
-      {{/if}}
-      {{/if}}
-      {{/each}}
-      {{/if}}
-
-      {{#if vm.storeContext.selectedProduct}}
-      <div class="ss-detail-panel">
-        <div class="ss-detail-header">
-          <button type="button" class="ss-detail-back" data-action="detail-back">← BACK</button>
-          <span class="ss-detail-rar ss-rar-{{vm.storeContext.selectedProduct.rarityClass}}">{{vm.storeContext.selectedProduct.rarityLabel}}</span>
-          <span class="ss-detail-avail">{{vm.storeContext.selectedProduct.availability}}</span>
-        </div>
-        <div class="ss-detail-body">
-          <div class="ss-detail-media">
-            {{#if vm.storeContext.selectedProduct.img}}
-            <img class="ss-detail-img" src="{{vm.storeContext.selectedProduct.img}}" alt="{{vm.storeContext.selectedProduct.name}}"/>
-            {{else}}
-            <div class="ss-detail-glyph">{{vm.storeContext.selectedProduct.glyph}}</div>
-            {{/if}}
-            <div class="ss-detail-price-stack">
-              {{#if vm.storeContext.selectedProduct.requiresCondition}}
-              <div class="ss-detail-price-line"><span>NEW</span><strong>$ {{vm.storeContext.selectedProduct.newCost}}</strong></div>
-              <div class="ss-detail-price-line"><span>USED</span><strong>$ {{vm.storeContext.selectedProduct.usedCost}}</strong></div>
-              {{else}}
-              <div class="ss-detail-price-line is-primary"><span>PRICE</span><strong>$ {{vm.storeContext.selectedProduct.price}}</strong></div>
-              {{/if}}
-            </div>
-          </div>
-          <div class="ss-detail-info">
-            <h2 class="ss-detail-name">{{vm.storeContext.selectedProduct.name}}</h2>
-            <div class="ss-detail-catline">
-              <span>{{vm.storeContext.selectedProduct.typeLabel}}</span>
-              {{#if vm.storeContext.selectedProduct.category}}<span>{{vm.storeContext.selectedProduct.category}}</span>{{/if}}
-              {{#if vm.storeContext.selectedProduct.subcategory}}<span>{{vm.storeContext.selectedProduct.subcategory}}</span>{{/if}}
-            </div>
-            {{#if vm.storeContext.selectedProduct.suggestionTierLabel}}
-            <div class="ss-detail-tier ss-tier-{{vm.storeContext.selectedProduct.suggestion.tier}}">
-              ◆ {{vm.storeContext.selectedProduct.suggestionTierLabel}} for your build
-            </div>
-            {{/if}}
-            {{#if vm.storeContext.selectedProduct.suggestionBullets.length}}
-            <ul class="ss-detail-bullets">
-              {{#each vm.storeContext.selectedProduct.suggestionBullets}}
-              <li>{{this}}</li>
-              {{/each}}
-            </ul>
-            {{/if}}
-            {{#if vm.storeContext.selectedProduct.description}}
-            <div class="ss-detail-desc">{{{vm.storeContext.selectedProduct.description}}}</div>
-            {{/if}}
-            {{#if vm.storeContext.selectedProduct.techDetailsHtml}}
-            <div class="ss-detail-tech">{{{vm.storeContext.selectedProduct.techDetailsHtml}}}</div>
-            {{/if}}
-          </div>
-        </div>
-        <div class="ss-detail-foot">
-          {{#if vm.storeContext.selectedProduct.requiresCondition}}
-          <button type="button" class="ss-btn" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="used">+ ADD USED</button>
-          <button type="button" class="ss-btn ss-btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="new">+ ADD NEW</button>
+      <header class="swse-store-surface__hero">
+        <div class="swse-store-surface__rendarr-portrait">
+          {{#if vm.storeContext.rendarrImage}}
+          <img src="{{vm.storeContext.rendarrImage}}" alt="Rendarr" class="swse-store-surface__rendarr-img"/>
           {{else}}
-          <button type="button" class="ss-btn ss-btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="{{vm.storeContext.selectedProduct.type}}">+ ADD TO CART</button>
+          <svg viewBox="0 0 64 64" class="swse-store-surface__rendarr-svg"><circle cx="32" cy="24" r="14" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 60 Q32 38 56 60" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
           {{/if}}
         </div>
-        {{#if vm.storeContext.selectedProduct.flavorReviewsHtml}}
-        <div class="ss-detail-reviews">
-          <div class="ss-detail-reviews-title">Marketplace Reviews</div>
-          {{{vm.storeContext.selectedProduct.flavorReviewsHtml}}}
+        <div class="swse-store-surface__rendarr-meta">
+          <div class="swse-store-surface__rendarr-name"><span class="swse-store-surface__rendarr-mark">⚡</span>RENDARR'S EXCHANGE</div>
+          <div class="swse-store-surface__rendarr-sub">Quartermaster · Galactic Trade Network</div>
+          <div class="swse-store-surface__rendarr-quote">
+            {{#if vm.storeContext.rendarrWelcome}}"{{vm.storeContext.rendarrWelcome}}"{{else}}"What can I do for you today?"{{/if}}
+          </div>
         </div>
+        <div class="swse-store-surface__credits-block">
+          <span class="swse-store-surface__credits-lbl">ACCOUNT</span>
+          <span class="swse-store-surface__credits-val">$ {{vm.actorCredits}}</span>
+          {{#if vm.storeContext.cartCount}}
+          <span class="swse-store-surface__credits-delta neg">−$ {{vm.storeContext.cartTotal}} staged</span>
+          <span class="swse-store-surface__credits-reserve">$ {{vm.storeContext.pageContext.cartRemaining}} after</span>
+          {{/if}}
+        </div>
+      </header>
+
+      <nav class="swse-store-surface__tabs">
+        <button type="button" class="swse-store-surface__tab {{#if (eq vm.storeContext.currentView 'browse')}}active{{/if}} {{#if vm.storeContext.selectedProduct}}active{{/if}}" data-ss-tab="browse">
+          <span class="swse-store-surface__tab-glyph">⊞</span> BROWSE
+        </button>
+        <button type="button" class="swse-store-surface__tab {{#if (eq vm.storeContext.currentView 'cart')}}active{{/if}}" data-ss-tab="cart">
+          <span class="swse-store-surface__tab-glyph">◳</span> CART
+          {{#if vm.storeContext.cartCount}}<span class="swse-store-surface__tab-count">{{vm.storeContext.cartCount}}</span>{{/if}}
+        </button>
+        <button type="button" class="swse-store-surface__tab {{#if (eq vm.storeContext.currentView 'checkout')}}active{{/if}}" data-ss-tab="checkout">
+          <span class="swse-store-surface__tab-glyph">◈</span> CHECKOUT
+        </button>
+        <button type="button" class="swse-store-surface__tab {{#if (eq vm.storeContext.currentView 'history')}}active{{/if}}" data-ss-tab="history">
+          <span class="swse-store-surface__tab-glyph">◎</span> HISTORY
+        </button>
+      </nav>
+
+      <main class="swse-store-surface__screen">
+
+        {{#if vm.storeContext.isBrowseOrDetail}}
+        <section class="swse-store-surface__filters">
+          <div class="swse-store-surface__filter-search">
+            <i class="fas fa-search swse-store-surface__filter-ico"></i>
+            <input type="text" id="ss-search" class="swse-store-surface__search-input" placeholder="SEARCH LISTINGS…" aria-label="Search store" value="{{vm.storeContext.filters.search}}"/>
+          </div>
+          <div class="swse-store-surface__filter-group">
+            <span class="swse-store-surface__filter-lbl">AVAIL</span>
+            <select id="ss-avail" class="swse-store-surface__select">
+              <option value="all">All</option>
+              <option value="standard">Standard</option>
+              <option value="licensed">Licensed</option>
+              <option value="restricted">Restricted</option>
+              <option value="military">Military</option>
+              <option value="illegal">Illegal</option>
+              <option value="rare">Rare</option>
+            </select>
+          </div>
+          <div class="swse-store-surface__filter-group">
+            <span class="swse-store-surface__filter-lbl">SORT</span>
+            <select id="ss-sort" class="swse-store-surface__select">
+              <option value="default">Best Match</option>
+              <option value="price-asc">Price ↑</option>
+              <option value="price-desc">Price ↓</option>
+              <option value="name-asc">Name A–Z</option>
+            </select>
+          </div>
+          <div class="swse-store-surface__filter-count">
+            <span data-results-count>{{vm.storeContext.visibleItemCount}}</span> listings
+          </div>
+          <button type="button" class="swse-store-surface__filter-clear" data-action="clear-filters">✕ CLEAR</button>
+        </section>
+
+        <nav class="swse-store-surface__category-tabs">
+          <button type="button" class="swse-store-surface__category-chip {{#unless vm.storeContext.currentCategory}}active{{/unless}}" data-action="category-nav" data-category="">ALL</button>
+          {{#each vm.storeContext.categorySummary}}
+          <button type="button" class="swse-store-surface__category-chip {{#if (eq ../vm.storeContext.currentCategory key)}}active{{/if}}" data-action="category-nav" data-category="{{key}}">
+            {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
+          </button>
+          {{/each}}
+        </nav>
+
+        {{!-- Phase 2: Secondary navigation for subcategories --}}
+        {{#if vm.storeContext.navigationModel.topCategories}}
+        {{#each vm.storeContext.navigationModel.topCategories}}
+        {{#if (eq key ../vm.storeContext.currentCategory)}}
+        {{#if children}}
+        <nav class="swse-store-surface__subnav">
+          {{!-- "All [Category]" reset chip --}}
+          <button type="button" class="swse-store-surface__subcat-chip {{#unless ../../../vm.storeContext.currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="">
+            All {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
+          </button>
+
+          {{#if (eq key 'weapons')}}
+          {{!-- WEAPONS: Group by family (Melee/Ranged) --}}
+          {{#if familyGroups.melee}}
+          <div class="swse-store-surface__family-group">
+            <div class="swse-store-surface__family-label">Melee</div>
+            <div class="swse-store-surface__family-chips">
+              {{#each familyGroups.melee}}
+              <button type="button" class="swse-store-surface__subcat-chip {{#if (eq label ../../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
+                      data-action="subcategory-nav" data-subcategory="{{label}}">
+                {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
+              </button>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+
+          {{#if familyGroups.ranged}}
+          <div class="swse-store-surface__family-group">
+            <div class="swse-store-surface__family-label">Ranged</div>
+            <div class="swse-store-surface__family-chips">
+              {{#each familyGroups.ranged}}
+              <button type="button" class="swse-store-surface__subcat-chip {{#if (eq label ../../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
+                      data-action="subcategory-nav" data-subcategory="{{label}}">
+                {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
+              </button>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+
+          {{else}}
+          {{!-- OTHER CATEGORIES: List all subcategories --}}
+          {{#each children}}
+          <button type="button" class="swse-store-surface__subcat-chip {{#if (eq label ../../../vm.storeContext.currentSubcategory)}}active{{/if}}"
+                  data-action="subcategory-nav" data-subcategory="{{label}}">
+            {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
+          </button>
+          {{/each}}
+          {{/if}}
+        </nav>
         {{/if}}
-      </div>
-      {{/if}}
+        {{/if}}
+        {{/each}}
+        {{/if}}
 
-      <div class="store-card-grid ss-browse-grid">
-        {{#each vm.storeContext.allItems}}
-        <div class="store-card ss-rar-{{this.rarityClass}} {{#if (eq ../vm.storeContext.selectedProductId this.id)}}is-selected{{/if}}"
-             data-item-id="{{this.id}}"
-             data-item-type="{{this.type}}"
-             data-name="{{this.name}}"
-             data-category="{{this.category}}"
-             data-subcategory="{{this.subcategory}}"
-             data-availability="{{this.availability}}"
-             data-price="{{#if this.cost}}{{this.cost}}{{else}}{{this.finalCost}}{{/if}}"
-             data-score="{{#if this.suggestion}}{{this.suggestion.score}}{{else}}0{{/if}}">
-          <span class="sc-rar-tag">{{this.rarityLabel}}</span>
-          <div class="sc-hero">
-            {{#if this.img}}
-            <img class="sc-thumb" src="{{this.img}}" alt="{{this.name}}"/>
-            {{else}}
-            <div class="sc-glyph-panel"><span class="sc-glyph">{{this.glyph}}</span></div>
-            {{/if}}
-          </div>
-          <div class="sc-body">
-            <div class="sc-name">{{this.name}}</div>
-            <div class="sc-cat">{{this.typeLabel}} · {{this.category}}{{#if this.subcategory}} · {{this.subcategory}}{{/if}}</div>
-            <div class="sc-meta-row">
-              <span class="sc-meta-pill">{{this.availability}}</span>
-              {{#if this.suggestion.tierLabel}}<span class="sc-tier sc-tier--{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>{{/if}}
+        <section class="swse-store-surface__browse">
+          <div class="swse-store-surface__grid">
+
+            {{#each vm.storeContext.allItems}}
+            <div class="swse-store-surface__card swse-store-surface__card--rar-{{this.rarityClass}} {{#if (eq ../vm.storeContext.selectedProductId this.id)}}is-selected{{/if}}"
+                 data-item-id="{{this.id}}"
+                 data-item-type="{{this.type}}"
+                 data-name="{{this.name}}"
+                 data-category="{{this.category}}"
+                 data-subcategory="{{this.subcategory}}"
+                 data-availability="{{this.availability}}"
+                 data-price="{{#if this.cost}}{{this.cost}}{{else}}{{this.finalCost}}{{/if}}"
+                 data-score="{{#if this.suggestion}}{{this.suggestion.score}}{{else}}0{{/if}}">
+              <span class="swse-store-surface__card-rar-tag">{{this.rarityLabel}}</span>
+              <div class="swse-store-surface__card-hero">
+                {{#if this.img}}
+                <img class="swse-store-surface__card-thumb" src="{{this.img}}" alt="{{this.name}}"/>
+                {{else}}
+                <div class="swse-store-surface__card-glyph-panel"><span class="swse-store-surface__card-glyph">{{this.glyph}}</span></div>
+                {{/if}}
+              </div>
+              <div class="swse-store-surface__card-body">
+                <div class="swse-store-surface__card-name">{{this.name}}</div>
+                <div class="swse-store-surface__card-cat">{{this.typeLabel}} · {{this.category}}{{#if this.subcategory}} · {{this.subcategory}}{{/if}}</div>
+                <div class="swse-store-surface__card-meta-row">
+                  <span class="swse-store-surface__card-meta-pill">{{this.availability}}</span>
+                  {{#if this.suggestion.tierLabel}}<span class="swse-store-surface__card-tier swse-store-surface__card-tier--{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>{{/if}}
+                </div>
+              </div>
+              <div class="swse-store-surface__card-foot">
+                {{#if this.costUsed}}
+                <span class="swse-store-surface__card-price">NEW $ {{this.cost}} · USED $ {{this.costUsed}}</span>
+                {{else}}
+                <span class="swse-store-surface__card-price">$ {{this.finalCost}}</span>
+                {{/if}}
+                <div class="swse-store-surface__card-actions">
+                  <button type="button" class="swse-store-surface__card-btn" data-action="expand-product" data-item-id="{{this.id}}">DETAILS</button>
+                  {{#if (eq this.type 'vehicle')}}
+                  <button type="button" class="swse-store-surface__card-btn" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="used">USED</button>
+                  <button type="button" class="swse-store-surface__card-btn swse-store-surface__card-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="new">NEW</button>
+                  {{else}}
+                  <button type="button" class="swse-store-surface__card-btn swse-store-surface__card-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="{{this.type}}">+ ADD</button>
+                  {{/if}}
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="sc-foot">
-            {{#if this.costUsed}}
-            <span class="sc-price">NEW $ {{this.cost}} · USED $ {{this.costUsed}}</span>
-            {{else}}
-            <span class="sc-price">$ {{this.finalCost}}</span>
-            {{/if}}
-            <div class="sc-actions">
-              <button type="button" class="sc-btn" data-action="expand-product" data-item-id="{{this.id}}">DETAILS</button>
-              {{#if (eq this.type 'vehicle')}}
-              <button type="button" class="sc-btn" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="used">USED</button>
-              <button type="button" class="sc-btn sc-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="new">NEW</button>
-              {{else}}
-              <button type="button" class="sc-btn sc-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="{{this.type}}">+ ADD</button>
-              {{/if}}
-            </div>
-          </div>
-        </div>
-        {{/each}}
-      </div>
-      <div class="store-browse-empty ss-empty" style="display:none">
-        <div class="ss-empty-glyph">◌</div>
-        <div class="ss-empty-msg">No listings match the current filters.</div>
-        <div class="ss-empty-sub">Try another category or clear the search parameters.</div>
-      </div>
-    </div>
-    {{/if}}
-
-    {{#if (eq vm.storeContext.currentView 'cart')}}
-    <div class="ss-pane ss-pane-cart">
-      {{#if vm.storeContext.cartEntries.length}}
-      <div class="ss-cart-list">
-        {{#each vm.storeContext.cartEntries}}
-        <div class="ss-cart-row">
-          {{#if this.img}}<img class="ss-cart-img" src="{{this.img}}" alt="{{this.name}}"/>{{else}}<div class="ss-cart-glyph">{{this.glyph}}</div>{{/if}}
-          <div class="ss-cart-meta">
-            <div class="ss-cart-name">{{this.name}}</div>
-            <div class="ss-cart-type">{{this.summary}}</div>
-          </div>
-          <div class="ss-cart-qty">×{{this.qty}}</div>
-          <div class="ss-cart-linecost">$ {{this.cost}}</div>
-          <button type="button" class="ss-btn ss-btn--ghost" data-action="remove-from-cart" data-item-id="{{this.id}}" data-item-type="{{this.itemType}}" data-condition="{{this.condition}}">REMOVE</button>
-        </div>
-        {{/each}}
-      </div>
-      <div class="ss-cart-summary">
-        <div class="ss-cart-summary-row">
-          <span>TOTAL</span>
-          <span class="ss-cart-total">$ {{vm.storeContext.cartTotal}}</span>
-        </div>
-        <div class="ss-cart-summary-row dim">
-          <span>AVAILABLE</span>
-          <span>$ {{vm.actorCredits}}</span>
-        </div>
-        <div class="ss-cart-summary-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}}">
-          <span>RESERVE AFTER TRADE</span>
-          <span>$ {{vm.storeContext.pageContext.cartRemaining}}</span>
-        </div>
-        <div class="ss-cart-actions">
-          <button type="button" class="ss-btn" data-action="clear-cart">CLEAR CART</button>
-          <button type="button" class="ss-btn ss-btn--primary" data-action="proceed-checkout">PROCEED TO CHECKOUT →</button>
-        </div>
-      </div>
-      {{else}}
-      <div class="ss-empty">
-        <div class="ss-empty-glyph">◳</div>
-        <div class="ss-empty-msg">Your cart is empty.</div>
-        <div class="ss-empty-sub">Browse listings and stage gear before checkout.</div>
-        <button type="button" class="ss-btn ss-btn--primary" data-ss-tab="browse">→ BROWSE LISTINGS</button>
-      </div>
-      {{/if}}
-    </div>
-    {{/if}}
-
-    {{#if (eq vm.storeContext.currentView 'checkout')}}
-    <div class="ss-pane ss-pane-checkout">
-      <div class="ss-checkout-header">
-        <span class="ss-checkout-title">◈ SETTLEMENT WINDOW</span>
-        <span class="ss-checkout-sub">Review the locked manifest before confirming the trade.</span>
-      </div>
-      {{#if vm.storeContext.cartEntries.length}}
-      <div class="ss-checkout-manifest">
-        {{#each vm.storeContext.cartEntries}}
-        <div class="ss-checkout-row">
-          <span class="ss-checkout-row-name">{{this.name}}</span>
-          <span class="ss-checkout-row-type">{{this.summary}} · ×{{this.qty}}</span>
-          <span class="ss-checkout-row-cost">$ {{this.cost}}</span>
-        </div>
-        {{/each}}
-      </div>
-      <div class="ss-checkout-ledger">
-        <div class="ss-checkout-ledger-row"><span>AVAILABLE CREDITS</span><span>$ {{vm.actorCredits}}</span></div>
-        <div class="ss-checkout-ledger-row debit"><span>TRADE DEBIT</span><span>−$ {{vm.storeContext.cartTotal}}</span></div>
-        <div class="ss-checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total"><span>REMAINING RESERVE</span><span>$ {{vm.storeContext.pageContext.cartRemaining}}</span></div>
-      </div>
-      <div class="ss-checkout-actions">
-        <button type="button" class="ss-btn" data-action="return-to-cart">← RETURN TO CART</button>
-        <button type="button" class="ss-btn ss-btn--confirm" data-action="confirm-checkout">◈ CONFIRM TRADE</button>
-      </div>
-      {{else}}
-      <div class="ss-empty">
-        <div class="ss-empty-msg">Nothing to settle — cart is empty.</div>
-        <button type="button" class="ss-btn" data-action="return-to-cart">← RETURN TO CART</button>
-      </div>
-      {{/if}}
-    </div>
-    {{/if}}
-
-    {{#if (eq vm.storeContext.currentView 'history')}}
-    <div class="ss-pane ss-pane-history">
-      {{#if vm.storeContext.purchaseHistoryEntries.length}}
-      <div class="ss-history-list">
-        {{#each vm.storeContext.purchaseHistoryEntries}}
-        <div class="ss-history-entry">
-          <div class="ss-history-entry-header">
-            <span class="ss-history-date">{{this.timestamp}}</span>
-            <span class="ss-history-total">$ {{this.total}}</span>
-          </div>
-          <div class="ss-history-items">
-            {{#each this.items}}
-            <span class="ss-history-item">{{this.name}} ×{{this.qty}} (${{this.cost}})</span>
             {{/each}}
           </div>
-        </div>
-        {{/each}}
-      </div>
-      {{else}}
-      <div class="ss-empty">
-        <div class="ss-empty-glyph">◎</div>
-        <div class="ss-empty-msg">No purchase history.</div>
-        <div class="ss-empty-sub">Previous exchange logs will appear here.</div>
-      </div>
-      {{/if}}
-    </div>
-    {{/if}}
 
-  </form>
+          {{!-- Side rail: Selected product or mini cart --}}
+          <aside class="swse-store-surface__rail">
+            {{#if vm.storeContext.selectedProduct}}
+            <div class="swse-store-surface__detail-panel">
+              <div class="swse-store-surface__detail-header">
+                <button type="button" class="swse-store-surface__detail-back" data-action="detail-back">← BACK</button>
+                <span class="swse-store-surface__detail-rar swse-store-surface__detail-rar-{{vm.storeContext.selectedProduct.rarityClass}}">{{vm.storeContext.selectedProduct.rarityLabel}}</span>
+                <span class="swse-store-surface__detail-avail">{{vm.storeContext.selectedProduct.availability}}</span>
+              </div>
+              <div class="swse-store-surface__detail-body">
+                <div class="swse-store-surface__detail-media">
+                  {{#if vm.storeContext.selectedProduct.img}}
+                  <img class="swse-store-surface__detail-img" src="{{vm.storeContext.selectedProduct.img}}" alt="{{vm.storeContext.selectedProduct.name}}"/>
+                  {{else}}
+                  <div class="swse-store-surface__detail-glyph">{{vm.storeContext.selectedProduct.glyph}}</div>
+                  {{/if}}
+                  <div class="swse-store-surface__detail-price-stack">
+                    {{#if vm.storeContext.selectedProduct.requiresCondition}}
+                    <div class="swse-store-surface__detail-price-line"><span>NEW</span><strong>$ {{vm.storeContext.selectedProduct.newCost}}</strong></div>
+                    <div class="swse-store-surface__detail-price-line"><span>USED</span><strong>$ {{vm.storeContext.selectedProduct.usedCost}}</strong></div>
+                    {{else}}
+                    <div class="swse-store-surface__detail-price-line is-primary"><span>PRICE</span><strong>$ {{vm.storeContext.selectedProduct.price}}</strong></div>
+                    {{/if}}
+                  </div>
+                </div>
+                <div class="swse-store-surface__detail-info">
+                  <h2 class="swse-store-surface__detail-name">{{vm.storeContext.selectedProduct.name}}</h2>
+                  <div class="swse-store-surface__detail-catline">
+                    <span>{{vm.storeContext.selectedProduct.typeLabel}}</span>
+                    {{#if vm.storeContext.selectedProduct.category}}<span>{{vm.storeContext.selectedProduct.category}}</span>{{/if}}
+                    {{#if vm.storeContext.selectedProduct.subcategory}}<span>{{vm.storeContext.selectedProduct.subcategory}}</span>{{/if}}
+                  </div>
+                  {{#if vm.storeContext.selectedProduct.suggestionTierLabel}}
+                  <div class="swse-store-surface__detail-tier swse-store-surface__detail-tier-{{vm.storeContext.selectedProduct.suggestion.tier}}">
+                    ◆ {{vm.storeContext.selectedProduct.suggestionTierLabel}} for your build
+                  </div>
+                  {{/if}}
+                  {{#if vm.storeContext.selectedProduct.suggestionBullets.length}}
+                  <ul class="swse-store-surface__detail-bullets">
+                    {{#each vm.storeContext.selectedProduct.suggestionBullets}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                  </ul>
+                  {{/if}}
+                  {{#if vm.storeContext.selectedProduct.description}}
+                  <div class="swse-store-surface__detail-desc">{{{vm.storeContext.selectedProduct.description}}}</div>
+                  {{/if}}
+                  {{#if vm.storeContext.selectedProduct.techDetailsHtml}}
+                  <div class="swse-store-surface__detail-tech">{{{vm.storeContext.selectedProduct.techDetailsHtml}}}</div>
+                  {{/if}}
+                </div>
+              </div>
+              <div class="swse-store-surface__detail-foot">
+                {{#if vm.storeContext.selectedProduct.requiresCondition}}
+                <button type="button" class="swse-store-surface__btn" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="used">+ ADD USED</button>
+                <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="new">+ ADD NEW</button>
+                {{else}}
+                <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="{{vm.storeContext.selectedProduct.type}}">+ ADD TO CART</button>
+                {{/if}}
+              </div>
+              {{#if vm.storeContext.selectedProduct.flavorReviewsHtml}}
+              <div class="swse-store-surface__detail-reviews">
+                <div class="swse-store-surface__detail-reviews-title">Marketplace Reviews</div>
+                {{{vm.storeContext.selectedProduct.flavorReviewsHtml}}}
+              </div>
+              {{/if}}
+            </div>
+            {{else}}
+            <div class="swse-store-surface__mini-cart">
+              {{#if vm.storeContext.cartEntries.length}}
+              <div class="swse-store-surface__mini-cart-header">STAGED ({{vm.storeContext.cartCount}})</div>
+              <div class="swse-store-surface__mini-cart-list">
+                {{#each vm.storeContext.cartEntries}}
+                <div class="swse-store-surface__mini-cart-item">
+                  <div class="swse-store-surface__mini-cart-name">{{this.name}}</div>
+                  <div class="swse-store-surface__mini-cart-qty">×{{this.qty}}</div>
+                  <div class="swse-store-surface__mini-cart-price">$ {{this.cost}}</div>
+                </div>
+                {{/each}}
+              </div>
+              <div class="swse-store-surface__mini-cart-summary">
+                <div class="swse-store-surface__mini-cart-row"><span>TOTAL</span><strong>$ {{vm.storeContext.cartTotal}}</strong></div>
+                <div class="swse-store-surface__mini-cart-row"><span>REMAINING</span><strong>$ {{vm.storeContext.pageContext.cartRemaining}}</strong></div>
+              </div>
+              {{else}}
+              <div class="swse-store-surface__mini-cart-empty">
+                <div class="swse-store-surface__mini-cart-empty-glyph">◳</div>
+                <div class="swse-store-surface__mini-cart-empty-msg">No items staged</div>
+              </div>
+              {{/if}}
+            </div>
+            {{/if}}
+          </aside>
+        </section>
+
+        <div class="swse-store-surface__empty" style="display:none">
+          <div class="swse-store-surface__empty-glyph">◌</div>
+          <div class="swse-store-surface__empty-msg">No listings match the current filters.</div>
+          <div class="swse-store-surface__empty-sub">Try another category or clear the search parameters.</div>
+        </div>
+        {{/if}}
+
+        {{#if (eq vm.storeContext.currentView 'cart')}}
+        <section class="swse-store-surface__pane swse-store-surface__pane-cart">
+          {{#if vm.storeContext.cartEntries.length}}
+          <div class="swse-store-surface__cart-list">
+            {{#each vm.storeContext.cartEntries}}
+            <div class="swse-store-surface__cart-row">
+              {{#if this.img}}<img class="swse-store-surface__cart-img" src="{{this.img}}" alt="{{this.name}}"/>{{else}}<div class="swse-store-surface__cart-glyph">{{this.glyph}}</div>{{/if}}
+              <div class="swse-store-surface__cart-meta">
+                <div class="swse-store-surface__cart-name">{{this.name}}</div>
+                <div class="swse-store-surface__cart-type">{{this.summary}}</div>
+              </div>
+              <div class="swse-store-surface__cart-qty">×{{this.qty}}</div>
+              <div class="swse-store-surface__cart-linecost">$ {{this.cost}}</div>
+              <button type="button" class="swse-store-surface__btn swse-store-surface__btn--ghost" data-action="remove-from-cart" data-item-id="{{this.id}}" data-item-type="{{this.itemType}}" data-condition="{{this.condition}}">REMOVE</button>
+            </div>
+            {{/each}}
+          </div>
+          <div class="swse-store-surface__cart-summary">
+            <div class="swse-store-surface__cart-summary-row">
+              <span>TOTAL</span>
+              <span class="swse-store-surface__cart-total">$ {{vm.storeContext.cartTotal}}</span>
+            </div>
+            <div class="swse-store-surface__cart-summary-row dim">
+              <span>AVAILABLE</span>
+              <span>$ {{vm.actorCredits}}</span>
+            </div>
+            <div class="swse-store-surface__cart-summary-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}}">
+              <span>RESERVE AFTER TRADE</span>
+              <span>$ {{vm.storeContext.pageContext.cartRemaining}}</span>
+            </div>
+            <div class="swse-store-surface__cart-actions">
+              <button type="button" class="swse-store-surface__btn" data-action="clear-cart">CLEAR CART</button>
+              <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-action="proceed-checkout">PROCEED TO CHECKOUT →</button>
+            </div>
+          </div>
+          {{else}}
+          <div class="swse-store-surface__empty">
+            <div class="swse-store-surface__empty-glyph">◳</div>
+            <div class="swse-store-surface__empty-msg">Your cart is empty.</div>
+            <div class="swse-store-surface__empty-sub">Browse listings and stage gear before checkout.</div>
+            <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-ss-tab="browse">→ BROWSE LISTINGS</button>
+          </div>
+          {{/if}}
+        </section>
+        {{/if}}
+
+        {{#if (eq vm.storeContext.currentView 'checkout')}}
+        <section class="swse-store-surface__pane swse-store-surface__pane-checkout">
+          <div class="swse-store-surface__checkout-header">
+            <span class="swse-store-surface__checkout-title">◈ SETTLEMENT WINDOW</span>
+            <span class="swse-store-surface__checkout-sub">Review the locked manifest before confirming the trade.</span>
+          </div>
+          {{#if vm.storeContext.cartEntries.length}}
+          <div class="swse-store-surface__checkout-manifest">
+            {{#each vm.storeContext.cartEntries}}
+            <div class="swse-store-surface__checkout-row">
+              <span class="swse-store-surface__checkout-row-name">{{this.name}}</span>
+              <span class="swse-store-surface__checkout-row-type">{{this.summary}} · ×{{this.qty}}</span>
+              <span class="swse-store-surface__checkout-row-cost">$ {{this.cost}}</span>
+            </div>
+            {{/each}}
+          </div>
+          <div class="swse-store-surface__checkout-ledger">
+            <div class="swse-store-surface__checkout-ledger-row"><span>AVAILABLE CREDITS</span><span>$ {{vm.actorCredits}}</span></div>
+            <div class="swse-store-surface__checkout-ledger-row debit"><span>TRADE DEBIT</span><span>−$ {{vm.storeContext.cartTotal}}</span></div>
+            <div class="swse-store-surface__checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total"><span>REMAINING RESERVE</span><span>$ {{vm.storeContext.pageContext.cartRemaining}}</span></div>
+          </div>
+          <div class="swse-store-surface__checkout-actions">
+            <button type="button" class="swse-store-surface__btn" data-action="return-to-cart">← RETURN TO CART</button>
+            <button type="button" class="swse-store-surface__btn swse-store-surface__btn--confirm" data-action="confirm-checkout">◈ CONFIRM TRADE</button>
+          </div>
+          {{else}}
+          <div class="swse-store-surface__empty">
+            <div class="swse-store-surface__empty-msg">Nothing to settle — cart is empty.</div>
+            <button type="button" class="swse-store-surface__btn" data-action="return-to-cart">← RETURN TO CART</button>
+          </div>
+          {{/if}}
+        </section>
+        {{/if}}
+
+        {{#if (eq vm.storeContext.currentView 'history')}}
+        <section class="swse-store-surface__pane swse-store-surface__pane-history">
+          {{#if vm.storeContext.purchaseHistoryEntries.length}}
+          <div class="swse-store-surface__history-list">
+            {{#each vm.storeContext.purchaseHistoryEntries}}
+            <div class="swse-store-surface__history-entry">
+              <div class="swse-store-surface__history-entry-header">
+                <span class="swse-store-surface__history-date">{{this.timestamp}}</span>
+                <span class="swse-store-surface__history-total">$ {{this.total}}</span>
+              </div>
+              <div class="swse-store-surface__history-items">
+                {{#each this.items}}
+                <span class="swse-store-surface__history-item">{{this.name}} ×{{this.qty}} (${{this.cost}})</span>
+                {{/each}}
+              </div>
+            </div>
+            {{/each}}
+          </div>
+          {{else}}
+          <div class="swse-store-surface__empty">
+            <div class="swse-store-surface__empty-glyph">◎</div>
+            <div class="swse-store-surface__empty-msg">No purchase history.</div>
+            <div class="swse-store-surface__empty-sub">Previous exchange logs will appear here.</div>
+          </div>
+          {{/if}}
+        </section>
+        {{/if}}
+
+      </main>
+    </form>
   {{/unless}}
 
-  {{else}}
-  <div class="ss-error">
-    <i class="fas fa-exclamation-triangle"></i>
-    <span>Unable to load store.</span>
-  </div>
-  {{/if}}
+    {{else}}
+    <div class="swse-store-surface__error">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Unable to load store.</span>
+    </div>
+    {{/if}}
+    </section>
 
 </div>
