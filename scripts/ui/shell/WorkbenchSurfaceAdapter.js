@@ -69,8 +69,8 @@ export class WorkbenchSurfaceAdapter {
   }
 
   /**
-   * Build the view model for this surface by calling _prepareContext().
-   * Returns the full workbench context (categories, items, upgrades, footer, etc).
+   * Build the view model for this surface by rendering the full workbench template.
+   * Mirrors the pattern used by CustomizationSurfaceAdapter.
    *
    * @returns {Promise<object>}
    */
@@ -81,9 +81,15 @@ export class WorkbenchSurfaceAdapter {
 
     try {
       const context = await this._workbench._prepareContext({});
+      const contentHtml = await foundry.applications.handlebars.renderTemplate(
+        'systems/foundryvtt-swse/templates/apps/customization/item-customization-workbench.hbs',
+        context
+      );
+
       return {
         id: 'workbench',
         title: 'Armory // Customization',
+        contentHtml,
         vm: context,
         isReady: true
       };

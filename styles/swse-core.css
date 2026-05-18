@@ -1,4 +1,6 @@
-@import url("apps/unified-customization-workbench.css");
+/* Deprecated: unified-customization-workbench.css is no longer used.
+   The workbench now uses item-customization-workbench.css loaded via system.json */
+/* @import url("apps/unified-customization-workbench.css"); */
 /* ============================================================
    SWSE DATAPAD CORE THEME (V2 SAFE)
    Fully Namespaced — No Global Overrides
