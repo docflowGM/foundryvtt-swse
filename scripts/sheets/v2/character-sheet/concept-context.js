@@ -414,15 +414,107 @@ function buildTalentsTab(context) {
   };
 }
 
-function normalizeForcePower(power, discarded = false) {
-  const tags = asArray(power?.system?.tags ?? power?.tags).map((tag) => String(tag));
+function forceText(value) {
+  return (typeof value === 'string' ? value : String(value || '')).replace(/<[^>]*>/g, '').trim();
+}
+
+function forceTextExcerpt(value, max = 160) {
+  const text = forceText(value);
+  return text.length > max ? text.slice(0, max).replace(/\s+\S*$/, '') + '…' : text;
+}
+
+function getForceDescriptorTokens(power) {
+  const system = power?.system ?? {};
+  return [
+    system.discipline,
+    ...(Array.isArray(system.descriptor) ? system.descriptor : []),
+    ...(Array.isArray(system.tags) ? system.tags : []),
+    ...(Array.isArray(power?.tags) ? power.tags : []),
+    power?.name
+  ]
+    .filter(Boolean)
+    .map((v) => String(v).toLowerCase());
+}
+
+function getForceCardP(power, isForm = false) {
+  if (isForm) return 'form';
+  const tokens = getForceDescriptorTokens(power).join(' ');
+  if (tokens.includes('dark')) return 'dark';
+  if (tokens.includes('light') || tokens.includes('vital') || tokens.includes('healing')) return 'light';
+  if (tokens.includes('telekinetic') || tokens.includes('tk') || tokens.includes('move object') || tokens.includes('slam') || tokens.includes('thrust') || tokens.includes('grip')) return 'tk';
+  if (tokens.includes('mind') || tokens.includes('telepathic') || tokens.includes('illusion')) return 'mind';
+  return 'neutral';
+}
+
+function getForceDescriptorLabels(power, p) {
+  const system = power?.system ?? {};
+  const labels = Array.isArray(system.descriptor)
+    ? system.descriptor.map((v) => String(v)).filter(Boolean)
+    : [];
+  if (!labels.length) {
+    if (p === 'dark') labels.push('Dark Side');
+    else if (p === 'light') labels.push('Light Side');
+    else if (p === 'tk') labels.push('Telekinetic');
+    else if (p === 'mind') labels.push('Mind-Affecting');
+  }
+  return labels.slice(0, 3);
+}
+
+function getForceSymbol(power, p) {
+  if (p === 'dark') return '⚡';
+  if (p === 'light') return '✦';
+  if (p === 'tk') return '◎';
+  if (p === 'mind') return '◉';
+  if (p === 'form') return '◆';
+  return '✧';
+}
+
+function getForceDcRows(power) {
+  const system = power?.system ?? {};
+  const chart = Array.isArray(system.dcChart) ? system.dcChart : [];
+  if (chart.length) {
+    return chart.map((row) => ({
+      dc: row.dc ?? row.min ?? '',
+      effect: forceText(row.description || row.effect || row.effectSummary || '')
+    })).filter((row) => row.dc || row.effect);
+  }
+  const tiers = Array.isArray(system.resolution?.tiers) ? system.resolution.tiers : [];
+  return tiers.map((row) => ({
+    dc: row.min ?? row.dc ?? '',
+    effect: forceText(row.description || row.effect || row.effectSummary || '')
+  })).filter((row) => row.dc || row.effect);
+}
+
+function normalizeForcePower(power, discarded = false, options = {}) {
+  const isForm = options.type === 'form';
+  const p = getForceCardP(power, isForm);
+  const dcRows = getForceDcRows(power);
+  const system = power?.system ?? {};
+  const rawTags = system.tags ?? power?.tags;
+  const tags = (Array.isArray(rawTags) ? rawTags : []).map((tag) => String(tag));
+  const descriptorLabels = getForceDescriptorLabels(power, p);
+  const desc = forceText(system.effect || system.description || power?.description || power?.summary || '');
+  const blurb = forceTextExcerpt(system.summary || system.effect || system.description || power?.summary || '', 150);
+
   return {
     id: power?.id || '',
     name: power?.name || 'Unnamed Power',
-    discarded,
+    img: power?.img || '',
+    p,
+    type: isForm ? 'form' : 'force',
+    sym: getForceSymbol(power, p),
     tags,
-    tagString: tags.join(' '),
-    summary: excerpt(power?.system?.summary || power?.system?.description || power?.summary, 160)
+    descriptorLabels,
+    form: forceText(system.form || system.lightsaberForm || power?.form || ''),
+    tagString: [...tags, ...descriptorLabels].join(' '),
+    blurb,
+    desc,
+    dcRows,
+    hasDcRows: dcRows.length > 0,
+    fpOk: p !== 'dark',
+    discarded,
+    // Legacy fields kept for backward compat with old force-tab
+    summary: forceTextExcerpt(system.summary || system.description || power?.summary || '', 160)
   };
 }
 
@@ -451,6 +543,48 @@ function buildForceTab(context) {
     hasRecoverable: discard.length > 0
   } : { pending: false, recoverableCount: discard.length, hasRecoverable: discard.length > 0 };
 
+  // Force Suite: split hand into force powers vs lightsaber form powers
+  const forceSuiteHand = hand.filter((power) => power.type !== 'form');
+  const forceSuiteForms = hand.filter((power) => power.type === 'form');
+
+  // Resolve Use the Force total from the skills panel
+  const skillsEntries = asArray(context.skillsPanel?.skills ?? context.skillsPanel?.entries);
+  const utfSkill = skillsEntries.find((skill) => {
+    const key = String(skill?.key || skill?.id || skill?.name || '').toLowerCase().replace(/[\s\-_]/g, '');
+    return key === 'usetheforce';
+  });
+  const utfTotal = utfSkill?.total ?? context.useTheForceTotal ?? '—';
+
+  // Actor subtitle from identity
+  const identity = context.biographyPanel?.identity ?? {};
+  const actorSubtitle = [
+    context.classDisplay || identity.class,
+    identity.level ? `Level ${Number(identity.level) || Number(context.actor?.system?.level) || 1}` : null,
+    identity.species
+  ].filter(Boolean).join(' · ');
+
+  const forceSuite = {
+    actorName: actor?.name || 'Unknown Force User',
+    actorSubtitle,
+    utfTotal,
+    forcePointsValue: Number(context.forcePointsValue) || 0,
+    forcePointsMax: Number(context.forcePointsMax) || 0,
+    destinyPointsValue: Number(context.destinyPointsValue) || 0,
+    destinyPointsMax: Number(context.destinyPointsMax) || 0,
+    darkSideValue: Number(context.darkSidePanel?.value) || 0,
+    darkSideMax: Number(context.darkSidePanel?.max) || 0,
+    forcePowers: forceSuiteHand,
+    formPowers: forceSuiteForms,
+    discarded: discard,
+    counts: {
+      force: forceSuiteHand.length,
+      form: forceSuiteForms.length,
+      discard: discard.length
+    },
+    forcefulRecovery,
+    hasDarkSideScore: (Number(context.darkSidePanel?.value) || 0) > 0
+  };
+
   return {
     metrics: [
       { label: 'Force Points', value: `${Number(context.forcePointsValue) || 0}/${Number(context.forcePointsMax) || 0}` },
@@ -469,6 +603,7 @@ function buildForceTab(context) {
     tags,
     hasAnything: hand.length > 0 || discard.length > 0 || techniques.length > 0 || secrets.length > 0,
     forcefulRecovery,
+    forceSuite,
     constructionAvailable: !!context.lightsaberConstructionAvailable,
     constructionDeferred: !!context.lightsaberConstructionDeferred
   };

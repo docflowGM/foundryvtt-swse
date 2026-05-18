@@ -1,4 +1,6 @@
-<div class="swse-concept-dashboard">
+{{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-suite-tab.hbs"}}
+
+<div class="swse-concept-dashboard swse-concept-dashboard--force-legacy" style="display:none" aria-hidden="true">
   <div class="swse-concept-card-grid swse-concept-card-grid--force-top">
     {{#each conceptLayout.force.metrics as |metric|}}
       <article class="swse-concept-info-card swse-concept-info-card--stat">

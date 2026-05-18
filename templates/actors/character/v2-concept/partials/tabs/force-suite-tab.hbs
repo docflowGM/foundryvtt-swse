@@ -1,0 +1,128 @@
+<div class="swse-force-suite-tab {{#if conceptLayout.force.forceSuite.hasDarkSideScore}}has-dsp{{/if}}" data-force-suite-tab>
+  <section class="fs-mchar">
+    <div>
+      <div class="mc-name">{{conceptLayout.force.forceSuite.actorName}}</div>
+      <div class="mc-sub">{{conceptLayout.force.forceSuite.actorSubtitle}}</div>
+    </div>
+
+    <div class="mc-gap"></div>
+
+    <div class="mstat utf">
+      <div>
+        <div class="ml">Use the Force</div>
+        <div class="mv">{{conceptLayout.force.forceSuite.utfTotal}}</div>
+      </div>
+    </div>
+
+    <div class="mstat fp">
+      <div>
+        <div class="ml">Force Points</div>
+        <div class="mv">{{conceptLayout.force.forceSuite.forcePointsValue}}</div>
+      </div>
+    </div>
+
+    {{#if conceptLayout.force.forceSuite.hasDarkSideScore}}
+    <div class="mstat dsp">
+      <div>
+        <div class="ml">Dark Side Score</div>
+        <div class="mv">{{conceptLayout.force.forceSuite.darkSideValue}}</div>
+      </div>
+    </div>
+    {{/if}}
+
+    <div class="suite-badge">◈ Force Suite</div>
+  </section>
+
+  <section class="fsuite" data-screen-label="Force Suite">
+    <div class="fs-section fs-section--force">
+      <div class="fs-head">
+        <span class="fs-head-lbl cy">⬡ Force Powers</span>
+        <span class="fs-head-cnt cy">{{conceptLayout.force.forceSuite.counts.force}}</span>
+        <div class="fs-line cy"></div>
+        <span class="fs-head-rule">Standard Action · Use the Force check</span>
+      </div>
+
+      {{#if conceptLayout.force.forceSuite.forcePowers.length}}
+        <div class="fs-hand force-card-grid" data-force-hand="force">
+          {{#each conceptLayout.force.forceSuite.forcePowers as |power|}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-suite-card.hbs" power=power}}
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="disc-empty">No Force powers ready</div>
+      {{/if}}
+    </div>
+
+    {{#if conceptLayout.force.forceSuite.formPowers.length}}
+    <div class="fs-section fs-section--forms">
+      <div class="fs-head">
+        <span class="fs-head-lbl pk">◇ Lightsaber Form Powers</span>
+        <span class="fs-head-cnt pk">{{conceptLayout.force.forceSuite.counts.form}}</span>
+        <div class="fs-line pk"></div>
+        <span class="fs-head-rule">Requires Form Training · Reaction / Standard</span>
+      </div>
+
+      <div class="fs-hand force-card-grid" data-force-hand="form">
+        {{#each conceptLayout.force.forceSuite.formPowers as |power|}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-suite-card.hbs" power=power}}
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <section class="disc-wrap">
+      <div class="disc-head">
+        <span class="disc-title">◇ Discard Pile</span>
+        <span class="disc-num">{{conceptLayout.force.forceSuite.counts.discard}}</span>
+        <span class="disc-nlbl">spent</span>
+        <div class="disc-gap"></div>
+
+        <div class="rrow">
+          <button type="button" class="rbtn rest" data-action="force-suite-recover-all" data-recovery-source="rest">⟲ Rest (1 min)</button>
+          <button type="button" class="rbtn n20" data-action="force-suite-recover-all" data-recovery-source="nat20">★ Natural 20</button>
+          <button type="button" class="rbtn fpr" data-action="force-suite-pick-recovery">◆ Spend Force Point</button>
+        </div>
+      </div>
+
+      <div class="rbtn-rules">
+        <div class="rbtn-rule">After 1 min rest, regain all spent Force Powers.</div>
+        <div class="rbtn-rule">Nat 20 on UTF check: regain all at end of turn.</div>
+        <div class="rbtn-rule">Spend Force Point as Reaction: recover one spent power.</div>
+      </div>
+
+      <div class="disc-body">
+        <div class="dstack">
+          <div class="dstack-c"></div>
+          <div class="dstack-c"></div>
+          <div class="dstack-c"></div>
+          <div class="dstack-n">{{conceptLayout.force.forceSuite.counts.discard}}</div>
+        </div>
+
+        <div class="disc-pile" data-force-discard-pile>
+          {{#if conceptLayout.force.forceSuite.discarded.length}}
+            {{#each conceptLayout.force.forceSuite.discarded as |power|}}
+              <button type="button"
+                      class="disc-chip"
+                      data-action="force-suite-recover-one"
+                      data-item-id="{{power.id}}"
+                      data-p="{{power.p}}">
+                {{power.name}}
+              </button>
+            {{/each}}
+          {{else}}
+            <span class="disc-empty">No spent powers</span>
+          {{/if}}
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <div class="roll-toast hidden" data-force-roll-toast>
+    <div class="rt-pn" data-force-toast-name>FORCE POWER</div>
+    <div class="rt-die" data-force-toast-die>—</div>
+    <div class="rt-total" data-force-toast-total></div>
+    <div class="rt-tier" data-force-toast-tier></div>
+    <div class="rt-fx" data-force-toast-effect></div>
+    <div class="rt-nat" data-force-toast-nat></div>
+  </div>
+</div>
