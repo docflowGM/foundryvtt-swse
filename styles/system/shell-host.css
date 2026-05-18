@@ -478,3 +478,49 @@
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
 }
+
+/* ─── Workbench Surface Inline Layout ────────────────────────────────────── */
+/* The workbench surface renders the full item-customization-workbench template
+   inline within the shell. The outer body must NOT scroll; internal panels
+   (.inventory-list, .card-list, .variant-list) manage their own scrolling. */
+
+.swse.sheet.actor.character.v2 .swse-shell-surface--workbench {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-shell-surface--workbench .swse-shell-surface__body {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-item-customization-workbench {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: 100% !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-customization-stage {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-customization-tablet {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-customization-screen {
+  min-height: auto !important;
+}
