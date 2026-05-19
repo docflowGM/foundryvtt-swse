@@ -10,6 +10,32 @@ import { ForcePowerManager } from "/systems/foundryvtt-swse/scripts/utils/force-
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
+function isProgressionManagedForceMutation(itemOrActor, options = {}) {
+  const source = String(options?.source || options?.meta?.source || '').toLowerCase();
+  const guardKey = String(options?.meta?.guardKey || options?.guardKey || '').toLowerCase();
+  const suppress = options?.swse?.suppressForcePowerPrompt === true
+    || options?.meta?.suppressForcePowerPrompt === true
+    || options?.meta?.skipForcePowerHook === true;
+
+  if (suppress) return true;
+  if (guardKey.includes('force-power-grant')) return true;
+  if (source.includes('progressionfinalizer')
+      || source.includes('actoreengine.applyprogression')
+      || source.includes('actorengine.applyprogression')
+      || source.includes('actorengine.applymutationplan')
+      || source.includes('progression')) {
+    return true;
+  }
+
+  const flags = itemOrActor?.flags || {};
+  const progressionFlag = flags?.swse?.progression
+    || flags?.['foundryvtt-swse']?.progression
+    || itemOrActor?.system?.progressionSource
+    || itemOrActor?.system?.source === 'progression';
+
+  return !!progressionFlag;
+}
+
 export function initializeForcePowerHooks() {
 
   /**
@@ -19,8 +45,18 @@ export function initializeForcePowerHooks() {
     // Only process on the creating user's client
     if (game.user.id !== userId) {return;}
 
-    // PHASE 10: Guard against re-entrant item creation from force power grants
-    if (options?.meta?.guardKey === 'force-power-grant') {return;}
+    // PHASE 10: Guard against re-entrant item creation from force power grants.
+    // V2 progression/chargen already owns Force Power selection in the holopad step;
+    // progression-created Force Sensitivity/Force Training feats must not launch the
+    // legacy V1 ForcePowerManager dialog after Summary/Confirm.
+    if (isProgressionManagedForceMutation(item, options)) {
+      SWSELogger.debug('SWSE | Force Powers | Skipping legacy prompt for progression-managed feat creation', {
+        item: item.name,
+        source: options?.source || options?.meta?.source || null,
+        guardKey: options?.meta?.guardKey || null
+      });
+      return;
+    }
 
     // Only process feats
     if (item.type !== 'feat') {return;}
@@ -73,8 +109,18 @@ export function initializeForcePowerHooks() {
     // Only process on the updating user's client
     if (game.user.id !== userId) {return;}
 
-    // PHASE 10: Guard against re-entrant ability checks from force power grants
-    if (options?.meta?.guardKey === 'force-power-grant') {return;}
+    // PHASE 10: Guard against re-entrant ability checks from force power grants.
+    // V2 progression handles any ability-modifier-driven Force Power entitlements as
+    // a normal progression step, so the legacy manager must not open a second picker
+    // from the actor update hook during finalization.
+    if (isProgressionManagedForceMutation(actor, options)) {
+      SWSELogger.debug('SWSE | Force Powers | Skipping legacy ability-increase prompt for progression-managed actor update', {
+        actor: actor.name,
+        source: options?.source || options?.meta?.source || null,
+        guardKey: options?.meta?.guardKey || null
+      });
+      return;
+    }
 
     // PHASE 2: Skip if actor is currently in an in-flight mutation transaction
     // This prevents re-entrant writes during the original update

@@ -35,6 +35,7 @@ import { resolveClassModel } from '../../../engine/progression/utils/class-resol
 import { ClassFeatRegistry } from '../../../engine/progression/feats/class-feat-registry.js';
 import { LanguageEngine } from '../../../engine/progression/engine/language-engine.js';
 import { buildLevelUpEventContext, countClassFeatureChoicesAtLevel } from '../../../engine/progression/utils/levelup-event-context.js';
+import { buildLevelUpEntitlementManifest } from '../../../engine/progression/utils/levelup-entitlement-manifest.js';
 
 export class ActiveStepComputer {
   /**
@@ -244,10 +245,9 @@ export class ActiveStepComputer {
 
   _hasAttributeIncreaseWork(actor, progressionSession, mode = 'chargen') {
     if (mode !== 'levelup') return true;
-    const context = buildLevelUpEventContext(actor, progressionSession);
-    const enteringLevel = Number(context?.enteringLevel || 0);
+    const manifest = buildLevelUpEntitlementManifest(actor, progressionSession);
     const hasPendingSelection = !!progressionSession?.draftSelections?.attributes;
-    return hasPendingSelection || (enteringLevel > 1 && enteringLevel % 4 === 0);
+    return hasPendingSelection || manifest.abilityIncreases.required === true;
   }
 
   _hasSkillChoices(actor, progressionSession, mode = 'chargen') {
@@ -412,33 +412,41 @@ export class ActiveStepComputer {
    * @private
    */
   async _hasFeatChoices(stepNodeId, actor, progressionSession, mode = 'chargen') {
+    const manifest = mode === 'levelup' ? buildLevelUpEntitlementManifest(actor, progressionSession) : null;
+
     if (stepNodeId !== 'class-feat') {
       if (mode !== 'levelup') return true;
-      const levelContext = buildLevelUpEventContext(actor, progressionSession);
-      const enteringLevel = Number(levelContext?.enteringLevel || 0);
-      return enteringLevel > 1 && enteringLevel % 3 === 0;
+      return manifest?.generalFeat?.required === true;
     }
 
     try {
+      if (mode === 'levelup' && manifest?.multiclassStartingFeat?.required === true) {
+        return (manifest.multiclassStartingFeat.options || []).length > 0;
+      }
+
       const classSelection = progressionSession?.getSelection?.('class') || progressionSession?.draftSelections?.class || null;
       const classModel = resolveClassModel(classSelection);
       if (!classModel) {
         return false;
       }
 
-      const levelContext = buildLevelUpEventContext(actor, progressionSession);
-      const classLevel = levelContext?.selectedClassNextLevel || 1;
-      const levelEntry = Array.isArray(classModel.levelProgression)
-        ? classModel.levelProgression.find(entry => Number(entry.level) === classLevel)
-        : null;
-      const features = levelEntry?.features || [];
-      const hasClassFeatGrant = features.some(feature => {
-        const type = String(feature?.type || '').toLowerCase();
-        const name = String(feature?.name || feature || '').toLowerCase();
-        return type === 'feat_choice' || name.includes('bonus feat');
-      });
+      const classFeatChoices = mode === 'levelup'
+        ? Number(manifest?.choices?.classFeatChoices || 0)
+        : (() => {
+          const levelContext = buildLevelUpEventContext(actor, progressionSession);
+          const classLevel = levelContext?.selectedClassNextLevel || 1;
+          const levelEntry = Array.isArray(classModel.levelProgression)
+            ? classModel.levelProgression.find(entry => Number(entry.level) === classLevel)
+            : null;
+          const features = levelEntry?.features || [];
+          return features.some(feature => {
+            const type = String(feature?.type || '').toLowerCase();
+            const name = String(feature?.name || feature || '').toLowerCase();
+            return type === 'feat_choice' || name.includes('bonus feat');
+          }) ? 1 : 0;
+        })();
 
-      if (!hasClassFeatGrant) {
+      if (classFeatChoices <= 0) {
         return false;
       }
 
@@ -465,9 +473,9 @@ export class ActiveStepComputer {
     const classModel = resolveClassModel(classSelection);
     if (!classModel) return false;
 
-    const levelContext = buildLevelUpEventContext(actor, progressionSession);
-    const classLevel = levelContext?.selectedClassNextLevel || 1;
-    const owedTalents = countClassFeatureChoicesAtLevel(classModel, classLevel, 'talent_choice');
+    const owedTalents = mode === 'levelup'
+      ? Number(buildLevelUpEntitlementManifest(actor, progressionSession)?.choices?.talentChoices || 0)
+      : countClassFeatureChoicesAtLevel(classModel, buildLevelUpEventContext(actor, progressionSession)?.selectedClassNextLevel || 1, 'talent_choice');
 
     // The current progression spine has both general/class talent surfaces; both are
     // selection UIs for the same class-granted talent budget. Show them only when a

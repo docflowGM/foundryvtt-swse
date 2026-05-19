@@ -374,3 +374,52 @@
 .progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__identity {
   display: none;
 }
+
+/* Phase 4: mentor choice reactions. A short pulse confirms that the rail is
+   responding to the player's current choice, not merely replaying step text. */
+.progression-shell .prog-mentor-rail[data-choice-reaction="true"] .prog-mentor__dialogue {
+  animation: swse-mentor-choice-reaction-pulse 760ms ease-out;
+}
+
+.progression-shell .prog-mentor-rail[data-choice-reaction="true"] .prog-mentor__portrait {
+  animation: swse-mentor-choice-portrait-pulse 760ms ease-out;
+}
+
+.progression-shell .prog-mentor-rail[data-choice-reaction-mood="cautionary"] .prog-mentor__dialogue {
+  box-shadow: 0 0 18px rgba(255, 160, 80, 0.24), inset 0 0 18px rgba(255, 160, 80, 0.1);
+}
+
+.progression-shell .prog-mentor-rail[data-choice-reaction-mood="celebratory"] .prog-mentor__dialogue,
+.progression-shell .prog-mentor-rail[data-choice-reaction-mood="encouraging"] .prog-mentor__dialogue {
+  box-shadow: 0 0 18px rgba(104, 219, 255, 0.24), inset 0 0 18px rgba(104, 219, 255, 0.1);
+}
+
+@keyframes swse-mentor-choice-reaction-pulse {
+  0% {
+    transform: translateY(0);
+    filter: brightness(1);
+  }
+  38% {
+    transform: translateY(-1px);
+    filter: brightness(1.22);
+  }
+  100% {
+    transform: translateY(0);
+    filter: brightness(1);
+  }
+}
+
+@keyframes swse-mentor-choice-portrait-pulse {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  42% {
+    transform: scale(1.025);
+    filter: brightness(1.16);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}

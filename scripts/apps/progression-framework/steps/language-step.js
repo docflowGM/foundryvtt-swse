@@ -993,7 +993,7 @@ export class LanguageStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    const customGuidance = getStepGuidance(shell.actor, 'languages');
+    const customGuidance = getStepGuidance(shell.actor, 'languages', shell);
     if (customGuidance) return customGuidance;
 
     // Mode-aware default guidance (languages is primarily chargen)

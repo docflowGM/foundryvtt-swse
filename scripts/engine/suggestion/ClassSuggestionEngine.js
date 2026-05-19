@@ -165,8 +165,17 @@ export class ClassSuggestionEngine {
         }
 
         const suggestedCount = suggestions.filter(s => s.isSuggested).length;
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: COMPLETE - ${suggestedCount}/${suggestions.length} classes suggested`);
-        return suggestions;
+        const ranked = this.sortBySuggestion(suggestions);
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: COMPLETE - ${suggestedCount}/${ranked.length} classes suggested`, {
+            top: ranked.slice(0, 5).map(s => ({
+                name: s.name,
+                tier: s.suggestion?.tier ?? 0,
+                score: s.suggestion?.score ?? 0,
+                confidence: s.suggestion?.confidence ?? 0,
+                reason: s.suggestion?.reason
+            }))
+        });
+        return ranked;
     }
 
     /**
@@ -182,6 +191,14 @@ export class ClassSuggestionEngine {
             // Higher tier first
             if (tierB !== tierA) {
                 return tierB - tierA;
+            }
+
+            // Then use raw fit score/confidence so all Tier 2 ability-synergy
+            // classes are still ranked by how strongly they matched the build.
+            const scoreA = Number(a.suggestion?.score ?? a.suggestion?.confidence ?? 0);
+            const scoreB = Number(b.suggestion?.score ?? b.suggestion?.confidence ?? 0);
+            if (scoreB !== scoreA) {
+                return scoreB - scoreA;
             }
 
             // Prestige classes before base classes
@@ -756,7 +773,7 @@ export class ClassSuggestionEngine {
                 cls.name,
                 prereqCheck.missing,
                 synergyReason,
-                { reasons: fit.reasons, cautions: fit.cautions }
+                { reasons: fit.reasons, cautions: fit.cautions, score: synergyScore }
             );
         }
 
@@ -768,7 +785,7 @@ export class ClassSuggestionEngine {
                 cls.name,
                 prereqCheck.missing,
                 reason,
-                { reasons: fit.reasons.length ? fit.reasons : [reason], cautions: fit.cautions }
+                { reasons: fit.reasons.length ? fit.reasons : [reason], cautions: fit.cautions, score: synergyScore }
             );
         }
 
@@ -988,6 +1005,8 @@ export class ClassSuggestionEngine {
             label: tierMetadata.label,
             reason: customReason || tierMetadata.description,
             reasons,
+            score: Number(extras.score ?? tier) || 0,
+            confidence: Math.max(0, Math.min(1, Number(extras.confidence ?? ((Number(extras.score ?? tier) || 0) / 8)) || 0)),
             cautions: extras.cautions || extras.cautionReasons || [],
             cautionReasons: extras.cautions || extras.cautionReasons || [],
             missingPrereqs,

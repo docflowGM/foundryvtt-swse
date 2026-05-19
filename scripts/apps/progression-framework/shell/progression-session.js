@@ -117,6 +117,21 @@ export class ProgressionSession {
       lastAdviceGiven: null,
     };
 
+    // Canonical mentor identity context for the progression rail. This is
+    // intentionally separate from advisory text: identity should remain stable
+    // once high-confidence class context exists, while dialogue lines can fall
+    // back independently per step.
+    this.mentorContext = this._createDefaultMentorContext('session initialized');
+
+    // Non-blocking mentor diagnostics. These breadcrumbs help identify why a
+    // rail fell through to generic guidance without making dialogue lookup a
+    // progression blocker.
+    this.mentorDiagnostics = {
+      contextUpdates: [],
+      preservedContexts: [],
+      choiceReactions: [],
+    };
+
     // Commit diagnostics are non-blocking breadcrumbs. A bad step commit must
     // never destroy the last known-good draft selections.
     this.commitDiagnostics = {
@@ -225,7 +240,100 @@ export class ProgressionSession {
     return this.draftSelections[selectionKey] ?? null;
   }
 
+  /**
+   * Return a snapshot of the canonical mentor identity context.
+   * @returns {Object|null}
+   */
+  getMentorContext() {
+    return this.mentorContext ? { ...this.mentorContext } : null;
+  }
 
+  /**
+   * Update the canonical mentor identity context with sticky high-confidence
+   * behavior. Low-confidence fallbacks should never overwrite a class-selected
+   * mentor during chargen rerenders or async hydration gaps.
+   *
+   * @param {Object} nextContext
+   * @param {Object} options
+   * @param {boolean} options.force
+   * @returns {Object|null}
+   */
+  updateMentorContext(nextContext = null, options = {}) {
+    if (!nextContext) return this.getMentorContext();
+
+    const current = this.mentorContext || null;
+    const currentConfidence = Number(current?.confidence ?? 0) || 0;
+    const nextConfidence = Number(nextContext?.confidence ?? 0) || 0;
+    const force = options.force === true
+      || ['manual', 'class-selection', 'prestige-selection'].includes(nextContext.source);
+
+    const shouldKeepCurrent = !force
+      && current
+      && (current.mentorId || current.mentorKey)
+      && (
+        (currentConfidence >= 0.85 && nextConfidence < 0.65)
+        || (current.source === 'class-selection' && nextContext.fallback === true)
+      );
+
+    if (shouldKeepCurrent) {
+      this._recordMentorDiagnostic('preservedContexts', {
+        currentSource: current?.source,
+        currentMentorId: current?.mentorId || current?.mentorKey,
+        currentConfidence,
+        attemptedSource: nextContext?.source,
+        attemptedMentorId: nextContext?.mentorId || nextContext?.mentorKey,
+        attemptedConfidence: nextConfidence,
+        attemptedFallback: nextContext?.fallback === true,
+      });
+      return this.getMentorContext();
+    }
+
+    this.mentorContext = {
+      ...current,
+      ...nextContext,
+      lastResolvedAt: Date.now(),
+    };
+    this._recordMentorDiagnostic('contextUpdates', {
+      mentorId: this.mentorContext.mentorId || this.mentorContext.mentorKey,
+      className: this.mentorContext.className || null,
+      source: this.mentorContext.source,
+      confidence: this.mentorContext.confidence,
+      fallback: this.mentorContext.fallback === true,
+      stepId: this.mentorContext.stepId || null,
+    });
+    this.advisoryContext.mentorId = this.mentorContext.mentorId || this.mentorContext.mentorKey || this.advisoryContext.mentorId;
+    this.lastModifiedAt = Date.now();
+    return this.getMentorContext();
+  }
+
+
+
+  _createDefaultMentorContext(reason = 'default mentor context') {
+    return {
+      mentorId: 'Scoundrel',
+      mentorKey: 'Scoundrel',
+      className: null,
+      stepId: null,
+      source: 'fallback',
+      confidence: 0.1,
+      reason,
+      fallback: true,
+      lastResolvedAt: Date.now(),
+    };
+  }
+
+  _recordMentorDiagnostic(bucket, entry = {}) {
+    if (!this.mentorDiagnostics) {
+      this.mentorDiagnostics = { contextUpdates: [], preservedContexts: [], choiceReactions: [] };
+    }
+    if (!Array.isArray(this.mentorDiagnostics[bucket])) {
+      this.mentorDiagnostics[bucket] = [];
+    }
+    this.mentorDiagnostics[bucket].push({ ...entry, timestamp: Date.now() });
+    if (this.mentorDiagnostics[bucket].length > 25) {
+      this.mentorDiagnostics[bucket].shift();
+    }
+  }
 
   clearSelection(selectionKey) {
     if (!this._schema[selectionKey] && !(selectionKey in this.draftSelections)) return false;
@@ -321,6 +429,9 @@ export class ProgressionSession {
     this.completedStepIds = [];
     this.invalidatedStepIds = [];
     this.projectedCharacter = null;
+    this.mentorContext = this._createDefaultMentorContext('session reset');
+    this.mentorDiagnostics = { contextUpdates: [], preservedContexts: [], choiceReactions: [] };
+    this.advisoryContext.mentorId = this.mentorContext.mentorId;
     this.lastModifiedAt = Date.now();
   }
 

@@ -26,7 +26,13 @@ import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engin
 import { MedicalSecretRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/medical/medical-secret-registry.js';
 import { ActorEngine as CanonicalActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
-import { ensureForcePowerAbilityMeta } from '/systems/foundryvtt-swse/scripts/engine/abilities/force-power/force-power-ability-meta.js';
+import { calculateMaxForcePointsForBuildPlan } from '/systems/foundryvtt-swse/scripts/data/force-points.js';
+import { buildLevelUpEntitlementManifest } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
+import {
+  auditLevelUpActorAfterFinalization,
+  buildLevelUpFinalizationReceipt,
+  validateLevelUpRequiredSelections,
+} from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-finalization-audit.js';
 
 export class ProgressionFinalizer {
   /**
@@ -163,6 +169,30 @@ export class ProgressionFinalizer {
           actorId: actor.id,
         });
         return result;
+      }
+
+      if (sessionState.mode === 'levelup') {
+        const postAudit = this._auditLevelUpFinalization(actor, finalMutationPlan, sessionState);
+        if (!postAudit.ok) {
+          swseLogger.error('[ProgressionFinalizer] Level-up finalization audit failed', {
+            actorId: actor.id,
+            actorName: actor.name,
+            errors: postAudit.errors,
+            warnings: postAudit.warnings,
+          });
+          return {
+            success: false,
+            error: `Level-up finalization audit failed: ${postAudit.errors.join('; ')}`,
+            audit: postAudit,
+          };
+        }
+        if (postAudit.warnings.length) {
+          swseLogger.warn('[ProgressionFinalizer] Level-up finalization audit warnings', {
+            actorId: actor.id,
+            actorName: actor.name,
+            warnings: postAudit.warnings,
+          });
+        }
       }
 
       swseLogger.log('[ProgressionFinalizer] Finalization successful', {
@@ -316,6 +346,32 @@ export class ProgressionFinalizer {
       if (hpNeedsResolution) {
         throw new Error('Level-up incomplete: HP gain must be resolved before finalization');
       }
+
+      const manifest = buildLevelUpEntitlementManifest(sessionState.actor, sessionState.progressionSession);
+      if (manifest.abilityIncreases.required) {
+        const increases = sessionState.progressionSession?.draftSelections?.attributes?.increases || {};
+        const selectedAbilityKeys = Object.entries(increases)
+          .filter(([, value]) => Number(value || 0) > 0)
+          .map(([key]) => key);
+        const hasInvalidStack = Object.values(increases).some((value) => Number(value || 0) > 1);
+        if (selectedAbilityKeys.length !== manifest.abilityIncreases.count || hasInvalidStack) {
+          throw new Error(`Level-up incomplete: choose exactly ${manifest.abilityIncreases.count} different ability increases`);
+        }
+      }
+      if (manifest.multiclassStartingFeat.required) {
+        const feats = Array.isArray(sessionState.progressionSession?.draftSelections?.feats)
+          ? sessionState.progressionSession.draftSelections.feats
+          : [];
+        const hasStartingFeat = feats.some((feat) => feat?.levelupGrantKind === 'multiclassStartingFeat' || feat?.system?.multiclassStartingFeat === true || feat?.source === 'multiclass-starting-feat');
+        if (!hasStartingFeat) {
+          throw new Error('Level-up incomplete: choose one starting feat from the new class');
+        }
+      }
+
+      const levelUpChoiceErrors = validateLevelUpRequiredSelections(manifest, sessionState.progressionSession);
+      if (levelUpChoiceErrors.length) {
+        throw new Error(`Level-up incomplete: ${levelUpChoiceErrors.join('; ')}`);
+      }
     }
   }
 
@@ -377,6 +433,9 @@ export class ProgressionFinalizer {
 
     const selections = sessionState.progressionSession.draftSelections || {};
     await ProgressionContentAuthority.initialize?.();
+    const levelUpManifest = sessionState.mode === 'levelup'
+      ? buildLevelUpEntitlementManifest(actor, sessionState.progressionSession, { selectedClass: selections.class })
+      : null;
 
     // Read all data from canonical session ONLY. No fallback chains.
     const summary = selections.survey || {};
@@ -484,22 +543,6 @@ export class ProgressionFinalizer {
       // instead of replacing the actor's primary class field.
       if (sessionState.mode === 'chargen') {
         set['system.class'] = clazz;
-        const startingLevel = Math.max(1, Number(summary.startingLevel || actor?.system?.level || 1) || 1);
-        const className = clazz.name || clazz.label || String(clazz);
-        const classId = clazz.id || clazz.classId || clazz.sourceId || clazz.slug || className;
-        set['system.level'] = startingLevel;
-        set['system.progression.classLevels'] = [{
-          class: className,
-          classId,
-          className,
-          level: startingLevel
-        }];
-        const startingBab = this._computeClassBabAtLevel(clazz, startingLevel);
-        set['system.baseAttackBonus'] = startingBab;
-        set['system.bab.total'] = startingBab;
-        const startingForcePoints = this._computeStartingForcePoints(clazz, startingLevel, selections, actor);
-        set['system.forcePoints.max'] = startingForcePoints;
-        set['system.forcePoints.value'] = startingForcePoints;
       }
 
       if (sessionState.mode === 'levelup') {
@@ -631,25 +674,52 @@ export class ProgressionFinalizer {
     }
 
     // Canonical stored ability path is system.abilities.<key>.base.
-    // Also initialize the sheet-facing mirror paths during chargen finalization so
-    // the completed sheet is immediately coherent before the next derived pass.
+    // Chargen writes final assigned scores. Level-up applies RAW +1 deltas to
+    // exactly two different abilities and never overwrites the entire ability map.
     const attrMap = { strength: 'str', dexterity: 'dex', constitution: 'con', intelligence: 'int', wisdom: 'wis', charisma: 'cha', str: 'str', dex:'dex', con:'con', int:'int', wis:'wis', cha:'cha' };
-    const finalAttrValues = this._normalizeFinalAttributeValues(attr, attrValues, pendingSpeciesContext, actor);
-    for (const [k, v] of Object.entries(attrValues || {})) {
-      const key = attrMap[k];
-      const val = typeof v === 'object' ? (v?.score ?? v?.base ?? v?.value ?? v?.total) : v;
-      if (!key || !Number.isFinite(Number(val))) continue;
-      const baseScore = Number(val);
-      const finalScore = Number(finalAttrValues?.[key] ?? baseScore);
-      const mod = this._abilityMod(finalScore);
-      set[`system.abilities.${key}.base`] = baseScore;
-      set[`system.abilities.${key}.value`] = finalScore;
-      set[`system.abilities.${key}.total`] = finalScore;
-      set[`system.abilities.${key}.mod`] = mod;
-      set[`system.attributes.${key}.base`] = baseScore;
-      set[`system.attributes.${key}.value`] = finalScore;
-      set[`system.attributes.${key}.total`] = finalScore;
-      set[`system.attributes.${key}.mod`] = mod;
+    if (sessionState.mode === 'levelup' && attr?.mode === 'levelup-ability-increase') {
+      const increases = attr.increases || {};
+      for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+        const delta = Math.max(0, Math.min(1, Number(increases?.[key] || 0) || 0));
+        if (delta <= 0) continue;
+        const currentBase = Number(actor?.system?.abilities?.[key]?.base ?? actor?.system?.abilities?.[key]?.value ?? 10) || 10;
+        const currentRacial = Number(actor?.system?.abilities?.[key]?.racial ?? actor?.system?.abilities?.[key]?.species ?? 0) || 0;
+        const currentTemp = Number(actor?.system?.abilities?.[key]?.temp ?? 0) || 0;
+        const nextBase = currentBase + delta;
+        const finalScore = nextBase + currentRacial + currentTemp;
+        const mod = this._abilityMod(finalScore);
+        set[`system.abilities.${key}.base`] = nextBase;
+        set[`system.abilities.${key}.value`] = finalScore;
+        set[`system.abilities.${key}.total`] = finalScore;
+        set[`system.abilities.${key}.mod`] = mod;
+        set[`system.attributes.${key}.base`] = nextBase;
+        set[`system.attributes.${key}.value`] = finalScore;
+        set[`system.attributes.${key}.total`] = finalScore;
+        set[`system.attributes.${key}.mod`] = mod;
+      }
+      set['system.progression.lastAbilityIncrease'] = {
+        level: levelUpManifest?.characterLevel || null,
+        increases,
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      const finalAttrValues = this._normalizeFinalAttributeValues(attr, attrValues, pendingSpeciesContext, actor);
+      for (const [k, v] of Object.entries(attrValues || {})) {
+        const key = attrMap[k];
+        const val = typeof v === 'object' ? (v?.score ?? v?.base ?? v?.value ?? v?.total) : v;
+        if (!key || !Number.isFinite(Number(val))) continue;
+        const baseScore = Number(val);
+        const finalScore = Number(finalAttrValues?.[key] ?? baseScore);
+        const mod = this._abilityMod(finalScore);
+        set[`system.abilities.${key}.base`] = baseScore;
+        set[`system.abilities.${key}.value`] = finalScore;
+        set[`system.abilities.${key}.total`] = finalScore;
+        set[`system.abilities.${key}.mod`] = mod;
+        set[`system.attributes.${key}.base`] = baseScore;
+        set[`system.attributes.${key}.value`] = finalScore;
+        set[`system.attributes.${key}.total`] = finalScore;
+        set[`system.attributes.${key}.mod`] = mod;
+      }
     }
 
     if (sessionState.mode === 'chargen') {
@@ -674,6 +744,28 @@ export class ProgressionFinalizer {
         set['flags.swse.progressionHistory'] = this._withWealthProgressionHistory(actor, selections, sessionState);
       }
 
+      const startingLevel = Number(summary.startingLevel || set['system.level'] || 1) || 1;
+      const startingForcePointMax = calculateMaxForcePointsForBuildPlan({
+        actor,
+        totalLevel: startingLevel,
+        selectedClass: clazz,
+        classLevels: [{
+          class: clazz?.name || clazz?.label || String(clazz || 'Class'),
+          classId: clazz?.id || clazz?.classId || clazz?.sourceId || this._normalizeClassKey(clazz),
+          level: startingLevel,
+        }],
+      });
+      set['system.forcePoints.max'] = startingForcePointMax;
+      set['system.forcePoints.value'] = startingForcePointMax;
+      set['system.progression.lastForcePointRefresh'] = {
+        reason: 'chargen-finalization',
+        previousValue: Number(actor?.system?.forcePoints?.value ?? 0) || 0,
+        previousMax: Number(actor?.system?.forcePoints?.max ?? 0) || 0,
+        newValue: startingForcePointMax,
+        newMax: startingForcePointMax,
+        timestamp: new Date().toISOString(),
+      };
+
       const speciesPortrait = this._resolveSpeciesPortrait(species, pendingSpeciesContext);
       if (this._actorNeedsPortrait(actor) && speciesPortrait) {
         set.img = speciesPortrait;
@@ -682,18 +774,50 @@ export class ProgressionFinalizer {
 
     if (sessionState.mode === 'levelup') {
       const hpGain = Number(summary.hpGain || 0) || 0;
+      const currentHpMax = Number(actor?.system?.hp?.max ?? actor?.system?.derived?.hp?.max ?? 0) || 0;
+      const currentHpValue = Number(actor?.system?.hp?.value ?? currentHpMax) || 0;
       if (hpGain > 0) {
-        const currentHpMax = Number(actor?.system?.hp?.max ?? actor?.system?.derived?.hp?.max ?? 0) || 0;
-        const currentHpValue = Number(actor?.system?.hp?.value ?? currentHpMax) || 0;
-        set['system.hp.max'] = Math.max(1, currentHpMax + hpGain);
-        set['system.hp.value'] = Math.max(1, currentHpValue + hpGain);
+        const nextHpMax = Math.max(1, currentHpMax + hpGain);
+        const hpRecoveryMode = ProgressionRules.getLevelUpHpRecoveryMode();
+        const nextHpValue = this._resolveLevelUpCurrentHp({
+          currentHpValue,
+          hpGain,
+          nextHpMax,
+          mode: hpRecoveryMode,
+        });
+        set['system.hp.max'] = nextHpMax;
+        set['system.hp.value'] = nextHpValue;
         set['system.progression.lastHpGain'] = {
           amount: hpGain,
           method: summary.hpGainMethod || null,
           formula: summary.hpGainFormula || null,
+          recoveryMode: hpRecoveryMode,
+          previousValue: currentHpValue,
+          previousMax: currentHpMax,
+          newValue: nextHpValue,
+          newMax: nextHpMax,
           timestamp: new Date().toISOString(),
         };
       }
+
+      const targetLevel = Number(set['system.level'] || sessionState.targetLevel || sessionState.progressionSession?.targetLevel || (Number(actor?.system?.level || 1) + 1)) || 1;
+      const classLevelsAfter = set['system.progression.classLevels'] || actor?.system?.progression?.classLevels || null;
+      const nextForcePointMax = calculateMaxForcePointsForBuildPlan({
+        actor,
+        totalLevel: targetLevel,
+        selectedClass: clazz,
+        classLevels: classLevelsAfter,
+      });
+      set['system.forcePoints.max'] = nextForcePointMax;
+      set['system.forcePoints.value'] = nextForcePointMax;
+      set['system.progression.lastForcePointRefresh'] = {
+        reason: 'level-up',
+        previousValue: Number(actor?.system?.forcePoints?.value ?? 0) || 0,
+        previousMax: Number(actor?.system?.forcePoints?.max ?? 0) || 0,
+        newValue: nextForcePointMax,
+        newMax: nextForcePointMax,
+        timestamp: new Date().toISOString(),
+      };
 
       const explicitCreditDelta = Number(summary.creditDelta || 0) || 0;
       const inferredCreditDelta = explicitCreditDelta || this._computeLevelupWealthCreditGrant(actor, selections, sessionState);
@@ -737,10 +861,13 @@ export class ProgressionFinalizer {
         typeof l === 'string' ? l : l?.internalId || l?._id || l?.id || l?.slug || l?.name
       ).filter(Boolean);
       const existingLanguageNames = sessionState.mode === 'levelup'
+        ? this._extractActorLanguageNames(actor)
+        : [];
+      const existingLanguageIds = sessionState.mode === 'levelup'
         ? this._extractActorLanguageIds(actor)
         : [];
       set['system.languages'] = Array.from(new Set([...existingLanguageNames, ...languageNames]));
-      set['system.languageIds'] = Array.from(new Set(languageIds));
+      set['system.languageIds'] = Array.from(new Set([...existingLanguageIds, ...languageIds]));
     }
 
     if (this._hasForceSensitivityGrant(actor, selections)) {
@@ -767,6 +894,24 @@ export class ProgressionFinalizer {
       }
     }
 
+    if (sessionState.mode === 'levelup' && levelUpManifest?.classSkills?.length) {
+      const classSkillSources = Array.isArray(actor?.system?.progression?.classSkillSources)
+        ? [...actor.system.progression.classSkillSources]
+        : [];
+      const seenClassSkillSources = new Set(classSkillSources.map(entry => `${entry?.id || entry?.key || entry?.name}::${entry?.classId || ''}`));
+      for (const entry of levelUpManifest.classSkills) {
+        const rawKey = entry.key || entry.id || entry.name;
+        const skillKey = this._canonicalSkillKey(rawKey);
+        if (skillKey) set[`system.skills.${skillKey}.classSkill`] = true;
+        const sourceKey = `${entry.id || entry.key || entry.name}::${entry.classId || ''}`;
+        if (!seenClassSkillSources.has(sourceKey)) {
+          classSkillSources.push(entry);
+          seenClassSkillSources.add(sourceKey);
+        }
+      }
+      set['system.progression.classSkillSources'] = classSkillSources;
+    }
+
     // PHASE 3: Add natural weapons from species materialization
     for (const nw of (sessionState.mode === 'chargen' ? itemsToCreate : [])) {
       add.items.push({
@@ -780,8 +925,11 @@ export class ProgressionFinalizer {
 
     await ProgressionContentAuthority.initialize?.();
 
-    const classAutoGrantItems = await this._compileClassAutoGrantItems(actor, selections, sessionState);
+    const classAutoGrantItems = await this._compileClassAutoGrantItems(actor, selections, sessionState, levelUpManifest);
     add.items.push(...classAutoGrantItems.items);
+    if (sessionState.mode === 'levelup') {
+      add.items.push(...await this._compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState));
+    }
     if (classAutoGrantItems.suppressed?.length) {
       set['flags.swse.suppressedClassAutoGrants'] = classAutoGrantItems.suppressed;
     }
@@ -795,6 +943,11 @@ export class ProgressionFinalizer {
         Number(currentSuite.max || 0),
         Number((currentSuite.maneuvers || []).length || 0) + compiledAbilityItems.postApply.starshipManeuverNames.length
       );
+    }
+
+    if (sessionState.mode === 'levelup' && levelUpManifest) {
+      set['flags.swse.levelUpEntitlementManifest'] = levelUpManifest;
+      set['flags.swse.levelUpFinalizationReceipt'] = buildLevelUpFinalizationReceipt(levelUpManifest, sessionState.progressionSession);
     }
 
     return {
@@ -999,6 +1152,23 @@ export class ProgressionFinalizer {
     return history;
   }
 
+  static _resolveLevelUpCurrentHp({ currentHpValue = 0, hpGain = 0, nextHpMax = 1, mode = 'none' } = {}) {
+    const current = Number(currentHpValue);
+    const safeCurrent = Number.isFinite(current) ? current : 0;
+    const gain = Math.max(0, Number(hpGain || 0) || 0);
+    const max = Math.max(1, Number(nextHpMax || 1) || 1);
+
+    switch (mode) {
+      case 'refillToMax':
+        return max;
+      case 'increaseCurrentByMaxGain':
+        return Math.min(max, safeCurrent + gain);
+      case 'none':
+      default:
+        return Math.min(max, safeCurrent);
+    }
+  }
+
   static _canonicalSkillKey(value) {
     const raw = String(value || '').trim();
     if (!raw) return '';
@@ -1019,7 +1189,25 @@ export class ProgressionFinalizer {
     return map[normalized] || raw;
   }
 
+  static _extractActorLanguageNames(actor) {
+    const languages = actor?.system?.languages || [];
+    if (Array.isArray(languages)) {
+      return languages.map(lang => typeof lang === 'string' ? lang : lang?.name || lang?.label || lang?.id).filter(Boolean);
+    }
+    if (typeof languages === 'object') {
+      return Object.entries(languages)
+        .filter(([, value]) => value === true || value?.known === true || value?.selected === true)
+        .map(([key, value]) => value?.name || value?.label || value?.id || key)
+        .filter(Boolean);
+    }
+    return [];
+  }
+
   static _extractActorLanguageIds(actor) {
+    const explicit = actor?.system?.languageIds || actor?.system?.language_ids || [];
+    if (Array.isArray(explicit) && explicit.length) {
+      return explicit.map(lang => typeof lang === 'string' ? lang : lang?.id || lang?.name).filter(Boolean);
+    }
     const languages = actor?.system?.languages || [];
     if (Array.isArray(languages)) {
       return languages.map(lang => typeof lang === 'string' ? lang : lang?.id || lang?.name).filter(Boolean);
@@ -1435,13 +1623,19 @@ export class ProgressionFinalizer {
   }
 
 
-  static async _compileClassAutoGrantItems(actor, selections, sessionState) {
+  static async _compileClassAutoGrantItems(actor, selections, sessionState, levelUpManifest = null) {
     const sessionId = sessionState.sessionId || 'unknown';
     const clazz = selections.class || null;
     if (!clazz || !actor) return { items: [], suppressed: [] };
     if (sessionState.mode === 'levelup') {
-      const levelContext = buildLevelUpEventContext(actor, sessionState.progressionSession, { selectedClass: clazz });
+      const levelContext = levelUpManifest?.context || buildLevelUpEventContext(actor, sessionState.progressionSession, { selectedClass: clazz });
       if (!levelContext.isNewClass) {
+        return { items: [], suppressed: [] };
+      }
+      // RAW multiclassing: when taking the first level in a new base class,
+      // the player chooses ONE starting feat. Do not auto-grant the whole
+      // starting proficiency package unless the explicit house rule is enabled.
+      if (levelContext.isNewBaseClass && ProgressionRules.multiclassExtraStartingFeatsEnabled?.() !== true) {
         return { items: [], suppressed: [] };
       }
     }
@@ -1502,17 +1696,58 @@ export class ProgressionFinalizer {
     return { items, suppressed: ledger.suppressedGrants || [] };
   }
 
+  static async _compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState) {
+    if (!levelUpManifest?.automaticClassFeatures?.length) return [];
+    const existing = new Set((actor?.items || []).map(item => `${String(item.type || '').toLowerCase()}::${String(item.name || '').toLowerCase()}`));
+    const out = [];
+    for (const feature of levelUpManifest.automaticClassFeatures) {
+      const name = feature.name || feature.id;
+      if (!name) continue;
+      const dedupeKey = `feat::${String(name).toLowerCase()}`;
+      if (existing.has(dedupeKey)) continue;
+      existing.add(dedupeKey);
+      out.push({
+        name,
+        type: 'feat',
+        system: {
+          ...(feature.system || {}),
+          source: feature.className || 'Class Feature',
+          sourceType: 'class-feature',
+          classFeature: true,
+          autoGranted: true,
+          grantedByClass: true,
+          locked: true,
+          choiceEditable: false,
+        },
+        flags: {
+          swse: {
+            progression: {
+              sourceSession: sessionState.sessionId || 'unknown',
+              selectionKey: 'class-automatic-feature',
+              selectionId: feature.id || name,
+              countIndex: 0,
+            },
+            classGranted: true,
+            classFeature: true,
+            sourceClass: feature.className || null,
+          },
+        },
+      });
+    }
+    return out;
+  }
+
   static async _compileProgressionAbilityItems(actor, selections, sessionState) {
     const sessionId = sessionState.sessionId || 'unknown';
     const itemSpecs = [];
     const postApply = { starshipManeuverNames: [] };
     const domainConfig = [
-      { key: 'feats', aliases: ['general-feat', 'heroic-feat', 'class-feat', 'feat'], type: 'feat', docGetter: (entry) => ProgressionContentAuthority.getFeatDocument(entry), allowDuplicates: false },
-      { key: 'talents', aliases: ['general-talent', 'heroic-talent', 'class-talent', 'talent'], type: 'talent', docGetter: (entry) => ProgressionContentAuthority.getTalentDocument(entry), allowDuplicates: false },
-      { key: 'forcePowers', aliases: ['force-powers', 'force-power'], type: 'force-power', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'power'), allowDuplicates: true },
-      { key: 'forceTechniques', aliases: ['force-techniques', 'force-technique'], type: 'forcetechnique', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'technique'), allowDuplicates: false },
-      { key: 'forceSecrets', aliases: ['force-secrets', 'force-secret'], type: 'forcesecret', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'secret'), allowDuplicates: false },
-      { key: 'medicalSecrets', aliases: ['medical-secrets', 'medical-secret'], type: 'feat', docGetter: async (entry) => { await MedicalSecretRegistry.ensureInitialized(); return MedicalSecretRegistry.getDocumentByRef(entry); }, allowDuplicates: false },
+      { key: 'feats', type: 'feat', docGetter: (entry) => ProgressionContentAuthority.getFeatDocument(entry), allowDuplicates: false },
+      { key: 'talents', type: 'talent', docGetter: (entry) => ProgressionContentAuthority.getTalentDocument(entry), allowDuplicates: false },
+      { key: 'forcePowers', type: 'force-power', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'power'), allowDuplicates: true },
+      { key: 'forceTechniques', type: 'forcetechnique', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'technique'), allowDuplicates: false },
+      { key: 'forceSecrets', type: 'forcesecret', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'secret'), allowDuplicates: false },
+      { key: 'medicalSecrets', type: 'feat', docGetter: async (entry) => { await MedicalSecretRegistry.ensureInitialized(); return MedicalSecretRegistry.getDocumentByRef(entry); }, allowDuplicates: false },
     ];
 
     const existingByTypeAndName = new Set(
@@ -1526,35 +1761,8 @@ export class ProgressionFinalizer {
       }).filter(Boolean)
     );
 
-    const collectDomainSelections = (domain) => {
-      const values = [];
-      const add = (value, sourceKey = domain.key) => {
-        if (!value) return;
-        if (Array.isArray(value)) {
-          value.forEach((entry) => add(entry, sourceKey));
-          return;
-        }
-        if (value && typeof value === 'object') {
-          values.push({ ...value, source: value.source || sourceKey });
-          return;
-        }
-        values.push({ id: String(value), name: String(value), source: sourceKey });
-      };
-
-      add(selections?.[domain.key], domain.key);
-      for (const alias of domain.aliases || []) add(selections?.[alias], alias);
-
-      const seen = new Set();
-      return values.filter((entry) => {
-        const key = this._normalizeNameKey(entry?.id || entry?.name || entry?.label || JSON.stringify(entry));
-        if (!key || seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-    };
-
     for (const domain of domainConfig) {
-      const rawValues = collectDomainSelections(domain);
+      const rawValues = Array.isArray(selections[domain.key]) ? selections[domain.key] : [];
       for (const rawEntry of rawValues) {
         const count = Math.max(1, Number(rawEntry?.count || 1));
         const resolvedDoc = await domain.docGetter(rawEntry);
@@ -1581,16 +1789,6 @@ export class ProgressionFinalizer {
             recursive: true,
             overwrite: true
           });
-          if (domain.type === 'force-power') {
-            const normalizedForcePower = ensureForcePowerAbilityMeta(baseItem, { source: 'progression-finalizer' });
-            baseItem.type = normalizedForcePower.type || 'force-power';
-            baseItem.system = normalizedForcePower.system || baseItem.system || {};
-            baseItem.flags = foundry.utils.mergeObject(baseItem.flags || {}, normalizedForcePower.flags || {}, {
-              inplace: false,
-              recursive: true,
-              overwrite: true
-            });
-          }
           if (domain.type === 'feat' && String(rawEntry?.source || '').includes('class')) {
             baseItem.system.sourceType = baseItem.system.sourceType || 'class';
             baseItem.system.locked = true;
@@ -1696,6 +1894,14 @@ export class ProgressionFinalizer {
         'system.starshipManeuverSuite.max': Math.max(Number(suite.max || 0), existing.size),
       }, { source: 'ProgressionFinalizer._syncPostApplyState' });
     }
+  }
+
+  static _auditLevelUpFinalization(actor, mutationPlan, sessionState) {
+    const manifest = mutationPlan?.set?.['flags.swse.levelUpEntitlementManifest']
+      || sessionState?.progressionSession?.levelUpEntitlementManifest
+      || null;
+    if (!manifest) return { ok: true, errors: [], warnings: [] };
+    return auditLevelUpActorAfterFinalization(actor, manifest, sessionState?.progressionSession || null);
   }
 
   /**

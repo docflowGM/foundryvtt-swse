@@ -454,6 +454,13 @@ export class ProgressionSurfaceAdapter {
       const ShellClass = mode === 'chargen' ? ChargenShell : LevelupShell;
       const app = new ShellClass(actor, mode, options);
 
+      // Let ProgressionShell know it is being hosted inline. On successful
+      // confirmation it should return the holopad to the actual character sheet,
+      // not leave the player on a completed progression surface.
+      app._embeddedInHolopad = true;
+      app._inlineSurfaceAdapter = this;
+      app._inlineShellHost = this._shellHost;
+
       // Inline holopad launches must never spawn a standalone recovery dialog.
       // The old RecoverySessionDialog is an ApplicationV2 window and currently
       // renders blank under the frameless sheet stack.  For inline mode, resume
@@ -592,6 +599,31 @@ export class ProgressionSurfaceAdapter {
     } catch (err) {
       SWSELogger.error('[ProgressionSurfaceAdapter] Initialization failed:', err);
       this._ready = false;
+    }
+  }
+
+
+  /**
+   * Called by the embedded ProgressionShell after successful finalization.
+   * Returns the hosting character sheet to the primary sheet surface and tears
+   * down this adapter so the next level-up/chargen launch starts fresh.
+   */
+  async completeAndReturnToSheet() {
+    const host = this._shellHost;
+    const key = `${this._actorId}-${this.mode}`;
+    this._ready = false;
+    this._app = null;
+    ProgressionSurfaceAdapter._registry.delete(key);
+
+    if (host?.setSurface) {
+      await host.setSurface('sheet', {
+        source: 'progression-finalized',
+        mode: this.mode
+      });
+    }
+
+    if (typeof host?.render === 'function') {
+      await host.render(true);
     }
   }
 

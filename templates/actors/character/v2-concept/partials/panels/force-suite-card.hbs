@@ -29,7 +29,11 @@
       </div>
 
       <div class="fc-foot">
-        <button type="button" class="fc-use" data-action="activate-force" data-item-id="{{power.id}}">▶ USE POWER</button>
+        {{#if power.canUse}}
+          <button type="button" class="fc-use" data-action="activate-force" data-item-id="{{power.id}}">▶ USE POWER</button>
+        {{else}}
+          <span class="fc-use fc-use--recorded">BUILD RECORD</span>
+        {{/if}}
         <button type="button" class="fc-flip" data-action="force-suite-flip-card" data-item-id="{{power.id}}" title="Full details">▿</button>
       </div>
     </div>
@@ -72,7 +76,11 @@
       </div>
 
       <div class="fc-bfoot">
-        <button type="button" class="fc-use" data-action="activate-force" data-item-id="{{power.id}}">▶ USE POWER</button>
+        {{#if power.canUse}}
+          <button type="button" class="fc-use" data-action="activate-force" data-item-id="{{power.id}}">▶ USE POWER</button>
+        {{else}}
+          <span class="fc-use fc-use--recorded">BUILD RECORD</span>
+        {{/if}}
         <button type="button" class="fc-flip" data-action="force-suite-flip-card" data-item-id="{{power.id}}" title="Flip back">▵</button>
       </div>
     </div>

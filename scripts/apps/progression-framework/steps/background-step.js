@@ -497,7 +497,7 @@ getUtilityBarConfig() {
   }
 
   getMentorContext(shell) {
-    const customGuidance = getStepGuidance(shell.actor, 'background');
+    const customGuidance = getStepGuidance(shell.actor, 'background', shell);
     if (customGuidance) return customGuidance;
 
     // Mode-aware default guidance (background is primarily chargen)

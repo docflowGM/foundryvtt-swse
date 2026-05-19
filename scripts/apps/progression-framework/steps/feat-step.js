@@ -36,6 +36,7 @@ import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/prog
 import { FeatChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js';
 import { attachFeatIconPath, resolveFeatIconPath } from './feat-icon-resolver.js';
 import { PendingEntitlementService } from '../services/pending-entitlement-service.js';
+import { buildLevelUpEntitlementManifest, getManifestStartingFeatNameSet, normalizeManifestName } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
 
 function resolveClassLookupKeysForFeatStep(shell) {
   try {
@@ -340,6 +341,29 @@ export class FeatStep extends ProgressionStepPlugin {
   // Data Retrieval & Processing
   // ---------------------------------------------------------------------------
 
+  _getLevelupManifest(shell) {
+    if (shell?.mode !== 'levelup' && shell?.progressionSession?.mode !== 'levelup') return null;
+    try {
+      return buildLevelUpEntitlementManifest(shell?.actor || null, shell?.progressionSession || null);
+    } catch (err) {
+      swseLogger.warn('[FeatStep] Failed to build level-up entitlement manifest for feat filtering', {
+        error: err?.message || String(err),
+      });
+      return null;
+    }
+  }
+
+  _isLevelupMulticlassStartingFeatSlot(shell) {
+    if (this._slotType !== 'class') return false;
+    const manifest = this._getLevelupManifest(shell);
+    return manifest?.multiclassStartingFeat?.required === true;
+  }
+
+  _getAllowedMulticlassStartingFeatNames(shell) {
+    const manifest = this._getLevelupManifest(shell);
+    return getManifestStartingFeatNameSet(manifest);
+  }
+
   /**
    * Get all feats legal for this context
    */
@@ -350,8 +374,14 @@ export class FeatStep extends ProgressionStepPlugin {
     this._availabilityByFeatId = new Map();
     const pendingAbilityData = this._buildPendingAbilityData(shell);
     const classLookupKeys = resolveClassLookupKeysForFeatStep(shell);
+    const isMulticlassStartingFeatSlot = this._isLevelupMulticlassStartingFeatSlot(shell);
+    const multiclassStartingFeatNames = isMulticlassStartingFeatSlot
+      ? this._getAllowedMulticlassStartingFeatNames(shell)
+      : new Set();
 
-    // Build class grant ledger to identify class-granted feats that are pending
+    // Build class grant ledger to identify class-granted feats that are pending.
+    // Exception: RAW multiclassing lets the player CHOOSE one starting feat from
+    // the new class. Those options must not be treated as already granted.
     const classGrantedFeats = new Set();
     try {
       const selectedClass = resolveSelectedClassFromShell(shell) || resolveClassModel(
@@ -386,6 +416,9 @@ export class FeatStep extends ProgressionStepPlugin {
     }
 
     for (const feat of this._allFeats) {
+      if (isMulticlassStartingFeatSlot && !multiclassStartingFeatNames.has(normalizeManifestName(feat?.name || feat?.id || feat?._id))) {
+        continue;
+      }
       const featId = feat?._id || feat?.id || feat?.name;
       const status = {
         isAvailable: false,
@@ -408,9 +441,11 @@ export class FeatStep extends ProgressionStepPlugin {
           { slotType: this._slotType, classId: this._classId, classLookupKeys },
           actor
         );
-        status.slotCompatible = !!slotValidation?.valid;
+        status.slotCompatible = isMulticlassStartingFeatSlot
+          ? multiclassStartingFeatNames.has(normalizeManifestName(feat.name))
+          : !!slotValidation?.valid;
 
-        status.isGranted = hasFeatOwnershipName(classGrantedFeats, feat.name);
+        status.isGranted = !isMulticlassStartingFeatSlot && hasFeatOwnershipName(classGrantedFeats, feat.name);
         status.isOwned = actor.items.some(i =>
           i.type === 'feat' && hasFeatOwnershipName(new Set(getFeatOwnershipKeys(i.name)), feat.name)
         );
@@ -580,17 +615,28 @@ export class FeatStep extends ProgressionStepPlugin {
     return this._getCommittedFeatSelections(shell).find(feat => feat?.slotType === this._slotType) || null;
   }
 
-  _buildCanonicalFeatSelection(feat) {
+  _buildCanonicalFeatSelection(feat, shell = null) {
     if (!feat) return null;
+    const isMulticlassStartingFeat = this._isLevelupMulticlassStartingFeatSlot(shell);
     return {
       id: feat.id || feat._id,
       name: feat.name || '',
       type: feat.type || 'feat',
-      system: feat.system || {},
+      system: {
+        ...(feat.system || {}),
+        ...(isMulticlassStartingFeat ? {
+          sourceType: 'class',
+          grantedByClass: true,
+          multiclassStartingFeat: true,
+          locked: true,
+          choiceEditable: false,
+        } : {}),
+      },
       img: feat.iconPath || feat.img || undefined,
       iconPath: resolveFeatIconPath(feat) || feat.iconPath || feat.img || undefined,
       slotType: this._slotType,
-      source: this._slotType,
+      source: isMulticlassStartingFeat ? 'multiclass-starting-feat' : this._slotType,
+      levelupGrantKind: isMulticlassStartingFeat ? 'multiclassStartingFeat' : undefined,
     };
   }
 
@@ -1130,7 +1176,7 @@ export class FeatStep extends ProgressionStepPlugin {
     const currentSelections = this._getCommittedFeatSelections(shell);
     const slotSelections = currentSelections.filter(entry => entry?.slotType !== this._slotType);
     const isTogglingOff = this._selectedFeatId === featId;
-    let nextSelection = isTogglingOff ? null : this._buildCanonicalFeatSelection(feat);
+    let nextSelection = isTogglingOff ? null : this._buildCanonicalFeatSelection(feat, shell);
     if (nextSelection) {
       const choiceMeta = FeatChoiceResolver.getChoiceMeta(feat);
       const choiceSource = FeatChoiceResolver.inferChoiceSource(feat);

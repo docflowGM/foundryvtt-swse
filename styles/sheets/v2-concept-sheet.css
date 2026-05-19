@@ -6803,6 +6803,16 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
   background: color-mix(in oklch, var(--force-card-accent) 25%, transparent);
 }
 
+.swse-force-suite-tab .fc-use--recorded {
+  cursor: default;
+  text-align: center;
+  opacity: 0.82;
+}
+
+.swse-force-suite-tab .fc-use--recorded:hover {
+  background: color-mix(in oklch, var(--force-card-accent) 15%, transparent);
+}
+
 .swse-force-suite-tab .fc-flip {
   font-size: 0.65rem;
   padding: 0.25rem 0.4rem;

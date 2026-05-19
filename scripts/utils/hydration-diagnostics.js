@@ -142,7 +142,10 @@ export function getRecentHydrationMutation(sheet, maxAgeMs = HYDRATION_TRACE_WIN
 }
 
 export function emitHydrationWarning(stage, data = {}) {
-  SWSELogger.warn(`[HYDRATION TRACE] ${stage}`, data);
+  // Hydration traces are diagnostic breadcrumbs, not player-visible failures.
+  // Keep them available in debug logs without making normal sheet updates look
+  // like console warnings. Real failures still use emitHydrationError().
+  SWSELogger.debug(`[HYDRATION TRACE] ${stage}`, data);
 }
 
 export function emitHydrationError(stage, data = {}) {

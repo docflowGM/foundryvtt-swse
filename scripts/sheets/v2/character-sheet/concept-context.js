@@ -11,11 +11,6 @@ function toCountBadge(value) {
   return n > 0 ? String(n) : null;
 }
 
-function getAbilityAccentClass(key) {
-  const normalized = String(key || '').toLowerCase();
-  return normalized ? `swse-ability-accent--${normalized}` : 'swse-ability-accent--none';
-}
-
 function asArray(value) {
   return Array.isArray(value) ? value : [];
 }
@@ -146,7 +141,12 @@ function getDerivedSkillMap(context) {
     .map((value) => [canonicalizeSkillKey(value?.key ?? value?.id ?? value?.label), value])
     .filter(([key, value]) => isCanonicalSkillKey(key) && value && typeof value === 'object' && !Array.isArray(value));
 
-  return Object.fromEntries([...objectRows, ...listEntries]);
+  // The keyed derived map is the engine-owned source of truth.  The optional
+  // .list mirror is display-only and may be rebuilt during a transient repaint;
+  // it must never override keyed totals/modifiers.
+  const merged = Object.fromEntries(listEntries);
+  for (const [key, value] of objectRows) merged[key] = value;
+  return merged;
 }
 
 function buildStatusChips({ healthPanel, forceSensitive, inventoryPanel, armorSummaryPanel }) {
@@ -281,12 +281,10 @@ function buildAbilityTab(abilities) {
       label: ability.label,
       base: Number(ability.base) || 0,
       racial: Number(ability.racial) || 0,
-      enhancement: Number(ability.enhancement ?? ability.misc ?? 0) || 0,
       temp: Number(ability.temp) || 0,
       total: Number(ability.total) || 0,
       mod: Number(ability.mod) || 0,
-      modClass: ability.modClass || toSignedClass(ability.mod),
-      abilityAccentClass: ability.abilityAccentClass || getAbilityAccentClass(ability.key)
+      modClass: ability.modClass || toSignedClass(ability.mod)
     }))
     .sort((a, b) => b.total - a.total || a.label.localeCompare(b.label));
 
@@ -346,7 +344,6 @@ function buildSkillsTab(context, abilities, identity) {
     .map((ab) => ({ key: ab?.key || '', label: ab?.label || titleCase(ab?.key) }))
     .filter((ab) => ab.key);
   const abilityMap = new Map(abilityChoices.map((ab) => [ab.key, ab.label]));
-  const abilityTotals = new Map(asArray(abilities).map((ability) => [ability.key, Number(ability.mod) || 0]));
   const derivedSkills = getDerivedSkillMap(context);
   const systemSkills = normalizeSkillMap(context.system?.skills ?? context.actor?.system?.skills, { includeDefaults: true });
 
@@ -359,13 +356,14 @@ function buildSkillsTab(context, abilities, identity) {
       const candidateAbility = skill?.selectedAbility || skill?.ability || skill?.abilityKey || systemSkill?.selectedAbility || defaultAbility;
       const selectedAbility = abilityMap.has(candidateAbility) ? candidateAbility : defaultAbility;
       const skillTooltipKey = humanizeSkillLabel(key, skill?.label).replace(/\s+/g, '');
-      const accentClass = getAbilityAccentClass(selectedAbility);
+      const abilityAccentClass = selectedAbility ? `swse-ability-accent--${selectedAbility}` : 'swse-ability-accent--none';
       const extraUsesGrouped = buildSkillUseGroups(skill?.extraUsesGrouped ?? systemSkill?.extraUsesGrouped);
       const extraUsesCount = extraUsesGrouped.reduce((sum, group) => sum + group.entries.length, 0);
       const total = Number.isFinite(Number(skill?.total)) ? Number(skill.total) : Number(systemSkill?.total) || 0;
-      const abilityMod = Number.isFinite(Number(abilityTotals.get(selectedAbility)))
-        ? Number(abilityTotals.get(selectedAbility))
-        : (Number.isFinite(Number(skill?.abilityMod)) ? Number(skill.abilityMod) : 0);
+      const derivedAbilityMod = Number(context.derived?.attributes?.[selectedAbility]?.mod);
+      const abilityMod = Number.isFinite(Number(skill?.abilityMod))
+        ? Number(skill.abilityMod)
+        : (Number.isFinite(derivedAbilityMod) ? derivedAbilityMod : 0);
       const miscMod = Number.isFinite(Number(systemSkill?.miscMod)) ? Number(systemSkill.miscMod) : Number(skill?.miscMod) || 0;
 
       return {
@@ -375,7 +373,7 @@ function buildSkillsTab(context, abilities, identity) {
         totalClass: toSignedClass(total),
         selectedAbility,
         defaultAbility,
-        abilityAccentClass: accentClass,
+        abilityAccentClass,
         selectedAbilityLabel: abilityMap.get(selectedAbility) || titleCase(selectedAbility),
         abilityMod,
         abilityModClass: toSignedClass(abilityMod),
@@ -413,13 +411,14 @@ function buildSkillsTab(context, abilities, identity) {
 
   const level = Number(identity?.level) || Number(context.actor?.system?.level) || 1;
   const halfLevel = Math.floor(level / 2);
+  const abilityTotals = new Map(asArray(abilities).map((ability) => [ability.key, Number(ability.mod) || 0]));
   const customEntries = asArray(context.system?.customSkills ?? context.actor?.system?.customSkills).map((skill, index) => {
     const abilityKey = skill?.ability || 'int';
     const abilityMod = Number(abilityTotals.get(abilityKey)) || 0;
     const miscMod = Number(skill?.miscMod) || 0;
     const total = abilityMod + halfLevel + (skill?.trained ? 5 : 0) + (skill?.focused ? 5 : 0) + miscMod;
 
-    const abilityAccentClass = getAbilityAccentClass(abilityKey);
+    const abilityAccentClass = abilityKey ? `swse-ability-accent--${abilityKey}` : 'swse-ability-accent--none';
 
     return {
       id: skill?.id || `custom-${index}`,
@@ -462,7 +461,8 @@ function buildTalentsTab(context) {
     id: feat?.id || '',
     name: feat?.name || 'Unnamed Feat',
     source: feat?.source || '',
-    description: excerpt(feat?.description, 160)
+    description: excerpt(feat?.description, 160),
+    virtual: feat?.virtual === true
   }));
 
   const talentGroups = Object.entries(context.talentPanel?.grouped ?? {})
@@ -473,7 +473,8 @@ function buildTalentsTab(context) {
         id: talent?.id || '',
         name: talent?.name || 'Unnamed Talent',
         source: talent?.source || '',
-        description: excerpt(talent?.description, 160)
+        description: excerpt(talent?.description, 160),
+        virtual: talent?.virtual === true
       }))
     }))
     .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
@@ -575,6 +576,8 @@ function normalizeForcePower(power, discarded = false, options = {}) {
     id: power?.id || '',
     name: power?.name || 'Unnamed Power',
     img: power?.img || '',
+    virtual: power?.virtual === true,
+    canUse: power?.virtual !== true && !!power?.id,
     p,
     type: isForm ? 'form' : 'force',
     sym: getForceSymbol(power, p),
@@ -844,8 +847,7 @@ export function buildConceptSheetViewModel(context = {}) {
       shortLabel: ability.label?.slice(0, 3)?.toUpperCase?.() || ability.key?.toUpperCase?.() || '—',
       total: Number(ability.total) || 0,
       mod: Number(ability.mod) || 0,
-      modClass: ability.modClass || toSignedClass(ability.mod),
-      abilityAccentClass: ability.abilityAccentClass || getAbilityAccentClass(ability.key)
+      modClass: ability.modClass || toSignedClass(ability.mod)
     })),
     abilitiesTab,
     defenses: defenses.map((def) => ({

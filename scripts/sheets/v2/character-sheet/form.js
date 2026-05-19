@@ -200,26 +200,31 @@ function resolveExplicitFieldTarget(event) {
 export function isDirectFieldMutationPath(fieldName) {
   if (!fieldName || typeof fieldName !== 'string') return false;
 
-  return (
-    /^system\.abilities\.(str|dex|con|int|wis|cha)\.(base|racial|temp)$/.test(fieldName) ||
-    /^system\.skills\.[^.]+\.(trained|focused|miscMod|selectedAbility|favorite)$/.test(fieldName) ||
-    /^system\.customSkills\.\d+\.(label|ability|trained|focused|miscMod|notes)$/.test(fieldName) ||
-    /^system\.defenses\.(fortitude|reflex|will)\.(ability|classBonus)$/.test(fieldName) ||
-    /^system\.defenses\.reflex\.armor$/.test(fieldName) ||
-    /^system\.defenses\.(fortitude|reflex|will)\.misc\.user\.extra$/.test(fieldName) ||
-    fieldName === 'system.conditionTrack.current'
-  );
+  // Sheet-wide repaint hardening: any single field change should cross the
+  // sheet/ActorEngine boundary as a scoped dot-path mutation.  The previous
+  // fallback serialized the whole rendered sheet for fields that were not in
+  // this allow-list, which let stale display mirrors overwrite unrelated actor
+  // domains during repaint.
+  if (fieldName === 'name') return true;
+  if (!fieldName.startsWith('system.')) return false;
+  if (fieldName.startsWith('system.derived.')) return false;
+
+  // system.hp.max is HP-engine owned. The visible max HP control is display-only
+  // unless it goes through the explicit HP/recompute handler.
+  if (fieldName === 'system.hp.max') return false;
+
+  return true;
 }
 
 export function coerceSingleFieldValue(fieldName, value, field = null) {
   const expectedType = getFieldType(fieldName);
 
-  if (expectedType === 'number') {
+  if (expectedType === 'number' || field?.matches?.('input[type="number"], input[type="range"]')) {
     const numValue = Number(value);
     return Number.isNaN(numValue) ? 0 : numValue;
   }
 
-  if (expectedType === 'boolean') {
+  if (expectedType === 'boolean' || field?.matches?.('input[type="checkbox"]')) {
     if (field?.matches?.('input[type="checkbox"]')) return field.checked;
     return value === 'true' || value === '1' || value === true || value === 'on';
   }
@@ -235,8 +240,11 @@ export function buildScopedUpdateFromField(field) {
     rawValue = field.checked;
   }
 
+  const value = coerceSingleFieldValue(field.name, rawValue, field);
+  if (field.name === 'name' && String(value || '').trim() === '') return null;
+
   return {
-    [field.name]: coerceSingleFieldValue(field.name, rawValue, field)
+    [field.name]: value
   };
 }
 
@@ -365,7 +373,7 @@ export async function handleFormSubmission(sheet, event) {
       await ActorEngine.updateActor(currentActor, scopedUpdate, {
         source: 'character-sheet-direct-field',
         suppressAppRefresh: true,
-        meta: { guardKey: `direct-field:` }
+        meta: { guardKey: `direct-field:${explicitField.name}` }
       });
 
       const refreshedActor = game.actors.get(currentActorId) ?? currentActor;
@@ -399,7 +407,7 @@ export async function handleFormSubmission(sheet, event) {
         });
       }
       console.error('[PERSISTENCE] Direct field mutation failed:', err);
-      ui?.notifications?.error(`Field update failed: `);
+      ui?.notifications?.error?.(`Field update failed: ${err?.message ?? err}`);
       return;
     }
   }

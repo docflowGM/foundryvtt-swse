@@ -229,7 +229,7 @@ export class FinalizeIntegration {
 
         // PHASE 3.4: Suite Reselection (level-up only, after ability recalculation)
         // Offers players to reselect Force Powers and Maneuvers with new capacity
-        if (mode === 'levelup' && isSuiteReselectionEnabled()) {
+        if (mode === 'levelup' && isSuiteReselectionEnabled() && !this._hasProgressionManagedForceOrManeuverSelection(actor, engine)) {
             await this._offerSuiteReselection(actor);
         }
 

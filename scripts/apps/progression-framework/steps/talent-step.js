@@ -2019,7 +2019,7 @@ export class TalentStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    const customGuidance = getStepGuidance(shell.actor, 'general-talent');
+    const customGuidance = getStepGuidance(shell.actor, 'general-talent', shell);
     if (customGuidance) return customGuidance;
 
     // Mode-aware default guidance

@@ -46,6 +46,7 @@ export const SETTINGS_DEFAULTS = {
     // Hit Points
     hpGeneration: 'average',
     maxHPLevels: 1,
+    levelUpHpRecoveryMode: 'none',
 
     // Death & Dying
     deathSystem: 'standard',

@@ -13,6 +13,7 @@ import {
   planPooledAssignment
 } from '/systems/foundryvtt-swse/scripts/engine/suggestion/attribute-planner.js';
 import { getStepGuidance } from './mentor-step-integration.js';
+import { buildLevelUpEntitlementManifest } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
 
 const POINT_BUY_BASE = 8;
 const POINT_BUY_COST = Object.freeze({
@@ -102,6 +103,46 @@ export class AttributeStep extends ProgressionStepPlugin {
   _getAssignableAbilityKeys(shell) {
     const excluded = this._getExcludedSet(shell);
     return this._getAbilityKeys(shell).filter(key => !excluded.has(key));
+  }
+
+
+  _isLevelUpAbilityIncreaseMode(shell) {
+    const mode = shell?.mode || shell?.progressionSession?.mode || shell?.progressionSession?.draftSelections?.mode;
+    if (mode && mode !== 'levelup') return false;
+    try {
+      const manifest = buildLevelUpEntitlementManifest(shell?.actor || null, shell?.progressionSession || null);
+      return manifest?.abilityIncreases?.required === true;
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  _getLevelUpAbilityIncreaseCount(shell) {
+    try {
+      const manifest = buildLevelUpEntitlementManifest(shell?.actor || null, shell?.progressionSession || null);
+      return Math.max(0, Number(manifest?.abilityIncreases?.count || 0) || 0);
+    } catch (_err) {
+      return 0;
+    }
+  }
+
+  _getActorAbilityBase(shell, key) {
+    const ability = shell?.actor?.system?.abilities?.[key] || shell?.actor?.system?.attributes?.[key] || {};
+    return Number(ability.base ?? ability.value ?? ability.total ?? 10) || 10;
+  }
+
+  _normalizeLevelUpIncreases(raw = null, shell = null) {
+    const increases = raw?.increases || raw?.abilityIncreases || raw || {};
+    const out = {};
+    for (const key of this._getAbilityKeys(shell)) {
+      out[key] = Math.max(0, Math.min(1, Number(increases?.[key] ?? 0) || 0));
+    }
+    return out;
+  }
+
+  _getLevelUpIncreaseSpent(shell) {
+    return Object.values(this._normalizeLevelUpIncreases(this._attributes, shell))
+      .reduce((sum, value) => sum + (Number(value) || 0), 0);
   }
 
   _getSpeciesAttributeOverride(shell) {
@@ -604,6 +645,16 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   async onStepEnter(shell) {
+    if (this._isLevelUpAbilityIncreaseMode(shell)) {
+      const existingLevelUp = shell?.progressionSession?.draftSelections?.attributes || null;
+      this._attributes = this._normalizeLevelUpIncreases(existingLevelUp, shell);
+      this._scorePool = [];
+      this._selectedPoolId = null;
+      const needed = this._getLevelUpAbilityIncreaseCount(shell);
+      this._committed = needed > 0 && this._getLevelUpIncreaseSpent(shell) === needed && existingLevelUp?.mode === 'levelup-ability-increase';
+      return;
+    }
+
     const existing = this._normalizeIncomingAttributes(
       shell?.progressionSession?.draftSelections?.attributes,
       shell
@@ -687,6 +738,19 @@ export class AttributeStep extends ProgressionStepPlugin {
   async _performLock(shell) {
     if (!this._attributes) {
       ui?.notifications?.warn?.('Assign your attributes first.');
+      return;
+    }
+
+    if (this._isLevelUpAbilityIncreaseMode(shell)) {
+      const needed = this._getLevelUpAbilityIncreaseCount(shell);
+      const increases = this._normalizeLevelUpIncreases(this._attributes, shell);
+      const spent = Object.values(increases).reduce((sum, value) => sum + (Number(value) || 0), 0);
+      if (spent !== needed) {
+        ui?.notifications?.warn?.(`Choose exactly ${needed} different abilities to increase.`);
+        return;
+      }
+      await this.onItemCommitted(increases, shell);
+      shell?.render?.();
       return;
     }
 
@@ -841,6 +905,22 @@ export class AttributeStep extends ProgressionStepPlugin {
 
   _handlePointBuyDelta(key, delta, shell) {
     if (this._committed) return;
+    if (this._isLevelUpAbilityIncreaseMode(shell)) {
+      const ability = String(key || '').toLowerCase();
+      if (!this._getAbilityKeys(shell).includes(ability)) return;
+      const needed = this._getLevelUpAbilityIncreaseCount(shell);
+      const current = this._normalizeLevelUpIncreases(this._attributes, shell);
+      const oldValue = Number(current[ability] || 0);
+      const nextValue = delta > 0 ? 1 : 0;
+      const spentWithout = Object.entries(current)
+        .filter(([k]) => k !== ability)
+        .reduce((sum, [, value]) => sum + (Number(value) || 0), 0);
+      if (nextValue > oldValue && spentWithout + nextValue > needed) return;
+      this._attributes = { ...current, [ability]: nextValue };
+      this._focusedAbility = ability;
+      shell.render();
+      return;
+    }
     if (this._isSpeciesFixedMode()) {
       this._handleSpeciesFixedDelta(key, delta, shell);
       return;
@@ -906,7 +986,7 @@ export class AttributeStep extends ProgressionStepPlugin {
 
   getSelection() {
     const selected = this._attributes
-      ? Object.entries(this._attributes).filter(([_, value]) => Number.isFinite(Number(value))).map(([key]) => key)
+      ? Object.entries(this._attributes).filter(([_, value]) => Number.isFinite(Number(value)) && Number(value) > 0).map(([key]) => key)
       : [];
 
     return {
@@ -917,6 +997,29 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   async onItemCommitted(attributes, shell) {
+    if (this._isLevelUpAbilityIncreaseMode(shell)) {
+      const increases = this._normalizeLevelUpIncreases(attributes, shell);
+      this._attributes = increases;
+      this._committed = true;
+      const finalValues = {};
+      const modifiers = {};
+      for (const key of this._getAbilityKeys(shell)) {
+        const base = this._getActorAbilityBase(shell, key);
+        const finalScore = base + (Number(increases[key] || 0) || 0);
+        finalValues[key] = finalScore;
+        modifiers[key] = Math.floor((finalScore - 10) / 2);
+      }
+      await this._commitNormalized(shell, 'attributes', {
+        mode: 'levelup-ability-increase',
+        increases,
+        values: finalValues,
+        finalValues,
+        modifiers,
+        abilityIncreaseLevel: buildLevelUpEntitlementManifest(shell?.actor || null, shell?.progressionSession || null)?.characterLevel || null,
+      });
+      return;
+    }
+
     this._attributes = { ...attributes };
     this._committed = true;
     const speciesMods = this._isSpeciesFixedMode()
@@ -944,6 +1047,18 @@ export class AttributeStep extends ProgressionStepPlugin {
       return { isValid: false, errors: ['Attributes not yet assigned'], warnings: [] };
     }
 
+    if (this._isLevelUpAbilityIncreaseMode(shell)) {
+      const needed = this._getLevelUpAbilityIncreaseCount(shell);
+      const spent = this._getLevelUpIncreaseSpent(shell);
+      if (spent !== needed) {
+        return { isValid: false, errors: [`Choose exactly ${needed} different abilities to increase`], warnings: [] };
+      }
+      if (!this._committed) {
+        return { isValid: false, errors: ['Click Lock Attributes to continue'], warnings: [] };
+      }
+      return { isValid: true, errors: [], warnings: [] };
+    }
+
     if (this._isSpeciesFixedMode()) {
       const status = this._getSpeciesFixedAllocationStatus(shell);
       if (!status.complete) {
@@ -967,6 +1082,14 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   getBlockingIssues(shell = null) {
+    if (this._isLevelUpAbilityIncreaseMode(shell)) {
+      const needed = this._getLevelUpAbilityIncreaseCount(shell);
+      const spent = this._getLevelUpIncreaseSpent(shell);
+      if (spent !== needed) return [`Choose exactly ${needed} different abilities to increase`];
+      if (!this._committed) return ['Click Lock Attributes to continue'];
+      return [];
+    }
+
     if (this._isSpeciesFixedMode()) {
       const status = this._getSpeciesFixedAllocationStatus(shell);
       if (!status.complete) return [`Distribute ${status.remaining} more clone attribute increase point${status.remaining === 1 ? '' : 's'}`];
@@ -978,6 +1101,16 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   getRemainingPicks(shell = null) {
+    if (this._isLevelUpAbilityIncreaseMode(shell)) {
+      const needed = this._getLevelUpAbilityIncreaseCount(shell);
+      const spent = this._getLevelUpIncreaseSpent(shell);
+      return [{
+        label: 'Ability increases remaining',
+        count: Math.max(0, needed - spent),
+        isWarning: spent !== needed || !this._committed,
+      }];
+    }
+
     if (this._isSpeciesFixedMode()) {
       const status = this._getSpeciesFixedAllocationStatus(shell);
       if (!status.complete) {
@@ -1000,6 +1133,56 @@ export class AttributeStep extends ProgressionStepPlugin {
 
   async getStepData(context) {
     const shell = context?.shell;
+    if (this._isLevelUpAbilityIncreaseMode(shell)) {
+      const needed = this._getLevelUpAbilityIncreaseCount(shell);
+      const increases = this._normalizeLevelUpIncreases(this._attributes, shell);
+      const spent = Object.values(increases).reduce((sum, value) => sum + (Number(value) || 0), 0);
+      const abilities = this._getAbilityKeys(shell).map(key => {
+        const base = this._getActorAbilityBase(shell, key);
+        const increase = Number(increases[key] || 0) || 0;
+        const finalScore = base + increase;
+        const modifier = this._modifier(finalScore);
+        return {
+          id: key,
+          label: key.toUpperCase(),
+          isFocused: this._focusedAbility === key,
+          isUnassigned: false,
+          baseDisplay: String(base),
+          finalDisplay: String(finalScore),
+          speciesMod: increase,
+          speciesModClass: increase > 0 ? 'prog-num--pos' : 'prog-num--zero',
+          modifierFormatted: Number.isFinite(Number(modifier)) ? (modifier > 0 ? `+${modifier}` : `${modifier}`) : '—',
+          modClass: modifier > 0 ? 'prog-num--pos' : modifier < 0 ? 'prog-num--neg' : 'prog-num--zero',
+          canAdjust: !this._committed,
+          canIncrease: increase < 1 && spent < needed,
+          canDecrease: increase > 0,
+          assignedValues: [],
+          assignmentCapacity: 0,
+          assignmentHint: increase > 0 ? '+1 selected' : null,
+        };
+      });
+      return {
+        isCommitted: this._committed,
+        method: 'levelup-increase',
+        abilities,
+        scorePool: [],
+        pointBuyPool: 0,
+        showMethodSelector: false,
+        showPointBuy: false,
+        showGeneratedPool: false,
+        isSpeciesFixed: false,
+        attributeIncreaseMode: true,
+        secondColumnLabel: 'Increase',
+        showUtilityActions: false,
+        pointBuyStatus: { spent, percent: needed ? Math.round((spent / needed) * 100) : 100, isComplete: spent === needed, status: `${Math.max(0, needed - spent)} remaining` },
+        remainingPoolAssignments: 0,
+        currentMethodDescription: `Choose exactly ${needed} different abilities. Each selected ability gains +1.`,
+        poolInstruction: spent === needed ? 'Ability increases ready to lock.' : `${Math.max(0, needed - spent)} increase${needed - spent === 1 ? '' : 's'} remaining.`,
+        lockButtonLabel: this._committed ? 'Unlock Ability Increases' : 'Lock Ability Increases',
+        rerollButtonLabel: 'Reroll',
+      };
+    }
+
     const pointBuyPool = this.getPointBuyPool(shell);
     const speciesMods = this._isSpeciesFixedMode() ? { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 } : this._getSpeciesMods(shell);
     const attributeOverride = this._getSpeciesAttributeOverride(shell);
@@ -1081,6 +1264,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       showMethodSelector: !this._isSpeciesFixedMode(),
       showPointBuy: this._method === 'point-buy' && !this._isSpeciesFixedMode(),
       showGeneratedPool: this._method !== 'point-buy' && !this._isSpeciesFixedMode(),
+      showUtilityActions: true,
       isSpeciesFixed: this._isSpeciesFixedMode(),
       attributeOverride,
       speciesFixedAllocation,

@@ -32,6 +32,7 @@ import { ActiveStepComputer } from './active-step-computer.js';
 import { StepCategory } from '../steps/step-descriptor.js';
 import { ActionFooter } from './action-footer.js';
 import { MentorRail } from './mentor-rail.js';
+import { MentorChoiceReactionRouter } from './mentor-choice-reaction-router.js';
 import { ProgressRail } from './progress-rail.js';
 import { UtilityBar } from './utility-bar.js';
 import { HydrationDiagnosticsCollector, HydrationValidator, HydrationRecoveryStrategies } from '../hydration-diagnostics.js';
@@ -46,7 +47,7 @@ import { ProjectionEngine } from './projection-engine.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
 import { resolveMentorData, resolveMentorPortraitPath, getMentorKey } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
-import { getStepMentorObject } from '../steps/mentor-step-integration.js';
+import { getStepMentorObject, resolveStepMentorContext } from '../steps/mentor-step-integration.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -293,6 +294,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     // Subsystem controllers
     this.mentorRail = new MentorRail(this);
+    this.mentorChoiceReactions = new MentorChoiceReactionRouter(this);
+    this._suppressLegacyMentorSpeech = false;
     this.progressRail = new ProgressRail(this);
     this.utilityBar = new UtilityBar(this);
     if (typeof game !== 'undefined') game.__swseActiveProgressionShell = this;
@@ -1107,8 +1110,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   _syncMentorForStep(descriptor = null) {
     try {
-      const mentorData = getStepMentorObject(this.actor, this) || resolveMentorData('Scoundrel') || {};
-      const mentorKey = getMentorKey(mentorData);
+      const mentorContext = resolveStepMentorContext(this.actor, this, {
+        stepId: descriptor?.stepId || this.steps?.[this.currentStepIndex]?.stepId || null,
+      });
+      const mentorData = mentorContext?.mentor || getStepMentorObject(this.actor, this) || resolveMentorData('Scoundrel') || {};
+      const mentorKey = mentorContext?.mentorKey || mentorContext?.mentorId || getMentorKey(mentorData);
       Object.assign(this.mentor, {
         id: mentorKey,
         mentorId: mentorKey,
@@ -1877,6 +1883,24 @@ export class ProgressionShell extends SWSEApplicationV2 {
   // ---------------------------------------------------------------------------
 
   /**
+   * Suppress older step-local mentor speech while the central choice reaction
+   * router handles the same click. This keeps legacy step helpers harmless
+   * without requiring every plugin to be rewritten.
+   * @param {Function} callback
+   * @returns {Promise<*>}
+   * @private
+   */
+  async _withSuppressedLegacyMentorSpeech(callback) {
+    const previous = this._suppressLegacyMentorSpeech === true;
+    this._suppressLegacyMentorSpeech = true;
+    try {
+      return await callback();
+    } finally {
+      this._suppressLegacyMentorSpeech = previous;
+    }
+  }
+
+  /**
    * Wire up delegated action handling for the current step plugin.
    * Allows plugins to define step-specific actions via handleAction() method.
    * This supports skill-train, skill-untrain, skill-reset and other step-specific actions.
@@ -1903,9 +1927,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
       if (!action) return;
 
       try {
-        const handled = await plugin.handleAction(action, event, target, this);
+        const handled = await this._withSuppressedLegacyMentorSpeech(() => plugin.handleAction(action, event, target, this));
         if (handled === true) {
-          // Plugin handled the action
+          this.mentorChoiceReactions?.reactToInteraction({
+            stepId: this.steps[this.currentStepIndex]?.stepId,
+            actionName: action,
+            plugin,
+            event,
+            target,
+          });
         }
       } catch (err) {
         swseLogger.error(`[ProgressionShell] Plugin action "${action}" failed:`, err);
@@ -2417,12 +2447,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
         sessionId: this.element?.dataset.sessionId || 'unknown',
       };
 
-      // Last-chance recovery point: finalization must never be the moment the
-      // player loses a completed build. If apply fails, this checkpoint/session
-      // snapshot remains available for resume/debugging.
-      await this._persistSessionSnapshot('pre-finalize');
-      await ChargenPersistence.saveCheckpoint(this, 'pre-finalize');
-
       // Hand to finalizer (not direct actor.update())
       const result = await ProgressionFinalizer.finalize(sessionState, this.actor);
 
@@ -2433,6 +2457,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
         // Phase 3: Clear checkpoints after successful finalization
         await this.clearCheckpoints();
 
+        // Inline holopad mode: return the hosting character sheet to the real
+        // character sheet surface. This makes Confirm feel like a completed
+        // handoff instead of leaving the player in a dead progression screen.
+        if (this._embeddedInHolopad && this._inlineSurfaceAdapter?.completeAndReturnToSheet) {
+          await this._inlineSurfaceAdapter.completeAndReturnToSheet();
+          return;
+        }
+
         await this.close();
         const sheet = this.actor?.sheet;
         if (sheet) {
@@ -2440,7 +2472,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
             if (sheet.minimized && typeof sheet.maximize === 'function') {
               await sheet.maximize();
             }
-            sheet.render(true);
+            if (typeof sheet.returnToSheet === 'function') {
+              await sheet.returnToSheet();
+            } else {
+              sheet.render(true);
+            }
           } catch (sheetErr) {
             swseLogger.warn('[ProgressionShell] Failed to re-open actor sheet after finalization', sheetErr);
           }
@@ -2499,7 +2535,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return { element, row: null, itemId: null, matchedAttribute: null };
     }
 
-    const row = element.closest('[data-item-id], [data-feat-id], [data-language-id]');
+    const selector = [
+      '[data-item-id]', '[data-feat-id]', '[data-language-id]', '[data-talent-id]',
+      '[data-tree-id]', '[data-node-id]', '[data-skill]', '[data-skill-id]', '[data-skill-key]',
+      '[data-power-id]', '[data-secret-id]', '[data-technique-id]', '[data-maneuver-id]',
+      '[data-system-id]', '[data-class-id]', '[data-background-id]', '[data-species-id]',
+      '[data-variant-id]', '[data-id]', '[data-key]', '[data-slug]',
+    ].join(', ');
+
+    const row = element.closest(selector);
     if (!row) {
       return { element, row: null, itemId: null, matchedAttribute: null };
     }
@@ -2508,6 +2552,24 @@ export class ProgressionShell extends SWSEApplicationV2 {
       ['itemId', 'data-item-id'],
       ['featId', 'data-feat-id'],
       ['languageId', 'data-language-id'],
+      ['talentId', 'data-talent-id'],
+      ['treeId', 'data-tree-id'],
+      ['nodeId', 'data-node-id'],
+      ['skill', 'data-skill'],
+      ['skillId', 'data-skill-id'],
+      ['skillKey', 'data-skill-key'],
+      ['powerId', 'data-power-id'],
+      ['secretId', 'data-secret-id'],
+      ['techniqueId', 'data-technique-id'],
+      ['maneuverId', 'data-maneuver-id'],
+      ['systemId', 'data-system-id'],
+      ['classId', 'data-class-id'],
+      ['backgroundId', 'data-background-id'],
+      ['speciesId', 'data-species-id'],
+      ['variantId', 'data-variant-id'],
+      ['id', 'data-id'],
+      ['key', 'data-key'],
+      ['slug', 'data-slug'],
     ];
 
     for (const [datasetKey, attributeName] of candidates) {
@@ -2574,7 +2636,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       swseLogger.warn('[ProgressionShell] _onFocusItem: could not resolve focus row identity', {
         rowElement: row?.outerHTML?.slice(0, 100),
         matchedAttribute,
-        ancestorChain: element?.closest?.('[data-item-id], [data-feat-id], [data-language-id]') ? 'found' : 'not found',
+        ancestorChain: element?.closest?.('[data-item-id], [data-feat-id], [data-talent-id], [data-skill], [data-skill-id], [data-power-id]') ? 'found' : 'not found',
       });
       return;
     }
@@ -2590,12 +2652,22 @@ export class ProgressionShell extends SWSEApplicationV2 {
       swseLogger.debug(`[ProgressionShell] _onFocusItem calling plugin.onItemFocused(${itemId})`);
 
       try {
-        await plugin.onItemFocused(itemId, this);
+        await this._withSuppressedLegacyMentorSpeech(() => plugin.onItemFocused(itemId, this));
 
         // Re-render to update the detail panel with the newly focused item.
         // Preserve scroll even when a plugin already requested a render internally.
         this._pendingScrollSnapshots = this._pendingScrollSnapshots?.length ? this._pendingScrollSnapshots : captureInteractionScroll();
         await this.requestRender({ preserveScroll: true, reason: `focus-item:${stepId}` });
+
+        this.mentorChoiceReactions?.reactToInteraction({
+          stepId,
+          action: 'focus',
+          actionName: 'focus-item',
+          itemId,
+          plugin,
+          event,
+          target: row || element,
+        });
 
         ProgressionDebugCapture.log('Progression Debug', `[Click #${clickNum}] plugin.onItemFocused() completed`, {
           focusedItem_id: this.focusedItem?.id ?? '(null)',
@@ -2629,13 +2701,23 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return;
     }
 
-    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    const stepId = this.steps[this.currentStepIndex]?.stepId;
+    const plugin = this.stepPlugins.get(stepId);
     if (plugin) {
-      await plugin.onItemCommitted(itemId, this);
+      await this._withSuppressedLegacyMentorSpeech(() => plugin.onItemCommitted(itemId, this));
       // Rebuild projection after selection committed to update selected rail
       this._rebuildProjection();
       // Trigger re-render to show updated selected rail without losing the scroll position.
-      this.requestRender({ preserveScroll: true, reason: 'commit-item' });
+      await this.requestRender({ preserveScroll: true, reason: 'commit-item' });
+      this.mentorChoiceReactions?.reactToInteraction({
+        stepId,
+        action: 'commit',
+        actionName: 'commit-item',
+        itemId,
+        plugin,
+        event,
+        target: row || element,
+      });
     }
   }
 
@@ -2654,9 +2736,19 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return;
     }
 
-    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    const stepId = this.steps[this.currentStepIndex]?.stepId;
+    const plugin = this.stepPlugins.get(stepId);
     if (plugin?.onIncrementQuantity) {
-      await plugin.onIncrementQuantity(itemId, this);
+      await this._withSuppressedLegacyMentorSpeech(() => plugin.onIncrementQuantity(itemId, this));
+      this.mentorChoiceReactions?.reactToInteraction({
+        stepId,
+        action: 'commit',
+        actionName: 'increment-quantity',
+        itemId,
+        plugin,
+        event,
+        target: row || element,
+      });
     }
   }
 
@@ -2675,9 +2767,19 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return;
     }
 
-    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    const stepId = this.steps[this.currentStepIndex]?.stepId;
+    const plugin = this.stepPlugins.get(stepId);
     if (plugin?.onDecrementQuantity) {
-      await plugin.onDecrementQuantity(itemId, this);
+      await this._withSuppressedLegacyMentorSpeech(() => plugin.onDecrementQuantity(itemId, this));
+      this.mentorChoiceReactions?.reactToInteraction({
+        stepId,
+        action: 'uncommit',
+        actionName: 'decrement-quantity',
+        itemId,
+        plugin,
+        event,
+        target: row || element,
+      });
     }
   }
 
@@ -2861,8 +2963,17 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     const plugin = this.stepPlugins.get(stepId);
     if (plugin?.handleAction) {
-      const handled = await plugin.handleAction(actionName, event, target, this);
-      if (handled === true) return;
+      const handled = await this._withSuppressedLegacyMentorSpeech(() => plugin.handleAction(actionName, event, target, this));
+      if (handled === true) {
+        this.mentorChoiceReactions?.reactToInteraction({
+          stepId,
+          actionName,
+          plugin,
+          event,
+          target,
+        });
+        return;
+      }
     }
 
     // Allow the event to bubble to the work-surface element where step plugins

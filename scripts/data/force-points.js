@@ -68,6 +68,95 @@ export function calculateMaxForcePoints(actor) {
     return maxFP;
 }
 
+
+/**
+ * Calculate maximum Force Points for a progression build plan before the actor's
+ * class item / level fields have necessarily been persisted.
+ *
+ * This is the progression receiving-dock version of calculateMaxForcePoints().
+ * It preserves the same canonical formula while accepting the target level and
+ * pending class ledger from chargen/level-up finalization.
+ *
+ * @param {Object} options
+ * @param {Object} [options.actor] - Current actor document
+ * @param {number} [options.totalLevel] - Target character level after progression
+ * @param {Object|string} [options.selectedClass] - Class being taken/finalized
+ * @param {Array<Object>} [options.classLevels] - Target class-level ledger after progression
+ * @returns {number}
+ */
+export function calculateMaxForcePointsForBuildPlan({ actor = null, totalLevel = null, selectedClass = null, classLevels = null } = {}) {
+    const level = getBuildPlanTotalLevel(actor, totalLevel, classLevels);
+    const base = getForcePointBaseForBuildPlan(actor, selectedClass, classLevels);
+    const featBonus = actor ? MetaResourceFeatResolver.getForcePointMaxBonus(actor) : 0;
+    return base + Math.floor(level / 2) + featBonus;
+}
+
+function getBuildPlanTotalLevel(actor, totalLevel = null, classLevels = null) {
+    const explicit = Number(totalLevel);
+    if (Number.isFinite(explicit) && explicit > 0) return Math.floor(explicit);
+
+    if (Array.isArray(classLevels) && classLevels.length) {
+        const sum = classLevels.reduce((acc, entry) => acc + (Number(entry?.level || 0) || 0), 0);
+        if (sum > 0) return Math.floor(sum);
+    }
+
+    return Math.max(1, getTotalCharacterLevel(actor));
+}
+
+function getForcePointBaseForBuildPlan(actor = null, selectedClass = null, classLevels = null) {
+    let highestBase = 5;
+
+    if (actor?.getFlag?.('swse', 'hasBase7FP') || actor?.flags?.swse?.hasBase7FP) highestBase = Math.max(highestBase, 7);
+    if (actor?.getFlag?.('swse', 'hasPrestigeFPBonus') || actor?.flags?.swse?.hasPrestigeFPBonus) highestBase = Math.max(highestBase, 6);
+
+    const inspectClass = (entry) => {
+        const classDef = resolveForcePointClassDefinition(entry);
+        const forcePointBase = Number(
+            classDef?.forcePointBase
+            ?? entry?.forcePointBase
+            ?? entry?.system?.forcePointBase
+            ?? entry?.system?.force_point_base
+            ?? 0
+        ) || 0;
+        const baseClass = classDef?.baseClass ?? entry?.baseClass ?? entry?.system?.baseClass ?? entry?.system?.base_class;
+        const grantsForcePoints = classDef?.grantsForcePoints ?? entry?.grantsForcePoints ?? entry?.system?.grantsForcePoints ?? entry?.system?.grants_force_points;
+        const normalizedName = normalizeForcePointClassKey(classDef?.name || entry?.name || entry?.className || entry?.class || entry);
+
+        if (forcePointBase === 7 || ['force_disciple', 'jedi_master', 'sith_lord'].includes(normalizedName)) {
+            highestBase = Math.max(highestBase, 7);
+            return;
+        }
+
+        const isPrestige = baseClass === false || classDef?.prestigeClass === true || entry?.prestigeClass === true || entry?.system?.prestigeClass === true;
+        const grants = grantsForcePoints !== false;
+        if (isPrestige && grants && normalizedName !== 'shaper') {
+            highestBase = Math.max(highestBase, 6);
+        }
+    };
+
+    for (const item of actor?.items?.filter?.(i => i?.type === 'class') || []) inspectClass(item);
+    for (const entry of Array.isArray(classLevels) ? classLevels : []) inspectClass(entry);
+    if (selectedClass) inspectClass(selectedClass);
+
+    return highestBase;
+}
+
+function resolveForcePointClassDefinition(entry) {
+    if (!entry) return null;
+    if (entry.type === 'class') return ClassesDB.fromItem?.(entry) || null;
+    const id = entry?.id || entry?.classId || entry?.sourceId || entry?.system?.classId || entry?.name || entry?.className || entry?.class || entry;
+    return ClassesDB.get?.(id) || ClassesDB.byName?.(id) || null;
+}
+
+function normalizeForcePointClassKey(value) {
+    return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/&/g, 'and')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_|_$/g, '');
+}
+
 /**
  * Get total character level across all classes.
  *

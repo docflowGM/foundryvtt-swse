@@ -20,6 +20,8 @@ import { buildHpViewModel, buildDefensesViewModel, buildAttributesViewModel, bui
 import { UpgradeService } from '/systems/foundryvtt-swse/scripts/engine/upgrades/UpgradeService.js';
 import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
 import { CurrentConditionResolver } from '/systems/foundryvtt-swse/scripts/engine/effects/current-condition-resolver.js';
+import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey } from '/systems/foundryvtt-swse/scripts/utils/skill-normalization.js';
+import { isFeatLikeItem, isForcePowerItem, isPlaceholderSheetItem, isTalentLikeItem } from '/systems/foundryvtt-swse/scripts/utils/item-classification.js';
 
 export class PanelContextBuilder {
   constructor(actor, sheetInstance) {
@@ -423,6 +425,148 @@ export class PanelContextBuilder {
     return panel;
   }
 
+
+  _normalizeManifestNameKey(value = '') {
+    return String(value || '')
+      .toLowerCase()
+      .replace(/[’']/g, '')
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9]+/g, '');
+  }
+
+  _progressionManifest() {
+    return this.actor?.flags?.swse?.progressionBuildManifest || {};
+  }
+
+  _manifestExpectedNames(key) {
+    const expected = this._progressionManifest()?.expected || {};
+    const raw = expected?.[key];
+    const list = Array.isArray(raw) ? raw : raw ? [raw] : [];
+    return list.map((entry) => {
+      if (!entry) return '';
+      if (typeof entry === 'string') return entry;
+      return entry.name || entry.label || entry.title || entry.id || entry._id || entry.slug || '';
+    }).filter(Boolean);
+  }
+
+  _manifestSpeciesItems() {
+    const expected = this._progressionManifest()?.expected || {};
+    return Array.isArray(expected.speciesItems) ? expected.speciesItems : [];
+  }
+
+  _appendManifestRows(entries, names, { type = 'feat', source = 'Progression Record', group = 'Progression Record' } = {}) {
+    const used = new Set(entries.map((entry) => this._normalizeManifestNameKey(entry?.name || entry?.label || '')));
+    const out = [...entries];
+    for (const name of names || []) {
+      const key = this._normalizeManifestNameKey(name);
+      if (!key || used.has(key)) continue;
+      used.add(key);
+      out.push({
+        id: `manifest-${type}-${key}`,
+        name,
+        label: name,
+        type,
+        source,
+        sourceType: 'progression-manifest',
+        group,
+        tree: group,
+        category: source,
+        description: 'Recorded in the progression build plan. If this row is display-only, the underlying actor item was missing and should be repaired by progression finalization.',
+        tags: ['Progression Record'],
+        virtual: true,
+        canEdit: false,
+        canDelete: false,
+        cssClass: `${type}-row progression-record virtual`,
+      });
+    }
+    return out;
+  }
+
+  _normalizeSpeciesAbilityEntry(entry, fallbackSource = 'Species') {
+    if (!entry) return null;
+    if (typeof entry === 'string') {
+      return { name: entry, source: fallbackSource, summary: '' };
+    }
+    const system = entry.system || {};
+    const speciesAbility = system.speciesAbility || system.specialAbility || entry.speciesAbility || entry.specialAbility || {};
+    const name = entry.name
+      || speciesAbility.name
+      || entry.label
+      || entry.sourceTrait
+      || entry.sourceTraitName
+      || entry.id
+      || entry.key
+      || '';
+    if (!name) return null;
+    return {
+      id: entry.id || entry._id || speciesAbility.id || this._normalizeManifestNameKey(name),
+      name,
+      source: entry.source
+        || system.source
+        || speciesAbility.sourceSpecies
+        || entry.sourceSpecies
+        || fallbackSource,
+      summary: entry.summary
+        || entry.description
+        || system.description
+        || speciesAbility.description
+        || entry.effect
+        || '',
+      description: entry.description || system.description || speciesAbility.description || '',
+      virtual: entry.virtual === true,
+    };
+  }
+
+  _collectSpeciesAbilityEntries() {
+    const entries = [];
+    const add = (value, source = 'Species') => {
+      if (!value) return;
+      if (Array.isArray(value)) {
+        for (const item of value) add(item, source);
+        return;
+      }
+      if (value && typeof value === 'object' && !value.name && !value.label && !value.id && !value.key && !value.system) {
+        for (const [key, item] of Object.entries(value)) {
+          const next = item && typeof item === 'object' ? { id: key, ...item } : { id: key, name: key, summary: String(item || '') };
+          add(next, source);
+        }
+        return;
+      }
+      const normalized = this._normalizeSpeciesAbilityEntry(value, source);
+      if (normalized) entries.push(normalized);
+    };
+
+    add(this.derived?.racialAbilities, 'Derived');
+    add(this.actor?.flags?.swse?.activeSpeciesAbilities, 'Species Ability');
+    add(this.actor?.flags?.swse?.speciesTraits, 'Species Trait');
+    add(this.actor?.flags?.swse?.speciesTraitIds, 'Species Trait');
+    add(this.actor?.flags?.swse?.speciesRerolls, 'Species Reroll');
+
+    for (const item of Array.from(this.actor?.items ?? [])) {
+      if (item?.flags?.swse?.speciesGranted || item?.flags?.swse?.isSpeciesAbility || item?.system?.speciesAbility || item?.system?.specialAbility?.sourceType === 'species') {
+        add(item, item.flags?.swse?.sourceSpecies || 'Species Item');
+      }
+    }
+
+    for (const name of this._manifestExpectedNames('speciesTraits')) {
+      add({ name, virtual: true, summary: 'Recorded species trait from the progression build manifest.' }, 'Progression Record');
+    }
+    for (const name of this._manifestExpectedNames('speciesAbilities')) {
+      add({ name, virtual: true, summary: 'Recorded activated species ability from the progression build manifest.' }, 'Progression Record');
+    }
+    for (const item of this._manifestSpeciesItems()) {
+      add({ ...item, virtual: true, summary: item.summary || item.description || 'Recorded in the progression build manifest.' }, 'Progression Record');
+    }
+
+    const seen = new Set();
+    return entries.filter((entry) => {
+      const key = this._normalizeManifestNameKey(entry?.name || entry?.id || '');
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
   /**
    * Build the talents/feats panel context
    *
@@ -435,16 +579,19 @@ export class PanelContextBuilder {
   buildTalentPanel() {
     const items = this.actor.items || [];
 
-    // Normalize talent/feat rows
-    const entries = items
-      .filter(item => item.type === 'talent')
-      // Filter out placeholder talents: those with default "New Talent" name and no description
-      .filter(item => {
-        const isPlaceholder = (item.name === 'New Talent' || item.name === 'NEW TALENT') &&
-                              (!item.system?.description || item.system.description.trim() === '');
-        return !isPlaceholder;
-      })
+    // Normalize talent rows.  Use semantic classification so progression-granted
+    // legacy ability-shaped talents still appear on the sheet. Then append any
+    // progression manifest rows that are missing from actor items so the sheet
+    // never hides a build-plan grant from the player.
+    const itemRows = items
+      .filter(item => isTalentLikeItem(item))
+      .filter(item => !isPlaceholderSheetItem(item, 'talent'))
       .map(item => RowTransformers.toTalentRow(item, this.sheet.isEditable));
+    const entries = this._appendManifestRows(itemRows, this._manifestExpectedNames('talents'), {
+      type: 'talent',
+      source: 'Progression Record',
+      group: 'Progression Record'
+    });
 
     // Group by tree if available
     const grouped = {};
@@ -475,14 +622,9 @@ export class PanelContextBuilder {
   buildFeatPanel() {
     const items = this.actor.items || [];
 
-    const entries = items
-      .filter(item => item.type === 'feat')
-      // Filter out placeholder feats: those with default "New Feat" name and no description
-      .filter(item => {
-        const isPlaceholder = (item.name === 'New Feat' || item.name === 'NEW FEAT') &&
-                            (!item.system?.description || item.system.description.trim() === '');
-        return !isPlaceholder;
-      })
+    const itemRows = items
+      .filter(item => isFeatLikeItem(item))
+      .filter(item => !isPlaceholderSheetItem(item, 'feat'))
       .map(item => {
         const row = RowTransformers.toFeatRow(item, this.sheet.isEditable);
         const choiceStatus = FeatChoiceResolver.getChoiceStatusSync(this.actor, item);
@@ -503,6 +645,16 @@ export class PanelContextBuilder {
         }
         return row;
       });
+
+    const manifestFeatNames = [
+      ...this._manifestExpectedNames('classAutoGrants'),
+      ...this._manifestExpectedNames('feats')
+    ];
+    const entries = this._appendManifestRows(itemRows, manifestFeatNames, {
+      type: 'feat',
+      source: 'Progression/Class Grant',
+      group: 'Progression Record'
+    });
 
     const panel = {
       entries,
@@ -678,12 +830,33 @@ export class PanelContextBuilder {
    * The actual force item objects come directly from the actor's items collection.
    */
   buildForcePowersPanel() {
-    // Extract force powers from actor items
-    const forcePowers = (this.actor?.items ?? []).filter(i => i.type === 'force-power');
+    // Extract force powers from actor items semantically.  Existing actors may own
+    // Force powers with older item types but valid FORCE_POWER execution metadata.
+    const forcePowers = Array.from(this.actor?.items ?? []).filter(i => isForcePowerItem(i));
 
-    // Organize into hand/discard based on system.discarded flag
-    const hand = forcePowers.filter(p => !p.system?.discarded);
+    // Organize into hand/discard based on system.discarded flag. Append display-only
+    // manifest rows if a progression build plan says the actor should know a power
+    // but the embedded item was not materialized; finalizer/backfill should repair
+    // these, but the player should never see an empty Force store when the build
+    // record has the power.
+    const handItems = forcePowers.filter(p => !p.system?.discarded);
     const discard = forcePowers.filter(p => p.system?.discarded);
+    const hand = this._appendManifestRows(handItems, this._manifestExpectedNames('forcePowers'), {
+      type: 'force-power',
+      source: 'Progression Record',
+      group: 'Force Powers'
+    }).map((entry) => {
+      if (!entry.virtual) return entry;
+      return {
+        ...entry,
+        system: {
+          ...(entry.system || {}),
+          executionModel: 'FORCE_POWER',
+          summary: entry.description,
+          tags: ['Progression Record'],
+        },
+      };
+    });
 
     // Extract secrets and techniques from derived (pre-computed by actor engine)
     const secrets = this.derived.forceSecrets?.list ?? [];
@@ -830,7 +1003,7 @@ export class PanelContextBuilder {
    * - hasEntries: boolean
    */
   buildRacialAbilitiesPanel() {
-    const racialAbilities = this.derived.racialAbilities || [];
+    const racialAbilities = this._collectSpeciesAbilityEntries();
 
     const panel = {
       entries: racialAbilities,
@@ -1038,9 +1211,9 @@ export class PanelContextBuilder {
     const initiativeTotal = Number(derived.initiative?.total) || 0;
     const perceptionTotal = Number(derived.skills?.perception?.total) || 0;
 
-    // BAB should display the engine-derived value when available; actors finalized
-    // before BAB materialization may still have a stale 0 in system.baseAttackBonus.
-    const bab = Number(derived.bab ?? derived.baseAttackBonus ?? system.bab?.total ?? system.baseAttackBonus) || 0;
+    // BAB: system.baseAttackBonus is the authoritative editable field
+    // Fallback to derived.bab only if system value not set
+    const bab = Number(system.baseAttackBonus ?? derived.bab) || 0;
 
     const grappleBonus = Number(derived.grappleBonus) || 0;
     const damageThreshold = Number(derived.damageThreshold) || 0;
@@ -1115,16 +1288,18 @@ export class PanelContextBuilder {
    * - skills: [ { key, label, bonus, trained, canEdit } ]
    */
   buildSkillsPanel() {
-    const skillKeys = Object.keys(this.derived.skills || {});
+    const rawSkills = this.derived.skills || {};
+    const skillKeys = Object.keys(CANONICAL_SKILL_DEFS).filter((key) => rawSkills?.[key]);
 
     const skills = skillKeys.map(key => {
-      const skillData = this.derived.skills?.[key] || {};
+      const skillData = rawSkills?.[key] || {};
+      const canonicalKey = canonicalizeSkillKey(key);
       const bonus = Number(skillData.total) || 0;
-      const trained = this.system.skills?.[key]?.trained === true;
+      const trained = this.system.skills?.[canonicalKey]?.trained === true || skillData.trained === true;
 
       return {
-        key,
-        label: skillData.label || key,
+        key: canonicalKey,
+        label: skillData.label || CANONICAL_SKILL_DEFS[canonicalKey]?.label || key,
         bonus,
         trained,
         canEdit: this.sheet.isEditable

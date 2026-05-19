@@ -222,6 +222,20 @@ export function registerHouseruleSettings() {
     default: 1
   });
 
+  register('levelUpHpRecoveryMode', {
+    name: 'HP on Level Up',
+    hint: 'Controls current HP when max HP increases during level-up. RAW-safe default preserves current HP; optional house rules can refill to max or add only the max-HP gain to current HP.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      none: 'Default: keep current HP unchanged',
+      refillToMax: 'House Rule: refill current HP to new maximum',
+      increaseCurrentByMaxGain: 'House Rule: increase current HP by the max HP gained'
+    },
+    default: 'none'
+  });
+
   /* -------------------------------------------------------------------------- */
   /*                               DEATH & DYING                                 */
   /* -------------------------------------------------------------------------- */

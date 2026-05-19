@@ -43,6 +43,14 @@ export class ProgressionRules {
     return HouseRuleService.getNumber('maxHPLevels', 1);
   }
 
+  static getLevelUpHpRecoveryMode() {
+    const mode = HouseRuleService.getString('levelUpHpRecoveryMode', 'none');
+    const normalized = String(mode || 'none').trim();
+    return ['none', 'refillToMax', 'increaseCurrentByMaxGain'].includes(normalized)
+      ? normalized
+      : 'none';
+  }
+
   /**
    * Multiclass Policy Rules
    */

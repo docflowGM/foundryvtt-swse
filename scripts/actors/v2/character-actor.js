@@ -189,22 +189,35 @@ function mirrorHp(system) {
 
 function mirrorSkills(system) {
   const skills = normalizeSkillMap(system.skills);
+  const existingDerived = system.derived?.skills ?? {};
   const list = [];
 
   for (const [key, s] of Object.entries(skills)) {
     if (!s || key === 'pilot') continue;
 
-    const total = safeNumber(s.legacyStaticTotal ? s.legacyTotal : s.total, 0);
-    const trained = s.trained === true;
-    const focused = s.focused === true;
-    const ability = typeof s.selectedAbility === 'string' ? s.selectedAbility : (s.ability ?? '');
+    const derivedSkill = existingDerived?.[key] && typeof existingDerived[key] === 'object'
+      ? existingDerived[key]
+      : {};
+    const total = Number.isFinite(Number(derivedSkill.total))
+      ? Number(derivedSkill.total)
+      : safeNumber(s.legacyStaticTotal ? s.legacyTotal : s.total, 0);
+    const trained = s.trained === true || derivedSkill.trained === true;
+    const focused = s.focused === true || derivedSkill.focused === true;
+    const ability = typeof derivedSkill.selectedAbility === 'string'
+      ? derivedSkill.selectedAbility
+      : (typeof s.selectedAbility === 'string' ? s.selectedAbility : (s.ability ?? ''));
     list.push({
       key,
       label: humanizeSkillKey(key),
       total,
       trained,
       focused,
-      ability
+      ability,
+      abilityMod: Number.isFinite(Number(derivedSkill.abilityMod)) ? Number(derivedSkill.abilityMod) : 0,
+      halfLevel: Number.isFinite(Number(derivedSkill.halfLevel)) ? Number(derivedSkill.halfLevel) : 0,
+      miscMod: Number.isFinite(Number(derivedSkill.miscMod)) ? Number(derivedSkill.miscMod) : safeNumber(s.miscMod, 0),
+      armorPenalty: Number.isFinite(Number(derivedSkill.armorPenalty)) ? Number(derivedSkill.armorPenalty) : 0,
+      conditionPenalty: Number.isFinite(Number(derivedSkill.conditionPenalty)) ? Number(derivedSkill.conditionPenalty) : 0
     });
   }
 

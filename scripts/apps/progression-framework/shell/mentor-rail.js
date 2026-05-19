@@ -1,6 +1,7 @@
 import { getMentorGuidance, MENTORS, resolveMentorData, resolveMentorPortraitPath, getMentorKey } from '../../../engine/mentor/mentor-dialogues.js';
 import { MentorTranslationIntegration } from '../../../mentor/mentor-translation-integration.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
+import { getStepMentorObject, resolveStepMentorContext, resolveStepMentorGuidance, setSessionMentorContext } from '../steps/mentor-step-integration.js';
 
 /**
  * Maps step ID to mentor guidance choice type for getMentorGuidance().
@@ -96,7 +97,7 @@ export class MentorRail {
       const active = this.shell.mentor?.pendingDialogue;
       if (!active?.text) return;
       this.shell.mentor.pendingDialogue = null;
-      void this.speak(active.text, active.mood ?? null);
+      void this.speak(active.text, active.mood ?? null, { bypassSuppression: true, source: 'pending-flush' });
     });
   }
 
@@ -105,11 +106,19 @@ export class MentorRail {
    * Does NOT trigger shell re-render (animation runs on existing DOM).
    * @param {string} text — text to speak
    * @param {string|null} mood — optional mood to set
+   * @param {Object} options
+   * @param {boolean} options.bypassSuppression - true for central router/queued rail speech
    * @returns {Promise<void>}
    */
-  async speak(text, mood = null) {
+  async speak(text, mood = null, options = {}) {
     const dialogueText = String(text || '').trim();
     if (!dialogueText) return;
+
+    if (this.shell?._suppressLegacyMentorSpeech && options?.bypassSuppression !== true) {
+      this.shell.mentor.currentDialogue = dialogueText;
+      this.shell.mentor.animationState = 'suppressed';
+      return;
+    }
 
     // [DEBUG] Sequence tracking
     const speakNum = ProgressionDebugCapture?.nextMentorSpeak?.() ?? 0;
@@ -238,13 +247,19 @@ export class MentorRail {
       descriptor_label: descriptor.label,
     });
 
-    const mentorObj = this._getMentorObject();
+    const guidance = resolveStepMentorGuidance(
+      this.shell?.actor ?? null,
+      descriptor.stepId,
+      this.shell,
+      { stepId: descriptor.stepId }
+    );
+    const mentorObj = guidance?.mentor || getStepMentorObject(this.shell?.actor ?? null, this.shell) || this._getMentorObject();
     if (!mentorObj) {
       console.log('[SWSE Translation Debug] speakForStep() early return — no mentor object');
       return;
     }
 
-    const mentorKey = getMentorKey(mentorObj);
+    const mentorKey = guidance?.mentorContext?.mentorKey || guidance?.mentorContext?.mentorId || getMentorKey(mentorObj);
     Object.assign(this.shell.mentor, {
       id: mentorKey,
       mentorId: mentorKey,
@@ -253,14 +268,17 @@ export class MentorRail {
       portrait: resolveMentorPortraitPath(mentorObj.portrait || this.shell.mentor.portrait),
     });
 
-    const choiceType = STEP_CHOICE_TYPE[descriptor.stepId];
-    const text = choiceType
-      ? getMentorGuidance(mentorObj, choiceType)
-      : `You are at the ${descriptor.label} step.`;
+    const text = guidance?.text
+      || (guidance?.choiceType ? getMentorGuidance(mentorObj, guidance.choiceType) : '')
+      || `You are at the ${descriptor.label} step.`;
 
     // [DEBUG] Text resolution
     console.log('[SWSE Translation Debug] speakForStep() resolved text', {
-      choiceType,
+      choiceType: guidance?.choiceType,
+      textSource: guidance?.textSource,
+      mentorId: mentorKey,
+      mentorSource: guidance?.mentorContext?.source,
+      mentorConfidence: guidance?.mentorContext?.confidence,
       text_length: text?.length ?? 0,
       text_first_50: text?.slice?.(0, 50) ?? '(null)',
       will_call_speak: !!text,
@@ -296,8 +314,22 @@ export class MentorRail {
     const data = resolveMentorData(mentorRef);
     if (!data) return;
 
+    const mentorKey = getMentorKey(mentorRef);
+    setSessionMentorContext(this.shell, {
+      mentor: data,
+      mentorId: mentorKey,
+      mentorKey,
+      className: this.shell?.progressionSession?.getSelection?.('class')?.className || null,
+      stepId: this.shell?.steps?.[this.shell?.currentStepIndex]?.stepId || null,
+      source: 'manual',
+      confidence: 1,
+      reason: 'mentorRail.setMentor',
+      fallback: false,
+    }, { force: true });
+
     Object.assign(this.shell.mentor, {
-      mentorId: getMentorKey(mentorRef),
+      mentorId: mentorKey,
+      id: mentorKey,
       name: data.name,
       title: data.title,
       portrait: resolveMentorPortraitPath(data.portrait),
@@ -321,6 +353,49 @@ export class MentorRail {
   }
 
   /**
+   * Sync the rendered identity block with the canonical session mentor context.
+   * This is a DOM/state repair pass only; it does not trigger a shell render.
+   * It prevents stale shell.mentor values from surviving a render when the
+   * session already knows the correct high-confidence mentor.
+   * @param {HTMLElement|null} regionEl
+   * @returns {Object|null}
+   * @private
+   */
+  _syncIdentityFromSessionContext(regionEl = null) {
+    const descriptor = this.shell?.steps?.[this.shell?.currentStepIndex] || this.shell?.currentDescriptor || null;
+    const context = resolveStepMentorContext(this.shell?.actor ?? null, this.shell, {
+      stepId: descriptor?.stepId || null,
+      validateRegistry: false,
+    });
+    const mentorObj = context?.mentor;
+    if (!mentorObj) return context || null;
+
+    const mentorKey = context?.mentorKey || context?.mentorId || getMentorKey(mentorObj);
+    const portrait = resolveMentorPortraitPath(mentorObj.portrait || this.shell.mentor?.portrait);
+    Object.assign(this.shell.mentor, {
+      id: mentorKey,
+      mentorId: mentorKey,
+      name: mentorObj.name || this.shell.mentor?.name,
+      title: mentorObj.title || this.shell.mentor?.title,
+      portrait,
+    });
+
+    const root = regionEl?.querySelector?.('.prog-mentor-rail') || regionEl;
+    root?.querySelector?.('.prog-mentor__name')?.lastChild && (root.querySelector('.prog-mentor__name').lastChild.textContent = this.shell.mentor.name || 'Mentor');
+    const titleEl = root?.querySelector?.('.prog-mentor__title');
+    if (titleEl) titleEl.textContent = this.shell.mentor.title || '';
+    const portraitWrap = root?.querySelector?.('[data-mentor-portrait]');
+    if (portraitWrap) portraitWrap.setAttribute('data-mentor-portrait', mentorKey);
+    const img = root?.querySelector?.('.prog-mentor__portrait-image');
+    if (img instanceof HTMLImageElement && portrait && img.getAttribute('src') !== portrait) {
+      img.setAttribute('src', portrait);
+      img.setAttribute('title', this.shell.mentor.name || 'Mentor');
+    }
+
+    return context;
+  }
+
+  /**
    * Called by shell._onRender() after every render.
    * Restores static dialogue text if animation was complete before re-render.
    * Applies message-length classes for responsive text scaling.
@@ -328,6 +403,8 @@ export class MentorRail {
    */
   afterRender(regionEl) {
     if (!regionEl) return;
+
+    this._syncIdentityFromSessionContext(regionEl);
 
     const { currentDialogue, animationState } = this.shell.mentor;
     const textEl = regionEl.querySelector('[data-mentor-text]');

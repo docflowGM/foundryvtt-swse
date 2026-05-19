@@ -945,3 +945,43 @@
     animation: none;
   }
 }
+
+/* Chargen language viewport hardening: let the middle work surface own scrolling.
+   The previous nested list scrollbars could squash the available-language box in
+   the holopad frame, hiding choices inside a tiny inner viewport. */
+.progression-shell[data-step-id="languages"] [data-region="work-surface"] {
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-items: stretch;
+}
+
+.progression-shell[data-step-id="languages"] .language-work-surface {
+  height: auto;
+  min-height: 100%;
+  max-height: none;
+  overflow: visible;
+  padding-bottom: 1rem;
+}
+
+.progression-shell[data-step-id="languages"] .language-section,
+.progression-shell[data-step-id="languages"] .language-list,
+.progression-shell[data-step-id="languages"] .known-list,
+.progression-shell[data-step-id="languages"] .selected-list,
+.progression-shell[data-step-id="languages"] .available-list {
+  max-height: none;
+}
+
+.progression-shell[data-step-id="languages"] .language-list,
+.progression-shell[data-step-id="languages"] .known-list,
+.progression-shell[data-step-id="languages"] .selected-list,
+.progression-shell[data-step-id="languages"] .available-list {
+  overflow: visible;
+}
+
+.progression-shell[data-step-id="languages"] .available-languages-section {
+  flex: 0 0 auto;
+}
+
+.progression-shell[data-step-id="languages"] .available-languages-section .available-list {
+  min-height: 0;
+}

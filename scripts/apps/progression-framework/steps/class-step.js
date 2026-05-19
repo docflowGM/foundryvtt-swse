@@ -10,7 +10,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
 import { normalizeClass } from './step-normalizers.js';
-import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
+import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker, setSessionMentorContext } from './mentor-step-integration.js';
 import { getMentorGuidance, getMentorForClass, getMentorKey, getMentorIntroText, resolveMentorData, resolveMentorPortraitPath } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
@@ -447,6 +447,17 @@ export class ClassStep extends ProgressionStepPlugin {
     if (mentor) {
       const mentorKey = getMentorKey(entry.name);
       const resolvedMentor = resolveMentorData(mentorKey) || resolveMentorData(mentor) || mentor;
+      setSessionMentorContext(shell, {
+        mentor: resolvedMentor,
+        mentorKey,
+        mentorId: mentorKey,
+        className: entry.name,
+        stepId: 'class',
+        source: 'class-selection',
+        confidence: 1,
+        reason: 'player committed class selection',
+        fallback: false,
+      }, { force: true });
       shell.mentorRail?.setMentor?.(mentorKey);
       shell.mentor.currentDialogue = getMentorIntroText(resolvedMentor, entry.name);
       shell.mentor.mood = 'encouraging';
@@ -704,8 +715,21 @@ export class ClassStep extends ProgressionStepPlugin {
         persist: true
       });
 
-      // Store top legal suggestions. Keep enough options to compare base roles.
-      this._suggestedClasses = (suggested || []).slice(0, mode === 'chargen' ? 3 : 4);
+      // Store top legal *ranked* suggestions. The class engine now returns ranked
+      // results, but keep a defensive sort/filter here so fallback/legal options
+      // can never masquerade as recommendations because of registry order.
+      const rankedSuggested = (suggested || [])
+        .filter(s => (s?.suggestion?.tier ?? s?.tier ?? 0) >= 2 || s?.isSuggested === true)
+        .sort((a, b) => {
+          const tierA = Number(a?.suggestion?.tier ?? a?.tier ?? 0);
+          const tierB = Number(b?.suggestion?.tier ?? b?.tier ?? 0);
+          if (tierB !== tierA) return tierB - tierA;
+          const scoreA = Number(a?.suggestion?.score ?? a?.suggestion?.confidence ?? a?.confidence ?? 0);
+          const scoreB = Number(b?.suggestion?.score ?? b?.suggestion?.confidence ?? b?.confidence ?? 0);
+          if (scoreB !== scoreA) return scoreB - scoreA;
+          return String(a?.name || '').localeCompare(String(b?.name || ''));
+        });
+      this._suggestedClasses = rankedSuggested.slice(0, mode === 'chargen' ? 3 : 4);
     } catch (err) {
       swseLogger.warn('[ClassStep] Suggestion service error:', err);
       this._suggestedClasses = [];

@@ -1,8 +1,8 @@
 <div class="prog-attribute-surface">
   <div class="prog-attribute-header">
-    <h3 class="prog-attribute-title">Assign Your Attributes</h3>
+    <h3 class="prog-attribute-title">{{#if attributeIncreaseMode}}Increase Your Abilities{{else}}Assign Your Attributes{{/if}}</h3>
     <p class="prog-attribute-help">
-      Choose your base scores, then species modifiers will be applied automatically.
+      {{#if attributeIncreaseMode}}At this level, choose two different ability scores to increase by +1.{{else}}{{#if attributeIncreaseMode}}At this level, choose two different ability scores to increase by +1.{{else}}Choose your base scores, then species modifiers will be applied automatically.{{/if}}{{/if}}
     </p>
   </div>
 
@@ -58,14 +58,14 @@
       {{/if}}
     </div>
     <div class="prog-attribute-toolbar__actions">
-      {{#unless isSpeciesFixed}}
+      {{#if showUtilityActions}}{{#unless isSpeciesFixed}}
         <button class="prog-btn prog-btn--secondary" data-attr-reroll type="button">
           <i class="fas fa-rotate-right"></i> {{rerollButtonLabel}}
         </button>
         <button class="prog-btn prog-btn--secondary" data-attr-auto-assign type="button">
           <i class="fas fa-wand-magic-sparkles"></i> Auto Assign
         </button>
-      {{/unless}}
+      {{/unless}}{{/if}}
       {{#if showSpeciesFixedOverride}}
         <button class="prog-btn prog-btn--secondary" data-action="attribute-override-species-fixed" type="button">
           <i class="fas fa-user-shield"></i> Override Method / Notify GM
@@ -154,7 +154,7 @@
             <span class="prog-attribute-stat__value">{{baseDisplay}}</span>
           </div>
           <div class="prog-attribute-stat">
-            <span class="prog-attribute-stat__label">Species</span>
+            <span class="prog-attribute-stat__label">{{#if ../secondColumnLabel}}{{../secondColumnLabel}}{{else}}Species{{/if}}</span>
             <span class="prog-attribute-stat__value {{speciesModClass}}">
               {{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}}
             </span>

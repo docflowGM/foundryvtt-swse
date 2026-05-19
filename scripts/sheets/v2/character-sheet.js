@@ -78,6 +78,7 @@ import { ThemeManager } from "/systems/foundryvtt-swse/scripts/ui/theme/ThemeMan
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { activateCustomSkillsUI } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/custom-skills-ui.js";
 import { FeatChoiceDialog } from "/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js";
+import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
 import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
@@ -2079,28 +2080,16 @@ export class SWSEV2CharacterSheet extends
     };
 
     // THEN: Build abilities array from abilitiesMap
-    const derivedAttributes = derived.attributes ?? {};
     const abilities = ABILITY_KEYS.map(key => {
       const ability = abilitiesMap[key] ?? {};
-      const derivedAbility = derivedAttributes[key] ?? {};
-      const base = Number(ability.base ?? derivedAbility.base ?? 10) || 10;
-      const racial = Number(ability.racial ?? derivedAbility.racial ?? 0) || 0;
-      const enhancement = Number(ability.enhancement ?? derivedAbility.enhancement ?? 0) || 0;
-      const temp = Number(ability.temp ?? derivedAbility.temp ?? 0) || 0;
-      const total = Number.isFinite(Number(derivedAbility.total))
-        ? Number(derivedAbility.total)
-        : Number(ability.total ?? ability.value ?? (base + racial + enhancement + temp)) || 10;
-      const mod = Number.isFinite(Number(derivedAbility.mod))
-        ? Number(derivedAbility.mod)
-        : Number(ability.mod ?? Math.floor((total - 10) / 2)) || 0;
+      const mod = ability.mod ?? 0;
       return {
         key,
         label: ABILITY_LABELS[key],
-        base,
-        racial,
-        enhancement,
-        temp,
-        total,
+        base: ability.base ?? 10,
+        racial: ability.racial ?? 0,
+        temp: ability.temp ?? 0,
+        total: ability.total ?? 10,
         mod,
         // SEMANTIC: Visual state class for modifier
         modClass: mod > 0 ? 'mod--positive' : mod < 0 ? 'mod--negative' : 'mod--zero'
@@ -2120,14 +2109,9 @@ export class SWSEV2CharacterSheet extends
       const selectedAbilityKey = skillData.selectedAbility ?? definition.ability ?? 'str';
       const selectedAbilityLabel = abilityMap[selectedAbilityKey] ?? 'Unknown';
 
-      // Get ability modifier from derived attributes first; system.abilities.*.mod is legacy/stale on many actors.
+      // Get ability modifier - look it up from the abilities map
       const selectedAbility = abilitiesMap[selectedAbilityKey] ?? {};
-      const selectedDerivedAbility = derivedAttributes[selectedAbilityKey] ?? {};
-      const abilityMod = Number.isFinite(Number(selectedDerivedAbility.mod))
-        ? Number(selectedDerivedAbility.mod)
-        : Number.isFinite(Number(selectedAbility.mod))
-          ? Number(selectedAbility.mod)
-          : 0;
+      const abilityMod = Number.isFinite(selectedAbility.mod) ? selectedAbility.mod : 0;
 
       // Get halfLevel from system (this is just display, not a calculation)
       const halfLevel = Math.max(0, Math.floor((system.level ?? 1) / 2));
@@ -2162,12 +2146,7 @@ export class SWSEV2CharacterSheet extends
       };
     });
 
-    // Keep system.derived.skills as an engine-owned keyed map. Attach a non-authoritative
-    // display list without replacing the keyed map so sidebars and panels can still read
-    // derived.skills.perception.total, derived.skills.acrobatics.total, etc.
-    if (derived.skills && typeof derived.skills === 'object' && !Array.isArray(derived.skills)) {
-      derived.skills.list = skillsList;
-    }
+    derived.skills = skillsList;
 
     // Phase 10+: Populate extraUses from ExtraSkillUseRegistry with enhanced UX
     // Adds expandable skill uses with intelligent grouping, status awareness, and filtering.
@@ -2191,7 +2170,7 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
-    for (const skill of skillsList) {
+    for (const skill of derived.skills) {
       if (!registryReady) {
         skill.extraUses = [];
         skill.extraUsesGrouped = {};
@@ -2382,10 +2361,9 @@ export class SWSEV2CharacterSheet extends
 
     const speed = typeof system.speed === "number" ? system.speed : (system.speed?.value ?? 0);
 
-    const keyedDerivedSkills = (derived.skills && !Array.isArray(derived.skills)) ? derived.skills : {};
     const perceptionTotal = Number(
-      keyedDerivedSkills?.perception?.total ??
-      keyedDerivedSkills?.perception ??
+      derived.skills?.perception?.total ??
+      derived.skills?.perception ??
       0
     ) || 0;
 
@@ -2406,8 +2384,9 @@ const forcePoints = [];
       });
     }
 
-    // Force suite context (hand/discard zones + tag filtering)
-    const forcePowers = (actor?.items ?? []).filter(i => i.type === 'force-power' || i.type === 'force-power');
+    // Force suite context (hand/discard zones + tag filtering).  Existing actors
+    // can carry legacy typed FORCE_POWER items, so classify semantically.
+    const forcePowers = (actor?.items ?? []).filter(i => isForcePowerItem(i));
     const forceTags = [...new Set(forcePowers.flatMap(p => p.system?.tags ?? []))].sort();
     const toPlain = p => ({ id: p.id, name: p.name, img: p.img, system: foundry.utils.duplicate(p.system ?? {}) });
     const forceSuite = {
@@ -3164,6 +3143,8 @@ const forcePoints = [];
     // === HP INPUT HANDLING ===
     html.querySelectorAll('.hp-input').forEach(input => {
       input.addEventListener('change', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         const el = event.currentTarget;
         const path = el.dataset.path;
         const value = Number(el.value);
@@ -4700,7 +4681,8 @@ const forcePoints = [];
     html.querySelectorAll('[data-action="add-feat"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
-        this._showItemSelectionModal('feat');
+        event.stopPropagation();
+        await this._createAndOpenBlankItem('feat');
       }, { signal });
     });
 
@@ -4732,9 +4714,36 @@ const forcePoints = [];
     html.querySelectorAll('[data-action="add-talent"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
-        this._showItemSelectionModal('talent');
+        event.stopPropagation();
+        await this._createAndOpenBlankItem('talent');
       }, { signal });
     });
+  }
+
+  async _createAndOpenBlankItem(itemType) {
+    const safeType = String(itemType || '').trim();
+    if (!safeType) return null;
+
+    const label = safeType.charAt(0).toUpperCase() + safeType.slice(1);
+    const itemData = {
+      name: `New ${label}`,
+      type: safeType,
+      system: safeType === 'feat'
+        ? { category: 'General', source: 'Manual' }
+        : safeType === 'talent'
+          ? { tree: 'General', source: 'Manual' }
+          : {}
+    };
+
+    try {
+      const [doc] = await ActorEngine.createEmbeddedDocuments(this.actor, "Item", [itemData], { source: `character-sheet-add-${safeType}` });
+      doc?.sheet?.render?.(true);
+      await this.render?.(false);
+      return doc ?? null;
+    } catch (err) {
+      ui?.notifications?.error?.(`Failed to create ${label}: ${err?.message ?? err}`);
+      return null;
+    }
   }
 
   /* ============================================================

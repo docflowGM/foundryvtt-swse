@@ -19,6 +19,45 @@ import { getMentorAtomPhrase, MENTOR_ATOM_PHRASES } from "/systems/foundryvtt-sw
 
 export class MentorJudgmentEngine {
   /**
+   * Adapter used by MentorInteractionOrchestrator. Older orchestration code
+   * expects a mentor object with respondToAtoms(); this engine is the real
+   * authority, so provide the adapter here instead of adding another system.
+   *
+   * @param {string} mentorIdOrName
+   * @returns {{name: string, respondToAtoms: Function}}
+   */
+  static getMentor(mentorIdOrName) {
+    const mentorName = this._normalizeMentorName(mentorIdOrName);
+    return {
+      name: mentorName,
+      respondToAtoms: async (atoms = [], intensity = 'medium', context = 'selection') => (
+        this.buildExplanation(atoms, mentorName, context, intensity)
+      ),
+    };
+  }
+
+  /**
+   * Normalize broad mentor IDs to phrase-library names while keeping default
+   * fallback available for mentors without bespoke atom phrases yet.
+   * @private
+   */
+  static _normalizeMentorName(mentorIdOrName) {
+    const raw = String(mentorIdOrName || '').trim();
+    const token = raw
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+
+    if (token.includes('miraj')) return 'Miraj';
+    if (token === 'lead' || token.includes('captain') || token.includes('soldier')) return 'Lead';
+
+    // Preserve direct phrase-library names if they exist.
+    const direct = Object.keys(MENTOR_ATOM_PHRASES).find(name => name.toLowerCase() === raw.toLowerCase());
+    return direct || 'default';
+  }
+
+  /**
    * Build a mentor-voiced explanation from semantic atoms
    *
    * @param {string[]} atoms - Array of atom keys (e.g., ['CommitmentDeclared', 'GoalAdvancement'])
