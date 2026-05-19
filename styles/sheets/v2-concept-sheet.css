@@ -7256,3 +7256,29 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
 
 .swse-holopad-roll-companion.is-success .hrc-tier { color: oklch(0.82 0.19 145); }
 .swse-holopad-roll-companion.is-failure .hrc-tier { color: oklch(0.70 0.22 25);  }
+
+/* Playtime defense matrix: collapsed during play, expanded as editable rows in edit mode. */
+.swse-character-sheet-form-root.swse-sheet-mode--play .defenses-panel .defense-collapsed {
+  display: flex;
+}
+
+.swse-character-sheet-form-root.swse-sheet-mode--play .defenses-panel .defense-expanded {
+  display: none !important;
+}
+
+.swse-character-sheet-form-root.swse-sheet-mode--edit .defenses-panel .defense-collapsed {
+  display: none !important;
+}
+
+.swse-character-sheet-form-root.swse-sheet-mode--edit .defenses-panel .defense-expanded {
+  display: grid !important;
+}
+
+.swse-character-sheet-form-root.swse-sheet-mode--edit .defenses-panel [data-action="toggle-defenses"] {
+  display: none !important;
+}
+
+.swse-character-sheet-form-root.swse-sheet-mode--edit .defenses-panel .swse-concept-defense-card {
+  border-color: rgba(111, 215, 255, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(111, 215, 255, 0.08), 0 0 18px rgba(111, 215, 255, 0.08);
+}

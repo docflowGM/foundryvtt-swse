@@ -128,15 +128,7 @@ export class FeatChoiceResolver {
     return meta;
   }
 
-  static isIntrinsicNoChoiceFeat(itemOrFeat) {
-    const meta = this.getChoiceMeta(itemOrFeat);
-    const featKey = stableKey(itemOrFeat?.name || itemOrFeat?.label);
-    const choiceKey = stableKey(meta?.choiceKind || meta?.choiceKey);
-    return featKey === 'improved_defenses' || choiceKey === 'improved_defenses';
-  }
-
   static requiresChoice(itemOrFeat) {
-    if (this.isIntrinsicNoChoiceFeat(itemOrFeat)) return false;
     const meta = this.getChoiceMeta(itemOrFeat);
     return Boolean(meta?.required || meta?.resolution === 'immediate' || meta?.resolution === 'grant_entitlement');
   }
@@ -194,6 +186,7 @@ export class FeatChoiceResolver {
 
     for (const entry of asArray(pending?.selectedFeats)) pushPending(entry, 'pending');
     for (const entry of asArray(pending?.grantedFeats)) pushPending(entry, entry?.sourceType || entry?.system?.sourceType || 'class');
+    for (const entry of asArray(pending?.grantedProficiencies)) pushPending(entry, entry?.sourceType || entry?.system?.sourceType || 'class-proficiency');
     return results.filter((item) => item?.type === 'feat');
   }
 
@@ -616,7 +609,7 @@ export class FeatChoiceResolver {
 
     for (const item of items) {
       const meta = this.getChoiceMeta(item);
-      if (!this.requiresChoice(item)) continue;
+      if (!meta?.required) continue;
       if (meta.resolution === 'already_resolved_static_variant') continue;
       if (this.hasStoredChoice(actor, item)) continue;
 

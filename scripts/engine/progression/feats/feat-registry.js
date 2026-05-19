@@ -8,6 +8,42 @@ import { toStableKey } from "/systems/foundryvtt-swse/scripts/utils/stable-key.j
 import { loadFeatBucketsMapping, normalizeFeatRuntime, normalizeFeatTypeKey, resolveFeatBonusFeatFor } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-shape.js";
 import { FeatRegistry as CanonicalFeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 
+const CANONICAL_FEAT_DISPLAY_NAMES = new Map([
+  ['point blank shot', 'Point-Blank Shot'],
+]);
+
+function normalizeFeatRegistryKey(name) {
+  return String(name || '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u2018\u2019\u201B\u2032']/g, '')
+    .replace(/[\u2010-\u2015]/g, '-')
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function scoreFeatCompleteness(feat) {
+  const system = feat?.system || {};
+  const modifiers = Array.isArray(system?.abilityMeta?.modifiers) ? system.abilityMeta.modifiers.length : 0;
+  const bonusFeatFor = Array.isArray(system?.bonus_feat_for) ? system.bonus_feat_for.length : 0;
+  const tags = Array.isArray(system?.tags) ? system.tags.length : 0;
+  const descriptionLength = String(system?.description?.value || system?.description || feat?.description || '').length;
+  return (modifiers * 100) + (bonusFeatFor * 25) + tags + Math.min(descriptionLength, 250) / 250;
+}
+
+function preferFeatEntry(existing, candidate) {
+  if (!existing) return candidate;
+  if (!candidate) return existing;
+  return scoreFeatCompleteness(candidate) > scoreFeatCompleteness(existing) ? candidate : existing;
+}
+
+function applyCanonicalDisplayName(feat) {
+  const key = normalizeFeatRegistryKey(feat?.name);
+  const displayName = CANONICAL_FEAT_DISPLAY_NAMES.get(key);
+  return displayName ? { ...feat, name: displayName } : feat;
+}
+
 export const FeatRegistry = {
   feats: new Map(),
   _byKey: new Map(),
@@ -34,8 +70,10 @@ export const FeatRegistry = {
             source: entry.source,
           },
         };
-        const normalizedFeat = normalizeFeatRuntime(docLike, { mapping });
-        this.feats.set(normalizedFeat.name.toLowerCase(), normalizedFeat);
+        const normalizedFeat = applyCanonicalDisplayName(normalizeFeatRuntime(docLike, { mapping }));
+        const registryKey = normalizeFeatRegistryKey(normalizedFeat.name) || normalizedFeat.name.toLowerCase();
+        const preferredFeat = preferFeatEntry(this.feats.get(registryKey), normalizedFeat);
+        this.feats.set(registryKey, preferredFeat);
         const key = entry.system?.key ?? toStableKey(normalizedFeat.name);
         if (key) this._byKey.set(key, normalizedFeat);
       }
@@ -49,9 +87,9 @@ export const FeatRegistry = {
     }
   },
 
-  get(name) { return name ? this.feats.get(String(name).toLowerCase()) ?? null : null; },
+  get(name) { return name ? this.feats.get(normalizeFeatRegistryKey(name) || String(name).toLowerCase()) ?? null : null; },
   byKey(key) { return key ? this._byKey.get(key) ?? null : null; },
-  has(name) { return !!name && this.feats.has(String(name).toLowerCase()); },
+  has(name) { return !!name && this.feats.has(normalizeFeatRegistryKey(name) || String(name).toLowerCase()); },
   list() { return Array.from(this.feats.values()); },
   count() { return this.feats.size; },
   getByType(featType) { const normalized = normalizeFeatTypeKey(featType); return this.list().filter((feat) => feat.featType === normalized); },

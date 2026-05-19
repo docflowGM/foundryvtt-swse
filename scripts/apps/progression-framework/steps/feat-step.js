@@ -99,8 +99,11 @@ const FEAT_TYPE_ICONS = {
 function normalizeFeatNameKey(name) {
   const key = String(name || '')
     .toLowerCase()
-    .replace(/\s+/g, ' ')
-    .replace(/[\u2018\u2019]/g, "'")
+    .normalize('NFKD')
+    .replace(/[\u2018\u2019\u201B\u2032']/g, '')
+    .replace(/[\u2010-\u2015]/g, '-')
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, ' ')
     .trim();
   if (!key) return '';
   return key;
@@ -111,6 +114,12 @@ function getFeatOwnershipKeys(name) {
   const keys = new Set([base]);
   if (base === 'force sensitivity') keys.add('force sensitive');
   if (base === 'force sensitive') keys.add('force sensitivity');
+  if (base === 'weapon proficiency simple') keys.add('weapon proficiency simple weapons');
+  if (base === 'weapon proficiency simple weapons') keys.add('weapon proficiency simple');
+  if (base === 'advanced melee weapon proficiency') keys.add('weapon proficiency advanced melee weapons');
+  if (base === 'weapon proficiency advanced melee weapons') keys.add('advanced melee weapon proficiency');
+  if (base === 'heavy weapon proficiency') keys.add('weapon proficiency heavy weapons');
+  if (base === 'weapon proficiency heavy weapons') keys.add('heavy weapon proficiency');
   return Array.from(keys).filter(Boolean);
 }
 
@@ -357,7 +366,9 @@ export class FeatStep extends ProgressionStepPlugin {
 
         for (const grant of [
           ...(Array.isArray(ledger?.grantedFeats) ? ledger.grantedFeats : []),
+          ...(Array.isArray(ledger?.grantedProficiencies) ? ledger.grantedProficiencies : []),
           ...(Array.isArray(merged?.grantedFeats) ? merged.grantedFeats : []),
+          ...(Array.isArray(merged?.grantedProficiencies) ? merged.grantedProficiencies : []),
           ...(Array.isArray(merged?.selectedFeats) ? merged.selectedFeats : []),
         ]) {
           addFeatOwnershipName(classGrantedFeats, getGrantedFeatName(grant));
@@ -1123,7 +1134,7 @@ export class FeatStep extends ProgressionStepPlugin {
     if (nextSelection) {
       const choiceMeta = FeatChoiceResolver.getChoiceMeta(feat);
       const choiceSource = FeatChoiceResolver.inferChoiceSource(feat);
-      if (FeatChoiceResolver.requiresChoice(feat) && choiceSource !== 'grantPool') {
+      if (choiceMeta?.required && choiceSource !== 'grantPool') {
         const pendingForChoice = this._buildPendingAbilityData(shell);
         pendingForChoice.selectedFeats = slotSelections;
         const selectedChoice = await FeatChoiceDialog.prompt(shell.actor, feat, { title: `Choose: ${feat.name}` });
