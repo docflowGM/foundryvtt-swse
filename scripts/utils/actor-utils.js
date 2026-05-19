@@ -102,6 +102,51 @@ function removeUndefinedValues(payload) {
   return clone;
 }
 
+
+/**
+ * Flatten actor update payloads at the final Foundry boundary while preserving
+ * arrays as whole values. This prevents partial nested payloads such as
+ * { system: { skills: { acrobatics: { trained: true } } } } from replacing
+ * larger canonical objects during rerenders. Dot-path mutations are the safest
+ * contract for sheet interaction writes, condition buttons, skill toggles, and
+ * progression finalization mirrors.
+ */
+function flattenActorUpdatePayload(payload) {
+  if (!payload || typeof payload !== 'object') return payload;
+
+  const out = {};
+  const walk = (value, path) => {
+    if (!path) return;
+    if (value === undefined) return;
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+      out[path] = value;
+      return;
+    }
+    if ((typeof Actor !== 'undefined' && value instanceof Actor) || (typeof Item !== 'undefined' && value instanceof Item) || value.collection) {
+      out[path] = value;
+      return;
+    }
+    const entries = Object.entries(value);
+    if (!entries.length) {
+      out[path] = value;
+      return;
+    }
+    for (const [key, child] of entries) {
+      walk(child, `${path}.${key}`);
+    }
+  };
+
+  for (const [key, value] of Object.entries(payload)) {
+    if (key.includes('.')) {
+      out[key] = value;
+    } else {
+      walk(value, key);
+    }
+  }
+
+  return out;
+}
+
 /**
  * Atomic Actor Update Helper
  * Provides safe, validated actor updates that are batched and transactional.
@@ -234,7 +279,7 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
     // CRITICAL BOUNDARY: Remove all undefined values before passing to Foundry
     // Foundry's schema validation rejects any undefined value in the payload.
     // This ensures that fields like `name` are only included if they have actual values.
-    const finalPayload = removeUndefinedValues(sanitized);
+    const finalPayload = flattenActorUpdatePayload(removeUndefinedValues(sanitized));
 
     if (Object.keys(finalPayload).length === 0) {
       swseLogger.warn('applyActorUpdateAtomic: Payload reduced to empty after removing undefined values. Skipping update.', {
@@ -282,7 +327,7 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
           });
           const sanitized = coerceSpeedIntegers(worldActor, changes);
           // CRITICAL: Also remove undefined values in recovery path
-          const finalPayload = removeUndefinedValues(sanitized);
+          const finalPayload = flattenActorUpdatePayload(removeUndefinedValues(sanitized));
           const result = await worldActor.update(finalPayload, options);
           return result;
         } else if (worldActor && worldActor === actor) {

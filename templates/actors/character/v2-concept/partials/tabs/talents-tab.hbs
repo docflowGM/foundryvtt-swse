@@ -21,9 +21,7 @@
           <h3 class="swse-concept-panel__title">Feat Ledger</h3>
           <p class="swse-concept-panel__hint">Standard feats currently loaded on the actor.</p>
         </div>
-        {{#if conceptLayout.talents.canEditFeats}}
-          <button type="button" class="swse-concept-btn" data-action="add-feat">Add Feat</button>
-        {{/if}}
+        <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-feat">Add Feat</button>
       </header>
 
       {{#if conceptLayout.talents.featEntries.length}}
@@ -57,9 +55,7 @@
           <h3 class="swse-concept-panel__title">Talent Trees</h3>
           <p class="swse-concept-panel__hint">Grouped by originating tree so the progression path stays readable.</p>
         </div>
-        {{#if conceptLayout.talents.canEditTalents}}
-          <button type="button" class="swse-concept-btn" data-action="add-talent">Add Talent</button>
-        {{/if}}
+        <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="add-talent">Add Talent</button>
       </header>
 
       {{#if conceptLayout.talents.talentGroups.length}}

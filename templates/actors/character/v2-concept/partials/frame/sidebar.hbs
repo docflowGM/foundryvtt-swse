@@ -6,8 +6,8 @@
     </header>
     <div class="swse-concept-ability-grid">
       {{#each conceptLayout.abilities as |ability|}}
-        <button type="button" class="swse-concept-ability" data-action="roll-ability" data-ability="{{ability.key}}">
-          <span class="swse-concept-ability__label">{{ability.shortLabel}}</span>
+        <button type="button" class="swse-concept-ability {{ability.abilityAccentClass}} swse-concept-ability--{{ability.key}}" data-action="roll-ability" data-ability="{{ability.key}}">
+          <span class="swse-concept-ability__label {{ability.abilityAccentClass}}">{{ability.shortLabel}}</span>
           <strong>{{ability.total}}</strong>
           <em class="{{ability.modClass}}">{{numberFormat ability.mod decimals=0 sign=true}}</em>
         </button>

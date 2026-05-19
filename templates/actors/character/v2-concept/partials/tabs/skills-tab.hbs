@@ -194,9 +194,8 @@
                     </div>
 
                     <div class="extra-use-meta">
-                      {{#if use.dc}}<span class="extra-use-dc">DC {{use.dc}}</span>{{/if}}
-                      {{#if use.actionTypeLabel.label}}<span class="action-type-tag {{use.actionType}}">{{use.actionTypeLabel.icon}} {{use.actionTypeLabel.label}}</span>{{/if}}
-                      {{#if use.timeLabel}}<span class="extra-use-time {{use.timeClass}}">{{use.timeLabel}}</span>{{/if}}
+                      <span class="extra-use-dc">{{#if use.dc}}DC {{use.dc}}{{else}}DC —{{/if}}</span>
+                      <span class="extra-use-time {{use.timeClass}}">{{#if use.timeLabel}}{{use.timeLabel}}{{else}}—{{/if}}</span>
                     </div>
 
                     <div class="extra-use-action-right">

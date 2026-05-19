@@ -192,7 +192,15 @@ export class PrerequisiteChecker {
         const pendingHit = pendingArray.some((i) => predicate(i));
         if (pendingHit) return true;
 
-        const grantedArray = itemType === 'feat' ? (pending.grantedFeats || []) : (pending.grantedTalents || []);
+        // Include grantedProficiencies alongside grantedFeats for feat-type checks.
+        // Class-granted weapon/armor proficiencies live in grantedProficiencies, not grantedFeats,
+        // but they must satisfy feat prerequisites (e.g. "Weapon Proficiency (Pistols)").
+        const grantedArray = itemType === 'feat'
+            ? [
+                ...(pending.grantedFeats || []),
+                ...(pending.grantedProficiencies || []),
+              ]
+            : (pending.grantedTalents || []);
         return grantedArray.some((entry) => predicate(typeof entry === 'string' ? { name: entry } : entry));
     }
 
@@ -1313,11 +1321,25 @@ export class PrerequisiteChecker {
     }
 
     static _checkArmorProficiencyCondition(prereq, actor, pending) {
+        const armorTarget = String(prereq.armor || '').toLowerCase().trim();
         const proficiencies = actor.system?.armorProficiencies || [];
-        const hasProficiency = proficiencies.includes(prereq.armor);
+        if (proficiencies.some(p => String(p || '').toLowerCase() === armorTarget)) {
+            return { met: true, message: '' };
+        }
+        // Also check pending grantedProficiencies (during chargen, before finalization).
+        // Stacking rule: heavy satisfies all; medium satisfies light+medium; light satisfies light.
+        const grantedMet = (pending?.grantedProficiencies || [])
+            .filter(p => p.type === 'armor')
+            .some(p => {
+                const grantName = String(p.name || '').toLowerCase();
+                if (grantName.includes('heavy')) return true;
+                if (grantName.includes('medium') && (armorTarget === 'light' || armorTarget === 'medium')) return true;
+                if (grantName.includes('light') && armorTarget === 'light') return true;
+                return false;
+            });
         return {
-            met: hasProficiency,
-            message: !hasProficiency ? `Requires proficiency with ${prereq.armor}` : ''
+            met: grantedMet,
+            message: !grantedMet ? `Requires proficiency with ${prereq.armor}` : ''
         };
     }
 
@@ -2072,8 +2094,12 @@ function checkFeats(actor, requiredFeats, pending = {}) {
 
     const actorFeats = getActorFeats(actor);
 
-    // Add granted feats from pending state (e.g., from class selection)
-    const grantedFeats = pending.grantedFeats || [];
+    // Add granted feats AND granted proficiencies from pending state (e.g., from class selection).
+    // grantedProficiencies holds weapon/armor proficiency class grants which must satisfy feat prereqs.
+    const grantedFeats = [
+        ...(pending.grantedFeats || []),
+        ...(pending.grantedProficiencies || []),
+    ];
     const allFeats = [...actorFeats, ...grantedFeats.map(f => ({ name: typeof f === 'string' ? f : f.name }))];
 
     const missing = [];
@@ -2122,8 +2148,12 @@ function checkFeatsAny(actor, requiredFeats, pending = {}) {
 
     const actorFeats = getActorFeats(actor);
 
-    // Add granted feats from pending state (e.g., from class selection)
-    const grantedFeats = pending.grantedFeats || [];
+    // Add granted feats AND granted proficiencies from pending state (e.g., from class selection).
+    // grantedProficiencies holds weapon/armor proficiency class grants which must satisfy feat prereqs.
+    const grantedFeats = [
+        ...(pending.grantedFeats || []),
+        ...(pending.grantedProficiencies || []),
+    ];
     const allFeats = [...actorFeats, ...grantedFeats.map(f => ({ name: typeof f === 'string' ? f : f.name }))];
 
     for (const feat of requiredFeats) {

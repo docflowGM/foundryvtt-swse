@@ -75,6 +75,7 @@ const CHARACTER_V2_CONCEPT_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/abilities-tab.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/biography-tab.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/combat-tab.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-suite-tab.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-tab.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/relationships-tab.hbs',

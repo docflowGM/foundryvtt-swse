@@ -440,6 +440,8 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
     if (shell?.committedSelections) {
       shell.committedSelections.set('droid-builder', finalizedSelection);
     }
+    // _commitNormalized already commits the canonical droid selection and
+    // refreshes BuildIntent compatibility state. Avoid a second legacy alias commit.
 
     swseLogger.debug('[FinalDroidConfigurationStep] Finalized droid build committed', finalizedSelection);
   }

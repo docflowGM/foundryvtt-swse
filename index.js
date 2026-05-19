@@ -25,6 +25,7 @@ import { MutationInterceptor } from "./scripts/governance/mutation/MutationInter
 import { SystemInitHooks } from "./scripts/engine/progression/hooks/system-init-hooks.js";
 import { registerHandlebarsHelpers as registerSystemHandlebarsHelpers } from "./helpers/handlebars/index.js";
 import { PoisonEngine } from "./scripts/engine/poison/poison-engine.js";
+import { repairActorForcePowerAbilityMeta, repairWorldForcePowerAbilityMeta } from "./scripts/engine/abilities/force-power/force-power-ability-meta.js";
 
 UIManager.init();
 
@@ -147,12 +148,20 @@ Hooks.once("ready", async () => {
 
   // Setup store shortcut
   game.swse.openStore = actor => new SWSEStore(actor ?? null).render(true);
+  game.swse.repairForcePowerAbilityMeta = async (actor = null, options = {}) => {
+    return actor
+      ? repairActorForcePowerAbilityMeta(actor, options)
+      : repairWorldForcePowerAbilityMeta(options);
+  };
 
   onDiscoveryReady();
 
   // Auto-load data on first run
   if (game.user.isGM) {
     await WorldDataLoader.autoLoad();
+    repairWorldForcePowerAbilityMeta({ silent: true }).catch((err) => {
+      console.warn('SWSE | Force power abilityMeta backfill failed:', err);
+    });
   }
 });
 

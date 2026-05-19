@@ -26,7 +26,6 @@ import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engin
 import { MedicalSecretRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/medical/medical-secret-registry.js';
 import { ActorEngine as CanonicalActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
-import { ensureForcePowerAbilityMeta } from '/systems/foundryvtt-swse/scripts/engine/abilities/force-power/force-power-ability-meta.js';
 
 export class ProgressionFinalizer {
   /**
@@ -181,6 +180,104 @@ export class ProgressionFinalizer {
   }
 
   /**
+   * Repair canonical draft selections from legacy/checkpoint mirrors before finalization.
+   *
+   * The canonical ProgressionSession remains the source of truth, but chargen is a
+   * long player workflow. If a legacy step mirror has a value that the canonical
+   * draft is missing, recover it instead of allowing Summary/finalize to throw
+   * away the player's work. This only fills empty canonical slots and validates
+   * through the session schema before writing.
+   *
+   * @private
+   */
+  static _repairSessionSelectionsFromFallbacks(sessionState = {}) {
+    const session = sessionState.progressionSession;
+    if (!session?.draftSelections) return 0;
+
+    const aliases = {
+      attribute: 'attributes',
+      attributes: 'attributes',
+      'l1-survey': 'survey',
+      survey: 'survey',
+      'base-class-survey': 'classSurveys',
+      'general-feat': 'feats',
+      'class-feat': 'feats',
+      'heroic-feat': 'feats',
+      feats: 'feats',
+      'general-talent': 'talents',
+      'class-talent': 'talents',
+      'heroic-talent': 'talents',
+      talents: 'talents',
+      'force-powers': 'forcePowers',
+      forcePowers: 'forcePowers',
+      'force-techniques': 'forceTechniques',
+      forceTechniques: 'forceTechniques',
+      'force-secrets': 'forceSecrets',
+      forceSecrets: 'forceSecrets',
+      'medical-secrets': 'medicalSecrets',
+      medicalSecrets: 'medicalSecrets',
+      'starship-maneuver': 'starshipManeuvers',
+      'starship-maneuvers': 'starshipManeuvers',
+      starshipManeuvers: 'starshipManeuvers',
+      'prestige-survey': 'prestigeSurvey',
+      droidBuilder: 'droid',
+      'droid-builder': 'droid',
+    };
+
+    const isEmpty = (value) => {
+      if (value === null || value === undefined) return true;
+      if (Array.isArray(value)) return value.length === 0;
+      if (typeof value === 'object') return Object.keys(value).length === 0;
+      return false;
+    };
+
+    const sources = [];
+    const committed = sessionState.committedSelections;
+    if (committed instanceof Map) {
+      sources.push(Object.fromEntries(committed.entries()));
+    } else if (committed && typeof committed === 'object') {
+      sources.push(committed);
+    }
+    const buildIntentSelections = sessionState.buildIntent?.getAllSelections?.();
+    if (buildIntentSelections && typeof buildIntentSelections === 'object') sources.push(buildIntentSelections);
+    if (sessionState.stepData && typeof sessionState.stepData === 'object' && !(sessionState.stepData instanceof Map)) {
+      sources.push(sessionState.stepData);
+    }
+
+    let repaired = 0;
+    for (const source of sources) {
+      for (const [rawKey, rawValue] of Object.entries(source || {})) {
+        const key = aliases[rawKey] || rawKey;
+        if (!Object.prototype.hasOwnProperty.call(session.draftSelections, key)) continue;
+        if (isEmpty(rawValue) || !isEmpty(session.draftSelections[key])) continue;
+
+        try {
+          const coerced = typeof session._coerceSelectionToSchema === 'function'
+            ? session._coerceSelectionToSchema(key, rawValue, { stepId: 'finalization-repair' })
+            : rawValue;
+          if (typeof session._validateSelection === 'function') {
+            session._validateSelection(key, coerced);
+          }
+          session.draftSelections[key] = coerced;
+          repaired += 1;
+        } catch (err) {
+          swseLogger.warn('[ProgressionFinalizer] Ignored unrecoverable fallback selection during finalization repair', {
+            rawKey,
+            key,
+            message: err?.message || String(err),
+          });
+        }
+      }
+    }
+
+    if (repaired > 0) {
+      session.lastModifiedAt = Date.now();
+      swseLogger.warn('[ProgressionFinalizer] Repaired missing canonical selections before finalization', { repaired });
+    }
+    return repaired;
+  }
+
+  /**
    * Validate a compiled mutation plan.
    * Checks for:
    * - required fields present
@@ -263,6 +360,7 @@ export class ProgressionFinalizer {
     }
 
     const session = sessionState.progressionSession;
+    this._repairSessionSelectionsFromFallbacks(sessionState);
     const selections = session.draftSelections || {};
     const summarySelection = selections.survey || {};
 
@@ -299,9 +397,10 @@ export class ProgressionFinalizer {
     if (sessionState.mode === 'chargen') {
       const hasName = !!(summarySelection.characterName || this._getUsableActorName(sessionState.actor));
       const hasClass = !!selections.class;
+      const hasSpecies = !!(selections.species || selections.droid);
       const hasAttributes = !!selections.attributes;
-      if (!hasName || !hasClass || !hasAttributes) {
-        throw new Error('Chargen incomplete: missing required name, class, or attributes in canonical session');
+      if (!hasName || !hasClass || !hasSpecies || !hasAttributes) {
+        throw new Error('Chargen incomplete: missing required name, species, class, or attributes in canonical session');
       }
       const creditMode = ProgressionRules.getStartingCreditMode?.() || 'roll';
       const autoCredits = ProgressionRules.getMaxStartingCreditsEnabled?.() === true || creditMode === 'max' || creditMode === 'maximum' || creditMode === 'average';
@@ -375,6 +474,7 @@ export class ProgressionFinalizer {
       throw new Error('compileMutationPlan requires canonical progressionSession');
     }
 
+    this._repairSessionSelectionsFromFallbacks(sessionState);
     const selections = sessionState.progressionSession.draftSelections || {};
     await ProgressionContentAuthority.initialize?.();
 
@@ -484,22 +584,6 @@ export class ProgressionFinalizer {
       // instead of replacing the actor's primary class field.
       if (sessionState.mode === 'chargen') {
         set['system.class'] = clazz;
-        const startingLevel = Math.max(1, Number(summary.startingLevel || actor?.system?.level || 1) || 1);
-        const className = clazz.name || clazz.label || String(clazz);
-        const classId = clazz.id || clazz.classId || clazz.sourceId || clazz.slug || className;
-        set['system.level'] = startingLevel;
-        set['system.progression.classLevels'] = [{
-          class: className,
-          classId,
-          className,
-          level: startingLevel
-        }];
-        const startingBab = this._computeClassBabAtLevel(clazz, startingLevel);
-        set['system.baseAttackBonus'] = startingBab;
-        set['system.bab.total'] = startingBab;
-        const startingForcePoints = this._computeStartingForcePoints(clazz, startingLevel, selections, actor);
-        set['system.forcePoints.max'] = startingForcePoints;
-        set['system.forcePoints.value'] = startingForcePoints;
       }
 
       if (sessionState.mode === 'levelup') {
@@ -1507,12 +1591,12 @@ export class ProgressionFinalizer {
     const itemSpecs = [];
     const postApply = { starshipManeuverNames: [] };
     const domainConfig = [
-      { key: 'feats', aliases: ['general-feat', 'heroic-feat', 'class-feat', 'feat'], type: 'feat', docGetter: (entry) => ProgressionContentAuthority.getFeatDocument(entry), allowDuplicates: false },
-      { key: 'talents', aliases: ['general-talent', 'heroic-talent', 'class-talent', 'talent'], type: 'talent', docGetter: (entry) => ProgressionContentAuthority.getTalentDocument(entry), allowDuplicates: false },
-      { key: 'forcePowers', aliases: ['force-powers', 'force-power'], type: 'force-power', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'power'), allowDuplicates: true },
-      { key: 'forceTechniques', aliases: ['force-techniques', 'force-technique'], type: 'forcetechnique', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'technique'), allowDuplicates: false },
-      { key: 'forceSecrets', aliases: ['force-secrets', 'force-secret'], type: 'forcesecret', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'secret'), allowDuplicates: false },
-      { key: 'medicalSecrets', aliases: ['medical-secrets', 'medical-secret'], type: 'feat', docGetter: async (entry) => { await MedicalSecretRegistry.ensureInitialized(); return MedicalSecretRegistry.getDocumentByRef(entry); }, allowDuplicates: false },
+      { key: 'feats', type: 'feat', docGetter: (entry) => ProgressionContentAuthority.getFeatDocument(entry), allowDuplicates: false },
+      { key: 'talents', type: 'talent', docGetter: (entry) => ProgressionContentAuthority.getTalentDocument(entry), allowDuplicates: false },
+      { key: 'forcePowers', type: 'force-power', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'power'), allowDuplicates: true },
+      { key: 'forceTechniques', type: 'forcetechnique', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'technique'), allowDuplicates: false },
+      { key: 'forceSecrets', type: 'forcesecret', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'secret'), allowDuplicates: false },
+      { key: 'medicalSecrets', type: 'feat', docGetter: async (entry) => { await MedicalSecretRegistry.ensureInitialized(); return MedicalSecretRegistry.getDocumentByRef(entry); }, allowDuplicates: false },
     ];
 
     const existingByTypeAndName = new Set(
@@ -1526,35 +1610,8 @@ export class ProgressionFinalizer {
       }).filter(Boolean)
     );
 
-    const collectDomainSelections = (domain) => {
-      const values = [];
-      const add = (value, sourceKey = domain.key) => {
-        if (!value) return;
-        if (Array.isArray(value)) {
-          value.forEach((entry) => add(entry, sourceKey));
-          return;
-        }
-        if (value && typeof value === 'object') {
-          values.push({ ...value, source: value.source || sourceKey });
-          return;
-        }
-        values.push({ id: String(value), name: String(value), source: sourceKey });
-      };
-
-      add(selections?.[domain.key], domain.key);
-      for (const alias of domain.aliases || []) add(selections?.[alias], alias);
-
-      const seen = new Set();
-      return values.filter((entry) => {
-        const key = this._normalizeNameKey(entry?.id || entry?.name || entry?.label || JSON.stringify(entry));
-        if (!key || seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-    };
-
     for (const domain of domainConfig) {
-      const rawValues = collectDomainSelections(domain);
+      const rawValues = Array.isArray(selections[domain.key]) ? selections[domain.key] : [];
       for (const rawEntry of rawValues) {
         const count = Math.max(1, Number(rawEntry?.count || 1));
         const resolvedDoc = await domain.docGetter(rawEntry);
@@ -1581,16 +1638,6 @@ export class ProgressionFinalizer {
             recursive: true,
             overwrite: true
           });
-          if (domain.type === 'force-power') {
-            const normalizedForcePower = ensureForcePowerAbilityMeta(baseItem, { source: 'progression-finalizer' });
-            baseItem.type = normalizedForcePower.type || 'force-power';
-            baseItem.system = normalizedForcePower.system || baseItem.system || {};
-            baseItem.flags = foundry.utils.mergeObject(baseItem.flags || {}, normalizedForcePower.flags || {}, {
-              inplace: false,
-              recursive: true,
-              overwrite: true
-            });
-          }
           if (domain.type === 'feat' && String(rawEntry?.source || '').includes('class')) {
             baseItem.system.sourceType = baseItem.system.sourceType || 'class';
             baseItem.system.locked = true;

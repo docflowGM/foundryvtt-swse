@@ -2079,16 +2079,28 @@ export class SWSEV2CharacterSheet extends
     };
 
     // THEN: Build abilities array from abilitiesMap
+    const derivedAttributes = derived.attributes ?? {};
     const abilities = ABILITY_KEYS.map(key => {
       const ability = abilitiesMap[key] ?? {};
-      const mod = ability.mod ?? 0;
+      const derivedAbility = derivedAttributes[key] ?? {};
+      const base = Number(ability.base ?? derivedAbility.base ?? 10) || 10;
+      const racial = Number(ability.racial ?? derivedAbility.racial ?? 0) || 0;
+      const enhancement = Number(ability.enhancement ?? derivedAbility.enhancement ?? 0) || 0;
+      const temp = Number(ability.temp ?? derivedAbility.temp ?? 0) || 0;
+      const total = Number.isFinite(Number(derivedAbility.total))
+        ? Number(derivedAbility.total)
+        : Number(ability.total ?? ability.value ?? (base + racial + enhancement + temp)) || 10;
+      const mod = Number.isFinite(Number(derivedAbility.mod))
+        ? Number(derivedAbility.mod)
+        : Number(ability.mod ?? Math.floor((total - 10) / 2)) || 0;
       return {
         key,
         label: ABILITY_LABELS[key],
-        base: ability.base ?? 10,
-        racial: ability.racial ?? 0,
-        temp: ability.temp ?? 0,
-        total: ability.total ?? 10,
+        base,
+        racial,
+        enhancement,
+        temp,
+        total,
         mod,
         // SEMANTIC: Visual state class for modifier
         modClass: mod > 0 ? 'mod--positive' : mod < 0 ? 'mod--negative' : 'mod--zero'
@@ -2108,9 +2120,14 @@ export class SWSEV2CharacterSheet extends
       const selectedAbilityKey = skillData.selectedAbility ?? definition.ability ?? 'str';
       const selectedAbilityLabel = abilityMap[selectedAbilityKey] ?? 'Unknown';
 
-      // Get ability modifier - look it up from the abilities map
+      // Get ability modifier from derived attributes first; system.abilities.*.mod is legacy/stale on many actors.
       const selectedAbility = abilitiesMap[selectedAbilityKey] ?? {};
-      const abilityMod = Number.isFinite(selectedAbility.mod) ? selectedAbility.mod : 0;
+      const selectedDerivedAbility = derivedAttributes[selectedAbilityKey] ?? {};
+      const abilityMod = Number.isFinite(Number(selectedDerivedAbility.mod))
+        ? Number(selectedDerivedAbility.mod)
+        : Number.isFinite(Number(selectedAbility.mod))
+          ? Number(selectedAbility.mod)
+          : 0;
 
       // Get halfLevel from system (this is just display, not a calculation)
       const halfLevel = Math.max(0, Math.floor((system.level ?? 1) / 2));
@@ -2145,7 +2162,12 @@ export class SWSEV2CharacterSheet extends
       };
     });
 
-    derived.skills = skillsList;
+    // Keep system.derived.skills as an engine-owned keyed map. Attach a non-authoritative
+    // display list without replacing the keyed map so sidebars and panels can still read
+    // derived.skills.perception.total, derived.skills.acrobatics.total, etc.
+    if (derived.skills && typeof derived.skills === 'object' && !Array.isArray(derived.skills)) {
+      derived.skills.list = skillsList;
+    }
 
     // Phase 10+: Populate extraUses from ExtraSkillUseRegistry with enhanced UX
     // Adds expandable skill uses with intelligent grouping, status awareness, and filtering.
@@ -2169,7 +2191,7 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
-    for (const skill of derived.skills) {
+    for (const skill of skillsList) {
       if (!registryReady) {
         skill.extraUses = [];
         skill.extraUsesGrouped = {};
@@ -2360,9 +2382,10 @@ export class SWSEV2CharacterSheet extends
 
     const speed = typeof system.speed === "number" ? system.speed : (system.speed?.value ?? 0);
 
+    const keyedDerivedSkills = (derived.skills && !Array.isArray(derived.skills)) ? derived.skills : {};
     const perceptionTotal = Number(
-      derived.skills?.perception?.total ??
-      derived.skills?.perception ??
+      keyedDerivedSkills?.perception?.total ??
+      keyedDerivedSkills?.perception ??
       0
     ) || 0;
 

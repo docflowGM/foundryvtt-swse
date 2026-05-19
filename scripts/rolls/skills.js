@@ -86,7 +86,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
   }
 
   // === RENDER TO CHAT ===
-  const skillLabel = skill.label || utils.string.capitalize(skillKey);
+  const skillLabel = skill.label || utils?.string?.capitalize?.(skillKey) || String(skillKey || 'Skill').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[\-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   if (rollResult.roll) {
     // Build detailed modifier breakdown
     const total = rollResult.roll?.total ?? 'unknown';
@@ -285,7 +285,7 @@ export async function rollAbilityCheck(actor, abilityKey, options = {}) {
   }
 
   // === RENDER TO CHAT ===
-  const abilityLabel = ABILITY_LABELS[key] || utils.string.capitalize(key);
+  const abilityLabel = ABILITY_LABELS[key] || utils?.string?.capitalize?.(key) || String(key || 'Ability').replace(/\b\w/g, c => c.toUpperCase());
   if (rollResult.roll) {
     await SWSEChat.postRoll({
       roll: rollResult.roll,

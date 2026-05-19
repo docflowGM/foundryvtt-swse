@@ -1136,6 +1136,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     if (shell?.committedSelections && this.descriptor?.stepId) {
       shell.committedSelections.set(this.descriptor.stepId, deferredSelection);
     }
+    // _commitNormalized already commits the canonical droid selection and
+    // refreshes BuildIntent compatibility state. Avoid a second step-id commit.
 
     swseLogger.debug('[DroidBuilderStep] Deferred droid build committed before reconciliation', deferredSelection);
   }
@@ -1256,6 +1258,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     if (shell?.committedSelections && this.descriptor?.stepId) {
       shell.committedSelections.set(this.descriptor.stepId, selection);
     }
+    // _commitNormalized already commits the canonical droid selection and
+    // refreshes BuildIntent compatibility state. Avoid a second step-id commit.
 
     swseLogger.debug('[DroidBuilderStep.onItemCommitted] Droid build committed', selection);
   }

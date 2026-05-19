@@ -33,17 +33,15 @@ export const STORE_PACKS = {
   ARMOR_CANONICAL: 'foundryvtt-swse.armor',
 
   // Equipment: subtype-first where available, aggregate fallback remains canonical.
+  // Pack names must match system.json declarations exactly.
   EQUIPMENT_PACKS: [
-    'foundryvtt-swse.equipment-accessories',
-    'foundryvtt-swse.equipment-computers',
-    'foundryvtt-swse.equipment-communications',
-    'foundryvtt-swse.equipment-detection',
-    'foundryvtt-swse.equipment-explosives',
-    'foundryvtt-swse.equipment-life-support',
-    'foundryvtt-swse.equipment-medical',
-    'foundryvtt-swse.equipment-survival',
-    'foundryvtt-swse.equipment-tools',
-    'foundryvtt-swse.equipment-upgrades'
+    'foundryvtt-swse.equipment-comlinks',    // communications & sensors
+    'foundryvtt-swse.equipment-medical',     // medpacs & stims
+    'foundryvtt-swse.equipment-other',       // accessories, explosives, life support, misc
+    'foundryvtt-swse.equipment-security',    // locks, scanners, detection
+    'foundryvtt-swse.equipment-survival',    // field gear & rations
+    'foundryvtt-swse.equipment-tech',        // computers & slicing tools
+    'foundryvtt-swse.equipment-tools'        // general tools
   ],
   EQUIPMENT: 'foundryvtt-swse.equipment',
 

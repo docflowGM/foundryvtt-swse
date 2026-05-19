@@ -102,6 +102,17 @@ export const ActorEngine = {
     if (!derivedUpdate || typeof derivedUpdate !== 'object') return;
 
     actor.system.derived ??= {};
+
+    // HARDENING: system.derived.skills must remain the engine-owned object map.
+    // Some sheet/view-model paths render skill rows as arrays; if that display shape ever
+    // leaks onto actor.system.derived.skills, later skill edits repaint every total as 0
+    // because ModifierEngine and the concept sheet read an array instead of keyed skills.
+    if (derivedUpdate.skills && typeof derivedUpdate.skills === 'object' && !Array.isArray(derivedUpdate.skills)) {
+      if (!actor.system.derived.skills || typeof actor.system.derived.skills !== 'object' || Array.isArray(actor.system.derived.skills)) {
+        actor.system.derived.skills = {};
+      }
+    }
+
     foundry.utils.mergeObject(actor.system.derived, derivedUpdate, {
       inplace: true,
       insertKeys: true,
@@ -634,9 +645,16 @@ export const ActorEngine = {
           // [MUTATION TRACE] ENGINE — handoff to applyActorUpdateAtomic
           traceLog('ENGINE', `handoff to applyActorUpdateAtomic (traceId=${_traceId})`, {
             actor:   actorSummary(actor),
-            payload: payloadSummary(normalizedUpdateData)
+            payload: payloadSummary(foundry.utils.flattenObject(normalizedUpdateData))
           });
-          const result = await applyActorUpdateAtomic(actor, normalizedUpdateData, optsWithMeta);
+          // Foundry's update boundary is safest with flattened dot-path payloads.
+          // Passing a nested partial like {system:{skills:{acrobatics:{trained:true}}}}
+          // can be interpreted as an object replacement by some schema paths, which is
+          // exactly the failure mode that makes one skill checkbox repaint the whole
+          // skill table with zero totals. Keep the ActorEngine contract normalized, but
+          // cross the document update boundary as explicit leaf paths.
+          const atomicUpdateData = foundry.utils.flattenObject(normalizedUpdateData);
+          const result = await applyActorUpdateAtomic(actor, atomicUpdateData, optsWithMeta);
           if (options.skipRecalc || options.deferRecalc) {
             SWSELogger.debug(`[RECOMPUTE] Skipped after ActorEngine.updateActor for ${actor.name}`, {
               guardKey: meta.guardKey ?? null,

@@ -266,7 +266,9 @@ export class ModifierEngine {
           const base = Number(skillData.total ?? 0) || 0;
 
           bundle.skills[skillKey] = {
-            total: Math.max(0, base + modifier),
+            // Skill totals may legitimately be negative in SWSE. Do not clamp them to 0;
+            // the sheet's positive/zero/negative color language should reflect the actual value.
+            total: base + modifier,
             adjustment: modifier
           };
         }

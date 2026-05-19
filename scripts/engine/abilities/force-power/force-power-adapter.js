@@ -29,6 +29,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ForcePowerContractValidator } from "./force-power-contract.js";
 import { ForcePowerFrequencyType } from "./force-power-types.js";
+import { ensureForcePowerAbilityMeta } from "./force-power-ability-meta.js";
 
 /**
  * Registers and manages FORCE_POWER execution model
@@ -43,11 +44,17 @@ export class ForceAdapter {
    */
   static register(actor, ability) {
     try {
+      // ── Normalize legacy actor-owned powers before validating ──────────
+      // Existing actors can own pre-contract Force power items that lack
+      // system.abilityMeta. This creates a non-mutating runtime view for
+      // registration while the ready-hook backfill persists the same repair.
+      const normalizedAbility = ensureForcePowerAbilityMeta(ability, { source: 'runtime-registration' }) || ability;
+
       // ── Validate contract ──────────────────────────────────────────────
-      ForcePowerContractValidator.assert(ability);
+      ForcePowerContractValidator.assert(normalizedAbility);
 
       // ── Initialize runtime metadata (idempotent) ──────────────────────
-      const meta = ability.system?.abilityMeta || {};
+      const meta = normalizedAbility.system?.abilityMeta || {};
       const frequencyType = meta.frequency || ForcePowerFrequencyType.UNLIMITED;
 
       // Store metadata for execution phase
@@ -72,11 +79,16 @@ export class ForceAdapter {
         `(frequency: ${frequencyType}, cost: ${meta.forcePointCost || 0} FP)`
       );
     } catch (err) {
-      swseLogger.error(
-        `[ForceAdapter] Registration failed for "${ability.name}":`,
-        err.message
-      );
-      // Non-fatal: log error but don't crash actor registration
+      actor._forcePowerRegistrationFailures ??= new Set();
+      const failureKey = `${ability.id || ability.name}::${err?.message || err}`;
+      if (!actor._forcePowerRegistrationFailures.has(failureKey)) {
+        actor._forcePowerRegistrationFailures.add(failureKey);
+        swseLogger.error(
+          `[ForceAdapter] Registration failed for "${ability.name}":`,
+          err.message
+        );
+      }
+      // Non-fatal: log once and don't crash actor registration.
     }
   }
 

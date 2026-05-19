@@ -1424,7 +1424,7 @@
 
 .swse-concept-ability-card__math {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -7281,4 +7281,110 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
 .swse-character-sheet-form-root.swse-sheet-mode--edit .defenses-panel .swse-concept-defense-card {
   border-color: rgba(111, 215, 255, 0.28);
   box-shadow: inset 0 0 0 1px rgba(111, 215, 255, 0.08), 0 0 18px rgba(111, 215, 255, 0.08);
+}
+
+/* Playtime hardening: preserve system-wide value language on dense skill/ability readouts. */
+form[id^="SWSEV2CharacterSheet"] .mod--positive,
+.swse.sheet.actor.character.v2 .mod--positive,
+.swse-character-sheet .mod--positive,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat strong.mod--positive,
+.swse.sheet.actor.character.v2 .swse-concept-skill-stat strong.mod--positive,
+.swse-character-sheet .swse-concept-skill-stat strong.mod--positive {
+  color: #8dffbf !important;
+  text-shadow: 0 0 calc(8px * var(--glow-mult, 1)) rgba(141, 255, 191, 0.45) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .mod--negative,
+.swse.sheet.actor.character.v2 .mod--negative,
+.swse-character-sheet .mod--negative,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat strong.mod--negative,
+.swse.sheet.actor.character.v2 .swse-concept-skill-stat strong.mod--negative,
+.swse-character-sheet .swse-concept-skill-stat strong.mod--negative {
+  color: #ff7b7b !important;
+  text-shadow: 0 0 calc(8px * var(--glow-mult, 1)) rgba(255, 123, 123, 0.42) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .mod--zero,
+.swse.sheet.actor.character.v2 .mod--zero,
+.swse-character-sheet .mod--zero,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat strong.mod--zero,
+.swse.sheet.actor.character.v2 .swse-concept-skill-stat strong.mod--zero,
+.swse-character-sheet .swse-concept-skill-stat strong.mod--zero {
+  color: #ffe08f !important;
+  text-shadow: 0 0 calc(8px * var(--glow-mult, 1)) rgba(255, 224, 143, 0.42) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability__label.swse-ability-accent--str,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-card.swse-ability-accent--str .swse-concept-ability-card__label { color: #ff8a3d !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability__label.swse-ability-accent--dex,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-card.swse-ability-accent--dex .swse-concept-ability-card__label { color: #61d66f !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability__label.swse-ability-accent--con,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-card.swse-ability-accent--con .swse-concept-ability-card__label { color: #ffd166 !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability__label.swse-ability-accent--int,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-card.swse-ability-accent--int .swse-concept-ability-card__label { color: #4cc9f0 !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability__label.swse-ability-accent--wis,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-card.swse-ability-accent--wis .swse-concept-ability-card__label { color: #c77dff !important; }
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability__label.swse-ability-accent--cha,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-card.swse-ability-accent--cha .swse-concept-ability-card__label { color: #ff5cbe !important; }
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill {
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill input[type="checkbox"] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 6px !important;
+  border: 1px solid oklch(var(--vapor-cyan) / 0.48) !important;
+  background: linear-gradient(180deg, rgba(6, 18, 28, 0.95), rgba(1, 8, 14, 0.95)) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 0 calc(8px * var(--glow-mult, 1)) rgba(111, 215, 255, 0.16) !important;
+  cursor: pointer !important;
+  position: relative !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill input[type="checkbox"]:checked {
+  border-color: #8dffbf !important;
+  background: linear-gradient(180deg, rgba(141, 255, 191, 0.86), rgba(37, 142, 92, 0.82)) !important;
+  box-shadow: 0 0 calc(12px * var(--glow-mult, 1)) rgba(141, 255, 191, 0.42) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill input[type="checkbox"]:checked::after {
+  content: "✓" !important;
+  position: absolute !important;
+  inset: -1px 0 0 0 !important;
+  color: #06110b !important;
+  font-size: 14px !important;
+  line-height: 18px !important;
+  text-align: center !important;
+  font-weight: 900 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .extra-use-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 138px 82px !important;
+  gap: 12px !important;
+  align-items: center !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .extra-use-meta {
+  display: grid !important;
+  grid-template-columns: 56px minmax(0, 1fr) !important;
+  gap: 8px !important;
+  align-items: center !important;
+  justify-content: start !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .extra-use-dc,
+form[id^="SWSEV2CharacterSheet"] .extra-use-time {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 24px !important;
+  white-space: nowrap !important;
+}
+
+.swse-character-sheet-form-root.swse-sheet-mode--edit .swse-concept-ability-card__math.swse-edit-reveal {
+  display: grid !important;
 }

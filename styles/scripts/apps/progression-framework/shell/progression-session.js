@@ -159,6 +159,8 @@ export class ProgressionSession {
       'starship-maneuver': 'starshipManeuvers',
       'starship-maneuvers': 'starshipManeuvers',
       'prestige-survey': 'prestigeSurvey',
+      'droid-builder': 'droid',
+      'final-droid-configuration': 'droid',
     };
     selectionKey = selectionAliases[selectionKey] || selectionKey;
     if (!this._schema[selectionKey]) {
@@ -178,22 +180,19 @@ export class ProgressionSession {
       this._validateSelection(selectionKey, normalizedValue);
 
       // Write to canonical draftSelections only after validation succeeds. The
-      // previous value remains intact if validation fails. Array-backed ability
-      // domains are append/replace-by-slot safe so legacy singleton commits can
-      // never erase the rest of a build at Summary.
-      const valueToStore = this._mergeArraySelection(selectionKey, normalizedValue, { stepId });
-      this.draftSelections[selectionKey] = valueToStore;
+      // previous value remains intact if validation fails.
+      this.draftSelections[selectionKey] = normalizedValue;
       this.lastModifiedAt = Date.now();
 
       // Trigger watchers for backward compat
-      this._triggerWatchers(selectionKey, valueToStore);
+      this._triggerWatchers(selectionKey, normalizedValue);
 
       // Trigger persistence hooks (Phase 1: auto-save after commit)
       this._triggerPersistenceHooks(stepId, selectionKey);
 
       swseLogger.debug(
         `[ProgressionSession] Committed ${selectionKey} from ${stepId}`,
-        { value: valueToStore }
+        { value: normalizedValue }
       );
 
       return true;
@@ -495,20 +494,53 @@ export class ProgressionSession {
 
       if (typeof value === 'object') {
         const candidate = this._extractArrayCandidate(selectionKey, value);
-        const rawArray = Array.isArray(candidate) ? candidate : [value];
-        const coerced = this._normalizeArraySelection(selectionKey, rawArray);
-        this._recordCommitDiagnostic('coerced', {
-          stepId: context.stepId || null,
-          selectionKey,
-          fromType: 'object',
-          toType: 'array',
-          count: coerced.length,
-        });
-        swseLogger.warn(`[ProgressionSession] Coerced ${selectionKey} commit into canonical array`, {
-          stepId: context.stepId,
-          count: coerced.length,
-        });
-        return coerced;
+        if (Array.isArray(candidate)) {
+          const coerced = this._normalizeArraySelection(selectionKey, candidate);
+          this._recordCommitDiagnostic('coerced', {
+            stepId: context.stepId || null,
+            selectionKey,
+            fromType: 'object',
+            toType: 'array',
+            count: coerced.length,
+          });
+          swseLogger.warn(`[ProgressionSession] Coerced ${selectionKey} commit into canonical array`, {
+            stepId: context.stepId,
+            count: coerced.length,
+          });
+          return coerced;
+        }
+
+        if (candidate !== null && candidate !== undefined) {
+          const coerced = this._normalizeArraySelection(selectionKey, [candidate]).filter(Boolean);
+          if (coerced.length) {
+            this._recordCommitDiagnostic('coerced', {
+              stepId: context.stepId || null,
+              selectionKey,
+              fromType: 'object-scalar-wrapper',
+              toType: 'array',
+              count: coerced.length,
+            });
+            return this._mergeArraySelection(selectionKey, coerced);
+          }
+        }
+
+        if (this._isSelectionLikeObject(value)) {
+          const coerced = this._normalizeArraySelection(selectionKey, [value]).filter(Boolean);
+          if (coerced.length) {
+            this._recordCommitDiagnostic('coerced', {
+              stepId: context.stepId || null,
+              selectionKey,
+              fromType: 'singleton-object',
+              toType: 'array',
+              count: coerced.length,
+            });
+            swseLogger.warn(`[ProgressionSession] Recovered singleton ${selectionKey} commit as canonical array`, {
+              stepId: context.stepId,
+              count: coerced.length,
+            });
+            return this._mergeArraySelection(selectionKey, coerced);
+          }
+        }
       }
     }
 
@@ -536,6 +568,68 @@ export class ProgressionSession {
       || value.values
       || value[selectionKey]
       || null;
+  }
+
+  /** @private */
+  _isSelectionLikeObject(value) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+    return !!(
+      value.id
+      || value._id
+      || value.key
+      || value.slug
+      || value.name
+      || value.label
+      || value.uuid
+      || value.compendiumId
+      || value.sourceId
+    );
+  }
+
+  /** @private */
+  _entryIdentityKey(entry) {
+    if (!entry || typeof entry !== 'object') return String(entry ?? '');
+    const base = entry.id
+      || entry._id
+      || entry.uuid
+      || entry.compendiumId
+      || entry.sourceId
+      || entry.slug
+      || entry.key
+      || entry.name
+      || entry.label
+      || '';
+    return String(base).trim().toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '');
+  }
+
+  /** @private */
+  _mergeArraySelection(selectionKey, entries = []) {
+    const current = Array.isArray(this.draftSelections?.[selectionKey])
+      ? [...this.draftSelections[selectionKey]]
+      : [];
+    const merged = [...current];
+
+    for (const entry of entries) {
+      if (entry === null || entry === undefined) continue;
+      const incomingKey = this._entryIdentityKey(entry);
+      const incomingSlot = entry?.slotType || entry?.slotId || entry?.sourceSlot || null;
+      const sameSlotIndex = incomingSlot
+        ? merged.findIndex(existing => (existing?.slotType || existing?.slotId || existing?.sourceSlot || null) === incomingSlot)
+        : -1;
+      const sameIdentityIndex = incomingKey
+        ? merged.findIndex(existing => this._entryIdentityKey(existing) === incomingKey)
+        : -1;
+
+      if (sameSlotIndex >= 0) {
+        merged[sameSlotIndex] = entry;
+      } else if (sameIdentityIndex >= 0) {
+        merged[sameIdentityIndex] = { ...merged[sameIdentityIndex], ...entry };
+      } else {
+        merged.push(entry);
+      }
+    }
+
+    return this._normalizeArraySelection(selectionKey, merged);
   }
 
   /** @private */

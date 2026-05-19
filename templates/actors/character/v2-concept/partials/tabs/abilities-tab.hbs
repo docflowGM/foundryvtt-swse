@@ -23,7 +23,7 @@
 
     <div class="swse-concept-ability-card-grid">
       {{#each conceptLayout.abilitiesTab.entries as |ability|}}
-        <article class="swse-concept-ability-card ability-row {{#if ability.isPrimary}}is-primary{{/if}} {{#if ability.isSecondary}}is-secondary{{/if}} {{#if ability.isLowest}}is-lowest{{/if}}">
+        <article class="swse-concept-ability-card ability-row {{ability.abilityAccentClass}} swse-concept-ability-card--{{ability.key}} {{#if ability.isPrimary}}is-primary{{/if}} {{#if ability.isSecondary}}is-secondary{{/if}} {{#if ability.isLowest}}is-lowest{{/if}}">
           <div class="swse-concept-ability-card__topline">
             <div>
               <span class="swse-concept-ability-card__label">{{ability.label}}</span>
@@ -41,7 +41,7 @@
             </div>
           </div>
 
-          <div class="ability-expanded swse-concept-ability-card__math">
+          <div class="ability-expanded swse-concept-ability-card__math swse-edit-reveal">
             <label class="swse-concept-ability-field">
               <span>Base</span>
               <input type="number"
@@ -56,6 +56,14 @@
                      data-field="racial"
                      name="system.abilities.{{ability.key}}.racial"
                      value="{{ability.racial}}">
+            </label>
+
+            <label class="swse-concept-ability-field">
+              <span>Misc</span>
+              <input type="number"
+                     data-field="enhancement"
+                     name="system.abilities.{{ability.key}}.enhancement"
+                     value="{{ability.enhancement}}">
             </label>
 
             <label class="swse-concept-ability-field">

@@ -1214,6 +1214,10 @@ export class FeatStep extends ProgressionStepPlugin {
     if (shell?.committedSelections && this.descriptor?.stepId) {
       shell.committedSelections.set(this.descriptor.stepId, nextSelection);
     }
+    // _commitNormalized already commits the canonical feats array to
+    // ProgressionSession and refreshes BuildIntent compatibility state. Do not
+    // re-commit the single selected feat under the step id; that legacy shape
+    // is an object while the canonical feats key requires an array.
   }
 
   // ---------------------------------------------------------------------------

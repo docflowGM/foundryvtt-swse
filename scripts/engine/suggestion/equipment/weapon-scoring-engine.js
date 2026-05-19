@@ -130,7 +130,7 @@ export class WeaponScoringEngine {
         }
       };
 
-      SWSELogger.log(`[WeaponScoringEngine] Scored ${weapon.name}`, {
+      SWSELogger.debug(`[WeaponScoringEngine] Scored ${weapon.name}`, {
         axisAScore: axisA.normalizedScore.toFixed(2),
         axisBScore: axisB.normalizedScore.toFixed(2),
         finalScore: combined.finalScore.toFixed(2),

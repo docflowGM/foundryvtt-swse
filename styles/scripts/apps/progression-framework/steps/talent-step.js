@@ -1960,6 +1960,10 @@ export class TalentStep extends ProgressionStepPlugin {
       if (shell?.committedSelections && this.descriptor?.stepId) {
         shell.committedSelections.set(this.descriptor.stepId, nextSelection);
       }
+      // _commitNormalized already commits the canonical talents array to
+      // ProgressionSession and refreshes BuildIntent compatibility state. Do not
+      // re-commit the single selected talent under the step id; that legacy shape
+      // is an object while the canonical talents key requires an array.
     }
   }
 

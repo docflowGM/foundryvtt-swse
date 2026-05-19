@@ -1038,9 +1038,9 @@ export class PanelContextBuilder {
     const initiativeTotal = Number(derived.initiative?.total) || 0;
     const perceptionTotal = Number(derived.skills?.perception?.total) || 0;
 
-    // BAB: system.baseAttackBonus is the authoritative editable field
-    // Fallback to derived.bab only if system value not set
-    const bab = Number(system.baseAttackBonus ?? derived.bab) || 0;
+    // BAB should display the engine-derived value when available; actors finalized
+    // before BAB materialization may still have a stale 0 in system.baseAttackBonus.
+    const bab = Number(derived.bab ?? derived.baseAttackBonus ?? system.bab?.total ?? system.baseAttackBonus) || 0;
 
     const grappleBonus = Number(derived.grappleBonus) || 0;
     const damageThreshold = Number(derived.damageThreshold) || 0;

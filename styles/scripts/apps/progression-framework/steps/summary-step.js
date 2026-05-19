@@ -378,6 +378,14 @@ export class SummaryStep extends ProgressionStepPlugin {
 
     await ProgressionContentAuthority.initialize?.();
 
+    ProgressionFinalizer._repairSessionSelectionsFromFallbacks?.({
+      mode: shell.mode,
+      actor: shell.actor,
+      progressionSession: shell.progressionSession,
+      committedSelections: shell.committedSelections,
+      buildIntent: shell.buildIntent,
+      stepData: shell.stepData,
+    });
     const projection = shell.progressionSession.currentProjection || await ProjectionEngine.buildProjection(shell.progressionSession, shell.actor);
     shell.progressionSession.currentProjection = projection;
     const selections = shell.progressionSession.draftSelections || {};
@@ -390,11 +398,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     this._summary.attributes = projection?.attributes || this._normalizeAttributeObject(selections.attributes?.values || selections.attributes || character.abilities || character.attributes || {});
     this._summary.attributeSummary = this._buildAttributeSummary(this._summary.attributes, !!selections.droid);
     this._summary.skills = projection?.skills?.trained || ProgressionContentAuthority.normalizeSkillSelection(selections.skills);
-    // Summary should display the skills the player actually trained. Projection
-    // also exposes class/background skills as grants for validation/finalization,
-    // but those are trainable options, not trained selections. Showing the
-    // projection total made every class skill look trained at the finish line.
-    this._summary.skillRows = this._buildSkillRows(this._summary.skills, this._summary.attributes, this._summary.level);
+    this._summary.skillRows = this._buildSkillRows(projection?.skills?.total || this._summary.skills, this._summary.attributes, this._summary.level);
     this._summary.languages = (projection?.languages || []).map(lang => this._displayName(lang)).filter(Boolean);
     this._summary.featSelections = projection?.abilities?.feats || ProgressionContentAuthority.normalizeSelectionList('feat', selections.feats);
     this._summary.feats = this._summary.featSelections.map(feat => this._displayName(feat)).filter(Boolean);
@@ -1109,8 +1113,8 @@ export class SummaryStep extends ProgressionStepPlugin {
       const ability = String(skill?.ability || skill?.system?.ability || skill?.selectedAbility || '').toLowerCase();
       const abilityKey = ['str','dex','con','int','wis','cha'].includes(ability) ? ability : null;
       const abilityMod = abilityKey ? Number(attributes?.[abilityKey]?.modifier || 0) : 0;
+      const trained = skill?.trained !== false;
       const focused = !!skill?.focused;
-      const trained = focused || skill?.trained === true || skill?.isTrained === true || skill?.selected === true || skill?.source === 'selection';
       const misc = Number(skill?.miscMod || skill?.misc || 0) || 0;
       const total = halfLevel + abilityMod + (trained ? 5 : 0) + (focused ? 5 : 0) + misc;
       return {

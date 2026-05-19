@@ -120,6 +120,7 @@
     "styles/system/settings-surface.css",
     "styles/system/mentor-surface.css",
     "styles/system/store-surface.css",
+    "styles/system/store-splash.css",
     "styles/system/secondary-surfaces.css",
     "styles/system/chat-surfaces.css",
     "styles/system/scene-controls.css",
