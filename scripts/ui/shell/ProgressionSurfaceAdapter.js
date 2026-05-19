@@ -329,6 +329,25 @@ export class ProgressionSurfaceAdapter {
         case 'decrement-quantity':
           await this._app._onDecrementQuantity?.(event, target);
           break;
+        case 'roll-credits':
+        case 'reroll-credits':
+          await this._app._onRollCredits?.(event, target);
+          break;
+        case 'use-max-credits':
+          await this._app._onUseMaxCredits?.(event, target);
+          break;
+        case 'use-average-credits':
+          await this._app._onUseAverageCredits?.(event, target);
+          break;
+        case 'roll-hp':
+          await this._app._onRollHP?.(event, target);
+          break;
+        case 'use-max-hp':
+          await this._app._onUseMaxHP?.(event, target);
+          break;
+        case 'start-over':
+          await this._app._onStartOver?.(event, target);
+          break;
         default:
           // Try delegating to active step plugin first
           const descriptor = this._app.steps?.[this._app.currentStepIndex] ?? null;

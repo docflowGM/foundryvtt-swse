@@ -520,6 +520,7 @@ export function ShellHostMixin(BaseClass) {
       messengerRoot.querySelectorAll('form[data-holonet-action="send-message"]').forEach(form => {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
           const data = new FormData(form);
           const body = String(data.get('body') || '').trim();
           const imageUrl = String(data.get('imageUrl') || '').trim();
@@ -536,6 +537,7 @@ export function ShellHostMixin(BaseClass) {
       messengerRoot.querySelectorAll('form[data-holonet-action="create-thread"]').forEach(form => {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
           const data = new FormData(form);
           const body = String(data.get('body') || '').trim();
           const imageUrl = String(data.get('imageUrl') || '').trim();
@@ -553,6 +555,7 @@ export function ShellHostMixin(BaseClass) {
       messengerRoot.querySelectorAll('form[data-holonet-action="create-job"]').forEach(form => {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
           const data = new FormData(form);
           const title = String(data.get('title') || '').trim();
           const body = String(data.get('body') || '').trim();
@@ -588,6 +591,7 @@ export function ShellHostMixin(BaseClass) {
       messengerRoot.querySelectorAll('form[data-holonet-action="manage-members"]').forEach(form => {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
           const data = new FormData(form);
           const action = String(data.get('memberAction') || 'invite-members');
           const recipientIds = data.getAll('recipientIds').map(String).filter(Boolean);
@@ -602,6 +606,7 @@ export function ShellHostMixin(BaseClass) {
       messengerRoot.querySelectorAll('form[data-holonet-action="transfer-credits"]').forEach(form => {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
           const data = new FormData(form);
           const threadId = form.dataset.threadId;
           const recipientId = String(data.get('recipientId') || '');
@@ -622,6 +627,7 @@ export function ShellHostMixin(BaseClass) {
       messengerRoot.querySelectorAll('form[data-holonet-action="party-fund"]').forEach(form => {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
           const data = new FormData(form);
           const threadId = form.dataset.threadId;
           const amount = Number(data.get('amount') || 0);
@@ -638,6 +644,7 @@ export function ShellHostMixin(BaseClass) {
       messengerRoot.querySelectorAll('form[data-holonet-action="set-presence"]').forEach(form => {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
           const data = new FormData(form);
           await HolonetMessengerService.setPresence({
             actor,
@@ -652,6 +659,7 @@ export function ShellHostMixin(BaseClass) {
       messengerRoot.querySelectorAll('form[data-holonet-action="create-persona"]').forEach(form => {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
           const data = new FormData(form);
           await HolonetMessengerService.createCustomPersona({
             label: String(data.get('label') || '').trim(),
@@ -666,6 +674,7 @@ export function ShellHostMixin(BaseClass) {
       messengerRoot.querySelectorAll('form[data-holonet-action="item-transfer"]').forEach(form => {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
           const data = new FormData(form);
           const threadId = form.dataset.threadId;
           const recipientId = String(data.get('recipientId') || '');
@@ -681,6 +690,7 @@ export function ShellHostMixin(BaseClass) {
       messengerRoot.querySelectorAll('form[data-holonet-action="job-status"]').forEach(form => {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
           const data = new FormData(form);
           const threadId = form.dataset.threadId;
           const status = String(data.get('status') || '').trim();
@@ -693,6 +703,7 @@ export function ShellHostMixin(BaseClass) {
       messengerRoot.querySelectorAll('form[data-holonet-action="award-job-items"]').forEach(form => {
         form.addEventListener('submit', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
           const data = new FormData(form);
           const threadId = form.dataset.threadId;
           const recipientId = String(data.get('recipientId') || '');

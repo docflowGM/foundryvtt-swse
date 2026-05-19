@@ -175,6 +175,17 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     );
     const remainingTrainingDisplay = Math.max(0, this._remainingPicks - pendingSelectedTotal);
 
+    swseLogger.debug('[ForcePowerStep.getStepData] Slot calculation', {
+      totalPowerTraining: this._totalPowerTraining,
+      selectedPowerTraining: this._selectedPowerTraining,
+      remainingPicks: this._remainingPicks,
+      pendingSelectedTotal,
+      selectedTrainingDisplay,
+      remainingTrainingDisplay,
+      committedPowerCounts: Object.fromEntries(this._committedPowerCounts),
+      entitlementReasons: this._entitlementReasons
+    });
+
     // Build card state map: powerId → {isPending, isCommitted, count, status}
     const cardStates = new Map();
     const allPowerIds = new Set([
@@ -472,6 +483,14 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, c) => sum + c, 0);
     const remaining = this._remainingPicks - totalSelected;
 
+    swseLogger.debug('[ForcePowerStep.getRemainingPicks] Footer calculation', {
+      totalPowerTraining: this._totalPowerTraining,
+      remainingPicks: this._remainingPicks,
+      totalSelected,
+      remaining,
+      committedPowerCounts: Object.fromEntries(this._committedPowerCounts)
+    });
+
     if (remaining <= 0) {
       // Build display like "Move Object ×2, Surge ×1"
       const summaryParts = Array.from(this._committedPowerCounts.entries()).map(([id, count]) => {
@@ -585,7 +604,12 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       this._entitlementReasons = Array.isArray(result.reasons) ? result.reasons : [];
       swseLogger.debug(
         `[ForcePowerStep._computeTotalEntitlements] Shell-aware: ${result.total} total, ${result.selected} selected, ${result.remaining} remaining`,
-        { reasons: result.reasons, source: result.source }
+        {
+          reasons: result.reasons,
+          source: result.source,
+          diagnostics: result.diagnostics,
+          featEntitlements: this._entitlementSummary
+        }
       );
       return result.remaining;
     }

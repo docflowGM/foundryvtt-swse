@@ -1,4 +1,5 @@
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 function toSignedClass(value) {
   const n = Number(value) || 0;
@@ -52,6 +53,69 @@ function humanizeSkillLabel(key, fallback = '') {
 
 function isCanonicalSkillKey(key) {
   return !!key && Object.prototype.hasOwnProperty.call(CANONICAL_SKILL_DEFS, key);
+}
+
+function hasForceSensitivityAccess(context = {}, identity = {}) {
+  const actor = context.actor ?? {};
+  try {
+    if (CapabilityRegistry.isForceSensitive(actor)) return true;
+  } catch (_err) {
+    // Fall through to direct shape checks; sheet rendering must never fail on capability lookup.
+  }
+
+  const system = context.system ?? actor.system ?? {};
+  if (context.forceSensitive === true || system.forceSensitive === true || system.progression?.forceSensitive === true) return true;
+
+  const unlockedDomains = system.progression?.unlockedDomains;
+  if (Array.isArray(unlockedDomains) && unlockedDomains.includes('force')) return true;
+
+  const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const isForcePositiveText = (value) => {
+    const text = normalize(value);
+    return !!text && (text.includes('force sensitive') || text.includes('force sensitivity') || text.includes('force training')) && !text.includes('non force sensitive');
+  };
+
+  const speciesVariant = system.speciesVariant || actor.flags?.swse?.speciesVariant;
+  if (speciesVariant) {
+    if (isForcePositiveText(speciesVariant.label || speciesVariant.name || speciesVariant.id)) return true;
+    const variantSpecial = Array.isArray(speciesVariant.special) ? speciesVariant.special : [];
+    if (variantSpecial.some(isForcePositiveText)) return true;
+  }
+
+  const speciesTraits = [
+    ...(Array.isArray(system.speciesTraits) ? system.speciesTraits : []),
+    ...(Array.isArray(system.speciesRules?.traits) ? system.speciesRules.traits : []),
+    ...(Array.isArray(system.speciesRules?.special) ? system.speciesRules.special : [])
+  ];
+  if (speciesTraits.some((trait) => isForcePositiveText(trait?.name || trait?.label || trait))) return true;
+
+  const identitySpecies = identity?.species || system.species || system.race;
+  if (typeof identitySpecies === 'object') {
+    const special = Array.isArray(identitySpecies.special) ? identitySpecies.special : [];
+    const traits = Array.isArray(identitySpecies.traits) ? identitySpecies.traits : [];
+    if ([...special, ...traits].some((trait) => isForcePositiveText(trait?.name || trait?.label || trait))) return true;
+  }
+
+  const itemList = Array.from(actor.items ?? []);
+  return itemList.some((item) => {
+    if (!item) return false;
+    if (item.type === 'class') {
+      const classTags = [
+        ...(Array.isArray(item.system?.tags) ? item.system.tags : []),
+        ...(Array.isArray(item.system?.metadata?.tags) ? item.system.metadata.tags : []),
+        ...(Array.isArray(item.system?.startingFeats) ? item.system.startingFeats : []),
+        ...(Array.isArray(item.system?.features) ? item.system.features : [])
+      ];
+      if (item.system?.forceSensitive === true || classTags.some((entry) => isForcePositiveText(entry?.name || entry?.label || entry))) return true;
+    }
+    if (item.type === 'species') {
+      const special = Array.isArray(item.system?.special) ? item.system.special : [];
+      const traits = Array.isArray(item.system?.traits) ? item.system.traits : [];
+      const canonicalTraits = Array.isArray(item.system?.canonicalTraits) ? item.system.canonicalTraits : [];
+      if ([...special, ...traits, ...canonicalTraits].some((trait) => isForcePositiveText(trait?.name || trait?.label || trait))) return true;
+    }
+    return item.type === 'feat' && isForcePositiveText(item.name);
+  });
 }
 
 function getDerivedSkillMap(context) {
@@ -267,6 +331,7 @@ function buildSkillUseGroups(grouped) {
 }
 
 function buildSkillsTab(context, abilities, identity) {
+  const hasForceAccess = hasForceSensitivityAccess(context, identity);
   const rawAbilityChoices = asArray(context.derived?.identity?.abilities).length
     ? asArray(context.derived?.identity?.abilities)
     : asArray(abilities);
@@ -278,6 +343,7 @@ function buildSkillsTab(context, abilities, identity) {
   const systemSkills = normalizeSkillMap(context.system?.skills ?? context.actor?.system?.skills, { includeDefaults: true });
 
   const entries = Object.keys(CANONICAL_SKILL_DEFS)
+    .filter((key) => key !== 'useTheForce' || hasForceAccess)
     .map((key) => {
       const skill = derivedSkills[key] ?? {};
       const systemSkill = systemSkills[key] ?? {};
@@ -294,7 +360,7 @@ function buildSkillsTab(context, abilities, identity) {
 
       return {
         key,
-        label: humanizeSkillLabel(key, skill?.label),
+        label: CANONICAL_SKILL_DEFS[key]?.label || humanizeSkillLabel(key, skill?.label),
         total,
         totalClass: toSignedClass(total),
         selectedAbility,
@@ -692,6 +758,7 @@ export function buildConceptSheetViewModel(context = {}) {
   const biography = flags?.biography || '';
   const campaignLog = flags?.campaignLog || '';
   const profileSummary = flags?.profileSummary || '';
+  const forceAccess = hasForceSensitivityAccess(context, identity);
   const abilitiesTab = buildAbilityTab(abilities);
   const skills = buildSkillsTab(context, abilities, identity);
   const talents = buildTalentsTab(context);
@@ -725,7 +792,7 @@ export function buildConceptSheetViewModel(context = {}) {
     { label: `Level ${Number(identity.level) || Number(actor?.system?.level) || 1}`, tone: 'ok' }
   ];
 
-  if (context.forceSensitive) {
+  if (forceAccess) {
     dossierTags.push({ label: 'Force-Sensitive', tone: 'force' });
   }
 
@@ -740,7 +807,7 @@ export function buildConceptSheetViewModel(context = {}) {
     { id: 'relationships', label: 'Relationships', icon: 'fa-solid fa-network-wired', count: toCountBadge(relationshipEntries.length) }
   ];
 
-  if (context.forceSensitive) {
+  if (forceAccess) {
     tabs.splice(5, 0, { id: 'force', label: 'Force', icon: 'fa-solid fa-sparkles', count: toCountBadge(fpMax) });
   }
 
@@ -758,7 +825,8 @@ export function buildConceptSheetViewModel(context = {}) {
       age: identity.age || '—',
       gender: identity.gender || '—',
       height: identity.height || '—',
-      weight: identity.weight || '—'
+      weight: identity.weight || '—',
+      forceSensitive: forceAccess
     },
     tabs,
     abilities: abilities.map((ability) => ({

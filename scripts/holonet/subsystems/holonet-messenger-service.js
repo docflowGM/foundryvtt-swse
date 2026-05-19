@@ -798,9 +798,7 @@ export class HolonetMessengerService {
     const jobBody = [
       body?.trim() || 'A new job has been posted to the Holonet board.',
       rewardLines.length ? rewardLines.join(' // ') : ''
-    ].filter(Boolean).join('
-
-');
+    ].filter(Boolean).join('\n\n');
 
     await this._publishSystemMessage(thread, `Job posted: ${title || 'New Holonet Job'}.`, { eventType: 'job-posted' });
     await this._gmSendMessage({

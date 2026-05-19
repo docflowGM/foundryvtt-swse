@@ -713,13 +713,17 @@ export class ProgressionFinalizer {
     }
     const allLanguageEntries = [...grantedLanguageEntries, ...selectedLanguageEntries];
     if (sessionState.mode === 'chargen' || selectedLanguageEntries.length > 0) {
-      const languageIds = allLanguageEntries.map(l =>
-        typeof l === 'string' ? l : l?.id || l?._id || l?.internalId || l?.slug || l?.name
+      const languageNames = allLanguageEntries.map(l =>
+        typeof l === 'string' ? l : l?.name || l?.label || l?.language || l?.value || l?.id || l?._id || l?.internalId || l?.slug
       ).filter(Boolean);
-      const existingLanguageIds = sessionState.mode === 'levelup'
+      const languageIds = allLanguageEntries.map(l =>
+        typeof l === 'string' ? l : l?.internalId || l?._id || l?.id || l?.slug || l?.name
+      ).filter(Boolean);
+      const existingLanguageNames = sessionState.mode === 'levelup'
         ? this._extractActorLanguageIds(actor)
         : [];
-      set['system.languages'] = Array.from(new Set([...existingLanguageIds, ...languageIds]));
+      set['system.languages'] = Array.from(new Set([...existingLanguageNames, ...languageNames]));
+      set['system.languageIds'] = Array.from(new Set(languageIds));
     }
 
     if (this._hasForceSensitivityGrant(actor, selections)) {

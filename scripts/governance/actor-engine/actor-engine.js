@@ -637,7 +637,15 @@ export const ActorEngine = {
             payload: payloadSummary(normalizedUpdateData)
           });
           const result = await applyActorUpdateAtomic(actor, normalizedUpdateData, optsWithMeta);
-          await this.recalcAll(actor);
+          if (options.skipRecalc || options.deferRecalc) {
+            SWSELogger.debug(`[RECOMPUTE] Skipped after ActorEngine.updateActor for ${actor.name}`, {
+              guardKey: meta.guardKey ?? null,
+              skipRecalc: Boolean(options.skipRecalc),
+              deferRecalc: Boolean(options.deferRecalc)
+            });
+          } else {
+            await this.recalcAll(actor);
+          }
           if (shouldTraceHydration) {
             emitHydrationWarning('ENGINE_UPDATE_SUCCESS', {
               traceId: _traceId,

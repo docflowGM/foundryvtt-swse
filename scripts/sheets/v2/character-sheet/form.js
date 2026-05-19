@@ -284,6 +284,17 @@ export async function handleFormSubmission(sheet, event) {
   }
 
   const explicitTarget = event?.target ?? event?.currentTarget ?? null;
+
+  // PHASE 11: SKIP HOLONET FORMS
+  // Holonet Messenger forms must not be processed by the character sheet form handler.
+  // They should be routed through ShellHost event delegation instead.
+  // Check for data-holonet-action to identify Messenger/Holonet forms.
+  if (explicitTarget?.hasAttribute?.('data-holonet-action')) {
+    SWSELogger.debug('[PERSISTENCE] Skipping Holonet form submission (routed to ShellHost)', {
+      action: explicitTarget.dataset.holonetAction
+    });
+    return;
+  }
   const explicitField = resolveExplicitFieldTarget(event);
   let form = explicitTarget instanceof HTMLFormElement ? explicitTarget : explicitTarget?.closest?.('form');
   let container = explicitTarget?.closest?.('.swse-character-sheet-form') ?? null;

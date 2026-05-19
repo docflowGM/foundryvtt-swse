@@ -52,17 +52,15 @@ export class MissingPrereqsTracker {
         return;
       }
 
-      // Update actor system data through ActorEngine with skip flag to prevent integrity recursion
-      actor._skipIntegrityCheck = true;
-      try {
-        await ActorEngine.updateActor(actor, {
-          'system.missingPrerequisites': newTracking
-        }, {
-          meta: { guardKey: 'prerequisite-integrity-tracking' }
-        });
-      } finally {
-        actor._skipIntegrityCheck = false;
-      }
+      // Persist integrity metadata through ActorEngine without triggering a nested recompute.
+      // This method is already running inside prerequisite integrity evaluation, so a normal
+      // post-update recalc would immediately recurse back into the same integrity tracker.
+      await ActorEngine.updateActor(actor, {
+        'system.missingPrerequisites': newTracking
+      }, {
+        meta: { guardKey: 'prerequisite-integrity-tracking' },
+        skipRecalc: true
+      });
 
       SWSELogger.debug(`[MISSING-PREREQS] Updated tracking for ${actor.name}`, {
         itemsTracked: Object.keys(newTracking).length
@@ -154,16 +152,12 @@ export class MissingPrereqsTracker {
   static async clearTracking(actor) {
     if (!actor) return;
     try {
-      actor._skipIntegrityCheck = true;
-      try {
-        await ActorEngine.updateActor(actor, {
-          'system.missingPrerequisites': {}
-        }, {
-          meta: { guardKey: 'prerequisite-integrity-tracking' }
-        });
-      } finally {
-        actor._skipIntegrityCheck = false;
-      }
+      await ActorEngine.updateActor(actor, {
+        'system.missingPrerequisites': {}
+      }, {
+        meta: { guardKey: 'prerequisite-integrity-tracking' },
+        skipRecalc: true
+      });
     } catch (err) {
       SWSELogger.error('[MISSING-PREREQS] Failed to clear tracking:', err);
     }

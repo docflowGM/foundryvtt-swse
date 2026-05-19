@@ -137,7 +137,8 @@ export class PassiveAdapter {
 
     // PHASE 3: Transform to canonical Modifier format
     const canonicalModifiers = [];
-    for (const rawModifier of meta.modifiers) {
+    const rawModifiers = this._getEffectiveModifierDefinitions(ability, meta.modifiers);
+    for (const rawModifier of rawModifiers) {
       try {
         const canonical = this._transformToCanonicalModifier(
           rawModifier,
@@ -167,6 +168,39 @@ export class PassiveAdapter {
       actor._passiveModifiers = {};
     }
     actor._passiveModifiers[ability.id] = canonicalModifiers;
+  }
+
+  static _isImprovedDefensesAbility(ability = null) {
+    const nameKey = String(ability?.name || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+    const choiceKey = String(ability?.system?.choiceMeta?.choiceKind || ability?.system?.choiceMeta?.choiceKey || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+    return nameKey === 'improved_defenses' || choiceKey === 'improved_defenses';
+  }
+
+  static _getEffectiveModifierDefinitions(ability, modifiers = []) {
+    if (!this._isImprovedDefensesAbility(ability)) return modifiers;
+
+    const choiceBackedDefenseModifier = modifiers.find((modifier) => {
+      const config = modifier?.targetFromSelectedChoice;
+      const prefix = typeof config === 'string' ? config : config?.prefix;
+      return prefix === 'defense.';
+    });
+
+    if (!choiceBackedDefenseModifier) return modifiers;
+
+    return ['fortitude', 'reflex', 'will'].map((defense) => ({
+      ...choiceBackedDefenseModifier,
+      target: `defense.${defense}`,
+      targetFromSelectedChoice: undefined,
+      description: `${ability?.name || 'Improved Defenses'}: +1 to all defenses`
+    }));
   }
 
   /**

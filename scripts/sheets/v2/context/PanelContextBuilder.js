@@ -739,6 +739,71 @@ export class PanelContextBuilder {
     return panel;
   }
 
+  _normalizeLanguageDisplayEntry(value) {
+    if (!value) return '';
+    if (typeof value === 'string') return value.trim();
+    if (typeof value === 'object') {
+      const candidate = value.name
+        || value.label
+        || value.language
+        || value.value
+        || value.slug
+        || value.id
+        || value._id
+        || value.internalId;
+      return String(candidate || '').trim();
+    }
+    return String(value || '').trim();
+  }
+
+  _collectLanguageDisplayEntries() {
+    const out = [];
+    const addMany = (values) => {
+      if (!values) return;
+      const list = Array.isArray(values) ? values : [values];
+      for (const value of list) {
+        const label = this._normalizeLanguageDisplayEntry(value);
+        if (label) out.push(label);
+      }
+    };
+
+    addMany(this.system.languages);
+    addMany(this.system.languageNames);
+    addMany(this.system.languageLabels);
+    addMany(this.system.languageData?.knownLanguages);
+    addMany(this.system.languageData?.known);
+    addMany(this.system.progression?.languages);
+    addMany(this.system.progression?.knownLanguages);
+
+    // Defensive fallback for actors finalized before language grants were
+    // materialized onto system.languages. The sheet can still read language
+    // grants from species/background data already embedded on the actor.
+    addMany(this.system.species?.languages);
+    addMany(this.system.species?.primary?.languages);
+    addMany(this.system.species?.selected?.languages);
+    addMany(this.system.speciesVariant?.languages);
+
+    for (const item of Array.from(this.actor?.items ?? [])) {
+      if (item?.type === 'species') {
+        addMany(item.system?.languages);
+        addMany(item.system?.canonicalStats?.languages);
+        addMany(item.system?.speciesRules?.languages);
+      }
+      if (item?.type === 'background') {
+        addMany(item.system?.languages);
+        addMany(item.system?.grants?.languages);
+      }
+    }
+
+    const seen = new Set();
+    return out.filter((label) => {
+      const key = String(label || '').toLowerCase();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
   /**
    * Build the languages panel context
    *
@@ -747,7 +812,7 @@ export class PanelContextBuilder {
    * - hasEntries: boolean
    */
   buildLanguagesPanel() {
-    const languages = this.system.languages || [];
+    const languages = this._collectLanguageDisplayEntries();
 
     const panel = {
       entries: languages,

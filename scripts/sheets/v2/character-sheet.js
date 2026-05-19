@@ -80,6 +80,7 @@ import { activateCustomSkillsUI } from "/systems/foundryvtt-swse/scripts/sheets/
 import { FeatChoiceDialog } from "/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js";
 import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
 import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
+import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 
 const SHEET_MODE_STORAGE_PREFIX = 'swse.sheetMode';
 
@@ -102,6 +103,65 @@ function setStoredSheetMode(actor, mode) {
   } catch (_err) {
     // localStorage may be unavailable in some embedded contexts; mode still works for this render.
   }
+}
+
+
+function hasForceSensitivityAccess(actor) {
+  if (!actor) return false;
+
+  try {
+    if (CapabilityRegistry.isForceSensitive(actor)) return true;
+  } catch (_err) {
+    // Fall through to direct shape checks; sheet rendering must never fail on capability lookup.
+  }
+
+  const system = actor.system ?? {};
+  if (system.forceSensitive === true || system.progression?.forceSensitive === true) return true;
+
+  const unlockedDomains = system.progression?.unlockedDomains;
+  if (Array.isArray(unlockedDomains) && unlockedDomains.includes('force')) return true;
+
+  const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const isForcePositiveText = (value) => {
+    const text = normalize(value);
+    return !!text && (text.includes('force sensitive') || text.includes('force sensitivity') || text.includes('force training')) && !text.includes('non force sensitive');
+  };
+
+  const speciesVariant = system.speciesVariant || actor.flags?.swse?.speciesVariant;
+  if (speciesVariant) {
+    if (isForcePositiveText(speciesVariant.label || speciesVariant.name || speciesVariant.id)) return true;
+    const variantSpecial = Array.isArray(speciesVariant.special) ? speciesVariant.special : [];
+    if (variantSpecial.some(isForcePositiveText)) return true;
+  }
+
+  const speciesRules = system.speciesRules || {};
+  const speciesTraits = [
+    ...(Array.isArray(system.speciesTraits) ? system.speciesTraits : []),
+    ...(Array.isArray(speciesRules.traits) ? speciesRules.traits : []),
+    ...(Array.isArray(speciesRules.special) ? speciesRules.special : [])
+  ];
+  if (speciesTraits.some((trait) => isForcePositiveText(trait?.name || trait?.label || trait))) return true;
+
+  const itemList = Array.from(actor.items ?? []);
+  return itemList.some((item) => {
+    if (!item) return false;
+    if (item.type === 'class') {
+      const classTags = [
+        ...(Array.isArray(item.system?.tags) ? item.system.tags : []),
+        ...(Array.isArray(item.system?.metadata?.tags) ? item.system.metadata.tags : []),
+        ...(Array.isArray(item.system?.startingFeats) ? item.system.startingFeats : []),
+        ...(Array.isArray(item.system?.features) ? item.system.features : [])
+      ];
+      if (item.system?.forceSensitive === true || classTags.some((entry) => isForcePositiveText(entry?.name || entry?.label || entry))) return true;
+    }
+    if (item.type === 'species') {
+      const special = Array.isArray(item.system?.special) ? item.system.special : [];
+      const traits = Array.isArray(item.system?.traits) ? item.system.traits : [];
+      const canonicalTraits = Array.isArray(item.system?.canonicalTraits) ? item.system.canonicalTraits : [];
+      if ([...special, ...traits, ...canonicalTraits].some((trait) => isForcePositiveText(trait?.name || trait?.label || trait))) return true;
+    }
+    return item.type === 'feat' && isForcePositiveText(item.name);
+  });
 }
 
 function applySheetInteractionMode(root, mode = 'play') {
@@ -2232,7 +2292,7 @@ export class SWSEV2CharacterSheet extends
     let classDisplay = derived.identity?.classDisplay ?? '—';
 
     // Identity + visual customization
-    const forceSensitive = system.forceSensitive ?? false;
+    const forceSensitive = hasForceSensitivityAccess(actor);
     const identityGlowColor = forceSensitive ? '#88cfff' : '#666666';
 
     // Condition track steps (0-5 numeric → visual array)
@@ -2251,17 +2311,30 @@ export class SWSEV2CharacterSheet extends
     const initiativeTotal = Number(derived?.initiative?.total ?? derived?.initiative ?? 0) || 0;
 
     // Combat attacks context
-    // PHASE 6: Derived is authoritative for attacks list
-    // PHASE 10: Removed happy-path fallback rebuild. If derived.attacks.list is missing,
-    // use empty array instead of rebuilding from items. This ensures we detect derived computation failures.
-    let attacksList = derived?.attacks?.list ?? [];
+    // PHASE 6: Derived is authoritative for item-backed attacks.
+    // PHASE 10: Removed happy-path fallback rebuild. If derived.attacks.list is missing
+    // while equipped/auto-equipped weapon sources exist, report it instead of rebuilding from items.
+    //
+    // Important: the always-available Unarmed Attack is intentionally built as a virtual
+    // sheet/action context below, not as an item-backed entry in derived.attacks.list.
+    // Therefore a character with no equipped weapons should NOT be treated as a missing
+    // derived-attacks failure.
+    const attacksBundle = derived?.attacks;
+    let attacksList = Array.isArray(attacksBundle?.list) ? attacksBundle.list : [];
+    const expectedItemBackedAttackCount = Array.from(actor?.items ?? []).filter(item =>
+      item?.type === 'weapon' && (item.system?.equipped === true || item.flags?.swse?.autoEquipped === true)
+    ).length;
+    const missingAttackBundle = !attacksBundle || !Array.isArray(attacksBundle.list);
+    const missingExpectedItemBackedAttacks = expectedItemBackedAttackCount > 0 && attacksList.length === 0;
 
-    // PHASE 8 Check: If attacks list is empty, log warning for observability
-    if (attacksList.length === 0) {
-      swseLogger.warn(`[Phase 10] Attacks list missing from derived for ${actor.name}`, {
+    // PHASE 8 Check: warn only when the derived attack bundle is actually missing,
+    // or when item-backed attack sources exist but no derived item attacks were emitted.
+    if (missingAttackBundle || missingExpectedItemBackedAttacks) {
+      swseLogger.warn(`[Phase 10] Item-backed attacks missing from derived for ${actor.name}`, {
         actor: actor.name,
-        derivedAttacks: derived?.attacks,
-        note: 'Fallback rebuild has been removed in Phase 10. Check DerivedCalculator output.'
+        expectedItemBackedAttackCount,
+        derivedAttacks: attacksBundle,
+        note: 'Unarmed Attack is virtual and built separately; this warning only concerns equipped/auto-equipped weapon attacks.'
       });
 
       if (CONFIG?.SWSE?.debug?.contractObservability) {
@@ -2524,6 +2597,10 @@ const forcePoints = [];
     // Character Level Checks
     const level = actor.system.level ?? 1;
     const isLevel0 = level === 0;
+    const chargenCompleted = actor.getFlag?.('foundryvtt-swse', 'chargen.completed') === true
+      || system?.progression?.chargenComplete === true
+      || system?.swse?.chargenComplete === true
+      || Number(level) > 0;
 
     // DIAGNOSTIC: Log level info (disabled to reduce console spam)
     // swseLogger.debug('[CHARGEN DEBUG] Character level info:', {
@@ -2839,6 +2916,7 @@ const forcePoints = [];
       ...panelContexts,
       isGM,
       isLevel0,
+      chargenCompleted,
       buildMode,
       actionEconomy,
       xpLevelReady,
@@ -2882,6 +2960,7 @@ const forcePoints = [];
       // ═════════════════════════════════════════════════════════════════
       isGM,
       isLevel0,
+      chargenCompleted,
       buildMode,
       actionEconomy,
       xpLevelReady,

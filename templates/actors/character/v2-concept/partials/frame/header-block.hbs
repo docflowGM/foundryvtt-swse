@@ -73,8 +73,10 @@
         <button type="button" data-action="cmd-levelup" class="swse-concept-btn swse-concept-btn--primary {{#if xpLevelReady}}ready{{/if}}">Level Up</button>
       {{/if}}
       <button type="button" data-action="cmd-store" class="swse-concept-btn">Store</button>
-      <button type="button" data-action="cmd-select-class" class="swse-concept-btn">Class</button>
-      <button type="button" data-action="cmd-select-species" class="swse-concept-btn">Species</button>
+      {{#unless chargenCompleted}}
+        <button type="button" data-action="cmd-select-class" class="swse-concept-btn">Class</button>
+        <button type="button" data-action="cmd-select-species" class="swse-concept-btn">Species</button>
+      {{/unless}}
       <button type="button" data-action="open-settings-app" class="swse-concept-btn">Settings</button>
       <button type="button" data-action="toggle-help-mode" class="swse-concept-btn" title="{{helpLevelDescription}}">{{helpLevelLabel}}</button>
     </div>

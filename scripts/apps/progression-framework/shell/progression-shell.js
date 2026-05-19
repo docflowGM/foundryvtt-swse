@@ -2761,6 +2761,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
   async _onStartOver(event, target) {
     event?.preventDefault();
+
+    // Show confirmation dialog before destructive reset
+    const confirmed = await this._confirmStartOver();
+    if (!confirmed) return;
+
     try {
       this.progressionSession?.reset?.();
       this.buildIntent?.reset?.();
@@ -2774,6 +2779,62 @@ export class ProgressionShell extends SWSEApplicationV2 {
     } catch (error) {
       swseLogger.error('[ProgressionShell._onStartOver] Failed to reset chargen session', error);
       ui.notifications.error('Unable to start over. See console for details.');
+    }
+  }
+
+  /**
+   * Show confirmation dialog for destructive Start Over action.
+   * @returns {Promise<boolean>} - true if user confirms, false otherwise
+   */
+  async _confirmStartOver() {
+    // Use Foundry v13 DialogV2 if available, fall back to v1 Dialog for compatibility
+    const hasDialogV2 = typeof foundry !== 'undefined' &&
+                        foundry?.applications?.api?.DialogV2;
+
+    if (hasDialogV2) {
+      // Foundry v13 DialogV2 approach
+      return new Promise((resolve) => {
+        foundry.applications.api.DialogV2.confirm({
+          title: 'Warning: Start Over?',
+          content: `<p>Warning, doing this will send you back to the beginning and all of your progress will be lost. This is not recoverable. Continue?</p>`,
+          yes: {
+            icon: '<i class="fas fa-check"></i>',
+            label: 'Yes, Start Over',
+            callback: () => resolve(true),
+          },
+          no: {
+            icon: '<i class="fas fa-times"></i>',
+            label: 'No, Cancel',
+            callback: () => resolve(false),
+          },
+          default: 'no',
+          rejectClose: false, // Allow closing without explicit button click
+          onClose: () => resolve(false), // Close/Escape returns false
+        });
+      });
+    } else {
+      // Fallback to v1 Dialog for older versions
+      return new Promise((resolve) => {
+        const dialog = new Dialog({
+          title: 'Warning: Start Over?',
+          content: `<p>Warning, doing this will send you back to the beginning and all of your progress will be lost. This is not recoverable. Continue?</p>`,
+          buttons: {
+            yes: {
+              icon: '<i class="fas fa-check"></i>',
+              label: 'Yes, Start Over',
+              callback: () => resolve(true),
+            },
+            no: {
+              icon: '<i class="fas fa-times"></i>',
+              label: 'No, Cancel',
+              callback: () => resolve(false),
+            },
+          },
+          default: 'no',
+          close: () => resolve(false), // Escape or X button closes as Cancel
+        });
+        dialog.render(true);
+      });
     }
   }
 

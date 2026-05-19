@@ -644,6 +644,129 @@ export class SummaryStep extends ProgressionStepPlugin {
     };
   }
 
+  /**
+   * Build a display-only preview object from a ProgressionFinalizer dry-run result.
+   *
+   * CONTRACT:
+   * - Pure method — no actor mutations, no draft-state writes, no side effects.
+   * - Accepts any shape that dryRun() may return, including failure objects and
+   *   partial/empty plans; always returns a fully-formed object.
+   * - Consumed by: _buildLevelupSummary (stored as levelupSummary.mutationPreview),
+   *   validate() (reads .success / .error / .validationErrors), and the review HBS.
+   *
+   * @param {Object|null|undefined} dryRun - Result from ProgressionFinalizer.dryRun()
+   * @returns {{
+   *   success: boolean,
+   *   error: string|null,
+   *   validationErrors: string[],
+   *   warnings: string[],
+   *   planValid: boolean,
+   *   actorUpdateCount: number,
+   *   itemGrantCount: number,
+   *   itemUpdateCount: number,
+   *   itemDeleteCount: number,
+   *   patchRows: {path:string, label:string, value:string}[],
+   *   itemGrantRows: {name:string, type:string}[],
+   *   itemUpdateRows: {id:string, changes:number}[],
+   * }}
+   * @private
+   */
+  _buildLevelupMutationPreview(dryRun) {
+    const EMPTY_RESULT = {
+      success: false,
+      error: null,
+      validationErrors: [],
+      warnings: [],
+      planValid: false,
+      actorUpdateCount: 0,
+      itemGrantCount: 0,
+      itemUpdateCount: 0,
+      itemDeleteCount: 0,
+      patchRows: [],
+      itemGrantRows: [],
+      itemUpdateRows: [],
+    };
+
+    // Guard: no dry-run result at all
+    if (dryRun == null) {
+      return { ...EMPTY_RESULT, error: 'Dry-run produced no result' };
+    }
+
+    // Guard: dry-run itself failed (compilation or validation error)
+    if (!dryRun.success) {
+      return {
+        ...EMPTY_RESULT,
+        error: typeof dryRun.error === 'string' && dryRun.error
+          ? dryRun.error
+          : 'Level-up mutation plan could not be compiled',
+      };
+    }
+
+    // --- Extract plan sections defensively ---
+    const plan = (dryRun.plan && typeof dryRun.plan === 'object') ? dryRun.plan : {};
+    const validation = (dryRun.validation && typeof dryRun.validation === 'object') ? dryRun.validation : {};
+
+    const setPatches = (plan.set && typeof plan.set === 'object') ? plan.set : {};
+    const addItems = Array.isArray(plan.add?.items) ? plan.add.items : [];
+    const updateItems = Array.isArray(plan.update?.items) ? plan.update.items : [];
+    const deleteItems = Array.isArray(plan.delete?.items) ? plan.delete.items : [];
+    const warnings = Array.isArray(validation.warnings) ? validation.warnings.map(String) : [];
+    const validationErrors = Array.isArray(validation.errors) ? validation.errors.map(String) : [];
+
+    // --- Friendly labels for the most meaningful actor patch paths ---
+    const FRIENDLY_PATHS = {
+      'system.level': 'Character Level',
+      'system.hp.max': 'HP Max',
+      'system.hp.value': 'HP Current',
+      'system.credits': 'Credits',
+      'system.progression.lastLeveledClass.className': 'Class',
+      'system.progression.lastLeveledClass.classLevel': 'Class Level',
+      'system.progression.lastLeveledClass.characterLevel': 'Character Level',
+      'system.progression.lastHpGain.amount': 'HP Gained',
+      'system.progression.lastCreditDelta.amount': 'Credits Gained',
+    };
+
+    const patchRows = [];
+    for (const [path, value] of Object.entries(setPatches)) {
+      const label = FRIENDLY_PATHS[path];
+      if (label) {
+        patchRows.push({ path, label, value: String(value ?? '') });
+      }
+    }
+
+    // --- Readable item grant rows (feats, talents, force powers, maneuvers …) ---
+    const itemGrantRows = addItems
+      .filter(item => item != null)
+      .map(item => ({
+        name: String(item.name || item.type || '(unnamed item)'),
+        type: String(item.type || 'item'),
+      }));
+
+    // --- Item update rows (e.g. class item level bump) ---
+    const itemUpdateRows = updateItems
+      .filter(item => item != null)
+      .map(item => ({
+        id: String(item._id || '?'),
+        // Count meaningful data fields (exclude the _id key itself)
+        changes: Math.max(0, Object.keys(item).filter(k => k !== '_id').length),
+      }));
+
+    return {
+      success: true,
+      error: null,
+      validationErrors,
+      warnings,
+      planValid: validation.isValid !== false,
+      actorUpdateCount: Object.keys(setPatches).length,
+      itemGrantCount: addItems.length,
+      itemUpdateCount: updateItems.length,
+      itemDeleteCount: deleteItems.length,
+      patchRows,
+      itemGrantRows,
+      itemUpdateRows,
+    };
+  }
+
   _getCurrentLevel(actor) {
     return Number(actor?.system?.details?.level ?? actor?.system?.level ?? 1);
   }
@@ -1577,18 +1700,142 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   async handleAction(action, event, target, shell) {
-    if (action !== 'generate-name' && action !== 'generate-droid-name') return false;
-    event?.preventDefault?.();
-    event?.stopPropagation?.();
-    const randomName = action === 'generate-droid-name'
-      ? await this._generateRandomDroidName(shell?.actor)
-      : await this._generateRandomName(shell?.actor);
-    if (!randomName) return true;
-    this._characterName = randomName;
-    this._summary.name = randomName;
-    this._commitBusinessItems(shell);
-    shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
-    return true;
+    // Handle name generation actions
+    if (action === 'generate-name' || action === 'generate-droid-name') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      const randomName = action === 'generate-droid-name'
+        ? await this._generateRandomDroidName(shell?.actor)
+        : await this._generateRandomName(shell?.actor);
+      if (!randomName) return true;
+      this._characterName = randomName;
+      this._summary.name = randomName;
+      this._commitBusinessItems(shell);
+      shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+      return true;
+    }
+
+    // Handle credit resolution actions
+    if (action === 'roll-credits' || action === 'reroll-credits') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      await this.rollCredits(shell?.actor, shell);
+      shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+      return true;
+    }
+
+    if (action === 'use-max-credits') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      await this.useMaximumCredits(shell?.actor, shell);
+      shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+      return true;
+    }
+
+    if (action === 'use-average-credits') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      await this.useAverageCredits(shell?.actor, shell);
+      shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+      return true;
+    }
+
+    // Handle HP resolution actions (for level-up)
+    if (action === 'roll-hp') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      await this.rollHP?.(shell?.actor, shell);
+      shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+      return true;
+    }
+
+    if (action === 'use-max-hp') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      await this.useMaxHP?.(shell?.actor, shell);
+      shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Extract display names from a selection object.
+   * Handles arrays, Sets, Maps, objects with name fields, and other data shapes.
+   * @param {*} selection - Selection data
+   * @returns {string[]} - Array of clean display names
+   * @private
+   */
+  _getSelectionNames(selection) {
+    if (!selection) return [];
+
+    // Handle arrays
+    if (Array.isArray(selection)) {
+      return selection
+        .map(entry => {
+          if (typeof entry === 'string') return entry;
+          return entry?.name || entry?.label || entry?.title || entry?.displayName || entry?.id || '';
+        })
+        .filter(Boolean);
+    }
+
+    // Handle Set
+    if (selection instanceof Set) {
+      return Array.from(selection).map(entry => {
+        if (typeof entry === 'string') return entry;
+        return entry?.name || entry?.label || entry?.title || entry?.displayName || entry?.id || '';
+      }).filter(Boolean);
+    }
+
+    // Handle Map
+    if (selection instanceof Map) {
+      return Array.from(selection.values()).map(entry => {
+        if (typeof entry === 'string') return entry;
+        return entry?.name || entry?.label || entry?.title || entry?.displayName || entry?.id || '';
+      }).filter(Boolean);
+    }
+
+    // Handle plain object dictionary
+    if (typeof selection === 'object') {
+      return Object.values(selection)
+        .map(entry => {
+          if (typeof entry === 'string') return entry;
+          return entry?.name || entry?.label || entry?.title || entry?.displayName || entry?.id || '';
+        })
+        .filter(Boolean);
+    }
+
+    return [];
+  }
+
+  /**
+   * Extract skill selection keys from various skill selection formats.
+   * @param {*} skillSelections - Skill selection data
+   * @returns {string[]} - Array of skill keys
+   * @private
+   */
+  _extractSkillSelectionKeys(skillSelections) {
+    if (!skillSelections) return [];
+
+    // Handle arrays of strings (skill keys)
+    if (Array.isArray(skillSelections)) {
+      return skillSelections.filter(key => typeof key === 'string');
+    }
+
+    // Handle object dictionary where keys are skill IDs and values are truthy
+    if (typeof skillSelections === 'object') {
+      return Object.entries(skillSelections)
+        .filter(([, value]) => {
+          if (typeof value === 'boolean') return value;
+          if (typeof value === 'object' && value) return value.trained || value.selected || value.value;
+          return Boolean(value);
+        })
+        .map(([key]) => key)
+        .filter(Boolean);
+    }
+
+    return [];
   }
 
   getMentorContext(shell) {

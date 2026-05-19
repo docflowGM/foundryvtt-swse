@@ -32,7 +32,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
+import { CANONICAL_SKILL_DEFS, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 import { isRankedModeEnabled, deriveTrainedFromRanks } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
 import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
@@ -262,33 +262,7 @@ export class DerivedCalculator {
       // If derived.skills is missing/uninitialized, rollSkill() logs a warning
       // and returns null (graceful fallback, no recompute).
       updates['system.derived.skills'] = {};
-      const skillData = {
-        acrobatics: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
-        animalHandling: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
-        athleticism: { defaultAbility: 'str', untrained: true, armorPenalty: true },
-        awareness: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
-        climb: { defaultAbility: 'str', untrained: true, armorPenalty: true },
-        concentration: { defaultAbility: 'con', untrained: true, armorPenalty: false },
-        deception: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
-        gatherInformation: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
-        initiative: { defaultAbility: 'dex', untrained: true, armorPenalty: false },
-        insight: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
-        intimidate: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
-        jump: { defaultAbility: 'str', untrained: true, armorPenalty: true },
-        knowledge: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-        mechanics: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-        medicine: { defaultAbility: 'wis', untrained: false, armorPenalty: false },
-        perception: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
-        persuasion: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
-        piloting: { defaultAbility: 'dex', untrained: false, armorPenalty: false },
-        ride: { defaultAbility: 'dex', untrained: true, armorPenalty: false },
-        stealth: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
-        survival: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
-        swim: { defaultAbility: 'str', untrained: true, armorPenalty: true },
-        treatInjury: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
-        useComputer: { defaultAbility: 'int', untrained: true, armorPenalty: false },
-        useTheForce: { defaultAbility: 'cha', untrained: true, armorPenalty: false }
-      };
+      const skillData = CANONICAL_SKILL_DEFS;
 
       const normalizedSkills = normalizeSkillMap(actor.system.skills);
       const halfLevel = actor.system.halfLevel || 0;

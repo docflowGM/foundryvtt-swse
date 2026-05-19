@@ -146,29 +146,14 @@
     },
     "improved_defenses": {
       "label": "Improved Defenses",
-      "mode": "fixed",
+      "mode": "none",
       "repeatable": false,
-      "choiceSource": "fixed",
-      "storagePath": "flags.swse.choices.improved_defenses",
-      "options": [
-        {
-          "id": "fortitude",
-          "label": "Fortitude Defense",
-          "value": "fortitude"
-        },
-        {
-          "id": "reflex",
-          "label": "Reflex Defense",
-          "value": "reflex"
-        },
-        {
-          "id": "will",
-          "label": "Will Defense",
-          "value": "will"
-        }
-      ],
-      "effectTarget": "defense.selected",
-      "effectValue": 1
+      "choiceSource": "none",
+      "storagePath": null,
+      "options": [],
+      "effectTarget": "defense.all",
+      "effectValue": 1,
+      "note": "Improved Defenses is intrinsic: it grants +1 to Fortitude, Reflex, and Will. No player choice is required."
     },
     "skill_training": {
       "label": "Skill Training",

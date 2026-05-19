@@ -193,14 +193,36 @@ export async function resolveForcePowerEntitlements(shell, actor) {
     // Feat grant entitlements: pending or owned Force Training instances unlock
     // Force Power slots, but the Force Power step owns the actual choices.
     try {
-      const forceTrainingEntitlements = FeatGrantEntitlementResolver.resolve(actor, { shell, includePending: true })
+      const allForceEntitlements = FeatGrantEntitlementResolver.resolve(actor, { shell, includePending: true });
+      swseLogger.debug(`[ForceSuiteResolution.ForcePower] All entitlements from resolver`, {
+        sessionId,
+        allEntitlements: allForceEntitlements.map(e => ({
+          grantType: e.grantType,
+          sourceName: e.sourceName,
+          sourceType: e.sourceType,
+          count: e.count
+        }))
+      });
+
+      const forceTrainingEntitlements = allForceEntitlements
         .filter((entry) => entry.grantType === 'forcePowerSlots')
         .filter((entry) => !isLevelUpLike || entry.sourceType === 'pendingFeat');
       const forceTrainingSlots = forceTrainingEntitlements.reduce((sum, entry) => sum + (Number(entry.count) || 0), 0);
+
+      swseLogger.debug(`[ForceSuiteResolution.ForcePower] Force Training slot calculation`, {
+        sessionId,
+        forceTrainingEntitlements: forceTrainingEntitlements.map(e => ({
+          sourceName: e.sourceName,
+          sourceType: e.sourceType,
+          count: e.count
+        })),
+        forceTrainingSlots
+      });
+
       if (forceTrainingSlots > 0) {
         totalEntitlements += forceTrainingSlots;
         reasons.push(`Force Training entitlement slots: ${forceTrainingSlots}`);
-        diagnostics.forceTrainingEntitlements = { total: forceTrainingSlots };
+        diagnostics.forceTrainingEntitlements = { total: forceTrainingSlots, entries: forceTrainingEntitlements.length };
       }
     } catch (entitlementErr) {
       swseLogger.error(`[ForceSuiteResolution.ForcePower] Force Training entitlement exception for ${actorName}`, {

@@ -1123,7 +1123,7 @@ export class FeatStep extends ProgressionStepPlugin {
     if (nextSelection) {
       const choiceMeta = FeatChoiceResolver.getChoiceMeta(feat);
       const choiceSource = FeatChoiceResolver.inferChoiceSource(feat);
-      if (choiceMeta?.required && choiceSource !== 'grantPool') {
+      if (FeatChoiceResolver.requiresChoice(feat) && choiceSource !== 'grantPool') {
         const pendingForChoice = this._buildPendingAbilityData(shell);
         pendingForChoice.selectedFeats = slotSelections;
         const selectedChoice = await FeatChoiceDialog.prompt(shell.actor, feat, { title: `Choose: ${feat.name}` });

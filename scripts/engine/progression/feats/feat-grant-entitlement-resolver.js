@@ -243,6 +243,23 @@ export class FeatGrantEntitlementResolver {
     entries.forEach((entry, index) => {
       entitlements.push(...this.resolveForFeat(actor, entry, index));
     });
+
+    // Diagnostic logging for Force-related entitlements
+    const forcePowerEntitlements = entitlements.filter(e => e.grantType === 'forcePowerSlots');
+    if (forcePowerEntitlements.length > 0 || entries.some(e => /force training|force sensitivity/i.test(e.name || ''))) {
+      console.log('[FeatGrantEntitlementResolver.resolve] Force suite diagnostics', {
+        allEntries: entries.map(e => ({ name: e.name, sourceType: e.sourceType })),
+        forcePowerEntitlements: forcePowerEntitlements.map(e => ({
+          sourceName: e.sourceName,
+          sourceType: e.sourceType,
+          count: e.count,
+          countFormula: e.countFormula
+        })),
+        forceTrainingFeats: entries.filter(e => /force training/i.test(e.name || '')).map(e => ({ name: e.name, sourceType: e.sourceType })),
+        forceSensitivityFeats: entries.filter(e => /force sensitivity/i.test(e.name || '')).map(e => ({ name: e.name, sourceType: e.sourceType }))
+      });
+    }
+
     return entitlements;
   }
 

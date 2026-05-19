@@ -42,6 +42,7 @@ function uniqueBy(entries, keyFn = (entry) => entry?.id ?? entry?.name) {
 
 export class ProgressionContentAuthority {
   static _initialized = false;
+  static _speciesLanguageRules = null;
 
   static async initialize() {
     if (this._initialized) return true;
@@ -75,6 +76,55 @@ export class ProgressionContentAuthority {
       SpeciesRegistry.getById(ref.id || ref._id || ref.internalId || ref.sourceId) ||
       SpeciesRegistry.getByName(ref.name || ref.speciesName)
     );
+  }
+
+  static _normalizeSpeciesLanguageRuleKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[’]/g, "'")
+      .replace(/[^a-z0-9' ]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  static async _loadSpeciesLanguageRules() {
+    if (this._speciesLanguageRules) return this._speciesLanguageRules;
+    try {
+      const resp = await fetch('systems/foundryvtt-swse/data/species-languages.json');
+      if (!resp?.ok) throw new Error(`HTTP ${resp?.status || 'unknown'}`);
+      const data = await resp.json();
+      this._speciesLanguageRules = data?.species || data || {};
+    } catch (err) {
+      swseLogger.warn('[ProgressionContentAuthority] Failed to load species language rules; falling back to registry species languages only', err);
+      this._speciesLanguageRules = {};
+    }
+    return this._speciesLanguageRules;
+  }
+
+  static async _getSpeciesLanguageRuleNames(speciesSelection = null, resolvedSpecies = null) {
+    const rules = await this._loadSpeciesLanguageRules();
+    const candidateNames = [
+      resolvedSpecies?.name,
+      resolvedSpecies?.canonicalName,
+      speciesSelection?.name,
+      speciesSelection?.speciesName,
+      speciesSelection?.label,
+      typeof speciesSelection === 'string' ? speciesSelection : null,
+    ].filter(Boolean);
+
+    for (const candidate of candidateNames) {
+      const target = this._normalizeSpeciesLanguageRuleKey(candidate);
+      if (!target) continue;
+      for (const [name, rule] of Object.entries(rules || {})) {
+        const normalized = this._normalizeSpeciesLanguageRuleKey(name);
+        if (normalized === target || (normalized.endsWith('s') && normalized.slice(0, -1) === target) || (target.endsWith('s') && target.slice(0, -1) === normalized)) {
+          const entries = Array.isArray(rule?.languages) ? rule.languages : [];
+          return entries.map(entry => entry?.name || entry?.label || entry).filter(Boolean);
+        }
+      }
+    }
+    return [];
   }
 
   static async resolveBackground(ref) {
@@ -243,6 +293,7 @@ export class ProgressionContentAuthority {
   static async getGrantedLanguageEntries({ speciesSelection = null, backgroundSelection = null } = {}) {
     const species = this.resolveSpecies(speciesSelection);
     const speciesLanguages = Array.isArray(species?.languages) ? species.languages : [];
+    const ruleLanguages = await this._getSpeciesLanguageRuleNames(speciesSelection, species);
     const background = await this.resolveBackground(backgroundSelection);
     const backgroundLanguages = Array.isArray(background?.languages)
       ? background.languages
@@ -251,11 +302,12 @@ export class ProgressionContentAuthority {
         : [];
 
     const resolved = [];
-    for (const lang of [...speciesLanguages, ...backgroundLanguages]) {
+    for (const lang of [...speciesLanguages, ...ruleLanguages, ...backgroundLanguages]) {
       const entry = await this.resolveLanguage(lang);
       if (entry) resolved.push(entry);
+      else if (lang) resolved.push({ id: String(lang), name: String(lang) });
     }
-    return uniqueBy(resolved);
+    return uniqueBy(resolved, (entry) => String(entry?.name || entry?.id || '').toLowerCase());
   }
 
   static normalizeSelectionList(kind, rawValues) {

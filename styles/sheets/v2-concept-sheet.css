@@ -6444,11 +6444,11 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
 
 .swse-sheet-mode--play .swse-concept-panel--gear-actions,
 .swse-sheet-mode--play .swse-concept-custom-skill-row__controls,
-.swse-sheet-mode--play .swse-concept-custom-skill-row__notes,
-.swse-sheet-mode--play .swse-concept-skill-row__math {
+.swse-sheet-mode--play .swse-concept-custom-skill-row__notes {
   display: none !important;
 }
 
+.swse-sheet-mode--play .swse-concept-skill-row__math,
 .swse-sheet-mode--edit .swse-concept-skill-row__math,
 .swse-sheet-mode--edit .swse-concept-custom-skill-row__controls,
 .swse-sheet-mode--edit .swse-concept-custom-skill-row__notes {

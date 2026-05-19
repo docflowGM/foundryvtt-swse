@@ -76,6 +76,42 @@
     {{/if}}
   </div>
 
+  {{!-- Granted Starting Feats (Class, Species, Background) --}}
+  {{#if grantedFeatsList}}
+  <section class="feat-group granted-feats-group">
+    <div class="group-header">
+      <div class="header-content">
+        <i class="fa-solid fa-gift group-icon"></i>
+        <h3 class="group-title">Granted Starting Feats</h3>
+        <span class="feat-count-badge">{{grantedFeatsList.length}}</span>
+      </div>
+    </div>
+
+    <div class="feat-list granted-list">
+      {{#each grantedFeatsList}}
+      <div class="feat-item granted-feat {{#if this.isFocused}}focused{{/if}}"
+           style="--feat-tree-indent: {{this.treeIndent}};"
+           data-feat-id="{{this.id}}"
+           data-item-id="{{this.id}}"
+           data-action="focus-item">
+        <div class="feat-item-content">
+          <span class="feat-name">{{this.name}}</span>
+          {{#if this.subcategory}}<span class="feat-subcategory-pill">{{this.subcategory}}</span>{{/if}}
+          {{#if this.missingPrerequisites}}
+            <span class="feat-prereq-line">Prerequisites: {{#each this.missingPrerequisites}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>
+          {{else}}
+            <span class="feat-prereq-line">{{this.prerequisiteLine}}</span>
+          {{/if}}
+        </div>
+        <div class="feat-item-meta">
+          <span class="feat-grant-badge"><i class="fa-solid fa-crown"></i> Class Grant</span>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
   {{#if groupedFeats.suggested}}
   <section class="feat-group suggested-group">
     <div class="group-header" data-action="toggle-category" data-category="suggested">

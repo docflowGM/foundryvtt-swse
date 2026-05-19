@@ -391,7 +391,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;    /* Allow absolutely positioned popover (footer explanation) to render above */
 }
 
 /* =============================================================================

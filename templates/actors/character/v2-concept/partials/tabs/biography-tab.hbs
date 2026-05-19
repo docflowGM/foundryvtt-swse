@@ -30,6 +30,10 @@
     </div>
   </section>
 
+  {{#if darkSidePanel}}
+    {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/dark-side-panel.hbs"}}
+  {{/if}}
+
   <div class="swse-concept-grid swse-concept-grid--two">
     <section class="swse-concept-panel">
       <header class="swse-concept-panel__header">
