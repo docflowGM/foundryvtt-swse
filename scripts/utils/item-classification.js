@@ -18,16 +18,27 @@ function includesAny(value, needles = []) {
 
 function allItemText(item) {
   const system = item?.system ?? {};
+  const flags = item?.flags?.swse ?? {};
+  const progression = flags.progression ?? {};
   const tags = [
     ...(Array.isArray(system.tags) ? system.tags : []),
     ...(Array.isArray(system.metadata?.tags) ? system.metadata.tags : []),
+    ...(Array.isArray(system.abilityMeta?.tags) ? system.abilityMeta.tags : []),
     system.category,
     system.featType,
+    system.talentTree,
+    system.tree,
     system.subType,
     system.sourceType,
     system.executionModel,
+    system.abilityMeta?.executionModel,
     system.progressionType,
-    system.type
+    system.grantType,
+    system.type,
+    progression.selectionKey,
+    progression.sourceType,
+    flags.sourceType,
+    flags.progressionType
   ].filter(Boolean).join(' ');
   return `${item?.type ?? ''} ${item?.name ?? ''} ${tags}`;
 }
@@ -47,18 +58,24 @@ export function isFeatLikeItem(item) {
   if (!item || isForcePowerItem(item)) return false;
   const type = normalizeText(item.type).replace(/\s+/g, '');
   const system = item.system ?? {};
+  const progressionKey = normalizeText(item.flags?.swse?.progression?.selectionKey);
+  const text = allItemText(item);
+
   if (type === 'feat') return true;
   if (system.featType || system.category === 'feat' || system.sourceType === 'feat') return true;
   if (system.progressionType === 'feat' || system.grantType === 'feat') return true;
+  if (progressionKey.includes('feat') || progressionKey.includes('class auto grants')) return true;
+  if (includesAny(text, [' selected feats ', ' class auto grants ', ' general feat ', ' class feat '])) return true;
 
-  const text = allItemText(item);
-  if (system.executionModel === 'UNLOCK') {
+  if (system.executionModel === 'UNLOCK' || system.abilityMeta?.executionModel === 'UNLOCK' || type === 'ability') {
     return includesAny(text, [
       'weapon proficiency',
       'armor proficiency',
       'force sensitivity',
       'force training',
-      'skill focus'
+      'skill focus',
+      'linguist',
+      'proficiency'
     ]);
   }
 
@@ -69,9 +86,14 @@ export function isTalentLikeItem(item) {
   if (!item || isForcePowerItem(item) || isFeatLikeItem(item)) return false;
   const type = normalizeText(item.type).replace(/\s+/g, '');
   const system = item.system ?? {};
+  const progressionKey = normalizeText(item.flags?.swse?.progression?.selectionKey);
+  const text = allItemText(item);
+
   if (type === 'talent') return true;
   if (system.talentTree || system.tree || system.sourceType === 'talent') return true;
   if (system.progressionType === 'talent' || system.grantType === 'talent') return true;
+  if (progressionKey.includes('talent')) return true;
+  if (includesAny(text, [' selected talents ', ' heroic talent ', ' class talent ', ' talent tree '])) return true;
   return false;
 }
 

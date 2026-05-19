@@ -62,6 +62,7 @@ export class ProgressionSession {
 
     // Actor context (snapshot, not live)
     this.actorId = actor?.id || null;
+    this.sessionId = `${mode}-${this.actorId || 'unknown'}-${Date.now()}`;
     this.actorSnapshot = actor ? this._snapshotActor(actor) : null;
 
     // Normalized draft selections (the single source of truth)
@@ -199,12 +200,22 @@ export class ProgressionSession {
       // previous value remains intact if validation fails. Array-backed ability
       // domains are append/replace-by-slot safe so legacy singleton commits can
       // never erase the rest of a build at Summary.
+      const previousValue = this.draftSelections[selectionKey];
       const valueToStore = this._mergeArraySelection(selectionKey, normalizedValue, { stepId });
+
+      // No-op unchanged commits. This is important for Summary/Business Items
+      // and language selection: repeated render-time validation must never cause
+      // actor flag writes, queued sheet renders, or active-step recomputation.
+      if (this._selectionValuesEqual(previousValue, valueToStore)) {
+        swseLogger.debug(`[ProgressionSession] Ignored unchanged ${selectionKey} commit from ${stepId}`);
+        return true;
+      }
+
       this.draftSelections[selectionKey] = valueToStore;
       this.lastModifiedAt = Date.now();
 
       // Trigger watchers for backward compat
-      this._triggerWatchers(selectionKey, valueToStore);
+      this._triggerWatchers(selectionKey, valueToStore, previousValue);
 
       // Trigger persistence hooks (Phase 1: auto-save after commit)
       this._triggerPersistenceHooks(stepId, selectionKey);
@@ -358,9 +369,12 @@ export class ProgressionSession {
       skills: null,
       attributes: null,
     };
-    this.draftSelections[selectionKey] = Object.prototype.hasOwnProperty.call(defaults, selectionKey) ? defaults[selectionKey] : null;
+    const previousValue = this.draftSelections[selectionKey];
+    const nextValue = Object.prototype.hasOwnProperty.call(defaults, selectionKey) ? defaults[selectionKey] : null;
+    if (this._selectionValuesEqual(previousValue, nextValue)) return true;
+    this.draftSelections[selectionKey] = nextValue;
     this.lastModifiedAt = Date.now();
-    this._triggerWatchers(selectionKey, this.draftSelections[selectionKey]);
+    this._triggerWatchers(selectionKey, this.draftSelections[selectionKey], previousValue);
     this._triggerPersistenceHooks('clear-selection', selectionKey);
     return true;
   }
@@ -675,6 +689,83 @@ export class ProgressionSession {
   }
 
   /** @private */
+  _mergeArraySelection(selectionKey, normalizedValue, context = {}) {
+    const schemaDef = this._schema?.[selectionKey];
+    if (schemaDef?.type !== 'array') return normalizedValue;
+    if (!Array.isArray(normalizedValue)) return normalizedValue;
+
+    // Full array commits from modern steps replace the prior array. Singleton
+    // legacy object commits may be merged by id so a single feat/talent choice
+    // cannot erase the rest of the draft. Languages intentionally replace: the
+    // language step owns the entire bonus-language list.
+    if (selectionKey === 'languages') return this._dedupeSelectionArray(normalizedValue);
+    if (normalizedValue.length !== 1 || !this._isSelectionLikeObject(normalizedValue[0])) {
+      return this._dedupeSelectionArray(normalizedValue);
+    }
+
+    const previous = Array.isArray(this.draftSelections?.[selectionKey])
+      ? this.draftSelections[selectionKey]
+      : [];
+    const incoming = normalizedValue[0];
+    const incomingKey = this._entryIdentityKey(incoming);
+    if (!incomingKey) return this._dedupeSelectionArray(normalizedValue);
+
+    const merged = previous.filter(entry => this._entryIdentityKey(entry) !== incomingKey);
+    merged.push(incoming);
+    return this._dedupeSelectionArray(merged);
+  }
+
+  /** @private */
+  _dedupeSelectionArray(entries = []) {
+    const seen = new Set();
+    const out = [];
+    for (const entry of entries || []) {
+      const key = this._entryIdentityKey(entry) || this._stableSelectionStringify(entry);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(entry);
+    }
+    return out;
+  }
+
+  /** @private */
+  _entryIdentityKey(entry) {
+    if (entry === null || entry === undefined) return '';
+    if (typeof entry !== 'object') return String(entry);
+    const raw = entry.uuid || entry.id || entry._id || entry.key || entry.slug || entry.name || entry.label;
+    return raw ? String(raw).trim().toLowerCase() : '';
+  }
+
+  /** @private */
+  _isSelectionLikeObject(value) {
+    return !!value && typeof value === 'object' && !Array.isArray(value)
+      && !!(value.uuid || value.id || value._id || value.key || value.slug || value.name || value.label);
+  }
+
+  /** @private */
+  _selectionValuesEqual(a, b) {
+    return this._stableSelectionStringify(a) === this._stableSelectionStringify(b);
+  }
+
+  /** @private */
+  _stableSelectionStringify(value) {
+    const normalize = (input) => {
+      if (Array.isArray(input)) return input.map(normalize);
+      if (!input || typeof input !== 'object') return input;
+      return Object.keys(input).sort().reduce((out, key) => {
+        if (typeof input[key] === 'function') return out;
+        out[key] = normalize(input[key]);
+        return out;
+      }, {});
+    };
+    try {
+      return JSON.stringify(normalize(value));
+    } catch (_err) {
+      return String(value);
+    }
+  }
+
+  /** @private */
   _recordCommitDiagnostic(kind, detail = {}) {
     if (!this.commitDiagnostics) {
       this.commitDiagnostics = { coercedCommits: [], failedCommits: [] };
@@ -715,8 +806,8 @@ export class ProgressionSession {
    * Trigger watchers for a selection change.
    * @private
    */
-  _triggerWatchers(selectionKey, newValue) {
-    const oldValue = this.draftSelections[selectionKey];
+  _triggerWatchers(selectionKey, newValue, oldValue = undefined) {
+    if (oldValue === undefined) oldValue = this.draftSelections[selectionKey];
 
     if (this._watchers.has(selectionKey)) {
       this._watchers.get(selectionKey).forEach(callback => {

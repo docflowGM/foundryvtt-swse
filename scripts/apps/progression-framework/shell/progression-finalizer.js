@@ -936,6 +936,16 @@ export class ProgressionFinalizer {
 
     const compiledAbilityItems = await this._compileProgressionAbilityItems(actor, selections, sessionState);
     add.items.push(...compiledAbilityItems.items);
+    if (Array.isArray(compiledAbilityItems.deleteItems) && compiledAbilityItems.deleteItems.length) {
+      itemsToDelete.push(...compiledAbilityItems.deleteItems);
+    }
+
+    if (compiledAbilityItems.postApply?.starshipManeuverRemoveItemIds?.length) {
+      const removeIds = new Set(compiledAbilityItems.postApply.starshipManeuverRemoveItemIds.map((id) => String(id)));
+      const currentSuite = actor.system?.starshipManeuverSuite || {};
+      const currentManeuvers = Array.isArray(currentSuite.maneuvers) ? currentSuite.maneuvers : [];
+      set['system.starshipManeuverSuite.maneuvers'] = currentManeuvers.filter((id) => !removeIds.has(String(id)));
+    }
 
     if (compiledAbilityItems.postApply?.starshipManeuverNames?.length) {
       const currentSuite = actor.system?.starshipManeuverSuite || {};
@@ -1740,7 +1750,8 @@ export class ProgressionFinalizer {
   static async _compileProgressionAbilityItems(actor, selections, sessionState) {
     const sessionId = sessionState.sessionId || 'unknown';
     const itemSpecs = [];
-    const postApply = { starshipManeuverNames: [] };
+    const deleteItems = [];
+    const postApply = { starshipManeuverNames: [], starshipManeuverRemoveItemIds: [] };
     const domainConfig = [
       { key: 'feats', type: 'feat', docGetter: (entry) => ProgressionContentAuthority.getFeatDocument(entry), allowDuplicates: false },
       { key: 'talents', type: 'talent', docGetter: (entry) => ProgressionContentAuthority.getTalentDocument(entry), allowDuplicates: false },
@@ -1764,7 +1775,13 @@ export class ProgressionFinalizer {
     for (const domain of domainConfig) {
       const rawValues = Array.isArray(selections[domain.key]) ? selections[domain.key] : [];
       for (const rawEntry of rawValues) {
-        const count = Math.max(1, Number(rawEntry?.count || 1));
+        const removeCount = Math.max(0, Number(rawEntry?.removeCount || 0) || 0);
+        if (domain.key === 'forcePowers' && removeCount > 0) {
+          deleteItems.push(...this._collectOwnedForcePowerItemIds(actor, rawEntry, removeCount));
+        }
+
+        const count = Math.max(0, Number(rawEntry?.count ?? 1) || 0);
+        if (count <= 0) continue;
         const resolvedDoc = await domain.docGetter(rawEntry);
         const resolvedData = resolvedDoc?.toObject ? resolvedDoc.toObject() : null;
         const resolvedName = resolvedData?.name || rawEntry?.name || rawEntry?.id || String(rawEntry);
@@ -1828,7 +1845,15 @@ export class ProgressionFinalizer {
 
     const starshipSelections = Array.isArray(selections.starshipManeuvers) ? selections.starshipManeuvers : [];
     for (const rawEntry of starshipSelections) {
-      const count = Math.max(1, Number(rawEntry?.count || 1));
+      const removeCount = Math.max(0, Number(rawEntry?.removeCount || 0) || 0);
+      if (removeCount > 0) {
+        const removeIds = this._collectOwnedStarshipManeuverItemIds(actor, rawEntry, removeCount);
+        deleteItems.push(...removeIds);
+        postApply.starshipManeuverRemoveItemIds.push(...removeIds);
+      }
+
+      const count = Math.max(0, Number(rawEntry?.count ?? 1) || 0);
+      if (count <= 0) continue;
       const maneuverName = rawEntry?.name || rawEntry?.id || String(rawEntry);
       const existingCount = actor.items.filter((item) => item.type === 'maneuver' && String(item.name || '').toLowerCase() === String(maneuverName).toLowerCase()).length;
 
@@ -1866,22 +1891,64 @@ export class ProgressionFinalizer {
       }
     }
 
-    return { items: itemSpecs, postApply };
+    return { items: itemSpecs, deleteItems: Array.from(new Set(deleteItems)), postApply };
+  }
+
+  static _collectOwnedForcePowerItemIds(actor, rawEntry, count = 0) {
+    const targetId = this._normalizeNameKey(rawEntry?.id || rawEntry?._id || rawEntry?.slug || rawEntry?.name || rawEntry);
+    const targetName = this._normalizeNameKey(rawEntry?.name || rawEntry?.label || rawEntry?.id || rawEntry);
+    const matches = actor.items.filter((item) => {
+      const type = String(item?.type || '').toLowerCase();
+      const executionModel = String(item?.system?.executionModel || item?.system?.abilityType || '').toLowerCase();
+      if (!(type === 'force-power' || type === 'power' || executionModel === 'force_power')) return false;
+      const candidates = [
+        item.id,
+        item._id,
+        item.name,
+        item.system?.slug,
+        item.system?.abilities?.id,
+        item.flags?.swse?.progression?.selectionId,
+      ].map((value) => this._normalizeNameKey(value)).filter(Boolean);
+      return candidates.includes(targetId) || candidates.includes(targetName);
+    });
+    return matches.slice(0, Math.max(0, Number(count) || 0)).map((item) => item.id).filter(Boolean);
+  }
+
+  static _collectOwnedStarshipManeuverItemIds(actor, rawEntry, count = 0) {
+    const targetId = this._normalizeNameKey(rawEntry?.id || rawEntry?._id || rawEntry?.slug || rawEntry?.name || rawEntry);
+    const targetName = this._normalizeNameKey(rawEntry?.name || rawEntry?.label || rawEntry?.id || rawEntry);
+    const suiteIds = new Set(Array.isArray(actor?.system?.starshipManeuverSuite?.maneuvers)
+      ? actor.system.starshipManeuverSuite.maneuvers.map((value) => String(value))
+      : []);
+    const matches = actor.items.filter((item) => {
+      if (String(item?.type || '').toLowerCase() !== 'maneuver') return false;
+      if (suiteIds.size && !suiteIds.has(String(item.id || item._id)) && !suiteIds.has(String(item.name || ''))) return false;
+      const candidates = [
+        item.id,
+        item._id,
+        item.name,
+        item.system?.slug,
+        item.flags?.swse?.progression?.selectionId,
+      ].map((value) => this._normalizeNameKey(value)).filter(Boolean);
+      return candidates.includes(targetId) || candidates.includes(targetName);
+    });
+    return matches.slice(0, Math.max(0, Number(count) || 0)).map((item) => item.id).filter(Boolean);
   }
 
   static async _syncPostApplyState(actor, mutationPlan) {
     const engine = this._resolveActorEngine();
     const starshipManeuverNames = mutationPlan?.metadata?.postApply?.starshipManeuverNames || [];
-    if (!engine?.updateActor || !starshipManeuverNames.length) return;
+    const removeIds = new Set((mutationPlan?.metadata?.postApply?.starshipManeuverRemoveItemIds || []).map((id) => String(id)));
+    if (!engine?.updateActor || (!starshipManeuverNames.length && !removeIds.size)) return;
 
     const suite = actor.system?.starshipManeuverSuite || { maneuvers: [] };
-    const existing = new Set(Array.isArray(suite.maneuvers) ? suite.maneuvers : []);
+    const existing = new Set(Array.isArray(suite.maneuvers) ? suite.maneuvers.filter((id) => !removeIds.has(String(id))) : []);
     const matchingIds = actor.items
       .filter((item) => item.type === 'maneuver' && starshipManeuverNames.includes(item.name))
       .map((item) => item.id)
       .filter(Boolean);
 
-    let changed = false;
+    let changed = removeIds.size > 0;
     for (const id of matchingIds) {
       if (existing.has(id)) continue;
       existing.add(id);

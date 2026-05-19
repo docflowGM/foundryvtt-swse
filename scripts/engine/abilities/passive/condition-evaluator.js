@@ -35,7 +35,8 @@ export class ConditionEvaluator {
     }
 
     try {
-      switch (condition.type) {
+      const conditionType = String(condition.type || '').toUpperCase().replace(/[\s-]+/g, '_');
+      switch (conditionType) {
         case "WEAPON_CATEGORY":
           return this._hasWeaponCategory(actor, condition.value);
 
@@ -47,6 +48,9 @@ export class ConditionEvaluator {
 
         case "SKILL_CONTEXT":
           return this._checkSkillContext(actor, condition.value);
+
+        case "UNTRAINED_CHECK":
+          return this._checkUntrainedCheck(actor, condition.value);
 
         default:
           swseLogger.warn(
@@ -174,6 +178,17 @@ export class ConditionEvaluator {
     }
 
     return !!actor?.system?.skills?.[skillKey];
+  }
+
+  static _checkUntrainedCheck(actor, value) {
+    const raw = typeof value === 'string' ? value : value?.skill || value?.key || value?.id || '';
+    if (!raw) return true;
+    const key = String(raw).replace(/[\s-]+/g, '').replace(/^knowledge/i, 'knowledge');
+    const skills = actor?.system?.skills || {};
+    return !!skills[raw] || !!skills[key] || Object.keys(skills).some((candidate) => {
+      const normalized = String(candidate).replace(/[\s-]+/g, '').toLowerCase();
+      return normalized === String(key).toLowerCase();
+    });
   }
 }
 

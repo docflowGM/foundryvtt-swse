@@ -192,8 +192,9 @@ export function adaptClassForLoaderCompatibility(classModel) {
   };
 
   const featuresByLevel = {};
-  for (const entry of classModel.levelProgression) {
-    const validFeatures = entry.features.filter(f => f && typeof f === 'object');
+  for (const entry of classModel.levelProgression || []) {
+    const features = Array.isArray(entry?.features) ? entry.features : [];
+    const validFeatures = features.filter(f => f && typeof f === 'object');
     featuresByLevel[entry.level] = {
       features: validFeatures,
       bonusFeats: validFeatures.filter(f => f.type === 'feat_choice' || f.name?.includes('Bonus Feat')).length,
@@ -216,8 +217,15 @@ export function adaptClassForLoaderCompatibility(classModel) {
     forceSensitive: classModel.forceSensitive,
     prestigeClass: !classModel.baseClass,
     tags: classModel.tags,
+    babProgression: classModel.babProgression,
+    isNonheroic: classModel.isNonheroic === true || classModel.name?.toLowerCase?.() === 'nonheroic',
     levelProgression: featuresByLevel,
-    _raw: null,  // Loader kept _raw for debugging, we don't need it
+    levelProgressionArray: classModel.levelProgression || [],
+    // Several derived calculators still read the old loader _raw shape.
+    // Keep it populated so the canonical adapter remains backward-compatible.
+    _raw: {
+      level_progression: classModel.levelProgression || []
+    },
     _canonical: classModel
   };
 }

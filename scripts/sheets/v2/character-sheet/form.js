@@ -121,6 +121,10 @@ function getFieldType(fieldName) {
     return 'boolean';
   }
 
+  if (/^system\.abilities\.[^.]+\.(base|racial|species|enhancement|misc|temp)$/.test(fieldName)) {
+    return 'number';
+  }
+
   if (/^system\.skills\.[^.]+\.miscMod$/.test(fieldName)) {
     return 'number';
   }
@@ -372,7 +376,6 @@ export async function handleFormSubmission(sheet, event) {
 
       await ActorEngine.updateActor(currentActor, scopedUpdate, {
         source: 'character-sheet-direct-field',
-        suppressAppRefresh: true,
         meta: { guardKey: `direct-field:${explicitField.name}` }
       });
 

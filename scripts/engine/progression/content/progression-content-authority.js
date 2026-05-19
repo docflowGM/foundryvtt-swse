@@ -374,11 +374,50 @@ export class ProgressionContentAuthority {
   }
 
   static normalizeSkillSelection(skillsSelection) {
-    const trained = Array.isArray(skillsSelection?.trained)
-      ? skillsSelection.trained
-      : Array.isArray(skillsSelection)
-        ? skillsSelection
-        : Object.keys(skillsSelection || {}).filter((key) => skillsSelection?.[key]?.trained);
+    if (!skillsSelection) return [];
+
+    const trained = [];
+    const addRaw = (value) => {
+      if (!value) return;
+      if (typeof value === 'string') {
+        trained.push(value);
+        return;
+      }
+      if (value && typeof value === 'object') {
+        trained.push(value.key || value.id || value._id || value.internalId || value.name || value.label);
+      }
+    };
+
+    const addExplicitObjectMap = (map) => {
+      if (!map || typeof map !== 'object' || Array.isArray(map)) return;
+      for (const [key, value] of Object.entries(map)) {
+        // Only explicit player-trained values count here. Class-skill eligibility,
+        // granted skills, and display maps must not be promoted into trained picks.
+        if (value === true) {
+          trained.push(key);
+        } else if (value && typeof value === 'object' && value.trained === true) {
+          trained.push(value.key || value.id || value.name || key);
+        }
+      }
+    };
+
+    if (Array.isArray(skillsSelection)) {
+      skillsSelection.forEach(addRaw);
+    } else if (Array.isArray(skillsSelection.trained)) {
+      skillsSelection.trained.forEach(addRaw);
+    } else if (Array.isArray(skillsSelection.selected)) {
+      skillsSelection.selected.forEach(addRaw);
+    } else if (Array.isArray(skillsSelection.skills)) {
+      skillsSelection.skills.forEach(addRaw);
+    } else if (skillsSelection.trained && typeof skillsSelection.trained === 'object') {
+      addExplicitObjectMap(skillsSelection.trained);
+    } else if (skillsSelection.selected && typeof skillsSelection.selected === 'object') {
+      addExplicitObjectMap(skillsSelection.selected);
+    } else if (skillsSelection.trainedSkills && typeof skillsSelection.trainedSkills === 'object') {
+      addExplicitObjectMap(skillsSelection.trainedSkills);
+    } else if (skillsSelection && typeof skillsSelection === 'object') {
+      addExplicitObjectMap(skillsSelection);
+    }
 
     const resolved = trained.map((skill) => this.resolveSkill(skill)).filter(Boolean);
     const normalized = resolved.map((entry) => ({
@@ -391,7 +430,15 @@ export class ProgressionContentAuthority {
 
     if (normalized.length === 0 && trained.length > 0) {
       swseLogger.debug('[ProgressionContentAuthority] Skill selection fell back to raw values', { trained });
-      return trained.map((skill) => ({ id: skill, key: String(skill || '').toLowerCase(), name: String(skill || ''), source: 'selection' }));
+      return uniqueBy(
+        trained.filter(Boolean).map((skill) => ({
+          id: skill,
+          key: String(skill || '').toLowerCase(),
+          name: String(skill || ''),
+          source: 'selection'
+        })),
+        (entry) => entry.key || entry.id
+      );
     }
 
     return uniqueBy(normalized, (entry) => entry.key || entry.id);

@@ -218,24 +218,55 @@ export function normalizeSkills(raw) {
   if (!raw) return null;
 
   try {
-    // Handle both array and object formats
     let trainedList = [];
+    const addSkillRef = (value, fallbackKey = null) => {
+      if (!value && !fallbackKey) return;
+      if (typeof value === 'string') {
+        trainedList.push(value);
+        return;
+      }
+      if (value && typeof value === 'object') {
+        trainedList.push(value.key || value.id || value.skill || value.name || fallbackKey);
+        return;
+      }
+      if (fallbackKey) trainedList.push(fallbackKey);
+    };
+
+    const addExplicitMap = (map) => {
+      if (!map || typeof map !== 'object' || Array.isArray(map)) return;
+      for (const [key, value] of Object.entries(map)) {
+        if (value === true) {
+          trainedList.push(key);
+        } else if (value && typeof value === 'object' && value.trained === true) {
+          addSkillRef(value, key);
+        }
+      }
+    };
 
     if (Array.isArray(raw)) {
-      trainedList = raw.map(s => {
-        if (typeof s === 'string') return s;
-        if (typeof s === 'object') return s.key || s.id || s.skill;
-        return null;
-      }).filter(Boolean);
+      raw.forEach(addSkillRef);
     } else if (typeof raw === 'object') {
-      // If it's an object, try to extract trained skills
-      if (raw.trained && Array.isArray(raw.trained)) {
-        trainedList = raw.trained;
+      if (Array.isArray(raw.trained)) {
+        raw.trained.forEach(addSkillRef);
+      } else if (Array.isArray(raw.selected)) {
+        raw.selected.forEach(addSkillRef);
+      } else if (Array.isArray(raw.skills)) {
+        raw.skills.forEach(addSkillRef);
+      } else if (raw.trainedSkills && typeof raw.trainedSkills === 'object') {
+        addExplicitMap(raw.trainedSkills);
+      } else if (raw.trained && typeof raw.trained === 'object') {
+        addExplicitMap(raw.trained);
+      } else if (raw.selected && typeof raw.selected === 'object') {
+        addExplicitMap(raw.selected);
       } else {
-        // Object format with skill keys as properties
-        trainedList = Object.keys(raw).filter(key => raw[key]?.trained || raw[key] === true);
+        // Last-resort legacy format. Only explicit boolean/flagged trained
+        // values count; class-skill eligibility or display-only maps must not
+        // become trained selections.
+        addExplicitMap(raw);
       }
     }
+
+    trainedList = Array.from(new Set(trainedList.filter(Boolean)));
 
     return {
       trained: trainedList,

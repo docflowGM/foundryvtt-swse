@@ -103,7 +103,18 @@ export class LevelupShell extends ProgressionShell {
       );
 
       // Convert active node IDs to StepDescriptors with plugins wired
-      const descriptors = mapNodesToDescriptors(activeNodeIds);
+      let descriptors = mapNodesToDescriptors(activeNodeIds);
+
+      // Suite-maintenance launches may intentionally target steps that are normally
+      // conditional. Inject the target descriptor so sheet buttons/reselection never
+      // fall back to a legacy picker when the active-step computer has no pending
+      // entitlement yet.
+      const requestedStep = this.options?.targetStep || this.options?.currentStep || null;
+      if (['force-powers', 'starship-maneuvers'].includes(requestedStep)
+        && !descriptors.some((descriptor) => descriptor.stepId === requestedStep)) {
+        const injected = mapNodesToDescriptors([requestedStep]);
+        descriptors = [...descriptors, ...injected.filter(Boolean)];
+      }
 
       if (descriptors.length === 0) {
         console.warn('[LevelupShell] No active steps computed for level-up');

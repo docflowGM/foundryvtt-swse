@@ -72,9 +72,10 @@
   {{!-- PHASE 8: Selection controls with quantity display --}}
   <div class="prog-force-power-details__actions">
     {{#if selectedCount}}
-      <p class="prog-force-power-details__hint">
-        <i class="fas fa-hourglass-end" aria-hidden="true"></i>
-        Current selection: <strong>{{selectedCount}}</strong> {{selectedUseLabel}} pending
+      <p class="prog-force-power-details__hint prog-force-power-details__selection-breakdown">
+        <span><i class="fas fa-hourglass-end" aria-hidden="true"></i> Pending: <strong>{{selectedCount}}</strong> {{selectedUseLabel}}</span>
+        {{#if committedCount}}<span>Known: <strong>{{committedCount}}</strong></span>{{/if}}
+        {{#if removedCount}}<span>Replacement slots opened: <strong>{{removedCount}}</strong></span>{{/if}}
       </p>
 
       {{!-- Inline quantity control --}}

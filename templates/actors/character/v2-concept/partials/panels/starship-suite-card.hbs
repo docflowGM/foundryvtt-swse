@@ -1,0 +1,80 @@
+<div class="fcard force-card starship-card {{#if power.discarded}}spent discarded{{/if}}"
+     data-item-id="{{power.id}}"
+     data-tags="{{power.tagString}}"
+     data-p="{{power.p}}"
+     data-type="{{power.type}}">
+  <div class="fcard-inner">
+    <div class="fc-face front">
+      <div class="fc-strip"></div>
+
+      <div class="fc-icon">
+        {{#if power.img}}
+          <img class="fc-img" src="{{power.img}}" alt="{{power.name}}">
+        {{else}}
+          <span class="fc-sym">{{power.sym}}</span>
+        {{/if}}
+      </div>
+
+      <div class="fc-body">
+        <div class="fc-name force-name">{{power.name}}</div>
+        <div class="fc-tags">
+          {{#each power.descriptorLabels as |tag|}}
+            <span class="dtag">{{tag}}</span>
+          {{/each}}
+          {{#if power.form}}
+            <span class="dtag form2">{{power.form}}</span>
+          {{/if}}
+        </div>
+        <div class="fc-blurb">{{power.blurb}}</div>
+      </div>
+
+      <div class="fc-foot">
+        {{#if power.canUse}}
+          <button type="button" class="fc-use" data-action="activate-starship-maneuver" data-item-id="{{power.id}}">▶ USE MANEUVER</button>
+        {{else}}
+          <span class="fc-use fc-use--recorded">BUILD RECORD</span>
+        {{/if}}
+        <button type="button" class="fc-flip" data-action="starship-suite-flip-card" data-item-id="{{power.id}}" title="Full details">▿</button>
+      </div>
+    </div>
+
+    <div class="fc-face back">
+      <div class="fc-strip"></div>
+
+      <div class="fc-bback">
+        <div class="fc-bname">{{power.name}}</div>
+        <div class="fc-bdesc">{{power.desc}}</div>
+
+        {{#if power.hasDcRows}}
+          <table class="dct">
+            <thead>
+              <tr>
+                <th>Pilot DC</th>
+                <th>Effect</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each power.dcRows as |row|}}
+                <tr>
+                  <td class="dn">{{row.dc}}</td>
+                  <td>{{row.effect}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{/if}}
+      </div>
+
+      <div class="fc-bfoot">
+        {{#if power.canUse}}
+          <button type="button" class="fc-use" data-action="activate-starship-maneuver" data-item-id="{{power.id}}">▶ USE MANEUVER</button>
+        {{else}}
+          <span class="fc-use fc-use--recorded">BUILD RECORD</span>
+        {{/if}}
+        <button type="button" class="fc-flip" data-action="starship-suite-flip-card" data-item-id="{{power.id}}" title="Flip back">▵</button>
+      </div>
+    </div>
+
+    <div class="fc-spent">SPENT</div>
+  </div>
+</div>

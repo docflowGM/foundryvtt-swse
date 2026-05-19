@@ -163,7 +163,11 @@ export async function launchProgression(actor, options = {}) {
   const surfaceId = isChargenIncomplete ? 'chargen' : 'progression';
   const shell = ShellRouter.getShell(actor.id);
   if (shell) {
-    shell.setSurface(surfaceId, { source: options.source ?? 'sheet', stepId: options.currentStep ?? null })
+    shell.setSurface(surfaceId, {
+      ...options,
+      source: options.source ?? 'sheet',
+      stepId: options.currentStep ?? options.targetStep ?? null,
+    })
       .then(() => shell.render(false))
       .catch(() => {});
   }

@@ -7398,3 +7398,123 @@ form[id^="SWSEV2CharacterSheet"] .extra-use-time {
 .swse-character-sheet-form-root.swse-sheet-mode--edit .swse-concept-ability-card__math.swse-edit-reveal {
   display: grid !important;
 }
+
+
+/* === SWSE sheet hardening: flat defenses, read-only attribute play view, action sequence chart === */
+.swse-character-sheet .swse-concept-defense-matrix {
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+.swse-character-sheet .swse-concept-defense-card,
+.swse-character-sheet .swse-concept-defense-field,
+.swse-character-sheet .swse-concept-defense-field--readonly,
+.swse-character-sheet .swse-concept-defense-field--total {
+  clip-path: none !important;
+  border-radius: 12px !important;
+}
+
+.swse-character-sheet .swse-concept-defense-card {
+  padding: 12px !important;
+  background: rgba(4, 12, 22, 0.58) !important;
+}
+
+.swse-character-sheet-form-root.swse-sheet-mode--play .abilities-panel .swse-edit-reveal,
+.swse-character-sheet-form-root.swse-sheet-mode--play .swse-concept-ability-card .ability-expanded {
+  display: grid !important;
+}
+
+.swse-character-sheet-form-root.swse-sheet-mode--play .swse-concept-ability-card input,
+.swse-character-sheet-form-root.swse-sheet-mode--play .swse-concept-ability-card select,
+.swse-character-sheet-form-root.swse-sheet-mode--play .swse-concept-ability-card textarea {
+  pointer-events: none !important;
+  user-select: none !important;
+  color: var(--swse-concept-text, #f2fbff) !important;
+  background: rgba(6, 12, 20, 0.52) !important;
+  border-color: rgba(111, 215, 255, 0.12) !important;
+  opacity: 0.96 !important;
+}
+
+.swse-concept-action-sequence {
+  margin: 0 0 14px;
+  padding: 14px;
+  border: 1px solid rgba(111, 215, 255, 0.14);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(111, 215, 255, 0.06), rgba(4, 10, 18, 0.56));
+}
+
+.swse-concept-action-sequence__rail {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.swse-concept-action-sequence__node {
+  width: min(100%, 260px);
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border: 1px solid rgba(111, 215, 255, 0.20);
+  border-radius: 10px;
+  background: rgba(5, 13, 24, 0.78);
+  color: var(--swse-concept-text, #f2fbff);
+  font-family: var(--swse-font-mono, var(--font-mono, monospace));
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.swse-concept-action-sequence__node--full {
+  border-color: rgba(255, 224, 143, 0.35);
+}
+
+.swse-concept-action-sequence__arrow {
+  color: rgba(242, 251, 255, 0.72);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.swse-concept-action-sequence__note {
+  max-width: 42rem;
+  margin: 10px auto 0;
+  color: var(--swse-concept-text-muted, #9db6c6);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.swse-character-sheet .swse-concept-defense-breakdown {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin-top: 10px !important;
+}
+
+.swse-character-sheet .swse-concept-defense-breakdown__row {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  min-height: 48px !important;
+  padding: 8px 10px !important;
+  border: 1px solid rgba(111, 215, 255, 0.12) !important;
+  border-radius: 10px !important;
+  clip-path: none !important;
+  background: rgba(6, 12, 20, 0.46) !important;
+  text-align: center !important;
+}
+
+.swse-character-sheet .swse-concept-defense-breakdown__row span {
+  color: var(--swse-concept-text-faint, #8fb9c9) !important;
+  font-size: 0.68rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+}
+
+.swse-character-sheet .swse-concept-defense-breakdown__row strong {
+  color: var(--swse-concept-text, #f2fbff) !important;
+  font-size: 1rem !important;
+}

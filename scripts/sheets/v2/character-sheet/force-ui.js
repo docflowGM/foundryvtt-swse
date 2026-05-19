@@ -9,6 +9,7 @@ import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engin
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { ShellOverlayManager } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellOverlayManager.js";
 import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Handle force card discard animation
@@ -277,6 +278,95 @@ export function activateForceUI(sheet, html, { signal } = {}) {
         }
       } catch (err) {
         ui?.notifications?.error?.(`Force recovery failed: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+  // ── Starship Maneuver Suite handlers ───────────────────────────────────────
+
+  html.querySelectorAll('[data-action="starship-suite-flip-card"]').forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const card = button.closest('.fcard');
+      card?.classList.toggle('flipped');
+    }, { signal });
+  });
+
+  html.querySelectorAll('[data-action="activate-starship-maneuver"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const itemId = button.dataset.itemId;
+      if (!itemId) return;
+      const maneuver = sheet.actor.items.get(itemId);
+      if (!maneuver || maneuver.type !== 'maneuver') return;
+      if (maneuver.system?.spent === true) {
+        ui?.notifications?.info?.(`${maneuver.name} is already spent.`);
+        return;
+      }
+      try {
+        await ActorEngine.updateEmbeddedDocuments(sheet.actor, 'Item', [{ _id: itemId, 'system.spent': true }], { source: 'starship-suite-use' });
+        ui?.notifications?.info?.(`${maneuver.name} spent.`);
+        showHolopadRollCompanion(button, { success: true, spent: true }, {
+          kind: 'starship-maneuver',
+          title: 'Maneuver Used',
+          itemName: maneuver.name,
+          actorName: sheet.actor?.name,
+        });
+        sheet.render?.(false);
+      } catch (err) {
+        ui?.notifications?.error?.(`Starship maneuver use failed: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+  html.querySelectorAll('[data-action="starship-suite-recover-all"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const spent = sheet.actor.items.filter((item) => item.type === 'maneuver' && item.system?.spent === true);
+      if (!spent.length) {
+        ui?.notifications?.info?.('No spent Starship Maneuvers to recover.');
+        return;
+      }
+      try {
+        await ActorEngine.updateEmbeddedDocuments(sheet.actor, 'Item', spent.map((item) => ({ _id: item.id, 'system.spent': false })), { source: 'starship-suite-recover-all' });
+        ui?.notifications?.info?.('All spent Starship Maneuvers recovered.');
+        sheet.render?.(false);
+      } catch (err) {
+        ui?.notifications?.error?.(`Starship maneuver recovery failed: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+  html.querySelectorAll('[data-action="starship-suite-pick-recovery"]').forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const root = button.closest('[data-starship-suite-tab]');
+      const hasSpent = !!root?.querySelector('[data-starship-discard-pile] [data-action="starship-suite-recover-one"]');
+      if (!hasSpent) {
+        ui?.notifications?.info?.('Spent maneuver pile is empty.');
+        return;
+      }
+      root?.classList.toggle('is-picking-recovery');
+      button.classList.toggle('sel');
+    }, { signal });
+  });
+
+  html.querySelectorAll('[data-action="starship-suite-recover-one"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const itemId = button.dataset.itemId;
+      if (!itemId) return;
+      const maneuver = sheet.actor.items.get(itemId);
+      if (!maneuver || maneuver.type !== 'maneuver') return;
+      const root = button.closest('[data-starship-suite-tab]');
+      const spendingForcePoint = root?.classList.contains('is-picking-recovery');
+      try {
+        await ActorEngine.updateEmbeddedDocuments(sheet.actor, 'Item', [{ _id: itemId, 'system.spent': false }], { source: 'starship-suite-recover-one' });
+        ui?.notifications?.info?.(`${maneuver.name} recovered${spendingForcePoint ? ' (Force Point spent)' : ''}.`);
+        root?.classList.remove('is-picking-recovery');
+        sheet.render?.(false);
+      } catch (err) {
+        ui?.notifications?.error?.(`Starship maneuver recovery failed: ${err.message}`);
       }
     }, { signal });
   });

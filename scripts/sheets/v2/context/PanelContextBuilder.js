@@ -31,6 +31,10 @@ export class PanelContextBuilder {
     this.derived = actor.system?.derived ?? {};
   }
 
+  _actorItems() {
+    return Array.from(this.actor?.items ?? []);
+  }
+
   /**
    * Validate a panel context and enforce contract
    * In strict mode: throws on validation errors
@@ -356,7 +360,7 @@ export class PanelContextBuilder {
    * - equippedArmor: { name, type, defenses, modifiers } | null
    */
   buildInventoryPanel() {
-    const items = this.actor.items || [];
+    const items = this._actorItems();
 
     // Normalize all inventory rows
     const entries = items
@@ -435,7 +439,13 @@ export class PanelContextBuilder {
   }
 
   _progressionManifest() {
-    return this.actor?.flags?.swse?.progressionBuildManifest || {};
+    const explicit = this.actor?.flags?.swse?.progressionBuildManifest;
+    if (explicit && typeof explicit === 'object') return explicit;
+    const receipt = this.actor?.flags?.swse?.levelUpFinalizationReceipt
+      || this.actor?.flags?.swse?.progressionFinalizationReceipt
+      || {};
+    if (!receipt || typeof receipt !== 'object') return {};
+    return receipt.manifest || receipt.progressionBuildManifest || {};
   }
 
   _manifestExpectedNames(key) {
@@ -542,7 +552,7 @@ export class PanelContextBuilder {
     add(this.actor?.flags?.swse?.speciesTraitIds, 'Species Trait');
     add(this.actor?.flags?.swse?.speciesRerolls, 'Species Reroll');
 
-    for (const item of Array.from(this.actor?.items ?? [])) {
+    for (const item of this._actorItems()) {
       if (item?.flags?.swse?.speciesGranted || item?.flags?.swse?.isSpeciesAbility || item?.system?.speciesAbility || item?.system?.specialAbility?.sourceType === 'species') {
         add(item, item.flags?.swse?.sourceSpecies || 'Species Item');
       }
@@ -577,7 +587,7 @@ export class PanelContextBuilder {
    * - totalCount: number
    */
   buildTalentPanel() {
-    const items = this.actor.items || [];
+    const items = this._actorItems();
 
     // Normalize talent rows.  Use semantic classification so progression-granted
     // legacy ability-shaped talents still appear on the sheet. Then append any
@@ -620,7 +630,7 @@ export class PanelContextBuilder {
    * Build the feats panel context
    */
   buildFeatPanel() {
-    const items = this.actor.items || [];
+    const items = this._actorItems();
 
     const itemRows = items
       .filter(item => isFeatLikeItem(item))
@@ -674,7 +684,7 @@ export class PanelContextBuilder {
    * Build the maneuvers panel context
    */
   buildManeuverPanel() {
-    const items = this.actor.items || [];
+    const items = this._actorItems();
 
     const entries = items
       .filter(item => item.type === 'maneuver')
@@ -956,7 +966,7 @@ export class PanelContextBuilder {
     addMany(this.system.species?.selected?.languages);
     addMany(this.system.speciesVariant?.languages);
 
-    for (const item of Array.from(this.actor?.items ?? [])) {
+    for (const item of this._actorItems()) {
       if (item?.type === 'species') {
         addMany(item.system?.languages);
         addMany(item.system?.canonicalStats?.languages);
@@ -1021,7 +1031,7 @@ export class PanelContextBuilder {
    * - canEdit: boolean
    */
   buildArmorSummaryPanel() {
-    const equippedArmorItem = this.actor.items.find(item =>
+    const equippedArmorItem = this._actorItems().find(item =>
       item.type === 'armor' && item.system?.equipped === true
     );
 
@@ -1057,7 +1067,7 @@ export class PanelContextBuilder {
   buildEquipmentLedgerPanel() {
     let totalEquipmentWeightNum = 0;
 
-    const allEquipment = this.actor.items
+    const allEquipment = this._actorItems()
       .filter(item => ['weapon', 'armor', 'equipment'].includes(item.type))
       .map(item => {
         const itemWeight = item.system?.weight ?? 0;

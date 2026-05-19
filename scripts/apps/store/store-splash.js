@@ -315,18 +315,30 @@ export function initRendarrStoreSplash(root, options = {}) {
   const cleanup = () => {};
   signal?.addEventListener?.('abort', cleanup, { once: true });
 
-  /* Continue handler */
+  /* Continue handler
+   *
+   * The splash can render inline inside the character holopad or as the legacy
+   * standalone AppV2. Bind both the static button and a delegated splash-level
+   * handler so the CTA cannot become inert if the template is rehydrated or the
+   * ApplicationV2 action map does not see the store-specific action id.
+   */
+  const continueSelector = '[data-action="store-splash-continue"], [data-store-splash-enter]';
   const continueHandler = async (event) => {
     event?.preventDefault?.();
     event?.stopPropagation?.();
     await options.onContinue?.(event);
   };
-  splash.querySelectorAll('[data-action="store-splash-continue"]').forEach(btn => {
+  splash.querySelectorAll(continueSelector).forEach(btn => {
     btn.addEventListener('click', continueHandler, { signal });
   });
 
-  /* Hot deal click handler */
   splash.addEventListener('click', async (event) => {
+    const continueTarget = event.target instanceof Element ? event.target.closest(continueSelector) : null;
+    if (continueTarget) {
+      await continueHandler(event);
+      return;
+    }
+
     const target = event.target instanceof Element ? event.target.closest('[data-action="store-hot-deal-open"]') : null;
     if (!target) return;
     event.preventDefault();

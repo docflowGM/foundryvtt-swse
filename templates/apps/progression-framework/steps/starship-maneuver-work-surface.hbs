@@ -1,67 +1,118 @@
 {{!-- Starship Maneuver Selection Work Surface --}}
-{{!-- CRITICAL: Uses stacking/duplicate selection model like Force Powers --}}
+{{!-- Mirrors Force Power selector structure, colors, and quantity behavior. --}}
 
-<div class="prog-starship-maneuver-browse swse-starship-selector swse-store-stage">
+<div class="prog-force-power-browse prog-starship-maneuver-browse swse-force-selector swse-starship-selector swse-store-stage">
+  {{#if hasTrainingSummary}}
+    <section class="prog-force-power-training-summary prog-starship-maneuver-training-summary" aria-label="Starship Maneuver training allowance">
+      <div class="prog-force-power-training-summary__main">
+        <span class="prog-force-power-training-summary__label">Starship Maneuver Training</span>
+        <strong class="prog-force-power-training-summary__count">{{selectedManeuverTraining}} / {{selectionBudget}}</strong>
+        <span class="prog-force-power-training-summary__remaining">{{remainingPicks}} remaining</span>
+        {{#if removedManeuverCount}}
+          <span class="prog-force-power-training-summary__remaining">{{removedManeuverCount}} replacement slot(s)</span>
+        {{/if}}
+      </div>
+    </section>
+  {{/if}}
+
   {{#if maneuvers.length}}
-    <div class="prog-starship-maneuver-grid" role="list">
+    <div class="prog-force-power-grid prog-starship-maneuver-grid" role="list">
       {{#each maneuvers}}
-        <div class="prog-starship-maneuver-card
-                    {{#if (arrayIncludes ../committedCounts @key)}}prog-starship-maneuver-card--selected{{/if}}
-                    {{#if this.isSuggested}}prog-maneuver-card--suggested prog-maneuver-card--suggested-{{this.confidenceLevel}}{{/if}}"
+        <div class="prog-force-power-card prog-starship-maneuver-card
+                    {{#if (lookup ../pendingCounts this.stateId)}}prog-force-power-card--selected prog-starship-maneuver-card--selected{{/if}}
+                    {{#if this.isSuggested}}prog-power-card--suggested prog-power-card--suggested-{{this.confidenceLevel}}{{/if}}"
              data-action="focus-item"
-             data-item-id="{{this.id}}"
+             data-item-id="{{this.lookupId}}" data-maneuver-id="{{this.stateId}}"
              data-recommended="{{#if this.isSuggested}}true{{/if}}"
              data-confidence-level="{{this.confidenceLevel}}"
-             tabindex="0" role="option">
+             tabindex="0" role="option"
+             aria-selected="{{#if (lookup ../pendingCounts this.stateId)}}true{{else}}false{{/if}}">
 
-          <div class="prog-starship-maneuver-card__header">
-            <h3 class="prog-starship-maneuver-card__name">
+          {{#if this.img}}
+            <div class="prog-forcepower-card__media prog-starship-maneuver-card__media prog-holo-media prog-holo-media--wide" data-item-id="{{this.lookupId}}">
+              <img class="prog-forcepower-card__image prog-starship-maneuver-card__image prog-holo-media__image" src="{{this.img}}" alt="{{this.name}}" data-item-id="{{this.lookupId}}">
+              <div class="prog-holo-scan"></div>
+            </div>
+          {{/if}}
+
+          <div class="prog-force-power-card__header prog-starship-maneuver-card__header">
+            <h3 class="prog-force-power-card__name prog-starship-maneuver-card__name">
               {{this.name}}
               {{#if this.badgeLabel}}
                 <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
               {{/if}}
             </h3>
-            {{#if (lookup ../committedCounts this.id)}}
-              <span class="prog-starship-maneuver-card__count-badge">
-                ×{{lookup ../committedCounts this.id}}
-              </span>
-            {{/if}}
+            {{#with (lookup ../cardStates this.stateId)}}
+              {{#if totalCount}}
+                <span class="prog-force-power-card__count-badge prog-starship-maneuver-card__count-badge">×{{totalCount}}</span>
+              {{/if}}
+            {{/with}}
           </div>
 
-          {{#if this.description}}
-            <p class="prog-starship-maneuver-card__description">
+          {{#if this.summary}}
+            <p class="prog-force-power-card__description prog-starship-maneuver-card__description">
+              {{truncate this.summary 100}}
+            </p>
+          {{else if this.description}}
+            <p class="prog-force-power-card__description prog-starship-maneuver-card__description">
               {{truncate this.description 100}}
             </p>
           {{/if}}
 
-          {{#if (lookup ../committedCounts this.id)}}
-            <div class="prog-starship-maneuver-card__state-hint">
-              <i class="fas fa-star" aria-hidden="true"></i>
-              Selected {{lookup ../committedCounts this.id}} {{plural (lookup ../committedCounts this.id) "use" "uses"}}
-            </div>
+          {{#if (lookup ../cardStates this.stateId)}}
+            {{#with (lookup ../cardStates this.stateId)}}
+              <div class="prog-force-power-card__state-section prog-starship-maneuver-card__state-section">
+                {{#if isCommitted}}
+                  <span class="prog-force-power-card__status-badge prog-force-power-card__status-badge--committed">
+                    <i class="fas fa-lock" aria-hidden="true"></i>
+                    Known ({{effectiveOwnedCount}})
+                  </span>
+                {{/if}}
+                {{#if isPending}}
+                  <span class="prog-force-power-card__status-badge prog-force-power-card__status-badge--pending">
+                    <i class="fas fa-hourglass-end" aria-hidden="true"></i>
+                    Pending ({{pendingCount}})
+                  </span>
+                {{/if}}
+                {{#if isRemoved}}
+                  <span class="prog-force-power-card__status-badge prog-force-power-card__status-badge--removed">
+                    <i class="fas fa-rotate-left" aria-hidden="true"></i>
+                    Reselecting ({{removedCount}})
+                  </span>
+                {{/if}}
 
-            {{!-- Phase 8: Work-surface quantity controls (parity with force-power) --}}
-            <div class="prog-starship-maneuver-card__quantity-inline">
-              <button class="prog-quantity-btn prog-quantity-btn--decrement"
-                      data-action="decrement-quantity"
-                      data-item-id="{{this.id}}"
-                      type="button"
-                      aria-label="Remove one selection"
-                      title="Remove one">
-                <i class="fas fa-minus" aria-hidden="true"></i>
-              </button>
-              <span class="prog-quantity-display">{{lookup ../committedCounts this.id}}</span>
-              <button class="prog-quantity-btn prog-quantity-btn--increment"
-                      data-action="increment-quantity"
-                      data-item-id="{{this.id}}"
-                      type="button"
-                      aria-label="Add one more selection"
-                      title="Add one">
-                <i class="fas fa-plus" aria-hidden="true"></i>
-              </button>
-            </div>
+                {{#if (or canIncrement canDecrement)}}
+                  <div class="prog-force-power-card__quantity-control prog-starship-maneuver-card__quantity-inline">
+                    <button class="prog-quantity-btn prog-quantity-btn--decrement"
+                            data-action="decrement-quantity"
+                            data-item-id="{{maneuverId}}"
+                            type="button"
+                            aria-label="Remove one maneuver"
+                            title="Remove"
+                            {{#unless canDecrement}}disabled{{/unless}}>
+                      <i class="fas fa-minus" aria-hidden="true"></i>
+                    </button>
+                    <span class="prog-quantity-display">{{totalCount}}</span>
+                    <button class="prog-quantity-btn prog-quantity-btn--increment"
+                            data-action="increment-quantity"
+                            data-item-id="{{maneuverId}}"
+                            type="button"
+                            aria-label="Add one maneuver"
+                            title="Add"
+                            {{#unless canIncrement}}disabled{{/unless}}>
+                      <i class="fas fa-plus" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                {{else}}
+                  <div class="prog-force-power-card__state-hint prog-force-power-card__state-hint--available prog-starship-maneuver-card__state-hint--available">
+                    <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                    Available
+                  </div>
+                {{/if}}
+              </div>
+            {{/with}}
           {{else}}
-            <div class="prog-starship-maneuver-card__state-hint prog-starship-maneuver-card__state-hint--available">
+            <div class="prog-force-power-card__state-hint prog-force-power-card__state-hint--available prog-starship-maneuver-card__state-hint--available">
               <i class="fas fa-plus-circle" aria-hidden="true"></i>
               Available
             </div>
@@ -70,9 +121,9 @@
       {{/each}}
     </div>
   {{else}}
-    <div class="prog-starship-maneuver-browse__empty">
+    <div class="prog-force-power-browse__empty prog-starship-maneuver-browse__empty">
       <i class="fas fa-rocket" aria-hidden="true"></i>
-      <p>No Starship Maneuvers available.</p>
+      <p>No Starship Maneuvers match your search or filters.</p>
     </div>
   {{/if}}
 </div>

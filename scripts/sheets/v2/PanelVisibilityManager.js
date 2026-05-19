@@ -18,10 +18,10 @@ export class PanelVisibilityManager extends BasePanelVisibilityManager {
     // Note: portraitPanel and biographyPanel are always visible (header), but built with overview for efficiency
     this.tabPanels = {
       overview: ['portraitPanel', 'biographyPanel', 'healthPanel', 'defensePanel', 'secondWindPanel', 'resourcesPanel', 'languagesPanel'],
-      abilities: ['abilitiesPanel', 'racialAbilitiesPanel'],
+      abilities: ['abilitiesPanel'],
       skills: ['skillsPanel'],
       combat: ['healthPanel', 'defensePanel', 'resourcesPanel'],
-      talents: ['talentPanel', 'featPanel'],
+      talents: ['talentPanel', 'featPanel', 'racialAbilitiesPanel'],
       force: ['forcePowersPanel'],
       gear: ['inventoryPanel', 'armorSummaryPanel', 'equipmentLedgerPanel'],
       biography: ['biographyPanel', 'languagesPanel', 'darkSidePanel'],
@@ -62,7 +62,7 @@ export class PanelVisibilityManager extends BasePanelVisibilityManager {
       force: ['forcePowersPanel'],
       relationship: ['relationshipsPanel'],
       language: ['languagesPanel'],
-      ability: ['racialAbilitiesPanel'],
+      ability: ['abilitiesPanel', 'racialAbilitiesPanel'],
       combat: ['darkSidePanel', 'secondWindPanel', 'resourcesPanel'],
       resources: ['resourcesPanel'],
       health: ['healthPanel'],

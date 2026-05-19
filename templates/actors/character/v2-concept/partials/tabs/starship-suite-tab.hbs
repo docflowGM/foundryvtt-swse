@@ -1,0 +1,93 @@
+<div class="swse-force-suite-tab swse-starship-suite-tab" data-starship-suite-tab>
+  <section class="fs-mchar">
+    <div>
+      <div class="mc-name">{{conceptLayout.starship.starshipSuite.actorName}}</div>
+      <div class="mc-sub">{{conceptLayout.starship.starshipSuite.actorSubtitle}}</div>
+    </div>
+
+    <div class="mc-gap"></div>
+
+    <div class="mstat utf">
+      <div>
+        <div class="ml">Pilot</div>
+        <div class="mv">{{conceptLayout.starship.starshipSuite.pilotTotal}}</div>
+      </div>
+    </div>
+
+    <div class="mstat fp">
+      <div>
+        <div class="ml">Force Points</div>
+        <div class="mv">{{conceptLayout.starship.starshipSuite.forcePointsValue}}</div>
+      </div>
+    </div>
+
+    <div class="suite-badge">◈ Starship Maneuver Suite</div>
+  </section>
+
+  <section class="fsuite" data-screen-label="Starship Maneuver Suite">
+    <div class="fs-section fs-section--force fs-section--starship">
+      <div class="fs-head">
+        <span class="fs-head-lbl cy">⬡ Ready Maneuvers</span>
+        <span class="fs-head-cnt cy">{{conceptLayout.starship.starshipSuite.counts.maneuvers}}</span>
+        <div class="fs-line cy"></div>
+        <span class="fs-head-rule">Pilot check · Starship combat tactic</span>
+      </div>
+
+      {{#if conceptLayout.starship.starshipSuite.maneuvers.length}}
+        <div class="fs-hand force-card-grid" data-starship-hand="ready">
+          {{#each conceptLayout.starship.starshipSuite.maneuvers as |power|}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/starship-suite-card.hbs" power=power}}
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="disc-empty">No maneuvers ready</div>
+      {{/if}}
+    </div>
+
+    <section class="disc-wrap">
+      <div class="disc-head">
+        <span class="disc-title">◇ Spent Maneuvers</span>
+        <span class="disc-num">{{conceptLayout.starship.starshipSuite.counts.spent}}</span>
+        <span class="disc-nlbl">spent</span>
+        <div class="disc-gap"></div>
+
+        <div class="rrow">
+          <button type="button" class="rbtn rest" data-action="starship-suite-recover-all" data-recovery-source="rest">⟲ Rest (1 min)</button>
+          <button type="button" class="rbtn n20" data-action="starship-suite-recover-all" data-recovery-source="nat20">★ Natural 20</button>
+          <button type="button" class="rbtn fpr" data-action="starship-suite-pick-recovery">◆ Spend Force Point</button>
+        </div>
+      </div>
+
+      <div class="rbtn-rules">
+        <div class="rbtn-rule">After 1 min rest, regain all spent Starship Maneuvers.</div>
+        <div class="rbtn-rule">Nat 20 on Pilot check: regain all at end of turn.</div>
+        <div class="rbtn-rule">Spend Force Point as Reaction: recover one spent maneuver.</div>
+      </div>
+
+      <div class="disc-body">
+        <div class="dstack">
+          <div class="dstack-c"></div>
+          <div class="dstack-c"></div>
+          <div class="dstack-c"></div>
+          <div class="dstack-n">{{conceptLayout.starship.starshipSuite.counts.spent}}</div>
+        </div>
+
+        <div class="disc-pile" data-starship-discard-pile>
+          {{#if conceptLayout.starship.starshipSuite.spent.length}}
+            {{#each conceptLayout.starship.starshipSuite.spent as |power|}}
+              <button type="button"
+                      class="disc-chip"
+                      data-action="starship-suite-recover-one"
+                      data-item-id="{{power.id}}"
+                      data-p="{{power.p}}">
+                {{power.name}}
+              </button>
+            {{/each}}
+          {{else}}
+            <span class="disc-empty">No spent maneuvers</span>
+          {{/if}}
+        </div>
+      </div>
+    </section>
+  </section>
+</div>

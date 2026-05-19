@@ -120,7 +120,9 @@
     </div>
     <button type="button"
             class="ren-enter-btn{{#unless storeOpen}} is-closed{{/unless}}"
-            data-action="store-splash-continue">
+            data-action="store-splash-continue"
+            data-store-splash-enter="true"
+            aria-label="Enter Rendarr's Outfitters">
       {{#if storeOpen}}ENTER OUTFITTERS →{{else}}STORE CLOSED{{/if}}
     </button>
     <div class="ren-cta-side ren-cta-side--right">

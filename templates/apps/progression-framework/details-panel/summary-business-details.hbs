@@ -8,10 +8,10 @@
     <div class="prog-section-header"><span><i class="fas fa-id-card"></i> Name</span></div>
     <div class="prog-name-input-section">
       <label for="summary-name-input" class="prog-input-label">Character Name</label>
-      <input id="summary-name-input" class="summary-step-name-input prog-text-input" type="text" placeholder="Enter or generate a name..." value="{{characterName}}" />
+      <input id="summary-name-input" name="characterName" class="summary-step-name-input prog-text-input" type="text" placeholder="Enter or generate a name..." value="{{characterName}}" />
       <div class="prog-random-name-buttons">
-        <button class="summary-step-random-name-btn prog-btn prog-btn--small" type="button"><i class="fas fa-dice"></i> Generate Name</button>
-        <button class="summary-step-random-droid-name-btn prog-btn prog-btn--small" type="button"><i class="fas fa-robot"></i> Droid Name</button>
+        <button class="summary-step-random-name-btn prog-btn prog-btn--small" data-action="generate-name" type="button"><i class="fas fa-dice"></i> Generate Name</button>
+        <button class="summary-step-random-droid-name-btn prog-btn prog-btn--small" data-action="generate-droid-name" type="button"><i class="fas fa-robot"></i> Droid Name</button>
       </div>
     </div>
   </div>

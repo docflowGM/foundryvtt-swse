@@ -25,6 +25,7 @@ import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/documen
 import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
 import { TypingAnimation } from "/systems/foundryvtt-swse/scripts/utils/typing-animation.js";
 import { qs, qsa, setVisible, isVisible } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
+import { launchProgressionSuiteStep } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-suite-launcher.js";
 
 // Import shared utilities
 import {
@@ -1127,10 +1128,13 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   // ========================================
 
   async _handleForceTrainingFeat(feat) {
-    // Force Training opens the force power selection interface
-    // For now, just add the feat - the force power selection happens separately
     this.selectedFeats.push(feat);
-    ui.notifications.info(`Selected feat: ${feat.name}. You will select Force powers separately.`);
+    ui.notifications.info(`Selected feat: ${feat.name}. Opening canonical Force power training.`);
+    await launchProgressionSuiteStep(this.actor, 'force-powers', {
+      reason: 'force-training-feat',
+      source: 'legacy-levelup-feat-handler',
+      requestedCount: 1,
+    });
   }
 
   async _handleSkillTrainingFeat(feat) {

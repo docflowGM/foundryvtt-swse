@@ -58,6 +58,65 @@ const NONHEROIC_BAB_PROGRESSION = [
 
 export class BABCalculator {
   /**
+   * Resolve class level progression from every supported class-data shape.
+   * During the canonical migration some callers receive loader data, some
+   * receive canonical ClassModel data, and older code still reads _raw.
+   * @param {Object} classData
+   * @returns {Array<Object>}
+   */
+  static _resolveLevelProgression(classData) {
+    if (Array.isArray(classData?._raw?.level_progression)) {
+      return classData._raw.level_progression;
+    }
+
+    if (Array.isArray(classData?.levelProgressionArray)) {
+      return classData.levelProgressionArray;
+    }
+
+    if (Array.isArray(classData?._canonical?.levelProgression)) {
+      return classData._canonical.levelProgression;
+    }
+
+    if (Array.isArray(classData?.levelProgression)) {
+      return classData.levelProgression;
+    }
+
+    if (classData?.levelProgression && typeof classData.levelProgression === 'object') {
+      return Object.entries(classData.levelProgression)
+        .map(([level, value]) => ({ level: Number(level), ...(value || {}) }))
+        .sort((a, b) => (a.level || 0) - (b.level || 0));
+    }
+
+    return [];
+  }
+
+  /**
+   * Last-ditch progression fallback from BAB rate labels. This should only be
+   * used for malformed class data; normal class compendium rows include exact
+   * cumulative BAB by level.
+   * @param {Object} classData
+   * @param {number} level
+   * @returns {number|null}
+   */
+  static _estimateBabFromProgression(classData, level) {
+    const rate = classData?.babProgression || classData?.baseAttackBonus;
+    if (!rate || !Number.isFinite(level) || level <= 0) {
+      return null;
+    }
+
+    if (rate === 'fast' || rate === 'high') {
+      return level;
+    }
+
+    // SWSE heroic non-full BAB classes use the 3/4 progression.
+    if (rate === 'slow' || rate === 'medium' || rate === 'low') {
+      return Math.floor(level * 0.75);
+    }
+
+    return null;
+  }
+
+  /**
    * Calculate total BAB from class levels.
    * Async (loads compendium data), but only called during recalculation, not mutation.
    *
@@ -104,22 +163,31 @@ export class BABCalculator {
           totalBAB += NONHEROIC_BAB_PROGRESSION[levelsInClass - 1];
         }
       } else {
-        // Use heroic class progression
-        const rawData = classData._raw;
-        const levelProgression = rawData?.level_progression || [];
-
-        // Verify level progression data exists (fail-fast on config errors)
-        if (!levelProgression || levelProgression.length === 0) {
-          throw new Error(
-            `BABCalculator: Class "${classLevel.class}" has no level_progression data. ` +
-            `Verify class definition includes level progression.`
-          );
-        }
+        // Use heroic class progression. Exact cumulative BAB from compendium is
+        // preferred; progression-rate fallback only covers damaged/migrating data.
+        const levelProgression = this._resolveLevelProgression(classData);
 
         if (levelsInClass > 0 && levelsInClass <= levelProgression.length) {
           const finalLevelData = levelProgression[levelsInClass - 1];
-          totalBAB += finalLevelData.bab || 0;
+          if (Number.isFinite(Number(finalLevelData?.bab))) {
+            totalBAB += Number(finalLevelData.bab);
+            continue;
+          }
         }
+
+        const estimatedBab = this._estimateBabFromProgression(classData, levelsInClass);
+        if (estimatedBab !== null) {
+          swseLogger.warn(
+            `[BABCalculator] Estimated BAB for "${classLevel.class}" level ${levelsInClass} because exact level_progression data was unavailable`
+          );
+          totalBAB += estimatedBab;
+          continue;
+        }
+
+        throw new Error(
+          `BABCalculator: Class "${classLevel.class}" has no usable level_progression data. ` +
+          `Verify class definition includes level progression.`
+        );
       }
     }
 

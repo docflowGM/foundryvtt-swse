@@ -465,6 +465,14 @@ function buildTalentsTab(context) {
     virtual: feat?.virtual === true
   }));
 
+  const speciesAbilityEntries = asArray(context.racialAbilitiesPanel?.entries).map((ability, index) => ({
+    id: ability?.id || ability?.uuid || ability?.key || `species-ability-${index}`,
+    name: ability?.name || ability?.label || 'Species Ability',
+    source: ability?.source || ability?.species || 'Species',
+    description: excerpt(ability?.description || ability?.summary || ability?.system?.description, 160),
+    virtual: ability?.virtual === true
+  }));
+
   const talentGroups = Object.entries(context.talentPanel?.grouped ?? {})
     .map(([label, entries]) => ({
       label,
@@ -479,11 +487,16 @@ function buildTalentsTab(context) {
     }))
     .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 
+  const talentCount = talentGroups.reduce((sum, group) => sum + group.count, 0);
+
   return {
     featEntries,
+    speciesAbilityEntries,
     talentGroups,
     featCount: featEntries.length,
-    talentCount: talentGroups.reduce((sum, group) => sum + group.count, 0),
+    speciesAbilityCount: speciesAbilityEntries.length,
+    talentCount,
+    abilityCount: featEntries.length + speciesAbilityEntries.length + talentCount,
     treeCount: talentGroups.length,
     canEditTalents: !!context.talentPanel?.canEdit,
     canEditFeats: !!context.featPanel?.canEdit
@@ -687,6 +700,91 @@ export function buildForceTab(context) {
   };
 }
 
+function normalizeStarshipManeuver(entry, discarded = false) {
+  const system = entry?.system ?? {};
+  const rawTags = system.tags ?? system.descriptor ?? entry?.tags ?? [];
+  const tags = (Array.isArray(rawTags) ? rawTags : String(rawTags || '').split(/[,;]/))
+    .map((tag) => String(tag || '').trim())
+    .filter(Boolean);
+  const descriptorLabels = tags.slice(0, 3);
+  const desc = forceText(system.effect || system.benefit || system.description || system.normalText || entry?.description || entry?.summary || '');
+  const blurb = forceTextExcerpt(system.summary || system.effect || system.benefit || system.description || entry?.summary || '', 150);
+  const dcRows = getForceDcRows({ system });
+
+  return {
+    id: entry?.id || entry?._id || '',
+    name: entry?.name || 'Unnamed Maneuver',
+    img: entry?.img || '',
+    virtual: entry?.virtual === true,
+    canUse: entry?.virtual !== true && !!(entry?.id || entry?._id),
+    p: 'neutral',
+    type: 'starship-maneuver',
+    sym: '✦',
+    tags,
+    descriptorLabels,
+    form: forceText(system.category || system.descriptor || entry?.category || ''),
+    tagString: tags.join(' '),
+    blurb,
+    desc,
+    dcRows,
+    hasDcRows: dcRows.length > 0,
+    fpOk: true,
+    discarded: discarded || system.spent === true,
+    summary: forceTextExcerpt(system.summary || system.description || entry?.summary || '', 160)
+  };
+}
+
+function buildStarshipSuiteTab(context) {
+  const actor = context.actor;
+  const suiteIds = new Set(Array.isArray(actor?.system?.starshipManeuverSuite?.maneuvers)
+    ? actor.system.starshipManeuverSuite.maneuvers.map((value) => String(value))
+    : []);
+  const maneuverItems = asArray(actor?.items?.contents || Array.from(actor?.items || []))
+    .filter((item) => String(item?.type || '').toLowerCase() === 'maneuver')
+    .filter((item) => !suiteIds.size || suiteIds.has(String(item.id || item._id)) || suiteIds.has(String(item.name || '')));
+
+  const fallbackEntries = asArray(context.starshipManeuversPanel?.entries).map((entry) => ({ ...entry, virtual: true }));
+  const sourceEntries = maneuverItems.length ? maneuverItems : fallbackEntries;
+  const ready = sourceEntries.filter((entry) => entry?.system?.spent !== true).map((entry) => normalizeStarshipManeuver(entry, false));
+  const spent = sourceEntries.filter((entry) => entry?.system?.spent === true).map((entry) => normalizeStarshipManeuver(entry, true));
+
+  const skillsEntries = asArray(context.skillsPanel?.skills ?? context.skillsPanel?.entries);
+  const pilotSkill = skillsEntries.find((skill) => {
+    const key = String(skill?.key || skill?.id || skill?.name || '').toLowerCase().replace(/[\s\-_]/g, '');
+    return key === 'pilot';
+  });
+  const pilotTotal = pilotSkill?.total ?? context.pilotTotal ?? '—';
+
+  const identity = context.biographyPanel?.identity ?? {};
+  const actorSubtitle = [
+    context.classDisplay || identity.class,
+    identity.level ? `Level ${Number(identity.level) || Number(context.actor?.system?.level) || 1}` : null,
+    identity.species
+  ].filter(Boolean).join(' · ');
+
+  const starshipSuite = {
+    actorName: actor?.name || 'Unknown Pilot',
+    actorSubtitle,
+    pilotTotal,
+    forcePointsValue: Number(context.forcePointsValue) || 0,
+    forcePointsMax: Number(context.forcePointsMax) || 0,
+    maneuvers: ready,
+    spent,
+    counts: {
+      maneuvers: ready.length,
+      spent: spent.length,
+      total: ready.length + spent.length,
+    },
+  };
+
+  return {
+    hasAnything: ready.length > 0 || spent.length > 0,
+    entries: [...ready, ...spent],
+    starshipSuite,
+  };
+}
+
+
 function buildRelationshipsTab(context) {
   const entries = asArray(context.relationshipsPanel?.relationships).map((rel, index) => {
     const typeLabel = rel?.type ? titleCase(rel.type) : 'Unclassified';
@@ -775,6 +873,7 @@ export function buildConceptSheetViewModel(context = {}) {
   const skills = buildSkillsTab(context, abilities, identity);
   const talents = buildTalentsTab(context);
   const force = buildForceTab(context);
+  const starship = buildStarshipSuiteTab(context);
   const relationships = buildRelationshipsTab(context);
 
   const conditionStep = Number(context.healthPanel?.currentConditionPenalty?.step) || 0;
@@ -808,19 +907,26 @@ export function buildConceptSheetViewModel(context = {}) {
     dossierTags.push({ label: 'Force-Sensitive', tone: 'force' });
   }
 
+  const speciesAbilityCount = asArray(context.racialAbilitiesPanel?.entries).length;
+  const starshipManeuverCount = starship.starshipSuite?.counts?.total || 0;
   const tabs = [
     { id: 'overview', label: 'Summary', icon: 'fa-solid fa-file-lines', active: true },
-    { id: 'abilities', label: 'Abilities', icon: 'fa-solid fa-dna', count: toCountBadge(abilities.length) },
+    { id: 'abilities', label: 'Attributes', icon: 'fa-solid fa-dna', count: toCountBadge(abilities.length) },
     { id: 'skills', label: 'Skills', icon: 'fa-solid fa-crosshairs', count: toCountBadge(skillCount) },
     { id: 'combat', label: 'Combat', icon: 'fa-solid fa-burst', count: toCountBadge(attackEntries.length + (unarmedAttackEntry ? 1 : 0) || actionGroups.length) },
-    { id: 'talents', label: 'Talents', icon: 'fa-solid fa-diagram-project', count: toCountBadge(talentEntries.length + featEntries.length) },
+    { id: 'talents', label: 'Abilities', icon: 'fa-solid fa-diagram-project', count: toCountBadge(talentEntries.length + featEntries.length + speciesAbilityCount) },
     { id: 'gear', label: 'Gear', icon: 'fa-solid fa-toolbox', count: toCountBadge(inventoryEntries.length) },
     { id: 'biography', label: 'Biography', icon: 'fa-solid fa-book-open' },
     { id: 'relationships', label: 'Relationships', icon: 'fa-solid fa-network-wired', count: toCountBadge(relationshipEntries.length) }
   ];
 
+  let suiteInsertIndex = 5;
   if (forceAccess) {
-    tabs.splice(5, 0, { id: 'force', label: 'Force', icon: 'fa-solid fa-sparkles', count: toCountBadge(fpMax) });
+    tabs.splice(suiteInsertIndex, 0, { id: 'force', label: 'Force', icon: 'fa-solid fa-sparkles', count: toCountBadge(fpMax) });
+    suiteInsertIndex += 1;
+  }
+  if (starship.hasAnything) {
+    tabs.splice(suiteInsertIndex, 0, { id: 'starship', label: 'Starship', icon: 'fa-solid fa-rocket', count: toCountBadge(starshipManeuverCount) });
   }
 
   return {
@@ -910,6 +1016,7 @@ export function buildConceptSheetViewModel(context = {}) {
     skills,
     talents,
     force,
+    starship,
     relationships,
     combat: {
       telemetry: [

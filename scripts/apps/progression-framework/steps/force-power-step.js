@@ -2,7 +2,7 @@
  * force-power-step.js
  *
  * Force Power selection step plugin for the progression shell.
- * Wraps ForcePowerPicker and integrates with the shell regions (work-surface, details-panel).
+ * Canonical V2 Force Power selector integrated with the shell regions (work-surface, details-panel).
  *
  * This step is CONDITIONAL in level-up mode — it's only unlocked by:
  * - Force Sensitivity feat
@@ -10,12 +10,10 @@
  * - Engine-defined force power grants
  *
  * Chargen: Force Powers are not a canonical step (unlocked implicitly via class).
- * Level-up: Force Powers only appear when ForcePowerEngine grants them.
+ * Level-up: Force Powers appear when progression grants/reselection expose a force-power budget.
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
-import { ForcePowerPicker } from '../../../apps/progression/force-power-picker.js';
-import { ForcePowerEngine } from '../../../engine/progression/engine/force-power-engine.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker } from './mentor-step-integration.js';
@@ -44,7 +42,10 @@ export class ForcePowerStep extends ProgressionStepPlugin {
      * Model: Map<powerId, count> instead of Set.
      * Example: { 'move-object': 2, 'surge': 1 } = 3 total selections, 2 picks remaining
      */
-    this._committedPowerCounts = new Map();  // id -> count (for stacking)
+    this._committedPowerCounts = new Map();  // id -> pending add count (for stacking)
+    this._removedPowerCounts = new Map();    // id -> owned uses removed for reselection
+    this._actorPowerCounts = new Map();      // id -> actor-owned count at render time
+    this._baseRemainingPicks = 0;            // entitlement slots before reselection removals
 
     this._remainingPicks = 0;
     this._totalPowerTraining = 0;
@@ -84,6 +85,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       //
       // PHASE 3: Now shell-aware — passes shell context for pending state
       this._remainingPicks = await this._computeTotalEntitlements(shell.actor, shell);
+      this._baseRemainingPicks = this._remainingPicks;
 
       // Filter to legal powers (prereqs met, not already selected)
       // PHASE 3.1: Pass shell to access pending class grants
@@ -153,92 +155,105 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    * PHASE 8: Distinguishes pending counts (current session) from committed counts (already on actor).
    */
   async getStepData(context) {
-    // Load actor's existing force powers (previously committed from past progressions)
-    const actorForcePowers = context?.actor?.items?.filter(i =>
-      i.type === 'force-power' || i.type === 'power'
-    ) || [];
-    const actorCommittedCounts = new Map();
-    for (const item of actorForcePowers) {
-      // Count occurrences of each power by name (actor may have duplicates for stacking)
-      const powerId = item.system?.abilities?.id || item.name?.toLowerCase().replace(/\s+/g, '-');
-      const currentCount = actorCommittedCounts.get(powerId) ?? 0;
-      actorCommittedCounts.set(powerId, currentCount + 1);
-    }
+    const actorEntries = this._getActorForcePowerEntries(context?.actor);
+    this._actorPowerCounts = new Map(actorEntries.map((entry) => [entry.id, entry.count]));
 
-    // Pending counts are current session selections (in _committedPowerCounts)
     const pendingCounts = new Map(this._committedPowerCounts);
+    const removedCounts = new Map(this._removedPowerCounts);
+    const actorCommittedCounts = new Map(this._actorPowerCounts);
 
-    const pendingSelectedTotal = Array.from(pendingCounts.values()).reduce((sum, count) => sum + (Number(count) || 0), 0);
-    const selectedTrainingDisplay = Math.min(
-      this._totalPowerTraining,
-      Math.max(this._selectedPowerTraining, pendingSelectedTotal)
-    );
-    const remainingTrainingDisplay = Math.max(0, this._remainingPicks - pendingSelectedTotal);
+    const pendingSelectedTotal = this._sumCounts(pendingCounts);
+    const removedTotal = this._sumCounts(removedCounts);
+    const effectiveBudget = this._getEffectiveSelectionBudget();
+    const remainingTrainingDisplay = Math.max(0, effectiveBudget - pendingSelectedTotal);
+    const selectedTrainingDisplay = Math.min(effectiveBudget, Math.max(this._selectedPowerTraining, pendingSelectedTotal));
 
     swseLogger.debug('[ForcePowerStep.getStepData] Slot calculation', {
       totalPowerTraining: this._totalPowerTraining,
       selectedPowerTraining: this._selectedPowerTraining,
+      baseRemainingPicks: this._baseRemainingPicks,
       remainingPicks: this._remainingPicks,
+      effectiveBudget,
       pendingSelectedTotal,
-      selectedTrainingDisplay,
-      remainingTrainingDisplay,
-      committedPowerCounts: Object.fromEntries(this._committedPowerCounts),
+      removedTotal,
+      actorCommittedCounts: Object.fromEntries(actorCommittedCounts),
+      pendingPowerCounts: Object.fromEntries(pendingCounts),
+      removedPowerCounts: Object.fromEntries(removedCounts),
       entitlementReasons: this._entitlementReasons
     });
 
-    // Build card state map: powerId → {isPending, isCommitted, count, status}
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedPowers);
+    const formattedPowers = this._filteredPowers.map(p => this._formatPowerCard(p, suggestedIds, confidenceMap));
+
     const cardStates = new Map();
     const allPowerIds = new Set([
+      ...formattedPowers.map((power) => power.stateId || power.id),
       ...Array.from(pendingCounts.keys()),
       ...Array.from(actorCommittedCounts.keys()),
+      ...Array.from(removedCounts.keys()),
     ]);
 
     for (const powerId of allPowerIds) {
       const pendingCount = pendingCounts.get(powerId) ?? 0;
       const committedCount = actorCommittedCounts.get(powerId) ?? 0;
-      const totalCount = pendingCount + committedCount;
+      const removedCount = removedCounts.get(powerId) ?? 0;
+      const effectiveOwnedCount = Math.max(0, committedCount - removedCount);
+      const totalCount = effectiveOwnedCount + pendingCount;
+      const canDecrement = pendingCount > 0 || effectiveOwnedCount > 0;
+      const canIncrement = pendingSelectedTotal < effectiveBudget || removedCount > 0;
 
       cardStates.set(powerId, {
         powerId,
         pendingCount,
         committedCount,
+        removedCount,
+        effectiveOwnedCount,
         totalCount,
         isPending: pendingCount > 0,
-        isCommitted: committedCount > 0,
-        status: committedCount > 0 && pendingCount > 0 ? 'pending-additional'
-                : committedCount > 0 ? 'committed'
-                : 'pending',
+        isCommitted: effectiveOwnedCount > 0,
+        isRemoved: removedCount > 0,
+        canIncrement,
+        canDecrement,
+        status: removedCount > 0 ? 'removed'
+          : effectiveOwnedCount > 0 && pendingCount > 0 ? 'pending-additional'
+            : effectiveOwnedCount > 0 ? 'committed'
+              : pendingCount > 0 ? 'pending'
+                : 'available',
       });
     }
 
-    // Build summary display: "Power A ×2 (Pending), Power B ×1 (Committed)"
-    const committedSummary = Array.from(pendingCounts.entries()).map(([id, count]) => {
-      const power = this._allPowers.find(p => p.id === id);
-      return { id, name: power?.name || id, count, status: 'pending' };
-    });
+    const committedSummary = [];
     for (const [id, count] of actorCommittedCounts.entries()) {
-      if (!pendingCounts.has(id)) {
-        const power = this._allPowers.find(p => p.id === id);
-        committedSummary.push({ id, name: power?.name || id, count, status: 'committed' });
-      }
+      const removedCount = removedCounts.get(id) ?? 0;
+      const effectiveOwnedCount = Math.max(0, count - removedCount);
+      const power = this._resolvePower(id);
+      if (effectiveOwnedCount > 0) committedSummary.push({ id, name: power?.name || id, count: effectiveOwnedCount, status: 'committed' });
+      if (removedCount > 0) committedSummary.push({ id, name: power?.name || id, count: removedCount, status: 'removed' });
+    }
+    for (const [id, count] of pendingCounts.entries()) {
+      if (count <= 0) continue;
+      const power = this._resolvePower(id);
+      committedSummary.push({ id, name: power?.name || id, count, status: 'pending' });
     }
 
-    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedPowers);
-
     return {
-      powers: this._filteredPowers.map(p => this._formatPowerCard(p, suggestedIds, confidenceMap)),
+      powers: formattedPowers,
       focusedPowerId: this._focusedPowerId,
-      // PHASE 8: Separate pending and committed for UI distinction
       pendingCounts: Object.fromEntries(pendingCounts),
       committedCounts: Object.fromEntries(actorCommittedCounts),
+      removedCounts: Object.fromEntries(removedCounts),
       cardStates: Object.fromEntries(cardStates),
-      committedSummary,  // for footer display
+      committedSummary,
       totalPowerTraining: this._totalPowerTraining,
       selectedPowerTraining: selectedTrainingDisplay,
       remainingPicks: remainingTrainingDisplay,
-      selectionBudget: this._remainingPicks,
+      selectionBudget: effectiveBudget,
+      baseRemainingPicks: this._baseRemainingPicks,
+      knownPowerCount: Math.max(0, this._sumCounts(actorCommittedCounts) - removedTotal + pendingSelectedTotal),
+      removedPowerCount: removedTotal,
+      pendingPowerCount: pendingSelectedTotal,
       entitlementReasons: [...this._entitlementReasons],
-      hasTrainingSummary: this._totalPowerTraining > 0 || this._entitlementReasons.length > 0,
+      hasTrainingSummary: this._totalPowerTraining > 0 || this._entitlementReasons.length > 0 || removedTotal > 0,
       hasSuggestions,
       suggestedPowerIds: Array.from(suggestedIds),
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
@@ -253,11 +268,12 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    * Selection is complete when total picks selected >= total picks allowed.
    */
   getSelection() {
-    const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, count) => sum + count, 0);
+    const totalSelected = this._sumCounts(this._committedPowerCounts);
+    const effectiveBudget = this._getEffectiveSelectionBudget();
     return {
       selected: Array.from(this._committedPowerCounts.keys()),
       count: totalSelected,
-      isComplete: totalSelected >= this._remainingPicks,
+      isComplete: totalSelected >= effectiveBudget,
     };
   }
 
@@ -290,99 +306,66 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    * Removes power only if explicitly deselected (count → 0).
    */
   async onItemCommitted(powerId, shell) {
+    await this.onIncrementQuantity(powerId, shell, { render: false });
+  }
+
+  /**
+   * Increment quantity of a selected power (via [+] button on card).
+   * Restores a removed owned use first; otherwise spends an available pick.
+   */
+  async onIncrementQuantity(powerId, shell, options = {}) {
     const power = this._resolvePower(powerId);
     if (!power) return;
 
-    const resolvedPowerId = power.id || powerId;
-    const currentCount = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
-    const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, c) => sum + c, 0);
+    const resolvedPowerId = this._normalizePowerId(power);
+    const removedCount = this._removedPowerCounts.get(resolvedPowerId) ?? 0;
+    const totalSelected = this._sumCounts(this._committedPowerCounts);
+    const effectiveBudget = this._getEffectiveSelectionBudget();
 
-    // Can add another use if picks remain
-    if (totalSelected < this._remainingPicks) {
+    if (removedCount > 0) {
+      const nextRemoved = removedCount - 1;
+      if (nextRemoved > 0) this._removedPowerCounts.set(resolvedPowerId, nextRemoved);
+      else this._removedPowerCounts.delete(resolvedPowerId);
+    } else if (totalSelected < effectiveBudget) {
+      const currentCount = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
       this._committedPowerCounts.set(resolvedPowerId, currentCount + 1);
-    }
-    // If all picks are used and this power is selected, allow deselection (count → 0)
-    // This is handled via a separate deselect action in the details panel, if needed
-
-    const powersList = Array.from(this._committedPowerCounts.entries())
-      .filter(([_, count]) => count > 0)
-      .map(([powerId, count]) => ({ id: powerId, count }));
-
-    await this._commitNormalized(shell, 'forcePowers', powersList);
-
-    // Update observable build intent (Phase 6 solution)
-    if (shell?.buildIntent && this.descriptor?.stepId) {
-      shell.buildIntent.commitSelection(this.descriptor.stepId, 'forcePowers', powersList);
+    } else {
+      return;
     }
 
-    // Keep focus on the power for context
+    await this._commitPowerSelection(shell);
     this._focusedPowerId = resolvedPowerId;
     shell.focusedItem = this._formatPowerCard(power);
-    // The shell owns the post-commit render for normal card/details clicks. Rendering
-    // here caused double-renders and intermittent stale/blank detail rails.
+    if (options.render !== false) shell.render();
   }
 
   /**
-   * PHASE 8: Increment quantity of a selected power (via [+] button on card).
-   */
-  async onIncrementQuantity(powerId, shell) {
-    const power = this._resolvePower(powerId);
-    if (!power) return;
-
-    const resolvedPowerId = power.id || powerId;
-    const currentCount = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
-    const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, c) => sum + c, 0);
-
-    // Allow increment if picks remain
-    if (totalSelected < this._remainingPicks) {
-      this._committedPowerCounts.set(resolvedPowerId, currentCount + 1);
-
-      const powersList = Array.from(this._committedPowerCounts.entries())
-        .filter(([_, count]) => count > 0)
-        .map(([id, count]) => ({ id, count }));
-      await this._commitNormalized(shell, 'forcePowers', powersList);
-
-      // Update buildIntent
-      if (shell?.buildIntent && this.descriptor?.stepId) {
-        shell.buildIntent.commitSelection(this.descriptor.stepId, 'forcePowers', powersList);
-      }
-
-      shell.render();
-    }
-  }
-
-  /**
-   * PHASE 8: Decrement quantity of a selected power (via [−] button on card).
-   * Cannot decrement below 0 or decrement committed (already on actor) quantities.
+   * Decrement quantity of a selected power (via [−] button on card).
+   * Removes pending selections first. If the actor already owns the power,
+   * marks one owned use for replacement, opening one additional pick slot.
    */
   async onDecrementQuantity(powerId, shell) {
     const power = this._resolvePower(powerId);
     if (!power) return;
 
-    const resolvedPowerId = power.id || powerId;
-    const currentCount = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
+    const resolvedPowerId = this._normalizePowerId(power);
+    const currentPending = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
 
-    // Only decrement if there are pending selections to remove
-    if (currentCount > 0) {
-      this._committedPowerCounts.set(resolvedPowerId, currentCount - 1);
-
-      // If count reaches 0, remove from map
-      if (this._committedPowerCounts.get(resolvedPowerId) === 0) {
-        this._committedPowerCounts.delete(resolvedPowerId);
-      }
-
-      const powersList = Array.from(this._committedPowerCounts.entries())
-        .filter(([_, count]) => count > 0)
-        .map(([id, count]) => ({ id, count }));
-      await this._commitNormalized(shell, 'forcePowers', powersList);
-
-      // Update buildIntent
-      if (shell?.buildIntent && this.descriptor?.stepId) {
-        shell.buildIntent.commitSelection(this.descriptor.stepId, 'forcePowers', powersList);
-      }
-
-      shell.render();
+    if (currentPending > 0) {
+      const next = currentPending - 1;
+      if (next > 0) this._committedPowerCounts.set(resolvedPowerId, next);
+      else this._committedPowerCounts.delete(resolvedPowerId);
+    } else {
+      const ownedCount = this._getActorPowerCount(shell?.actor, resolvedPowerId);
+      const removedCount = this._removedPowerCounts.get(resolvedPowerId) ?? 0;
+      if (ownedCount <= removedCount) return;
+      this._removedPowerCounts.set(resolvedPowerId, removedCount + 1);
     }
+
+    await this._commitPowerSelection(shell);
+    this._focusedPowerId = resolvedPowerId;
+    shell.focusedItem = this._formatPowerCard(power);
+    shell.render();
   }
 
   /**
@@ -406,9 +389,12 @@ export class ForcePowerStep extends ProgressionStepPlugin {
 
     const resolvedPower = this._resolvePower(focusedItem.id || focusedItem._id || focusedItem.name) || focusedItem;
     const formattedPower = this._formatPowerCard(resolvedPower);
-    const currentCount = this._committedPowerCounts.get(formattedPower.id) ?? this._committedPowerCounts.get(focusedItem.id) ?? 0;
-    const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, c) => sum + c, 0);
-    const canAddMore = totalSelected < this._remainingPicks;
+    const stateId = formattedPower.stateId || formattedPower.id;
+    const currentCount = this._committedPowerCounts.get(stateId) ?? 0;
+    const committedCount = this._actorPowerCounts.get(stateId) ?? 0;
+    const removedCount = this._removedPowerCounts.get(stateId) ?? 0;
+    const totalSelected = this._sumCounts(this._committedPowerCounts);
+    const canAddMore = totalSelected < this._getEffectiveSelectionBudget() || removedCount > 0;
 
     // Normalize detail panel data for canonical display (no fabrication)
     const normalized = normalizeDetailPanelData(formattedPower, 'force_power');
@@ -427,6 +413,8 @@ export class ForcePowerStep extends ProgressionStepPlugin {
         hasDescriptors: descriptors.length > 0,
         hasRoleMetadataTags: roleMetadataTags.length > 0,
         selectedCount: currentCount,
+        committedCount,
+        removedCount,
         selectedCountLabel: currentCount === 1 ? 'time' : 'times',
         selectedUseLabel: currentCount === 1 ? 'use' : 'uses',
         canAddMore,
@@ -454,17 +442,18 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    * Example: "Move Object ×2, Surge ×1" = 3 picks, if 3 allowed then valid.
    */
   validate() {
-    const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, c) => sum + c, 0);
-    const isValid = totalSelected >= this._remainingPicks;
+    const totalSelected = this._sumCounts(this._committedPowerCounts);
+    const effectiveBudget = this._getEffectiveSelectionBudget();
+    const isValid = totalSelected >= effectiveBudget;
     const errors = isValid ? [] : [
-      `Select ${this._remainingPicks - totalSelected} more Force Power use(s).`,
+      `Select ${effectiveBudget - totalSelected} more Force Power use(s).`,
     ];
     return { isValid, errors, warnings: [] };
   }
 
   getBlockingIssues() {
-    const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, c) => sum + c, 0);
-    const remaining = this._remainingPicks - totalSelected;
+    const totalSelected = this._sumCounts(this._committedPowerCounts);
+    const remaining = this._getEffectiveSelectionBudget() - totalSelected;
     if (remaining <= 0) return [];
     return [
       `${remaining} Force Power use(s) remaining`,
@@ -480,31 +469,35 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    * Example footer: "Move Object ×2 | Surge ×1 | 3 Total | (0 remaining)"
    */
   getRemainingPicks() {
-    const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, c) => sum + c, 0);
-    const remaining = this._remainingPicks - totalSelected;
+    const totalSelected = this._sumCounts(this._committedPowerCounts);
+    const effectiveBudget = this._getEffectiveSelectionBudget();
+    const remaining = effectiveBudget - totalSelected;
 
     swseLogger.debug('[ForcePowerStep.getRemainingPicks] Footer calculation', {
       totalPowerTraining: this._totalPowerTraining,
-      remainingPicks: this._remainingPicks,
+      baseRemainingPicks: this._baseRemainingPicks,
+      effectiveBudget,
       totalSelected,
       remaining,
-      committedPowerCounts: Object.fromEntries(this._committedPowerCounts)
+      committedPowerCounts: Object.fromEntries(this._committedPowerCounts),
+      removedPowerCounts: Object.fromEntries(this._removedPowerCounts)
     });
 
     if (remaining <= 0) {
-      // Build display like "Move Object ×2, Surge ×1"
       const summaryParts = Array.from(this._committedPowerCounts.entries()).map(([id, count]) => {
-        const power = this._allPowers.find(p => p.id === id);
+        const power = this._resolvePower(id);
         const name = power?.name || id;
         return count > 1 ? `${name} ×${count}` : name;
       });
+      const removedTotal = this._sumCounts(this._removedPowerCounts);
+      if (removedTotal > 0) summaryParts.push(`${removedTotal} replacement slot${removedTotal === 1 ? '' : 's'} opened`);
       const label = summaryParts.length > 0
         ? `✓ ${summaryParts.join(', ')}`
         : `✓ ${totalSelected} Selected`;
-      return [{ label, count: 0, total: Math.max(0, Number(this._remainingPicks || 0)), selected: Math.max(0, totalSelected), isWarning: false }];
+      return [{ label, count: 0, total: Math.max(0, Number(effectiveBudget || 0)), selected: Math.max(0, totalSelected), isWarning: false }];
     }
 
-    return [{ label: 'Force Power use(s)', count: Math.max(0, remaining), total: Math.max(0, Number(this._remainingPicks || 0)), selected: Math.max(0, totalSelected), isWarning: true }];
+    return [{ label: 'Force Power use(s)', count: Math.max(0, remaining), total: Math.max(0, Number(effectiveBudget || 0)), selected: Math.max(0, totalSelected), isWarning: true }];
   }
 
   /**
@@ -758,6 +751,72 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     return shell.buildIntent.toCharacterData();
   }
 
+  _sumCounts(counts) {
+    return Array.from(counts?.values?.() || []).reduce((sum, count) => sum + (Number(count) || 0), 0);
+  }
+
+  _normalizePowerId(powerOrId) {
+    const power = typeof powerOrId === 'object' ? powerOrId : this._resolvePower(powerOrId);
+    return String(power?.id || power?._id || power?.uuid || this._normalizePowerLookupKey(power?.name || powerOrId));
+  }
+
+  _getEffectiveSelectionBudget() {
+    return Math.max(0, Number(this._baseRemainingPicks ?? this._remainingPicks) || 0) + this._sumCounts(this._removedPowerCounts);
+  }
+
+  _getActorForcePowerEntries(actor) {
+    const items = actor?.items?.filter?.((item) => {
+      const type = String(item?.type || '').toLowerCase();
+      const executionModel = String(item?.system?.executionModel || item?.system?.abilityType || '').toLowerCase();
+      return type === 'force-power' || type === 'power' || executionModel === 'force_power';
+    }) || [];
+
+    const counts = new Map();
+    for (const item of items) {
+      const candidates = [
+        item.system?.abilities?.id,
+        item.system?.slug,
+        item.flags?.swse?.progression?.selectionId,
+        item.id,
+        item._id,
+        item.name,
+      ];
+      const resolved = candidates.map((candidate) => this._resolvePower(candidate)).find(Boolean);
+      const id = this._normalizePowerId(resolved || item.name || item.id);
+      counts.set(id, (counts.get(id) || 0) + 1);
+    }
+
+    return Array.from(counts.entries()).map(([id, count]) => ({ id, count }));
+  }
+
+  _getActorPowerCount(actor, powerId) {
+    if (!this._actorPowerCounts?.size) {
+      this._actorPowerCounts = new Map(this._getActorForcePowerEntries(actor).map((entry) => [entry.id, entry.count]));
+    }
+    return this._actorPowerCounts.get(this._normalizePowerId(powerId)) || 0;
+  }
+
+  async _commitPowerSelection(shell) {
+    const powersList = [];
+    const ids = new Set([
+      ...Array.from(this._committedPowerCounts.keys()),
+      ...Array.from(this._removedPowerCounts.keys()),
+    ]);
+
+    for (const id of ids) {
+      const power = this._resolvePower(id);
+      const count = Math.max(0, Number(this._committedPowerCounts.get(id) || 0));
+      const removeCount = Math.max(0, Number(this._removedPowerCounts.get(id) || 0));
+      if (count <= 0 && removeCount <= 0) continue;
+      powersList.push({ id, name: power?.name || id, count, removeCount });
+    }
+
+    await this._commitNormalized(shell, 'forcePowers', powersList);
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(this.descriptor.stepId, 'forcePowers', powersList);
+    }
+  }
+
   _normalizePowerLookupKey(value) {
     return String(value || '')
       .trim()
@@ -886,6 +945,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       id: canonicalId,
       _id: power?._id || canonicalId,
       lookupId: canonicalId,
+      stateId: this._normalizePowerId(power),
       img: this._resolvePowerImage(power),
       descriptorList: this._formatDescriptorList(power),
       roleMetadataTags: this._formatRoleMetadataTags(power),

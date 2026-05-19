@@ -369,6 +369,12 @@ export class ActiveStepComputer {
    * @private
    */
   _hasUnallocatedLanguageSlots(actor, progressionSession) {
+    // Never remove Languages while it is the current live step. The final bonus
+    // language click may spend the last slot; removing the current step during
+    // that same commit causes an unsolicited jump to Summary and can discard
+    // transient UI state.
+    if (progressionSession?.currentStepId === 'languages') return true;
+
     // Languages step should only appear when there are player-selectable bonus
     // language slots. Granted species/background languages are materialized
     // automatically and must not force an empty step.

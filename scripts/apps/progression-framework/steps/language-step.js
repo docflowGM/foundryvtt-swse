@@ -209,6 +209,16 @@ export class LanguageStep extends ProgressionStepPlugin {
     return true;
   }
 
+  _restoreSelectedBonusLanguagesFromSession(shell) {
+    const saved = shell?.progressionSession?.draftSelections?.languages;
+    if (!Array.isArray(saved) || saved.length === 0) return;
+    const names = saved
+      .map(entry => typeof entry === 'string' ? entry : (entry?.name || entry?.label || entry?.id || entry?.slug))
+      .map(name => String(name || '').trim())
+      .filter(Boolean);
+    if (names.length > 0) this._selectedBonusLanguages = Array.from(new Set(names));
+  }
+
   async _commitLanguageSelection(shell) {
     const normalizedLanguages = normalizeLanguages(
       this._selectedBonusLanguages.map(name => ({ id: name, source: 'selected' }))
@@ -243,6 +253,7 @@ export class LanguageStep extends ProgressionStepPlugin {
 
     // Compute known/granted languages from all sources
     this._knownLanguages = await this._getKnownLanguages(shell.actor, shell);
+    this._restoreSelectedBonusLanguagesFromSession(shell);
 
     // FIX 4: Compute available bonus language picks including pending selections
     this._bonusLanguagesAvailable = await this._calculateBonusLanguagesAvailable(shell.actor, shell);

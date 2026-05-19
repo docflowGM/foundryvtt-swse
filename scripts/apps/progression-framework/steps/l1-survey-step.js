@@ -397,7 +397,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   async _goBackWithinSurvey(shell) {
     const questions = this._getRenderableQuestions();
 
-    if (this._surveyPhase === 'intro') {
+    if (this._surveyPhase === 'intro' || this._surveyPhase === 'unavailable') {
       await this._saveSurveyDraft(shell);
       await shell?._onPreviousStep?.();
       return;
@@ -675,8 +675,12 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     const selectedOption = activeQuestion ? this._surveyAnswers?.[activeQuestion.id] || null : null;
     const answeredCount = Object.keys(this._surveyAnswers).length;
     const totalQuestions = questions.length || 0;
-    const isComplete = totalQuestions > 0 && answeredCount >= totalQuestions;
-    const surveySummary = processSurveyAnswers(this._surveyAnswers, this._surveyDefinition);
+    const hasSurveyQuestions = totalQuestions > 0;
+    const surveyUnavailable = !this._surveyDefinition || !hasSurveyQuestions;
+    const isComplete = hasSurveyQuestions && answeredCount >= totalQuestions;
+    const surveySummary = this._surveyDefinition
+      ? processSurveyAnswers(this._surveyAnswers, this._surveyDefinition)
+      : { detailTags: [] };
     const completionTags = buildCompletionTags(surveySummary, surveyData.topMatches);
 
     const activeMentor = mentor || surveyData.mentor || null;
@@ -700,17 +704,21 @@ export class L1SurveyStep extends ProgressionStepPlugin {
       remainingCount: Math.max(totalQuestions - answeredCount, 0),
       totalQuestions,
       isComplete,
-      surveyPhase: this._surveyPhase,
+      hasSurveyQuestions,
+      surveyUnavailable,
+      surveyPhase: surveyUnavailable ? 'unavailable' : this._surveyPhase,
       progressDots: buildProgressDots(totalQuestions, this._activeQuestionIndex, answeredCount, this._surveyPhase),
       canSurveyBack: this._canSurveyBack(),
       surveyDraftNotice: !isComplete ? 'Draft saved. Mentor recommendations update only after you complete the survey.' : null,
       promptText: this._getPromptText(activeQuestion),
       responseText: this._getResponseText(selectedOption),
       completionText: this._getCompletionText(),
-      introText: surveyData.mentor?.summaryGuidance
-        || surveyData.mentor?.classGuidance
-        || mentorGuidance
-        || 'Answer honestly so your mentor can read the shape of your path.',
+      introText: surveyUnavailable
+        ? 'The class intent survey could not be loaded for the selected class. Go back to Class, reselect your class, and continue; this step will rebuild from the committed class context.'
+        : surveyData.mentor?.summaryGuidance
+          || surveyData.mentor?.classGuidance
+          || mentorGuidance
+          || 'Answer honestly so your mentor can read the shape of your path.',
       surveySummary,
       completionTags,
       topMatches: surveyData.topMatches,
@@ -860,7 +868,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
   _resolveInitialPhase() {
     const questions = this._getRenderableQuestions();
-    if (!questions.length) return 'complete';
+    if (!questions.length) return 'unavailable';
     const answeredCount = Object.keys(this._surveyAnswers || {}).length;
     if (answeredCount <= 0) return 'intro';
     if (answeredCount >= questions.length) return 'complete';

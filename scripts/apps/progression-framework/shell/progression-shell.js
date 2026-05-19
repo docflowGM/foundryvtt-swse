@@ -2425,8 +2425,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
       const currentDescriptor = this.steps[this.currentStepIndex];
       if (currentDescriptor) {
         const currentPlugin = this.stepPlugins.get(currentDescriptor.stepId);
+        if (currentPlugin && typeof currentPlugin.syncFromDom === 'function') {
+          try {
+            currentPlugin.syncFromDom(this);
+          } catch (syncErr) {
+            swseLogger.warn('[ProgressionShell] Failed to sync current step DOM before final validation', syncErr);
+          }
+        }
         if (currentPlugin && typeof currentPlugin.validate === 'function') {
-          const validation = currentPlugin.validate();
+          const validation = currentPlugin.validate(this);
           if (validation.errors && validation.errors.length > 0) {
             // Blocking errors prevent finalization
             swseLogger.warn('[ProgressionShell] Finalization blocked by validation errors:', validation.errors);
@@ -3196,7 +3203,24 @@ export class ProgressionShell extends SWSEApplicationV2 {
       const newDescriptors = mapNodesToDescriptors(newActiveNodeIds);
 
       // Filter hidden steps
-      const newSteps = newDescriptors.filter(d => !d.isHidden);
+      let newSteps = newDescriptors.filter(d => !d.isHidden);
+
+      // If active-step recomputation would remove the step currently handling a
+      // click, keep that descriptor until the user navigates away. This prevents
+      // mid-commit step removal from jumping the shell to Summary.
+      const currentStepIdBeforeRebuild = this.steps[this.currentStepIndex]?.stepId ?? null;
+      if (currentStepIdBeforeRebuild && !newSteps.some(d => d.stepId === currentStepIdBeforeRebuild)) {
+        const currentDescriptor = this.steps.find(d => d.stepId === currentStepIdBeforeRebuild);
+        if (currentDescriptor) {
+          const oldIndex = Math.max(0, this.steps.findIndex(d => d.stepId === currentStepIdBeforeRebuild));
+          newSteps = [...newSteps];
+          newSteps.splice(Math.min(oldIndex, newSteps.length), 0, currentDescriptor);
+          swseLogger.warn('[ProgressionShell] Preserved current step during active-step recompute', {
+            stepId: currentStepIdBeforeRebuild,
+            reason: 'prevent-current-step-removal-during-commit',
+          });
+        }
+      }
 
       // Update step list
       const oldStepIds = this.steps.map(s => s.stepId);
@@ -3204,7 +3228,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
       // Only rebuild if there's an actual change
       if (JSON.stringify(oldStepIds) !== JSON.stringify(newStepIds)) {
-        const currentStepIdBeforeRebuild = this.steps[this.currentStepIndex]?.stepId ?? null;
         const previousPlugins = new Map(this.stepPlugins);
 
         // Rebuild the descriptor list, but preserve live plugin instances for

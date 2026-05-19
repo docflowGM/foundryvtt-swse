@@ -469,48 +469,54 @@ export class ProgressionStepPlugin {
       }
 
       // PHASE 2: Trigger post-commit reconciliation
-      // This invalidates/dirtifies affected downstream nodes
-      try {
-        const reconciler = new ProgressionReconciler();
-        const computer = new ActiveStepComputer();
-        const mode = shell.mode || 'chargen';
-        const subtype = shell.actor?.type === 'npc' ? 'npc' : 'actor';
+      // This invalidates/dirtifies affected downstream nodes. Language choices
+      // are purely draft-list edits inside one step; recomputing the whole active
+      // spine on every language click can remove the current Languages step when
+      // the final slot is spent, dumping the player into Summary mid-click.
+      const shouldRunReconciliation = selectionKey !== 'languages';
+      if (shouldRunReconciliation) {
+        try {
+          const reconciler = new ProgressionReconciler();
+          const computer = new ActiveStepComputer();
+          const mode = shell.mode || 'chargen';
+          const subtype = shell.actor?.type === 'npc' ? 'npc' : 'actor';
 
-        const reconciliationReport = await reconciler.reconcileAfterCommit(
-          nodeId,
-          shell.actor,
-          shell.progressionSession,
-          {
-            activeStepComputer: computer,
-            currentStepId: shell.steps[shell.currentStepIndex]?.stepId,
-            mode,
-            subtype,
+          const reconciliationReport = await reconciler.reconcileAfterCommit(
+            nodeId,
+            shell.actor,
+            shell.progressionSession,
+            {
+              activeStepComputer: computer,
+              currentStepId: shell.steps[shell.currentStepIndex]?.stepId,
+              mode,
+              subtype,
+            }
+          );
+
+          if (reconciliationReport.actionsTaken.length > 0) {
+            swseLogger.log('[ProgressionStepPlugin] Post-commit reconciliation:', reconciliationReport);
           }
-        );
 
-        if (reconciliationReport.actionsTaken.length > 0) {
-          swseLogger.log('[ProgressionStepPlugin] Post-commit reconciliation:', reconciliationReport);
+          // The reconciler computes the new active node list, but the shell owns
+          // the renderable StepDescriptor/plugin list. Rebuild it immediately so
+          // level-up class choices can reveal newly owed downstream work (surveys,
+          // feats, talents, Medical Secrets, etc.) before the user advances.
+          if (typeof shell._recomputeActiveStepsIfNeeded === 'function') {
+            await shell._recomputeActiveStepsIfNeeded();
+          }
+        } catch (reconcileErr) {
+          swseLogger.error(
+            '[ProgressionStepPlugin] Error during post-commit reconciliation:',
+            reconcileErr
+          );
+          // Don't fail the commit if reconciliation fails
         }
-
-        // The reconciler computes the new active node list, but the shell owns
-        // the renderable StepDescriptor/plugin list. Rebuild it immediately so
-        // level-up class choices can reveal newly owed downstream work (surveys,
-        // feats, talents, Medical Secrets, etc.) before the user advances.
-        if (typeof shell._recomputeActiveStepsIfNeeded === 'function') {
-          await shell._recomputeActiveStepsIfNeeded();
-        }
-      } catch (reconcileErr) {
-        swseLogger.error(
-          '[ProgressionStepPlugin] Error during post-commit reconciliation:',
-          reconcileErr
-        );
-        // Don't fail the commit if reconciliation fails
       }
 
       // PHASE 3: Build projected character from selections
       // This derives what the character looks like with current selections applied
       try {
-        const projection = ProjectionEngine.buildProjection(
+        const projection = await ProjectionEngine.buildProjection(
           shell.progressionSession,
           shell.actor
         );

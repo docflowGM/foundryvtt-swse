@@ -77,6 +77,12 @@
               </section>
               {{/if}}
 
+              {{#if conceptLayout.starship.hasAnything}}
+              <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="starship">
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/starship-suite-tab.hbs"}}
+              </section>
+              {{/if}}
+
               <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="gear">
                 {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/gear-tab.hbs"}}
               </section>

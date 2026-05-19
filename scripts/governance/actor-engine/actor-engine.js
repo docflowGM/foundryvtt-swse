@@ -3321,15 +3321,20 @@ export const ActorEngine = {
           continue;
         }
 
+        const embeddedName = collection === 'items' || collection === 'item' || collection === 'Item'
+          ? 'Item'
+          : collection === 'effects' || collection === 'activeEffects' || collection === 'ActiveEffect'
+            ? 'ActiveEffect'
+            : collection;
+
         SWSELogger.debug('ActorEngine._applyDeleteOps', {
           actor: actor.id,
           collection,
+          embeddedName,
           count: ids.length
         });
 
-        // planned: In full implementation, resolve IDs to embedded documents
-        // For now, assume IDs are valid
-        await this.deleteEmbeddedDocuments(actor, collection, ids, { source });
+        await this.deleteEmbeddedDocuments(actor, embeddedName, ids, { source });
       }
     } catch (error) {
       const { MutationApplicationError } = await import("/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js");

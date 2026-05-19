@@ -325,3 +325,44 @@
   text-shadow: var(--prog-heading-shadow);
   font-size: var(--prog-font-size-base);
 }
+
+/* Starship selector parity: intentionally mirrors the Force Power V2 selector. */
+.progression-shell .prog-starship-maneuver-browse.swse-force-selector {
+  width: 100%;
+}
+
+.progression-shell .prog-starship-maneuver-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.progression-shell .prog-starship-maneuver-card.prog-force-power-card {
+  min-height: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 200, 255, 0.28);
+  background: linear-gradient(180deg, rgba(4, 24, 42, 0.94), rgba(2, 12, 26, 0.96));
+  box-shadow: 0 0 16px rgba(0, 200, 255, 0.08), inset 0 0 18px rgba(0, 200, 255, 0.05);
+  padding: 0.7rem;
+}
+
+.progression-shell .prog-starship-maneuver-card.prog-force-power-card:hover,
+.progression-shell .prog-starship-maneuver-card.prog-force-power-card:focus {
+  border-color: rgba(0, 229, 255, 0.75);
+  box-shadow: 0 0 22px rgba(0, 229, 255, 0.18), inset 0 0 20px rgba(0, 229, 255, 0.08);
+}
+
+.progression-shell .prog-starship-maneuver-card--selected {
+  border-color: rgba(78, 255, 184, 0.75);
+}
+
+.progression-shell .prog-starship-maneuver-card__count-badge {
+  border-color: rgba(78, 255, 184, 0.5);
+  color: #9dffd8;
+}
+
+.progression-shell .prog-starship-maneuver-details__selection-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}

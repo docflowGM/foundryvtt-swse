@@ -923,10 +923,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     };
 
     // Use the already calculated halfLevel property
-    const halfLevel = this.halfLevel || 0;
+    const halfLevel = Number.isFinite(Number(this.halfLevel)) ? Number(this.halfLevel) : 0;
 
     // Get armor check penalty (calculated in _calculateArmorEffects)
-    const armorCheckPenalty = this.armorCheckPenalty || 0;
+    const armorCheckPenalty = Number.isFinite(Number(this.armorCheckPenalty)) ? Number(this.armorCheckPenalty) : 0;
 
     // Droids can only use these skills untrained (unless they have Heuristic Processor)
     const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
@@ -945,15 +945,29 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       const data = skillData[skillKey];
       if (!data) {continue;}
 
-      // Use selectedAbility if set, otherwise use default
+      // Use selectedAbility if set, otherwise use default.
+      // Foundry's synchronous data-model prepare pass can run before the async
+      // derived engine has repopulated attributes.*.mod. Never treat a missing
+      // .mod as +0 here; rebuild the ability total from the canonical stored
+      // components so a sheet repaint cannot collapse every skill total to zero.
       const abilityKey = skill.selectedAbility || data.defaultAbility;
-      const abilityMod = (this.isDroid && abilityKey === 'con') ? 0 : (this.attributes[abilityKey]?.mod || 0);
+      const abilityState = this.attributes?.[abilityKey] ?? {};
+      const abilityTotal = Number.isFinite(Number(abilityState.total))
+        ? Number(abilityState.total)
+        : (
+            (Number.isFinite(Number(abilityState.base)) ? Number(abilityState.base) : 10) +
+            (Number.isFinite(Number(abilityState.racial)) ? Number(abilityState.racial) : 0) +
+            (Number.isFinite(Number(abilityState.enhancement)) ? Number(abilityState.enhancement) : 0) +
+            (Number.isFinite(Number(abilityState.temp)) ? Number(abilityState.temp) : 0)
+          );
+      const abilityMod = (this.isDroid && abilityKey === 'con') ? 0 : Math.floor((abilityTotal - 10) / 2);
 
-      // Calculate total bonus
-      let total = abilityMod + (skill.miscMod || 0);
+      // Calculate total bonus; form inputs can arrive as strings during repaint.
+      const skillMiscMod = Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0;
+      let total = abilityMod + skillMiscMod;
 
       // Add species trait bonus for this skill
-      const speciesBonus = speciesSkillBonuses[skillKey] || 0;
+      const speciesBonus = Number.isFinite(Number(speciesSkillBonuses[skillKey])) ? Number(speciesSkillBonuses[skillKey]) : 0;
       if (speciesBonus !== 0) {
         total += speciesBonus;
         skill.speciesBonus = speciesBonus; // Store for display
@@ -975,7 +989,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       // Apply occupation bonus from background (only to untrained checks)
       // Occupation bonus gives +2 to specific skills when making untrained checks
       if (!skill.trained && occupationBonus?.skills?.includes(skillKey)) {
-        total += occupationBonus.value || 2;
+        total += Number.isFinite(Number(occupationBonus.value)) ? Number(occupationBonus.value) : 2;
         skill.hasOccupationBonus = true;
       } else {
         skill.hasOccupationBonus = false;
@@ -987,7 +1001,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       }
 
       // Apply condition track penalty (affects all skills and rolls)
-      const conditionPenalty = this.conditionTrack?.penalty || 0;
+      const conditionPenalty = Number.isFinite(Number(this.conditionTrack?.penalty)) ? Number(this.conditionTrack?.penalty) : 0;
       total += conditionPenalty; // Note: penalty is negative, so we add it
 
       // Determine if skill can be used untrained

@@ -100,6 +100,7 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   async onStepEnter(shell) {
+    this._lastShell = shell || this._lastShell || null;
     const mode = shell?.mode || 'chargen';
     this._activeMode = mode;
 
@@ -118,6 +119,7 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   async onDataReady(shell) {
+    this._lastShell = shell || this._lastShell || null;
     if (!shell.element) return;
 
     this._renderAbort?.abort();
@@ -130,13 +132,11 @@ export class SummaryStep extends ProgressionStepPlugin {
       if (nameInput) {
         nameInput.value = this._characterName || '';
         nameInput.addEventListener('input', (e) => {
-          this._characterName = String(e.target.value || '').trim();
-          this._summary.name = this._characterName;
-          this._commitBusinessItems(shell);
+          this._setCharacterName(e.target.value, shell, { commit: false });
         }, { signal });
         nameInput.addEventListener('change', () => {
-          this._commitBusinessItems(shell);
-          shell.render();
+          this._syncBusinessItemsFromDom(shell, { commit: true });
+          shell?.requestRender?.({ preserveScroll: true, reason: 'summary-name-change' }) ?? shell.render();
         }, { signal });
       }
 
@@ -161,12 +161,12 @@ export class SummaryStep extends ProgressionStepPlugin {
       if (randomNameBtn) {
         randomNameBtn.addEventListener('click', async (e) => {
           e.preventDefault();
+          e.stopPropagation?.();
+          e.stopImmediatePropagation?.();
           const randomName = await this._generateRandomName(shell.actor);
           if (randomName) {
-            this._characterName = randomName;
-            this._summary.name = randomName;
-            this._commitBusinessItems(shell);
-            shell.render();
+            this._setCharacterName(randomName, shell, { commit: true });
+            shell?.requestRender?.({ preserveScroll: true, reason: 'generate-name' }) ?? shell.render();
           }
         }, { signal });
       }
@@ -175,12 +175,12 @@ export class SummaryStep extends ProgressionStepPlugin {
       if (randomDroidNameBtn) {
         randomDroidNameBtn.addEventListener('click', async (e) => {
           e.preventDefault();
+          e.stopPropagation?.();
+          e.stopImmediatePropagation?.();
           const randomName = await this._generateRandomDroidName(shell.actor);
           if (randomName) {
-            this._characterName = randomName;
-            this._summary.name = randomName;
-            this._commitBusinessItems(shell);
-            shell.render();
+            this._setCharacterName(randomName, shell, { commit: true });
+            shell?.requestRender?.({ preserveScroll: true, reason: 'generate-droid-name' }) ?? shell.render();
           }
         }, { signal });
       }
@@ -201,10 +201,11 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   async getStepData(context) {
+    if (context?.shell) this._lastShell = context.shell;
     const mode = context?.mode || context?.shell?.mode || 'chargen';
 
     if (mode === 'levelup') {
-      const validation = this.validate();
+      const validation = this.validate(context?.shell);
       return {
         mode,
         levelupSummary: this._levelupSummary,
@@ -221,7 +222,7 @@ export class SummaryStep extends ProgressionStepPlugin {
 
     const orderedFeats = canonicallyOrderSelections(this._summary.featSelections);
     const orderedTalents = canonicallyOrderSelections(this._summary.talentSelections);
-    const validation = this.validate();
+    const validation = this.validate(context?.shell);
     const issuesSummary = {
       hasErrors: validation.errors.length > 0,
       errorCount: validation.errors.length,
@@ -229,8 +230,8 @@ export class SummaryStep extends ProgressionStepPlugin {
       hasCaution: validation.warnings.caution.length > 0,
       cautionCount: validation.warnings.caution.length,
       cautions: validation.warnings.caution,
-      isReadyToFinalize: validation.isValid && this._isReviewComplete && !!this._characterName,
-      finalizationStatus: validation.isValid && this._isReviewComplete && !!this._characterName
+      isReadyToFinalize: validation.isValid && this._isReviewComplete && this._hasCharacterName(context?.shell),
+      finalizationStatus: validation.isValid && this._isReviewComplete && this._hasCharacterName(context?.shell)
         ? 'Ready to create character'
         : validation.errors.length > 0
           ? `${validation.errors.length} error${validation.errors.length === 1 ? '' : 's'} to fix`
@@ -240,7 +241,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     return {
       mode,
       summary: this._summary,
-      characterName: this._characterName,
+      characterName: this._getResolvedCharacterName(context?.shell),
       startingLevel: this._startingLevel,
       isReviewComplete: this._isReviewComplete,
       orderedFeats,
@@ -249,7 +250,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     };
   }
 
-  validate() {
+  validate(shell = null) {
     const mode = this._activeMode || 'chargen';
     const errors = [];
     const warnings = { blocking: [], caution: [], info: [] };
@@ -275,7 +276,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       };
     }
 
-    if (!this._characterName || this._characterName.trim() === '') {
+    if (!this._hasCharacterName(shell || this._lastShell)) {
       errors.push('Character name is required (enter or generate a name above)');
     }
     if (this._startingLevel < 1 || this._startingLevel > 20) {
@@ -310,7 +311,11 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   async onStepExit(shell) {
-    this._commitBusinessItems(shell);
+    this._syncBusinessItemsFromDom(shell || this._lastShell, { commit: true });
+  }
+
+  syncFromDom(shell = null) {
+    return this._syncBusinessItemsFromDom(shell || this._lastShell, { commit: true });
   }
 
   getSelection() {
@@ -319,15 +324,17 @@ export class SummaryStep extends ProgressionStepPlugin {
       const complete = !(this._hpGainState.needsResolution && !this._hpGainState.resolved);
       return { selected: complete ? ['levelup-summary'] : [], count: complete ? 1 : 0, isComplete: complete };
     }
+    const hasName = this._hasCharacterName(this._lastShell);
+    const name = this._getResolvedCharacterName(this._lastShell);
     return {
-      selected: this._characterName ? [this._characterName] : [],
-      count: this._characterName ? 1 : 0,
-      isComplete: this._isReviewComplete && !!this._characterName && this._startingLevel >= 1 && this._startingLevel <= 20 && !(this._creditsState.needsResolution && !this._creditsState.resolved),
+      selected: hasName ? [name] : [],
+      count: hasName ? 1 : 0,
+      isComplete: this._isReviewComplete && hasName && this._startingLevel >= 1 && this._startingLevel <= 20 && !(this._creditsState.needsResolution && !this._creditsState.resolved),
     };
   }
 
-  getBlockingIssues() {
-    return this.validate().errors;
+  getBlockingIssues(shell = null) {
+    return this.validate(shell || this._lastShell).errors;
   }
 
   renderWorkSurface(stepData) {
@@ -338,12 +345,13 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   renderSummaryPanel(context = {}) {
+    if (context?.shell) this._lastShell = context.shell;
     if ((this._activeMode || 'chargen') === 'levelup') return null;
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/summary-metadata-rail.hbs',
       data: {
         actorIdentity: {
-          name: this._characterName || this._getExistingCharacterName(context?.shell?.actor) || 'Unnamed',
+          name: this._getResolvedCharacterName(context?.shell) || this._getExistingCharacterName(context?.shell?.actor) || 'Unnamed',
           portrait: this._summary.portrait || null,
         },
         summary: this._summary,
@@ -352,19 +360,20 @@ export class SummaryStep extends ProgressionStepPlugin {
   }
 
   renderDetailsPanel(focusedItem, shell = null) {
+    if (shell) this._lastShell = shell;
     if ((this._activeMode || 'chargen') === 'levelup') return this.renderDetailsPanelEmptyState();
-    const validation = this.validate();
+    const validation = this.validate(shell || this._lastShell);
     const issuesSummary = {
       hasErrors: validation.errors.length > 0,
       errorCount: validation.errors.length,
       errors: validation.errors,
-      isReadyToFinalize: validation.isValid && this._isReviewComplete && !!this._characterName,
+      isReadyToFinalize: validation.isValid && this._isReviewComplete && this._hasCharacterName(shell || this._lastShell),
     };
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/summary-business-details.hbs',
       data: {
         summary: this._summary,
-        characterName: this._characterName,
+        characterName: this._getResolvedCharacterName(shell || this._lastShell),
         startingLevel: this._startingLevel,
         hasSpeciesPortrait: !!(this._summary.portrait),
         issuesSummary,
@@ -378,7 +387,10 @@ export class SummaryStep extends ProgressionStepPlugin {
 
     await ProgressionContentAuthority.initialize?.();
 
-    const projection = shell.progressionSession.currentProjection || await ProjectionEngine.buildProjection(shell.progressionSession, shell.actor);
+    // Always rebuild Summary from the latest canonical draft. A cached
+    // projection can be stale after rapid language/name/business-item commits,
+    // and older builds could even store an unresolved Promise here.
+    const projection = await ProjectionEngine.buildProjection(shell.progressionSession, shell.actor);
     shell.progressionSession.currentProjection = projection;
     const selections = shell.progressionSession.draftSelections || {};
 
@@ -1485,23 +1497,43 @@ export class SummaryStep extends ProgressionStepPlugin {
   _computeLevelupWealthCreditGrant(actor, selections = {}, selectedClass = null, session = null) {
     const hasWealth = this._hasWealthTalent(actor, selections);
     if (!hasWealth) return 0;
-    const classModel = ProgressionContentAuthority.resolveClass(selectedClass || selections.class) || selectedClass || selections.class || {};
-    const classKey = String(classModel?.name || classModel?.label || classModel?.id || '')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '');
-    if (classKey !== 'noble' && classKey !== 'corporateagent') return 0;
-    let classLevel = 1;
-    try {
-      const levelContext = buildLevelUpEventContext(actor, session || globalThis.game?.swse?.currentProgressionShell?.progressionSession, { selectedClass: selectedClass || selections.class });
-      classLevel = Number(levelContext?.selectedClassNextLevel || 1) || 1;
-      const history = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
-      const granted = history?.['swse.talent.wealth']?.levelsGranted || [];
-      if (granted.map(Number).includes(classLevel)) return 0;
-    } catch (_err) {
-      const existing = ActorAbilityBridge.getClasses(actor).find(c => String(c.name || '').toLowerCase() === String(classModel?.name || '').toLowerCase());
-      classLevel = Number(existing?.level || 0) + 1;
+
+    // Inline lineage-eligibility check: talentTreeIds first, then name fallback
+    const isLineageClass = (classEntry) => {
+      const classModel = ProgressionContentAuthority.resolveClass(classEntry) || classEntry || {};
+      const treeIds = classModel?.system?.talentTreeIds;
+      if (Array.isArray(treeIds) && treeIds.length) {
+        return treeIds.map(t => String(t || '').toLowerCase().trim()).includes('lineage');
+      }
+      const key = String(classModel?.name || classModel?.label || classModel?.id || classEntry?.name || classEntry || '')
+        .toLowerCase().replace(/[^a-z0-9]+/g, '');
+      return key === 'noble' || key === 'corporateagent';
+    };
+
+    // Count all lineage-eligible class levels already on the actor (pre-mutation)
+    const effectiveClass = selectedClass || selections.class;
+    let lineageLevelCount = 0;
+    for (const classItem of ActorAbilityBridge.getClasses(actor)) {
+      if (isLineageClass(classItem)) {
+        lineageLevelCount += Math.max(0, Number(classItem?.level ?? classItem?.system?.level ?? 0) || 0);
+      }
     }
-    return Math.max(0, classLevel * 5000);
+    // Add 1 for the newly-selected class if it is lineage-eligible
+    if (isLineageClass(effectiveClass)) lineageLevelCount += 1;
+    if (lineageLevelCount === 0) return 0;
+
+    // Guard against double-processing the same character level-up
+    try {
+      const levelContext = buildLevelUpEventContext(actor, session || globalThis.game?.swse?.currentProgressionShell?.progressionSession, { selectedClass: effectiveClass });
+      const characterLevel = Number(levelContext?.enteringLevel || 1) || 1;
+      const history = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
+      const grantedCharLevels = history?.['swse.talent.wealth']?.characterLevelsGranted || [];
+      if (grantedCharLevels.map(Number).includes(characterLevel)) return 0;
+    } catch (_err) {
+      // Cannot determine level context; proceed with grant
+    }
+
+    return Math.max(0, lineageLevelCount * 5000);
   }
 
   _hasWealthTalent(actor, selections = {}) {
@@ -1601,12 +1633,78 @@ export class SummaryStep extends ProgressionStepPlugin {
     return species.img || species.image || species.portrait || species.system?.img || species.system?.image || null;
   }
 
+  _getDraftCharacterName(shell = null) {
+    const survey = shell?.progressionSession?.getSelection?.('survey')
+      || shell?.progressionSession?.draftSelections?.survey
+      || null;
+    return String(survey?.characterName || '').trim();
+  }
+
+  _readCharacterNameFromDom(shell = null) {
+    const root = shell?.element || this._lastShell?.element || null;
+    const input = root?.querySelector?.('.summary-step-name-input');
+    return input ? String(input.value || '').trim() : '';
+  }
+
+  _getResolvedCharacterName(shell = null) {
+    const domName = this._readCharacterNameFromDom(shell);
+    const draftName = this._getDraftCharacterName(shell);
+    return String(domName || this._characterName || draftName || '').trim();
+  }
+
+  _hasCharacterName(shell = null) {
+    return this._getResolvedCharacterName(shell).length > 0;
+  }
+
+  _setCharacterName(value, shell = null, options = {}) {
+    const name = String(value || '').trim();
+    this._characterName = name;
+    this._summary.name = name;
+    const root = shell?.element || this._lastShell?.element || null;
+    const input = root?.querySelector?.('.summary-step-name-input');
+    if (input && input.value !== value) input.value = value || '';
+    if (options.commit === true) this._commitBusinessItems(shell || this._lastShell);
+    return name;
+  }
+
+  _syncBusinessItemsFromDom(shell = null, options = {}) {
+    const root = shell?.element || this._lastShell?.element || null;
+    const input = root?.querySelector?.('.summary-step-name-input') || null;
+    if (input) {
+      this._setCharacterName(input.value, shell, { commit: false });
+    } else if (!this._characterName) {
+      const resolved = this._getDraftCharacterName(shell) || '';
+      if (resolved) this._setCharacterName(resolved, shell, { commit: false });
+    }
+    if (options.commit === true) this._commitBusinessItems(shell || this._lastShell);
+    return this._characterName;
+  }
+
+  _stableStringify(value) {
+    const normalize = (input) => {
+      if (Array.isArray(input)) return input.map(normalize);
+      if (!input || typeof input !== 'object') return input;
+      return Object.keys(input).sort().reduce((out, key) => {
+        if (typeof input[key] === 'function') return out;
+        out[key] = normalize(input[key]);
+        return out;
+      }, {});
+    };
+    try {
+      return JSON.stringify(normalize(value));
+    } catch (_err) {
+      return String(value);
+    }
+  }
+
   _commitBusinessItems(shell) {
     if (!shell?.progressionSession?.commitSelection) return false;
     const currentSurvey = shell.progressionSession.getSelection?.('survey') || shell.progressionSession.draftSelections?.survey || {};
+    const resolvedName = this._getResolvedCharacterName(shell);
+    if (resolvedName !== this._characterName) this._setCharacterName(resolvedName, shell, { commit: false });
     const payload = {
       ...(currentSurvey && typeof currentSurvey === 'object' ? currentSurvey : {}),
-      characterName: this._characterName || '',
+      characterName: resolvedName || '',
       startingLevel: this._startingLevel || 1,
       startingCredits: this._creditsState?.resolved ? Number(this._creditsState.amount || 0) : 0,
       startingCreditsResolved: !!this._creditsState?.resolved,
@@ -1622,7 +1720,20 @@ export class SummaryStep extends ProgressionStepPlugin {
       creditDeltaSources: this._activeMode === 'levelup' ? (this._creditsState?.sources || []) : [],
       finalCredits: this._activeMode === 'levelup' ? Number(this._creditsState?.final || 0) : Number(this._creditsState?.amount || 0),
     };
+    if (this._stableStringify(currentSurvey || {}) === this._stableStringify(payload)) {
+      return true;
+    }
     return shell.progressionSession.commitSelection('summary', 'survey', payload);
+  }
+
+  async _applyGeneratedName(shell = null, kind = 'character') {
+    const randomName = kind === 'droid'
+      ? await this._generateRandomDroidName(shell?.actor)
+      : await this._generateRandomName(shell?.actor);
+    if (!randomName) return '';
+    this._setCharacterName(randomName, shell, { commit: true });
+    shell?.requestRender?.({ preserveScroll: true, reason: kind === 'droid' ? 'generate-droid-name' : 'generate-name' }) ?? shell?.render?.();
+    return randomName;
   }
 
   async _generateRandomName(actor) {
@@ -1708,14 +1819,8 @@ export class SummaryStep extends ProgressionStepPlugin {
     if (action === 'generate-name' || action === 'generate-droid-name') {
       event?.preventDefault?.();
       event?.stopPropagation?.();
-      const randomName = action === 'generate-droid-name'
-        ? await this._generateRandomDroidName(shell?.actor)
-        : await this._generateRandomName(shell?.actor);
-      if (!randomName) return true;
-      this._characterName = randomName;
-      this._summary.name = randomName;
-      this._commitBusinessItems(shell);
-      shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+      event?.stopImmediatePropagation?.();
+      await this._applyGeneratedName(shell, action === 'generate-droid-name' ? 'droid' : 'character');
       return true;
     }
 

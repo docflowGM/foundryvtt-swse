@@ -36,6 +36,11 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
      * Each selection = additional use (like "Battle Strike ×2").
      */
     this._committedManeuverCounts = new Map();
+    this._removedManeuverCounts = new Map();
+    this._actorManeuverCounts = new Map();
+    this._baseRemainingPicks = 0;
+    this._totalManeuverTraining = 0;
+    this._selectedManeuverTraining = 0;
 
     this._remainingPicks = 0;
     this._suggestedManeuvers = [];  // Suggested starship maneuvers
@@ -207,6 +212,9 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
         const actorCount = shell.actor?.system?.starshipManeuverSuite?.maneuvers?.length ?? 0;
         const alreadySelected = pendingCount > 0 ? pendingCount : actorCount;
         this._remainingPicks = Math.max(0, capacity - alreadySelected);
+        this._baseRemainingPicks = this._remainingPicks;
+        this._totalManeuverTraining = capacity;
+        this._selectedManeuverTraining = alreadySelected;
 
         diagnostics.alreadySelected = {
           pendingCount,
@@ -290,19 +298,87 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   }
 
   async getStepData(context) {
-    const committedSummary = Array.from(this._committedManeuverCounts.entries()).map(([id, count]) => {
-      const maneuver = this._allManeuvers.find(m => m.id === id);
-      return { id, name: maneuver?.name || id, count };
-    });
+    const actorEntries = this._getActorManeuverEntries(context?.actor);
+    this._actorManeuverCounts = new Map(actorEntries.map((entry) => [entry.id, entry.count]));
+
+    const pendingCounts = new Map(this._committedManeuverCounts);
+    const removedCounts = new Map(this._removedManeuverCounts);
+    const committedCounts = new Map(this._actorManeuverCounts);
+    const pendingTotal = this._sumCounts(pendingCounts);
+    const removedTotal = this._sumCounts(removedCounts);
+    const effectiveBudget = this._getEffectiveSelectionBudget();
+    const remainingPicks = Math.max(0, effectiveBudget - pendingTotal);
 
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedManeuvers);
+    const formattedManeuvers = this._filteredManeuvers.map(m => this._formatManeuverCard(m, suggestedIds, confidenceMap));
+
+    const cardStates = new Map();
+    const allIds = new Set([
+      ...formattedManeuvers.map((maneuver) => maneuver.stateId || maneuver.id),
+      ...Array.from(pendingCounts.keys()),
+      ...Array.from(committedCounts.keys()),
+      ...Array.from(removedCounts.keys()),
+    ]);
+
+    for (const maneuverId of allIds) {
+      const pendingCount = pendingCounts.get(maneuverId) ?? 0;
+      const committedCount = committedCounts.get(maneuverId) ?? 0;
+      const removedCount = removedCounts.get(maneuverId) ?? 0;
+      const effectiveOwnedCount = Math.max(0, committedCount - removedCount);
+      const totalCount = effectiveOwnedCount + pendingCount;
+      const canDecrement = pendingCount > 0 || effectiveOwnedCount > 0;
+      const canIncrement = pendingTotal < effectiveBudget || removedCount > 0;
+      cardStates.set(maneuverId, {
+        maneuverId,
+        pendingCount,
+        committedCount,
+        removedCount,
+        effectiveOwnedCount,
+        totalCount,
+        isPending: pendingCount > 0,
+        isCommitted: effectiveOwnedCount > 0,
+        isRemoved: removedCount > 0,
+        canIncrement,
+        canDecrement,
+        status: removedCount > 0 ? 'removed'
+          : effectiveOwnedCount > 0 && pendingCount > 0 ? 'pending-additional'
+            : effectiveOwnedCount > 0 ? 'committed'
+              : pendingCount > 0 ? 'pending'
+                : 'available',
+      });
+    }
+
+    const committedSummary = [];
+    for (const [id, count] of committedCounts.entries()) {
+      const removedCount = removedCounts.get(id) ?? 0;
+      const effectiveOwnedCount = Math.max(0, count - removedCount);
+      const maneuver = this._resolveManeuver(id);
+      if (effectiveOwnedCount > 0) committedSummary.push({ id, name: maneuver?.name || id, count: effectiveOwnedCount, status: 'committed' });
+      if (removedCount > 0) committedSummary.push({ id, name: maneuver?.name || id, count: removedCount, status: 'removed' });
+    }
+    for (const [id, count] of pendingCounts.entries()) {
+      if (count <= 0) continue;
+      const maneuver = this._resolveManeuver(id);
+      committedSummary.push({ id, name: maneuver?.name || id, count, status: 'pending' });
+    }
 
     return {
-      maneuvers: this._filteredManeuvers.map(m => this._formatManeuverCard(m, suggestedIds, confidenceMap)),
+      maneuvers: formattedManeuvers,
       focusedManeuverID: this._focusedManeuverID,
-      committedCounts: Object.fromEntries(this._committedManeuverCounts),
+      pendingCounts: Object.fromEntries(pendingCounts),
+      committedCounts: Object.fromEntries(committedCounts),
+      removedCounts: Object.fromEntries(removedCounts),
+      cardStates: Object.fromEntries(cardStates),
       committedSummary,
-      remainingPicks: this._remainingPicks,
+      remainingPicks,
+      selectionBudget: effectiveBudget,
+      totalManeuverTraining: this._totalManeuverTraining,
+      selectedManeuverTraining: Math.min(effectiveBudget, Math.max(this._selectedManeuverTraining, pendingTotal)),
+      knownManeuverCount: Math.max(0, this._sumCounts(committedCounts) - removedTotal + pendingTotal),
+      selectedManeuverCount: pendingTotal,
+      removedManeuverCount: removedTotal,
+      pendingManeuverCount: pendingTotal,
+      hasTrainingSummary: effectiveBudget > 0 || removedTotal > 0,
       hasSuggestions,
       suggestedManeuverIds: Array.from(suggestedIds),
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
@@ -313,113 +389,78 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   }
 
   getSelection() {
-    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
+    const totalSelected = this._sumCounts(this._committedManeuverCounts);
+    const effectiveBudget = this._getEffectiveSelectionBudget();
     return {
       selected: Array.from(this._committedManeuverCounts.keys()),
       count: totalSelected,
-      isComplete: totalSelected >= this._remainingPicks,
+      isComplete: totalSelected >= effectiveBudget,
     };
   }
 
   async onItemFocused(maneuverId, shell) {
-    const maneuver = this._allManeuvers.find(m => m.id === maneuverId);
+    const maneuver = this._resolveManeuver(maneuverId);
     if (!maneuver) return;
 
-    this._focusedManeuverID = maneuverId;
-    shell.focusedItem = maneuver;
-    await handleAskMentor(shell.actor, 'starship-maneuvers', shell);
-    shell.render();
+    const resolvedId = this._normalizeManeuverId(maneuver);
+    this._focusedManeuverID = resolvedId;
+    shell.focusedItem = this._formatManeuverCard(maneuver);
   }
 
   async onItemHovered(maneuverId, shell) {}
 
   async onItemCommitted(maneuverId, shell) {
-    const maneuver = this._allManeuvers.find(m => m.id === maneuverId);
-    if (!maneuver) return;
-
-    const currentCount = this._committedManeuverCounts.get(maneuverId) ?? 0;
-    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
-
-    if (totalSelected < this._remainingPicks) {
-      this._committedManeuverCounts.set(maneuverId, currentCount + 1);
-    }
-
-    const maneuversList = Array.from(this._committedManeuverCounts.entries())
-      .filter(([_, count]) => count > 0)
-      .map(([maneuverId, count]) => ({ id: maneuverId, count }));
-
-    await this._commitNormalized(shell, 'starshipManeuvers', maneuversList);
-
-    // Update observable build intent (Phase 6 solution)
-    if (shell?.buildIntent && this.descriptor?.stepId) {
-      shell.buildIntent.commitSelection(this.descriptor.stepId, 'starshipManeuvers', maneuversList);
-    }
-
-    this._focusedManeuverID = maneuverId;
-    shell.focusedItem = maneuver;
-    shell.render();
+    await this.onIncrementQuantity(maneuverId, shell, { render: false });
   }
 
-  /**
-   * PHASE 3: Increment quantity of a selected maneuver (via [+] button on work-surface or details panel).
-   * Updates the committed count and notifies buildIntent of the new selection state.
-   */
-  async onIncrementQuantity(maneuverId, shell) {
-    const maneuver = this._allManeuvers.find(m => m.id === maneuverId);
+  async onIncrementQuantity(maneuverId, shell, options = {}) {
+    const maneuver = this._resolveManeuver(maneuverId);
     if (!maneuver) return;
 
-    const currentCount = this._committedManeuverCounts.get(maneuverId) ?? 0;
-    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
+    const resolvedId = this._normalizeManeuverId(maneuver);
+    const removedCount = this._removedManeuverCounts.get(resolvedId) ?? 0;
+    const totalSelected = this._sumCounts(this._committedManeuverCounts);
+    const effectiveBudget = this._getEffectiveSelectionBudget();
 
-    // Allow increment if picks remain
-    if (totalSelected < this._remainingPicks) {
-      this._committedManeuverCounts.set(maneuverId, currentCount + 1);
-
-      const maneuversList = Array.from(this._committedManeuverCounts.entries())
-        .filter(([_, count]) => count > 0)
-        .map(([id, count]) => ({ id, count }));
-      await this._commitNormalized(shell, 'starshipManeuvers', maneuversList);
-
-      // Update buildIntent
-      if (shell?.buildIntent && this.descriptor?.stepId) {
-        shell.buildIntent.commitSelection(this.descriptor.stepId, 'starshipManeuvers', maneuversList);
-      }
-
-      shell.render();
+    if (removedCount > 0) {
+      const next = removedCount - 1;
+      if (next > 0) this._removedManeuverCounts.set(resolvedId, next);
+      else this._removedManeuverCounts.delete(resolvedId);
+    } else if (totalSelected < effectiveBudget) {
+      const currentCount = this._committedManeuverCounts.get(resolvedId) ?? 0;
+      this._committedManeuverCounts.set(resolvedId, currentCount + 1);
+    } else {
+      return;
     }
+
+    await this._commitManeuverSelection(shell);
+    this._focusedManeuverID = resolvedId;
+    shell.focusedItem = this._formatManeuverCard(maneuver);
+    if (options.render !== false) shell.render();
   }
 
-  /**
-   * PHASE 3: Decrement quantity of a selected maneuver (via [−] button on work-surface or details panel).
-   * Cannot decrement below 0. Updates committed count and notifies buildIntent of the new selection state.
-   */
   async onDecrementQuantity(maneuverId, shell) {
-    const maneuver = this._allManeuvers.find(m => m.id === maneuverId);
+    const maneuver = this._resolveManeuver(maneuverId);
     if (!maneuver) return;
 
-    const currentCount = this._committedManeuverCounts.get(maneuverId) ?? 0;
+    const resolvedId = this._normalizeManeuverId(maneuver);
+    const currentPending = this._committedManeuverCounts.get(resolvedId) ?? 0;
 
-    // Only decrement if there are pending selections to remove
-    if (currentCount > 0) {
-      this._committedManeuverCounts.set(maneuverId, currentCount - 1);
-
-      // If count reaches 0, remove from map
-      if (this._committedManeuverCounts.get(maneuverId) === 0) {
-        this._committedManeuverCounts.delete(maneuverId);
-      }
-
-      const maneuversList = Array.from(this._committedManeuverCounts.entries())
-        .filter(([_, count]) => count > 0)
-        .map(([id, count]) => ({ id, count }));
-      await this._commitNormalized(shell, 'starshipManeuvers', maneuversList);
-
-      // Update buildIntent
-      if (shell?.buildIntent && this.descriptor?.stepId) {
-        shell.buildIntent.commitSelection(this.descriptor.stepId, 'starshipManeuvers', maneuversList);
-      }
-
-      shell.render();
+    if (currentPending > 0) {
+      const next = currentPending - 1;
+      if (next > 0) this._committedManeuverCounts.set(resolvedId, next);
+      else this._committedManeuverCounts.delete(resolvedId);
+    } else {
+      const ownedCount = this._getActorManeuverCount(shell?.actor, resolvedId);
+      const removedCount = this._removedManeuverCounts.get(resolvedId) ?? 0;
+      if (ownedCount <= removedCount) return;
+      this._removedManeuverCounts.set(resolvedId, removedCount + 1);
     }
+
+    await this._commitManeuverSelection(shell);
+    this._focusedManeuverID = resolvedId;
+    shell.focusedItem = this._formatManeuverCard(maneuver);
+    shell.render();
   }
 
 
@@ -435,9 +476,12 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       return this.renderDetailsPanelEmptyState();
     }
 
-    const currentCount = this._committedManeuverCounts.get(focusedItem.id) ?? 0;
-    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
-    const canAddMore = totalSelected < this._remainingPicks;
+    const stateId = focusedItem.stateId || this._normalizeManeuverId(focusedItem);
+    const currentCount = this._committedManeuverCounts.get(stateId) ?? 0;
+    const committedCount = this._actorManeuverCounts.get(stateId) ?? 0;
+    const removedCount = this._removedManeuverCounts.get(stateId) ?? 0;
+    const totalSelected = this._sumCounts(this._committedManeuverCounts);
+    const canAddMore = totalSelected < this._getEffectiveSelectionBudget() || removedCount > 0;
 
     // Normalize detail panel data for canonical display (no fabrication)
     const normalized = normalizeDetailPanelData(focusedItem, 'starship_maneuver');
@@ -448,6 +492,8 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
         maneuver: focusedItem,
         description: focusedItem.description || focusedItem.system?.description || '',
         selectedCount: currentCount,
+        committedCount,
+        removedCount,
         canAddMore,
         buttonLabel: currentCount > 0 ? 'Add Another Use' : 'Add Maneuver',
         // Add normalized fields for enhanced detail rail
@@ -469,15 +515,16 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   }
 
   validate() {
-    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
-    const isValid = totalSelected >= this._remainingPicks;
-    const errors = isValid ? [] : [`Select ${this._remainingPicks - totalSelected} more Maneuver(s).`];
+    const totalSelected = this._sumCounts(this._committedManeuverCounts);
+    const effectiveBudget = this._getEffectiveSelectionBudget();
+    const isValid = totalSelected >= effectiveBudget;
+    const errors = isValid ? [] : [`Select ${effectiveBudget - totalSelected} more Maneuver(s).`];
     return { isValid, errors, warnings: [] };
   }
 
   getBlockingIssues() {
-    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
-    const remaining = this._remainingPicks - totalSelected;
+    const totalSelected = this._sumCounts(this._committedManeuverCounts);
+    const remaining = this._getEffectiveSelectionBudget() - totalSelected;
     if (remaining <= 0) return [];
     return [`${remaining} Maneuver(s) remaining`];
   }
@@ -485,15 +532,18 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   getWarnings() { return []; }
 
   getRemainingPicks() {
-    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
-    const remaining = this._remainingPicks - totalSelected;
+    const totalSelected = this._sumCounts(this._committedManeuverCounts);
+    const effectiveBudget = this._getEffectiveSelectionBudget();
+    const remaining = effectiveBudget - totalSelected;
 
     if (remaining <= 0) {
       const summaryParts = Array.from(this._committedManeuverCounts.entries()).map(([id, count]) => {
-        const maneuver = this._allManeuvers.find(m => m.id === id);
+        const maneuver = this._resolveManeuver(id);
         const name = maneuver?.name || id;
         return count > 1 ? `${name} ×${count}` : name;
       });
+      const removedTotal = this._sumCounts(this._removedManeuverCounts);
+      if (removedTotal > 0) summaryParts.push(`${removedTotal} replacement slot${removedTotal === 1 ? '' : 's'} opened`);
       const label = summaryParts.length > 0
         ? `✓ ${summaryParts.join(', ')}`
         : `✓ ${totalSelected} Selected`;
@@ -646,11 +696,95 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     return shell.buildIntent.toCharacterData();
   }
 
+  _sumCounts(counts) {
+    return Array.from(counts?.values?.() || []).reduce((sum, count) => sum + (Number(count) || 0), 0);
+  }
+
+  _normalizeManeuverLookupKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[’']/g, '')
+      .replace(/[^a-z0-9]+/g, '-');
+  }
+
+  _normalizeManeuverId(maneuverOrId) {
+    const maneuver = typeof maneuverOrId === 'object' ? maneuverOrId : this._resolveManeuver(maneuverOrId);
+    return String(maneuver?.id || maneuver?._id || maneuver?.uuid || this._normalizeManeuverLookupKey(maneuver?.name || maneuverOrId));
+  }
+
+  _resolveManeuver(maneuverId) {
+    if (!maneuverId) return null;
+    const key = String(maneuverId);
+    const normalized = this._normalizeManeuverLookupKey(key);
+    return this._allManeuvers.find(maneuver => {
+      const ids = [maneuver?.id, maneuver?._id, maneuver?.uuid, maneuver?.name, maneuver?.system?.slug]
+        .filter(Boolean)
+        .map(value => String(value));
+      return ids.includes(key) || ids.some(value => this._normalizeManeuverLookupKey(value) === normalized);
+    }) || null;
+  }
+
+  _getEffectiveSelectionBudget() {
+    return Math.max(0, Number(this._baseRemainingPicks ?? this._remainingPicks) || 0) + this._sumCounts(this._removedManeuverCounts);
+  }
+
+  _getActorManeuverEntries(actor) {
+    const suiteIds = new Set(Array.isArray(actor?.system?.starshipManeuverSuite?.maneuvers)
+      ? actor.system.starshipManeuverSuite.maneuvers.map(value => String(value))
+      : []);
+    const items = actor?.items?.filter?.((item) => String(item?.type || '').toLowerCase() === 'maneuver') || [];
+    const counts = new Map();
+
+    for (const item of items) {
+      if (suiteIds.size && !suiteIds.has(String(item.id || item._id)) && !suiteIds.has(String(item.name || ''))) continue;
+      const candidates = [item.system?.slug, item.flags?.swse?.progression?.selectionId, item.id, item._id, item.name];
+      const resolved = candidates.map((candidate) => this._resolveManeuver(candidate)).find(Boolean);
+      const id = this._normalizeManeuverId(resolved || item.name || item.id);
+      counts.set(id, (counts.get(id) || 0) + 1);
+    }
+
+    return Array.from(counts.entries()).map(([id, count]) => ({ id, count }));
+  }
+
+  _getActorManeuverCount(actor, maneuverId) {
+    if (!this._actorManeuverCounts?.size) {
+      this._actorManeuverCounts = new Map(this._getActorManeuverEntries(actor).map((entry) => [entry.id, entry.count]));
+    }
+    return this._actorManeuverCounts.get(this._normalizeManeuverId(maneuverId)) || 0;
+  }
+
+  async _commitManeuverSelection(shell) {
+    const maneuversList = [];
+    const ids = new Set([
+      ...Array.from(this._committedManeuverCounts.keys()),
+      ...Array.from(this._removedManeuverCounts.keys()),
+    ]);
+
+    for (const id of ids) {
+      const maneuver = this._resolveManeuver(id);
+      const count = Math.max(0, Number(this._committedManeuverCounts.get(id) || 0));
+      const removeCount = Math.max(0, Number(this._removedManeuverCounts.get(id) || 0));
+      if (count <= 0 && removeCount <= 0) continue;
+      maneuversList.push({ id, name: maneuver?.name || id, count, removeCount });
+    }
+
+    await this._commitNormalized(shell, 'starshipManeuvers', maneuversList);
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(this.descriptor.stepId, 'starshipManeuvers', maneuversList);
+    }
+  }
+
   _formatManeuverCard(maneuver, suggestedIds = new Set(), confidenceMap = new Map()) {
-    const isSuggested = this.isSuggestedItem(maneuver.id, suggestedIds);
-    const confidenceData = confidenceMap.get ? confidenceMap.get(maneuver.id) : confidenceMap[maneuver.id];
+    const canonicalId = this._normalizeManeuverId(maneuver);
+    const isSuggested = this.isSuggestedItem(canonicalId, suggestedIds) || this.isSuggestedItem(maneuver.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? (confidenceMap.get(canonicalId) || confidenceMap.get(maneuver.id)) : (confidenceMap[canonicalId] || confidenceMap[maneuver.id]);
     return {
       ...maneuver,
+      id: canonicalId,
+      _id: maneuver?._id || canonicalId,
+      lookupId: canonicalId,
+      stateId: canonicalId,
       isSuggested,
       badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,

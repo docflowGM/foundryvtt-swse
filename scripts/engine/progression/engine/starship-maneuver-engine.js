@@ -16,6 +16,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ManeuverSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/maneuvers/maneuver-slot-validator.js";
+import { launchProgressionSuiteStep } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-suite-launcher.js";
 
 export class StarshipManeuverEngine {
   /**
@@ -76,17 +77,12 @@ export class StarshipManeuverEngine {
   }
 
   /**
-   * Handle Starship Maneuver selection trigger from finalization/level-up pipeline
-   * Opens picker UI and applies selected maneuvers
-   *
-   * PHASE 3.0: Minimal implementation for emergency stabilization
-   * - Opens StarshipManeuverPicker
-   * - Applies selected via ActorEngine (no direct mutations)
-   * - No advanced authority logic (deferred to Phase 3.1+)
+   * Handle Starship Maneuver selection trigger from finalization/level-up pipeline.
+   * Opens the canonical V2 progression step instead of the retired legacy picker.
    *
    * @param {Actor} actor - The actor selecting maneuvers
    * @param {Number} count - How many maneuvers to select
-   * @returns {Promise<Object>} Result with applied count
+   * @returns {Promise<Object>} Result with routing status
    */
   static async handleStarshipManeuverTriggers(actor, count = 1) {
     if (count <= 0) {
@@ -95,38 +91,21 @@ export class StarshipManeuverEngine {
     }
 
     try {
-      // Dynamically import picker to avoid circular dependencies
-      const { StarshipManeuverPicker } = await import("/systems/foundryvtt-swse/scripts/apps/progression/starship-maneuver-picker.js");
+      const shell = await launchProgressionSuiteStep(actor, 'starship-maneuvers', {
+        reason: 'starship-maneuver-trigger',
+        source: 'starship-maneuver-engine',
+        requestedCount: Math.max(0, Number(count) || 0),
+      });
 
-      // Get available maneuvers (actor's existing maneuver items)
-      const available = await this.collectAvailableManeuvers(actor);
-
-      if (available.length === 0) {
-        swseLogger.warn('StarshipManeuverEngine: No maneuvers available on actor');
-        ui.notifications.warn('No Starship Maneuvers available to select.');
-        return { success: true, applied: 0 };
-      }
-
-      // Open picker and get selection
-      const selected = await StarshipManeuverPicker.select(available, count, actor);
-
-      if (selected && selected.length > 0) {
-        // Apply selected maneuvers to suite via ActorEngine
-        const result = await this.applySelected(actor, selected);
-        swseLogger.log('StarshipManeuverEngine: Maneuvers selected', {
-          count: selected.length,
-          actorName: actor.name
-        });
-        return result;
-      }
-
-      swseLogger.log('StarshipManeuverEngine: User cancelled maneuver selection');
-      return { success: true, applied: 0 };
-
+      return shell
+        ? { success: true, applied: 0, message: 'Starship Maneuver training opened in the canonical progression step.' }
+        : { success: false, error: 'Failed to open Starship Maneuver progression step.' };
     } catch (e) {
       swseLogger.error('StarshipManeuverEngine.handleStarshipManeuverTriggers error', e);
-      ui.notifications.error('Failed to open Maneuver selection. See console for details.');
+      ui?.notifications?.error?.('Failed to open Starship Maneuver training. See console for details.');
       return { success: false, error: e.message };
     }
   }
-}
+
+  }
+

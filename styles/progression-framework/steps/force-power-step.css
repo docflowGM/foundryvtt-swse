@@ -610,3 +610,17 @@
 .progression-shell .prog-force-power-details__chip--role {
   color: var(--prog-text-heading);
 }
+
+/* V2 suite reselection badges */
+.progression-shell .prog-force-power-card__status-badge--removed {
+  border-color: rgba(255, 190, 64, 0.55);
+  background: rgba(255, 190, 64, 0.12);
+  color: #ffd27a;
+}
+
+.progression-shell .prog-force-power-details__selection-breakdown,
+.progression-shell .prog-starship-maneuver-details__selection-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}

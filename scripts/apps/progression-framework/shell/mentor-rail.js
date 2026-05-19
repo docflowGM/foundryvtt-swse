@@ -115,8 +115,15 @@ export class MentorRail {
     if (!dialogueText) return;
 
     if (this.shell?._suppressLegacyMentorSpeech && options?.bypassSuppression !== true) {
-      this.shell.mentor.currentDialogue = dialogueText;
-      this.shell.mentor.animationState = 'suppressed';
+      // Legacy step-local chatter is intentionally ignored while the central
+      // MentorChoiceReactionRouter owns this click. Do not mutate
+      // currentDialogue here; doing so caused old per-step fallback lines to
+      // overwrite the rail state before the routed mentor reaction could speak.
+      this.shell.progressionSession?._recordMentorDiagnostic?.('skippedReactions', {
+        reason: 'legacy-mentor-speech-suppressed',
+        textPreview: dialogueText.slice(0, 80),
+        source: options?.source || 'legacy-step',
+      });
       return;
     }
 

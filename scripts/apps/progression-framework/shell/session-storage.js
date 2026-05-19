@@ -50,7 +50,18 @@ export class SessionStorage {
 
     try {
       const sessionData = this._compileSessionData(session, mode);
-      await actor.setFlag('foundryvtt-swse', `progression.${mode}.session`, sessionData);
+      const flagPath = `progression.${mode}.session`;
+      const existing = actor.getFlag?.('foundryvtt-swse', flagPath);
+      if (existing && this._isSemanticallySameSession(existing, sessionData)) {
+        swseLogger.debug('[SessionStorage] Session save skipped; state unchanged', {
+          actorId: actor.id,
+          mode,
+          sessionId: existing.sessionId || sessionData.sessionId,
+        });
+        return true;
+      }
+
+      await actor.setFlag('foundryvtt-swse', flagPath, sessionData);
 
       swseLogger.debug('[SessionStorage] Session saved', {
         actorId: actor.id,
@@ -254,8 +265,9 @@ export class SessionStorage {
    * @private
    */
   static _compileSessionData(session, mode) {
-    // Generate unique session ID for diagnostics
-    const sessionId = `${mode}-${session.actorId}-${Date.now()}`;
+    // Keep a stable session id for the lifetime of this shell. A changing id
+    // makes every autosave look dirty and can feed actor-update render storms.
+    const sessionId = session.sessionId || `${mode}-${session.actorId}-${session.createdAt || Date.now()}`;
 
     return {
       // Metadata
@@ -277,6 +289,40 @@ export class SessionStorage {
       // Entitlements for reference (recomputed on restore)
       derivedEntitlements: { ...session.derivedEntitlements },
     };
+  }
+
+  /** @private */
+  static _isSemanticallySameSession(a = {}, b = {}) {
+    const pick = (value = {}) => ({
+      mode: value.mode || null,
+      subtype: value.subtype || null,
+      version: value.version || 1,
+      draftSelections: value.draftSelections || {},
+      visitedStepIds: value.visitedStepIds || [],
+      invalidatedStepIds: value.invalidatedStepIds || [],
+      currentStepId: value.currentStepId || null,
+      completedStepIds: value.completedStepIds || [],
+      derivedEntitlements: value.derivedEntitlements || {},
+    });
+    return this._stableStringify(pick(a)) === this._stableStringify(pick(b));
+  }
+
+  /** @private */
+  static _stableStringify(value) {
+    const normalize = (input) => {
+      if (Array.isArray(input)) return input.map(normalize);
+      if (!input || typeof input !== 'object') return input;
+      return Object.keys(input).sort().reduce((out, key) => {
+        if (typeof input[key] === 'function') return out;
+        out[key] = normalize(input[key]);
+        return out;
+      }, {});
+    };
+    try {
+      return JSON.stringify(normalize(value));
+    } catch (_err) {
+      return String(value);
+    }
   }
 
   /**

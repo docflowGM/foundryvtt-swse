@@ -144,7 +144,7 @@ export class StoreSurfaceController {
       }, { signal });
     }
 
-    root.querySelectorAll('.store-card[data-item-id]').forEach(card => {
+    root.querySelectorAll('.store-card[data-item-id], .swse-store-surface__card[data-item-id]').forEach(card => {
       card.addEventListener('click', ev => {
         if (ev.target instanceof Element && ev.target.closest('button')) return;
         const id = card.dataset.itemId;
@@ -260,8 +260,32 @@ export class StoreSurfaceController {
   }
 
   _attachSplash(root, signal) {
-    const splash = root.querySelector?.('.swse-store-splash--rendarrs');
+    const splash = root?.querySelector?.('.swse-store-splash--rendarrs')
+      ?? (root?.matches?.('.swse-store-splash--rendarrs') ? root : null);
     if (!splash) return false;
+
+    // Belt-and-suspenders inline routing: the splash initializer also wires the
+    // CTA, but the shell surface owns navigation state. Capture the enter action
+    // at the surface controller level so the button cannot become inert if AppV2
+    // action dispatch or template rehydration misses the direct listener.
+    const enterSelector = '[data-action="store-splash-continue"], [data-store-splash-enter]';
+    root.addEventListener('click', (ev) => {
+      const target = ev.target instanceof Element ? ev.target.closest(enterSelector) : null;
+      if (!target) return;
+      ev.preventDefault();
+      ev.stopImmediatePropagation?.();
+      this._enterStore();
+    }, { signal, capture: true });
+
+    root.addEventListener('keydown', (ev) => {
+      const active = document.activeElement;
+      const isSplashFocus = active instanceof Element && splash.contains(active);
+      if (!isSplashFocus || (ev.key !== 'Enter' && ev.key !== ' ')) return;
+      ev.preventDefault();
+      ev.stopImmediatePropagation?.();
+      this._enterStore();
+    }, { signal, capture: true });
+
     initRendarrStoreSplash(root, {
       signal,
       onContinue: () => this._enterStore(),
@@ -271,7 +295,7 @@ export class StoreSurfaceController {
   }
 
   _enterStore(patch = {}) {
-    this._setOptions({ splashComplete: true, currentView: 'browse', ...patch });
+    this._setOptions({ splashComplete: true, currentView: 'browse', selectedProductId: null, ...patch });
   }
 
   _openHotDeal({ id, name, category } = {}) {
@@ -290,7 +314,8 @@ export class StoreSurfaceController {
   _focusHotDeal(root) {
     const focusId = this._host._shellSurfaceOptions?.hotDealFocusId;
     if (!focusId) return;
-    const selector = `.store-card[data-item-id="${CSS.escape(focusId)}"]`;
+    const safeId = CSS.escape(focusId);
+    const selector = `.store-card[data-item-id="${safeId}"], .swse-store-surface__card[data-item-id="${safeId}"]`;
     const card = root.querySelector(selector);
     if (!card) return;
     card.classList.add('is-hot-deal-focus');
@@ -355,7 +380,7 @@ export class StoreSurfaceController {
     const categoryVal = (this._host._shellSurfaceOptions?.currentCategory ?? '').toLowerCase();
 
     let visible = 0;
-    root.querySelectorAll('.store-card[data-item-id]').forEach(card => {
+    root.querySelectorAll('.store-card[data-item-id], .swse-store-surface__card[data-item-id]').forEach(card => {
       const name = (card.dataset.name ?? '').toLowerCase();
       const cat = (card.dataset.category ?? '').toLowerCase();
       const subtype = (card.dataset.subcategory ?? '').toLowerCase();
@@ -373,19 +398,19 @@ export class StoreSurfaceController {
     const counter = root.querySelector('[data-results-count]');
     if (counter) counter.textContent = visible;
 
-    const emptyEl = root.querySelector('.store-browse-empty');
+    const emptyEl = root.querySelector('.store-browse-empty, .swse-store-surface__empty');
     if (emptyEl) emptyEl.style.display = visible === 0 ? '' : 'none';
   }
 
   _clientSort(root) {
     const sortVal = root.querySelector('#ss-sort')?.value ?? 'default';
-    const grid = root.querySelector('.store-card-grid');
+    const grid = root.querySelector('.store-card-grid, .swse-store-surface__grid');
     if (!grid) {
       this._clientFilter(root);
       return;
     }
 
-    const cards = Array.from(grid.querySelectorAll('.store-card[data-item-id]'));
+    const cards = Array.from(grid.querySelectorAll('.store-card[data-item-id], .swse-store-surface__card[data-item-id]'));
     cards.sort((a, b) => {
       if (sortVal === 'price-asc') return parseFloat(a.dataset.price ?? 0) - parseFloat(b.dataset.price ?? 0);
       if (sortVal === 'price-desc') return parseFloat(b.dataset.price ?? 0) - parseFloat(a.dataset.price ?? 0);

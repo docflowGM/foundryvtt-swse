@@ -2008,7 +2008,19 @@ export class SWSEV2CharacterSheet extends
     derived.talents.groups ??= [];
     derived.talents.list ??= [];
 
-    derived.skills ??= [];
+    const canonicalDerivedSkills = (
+      derived.skills &&
+      typeof derived.skills === 'object' &&
+      !Array.isArray(derived.skills)
+    ) ? foundry.utils.duplicate(derived.skills) : {};
+    const hasCanonicalSkillMap = Object.keys(canonicalDerivedSkills).length > 0;
+    const derivedAttributesMap = (
+      derived.attributes &&
+      typeof derived.attributes === 'object' &&
+      !Array.isArray(derived.attributes)
+    ) ? derived.attributes : {};
+
+    derived.skills ??= {};
 
     derived.attacks ??= {};
     derived.attacks.list ??= [];
@@ -2072,34 +2084,57 @@ export class SWSEV2CharacterSheet extends
       useTheForce: { label: 'Use the Force', ability: 'cha' }
     };
 
-    // FIRST: Build abilities map from system.abilities (needed by skills processing below)
+    // FIRST: Build abilities map from canonical stored components plus derived totals.
+    // The actor stores base/species/misc/temp in system.abilities, while the live
+    // modifier/total contract is emitted by the derived engine. If derived is late
+    // during a repaint, compute from stored components instead of defaulting to 10/+0.
     const abilitiesMap = system.abilities ?? {};
     const abilityMap = {
       'str': 'Strength', 'dex': 'Dexterity', 'con': 'Constitution',
       'int': 'Intelligence', 'wis': 'Wisdom', 'cha': 'Charisma'
     };
 
-    // THEN: Build abilities array from abilitiesMap
+    const toFiniteNumber = (value, fallback = 0) => {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : fallback;
+    };
+
     const abilities = ABILITY_KEYS.map(key => {
       const ability = abilitiesMap[key] ?? {};
-      const mod = ability.mod ?? 0;
+      const derivedAbility = derivedAttributesMap[key] ?? {};
+      const base = toFiniteNumber(ability.base ?? derivedAbility.base, 10);
+      const racial = toFiniteNumber(ability.racial ?? ability.species ?? derivedAbility.racial ?? derivedAbility.species, 0);
+      const enhancement = toFiniteNumber(ability.enhancement ?? ability.misc ?? derivedAbility.enhancement ?? derivedAbility.misc, 0);
+      const temp = toFiniteNumber(ability.temp ?? derivedAbility.temp, 0);
+      const total = Number.isFinite(Number(derivedAbility.total))
+        ? Number(derivedAbility.total)
+        : Number.isFinite(Number(ability.total))
+          ? Number(ability.total)
+          : base + racial + enhancement + temp;
+      const mod = Number.isFinite(Number(derivedAbility.mod))
+        ? Number(derivedAbility.mod)
+        : Number.isFinite(Number(ability.mod))
+          ? Number(ability.mod)
+          : Math.floor((total - 10) / 2);
       return {
         key,
         label: ABILITY_LABELS[key],
-        base: ability.base ?? 10,
-        racial: ability.racial ?? 0,
-        temp: ability.temp ?? 0,
-        total: ability.total ?? 10,
+        base,
+        racial,
+        enhancement,
+        temp,
+        total,
         mod,
         // SEMANTIC: Visual state class for modifier
         modClass: mod > 0 ? 'mod--positive' : mod < 0 ? 'mod--negative' : 'mod--zero'
       };
     });
+    const abilityByKey = new Map(abilities.map((ability) => [ability.key, ability]));
 
     // Build skills array from system.derived.skills (SSOT) - NO CALCULATIONS HERE
     // The derived engine has already calculated all skill bonuses
     const systemSkills = system.skills ?? {};
-    const derivedSkills = derived.skills ?? {};
+    const derivedSkills = canonicalDerivedSkills;
 
     const skillsList = Object.entries(SWSE_SKILL_DEFINITIONS).map(([key, definition]) => {
       const skillData = systemSkills[key] ?? {};
@@ -2109,22 +2144,34 @@ export class SWSEV2CharacterSheet extends
       const selectedAbilityKey = skillData.selectedAbility ?? definition.ability ?? 'str';
       const selectedAbilityLabel = abilityMap[selectedAbilityKey] ?? 'Unknown';
 
-      // Get ability modifier - look it up from the abilities map
-      const selectedAbility = abilitiesMap[selectedAbilityKey] ?? {};
-      const abilityMod = Number.isFinite(selectedAbility.mod) ? selectedAbility.mod : 0;
+      // Get ability modifier from the hardened ability VM, not directly from
+      // system.abilities.*.mod. The stored ability object often has no .mod during
+      // Foundry's repaint cycle.
+      const selectedAbility = abilityByKey.get(selectedAbilityKey) ?? {};
+      const abilityMod = Number.isFinite(Number(derivedData.abilityMod))
+        ? Number(derivedData.abilityMod)
+        : Number.isFinite(Number(selectedAbility.mod))
+          ? Number(selectedAbility.mod)
+          : 0;
 
       // Get halfLevel from system (this is just display, not a calculation)
       const halfLevel = Math.max(0, Math.floor((system.level ?? 1) / 2));
 
       // Ensure all numeric values are safe for template rendering
-      const safeMiscMod = Number.isFinite(skillData.miscMod) ? skillData.miscMod : 0;
+      const safeMiscMod = toFiniteNumber(skillData.miscMod, 0);
 
-      // PHASE 7: Derived is authoritative for skill totals
-      // DerivedCalculator computes and stores skill totals in system.derived.skills[key].total
-      // Sheet should NEVER recompute skill totals — that is DerivedCalculator's job
-      // PHASE 10: Removed happy-path fallback. If derived.total is missing, use error value (0)
-      // rather than rebuilding. This ensures we know when derived computation fails.
-      const safeTotal = Number.isFinite(derivedData.total) ? derivedData.total : 0;
+      // Derived is authoritative for skill totals when present. During a direct
+      // sheet edit repaint, however, derived can be momentarily unavailable. Use a
+      // stable display fallback from the canonical stored components so one checkbox
+      // cannot repaint the whole skill ledger as zero.
+      const focusedBonus = skillData.focused ? 5 : 0;
+      const trainedBonus = skillData.trained ? 5 : 0;
+      const fallbackTotal = abilityMod + halfLevel + safeMiscMod + trainedBonus + focusedBonus;
+      const safeTotal = Number.isFinite(Number(derivedData.total))
+        ? Number(derivedData.total)
+        : Number.isFinite(Number(skillData.total))
+          ? Number(skillData.total)
+          : fallbackTotal;
 
       return {
         key,
@@ -2146,6 +2193,7 @@ export class SWSEV2CharacterSheet extends
       };
     });
 
+    derived.skillsByKey = canonicalDerivedSkills;
     derived.skills = skillsList;
 
     // Phase 10+: Populate extraUses from ExtraSkillUseRegistry with enhanced UX
@@ -2362,8 +2410,8 @@ export class SWSEV2CharacterSheet extends
     const speed = typeof system.speed === "number" ? system.speed : (system.speed?.value ?? 0);
 
     const perceptionTotal = Number(
-      derived.skills?.perception?.total ??
-      derived.skills?.perception ??
+      canonicalDerivedSkills?.perception?.total ??
+      skillsList.find((skill) => skill.key === 'perception')?.total ??
       0
     ) || 0;
 

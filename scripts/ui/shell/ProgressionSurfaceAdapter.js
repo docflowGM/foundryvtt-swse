@@ -57,6 +57,7 @@ export class ProgressionSurfaceAdapter {
     const existing = this._registry.get(key);
     if (existing?._ready) {
       existing._shellHost = shellHost;
+      await existing._navigateToRequestedStep(options);
       return existing;
     }
 
@@ -442,6 +443,28 @@ export class ProgressionSurfaceAdapter {
 
   // ─── Private ────────────────────────────────────────────────────────────────
 
+  async _navigateToRequestedStep(options = {}) {
+    const targetStep = options?.targetStep || options?.currentStep || options?.stepId || null;
+    if (!targetStep || !this._app || !this._ready) return false;
+
+    const index = this._app.steps?.findIndex?.((descriptor) => descriptor?.stepId === targetStep) ?? -1;
+    if (index < 0 || index === this._app.currentStepIndex) return false;
+
+    try {
+      if (typeof this._app.navigateToStep === 'function') {
+        await this._app.navigateToStep(targetStep, { source: options.source || 'inline-target-step' });
+      } else {
+        this._app.currentStepIndex = index;
+        await this._app._activateStep?.(index);
+      }
+      await this._shellHost?.render?.(false);
+      return true;
+    } catch (err) {
+      SWSELogger.error('[ProgressionSurfaceAdapter] Failed to navigate to requested step:', err);
+      return false;
+    }
+  }
+
   async _initialize(actor, mode, options) {
     try {
       const { ChargenShell } = await import(
@@ -594,6 +617,8 @@ export class ProgressionSurfaceAdapter {
       if (options?.skipIntro === true && this._getCurrentStepId() === 'intro') {
         await this.advancePastIntro('inline-launch-skip-intro');
       }
+
+      await this._navigateToRequestedStep(options);
 
       SWSELogger.log(`[ProgressionSurfaceAdapter] Initialized ${mode} for actor ${actor.name}`);
     } catch (err) {

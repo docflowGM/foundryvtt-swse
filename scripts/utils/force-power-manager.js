@@ -1,8 +1,8 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { ForceTrainingEngine } from "/systems/foundryvtt-swse/scripts/engine/force/ForceTrainingEngine.js";
 import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { launchProgressionSuiteStep } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-suite-launcher.js";
 
 /**
  * Force Power Management System
@@ -81,139 +81,32 @@ export class ForcePowerManager {
   }
 
   /**
-   * Open dialogue to select force powers
+   * Open the canonical V2 Force Power progression step.
+   *
+   * Legacy popup selection is intentionally retired: every non-custom force
+   * power selection, reselection, or replacement must flow through the V2
+   * progression step so slots, owned powers, and finalization stay canonical.
+   *
    * @param {Actor} actor - The actor
-   * @param {number} count - Number of powers to select
-   * @param {string} reason - Reason for selection (for dialogue title)
-   * @returns {Promise<Array>} Selected power IDs
+   * @param {number} count - Number of powers requested
+   * @param {string} reason - Reason shown to the progression step
+   * @returns {Promise<Array>} Empty array; finalization owns item creation
    */
   static async selectForcePowers(actor, count, reason = 'Select Force Powers') {
-    const availablePowers = await this.getAvailablePowers();
+    const requestedCount = Math.max(0, Number(count) || 0);
+    const shell = await launchProgressionSuiteStep(actor, 'force-powers', {
+      reason,
+      requestedCount,
+      source: 'force-power-manager',
+    });
 
-    if (availablePowers.length === 0) {
-      ui.notifications.warn('No Force Powers available in compendium');
-      return [];
+    if (!shell) {
+      ui?.notifications?.warn?.('Force power training could not be opened.');
     }
 
-    // Build selection tracker
-    const selectedPowers = new Map(); // power ID -> count
-
-    return new Promise((resolve) => {
-      const powerListHTML = availablePowers.map(power => `
-        <div class="force-power-select-item" data-power-id="${power._id}">
-          <img src="${power.img || 'icons/svg/mystery-man.svg'}" width="32" height="32" alt="${power.name}"/>
-          <div class="power-info">
-            <div class="power-name">${power.name}</div>
-            <div class="power-description">${power.system?.description || ''}</div>
-          </div>
-          <div class="power-quantity-controls">
-            <button type="button" class="power-decrease" data-power-id="${power._id}">
-              <i class="fa-solid fa-minus"></i>
-            </button>
-            <span class="power-count" data-power-id="${power._id}">0</span>
-            <button type="button" class="power-increase" data-power-id="${power._id}">
-              <i class="fa-solid fa-plus"></i>
-            </button>
-          </div>
-        </div>
-      `).join('');
-
-      const dialogContent = `
-        <div class="force-power-selector">
-          <div class="selection-header">
-            <p>Select <strong><span class="remaining-count">${count}</span></strong> Force Power(s)</p>
-            <p class="hint">Powers can be selected multiple times</p>
-          </div>
-          <div class="force-powers-list">
-            ${powerListHTML}
-          </div>
-        </div>
-      `;
-
-      const dialog = new SWSEDialogV2({
-        title: reason,
-        content: dialogContent,
-        buttons: {
-          ok: {
-            icon: '<i class="fa-solid fa-check"></i>',
-            label: 'Confirm Selection',
-            callback: (html) => {
-              const selected = [];
-              selectedPowers.forEach((count, powerId) => {
-                for (let i = 0; i < count; i++) {
-                  selected.push(powerId);
-                }
-              });
-              resolve(selected);
-            }
-          },
-          cancel: {
-            icon: '<i class="fa-solid fa-times"></i>',
-            label: 'Cancel',
-            callback: () => resolve([])
-          }
-        },
-        default: 'ok',
-        render: (html) => {
-          // Convert to DOM element if needed
-          const element = html instanceof HTMLElement ? html : html[0];
-          if (!element) {return;}
-
-          const updateRemaining = () => {
-            const total = Array.from(selectedPowers.values()).reduce((sum, val) => sum + val, 0);
-            const remaining = count - total;
-            const remainingElement = element.querySelector('.remaining-count');
-            if (remainingElement) {remainingElement.textContent = remaining;}
-
-            // Disable increase buttons if at limit
-            const disableIncrease = remaining <= 0;
-            element.querySelectorAll('.power-increase').forEach(btn => {
-              btn.disabled = disableIncrease;
-            });
-          };
-
-          // Increase button
-          element.querySelectorAll('.power-increase').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              const powerId = e.currentTarget.dataset.powerId;
-              const current = selectedPowers.get(powerId) || 0;
-              const total = Array.from(selectedPowers.values()).reduce((sum, val) => sum + val, 0);
-
-              if (total < count) {
-                selectedPowers.set(powerId, current + 1);
-                const countElement = element.querySelector(`.power-count[data-power-id="${powerId}"]`);
-                if (countElement) {countElement.textContent = current + 1;}
-                updateRemaining();
-              }
-            });
-          });
-
-          // Decrease button
-          element.querySelectorAll('.power-decrease').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              const powerId = e.currentTarget.dataset.powerId;
-              const current = selectedPowers.get(powerId) || 0;
-
-              if (current > 0) {
-                const newCount = current - 1;
-                if (newCount === 0) {
-                  selectedPowers.delete(powerId);
-                } else {
-                  selectedPowers.set(powerId, newCount);
-                }
-                const countElement = element.querySelector(`.power-count[data-power-id="${powerId}"]`);
-                if (countElement) {countElement.textContent = newCount;}
-                updateRemaining();
-              }
-            });
-          });
-
-          updateRemaining();
-        }
-      });
-
-      dialog.render(true);
-    });
+    // Selection is completed by the V2 progression finalizer. Returning [] keeps
+    // legacy callers from attempting duplicate direct grants.
+    return [];
   }
 
   /**
@@ -254,22 +147,15 @@ export class ForcePowerManager {
    */
   static async handleForceSensitivity(actor) {
     // Force Sensitivity grants 1 force power
-    const selectedPowers = await this.selectForcePowers(actor, 1, 'Force Sensitivity - Select 1 Power');
+    await this.selectForcePowers(actor, 1, 'Force Sensitivity - Select 1 Power');
 
-    if (selectedPowers.length > 0) {
-      await this.grantForcePowers(actor, selectedPowers);
-
-      // Initialize force suite if not already set
-      if (!actor.system.forceSuite) {
-        await globalThis.SWSE.ActorEngine.updateActor(actor, {
-          'system.forceSuite': {
-            max: 0,
-            powers: []
-          }
-        });
-
-
-      }
+    if (!actor.system.forceSuite) {
+      await globalThis.SWSE.ActorEngine.updateActor(actor, {
+        'system.forceSuite': {
+          max: 0,
+          powers: []
+        }
+      });
     }
   }
 
@@ -283,15 +169,11 @@ export class ForcePowerManager {
     const modifier = this.getForceAbilityModifier(actor);
     const powerCount = 1 + Math.max(0, modifier);
 
-    const selectedPowers = await this.selectForcePowers(
+    await this.selectForcePowers(
       actor,
       powerCount,
       `Force Training - Select ${powerCount} Power(s)`
     );
-
-    if (selectedPowers.length > 0) {
-      await this.grantForcePowers(actor, selectedPowers);
-    }
 
     // Update force suite maximum
     const newMax = this.calculateForceSuiteSize(actor);
@@ -327,15 +209,11 @@ export class ForcePowerManager {
           `Granting ${powerCount} Force Power(s) (${forceTrainingCount} Force Training feat${forceTrainingCount > 1 ? 's' : ''})`
         );
 
-        const selectedPowers = await this.selectForcePowers(
+        await this.selectForcePowers(
           actor,
           powerCount,
           `Ability Increase - Select ${powerCount} Power(s)`
         );
-
-        if (selectedPowers.length > 0) {
-          await this.grantForcePowers(actor, selectedPowers);
-        }
 
         // Update force suite maximum
         const newMax = this.calculateForceSuiteSize(actor);
