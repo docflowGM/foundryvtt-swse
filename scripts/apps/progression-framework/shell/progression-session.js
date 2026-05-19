@@ -130,6 +130,9 @@ export class ProgressionSession {
       contextUpdates: [],
       preservedContexts: [],
       choiceReactions: [],
+      skippedReactions: [],
+      coverageWarnings: [],
+      fallbackPaths: [],
     };
 
     // Commit diagnostics are non-blocking breadcrumbs. A bad step commit must
@@ -324,7 +327,7 @@ export class ProgressionSession {
 
   _recordMentorDiagnostic(bucket, entry = {}) {
     if (!this.mentorDiagnostics) {
-      this.mentorDiagnostics = { contextUpdates: [], preservedContexts: [], choiceReactions: [] };
+      this.mentorDiagnostics = { contextUpdates: [], preservedContexts: [], choiceReactions: [], skippedReactions: [], coverageWarnings: [], fallbackPaths: [] };
     }
     if (!Array.isArray(this.mentorDiagnostics[bucket])) {
       this.mentorDiagnostics[bucket] = [];
@@ -430,7 +433,7 @@ export class ProgressionSession {
     this.invalidatedStepIds = [];
     this.projectedCharacter = null;
     this.mentorContext = this._createDefaultMentorContext('session reset');
-    this.mentorDiagnostics = { contextUpdates: [], preservedContexts: [], choiceReactions: [] };
+    this.mentorDiagnostics = { contextUpdates: [], preservedContexts: [], choiceReactions: [], skippedReactions: [], coverageWarnings: [], fallbackPaths: [] };
     this.advisoryContext.mentorId = this.mentorContext.mentorId;
     this.lastModifiedAt = Date.now();
   }

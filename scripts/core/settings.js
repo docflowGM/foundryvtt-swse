@@ -349,6 +349,42 @@ game.settings.register('foundryvtt-swse', 'debugMode', {
     default: true
   });
 
+
+  // Mentor rail choice-reaction tuning. These settings affect the in-rail
+  // micro-reactions fired by normal progression clicks, not the core step
+  // guidance/fallback dialogue.
+  game.settings.register('foundryvtt-swse', 'mentorReactionMode', {
+    name: 'Mentor Rail Choice Reactions',
+    hint: 'Controls how often the mentor rail reacts to progression choices. Full reacts to normal choices, Important Only speaks for high-impact choices, Off disables choice reactions.',
+    scope: 'client',
+    config: true,
+    type: String,
+    choices: {
+      full: 'Full',
+      important: 'Important Only',
+      off: 'Off'
+    },
+    default: 'full'
+  });
+
+  game.settings.register('foundryvtt-swse', 'mentorFocusReactionsEnabled', {
+    name: 'Mentor Rail Focus Reactions',
+    hint: 'Allow brief mentor rail reactions when browsing/focusing choices. Commit/select reactions still follow the Mentor Rail Choice Reactions setting.',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register('foundryvtt-swse', 'mentorReactionDebug', {
+    name: 'Mentor Rail Reaction Debugging',
+    hint: 'Expose mentor rail debug console helpers and additional diagnostics for GMs and content maintainers.',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   // Phase 3b: Store GM Approval Gate Setting
   game.settings.register('foundryvtt-swse', 'store.requireGMApproval', {
     name: 'SWSE.Settings.Store.RequireGMApproval.Name',

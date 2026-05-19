@@ -33,6 +33,7 @@ import { StepCategory } from '../steps/step-descriptor.js';
 import { ActionFooter } from './action-footer.js';
 import { MentorRail } from './mentor-rail.js';
 import { MentorChoiceReactionRouter } from './mentor-choice-reaction-router.js';
+import { registerMentorReactionDebug } from './mentor-reaction-debug.js';
 import { ProgressRail } from './progress-rail.js';
 import { UtilityBar } from './utility-bar.js';
 import { HydrationDiagnosticsCollector, HydrationValidator, HydrationRecoveryStrategies } from '../hydration-diagnostics.js';
@@ -184,6 +185,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     console.log('[TEMP AUDIT] Calling _initializeSteps...');
     await app._initializeSteps();
     console.log('[TEMP AUDIT] Steps initialized, count:', app.steps?.length || 0);
+    app.mentorChoiceReactions?.validateReactionCoverage?.();
 
     // Initialize the first step (critical for post-splash Species entry)
     console.log('[TEMP AUDIT] Calling _initializeFirstStep...');
@@ -295,6 +297,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Subsystem controllers
     this.mentorRail = new MentorRail(this);
     this.mentorChoiceReactions = new MentorChoiceReactionRouter(this);
+    registerMentorReactionDebug(this);
     this._suppressLegacyMentorSpeech = false;
     this.progressRail = new ProgressRail(this);
     this.utilityBar = new UtilityBar(this);

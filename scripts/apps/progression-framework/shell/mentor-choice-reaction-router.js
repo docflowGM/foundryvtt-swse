@@ -23,6 +23,8 @@ import { MentorJudgmentEngine } from '/systems/foundryvtt-swse/scripts/engine/me
 import { REASON_ATOMS } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-reason-atoms.js';
 import { resolveStepMentorContext, STEP_TO_CHOICE_TYPE } from '../steps/mentor-step-integration.js';
 
+const SYSTEM_ID = 'foundryvtt-swse';
+
 const LANGUAGE_STEPS = new Set(['language', 'languages']);
 
 const PASSIVE_ACTIONS = new Set([
@@ -70,9 +72,13 @@ const STEP_TO_DOMAIN = {
   'force-powers': 'forcepowers',
   'force-secrets': 'force-secrets',
   'force-techniques': 'force-techniques',
+  'medical-secrets': 'medical-secrets',
+  'starship-maneuver': 'starship-maneuvers',
+  'starship-maneuvers': 'starship-maneuvers',
   'droid-builder': 'droid-systems',
   'droid-degree': 'droid-systems',
   'droid-model': 'droid-systems',
+  'final-droid-configuration': 'droid-systems',
 };
 
 const SEARCH_ARRAY_KEYS = [
@@ -98,6 +104,31 @@ const ITEM_ID_DATASET_KEYS = [
 
 const VALID_MOODS = new Set(['neutral', 'encouraging', 'cautionary', 'celebratory']);
 
+const REACTION_MODES = new Set(['full', 'important', 'off']);
+
+const NON_CHOICE_STEPS = new Set([
+  'intro', 'name', 'summary', 'confirm', 'levelup-review', 'languages', 'language',
+]);
+
+const HIGH_VALUE_STEPS = new Set([
+  'species', 'class', 'background', 'general-feat', 'class-feat', 'nonheroic-starting-feats',
+  'general-talent', 'class-talent', 'force-powers', 'force-secrets', 'force-techniques',
+  'medical-secrets', 'starship-maneuver', 'starship-maneuvers',
+]);
+
+const MEDIUM_VALUE_STEPS = new Set([
+  'attribute', 'ability', 'ability-scores', 'skills', 'droid-builder', 'droid-degree',
+  'droid-model', 'final-droid-configuration',
+]);
+
+const REQUIRED_REACTION_STEPS = new Set([
+  'species', 'class', 'attribute', 'ability', 'ability-scores', 'background', 'skills',
+  'general-feat', 'class-feat', 'nonheroic-starting-feats',
+  'general-talent', 'class-talent', 'force-powers', 'force-secrets', 'force-techniques',
+  'medical-secrets', 'starship-maneuver', 'starship-maneuvers',
+  'droid-builder', 'droid-degree', 'droid-model', 'final-droid-configuration',
+]);
+
 function normalizeKey(value) {
   return String(value || '')
     .trim()
@@ -113,6 +144,24 @@ function asArray(value) {
   if (value instanceof Map) return Array.from(value.values());
   if (typeof value === 'object') return Object.values(value);
   return [];
+}
+
+function getSetting(key, fallback = null) {
+  try {
+    return globalThis.game?.settings?.get?.(SYSTEM_ID, key) ?? fallback;
+  } catch (_) {
+    return fallback;
+  }
+}
+
+function isDebugEnabled() {
+  return globalThis.game?.user?.isGM === true && getSetting('mentorReactionDebug', false) === true;
+}
+
+function clamp01(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return 0;
+  return Math.max(0, Math.min(1, number));
 }
 
 function itemName(item, fallback = 'this choice') {
@@ -184,6 +233,10 @@ export class MentorChoiceReactionRouter {
     this._lastReactionKey = null;
     this._lastReactionAt = 0;
     this._sequence = 0;
+    this._lastSkippedReaction = null;
+    this._lastFallbackPath = null;
+    this._coverageReport = null;
+    this._coverageValidated = false;
   }
 
   reactToInteraction(payload = {}) {
@@ -192,11 +245,21 @@ export class MentorChoiceReactionRouter {
       const stepId = payload.stepId || descriptor?.stepId || this.shell?.progressionSession?.currentStepId || null;
       if (!stepId || LANGUAGE_STEPS.has(stepId)) return;
 
+      const tuning = this.getTuningSnapshot();
+      if (!tuning.mentorGuidanceEnabled || tuning.mode === 'off') {
+        this._recordSkippedReaction({ stepId, action: payload.action || null, reason: tuning.mode === 'off' ? 'mode-off' : 'mentor-guidance-disabled' });
+        return;
+      }
+
       const actionName = payload.actionName || payload.target?.dataset?.action || payload.action || null;
       if (actionName && PASSIVE_ACTIONS.has(actionName)) return;
 
       const action = this._normalizeAction(payload.action, actionName);
       if (!action) return;
+      if (action === 'focus' && !tuning.focusReactionsEnabled) {
+        this._recordSkippedReaction({ stepId, action, actionName, reason: 'focus-reactions-disabled' });
+        return;
+      }
 
       const target = payload.target || payload.event?.target || null;
       const itemIdValue = payload.itemId || this._itemIdFromTarget(target) || this._itemIdFromTarget(payload.event?.target) || null;
@@ -207,8 +270,11 @@ export class MentorChoiceReactionRouter {
 
       const reactionKey = [stepId, action, normalizeKey(resolvedId || itemName(item)), actionName || ''].join(':');
       const now = Date.now();
-      const minInterval = action === 'focus' ? 1250 : 450;
-      if (reactionKey === this._lastReactionKey && now - this._lastReactionAt < minInterval) return;
+      const minInterval = this._throttleMs({ stepId, action });
+      if (reactionKey === this._lastReactionKey && now - this._lastReactionAt < minInterval) {
+        this._recordSkippedReaction({ stepId, action, actionName, itemId: resolvedId, reason: 'throttled', throttleMs: minInterval });
+        return;
+      }
       this._lastReactionKey = reactionKey;
       this._lastReactionAt = now;
 
@@ -227,6 +293,72 @@ export class MentorChoiceReactionRouter {
     } catch (err) {
       swseLogger.warn('[MentorChoiceReactionRouter] Failed to queue mentor reaction', err);
     }
+  }
+
+
+  getTuningSnapshot() {
+    const mode = String(getSetting('mentorReactionMode', 'full') || 'full').toLowerCase();
+    const normalizedMode = REACTION_MODES.has(mode) ? mode : 'full';
+    return {
+      mode: normalizedMode,
+      focusReactionsEnabled: getSetting('mentorFocusReactionsEnabled', true) !== false,
+      debugEnabled: isDebugEnabled(),
+      mentorGuidanceEnabled: getSetting('mentorGuidanceEnabled', true) !== false,
+    };
+  }
+
+  getDebugSnapshot() {
+    return {
+      lastReactionKey: this._lastReactionKey,
+      lastReactionAt: this._lastReactionAt,
+      lastSkippedReaction: this._lastSkippedReaction,
+      lastFallbackPath: this._lastFallbackPath,
+      coverageReport: this._coverageReport,
+      tuning: this.getTuningSnapshot(),
+    };
+  }
+
+  canReactToStep(stepId) {
+    if (!stepId || LANGUAGE_STEPS.has(stepId) || NON_CHOICE_STEPS.has(stepId)) return false;
+    return !!(STEP_TO_DOMAIN[stepId] || STEP_TO_CHOICE_TYPE[stepId] || REQUIRED_REACTION_STEPS.has(stepId));
+  }
+
+  validateReactionCoverage(options = {}) {
+    const force = options.force === true;
+    if (this._coverageValidated && !force) return this._coverageReport;
+
+    const steps = asArray(this.shell?.steps).map(step => step?.stepId).filter(Boolean);
+    const relevant = steps.filter(stepId => !LANGUAGE_STEPS.has(stepId) && !NON_CHOICE_STEPS.has(stepId));
+    const coverage = relevant.map(stepId => ({
+      stepId,
+      covered: this.canReactToStep(stepId),
+      domain: STEP_TO_DOMAIN[stepId] || STEP_TO_CHOICE_TYPE[stepId] || null,
+      importance: this._stepBaseImportance(stepId),
+    }));
+    const missing = coverage.filter(row => !row.covered).map(row => row.stepId);
+    const requiredMissing = Array.from(REQUIRED_REACTION_STEPS)
+      .filter(stepId => steps.includes(stepId) && !this.canReactToStep(stepId));
+
+    const report = {
+      ok: missing.length === 0 && requiredMissing.length === 0,
+      total: coverage.length,
+      covered: coverage.filter(row => row.covered).length,
+      missing,
+      requiredMissing,
+      coverage,
+      checkedAt: Date.now(),
+    };
+
+    this._coverageReport = report;
+    this._coverageValidated = true;
+
+    if (!report.ok) {
+      this._recordCoverageWarning(report);
+      if (isDebugEnabled()) {
+        swseLogger.warn('[MentorChoiceReactionRouter] Mentor reaction coverage gaps detected', report);
+      }
+    }
+    return report;
   }
 
   _normalizeAction(action, actionName) {
@@ -255,8 +387,25 @@ export class MentorChoiceReactionRouter {
       const isSuggested = !!suggestion || this._targetLooksSuggested(target);
       const atoms = this._collectAtoms({ suggestion, item, action, stepId, isSuggested });
       const intensity = this._resolveIntensity(suggestion, action, isSuggested);
+      const importance = this._resolveImportance({ stepId, action, actionName: context.actionName, item, suggestion, isSuggested, intensity, atoms });
+      const tuning = this.getTuningSnapshot();
+      if (!this._shouldReactForTuning({ tuning, action, importance, isSuggested, intensity, atoms })) {
+        this._recordSkippedReaction({
+          stepId,
+          action,
+          actionName: context.actionName,
+          itemId: resolvedItemId,
+          itemName: itemName(item),
+          reason: tuning.mode === 'important' ? 'below-important-threshold' : 'tuning-suppressed',
+          importance,
+          intensity,
+          mode: tuning.mode,
+        });
+        return;
+      }
       const normalizedSuggestion = this._normalizeSuggestion(suggestion, item, atoms, intensity, action, isSuggested);
 
+      let textSource = 'orchestrator';
       let text = await this._buildOrchestratedText({
         mentorId,
         mentorName,
@@ -269,6 +418,8 @@ export class MentorChoiceReactionRouter {
       });
 
       if (!text || this._isEmptyMentorText(text)) {
+        textSource = 'metadata-fallback';
+        this._recordFallbackPath({ stepId, action, item, mentorId, reason: 'orchestrator-and-advisory-empty', atoms, intensity });
         text = this._buildFallbackText({ mentorId, mentorName, stepId, action, item, atoms, intensity, suggestion: normalizedSuggestion });
       }
 
@@ -276,7 +427,7 @@ export class MentorChoiceReactionRouter {
       if (!text || token !== this._sequence && action === 'focus') return;
 
       await this._speak(text, this._moodFor(atoms, action, intensity));
-      this._recordReactionBreadcrumb({ stepId, action, item, mentorId, atoms, intensity, source: suggestion ? 'suggestion' : 'metadata' });
+      this._recordReactionBreadcrumb({ stepId, action, item, mentorId, atoms, intensity, importance, source: suggestion ? textSource : 'metadata', textSource });
     } catch (err) {
       swseLogger.warn('[MentorChoiceReactionRouter] Mentor reaction failed', {
         stepId: context?.stepId || null,
@@ -695,6 +846,54 @@ export class MentorChoiceReactionRouter {
     return intensity;
   }
 
+
+  _throttleMs({ stepId, action }) {
+    const baseImportance = this._stepBaseImportance(stepId);
+    if (action === 'focus') return baseImportance >= 0.75 ? 1100 : 1750;
+    if (action === 'uncommit') return 700;
+    return baseImportance >= 0.75 ? 350 : 550;
+  }
+
+  _stepBaseImportance(stepId) {
+    if (HIGH_VALUE_STEPS.has(stepId)) return 0.9;
+    if (MEDIUM_VALUE_STEPS.has(stepId)) return 0.65;
+    if (STEP_TO_DOMAIN[stepId] || STEP_TO_CHOICE_TYPE[stepId]) return 0.55;
+    return 0.35;
+  }
+
+  _resolveImportance({ stepId, action, suggestion, isSuggested, intensity, atoms }) {
+    let score = this._stepBaseImportance(stepId);
+    if (action === 'commit') score += 0.18;
+    if (action === 'uncommit') score += 0.08;
+    if (action === 'focus') score -= 0.18;
+    if (isSuggested) score += 0.12;
+    if (['high', 'very_high'].includes(intensity)) score += 0.1;
+    if (['very_low', 'low'].includes(intensity)) score -= 0.08;
+    if (atoms?.some?.(atom => [REASON_ATOMS.RiskIncreased, REASON_ATOMS.DependencyChain, REASON_ATOMS.RareChoice, REASON_ATOMS.ThresholdApproaching].includes(atom))) {
+      score += 0.1;
+    }
+    const confidence = Number(suggestion?.suggestion?.confidence ?? suggestion?.confidence ?? 0) || 0;
+    if (confidence >= 0.8) score += 0.08;
+    return clamp01(score);
+  }
+
+  _shouldReactForTuning({ tuning, action, importance, isSuggested, intensity, atoms }) {
+    if (!tuning?.mentorGuidanceEnabled || tuning?.mode === 'off') return false;
+    if (action === 'focus' && tuning.focusReactionsEnabled === false) return false;
+    if (tuning.mode === 'full') {
+      if (action === 'focus') return importance >= 0.42 || isSuggested;
+      return importance >= 0.35;
+    }
+    if (tuning.mode === 'important') {
+      if (action === 'focus') return importance >= 0.78 || (isSuggested && importance >= 0.65);
+      return importance >= 0.72
+        || isSuggested
+        || ['high', 'very_high'].includes(intensity)
+        || atoms?.some?.(atom => [REASON_ATOMS.RiskIncreased, REASON_ATOMS.DependencyChain, REASON_ATOMS.RareChoice].includes(atom));
+    }
+    return false;
+  }
+
   _moodFor(atoms, action, intensity) {
     if (atoms.some(atom => [REASON_ATOMS.RiskIncreased, REASON_ATOMS.PatternConflict, REASON_ATOMS.ReadinessLacking, REASON_ATOMS.ThresholdApproaching].includes(atom))) {
       return 'cautionary';
@@ -750,7 +949,69 @@ export class MentorChoiceReactionRouter {
     }, 850);
   }
 
-  _recordReactionBreadcrumb({ stepId, action, item, mentorId, atoms, intensity, source }) {
+
+  _recordFallbackPath(entry = {}) {
+    try {
+      const breadcrumb = {
+        type: 'choice-reaction-fallback-path',
+        ...entry,
+        itemId: itemId(entry.item),
+        itemName: itemName(entry.item),
+        timestamp: Date.now(),
+      };
+      delete breadcrumb.item;
+      this._lastFallbackPath = breadcrumb;
+      const session = this.shell?.progressionSession;
+      if (typeof session?._recordMentorDiagnostic === 'function') {
+        session._recordMentorDiagnostic('fallbackPaths', breadcrumb);
+      }
+      if (isDebugEnabled()) {
+        swseLogger.debug('[MentorChoiceReactionRouter] Fallback path used', breadcrumb);
+      }
+    } catch (_) {
+      // Diagnostics must never affect player interaction.
+    }
+  }
+
+  _recordSkippedReaction(entry = {}) {
+    try {
+      const breadcrumb = {
+        type: 'choice-reaction-skipped',
+        ...entry,
+        timestamp: Date.now(),
+      };
+      this._lastSkippedReaction = breadcrumb;
+      const session = this.shell?.progressionSession;
+      if (typeof session?._recordMentorDiagnostic === 'function') {
+        session._recordMentorDiagnostic('skippedReactions', breadcrumb);
+      }
+      if (isDebugEnabled()) {
+        swseLogger.debug('[MentorChoiceReactionRouter] Reaction skipped', breadcrumb);
+      }
+    } catch (_) {
+      // Diagnostics must never affect player interaction.
+    }
+  }
+
+  _recordCoverageWarning(report) {
+    try {
+      const warning = {
+        type: 'choice-reaction-coverage',
+        missing: report.missing || [],
+        requiredMissing: report.requiredMissing || [],
+        total: report.total,
+        covered: report.covered,
+      };
+      const session = this.shell?.progressionSession;
+      if (typeof session?._recordMentorDiagnostic === 'function') {
+        session._recordMentorDiagnostic('coverageWarnings', warning);
+      }
+    } catch (_) {
+      // Diagnostics must never affect player interaction.
+    }
+  }
+
+  _recordReactionBreadcrumb({ stepId, action, item, mentorId, atoms, intensity, importance, source, textSource }) {
     try {
       const session = this.shell?.progressionSession;
       const breadcrumb = {
@@ -762,7 +1023,9 @@ export class MentorChoiceReactionRouter {
         mentorId,
         atoms,
         intensity,
+        importance,
         source,
+        textSource,
         timestamp: Date.now(),
       };
       if (typeof session?._recordMentorDiagnostic === 'function') {
