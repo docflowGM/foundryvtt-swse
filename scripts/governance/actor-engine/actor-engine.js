@@ -1329,7 +1329,12 @@ export const ActorEngine = {
         }
       }
 
-      await this.updateActor(actor, updates);
+      // RENDER SEQUENCING FIX: Suppress intermediate renders. Damage application affects
+      // both HP and condition track, which both impact derived values. After updateActor
+      // completes recalcAll(), _refreshOpenActorApps() will render with stable data.
+      await this.updateActor(actor, updates, {
+        render: false
+      });
 
       SWSELogger.log(`Damage applied to ${actor.name}: ${damagePacket.amount} incoming → ${resolution.damageToHP} HP`, {
         source: damagePacket.source,
@@ -1451,8 +1456,15 @@ export const ActorEngine = {
         return { applied: 0, newStep: clampedStep };
       }
 
+      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
+      // Pass render: false to actor.update() to prevent Foundry from auto-rendering.
+      // After recalcAll() completes, _refreshOpenActorApps() will render once with
+      // stable derived data (system.derived.damage.conditionPenalty). This ensures the
+      // condition track step and penalty display are always in sync.
       await this.updateActor(actor, {
         'system.conditionTrack.current': clampedStep
+      }, {
+        render: false
       });
 
       SWSELogger.log(`Condition step updated for ${actor.name}`, {
@@ -1493,9 +1505,12 @@ export const ActorEngine = {
         return { applied: 0, persistent };
       }
 
+      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
       await this.updateActor(actor, {
         'system.conditionTrack.persistent': persistent,
         ...(persistent ? {} : { 'system.conditionTrack.persistentSteps': 0 })
+      }, {
+        render: false
       });
 
       SWSELogger.log(`Condition persistent flag updated for ${actor.name}`, {
@@ -1545,8 +1560,11 @@ export const ActorEngine = {
         return { applied: 0, newCondition };
       }
 
+      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
       await this.updateActor(actor, {
         'system.conditionTrack.current': newCondition
+      }, {
+        render: false
       });
 
       const directionLabel = direction > 0 ? 'worsened' : 'improved';
@@ -1583,7 +1601,10 @@ export const ActorEngine = {
 
       const current = Math.max(0, Number(actor.system?.conditionTrack?.persistentSteps ?? 0));
       const total = current + delta;
-      await this.updateActor(actor, { 'system.conditionTrack.persistentSteps': total });
+      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
+      await this.updateActor(actor, { 'system.conditionTrack.persistentSteps': total }, {
+        render: false
+      });
       return { applied: delta, total, source };
     } catch (err) {
       SWSELogger.error(`ActorEngine.incrementPersistentConditionSteps failed for ${actor?.name ?? 'unknown actor'}`, { error: err, amount, source });
