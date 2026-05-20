@@ -616,12 +616,16 @@ export const ActorEngine = {
       // Phase 3A & 3D normalizations are now handled in Phase 4 comprehensive normalization above
 
       // ========================================
-      // PHASE 1 DIAGNOSTICS: Semantic boundary audit
-      // Warning-only — no payload changes, no rejection.
-      // Evidence collection before Phase 2 enforcement.
+      // PHASE 1 DIAGNOSTICS: Semantic boundary audit (warning-only)
+      // PHASE 2 CLASSIFICATION: Source-based false-positive suppression
+      // PHASE 3 GUARDRAILS: Safe automatic correction for proven-unsafe paths
+      //
+      // Phase 1/2: identify and classify suspicious payloads (no payload changes).
+      // Phase 3: correct paths we know are wrong for live/unknown callers.
+      // Future phases: convert warning-only broad replacements to strict enforcement
+      //   after runtime validation proves parity.
       //
       // Long-term invariant: ActorEngine is the public mutation facade.
-      // Future phases will enforce semantic rules here only after parity is proven.
       // ========================================
       const _opCategory = this._classifyOperationIntent(normalizedUpdateData, options, actor);
       // Pass the ORIGINAL updateData (pre-normalization) so check #1 can detect whether the
@@ -629,6 +633,9 @@ export const ActorEngine = {
       // _normalizeMutationForContract runs expandObject(), normalizedUpdateData.system is
       // always an object — using it here would false-positive on every safe narrow update.
       this._auditSemanticBoundaries(updateData, flatUpdateData, actor, _opCategory, options);
+      // Phase 3: apply guardrails — safe corrections to proven-unsafe paths.
+      // Result replaces flatUpdateData as the payload that crosses the document boundary.
+      const p3FlatData = this._applyPhase3Guardrails(flatUpdateData, _opCategory, actor, options);
 
       // ========================================
       // PHASE 2: Mark mutation as in-flight before any reactive code can run
@@ -661,7 +668,7 @@ export const ActorEngine = {
           // [MUTATION TRACE] ENGINE — handoff to applyActorUpdateAtomic
           traceLog('ENGINE', `handoff to applyActorUpdateAtomic (traceId=${_traceId})`, {
             actor:   actorSummary(actor),
-            payload: payloadSummary(foundry.utils.flattenObject(normalizedUpdateData))
+            payload: payloadSummary(p3FlatData)
           });
           // Foundry's update boundary is safest with flattened dot-path payloads.
           // Passing a nested partial like {system:{skills:{acrobatics:{trained:true}}}}
@@ -669,7 +676,8 @@ export const ActorEngine = {
           // exactly the failure mode that makes one skill checkbox repaint the whole
           // skill table with zero totals. Keep the ActorEngine contract normalized, but
           // cross the document update boundary as explicit leaf paths.
-          const atomicUpdateData = foundry.utils.flattenObject(normalizedUpdateData);
+          // p3FlatData is flatUpdateData after Phase 3 guardrail corrections.
+          const atomicUpdateData = p3FlatData;
           const result = await applyActorUpdateAtomic(actor, atomicUpdateData, optsWithMeta);
           updateApplied = true;
           if (options.skipRecalc || options.deferRecalc) {
@@ -4362,6 +4370,102 @@ export const ActorEngine = {
         }
       }
     }
+  },
+
+  // ========================================
+  // PHASE 3 GUARDRAILS: Safe automatic corrections for proven-unsafe paths
+  // ========================================
+
+  /**
+   * Apply Phase 3 guardrails to the flattened payload before it crosses
+   * the Foundry document update boundary.
+   *
+   * Phase 1/2: identified suspicious payloads (warning-only, no changes).
+   * Phase 3: corrects paths we know are wrong for live/unknown callers.
+   * Future phases: will enforce broad replacement rules after runtime validation.
+   *
+   * Currently enforced (auto-corrected):
+   *   system.abilities.{key}.base → system.attributes.{key}.base  (live/unknown callers)
+   *
+   * Warning-only (not corrected yet):
+   *   system.abilities.{key}.mod / .modifier / .total             (no safe 1:1 mapping)
+   *   system.derived.* outside calc cycle                         (may break derived flows)
+   *   broad system / domain replacements                          (may be legitimate)
+   *
+   * Broad-safe contexts (migration-repair, progression-commit, canonical-normalization,
+   * derived-rebuild) bypass all Phase 3 guardrails — they own their payload shape.
+   *
+   * @param {Object} flatData - Flattened update payload (from flattenObject)
+   * @param {string} operationCategory - From _classifyOperationIntent
+   * @param {Actor} actor
+   * @param {Object} options
+   * @returns {Object} Potentially modified flat payload (same reference if no changes)
+   * @private
+   */
+  _applyPhase3Guardrails(flatData, operationCategory, actor, options) {
+    // Broad-safe contexts own their payload shape — skip all guardrails.
+    if (['migration-repair', 'progression-commit', 'canonical-normalization', 'derived-rebuild'].includes(operationCategory)) {
+      return flatData;
+    }
+    return this._guardrailAbilitiesMirrorWrites(flatData, operationCategory, actor, options);
+  },
+
+  /**
+   * Redirect system.abilities.{key}.base → system.attributes.{key}.base.
+   *
+   * system.abilities is a read-only compatibility mirror of system.attributes.
+   * system.attributes is the canonical persisted ability-score storage.
+   *
+   * Only the .base subfield is redirected — it has a known 1:1 canonical equivalent.
+   * Other subfields (.mod, .modifier, .total) are warning-only: blindly redirecting
+   * them could clobber derived state managed by DerivedCalculator.
+   *
+   * Note: by the time this runs, _normalizeAbilityPathsForContract has already
+   * converted any .value → .base within system.abilities, so only .base appears here.
+   * @private
+   */
+  _guardrailAbilitiesMirrorWrites(flatData, operationCategory, actor, options) {
+    const ABILITY_KEYS = new Set(['str', 'dex', 'con', 'int', 'wis', 'cha']);
+    const abilitiesKeys = Object.keys(flatData).filter(k => k.startsWith('system.abilities.'));
+    if (abilitiesKeys.length === 0) return flatData; // Fast path: nothing to redirect
+
+    const redirects = [];
+    const warnOnly = [];
+    const result = { ...flatData };
+
+    for (const key of abilitiesKeys) {
+      const match = key.match(/^system\.abilities\.([a-z]+)\.(.+)$/);
+      if (!match) continue;
+      const [, abilityKey, subfield] = match;
+      if (!ABILITY_KEYS.has(abilityKey)) continue;
+
+      if (subfield === 'base') {
+        // Safe redirect: canonical 1:1 equivalent exists.
+        const canonical = `system.attributes.${abilityKey}.base`;
+        result[canonical] = result[key];
+        delete result[key];
+        redirects.push(`${key} → ${canonical}`);
+      } else {
+        // .mod, .modifier, .total, or unknown subfield — warn but do not redirect.
+        // These are derived/computed values; writing them to system.attributes.*
+        // would have different semantics and could corrupt derived state.
+        warnOnly.push(key);
+      }
+    }
+
+    if (redirects.length > 0 || warnOnly.length > 0) {
+      SWSELogger.warn('[ActorEngine:P3] system.abilities mirror write intercepted', {
+        actorId: actor?.id,
+        actorName: actor?.name,
+        operationCategory,
+        redirected: redirects,
+        warnOnly,
+        source: options?.source ?? null,
+        action: redirects.length > 0 ? 'redirected-to-attributes' : 'warn-only'
+      });
+    }
+
+    return result;
   },
 
   // ========================================
