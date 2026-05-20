@@ -75,7 +75,7 @@ export class DropHandler {
     // Update abilities (base only)
     if (template.abilities) {
       for (const [key, value] of Object.entries(template.abilities)) {
-        updates[`system.abilities.${key}.base`] = value.base;
+        updates[`system.attributes.${key}.base`] = value.base;
         // PHASE 2: Derived totals go to system.derived.*, not system.*
         updates[`system.derived.attributes.${key}.total`] = value.total;
       }

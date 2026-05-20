@@ -144,7 +144,7 @@
           {{#each abilities as |ability|}}
             <div class="swse-panel swse-ability-card">
               <div class="swse-panel-title">{{ability.label}}</div>
-              <input name="system.abilities.{{ability.key}}.base"
+              <input name="system.attributes.{{ability.key}}.base"
                      type="number" value="{{ability.base}}"/>
               <div class="swse-ability-total">{{ability.total}}</div>
               <div class="swse-ability-mod {{ability.modClass}}">{{ability.mod}}</div>

@@ -209,9 +209,8 @@ function _materializeSpeciesIdentity(actor, pendingContext) {
     mutations['flags.swse.speciesActsAsDroid'] = true;
   }
   if (speciesRules.noConstitution) {
-    mutations['system.abilities.con.base'] = 0;
-    mutations['system.abilities.con.racial'] = 0;
-    mutations['system.abilities.con.total'] = 0;
+    mutations['system.attributes.con.base'] = 0;
+    mutations['system.attributes.con.racial'] = 0;
     mutations['flags.swse.noConstitutionFromSpecies'] = true;
   }
   if (speciesRules.retainsConstitution) {
@@ -231,8 +230,8 @@ function _materializeAbilities(actor, pendingContext) {
   const abilities = pendingContext.abilities || {};
   for (const [key, value] of Object.entries(abilities)) {
     if (value !== 0) {
-      // Store as racial modifier in system.abilities.<key>.racial
-      mutations[`system.abilities.${key}.racial`] = value;
+      // Store as racial modifier in system.attributes.<key>.racial
+      mutations[`system.attributes.${key}.racial`] = value;
     }
   }
 

@@ -726,14 +726,8 @@ export class ProgressionFinalizer {
       const baseScore = Number(val);
       const finalScore = Number(finalAttrValues?.[key] ?? baseScore);
       const mod = this._abilityMod(finalScore);
-      set[`system.abilities.${key}.base`] = baseScore;
-      set[`system.abilities.${key}.value`] = finalScore;
-      set[`system.abilities.${key}.total`] = finalScore;
-      set[`system.abilities.${key}.mod`] = mod;
+      // Write to canonical system.attributes; system.abilities is a read-only compatibility mirror
       set[`system.attributes.${key}.base`] = baseScore;
-      set[`system.attributes.${key}.value`] = finalScore;
-      set[`system.attributes.${key}.total`] = finalScore;
-      set[`system.attributes.${key}.mod`] = mod;
     }
 
     if (sessionState.mode === 'chargen') {

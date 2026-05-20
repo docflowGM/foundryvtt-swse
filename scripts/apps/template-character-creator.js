@@ -387,7 +387,7 @@ async _prepareContext(options) {
       // Apply ability scores
       const abilityUpdates = {};
       for (const [ability, value] of Object.entries(template.abilityScores)) {
-        abilityUpdates[`system.abilities.${ability}.base`] = parseInt(value, 10) || 10;
+        abilityUpdates[`system.attributes.${ability}.base`] = parseInt(value, 10) || 10;
       }
 
       // Apply species bonuses
@@ -762,7 +762,7 @@ async _prepareContext(options) {
     if (speciesData?.abilityModifiers || speciesData?.abilityMods) {
       for (const [ability, value] of Object.entries(speciesData.abilityModifiers || speciesData.abilityMods || {})) {
         if (value !== 0) {
-          abilityUpdates[`system.abilities.${ability}.racial`] = value;
+          abilityUpdates[`system.attributes.${ability}.racial`] = value;
         }
       }
     }
