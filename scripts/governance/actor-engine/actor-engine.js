@@ -162,13 +162,13 @@ export const ActorEngine = {
    * Perform any derived-stat recalculation.
    * Runs after every validated update. Non-blocking.
    *
-   * PHASE 2C: ModifierEngine.applyAll() is currently IMPURE
+   * PHASE 2C: ModifierEngine.applyComputedBundle() is currently IMPURE
    * It writes directly to system.derived.* without enforcement.
-   * planned (Phase 2C): Refactor ModifierEngine.applyAll() to:
+   * planned (Phase 2C): Refactor ModifierEngine.applyComputedBundle() to:
    *   - Return computed modifier bundle instead of mutating
    *   - Apply bundle in DerivedCalculator context only
    *   - Prevent unauthorized writes to system.derived.*
-   * Known issues in ModifierEngine.applyAll():
+   * Known issues in ModifierEngine.applyComputedBundle():
    *   - Writes system.skills.*.total directly (should be derived-only)
    *   - Writes system.derived.initiative as number (corrupts shape)
    *   - Writes system.derived.defenses.*.total (should be value)

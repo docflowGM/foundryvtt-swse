@@ -1,4 +1,22 @@
 /**
+ * ⚠️  DEPRECATED — DO NOT IMPORT — UNWIRED
+ *
+ * This file implements the old prototype-wrapper approach to mutation governance.
+ * That approach was permanently removed. All enforcement now happens through:
+ *   - ActorEngine as the sole public mutation facade
+ *   - MutationInterceptor for active context tracking (scripts/governance/mutation/MutationInterceptor.js)
+ *   - Sentinel validation layers inside ActorEngine
+ *
+ * The `initialize()` method below documents the removal — it explicitly states
+ * "PERMANENT FIX: Removed prototype patching" and does nothing meaningful.
+ * `interceptActorUpdate()` / `interceptItemUpdate()` are dead code that were never
+ * wired after the facade pattern replaced them.
+ *
+ * Deletion candidate: after a dedicated deletion-proof phase. Do not delete alongside
+ * active files — handle in a separate cleanup commit with clear rationale.
+ *
+ * — Phase 9 audit label
+ *
  * MutationInterceptorLock
  * PHASE 9: Global mutation interception and governance enforcement
  *

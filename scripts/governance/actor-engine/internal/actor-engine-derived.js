@@ -1,4 +1,23 @@
 // scripts/governance/actor-engine/internal/actor-engine-derived.js
+// ⚠️  STALE DUPLICATE — DO NOT IMPORT — UNWIRED
+//
+// This module is a historical snapshot of ActorEngine's recalcAll() pipeline.
+// ALL logic here is duplicated in the live actor-engine.js, including:
+//   - performance.now() timing (lines 182-183 in live file)
+//   - _isDerivedCalcCycle flag guard
+//   - DerivedCalculator.computeAll() + ModifierEngine.applyComputedBundle() pipeline
+//   - _skipIntegrityCheck strict-mode rejection
+//   - ModifierEngine impurity TODO (lines 165-176 in live file)
+//
+// The one addition here that is NOT yet in the live file is the _checkIntegrity()
+// call via PrerequisiteIntegrityChecker (stale file lines 109-115). That integration
+// needs a separate PrerequisiteIntegrityChecker audit before it can be migrated.
+//
+// Deletion candidate: after PrerequisiteIntegrityChecker integration is assessed and
+// a full parity check is run. Do not delete before that assessment.
+//
+// — Phase 9 audit label
+//
 // Internal module for derived recalculation and integrity checking
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";

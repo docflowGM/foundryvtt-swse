@@ -1,4 +1,21 @@
 /**
+ * ⚠️  DEPRECATED — DO NOT IMPORT — UNWIRED
+ *
+ * All four monitoring methods in this class (_monitorActorUpdates, _monitorEmbeddedMutations,
+ * _monitorMacroExecution, _monitorDirectSystemWrites) emit a console.warn about being
+ * disabled and do nothing. The prototype-wrapper approach they implemented was permanently
+ * removed and replaced by the ActorEngine facade + MutationInterceptor context pattern.
+ *
+ * `initialize()` calls all four disabled stubs — importing and calling it is a no-op
+ * that generates console noise. It is not called from any live code path.
+ *
+ * Only importer is `mutation-boundary-defense.test.js` (its own test file).
+ *
+ * Deletion candidate: after a dedicated deletion-proof phase. Delete together with
+ * mutation-interceptor-lock.js in a single cleanup commit.
+ *
+ * — Phase 9 audit label
+ *
  * PHASE 5B-6: Mutation Boundary Defense
  *
  * Extends SWSESentinel to defend mutation boundaries.

@@ -1,4 +1,22 @@
 /**
+ * ⚠️  DEPRECATED — DO NOT IMPORT — UNWIRED
+ *
+ * This file was designed as a performance and sovereignty enforcement layer around
+ * derived calculations. None of its methods (enforceLock, detectBottlenecks,
+ * measurePerformance, createDerivedProxy, verifyCalculatorAuthority) are called from
+ * any live code path. It has zero importers.
+ *
+ * The `createDerivedProxy()` method uses a Proxy to block direct derived mutations —
+ * a valid concept, but it was never wired because ActorEngine's recalc pipeline
+ * enforces the same invariant through the `_isDerivedCalcCycle` flag and the
+ * `applyComputedBundle` boundary.
+ *
+ * Deletion candidate: after a dedicated deletion-proof phase. Low salvage value —
+ * the `measurePerformance()` wrapper pattern is already covered by `performance.now()`
+ * timing in the live `recalcAll()`.
+ *
+ * — Phase 9 audit label
+ *
  * PerformanceSovereigntyLock
  * PHASE 8: Ensure derived calculations cannot be bypassed through performance optimization
  *
