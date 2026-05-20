@@ -1988,7 +1988,7 @@ export const ActorEngine = {
 
       const isDroidActor = actor.type === 'droid' || actor.system?.isDroid === true;
       const conScore = isDroidActor ? 0 : Number(actor.system?.derived?.attributes?.con?.total ?? actor.system?.attributes?.con?.base ?? 10);
-      const conMod = isDroidActor ? 0 : Number(actor.system?.derived?.attributes?.con?.mod ?? actor.system?.abilities?.con?.mod ?? 0);
+      const conMod = isDroidActor ? 0 : this._getCanonicalAbilityMod(actor, 'con');
       const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
       const baseDailyUses = HouseRuleService.isEnabled('secondWindWebEnhancement')
         ? Math.max(1, 1 + fortClassBonus + conMod)
@@ -2095,7 +2095,7 @@ export const ActorEngine = {
       if (!actor) {throw new Error('resetSecondWind() called with no actor');}
 
       const isDroidActor = actor.type === 'droid' || actor.system?.isDroid === true;
-      const conMod = isDroidActor ? 0 : Number(actor.system?.derived?.attributes?.con?.mod ?? actor.system?.abilities?.con?.mod ?? 0);
+      const conMod = isDroidActor ? 0 : this._getCanonicalAbilityMod(actor, 'con');
       const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
       const secondWindFeatRules = MetaResourceFeatResolver.getSecondWindRules(actor);
       const hasExtraSecondWindFeat = secondWindFeatRules.extraUseMultiplier > 0;
@@ -3078,7 +3078,11 @@ export const ActorEngine = {
     const abilityKeys = ["str","dex","con","int","wis","cha"];
 
     const abilities = abilityKeys.map(key => {
-      const total = actor.system?.abilities?.[key]?.total ?? 10;
+      // Canonical total: derived (pre-computed) → attributes base → abilities mirror fallback
+      const total = actor.system?.derived?.attributes?.[key]?.total
+        ?? actor.system?.attributes?.[key]?.base
+        ?? actor.system?.abilities?.[key]?.total
+        ?? 10;
       return {
         key,
         label: key.toUpperCase(),
@@ -3861,14 +3865,15 @@ export const ActorEngine = {
       const isDroid = actor.type === 'droid';
       const bonusHP = actor.system.hp?.bonus ?? 0;
 
-      // Compute CON modifier from PERSISTENT abilities (NOT derived/SchemaAdapters)
-      // Fallback to derived only if abilities missing (migration edge case)
+      // Compute CON modifier from canonical persistent path (system.attributes),
+      // falling back to compatibility mirror (system.abilities) for old actors.
       let conMod = 0;
       if (!isDroid) {
-        const conBase = actor.system.abilities?.con?.base ?? 10;
-        const conRacial = actor.system.abilities?.con?.racial ?? 0;
-        const conEnhancement = actor.system.abilities?.con?.enhancement ?? 0;
-        const conTemp = actor.system.abilities?.con?.temp ?? 0;
+        const conSrc = actor.system.attributes?.con ?? actor.system.abilities?.con ?? {};
+        const conBase = Number(conSrc.base ?? 10);
+        const conRacial = Number(conSrc.racial ?? 0);
+        const conEnhancement = Number(conSrc.enhancement ?? 0);
+        const conTemp = Number(conSrc.temp ?? 0);
         const conTotal = conBase + conRacial + conEnhancement + conTemp;
         conMod = Math.floor((conTotal - 10) / 2);
       }
@@ -3911,7 +3916,7 @@ export const ActorEngine = {
         hitDie: classItem.system.hitDie,
         hpAtFirstLevel,
         hpPerLevel,
-        conTotal: (actor.system.abilities?.con?.base ?? 10) + (actor.system.abilities?.con?.racial ?? 0) + (actor.system.abilities?.con?.enhancement ?? 0) + (actor.system.abilities?.con?.temp ?? 0),
+        conTotal: conBase + conRacial + conEnhancement + conTemp,
         conMod,
         bonusHP,
         isDroid,
@@ -4686,6 +4691,48 @@ export const ActorEngine = {
     }
 
     return warnings;
+  },
+
+  // ========================================
+  // Canonical ability read helpers (Phase 4)
+  // ========================================
+
+  /**
+   * Get canonical ability base score.
+   * Primary:  system.attributes.[key].base  (persisted canonical)
+   * Fallback: system.abilities.[key].base   (compatibility mirror)
+   *
+   * @param {Actor} actor
+   * @param {string} key - e.g. 'con'
+   * @param {number} [fallback=10]
+   * @returns {number}
+   */
+  _getCanonicalAbilityBase(actor, key, fallback = 10) {
+    return Number(
+      actor.system?.attributes?.[key]?.base ??
+      actor.system?.abilities?.[key]?.base ??
+      fallback
+    );
+  },
+
+  /**
+   * Get canonical ability modifier.
+   * Primary:  system.derived.attributes.[key].mod  (pre-computed by DerivedCalculator)
+   * Fallback: compute from canonical base + racial + enhancement + temp
+   *
+   * @param {Actor} actor
+   * @param {string} key - e.g. 'con'
+   * @returns {number}
+   */
+  _getCanonicalAbilityMod(actor, key) {
+    const derivedMod = actor.system?.derived?.attributes?.[key]?.mod;
+    if (derivedMod !== undefined) return Number(derivedMod);
+    const src = actor.system?.attributes?.[key] ?? actor.system?.abilities?.[key] ?? {};
+    const total = (Number(src.base ?? 10))
+      + (Number(src.racial ?? 0))
+      + (Number(src.enhancement ?? 0))
+      + (Number(src.temp ?? 0));
+    return Math.floor((total - 10) / 2);
   },
 
   // ========================================
