@@ -82,6 +82,7 @@ import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-cl
 import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
 import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
+import { createSafeEmbeddedItem, createSafeItemData } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
 
 const SHEET_MODE_STORAGE_PREFIX = 'swse.sheetMode';
 
@@ -4691,31 +4692,16 @@ const forcePoints = [];
       this._pendingAddItemTypes.add(itemType);
 
       try {
-        const createData = itemType === "shield"
-          ? {
-              name: "New Shield",
-              type: "armor",
-              system: {
-                armorType: "shield",
-                shieldRating: 0,
-                currentSR: 0,
-                charges: { current: 0, max: 0 },
-                activated: false
-              }
-            }
-          : {
-              name: `New ${itemType.charAt(0).toUpperCase() + itemType.slice(1)}`,
-              type: itemType,
-              system: {}
-            };
+        const doc = await createSafeEmbeddedItem(this.actor, itemType, {
+          shieldMode: itemType === "shield",
+          source: `character-sheet-add-${itemType}`
+        });
 
-        await ActorEngine.createEmbeddedDocuments(this.actor, "Item", [createData]);
-        // Explicitly re-render to ensure mirrorAttacks is called with the newly created weapon
-        // This ensures derived.attacks.list is properly populated for the UI
-        if (this.render) {
+        // Explicitly re-render to ensure derived item mirrors are populated for the UI.
+        if (doc && this.render) {
           await this.render(false);
         }
-        ui.notifications.info(`Created new ${itemType}`);
+        ui.notifications.info(`Created new ${doc?.type || itemType}`);
       } catch (err) {
         ui.notifications.error(`Failed to create item: ${err.message}`);
       } finally {
@@ -4772,19 +4758,11 @@ const forcePoints = [];
     const safeType = String(itemType || '').trim();
     if (!safeType) return null;
 
-    const label = safeType.charAt(0).toUpperCase() + safeType.slice(1);
-    const itemData = {
-      name: `New ${label}`,
-      type: safeType,
-      system: safeType === 'feat'
-        ? { category: 'General', source: 'Manual' }
-        : safeType === 'talent'
-          ? { tree: 'General', source: 'Manual' }
-          : {}
-    };
+    const itemData = createSafeItemData(safeType);
+    const label = itemData.name.replace(/^New\s+/, '') || safeType;
 
     try {
-      const [doc] = await ActorEngine.createEmbeddedDocuments(this.actor, "Item", [itemData], { source: `character-sheet-add-${safeType}` });
+      const doc = await createSafeEmbeddedItem(this.actor, safeType, { source: `character-sheet-add-${safeType}` });
       doc?.sheet?.render?.(true);
       await this.render?.(false);
       return doc ?? null;
@@ -4863,20 +4841,13 @@ const forcePoints = [];
 
     this._hideItemSelectionModal();
 
-    // Create a blank item
-    const itemData = {
-      type: this._currentItemType,
-      name: `New ${this._currentItemType.charAt(0).toUpperCase() + this._currentItemType.slice(1)}`,
-      system: {}
-    };
-
     try {
-      const [doc] = await ActorEngine.createEmbeddedDocuments(this.actor, "Item", [itemData]);
-      if (doc) {
-        doc.sheet.render(true);
-      }
+      const doc = await createSafeEmbeddedItem(this.actor, this._currentItemType, {
+        source: `character-sheet-modal-custom-${this._currentItemType}`
+      });
+      doc?.sheet?.render?.(true);
+      await this.render?.(false);
     } catch (err) {
-      // console.error(`Failed to create ${this._currentItemType}:`, err);
       ui?.notifications?.error?.(`Failed to create ${this._currentItemType}: ${err.message}`);
     }
   }

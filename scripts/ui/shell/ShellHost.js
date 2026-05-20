@@ -67,8 +67,9 @@ export function ShellHostMixin(BaseClass) {
      * @param {object} [options]
      */
     async setSurface(surfaceId, options = {}) {
-      SWSELogger.debug(`[ShellHost] setSurface: ${this._shellSurface} → ${surfaceId}`);
-      this._shellSurface = surfaceId;
+      const normalizedSurfaceId = surfaceId === 'upgrade' ? 'workbench' : surfaceId;
+      SWSELogger.debug(`[ShellHost] setSurface: ${this._shellSurface} → ${normalizedSurfaceId}`);
+      this._shellSurface = normalizedSurfaceId;
       this._shellSurfaceOptions = options;
       // Surface transitions clear the overlay/drawer stack
       this._shellOverlay = null;

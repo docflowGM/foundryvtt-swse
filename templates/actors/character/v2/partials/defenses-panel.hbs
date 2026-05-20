@@ -18,7 +18,7 @@
             <div class="defense-label-group">
               <div class="defense-label">{{def.label}}</div>
               <div class="defense-summary">
-                10 + Armor {{def.armorBonus}} + {{def.abilityLabel}} {{def.abilityMod}} + Class {{def.classDef}} + Misc {{def.miscMod}}
+                10 + Heroic/Armor {{def.levelContribution}} + {{def.abilityLabel}} {{def.abilityMod}} + Class {{def.classDef}} + Species {{def.speciesBonus}} + Misc {{def.miscMod}}
               </div>
             </div>
 
@@ -33,6 +33,10 @@
               <div class="defense-breakdown-row">
                 <span class="defense-breakdown-label">Base</span>
                 <span class="defense-breakdown-value">10</span>
+              </div>
+              <div class="defense-breakdown-row">
+                <span class="defense-breakdown-label">Heroic/Armor</span>
+                <span class="defense-breakdown-value">{{numberFormat def.levelContribution decimals=0 sign=true}}</span>
               </div>
               <div class="defense-breakdown-row">
                 <span class="defense-breakdown-label">Armor Bonus</span>
@@ -50,6 +54,18 @@
                 <span class="defense-breakdown-label">Class Bonus</span>
                 <input type="number" name="{{def.classBonusPath}}" value="{{def.classDef}}" class="misc-input" {{#unless def.canEdit}}disabled{{/unless}} />
               </div>
+              {{#if def.speciesBonus}}
+                <div class="defense-breakdown-row">
+                  <span class="defense-breakdown-label">Species</span>
+                  <span class="defense-breakdown-value {{def.speciesBonusClass}}">{{numberFormat def.speciesBonus decimals=0 sign=true}}</span>
+                </div>
+              {{/if}}
+              {{#if def.rulesBonus}}
+                <div class="defense-breakdown-row">
+                  <span class="defense-breakdown-label">Rules</span>
+                  <span class="defense-breakdown-value {{def.rulesBonusClass}}">{{numberFormat def.rulesBonus decimals=0 sign=true}}</span>
+                </div>
+              {{/if}}
               <div class="defense-breakdown-row defense-breakdown-row--editable">
                 <label class="defense-breakdown-label" for="defense-misc-{{def.key}}">Misc Modifier</label>
                 <input id="defense-misc-{{def.key}}"

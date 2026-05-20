@@ -143,9 +143,16 @@ export class PostRenderAssertions {
 
     const { rootSelector, expectedElements = {}, optionalElements = {}, critical = false } = def.postRenderAssertions;
 
-    // Check root exists
+    // Check root exists. Concept tabs can render the same panel data through
+    // newer dashboard DOM instead of the legacy registry root selectors. Treat
+    // those concept-dashboard roots as valid equivalents so diagnostics do not
+    // spam false positives or mask real errors during gear-tab hydration tests.
     const root = html?.querySelector?.(rootSelector);
     if (!root) {
+      const activeConceptGear = html?.querySelector?.('.tab.active[data-tab="gear"] .swse-concept-dashboard, .tab.active[data-tab="gear"] .swse-concept-panel--ledger');
+      if (activeConceptGear && ['inventoryPanel', 'armorSummaryPanel', 'equipmentLedgerPanel'].includes(panelKey)) {
+        return;
+      }
       this._reportViolation(`${panelKey} root (${rootSelector}) not found`, critical);
       return;
     }

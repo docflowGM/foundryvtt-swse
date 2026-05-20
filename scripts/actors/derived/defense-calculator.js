@@ -36,6 +36,79 @@ function getSystemActiveDefenseBonus(actor, defenseType) {
 
 export class DefenseCalculator {
 
+  static _numberOrZero(value) {
+    const num = Number(value);
+    return Number.isFinite(num) ? num : 0;
+  }
+
+  static _normalizeDefenseKey(defenseType) {
+    const key = String(defenseType || '').toLowerCase();
+    if (key === 'fort' || key === 'fortitude') return 'fortitude';
+    if (key === 'ref' || key === 'reflex') return 'reflex';
+    return 'will';
+  }
+
+  static _collectSpeciesDefenseBonus(actor, defenseType) {
+    const key = this._normalizeDefenseKey(defenseType);
+    const defensesState = actor?.system?.defenses ?? {};
+    const defenseState = defensesState?.[key] ?? {};
+
+    const direct = this._numberOrZero(defenseState?.speciesBonus)
+      + this._numberOrZero(defenseState?.species)
+      + this._numberOrZero(defenseState?.misc?.auto?.species)
+      + this._numberOrZero(actor?.system?.speciesTraitBonuses?.defenses?.[key])
+      + this._numberOrZero(actor?.system?.speciesCombatBonuses?.defenses?.[key]);
+    if (direct !== 0) return direct;
+
+    let ruleTotal = 0;
+    const speciesItems = (actor?.items || []).filter(item => item?.type === 'species');
+    for (const item of speciesItems) {
+      const traitBuckets = [
+        item?.system?.structuralTraits,
+        item?.system?.canonicalTraits,
+        item?.system?.traits,
+        item?.system?.speciesTraits,
+      ].flatMap(value => Array.isArray(value) ? value : (value && typeof value === 'object' ? Object.values(value) : []));
+
+      for (const trait of traitBuckets) {
+        const rules = Array.isArray(trait?.rules) ? trait.rules : [];
+        for (const rule of rules) {
+          const type = String(rule?.type || '').toLowerCase();
+          const ruleDefense = this._normalizeDefenseKey(rule?.defense || rule?.target || '');
+          if (type !== 'defensemodifier' && type !== 'defense_modifier') continue;
+          if (ruleDefense !== key) continue;
+          ruleTotal += this._numberOrZero(rule?.value ?? rule?.bonus ?? rule?.modifier);
+        }
+      }
+    }
+    if (ruleTotal !== 0) return ruleTotal;
+
+    // Legacy/manual species items may only carry rules in prose. Scan once as a
+    // fallback so Neimoidian-style species penalties are still honored after
+    // migration without requiring old actors to be repaired by hand.
+    for (const item of speciesItems) {
+      const text = [
+        item?.name,
+        item?.system?.description,
+        item?.system?.special,
+        JSON.stringify(item?.system?.structuralTraits || []),
+        JSON.stringify(item?.system?.canonicalTraits || []),
+      ].join(' ');
+      const defenseLabel = key === 'fortitude' ? 'fortitude' : key === 'reflex' ? 'reflex' : 'will';
+      const patterns = [
+        new RegExp(`([+-]\\d+)\\s+species\\s+(?:bonus|penalty)[^.!?]{0,80}${defenseLabel}\\s+defense`, 'i'),
+        new RegExp(`takes?\\s+a?\\s*([+-]\\d+)\\s+species\\s+(?:bonus|penalty)[^.!?]{0,80}${defenseLabel}\\s+defense`, 'i'),
+      ];
+      for (const pattern of patterns) {
+        const match = text.match(pattern);
+        const value = Number(match?.[1]);
+        if (Number.isFinite(value)) return value;
+      }
+    }
+
+    return 0;
+  }
+
   /**
    * Calculate defense bonuses.
    * PHASE 4: Includes state-dependent modifiers
@@ -91,7 +164,8 @@ export class DefenseCalculator {
     const getMiscBonus = (defenseState) => {
       let total = 0;
       if (defenseState?.misc?.auto && typeof defenseState.misc.auto === 'object') {
-        for (const value of Object.values(defenseState.misc.auto)) {
+        for (const [key, value] of Object.entries(defenseState.misc.auto)) {
+          if (String(key || '').toLowerCase() === 'species') continue;
           total += Number(value || 0);
         }
       }
@@ -114,9 +188,13 @@ export class DefenseCalculator {
     const fortitudeState = defensesState?.fortitude ?? {};
     const willState = defensesState?.will ?? {};
 
+    const reflexSpeciesBonus = this._collectSpeciesDefenseBonus(actor, 'reflex');
+    const fortSpeciesBonus = this._collectSpeciesDefenseBonus(actor, 'fortitude');
+    const willSpeciesBonus = this._collectSpeciesDefenseBonus(actor, 'will');
+
     const reflexAbilityKey = String(reflexState.ability || 'dex').toLowerCase();
     let reflexAbilityMod = getAbilityMod(reflexAbilityKey, 0);
-    const reflexClassBonus = Number(reflexState.classBonus ?? computedRefClassBonus) || 0;
+    const reflexClassBonus = Number(computedRefClassBonus ?? reflexState.classBonus ?? 0) || 0;
     const reflexMiscBonus = getMiscBonus(reflexState);
     const reflexArmorBonus = Number(reflexState.armor ?? equippedArmor?.system?.defenseBonus ?? equippedArmor?.system?.armorBonus ?? 0) || 0;
     if (equippedArmor) {
@@ -136,25 +214,25 @@ export class DefenseCalculator {
       }
     }
     const reflexBase = 10 + reflexLevelTerm + reflexClassBonus + reflexSizeModifier;
-    const reflexTotal = Math.max(1, reflexBase + reflexAbilityMod + reflexMiscBonus + refStateBonus + refAdjust + conditionPenalty);
+    const reflexTotal = Math.max(1, reflexBase + reflexAbilityMod + reflexMiscBonus + reflexSpeciesBonus + refStateBonus + refAdjust + conditionPenalty);
 
     const fortDefaultAbility = isDroidActor ? 'str' : 'con';
     // SWSE RAW: nonliving targets without Constitution, including Droids, add STR to Fortitude.
     // Do not allow stale legacy data (system.defenses.fortitude.ability = 'con') to override this.
     const fortAbilityKey = isDroidActor ? 'str' : String(fortitudeState.ability || fortDefaultAbility).toLowerCase();
     const fortAbilityMod = getAbilityMod(fortAbilityKey, 0);
-    const fortClassBonus = Number(fortitudeState.classBonus ?? computedFortClassBonus) || 0;
+    const fortClassBonus = Number(computedFortClassBonus ?? fortitudeState.classBonus ?? 0) || 0;
     const fortMiscBonus = getMiscBonus(fortitudeState);
     const fortArmorBonus = Number(equippedArmor?.system?.equipmentBonus ?? equippedArmor?.system?.fortBonus ?? 0) || 0;
     const fortBase = 10 + heroicLevel + fortClassBonus + fortAbilityMod + fortArmorBonus;
-    const fortTotal = Math.max(1, fortBase + fortMiscBonus + fortStateBonus + fortAdjust + conditionPenalty);
+    const fortTotal = Math.max(1, fortBase + fortMiscBonus + fortSpeciesBonus + fortStateBonus + fortAdjust + conditionPenalty);
 
     const willAbilityKey = String(willState.ability || 'wis').toLowerCase();
     const willAbilityMod = getAbilityMod(willAbilityKey, 0);
-    const willClassBonus = Number(willState.classBonus ?? computedWillClassBonus) || 0;
+    const willClassBonus = Number(computedWillClassBonus ?? willState.classBonus ?? 0) || 0;
     const willMiscBonus = getMiscBonus(willState);
     const willBase = 10 + heroicLevel + willClassBonus + willAbilityMod;
-    const willTotal = Math.max(1, willBase + willMiscBonus + willStateBonus + willAdjust + conditionPenalty);
+    const willTotal = Math.max(1, willBase + willMiscBonus + willSpeciesBonus + willStateBonus + willAdjust + conditionPenalty);
 
     const flatFootedBase = reflexBase;
     // Flat-footed removes a positive Dexterity bonus, but never removes a
@@ -168,6 +246,9 @@ export class DefenseCalculator {
         adjustment: fortAdjust,
         stateBonus: fortStateBonus,
         classBonus: fortClassBonus,
+        heroicLevel,
+        levelContribution: heroicLevel,
+        speciesBonus: fortSpeciesBonus,
         miscBonus: fortMiscBonus,
         armorBonus: fortArmorBonus,
         abilityKey: fortAbilityKey,
@@ -180,6 +261,9 @@ export class DefenseCalculator {
         adjustment: refAdjust,
         stateBonus: refStateBonus,
         classBonus: reflexClassBonus,
+        heroicLevel,
+        levelContribution: reflexLevelTerm,
+        speciesBonus: reflexSpeciesBonus,
         miscBonus: reflexMiscBonus,
         armorBonus: reflexArmorBonus,
         armorContribution: reflexLevelTerm,
@@ -194,6 +278,9 @@ export class DefenseCalculator {
         adjustment: willAdjust,
         stateBonus: willStateBonus,
         classBonus: willClassBonus,
+        heroicLevel,
+        levelContribution: heroicLevel,
+        speciesBonus: willSpeciesBonus,
         miscBonus: willMiscBonus,
         armorBonus: 0,
         abilityKey: willAbilityKey,
@@ -206,6 +293,9 @@ export class DefenseCalculator {
         adjustment: refAdjust,
         stateBonus: refStateBonus,
         classBonus: reflexClassBonus,
+        heroicLevel,
+        levelContribution: reflexLevelTerm,
+        speciesBonus: reflexSpeciesBonus,
         miscBonus: reflexMiscBonus,
         armorBonus: reflexArmorBonus,
         armorContribution: reflexLevelTerm,

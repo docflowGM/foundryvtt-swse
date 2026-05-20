@@ -927,6 +927,7 @@ export class ProgressionFinalizer {
 
     const classAutoGrantItems = await this._compileClassAutoGrantItems(actor, selections, sessionState, levelUpManifest);
     add.items.push(...classAutoGrantItems.items);
+    add.items.push(...await this._compileClassStarterEquipmentItems(actor, selections, sessionState));
     if (sessionState.mode === 'levelup') {
       add.items.push(...await this._compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState));
     }
@@ -1075,6 +1076,16 @@ export class ProgressionFinalizer {
 
   static _isLineageEligibleClass(classSelection = null) {
     const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
+    const treeIds = [
+      ...(Array.isArray(classModel?.system?.talentTreeIds) ? classModel.system.talentTreeIds : []),
+      ...(Array.isArray(classModel?.system?.talentTrees) ? classModel.system.talentTrees : []),
+      ...(Array.isArray(classModel?.talentTreeIds) ? classModel.talentTreeIds : []),
+      ...(Array.isArray(classModel?.talentTrees) ? classModel.talentTrees : []),
+      ...(Array.isArray(classSelection?.system?.talentTreeIds) ? classSelection.system.talentTreeIds : []),
+      ...(Array.isArray(classSelection?.system?.talentTrees) ? classSelection.system.talentTrees : []),
+    ].map(tree => this._normalizeNameKey(tree?.id || tree?.key || tree?.name || tree));
+    if (treeIds.includes('lineage')) return true;
+
     const key = this._normalizeNameKey(classModel?.name || classModel?.label || classModel?.id || classSelection?.name || classSelection);
     return key === 'noble' || key === 'corporateagent';
   }
@@ -1124,37 +1135,63 @@ export class ProgressionFinalizer {
     return (summary.creditDeltaSources || []).some(source => this._normalizeNameKey(source?.label || source?.source || '') === 'wealthtalent');
   }
 
-  static _computeLevelupWealthCreditGrant(actor, selections = {}, sessionState = {}) {
-    if (!this._hasWealthTalentSelection(selections) && !this._actorHasWealthTalent(actor)) return 0;
-    if (!this._isLineageEligibleClass(selections.class)) return 0;
-    let classLevel = 1;
+  static _getLineageEligibleClassLevelCountAfterLevelup(actor, selections = {}, sessionState = {}) {
+    let lineageLevelCount = 0;
+    for (const classItem of actor?.items || []) {
+      if (classItem?.type !== 'class') continue;
+      if (!this._isLineageEligibleClass(classItem)) continue;
+      lineageLevelCount += Math.max(0, Number(classItem?.system?.level ?? classItem?.level ?? 0) || 0);
+    }
+
+    const selectedClass = selections.class;
+    if (this._isLineageEligibleClass(selectedClass)) {
+      // The actor still contains the pre-level-up class items at finalization time.
+      // Add this event's selected class level once so Noble 1 grants 5000, Noble 2
+      // grants 10000, and non-Lineage classes after Noble keep paying based on the
+      // existing Noble/Lineage levels.
+      lineageLevelCount += 1;
+    }
+    return lineageLevelCount;
+  }
+
+  static _getLevelupCharacterLevelKey(actor, selections = {}, sessionState = {}) {
     try {
       const levelContext = buildLevelUpEventContext(actor, sessionState.progressionSession, { selectedClass: selections.class });
-      classLevel = Number(levelContext?.selectedClassNextLevel || 1) || 1;
-      const history = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
-      const granted = history?.['swse.talent.wealth']?.levelsGranted || [];
-      if (granted.map(Number).includes(classLevel)) return 0;
-    } catch (_err) {
-      classLevel = Number(sessionState?.targetLevel || actor?.system?.level || 1) || 1;
-    }
-    return Math.max(0, classLevel * 5000);
+      const enteringLevel = Number(levelContext?.enteringLevel);
+      if (Number.isFinite(enteringLevel) && enteringLevel > 0) return Math.floor(enteringLevel);
+    } catch (_err) {}
+    const fallback = Number(sessionState?.targetLevel ?? actor?.system?.level ?? 1);
+    return Number.isFinite(fallback) ? Math.max(1, Math.floor(fallback)) : 1;
+  }
+
+  static _computeLevelupWealthCreditGrant(actor, selections = {}, sessionState = {}) {
+    if (!this._hasWealthTalentSelection(selections) && !this._actorHasWealthTalent(actor)) return 0;
+
+    const history = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
+    const characterLevel = this._getLevelupCharacterLevelKey(actor, selections, sessionState);
+    const grantedCharLevels = history?.['swse.talent.wealth']?.characterLevelsGranted || [];
+    if (grantedCharLevels.map(Number).includes(characterLevel)) return 0;
+
+    const lineageLevelCount = this._getLineageEligibleClassLevelCountAfterLevelup(actor, selections, sessionState);
+    return Math.max(0, lineageLevelCount * 5000);
   }
 
   static _withLevelupWealthProgressionHistory(actor, selections = {}, sessionState = {}, creditDelta = 0) {
     const raw = actor?.flags?.swse?.progressionHistory || actor?.getFlag?.('swse', 'progressionHistory') || {};
     const history = foundry?.utils?.deepClone ? foundry.utils.deepClone(raw) : JSON.parse(JSON.stringify(raw || {}));
     const key = 'swse.talent.wealth';
-    let classLevel = Number(sessionState?.targetLevel || actor?.system?.level || 1) || 1;
-    try {
-      const levelContext = buildLevelUpEventContext(actor, sessionState.progressionSession, { selectedClass: selections.class });
-      classLevel = Number(levelContext?.selectedClassNextLevel || classLevel) || classLevel;
-    } catch (_err) {}
-    const existing = history[key] || { levelsGranted: [] };
+    const lineageLevelCount = this._getLineageEligibleClassLevelCountAfterLevelup(actor, selections, sessionState);
+    const characterLevel = this._getLevelupCharacterLevelKey(actor, selections, sessionState);
+    const existing = history[key] || { levelsGranted: [], characterLevelsGranted: [] };
     const levels = new Set((Array.isArray(existing.levelsGranted) ? existing.levelsGranted : []).map(Number).filter(Number.isFinite));
-    levels.add(classLevel);
+    for (let level = 1; level <= lineageLevelCount; level += 1) levels.add(level);
+    const characterLevels = new Set((Array.isArray(existing.characterLevelsGranted) ? existing.characterLevelsGranted : []).map(Number).filter(Number.isFinite));
+    characterLevels.add(characterLevel);
     history[key] = {
       ...existing,
       levelsGranted: Array.from(levels).sort((a, b) => a - b),
+      characterLevelsGranted: Array.from(characterLevels).sort((a, b) => a - b),
+      lastLineageLevelCount: lineageLevelCount,
       lastGrantedAt: new Date().toISOString(),
       lastGrantedCredits: creditDelta,
       source: 'levelup-finalizer',
@@ -1704,6 +1741,147 @@ export class ProgressionFinalizer {
     }
 
     return { items, suppressed: ledger.suppressedGrants || [] };
+  }
+
+
+  static async _compileClassStarterEquipmentItems(actor, selections, sessionState) {
+    if (sessionState?.mode !== 'chargen') return [];
+    if (!this._isJediClassSelection(selections?.class)) return [];
+    if (this._actorHasLightsaber(actor)) return [];
+
+    const sessionId = sessionState.sessionId || 'unknown';
+    const baseItem = await this._loadStarterLightsaberItemData();
+    const itemData = baseItem || this._buildFallbackStarterLightsaberItemData();
+
+    delete itemData._id;
+    itemData.name = itemData.name || 'Lightsaber';
+    itemData.type = itemData.type || 'weapon';
+    itemData.system = foundry.utils.mergeObject(itemData.system || {}, {
+      equipped: true,
+      carried: true,
+      category: itemData.system?.category || 'lightsaber',
+      subcategory: itemData.system?.subcategory || itemData.system?.subtype || 'lightsaber',
+      weaponCategory: 'melee',
+      weaponType: 'melee',
+      rangeProfile: 'melee',
+      equippable: {
+        equipped: true,
+        slot: 'hand',
+      },
+    }, { inplace: false, recursive: true, overwrite: true });
+    itemData.flags = foundry.utils.mergeObject(itemData.flags || {}, {
+      swse: {
+        progression: {
+          sourceSession: sessionId,
+          selectionKey: 'class-starter-equipment',
+          selectionId: 'weapon-lightsaber',
+          countIndex: 0,
+        },
+        classStarterEquipment: true,
+        autoEquipped: true,
+        sourceClass: 'Jedi',
+      },
+    }, { inplace: false, recursive: true });
+
+    return [itemData];
+  }
+
+  static _isJediClassSelection(classSelection = null) {
+    const classModel = ProgressionContentAuthority.resolveClass(classSelection) || classSelection || {};
+    const candidates = [
+      classModel?.name,
+      classModel?.className,
+      classModel?.id,
+      classModel?.classId,
+      classSelection?.name,
+      classSelection?.className,
+      classSelection?.id,
+      classSelection?.classId,
+      typeof classSelection === 'string' ? classSelection : null,
+    ];
+    return candidates.some((candidate) => this._normalizeNameKey(candidate) === 'jedi');
+  }
+
+  static _actorHasLightsaber(actor) {
+    return Array.from(actor?.items || []).some((item) => {
+      if (String(item?.type || '').toLowerCase() !== 'weapon') return false;
+      const name = this._normalizeNameKey(item?.name);
+      const subtype = this._normalizeNameKey(item?.system?.subtype || item?.system?.subcategory || item?.system?.category || item?.system?.weaponCategory);
+      const traits = [
+        ...(Array.isArray(item?.system?.properties) ? item.system.properties : []),
+        ...(Array.isArray(item?.system?.traits) ? item.system.traits : []),
+      ].map((value) => this._normalizeNameKey(value));
+      return name.includes('lightsaber') || subtype.includes('lightsaber') || traits.includes('lightsaber');
+    });
+  }
+
+  static async _loadStarterLightsaberItemData() {
+    const packCandidates = [
+      { pack: 'foundryvtt-swse.weapons', ids: ['weapon-lightsaber'], names: ['Lightsaber'] },
+      { pack: 'foundryvtt-swse.weapons-simple', ids: ['weapon-lightsaber'], names: ['Lightsaber'] },
+      { pack: 'foundryvtt-swse.weapons-lightsabers', ids: ['lightsaber-chassis-standard'], names: ['Lightsaber (Standard)'] },
+    ];
+
+    for (const candidate of packCandidates) {
+      const pack = globalThis.game?.packs?.get?.(candidate.pack);
+      if (!pack) continue;
+
+      for (const id of candidate.ids) {
+        const doc = typeof pack.getDocument === 'function'
+          ? await pack.getDocument(id).catch(() => null)
+          : null;
+        if (doc) return doc.toObject ? doc.toObject() : foundry.utils.deepClone(doc);
+      }
+
+      const index = typeof pack.getIndex === 'function'
+        ? await pack.getIndex().catch(() => null)
+        : null;
+      for (const name of candidate.names) {
+        const entry = Array.from(index || pack.index || []).find((idx) => String(idx?.name || '').toLowerCase() === String(name || '').toLowerCase());
+        if (!entry?._id) continue;
+        const doc = typeof pack.getDocument === 'function'
+          ? await pack.getDocument(entry._id).catch(() => null)
+          : null;
+        if (doc) return doc.toObject ? doc.toObject() : foundry.utils.deepClone(doc);
+      }
+    }
+
+    return null;
+  }
+
+  static _buildFallbackStarterLightsaberItemData() {
+    return {
+      name: 'Lightsaber',
+      type: 'weapon',
+      img: 'icons/svg/sword.svg',
+      system: {
+        damage: '2d8',
+        damageType: 'energy',
+        attackBonus: 0,
+        attackAttribute: 'str',
+        range: 'Melee',
+        weight: 1,
+        cost: 12000,
+        equipped: true,
+        description: '<p>The elegant weapon of the Jedi and Sith. A blade of pure energy capable of cutting through nearly anything.</p>',
+        properties: ['Lightsaber', 'Critical 19-20', 'Exotic', 'Armor-Piercing'],
+        ammunition: { type: 'none', current: 0, max: 0 },
+        weaponCategory: 'melee',
+        proficiency: 'exotic',
+        subcategory: 'lightsaber',
+        category: 'lightsaber',
+        combat: {
+          attack: { ability: 'str', bonus: 0 },
+          damage: { dice: '2d8', bonus: 0, type: 'energy', ability: 'str' },
+        },
+        equippable: { equipped: true, slot: 'hand' },
+        rangeProfile: 'melee',
+        weaponType: 'melee',
+        traits: ['Lightsaber', 'Critical 19-20', 'Exotic', 'Armor-Piercing'],
+      },
+      effects: [],
+      flags: {},
+    };
   }
 
   static async _compileAutomaticClassFeatureItems(actor, levelUpManifest, sessionState) {

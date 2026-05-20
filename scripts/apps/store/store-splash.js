@@ -376,7 +376,7 @@ export class SWSEStoreSplashV2 extends HandlebarsApplicationMixin(ApplicationV2)
     id: 'swse-store-splash',
     classes: ['swse', 'store-splash'],
     actions: {
-      continue: (event, target) => this.prototype._onContinueAction.call(this, event, target),
+      'store-splash-continue': '_onContinueAction',
     },
     window: {
       title: "Rendarr's Outfitters",

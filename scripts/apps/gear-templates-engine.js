@@ -9,9 +9,15 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
  */
 export class GearTemplatesEngine {
   static getTemplateLimit() {
-    const configured = Number(game.settings?.get('foundryvtt-swse', 'maxTemplatesPerItem') ?? 1);
-    if (!Number.isFinite(configured)) return 1;
-    return Math.max(1, Math.floor(configured));
+    try {
+      const configured = Number(game.settings?.get?.('foundryvtt-swse', 'maxTemplatesPerItem') ?? 1);
+      if (!Number.isFinite(configured)) return 1;
+      return Math.max(1, Math.floor(configured));
+    } catch (err) {
+      // The workbench must remain usable even if an older world or load order
+      // reaches this engine before the configurable setting has been registered.
+      return 1;
+    }
   }
 
   static _getTemplateByKey(key) {

@@ -20,7 +20,7 @@
         <div class="swse-concept-panel__header defense-collapsed">
           <div>
             <h3 class="swse-concept-panel__title">{{def.label}}</h3>
-            <p class="swse-concept-panel__hint">10 + ability + class + armor + misc + condition.</p>
+            <p class="swse-concept-panel__hint">10 + heroic level/armor + ability + class + species + misc.</p>
           </div>
           <div class="swse-concept-ledger-row__actions">
             <span class="swse-concept-chip swse-concept-chip--neutral">{{def.abilityLabel}}</span>
@@ -31,6 +31,11 @@
         {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/defense-breakdown-tooltip.hbs" defense=def}}
 
         <div class="defense-expanded swse-concept-defense-editor" data-expanded-display="grid">
+          <div class="swse-concept-defense-field swse-concept-defense-field--readonly">
+            <span>Heroic/Armor</span>
+            <strong>{{numberFormat def.levelContribution decimals=0 sign=true}}</strong>
+          </div>
+
           <label class="swse-concept-defense-field">
             <span>Ability</span>
             <select name="{{def.abilityPath}}" {{#unless def.canEdit}}disabled{{/unless}}>
@@ -73,6 +78,20 @@
                    value="{{def.miscMod}}"
                    {{#unless def.canEdit}}disabled{{/unless}}>
           </label>
+
+          {{#if def.speciesBonus}}
+            <div class="swse-concept-defense-field swse-concept-defense-field--readonly">
+              <span>Species</span>
+              <strong class="{{def.speciesBonusClass}}">{{numberFormat def.speciesBonus decimals=0 sign=true}}</strong>
+            </div>
+          {{/if}}
+
+          {{#if def.rulesBonus}}
+            <div class="swse-concept-defense-field swse-concept-defense-field--readonly">
+              <span>Rules</span>
+              <strong class="{{def.rulesBonusClass}}">{{numberFormat def.rulesBonus decimals=0 sign=true}}</strong>
+            </div>
+          {{/if}}
 
           <div class="swse-concept-defense-field swse-concept-defense-field--readonly">
             <span>Condition</span>

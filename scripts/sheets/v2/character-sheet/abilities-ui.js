@@ -33,7 +33,8 @@ export function activateAbilitiesUI(sheet, html, { signal } = {}) {
   html.querySelectorAll('[data-action="add-feat"]').forEach(button => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
-      sheet._showItemSelectionModal('feat');
+      event.stopPropagation();
+      await sheet._createAndOpenBlankItem?.('feat');
     }, { signal });
   });
 
@@ -52,7 +53,8 @@ export function activateAbilitiesUI(sheet, html, { signal } = {}) {
   html.querySelectorAll('[data-action="add-talent"]').forEach(button => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
-      sheet._showItemSelectionModal('talent');
+      event.stopPropagation();
+      await sheet._createAndOpenBlankItem?.('talent');
     }, { signal });
   });
 }

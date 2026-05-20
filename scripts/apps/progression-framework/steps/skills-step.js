@@ -83,7 +83,7 @@ export class SkillsStep extends ProgressionStepPlugin {
       swseLogger.log('[SkillsStep] Level-up skill entitlement count resolved:', {
         allowedCount: this._allowedCount,
         existingTrained: this._countActorTrainedSkills(character),
-        pendingSkillSlots: this._resolvePendingSkillTrainingSlots(shell),
+        pendingSkillSlots: this._resolvePendingSkillTrainingSlots(shell, character),
       });
     } else if (isNonheroic) {
       // Nonheroic characters get 1 + INT mod (minimum 1) skill slots
@@ -820,22 +820,71 @@ renderDetailsPanel(focusedItem) {
     return Object.values(character?.skills || {}).filter((skill) => skill?.trained === true).length;
   }
 
-  _resolvePendingSkillTrainingSlots(shell) {
+  _resolvePendingSkillTrainingSlots(shell, character = null) {
     const pendingEntitlements = shell?.progressionSession?.draftSelections?.pendingEntitlements || [];
-    return pendingEntitlements.reduce((total, entry) => {
+    const entitlementSlots = pendingEntitlements.reduce((total, entry) => {
       const type = String(entry?.type || entry?.kind || '').toLowerCase();
       if (type !== 'skill_training_slot' && type !== 'skill_training' && type !== 'bonus_skill_training') return total;
       const quantity = Math.max(1, Number(entry?.quantity ?? entry?.count ?? 1));
       const spent = Math.max(0, Number(entry?.spent ?? entry?.spentSelections?.length ?? 0));
       return total + Math.max(0, quantity - spent);
     }, 0);
+
+    return entitlementSlots + this._getPendingIntModifierDelta(shell, character);
+  }
+
+  _getAbilityScore(character = {}, abilityKey = 'int') {
+    const ability = character?.abilities?.[abilityKey] || character?.attributes?.[abilityKey] || {};
+    const explicit = Number(ability.total ?? ability.score ?? ability.value);
+    if (Number.isFinite(explicit)) return explicit;
+    const base = Number(ability.base ?? 10);
+    const racial = Number(ability.racial ?? ability.species ?? 0);
+    const enhancement = Number(ability.enhancement ?? 0);
+    const temp = Number(ability.temp ?? 0);
+    const total = (Number.isFinite(base) ? base : 10)
+      + (Number.isFinite(racial) ? racial : 0)
+      + (Number.isFinite(enhancement) ? enhancement : 0)
+      + (Number.isFinite(temp) ? temp : 0);
+    return Number.isFinite(total) ? total : 10;
+  }
+
+  _abilityModifier(score) {
+    const safe = Number(score);
+    return Math.floor(((Number.isFinite(safe) ? safe : 10) - 10) / 2);
+  }
+
+  _getPendingAbilityScore(shell, character = {}, abilityKey = 'int') {
+    const current = this._getAbilityScore(character, abilityKey);
+    const attributes = shell?.progressionSession?.draftSelections?.attributes || null;
+    if (!attributes) return current;
+    const direct = Number(
+      attributes?.finalValues?.[abilityKey]
+        ?? attributes?.values?.[abilityKey]
+        ?? attributes?.[abilityKey]?.score
+        ?? attributes?.[abilityKey]?.value
+        ?? attributes?.[abilityKey]
+    );
+    if (Number.isFinite(direct)) return direct;
+    const increase = Number(attributes?.increases?.[abilityKey] ?? 0);
+    if (Number.isFinite(increase) && increase > 0) return current + increase;
+    return current;
+  }
+
+  _getPendingIntModifierDelta(shell, character = {}) {
+    const currentMod = this._abilityModifier(this._getAbilityScore(character, 'int'));
+    const attributes = shell?.progressionSession?.draftSelections?.attributes || null;
+    const explicitPendingMod = Number(attributes?.modifiers?.int);
+    const pendingMod = Number.isFinite(explicitPendingMod)
+      ? explicitPendingMod
+      : this._abilityModifier(this._getPendingAbilityScore(shell, character, 'int'));
+    return Math.max(0, pendingMod - currentMod);
   }
 
   _resolveLevelupAllowedSkillCount(shell, character) {
     // In level-up, the step resolves only the new training slots owed now.
     // Existing actor-trained skills are tracked separately so they do not
     // consume this event's budget or let the player train extra skills.
-    return this._resolvePendingSkillTrainingSlots(shell);
+    return this._resolvePendingSkillTrainingSlots(shell, character);
   }
 
   _deriveAvailableSkills(shell) {

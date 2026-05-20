@@ -13,6 +13,20 @@ import { registerHouseruleSettings } from "/systems/foundryvtt-swse/scripts/hous
  */
 export async function registerSystemSettings() {
 
+
+
+  if (!game.settings.settings.has('foundryvtt-swse.maxTemplatesPerItem')) {
+    game.settings.register('foundryvtt-swse', 'maxTemplatesPerItem', {
+      name: 'Maximum Templates Per Item',
+      hint: 'Default maximum number of templates that can be attached to a weapon, armor, or gear item in the customization workbench.',
+      scope: 'world',
+      config: true,
+      type: Number,
+      range: { min: 1, max: 5, step: 1 },
+      default: 1
+    });
+  }
+
 game.settings.register('foundryvtt-swse', 'debugMode', {
   name: 'Debug Mode',
   hint: 'Enable verbose logging for SWSE system',

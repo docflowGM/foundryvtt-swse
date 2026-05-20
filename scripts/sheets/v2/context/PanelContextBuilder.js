@@ -239,17 +239,25 @@ export class PanelContextBuilder {
       const derivedDefense = this.derived?.defenses?.[systemKey] ?? {};
       const abilityKey = String(defenseData.ability || derivedDefense.abilityKey || defaultAbility || '').toLowerCase();
       const abilityMod = Number(derivedAttributes?.[abilityKey]?.mod ?? derivedDefense?.abilityMod ?? 0) || 0;
-      const miscMod = Number(defenseData.misc?.user?.extra ?? defenseData.miscMod ?? derivedDefense?.miscBonus ?? 0) || 0;
-      const classDef = Number(defenseData.classBonus ?? derivedDefense?.classBonus ?? 0) || 0;
+      const miscMod = Number(derivedDefense?.miscBonus ?? defenseData.misc?.user?.extra ?? defenseData.miscMod ?? 0) || 0;
+      const classDef = Number(derivedDefense?.classBonus ?? defenseData.classBonus ?? 0) || 0;
+      const heroicLevel = Number(derivedDefense?.heroicLevel ?? this.derived?.heroicLevel ?? system?.level ?? 0) || 0;
+      const levelContribution = Number(derivedDefense?.levelContribution ?? derivedDefense?.armorContribution ?? heroicLevel) || 0;
       const armorBonus = Number(
         systemKey === 'reflex'
-          ? (defenseData.armor ?? derivedDefense?.armorBonus ?? derivedDefense?.armorContribution ?? 0)
+          ? (derivedDefense?.armorBonus ?? defenseData.armor ?? 0)
           : (derivedDefense?.armorBonus ?? 0)
       ) || 0;
-      const conditionPenalty = Number(this.derived?.damage?.conditionPenalty ?? 0) || 0;
+      const speciesBonus = Number(derivedDefense?.speciesBonus ?? defenseData.speciesBonus ?? 0) || 0;
+      const rulesBonus = (Number(derivedDefense?.stateBonus ?? 0) || 0) + (Number(derivedDefense?.adjustment ?? 0) || 0);
+      const sizeModifier = Number(derivedDefense?.sizeModifier ?? 0) || 0;
+      const conditionPenalty = Number(derivedDefense?.conditionPenalty ?? this.derived?.damage?.conditionPenalty ?? 0) || 0;
       const total = Number(defenseViewModel?.total ?? derivedDefense?.total ?? 10) || 10;
       const abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';
       const miscModClass = miscMod > 0 ? 'mod--positive' : miscMod < 0 ? 'mod--negative' : 'mod--zero';
+      const speciesBonusClass = speciesBonus > 0 ? 'mod--positive' : speciesBonus < 0 ? 'mod--negative' : 'mod--zero';
+      const rulesBonusClass = rulesBonus > 0 ? 'mod--positive' : rulesBonus < 0 ? 'mod--negative' : 'mod--zero';
+      const sizeModClass = sizeModifier > 0 ? 'mod--positive' : sizeModifier < 0 ? 'mod--negative' : 'mod--zero';
 
       return {
         key,
@@ -257,6 +265,14 @@ export class PanelContextBuilder {
         label,
         total,
         armorBonus,
+        heroicLevel,
+        levelContribution,
+        speciesBonus,
+        speciesBonusClass,
+        rulesBonus,
+        rulesBonusClass,
+        sizeModifier,
+        sizeModClass,
         armorEditable: systemKey === 'reflex',
         armorPath: systemKey === 'reflex' ? 'system.defenses.reflex.armor' : null,
         abilityKey,

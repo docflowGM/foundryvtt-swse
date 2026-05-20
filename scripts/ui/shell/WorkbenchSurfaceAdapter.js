@@ -120,7 +120,7 @@ export class WorkbenchSurfaceAdapter {
       this._workbench.selectedItemId = options.itemId;
     }
     if (options.search !== undefined) {
-      this._workbench.search = options.search;
+      this._workbench._setSearchForCategory?.(this._workbench.selectedCategory, options.search);
     }
   }
 
@@ -136,93 +136,12 @@ export class WorkbenchSurfaceAdapter {
   async handleAction(action, target) {
     if (!this._workbench) return;
 
-    const wb = this._workbench;
-
     try {
-      switch (action) {
-        case 'select-category': {
-          const category = target.dataset.category;
-          if (category) {
-            wb.selectedCategory = category;
-            const savedItemId = wb._selectedByCategory.get(category) || null;
-            wb.selectedItemId = savedItemId;
-          }
-          break;
-        }
-
-        case 'select-item': {
-          const itemId = target.dataset.itemId;
-          const category = target.dataset.category || wb.selectedCategory;
-          if (itemId) {
-            wb.selectedItemId = itemId;
-            if (category) wb._selectedByCategory.set(category, itemId);
-          }
-          break;
-        }
-
-        case 'search-items': {
-          const input = target.closest('.workbench-search-row')?.querySelector('input');
-          const value = input?.value ?? target.value ?? '';
-          wb.search = value;
-          if (wb.selectedCategory) {
-            wb._searchByCategory.set(wb.selectedCategory, value);
-          }
-          break;
-        }
-
-        case 'toggle-upgrade': {
-          const upgradeKey = target.dataset.upgradeKey ?? target.dataset.key;
-          const item = wb._getCurrentItem?.();
-          const draft = wb._getDraft?.(item);
-          if (upgradeKey && draft) {
-            if (draft.selectedUpgrades.includes(upgradeKey)) {
-              draft.selectedUpgrades = draft.selectedUpgrades.filter(k => k !== upgradeKey);
-            } else {
-              draft.selectedUpgrades = [...(draft.selectedUpgrades || []), upgradeKey];
-            }
-          }
-          break;
-        }
-
-        case 'toggle-template': {
-          const templateKey = target.dataset.templateKey ?? target.dataset.key;
-          const item = wb._getCurrentItem?.();
-          const draft = wb._getDraft?.(item);
-          if (templateKey && draft) {
-            if (draft.selectedTemplates?.includes(templateKey)) {
-              draft.selectedTemplates = draft.selectedTemplates.filter(k => k !== templateKey);
-            } else {
-              draft.selectedTemplates = [...(draft.selectedTemplates || []), templateKey];
-            }
-          }
-          break;
-        }
-
-        case 'apply-item': {
-          await wb.applyCurrentItemFromSurface?.();
-          break;
-        }
-
-        case 'reset-item': {
-          const item = wb._getCurrentItem?.();
-          if (item) {
-            wb._drafts.set(item.id, wb._getInitialDraft(item));
-          }
-          break;
-        }
-
-        case 'close-workbench': {
-          await this._shellHost?.setSurface?.('sheet');
-          await this._shellHost?.render?.(false);
-          return;
-        }
-
-        default:
-          SWSELogger.debug(`[WorkbenchSurfaceAdapter] Unhandled action: ${action}`);
+      if (typeof this._workbench.handleSurfaceAction === 'function') {
+        await this._workbench.handleSurfaceAction(action, target);
+        return;
       }
-
-      // Re-render the shell surface with updated workbench state
-      await this._shellHost?.render?.(false);
+      SWSELogger.warn(`[WorkbenchSurfaceAdapter] Workbench is missing handleSurfaceAction for ${action}`);
     } catch (err) {
       SWSELogger.error(`[WorkbenchSurfaceAdapter] Action "${action}" failed:`, err);
     }
@@ -250,11 +169,18 @@ export class WorkbenchSurfaceAdapter {
         onStage: options.onStage ?? null
       });
 
-      // CRITICAL: Override _renderPreservingUi to redirect to shell re-render
+      // CRITICAL: Override _renderPreservingUi to redirect to shell re-render.
+      // The workbench instance is hosted inline; it must never open or close its
+      // own ApplicationV2 window while operating inside the holopad.
       const self = this;
       this._workbench._renderPreservingUi = async function() {
         SWSELogger.debug('[WorkbenchSurfaceAdapter] Intercepted _renderPreservingUi — redirecting to shell');
         await self._shellHost?.render?.(false);
+      };
+      this._workbench.close = async function() {
+        await self._shellHost?.setSurface?.('sheet');
+        await self._shellHost?.render?.(false);
+        return this;
       };
 
       SWSELogger.log(`[WorkbenchSurfaceAdapter] Initialized workbench for actor ${actor.name}`);

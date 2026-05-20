@@ -37,7 +37,7 @@ export class RowTransformers {
       type: item.type,
       typeLabel: item.type.charAt(0).toUpperCase() + item.type.slice(1),
       label: item.name,
-      value: item.system?.value || 0,
+      value: Number(item.system?.value ?? item.system?.cost ?? 0) || 0,
       quantity: Number(item.system?.quantity) || 1,
       weight: Number(item.system?.weight) || 0,
       rarity: item.system?.rarity || 'common',
@@ -81,10 +81,10 @@ export class RowTransformers {
       weight: Number(item.system?.weight) || 0,
       isPowered: Boolean(item.system?.isPowered),
       upgradeSlots: Number(item.system?.upgradeSlots) || 0,
-      reflexBonus: Number(item.system?.reflex) || 0,
-      fortBonus: Number(item.system?.fort) || 0,
-      maxDexBonus: Number(item.system?.maxDex) || 0,
-      armorCheckPenalty: Number(item.system?.acp) || 0,
+      reflexBonus: Number(item.system?.reflexBonus ?? item.system?.defenseBonus ?? item.system?.reflex ?? 0) || 0,
+      fortBonus: Number(item.system?.fortitudeBonus ?? item.system?.fortBonus ?? item.system?.fort ?? 0) || 0,
+      maxDexBonus: Number(item.system?.maxDex ?? item.system?.maxDexBonus ?? 0) || 0,
+      armorCheckPenalty: Number(item.system?.armorCheckPenalty ?? item.system?.acp ?? 0) || 0,
       speedPenalty: Number(item.system?.speedPenalty) || 0
     };
   }

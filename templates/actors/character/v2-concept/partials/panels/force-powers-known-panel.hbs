@@ -5,6 +5,7 @@
         <h3 class="swse-concept-panel__title">Available Powers</h3>
         <p class="swse-concept-panel__hint">Currently available Force powers.</p>
       </div>
+      <button type="button" class="swse-concept-btn swse-concept-btn--primary swse-edit-only" data-action="add-force-power">Add Power</button>
     </header>
 
     {{#if conceptLayout.force.hand.length}}
@@ -30,6 +31,7 @@
       <div class="swse-concept-empty-state">
         <span class="swse-concept-empty-state__eyebrow">No powers ready</span>
         <strong>This actor currently has no available Force powers.</strong>
+        <button type="button" class="swse-concept-btn swse-concept-btn--primary swse-edit-only" data-action="add-force-power">Add Custom Power</button>
       </div>
     {{/if}}
   </section>

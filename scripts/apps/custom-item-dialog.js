@@ -5,6 +5,7 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { createSafeItemData } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
 
 export class CustomItemDialog {
 
@@ -125,9 +126,8 @@ export class CustomItemDialog {
                 ? formData.properties.split(',').map(p => p.trim()).filter(p => p)
                 : [];
 
-              const itemData = {
-                name: formData.name,
-                type: 'weapon',
+              const itemData = createSafeItemData('weapon', {
+                name: formData.name || 'Custom Weapon',
                 img: 'icons/weapons/swords/sword-broad-worn.webp',
                 system: {
                   damage: formData.damage || '1d8',
@@ -143,12 +143,12 @@ export class CustomItemDialog {
                     current: parseInt(formData.ammoCurrent, 10) || 0,
                     max: parseInt(formData.ammoMax, 10) || 0
                   },
-                  upgradeSlots: parseInt(formData.upgradeSlots, 10) ?? 1,
+                  upgradeSlots: parseInt(formData.upgradeSlots, 10) || 1,
                   installedUpgrades: [],
                   description: formData.description || '',
                   equipped: false
                 }
-              };
+              });
 
               const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               resolve(created[0]);
@@ -282,26 +282,29 @@ export class CustomItemDialog {
                 }
               }
 
-              const itemData = {
-                name: formData.name,
-                type: 'armor',
+              const itemData = createSafeItemData('armor', {
+                name: formData.name || (options.shieldMode ? 'Custom Shield' : 'Custom Armor'),
                 img: 'icons/equipment/chest/breastplate-cuirass-steel.webp',
+                shieldMode: options.shieldMode,
                 system: {
                   armorType: formData.armorType || (options.shieldMode ? 'shield' : 'light'),
                   defenseBonus: parseInt(formData.defenseBonus, 10) || 0,
                   equipmentBonus: parseInt(formData.equipmentBonus, 10) || 0,
                   fortBonus: parseInt(formData.fortBonus, 10) || 0,
+                  reflexBonus: parseInt(formData.defenseBonus, 10) || 0,
+                  fortitudeBonus: parseInt(formData.fortBonus, 10) || 0,
                   maxDexBonus: maxDexBonus,
+                  maxDex: maxDexBonus ?? 999,
                   armorCheckPenalty: parseInt(formData.armorCheckPenalty, 10) || 0,
                   speedPenalty: parseInt(formData.speedPenalty, 10) || 0,
                   weight: parseFloat(formData.weight) || 0,
                   cost: parseInt(formData.cost, 10) || 0,
-                  upgradeSlots: parseInt(formData.upgradeSlots, 10) ?? 1,
+                  upgradeSlots: parseInt(formData.upgradeSlots, 10) || 1,
                   installedUpgrades: [],
                   description: formData.description || '',
                   equipped: false
                 }
-              };
+              });
 
               const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               resolve(created[0]);
@@ -377,18 +380,16 @@ export class CustomItemDialog {
               const form = root?.querySelector?.('form');
               const formData = new FormDataExtended(form).object;
 
-              const itemData = {
-                name: formData.name,
-                type: 'equipment',
-                img: 'icons/sundries/misc/pouch-simple-leather-brown.webp',
+              const itemData = createSafeItemData('equipment', {
+                name: formData.name || 'Custom Equipment',
                 system: {
                   weight: parseFloat(formData.weight) || 0,
                   cost: parseInt(formData.cost, 10) || 0,
-                  upgradeSlots: parseInt(formData.upgradeSlots, 10) ?? 1,
+                  upgradeSlots: parseInt(formData.upgradeSlots, 10) || 1,
                   installedUpgrades: [],
                   description: formData.description || ''
                 }
-              };
+              });
 
               const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               resolve(created[0]);
@@ -495,13 +496,13 @@ export class CustomItemDialog {
                 ? formData.bonusFeatFor.split(',').map(c => c.trim()).filter(c => c)
                 : [];
 
-              const itemData = {
-                name: formData.name,
-                type: 'feat',
-                img: 'icons/sundries/scrolls/scroll-bound-ruby-red.webp',
+              const itemData = createSafeItemData('feat', {
+                name: formData.name || 'Custom Feat',
                 system: {
                   featType: formData.featType || 'general',
+                  category: formData.featType || 'general',
                   prerequisite: formData.prerequisite || '',
+                  prerequisites: formData.prerequisite || '',
                   benefit: formData.benefit || '',
                   special: formData.special || '',
                   normalText: formData.normalText || '',
@@ -512,7 +513,7 @@ export class CustomItemDialog {
                     perDay: formData.usesPerDay === 'on'
                   }
                 }
-              };
+              });
 
               const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               resolve(created[0]);
@@ -602,13 +603,13 @@ export class CustomItemDialog {
               const form = root?.querySelector?.('form');
               const formData = new FormDataExtended(form).object;
 
-              const itemData = {
-                name: formData.name,
-                type: 'talent',
-                img: 'icons/magic/symbols/runes-star-pentagon-orange.webp',
+              const itemData = createSafeItemData('talent', {
+                name: formData.name || 'Custom Talent',
                 system: {
                   tree: formData.tree || 'Custom',
+                  talentTree: formData.tree || 'Custom',
                   prerequisite: formData.prerequisite || '',
+                  prerequisites: formData.prerequisite || '',
                   benefit: formData.benefit || '',
                   special: formData.special || '',
                   uses: {
@@ -618,7 +619,7 @@ export class CustomItemDialog {
                     perDay: formData.usesPerDay === 'on'
                   }
                 }
-              };
+              });
 
               const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               resolve(created[0]);
@@ -865,11 +866,10 @@ export class CustomItemDialog {
                 }
               }
 
-              const itemData = {
-                name: formData.name,
-                type: 'force-power',
-                img: 'icons/magic/light/orb-lightbulb-gray.webp',
+              const itemData = createSafeItemData('force-power', {
+                name: formData.name || 'Custom Force Power',
                 system: {
+                  level: parseInt(formData.powerLevel, 10) || 1,
                   powerLevel: parseInt(formData.powerLevel, 10) || 1,
                   discipline: formData.discipline || 'telekinetic',
                   useTheForce: parseInt(formData.useTheForce, 10) || 15,
@@ -887,13 +887,14 @@ export class CustomItemDialog {
                   sourcebook: formData.sourcebook || 'Homebrew',
                   page: parseInt(formData.page, 10) || null,
                   uses: {
-                    current: 0,
-                    max: parseInt(formData.usesMax, 10) || 0
+                    current: parseInt(formData.usesMax, 10) > 0 ? parseInt(formData.usesMax, 10) : 1,
+                    max: parseInt(formData.usesMax, 10) || 1
                   },
                   inSuite: false,
-                  spent: false
+                  spent: false,
+                  discarded: false
                 }
-              };
+              });
 
               const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               resolve(created[0]);

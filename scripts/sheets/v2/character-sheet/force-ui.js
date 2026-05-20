@@ -10,6 +10,7 @@ import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/cus
 import { ShellOverlayManager } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellOverlayManager.js";
 import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { createSafeEmbeddedItem } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
 
 /**
  * Handle force card discard animation
@@ -61,6 +62,37 @@ function handleForceRecoveryAnimation(itemIds = [], full = false) {
  * @param {AbortSignal} signal - Abort signal for cleanup
  */
 export function activateForceUI(sheet, html, { signal } = {}) {
+
+  // Add a custom Force power as a real force-power Item, never as generic gear.
+  html.querySelectorAll('[data-action="add-force-power"]').forEach(button => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      try {
+        const doc = await createSafeEmbeddedItem(sheet.actor, 'force-power', { source: 'force-panel-add-force-power' });
+        doc?.sheet?.render?.(true);
+        sheet.render?.(false);
+      } catch (err) {
+        ui?.notifications?.error?.(`Failed to create Force Power: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+  // Add a custom starship maneuver as a real maneuver Item.
+  html.querySelectorAll('[data-action="add-starship-maneuver"]').forEach(button => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      try {
+        const doc = await createSafeEmbeddedItem(sheet.actor, 'maneuver', { source: 'starship-suite-add-maneuver' });
+        doc?.sheet?.render?.(true);
+        sheet.render?.(false);
+      } catch (err) {
+        ui?.notifications?.error?.(`Failed to create Starship Maneuver: ${err.message}`);
+      }
+    }, { signal });
+  });
+
   // Force sort dropdown
   html.querySelectorAll('[data-action="force-sort"]').forEach(select => {
     select.addEventListener("change", (event) => {

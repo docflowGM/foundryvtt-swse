@@ -214,17 +214,16 @@ export class HomeSurfaceService {
   static async _getUpgradeSummary(actor) {
     try {
       if (!actor) return { visible: false, enabled: false, badge: null };
-      const { UpgradeService } = await import('/systems/foundryvtt-swse/scripts/engine/upgrades/UpgradeService.js');
-      const allRecords = UpgradeService.collectOwnedUpgradeRecords(actor);
-      const applicable = UpgradeService.filterApplicableRecords(allRecords);
-      if (applicable.length === 0) return { visible: false, enabled: false, badge: null };
+      const { ItemCustomizationWorkbench } = await import('/systems/foundryvtt-swse/scripts/apps/customization/item-customization-workbench.js');
+      const customizable = Array.from(actor.items ?? []).filter(item => ItemCustomizationWorkbench.supportsItem(item));
+      if (customizable.length === 0) return { visible: false, enabled: false, badge: null };
       return {
         visible: true,
         enabled: true,
-        badge: applicable.length > 0 ? String(applicable.length) : null
+        badge: customizable.length > 0 ? String(customizable.length) : null
       };
     } catch (err) {
-      SWSELogger.warn('[HomeSurfaceService] Upgrade summary failed:', err);
+      SWSELogger.warn('[HomeSurfaceService] Workbench summary failed:', err);
       return { visible: false, enabled: false, badge: null };
     }
   }
@@ -406,7 +405,7 @@ export class HomeSurfaceService {
         id: 'workbench',
         label: 'Workbench',
         icon: '✦',
-        routeId: 'upgrade',
+        routeId: 'workbench',
         visible: upgradeSummary.visible,
         enabled: upgradeSummary.enabled,
         badge: upgradeSummary.badge,

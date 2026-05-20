@@ -652,7 +652,93 @@ export class LanguageStep extends ProgressionStepPlugin {
    * additional languages, minimum 1, and updates dynamically when INT changes.
    */
   async _calculateBonusLanguagesAvailable(actor, shell) {
-    return LanguageEngine.calculateBonusLanguagesAvailable(actor, { shell, includePending: true });
+    if (!this.isLevelup?.(shell)) {
+      return LanguageEngine.calculateBonusLanguagesAvailable(actor, { shell, includePending: true });
+    }
+
+    const intDelta = this._getPendingIntModifierDelta(actor, shell);
+    const pendingIntMod = Math.max(0, this._abilityModifier(this._getPendingAbilityScore(actor, shell, 'int')));
+    const ownedLinguistSlotsFromIntDelta = this._countOwnedLinguistInstances(actor) * intDelta;
+    const pendingLinguistSlots = this._countPendingLinguistInstances(shell) * Math.max(1, 1 + pendingIntMod);
+    return intDelta + ownedLinguistSlotsFromIntDelta + pendingLinguistSlots + this._countPendingLanguageEntitlementSlots(shell);
+  }
+
+  _getActorAbilityScore(actor, abilityKey = 'int') {
+    const ability = actor?.system?.abilities?.[abilityKey] || actor?.system?.attributes?.[abilityKey] || {};
+    const explicit = Number(ability.total ?? ability.score ?? ability.value);
+    if (Number.isFinite(explicit)) return explicit;
+    const base = Number(ability.base ?? 10);
+    const racial = Number(ability.racial ?? ability.species ?? 0);
+    const enhancement = Number(ability.enhancement ?? 0);
+    const temp = Number(ability.temp ?? 0);
+    const total = (Number.isFinite(base) ? base : 10)
+      + (Number.isFinite(racial) ? racial : 0)
+      + (Number.isFinite(enhancement) ? enhancement : 0)
+      + (Number.isFinite(temp) ? temp : 0);
+    return Number.isFinite(total) ? total : 10;
+  }
+
+  _abilityModifier(score) {
+    const safe = Number(score);
+    return Math.floor(((Number.isFinite(safe) ? safe : 10) - 10) / 2);
+  }
+
+  _getPendingAbilityScore(actor, shell, abilityKey = 'int') {
+    const current = this._getActorAbilityScore(actor, abilityKey);
+    const attributes = shell?.progressionSession?.draftSelections?.attributes || null;
+    if (!attributes) return current;
+    const direct = Number(
+      attributes?.finalValues?.[abilityKey]
+        ?? attributes?.values?.[abilityKey]
+        ?? attributes?.[abilityKey]?.score
+        ?? attributes?.[abilityKey]?.value
+        ?? attributes?.[abilityKey]
+    );
+    if (Number.isFinite(direct)) return direct;
+    const increase = Number(attributes?.increases?.[abilityKey] ?? 0);
+    if (Number.isFinite(increase) && increase > 0) return current + increase;
+    return current;
+  }
+
+  _getPendingIntModifierDelta(actor, shell) {
+    const currentMod = this._abilityModifier(this._getActorAbilityScore(actor, 'int'));
+    const attributes = shell?.progressionSession?.draftSelections?.attributes || null;
+    const explicitPendingMod = Number(attributes?.modifiers?.int);
+    const pendingMod = Number.isFinite(explicitPendingMod)
+      ? explicitPendingMod
+      : this._abilityModifier(this._getPendingAbilityScore(actor, shell, 'int'));
+    return Math.max(0, pendingMod - currentMod);
+  }
+
+  _countOwnedLinguistInstances(actor) {
+    return (actor?.items || []).filter(item => {
+      const name = String(item?.name || item?.system?.name || '').toLowerCase();
+      return item?.type === 'feat' && (name === 'linguist' || name.includes('linguist'));
+    }).length;
+  }
+
+  _countPendingLinguistInstances(shell) {
+    const pendingFeats = Array.isArray(shell?.progressionSession?.draftSelections?.feats)
+      ? shell.progressionSession.draftSelections.feats
+      : [];
+    return pendingFeats.reduce((total, feat) => {
+      const name = String(feat?.name || feat?.label || feat?.id || feat || '').toLowerCase();
+      if (name !== 'linguist' && !name.includes('linguist')) return total;
+      return total + Math.max(1, Number(feat?.count || 1));
+    }, 0);
+  }
+
+  _countPendingLanguageEntitlementSlots(shell) {
+    const entitlements = Array.isArray(shell?.progressionSession?.draftSelections?.pendingEntitlements)
+      ? shell.progressionSession.draftSelections.pendingEntitlements
+      : [];
+    return entitlements.reduce((total, entry) => {
+      const type = String(entry?.type || entry?.kind || '').toLowerCase();
+      if (type !== 'language_slot' && type !== 'language_training_slot' && type !== 'bonus_language') return total;
+      const quantity = Math.max(1, Number(entry?.quantity ?? entry?.count ?? 1));
+      const spent = Math.max(0, Number(entry?.spent ?? entry?.spentSelections?.length ?? 0));
+      return total + Math.max(0, quantity - spent);
+    }, 0);
   }
 
   /**

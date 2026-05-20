@@ -23,10 +23,12 @@
           <div class="item-editor__identity-row">
             <div class="form-field">
               <label>Type</label>
-              <select name="type" class="item-type-select">
+              <select name="type" class="item-type-select" {{#if itemId}}disabled{{/if}}>
                 <option value="weapon" {{#if (eq item.type "weapon")}}selected{{/if}}>Weapon</option>
                 <option value="armor" {{#if (eq item.type "armor")}}selected{{/if}}>Armor</option>
                 <option value="equipment" {{#if (eq item.type "equipment")}}selected{{/if}}>Equipment</option>
+                <option value="feat" {{#if (eq item.type "feat")}}selected{{/if}}>Feat</option>
+                <option value="talent" {{#if (eq item.type "talent")}}selected{{/if}}>Talent</option>
               </select>
             </div>
 
@@ -59,6 +61,22 @@
                 <option value="consumable" {{#if (eq system.category "consumable")}}selected{{/if}}>Consumable</option>
                 <option value="medical" {{#if (eq system.category "medical")}}selected{{/if}}>Medical</option>
               </select>
+            </div>
+            {{else if (eq item.type "feat")}}
+            <div class="form-field">
+              <label>Feat Type</label>
+              <select name="system.featType" class="item-category-select">
+                <option value="general" {{#if (eq system.featType "general")}}selected{{/if}}>General</option>
+                <option value="class_feature" {{#if (eq system.featType "class_feature")}}selected{{/if}}>Class Feature</option>
+                <option value="force" {{#if (eq system.featType "force")}}selected{{/if}}>Force</option>
+                <option value="species" {{#if (eq system.featType "species")}}selected{{/if}}>Species</option>
+                <option value="bonus" {{#if (eq system.featType "bonus")}}selected{{/if}}>Bonus</option>
+              </select>
+            </div>
+            {{else if (eq item.type "talent")}}
+            <div class="form-field">
+              <label>Talent Tree</label>
+              <input type="text" name="system.tree" value="{{system.tree}}" placeholder="e.g., Lineage" />
             </div>
             {{/if}}
           </div>
@@ -145,10 +163,6 @@
                 <select name="system.attackAttribute">
                   <option value="str" {{#if (eq system.attackAttribute "str")}}selected{{/if}}>Strength</option>
                   <option value="dex" {{#if (eq system.attackAttribute "dex")}}selected{{/if}}>Dexterity</option>
-                  <option value="con" {{#if (eq system.attackAttribute "con")}}selected{{/if}}>Constitution</option>
-                  <option value="int" {{#if (eq system.attackAttribute "int")}}selected{{/if}}>Intelligence</option>
-                  <option value="wis" {{#if (eq system.attackAttribute "wis")}}selected{{/if}}>Wisdom</option>
-                  <option value="cha" {{#if (eq system.attackAttribute "cha")}}selected{{/if}}>Charisma</option>
                 </select>
               </div>
 
@@ -471,6 +485,70 @@
             </div>
           </div>
         </section>
+
+        {{!-- FEAT EDITOR --}}
+        {{else if (eq item.type "feat")}}
+        <div class="item-editor__grid item-editor__grid--two-col">
+          <section class="item-editor__section">
+            <h3 class="item-editor__section-title">Feat Details</h3>
+            <div class="form-field">
+              <label>Category</label>
+              <input type="text" name="system.category" value="{{system.category}}" placeholder="General, Force, Class..." />
+            </div>
+            <div class="form-field">
+              <label>Source</label>
+              <input type="text" name="system.source" value="{{system.source}}" placeholder="Manual" />
+            </div>
+            <div class="form-field form-field--full">
+              <label>Prerequisites</label>
+              <textarea name="system.prerequisite" rows="3">{{system.prerequisite}}</textarea>
+            </div>
+          </section>
+
+          <section class="item-editor__section">
+            <h3 class="item-editor__section-title">Rules Text</h3>
+            <div class="form-field form-field--full">
+              <label>Benefit</label>
+              <textarea name="system.benefit" rows="5">{{system.benefit}}</textarea>
+            </div>
+            <div class="form-field form-field--full">
+              <label>Special</label>
+              <textarea name="system.special" rows="3">{{system.special}}</textarea>
+            </div>
+          </section>
+        </div>
+
+        {{!-- TALENT EDITOR --}}
+        {{else if (eq item.type "talent")}}
+        <div class="item-editor__grid item-editor__grid--two-col">
+          <section class="item-editor__section">
+            <h3 class="item-editor__section-title">Talent Details</h3>
+            <div class="form-field">
+              <label>Talent Tree</label>
+              <input type="text" name="system.tree" value="{{system.tree}}" placeholder="Talent tree" />
+            </div>
+            <div class="form-field">
+              <label>Source</label>
+              <input type="text" name="system.source" value="{{system.source}}" placeholder="Manual" />
+            </div>
+            <div class="form-field form-field--full">
+              <label>Prerequisites</label>
+              <textarea name="system.prerequisite" rows="3">{{system.prerequisite}}</textarea>
+            </div>
+          </section>
+
+          <section class="item-editor__section">
+            <h3 class="item-editor__section-title">Rules Text</h3>
+            <div class="form-field form-field--full">
+              <label>Benefit</label>
+              <textarea name="system.benefit" rows="5">{{system.benefit}}</textarea>
+            </div>
+            <div class="form-field form-field--full">
+              <label>Special</label>
+              <textarea name="system.special" rows="3">{{system.special}}</textarea>
+            </div>
+          </section>
+        </div>
 
         {{/if}}
       </div>

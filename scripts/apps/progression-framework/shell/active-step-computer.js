@@ -180,7 +180,7 @@ export class ActiveStepComputer {
 
         // Languages: applicable only if unallocated language slots exist
         case 'languages':
-          return this._hasUnallocatedLanguageSlots(actor, progressionSession);
+          return this._hasUnallocatedLanguageSlots(actor, progressionSession, mode);
 
         // New base-class survey: only after selecting a new base class after level 1
         case 'base-class-survey':
@@ -253,14 +253,14 @@ export class ActiveStepComputer {
   _hasSkillChoices(actor, progressionSession, mode = 'chargen') {
     if (mode !== 'levelup') return true;
 
-    const slots = this._countPendingSkillTrainingSlots(progressionSession);
+    const slots = this._countPendingSkillTrainingSlots(actor, progressionSession);
     if (slots <= 0) return false;
 
     const selectedNewSkills = this._countNewlySelectedTrainedSkills(actor, progressionSession);
     return selectedNewSkills < slots || !!progressionSession?.draftSelections?.skills;
   }
 
-  _countPendingSkillTrainingSlots(progressionSession) {
+  _countPendingSkillTrainingSlots(actor, progressionSession) {
     const draft = progressionSession?.draftSelections || {};
     const entitlements = Array.isArray(draft.pendingEntitlements) ? draft.pendingEntitlements : [];
     const entitlementSlots = entitlements
@@ -274,7 +274,95 @@ export class ActiveStepComputer {
       return sum + Math.max(1, Number(feat?.count || 1));
     }, 0);
 
-    return Math.max(entitlementSlots, featSlots);
+    const intDeltaSlots = this._getPendingIntModifierDelta(actor, progressionSession);
+    return Math.max(entitlementSlots, featSlots) + intDeltaSlots;
+  }
+
+  _getActorAbilityScore(actor, abilityKey = 'int') {
+    const ability = actor?.system?.abilities?.[abilityKey] || actor?.system?.attributes?.[abilityKey] || {};
+    const explicit = Number(ability.total ?? ability.score ?? ability.value);
+    if (Number.isFinite(explicit)) return explicit;
+    const base = Number(ability.base ?? 10);
+    const racial = Number(ability.racial ?? ability.species ?? 0);
+    const enhancement = Number(ability.enhancement ?? 0);
+    const temp = Number(ability.temp ?? 0);
+    const total = (Number.isFinite(base) ? base : 10)
+      + (Number.isFinite(racial) ? racial : 0)
+      + (Number.isFinite(enhancement) ? enhancement : 0)
+      + (Number.isFinite(temp) ? temp : 0);
+    return Number.isFinite(total) ? total : 10;
+  }
+
+  _abilityModifier(score) {
+    const safe = Number(score);
+    return Math.floor(((Number.isFinite(safe) ? safe : 10) - 10) / 2);
+  }
+
+  _getPendingAbilityScore(actor, progressionSession, abilityKey = 'int') {
+    const current = this._getActorAbilityScore(actor, abilityKey);
+    const attributes = progressionSession?.draftSelections?.attributes || null;
+    if (!attributes) return current;
+
+    const direct = Number(
+      attributes?.finalValues?.[abilityKey]
+        ?? attributes?.values?.[abilityKey]
+        ?? attributes?.[abilityKey]?.score
+        ?? attributes?.[abilityKey]?.value
+        ?? attributes?.[abilityKey]
+    );
+    if (Number.isFinite(direct)) return direct;
+
+    const increase = Number(attributes?.increases?.[abilityKey] ?? 0);
+    if (Number.isFinite(increase) && increase > 0) return current + increase;
+    return current;
+  }
+
+  _getPendingIntModifierDelta(actor, progressionSession) {
+    const currentMod = this._abilityModifier(this._getActorAbilityScore(actor, 'int'));
+    const attributes = progressionSession?.draftSelections?.attributes || null;
+    const explicitPendingMod = Number(attributes?.modifiers?.int);
+    const pendingMod = Number.isFinite(explicitPendingMod)
+      ? explicitPendingMod
+      : this._abilityModifier(this._getPendingAbilityScore(actor, progressionSession, 'int'));
+    return Math.max(0, pendingMod - currentMod);
+  }
+
+  _countOwnedLinguistInstances(actor) {
+    return (actor?.items || []).filter(item => {
+      const name = String(item?.name || item?.system?.name || '').toLowerCase();
+      return item?.type === 'feat' && (name === 'linguist' || name.includes('linguist'));
+    }).length;
+  }
+
+  _countPendingLinguistInstances(progressionSession) {
+    const pendingFeats = Array.isArray(progressionSession?.draftSelections?.feats) ? progressionSession.draftSelections.feats : [];
+    return pendingFeats.reduce((total, feat) => {
+      const name = String(feat?.name || feat?.label || feat?.id || feat || '').toLowerCase();
+      if (name !== 'linguist' && !name.includes('linguist')) return total;
+      return total + Math.max(1, Number(feat?.count || 1));
+    }, 0);
+  }
+
+  _countPendingLanguageEntitlementSlots(progressionSession) {
+    const entitlements = Array.isArray(progressionSession?.draftSelections?.pendingEntitlements)
+      ? progressionSession.draftSelections.pendingEntitlements
+      : [];
+    return entitlements.reduce((total, entry) => {
+      const type = String(entry?.type || entry?.kind || '').toLowerCase();
+      if (type !== 'language_slot' && type !== 'language_training_slot' && type !== 'bonus_language') return total;
+      const quantity = Math.max(1, Number(entry?.quantity ?? entry?.count ?? 1));
+      const spent = Math.max(0, Number(entry?.spent ?? entry?.spentSelections?.length ?? 0));
+      return total + Math.max(0, quantity - spent);
+    }, 0);
+  }
+
+  _countLevelupLanguageSlots(actor, progressionSession) {
+    const intDelta = this._getPendingIntModifierDelta(actor, progressionSession);
+    const pendingScore = this._getPendingAbilityScore(actor, progressionSession, 'int');
+    const pendingIntMod = Math.max(0, this._abilityModifier(pendingScore));
+    const ownedLinguistSlotsFromIntDelta = this._countOwnedLinguistInstances(actor) * intDelta;
+    const pendingLinguistSlots = this._countPendingLinguistInstances(progressionSession) * Math.max(1, 1 + pendingIntMod);
+    return intDelta + ownedLinguistSlotsFromIntDelta + pendingLinguistSlots + this._countPendingLanguageEntitlementSlots(progressionSession);
   }
 
   _countNewlySelectedTrainedSkills(actor, progressionSession) {
@@ -368,43 +456,30 @@ export class ActiveStepComputer {
    * PHASE 7: Dynamic Linguist compatibility instead of hardcoded bonus
    * @private
    */
-  _hasUnallocatedLanguageSlots(actor, progressionSession) {
+  _hasUnallocatedLanguageSlots(actor, progressionSession, mode = 'chargen') {
     // Never remove Languages while it is the current live step. The final bonus
     // language click may spend the last slot; removing the current step during
     // that same commit causes an unsolicited jump to Summary and can discard
     // transient UI state.
     if (progressionSession?.currentStepId === 'languages') return true;
 
-    // Languages step should only appear when there are player-selectable bonus
-    // language slots. Granted species/background languages are materialized
-    // automatically and must not force an empty step.
-    const engineSlots = Math.max(0, Number(
-      LanguageEngine.calculateBonusLanguagesAvailable(actor, {
-        shell: { actor, progressionSession },
-        progressionSession,
-        includePending: true,
-      }) || 0
-    ));
-
-    const pending = progressionSession?.draftSelections || {};
-    const attrSelection = pending.attributes?.values || pending.attributes || {};
-    const pendingInt = Number(
-      attrSelection?.int?.score
-        ?? attrSelection?.int?.base
-        ?? attrSelection?.int?.value
-        ?? attrSelection?.int
-        ?? actor?.system?.abilities?.int?.base
-        ?? actor?.system?.abilities?.int?.value
-        ?? 10
-    );
-    const intBonusSlots = Math.max(0, Math.floor(((Number.isFinite(pendingInt) ? pendingInt : 10) - 10) / 2));
-    const pendingFeats = Array.isArray(pending.feats) ? pending.feats : [];
-    const pendingLinguistCount = pendingFeats.filter((feat) => {
-      const name = String(feat?.name || feat?.label || feat?.id || feat || '').toLowerCase();
-      return name === 'linguist' || name.includes('linguist');
-    }).reduce((total, feat) => total + Math.max(1, Number(feat?.count || 1)), 0);
-    const pendingSlots = intBonusSlots + (pendingLinguistCount * Math.max(1, 1 + intBonusSlots));
-    const bonusSlots = Math.max(engineSlots, pendingSlots);
+    let bonusSlots;
+    if (mode === 'levelup') {
+      // Level-up owes only newly-created language picks this event: INT modifier
+      // increases, existing Linguist scaling from that INT increase, newly-taken
+      // Linguist, and explicit pending language entitlements. Do not compare the
+      // draft against the actor's lifetime language entitlement.
+      bonusSlots = this._countLevelupLanguageSlots(actor, progressionSession);
+    } else {
+      // Chargen still compares against the total bonus-language entitlement.
+      bonusSlots = Math.max(0, Number(
+        LanguageEngine.calculateBonusLanguagesAvailable(actor, {
+          shell: { actor, progressionSession },
+          progressionSession,
+          includePending: true,
+        }) || 0
+      ));
+    }
 
     const selectedLanguages = Array.isArray(progressionSession?.draftSelections?.languages)
       ? progressionSession.draftSelections.languages.length
@@ -744,21 +819,11 @@ export class ActiveStepComputer {
    * @private
    */
   async _checkPrerequisiteActivation(node, actor, progressionSession) {
-    // Force powers: requires Force Sensitivity or a pending Force Training/Force Sensitivity grant.
+    // Force powers: use the same shell-aware entitlement resolver used by
+    // applicability. This sees pending class auto-grants such as Jedi's Force
+    // Sensitivity during chargen, not just already-created actor feat items.
     if (node.nodeId === 'force-powers') {
-      const pendingFeats = progressionSession?.draftSelections?.feats || [];
-      const pendingGrantedFeats = progressionSession?.pendingState?.grantedFeats || [];
-      const pendingNames = [
-        ...pendingFeats,
-        ...pendingGrantedFeats,
-      ].map(entry => String(entry?.name || entry?.label || entry || '').toLowerCase());
-      const hasPendingForceAccess = pendingNames.some(name =>
-        name.includes('force sensitivity') || name.includes('force sensitive') || name.includes('force training')
-      );
-      const hasForceSensitivity = actor.items.some(item =>
-        item.type === 'feat' && item.name?.toLowerCase().includes('force sensitivity')
-      );
-      return hasForceSensitivity || hasPendingForceAccess;
+      return await this._hasForcePowerChoices(actor, progressionSession);
     }
 
     // Force secrets: PHASE 3 - check real class grant budget (not proxy signals)

@@ -227,6 +227,31 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     return null;
   }
 
+  _getSearchForCategory(category = this.selectedCategory) {
+    const key = String(category || '').trim();
+    if (!key) return String(this.search || '');
+    return this._searchByCategory.has(key) ? String(this._searchByCategory.get(key) || '') : '';
+  }
+
+  _setSearchForCategory(category = this.selectedCategory, value = '') {
+    const key = String(category || this.selectedCategory || '').trim();
+    const search = String(value ?? '');
+    if (key) this._searchByCategory.set(key, search);
+    if (!key || key === this.selectedCategory) this.search = search;
+    return search;
+  }
+
+  _rememberSelectedItem(category = this.selectedCategory, itemId = null) {
+    const key = String(category || '').trim();
+    if (!key) return null;
+    const rememberedId = itemId || (key === 'lightsaber'
+      ? this._lightsaber?.selectedOwnedSaberId
+      : this.selectedItemId);
+    if (rememberedId) this._selectedByCategory.set(key, rememberedId);
+    else this._selectedByCategory.delete(key);
+    return rememberedId || null;
+  }
+
   _getVisibleCategories() {
     const byCategory = {
       weapons: this.actor.items.filter(item => ['blaster', 'weapon'].includes(item.type) && !LightsaberConstructionEngine.isLightsaberItem(item)),
@@ -654,6 +679,255 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           : (preview.slotState.isOverflowing ? 'Slot Overflow' : 'Insufficient Credits')
       }
     };
+  }
+
+  async handleSurfaceAction(action, target) {
+    switch (action) {
+      case 'select-category': {
+        this._rememberSelectedItem();
+        this.selectedCategory = target?.dataset?.category || this.selectedCategory;
+        this.search = this._getSearchForCategory(this.selectedCategory);
+        if (this.selectedCategory !== 'lightsaber') this.selectedItemId = this._selectedByCategory.get(this.selectedCategory) || null;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'select-item': {
+        const itemId = target?.dataset?.itemId;
+        if (!itemId) return;
+        if (this.selectedCategory === 'lightsaber') {
+          this._lightsaber.selectedOwnedSaberId = itemId;
+          this._rememberSelectedItem('lightsaber', itemId);
+        } else {
+          this.selectedItemId = itemId;
+          this._rememberSelectedItem(this.selectedCategory, itemId);
+        }
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'search-items': {
+        this._setSearchForCategory(this.selectedCategory, target?.value || '');
+        window.clearTimeout(this._searchRenderTimer);
+        this._searchRenderTimer = window.setTimeout(() => this._renderPreservingUi(), 140);
+        return;
+      }
+
+      case 'reset-filter': {
+        this._setSearchForCategory(this.selectedCategory, '');
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'toggle-upgrade': {
+        if (target?.disabled || target?.classList?.contains?.('disabled')) return;
+        const item = this._getCurrentItem();
+        const draft = this._getDraft(item);
+        if (!item || !draft) return;
+        const key = target?.dataset?.key || target?.dataset?.upgradeKey;
+        if (!key) return;
+        const currentInstalled = this._getCurrentAppliedUpgradeKeys(item);
+        if (currentInstalled.includes(key)) return;
+        const idx = draft.selectedUpgrades.indexOf(key);
+        if (idx >= 0) draft.selectedUpgrades.splice(idx, 1);
+        else draft.selectedUpgrades.push(key);
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'toggle-template': {
+        if (target?.disabled || target?.classList?.contains?.('disabled')) return;
+        const item = this._getCurrentItem();
+        const draft = this._getDraft(item);
+        if (!item || !draft) return;
+        const key = target?.dataset?.key || target?.dataset?.templateKey;
+        if (!key) return;
+        const currentlyApplied = Array.isArray(item.flags?.swse?.appliedTemplates)
+          ? item.flags.swse.appliedTemplates.map(entry => entry?.templateKey)
+          : [];
+        if (currentlyApplied.includes(key)) return;
+        const idx = draft.selectedTemplates.indexOf(key);
+        if (idx >= 0) draft.selectedTemplates.splice(idx, 1);
+        else {
+          const validation = GearTemplatesEngine.canApplyTemplate(item, key);
+          if (!validation.valid) {
+            ui.notifications.warn(validation.reason);
+            return;
+          }
+          draft.selectedTemplates = [key, ...draft.selectedTemplates.filter(Boolean)].slice(0, GearTemplatesEngine.getTemplateLimit());
+        }
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'toggle-size-increase': {
+        const button = target?.closest?.('button') || target;
+        if (button?.disabled || button?.classList?.contains?.('disabled')) return;
+        const item = this._getCurrentItem();
+        const draft = this._getDraft(item);
+        if (!item || !draft) return;
+        const currentState = this._getCustomizationState(item);
+        if (currentState.structural?.sizeIncreaseApplied) return;
+        draft.structural.sizeIncreaseApplied = !draft.structural.sizeIncreaseApplied;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'toggle-strip': {
+        if (target?.disabled || target?.classList?.contains?.('disabled')) return;
+        const item = this._getCurrentItem();
+        const draft = this._getDraft(item);
+        const key = target?.dataset?.key;
+        if (!item || !draft || !key) return;
+        const current = new Set(item.flags?.swse?.customizationStructural?.strippedAreas || []);
+        if (current.has(key)) return;
+        const idx = draft.structural.strippedAreas.indexOf(key);
+        if (idx >= 0) draft.structural.strippedAreas.splice(idx, 1);
+        else draft.structural.strippedAreas.push(key);
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'set-bolt-color': {
+        const draft = this._getDraft(this._getCurrentItem());
+        if (!draft) return;
+        draft.boltColor = target?.dataset?.key;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'set-fx-type': {
+        const draft = this._getDraft(this._getCurrentItem());
+        if (!draft) return;
+        draft.fxType = target?.dataset?.key;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'set-accent': {
+        const draft = this._getDraft(this._getCurrentItem());
+        if (!draft) return;
+        draft.accentColor = target?.dataset?.key;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'set-tint': {
+        const draft = this._getDraft(this._getCurrentItem());
+        if (!draft) return;
+        draft.tintColor = target?.dataset?.key;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'set-variant': {
+        const draft = this._getDraft(this._getCurrentItem());
+        if (!draft) return;
+        draft.variant = target?.dataset?.key;
+        draft.selectedUpgrades = draft.selectedUpgrades.filter(key => {
+          const mod = GEAR_MODS[key];
+          return mod?.compatible?.includes(draft.variant);
+        });
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'select-lightsaber-chassis': {
+        this._lightsaber.selectedChassisId = target?.dataset?.key;
+        this._lightsaber.selectedAccessoryIds = this._lightsaber.selectedAccessoryIds.filter(id => this._isLightsaberAccessoryCompatible(id));
+        if (!this._isLightsaberCrystalCompatible(this._lightsaber.selectedCrystalId)) {
+          const firstCompatible = this._catalogs.crystals.find(option => this._isLightsaberCrystalCompatible(option.id));
+          this._lightsaber.selectedCrystalId = firstCompatible?.id || this._catalogs.crystals[0]?.id || null;
+        }
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'select-lightsaber-crystal': {
+        if (target?.classList?.contains?.('disabled')) return;
+        const key = target?.dataset?.key;
+        if (!this._isLightsaberCrystalCompatible(key)) {
+          ui.notifications.warn('That crystal is not compatible with the selected chassis.');
+          return;
+        }
+        this._lightsaber.selectedCrystalId = key;
+        const crystal = this._catalogs.crystals.find(option => option.id === key || option._id === key);
+        const preferred = this._resolveBladeColorOptions(crystal)[0];
+        if (preferred) this._lightsaber.selectedBladeColor = preferred;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'toggle-lightsaber-accessory': {
+        const id = target?.dataset?.key;
+        if (!id) return;
+        if (target?.classList?.contains?.('disabled') || !this._isLightsaberAccessoryCompatible(id)) {
+          ui.notifications.warn('That accessory is not compatible with the selected chassis.');
+          return;
+        }
+        const ids = this._lightsaber.selectedAccessoryIds;
+        const idx = ids.indexOf(id);
+        if (idx >= 0) ids.splice(idx, 1);
+        else {
+          const accessory = this._findLightsaberCatalogOption('accessories', id);
+          const slotCost = Number(accessory?.system?.lightsaber?.upgradeSlots ?? accessory?.system?.upgradeSlots ?? 1) || 1;
+          const current = this._getLightsaberAccessorySlotState();
+          if ((current.usedSlots + slotCost) > current.totalAvailable) {
+            ui.notifications.warn('That accessory exceeds this hilt slot budget.');
+            return;
+          }
+          ids.push(id);
+        }
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'set-lightsaber-color': {
+        this._lightsaber.selectedBladeColor = target?.dataset?.key;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'set-lightsaber-check-mode': {
+        if (target?.disabled || target?.classList?.contains?.('disabled')) return;
+        const mode = target?.dataset?.key;
+        if (mode === 'roll' || mode === 'take10') this._lightsaber.selectedCheckMode = mode;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'reset-item': {
+        if (this.selectedCategory === 'lightsaber') {
+          const editItem = this._lightsaber.selectedOwnedSaberId ? this.actor.items.get(this._lightsaber.selectedOwnedSaberId) : null;
+          this._lightsaber.selectedChassisId = null;
+          this._lightsaber.selectedCrystalId = null;
+          this._lightsaber.selectedAccessoryIds = [];
+          this._lightsaber.selectedBladeColor = DEFAULT_BLADE_COLOR;
+          this._lightsaber.selectedCheckMode = 'roll';
+          if (editItem) this._lightsaber.selectedOwnedSaberId = editItem.id;
+          this._hydrateLightsaberDefaults();
+        } else {
+          const item = this._getCurrentItem();
+          if (item) this._drafts.set(item.id, this._getInitialDraft(item));
+        }
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'close-workbench': {
+        await this.close();
+        return;
+      }
+
+      case 'apply-item': {
+        if (this._pendingApply) return;
+        await this.#applyCurrentItem();
+        return;
+      }
+
+      default:
+        return;
+    }
   }
 
   wireEvents() {

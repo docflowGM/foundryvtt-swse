@@ -60,6 +60,7 @@ const CLASS_META = {
 
 const DEPARTURE_OPTIONS = {
   jedi: {
+    id: 'departure_from_jedi',
     text: 'What about your old path as a Jedi made you seek this new training?',
     options: [
       departure('force_was_not_enough', 'The Force was not enough by itself.', 'You need practical tools beyond meditation, intuition, and the lightsaber.', ['Practical', 'Broadened Path'], pos({ skillUtility: 2, tacticalAwareness: 1 }, { flex: 1 }, { intelligence: 1 }), neg({ forceDC: -1 }, { controller: -1 })),
@@ -69,6 +70,7 @@ const DEPARTURE_OPTIONS = {
     ],
   },
   noble: {
+    id: 'departure_from_noble',
     text: 'What about your old path as a Noble made you seek this new training?',
     options: [
       departure('words_not_enough', 'Words were not enough.', 'Influence mattered, but some problems demanded direct capability.', ['Action', 'Directness'], pos({ accuracy: 1, reactionDefense: 1, tacticalAwareness: 1 }, { striker: 1, defender: 1 }, { dexterity: 1, strength: 1 }), neg({ socialManipulation: -1 }, { social: -1, leader: -0.5 })),
@@ -78,6 +80,7 @@ const DEPARTURE_OPTIONS = {
     ],
   },
   scout: {
+    id: 'departure_from_scout',
     text: 'What about your old path as a Scout made you seek this new training?',
     options: [
       departure('instinct_not_enough', 'Instinct was not enough.', 'Awareness kept you alive, but you need a stronger answer when survival is not the only goal.', ['Growth', 'Purpose'], pos({ tacticalAwareness: 1, reactionDefense: 1 }, { support: 1, defender: 1 }, { wisdom: 1 }), neg({ skillUtility: -0.5 }, { utility: -0.5 })),
@@ -87,6 +90,7 @@ const DEPARTURE_OPTIONS = {
     ],
   },
   soldier: {
+    id: 'departure_from_soldier',
     text: 'What about your old path as a Soldier made you seek this new training?',
     options: [
       departure('weapons_not_everything', 'Weapons could not solve everything.', 'You learned that some battles require more than armor, aim, and force.', ['Broadened Tools', 'Restraint'], pos({ skillUtility: 1, socialManipulation: 1, tacticalAwareness: 1 }, { controller: 1, support: 1 }, { wisdom: 1, charisma: 1 }), neg({ singleTargetDamage: -1 }, { striker: -0.5 })),
@@ -96,6 +100,7 @@ const DEPARTURE_OPTIONS = {
     ],
   },
   scoundrel: {
+    id: 'departure_from_scoundrel',
     text: 'What about your old path as a Scoundrel made you seek this new training?',
     options: [
       departure('luck_not_enough', 'Luck stopped being enough.', 'Timing and nerve helped you survive, but you need discipline when the odds turn cruel.', ['Discipline', 'Stability'], pos({ reactionDefense: 1, tacticalAwareness: 1 }, { defender: 1 }, { wisdom: 1 }), neg({ evasion: -0.5 }, { luck: -1 })),

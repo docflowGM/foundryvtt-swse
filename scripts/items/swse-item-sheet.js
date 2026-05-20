@@ -16,6 +16,7 @@ import { BLADE_COLOR_MAP } from "/systems/foundryvtt-swse/scripts/data/blade-col
 import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
+import { normalizeItemSystem, sanitizeItemSheetUpdate } from "/systems/foundryvtt-swse/scripts/items/item-defaults.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -28,7 +29,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     window: { resizable: true },
     form: {
       handler: SWSEItemSheet.#onSubmitForm,
-      submitOnChange: true,
+      submitOnChange: false,
       closeOnSubmit: false
     }
   });
@@ -83,7 +84,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     if (previewItemType) {
       itemData.type = previewItemType;
     }
-    itemData.system ??= {};
+    itemData.system = normalizeItemSystem(itemData.type ?? this.item?.type ?? 'equipment', this.item?.system ?? {}, itemData.system ?? {});
     if (previewWeaponBranch && itemData.type === 'weapon') {
       itemData.system.meleeOrRanged = previewWeaponBranch;
     }
@@ -431,7 +432,9 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     event.preventDefault();
 
     const app = this;
-    const data = foundry.utils.expandObject(formData.object);
+    const rawObject = formData?.object ?? Object.fromEntries(new FormData(form).entries());
+    const hasDottedKeys = Object.keys(rawObject ?? {}).some(key => String(key).includes('.'));
+    const data = hasDottedKeys ? foundry.utils.expandObject(rawObject) : foundry.utils.deepClone(rawObject ?? {});
 
     // Normalize string lists into arrays.
     if (typeof data?.system?.properties === 'string') {
@@ -454,14 +457,23 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     }
 
     const actor = this.item?.actor;
-    const flatData = foundry.utils.flattenObject(data);
+    const requestedType = data?.type ?? this.item?.type;
+    if (requestedType && requestedType !== this.item?.type) {
+      ui.notifications?.warn?.('Changing an existing item type is not supported here. Create a new blank item of the desired type instead.');
+      data.type = this.item?.type;
+    }
+
+    const safeUpdate = sanitizeItemSheetUpdate(this.item, data, form);
+    const flatData = foundry.utils.flattenObject(safeUpdate);
 
     // PHASE 2: Route embedded items through ActorEngine
     if (this.item?.isEmbedded && actor) {
       try {
-        await ActorEngine.updateEmbeddedDocuments(actor, "Item", [{ _id: this.item.id, ...flatData }]);
+        await ActorEngine.updateEmbeddedDocuments(actor, "Item", [{ _id: this.item.id, ...flatData }], { source: 'swse-item-sheet-confirm' });
         app._previewItemType = null;
         app._previewWeaponBranch = null;
+        ui.notifications?.info?.(`${this.item.name || safeUpdate.name} saved.`);
+        await app.close?.();
         return;
       } catch (err) {
         console.error('[Item Sheet] Form submission failed:', err);
@@ -475,5 +487,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     await app.item.update(flatData); // @mutation-exception: UI-only unowned item
     app._previewItemType = null;
     app._previewWeaponBranch = null;
+    ui.notifications?.info?.(`${app.item?.name || safeUpdate.name} saved.`);
+    await app.close?.();
   }
 }

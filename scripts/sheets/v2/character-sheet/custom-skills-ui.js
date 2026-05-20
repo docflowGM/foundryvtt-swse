@@ -8,6 +8,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { rollCustomSkill } from "/systems/foundryvtt-swse/scripts/rolls/custom-skill-roller.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { createCustomSkillEntry } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
 
 /**
  * Activate custom skills panel UI listeners
@@ -62,21 +63,13 @@ async function addCustomSkill(actor) {
 
   const customSkills = actor.system.customSkills || [];
 
-  const newSkill = {
-    id: `custom-${Date.now()}`,
-    label: 'New Custom Skill',
-    ability: 'int',
-    trained: false,
-    focused: false,
-    miscMod: 0,
-    notes: ''
-  };
+  const newSkill = createCustomSkillEntry();
 
   const updatedSkills = [...customSkills, newSkill];
 
   await ActorEngine.updateActor(actor, {
-    system: { customSkills: updatedSkills }
-  });
+    "system.customSkills": updatedSkills
+  }, { source: 'custom-skills-add' });
 
   swseLogger.log('[CustomSkills] Added new custom skill:', newSkill.id);
 }
@@ -99,8 +92,8 @@ async function deleteCustomSkill(actor, skillId) {
   const updatedSkills = customSkills.filter(skill => skill.id !== skillId);
 
   await ActorEngine.updateActor(actor, {
-    system: { customSkills: updatedSkills }
-  });
+    "system.customSkills": updatedSkills
+  }, { source: 'custom-skills-add' });
 
   swseLogger.log('[CustomSkills] Deleted custom skill:', skillId);
 }

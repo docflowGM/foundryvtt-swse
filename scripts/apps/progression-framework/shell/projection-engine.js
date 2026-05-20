@@ -4,6 +4,7 @@
 
 import { swseLogger } from '../../../utils/logger.js';
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
+import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 
 export class ProjectionEngine {
   static async buildProjection(progressionSession, actor) {
@@ -20,7 +21,7 @@ export class ProjectionEngine {
         identity: await this._projectIdentity(draftSelections),
         attributes: this._projectAttributes(draftSelections, actor),
         skills: await this._projectSkills(draftSelections),
-        abilities: this._projectAbilities(draftSelections),
+        abilities: this._projectAbilities(draftSelections, actor, progressionSession.mode || 'chargen'),
         languages: await this._projectLanguages(draftSelections),
         droid: this._projectDroid(draftSelections),
         beast: this._projectBeast(draftSelections),
@@ -136,9 +137,12 @@ export class ProjectionEngine {
     return { trained, granted: grantedNormalized, total };
   }
 
-  static _projectAbilities(draftSelections) {
+  static _projectAbilities(draftSelections, actor = null, mode = 'chargen') {
+    const selectedFeats = ProgressionContentAuthority.normalizeSelectionList('feat', draftSelections.feats);
+    const classGrantedFeats = mode === 'chargen' ? this._getClassGrantedFeatProjectionEntries(draftSelections, actor) : [];
+
     return {
-      feats: ProgressionContentAuthority.normalizeSelectionList('feat', draftSelections.feats),
+      feats: this._uniqueAbilityEntries([...classGrantedFeats, ...selectedFeats]),
       talents: ProgressionContentAuthority.normalizeSelectionList('talent', draftSelections.talents),
       forcePowers: ProgressionContentAuthority.normalizeSelectionList('forcePower', draftSelections.forcePowers),
       forceTechniques: ProgressionContentAuthority.normalizeSelectionList('forceTechnique', draftSelections.forceTechniques),
@@ -146,6 +150,73 @@ export class ProjectionEngine {
       medicalSecrets: ProgressionContentAuthority.normalizeSelectionList('medicalSecret', draftSelections.medicalSecrets),
       starshipManeuvers: Array.isArray(draftSelections.starshipManeuvers) ? draftSelections.starshipManeuvers.map((m) => typeof m === 'string' ? { id: m, name: m, source: 'selection' } : { id: m.id || m.name, name: m.name || m.id, source: m.source || 'selection' }) : [],
     };
+  }
+
+
+  static _getClassGrantedFeatProjectionEntries(draftSelections, actor = null) {
+    if (!draftSelections?.class || !actor) return [];
+
+    try {
+      const pendingState = {
+        selectedClass: draftSelections.class,
+        selectedFeats: draftSelections.feats || [],
+        selectedTalents: draftSelections.talents || [],
+        selectedSkills: draftSelections.skills || [],
+        pendingSpeciesContext: draftSelections.pendingSpeciesContext || draftSelections.species?.pendingContext || null,
+      };
+      const ledger = buildClassGrantLedger(actor, draftSelections.class, pendingState);
+      const grants = [
+        ...(Array.isArray(ledger?.grantedFeats) ? ledger.grantedFeats : []),
+        ...(Array.isArray(ledger?.grantedProficiencies) ? ledger.grantedProficiencies : []),
+      ];
+
+      return grants
+        .map((grant) => this._formatClassGrantedFeatProjectionEntry(grant, ledger))
+        .filter(Boolean);
+    } catch (err) {
+      swseLogger.debug('[ProjectionEngine] Class grant projection failed; continuing with selected feats only', {
+        error: err?.message || String(err),
+      });
+      return [];
+    }
+  }
+
+  static _formatClassGrantedFeatProjectionEntry(grant, ledger = null) {
+    const name = grant?.name || grant?.target || grant?.id || null;
+    if (!name) return null;
+
+    const resolved = ProgressionContentAuthority.resolveFeat({ name, id: grant?.id || name })
+      || ProgressionContentAuthority.resolveFeat(name);
+
+    return {
+      id: resolved?.id || grant?.id || name,
+      name: resolved?.name || name,
+      source: 'class-auto-grant',
+      category: resolved?.category || grant?.category || grant?.type || null,
+      tags: Array.isArray(resolved?.tags) ? [...resolved.tags] : [],
+      description: resolved?.description || '',
+      pack: resolved?.pack || null,
+      choiceMeta: resolved?.system?.choiceMeta || null,
+      grantedByClass: true,
+      autoGranted: true,
+      locked: true,
+      sourceClass: ledger?.className || null,
+    };
+  }
+
+  static _uniqueAbilityEntries(entries = []) {
+    const out = [];
+    const seen = new Set();
+    for (const entry of entries || []) {
+      if (!entry) continue;
+      const key = String(entry.name || entry.id || '')
+        .trim()
+        .toLowerCase();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      out.push(entry);
+    }
+    return out;
   }
 
   static async _projectLanguages(draftSelections) {
@@ -186,11 +257,13 @@ export class ProjectionEngine {
     const warnings = await this._computeProjectionWarnings(draftSelections, session);
     const grantedSkills = await ProgressionContentAuthority.getGrantedSkillEntries({ classSelection: draftSelections.class, backgroundSelection: draftSelections.background });
     const grantedLanguages = await ProgressionContentAuthority.getGrantedLanguageEntries({ speciesSelection: draftSelections.species, backgroundSelection: draftSelections.background });
+    const classGrantedFeats = session?.mode === 'chargen' ? this._getClassGrantedFeatProjectionEntries(draftSelections, actor) : [];
     return {
       warnings,
       grants: {
         skills: grantedSkills.map((entry) => entry.name),
         languages: grantedLanguages.map((entry) => entry.name),
+        feats: classGrantedFeats.map((entry) => entry.name),
       },
       credits: ProgressionContentAuthority.getStartingCredits({ classSelection: draftSelections.class, backgroundSelection: draftSelections.background }),
       projectStatus: warnings.length === 0 ? 'complete' : 'incomplete',

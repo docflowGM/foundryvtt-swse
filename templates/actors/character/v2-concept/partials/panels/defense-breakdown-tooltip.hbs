@@ -4,6 +4,10 @@
     <strong>10</strong>
   </div>
   <div class="swse-concept-defense-breakdown__row">
+    <span>Heroic/Armor</span>
+    <strong>{{numberFormat defense.levelContribution decimals=0 sign=true}}</strong>
+  </div>
+  <div class="swse-concept-defense-breakdown__row">
     <span>{{defense.abilityLabel}}</span>
     <strong class="{{defense.abilityModClass}}">{{numberFormat defense.abilityMod decimals=0 sign=true}}</strong>
   </div>
@@ -15,6 +19,24 @@
     <span>Armor</span>
     <strong>{{numberFormat defense.armorBonus decimals=0 sign=true}}</strong>
   </div>
+  {{#if defense.sizeModifier}}
+    <div class="swse-concept-defense-breakdown__row">
+      <span>Size</span>
+      <strong class="{{defense.sizeModClass}}">{{numberFormat defense.sizeModifier decimals=0 sign=true}}</strong>
+    </div>
+  {{/if}}
+  {{#if defense.speciesBonus}}
+    <div class="swse-concept-defense-breakdown__row">
+      <span>Species</span>
+      <strong class="{{defense.speciesBonusClass}}">{{numberFormat defense.speciesBonus decimals=0 sign=true}}</strong>
+    </div>
+  {{/if}}
+  {{#if defense.rulesBonus}}
+    <div class="swse-concept-defense-breakdown__row">
+      <span>Rules</span>
+      <strong class="{{defense.rulesBonusClass}}">{{numberFormat defense.rulesBonus decimals=0 sign=true}}</strong>
+    </div>
+  {{/if}}
   <div class="swse-concept-defense-breakdown__row">
     <span>Misc</span>
     <strong class="{{defense.miscModClass}}">{{numberFormat defense.miscMod decimals=0 sign=true}}</strong>

@@ -14,6 +14,7 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { createSafeEmbeddedItem } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
 import { DroidCustomizationRouter } from "/systems/foundryvtt-swse/scripts/applications/droid/droid-customization-router.js";
 import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
 import { StockDroidConversionDialog } from "/systems/foundryvtt-swse/scripts/apps/stock-droid-conversion-dialog.js";
@@ -250,14 +251,24 @@ function wireFeatTalentButtons(sheet, root, signal) {
   for (const btn of root.querySelectorAll('[data-action="add-feat"]')) {
     btn.addEventListener("click", async (ev) => {
       ev.preventDefault();
-      game.swse.progression?.openFeatSelector?.(sheet.document);
+      if (game.swse.progression?.openFeatSelector) {
+        game.swse.progression.openFeatSelector(sheet.document);
+      } else {
+        const doc = await createSafeEmbeddedItem(sheet.document, 'feat', { source: 'droid-sheet-add-feat' });
+        doc?.sheet?.render?.(true);
+      }
     }, { signal });
   }
 
   for (const btn of root.querySelectorAll('[data-action="add-talent"]')) {
     btn.addEventListener("click", async (ev) => {
       ev.preventDefault();
-      game.swse.progression?.openTalentSelector?.(sheet.document);
+      if (game.swse.progression?.openTalentSelector) {
+        game.swse.progression.openTalentSelector(sheet.document);
+      } else {
+        const doc = await createSafeEmbeddedItem(sheet.document, 'talent', { source: 'droid-sheet-add-talent' });
+        doc?.sheet?.render?.(true);
+      }
     }, { signal });
   }
 }
