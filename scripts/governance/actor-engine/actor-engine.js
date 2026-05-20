@@ -616,6 +616,17 @@ export const ActorEngine = {
       // Phase 3A & 3D normalizations are now handled in Phase 4 comprehensive normalization above
 
       // ========================================
+      // PHASE 1 DIAGNOSTICS: Semantic boundary audit
+      // Warning-only — no payload changes, no rejection.
+      // Evidence collection before Phase 2 enforcement.
+      //
+      // Long-term invariant: ActorEngine is the public mutation facade.
+      // Future phases will enforce semantic rules here only after parity is proven.
+      // ========================================
+      const _opCategory = this._classifyOperationIntent(normalizedUpdateData, options, actor);
+      this._auditSemanticBoundaries(normalizedUpdateData, flatUpdateData, actor, _opCategory, options);
+
+      // ========================================
       // PHASE 2: Mark mutation as in-flight before any reactive code can run
       // ========================================
       this._markActorMutationInFlight(actor.id);
@@ -751,6 +762,9 @@ export const ActorEngine = {
       // accidentally includes a type field in an update targeting an existing item.
       let safeUpdates = updates;
       if (embeddedName === 'Item') {
+        // Phase 1 diagnostics: audit original updates before P0.1 stripping
+        this._auditEmbeddedItemBoundaries(updates, actor, options);
+
         safeUpdates = updates.map(update => {
           const itemId = update._id ?? update.id;
           if (!itemId || !('type' in update)) return update;
@@ -4131,6 +4145,194 @@ export const ActorEngine = {
     }
 
     return { isValid: warnings.length === 0, warnings };
+  },
+
+  // ========================================
+  // PHASE 1 DIAGNOSTICS: Semantic boundary helpers
+  // Diagnostic-only. No rejection. No behavior change.
+  // These collect evidence before Phase 2 enforcement.
+  // ========================================
+
+  /**
+   * Classify the intended operation category for semantic boundary diagnostics.
+   * Not authoritative — reduces false-positive noise in audit logs.
+   *
+   * Categories:
+   *   migration-repair        — migration, world repair, schema repair
+   *   progression-commit      — level-up, finalization, skill commit
+   *   derived-rebuild         — DerivedCalculator cycle
+   *   canonical-normalization — shape normalization passes
+   *   live-ui-update          — narrow dot-path update from sheet interaction
+   *   unknown                 — unclassified; highest suspicion weight
+   * @private
+   */
+  _classifyOperationIntent(updateData, options, actor) {
+    const source = options?.source ?? options?.meta?.source ?? '';
+    const guardKey = options?.meta?.guardKey ?? '';
+    const metaOrigin = options?.meta?.origin ?? '';
+
+    if (metaOrigin === 'migration' || /migration|repair/i.test(source)) return 'migration-repair';
+    if (
+      source === 'ActorEngine.applyProgression' ||
+      /progression|finali/i.test(source) ||
+      guardKey.includes('progression')
+    ) return 'progression-commit';
+    if (options?.isDerivedCalculatorCall === true || actor?._isDerivedCalcCycle === true) return 'derived-rebuild';
+    if (/canonical|normali/i.test(source)) return 'canonical-normalization';
+
+    // Narrow leaf-path updates are typical live UI interactions — not suspicious
+    const flat = foundry.utils.flattenObject(updateData ?? {});
+    const keys = Object.keys(flat);
+    if (keys.length <= 4 && keys.every(k => (k.match(/\./g) ?? []).length >= 2)) return 'live-ui-update';
+
+    return 'unknown';
+  },
+
+  /**
+   * Audit actor update payloads for semantic boundary violations.
+   *
+   * Detects dangerous-but-currently-approved payload patterns that should be
+   * understood before any hard rejection is added in later phases.
+   *
+   * Warning-only — does not alter updateData, does not block updates.
+   *
+   * Long-term invariant: This is the evidence collection layer.
+   * Future phases may turn these warnings into enforcement after parity is proven.
+   * @private
+   */
+  _auditSemanticBoundaries(updateData, flatData, actor, operationCategory, options) {
+    // Broad-safe contexts: migration, progression, canonical normalization, derived rebuild
+    // These legitimately write broad payloads and should not generate noise.
+    const isBroadSafe = [
+      'migration-repair',
+      'progression-commit',
+      'canonical-normalization',
+      'derived-rebuild'
+    ].includes(operationCategory);
+
+    const suspicious = [];
+    const flatKeys = Object.keys(flatData);
+    const keyCount = flatKeys.length;
+
+    // 1. Full `system` replacement — nested updateData.system object
+    //    Typical in adoption, migration, or sheet form submissions capturing entire system.
+    if (
+      updateData?.system &&
+      typeof updateData.system === 'object' &&
+      !Array.isArray(updateData.system) &&
+      !isBroadSafe
+    ) {
+      suspicious.push({ key: 'system', reason: 'full-system-replacement' });
+    }
+
+    // 2. Broad domain replacement via pre-flattened exact-domain key
+    //    e.g. caller passed {'system.skills': { ... }} instead of leaf paths
+    const broadDomainKeys = ['system.skills', 'system.defenses', 'system.attributes', 'system.abilities'];
+    for (const dk of broadDomainKeys) {
+      if (Object.prototype.hasOwnProperty.call(flatData, dk) && typeof flatData[dk] === 'object') {
+        suspicious.push({ key: dk, reason: 'broad-domain-key-replacement' });
+      }
+    }
+
+    // 3. system.abilities writes — intended as a read-only compat mirror of system.attributes.
+    //    Writes here may indicate a caller that bypassed the canonical write path.
+    //    Note: current normalization still routes through system.abilities; this flag
+    //    tracks frequency so the canonical path decision can be made in a later phase.
+    if (!isBroadSafe) {
+      const abilitiesWrites = flatKeys.filter(k => k.startsWith('system.abilities.'));
+      if (abilitiesWrites.length > 0) {
+        suspicious.push({
+          key: 'system.abilities.*',
+          reason: 'write-to-abilities-mirror-path',
+          count: abilitiesWrites.length,
+          examples: abilitiesWrites.slice(0, 4)
+        });
+      }
+    }
+
+    // 4. system.derived writes from outside a derived-calc cycle.
+    //    _validateDerivedWriteAuthority() already handles enforcement; this adds
+    //    structured payload context alongside it.
+    if (!actor._isDerivedCalcCycle && !options?.isDerivedCalculatorCall) {
+      const derivedWrites = flatKeys.filter(k => k.startsWith('system.derived.'));
+      if (derivedWrites.length > 0) {
+        suspicious.push({
+          key: 'system.derived.*',
+          reason: 'derived-write-outside-calc-cycle',
+          count: derivedWrites.length,
+          examples: derivedWrites.slice(0, 4)
+        });
+      }
+    }
+
+    // 5. Broad payload with many flattened keys from an unclassified caller.
+    //    Threshold chosen to be above typical progression packets (~15 keys).
+    const BROAD_THRESHOLD = 25;
+    if (keyCount > BROAD_THRESHOLD && !isBroadSafe) {
+      suspicious.push({ key: `(${keyCount} flat keys)`, reason: 'broad-payload-unclassified-caller', keyCount });
+    }
+
+    if (suspicious.length === 0) return; // Nothing suspicious — stay silent
+
+    SWSELogger.warn('[ActorEngine:P1] Semantic boundary audit: suspicious payload', {
+      actorId: actor?.id,
+      actorName: actor?.name,
+      actorType: actor?.type,
+      source: options?.source ?? options?.meta?.source ?? null,
+      operationCategory,
+      flatKeyCount: keyCount,
+      suspicious,
+      allowed: true // Phase 1: diagnostic only — update proceeds
+    });
+  },
+
+  /**
+   * Audit embedded Item update payloads for semantic boundary violations.
+   *
+   * Detects: missing _id, broad system replacement on items.
+   * Type-mutation detection is handled by the P0.1 backstop above this call.
+   *
+   * Warning-only. No payload changes here — called before P0.1 stripping.
+   *
+   * Long-term invariant: Item type mutation must never reach the document layer.
+   * system.* replacement on embedded items may indicate a view-model leak.
+   * @private
+   */
+  _auditEmbeddedItemBoundaries(updates, actor, options) {
+    for (const update of updates) {
+      const itemId = update._id ?? update.id;
+
+      // Missing _id — required for embedded document updates
+      if (!itemId) {
+        SWSELogger.warn('[ActorEngine:P1] Embedded Item update is missing _id', {
+          actorId: actor?.id,
+          actorName: actor?.name,
+          source: options?.source ?? null,
+          updateKeys: Object.keys(update).slice(0, 8)
+        });
+        continue;
+      }
+
+      // Broad system object replacement on an existing item.
+      // Narrow dot-path updates (system.quantity, system.equipped) are expected;
+      // passing the entire system object risks clobbering fields the caller didn't intend.
+      if (update.system && typeof update.system === 'object' && !Array.isArray(update.system)) {
+        const systemKeyCount = Object.keys(update.system).length;
+        const BROAD_ITEM_THRESHOLD = 6;
+        if (systemKeyCount > BROAD_ITEM_THRESHOLD) {
+          SWSELogger.warn('[ActorEngine:P1] Embedded Item update contains broad system replacement', {
+            actorId: actor?.id,
+            actorName: actor?.name,
+            itemId,
+            itemName: actor?.items?.get?.(itemId)?.name,
+            systemKeyCount,
+            systemKeys: Object.keys(update.system).slice(0, 8),
+            source: options?.source ?? null,
+            allowed: true
+          });
+        }
+      }
+    }
   },
 
   // ========================================
