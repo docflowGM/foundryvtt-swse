@@ -17,6 +17,7 @@ import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-f
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { normalizeItemSystem, sanitizeItemSheetUpdate } from "/systems/foundryvtt-swse/scripts/items/item-defaults.js";
+import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems, summarizeItem } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -76,6 +77,13 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     // which fail RenderAssertions.assertContextSerializable().
     const itemData = this.item?.toObject?.() ?? {};
 
+    installItemEditorTrace();
+    addItemEditorTrace('item-sheet-prepare-context', {
+      item: summarizeItem(this.item),
+      actor: summarizeActorItems(this.item?.actor),
+      options
+    });
+
     // Preview-only state used when a type/branch selector changes before the
     // sheet has finished saving. This keeps dependent selects stable without
     // touching deprecated global FormDataExtended APIs.
@@ -126,6 +134,14 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
     const root = this.element;
     if (!root) {return;}
+
+    installItemEditorTrace();
+    addItemEditorTrace('item-sheet-render', {
+      item: summarizeItem(this.item),
+      actor: summarizeActorItems(this.item?.actor),
+      hasForm: !!root.querySelector('form'),
+      itemType: this.item?.type ?? null
+    });
 
     // Upgrade management
     // Phase 11: single-item upgrade from item sheet opens as shell OVERLAY on the actor's shell host.
@@ -432,62 +448,128 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     event.preventDefault();
 
     const app = this;
-    const rawObject = formData?.object ?? Object.fromEntries(new FormData(form).entries());
-    const hasDottedKeys = Object.keys(rawObject ?? {}).some(key => String(key).includes('.'));
-    const data = hasDottedKeys ? foundry.utils.expandObject(rawObject) : foundry.utils.deepClone(rawObject ?? {});
+    installItemEditorTrace();
 
-    // Normalize string lists into arrays.
-    if (typeof data?.system?.properties === 'string') {
-      data.system.properties = data.system.properties
-        .split(',')
-        .map((p) => p.trim())
-        .filter(Boolean);
+    if (app._isSavingItem === true) {
+      addItemEditorTrace('item-sheet-submit-ignored-busy', {
+        item: summarizeItem(app.item),
+        actor: summarizeActorItems(app.item?.actor)
+      });
+      return;
     }
 
-    if (typeof data?.system?.tags === 'string') {
-      data.system.tags = data.system.tags
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean);
+    app._isSavingItem = true;
+    const confirmButton = form?.querySelector?.('.item-editor__footer-confirm');
+    if (confirmButton) {
+      confirmButton.disabled = true;
+      confirmButton.dataset.swseSaving = 'true';
     }
 
-    // If a shield is toggled off via form edits, ensure derived UI doesn't remain "active".
-    if (data?.system?.charges && Number(data.system.charges?.current ?? 0) <= 0) {
-      data.system.activated = false;
-    }
+    try {
+      const rawObject = formData?.object ?? Object.fromEntries(new FormData(form).entries());
+      const hasDottedKeys = Object.keys(rawObject ?? {}).some(key => String(key).includes('.'));
+      const data = hasDottedKeys ? foundry.utils.expandObject(rawObject) : foundry.utils.deepClone(rawObject ?? {});
 
-    const actor = this.item?.actor;
-    const requestedType = data?.type ?? this.item?.type;
-    if (requestedType && requestedType !== this.item?.type) {
-      ui.notifications?.warn?.('Changing an existing item type is not supported here. Create a new blank item of the desired type instead.');
-      data.type = this.item?.type;
-    }
+      addItemEditorTrace('item-sheet-submit-raw', {
+        item: summarizeItem(app.item),
+        actor: summarizeActorItems(app.item?.actor),
+        rawKeys: Object.keys(rawObject ?? {}).sort(),
+        rawObject,
+        expandedSystemKeys: Object.keys(data?.system ?? {}).sort()
+      });
 
-    const safeUpdate = sanitizeItemSheetUpdate(this.item, data, form);
-    const flatData = foundry.utils.flattenObject(safeUpdate);
+      // Normalize string lists into arrays.
+      if (typeof data?.system?.properties === 'string') {
+        data.system.properties = data.system.properties
+          .split(',')
+          .map((p) => p.trim())
+          .filter(Boolean);
+      }
 
-    // PHASE 2: Route embedded items through ActorEngine
-    if (this.item?.isEmbedded && actor) {
+      if (typeof data?.system?.tags === 'string') {
+        data.system.tags = data.system.tags
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean);
+      }
+
+      // If a shield is toggled off via form edits, ensure derived UI doesn't remain "active".
+      if (data?.system?.charges && Number(data.system.charges?.current ?? 0) <= 0) {
+        data.system.activated = false;
+      }
+
+      const actor = app.item?.actor;
+      const requestedType = data?.type ?? app.item?.type;
+      if (requestedType && requestedType !== app.item?.type) {
+        ui.notifications?.warn?.('Changing an existing item type is not supported here. Create a new blank item of the desired type instead.');
+        data.type = app.item?.type;
+      }
+
+      const safeUpdate = sanitizeItemSheetUpdate(app.item, data, form);
+      const flatData = foundry.utils.flattenObject(safeUpdate);
+
+      addItemEditorTrace('item-sheet-submit-sanitized', {
+        item: summarizeItem(app.item),
+        actor: summarizeActorItems(actor),
+        requestedType,
+        safeUpdate,
+        flatKeys: Object.keys(flatData ?? {}).sort(),
+        flatData
+      });
+
+      // PHASE 2: Route embedded items through ActorEngine
+      if (app.item?.isEmbedded && actor) {
+        try {
+          await ActorEngine.updateEmbeddedDocuments(actor, "Item", [{ _id: app.item.id, ...flatData }], { source: 'swse-item-sheet-confirm' });
+          addItemEditorTrace('item-sheet-submit-success-embedded', {
+            item: summarizeItem(app.item),
+            actor: summarizeActorItems(actor),
+            updatedItemId: app.item.id
+          });
+          app._previewItemType = null;
+          app._previewWeaponBranch = null;
+          ui.notifications?.info?.(`${app.item.name || safeUpdate.name} saved.`);
+          await app.close?.();
+          return;
+        } catch (err) {
+          addItemEditorTrace('item-sheet-submit-error-embedded', {
+            item: summarizeItem(app.item),
+            actor: summarizeActorItems(actor),
+            flatData,
+            error: err
+          });
+          console.error('[Item Sheet] Form submission failed:', err);
+          ui.notifications.error(`Failed to save item: ${err.message}`);
+          return;
+        }
+      }
+
+      // @mutation-exception: Unowned item update
+      // Unowned items (not on an actor) can update directly — UI-only sheet operation
       try {
-        await ActorEngine.updateEmbeddedDocuments(actor, "Item", [{ _id: this.item.id, ...flatData }], { source: 'swse-item-sheet-confirm' });
-        app._previewItemType = null;
-        app._previewWeaponBranch = null;
-        ui.notifications?.info?.(`${this.item.name || safeUpdate.name} saved.`);
-        await app.close?.();
-        return;
+        await app.item.update(flatData); // @mutation-exception: UI-only unowned item
+        addItemEditorTrace('item-sheet-submit-success-unowned', {
+          item: summarizeItem(app.item),
+          flatData
+        });
       } catch (err) {
-        console.error('[Item Sheet] Form submission failed:', err);
-        ui.notifications.error(`Failed to save item: ${err.message}`);
-        return;
+        addItemEditorTrace('item-sheet-submit-error-unowned', {
+          item: summarizeItem(app.item),
+          flatData,
+          error: err
+        });
+        throw err;
+      }
+      app._previewItemType = null;
+      app._previewWeaponBranch = null;
+      ui.notifications?.info?.(`${app.item?.name || safeUpdate.name} saved.`);
+      await app.close?.();
+    } finally {
+      app._isSavingItem = false;
+      if (confirmButton) {
+        confirmButton.disabled = false;
+        delete confirmButton.dataset.swseSaving;
       }
     }
-
-    // @mutation-exception: Unowned item update
-    // Unowned items (not on an actor) can update directly — UI-only sheet operation
-    await app.item.update(flatData); // @mutation-exception: UI-only unowned item
-    app._previewItemType = null;
-    app._previewWeaponBranch = null;
-    ui.notifications?.info?.(`${app.item?.name || safeUpdate.name} saved.`);
-    await app.close?.();
   }
 }

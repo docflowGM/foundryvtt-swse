@@ -44,9 +44,19 @@ function compactName(type) {
     .replace(/\b\w/g, char => char.toUpperCase());
 }
 
+function unwrapNumberish(value) {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    for (const key of ['value', 'current', 'total', 'amount', 'credits', 'base']) {
+      if (value[key] !== undefined && value[key] !== null && value[key] !== '') return value[key];
+    }
+  }
+  return value;
+}
+
 function toNumber(value, fallback = 0, { nullable = false } = {}) {
-  if (value === '' || value == null) return nullable ? null : fallback;
-  const number = Number(value);
+  const unwrapped = unwrapNumberish(value);
+  if (unwrapped === '' || unwrapped == null) return nullable ? null : fallback;
+  const number = Number(unwrapped);
   return Number.isFinite(number) ? number : (nullable ? null : fallback);
 }
 
@@ -187,11 +197,47 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
 
   talent: {
     tree: 'General',
+    talentTree: 'General',
     source: 'Manual',
     prerequisite: '',
+    prerequisites: '',
     benefit: '',
     special: '',
-    uses: { current: 0, max: 0, perEncounter: false, perDay: false }
+    uses: { current: 0, max: 0, perEncounter: false, perDay: false },
+    isCustom: true
+  },
+
+  'force-power': {
+    description: '',
+    source: 'Manual',
+    level: 1,
+    powerLevel: 1,
+    discipline: 'general',
+    useTheForce: 15,
+    time: 'Standard Action',
+    range: '6 squares',
+    target: '',
+    duration: 'Instantaneous',
+    effect: '',
+    special: '',
+    tags: [],
+    uses: { current: 1, max: 1 },
+    inSuite: false,
+    spent: false,
+    discarded: false,
+    isCustom: true
+  },
+
+  maneuver: {
+    description: '',
+    source: 'Manual',
+    actionType: 'standard',
+    talentTree: 'Custom',
+    tags: [],
+    uses: { current: 1, max: 1 },
+    inSuite: false,
+    spent: false,
+    isCustom: true
   }
 });
 
@@ -244,6 +290,17 @@ const NUMERIC_PATHS = {
   talent: [
     ['uses.current', 0],
     ['uses.max', 0]
+  ],
+  'force-power': [
+    ['level', 1],
+    ['powerLevel', 1],
+    ['useTheForce', 15],
+    ['uses.current', 1],
+    ['uses.max', 1]
+  ],
+  maneuver: [
+    ['uses.current', 1],
+    ['uses.max', 1]
   ]
 };
 

@@ -1,5 +1,20 @@
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 
+
+function safeNumber(value, fallback = 0) {
+  let candidate = value;
+  if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) {
+    for (const key of ['value', 'current', 'total', 'amount', 'credits', 'base']) {
+      if (candidate[key] !== undefined && candidate[key] !== null && candidate[key] !== '') {
+        candidate = candidate[key];
+        break;
+      }
+    }
+  }
+  const numeric = Number(candidate);
+  return Number.isFinite(numeric) ? numeric : fallback;
+}
+
 /**
  * RowTransformers
  *
@@ -37,9 +52,9 @@ export class RowTransformers {
       type: item.type,
       typeLabel: item.type.charAt(0).toUpperCase() + item.type.slice(1),
       label: item.name,
-      value: Number(item.system?.value ?? item.system?.cost ?? 0) || 0,
-      quantity: Number(item.system?.quantity) || 1,
-      weight: Number(item.system?.weight) || 0,
+      value: safeNumber(item.system?.value ?? item.system?.cost, 0),
+      quantity: safeNumber(item.system?.quantity, 1) || 1,
+      weight: safeNumber(item.system?.weight, 0),
       rarity: item.system?.rarity || 'common',
       equipped,
       activated,
@@ -78,14 +93,14 @@ export class RowTransformers {
       img: item.img || '/images/icons/svg/mystery-man.svg',
       type: 'armor',
       armorType: item.system?.armorType || 'Light Armor',
-      weight: Number(item.system?.weight) || 0,
+      weight: safeNumber(item.system?.weight, 0),
       isPowered: Boolean(item.system?.isPowered),
-      upgradeSlots: Number(item.system?.upgradeSlots) || 0,
-      reflexBonus: Number(item.system?.reflexBonus ?? item.system?.defenseBonus ?? item.system?.reflex ?? 0) || 0,
-      fortBonus: Number(item.system?.fortitudeBonus ?? item.system?.fortBonus ?? item.system?.fort ?? 0) || 0,
-      maxDexBonus: Number(item.system?.maxDex ?? item.system?.maxDexBonus ?? 0) || 0,
-      armorCheckPenalty: Number(item.system?.armorCheckPenalty ?? item.system?.acp ?? 0) || 0,
-      speedPenalty: Number(item.system?.speedPenalty) || 0
+      upgradeSlots: safeNumber(item.system?.upgradeSlots, 0),
+      reflexBonus: safeNumber(item.system?.reflexBonus ?? item.system?.defenseBonus ?? item.system?.reflex, 0),
+      fortBonus: safeNumber(item.system?.fortitudeBonus ?? item.system?.fortBonus ?? item.system?.fort, 0),
+      maxDexBonus: safeNumber(item.system?.maxDex ?? item.system?.maxDexBonus, 0),
+      armorCheckPenalty: safeNumber(item.system?.armorCheckPenalty ?? item.system?.acp, 0),
+      speedPenalty: safeNumber(item.system?.speedPenalty, 0)
     };
   }
 
@@ -104,7 +119,7 @@ export class RowTransformers {
       sourceType: item.system?.sourceType || 'talent',
       tree: item.system?.tree || 'General',
       group: item.system?.tree || 'General',
-      cost: Number(item.system?.cost) || 1,
+      cost: safeNumber(item.system?.cost, 1),
       prerequisites: item.system?.prerequisites || '',
       description: item.system?.description || '',
       tags: this._extractTags(item),

@@ -83,6 +83,7 @@ import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sh
 import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 import { createSafeEmbeddedItem, createSafeItemData } from "/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js";
+import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
 
 const SHEET_MODE_STORAGE_PREFIX = 'swse.sheetMode';
 
@@ -2765,12 +2766,37 @@ const forcePoints = [];
     const panelsToBuild = this.visibilityManager.getPanelsToBuild(this.document);
     const panelsToSkip = this.visibilityManager.getPanelsSkipped(this.document);
 
-    // CRITICAL: Always build header-bound panels. The concept chrome renders
-    // outside individual tabs and shell surfaces, so these view models must be
-    // available even when Home/Settings/Progression is active.
-    for (const requiredPanel of ['portraitPanel', 'biographyPanel', 'healthPanel', 'defensePanel']) {
+    // CRITICAL: Always build shell/chrome and high-risk ledger panels. The
+    // concept sheet keeps tab DOM alive while switching tabs client-side, so
+    // first render must hydrate the ledgers that players can reveal without a
+    // full AppV2 context rebuild. Otherwise Feats/Talents/Gear appear empty
+    // until an Add button causes a mutation-driven render.
+    const alwaysHydratedPanels = [
+      'portraitPanel',
+      'biographyPanel',
+      'healthPanel',
+      'defensePanel',
+      'talentPanel',
+      'featPanel',
+      'racialAbilitiesPanel',
+      'inventoryPanel',
+      'armorSummaryPanel',
+      'equipmentLedgerPanel',
+      'forcePowersPanel',
+      'starshipManeuversPanel'
+    ];
+    for (const requiredPanel of alwaysHydratedPanels) {
       if (!panelsToBuild.includes(requiredPanel)) panelsToBuild.push(requiredPanel);
     }
+
+    installItemEditorTrace();
+    addItemEditorTrace('sheet-panel-build-plan', {
+      actor: summarizeActorItems(actor),
+      activeTab: this.visibilityManager?.currentTab ?? null,
+      panelsToBuild: [...panelsToBuild],
+      panelsToSkip: [...panelsToSkip],
+      shellSurface: this._shellSurface
+    });
 
     // Build visible panels + cached hidden panels
     panelContexts = {};
@@ -3396,6 +3422,11 @@ const forcePoints = [];
       // PHASE 2: UIStateManager is the sole owner of tab activation.
       // Visibility manager tracks which panels should be built for this tab.
       this.visibilityManager?.setActiveTab?.(tabName);
+      addItemEditorTrace('sheet-tab-switch', {
+        actor: summarizeActorItems(this.actor),
+        tabName,
+        panelState: this.visibilityManager?.getState?.() ?? null
+      });
       // UIStateManager manages all DOM updates (active classes, panel visibility).
       this.uiStateManager?._activateTab?.(tabLink);
       // Removed hard DOM toggle: UIStateManager._activateTab already handles all necessary DOM changes.
@@ -4762,11 +4793,18 @@ const forcePoints = [];
     const label = itemData.name.replace(/^New\s+/, '') || safeType;
 
     try {
+      addItemEditorTrace('sheet-create-and-open-before', { actor: summarizeActorItems(this.actor), itemType: safeType, label });
       const doc = await createSafeEmbeddedItem(this.actor, safeType, { source: `character-sheet-add-${safeType}` });
+      addItemEditorTrace('sheet-create-and-open-after-create', {
+        actor: summarizeActorItems(this.actor),
+        itemType: safeType,
+        created: doc ? { id: doc.id, name: doc.name, type: doc.type } : null
+      });
       doc?.sheet?.render?.(true);
       await this.render?.(false);
       return doc ?? null;
     } catch (err) {
+      addItemEditorTrace('sheet-create-and-open-error', { actor: summarizeActorItems(this.actor), itemType: safeType, error: err });
       ui?.notifications?.error?.(`Failed to create ${label}: ${err?.message ?? err}`);
       return null;
     }

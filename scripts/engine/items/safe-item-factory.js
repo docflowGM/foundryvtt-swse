@@ -6,6 +6,7 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
 
 const TYPE_ALIASES = Object.freeze({
   gear: 'equipment',
@@ -28,13 +29,13 @@ const TYPE_ALIASES = Object.freeze({
 });
 
 const DEFAULT_IMAGES = Object.freeze({
-  weapon: 'icons/weapons/swords/sword-simple.webp',
-  armor: 'icons/equipment/chest/breastplate-layered-steel.webp',
+  weapon: 'icons/svg/sword.svg',
+  armor: 'icons/svg/shield.svg',
   equipment: 'icons/sundries/misc/pouch-simple-leather-brown.webp',
-  feat: 'icons/sundries/scrolls/scroll-bound-ruby-red.webp',
-  talent: 'icons/magic/symbols/runes-star-pentagon-orange.webp',
-  'force-power': 'icons/magic/light/orb-lightbulb-gray.webp',
-  maneuver: 'icons/environment/settlement/watchtower-silhouette.webp',
+  feat: 'icons/svg/book.svg',
+  talent: 'icons/svg/aura.svg',
+  'force-power': 'icons/svg/daze.svg',
+  maneuver: 'icons/svg/wing.svg',
   skill: 'icons/sundries/documents/document-sealed-signatures-red.webp'
 });
 
@@ -73,7 +74,9 @@ function buildSystemData(type, options = {}) {
         attackBonus: 0,
         attackAttribute: 'str',
         critRange: 20,
+        criticalRange: '20',
         critMultiplier: 2,
+        criticalMultiplier: 'x2',
         damageType: 'energy',
         armorPiercing: 0,
         autofire: false,
@@ -89,6 +92,7 @@ function buildSystemData(type, options = {}) {
         wieldedTwoHanded: false,
         weight: 0,
         cost: 0,
+        value: 0,
         gearTemplate: '',
         gearTemplateSecondary: '',
         templateCost: 0,
@@ -110,10 +114,15 @@ function buildSystemData(type, options = {}) {
         ...baseSystem('', 'Manual'),
         armorType: options.shieldMode ? 'shield' : 'light',
         reflexBonus: 0,
+        defenseBonus: 0,
         fortitudeBonus: 0,
+        fortBonus: 0,
+        equipmentBonus: 0,
         maxDex: 999,
+        maxDexBonus: 999,
         weight: 0,
         cost: 0,
+        value: 0,
         equipmentPerceptionBonus: 0,
         armorProficiency: false,
         features: '',
@@ -132,6 +141,7 @@ function buildSystemData(type, options = {}) {
         ...baseSystem('', 'Manual'),
         weight: 0,
         cost: 0,
+        value: 0,
         upgradeSlots: 1,
         installedUpgrades: [],
         quantity: 1,
@@ -277,14 +287,47 @@ export function createCustomSkillEntry(options = {}) {
 }
 
 export async function createSafeEmbeddedItem(actor, kind, options = {}) {
+  installItemEditorTrace();
   if (!actor?.isOwner) {
+    addItemEditorTrace('safe-item-create-denied', { actor: summarizeActorItems(actor), kind, options });
     ui?.notifications?.warn?.('You do not have permission to edit this actor.');
     return null;
   }
 
   const itemData = createSafeItemData(kind, options);
-  const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [clone(itemData)], {
-    source: options.source || `safe-item-factory-${itemData.type}`
+  addItemEditorTrace('safe-item-create-before', {
+    actor: summarizeActorItems(actor),
+    requestedKind: kind,
+    itemData: {
+      name: itemData.name,
+      type: itemData.type,
+      img: itemData.img,
+      systemKeys: Object.keys(itemData.system ?? {}).sort(),
+      numericProbe: {
+        cost: itemData.system?.cost,
+        value: itemData.system?.value,
+        weight: itemData.system?.weight,
+        equipped: itemData.system?.equipped,
+        reflexBonus: itemData.system?.reflexBonus,
+        fortitudeBonus: itemData.system?.fortitudeBonus,
+        attackBonus: itemData.system?.attackBonus
+      }
+    },
+    options
   });
-  return created?.[0] ?? null;
+
+  try {
+    const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [clone(itemData)], {
+      source: options.source || `safe-item-factory-${itemData.type}`
+    });
+    addItemEditorTrace('safe-item-create-after', {
+      actor: summarizeActorItems(actor),
+      requestedKind: kind,
+      created: created?.map?.((item) => ({ id: item.id, name: item.name, type: item.type })) ?? []
+    });
+    return created?.[0] ?? null;
+  } catch (err) {
+    addItemEditorTrace('safe-item-create-error', { actor: summarizeActorItems(actor), requestedKind: kind, itemData, error: err });
+    throw err;
+  }
 }

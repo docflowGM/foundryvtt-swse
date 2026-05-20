@@ -22,6 +22,21 @@ import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/prog
 import { CurrentConditionResolver } from '/systems/foundryvtt-swse/scripts/engine/effects/current-condition-resolver.js';
 import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey } from '/systems/foundryvtt-swse/scripts/utils/skill-normalization.js';
 import { isFeatLikeItem, isForcePowerItem, isPlaceholderSheetItem, isTalentLikeItem } from '/systems/foundryvtt-swse/scripts/utils/item-classification.js';
+import { addItemEditorTrace, summarizeActorItems } from '/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js';
+
+function safePanelNumber(value, fallback = 0) {
+  let candidate = value;
+  if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) {
+    for (const key of ['value', 'current', 'total', 'amount', 'credits', 'base']) {
+      if (candidate[key] !== undefined && candidate[key] !== null && candidate[key] !== '') {
+        candidate = candidate[key];
+        break;
+      }
+    }
+  }
+  const numeric = Number(candidate);
+  return Number.isFinite(numeric) ? numeric : fallback;
+}
 
 export class PanelContextBuilder {
   constructor(actor, sheetInstance) {
@@ -428,6 +443,15 @@ export class PanelContextBuilder {
       hasUpgradeableItems = false;
     }
 
+    addItemEditorTrace('panel-hydration-inventory', {
+      actor: summarizeActorItems(this.actor),
+      itemTypesSeen: items.map((item) => ({ id: item.id, name: item.name, type: item.type })),
+      entries: entries.map((entry) => ({ id: entry.id, name: entry.name, type: entry.type, value: entry.value, weight: entry.weight })),
+      groupedCounts: Object.fromEntries(Object.entries(grouped).map(([key, value]) => [key, value.length])),
+      totalWeight,
+      hasUpgradeableItems
+    });
+
     const panel = {
       entries,
       grouped,
@@ -627,6 +651,13 @@ export class PanelContextBuilder {
       grouped[group].push(entry);
     });
 
+    addItemEditorTrace('panel-hydration-talents', {
+      actor: summarizeActorItems(this.actor),
+      rawTalentLikeCount: itemRows.length,
+      manifestAddedCount: Math.max(0, entries.length - itemRows.length),
+      entries: entries.map((entry) => ({ id: entry.id, name: entry.name, type: entry.type, virtual: entry.virtual === true }))
+    });
+
     const panel = {
       entries,
       grouped,
@@ -680,6 +711,13 @@ export class PanelContextBuilder {
       type: 'feat',
       source: 'Progression/Class Grant',
       group: 'Progression Record'
+    });
+
+    addItemEditorTrace('panel-hydration-feats', {
+      actor: summarizeActorItems(this.actor),
+      rawFeatLikeCount: itemRows.length,
+      manifestAddedCount: Math.max(0, entries.length - itemRows.length),
+      entries: entries.map((entry) => ({ id: entry.id, name: entry.name, type: entry.type, virtual: entry.virtual === true }))
     });
 
     const panel = {
@@ -1031,6 +1069,12 @@ export class PanelContextBuilder {
   buildRacialAbilitiesPanel() {
     const racialAbilities = this._collectSpeciesAbilityEntries();
 
+    addItemEditorTrace('panel-hydration-racial-abilities', {
+      actor: summarizeActorItems(this.actor),
+      count: racialAbilities.length,
+      entries: racialAbilities.map((entry) => ({ id: entry.id, name: entry.name, virtual: entry.virtual === true }))
+    });
+
     const panel = {
       entries: racialAbilities,
       hasEntries: racialAbilities.length > 0
@@ -1052,19 +1096,7 @@ export class PanelContextBuilder {
     );
 
     const panel = {
-      equippedArmor: equippedArmorItem ? {
-        id: equippedArmorItem.id,
-        name: equippedArmorItem.name,
-        armorType: equippedArmorItem.system?.armorType,
-        reflexBonus: equippedArmorItem.system?.reflexBonus,
-        fortBonus: equippedArmorItem.system?.fortBonus,
-        maxDexBonus: equippedArmorItem.system?.maxDexBonus,
-        armorCheckPenalty: equippedArmorItem.system?.armorCheckPenalty,
-        speedPenalty: equippedArmorItem.system?.speedPenalty,
-        weight: equippedArmorItem.system?.weight,
-        isPowered: equippedArmorItem.system?.isPowered,
-        upgradeSlots: equippedArmorItem.system?.upgradeSlots
-      } : null,
+      equippedArmor: equippedArmorItem ? RowTransformers.toArmorSummaryRow(equippedArmorItem) : null,
       canEdit: this.sheet.isEditable
     };
 
@@ -1086,9 +1118,9 @@ export class PanelContextBuilder {
     const allEquipment = this._actorItems()
       .filter(item => ['weapon', 'armor', 'equipment'].includes(item.type))
       .map(item => {
-        const itemWeight = item.system?.weight ?? 0;
-        const itemQty = item.system?.quantity ?? 1;
-        const itemCost = item.system?.cost ?? 0;
+        const itemWeight = safePanelNumber(item.system?.weight, 0);
+        const itemQty = safePanelNumber(item.system?.quantity, 1) || 1;
+        const itemCost = safePanelNumber(item.system?.cost ?? item.system?.value, 0);
         totalEquipmentWeightNum += itemWeight * itemQty;
         return {
           id: item.id,
