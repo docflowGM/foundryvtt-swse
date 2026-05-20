@@ -759,15 +759,21 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 targetHeroicLevel
             } = followerMutation;
 
-            // Update derived state
+            // Update follower state with canonical paths and explicit dot paths.
+            // system.attributes is canonical ability storage (system.abilities is a read-only mirror).
+            // system.hp.max requires isRecomputeHPCall; split object to avoid broad replacement.
             const updateData = {
                 'system.level': targetHeroicLevel,
-                'system.abilities': followerState.abilities,
-                'system.hp': followerState.hp,
+                'system.attributes': followerState.abilities,
+                'system.hp.max': followerState.hp?.max,
+                'system.hp.value': followerState.hp?.value,
                 'system.baseAttackBonus': followerState.bab,
                 'system.progression.followerChoices': persistentChoices,
                 'system.progression.followerTemplate': templateType
             };
+            // Remove undefined hp fields to avoid writing null into schema
+            if (updateData['system.hp.max'] === undefined) delete updateData['system.hp.max'];
+            if (updateData['system.hp.value'] === undefined) delete updateData['system.hp.value'];
 
             // Apply defense updates
             if (followerState.defenses) {
@@ -776,7 +782,10 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 }
             }
 
-            await ActorEngine.updateActor(follower, updateData, { source: 'FollowerCreator.updateFromMutation' });
+            await ActorEngine.updateActor(follower, updateData, {
+                source: 'FollowerCreator.updateFromMutation.progression',
+                isRecomputeHPCall: true
+            });
 
             swseLogger.log('[FollowerCreator] Follower updated from mutation:', {
                 followerId: follower.id,

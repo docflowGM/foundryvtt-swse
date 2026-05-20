@@ -260,7 +260,7 @@ async function cmdRest(args) {
 
     // Base recovery: HP and force (always)
     const updateData = {
-      'system.derived.hp.value': a.system?.derived?.hp?.max || a.system?.hp?.max || 0,
+      'system.hp.value': a.system?.hp?.max || a.system?.derived?.hp?.max || 0,
       'system.force.value': a.system.force.max ?? 0,
       'system.conditions': {}
     };

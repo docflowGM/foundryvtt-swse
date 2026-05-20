@@ -190,11 +190,9 @@ export async function calculateDefenseBonuses(actor) {
         SWSELogger.log(`SWSE LevelUp | Updating ${className} with defense bonuses: Fort +${progression.fortitude}, Ref +${progression.reflex}, Will +${progression.will}`);
         await ActorEngine.updateOwnedItems(actor, [{
           _id: classItem.id,
-          'system.defenses': {
-            fortitude: progression.fortitude,
-            reflex: progression.reflex,
-            will: progression.will
-          }
+          'system.defenses.fortitude': progression.fortitude,
+          'system.defenses.reflex': progression.reflex,
+          'system.defenses.will': progression.will
         }], { source: 'levelup-shared.calculateDefenseBonuses' });
       }
     }

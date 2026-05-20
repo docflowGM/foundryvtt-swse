@@ -1,4 +1,26 @@
 // scripts/governance/actor-engine/internal/actor-engine-validation.js
+// ⚠️  STALE DUPLICATE — DO NOT IMPORT — UNWIRED
+//
+// This module is a historical snapshot of ActorEngine's validation and normalization
+// pipeline. All methods have counterparts in the live actor-engine.js:
+//   _validateDerivedWriteAuthority, _normalizeMutationForContract,
+//   _initializeCanonicalShapesForTouchedDomains, _validateCanonicalMutationPlan,
+//   and 4+ normalize/ensure-shape helpers.
+//
+// KNOWN DIVERGENCE — STALE PATH:
+//   _ensureCanonicalAbilityShapes() here initializes `system.abilities` (the read-only
+//   mirror). The live version (post-Phase 4) initializes `system.attributes` (canonical).
+//   Importing this file and calling _ensureCanonicalAbilityShapes would silently regress
+//   Phase 4 canonical read-path cleanup.
+//
+// DELETION CAUTION:
+//   An earlier delta audit found this file was missing defense normalization /
+//   canonical defense shape behavior relative to the live version. A full method-by-method
+//   parity check (not a 3–5 payload sample) is required before deletion can be declared safe.
+//   Do not delete this file until that parity audit is complete and documented.
+//
+// — Phase 9 audit label
+//
 // Internal module for validation and normalization
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";

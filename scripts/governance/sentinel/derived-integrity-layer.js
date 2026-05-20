@@ -1,4 +1,27 @@
 /**
+ * ⚠️  DO NOT IMPORT — DANGEROUS MODULE-LEVEL SIDE EFFECT
+ *
+ * This file patches `Actor.prototype.prepareDerivedData` at module load time via a
+ * `Hooks.once('ready', ...)` call at the bottom of this file. The patch fires the
+ * moment this module is imported — there is no safe opt-in call. It is NOT idempotent;
+ * calling it a second time double-wraps the prototype and corrupts derived data
+ * preparation for every actor in the world.
+ *
+ * This file is retained ONLY as historical/reference code showing the kind of
+ * enforcement that was considered during the Phase 2 sentinel design.
+ * It was never wired into the system because the prototype-patching approach was
+ * replaced by the ActorEngine facade + MutationInterceptor context pattern.
+ *
+ * If you need to extend derived data computation:
+ *   - Use DerivedCalculator.computeAll() (the ONLY authority for system.derived.*)
+ *   - Use ActorEngine.recalcAll() to trigger a full recompute
+ *   - Do NOT patch Actor.prototype.prepareDerivedData
+ *
+ * Deletion candidate: after a dedicated deletion-proof phase confirms no downstream
+ * code depends on this file as a reference or import source.
+ *
+ * — Phase 9 audit label
+ *
  * SENTINEL — Derived Data Integrity Layer
  * Phase 2 Completion: Enforces single-authority derived data consolidation
  *

@@ -3501,18 +3501,18 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const updates = { 'system.level': newLevel };
 
     // Recalculate HP for new level
-    // PHASE 2: Read from system.derived.* (authoritative source)
     const conMod = this.actor.system.derived?.attributes?.con?.mod || 0;
     const classDoc = this._packs.classes.find(c =>
       c.name === selectedClassName
     );
     const hitDie = classDoc?.system?.hitDie || 6;
     const hpGain = Math.floor(hitDie / 2) + 1 + conMod;
-    // PHASE 2: Write to system.derived.hp.max (authoritative location)
-    updates['system.derived.hp.max'] = (this.actor.system.derived?.hp?.max || 0) + hpGain;
-    updates['system.derived.hp.value'] = (this.actor.system.derived?.hp?.value || this.actor.system.hp?.value || 0) + hpGain;
+    // Write canonical current HP; recomputeHP will recalculate system.hp.max from level+CON formula.
+    updates['system.hp.value'] = (this.actor.system.hp?.value || 0) + hpGain;
 
     await globalThis.SWSE.ActorEngine.updateActor(this.actor, updates);
+    // Recalculate HP max from the new level (reads system.level, writes system.hp.max)
+    await globalThis.SWSE.ActorEngine.recomputeHP(this.actor);
 
     // Add new feats/talents/powers
     const items = [];
