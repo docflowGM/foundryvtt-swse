@@ -57,6 +57,8 @@ function safeClone(value, depth = 0, seen = new WeakSet()) {
     };
   }
 
+  if (value instanceof Date) return value.toISOString();
+
   if (seen.has(value)) return '[circular]';
   seen.add(value);
 

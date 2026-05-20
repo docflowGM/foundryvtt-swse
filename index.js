@@ -26,6 +26,7 @@ import { SystemInitHooks } from "./scripts/engine/progression/hooks/system-init-
 import { registerHandlebarsHelpers as registerSystemHandlebarsHelpers } from "./helpers/handlebars/index.js";
 import { PoisonEngine } from "./scripts/engine/poison/poison-engine.js";
 import { repairActorForcePowerAbilityMeta, repairWorldForcePowerAbilityMeta } from "./scripts/engine/abilities/force-power/force-power-ability-meta.js";
+import { installItemEditorTrace } from "./scripts/debug/item-editor-trace.js";
 
 UIManager.init();
 
@@ -34,6 +35,7 @@ UIManager.init();
 // ============================================
 Hooks.once("init", async () => {
   console.log("SWSE | Initializing Star Wars Saga Edition system...");
+  installItemEditorTrace();
 
   // Foundry v13+ namespaced references
   const { Actors, Items } = foundry.documents.collections;
