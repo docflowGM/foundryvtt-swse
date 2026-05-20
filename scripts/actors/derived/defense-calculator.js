@@ -152,11 +152,10 @@ export class DefenseCalculator {
 
     const getAbilityMod = (abilityKey, fallback = 0) => {
       const key = String(abilityKey || '').toLowerCase();
-      const derivedMod = actor.system?.derived?.attributes?.[key]?.mod;
-      if (Number.isFinite(Number(derivedMod))) return Number(derivedMod);
-
-      const ability = abilitiesState?.[key] ?? {};
-      const total = Number(ability.total ?? ((ability.base ?? 10) + (ability.racial ?? 0) + (ability.enhancement ?? 0) + (ability.temp ?? 0)));
+      // Always compute from canonical raw attributes — avoids stale system.derived.attributes.*.mod
+      // which is written AFTER DefenseCalculator runs in the same DerivedCalculator.computeAll pass.
+      const attr = (actor.system?.attributes ?? actor.system?.abilities ?? {})[key] ?? {};
+      const total = (attr.base ?? 10) + (attr.racial ?? 0) + (attr.enhancement ?? 0) + (attr.temp ?? 0);
       if (!Number.isFinite(total)) return fallback;
       return Math.floor((total - 10) / 2);
     };
@@ -412,5 +411,36 @@ export class DefenseCalculator {
       reflex: { base: 0, total: 0, adjustment: 0 },
       will: { base: 0, total: 0, adjustment: 0 }
     };
+  }
+
+  /**
+   * Debug helper: log defense breakdown for an actor.
+   * Usage: SWSE.debug.defenses(actor)
+   * @param {Actor} actor
+   */
+  static async debugFor(actor) {
+    if (!actor?.system) { console.warn('[DefenseCalculator.debugFor] no actor'); return; }
+    const prog = actor.system.progression || {};
+    const classLevels = prog.classLevels || [];
+    const result = await DefenseCalculator.calculate(actor, classLevels);
+    const attrs = actor.system.attributes || actor.system.abilities || {};
+    const lines = [];
+    lines.push(`=== Defense Breakdown: ${actor.name} ===`);
+    lines.push(`  Class levels: ${JSON.stringify(classLevels)}`);
+    for (const [key, val] of Object.entries(attrs)) {
+      const base = val?.base ?? 10;
+      const racial = val?.racial ?? 0;
+      const enhancement = val?.enhancement ?? 0;
+      const temp = val?.temp ?? 0;
+      const total = base + racial + enhancement + temp;
+      const mod = Math.floor((total - 10) / 2);
+      lines.push(`  ${key}: base=${base} racial=${racial} enh=${enhancement} temp=${temp} total=${total} mod=${mod}`);
+    }
+    for (const def of ['reflex', 'fortitude', 'will']) {
+      const d = result[def];
+      lines.push(`  ${def}: 10 + level(${d.levelContribution ?? d.heroicLevel}) + class(${d.classBonus}) + abil(${d.abilityMod}) + size(${d.sizeModifier ?? 0}) + misc(${d.miscBonus ?? 0}) + cond(${d.conditionPenalty}) = ${d.total}`);
+    }
+    console.log(lines.join('\n'));
+    return result;
   }
 }
