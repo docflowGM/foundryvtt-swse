@@ -641,6 +641,11 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       ui.notifications?.info?.(`${app.item?.name || safeUpdate.name} saved.`);
       await app.close?.();
     } finally {
+      addItemEditorTrace('finally', {
+        itemId: app.item?.id,
+        itemType: app.item?.type,
+        itemName: app.item?.name
+      });
       app._isSavingItem = false;
       if (confirmButton) {
         confirmButton.disabled = false;
