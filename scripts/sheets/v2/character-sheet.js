@@ -5046,40 +5046,44 @@ const forcePoints = [];
       const step = parseInt(button.dataset.step, 10);
       if (isNaN(step) || step < 0 || step > 5) return;
 
-      const plan = {
-        update: {
-          "system.conditionTrack.current": step
-        }
-      };
+      // No-op guard: skip if already at this step
+      const current = this.actor?.system?.conditionTrack?.current ?? 0;
+      if (step === current) return;
 
-      const mutationRecord = recordHydrationMutation(this, {
-        source: "character-sheet-condition-button",
-        field: "system.conditionTrack.current",
-        step,
-        update: plan.update,
-        before: captureHydrationSnapshot(this.actor)
+      addItemEditorTrace('condition-click', {
+        actorId: this.actor?.id,
+        from: current,
+        to: step
       });
 
       try {
-        emitHydrationWarning("CONDITION_BUTTON_MUTATION_START", {
+        addItemEditorTrace('condition-update-start', {
           actorId: this.actor?.id,
-          actorName: this.actor?.name,
-          mutation: mutationRecord
+          step
         });
-        await ActorEngine.apply(this.actor, plan, {
-          source: "character-sheet-condition-button",
-          suppressAppRefresh: true
+        // Route through the canonical helper — has its own no-op guard, uses
+        // updateActor (which runs recalcAll then _refreshOpenActorApps), and
+        // does NOT suppress the final corrective render.
+        await ActorEngine.setConditionStep(this.actor, step, 'character-sheet-condition-button');
+        addItemEditorTrace('recalc-finish', {
+          actorId: this.actor?.id,
+          step
         });
-        recordHydrationMutation(this, { ...mutationRecord, status: "success", after: captureHydrationSnapshot(this.actor) });
+        addItemEditorTrace('post-recalc-render-requested', {
+          actorId: this.actor?.id
+        });
         ui?.notifications?.info?.("Condition updated!");
       } catch (err) {
+        addItemEditorTrace('condition-update-failure', {
+          actorId: this.actor?.id,
+          step,
+          error: String(err?.message)
+        });
         emitHydrationError("CONDITION_BUTTON_MUTATION_FAILED", {
           actorId: this.actor?.id,
           actorName: this.actor?.name,
-          mutation: mutationRecord,
           error: err?.message,
-          stack: err?.stack,
-          snapshot: captureHydrationSnapshot(this.actor)
+          stack: err?.stack
         });
         ui?.notifications?.error?.('Condition update failed: ' + err.message);
       }
