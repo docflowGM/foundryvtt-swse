@@ -331,6 +331,30 @@ export class ForcePointsService {
     return false;
   }
 
+  // --- Pure calculation helpers (no mutation, no logging) ---
+
+  /** Calculate gain result without mutating. Returns { newValue, actualGain, currentFP, maxFP }. */
+  static calcGain(actor, amount) {
+    const currentFP = actor.system.forcePoints?.value || 0;
+    const maxFP = actor.system.forcePoints?.max || 10;
+    const newValue = Math.min(maxFP, currentFP + amount);
+    return { newValue, actualGain: newValue - currentFP, currentFP, maxFP };
+  }
+
+  /** Calculate spend result without mutating. Returns { newValue, actualSpent, currentFP }. */
+  static calcSpend(actor, amount) {
+    const currentFP = actor.system.forcePoints?.value || 0;
+    const newValue = Math.max(0, currentFP - amount);
+    return { newValue, actualSpent: currentFP - newValue, currentFP };
+  }
+
+  /** Calculate destiny spend result without mutating. Returns { newValue, actualSpent, currentDP }. */
+  static calcDestinySpend(actor, amount) {
+    const currentDP = actor.system.destinyPoints?.value || 0;
+    const newValue = Math.max(0, currentDP - amount);
+    return { newValue, actualSpent: currentDP - newValue, currentDP };
+  }
+
   /**
    * Get Force Point bonus formula for display/logging
    * E.g., "1d6", "2d6 (highest)", "3d8 (highest)"

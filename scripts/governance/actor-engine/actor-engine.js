@@ -16,6 +16,7 @@ import { captureHydrationSnapshot, collectHydrationSensitivePaths, emitHydration
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 
 /**
  * ActorEngine
@@ -1812,10 +1813,8 @@ export const ActorEngine = {
         throw new Error(`Invalid force point amount: ${amount}`);
       }
 
-      const currentFP = actor.system.forcePoints?.value || 0;
-      const maxFP = actor.system.forcePoints?.max || 10;
-      const newFP = Math.min(maxFP, currentFP + amount);
-      const actualGain = newFP - currentFP;
+      // Delegate calculation to ForcePointsService; mutation stays here
+      const { newValue: newFP, actualGain, maxFP } = ForcePointsService.calcGain(actor, amount);
 
       if (actualGain === 0) {
         SWSELogger.debug(`${actor.name} force points already at max`);
@@ -1854,9 +1853,8 @@ export const ActorEngine = {
         throw new Error(`Invalid force point amount: ${amount}`);
       }
 
-      const currentFP = actor.system.forcePoints?.value || 0;
-      const newFP = Math.max(0, currentFP - amount);
-      const actualSpent = currentFP - newFP;
+      // Delegate calculation to ForcePointsService; mutation stays here
+      const { newValue: newFP, actualSpent } = ForcePointsService.calcSpend(actor, amount);
 
       if (actualSpent === 0) {
         SWSELogger.debug(`${actor.name} has no force points to spend`);
@@ -1895,9 +1893,8 @@ export const ActorEngine = {
         throw new Error(`Invalid destiny point amount: ${amount}`);
       }
 
-      const currentDP = actor.system.destinyPoints?.value || 0;
-      const newDP = Math.max(0, currentDP - amount);
-      const actualSpent = currentDP - newDP;
+      // Delegate calculation to ForcePointsService; mutation stays here
+      const { newValue: newDP, actualSpent } = ForcePointsService.calcDestinySpend(actor, amount);
 
       if (actualSpent === 0) {
         SWSELogger.debug(`${actor.name} has no destiny points to spend`);
