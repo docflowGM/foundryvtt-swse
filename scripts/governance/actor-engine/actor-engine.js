@@ -624,6 +624,7 @@ export const ActorEngine = {
         // PHASE 3: Authorize mutation via context
         // ========================================
         MutationInterceptor.setContext('ActorEngine.updateActor');
+        let updateApplied = false;
         try {
           // DIAGNOSTIC: Verify actor is still valid before atomic update
           if (!(actor instanceof Actor)) {
@@ -655,6 +656,7 @@ export const ActorEngine = {
           // cross the document update boundary as explicit leaf paths.
           const atomicUpdateData = foundry.utils.flattenObject(normalizedUpdateData);
           const result = await applyActorUpdateAtomic(actor, atomicUpdateData, optsWithMeta);
+          updateApplied = true;
           if (options.skipRecalc || options.deferRecalc) {
             SWSELogger.debug(`[RECOMPUTE] Skipped after ActorEngine.updateActor for ${actor.name}`, {
               guardKey: meta.guardKey ?? null,
@@ -673,9 +675,16 @@ export const ActorEngine = {
               after: captureHydrationSnapshot(actor)
             });
           }
-          this._refreshOpenActorApps(actor, options);
           return result;
         } finally {
+          // RENDER SEQUENCING: Guarantee final render after successful actor update,
+          // even if recalcAll or hydration tracing throws. This ensures the sheet is
+          // not left stale after render:false suppresses Foundry's auto-render.
+          // Only render if actor.update() actually succeeded and committed data.
+          if (updateApplied) {
+            this._refreshOpenActorApps(actor, options);
+          }
+
           // Always clear context, even on error
           MutationInterceptor.clearContext();
 
