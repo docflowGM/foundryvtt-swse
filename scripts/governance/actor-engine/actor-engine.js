@@ -624,6 +624,7 @@ export const ActorEngine = {
         // PHASE 3: Authorize mutation via context
         // ========================================
         MutationInterceptor.setContext('ActorEngine.updateActor');
+        let updateApplied = false;
         try {
           // DIAGNOSTIC: Verify actor is still valid before atomic update
           if (!(actor instanceof Actor)) {
@@ -655,6 +656,7 @@ export const ActorEngine = {
           // cross the document update boundary as explicit leaf paths.
           const atomicUpdateData = foundry.utils.flattenObject(normalizedUpdateData);
           const result = await applyActorUpdateAtomic(actor, atomicUpdateData, optsWithMeta);
+          updateApplied = true;
           if (options.skipRecalc || options.deferRecalc) {
             SWSELogger.debug(`[RECOMPUTE] Skipped after ActorEngine.updateActor for ${actor.name}`, {
               guardKey: meta.guardKey ?? null,
@@ -673,9 +675,16 @@ export const ActorEngine = {
               after: captureHydrationSnapshot(actor)
             });
           }
-          this._refreshOpenActorApps(actor, options);
           return result;
         } finally {
+          // RENDER SEQUENCING: Guarantee final render after successful actor update,
+          // even if recalcAll or hydration tracing throws. This ensures the sheet is
+          // not left stale after render:false suppresses Foundry's auto-render.
+          // Only render if actor.update() actually succeeded and committed data.
+          if (updateApplied) {
+            this._refreshOpenActorApps(actor, options);
+          }
+
           // Always clear context, even on error
           MutationInterceptor.clearContext();
 
@@ -737,9 +746,33 @@ export const ActorEngine = {
       // DEV MODE: Instrument actor.items for SSOT violation detection
       this._instrumentActorItemsForSSSTOT(actor);
 
+      // Backstop: strip type mutations for existing embedded Items.
+      // The primary guard is in the item sheet, but this catches any caller that
+      // accidentally includes a type field in an update targeting an existing item.
+      let safeUpdates = updates;
+      if (embeddedName === 'Item') {
+        safeUpdates = updates.map(update => {
+          const itemId = update._id ?? update.id;
+          if (!itemId || !('type' in update)) return update;
+          const existing = actor.items?.get?.(itemId);
+          if (!existing) return update;
+          if (existing.type !== update.type) {
+            SWSELogger.warn('[ActorEngine] Blocked item type mutation attempt', {
+              itemId,
+              existingType: existing.type,
+              attemptedType: update.type,
+              source: options?.source ?? 'unknown'
+            });
+          }
+          const clean = { ...update };
+          delete clean.type;
+          return clean;
+        });
+      }
+
       SWSELogger.debug(`ActorEngine.updateEmbeddedDocuments → ${actor.name}`, {
         embeddedName,
-        updates,
+        updates: safeUpdates,
         options
       });
 
@@ -748,7 +781,7 @@ export const ActorEngine = {
       // ========================================
       MutationInterceptor.setContext(`ActorEngine.updateEmbeddedDocuments[${embeddedName}]`);
       try {
-        const result = await actor.updateEmbeddedDocuments(embeddedName, updates, options);
+        const result = await actor.updateEmbeddedDocuments(embeddedName, safeUpdates, options);
         if (!options.skipRecalc && !options.deferRecalc) await this.recalcAll(actor);
         return result;
       } finally {
@@ -1305,7 +1338,12 @@ export const ActorEngine = {
         }
       }
 
-      await this.updateActor(actor, updates);
+      // RENDER SEQUENCING FIX: Suppress intermediate renders. Damage application affects
+      // both HP and condition track, which both impact derived values. After updateActor
+      // completes recalcAll(), _refreshOpenActorApps() will render with stable data.
+      await this.updateActor(actor, updates, {
+        render: false
+      });
 
       SWSELogger.log(`Damage applied to ${actor.name}: ${damagePacket.amount} incoming → ${resolution.damageToHP} HP`, {
         source: damagePacket.source,
@@ -1427,8 +1465,15 @@ export const ActorEngine = {
         return { applied: 0, newStep: clampedStep };
       }
 
+      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
+      // Pass render: false to actor.update() to prevent Foundry from auto-rendering.
+      // After recalcAll() completes, _refreshOpenActorApps() will render once with
+      // stable derived data (system.derived.damage.conditionPenalty). This ensures the
+      // condition track step and penalty display are always in sync.
       await this.updateActor(actor, {
         'system.conditionTrack.current': clampedStep
+      }, {
+        render: false
       });
 
       SWSELogger.log(`Condition step updated for ${actor.name}`, {
@@ -1469,9 +1514,12 @@ export const ActorEngine = {
         return { applied: 0, persistent };
       }
 
+      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
       await this.updateActor(actor, {
         'system.conditionTrack.persistent': persistent,
         ...(persistent ? {} : { 'system.conditionTrack.persistentSteps': 0 })
+      }, {
+        render: false
       });
 
       SWSELogger.log(`Condition persistent flag updated for ${actor.name}`, {
@@ -1521,8 +1569,11 @@ export const ActorEngine = {
         return { applied: 0, newCondition };
       }
 
+      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
       await this.updateActor(actor, {
         'system.conditionTrack.current': newCondition
+      }, {
+        render: false
       });
 
       const directionLabel = direction > 0 ? 'worsened' : 'improved';
@@ -1559,7 +1610,10 @@ export const ActorEngine = {
 
       const current = Math.max(0, Number(actor.system?.conditionTrack?.persistentSteps ?? 0));
       const total = current + delta;
-      await this.updateActor(actor, { 'system.conditionTrack.persistentSteps': total });
+      // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
+      await this.updateActor(actor, { 'system.conditionTrack.persistentSteps': total }, {
+        render: false
+      });
       return { applied: delta, total, source };
     } catch (err) {
       SWSELogger.error(`ActorEngine.incrementPersistentConditionSteps failed for ${actor?.name ?? 'unknown actor'}`, { error: err, amount, source });

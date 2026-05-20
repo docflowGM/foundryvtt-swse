@@ -217,16 +217,15 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
       const mod = abilityMods[ability] || 0;
       if (mod !== 0) {
         // Apply modifier to racial modifier slot (where species/racial mods go)
-        mutationPlan.set[`system.abilities.${ability}.racial`] = mod;
+        mutationPlan.set[`system.attributes.${ability}.racial`] = mod;
       }
     }
 
     // Enforce CON = 0 regardless of what the attribute step committed.
     // Droids do not have Constitution. Force all CON-related fields to 0.
     // Reference: chargen-droid.js:38-42 (legacy spec)
-    mutationPlan.set['system.abilities.con.base'] = 0;
-    mutationPlan.set['system.abilities.con.racial'] = 0;
-    mutationPlan.set['system.abilities.con.total'] = 0;
+    mutationPlan.set['system.attributes.con.base'] = 0;
+    mutationPlan.set['system.attributes.con.racial'] = 0;
 
     // Enforce ability score floor of 1 (SWSE rule: droid score can never be less than 1)
     // This will be validated at finalization

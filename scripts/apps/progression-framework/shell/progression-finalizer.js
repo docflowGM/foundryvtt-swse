@@ -682,20 +682,14 @@ export class ProgressionFinalizer {
       for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
         const delta = Math.max(0, Math.min(1, Number(increases?.[key] || 0) || 0));
         if (delta <= 0) continue;
-        const currentBase = Number(actor?.system?.abilities?.[key]?.base ?? actor?.system?.abilities?.[key]?.value ?? 10) || 10;
-        const currentRacial = Number(actor?.system?.abilities?.[key]?.racial ?? actor?.system?.abilities?.[key]?.species ?? 0) || 0;
-        const currentTemp = Number(actor?.system?.abilities?.[key]?.temp ?? 0) || 0;
+        const currentBase = Number(actor?.system?.attributes?.[key]?.base ?? actor?.system?.abilities?.[key]?.base ?? actor?.system?.abilities?.[key]?.value ?? 10) || 10;
+        const currentRacial = Number(actor?.system?.attributes?.[key]?.racial ?? actor?.system?.abilities?.[key]?.racial ?? actor?.system?.abilities?.[key]?.species ?? 0) || 0;
+        const currentTemp = Number(actor?.system?.attributes?.[key]?.temp ?? actor?.system?.abilities?.[key]?.temp ?? 0) || 0;
         const nextBase = currentBase + delta;
         const finalScore = nextBase + currentRacial + currentTemp;
         const mod = this._abilityMod(finalScore);
-        set[`system.abilities.${key}.base`] = nextBase;
-        set[`system.abilities.${key}.value`] = finalScore;
-        set[`system.abilities.${key}.total`] = finalScore;
-        set[`system.abilities.${key}.mod`] = mod;
+        // Write to canonical system.attributes; system.abilities is a read-only compatibility mirror
         set[`system.attributes.${key}.base`] = nextBase;
-        set[`system.attributes.${key}.value`] = finalScore;
-        set[`system.attributes.${key}.total`] = finalScore;
-        set[`system.attributes.${key}.mod`] = mod;
       }
       set['system.progression.lastAbilityIncrease'] = {
         level: levelUpManifest?.characterLevel || null,
@@ -711,14 +705,8 @@ export class ProgressionFinalizer {
         const baseScore = Number(val);
         const finalScore = Number(finalAttrValues?.[key] ?? baseScore);
         const mod = this._abilityMod(finalScore);
-        set[`system.abilities.${key}.base`] = baseScore;
-        set[`system.abilities.${key}.value`] = finalScore;
-        set[`system.abilities.${key}.total`] = finalScore;
-        set[`system.abilities.${key}.mod`] = mod;
+        // Write to canonical system.attributes; system.abilities is a read-only compatibility mirror
         set[`system.attributes.${key}.base`] = baseScore;
-        set[`system.attributes.${key}.value`] = finalScore;
-        set[`system.attributes.${key}.total`] = finalScore;
-        set[`system.attributes.${key}.mod`] = mod;
       }
     }
 

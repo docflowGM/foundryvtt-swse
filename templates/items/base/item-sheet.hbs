@@ -29,6 +29,9 @@
                 <option value="equipment" {{#if (eq item.type "equipment")}}selected{{/if}}>Equipment</option>
                 <option value="feat" {{#if (eq item.type "feat")}}selected{{/if}}>Feat</option>
                 <option value="talent" {{#if (eq item.type "talent")}}selected{{/if}}>Talent</option>
+                {{#unless (or (eq item.type "weapon") (eq item.type "armor") (eq item.type "equipment") (eq item.type "feat") (eq item.type "talent"))}}
+                <option value="{{item.type}}" selected>{{item.type}}</option>
+                {{/unless}}
               </select>
             </div>
 

@@ -365,7 +365,7 @@ export class ProgressionSession {
         if (speciesData?.abilityMods) {
           for (const [ability, mod] of Object.entries(speciesData.abilityMods)) {
             if (mod !== 0) {
-              updates[`system.abilities.${ability}.racial`] = mod;
+              updates[`system.attributes.${ability}.racial`] = mod;
             }
           }
         }
@@ -387,7 +387,7 @@ export class ProgressionSession {
         updates['system.progression.abilityMethod'] = this.stagedChanges.abilities.method;
         for (const [ability, data] of Object.entries(this.stagedChanges.abilities.abilities)) {
           const value = data.value || data;
-          updates[`system.abilities.${ability}.base`] = value;
+          updates[`system.attributes.${ability}.base`] = value;
         }
       }
 
@@ -420,8 +420,8 @@ export class ProgressionSession {
       // Ability increases
       if (Object.keys(this.stagedChanges.abilityIncreases).length > 0) {
         for (const [ability, increase] of Object.entries(this.stagedChanges.abilityIncreases)) {
-          const currentBase = this.actor.system.abilities?.[ability]?.base || 10;
-          updates[`system.abilities.${ability}.base`] = currentBase + increase;
+          const currentBase = this.actor.system.attributes?.[ability]?.base || this.actor.system.abilities?.[ability]?.base || 10;
+          updates[`system.attributes.${ability}.base`] = currentBase + increase;
         }
       }
 

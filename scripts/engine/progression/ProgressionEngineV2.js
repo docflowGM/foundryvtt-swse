@@ -173,7 +173,8 @@ export class ProgressionEngineV2 {
 
       if (Object.keys(abilityIncreases).length > 0) {
         for (const [abilityKey, abilityData] of Object.entries(abilityIncreases)) {
-          advancementPlan.updates[`system.abilities.${abilityKey}.total`] = abilityData.newTotal;
+          // Write to system.attributes.base; system.abilities is a read-only compatibility mirror
+          advancementPlan.updates[`system.attributes.${abilityKey}.base`] = abilityData.newTotal;
         }
       }
 
