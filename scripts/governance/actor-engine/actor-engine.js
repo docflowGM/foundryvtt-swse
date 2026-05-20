@@ -4442,9 +4442,17 @@ export const ActorEngine = {
       if (subfield === 'base') {
         // Safe redirect: canonical 1:1 equivalent exists.
         const canonical = `system.attributes.${abilityKey}.base`;
-        result[canonical] = result[key];
-        delete result[key];
-        redirects.push(`${key} → ${canonical}`);
+        const mirrorValue = result[key];
+        if (Object.prototype.hasOwnProperty.call(result, canonical)) {
+          // Canonical path already present in the same payload — canonical wins.
+          // Do not overwrite an explicit system.attributes write with a mirror value.
+          delete result[key];
+          redirects.push(`${key} CONFLICT — canonical wins (${canonical}=${result[canonical]}, mirror=${mirrorValue} dropped)`);
+        } else {
+          result[canonical] = mirrorValue;
+          delete result[key];
+          redirects.push(`${key} → ${canonical}`);
+        }
       } else {
         // .mod, .modifier, .total, or unknown subfield — warn but do not redirect.
         // These are derived/computed values; writing them to system.attributes.*
