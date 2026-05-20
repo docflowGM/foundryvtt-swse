@@ -21,6 +21,7 @@ import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems, summar
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
+const { FormDataExtended } = foundry.applications;
 
 export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   /** @inheritDoc */
@@ -217,6 +218,34 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     const meleeOrRangedSelect = root.querySelector('.melee-or-ranged-select');
     if (meleeOrRangedSelect) {
       meleeOrRangedSelect.addEventListener('change', this.#onMeleeOrRangedChange.bind(this));
+    }
+
+    // Intercept native form submission — AppV2 does not set tag:'form' so the
+    // browser would navigate away (hard-crashing Foundry) without this guard.
+    const innerForm = root.querySelector('form.swse-item-editor-form');
+    if (innerForm) {
+      innerForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        addItemEditorTrace('native-submit-captured', {
+          itemId: this.item?.id,
+          itemType: this.item?.type
+        });
+        const fd = new FormDataExtended(innerForm);
+        await SWSEItemSheet.#onSubmitForm.call(this, event, innerForm, fd);
+      });
+    }
+
+    // Earliest-possible confirm-click trace (fires before submit)
+    const confirmBtn = root.querySelector('.item-editor__footer-confirm');
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', (event) => {
+        addItemEditorTrace('confirm-click', {
+          itemId: this.item?.id,
+          itemType: this.item?.type,
+          itemName: this.item?.name
+        });
+      }, { capture: true });
     }
   }
 
@@ -465,8 +494,20 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       confirmButton.dataset.swseSaving = 'true';
     }
 
+    addItemEditorTrace('submit-start', {
+      itemId: app.item?.id,
+      itemType: app.item?.type,
+      itemName: app.item?.name
+    });
+
     try {
       const rawObject = formData?.object ?? Object.fromEntries(new FormData(form).entries());
+
+      addItemEditorTrace('formdata-collected', {
+        itemId: app.item?.id,
+        rawKeyCount: Object.keys(rawObject ?? {}).length,
+        rawKeys: Object.keys(rawObject ?? {}).sort()
+      });
       const hasDottedKeys = Object.keys(rawObject ?? {}).some(key => String(key).includes('.'));
       const data = hasDottedKeys ? foundry.utils.expandObject(rawObject) : foundry.utils.deepClone(rawObject ?? {});
 
@@ -517,10 +558,27 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
         flatData
       });
 
+      addItemEditorTrace('normalized-payload', {
+        itemId: app.item?.id,
+        itemType: app.item?.type,
+        flatKeys: Object.keys(flatData ?? {}).sort(),
+        typeInPayload: 'type' in flatData,
+        idInPayload: '_id' in flatData
+      });
+
       // PHASE 2: Route embedded items through ActorEngine
       if (app.item?.isEmbedded && actor) {
         try {
+          addItemEditorTrace('update-start', {
+            itemId: app.item?.id,
+            path: 'embedded',
+            actorId: actor?.id
+          });
           await ActorEngine.updateEmbeddedDocuments(actor, "Item", [{ _id: app.item.id, ...flatData }], { source: 'swse-item-sheet-confirm' });
+          addItemEditorTrace('update-success', {
+            itemId: app.item?.id,
+            path: 'embedded'
+          });
           addItemEditorTrace('item-sheet-submit-success-embedded', {
             item: summarizeItem(app.item),
             actor: summarizeActorItems(actor),
@@ -532,6 +590,11 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
           await app.close?.();
           return;
         } catch (err) {
+          addItemEditorTrace('update-failure', {
+            itemId: app.item?.id,
+            path: 'embedded',
+            error: err
+          });
           addItemEditorTrace('item-sheet-submit-error-embedded', {
             item: summarizeItem(app.item),
             actor: summarizeActorItems(actor),
@@ -547,12 +610,25 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       // @mutation-exception: Unowned item update
       // Unowned items (not on an actor) can update directly — UI-only sheet operation
       try {
+        addItemEditorTrace('update-start', {
+          itemId: app.item?.id,
+          path: 'unowned'
+        });
         await app.item.update(flatData); // @mutation-exception: UI-only unowned item
+        addItemEditorTrace('update-success', {
+          itemId: app.item?.id,
+          path: 'unowned'
+        });
         addItemEditorTrace('item-sheet-submit-success-unowned', {
           item: summarizeItem(app.item),
           flatData
         });
       } catch (err) {
+        addItemEditorTrace('update-failure', {
+          itemId: app.item?.id,
+          path: 'unowned',
+          error: err
+        });
         addItemEditorTrace('item-sheet-submit-error-unowned', {
           item: summarizeItem(app.item),
           flatData,
