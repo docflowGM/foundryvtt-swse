@@ -312,7 +312,7 @@ export class SuggestionService {
 
   static async _persistSuggestionState(actor, context, suggestions) {
     // Non-fatal: suggestion state persistence is optional (used for diff display only).
-    // Direct actor.setFlag() is blocked by MutationBoundaryDefense — skip silently.
+    // Direct actor.setFlag() is not routed through ActorEngine — skip silently.
     try {
       const ids = suggestions.map(s => s?.targetRef?.id || s?.id || s?.name).filter(Boolean);
 
