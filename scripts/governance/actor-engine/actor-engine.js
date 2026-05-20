@@ -4203,7 +4203,9 @@ export const ActorEngine = {
     //                            'finalize-integration'
     //   canonical-normalization: 'ActorEngine.apply:adoption',
     //                            'CharacterGenerationEngine.apply',
-    //                            'chargen-init.imported-droid'
+    //                            'chargen-init.imported-droid',
+    //                            'vehicle-handler.canonical-seed'
+    //   progression-commit:     (also) 'FollowerCreator.updateFromMutation.progression'
     //   derived-rebuild:         options.isDerivedCalculatorCall===true,
     //                            actor._isDerivedCalcCycle===true
     // -----------------------------------------------------------------------

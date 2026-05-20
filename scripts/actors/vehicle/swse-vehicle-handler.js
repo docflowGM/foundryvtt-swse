@@ -190,7 +190,7 @@ export class SWSEVehicleHandler {
     }
 
     try {
-      await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
+      await globalThis.SWSE.ActorEngine.updateActor(actor, updates, { source: 'vehicle-handler.canonical-seed' });
       ui.notifications.info(`${vehicleItem.name} applied to ${actor.name}`);
       return true;
     } catch (error) {
