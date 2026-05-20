@@ -624,7 +624,11 @@ export const ActorEngine = {
       // Future phases will enforce semantic rules here only after parity is proven.
       // ========================================
       const _opCategory = this._classifyOperationIntent(normalizedUpdateData, options, actor);
-      this._auditSemanticBoundaries(normalizedUpdateData, flatUpdateData, actor, _opCategory, options);
+      // Pass the ORIGINAL updateData (pre-normalization) so check #1 can detect whether the
+      // caller explicitly passed {system:{...}} (nested) vs a flat dot-path key. After
+      // _normalizeMutationForContract runs expandObject(), normalizedUpdateData.system is
+      // always an object — using it here would false-positive on every safe narrow update.
+      this._auditSemanticBoundaries(updateData, flatUpdateData, actor, _opCategory, options);
 
       // ========================================
       // PHASE 2: Mark mutation as in-flight before any reactive code can run
