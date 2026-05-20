@@ -180,7 +180,9 @@ export class CharacterGenerationEngine {
       // ====================================================================
       // PHASE 1: Apply all actor updates through ActorEngine
       // ====================================================================
-      await ActorEngine.updateActor(actor, plan.updates);
+      // Source tag required: plan.updates is a broad initial character setup payload.
+      // Classifier recognizes 'CharacterGenerationEngine.apply' (/chargen/i) → canonical-normalization.
+      await ActorEngine.updateActor(actor, plan.updates, { source: 'CharacterGenerationEngine.apply' });
       swseLogger.debug(`[ChargenEngine] Applied ${Object.keys(plan.updates).length} root updates`);
 
       // ====================================================================

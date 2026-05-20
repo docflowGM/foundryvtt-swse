@@ -60,7 +60,9 @@ export class ChargenFinalizer {
           SWSELogger.log('[CHARGEN FINALIZER] Updating existing actor through ActorEngine');
           TraceMetrics.recordStep(traceId, 'update-actor');
           // SOVEREIGNTY: Route actor update through ActorEngine
-          await ActorEngine.updateActor(finalActor, actorData);
+          // Source tag required: actorData is a broad chargen payload.
+          // Classifier recognizes 'chargen-finalizer' (/finali/i) → progression-commit.
+          await ActorEngine.updateActor(finalActor, actorData, { source: 'chargen-finalizer' });
         }
 
         if (!finalActor) {

@@ -1197,7 +1197,11 @@ export const ActorEngine = {
 
         // ---- ADOPTION PHASE 3: Replace system ----
         if (mutationPlan.replaceSystem && Object.keys(mutationPlan.replaceSystem).length > 0) {
-          await this.updateActor(actor, { system: mutationPlan.replaceSystem });
+          // Source tag required: this is an intentionally broad system replacement (adoption).
+          // The diagnostic classifier recognizes 'ActorEngine.apply:adoption' → canonical-normalization.
+          await this.updateActor(actor, { system: mutationPlan.replaceSystem }, {
+            source: 'ActorEngine.apply:adoption'
+          });
         }
       }
 
@@ -4171,6 +4175,25 @@ export const ActorEngine = {
    * @private
    */
   _classifyOperationIntent(updateData, options, actor) {
+    // -----------------------------------------------------------------------
+    // Source-based classification: reduces false-positive noise in audit logs.
+    // These are warning-only diagnostics. Source classification is NOT hard
+    // operation-mode validation — it exists solely to identify known-safe broad
+    // payloads before future enforcement phases add real restrictions.
+    //
+    // Confirmed real source strings in the codebase (audit: 2025-05-20):
+    //   migration-repair:        meta.origin==='migration', 'repair'
+    //   progression-commit:      'ActorEngine.applyProgression', 'progression',
+    //                            'progression-finalized', 'progression-attribute-step',
+    //                            'ProgressionFinalizer.finalize', 'levelup-finalizer',
+    //                            'chargen-finalizer', 'chargen-finalization',
+    //                            'finalize-integration'
+    //   canonical-normalization: 'ActorEngine.apply:adoption',
+    //                            'CharacterGenerationEngine.apply',
+    //                            'chargen-init.imported-droid'
+    //   derived-rebuild:         options.isDerivedCalculatorCall===true,
+    //                            actor._isDerivedCalcCycle===true
+    // -----------------------------------------------------------------------
     const source = options?.source ?? options?.meta?.source ?? '';
     const guardKey = options?.meta?.guardKey ?? '';
     const metaOrigin = options?.meta?.origin ?? '';
@@ -4182,7 +4205,9 @@ export const ActorEngine = {
       guardKey.includes('progression')
     ) return 'progression-commit';
     if (options?.isDerivedCalculatorCall === true || actor?._isDerivedCalcCycle === true) return 'derived-rebuild';
-    if (/canonical|normali/i.test(source)) return 'canonical-normalization';
+    // adoption: ActorEngine.apply() system replacement (internal).
+    // chargen: CharacterGenerationEngine initial shape setup and chargen-init imports.
+    if (/canonical|normali|adoption|chargen/i.test(source)) return 'canonical-normalization';
 
     // Narrow leaf-path updates are typical live UI interactions — not suspicious
     const flat = foundry.utils.flattenObject(updateData ?? {});
